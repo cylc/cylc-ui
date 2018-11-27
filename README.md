@@ -28,3 +28,10 @@ npm test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+## Development tools
+
+* Node, npm
+* webpack
+* Vue.JS Cli
+* Vue.JS browser extensions (e.g. [Firefox Vue.JS extension](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/))
