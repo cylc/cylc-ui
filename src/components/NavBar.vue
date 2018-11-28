@@ -44,9 +44,9 @@
             </ul>
           </li>
           <li>
-            <a href="#">
-              Help
-            </a>
+            <router-link tag="li" to="/help">
+              <a>Help</a>
+            </router-link>
           </li>
         </ul>
       </div>
@@ -72,7 +72,7 @@ export default {
   #sidebar {
     min-width: 250px;
     max-width: 250px;
-    background: #7386D5;
+    background: #6a89cc;
     color: #fff;
     transition: all 0.3s;
   }
@@ -83,7 +83,7 @@ export default {
 
   #sidebar .sidebar-header {
     padding: 20px;
-    background: #6d7fcc;
+    background: #4a69bd;
   }
 
   #sidebar ul.components {
@@ -110,7 +110,7 @@ export default {
   #sidebar ul li.active>a,
   a[aria-expanded="true"] {
     color: #fff;
-    background: #6d7fcc;
+    background: #1e3799;
   }
 
   a[data-toggle="collapse"] {
@@ -144,7 +144,7 @@ export default {
   ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
-    background: #6d7fcc;
+    background-color: #1e3799;
   }
 
   ul.CTAs {
