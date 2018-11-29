@@ -1,65 +1,71 @@
 <!-- Source: https://bootstrapious.com/p/bootstrap-sidebar -->
 <template>
-    <!-- Sidebar -->
-    <nav id="sidebar" v-bind:class="{ active: isMenuToggled }">
-      <div class="sidebar-header">
-        <img src="../assets/logo.png" alt="Cylc Logo">
-        <ul class="list-unstyled components">
-          <router-link tag="li" to="/">
-            <a>Home</a>
+  <!-- Sidebar -->
+  <nav id="sidebar" v-bind:class="{ active: isMenuToggled }">
+    <div class="sidebar-header">
+      <img src="../assets/logo.png" alt="Cylc Logo">
+      <ul class="list-unstyled components">
+        <router-link tag="li" to="/">
+          <a>Home</a>
+        </router-link>
+        <li>
+          <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Suites</a>
+          <ul class="collapse list-unstyled" id="homeSubmenu">
+            <li>
+              <a href="#">
+                Running
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                Stalled
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#">
+            Jobs
+          </a>
+        </li>
+        <li>
+          <a href="#managementSubmenu" data-toggle="collapse" aria-expanded="false"
+             class="dropdown-toggle">Management</a>
+          <ul class="collapse list-unstyled" id="managementSubmenu">
+            <li>
+              <a href="#">
+                Users
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                Logs
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <router-link tag="li" to="/help">
+            <a>Help</a>
           </router-link>
-          <li>
-            <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Suites</a>
-            <ul class="collapse list-unstyled" id="homeSubmenu">
-              <li>
-                <a href="#">
-                  Running
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  Stalled
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="#">
-              Jobs
-            </a>
-          </li>
-          <li>
-            <a href="#managementSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Management</a>
-            <ul class="collapse list-unstyled" id="managementSubmenu">
-              <li>
-                <a href="#">
-                  Users
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  Logs
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <router-link tag="li" to="/help">
-              <a>Help</a>
-            </router-link>
-          </li>
-        </ul>
-      </div>
-    </nav>
+        </li>
+      </ul>
+    </div>
+  </nav>
 </template>
 
-<script>
-export default {
-  name: 'NavBar',
-  props: {
-    isMenuToggled: Boolean
+<script lang="ts">
+  import {Component, Vue} from 'vue-property-decorator';
+
+  @Component
+  export default class NavBar extends Vue {
+
+    /**
+     * Define whether the navigation bar menu is toggled or not. Defaults to {@code false}.
+     */
+    protected isMenuToggled: boolean = false;
+
   }
-}
 </script>
 
 <style scoped>
@@ -107,7 +113,7 @@ export default {
     background: #fff;
   }
 
-  #sidebar ul li.active>a,
+  #sidebar ul li.active > a,
   a[aria-expanded="true"] {
     color: #fff;
     background: #1e3799;
@@ -133,9 +139,11 @@ export default {
     #sidebar {
       margin-left: -250px;
     }
+
     #sidebar.active {
       margin-left: 0;
     }
+
     #sidebarCollapse span {
       display: none;
     }

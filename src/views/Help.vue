@@ -13,7 +13,8 @@
             Cylc User Guide
           </div>
           <div class="card-body">
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
             <a href="#" class="btn btn-primary">Read Online</a>
             <a href="#" class="btn btn-info">PDF</a>
           </div>
@@ -26,7 +27,8 @@
             Cylc Suite Design Guide
           </div>
           <div class="card-body">
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
             <a href="#" class="btn btn-primary">Read Online</a>
             <a href="#" class="btn btn-info">PDF</a>
           </div>
@@ -39,7 +41,8 @@
             Cylc Google Groups
           </div>
           <div class="card-body">
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
             <a href="#" class="btn btn-primary">Archive</a>
           </div>
         </div>
@@ -51,7 +54,8 @@
             Cylc RIOT.im
           </div>
           <div class="card-body">
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
             <a href="#" class="btn btn-primary">Chat</a>
           </div>
         </div>
@@ -63,13 +67,3 @@
       Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'HelpPage'
-}
-</script>
-
-<style scoped>
-
-</style>
