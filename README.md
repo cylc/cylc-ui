@@ -1,4 +1,6 @@
-# Cylc WEB GUI
+# Cylc Web
+
+Bringing [Cylc](https://cylc.github.io/cylc/) to the Web.
 
 ## Project setup
 ```
@@ -36,6 +38,7 @@ npm run test:unit
 ```
 
 ### Customize configuration
+
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## Development tools
