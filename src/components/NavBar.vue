@@ -55,17 +55,17 @@
 </template>
 
 <script lang="ts">
-  import {Component, Vue} from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator'
 
-  @Component
-  export default class NavBar extends Vue {
+@Component
+class NavBar extends Vue {
+  /**
+   * Define whether the navigation bar menu is toggled or not. Defaults to false.
+   */
+  isMenuToggled: boolean = false;
+}
 
-    /**
-     * Define whether the navigation bar menu is toggled or not. Defaults to {@code false}.
-     */
-    protected isMenuToggled: boolean = false;
-
-  }
+export default NavBar
 </script>
 
 <style scoped>
@@ -133,7 +133,7 @@
 
   /* ---------------------------------------------------
     MEDIAQUERIES
------------------------------------------------------ */
+  ----------------------------------------------------- */
 
   @media (max-width: 768px) {
     #sidebar {
