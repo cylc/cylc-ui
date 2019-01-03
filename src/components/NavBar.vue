@@ -3,11 +3,13 @@
   <!-- Sidebar -->
   <nav id="sidebar" v-bind:class="{ active: isMenuToggled }">
     <div class="sidebar-header">
-      <img src="../assets/logo.png" alt="Cylc Logo">
+      <img src="../assets/logo.png" alt="Cylc Logo" width="150px">
       <ul class="list-unstyled components">
         <router-link tag="li" to="/">
           <a>Home</a>
         </router-link>
+      </ul>
+      <ul class="list-unstyled components">
         <li>
           <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Suites</a>
           <ul class="collapse list-unstyled" id="homeSubmenu">
@@ -28,6 +30,8 @@
             Jobs
           </a>
         </li>
+      </ul>
+      <ul class="list-unstyled components">
         <li>
           <a href="#managementSubmenu" data-toggle="collapse" aria-expanded="false"
              class="dropdown-toggle">Management</a>
@@ -78,7 +82,7 @@ export default NavBar
   #sidebar {
     min-width: 250px;
     max-width: 250px;
-    background: #6a89cc;
+    background: #393939;
     color: #fff;
     transition: all 0.3s;
   }
@@ -89,12 +93,12 @@ export default NavBar
 
   #sidebar .sidebar-header {
     padding: 20px;
-    background: #4a69bd;
+    background: #333333;
   }
 
   #sidebar ul.components {
-    padding: 20px 0;
-    border-bottom: 1px solid #47748b;
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid #555555;
   }
 
   #sidebar ul p {
@@ -109,14 +113,14 @@ export default NavBar
   }
 
   #sidebar ul li a:hover {
-    color: #7386D5;
-    background: #fff;
+    color: #EEEEEE;
+    background: #888888;
   }
 
   #sidebar ul li.active > a,
   a[aria-expanded="true"] {
     color: #fff;
-    background: #1e3799;
+    background: #393939;
   }
 
   a[data-toggle="collapse"] {
@@ -152,7 +156,7 @@ export default NavBar
   ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
-    background-color: #1e3799;
+    background-color: #393939;
   }
 
   ul.CTAs {
