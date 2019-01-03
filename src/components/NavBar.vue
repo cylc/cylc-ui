@@ -49,8 +49,8 @@
           </ul>
         </li>
         <li>
-          <router-link tag="li" to="/help">
-            <a>Help</a>
+          <router-link tag="li" to="/about">
+            <a>About</a>
           </router-link>
         </li>
       </ul>
