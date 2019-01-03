@@ -8,20 +8,22 @@
 </template>
 
 <script lang="ts">
-  import NavBar from '@/components/NavBar.vue';
-  import 'bootstrap';
-  import 'jquery';
-  import {Component, Vue} from 'vue-property-decorator';
+import NavBar from '@/components/NavBar.vue'
+import 'bootstrap'
+import 'jquery'
+import { Component, Vue } from 'vue-property-decorator'
 
-  @Component({
-    components: {
-      NavBar,
-    },
-  })
-
-  export default class App extends Vue {
-
+@Component({
+  components: {
+    NavBar
   }
+})
+
+class App extends Vue {
+
+}
+
+export default App
 </script>
 
 <style lang="scss">
