@@ -14,10 +14,6 @@ export default [
     view: 'Suites'
   },
   {
-    path: '/logs',
-    view: 'Logs'
-  },
-  {
     path: '/user-profile',
     name: 'User Profile',
     view: 'UserProfile'

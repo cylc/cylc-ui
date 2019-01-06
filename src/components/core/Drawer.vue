@@ -97,11 +97,6 @@ export default {
         text: 'Suites'
       },
       {
-        to: '/logs',
-        icon: 'mdi-file-document-box-multiple-outline',
-        text: 'Logs'
-      },
-      {
         to: '/user-profile',
         icon: 'mdi-account',
         text: 'User Profile'
