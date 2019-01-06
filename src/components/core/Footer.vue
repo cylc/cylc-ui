@@ -16,15 +16,7 @@
     </div>
     <v-spacer/>
     <span class="font-weight-light copyright">
-      &copy;
-      {{ (new Date()).getFullYear() }}
-      <a
-        href="https://www.creative-tim.com/"
-        target="_blank">Creative Tim</a>, made with
-      <v-icon
-        color="tertiary"
-        size="17">mdi-heart</v-icon>
-      for a better web
+      &copy; 2008-{{ (new Date()).getFullYear() }} NIWA &amp; British Crown (Met Office) &amp; contributors
     </span>
   </v-footer>
 </template>
@@ -33,10 +25,8 @@
 export default {
   data: () => ({
     links: [
-      { name: 'Home', Link: '/dashboard' },
-      { name: 'Creative Tim', Link: 'https://www.creative-tim.com' },
-      { name: 'About Us', Link: 'https://creative-tim.com/presentation' },
-      { name: 'Blog', Link: 'https://blog.creative-tim.com' }
+      { name: 'Website', Link: 'https://cylc.github.io/cylc/' },
+      { name: 'About', Link: '/about' }
     ]
   })
 }
