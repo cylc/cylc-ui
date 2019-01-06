@@ -87,11 +87,6 @@ export default {
         to: '/user-profile',
         icon: 'mdi-account',
         text: 'User Profile'
-      },
-      {
-        to: '/administration',
-        icon: 'mdi-account-star',
-        text: 'Administration'
       }
     ],
     responsive: false

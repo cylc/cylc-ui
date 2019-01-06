@@ -19,11 +19,6 @@ export default [
     view: 'UserProfile'
   },
   {
-    path: '/administration',
-    name: 'Administration',
-    view: 'UserProfile'
-  },
-  {
     path: '/notifications',
     view: 'Notifications'
   }
