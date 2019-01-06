@@ -21,5 +21,9 @@ export default [
   {
     path: '/notifications',
     view: 'Notifications'
+  },
+  {
+    path: '/about',
+    view: 'About'
   }
 ]
