@@ -29,7 +29,7 @@
             />
           </v-list-tile-avatar>
           <v-list-tile-title class="title">
-            Vuetify MD
+            Cylc Web
           </v-list-tile-title>
         </v-list-tile>
         <v-divider/>
@@ -71,7 +71,7 @@ import {
 
 export default {
   data: () => ({
-    logo: './img/vuetifylogo.png',
+    logo: './img/logo.png',
     links: [
       {
         to: '/dashboard',
