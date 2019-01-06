@@ -10,34 +10,25 @@ export default [
     view: 'Dashboard'
   },
   {
+    path: '/suites',
+    view: 'Suites'
+  },
+  {
+    path: '/logs',
+    view: 'Logs'
+  },
+  {
     path: '/user-profile',
     name: 'User Profile',
     view: 'UserProfile'
   },
   {
-    path: '/table-list',
-    name: 'Table List',
-    view: 'TableList'
-  },
-  {
-    path: '/typography',
-    view: 'Typography'
-  },
-  {
-    path: '/icons',
-    view: 'Icons'
-  },
-  {
-    path: '/maps',
-    view: 'Maps'
+    path: '/administration',
+    name: 'Administration',
+    view: 'UserProfile'
   },
   {
     path: '/notifications',
     view: 'Notifications'
-  },
-  {
-    path: '/upgrade',
-    name: 'Upgrade to PRO',
-    view: 'Upgrade'
   }
 ]
