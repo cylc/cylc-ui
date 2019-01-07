@@ -19,8 +19,15 @@
           <v-data-table
             :headers="headers"
             :items="items"
-            hide-actions
           >
+            <template slot="no-data">
+              <v-alert
+                :value="true"
+                color="error"
+                icon="warning">
+                No suites found for the current user
+              </v-alert>
+            </template>
             <template
               slot="headerCell"
               slot-scope="{ header }"
