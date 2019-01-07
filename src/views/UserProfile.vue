@@ -85,11 +85,6 @@
             <h6 class="category text-gray font-weight-thin mb-3">User</h6>
             <h4 class="card-title font-weight-light">Robert Typer</h4>
             <p class="card-description font-weight-light">Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...</p>
-            <v-btn
-              color="success"
-              round
-              class="font-weight-light"
-            >Follow</v-btn>
           </v-card-text>
         </material-card>
       </v-flex>
