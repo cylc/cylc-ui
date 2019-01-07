@@ -9,14 +9,23 @@
         v-for="link in links"
         :key="link.name"
       >
-        <a
-          :href="link.Link"
-          class="tertiary--text footer-links">{{ link.name }}</a>
+        <template
+          v-if="link.route">
+          <router-link
+            :to="link.Link"
+            class="tertiary--text footer-links">About</router-link>
+        </template>
+        <template
+          v-else>
+          <a
+            :href="link.Link"
+            class="tertiary--text footer-links">{{ link.name }}</a>
+        </template>
       </span>
     </div>
     <v-spacer/>
     <span class="font-weight-light copyright">
-      &copy; 2008-{{ (new Date()).getFullYear() }} NIWA &amp; British Crown (Met Office) &amp; contributors
+      Cylc Web {{ $store.getters.appVersion }} &copy; 2008-{{ (new Date()).getFullYear() }} NIWA &amp; British Crown (Met Office) &amp; contributors
     </span>
   </v-footer>
 </template>
@@ -25,8 +34,8 @@
 export default {
   data: () => ({
     links: [
-      { name: 'Website', Link: 'https://cylc.github.io/cylc/' },
-      { name: 'About', Link: '/about' }
+      { name: 'Website', Link: 'https://cylc.github.io/cylc/', route: false },
+      { name: 'About', Link: '/about', route: true }
     ]
   })
 }
