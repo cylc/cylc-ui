@@ -13,8 +13,8 @@
       >
         <material-card
           color="green"
-          title="Simple Table"
-          text="Here is a subtitle for this table"
+          title="List of Suites"
+          text="This is the list of suites the current user has access to"
         >
           <v-data-table
             :headers="headers"
@@ -35,45 +35,12 @@
               slot-scope="{ item }"
             >
               <td>{{ item.name }}</td>
-              <td>{{ item.country }}</td>
-              <td>{{ item.city }}</td>
-              <td class="text-xs-right">{{ item.salary }}</td>
-            </template>
-          </v-data-table>
-        </material-card>
-      </v-flex>
-      <v-flex
-        md12
-      >
-        <material-card
-          color="green"
-          flat
-          full-width
-          title="Table on Plain Background"
-          text="Here is a subtitle for this table"
-        >
-          <v-data-table
-            :headers="headers"
-            :items="items.slice(0, 7)"
-            hide-actions
-          >
-            <template
-              slot="headerCell"
-              slot-scope="{ header }"
-            >
-              <span
-                class="subheading font-weight-light text--darken-3"
-                v-text="header.text"
-              />
-            </template>
-            <template
-              slot="items"
-              slot-scope="{ item }"
-            >
-              <td>{{ item.name }}</td>
-              <td>{{ item.country }}</td>
-              <td>{{ item.city }}</td>
-              <td class="text-xs-right">{{ item.salary }}</td>
+              <td>{{ item.group }}</td>
+              <td>{{ item.host }}</td>
+              <td>{{ item.owner }}</td>
+              <td>{{ item.version }}</td>
+              <td>{{ item.updated }}</td>
+              <td>{{ item.status }}</td>
             </template>
           </v-data-table>
         </material-card>
@@ -87,59 +54,91 @@ export default {
   data: () => ({
     headers: [
       {
-        sortable: false,
+        sortable: true,
         text: 'Name',
         value: 'name'
       },
       {
         sortable: false,
-        text: 'Country',
-        value: 'country'
+        text: 'Group',
+        value: 'group'
       },
       {
         sortable: false,
-        text: 'City',
-        value: 'city'
+        text: 'Host',
+        value: 'host'
       },
       {
         sortable: false,
-        text: 'Salary',
-        value: 'salary',
-        align: 'right'
+        text: 'Owner',
+        value: 'owner'
+      },
+      {
+        sortable: false,
+        text: 'Version',
+        value: 'version'
+      },
+      {
+        sortable: false,
+        text: 'Updated',
+        value: 'updated'
+      },
+      {
+        sortable: true,
+        text: 'Status',
+        value: 'status'
       }
     ],
     items: [
       {
         name: 'Dakota Rice',
-        country: 'Niger',
-        city: 'Oud-Tunrhout',
-        salary: '$35,738'
+        group: null,
+        host: 'localhost',
+        owner: 'robert',
+        version: '7.8.0-abc123',
+        updated: '30/10/2018',
+        status: 'Running'
       },
       {
         name: 'Minerva Hooper',
-        country: 'Curaçao',
-        city: 'Sinaai-Waas',
-        salary: '$23,738'
+        group: null,
+        host: 'localhost',
+        owner: 'robert',
+        version: '7.6.0-abc123',
+        updated: '01/12/2018',
+        status: 'Running'
       }, {
         name: 'Sage Rodriguez',
-        country: 'Netherlands',
-        city: 'Overland Park',
-        salary: '$56,142'
+        group: null,
+        host: 'localhost',
+        owner: 'robert',
+        version: '8.0.0-b1-123abc',
+        updated: '30/10/2018',
+        status: 'Running'
       }, {
         name: 'Philip Chanley',
-        country: 'Korea, South',
-        city: 'Gloucester',
-        salary: '$38,735'
+        group: null,
+        host: 'localhost',
+        owner: 'robert',
+        version: '7.8.0-abc123',
+        updated: '07/01/2019',
+        status: 'Stalled'
       }, {
         name: 'Doris Greene',
-        country: 'Malawi',
-        city: 'Feldkirchen in Kārnten',
-        salary: '$63,542'
+        group: null,
+        host: 'localhost',
+        owner: 'robert',
+        version: '7.8.0-abc123',
+        updated: '30/10/2018',
+        status: 'Running'
       }, {
         name: 'Mason Porter',
-        country: 'Chile',
-        city: 'Gloucester',
-        salary: '$78,615'
+        group: null,
+        host: 'localhost',
+        owner: 'robert',
+        version: '7.8.0-abc123',
+        updated: '30/10/2018',
+        status: 'Cancelled'
       }
     ]
   })
