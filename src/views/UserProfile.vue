@@ -9,7 +9,7 @@
     >
       <v-flex
         xs12
-        md8
+        md12
       >
         <material-card
           color="green"
@@ -74,18 +74,6 @@
               </v-layout>
             </v-container>
           </v-form>
-        </material-card>
-      </v-flex>
-      <v-flex
-        xs12
-        md4
-      >
-        <material-card class="v-card-profile">
-          <v-card-text class="text-xs-center">
-            <h6 class="category text-gray font-weight-thin mb-3">User</h6>
-            <h4 class="card-title font-weight-light">Robert Typer</h4>
-            <p class="card-description font-weight-light">Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...</p>
-          </v-card-text>
         </material-card>
       </v-flex>
     </v-layout>
