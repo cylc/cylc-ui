@@ -140,6 +140,6 @@ export default {
     return {
       title: 'Cylc Web | User Profile'
     }
-  },
+  }
 }
 </script>
