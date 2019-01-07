@@ -58,6 +58,11 @@
 
 <script>
 export default {
+  metaInfo () {
+    return {
+      title: 'Cylc Web | Suites'
+    }
+  },
   data: () => ({
     headers: [
       {

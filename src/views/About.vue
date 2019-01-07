@@ -18,6 +18,10 @@
 
 <script>
 export default {
-  //
+  metaInfo () {
+    return {
+      title: 'Cylc Web | About'
+    }
+  }
 }
 </script>

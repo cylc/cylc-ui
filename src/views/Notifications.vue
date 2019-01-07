@@ -233,6 +233,11 @@
 
 <script>
 export default {
+  metaInfo () {
+    return {
+      title: 'Cylc Web | Notifications'
+    }
+  },
   data: () => ({
     color: null,
     colors: [

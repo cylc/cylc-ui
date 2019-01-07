@@ -361,6 +361,11 @@
 
 <script>
 export default {
+  metaInfo () {
+    return {
+      title: 'Cylc Web | Dashboard'
+    }
+  },
   data () {
     return {
       dailySalesChart: {
