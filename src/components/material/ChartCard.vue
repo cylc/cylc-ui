@@ -42,7 +42,7 @@ export default {
     },
     ratio: {
       type: String,
-      default: undefined
+      default: ''
     },
     responsiveOptions: {
       type: Array,
