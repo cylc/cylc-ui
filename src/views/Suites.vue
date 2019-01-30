@@ -12,9 +12,9 @@
         md12
       >
         <material-card
+          :text="$t('Suites.tableSubHeader')"
+          :title="$t('Suites.tableHeader')"
           color="green"
-          title="List of Suites"
-          text="This is the list of suites the current user has access to"
         >
           <v-data-table
             :headers="headers"

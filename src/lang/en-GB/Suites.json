@@ -1,0 +1,11 @@
+{
+  "tableHeader": "List of Suites",
+  "tableSubHeader": "This is the list of suites the current user has access to",
+  "tableColumnName": "Name",
+  "tableColumnGroup": "Group",
+  "tableColumnHost": "Host",
+  "tableColumnOwner": "Owner",
+  "tableColumnVersion": "Version",
+  "tableColumnUpdated": "Updated",
+  "tableColumnStatus": "Status"
+}
