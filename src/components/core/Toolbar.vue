@@ -87,6 +87,7 @@
         >
           <v-icon color="tertiary">mdi-account</v-icon>
         </router-link>
+        <core-locales />
       </v-flex>
     </v-toolbar-items>
   </v-toolbar>

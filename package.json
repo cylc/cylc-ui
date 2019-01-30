@@ -14,6 +14,7 @@
     "sass-loader": "^7.1.0",
     "vue": "^2.5.22",
     "vue-chartist": "^2.1.2",
+    "vue-flag-icon": "^1.0.6",
     "vue-meta": "^1.5.2",
     "vuetify": "^1.4.3"
   },

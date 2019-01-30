@@ -14,6 +14,7 @@ import { sync } from 'vuex-router-sync'
 // Application imports
 import App from './App'
 import i18n from '@/i18n'
+import FlagIcon from 'vue-flag-icon'
 import router from '@/router'
 import store from '@/store'
 
@@ -21,6 +22,8 @@ import store from '@/store'
 sync(store, router)
 
 Vue.config.productionTip = false
+
+Vue.use(FlagIcon)
 
 /* eslint-disable no-new */
 new Vue({
