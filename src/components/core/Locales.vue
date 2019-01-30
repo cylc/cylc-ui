@@ -1,21 +1,20 @@
 <!-- From https://github.com/vuetifyjs/vuetify/blob/master/packages/docs/src/components/core/Locales.vue -->
 <template>
   <v-menu
-    attach
     bottom
     left
     offset-y
   >
     <v-btn
       slot="activator"
-      :aria-label="$t('Vuetify.AppToolbar.translations')"
+      aria-label="Translations"
       flat
       style="min-width: 48px"
     >
-      <v-img
+      <flag
         v-if="currentLanguage"
-        :src="`https://cdn.vuetifyjs.com/images/flags/${currentLanguage.country}.png`"
-        width="26px"
+        :iso="currentLanguage.country"
+        :squared="false"
       />
     </v-btn>
     <v-list
@@ -32,9 +31,9 @@
           tile
           size="24px"
         >
-          <v-img
-            :src="`https://cdn.vuetifyjs.com/images/flags/${language.country}.png`"
-            width="24px"
+          <flag
+            :iso="language.country"
+            :squared="false"
           />
         </v-list-tile-avatar>
         <v-list-tile-title v-text="language.name"/>
@@ -58,8 +57,7 @@ export default {
   },
   methods: {
     translateI18n (lang) {
-      this.$router.replace({ params: { lang } })
-      document.cookie = `currentLanguage=${lang};path=/;max-age=${60 * 60 * 24 * 7}` // expires in 7 days
+      this.$i18n.locale = lang
     }
   }
 }
