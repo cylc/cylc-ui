@@ -40,6 +40,7 @@
         <router-link
           v-ripple
           class="toolbar-items"
+          aria-label="Dashboard"
           to="/"
         >
           <v-icon color="tertiary">mdi-view-dashboard</v-icon>
@@ -83,6 +84,7 @@
         <router-link
           v-ripple
           class="toolbar-items"
+          aria-label="User Profile"
           to="/user-profile"
         >
           <v-icon color="tertiary">mdi-account</v-icon>
