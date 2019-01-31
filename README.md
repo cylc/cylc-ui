@@ -1,5 +1,30 @@
 # Cylc Web
 
+## Building
+
+This project was created with the [vue-cli](https://cli.vuejs.org/). Plugins
+can be added through the vue-cli utility, and for building the project, you
+can use one of the following commands.
+
+### Project setup
+
+    npm install
+
+### Compiles and hot-reloads for development
+
+    npm run serve
+
+### Compiles and minifies for production
+
+    npm run build
+
+### Run your tests
+
+    npm run test
+
+### Lints and fixes files
+
+    npm run lint
 
 ## Internationalization
 
