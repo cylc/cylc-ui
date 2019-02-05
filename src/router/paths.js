@@ -5,6 +5,11 @@
  */
 export default [
   {
+    path: '/login',
+    name: 'Login',
+    view: 'Login'
+  },
+  {
     path: '/dashboard',
     // Relative to /src/views
     view: 'Dashboard'

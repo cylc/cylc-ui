@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <core-toolbar />
+    <core-toolbar v-if="$route.name !== 'Login'" />
 
-    <core-drawer />
+    <core-drawer v-if="$route.name !== 'Login'" />
 
     <core-view />
   </v-app>
