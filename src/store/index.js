@@ -9,25 +9,36 @@
 // Lib imports
 import Vue from 'vue'
 import Vuex from 'vuex'
-
-// Store functionality
-import actions from './actions'
-import getters from './getters'
-import mutations from './mutations'
-import state from './state'
-
 // Modules
 import { app } from './app.module'
+
+// Actions
+const actions = {}
+
+// Getters
+const getters = {
+  appVersion: (state) => {
+    return state.packageJson.version
+  }
+}
+
+// Mutations
+const mutations = {}
+
+// State
+const state = {
+  packageJson: JSON.parse(unescape(process.env.PACKAGE_JSON || '%7B%7D'))
+}
 
 Vue.use(Vuex)
 
 // Create a new store
 const store = new Vuex.Store({
-  actions,
-  getters,
   modules: {
     app
   },
+  actions,
+  getters,
   mutations,
   state
 })
