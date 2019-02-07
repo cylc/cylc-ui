@@ -1,10 +1,7 @@
 <template>
-  <v-container
-    fill-height
-    fluid
-    grid-list-xl>
+  <v-content>
     <slot />
-  </v-container>
+  </v-content>
 </template>
 
 <script>
