@@ -29,7 +29,6 @@
     "material-design-icons-iconfont": "^3.0.3",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
-    "vue-analytics": "^5.16.2",
     "vue-i18n": "^7.4.0",
     "vue-router": "^3.0.1",
     "vue-template-compiler": "^2.5.22",
