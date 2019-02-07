@@ -18,6 +18,12 @@ import FlagIcon from 'vue-flag-icon'
 import router from '@/router'
 import store from '@/store'
 
+// Layouts
+import Default from '@/layouts/Default.vue'
+import Empty from '@/layouts/Empty.vue'
+Vue.component('default-layout', Default)
+Vue.component('empty-layout', Empty)
+
 // Sync store with router
 sync(store, router)
 

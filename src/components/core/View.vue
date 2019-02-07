@@ -2,25 +2,19 @@
   <v-content>
     <div id="core-view">
       <v-fade-transition mode="out-in">
-        <router-view />
+        <slot/>
       </v-fade-transition>
     </div>
-    <core-footer v-if="$route.name !== 'Maps'" />
+    <core-footer/>
   </v-content>
 </template>
 
 <script>
-export default {
-  metaInfo () {
-    return {
-      title: 'Cylc Web'
-    }
-  }
-}
+export default {}
 </script>
 
 <style>
-#core-view {
-  padding-bottom: 100px;
-}
+  #core-view {
+    padding-bottom: 100px;
+  }
 </style>

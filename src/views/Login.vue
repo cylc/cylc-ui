@@ -3,32 +3,49 @@
     fill-height
     fluid
     grid-list-xl>
-    <v-layout justify-center>
+    <v-layout
+      align-center
+      justify-center>
       <v-flex
         xs12
         sm10
         md8
         lg6>
-        <v-card ref="form">
+        <v-card
+          ref="form"
+          class="elevation-12">
           <v-card-text>
-            <v-text-field
-              ref="username"
-              v-model="username"
-              :rules="[() => !!username || 'This field is required']"
-              :error-messages="errorMessages"
-              label="User name"
-              placeholder="john.doe"
-              required
-            ></v-text-field>
-            <v-text-field
-              ref="password"
-              v-model="password"
-              :rules="[() => !!password || 'This field is required']"
-              :error-messages="errorMessages"
-              label="Password"
-              placeholder="*********"
-              required
-            ></v-text-field>
+            <v-form>
+              <v-text-field
+                ref="username"
+                v-model="username"
+                :rules="[() => !!username || 'This field is required']"
+                :error-messages="errorMessages"
+                label="User name"
+                placeholder="john.doe"
+                required
+              ></v-text-field>
+              <v-text-field
+                ref="password"
+                v-model="password"
+                :rules="[() => !!password || 'This field is required']"
+                :error-messages="errorMessages"
+                label="Password"
+                placeholder="*********"
+                required
+              ></v-text-field>
+            <!--<v-text-field-->
+              <!--v-model="password"-->
+              <!--:append-icon="showPassword ? 'visibility_off' : 'visibility'"-->
+              <!--:rules="[rules.required, rules.min]"-->
+              <!--:type="showPassword ? 'text' : 'password'"-->
+              <!--name="password"-->
+              <!--label="Normal with hint text"-->
+              <!--hint="Try to use a strong password"-->
+              <!--counter-->
+              <!--@click:append="showPassword = !showPassword"-->
+            <!--&gt;</v-text-field>-->
+            </v-form>
           </v-card-text>
           <v-divider class="mt-5"></v-divider>
           <v-card-actions>
@@ -69,11 +86,12 @@ export default {
       username: '',
       password: '',
       errorMessages: '',
-      formHasErrors: false
+      formHasErrors: false,
+      showPassword: false
     }
   },
   computed: {
-    form() {
+    form () {
       return {
         username: this.username,
         password: this.password

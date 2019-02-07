@@ -7,28 +7,46 @@ export default [
   {
     path: '/login',
     name: 'Login',
-    view: 'Login'
+    view: 'Login',
+    meta: {
+      'layout': 'empty'
+    }
   },
   {
     path: '/dashboard',
     // Relative to /src/views
-    view: 'Dashboard'
+    view: 'Dashboard',
+    meta: {
+      'layout': 'default'
+    }
   },
   {
     path: '/suites',
-    view: 'Suites'
+    view: 'Suites',
+    meta: {
+      'layout': 'default'
+    }
   },
   {
     path: '/user-profile',
     name: 'User Profile',
-    view: 'UserProfile'
+    view: 'UserProfile',
+    meta: {
+      'layout': 'default'
+    }
   },
   {
     path: '/notifications',
-    view: 'Notifications'
+    view: 'Notifications',
+    meta: {
+      'layout': 'default'
+    }
   },
   {
     path: '/about',
-    view: 'About'
+    view: 'About',
+    meta: {
+      'layout': 'default'
+    }
   }
 ]
