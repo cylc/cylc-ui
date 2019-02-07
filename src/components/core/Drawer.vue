@@ -82,6 +82,11 @@ export default {
         to: '/user-profile',
         icon: 'mdi-account',
         text: 'User Profile'
+      },
+      {
+        to: '/login',
+        icon: 'mdi-account',
+        text: 'Log in'
       }
     ],
     responsive: false
