@@ -34,10 +34,14 @@
                 v-model="password"
                 :rules="[() => !!password || 'This field is required']"
                 :error-messages="errorMessages"
+                :append-icon="showPassword ? 'visibility_off' : 'visibility'"
+                :type="showPassword ? 'text' : 'password'"
                 prepend-icon="lock"
                 label="Password"
                 placeholder="*********"
+                counter
                 required
+                @click:append="showPassword = !showPassword"
               />
             <!--<v-text-field-->
               <!--:append-icon="showPassword ? 'visibility_off' : 'visibility'"-->
