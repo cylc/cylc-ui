@@ -15,7 +15,7 @@
             dark
             color="primary">
             <v-toolbar-title>Cylc {{ appVersion }}</v-toolbar-title>
-            <v-spacer />
+            <v-spacer/>
           </v-toolbar>
           <v-card-text>
             <v-form>
@@ -43,19 +43,9 @@
                 required
                 @click:append="showPassword = !showPassword"
               />
-            <!--<v-text-field-->
-              <!--:append-icon="showPassword ? 'visibility_off' : 'visibility'"-->
-              <!--:rules="[rules.required, rules.min]"-->
-              <!--:type="showPassword ? 'text' : 'password'"-->
-              <!--name="password"-->
-              <!--label="Normal with hint text"-->
-              <!--hint="Try to use a strong password"-->
-              <!--counter-->
-              <!--@click:append="showPassword = !showPassword"-->
-            <!--&gt;</v-text-field>-->
             </v-form>
           </v-card-text>
-          <v-divider class="mt-5" />
+          <v-divider class="mt-5"/>
           <v-card-actions>
             <v-btn
               align-center
