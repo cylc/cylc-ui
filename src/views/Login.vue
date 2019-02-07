@@ -1,8 +1,7 @@
 <template>
   <v-container
     fill-height
-    fluid
-    grid-list-xl>
+    fluid>
     <v-layout
       align-center
       justify-center>
@@ -11,10 +10,11 @@
         sm8
         md4>
         <v-card
-          ref="form"
           class="elevation-12">
-          <v-toolbar color="primary">
-            <v-toolbar-title>Sign in</v-toolbar-title>
+          <v-toolbar
+            dark
+            color="primary">
+            <v-toolbar-title>Cylc {{ appVersion }}</v-toolbar-title>
             <v-spacer />
           </v-toolbar>
           <v-card-text>
@@ -57,27 +57,9 @@
           </v-card-text>
           <v-divider class="mt-5" />
           <v-card-actions>
-            <v-tooltip>
-              <span>Cylc</span>
-            </v-tooltip>
-            <v-spacer />
-            <v-slide-x-reverse-transition>
-              <v-tooltip
-                v-if="formHasErrors"
-                left
-              >
-                <v-btn
-                  slot="activator"
-                  icon
-                  class="my-0"
-                  @click="resetForm"
-                >
-                  <v-icon>refresh</v-icon>
-                </v-btn>
-                <span>Refresh form</span>
-              </v-tooltip>
-            </v-slide-x-reverse-transition>
             <v-btn
+              align-center
+              justify-center
               color="green"
               @click="submit">Submit
             </v-btn>
@@ -105,6 +87,9 @@ export default {
         username: this.username,
         password: this.password
       }
+    },
+    appVersion: function () {
+      return this.$store.getters.appVersion
     }
   },
   methods: {
