@@ -24,7 +24,7 @@
                 label="User name"
                 placeholder="john.doe"
                 required
-              ></v-text-field>
+              />
               <v-text-field
                 ref="password"
                 v-model="password"
@@ -33,7 +33,7 @@
                 label="Password"
                 placeholder="*********"
                 required
-              ></v-text-field>
+              />
             <!--<v-text-field-->
               <!--v-model="password"-->
               <!--:append-icon="showPassword ? 'visibility_off' : 'visibility'"-->
@@ -47,10 +47,10 @@
             <!--&gt;</v-text-field>-->
             </v-form>
           </v-card-text>
-          <v-divider class="mt-5"></v-divider>
+          <v-divider class="mt-5" />
           <v-card-actions>
             <v-btn flat>Cancel</v-btn>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-slide-x-reverse-transition>
               <v-tooltip
                 v-if="formHasErrors"
