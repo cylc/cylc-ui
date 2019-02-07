@@ -18,6 +18,9 @@ import FlagIcon from 'vue-flag-icon'
 import router from '@/router'
 import store from '@/store'
 
+// Material UI icons
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+
 // Layouts
 import Default from '@/layouts/Default.vue'
 import Empty from '@/layouts/Empty.vue'
