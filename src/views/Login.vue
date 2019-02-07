@@ -8,12 +8,15 @@
       justify-center>
       <v-flex
         xs12
-        sm10
-        md8
-        lg6>
+        sm8
+        md4>
         <v-card
           ref="form"
           class="elevation-12">
+          <v-toolbar color="primary">
+            <v-toolbar-title>Sign in</v-toolbar-title>
+            <v-spacer />
+          </v-toolbar>
           <v-card-text>
             <v-form>
               <v-text-field
@@ -21,6 +24,7 @@
                 v-model="username"
                 :rules="[() => !!username || 'This field is required']"
                 :error-messages="errorMessages"
+                prepend-icon="person"
                 label="User name"
                 placeholder="john.doe"
                 required
@@ -30,12 +34,12 @@
                 v-model="password"
                 :rules="[() => !!password || 'This field is required']"
                 :error-messages="errorMessages"
+                prepend-icon="lock"
                 label="Password"
                 placeholder="*********"
                 required
               />
             <!--<v-text-field-->
-              <!--v-model="password"-->
               <!--:append-icon="showPassword ? 'visibility_off' : 'visibility'"-->
               <!--:rules="[rules.required, rules.min]"-->
               <!--:type="showPassword ? 'text' : 'password'"-->
@@ -49,7 +53,9 @@
           </v-card-text>
           <v-divider class="mt-5" />
           <v-card-actions>
-            <v-btn flat>Cancel</v-btn>
+            <v-tooltip>
+              <span>Cylc</span>
+            </v-tooltip>
             <v-spacer />
             <v-slide-x-reverse-transition>
               <v-tooltip
@@ -68,8 +74,7 @@
               </v-tooltip>
             </v-slide-x-reverse-transition>
             <v-btn
-              color="primary"
-              flat
+              color="green"
               @click="submit">Submit
             </v-btn>
           </v-card-actions>
