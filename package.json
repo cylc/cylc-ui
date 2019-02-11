@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "dev": "npm run serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test:unit": "cross-env BABEL_ENV=test karma start"
   },
   "dependencies": {
     "chartist": "0.11.0",
@@ -25,6 +26,12 @@
     "@vue/cli-service": "^3.4.0",
     "@vue/eslint-config-standard": "^3.0.1",
     "axios": "^0.17.1",
+    "cross-env": "^5.2.0",
+    "jasmine-core": "^3.3.0",
+    "karma": "^4.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^2.0.1",
+    "karma-webpack": "^3.0.5",
     "lodash": "^4.17.11",
     "material-design-icons-iconfont": "^3.0.3",
     "stylus": "^0.54.5",
@@ -33,6 +40,7 @@
     "vue-router": "^3.0.1",
     "vue-template-compiler": "^2.6.3",
     "vuex": "^3.1.0",
-    "vuex-router-sync": "^5.0.0"
+    "vuex-router-sync": "^5.0.0",
+    "webpack": "^4.29.3"
   }
 }
