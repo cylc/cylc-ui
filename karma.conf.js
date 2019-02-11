@@ -1,15 +1,6 @@
 // karma.conf.js
 
-var webpackConfig = require('/home/kinow/Development/python/workspace/cylc-web/node_modules/@vue/cli-service/webpack.config.js')
-// const webpackConfig = {
-//   module: {
-//     rules: [{
-//       test: /\.js$/,
-//       loader: 'babel-loader',
-//       exclude: /node_modules/
-//     }]
-//   }
-// }
+var webpackConfig = require('./node_modules/@vue/cli-service/webpack.config.js')
 
 module.exports = function (config) {
   config.set({
