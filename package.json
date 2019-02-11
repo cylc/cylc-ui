@@ -7,7 +7,7 @@
     "dev": "npm run serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test:unit": "cross-env BABEL_ENV=test karma start"
+    "test:unit": "./node_modules/.bin/cross-env BABEL_ENV=test ./node_modules/karma/bin/karma start"
   },
   "dependencies": {
     "chartist": "0.11.0",
