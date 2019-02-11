@@ -10,7 +10,7 @@
           <slot/>
         </v-fade-transition>
       </div>
-      <footer/>
+      <Footer/>
     </v-content>
   </div>
 </template>
@@ -31,5 +31,7 @@ export default {
 </script>
 
 <style scoped>
-
+#core-footer {
+  position: relative;
+}
 </style>
