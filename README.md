@@ -18,9 +18,9 @@ can use one of the following commands.
 
     npm run build
 
-### Run your tests
+### Run unit tests
 
-    npm run test
+    npm run test:unit
 
 ### Lints and fixes files
 
