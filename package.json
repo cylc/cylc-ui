@@ -6,33 +6,43 @@
     "serve": "vue-cli-service serve",
     "dev": "npm run serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test:e2e": "vue-cli-service test:e2e",
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "chartist": "0.11.0",
-    "node-sass": "^4.9.3",
-    "sass-loader": "^7.1.0",
-    "vue": "^2.6.3",
+    "vue": "^2.6.5",
     "vue-chartist": "^2.1.2",
     "vue-flag-icon": "^1.0.6",
+    "vue-i18n": "^7.4.0",
     "vue-meta": "^1.5.2",
-    "vuetify": "^1.5.0"
+    "vue-router": "^3.0.1",
+    "vuetify": "^1.5.0",
+    "vuex": "^3.1.0",
+    "vuex-router-sync": "^5.0.0",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.1.0"
   },
   "devDependencies": {
     "@mdi/font": "^2.5.94",
     "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-e2e-cypress": "^3.4.0",
     "@vue/cli-plugin-eslint": "^3.4.0",
+    "@vue/cli-plugin-unit-mocha": "^3.4.0",
     "@vue/cli-service": "^3.4.0",
-    "@vue/eslint-config-standard": "^3.0.1",
+    "@vue/test-utils": "^1.0.0-beta.20",
     "axios": "^0.17.1",
+    "babel-eslint": "^10.0.1",
+    "chai": "^4.1.2",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
     "lodash": "^4.17.11",
     "material-design-icons-iconfont": "^3.0.3",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
-    "vue-i18n": "^7.4.0",
-    "vue-router": "^3.0.1",
-    "vue-template-compiler": "^2.6.3",
-    "vuex": "^3.1.0",
-    "vuex-router-sync": "^5.0.0"
+    "vue-template-compiler": "^2.6.5",
+    "webpack": "^4.29.3"
   }
 }
