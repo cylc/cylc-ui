@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/kinow/cylc-web.svg?branch=master)](https://travis-ci.org/kinow/cylc-web)
+[![codecov](https://codecov.io/gh/kinow/cylc-web/branch/master/graph/badge.svg)](https://codecov.io/gh/kinow/cylc-web)
 
 # Cylc Web
 
