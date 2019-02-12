@@ -27,6 +27,8 @@
                     class="purple-input"
                     label="User Name"
                     value="robert.typer"
+                    id="username"
+                    name="username"
                     disabled
                   />
                 </v-flex>
