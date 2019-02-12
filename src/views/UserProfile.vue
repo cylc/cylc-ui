@@ -37,9 +37,13 @@
                   md6
                 >
                   <v-text-field
+                    :error-messages="errors.collect('email')"
                     label="Email Address"
                     class="purple-input"
                     value="Robert.Typer@company.co.nz"
+                    v-validate="'required|email'"
+                    v-model="email"
+                    data-vv-name="email"
                   />
                 </v-flex>
                 <v-flex
@@ -67,6 +71,7 @@
                   text-xs-right
                 >
                   <v-btn
+                    @click="submit"
                     class="mx-0 font-weight-light"
                     color="success"
                   >
@@ -84,6 +89,16 @@
 
 <script>
 export default {
+  data: () => {
+    return {
+      email: ""
+    }
+  },
+  methods: {
+    submit() {
+      this.$validator.validateAll()
+    }
+  },
   metaInfo () {
     return {
       title: 'Cylc Web | User Profile'
