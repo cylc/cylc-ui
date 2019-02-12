@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/kinow/cylc-web.svg?branch=master)](https://travis-ci.org/kinow/cylc-web)
+
 # Cylc Web
 
 ## Building
