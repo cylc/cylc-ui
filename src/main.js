@@ -2,11 +2,11 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 
-// Components
-import './components'
-
 // Plugins
 import './plugins'
+
+// Components
+import './components'
 
 // Sync router with store
 import { sync } from 'vuex-router-sync'
