@@ -22,6 +22,14 @@ can use one of the following commands.
 
     npm run test:unit
 
+### Run functional tests
+
+    npm run test:e2e
+
+Or for headless mode
+
+    npm run test:e2e -- --headless
+
 ### Lints and fixes files
 
     npm run lint
