@@ -24,7 +24,8 @@ jobs:
     - stage: test
       script:
         # Run tests
-        - npm run test:unit
+        - npm run coverage:unit
+        - bash <(curl -s https://codecov.io/bash)
     - stage: build
       script:
         # Build all
