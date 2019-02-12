@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "chartist": "0.11.0",
+    "vee-validate": "^2.1.7",
     "vue": "^2.6.5",
     "vue-chartist": "^2.1.2",
     "vue-flag-icon": "^1.0.6",
