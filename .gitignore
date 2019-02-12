@@ -17,6 +17,11 @@ yarn-debug.log*
 yarn-error.log*
 selenium-debug.log*
 
+# Coverage
+.nyc_output/
+/coverage/
+
+
 # Editor directories and files
 .idea
 .vscode

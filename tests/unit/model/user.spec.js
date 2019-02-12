@@ -11,7 +11,7 @@ describe('UserModel', () => {
         'password': '123john.foe123'
       }
       const user = new User(data)
-      expect(user.username).to.equal('john.foe')
+      expect(user.getUserName()).to.equal('john.foe')
     })
   })
 })
