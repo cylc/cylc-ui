@@ -21,7 +21,6 @@ selenium-debug.log*
 .nyc_output/
 /coverage/
 
-
 # Editor directories and files
 .idea
 .vscode

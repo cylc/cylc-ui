@@ -22,6 +22,10 @@ can use one of the following commands.
 
     npm run test:unit
 
+For coverage
+
+    npm run coverage:unit
+
 ### Run functional tests
 
     npm run test:e2e
