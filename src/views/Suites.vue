@@ -57,6 +57,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
+
 export default {
   metaInfo () {
     return {
@@ -153,6 +156,13 @@ export default {
         status: 'Cancelled'
       }
     ]
-  })
+  }),
+  computed: {
+    // namespace: module suites, and property suites, hence these repeated tokens...
+    ...mapState('suites', ['suites'])
+  },
+  beforeCreate() {
+    this.$store.dispatch('suites/fetchSuites')
+  }
 }
 </script>
