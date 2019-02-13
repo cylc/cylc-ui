@@ -16,13 +16,14 @@ import App from './App'
 import i18n from '@/i18n'
 import router from '@/router'
 import store from '@/store'
-// import { createProvider } from './vue-apollo'
-import ApolloClient from "apollo-boost"
 
 // GraphQL
-const apolloProvider = new ApolloClient({
-  // You should use an absolute URL here
-  uri: "https://api.graphcms.com/simple/v1/awesomeTalksClone"
+import VueApollo from 'vue-apollo'
+
+import apolloClient from '@/utils/graphql'
+
+const apolloProvider = new VueApollo({
+  defaultClient: apolloClient
 })
 
 // Sync store with router
@@ -35,7 +36,6 @@ new Vue({
   i18n,
   router,
   store,
-  apolloProvider: apolloProvider,
-  // apolloProvider: createProvider(),
+  apolloProvider,
   render: h => h(App)
 }).$mount('#app')
