@@ -12,10 +12,12 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "apollo-boost": "^0.1.27",
     "chartist": "0.11.0",
+    "graphql": "^14.1.1",
     "vee-validate": "^2.1.7",
     "vue": "^2.6.5",
-    "vue-apollo": "^3.0.0-beta.11",
+    "vue-apollo": "^3.0.0-beta.28",
     "vue-chartist": "^2.1.2",
     "vue-flag-icon": "^1.0.6",
     "vue-i18n": "^7.4.0",
