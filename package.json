@@ -2,22 +2,20 @@
   "name": "cylc-web",
   "version": "1.0.0",
   "private": true,
-  "bugs": {
-    "url": "https://github.com/kinow/cylc-web/issues"
-  },
   "scripts": {
     "serve": "vue-cli-service serve",
-    "dev": "npm run serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "coverage:unit": "nyc vue-cli-service test:unit",
+    "dev": "npm run serve",
     "test:e2e": "vue-cli-service test:e2e",
-    "test:unit": "vue-cli-service test:unit",
-    "coverage:unit": "nyc vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "chartist": "0.11.0",
     "vee-validate": "^2.1.7",
     "vue": "^2.6.5",
+    "vue-apollo": "^3.0.0-beta.11",
     "vue-chartist": "^2.1.2",
     "vue-flag-icon": "^1.0.6",
     "vue-i18n": "^7.4.0",
@@ -41,6 +39,7 @@
     "cross-env": "^5.2.0",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
+    "graphql-tag": "^2.9.0",
     "istanbul-instrumenter-loader": "^3.0.1",
     "lodash": "^4.17.11",
     "material-design-icons-iconfont": "^3.0.3",
@@ -49,7 +48,11 @@
     "sass-loader": "^7.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
+    "vue-cli-plugin-apollo": "^0.19.1",
     "vue-template-compiler": "^2.6.5",
     "webpack": "^4.29.3"
+  },
+  "bugs": {
+    "url": "https://github.com/kinow/cylc-web/issues"
   }
 }
