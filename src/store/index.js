@@ -11,6 +11,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 // Modules
 import { app } from './app.module'
+import { suites } from './suites.module'
 
 // Actions
 const actions = {}
@@ -35,7 +36,8 @@ Vue.use(Vuex)
 // Create a new store
 const store = new Vuex.Store({
   modules: {
-    app
+    app,
+    suites
   },
   actions,
   getters,

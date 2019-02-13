@@ -18,7 +18,7 @@
         >
           <v-data-table
             :headers="headers"
-            :items="items"
+            :items="suites"
           >
             <template slot="no-data">
               <v-alert
@@ -41,13 +41,13 @@
               slot="items"
               slot-scope="{ item }"
             >
+              <td>Suite of: {{ item.name }}</td>
+              <td></td>
+              <td>{{ item.id }}</td>
               <td>{{ item.name }}</td>
-              <td>{{ item.group }}</td>
-              <td>{{ item.host }}</td>
-              <td>{{ item.owner }}</td>
-              <td>{{ item.version }}</td>
-              <td>{{ item.updated }}</td>
-              <td>{{ item.status }}</td>
+              <td>Cylc 1.0.0</td>
+              <td>N/A</td>
+              <td>N/A</td>
             </template>
           </v-data-table>
         </material-card>
@@ -57,6 +57,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
+
 export default {
   metaInfo () {
     return {
@@ -153,6 +156,13 @@ export default {
         status: 'Cancelled'
       }
     ]
-  })
+  }),
+  computed: {
+    // namespace: module suites, and property suites, hence these repeated tokens...
+    ...mapState('suites', ['suites'])
+  },
+  beforeCreate() {
+    this.$store.dispatch('suites/fetchSuites')
+  }
 }
 </script>
