@@ -19,6 +19,7 @@
           <v-data-table
             :headers="headers"
             :items="suites"
+            :pagination.sync="pagination"
           >
             <template slot="no-data">
               <v-alert
@@ -67,6 +68,9 @@ export default {
     }
   },
   data: () => ({
+    pagination: {
+      rowsPerPage: 10
+    },
     headers: [
       {
         sortable: true,
