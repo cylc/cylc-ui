@@ -19,7 +19,7 @@
           <v-data-table
             :headers="headers"
             :items="suites"
-            :loading="true"
+            :loading="isLoading"
             :pagination.sync="pagination"
           >
             <template slot="no-data" v-if="!isLoading">

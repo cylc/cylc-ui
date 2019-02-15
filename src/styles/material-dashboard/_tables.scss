@@ -23,10 +23,6 @@ table.v-table thead th:first-child, table.v-table thead th:not(:first-child) {
   padding: $padding-small + 2 $tabs-text-box-padding;
 }
 
-.v-datatable__progress {
-  display: none;
-}
-
 table thead tr th span{
   font-size: 1.0625rem !important;
 }
