@@ -24,11 +24,23 @@ const getters = {
 }
 
 // Mutations
-const mutations = {}
+const mutations = {
+  loading(state, isLoading) {
+    if (isLoading) {
+      state.refCount++
+      state.isLoading = isLoading
+    } else if (state.refCount > 0) {
+      state.refCount--
+      state.isLoading = (state.refCount > 0)
+    }
+  }
+}
 
 // State
 const state = {
-  packageJson: JSON.parse(unescape(process.env.PACKAGE_JSON || '%7B%7D'))
+  packageJson: JSON.parse(unescape(process.env.PACKAGE_JSON || '%7B%7D')),
+  isLoading: false,
+  refCount: 0
 }
 
 Vue.use(Vuex)

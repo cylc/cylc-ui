@@ -19,9 +19,10 @@
           <v-data-table
             :headers="headers"
             :items="suites"
+            :loading="true"
             :pagination.sync="pagination"
           >
-            <template slot="no-data">
+            <template slot="no-data" v-if="!isLoading">
               <v-alert
                 :value="true"
                 color="error"
@@ -38,6 +39,7 @@
                 v-text="header.text"
               />
             </template>
+            <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
             <template
               slot="items"
               slot-scope="{ item }"
@@ -163,7 +165,8 @@ export default {
   }),
   computed: {
     // namespace: module suites, and property suites, hence these repeated tokens...
-    ...mapState('suites', ['suites'])
+    ...mapState('suites', ['suites']),
+    ...mapState(['isLoading'])
   },
   beforeCreate() {
     this.$store.dispatch('suites/fetchSuites')
