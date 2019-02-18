@@ -46,7 +46,7 @@
     "lodash": "^4.17.11",
     "material-design-icons-iconfont": "^3.0.3",
     "node-sass": "^4.9.0",
-    "nyc": "^13.2.0",
+    "nyc": "^13.3.0",
     "sass-loader": "^7.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
