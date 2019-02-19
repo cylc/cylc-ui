@@ -48,5 +48,12 @@ export default [
     meta: {
       'layout': 'default'
     }
+  },
+  {
+    path: '*',
+    view: 'NotFound',
+    meta: {
+      'layout': 'empty'
+    }
   }
 ]
