@@ -18,7 +18,8 @@ export default [
     view: 'Dashboard',
     meta: {
       'layout': 'default'
-    }
+    },
+    alias: ['/', '/user/:id']
   },
   {
     path: '/suites',
