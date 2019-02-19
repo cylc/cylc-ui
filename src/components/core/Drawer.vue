@@ -53,6 +53,17 @@
           v-text="link.text"
         />
       </v-list-tile>
+      <v-list-tile
+              href="/hub/home"
+              :active-class="color"
+              avatar
+              class="v-list-item"
+      >
+        <v-list-tile-action>
+          <v-icon>mdi-server-network</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-title>Hub</v-list-tile-title>
+      </v-list-tile>
     </v-layout>
   </v-navigation-drawer>
 </template>
