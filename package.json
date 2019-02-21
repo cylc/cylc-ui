@@ -44,7 +44,6 @@
     "eslint-plugin-vue": "^5.0.0",
     "istanbul-instrumenter-loader": "^3.0.1",
     "lodash": "^4.17.11",
-    "material-design-icons-iconfont": "^3.0.3",
     "node-sass": "^4.9.0",
     "nyc": "^13.3.0",
     "sass-loader": "^7.1.0",
