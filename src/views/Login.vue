@@ -24,7 +24,7 @@
                 v-model="username"
                 :rules="[() => !!username || 'This field is required']"
                 :error-messages="errorMessages"
-                prepend-icon="person"
+                prepend-icon="mdi-account"
                 label="User name"
                 placeholder="john.doe"
                 required
@@ -34,9 +34,9 @@
                 v-model="password"
                 :rules="[() => !!password || 'This field is required']"
                 :error-messages="errorMessages"
-                :append-icon="showPassword ? 'visibility_off' : 'visibility'"
+                :append-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 :type="showPassword ? 'text' : 'password'"
-                prepend-icon="lock"
+                prepend-icon="mdi-lock"
                 label="Password"
                 placeholder="*********"
                 counter
