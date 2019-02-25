@@ -1,16 +1,25 @@
 class User {
   constructor (data) {
-    this.data = data
-    this.username = data.username
-    this.password = data.password
+    this.username = data.name
+    this.groups = data.groups
+    this.created = data.created
+    this.admin = data.admin
   }
 
   getUserName () {
     return this.username
   }
 
-  getPassword () {
-    return this.password
+  getGroups () {
+    return this.groups
+  }
+
+  getCreated() {
+    return this.created
+  }
+
+  isAdmin() {
+    return this.admin
   }
 }
 

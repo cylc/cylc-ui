@@ -7,11 +7,16 @@ describe('UserModel', () => {
   describe('constructor', () => {
     it('should be created', () => {
       const data = {
-        'username': 'john.foe',
-        'password': '123john.foe123'
+        name: 'john.foe',
+        groups: ['abc', 'wheel'],
+        admin: true,
+        created: 'now'
       }
       const user = new User(data)
       expect(user.getUserName()).to.equal('john.foe')
+      expect(user.getGroups().length === 2).to.equal(true)
+      expect(user.isAdmin()).to.equal(true)
+      expect(user.getCreated()).to.equal('now')
     })
   })
 })
