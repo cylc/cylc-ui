@@ -1,82 +1,62 @@
 <template>
-  <v-container
-    fill-height
-    fluid
-    grid-list-xl>
-    <v-layout
-      justify-center
-      wrap
-    >
-      <v-flex
-        xs12
-        md12
-      >
+  <v-container>
+    <v-layout justify-center wrap>
+      <v-flex xs12 md12>
         <material-card
-          color="green"
-          title="Edit Profile"
-          text="Complete your profile"
+            color="green"
+            title="Your Profile"
+            text="This is a read-only view of your user"
         >
           <v-form>
             <v-container py-0>
-              <v-layout wrap>
-                <v-flex
-                  xs12
-                  md6
-                >
+              <v-layout row wrap>
+                <v-flex xs12 md12>
                   <v-text-field
-                    class="purple-input"
-                    label="User Name"
-                    value="robert.typer"
-                    id="username"
-                    name="username"
-                    disabled
+                      :value="user.getUserName()"
+                      label="Username"
+                      disabled
+                      aria-disabled="true"
                   />
                 </v-flex>
-                <v-flex
-                  xs12
-                  md6
-                >
-                  <v-text-field
-                    :error-messages="errors.collect('email')"
-                    label="Email Address"
-                    class="purple-input"
-                    value="Robert.Typer@company.co.nz"
-                    v-validate="'required|email'"
-                    v-model="email"
-                    data-vv-name="email"
+              </v-layout>
+              <v-layout row wrap>
+                <v-flex xs12 md12>
+                  <v-checkbox
+                      v-model="user.admin"
+                      label="Administrator"
+                      disabled
+                      aria-disabled="true"
                   />
                 </v-flex>
+              </v-layout>
+              <v-layout row wrap>
                 <v-flex
-                  xs12
-                  md6
+                    xs12
+                    md12
                 >
-                  <v-text-field
-                    label="First Name"
-                    class="purple-input"
-                    value="Robert"
+                  <v-select
+                      :items="user.getGroups()"
+                      v-model="user.groups"
+                      label="Groups"
+                      attach
+                      chips
+                      multiple
+                      disabled
+                      aria-disabled="true"
                   />
                 </v-flex>
+              </v-layout>
+              <v-layout row wrap>
                 <v-flex
-                  xs12
-                  md6
+                    xs12
+                    md12
                 >
                   <v-text-field
-                    label="Last Name"
-                    class="purple-input"
-                    value="Typer"
+                      :value="user.getCreated()"
+                      label="Created"
+                      disabled
+                      aria-disabled="true"
                   />
-                </v-flex>
-                <v-flex
-                  xs12
-                  text-xs-right
-                >
-                  <v-btn
-                    @click="submit"
-                    class="mx-0 font-weight-light"
-                    color="success"
-                  >
-                    Update Profile
-                  </v-btn>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -88,21 +68,15 @@
 </template>
 
 <script>
-export default {
-  data: () => {
-    return {
-      email: ""
-    }
-  },
-  methods: {
-    submit() {
-      this.$validator.validateAll()
-    }
-  },
-  metaInfo () {
-    return {
-      title: 'Cylc Web | User Profile'
+  import { mapState } from 'vuex';
+  export default {
+    computed: {
+      ...mapState('user', ['user'])
+    },
+    metaInfo() {
+      return {
+        title: 'Cylc Web | User Profile'
+      }
     }
   }
-}
 </script>
