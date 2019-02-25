@@ -12,6 +12,7 @@ import Vuex from 'vuex'
 // Modules
 import { app } from './app.module'
 import { suites } from './suites.module'
+import { user } from './user.module'
 
 // Actions
 const actions = {}
@@ -49,7 +50,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     app,
-    suites
+    suites,
+    user
   },
   actions,
   getters,
