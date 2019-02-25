@@ -17,27 +17,27 @@ const suitesQuery = gql`query allSpeakers {
 
 const state = {
   suites: []
-}
+};
 
 const actions = {
-  async fetchSuites({ commit }) {
-   commit('loading', true, {root: true})
+  async fetchSuites({commit}) {
+    commit('loading', true, {root: true});
     const response = await apolloClient.query({
       query: suitesQuery
-    })
+    });
 
-    commit('setSuites', response.data.allSpeakers)
+    commit('setSuites', response.data.allSpeakers);
     commit('loading', false, {root: true})
   }
-}
+};
 
 const mutations = {
   setSuites: set('suites')
-}
+};
 
 export const suites = {
   namespaced: true,
   state,
   actions,
   mutations
-}
+};
