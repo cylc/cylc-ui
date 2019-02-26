@@ -21,6 +21,10 @@ can use one of the following commands.
 
     npm run build
 
+### Produce build report
+
+    npm run build:report
+
 ### Run unit tests
 
     npm run test:unit
