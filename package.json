@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "build:report": "vue-cli-service build --report",
+    "build:watch": "vue-cli-service build --watch --mode development",
     "lint": "vue-cli-service lint",
     "coverage:unit": "nyc vue-cli-service test:unit",
     "dev": "npm run serve",
