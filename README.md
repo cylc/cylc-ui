@@ -21,6 +21,10 @@ can use one of the following commands.
 
     npm run build
 
+### Compiles and watch for changes for development
+
+    npm run build:watch
+
 ### Produce build report
 
     npm run build:report
@@ -44,6 +48,24 @@ Or for headless mode
 ### Lints and fixes files
 
     npm run lint
+
+## Integration with the backend Cylc UI server
+
+In the previous section _"Compiles and watch for changes for development"_,
+there is part of the solution for the integration with the backend Cylc UI Server.
+
+Running the comment to build and watch the solution, will produce a `index.html`
+in the `./dist/` folder. When running the Cylc Hub, you must remember to point
+the static files directory to the location of your `./dist` folder.
+
+If you have a folder used a _workspace_, you could check out both projects in
+that directory. Then, in your working copy of the Cylc Hub, it should be
+enough to point the static files directory to `../cylc-web/dist/`.
+
+This way with both Cylc Hub and Cylc UI running, you can work on either -
+or both - projects. Changes done in your Tornado application should reflect immediately
+or upon process restart. While the changes done in your Vue.js application
+will be automatically handled by your `build:watch` command.
 
 ## Internationalization
 
