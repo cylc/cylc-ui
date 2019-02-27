@@ -1,21 +1,22 @@
-import {set} from '@/utils/vuex'
-import User from '@/model/User.model'
-
 export const state = {
-  user: new User({
-    name: 'kinow',
-    groups: ['admin', 'wheel'],
-    created: 'now?',
-    admin: true
-  })
+  user: null
 };
 
 export const mutations = {
-  setUser: set('user')
+  SET_USER(state, user) {
+    state.user = user;
+  }
+};
+
+export const actions = {
+  setUser({commit}, user) {
+    commit('SET_USER', user);
+  }
 };
 
 export const user = {
   namespaced: true,
   state,
-  mutations
+  mutations,
+  actions
 };
