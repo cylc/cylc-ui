@@ -76,6 +76,7 @@
         next()
       }).catch((error) => {
         next(false);
+        // FIXME: application errors
         console.log(error)
       })
     },
