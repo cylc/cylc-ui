@@ -1,19 +1,4 @@
-import {set} from '@/utils/vuex'
-import gql from 'graphql-tag'
-
-import apolloClient from '@/utils/graphql'
-
-// query to retrieve all suites
-const suitesQuery = gql`query allSpeakers {
-    allSpeakers {
-      id
-      name
-      photo {
-        url
-      }
-    }
-}
-`;
+import {SuiteService} from '@/services/suite.service'
 
 const state = {
   suites: []
@@ -21,18 +6,18 @@ const state = {
 
 const actions = {
   async fetchSuites({commit}) {
-    commit('loading', true, {root: true});
-    const response = await apolloClient.query({
-      query: suitesQuery
+    commit('SET_LOADING', true, {root: true});
+    return SuiteService.getSuites().then((suites) => {
+      commit('SET_SUITES', suites);
+      commit('SET_LOADING', false, {root: true})
     });
-
-    commit('setSuites', response.data.allSpeakers);
-    commit('loading', false, {root: true})
   }
 };
 
 const mutations = {
-  setSuites: set('suites')
+  SET_SUITES(state, suites) {
+    state.suites = suites;
+  }
 };
 
 export const suites = {

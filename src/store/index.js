@@ -26,7 +26,7 @@ const getters = {
 
 // Mutations
 const mutations = {
-  loading(state, isLoading) {
+  SET_LOADING(state, isLoading) {
     if (isLoading) {
       state.refCount++
       state.isLoading = isLoading
