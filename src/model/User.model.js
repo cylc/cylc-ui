@@ -1,9 +1,9 @@
-class User {
-  constructor (data) {
-    this.username = data.name
-    this.groups = data.groups
-    this.created = data.created
-    this.admin = data.admin
+export default class User {
+  constructor (username, groups, created, admin) {
+    this.username = username
+    this.groups = groups
+    this.created = created
+    this.admin = admin
   }
 
   getUserName () {
@@ -22,5 +22,3 @@ class User {
     return this.admin
   }
 }
-
-export default User

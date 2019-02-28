@@ -68,8 +68,18 @@
 </template>
 
 <script>
+  import { UserService } from '@/services/user.service'
   import { mapState } from 'vuex';
   export default {
+    beforeRouteEnter(to, from, next) {
+      UserService.getUserProfile().then(() => {
+        next()
+      }).catch((error) => {
+        next(false);
+        // FIXME: application errors
+        console.log(error)
+      })
+    },
     computed: {
       ...mapState('user', ['user'])
     },
