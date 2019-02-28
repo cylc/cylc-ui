@@ -14,9 +14,16 @@ export const actions = {
   }
 };
 
+const getters = {
+  user: (state) => {
+    return state.user
+  }
+}
+
 export const user = {
   namespaced: true,
   state,
   mutations,
-  actions
+  actions,
+  getters
 };
