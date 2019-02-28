@@ -58,6 +58,6 @@
     "webpack": "^4.29.5"
   },
   "bugs": {
-    "url": "https://github.com/kinow/cylc-web/issues"
+    "url": "https://github.com/cylc/cylc-web/issues"
   }
 }
