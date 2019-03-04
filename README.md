@@ -92,3 +92,21 @@ testing the development version much easier.
 ## Validation
 
 The framework used for validation in this project is [vee-validate](https://baianat.github.io/vee-validate/).
+
+## JavaScript, ES6, TypeScript
+
+For the moment, the code in this repository is created using ES6, then Babel/WebPack take
+care to produce the final JavaScript code executed on browsers.
+
+TypeScript is most likely the future for us, especially as Vue.js announced their 3.x release
+includes porting their whole code base to TypeScript. However, we are still pending as of the
+time of writing a decision on the libraries used for displaying the suite graphs.
+
+This is an important decision, and as such may take a little longer to be over. Choosing
+a library that does not export types, would require us to find time to type the library
+and maintain that type code alongside any library updates.
+
+So for the time being, we are continuing with ES6, and once we have chosen the project
+dependencies, we can assess the amount of work to adopt TypeScript given our code base,
+ability of other developers to adapt to TypeScript, and the ease of use of the libraries
+in our code base.
