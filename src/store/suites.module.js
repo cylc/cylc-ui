@@ -1,17 +1,5 @@
-import {SuiteService} from '@/services/suite.service'
-
 const state = {
   suites: []
-};
-
-const actions = {
-  async fetchSuites({commit}) {
-    commit('SET_LOADING', true, {root: true});
-    return SuiteService.getSuites().then((suites) => {
-      commit('SET_SUITES', suites);
-      commit('SET_LOADING', false, {root: true})
-    });
-  }
 };
 
 const mutations = {
@@ -19,6 +7,15 @@ const mutations = {
     state.suites = suites;
   }
 };
+
+const actions = {
+  setSuites({commit}, suites) {
+    commit('SET_LOADING', true, {root: true});
+    commit('SET_SUITES', suites);
+    commit('SET_LOADING', false, {root: true})
+  }
+};
+
 
 export const suites = {
   namespaced: true,

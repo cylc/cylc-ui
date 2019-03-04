@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { SuiteService } from '@/services/suite.service'
 import { mapState } from 'vuex'
 
 
@@ -169,7 +170,10 @@ export default {
     ...mapState(['isLoading'])
   },
   beforeCreate() {
-    this.$store.dispatch('suites/fetchSuites')
+    SuiteService.getSuites().then(() => {}).catch((error) => {
+      // FIXME: application errors
+      console.log(error)
+    })
   }
 }
 </script>
