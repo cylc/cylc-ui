@@ -170,10 +170,7 @@ export default {
     ...mapState(['isLoading'])
   },
   beforeCreate() {
-    SuiteService.getSuites().then(() => {}).catch((error) => {
-      // FIXME: application errors
-      console.log(error)
-    })
+    SuiteService.getSuites().then(() => {})
   }
 }
 </script>
