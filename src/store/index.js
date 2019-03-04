@@ -14,13 +14,17 @@ import {app} from './app.module'
 import {suites} from './suites.module'
 import {user} from './user.module'
 
-// Actions
-const actions = {};
+// State
+const state = {
+  packageJson: JSON.parse(unescape(process.env.PACKAGE_JSON || '%7B%7D')),
+  isLoading: false,
+  refCount: 0
+};
 
-// Getters
-const getters = {
-  appVersion: (state) => {
-    return state.packageJson.version
+// Actions
+const actions = {
+  setLoading({commit}, isLoading) {
+    commit('SET_LOADING', isLoading);
   }
 };
 
@@ -37,11 +41,11 @@ const mutations = {
   }
 };
 
-// State
-const state = {
-  packageJson: JSON.parse(unescape(process.env.PACKAGE_JSON || '%7B%7D')),
-  isLoading: false,
-  refCount: 0
+// Getters
+const getters = {
+  appVersion: (state) => {
+    return state.packageJson.version
+  }
 };
 
 Vue.use(Vuex);
