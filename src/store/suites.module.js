@@ -10,16 +10,20 @@ const mutations = {
 
 const actions = {
   setSuites({commit}, suites) {
-    commit('SET_LOADING', true, {root: true});
     commit('SET_SUITES', suites);
-    commit('SET_LOADING', false, {root: true})
   }
 };
 
+const getters = {
+  suites: (state) => {
+    return state.suites
+  }
+};
 
 export const suites = {
   namespaced: true,
   state,
+  mutations,
   actions,
-  mutations
+  getters
 };

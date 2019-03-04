@@ -15,14 +15,15 @@ const suitesQuery = gql`query allSpeakers {
 `;
 
 export const SuiteService = {
-  async getSuites() {
+  getSuites() {
     // TODO: move setLoading to interceptors/chain filters
     //store.dispach('setLoading', true).then(() => {});
-    const response = await apolloClient.query({
+    return apolloClient.query({
       query: suitesQuery
+    }).then((response) => {
+      const suites = response.data.allSpeakers;
+      return store.dispatch('suites/setSuites', suites);
     });
     //store.dispach('setLoading', false);
-    const suites = response.data.allSpeakers;
-    return store.dispatch('suites/setSuites', suites);
   }
 };
