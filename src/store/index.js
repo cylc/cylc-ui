@@ -18,13 +18,20 @@ import {user} from './user.module'
 const state = {
   packageJson: JSON.parse(unescape(process.env.PACKAGE_JSON || '%7B%7D')),
   isLoading: false,
-  refCount: 0
+  refCount: 0,
+  alerts: []
 };
 
 // Actions
 const actions = {
   setLoading({commit}, isLoading) {
     commit('SET_LOADING', isLoading);
+  },
+  addAlert({commit}, alert) {
+    commit('ADD_ALERT', alert);
+  },
+  removeAlert({commit}, alertText) {
+    commit('REMOVE_ALERT', alertText);
   }
 };
 
@@ -37,6 +44,17 @@ const mutations = {
     } else if (state.refCount > 0) {
       state.refCount--;
       state.isLoading = (state.refCount > 0)
+    }
+  },
+  ADD_ALERT(state, alert) {
+    state.alerts.push(alert);
+  },
+  REMOVE_ALERT(state, alertText) {
+    for (var i = 0; i < state.alerts.length; i++) {
+      if (state.alerts[i].text === alertText) {
+        state.alerts.splice(i, 1);
+        break;
+      }
     }
   }
 };
