@@ -32,6 +32,9 @@ const actions = {
   },
   removeAlert({commit}, alertText) {
     commit('REMOVE_ALERT', alertText);
+  },
+  clearAlerts({commit}) {
+    commit('CLEAR_ALERTS');
   }
 };
 
@@ -56,6 +59,9 @@ const mutations = {
         break;
       }
     }
+  },
+  CLEAR_ALERTS(state) {
+    state.alerts = []
   }
 };
 
@@ -63,6 +69,9 @@ const mutations = {
 const getters = {
   appVersion: (state) => {
     return state.packageJson.version
+  },
+  alert: (state) => {
+    return state.alerts.length > 0
   }
 };
 
