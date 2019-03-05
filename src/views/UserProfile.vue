@@ -61,6 +61,7 @@
               </v-layout>
             </v-container>
           </v-form>
+          <v-progress-linear v-else :indeterminate="true" />
         </material-card>
       </v-flex>
     </v-layout>
@@ -75,6 +76,7 @@
       ...mapState('user', ['user'])
     },
     beforeCreate() {
+      this.$store.dispatch('user/setUser', null);
       UserService.getUserProfile()
     },
     metaInfo() {
