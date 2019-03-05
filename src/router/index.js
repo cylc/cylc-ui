@@ -11,6 +11,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Meta from 'vue-meta'
 import NProgress from 'nprogress'
+import store from '@/store'
 
 import '../../node_modules/nprogress/nprogress.css'
 
@@ -52,6 +53,7 @@ Vue.use(Meta);
 router.beforeResolve((to, from, next) => {
   if (to.name) {
     NProgress.start();
+    store.dispatch('clearAlerts');
   }
   next();
 });
