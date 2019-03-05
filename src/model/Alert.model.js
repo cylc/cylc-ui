@@ -1,8 +1,8 @@
 export default class Alert {
-  constructor(text, icon, type) {
+  constructor(text, icon, color) {
     this.text = text;
     this.icon = icon;
-    this.type = type;
+    this.color = color;
   }
 
   getText() {
@@ -13,7 +13,7 @@ export default class Alert {
     return this.icon;
   }
 
-  getType() {
-    return this.type;
+  getColor() {
+    return this.color;
   }
 }
