@@ -74,10 +74,8 @@
     beforeRouteEnter(to, from, next) {
       UserService.getUserProfile().then(() => {
         next()
-      }).catch((error) => {
+      }).catch(() => {
         next(false);
-        // FIXME: application errors
-        console.log(error)
       })
     },
     computed: {

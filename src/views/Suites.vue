@@ -170,7 +170,7 @@ export default {
     ...mapState(['isLoading'])
   },
   beforeCreate() {
-    SuiteService.getSuites().then(() => {})
+    SuiteService.getSuites()
   }
 }
 </script>
