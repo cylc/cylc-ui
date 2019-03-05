@@ -10,7 +10,6 @@
 
 <script>
   import {
-    mapGetters,
     mapState
   } from 'vuex'
   export default {
@@ -18,8 +17,7 @@
 
     computed: {
       ...mapState(['alerts']),
-      ...mapGetters(['alert'])
-    },
+    }
   }
 </script>
 

@@ -69,9 +69,6 @@ const mutations = {
 const getters = {
   appVersion: (state) => {
     return state.packageJson.version
-  },
-  alert: (state) => {
-    return state.alerts.length > 0
   }
 };
 
