@@ -5,6 +5,7 @@
     <drawer />
 
     <v-content>
+      <alert />
       <div id="core-view">
         <v-fade-transition mode="out-in">
           <slot/>
@@ -17,6 +18,7 @@
 
 <script>
 import Toolbar from '@/components/core/Toolbar'
+import Alert from "@/components/core/Alert"
 import Drawer from '@/components/core/Drawer'
 import Footer from '@/components/core/Footer'
 
@@ -24,6 +26,7 @@ export default {
   name: 'Default',
   components: {
     Toolbar,
+    Alert,
     Drawer,
     Footer
   }
