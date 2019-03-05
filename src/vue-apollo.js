@@ -56,7 +56,7 @@ export function createProvider (options = {}) {
   apolloClient.wsClient = wsClient;
 
   // Create vue apollo provider
-  const apolloProvider = new VueApollo({
+  return new VueApollo({
     defaultClient: apolloClient,
     defaultOptions: {
       $query: {
@@ -68,8 +68,6 @@ export function createProvider (options = {}) {
       console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
     },
   });
-
-  return apolloProvider
 }
 
 //
