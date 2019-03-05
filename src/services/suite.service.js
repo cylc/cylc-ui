@@ -25,7 +25,7 @@ export const SuiteService = {
       const suites = response.data.allSpeakers;
       return store.dispatch('suites/setSuites', suites);
     }).catch((error) => { // error is an ApolloError object
-      const alert = new Alert(error.message, null, null);
+      const alert = new Alert(error.message, null, 'error');
       return store.dispatch('addAlert', alert);
     });
     //store.dispach('setLoading', false);
