@@ -7,7 +7,7 @@
             title="Your Profile"
             text="This is a read-only view of your user"
         >
-          <v-form>
+          <v-form v-if="user !== null">
             <v-container py-0>
               <v-layout row wrap>
                 <v-flex xs12 md12>
@@ -71,17 +71,11 @@
   import { UserService } from '@/services/user.service'
   import { mapState } from 'vuex';
   export default {
-    beforeRouteEnter(to, from, next) {
-      UserService.getUserProfile().then(() => {
-        next()
-      }).catch((error) => {
-        next(false);
-        // FIXME: application errors
-        console.log(error)
-      })
-    },
     computed: {
       ...mapState('user', ['user'])
+    },
+    beforeCreate() {
+      UserService.getUserProfile()
     },
     metaInfo() {
       return {
