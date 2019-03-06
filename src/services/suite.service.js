@@ -19,16 +19,18 @@ const suitesQuery = gql`query allSpeakers {
 
 export const SuiteService = {
   getSuites() {
-    return axios.get(window.location.pathname + '/suites').then((response) => {
-      const suites = [];
-      for (var i = 0; i < response.data.length; i++) {
-        const entry = response.data[i];
-        suites.push(new Suite(entry.name, entry.user, entry.host, entry.port));
-      }
-      return store.dispatch('suites/setSuites', suites);
-    }).catch((error) => {
-      const alert = new Alert(error.response.statusText, null, 'error');
-      return store.dispatch('addAlert', alert);
+    store.dispatch('suites/setSuites', []).then(() => {
+      return axios.get(window.location.pathname + '/suites').then((response) => {
+        const suites = [];
+        for (var i = 0; i < response.data.length; i++) {
+          const entry = response.data[i];
+          suites.push(new Suite(entry.name, entry.user, entry.host, entry.port));
+        }
+        return store.dispatch('suites/setSuites', suites);
+      }).catch((error) => {
+        const alert = new Alert(error.response.statusText, null, 'error');
+        return store.dispatch('addAlert', alert);
+      });
     });
   },
   getSuitesGraphql() {
