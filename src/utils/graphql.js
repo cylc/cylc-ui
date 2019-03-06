@@ -8,6 +8,7 @@ export function createApolloClient(uri) {
   const authMiddleware = new ApolloLink((operation, forward) => {
     operation.setContext({
       headers: {
+        // FIXME: this is the random generated password, update every time it is generated for now!
         authorization: "Basic cylc:bhTSntiZ4jGf3Idwy9U2"
       }
     });
