@@ -44,13 +44,10 @@
               slot="items"
               slot-scope="{ item }"
             >
-              <td>Suite of: {{ item.name }}</td>
-              <td></td>
-              <td>{{ item.id }}</td>
               <td>{{ item.name }}</td>
-              <td>Cylc 1.0.0</td>
-              <td>N/A</td>
-              <td>N/A</td>
+              <td>{{ item.user }}</td>
+              <td>{{ item.host }}</td>
+              <td>{{ item.port }}</td>
             </template>
           </v-data-table>
         </material-card>
@@ -81,86 +78,19 @@ export default {
         value: 'name'
       },
       {
-        sortable: false,
-        text: 'Group',
-        value: 'group'
+        sortable: true,
+        text: 'Owner',
+        value: 'owner'
       },
       {
-        sortable: false,
+        sortable: true,
         text: 'Host',
         value: 'host'
       },
       {
         sortable: false,
-        text: 'Owner',
-        value: 'owner'
-      },
-      {
-        sortable: false,
-        text: 'Version',
-        value: 'version'
-      },
-      {
-        sortable: false,
-        text: 'Updated',
-        value: 'updated'
-      },
-      {
-        sortable: true,
-        text: 'Status',
-        value: 'status'
-      }
-    ],
-    items: [
-      {
-        name: 'Dakota Rice',
-        group: null,
-        host: 'localhost',
-        owner: 'robert',
-        version: '7.8.0-abc123',
-        updated: '30/10/2018',
-        status: 'Running'
-      },
-      {
-        name: 'Minerva Hooper',
-        group: null,
-        host: 'localhost',
-        owner: 'robert',
-        version: '7.6.0-abc123',
-        updated: '01/12/2018',
-        status: 'Running'
-      }, {
-        name: 'Sage Rodriguez',
-        group: null,
-        host: 'localhost',
-        owner: 'robert',
-        version: '8.0.0-b1-123abc',
-        updated: '30/10/2018',
-        status: 'Running'
-      }, {
-        name: 'Philip Chanley',
-        group: null,
-        host: 'localhost',
-        owner: 'robert',
-        version: '7.8.0-abc123',
-        updated: '07/01/2019',
-        status: 'Stalled'
-      }, {
-        name: 'Doris Greene',
-        group: null,
-        host: 'localhost',
-        owner: 'robert',
-        version: '7.8.0-abc123',
-        updated: '30/10/2018',
-        status: 'Running'
-      }, {
-        name: 'Mason Porter',
-        group: null,
-        host: 'localhost',
-        owner: 'robert',
-        version: '7.8.0-abc123',
-        updated: '30/10/2018',
-        status: 'Cancelled'
+        text: 'Port',
+        value: 'port'
       }
     ]
   }),
