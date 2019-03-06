@@ -29,6 +29,13 @@ export default [
     }
   },
   {
+    path: '/suites/:name',
+    view: 'Suite',
+    meta: {
+      'layout': 'default'
+    }
+  },
+  {
     path: '/user-profile',
     name: 'User Profile',
     view: 'UserProfile',

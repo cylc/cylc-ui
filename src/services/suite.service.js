@@ -1,28 +1,24 @@
 import Alert from '@/model/Alert.model'
-import apolloClient from '@/utils/graphql'
+import { createApolloClient } from '@/utils/graphql'
 import axios from 'axios';
 import gql from 'graphql-tag'
 import store from '@/store/'
 import Suite from '@/model/Suite.model';
 
 // query to retrieve all suites
-const suitesQuery = gql`query allSpeakers {
-    allSpeakers {
-      id
-      name
-      photo {
-        url
-      }
-    }
+const tasksQuery = gql`query {
+  tasks {
+    id, name, meanElapsedTime, namespace, depth
+  }
 }
 `;
 
 export const SuiteService = {
   getSuites() {
-    store.dispatch('suites/setSuites', []).then(() => {
+    return store.dispatch('suites/setSuites', []).then(() => {
       return axios.get(window.location.pathname + '/suites').then((response) => {
         const suites = [];
-        for (var i = 0; i < response.data.length; i++) {
+        for (let i = 0; i < response.data.length; i++) {
           const entry = response.data[i];
           suites.push(new Suite(entry.name, entry.user, entry.host, entry.port));
         }
@@ -33,12 +29,14 @@ export const SuiteService = {
       });
     });
   },
-  getSuitesGraphql() {
+  getSuiteTasks(suite) {
+    const uri = `http://${suite.host}:${suite.port}/graphql`;
+    const apolloClient = createApolloClient(uri);
     return apolloClient.query({
-      query: suitesQuery
+      query: tasksQuery
     }).then((response) => {
-      const suites = response.data.allSpeakers;
-      return store.dispatch('suites/setSuites', suites);
+      const tasks = response.data.tasks;
+      return store.dispatch('suites/setTasks', tasks);
     }).catch((error) => { // error is an ApolloError object
       const alert = new Alert(error.message, null, 'error');
       return store.dispatch('addAlert', alert);
