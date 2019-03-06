@@ -9,7 +9,7 @@ export function createApolloClient(uri) {
     operation.setContext({
       headers: {
         // FIXME: this is the random generated password, update every time it is generated for now!
-        authorization: "Basic cylc:bhTSntiZ4jGf3Idwy9U2"
+        Authorization: "Basic Y3lsYzpiaFRTbnRpWjRqR2YzSWR3eTlVMg=="
       }
     });
     return forward(operation);
