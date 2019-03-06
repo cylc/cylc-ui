@@ -48,6 +48,15 @@
               <td>{{ item.user }}</td>
               <td>{{ item.host }}</td>
               <td>{{ item.port }}</td>
+              <td class="justify-center">
+                <v-icon
+                    small
+                    class="mr-2"
+                    @click="viewSuite(item)"
+                >
+                  mdi-table-edit
+                </v-icon>
+              </td>
             </template>
           </v-data-table>
         </material-card>
@@ -91,6 +100,11 @@ export default {
         sortable: false,
         text: 'Port',
         value: 'port'
+      },
+      {
+        sortable: false,
+        text: 'Actions',
+        value: 'actions'
       }
     ]
   }),
@@ -101,6 +115,11 @@ export default {
   },
   beforeCreate() {
     SuiteService.getSuites()
+  },
+  methods: {
+    viewSuite(suite) {
+      this.$router.push({ path: `/suites/${suite.name}` });
+    }
   }
 }
 </script>
