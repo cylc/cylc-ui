@@ -34,8 +34,6 @@ export const SuiteService = {
     });
   },
   getSuitesGraphql() {
-    // TODO: move setLoading to interceptors/chain filters
-    //store.dispach('setLoading', true).then(() => {});
     return apolloClient.query({
       query: suitesQuery
     }).then((response) => {
@@ -45,6 +43,5 @@ export const SuiteService = {
       const alert = new Alert(error.message, null, 'error');
       return store.dispatch('addAlert', alert);
     });
-    //store.dispach('setLoading', false);
   }
 };
