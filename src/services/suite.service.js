@@ -14,6 +14,9 @@ const tasksQuery = gql`query {
 `;
 
 export const SuiteService = {
+  createGraphqlClient(host, port) {
+    return createApolloClient(`http://${host}:${port}/graphql`);
+  },
   getSuites() {
     return store.dispatch('suites/setSuites', []).then(() => {
       return axios.get(window.location.pathname + '/suites').then((response) => {
@@ -30,8 +33,7 @@ export const SuiteService = {
     });
   },
   getSuiteTasks(suite) {
-    const uri = `http://${suite.host}:${suite.port}/graphql`;
-    const apolloClient = createApolloClient(uri);
+    const apolloClient =  this.createGraphqlClient(suite.port, suite.host);
     return apolloClient.query({
       query: tasksQuery
     }).then((response) => {
