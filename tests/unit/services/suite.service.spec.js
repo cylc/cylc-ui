@@ -4,6 +4,7 @@ import sinon from 'sinon'
 import axios from 'axios'
 import store from '@/store'
 import Suite from "@/model/Suite.model";
+import {UserService} from "@/services/user.service";
 
 describe('SuiteService', () => {
   let sandbox;
@@ -36,6 +37,17 @@ describe('SuiteService', () => {
         const suites = store.getters['suites/suites'];
         expect(suites.length).to.equal(2);
         expect(suites[0].name).to.equal("suite 1");
+      });
+    });
+    it('should add an alert on error', () => {
+      expect(store.state.alerts.length).to.equal(0);
+      const e = new Error('mock error');
+      e.response = {
+        statusText: 'Test Status'
+      };
+      sandbox.stub(axios, 'get').rejects(e);
+      return SuiteService.getSuites().finally(() => {
+        expect(store.state.alerts.length).to.equal(1);
       });
     });
   });
