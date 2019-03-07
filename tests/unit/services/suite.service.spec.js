@@ -4,13 +4,13 @@ import sinon from 'sinon'
 import axios from 'axios'
 import store from '@/store'
 import Suite from "@/model/Suite.model";
-import {UserService} from "@/services/user.service";
 
 describe('SuiteService', () => {
   let sandbox;
   beforeEach(() => {
     sandbox = sinon.createSandbox();
     store.dispatch("suites/setSuites", []);
+    store.dispatch('clearAlerts');
   });
   afterEach(() => sandbox.restore());
   describe('getSuites returns the list of suites', () => {
@@ -79,6 +79,20 @@ describe('SuiteService', () => {
         const tasks = store.getters['suites/tasks'];
         expect(tasks.length).to.equal(2);
         expect(tasks[0].name).to.equal("speaker 1");
+      });
+    });
+    it('should add an alert on error', () => {
+      expect(store.state.alerts.length).to.equal(0);
+      const e = new Error('mock error');
+      const stubClient = {
+        uri: null,
+        query: function() {
+          return Promise.reject(e);
+        }
+      };
+      sandbox.stub(SuiteService, 'createGraphqlClient').returns(stubClient);
+      return SuiteService.getSuiteTasks(new Suite("suitename", "root", "localhost", 8080)).finally(() => {
+        expect(store.state.alerts.length).to.equal(1);
       });
     });
   });
