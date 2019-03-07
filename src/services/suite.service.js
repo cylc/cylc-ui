@@ -33,7 +33,7 @@ export const SuiteService = {
     });
   },
   getSuiteTasks(suite) {
-    const apolloClient =  this.createGraphqlClient(suite.port, suite.host);
+    const apolloClient =  this.createGraphqlClient(suite.host, suite.port);
     return apolloClient.query({
       query: tasksQuery
     }).then((response) => {
