@@ -10,7 +10,8 @@
     "src/i18n",
     "src/lang",
     "src/plugins",
-    "src/styles"
+    "src/styles",
+    "src/components/index.js"
    ],
   "extension" : [".js", ".vue"],
   "reporter" : ["html", "lcov", "text-summary"],
