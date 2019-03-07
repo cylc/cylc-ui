@@ -6,7 +6,10 @@ import store from '@/store'
 
 describe('UserService', () => {
   let sandbox;
-  beforeEach(() => sandbox = sinon.createSandbox());
+  beforeEach(() => {
+    sandbox = sinon.createSandbox();
+    store.dispatch('clearAlerts');
+  });
   afterEach(() => sandbox.restore());
   describe('getUserProfile returns the logged-in user profile information', () => {
     it('should return user profile object', () => {
@@ -25,6 +28,17 @@ describe('UserService', () => {
         expect(user.getCreated()).to.equal("2019-01-01");
         expect(user.isAdmin()).to.equal(true);
       });
-    })
+    });
+    it('should add an alert on error', () => {
+      expect(store.state.alerts.length).to.equal(0);
+      const e = new Error('mock error');
+      e.response = {
+        statusText: 'Test Status'
+      };
+      sandbox.stub(axios, 'get').rejects(e);
+      return UserService.getUserProfile().finally(() => {
+        expect(store.state.alerts.length).to.equal(1);
+      });
+    });
   })
 });
