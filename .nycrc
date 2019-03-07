@@ -3,7 +3,15 @@
   "statements" : 0,
   "branches" : 0,
   "include" : ["src/**/*.js"],
-  "exclude" : ["node_modules", "docs", "tests"],
+  "exclude" : [
+    "node_modules",
+    "docs",
+    "tests",
+    "src/i18n",
+    "src/lang",
+    "src/plugins",
+    "src/styles"
+   ],
   "extension" : [".js", ".vue"],
   "reporter" : ["html", "lcov", "text-summary"],
   "cache" : false,
