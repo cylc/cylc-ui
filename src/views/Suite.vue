@@ -46,17 +46,9 @@
             >
               <td>{{ item.id }}</td>
               <td>{{ item.name }}</td>
-              <td>{{ item.name }}</td>
+              <td>{{ item.meanElapsedTime }}</td>
+              <td>{{ item.namespace }}</td>
               <td>{{ item.depth }}</td>
-              <td class="justify-center">
-                <v-icon
-                    small
-                    class="mr-2"
-                    @click="viewSuite(item)"
-                >
-                  mdi-table-edit
-                </v-icon>
-              </td>
             </template>
           </v-data-table>
         </material-card>
