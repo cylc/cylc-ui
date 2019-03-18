@@ -34,7 +34,7 @@
 export default {
   data: () => ({
     links: [
-      { name: 'Website', Link: 'https://cylc.github.io/cylc/', route: false },
+      { name: 'Website', Link: 'https://cylc.github.io/', route: false },
       { name: 'About', Link: '/about', route: true }
     ]
   })
