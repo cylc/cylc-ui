@@ -25,7 +25,7 @@
     </div>
     <v-spacer/>
     <span class="font-weight-light copyright">
-      Cylc Web {{ $store.getters.appVersion }} &copy; 2008-{{ (new Date()).getFullYear() }} NIWA &amp; British Crown (Met Office) &amp; contributors
+      Cylc UI {{ $store.getters.appVersion }} &copy; 2008-{{ (new Date()).getFullYear() }} NIWA &amp; British Crown (Met Office) &amp; contributors
     </span>
   </v-footer>
 </template>

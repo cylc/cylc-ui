@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/cylc/cylc-web.svg?branch=master)](https://travis-ci.org/cylc/cylc-web)
-[![codecov](https://codecov.io/gh/cylc/cylc-web/branch/master/graph/badge.svg)](https://codecov.io/gh/cylc/cylc-web)
+[![Build Status](https://travis-ci.org/cylc/cylc-ui.svg?branch=master)](https://travis-ci.org/cylc/cylc-ui)
+[![codecov](https://codecov.io/gh/cylc/cylc-ui/branch/master/graph/badge.svg)](https://codecov.io/gh/cylc/cylc-ui)
 
-# Cylc Web
+# Cylc UI
 
 ## Building
 
@@ -60,7 +60,7 @@ the static files directory to the location of your `./dist` folder.
 
 If you have a folder used a _workspace_, you could check out both projects in
 that directory. Then, in your working copy of the Cylc Hub, it should be
-enough to point the static files directory to `../cylc-web/dist/`.
+enough to point the static files directory to `../cylc-ui/dist/`.
 
 This way with both Cylc Hub and Cylc UI running, you can work on either -
 or both - projects. Changes done in your Tornado application should reflect immediately

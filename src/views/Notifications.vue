@@ -235,7 +235,7 @@
 export default {
   metaInfo () {
     return {
-      title: 'Cylc Web | Notifications'
+      title: 'Cylc UI | Notifications'
     }
   },
   data: () => ({

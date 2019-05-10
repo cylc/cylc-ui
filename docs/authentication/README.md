@@ -22,8 +22,8 @@ First you will need to start the server in one terminal.
 $ cd jwt
 $ npm install
 npm notice created a lockfile as package-lock.json. You should commit this file.
-npm WARN cylc-web-jwt@1.0.0 No description
-npm WARN cylc-web-jwt@1.0.0 No repository field.
+npm WARN cylc-ui-jwt@1.0.0 No description
+npm WARN cylc-ui-jwt@1.0.0 No repository field.
 
 removed 68 packages in 2.102s
 found 0 vulnerabilities
