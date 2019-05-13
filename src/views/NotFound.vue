@@ -32,7 +32,7 @@
   export default {
     metaInfo () {
       return {
-        title: 'Cylc Web | Not Found'
+        title: 'Cylc UI | Not Found'
       }
     }
   }

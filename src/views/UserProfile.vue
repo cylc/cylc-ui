@@ -81,7 +81,7 @@
     },
     metaInfo() {
       return {
-        title: 'Cylc Web | User Profile'
+        title: 'Cylc UI | User Profile'
       }
     }
   }

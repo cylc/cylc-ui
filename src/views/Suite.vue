@@ -64,7 +64,7 @@
   export default {
     metaInfo() {
       return {
-        title: 'Cylc Web | Suite ' + this.$route.params.name
+        title: 'Cylc UI | Suite ' + this.$route.params.name
       }
     },
     data: () => ({

@@ -10,7 +10,7 @@
       <v-flex
         md6
       >
-        <p>Cylc Web version: {{ $store.getters.appVersion }}</p>
+        <p>Cylc UI version: {{ $store.getters.appVersion }}</p>
       </v-flex>
     </v-layout>
   </v-container>
@@ -20,7 +20,7 @@
 export default {
   metaInfo () {
     return {
-      title: 'Cylc Web | About'
+      title: 'Cylc UI | About'
     }
   }
 }

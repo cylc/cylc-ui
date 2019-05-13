@@ -73,7 +73,7 @@ import { mapState } from 'vuex'
 export default {
   metaInfo () {
     return {
-      title: 'Cylc Web | Suites'
+      title: 'Cylc UI | Suites'
     }
   },
   data: () => ({

@@ -363,7 +363,7 @@
 export default {
   metaInfo () {
     return {
-      title: 'Cylc Web | Dashboard'
+      title: 'Cylc UI | Dashboard'
     }
   },
   data () {

@@ -1,5 +1,5 @@
 {
-  "name": "cylc-web",
+  "name": "cylc-ui",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -59,6 +59,6 @@
     "webpack": "^4.30.0"
   },
   "bugs": {
-    "url": "https://github.com/cylc/cylc-web/issues"
+    "url": "https://github.com/cylc/cylc-ui/issues"
   }
 }

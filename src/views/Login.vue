@@ -97,7 +97,7 @@ export default {
   },
   metaInfo () {
     return {
-      title: 'Cylc Web | Login'
+      title: 'Cylc UI | Login'
     }
   }
 }
