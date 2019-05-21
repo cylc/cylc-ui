@@ -45,7 +45,7 @@
               slot-scope="{ item }"
             >
               <td>{{ item.name }}</td>
-              <td>{{ item.user }}</td>
+              <td>{{ item.owner }}</td>
               <td>{{ item.host }}</td>
               <td>{{ item.port }}</td>
               <td class="justify-center">
