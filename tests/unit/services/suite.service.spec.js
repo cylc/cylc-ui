@@ -5,6 +5,7 @@ import store from '@/store'
 import Suite from "@/model/Suite.model";
 
 describe('SuiteService', () => {
+  let suiteService = new SuiteService()
   let sandbox;
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -42,8 +43,8 @@ describe('SuiteService', () => {
           return Promise.resolve(suitesReturned);
         }
       };
-      sandbox.stub(SuiteService, 'createGraphqlClient').returns(stubClient);
-      return SuiteService.getSuites().then(function() {
+      sandbox.stub(suiteService, 'createGraphqlClient').returns(stubClient);
+      return suiteService.getSuites().then(function() {
         const suites = store.getters['suites/suites'];
         expect(suites.length).to.equal(2);
         expect(suites[0].name).to.equal("suite 1");
@@ -58,8 +59,8 @@ describe('SuiteService', () => {
           return Promise.reject(e);
         }
       };
-      sandbox.stub(SuiteService, 'createGraphqlClient').returns(stubClient);
-      return SuiteService.getSuites().finally(() => {
+      sandbox.stub(suiteService, 'createGraphqlClient').returns(stubClient);
+      return suiteService.getSuites().finally(() => {
         expect(store.state.alerts.length).to.equal(1);
       });
     });
@@ -86,9 +87,9 @@ describe('SuiteService', () => {
           return Promise.resolve(tasksReturned);
         }
       };
-      sandbox.stub(SuiteService, 'createGraphqlClient').returns(stubClient);
+      sandbox.stub(suiteService, 'createGraphqlClient').returns(stubClient);
 
-      return SuiteService.getSuiteTasks(new Suite("suitename", "root", "localhost", 8080)).then(function() {
+      return suiteService.getSuiteTasks(new Suite("suitename", "root", "localhost", 8080)).then(function() {
         const tasks = store.getters['suites/tasks'];
         expect(tasks.length).to.equal(2);
         expect(tasks[0].name).to.equal("speaker 1");
@@ -103,8 +104,8 @@ describe('SuiteService', () => {
           return Promise.reject(e);
         }
       };
-      sandbox.stub(SuiteService, 'createGraphqlClient').returns(stubClient);
-      return SuiteService.getSuiteTasks(new Suite("suitename", "root", "localhost", 8080)).finally(() => {
+      sandbox.stub(suiteService, 'createGraphqlClient').returns(stubClient);
+      return suiteService.getSuiteTasks(new Suite("suitename", "root", "localhost", 8080)).finally(() => {
         expect(store.state.alerts.length).to.equal(1);
       });
     });

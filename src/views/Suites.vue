@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { SuiteService } from '@/services/suite.service'
+import { SuiteService } from 'suite-service'
 import { mapState } from 'vuex'
 
 

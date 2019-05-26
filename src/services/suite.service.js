@@ -19,10 +19,12 @@ const tasksQuery = gql`query {
 }
 `;
 
-export const SuiteService = {
+export class SuiteService {
+
   createGraphqlClient() {
     return createApolloClient(`${window.location.pathname}/graphql`);
-  },
+  }
+
   getSuites() {
     const apolloClient =  this.createGraphqlClient();
     return apolloClient.query({
@@ -34,8 +36,9 @@ export const SuiteService = {
       const alert = new Alert(error.message, null, 'error');
       return store.dispatch('addAlert', alert);
     });
-  },
-  getSuiteTasks() {
+  }
+
+  getSuiteTasks(suiteId) {
     const apolloClient =  this.createGraphqlClient();
     return apolloClient.query({
       query: tasksQuery
@@ -45,6 +48,6 @@ export const SuiteService = {
     }).catch((error) => { // error is an ApolloError object
       const alert = new Alert(error.message, null, 'error');
       return store.dispatch('addAlert', alert);
-    });
+    })
   }
-};
+}
