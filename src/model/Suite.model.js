@@ -1,17 +1,22 @@
 export default class Suite {
-  constructor(name, user, host, port) {
+  constructor(id, name, owner, host, port) {
+    this.id = id;
     this.name = name;
-    this.user = user;
+    this.owner = owner;
     this.host = host;
     this.port = port
+  }
+
+  getId() {
+    return this.id;
   }
 
   getName() {
     return this.name
   }
 
-  getUser() {
-    return this.user
+  getOwner() {
+    return this.owner
   }
 
   getHost() {

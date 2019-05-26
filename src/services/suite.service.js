@@ -1,9 +1,15 @@
 import Alert from '@/model/Alert.model'
 import { createApolloClient } from '@/utils/graphql'
-import axios from 'axios';
 import gql from 'graphql-tag'
 import store from '@/store/'
-import Suite from '@/model/Suite.model';
+
+// query to retrieve all suites
+const suitesQuery = gql`query {
+  workflows {
+    id, name, owner, host, port
+  }
+}
+`;
 
 // query to retrieve all suites
 const tasksQuery = gql`query {
@@ -14,26 +20,23 @@ const tasksQuery = gql`query {
 `;
 
 export const SuiteService = {
-  createGraphqlClient(host, port) {
-    return createApolloClient(`http://${host}:${port}/graphql`);
+  createGraphqlClient() {
+    return createApolloClient(`${window.location.pathname}/graphql`);
   },
   getSuites() {
-    return store.dispatch('suites/setSuites', []).then(() => {
-      return axios.get(window.location.pathname + '/suites').then((response) => {
-        const suites = [];
-        for (let i = 0; i < response.data.length; i++) {
-          const entry = response.data[i];
-          suites.push(new Suite(entry.name, entry.user, entry.host, entry.port));
-        }
-        return store.dispatch('suites/setSuites', suites);
-      }).catch((error) => {
-        const alert = new Alert(error.response.statusText, null, 'error');
-        return store.dispatch('addAlert', alert);
-      });
+    const apolloClient =  this.createGraphqlClient();
+    return apolloClient.query({
+      query: suitesQuery
+    }).then((response) => {
+      const suites = response.data.workflows;
+      return store.dispatch('suites/setSuites', suites);
+    }).catch((error) => {
+      const alert = new Alert(error.message, null, 'error');
+      return store.dispatch('addAlert', alert);
     });
   },
-  getSuiteTasks(suite) {
-    const apolloClient =  this.createGraphqlClient(suite.host, suite.port);
+  getSuiteTasks() {
+    const apolloClient =  this.createGraphqlClient();
     return apolloClient.query({
       query: tasksQuery
     }).then((response) => {

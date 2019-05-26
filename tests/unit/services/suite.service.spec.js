@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import { SuiteService } from '@/services/suite.service'
 import sinon from 'sinon'
-import axios from 'axios'
 import store from '@/store'
 import Suite from "@/model/Suite.model";
 
@@ -17,22 +16,33 @@ describe('SuiteService', () => {
     it('should return list of suites', () => {
       // we have fake data until the graphql backend is ready
       const suitesReturned = new Promise((r) => r({ data:
-        [
           {
-            name: "suite 1",
-            user: "rob",
-            host: "localhost",
-            port: 1234
-          },
-          {
-            name: "suite 2",
-            user: "john",
-            host: "remotehost",
-            port: 4321
+            workflows:
+              [
+                {
+                  id: "rob/localhost",
+                  name: "suite 1",
+                  owner: "rob",
+                  host: "localhost",
+                  port: 1234
+                },
+                {
+                  id: "job/remotehost",
+                  name: "suite 2",
+                  owner: "john",
+                  host: "remotehost",
+                  port: 4321
+                }
+              ]
           }
-        ]
       }));
-      sandbox.stub(axios, 'get').returns(suitesReturned);
+      const stubClient = {
+        uri: null,
+        query: function() {
+          return Promise.resolve(suitesReturned);
+        }
+      };
+      sandbox.stub(SuiteService, 'createGraphqlClient').returns(stubClient);
       return SuiteService.getSuites().then(function() {
         const suites = store.getters['suites/suites'];
         expect(suites.length).to.equal(2);
@@ -42,10 +52,13 @@ describe('SuiteService', () => {
     it('should add an alert on error', () => {
       expect(store.state.alerts.length).to.equal(0);
       const e = new Error('mock error');
-      e.response = {
-        statusText: 'Test Status'
+      const stubClient = {
+        uri: null,
+        query: function() {
+          return Promise.reject(e);
+        }
       };
-      sandbox.stub(axios, 'get').rejects(e);
+      sandbox.stub(SuiteService, 'createGraphqlClient').returns(stubClient);
       return SuiteService.getSuites().finally(() => {
         expect(store.state.alerts.length).to.equal(1);
       });
