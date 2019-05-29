@@ -1,0 +1,109 @@
+#holder {
+  width: 100%;
+  height: 800px;
+  background-color: #222;
+  z-index: 10;
+}
+
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: left;
+  color: #2c3e50;
+  margin-top: 0;
+  width: 100%;
+}
+
+.cytoscape-navigator-overlay {
+  position: absolute;
+  border: 1px solid #fff;
+  background: #222;
+  z-index: 99999;
+  width: 200px;
+  height: 150px;
+  bottom: 83px;
+  right: -1px;
+  overflow: hidden;
+}
+
+.cytoscape-navigatorView {
+  border: 2px solid yellow;
+  border-radius: 1px;
+  background-color: #0c78ff;
+  opacity: 0.4;
+  /* cursor: move; */
+}
+
+.spinner {
+  position: fixed;
+  top: 50%;
+  left: 54%;
+}
+
+.tippy-popper {
+  /* transition: none !important; */
+}
+
+.collapsed-child {
+  opacity: 0;
+  display: none
+  }
+
+.switchlayout {
+  position: absolute;
+  bottom: 83px;
+  left: 1px;
+}
+
+.dagre-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #fff;
+  z-index: 99999;
+  height: 40px;
+}
+
+.cosebilkent-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #fff;
+  z-index: 99999;
+  height: 40px;
+}
+
+.klay-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #fff;
+  z-index: 99999;
+  height: 40px;
+  width: 40px;
+}
+
+.hierarchical-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #fff;
+  z-index: 99999;
+  height: 40px;
+}
+
+.cola-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #fff;
+  z-index: 99999;
+  height: 40px;
+  width: 40px;
+}
