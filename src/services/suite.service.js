@@ -35,13 +35,18 @@ export class SuiteService {
     }).catch((error) => {
       const alert = new Alert(error.message, null, 'error');
       return store.dispatch('addAlert', alert);
-    });
+    })
   }
 
   getSuiteTasks(suiteId) {
     const apolloClient =  this.createGraphqlClient();
     return apolloClient.query({
-      query: tasksQuery
+      query: tasksQuery,
+      variables: {
+        wIds: [suiteId],
+        minDepth: 0,
+        maxDepth: 4
+      }
     }).then((response) => {
       const tasks = response.data.tasks;
       return store.dispatch('suites/setTasks', tasks);

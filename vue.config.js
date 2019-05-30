@@ -20,7 +20,9 @@ module.exports = {
     }
 
     // set up aliases for mock services, used when the offline mode is used
-    const suiteService = process.env.NODE_ENV === 'offline' ? '@/services/mock/suite.service' : '@/services/suite.service';
+    const suiteService = process.env.NODE_ENV === 'offline'
+      ? '@/services/mock/suite.service'
+      : '@/services/suite.service'
     config.resolve.alias.set('suite-service', suiteService)
   }
 }
