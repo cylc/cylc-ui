@@ -1,8 +1,8 @@
 <template>
-  <div id="holder">
-    <cytoscape :config="config" :preConfig="preConfig" :afterCreated="afterCreated">
-      <cy-element v-for="def in elements.nodes" :key="`${def.data.id}`" :definition="def"/>
-      <cy-element v-for="def in elements.edges" :key="`${def.data.id}`" :definition="def"/>
+  <div id='holder'>
+    <cytoscape :config='config' :preConfig='preConfig' :afterCreated='afterCreated'>
+      <cy-element v-for='def in elements.nodes' :key='`${def.data.id}`' :definition='def'/>
+      <cy-element v-for='def in elements.edges' :key='`${def.data.id}`' :definition='def'/>
     </cytoscape>
   </div>
 </template>
@@ -10,18 +10,21 @@
 <script>
 import cytoscape from 'cytoscape'
 import klay from 'cytoscape-klay'
-import elements from "./../assets/test-data.json"
-// import elements from "./../assets/simple.graphml"
-import axios from "axios"
+import navigator from 'cytoscape-navigator'
+import axios from 'axios'
+// import complexdot from './../assets/complex.dot'
+
+const DATA_URL = 'http://localhost:8080/test-data.json';
+
+const elements = []
 
 const config = {
   autounselectify: true,
   boxSelectionEnabled: false,
   layout: {
-    name: "klay",
+    name: 'klay',
     textureOnViewport: false,
     hideEdgesOnViewport: true
-
   },
   style: [
     {
@@ -38,15 +41,7 @@ const config = {
         'line-height' : 1.1,
         'text-margin-x': 5,
         'font-size':'.8em',
-        'min-zoomed-font-size': '.6em',
-        // 'text-background-shape': 'rectangle',
-        // 'text-background-color': 'lightgray',
-        // 'text-border-width': 1,
-        // 'text-border-style': 'double',
-        // 'text-border-color': '#e87409',
-        // 'text-outline-color': '#e87409',
-        // 'border-color': '#e87409',
-        // 'border-opacity': 1
+        'min-zoomed-font-size': '.6em'
       }
     },
     {
@@ -66,12 +61,12 @@ const config = {
 };
 
 export default {
-  metaInfo () {
+  metaInfo() {
     return {
       title: 'Cylc UI | Graph'
     }
   },
-  name: "Graph",
+  name: 'Graph',
   data() {
     return {
       config,
@@ -80,23 +75,33 @@ export default {
     };
   },
   methods: {
-    preConfig(cytoscape) {
-      console.log("calling pre-config", config, elements);
+    onCyMouseDown(event) {
+      // this will be called `onmousedown` over cytoscape
+    },
+    async preConfig(cytoscape) {
       // cytoscape: this is the cytoscape constructor
       cytoscape.use(klay);
     },
-    async afterCreated() {
-      console.log("after created");
-      const cy = await this.$cytoscape.instance;
+    async afterCreated(cy) {
+      const {data: elements} = await axios.get(DATA_URL);
+      elements.nodes.forEach(n => cy.add(n));
+      elements.edges.forEach(n => cy.add(n));
+      console.log('after created');
+      console.log('loaded elements: ', elements, cy);
       cy.elements()
-        .layout({ 
-          name: "klay",
+        .layout({
+          name: 'klay',
           fit: true,
           padding: 30, // Padding on fit
           animate: false,
           spacing: 50,
+          styleEnabled: true,
+          // zoom: 1,
+          // pan: { x: 0, y: 0 },
+          minZoom: 1e-50,
+          maxZoom: 1e50,
           //  Whether to animate specific nodes when animation is on; non-animated nodes immediately go to their final positions
-          animateFilter: function( node, i ){ return true; }, 
+          animateFilter: function(node, i){return true;}, 
           animationDuration: 3000, // Duration of animation in ms if enabled
           animationEasing: 'ease-out',
           transform: function( node, pos ){ return pos; }, // A function that applies a transform to the final node position
@@ -131,11 +136,11 @@ export default {
             linearSegmentsDeflectionDampening: 0.3, // Dampens the movement of nodes to keep the diagram from getting too large.
             mergeEdges: false, // Edges that have no ports are merged so they touch the connected nodes at the same points.
             mergeHierarchyCrossingEdges: true, // If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports as possible.
-            nodeLayering:'NETWORK_SIMPLEX', // Strategy for node layering.
+            nodeLayering: 'NETWORK_SIMPLEX', // Strategy for node layering.
             /* NETWORK_SIMPLEX This algorithm tries to minimize the length of edges. This is the most computationally intensive algorithm. The number of iterations after which it aborts if it hasn't found a result yet can be set with the Maximal Iterations option.
             LONGEST_PATH A very simple algorithm that distributes nodes along their longest path to a sink node.
             INTERACTIVE Distributes the nodes into layers by comparing their positions before the layout algorithm was started. The idea is that the relative horizontal order of nodes as it was before layout was applied is not changed. This of course requires valid positions for all nodes to have been set on the input graph before calling the layout algorithm. The interactive node layering algorithm uses the Interactive Reference Point option to determine which reference point of nodes are used to compare positions. */
-            nodePlacement:'INTERACTIVE', // Strategy for Node Placement
+            nodePlacement: 'INTERACTIVE', // Strategy for Node Placement
             /* BRANDES_KOEPF Minimizes the number of edge bends at the expense of diagram size: diagrams drawn with this algorithm are usually higher than diagrams drawn with other algorithms.
             LINEAR_SEGMENTS Computes a balanced placement.
             INTERACTIVE Tries to keep the preset y coordinates of nodes from the original layout. For dummy nodes, a guess is made to infer their coordinates. Requires the other interactive phase implementations to have run as well.
@@ -145,9 +150,9 @@ export default {
             separateConnectedComponents: true, // Whether each connected component should be processed separately
             spacing: 24, // Overall setting for the minimal amount of space to be left between objects
             thoroughness: 7 // How much effort should be spent to produce a nice layout..
-        },
-        priority: function( edge ){ return null; }, // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
-            })
+          }
+          // priority: function( edge ){ return null; }, // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
+        })
         .run();
     }
   }
@@ -162,12 +167,12 @@ export default {
 }
 
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   color: #2c3e50;
-  margin-top:0;
-  width:100%
+  margin-top: 0;
+  width: 100%;
 }
 </style>
