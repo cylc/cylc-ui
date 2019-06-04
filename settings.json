@@ -1,0 +1,26 @@
+{
+  "eslint.validate": [
+    {
+      "language": "vue",
+      "autoFix": true,
+      // "vetur.format.defaultFormatter.js": "prettier-eslint",
+      "vetur.format.defaultFormatter.html": "js-beautify-html",
+      "vetur.format.defaultFormatterOptions": {
+        "prettier": {
+            "singleQuote": true,
+            "semi": false,
+        }
+    }
+    },
+    {
+      "language": "javascript",
+      "autoFix": true
+    },
+    {
+      "language": "javascriptreact",
+      "autoFix": true
+    }
+  ],
+  "eslint.autoFixOnSave": true,
+  "editor.formatOnSave": false
+}

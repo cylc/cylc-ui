@@ -90,6 +90,11 @@ export default {
         text: 'Suites'
       },
       {
+        to: '/graph',
+        icon: 'mdi-vector-circle',
+        text: 'Graph'
+      },
+      {
         to: '/user-profile',
         icon: 'mdi-account',
         text: 'User Profile'

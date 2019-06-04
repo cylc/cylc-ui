@@ -1,12 +1,13 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
+import Vue from 'vue';
 
 // Plugins
-import './plugins'
+import './plugins';
 
 // Components
 import './components'
+import VueCytoscape from './plugin'
 
 // Sync router with store
 import { sync } from 'vuex-router-sync'
@@ -21,6 +22,8 @@ import store from '@/store'
 import VueApollo from 'vue-apollo'
 
 import apolloClient from '@/utils/graphql'
+
+Vue.use(VueCytoscape)
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient
