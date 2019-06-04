@@ -3,37 +3,37 @@
       {
         "data": {
           "id": "foo.2000",
-          "label": "foo.2000"
+          "label": "foo 2000"
         }
       },
       {
         "data": {
           "id": "bar.2000",
-          "label": "bar.2000"
+          "label": "bar 2000"
         }
       },
       {
         "data": {
           "id": "baz.2000",
-          "label": "baz.2000"
+          "label": "baz 2000"
         }
       },
       {
         "data": {
           "id": "qux.2000",
-          "label": "qux.2000"
+          "label": "qux 2000"
         }
       },
       {
         "data": {
           "id": "pub.2000",
-          "label": "pub.2000"
+          "label": "pub 2000"
         }
       },
       {
         "data": {
           "id": "bool.2000",
-          "label": "bool.2000"
+          "label": "bool 2000"
         }
       }
     ],

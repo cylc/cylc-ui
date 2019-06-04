@@ -91,7 +91,7 @@ export default {
       },
       {
         to: '/graph',
-        icon: 'mdi-vector-circle',
+        icon: 'mdi-grain',
         text: 'Graph'
       },
       {

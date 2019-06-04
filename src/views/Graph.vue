@@ -19,34 +19,46 @@ const config = {
   boxSelectionEnabled: false,
   layout: {
     name: "klay",
-    textureOnViewport: true
+    textureOnViewport: false,
+    hideEdgesOnViewport: true
 
   },
   style: [
     {
-      selector: "node",
+      selector: 'node',
       css: {
-        "background-color": "#fff",
-        'content': 'data(label)'
-      }
-    },
-    {
-      selector: "label",
-      css: {
-        "background-color": "#bdfffc",
+        'background-color': '#bdfffc',
+        'content': 'data(label)',
         'font-family': 'Avenir, Helvetica, Arial, sans-serif',
-        'color': '#fff'
+        'color': '#fff',
+        'text-max-width': '.5em',
+        'text-wrap': 'wrap',
+        'text-valign': 'center',
+        'text-halign': 'right',
+        'line-height' : 1.1,
+        'text-margin-x': 5,
+        'font-size':'.8em',
+        'min-zoomed-font-size': '.6em',
+        // 'text-background-shape': 'rectangle',
+        // 'text-background-color': 'lightgray',
+        // 'text-border-width': 1,
+        // 'text-border-style': 'double',
+        // 'text-border-color': '#e87409',
+        // 'text-outline-color': '#e87409',
+        // 'border-color': '#e87409',
+        // 'border-opacity': 1
       }
     },
     {
-      selector: "edge",
+      selector: 'edge',
       css: {
-        'width': 3,
+        'width': 1,
         'curve-style': 'bezier',
         'target-arrow-shape': 'triangle',
-        'line-color': '#b0d9ff',
-        'target-arrow-color': '#b0d9ff',
-        'opacity': 0.5
+        'line-color': '#fff',
+        'target-arrow-color': '#fff',
+        'opacity': .8,
+        'target-distance-from-node': 3
       }
     }
   ],
@@ -82,10 +94,11 @@ export default {
           fit: true,
           padding: 30, // Padding on fit
           animate: false,
+          spacing: 50,
           //  Whether to animate specific nodes when animation is on; non-animated nodes immediately go to their final positions
           animateFilter: function( node, i ){ return true; }, 
-          animationDuration: 500, // Duration of animation in ms if enabled
-          // animationEasing:
+          animationDuration: 3000, // Duration of animation in ms if enabled
+          animationEasing: 'ease-out',
           transform: function( node, pos ){ return pos; }, // A function that applies a transform to the final node position
           ready: undefined, // Callback on layoutready
           stop: undefined, // Callback on layoutstop
@@ -130,7 +143,7 @@ export default {
             randomizationSeed: 1, // Seed used for pseudo-random number generators to control the layout algorithm; 0 means a new seed is generated
             routeSelfLoopInside: false, // Whether a self-loop is routed around or inside its node.
             separateConnectedComponents: true, // Whether each connected component should be processed separately
-            spacing: 20, // Overall setting for the minimal amount of space to be left between objects
+            spacing: 24, // Overall setting for the minimal amount of space to be left between objects
             thoroughness: 7 // How much effort should be spent to produce a nice layout..
         },
         priority: function( edge ){ return null; }, // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
@@ -154,7 +167,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top:0;
   width:100%
 }
 </style>
