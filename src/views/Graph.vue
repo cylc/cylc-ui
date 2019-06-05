@@ -1,5 +1,10 @@
 <template>
   <div id='holder'>
+    <div class="cytoscape-navigator">
+      <canvas></canvas>
+    <div class="cytoscape-navigatorView"></div>
+    <div class="cytoscape-navigatorOverlay"></div>
+</div>
     <cytoscape :config='config' :preConfig='preConfig' :afterCreated='afterCreated'>
       <cy-element v-for='def in elements.nodes' :key='`${def.data.id}`' :definition='def'/>
       <cy-element v-for='def in elements.edges' :key='`${def.data.id}`' :definition='def'/>
@@ -54,7 +59,7 @@ const config = {
         'target-arrow-color': '#fff',
         'opacity': .8,
         'target-distance-from-node': 3
-      }
+      },
     }
   ],
   elements: []
@@ -154,9 +159,20 @@ export default {
           // priority: function( edge ){ return null; }, // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
         })
         .run();
+        navigator(cytoscape)
+        cy.navigator({
+          container: '.cytoscape-navigator',
+          // container: '#navigator', // can be a HTML or jQuery element or jQuery selector
+          viewLiveFramerate: 0, // set false to update graph pan only on drag end; set 0 to do it instantly; set a number (frames per second) to update not more than N times per second
+          thumbnailEventFramerate: 30, // max thumbnail's updates per second triggered by graph updates
+          thumbnailLiveFramerate: false, // max thumbnail's updates per second. Set false to disable
+          dblClickDelay: 200, // milliseconds
+          removeCustomContainer: true, // destroy the container specified by user on plugin destroy
+          rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
+      })
+      }
     }
-  }
-};
+  };
 </script>
 
 <style>
@@ -175,4 +191,18 @@ export default {
   margin-top: 0;
   width: 100%;
 }
+
+.cytoscape-navigator {
+  position: absolute;
+  border: 1px solid #fff;
+  background: #333;
+  z-index: 99999;
+  width: 200px;
+  height: 150px;
+  bottom: 83px;
+  right: -1px;
+  overflow: hidden;
+}
+  
+  
 </style>
