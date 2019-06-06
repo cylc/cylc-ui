@@ -115,6 +115,10 @@
           }
         }
       });
+    },
+    mounted() {
+      const title = `Suite ${this.$route.params.name}`;
+      this.$store.commit('app/setTitle', title);
     }
   }
 </script>
