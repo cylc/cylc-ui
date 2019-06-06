@@ -3,9 +3,9 @@
     {
       "language": "vue",
       "autoFix": true,
-      "vetur.format.defaultFormatter.js": "prettier-eslint",
+    //   "vetur.format.defaultFormatter.js": "prettier-eslint",
       "vetur.format.defaultFormatter.html": "js-beautify-html",
-      // "vetur.format.defaultFormatter.js": "vscode-typescript",
+      "vetur.format.defaultFormatter.js": "vscode-typescript",
       "vetur.format.defaultFormatterOptions": {
         "prettier": {
             "singleQuote": true,
