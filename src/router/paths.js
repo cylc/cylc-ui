@@ -21,14 +21,23 @@ export default [
     },
     alias: ['/', '/user/:id']
   },
+  // {
+  //   path: '/graph',
+  //   // Relative to /src/views
+  //   view: 'Graph',
+  //   meta: {
+  //     'layout': 'default'
+  //   },
+  //   alias: ['/', '/user/:id']
+  // },
   {
-    path: '/graph',
+    path: '/dagre',
     // Relative to /src/views
-    view: 'Graph',
+    view: 'Dagre',
     meta: {
       'layout': 'default'
     },
-    alias: ['/', '/user/:id']
+    alias: ["/", "/user/:id"]
   },
   {
     path: '/suites',

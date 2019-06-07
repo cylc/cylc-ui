@@ -52,7 +52,7 @@ const config = {
         'text-margin-x': 5,
         'font-size': '.8em',
         'min-zoomed-font-size': '.6em',
-        'shape': 'rectangle'
+        shape: 'rectangle'
       }
     },
     {
@@ -90,7 +90,8 @@ export default {
       // cytoscape: this is the cytoscape constructor
       cytoscape.use(klay);
     },
-    async afterCreated(cy) {
+    async afterCreated() {
+      const cy = await this.$cytoscape.instance;
       const { data: elements } = await axios.get(DATA_URL);
       elements.nodes.forEach(n => cy.add(n));
       elements.edges.forEach(n => cy.add(n));
@@ -284,9 +285,9 @@ export default {
   }
 
 
-.cytoscape-navigator:hover .cytoscape-navigatorOverlay{background: purple;}
+/* .cytoscape-navigator:hover .cytoscape-navigatorOverlay{background: purple;} */
 /* .cytoscape-navigator .cytoscape-navigatorView{border: 2px solid yellow; border-radius: 1px; background-color: blueviolet; opacity: .2; cursor: move;} */
-.cytoscape-navigator.mouseover-view .cytoscape-navigatorView{background: rgba(0,255,0,0.5);}
+/* .cytoscape-navigator.mouseover-view .cytoscape-navigatorView{background: rgba(0,255,0,0.5);} */
 
 .reset {
   position: absolute;
