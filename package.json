@@ -14,7 +14,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "apollo-boost": "^0.4.1",
+    "apollo-boost": "^0.4.2",
     "axios-fetch": "^1.1.0",
     "chartist": "0.11.2",
     "graphql": "^14.3.1",
