@@ -15,18 +15,32 @@
 
 <script>
 /* eslint-disable */
-import cytoscape from 'cytoscape'
-import dagre from 'cytoscape-dagre'
-import navigator from 'cytoscape-navigator'
-import panzoom from 'cytoscape-panzoom'
-import axios from 'axios'
-import GridLoader from 'vue-spinner/src/GridLoader.vue'
-import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import cytoscape from 'cytoscape';
+import dagre from 'cytoscape-dagre';
+import navigator from 'cytoscape-navigator';
+import panzoom from 'cytoscape-panzoom';
+import axios from 'axios';
+import GridLoader from 'vue-spinner/src/GridLoader.vue';
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 
-const DATA_URL = 'http://localhost:8080/complex-cytoscape-dot.json'
+const DATA_URL = 'http://localhost:8080/complex-cytoscape-dot.json';
 
-const elements = []
-let loading = true
+const elements = [];
+let loading = true;
+let nodeOptions = {
+  normal: {
+    bgColor: 'grey'
+  },
+  selected: {
+    bgColor: 'yellow'
+  }
+};
+
+var edgeOptions = {
+  selected: {
+    lineColor: 'yellow'
+  }
+};
 
 const config = {
   autounselectify: true,
@@ -40,7 +54,8 @@ const config = {
     {
       selector: 'node',
       css: {
-        'background-color': '#bdfffc',
+        // 'background-color': '#bdfffc',
+        'background-color': nodeOptions.normal.bgColor,
         content: 'data(name)',
         'font-family': 'Avenir, Helvetica, Arial, sans-serif',
         color: '#fff',
@@ -52,9 +67,9 @@ const config = {
         'text-margin-x': 5,
         'font-size': '.8em',
         'min-zoomed-font-size': '.6em',
-        shape: 'rectangle',
-        'width': '40px',
-        'height': '40px'
+        shape: 'data(shape)',
+        width: '80px',
+        height: '60px'
       }
     },
     {
@@ -68,16 +83,54 @@ const config = {
         opacity: 0.8,
         'target-distance-from-node': 3
       }
-    }
+    },
+    // {
+    //   selector: ':selected',
+    //   style: {
+    //     'background-color': 'yellow',
+    //     'line-color': 'yellow',
+    //     'target-arrow-color': 'black',
+    //     'source-arrow-color': 'black'
+    //   }
+    // },
+    {
+      selector: 'edge:selected',
+      style: {
+        width: 20
+      }
+    },
+    {
+      selector: 'node.highlight',
+      style: {
+        'border-color': '#fff',
+        'border-width': '2px'
+      }
+    },
+    {
+      selector: 'node.semitransp',
+      style: { opacity: '0.5' }
+    },
+    {
+      selector: 'node.selected',
+      style: {'background-color': nodeOptions.selected.bgColor}
+    },
+    {
+      selector: 'edge.highlight',
+      style: {'mid-target-arrow-color': '#fff'}
+    },
+    {
+      selector: 'edge.semitransp',
+      style: { opacity: '0.2' }
+    },
   ],
   elements: []
-}
+};
 
 export default {
   metaInfo() {
     return {
       title: 'Cylc UI | Graph'
-    }
+    };
   },
   name: 'Graph',
   data() {
@@ -86,14 +139,14 @@ export default {
       elements,
       i: 1,
       // vue-spinner
-			color: '#5e9Aff',
+      color: '#5e9aff',
       height: '35px',
       width: '4px',
       margin: '2px',
       radius: '2px',
       size: '1em',
       loading: true
-    }
+    };
   },
   components: {
     GridLoader,
@@ -101,19 +154,17 @@ export default {
   },
   methods: {
     preConfig(cytoscape) {
-      console.log('calling pre-config', config, elements)
+      console.log('calling pre-config', config, elements);
       // cytoscape: this is the cytoscape constructor
-      cytoscape.use(dagre)
+      cytoscape.use(dagre);
     },
     async afterCreated() {
-      console.log('after created')
-      const cy = await this.$cytoscape.instance
-      const { data: elements } = await axios.get(DATA_URL)
-      elements.nodes.forEach(n => cy.add(n))
-      elements.edges.forEach(n => cy.add(n))
-      console.log('after created')
-      console.log('loaded elements: ', elements, cy),
-      this.loading = false // remove spinner
+      console.log('after created');
+      const cy = await this.$cytoscape.instance;
+      const { data: elements } = await axios.get(DATA_URL);
+      elements.nodes.forEach(n => cy.add(n));
+      elements.edges.forEach(n => cy.add(n)), console.log('after created');
+      console.log('loaded elements: ', elements, cy), (this.loading = false); // remove spinner
       cy.elements()
         .layout({
           name: 'dagre',
@@ -123,10 +174,10 @@ export default {
           rankSep: 100, // the separation between adjacent nodes in the same rank
           rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right
           minLen: function(edge) {
-            return 1
+            return 1;
           }, // number of ranks to keep between the source and target of the edge
           edgeWeight: function(edge) {
-            return 1
+            return 1;
           }, // higher weight edges are generally made shorter and straighter than lower weight edges
           // general layout options
           fit: true, // whether to fit to viewport
@@ -140,8 +191,8 @@ export default {
           ready: function() {}, // on layoutready
           stop: function() {} // on layoutstop
         })
-        .run()
-      navigator(cytoscape)
+        .run();
+      navigator(cytoscape);
       cy.navigator({
         container: '.cytoscape-navigator-overlay',
         viewLiveFramerate: 0, // set false to update graph pan only on drag end; set 0 to do it instantly; set a number (frames per second) to update not more than N times per second
@@ -150,48 +201,100 @@ export default {
         dblClickDelay: 200, // milliseconds
         removeCustomContainer: true, // destroy the container specified by user on plugin destroy
         rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
-      })
+      });
       cy.on('tap', 'node', function(event) {
-        let node = event.target
+        let node = event.target;
         console.log('selected ' + node.id(), node.data());
-      })
+      });
       cy.on('tap', 'edge', function(event) {
-        let edge = event.target
-        console.log('tapped edge ' + edge.id())
-      })
+        let edge = event.target;
+        console.log('tapped edge ' + edge.id());
+      }),
+        //   cy.on('select', 'node', function(event) {
+        //   console.log('selected node:', event.target);
+        //   event.target.animate({
+        //     style: {
+        //       'background-color': nodeOptions.selected.bgColor
+        //     }
+        //   }, {
+        //     duration: 100
+        //   });
+        // });
+        // cy.on('unselect', 'node', function(event) {
+        //   console.log('unselect node:', event.target);
+        //   event.target.stop();
+        //   event.target.style({
+        //     'background-color': nodeOptions.normal.bgColor
+        //   });
+        // });
+        cy.on('tap', 'node', function(event) {
+          const target = event.target;
+          const node = target[0]._private.data;
+          console.log('tapped ', node.name);
+          cy.elements()
+            .difference(target.outgoers())
+            .not(target)
+            .addClass('semitransp')
+          target
+            .addClass('highlight')
+            .addClass('selected')
+            .outgoers()
+            .addClass('highlight')
+        });
+      cy.on('click', function(event) {
+        //select either edges or nodes to remove the styles
+        // var edges = cy.edges();
+        var nodes = cy.nodes()
+        // edges.removeClass('semitransp');
+        // nodes.removeClass('semitransp');
+        cy.elements().removeClass('semitransp');
+        cy.elements().removeClass('highlight');
+        cy.elements().removeClass('selected');
+      });
+    //   cy.on('select', 'edge', function(event) {
+    //   console.log('select edge:', event.cyTarget);
+    //   event.cyTarget.animate({
+    //     style: {
+    //       'line-color': edgeOptions.selected.lineColor
+    //     }
+    //   }, {
+    //     duration: 100
+    //   });
+    // });
       // cy.on('click', '#reset-button', function(event) {
       //   console.log('tapped reset')
       //   cy.fit()
       // })
-      panzoom(cytoscape)
+      panzoom(cytoscape);
       let panzoomdefaults = {
-          zoomFactor: 0.1, // zoom factor per zoom tick
-          zoomDelay: 45, // how many ms between zoom ticks
-          minZoom: 0.1, // min zoom level
-          maxZoom: 10, // max zoom level
-          fitPadding: 50, // padding when fitting
-          panSpeed: 10, // how many ms in between pan ticks
-          panDistance: 100, // max pan distance per tick
-          panDragAreaSize: 75, // the length of the pan drag box in which the vector for panning is calculated (bigger = finer control of pan speed and direction)
-          panMinPercentSpeed: 0.25, // the slowest speed we can pan by (as a percent of panSpeed)
-          panInactiveArea: 8, // radius of inactive area in pan drag box
-          panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib); scales from this to 1.0
-          zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
-          fitSelector: undefined, // selector of elements to fit
-          animateOnFit: function(){ // whether to animate on fit
-            return true
-          },
-          fitAnimationDuration: 2000, // duration of animation on fit
-        }
-        cy.panzoom(panzoomdefaults)
+        zoomFactor: 0.1, // zoom factor per zoom tick
+        zoomDelay: 45, // how many ms between zoom ticks
+        minZoom: 0.1, // min zoom level
+        maxZoom: 10, // max zoom level
+        fitPadding: 50, // padding when fitting
+        panSpeed: 10, // how many ms in between pan ticks
+        panDistance: 100, // max pan distance per tick
+        panDragAreaSize: 75, // the length of the pan drag box in which the vector for panning is calculated (bigger = finer control of pan speed and direction)
+        panMinPercentSpeed: 0.25, // the slowest speed we can pan by (as a percent of panSpeed)
+        panInactiveArea: 8, // radius of inactive area in pan drag box
+        panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib); scales from this to 1.0
+        zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
+        fitSelector: undefined, // selector of elements to fit
+        animateOnFit: function() {
+          // whether to animate on fit
+          return true;
+        },
+        fitAnimationDuration: 2000 // duration of animation on fit
+      };
+      cy.panzoom(panzoomdefaults);
       //-----------------
     }
   }
-}
+};
 </script>
 
 <style>
- @import '~@/styles/cytoscape/panzoom.css';
+@import '~@/styles/cytoscape/panzoom.css';
 #holder {
   width: 100%;
   height: 800px;
