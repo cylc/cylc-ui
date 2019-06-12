@@ -29,7 +29,7 @@ const elements = [];
 let loading = true;
 let nodeOptions = {
   normal: {
-    bgColor: 'grey'
+    bgColor: '#74cfff'
   },
   selected: {
     bgColor: 'yellow'
@@ -37,6 +37,9 @@ let nodeOptions = {
 };
 
 var edgeOptions = {
+  normal: {
+    lineColor: '#fff'
+  },
   selected: {
     lineColor: 'yellow'
   }
@@ -54,9 +57,8 @@ const config = {
     {
       selector: 'node',
       css: {
-        // 'background-color': '#bdfffc',
         'background-color': nodeOptions.normal.bgColor,
-        content: 'data(name)',
+        content: 'data(label)',
         'font-family': 'Avenir, Helvetica, Arial, sans-serif',
         color: '#fff',
         'text-max-width': '.5em',
@@ -68,7 +70,7 @@ const config = {
         'font-size': '.8em',
         'min-zoomed-font-size': '.6em',
         shape: 'data(shape)',
-        width: '80px',
+        width: '100px',
         height: '60px'
       }
     },
@@ -78,25 +80,17 @@ const config = {
         width: 5,
         'curve-style': 'bezier',
         'target-arrow-shape': 'triangle',
-        'line-color': '#fff',
+        'line-color': edgeOptions.normal.lineColor,
         'target-arrow-color': '#fff',
         opacity: 0.8,
         'target-distance-from-node': 3
       }
     },
-    // {
-    //   selector: ':selected',
-    //   style: {
-    //     'background-color': 'yellow',
-    //     'line-color': 'yellow',
-    //     'target-arrow-color': 'black',
-    //     'source-arrow-color': 'black'
-    //   }
-    // },
     {
-      selector: 'edge:selected',
+      selector: 'edge.selected',
       style: {
-        width: 20
+        width: 20,
+        lineColor: edgeOptions.selected.lineColor
       }
     },
     {
@@ -112,16 +106,16 @@ const config = {
     },
     {
       selector: 'node.selected',
-      style: {'background-color': nodeOptions.selected.bgColor}
+      style: { 'background-color': nodeOptions.selected.bgColor }
     },
     {
       selector: 'edge.highlight',
-      style: {'mid-target-arrow-color': '#fff'}
+      style: { 'mid-target-arrow-color': 'yellow' }
     },
     {
       selector: 'edge.semitransp',
       style: { opacity: '0.2' }
-    },
+    }
   ],
   elements: []
 };
@@ -202,69 +196,31 @@ export default {
         removeCustomContainer: true, // destroy the container specified by user on plugin destroy
         rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
       });
-      cy.on('tap', 'node', function(event) {
-        let node = event.target;
-        console.log('selected ' + node.id(), node.data());
-      });
-      cy.on('tap', 'edge', function(event) {
-        let edge = event.target;
-        console.log('tapped edge ' + edge.id());
-      }),
-        //   cy.on('select', 'node', function(event) {
-        //   console.log('selected node:', event.target);
-        //   event.target.animate({
-        //     style: {
-        //       'background-color': nodeOptions.selected.bgColor
-        //     }
-        //   }, {
-        //     duration: 100
-        //   });
-        // });
-        // cy.on('unselect', 'node', function(event) {
-        //   console.log('unselect node:', event.target);
-        //   event.target.stop();
-        //   event.target.style({
-        //     'background-color': nodeOptions.normal.bgColor
-        //   });
-        // });
         cy.on('tap', 'node', function(event) {
-          const target = event.target;
-          const node = target[0]._private.data;
-          console.log('tapped ', node.name);
+          const node = event.target;
+          // const data = node[0]._private.data;
+          console.log('selected ' + node.id(), node.data());
           cy.elements()
-            .difference(target.outgoers())
-            .not(target)
-            .addClass('semitransp')
-          target
+            .difference(node.outgoers())
+            .not(node)
+            .addClass('semitransp');
+          node
             .addClass('highlight')
             .addClass('selected')
             .outgoers()
-            .addClass('highlight')
+            .addClass('highlight');
         });
+      cy.on('tap', 'edge', function(event) {
+        const edge = event.target;
+        // const data = edge[0]._private.data;
+        console.log('selected ' + edge.id(), edge.data());
+        edge.addClass('selected');
+      });
       cy.on('click', function(event) {
-        //select either edges or nodes to remove the styles
-        // var edges = cy.edges();
-        var nodes = cy.nodes()
-        // edges.removeClass('semitransp');
-        // nodes.removeClass('semitransp');
         cy.elements().removeClass('semitransp');
         cy.elements().removeClass('highlight');
         cy.elements().removeClass('selected');
       });
-    //   cy.on('select', 'edge', function(event) {
-    //   console.log('select edge:', event.cyTarget);
-    //   event.cyTarget.animate({
-    //     style: {
-    //       'line-color': edgeOptions.selected.lineColor
-    //     }
-    //   }, {
-    //     duration: 100
-    //   });
-    // });
-      // cy.on('click', '#reset-button', function(event) {
-      //   console.log('tapped reset')
-      //   cy.fit()
-      // })
       panzoom(cytoscape);
       let panzoomdefaults = {
         zoomFactor: 0.1, // zoom factor per zoom tick
@@ -287,7 +243,6 @@ export default {
         fitAnimationDuration: 2000 // duration of animation on fit
       };
       cy.panzoom(panzoomdefaults);
-      //-----------------
     }
   }
 };
