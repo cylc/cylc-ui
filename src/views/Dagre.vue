@@ -194,6 +194,7 @@ export default {
       elements.nodes.forEach(n => cy.add(n));
       elements.edges.forEach(n => cy.add(n)), console.log('after created');
       console.log('loaded elements: ', elements, cy), (this.loading = false); // remove spinner
+      cy.fit()
       cy.elements().hierarchical({
         mode: 'regular', // extension mode
         threshold: 25, // stopping criterion that affects granularity (#) of clusters
