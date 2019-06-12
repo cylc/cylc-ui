@@ -1,6 +1,11 @@
 <template>
   <div id='holder'>
     <pulse-loader :loading='loading' :color='color' :size='size' class='spinner'></pulse-loader>
+    <!-- <div class='reset'>
+      <v-btn align-center justify-center color='#333' class='v-btn' id='reset-button'>
+        <v-icon id='reset-icon' name='reset-icon' color='white'>mdi-backup-restore</v-icon>
+      </v-btn>
+    </div> -->
     <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
       <div class='cytoscape-navigatorView'></div>
@@ -17,8 +22,14 @@
 /* eslint-disable */
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
+import coseBilkent from 'cytoscape-cose-bilkent';
 import navigator from 'cytoscape-navigator';
 import panzoom from 'cytoscape-panzoom';
+import expandCollapse from 'cytoscape-expand-collapse';
+import undoRedo from 'cytoscape-undo-redo';
+import popper from 'cytoscape-popper';
+import hierarchical from 'cytoscape-hierarchical';
+import jqyuery from 'jquery';
 import axios from 'axios';
 import GridLoader from 'vue-spinner/src/GridLoader.vue';
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
@@ -68,7 +79,7 @@ const config = {
         'line-height': 1.1,
         'text-margin-x': 5,
         'font-size': '.8em',
-        'min-zoomed-font-size': '.6em',
+        'min-zoomed-font-size': '.8em',
         shape: 'data(shape)',
         width: '100px',
         height: '60px'
@@ -115,6 +126,27 @@ const config = {
     {
       selector: 'edge.semitransp',
       style: { opacity: '0.2' }
+    },
+    {
+    selector: 'node.cy-expand-collapse-collapsed-node',
+    style: {
+      'background-color': 'darkblue',
+      'shape': 'rectangle'
+    }
+  },
+  {
+    selector: 'edge.cy-expand-collapse-meta-edge',
+    style: {
+      'background-color': 'green',
+      'shape': 'rectangle'
+    }
+  },
+   {
+      'selector': 'edge.meta',
+      'style': {
+        'curve-style': 'unbundled-bezier',
+        'control-point-distances': '0 0 0',
+      },
     }
   ],
   elements: []
@@ -151,6 +183,9 @@ export default {
       console.log('calling pre-config', config, elements);
       // cytoscape: this is the cytoscape constructor
       cytoscape.use(dagre);
+      cytoscape.use( popper );
+      cytoscape.use(coseBilkent);
+      cytoscape.use(hierarchical);
     },
     async afterCreated() {
       console.log('after created');
@@ -159,11 +194,26 @@ export default {
       elements.nodes.forEach(n => cy.add(n));
       elements.edges.forEach(n => cy.add(n)), console.log('after created');
       console.log('loaded elements: ', elements, cy), (this.loading = false); // remove spinner
+      // cy.elements()
+      // .hierarchical({
+      //     mode: 'regular',                    // extension mode
+      //     threshold: 25,                      // stopping criterion that affects granularity (#) of clusters
+      //     distance: 'euclidean',              // distance metric for measuring the distance between two nodes
+      //     linkage: 'single',                  // linkage criteria for determining the distance between two clusters
+      //     attributes: [                       // attributes/features used to group nodes
+      //         function(node) {
+      //           return node.position('x');
+      //         },
+      //         function(node) {
+      //           return node.position('y');
+      //         }
+      //     ]
+      //   })
       cy.elements()
         .layout({
           name: 'dagre',
           //  // dagre algo options, uses default value on undefined
-          nodeSep: 110, // the separation between adjacent nodes in the same rank
+          nodeSep: 10, // the separation between adjacent nodes in the same rank
           edgeSep: 30, // the separation between adjacent edges in the same rank
           rankSep: 100, // the separation between adjacent nodes in the same rank
           rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right
@@ -185,7 +235,7 @@ export default {
           ready: function() {}, // on layoutready
           stop: function() {} // on layoutstop
         })
-        .run();
+        .run()
       navigator(cytoscape);
       cy.navigator({
         container: '.cytoscape-navigator-overlay',
@@ -195,7 +245,7 @@ export default {
         dblClickDelay: 200, // milliseconds
         removeCustomContainer: true, // destroy the container specified by user on plugin destroy
         rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
-      });
+      })
         cy.on('tap', 'node', function(event) {
           const node = event.target;
           // const data = node[0]._private.data;
@@ -217,10 +267,21 @@ export default {
         edge.addClass('selected');
       });
       cy.on('click', function(event) {
+        // const data = event.target._private
+        // console.log('cy event.target', data);
+        // var edges = cy.edges();
+        // var nodes = cy.nodes()
+        // edges.removeClass('selected')
+        // edges.removeClass('semitransp');
+        // nodes.removeClass('semitransp');
         cy.elements().removeClass('semitransp');
         cy.elements().removeClass('highlight');
         cy.elements().removeClass('selected');
       });
+      // cy.on('click', '#reset-button', function(event) {
+      //   console.log('tapped reset')
+      //   cy.fit()
+      // });
       panzoom(cytoscape);
       let panzoomdefaults = {
         zoomFactor: 0.1, // zoom factor per zoom tick
@@ -243,7 +304,87 @@ export default {
         fitAnimationDuration: 2000 // duration of animation on fit
       };
       cy.panzoom(panzoomdefaults);
-    }
+      undoRedo(cytoscape);
+      let undoRedoOptions = {
+        isDebug: true, // Debug mode for console messages
+        actions: {},// actions to be added
+        undoableDrag: false, // Whether dragging nodes are undoable can be a function as well
+        stackSizeLimit: undefined, // Size limit of undo stack, note that the size of redo stack cannot exceed size of undo stack
+        ready: function () { // callback when undo-redo is ready
+        }
+      };
+      cy.undoRedo(undoRedoOptions);
+      expandCollapse(cytoscape);
+      const excoloptions = {
+        layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
+        // layoutBy: {
+        //   name: 'dagre',
+        //   animate: 'end',
+        //   randomize: true,
+        //   fit: true
+        // },
+        // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
+        fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
+        animate: false, // whether to animate on drawing changes you can specify a function too
+        ready: function () { }, // callback when expand/collapse initialized
+        undoable: true, // and if undoRedoExtension exists,
+        cueEnabled: false, // Whether cues are enabled
+        expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
+        expandCollapseCueSize: 12, // size of expand-collapse cue
+        expandCollapseCueLineSize: 8, // size of lines used for drawing plus-minus icons
+        expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
+        collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
+        expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
+        };
+      cy.expandCollapse(excoloptions);
+      let api = cy.expandCollapse('get');
+      api.collapseAll();
+      // api.collapse(nodes, excoloptions)
+      // cy.unbind('expandcollapse.beforeexpand');
+      // cy.nodes().bind('expandcollapse.beforeexpand', function(event) { 
+      //   if (beforeExpand == null) 
+      //       beforeExpand = cy.elements().clone();  // save the graph before the first expand
+      // }); // Triggered before a node is expanded
+
+      // cy.unbind('expandcollapse.aftercollapse');
+      // cy.nodes().bind('expandcollapse.aftercollapse', function(event) { 
+      //   if(beforeExpand != null) {
+      //       cy.elements().remove();
+      //       cy.add(beforeExpand);  // set the graph to original values
+      //       beforeExpand = null;
+      //   }
+      // }); 
+      },
+      // const popperOptions = {
+      //     content: 'test data',
+      //     renderedPosition: 'bottom',
+      //     renderedDimensions: undefined,
+      //     popper: undefined
+      // }
+  // ,
+  //   async cyUpdate () {
+  //     // new nodes and edges
+  //     const { data: elements } = await axios.get(DATA_URL);
+  //     const cynodes = data.nodes;
+  //     const cylinks = data.edges;
+  //     // update the cytoscape instance
+  //     this.$cytoscape.instance.then(cy => {
+  //       // remove all elements
+  //       cy.remove(cy.elements())
+  //       // add the new ones
+  //       cy.add(cynodes)
+  //       cy.add(cylinks)
+  //       // inside the cytoscape callback we lose the component this, we can use `that` instead if needed
+  //       const that = this
+  //       // click and double click (simulated) over the nodes
+  //       cy.on('tap', 'node', function (event) {
+  //         const data = event.target.data()
+  //         // if you are using vuex you can dispatch your events this way
+  //         that.$store.dispatch('sectors/select', { data })
+  //       })
+  //     })
+  //   }
+  //------------------------------------------
   }
 };
 </script>
@@ -292,5 +433,19 @@ export default {
   top: 50%;
   left: 54%;
 }
+
+.reset {
+  position: absolute;
+  bottom: 83px;
+  left: 1px;
+}
+
+/* #reset-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #2c3e50;
+} */
 </style>
 
