@@ -1,6 +1,6 @@
 <template>
   <div id='holder'>
-    <pulse-loader :loading='loading' :color='color' :size='size' class='spinner'></pulse-loader>
+    <sync-loader :loading='loading' :color='color' :size='size' class='spinner'></sync-loader>
     <!-- <div class='reset'>
       <v-btn align-center justify-center color='#333' class='v-btn' id='reset-button'>
         <v-icon id='reset-icon' name='reset-icon' color='white'>mdi-backup-restore</v-icon>
@@ -31,18 +31,20 @@ import popper from 'cytoscape-popper';
 import hierarchical from 'cytoscape-hierarchical';
 import jqyuery from 'jquery';
 import axios from 'axios';
-import GridLoader from 'vue-spinner/src/GridLoader.vue';
-import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
+import SyncLoader from 'vue-spinner/src/SyncLoader.vue';
 
-const DATA_URL = 'http://localhost:8080/complex-cytoscape-dot.json';
+const DATA_URL = 'http://localhost:8080/complex-cytoscape-dot-1b.json';
 
 const elements = [];
 let loading = true;
 let nodeOptions = {
   normal: {
-    bgColor: '#74cfff'
+    bgColor: '#444'
   },
   selected: {
+    bgColor: 'yellow'
+  },
+  active: {
     bgColor: 'yellow'
   }
 };
@@ -68,7 +70,18 @@ const config = {
     {
       selector: 'node',
       css: {
-        'background-color': nodeOptions.normal.bgColor,
+        // 'background-color': nodeOptions.normal.bgColor,
+        // 'background-color': 'mapData(active, green)',
+        // 'background-color': 'mapData(selected, green)',
+        // 'background-color': 'mapData(submitted,0, 1, grey, #c4fff3)',
+        // 'background-color': 'mapData(running, 0, 1, grey, #6391FF)',
+        // 'background-color': 'mapData(succeeded, 0, 1, grey, green)',
+        'background-color': 'data(state)',
+        // 'background-image': [
+        // '../assests/pigeon.svg.png'
+        // ],
+        // 'background-fit': 'contain contain',
+        // 'background-image-opacity': 0.5,
         content: 'data(label)',
         'font-family': 'Avenir, Helvetica, Arial, sans-serif',
         color: '#fff',
@@ -80,9 +93,19 @@ const config = {
         'text-margin-x': 5,
         'font-size': '.8em',
         'min-zoomed-font-size': '.8em',
+        'border-color': '#fff',
+        'border-width': '.4em',
         shape: 'data(shape)',
-        width: '100px',
-        height: '60px'
+        width: '6em',
+        height: '6em'
+        // 'pie-size': '80%', //The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
+        // 'pie-1-background-color': '#E8747C', // The colour of the node’s ith pie chart slice.
+        // 'pie-1-background-size': 'mapData(foo, 0, 10, 0, 100)',
+        // 'pie-2-background-color': '#74CBE8',
+        // 'pie-2-background-size': 'mapData(bar, 0, 10, 0, 100)',
+        // 'pie-3-background-color': '#74E883',
+        // 'pie-3-background-size': 'mapData(baz, 0, 10, 0, 100)' // The size of the node’s ith pie chart slice, measured in percent (e.g. 25% or 25).
+        // // 'pie-i-background-opacity' : .8//The opacity of the node’s ith pie chart slice.
       }
     },
     {
@@ -100,8 +123,9 @@ const config = {
     {
       selector: 'edge.selected',
       style: {
-        width: 20,
-        lineColor: edgeOptions.selected.lineColor
+        width: 10,
+        lineColor: edgeOptions.selected.lineColor,
+        'target-arrow-color': edgeOptions.selected.lineColor
       }
     },
     {
@@ -119,6 +143,10 @@ const config = {
       selector: 'node.selected',
       style: { 'background-color': nodeOptions.selected.bgColor }
     },
+    // {
+    //   selector: 'node.active',
+    //   style: { 'background-color': nodeOptions.active.bgColor }
+    // },
     {
       selector: 'edge.highlight',
       style: { 'mid-target-arrow-color': 'yellow' }
@@ -147,7 +175,22 @@ const config = {
         'curve-style': 'unbundled-bezier',
         'control-point-distances': '0 0 0'
       }
+    },
+    {
+      selector: '.selected',
+      style: {
+        'background-color': 'yellow',
+        'background-image': './assests/pigeon.svg.png',
+        'background-fit': 'contain contain',
+        'background-image-opacity': 0.5,
+      }
     }
+    // {
+    //   selector: ':active',
+    //   style: {
+    //     'background-color': 'purple'
+    //   }
+    // }
   ],
   elements: []
 };
@@ -175,8 +218,7 @@ export default {
     };
   },
   components: {
-    GridLoader,
-    PulseLoader
+    SyncLoader
   },
   methods: {
     preConfig(cytoscape) {
@@ -194,49 +236,63 @@ export default {
       elements.nodes.forEach(n => cy.add(n));
       elements.edges.forEach(n => cy.add(n)), console.log('after created');
       console.log('loaded elements: ', elements, cy), (this.loading = false); // remove spinner
-      cy.fit()
-      cy.elements().hierarchical({
-        mode: 'regular', // extension mode
-        threshold: 25, // stopping criterion that affects granularity (#) of clusters
-        distance: 'euclidean', // distance metric for measuring the distance between two nodes
-        linkage: 'single', // linkage criteria for determining the distance between two clusters
-        attributes: [
-          // attributes/features used to group nodes
-          function(node) {
-            return node.position('x');
-          },
-          function(node) {
-            return node.position('y');
-          }
-        ]
-      });
-      // cy.elements()
-      //   .layout({
-      //     name: 'dagre',
-      //     //  // dagre algo options, uses default value on undefined
-      //     nodeSep: 10, // the separation between adjacent nodes in the same rank
-      //     edgeSep: 30, // the separation between adjacent edges in the same rank
-      //     rankSep: 100, // the separation between adjacent nodes in the same rank
-      //     rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right
-      //     minLen: function(edge) {
-      //       return 1;
-      //     }, // number of ranks to keep between the source and target of the edge
-      //     edgeWeight: function(edge) {
-      //       return 1;
-      //     }, // higher weight edges are generally made shorter and straighter than lower weight edges
-      //     // general layout options
-      //     fit: true, // whether to fit to viewport
-      //     padding: 30, // fit padding
-      //     spacingFactor: 3, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
-      //     padding: 30, // fit padding
-      //     animate: false, // whether to transition the node positions
-      //     animationDuration: 500, // duration of animation in ms if enabled
-      //     animationEasing: undefined, // easing of animation if enabled
-      //     boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-      //     ready: function() {}, // on layoutready
-      //     stop: function() {} // on layoutstop
-      //   })
-      //   .run()
+      cy.fit();
+      // cy.elements().hca({
+      //   mode: 'threshold',
+      //   threshold: 25,
+      //   distance: 'euclidian', // euclidian, squaredEuclidian, manhattan, max
+      //   preference: 'mean', // median, mean, min, max,
+      //   damping: 0.8, // [0.5 - 1]
+      //   minIterations: 100, // [optional] The minimum number of iteraions the algorithm will run before stopping (default 100).
+      //   maxIterations: 1000, // [optional] The maximum number of iteraions the algorithm will run before stopping (default 1000).
+      //   attributes: [
+      //     function(node) {
+      //       return node.data('weight');
+      //     }
+      //   ]
+      // });
+      // cy.elements().hierarchical({
+      //   mode: 'regular', // extension mode
+      //   threshold: 25, // stopping criterion that affects granularity (#) of clusters
+      //   distance: 'euclidean', // distance metric for measuring the distance between two nodes
+      //   linkage: 'single', // linkage criteria for determining the distance between two clusters
+      //   attributes: [
+      //     // attributes/features used to group nodes
+      //     function(node) {
+      //       return node.position('x');
+      //     },
+      //     function(node) {
+      //       return node.position('y');
+      //     }
+      //   ]
+      // });
+      cy.elements()
+        .layout({
+          name: 'dagre',
+          //  // dagre algo options, uses default value on undefined
+          nodeSep: 100, // the separation between adjacent nodes in the same rank
+          edgeSep: 30, // the separation between adjacent edges in the same rank
+          rankSep: 100, // the separation between adjacent nodes in the same rank
+          rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right
+          minLen: function(edge) {
+            return 1;
+          }, // number of ranks to keep between the source and target of the edge
+          edgeWeight: function(edge) {
+            return 1;
+          }, // higher weight edges are generally made shorter and straighter than lower weight edges
+          // general layout options
+          fit: true, // whether to fit to viewport
+          padding: 30, // fit padding
+          spacingFactor: 1, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
+          padding: 30, // fit padding
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          ready: function() {}, // on layoutready
+          stop: function() {} // on layoutstop
+        })
+        .run()
       navigator(cytoscape);
       cy.navigator({
         container: '.cytoscape-navigator-overlay',
@@ -250,7 +306,7 @@ export default {
       cy.on('tap', 'node', function(event) {
         const node = event.target;
         // const data = node[0]._private.data;
-        console.log('selected ' + node.id(), node.data());
+        console.log('tapped ' + node.id(), node.data());
         cy.elements()
           .difference(node.outgoers())
           .not(node)
@@ -427,7 +483,7 @@ export default {
   border-radius: 1px;
   background-color: #0c78ff;
   opacity: 0.4;
-  cursor: move;
+  /* cursor: move; */
 }
 
 .spinner {
