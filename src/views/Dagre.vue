@@ -33,10 +33,11 @@ import jqyuery from 'jquery';
 import axios from 'axios';
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue';
 
-const DATA_URL = 'http://localhost:8080/complex-cytoscape-dot-1b.json';
-
+// const DATA_URL = 'http://localhost:8080/complex-cytoscape-dot-1b.1.json';
+const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.1.json';
 const elements = [];
 let loading = true;
+
 let nodeOptions = {
   normal: {
     bgColor: '#444'
@@ -70,18 +71,7 @@ const config = {
     {
       selector: 'node',
       css: {
-        // 'background-color': nodeOptions.normal.bgColor,
-        // 'background-color': 'mapData(active, green)',
-        // 'background-color': 'mapData(selected, green)',
-        // 'background-color': 'mapData(submitted,0, 1, grey, #c4fff3)',
-        // 'background-color': 'mapData(running, 0, 1, grey, #6391FF)',
-        // 'background-color': 'mapData(succeeded, 0, 1, grey, green)',
         'background-color': 'data(state)',
-        // 'background-image': [
-        // '../assests/pigeon.svg.png'
-        // ],
-        // 'background-fit': 'contain contain',
-        // 'background-image-opacity': 0.5,
         content: 'data(label)',
         'font-family': 'Avenir, Helvetica, Arial, sans-serif',
         color: '#fff',
@@ -97,15 +87,29 @@ const config = {
         'border-width': '.4em',
         shape: 'data(shape)',
         width: '6em',
-        height: '6em'
-        // 'pie-size': '80%', //The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
-        // 'pie-1-background-color': '#E8747C', // The colour of the node’s ith pie chart slice.
-        // 'pie-1-background-size': 'mapData(foo, 0, 10, 0, 100)',
-        // 'pie-2-background-color': '#74CBE8',
-        // 'pie-2-background-size': 'mapData(bar, 0, 10, 0, 100)',
-        // 'pie-3-background-color': '#74E883',
-        // 'pie-3-background-size': 'mapData(baz, 0, 10, 0, 100)' // The size of the node’s ith pie chart slice, measured in percent (e.g. 25% or 25).
-        // // 'pie-i-background-opacity' : .8//The opacity of the node’s ith pie chart slice.
+        height: '6em',
+        'pie-size': '84%', //The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
+        'pie-1-background-color': '#9ef9ff', // The colour of the node’s ith pie chart slice.
+        'pie-1-background-size': 'mapData(submitted, 0, 100, 0, 100)',
+        'pie-2-background-color': '#4ab7ff',
+        'pie-2-background-size': 'mapData(running, 0, 100, 0, 100)',
+        'pie-3-background-color': '#31ff53',
+        'pie-3-background-size': 'mapData(succeeded, 0, 100, 0, 100)', // The size of the node’s ith pie chart slice, measured in percent (e.g. 25% or 25).
+        // 'pie-i-background-opacity' : 0, //The opacity of the node’s ith pie chart slice.
+        'pie-4-background-color': '#ff3a2b',
+        'pie-4-background-size': 'mapData(failed, 0, 100, 0, 100)',
+        'pie-5-background-color': '#d453ff',
+        'pie-5-background-size': 'mapData(subfailed, 0, 100, 0, 100)',
+        'pie-6-background-color': '#fefaff',
+        'pie-6-background-size': 'mapData(expired, 0, 100, 0, 100)',
+        'pie-7-background-color': '#fff138',
+        'pie-7-background-size': 'mapData(queued, 0, 100, 0, 100)',
+        'pie-8-background-color': '#ff3a2b',
+        'pie-8-background-size': 'mapData(retrying, 0, 100, 0, 100)',
+        'pie-9-background-color': '#666',
+        'pie-9-background-size': 'mapData(waiting, 0, 100, 0, 100)',
+        'pie-10-background-color': '#cacaca',
+        'pie-10-background-size': 'mapData(progress, 0, 100, 0, 100)'
       }
     },
     {
@@ -117,7 +121,7 @@ const config = {
         'line-color': edgeOptions.normal.lineColor,
         'target-arrow-color': '#fff',
         opacity: 0.8,
-        'target-distance-from-node': 3
+        'target-distance-from-node': 10
       }
     },
     {
@@ -180,9 +184,15 @@ const config = {
       selector: '.selected',
       style: {
         'background-color': 'yellow',
-        'background-image': './assests/pigeon.svg.png',
+        'background-image': require('@/assets/pigeon.svg.png'),
+        // 'background-image': function(node) {
+        //   let icon = node.data('icon');
+        //   console.log('ICON PATH --> ', icon);
+        //   return require(icon);
+        // }, // TODO
         'background-fit': 'contain contain',
         'background-image-opacity': 0.5,
+        'pie-size': '0%'
       }
     }
     // {
@@ -237,6 +247,7 @@ export default {
       elements.edges.forEach(n => cy.add(n)), console.log('after created');
       console.log('loaded elements: ', elements, cy), (this.loading = false); // remove spinner
       cy.fit();
+      // hierarchical clustering internal
       // cy.elements().hca({
       //   mode: 'threshold',
       //   threshold: 25,
@@ -251,6 +262,7 @@ export default {
       //     }
       //   ]
       // });
+      // hierarchical clustering 
       // cy.elements().hierarchical({
       //   mode: 'regular', // extension mode
       //   threshold: 25, // stopping criterion that affects granularity (#) of clusters
@@ -270,9 +282,9 @@ export default {
         .layout({
           name: 'dagre',
           //  // dagre algo options, uses default value on undefined
-          nodeSep: 100, // the separation between adjacent nodes in the same rank
+          nodeSep: 140, // the separation between adjacent nodes in the same rank
           edgeSep: 30, // the separation between adjacent edges in the same rank
-          rankSep: 100, // the separation between adjacent nodes in the same rank
+          rankSep: 140, // the separation between adjacent nodes in the same rank
           rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right
           minLen: function(edge) {
             return 1;
@@ -283,7 +295,7 @@ export default {
           // general layout options
           fit: true, // whether to fit to viewport
           padding: 30, // fit padding
-          spacingFactor: 1, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
+          spacingFactor: 1.2, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
           padding: 30, // fit padding
           animate: false, // whether to transition the node positions
           animationDuration: 500, // duration of animation in ms if enabled
@@ -292,7 +304,7 @@ export default {
           ready: function() {}, // on layoutready
           stop: function() {} // on layoutstop
         })
-        .run()
+        .run();
       navigator(cytoscape);
       cy.navigator({
         container: '.cytoscape-navigator-overlay',
