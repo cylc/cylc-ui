@@ -11,6 +11,10 @@
       <div class='cytoscape-navigatorView'></div>
       <div class='cytoscape-navigatorOverlay'></div>
     </div>
+    <b id='collapseAll' class='collapseAll' style='cursor: pointer;color: white'>collapse all</b> /
+    <b id='expandAll' class='expandAll' style='cursor: pointer; color: white'>expand all</b> /
+    <!-- <b id='collapseRecursively' class='collapseRecursively' style='cursor: pointer; color: white'>collapse selected recursively</b>
+    <b id='expandRecursively' class='expandRecursively' style='cursor: pointer; color: white' >expand selected recursively</b> -->
     <cytoscape :config='config' :preConfig='preConfig' :afterCreated='afterCreated'>
       <cy-element v-for='def in elements.nodes' :key='`${def.data.id}`' :definition='def'/>
       <cy-element v-for='def in elements.edges' :key='`${def.data.id}`' :definition='def'/>
@@ -262,7 +266,7 @@ export default {
       //     }
       //   ]
       // });
-      // hierarchical clustering 
+      // hierarchical clustering
       // cy.elements().hierarchical({
       //   mode: 'regular', // extension mode
       //   threshold: 25, // stopping criterion that affects granularity (#) of clusters
@@ -381,21 +385,22 @@ export default {
         stackSizeLimit: undefined, // Size limit of undo stack, note that the size of redo stack cannot exceed size of undo stack
         ready: function() {
           // callback when undo-redo is ready
+          this.loading = false; // add spinner
         }
       };
       cy.undoRedo(undoRedoOptions);
       expandCollapse(cytoscape);
       const excoloptions = {
-        layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
-        // layoutBy: {
-        //   name: 'dagre',
-        //   animate: 'end',
-        //   randomize: true,
-        //   fit: true
-        // },
+        // layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
+        layoutBy: {
+          name: 'dagre',
+          animate: 'end',
+          randomize: true,
+          fit: false
+        },
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
-        fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
-        animate: false, // whether to animate on drawing changes you can specify a function too
+        fisheye: false, // whether to perform fisheye view after expand/collapse you can specify a function too
+        animate: true, // whether to animate on drawing changes you can specify a function too
         ready: function() {}, // callback when expand/collapse initialized
         undoable: true, // and if undoRedoExtension exists,
         cueEnabled: false, // Whether cues are enabled
@@ -406,25 +411,48 @@ export default {
         collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
         expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
       };
-      cy.expandCollapse(excoloptions);
+      const expandCollapseOptions = {
+					layoutBy: {
+						name: 'dagre',
+						animate: 'end',
+						randomize: true,
+						fit: false
+					},
+					fisheye: false,
+          animate: true,
+          cueEnabled: false
+      	};
+      cy.expandCollapse(expandCollapseOptions)
+      // cy.expandCollapse(excoloptions)
+      // cy.expandCollapse({
+			// 		layoutBy: {
+			// 			name: 'dagre',
+			// 			animate: 'end',
+			// 			randomize: true,
+			// 			fit: false
+			// 		},
+			// 		fisheye: false,
+			// 		animate: true
+      // 	});
       let api = cy.expandCollapse('get');
-      api.collapseAll();
-      // api.collapse(nodes, excoloptions)
-      // cy.unbind('expandcollapse.beforeexpand');
-      // cy.nodes().bind('expandcollapse.beforeexpand', function(event) {
-      //   if (beforeExpand == null)
-      //       beforeExpand = cy.elements().clone();  // save the graph before the first expand
-      // }); // Triggered before a node is expanded
+      // api.collapseAll();
+      // api.collapse(cy.nodes(), excoloptions)
+      // api.collapse(cy.nodes(), expandCollapseOptions)
+      cy.unbind('expandcollapse.beforeexpand')
+      cy.nodes().bind('expandcollapse.beforeexpand', function(event) {
+        if (beforeExpand == null)
+            beforeExpand = cy.elements().clone();  // save the graph before the first expand
+      }); // Triggered before a node is expanded
 
-      // cy.unbind('expandcollapse.aftercollapse');
-      // cy.nodes().bind('expandcollapse.aftercollapse', function(event) {
-      //   if(beforeExpand != null) {
-      //       cy.elements().remove();
-      //       cy.add(beforeExpand);  // set the graph to original values
-      //       beforeExpand = null;
-      //   }
-      // });
-    }
+      cy.unbind('expandcollapse.aftercollapse');
+      cy.nodes().bind('expandcollapse.aftercollapse', function(event) {
+        if(beforeExpand != null) {
+            cy.elements().remove();
+            cy.add(beforeExpand);  // set the graph to original values
+            beforeExpand = null;
+        }
+      });
+    // }
     // const popperOptions = {
     //     content: 'test data',
     //     renderedPosition: 'bottom',
@@ -455,6 +483,60 @@ export default {
     //     })
     //   }
     //------------------------------------------
+      let ur = cy.undoRedo(); // external (optional) extension which enables undo/redo of expand/collapse
+
+			// cy.expandCollapse({
+			// 		layoutBy: {
+			// 			name: 'dagre',
+			// 			animate: 'end',
+			// 			randomize: true,
+			// 			fit: false
+			// 		},
+			// 		fisheye: false,
+			// 		animate: true
+      // 	});
+      
+      // cy.expandCollapse(excoloptions);
+
+        // document.getElementById('collapseRecursively').addEventListener('click', function (event) {
+        // // cy.on('click', '#collapseRecursively', function(event) {
+        //   console.log('collapseRecursively')
+				// 	ur.do('collapseRecursively', {
+				// 		nodes: cy.$(':selected')
+				// 	});
+				// });
+
+        // document.getElementById('expandRecursively').addEventListener('click', function (event) {
+        // // cy.on('click', '#expandRecursively', function(event) {
+        //   console.log('expandRecursively')
+				// 	ur.do('expandRecursively', {
+				// 		nodes: cy.$(':selected')
+				// 	});
+				// });
+
+        document.getElementById('collapseAll').addEventListener('click', function (event) {
+          console.log('collapseAll')
+        // cy.on('tap', 'collapseAll', function(event) {
+          // this.loading = true; // add spinner
+					ur.do('collapseAll'); // cy.collapseAll(options);
+				});
+
+        document.getElementById('expandAll').addEventListener('click', function (event) {
+          console.log('expandAll')
+        // cy.on('tap', 'expandAll', function(event) {
+					ur.do('expandAll');
+        });
+        
+        document.addEventListener('keydown', function (e){
+					if (e.ctrlKey && e.which == '90') {
+						cy.undoRedo().undo();
+					}
+					else if (e.ctrlKey && e.which == '89') {
+						cy.undoRedo().redo();
+					}
+				}, true )
+    //-------------------------------------------------
+    }
   }
 };
 </script>
