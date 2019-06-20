@@ -1,11 +1,16 @@
+
+<style>
+@import '~@/styles/cytoscape/panzoom.css';
+@import '~@/styles/cytoscape/cytoscape-custom.css';
+</style>
 <template>
   <div id='holder'>
     <sync-loader :loading='loading' :color='color' :size='size' class='spinner'></sync-loader>
-    <!-- <div class='reset'>
-      <v-btn align-center justify-center color='#333' class='v-btn' id='reset-button'>
+    <div class='reset'>
+      <v-btn align-center justify-center color='#222' depressed='true' id='reset-button' class='reset-button'>
         <v-icon id='reset-icon' name='reset-icon' color='white'>mdi-backup-restore</v-icon>
       </v-btn>
-    </div>-->
+    </div>
     <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
       <div class='cytoscape-navigatorView'></div>
@@ -20,22 +25,21 @@
   </div>
 </template>
 
+
 <script>
 /* eslint-disable */
 import cytoscape from 'cytoscape'
 import dagre from 'cytoscape-dagre'
-import coseBilkent from 'cytoscape-cose-bilkent'
 import navigator from 'cytoscape-navigator'
 import panzoom from 'cytoscape-panzoom'
 import expandCollapse from 'cytoscape-expand-collapse'
 import undoRedo from 'cytoscape-undo-redo'
 import popper from 'cytoscape-popper'
-import hierarchical from 'cytoscape-hierarchical'
 import jquery from 'jquery'
 import axios from 'axios'
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 
-const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.3.json'
+const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.4.json'
 const elements = []
 let loading = true
 
@@ -116,19 +120,19 @@ const config = {
     {
       selector: 'edge',
       css: {
-        'width': 5,
+        width: 5,
         'curve-style': 'bezier',
         'target-arrow-shape': 'triangle',
         'line-color': edgeOptions.normal.lineColor,
         'target-arrow-color': '#fff',
-        'opacity': 0.8,
+        opacity: 0.8,
         'target-distance-from-node': 10
       }
     },
     {
       selector: 'edge.selected',
       style: {
-        'width': 10,
+        width: 10,
         lineColor: edgeOptions.selected.lineColor,
         'target-arrow-color': edgeOptions.selected.lineColor
       }
@@ -142,7 +146,7 @@ const config = {
     },
     {
       selector: 'node.semitransp',
-      style: { 'opacity': '0.5' }
+      style: { opacity: '0.5' }
     },
     {
       selector: 'node.selected',
@@ -158,7 +162,7 @@ const config = {
     },
     {
       selector: 'edge.semitransp',
-      style: { 'opacity': '0.2' }
+      style: { opacity: '0.2' }
     },
     {
       selector: 'node.cy-expand-collapse-collapsed-node',
@@ -186,6 +190,11 @@ const config = {
       style: {
         'background-color': 'yellow',
         'background-image': require('@/assets/baseline-donut_large-24px.svg'),
+        // 'background-image': function(node) {
+        //   let path = node.data('icon')
+        //   console.log('ICON PATH --> ', path)
+        //   return path
+        // }, // TODO
         'background-fit': 'contain contain',
         'background-image-opacity': 0.5,
         'pie-size': '0%'
@@ -201,22 +210,43 @@ const config = {
     {
       selector: ':parent',
       style: {
-        'background-opacity': 0.333,
+        'background-opacity': 0.2,
+        'background-image-opacity': 0.2,
+        'background-color': '#b7c0e8'
       }
     },
     // {
-    //   selector: ':child',
+    //   selector: ':parent.selected',
     //   style: {
-    //     'background-opacity': 0.2
+    //     'background-opacity': .35,
+    //     'background-image-opacity': .35,
+    //     'background-color': '333'
     //   }
     // },
     {
-      selector: ':selected',
+      selector: ':child',
       style: {
-        'border-width': 3,
-        'border-color': 'purple'
+        'background-opacity': 0.15,
+        'background-image-opacity': 0.15,
+        'background-color': '#b7c0e8'
       }
     }
+    // {
+    //   selector: ':child.selected',
+    //   style: {
+    //     'background-opacity': 1,
+    //     'background-image-opacity': 1,
+    //     'background-color': '#b7c0e8',
+    //     'opacity': 1
+    //   }
+    // },
+    // {
+    //   selector: ':selected',
+    //   style: {
+    //     'border-width': 3,
+    //     'border-color': 'purple'
+    //   }
+    // }
   ],
   elements: []
 }
@@ -252,18 +282,14 @@ export default {
       // cytoscape: this is the cytoscape constructor
       cytoscape.use(dagre)
       // cytoscape.use(popper)
-      cytoscape.use(coseBilkent)
-      cytoscape.use(hierarchical)
     },
     async afterCreated() {
       console.log('after created')
       const cy = await this.$cytoscape.instance
       const { data: elements } = await axios.get(DATA_URL)
       elements.nodes.forEach(n => cy.add(n))
-      elements.edges.forEach(n => cy.add(n)),
-      console.log('after created')
-      console.log('loaded elements: ', elements, cy),
-      (this.loading = false) // remove spinner
+      elements.edges.forEach(n => cy.add(n)), console.log('after created')
+      console.log('loaded elements: ', elements, cy), (this.loading = false) // remove spinner
       // hierarchical clustering internal
       // cy.elements().hca({
       //   mode: 'threshold',
@@ -295,8 +321,7 @@ export default {
       //     }
       //   ]
       // })
-      cy.elements()
-        .layout({
+      const defaults = {
           name: 'dagre',
           //  // dagre algo options, uses default value on undefined
           nodeSep: 140, // the separation between adjacent nodes in the same rank
@@ -310,21 +335,23 @@ export default {
             return 1
           }, // higher weight edges are generally made shorter and straighter than lower weight edges
           // general layout options
-          fit: false, // whether to fit to viewport
-          padding: 30, // fit padding
+          fit: true, // whether to fit to viewport
+          padding: 150, // fit padding
           spacingFactor: 1.2, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
           animate: false, // whether to transition the node positions
           animationDuration: 500, // duration of animation in ms if enabled
           animationEasing: undefined, // easing of animation if enabled
           boundingBox: undefined, // constrain layout bounds { x1, y1, x2, y2 } or { x1, y1, w, h }
-          ready: function() {cy.fit()}, // on layoutready
+          ready: function() {}, // on layoutready
           stop: function() {} // on layoutstop
-        })
+        }
+      cy.elements()
+        .layout(defaults)
         .run()
       navigator(cytoscape)
       cy.navigator({
         container: '.cytoscape-navigator-overlay',
-        viewLiveFramerate: 0, // set false to update graph pan only on drag end; set 0 to do it instantly set a number (frames per second) to update not more than N times per second
+        viewLiveFramerate: 0, // set false to update graph pan only on drag end set 0 to do it instantly set a number (frames per second) to update not more than N times per second
         thumbnailEventFramerate: 30, // max thumbnail's updates per second triggered by graph updates
         thumbnailLiveFramerate: false, // max thumbnail's updates per second. Set false to disable
         dblClickDelay: 200, // milliseconds
@@ -349,24 +376,20 @@ export default {
         const edge = event.target
         // const data = edge[0]._private.data
         console.log('selected ' + edge.id(), edge.data())
-        // edge.addClass('selected')
+        edge.addClass('selected')
       })
-      // cy.on('click', function(event) {
-      //   // const data = event.target._private
-      //   // console.log('cy event.target', data)
-      //   // var edges = cy.edges()
-      //   // var nodes = cy.nodes()
-      //   // edges.removeClass('selected')
-      //   // edges.removeClass('semitransp')
-      //   // nodes.removeClass('semitransp')
-      //   cy.elements().removeClass('semitransp')
-      //   cy.elements().removeClass('highlight')
-      //   cy.elements().removeClass('selected')
-      // })
-      // cy.on('click', '#reset-button', function(event) {
-      //   console.log('tapped reset')
-      //   cy.fit()
-      // })
+      cy.on('click', function(event) {
+        // const data = event.target._private
+        // console.log('cy event.target', data)
+        // var edges = cy.edges()
+        // var nodes = cy.nodes()
+        // edges.removeClass('selected')
+        // edges.removeClass('semitransp')
+        // nodes.removeClass('semitransp')
+        cy.elements().removeClass('semitransp')
+        cy.elements().removeClass('highlight')
+        cy.elements().removeClass('selected')
+      })
       panzoom(cytoscape)
       let panzoomdefaults = {
         zoomFactor: 0.1, // zoom factor per zoom tick
@@ -384,7 +407,7 @@ export default {
         fitSelector: undefined, // selector of elements to fit
         animateOnFit: function() {
           // whether to animate on fit
-          return true
+          return false
         },
         fitAnimationDuration: 1000 // duration of animation on fit
       }
@@ -403,31 +426,7 @@ export default {
       cy.undoRedo(undoRedoOptions)
       expandCollapse(cytoscape, jquery)
       const expandCollapseOptions = {
-        // layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
-        layoutBy: {
-          name: 'dagre',
-          //  // dagre algo options, uses default value on undefined
-          nodeSep: 140, // the separation between adjacent nodes in the same rank
-          edgeSep: 30, // the separation between adjacent edges in the same rank
-          rankSep: 140, // the separation between adjacent nodes in the same rank
-          rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right
-          minLen: function(edge) {
-            return 1
-          }, // number of ranks to keep between the source and target of the edge
-          edgeWeight: function(edge) {
-            return 1
-          }, // higher weight edges are generally made shorter and straighter than lower weight edges
-          // general layout options
-          fit: false, // whether to fit to viewport
-          spacingFactor: 1.2, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
-          padding: 30, // fit padding
-          animate: false, // whether to transition the node positions
-          animationDuration: 500, // duration of animation in ms if enabled
-          animationEasing: undefined, // easing of animation if enabled
-          boundingBox: undefined, // constrain layout bounds { x1, y1, x2, y2 } or { x1, y1, w, h }
-          ready: function() {}, // on layoutready
-          stop: function() {} // on layoutstop
-        },
+        layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: false, // whether to perform fisheye view after expand/collapse you can specify a function too
         animate: true, // whether to animate on drawing changes you can specify a function too
@@ -441,140 +440,79 @@ export default {
         collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
         expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues,
       }
-      let opts = {
-        layoutBy: {
-						name: "cose-bilkent",
-						animate: "end",
-						randomize: false,
-						fit: false
-					},
-					fisheye: false,
-					animate: true
-      }
       let ur = cy.undoRedo()
       cy.expandCollapse(expandCollapseOptions)
       let api = cy.expandCollapse('get')
-      //  ur.do('expandAll')
-      api.collapseAll();
-    // const popperOptions = {
-    //     content: 'test data',
-    //     renderedPosition: 'bottom',
-    //     renderedDimensions: undefined,
-    //     popper: undefined
-    // }
-    // ,
-    //   async cyUpdate () {
-    //     // new nodes and edges
-    //     const { data: elements } = await axios.get(DATA_URL)
-    //     const cynodes = data.nodes
-    //     const cylinks = data.edges
-    //     // update the cytoscape instance
-    //     this.$cytoscape.instance.then(cy => {
-    //       // remove all elements
-    //       cy.remove(cy.elements())
-    //       // add the new ones
-    //       cy.add(cynodes)
-    //       cy.add(cylinks)
-    //       // inside the cytoscape callback we lose the component this, we can use `that` instead if needed
-    //       const that = this
-    //       // click and double click (simulated) over the nodes
-    //       cy.on('tap', 'node', function (event) {
-    //         const data = event.target.data()
-    //         // if you are using vuex you can dispatch your events this way
-    //         that.$store.dispatch('sectors/select', { data })
-    //       })
-    //     })
-    //   }
-    //------------------------------------------
-				document.getElementById('collapseAll').addEventListener('click', function () {
+      api.collapseAll()
+      // const popperOptions = {
+      //     content: 'test data',
+      //     renderedPosition: 'bottom',
+      //     renderedDimensions: undefined,
+      //     popper: undefined
+      // }
+      //   async cyUpdate () {
+      //     // new nodes and edges
+      //     const { data: elements } = await axios.get(DATA_URL)
+      //     const cynodes = data.nodes
+      //     const cylinks = data.edges
+      //     // update the cytoscape instance
+      //     this.$cytoscape.instance.then(cy => {
+      //       // remove all elements
+      //       cy.remove(cy.elements())
+      //       // add the new ones
+      //       cy.add(cynodes)
+      //       cy.add(cylinks)
+      //       // inside the cytoscape callback we lose the component this, we can use `that` instead if needed
+      //       const that = this
+      //       // click and double click (simulated) over the nodes
+      //       cy.on('tap', 'node', function (event) {
+      //         const data = event.target.data()
+      //         // if you are using vuex you can dispatch your events this way
+      //         that.$store.dispatch('sectors/select', { data })
+      //       })
+      //     })
+      //   }
+      //------------------------------------------
+      document
+        .getElementById('reset-button')
+        .addEventListener('click', function(event) {
+          console.log('tapped reset')
+          cy.elements()
+        .layout(defaults)
+        .run()
+        })
+
+      document
+        .getElementById('collapseAll')
+        .addEventListener('click', function() {
           console.log('collapseAll')
           ur.do('collapseAll')
-					// api.collapseAll()
-				});
+          cy.elements().removeClass('semitransp')
+          cy.elements().removeClass('highlight')
+          cy.elements().removeClass('selected')
+        })
 
-				document.getElementById('expandAll').addEventListener('click', function () {
+      document
+        .getElementById('expandAll')
+        .addEventListener('click', function() {
           console.log('expandAll')
           ur.do('expandAll')
-					// api.expandAll()
-				})
-        
-        document.addEventListener('keydown', function (e){
-					if (e.ctrlKey && e.which == '90') {
-						cy.undoRedo().undo()
-					}
-					else if (e.ctrlKey && e.which == '89') {
-						cy.undoRedo().redo()
-					}
-        },true )
-        
-    //-------------------------------------------------
+        })
+
+      document.addEventListener(
+        'keydown',
+        function(event) {
+          if (event.ctrlKey && event.which == '90') {
+            cy.undoRedo().undo()
+          } else if (event.ctrlKey && event.which == '89') {
+            cy.undoRedo().redo()
+          }
+        },
+        true
+      )
     }
   }
 }
 </script>
 
-<style>
-@import '~@/styles/cytoscape/panzoom.css';
-#holder {
-  width: 100%;
-  height: 800px;
-  background-color: #222;
-  z-index: 10;
-}
-
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #2c3e50;
-  margin-top: 0;
-  width: 100%;
-}
-
-.cytoscape-navigator-overlay {
-  position: absolute;
-  border: 1px solid #fff;
-  background: #222;
-  z-index: 99999;
-  width: 200px;
-  height: 150px;
-  bottom: 83px;
-  right: -1px;
-  overflow: hidden;
-}
-
-.cytoscape-navigatorView {
-  border: 2px solid yellow;
-  border-radius: 1px;
-  background-color: #0c78ff;
-  opacity: 0.4;
-  /* cursor: move; */
-}
-
-.spinner {
-  position: fixed;
-  top: 50%;
-  left: 54%;
-}
-
-.collapsed-child {
-  opacity: 0;
-  display: none
-  }
-
-/* .reset {
-  position: absolute;
-  bottom: 83px;
-  left: 1px;
-} */
-
-/* #reset-button {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: centre;
-  color: #2c3e50;
-} */
-</style>
 
