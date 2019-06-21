@@ -57,6 +57,37 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: centre;
-  color: #2c3e50;
+  color: #fff;
   z-index: 99999;
+  height: 40px;
+}
+
+.cosebilkent-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #fff;
+  z-index: 99999;
+  height: 40px;
+}
+
+.klay-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #fff;
+  z-index: 99999;
+  height: 40px;
+}
+
+.hierarchical-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #fff;
+  z-index: 99999;
+  height: 40px;
 }
