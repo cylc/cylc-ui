@@ -17,4 +17,4 @@ requireComponent.keys().forEach(fileName => {
   Vue.component(componentName, componentConfig.default || componentConfig)
 })
 
-Vue.component(VueAdsTable)
+Vue.component('vue-ads-table', VueAdsTable)

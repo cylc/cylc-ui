@@ -1,10 +1,12 @@
 import store from '@/store/'
 import Family from '@/model/Family.model'
+import VueAdsTableTreeTransformer from '@/transformers/vueadstabletree.transformer';
 
 export class SuiteService {
 
   constructor(currentTaskIndex = 0) {
     this.currentTaskIndex = currentTaskIndex;
+    this.transformer = new VueAdsTableTreeTransformer();
   }
 
   getSuites() {
@@ -16,9 +18,17 @@ export class SuiteService {
   getSuiteTasks(suiteId) {
     const mockedFamilyProxies = SuiteService.MOCKED_SUITE_TASKS[this.currentTaskIndex].data.familyProxies;
     const familyProxies = mockedFamilyProxies.map((mockedFamilyProxy) => {
-      return new Family(mockedFamilyProxy.name, mockedFamilyProxy.cyclePoint, mockedFamilyProxy.state, mockedFamilyProxy.depth, mockedFamilyProxy.childTasks);
+      return new Family(mockedFamilyProxy.name, mockedFamilyProxy.cyclePoint, mockedFamilyProxy.state, mockedFamilyProxy.depth, mockedFamilyProxy.childTasks, mockedFamilyProxy.childFamilies);
     });
     return store.dispatch('suites/setTasks', familyProxies);
+  }
+
+  // suppressing because it is not used in the mock
+  // eslint-disable-next-line no-unused-vars
+  fetchSuiteTree(suiteId) {
+    const mockedFamilyProxies = SuiteService.MOCKED_SUITE_TASKS[this.currentTaskIndex % SuiteService.MOCKED_SUITE_TASKS.length].data.familyProxies;
+    const familyProxies = this.transformer.transform(mockedFamilyProxies);
+    return store.dispatch('suites/setTree', familyProxies);
   }
 
   // Mocked data, recorded with vcrpy
@@ -70,6 +80,9 @@ export class SuiteService {
             "childTasks":[
               {
                 "id":"kinow/five/20130808T0000Z/prep",
+                "task":{
+                  "name":"prep"
+                },
                 "state":"held",
                 "latestMessage":"",
                 "depth":1,
@@ -79,6 +92,9 @@ export class SuiteService {
               },
               {
                 "id":"kinow/five/20130808T0000Z/foo",
+                "task":{
+                  "name":"foo"
+                },
                 "state":"held",
                 "latestMessage":"",
                 "depth":1,
@@ -88,6 +104,9 @@ export class SuiteService {
               },
               {
                 "id":"kinow/five/20130808T0000Z/bar",
+                "task":{
+                  "name":"bar"
+                },
                 "state":"held",
                 "latestMessage":"",
                 "depth":1,
@@ -109,21 +128,21 @@ export class SuiteService {
           {
             "id":"kinow/five",
             "name":"five",
-            "status":"running to stop at 20130812T0000Z",
+            "status":"held",
             "stateTotals":{
               "runahead":0,
-              "waiting":1,
-              "held":0,
+              "waiting":0,
+              "held":3,
               "queued":0,
               "expired":0,
-              "ready":1,
+              "ready":0,
               "submitFailed":0,
               "submitRetrying":0,
               "submitted":0,
               "retrying":0,
               "running":0,
               "failed":0,
-              "succeeded":1
+              "succeeded":0
             },
             "treeDepth":1
           }
@@ -132,48 +151,39 @@ export class SuiteService {
           {
             "name":"root",
             "cyclePoint":"20130808T0000Z",
-            "state":"ready",
+            "state":"held",
             "depth":0,
             "childTasks":[
               {
                 "id":"kinow/five/20130808T0000Z/prep",
-                "state":"succeeded",
-                "latestMessage":"succeeded",
+                "task":{
+                  "name":"prep"
+                },
+                "state":"held",
+                "latestMessage":"",
                 "depth":1,
                 "jobs":[
-                  {
-                    "id":"kinow/five/20130808T0000Z/prep/01",
-                    "host":"localhost",
-                    "batchSysName":"background",
-                    "batchSysJobId":"11841",
-                    "submittedTime":"2019-05-29T23:21:37Z",
-                    "startedTime":"2019-05-29T23:21:37Z",
-                    "finishedTime":"2019-05-29T23:21:37Z",
-                    "submitNum":1
-                  }
+
                 ]
               },
               {
                 "id":"kinow/five/20130808T0000Z/foo",
-                "state":"ready",
+                "task":{
+                  "name":"foo"
+                },
+                "state":"held",
                 "latestMessage":"",
                 "depth":1,
                 "jobs":[
-                  {
-                    "id":"kinow/five/20130808T0000Z/foo/01",
-                    "host":"localhost",
-                    "batchSysName":"background",
-                    "batchSysJobId":"",
-                    "submittedTime":"",
-                    "startedTime":"",
-                    "finishedTime":"",
-                    "submitNum":1
-                  }
+
                 ]
               },
               {
                 "id":"kinow/five/20130808T0000Z/bar",
-                "state":"waiting",
+                "task":{
+                  "name":"bar"
+                },
+                "state":"held",
                 "latestMessage":"",
                 "depth":1,
                 "jobs":[
@@ -208,7 +218,7 @@ export class SuiteService {
               "retrying":0,
               "running":0,
               "failed":0,
-              "succeeded":4
+              "succeeded":1
             },
             "treeDepth":1
           }
@@ -217,96 +227,47 @@ export class SuiteService {
           {
             "name":"root",
             "cyclePoint":"20130808T0000Z",
-            "state":"succeeded",
-            "depth":0,
-            "childTasks":[
-              {
-                "id":"kinow/five/20130808T0000Z/foo",
-                "state":"succeeded",
-                "latestMessage":"succeeded",
-                "depth":1,
-                "jobs":[
-                  {
-                    "id":"kinow/five/20130808T0000Z/foo/01",
-                    "host":"localhost",
-                    "batchSysName":"background",
-                    "batchSysJobId":"11883",
-                    "submittedTime":"2019-05-29T23:21:40Z",
-                    "startedTime":"2019-05-29T23:21:40Z",
-                    "finishedTime":"2019-05-29T23:21:40Z",
-                    "submitNum":1
-                  }
-                ]
-              },
-              {
-                "id":"kinow/five/20130808T0000Z/bar",
-                "state":"succeeded",
-                "latestMessage":"succeeded",
-                "depth":1,
-                "jobs":[
-                  {
-                    "id":"kinow/five/20130808T0000Z/bar/01",
-                    "host":"localhost",
-                    "batchSysName":"background",
-                    "batchSysJobId":"11923",
-                    "submittedTime":"2019-05-29T23:21:43Z",
-                    "startedTime":"2019-05-29T23:21:43Z",
-                    "finishedTime":"2019-05-29T23:21:43Z",
-                    "submitNum":1
-                  }
-                ]
-              }
-            ],
-            "childFamilies":[
-
-            ]
-          },
-          {
-            "name":"root",
-            "cyclePoint":"20130808T1200Z",
             "state":"waiting",
             "depth":0,
             "childTasks":[
               {
-                "id":"kinow/five/20130808T1200Z/foo",
+                "id":"kinow/five/20130808T0000Z/prep",
+                "task":{
+                  "name":"prep"
+                },
                 "state":"succeeded",
                 "latestMessage":"succeeded",
                 "depth":1,
                 "jobs":[
                   {
-                    "id":"kinow/five/20130808T1200Z/foo/01",
+                    "id":"kinow/five/20130808T0000Z/prep/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"11924",
-                    "submittedTime":"2019-05-29T23:21:43Z",
-                    "startedTime":"2019-05-29T23:21:43Z",
-                    "finishedTime":"2019-05-29T23:21:43Z",
+                    "batchSysJobId":"15152",
+                    "submittedTime":"2019-06-05T04:04:33Z",
+                    "startedTime":"2019-06-05T04:04:33Z",
+                    "finishedTime":"2019-06-05T04:04:33Z",
                     "submitNum":1
                   }
                 ]
               },
               {
-                "id":"kinow/five/20130808T1200Z/bar",
+                "id":"kinow/five/20130808T0000Z/foo",
+                "task":{
+                  "name":"foo"
+                },
                 "state":"waiting",
                 "latestMessage":"",
                 "depth":1,
                 "jobs":[
 
                 ]
-              }
-            ],
-            "childFamilies":[
-
-            ]
-          },
-          {
-            "name":"root",
-            "cyclePoint":"20130809T0000Z",
-            "state":"waiting",
-            "depth":0,
-            "childTasks":[
+              },
               {
-                "id":"kinow/five/20130809T0000Z/foo",
+                "id":"kinow/five/20130808T0000Z/bar",
+                "task":{
+                  "name":"bar"
+                },
                 "state":"waiting",
                 "latestMessage":"",
                 "depth":1,
@@ -342,6 +303,155 @@ export class SuiteService {
               "retrying":0,
               "running":2,
               "failed":0,
+              "succeeded":2
+            },
+            "treeDepth":1
+          }
+        ],
+        "familyProxies":[
+          {
+            "name":"root",
+            "cyclePoint":"20130808T0000Z",
+            "state":"running",
+            "depth":0,
+            "childTasks":[
+              {
+                "id":"kinow/five/20130808T0000Z/foo",
+                "task":{
+                  "name":"foo"
+                },
+                "state":"succeeded",
+                "latestMessage":"succeeded",
+                "depth":1,
+                "jobs":[
+                  {
+                    "id":"kinow/five/20130808T0000Z/foo/01",
+                    "host":"localhost",
+                    "batchSysName":"background",
+                    "batchSysJobId":"15191",
+                    "submittedTime":"2019-06-05T04:04:36Z",
+                    "startedTime":"2019-06-05T04:04:36Z",
+                    "finishedTime":"2019-06-05T04:04:36Z",
+                    "submitNum":1
+                  }
+                ]
+              },
+              {
+                "id":"kinow/five/20130808T0000Z/bar",
+                "task":{
+                  "name":"bar"
+                },
+                "state":"running",
+                "latestMessage":"started",
+                "depth":1,
+                "jobs":[
+                  {
+                    "id":"kinow/five/20130808T0000Z/bar/01",
+                    "host":"localhost",
+                    "batchSysName":"background",
+                    "batchSysJobId":"15231",
+                    "submittedTime":"2019-06-05T04:04:39Z",
+                    "startedTime":"2019-06-05T04:04:39Z",
+                    "finishedTime":"",
+                    "submitNum":1
+                  }
+                ]
+              }
+            ],
+            "childFamilies":[
+
+            ]
+          },
+          {
+            "name":"root",
+            "cyclePoint":"20130808T1200Z",
+            "state":"running",
+            "depth":0,
+            "childTasks":[
+              {
+                "id":"kinow/five/20130808T1200Z/bar",
+                "task":{
+                  "name":"bar"
+                },
+                "state":"waiting",
+                "latestMessage":"",
+                "depth":1,
+                "jobs":[
+
+                ]
+              },
+              {
+                "id":"kinow/five/20130808T1200Z/foo",
+                "task":{
+                  "name":"foo"
+                },
+                "state":"running",
+                "latestMessage":"started",
+                "depth":1,
+                "jobs":[
+                  {
+                    "id":"kinow/five/20130808T1200Z/foo/01",
+                    "host":"localhost",
+                    "batchSysName":"background",
+                    "batchSysJobId":"15232",
+                    "submittedTime":"2019-06-05T04:04:39Z",
+                    "startedTime":"2019-06-05T04:04:39Z",
+                    "finishedTime":"",
+                    "submitNum":1
+                  }
+                ]
+              }
+            ],
+            "childFamilies":[
+
+            ]
+          },
+          {
+            "name":"root",
+            "cyclePoint":"20130809T0000Z",
+            "state":"waiting",
+            "depth":0,
+            "childTasks":[
+              {
+                "id":"kinow/five/20130809T0000Z/foo",
+                "task":{
+                  "name":"foo"
+                },
+                "state":"waiting",
+                "latestMessage":"",
+                "depth":1,
+                "jobs":[
+
+                ]
+              }
+            ],
+            "childFamilies":[
+
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "data":{
+        "workflows":[
+          {
+            "id":"kinow/five",
+            "name":"five",
+            "status":"running to stop at 20130812T0000Z",
+            "stateTotals":{
+              "runahead":0,
+              "waiting":0,
+              "held":0,
+              "queued":0,
+              "expired":0,
+              "ready":2,
+              "submitFailed":0,
+              "submitRetrying":0,
+              "submitted":0,
+              "retrying":0,
+              "running":0,
+              "failed":0,
               "succeeded":6
             },
             "treeDepth":1
@@ -375,11 +485,14 @@ export class SuiteService {
           {
             "name":"root",
             "cyclePoint":"20130809T0000Z",
-            "state":"running",
+            "state":"ready",
             "depth":0,
             "childTasks":[
               {
                 "id":"kinow/five/20130809T0000Z/foo",
+                "task":{
+                  "name":"foo"
+                },
                 "state":"succeeded",
                 "latestMessage":"succeeded",
                 "depth":1,
@@ -388,27 +501,30 @@ export class SuiteService {
                     "id":"kinow/five/20130809T0000Z/foo/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"11996",
-                    "submittedTime":"2019-05-29T23:21:46Z",
-                    "startedTime":"2019-05-29T23:21:46Z",
-                    "finishedTime":"2019-05-29T23:21:46Z",
+                    "batchSysJobId":"15304",
+                    "submittedTime":"2019-06-05T04:04:42Z",
+                    "startedTime":"2019-06-05T04:04:42Z",
+                    "finishedTime":"2019-06-05T04:04:42Z",
                     "submitNum":1
                   }
                 ]
               },
               {
                 "id":"kinow/five/20130809T0000Z/bar",
-                "state":"running",
-                "latestMessage":"started",
+                "task":{
+                  "name":"bar"
+                },
+                "state":"ready",
+                "latestMessage":"",
                 "depth":1,
                 "jobs":[
                   {
                     "id":"kinow/five/20130809T0000Z/bar/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"12067",
-                    "submittedTime":"2019-05-29T23:21:49Z",
-                    "startedTime":"2019-05-29T23:21:49Z",
+                    "batchSysJobId":"",
+                    "submittedTime":"",
+                    "startedTime":"",
                     "finishedTime":"",
                     "submitNum":1
                   }
@@ -422,54 +538,28 @@ export class SuiteService {
           {
             "name":"root",
             "cyclePoint":"20130809T1200Z",
-            "state":"running",
+            "state":"ready",
             "depth":0,
             "childTasks":[
               {
-                "id":"kinow/five/20130809T1200Z/bar",
-                "state":"waiting",
-                "latestMessage":"",
-                "depth":1,
-                "jobs":[
-
-                ]
-              },
-              {
                 "id":"kinow/five/20130809T1200Z/foo",
-                "state":"running",
-                "latestMessage":"started",
+                "task":{
+                  "name":"foo"
+                },
+                "state":"ready",
+                "latestMessage":"",
                 "depth":1,
                 "jobs":[
                   {
                     "id":"kinow/five/20130809T1200Z/foo/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"12068",
-                    "submittedTime":"2019-05-29T23:21:49Z",
-                    "startedTime":"2019-05-29T23:21:49Z",
+                    "batchSysJobId":"",
+                    "submittedTime":"",
+                    "startedTime":"",
                     "finishedTime":"",
                     "submitNum":1
                   }
-                ]
-              }
-            ],
-            "childFamilies":[
-
-            ]
-          },
-          {
-            "name":"root",
-            "cyclePoint":"20130810T0000Z",
-            "state":"waiting",
-            "depth":0,
-            "childTasks":[
-              {
-                "id":"kinow/five/20130810T0000Z/foo",
-                "state":"waiting",
-                "latestMessage":"",
-                "depth":1,
-                "jobs":[
-
                 ]
               }
             ],
@@ -489,11 +579,11 @@ export class SuiteService {
             "status":"running to stop at 20130812T0000Z",
             "stateTotals":{
               "runahead":0,
-              "waiting":0,
+              "waiting":2,
               "held":0,
               "queued":0,
               "expired":0,
-              "ready":2,
+              "ready":0,
               "submitFailed":0,
               "submitRetrying":0,
               "submitted":0,
@@ -548,50 +638,44 @@ export class SuiteService {
             "state":"succeeded",
             "depth":0,
             "childTasks":[
-
-            ],
-            "childFamilies":[
-
-            ]
-          },
-          {
-            "name":"root",
-            "cyclePoint":"20130810T0000Z",
-            "state":"ready",
-            "depth":0,
-            "childTasks":[
               {
-                "id":"kinow/five/20130810T0000Z/foo",
+                "id":"kinow/five/20130809T1200Z/foo",
+                "task":{
+                  "name":"foo"
+                },
                 "state":"succeeded",
                 "latestMessage":"succeeded",
                 "depth":1,
                 "jobs":[
                   {
-                    "id":"kinow/five/20130810T0000Z/foo/01",
+                    "id":"kinow/five/20130809T1200Z/foo/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"12140",
-                    "submittedTime":"2019-05-29T23:21:52Z",
-                    "startedTime":"2019-05-29T23:21:52Z",
-                    "finishedTime":"2019-05-29T23:21:52Z",
+                    "batchSysJobId":"15376",
+                    "submittedTime":"2019-06-05T04:04:45Z",
+                    "startedTime":"2019-06-05T04:04:45Z",
+                    "finishedTime":"2019-06-05T04:04:45Z",
                     "submitNum":1
                   }
                 ]
               },
               {
-                "id":"kinow/five/20130810T0000Z/bar",
-                "state":"ready",
-                "latestMessage":"",
+                "id":"kinow/five/20130809T1200Z/bar",
+                "task":{
+                  "name":"bar"
+                },
+                "state":"succeeded",
+                "latestMessage":"succeeded",
                 "depth":1,
                 "jobs":[
                   {
-                    "id":"kinow/five/20130810T0000Z/bar/01",
+                    "id":"kinow/five/20130809T1200Z/bar/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"",
-                    "submittedTime":"",
-                    "startedTime":"",
-                    "finishedTime":"",
+                    "batchSysJobId":"15449",
+                    "submittedTime":"2019-06-05T04:04:48Z",
+                    "startedTime":"2019-06-05T04:04:48Z",
+                    "finishedTime":"2019-06-05T04:04:48Z",
                     "submitNum":1
                   }
                 ]
@@ -603,26 +687,64 @@ export class SuiteService {
           },
           {
             "name":"root",
+            "cyclePoint":"20130810T0000Z",
+            "state":"waiting",
+            "depth":0,
+            "childTasks":[
+              {
+                "id":"kinow/five/20130810T0000Z/foo",
+                "task":{
+                  "name":"foo"
+                },
+                "state":"succeeded",
+                "latestMessage":"succeeded",
+                "depth":1,
+                "jobs":[
+                  {
+                    "id":"kinow/five/20130810T0000Z/foo/01",
+                    "host":"localhost",
+                    "batchSysName":"background",
+                    "batchSysJobId":"15450",
+                    "submittedTime":"2019-06-05T04:04:48Z",
+                    "startedTime":"2019-06-05T04:04:48Z",
+                    "finishedTime":"2019-06-05T04:04:48Z",
+                    "submitNum":1
+                  }
+                ]
+              },
+              {
+                "id":"kinow/five/20130810T0000Z/bar",
+                "task":{
+                  "name":"bar"
+                },
+                "state":"waiting",
+                "latestMessage":"",
+                "depth":1,
+                "jobs":[
+
+                ]
+              }
+            ],
+            "childFamilies":[
+
+            ]
+          },
+          {
+            "name":"root",
             "cyclePoint":"20130810T1200Z",
-            "state":"ready",
+            "state":"waiting",
             "depth":0,
             "childTasks":[
               {
                 "id":"kinow/five/20130810T1200Z/foo",
-                "state":"ready",
+                "task":{
+                  "name":"foo"
+                },
+                "state":"waiting",
                 "latestMessage":"",
                 "depth":1,
                 "jobs":[
-                  {
-                    "id":"kinow/five/20130810T1200Z/foo/01",
-                    "host":"localhost",
-                    "batchSysName":"background",
-                    "batchSysJobId":"",
-                    "submittedTime":"",
-                    "startedTime":"",
-                    "finishedTime":"",
-                    "submitNum":1
-                  }
+
                 ]
               }
             ],
@@ -651,9 +773,9 @@ export class SuiteService {
               "submitRetrying":0,
               "submitted":0,
               "retrying":0,
-              "running":0,
+              "running":2,
               "failed":0,
-              "succeeded":14
+              "succeeded":12
             },
             "treeDepth":1
           }
@@ -722,11 +844,14 @@ export class SuiteService {
           {
             "name":"root",
             "cyclePoint":"20130810T1200Z",
-            "state":"succeeded",
+            "state":"running",
             "depth":0,
             "childTasks":[
               {
                 "id":"kinow/five/20130810T1200Z/foo",
+                "task":{
+                  "name":"foo"
+                },
                 "state":"succeeded",
                 "latestMessage":"succeeded",
                 "depth":1,
@@ -735,28 +860,31 @@ export class SuiteService {
                     "id":"kinow/five/20130810T1200Z/foo/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"12212",
-                    "submittedTime":"2019-05-29T23:21:55Z",
-                    "startedTime":"2019-05-29T23:21:55Z",
-                    "finishedTime":"2019-05-29T23:21:55Z",
+                    "batchSysJobId":"15523",
+                    "submittedTime":"2019-06-05T04:04:51Z",
+                    "startedTime":"2019-06-05T04:04:51Z",
+                    "finishedTime":"2019-06-05T04:04:51Z",
                     "submitNum":1
                   }
                 ]
               },
               {
                 "id":"kinow/five/20130810T1200Z/bar",
-                "state":"succeeded",
-                "latestMessage":"succeeded",
+                "task":{
+                  "name":"bar"
+                },
+                "state":"running",
+                "latestMessage":"started",
                 "depth":1,
                 "jobs":[
                   {
                     "id":"kinow/five/20130810T1200Z/bar/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"12283",
-                    "submittedTime":"2019-05-29T23:21:58Z",
-                    "startedTime":"2019-05-29T23:21:58Z",
-                    "finishedTime":"2019-05-29T23:21:58Z",
+                    "batchSysJobId":"15594",
+                    "submittedTime":"2019-06-05T04:04:54Z",
+                    "startedTime":"2019-06-05T04:04:54Z",
+                    "finishedTime":"",
                     "submitNum":1
                   }
                 ]
@@ -769,34 +897,40 @@ export class SuiteService {
           {
             "name":"root",
             "cyclePoint":"20130811T0000Z",
-            "state":"waiting",
+            "state":"running",
             "depth":0,
             "childTasks":[
               {
+                "id":"kinow/five/20130811T0000Z/bar",
+                "task":{
+                  "name":"bar"
+                },
+                "state":"waiting",
+                "latestMessage":"",
+                "depth":1,
+                "jobs":[
+
+                ]
+              },
+              {
                 "id":"kinow/five/20130811T0000Z/foo",
-                "state":"succeeded",
-                "latestMessage":"succeeded",
+                "task":{
+                  "name":"foo"
+                },
+                "state":"running",
+                "latestMessage":"started",
                 "depth":1,
                 "jobs":[
                   {
                     "id":"kinow/five/20130811T0000Z/foo/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"12284",
-                    "submittedTime":"2019-05-29T23:21:58Z",
-                    "startedTime":"2019-05-29T23:21:58Z",
-                    "finishedTime":"2019-05-29T23:21:58Z",
+                    "batchSysJobId":"15595",
+                    "submittedTime":"2019-06-05T04:04:54Z",
+                    "startedTime":"2019-06-05T04:04:54Z",
+                    "finishedTime":"",
                     "submitNum":1
                   }
-                ]
-              },
-              {
-                "id":"kinow/five/20130811T0000Z/bar",
-                "state":"waiting",
-                "latestMessage":"",
-                "depth":1,
-                "jobs":[
-
                 ]
               }
             ],
@@ -812,6 +946,9 @@ export class SuiteService {
             "childTasks":[
               {
                 "id":"kinow/five/20130811T1200Z/foo",
+                "task":{
+                  "name":"foo"
+                },
                 "state":"waiting",
                 "latestMessage":"",
                 "depth":1,
@@ -836,16 +973,16 @@ export class SuiteService {
             "status":"running to stop at 20130812T0000Z",
             "stateTotals":{
               "runahead":0,
-              "waiting":2,
+              "waiting":0,
               "held":0,
               "queued":0,
               "expired":0,
-              "ready":0,
+              "ready":2,
               "submitFailed":0,
               "submitRetrying":0,
               "submitted":0,
               "retrying":0,
-              "running":2,
+              "running":0,
               "failed":0,
               "succeeded":16
             },
@@ -940,11 +1077,14 @@ export class SuiteService {
           {
             "name":"root",
             "cyclePoint":"20130811T1200Z",
-            "state":"running",
+            "state":"ready",
             "depth":0,
             "childTasks":[
               {
                 "id":"kinow/five/20130811T1200Z/foo",
+                "task":{
+                  "name":"foo"
+                },
                 "state":"succeeded",
                 "latestMessage":"succeeded",
                 "depth":1,
@@ -953,27 +1093,30 @@ export class SuiteService {
                     "id":"kinow/five/20130811T1200Z/foo/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"12356",
-                    "submittedTime":"2019-05-29T23:22:01Z",
-                    "startedTime":"2019-05-29T23:22:01Z",
-                    "finishedTime":"2019-05-29T23:22:01Z",
+                    "batchSysJobId":"15667",
+                    "submittedTime":"2019-06-05T04:04:57Z",
+                    "startedTime":"2019-06-05T04:04:57Z",
+                    "finishedTime":"2019-06-05T04:04:57Z",
                     "submitNum":1
                   }
                 ]
               },
               {
                 "id":"kinow/five/20130811T1200Z/bar",
-                "state":"running",
-                "latestMessage":"started",
+                "task":{
+                  "name":"bar"
+                },
+                "state":"ready",
+                "latestMessage":"",
                 "depth":1,
                 "jobs":[
                   {
                     "id":"kinow/five/20130811T1200Z/bar/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"12429",
-                    "submittedTime":"2019-05-29T23:22:04Z",
-                    "startedTime":"2019-05-29T23:22:04Z",
+                    "batchSysJobId":"",
+                    "submittedTime":"",
+                    "startedTime":"",
                     "finishedTime":"",
                     "submitNum":1
                   }
@@ -987,54 +1130,28 @@ export class SuiteService {
           {
             "name":"root",
             "cyclePoint":"20130812T0000Z",
-            "state":"running",
+            "state":"ready",
             "depth":0,
             "childTasks":[
               {
-                "id":"kinow/five/20130812T0000Z/bar",
-                "state":"waiting",
-                "latestMessage":"",
-                "depth":1,
-                "jobs":[
-
-                ]
-              },
-              {
                 "id":"kinow/five/20130812T0000Z/foo",
-                "state":"running",
-                "latestMessage":"started",
+                "task":{
+                  "name":"foo"
+                },
+                "state":"ready",
+                "latestMessage":"",
                 "depth":1,
                 "jobs":[
                   {
                     "id":"kinow/five/20130812T0000Z/foo/01",
                     "host":"localhost",
                     "batchSysName":"background",
-                    "batchSysJobId":"12430",
-                    "submittedTime":"2019-05-29T23:22:04Z",
-                    "startedTime":"2019-05-29T23:22:04Z",
+                    "batchSysJobId":"",
+                    "submittedTime":"",
+                    "startedTime":"",
                     "finishedTime":"",
                     "submitNum":1
                   }
-                ]
-              }
-            ],
-            "childFamilies":[
-
-            ]
-          },
-          {
-            "name":"root",
-            "cyclePoint":"20130812T1200Z",
-            "state":"waiting",
-            "depth":0,
-            "childTasks":[
-              {
-                "id":"kinow/five/20130812T1200Z/foo",
-                "state":"waiting",
-                "latestMessage":"",
-                "depth":1,
-                "jobs":[
-
                 ]
               }
             ],

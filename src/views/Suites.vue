@@ -107,7 +107,9 @@ export default {
         text: 'Actions',
         value: 'actions'
       }
-    ]
+    ],
+    // TODO: page polling, for the time being until we have websockets/graphql subscriptions
+    polling: null
   }),
   computed: {
     // namespace: module suites, and property suites, hence these repeated tokens...
@@ -116,6 +118,13 @@ export default {
   },
   beforeCreate() {
     suiteService.getSuites()
+    // TODO: to be replaced by websockets
+    this.polling = setInterval(() => {
+      suiteService.getSuites()
+    }, 5000)
+  },
+  beforeDestroy() {
+    clearInterval(this.polling)
   },
   methods: {
     viewSuite(suite) {
