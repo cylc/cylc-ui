@@ -66,9 +66,10 @@
 </template>
 
 <script>
-import { SuiteService } from '@/services/suite.service'
+import { SuiteService } from 'suite-service'
 import { mapState } from 'vuex'
 
+const suiteService = new SuiteService();
 
 export default {
   metaInfo () {
@@ -114,7 +115,7 @@ export default {
     ...mapState(['isLoading'])
   },
   beforeCreate() {
-    SuiteService.getSuites()
+    suiteService.getSuites()
   },
   methods: {
     viewSuite(suite) {

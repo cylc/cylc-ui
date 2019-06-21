@@ -44,10 +44,11 @@
                 slot="items"
                 slot-scope="{ item }"
             >
-              <td>{{ item.id }}</td>
               <td>{{ item.name }}</td>
-              <td>{{ item.meanElapsedTime }}</td>
-              <td>{{ item.namespace }}</td>
+              <td>{{ item.state }}</td>
+              <td>{{ item.host }}</td>
+              <td>{{ item.jobId }}</td>
+              <td>{{ item.latestMessage }}</td>
               <td>{{ item.depth }}</td>
             </template>
           </v-data-table>
@@ -58,8 +59,10 @@
 </template>
 
 <script>
-  import {SuiteService} from '@/services/suite.service'
+  import { SuiteService } from 'suite-service'
   import {mapState} from 'vuex'
+
+  const suiteService = new SuiteService();
 
   export default {
     metaInfo() {
@@ -74,23 +77,28 @@
       headers: [
         {
           sortable: true,
-          text: 'ID',
-          value: 'id'
-        },
-        {
-          sortable: true,
-          text: 'Name',
+          text: 'Task',
           value: 'name'
         },
         {
-          sortable: false,
-          text: 'Elapsed Time',
-          value: 'meanElapsedTime'
+          sortable: true,
+          text: 'State',
+          value: 'state'
+        },
+        {
+          sortable: true,
+          text: 'Host',
+          value: 'host'
         },
         {
           sortable: false,
-          text: 'Namespace',
-          value: 'namespace'
+          text: 'Job ID',
+          value: 'jobId'
+        },
+        {
+          sortable: false,
+          text: 'Latest Message',
+          value: 'latestMessage'
         },
         {
           sortable: false,
@@ -105,20 +113,8 @@
       ...mapState(['isLoading'])
     },
     beforeCreate() {
-      // TBD: normally here we would have an ID, then query by ID...
-      SuiteService.getSuites().then(() => {
-        const suites = this.$store.getters['suites/suites'];
-        for (let i = 0; i < suites.length; i++) {
-          if (suites[i].name === this.$route.params.name) {
-            SuiteService.getSuiteTasks(suites[i]);
-            break;
-          }
-        }
-      });
-    },
-    mounted() {
-      const title = `Suite ${this.$route.params.name}`;
-      this.$store.commit('app/setTitle', title);
+      const suiteId = this.$route.params.name
+      suiteService.getSuiteTasks(suiteId)
     }
   }
 </script>
