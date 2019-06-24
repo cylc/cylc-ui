@@ -6,11 +6,4 @@ export default class Task {
     this.depth = depth
     this.jobs = jobs
   }
-
-  get jobId () {
-    if (this.jobs !== undefined && this.jobs.length > 0) {
-      return this.jobs.slice(-1)[0].batchSysJobId
-    }
-    return null
-  }
 }

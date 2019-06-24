@@ -16,42 +16,22 @@
             title="Tasks"
             color="green"
         >
-          <v-data-table
-              :headers="headers"
-              :items="tasks"
-              :loading="isLoading"
-              :pagination.sync="pagination"
+          <vue-ads-table
+              :columns="columns"
+              :rows="tree"
+              :classes="classes"
+              :filter="filter"
+              :start="start"
+              :end="end"
+              @filter-change="filterChanged"
           >
-            <template slot="no-data" v-if="!isLoading">
-              <v-alert
-                  :value="true"
-                  color="error"
-                  icon="warning">
-                No tasks found for the current user
-              </v-alert>
+            <template slot="toggle-children-icon" slot-scope="props">
+              <span>
+                <i class="mdi mdi-minus" v-if="props.expanded"></i>
+                <i class="mdi mdi-plus" v-else></i>
+              </span>
             </template>
-            <template
-                slot="headerCell"
-                slot-scope="{ header }"
-            >
-              <span
-                  class="subheading font-weight-light text-success text--darken-3"
-                  v-text="header.text"
-              ></span>
-            </template>
-            <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
-            <template
-                slot="items"
-                slot-scope="{ item }"
-            >
-              <td>{{ item.name }}</td>
-              <td>{{ item.state }}</td>
-              <td>{{ item.host }}</td>
-              <td>{{ item.jobId }}</td>
-              <td>{{ item.latestMessage }}</td>
-              <td>{{ item.depth }}</td>
-            </template>
-          </v-data-table>
+          </vue-ads-table>
         </material-card>
       </v-flex>
     </v-layout>
@@ -71,50 +51,81 @@
       }
     },
     data: () => ({
-      pagination: {
-        rowsPerPage: 10
-      },
-      headers: [
+      columns: [
         {
-          sortable: true,
-          text: 'Task',
-          value: 'name'
+          property: 'name',
+          title: 'Task',
+          direction: null,
+          filterable: true,
+          collapseIcon: true
         },
         {
-          sortable: true,
-          text: 'State',
-          value: 'state'
+          property: 'state',
+          title: 'State',
+          direction: null,
+          filterable: false
         },
         {
-          sortable: true,
-          text: 'Host',
-          value: 'host'
+          property: 'host',
+          title: 'Host',
+          direction: null,
+          filterable: true
         },
         {
-          sortable: false,
-          text: 'Job ID',
-          value: 'jobId'
+          property: 'jobId',
+          title: 'Job ID',
+          direction: null,
+          filterable: true
         },
         {
-          sortable: false,
-          text: 'Latest Message',
-          value: 'latestMessage'
+          property: 'latestMessage',
+          title: 'Latest Message',
+          direction: null,
+          filterable: false
         },
         {
-          sortable: false,
-          text: 'Depth',
-          value: 'depth'
+          property: 'depth',
+          title: 'Depth',
+          direction: null,
+          filterable: false
         }
-      ]
+      ],
+      classes: {
+        table: "v-table",
+        '0/all': {'column text-xs-left': true}
+      },
+      // vue-ads-table-tree filtering (even if not enabled, we need this)
+      filter: '',
+      // vue-ads-table-tree pagination
+      start: 0,
+      end: 100,
+      // TODO: page polling, for the time being until we have websockets/graphql subscriptions
+      polling: null
     }),
+    methods: {
+      filterChanged (filter) {
+        this.filter = filter;
+      },
+      fetchSuite() {
+        const suiteId = this.$route.params.name
+        suiteService.fetchSuiteTree(suiteId)
+        // TODO: to be replaced by websockets
+        this.polling = setInterval(() => {
+          suiteService.currentTaskIndex += 1
+          suiteService.fetchSuiteTree(suiteId)
+        }, 3000)
+      }
+    },
+    beforeDestroy() {
+      clearInterval(this.polling)
+    },
     computed: {
       // namespace: module suites, and property suites, hence these repeated tokens...
-      ...mapState('suites', ['tasks']),
+      ...mapState('suites', ['tasks', 'tree']),
       ...mapState(['isLoading'])
     },
-    beforeCreate() {
-      const suiteId = this.$route.params.name
-      suiteService.getSuiteTasks(suiteId)
+    mounted: function () {
+      this.fetchSuite()
     }
   }
 </script>

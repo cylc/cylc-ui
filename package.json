@@ -22,6 +22,7 @@
     "nprogress": "^0.2.0",
     "vee-validate": "^2.2.9",
     "vue": "^2.6.10",
+    "vue-ads-table-tree": "^2.3.3",
     "vue-apollo": "^3.0.0-beta.30",
     "vue-chartist": "^2.2.0",
     "vue-flag-icon": "^1.0.6",
