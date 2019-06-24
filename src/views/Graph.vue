@@ -1,15 +1,47 @@
+<style>
+@import '~@/styles/cytoscape/panzoom.css';
+@import '~@/styles/cytoscape/cytoscape-custom.css';
+</style>
 <template>
   <div id='holder'>
-    <!-- <div class='reset'>
-      <v-btn align-center justify-center color='#333' class='v-btn' id='reset-button'>
-        <v-icon id='reset-icon' name='reset-icon' color='white'>mdi-backup-restore</v-icon>
+    <sync-loader :loading='loading' :color='color' :size='size' class='spinner'></sync-loader>
+    <div class='reset'>
+      <v-btn align-center justify-center :depressed='true' id='dagre-button' class='dagre-button'>
+        DAGRE
+        <!-- <v-icon id='reset-icon' name='reset-icon' color='#333'>mdi-backup-restore</v-icon> -->
       </v-btn>
-    </div> -->
-    <div class='cytoscape-navigator'>
+      <v-btn
+        align-center
+        justify-center
+        :depressed='true'
+        id='cosebilkent-button'
+        class='cosebilkent-button'
+      >
+        COSE-BILKENT
+        <!-- <v-icon id='reset-icon' name='reset-icon' color='#333'>mdi-backup-restore</v-icon> -->
+      </v-btn>
+      <v-btn align-center justify-center :depressed='true' id='klay-button' class='klay-button'>
+        KLAY
+        <!-- <v-icon id='reset-icon' name='reset-icon' color='#333'>mdi-backup-restore</v-icon> -->
+      </v-btn>
+      <v-btn
+        align-center
+        justify-center
+        :depressed='true'
+        id='hierarchical-button'
+        class='hierarchical-button'
+      >
+        HIERARCHICAL
+        <!-- <v-icon id='reset-icon' name='reset-icon' color='#333'>mdi-backup-restore</v-icon> -->
+      </v-btn>
+    </div>
+    <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
       <div class='cytoscape-navigatorView'></div>
       <div class='cytoscape-navigatorOverlay'></div>
     </div>
+    <b id='collapseAll' class='collapseAll' style='cursor: pointer; color: white'>collapse all</b> /
+    <b id='expandAll' class='expandAll' style='cursor: pointer; color: white'>expand all</b> /
     <cytoscape :config='config' :preConfig='preConfig' :afterCreated='afterCreated'>
       <cy-element v-for='def in elements.nodes' :key='`${def.data.id}`' :definition='def'/>
       <cy-element v-for='def in elements.edges' :key='`${def.data.id}`' :definition='def'/>
@@ -17,22 +49,57 @@
   </div>
 </template>
 
+
 <script>
-import cytoscape from 'cytoscape';
-import klay from 'cytoscape-klay';
-import navigator from 'cytoscape-navigator';
-import axios from 'axios';
+/* eslint-disable */
+import cytoscape from 'cytoscape'
+import dagre from 'cytoscape-dagre'
+import klay from 'cytoscape-klay'
+import coseBilkent from 'cytoscape-cose-bilkent'
+import navigator from 'cytoscape-navigator'
+import panzoom from 'cytoscape-panzoom'
+import expandCollapse from 'cytoscape-expand-collapse'
+import undoRedo from 'cytoscape-undo-redo'
+import popper from 'cytoscape-popper'
+import jquery from 'jquery'
+import axios from 'axios'
+import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 
-// const DATA_URL = 'http://localhost:8080/test-data.json';
-const DATA_URL = 'http://localhost:8080/complex-cytoscape-dot.json';
+const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.5.json'
+let cy = {}
+let ur = {}
+let elements = []
+let loading = true
+let versionIndex = 0
+let layoutOptions = {}
+let expandCollapseOptions = {}
 
-const elements = [];
+let nodeOptions = {
+  normal: {
+    bgColor: '#444'
+  },
+  selected: {
+    bgColor: 'yellow'
+  },
+  active: {
+    bgColor: 'yellow'
+  }
+}
+
+var edgeOptions = {
+  normal: {
+    lineColor: '#fff'
+  },
+  selected: {
+    lineColor: 'yellow'
+  }
+}
 
 const config = {
   autounselectify: true,
-  boxSelectionEnabled: false,
+  boxSelectionEnabled: true,
   layout: {
-    name: 'klay',
+    name: 'dagre',
     textureOnViewport: false,
     hideEdgesOnViewport: true
   },
@@ -40,8 +107,8 @@ const config = {
     {
       selector: 'node',
       css: {
-        'background-color': '#bdfffc',
-        content: 'data(name)',
+        'background-color': 'data(state)',
+        content: 'data(id)',
         'font-family': 'Avenir, Helvetica, Arial, sans-serif',
         color: '#fff',
         'text-max-width': '.5em',
@@ -51,8 +118,34 @@ const config = {
         'line-height': 1.1,
         'text-margin-x': 5,
         'font-size': '.8em',
-        'min-zoomed-font-size': '.6em',
-        shape: 'rectangle'
+        'min-zoomed-font-size': '.8em',
+        'border-color': '#fff',
+        'border-width': '.4em',
+        shape: 'data(shape)',
+        width: '6em',
+        height: '6em',
+        'pie-size': '5.6em', //The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
+        'pie-1-background-color': '#9ef9ff', // The colour of the node’s ith pie chart slice.
+        'pie-1-background-size': 'mapData(submitted, 0, 100, 0, 100)',
+        'pie-2-background-color': '#4ab7ff',
+        'pie-2-background-size': 'mapData(running, 0, 100, 0, 100)',
+        'pie-3-background-color': '#31ff53',
+        'pie-3-background-size': 'mapData(succeeded, 0, 100, 0, 100)', // The size of the node’s ith pie chart slice, measured in percent (e.g. 25% or 25).
+        // 'pie-i-background-opacity' : 0, //The opacity of the node’s ith pie chart slice.
+        'pie-4-background-color': '#ff3a2b',
+        'pie-4-background-size': 'mapData(failed, 0, 100, 0, 100)',
+        'pie-5-background-color': '#d453ff',
+        'pie-5-background-size': 'mapData(subfailed, 0, 100, 0, 100)',
+        'pie-6-background-color': '#fefaff',
+        'pie-6-background-size': 'mapData(expired, 0, 100, 0, 100)',
+        'pie-7-background-color': '#fff138',
+        'pie-7-background-size': 'mapData(queued, 0, 100, 0, 100)',
+        'pie-8-background-color': '#ff3a2b',
+        'pie-8-background-size': 'mapData(retrying, 0, 100, 0, 100)',
+        'pie-9-background-color': '#666',
+        'pie-9-background-size': 'mapData(waiting, 0, 100, 0, 100)',
+        'pie-10-background-color': '#cacaca',
+        'pie-10-background-size': 'mapData(progress, 0, 100, 0, 100)'
       }
     },
     {
@@ -61,245 +154,697 @@ const config = {
         width: 5,
         'curve-style': 'bezier',
         'target-arrow-shape': 'triangle',
-        'line-color': '#fff',
+        'line-color': edgeOptions.normal.lineColor,
         'target-arrow-color': '#fff',
         opacity: 0.8,
-        'target-distance-from-node': 3
+        'target-distance-from-node': 10
+      }
+    },
+    {
+      selector: 'edge.selected',
+      style: {
+        width: 10,
+        lineColor: edgeOptions.selected.lineColor,
+        'target-arrow-color': edgeOptions.selected.lineColor
+      }
+    },
+    {
+      selector: 'node.highlight',
+      style: {
+        'border-color': '#fff',
+        'border-width': '2px'
+      }
+    },
+    {
+      selector: 'node.semitransp',
+      style: { opacity: '0.5' }
+    },
+    {
+      selector: 'node.selected',
+      style: { 'background-color': nodeOptions.selected.bgColor }
+    },
+    // {
+    //   selector: 'node.active',
+    //   style: { 'background-color': nodeOptions.active.bgColor }
+    // },
+    {
+      selector: 'edge.highlight',
+      style: { 'mid-target-arrow-color': 'yellow' }
+    },
+    {
+      selector: 'edge.semitransp',
+      style: { opacity: '0.2' }
+    },
+    {
+      selector: 'node.cy-expand-collapse-collapsed-node',
+      style: {
+        'background-color': '#333',
+        shape: 'rectangle'
+      }
+    },
+    {
+      selector: 'edge.cy-expand-collapse-meta-edge',
+      style: {
+        'background-color': 'green',
+        shape: 'rectangle'
+      }
+    },
+    // {
+    //   selector: 'edge.meta',
+    //   style: {
+    //     'curve-style': 'unbundled-bezier',
+    //     'control-point-distances': '0 0 0'
+    //   }
+    // },
+    {
+      selector: '.selected',
+      style: {
+        'background-color': 'yellow',
+        'background-image': require('@/assets/baseline-donut_large-24px.svg'),
+        // 'background-image': function(node) {
+        //   let path = node.data('icon')
+        //   console.log('ICON PATH --> ', path)
+        //   return path
+        // }, // TODO
+        'background-fit': 'contain contain',
+        'background-image-opacity': 0.5,
+        'pie-size': '0%'
+      }
+    },
+    // {
+    //   selector: 'edge.meta',
+    //   style: {
+    //     'width': 2,
+    //     'line-color': 'red'
+    //   }
+    // },
+    {
+      selector: ':parent',
+      style: {
+        'background-opacity': 0.2,
+        'background-image-opacity': 0.2,
+        'background-color': '#b7c0e8',
+        'border-color': '#444',
+        'border-width': '2px'
+      }
+    },
+    // {
+    //   selector: ':parent.selected',
+    //   style: {
+    //     'background-opacity': .35,
+    //     'background-image-opacity': .35,
+    //     'background-color': '333'
+    //   }
+    // },
+    {
+      selector: ':child',
+      style: {
+        'background-opacity': 0.15,
+        'background-image-opacity': 0.15,
+        'background-color': '#b7c0e8',
+        'border-color': '#444',
+        'border-width': '2px'
       }
     }
+    // {
+    //   selector: ':child.selected',
+    //   style: {
+    //     'background-opacity': 1,
+    //     'background-image-opacity': 1,
+    //     'background-color': '#b7c0e8',
+    //     'opacity': 1
+    //   }
+    // },
+    // {
+    //   selector: ':selected',
+    //   style: {
+    //     'border-width': 3,
+    //     'border-color': 'purple'
+    //   }
+    // }
   ],
   elements: []
-};
+}
 
 export default {
   metaInfo() {
     return {
       title: 'Cylc UI | Graph'
-    };
+    }
   },
   name: 'Graph',
   data() {
     return {
       config,
       elements,
-      i: 1
-    };
+      i: 1,
+      // vue-spinner
+      color: '#5e9aff',
+      height: '35px',
+      width: '4px',
+      margin: '2px',
+      radius: '2px',
+      size: '1em',
+      loading: true
+    }
+  },
+  components: {
+    SyncLoader
   },
   methods: {
-    async preConfig(cytoscape) {
+    preConfig(cytoscape) {
+      console.log('calling pre-config', config, elements)
       // cytoscape: this is the cytoscape constructor
-      cytoscape.use(klay);
+      cytoscape.use(dagre)
+      cytoscape.use(coseBilkent)
+      cytoscape.use(klay)
+      // cytoscape.use(popper)
     },
     async afterCreated() {
-      const cy = await this.$cytoscape.instance;
-      const { data: elements } = await axios.get(DATA_URL);
-      elements.nodes.forEach(n => cy.add(n));
-      elements.edges.forEach(n => cy.add(n));
-      console.log('after created');
-      console.log('loaded elements: ', elements, cy);
-      cy.elements()
-        .layout({
-          name: 'klay',
-          fit: true,
-          padding: 30, // Padding on fit
-          animate: false,
-          spacing: 50,
-          styleEnabled: true,
-          // zoom: 1,
-          // pan: { x: 0, y: 0 },
-          minZoom: 1e-50,
-          maxZoom: 1e50,
-          //  Whether to animate specific nodes when animation is on; non-animated nodes immediately go to their final positions
-          animateFilter: function(node, i) {
-            return true;
-          },
-          animationDuration: 3000, // Duration of animation in ms if enabled
-          animationEasing: 'ease-out',
-          transform: function(node, pos) {
-            return pos;
-          }, // A function that applies a transform to the final node position
-          ready: undefined, // Callback on layoutready
-          stop: undefined, // Callback on layoutstop
-          klay: {
-            // Following descriptions taken from http://layout.rtsys.informatik.uni-kiel.de:9444/Providedlayout.html?algorithm=de.cau.cs.kieler.klay.layered
-            addUnnecessaryBendpoints: false, // Adds bend points even if an edge does not change direction.
-            aspectRatio: 1.6, // The aimed aspect ratio of the drawing, that is the quotient of width by height
-            borderSpacing: 20, // Minimal amount of space to be left to the border
-            compactComponents: false, // Tries to further compact components (disconnected sub-graphs).
-            crossingMinimization: 'LAYER_SWEEP', // Strategy for crossing minimization.
-            /* LAYER_SWEEP The layer sweep algorithm iterates multiple times over the layers, trying to find node orderings that minimize the number of crossings. The algorithm uses randomization to increase the odds of finding a good result. To improve its results, consider increasing the Thoroughness option, which influences the number of iterations done. The Randomization seed also influences results.
-            INTERACTIVE Orders the nodes of each layer by comparing their positions before the layout algorithm was started. The idea is that the relative order of nodes as it was before layout was applied is not changed. This of course requires valid positions for all nodes to have been set on the input graph before calling the layout algorithm. The interactive layer sweep algorithm uses the Interactive Reference Point option to determine which reference point of nodes are used to compare positions. */
-            cycleBreaking: 'GREEDY', // Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines which edges to reverse to break the cycles. Reversed edges will end up pointing to the opposite direction of regular edges (that is, reversed edges will point left if edges usually point right).
-            /* GREEDY This algorithm reverses edges greedily. The algorithm tries to avoid edges that have the Priority property set.
-            INTERACTIVE The interactive algorithm tries to reverse edges that already pointed leftwards in the input graph. This requires node and port coordinates to have been set to sensible values.*/
-            direction: 'RIGHT', // Overall direction of edges: horizontal (right / left) or vertical (down / up)
-            /* UNDEFINED, RIGHT, LEFT, DOWN, UP */
-            edgeRouting: 'ORTHOGONAL', // Defines how edges are routed (POLYLINE, ORTHOGONAL, SPLINES)
-            edgeSpacingFactor: 0.5, // Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges.
-            feedbackEdges: false, // Whether feedback edges should be highlighted by routing around the nodes.
-            fixedAlignment: 'NONE', // Tells the BK node placer to use a certain alignment instead of taking the optimal result.  This option should usually be left alone.
-            /* NONE Chooses the smallest layout from the four possible candidates.
-            LEFTUP Chooses the left-up candidate from the four possible candidates.
-            RIGHTUP Chooses the right-up candidate from the four possible candidates.
-            LEFTDOWN Chooses the left-down candidate from the four possible candidates.
-            RIGHTDOWN Chooses the right-down candidate from the four possible candidates.
-            BALANCED Creates a balanced layout from the four possible candidates. */
-            inLayerSpacingFactor: 3.0, // Factor by which the usual spacing is multiplied to determine the in-layer spacing between objects.
-            layoutHierarchy: false, // Whether the selected layouter should consider the full hierarchy
-            linearSegmentsDeflectionDampening: 0.3, // Dampens the movement of nodes to keep the diagram from getting too large.
-            mergeEdges: false, // Edges that have no ports are merged so they touch the connected nodes at the same points.
-            mergeHierarchyCrossingEdges: true, // If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports as possible.
-            nodeLayering: 'NETWORK_SIMPLEX', // Strades": [tegy for node layering.
-            /* NETWORK_SIMPLEX This algorithm tries to minimize the length of edges. This is the most computationally intensive algorithm. The number of iterations after which it aborts if it hasn't found a result yet can be set with the Maximal Iterations option.
-            LONGEST_PATH A very simple algorithm that distributes nodes along their longest path to a sink node.
-            INTERACTIVE Distributes the nodes into layers by comparing their positions before the layout algorithm was started. The idea is that the relative horizontal order of nodes as it was before layout was applied is not changed. This of course requires valid positions for all nodes to have been set on the input graph before calling the layout algorithm. The interactive node layering algorithm uses the Interactive Reference Point option to determine which reference point of nodes are used to compare positions. */
-            nodePlacement: 'INTERACTIVE', // Strategy for Node Placement
-            /* BRANDES_KOEPF Minimizes the number of edge bends at the expense of diagram size: diagrams drawn with this algorithm are usually higher than diagrams drawn with other algorithms.
-            LINEAR_SEGMENTS Computes a balanced placement.
-            INTERACTIVE Tries to keep the preset y coordinates of nodes from the original layout. For dummy nodes, a guess is made to infer their coordinates. Requires the other interactive phase implementations to have run as well.
-            SIMPLE Minimizes the area at the expense of... well, pretty much everything else. */
-            randomizationSeed: 1, // Seed used for pseudo-random number generators to control the layout algorithm; 0 means a new seed is generated
-            routeSelfLoopInside: false, // Whether a self-loop is routed around or inside its node.
-            separateConnectedComponents: true, // Whether each connected component should be processed separately
-            spacing: 24, // Overall setting for the minimal amount of space to be left between objects
-            thoroughness: 7 // How much effort should be spent to produce a nice layout..
+      console.log('after created')
+      // cy = await this.$cytoscape.instance // load instance
+
+      //register extensions
+      if (typeof cytoscape('core', 'navigator') !== 'function') {
+        console.log('registering navigator')
+        navigator(cytoscape)
+      }
+
+      if (typeof cytoscape('core', 'panzoom') !== 'function') {
+        console.log('registering panzoom')
+        panzoom(cytoscape)
+      }
+
+      if (typeof cytoscape('core', 'undoRedo') !== 'function') {
+        console.log('registering undoRedo')
+        undoRedo(cytoscape)
+      }
+
+      if (typeof cytoscape('core', 'expandCollapse') !== 'function') {
+        console.log('registering expandCollapse with jquery')
+        expandCollapse(cytoscape, jquery)
+      }
+
+      const dagreOptions = {
+        name: 'dagre',
+        //  // dagre algo options, uses default value on undefined
+        nodeSep: 140, // the separation between adjacent nodes in the same rank
+        edgeSep: 30, // the separation between adjacent edges in the same rank
+        rankSep: 140, // the separation between adjacent nodes in the same rank
+        rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right
+        minLen: function(edge) {
+          return 1
+        }, // number of ranks to keep between the source and target of the edge
+        edgeWeight: function(edge) {
+          return 1
+        }, // higher weight edges are generally made shorter and straighter than lower weight edges
+        // general layout options
+        fit: true, // whether to fit to viewport
+        padding: 150, // fit padding
+        spacingFactor: 1.2, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
+        animate: false, // whether to transition the node positions
+        animationDuration: 500, // duration of animation in ms if enabled
+        animationEasing: undefined, // easing of animation if enabled
+        boundingBox: undefined, // constrain layout bounds { x1, y1, x2, y2 } or { x1, y1, w, h }
+        ready: function() {}, // on layoutready
+        stop: function() {} // on layoutstop
+      }
+
+      const coseBilkentOptions = {
+        name: 'cose-bilkent',
+        // Called on `layoutready`
+        ready: function() {},
+        // Called on `layoutstop`
+        stop: function() {},
+        // Whether to include labels in node dimensions. Useful for avoiding label overlap
+        nodeDimensionsIncludeLabels: false,
+        // number of ticks per frame higher is faster but more jerky
+        refresh: 30,
+        // Whether to fit the network view after when done
+        fit: true,
+        // Padding on fit
+        padding: 10,
+        // Whether to enable incremental mode
+        randomize: true,
+        // Node repulsion (non overlapping) multiplier
+        nodeRepulsion: 4500,
+        // Ideal (intra-graph) edge length
+        idealEdgeLength: 50,
+        // Divisor to compute edge forces
+        edgeElasticity: 0.45,
+        // Nesting factor (multiplier) to compute ideal edge length for inter-graph edges
+        nestingFactor: 0.1,
+        // Gravity force (constant)
+        gravity: 0.25,
+        // Maximum number of iterations to perform
+        numIter: 2500,
+        // Whether to tile disconnected nodes
+        tile: true,
+        // Type of layout animation. The option set is {'during', 'end', false}
+        animate: 'end',
+        // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
+        tilingPaddingVertical: 10,
+        // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
+        tilingPaddingHorizontal: 10,
+        // Gravity range (constant) for compounds
+        gravityRangeCompound: 1.5,
+        // Gravity force (constant) for compounds
+        gravityCompound: 1.0,
+        // Gravity range (constant)
+        gravityRange: 3.8,
+        // Initial cooling factor for incremental layout
+        initialEnergyOnIncremental: 0.5
+      }
+
+      const klayLayoutOptions = {
+        name: 'klay',
+        nodeDimensionsIncludeLabels: false, // Boolean which changes whether label dimensions are included when calculating node dimensions
+        fit: false, // Whether to fit
+        padding: 20, // Padding on fit
+        animate: false, // Whether to transition the node positions
+        animateFilter: function(node, i) {
+          return true
+        }, // Whether to animate specific nodes when animation is on non-animated nodes immediately go to their final positions
+        animationDuration: 500, // Duration of animation in ms if enabled
+        animationEasing: undefined, // Easing of animation if enabled
+        transform: function(node, pos) {
+          return pos
+        }, // A function that applies a transform to the final node position
+        ready: undefined, // Callback on layoutready
+        stop: undefined, // Callback on layoutstop
+        klay: {
+          // Following descriptions taken from http://layout.rtsys.informatik.uni-kiel.de:9444/Providedlayout.html?algorithm=de.cau.cs.kieler.klay.layered
+          addUnnecessaryBendpoints: false, // Adds bend points even if an edge does not change direction.
+          aspectRatio: 1.6, // The aimed aspect ratio of the drawing, that is the quotient of width by height
+          borderSpacing: 20, // Minimal amount of space to be left to the border
+          compactComponents: false, // Tries to further compact components (disconnected sub-graphs).
+          crossingMinimization: 'LAYER_SWEEP', // Strategy for crossing minimization.
+          /* LAYER_SWEEP The layer sweep algorithm iterates multiple times over the layers, trying to find node orderings that minimize the number of crossings. The algorithm uses randomization to increase the odds of finding a good result. To improve its results, consider increasing the Thoroughness option, which influences the number of iterations done. The Randomization seed also influences results.
+          INTERACTIVE Orders the nodes of each layer by comparing their positions before the layout algorithm was started. The idea is that the relative order of nodes as it was before layout was applied is not changed. This of course requires valid positions for all nodes to have been set on the input graph before calling the layout algorithm. The interactive layer sweep algorithm uses the Interactive Reference Point option to determine which reference point of nodes are used to compare positions. */
+          cycleBreaking: 'GREEDY', // Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines which edges to reverse to break the cycles. Reversed edges will end up pointing to the opposite direction of regular edges (that is, reversed edges will point left if edges usually point right).
+          /* GREEDY This algorithm reverses edges greedily. The algorithm tries to avoid edges that have the Priority property set.
+          INTERACTIVE The interactive algorithm tries to reverse edges that already pointed leftwards in the input graph. This requires node and port coordinates to have been set to sensible values.*/
+          direction: 'RIGHT', // Overall direction of edges: horizontal (right / left) or vertical (down / up)
+          /* UNDEFINED, RIGHT, LEFT, DOWN, UP */
+          edgeRouting: 'ORTHOGONAL', // Defines how edges are routed (POLYLINE, ORTHOGONAL, SPLINES)
+          edgeSpacingFactor: 0.5, // Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges.
+          feedbackEdges: false, // Whether feedback edges should be highlighted by routing around the nodes.
+          fixedAlignment: 'NONE', // Tells the BK node placer to use a certain alignment instead of taking the optimal result.  This option should usually be left alone.
+          /* NONE Chooses the smallest layout from the four possible candidates.
+          LEFTUP Chooses the left-up candidate from the four possible candidates.
+          RIGHTUP Chooses the right-up candidate from the four possible candidates.
+          LEFTDOWN Chooses the left-down candidate from the four possible candidates.
+          RIGHTDOWN Chooses the right-down candidate from the four possible candidates.
+          BALANCED Creates a balanced layout from the four possible candidates. */
+          inLayerSpacingFactor: 3.0, // Factor by which the usual spacing is multiplied to determine the in-layer spacing between objects.
+          layoutHierarchy: false, // Whether the selected layouter should consider the full hierarchy
+          linearSegmentsDeflectionDampening: 0.3, // Dampens the movement of nodes to keep the diagram from getting too large.
+          mergeEdges: false, // Edges that have no ports are merged so they touch the connected nodes at the same points.
+          mergeHierarchyCrossingEdges: true, // If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports as possible.
+          nodeLayering: 'NETWORK_SIMPLEX', // Strategy for node layering.
+          /* NETWORK_SIMPLEX This algorithm tries to minimize the length of edges. This is the most computationally intensive algorithm. The number of iterations after which it aborts if it hasn't found a result yet can be set with the Maximal Iterations option.
+          LONGEST_PATH A very simple algorithm that distributes nodes along their longest path to a sink node.
+          INTERACTIVE Distributes the nodes into layers by comparing their positions before the layout algorithm was started. The idea is that the relative horizontal order of nodes as it was before layout was applied is not changed. This of course requires valid positions for all nodes to have been set on the input graph before calling the layout algorithm. The interactive node layering algorithm uses the Interactive Reference Point option to determine which reference point of nodes are used to compare positions. */
+          nodePlacement: 'INTERACTIVE', // Strategy for Node Placement
+          /* BRANDES_KOEPF Minimizes the number of edge bends at the expense of diagram size: diagrams drawn with this algorithm are usually higher than diagrams drawn with other algorithms.
+          LINEAR_SEGMENTS Computes a balanced placement.
+          INTERACTIVE Tries to keep the preset y coordinates of nodes from the original layout. For dummy nodes, a guess is made to infer their coordinates. Requires the other interactive phase implementations to have run as well.
+          SIMPLE Minimizes the area at the expense of... well, pretty much everything else. */
+          randomizationSeed: 1, // Seed used for pseudo-random number generators to control the layout algorithm 0 means a new seed is generated
+          routeSelfLoopInside: false, // Whether a self-loop is routed around or inside its node.
+          separateConnectedComponents: true, // Whether each connected component should be processed separately
+          spacing: 24, // Overall setting for the minimal amount of space to be left between objects
+          thoroughness: 7 // How much effort should be spent to produce a nice layout..
+        },
+        priority: function(edge) {
+          return null
+        } // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
+      }
+
+      async function updateData() {
+          try {
+            const data = await axios.get(DATA_URL)
+            return data
+          } catch(error) {
+            console.log('error', error);
           }
-          // priority: function( edge ){ return null; }, // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
-        })
-        .run();
-      navigator(cytoscape);
+        }
+
+      async function getInstance(instance) {
+        try {
+
+          if(instance) {
+            return instance
+          } else {
+             return await this.$cytoscape.instance
+            // cy.instance.then(cy => {
+            //   const that = this
+            //   return cy
+            // })
+          }
+         
+        } catch (error) {
+          console.log('error', error);
+        }
+      }
+
+      async function runlayout(instance) {
+        try {
+          let cy = instance
+          if (cy) {
+            console.log('cy instance exists')
+            // remove all elements
+            cy.remove(cy.elements())
+            let cynodes = elements.nodes
+            let cyedges = elements.edges
+            // add the new ones
+            cy.add(cynodes)
+            cy.add(cyedges)
+            if (Object.entries(layoutOptions).length === 0 && layoutOptions.constructor === Object) {
+                console.log('layoutOptions is an empty object default to Dagre ')
+                layoutOptions = dagreOptions
+                console.log(layoutOptions)
+            }
+            await cy.elements()
+              .layout(layoutOptions)
+              .run()
+          return cy
+          } else {
+            console.log('cy instance does not exist')
+              cy = await this.$cytoscape.instance
+              let cynodes = elements.nodes
+              let cyedges = elements.edges
+              console.log('graph data version: ', elements.version)
+              // add the new ones
+              cy.add(cynodes)
+              cy.add(cyedges)
+              if (Object.entries(layoutOptions).length !== 0 && layoutOptions.constructor === Object) {
+                console.log('layoutOptions has entries =>\n' , layoutOptions)
+            }
+              await cy.elements()
+                .layout(layoutOptions)
+                .run()
+              return cy
+            }
+          } catch (error) {
+            console.log('error', error);
+          }
+      }
+
+      async function setupUndo(instance) {
+          let cy = instance
+          let ur = cy.undoRedo()
+          cy.expandCollapse(expandCollapseOptions)
+          let api = cy.expandCollapse('get')
+          api.collapseAll()
+          layoutOptions = dagreOptions
+          return ur
+      }
+
+      async function getGraph(instance) {
+          const cyinstance = await getInstance(instance)
+          const data = await updateData()
+          const cy = await runlayout(cyinstance)
+          const ur = await setupUndo(cy)
+          return cy, ur
+      }
+      // load graph data and run layout
+      cy = await this.$cytoscape.instance
+      let { data: elements }  = await updateData()
+      cy, ur = await getGraph(cy)
+      cy.expandCollapse(expandCollapseOptions)
+      let api = cy.expandCollapse('get')
+      api.collapseAll()
+
+      console.log('loaded elements: ', elements, cy), (this.loading = false) // remove spinner
+      // hierarchical clustering internal needs cy instance
+      const hca = cy.elements().hca({
+        mode: 'threshold',
+        threshold: 25,
+        distance: 'euclidian', // euclidian, squaredEuclidian, manhattan, max
+        preference: 'mean', // median, mean, min, max,
+        damping: 0.8, // [0.5 - 1]
+        minIterations: 100, // [optional] The minimum number of iteraions the algorithm will run before stopping (default 100).
+        maxIterations: 1000, // [optional] The maximum number of iteraions the algorithm will run before stopping (default 1000).
+        attributes: [
+          function(node) {
+            return node.data('weight')
+          }
+        ]
+      })
+      
       cy.navigator({
-        // container: '.cytoscape-navigator',
-        viewLiveFramerate: 0, // set false to update graph pan only on drag end; set 0 to do it instantly; set a number (frames per second) to update not more than N times per second
+        container: '.cytoscape-navigator-overlay',
+        viewLiveFramerate: 0, // set false to update graph pan only on drag end set 0 to do it instantly set a number (frames per second) to update not more than N times per second
         thumbnailEventFramerate: 30, // max thumbnail's updates per second triggered by graph updates
         thumbnailLiveFramerate: false, // max thumbnail's updates per second. Set false to disable
         dblClickDelay: 200, // milliseconds
         removeCustomContainer: true, // destroy the container specified by user on plugin destroy
         rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
-      });
-      // ------
-      // // color predecessor lines red on click
-      // cy.unbind('click');
-      // cy.bind('click', 'node', function(node) {
-      //   // console.log(node.target.predecessors().edges());
-      //   node.target
-      //     .predecessors()
-      //     .edges()
-      //     .animate({
-      //       style: {
-      //         lineColor: 'yellow'
-      //       }
-      //     });
-      // });
-      // // ----------------------
+      })
       cy.on('tap', 'node', function(event) {
-        let node = event.target;
-        console.log('selected ' + node.id(), node.data());
-      });
+        const node = event.target
+        // const data = node[0]._private.data
+        console.log('tapped ' + node.id(), node.data())
+        // cy.elements()
+        //   .difference(node.outgoers())
+        //   .not(node)
+        //   .addClass('semitransp')
+        // node
+        //   .addClass('highlight')
+        //   .addClass('selected')
+        //   .outgoers()
+        //   .addClass('highlight')
+      })
       cy.on('tap', 'edge', function(event) {
-        let edge = event.target;
-        console.log('tapped edge ' + edge.id());
-      });
-      cy.on('click', '#reset-button', function(event) {
-        console.log('tapped reset');
-        cy.fit();
-      });
-      cy.on('tap', function(event) {
-        console.log('reset');
-        if (event.target == cy) {
-          console.log('cy tapped');
+        const edge = event.target
+        // const data = edge[0]._private.data
+        console.log('selected ' + edge.id(), edge.data())
+        edge.addClass('selected')
+      })
+      cy.on('click', function(event) {
+        // const data = event.target._private
+        // console.log('cy event.target', data)
+        // var edges = cy.edges()
+        // var nodes = cy.nodes()
+        // edges.removeClass('selected')
+        // edges.removeClass('semitransp')
+        // nodes.removeClass('semitransp')
+        cy.elements().removeClass('semitransp')
+        cy.elements().removeClass('highlight')
+        cy.elements().removeClass('selected')
+      })
+
+      let panzoomdefaults = {
+        zoomFactor: 0.1, // zoom factor per zoom tick
+        zoomDelay: 45, // how many ms between zoom ticks
+        minZoom: 0.1, // min zoom level
+        maxZoom: 10, // max zoom level
+        fitPadding: 50, // padding when fitting
+        panSpeed: 10, // how many ms in between pan ticks
+        panDistance: 100, // max pan distance per tick
+        panDragAreaSize: 75, // the length of the pan drag box in which the vector for panning is calculated (bigger = finer control of pan speed and direction)
+        panMinPercentSpeed: 0.25, // the slowest speed we can pan by (as a percent of panSpeed)
+        panInactiveArea: 8, // radius of inactive area in pan drag box
+        panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib) scales from this to 1.0
+        zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
+        fitSelector: undefined, // selector of elements to fit
+        animateOnFit: function() {
+          // whether to animate on fit
+          return false
+        },
+        fitAnimationDuration: 1000 // duration of animation on fit
+      }
+      cy.panzoom(panzoomdefaults)
+
+      let undoRedoOptions = {
+        isDebug: true, // Debug mode for console messages
+        actions: {}, // actions to be added
+        undoableDrag: true, // Whether dragging nodes are undoable can be a function as well
+        stackSizeLimit: undefined, // Size limit of undo stack, note that the size of redo stack cannot exceed size of undo stack
+        ready: function() {
+          // callback when undo-redo is ready
+          this.loading = false // add spinner
         }
-        if (event.target == cy.cytoscape-navigator) {
-          console.log('reset tapped');
-        }
-        if (undefined === event.target.id) {
-          cy.fit();
-          // cy.json({
-          //   zoom: 1,
-          //   pan: { x: 0, y: 0 }
-        }
-      });
+      }
+      cy.undoRedo(undoRedoOptions)
+
+      expandCollapseOptions = {
+        layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
+        // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
+        fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
+        animate: true, // whether to animate on drawing changes you can specify a function too
+        ready: function() {}, // callback when expand/collapse initialized
+        undoable: true, // and if undoRedoExtension exists,
+        cueEnabled: true, // Whether cues are enabled
+        expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
+        expandCollapseCueSize: 20, // size of expand-collapse cue
+        expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
+        expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
+        collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
+        expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues,
+      }
+
+      const expandCollapseOptionsUndefined = {
+        layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
+        // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
+        fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
+        animate: false, // whether to animate on drawing changes you can specify a function too
+        ready: function() {}, // callback when expand/collapse initialized
+        undoable: true, // and if undoRedoExtension exists,
+        cueEnabled: true, // Whether cues are enabled
+        expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
+        expandCollapseCueSize: 20, // size of expand-collapse cue
+        expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
+        expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
+        collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
+        expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
+      }
+
+      const expandCollapseOptionsCoseBilkent = {
+        layoutBy: {
+          name: 'cose-bilkent',
+          animate: 'end',
+          randomize: false,
+          fit: true
+        },
+        // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
+        fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
+        animate: false, // whether to animate on drawing changes you can specify a function too
+        ready: function() {}, // callback when expand/collapse initialized
+        undoable: true, // and if undoRedoExtension exists,
+        cueEnabled: true, // Whether cues are enabled
+        expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
+        expandCollapseCueSize: 20, // size of expand-collapse cue
+        expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
+        expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
+        collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
+        expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
+      }
+
+      const expandCollapseOptionsKlay = {
+        layoutBy: {
+          name: 'cose-bilkent',
+          animate: 'end',
+          randomize: false,
+          fit: true
+        },
+        // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
+        fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
+        animate: false, // whether to animate on drawing changes you can specify a function too
+        ready: function() {}, // callback when expand/collapse initialized
+        undoable: true, // and if undoRedoExtension exists,
+        cueEnabled: true, // Whether cues are enabled
+        expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
+        expandCollapseCueSize: 20, // size of expand-collapse cue
+        expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
+        expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
+        collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
+        expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
+      }
+      
+      // const popperOptions = {
+      //     content: 'test data',
+      //     renderedPosition: 'bottom',
+      //     renderedDimensions: undefined,
+      //     popper: undefined
+      // }
+
+      document
+        .getElementById('dagre-button')
+        .addEventListener('click', function(event) {
+          console.log('tapped dagre button')
+          layoutOptions = dagreOptions
+          expandCollapseOptions = expandCollapseOptionsUndefined
+          cy.expandCollapse(expandCollapseOptionsUndefined)
+          cy.elements()
+            .layout(dagreOptions)
+            .run()
+        })
+
+      document
+        .getElementById('cosebilkent-button')
+        .addEventListener('click', function(event) {
+          console.log('tapped cosebilkent button')
+          expandCollapseOptions = expandCollapseOptionsCoseBilkent
+          cy.expandCollapse(expandCollapseOptionsCoseBilkent)
+          layoutOptions = coseBilkentOptions
+          ur.do('collapseAll')
+          cy.elements()
+            .layout(coseBilkentOptions)
+            .run()
+        })
+
+      document
+        .getElementById('klay-button')
+        .addEventListener('click', function(event) {
+          console.log('tapped klay button')
+          expandCollapseOptions = expandCollapseOptionsKlay
+          cy.expandCollapse(expandCollapseOptionsKlay)
+          layoutOptions = klayLayoutOptions
+          ur.do('collapseAll')
+          cy.elements()
+            .layout(klayLayoutOptions)
+            .run()
+        })
+
+      document
+        .getElementById('hierarchical-button')
+        .addEventListener('click', function(event) {
+        console.log('tapped hierarchical button')
+        // expandCollapseOptions = expandCollapseOptionsCoseBilkent
+        // cy.expandCollapse(expandCollapseOptionsUndefined)
+        cy.elements().hca({
+        mode: 'threshold',
+        threshold: 25,
+        distance: 'euclidian', // euclidian, squaredEuclidian, manhattan, max
+        preference: 'mean', // median, mean, min, max,
+        damping: 0.8, // [0.5 - 1]
+        minIterations: 100, // [optional] The minimum number of iteraions the algorithm will run before stopping (default 100).
+        maxIterations: 1000, // [optional] The maximum number of iteraions the algorithm will run before stopping (default 1000).
+        attributes: [
+          function(node) {
+            return node.data('weight')
+          }
+        ]
+      })
+          ur.do('collapseAll')
+          cy.elements()
+            .layout(klayLayoutOptions)
+            .run()
+        })
+
+      document
+        .getElementById('collapseAll')
+        .addEventListener('click', function() {
+          console.log('collapseAll')
+          ur.do('collapseAll')
+          cy.elements().removeClass('semitransp')
+          cy.elements().removeClass('highlight')
+          cy.elements().removeClass('selected')
+        })
+
+      document
+        .getElementById('expandAll')
+        .addEventListener('click', function() {
+          console.log('expandAll')
+          ur.do('expandAll')
+        })
+
+      document.addEventListener(
+        'keydown',
+        function(event) {
+          if (event.ctrlKey && event.which == '90') {
+            cy.undoRedo().undo()
+          } else if (event.ctrlKey && event.which == '89') {
+            cy.undoRedo().redo()
+          }
+        },
+        true
+      )
     }
-    // ,
-  //   async cyUpdate () {
-  //     // new nodes and edges
-  //     const { data: elements } = await axios.get(DATA_URL);
-  //     const cynodes = data.nodes;
-  //     const cylinks = data.edges;
-  //     // update the cytoscape instance
-  //     this.$cytoscape.instance.then(cy => {
-  //       // remove all elements
-  //       cy.remove(cy.elements())
-  //       // add the new ones
-  //       cy.add(cynodes)
-  //       cy.add(cylinks)
-  //       // inside the cytoscape callback we lose the component this, we can use `that` instead if needed
-  //       const that = this
-  //       // click and double click (simulated) over the nodes
-  //       cy.on('tap', 'node', function (event) {
-  //         const data = event.target.data()
-  //         // if you are using vuex you can dispatch your events this way
-  //         that.$store.dispatch('sectors/select', { data })
-  //       })
-  //     })
-  //   }
   }
-};
+}
 </script>
 
-<style>
-#holder {
-  width: 100%;
-  height: 800px;
-  background-color: #222;
-}
 
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #2c3e50;
-  margin-top: 0;
-  width: 100%;
-}
-
-.cytoscape-navigator {
-  position: absolute;
-  border: 1px solid #fff;
-  background: #222;
-  z-index: 99999;
-  width: 200px;
-  height: 150px;
-  bottom: 83px;
-  right: -1px;
-  overflow: hidden;
-}
-
-.cytoscape-navigatorView {
-    border: 2px solid yellow;
-    border-radius: 1px;
-    background-color: blue;
-    opacity: .2;
-    cursor: move;
-  }
-
-
-/* .cytoscape-navigator:hover .cytoscape-navigatorOverlay{background: purple;} */
-/* .cytoscape-navigator .cytoscape-navigatorView{border: 2px solid yellow; border-radius: 1px; background-color: blueviolet; opacity: .2; cursor: move;} */
-/* .cytoscape-navigator.mouseover-view .cytoscape-navigatorView{background: rgba(0,255,0,0.5);} */
-
-.reset {
-  position: absolute;
-  bottom: 83px;
-  left: 1px;
-}
-
-/* #reset-button {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: centre;
-  color: #2c3e50;
-} */
-</style>

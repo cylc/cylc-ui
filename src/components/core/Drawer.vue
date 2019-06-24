@@ -89,13 +89,8 @@ export default {
         icon: 'mdi-vector-circle',
         text: 'Suites'
       },
-      // {
-      //   to: '/graph',
-      //   icon: 'mdi-grain',
-      //   text: 'Graph'
-      // },
       {
-        to: '/dagre',
+        to: '/graph',
         icon: 'mdi-vector-polyline',
         text: 'Graph'
       },
