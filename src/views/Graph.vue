@@ -6,34 +6,28 @@
   <div id='holder'>
     <sync-loader :loading='loading' :color='color' :size='size' class='spinner'></sync-loader>
     <div class='reset'>
-      <v-btn align-center justify-center :depressed='true' id='dagre-button' class='dagre-button'>
-        DAGRE
-        <!-- <v-icon id='reset-icon' name='reset-icon' color='#333'>mdi-backup-restore</v-icon> -->
-      </v-btn>
+      <v-btn
+        align-center
+        justify-center
+        :depressed='true'
+        id='dagre-button'
+        class='dagre-button'
+      >DAGRE</v-btn>
       <v-btn
         align-center
         justify-center
         :depressed='true'
         id='cosebilkent-button'
         class='cosebilkent-button'
-      >
-        COSE-BILKENT
-        <!-- <v-icon id='reset-icon' name='reset-icon' color='#333'>mdi-backup-restore</v-icon> -->
-      </v-btn>
-      <v-btn align-center justify-center :depressed='true' id='klay-button' class='klay-button'>
-        KLAY
-        <!-- <v-icon id='reset-icon' name='reset-icon' color='#333'>mdi-backup-restore</v-icon> -->
-      </v-btn>
+      >COSE-BILKENT</v-btn>
+      <v-btn align-center justify-center :depressed='true' id='klay-button' class='klay-button'>KLAY</v-btn>
       <v-btn
         align-center
         justify-center
         :depressed='true'
         id='hierarchical-button'
         class='hierarchical-button'
-      >
-        HIERARCHICAL
-        <!-- <v-icon id='reset-icon' name='reset-icon' color='#333'>mdi-backup-restore</v-icon> -->
-      </v-btn>
+      >HIERARCHICAL</v-btn>
     </div>
     <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
@@ -64,6 +58,7 @@ import popper from 'cytoscape-popper'
 import jquery from 'jquery'
 import axios from 'axios'
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
+import _ from 'lodash'
 
 const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.5.json'
 let cy = {}
@@ -100,7 +95,7 @@ const config = {
   boxSelectionEnabled: true,
   layout: {
     name: 'dagre',
-    textureOnViewport: false,
+    textureOnViewport: true,
     hideEdgesOnViewport: true
   },
   style: [
@@ -322,28 +317,6 @@ export default {
     },
     async afterCreated() {
       console.log('after created')
-      // cy = await this.$cytoscape.instance // load instance
-
-      //register extensions
-      if (typeof cytoscape('core', 'navigator') !== 'function') {
-        console.log('registering navigator')
-        navigator(cytoscape)
-      }
-
-      if (typeof cytoscape('core', 'panzoom') !== 'function') {
-        console.log('registering panzoom')
-        panzoom(cytoscape)
-      }
-
-      if (typeof cytoscape('core', 'undoRedo') !== 'function') {
-        console.log('registering undoRedo')
-        undoRedo(cytoscape)
-      }
-
-      if (typeof cytoscape('core', 'expandCollapse') !== 'function') {
-        console.log('registering expandCollapse with jquery')
-        expandCollapse(cytoscape, jquery)
-      }
 
       const dagreOptions = {
         name: 'dagre',
@@ -481,102 +454,164 @@ export default {
         } // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
       }
 
-      async function updateData() {
-          try {
-            const data = await axios.get(DATA_URL)
-            return data
-          } catch(error) {
-            console.log('error', error);
-          }
+      async function registerExtensions() {
+        //register extensions
+        if (typeof cytoscape('core', 'navigator') !== 'function') {
+          console.log('registering navigator')
+          navigator(cytoscape)
         }
+
+        if (typeof cytoscape('core', 'panzoom') !== 'function') {
+          console.log('registering panzoom')
+          panzoom(cytoscape)
+        }
+
+        if (typeof cytoscape('core', 'undoRedo') !== 'function') {
+          console.log('registering undoRedo')
+          undoRedo(cytoscape)
+        }
+
+        if (typeof cytoscape('core', 'expandCollapse') !== 'function') {
+          console.log('registering expandCollapse with jquery')
+          expandCollapse(cytoscape, jquery)
+        }
+      }
+
+      async function updateData() {
+        try {
+          const data = await axios.get(DATA_URL)
+          return data
+        } catch (error) {
+          console.log('error', error)
+        }
+      }
+
+      async function run(cy) {
+        try {
+          await cy
+            .elements()
+            .layout(layoutOptions)
+            .run()
+          return cy
+        } catch (error) {
+          console.log('error', error)
+        }
+      }
 
       async function getInstance(instance) {
         try {
-
-          if(instance) {
+          if (instance) {
             return instance
           } else {
-             return await this.$cytoscape.instance
-            // cy.instance.then(cy => {
-            //   const that = this
-            //   return cy
-            // })
+            return await this.$cytoscape.instance
           }
-         
         } catch (error) {
-          console.log('error', error);
+          console.log('error', error)
         }
       }
 
       async function runlayout(instance) {
         try {
           let cy = instance
-          if (cy) {
+          if (!_.isEmpty(cy)) {
+            // if (this.$cytoscape.instance){
+            // remove all nodes and edges
+            cy.remove(cy.nodes())
+            cy.remove(cy.edges())
             console.log('cy instance exists')
-            // remove all elements
-            cy.remove(cy.elements())
-            let cynodes = elements.nodes
-            let cyedges = elements.edges
-            // add the new ones
-            cy.add(cynodes)
-            cy.add(cyedges)
-            if (Object.entries(layoutOptions).length === 0 && layoutOptions.constructor === Object) {
-                console.log('layoutOptions is an empty object default to Dagre ')
-                layoutOptions = dagreOptions
-                console.log(layoutOptions)
+            if (_.isObject(layoutOptions) && _.isEmpty(layoutOptions)) {
+              console.log('layoutOptions is an empty object default to Dagre ')
+              layoutOptions = dagreOptions
+              console.log(layoutOptions)
             }
-            await cy.elements()
-              .layout(layoutOptions)
-              .run()
-          return cy
-          } else {
-            console.log('cy instance does not exist')
-              cy = await this.$cytoscape.instance
+            if (_.isEmpty(cy.nodes) && _.isEmpty(cy.edges)) {
+              console.log('cy.nodes and edges length is zero - adding')
               let cynodes = elements.nodes
               let cyedges = elements.edges
-              console.log('graph data version: ', elements.version)
-              // add the new ones
+              // // add the new ones
               cy.add(cynodes)
               cy.add(cyedges)
-              if (Object.entries(layoutOptions).length !== 0 && layoutOptions.constructor === Object) {
-                console.log('layoutOptions has entries =>\n' , layoutOptions)
+            } else {
+              console.log('cy.elements exist')
+              // // remove all elements
+              cy.remove(cy.nodes())
+              cy.remove(cy.edges())
+              console.log('graph data version: ', elements.version)
+              // add the new ones
+              // cy.add(cynodes)
+              // cy.add(cyedges)
+              if (_.isObject(layoutOptions) && _.isEmpty(layoutOptions)) {
+                console.log('layoutOptions has entries =>\n', layoutOptions)
+              }
             }
-              await cy.elements()
-                .layout(layoutOptions)
-                .run()
-              return cy
-            }
-          } catch (error) {
-            console.log('error', error);
+            await cy
+              .elements()
+              .layout(layoutOptions)
+              .run()
+            return cy
           }
+        } catch (error) {
+          console.log('error', error)
+        }
       }
 
       async function setupUndo(instance) {
-          let cy = instance
-          let ur = cy.undoRedo()
-          cy.expandCollapse(expandCollapseOptions)
-          let api = cy.expandCollapse('get')
-          api.collapseAll()
-          layoutOptions = dagreOptions
-          return ur
+        let cy = instance
+        let ur = cy.undoRedo()
+        cy.expandCollapse(expandCollapseOptions)
+        let api = cy.expandCollapse('get')
+        api.collapseAll()
+        layoutOptions = dagreOptions
+        return cy, ur
       }
 
       async function getGraph(instance) {
-          const cyinstance = await getInstance(instance)
-          const data = await updateData()
-          const cy = await runlayout(cyinstance)
-          const ur = await setupUndo(cy)
-          return cy, ur
+        await registerExtensions()
+        const cyinstance = await getInstance(instance)
+        // const data = await updateData()
+        let cy = await runlayout(cyinstance)
+        let ur
+        cy, (ur = await setupUndo(cy))
+        getPanzoom(cy)
+        getNavigator(cy)
+        getUndoRedo(cy)
+        return cy, ur
       }
       // load graph data and run layout
       cy = await this.$cytoscape.instance
-      let { data: elements }  = await updateData()
-      cy, ur = await getGraph(cy)
+      let { data: elements } = await updateData()
+      cy, (ur = await getGraph(cy))
       cy.expandCollapse(expandCollapseOptions)
       let api = cy.expandCollapse('get')
       api.collapseAll()
+      console.log('loaded elements: ', elements, cy)
+      this.loading = false // remove spinner
 
-      console.log('loaded elements: ', elements, cy), (this.loading = false) // remove spinner
+      // ----------------------------------------
+      function getPanzoom() {
+        let panzoomdefaults = {
+          zoomFactor: 0.1, // zoom factor per zoom tick
+          zoomDelay: 45, // how many ms between zoom ticks
+          minZoom: 0.1, // min zoom level
+          maxZoom: 10, // max zoom level
+          fitPadding: 50, // padding when fitting
+          panSpeed: 10, // how many ms in between pan ticks
+          panDistance: 100, // max pan distance per tick
+          panDragAreaSize: 75, // the length of the pan drag box in which the vector for panning is calculated (bigger = finer control of pan speed and direction)
+          panMinPercentSpeed: 0.25, // the slowest speed we can pan by (as a percent of panSpeed)
+          panInactiveArea: 8, // radius of inactive area in pan drag box
+          panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib) scales from this to 1.0
+          zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
+          fitSelector: undefined, // selector of elements to fit
+          animateOnFit: function() {
+            // whether to animate on fit
+            return false
+          },
+          fitAnimationDuration: 1000 // duration of animation on fit
+        }
+        cy.panzoom(panzoomdefaults)
+        return cy.panzoom
+      }
       // hierarchical clustering internal needs cy instance
       const hca = cy.elements().hca({
         mode: 'threshold',
@@ -592,16 +627,35 @@ export default {
           }
         ]
       })
-      
-      cy.navigator({
-        container: '.cytoscape-navigator-overlay',
-        viewLiveFramerate: 0, // set false to update graph pan only on drag end set 0 to do it instantly set a number (frames per second) to update not more than N times per second
-        thumbnailEventFramerate: 30, // max thumbnail's updates per second triggered by graph updates
-        thumbnailLiveFramerate: false, // max thumbnail's updates per second. Set false to disable
-        dblClickDelay: 200, // milliseconds
-        removeCustomContainer: true, // destroy the container specified by user on plugin destroy
-        rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
-      })
+
+      function getNavigator(cy) {
+        cy.navigator({
+          container: '.cytoscape-navigator-overlay',
+          viewLiveFramerate: 0, // set false to update graph pan only on drag end set 0 to do it instantly set a number (frames per second) to update not more than N times per second
+          thumbnailEventFramerate: 30, // max thumbnail's updates per second triggered by graph updates
+          thumbnailLiveFramerate: false, // max thumbnail's updates per second. Set false to disable
+          dblClickDelay: 200, // milliseconds
+          removeCustomContainer: true, // destroy the container specified by user on plugin destroy
+          rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
+        })
+        return cy.navigator
+      }
+
+      function getUndoRedo(cy) {
+        let undoRedoOptions = {
+          isDebug: true, // Debug mode for console messages
+          actions: {}, // actions to be added
+          undoableDrag: true, // Whether dragging nodes are undoable can be a function as well
+          stackSizeLimit: undefined, // Size limit of undo stack, note that the size of redo stack cannot exceed size of undo stack
+          ready: function() {
+            // callback when undo-redo is ready
+            this.loading = false // add spinner
+          }
+        }
+        cy.undoRedo(undoRedoOptions)
+        return cy.undoRedo
+      }
+
       cy.on('tap', 'node', function(event) {
         const node = event.target
         // const data = node[0]._private.data
@@ -634,40 +688,6 @@ export default {
         cy.elements().removeClass('highlight')
         cy.elements().removeClass('selected')
       })
-
-      let panzoomdefaults = {
-        zoomFactor: 0.1, // zoom factor per zoom tick
-        zoomDelay: 45, // how many ms between zoom ticks
-        minZoom: 0.1, // min zoom level
-        maxZoom: 10, // max zoom level
-        fitPadding: 50, // padding when fitting
-        panSpeed: 10, // how many ms in between pan ticks
-        panDistance: 100, // max pan distance per tick
-        panDragAreaSize: 75, // the length of the pan drag box in which the vector for panning is calculated (bigger = finer control of pan speed and direction)
-        panMinPercentSpeed: 0.25, // the slowest speed we can pan by (as a percent of panSpeed)
-        panInactiveArea: 8, // radius of inactive area in pan drag box
-        panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib) scales from this to 1.0
-        zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
-        fitSelector: undefined, // selector of elements to fit
-        animateOnFit: function() {
-          // whether to animate on fit
-          return false
-        },
-        fitAnimationDuration: 1000 // duration of animation on fit
-      }
-      cy.panzoom(panzoomdefaults)
-
-      let undoRedoOptions = {
-        isDebug: true, // Debug mode for console messages
-        actions: {}, // actions to be added
-        undoableDrag: true, // Whether dragging nodes are undoable can be a function as well
-        stackSizeLimit: undefined, // Size limit of undo stack, note that the size of redo stack cannot exceed size of undo stack
-        ready: function() {
-          // callback when undo-redo is ready
-          this.loading = false // add spinner
-        }
-      }
-      cy.undoRedo(undoRedoOptions)
 
       expandCollapseOptions = {
         layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
@@ -742,7 +762,7 @@ export default {
         collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
         expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
       }
-      
+
       // const popperOptions = {
       //     content: 'test data',
       //     renderedPosition: 'bottom',
@@ -791,23 +811,21 @@ export default {
       document
         .getElementById('hierarchical-button')
         .addEventListener('click', function(event) {
-        console.log('tapped hierarchical button')
-        // expandCollapseOptions = expandCollapseOptionsCoseBilkent
-        // cy.expandCollapse(expandCollapseOptionsUndefined)
-        cy.elements().hca({
-        mode: 'threshold',
-        threshold: 25,
-        distance: 'euclidian', // euclidian, squaredEuclidian, manhattan, max
-        preference: 'mean', // median, mean, min, max,
-        damping: 0.8, // [0.5 - 1]
-        minIterations: 100, // [optional] The minimum number of iteraions the algorithm will run before stopping (default 100).
-        maxIterations: 1000, // [optional] The maximum number of iteraions the algorithm will run before stopping (default 1000).
-        attributes: [
-          function(node) {
-            return node.data('weight')
-          }
-        ]
-      })
+          console.log('tapped hierarchical button')
+          cy.elements().hca({
+            mode: 'threshold',
+            threshold: 25,
+            distance: 'euclidian', // euclidian, squaredEuclidian, manhattan, max
+            preference: 'mean', // median, mean, min, max,
+            damping: 0.8, // [0.5 - 1]
+            minIterations: 100, // [optional] The minimum number of iteraions the algorithm will run before stopping (default 100).
+            maxIterations: 1000, // [optional] The maximum number of iteraions the algorithm will run before stopping (default 1000).
+            attributes: [
+              function(node) {
+                return node.data('weight')
+              }
+            ]
+          })
           ur.do('collapseAll')
           cy.elements()
             .layout(klayLayoutOptions)
