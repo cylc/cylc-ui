@@ -679,6 +679,7 @@ export default {
           content: () => {
             let content = document.createElement('div')
             let expired = node.data('expired')
+            let failed = node.data('failed')
             let parent = node.data('parent')
             let running = node.data('running')
             let todo = node.data('todo')
@@ -692,6 +693,7 @@ export default {
             let state
             let currentstate = {}
             currentstate.expired = expired
+            currentstate.failed = failed
             currentstate.running = running
             currentstate.queued = queued
             currentstate.retrying = retrying
@@ -882,7 +884,7 @@ export default {
           name: 'cose-bilkent',
           animate: 'end',
           randomize: false,
-          fit: false
+          fit: true
         },
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
