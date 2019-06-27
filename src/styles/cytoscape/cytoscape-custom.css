@@ -84,6 +84,7 @@
   color: #fff;
   z-index: 99999;
   height: 40px;
+  width: 40px;
 }
 
 .hierarchical-button {
@@ -94,4 +95,15 @@
   color: #fff;
   z-index: 99999;
   height: 40px;
+}
+
+.cola-button {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: centre;
+  color: #fff;
+  z-index: 99999;
+  height: 40px;
+  width: 40px;
 }

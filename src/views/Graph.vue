@@ -4,86 +4,31 @@
 </style>
 <template>
   <div id='holder'>
-    <SyncLoader
-      :loading='loading'
-      :color='color'
-      :size='size'
-      class='spinner'
-    ></SyncLoader>
+    <SyncLoader :loading='loading' :color='color' :size='size' class='spinner'></SyncLoader>
     <div class='switchlayout'>
-      <v-btn
-        id='dagre-button'
-        name='dagre'
-        align-center
-        justify-center
-        :depressed='true'
-        class='dagre-button'
-        >DAGRE</v-btn
-      >
-      <v-btn
-        id='cosebilkent-button'
-        name='cose-bilkent'
-        align-center
-        justify-center
-        :depressed='true'
-        class='cosebilkent-button'
-        >COSE-BILKENT</v-btn
-      >
-      <v-btn
-        id='klay-button'
-        align-center
-        justify-center
-        :depressed='true'
-        class='klay-button'
-        >KLAY</v-btn
-      >
-      <v-btn
-        id='hierarchical-button'
-        name='hierarchical'
-        align-center
-        justify-center
-        :depressed='true'
-        class='hierarchical-button'
-        >HIERARCHICAL</v-btn
-      >
+      <v-btn id='dagre-button' name='dagre' align-center justify-center :depressed='true' class='dagre-button'>DAGRE</v-btn>
+      <v-btn id='cosebilkent-button' name='cose-bilkent' align-center justify-center :depressed='true' class='cosebilkent-button'>COSE-BILKENT</v-btn>
+      <v-btn id='klay-button' align-center justify-center :depressed='true' class='klay-button'>KLAY</v-btn>
+      <v-btn id='hierarchical-button' name='hierarchical' align-center justify-center :depressed='true' class='hierarchical-button'>HIERARCHICAL</v-btn>
+    <v-btn id='cola-button' name='cola' align-center justify-center :depressed='false' class='cola-button'>COLA</v-btn>
     </div>
     <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
       <div class='cytoscape-navigatorView'></div>
       <div class='cytoscape-navigatorOverlay'></div>
     </div>
-    <b
-      id='collapseAll'
-      class='collapseAll'
-      style='cursor: pointer; color: white'
-      >collapse all</b
-    >
-    /
-    <b id='expandAll' class='expandAll' style='cursor: pointer; color: white'
-      >expand all</b
-    >
-    /
-    <cytoscape
-      :config='config'
-      :pre-config='preConfig'
-      :after-created='afterCreated'
-    >
-      <cy-element
-        v-for='def in elements.nodes'
-        :key='`${def.data.id}`'
-        :definition='def'
-      />
-      <cy-element
-        v-for='def in elements.edges'
-        :key='`${def.data.id}`'
-        :definition='def'
-      />
+    <b id='collapseAll' class='collapseAll' style='cursor: pointer; color: white'>collapse all</b> /
+    <!-- <b id='expandAll' class='expandAll' style='cursor: pointer; color: white'>expand all</b> / -->
+    <cytoscape :config='config' :pre-config='preConfig' :after-created='afterCreated'>
+      <cy-element v-for='def in elements.nodes' :key='`${def.data.id}`' :definition='def'/>
+      <cy-element v-for='def in elements.edges' :key='`${def.data.id}`' :definition='def'/>
     </cytoscape>
   </div>
 </template>
 
 <script>
 import cytoscape from 'cytoscape'
+import cola from 'cytoscape-cola'
 import dagre from 'cytoscape-dagre'
 import klay from 'cytoscape-klay'
 import coseBilkent from 'cytoscape-cose-bilkent'
@@ -103,7 +48,6 @@ let cy = {}
 let ur = {}
 let elements = []
 let loading = true
-let versionIndex = 0
 let layoutOptions = {}
 let expandCollapseOptions = {}
 let tippy
@@ -349,6 +293,7 @@ export default {
     preConfig(cytoscape) {
       console.log('calling pre-config', config, elements)
       // cytoscape: this is the cytoscape constructor
+      cytoscape.use(cola)
       cytoscape.use(dagre)
       cytoscape.use(coseBilkent)
       cytoscape.use(klay)
@@ -391,7 +336,7 @@ export default {
         // number of ticks per frame higher is faster but more jerky
         refresh: 30,
         // Whether to fit the network view after when done
-        fit: true,
+        fit: false,
         // Padding on fit
         padding: 10,
         // Whether to enable incremental mode
@@ -489,6 +434,48 @@ export default {
         priority: function(edge) {
           return null
         } // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
+      }
+
+      const colaLayoutOptions = {
+        name: 'cola',
+        animate: true, // whether to show the layout as it's running
+        refresh: 1, // number of ticks per frame; higher is faster but more jerky
+        maxSimulationTime: 4000, // max length in ms to run the layout
+        ungrabifyWhileSimulating: false, // so you can't drag nodes during layout
+        fit: false, // on every layout reposition of nodes, fit the viewport
+        padding: 30, // padding around the simulation
+        boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+        nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
+
+        // layout event callbacks
+        ready: function() {}, // on layoutready
+        stop: function() {}, // on layoutstop
+
+        // positioning options
+        randomize: false, // use random node positions at beginning of layout
+        avoidOverlap: true, // if true, prevents overlap of node bounding boxes
+        handleDisconnected: true, // if true, avoids disconnected components from overlapping
+        convergenceThreshold: 0.01, // when the alpha value (system energy) falls below this value, the layout stops
+        nodeSpacing: function(node) {
+          return 100
+        }, // extra spacing around nodes
+        flow: undefined, // use DAG/tree flow layout if specified, e.g. { axis: 'y', minSeparation: 30 }
+        alignment: undefined, // relative alignment constraints on nodes, e.g. function( node ){ return { x: 0, y: 1 } }
+        gapInequalities: undefined, // list of inequality constraints for the gap between the nodes, e.g. [{'axis':'y', 'left':node1, 'right':node2, 'gap':25}]
+
+        // different methods of specifying edge length
+        // each can be a constant numerical value or a function like `function( edge ){ return 2; }`
+        edgeLength: undefined, // sets edge length directly in simulation
+        edgeSymDiffLength: undefined, // symmetric diff edge length in simulation
+        edgeJaccardLength: undefined, // jaccard edge length in simulation
+
+        // iterations of cola algorithm; uses default values on undefined
+        unconstrIter: undefined, // unconstrained initial layout iterations
+        userConstIter: undefined, // initial layout iterations with user-specified constraints
+        allConstIter: undefined, // initial layout iterations with all constraints including non-overlap
+
+        // infinite layout options
+        infinite: false // overrides all other options for a forces-all-the-time mode
       }
 
       async function registerExtensions() {
@@ -697,74 +684,88 @@ export default {
       }
 
       const popperOptions = {
-          content: 'test data',
-          renderedPosition: 'bottom',
-          renderedDimensions: undefined,
-          popper: undefined,
-          closeOnClickOutside: true
+        content: 'test data',
+        renderedPosition: 'bottom',
+        renderedDimensions: undefined,
+        popper: undefined,
+        closeOnClickOutside: true
       }
 
-       cy.on('tap', 'node', function(event) {
-          const node = event.target
-          console.log('tapped ' + node.id(), node.data())
-          let ref = node.popperRef()
-          // using tippy ^4.0.0
-          tippy = new Tippy(ref, {
-            content: () => {
-              let content = document.createElement('div')
-              let expired = node.data('expired')
-              let parent = node.data('parent')
-              let running = node.data('running')
-              let todo = node.data('todo')
-              let queued = node.data('queued')
-              let retrying = node.data('retrying')
-              let subfailed = node.data('subfailed')
-              let submitted = node.data('submitted')
-              let succeeded = node.data('succeeded')
-              let waiting = node.data('waiting')
-              // if state is in the data then this will become unecessary
-              let state
-              let currentstate = {}
-              currentstate.expired = expired
-              currentstate.running = running
-              currentstate.queued = queued
-              currentstate.retrying = retrying
-              currentstate.subfailed = subfailed
-              currentstate.submitted = submitted
-              currentstate.succeeded = succeeded
-              currentstate.waiting = waiting
-              for (let item in currentstate) {
-                console.log('key:' + item + ' value:' + currentstate[item]);
-                currentstate[item] > 0 ? state = item: ''
-              }
-              // if (state ==0){state = 'inactive'}
+      cy.on('tap', 'node', function(event) {
+        const node = event.target
+        console.log('tapped ' + node.id(), node.data())
+        let ref = node.popperRef()
+        // using tippy ^4.0.0
+        tippy = new Tippy(ref, {
+          content: () => {
+            let content = document.createElement('div')
+            let expired = node.data('expired')
+            let parent = node.data('parent')
+            let running = node.data('running')
+            let todo = node.data('todo')
+            let queued = node.data('queued')
+            let retrying = node.data('retrying')
+            let subfailed = node.data('subfailed')
+            let submitted = node.data('submitted')
+            let succeeded = node.data('succeeded')
+            let waiting = node.data('waiting')
+            // if state is in the data then this will become unecessary
+            let state
+            let currentstate = {}
+            currentstate.expired = expired
+            currentstate.running = running
+            currentstate.queued = queued
+            currentstate.retrying = retrying
+            currentstate.subfailed = subfailed
+            currentstate.submitted = submitted
+            currentstate.succeeded = succeeded
+            currentstate.waiting = waiting
+            for (let item in currentstate) {
+              console.log('key:' + item + ' value:' + currentstate[item])
+              currentstate[item] > 0 ? (state = item) : ''
+            }
 
-              let parentstring = '<br><strong>parent <span style="color: aqua;">' + parent  + '%</span></strong>'
-              let progress = '<br><strong>progress <span style="color: aqua;">' + running  + '%</span></strong>'
-              content.innerHTML = 'node<br>'
-              + '<strong>id <span style="color: aqua;">' + node.data('id') + '</span></strong><br>'
-              + '<strong>suid <span style="color: aqua;">' + node.data('suid') + '</span></strong><br>'
-              + '<strong>label <span style="color: aqua;">' + node.data('label') + '</span></strong><br>'
-              + '<strong>state <span style="color: aqua;">' + state + '</span></strong>'
-              running > 0 ? content.innerHTML += progress: ''
-              parent != undefined ? content.innerHTML += parentstring: ''
-              content.align = 'left'
-              return content
-            },
-            trigger: 'manual',
-            arrow: true,
-            placement: 'left',
-            hideOnClick: 'true',
-            delay: [0, 2000],
-            animation: 'fade',
-            multiple: false,
-            sticky: true,
-            flip: true,
-            duration: [250, 275],
-            allowHTML: false,
-            interactive: true
-            })
-            tippy.show()
+            let parentstring =
+              '<br><strong>parent <span style="color: aqua;">' +
+              parent +
+              '%</span></strong>'
+            let progress =
+              '<br><strong>progress <span style="color: aqua;">' +
+              running +
+              '%</span></strong>'
+            content.innerHTML =
+              'node<br>' +
+              '<strong>id <span style="color: aqua;">' +
+              node.data('id') +
+              '</span></strong><br>' +
+              '<strong>suid <span style="color: aqua;">' +
+              node.data('suid') +
+              '</span></strong><br>' +
+              '<strong>label <span style="color: aqua;">' +
+              node.data('label') +
+              '</span></strong><br>' +
+              '<strong>state <span style="color: aqua;">' +
+              state +
+              '</span></strong>'
+            running > 0 ? (content.innerHTML += progress) : ''
+            parent != undefined ? (content.innerHTML += parentstring) : ''
+            content.align = 'left'
+            return content
+          },
+          trigger: 'manual',
+          arrow: true,
+          placement: 'left',
+          hideOnClick: 'true',
+          delay: [0, 2000],
+          animation: 'fade',
+          multiple: false,
+          sticky: true,
+          flip: true,
+          duration: [250, 275],
+          allowHTML: false,
+          interactive: true
+        })
+        tippy.show()
       })
 
       // cy.on('tap', 'node', function(event) {
@@ -785,43 +786,47 @@ export default {
 
       cy.on('tap', 'edge', function(event) {
         const edge = event.target
-        // const data = edge[0]._private.data
-        console.log('selected ' + edge.id(), edge.data())
+        console.log('tapped ' + edge.id(), edge.data())
         edge.addClass('selected')
-      })
-
-      cy.on('tap', 'edge', function(event) {
-          const edge = event.target
-          console.log('tapped ' + edge.id(), edge.data())
-          edge.addClass('selected')
-          let ref = edge.popperRef()
-          tippy = new Tippy(ref, {
-            content: () => {
-              let content = document.createElement('div')
-              content.innerHTML = 'edge<br>'
-              + '<strong>source <span style="color: aqua;">' + edge.data('source')  + '%</span></strong><br>'
-              + '<strong>target <span style="color: aqua;">' + edge.data('target')  + '%</span></strong><br>'
-              + '<strong>id <span style="color: aqua;">' + edge.data('id') + '</span></strong><br>'
-              + '<strong>suid <span style="color: aqua;">' + edge.data('suid') + '</span></strong><br>'
-              + '<strong>label <span style="color: aqua;">' + edge.data('label') + '</span></strong><br>'
-              content.align = 'left'
-              return content
-            },
-            theme: 'light',
-            trigger: 'manual',
-            arrow: true,
-            placement: 'left',
-            hideOnClick: 'true',
-            delay: [0, 2000],
-            animation: 'fade',
-            multiple: false,
-            sticky: true,
-            flip: true,
-            duration: [250, 275],
-            allowHTML: false,
-            interactive: true
-            })
-            tippy.show()
+        let ref = edge.popperRef()
+        tippy = new Tippy(ref, {
+          content: () => {
+            let content = document.createElement('div')
+            content.innerHTML =
+              'edge<br>' +
+              '<strong>source <span style="color: aqua;">' +
+              edge.data('source') +
+              '%</span></strong><br>' +
+              '<strong>target <span style="color: aqua;">' +
+              edge.data('target') +
+              '%</span></strong><br>' +
+              '<strong>id <span style="color: aqua;">' +
+              edge.data('id') +
+              '</span></strong><br>' +
+              '<strong>suid <span style="color: aqua;">' +
+              edge.data('suid') +
+              '</span></strong><br>' +
+              '<strong>label <span style="color: aqua;">' +
+              edge.data('label') +
+              '</span></strong><br>'
+            content.align = 'left'
+            return content
+          },
+          theme: 'light',
+          trigger: 'manual',
+          arrow: true,
+          placement: 'left',
+          hideOnClick: 'true',
+          delay: [0, 2000],
+          animation: 'fade',
+          multiple: false,
+          sticky: true,
+          flip: true,
+          duration: [250, 275],
+          allowHTML: false,
+          interactive: true
+        })
+        tippy.show()
       })
 
       cy.on('click', function(event) {
@@ -836,7 +841,7 @@ export default {
         cy.elements().removeClass('highlight')
         cy.elements().removeClass('selected')
         if (tippy) {
-           tippy.hide()
+          tippy.hide()
         }
       })
 
@@ -877,7 +882,7 @@ export default {
           name: 'cose-bilkent',
           animate: 'end',
           randomize: false,
-          fit: true
+          fit: false
         },
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
@@ -894,14 +899,35 @@ export default {
       }
 
       const expandCollapseOptionsKlay = {
-        layoutBy: {
+         layoutBy: {
           name: 'cose-bilkent',
           animate: 'end',
           randomize: false,
-          fit: true
+          fit: false
         },
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
+        animate: false, // whether to animate on drawing changes you can specify a function too
+        ready: function() {}, // callback when expand/collapse initialized
+        undoable: true, // and if undoRedoExtension exists,
+        cueEnabled: true, // Whether cues are enabled
+        expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
+        expandCollapseCueSize: 20, // size of expand-collapse cue
+        expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
+        expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
+        collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
+        expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
+      }
+
+      const expandCollapseOptionsCola = {
+         layoutBy: {
+          name: 'cose-bilkent',
+          animate: 'end',
+          randomize: false,
+          fit: false
+        },
+        // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
+        fisheye: false, // whether to perform fisheye view after expand/collapse you can specify a function too
         animate: false, // whether to animate on drawing changes you can specify a function too
         ready: function() {}, // callback when expand/collapse initialized
         undoable: true, // and if undoRedoExtension exists,
@@ -921,6 +947,10 @@ export default {
           layoutOptions = dagreOptions
           expandCollapseOptions = expandCollapseOptionsUndefined
           cy.expandCollapse(expandCollapseOptionsUndefined)
+          ur.do('collapseAll')
+          cy.elements()
+            .layout(klayLayoutOptions)
+            .run()
           cy.elements()
             .layout(dagreOptions)
             .run()
@@ -977,6 +1007,19 @@ export default {
         })
 
       document
+      .getElementById('cola-button')
+      .addEventListener('click', function(event) {
+        console.log('tapped cola button')
+        expandCollapseOptions = expandCollapseOptionsCola
+        cy.expandCollapse(expandCollapseOptionsCola)
+        layoutOptions = colaLayoutOptions
+        ur.do('collapseAll')
+        cy.elements()
+          .layout(colaLayoutOptions)
+          .run()
+      })
+
+      document
         .getElementById('collapseAll')
         .addEventListener('click', function() {
           console.log('collapseAll')
@@ -986,12 +1029,12 @@ export default {
           cy.elements().removeClass('selected')
         })
 
-      document
-        .getElementById('expandAll')
-        .addEventListener('click', function() {
-          console.log('expandAll')
-          ur.do('expandAll')
-        })
+      // document
+      //   .getElementById('expandAll')
+      //   .addEventListener('click', function() {
+      //     console.log('expandAll')
+      //     ur.do('expandAll')
+      //   })
 
       document.addEventListener(
         'keydown',
