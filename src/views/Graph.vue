@@ -4,48 +4,85 @@
 </style>
 <template>
   <div id='holder'>
-    <sync-loader :loading='loading' :color='color' :size='size' class='spinner'></sync-loader>
-    <div class='reset'>
+    <SyncLoader
+      :loading='loading'
+      :color='color'
+      :size='size'
+      class='spinner'
+    ></SyncLoader>
+    <div class='switchlayout'>
       <v-btn
-        align-center
-        justify-center
-        :depressed='true'
         id='dagre-button'
+        name='dagre'
+        align-center
+        justify-center
+        :depressed='true'
         class='dagre-button'
-      >DAGRE</v-btn>
+        >DAGRE</v-btn
+      >
       <v-btn
-        align-center
-        justify-center
-        :depressed='true'
         id='cosebilkent-button'
-        class='cosebilkent-button'
-      >COSE-BILKENT</v-btn>
-      <v-btn align-center justify-center :depressed='true' id='klay-button' class='klay-button'>KLAY</v-btn>
-      <v-btn
+        name='cose-bilkent'
         align-center
         justify-center
         :depressed='true'
+        class='cosebilkent-button'
+        >COSE-BILKENT</v-btn
+      >
+      <v-btn
+        id='klay-button'
+        align-center
+        justify-center
+        :depressed='true'
+        class='klay-button'
+        >KLAY</v-btn
+      >
+      <v-btn
         id='hierarchical-button'
+        name='hierarchical'
+        align-center
+        justify-center
+        :depressed='true'
         class='hierarchical-button'
-      >HIERARCHICAL</v-btn>
+        >HIERARCHICAL</v-btn
+      >
     </div>
     <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
       <div class='cytoscape-navigatorView'></div>
       <div class='cytoscape-navigatorOverlay'></div>
     </div>
-    <b id='collapseAll' class='collapseAll' style='cursor: pointer; color: white'>collapse all</b> /
-    <b id='expandAll' class='expandAll' style='cursor: pointer; color: white'>expand all</b> /
-    <cytoscape :config='config' :preConfig='preConfig' :afterCreated='afterCreated'>
-      <cy-element v-for='def in elements.nodes' :key='`${def.data.id}`' :definition='def'/>
-      <cy-element v-for='def in elements.edges' :key='`${def.data.id}`' :definition='def'/>
+    <b
+      id='collapseAll'
+      class='collapseAll'
+      style='cursor: pointer; color: white'
+      >collapse all</b
+    >
+    /
+    <b id='expandAll' class='expandAll' style='cursor: pointer; color: white'
+      >expand all</b
+    >
+    /
+    <cytoscape
+      :config='config'
+      :pre-config='preConfig'
+      :after-created='afterCreated'
+    >
+      <cy-element
+        v-for='def in elements.nodes'
+        :key='`${def.data.id}`'
+        :definition='def'
+      />
+      <cy-element
+        v-for='def in elements.edges'
+        :key='`${def.data.id}`'
+        :definition='def'
+      />
     </cytoscape>
   </div>
 </template>
 
-
 <script>
-/* eslint-disable */
 import cytoscape from 'cytoscape'
 import dagre from 'cytoscape-dagre'
 import klay from 'cytoscape-klay'
@@ -59,8 +96,9 @@ import jquery from 'jquery'
 import axios from 'axios'
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 import _ from 'lodash'
+import Tippy from 'tippy.js'
 
-const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.5.json'
+const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.6.json'
 let cy = {}
 let ur = {}
 let elements = []
@@ -68,6 +106,7 @@ let loading = true
 let versionIndex = 0
 let layoutOptions = {}
 let expandCollapseOptions = {}
+let tippy
 
 let nodeOptions = {
   normal: {
@@ -103,7 +142,7 @@ const config = {
       selector: 'node',
       css: {
         'background-color': 'data(state)',
-        content: 'data(id)',
+        content: 'data(label)',
         'font-family': 'Avenir, Helvetica, Arial, sans-serif',
         color: '#fff',
         'text-max-width': '.5em',
@@ -140,7 +179,7 @@ const config = {
         'pie-9-background-color': '#666',
         'pie-9-background-size': 'mapData(waiting, 0, 100, 0, 100)',
         'pie-10-background-color': '#cacaca',
-        'pie-10-background-size': 'mapData(progress, 0, 100, 0, 100)'
+        'pie-10-background-size': 'mapData(todo, 0, 100, 0, 100)'
       }
     },
     {
@@ -288,6 +327,9 @@ export default {
     }
   },
   name: 'Graph',
+  components: {
+    SyncLoader
+  },
   data() {
     return {
       config,
@@ -303,9 +345,6 @@ export default {
       loading: true
     }
   },
-  components: {
-    SyncLoader
-  },
   methods: {
     preConfig(cytoscape) {
       console.log('calling pre-config', config, elements)
@@ -313,11 +352,9 @@ export default {
       cytoscape.use(dagre)
       cytoscape.use(coseBilkent)
       cytoscape.use(klay)
-      // cytoscape.use(popper)
     },
     async afterCreated() {
       console.log('after created')
-
       const dagreOptions = {
         name: 'dagre',
         //  // dagre algo options, uses default value on undefined
@@ -475,6 +512,11 @@ export default {
           console.log('registering expandCollapse with jquery')
           expandCollapse(cytoscape, jquery)
         }
+
+        if (typeof cytoscape('core', 'popper') !== 'function') {
+          console.log('registering popper')
+          popper(cytoscape)
+        }
       }
 
       async function updateData() {
@@ -514,10 +556,8 @@ export default {
         try {
           let cy = instance
           if (!_.isEmpty(cy)) {
-            // if (this.$cytoscape.instance){
-            // remove all nodes and edges
-            cy.remove(cy.nodes())
-            cy.remove(cy.edges())
+            cy.remove(cy.nodes()) //todo: remove
+            cy.remove(cy.edges()) //todo: remove
             console.log('cy instance exists')
             if (_.isObject(layoutOptions) && _.isEmpty(layoutOptions)) {
               console.log('layoutOptions is an empty object default to Dagre ')
@@ -656,26 +696,134 @@ export default {
         return cy.undoRedo
       }
 
-      cy.on('tap', 'node', function(event) {
-        const node = event.target
-        // const data = node[0]._private.data
-        console.log('tapped ' + node.id(), node.data())
-        // cy.elements()
-        //   .difference(node.outgoers())
-        //   .not(node)
-        //   .addClass('semitransp')
-        // node
-        //   .addClass('highlight')
-        //   .addClass('selected')
-        //   .outgoers()
-        //   .addClass('highlight')
+      const popperOptions = {
+          content: 'test data',
+          renderedPosition: 'bottom',
+          renderedDimensions: undefined,
+          popper: undefined,
+          closeOnClickOutside: true
+      }
+
+       cy.on('tap', 'node', function(event) {
+          const node = event.target
+          console.log('tapped ' + node.id(), node.data())
+          let ref = node.popperRef()
+          // using tippy ^4.0.0
+          tippy = new Tippy(ref, {
+            content: () => {
+              let content = document.createElement('div')
+              let expired = node.data('expired')
+              let parent = node.data('parent')
+              let running = node.data('running')
+              let todo = node.data('todo')
+              let queued = node.data('queued')
+              let retrying = node.data('retrying')
+              let subfailed = node.data('subfailed')
+              let submitted = node.data('submitted')
+              let succeeded = node.data('succeeded')
+              let waiting = node.data('waiting')
+              // if state is in the data then this will become unecessary
+              let state
+              let currentstate = {}
+              currentstate.expired = expired
+              currentstate.running = running
+              currentstate.queued = queued
+              currentstate.retrying = retrying
+              currentstate.subfailed = subfailed
+              currentstate.submitted = submitted
+              currentstate.succeeded = succeeded
+              currentstate.waiting = waiting
+              for (let item in currentstate) {
+                console.log('key:' + item + ' value:' + currentstate[item]);
+                currentstate[item] > 0 ? state = item: ''
+              }
+              // if (state ==0){state = 'inactive'}
+
+              let parentstring = '<br><strong>parent <span style="color: aqua;">' + parent  + '%</span></strong>'
+              let progress = '<br><strong>progress <span style="color: aqua;">' + running  + '%</span></strong>'
+              content.innerHTML = 'node<br>'
+              + '<strong>id <span style="color: aqua;">' + node.data('id') + '</span></strong><br>'
+              + '<strong>suid <span style="color: aqua;">' + node.data('suid') + '</span></strong><br>'
+              + '<strong>label <span style="color: aqua;">' + node.data('label') + '</span></strong><br>'
+              + '<strong>state <span style="color: aqua;">' + state + '</span></strong>'
+              running > 0 ? content.innerHTML += progress: ''
+              parent != undefined ? content.innerHTML += parentstring: ''
+              content.align = 'left'
+              return content
+            },
+            trigger: 'manual',
+            arrow: true,
+            placement: 'left',
+            hideOnClick: 'true',
+            delay: [0, 2000],
+            animation: 'fade',
+            multiple: false,
+            sticky: true,
+            flip: true,
+            duration: [250, 275],
+            allowHTML: false,
+            interactive: true
+            })
+            tippy.show()
       })
+
+      // cy.on('tap', 'node', function(event) {
+      //   const node = event.target
+      //   // const data = node[0]._private.data
+      //   console.log('tapped ' + node.id(), node.data())
+      //   // cy.elements()
+      //   //   .difference(node.outgoers())
+      //   //   .not(node)
+      //   //   .addClass('semitransp')
+      //   // node
+      //   //   .addClass('highlight')
+      //   //   .addClass('selected')
+      //   //   .outgoers()
+      //   //   .addClass('highlight')
+      //   //-------------------------------
+      // })
+
       cy.on('tap', 'edge', function(event) {
         const edge = event.target
         // const data = edge[0]._private.data
         console.log('selected ' + edge.id(), edge.data())
         edge.addClass('selected')
       })
+
+      cy.on('tap', 'edge', function(event) {
+          const edge = event.target
+          console.log('tapped ' + edge.id(), edge.data())
+          edge.addClass('selected')
+          let ref = edge.popperRef()
+          tippy = new Tippy(ref, {
+            content: () => {
+              let content = document.createElement('div')
+              content.innerHTML = 'edge<br>'
+              + '<strong>source <span style="color: aqua;">' + edge.data('source')  + '%</span></strong><br>'
+              + '<strong>target <span style="color: aqua;">' + edge.data('target')  + '%</span></strong><br>'
+              + '<strong>id <span style="color: aqua;">' + edge.data('id') + '</span></strong><br>'
+              + '<strong>suid <span style="color: aqua;">' + edge.data('suid') + '</span></strong><br>'
+              + '<strong>label <span style="color: aqua;">' + edge.data('label') + '</span></strong><br>'
+              content.align = 'left'
+              return content
+            },
+            theme: 'light',
+            trigger: 'manual',
+            arrow: true,
+            placement: 'left',
+            hideOnClick: 'true',
+            delay: [0, 2000],
+            animation: 'fade',
+            multiple: false,
+            sticky: true,
+            flip: true,
+            duration: [250, 275],
+            allowHTML: false,
+            interactive: true
+            })
+            tippy.show()
+      })
+
       cy.on('click', function(event) {
         // const data = event.target._private
         // console.log('cy event.target', data)
@@ -687,6 +835,9 @@ export default {
         cy.elements().removeClass('semitransp')
         cy.elements().removeClass('highlight')
         cy.elements().removeClass('selected')
+        if (tippy) {
+           tippy.hide()
+        }
       })
 
       expandCollapseOptions = {
@@ -762,13 +913,6 @@ export default {
         collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
         expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
       }
-
-      // const popperOptions = {
-      //     content: 'test data',
-      //     renderedPosition: 'bottom',
-      //     renderedDimensions: undefined,
-      //     popper: undefined
-      // }
 
       document
         .getElementById('dagre-button')
@@ -864,5 +1008,3 @@ export default {
   }
 }
 </script>
-
-

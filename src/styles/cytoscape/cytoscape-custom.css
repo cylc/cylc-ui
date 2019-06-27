@@ -41,12 +41,16 @@
   left: 54%;
 }
 
+.tippy-popper {
+  /* transition: none !important; */
+}
+
 .collapsed-child {
   opacity: 0;
   display: none
   }
 
-.reset {
+.switchlayout {
   position: absolute;
   bottom: 83px;
   left: 1px;

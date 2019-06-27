@@ -18,7 +18,7 @@
         "succeeded": 100,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -48,7 +48,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -78,7 +78,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 10
+        "todo": 10
       },
       "position":{
 
@@ -108,7 +108,7 @@
         "succeeded": 100,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -138,7 +138,7 @@
         "succeeded": 0,
         "failed": 100,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -168,7 +168,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -198,7 +198,7 @@
         "succeeded": 100,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -228,7 +228,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -258,7 +258,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 80
+        "todo": 80
       },
       "position":{
 
@@ -288,7 +288,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -318,7 +318,7 @@
         "succeeded": 100,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -348,7 +348,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -378,7 +378,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -408,7 +408,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 100,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -438,7 +438,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -468,7 +468,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -498,7 +498,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -528,7 +528,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -558,7 +558,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -588,7 +588,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -618,7 +618,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -648,7 +648,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
@@ -678,7 +678,7 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "progress": 0
+        "todo": 0
       },
       "position":{
 
