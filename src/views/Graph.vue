@@ -327,48 +327,27 @@ export default {
 
       const coseBilkentOptions = {
         name: 'cose-bilkent',
-        // Called on `layoutready`
-        ready: function() {},
-        // Called on `layoutstop`
-        stop: function() {},
-        // Whether to include labels in node dimensions. Useful for avoiding label overlap
-        nodeDimensionsIncludeLabels: false,
-        // number of ticks per frame higher is faster but more jerky
-        refresh: 30,
-        // Whether to fit the network view after when done
-        fit: false,
-        // Padding on fit
-        padding: 10,
-        // Whether to enable incremental mode
-        randomize: true,
-        // Node repulsion (non overlapping) multiplier
-        nodeRepulsion: 4500,
-        // Ideal (intra-graph) edge length
-        idealEdgeLength: 50,
-        // Divisor to compute edge forces
-        edgeElasticity: 0.45,
-        // Nesting factor (multiplier) to compute ideal edge length for inter-graph edges
-        nestingFactor: 0.1,
-        // Gravity force (constant)
-        gravity: 0.25,
-        // Maximum number of iterations to perform
-        numIter: 2500,
-        // Whether to tile disconnected nodes
-        tile: true,
-        // Type of layout animation. The option set is {'during', 'end', false}
-        animate: 'end',
-        // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
-        tilingPaddingVertical: 10,
-        // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
-        tilingPaddingHorizontal: 10,
-        // Gravity range (constant) for compounds
-        gravityRangeCompound: 1.5,
-        // Gravity force (constant) for compounds
-        gravityCompound: 1.0,
-        // Gravity range (constant)
-        gravityRange: 3.8,
-        // Initial cooling factor for incremental layout
-        initialEnergyOnIncremental: 0.5
+        ready: function() {},  // Called on `layoutready`
+        stop: function() {},  // Called on `layoutstop`
+        nodeDimensionsIncludeLabels: false, // Whether to include labels in node dimensions. Useful for avoiding label overlap
+        refresh: 30, // number of ticks per frame higher is faster but more jerky
+        fit: true, // Whether to fit the network view after when done
+        padding: 10, // Padding on fit
+        randomize: true,  // Whether to enable incremental mode
+        nodeRepulsion: 4500, // Node repulsion (non overlapping) multiplier
+        idealEdgeLength: 50,  // Ideal (intra-graph) edge length
+        edgeElasticity: 0.45, // Divisor to compute edge forces
+        nestingFactor: 0.1, // Nesting factor (multiplier) to compute ideal edge length for inter-graph edges
+        gravity: 0.25, // Gravity force (constant)
+        numIter: 2500,  // Maximum number of iterations to perform
+        tile: true, // Whether to tile disconnected nodes
+        animate: 'end', // Type of layout animation. The option set is {'during', 'end', false}
+        tilingPaddingVertical: 10,  // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
+        tilingPaddingHorizontal: 10, // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
+        gravityRangeCompound: 1.5, // Gravity range (constant) for compounds
+        gravityCompound: 1.0, // Gravity force (constant) for compounds
+        gravityRange: 3.8, // Gravity range (constant)
+        initialEnergyOnIncremental: 0.5 // Initial cooling factor for incremental layout
       }
 
       const klayLayoutOptions = {
@@ -882,7 +861,7 @@ export default {
           name: 'cose-bilkent',
           animate: 'end',
           randomize: false,
-          fit: false
+          fit: true
         },
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
