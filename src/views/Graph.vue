@@ -689,6 +689,7 @@ export default {
             let submitted = node.data('submitted')
             let succeeded = node.data('succeeded')
             let waiting = node.data('waiting')
+            let  children = node.data('collapsedChildren')
             // if state is in the data then this will become unecessary
             let state
             let currentstate = {}
@@ -703,8 +704,10 @@ export default {
             currentstate.waiting = waiting
             for (let item in currentstate) {
               console.log('key:' + item + ' value:' + currentstate[item])
-              currentstate[item] > 0 ? (state = item) : ''
+              currentstate[item] > 0 ? state = item : ''
             }
+            console.log('isParent => ', children)
+            children != undefined ? state = 'compound node' : ''
 
             let parentstring =
               '<br><strong>parent <span style="color: aqua;">' +
