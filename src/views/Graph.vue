@@ -43,7 +43,7 @@ import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 import _ from 'lodash'
 import Tippy from 'tippy.js'
 
-const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.6.json'
+const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.7.json'
 let cy = {}
 let ur = {}
 let elements = []
@@ -51,6 +51,7 @@ let loading = true
 let layoutOptions = {}
 let expandCollapseOptions = {}
 let tippy
+const BASE_URL = 'http://localhost:8080'
 
 let nodeOptions = {
   normal: {
@@ -85,6 +86,17 @@ const config = {
     {
       selector: 'node',
       css: {
+        'background-image': function(node) {
+          let path = node.data('icon')
+          console.log('ICON PATH --> ', path)
+          return path
+        },
+        'background-fit': 'contain contain',
+        'background-image-opacity': function(node) {
+          let opacity
+          node.data('running') > 0 ? opacity =  1 : opacity = .6
+          return opacity
+        },
         'background-color': 'data(state)',
         content: 'data(label)',
         'font-family': 'Avenir, Helvetica, Arial, sans-serif',
@@ -102,28 +114,42 @@ const config = {
         shape: 'data(shape)',
         width: '6em',
         height: '6em',
-        'pie-size': '5.6em', //The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
+        // 'pie-size': '5.6em', //The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
+        'pie-size': function(node) {
+          let size
+          node.data('running') > 0 ? size = '5.6em' : size = '0%'
+          return size
+        },
         'pie-1-background-color': '#9ef9ff', // The colour of the node’s ith pie chart slice.
         'pie-1-background-size': 'mapData(submitted, 0, 100, 0, 100)',
+        'pie-1-background-opacity' : .7,
         'pie-2-background-color': '#4ab7ff',
         'pie-2-background-size': 'mapData(running, 0, 100, 0, 100)',
+        'pie-2-background-opacity' : .7,
         'pie-3-background-color': '#31ff53',
         'pie-3-background-size': 'mapData(succeeded, 0, 100, 0, 100)', // The size of the node’s ith pie chart slice, measured in percent (e.g. 25% or 25).
-        // 'pie-i-background-opacity' : 0, //The opacity of the node’s ith pie chart slice.
+        'pie-3-background-opacity' : .7,
         'pie-4-background-color': '#ff3a2b',
         'pie-4-background-size': 'mapData(failed, 0, 100, 0, 100)',
+        'pie-4-background-opacity' : .7,
         'pie-5-background-color': '#d453ff',
         'pie-5-background-size': 'mapData(subfailed, 0, 100, 0, 100)',
+        'pie-5-background-opacity' : .7,
         'pie-6-background-color': '#fefaff',
         'pie-6-background-size': 'mapData(expired, 0, 100, 0, 100)',
+        'pie-6-background-opacity' : .7,
         'pie-7-background-color': '#fff138',
         'pie-7-background-size': 'mapData(queued, 0, 100, 0, 100)',
+        'pie-7-background-opacity' : .7,
         'pie-8-background-color': '#ff3a2b',
         'pie-8-background-size': 'mapData(retrying, 0, 100, 0, 100)',
+        'pie-8-background-opacity' : .7,
         'pie-9-background-color': '#666',
         'pie-9-background-size': 'mapData(waiting, 0, 100, 0, 100)',
+        'pie-9-background-opacity' : .7,
         'pie-10-background-color': '#cacaca',
-        'pie-10-background-size': 'mapData(todo, 0, 100, 0, 100)'
+        'pie-10-background-size': 'mapData(todo, 0, 100, 0, 100)',
+        'pie-10-background-opacity' : .7
       }
     },
     {
@@ -155,7 +181,7 @@ const config = {
     },
     {
       selector: 'node.semitransp',
-      style: { opacity: '0.5' }
+      style: { opacity: '0.5' },
     },
     {
       selector: 'node.selected',
@@ -194,21 +220,21 @@ const config = {
     //     'control-point-distances': '0 0 0'
     //   }
     // },
-    {
-      selector: '.selected',
-      style: {
-        'background-color': 'yellow',
-        'background-image': require('@/assets/baseline-donut_large-24px.svg'),
-        // 'background-image': function(node) {
-        //   let path = node.data('icon')
-        //   console.log('ICON PATH --> ', path)
-        //   return path
-        // }, // TODO
-        'background-fit': 'contain contain',
-        'background-image-opacity': 0.5,
-        'pie-size': '0%'
-      }
-    },
+    // {
+    //   selector: '.selected',
+    //   style: {
+    //     'background-color': 'yellow',
+    //     'background-image': require('@/assets/baseline-donut_large-24px.svg'),
+    //     // 'background-image': function(node) {
+    //     //   let path = node.data('icon')
+    //     //   console.log('ICON PATH --> ', path)
+    //     //   return path
+    //     // }, // TODO
+    //     'background-fit': 'contain contain',
+    //     'background-image-opacity': 0.5,
+    //     'pie-size': '0%'
+    //   }
+    // },
     // {
     //   selector: 'edge.meta',
     //   style: {
@@ -219,13 +245,16 @@ const config = {
     {
       selector: ':parent',
       style: {
-        'background-opacity': 0.2,
-        'background-image-opacity': 0.2,
+        'background-opacity': .2,
+        // 'background-image-opacity': .2,
+        'background-fit': 'contain contain',
         'background-color': '#b7c0e8',
         'border-color': '#444',
-        'border-width': '2px'
+        'border-width': '2px',
+        'pie-size': '5.6em'
       }
     },
+    
     // {
     //   selector: ':parent.selected',
     //   style: {
@@ -237,9 +266,9 @@ const config = {
     {
       selector: ':child',
       style: {
-        'background-opacity': 0.15,
-        'background-image-opacity': 0.15,
-        'background-color': '#b7c0e8',
+        // 'background-opacity': .15,
+        // 'background-image-opacity': .15,
+        // 'background-color': '#b7c0e8',
         'border-color': '#444',
         'border-width': '2px'
       }

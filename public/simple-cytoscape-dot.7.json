@@ -8,7 +8,7 @@
         "label": "long_start_12.20150219T1200Z",
         "suid": 442,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#31ff53",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -18,7 +18,8 @@
         "succeeded": 100,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -38,7 +39,7 @@
         "label": "long_res_create.20150219T1200Z",
         "suid": 441,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#9ef9ff",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -48,7 +49,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -78,7 +80,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 10
+        "todo": 10,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -98,7 +101,7 @@
         "label": "long_res_create.20150219T0600Z",
         "suid": 439,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#31ff53",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -108,7 +111,8 @@
         "succeeded": 100,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -128,7 +132,7 @@
         "label": "long_start_00.20150219T0000Z",
         "suid": 438,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#ff3a2b",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -138,7 +142,8 @@
         "succeeded": 0,
         "failed": 100,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -158,7 +163,7 @@
         "label": "long_res_create.20150219T0000Z",
         "suid": 437,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#9ef9ff",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -168,7 +173,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -188,7 +194,7 @@
         "label": "long_forecast_create_zap_little.20150219T1200Z",
         "suid": 436,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#31ff53",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -198,7 +204,8 @@
         "succeeded": 100,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -218,7 +225,7 @@
         "label": "long_forecast_create_zap_larger.20150219T1200Z",
         "suid": 435,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#fff138",
         "expired": 0,
         "queued": 100,
         "retrying": 0,
@@ -228,7 +235,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -248,7 +256,7 @@
         "label": "recover3.20150219T1200Z",
         "suid": 434,
         "shape": "ellipse",
-        "state": "#333",
+        "state": "#ccc",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -258,7 +266,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 80
+        "todo": 80,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -278,7 +287,7 @@
         "label": "recover3.20150219T0600Z",
         "suid": 433,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#9ef9ff",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -288,7 +297,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -308,7 +318,7 @@
         "label": "recover3.20150219T0000Z",
         "suid": 432,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#31ff53",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -318,7 +328,8 @@
         "succeeded": 100,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -348,7 +359,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -368,7 +380,7 @@
         "label": "long_sync_forecast_tJ.20150219T0600Z",
         "suid": 1000,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#fff138",
         "expired": 0,
         "queued": 100,
         "retrying": 0,
@@ -378,7 +390,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -398,7 +411,7 @@
         "label": "long_sync_forecast.20150219T0600Z",
         "suid": 1001,
         "shape": "ellipse",
-        "state": "#333",
+        "state": "#666",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -408,7 +421,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 100,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -428,7 +442,7 @@
         "label": "long_send_stingray_stingray.20150219T0600Z",
         "suid": 1002,
         "shape": "ellipse",
-        "state": "#333",
+        "state": "#fff138",
         "expired": 0,
         "queued": 100,
         "retrying": 0,
@@ -438,7 +452,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -458,7 +473,7 @@
         "label": "long_res_delete.20150219T0600Z",
         "suid": 1003,
         "shape": "ellipse",
-        "state": "#333",
+        "state": "#9ef9ff",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -468,7 +483,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -488,7 +504,7 @@
         "label": "long_happyland_ingest.20150219T0600Z",
         "suid": 1004,
         "shape": "ellipse",
-        "state": "#333",
+        "state": "#9ef9ff",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -498,7 +514,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -518,7 +535,7 @@
         "label": "ENSEMBLE_SUBJOB.20150219T0000Z (interaction) ensemble_subjob_hook.20150219T0000Z",
         "suid": 1005,
         "shape": "ellipse",
-        "state": "#333",
+        "state": "#666",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -528,7 +545,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -548,17 +566,18 @@
         "label": "brief_sync_happy.20150219T0600Z",
         "suid": 1006,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#9ef9ff",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
         "waiting": 0,
         "running": 0,
-        "submitted": 0,
+        "submitted": 100,
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -578,7 +597,7 @@
         "label": "brief_sync_forecast.20150219T0600Z",
         "suid": 1007,
         "shape": "ellipse",
-        "state": "grey",
+        "state": "#ff3a2b",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -586,9 +605,10 @@
         "running": 0,
         "submitted": 0,
         "succeeded": 0,
-        "failed": 0,
+        "failed": 100,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -618,7 +638,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -648,7 +669,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
@@ -678,7 +700,8 @@
         "succeeded": 0,
         "failed": 0,
         "subfailed": 0,
-        "todo": 0
+        "todo": 0,
+        "icon": "http://localhost:8080/img/baseline-donut_large-24px.svg"
       },
       "position":{
 
