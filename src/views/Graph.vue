@@ -601,28 +601,25 @@ export default {
         return cy, ur
       }
 
-      async function getGraph(instance) {
+      async function getGraph(cyinstance) {
         await registerExtensions()
-        const cyinstance = await getInstance(instance)
-        // const data = await updateData()
         let cy = await runlayout(cyinstance)
         let ur
-        cy, (ur = await setupUndo(cy))
+        cy, ur = await setupUndo(cy)
         getPanzoom(cy)
         getNavigator(cy)
         getUndoRedo(cy)
+        cy.expandCollapse(expandCollapseOptions)
+        let api = cy.expandCollapse('get')
+        api.collapseAll()
         return cy, ur
       }
       // load graph data and run layout
       cy = await this.$cytoscape.instance
       let { data: elements } = await updateData()
-      cy, (ur = await getGraph(cy))
-      cy.expandCollapse(expandCollapseOptions)
-      let api = cy.expandCollapse('get')
-      api.collapseAll()
+      cy, ur = await getGraph(cy)
       console.log('loaded elements: ', elements, cy)
       this.loading = false // remove spinner
-
       // ----------------------------------------
       function getPanzoom() {
         let panzoomdefaults = {

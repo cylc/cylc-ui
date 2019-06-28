@@ -135,15 +135,15 @@
         "state": "#ff3a2b",
         "expired": 0,
         "queued": 0,
-        "retrying": 100,
+        "retrying": 0,
         "waiting": 0,
         "running": 0,
         "submitted": 0,
         "succeeded": 0,
-        "failed": 0,
+        "failed": 100,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/outline-refresh-24px.svg"
+        "icon": "/img/outline-cancel-24px.svg"
       },
       "position":{
 
@@ -507,15 +507,15 @@
         "state": "#ff3a2b",
         "expired": 0,
         "queued": 0,
-        "retrying": 0,
+        "retrying": 100,
         "waiting": 0,
         "running": 0,
         "submitted": 0,
         "succeeded": 0,
-        "failed": 100,
+        "failed": 10,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/outline-cancel-24px.svg"
+        "icon": "/img/outline-refresh-24px.svg"
       },
       "position":{
 
