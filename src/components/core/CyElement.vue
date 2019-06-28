@@ -2,7 +2,7 @@
   <div></div>
 </template>
 <script>
-import VueCyObj from '@/plugins/cy-object'
+import VueCyObj from '@/components/core/Cytoscape'
 
 
 export default {

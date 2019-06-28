@@ -43,6 +43,9 @@ import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
 import _ from 'lodash'
 import Tippy from 'tippy.js'
 
+import VueCytoscape from '@/components/core/Cytoscape.vue'
+import CyElement from '@/components/core/CyElement.vue'
+
 const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.7.json'
 let cy = {}
 let ur = {}
@@ -88,7 +91,7 @@ const config = {
       css: {
         'background-image': function(node) {
           let path = node.data('icon')
-          path == undefined || path == '' ? path = require('@/assets/baseline-donut_large-24px.svg') : ''
+          path === undefined || path === '' ? path = require('@/assets/baseline-donut_large-24px.svg') : ''
           // console.log('ICON PATH --> ', path)
           return path
         },
@@ -302,7 +305,9 @@ export default {
   },
   name: 'Graph',
   components: {
-    SyncLoader
+    SyncLoader,
+    cytoscape: VueCytoscape,
+    'cy-element': CyElement
   },
   data() {
     return {
