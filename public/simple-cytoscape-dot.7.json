@@ -19,7 +19,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-radio_button_unchecked-24px.svg"
       },
       "position":{
 
@@ -50,7 +50,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-adjust-24px.svg"
       },
       "position":{
 
@@ -81,7 +81,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 10,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-adjust-24px.svg"
       },
       "position":{
 
@@ -112,7 +112,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-radio_button_unchecked-24px.svg"
       },
       "position":{
 
@@ -135,15 +135,15 @@
         "state": "#ff3a2b",
         "expired": 0,
         "queued": 0,
-        "retrying": 0,
+        "retrying": 100,
         "waiting": 0,
         "running": 0,
         "submitted": 0,
         "succeeded": 0,
-        "failed": 100,
+        "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-refresh-24px.svg"
       },
       "position":{
 
@@ -163,18 +163,18 @@
         "label": "long_res_create.20150219T0000Z",
         "suid": 437,
         "shape": "ellipse",
-        "state": "#9ef9ff",
+        "state": "#d453ff",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
         "waiting": 0,
         "running": 0,
-        "submitted": 100,
+        "submitted": 0,
         "succeeded": 0,
         "failed": 0,
-        "subfailed": 0,
+        "subfailed": 100,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-filter_tilt_shift-24px.svg"
       },
       "position":{
 
@@ -205,7 +205,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-radio_button_unchecked-24px.svg"
       },
       "position":{
 
@@ -267,7 +267,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 80,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-adjust-24px.svg"
       },
       "position":{
 
@@ -298,7 +298,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-adjust-24px.svg"
       },
       "position":{
 
@@ -329,7 +329,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-radio_button_unchecked-24px.svg"
       },
       "position":{
 
@@ -411,7 +411,7 @@
         "label": "long_sync_forecast.20150219T0600Z",
         "suid": 1001,
         "shape": "ellipse",
-        "state": "#666",
+        "state": "#fff",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -422,7 +422,7 @@
         "failed": 0,
         "subfailed": 100,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-radio_button_unchecked-24px.svg"
       },
       "position":{
 
@@ -484,7 +484,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-adjust-24px.svg"
       },
       "position":{
 
@@ -504,18 +504,18 @@
         "label": "long_happyland_ingest.20150219T0600Z",
         "suid": 1004,
         "shape": "ellipse",
-        "state": "#9ef9ff",
+        "state": "#ff3a2b",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
         "waiting": 0,
         "running": 0,
-        "submitted": 100,
+        "submitted": 0,
         "succeeded": 0,
-        "failed": 0,
+        "failed": 100,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-cancel-24px.svg"
       },
       "position":{
 
@@ -535,7 +535,7 @@
         "label": "ENSEMBLE_SUBJOB.20150219T0000Z (interaction) ensemble_subjob_hook.20150219T0000Z",
         "suid": 1005,
         "shape": "ellipse",
-        "state": "#666",
+        "state": "#fff",
         "expired": 0,
         "queued": 0,
         "retrying": 0,
@@ -546,7 +546,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-radio_button_unchecked-24px.svg"
       },
       "position":{
 
@@ -577,7 +577,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-adjust-24px.svg"
       },
       "position":{
 
@@ -608,7 +608,7 @@
         "failed": 100,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": "/img/outline-cancel-24px.svg"
       },
       "position":{
 
@@ -639,7 +639,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": ""
       },
       "position":{
 
@@ -670,7 +670,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "/img/baseline-donut_large-24px.svg"
+        "icon": ""
       },
       "position":{
 
@@ -701,7 +701,7 @@
         "failed": 0,
         "subfailed": 0,
         "todo": 0,
-        "icon": "http://localhost:8080/img/baseline-donut_large-24px.svg"
+        "icon": ""
       },
       "position":{
 

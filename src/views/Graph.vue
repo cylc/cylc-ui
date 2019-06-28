@@ -88,7 +88,8 @@ const config = {
       css: {
         'background-image': function(node) {
           let path = node.data('icon')
-          console.log('ICON PATH --> ', path)
+          path == undefined || path == '' ? path = require('@/assets/baseline-donut_large-24px.svg') : ''
+          // console.log('ICON PATH --> ', path)
           return path
         },
         'background-fit': 'contain contain',
