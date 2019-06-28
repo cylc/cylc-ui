@@ -33,7 +33,7 @@
     "jquery": "^3.4.1",
     "jshint": "^2.10.2",
     "nprogress": "^0.2.0",
-    "tippy.js": "^4.3.4",,
+    "tippy.js": "^4.3.4",
     "vue-cytoscape": "^0.2.10",
     "vee-validate": "^2.2.9",
     "vue": "^2.6.10",
