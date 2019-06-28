@@ -10,18 +10,33 @@
   </div>
 </template>
 <script>
-import VueCyObj from './../../plugins/cy-object'
+import VueCyObj from '@/plugins/cy-object'
 
 export default {
-  props: [
-    'config',
-    'preConfig',
-    'afterCreated',
-    'elementAdded',
-    'elementRemoved',
-    'debug',
-    'reflection'
-  ],
+  props: {
+    config: {
+      type: Object,
+      default: null
+    },
+    preConfig: {
+      type: Object,
+      default: null
+    },
+    afterCreated: {
+      type: Function,
+      default: null
+    },
+    elementAdded: {
+      type: Function,
+      default: null
+    },
+    elementRemoved: {
+      type: Function,
+      default: null
+    },
+    debug: Boolean,
+    reflection: Boolean
+  },
   data () {
     return {
       elements: []

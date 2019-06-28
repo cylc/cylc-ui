@@ -31,15 +31,6 @@ export default [
     alias: ['/', '/user/:id']
   },
   {
-    path: '/dagre',
-    // Relative to /src/views
-    view: 'Dagre',
-    meta: {
-      'layout': 'default'
-    },
-    alias: ["/", "/user/:id"]
-  },
-  {
     path: '/suites',
     view: 'Suites',
     meta: {

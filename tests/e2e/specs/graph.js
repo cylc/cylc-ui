@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import Graph from '@/views/Graph.vue'
 
 describe('Graph', () => {

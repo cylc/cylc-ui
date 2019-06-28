@@ -47,11 +47,11 @@ const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.7.json'
 let cy = {}
 let ur = {}
 let elements = []
+// eslint-disable-next-line no-unused-vars
 let loading = true
 let layoutOptions = {}
 let expandCollapseOptions = {}
 let tippy
-const BASE_URL = 'http://localhost:8080'
 
 let nodeOptions = {
   normal: {
@@ -255,7 +255,7 @@ const config = {
         'pie-size': '5.6em'
       }
     },
-    
+
     // {
     //   selector: ':parent.selected',
     //   style: {
@@ -337,9 +337,11 @@ export default {
         edgeSep: 30, // the separation between adjacent edges in the same rank
         rankSep: 140, // the separation between adjacent nodes in the same rank
         rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right
+        // eslint-disable-next-line no-unused-vars
         minLen: function(edge) {
           return 1
         }, // number of ranks to keep between the source and target of the edge
+        // eslint-disable-next-line no-unused-vars
         edgeWeight: function(edge) {
           return 1
         }, // higher weight edges are generally made shorter and straighter than lower weight edges
@@ -386,6 +388,7 @@ export default {
         fit: false, // Whether to fit
         padding: 20, // Padding on fit
         animate: false, // Whether to transition the node positions
+        // eslint-disable-next-line no-unused-vars
         animateFilter: function(node, i) {
           return true
         }, // Whether to animate specific nodes when animation is on non-animated nodes immediately go to their final positions
@@ -440,6 +443,7 @@ export default {
           spacing: 24, // Overall setting for the minimal amount of space to be left between objects
           thoroughness: 7 // How much effort should be spent to produce a nice layout..
         },
+        // eslint-disable-next-line no-unused-vars
         priority: function(edge) {
           return null
         } // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
@@ -465,6 +469,7 @@ export default {
         avoidOverlap: true, // if true, prevents overlap of node bounding boxes
         handleDisconnected: true, // if true, avoids disconnected components from overlapping
         convergenceThreshold: 0.01, // when the alpha value (system energy) falls below this value, the layout stops
+        // eslint-disable-next-line no-unused-vars
         nodeSpacing: function(node) {
           return 100
         }, // extra spacing around nodes
@@ -524,6 +529,7 @@ export default {
         }
       }
 
+      // eslint-disable-next-line no-unused-vars
       async function run(cy) {
         try {
           await cy
@@ -536,6 +542,7 @@ export default {
         }
       }
 
+      // eslint-disable-next-line no-unused-vars
       async function getInstance(instance) {
         try {
           if (instance) {
@@ -646,6 +653,7 @@ export default {
         return cy.panzoom
       }
       // hierarchical clustering internal needs cy instance
+      // eslint-disable-next-line no-unused-vars
       const hca = cy.elements().hca({
         mode: 'threshold',
         threshold: 25,
@@ -689,6 +697,7 @@ export default {
         return cy.undoRedo
       }
 
+      // eslint-disable-next-line no-unused-vars
       const popperOptions = {
         content: 'test data',
         renderedPosition: 'bottom',
@@ -709,6 +718,7 @@ export default {
             let failed = node.data('failed')
             let parent = node.data('parent')
             let running = node.data('running')
+            // eslint-disable-next-line no-unused-vars
             let todo = node.data('todo')
             let queued = node.data('queued')
             let retrying = node.data('retrying')
@@ -734,7 +744,7 @@ export default {
               currentstate[item] > 0 ? state = item : ''
             }
             console.log('isParent => ', children)
-            children != undefined ? state = 'compound node' : ''
+            children !== undefined ? state = 'compound node' : ''
 
             let parentstring =
               '<br><strong>parent <span style="color: aqua;">' +
@@ -759,7 +769,7 @@ export default {
               state +
               '</span></strong>'
             running > 0 ? (content.innerHTML += progress) : ''
-            parent != undefined ? (content.innerHTML += parentstring) : ''
+            parent !== undefined ? (content.innerHTML += parentstring) : ''
             content.align = 'left'
             return content
           },
@@ -840,6 +850,7 @@ export default {
         tippy.show()
       })
 
+      // eslint-disable-next-line no-unused-vars
       cy.on('click', function(event) {
         // const data = event.target._private
         // console.log('cy event.target', data)
@@ -953,6 +964,7 @@ export default {
 
       document
         .getElementById('dagre-button')
+        // eslint-disable-next-line no-unused-vars
         .addEventListener('click', function(event) {
           console.log('tapped dagre button')
           layoutOptions = dagreOptions
@@ -969,6 +981,7 @@ export default {
 
       document
         .getElementById('cosebilkent-button')
+        // eslint-disable-next-line no-unused-vars
         .addEventListener('click', function(event) {
           console.log('tapped cosebilkent button')
           expandCollapseOptions = expandCollapseOptionsCoseBilkent
@@ -982,6 +995,7 @@ export default {
 
       document
         .getElementById('klay-button')
+        // eslint-disable-next-line no-unused-vars
         .addEventListener('click', function(event) {
           console.log('tapped klay button')
           expandCollapseOptions = expandCollapseOptionsKlay
@@ -995,6 +1009,7 @@ export default {
 
       document
         .getElementById('hierarchical-button')
+        // eslint-disable-next-line no-unused-vars
         .addEventListener('click', function(event) {
           console.log('tapped hierarchical button')
           cy.elements().hca({
@@ -1019,6 +1034,7 @@ export default {
 
       document
       .getElementById('cola-button')
+      // eslint-disable-next-line no-unused-vars
       .addEventListener('click', function(event) {
         console.log('tapped cola button')
         expandCollapseOptions = expandCollapseOptionsCola
@@ -1050,9 +1066,9 @@ export default {
       document.addEventListener(
         'keydown',
         function(event) {
-          if (event.ctrlKey && event.which == '90') {
+          if (event.ctrlKey && event.which === '90') {
             cy.undoRedo().undo()
-          } else if (event.ctrlKey && event.which == '89') {
+          } else if (event.ctrlKey && event.which === '89') {
             cy.undoRedo().redo()
           }
         },

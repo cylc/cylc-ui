@@ -1,3 +1,5 @@
+import CyElement from '@/components/core/CyElement.vue'
+import VueCytoscape from '@/components/core/Cytoscape.vue'
 import cytoscape from 'cytoscape'
 
 export const sync = state => {
@@ -5,10 +7,10 @@ export const sync = state => {
   let elements = [...state.elements]
   // replace the `elements` field with a custom one
   Object.defineProperty(state, 'elements', {
-    get () {
+    get() {
       return elements
     },
-    set (newElements) {
+    set(newElements) {
       // update cytoscape view
       VueCyObj.instance.then(c => {
         // remove all the elements in cytoscape that are not in the newElements
@@ -32,18 +34,19 @@ export const sync = state => {
 let resolver = null
 let cy = null
 
+// eslint-disable-next-line no-unused-vars
 const promise = new Promise((resolve, reject) => {
   resolver = resolve
 })
 
 const VueCyObj = {
-  reset () {
+  reset() {
     cy = null
   },
-  get instance () {
+  get instance() {
     return promise
   },
-  setConfig (config, preConfig, afterCreated) {
+  setConfig(config, preConfig, afterCreated) {
     // if a pre-configuration function is passed
     // then call it with the cytoscape constructor
     // this is useful to install/use extensions
@@ -65,4 +68,12 @@ const VueCyObj = {
   }
 }
 
-export default VueCyObj
+export default {
+  install(Vue) {
+    Vue.component('cytoscape', VueCytoscape)
+    Vue.component('cy-element', CyElement)
+    Vue.prototype.$cytoscape = VueCyObj
+  }
+}
+
+export { VueCytoscape, CyElement }

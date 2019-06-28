@@ -2,16 +2,26 @@
   <div></div>
 </template>
 <script>
-import VueCyObj from './../../plugins/cy-object'
+import VueCyObj from '@/plugins/cy-object'
 
 
 export default {
-  props: ['definition', 'debug'],
+  props: {
+    definition: {
+      type: String,
+      default: ''
+    },
+    debug: {
+      type: Boolean,
+      default: false
+    }
+  },
   created () {
     if (this.debug) console.log('[CyElement] [+] created ', this.definition)
     this.add(this.definition)
   },
   watch: {
+    // eslint-disable-next-line no-unused-vars
     definition (newVal, oldVal) {
       // this.remove(oldVal)
       // this.add(newVal)
