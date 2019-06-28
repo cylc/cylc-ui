@@ -16,41 +16,22 @@
             title="Tasks"
             color="green"
         >
-          <v-data-table
-              :headers="headers"
-              :items="tasks"
-              :loading="isLoading"
-              :pagination.sync="pagination"
+          <vue-ads-table
+              :columns="columns"
+              :rows="tree"
+              :classes="classes"
+              :filter="filter"
+              :start="start"
+              :end="end"
+              @filter-change="filterChanged"
           >
-            <template slot="no-data" v-if="!isLoading">
-              <v-alert
-                  :value="true"
-                  color="error"
-                  icon="warning">
-                No tasks found for the current user
-              </v-alert>
+            <template slot="toggle-children-icon" slot-scope="props">
+              <span>
+                <i class="mdi mdi-minus" v-if="props.expanded"></i>
+                <i class="mdi mdi-plus" v-else></i>
+              </span>
             </template>
-            <template
-                slot="headerCell"
-                slot-scope="{ header }"
-            >
-              <span
-                  class="subheading font-weight-light text-success text--darken-3"
-                  v-text="header.text"
-              ></span>
-            </template>
-            <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
-            <template
-                slot="items"
-                slot-scope="{ item }"
-            >
-              <td>{{ item.id }}</td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.meanElapsedTime }}</td>
-              <td>{{ item.namespace }}</td>
-              <td>{{ item.depth }}</td>
-            </template>
-          </v-data-table>
+          </vue-ads-table>
         </material-card>
       </v-flex>
     </v-layout>
@@ -58,8 +39,10 @@
 </template>
 
 <script>
-  import {SuiteService} from '@/services/suite.service'
+  import { SuiteService } from 'suite-service'
   import {mapState} from 'vuex'
+
+  const suiteService = new SuiteService();
 
   export default {
     metaInfo() {
@@ -68,53 +51,81 @@
       }
     },
     data: () => ({
-      pagination: {
-        rowsPerPage: 10
-      },
-      headers: [
+      columns: [
         {
-          sortable: true,
-          text: 'ID',
-          value: 'id'
+          property: 'name',
+          title: 'Task',
+          direction: null,
+          filterable: true,
+          collapseIcon: true
         },
         {
-          sortable: true,
-          text: 'Name',
-          value: 'name'
+          property: 'state',
+          title: 'State',
+          direction: null,
+          filterable: false
         },
         {
-          sortable: false,
-          text: 'Elapsed Time',
-          value: 'meanElapsedTime'
+          property: 'host',
+          title: 'Host',
+          direction: null,
+          filterable: true
         },
         {
-          sortable: false,
-          text: 'Namespace',
-          value: 'namespace'
+          property: 'jobId',
+          title: 'Job ID',
+          direction: null,
+          filterable: true
         },
         {
-          sortable: false,
-          text: 'Depth',
-          value: 'depth'
+          property: 'latestMessage',
+          title: 'Latest Message',
+          direction: null,
+          filterable: false
+        },
+        {
+          property: 'depth',
+          title: 'Depth',
+          direction: null,
+          filterable: false
         }
-      ]
+      ],
+      classes: {
+        table: "v-table",
+        '0/all': {'column text-xs-left': true}
+      },
+      // vue-ads-table-tree filtering (even if not enabled, we need this)
+      filter: '',
+      // vue-ads-table-tree pagination
+      start: 0,
+      end: 100,
+      // TODO: page polling, for the time being until we have websockets/graphql subscriptions
+      polling: null
     }),
+    methods: {
+      filterChanged (filter) {
+        this.filter = filter;
+      },
+      fetchSuite() {
+        const suiteId = this.$route.params.name
+        suiteService.fetchSuiteTree(suiteId)
+        // TODO: to be replaced by websockets
+        this.polling = setInterval(() => {
+          suiteService.currentTaskIndex += 1
+          suiteService.fetchSuiteTree(suiteId)
+        }, 3000)
+      }
+    },
+    beforeDestroy() {
+      clearInterval(this.polling)
+    },
     computed: {
       // namespace: module suites, and property suites, hence these repeated tokens...
-      ...mapState('suites', ['tasks']),
+      ...mapState('suites', ['tasks', 'tree']),
       ...mapState(['isLoading'])
     },
-    beforeCreate() {
-      // TBD: normally here we would have an ID, then query by ID...
-      SuiteService.getSuites().then(() => {
-        const suites = this.$store.getters['suites/suites'];
-        for (let i = 0; i < suites.length; i++) {
-          if (suites[i].name === this.$route.params.name) {
-            SuiteService.getSuiteTasks(suites[i]);
-            break;
-          }
-        }
-      });
+    mounted: function () {
+      this.fetchSuite()
     }
   }
 </script>

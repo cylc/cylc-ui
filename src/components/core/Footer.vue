@@ -25,6 +25,7 @@
     </div>
     <v-spacer/>
     <span class="font-weight-light copyright">
+      <strong v-if="env !== 'PRODUCTION'">{{ env }}</strong>
       Cylc UI {{ $store.getters.appVersion }} &copy; 2008-{{ (new Date()).getFullYear() }} NIWA &amp; British Crown (Met Office) &amp; contributors
     </span>
   </v-footer>
@@ -36,7 +37,8 @@ export default {
     links: [
       { name: 'Website', Link: 'https://cylc.github.io/', route: false },
       { name: 'About', Link: '/about', route: true }
-    ]
+    ],
+    env: process.env.NODE_ENV.toUpperCase()
   })
 }
 </script>

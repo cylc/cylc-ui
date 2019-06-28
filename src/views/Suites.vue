@@ -66,9 +66,10 @@
 </template>
 
 <script>
-import { SuiteService } from '@/services/suite.service'
+import { SuiteService } from 'suite-service'
 import { mapState } from 'vuex'
 
+const suiteService = new SuiteService();
 
 export default {
   metaInfo () {
@@ -106,7 +107,9 @@ export default {
         text: 'Actions',
         value: 'actions'
       }
-    ]
+    ],
+    // TODO: page polling, for the time being until we have websockets/graphql subscriptions
+    polling: null
   }),
   computed: {
     // namespace: module suites, and property suites, hence these repeated tokens...
@@ -114,7 +117,14 @@ export default {
     ...mapState(['isLoading'])
   },
   beforeCreate() {
-    SuiteService.getSuites()
+    suiteService.getSuites()
+    // TODO: to be replaced by websockets
+    this.polling = setInterval(() => {
+      suiteService.getSuites()
+    }, 5000)
+  },
+  beforeDestroy() {
+    clearInterval(this.polling)
   },
   methods: {
     viewSuite(suite) {
