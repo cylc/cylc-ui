@@ -3,7 +3,7 @@
     id="app-drawer"
     v-model="inputValue"
     app
-    dark
+    light
     floating
     persistent
     mobile-break-point="991"
@@ -14,21 +14,13 @@
       tag="v-list"
       column
     >
-      <v-list-tile avatar>
-        <v-list-tile-avatar
-          color="white"
-        >
+      <v-list-tile>
           <v-img
             :src="logo"
-            height="34"
+            height="160"
             contain
           />
-        </v-list-tile-avatar>
-        <v-list-tile-title class="title">
-          Cylc UI
-        </v-list-tile-title>
       </v-list-tile>
-      <v-divider/>
       <v-list-tile
         v-if="responsive"
       >
@@ -38,6 +30,25 @@
           color="purple"
         />
       </v-list-tile>
+
+      <v-subheader>Views</v-subheader>
+      <v-list-tile
+        v-for="(link, i) in views"
+        :key="i"
+        :to="link.to"
+        :active-class="color"
+        avatar
+        class="v-list-item"
+      >
+        <v-list-tile-action>
+          <v-icon>{{ link.icon }}</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-title
+          v-text="link.text"
+        />
+      </v-list-tile>
+
+      <v-subheader>Links</v-subheader>
       <v-list-tile
         v-for="(link, i) in links"
         :key="i"
@@ -53,6 +64,7 @@
           v-text="link.text"
         />
       </v-list-tile>
+
       <v-list-tile
               href="/hub/home"
               :active-class="color"
@@ -78,12 +90,7 @@ import {
 export default {
   data: () => ({
     logo: './img/logo.png',
-    links: [
-      {
-        to: '/dashboard',
-        icon: 'mdi-view-dashboard',
-        text: 'Dashboard'
-      },
+    views: [
       {
         to: '/suites',
         icon: 'mdi-vector-circle',
@@ -93,6 +100,13 @@ export default {
         to: '/graph',
         icon: 'mdi-vector-polyline',
         text: 'Graph'
+      },
+    ],
+    links: [
+      {
+        to: '/dashboard',
+        icon: 'mdi-view-dashboard',
+        text: 'Dashboard'
       },
       {
         to: '/user-profile',
@@ -145,15 +159,18 @@ export default {
   #app-drawer {
     .v-list__tile {
       border-radius: 4px;
+        margin-top: 25px;
+        margin-top: 25px;
 
       &--buy {
-        margin-top: auto;
-        margin-bottom: 17px;
+        margin-top: 50px;
+        margin-bottom: 50px;
       }
     }
 
     .v-image__image--contain {
-      top: 9px;
+      top: 30px;
+      bottom: 30px;
       height: 60%;
     }
 
