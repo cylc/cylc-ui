@@ -2,6 +2,7 @@ import Alert from '@/model/Alert.model'
 import { createApolloClient } from '@/utils/graphql'
 import gql from 'graphql-tag'
 import store from '@/store/'
+import VueAdsTableTreeTransformer from '@/transformers/vueadstabletree.transformer'
 
 // query to retrieve all suites
 const suitesQuery = gql`{
@@ -85,6 +86,7 @@ export class SuiteService {
 
   constructor() {
     this.apolloClient = this.createGraphqlClient()
+    this.transformer = new VueAdsTableTreeTransformer()
   }
 
   createGraphqlClient() {
@@ -132,7 +134,8 @@ export class SuiteService {
       },
       fetchPolicy: 'no-cache'
     }).then((response) => {
-      const tasks = response.data.familyProxies;
+      const familyProxies = response.data.familyProxies;
+      const tasks = this.transformer.transform(familyProxies);
       return store.dispatch('suites/setTree', tasks);
     }).catch((error) => { // error is an ApolloError object
       const alert = new Alert(error.message, null, 'error');
