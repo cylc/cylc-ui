@@ -8,12 +8,14 @@
     persistent
     mobile-break-point="991"
     width="260"
+    clipped
   >
     <v-layout
       class="fill-height"
       tag="v-list"
       column
     >
+      <v-divider inset></v-divider>
       <v-list-tile>
           <v-img
             :src="logo"
@@ -33,8 +35,8 @@
 
       <v-subheader>Views</v-subheader>
       <v-list-tile
-        v-for="(link, i) in views"
-        :key="i"
+        v-for="(link, index) in viewLinks"
+        :key="index+link.text"
         :to="link.to"
         :active-class="color"
         avatar
@@ -48,10 +50,10 @@
         />
       </v-list-tile>
 
-      <v-subheader>Links</v-subheader>
+      <v-subheader>Other Links</v-subheader>
       <v-list-tile
-        v-for="(link, i) in links"
-        :key="i"
+        v-for="(link, index) in nonViewLinks"
+        :key="index+link.text"
         :to="link.to"
         :active-class="color"
         avatar
@@ -63,8 +65,8 @@
         <v-list-tile-title
           v-text="link.text"
         />
+      <!-- Add Hub route separately as it lives under root not /user/USER/ -->
       </v-list-tile>
-
       <v-list-tile
               href="/hub/home"
               :active-class="color"
@@ -90,33 +92,36 @@ import {
 export default {
   data: () => ({
     logo: './img/logo.png',
-    views: [
-      {
-        to: '/suites',
-        icon: 'mdi-vector-circle',
-        text: 'Suites'
-      },
-      {
-        to: '/graph',
-        icon: 'mdi-vector-polyline',
-        text: 'Graph'
-      },
-    ],
     links: [
       {
         to: '/dashboard',
         icon: 'mdi-view-dashboard',
-        text: 'Dashboard'
+        text: 'Dashboard',
+        view: false
+      },
+      {
+        to: '/suites',
+        icon: 'mdi-vector-circle',
+        text: 'Suites',
+        view: true
+      },
+      {
+        to: '/graph',
+        icon: 'mdi-vector-polyline',
+        text: 'Graph',
+        view: true
       },
       {
         to: '/user-profile',
         icon: 'mdi-account',
-        text: 'User Profile'
+        text: 'User Profile',
+        view: false
       },
       {
         to: '/login',
         icon: 'mdi-account',
-        text: 'Log in'
+        text: 'Log in',
+        view: false
       }
     ],
     responsive: false
@@ -130,6 +135,12 @@ export default {
       set (val) {
         this.setDrawer(val)
       }
+    },
+    viewLinks: function() {
+       return this.isView(true)
+    },
+    nonViewLinks: function() {
+       return this.isView(false)
     },
     items () {
       return this.$t('Layout.View.items')
@@ -150,7 +161,17 @@ export default {
       } else {
         this.responsive = false
       }
-    }
+    },
+    isView (bool) {
+    // return links to views for true argument and non-views for false argument
+      if (bool) {
+        return this.links.filter(function(u) {
+          return u.view;
+      })} else {
+        return this.links.filter(function(u) {
+          return !u.view;
+      })}
+    },
   }
 }
 </script>
@@ -159,12 +180,11 @@ export default {
   #app-drawer {
     .v-list__tile {
       border-radius: 4px;
-        margin-top: 25px;
-        margin-top: 25px;
+        margin-top: 5px;
 
       &--buy {
-        margin-top: 50px;
-        margin-bottom: 50px;
+        margin-top: auto;
+        margin-bottom: auto;
       }
     }
 
