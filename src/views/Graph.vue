@@ -46,7 +46,7 @@ import Tippy from 'tippy.js'
 import VueCytoscape from '@/components/core/Cytoscape.vue'
 import CyElement from '@/components/core/CyElement.vue'
 
-const DATA_URL = 'http://localhost:8080/simple-cytoscape-dot.7.json'
+const DATA_URL = 'simple-cytoscape-dot.7.js'
 let cy = {}
 let ur = {}
 let elements = []
@@ -91,7 +91,8 @@ const config = {
       css: {
         'background-image': function(node) {
           let path = node.data('icon')
-          path === undefined || path === '' ? path = require('@/assets/baseline-donut_large-24px.svg') : ''
+          // TODO: not sure if we can provide the path as a normal string, without importing the svg here?
+          path === undefined || path === '' ? path = require('@/../public/img/baseline-donut_large-24px.svg') : ''
           // console.log('ICON PATH --> ', path)
           return path
         },
