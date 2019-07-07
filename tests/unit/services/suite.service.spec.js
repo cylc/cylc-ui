@@ -7,7 +7,7 @@ describe('SuiteService', () => {
   const suiteService = new SuiteService()
   beforeEach(() => {
     store.dispatch("suites/setSuites", [])
-    store.dispatch('clearAlerts')
+    store.dispatch('setAlert', null)
   })
   describe('getSuites returns the list of suites', () => {
     it('should return list of suites', () => {
@@ -48,7 +48,7 @@ describe('SuiteService', () => {
       })
     })
     it('should add an alert on error', () => {
-      expect(store.state.alerts.length).to.equal(0)
+      expect(store.state.alert).to.equal(null)
       const e = new Error('mock error')
       suiteService.apolloClient = {
         uri: null,
@@ -57,7 +57,7 @@ describe('SuiteService', () => {
         }
       }
       return suiteService.getSuites().finally(() => {
-        expect(store.state.alerts.length).to.equal(1)
+        expect(store.state.alert.getText()).to.equal('mock error')
       })
     })
   })
@@ -91,7 +91,7 @@ describe('SuiteService', () => {
       })
     })
     it('should add an alert on error', () => {
-      expect(store.state.alerts.length).to.equal(0)
+      expect(store.state.alert).to.equal(null)
       const e = new Error('mock error')
       suiteService.apolloClient = {
         uri: null,
@@ -100,7 +100,7 @@ describe('SuiteService', () => {
         }
       }
       return suiteService.getSuiteTasks(new Suite("suitename", "root", "localhost", 8080)).finally(() => {
-        expect(store.state.alerts.length).to.equal(1)
+        expect(store.state.alert.getText()).to.equal('mock error')
       })
     })
   })
@@ -136,7 +136,7 @@ describe('SuiteService', () => {
       })
     })
     it('should add an alert on error', () => {
-      expect(store.state.alerts.length).to.equal(0)
+      expect(store.state.alert).to.equal(null)
       const e = new Error('mock error')
       suiteService.apolloClient = {
         uri: null,
@@ -145,7 +145,7 @@ describe('SuiteService', () => {
         }
       }
       return suiteService.fetchSuiteTree(3).finally(() => {
-        expect(store.state.alerts.length).to.equal(1)
+        expect(store.state.alert.getText()).to.equal('mock error')
       })
     })
   })

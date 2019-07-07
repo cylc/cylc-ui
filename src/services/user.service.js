@@ -11,7 +11,7 @@ export const UserService = {
       return store.dispatch('user/setUser', user);
     }).catch((error) => {
       const alert = new Alert(error.response.statusText, null, 'error');
-      return store.dispatch('addAlert', alert);
+      return store.dispatch('setAlert', alert);
     });
   }
 

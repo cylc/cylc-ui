@@ -8,7 +8,7 @@ describe('UserService', () => {
   let sandbox;
   beforeEach(() => {
     sandbox = sinon.createSandbox();
-    store.dispatch('clearAlerts');
+    store.dispatch('setAlert', null);
   });
   afterEach(() => sandbox.restore());
   describe('getUserProfile returns the logged-in user profile information', () => {
@@ -30,14 +30,14 @@ describe('UserService', () => {
       });
     });
     it('should add an alert on error', () => {
-      expect(store.state.alerts.length).to.equal(0);
+      expect(store.state.alert).to.equal(null);
       const e = new Error('mock error');
       e.response = {
         statusText: 'Test Status'
       };
       sandbox.stub(axios, 'get').rejects(e);
       return UserService.getUserProfile().finally(() => {
-        expect(store.state.alerts.length).to.equal(1);
+        expect(store.state.alert.getText()).to.equal('Test Status');
       });
     });
   })

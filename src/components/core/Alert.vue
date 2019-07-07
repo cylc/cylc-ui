@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container v-for="alert in alerts" :key="alert.text">
+    <v-container v-if="alert !== null" :key="alert.text">
       <v-alert :value="true" :color="alert.getColor()" :icon="alert.getIcon()" dismissible>
         {{ alert.getText() }}
       </v-alert>
@@ -16,11 +16,7 @@
     name: "Alert",
 
     computed: {
-      ...mapState(['alerts']),
+      ...mapState(['alert'])
     }
   }
 </script>
-
-<style scoped>
-
-</style>

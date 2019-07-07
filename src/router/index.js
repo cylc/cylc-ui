@@ -53,7 +53,7 @@ Vue.use(Meta);
 router.beforeResolve((to, from, next) => {
   if (to.name) {
     NProgress.start();
-    store.dispatch('clearAlerts');
+    store.dispatch('setAlert', null);
   }
   next();
 });
