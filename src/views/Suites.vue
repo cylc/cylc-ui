@@ -121,9 +121,7 @@ export default {
       .getSuites()
       .finally(() => { this.isLoading = false })
     // TODO: to be replaced by websockets
-    this.polling = setInterval(() => {
-      suiteService.getSuites()
-    }, 5000)
+    this.polling = setInterval(() => suiteService.getSuites(), 5000)
   },
   beforeDestroy() {
     clearInterval(this.polling)
