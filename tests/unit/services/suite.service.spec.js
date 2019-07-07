@@ -107,18 +107,22 @@ describe('SuiteService', () => {
   describe('fetchSuiteTree returns the suite tree view data structure', () => {
     it('should return suite tree view data', () => {
       const familyProxiesReturned = new Promise((r) => r({ data: {
-          familyProxies: [
-            {
-              id: "id1",
-              name: "speaker 1"
-            },
-            {
-              id: "id2",
-              name: "speaker 2"
-            }
-          ]
-        }
-      }))
+        familyProxies: [
+          {
+            childTasks: [
+              {
+                id: "id1",
+                name: "speaker 1"
+              },
+              {
+                id: "id2",
+                name: "speaker 2"
+              }
+            ],
+            childFamilies: []
+          }
+        ]
+      }}))
       suiteService.apolloClient = {
         uri: null,
         query: function() {
@@ -127,8 +131,8 @@ describe('SuiteService', () => {
       }
       return suiteService.fetchSuiteTree(3).then(function() {
         const tree = store.getters['suites/tree']
-        expect(tree.length).to.equal(2)
-        expect(tree[0].name).to.equal("speaker 1")
+        expect(tree[0].childTasks.length).to.equal(2)
+        expect(tree[0].childTasks[0].id).to.equal("id1")
       })
     })
     it('should add an alert on error', () => {
