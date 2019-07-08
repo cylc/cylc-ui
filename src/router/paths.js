@@ -28,7 +28,6 @@ export default [
     meta: {
       'layout': 'default'
     },
-    alias: ['/', '/user/:id']
   },
   {
     path: '/suites',
