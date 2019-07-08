@@ -3,7 +3,7 @@
     id="app-drawer"
     v-model="inputValue"
     app
-    light
+    dark
     floating
     persistent
     mobile-break-point="991"
@@ -163,14 +163,10 @@ export default {
       }
     },
     isView (bool) {
-    // return links to views for true argument and non-views for false argument
-      if (bool) {
-        return this.links.filter(function(u) {
-          return u.view;
-      })} else {
-        return this.links.filter(function(u) {
-          return !u.view;
-      })}
+      // return links to views for true argument, non-views for false argument
+      return this.links.filter(function(u) {
+        return u.view === bool;
+      })
     },
   }
 }
