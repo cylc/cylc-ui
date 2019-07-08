@@ -78,6 +78,7 @@ export default {
     }
   },
   data: () => ({
+    isLoading: true,
     pagination: {
       rowsPerPage: 10
     },
@@ -114,10 +115,11 @@ export default {
   computed: {
     // namespace: module suites, and property suites, hence these repeated tokens...
     ...mapState('suites', ['suites']),
-    ...mapState(['isLoading'])
   },
   beforeCreate() {
-    suiteService.getSuites()
+    suiteService
+      .getSuites()
+      .finally(() => { this.isLoading = false })
     // TODO: to be replaced by websockets
     this.polling = setInterval(() => {
       suiteService.getSuites()
