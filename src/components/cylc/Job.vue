@@ -4,7 +4,10 @@
 -->
 
 <template>
-  <span style="display:inline-block; vertical-align:middle">
+  <span
+    class="c-job"
+    style="display:inline-block; vertical-align:middle"
+  >
     <!-- the task icon SVG
            * comments prefixed `let` are instructions for changing style
            * contain in a 100x100 viewBox so pixels and percent are equal
@@ -31,40 +34,42 @@
 
 
 <style lang="scss">
-    svg.job {
-        /* scale the icon to the font-size */
-        width: 1em;
-        height: 1em;
+    .c-job {
+        svg.job {
+            /* scale the icon to the font-size */
+            width: 1em;
+            height: 1em;
 
-        rect {
-            /* if no job status display nothing */
-            fill: transparent;
-            stroke: transparent;
-        }
+            rect {
+                /* if no job status display nothing */
+                fill: transparent;
+                stroke: transparent;
+            }
 
-        &.submitted rect {
-            fill: rgb(125,207,212);
-            stroke: rgb(125,207,212);
-        }
+            &.submitted rect {
+                fill: rgb(125,207,212);
+                stroke: rgb(125,207,212);
+            }
 
-        &.running rect {
-            fill: rgb(106,164,241);
-            stroke: rgb(106,164,241);
-        }
+            &.running rect {
+                fill: rgb(106,164,241);
+                stroke: rgb(106,164,241);
+            }
 
-        &.succeeded rect {
-            fill: rgb(81,175,81);
-            stroke: rgb(81,175,81);
-        }
+            &.succeeded rect {
+                fill: rgb(81,175,81);
+                stroke: rgb(81,175,81);
+            }
 
-        &.failed rect {
-            fill: rgb(207,72,72);
-            stroke: rgb(207,72,72);
-        }
+            &.failed rect {
+                fill: rgb(207,72,72);
+                stroke: rgb(207,72,72);
+            }
 
-        &.submit-failed rect {
-            fill: rgb(190,106,192);
-            stroke: rgb(190,106,192);
+            &.submit-failed rect {
+                fill: rgb(190,106,192);
+                stroke: rgb(190,106,192);
+            }
         }
     }
 </style>
@@ -75,7 +80,7 @@
         name: 'Job',
         data: function () {
             return {
-                'status': 'running'
+                'status': null
             }
         }
     }
