@@ -4,7 +4,10 @@
 -->
 
 <template>
-  <span style="display:inline-block; vertical-align:middle">
+  <span
+    class="c-task"
+    style="display:inline-block; vertical-align:middle"
+  >
     <!-- the task icon SVG
            * comments prefixed `let` are instructions for changing style
            * contain in a 100x100 viewBox so pixels and percent are equal
@@ -74,82 +77,85 @@
 
 
 <style lang="scss">
-    $colour: rgb(90,90,90);
+    c-task {
 
-    @mixin disk() {
-        #outline {
-            stroke: $colour;
-            fill: $colour;
-        }
-    }
+        $colour: rgb(90,90,90);
 
-    @mixin outline() {
-        #outline {
-            stroke: $colour;
-        }
-    }
-
-    @mixin hub() {
-        #hub {
-            fill: $colour;
-        }
-    }
-
-    @mixin progress() {
-        #progress {
-            fill: transparent;
-            stroke: $colour;
-            transform-origin: 50% 50%;
-            transform: rotate(-90deg);
-            opacity: 0.4;
-        }
-    }
-
-    @mixin cross() {
-        #cross rect {
-            fill: $colour;
-        }
-    }
-
-    svg.task {
-        /* scale the icon to the font-size */
-        width: 1em;
-        height: 1em;
-
-        circle, rect {
-            /* if no task status display nothing */
-            fill: transparent;
-            stroke: transparent;
+        @mixin disk() {
+            #outline {
+                stroke: $colour;
+                fill: $colour;
+            }
         }
 
-        &.waiting {
-            @include outline();
+        @mixin outline() {
+            #outline {
+                stroke: $colour;
+            }
         }
 
-        &.submitted {
-            @include outline();
-            @include hub();
+        @mixin hub() {
+            #hub {
+                fill: $colour;
+            }
         }
 
-        &.running {
-            @include outline();
-            @include hub();
-            @include progress();
+        @mixin progress() {
+            #progress {
+                fill: transparent;
+                stroke: $colour;
+                transform-origin: 50% 50%;
+                transform: rotate(-90deg);
+                opacity: 0.4;
+            }
         }
 
-        &.succeeded {
-            @include disk();
+        @mixin cross() {
+            #cross rect {
+                fill: $colour;
+            }
         }
 
-        &.failed {
-            @include outline();
-            @include cross();
-        }
+        svg.task {
+            /* scale the icon to the font-size */
+            width: 1em;
+            height: 1em;
 
-        &.submit-failed {
-            @include outline();
-            @include hub();
-            @include cross();
+            circle, rect {
+                /* if no task status display nothing */
+                fill: transparent;
+                stroke: transparent;
+            }
+
+            &.waiting {
+                @include outline();
+            }
+
+            &.submitted {
+                @include outline();
+                @include hub();
+            }
+
+            &.running {
+                @include outline();
+                @include hub();
+                @include progress();
+            }
+
+            &.succeeded {
+                @include disk();
+            }
+
+            &.failed {
+                @include outline();
+                @include cross();
+            }
+
+            &.submit-failed {
+                @include outline();
+                @include hub();
+                @include cross();
+            }
         }
     }
 </style>
@@ -160,8 +166,8 @@
         name: 'Task',
         data: function () {
             return {
-                'status': 'running',
-                'progress': 25
+                'status': null,
+                'progress': 0
             }
         },
         computed: {
