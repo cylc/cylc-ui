@@ -1,0 +1,32 @@
+@import "../material-dashboard/colors";
+@import "../material-dashboard/variables";
+
+.v-toolbar {
+  min-height: inherit !important;
+
+  .v-toolbar__content {
+    min-height: inherit !important;
+  }
+}
+
+.c-toolbar {
+  background-color: $grey-200;
+  border-bottom: 3px solid $grey-300;
+
+  .c-toolbar-title, .add-view {
+    font-size: 22px;
+    color: $blue-A200;
+    font-weight: $font-weight-bolder;
+  }
+
+  .c-toolbar-title {
+    padding-right: 12px;
+  }
+
+  span {
+    color: $blue-grey-400;
+  }
+
+  .add-view {
+  }
+}

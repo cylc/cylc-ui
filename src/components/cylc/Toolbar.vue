@@ -120,34 +120,3 @@
   }
 }
 </script>
-
-<style lang="scss">
-  .v-toolbar {
-    min-height: inherit !important;
-    .v-toolbar__content {
-      min-height: inherit !important;
-    }
-  }
-
-  .c-toolbar {
-    background-color: #E7E7E7;
-    border-bottom: 3px solid #ccc;
-
-    .c-toolbar-title, .add-view {
-      font-size: 22px;
-      color: #5995EB;
-      font-weight: 500;
-    }
-
-    .c-toolbar-title {
-      padding-right: 13px;
-    }
-
-    span {
-      color: #7D878F;
-    }
-
-    .add-view {
-    }
-  }
-</style>
