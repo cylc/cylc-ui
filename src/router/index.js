@@ -52,6 +52,12 @@ Vue.use(Meta);
 
 router.beforeResolve((to, from, next) => {
   if (to.name) {
+    if (to.name === 'Suite') {
+      // We treat the suite differently for the toolbar title
+      store.commit('app/setTitle', to.params.name)
+    } else {
+      store.commit('app/setTitle', to.name)
+    }
     NProgress.start();
     store.dispatch('clearAlerts');
   }

@@ -24,7 +24,7 @@
     </div>
 
     <!-- control bar elements displayed only when a suite has been positioned -->
-    <template v-if="suite">
+    <template v-if="tree && tree.length > 0">
       <a @click="onClickPause">
         <v-icon color="#5E5E5E">mdi-pause</v-icon>
       </a>
@@ -77,17 +77,10 @@
 
   computed: {
     ...mapState('app', ['title']),
-    ...mapState('suites', ['suite'])
-  },
-
-  watch: {
-    '$route' (val) {
-      this.$store.commit('app/setTitle', val.name);
-    }
+    ...mapState('suites', ['tree'])
   },
 
   mounted () {
-    this.$store.commit('app/setTitle', this.$route.name);
     this.onResponsiveInverted()
     window.addEventListener('resize', this.onResponsiveInverted)
   },
