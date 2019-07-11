@@ -31,6 +31,9 @@
                 <i class="mdi mdi-plus" v-else></i>
               </span>
             </template>
+            <template slot="state" slot-scope="props">
+              <task :status="props.row.state" :progress=0 />
+            </template>
           </vue-ads-table>
         </material-card>
       </v-flex>
@@ -41,10 +44,14 @@
 <script>
   import { SuiteService } from 'suite-service'
   import {mapState} from 'vuex'
+  import Task from '@/components/cylc/Task'
 
   const suiteService = new SuiteService();
 
   export default {
+    components: {
+      'task': Task
+    },
     metaInfo() {
       return {
         title: 'Cylc UI | Suite ' + this.$route.params.name

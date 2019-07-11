@@ -13,7 +13,7 @@
            * contain in a 100x100 viewBox so pixels and percent are equal
            * bind the task status here, respond to styling in the CSS
     -->
-    <svg 
+    <svg
       class="task"
       v-bind:class="[status]"
       viewBox="0 0 100 100"
@@ -164,10 +164,15 @@
 <script>
     export default {
         name: 'Task',
-        data: function () {
-            return {
-                'status': null,
-                'progress': 0
+        props: {
+            status: {
+                type: String,
+                required: true
+            },
+            progress: {
+                type: Number,
+                required: false,
+                default: 0
             }
         },
         computed: {
