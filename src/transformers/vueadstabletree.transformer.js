@@ -40,11 +40,11 @@ export default class VueAdsTableTreeTransformer {
     );
     // monkey patching the task object to add fields matching what is expected in columns for vue-ads-table-tree
     t.name = childTask.id;
-    if (childTask.hasOwnProperty('jobs') && childTask.jobs.length > 0) {
+    if (Object.prototype.hasOwnProperty.call(childTask, 'jobs') && childTask.jobs.length > 0) {
       t.jobId = childTask.jobs[0].batchSysJobId;
       t.host = childTask.jobs[0].host;
     }
-    if (childTask.hasOwnProperty('task')) {
+    if (Object.prototype.hasOwnProperty.call(childTask, 'task')) {
       t.name = childTask.task.name;
     }
     return t;
