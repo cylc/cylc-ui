@@ -77,7 +77,7 @@
 
 
 <style lang="scss">
-    c-task {
+    .c-task {
 
         $colour: rgb(90,90,90);
 
