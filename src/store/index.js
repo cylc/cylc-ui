@@ -28,6 +28,10 @@ const actions = {
     commit('SET_LOADING', isLoading);
   },
   setAlert({state, commit}, alert) {
+    // log to console when the alert is not null (null can mean to remove the alert)
+    if (alert !== null) {
+      console.log(alert)
+    }
     if (alert === null || state.alert === null || state.alert.getText() !== alert.getText()) {
       commit('SET_ALERT', alert);
     }
