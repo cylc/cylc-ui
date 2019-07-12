@@ -125,6 +125,7 @@
     },
     beforeDestroy() {
       clearInterval(this.polling)
+      this.$store.dispatch('suites/setTree', [])
     },
     computed: {
       // namespace: module suites, and property suites, hence these repeated tokens...
