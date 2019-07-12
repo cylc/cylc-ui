@@ -44,8 +44,15 @@ export default [
     }
   },
   {
+    path: '/workflows/:name',
+    view: 'Tree',
+    meta: {
+      'layout': 'default'
+    }
+  },
+  {
     path: '/suites/:name',
-    view: 'Suite',
+    view: 'suite',
     meta: {
       layout: 'default'
     }

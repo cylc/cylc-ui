@@ -101,7 +101,7 @@ class WorkflowService {
 
   register(view) {
     /* register a new view */
-    this.views[view.id] = view
+    this.views[view.viewId] = view
   }
 
   unregister(view) {
@@ -161,7 +161,7 @@ class WorkflowService {
       view = this.views[id];
       ret += `\n${id}`;
       for (let item of this.subscriptions.filter(item => item[1] == view)) {
-        ret += `\n    # ${item[0]}`
+        ret += `\n    Subscription: ${item[0]}`
         ret += '\n' + prefix_lines(print(item[2]), '    ');
       }
     }

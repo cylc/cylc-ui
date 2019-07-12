@@ -92,7 +92,7 @@
       }
     },
     data: () => ({
-      id: 'GScan: ' + Math.random(),
+      viewId: 'GScan: ' + Math.random(),
       subscriptions: {},
       headers: [
         {
@@ -134,7 +134,7 @@
     },
     methods: {
       viewWorkflow(workflow) {
-        this.$router.push({ path: `/suites/${workflow.name}` });
+        this.$router.push({ path: `/workflows/${workflow.name}` });
       },
       subscribe(query_name) {
         if (!(query_name in this.subscriptions)) {
