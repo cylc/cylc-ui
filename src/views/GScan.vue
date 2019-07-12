@@ -65,22 +65,25 @@
   </v-container>
 </template>
 
+
 <script>
   import { workflowService } from 'workflow-service'
   import { mapState } from 'vuex'
-  import gql from 'graphql-tag'
 
   // query to retrieve all workflows
-  const workflowsQuery = gql`{
-    workflows {
-      id
-      name
-      owner
-      host
-      port
-    }
+  const QUERIES = {
+    'root': `
+      {
+        workflows {
+          id
+          name
+          owner
+          host
+          port
+        }
+      }
+    `
   }
-  `;
 
   export default {
     metaInfo () {
@@ -89,6 +92,8 @@
       }
     },
     data: () => ({
+      id: 'GScan: ' + Math.random(),
+      subscriptions: {},
       headers: [
         {
           sortable: true,
@@ -120,15 +125,27 @@
     computed: {
       ...mapState('workflows', ['workflows'])
     },
-    beforeCreate() {
-      workflowService.subscribe(workflowsQuery);
+    created() {
+      workflowService.register(this);
+      this.subscribe('root');
     },
     beforeDestroy() {
-      //workflowService.unsubscribe()
+      workflowService.unregister(this);
     },
     methods: {
       viewWorkflow(workflow) {
         this.$router.push({ path: `/suites/${workflow.name}` });
+      },
+      subscribe(query_name) {
+        if (!(query_name in this.subscriptions)) {
+          this.subscriptions[query_name] =
+            workflowService.subscribe(this, QUERIES[query_name]);
+        }
+      },
+      unsubscribe(query_name) {
+        if (query_name in this.subscriptions) {
+          workflowService.unsubscribe(this.subscriptions[query_name]);
+        }
       }
     }
   }
