@@ -74,12 +74,13 @@
 </style>
 
 <script>
-export default {
-  name: 'Job',
-  data: function () {
-    return {
-      status: null
+    export default {
+        name: 'Job',
+        props: {
+            status: {
+                type: String,
+                required: true
+            }
+        }
     }
-  }
-}
 </script>
