@@ -102,7 +102,7 @@ export class SuiteService {
       return store.dispatch('suites/setSuites', suites);
     }).catch((error) => {
       const alert = new Alert(error.message, null, 'error');
-      return store.dispatch('addAlert', alert);
+      return store.dispatch('setAlert', alert);
     })
   }
 
@@ -120,7 +120,7 @@ export class SuiteService {
       return store.dispatch('suites/setTasks', tasks);
     }).catch((error) => { // error is an ApolloError object
       const alert = new Alert(error.message, null, 'error');
-      return store.dispatch('addAlert', alert);
+      return store.dispatch('setAlert', alert);
     })
   }
 
@@ -139,7 +139,7 @@ export class SuiteService {
       return store.dispatch('suites/setTree', tasks);
     }).catch((error) => { // error is an ApolloError object
       const alert = new Alert(error.message, null, 'error');
-      return store.dispatch('addAlert', alert);
+      return store.dispatch('setAlert', alert);
     });
   }
 }
