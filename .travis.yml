@@ -20,7 +20,7 @@ jobs:
     - stage: lint
       script:
         # Run linter
-        - npm run lint
+        - npm run lint -- --no-fix
     - stage: test
       script:
         # Run tests
