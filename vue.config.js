@@ -23,10 +23,10 @@ module.exports = {
     const suiteService = process.env.NODE_ENV === 'offline'
       ? '@/services/mock/suite.service'
       : '@/services/suite.service'
-    const workflowService = process.env.NODE_ENV === 'offline'
-      ? '@/services/workflow.service'  // TODO restore mock service
-      : '@/services/workflow.service'
     config.resolve.alias.set('suite-service', suiteService)
+    const workflowService = process.env.NODE_ENV === 'offline'
+      ? '@/services/workflow.service.mock'
+      : '@/services/workflow.service'
     config.resolve.alias.set('workflow-service', workflowService)
   }
 }

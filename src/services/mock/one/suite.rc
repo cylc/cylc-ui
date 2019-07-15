@@ -1,0 +1,80 @@
+[meta]
+    description = """
+        A simple suite which demmonstrates tasks in different states.
+    """
+
+[cylc]
+    UTC mode = True
+
+[scheduling]
+    initial cycle point = 2000
+    [[dependencies]]
+        [[[P1D]]]
+            graph = """
+                sleepy[-P1D] & waiting[-P1D] =>
+                succeeded & eventually_succeeded & retrying
+                succeeded & eventually_succeeded => failed
+                failed:fail => checkpoint => sleepy & waiting
+                sleepy => !failed
+            """
+
+[runtime]
+    [[root]]
+        script = sleep 1
+
+    [[succeeded]]
+        script = """
+            cylc hold "${CYLC_SUITE_NAME}" "sleepy.${CYLC_TASK_CYCLE_POINT}"
+        """
+
+    [[eventually_succeeded]]
+        script = """
+            if [[ "${CYLC_TASK_SUBMIT_NUMBER}" -gt 3 ]]; then
+                true
+            else
+                false
+            fi
+        """
+        [[[job]]]
+            execution retry delays = 4*PT1S
+        [[[meta]]]
+            description = """
+                Will succeed, after a few false starts.
+            """
+
+    [[retrying]]
+        script = """
+            false
+        """
+        [[[job]]]
+            execution retry delays = PT5M
+        [[[meta]]]
+            description = """
+                Fails then sits in the retrying state for ages.
+            """
+
+    [[failed]]
+        script = """
+            false
+        """
+
+    [[checkpoint]]
+        script = """
+            # allow worklow's state to settle
+            sleep 5
+
+            # take a checkpoint
+            CHECK="${CYLC_SUITE_DEF_PATH}/../checkpoint/get_checkpoint.py"
+            cylc client \
+                "${CYLC_SUITE_NAME}" \
+                graphql \
+                <<< "$(python3 "${CHECK}")" \
+                > checkpoint
+
+            # reset stuff
+            cylc unhold \
+                "${CYLC_SUITE_NAME}" "sleepy.${CYLC_TASK_CYCLE_POINT}"
+            cylc reset \
+                "${CYLC_SUITE_NAME}" "retrying.${CYLC_TASK_CYCLE_POINT}" \
+                -s 'succeeded'
+        """

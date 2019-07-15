@@ -91,8 +91,9 @@
         'title': 'Cylc GScan'
       }
     },
+
     data: () => ({
-      viewId: 'GScan: ' + Math.random(),
+      viewID: 'GScan: ' + Math.random(),
       subscriptions: {},
       pagination: {
         rowsPerPage: 10
@@ -125,27 +126,33 @@
         }
       ],
     }),
+
     computed: {
       ...mapState('workflows', ['workflows']),
       ...mapState('app', ['isLoading'])
     },
+
     created() {
       workflowService.register(this);
       this.subscribe('root');
     },
+
     beforeDestroy() {
       workflowService.unregister(this);
     },
+
     methods: {
       viewWorkflow(workflow) {
         this.$router.push({ path: `/workflows/${workflow.name}` });
       },
+
       subscribe(query_name) {
         if (!(query_name in this.subscriptions)) {
           this.subscriptions[query_name] =
             workflowService.subscribe(this, QUERIES[query_name]);
         }
       },
+
       unsubscribe(query_name) {
         if (query_name in this.subscriptions) {
           workflowService.unsubscribe(this.subscriptions[query_name]);

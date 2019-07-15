@@ -83,7 +83,7 @@
     },
 
     data: () => ({
-      viewId: '',
+      viewID: '',
       workflowId: '',
       subscriptions: {}
     }),
@@ -105,7 +105,7 @@
 
     created() {
       this.workflowId = this.$route.params.name;
-      this.viewId = `Tree(${this.workflowId}): ${Math.random()}`;
+      this.viewID = `Tree(${this.workflowId}): ${Math.random()}`;
       workflowService.register(this);
       this.subscribe('root');
     },
