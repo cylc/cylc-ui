@@ -2,6 +2,9 @@
 const webpack = require('webpack')
 const path = require('path')
 
+const USERNAME = process.env.CYLC_USER
+const GRAPHQL_REWRITE = '/user/' + USERNAME + '/graphql'
+
 module.exports = {
   publicPath: '',
   outputDir: 'dist',
@@ -45,5 +48,17 @@ module.exports = {
       ? '@/services/mock/user.service.mock'
       : '@/services/user.service'
     config.resolve.alias.set('user-service', userService)
+  },
+  devServer: {
+    proxy:
+    {
+      // will match even if there is text before, like /user/name/graphql
+      '/graphql': {
+        target: 'http://localhost:8000',
+        pathRewrite: {
+          '.*': GRAPHQL_REWRITE
+        }
+      }
+    }
   }
 }
