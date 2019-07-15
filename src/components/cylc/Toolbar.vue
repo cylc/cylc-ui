@@ -24,7 +24,7 @@
     </div>
 
     <!-- control bar elements displayed only when a suite has been positioned -->
-    <template v-if="tree && tree.length > 0">
+    <template v-if="(workflows && workflows.length > 0) || (tree && tree.length > 0)">
       <a @click="onClickPause">
         <v-icon color="#5E5E5E">mdi-pause</v-icon>
       </a>
@@ -77,7 +77,8 @@ export default {
 
   computed: {
     ...mapState('app', ['title']),
-    ...mapState('suites', ['tree'])
+    ...mapState('suites', ['tree']),
+    ...mapState('workflows', ['workflows'])
   },
 
   mounted () {

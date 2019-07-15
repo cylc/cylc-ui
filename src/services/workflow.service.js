@@ -143,7 +143,7 @@ class WorkflowService {
       return true;
     }).catch((error) => {
       const alert = new Alert(error.message, null, 'error');
-      store.dispatch('addAlert', alert);
+      store.dispatch('setAlert', alert);
       return false;
     });
   }

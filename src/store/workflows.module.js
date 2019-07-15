@@ -1,6 +1,6 @@
 // raw GraphQL response data structure
 const state = {
-    workflows: {}
+    workflows: []
 };
 
 const mutations = {

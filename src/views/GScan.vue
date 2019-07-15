@@ -94,6 +94,9 @@
     data: () => ({
       viewId: 'GScan: ' + Math.random(),
       subscriptions: {},
+      pagination: {
+        rowsPerPage: 10
+      },
       headers: [
         {
           sortable: true,
@@ -123,7 +126,8 @@
       ],
     }),
     computed: {
-      ...mapState('workflows', ['workflows'])
+      ...mapState('workflows', ['workflows']),
+      ...mapState('app', ['isLoading'])
     },
     created() {
       workflowService.register(this);
