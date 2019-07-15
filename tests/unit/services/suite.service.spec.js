@@ -12,7 +12,7 @@ describe('SuiteService', () => {
   describe('getSuites returns the list of suites', () => {
     it('should return list of suites', () => {
       // we have fake data until the graphql backend is ready
-      const suitesReturned = new Promise((r) => r({ data:
+      const suitesReturned = new Promise((resolve) => resolve({ data:
           {
             workflows:
               [
@@ -64,7 +64,7 @@ describe('SuiteService', () => {
   describe('getSuiteTasks returns the list of tasks of a suite', () => {
     it('should return list of tasks for a suite', () => {
       // we have fake data until the graphql backend is ready
-      const tasksReturned = new Promise((r) => r({ data: {
+      const tasksReturned = new Promise((resolve) => resolve({ data: {
         tasks: [
           {
             id: 'id1',
@@ -106,7 +106,7 @@ describe('SuiteService', () => {
   })
   describe('fetchSuiteTree returns the suite tree view data structure', () => {
     it('should return suite tree view data', () => {
-      const familyProxiesReturned = new Promise((r) => r({ data: {
+      const familyProxiesReturned = new Promise((resolve) => resolve({ data: {
         familyProxies: [
           {
             childTasks: [

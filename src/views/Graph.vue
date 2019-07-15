@@ -92,7 +92,9 @@ const config = {
         'background-image': function (node) {
           let path = node.data('icon')
           // TODO: not sure if we can provide the path as a normal string, without importing the svg here?
-          path === undefined || path === '' ? path = require('@/../public/img/baseline-donut_large-24px.svg') : ''
+          if (path === undefined || path === '') {
+            path = require('@/../public/img/baseline-donut_large-24px.svg')
+          }
           // console.log('ICON PATH --> ', path)
           return path
         },
@@ -611,26 +613,25 @@ export default {
         const api = cy.expandCollapse('get')
         api.collapseAll()
         layoutOptions = dagreOptions
-        return cy, ur
+        return ur
       }
 
       async function getGraph (cyinstance) {
         await registerExtensions()
         const cy = await runlayout(cyinstance)
-        let ur
-        cy, ur = await setupUndo(cy)
+        const ur = await setupUndo(cy)
         getPanzoom(cy)
         getNavigator(cy)
         getUndoRedo(cy)
         cy.expandCollapse(expandCollapseOptions)
         const api = cy.expandCollapse('get')
         api.collapseAll()
-        return cy, ur
+        return ur
       }
       // load graph data and run layout
       cy = await this.$cytoscape.instance
       const { data: elements } = await updateData()
-      cy, ur = await getGraph(cy)
+      ur = await getGraph(cy)
       console.log('loaded elements: ', elements, cy)
       this.loading = false // remove spinner
       // ----------------------------------------
@@ -747,10 +748,14 @@ export default {
             currentstate.waiting = waiting
             for (const item in currentstate) {
               console.log('key:' + item + ' value:' + currentstate[item])
-              currentstate[item] > 0 ? state = item : ''
+              if (currentstate[item] > 0) {
+                state = item
+              }
             }
             console.log('isParent => ', children)
-            children !== undefined ? state = 'compound node' : ''
+            if (children !== undefined) {
+              state = 'compound node'
+            }
 
             const parentstring =
               '<br><strong>parent <span style="color: aqua;">' +
@@ -774,8 +779,12 @@ export default {
               '<strong>state <span style="color: aqua;">' +
               state +
               '</span></strong>'
-            running > 0 ? (content.innerHTML += progress) : ''
-            parent !== undefined ? (content.innerHTML += parentstring) : ''
+            if (running > 0) {
+              content.innerHTML += progress
+            }
+            if (parent !== undefined) {
+              content.innerHTML += parentstring
+            }
             content.align = 'left'
             return content
           },

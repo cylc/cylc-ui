@@ -2,8 +2,7 @@ import Vue from 'vue'
 import Graph from '@/views/Graph.vue'
 import { mount } from '@vue/test-utils'
 import { expect } from 'chai'
-import Vuetify from 'vuetify'
-import VBtn from 'vuetify'
+import Vuetify, { VBtn } from 'vuetify'
 import cytoscape from 'cytoscape'
 
 Vue.use(

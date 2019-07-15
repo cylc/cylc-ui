@@ -13,7 +13,7 @@ describe('UserService', () => {
   afterEach(() => sandbox.restore())
   describe('getUserProfile returns the logged-in user profile information', () => {
     it('should return user profile object', () => {
-      const userReturned = new Promise((r) => r({ data: {
+      const userReturned = new Promise((resolve) => resolve({ data: {
         name: 'cylc-user-01',
         groups: ['root', 'wheel'],
         created: '2019-01-01',
