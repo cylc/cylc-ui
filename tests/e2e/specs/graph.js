@@ -3,7 +3,7 @@ import Graph from '@/views/Graph.vue'
 describe('Graph', () => {
   // Inspect the raw component options
   it('has a created hook', () => {
-    expect(typeof Graph.created).toBe('function');
+    expect(typeof Graph.created).toBe('function')
   })
   // Evaluate the results of functions in
   // the raw component options

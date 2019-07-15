@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import VeeValidate from "vee-validate"
+import VeeValidate from 'vee-validate'
 
 Vue.use(VeeValidate, {
   validity: true

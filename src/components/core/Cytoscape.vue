@@ -18,10 +18,10 @@ export const sync = state => {
   let elements = [...state.elements]
   // replace the `elements` field with a custom one
   Object.defineProperty(state, 'elements', {
-    get() {
+    get () {
       return elements
     },
-    set(newElements) {
+    set (newElements) {
       // update cytoscape view
       VueCyObj.instance.then(c => {
         // remove all the elements in cytoscape that are not in the newElements
@@ -51,13 +51,13 @@ const promise = new Promise((resolve, reject) => {
 })
 
 const VueCyObj = {
-  reset() {
+  reset () {
     cy = null
   },
-  get instance() {
+  get instance () {
     return promise
   },
-  setConfig(config, preConfig, afterCreated) {
+  setConfig (config, preConfig, afterCreated) {
     // if a pre-configuration function is passed
     // then call it with the cytoscape constructor
     // this is useful to install/use extensions
@@ -81,7 +81,7 @@ const VueCyObj = {
 
 Vue.prototype.$cytoscape = VueCyObj
 
-export {VueCyObj}
+export { VueCyObj }
 
 export default {
   props: {

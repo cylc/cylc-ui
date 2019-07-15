@@ -1,12 +1,12 @@
 import { expect } from 'chai'
 import { SuiteService } from '@/services/suite.service'
 import store from '@/store'
-import Suite from "@/model/Suite.model"
+import Suite from '@/model/Suite.model'
 
 describe('SuiteService', () => {
   const suiteService = new SuiteService()
   beforeEach(() => {
-    store.dispatch("suites/setSuites", [])
+    store.dispatch('suites/setSuites', [])
     store.dispatch('setAlert', null)
   })
   describe('getSuites returns the list of suites', () => {
@@ -17,17 +17,17 @@ describe('SuiteService', () => {
             workflows:
               [
                 {
-                  id: "rob/localhost",
-                  name: "suite 1",
-                  owner: "rob",
-                  host: "localhost",
+                  id: 'rob/localhost',
+                  name: 'suite 1',
+                  owner: 'rob',
+                  host: 'localhost',
                   port: 1234
                 },
                 {
-                  id: "job/remotehost",
-                  name: "suite 2",
-                  owner: "john",
-                  host: "remotehost",
+                  id: 'job/remotehost',
+                  name: 'suite 2',
+                  owner: 'john',
+                  host: 'remotehost',
                   port: 4321
                 }
               ]
@@ -35,16 +35,16 @@ describe('SuiteService', () => {
       }))
       const stubClient = {
         uri: null,
-        query: function() {
+        query: function () {
           return suitesReturned
-          //return Promise.resolve(suitesReturned)
+          // return Promise.resolve(suitesReturned)
         }
       }
       suiteService.apolloClient = stubClient
-      return suiteService.getSuites().then(function() {
+      return suiteService.getSuites().then(function () {
         const suites = store.getters['suites/suites']
         expect(suites.length).to.equal(2)
-        expect(suites[0].name).to.equal("suite 1")
+        expect(suites[0].name).to.equal('suite 1')
       })
     })
     it('should add an alert on error', () => {
@@ -52,7 +52,7 @@ describe('SuiteService', () => {
       const e = new Error('mock error')
       suiteService.apolloClient = {
         uri: null,
-        query: function() {
+        query: function () {
           return Promise.reject(e)
         }
       }
@@ -65,29 +65,29 @@ describe('SuiteService', () => {
     it('should return list of tasks for a suite', () => {
       // we have fake data until the graphql backend is ready
       const tasksReturned = new Promise((r) => r({ data: {
-          tasks: [
-            {
-              id: "id1",
-              name: "speaker 1"
-            },
-            {
-              id: "id2",
-              name: "speaker 2"
-            }
-          ]
-        }
+        tasks: [
+          {
+            id: 'id1',
+            name: 'speaker 1'
+          },
+          {
+            id: 'id2',
+            name: 'speaker 2'
+          }
+        ]
+      }
       }))
       suiteService.apolloClient = {
         uri: null,
-        query: function() {
+        query: function () {
           return tasksReturned
         }
       }
 
-      return suiteService.getSuiteTasks(new Suite("suitename", "root", "localhost", 8080)).then(function() {
+      return suiteService.getSuiteTasks(new Suite('suitename', 'root', 'localhost', 8080)).then(function () {
         const tasks = store.getters['suites/tasks']
         expect(tasks.length).to.equal(2)
-        expect(tasks[0].name).to.equal("speaker 1")
+        expect(tasks[0].name).to.equal('speaker 1')
       })
     })
     it('should add an alert on error', () => {
@@ -95,11 +95,11 @@ describe('SuiteService', () => {
       const e = new Error('mock error')
       suiteService.apolloClient = {
         uri: null,
-        query: function() {
+        query: function () {
           return Promise.reject(e)
         }
       }
-      return suiteService.getSuiteTasks(new Suite("suitename", "root", "localhost", 8080)).finally(() => {
+      return suiteService.getSuiteTasks(new Suite('suitename', 'root', 'localhost', 8080)).finally(() => {
         expect(store.state.alert.getText()).to.equal('mock error')
       })
     })
@@ -111,28 +111,28 @@ describe('SuiteService', () => {
           {
             childTasks: [
               {
-                id: "id1",
-                name: "speaker 1"
+                id: 'id1',
+                name: 'speaker 1'
               },
               {
-                id: "id2",
-                name: "speaker 2"
+                id: 'id2',
+                name: 'speaker 2'
               }
             ],
             childFamilies: []
           }
         ]
-      }}))
+      } }))
       suiteService.apolloClient = {
         uri: null,
-        query: function() {
+        query: function () {
           return familyProxiesReturned
         }
       }
-      return suiteService.fetchSuiteTree(3).then(function() {
+      return suiteService.fetchSuiteTree(3).then(function () {
         const tree = store.getters['suites/tree']
         expect(tree[0].childTasks.length).to.equal(2)
-        expect(tree[0].childTasks[0].id).to.equal("id1")
+        expect(tree[0].childTasks[0].id).to.equal('id1')
       })
     })
     it('should add an alert on error', () => {
@@ -140,7 +140,7 @@ describe('SuiteService', () => {
       const e = new Error('mock error')
       suiteService.apolloClient = {
         uri: null,
-        query: function() {
+        query: function () {
           return Promise.reject(e)
         }
       }

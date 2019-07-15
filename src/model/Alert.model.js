@@ -1,19 +1,19 @@
 export default class Alert {
-  constructor(text, icon, color) {
-    this.text = text;
-    this.icon = icon;
-    this.color = color;
+  constructor (text, icon, color) {
+    this.text = text
+    this.icon = icon
+    this.color = color
   }
 
-  getText() {
-    return this.text;
+  getText () {
+    return this.text
   }
 
-  getIcon() {
-    return this.icon;
+  getIcon () {
+    return this.icon
   }
 
-  getColor() {
-    return this.color;
+  getColor () {
+    return this.color
   }
 }

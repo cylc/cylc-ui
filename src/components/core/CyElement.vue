@@ -4,7 +4,6 @@
 <script>
 import VueCyObj from '@/components/core/Cytoscape'
 
-
 export default {
   props: {
     definition: {

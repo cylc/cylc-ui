@@ -3,7 +3,6 @@ import Family from '@/model/Family.model'
 import Task from '@/model/Task.model'
 
 export default class VueAdsTableTreeTransformer {
-
   transform (graphqlFamilyProxies = []) {
     return _.map(graphqlFamilyProxies, (familyProxy) => {
       return this._recursivelyTransformFamily(familyProxy)
@@ -20,14 +19,14 @@ export default class VueAdsTableTreeTransformer {
       familyProxy.depth,
       childrenTasks,
       childrenFamilies
-    );
+    )
     // monkey patching the family object to add hierarchy for vue-ads-table-tree
-    f._showChildren = true;
-    f._children = childrenTasks;
-    if (f.name === "root") {
-      f.name = f.cyclePoint;
+    f._showChildren = true
+    f._children = childrenTasks
+    if (f.name === 'root') {
+      f.name = f.cyclePoint
     }
-    return f;
+    return f
   }
 
   _transformTask (childTask) {
@@ -37,16 +36,16 @@ export default class VueAdsTableTreeTransformer {
       childTask.latestMessage,
       childTask.depth,
       [] // FIXME; convert to a JobModel later?
-    );
+    )
     // monkey patching the task object to add fields matching what is expected in columns for vue-ads-table-tree
-    t.name = childTask.id;
+    t.name = childTask.id
     if (Object.prototype.hasOwnProperty.call(childTask, 'jobs') && childTask.jobs.length > 0) {
-      t.jobId = childTask.jobs[0].batchSysJobId;
-      t.host = childTask.jobs[0].host;
+      t.jobId = childTask.jobs[0].batchSysJobId
+      t.host = childTask.jobs[0].host
     }
     if (Object.prototype.hasOwnProperty.call(childTask, 'task')) {
-      t.name = childTask.task.name;
+      t.name = childTask.task.name
     }
-    return t;
+    return t
   }
 }

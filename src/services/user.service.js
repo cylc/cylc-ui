@@ -1,18 +1,18 @@
-import User from '@/model/User.model';
-import axios from 'axios';
-import store from '@/store/';
-import Alert from "@/model/Alert.model";
+import User from '@/model/User.model'
+import axios from 'axios'
+import store from '@/store/'
+import Alert from '@/model/Alert.model'
 
 export const UserService = {
 
-  getUserProfile() {
+  getUserProfile () {
     return axios.get(window.location.pathname + '/userprofile').then((response) => {
-      let user = new User(response.data.name, response.data.groups, response.data.created, response.data.admin);
-      return store.dispatch('user/setUser', user);
+      const user = new User(response.data.name, response.data.groups, response.data.created, response.data.admin)
+      return store.dispatch('user/setUser', user)
     }).catch((error) => {
-      const alert = new Alert(error.response.statusText, null, 'error');
-      return store.dispatch('setAlert', alert);
-    });
+      const alert = new Alert(error.response.statusText, null, 'error')
+      return store.dispatch('setAlert', alert)
+    })
   }
 
-};
+}

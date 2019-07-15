@@ -9,14 +9,14 @@
 </template>
 
 <script>
-  import {
-    mapState
-  } from 'vuex'
-  export default {
-    name: "Alert",
+import {
+  mapState
+} from 'vuex'
+export default {
+  name: 'Alert',
 
-    computed: {
-      ...mapState(['alert'])
-    }
+  computed: {
+    ...mapState(['alert'])
   }
+}
 </script>

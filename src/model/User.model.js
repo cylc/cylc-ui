@@ -14,11 +14,11 @@ export default class User {
     return this.groups
   }
 
-  getCreated() {
+  getCreated () {
     return this.created
   }
 
-  isAdmin() {
+  isAdmin () {
     return this.admin
   }
 }

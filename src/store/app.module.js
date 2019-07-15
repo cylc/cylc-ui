@@ -4,7 +4,7 @@ const state = {
   drawer: null,
   color: 'success',
   title: null
-};
+}
 
 const mutations = {
   setDrawer: set('drawer'),
@@ -12,13 +12,13 @@ const mutations = {
   setColor: set('color'),
   toggleDrawer: toggle('drawer'),
   setTitle: set('title')
-};
+}
 
-const actions = {};
+const actions = {}
 
 export const app = {
   namespaced: true,
   state,
   actions,
-  mutations,
-};
+  mutations
+}
