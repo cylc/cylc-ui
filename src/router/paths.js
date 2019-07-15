@@ -14,7 +14,6 @@ export default [
   },
   {
     path: '/dashboard',
-    // Relative to /src/views
     view: 'Dashboard',
     meta: {
       'layout': 'default'
@@ -23,7 +22,6 @@ export default [
   },
   {
     path: '/graph',
-    // Relative to /src/views
     view: 'Graph',
     meta: {
       'layout': 'default'
@@ -37,8 +35,17 @@ export default [
     }
   },
   {
-    path: '/suites/:name',
-    view: 'Suite',
+    path: '/suites/tree/:name',
+    name: 'Tree View',
+    view: 'TreeSuite',
+    meta: {
+      'layout': 'default'
+    }
+  },
+  {
+    path: '/suites/dot/:name',
+    name: 'Dot View',
+    view: 'DotSuite',
     meta: {
       'layout': 'default'
     }

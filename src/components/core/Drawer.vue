@@ -119,7 +119,7 @@ export default {
       },
       {
         to: '/login',
-        icon: 'mdi-account',
+        icon: 'mdi-lock-open',
         text: 'Log in',
         view: false
       }

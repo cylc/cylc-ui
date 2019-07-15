@@ -12,9 +12,9 @@
           md12
       >
         <material-card
-            text="This is the list of tasks for the suite"
-            title="Tasks"
-            color="green"
+            :text="$t('TreeView.tableSubHeader')"
+            :title="$t('TreeView.tableHeader')"
+            color="red"
         >
           <vue-ads-table
               :columns="columns"
