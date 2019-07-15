@@ -1,6 +1,6 @@
 {
   "tableHeader": "List of Suites",
-  "tableSubHeader": "This is the list of suites the current user has access to",
+  "tableSubHeader": "This is the list of suites I have access to",
   "tableColumnName": "Name",
   "tableColumnGroup": "Group",
   "tableColumnHost": "Host",
