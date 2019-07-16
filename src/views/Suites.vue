@@ -69,7 +69,7 @@
 import { SuiteService } from 'suite-service'
 import { mapState } from 'vuex'
 
-const suiteService = new SuiteService();
+const suiteService = new SuiteService()
 
 export default {
   metaInfo () {
@@ -114,21 +114,21 @@ export default {
   }),
   computed: {
     // namespace: module suites, and property suites, hence these repeated tokens...
-    ...mapState('suites', ['suites']),
+    ...mapState('suites', ['suites'])
   },
-  beforeCreate() {
+  beforeCreate () {
     suiteService
       .getSuites()
       .finally(() => { this.isLoading = false })
     // TODO: to be replaced by websockets
     this.polling = setInterval(() => suiteService.getSuites(), 5000)
   },
-  beforeDestroy() {
+  beforeDestroy () {
     clearInterval(this.polling)
   },
   methods: {
-    viewSuite(suite) {
-      this.$router.push({ path: `/suites/${suite.name}` });
+    viewSuite (suite) {
+      this.$router.push({ path: `/suites/${suite.name}` })
     }
   }
 }

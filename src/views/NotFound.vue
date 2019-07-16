@@ -29,11 +29,11 @@
 </template>
 
 <script>
-  export default {
-    metaInfo () {
-      return {
-        title: 'Cylc UI | Not Found'
-      }
+export default {
+  metaInfo () {
+    return {
+      title: 'Cylc UI | Not Found'
     }
   }
+}
 </script>

@@ -66,9 +66,9 @@
 
 <script>
 
-  import { mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
-  export default {
+export default {
   data: () => ({
     responsive: false,
     responsiveInput: false,
@@ -104,18 +104,18 @@
     },
     onClickPause () {
       // TODO: implement the pause action
-      console.log("Pausing workflows has not been implemented yet")
+      console.log('Pausing workflows has not been implemented yet')
     },
     onClickStop () {
       // TODO: implement the stop action
-      console.log("Stopping workflows has not been implemented yet")
+      console.log('Stopping workflows has not been implemented yet')
     },
     toggleExtended () {
       this.extended = !this.extended
     },
     onClickAddView () {
       // TODO: implement adding views action
-      console.log("Adding views has not been implemented yet")
+      console.log('Adding views has not been implemented yet')
     }
   }
 }

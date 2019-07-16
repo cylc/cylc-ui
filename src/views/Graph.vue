@@ -49,14 +49,14 @@ import CyElement from '@/components/core/CyElement.vue'
 const DATA_URL = 'simple-cytoscape-dot.7.js'
 let cy = {}
 let ur = {}
-let elements = []
+const elements = []
 // eslint-disable-next-line no-unused-vars
-let loading = true
+const loading = true
 let layoutOptions = {}
 let expandCollapseOptions = {}
 let tippy
 
-let nodeOptions = {
+const nodeOptions = {
   normal: {
     bgColor: '#444'
   },
@@ -89,18 +89,18 @@ const config = {
     {
       selector: 'node',
       css: {
-        'background-image': function(node) {
+        'background-image': function (node) {
           let path = node.data('icon')
           // TODO: not sure if we can provide the path as a normal string, without importing the svg here?
-          path === undefined || path === '' ? path = require('@/../public/img/baseline-donut_large-24px.svg') : ''
+          if (path === undefined || path === '') {
+            path = require('@/../public/img/baseline-donut_large-24px.svg')
+          }
           // console.log('ICON PATH --> ', path)
           return path
         },
         'background-fit': 'contain contain',
-        'background-image-opacity': function(node) {
-          let opacity
-          node.data('running') > 0 ? opacity =  1 : opacity = .6
-          return opacity
+        'background-image-opacity': function (node) {
+          return node.data('running') > 0 ? 1.0 : 0.6
         },
         'background-color': 'data(state)',
         content: 'data(label)',
@@ -120,41 +120,41 @@ const config = {
         width: '6em',
         height: '6em',
         // 'pie-size': '5.6em', //The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
-        'pie-size': function(node) {
+        'pie-size': function (node) {
           let size
           node.data('running') > 0 ? size = '5.6em' : size = '0%'
           return size
         },
         'pie-1-background-color': '#9ef9ff', // The colour of the node’s ith pie chart slice.
         'pie-1-background-size': 'mapData(submitted, 0, 100, 0, 100)',
-        'pie-1-background-opacity' : .7,
+        'pie-1-background-opacity': 0.7,
         'pie-2-background-color': '#4ab7ff',
         'pie-2-background-size': 'mapData(running, 0, 100, 0, 100)',
-        'pie-2-background-opacity' : .7,
+        'pie-2-background-opacity': 0.7,
         'pie-3-background-color': '#31ff53',
         'pie-3-background-size': 'mapData(succeeded, 0, 100, 0, 100)', // The size of the node’s ith pie chart slice, measured in percent (e.g. 25% or 25).
-        'pie-3-background-opacity' : .7,
+        'pie-3-background-opacity': 0.7,
         'pie-4-background-color': '#ff3a2b',
         'pie-4-background-size': 'mapData(failed, 0, 100, 0, 100)',
-        'pie-4-background-opacity' : .7,
+        'pie-4-background-opacity': 0.7,
         'pie-5-background-color': '#d453ff',
         'pie-5-background-size': 'mapData(subfailed, 0, 100, 0, 100)',
-        'pie-5-background-opacity' : .7,
+        'pie-5-background-opacity': 0.7,
         'pie-6-background-color': '#fefaff',
         'pie-6-background-size': 'mapData(expired, 0, 100, 0, 100)',
-        'pie-6-background-opacity' : .7,
+        'pie-6-background-opacity': 0.7,
         'pie-7-background-color': '#fff138',
         'pie-7-background-size': 'mapData(queued, 0, 100, 0, 100)',
-        'pie-7-background-opacity' : .7,
+        'pie-7-background-opacity': 0.7,
         'pie-8-background-color': '#ff3a2b',
         'pie-8-background-size': 'mapData(retrying, 0, 100, 0, 100)',
-        'pie-8-background-opacity' : .7,
+        'pie-8-background-opacity': 0.7,
         'pie-9-background-color': '#666',
         'pie-9-background-size': 'mapData(waiting, 0, 100, 0, 100)',
-        'pie-9-background-opacity' : .7,
+        'pie-9-background-opacity': 0.7,
         'pie-10-background-color': '#cacaca',
         'pie-10-background-size': 'mapData(todo, 0, 100, 0, 100)',
-        'pie-10-background-opacity' : .7
+        'pie-10-background-opacity': 0.7
       }
     },
     {
@@ -186,7 +186,7 @@ const config = {
     },
     {
       selector: 'node.semitransp',
-      style: { opacity: '0.5' },
+      style: { opacity: '0.5' }
     },
     {
       selector: 'node.selected',
@@ -250,7 +250,7 @@ const config = {
     {
       selector: ':parent',
       style: {
-        'background-opacity': .2,
+        'background-opacity': 0.2,
         // 'background-image-opacity': .2,
         'background-fit': 'contain contain',
         'background-color': '#b7c0e8',
@@ -299,7 +299,7 @@ const config = {
 }
 
 export default {
-  metaInfo() {
+  metaInfo () {
     return {
       title: 'Cylc UI | Graph'
     }
@@ -310,7 +310,7 @@ export default {
     cytoscape: VueCytoscape,
     'cy-element': CyElement
   },
-  data() {
+  data () {
     return {
       config,
       elements,
@@ -326,7 +326,7 @@ export default {
     }
   },
   methods: {
-    preConfig(cytoscape) {
+    preConfig (cytoscape) {
       console.log('calling pre-config', config, elements)
       // cytoscape: this is the cytoscape constructor
       cytoscape.use(cola)
@@ -334,7 +334,7 @@ export default {
       cytoscape.use(coseBilkent)
       cytoscape.use(klay)
     },
-    async afterCreated() {
+    async afterCreated () {
       console.log('after created')
       const dagreOptions = {
         name: 'dagre',
@@ -344,11 +344,11 @@ export default {
         rankSep: 140, // the separation between adjacent nodes in the same rank
         rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right
         // eslint-disable-next-line no-unused-vars
-        minLen: function(edge) {
+        minLen: function (edge) {
           return 1
         }, // number of ranks to keep between the source and target of the edge
         // eslint-disable-next-line no-unused-vars
-        edgeWeight: function(edge) {
+        edgeWeight: function (edge) {
           return 1
         }, // higher weight edges are generally made shorter and straighter than lower weight edges
         // general layout options
@@ -359,28 +359,28 @@ export default {
         animationDuration: 500, // duration of animation in ms if enabled
         animationEasing: undefined, // easing of animation if enabled
         boundingBox: undefined, // constrain layout bounds { x1, y1, x2, y2 } or { x1, y1, w, h }
-        ready: function() {}, // on layoutready
-        stop: function() {} // on layoutstop
+        ready: function () {}, // on layoutready
+        stop: function () {} // on layoutstop
       }
 
       const coseBilkentOptions = {
         name: 'cose-bilkent',
-        ready: function() {},  // Called on `layoutready`
-        stop: function() {},  // Called on `layoutstop`
+        ready: function () {}, // Called on `layoutready`
+        stop: function () {}, // Called on `layoutstop`
         nodeDimensionsIncludeLabels: false, // Whether to include labels in node dimensions. Useful for avoiding label overlap
         refresh: 30, // number of ticks per frame higher is faster but more jerky
         fit: true, // Whether to fit the network view after when done
         padding: 10, // Padding on fit
-        randomize: true,  // Whether to enable incremental mode
+        randomize: true, // Whether to enable incremental mode
         nodeRepulsion: 4500, // Node repulsion (non overlapping) multiplier
-        idealEdgeLength: 50,  // Ideal (intra-graph) edge length
+        idealEdgeLength: 50, // Ideal (intra-graph) edge length
         edgeElasticity: 0.45, // Divisor to compute edge forces
         nestingFactor: 0.1, // Nesting factor (multiplier) to compute ideal edge length for inter-graph edges
         gravity: 0.25, // Gravity force (constant)
-        numIter: 2500,  // Maximum number of iterations to perform
+        numIter: 2500, // Maximum number of iterations to perform
         tile: true, // Whether to tile disconnected nodes
         animate: 'end', // Type of layout animation. The option set is {'during', 'end', false}
-        tilingPaddingVertical: 10,  // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
+        tilingPaddingVertical: 10, // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
         tilingPaddingHorizontal: 10, // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
         gravityRangeCompound: 1.5, // Gravity range (constant) for compounds
         gravityCompound: 1.0, // Gravity force (constant) for compounds
@@ -395,12 +395,12 @@ export default {
         padding: 20, // Padding on fit
         animate: false, // Whether to transition the node positions
         // eslint-disable-next-line no-unused-vars
-        animateFilter: function(node, i) {
+        animateFilter: function (node, i) {
           return true
         }, // Whether to animate specific nodes when animation is on non-animated nodes immediately go to their final positions
         animationDuration: 500, // Duration of animation in ms if enabled
         animationEasing: undefined, // Easing of animation if enabled
-        transform: function(node, pos) {
+        transform: function (node, pos) {
           return pos
         }, // A function that applies a transform to the final node position
         ready: undefined, // Callback on layoutready
@@ -416,7 +416,7 @@ export default {
           INTERACTIVE Orders the nodes of each layer by comparing their positions before the layout algorithm was started. The idea is that the relative order of nodes as it was before layout was applied is not changed. This of course requires valid positions for all nodes to have been set on the input graph before calling the layout algorithm. The interactive layer sweep algorithm uses the Interactive Reference Point option to determine which reference point of nodes are used to compare positions. */
           cycleBreaking: 'GREEDY', // Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines which edges to reverse to break the cycles. Reversed edges will end up pointing to the opposite direction of regular edges (that is, reversed edges will point left if edges usually point right).
           /* GREEDY This algorithm reverses edges greedily. The algorithm tries to avoid edges that have the Priority property set.
-          INTERACTIVE The interactive algorithm tries to reverse edges that already pointed leftwards in the input graph. This requires node and port coordinates to have been set to sensible values.*/
+          INTERACTIVE The interactive algorithm tries to reverse edges that already pointed leftwards in the input graph. This requires node and port coordinates to have been set to sensible values. */
           direction: 'RIGHT', // Overall direction of edges: horizontal (right / left) or vertical (down / up)
           /* UNDEFINED, RIGHT, LEFT, DOWN, UP */
           edgeRouting: 'ORTHOGONAL', // Defines how edges are routed (POLYLINE, ORTHOGONAL, SPLINES)
@@ -450,7 +450,7 @@ export default {
           thoroughness: 7 // How much effort should be spent to produce a nice layout..
         },
         // eslint-disable-next-line no-unused-vars
-        priority: function(edge) {
+        priority: function (edge) {
           return null
         } // Edges with a non-nil value are skipped when geedy edge cycle breaking is enabled
       }
@@ -467,8 +467,8 @@ export default {
         nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
 
         // layout event callbacks
-        ready: function() {}, // on layoutready
-        stop: function() {}, // on layoutstop
+        ready: function () {}, // on layoutready
+        stop: function () {}, // on layoutstop
 
         // positioning options
         randomize: false, // use random node positions at beginning of layout
@@ -476,7 +476,7 @@ export default {
         handleDisconnected: true, // if true, avoids disconnected components from overlapping
         convergenceThreshold: 0.01, // when the alpha value (system energy) falls below this value, the layout stops
         // eslint-disable-next-line no-unused-vars
-        nodeSpacing: function(node) {
+        nodeSpacing: function (node) {
           return 100
         }, // extra spacing around nodes
         flow: undefined, // use DAG/tree flow layout if specified, e.g. { axis: 'y', minSeparation: 30 }
@@ -498,8 +498,8 @@ export default {
         infinite: false // overrides all other options for a forces-all-the-time mode
       }
 
-      async function registerExtensions() {
-        //register extensions
+      async function registerExtensions () {
+        // register extensions
         if (typeof cytoscape('core', 'navigator') !== 'function') {
           console.log('registering navigator')
           navigator(cytoscape)
@@ -526,7 +526,7 @@ export default {
         }
       }
 
-      async function updateData() {
+      async function updateData () {
         try {
           const data = await axios.get(DATA_URL)
           return data
@@ -536,7 +536,7 @@ export default {
       }
 
       // eslint-disable-next-line no-unused-vars
-      async function run(cy) {
+      async function run (cy) {
         try {
           await cy
             .elements()
@@ -549,7 +549,7 @@ export default {
       }
 
       // eslint-disable-next-line no-unused-vars
-      async function getInstance(instance) {
+      async function getInstance (instance) {
         try {
           if (instance) {
             return instance
@@ -561,12 +561,12 @@ export default {
         }
       }
 
-      async function runlayout(instance) {
+      async function runlayout (instance) {
         try {
-          let cy = instance
+          const cy = instance
           if (!_.isEmpty(cy)) {
-            cy.remove(cy.nodes()) //todo: remove
-            cy.remove(cy.edges()) //todo: remove
+            cy.remove(cy.nodes()) // todo: remove
+            cy.remove(cy.edges()) // todo: remove
             console.log('cy instance exists')
             if (_.isObject(layoutOptions) && _.isEmpty(layoutOptions)) {
               console.log('layoutOptions is an empty object default to Dagre ')
@@ -575,8 +575,8 @@ export default {
             }
             if (_.isEmpty(cy.nodes) && _.isEmpty(cy.edges)) {
               console.log('cy.nodes and edges length is zero - adding')
-              let cynodes = elements.nodes
-              let cyedges = elements.edges
+              const cynodes = elements.nodes
+              const cyedges = elements.edges
               // // add the new ones
               cy.add(cynodes)
               cy.add(cyedges)
@@ -604,38 +604,37 @@ export default {
         }
       }
 
-      async function setupUndo(instance) {
-        let cy = instance
-        let ur = cy.undoRedo()
+      async function setupUndo (instance) {
+        const cy = instance
+        const ur = cy.undoRedo()
         cy.expandCollapse(expandCollapseOptions)
-        let api = cy.expandCollapse('get')
+        const api = cy.expandCollapse('get')
         api.collapseAll()
         layoutOptions = dagreOptions
-        return cy, ur
+        return ur
       }
 
-      async function getGraph(cyinstance) {
+      async function getGraph (cyinstance) {
         await registerExtensions()
-        let cy = await runlayout(cyinstance)
-        let ur
-        cy, ur = await setupUndo(cy)
+        const cy = await runlayout(cyinstance)
+        const ur = await setupUndo(cy)
         getPanzoom(cy)
         getNavigator(cy)
         getUndoRedo(cy)
         cy.expandCollapse(expandCollapseOptions)
-        let api = cy.expandCollapse('get')
+        const api = cy.expandCollapse('get')
         api.collapseAll()
-        return cy, ur
+        return ur
       }
       // load graph data and run layout
       cy = await this.$cytoscape.instance
-      let { data: elements } = await updateData()
-      cy, ur = await getGraph(cy)
+      const { data: elements } = await updateData()
+      ur = await getGraph(cy)
       console.log('loaded elements: ', elements, cy)
       this.loading = false // remove spinner
       // ----------------------------------------
-      function getPanzoom() {
-        let panzoomdefaults = {
+      function getPanzoom () {
+        const panzoomdefaults = {
           zoomFactor: 0.1, // zoom factor per zoom tick
           zoomDelay: 45, // how many ms between zoom ticks
           minZoom: 0.1, // min zoom level
@@ -649,7 +648,7 @@ export default {
           panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib) scales from this to 1.0
           zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
           fitSelector: undefined, // selector of elements to fit
-          animateOnFit: function() {
+          animateOnFit: function () {
             // whether to animate on fit
             return false
           },
@@ -669,13 +668,13 @@ export default {
         minIterations: 100, // [optional] The minimum number of iteraions the algorithm will run before stopping (default 100).
         maxIterations: 1000, // [optional] The maximum number of iteraions the algorithm will run before stopping (default 1000).
         attributes: [
-          function(node) {
+          function (node) {
             return node.data('weight')
           }
         ]
       })
 
-      function getNavigator(cy) {
+      function getNavigator (cy) {
         cy.navigator({
           container: '.cytoscape-navigator-overlay',
           viewLiveFramerate: 0, // set false to update graph pan only on drag end set 0 to do it instantly set a number (frames per second) to update not more than N times per second
@@ -688,13 +687,13 @@ export default {
         return cy.navigator
       }
 
-      function getUndoRedo(cy) {
-        let undoRedoOptions = {
+      function getUndoRedo (cy) {
+        const undoRedoOptions = {
           isDebug: true, // Debug mode for console messages
           actions: {}, // actions to be added
           undoableDrag: true, // Whether dragging nodes are undoable can be a function as well
           stackSizeLimit: undefined, // Size limit of undo stack, note that the size of redo stack cannot exceed size of undo stack
-          ready: function() {
+          ready: function () {
             // callback when undo-redo is ready
             this.loading = false // add spinner
           }
@@ -712,30 +711,30 @@ export default {
         closeOnClickOutside: true
       }
 
-      cy.on('tap', 'node', function(event) {
+      cy.on('tap', 'node', function (event) {
         const node = event.target
         console.log('tapped ' + node.id(), node.data())
-        let ref = node.popperRef()
+        const ref = node.popperRef()
         // using tippy ^4.0.0
         tippy = new Tippy(ref, {
           content: () => {
-            let content = document.createElement('div')
-            let expired = node.data('expired')
-            let failed = node.data('failed')
-            let parent = node.data('parent')
-            let running = node.data('running')
+            const content = document.createElement('div')
+            const expired = node.data('expired')
+            const failed = node.data('failed')
+            const parent = node.data('parent')
+            const running = node.data('running')
             // eslint-disable-next-line no-unused-vars
-            let todo = node.data('todo')
-            let queued = node.data('queued')
-            let retrying = node.data('retrying')
-            let subfailed = node.data('subfailed')
-            let submitted = node.data('submitted')
-            let succeeded = node.data('succeeded')
-            let waiting = node.data('waiting')
-            let  children = node.data('collapsedChildren')
+            const todo = node.data('todo')
+            const queued = node.data('queued')
+            const retrying = node.data('retrying')
+            const subfailed = node.data('subfailed')
+            const submitted = node.data('submitted')
+            const succeeded = node.data('succeeded')
+            const waiting = node.data('waiting')
+            const children = node.data('collapsedChildren')
             // if state is in the data then this will become unecessary
             let state
-            let currentstate = {}
+            const currentstate = {}
             currentstate.expired = expired
             currentstate.failed = failed
             currentstate.running = running
@@ -745,18 +744,22 @@ export default {
             currentstate.submitted = submitted
             currentstate.succeeded = succeeded
             currentstate.waiting = waiting
-            for (let item in currentstate) {
+            for (const item in currentstate) {
               console.log('key:' + item + ' value:' + currentstate[item])
-              currentstate[item] > 0 ? state = item : ''
+              if (currentstate[item] > 0) {
+                state = item
+              }
             }
             console.log('isParent => ', children)
-            children !== undefined ? state = 'compound node' : ''
+            if (children !== undefined) {
+              state = 'compound node'
+            }
 
-            let parentstring =
+            const parentstring =
               '<br><strong>parent <span style="color: aqua;">' +
               parent +
               '%</span></strong>'
-            let progress =
+            const progress =
               '<br><strong>progress <span style="color: aqua;">' +
               running +
               '%</span></strong>'
@@ -774,8 +777,12 @@ export default {
               '<strong>state <span style="color: aqua;">' +
               state +
               '</span></strong>'
-            running > 0 ? (content.innerHTML += progress) : ''
-            parent !== undefined ? (content.innerHTML += parentstring) : ''
+            if (running > 0) {
+              content.innerHTML += progress
+            }
+            if (parent !== undefined) {
+              content.innerHTML += parentstring
+            }
             content.align = 'left'
             return content
           },
@@ -811,14 +818,14 @@ export default {
       //   //-------------------------------
       // })
 
-      cy.on('tap', 'edge', function(event) {
+      cy.on('tap', 'edge', function (event) {
         const edge = event.target
         console.log('tapped ' + edge.id(), edge.data())
         edge.addClass('selected')
-        let ref = edge.popperRef()
+        const ref = edge.popperRef()
         tippy = new Tippy(ref, {
           content: () => {
-            let content = document.createElement('div')
+            const content = document.createElement('div')
             content.innerHTML =
               'edge<br>' +
               '<strong>source <span style="color: aqua;">' +
@@ -857,7 +864,7 @@ export default {
       })
 
       // eslint-disable-next-line no-unused-vars
-      cy.on('click', function(event) {
+      cy.on('click', function (event) {
         // const data = event.target._private
         // console.log('cy event.target', data)
         // var edges = cy.edges()
@@ -878,7 +885,7 @@ export default {
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
         animate: true, // whether to animate on drawing changes you can specify a function too
-        ready: function() {}, // callback when expand/collapse initialized
+        ready: function () {}, // callback when expand/collapse initialized
         undoable: true, // and if undoRedoExtension exists,
         cueEnabled: true, // Whether cues are enabled
         expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
@@ -894,7 +901,7 @@ export default {
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
         animate: false, // whether to animate on drawing changes you can specify a function too
-        ready: function() {}, // callback when expand/collapse initialized
+        ready: function () {}, // callback when expand/collapse initialized
         undoable: true, // and if undoRedoExtension exists,
         cueEnabled: true, // Whether cues are enabled
         expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
@@ -915,7 +922,7 @@ export default {
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
         animate: false, // whether to animate on drawing changes you can specify a function too
-        ready: function() {}, // callback when expand/collapse initialized
+        ready: function () {}, // callback when expand/collapse initialized
         undoable: true, // and if undoRedoExtension exists,
         cueEnabled: true, // Whether cues are enabled
         expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
@@ -927,7 +934,7 @@ export default {
       }
 
       const expandCollapseOptionsKlay = {
-         layoutBy: {
+        layoutBy: {
           name: 'cose-bilkent',
           animate: 'end',
           randomize: false,
@@ -936,7 +943,7 @@ export default {
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
         animate: false, // whether to animate on drawing changes you can specify a function too
-        ready: function() {}, // callback when expand/collapse initialized
+        ready: function () {}, // callback when expand/collapse initialized
         undoable: true, // and if undoRedoExtension exists,
         cueEnabled: true, // Whether cues are enabled
         expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
@@ -948,7 +955,7 @@ export default {
       }
 
       const expandCollapseOptionsCola = {
-         layoutBy: {
+        layoutBy: {
           name: 'cose-bilkent',
           animate: 'end',
           randomize: false,
@@ -957,7 +964,7 @@ export default {
         // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
         fisheye: false, // whether to perform fisheye view after expand/collapse you can specify a function too
         animate: false, // whether to animate on drawing changes you can specify a function too
-        ready: function() {}, // callback when expand/collapse initialized
+        ready: function () {}, // callback when expand/collapse initialized
         undoable: true, // and if undoRedoExtension exists,
         cueEnabled: true, // Whether cues are enabled
         expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
@@ -971,7 +978,7 @@ export default {
       document
         .getElementById('dagre-button')
         // eslint-disable-next-line no-unused-vars
-        .addEventListener('click', function(event) {
+        .addEventListener('click', function (event) {
           console.log('tapped dagre button')
           layoutOptions = dagreOptions
           expandCollapseOptions = expandCollapseOptionsUndefined
@@ -988,7 +995,7 @@ export default {
       document
         .getElementById('cosebilkent-button')
         // eslint-disable-next-line no-unused-vars
-        .addEventListener('click', function(event) {
+        .addEventListener('click', function (event) {
           console.log('tapped cosebilkent button')
           expandCollapseOptions = expandCollapseOptionsCoseBilkent
           cy.expandCollapse(expandCollapseOptionsCoseBilkent)
@@ -1002,7 +1009,7 @@ export default {
       document
         .getElementById('klay-button')
         // eslint-disable-next-line no-unused-vars
-        .addEventListener('click', function(event) {
+        .addEventListener('click', function (event) {
           console.log('tapped klay button')
           expandCollapseOptions = expandCollapseOptionsKlay
           cy.expandCollapse(expandCollapseOptionsKlay)
@@ -1016,7 +1023,7 @@ export default {
       document
         .getElementById('hierarchical-button')
         // eslint-disable-next-line no-unused-vars
-        .addEventListener('click', function(event) {
+        .addEventListener('click', function (event) {
           console.log('tapped hierarchical button')
           cy.elements().hca({
             mode: 'threshold',
@@ -1027,7 +1034,7 @@ export default {
             minIterations: 100, // [optional] The minimum number of iteraions the algorithm will run before stopping (default 100).
             maxIterations: 1000, // [optional] The maximum number of iteraions the algorithm will run before stopping (default 1000).
             attributes: [
-              function(node) {
+              function (node) {
                 return node.data('weight')
               }
             ]
@@ -1039,22 +1046,22 @@ export default {
         })
 
       document
-      .getElementById('cola-button')
+        .getElementById('cola-button')
       // eslint-disable-next-line no-unused-vars
-      .addEventListener('click', function(event) {
-        console.log('tapped cola button')
-        expandCollapseOptions = expandCollapseOptionsCola
-        cy.expandCollapse(expandCollapseOptionsCola)
-        layoutOptions = colaLayoutOptions
-        ur.do('collapseAll')
-        cy.elements()
-          .layout(colaLayoutOptions)
-          .run()
-      })
+        .addEventListener('click', function (event) {
+          console.log('tapped cola button')
+          expandCollapseOptions = expandCollapseOptionsCola
+          cy.expandCollapse(expandCollapseOptionsCola)
+          layoutOptions = colaLayoutOptions
+          ur.do('collapseAll')
+          cy.elements()
+            .layout(colaLayoutOptions)
+            .run()
+        })
 
       document
         .getElementById('collapseAll')
-        .addEventListener('click', function() {
+        .addEventListener('click', function () {
           console.log('collapseAll')
           ur.do('collapseAll')
           cy.elements().removeClass('semitransp')
@@ -1071,7 +1078,7 @@ export default {
 
       document.addEventListener(
         'keydown',
-        function(event) {
+        function (event) {
           if (event.ctrlKey && event.which === '90') {
             cy.undoRedo().undo()
           } else if (event.ctrlKey && event.which === '89') {

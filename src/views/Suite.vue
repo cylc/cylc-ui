@@ -42,98 +42,98 @@
 </template>
 
 <script>
-  import { SuiteService } from 'suite-service'
-  import {mapState} from 'vuex'
-  import Task from '@/components/cylc/Task'
+import { SuiteService } from 'suite-service'
+import { mapState } from 'vuex'
+import Task from '@/components/cylc/Task'
 
-  const suiteService = new SuiteService();
+const suiteService = new SuiteService()
 
-  export default {
-    components: {
-      'task': Task
-    },
-    metaInfo() {
-      return {
-        title: 'Cylc UI | Suite ' + this.$route.params.name
-      }
-    },
-    data: () => ({
-      columns: [
-        {
-          property: 'name',
-          title: 'Task',
-          direction: null,
-          filterable: true,
-          collapseIcon: true
-        },
-        {
-          property: 'state',
-          title: 'State',
-          direction: null,
-          filterable: false
-        },
-        {
-          property: 'host',
-          title: 'Host',
-          direction: null,
-          filterable: true
-        },
-        {
-          property: 'jobId',
-          title: 'Job ID',
-          direction: null,
-          filterable: true
-        },
-        {
-          property: 'latestMessage',
-          title: 'Latest Message',
-          direction: null,
-          filterable: false
-        },
-        {
-          property: 'depth',
-          title: 'Depth',
-          direction: null,
-          filterable: false
-        }
-      ],
-      classes: {
-        table: "v-table",
-        '0/all': {'column text-xs-left': true}
-      },
-      // vue-ads-table-tree filtering (even if not enabled, we need this)
-      filter: '',
-      // vue-ads-table-tree pagination
-      start: 0,
-      end: 100,
-      // TODO: page polling, for the time being until we have websockets/graphql subscriptions
-      polling: null
-    }),
-    methods: {
-      filterChanged (filter) {
-        this.filter = filter;
-      },
-      fetchSuite() {
-        const suiteId = this.$route.params.name
-        suiteService.fetchSuiteTree(suiteId)
-        // TODO: to be replaced by websockets
-        this.polling = setInterval(() => {
-          suiteService.currentTaskIndex += 1
-          suiteService.fetchSuiteTree(suiteId)
-        }, 3000)
-      }
-    },
-    beforeDestroy() {
-      clearInterval(this.polling)
-      this.$store.dispatch('suites/setTree', [])
-    },
-    computed: {
-      // namespace: module suites, and property suites, hence these repeated tokens...
-      ...mapState('suites', ['tasks', 'tree']),
-      ...mapState(['isLoading'])
-    },
-    mounted: function () {
-      this.fetchSuite()
+export default {
+  components: {
+    task: Task
+  },
+  metaInfo () {
+    return {
+      title: 'Cylc UI | Suite ' + this.$route.params.name
     }
+  },
+  data: () => ({
+    columns: [
+      {
+        property: 'name',
+        title: 'Task',
+        direction: null,
+        filterable: true,
+        collapseIcon: true
+      },
+      {
+        property: 'state',
+        title: 'State',
+        direction: null,
+        filterable: false
+      },
+      {
+        property: 'host',
+        title: 'Host',
+        direction: null,
+        filterable: true
+      },
+      {
+        property: 'jobId',
+        title: 'Job ID',
+        direction: null,
+        filterable: true
+      },
+      {
+        property: 'latestMessage',
+        title: 'Latest Message',
+        direction: null,
+        filterable: false
+      },
+      {
+        property: 'depth',
+        title: 'Depth',
+        direction: null,
+        filterable: false
+      }
+    ],
+    classes: {
+      table: 'v-table',
+      '0/all': { 'column text-xs-left': true }
+    },
+    // vue-ads-table-tree filtering (even if not enabled, we need this)
+    filter: '',
+    // vue-ads-table-tree pagination
+    start: 0,
+    end: 100,
+    // TODO: page polling, for the time being until we have websockets/graphql subscriptions
+    polling: null
+  }),
+  methods: {
+    filterChanged (filter) {
+      this.filter = filter
+    },
+    fetchSuite () {
+      const suiteId = this.$route.params.name
+      suiteService.fetchSuiteTree(suiteId)
+      // TODO: to be replaced by websockets
+      this.polling = setInterval(() => {
+        suiteService.currentTaskIndex += 1
+        suiteService.fetchSuiteTree(suiteId)
+      }, 3000)
+    }
+  },
+  beforeDestroy () {
+    clearInterval(this.polling)
+    this.$store.dispatch('suites/setTree', [])
+  },
+  computed: {
+    // namespace: module suites, and property suites, hence these repeated tokens...
+    ...mapState('suites', ['tasks', 'tree']),
+    ...mapState(['isLoading'])
+  },
+  mounted: function () {
+    this.fetchSuite()
   }
+}
 </script>

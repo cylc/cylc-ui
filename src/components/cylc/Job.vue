@@ -13,7 +13,7 @@
            * contain in a 100x100 viewBox so pixels and percent are equal
            * bind the job status here, respond to styling in the CSS
     -->
-    <svg 
+    <svg
       class="job"
       v-bind:class="[status]"
       viewBox="0 0 100 100"
@@ -31,7 +31,6 @@
     </svg>
   </span>
 </template>
-
 
 <style lang="scss">
     .c-job {
@@ -74,14 +73,13 @@
     }
 </style>
 
-
 <script>
-    export default {
-        name: 'Job',
-        data: function () {
-            return {
-                'status': null
-            }
-        }
+export default {
+  name: 'Job',
+  data: function () {
+    return {
+      status: null
     }
+  }
+}
 </script>

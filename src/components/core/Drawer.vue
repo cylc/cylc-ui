@@ -136,11 +136,11 @@ export default {
         this.setDrawer(val)
       }
     },
-    viewLinks: function() {
-       return this.isView(true)
+    viewLinks: function () {
+      return this.isView(true)
     },
-    nonViewLinks: function() {
-       return this.isView(false)
+    nonViewLinks: function () {
+      return this.isView(false)
     },
     items () {
       return this.$t('Layout.View.items')
@@ -164,10 +164,10 @@ export default {
     },
     isView (bool) {
       // return links to views for true argument, non-views for false argument
-      return this.links.filter(function(u) {
-        return u.view === bool;
+      return this.links.filter(function (u) {
+        return u.view === bool
       })
-    },
+    }
   }
 }
 </script>

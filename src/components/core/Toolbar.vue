@@ -81,9 +81,9 @@
 
 <script>
 
-  import { mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
-  export default {
+export default {
   data: () => ({
     notifications: [
       'Mike, John responded to your email',
@@ -102,12 +102,12 @@
 
   watch: {
     '$route' (val) {
-      this.$store.commit('app/setTitle', val.name);
+      this.$store.commit('app/setTitle', val.name)
     }
   },
 
   mounted () {
-    this.$store.commit('app/setTitle', this.$route.name);
+    this.$store.commit('app/setTitle', this.$route.name)
     this.onResponsiveInverted()
     window.addEventListener('resize', this.onResponsiveInverted)
   },

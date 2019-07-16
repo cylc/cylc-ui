@@ -14,7 +14,7 @@ const suitesQuery = gql`{
         port
     }
 }
-`;
+`
 
 // query to retrieve all suites
 const tasksQuery = gql`fragment treeNest on FamilyProxy {
@@ -80,33 +80,32 @@ query tree($wIds: [ID], $nIds: [ID], $nStates: [String], $minDepth: Int, $maxDep
     }
   }
 }
-`;
+`
 
 export class SuiteService {
-
-  constructor() {
+  constructor () {
     this.apolloClient = this.createGraphqlClient()
     this.transformer = new VueAdsTableTreeTransformer()
   }
 
-  createGraphqlClient() {
-    return createApolloClient(`${window.location.pathname}/graphql`);
+  createGraphqlClient () {
+    return createApolloClient(`${window.location.pathname}/graphql`)
   }
 
-  getSuites() {
+  getSuites () {
     return this.apolloClient.query({
       query: suitesQuery,
       fetchPolicy: 'no-cache'
     }).then((response) => {
-      const suites = response.data.workflows;
-      return store.dispatch('suites/setSuites', suites);
+      const suites = response.data.workflows
+      return store.dispatch('suites/setSuites', suites)
     }).catch((error) => {
-      const alert = new Alert(error.message, null, 'error');
-      return store.dispatch('setAlert', alert);
+      const alert = new Alert(error.message, null, 'error')
+      return store.dispatch('setAlert', alert)
     })
   }
 
-  getSuiteTasks(suiteId) {
+  getSuiteTasks (suiteId) {
     return this.apolloClient.query({
       query: tasksQuery,
       variables: {
@@ -116,15 +115,15 @@ export class SuiteService {
       },
       fetchPolicy: 'no-cache'
     }).then((response) => {
-      const tasks = response.data.tasks;
-      return store.dispatch('suites/setTasks', tasks);
+      const tasks = response.data.tasks
+      return store.dispatch('suites/setTasks', tasks)
     }).catch((error) => { // error is an ApolloError object
-      const alert = new Alert(error.message, null, 'error');
-      return store.dispatch('setAlert', alert);
+      const alert = new Alert(error.message, null, 'error')
+      return store.dispatch('setAlert', alert)
     })
   }
 
-  fetchSuiteTree(suiteId) {
+  fetchSuiteTree (suiteId) {
     return this.apolloClient.query({
       query: tasksQuery,
       variables: {
@@ -134,12 +133,12 @@ export class SuiteService {
       },
       fetchPolicy: 'no-cache'
     }).then((response) => {
-      const familyProxies = response.data.familyProxies;
-      const tasks = this.transformer.transform(familyProxies);
-      return store.dispatch('suites/setTree', tasks);
+      const familyProxies = response.data.familyProxies
+      const tasks = this.transformer.transform(familyProxies)
+      return store.dispatch('suites/setTree', tasks)
     }).catch((error) => { // error is an ApolloError object
-      const alert = new Alert(error.message, null, 'error');
-      return store.dispatch('setAlert', alert);
-    });
+      const alert = new Alert(error.message, null, 'error')
+      return store.dispatch('setAlert', alert)
+    })
   }
 }

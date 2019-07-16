@@ -69,23 +69,23 @@
 </template>
 
 <script>
-  import { UserService } from '@/services/user.service'
-  import { mapState } from 'vuex';
-  export default {
-    computed: {
-      ...mapState('user', ['user'])
-    },
-    beforeCreate() {
-      this.$store
-              .dispatch('user/setUser', null)
-              .then(() => {
-                UserService.getUserProfile()
-              });
-    },
-    metaInfo() {
-      return {
-        title: 'Cylc UI | User Profile'
-      }
+import { UserService } from '@/services/user.service'
+import { mapState } from 'vuex'
+export default {
+  computed: {
+    ...mapState('user', ['user'])
+  },
+  beforeCreate () {
+    this.$store
+      .dispatch('user/setUser', null)
+      .then(() => {
+        UserService.getUserProfile()
+      })
+  },
+  metaInfo () {
+    return {
+      title: 'Cylc UI | User Profile'
     }
   }
+}
 </script>

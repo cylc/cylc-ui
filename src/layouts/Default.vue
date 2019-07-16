@@ -18,7 +18,7 @@
 
 <script>
 import Toolbar from '@/components/cylc/Toolbar'
-import Alert from "@/components/core/Alert"
+import Alert from '@/components/core/Alert'
 import Drawer from '@/components/core/Drawer'
 import Footer from '@/components/core/Footer'
 

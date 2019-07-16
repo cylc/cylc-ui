@@ -75,7 +75,6 @@
   </span>
 </template>
 
-
 <style lang="scss">
     .c-task {
 
@@ -160,28 +159,26 @@
     }
 </style>
 
-
 <script>
-    export default {
-        name: 'Task',
-        props: {
-            status: {
-                type: String,
-                required: true
-            },
-            progress: {
-                type: Number,
-                required: false,
-                default: 0
-            }
-        },
-        computed: {
-            progressStyle: function () {
-                return {
-                    'stroke-dashoffset':
-                        `calc(157 - (157 * ${this.progress/100} + ))`
-                }
-            }
-        }
+export default {
+  name: 'Task',
+  props: {
+    status: {
+      type: String,
+      required: true
+    },
+    progress: {
+      type: Number,
+      required: false,
+      default: 0
     }
+  },
+  computed: {
+    progressStyle: function () {
+      return {
+        'stroke-dashoffset': `calc(157 - (157 * ${this.progress / 100} + ))`
+      }
+    }
+  }
+}
 </script>
