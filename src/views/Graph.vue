@@ -100,9 +100,7 @@ const config = {
         },
         'background-fit': 'contain contain',
         'background-image-opacity': function (node) {
-          let opacity
-          node.data('running') > 0 ? opacity = 1 : opacity = 0.6
-          return opacity
+          return node.data('running') > 0 ? 1.0 : 0.6
         },
         'background-color': 'data(state)',
         content: 'data(label)',
