@@ -22,11 +22,15 @@
 
 <script>
   // This script customises the default 'dot' icons and animations on them:
-  import 'status-indicator/styles.css'
+  import 'vue-status-indicator/styles.css'
+  import { StatusIndicator } from 'vue-status-indicator'
 
   export default {
     name: 'Dot',
     props: ['dotClass'],
+    components: {
+     'status-indicator': StatusIndicator
+    },
     watch: {
       // Start the pulse animation if the task state (hence dot class) changes
       hasDotClassChanged: function() {
@@ -67,13 +71,9 @@
       },
       testInState(stateString, requiredState) {
         // For safety with 'undefined' values, check variety of negation cases:
-        if (stateString == null ||
-            this.stateToDotClassMappings[stateString] == null ||
-            this.stateToDotClassMappings[stateString] != requiredState) {
-          return false;
-        } else {
-          return true;
-        }
+        return !(stateString == null ||
+                 this.stateToDotClassMappings[stateString] == null ||
+                 this.stateToDotClassMappings[stateString] !== requiredState)
       },
       dismissPulse() {
         this.isPulseOn = false;
