@@ -95,6 +95,7 @@
     data: () => ({
       viewID: 'GScan: ' + Math.random(),
       subscriptions: {},
+      isLoading: true,
       pagination: {
         rowsPerPage: 10
       },
@@ -128,12 +129,16 @@
     }),
 
     computed: {
-      ...mapState('workflows', ['workflows']),
-      ...mapState('app', ['isLoading'])
+      ...mapState('workflows', ['workflows'])
     },
 
     created() {
-      workflowService.register(this);
+      workflowService.register(
+        this,
+        {
+          activeCallback: this.setActive
+        }
+      );
       this.subscribe('root');
     },
 
@@ -147,16 +152,29 @@
       },
 
       subscribe(query_name) {
+        var id = workflowService.subscribe(
+          this,
+          QUERIES[query_name],
+          this.setActive
+        )
         if (!(query_name in this.subscriptions)) {
-          this.subscriptions[query_name] =
-            workflowService.subscribe(this, QUERIES[query_name]);
+          this.subscriptions[query_name] = {
+            id,
+            active: false
+          }
         }
       },
 
       unsubscribe(query_name) {
         if (query_name in this.subscriptions) {
-          workflowService.unsubscribe(this.subscriptions[query_name]);
+          workflowService.unsubscribe(
+            this.subscriptions[query_name].id
+          );
         }
+      },
+
+      setActive(isActive) {
+        this.isLoading = ! isActive;
       }
     }
   }

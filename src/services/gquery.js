@@ -3,16 +3,27 @@ import { print } from 'graphql/language/printer';
 
 import { createApolloClient } from '@/utils/graphql'
 
+import Alert from '@/model/Alert.model'
+import store from '@/store/'
+
 
 function gClone(query) {
-    /* clone a query, why oh why isn't there a better way of doing this in JS!
-     * this is acytually kinda dangerous as there can be lost information */
+    /** Clone a GraphQL query.
+     * Why oh why isn't there a better way of doing this in JS!
+     * @param {Object} query - Parsed GraphQL query.
+     * @return {Object} Deep clone of the provided query.
+     */
+    // TODO - consider serialising via parse(print(query));
     return JSON.parse(JSON.stringify(query));
 }
 
 
 function getSelections(a) {
-    /* return dictionary of selections present on a node. */
+    /**
+     * Return map of selections present on a node.
+     * @param {Object} a - Node of GraphQL query.
+     * @return {Object} All selections present on this node.
+     */
     var selections = {};
     if (! a.selectionSet) {
         return {};
@@ -30,7 +41,11 @@ function getSelections(a) {
 
 
 function mergeSelection(a, b) {
-    /* merge b into a */
+    /**
+     * Merge node b into node a (modifies a in-place).
+     * @param {Object} a - Node of a GraphQL query.
+     * @param {Object} b - Node of a GraphQL query.
+     */
     var aSel = getSelections(a);
     var bSel = getSelections(b);
     for (let selection in bSel) {
@@ -44,17 +59,32 @@ function mergeSelection(a, b) {
 
 
 function merge(a, b) {
-    /* merge two graphql schema */
+    /**
+     * Merge two graphql schema (modifies a in-place).
+     * @param {Object} a - Parsed GraphQL query.
+     * @param {Object} b - Parsed GraphQL query.
+     */
     mergeSelection(a.definitions[0], b.definitions[0]);
 }
 
 
 function prefix_lines(str, pref) {
+    /**
+     * Prefixes each line of a multi-line string.
+     * @param {string} str - Multi-line string.
+     * @param {string} prefix - Line prefix.
+     * @return {string}
+     */
     return pref + str.replace(/\n/g, `\n${pref}`);
 }
 
 
 class GQuery {
+    /**
+     * GraphQL proxy, designed to serve as a single point of access to a
+     * GraphQL endpoint for a collection of views with potentially overlapping
+     * queries.
+     */
 
     constructor() {
         this.apolloClient = createApolloClient(
@@ -62,16 +92,13 @@ class GQuery {
         );
         this.query;
         this.subscriptions = [];
-        this.views = new WeakMap();
-    }
-
-    getHash() {
-        /* psudo-random hash for internal identification only */
-        return Math.random();
+        this.views = [];
     }
 
     recompute () {
-        /* recompute the combined query */
+        /**
+         * Compute the combined query from all registered subscriptions.
+         */
         if (this.subscriptions.length < 1) {
             this.query = null;
             return;
@@ -85,73 +112,131 @@ class GQuery {
     
         // TODO - remove
         this.print();
-      }
+    }
 
-    register(view) {
-        /* register a new view */
-        this.views[view.viewID] = view
+    register(view, callbacks) {
+        /**
+         * Register a view to this instance.
+         * @param {Vue.View} view - The view to register.
+         * @param {Object} callbacks - A map of the form {name: fcn}.
+         */
+        this.views.push({
+            id: view.viewID,
+            view,
+            ...callbacks
+        });
     }
 
     unregister(view) {
-        /* unregister a view (all subscriptions will be dropped */
-        delete this.views[view.viewID]
+        /**
+         * Unregister a view (all subscriptions will be dropped.
+         * @param {Vue.View} view - The view to unregister.
+         */
+        this.views = this.views.filter(
+            v => v.view != view
+        );
         this.subscriptions = this.subscriptions.filter(
-            item => item.view != view
+            s => s.view != view
         );
         this.recompute();
     }
 
     subscribe(view, query) {
-        /* subscribe a view to a query */
-        var hash = this.getHash();
+        /**
+         * Subscribe a new query.
+         * @param {Vue.View} view - The view to subscribe the query to.
+         * @param {string} query - The query to subscribe.
+         * @return {number} The subscription ID (used for un-subscribing).
+         */
+        var id = Math.random();
         this.subscriptions.push({
-            "hash": hash,
-            "view": view,
-            "query": parse(query),
-            "active": false
+            id,
+            view,
+            query: parse(query),
+            active: false
         });
         this.recompute();
-        return hash;
+        return id;
     }
 
-    unsubscribe (hash) {
-        /* un-subscribe a view from a query */
+    unsubscribe(id) {
+        /**
+         * Un-subscribe from a query.
+         * @param {number} id - The subscription ID to un-subscribe.
+         */
         this.subscriptions = this.subscriptions.filter(
-            item => item.hash != hash
+            s => s.id != id
         );
         this.recompute();
     }
 
-    request(successCallback, errorCallback) {
-        /* perform a REST GraphQL request, call handler with result. */
-        console.log('graphql:', this.query);
+    request() {
+        /**
+         * Perform a REST GraphQL request for all subscriptions.
+         */
+        console.log('graphql request:', this.query);
         return this.apolloClient.query({
             query: this.query,
             fetchPolicy: 'no-cache'
         }).then((response) => {
-            successCallback(response.data.workflows)
+            // commit results
+            store.dispatch(
+                'workflows/set',
+                response.data.workflows
+            );
+            // set all subscriptions to active
+            this.subscriptions
+                .filter(s => s.active === false)
+                .forEach(s => s.active = true);
+            // run callback functions on the views
+            this.callbackActive();
         }).catch((error) => {
-            errorCallback(error)
+            store.dispatch(
+                'setAlert',
+                new Alert(error.message, null, 'error')
+            );
         });
     }
 
+    callbackActive() {
+        /**
+         * Run callback functions registered by views.
+         */
+        // activeCallback - called when all subscriptions are active
+        this.views
+            .filter(v => v.activeCallback)
+            .forEach(view => {
+                if (
+                    this.subscriptions
+                        .filter(s => s.view === view.view)
+                        .every(s => s.active === true)
+                ) {
+                    view.activeCallback(true);
+                }
+            });
+    }
+
     print () {
-        /* dump a human-readable representation of all subscriptions */
+        /**
+         * Dump a human-readable representation of all subscriptions.
+         */
         var ret = 'Combined Query:';
         if (this.query) {
             ret += '\n' + prefix_lines(print(this.query), '    ');
         } else {
             ret += `\n    ${this.query}`;
         }
-        var view;
-        for (let id in this.views) {
-            view = this.views[id];
-            ret += `\n${id}`;
-            for (let item of this.subscriptions.filter(item => item.view == view)) {
-                ret += `\n    Subscription: ${item[0]}`
-                ret += '\n' + prefix_lines(print(item.query), '    ');
-            }
-        }
+
+        this.views.forEach(view => {
+            ret += `\n${view.id}`
+            this.subscriptions
+                .filter(s => s.view === view.view)
+                .forEach(subscription => {
+                    ret += `\n    Subscription ${subscription.id}`;
+                    ret += '\n' + prefix_lines(print(subscription.query), '    ');
+                });
+        });
+
         console.log(ret);
     }
   

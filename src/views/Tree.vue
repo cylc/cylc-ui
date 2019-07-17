@@ -1,5 +1,6 @@
 <template>
   <div class="c-tree">
+    <!-- TODO: add progress bar which displays with {{ isLoading }} -->
     <ul v-for="workflow in workflows" :key="workflow.id">
       <li v-if="workflow.name === workflowId">
         <!-- Workflow -->
@@ -85,7 +86,8 @@
     data: () => ({
       viewID: '',
       workflowId: '',
-      subscriptions: {}
+      subscriptions: {},
+      isLoading: true
     }),
 
     computed: {
@@ -106,7 +108,12 @@
     created() {
       this.workflowId = this.$route.params.name;
       this.viewID = `Tree(${this.workflowId}): ${Math.random()}`;
-      workflowService.register(this);
+      workflowService.register(
+        this,
+        {
+          activeCallback: this.setActive
+        }
+      );
       this.subscribe('root');
     },
 
@@ -115,26 +122,37 @@
     },
 
     methods: {
-      subscribe(query_name) {
-        /* Subscribe this view to a new GraphQL query.
-         * Query name must be in QUERIES. */
-        if (!(query_name in this.subscriptions)) {
-          this.subscriptions[query_name] =
+      subscribe(queryName) {
+        /**
+         * Subscribe this view to a new GraphQL query.
+         * @param {string} queryName - Must be in QUERIES.
+         */
+        if (!(queryName in this.subscriptions)) {
+          this.subscriptions[queryName] =
             workflowService.subscribe(
               this,
-              QUERIES[query_name].replace('WORKFLOW_ID', this.workflowId)
+              QUERIES[queryName].replace('WORKFLOW_ID', this.workflowId)
             );
         }
       },
 
-      unsubscribe(query_name) {
-        /* Unsubscribe this view to a new GraphQL query.
-         * Query name must be in QUERIES. */
-        if (query_name in this.subscriptions) {
+      unsubscribe(queryName) {
+        /**
+         * Unsubscribe this view to a new GraphQL query.
+         * @param {string} queryName - Must be in QUERIES.
+         */
+        if (queryName in this.subscriptions) {
           workflowService.unsubscribe(
-            this.subscriptions[query_name]
+            this.subscriptions[queryName]
           );
         }
+      },
+
+      setActive(isActive) {
+        /** Toggle the isLoading state.
+         * @param {bool} isActive - Are this views subs active.
+         */
+         this.isLoading = ! isActive;
       }
     }
   }

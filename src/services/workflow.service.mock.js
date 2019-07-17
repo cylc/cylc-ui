@@ -4,25 +4,28 @@ import store from '@/store/'
 
 
 class MockWorkflowService extends GQuery {
-    /* Standin WorkflowService for off-line work.
-     *
+    /**
+     * Standin WorkflowService for off-line work.
      * This class provides the functionality for fetching mock data.
      */
 
     constructor() {
         super();
-        this.load_mock();
-    }
-
-    load_mock() {
-        /* load the mock data */
-        console.log('load mock data');
+        // load mock data
         store.dispatch('workflows/set', checkpoint.workflows);
     }
 
-    request () {
-        /* disable the GraphQL stuff */
-        console.log('mock graphql:', this.query);
+    subscribe (view, query) {
+        /**
+         * Subscribe to a query.
+         * This wraps the GQuery method to set each subscription to active.
+         */
+        var id = super.subscribe(view, query);
+        this.subscriptions.every(s => {
+            s.active = true;
+        });
+        this.callbackActive();
+        return id;
     }
 }
 
