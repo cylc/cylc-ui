@@ -151,7 +151,7 @@ export default {
     },
 
     subscribe (queryName) {
-      var id = workflowService.subscribe(
+      const id = workflowService.subscribe(
         this,
         QUERIES[queryName],
         this.setActive

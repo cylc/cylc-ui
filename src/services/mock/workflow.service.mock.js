@@ -19,7 +19,7 @@ class MockWorkflowService extends GQuery {
          * Subscribe to a query.
          * This wraps the GQuery method to set each subscription to active.
          */
-    var id = super.subscribe(view, query)
+    const id = super.subscribe(view, query)
     this.subscriptions.every(s => {
       s.active = true
     })
