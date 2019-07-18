@@ -111,7 +111,7 @@ class GQuery {
   register (view, callbacks) {
     /**
      * Register a view to this instance.
-     * @param {Vue.View} view - The view to register.
+     * @param {Object} view - The view to register.
      * @param {Object} callbacks - A map of the form {name: fcn}.
      */
     this.views.push({
@@ -124,7 +124,7 @@ class GQuery {
   unregister (view) {
     /**
      * Unregister a view (all subscriptions will be dropped.
-     * @param {Vue.View} view - The view to unregister.
+     * @param {Object} view - The view to unregister.
      */
     this.views = this.views.filter(
       v => v.view !== view
@@ -138,7 +138,7 @@ class GQuery {
   subscribe (view, query) {
     /**
      * Subscribe a new query.
-     * @param {Vue.View} view - The view to subscribe the query to.
+     * @param {Object} view - The view to subscribe the query to.
      * @param {string} query - The query to subscribe.
      * @return {number} The subscription ID (used for un-subscribing).
      */
