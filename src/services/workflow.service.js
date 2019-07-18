@@ -9,13 +9,23 @@ class LiveWorkflowService extends GQuery {
 
   constructor () {
     super()
-    this.polling = setInterval(() => {
-      this.request()
-    }, 5000)
+    this.polling = null
   }
 
   destructor () {
     clearInterval(this.polling)
+  }
+
+  subscribe (view, query) {
+    const ret = super.subscribe(view, query)
+    if (!this.polling) {
+      // start polling when we recieve the first subscription
+      this.polling = setInterval(() => {
+        this.request()
+      }, 5000)
+      this.request()
+    }
+    return ret
   }
 }
 
