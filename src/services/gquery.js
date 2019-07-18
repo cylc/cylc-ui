@@ -90,7 +90,7 @@ class GQuery {
         this.apolloClient = createApolloClient(
             `${window.location.pathname}/graphql`
         );
-        this.query;
+        this.query = null;
         this.subscriptions = [];
         this.views = [];
     }

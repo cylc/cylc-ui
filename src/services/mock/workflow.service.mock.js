@@ -5,7 +5,7 @@ import store from '@/store/'
 
 class MockWorkflowService extends GQuery {
     /**
-     * Standin WorkflowService for off-line work.
+     * Stand-in WorkflowService for off-line work.
      * This class provides the functionality for fetching mock data.
      */
 

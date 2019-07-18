@@ -52,7 +52,7 @@ export default [
   },
   {
     path: '/suites/:name',
-    view: 'suite',
+    view: 'Suite',
     meta: {
       layout: 'default'
     }
