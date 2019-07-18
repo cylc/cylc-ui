@@ -65,14 +65,13 @@
   </v-container>
 </template>
 
-
 <script>
-  import { workflowService } from 'workflow-service'
-  import { mapState } from 'vuex'
+import { workflowService } from 'workflow-service'
+import { mapState } from 'vuex'
 
-  // query to retrieve all workflows
-  const QUERIES = {
-    'root': `
+// query to retrieve all workflows
+const QUERIES = {
+  root: `
       {
         workflows {
           id
@@ -83,99 +82,99 @@
         }
       }
     `
-  }
+}
 
-  export default {
-    metaInfo () {
-      return {
-        'title': 'Cylc GScan'
-      }
+export default {
+  metaInfo () {
+    return {
+      title: 'Cylc GScan'
+    }
+  },
+
+  data: () => ({
+    viewID: 'GScan: ' + Math.random(),
+    subscriptions: {},
+    isLoading: true,
+    pagination: {
+      rowsPerPage: 10
     },
-
-    data: () => ({
-      viewID: 'GScan: ' + Math.random(),
-      subscriptions: {},
-      isLoading: true,
-      pagination: {
-        rowsPerPage: 10
+    headers: [
+      {
+        sortable: true,
+        text: 'Name',
+        value: 'name'
       },
-      headers: [
-        {
-          sortable: true,
-          text: 'Name',
-          value: 'name'
-        },
-        {
-          sortable: true,
-          text: 'Owner',
-          value: 'owner'
-        },
-        {
-          sortable: true,
-          text: 'Host',
-          value: 'host'
-        },
-        {
-          sortable: false,
-          text: 'Port',
-          value: 'port'
-        },
-        {
-          sortable: false,
-          text: 'Actions',
-          value: 'actions'
-        }
-      ],
-    }),
+      {
+        sortable: true,
+        text: 'Owner',
+        value: 'owner'
+      },
+      {
+        sortable: true,
+        text: 'Host',
+        value: 'host'
+      },
+      {
+        sortable: false,
+        text: 'Port',
+        value: 'port'
+      },
+      {
+        sortable: false,
+        text: 'Actions',
+        value: 'actions'
+      }
+    ]
+  }),
 
-    computed: {
-      ...mapState('workflows', ['workflows'])
+  computed: {
+    ...mapState('workflows', ['workflows'])
+  },
+
+  created () {
+    workflowService.register(
+      this,
+      {
+        activeCallback: this.setActive
+      }
+    )
+    this.subscribe('root')
+  },
+
+  beforeDestroy () {
+    workflowService.unregister(this)
+  },
+
+  methods: {
+    viewWorkflow (workflow) {
+      this.$router.push({ path: `/workflows/${workflow.name}` })
     },
 
-    created() {
-      workflowService.register(
+    subscribe (queryName) {
+      var id = workflowService.subscribe(
         this,
-        {
-          activeCallback: this.setActive
+        QUERIES[queryName],
+        this.setActive
+      )
+      if (!(queryName in this.subscriptions)) {
+        this.subscriptions[queryName] = {
+          id,
+          active: false
         }
-      );
-      this.subscribe('root');
-    },
-
-    beforeDestroy() {
-      workflowService.unregister(this);
-    },
-
-    methods: {
-      viewWorkflow(workflow) {
-        this.$router.push({ path: `/workflows/${workflow.name}` });
-      },
-
-      subscribe(query_name) {
-        var id = workflowService.subscribe(
-          this,
-          QUERIES[query_name],
-          this.setActive
-        )
-        if (!(query_name in this.subscriptions)) {
-          this.subscriptions[query_name] = {
-            id,
-            active: false
-          }
-        }
-      },
-
-      unsubscribe(query_name) {
-        if (query_name in this.subscriptions) {
-          workflowService.unsubscribe(
-            this.subscriptions[query_name].id
-          );
-        }
-      },
-
-      setActive(isActive) {
-        this.isLoading = ! isActive;
       }
+    },
+
+    unsubscribe (queryName) {
+      if (queryName in this.subscriptions) {
+        workflowService.unsubscribe(
+          this.subscriptions[queryName].id
+        )
+      }
+    },
+
+    setActive (isActive) {
+      this.isLoading = !isActive
     }
   }
+}
 </script>

@@ -74,13 +74,13 @@
 </style>
 
 <script>
-    export default {
-        name: 'Job',
-        props: {
-            status: {
-                type: String,
-                required: true
-            }
-        }
+export default {
+  name: 'Job',
+  props: {
+    status: {
+      type: String,
+      required: true
     }
+  }
+}
 </script>

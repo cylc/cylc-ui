@@ -40,14 +40,14 @@ export default [
     path: '/workflows',
     view: 'GScan',
     meta: {
-      'layout': 'default'
+      layout: 'default'
     }
   },
   {
     path: '/workflows/:name',
     view: 'Tree',
     meta: {
-      'layout': 'default'
+      layout: 'default'
     }
   },
   {

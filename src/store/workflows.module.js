@@ -1,32 +1,32 @@
 // raw GraphQL response data structure
 const state = {
-    workflows: []
-};
+  workflows: []
+}
 
 const mutations = {
-    SET(state, data) {
-        // TODO: when subscriptions are introduced this will have to apply
-        // deltas to the store
-        state.workflows = data;
-    }
-};
+  SET (state, data) {
+    // TODO: when subscriptions are introduced this will have to apply
+    // deltas to the store
+    state.workflows = data
+  }
+}
 
 const actions = {
-    set({commit}, data) {
-        commit('SET', data)
-    }
-};
+  set ({ commit }, data) {
+    commit('SET', data)
+  }
+}
 
 const getters = {
-    workflows: (state) => {
-        return state.workflows;
-    }
-};
+  workflows: (state) => {
+    return state.workflows
+  }
+}
 
 export const workflows = {
-    namespaced: true,
-    state,
-    mutations,
-    actions,
-    getters
-};
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+  getters
+}
