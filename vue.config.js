@@ -25,7 +25,7 @@ module.exports = {
       : '@/services/suite.service'
     config.resolve.alias.set('suite-service', suiteService)
     const workflowService = process.env.NODE_ENV === 'offline'
-      ? '@/services/workflow.service.mock'
+      ? '@/services/mock/workflow.service.mock'
       : '@/services/workflow.service'
     config.resolve.alias.set('workflow-service', workflowService)
   }
