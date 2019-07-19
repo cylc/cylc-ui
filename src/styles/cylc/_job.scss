@@ -1,127 +1,112 @@
-.job_theme--normal {
+/* css namespace for job element */
+$cjob: ".c-job svg.job rect";
 
+
+#{$cjob} {
+    /* if no job status display nothing */
+    fill: transparent;
+    stroke: transparent;
+}
+
+
+.job_theme--normal {
     $teal: rgb(125,207,212);
     $blue: rgb(106,164,241);
     $green: rgb(81,175,81);
     $red: rgb(207,72,72);
     $pink: rgb(190,106,192);
 
-    .c-job {
-        svg.job {
-            rect {
-                /* if no job status display nothing */
-                fill: transparent;
-                stroke: transparent;
-            }
+    #{$cjob} {
+        &.submitted {
+            fill: $teal;
+            stroke: $teal;
+        }
 
-            &.submitted rect {
-                fill: $teal;
-                stroke: $teal;
-            }
+        &.running {
+            fill: $blue;
+            stroke: $blue;
+        }
 
-            &.running rect {
-                fill: $blue;
-                stroke: $blue;
-            }
+        &.succeeded {
+            fill: $green;
+            stroke: $green;
+        }
 
-            &.succeeded rect {
-                fill: $green;
-                stroke: $green;
-            }
+        &.failed {
+            fill: $red;
+            stroke: $red;
+        }
 
-            &.failed rect {
-                fill: $red;
-                stroke: $red;
-            }
-
-            &.submit-failed rect {
-                fill: $pink;
-                stroke: $pink;
-            }
+        &.submit-failed {
+            fill: $pink;
+            stroke: $pink;
         }
     }
 }
 
-.job_theme--greyscale {
 
+.job_theme--greyscale {
     $light: rgb(208,208,208);
     $medium: rgb(133,133,133);
     $dark: rgb(0,0,0);
 
-    .c-job {
-        svg.job {
-            rect {
-                /* if no job status display nothing */
-                fill: transparent;
-                stroke: transparent;
-            }
+    #{$cjob} {
+        &.submitted {
+            fill: transparent;
+            stroke: $light;
+        }
 
-            &.submitted rect {
-                fill: transparent;
-                stroke: $light;
-            }
+        &.running {
+            fill: $light;
+            stroke: $light;
+        }
 
-            &.running rect {
-                fill: $light;
-                stroke: $light;
-            }
+        &.succeeded {
+            fill: $medium;
+            stroke: $medium;
+        }
 
-            &.succeeded rect {
-                fill: $medium;
-                stroke: $medium;
-            }
+        &.failed {
+            fill: $dark;
+            stroke: $dark;
+        }
 
-            &.failed rect {
-                fill: $dark;
-                stroke: $dark;
-            }
-
-            &.submit-failed rect {
-                fill: transparent;
-                stroke: $dark;
-            }
+        &.submit-failed {
+            fill: transparent;
+            stroke: $dark;
         }
     }
 }
 
 .job_theme--colour_blind {
-
     $grey: rgb(152,152,152);
     $success: rgb(108,218,255);
     $error: rgb(146,0,0);
 
-    .c-job {
-        svg.job {
-            rect {
-                /* if no job status display nothing */
-                fill: transparent;
-                stroke: transparent;
-            }
+    #{$cjob} {
+        &.submitted {
+            fill: transparent;
+            stroke: $grey;
+        }
 
-            &.submitted rect {
-                fill: transparent;
-                stroke: $grey;
-            }
+        &.running {
+            fill: $grey;
+            stroke: $grey;
+        }
 
-            &.running rect {
-                fill: $grey;
-                stroke: $grey;
-            }
+        &.succeeded {
+            fill: $success;
+            stroke: $success;
+        }
 
-            &.succeeded rect {
-                fill: $success;
-                stroke: $success;
-            }
+        &.failed {
+            fill: $error;
+            stroke: $error;
+        }
 
-            &.failed rect {
-                fill: $error;
-                stroke: $error;
-            }
-
-            &.submit-failed rect {
-                fill: transparent;
-                stroke: $error;
-            }
+        &.submit-failed {
+            fill: transparent;
+            stroke: $error;
         }
     }
 }

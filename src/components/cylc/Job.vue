@@ -15,7 +15,6 @@
     -->
     <svg
       class="job"
-      v-bind:class="[status]"
       viewBox="0 0 100 100"
     >
       <!-- the job status icon
@@ -23,6 +22,7 @@
            * let height = 100 - y - stroke-width
       -->
       <rect
+        v-bind:class="[status]"
         x="10" y="10"
         width="80" height="80"
         rx="20" ry="20"
