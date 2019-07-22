@@ -3,7 +3,8 @@ import { set, toggle } from '@/utils/vuex'
 const state = {
   drawer: null,
   color: 'success',
-  title: null
+  title: null,
+  theme: 'normal'
 }
 
 const mutations = {
@@ -11,7 +12,8 @@ const mutations = {
   setImage: set('image'),
   setColor: set('color'),
   toggleDrawer: toggle('drawer'),
-  setTitle: set('title')
+  setTitle: set('title'),
+  setTheme: set('theme')
 }
 
 const actions = {}

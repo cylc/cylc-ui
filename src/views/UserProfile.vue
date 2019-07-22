@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { UserService } from '@/services/user.service'
+import { UserService } from 'user-service'
 import { mapState } from 'vuex'
 export default {
   computed: {

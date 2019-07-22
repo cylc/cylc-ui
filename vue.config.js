@@ -24,5 +24,10 @@ module.exports = {
       ? '@/services/mock/suite.service'
       : '@/services/suite.service'
     config.resolve.alias.set('suite-service', suiteService)
+
+    const userService = process.env.NODE_ENV === 'offline'
+      ? '@/services/mock/user.service'
+      : '@/services/user.service'
+    config.resolve.alias.set('user-service', userService)
   }
 }
