@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container v-if="alert !== null" :key="alert.text">
+    <v-container v-if="alert !== null" :key="alert.created">
       <v-alert :value="true" :color="alert.getColor()" :icon="alert.getIcon()" dismissible>
         {{ alert.getText() }}
       </v-alert>

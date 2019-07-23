@@ -3,6 +3,7 @@ export default class Alert {
     this.text = text
     this.icon = icon
     this.color = color
+    this.created = new Date().getTime()
   }
 
   getText () {
