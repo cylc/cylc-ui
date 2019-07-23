@@ -22,13 +22,10 @@ function getSelections (a) {
    * @param {Object} a - Node of GraphQL query.
    * @return {Object} All selections present on this node.
    */
+  if (!a.selectionSet || !a.selectionSet.selections) {
+    return {}
+  }
   var selections = {}
-  if (!a.selectionSet) {
-    return {}
-  }
-  if (!a.selectionSet.selections) {
-    return {}
-  }
   for (const selection of a.selectionSet.selections) {
     if (selection.kind === 'Field') {
       selections[selection.name.value] = selection

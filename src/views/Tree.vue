@@ -7,7 +7,7 @@
         <span>
           {{ workflow.name }}
         </span>
-        <ul>
+        <ul v-if="workflow.taskProxies">
           <li v-for="cycle in cycles" :key="cycle">
             <!-- Cycle -->
             <span>
