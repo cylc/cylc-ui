@@ -7,6 +7,7 @@
  */
 
 // Lib imports
+import _ from 'lodash'
 import Vue from 'vue'
 import Vuex from 'vuex'
 // Modules
@@ -32,7 +33,7 @@ const actions = {
     if (alert !== null) {
       console.log(alert)
     }
-    if (alert === null || state.alert === null || state.alert.getText() !== alert.getText()) {
+    if (alert === null || state.alert === null || !_.isEqual(state.alert, alert)) {
       commit('SET_ALERT', alert)
     }
   }
