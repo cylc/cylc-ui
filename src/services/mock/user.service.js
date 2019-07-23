@@ -2,6 +2,7 @@ import Alert from '@/model/Alert.model'
 import User from '@/model/User.model'
 import Settings from '@/model/Settings.model'
 import store from '@/store/index'
+import i18n from '@/i18n/index'
 
 export const UserService = {
 
@@ -28,6 +29,7 @@ export const UserService = {
     } else {
       settings = new Settings()
     }
+    i18n.locale = settings.language
     return store.dispatch('user/setSettings', settings)
   },
 
@@ -42,6 +44,7 @@ export const UserService = {
     try {
       await store.dispatch('setLoading', true)
       localStorage.setItem('user/settings', JSON.stringify(settings))
+      i18n.locale = settings.language
       await store.dispatch('user/setSettings', settings)
       return store.dispatch('setAlert', new Alert('Settings updated', null, 'success'))
     } catch (error) {

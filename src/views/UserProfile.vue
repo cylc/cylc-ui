@@ -3,7 +3,7 @@
     <v-layout justify-center wrap>
       <v-flex xs12 md12>
         <material-card
-          title="Settings">
+          :title="$t('Settings.title')">
           <v-form>
             <v-dialog fullscreen full-width persistent :value=isLoading>
               <v-container fluid fill-height style="background-color: rgba(255, 255, 255, 0.5)">
