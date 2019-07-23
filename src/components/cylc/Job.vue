@@ -76,9 +76,10 @@
 <script>
 export default {
   name: 'Job',
-  data: function () {
-    return {
-      status: null
+  props: {
+    status: {
+      type: String,
+      required: true
     }
   }
 }

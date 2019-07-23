@@ -12,6 +12,7 @@ import Vuex from 'vuex'
 // Modules
 import { app } from './app.module'
 import { suites } from './suites.module'
+import { workflows } from './workflows.module'
 import { user } from './user.module'
 
 // State
@@ -68,6 +69,7 @@ const store = new Vuex.Store({
   modules: {
     app,
     suites,
+    workflows,
     user
   },
   actions,

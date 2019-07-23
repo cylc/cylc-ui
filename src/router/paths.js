@@ -37,6 +37,20 @@ export default [
     }
   },
   {
+    path: '/workflows',
+    view: 'GScan',
+    meta: {
+      layout: 'default'
+    }
+  },
+  {
+    path: '/workflows/:name',
+    view: 'Tree',
+    meta: {
+      layout: 'default'
+    }
+  },
+  {
     path: '/suites/:name',
     view: 'Suite',
     meta: {
