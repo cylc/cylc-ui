@@ -3,8 +3,6 @@
     id="app-drawer"
     v-model="inputValue"
     app
-    dark
-    floating
     persistent
     mobile-break-point="991"
     width="260"
@@ -15,14 +13,7 @@
       tag="v-list"
       column
     >
-      <v-divider inset></v-divider>
-      <v-list-tile>
-          <v-img
-            :src="logo"
-            height="160"
-            contain
-          />
-      </v-list-tile>
+      <c-header />
       <v-list-tile
         v-if="responsive"
       >
@@ -88,10 +79,13 @@ import {
   mapMutations,
   mapState
 } from 'vuex'
+import Header from '@/components/cylc/Header'
 
 export default {
+  components: {
+    'c-header': Header
+  },
   data: () => ({
-    logo: './img/logo.png',
     links: [
       {
         to: '/dashboard',
@@ -173,6 +167,8 @@ export default {
 </script>
 
 <style lang="scss">
+  @import "../../styles/material-dashboard/colors";
+
   #app-drawer {
     .v-list__tile {
       border-radius: 4px;
@@ -195,5 +191,12 @@ export default {
       padding-left: 15px;
       padding-right: 15px;
     }
+  }
+
+  /* this is not in our styles/material-dashboard, so we need to force-override */
+  .v-navigation-drawer {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border-right: 2px solid $grey-300;
   }
 </style>
