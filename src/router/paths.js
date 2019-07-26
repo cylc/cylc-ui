@@ -5,14 +5,6 @@
  */
 export default [
   {
-    path: '/login',
-    name: 'Login',
-    view: 'Login',
-    meta: {
-      layout: 'empty'
-    }
-  },
-  {
     path: '/dashboard',
     // Relative to /src/views
     view: 'Dashboard',

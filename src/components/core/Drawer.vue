@@ -110,12 +110,6 @@ export default {
         icon: 'mdi-account',
         text: 'User Profile',
         view: false
-      },
-      {
-        to: '/login',
-        icon: 'mdi-account',
-        text: 'Log in',
-        view: false
       }
     ],
     responsive: false
