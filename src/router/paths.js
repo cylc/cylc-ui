@@ -49,6 +49,13 @@ export default [
     }
   },
   {
+    path: '/',
+    view: 'Dashboard',
+    meta: {
+      layout: 'default'
+    }
+  },
+  {
     path: '*',
     view: 'NotFound',
     meta: {
