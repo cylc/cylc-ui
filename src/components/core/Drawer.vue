@@ -24,6 +24,17 @@
         />
       </v-list-tile>
 
+      <v-list-tile
+          to="/dashboard"
+          :active-class="color"
+          avatar
+          class="v-list-item"
+      >
+        <v-list-tile-action>
+          <v-icon>mdi-home</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-title>Dashboard</v-list-tile-title>
+      </v-list-tile>
       <v-subheader>Views</v-subheader>
       <v-list-tile
         v-for="(link, index) in viewLinks"
