@@ -100,7 +100,7 @@ care to produce the final JavaScript code executed on browsers.
 
 TypeScript is most likely the future for us, especially as Vue.js announced their 3.x release
 includes porting their whole code base to TypeScript. However, we are still pending as of the
-time of writing a decision on the libraries used for displaying the suite graphs.
+time of writing a decision on the libraries used for displaying the workflow graphs.
 
 This is an important decision, and as such may take a little longer to be over. Choosing
 a library that does not export types, would require us to find time to type the library
