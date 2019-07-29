@@ -51,35 +51,6 @@
           v-text="link.text"
         />
       </v-list-tile>
-
-      <v-subheader>Other Links</v-subheader>
-      <v-list-tile
-        v-for="(link, index) in nonViewLinks"
-        :key="index+link.text"
-        :to="link.to"
-        :active-class="color"
-        avatar
-        class="v-list-item"
-      >
-        <v-list-tile-action>
-          <v-icon>{{ link.icon }}</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-title
-          v-text="link.text"
-        />
-      <!-- Add Hub route separately as it lives under root not /user/USER/ -->
-      </v-list-tile>
-      <v-list-tile
-              href="/hub/home"
-              :active-class="color"
-              avatar
-              class="v-list-item"
-      >
-        <v-list-tile-action>
-          <v-icon>mdi-server-network</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-title>Hub</v-list-tile-title>
-      </v-list-tile>
     </v-layout>
   </v-navigation-drawer>
 </template>
@@ -116,12 +87,6 @@ export default {
         icon: 'mdi-vector-polyline',
         text: i18n.t('App.graph'),
         view: true
-      },
-      {
-        to: '/user-profile',
-        icon: 'mdi-account',
-        text: i18n.t('App.userProfile'),
-        view: false
       }
     ],
     responsive: false
