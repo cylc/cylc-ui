@@ -20,13 +20,6 @@ export default [
     }
   },
   {
-    path: '/suites',
-    view: 'Suites',
-    meta: {
-      layout: 'default'
-    }
-  },
-  {
     path: '/workflows',
     view: 'GScan',
     meta: {

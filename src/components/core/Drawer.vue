@@ -94,9 +94,9 @@ export default {
         view: false
       },
       {
-        to: '/suites',
+        to: '/workflows',
         icon: 'mdi-vector-circle',
-        text: 'Suites',
+        text: 'Workflows',
         view: true
       },
       {
