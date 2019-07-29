@@ -65,13 +65,6 @@ export default [
     }
   },
   {
-    path: '/about',
-    view: 'About',
-    meta: {
-      layout: 'default'
-    }
-  },
-  {
     path: '*',
     view: 'NotFound',
     meta: {

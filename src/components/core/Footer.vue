@@ -4,25 +4,6 @@
     absolute
     height="82"
   >
-    <div class="footer-items">
-      <span
-        v-for="link in links"
-        :key="link.name"
-      >
-        <template
-          v-if="link.route">
-          <router-link
-            :to="link.Link"
-            class="tertiary--text footer-links">About</router-link>
-        </template>
-        <template
-          v-else>
-          <a
-            :href="link.Link"
-            class="tertiary--text footer-links">{{ link.name }}</a>
-        </template>
-      </span>
-    </div>
     <v-spacer/>
     <span class="font-weight-light copyright">
       <strong v-if="env !== 'PRODUCTION'">{{ env }}</strong>
