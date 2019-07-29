@@ -52,7 +52,7 @@ Vue.use(Meta)
 
 router.beforeResolve((to, from, next) => {
   if (to.name) {
-    if (to.name === 'Suite') {
+    if (['Tree', 'Graph'].indexOf(to.name) !== -1) {
       // We treat the suite differently for the toolbar title
       store.commit('app/setTitle', to.params.name)
     } else {
