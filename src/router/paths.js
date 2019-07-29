@@ -6,7 +6,6 @@
 export default [
   {
     path: '/dashboard',
-    // Relative to /src/views
     view: 'Dashboard',
     meta: {
       layout: 'default'
@@ -15,7 +14,6 @@ export default [
   },
   {
     path: '/graph',
-    // Relative to /src/views
     view: 'Graph',
     meta: {
       layout: 'default'
