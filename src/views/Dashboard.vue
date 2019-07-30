@@ -37,7 +37,7 @@
     <v-divider />
     <v-layout row wrap>
       <v-flex xs12 md6 lg6>
-        <v-list two-line>
+        <v-list three-line>
           <v-list-tile
               avatar
               to="/user-profile"
@@ -75,7 +75,7 @@
         </v-list>
       </v-flex>
       <v-flex xs12 md6 lg6>
-        <v-list two-line>
+        <v-list three-line>
           <v-list-tile
               avatar
               href="#"
@@ -200,6 +200,6 @@ export default {
 
 /* to left align items in the dashboard */
 .v-list__tile {
-  padding: 0 0;
+  padding: 10px 0;
 }
 </style>
