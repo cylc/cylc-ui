@@ -2,8 +2,7 @@
   <v-list-tile-action-text class="pt-3 pb-3 c-header">
     <v-layout align-center justify-center row wrap fill-height>
       <div class="mb-2">
-        <svg version="1.1" preserveAspectRatio="xMinYMin meet" width="100%" height="100%" viewBox="0 0 655 260" xmlns="http://www.w3.org/2000/svg"
-             xmlns:osb="http://www.openswatchbook.org/uri/2009/osb">
+        <svg version="1.1" preserveAspectRatio="xMinYMin meet" width="100%" height="100%" viewBox="0 0 655 260" xmlns="http://www.w3.org/2000/svg">
           <g transform="translate(292.53 -49.505)">
             <g>
               <circle transform="scale(-1,1)" cx="-135.7" cy="248.39" r="27.743" fill="#818181"/>
