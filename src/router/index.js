@@ -52,8 +52,9 @@ Vue.use(Meta)
 
 router.beforeResolve((to, from, next) => {
   if (to.name) {
-    if (to.name === 'Suite') {
-      // We treat the suite differently for the toolbar title
+    if (['Tree', 'Graph'].indexOf(to.name) !== -1) {
+      // When a workflow is being displayed, we set the title to a
+      // different value.
       store.commit('app/setTitle', to.params.name)
     } else {
       store.commit('app/setTitle', to.name)

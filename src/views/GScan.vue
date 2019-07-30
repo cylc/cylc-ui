@@ -12,8 +12,8 @@
         md12
       >
         <material-card
-          :text="$t('Suites.tableSubHeader')"
-          :title="$t('Suites.tableHeader')"
+          :text="$t('Workflows.tableSubHeader')"
+          :title="$t('Workflows.tableHeader')"
           color="green"
         >
           <v-data-table

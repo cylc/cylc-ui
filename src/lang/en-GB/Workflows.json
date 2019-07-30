@@ -1,6 +1,6 @@
 {
-  "tableHeader": "List of Suites",
-  "tableSubHeader": "This is the list of suites the current user has access to",
+  "tableHeader": "List of Workflows",
+  "tableSubHeader": "This is the list of workflows the current user has access to",
   "tableColumnName": "Name",
   "tableColumnGroup": "Group",
   "tableColumnHost": "Host",

@@ -1,0 +1,11 @@
+{
+  "tableHeader": "Lista de Workflows",
+  "tableSubHeader": "Esta é a lista de workflows que este usuário possui permissoões para visualizar",
+  "tableColumnName": "Nome",
+  "tableColumnGroup": "Grupo",
+  "tableColumnHost": "Host",
+  "tableColumnOwner": "Usuário",
+  "tableColumnVersion": "Versão",
+  "tableColumnUpdated": "Atualizado",
+  "tableColumnStatus": "Status"
+}

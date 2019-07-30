@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { VueAdsTable } from 'vue-ads-table-tree'
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
 
@@ -16,5 +15,3 @@ requireComponent.keys().forEach(fileName => {
 
   Vue.component(componentName, componentConfig.default || componentConfig)
 })
-
-Vue.component('vue-ads-table', VueAdsTable)

@@ -6,7 +6,6 @@
 export default [
   {
     path: '/dashboard',
-    // Relative to /src/views
     view: 'Dashboard',
     meta: {
       layout: 'default'
@@ -15,15 +14,7 @@ export default [
   },
   {
     path: '/graph',
-    // Relative to /src/views
     view: 'Graph',
-    meta: {
-      layout: 'default'
-    }
-  },
-  {
-    path: '/suites',
-    view: 'Suites',
     meta: {
       layout: 'default'
     }
@@ -38,13 +29,6 @@ export default [
   {
     path: '/workflows/:name',
     view: 'Tree',
-    meta: {
-      layout: 'default'
-    }
-  },
-  {
-    path: '/suites/:name',
-    view: 'Suite',
     meta: {
       layout: 'default'
     }
