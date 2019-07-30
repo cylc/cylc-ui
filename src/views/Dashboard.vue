@@ -34,54 +34,79 @@
         </v-data-table>
       </v-flex>
     </v-layout>
+    <v-divider />
     <v-layout row wrap>
-      <v-flex xs6 md6 lg2>
+      <v-flex xs12 md6 lg6>
         <v-list two-line>
           <v-list-tile
               avatar
               to="/user-profile"
               :active-class="color"
           >
-            <v-list-tile-avatar size="80" style="font-size: 2em;">
-              <task status="succeeded" id="settings-node" />
+            <v-list-tile-avatar size="60" style="font-size: 2em;">
+              <v-icon medium>mdi-settings</v-icon>
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title font-weight-thin">
                 Settings
               </v-list-tile-title>
               <v-list-tile-sub-title>
-                <job status="succeeded" />
+                View your Hub permissions, and alter user preferences
               </v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
           <v-list-tile
               avatar
-              href="https://cylc.github.io/doc/built-sphinx/index.html"
+              href="/hub/home"
               :active-class="color"
           >
-            <v-list-tile-avatar size="80" style="font-size: 2em;">
-              <task status="waiting" id="guide-node" />
+            <v-list-tile-avatar size="60" style="font-size: 2em;">
+              <v-icon medium>mdi-hubspot</v-icon>
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title font-weight-thin">
-                Suite User Guide
+                Cylc Hub
               </v-list-tile-title>
+              <v-list-tile-sub-title>
+                Visit the Hub to manage your running UI Servers
+              </v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
       </v-flex>
-      <v-flex xs6 md6 lg2>
+      <v-flex xs12 md6 lg6>
         <v-list two-line>
-          <v-list-tile avatar>
-            <v-list-tile-avatar size="80" style="font-size: 2em;">
-              <task status="succeeded" id="quickstart-node" />
+          <v-list-tile
+              avatar
+              href="#"
+              :active-class="color"
+          >
+            <v-list-tile-avatar size="60" style="font-size: 2em;">
+              <v-icon medium>mdi-book</v-icon>
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title font-weight-thin">
                 Cylc UI Quickstart
               </v-list-tile-title>
               <v-list-tile-sub-title>
-                <job status="succeeded" />
+                Learn how to use the Cylc UI
+              </v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-list-tile
+              avatar
+              href="https://cylc.github.io/doc/built-sphinx/suite-design-guide/suite-design-guide-master.html"
+              :active-class="color"
+          >
+            <v-list-tile-avatar size="60" style="font-size: 2em;">
+              <v-icon medium>mdi-book-open-variant</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+              <v-list-tile-title class="title font-weight-thin">
+                Suite Design Guide
+              </v-list-tile-title>
+              <v-list-tile-sub-title>
+                How to make complex Cylc and Rose workflows simpler and easier to maintain
               </v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -90,39 +115,19 @@
               href="https://cylc.github.io/documentation.html"
               :active-class="color"
           >
-            <v-list-tile-avatar size="80" style="font-size: 2em;">
-              <task status="running" :progress=25 id="documentation-node" />
+            <v-list-tile-avatar size="60" style="font-size: 2em;">
+              <v-icon medium>mdi-file-document-box-multiple</v-icon>
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title class="title font-weight-thin">
                 Documentation
               </v-list-tile-title>
               <v-list-tile-sub-title>
-                <job status="submitted"/>
-                <job status="submitted"/>
-                <job status="submitted"/>
+                The complete Cylc documentation
               </v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
-      </v-flex>
-    </v-layout>
-    <v-layout row wrap>
-      <v-flex xs12 md12 lg2 offset-lg1>
-        <v-list-tile
-            avatar
-            href="/hub/home"
-            :active-class="color"
-        >
-          <v-list-tile-avatar size="80" style="font-size: 2em;">
-            <task status="failed" id="hub-node" />
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            <v-list-tile-title class="title font-weight-thin">
-              Cylc Hub
-            </v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
       </v-flex>
     </v-layout>
   </v-container>
@@ -131,8 +136,6 @@
 <script>
 import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
 
 function connectNodes (fromNode, toNode) {
   console.log('TODO?')
@@ -140,10 +143,6 @@ function connectNodes (fromNode, toNode) {
 
 export default {
   mixins: [mixin],
-  components: {
-    task: Task,
-    job: Job
-  },
   metaInfo () {
     return {
       title: this.getPageTitle('App.dashboard')
@@ -167,3 +166,40 @@ export default {
   }
 }
 </script>
+
+<style>
+.c-dashboard {
+  padding: 0 24px;
+}
+
+/* Items in the bottom menu are left-aligned with the top Workflows&Events
+   entries, so we are required to override some styles from Vuetify components
+   in here.*/
+
+/* to left align items in the dashboard */
+.v-avatar .v-icon {
+  width: auto;
+  height: auto;
+}
+.v-list__tile__action, .v-list__tile__avatar {
+  min-width: auto;
+  margin-left: -10px;
+}
+
+/* otherwise avatar does not left align with component above,
+   !important as the attributes are set in the tag element -->
+.v-avatar {
+  height: auto !important;
+  width: auto !important;
+}
+
+/* otherwise responsive UI ends up with extra space between vertical menu items */
+.v-list {
+  padding: 0 0;
+}
+
+/* to left align items in the dashboard */
+.v-list__tile {
+  padding: 0 0;
+}
+</style>
