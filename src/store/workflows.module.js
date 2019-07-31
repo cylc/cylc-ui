@@ -17,16 +17,9 @@ const actions = {
   }
 }
 
-const getters = {
-  workflows: (state) => {
-    return state.workflows
-  }
-}
-
 export const workflows = {
   namespaced: true,
   state,
   mutations,
-  actions,
-  getters
+  actions
 }
