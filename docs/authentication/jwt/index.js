@@ -10,8 +10,8 @@ const jwt = require('jsonwebtoken')
 
 // passport stuff
 const passport = require('passport')
-const jwtStrategry = require('./jwt_strategy')
-passport.use(jwtStrategry)
+const jwtStrategy = require('./jwt_strategy')
+passport.use(jwtStrategy)
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
