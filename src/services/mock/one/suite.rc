@@ -1,6 +1,6 @@
 [meta]
     description = """
-        A simple suite which demmonstrates tasks in different states.
+        A simple suite which demonstrates tasks in different states.
     """
 
 [cylc]
@@ -60,7 +60,7 @@
 
     [[checkpoint]]
         script = """
-            # allow worklow's state to settle
+            # allow workflow's state to settle
             sleep 5
 
             # take a checkpoint

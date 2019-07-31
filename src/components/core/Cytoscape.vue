@@ -72,7 +72,7 @@ const VueCyObj = {
       afterCreated(cy)
     }
 
-    // let the cytoscape instace available for the awaiters
+    // let the cytoscape instance available for the awaiters
     if (resolver) {
       resolver(cy)
     }
