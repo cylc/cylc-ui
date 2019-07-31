@@ -12,8 +12,8 @@
         md12
       >
         <material-card
-          :text="$t('Workflows.tableSubHeader')"
-          :title="$t('Workflows.tableHeader')"
+            :title="$t('Workflows.tableHeader')"
+            :text="$t('Workflows.tableSubHeader')"
           color="green"
         >
           <v-data-table
@@ -68,6 +68,8 @@
 <script>
 import { workflowService } from 'workflow-service'
 import { mapState } from 'vuex'
+import { mixin } from '@/mixins/index'
+import i18n from '@/i18n'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -85,9 +87,10 @@ const QUERIES = {
 }
 
 export default {
+  mixins: [mixin],
   metaInfo () {
     return {
-      title: 'Cylc GScan'
+      title: this.getPageTitle('App.workflows')
     }
   },
 
@@ -101,27 +104,27 @@ export default {
     headers: [
       {
         sortable: true,
-        text: 'Name',
+        text: i18n.t('Workflows.tableColumnName'),
         value: 'name'
       },
       {
         sortable: true,
-        text: 'Owner',
+        text: i18n.t('Workflows.tableColumnOwner'),
         value: 'owner'
       },
       {
         sortable: true,
-        text: 'Host',
+        text: i18n.t('Workflows.tableColumnHost'),
         value: 'host'
       },
       {
         sortable: false,
-        text: 'Port',
+        text: i18n.t('Workflows.tableColumnPort'),
         value: 'port'
       },
       {
         sortable: false,
-        text: 'Actions',
+        text: i18n.t('Workflows.tableColumnActions'),
         value: 'actions'
       }
     ]

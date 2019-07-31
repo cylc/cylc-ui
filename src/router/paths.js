@@ -1,3 +1,5 @@
+import i18n from '@/i18n'
+
 /**
  * Define all of your application routes here
  * for more information on routes, see the
@@ -7,6 +9,7 @@ export default [
   {
     path: '/dashboard',
     view: 'Dashboard',
+    name: i18n.t('App.dashboard'),
     meta: {
       layout: 'default'
     },
@@ -15,12 +18,14 @@ export default [
   {
     path: '/graph',
     view: 'Graph',
+    name: i18n.t('App.graph'),
     meta: {
       layout: 'default'
     }
   },
   {
     path: '/workflows',
+    name: i18n.t('App.workflows'),
     view: 'GScan',
     meta: {
       layout: 'default'
@@ -35,7 +40,7 @@ export default [
   },
   {
     path: '/user-profile',
-    name: 'User Profile',
+    name: i18n.t('App.userProfile'),
     view: 'UserProfile',
     meta: {
       layout: 'default'

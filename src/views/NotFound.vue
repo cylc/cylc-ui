@@ -12,15 +12,15 @@
         <v-card>
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0">Page not found</h3>
+              <h3 class="headline mb-0">{{ $t('NotFound.title') }}</h3>
             </div>
           </v-card-title>
           <v-card-text>
-            Maybe the page you are looking for has been removed, or you typed in the wrong address
+            {{ $t('NotFound.message') }}
           </v-card-text>
           <v-card-actions>
-            <button @click="$router.go(-1)" class="v-btn success">Go Back</button>
-            <router-link to="/dashboard" tag="button" class="white--text success v-btn">Go to Homepage</router-link>
+            <button @click="$router.go(-1)" class="v-btn success">{{ $t('NotFound.goBack') }}</button>
+            <router-link to="/dashboard" tag="button" class="white--text success v-btn">{{ $t('NotFound.toHomepage') }}</router-link>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -29,10 +29,13 @@
 </template>
 
 <script>
+import { mixin } from '@/mixins/index'
+
 export default {
+  mixins: [mixin],
   metaInfo () {
     return {
-      title: 'Cylc UI | Not Found'
+      title: this.getPageTitle('App.notFound')
     }
   }
 }

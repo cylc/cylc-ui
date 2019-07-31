@@ -80,6 +80,7 @@ import {
   mapState
 } from 'vuex'
 import Header from '@/components/cylc/Header'
+import i18n from '@/i18n'
 
 export default {
   components: {
@@ -90,25 +91,25 @@ export default {
       {
         to: '/dashboard',
         icon: 'mdi-view-dashboard',
-        text: 'Dashboard',
+        text: i18n.t('App.dashboard'),
         view: false
       },
       {
         to: '/workflows',
         icon: 'mdi-vector-circle',
-        text: 'Workflows',
+        text: i18n.t('App.workflows'),
         view: true
       },
       {
         to: '/graph',
         icon: 'mdi-vector-polyline',
-        text: 'Graph',
+        text: i18n.t('App.graph'),
         view: true
       },
       {
         to: '/user-profile',
         icon: 'mdi-account',
-        text: 'User Profile',
+        text: i18n.t('App.userProfile'),
         view: false
       }
     ],
