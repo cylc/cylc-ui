@@ -1,0 +1,10 @@
+{
+  "name": "Cylc UI",
+  "dashboard": "Dashboard",
+  "graph": "Grafo",
+  "workflow": "Workflow {name}",
+  "workflows": "Workflows",
+  "notFound": "Página não encontrada",
+  "userProfile": "Perfil de Usuário",
+  "footer": "NIWA & British Crown (Met Office) & contribuidores"
+}

@@ -7,7 +7,7 @@
     <v-spacer/>
     <span class="font-weight-light copyright">
       <strong v-if="env !== 'PRODUCTION'">{{ env }}</strong>
-      Cylc UI {{ $store.getters.appVersion }} &copy; 2008-{{ (new Date()).getFullYear() }} NIWA &amp; British Crown (Met Office) &amp; contributors
+      {{ $t('App.name') }} {{ $store.getters.appVersion }} &copy; 2008-{{ (new Date()).getFullYear() }} {{ $t('App.footer') }}
     </span>
   </v-footer>
 </template>

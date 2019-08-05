@@ -45,6 +45,7 @@ import Tippy from 'tippy.js'
 
 import VueCytoscape from '@/components/core/Cytoscape.vue'
 import CyElement from '@/components/core/CyElement.vue'
+import { mixin } from '@/mixins/index'
 
 const DATA_URL = 'simple-cytoscape-dot.7.js'
 let cy = {}
@@ -299,9 +300,13 @@ const config = {
 }
 
 export default {
+  mixins: [mixin],
   metaInfo () {
+    // TODO: once the component is using live data, use the workflow name here
+    // const workflowName = this.$route.params.name || '(TODO)'
+    // and pass to the getPageTitle('App.graph', , { name: workflowName })
     return {
-      title: 'Cylc UI | Graph'
+      title: this.getPageTitle('App.graph')
     }
   },
   name: 'Graph',
