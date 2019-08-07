@@ -2,10 +2,8 @@
   "tableHeader": "List of Workflows",
   "tableSubHeader": "This is the list of workflows the current user has access to",
   "tableColumnName": "Name",
-  "tableColumnGroup": "Group",
-  "tableColumnHost": "Host",
   "tableColumnOwner": "Owner",
-  "tableColumnVersion": "Version",
-  "tableColumnUpdated": "Updated",
-  "tableColumnStatus": "Status"
+  "tableColumnHost": "Host",
+  "tableColumnPort": "Port",
+  "tableColumnActions": "Actions"
 }

@@ -1,0 +1,10 @@
+{
+  "name": "Cylc UI",
+  "dashboard": "Dashboard",
+  "graph": "Graph",
+  "workflow": "Workflow {name}",
+  "workflows": "Workflows",
+  "notFound": "Not Found",
+  "userProfile": "User Profile",
+  "footer": "NIWA & British Crown (Met Office) & contributors"
+}
