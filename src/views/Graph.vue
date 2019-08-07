@@ -1069,9 +1069,9 @@ export default {
       document.addEventListener(
         'keydown',
         function (event) {
-          if (event.ctrlKey && event.which === '90') {
+          if (event.ctrlKey && event.which === 90) {
             cy.undoRedo().undo()
-          } else if (event.ctrlKey && event.which === '89') {
+          } else if (event.ctrlKey && event.which === 89) {
             cy.undoRedo().redo()
           }
         },
