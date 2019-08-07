@@ -8,10 +8,13 @@
 </template>
 
 <script>
+import { mixin } from '@/mixins/index'
+
 export default {
+  mixins: [mixin],
   metaInfo () {
     return {
-      title: 'Cylc UI | Dashboard'
+      title: this.getPageTitle('App.dashboard')
     }
   }
 }

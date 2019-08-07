@@ -34,7 +34,7 @@
       </a>
 
       <a>
-        <v-chip color="#E7E7E7" @click="toggleExtended">Control</v-chip>
+        <v-chip color="#E7E7E7" @click="toggleExtended">{{ $t('Toolbar.control') }}</v-chip>
       </a>
 
       <span>Running, will stop at 30000101T0000 cycle</span>
@@ -42,7 +42,7 @@
       <v-spacer />
 
       <a class="add-view" @click="onClickAddView">
-        Add View <v-icon color="#5995EB">mdi-plus-circle</v-icon>
+        {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
       </a>
     </template>
 

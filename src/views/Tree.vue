@@ -43,6 +43,7 @@ import { workflowService } from 'workflow-service'
 import { mapState } from 'vuex'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
+import { mixin } from '@/mixins/index'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -71,14 +72,16 @@ const QUERIES = {
 }
 
 export default {
+  mixins: [mixin],
   components: {
     task: Task,
     job: Job
   },
 
   metaInfo () {
+    const workflowName = this.$route.params.name
     return {
-      title: 'Tree View'
+      title: this.getPageTitle('App.workflow', { name: workflowName })
     }
   },
 

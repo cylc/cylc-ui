@@ -1,0 +1,8 @@
+{
+  "tableHeader": "Your Profile",
+  "tableSubHeader": "This is a read-only view of your user",
+  "username": "Username",
+  "administrator": "Administrator",
+  "groups": "Groups",
+  "created": "Created"
+}
