@@ -1,9 +1,19 @@
 // optional file, loaded automatically by @vue/cli-service if present next to package.json
+var webpack = require('webpack')
 
 module.exports = {
   publicPath: '',
   outputDir: 'dist',
   indexPath: 'index.html',
+  configureWebpack: {
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          PACKAGE_JSON: '"' + escape(JSON.stringify(require('./package.json'))) + '"'
+        }
+      })
+    ]
+  },
   chainWebpack: config => {
     if (process.env.NODE_ENV !== 'production') {
       config.module.rule('js')

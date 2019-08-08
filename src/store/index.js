@@ -17,6 +17,7 @@ import { user } from './user.module'
 // State
 const state = {
   packageJson: JSON.parse(unescape(process.env.PACKAGE_JSON || '%7B%7D')),
+  environment: process.env.NODE_ENV.toUpperCase(),
   isLoading: false,
   refCount: 0,
   alert: null
@@ -54,13 +55,6 @@ const mutations = {
   }
 }
 
-// Getters
-const getters = {
-  appVersion: (state) => {
-    return state.packageJson.version
-  }
-}
-
 Vue.use(Vuex)
 
 // Create a new store
@@ -71,7 +65,6 @@ const store = new Vuex.Store({
     user
   },
   actions,
-  getters,
   mutations,
   state
 })
