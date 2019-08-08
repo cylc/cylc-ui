@@ -18,10 +18,7 @@
       <div class='cytoscape-navigatorOverlay'></div>
     </div>
     <b id='collapseAll' class='collapseAll' style='cursor: pointer; color: white'>collapse all</b> /
-    <!-- <b id='expandAll' class='expandAll' style='cursor: pointer; color: white'>expand all</b> / -->
-    <cytoscape :config='config' :pre-config='preConfig' :after-created='afterCreated'>
-      <cy-element v-for='def in elements.nodes' :key='`${def.data.id}`' :definition='def'/>
-      <cy-element v-for='def in elements.edges' :key='`${def.data.id}`' :definition='def'/>
+    <cytoscape :config='config' :pre-config='preConfig' :after-created='afterCreated' :debug='true'>
     </cytoscape>
   </div>
 </template>
@@ -44,7 +41,6 @@ import _ from 'lodash'
 import Tippy from 'tippy.js'
 
 import VueCytoscape from '@/components/core/Cytoscape.vue'
-import CyElement from '@/components/core/CyElement.vue'
 import { mixin } from '@/mixins/index'
 
 const DATA_URL = 'simple-cytoscape-dot.7.js'
@@ -310,10 +306,15 @@ export default {
     }
   },
   name: 'Graph',
+  beforeRouteLeave (to, from, next) {
+    if (tippy) {
+      tippy.hide()
+    }
+    next()
+  },
   components: {
     SyncLoader,
-    cytoscape: VueCytoscape,
-    'cy-element': CyElement
+    cytoscape: VueCytoscape
   },
   data () {
     return {
@@ -504,7 +505,7 @@ export default {
       }
 
       async function registerExtensions () {
-        // register extensions
+        // // register extensions
         if (typeof cytoscape('core', 'navigator') !== 'function') {
           console.log('registering navigator')
           navigator(cytoscape)
@@ -554,56 +555,43 @@ export default {
       }
 
       // eslint-disable-next-line no-unused-vars
-      async function getInstance (instance) {
-        try {
-          if (instance) {
-            return instance
-          } else {
-            return await this.$cytoscape.instance
-          }
-        } catch (error) {
-          console.log('error', error)
-        }
-      }
-
       async function runlayout (instance) {
         try {
           const cy = instance
-          if (!_.isEmpty(cy)) {
-            cy.remove(cy.nodes()) // todo: remove
-            cy.remove(cy.edges()) // todo: remove
-            console.log('cy instance exists')
-            if (_.isObject(layoutOptions) && _.isEmpty(layoutOptions)) {
-              console.log('layoutOptions is an empty object default to Dagre ')
-              layoutOptions = dagreOptions
-              console.log(layoutOptions)
-            }
-            if (_.isEmpty(cy.nodes) && _.isEmpty(cy.edges)) {
-              console.log('cy.nodes and edges length is zero - adding')
-              const cynodes = elements.nodes
-              const cyedges = elements.edges
-              // // add the new ones
-              cy.add(cynodes)
-              cy.add(cyedges)
-            } else {
-              console.log('cy.elements exist')
-              // // remove all elements
-              cy.remove(cy.nodes())
-              cy.remove(cy.edges())
-              console.log('graph data version: ', elements.version)
-              // add the new ones
-              // cy.add(cynodes)
-              // cy.add(cyedges)
-              if (_.isObject(layoutOptions) && _.isEmpty(layoutOptions)) {
-                console.log('layoutOptions has entries =>\n', layoutOptions)
-              }
-            }
-            await cy
-              .elements()
-              .layout(layoutOptions)
-              .run()
-            return cy
+          const cynodes = elements.nodes
+          const cyedges = elements.edges
+          if (_.isObject(layoutOptions) && _.isEmpty(layoutOptions)) {
+            console.log('layoutOptions is an empty object default to Dagre ')
+            layoutOptions = dagreOptions
           }
+          if (!_.isEmpty(cy)) {
+            cy.remove(cy.nodes())
+            cy.remove(cy.edges())
+            cy.add(cynodes)
+            cy.add(cyedges)
+            // cy.mount(cytoscape.__________cytoscape_container)
+            console.log('cy instance exists')
+          } else if (_.isEmpty(cy.nodes) && _.isEmpty(cy.edges)) {
+            console.log('cy.nodes and edges length is zero - adding')
+            // add the new ones
+            cy.add(cynodes)
+            cy.add(cyedges)
+            // cy.mount(cytoscape.__________cytoscape_container)
+          } else {
+            console.log('cy.elements exist')
+            // remove all elements
+            cy.remove(cy.nodes())
+            cy.remove(cy.edges())
+            console.log('graph data version: ', elements.version)
+            // add the new ones
+            cy.add(cynodes)
+            cy.add(cyedges)
+          }
+          await cy
+            .elements()
+            .layout(layoutOptions)
+            .run()
+          return cy
         } catch (error) {
           console.log('error', error)
         }
@@ -619,9 +607,9 @@ export default {
         return ur
       }
 
-      async function getGraph (cyinstance) {
+      async function getGraph (instance) {
         await registerExtensions()
-        const cy = await runlayout(cyinstance)
+        const cy = await runlayout(instance)
         const ur = await setupUndo(cy)
         getPanzoom(cy)
         getNavigator(cy)
@@ -631,13 +619,15 @@ export default {
         api.collapseAll()
         return ur
       }
+
       // load graph data and run layout
-      cy = await this.$cytoscape.instance
       const { data: elements } = await updateData()
+      cy = await this.$cytoscape.instance
       ur = await getGraph(cy)
       console.log('loaded elements: ', elements, cy)
       this.loading = false // remove spinner
       // ----------------------------------------
+
       function getPanzoom () {
         const panzoomdefaults = {
           zoomFactor: 0.1, // zoom factor per zoom tick
@@ -1084,9 +1074,9 @@ export default {
       document.addEventListener(
         'keydown',
         function (event) {
-          if (event.ctrlKey && event.which === '90') {
+          if (event.ctrlKey && event.which === 90) {
             cy.undoRedo().undo()
-          } else if (event.ctrlKey && event.which === '89') {
+          } else if (event.ctrlKey && event.which === 89) {
             cy.undoRedo().redo()
           }
         },
