@@ -175,8 +175,9 @@ export default {
   },
   computed: {
     progressStyle: function () {
+      const progress = 157 - (157 * (this.progress / 100))
       return {
-        'stroke-dashoffset': `calc(157 - (157 * ${this.progress / 100} + ))`
+        'stroke-dashoffset': progress
       }
     }
   }
