@@ -44,7 +44,6 @@ import VueCytoscape from '@/components/core/Cytoscape.vue'
 import { mixin } from '@/mixins/index'
 
 const DATA_URL = 'simple-cytoscape-dot.7.js'
-let cy = {}
 let ur = {}
 const elements = []
 // eslint-disable-next-line no-unused-vars
@@ -340,7 +339,7 @@ export default {
       cytoscape.use(coseBilkent)
       cytoscape.use(klay)
     },
-    async afterCreated () {
+    async afterCreated (cy) {
       console.log('after created')
       const dagreOptions = {
         name: 'dagre',
@@ -622,7 +621,6 @@ export default {
 
       // load graph data and run layout
       const { data: elements } = await updateData()
-      cy = await this.$cytoscape.instance
       ur = await getGraph(cy)
       console.log('loaded elements: ', elements, cy)
       this.loading = false // remove spinner
