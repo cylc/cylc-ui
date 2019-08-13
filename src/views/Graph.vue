@@ -18,7 +18,7 @@
       <div class='cytoscape-navigatorOverlay'></div>
     </div>
     <b id='collapseAll' class='collapseAll' style='cursor: pointer; color: white'>collapse all</b> /
-    <cytoscape :config='config' :pre-config='preConfig' :after-created='afterCreated' :debug='true'>
+    <cytoscape id='cytoscape' :pre-config='preConfig' :after-created='afterCreated' :debug='true'>
     </cytoscape>
   </div>
 </template>
@@ -37,16 +37,13 @@ import popper from 'cytoscape-popper'
 import jquery from 'jquery'
 import axios from 'axios'
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
-import _ from 'lodash'
 import Tippy from 'tippy.js'
 
 import VueCytoscape from '@/components/core/Cytoscape.vue'
 import { mixin } from '@/mixins/index'
 
 const DATA_URL = 'simple-cytoscape-dot.7.js'
-let cy = {}
 let ur = {}
-const elements = []
 // eslint-disable-next-line no-unused-vars
 const loading = true
 let layoutOptions = {}
@@ -74,228 +71,8 @@ var edgeOptions = {
   }
 }
 
-const config = {
-  autounselectify: true,
-  boxSelectionEnabled: true,
-  layout: {
-    name: 'dagre',
-    textureOnViewport: true,
-    hideEdgesOnViewport: true
-  },
-  style: [
-    {
-      selector: 'node',
-      css: {
-        'background-image': function (node) {
-          let path = node.data('icon')
-          // TODO: not sure if we can provide the path as a normal string, without importing the svg here?
-          if (path === undefined || path === '') {
-            path = require('@/../public/img/baseline-donut_large-24px.svg')
-          }
-          // console.log('ICON PATH --> ', path)
-          return path
-        },
-        'background-fit': 'contain contain',
-        'background-image-opacity': function (node) {
-          return node.data('running') > 0 ? 1.0 : 0.6
-        },
-        'background-color': 'data(state)',
-        content: 'data(label)',
-        'font-family': 'Avenir, Helvetica, Arial, sans-serif',
-        color: '#fff',
-        'text-max-width': '.5em',
-        'text-wrap': 'wrap',
-        'text-valign': 'top',
-        'text-halign': 'right',
-        'line-height': 1.1,
-        'text-margin-x': 5,
-        'font-size': '.8em',
-        'min-zoomed-font-size': '.8em',
-        'border-color': '#fff',
-        'border-width': '.4em',
-        shape: 'data(shape)',
-        width: '6em',
-        height: '6em',
-        // 'pie-size': '5.6em', //The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
-        'pie-size': function (node) {
-          let size
-          node.data('running') > 0 ? size = '5.6em' : size = '0%'
-          return size
-        },
-        'pie-1-background-color': '#9ef9ff', // The colour of the node’s ith pie chart slice.
-        'pie-1-background-size': 'mapData(submitted, 0, 100, 0, 100)',
-        'pie-1-background-opacity': 0.7,
-        'pie-2-background-color': '#4ab7ff',
-        'pie-2-background-size': 'mapData(running, 0, 100, 0, 100)',
-        'pie-2-background-opacity': 0.7,
-        'pie-3-background-color': '#31ff53',
-        'pie-3-background-size': 'mapData(succeeded, 0, 100, 0, 100)', // The size of the node’s ith pie chart slice, measured in percent (e.g. 25% or 25).
-        'pie-3-background-opacity': 0.7,
-        'pie-4-background-color': '#ff3a2b',
-        'pie-4-background-size': 'mapData(failed, 0, 100, 0, 100)',
-        'pie-4-background-opacity': 0.7,
-        'pie-5-background-color': '#d453ff',
-        'pie-5-background-size': 'mapData(subfailed, 0, 100, 0, 100)',
-        'pie-5-background-opacity': 0.7,
-        'pie-6-background-color': '#fefaff',
-        'pie-6-background-size': 'mapData(expired, 0, 100, 0, 100)',
-        'pie-6-background-opacity': 0.7,
-        'pie-7-background-color': '#fff138',
-        'pie-7-background-size': 'mapData(queued, 0, 100, 0, 100)',
-        'pie-7-background-opacity': 0.7,
-        'pie-8-background-color': '#ff3a2b',
-        'pie-8-background-size': 'mapData(retrying, 0, 100, 0, 100)',
-        'pie-8-background-opacity': 0.7,
-        'pie-9-background-color': '#666',
-        'pie-9-background-size': 'mapData(waiting, 0, 100, 0, 100)',
-        'pie-9-background-opacity': 0.7,
-        'pie-10-background-color': '#cacaca',
-        'pie-10-background-size': 'mapData(todo, 0, 100, 0, 100)',
-        'pie-10-background-opacity': 0.7
-      }
-    },
-    {
-      selector: 'edge',
-      css: {
-        width: 5,
-        'curve-style': 'bezier',
-        'target-arrow-shape': 'triangle',
-        'line-color': edgeOptions.normal.lineColor,
-        'target-arrow-color': '#fff',
-        opacity: 0.8,
-        'target-distance-from-node': 10
-      }
-    },
-    {
-      selector: 'edge.selected',
-      style: {
-        width: 10,
-        lineColor: edgeOptions.selected.lineColor,
-        'target-arrow-color': edgeOptions.selected.lineColor
-      }
-    },
-    {
-      selector: 'node.highlight',
-      style: {
-        'border-color': '#fff',
-        'border-width': '2px'
-      }
-    },
-    {
-      selector: 'node.semitransp',
-      style: { opacity: '0.5' }
-    },
-    {
-      selector: 'node.selected',
-      style: { 'background-color': nodeOptions.selected.bgColor }
-    },
-    // {
-    //   selector: 'node.active',
-    //   style: { 'background-color': nodeOptions.active.bgColor }
-    // },
-    {
-      selector: 'edge.highlight',
-      style: { 'mid-target-arrow-color': 'yellow' }
-    },
-    {
-      selector: 'edge.semitransp',
-      style: { opacity: '0.2' }
-    },
-    {
-      selector: 'node.cy-expand-collapse-collapsed-node',
-      style: {
-        'background-color': '#333',
-        shape: 'rectangle'
-      }
-    },
-    {
-      selector: 'edge.cy-expand-collapse-meta-edge',
-      style: {
-        'background-color': 'green',
-        shape: 'rectangle'
-      }
-    },
-    // {
-    //   selector: 'edge.meta',
-    //   style: {
-    //     'curve-style': 'unbundled-bezier',
-    //     'control-point-distances': '0 0 0'
-    //   }
-    // },
-    // {
-    //   selector: '.selected',
-    //   style: {
-    //     'background-color': 'yellow',
-    //     'background-image': require('@/assets/baseline-donut_large-24px.svg'),
-    //     // 'background-image': function(node) {
-    //     //   let path = node.data('icon')
-    //     //   console.log('ICON PATH --> ', path)
-    //     //   return path
-    //     // }, // TODO
-    //     'background-fit': 'contain contain',
-    //     'background-image-opacity': 0.5,
-    //     'pie-size': '0%'
-    //   }
-    // },
-    // {
-    //   selector: 'edge.meta',
-    //   style: {
-    //     'width': 2,
-    //     'line-color': 'red'
-    //   }
-    // },
-    {
-      selector: ':parent',
-      style: {
-        'background-opacity': 0.2,
-        // 'background-image-opacity': .2,
-        'background-fit': 'contain contain',
-        'background-color': '#b7c0e8',
-        'border-color': '#444',
-        'border-width': '2px',
-        'pie-size': '5.6em'
-      }
-    },
-
-    // {
-    //   selector: ':parent.selected',
-    //   style: {
-    //     'background-opacity': .35,
-    //     'background-image-opacity': .35,
-    //     'background-color': '333'
-    //   }
-    // },
-    {
-      selector: ':child',
-      style: {
-        // 'background-opacity': .15,
-        // 'background-image-opacity': .15,
-        // 'background-color': '#b7c0e8',
-        'border-color': '#444',
-        'border-width': '2px'
-      }
-    }
-    // {
-    //   selector: ':child.selected',
-    //   style: {
-    //     'background-opacity': 1,
-    //     'background-image-opacity': 1,
-    //     'background-color': '#b7c0e8',
-    //     'opacity': 1
-    //   }
-    // },
-    // {
-    //   selector: ':selected',
-    //   style: {
-    //     'border-width': 3,
-    //     'border-color': 'purple'
-    //   }
-    // }
-  ],
-  elements: []
-}
-
 export default {
+  name: 'Graph',
   mixins: [mixin],
   metaInfo () {
     // TODO: once the component is using live data, use the workflow name here
@@ -305,7 +82,6 @@ export default {
       title: this.getPageTitle('App.graph')
     }
   },
-  name: 'Graph',
   beforeRouteLeave (to, from, next) {
     if (tippy) {
       tippy.hide()
@@ -318,8 +94,6 @@ export default {
   },
   data () {
     return {
-      config,
-      elements,
       i: 1,
       // vue-spinner
       color: '#5e9aff',
@@ -333,15 +107,13 @@ export default {
   },
   methods: {
     preConfig (cytoscape) {
-      console.log('calling pre-config', config, elements)
       // cytoscape: this is the cytoscape constructor
       cytoscape.use(cola)
       cytoscape.use(dagre)
       cytoscape.use(coseBilkent)
       cytoscape.use(klay)
     },
-    async afterCreated () {
-      console.log('after created')
+    async afterCreated (cy) {
       const dagreOptions = {
         name: 'dagre',
         //  // dagre algo options, uses default value on undefined
@@ -504,8 +276,8 @@ export default {
         infinite: false // overrides all other options for a forces-all-the-time mode
       }
 
-      async function registerExtensions () {
-        // // register extensions
+      async function registerExtensions (instance) {
+        // register extensions
         if (typeof cytoscape('core', 'navigator') !== 'function') {
           console.log('registering navigator')
           navigator(cytoscape)
@@ -541,14 +313,179 @@ export default {
         }
       }
 
-      // eslint-disable-next-line no-unused-vars
-      async function run (cy) {
+      async function updateStyle () {
         try {
-          await cy
-            .elements()
-            .layout(layoutOptions)
-            .run()
-          return cy
+          const data = await updateData()
+          return updateConfig(data)
+        } catch (error) {
+          console.log('error', error)
+        }
+      }
+
+      async function updateConfig (data) {
+        try {
+          const config = {
+            autounselectify: true,
+            boxSelectionEnabled: true,
+            layout: {
+              name: 'dagre',
+              textureOnViewport: false,
+              hideEdgesOnViewport: true
+            },
+            style: [
+              {
+                selector: 'node',
+                css: {
+                  'background-image': function (node) {
+                    let path = node.data('icon')
+                    if (path === undefined || path === '') {
+                      path = require('@/../public/img/baseline-donut_large-24px.svg')
+                    }
+                    return path
+                  },
+                  'background-fit': 'contain contain',
+                  'background-image-opacity': function (node) {
+                    return node.data('running') > 0 ? 1.0 : 0.6
+                  },
+                  'background-color': 'data(state)',
+                  content: 'data(label)',
+                  'font-family': 'Avenir, Helvetica, Arial, sans-serif',
+                  color: '#fff',
+                  'text-max-width': '.5em',
+                  'text-wrap': 'wrap',
+                  'text-valign': 'top',
+                  'text-halign': 'right',
+                  'line-height': 1.1,
+                  'text-margin-x': 5,
+                  'font-size': '.8em',
+                  'min-zoomed-font-size': '.8em',
+                  'border-color': '#fff',
+                  'border-width': '.4em',
+                  shape: 'data(shape)',
+                  width: '6em',
+                  height: '6em',
+                  // 'pie-size': '5.6em', //The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
+                  'pie-size': function (node) {
+                    let size
+                    node.data('running') > 0 ? size = '5.6em' : size = '0%'
+                    return size
+                  },
+                  'pie-1-background-color': '#9ef9ff', // The colour of the node’s ith pie chart slice.
+                  'pie-1-background-size': 'mapData(submitted, 0, 100, 0, 100)',
+                  'pie-1-background-opacity': 0.7,
+                  'pie-2-background-color': '#4ab7ff',
+                  'pie-2-background-size': 'mapData(running, 0, 100, 0, 100)',
+                  'pie-2-background-opacity': 0.7,
+                  'pie-3-background-color': '#31ff53',
+                  'pie-3-background-size': 'mapData(succeeded, 0, 100, 0, 100)', // The size of the node’s ith pie chart slice, measured in percent (e.g. 25% or 25).
+                  'pie-3-background-opacity': 0.7,
+                  'pie-4-background-color': '#ff3a2b',
+                  'pie-4-background-size': 'mapData(failed, 0, 100, 0, 100)',
+                  'pie-4-background-opacity': 0.7,
+                  'pie-5-background-color': '#d453ff',
+                  'pie-5-background-size': 'mapData(subfailed, 0, 100, 0, 100)',
+                  'pie-5-background-opacity': 0.7,
+                  'pie-6-background-color': '#fefaff',
+                  'pie-6-background-size': 'mapData(expired, 0, 100, 0, 100)',
+                  'pie-6-background-opacity': 0.7,
+                  'pie-7-background-color': '#fff138',
+                  'pie-7-background-size': 'mapData(queued, 0, 100, 0, 100)',
+                  'pie-7-background-opacity': 0.7,
+                  'pie-8-background-color': '#ff3a2b',
+                  'pie-8-background-size': 'mapData(retrying, 0, 100, 0, 100)',
+                  'pie-8-background-opacity': 0.7,
+                  'pie-9-background-color': '#666',
+                  'pie-9-background-size': 'mapData(waiting, 0, 100, 0, 100)',
+                  'pie-9-background-opacity': 0.7,
+                  'pie-10-background-color': '#cacaca',
+                  'pie-10-background-size': 'mapData(todo, 0, 100, 0, 100)',
+                  'pie-10-background-opacity': 0.7
+                }
+              },
+              {
+                selector: 'edge',
+                css: {
+                  width: 5,
+                  'curve-style': 'bezier',
+                  'target-arrow-shape': 'triangle',
+                  'line-color': edgeOptions.normal.lineColor,
+                  'target-arrow-color': '#fff',
+                  opacity: 0.8,
+                  'target-distance-from-node': 10
+                }
+              },
+              {
+                selector: 'edge.selected',
+                style: {
+                  width: 10,
+                  lineColor: edgeOptions.selected.lineColor,
+                  'target-arrow-color': edgeOptions.selected.lineColor
+                }
+              },
+              {
+                selector: 'node.highlight',
+                style: {
+                  'border-color': '#fff',
+                  'border-width': '2px'
+                }
+              },
+              {
+                selector: 'node.semitransp',
+                style: { opacity: '0.5' }
+              },
+              {
+                selector: 'node.selected',
+                style: { 'background-color': nodeOptions.selected.bgColor }
+              },
+              {
+                selector: 'edge.highlight',
+                style: { 'mid-target-arrow-color': 'yellow' }
+              },
+              {
+                selector: 'edge.semitransp',
+                style: { opacity: '0.2' }
+              },
+              {
+                selector: 'node.cy-expand-collapse-collapsed-node',
+                style: {
+                  'background-color': '#333',
+                  shape: 'rectangle'
+                }
+              },
+              {
+                selector: 'edge.cy-expand-collapse-meta-edge',
+                style: {
+                  'background-color': 'green',
+                  shape: 'rectangle'
+                }
+              },
+              {
+                selector: ':parent',
+                style: {
+                  'background-opacity': 0.2,
+                  // 'background-image-opacity': .2,
+                  'background-fit': 'contain contain',
+                  'background-color': '#b7c0e8',
+                  'border-color': '#444',
+                  'border-width': '2px',
+                  'pie-size': '5.6em'
+                }
+              },
+              {
+                selector: ':child',
+                style: {
+                  // 'background-opacity': .15,
+                  // 'background-image-opacity': .15,
+                  // 'background-color': '#b7c0e8',
+                  'border-color': '#444',
+                  'border-width': '2px'
+                }
+              }
+            ],
+            elements: []
+          }
+
+          return config
         } catch (error) {
           console.log('error', error)
         }
@@ -558,35 +495,6 @@ export default {
       async function runlayout (instance) {
         try {
           const cy = instance
-          const cynodes = elements.nodes
-          const cyedges = elements.edges
-          if (_.isObject(layoutOptions) && _.isEmpty(layoutOptions)) {
-            console.log('layoutOptions is an empty object default to Dagre ')
-            layoutOptions = dagreOptions
-          }
-          if (!_.isEmpty(cy)) {
-            cy.remove(cy.nodes())
-            cy.remove(cy.edges())
-            cy.add(cynodes)
-            cy.add(cyedges)
-            // cy.mount(cytoscape.__________cytoscape_container)
-            console.log('cy instance exists')
-          } else if (_.isEmpty(cy.nodes) && _.isEmpty(cy.edges)) {
-            console.log('cy.nodes and edges length is zero - adding')
-            // add the new ones
-            cy.add(cynodes)
-            cy.add(cyedges)
-            // cy.mount(cytoscape.__________cytoscape_container)
-          } else {
-            console.log('cy.elements exist')
-            // remove all elements
-            cy.remove(cy.nodes())
-            cy.remove(cy.edges())
-            console.log('graph data version: ', elements.version)
-            // add the new ones
-            cy.add(cynodes)
-            cy.add(cyedges)
-          }
           await cy
             .elements()
             .layout(layoutOptions)
@@ -609,6 +517,7 @@ export default {
 
       async function getGraph (instance) {
         await registerExtensions()
+        layoutOptions = dagreOptions
         const cy = await runlayout(instance)
         const ur = await setupUndo(cy)
         getPanzoom(cy)
@@ -622,7 +531,12 @@ export default {
 
       // load graph data and run layout
       const { data: elements } = await updateData()
-      cy = await this.$cytoscape.instance
+      const stylesheet = await updateStyle()
+      cy = await cytoscape({
+        container: document.getElementById('cytoscape'),
+        elements: elements,
+        style: stylesheet.style
+      })
       ur = await getGraph(cy)
       console.log('loaded elements: ', elements, cy)
       this.loading = false // remove spinner
@@ -740,12 +654,12 @@ export default {
             currentstate.succeeded = succeeded
             currentstate.waiting = waiting
             for (const item in currentstate) {
-              console.log('key:' + item + ' value:' + currentstate[item])
+              // console.log('key:' + item + ' value:' + currentstate[item])
               if (currentstate[item] > 0) {
                 state = item
               }
             }
-            console.log('isParent => ', children)
+            // console.log('isParent => ', children)
             if (children !== undefined) {
               state = 'compound node'
             }
@@ -797,22 +711,6 @@ export default {
         tippy.show()
       })
 
-      // cy.on('tap', 'node', function(event) {
-      //   const node = event.target
-      //   // const data = node[0]._private.data
-      //   console.log('tapped ' + node.id(), node.data())
-      //   // cy.elements()
-      //   //   .difference(node.outgoers())
-      //   //   .not(node)
-      //   //   .addClass('semitransp')
-      //   // node
-      //   //   .addClass('highlight')
-      //   //   .addClass('selected')
-      //   //   .outgoers()
-      //   //   .addClass('highlight')
-      //   //-------------------------------
-      // })
-
       cy.on('tap', 'edge', function (event) {
         const edge = event.target
         console.log('tapped ' + edge.id(), edge.data())
@@ -860,13 +758,6 @@ export default {
 
       // eslint-disable-next-line no-unused-vars
       cy.on('click', function (event) {
-        // const data = event.target._private
-        // console.log('cy event.target', data)
-        // var edges = cy.edges()
-        // var nodes = cy.nodes()
-        // edges.removeClass('selected')
-        // edges.removeClass('semitransp')
-        // nodes.removeClass('semitransp')
         cy.elements().removeClass('semitransp')
         cy.elements().removeClass('highlight')
         cy.elements().removeClass('selected')
@@ -974,7 +865,6 @@ export default {
         .getElementById('dagre-button')
         // eslint-disable-next-line no-unused-vars
         .addEventListener('click', function (event) {
-          console.log('tapped dagre button')
           layoutOptions = dagreOptions
           expandCollapseOptions = expandCollapseOptionsUndefined
           cy.expandCollapse(expandCollapseOptionsUndefined)
@@ -991,7 +881,6 @@ export default {
         .getElementById('cosebilkent-button')
         // eslint-disable-next-line no-unused-vars
         .addEventListener('click', function (event) {
-          console.log('tapped cosebilkent button')
           expandCollapseOptions = expandCollapseOptionsCoseBilkent
           cy.expandCollapse(expandCollapseOptionsCoseBilkent)
           layoutOptions = coseBilkentOptions
@@ -1005,7 +894,6 @@ export default {
         .getElementById('klay-button')
         // eslint-disable-next-line no-unused-vars
         .addEventListener('click', function (event) {
-          console.log('tapped klay button')
           expandCollapseOptions = expandCollapseOptionsKlay
           cy.expandCollapse(expandCollapseOptionsKlay)
           layoutOptions = klayLayoutOptions
@@ -1019,7 +907,6 @@ export default {
         .getElementById('hierarchical-button')
         // eslint-disable-next-line no-unused-vars
         .addEventListener('click', function (event) {
-          console.log('tapped hierarchical button')
           cy.elements().hca({
             mode: 'threshold',
             threshold: 25,
@@ -1044,7 +931,6 @@ export default {
         .getElementById('cola-button')
       // eslint-disable-next-line no-unused-vars
         .addEventListener('click', function (event) {
-          console.log('tapped cola button')
           expandCollapseOptions = expandCollapseOptionsCola
           cy.expandCollapse(expandCollapseOptionsCola)
           layoutOptions = colaLayoutOptions
@@ -1057,19 +943,11 @@ export default {
       document
         .getElementById('collapseAll')
         .addEventListener('click', function () {
-          console.log('collapseAll')
           ur.do('collapseAll')
           cy.elements().removeClass('semitransp')
           cy.elements().removeClass('highlight')
           cy.elements().removeClass('selected')
         })
-
-      // document
-      //   .getElementById('expandAll')
-      //   .addEventListener('click', function() {
-      //     console.log('expandAll')
-      //     ur.do('expandAll')
-      //   })
 
       document.addEventListener(
         'keydown',
