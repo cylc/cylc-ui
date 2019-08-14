@@ -6,6 +6,7 @@
         v-for="workflow of workflows"
         :key="workflow.id"
         :node="workflow"
+        :hoverable="hoverable"
     >
     </tree-item>
   </div>
@@ -24,7 +25,8 @@ export default {
     cycles: {
       type: Map,
       required: true
-    }
+    },
+    hoverable: Boolean
   },
   components: {
     'tree-item': TreeItem

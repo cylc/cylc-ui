@@ -1,5 +1,5 @@
 <template>
-  <tree :workflows="workflowTree" :cycles="cycles"></tree>
+  <tree :workflows="workflowTree" :cycles="cycles" :hoverable="true"></tree>
 </template>
 
 <script>

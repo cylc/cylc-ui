@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-        :class="{node: true, active: selected}"
+        :class="getNodeClass()"
         :style="{'padding-left': `${depth *30}px`}"
     >
       <!-- the node's left icon; used for expand/collapse -->
@@ -35,6 +35,7 @@
           :key="child.id"
           :node="child"
           :depth="depth + 1"
+          :hoverable="hoverable"
       ></TreeItem>
     </span>
   </div>
@@ -58,7 +59,8 @@ export default {
     depth: {
       type: Number,
       default: 0
-    }
+    },
+    hoverable: Boolean
   },
   data () {
     return {
@@ -88,21 +90,33 @@ export default {
       } else {
         alert('Clicked without CTRL!')
       }
+    },
+    getNodeClass () {
+      return {
+        node: true,
+        active: this.selected,
+        hoverable: this.hoverable
+      }
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+@import "../../styles/material-dashboard/colors";
+
+@mixin states() {
+  &:hover {
+    background-color: $grey-100;
+  }
+
+}
+
 .node {
   line-height: 1.8em;
 
-  &:hover {
-    background: #eeeeee;
-  }
-
-  &.active {
-    background: #BDD5F7;
+  &.hoverable {
+    @include states()
   }
 }
 .type {
