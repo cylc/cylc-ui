@@ -39,14 +39,14 @@
           stroke-dasharray="157"
           v-bind:style="progressStyle"
         ></circle>
-        <!-- circle in the middle
+        <!-- circle in the middle (hub)
                * position in the middle
                * radius can be changed independently
         -->
         <circle
           id="hub"
           cx="50" cy="50"
-          r="12">
+          r="15">
         </circle>
         <!-- outer circle
                * position in the middle
@@ -203,7 +203,6 @@
 
             &.submit-failed {
                 @include outline();
-                @include hub();
                 @include cross($foreground);
             }
         }
