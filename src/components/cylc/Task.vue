@@ -141,9 +141,9 @@
             }
         }
 
-        @mixin cross() {
+        @mixin cross($colour) {
             #cross rect {
-                fill: $foreground;
+                fill: $colour;
             }
         }
 
@@ -196,14 +196,15 @@
             }
 
             &.failed {
+                @include disk();
                 @include outline();
-                @include cross();
+                @include cross($background);
             }
 
             &.submit-failed {
                 @include outline();
                 @include hub();
-                @include cross();
+                @include cross($foreground);
             }
         }
     }
