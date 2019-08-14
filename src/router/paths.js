@@ -47,13 +47,6 @@ export default [
     }
   },
   {
-    path: '/notifications',
-    view: 'Notifications',
-    meta: {
-      layout: 'default'
-    }
-  },
-  {
     path: '/',
     view: 'Dashboard',
     meta: {

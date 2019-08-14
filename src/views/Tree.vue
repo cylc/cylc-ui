@@ -49,7 +49,7 @@ import { mixin } from '@/mixins/index'
 const QUERIES = {
   root: `
       {
-        workflows(ids: "WORKFLOW_ID") {
+        workflows(ids: ["WORKFLOW_ID"]) {
           id
           name
           status

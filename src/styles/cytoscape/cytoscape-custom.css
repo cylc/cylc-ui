@@ -2,7 +2,21 @@
   width: 100%;
   height: 800px;
   background-color: #222;
-  z-index: 10;
+  z-index: 1;
+}
+
+#cytoscape { 
+  width: 100%;
+  height: 800px;
+  background-color: #222;
+  z-index: 2;
+}
+
+#cytoscape { 
+  width: 100%;
+  height: 800px;
+  background-color: #222;
+  z-index: 100;
 }
 
 #app {
@@ -19,7 +33,7 @@
   position: absolute;
   border: 1px solid #fff;
   background: #222;
-  z-index: 99999;
+  z-index: 5;
   width: 200px;
   height: 150px;
   bottom: 83px;
@@ -39,10 +53,7 @@
   position: fixed;
   top: 50%;
   left: 54%;
-}
-
-.tippy-popper {
-  /* transition: none !important; */
+  z-index: 99;
 }
 
 .collapsed-child {
@@ -62,7 +73,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: centre;
   color: #fff;
-  z-index: 99999;
+  z-index: 4;
   height: 40px;
 }
 
@@ -72,7 +83,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: centre;
   color: #fff;
-  z-index: 99999;
+  z-index: 4;
   height: 40px;
 }
 
@@ -82,7 +93,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: centre;
   color: #fff;
-  z-index: 99999;
+  z-index: 4;
   height: 40px;
   width: 40px;
 }
@@ -93,7 +104,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: centre;
   color: #fff;
-  z-index: 99999;
+  z-index: 4;
   height: 40px;
 }
 
@@ -103,7 +114,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: centre;
   color: #fff;
-  z-index: 99999;
+  z-index: 4;
   height: 40px;
   width: 40px;
 }

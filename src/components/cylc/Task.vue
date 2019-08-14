@@ -15,60 +15,91 @@
     -->
     <svg
       class="task"
-      v-bind:class="[status]"
+      v-bind:class="[classes]"
       viewBox="0 0 100 100"
     >
-      <!-- progress pie chart:
-             * position in the middle
-             * let radius = 25% radius
-             * let stroke-width = 100% - (2*radius) = 50%
-             * let stroke-dasharray ~= 2 * pi * radius
-             * use dashes as the line style to turn this into a pie chart
-      -->
-      <circle
-        id="progress"
-        cx="50" cy="50"
-        r="25"
-        stroke-width="50"
-        stroke-dasharray="157"
-        v-bind:style="progressStyle"
-      ></circle>
-      <!-- circle in the middle
-             * position in the middle
-             * radius can be changed independently
-      -->
-      <circle
-        id="hub"
-        cx="50" cy="50"
-        r="12">
-      </circle>
-      <!-- outer circle
-             * position in the middle
-             * let radius = 50% - (2*stroke-width)
-      -->
-      <circle
-        id="outline"
-        cx="50" cy="50"
-        r="46"
-        stroke-width="8">
-      </circle>
-      <!-- cross (failure)
-             * create a plus and rotate it 45 deg around the origin
-             * let rx ~= max(width, height) * 0.1
+      <!--
+        Status indicator - the status portion of the task state.
       -->
       <g
-        id="cross"
-        transform="rotate(45, 50, 50)"
+        id="status"
       >
+        <!-- progress pie chart:
+               * position in the middle
+               * let radius = 25% radius
+               * let stroke-width = 100% - (2*radius) = 50%
+               * let stroke-dasharray ~= 2 * pi * radius
+               * use dashes as the line style to turn this into a pie chart
+        -->
+        <circle
+          id="progress"
+          cx="50" cy="50"
+          r="25"
+          stroke-width="50"
+          stroke-dasharray="157"
+          v-bind:style="progressStyle"
+        ></circle>
+        <!-- circle in the middle
+               * position in the middle
+               * radius can be changed independently
+        -->
+        <circle
+          id="hub"
+          cx="50" cy="50"
+          r="12">
+        </circle>
+        <!-- outer circle
+               * position in the middle
+               * let radius = 50% - (2*stroke-width)
+        -->
+        <circle
+          id="outline"
+          cx="50" cy="50"
+          r="46"
+          stroke-width="8">
+        </circle>
+        <!-- cross (failure)
+               * create a plus and rotate it 45 deg around the origin
+               * let rx ~= max(width, height) * 0.1
+        -->
+        <g
+          id="cross"
+          transform="rotate(45, 50, 50)"
+        >
+          <rect
+            x=15 y=45
+            width="70" height="10"
+            rx="7" ry="7"
+          ></rect>
+          <rect
+            x=45 y=15
+            width="10" height="70"
+            rx="7" ry="7"
+          ></rect>
+        </g>
+      </g>
+
+      <!--
+        isHeld - the isHeld portion of the task state.
+      -->
+      <g
+        id="held"
+        transform="scale(0.45)"
+      >
+        <circle
+          cx="50" cy="50"
+          r="46"
+          stroke-width="8"
+        ></circle>
         <rect
-          x=15 y=45
-          width="70" height="10"
-          rx="7" ry="7"
+          x=32.5 y=25
+          width="10" height="50"
+          rx="5" ry="5"
         ></rect>
         <rect
-          x=45 y=15
-          width="10" height="70"
-          rx="7" ry="7"
+          x=52.5 y=25
+          width="10" height="50"
+          rx="5" ry="5"
         ></rect>
       </g>
     </svg>
@@ -78,31 +109,32 @@
 <style lang="scss">
     .c-task {
 
-        $colour: rgb(90,90,90);
+        $foreground: rgb(90,90,90);
+        $background: rgb(255,255,255);
 
         @mixin disk() {
             #outline {
-                stroke: $colour;
-                fill: $colour;
+                stroke: $foreground;
+                fill: $foreground;
             }
         }
 
         @mixin outline() {
             #outline {
-                stroke: $colour;
+                stroke: $foreground;
             }
         }
 
         @mixin hub() {
             #hub {
-                fill: $colour;
+                fill: $foreground;
             }
         }
 
         @mixin progress() {
             #progress {
                 fill: transparent;
-                stroke: $colour;
+                stroke: $foreground;
                 transform-origin: 50% 50%;
                 transform: rotate(-90deg);
                 opacity: 0.4;
@@ -111,7 +143,19 @@
 
         @mixin cross() {
             #cross rect {
-                fill: $colour;
+                fill: $foreground;
+            }
+        }
+
+        @mixin held() {
+            #held {
+                circle {
+                    stroke: $foreground;
+                    fill: $background;
+                }
+                rect {
+                    fill: $foreground;
+                }
             }
         }
 
@@ -126,6 +170,12 @@
                 stroke: transparent;
             }
 
+            /* isHeld */
+            &.held {
+              @include held();
+            }
+
+            /* status */
             &.waiting {
                 @include outline();
             }
@@ -167,6 +217,10 @@ export default {
       type: String,
       required: true
     },
+    isHeld: {
+      type: Boolean,
+      require: true
+    },
     progress: {
       type: Number,
       required: false,
@@ -179,6 +233,13 @@ export default {
       return {
         'stroke-dashoffset': progress
       }
+    },
+    classes: function () {
+      const classes = [this.status]
+      if (this.isHeld) {
+        classes.push('held')
+      }
+      return classes
     }
   }
 }
