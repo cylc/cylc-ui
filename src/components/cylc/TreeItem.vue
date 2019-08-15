@@ -36,6 +36,7 @@
           :node="child"
           :depth="depth + 1"
           :hoverable="hoverable"
+          v-on:tree-item-clicked="$emit('tree-item-clicked', $event)"
       ></TreeItem>
     </span>
   </div>
@@ -65,6 +66,7 @@ export default {
   data () {
     return {
       expanded: true,
+      active: false,
       selected: false
     }
   },
@@ -85,17 +87,18 @@ export default {
       return styles
     },
     nodeClicked (e) {
+      this.$emit('tree-item-clicked', this)
       if (e.ctrlKey) {
-        alert('Clicked with CTRL!')
+        console.log('Clicked with CTRL!')
       } else {
-        alert('Clicked without CTRL!')
+        console.log('Clicked without CTRL!')
       }
     },
     getNodeClass () {
       return {
         node: true,
-        active: this.selected,
-        hoverable: this.hoverable
+        'node--hoverable': this.hoverable,
+        'node--active': this.active
       }
     }
   }
@@ -105,18 +108,30 @@ export default {
 <style scoped lang="scss">
 @import "../../styles/material-dashboard/colors";
 
+$active-color: #BDD5F7;
+
+@mixin active-state() {
+  background-color: $active-color;
+  &:hover {
+    background-color: $active-color;
+  }
+}
+
 @mixin states() {
   &:hover {
     background-color: $grey-100;
   }
-
 }
 
 .node {
   line-height: 1.8em;
 
-  &.hoverable {
+  &--hoverable {
     @include states()
+  }
+
+  &--active {
+    @include active-state()
   }
 }
 .type {

@@ -1,5 +1,23 @@
 <template>
-  <tree :workflows="workflowTree" :cycles="cycles" :hoverable="true"></tree>
+  <v-container flui>
+    <v-layout row wrap>
+      <v-flex xs12 sm4 md4>
+        <v-checkbox v-model="hoverable" label="Hoverable?" class="mx-2"/>
+      </v-flex>
+      <v-flex xs12 sm4 md4>
+        <v-checkbox v-model="activable" label="Activable?" class="mx-2"/>
+      </v-flex>
+      <v-flex xs12 sm4 md4>
+        <v-checkbox v-model="multipleActive" label="Multiple active?" class="mx-2"/>
+      </v-flex>
+    </v-layout>
+    <tree
+        :workflows="workflowTree"
+        :cycles="cycles"
+        :hoverable="hoverable"
+        :activable="activable"
+        :multiple-active="multipleActive"></tree>
+  </v-container>
 </template>
 
 <script>
@@ -53,7 +71,10 @@ export default {
     viewID: '',
     workflowId: '',
     subscriptions: {},
-    isLoading: true
+    isLoading: true,
+    hoverable: false,
+    activable: false,
+    multipleActive: false
   }),
 
   computed: {
