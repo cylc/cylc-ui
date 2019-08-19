@@ -1,33 +1,51 @@
 <template>
   <div>
-    <div
+    <v-layout
+        row
+        wrap
         :class="getNodeClass()"
         :style="{'padding-left': `${depth *30}px`}"
     >
       <!-- the node's left icon; used for expand/collapse -->
-      <span
+      <v-flex
+        shrink
         v-if="hasChildren"
         class="type"
         @click="typeClicked"
         :style="getTypeStyle()"
-      >{{ expanded ? '&#9661;' : '&#9655;' }}</span>
+      >{{ expanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
-      <span v-if="node.__type === 'cyclepoint'">
-        <task :status="node.state" :progress=0 />
+      <v-layout @click="nodeClicked" row wrap v-if="node.__type === 'cyclepoint'">
+        <v-flex shrink>
+          <task :status="node.state" :progress=0 />
+        </v-flex>
+        <v-flex grow>
+          <span class="mx-1">{{ node.name }}</span>
+        </v-flex>
+      </v-layout>
+      <v-layout @click="nodeClicked" row wrap v-else-if="node.__type === 'task'">
+        <v-flex shrink>
+          <task :status="node.state" :progress=0 />
+        </v-flex>
+        <v-flex grow>
+          <span class="mx-1">{{ node.name }}</span>
+        </v-flex>
+      </v-layout>
+      <v-layout @click="nodeClicked" row wrap v-else-if="node.__type === 'job'">
+        <v-flex shrink>
+          <job :status="node.state" />
+        </v-flex>
+        <v-flex xs1>
+          <span class="mx-1">{{ node.name }}</span>
+        </v-flex>
+        <v-flex grow>
+          <span class="text-gray">{{ node.host }}</span>
+        </v-flex>
+      </v-layout>
+      <v-layout row wrap v-else>
         <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
-      </span>
-      <span v-else-if="node.__type === 'task'">
-        <task :status="node.state" :progress=0 />
-        <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
-      </span>
-      <span v-else-if="node.__type === 'job'">
-        <job :status="node.state" />
-        <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
-      </span>
-      <span v-else>
-        <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
-      </span>
-    </div>
+      </v-layout>
+    </v-layout>
     <span v-show="expanded">
       <!-- component recursion -->
       <TreeItem
