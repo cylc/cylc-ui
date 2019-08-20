@@ -13,7 +13,7 @@
         class="type"
         @click="typeClicked"
         :style="getTypeStyle()"
-      >{{ expanded ? '&#9661;' : '&#9655;' }}</v-flex>
+      >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <v-layout @click="nodeClicked" row wrap v-if="node.__type === 'cyclepoint'">
         <v-flex shrink>
@@ -30,7 +30,7 @@
         <v-flex shrink>
           <span class="mx-1">{{ node.name }}</span>
         </v-flex>
-        <v-flex grow ml-4 v-if="!expanded">
+        <v-flex grow ml-4 v-if="!isExpanded">
           <!-- Task summary -->
           <job
               v-for="(task, index) in node.children"
@@ -53,7 +53,7 @@
         <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
       </v-layout>
     </v-layout>
-    <span v-show="expanded">
+    <span v-show="isExpanded">
       <!-- component recursion -->
       <TreeItem
           v-for="child in node.children"
@@ -62,6 +62,10 @@
           :depth="depth + 1"
           :hoverable="hoverable"
           :min-depth="minDepth"
+          :expanded="expanded"
+          v-on:tree-item-created="$emit('tree-item-created', $event)"
+          v-on:tree-item-expanded="$emit('tree-item-expanded', $event)"
+          v-on:tree-item-collapsed="$emit('tree-item-collapsed', $event)"
           v-on:tree-item-clicked="$emit('tree-item-clicked', $event)"
       ></TreeItem>
     </span>
@@ -91,13 +95,17 @@ export default {
       type: Number,
       default: 0
     },
-    hoverable: Boolean
+    hoverable: Boolean,
+    expanded: {
+      type: Boolean,
+      default: true
+    }
   },
   data () {
     return {
-      expanded: true,
       active: false,
-      selected: false
+      selected: false,
+      isExpanded: this.expanded
     }
   },
   computed: {
@@ -105,12 +113,20 @@ export default {
       return Object.prototype.hasOwnProperty.call(this.node, 'children')
     }
   },
+  created () {
+    this.$emit('tree-item-created', this)
+  },
   methods: {
     typeClicked () {
       if (this.node.__type === 'task') {
         // ok
       }
-      this.expanded = !this.expanded
+      this.isExpanded = !this.isExpanded
+      if (this.isExpanded) {
+        this.$emit('tree-item-expanded', this)
+      } else {
+        this.$emit('tree-item-collapsed', this)
+      }
     },
     getTypeStyle () {
       const styles = {}

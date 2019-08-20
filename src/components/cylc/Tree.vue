@@ -8,6 +8,10 @@
         :node="workflow"
         :hoverable="hoverable"
         :min-depth="minDepth"
+        :expanded="expanded"
+        v-on:tree-item-created="onTreeItemCreated"
+        v-on:tree-item-expanded="onTreeItemExpanded"
+        v-on:tree-item-collapsed="onTreeItemCollapsed"
         v-on:tree-item-clicked="onTreeItemClicked"
     >
     </tree-item>
@@ -41,10 +45,53 @@ export default {
   },
   data () {
     return {
-      activeCache: new Set()
+      treeItemCache: new Set(),
+      activeCache: new Set(),
+      expandedCache: new Set(),
+      expanded: true,
+      expandedFilter: null,
+      collapseFilter: null
     }
   },
   methods: {
+    expandAll (filter = null) {
+      const collection = filter ? [...this.treeItemCache].filter(filter) : this.treeItemCache
+      for (const treeItem of collection) {
+        if (treeItem.depth < this.minDepth) {
+          // do not touch hidden tree items
+          continue
+        }
+        treeItem.isExpanded = true
+        this.expandedCache.add(treeItem)
+      }
+      this.expanded = true
+    },
+    collapseAll (filter = null) {
+      const collection = filter ? [...this.expandedCache].filter(filter) : this.expandedCache
+      for (const treeItem of collection) {
+        if (treeItem.depth < this.minDepth) {
+          // do not touch hidden tree items
+          continue
+        }
+        treeItem.isExpanded = false
+        this.expandedCache.delete(treeItem)
+      }
+      if (!filter) {
+        this.expanded = false
+      }
+    },
+    onTreeItemExpanded (treeItem) {
+      this.expandedCache.add(treeItem)
+    },
+    onTreeItemCollapsed (treeItem) {
+      this.expandedCache.delete(treeItem)
+    },
+    onTreeItemCreated (treeItem) {
+      this.treeItemCache.add(treeItem)
+      if (treeItem.isExpanded) {
+        this.expandedCache.add(treeItem)
+      }
+    },
     onTreeItemClicked (treeItem) {
       if (this.activable) {
         if (!this.multipleActive) {

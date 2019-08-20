@@ -14,7 +14,22 @@
         <v-text-field v-model.number="minDepth" label="Minimum depth" class="mx-2" />
       </v-flex>
     </v-layout>
+    <v-layout row wrap>
+      <v-flex xs12 sm3 md3>
+        <v-btn small @click="$refs.treeComponent1.expandAll()">Expand All</v-btn>
+      </v-flex>
+      <v-flex xs12 sm3 md3>
+        <v-btn small @click="$refs.treeComponent1.collapseAll()">Collapse All</v-btn>
+      </v-flex>
+      <v-flex xs12 sm3 md3>
+        <v-btn small @click="$refs.treeComponent1.expandAll((treeItem) => treeItem.node.__type === 'task')">Expand All Tasks</v-btn>
+      </v-flex>
+      <v-flex xs12 sm3 md3>
+        <v-btn small @click="$refs.treeComponent1.collapseAll((treeItem) => treeItem.node.__type === 'task')">Collapse All Tasks</v-btn>
+      </v-flex>
+    </v-layout>
     <tree
+        ref="treeComponent1"
         :workflows="workflowTree"
         :cycles="cycles"
         :hoverable="hoverable"
