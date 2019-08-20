@@ -1,14 +1,17 @@
 <template>
-  <v-container flui>
+  <v-container fluid>
     <v-layout row wrap>
-      <v-flex xs12 sm4 md4>
+      <v-flex xs12 sm3 md3>
         <v-checkbox v-model="hoverable" label="Hoverable?" class="mx-2"/>
       </v-flex>
-      <v-flex xs12 sm4 md4>
+      <v-flex xs12 sm3 md3>
         <v-checkbox v-model="activable" label="Activable?" class="mx-2"/>
       </v-flex>
-      <v-flex xs12 sm4 md4>
+      <v-flex xs12 sm3 md3>
         <v-checkbox v-model="multipleActive" label="Multiple active?" class="mx-2"/>
+      </v-flex>
+      <v-flex xs12 sm3 md3>
+        <v-text-field v-model.number="minDepth" label="Minimum depth" class="mx-2" />
       </v-flex>
     </v-layout>
     <tree
@@ -16,7 +19,9 @@
         :cycles="cycles"
         :hoverable="hoverable"
         :activable="activable"
-        :multiple-active="multipleActive"></tree>
+        :multiple-active="multipleActive"
+        :min-depth="minDepth"
+    ></tree>
   </v-container>
 </template>
 
@@ -41,10 +46,13 @@ const QUERIES = {
             state
             cyclePoint
             task {
+              meanElapsedTime
               name
             }
             jobs {
               id
+              host
+              startedTime
               state
               submitNum
             }
@@ -74,7 +82,8 @@ export default {
     isLoading: true,
     hoverable: false,
     activable: false,
-    multipleActive: false
+    multipleActive: false,
+    minDepth: 1
   }),
 
   computed: {

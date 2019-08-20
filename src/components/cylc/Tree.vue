@@ -7,6 +7,7 @@
         :key="workflow.id"
         :node="workflow"
         :hoverable="hoverable"
+        :min-depth="minDepth"
         v-on:tree-item-clicked="onTreeItemClicked"
     >
     </tree-item>
@@ -29,7 +30,11 @@ export default {
     },
     hoverable: Boolean,
     activable: Boolean,
-    multipleActive: Boolean
+    multipleActive: Boolean,
+    minDepth: {
+      type: Number,
+      default: 0
+    }
   },
   components: {
     'tree-item': TreeItem

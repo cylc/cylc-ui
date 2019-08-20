@@ -2,9 +2,9 @@
   <div>
     <v-layout
         row
-        wrap
+        v-show="depth >= minDepth"
         :class="getNodeClass()"
-        :style="{'padding-left': `${depth *30}px`}"
+        :style="getNodeStyle()"
     >
       <!-- the node's left icon; used for expand/collapse -->
       <v-flex
@@ -54,6 +54,7 @@
           :node="child"
           :depth="depth + 1"
           :hoverable="hoverable"
+          :min-depth="minDepth"
           v-on:tree-item-clicked="$emit('tree-item-clicked', $event)"
       ></TreeItem>
     </span>
@@ -76,6 +77,10 @@ export default {
       required: true
     },
     depth: {
+      type: Number,
+      default: 0
+    },
+    minDepth: {
       type: Number,
       default: 0
     },
@@ -110,6 +115,14 @@ export default {
         console.log('Clicked with CTRL!')
       } else {
         console.log('Clicked without CTRL!')
+      }
+    },
+    getNodeStyle () {
+      // we need to compensate for the minimum depth set by the user, subtracting it
+      // from the node depth.
+      const depthDifference = this.depth - this.minDepth
+      return {
+        'padding-left': `${depthDifference * 30}px`
       }
     },
     getNodeClass () {
