@@ -27,15 +27,22 @@
         <v-flex shrink>
           <task :status="node.state" :progress=0 />
         </v-flex>
-        <v-flex grow>
+        <v-flex shrink>
           <span class="mx-1">{{ node.name }}</span>
+        </v-flex>
+        <v-flex grow ml-4 v-if="!expanded">
+          <!-- Task summary -->
+          <job
+              v-for="(task, index) in node.children"
+              :key="`${task.id}-summary-${index}`"
+              :status="task.state" />
         </v-flex>
       </v-layout>
       <v-layout @click="nodeClicked" row wrap v-else-if="node.__type === 'job'">
         <v-flex shrink>
           <job :status="node.state" />
         </v-flex>
-        <v-flex xs1>
+        <v-flex xs2 md1 lg1>
           <span class="mx-1">{{ node.name }}</span>
         </v-flex>
         <v-flex grow>
@@ -100,6 +107,9 @@ export default {
   },
   methods: {
     typeClicked () {
+      if (this.node.__type === 'task') {
+        // ok
+      }
       this.expanded = !this.expanded
     },
     getTypeStyle () {
