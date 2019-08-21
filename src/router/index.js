@@ -52,7 +52,7 @@ Vue.use(Meta)
 
 router.beforeResolve((to, from, next) => {
   if (to.name) {
-    if (['Tree', 'Graph'].indexOf(to.name) !== -1) {
+    if (['Tree'].includes(to.name)) {
       // When a workflow is being displayed, we set the title to a
       // different value.
       store.commit('app/setTitle', to.params.name)

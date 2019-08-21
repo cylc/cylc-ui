@@ -24,7 +24,7 @@
     </div>
 
     <!-- control bar elements displayed only when a workflow has been positioned -->
-    <template v-if="workflows && workflows.length > 0">
+    <template v-if="isDisplayingWorkflow()">
       <a @click="onClickPause">
         <v-icon color="#5E5E5E">mdi-pause</v-icon>
       </a>
@@ -116,6 +116,10 @@ export default {
     onClickAddView () {
       // TODO: implement adding views action
       console.log('Adding views has not been implemented yet')
+    },
+    isDisplayingWorkflow () {
+      // add other view names that must display the Control bar here
+      return ['Tree'].includes(this.$route.name)
     }
   }
 }
