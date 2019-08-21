@@ -16,5 +16,5 @@ else
     exit 1
 fi
 
-sed -i "1 s/^/const checkpoint=/; s/${USER}/cylc/g" "${CHECK_FILE}"
+sed -i "1 s/^/const checkpoint = /; s/${USER}/cylc/g" "${CHECK_FILE}"
 echo -e '\nexport { checkpoint }' >> "${CHECK_FILE}"
