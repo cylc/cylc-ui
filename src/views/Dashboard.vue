@@ -137,10 +137,6 @@
 import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
 
-function connectNodes (fromNode, toNode) {
-  console.log('TODO?')
-}
-
 export default {
   mixins: [mixin],
   metaInfo () {
@@ -158,11 +154,6 @@ export default {
   }),
   computed: {
     ...mapState('app', ['color'])
-  },
-  mounted: function () {
-    const settingsNode = document.getElementById('settings-node').children[0]
-    const suiteDesignGuideNode = document.getElementById('guide-node').children[0]
-    connectNodes(settingsNode, suiteDesignGuideNode)
   }
 }
 </script>
