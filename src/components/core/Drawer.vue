@@ -4,6 +4,7 @@
     v-model="inputValue"
     app
     persistent
+    floating
     mobile-break-point="991"
     width="260"
     clipped
@@ -143,7 +144,7 @@ export default {
   #app-drawer {
     .v-list__tile {
       border-radius: 4px;
-        margin-top: 5px;
+      margin-top: 5px;
 
       &--buy {
         margin-top: auto;
@@ -168,6 +169,5 @@ export default {
   .v-navigation-drawer {
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-    border-right: 2px solid $grey-300;
   }
 </style>
