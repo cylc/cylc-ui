@@ -51,13 +51,5 @@ export default [
     meta: {
       layout: 'empty'
     }
-  },
-  {
-    path: '/tree2',
-    name: i18n.t('App.workflows'),
-    view: 'Tree2',
-    meta: {
-      layout: 'default'
-    }
   }
 ]
