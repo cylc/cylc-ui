@@ -12,11 +12,9 @@
 
 <script>
 import { workflowService } from 'workflow-service'
-import { mapState } from 'vuex'
 import { mixin } from '@/mixins/index'
-import { extractGroupState } from '@/utils/tasks'
+import { mapState } from 'vuex'
 import Tree from '@/components/cylc/Tree'
-import omit from 'lodash/omit'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -71,72 +69,7 @@ export default {
   }),
 
   computed: {
-    ...mapState('workflows', ['workflows']),
-    /**
-     * Compute a map of cycles, where the key is the workflow ID, and the
-     * value is the cyclepoint name.
-     */
-    cycles: function () {
-      const cycles = new Map()
-      for (const workflow of this.workflows) {
-        if (!cycles.get(workflow.id)) {
-          cycles.set(workflow.id, new Set())
-        }
-        for (const proxy of workflow.taskProxies) {
-          cycles.get(workflow.id).add(proxy.cyclePoint)
-        }
-      }
-      return cycles
-    },
-    /**
-     * Compute a workflow tree where the root is the workflow node, followed by
-     * the cycle points, and finally by task proxies.
-     *
-     * Every node has a .name property for display.
-     */
-    workflowTree: function () {
-      const workflowTree = []
-      for (const workflow of this.workflows) {
-        // add workflow minus taskProxies, with children
-        const simplifiedWorkflow = omit(workflow, 'taskProxies')
-        simplifiedWorkflow.__type = 'workflow'
-        simplifiedWorkflow.children = []
-        for (const cyclePoint of this.cycles.get(workflow.id)) {
-          const simplifiedCyclepoint = {
-            name: cyclePoint,
-            id: cyclePoint,
-            state: '',
-            children: [],
-            __type: 'cyclepoint'
-          }
-
-          const childStates = []
-
-          for (const taskProxy of workflow.taskProxies) {
-            if (taskProxy.cyclePoint === cyclePoint) {
-              const simplifiedTaskProxy = omit(taskProxy, ['jobs', 'task'])
-              simplifiedTaskProxy.name = taskProxy.task.name
-              simplifiedTaskProxy.children = []
-              simplifiedTaskProxy.__type = 'task'
-              for (const job of taskProxy.jobs.reverse()) {
-                job.name = `#${job.submitNum}`
-                job.__type = 'job'
-                simplifiedTaskProxy.children.push(job)
-              }
-              simplifiedCyclepoint.children.push(simplifiedTaskProxy)
-
-              childStates.push(taskProxy.state)
-            }
-          }
-
-          simplifiedCyclepoint.state = extractGroupState(childStates, false)
-
-          simplifiedWorkflow.children.push(simplifiedCyclepoint)
-        }
-        workflowTree.push(simplifiedWorkflow)
-      }
-      return workflowTree
-    },
+    ...mapState('workflows', ['workflowTree']),
     workflows: function () {
       for (const workflow of this.workflowTree) {
         if (workflow.name === this.$route.params.name) {
