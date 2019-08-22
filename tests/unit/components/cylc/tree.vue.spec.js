@@ -5,20 +5,22 @@ import { expect } from 'chai'
 // eslint-disable-next-line no-unused-vars
 import * as vuetify from '@/plugins/vuetify'
 import Tree from '@/components/cylc/Tree'
-import { simpleWorkflowTree3Nodes } from './tree.data'
+import { simpleWorkflowTree4Nodes } from './tree.data'
 
 const cycles = new Map([
-  ['user/workflow1', new Set([
-    '20100101T0000Z'
+  [
+    'user/workflow1',
+    new Set([
+      '20100101T0000Z'
+    ])
   ]
-  )]
 ])
 
 describe('Tree component', () => {
   it('should display the tree with valid data', () => {
     const wrapper = mount(Tree, {
       propsData: {
-        workflows: simpleWorkflowTree3Nodes,
+        workflows: simpleWorkflowTree4Nodes,
         cycles: cycles
       }
     })
@@ -29,24 +31,24 @@ describe('Tree component', () => {
     it('should display workflow with default minDepth=0', () => {
       const wrapper = mount(Tree, {
         propsData: {
-          workflows: simpleWorkflowTree3Nodes,
+          workflows: simpleWorkflowTree4Nodes,
           cycles: cycles
         }
       })
       const nodes = wrapper.findAll('div.node')
-      expect(nodes.length).to.equal(3)
+      expect(nodes.length).to.equal(4)
       expect(nodes.wrappers[0].isVisible()).to.equal(true)
     })
     it('should hide workflow with minDepth=1', () => {
       const wrapper = mount(Tree, {
         propsData: {
-          workflows: simpleWorkflowTree3Nodes,
+          workflows: simpleWorkflowTree4Nodes,
           cycles: cycles,
           minDepth: 1
         }
       })
       const nodes = wrapper.findAll('div.node')
-      expect(nodes.length).to.equal(3)
+      expect(nodes.length).to.equal(4)
       expect(nodes.wrappers[0].isVisible()).to.equal(false)
     })
   })
@@ -54,7 +56,7 @@ describe('Tree component', () => {
     it('should not activate by default', () => {
       const wrapper = mount(Tree, {
         propsData: {
-          workflows: simpleWorkflowTree3Nodes,
+          workflows: simpleWorkflowTree4Nodes,
           cycles: cycles
         }
       })
@@ -70,7 +72,7 @@ describe('Tree component', () => {
     it('should activate correctly', () => {
       const wrapper = mount(Tree, {
         propsData: {
-          workflows: simpleWorkflowTree3Nodes,
+          workflows: simpleWorkflowTree4Nodes,
           cycles: cycles,
           activable: true
         }
