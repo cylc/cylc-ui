@@ -31,7 +31,6 @@
     <tree
         ref="treeComponent1"
         :workflows="workflowTree"
-        :cycles="cycles"
         :hoverable="hoverable"
         :activable="activable"
         :multiple-active="multipleActive"

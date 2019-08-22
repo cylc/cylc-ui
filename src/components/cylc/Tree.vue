@@ -28,10 +28,6 @@ export default {
       type: Array,
       required: true
     },
-    cycles: {
-      type: Map,
-      required: true
-    },
     hoverable: Boolean,
     activable: Boolean,
     multipleActive: Boolean,
