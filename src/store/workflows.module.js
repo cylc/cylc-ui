@@ -29,11 +29,14 @@ const mutations = {
 function _getCycles (workflows) {
   const cycles = new Map()
   for (const workflow of workflows) {
-    if (!cycles.get(workflow.id)) {
-      cycles.set(workflow.id, new Set())
-    }
-    for (const proxy of workflow.taskProxies) {
-      cycles.get(workflow.id).add(proxy.cyclePoint)
+    if (Object.prototype.hasOwnProperty.call(workflow, 'taskProxies')) {
+      console.log(workflow.taskProxies)
+      if (!cycles.get(workflow.id)) {
+        cycles.set(workflow.id, new Set())
+      }
+      for (const proxy of workflow.taskProxies) {
+        cycles.get(workflow.id).add(proxy.cyclePoint)
+      }
     }
   }
   return cycles
@@ -52,46 +55,48 @@ function _getCycles (workflows) {
 function _getWorkflowTree (workflows) {
   const cycles = _getCycles(workflows)
   const workflowTree = []
-  for (const workflow of workflows) {
-    // add workflow minus taskProxies, with children
-    const simplifiedWorkflow = omit(workflow, 'taskProxies')
-    simplifiedWorkflow.__type = 'workflow'
-    simplifiedWorkflow.children = []
-    for (const cyclePoint of cycles.get(workflow.id)) {
-      const simplifiedCyclepoint = {
-        name: cyclePoint,
-        id: cyclePoint,
-        state: '',
-        children: [],
-        __type: 'cyclepoint'
-      }
-
-      const childStates = []
-
-      for (const taskProxy of workflow.taskProxies) {
-        if (taskProxy.cyclePoint === cyclePoint) {
-          const simplifiedTaskProxy = omit(taskProxy, ['jobs', 'task'])
-          simplifiedTaskProxy.name = taskProxy.task.name
-          simplifiedTaskProxy.children = []
-          simplifiedTaskProxy.__type = 'task'
-          for (const job of taskProxy.jobs.reverse()) {
-            job.name = `#${job.submitNum}`
-            job.__type = 'job'
-            simplifiedTaskProxy.children.push(job)
-          }
-          simplifiedCyclepoint.children.push(simplifiedTaskProxy)
-
-          childStates.push(taskProxy.state)
+  if (cycles.size > 0) {
+    for (const workflow of workflows) {
+      // add workflow minus taskProxies, with children
+      const simplifiedWorkflow = omit(workflow, 'taskProxies')
+      simplifiedWorkflow.__type = 'workflow'
+      simplifiedWorkflow.children = []
+      for (const cyclePoint of cycles.get(workflow.id)) {
+        const simplifiedCyclepoint = {
+          name: cyclePoint,
+          id: cyclePoint,
+          state: '',
+          children: [],
+          __type: 'cyclepoint'
         }
+
+        const childStates = []
+
+        for (const taskProxy of workflow.taskProxies) {
+          if (taskProxy.cyclePoint === cyclePoint) {
+            const simplifiedTaskProxy = omit(taskProxy, ['jobs', 'task'])
+            simplifiedTaskProxy.name = taskProxy.task.name
+            simplifiedTaskProxy.children = []
+            simplifiedTaskProxy.__type = 'task'
+            for (const job of taskProxy.jobs.reverse()) {
+              job.name = `#${job.submitNum}`
+              job.__type = 'job'
+              simplifiedTaskProxy.children.push(job)
+            }
+            simplifiedCyclepoint.children.push(simplifiedTaskProxy)
+
+            childStates.push(taskProxy.state)
+          }
+        }
+
+        simplifiedCyclepoint.state = extractGroupState(childStates, false)
+
+        simplifiedWorkflow.children.push(simplifiedCyclepoint)
       }
-
-      simplifiedCyclepoint.state = extractGroupState(childStates, false)
-
-      simplifiedWorkflow.children.push(simplifiedCyclepoint)
+      workflowTree.push(simplifiedWorkflow)
     }
-    workflowTree.push(simplifiedWorkflow)
-    return workflowTree
   }
+  return workflowTree
 }
 
 const actions = {

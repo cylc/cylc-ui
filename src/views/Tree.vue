@@ -1,7 +1,7 @@
 <template>
   <div class="c-tree">
     <tree
-      :workflows="workflows"
+      :workflows="currentWorkflow"
       :hoverable="false"
       :activable="false"
       :multiple-active="false"
@@ -70,7 +70,7 @@ export default {
 
   computed: {
     ...mapState('workflows', ['workflowTree']),
-    workflows: function () {
+    currentWorkflow: function () {
       for (const workflow of this.workflowTree) {
         if (workflow.name === this.$route.params.name) {
           return [workflow]
