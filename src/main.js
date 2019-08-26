@@ -4,6 +4,7 @@ import Vue from 'vue'
 
 // Plugins
 import './plugins'
+import vuetify from './plugins/vuetify'
 
 // Components
 import './components'
@@ -36,6 +37,7 @@ new Vue({
   i18n,
   router,
   store,
+  vuetify,
   apolloProvider,
   render: h => h(App)
 }).$mount('#app')
