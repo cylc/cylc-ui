@@ -1,19 +1,16 @@
-@import "../material-dashboard/colors";
-@import "../material-dashboard/variables";
-
 .c-header {
-  background-color: $grey-300;
+  background-color: map-get($grey, 'lighten-3');
 }
 
 .c-environment-info {
-  color: $grey-900;
-  font-size: $font-size-default;
-  font-weight: $font-weight-base;
+  color: map-get($grey, base);
+  font-size: $font-size-root;
+  font-weight: map-get($font-weights, 'regular');
 
   .v-chip {
-    font-size: $font-size-default;
+    font-size: $font-size-root;
     span {
-      background-color: $grey-100;
+      background-color: map-get($grey, 'lighten-3');
     }
   }
 }
