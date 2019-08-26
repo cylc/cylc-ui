@@ -139,8 +139,6 @@ export default {
 </script>
 
 <style lang="scss">
-  @import "../../styles/material-dashboard/colors";
-
   #app-drawer {
     .v-list__tile {
       border-radius: 4px;
