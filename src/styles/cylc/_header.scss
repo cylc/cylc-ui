@@ -10,7 +10,11 @@
   .v-chip {
     font-size: $font-size-root;
     span {
-      background-color: map-get($grey, 'lighten-3');
+      background-color: map-get($grey, 'lighten-5');
     }
+  }
+
+  .v-chip.v-chip--outlined.v-chip.v-chip {
+    background-color: map-get($grey, 'lighten-5') !important;
   }
 }

@@ -12,6 +12,7 @@
     <v-layout
       tag="v-list"
       column
+      style="padding: 0"
     >
       <c-header />
       <v-list-item

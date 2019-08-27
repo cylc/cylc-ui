@@ -1,10 +1,9 @@
 <template>
   <div>
     <v-app-bar
-        id="core-app-bar"
+      id="core-app-bar"
       app
       absolute
-      color="transparent"
       flat
       dense
       class="c-toolbar"

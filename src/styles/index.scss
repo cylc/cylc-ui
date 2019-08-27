@@ -1,6 +1,11 @@
 @import '~vuetify/src/styles/styles.sass';
 
 @import "cylc/variables";
-@import "cylc/sidebar";
+@import "cylc/header";
 @import "cylc/toolbar";
 @import "cylc/drawer";
+@import "cylc/footer";
+
+.theme--light.v-application {
+  background-color: transparent;
+}
