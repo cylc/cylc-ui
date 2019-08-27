@@ -20,7 +20,6 @@
             :headers="headers"
             :items="workflows"
             :loading="isLoading"
-            :pagination.sync="pagination"
           >
             <template slot="no-data" v-if="!isLoading">
               <v-alert
@@ -98,9 +97,6 @@ export default {
     viewID: 'GScan: ' + Math.random(),
     subscriptions: {},
     isLoading: true,
-    pagination: {
-      rowsPerPage: 10
-    },
     headers: [
       {
         sortable: true,
