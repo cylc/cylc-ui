@@ -2,9 +2,9 @@
   <v-container
     fluid
     grid-list
-    class="c-dashboard"
+    class="c-dashboard mt-4"
   >
-    <v-layout row wrap>
+    <v-layout wrap>
       <v-flex xs6 md6 lg3>
         <p class="display-1">Workflows</p>
         <!-- TODO: link with data from the query -->
@@ -12,7 +12,7 @@
             :items="workflows"
             hide-default-footer
             hide-default-header>
-          <template v-slot:items="props">
+          <template v-slot:item="props">
             <td class="headline">{{ props.item.count }}</td>
             <td class="title">{{ props.item.text }}</td>
           </template>
@@ -24,7 +24,7 @@
             :items="events"
             hide-default-footer
             hide-default-header>
-          <template v-slot:items="props">
+          <template v-slot:item="props">
             <td class="headline">{{ props.item.id }}</td>
             <td class="title">{{ props.item.text }}</td>
           </template>
@@ -130,7 +130,6 @@
 
 <script>
 import { mixin } from '@/mixins/index'
-import { mapState } from 'vuex'
 
 export default {
   mixins: [mixin],
@@ -146,10 +145,7 @@ export default {
       { text: 'Stopped', count: 0 }
     ],
     events: []
-  }),
-  computed: {
-    ...mapState('app', ['color'])
-  }
+  })
 }
 </script>
 
