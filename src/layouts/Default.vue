@@ -19,7 +19,7 @@
 <script>
 import Toolbar from '@/components/cylc/Toolbar'
 import Alert from '@/components/core/Alert'
-import Drawer from '@/components/core/Drawer'
+import Drawer from '@/components/cylc/Drawer'
 import Footer from '@/components/core/Footer'
 
 export default {

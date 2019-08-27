@@ -1,10 +1,10 @@
 <template>
-  <v-toolbar
-    flat
-    dense
-    class="c-toolbar"
-  >
-    <div class="v-toolbar-title">
+  <div>
+    <v-toolbar
+      flat
+      dense
+      class="c-toolbar"
+    >
       <v-toolbar-title
         class="tertiary--text font-weight-light"
       >
@@ -21,34 +21,9 @@
         <!-- title -->
         <span class="c-toolbar-title">{{ title }}</span>
       </v-toolbar-title>
-    </div>
 
-    <!-- control bar elements displayed only when a workflow has been positioned -->
-    <template v-if="isDisplayingWorkflow()">
-      <a @click="onClickPause">
-        <v-icon color="#5E5E5E">mdi-pause</v-icon>
-      </a>
-
-      <a @click="onClickStop">
-        <v-icon color="#5E5E5E">mdi-stop</v-icon>
-      </a>
-
-      <a>
-        <v-chip color="#E7E7E7" @click="toggleExtended">{{ $t('Toolbar.control') }}</v-chip>
-      </a>
-
-      <span>Running, will stop at 30000101T0000 cycle</span>
-
-      <v-spacer />
-
-      <a class="add-view" @click="onClickAddView">
-        {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
-      </a>
-    </template>
-
-    <!-- displayed only when extended===true -->
-    <template v-slot:extension v-if="extended">
-      <span style="margin-left: 260px;">
+      <!-- control bar elements displayed only when a workflow has been positioned -->
+      <template v-if="isDisplayingWorkflow()">
         <a @click="onClickPause">
           <v-icon color="#5E5E5E">mdi-pause</v-icon>
         </a>
@@ -57,11 +32,36 @@
           <v-icon color="#5E5E5E">mdi-stop</v-icon>
         </a>
 
-        <span>Other controls added in the future</span>
-      </span>
-    </template>
+        <a>
+          <v-chip color="#E7E7E7" @click="toggleExtended">{{ $t('Toolbar.control') }}</v-chip>
+        </a>
 
-  </v-toolbar>
+        <span>Running, will stop at 30000101T0000 cycle</span>
+
+        <v-spacer />
+
+        <a class="add-view" @click="onClickAddView">
+          {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
+        </a>
+      </template>
+
+      <!-- displayed only when extended===true -->
+      <template v-slot:extension v-if="extended">
+        <span style="margin-left: 260px;">
+          <a @click="onClickPause">
+            <v-icon color="#5E5E5E">mdi-pause</v-icon>
+          </a>
+
+          <a @click="onClickStop">
+            <v-icon color="#5E5E5E">mdi-stop</v-icon>
+          </a>
+
+          <span>Other controls added in the future</span>
+        </span>
+      </template>
+
+    </v-toolbar>
+  </div>
 </template>
 
 <script>
