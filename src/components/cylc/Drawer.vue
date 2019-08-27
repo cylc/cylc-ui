@@ -8,12 +8,13 @@
     mobile-break-point="991"
     width="260"
     clipped
+    class="fill-height"
   >
     <v-layout
       tag="v-list"
       column
     >
-      <c-header class="fill-height" />
+      <c-header />
       <v-list-item
         v-if="responsive"
       >
