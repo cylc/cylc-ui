@@ -1,6 +1,10 @@
 <template>
   <div>
-    <v-toolbar
+    <v-app-bar
+        id="core-app-bar"
+      app
+      absolute
+      color="transparent"
       flat
       dense
       class="c-toolbar"
@@ -60,7 +64,7 @@
         </span>
       </template>
 
-    </v-toolbar>
+    </v-app-bar>
   </div>
 </template>
 
@@ -124,3 +128,14 @@ export default {
   }
 }
 </script>
+
+<style>
+  /* Fix coming in v2.0.8 */
+  #core-app-bar {
+    width: auto;
+  }
+
+  #core-app-bar a {
+    text-decoration: none;
+  }
+</style>

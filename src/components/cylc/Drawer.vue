@@ -3,11 +3,10 @@
     id="app-drawer"
     v-model="inputValue"
     app
-    persistent
     floating
     mobile-break-point="991"
     width="260"
-    clipped
+    persistent
     class="fill-height"
   >
     <v-layout
