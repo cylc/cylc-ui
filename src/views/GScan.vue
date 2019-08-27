@@ -40,7 +40,7 @@
             </template>
             <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
             <template
-              slot="items"
+              slot="item"
               slot-scope="{ item }"
             >
               <td>{{ item.name }}</td>
