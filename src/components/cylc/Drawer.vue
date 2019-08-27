@@ -124,35 +124,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-  #app-drawer {
-    .v-list__tile {
-      border-radius: 4px;
-      margin-top: 5px;
-
-      &--buy {
-        margin-top: auto;
-        margin-bottom: auto;
-      }
-    }
-
-    .v-image__image--contain {
-      top: 30px;
-      bottom: 30px;
-      height: 60%;
-    }
-
-    .search-input {
-      margin-bottom: 30px !important;
-      padding-left: 15px;
-      padding-right: 15px;
-    }
-  }
-
-  /* this is not in our styles/material-dashboard, so we need to force-override */
-  .v-navigation-drawer {
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-  }
-</style>
