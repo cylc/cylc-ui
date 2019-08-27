@@ -10,8 +10,8 @@
         <!-- TODO: link with data from the query -->
         <v-data-table
             :items="workflows"
-            hide-actions
-            hide-headers>
+            hide-default-footer
+            hide-default-header>
           <template v-slot:items="props">
             <td class="headline">{{ props.item.count }}</td>
             <td class="title">{{ props.item.text }}</td>
@@ -22,8 +22,8 @@
         <p class="display-1">Events</p>
         <v-data-table
             :items="events"
-            hide-actions
-            hide-headers>
+            hide-default-footer
+            hide-default-header>
           <template v-slot:items="props">
             <td class="headline">{{ props.item.id }}</td>
             <td class="title">{{ props.item.text }}</td>
@@ -38,95 +38,90 @@
     <v-layout row wrap>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-tile
-              avatar
+          <v-list-item
               to="/user-profile"
               :active-class="color"
           >
-            <v-list-tile-avatar size="60" style="font-size: 2em;">
+            <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-settings</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content>
-              <v-list-tile-title class="title font-weight-thin">
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title class="title font-weight-thin">
                 Settings
-              </v-list-tile-title>
-              <v-list-tile-sub-title>
+              </v-list-item-title>
+              <v-list-item-subtitle>
                 View your Hub permissions, and alter user preferences
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <v-list-tile
-              avatar
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
               href="/hub/home"
               :active-class="color"
           >
-            <v-list-tile-avatar size="60" style="font-size: 2em;">
+            <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-hubspot</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content>
-              <v-list-tile-title class="title font-weight-thin">
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title class="title font-weight-thin">
                 Cylc Hub
-              </v-list-tile-title>
-              <v-list-tile-sub-title>
+              </v-list-item-title>
+              <v-list-item-subtitle>
                 Visit the Hub to manage your running UI Servers
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-flex>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-tile
-              avatar
+          <v-list-item
               href="#"
               :active-class="color"
           >
-            <v-list-tile-avatar size="60" style="font-size: 2em;">
+            <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-book</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content>
-              <v-list-tile-title class="title font-weight-thin">
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title class="title font-weight-thin">
                 Cylc UI Quickstart
-              </v-list-tile-title>
-              <v-list-tile-sub-title>
+              </v-list-item-title>
+              <v-list-item-subtitle>
                 Learn how to use the Cylc UI
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <v-list-tile
-              avatar
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
               href="https://cylc.github.io/doc/built-sphinx/suite-design-guide/suite-design-guide-master.html"
               :active-class="color"
           >
-            <v-list-tile-avatar size="60" style="font-size: 2em;">
+            <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-book-open-variant</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content>
-              <v-list-tile-title class="title font-weight-thin">
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title class="title font-weight-thin">
                 Suite Design Guide
-              </v-list-tile-title>
-              <v-list-tile-sub-title>
+              </v-list-item-title>
+              <v-list-item-subtitle>
                 How to make complex Cylc and Rose workflows simpler and easier to maintain
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <v-list-tile
-              avatar
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
               href="https://cylc.github.io/documentation.html"
               :active-class="color"
           >
-            <v-list-tile-avatar size="60" style="font-size: 2em;">
+            <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-file-document-box-multiple</v-icon>
-            </v-list-tile-avatar>
-            <v-list-tile-content>
-              <v-list-tile-title class="title font-weight-thin">
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title class="title font-weight-thin">
                 Documentation
-              </v-list-tile-title>
-              <v-list-tile-sub-title>
+              </v-list-item-title>
+              <v-list-item-subtitle>
                 The complete Cylc documentation
-              </v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-flex>
     </v-layout>

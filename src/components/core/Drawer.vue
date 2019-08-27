@@ -15,7 +15,7 @@
       column
     >
       <c-header />
-      <v-list-tile
+      <v-list-item
         v-if="responsive"
       >
         <v-text-field
@@ -23,35 +23,33 @@
           label="Search..."
           color="purple"
         />
-      </v-list-tile>
+      </v-list-item>
 
-      <v-list-tile
+      <v-list-item
           to="/"
           :active-class="color"
-          avatar
           class="v-list-item"
       >
-        <v-list-tile-action>
+        <v-list-item-action>
           <v-icon>mdi-home</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-title>Dashboard</v-list-tile-title>
-      </v-list-tile>
+        </v-list-item-action>
+        <v-list-item-title>Dashboard</v-list-item-title>
+      </v-list-item>
       <v-subheader>Views</v-subheader>
-      <v-list-tile
+      <v-list-item
         v-for="(link, index) in viewLinks"
         :key="index+link.text"
         :to="link.to"
         :active-class="color"
-        avatar
         class="v-list-item"
       >
-        <v-list-tile-action>
+        <v-list-item-action>
           <v-icon>{{ link.icon }}</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-title
+        </v-list-item-action>
+        <v-list-item-title
           v-text="link.text"
         />
-      </v-list-tile>
+      </v-list-item>
     </v-layout>
   </v-navigation-drawer>
 </template>
@@ -62,12 +60,17 @@ import {
   mapMutations,
   mapState
 } from 'vuex'
+// because we use `tag=v-list` and not `v-list`
+// eslint-disable-next-line no-unused-vars
+import { VList } from 'vuetify/lib/components/VList'
 import Header from '@/components/cylc/Header'
 import i18n from '@/i18n'
 
 export default {
   components: {
-    'c-header': Header
+    'c-header': Header,
+    // eslint-disable-next-line vue/no-unused-components
+    'v-list': VList
   },
   data: () => ({
     links: [
