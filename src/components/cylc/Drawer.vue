@@ -26,7 +26,7 @@
 
       <v-list-item
           to="/dashboard"
-          active-class="primary white--text"
+          active-class="primary grey--text text--darken-3"
           class="v-list-item"
       >
         <v-list-item-action>
@@ -39,7 +39,7 @@
         v-for="(link, index) in viewLinks"
         :key="index+link.text"
         :to="link.to"
-        active-class="primary white--text"
+        active-class="primary grey--text text--darken-3"
         class="v-list-item"
       >
         <v-list-item-action>
