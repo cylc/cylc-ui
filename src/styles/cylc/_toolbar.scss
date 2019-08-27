@@ -7,11 +7,11 @@
 }
 
 .c-toolbar {
-  background-color: map-get($grey, 'lighten-4');
+  background-color: map-get($grey, 'lighten-3');
 
   .c-toolbar-title, .add-view {
     font-size: 22px;
-    color: map-get($blue, 'lighten-4');
+    color: map-get($blue, 'lighten-3');
     font-weight: map-get($font-weights, medium);
   }
 
