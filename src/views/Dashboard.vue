@@ -9,24 +9,30 @@
         <p class="display-1">Workflows</p>
         <!-- TODO: link with data from the query -->
         <v-data-table
+            :headers="workflowsHeader"
             :items="workflows"
             hide-default-footer
             hide-default-header>
-          <template v-slot:item="props">
-            <td class="headline">{{ props.item.count }}</td>
-            <td class="title">{{ props.item.text }}</td>
+          <template v-slot:item.count="{ item }">
+            <span class="headline font-weight-thin">{{ item.count }}</span>
+          </template>
+          <template v-slot:item.text="{ item }">
+            <span class="title font-weight-thin">{{ item.text }}</span>
           </template>
         </v-data-table>
       </v-flex>
       <v-flex xs6 md6 lg9>
         <p class="display-1">Events</p>
         <v-data-table
+            :headers="eventsHeader"
             :items="events"
             hide-default-footer
             hide-default-header>
-          <template v-slot:item="props">
-            <td class="headline">{{ props.item.id }}</td>
-            <td class="title">{{ props.item.text }}</td>
+          <template v-slot:item.id="{ item }">
+            <span class="title font-weight-thin">{{ item.id }}</span>
+          </template>
+          <template v-slot:item.text="{ item }">
+            <span class="title font-weight-thin">{{ item.text }}</span>
           </template>
           <template v-slot:no-data>
             <td class="title">No events</td>
@@ -123,14 +129,49 @@ export default {
       title: this.getPageTitle('App.dashboard')
     }
   },
-  data: () => ({
-    workflows: [
-      { text: 'Running', count: 0 },
-      { text: 'Held', count: 0 },
-      { text: 'Stopped', count: 0 }
-    ],
-    events: []
-  })
+  data () {
+    return {
+      workflowsHeader: [
+        {
+          text: 'Count',
+          sortable: false,
+          value: 'count'
+        },
+        {
+          text: 'Text',
+          sortable: false,
+          value: 'text'
+        }
+      ],
+      workflows: [
+        {
+          text: 'Running',
+          count: 0
+        },
+        {
+          text: 'Held',
+          count: 0
+        },
+        {
+          text: 'Stopped',
+          count: 0
+        }
+      ],
+      eventsHeader: [
+        {
+          text: 'ID',
+          sortable: false,
+          value: 'id'
+        },
+        {
+          text: 'Event',
+          sortable: false,
+          value: 'text'
+        }
+      ],
+      events: []
+    }
+  }
 }
 </script>
 
