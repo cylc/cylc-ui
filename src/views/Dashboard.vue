@@ -38,10 +38,7 @@
     <v-layout row wrap>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-item
-              to="/user-profile"
-              :active-class="color"
-          >
+          <v-list-item to="/user-profile">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-settings</v-icon>
             </v-list-item-avatar>
@@ -54,10 +51,7 @@
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item
-              href="/hub/home"
-              :active-class="color"
-          >
+          <v-list-item href="/hub/home">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-hubspot</v-icon>
             </v-list-item-avatar>
@@ -74,10 +68,7 @@
       </v-flex>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-item
-              href="#"
-              :active-class="color"
-          >
+          <v-list-item href="#">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-book</v-icon>
             </v-list-item-avatar>
@@ -90,10 +81,7 @@
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item
-              href="https://cylc.github.io/doc/built-sphinx/suite-design-guide/suite-design-guide-master.html"
-              :active-class="color"
-          >
+          <v-list-item href="https://cylc.github.io/doc/built-sphinx/suite-design-guide/suite-design-guide-master.html">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-book-open-variant</v-icon>
             </v-list-item-avatar>
@@ -106,10 +94,7 @@
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item
-              href="https://cylc.github.io/documentation.html"
-              :active-class="color"
-          >
+          <v-list-item href="https://cylc.github.io/documentation.html">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-file-document-box-multiple</v-icon>
             </v-list-item-avatar>
