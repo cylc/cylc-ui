@@ -13,13 +13,16 @@ describe('UserService', () => {
   afterEach(() => sandbox.restore())
   describe('getUserProfile returns the logged-in user profile information', () => {
     it('should return user profile object', () => {
-      const userReturned = new Promise((resolve) => resolve({ data: {
-        name: 'cylc-user-01',
-        groups: ['root', 'wheel'],
-        created: '2019-01-01',
-        admin: true
-      }
-      }))
+      const userReturned = new Promise((resolve) => resolve(
+        {
+          data: {
+            name: 'cylc-user-01',
+            groups: ['root', 'wheel'],
+            created: '2019-01-01',
+            admin: true
+          }
+        })
+      )
       sandbox.stub(axios, 'get').returns(userReturned)
       return UserService.getUserProfile().then(function () {
         const user = store.state.user.user
