@@ -67,6 +67,7 @@
     "istanbul-instrumenter-loader": "^3.0.1",
     "lodash": "^4.17.15",
     "node-sass": "^4.12.0",
+    "null-loader": "^3.0.0",
     "nyc": "^14.1.1",
     "sass": "^1.22.10",
     "sass-loader": "^7.3.1",
