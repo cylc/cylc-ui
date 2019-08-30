@@ -2,7 +2,7 @@
 
 describe('My First Test', () => {
   it('Visits the app root url', () => {
-    cy.visit('/dashboard')
-    cy.contains('div', 'Dashboard')
+    cy.visit('/#/')
+    cy.get('.c-toolbar-title').should('contain', 'Dashboard')
   })
 })

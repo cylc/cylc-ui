@@ -49,6 +49,7 @@
     "vuex-router-sync": "^5.0.0"
   },
   "devDependencies": {
+    "@cypress/webpack-preprocessor": "^4.1.0",
     "@mdi/font": "^3.9.97",
     "@vue/cli-plugin-babel": "^3.10.0",
     "@vue/cli-plugin-e2e-cypress": "^3.10.0",
