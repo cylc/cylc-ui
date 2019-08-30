@@ -26,7 +26,7 @@
       </v-list-tile>
 
       <v-list-tile
-          to="/dashboard"
+          to="/"
           :active-class="color"
           avatar
           class="v-list-item"
