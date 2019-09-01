@@ -118,9 +118,6 @@ export default {
   },
   methods: {
     typeClicked () {
-      if (this.node.__type === 'task') {
-        // ok
-      }
       this.isExpanded = !this.isExpanded
       if (this.isExpanded) {
         this.$emit('tree-item-expanded', this)

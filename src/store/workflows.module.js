@@ -30,7 +30,6 @@ function _getCycles (workflows) {
   const cycles = new Map()
   for (const workflow of workflows) {
     if (Object.prototype.hasOwnProperty.call(workflow, 'taskProxies')) {
-      console.log(workflow.taskProxies)
       if (!cycles.get(workflow.id)) {
         cycles.set(workflow.id, new Set())
       }
