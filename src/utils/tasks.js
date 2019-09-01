@@ -1,26 +1,6 @@
 import TaskState from '@/model/TaskState.model'
 
 /**
- * States used when comparing the parent with children nodes.
- * @type {*[]}
- */
-const orderedStates = [
-  TaskState.SUBMIT_FAILED,
-  TaskState.FAILED,
-  TaskState.EXPIRED,
-  TaskState.SUBMIT_RETRYING,
-  TaskState.RETRYING,
-  TaskState.RUNNING,
-  TaskState.SUBMITTED,
-  TaskState.READY,
-  TaskState.QUEUED,
-  TaskState.WAITING,
-  TaskState.HELD,
-  TaskState.SUCCEEDED,
-  TaskState.RUNAHEAD
-]
-
-/**
  * States used when the parent is stopped.
  * @type {*[]}
  */
@@ -48,7 +28,7 @@ const isStoppedOrderedStates = [
  * @link @see https://github.com/cylc/cylc-flow/blob/d66ae5c3ce8c749c8178d1cd53cb8c81d1560346/lib/cylc/task_state_prop.py
  */
 function extractGroupState (childStates, isStopped = false) {
-  const states = isStopped ? isStoppedOrderedStates : orderedStates
+  const states = isStopped ? isStoppedOrderedStates : TaskState.enumValues
   for (const state of states) {
     if (childStates.includes(state.name.toLowerCase())) {
       return state.name.toLowerCase()
