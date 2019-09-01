@@ -1,5 +1,4 @@
 // raw GraphQL response data structure
-import omit from 'lodash/omit'
 import { extractGroupState } from '@/utils/tasks'
 
 const state = {
@@ -57,9 +56,8 @@ function _getWorkflowTree (workflows) {
   if (cycles.size > 0) {
     for (const workflow of workflows) {
       // add workflow minus taskProxies, with children
-      const simplifiedWorkflow = omit(workflow, 'taskProxies')
-      simplifiedWorkflow.__type = 'workflow'
-      simplifiedWorkflow.children = []
+      workflow.__type = 'workflow'
+      workflow.children = []
       for (const cyclePoint of cycles.get(workflow.id)) {
         const simplifiedCyclepoint = {
           name: cyclePoint,
@@ -73,16 +71,15 @@ function _getWorkflowTree (workflows) {
 
         for (const taskProxy of workflow.taskProxies) {
           if (taskProxy.cyclePoint === cyclePoint) {
-            const simplifiedTaskProxy = omit(taskProxy, ['jobs', 'task'])
-            simplifiedTaskProxy.name = taskProxy.task.name
-            simplifiedTaskProxy.children = []
-            simplifiedTaskProxy.__type = 'task'
+            taskProxy.name = taskProxy.task.name
+            taskProxy.children = []
+            taskProxy.__type = 'task'
             for (const job of taskProxy.jobs.reverse()) {
               job.name = `#${job.submitNum}`
               job.__type = 'job'
-              simplifiedTaskProxy.children.push(job)
+              taskProxy.children.push(job)
             }
-            simplifiedCyclepoint.children.push(simplifiedTaskProxy)
+            simplifiedCyclepoint.children.push(taskProxy)
 
             childStates.push(taskProxy.state)
           }
@@ -90,9 +87,9 @@ function _getWorkflowTree (workflows) {
 
         simplifiedCyclepoint.state = extractGroupState(childStates, false)
 
-        simplifiedWorkflow.children.push(simplifiedCyclepoint)
+        workflow.children.push(simplifiedCyclepoint)
       }
-      workflowTree.push(simplifiedWorkflow)
+      workflowTree.push(workflow)
     }
   }
   return workflowTree
