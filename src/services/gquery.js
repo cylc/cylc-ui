@@ -165,7 +165,9 @@ class GQuery {
     /**
      * Perform a REST GraphQL request for all subscriptions.
      */
-    console.log('graphql request:', this.query)
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('graphql request:', this.query)
+    }
     return this.apolloClient.query({
       query: this.query,
       fetchPolicy: 'no-cache'
@@ -228,7 +230,9 @@ class GQuery {
         })
     })
 
-    console.log(ret)
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug(ret)
+    }
   }
 }
 
