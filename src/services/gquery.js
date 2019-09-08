@@ -78,9 +78,11 @@ class GQuery {
    */
 
   constructor () {
-    this.apolloClient = createApolloClient(
-      `${window.location.pathname}/graphql`
-    )
+    // window.location.pathname will have the URL path, such as /user/foo/, or /user/foo/index.html
+    // so here we just drop the file name such as index.html if present.
+    const baseUrl = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1)
+    const url = `${baseUrl}graphql`
+    this.apolloClient = createApolloClient(url)
     this.query = null
     this.subscriptions = []
     this.views = []
