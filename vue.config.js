@@ -2,8 +2,12 @@
 const webpack = require('webpack')
 const path = require('path')
 
-const USERNAME = process.env.CYLC_USER
-const GRAPHQL_REWRITE = '/user/' + USERNAME + '/graphql'
+/**
+ * GraphQL URL used to rewrite requests when running a devServer. This will be used by a proxy in the devServer.
+ * @type {string}
+ */
+const user = process.env.CYLC_USER || process.env.USER
+const GRAPHQL_REWRITE = `/user/${user}/graphql`
 
 module.exports = {
   publicPath: '',
