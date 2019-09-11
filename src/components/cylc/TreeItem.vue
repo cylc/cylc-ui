@@ -15,6 +15,7 @@
         :style="getTypeStyle()"
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
+      <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
       <v-layout @click="nodeClicked" row wrap v-if="node.__type === 'cyclepoint'">
         <v-flex shrink>
           <task :status="node.state" :progress=0 />
