@@ -12,10 +12,13 @@ query = '''
             state
             cyclePoint
             task {
+                meanElapsedTime
                 name
             }
             jobs {
                 id
+                host
+                startedTime
                 state
                 submitNum
             }
@@ -29,4 +32,4 @@ wrapper = {
 }
 
 import json
-print(json.dumps(wrapper))
+print(json.dumps(wrapper, indent=2))

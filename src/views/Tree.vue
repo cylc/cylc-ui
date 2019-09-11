@@ -53,15 +53,21 @@ const QUERIES = {
           id
           name
           status
+          owner
+          host
+          port
           taskProxies {
             id
             state
             cyclePoint
             task {
+              meanElapsedTime
               name
             }
             jobs {
               id
+              host
+              startedTime
               state
               submitNum
             }
