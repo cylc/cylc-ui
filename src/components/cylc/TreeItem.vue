@@ -135,11 +135,6 @@ export default {
     },
     nodeClicked (e) {
       this.$emit('tree-item-clicked', this)
-      if (e.ctrlKey) {
-        console.log('Clicked with CTRL!')
-      } else {
-        console.log('Clicked without CTRL!')
-      }
     },
     getNodeStyle () {
       // we need to compensate for the minimum depth set by the user, subtracting it
