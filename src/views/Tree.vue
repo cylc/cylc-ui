@@ -1,49 +1,20 @@
 <template>
   <div class="c-tree">
-    <!-- TODO: add progress bar which displays with {{ isLoading }} -->
-    <ul v-for="workflow in workflows" :key="workflow.id">
-      <li v-if="workflow.name === workflowId">
-        <!-- Workflow -->
-        <span>
-          {{ workflow.name }}
-        </span>
-        <ul v-if="workflow.taskProxies">
-          <li v-for="cycle in cycles" :key="cycle">
-            <!-- Cycle -->
-            <span>
-              {{ cycle }}
-            </span>
-            <ul v-for="proxy in workflow.taskProxies" :key="proxy.id">
-              <li v-if="proxy.cyclePoint === cycle">
-                <!-- Task -->
-                <span>
-                  <task :status="proxy.state" :progress=0 />
-                  {{ proxy.task.name }}
-                </span>
-                <ul>
-                  <li v-for="job in proxy.jobs" :key="job.id">
-                    <!-- Job -->
-                    <span>
-                      # {{ job.submitNum }}
-                      <job :status="job.state" />
-                    </span>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <tree
+      :workflows="currentWorkflow"
+      :hoverable="false"
+      :activable="false"
+      :multiple-active="false"
+      :min-depth="1"
+    ></tree>
   </div>
 </template>
 
 <script>
 import { workflowService } from 'workflow-service'
-import { mapState } from 'vuex'
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
 import { mixin } from '@/mixins/index'
+import { mapState } from 'vuex'
+import Tree from '@/components/cylc/Tree'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -80,8 +51,7 @@ const QUERIES = {
 export default {
   mixins: [mixin],
   components: {
-    task: Task,
-    job: Job
+    tree: Tree
   },
 
   metaInfo () {
@@ -99,17 +69,14 @@ export default {
   }),
 
   computed: {
-    ...mapState('workflows', ['workflows']),
-    cycles: function () {
-      var cycles = new Set()
-      for (const workflow of this.workflows) {
-        if (workflow.name === this.workflowId) {
-          for (const proxy of workflow.taskProxies) {
-            cycles.add(proxy.cyclePoint)
-          }
+    ...mapState('workflows', ['workflowTree']),
+    currentWorkflow: function () {
+      for (const workflow of this.workflowTree) {
+        if (workflow.name === this.$route.params.name) {
+          return [workflow]
         }
       }
-      return cycles
+      return []
     }
   },
 
