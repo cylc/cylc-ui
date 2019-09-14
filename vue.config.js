@@ -35,9 +35,20 @@ module.exports = {
     // Troubleshooting it during the update, it appears that the only way to make our tests to pass was
     // by ignoring sass transformations too in webpack.
     if (process.env.NODE_ENV === 'test') {
-      config.module.rule('sass')
-        .use('sass')
+      config.module.rules.delete('scss')
+      config.module.rule('scss')
+        .test(/\.scss$/)
+        .use(['null-loader'])
         .loader('null-loader')
+
+      config.module.rules.delete('sass')
+      config.module.rule('sass')
+        .test(/\.sass$/)
+        .use('null-loader')
+        .loader('null-loader')
+        .options({
+          indentedSyntax: true
+        })
     }
 
     // set up aliases for mock services, used when the offline mode is used
