@@ -236,7 +236,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../styles/material-dashboard/colors";
+@import '~vuetify/src/styles/styles.sass';
 
 $active-color: #BDD5F7;
 
@@ -249,7 +249,7 @@ $active-color: #BDD5F7;
 
 @mixin states() {
   &:hover {
-    background-color: $grey-100;
+    background-color: map-get($grey, 'lighten-3');
   }
 }
 
