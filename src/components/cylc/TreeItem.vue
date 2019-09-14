@@ -182,7 +182,7 @@ export default {
     getTypeStyle () {
       const styles = {}
       if (this.hasChildren) {
-        styles['cursor'] = 'pointer'
+        styles.cursor = 'pointer'
       }
       return styles
     },
