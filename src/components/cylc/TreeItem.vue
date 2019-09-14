@@ -10,7 +10,7 @@
       <v-flex
         shrink
         v-if="hasChildren"
-        class="type"
+        class="mr-4"
         @click="typeClicked"
         :style="getTypeStyle()"
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
@@ -269,7 +269,7 @@ $active-color: #BDD5F7;
 }
 
 $arrow-size: 15px;
-$leaf-background-color: $grey-100;
+$leaf-background-color: map-get($grey, 'lighten-3');
 
 .leaf {
   .arrow-up {
