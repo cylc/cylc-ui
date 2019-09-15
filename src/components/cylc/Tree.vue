@@ -105,6 +105,11 @@ export default {
           this.activeCache.add(treeItem)
         }
       }
+    },
+    clearCaches () {
+      this.treeItemCache.clear()
+      this.activeCache.clear()
+      this.expandedCache.clear()
     }
   }
 }
