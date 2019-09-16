@@ -16,5 +16,11 @@ else
     exit 1
 fi
 
-sed -i "1 s/^/const checkpoint = /; s/${USER}/cylc/g" "${CHECK_FILE}"
+# This line goes to the top of the file, disabling eslint for the checkpoint.js file
+sed -i "1 i\/* eslint-disable */\n" "${CHECK_FILE}"
+# This one goes to the second line, prepending the JS variable declaration before the JSON string
+sed -i "3 s/^/const checkpoint = /" "${CHECK_FILE}"
+# Replace globally the user running the workflow
+sed -i "s/${USER}/cylc/g" "${CHECK_FILE}"
+# Finally we export it so we can use it from JS modules
 echo -e '\nexport { checkpoint }' >> "${CHECK_FILE}"
