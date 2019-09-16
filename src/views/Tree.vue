@@ -37,6 +37,8 @@ const QUERIES = {
             }
             jobs(sort: { keys: ["submit_num"], reverse:true }) {
               id
+              batchSysName
+              batchSysJobId
               host
               startedTime
               state
