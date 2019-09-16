@@ -126,6 +126,7 @@ function _getWorkflowTree (workflows) {
       }
       workflowTree.push(workflow)
     }
+    cycles.clear()
   }
   return workflowTree
 }
