@@ -1,6 +1,8 @@
 // raw GraphQL response data structure
 import { extractGroupState } from '@/utils/tasks'
 
+const STATES_WITH_PROGRESS = ['running']
+
 const state = {
   workflows: [],
   workflowTree: []
@@ -108,7 +110,9 @@ function _getWorkflowTree (workflows) {
             }
             simplifiedCyclepoint.children.push(taskProxy)
 
-            taskProxy.progress = _computePercentProgress(startedTime, taskProxy.task.meanElapsedTime)
+            if (STATES_WITH_PROGRESS.includes(taskProxy.state)) {
+              taskProxy.progress = _computePercentProgress(startedTime, taskProxy.task.meanElapsedTime)
+            }
 
             childStates.push(taskProxy.state)
           }
