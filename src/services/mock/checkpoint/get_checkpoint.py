@@ -11,6 +11,7 @@ query = '''
             id
             state
             cyclePoint
+            latestMessage
             task {
                 meanElapsedTime
                 name
@@ -21,6 +22,8 @@ query = '''
                 batchSysJobId
                 host
                 startedTime
+                submittedTime
+                finishedTime
                 state
                 submitNum
             }

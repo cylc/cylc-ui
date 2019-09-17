@@ -31,6 +31,7 @@ const QUERIES = {
             id
             state
             cyclePoint
+            latestMessage
             task {
               meanElapsedTime
               name
@@ -41,6 +42,8 @@ const QUERIES = {
               batchSysJobId
               host
               startedTime
+              submittedTime
+              finishedTime
               state
               submitNum
             }

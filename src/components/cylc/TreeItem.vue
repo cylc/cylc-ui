@@ -59,7 +59,7 @@
               <v-flex xs4 sm3 md2 lg2 xl1 no-wrap>
                 <span class="px-4">{{ leafProperty.title }}</span>
               </v-flex>
-              <v-flex grow>
+              <v-flex wrap>
                 <span class="text-gray">{{ node[leafProperty.property] }}</span>
               </v-flex>
             </v-layout>
@@ -143,8 +143,20 @@ export default {
           property: 'batchSysName'
         },
         {
+          title: 'submit time',
+          property: 'submittedTime'
+        },
+        {
           title: 'start time',
           property: 'startedTime'
+        },
+        {
+          title: 'finish time',
+          property: 'finishedTime'
+        },
+        {
+          title: 'last message',
+          property: 'latestMessage'
         }
       ],
       displayLeaf: false
