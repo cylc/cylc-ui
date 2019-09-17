@@ -40,7 +40,7 @@
         </v-flex>
       </v-layout>
       <v-layout column wrap v-else-if="node.__type === 'job'">
-        <v-layout @click="nodeClicked" row wrap>
+        <v-layout @click="jobNodeClicked" row wrap>
           <v-flex shrink>
             <job :status="node.state" />
           </v-flex>
@@ -168,8 +168,19 @@ export default {
       }
       return styles
     },
+    /**
+     * Handler for when any node of the tree was clicked, except jobs.
+     * @param {event} e event
+     */
     nodeClicked (e) {
       this.$emit('tree-item-clicked', this)
+    },
+    /**
+     * Handler for when a job node was clicked.
+     * @param {event} e event
+     */
+    jobNodeClicked (e) {
+      this.displayLeaf = !this.displayLeaf
     },
     getNodeStyle () {
       // we need to compensate for the minimum depth set by the user, subtracting it
