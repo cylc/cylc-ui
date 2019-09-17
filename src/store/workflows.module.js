@@ -103,6 +103,7 @@ function _getWorkflowTree (workflows) {
             for (const job of taskProxy.jobs) {
               job.name = `#${job.submitNum}`
               job.__type = 'job'
+              job.latestMessage = taskProxy.latestMessage
               taskProxy.children.push(job)
               // we use only the highest submitNum startedTime
               if (startedTime === 0 && job.startedTime) {

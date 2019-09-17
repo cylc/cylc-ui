@@ -7,18 +7,23 @@ query = '''
         owner
         host
         port
-        taskProxies {
+        taskProxies(sort: { keys: ["cyclePoint"] }) {
             id
             state
             cyclePoint
+            latestMessage
             task {
                 meanElapsedTime
                 name
             }
             jobs(sort: { keys: ["submit_num"], reverse:true }) {
                 id
+                batchSysName
+                batchSysJobId
                 host
                 startedTime
+                submittedTime
+                finishedTime
                 state
                 submitNum
             }

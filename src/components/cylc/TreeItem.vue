@@ -39,16 +39,32 @@
               :status="task.state" />
         </v-flex>
       </v-layout>
-      <v-layout @click="nodeClicked" row wrap v-else-if="node.__type === 'job'">
-        <v-flex shrink>
-          <job :status="node.state" />
-        </v-flex>
-        <v-flex xs2 md1 lg1>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
-        <v-flex grow>
-          <span class="text-gray">{{ node.host }}</span>
-        </v-flex>
+      <v-layout column wrap v-else-if="node.__type === 'job'">
+        <v-layout @click="jobNodeClicked" row wrap>
+          <v-flex shrink>
+            <job :status="node.state" />
+          </v-flex>
+          <v-flex xs2 md1 lg1>
+            <span class="mx-1">{{ node.name }}</span>
+          </v-flex>
+          <v-flex grow>
+            <span class="text-gray">{{ node.host }}</span>
+          </v-flex>
+        </v-layout>
+        <!-- leaf node -->
+        <div class="leaf" v-if="displayLeaf">
+          <div class="arrow-up"></div>
+          <v-layout column wrap class="py-2" :style="getLeafStyle()">
+            <v-layout row v-for="leafProperty in leafProperties" :key="leafProperty.id">
+              <v-flex xs4 sm3 md2 lg2 xl1 no-wrap>
+                <span class="px-4">{{ leafProperty.title }}</span>
+              </v-flex>
+              <v-flex wrap>
+                <span class="text-gray">{{ node[leafProperty.property] }}</span>
+              </v-flex>
+            </v-layout>
+          </v-layout>
+        </div>
       </v-layout>
       <v-layout row wrap v-else>
         <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
@@ -76,6 +92,12 @@
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
+
+/**
+ * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
+ * @type {number} integer
+ */
+const NODE_DEPTH_OFFSET = 30
 
 export default {
   name: 'TreeItem',
@@ -106,7 +128,38 @@ export default {
     return {
       active: false,
       selected: false,
-      isExpanded: this.expanded
+      isExpanded: this.expanded,
+      leafProperties: [
+        {
+          title: 'host id',
+          property: 'host'
+        },
+        {
+          title: 'job id',
+          property: 'batchSysJobId'
+        },
+        {
+          title: 'batch sys',
+          property: 'batchSysName'
+        },
+        {
+          title: 'submit time',
+          property: 'submittedTime'
+        },
+        {
+          title: 'start time',
+          property: 'startedTime'
+        },
+        {
+          title: 'finish time',
+          property: 'finishedTime'
+        },
+        {
+          title: 'latest message',
+          property: 'latestMessage'
+        }
+      ],
+      displayLeaf: false
     }
   },
   computed: {
@@ -133,15 +186,42 @@ export default {
       }
       return styles
     },
+    /**
+     * Handler for when any node of the tree was clicked, except jobs.
+     * @param {event} e event
+     */
     nodeClicked (e) {
       this.$emit('tree-item-clicked', this)
+    },
+    /**
+     * Handler for when a job node was clicked.
+     * @param {event} e event
+     */
+    jobNodeClicked (e) {
+      this.displayLeaf = !this.displayLeaf
     },
     getNodeStyle () {
       // we need to compensate for the minimum depth set by the user, subtracting it
       // from the node depth.
       const depthDifference = this.depth - this.minDepth
       return {
-        'padding-left': `${depthDifference * 30}px`
+        'padding-left': `${depthDifference * NODE_DEPTH_OFFSET}px`
+      }
+    },
+    /**
+     * All nodes have the same padding-left. However, the job leaf node needs special care, as it will occupy the
+     * whole content area.
+     *
+     * For this, we calculate it similarly to `getNodeStyle` but doing the reverse, to move the element to the
+     * left, instead of moving it to the right. Using `depth` to calculate the exact location for the element.
+     */
+    getLeafStyle () {
+      const depthDifference = this.depth - this.minDepth
+      // The value we multiply `depthDifference` by is the same as in `getNodeStyle`, but we make it negative to
+      // move it to the left.
+      // Now the 16px comes from mx3, which we apply to the content area element.
+      return {
+        'margin-left': `-${(depthDifference * NODE_DEPTH_OFFSET) + 16}px`
       }
     },
     getNodeClass () {
@@ -186,5 +266,22 @@ $active-color: #BDD5F7;
 }
 .type {
   margin-right: 10px;
+}
+
+$arrow-size: 15px;
+$leaf-background-color: $grey-100;
+
+.leaf {
+  .arrow-up {
+    width: 0;
+    height: 0;
+    border-left: $arrow-size solid transparent;
+    border-right: $arrow-size solid transparent;
+    border-bottom: $arrow-size solid $leaf-background-color;
+  }
+  .layout {
+    background-color: $leaf-background-color;
+    margin-right: -16px;
+  }
 }
 </style>
