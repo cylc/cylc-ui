@@ -235,7 +235,7 @@ $active-color: #BDD5F7;
 }
 
 $arrow-size: 15px;
-$leaf-background-color: #e7e7e7;
+$leaf-background-color: $grey-100;
 
 .leaf {
   .arrow-up {
