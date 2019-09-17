@@ -51,7 +51,9 @@
             <span class="text-gray">{{ node.host }}</span>
           </v-flex>
         </v-layout>
-        <v-layout column wrap class="py-2" style="background-color: #e7e7e7; margin-left: -80px; margin-right: -20px;">
+        <!-- leaf node -->
+        <div class="arrow-up"></div>
+        <v-layout column wrap class="leaf py-2" style="margin-left: -80px;">
           <v-layout row v-for="jobLeaf in jobLeaves" :key="jobLeaf.id">
             <v-flex xs3 md1 no-wrap>
               <span class="px-4">{{ jobLeaf.title }}</span>
@@ -216,5 +218,21 @@ $active-color: #BDD5F7;
 }
 .type {
   margin-right: 10px;
+}
+
+$arrow-size: 15px;
+$leaf-background-color: #e7e7e7;
+
+.arrow-up {
+  width: 0;
+  height: 0;
+  border-left: $arrow-size solid transparent;
+  border-right: $arrow-size solid transparent;
+  border-bottom: $arrow-size solid $leaf-background-color;
+}
+
+.leaf {
+  background-color: $leaf-background-color;
+  margin-right: -20px;
 }
 </style>
