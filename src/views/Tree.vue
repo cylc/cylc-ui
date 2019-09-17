@@ -27,7 +27,7 @@ const QUERIES = {
           owner
           host
           port
-          taskProxies {
+          taskProxies(sort: { keys: ["cyclePoint"] }) {
             id
             state
             cyclePoint
