@@ -52,17 +52,19 @@
           </v-flex>
         </v-layout>
         <!-- leaf node -->
-        <div class="arrow-up"></div>
-        <v-layout column wrap class="leaf py-2" style="margin-left: -80px;">
-          <v-layout row v-for="jobLeaf in jobLeaves" :key="jobLeaf.id">
-            <v-flex xs3 md1 no-wrap>
-              <span class="px-4">{{ jobLeaf.title }}</span>
-            </v-flex>
-            <v-flex grow>
-              <span class="text-gray">{{ node[jobLeaf.property] }}</span>
-            </v-flex>
+        <div class="leaf" v-if="displayLeaf">
+          <div class="arrow-up"></div>
+          <v-layout column wrap class="py-2" style="margin-left: -80px;">
+            <v-layout row v-for="leafProperty in leafProperties" :key="leafProperty.id">
+              <v-flex xs3 md1 no-wrap>
+                <span class="px-4">{{ leafProperty.title }}</span>
+              </v-flex>
+              <v-flex grow>
+                <span class="text-gray">{{ node[leafProperty.property] }}</span>
+              </v-flex>
+            </v-layout>
           </v-layout>
-        </v-layout>
+        </div>
       </v-layout>
       <v-layout row wrap v-else>
         <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
@@ -121,7 +123,7 @@ export default {
       active: false,
       selected: false,
       isExpanded: this.expanded,
-      jobLeaves: [
+      leafProperties: [
         {
           title: 'host id',
           property: 'host'
@@ -138,7 +140,8 @@ export default {
           title: 'start time',
           property: 'startedTime'
         }
-      ]
+      ],
+      displayLeaf: false
     }
   },
   computed: {
@@ -223,16 +226,17 @@ $active-color: #BDD5F7;
 $arrow-size: 15px;
 $leaf-background-color: #e7e7e7;
 
-.arrow-up {
-  width: 0;
-  height: 0;
-  border-left: $arrow-size solid transparent;
-  border-right: $arrow-size solid transparent;
-  border-bottom: $arrow-size solid $leaf-background-color;
-}
-
 .leaf {
-  background-color: $leaf-background-color;
-  margin-right: -20px;
+  .arrow-up {
+    width: 0;
+    height: 0;
+    border-left: $arrow-size solid transparent;
+    border-right: $arrow-size solid transparent;
+    border-bottom: $arrow-size solid $leaf-background-color;
+  }
+  .layout {
+    background-color: $leaf-background-color;
+    margin-right: -20px;
+  }
 }
 </style>
