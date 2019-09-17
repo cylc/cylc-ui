@@ -39,16 +39,28 @@
               :status="task.state" />
         </v-flex>
       </v-layout>
-      <v-layout @click="nodeClicked" row wrap v-else-if="node.__type === 'job'">
-        <v-flex shrink>
-          <job :status="node.state" />
-        </v-flex>
-        <v-flex xs2 md1 lg1>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
-        <v-flex grow>
-          <span class="text-gray">{{ node.host }}</span>
-        </v-flex>
+      <v-layout column wrap v-else-if="node.__type === 'job'">
+        <v-layout @click="nodeClicked" row wrap>
+          <v-flex shrink>
+            <job :status="node.state" />
+          </v-flex>
+          <v-flex xs2 md1 lg1>
+            <span class="mx-1">{{ node.name }}</span>
+          </v-flex>
+          <v-flex grow>
+            <span class="text-gray">{{ node.host }}</span>
+          </v-flex>
+        </v-layout>
+        <v-layout column wrap class="py-2" style="background-color: #e7e7e7; margin-left: -80px; margin-right: -20px;">
+          <v-layout row v-for="jobLeaf in jobLeaves" :key="jobLeaf.id">
+            <v-flex xs3 md1 no-wrap>
+              <span class="px-4">{{ jobLeaf.title }}</span>
+            </v-flex>
+            <v-flex grow>
+              <span class="text-gray">{{ node[jobLeaf.property] }}</span>
+            </v-flex>
+          </v-layout>
+        </v-layout>
       </v-layout>
       <v-layout row wrap v-else>
         <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
@@ -106,7 +118,25 @@ export default {
     return {
       active: false,
       selected: false,
-      isExpanded: this.expanded
+      isExpanded: this.expanded,
+      jobLeaves: [
+        {
+          title: 'host id',
+          property: 'host'
+        },
+        {
+          title: 'job id',
+          property: 'batchSysJobId'
+        },
+        {
+          title: 'batch sys',
+          property: 'batchSysName'
+        },
+        {
+          title: 'start time',
+          property: 'startedTime'
+        }
+      ]
     }
   },
   computed: {
