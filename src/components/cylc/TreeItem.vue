@@ -155,7 +155,7 @@ export default {
           property: 'finishedTime'
         },
         {
-          title: 'last message',
+          title: 'latest message',
           property: 'latestMessage'
         }
       ],
