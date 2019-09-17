@@ -1,6 +1,5 @@
 <template>
-  <!-- mx is margin on the x axis, and mb is margin-bottom, 3 is 3 out of 5 -->
-  <div class="mx-5 my-2">
+  <div class="my-2">
     <!-- each workflow is a tree root -->
     <tree-item
         v-for="workflow of workflows"

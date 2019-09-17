@@ -1,7 +1,6 @@
 <template>
   <div>
-    <v-layout
-        row
+    <v-row
         v-show="depth >= minDepth"
         :class="getNodeClass()"
         :style="getNodeStyle()"
@@ -10,13 +9,12 @@
       <v-flex
         shrink
         v-if="hasChildren"
-        class="mr-4"
         @click="typeClicked"
         :style="getTypeStyle()"
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <v-layout @click="nodeClicked" row wrap v-if="node.__type === 'cyclepoint'">
+      <v-layout class="node-data" @click="nodeClicked" row wrap v-if="node.__type === 'cyclepoint'">
         <v-flex shrink>
           <task :status="node.state" :progress=0 />
         </v-flex>
@@ -24,7 +22,7 @@
           <span class="mx-1">{{ node.name }}</span>
         </v-flex>
       </v-layout>
-      <v-layout @click="nodeClicked" row wrap v-else-if="node.__type === 'task'">
+      <v-layout class="node-data" @click="nodeClicked" row wrap v-else-if="node.__type === 'task'">
         <v-flex shrink>
           <task :status="node.state" :progress="node.progress" />
         </v-flex>
@@ -39,7 +37,7 @@
               :status="task.state" />
         </v-flex>
       </v-layout>
-      <v-layout column wrap v-else-if="node.__type === 'job'">
+      <v-layout class="node-data" layout column v-else-if="node.__type === 'job'">
         <v-layout @click="jobNodeClicked" row wrap>
           <v-flex shrink>
             <job :status="node.state" />
@@ -48,28 +46,28 @@
             <span class="mx-1">{{ node.name }}</span>
           </v-flex>
           <v-flex grow>
-            <span class="text-gray">{{ node.host }}</span>
+            <span class="grey--text">{{ node.host }}</span>
           </v-flex>
         </v-layout>
         <!-- leaf node -->
-        <div class="leaf" v-if="displayLeaf">
-          <div class="arrow-up"></div>
-          <v-layout column wrap class="py-2" :style="getLeafStyle()">
-            <v-layout row v-for="leafProperty in leafProperties" :key="leafProperty.id">
-              <v-flex xs4 sm3 md2 lg2 xl1 no-wrap>
-                <span class="px-4">{{ leafProperty.title }}</span>
-              </v-flex>
-              <v-flex wrap>
-                <span class="text-gray">{{ node[leafProperty.property] }}</span>
-              </v-flex>
-            </v-layout>
-          </v-layout>
-        </div>
       </v-layout>
-      <v-layout row wrap v-else>
+      <v-layout class="node-data" row wrap v-else>
         <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
       </v-layout>
-    </v-layout>
+    </v-row>
+    <v-container class="leaf" v-if="displayLeaf && node.__type === 'job'">
+      <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
+      <v-col class="leaf-data font-weight-light py-4">
+        <v-row v-for="leafProperty in leafProperties" :key="leafProperty.id" no-gutters>
+          <v-col xs="4" sm="4" md="4" lg="2" xl="2" no-wrap>
+            <span class="px-4">{{ leafProperty.title }}</span>
+          </v-col>
+          <v-col wrap>
+            <span class="grey--text">{{ node[leafProperty.property] }}</span>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-container>
     <span v-show="isExpanded">
       <!-- component recursion -->
       <TreeItem
@@ -215,20 +213,18 @@ export default {
      * For this, we calculate it similarly to `getNodeStyle` but doing the reverse, to move the element to the
      * left, instead of moving it to the right. Using `depth` to calculate the exact location for the element.
      */
-    getLeafStyle () {
+    getLeafTriangleStyle () {
       const depthDifference = this.depth - this.minDepth
-      // The value we multiply `depthDifference` by is the same as in `getNodeStyle`, but we make it negative to
-      // move it to the left.
-      // Now the 16px comes from mx3, which we apply to the content area element.
       return {
-        'margin-left': `-${(depthDifference * NODE_DEPTH_OFFSET) + 16}px`
+        'margin-left': `${depthDifference * NODE_DEPTH_OFFSET}px`
       }
     },
     getNodeClass () {
       return {
         node: true,
         'node--hoverable': this.hoverable,
-        'node--active': this.active
+        'node--active': this.active,
+        'ml-3': true
       }
     }
   }
@@ -263,6 +259,10 @@ $active-color: #BDD5F7;
   &--active {
     @include active-state()
   }
+
+  .node-data {
+    margin-left: 6px;
+  }
 }
 .type {
   margin-right: 10px;
@@ -272,16 +272,19 @@ $arrow-size: 15px;
 $leaf-background-color: map-get($grey, 'lighten-3');
 
 .leaf {
+  padding: 0;
+  margin: 0;
   .arrow-up {
     width: 0;
     height: 0;
     border-left: $arrow-size solid transparent;
     border-right: $arrow-size solid transparent;
     border-bottom: $arrow-size solid $leaf-background-color;
+    display: flex;
+    flex-wrap: nowrap;
   }
-  .layout {
+  .leaf-data {
     background-color: $leaf-background-color;
-    margin-right: -16px;
   }
 }
 </style>
