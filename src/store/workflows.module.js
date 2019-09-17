@@ -1,6 +1,8 @@
 // raw GraphQL response data structure
 import { extractGroupState } from '@/utils/tasks'
 
+const STATES_WITH_PROGRESS = ['running']
+
 const state = {
   workflows: [],
   workflowTree: []
@@ -41,6 +43,28 @@ function _getCycles (workflows) {
 }
 
 /**
+ * Compute percent progress.
+ *
+ * @see https://github.com/cylc/cylc-flow/blob/de7d938496e82dbdfb165938145670dd8e801efd/lib/cylc/gui/updater_tree.py#L248-L263
+ * @param {number} startedTime in milliseconds since 1970-01-01 00:00:00 UTC, e.g. 1568353099874
+ * @param {number} meanElapsedTime mean elapsed time in seconds
+ * @returns {number} the percent progress, e.g. 25 (meaning 25% progress)
+ * @private
+ */
+function _computePercentProgress (startedTime, meanElapsedTime) {
+  const now = Date.now() // milliseconds since 1970-01-01
+  // startedTime > now reportedly possible via interaction with `cylc reset`
+  if (startedTime > now || meanElapsedTime === 0) {
+    return 0
+  }
+
+  if (now > startedTime + meanElapsedTime * 1000) {
+    return 100
+  }
+  return 100 * (now - startedTime) / (meanElapsedTime * 1000)
+}
+
+/**
  * Compute a workflow tree where the root is the workflow node, followed by
  * the cycle points, and finally by task proxies.
  *
@@ -74,12 +98,22 @@ function _getWorkflowTree (workflows) {
             taskProxy.name = taskProxy.task.name
             taskProxy.children = []
             taskProxy.__type = 'task'
-            for (const job of taskProxy.jobs.reverse()) {
+            let startedTime = 0
+            // the GraphQL query is expected to have `jobs(sort: { keys: ["submit_num"], reverse:true }) {`
+            for (const job of taskProxy.jobs) {
               job.name = `#${job.submitNum}`
               job.__type = 'job'
               taskProxy.children.push(job)
+              // we use only the highest submitNum startedTime
+              if (startedTime === 0 && job.startedTime) {
+                startedTime = Date.parse(job.startedTime)
+              }
             }
             simplifiedCyclepoint.children.push(taskProxy)
+
+            if (STATES_WITH_PROGRESS.includes(taskProxy.state)) {
+              taskProxy.progress = _computePercentProgress(startedTime, taskProxy.task.meanElapsedTime)
+            }
 
             childStates.push(taskProxy.state)
           }

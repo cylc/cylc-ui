@@ -26,7 +26,7 @@
       </v-layout>
       <v-layout @click="nodeClicked" row wrap v-else-if="node.__type === 'task'">
         <v-flex shrink>
-          <task :status="node.state" :progress=0 />
+          <task :status="node.state" :progress="node.progress" />
         </v-flex>
         <v-flex shrink>
           <span class="mx-1">{{ node.name }}</span>

@@ -35,7 +35,7 @@ const QUERIES = {
               meanElapsedTime
               name
             }
-            jobs {
+            jobs(sort: { keys: ["submit_num"], reverse:true }) {
               id
               host
               startedTime
