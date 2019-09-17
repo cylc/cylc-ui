@@ -26,7 +26,7 @@
       </v-list-item>
 
       <v-list-item
-          to="/dashboard"
+          to="/"
           active-class="primary grey--text text--darken-3"
           class="v-list-item"
       >
