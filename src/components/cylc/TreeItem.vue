@@ -56,7 +56,7 @@
           <div class="arrow-up"></div>
           <v-layout column wrap class="py-2" style="margin-left: -80px;">
             <v-layout row v-for="leafProperty in leafProperties" :key="leafProperty.id">
-              <v-flex xs3 md1 no-wrap>
+              <v-flex xs4 sm3 md2 lg2 xl1 no-wrap>
                 <span class="px-4">{{ leafProperty.title }}</span>
               </v-flex>
               <v-flex grow>
