@@ -54,7 +54,7 @@
         <!-- leaf node -->
         <div class="leaf" v-if="displayLeaf">
           <div class="arrow-up"></div>
-          <v-layout column wrap class="py-2" style="margin-left: -80px;">
+          <v-layout column wrap class="py-2" :style="getLeafStyle()">
             <v-layout row v-for="leafProperty in leafProperties" :key="leafProperty.id">
               <v-flex xs4 sm3 md2 lg2 xl1 no-wrap>
                 <span class="px-4">{{ leafProperty.title }}</span>
@@ -92,6 +92,12 @@
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
+
+/**
+ * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
+ * @type {number} integer
+ */
+const NODE_DEPTH_OFFSET = 30
 
 export default {
   name: 'TreeItem',
@@ -187,7 +193,23 @@ export default {
       // from the node depth.
       const depthDifference = this.depth - this.minDepth
       return {
-        'padding-left': `${depthDifference * 30}px`
+        'padding-left': `${depthDifference * NODE_DEPTH_OFFSET}px`
+      }
+    },
+    /**
+     * All nodes have the same padding-left. However, the job leaf node needs special care, as it will occupy the
+     * whole content area.
+     *
+     * For this, we calculate it similarly to `getNodeStyle` but doing the reverse, to move the element to the
+     * left, instead of moving it to the right. Using `depth` to calculate the exact location for the element.
+     */
+    getLeafStyle () {
+      const depthDifference = this.depth - this.minDepth
+      // The value we multiply `depthDifference` by is the same as in `getNodeStyle`, but we make it negative to
+      // move it to the left.
+      // Now the 16px comes from mx3, which we apply to the content area element.
+      return {
+        'margin-left': `-${(depthDifference * NODE_DEPTH_OFFSET) + 16}px`
       }
     },
     getNodeClass () {
@@ -247,7 +269,7 @@ $leaf-background-color: $grey-100;
   }
   .layout {
     background-color: $leaf-background-color;
-    margin-right: -20px;
+    margin-right: -16px;
   }
 }
 </style>
