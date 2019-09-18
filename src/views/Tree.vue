@@ -100,7 +100,7 @@ export default {
   },
 
   beforeDestroy () {
-    this.$refs['tree0'].clearCaches()
+    this.$refs.tree0.clearCaches()
     workflowService.unregister(this)
   },
 
