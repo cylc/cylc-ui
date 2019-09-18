@@ -23,10 +23,10 @@ describe('TreeItem component', () => {
   })
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
-    it('should display the TreeItem expanded by default', () => {
+    it('should display the cycle point expanded by default', () => {
       const wrapper = mount(TreeItem, {
         propsData: {
-          node: simpleTaskNode,
+          node: simpleCyclepointNode,
           minDepth: 0,
           depth: 0
         }
@@ -35,7 +35,7 @@ describe('TreeItem component', () => {
       const expandControlElement = wrapper.find('.node-expand-collapse-button')
       expect(expandControlElement.text()).to.equal('▽')
     })
-    it('should not display the TreeItem expanded when set expanded=true', () => {
+    it('should not display the cycle point expanded when set expanded=true', () => {
       const wrapper = mount(TreeItem, {
         propsData: {
           node: simpleTaskNode,
@@ -43,6 +43,18 @@ describe('TreeItem component', () => {
         }
       })
       expect(wrapper.props().initialExpanded).to.equal(false)
+      const expandControlElement = wrapper.find('.node-expand-collapse-button')
+      expect(expandControlElement.text()).to.equal('▷')
+    })
+    it('should not display the task expanded by default', () => {
+      const wrapper = mount(TreeItem, {
+        propsData: {
+          node: simpleTaskNode,
+          minDepth: 0,
+          depth: 0
+        }
+      })
+      expect(wrapper.props().initialExpanded).to.equal(true)
       const expandControlElement = wrapper.find('.node-expand-collapse-button')
       expect(expandControlElement.text()).to.equal('▷')
     })
