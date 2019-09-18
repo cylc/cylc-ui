@@ -16,7 +16,7 @@
         :elevation="elevation"
         class="v-card--material__header d-flex align-center"
         dark
-        min-height="80"
+        min-height="60"
       >
         <slot
           v-if="!title && !text"
@@ -27,11 +27,11 @@
           class="px-3"
         >
           <h4
-            class="title font-weight-light mb-2"
+            class="title font-weight-light mb-0"
             v-text="title"
           />
           <p
-            class="category font-weight-thin mb-0"
+            class="category font-weight-thin mb-1"
             v-text="text"
           />
         </div>

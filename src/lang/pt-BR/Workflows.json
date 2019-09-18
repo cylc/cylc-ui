@@ -1,6 +1,5 @@
 {
-  "tableHeader": "Lista de Workflows",
-  "tableSubHeader": "Esta é a lista de workflows que este usuário possui permissoões para visualizar",
+  "tableHeader": "Seus Workflows",
   "tableColumnName": "Nome",
   "tableColumnOwner": "Usuário",
   "tableColumnHost": "Servidor",
