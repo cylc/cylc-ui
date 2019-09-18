@@ -45,19 +45,21 @@
               slot="item"
               slot-scope="{ item }"
             >
-              <td>{{ item.name }}</td>
-              <td>{{ item.owner }}</td>
-              <td>{{ item.host }}</td>
-              <td>{{ item.port }}</td>
-              <td class="justify-center">
-                <v-icon
-                    small
-                    class="mr-2"
-                    @click="viewWorkflow(item)"
-                >
-                  mdi-table-edit
-                </v-icon>
-              </td>
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.owner }}</td>
+                <td>{{ item.host }}</td>
+                <td>{{ item.port }}</td>
+                <td class="justify-center">
+                  <v-icon
+                      small
+                      class="mr-2"
+                      @click="viewWorkflow(item)"
+                  >
+                    mdi-table-edit
+                  </v-icon>
+                </td>
+              </tr>
             </template>
           </v-data-table>
         </material-card>
