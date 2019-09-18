@@ -1,5 +1,14 @@
 <template>
   <div class="c-tree">
+    <v-switch
+        label="Collapse All"
+        class="mx-3 mt-3"
+        style="margin-bottom: -20px;"
+        v-model="collapsed"
+        @change="!collapsed ? $refs.tree0.expandAll() : $refs.tree0.collapseAll()"
+        :flat=true
+        :inset=true
+    ></v-switch>
     <tree
       :workflows="currentWorkflow"
       :hoverable="false"
@@ -72,7 +81,8 @@ export default {
     viewID: '',
     workflowId: '',
     subscriptions: {},
-    isLoading: true
+    isLoading: true,
+    collapsed: false
   }),
 
   computed: {

@@ -33,6 +33,10 @@ export default {
     minDepth: {
       type: Number,
       default: 0
+    },
+    initialExpanded: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -50,7 +54,7 @@ export default {
       treeItemCache: new Set(),
       activeCache: new Set(),
       expandedCache: new Set(),
-      expanded: true,
+      expanded: this.initialExpanded,
       expandedFilter: null,
       collapseFilter: null
     }
