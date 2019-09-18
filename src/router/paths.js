@@ -15,14 +15,6 @@ export default [
     }
   },
   {
-    path: '/graph',
-    view: 'Graph',
-    name: i18n.t('App.graph'),
-    meta: {
-      layout: 'default'
-    }
-  },
-  {
     path: '/workflows',
     name: i18n.t('App.workflows'),
     view: 'GScan',
