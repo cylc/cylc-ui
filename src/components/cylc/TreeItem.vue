@@ -7,6 +7,7 @@
     >
       <!-- the node's left icon; used for expand/collapse -->
       <v-flex
+        class="node-expand-collapse-button"
         shrink
         v-if="hasChildren"
         @click="typeClicked"

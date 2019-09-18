@@ -32,7 +32,7 @@ describe('TreeItem component', () => {
         }
       })
       expect(wrapper.props().expanded).to.equal(true)
-      const expandControlElement = wrapper.find('.mr-4')
+      const expandControlElement = wrapper.find('.node-expand-collapse-button')
       expect(expandControlElement.text()).to.equal('▽')
     })
     it('should not display the TreeItem expanded when set expanded=true', () => {
@@ -43,7 +43,7 @@ describe('TreeItem component', () => {
         }
       })
       expect(wrapper.props().expanded).to.equal(false)
-      const expandControlElement = wrapper.find('.mr-4')
+      const expandControlElement = wrapper.find('.node-expand-collapse-button')
       expect(expandControlElement.text()).to.equal('▷')
     })
   })
