@@ -3,9 +3,11 @@
     <v-layout justify-center wrap>
       <v-flex xs12 md12>
         <material-card
-            color="green"
-            :title="$t('UserProfile.tableHeader')"
-            :text="$t('UserProfile.tableSubHeader')"
+          color="grey"
+          :elevation="0"
+          :flat="true"
+          :title="$t('UserProfile.tableHeader')"
+          :text="$t('UserProfile.tableSubHeader')"
         >
           <v-form v-if="user !== null">
             <v-container py-0>

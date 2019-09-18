@@ -1,6 +1,3 @@
-@import "../material-dashboard/colors";
-@import "../material-dashboard/variables";
-
 .v-toolbar {
   min-height: inherit !important;
 
@@ -10,12 +7,12 @@
 }
 
 .c-toolbar {
-  background-color: $grey-200;
+  background-color: map-get($grey, 'lighten-4') !important;
 
   .c-toolbar-title, .add-view {
     font-size: 22px;
-    color: $blue-A200;
-    font-weight: $font-weight-bolder;
+    color: $font-default-color;
+    font-weight: map-get($font-weights, medium);
   }
 
   .c-toolbar-title {
@@ -23,7 +20,7 @@
   }
 
   span {
-    color: $blue-grey-400;
+    color: $font-default-color;
   }
 
   .add-view {

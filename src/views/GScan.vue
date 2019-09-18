@@ -12,15 +12,16 @@
         md12
       >
         <material-card
-            :title="$t('Workflows.tableHeader')"
-            :text="$t('Workflows.tableSubHeader')"
-          color="green"
+          :title="$t('Workflows.tableHeader')"
+          :text="$t('Workflows.tableSubHeader')"
+          :elevation="0"
+          :flat="true"
+          color="grey"
         >
           <v-data-table
             :headers="headers"
             :items="workflows"
             :loading="isLoading"
-            :pagination.sync="pagination"
           >
             <template slot="no-data" v-if="!isLoading">
               <v-alert
@@ -41,7 +42,7 @@
             </template>
             <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
             <template
-              slot="items"
+              slot="item"
               slot-scope="{ item }"
             >
               <td>{{ item.name }}</td>
@@ -98,9 +99,6 @@ export default {
     viewID: 'GScan: ' + Math.random(),
     subscriptions: {},
     isLoading: true,
-    pagination: {
-      rowsPerPage: 10
-    },
     headers: [
       {
         sortable: true,

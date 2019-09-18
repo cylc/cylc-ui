@@ -1,7 +1,7 @@
 <template>
-  <v-list-tile-action-text class="pt-3 pb-3 c-header">
+  <v-list-item-action-text class="pt-3 pb-3 c-header">
     <v-layout align-center justify-center row wrap fill-height>
-      <div class="mb-2">
+      <div class="mb-2 px-8">
         <svg version="1.1" preserveAspectRatio="xMinYMin meet" width="100%" height="100%" viewBox="0 0 655 260" xmlns="http://www.w3.org/2000/svg">
           <g transform="translate(292.53 -49.505)">
             <g>
@@ -20,12 +20,12 @@
         </svg>
       </div>
       <div class="c-environment-info">
-        <v-chip outline color="grey lighten-1" text-color="grey darken-4">{{ user }}</v-chip>
+        <v-chip outlined color="grey lighten-1" text-color="grey darken-4">{{ user }}</v-chip>
         <span class="at">@</span>
-        <v-chip outline color="grey lighten-1" text-color="grey darken-4">{{ environment }}</v-chip>
+        <v-chip outlined color="grey lighten-1" text-color="grey darken-4">{{ environment }}</v-chip>
       </div>
     </v-layout>
-  </v-list-tile-action-text>
+  </v-list-item-action-text>
 </template>
 
 <script>
