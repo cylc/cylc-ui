@@ -13,7 +13,6 @@
       >
         <material-card
           :title="$t('Workflows.tableHeader')"
-          :text="$t('Workflows.tableSubHeader')"
           :elevation="0"
           :flat="true"
           color="grey"
