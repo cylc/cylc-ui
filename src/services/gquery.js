@@ -165,7 +165,7 @@ class GQuery {
     /**
      * Perform a REST GraphQL request for all subscriptions.
      */
-    console.log('graphql request:', this.query)
+    // console.log('graphql request:', this.query)
     return this.apolloClient.query({
       query: this.query,
       fetchPolicy: 'no-cache'

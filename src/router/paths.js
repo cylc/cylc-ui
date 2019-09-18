@@ -15,12 +15,13 @@ export default [
     }
   },
   {
-    path: '/graph',
+    path: '/graph/:workflowid',
     view: 'Graph',
     name: i18n.t('App.graph'),
     meta: {
       layout: 'default'
-    }
+    },
+    props: true
   },
   {
     path: '/workflows',

@@ -1,3 +1,4 @@
+/* jshint esversion: 6, asi: true */
 /**
  * Vuex
  *
@@ -13,6 +14,7 @@ import Vuex from 'vuex'
 import { app } from './app.module'
 import { workflows } from './workflows.module'
 import { user } from './user.module'
+import graph from './graph.module'
 
 // State
 const state = {
@@ -62,7 +64,8 @@ const store = new Vuex.Store({
   modules: {
     app,
     workflows,
-    user
+    user,
+    graph
   },
   actions,
   mutations,

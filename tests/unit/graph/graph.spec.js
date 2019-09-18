@@ -1,5 +1,6 @@
+/* jshint esversion: 6, asi: true */
 import Vue from 'vue'
-import Graph from '@/views/Graph.vue'
+import Graph from '@/components/cylc//Graph.vue'
 import { mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import Vuetify, { VBtn } from 'vuetify'

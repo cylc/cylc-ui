@@ -82,12 +82,6 @@ export default {
         icon: 'mdi-vector-circle',
         text: i18n.t('App.workflows'),
         view: true
-      },
-      {
-        to: '/graph',
-        icon: 'mdi-vector-polyline',
-        text: i18n.t('App.graph'),
-        view: true
       }
     ],
     responsive: false

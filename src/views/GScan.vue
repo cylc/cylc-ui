@@ -57,6 +57,15 @@
                   mdi-table-edit
                 </v-icon>
               </td>
+              <td class="justify-center">
+                <v-icon
+                    small
+                    class="mr-2"
+                    @click="viewGraph(item)"
+                >
+                  mdi-vector-polyline
+                </v-icon>
+              </td>
             </template>
           </v-data-table>
         </material-card>
@@ -151,6 +160,10 @@ export default {
   methods: {
     viewWorkflow (workflow) {
       this.$router.push({ path: `/workflows/${workflow.name}` })
+    },
+
+    viewGraph (workflow) {
+      this.$router.push({ path: `/graph/${workflow.id}` })
     },
 
     subscribe (queryName) {

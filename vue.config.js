@@ -12,7 +12,8 @@ module.exports = {
           PACKAGE_JSON: '"' + escape(JSON.stringify(require('./package.json'))) + '"'
         }
       })
-    ]
+    ],
+    devtool: 'source-map'
   },
   chainWebpack: config => {
     if (process.env.NODE_ENV !== 'production') {
