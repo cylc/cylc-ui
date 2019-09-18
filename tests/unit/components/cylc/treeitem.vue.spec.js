@@ -31,7 +31,7 @@ describe('TreeItem component', () => {
           depth: 0
         }
       })
-      expect(wrapper.props().expanded).to.equal(true)
+      expect(wrapper.props().initialExpanded).to.equal(true)
       const expandControlElement = wrapper.find('.node-expand-collapse-button')
       expect(expandControlElement.text()).to.equal('▽')
     })
@@ -39,10 +39,10 @@ describe('TreeItem component', () => {
       const wrapper = mount(TreeItem, {
         propsData: {
           node: simpleTaskNode,
-          expanded: false
+          initialExpanded: false
         }
       })
-      expect(wrapper.props().expanded).to.equal(false)
+      expect(wrapper.props().initialExpanded).to.equal(false)
       const expandControlElement = wrapper.find('.node-expand-collapse-button')
       expect(expandControlElement.text()).to.equal('▷')
     })

@@ -98,6 +98,7 @@ function _getWorkflowTree (workflows) {
             taskProxy.name = taskProxy.task.name
             taskProxy.children = []
             taskProxy.__type = 'task'
+            taskProxy.expanded = false
             let startedTime = 0
             // the GraphQL query is expected to have `jobs(sort: { keys: ["submit_num"], reverse:true }) {`
             for (const job of taskProxy.jobs) {

@@ -7,7 +7,7 @@
         :node="workflow"
         :hoverable="hoverable"
         :min-depth="minDepth"
-        :expanded="expanded"
+        :initialExpanded="expanded"
         v-on:tree-item-created="onTreeItemCreated"
         v-on:tree-item-expanded="onTreeItemExpanded"
         v-on:tree-item-collapsed="onTreeItemCollapsed"
