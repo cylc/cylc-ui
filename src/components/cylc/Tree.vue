@@ -35,6 +35,13 @@ export default {
       default: 0
     }
   },
+  watch: {
+    workflows: {
+      handler () {
+        this.clearCaches()
+      }
+    }
+  },
   components: {
     'tree-item': TreeItem
   },
@@ -105,6 +112,11 @@ export default {
           this.activeCache.add(treeItem)
         }
       }
+    },
+    clearCaches () {
+      this.treeItemCache.clear()
+      this.activeCache.clear()
+      this.expandedCache.clear()
     }
   }
 }

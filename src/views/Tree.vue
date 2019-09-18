@@ -6,6 +6,8 @@
       :activable="false"
       :multiple-active="false"
       :min-depth="1"
+      ref="tree0"
+      key="tree0"
     ></tree>
   </div>
 </template>
@@ -98,6 +100,7 @@ export default {
   },
 
   beforeDestroy () {
+    this.$refs.tree0.clearCaches()
     workflowService.unregister(this)
   },
 

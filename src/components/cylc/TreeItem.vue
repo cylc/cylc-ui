@@ -73,6 +73,7 @@
       <!-- component recursion -->
       <TreeItem
           v-for="child in node.children"
+          ref="treeitem"
           :key="child.id"
           :node="child"
           :depth="depth + 1"
@@ -169,7 +170,18 @@ export default {
   created () {
     this.$emit('tree-item-created', this)
   },
+  beforeDestroy () {
+    if (Object.prototype.hasOwnProperty.call(this.$refs, 'treeitem')) {
+      this.$refs.treeitem.map((treeitem) => {
+        treeitem.destroy()
+      })
+    }
+  },
   methods: {
+    destroy () {
+      // $destroy will trigger beforeDestroy and destroyed
+      this.$destroy(/* destroy from DOM as well */ true)
+    },
     typeClicked () {
       this.isExpanded = !this.isExpanded
       if (this.isExpanded) {
