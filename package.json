@@ -38,7 +38,6 @@
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.30",
     "vue-cytoscape": "^0.2.10",
-    "vue-flag-icon": "^1.0.6",
     "vue-i18n": "^8.14.0",
     "vue-meta": "^2.2.1",
     "vue-router": "^3.1.2",
