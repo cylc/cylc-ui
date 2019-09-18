@@ -1,5 +1,4 @@
 import './axios'
-import './chartist'
 import './flags'
 import './layouts'
 import './veevalidate'
