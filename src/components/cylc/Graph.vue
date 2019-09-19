@@ -103,14 +103,14 @@ const states = Object.freeze({
   EXPIRED: { state: 'expired', icon: 'baseline-donut_large-24px.svg', colour: '#fefaff' },
   FAILED: { state: 'failed', icon: 'outline-cancel-24px.svg', colour: '#ff3a2b' },
   QUEUED: { state: 'queued', icon: 'baseline-donut_large-24px.svg', colour: '#fff138' },
-  READY: { state: 'ready', icon: 'outline-radio_button_unchecked-24px.svg', colour: '##7093FF' },
+  READY: { state: 'ready', icon: 'outline-radio_button_unchecked-24px.svg', colour: '#7093FF' },
   RETRYING: { state: 'retrying', icon: 'outline-refresh-24px.svg', colour: '#ff3a2b' },
   RUNNING: { state: 'running', icon: 'outline-adjust-24px.svg', colour: '#4ab7ff' },
   SUBFAILED: { state: 'subfailed', icon: 'outline-filter_tilt_shift-24px.svg', colour: '#d453ff' },
   SUBMITTED: { state: 'submitted', icon: 'outline-adjust-24px.svg', colour: '#9ef9ff' },
   SUCCEEDED: { state: 'succeeded', icon: 'outline-radio_button_unchecked-24px.svg', colour: '#31ff53' },
   WAITING: { state: 'waiting', icon: 'outline-radio_button_unchecked-24px.svg', colour: '#666' },
-  DEFAULT: { state: 'default', icon: 'baseline-donut_large-24px.svg', colour: '#333' }
+  DEFAULT: { state: 'default', icon: 'baseline-donut_large-24px.svg', colour: '#555' }
 })
 
 const dagreOptions = {
@@ -532,7 +532,6 @@ export default {
 
     async workflowUpdated (workflows) {
       try {
-        console.log('workflowUpdated')
         const elements = {
           nodes: [],
           edges: []
@@ -561,15 +560,17 @@ export default {
         const nodesArray = []
         let nodeObj = {}
         let parentId = ''
+        let todo = 0
         each(nodes, (node, key) => {
           nodeObj = {
             data: {
               id: '',
-              runpercent: 0,
               state: 'undefined',
               parent: '',
               label: '',
-              shape: 'ellipse'
+              shape: 'ellipse',
+              runpercent: 0,
+              todo: 0
             },
             position: {
 
@@ -585,10 +586,16 @@ export default {
           has(node, 'id') && !isEmpty(node.id) ? nodeObj.data.id = getUuid(node.id) : console.log('workflowUpdated - node id is empty')
           has(node, 'label') && !isEmpty(node.label) ? nodeObj.data.label = node.label : console.log('workflowUpdated - node label is empty')
           has(node, 'state') && !isEmpty(node.state) ? nodeObj.data.state = node.state : nodeObj.state = 'undefined'
-          has(node, 'runpercent') && !isEmpty(node.runpercent) ? nodeObj.data.runpercent = node.runpercent : nodeObj.data.runpercent = 0
-          has(node, 'parent') && has(node.parent, 'id') && !isEmpty(node.parent.id) ? parentId = getUuid(node.parent.id)
-            : console.log('workflowUpdated - node parent is empty')
-          nodeObj.data.parent = parentId
+          if (has(node.parent, 'id') && !isEmpty(node.parent.id)) {
+            parentId = getUuid(node.parent.id)
+            nodeObj.data.parent = parentId
+          }
+          if (has(node, 'runpercent') && !isEmpty(node.runpercent) && (parseInt(node.runpercent) > 0)) {
+            nodeObj.data.runpercent = parseInt(node.runpercent)
+            nodeObj.running = nodeObj.data.runpercent
+            todo = (100 - parseInt(node.runpercent))
+            nodeObj.data.todo = todo
+          }
           nodesArray.push(nodeObj)
         })
         console.log('NODES ::: ', nodesArray)
@@ -628,7 +635,7 @@ export default {
           edgeObj.data.source !== undefined || edgeObj.data.target !== undefined ? edgesArray.push(edgeObj)
             : console.log('skipping adding edge with empty source or target')
         })
-        console.log('EDGES ::: ', edgesArray)
+        // console.log('EDGES ::: ', edgesArray)
         return edgesArray
       } catch (error) {
         console.error('getEdges error: ', error)
@@ -738,7 +745,7 @@ export default {
             {
               selector: 'node',
               css: {
-                'background-image': function (node) {
+                'background-image': (node) => {
                   let icon = states.DEFAULT.icon
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
@@ -747,10 +754,10 @@ export default {
                   return path
                 },
                 'background-fit': 'contain contain',
-                'background-image-opacity': function (node) {
+                'background-image-opacity': (node) => {
                   return has(data, 'runpercent') && !isEmpty(data('runpercent')) && data('runpercent') > 0 ? 1.0 : 0.6
                 },
-                'background-color': function (node) {
+                'background-color': (node) => {
                   let colour = states.DEFAULT.colour
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
@@ -774,45 +781,13 @@ export default {
                 width: '6em',
                 height: '6em',
                 // The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
-                'pie-size': function (node) {
-                  let size
-                  has(node.data('runpercent')) && node.data('runpercent') > 0 ? size = '5.6em' : size = '0%'
-                  return size
-                },
-                'pie-1-background-color': '#9ef9ff', // The colour of the node’s ith pie chart slice.
-                'pie-1-background-size': 'mapData(submitted, 0, 100, 0, 100)',
-                'pie-1-background-opacity': 0.7,
-                'pie-2-background-color': '#4ab7ff',
-                'pie-2-background-size': 'mapData(running, 0, 100, 0, 100)',
-                'pie-2-background-opacity': 0.7,
-                'pie-3-background-color': '#31ff53',
-                'pie-3-background-size': 'mapData(succeeded, 0, 100, 0, 100)', // The size of the node’s ith pie chart slice, measured in percent (e.g. 25% or 25).
-                'pie-3-background-opacity': 0.7,
-                'pie-4-background-color': '#ff3a2b',
-                'pie-4-background-size': 'mapData(failed, 0, 100, 0, 100)',
-                'pie-4-background-opacity': 0.7,
-                'pie-5-background-color': '#d453ff',
-                'pie-5-background-size': 'mapData(subfailed, 0, 100, 0, 100)',
-                'pie-5-background-opacity': 0.7,
-                'pie-6-background-color': '#fefaff',
-                'pie-6-background-size': 'mapData(expired, 0, 100, 0, 100)',
-                'pie-6-background-opacity': 0.7,
-                'pie-7-background-color': '#fff138',
-                'pie-7-background-size': 'mapData(queued, 0, 100, 0, 100)',
-                'pie-7-background-opacity': 0.7,
-                'pie-8-background-color': '#ff3a2b',
-                'pie-8-background-size': 'mapData(retrying, 0, 100, 0, 100)',
-                'pie-8-background-opacity': 0.7,
-                'pie-9-background-color': '#666',
-                'pie-9-background-size': 'mapData(waiting, 0, 100, 0, 100)',
-                'pie-9-background-opacity': 0.7,
-                'pie-10-background-color': '#cacaca',
-                'pie-10-background-size': 'mapData(runpercent, 0, 100, 0, 100)',
-                'pie-10-background-opacity': 0.7,
-                'pie-11-background-size': 'mapData(undefined, 0, 100, 0, 100)',
-                'pie-11-background-opacity': 0.7,
-                'pie-12-background-size': 'mapData(ready, 0, 100, 0, 100)',
-                'pie-12-background-opacity': 0.7
+                'pie-size': '5.6em',
+                'pie-1-background-color': states.RUNNING.colour,
+                'pie-1-background-size': 'mapData(running, 0, 100, 0, 100)',
+                'pie-1-background-opacity': 0.5,
+                'pie-2-background-color': '#333',
+                'pie-2-background-size': 'mapData(todo, 0, 100, 0, 100)',
+                'pie-2-background-opacity': 0.5
               }
             },
             {
@@ -973,7 +948,6 @@ export default {
     },
 
     async updateGraph () {
-      console.log('UPDATEGRAPH')
       try {
         if (tippy) {
           tippy.hide()
@@ -1091,7 +1065,7 @@ export default {
           }
         })
 
-        instance.on('tap', 'node', function (event) {
+        instance.on('tap', 'node', (event) => {
           const node = event.target
           console.log('tapped ' + node.id(), node.data())
           const ref = node.popperRef()
@@ -1153,7 +1127,7 @@ export default {
           tippy.show()
         })
 
-        instance.on('tap', 'edge', function (event) {
+        instance.on('tap', 'edge', (event) => {
           const edge = event.target
           console.log('tapped ' + edge.id(), edge.data())
           edge.addClass('selected')
@@ -1196,7 +1170,7 @@ export default {
         })
 
         // eslint-disable-next-line no-unused-vars
-        instance.on('click', function (event) {
+        instance.on('click', (event) => {
           instance.elements().removeClass('semitransp')
           instance.elements().removeClass('highlight')
           instance.elements().removeClass('selected')
@@ -1250,7 +1224,7 @@ export default {
               minIterations: 100, // [optional] The minimum number of iteraions the algorithm will run before stopping (default 100).
               maxIterations: 1000, // [optional] The maximum number of iteraions the algorithm will run before stopping (default 1000).
               attributes: [
-                function (node) {
+                (node) => {
                   return node.data('weight')
                 }
               ]
@@ -1291,7 +1265,7 @@ export default {
     activateKeys (instance) {
       document.addEventListener(
         'keydown',
-        function (event) {
+        (event) => {
           if ((event.metaKey && event.which === 90) || (event.ctrlKey && event.which === 90)) {
             instance.undoRedo().undo()
           } else if ((event.metaKey && event.which === 89) || (event.ctrlKey && event.which === 89)) {
