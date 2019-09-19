@@ -88,6 +88,7 @@ export default {
     },
     onTreeItemExpanded (treeItem) {
       this.expandedCache.add(treeItem)
+      this.$emit('tree-item-expanded', treeItem)
     },
     onTreeItemCollapsed (treeItem) {
       this.expandedCache.delete(treeItem)

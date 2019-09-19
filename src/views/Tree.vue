@@ -15,6 +15,7 @@
       :activable="false"
       :multiple-active="false"
       :min-depth="1"
+      v-on:tree-item-expanded="onTreeItemExpanded"
       ref="tree0"
       key="tree0"
     ></tree>
@@ -146,6 +147,10 @@ export default {
          * @param {bool} isActive - Are this views subs active.
          */
       this.isLoading = !isActive
+    },
+
+    onTreeItemExpanded (treeItem) {
+      this.collapsed = false
     }
   }
 }
