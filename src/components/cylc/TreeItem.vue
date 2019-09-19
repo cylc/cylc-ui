@@ -81,6 +81,7 @@
           :min-depth="minDepth"
           :initialExpanded="initialExpanded"
           v-on:tree-item-created="$emit('tree-item-created', $event)"
+          v-on:tree-item-destroyed="$emit('tree-item-destroyed', $event)"
           v-on:tree-item-expanded="$emit('tree-item-expanded', $event)"
           v-on:tree-item-collapsed="$emit('tree-item-collapsed', $event)"
           v-on:tree-item-clicked="$emit('tree-item-clicked', $event)"
@@ -171,11 +172,7 @@ export default {
     this.$emit('tree-item-created', this)
   },
   beforeDestroy () {
-    if (Object.prototype.hasOwnProperty.call(this.$refs, 'treeitem')) {
-      this.$refs.treeitem.map((treeitem) => {
-        treeitem.destroy()
-      })
-    }
+    this.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
     if (Object.prototype.hasOwnProperty.call(this.node, 'expanded')) {
@@ -184,10 +181,6 @@ export default {
     }
   },
   methods: {
-    destroy () {
-      // $destroy will trigger beforeDestroy and destroyed
-      this.$destroy(/* destroy from DOM as well */ true)
-    },
     typeClicked () {
       this.isExpanded = !this.isExpanded
       this.emitExpandCollapseEvent(this.isExpanded)
