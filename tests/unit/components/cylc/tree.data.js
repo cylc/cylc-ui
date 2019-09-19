@@ -20,6 +20,7 @@ const simpleWorkflowTree4Nodes = [
             id: 'user/workflow1/20100101T0000Z/foo',
             name: 'foo',
             state: 'failed',
+            expanded: false,
             children: [
               {
                 __type: 'job',

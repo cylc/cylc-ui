@@ -79,7 +79,7 @@
           :depth="depth + 1"
           :hoverable="hoverable"
           :min-depth="minDepth"
-          :expanded="expanded"
+          :initialExpanded="initialExpanded"
           v-on:tree-item-created="$emit('tree-item-created', $event)"
           v-on:tree-item-expanded="$emit('tree-item-expanded', $event)"
           v-on:tree-item-collapsed="$emit('tree-item-collapsed', $event)"
@@ -119,7 +119,7 @@ export default {
       default: 0
     },
     hoverable: Boolean,
-    expanded: {
+    initialExpanded: {
       type: Boolean,
       default: true
     }
@@ -128,7 +128,7 @@ export default {
     return {
       active: false,
       selected: false,
-      isExpanded: this.expanded,
+      isExpanded: this.initialExpanded,
       leafProperties: [
         {
           title: 'host id',
@@ -177,6 +177,12 @@ export default {
       })
     }
   },
+  beforeMount () {
+    if (Object.prototype.hasOwnProperty.call(this.node, 'expanded')) {
+      this.isExpanded = this.node.expand
+      this.emitExpandCollapseEvent(this.isExpanded)
+    }
+  },
   methods: {
     destroy () {
       // $destroy will trigger beforeDestroy and destroyed
@@ -184,7 +190,15 @@ export default {
     },
     typeClicked () {
       this.isExpanded = !this.isExpanded
-      if (this.isExpanded) {
+      this.emitExpandCollapseEvent(this.isExpanded)
+    },
+    /**
+     * Emits an event `tree-item-expanded` if `expanded` is true, or emits
+     * `tree-item-collapsed` if `expanded` is false.
+     * @param {boolean} expanded whether the node is expanded or not
+     */
+    emitExpandCollapseEvent (expanded) {
+      if (expanded) {
         this.$emit('tree-item-expanded', this)
       } else {
         this.$emit('tree-item-collapsed', this)

@@ -23,7 +23,30 @@ describe('TreeItem component', () => {
   })
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
-    it('should display the TreeItem expanded by default', () => {
+    it('should display the cycle point expanded by default', () => {
+      const wrapper = mount(TreeItem, {
+        propsData: {
+          node: simpleCyclepointNode,
+          minDepth: 0,
+          depth: 0
+        }
+      })
+      expect(wrapper.props().initialExpanded).to.equal(true)
+      const expandControlElement = wrapper.find('.node-expand-collapse-button')
+      expect(expandControlElement.text()).to.equal('▽')
+    })
+    it('should not display the cycle point expanded when set expanded=true', () => {
+      const wrapper = mount(TreeItem, {
+        propsData: {
+          node: simpleTaskNode,
+          initialExpanded: false
+        }
+      })
+      expect(wrapper.props().initialExpanded).to.equal(false)
+      const expandControlElement = wrapper.find('.node-expand-collapse-button')
+      expect(expandControlElement.text()).to.equal('▷')
+    })
+    it('should not display the task expanded by default', () => {
       const wrapper = mount(TreeItem, {
         propsData: {
           node: simpleTaskNode,
@@ -31,18 +54,7 @@ describe('TreeItem component', () => {
           depth: 0
         }
       })
-      expect(wrapper.props().expanded).to.equal(true)
-      const expandControlElement = wrapper.find('.node-expand-collapse-button')
-      expect(expandControlElement.text()).to.equal('▽')
-    })
-    it('should not display the TreeItem expanded when set expanded=true', () => {
-      const wrapper = mount(TreeItem, {
-        propsData: {
-          node: simpleTaskNode,
-          expanded: false
-        }
-      })
-      expect(wrapper.props().expanded).to.equal(false)
+      expect(wrapper.props().initialExpanded).to.equal(true)
       const expandControlElement = wrapper.find('.node-expand-collapse-button')
       expect(expandControlElement.text()).to.equal('▷')
     })
