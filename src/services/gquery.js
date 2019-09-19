@@ -213,7 +213,10 @@ class GQuery {
     /**
      * Dump a human-readable representation of all subscriptions.
      */
-    var ret = 'Combined Query:'
+    if (process.env.NODE_ENV === 'production') {
+      return
+    }
+    let ret = 'Combined Query:'
     if (this.query) {
       ret += '\n' + prefixLines(print(this.query), '    ')
     } else {
@@ -230,9 +233,7 @@ class GQuery {
         })
     })
 
-    if (process.env.NODE_ENV !== 'production') {
-      console.debug(ret)
-    }
+    console.debug(ret)
   }
 }
 
