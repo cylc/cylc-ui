@@ -9,6 +9,7 @@
         :min-depth="minDepth"
         :initialExpanded="expanded"
         v-on:tree-item-created="onTreeItemCreated"
+        v-on:tree-item-destroyed="onTreeItemDestroyed"
         v-on:tree-item-expanded="onTreeItemExpanded"
         v-on:tree-item-collapsed="onTreeItemCollapsed"
         v-on:tree-item-clicked="onTreeItemClicked"
@@ -33,13 +34,6 @@ export default {
     minDepth: {
       type: Number,
       default: 0
-    }
-  },
-  watch: {
-    workflows: {
-      handler () {
-        this.clearCaches()
-      }
     }
   },
   components: {
@@ -84,6 +78,8 @@ export default {
     },
     onTreeItemExpanded (treeItem) {
       this.expandedCache.add(treeItem)
+      this.expanded = true
+      this.$emit('tree-item-expanded', treeItem)
     },
     onTreeItemCollapsed (treeItem) {
       this.expandedCache.delete(treeItem)
@@ -92,7 +88,14 @@ export default {
       this.treeItemCache.add(treeItem)
       if (treeItem.isExpanded) {
         this.expandedCache.add(treeItem)
+        this.$emit('tree-item-expanded', treeItem)
       }
+    },
+    onTreeItemDestroyed (treeItem) {
+      // make sure the item is removed from all caches, otherwise we will have a memory leak
+      this.treeItemCache.delete(treeItem)
+      this.expandedCache.delete(treeItem)
+      this.activeCache.delete(treeItem)
     },
     onTreeItemClicked (treeItem) {
       if (this.activable) {
@@ -112,11 +115,6 @@ export default {
           this.activeCache.add(treeItem)
         }
       }
-    },
-    clearCaches () {
-      this.treeItemCache.clear()
-      this.activeCache.clear()
-      this.expandedCache.clear()
     }
   }
 }
