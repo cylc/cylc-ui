@@ -33,14 +33,17 @@
           <v-icon color="#5E5E5E">mdi-stop</v-icon>
         </a>
 
+        <!-- TODO: add control options and call mutations -->
+        <!--
         <a>
           <v-chip color="#E7E7E7" @click="toggleExtended">{{ $t('Toolbar.control') }}</v-chip>
         </a>
+        -->
 
-        <!-- TODO: workflow latest message goes here -->
+        <!-- TODO: add workflow latest message -->
         <span></span>
 
-        <!-- TODO: enable add view when tabs are added -->
+        <!-- TODO: enable add view button to add view to a tab/panel -->
         <!--
         <v-spacer />
 
@@ -109,11 +112,9 @@ export default {
     },
     onClickPause () {
       // TODO: implement the pause action
-      console.log('Pausing workflows has not been implemented yet')
     },
     onClickStop () {
       // TODO: implement the stop action
-      console.log('Stopping workflows has not been implemented yet')
     },
     toggleExtended () {
       this.extended = !this.extended
