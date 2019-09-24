@@ -1,14 +1,17 @@
 <template>
-  <div class="c-tree">
-    <tree
-      :workflows="currentWorkflow"
-      :hoverable="false"
-      :activable="false"
-      :multiple-active="false"
-      :min-depth="1"
-      ref="tree0"
-      key="tree0"
-    ></tree>
+  <div>
+    <toolbar />
+    <div class="c-tree">
+      <tree
+        :workflows="currentWorkflow"
+        :hoverable="false"
+        :activable="false"
+        :multiple-active="false"
+        :min-depth="1"
+        ref="tree0"
+        key="tree0"
+      ></tree>
+    </div>
   </div>
 </template>
 
@@ -17,6 +20,7 @@ import { workflowService } from 'workflow-service'
 import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
 import Tree from '@/components/cylc/Tree'
+import Toolbar from '@/components/cylc/Toolbar'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -58,6 +62,7 @@ const QUERIES = {
 export default {
   mixins: [mixin],
   components: {
+    toolbar: Toolbar,
     tree: Tree
   },
 

@@ -2,10 +2,8 @@
   <div>
     <v-app-bar
       id="core-app-bar"
-      app
-      absolute
-      flat
       dense
+      flat
       class="c-toolbar"
     >
       <v-toolbar-title
@@ -26,7 +24,7 @@
       </v-toolbar-title>
 
       <!-- control bar elements displayed only when a workflow has been positioned -->
-      <template v-if="isDisplayingWorkflow()">
+      <template>
         <a @click="onClickPause">
           <v-icon color="#5E5E5E">mdi-pause</v-icon>
         </a>
@@ -119,22 +117,13 @@ export default {
     onClickAddView () {
       // TODO: implement adding views action
       console.log('Adding views has not been implemented yet')
-    },
-    isDisplayingWorkflow () {
-      // add other view names that must display the Control bar here
-      return ['Tree'].includes(this.$route.name)
     }
   }
 }
 </script>
 
 <style>
-  /* Fix coming in v2.0.8 */
-  #core-app-bar {
-    width: auto;
-  }
-
-  #core-app-bar a {
-    text-decoration: none;
-  }
+#core-app-bar a {
+  text-decoration: none;
+}
 </style>
