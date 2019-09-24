@@ -80,11 +80,6 @@
           :hoverable="hoverable"
           :min-depth="minDepth"
           :initialExpanded="initialExpanded"
-          v-on:tree-item-created="$emit('tree-item-created', $event)"
-          v-on:tree-item-destroyed="$emit('tree-item-destroyed', $event)"
-          v-on:tree-item-expanded="$emit('tree-item-expanded', $event)"
-          v-on:tree-item-collapsed="$emit('tree-item-collapsed', $event)"
-          v-on:tree-item-clicked="$emit('tree-item-clicked', $event)"
       ></TreeItem>
     </span>
   </div>
@@ -93,6 +88,7 @@
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
+import { TreeEventBus } from '@/components/cylc/tree/event-bus'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -169,10 +165,10 @@ export default {
     }
   },
   created () {
-    this.$emit('tree-item-created', this)
+    TreeEventBus.$emit('tree-item-created', this)
   },
   beforeDestroy () {
-    this.$emit('tree-item-destroyed', this)
+    TreeEventBus.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
     if (Object.prototype.hasOwnProperty.call(this.node, 'expanded')) {
@@ -192,9 +188,9 @@ export default {
      */
     emitExpandCollapseEvent (expanded) {
       if (expanded) {
-        this.$emit('tree-item-expanded', this)
+        TreeEventBus.$emit('tree-item-expanded', this)
       } else {
-        this.$emit('tree-item-collapsed', this)
+        TreeEventBus.$emit('tree-item-collapsed', this)
       }
     },
     getTypeStyle () {
@@ -209,7 +205,7 @@ export default {
      * @param {event} e event
      */
     nodeClicked (e) {
-      this.$emit('tree-item-clicked', this)
+      TreeEventBus.$emit('tree-item-clicked', this)
     },
     /**
      * Handler for when a job node was clicked.
