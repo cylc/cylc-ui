@@ -37,13 +37,17 @@
           <v-chip color="#E7E7E7" @click="toggleExtended">{{ $t('Toolbar.control') }}</v-chip>
         </a>
 
-        <span>Running, will stop at 30000101T0000 cycle</span>
+        <!-- TODO: workflow latest message goes here -->
+        <span></span>
 
+        <!-- TODO: enable add view when tabs are added -->
+        <!--
         <v-spacer />
 
         <a class="add-view" @click="onClickAddView">
           {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
         </a>
+        -->
       </template>
 
       <!-- displayed only when extended===true -->
