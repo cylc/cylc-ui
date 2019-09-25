@@ -38,6 +38,14 @@ export default [
     }
   },
   {
+    path: '/guide',
+    name: 'Guide',
+    view: 'Guide',
+    meta: {
+      layout: 'default'
+    }
+  },
+  {
     path: '*',
     view: 'NotFound',
     meta: {
