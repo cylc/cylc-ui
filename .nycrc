@@ -18,5 +18,7 @@
   "reporter" : ["html", "lcov", "text-summary"],
   "cache" : false,
   "all" : true,
-  "check-coverage" : true
+  "check-coverage" : true,
+  "instrument" : false,
+  "sourceMap" : false
 }
