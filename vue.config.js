@@ -1,5 +1,6 @@
 // optional file, loaded automatically by @vue/cli-service if present next to package.json
 var webpack = require('webpack')
+var path = require('path')
 
 module.exports = {
   publicPath: '',
@@ -15,9 +16,11 @@ module.exports = {
     ]
   },
   chainWebpack: config => {
-    if (process.env.NODE_ENV !== 'production') {
-      config.module.rule('js')
-        .use('istanbul')
+    if (process.env.NODE_ENV === 'test') {
+      config.module.rule('istanbul')
+        .test(/\.js$/)
+        .include.add(path.resolve('src')).end()
+        .use('istanbul-instrumenter-loader')
         .loader('istanbul-instrumenter-loader')
         .options({ esModules: true })
         .before('babel-loader')
@@ -25,7 +28,9 @@ module.exports = {
       config.output
         .devtoolModuleFilenameTemplate('[absolute-resource-path]')
         .devtoolFallbackModuleFilenameTemplate('[absolute-resource-path]?[hash]')
+    }
 
+    if (process.env.NODE_ENV !== 'production') {
       config.devtool('inline-cheap-module-source-map')
     }
 
