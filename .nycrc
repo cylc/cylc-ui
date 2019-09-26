@@ -16,6 +16,6 @@
   "cache": false,
   "all": true,
   "check-coverage": false,
-  "instrument": false,
-  "sourceMap": false
+  "instrument": true,
+  "sourceMap": true
 }
