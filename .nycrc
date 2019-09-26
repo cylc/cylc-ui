@@ -1,9 +1,6 @@
 {
-  "lines" : 0,
-  "statements" : 0,
-  "branches" : 0,
-  "include" : ["src/**/*.js"],
-  "exclude" : [
+  "include": ["src/**/*.js"],
+  "exclude": [
     "node_modules",
     "docs",
     "tests",
@@ -14,9 +11,11 @@
     "src/styles",
     "src/components/index.js"
    ],
-  "extension" : [".js", ".vue"],
-  "reporter" : ["html", "lcov", "text-summary"],
-  "cache" : false,
-  "all" : true,
-  "check-coverage" : true
+  "extension": [".js", ".vue"],
+  "reporter": ["html", "lcov", "text-summary"],
+  "cache": false,
+  "all": true,
+  "check-coverage": false,
+  "instrument": true,
+  "sourceMap": true
 }
