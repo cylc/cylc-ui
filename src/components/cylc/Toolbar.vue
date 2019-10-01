@@ -2,10 +2,8 @@
   <div>
     <v-app-bar
       id="core-app-bar"
-      app
-      absolute
-      flat
       dense
+      flat
       class="c-toolbar"
     >
       <v-toolbar-title
@@ -26,7 +24,7 @@
       </v-toolbar-title>
 
       <!-- control bar elements displayed only when a workflow has been positioned -->
-      <template v-if="isDisplayingWorkflow()">
+      <template>
         <a @click="onClickPause">
           <v-icon color="#5E5E5E">mdi-pause</v-icon>
         </a>
@@ -35,17 +33,24 @@
           <v-icon color="#5E5E5E">mdi-stop</v-icon>
         </a>
 
+        <!-- TODO: add control options and call mutations -->
+        <!--
         <a>
           <v-chip color="#E7E7E7" @click="toggleExtended">{{ $t('Toolbar.control') }}</v-chip>
         </a>
+        -->
 
-        <span>Running, will stop at 30000101T0000 cycle</span>
+        <!-- TODO: add workflow latest message -->
+        <span></span>
 
+        <!-- TODO: enable add view button to add view to a tab/panel -->
+        <!--
         <v-spacer />
 
         <a class="add-view" @click="onClickAddView">
           {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
         </a>
+        -->
       </template>
 
       <!-- displayed only when extended===true -->
@@ -107,11 +112,9 @@ export default {
     },
     onClickPause () {
       // TODO: implement the pause action
-      console.log('Pausing workflows has not been implemented yet')
     },
     onClickStop () {
       // TODO: implement the stop action
-      console.log('Stopping workflows has not been implemented yet')
     },
     toggleExtended () {
       this.extended = !this.extended
@@ -119,22 +122,13 @@ export default {
     onClickAddView () {
       // TODO: implement adding views action
       console.log('Adding views has not been implemented yet')
-    },
-    isDisplayingWorkflow () {
-      // add other view names that must display the Control bar here
-      return ['Tree'].includes(this.$route.name)
     }
   }
 }
 </script>
 
 <style>
-  /* Fix coming in v2.0.8 */
-  #core-app-bar {
-    width: auto;
-  }
-
-  #core-app-bar a {
-    text-decoration: none;
-  }
+#core-app-bar a {
+  text-decoration: none;
+}
 </style>
