@@ -1,18 +1,15 @@
 <template>
-  <v-container
-    fluid
-    grid-list
-    class="c-dashboard mt-4"
-  >
+  <v-container fluid grid-list class="c-dashboard mt-4">
     <v-layout wrap>
       <v-flex xs6 md6 lg3>
         <p class="display-1">Workflows</p>
         <!-- TODO: link with data from the query -->
         <v-data-table
-            :headers="workflowsHeader"
-            :items="workflows"
-            hide-default-footer
-            hide-default-header>
+          :headers="workflowsHeader"
+          :items="workflows"
+          hide-default-footer
+          hide-default-header
+        >
           <template v-slot:item.count="{ item }">
             <span class="headline font-weight-thin">{{ item.count }}</span>
           </template>
@@ -24,10 +21,11 @@
       <v-flex xs6 md6 lg9>
         <p class="display-1">Events</p>
         <v-data-table
-            :headers="eventsHeader"
-            :items="events"
-            hide-default-footer
-            hide-default-header>
+          :headers="eventsHeader"
+          :items="events"
+          hide-default-footer
+          hide-default-header
+        >
           <template v-slot:item.id="{ item }">
             <span class="title font-weight-thin">{{ item.id }}</span>
           </template>
@@ -44,73 +42,55 @@
     <v-layout row wrap>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-item to="/user-profile" class="v-list-resize-left">
+          <v-list-item to="/user-profile">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-settings</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
-                Settings
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                View your Hub permissions, and alter user preferences
-              </v-list-item-subtitle>
+              <v-list-item-title class="title font-weight-thin">Settings</v-list-item-title>
+              <v-list-item-subtitle>View your Hub permissions, and alter user preferences</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item href="/hub/home" class="v-list-resize-left">
+          <v-list-item href="/hub/home">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-hubspot</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
-                Cylc Hub
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                Visit the Hub to manage your running UI Servers
-              </v-list-item-subtitle>
+              <v-list-item-title class="title font-weight-thin">Cylc Hub</v-list-item-title>
+              <v-list-item-subtitle>Visit the Hub to manage your running UI Servers</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-flex>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-item href="#" class="v-list-resize-right">
+          <v-list-item href="#">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-book</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
-                Cylc UI Quickstart
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                Learn how to use the Cylc UI
-              </v-list-item-subtitle>
+              <v-list-item-title class="title font-weight-thin">Cylc UI Quickstart</v-list-item-title>
+              <v-list-item-subtitle>Learn how to use the Cylc UI</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item href="https://cylc.github.io/doc/built-sphinx/suite-design-guide/suite-design-guide-master.html" class="v-list-resize-right" style="padding: 0 0 0 16px; margin: 0 12px 0 0;">
+          <v-list-item
+            href="https://cylc.github.io/doc/built-sphinx/suite-design-guide/suite-design-guide-master.html"
+          >
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-book-open-variant</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
-                Suite Design Guide
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                How to make complex Cylc and Rose workflows simpler and easier to maintain
-              </v-list-item-subtitle>
+              <v-list-item-title class="title font-weight-thin">Suite Design Guide</v-list-item-title>
+              <v-list-item-subtitle>How to make complex Cylc and Rose workflows simpler and easier to maintain</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item href="https://cylc.github.io/documentation.html" class="v-list-resize-right">
+          <v-list-item href="https://cylc.github.io/documentation.html">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-file-document-box-multiple</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
-                Documentation
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                The complete Cylc documentation
-              </v-list-item-subtitle>
+              <v-list-item-title class="title font-weight-thin">Documentation</v-list-item-title>
+              <v-list-item-subtitle>The complete Cylc documentation</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -120,7 +100,7 @@
 </template>
 
 <script>
-import { mixin } from '@/mixins/index'
+import { mixin } from '@/mixins/index';
 
 export default {
   mixins: [mixin],
@@ -189,7 +169,8 @@ export default {
   width: auto;
   height: auto;
 }
-.v-list__tile__action, .v-list__tile__avatar {
+.v-list__tile__action,
+.v-list__tile__avatar {
   min-width: auto;
   margin-left: -10px;
 }
@@ -209,22 +190,5 @@ export default {
 /* to left align items in the dashboard */
 .v-list__tile {
   padding: 10px 0;
-}
-
-.v-list-resize-left, 
-.v-list-resize-right {
-  padding: 0;
-  margin: 0 12px;
-}
-
-@media (min-width: 960px) {
-  .v-list-resize-left {
-    padding: 0 16px 0 0; 
-    margin: 0 0 0 12px;
-  }
-  .v-list-resize-right {
-    padding: 0 0 0 16px; 
-    margin: 0 12px 0 0;
-  }
 }
 </style>
