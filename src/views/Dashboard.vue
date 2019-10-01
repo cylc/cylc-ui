@@ -41,7 +41,7 @@
       </v-flex>
     </v-layout>
     <v-divider />
-    <v-layout row wrap>
+    <v-layout wrap>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
           <v-list-item to="/user-profile">
