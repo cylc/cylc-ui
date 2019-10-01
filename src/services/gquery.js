@@ -25,7 +25,7 @@ function getSelections (a) {
   if (!a.selectionSet || !a.selectionSet.selections) {
     return {}
   }
-  var selections = {}
+  const selections = {}
   for (const selection of a.selectionSet.selections) {
     if (selection.kind === 'Field') {
       selections[selection.name.value] = selection
@@ -95,7 +95,7 @@ class GQuery {
       return
     }
     // merge together active subscriptions
-    var root = gClone(this.subscriptions[0].query)
+    const root = gClone(this.subscriptions[0].query)
     for (const subscription of this.subscriptions.slice(1)) {
       merge(root, subscription.query)
     }
