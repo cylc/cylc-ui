@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { mixin } from '@/mixins/index';
+import { mixin } from '@/mixins/index'
 
 export default {
   mixins: [mixin],
