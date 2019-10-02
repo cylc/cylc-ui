@@ -40,6 +40,7 @@ below.
  - Martin Ryan
  - Tim Pillinger
  - Alex Szabó
+ - Ash Newport
 
 (All contributors are identifiable with email addresses in the git version
 control logs or otherwise.)
