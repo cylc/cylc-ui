@@ -41,6 +41,7 @@ below.
  - Tim Pillinger
  - Alex Szabó
  - Ash Newport
+ - Garrett Walker
 
 (All contributors are identifiable with email addresses in the git version
 control logs or otherwise.)
