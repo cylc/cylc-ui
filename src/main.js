@@ -15,18 +15,6 @@ import i18n from '@/i18n'
 import router from '@/router'
 import store from '@/store'
 
-// GraphQL
-import VueApollo from 'vue-apollo'
-
-import { createApolloClient } from '@/utils/graphql'
-
-const apolloClient = createApolloClient(
-  `${window.location.pathname}/graphql`
-)
-const apolloProvider = new VueApollo({
-  defaultClient: apolloClient
-})
-
 // Sync store with router
 sync(store, router)
 
@@ -38,6 +26,5 @@ new Vue({
   router,
   store,
   vuetify,
-  apolloProvider,
   render: h => h(App)
 }).$mount('#app')
