@@ -44,6 +44,7 @@ export function createApolloClient (queryUri, subscriptionUri = null) {
   )
 
   return new ApolloClient({
+    uri: queryUri,
     fetchOptions: {
       link: link
     }
