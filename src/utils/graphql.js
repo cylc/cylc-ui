@@ -1,8 +1,9 @@
-import ApolloClient from 'apollo-boost'
+import ApolloClient from 'apollo-client'
 import { ApolloLink, split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
+import { InMemoryCache } from 'apollo-cache-inmemory'
 
 /**
  * Create an ApolloClient using the given URI's.
@@ -44,9 +45,8 @@ export function createApolloClient (queryUri, subscriptionUri = null) {
   )
 
   return new ApolloClient({
-    uri: queryUri,
-    fetchOptions: {
-      link: link
-    }
+    link: link,
+    cache: new InMemoryCache(),
+    connectToDevTools: process.env.NODE_ENV !== 'production'
   })
 }
