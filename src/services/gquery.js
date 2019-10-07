@@ -78,9 +78,12 @@ class GQuery {
    */
 
   constructor (enableWebSockets = false) {
+    const baseUrl = `${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}${window.location.pathname}`
+    const httpUrl = `${window.location.protocol}//${baseUrl}graphql`
+    const wsUrl = `ws://${baseUrl}subscriptions`
     this.apolloClient = createApolloClient(
-      `${window.location.pathname}/graphql`,
-      enableWebSockets ? `${window.location.pathname}/subscriptions` : null
+      httpUrl,
+      enableWebSockets ? wsUrl : null
     )
     this.query = null
     this.subscriptions = []
