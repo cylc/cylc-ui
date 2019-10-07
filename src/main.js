@@ -15,8 +15,15 @@ import i18n from '@/i18n'
 import router from '@/router'
 import store from '@/store'
 
+// GraphQL client
+import { SubscriptionWorkflowService } from 'workflow-service'
+
 // Sync store with router
 sync(store, router)
+
+// WorkflowService singleton available application-wide
+const workflowService = new SubscriptionWorkflowService()
+Vue.prototype.$workflowService = workflowService
 
 Vue.config.productionTip = false
 
