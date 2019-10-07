@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import { workflowService } from 'workflow-service'
 import { mixin } from '@/mixins/index'
 import { mapGetters } from 'vuex'
 import Tree from '@/components/cylc/Tree'
@@ -24,7 +23,7 @@ import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
 // query to retrieve all workflows
 const QUERIES = {
   root: `
-      {
+      subscription {
         workflows(ids: ["WORKFLOW_ID"]) {
           id
           name
@@ -120,7 +119,7 @@ export default {
 
   created () {
     this.viewID = `Tree(${this.workflowName}): ${Math.random()}`
-    workflowService.register(
+    this.$workflowService.register(
       this,
       {
         activeCallback: this.setActive
@@ -130,7 +129,7 @@ export default {
   },
 
   beforeDestroy () {
-    workflowService.unregister(this)
+    this.$workflowService.unregister(this)
   },
 
   methods: {
@@ -141,10 +140,10 @@ export default {
          */
       if (!(queryName in this.subscriptions)) {
         this.subscriptions[queryName] =
-            workflowService.subscribe(
-              this,
-              QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
-            )
+          this.$workflowService.subscribe(
+            this,
+            QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
+          )
       }
     },
 
@@ -154,7 +153,7 @@ export default {
          * @param {string} queryName - Must be in QUERIES.
          */
       if (queryName in this.subscriptions) {
-        workflowService.unsubscribe(
+        this.$workflowService.unsubscribe(
           this.subscriptions[queryName]
         )
       }
