@@ -19,7 +19,7 @@ import { getMainDefinition } from 'apollo-utilities'
  * a Subscription link.
  *
  * @param queryUri {string} Query URI, e.g. http://localhost:3000/graphql
- * @param subscriptionUri {string} Subscription URI, e.g. ws://localhost:3000/subscriptions
+ * @param subscriptionUri {object} Subscription URI, e.g. ws://localhost:3000/subscriptions
  * @returns {DefaultClient} an ApolloClient
  */
 export function createApolloClient (queryUri, subscriptionUri = null) {
