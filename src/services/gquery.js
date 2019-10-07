@@ -77,9 +77,10 @@ class GQuery {
    * queries.
    */
 
-  constructor () {
+  constructor (enableWebSockets = false) {
     this.apolloClient = createApolloClient(
-      `${window.location.pathname}/graphql`
+      `${window.location.pathname}/graphql`,
+      enableWebSockets ? `${window.location.pathname}/subscriptions` : null
     )
     this.query = null
     this.subscriptions = []

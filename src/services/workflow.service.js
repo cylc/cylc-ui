@@ -8,7 +8,7 @@ class LiveWorkflowService extends GQuery {
      */
 
   constructor () {
-    super()
+    super(/* enableWebSockets */ true)
     this.polling = null
   }
 

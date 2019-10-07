@@ -9,7 +9,7 @@ class MockWorkflowService extends GQuery {
      */
 
   constructor () {
-    super()
+    super(/* enableWebSockets */ false)
     // load mock data
     store.dispatch('workflows/set', checkpoint.workflows)
   }

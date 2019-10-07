@@ -1,4 +1,6 @@
 import { expect } from 'chai'
+// need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
+import 'cross-fetch/polyfill'
 import { GQuery } from '@/services/gquery'
 import { parse } from 'graphql/language/parser'
 

@@ -1,4 +1,6 @@
 import { expect } from 'chai'
+// need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
+import 'cross-fetch/polyfill'
 import { createApolloClient } from '@/utils/graphql'
 
 describe('utils', () => {
