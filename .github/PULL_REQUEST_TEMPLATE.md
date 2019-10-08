@@ -22,5 +22,4 @@ This is a small change with no associated Issue.
 - [ ] No change log entry required (why? e.g. invisible to users).
 <!-- choose one: -->
 - [ ] I have opened a documentation PR at cylc/cylc-doc/pull/XXXX.
-- [ ] (7.8.x branch) I have updated the documentation in this PR branch.
 - [ ] No documentation update required.
