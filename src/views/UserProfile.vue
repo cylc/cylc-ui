@@ -71,7 +71,6 @@
 </template>
 
 <script>
-import { UserService } from '@/services/user.service'
 import { mapState } from 'vuex'
 import { mixin } from '@/mixins/index'
 
@@ -80,13 +79,7 @@ export default {
   computed: {
     ...mapState('user', ['user'])
   },
-  beforeCreate () {
-    this.$store
-      .dispatch('user/setUser', null)
-      .then(() => {
-        UserService.getUserProfile()
-      })
-  },
+
   metaInfo () {
     return {
       title: this.getPageTitle('App.userProfile')
