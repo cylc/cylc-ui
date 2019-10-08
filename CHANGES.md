@@ -21,6 +21,9 @@ None or N/A.
 [#257](https://github.com/cylc/cylc-ui/pull/257) - Display toolbar for
 workflows only.
 
+[#283](https://github.com/cylc/cylc-ui/pull/283) -  Load user information
+on application startup.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard
