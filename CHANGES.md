@@ -24,7 +24,7 @@ workflows only.
 [#283](https://github.com/cylc/cylc-ui/pull/283) - Load user information
 on application startup.
 
-[#283](https://github.com/cylc/cylc-ui/pull/285) - Update Vuetify to 2.1,
+[#285](https://github.com/cylc/cylc-ui/pull/285) - Update Vuetify to 2.1,
 along with other dependencies with updates available.
 
 [#291](https://github.com/cylc/cylc-ui/pull/291) - Add families to Tree
@@ -37,6 +37,9 @@ dashboard workflows summary.
 
 [#307](https://github.com/cylc/cylc-ui/pull/307) - Invoke mutations to
 hold, release, and stop workflows.
+
+[#280](https://github.com/cylc/cylc-ui/pull/280) - Add WebSockets client
+for GraphQL subscriptions.
 
 ### Fixes
 
