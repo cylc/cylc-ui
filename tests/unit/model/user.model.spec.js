@@ -10,11 +10,13 @@ describe('UserModel', () => {
       const groups = ['abc', 'wheel']
       const admin = true
       const created = 'now'
-      const user = new User(name, groups, created, admin)
-      expect(user.getUserName()).to.equal('john.foe')
-      expect(user.getGroups().length === 2).to.equal(true)
-      expect(user.isAdmin()).to.equal(true)
-      expect(user.getCreated()).to.equal('now')
+      const server = '/cylc/user/john.foe'
+      const user = new User(name, groups, created, admin, server)
+      expect(user.username).to.equal(name)
+      expect(user.groups.length === 2).to.equal(admin)
+      expect(user.admin).to.equal(true)
+      expect(user.created).to.equal(created)
+      expect(user.server).to.equal(server)
     })
   })
 })
