@@ -80,10 +80,6 @@
           :hoverable="hoverable"
           :min-depth="minDepth"
           :initialExpanded="initialExpanded"
-          v-on:tree-item-created="$emit('tree-item-created', $event)"
-          v-on:tree-item-expanded="$emit('tree-item-expanded', $event)"
-          v-on:tree-item-collapsed="$emit('tree-item-collapsed', $event)"
-          v-on:tree-item-clicked="$emit('tree-item-clicked', $event)"
       ></TreeItem>
     </span>
   </div>
@@ -92,6 +88,7 @@
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
+import { TreeEventBus } from '@/components/cylc/tree/event-bus'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -168,14 +165,10 @@ export default {
     }
   },
   created () {
-    this.$emit('tree-item-created', this)
+    TreeEventBus.$emit('tree-item-created', this)
   },
   beforeDestroy () {
-    if (Object.prototype.hasOwnProperty.call(this.$refs, 'treeitem')) {
-      this.$refs.treeitem.map((treeitem) => {
-        treeitem.destroy()
-      })
-    }
+    TreeEventBus.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
     if (Object.prototype.hasOwnProperty.call(this.node, 'expanded')) {
@@ -184,10 +177,6 @@ export default {
     }
   },
   methods: {
-    destroy () {
-      // $destroy will trigger beforeDestroy and destroyed
-      this.$destroy(/* destroy from DOM as well */ true)
-    },
     typeClicked () {
       this.isExpanded = !this.isExpanded
       this.emitExpandCollapseEvent(this.isExpanded)
@@ -199,9 +188,9 @@ export default {
      */
     emitExpandCollapseEvent (expanded) {
       if (expanded) {
-        this.$emit('tree-item-expanded', this)
+        TreeEventBus.$emit('tree-item-expanded', this)
       } else {
-        this.$emit('tree-item-collapsed', this)
+        TreeEventBus.$emit('tree-item-collapsed', this)
       }
     },
     getTypeStyle () {
@@ -216,7 +205,7 @@ export default {
      * @param {event} e event
      */
     nodeClicked (e) {
-      this.$emit('tree-item-clicked', this)
+      TreeEventBus.$emit('tree-item-clicked', this)
     },
     /**
      * Handler for when a job node was clicked.

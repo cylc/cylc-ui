@@ -29,6 +29,9 @@ on application startup.
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard
 links on hover.
 
+[#254](https://github.com/cylc/cylc-ui/pull/254) -  Keep cache in sync,
+and use a global event bus.
+
 ### Documentation
 
 [#215](https://github.com/cylc/cylc-ui/pull/215) - guide: add beginnings

@@ -8,10 +8,6 @@
         :hoverable="hoverable"
         :min-depth="minDepth"
         :initialExpanded="expanded"
-        v-on:tree-item-created="onTreeItemCreated"
-        v-on:tree-item-expanded="onTreeItemExpanded"
-        v-on:tree-item-collapsed="onTreeItemCollapsed"
-        v-on:tree-item-clicked="onTreeItemClicked"
     >
     </tree-item>
   </div>
@@ -19,6 +15,7 @@
 
 <script>
 import TreeItem from '@/components/cylc/TreeItem'
+import { TreeEventBus } from '@/components/cylc/tree/event-bus'
 
 export default {
   name: 'Tree',
@@ -35,13 +32,6 @@ export default {
       default: 0
     }
   },
-  watch: {
-    workflows: {
-      handler () {
-        this.clearCaches()
-      }
-    }
-  },
   components: {
     'tree-item': TreeItem
   },
@@ -54,6 +44,21 @@ export default {
       expandedFilter: null,
       collapseFilter: null
     }
+  },
+  created () {
+    TreeEventBus.$on('tree-item-created', this.onTreeItemCreated)
+    TreeEventBus.$on('tree-item-destroyed', this.onTreeItemDestroyed)
+    TreeEventBus.$on('tree-item-expanded', this.onTreeItemExpanded)
+    TreeEventBus.$on('tree-item-collapsed', this.onTreeItemCollapsed)
+    TreeEventBus.$on('tree-item-clicked', this.onTreeItemClicked)
+  },
+  destroyed () {
+    // we cannot simply call TreeEventBus.$off() as we may have more trees listening...
+    TreeEventBus.$off('tree-item-created', this.onTreeItemCreated)
+    TreeEventBus.$off('tree-item-destroyed', this.onTreeItemDestroyed)
+    TreeEventBus.$off('tree-item-expanded', this.onTreeItemExpanded)
+    TreeEventBus.$off('tree-item-collapsed', this.onTreeItemCollapsed)
+    TreeEventBus.$off('tree-item-clicked', this.onTreeItemClicked)
   },
   methods: {
     expandAll (filter = null) {
@@ -84,6 +89,7 @@ export default {
     },
     onTreeItemExpanded (treeItem) {
       this.expandedCache.add(treeItem)
+      this.expanded = true
     },
     onTreeItemCollapsed (treeItem) {
       this.expandedCache.delete(treeItem)
@@ -93,6 +99,12 @@ export default {
       if (treeItem.isExpanded) {
         this.expandedCache.add(treeItem)
       }
+    },
+    onTreeItemDestroyed (treeItem) {
+      // make sure the item is removed from all caches, otherwise we will have a memory leak
+      this.treeItemCache.delete(treeItem)
+      this.expandedCache.delete(treeItem)
+      this.activeCache.delete(treeItem)
     },
     onTreeItemClicked (treeItem) {
       if (this.activable) {
@@ -112,11 +124,6 @@ export default {
           this.activeCache.add(treeItem)
         }
       }
-    },
-    clearCaches () {
-      this.treeItemCache.clear()
-      this.activeCache.clear()
-      this.expandedCache.clear()
     }
   }
 }
