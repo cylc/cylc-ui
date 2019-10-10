@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer
     id="app-drawer"
-    v-model="inputValue"
+    v-model="displayDrawer"
     app
     floating
     mobile-break-point="991"
@@ -86,7 +86,8 @@ export default {
         view: true
       }
     ],
-    responsive: false
+    responsive: false,
+    displayDrawer: true
   }),
   computed: {
     inputValue: {
