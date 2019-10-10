@@ -1,6 +1,5 @@
 <template>
   <v-navigation-drawer
-    id="app-drawer"
     v-model="displayDrawer"
     app
     floating
