@@ -14,11 +14,8 @@ const mutations = {
   setTitle: set('title')
 }
 
-const actions = {}
-
 export const app = {
   namespaced: true,
   state,
-  actions,
   mutations
 }
