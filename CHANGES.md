@@ -21,8 +21,11 @@ None or N/A.
 [#257](https://github.com/cylc/cylc-ui/pull/257) - Display toolbar for
 workflows only.
 
-[#283](https://github.com/cylc/cylc-ui/pull/283) -  Load user information
+[#283](https://github.com/cylc/cylc-ui/pull/283) - Load user information
 on application startup.
+
+[#283](https://github.com/cylc/cylc-ui/pull/285) - Update Vuetify to 2.1,
+along with other dependencies with updates available.
 
 ### Fixes
 
