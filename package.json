@@ -57,7 +57,7 @@
     "null-loader": "^3.0.0",
     "nyc": "^14.1.1",
     "sass": "^1.23.0",
-    "sass-loader": "^8.0.0",
+    "sass-loader": "^7.3.1",
     "sinon": "^7.5.0",
     "standard": "^14.3.1",
     "vue-cli-plugin-apollo": "^0.21.1",
