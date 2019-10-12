@@ -1,16 +1,12 @@
+/* this is not in our styles/material-dashboard, so we need to force-override */
 .v-navigation-drawer {
   background-color: map-get($grey, 'lighten-4') !important;
-}
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
 
-#app-drawer {
   .v-list__tile {
     border-radius: 4px;
     margin-top: 5px;
-
-    &--buy {
-      margin-top: auto;
-      margin-bottom: auto;
-    }
   }
 
   .v-image__image--contain {
@@ -24,10 +20,4 @@
     padding-left: 15px;
     padding-right: 15px;
   }
-}
-
-/* this is not in our styles/material-dashboard, so we need to force-override */
-.v-navigation-drawer {
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important;
 }
