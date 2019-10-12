@@ -16,7 +16,7 @@ import router from '@/router'
 import store from '@/store'
 
 // GraphQL client
-import { SubscriptionWorkflowService } from 'workflow-service'
+import SubscriptionWorkflowService from 'workflow-service'
 
 // Sync store with router
 sync(store, router)

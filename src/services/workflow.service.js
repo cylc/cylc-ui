@@ -98,3 +98,4 @@ class SubscriptionWorkflowService extends GQuery {
 }
 
 export { LiveWorkflowService, SubscriptionWorkflowService }
+export default SubscriptionWorkflowService
