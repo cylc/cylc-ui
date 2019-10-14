@@ -30,8 +30,13 @@ module.exports = {
         .devtoolFallbackModuleFilenameTemplate('[absolute-resource-path]?[hash]')
     }
 
+    // https://webpack.js.org/configuration/devtool/
     if (process.env.NODE_ENV !== 'production') {
-      config.devtool('inline-cheap-module-source-map')
+      if (process.env.NODE_ENV === 'test') {
+        config.devtool('eval')
+      } else {
+        config.devtool('inline-cheap-module-source-map')
+      }
     }
 
     // mocha-webpack appears to be having issues with sass-loader, interpreting .sass files as .scss after
