@@ -30,8 +30,13 @@ module.exports = {
         .devtoolFallbackModuleFilenameTemplate('[absolute-resource-path]?[hash]')
     }
 
+    // https://webpack.js.org/configuration/devtool/
     if (process.env.NODE_ENV !== 'production') {
-      config.devtool('inline-cheap-module-source-map')
+      if (process.env.NODE_ENV === 'test') {
+        config.devtool('eval')
+      } else {
+        config.devtool('inline-cheap-module-source-map')
+      }
     }
 
     // set up aliases for mock services, used when the offline mode is used
