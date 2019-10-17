@@ -35,6 +35,9 @@ links on hover.
 [#254](https://github.com/cylc/cylc-ui/pull/254) -  Keep cache in sync,
 and use a global event bus.
 
+[#284](https://github.com/cylc/cylc-ui/pull/284) -  Use data from
+JupyterHub to create the Hub URL (handling base_url).
+
 ### Documentation
 
 [#215](https://github.com/cylc/cylc-ui/pull/215) - guide: add beginnings

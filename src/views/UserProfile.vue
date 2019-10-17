@@ -14,7 +14,7 @@
               <v-layout row wrap>
                 <v-flex xs12 md12>
                   <v-text-field
-                      :value="user.getUserName()"
+                      :value="user.name"
                       :label="$t('UserProfile.username')"
                       disabled
                       aria-disabled="true"
@@ -37,7 +37,7 @@
                     md12
                 >
                   <v-select
-                      :items="user.getGroups()"
+                      :items="user.groups"
                       v-model="user.groups"
                       :label="$t('UserProfile.groups')"
                       attach
@@ -54,7 +54,7 @@
                     md12
                 >
                   <v-text-field
-                      :value="user.getCreated()"
+                      :value="user.created"
                       :label="$t('UserProfile.created')"
                       disabled
                       aria-disabled="true"
