@@ -12,8 +12,8 @@
         [[[P1D]]]
             graph = """
                 sleepy[-P1D] & waiting[-P1D] =>
-                succeeded & eventually_succeeded & retrying
-                succeeded & eventually_succeeded => failed
+                SUCCEEDED:succeed-all & retrying
+                SUCCEEDED:succeed-all => failed
                 failed:fail => checkpoint => sleepy & waiting
                 sleepy => !failed
             """
@@ -22,12 +22,18 @@
     [[root]]
         script = sleep 1
 
+    [[GOOD]]
+    [[SUCCEEDED]]
+        inherit = GOOD
+
     [[succeeded]]
+        inherit = SUCCEEDED
         script = """
             cylc hold "${CYLC_SUITE_NAME}" "sleepy.${CYLC_TASK_CYCLE_POINT}"
         """
 
     [[eventually_succeeded]]
+        inherit = SUCCEEDED
         script = """
             if [[ "${CYLC_TASK_SUBMIT_NUMBER}" -gt 3 ]]; then
                 true
@@ -42,7 +48,10 @@
                 Will succeed, after a few false starts.
             """
 
+    [[BAD]]
+
     [[retrying]]
+        inherit = BAD
         script = """
             false
         """
@@ -54,11 +63,13 @@
             """
 
     [[failed]]
+        inherit = BAD
         script = """
             false
         """
 
     [[checkpoint]]
+        inherit = root
         script = """
             # allow workflow's state to settle
             sleep 5
