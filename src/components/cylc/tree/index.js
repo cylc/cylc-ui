@@ -4,80 +4,65 @@ import { STATES_WITH_PROGRESS, computePercentProgress, getWorkflowCycles } from 
 /**
  * Given a GraphQL response workflow, this function will return the data structure
  * expected by the Vue.js tree component.
+ *
+ * The data structure returned will be a tree-like structure, where the root is the workflow
+ * node, followed by cycle points, then families, and finally tasks as leaf nodes.
+ *
+ * Every node has data, and a .name property used to display the node in the tree in the UI.
+ *
  * @param workflow {object}
  * @returns {Array}
  */
 function convertGraphQLWorkflowToTree (workflow) {
-  // TODO: build the whole structure in one go to save iterations...
-  return []
-}
-
-/**
- * Compute a workflow tree where the root is the workflow node, followed by
- * the cycle points, and finally by task proxies.
- *
- * Every node has a .name property for display.
- *
- * @param workflows
- * @returns {[]}
- * @private
- */
-function getWorkflowTree (workflows) {
-  const cycles = getCycles(workflows)
-  const workflowTree = []
-  if (cycles.size > 0) {
-    for (const workflow of workflows) {
-      // add workflow minus taskProxies, with children
-      workflow.__type = 'workflow'
-      workflow.children = []
-      for (const cyclePoint of cycles.get(workflow.id)) {
-        const simplifiedCyclepoint = {
-          name: cyclePoint,
-          id: cyclePoint,
-          state: '',
+  const cycles = getWorkflowCycles(workflow)
+  Object.assign(workflow, {
+    __type: 'workflow',
+    children: []
+  })
+  for (const cyclePoint of cycles) {
+    const cyclePointNode = {
+      __type: 'cyclepoint',
+      name: cyclePoint,
+      children: [],
+      id: cyclePoint,
+      state: ''
+    }
+    workflow.children.push(cyclePointNode)
+    // list used to keep the states of children nodes, and then later used to calculate the group-state
+    const childStates = []
+    for (const taskProxy of workflow.taskProxies) {
+      if (taskProxy.cyclePoint === cyclePoint) {
+        childStates.push(taskProxy.state)
+        Object.assign(taskProxy, {
+          __type: 'task',
+          name: taskProxy.task.name,
           children: [],
-          __type: 'cyclepoint'
+          expanded: false
+        })
+        cyclePointNode.children.push(taskProxy)
+        for (const job of taskProxy.jobs) {
+          Object.assign(job, {
+            __type: 'job',
+            name: `#${job.submitNum}`,
+            latestMessage: taskProxy.latestMessage
+          })
+          taskProxy.children.push(job)
         }
-
-        const childStates = []
-
-        for (const taskProxy of workflow.taskProxies) {
-          if (taskProxy.cyclePoint === cyclePoint) {
-            taskProxy.name = taskProxy.task.name
-            taskProxy.children = []
-            taskProxy.__type = 'task'
-            taskProxy.expanded = false
-            let startedTime = 0
-            // the GraphQL query is expected to have `jobs(sort: { keys: ["submit_num"], reverse:true }) {`
-            for (const job of taskProxy.jobs) {
-              job.name = `#${job.submitNum}`
-              job.__type = 'job'
-              job.latestMessage = taskProxy.latestMessage
-              taskProxy.children.push(job)
-              // we use only the highest submitNum startedTime
-              if (startedTime === 0 && job.startedTime) {
-                startedTime = Date.parse(job.startedTime)
-              }
-            }
-            simplifiedCyclepoint.children.push(taskProxy)
-
-            if (STATES_WITH_PROGRESS.includes(taskProxy.state)) {
-              taskProxy.progress = computePercentProgress(startedTime, taskProxy.task.meanElapsedTime)
-            }
-
-            childStates.push(taskProxy.state)
+        // calculate task progress if necessary/possible
+        if (STATES_WITH_PROGRESS.includes(taskProxy.state) && taskProxy.jobs.length > 0) {
+          // the graphql query is expected to have jobs sorted by submit_num, e.g.:
+          // `jobs(sort: { keys: ["submit_num"], reverse:true })`
+          const latestJob = taskProxy.jobs[0]
+          if (Object.hasOwnProperty.call(latestJob, 'startedTime')) {
+            const startedTime = Date.parse(latestJob.startedTime)
+            taskProxy.progress = computePercentProgress(startedTime, taskProxy.task.meanElapsedTime)
           }
         }
-
-        simplifiedCyclepoint.state = extractGroupState(childStates, false)
-
-        workflow.children.push(simplifiedCyclepoint)
       }
-      workflowTree.push(workflow)
     }
-    cycles.clear()
+    cyclePointNode.state = extractGroupState(childStates, false)
   }
-  return workflowTree
+  return [workflow]
 }
 
 export {
