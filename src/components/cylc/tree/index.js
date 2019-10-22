@@ -2,12 +2,12 @@ import { extractGroupState } from '@/utils/tasks'
 import { STATES_WITH_PROGRESS, computePercentProgress, getWorkflowCycles } from '@/components/cylc'
 
 /**
- * Given a GraphQL query response for workflows, this function will return the data structure
+ * Given a GraphQL response workflow, this function will return the data structure
  * expected by the Vue.js tree component.
- * @param workflows {Array}
+ * @param workflow {object}
  * @returns {Array}
  */
-function convertGraphQLWorkflowsToTree (workflows) {
+function convertGraphQLWorkflowToTree (workflow) {
   // TODO: build the whole structure in one go to save iterations...
   return []
 }
@@ -81,5 +81,5 @@ function getWorkflowTree (workflows) {
 }
 
 export {
-  convertGraphQLWorkflowsToTree
+  convertGraphQLWorkflowToTree
 }

@@ -1,4 +1,4 @@
-import { convertGraphQLWorkflowsToTree } from '@/components/cylc/tree/index'
+import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
 
 const state = {
   workflows: [],
@@ -18,7 +18,12 @@ const mutations = {
 
 const actions = {
   set ({ commit }, data) {
-    commit('SET_WORKFLOW_TREE', convertGraphQLWorkflowsToTree(data))
+    if (data && Array.isArray(data) && data.length > 0) {
+      const workflow = data[0]
+      if (Object.hasOwnProperty.call(workflow, 'familyProxies')) {
+        commit('SET_WORKFLOW_TREE', convertGraphQLWorkflowToTree(data[0]))
+      }
+    }
     commit('SET', data)
   }
 }
