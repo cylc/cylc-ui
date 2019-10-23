@@ -68,9 +68,12 @@ router.beforeResolve((to, from, next) => {
 
 router.beforeEach((to, from, next) => {
   if (!store.state.user.user) {
-    UserService.getUserProfile().then(() => {})
+    UserService.getUserProfile().then(() => {
+      next()
+    })
+  } else {
+    next()
   }
-  next()
 })
 
 router.afterEach(() => {
