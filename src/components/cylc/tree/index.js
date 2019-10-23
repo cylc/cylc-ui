@@ -44,10 +44,6 @@ function convertGraphQLWorkflowToTree (workflow) {
   // build hierarchy of cycle-point with zero or many families, and each family with zero or many other families
   for (const familyProxy of workflow.familyProxies) {
     const parent = familyProxy.firstParent
-    // skip the root family, which has null as its first parent
-    if (parent === null) {
-      continue
-    }
     const parsedFamilyId = parseFamilyId(familyProxy.id)
     if (!lookup.get(parsedFamilyId.cyclePoint)) {
       // create cycle point node, using family's cycle point info
@@ -63,6 +59,10 @@ function convertGraphQLWorkflowToTree (workflow) {
       workflow.children.push(cyclePointNode)
     }
 
+    // skip the root family, which has null as its first parent
+    if (parent === null) {
+      continue
+    }
     if (!lookup.get(familyProxy.id)) {
       // create family proxy node for the tree
       Object.assign(familyProxy, {
@@ -127,50 +127,15 @@ function convertGraphQLWorkflowToTree (workflow) {
       }
     }
   }
-  // const cycles = getWorkflowCycles(workflow)
-  // for (const cyclePoint of cycles) {
-  //   const cyclePointNode = {
-  //     __type: 'cyclepoint',
-  //     name: cyclePoint,
-  //     children: [],
-  //     id: cyclePoint,
-  //     state: ''
-  //   }
-  //   workflow.children.push(cyclePointNode)
-  //   // list used to keep the states of children nodes, and then later used to calculate the group-state
-  //   const childStates = []
-  //   for (const taskProxy of workflow.taskProxies) {
-  //     if (taskProxy.cyclePoint === cyclePoint) {
-  //       childStates.push(taskProxy.state)
-  //       Object.assign(taskProxy, {
-  //         __type: 'task',
-  //         name: taskProxy.task.name,
-  //         children: [],
-  //         expanded: false
-  //       })
-  //       cyclePointNode.children.push(taskProxy)
-  //       for (const job of taskProxy.jobs) {
-  //         Object.assign(job, {
-  //           __type: 'job',
-  //           name: `#${job.submitNum}`,
-  //           latestMessage: taskProxy.latestMessage
-  //         })
-  //         taskProxy.children.push(job)
-  //       }
-  //       // calculate task progress if necessary/possible
-  //       if (STATES_WITH_PROGRESS.includes(taskProxy.state) && taskProxy.jobs.length > 0) {
-  //         // the graphql query is expected to have jobs sorted by submit_num, e.g.:
-  //         // `jobs(sort: { keys: ["submit_num"], reverse:true })`
-  //         const latestJob = taskProxy.jobs[0]
-  //         if (Object.hasOwnProperty.call(latestJob, 'startedTime')) {
-  //           const startedTime = Date.parse(latestJob.startedTime)
-  //           taskProxy.progress = computePercentProgress(startedTime, taskProxy.task.meanElapsedTime)
-  //         }
-  //       }
-  //     }
-  //   }
-  //   cyclePointNode.state = extractGroupState(childStates, false)
-  // }
+
+  // last step now is to calculate the group-state for cycle-points, based on its direct children's states
+  for (const cyclepoint of workflow.children) {
+    const childStates = []
+    for (const child of cyclepoint.children) {
+      childStates.push(child.state)
+    }
+    cyclepoint.state = extractGroupState(childStates, false)
+  }
   return [workflow]
 }
 
