@@ -23,6 +23,14 @@
           <span class="mx-1">{{ node.name }}</span>
         </v-flex>
       </v-layout>
+      <v-layout class="node-data" @click="nodeClicked" row wrap v-else-if="node.__type === 'family'">
+        <v-flex shrink>
+          <task :status="node.state" :progress="node.progress" />
+        </v-flex>
+        <v-flex grow>
+          <span class="mx-1">{{ node.name }}</span>
+        </v-flex>
+      </v-layout>
       <v-layout class="node-data" @click="nodeClicked" row wrap v-else-if="node.__type === 'task'">
         <v-flex shrink>
           <task :status="node.state" :progress="node.progress" />
