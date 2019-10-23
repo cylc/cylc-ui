@@ -26,24 +26,7 @@ function computePercentProgress (startedTime, meanElapsedTime) {
   return 100 * (now - startedTime) / (meanElapsedTime * 1000)
 }
 
-/**
- * Extract the list of cycles for a given workflow.
- *
- * @param workflow {object} a workflow
- * @returns {Set<string>}
- */
-function getWorkflowCycles (workflow) {
-  const cycles = new Set()
-  if (Object.prototype.hasOwnProperty.call(workflow, 'taskProxies')) {
-    for (const proxy of workflow.taskProxies) {
-      cycles.add(proxy.cyclePoint)
-    }
-  }
-  return cycles
-}
-
 export {
   STATES_WITH_PROGRESS,
-  computePercentProgress,
-  getWorkflowCycles
+  computePercentProgress
 }
