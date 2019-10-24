@@ -7,36 +7,47 @@ describe('store', () => {
   beforeEach(() => {
     workflows = [
       {
-        id: 'cylc/one',
+        id: 'cylc|one',
         name: 'one',
         status: 'running',
         taskProxies: [
           {
-            id: 'cylc/one/20000101T0000Z/sleepy',
+            id: 'cylc|one|20000101T0000Z|sleepy',
             state: 'running',
             task: {
               meanElapsedTime: 1.0
             },
+            firstParent: {
+              id: 'cylc|one|20000101T0000Z|root',
+              state: 'running'
+            },
             jobs: [
               {
-                id: 'cylc/one/20000103T0000Z/sleepy/01',
+                id: 'cylc|one|20000101T0000Z|sleepy|03',
                 startedTime: '2019-08-21T01:31:30Z',
                 state: 'running',
                 submitNum: 3
               },
               {
-                id: 'cylc/one/20000102T0000Z/sleepy/01',
+                id: 'cylc|one|20000101T0000Z|sleepy|02',
                 startedTime: '2018-08-21T01:31:30Z',
                 state: 'running',
                 submitNum: 2
               },
               {
-                id: 'cylc/one/20000101T0000Z/sleepy/01',
+                id: 'cylc|one|20000101T0000Z|sleepy|01',
                 startedTime: '2017-08-21T01:31:30Z',
                 state: 'running',
                 submitNum: 1
               }
             ]
+          }
+        ],
+        familyProxies: [
+          {
+            id: 'cylc|one|20000101T0000Z|root',
+            state: 'running',
+            firstParent: null
           }
         ]
       }
