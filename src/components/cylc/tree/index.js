@@ -93,6 +93,10 @@ function convertGraphQLWorkflowToTree (workflow) {
     }
   }
 
+  workflow.children.sort((cyclepoint, anotherCyclepoint) => {
+    return cyclepoint.id.localeCompare(anotherCyclepoint.id)
+  })
+
   // simply iterate through tasks, creating the nodes, then attach them to their parents using the lookup map
   for (const taskProxy of workflow.taskProxies) {
     Object.assign(taskProxy, {
