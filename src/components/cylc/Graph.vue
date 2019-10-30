@@ -54,11 +54,7 @@ const QUERIES = {
         {
           workflows(ids: ["WORKFLOW_ID"]) {
             id
-            name
             status
-            owner
-            host
-            port
             nodesEdges {
               nodes {
                 id
@@ -70,7 +66,6 @@ const QUERIES = {
                 state
                 cyclePoint
                 task {
-                  meanElapsedTime
                   name
                 }
                 jobs(sort: {keys: ["submit_num"], reverse: true}) {
@@ -90,8 +85,6 @@ const QUERIES = {
                 source
                 target
                 label: id
-                cond
-                suicide
               }
             }
           }
@@ -552,8 +545,6 @@ export default {
       edges: [],
       subscriptions: {},
       workflowId: '',
-      workflowOwner: '',
-      workflowName: '',
       suiteName: ''
     }
   },
@@ -657,12 +648,6 @@ export default {
           if (!isUndefined(workflows)) {
             each(workflows, (value, key) => {
               each(value, (workflow, key) => {
-                if (!isEmpty(workflow.owner)) {
-                  this.workflowOwner = workflow.owner
-                }
-                if (!isEmpty(workflow.name)) {
-                  this.workflowName = workflow.name
-                }
                 if (has(workflow.nodesEdges, 'edges') && !isUndefined(workflow.nodesEdges.edges)) {
                   elements.edges = this.getEdges(workflow.nodesEdges.edges)
                 }
@@ -787,12 +772,6 @@ export default {
           has(edge, 'id') && !isEmpty(edge.id) ? edgeObj.data.id = edge.id : console.debug('workflowUpdated - edge id is empty')
           has(edge, 'source') && !isEmpty(edge.source) ? edgeObj.data.source = edge.source : edgeObj.source = undefined
           has(edge, 'target') && !isEmpty(edge.target) ? edgeObj.data.target = edge.target : edge.target = undefined
-          if (!isEmpty(this.workflowOwner)) {
-            edgeObj.data.owner = this.workflowOwner
-          }
-          if (!isEmpty(this.workflowName)) {
-            edgeObj.data.name = this.workflowName
-          }
           has(edge, 'label') && !isEmpty(edge.label) ? edgeObj.data.label = edge.label : edgeObj.label = ''
           edgeObj.data.source !== undefined || edgeObj.data.target !== undefined ? edgesArray.push(edgeObj)
             : console.debug('skipping adding edge with empty source or target')
