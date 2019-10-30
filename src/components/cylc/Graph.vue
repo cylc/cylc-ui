@@ -649,10 +649,26 @@ export default {
             each(workflows, (value, key) => {
               each(value, (workflow, key) => {
                 if (has(workflow.nodesEdges, 'edges') && !isUndefined(workflow.nodesEdges.edges)) {
-                  elements.edges = this.getEdges(workflow.nodesEdges.edges)
+                  const edges = []
+                  each(workflow.nodesEdges.edges, (edge, key) => {
+                    edges.push({
+                      data: edge,
+                      position: {},
+                      group: 'edges'
+                    })
+                  })
+                  elements.edges = edges
                 }
                 if (has(workflow.nodesEdges, 'nodes') && !isUndefined(workflow.nodesEdges.nodes)) {
-                  elements.nodes = this.getNodes(workflow.nodesEdges.nodes)
+                  const nodes = []
+                  each(workflow.nodesEdges.nodes, (node, key) => {
+                    nodes.push({
+                      data: node,
+                      position: {},
+                      group: 'nodes'
+                    })
+                  })
+                  elements.nodes = nodes
                 }
               })
             })
@@ -663,132 +679,6 @@ export default {
       } catch (error) {
         console.error('workflowUpdated error: ', error)
       }
-    },
-
-    getNodes (nodes) {
-      try {
-        const nodesArray = []
-        let nodeObj = {}
-        let todo = 0
-        let jobsArray = []
-        each(nodes, (node, key) => {
-          nodeObj = {
-            data: {
-              id: '',
-              name: '',
-              state: 'undefined',
-              parent: '',
-              label: '',
-              shape: 'ellipse',
-              runpercent: 0,
-              todo: 0,
-              running: 0,
-              cyclepoint: '',
-              submittedtime: '',
-              starttime: '',
-              finishtime: '',
-              jobs: '',
-              jobsarray: [],
-              status: ''
-            },
-            position: {
-
-            },
-            group: 'nodes',
-            removed: false,
-            selected: false,
-            selectable: true,
-            locked: false,
-            grabbable: true,
-            classes: ''
-          }
-          if (has(node, 'task') && !isEmpty(node.task) && has(node.task, 'name') && !isEmpty(node.task.name)) {
-            nodeObj.data.label = node.task.name
-          }
-          has(node, 'id') && !isEmpty(node.id) ? nodeObj.data.id = node.id : console.warn('workflowUpdated - node id is empty')
-          has(node, 'state') && !isEmpty(node.state) ? nodeObj.data.state = node.state : nodeObj.state = 'undefined'
-          has(node, 'status') && !isEmpty(node.status) ? nodeObj.data.status = node.status : nodeObj.status = 'undefined'
-          if (has(node, 'runpercent') && !isEmpty(node.runpercent) && (parseInt(node.runpercent) > 0)) {
-            nodeObj.data.runpercent = parseInt(node.runpercent)
-            nodeObj.running = nodeObj.data.runpercent
-            todo = 100 - parseInt(nodeObj.data.runpercent)
-            nodeObj.data.todo = todo
-          }
-          if (has(node, 'runpercent') && !isEmpty(node.runpercent) && (parseInt(node.runpercent) > 0)) {
-            nodeObj.data.runpercent = parseInt(node.runpercent)
-            nodeObj.running = nodeObj.data.runpercent
-            todo = (100 - parseInt(node.runpercent))
-            nodeObj.data.todo = todo
-          }
-          if (has(node.parent, 'id') && !isEmpty(node.parent.id)) {
-            nodeObj.data.parent = node.parent.id
-          }
-          if (has(node, 'cyclePoint') && !isEmpty(node.cyclePoint)) {
-            nodeObj.data.cyclepoint = node.cyclePoint
-          }
-          if (has(node, 'jobs') && !isEmpty(node.jobs)) {
-            jobsArray = this.getJobs(node.jobs)
-            nodeObj.data.jobsarray = jobsArray
-            const joblength = node.jobs.length
-            nodeObj.data.jobs = String(node.jobs.length)
-            nodeObj.data.submittedtime = jobsArray[0].submittedTime
-            nodeObj.data.starttime = jobsArray[0].startedTime
-            nodeObj.data.finishtime = jobsArray[joblength - 1].finishedTime
-          }
-          nodesArray.push(nodeObj)
-        })
-        // console.debug('NODES ::: ', JSON.stringify(nodesArray))
-        return nodesArray
-      } catch (error) {
-        console.error('getNodes error: ', error)
-      }
-    },
-
-    getEdges (edges) {
-      try {
-        const edgesArray = []
-        let edgeObj = {}
-        each(edges, (edge, key) => {
-          edgeObj = {
-            data: {
-              id: '',
-              source: '',
-              target: '',
-              label: '',
-              owner: '',
-              name: ''
-            },
-            position: {
-
-            },
-            group: 'edges',
-            removed: false,
-            selected: false,
-            selectable: true,
-            locked: false,
-            grabbable: true,
-            classes: ''
-          }
-          has(edge, 'id') && !isEmpty(edge.id) ? edgeObj.data.id = edge.id : console.debug('workflowUpdated - edge id is empty')
-          has(edge, 'source') && !isEmpty(edge.source) ? edgeObj.data.source = edge.source : edgeObj.source = undefined
-          has(edge, 'target') && !isEmpty(edge.target) ? edgeObj.data.target = edge.target : edge.target = undefined
-          has(edge, 'label') && !isEmpty(edge.label) ? edgeObj.data.label = edge.label : edgeObj.label = ''
-          edgeObj.data.source !== undefined || edgeObj.data.target !== undefined ? edgesArray.push(edgeObj)
-            : console.debug('skipping adding edge with empty source or target')
-        })
-        // console.debug('EDGES ::: ', JSON.stringify(edgesArray))
-        return edgesArray
-      } catch (error) {
-        console.error('getEdges error: ', error)
-      }
-    },
-
-    getJobs (jobs) {
-      const jobsArray = []
-      each(jobs, (job, key) => {
-        jobsArray.push(job)
-      })
-      return jobsArray
     },
 
     changeLayout (value) {
@@ -813,8 +703,7 @@ export default {
         cytoscape.use(cise)
         cytoscape.use(coseBilkent)
         this.cy = cytoscape({
-          container: document.getElementById('cytoscape'),
-          elements: this.graphData
+          container: document.getElementById('cytoscape')
         })
         this.debouncer = debounce(this.updateGraph, 100)
       } catch (error) {
@@ -1226,7 +1115,6 @@ export default {
         {
           query: 'node',
           tpl: (data) => {
-            const jobs = data.jobsarray
             let JOBSTATE
             // eslint-disable-next-line no-unused-vars
             let jobSquare
@@ -1235,7 +1123,7 @@ export default {
             let xoffset = offset * -1
             let yoffset = 0
 
-            each(jobs, (job, key) => {
+            each(data.jobs, (job, key) => {
               JOBSTATE = String(job.state).toUpperCase()
               // index++
               xoffset += offset
@@ -1251,7 +1139,7 @@ export default {
             return '<div style="display:relative margin-top: 3em; class="cy-title"><span class="cy-title__label">' + data.label +
             '</span><br>' +
             '<span  class="cy-title__cyclepoint">' +
-            data.cyclepoint +
+            data.cyclePoint +
             '</span><br>' +
             jobsGrid +
             '</div>'
@@ -1307,7 +1195,7 @@ export default {
               let details
               let jobsquare
               const tasksquare = '<div class="box-task-graph ' + state + '-graph"></div>'
-              const jobs = node.data('jobsarray')
+              const jobs = node.data('jobs')
               const parentstring =
                 '<strong>parent <span style="color: #555;">' +
                 parent +
