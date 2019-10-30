@@ -14,7 +14,7 @@
               <v-layout row wrap>
                 <v-flex xs12 md12>
                   <v-text-field
-                      :value="user.name"
+                      :value="user.username"
                       :label="$t('UserProfile.username')"
                       disabled
                       aria-disabled="true"
