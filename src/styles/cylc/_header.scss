@@ -1,20 +1,23 @@
 .c-header {
   background-color: map-get($grey, 'lighten-3');
-}
+  display: block;
 
-.c-environment-info {
-  color: map-get($grey, base);
-  font-size: $font-size-root;
-  font-weight: map-get($font-weights, 'regular');
+  .layout {
+    .c-environment-info {
+      color: map-get($grey, base);
+      font-size: $font-size-root;
+      font-weight: map-get($font-weights, 'regular');
 
-  .v-chip {
-    font-size: $font-size-root;
-    span {
-      background-color: map-get($grey, 'lighten-5');
+      .v-chip {
+        font-size: $font-size-root;
+        span {
+          background-color: map-get($grey, 'lighten-5');
+        }
+      }
+
+      .v-chip.v-chip--outlined.v-chip.v-chip {
+        background-color: map-get($grey, 'lighten-5') !important;
+      }
     }
-  }
-
-  .v-chip.v-chip--outlined.v-chip.v-chip {
-    background-color: map-get($grey, 'lighten-5') !important;
   }
 }

@@ -26,10 +26,10 @@ describe('UserService', () => {
       sandbox.stub(axios, 'get').returns(userReturned)
       return UserService.getUserProfile().then(function () {
         const user = store.state.user.user
-        expect(user.getUserName()).to.equal('cylc-user-01')
-        expect(user.getGroups().length).to.equal(2)
-        expect(user.getCreated()).to.equal('2019-01-01')
-        expect(user.isAdmin()).to.equal(true)
+        expect(user.username).to.equal('cylc-user-01')
+        expect(user.groups.length).to.equal(2)
+        expect(user.created).to.equal('2019-01-01')
+        expect(user.admin).to.equal(true)
       })
     })
     it('should add an alert on error', () => {

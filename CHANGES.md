@@ -21,10 +21,22 @@ None or N/A.
 [#257](https://github.com/cylc/cylc-ui/pull/257) - Display toolbar for
 workflows only.
 
+[#283](https://github.com/cylc/cylc-ui/pull/283) - Load user information
+on application startup.
+
+[#283](https://github.com/cylc/cylc-ui/pull/285) - Update Vuetify to 2.1,
+along with other dependencies with updates available.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard
 links on hover.
+
+[#254](https://github.com/cylc/cylc-ui/pull/254) -  Keep cache in sync,
+and use a global event bus.
+
+[#284](https://github.com/cylc/cylc-ui/pull/284) -  Use data from
+JupyterHub to create the Hub URL (handling base_url).
 
 ### Documentation
 

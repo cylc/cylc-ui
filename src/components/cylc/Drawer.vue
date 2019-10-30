@@ -1,7 +1,6 @@
 <template>
   <v-navigation-drawer
-    id="app-drawer"
-    v-model="inputValue"
+    v-model="drawer"
     app
     floating
     mobile-break-point="991"
@@ -12,7 +11,7 @@
     <v-layout
       tag="v-list"
       column
-      style="padding: 0"
+      class="pa-0"
     >
       <c-header />
       <v-list-item
@@ -55,10 +54,6 @@
 </template>
 
 <script>
-// Utilities
-import {
-  mapMutations
-} from 'vuex'
 // because we use `tag=v-list` and not `v-list`
 // eslint-disable-next-line no-unused-vars
 import { VList } from 'vuetify/lib/components/VList'
@@ -89,6 +84,14 @@ export default {
     responsive: false
   }),
   computed: {
+    drawer: {
+      get: function () {
+        return this.$store.state.app.drawer
+      },
+      set: function (val) {
+        this.$store.commit('app/setDrawer', val)
+      }
+    },
     inputValue: {
       get () {
         return this.$store.state.app.drawer
@@ -108,7 +111,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('app', ['setDrawer', 'toggleDrawer']),
     isView (bool) {
       // return links to views for true argument, non-views for false argument
       return this.links.filter(function (u) {

@@ -57,7 +57,7 @@
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item href="/hub/home">
+          <v-list-item :href=user.getHubUrl()>
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-hubspot</v-icon>
             </v-list-item-avatar>
@@ -121,6 +121,7 @@
 
 <script>
 import { mixin } from '@/mixins/index'
+import { mapState } from 'vuex'
 
 export default {
   mixins: [mixin],
@@ -171,6 +172,9 @@ export default {
       ],
       events: []
     }
+  },
+  computed: {
+    ...mapState('user', ['user'])
   }
 }
 </script>
