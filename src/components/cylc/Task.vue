@@ -266,6 +266,7 @@ export default {
       if (['waiting', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(this.status)) {
         classes.push(this.status)
       } else {
+        // eslint-disable-next-line no-console
         console.error(`Invalid task status: ${this.status}`)
         classes.push('unknown')
       }
