@@ -1,6 +1,11 @@
 <template>
   <div id='holder'>
-    <SyncLoader :loading='loading' :color='color' :size='size' class='spinner'></SyncLoader>
+    <SyncLoader
+      :loading='loading'
+      :color='vueSpinner.color'
+      :size='vueSpinner.size'
+      class='spinner'
+    ></SyncLoader>
     <div class='switchlayout'>
       <v-btn id='freeze-button' x-small name='freeze' align-bottom justify-center :outlined='true' class='freeze-button' @click='freezeGraph("freeze", $event)'>freeze</v-btn>
       <!-- <v-btn id='collapse-button' x-small name='collapse-all' class='collapse-all-button' align-center justify-center :outlined='true' style='cursor: pointer;' @click='collapseAll()'>collapse</v-btn> -->
@@ -12,7 +17,6 @@
       <v-btn id='cola-button' small name='cola' align-center justify-center :outlined='true' class='cola-button' @click='switchLayout("cola", $event)'>COLA</v-btn>
       <v-btn id='cise-button' small name='cise' align-center justify-center :outlined='true' class='cise-button' @click='switchLayout("cise", $event)'>CISE</v-btn>
       <div id='layout' class='layout-title'>layout: {{layoutName}}<span v-if='freeze'>-frozen</span></div>
-      <div id='suite' class='suite-title'>suite: {{suiteName}}</div>
     </div>
     </div>
     <div class='cytoscape-navigator-overlay'>
@@ -524,17 +528,12 @@ export default {
         nodes: [],
         edges: []
       },
-      i: 1,
-      // vue-spinner
-      color: '#5e9aff',
-      height: '35px',
-      width: '4px',
-      margin: '2px',
-      radius: '2px',
-      size: '.2em',
       loading: true,
+      vueSpinner: {
+        color: '#5e9aff',
+        size: '.2em'
+      },
       // layout variables
-      status: 'pending',
       layoutName: 'dagre',
       layoutStopped: true,
       layoutReady: false,
@@ -542,10 +541,8 @@ export default {
       // elements
       nodesEdges: [],
       workflows: [],
-      edges: [],
       subscriptions: {},
-      workflowId: '',
-      suiteName: ''
+      workflowId: ''
     }
   },
   watch: {
@@ -591,7 +588,7 @@ export default {
   },
 
   mounted () {
-    console.debug(`MOUNTED called, status: ${this.status}`)
+    console.debug('MOUNTED')
     this.$store.watch((store) => {
       this.workflows = store.workflows
     })
@@ -599,7 +596,6 @@ export default {
 
   created (cy) {
     console.debug('CREATED')
-    this.suiteName = this.$route.params.workflowid
     this.workflowId = this.$route.params.workflowid
     workflowService.register(
       this,
