@@ -558,7 +558,8 @@ export default {
 
     workflows: {
       handler: function (newval, oldval) {
-        initialised ? this.workflowUpdated(newval) : console.debug('initialising')
+        console.debug('initialising')
+        this.workflowUpdated(newval)
         initialised = true
       },
       deep: true
@@ -669,8 +670,11 @@ export default {
               })
             })
           }
-          console.debug('elements ==>>>> ', elements)
-          isEmpty(elements) ? console.warn('gdata is empty or undefined') : this.graphData = elements
+          if (isEmpty(elements)) {
+            console.warn('gdata is empty or undefined')
+          } else {
+            this.graphData = elements
+          }
         }
       } catch (error) {
         console.error('workflowUpdated error: ', error)
@@ -713,7 +717,11 @@ export default {
         layoutOptions = dagreOptions
         expandCollapseOptions = expandCollapseOptionsUndefined
         const loaded = await this.initialise(cy)
-        loaded ? this.loading = false : console.error('there was an error loading the graph view')
+        if (loaded) {
+          this.loading = false
+        } else {
+          console.error('there was an error loading the graph view')
+        }
       } catch (error) {
         console.error('afterCreated error', error)
       }
@@ -779,10 +787,9 @@ export default {
               selector: 'node',
               css: {
                 'background-image': function memoize (node) {
-                  let icon = states.DEFAULT.icon
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
-                  !isEmpty(STATE) && !isUndefined(STATE) && STATE !== 'UNDEFINED' ? icon = states[STATE].icon : icon = states.DEFAULT.icon
+                  const icon = states[STATE].icon || states.DEFAULT.icon
                   const path = require('@/../public/img/' + String(icon))
                   return path
                 },
@@ -791,16 +798,9 @@ export default {
                   return has(data, 'runpercent') && !isEmpty(data('runpercent')) && data('runpercent') > 0 ? 1.0 : 0.6
                 },
                 'background-color': function memoize (node) {
-                  let colour = states.DEFAULT.colour
-                  // let isCompound = false
-                  // let children = node.data('collapsedChildren')
-                  // if (children !== undefined) {
-                  //   isCompound = true
-                  // }
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
-                  !isEmpty(STATE) && !isUndefined(STATE) && STATE !== 'UNDEFINED' ? colour = states[STATE].colour : colour = states.DEFAULT.colour
-                  return colour
+                  return states[STATE].colour || states.DEFAULT.colour
                 },
                 // content: 'data(label)',
                 'font-family': 'Avenir, Helvetica, Arial, sans-serif',
@@ -880,11 +880,9 @@ export default {
               selector: 'node.cy-expand-collapse-collapsed-node',
               style: {
                 'background-color': function memoize (node) {
-                  let colour = states.DEFAULT.colour
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
-                  !isEmpty(STATE) && !isUndefined(STATE) && STATE !== 'UNDEFINED' ? colour = states[STATE].colour : colour = states.DEFAULT.colour
-                  return colour
+                  return states[STATE].colour || states.DEFAULT.colour
                 },
                 shape: 'rectangle'
               }
@@ -910,9 +908,6 @@ export default {
             {
               selector: ':child',
               style: {
-                // 'background-opacity': .15,
-                // 'background-image-opacity': .15,
-                // 'background-color': '#b7c0e8',
                 'border-color': '#444',
                 'border-width': '1px'
               }
@@ -1487,10 +1482,12 @@ export default {
   }
 }
 </script>
+
 <style lang="css">
 @import '~@/styles/cytoscape/panzoom.css';
 @import '~@/styles/cytoscape/cytoscape-custom.css';
 </style>
+
 <style lang="scss">
 @import '~@/styles/cytoscape/html-label.scss';
 </style>
