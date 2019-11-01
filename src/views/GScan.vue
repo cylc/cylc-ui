@@ -50,13 +50,8 @@
                 <td>{{ item.host }}</td>
                 <td>{{ item.port }}</td>
                 <td class="justify-center">
-                  <v-icon
-                      small
-                      class="mr-2"
-                      @click="viewWorkflow(item)"
-                  >
-                    mdi-table-edit
-                  </v-icon>
+                  <v-icon small class="mr-2" @click="viewWorkflow(item)">mdi-table-edit</v-icon>
+                  <v-icon small class="mr-2" @click="viewGraph(item)">mdi-vector-polyline</v-icon>
                 </td>
               </tr>
             </template>
@@ -150,6 +145,10 @@ export default {
   methods: {
     viewWorkflow (workflow) {
       this.$router.push({ path: `/workflows/${workflow.name}` })
+    },
+
+    viewGraph (workflow) {
+      this.$router.push({ path: `/graph/${workflow.id}` })
     },
 
     subscribe (queryName) {
