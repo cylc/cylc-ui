@@ -166,6 +166,7 @@ class GQuery {
      * Perform a REST GraphQL request for all subscriptions.
      */
     if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
       console.debug('graphql request:', this.query)
     }
     return this.apolloClient.query({
@@ -233,6 +234,7 @@ class GQuery {
         })
     })
 
+    // eslint-disable-next-line no-console
     console.debug(ret)
   }
 }

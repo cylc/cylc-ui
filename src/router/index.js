@@ -12,6 +12,7 @@ import Router from 'vue-router'
 import Meta from 'vue-meta'
 import NProgress from 'nprogress'
 import store from '@/store'
+import { UserService } from 'user-service'
 
 import '../../node_modules/nprogress/nprogress.css'
 
@@ -51,6 +52,7 @@ const router = new Router({
 Vue.use(Meta)
 
 router.beforeResolve((to, from, next) => {
+  NProgress.start()
   if (to.name) {
     if (['Tree'].includes(to.name)) {
       // When a workflow is being displayed, we set the title to a
@@ -59,10 +61,19 @@ router.beforeResolve((to, from, next) => {
     } else {
       store.commit('app/setTitle', to.name)
     }
-    NProgress.start()
-    store.dispatch('setAlert', null)
+    store.dispatch('setAlert', null).then(() => {})
   }
   next()
+})
+
+router.beforeEach((to, from, next) => {
+  if (!store.state.user.user) {
+    UserService.getUserProfile().then(() => {
+      next()
+    })
+  } else {
+    next()
+  }
 })
 
 router.afterEach(() => {

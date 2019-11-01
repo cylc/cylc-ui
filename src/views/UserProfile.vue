@@ -14,7 +14,7 @@
               <v-layout row wrap>
                 <v-flex xs12 md12>
                   <v-text-field
-                      :value="user.getUserName()"
+                      :value="user.username"
                       :label="$t('UserProfile.username')"
                       disabled
                       aria-disabled="true"
@@ -37,7 +37,7 @@
                     md12
                 >
                   <v-select
-                      :items="user.getGroups()"
+                      :items="user.groups"
                       v-model="user.groups"
                       :label="$t('UserProfile.groups')"
                       attach
@@ -54,7 +54,7 @@
                     md12
                 >
                   <v-text-field
-                      :value="user.getCreated()"
+                      :value="user.created"
                       :label="$t('UserProfile.created')"
                       disabled
                       aria-disabled="true"
@@ -71,7 +71,6 @@
 </template>
 
 <script>
-import { UserService } from '@/services/user.service'
 import { mapState } from 'vuex'
 import { mixin } from '@/mixins/index'
 
@@ -80,13 +79,7 @@ export default {
   computed: {
     ...mapState('user', ['user'])
   },
-  beforeCreate () {
-    this.$store
-      .dispatch('user/setUser', null)
-      .then(() => {
-        UserService.getUserProfile()
-      })
-  },
+
   metaInfo () {
     return {
       title: this.getPageTitle('App.userProfile')
