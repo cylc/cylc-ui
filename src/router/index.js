@@ -19,16 +19,15 @@ import '../../node_modules/nprogress/nprogress.css'
 // Routes
 import paths from './paths'
 
-function route (path, view, name, meta, alias) {
-  return {
-    name: name || view,
-    meta,
-    path,
-    alias,
+function route (path) {
+  const copy = Object.assign({}, path)
+  const view = copy.view
+  return Object.assign(copy, {
+    name: path.name || view,
     component: (resolve) => import(
       `@/views/${view}.vue`
     ).then(resolve)
-  }
+  })
 }
 
 Vue.use(Router)
@@ -36,7 +35,7 @@ Vue.use(Router)
 // Create a new router
 const router = new Router({
   mode: 'hash',
-  routes: paths.map(path => route(path.path, path.view, path.name, path.meta, path.alias)),
+  routes: paths.map(path => route(path)),
   //  .concat([{ path: '*', redirect: '/dashboard' }]),
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {
