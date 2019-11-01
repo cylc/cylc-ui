@@ -38,6 +38,8 @@ and use a global event bus.
 [#284](https://github.com/cylc/cylc-ui/pull/284) -  Use data from
 JupyterHub to create the Hub URL (handling base_url).
 
+[#297](https://github.com/cylc/cylc-ui/pull/297) - Support IE and Safari
+
 ### Documentation
 
 [#215](https://github.com/cylc/cylc-ui/pull/215) - guide: add beginnings
