@@ -928,11 +928,6 @@ export default {
                 },
                 'background-color': function memoize (node) {
                   let colour = states.DEFAULT.colour
-                  // let isCompound = false
-                  // let children = node.data('collapsedChildren')
-                  // if (children !== undefined) {
-                  //   isCompound = true
-                  // }
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
                   !isEmpty(STATE) && !isUndefined(STATE) && STATE !== 'UNDEFINED' ? colour = states[STATE].colour : colour = states.DEFAULT.colour
@@ -1457,7 +1452,7 @@ export default {
           tippy = new Tippy(ref, {
             content: () => {
               const content = document.createElement('div')
-              content.classList.add('edge-tooltip')
+              content.classList.add('graph-edge-tooltip')
               content.innerHTML =
               '<div class="header-graph"><strong>edge</div></strong><br>' +
                '<strong>owner: <span class="details-graph">' +
