@@ -23,11 +23,12 @@ export default [
     }
   },
   {
-    path: '/workflows/:name',
+    path: '/workflows/:workflowName',
     view: 'Tree',
     meta: {
       layout: 'default'
-    }
+    },
+    props: true
   },
   {
     path: '/user-profile',
