@@ -61,15 +61,22 @@ const QUERIES = {
 
 export default {
   mixins: [mixin],
+
+  props: {
+    workflowName: {
+      type: String,
+      required: true
+    }
+  },
+
   components: {
     toolbar: Toolbar,
     tree: Tree
   },
 
   metaInfo () {
-    const workflowName = this.$route.params.name
     return {
-      title: this.getPageTitle('App.workflow', { name: workflowName })
+      title: this.getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
 
@@ -84,7 +91,7 @@ export default {
     ...mapState('workflows', ['workflowTree']),
     currentWorkflow: function () {
       for (const workflow of this.workflowTree) {
-        if (workflow.name === this.$route.params.name) {
+        if (workflow.name === this.workflowName) {
           return [workflow]
         }
       }
@@ -93,7 +100,7 @@ export default {
   },
 
   created () {
-    this.workflowId = this.$route.params.name
+    this.workflowId = this.workflowName
     this.viewID = `Tree(${this.workflowId}): ${Math.random()}`
     workflowService.register(
       this,
