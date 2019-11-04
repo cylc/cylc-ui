@@ -1,94 +1,8 @@
-<template>
-  <div>
-    <v-row
-        v-show="depth >= minDepth"
-        :class="getNodeClass()"
-        :style="getNodeStyle()"
-    >
-      <!-- the node's left icon; used for expand/collapse -->
-      <v-flex
-        class="node-expand-collapse-button"
-        shrink
-        v-if="hasChildren"
-        @click="typeClicked"
-        :style="getTypeStyle()"
-      >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
-      <!-- the node value -->
-      <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <v-layout class="node-data" @click="nodeClicked" row wrap v-if="node.__type === 'cyclepoint'">
-        <v-flex shrink>
-          <task :status="node.state" :progress=0 />
-        </v-flex>
-        <v-flex grow>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
-      </v-layout>
-      <v-layout class="node-data" @click="nodeClicked" row wrap v-else-if="node.__type === 'task'">
-        <v-flex shrink>
-          <task :status="node.state" :progress="node.progress" />
-        </v-flex>
-        <v-flex shrink>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
-        <v-flex grow ml-4 v-if="!isExpanded">
-          <!-- Task summary -->
-          <job
-              v-for="(task, index) in node.children"
-              :key="`${task.id}-summary-${index}`"
-              :status="task.state" />
-        </v-flex>
-      </v-layout>
-      <v-layout class="node-data" layout column v-else-if="node.__type === 'job'">
-        <v-layout @click="jobNodeClicked" row wrap>
-          <v-flex shrink>
-            <job :status="node.state" />
-          </v-flex>
-          <v-flex xs2 md1 lg1>
-            <span class="mx-1">{{ node.name }}</span>
-          </v-flex>
-          <v-flex grow>
-            <span class="grey--text">{{ node.host }}</span>
-          </v-flex>
-        </v-layout>
-        <!-- leaf node -->
-      </v-layout>
-      <v-layout class="node-data" row wrap v-else>
-        <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
-      </v-layout>
-    </v-row>
-    <v-container class="leaf" v-if="displayLeaf && node.__type === 'job'">
-      <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
-      <v-col class="leaf-data font-weight-light py-4">
-        <v-row v-for="leafProperty in leafProperties" :key="leafProperty.id" no-gutters>
-          <v-col xs="4" sm="4" md="4" lg="2" xl="2" no-wrap>
-            <span class="px-4">{{ leafProperty.title }}</span>
-          </v-col>
-          <v-col wrap>
-            <span class="grey--text">{{ node[leafProperty.property] }}</span>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-container>
-    <span v-show="isExpanded">
-      <!-- component recursion -->
-      <TreeItem
-          v-for="child in node.children"
-          ref="treeitem"
-          :key="child.id"
-          :node="child"
-          :depth="depth + 1"
-          :hoverable="hoverable"
-          :min-depth="minDepth"
-          :initialExpanded="initialExpanded"
-      ></TreeItem>
-    </span>
-  </div>
-</template>
-
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 import { TreeEventBus } from '@/components/cylc/tree/event-bus'
+import { VRow, VFlex, VLayout, VContainer, VCol } from 'vuetify/lib/components'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -96,11 +10,217 @@ import { TreeEventBus } from '@/components/cylc/tree/event-bus'
  */
 const NODE_DEPTH_OFFSET = 30
 
+function createNodeLayout (createElement, nodeClicked, children) {
+  return createElement(VLayout, {
+    class: 'node-data row wrap',
+    on: {
+      click: nodeClicked
+    }
+  }, children)
+}
+
 export default {
   name: 'TreeItem',
+  functional: false,
+  render: function (createElement) {
+    // the node's left icon; used for expand/collapse
+    const expandCollapseButton = createElement(VFlex, {
+      class: 'node-expand-collapse-button shrink',
+      on: {
+        click: this.typeClicked
+      },
+      style: this.getTypeStyle()
+    }, this.isExpanded ? '▽' : '▷')
+    const divContents = []
+
+    // v-row displayed only if depth >= this minimum depth
+    if (this.depth >= this.minDepth) {
+      const rowContents = []
+      if (this.hasChildren) {
+        rowContents.push(expandCollapseButton)
+      }
+      // the node value
+      let node = null
+      switch (this.node.__type) {
+        case 'cyclepoint':
+          node = createNodeLayout(createElement, this.nodeClicked, [
+            createElement(VFlex, {
+              class: 'shrink'
+            }, [
+              createElement(Task, {
+                props: {
+                  status: this.node.state,
+                  progress: 0
+                }
+              })
+            ]),
+            createElement(VFlex, {
+              class: 'grow'
+            }, [
+              createElement('span', {
+                class: 'mx-1'
+              }, this.node.name)
+            ])
+          ])
+          break
+        case 'task':
+          // eslint-disable-next-line no-case-declarations
+          const taskChildren = []
+          if (!this.isExpanded && Object.hasOwnProperty.call(this.node, 'children') && Array.isArray(this.node.children)) {
+            const taskJobs = []
+            // task summary
+            for (const [index, task] of this.node.children.entries()) {
+              const key = `${task.id}-summary-${index}`
+              taskJobs.push(createElement(Job, {
+                key: key,
+                props: {
+                  status: task.state
+                }
+              }))
+            }
+            const taskChild = createElement(VFlex, {
+              class: 'grow ml-4'
+            }, taskJobs)
+            taskChildren.push(taskChild)
+          }
+          node = createNodeLayout(createElement, this.nodeClicked, [
+            createElement(VFlex, {
+              class: 'shrink'
+            }, [
+              createElement(Task, {
+                props: {
+                  status: this.node.state,
+                  progress: 0
+                }
+              })
+            ]),
+            createElement(VFlex, {
+              class: 'shrink'
+            }, [
+              createElement('span', {
+                class: 'mx-1'
+              }, this.node.name)
+            ]),
+            taskChildren
+          ])
+          break
+        case 'job':
+          node = createNodeLayout(createElement, this.jobNodeClicked, [
+            createElement(VFlex, {
+              class: 'shrink'
+            }, [
+              createElement(Job, {
+                props: {
+                  status: this.node.state
+                }
+              })
+            ]),
+            createElement(VFlex, {
+              class: 'xs2 md1 lg1'
+            }, [
+              createElement('span', {
+                class: 'mx-1'
+              }, this.node.name)
+            ]),
+            createElement(VFlex, {
+              class: 'grow'
+            }, [
+              createElement('span', {
+                class: 'grey--text'
+              },
+              this.node.host)
+            ])
+          ])
+          break
+        default:
+          // default node value
+          node = createNodeLayout(createElement, this.nodeClicked, [
+            createElement('span', {
+              on: {
+                click: this.nodeClicked
+              },
+              class: 'mx-1'
+            }, this.node.name)
+          ])
+          break
+      }
+      rowContents.push(node)
+      // each TreeItem is a VRow
+      const row = createElement(VRow, {
+        'v-show': this.depth >= this.minDepth,
+        class: this.getNodeClass(),
+        style: this.getNodeStyle()
+      }, rowContents)
+      divContents.push(row)
+    }
+
+    // job leaf
+    if (this.displayLeaf && this.node.__type === 'job') {
+      const leafProperties = []
+      this.leafProperties.forEach((leafProperty) => {
+        leafProperties.push(createElement(VRow, {
+          key: leafProperty.id,
+          class: 'no-gutters'
+        }, [
+          createElement(VCol, {
+            class: 'xs-4 sm-4 md-4 lg-2 xl-2 no-wrap'
+          }, [
+            createElement('span', {
+              class: 'px-4'
+            }, leafProperty.title)
+          ]),
+          createElement(VCol, {
+            class: 'wrap'
+          }, [
+            createElement('span', {
+              class: 'grey--text'
+            }, this.node[leafProperty.property])
+          ])
+        ]))
+      })
+      divContents.push(createElement(VContainer, {
+        class: 'leaf'
+      }, [
+        createElement('div', {
+          class: 'arrow-up',
+          style: this.getLeafTriangleStyle()
+        }),
+        createElement(VCol, {
+          class: 'leaf-data font-weight-light py-4'
+        }, [
+          leafProperties
+        ])
+      ]))
+    }
+
+    // child TreeItem (recursion happens here!)
+    if (this.isExpanded && Object.hasOwnProperty.call(this.node, 'children') && Array.isArray(this.node.children)) {
+      const children = this.node.children.map((child) => {
+        return createElement('TreeItem', {
+          ref: 'treeitem',
+          key: child.id,
+          props: {
+            node: child,
+            depth: this.depth + 1,
+            hoverable: this.hoverable,
+            'min-depth': this.minDepth,
+            initialExpanded: this.initialExpanded
+          }
+        })
+      })
+      divContents.push(createElement('span', {}, children))
+    }
+    // component single-element, a div
+    return createElement('div', {}, divContents)
+  },
   components: {
     task: Task,
-    job: Job
+    job: Job,
+    VRow,
+    VLayout,
+    VFlex,
+    VContainer,
+    VCol
   },
   props: {
     node: {
