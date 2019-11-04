@@ -203,7 +203,7 @@ export default {
             node: child,
             depth: this.depth + 1,
             hoverable: this.hoverable,
-            'min-depth': this.minDepth,
+            minDepth: this.minDepth,
             initialExpanded: this.initialExpanded
           }
         })
