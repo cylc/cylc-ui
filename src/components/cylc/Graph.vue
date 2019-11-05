@@ -1127,7 +1127,7 @@ export default {
               '<rect x="' + xoffset + '" y="' + yoffset + '" width="20" height="20" rx="4" ry="4"  stroke="" fill="' + states[JOBSTATE].colour + '" fill-opacity="1" stroke-opacity="0.8"/>'
               jobsGrid = jobsGrid.concat('', jobSquare)
             })
-            return '<div style="display:relative margin-top: 3em; class="cy-title"><span class="cy-title__label">' + data.label +
+            return '<div style="display:relative margin-top: 3em; class="cy-title"><span class="cy-title__label">' + data.task.name +
             '</span><br>' +
             '<span  class="cy-title__cyclepoint">' +
             data.cyclePoint +
