@@ -1,0 +1,152 @@
+.c-graph {
+    width: 100%;
+    height: 800px;
+    background-color: #fff;
+    z-index: 1;
+
+    #cytoscape {
+      width: 100%;
+      height: 800px;
+      background-color: #fff;
+      z-index: 2;
+    }
+
+    .cytoscape-navigator-overlay {
+      position: absolute;
+      border: 1px solid #222;
+      background: #fff;
+      z-index: 5;
+      width: 200px;
+      height: 150px;
+      bottom: 83px;
+      right: -1px;
+      overflow: hidden;
+    }
+
+    .cytoscape-navigatorView {
+      border: 2px solid rgb(18, 6, 87);
+      border-radius: 1px;
+      background-color: #0c78ff;
+      opacity: 0.4;
+      /* cursor: move; */
+    }
+
+    .spinner {
+      position: absolute;
+      top: 710px;
+      left: 130px;
+      z-index: 99;
+    }
+
+    .collapsed-child {
+      opacity: 0;
+      display: none
+      }
+
+    .switchlayout {
+      position: absolute;
+      bottom: 83px;
+      left: 1px;
+    }
+
+    .dagre-button {
+      text-align: centre;
+      color: #f2f2f2;
+      z-index: 4;
+      height: 40px;
+    }
+
+    .cise-button {
+      text-align: centre;
+      color: #f2f2f2;
+      z-index: 4;
+      height: 40px;
+      width: 40px;
+      margin-left: 4px;
+    }
+
+    .cosebilkent-button {
+      text-align: centre;
+      color: #f2f2f2;
+      z-index: 4;
+      height: 40px;
+      margin-left: 4px;
+    }
+
+    .hierarchical-button {
+      text-align: centre;
+      color: #f2f2f2;
+      z-index: 4;
+      height: 40px;
+      margin-left: 4px;
+    }
+
+    .cola-button {
+      text-align: centre;
+      color: #f2f2f2;
+      z-index: 4;
+      height: 40px;
+      width: 40px;
+      margin-left: 4px;
+    }
+
+    .collapse-all-button {
+      text-align: centre;
+      color: #f2f2f2;
+      font-size: .4em;
+      size: 'x-small';
+      z-index: 4;
+      height: 10px;
+      margin-left: 0.1em;
+      margin-top: 1em;
+      margin-bottom: 1em;
+      margin-right: .4em;
+    }
+
+    .freeze-button {
+      text-align: centre;
+      color: #f2f2f2;
+      font-size: .4em;
+      size: 'x-small';
+      z-index: 4;
+      height: 10px;
+      margin-left: 0.1em;
+      margin-top: 1em;
+      margin-bottom: 1em;
+      margin-right: .4em;
+    }
+
+    .layout-title {
+      text-align: left;
+      font-size: .8em;
+      color: #2b2b2b;
+      /* background: #f2f2f2; */
+      text-transform: lowercase;
+      position: absolute;
+      bottom: 64px;
+      left: 1px;
+      z-index: 4;
+    }
+
+    .suite-title {
+      text-align: left;
+      font-size: .8em;
+      color: #2b2b2b;
+      /* background: #f2f2f2; */
+      text-transform: lowercase;
+      position: absolute;
+      bottom: 80px;
+      left: 1px;
+      z-index: 4;
+    }
+
+    .node-tooltip {
+      font-family: arial, helvetica, sans-serif;
+    }
+
+    .edge-tooltip {
+      font-family: arial, helvetica, sans-serif;
+      width: 100%;
+    }
+
+}

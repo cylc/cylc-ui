@@ -1,5 +1,5 @@
 <template>
-  <div id='holder'>
+  <div class="c-graph">
     <SyncLoader
       :loading='loading'
       :color='vueSpinner.color'
@@ -1516,9 +1516,9 @@ export default {
 
 <style lang="css">
 @import '~@/styles/cytoscape/panzoom.css';
-@import '~@/styles/cytoscape/cytoscape-custom.css';
 </style>
 
 <style lang="scss">
 @import '~@/styles/cytoscape/html-label.scss';
+@import '~@/styles/cytoscape/cytoscape-custom.scss';
 </style>
