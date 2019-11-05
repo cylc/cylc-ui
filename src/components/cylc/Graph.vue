@@ -22,6 +22,7 @@
       <div>
         <v-btn
           v-for="engine in layoutEngines"
+          v-bind:key="engine"
           :id='`${engine}-button`'
           small
           align-center
@@ -683,18 +684,14 @@ export default {
                 const edges = []
                 each(workflow.nodesEdges.edges || [], (edge, key) => {
                   edges.push({
-                    data: edge,
-                    //position: {},
-                    //group: 'edges'
+                    data: edge
                   })
                 })
                 elements.edges = edges
                 const nodes = []
                 each(workflow.nodesEdges.nodes || [], (node, key) => {
                   nodes.push({
-                    data: node,
-                    //position: {},
-                    //group: 'nodes'
+                    data: node
                   })
                 })
                 elements.nodes = nodes
