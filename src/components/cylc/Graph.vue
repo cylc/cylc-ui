@@ -1145,6 +1145,7 @@ export default {
             let xoffset = offset * -1
             let yoffset = 0
 
+            each(data.jobs, (job, key) => {
               JOBSTATE = String(job.state).toUpperCase()
               // index++
               xoffset += offset
