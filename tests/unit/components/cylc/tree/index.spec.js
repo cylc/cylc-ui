@@ -16,7 +16,9 @@ const workflow = {
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|SUCCEEDED',
-        state: 'succeeded'
+        state: 'succeeded',
+        name: 'SUCCEEDED',
+        cyclePoint: '20000101T0000Z'
       },
       task: {
         meanElapsedTime: 0.5,
@@ -76,7 +78,9 @@ const workflow = {
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
-        state: 'failed'
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000101T0000Z'
       },
       task: {
         meanElapsedTime: 1.0,
@@ -103,7 +107,9 @@ const workflow = {
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|SUCCEEDED',
-        state: 'succeeded'
+        state: 'succeeded',
+        name: 'SUCCEEDED',
+        cyclePoint: '20000101T0000Z'
       },
       task: {
         meanElapsedTime: 1.0,
@@ -130,7 +136,9 @@ const workflow = {
       latestMessage: 'failed, retrying in PT5M (after 2019-10-23T07:07:39Z)',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|BAD',
-        state: 'failed'
+        state: 'failed',
+        name: 'BAD',
+        cyclePoint: '20000101T0000Z'
       },
       task: {
         meanElapsedTime: 0.0,
@@ -157,7 +165,9 @@ const workflow = {
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
-        state: 'failed'
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000101T0000Z'
       },
       task: {
         meanElapsedTime: 7.0,
@@ -184,7 +194,9 @@ const workflow = {
       latestMessage: 'failed/EXIT',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|BAD',
-        state: 'failed'
+        state: 'failed',
+        name: 'BAD',
+        cyclePoint: '20000101T0000Z'
       },
       task: {
         meanElapsedTime: 0.0,
@@ -211,7 +223,9 @@ const workflow = {
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
-        state: 'failed'
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000101T0000Z'
       },
       task: {
         meanElapsedTime: 1.0,
@@ -238,7 +252,9 @@ const workflow = {
       latestMessage: '',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
-        state: 'failed'
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000102T0000Z'
       },
       task: {
         meanElapsedTime: 1.0,
@@ -253,7 +269,9 @@ const workflow = {
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|SUCCEEDED',
-        state: 'succeeded'
+        state: 'succeeded',
+        name: 'SUCCEEDED',
+        cyclePoint: '20000102T0000Z'
       },
       task: {
         meanElapsedTime: 1.0,
@@ -280,7 +298,9 @@ const workflow = {
       latestMessage: 'failed/EXIT',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|BAD',
-        state: 'failed'
+        state: 'failed',
+        name: 'BAD',
+        cyclePoint: '20000102T0000Z'
       },
       task: {
         meanElapsedTime: 0.0,
@@ -307,7 +327,9 @@ const workflow = {
       latestMessage: '',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
-        state: 'failed'
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000102T0000Z'
       },
       task: {
         meanElapsedTime: 1.0,
@@ -322,7 +344,9 @@ const workflow = {
       latestMessage: 'started',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
-        state: 'failed'
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000102T0000Z'
       },
       task: {
         meanElapsedTime: 7.0,
@@ -349,7 +373,9 @@ const workflow = {
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|SUCCEEDED',
-        state: 'succeeded'
+        state: 'succeeded',
+        name: 'SUCCEEDED',
+        cyclePoint: '20000102T0000Z'
       },
       task: {
         meanElapsedTime: 0.5,
@@ -409,7 +435,9 @@ const workflow = {
       latestMessage: 'failed, retrying in PT5M (after 2019-10-23T07:08:10Z)',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|BAD',
-        state: 'failed'
+        state: 'failed',
+        name: 'BAD',
+        cyclePoint: '20000102T0000Z'
       },
       task: {
         meanElapsedTime: 0.0,
@@ -433,59 +461,87 @@ const workflow = {
   familyProxies: [
     {
       id: 'cylc|one|20000102T0000Z|root',
+      name: 'root',
+      cyclePoint: '20000102T0000Z',
       state: 'failed',
       firstParent: null
     },
     {
       id: 'cylc|one|20000101T0000Z|root',
+      name: 'root',
+      cyclePoint: '20000101T0000Z',
       state: 'failed',
       firstParent: null
     },
     {
       id: 'cylc|one|20000101T0000Z|SUCCEEDED',
+      name: 'SUCCEEDED',
+      cyclePoint: '20000101T0000Z',
       state: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|GOOD',
-        state: 'succeeded'
+        state: 'succeeded',
+        name: 'GOOD',
+        cyclePoint: '20000101T0000Z'
       }
     },
     {
       id: 'cylc|one|20000101T0000Z|BAD',
+      name: 'BAD',
+      cyclePoint: '20000101T0000Z',
       state: 'failed',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
-        state: 'failed'
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000101T0000Z'
       }
     },
     {
       id: 'cylc|one|20000101T0000Z|GOOD',
+      name: 'GOOD',
+      cyclePoint: '20000101T0000Z',
       state: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
-        state: 'failed'
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000101T0000Z'
       }
     },
     {
       id: 'cylc|one|20000102T0000Z|SUCCEEDED',
+      name: 'SUCCEEDED',
+      cyclePoint: '20000102T0000Z',
       state: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|GOOD',
-        state: 'succeeded'
+        state: 'succeeded',
+        name: 'GOOD',
+        cyclePoint: '20000102T0000Z'
       }
     },
     {
       id: 'cylc|one|20000102T0000Z|GOOD',
+      name: 'GOOD',
+      cyclePoint: '20000102T0000Z',
       state: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
-        state: 'failed'
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000102T0000Z'
       }
     },
     {
       id: 'cylc|one|20000102T0000Z|BAD',
+      name: 'BAD',
+      cyclePoint: '20000102T0000Z',
       state: 'failed',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
+        name: 'root',
+        cyclePoint: '20000102T0000Z',
         state: 'failed'
       }
     }
@@ -519,21 +575,5 @@ describe('Tree component functions', () => {
     expect(children[1].name).to.equal('GOOD')
     expect(children[1].children[0].__type).to.equal(FAMILY_TYPE)
     expect(children[1].children[0].name).to.equal('SUCCEEDED')
-  })
-  it('should raise an error if a family id is invalid', () => {
-    const invalidWorkflow = {
-      id: 'cylc|one',
-      name: 'one',
-      status: 'running',
-      owner: 'cylc',
-      host: 'ranma',
-      port: 43066,
-      familyProxies: [
-        {
-          id: 'not/the/id/you/are/looking/for'
-        }
-      ]
-    }
-    expect(() => { convertGraphQLWorkflowToTree(invalidWorkflow) }).to.throw(Error, 'invalid id not/the/id/you/are/looking/for')
   })
 })

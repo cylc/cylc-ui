@@ -19,7 +19,9 @@ describe('store', () => {
             },
             firstParent: {
               id: 'cylc|one|20000101T0000Z|root',
-              state: 'running'
+              state: 'running',
+              name: 'root',
+              cyclePoint: '20000101T0000Z'
             },
             jobs: [
               {
@@ -46,6 +48,8 @@ describe('store', () => {
         familyProxies: [
           {
             id: 'cylc|one|20000101T0000Z|root',
+            name: 'root',
+            cyclePoint: '20000101T0000Z',
             state: 'running',
             firstParent: null
           }
