@@ -645,28 +645,24 @@ export default {
           if (!isUndefined(workflows)) {
             each(workflows, (value, key) => {
               each(value, (workflow, key) => {
-                if (has(workflow.nodesEdges, 'edges') && !isUndefined(workflow.nodesEdges.edges)) {
-                  const edges = []
-                  each(workflow.nodesEdges.edges, (edge, key) => {
-                    edges.push({
-                      data: edge,
-                      position: {},
-                      group: 'edges'
-                    })
+                const edges = []
+                each(workflow.nodesEdges.edges || [], (edge, key) => {
+                  edges.push({
+                    data: edge,
+                    //position: {},
+                    //group: 'edges'
                   })
-                  elements.edges = edges
-                }
-                if (has(workflow.nodesEdges, 'nodes') && !isUndefined(workflow.nodesEdges.nodes)) {
-                  const nodes = []
-                  each(workflow.nodesEdges.nodes, (node, key) => {
-                    nodes.push({
-                      data: node,
-                      position: {},
-                      group: 'nodes'
-                    })
+                })
+                elements.edges = edges
+                const nodes = []
+                each(workflow.nodesEdges.nodes || [], (node, key) => {
+                  nodes.push({
+                    data: node,
+                    //position: {},
+                    //group: 'nodes'
                   })
-                  elements.nodes = nodes
-                }
+                })
+                elements.nodes = nodes
               })
             })
           }
