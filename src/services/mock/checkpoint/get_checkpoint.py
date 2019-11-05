@@ -14,6 +14,8 @@ query = '''
             latestMessage
             firstParent {
                 id
+                name
+                cyclePoint
                 state
             }
             task {
@@ -34,9 +36,13 @@ query = '''
         }
         familyProxies (sort: { keys: ["firstParent"]}) {
             id
+            name
             state
+            cyclePoint
             firstParent {
                 id
+                name
+                cyclePoint
                 state
             }
         }
