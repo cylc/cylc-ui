@@ -40,6 +40,8 @@ const QUERIES = {
             latestMessage
             firstParent {
               id
+              name
+              cyclePoint
               state
             }
             task {
@@ -60,9 +62,13 @@ const QUERIES = {
           }
           familyProxies (sort: { keys: ["firstParent"]}) {
             id
+            name
             state
+            cyclePoint
             firstParent {
               id
+              name
+              cyclePoint
               state
             }
           }

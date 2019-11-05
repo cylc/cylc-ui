@@ -2,26 +2,6 @@ import { extractGroupState } from '@/utils/tasks'
 import { computePercentProgress } from '@/components/cylc'
 
 /**
- * @private
- * @param entryId {string} a family proxy, or task proxy ID
- * @param separator {string}
- * @returns {{cyclePoint: *, workflow: *, family: *, user: *}}
- */
-function parseFamilyId (entryId, separator = '|') {
-  // TODO: get the separator (for now we are using "|") from a constant?
-  const tokens = entryId.split(separator)
-  if (tokens.length !== 4) {
-    throw Error(`invalid id ${entryId}`)
-  }
-  return {
-    user: tokens[0],
-    workflow: tokens[1],
-    cyclePoint: tokens[2],
-    family: tokens[3]
-  }
-}
-
-/**
  * Given a GraphQL response workflow, this function will return the data structure
  * expected by the Vue.js tree component.
  *
@@ -44,17 +24,16 @@ function convertGraphQLWorkflowToTree (workflow) {
   // build hierarchy of cycle-point with zero or many families, and each family with zero or many other families
   for (const familyProxy of workflow.familyProxies) {
     const parent = familyProxy.firstParent
-    const parsedFamilyId = parseFamilyId(familyProxy.id)
-    if (!lookup.get(parsedFamilyId.cyclePoint)) {
+    if (!lookup.get(familyProxy.cyclePoint)) {
       // create cycle point node, using family's cycle point info
       const cyclePointNode = {
         __type: 'cyclepoint',
-        name: parsedFamilyId.cyclePoint,
+        name: familyProxy.cyclePoint,
         children: [],
-        id: parsedFamilyId.cyclePoint,
+        id: familyProxy.cyclePoint,
         state: ''
       }
-      lookup.set(parsedFamilyId.cyclePoint, cyclePointNode)
+      lookup.set(familyProxy.cyclePoint, cyclePointNode)
       // a cycle point must go directly under the workflow
       workflow.children.push(cyclePointNode)
     }
@@ -67,23 +46,22 @@ function convertGraphQLWorkflowToTree (workflow) {
       // create family proxy node for the tree
       Object.assign(familyProxy, {
         __type: 'family',
-        name: parsedFamilyId.family,
+        name: familyProxy.name,
         children: []
       })
       lookup.set(familyProxy.id, familyProxy)
       // we should not add to the parent just yet, as it could a) not exist, or b) be the root family
     }
 
-    const parsedParentId = parseFamilyId(parent.id)
-    if (parsedParentId.family === 'root') {
+    if (parent.name === 'root') {
       // if the parent is root, we use the cyclepoint as the parent
-      lookup.get(parsedFamilyId.cyclePoint).children.push(lookup.get(familyProxy.id))
+      lookup.get(familyProxy.cyclePoint).children.push(lookup.get(familyProxy.id))
     } else {
       if (!lookup.get(parent.id)) {
         // construct preliminary parent node if not root
         Object.assign(parent, {
           __type: 'family',
-          name: parsedParentId.family,
+          name: parent.name,
           children: []
         })
         lookup.set(parent.id, parent)
@@ -105,10 +83,9 @@ function convertGraphQLWorkflowToTree (workflow) {
       children: [],
       expanded: false
     })
-    const parsedTaskProxyId = parseFamilyId(taskProxy.firstParent.id)
-    if (parsedTaskProxyId.family === 'root') {
+    if (taskProxy.firstParent.name === 'root') {
       // if the parent is root, we must instead attach this node to the cyclepoint!
-      lookup.get(parsedTaskProxyId.cyclePoint).children.push(taskProxy)
+      lookup.get(taskProxy.firstParent.cyclePoint).children.push(taskProxy)
     } else {
       lookup.get(taskProxy.firstParent.id).children.push(taskProxy)
     }
