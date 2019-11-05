@@ -1,19 +1,47 @@
 <template>
-  <div id='holder'>
-    <SyncLoader :loading='loading' :color='color' :size='size' class='graph-spinner'></SyncLoader>
-    <div class='graph-switchlayout'>
-      <v-btn id='freeze-button' x-small name='freeze' align-bottom justify-center :outlined='true' class='graph-freeze-button' @click='freezeGraph("freeze", $event)'>freeze</v-btn>
-      <!-- <v-btn id='collapse-button' x-small name='collapse-all' class='graph-collapse-all-button' align-center justify-center :outlined='true' style='cursor: pointer;' @click='collapseAll()'>collapse</v-btn> -->
-      <!-- <v-btn id='expand-button' x-small name='expand-all' class='graph-collapse-all-button' align-center justify-center :outlined='true' style='cursor: pointer;' @click='expandAll()'>expand</v-btn> -->
+  <div class="c-graph">
+    <SyncLoader
+      :loading='loading'
+      :color='vueSpinner.color'
+      :size='vueSpinner.size'
+      class='spinner'
+    ></SyncLoader>
+    <div class='switchlayout'>
+      <v-btn
+        id='freeze-button'
+        x-small
+        name='freeze'
+        align-bottom
+        justify-center
+        :outlined='true'
+        class='freeze-button'
+        @click='freezeGraph("freeze", $event)'
+      >
+        freeze
+      </v-btn>
       <div>
-      <v-btn id='dagre-button' small align-center justify-center :outlined='true' name='dagre' class='graph-dagre-button' @click='switchLayout("dagre", $event)'>DAGRE</v-btn>
-      <v-btn id='cosebilkent-button' small name='cose-bilkent' align-center justify-center :outlined='true' class='graph-cosebilkent-button' @click='switchLayout("cose-bilkent", $event)'>COSE-BILKENT</v-btn>
-      <v-btn id='hierarchical-button' small align-center justify-center :outlined='true' class='graph-hierarchical-button' @click='switchLayout("hierarchical", $event)'>HIERARCHICAL</v-btn>
-      <v-btn id='cola-button' small name='cola' align-center justify-center :outlined='true' class='graph-cola-button' @click='switchLayout("cola", $event)'>COLA</v-btn>
-      <v-btn id='cise-button' small name='cise' align-center justify-center :outlined='true' class='graph-cise-button' @click='switchLayout("cise", $event)'>CISE</v-btn>
-      <div id='layout' class='graph-layout-title'>layout: {{layoutName}}<span v-if='freeze'>-frozen</span></div>
-      <div id='suite' class='graph-suite-title'>suite: {{suiteName}}</div>
-    </div>
+        <v-btn
+          v-for="engine in layoutEngines"
+          v-bind:key="engine"
+          :id='`${engine}-button`'
+          small
+          align-center
+          justify-center
+          :outlined='true'
+          :name='engine'
+          :class='`${engine.replace("-", "")}-button`'
+          @click='switchLayout(`${engine}`, $event)'
+        >
+          {{ engine }}
+        </v-btn>
+        <div
+          id='layout'
+          class='layout-title'
+        >
+          layout: {{layoutName}}
+          <span v-if='freeze'>-frozen</span>
+        </div>
+      </div>
     </div>
     <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
@@ -22,8 +50,12 @@
     </div>
     <div>
     </div>
-    <cytoscape id='cytoscape' :pre-config='preConfig' :after-created='afterCreated' :debug='true'>
-    </cytoscape>
+    <cytoscape
+      id='cytoscape'
+      :pre-config='preConfig'
+      :after-created='afterCreated'
+      :debug='true'
+    ></cytoscape>
   </div>
 </template>
 
@@ -54,11 +86,7 @@ const QUERIES = {
         {
           workflows(ids: ["WORKFLOW_ID"]) {
             id
-            name
             status
-            owner
-            host
-            port
             nodesEdges {
               nodes {
                 id
@@ -70,7 +98,6 @@ const QUERIES = {
                 state
                 cyclePoint
                 task {
-                  meanElapsedTime
                   name
                 }
                 jobs(sort: {keys: ["submit_num"], reverse: true}) {
@@ -90,8 +117,6 @@ const QUERIES = {
                 source
                 target
                 label: id
-                cond
-                suicide
               }
             }
           }
@@ -531,17 +556,12 @@ export default {
         nodes: [],
         edges: []
       },
-      i: 1,
-      // vue-spinner
-      color: '#5e9aff',
-      height: '35px',
-      width: '4px',
-      margin: '2px',
-      radius: '2px',
-      size: '.2em',
       loading: true,
+      vueSpinner: {
+        color: '#5e9aff',
+        size: '.2em'
+      },
       // layout variables
-      status: 'pending',
       layoutName: 'dagre',
       layoutStopped: true,
       layoutReady: false,
@@ -549,12 +569,16 @@ export default {
       // elements
       nodesEdges: [],
       workflows: [],
-      edges: [],
       subscriptions: {},
       workflowId: '',
-      workflowOwner: '',
-      workflowName: '',
-      suiteName: ''
+      // layout engines
+      layoutEngines: [
+        'dagre',
+        'cose-bilkent',
+        'hierarchical',
+        'cola',
+        'cise'
+      ]
     }
   },
   watch: {
@@ -570,7 +594,8 @@ export default {
 
     workflows: {
       handler: function (newval, oldval) {
-        initialised ? this.workflowUpdated(newval) : console.debug('initialising')
+        console.debug('initialising')
+        this.workflowUpdated(newval)
         initialised = true
       },
       deep: true
@@ -600,7 +625,7 @@ export default {
   },
 
   mounted () {
-    console.debug(`MOUNTED called, status: ${this.status}`)
+    console.debug('MOUNTED')
     this.$store.watch((store) => {
       this.workflows = store.workflows
     })
@@ -608,7 +633,6 @@ export default {
 
   created (cy) {
     console.debug('CREATED')
-    this.suiteName = this.$route.params.workflowid
     this.workflowId = this.$route.params.workflowid
     workflowService.register(
       this,
@@ -657,159 +681,32 @@ export default {
           if (!isUndefined(workflows)) {
             each(workflows, (value, key) => {
               each(value, (workflow, key) => {
-                if (!isEmpty(workflow.owner)) {
-                  this.workflowOwner = workflow.owner
-                }
-                if (!isEmpty(workflow.name)) {
-                  this.workflowName = workflow.name
-                }
-                if (has(workflow.nodesEdges, 'edges') && !isUndefined(workflow.nodesEdges.edges)) {
-                  elements.edges = this.getEdges(workflow.nodesEdges.edges)
-                }
-                if (has(workflow.nodesEdges, 'nodes') && !isUndefined(workflow.nodesEdges.nodes)) {
-                  elements.nodes = this.getNodes(workflow.nodesEdges.nodes)
-                }
+                const edges = []
+                each(workflow.nodesEdges.edges || [], (edge, key) => {
+                  edges.push({
+                    data: edge
+                  })
+                })
+                elements.edges = edges
+                const nodes = []
+                each(workflow.nodesEdges.nodes || [], (node, key) => {
+                  nodes.push({
+                    data: node
+                  })
+                })
+                elements.nodes = nodes
               })
             })
           }
-          console.debug('elements ==>>>> ', elements)
-          isEmpty(elements) ? console.warn('gdata is empty or undefined') : this.graphData = elements
+          if (isEmpty(elements)) {
+            console.warn('gdata is empty or undefined')
+          } else {
+            this.graphData = elements
+          }
         }
       } catch (error) {
         console.error('workflowUpdated error: ', error)
       }
-    },
-
-    getNodes (nodes) {
-      try {
-        const nodesArray = []
-        let nodeObj = {}
-        let todo = 0
-        let jobsArray = []
-        each(nodes, (node, key) => {
-          nodeObj = {
-            data: {
-              id: '',
-              name: '',
-              state: 'undefined',
-              parent: '',
-              label: '',
-              shape: 'ellipse',
-              runpercent: 0,
-              todo: 0,
-              running: 0,
-              cyclepoint: '',
-              submittedtime: '',
-              starttime: '',
-              finishtime: '',
-              jobs: '',
-              jobsarray: [],
-              status: ''
-            },
-            position: {
-
-            },
-            group: 'nodes',
-            removed: false,
-            selected: false,
-            selectable: true,
-            locked: false,
-            grabbable: true,
-            classes: ''
-          }
-          if (has(node, 'task') && !isEmpty(node.task) && has(node.task, 'name') && !isEmpty(node.task.name)) {
-            nodeObj.data.label = node.task.name
-          }
-          has(node, 'id') && !isEmpty(node.id) ? nodeObj.data.id = node.id : console.warn('workflowUpdated - node id is empty')
-          has(node, 'state') && !isEmpty(node.state) ? nodeObj.data.state = node.state : nodeObj.state = 'undefined'
-          has(node, 'status') && !isEmpty(node.status) ? nodeObj.data.status = node.status : nodeObj.status = 'undefined'
-          if (has(node, 'runpercent') && !isEmpty(node.runpercent) && (parseInt(node.runpercent) > 0)) {
-            nodeObj.data.runpercent = parseInt(node.runpercent)
-            nodeObj.running = nodeObj.data.runpercent
-            todo = 100 - parseInt(nodeObj.data.runpercent)
-            nodeObj.data.todo = todo
-          }
-          if (has(node, 'runpercent') && !isEmpty(node.runpercent) && (parseInt(node.runpercent) > 0)) {
-            nodeObj.data.runpercent = parseInt(node.runpercent)
-            nodeObj.running = nodeObj.data.runpercent
-            todo = (100 - parseInt(node.runpercent))
-            nodeObj.data.todo = todo
-          }
-          if (has(node.parent, 'id') && !isEmpty(node.parent.id)) {
-            nodeObj.data.parent = node.parent.id
-          }
-          if (has(node, 'cyclePoint') && !isEmpty(node.cyclePoint)) {
-            nodeObj.data.cyclepoint = node.cyclePoint
-          }
-          if (has(node, 'jobs') && !isEmpty(node.jobs)) {
-            jobsArray = this.getJobs(node.jobs)
-            nodeObj.data.jobsarray = jobsArray
-            const joblength = node.jobs.length
-            nodeObj.data.jobs = String(node.jobs.length)
-            nodeObj.data.submittedtime = jobsArray[0].submittedTime
-            nodeObj.data.starttime = jobsArray[0].startedTime
-            nodeObj.data.finishtime = jobsArray[joblength - 1].finishedTime
-          }
-          nodesArray.push(nodeObj)
-        })
-        // console.debug('NODES ::: ', JSON.stringify(nodesArray))
-        return nodesArray
-      } catch (error) {
-        console.error('getNodes error: ', error)
-      }
-    },
-
-    getEdges (edges) {
-      try {
-        const edgesArray = []
-        let edgeObj = {}
-        each(edges, (edge, key) => {
-          edgeObj = {
-            data: {
-              id: '',
-              source: '',
-              target: '',
-              label: '',
-              owner: '',
-              name: ''
-            },
-            position: {
-
-            },
-            group: 'edges',
-            removed: false,
-            selected: false,
-            selectable: true,
-            locked: false,
-            grabbable: true,
-            classes: ''
-          }
-          has(edge, 'id') && !isEmpty(edge.id) ? edgeObj.data.id = edge.id : console.debug('workflowUpdated - edge id is empty')
-          has(edge, 'source') && !isEmpty(edge.source) ? edgeObj.data.source = edge.source : edgeObj.source = undefined
-          has(edge, 'target') && !isEmpty(edge.target) ? edgeObj.data.target = edge.target : edge.target = undefined
-          if (!isEmpty(this.workflowOwner)) {
-            edgeObj.data.owner = this.workflowOwner
-          }
-          if (!isEmpty(this.workflowName)) {
-            edgeObj.data.name = this.workflowName
-          }
-          has(edge, 'label') && !isEmpty(edge.label) ? edgeObj.data.label = edge.label : edgeObj.label = ''
-          edgeObj.data.source !== undefined || edgeObj.data.target !== undefined ? edgesArray.push(edgeObj)
-            : console.debug('skipping adding edge with empty source or target')
-        })
-        // console.debug('EDGES ::: ', JSON.stringify(edgesArray))
-        return edgesArray
-      } catch (error) {
-        console.error('getEdges error: ', error)
-      }
-    },
-
-    getJobs (jobs) {
-      const jobsArray = []
-      each(jobs, (job, key) => {
-        jobsArray.push(job)
-      })
-      return jobsArray
     },
 
     changeLayout (value) {
@@ -834,8 +731,7 @@ export default {
         cytoscape.use(cise)
         cytoscape.use(coseBilkent)
         this.cy = cytoscape({
-          container: document.getElementById('cytoscape'),
-          elements: this.graphData
+          container: document.getElementById('cytoscape')
         })
         this.debouncer = debounce(this.updateGraph, 100)
       } catch (error) {
@@ -849,7 +745,11 @@ export default {
         layoutOptions = dagreOptions
         expandCollapseOptions = expandCollapseOptionsUndefined
         const loaded = await this.initialise(cy)
-        loaded ? this.loading = false : console.error('there was an error loading the graph view')
+        if (loaded) {
+          this.loading = false
+        } else {
+          console.error('there was an error loading the graph view')
+        }
       } catch (error) {
         console.error('afterCreated error', error)
       }
@@ -915,10 +815,9 @@ export default {
               selector: 'node',
               css: {
                 'background-image': function memoize (node) {
-                  let icon = states.DEFAULT.icon
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
-                  !isEmpty(STATE) && !isUndefined(STATE) && STATE !== 'UNDEFINED' ? icon = states[STATE].icon : icon = states.DEFAULT.icon
+                  const icon = states[STATE].icon || states.DEFAULT.icon
                   const path = require('@/../public/img/' + String(icon))
                   return path
                 },
@@ -927,11 +826,9 @@ export default {
                   return has(data, 'runpercent') && !isEmpty(data('runpercent')) && data('runpercent') > 0 ? 1.0 : 0.6
                 },
                 'background-color': function memoize (node) {
-                  let colour = states.DEFAULT.colour
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
-                  !isEmpty(STATE) && !isUndefined(STATE) && STATE !== 'UNDEFINED' ? colour = states[STATE].colour : colour = states.DEFAULT.colour
-                  return colour
+                  return states[STATE].colour || states.DEFAULT.colour
                 },
                 // content: 'data(label)',
                 'font-family': 'Avenir, Helvetica, Arial, sans-serif',
@@ -1011,11 +908,9 @@ export default {
               selector: 'node.cy-expand-collapse-collapsed-node',
               style: {
                 'background-color': function memoize (node) {
-                  let colour = states.DEFAULT.colour
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
-                  !isEmpty(STATE) && !isUndefined(STATE) && STATE !== 'UNDEFINED' ? colour = states[STATE].colour : colour = states.DEFAULT.colour
-                  return colour
+                  return states[STATE].colour || states.DEFAULT.colour
                 },
                 shape: 'rectangle'
               }
@@ -1041,9 +936,6 @@ export default {
             {
               selector: ':child',
               style: {
-                // 'background-opacity': .15,
-                // 'background-image-opacity': .15,
-                // 'background-color': '#b7c0e8',
                 'border-color': '#444',
                 'border-width': '1px'
               }
@@ -1242,7 +1134,6 @@ export default {
         {
           query: 'node',
           tpl: (data) => {
-            const jobs = data.jobsarray
             let JOBSTATE
             // eslint-disable-next-line no-unused-vars
             let jobSquare
@@ -1251,7 +1142,7 @@ export default {
             let xoffset = offset * -1
             let yoffset = 0
 
-            each(jobs, (job, key) => {
+            each(data.jobs, (job, key) => {
               JOBSTATE = String(job.state).toUpperCase()
               // index++
               xoffset += offset
@@ -1264,10 +1155,10 @@ export default {
               '<rect x="' + xoffset + '" y="' + yoffset + '" width="20" height="20" rx="4" ry="4"  stroke="" fill="' + states[JOBSTATE].colour + '" fill-opacity="1" stroke-opacity="0.8"/>'
               jobsGrid = jobsGrid.concat('', jobSquare)
             })
-            return '<div style="display:relative margin-top: 3em; class="cy-title"><span class="cy-title__label">' + data.label +
+            return '<div style="display:relative margin-top: 3em; class="cy-title"><span class="cy-title__label">' + data.task.name +
             '</span><br>' +
             '<span  class="cy-title__cyclepoint">' +
-            data.cyclepoint +
+            data.cyclePoint +
             '</span><br>' +
             jobsGrid +
             '</div>'
@@ -1311,7 +1202,7 @@ export default {
             content: function memoize () {
               const content = document.createElement('div')
               content.id = 'tooltip'
-              content.classList.add('graph-node-tooltip')
+              content.classList.add('node-tooltip')
               const children = node.data('collapsedChildren')
               let runpercent = 0
               if (has(node.data, 'runpercent')) {
@@ -1323,7 +1214,7 @@ export default {
               let details
               let jobsquare
               const tasksquare = '<div class="box-task-graph ' + state + '-graph"></div>'
-              const jobs = node.data('jobsarray')
+              const jobs = node.data('jobs')
               const parentstring =
                 '<strong>parent <span style="color: #555;">' +
                 parent +
@@ -1341,7 +1232,7 @@ export default {
                 let submittedTime = ''
                 let finishedTime = ''
                 let submitNum = ''
-                const jobid = '<span class="jobid-graph">' + job.batchSysJobId + '</span>'
+                const jobid = '<span class="jobid">' + job.batchSysJobId + '</span>'
                 jobsquare = '<div class="box-job-graph ' + job.state + '-graph"></div>'
                 details = '<details><summary>' + jobid + jobsquare + '</summary>'
                 jobInfoBlock += details
@@ -1452,7 +1343,7 @@ export default {
           tippy = new Tippy(ref, {
             content: () => {
               const content = document.createElement('div')
-              content.classList.add('graph-edge-tooltip')
+              content.classList.add('edge-tooltip')
               content.innerHTML =
               '<div class="header-graph"><strong>edge</div></strong><br>' +
                '<strong>owner: <span class="details-graph">' +
@@ -1619,10 +1510,12 @@ export default {
   }
 }
 </script>
+
 <style lang="css">
 @import '~@/styles/cytoscape/panzoom.css';
-@import '~@/styles/cytoscape/cytoscape-custom.css';
 </style>
+
 <style lang="scss">
 @import '~@/styles/cytoscape/html-label.scss';
+@import '~@/styles/cytoscape/cytoscape-custom.scss';
 </style>
