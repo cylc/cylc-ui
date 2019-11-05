@@ -34,21 +34,9 @@
         </v-list-item-action>
         <v-list-item-title>Dashboard</v-list-item-title>
       </v-list-item>
-      <v-subheader>Views</v-subheader>
-      <v-list-item
-        v-for="(link, index) in viewLinks"
-        :key="index+link.text"
-        :to="link.to"
-        active-class="primary grey--text text--darken-3"
-        class="v-list-item"
-      >
-        <v-list-item-action>
-          <v-icon>{{ link.icon }}</v-icon>
-        </v-list-item-action>
-        <v-list-item-title
-          v-text="link.text"
-        />
-      </v-list-item>
+      <g-scan
+        :workflows="workflows"
+      />
     </v-layout>
   </v-navigation-drawer>
 </template>
@@ -59,9 +47,12 @@
 import { VList } from 'vuetify/lib/components/VList'
 import Header from '@/components/cylc/Header'
 import i18n from '@/i18n'
+import { mapState } from 'vuex'
+import GScan from '@/components/cylc/GScan'
 
 export default {
   components: {
+    GScan,
     'c-header': Header,
     // eslint-disable-next-line vue/no-unused-components
     'v-list': VList
@@ -84,6 +75,7 @@ export default {
     responsive: false
   }),
   computed: {
+    ...mapState('workflows', ['workflows']),
     drawer: {
       get: function () {
         return this.$store.state.app.drawer
