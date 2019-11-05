@@ -1,10 +1,4 @@
 /**
- * List of task/job states that support "progress".
- * @type {string[]}
- */
-const STATES_WITH_PROGRESS = ['running']
-
-/**
  * Compute percent progress.
  *
  * @see https://github.com/cylc/cylc-flow/blob/de7d938496e82dbdfb165938145670dd8e801efd/lib/cylc/gui/updater_tree.py#L248-L263
@@ -27,6 +21,5 @@ function computePercentProgress (startedTime, meanElapsedTime) {
 }
 
 export {
-  STATES_WITH_PROGRESS,
   computePercentProgress
 }

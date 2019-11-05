@@ -1,5 +1,5 @@
 import { extractGroupState } from '@/utils/tasks'
-import { STATES_WITH_PROGRESS, computePercentProgress } from '@/components/cylc'
+import { computePercentProgress } from '@/components/cylc'
 
 /**
  * @private
@@ -121,7 +121,7 @@ function convertGraphQLWorkflowToTree (workflow) {
       taskProxy.children.push(job)
     }
     // calculate task progress if necessary/possible
-    if (STATES_WITH_PROGRESS.includes(taskProxy.state) && taskProxy.jobs.length > 0) {
+    if (taskProxy.state === 'running' && taskProxy.jobs.length > 0) {
       // the graphql query is expected to have jobs sorted by submit_num, e.g.:
       // `jobs(sort: { keys: ["submit_num"], reverse:true })`
       const latestJob = taskProxy.jobs[0]
