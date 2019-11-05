@@ -121,7 +121,6 @@ export default {
     },
     onClickAddView () {
       // TODO: implement adding views action
-      console.log('Adding views has not been implemented yet')
     }
   }
 }
