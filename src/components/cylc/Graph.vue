@@ -7,17 +7,40 @@
       class='spinner'
     ></SyncLoader>
     <div class='switchlayout'>
-      <v-btn id='freeze-button' x-small name='freeze' align-bottom justify-center :outlined='true' class='freeze-button' @click='freezeGraph("freeze", $event)'>freeze</v-btn>
-      <!-- <v-btn id='collapse-button' x-small name='collapse-all' class='collapse-all-button' align-center justify-center :outlined='true' style='cursor: pointer;' @click='collapseAll()'>collapse</v-btn> -->
-      <!-- <v-btn id='expand-button' x-small name='expand-all' class='collapse-all-button' align-center justify-center :outlined='true' style='cursor: pointer;' @click='expandAll()'>expand</v-btn> -->
+      <v-btn
+        id='freeze-button'
+        x-small
+        name='freeze'
+        align-bottom
+        justify-center
+        :outlined='true'
+        class='freeze-button'
+        @click='freezeGraph("freeze", $event)'
+      >
+        freeze
+      </v-btn>
       <div>
-      <v-btn id='dagre-button' small align-center justify-center :outlined='true' name='dagre' class='dagre-button' @click='switchLayout("dagre", $event)'>DAGRE</v-btn>
-      <v-btn id='cosebilkent-button' small name='cose-bilkent' align-center justify-center :outlined='true' class='cosebilkent-button' @click='switchLayout("cose-bilkent", $event)'>COSE-BILKENT</v-btn>
-      <v-btn id='hierarchical-button' small align-center justify-center :outlined='true' class='hierarchical-button' @click='switchLayout("hierarchical", $event)'>HIERARCHICAL</v-btn>
-      <v-btn id='cola-button' small name='cola' align-center justify-center :outlined='true' class='cola-button' @click='switchLayout("cola", $event)'>COLA</v-btn>
-      <v-btn id='cise-button' small name='cise' align-center justify-center :outlined='true' class='cise-button' @click='switchLayout("cise", $event)'>CISE</v-btn>
-      <div id='layout' class='layout-title'>layout: {{layoutName}}<span v-if='freeze'>-frozen</span></div>
-    </div>
+        <v-btn
+          v-for="engine in layoutEngines"
+          :id='`${engine}-button`'
+          small
+          align-center
+          justify-center
+          :outlined='true'
+          :name='engine'
+          :class='`${engine.replace("-", "")}-button`'
+          @click='switchLayout(`${engine}`, $event)'
+        >
+          {{ engine }}
+        </v-btn>
+        <div
+          id='layout'
+          class='layout-title'
+        >
+          layout: {{layoutName}}
+          <span v-if='freeze'>-frozen</span>
+        </div>
+      </div>
     </div>
     <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
@@ -26,8 +49,12 @@
     </div>
     <div>
     </div>
-    <cytoscape id='cytoscape' :pre-config='preConfig' :after-created='afterCreated' :debug='true'>
-    </cytoscape>
+    <cytoscape
+      id='cytoscape'
+      :pre-config='preConfig'
+      :after-created='afterCreated'
+      :debug='true'
+    ></cytoscape>
   </div>
 </template>
 
@@ -542,7 +569,15 @@ export default {
       nodesEdges: [],
       workflows: [],
       subscriptions: {},
-      workflowId: ''
+      workflowId: '',
+      // layout engines
+      layoutEngines: [
+        'dagre',
+        'cose-bilkent',
+        'hierarchical',
+        'cola',
+        'cise'
+      ]
     }
   },
   watch: {
