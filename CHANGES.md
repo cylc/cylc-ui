@@ -27,6 +27,9 @@ on application startup.
 [#283](https://github.com/cylc/cylc-ui/pull/285) - Update Vuetify to 2.1,
 along with other dependencies with updates available.
 
+[#291](https://github.com/cylc/cylc-ui/pull/291) - Add families to Tree
+view and component.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard

@@ -7,7 +7,7 @@ const simpleWorkflowTree4Nodes = [
     __type: 'workflow',
     id: 'user/workflow1',
     name: 'workflow1',
-    status: 'running',
+    state: 'running',
     children: [
       {
         __type: 'checkpoint',

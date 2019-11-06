@@ -38,6 +38,12 @@ const QUERIES = {
             state
             cyclePoint
             latestMessage
+            firstParent {
+              id
+              name
+              cyclePoint
+              state
+            }
             task {
               meanElapsedTime
               name
@@ -52,6 +58,18 @@ const QUERIES = {
               finishedTime
               state
               submitNum
+            }
+          }
+          familyProxies (sort: { keys: ["firstParent"]}) {
+            id
+            name
+            state
+            cyclePoint
+            firstParent {
+              id
+              name
+              cyclePoint
+              state
             }
           }
         }

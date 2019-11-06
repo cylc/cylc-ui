@@ -12,6 +12,12 @@ query = '''
             state
             cyclePoint
             latestMessage
+            firstParent {
+                id
+                name
+                cyclePoint
+                state
+            }
             task {
                 meanElapsedTime
                 name
@@ -26,6 +32,18 @@ query = '''
                 finishedTime
                 state
                 submitNum
+            }
+        }
+        familyProxies (sort: { keys: ["firstParent"]}) {
+            id
+            name
+            state
+            cyclePoint
+            firstParent {
+                id
+                name
+                cyclePoint
+                state
             }
         }
     }
