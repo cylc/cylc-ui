@@ -39,6 +39,16 @@
           stroke-dasharray="157"
           v-bind:style="progressStyle"
         ></circle>
+        <!-- dot in the middle (small hub)
+               * position in the middle
+               * radius can be changed independently
+               * we can't just change the radius with CSS (SVG2 only).
+        -->
+        <circle
+          id="dot"
+          cx="50" cy="50"
+          r="8">
+        </circle>
         <!-- circle in the middle (hub)
                * position in the middle
                * radius can be changed independently
@@ -50,7 +60,7 @@
         </circle>
         <!-- outer circle
                * position in the middle
-               * let radius = 50% - (2*stroke-width)
+               * let radius = 50% - (stroke-width/2)
         -->
         <circle
           id="outline"
@@ -138,6 +148,12 @@
             }
         }
 
+        @mixin dot() {
+            #dot {
+                fill: $foreground;
+            }
+        }
+
         @mixin hub() {
             #hub {
                 fill: $foreground;
@@ -195,8 +211,15 @@
             }
 
             /* status */
-            &.waiting {
+            &.waiting, &.queued {
+                /* NOTE: queued tasks may acquire an xtrigger or similar */
                 @include outline();
+            }
+
+            &.ready, &.preparing {
+                /* TODO: by cylc 8.0.0 - remove ready state */
+                @include outline();
+                @include dot();
             }
 
             &.submitted {
