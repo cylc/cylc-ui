@@ -3,7 +3,7 @@
     <toolbar />
     <div class="c-tree">
       <tree
-        :workflows="currentWorkflow"
+        :workflows="workflowTree"
         :hoverable="false"
         :activable="false"
         :multiple-active="false"
@@ -21,6 +21,7 @@ import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
 import Tree from '@/components/cylc/Tree'
 import Toolbar from '@/components/cylc/Toolbar'
+import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -106,14 +107,25 @@ export default {
   }),
 
   computed: {
-    ...mapState('workflows', ['workflowTree']),
+    ...mapState('workflows', ['workflows']),
     currentWorkflow: function () {
-      for (const workflow of this.workflowTree) {
+      for (const workflow of this.workflows) {
         if (workflow.name === this.workflowName) {
-          return [workflow]
+          return workflow
         }
       }
-      return []
+      return null
+    },
+    workflowTree: function () {
+      const workflowTree = []
+      if (this.currentWorkflow !== null && Object.hasOwnProperty.call(this.currentWorkflow, 'familyProxies')) {
+        try {
+          workflowTree.push(...convertGraphQLWorkflowToTree(this.currentWorkflow))
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      return workflowTree
     }
   },
 
