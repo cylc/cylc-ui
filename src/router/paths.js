@@ -25,6 +25,7 @@ export default [
   {
     path: '/workflows/:workflowName',
     view: 'Tree',
+    name: 'tree',
     meta: {
       layout: 'default'
     },
@@ -41,7 +42,7 @@ export default [
   {
     path: '/graph/:workflowid',
     view: 'Graph',
-    name: i18n.t('App.graph'),
+    name: 'graph',
     meta: {
       layout: 'default'
     },
