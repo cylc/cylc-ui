@@ -122,6 +122,7 @@ export default {
         try {
           workflowTree.push(...convertGraphQLWorkflowToTree(this.currentWorkflow))
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error(e)
         }
       }
