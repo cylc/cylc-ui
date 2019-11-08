@@ -1,5 +1,6 @@
 import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
 import { expect } from 'chai'
+import sinon from 'sinon'
 
 const workflow = {
   id: 'cylc|one',
@@ -367,6 +368,35 @@ const workflow = {
       ]
     },
     {
+      id: 'cylc|one|20000102T0000Z|checkpoint2',
+      state: 'running',
+      cyclePoint: '20000102T0000Z',
+      latestMessage: 'started',
+      firstParent: {
+        id: 'cylc|one|20000102T0000Z|root',
+        state: 'failed',
+        name: 'root',
+        cyclePoint: '20000102T0000Z'
+      },
+      task: {
+        meanElapsedTime: 0.0,
+        name: 'checkpoint2'
+      },
+      jobs: [
+        {
+          id: 'cylc|one|20000102T0000Z|checkpoint2|1',
+          batchSysName: 'background',
+          batchSysJobId: '16688',
+          host: 'localhost',
+          startedTime: '2019-10-23T07:03:28Z',
+          submittedTime: '2019-10-23T07:03:27Z',
+          finishedTime: '',
+          state: 'running',
+          submitNum: 1
+        }
+      ]
+    },
+    {
       id: 'cylc|one|20000102T0000Z|eventually_succeeded',
       state: 'succeeded',
       cyclePoint: '20000102T0000Z',
@@ -553,7 +583,7 @@ const FAMILY_TYPE = 'family'
 const TASK_TYPE = 'task'
 
 describe('Tree component functions', () => {
-  const workflowTree = convertGraphQLWorkflowToTree(workflow)[0]
+  const workflowTree = convertGraphQLWorkflowToTree(workflow)
   it('should add cycle points as direct children of the workflow', () => {
     expect(workflowTree.children.length).to.equal(2)
     expect(workflowTree.children[0].__type).to.equal(CYCLEPOINT_TYPE)
@@ -575,5 +605,56 @@ describe('Tree component functions', () => {
     expect(children[1].name).to.equal('GOOD')
     expect(children[1].children[0].__type).to.equal(FAMILY_TYPE)
     expect(children[1].children[0].name).to.equal('SUCCEEDED')
+  })
+  it('should set the progress to 0 when meanElapsedTime is 0', () => {
+    expect(workflow.taskProxies[11].task.meanElapsedTime).to.equal(7.0)
+    expect(workflow.taskProxies[12].task.meanElapsedTime).to.equal(0)
+    // when parsed, these two task proxies will become these children of a cyclepoint (was root family before)
+    expect(workflowTree.children[1].children[4].progress).to.not.equal(0)
+    expect(workflowTree.children[1].children[5].progress).to.equal(0)
+  })
+  it('should set the progress to 0 when startedTime is greater than now', () => {
+    // dispatching here will call new Date() to calculate now, so let's mock it...
+    const stub = sinon.stub(Date, 'now').returns(0)
+    // now the clock is set back to moment 0 (19700101...) by sinon, so Date.now() or new Date().getTime()
+    // will return the clock object and the moment 0...
+    const workflowTree = convertGraphQLWorkflowToTree(workflow)
+    // see test above, where the value is **not** equal 0
+    expect(workflowTree.children[1].children[4].progress).to.equal(0)
+    // remove the mock
+    stub.restore()
+  })
+  it('should set the progress to 100 when now() is greater than elapsedTime', () => {
+    // avoid changing original test data
+    const copy = Object.assign({}, workflow)
+    // dispatching here will call new Date() to calculate now, so let's mock it...
+    const startedTime = Date.parse(copy.taskProxies[11].jobs[0].startedTime)
+    copy.taskProxies[11].task.meanElapsedTime = 1.0
+    const meanElapsedTime = copy.taskProxies[11].task.meanElapsedTime
+    const timeExpectedToComplete = startedTime + meanElapsedTime * 1000
+    // even if 0.1 greater than the timeExpectedToComplete, it will be 100
+    const stub = sinon.stub(Date, 'now').returns(timeExpectedToComplete + 0.1)
+    // now the clock is set back to moment 0 (19700101...) by sinon, so Date.now() or new Date().getTime()
+    // will return the clock object and the moment 0...
+    const workflowTree = convertGraphQLWorkflowToTree(copy)
+    const task = workflowTree.children[1].children[4]
+    expect(task.progress).to.equal(100)
+    // remove the mock
+    stub.restore()
+  })
+  it('should compute the progress percent', () => {
+    // avoid changing original test data
+    const copy = Object.assign({}, workflow)
+    // dispatching here will call new Date() to calculate now, so let's mock it...
+    const startedTime = Date.parse(copy.taskProxies[11].jobs[0].startedTime)
+    copy.taskProxies[11].task.meanElapsedTime = 1.0
+    const stub = sinon.stub(Date, 'now').returns(startedTime + 500) // so let's make the now() function return started time plus 500 ms (half of meanElapsedTime * 1000)
+    // now the clock is set back to moment 0 (19700101...) by sinon, so Date.now() or new Date().getTime()
+    // will return the clock object and the moment 0...
+    const workflowTree = convertGraphQLWorkflowToTree(copy)
+    const task = workflowTree.children[1].children[4]
+    expect(task.progress).to.equal(50)
+    // remove the mock
+    stub.restore()
   })
 })

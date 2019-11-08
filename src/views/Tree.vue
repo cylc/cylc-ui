@@ -119,7 +119,7 @@ export default {
       const workflowTree = []
       if (this.currentWorkflow !== null && Object.hasOwnProperty.call(this.currentWorkflow, 'familyProxies')) {
         try {
-          workflowTree.push(...convertGraphQLWorkflowToTree(this.currentWorkflow))
+          workflowTree.push(convertGraphQLWorkflowToTree(this.currentWorkflow))
         } catch (e) {
           // eslint-disable-next-line no-console
           console.error(e)
