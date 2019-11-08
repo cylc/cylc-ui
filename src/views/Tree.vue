@@ -101,7 +101,6 @@ export default {
 
   data: () => ({
     viewID: '',
-    workflowId: '',
     subscriptions: {},
     isLoading: true
   }),
@@ -131,8 +130,7 @@ export default {
   },
 
   created () {
-    this.workflowId = this.workflowName
-    this.viewID = `Tree(${this.workflowId}): ${Math.random()}`
+    this.viewID = `Tree(${this.workflowName}): ${Math.random()}`
     workflowService.register(
       this,
       {
@@ -156,7 +154,7 @@ export default {
         this.subscriptions[queryName] =
             workflowService.subscribe(
               this,
-              QUERIES[queryName].replace('WORKFLOW_ID', this.workflowId)
+              QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
             )
       }
     },
