@@ -57,7 +57,7 @@
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item :href=user.getHubUrl()>
+          <v-list-item :href=hubUrl>
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-hubspot</v-icon>
             </v-list-item-avatar>
@@ -174,7 +174,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['user'])
+    ...mapState('user', ['user']),
+    hubUrl: function () {
+      if (this.user) {
+        return this.user.getHubUrl()
+      }
+      return '/hub/home'
+    }
   }
 }
 </script>
