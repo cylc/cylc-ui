@@ -100,7 +100,7 @@
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item href="https://cylc.github.io/documentation.html">
+          <v-list-item href="https://cylc.github.io/documentation">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-file-document-box-multiple</v-icon>
             </v-list-item-avatar>
