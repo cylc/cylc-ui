@@ -4,8 +4,7 @@
       <div v-for="workflow in workflows" :key="workflow.id">
         <v-list-item :to="`/workflows/${ workflow.name }`">
           <v-list-item-action>
-            <!-- TODO: the workflows are always running now, but later we will need https://github.com/cylc/cylc-ui/issues/90 adn update the icon displayed here -->
-            <v-icon>mdi-play-circle</v-icon>
+            <v-icon>{{ getWorkflowIcon(workflow.status) }}</v-icon>
           </v-list-item-action>
           <v-list-item-title>
             <v-layout align-center align-content-center wrap>
@@ -188,6 +187,17 @@ export default {
        * @param {bool} isActive - Are this views subs active.
        */
       this.isLoading = !isActive
+    },
+
+    getWorkflowIcon (status) {
+      switch (status) {
+        case 'running':
+          return 'mdi-play-circle'
+        case 'held':
+          return 'mdi-pause-octagon'
+        default:
+          return 'mdi-help-circle'
+      }
     }
   }
 }
