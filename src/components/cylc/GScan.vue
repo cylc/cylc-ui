@@ -61,6 +61,44 @@
 
 <script>
 import Job from '@/components/cylc/Job'
+import { workflowService } from 'workflow-service'
+
+const QUERIES = {
+  root: `
+    {
+      workflows {
+        id
+        name
+        status
+        owner
+        host
+        port
+        taskProxies(sort: { keys: ["cyclePoint"] }) {
+          id
+          name
+          state
+          cyclePoint
+          latestMessage
+          task {
+            meanElapsedTime
+            name
+          }
+          jobs(sort: { keys: ["submit_num"], reverse:true }) {
+            id
+            batchSysName
+            batchSysJobId
+            host
+            startedTime
+            submittedTime
+            finishedTime
+            state
+            submitNum
+          }
+        }
+      }
+    }
+  `
+}
 
 export default {
   name: 'GScan',
@@ -74,6 +112,13 @@ export default {
     workflows: {
       type: Array,
       required: true
+    }
+  },
+  data () {
+    return {
+      viewID: '',
+      subscriptions: {},
+      isLoading: true
     }
   },
   computed: {
@@ -96,6 +141,53 @@ export default {
         workflowSummaries.set(workflow.name, states)
       }
       return workflowSummaries
+    }
+  },
+  created () {
+    this.viewID = `GScan(*): ${Math.random()}`
+    workflowService.register(
+      this,
+      {
+        activeCallback: this.setActive
+      }
+    )
+    this.subscribe('root')
+  },
+  beforeDestroy () {
+    workflowService.unregister(this)
+  },
+  methods: {
+    subscribe (queryName) {
+      /**
+       * Subscribe this view to a new GraphQL query.
+       * @param {string} queryName - Must be in QUERIES.
+       */
+      if (!(queryName in this.subscriptions)) {
+        this.subscriptions[queryName] =
+          workflowService.subscribe(
+            this,
+            QUERIES[queryName]
+          )
+      }
+    },
+
+    unsubscribe (queryName) {
+      /**
+       * Unsubscribe this view to a new GraphQL query.
+       * @param {string} queryName - Must be in QUERIES.
+       */
+      if (queryName in this.subscriptions) {
+        workflowService.unsubscribe(
+          this.subscriptions[queryName]
+        )
+      }
+    },
+
+    setActive (isActive) {
+      /** Toggle the isLoading state.
+       * @param {bool} isActive - Are this views subs active.
+       */
+      this.isLoading = !isActive
     }
   }
 }
