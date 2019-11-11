@@ -36,9 +36,10 @@
                     <span>
                       <span class="grey--text">Recent {{ state }} tasks:</span>
                       <br/>
-                      <span v-for="(task, index) in tasks" :key="index">
+                      <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                         {{ task }}<br v-if="index !== tasks.length -1" />
                       </span>
+                      <span v-if="tasks.length > maximumTasksDisplayed" class="font-italic">And {{ tasks.length - maximumTasksDisplayed }} more</span>
                     </span>
                   </v-tooltip>
                 </span>
@@ -60,6 +61,7 @@
 <script>
 import Job from '@/components/cylc/Job'
 import { workflowService } from 'workflow-service'
+import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 
 const QUERIES = {
   root: `
@@ -116,7 +118,8 @@ export default {
     return {
       viewID: '',
       subscriptions: {},
-      isLoading: true
+      isLoading: true,
+      maximumTasksDisplayed: 5
     }
   },
   computed: {
@@ -127,16 +130,7 @@ export default {
     workflowsSummaries () {
       const workflowSummaries = new Map()
       for (const workflow of this.workflows) {
-        const states = new Map()
-        for (const taskProxy of workflow.taskProxies) {
-          for (const job of taskProxy.jobs) {
-            if (!states.has(job.state)) {
-              states.set(job.state, new Set())
-            }
-            states.get(job.state).add(`${taskProxy.name}.${taskProxy.cyclePoint}`)
-          }
-        }
-        workflowSummaries.set(workflow.name, states)
+        workflowSummaries.set(workflow.name, getWorkflowSummary(workflow))
       }
       return workflowSummaries
     }

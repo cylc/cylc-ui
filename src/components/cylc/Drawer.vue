@@ -63,7 +63,7 @@ import { VList } from 'vuetify/lib/components/VList'
 import Header from '@/components/cylc/Header'
 import i18n from '@/i18n'
 import { mapState } from 'vuex'
-import GScan from '@/components/cylc/GScan'
+import GScan from '@/components/cylc/gscan/GScan'
 
 export default {
   components: {
