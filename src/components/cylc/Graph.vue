@@ -9,7 +9,7 @@
     <div class='switchlayout'>
       <v-btn
         id='freeze-button'
-        x-small
+        small
         name='freeze'
         align-bottom
         justify-center
@@ -152,18 +152,18 @@ const edgeOptions = {
 const config = {}
 
 const states = Object.freeze({
-  EXPIRED: { state: 'expired', icon: 'baseline-donut_large-24px.svg', colour: '#fefaff' },
-  FAILED: { state: 'failed', icon: 'outline-cancel-24px.svg', colour: '#ff3a2b' },
-  QUEUED: { state: 'queued', icon: 'baseline-donut_large-24px.svg', colour: '#fff138' },
-  READY: { state: 'ready', icon: 'outline-radio_button_unchecked-24px.svg', colour: '#7093FF' },
-  RETRYING: { state: 'retrying', icon: 'outline-refresh-24px.svg', colour: '#ff3a2b' },
-  RUNNING: { state: 'running', icon: 'outline-adjust-24px.svg', colour: '#4ab7ff' },
-  SUBFAILED: { state: 'subfailed', icon: 'outline-filter_tilt_shift-24px.svg', colour: '#d453ff' },
-  SUBMITTED: { state: 'submitted', icon: 'outline-adjust-24px.svg', colour: '#9ef9ff' },
-  SUCCEEDED: { state: 'succeeded', icon: 'outline-radio_button_unchecked-24px.svg', colour: '#31ff53' },
-  WAITING: { state: 'waiting', icon: 'outline-radio_button_unchecked-24px.svg', colour: '#666' },
-  DEFAULT: { state: 'default', icon: 'baseline-donut_large-24px.svg', colour: '#555' },
-  UNDEFINED: { state: 'UNDEFINED', icon: '', colour: '#444' }
+  EXPIRED: { state: 'expired', icon: '', colour: '#fefaff' },
+  FAILED: { state: 'failed', icon: '', colour: '#cf4848' },
+  QUEUED: { state: 'queued', icon: '', colour: '#efefd9' },
+  READY: { state: 'ready', icon: '', colour: '#bfe5e7' },
+  RETRYING: { state: 'retrying', icon: '', colour: '#efefd9' },
+  RUNNING: { state: 'running', icon: '', colour: '#6aa4f1' },
+  SUBFAILED: { state: 'subfailed', icon: '', colour: '#be6ac0' },
+  SUBMITTED: { state: 'submitted', icon: '', colour: '#7dcfd4' },
+  SUCCEEDED: { state: 'succeeded', icon: '', colour: '#51af51' },
+  WAITING: { state: 'waiting', icon: '', colour: '#efefd9' },
+  DEFAULT: { state: 'default', icon: '', colour: '#efefd9' },
+  UNDEFINED: { state: 'UNDEFINED', icon: '', colour: '#efefd9' }
 })
 
 const dagreOptions = {
@@ -228,7 +228,7 @@ const ciseOptions = {
     return node.cyclepoint
   },
   // -------- Optional parameters --------
-  animate: 'end',
+  animate: false,
   // number of ticks per frame; higher is faster but more jerky
   refresh: 20,
   // Animation duration used for animate:'end'
@@ -285,7 +285,7 @@ const coseBilkentOptions = {
   gravity: 0.5, // Gravity force (constant)
   numIter: 2500, // Maximum number of iterations to perform
   tile: true, // Whether to tile disconnected nodes
-  animate: 'end', // Type of layout animation. The option set is {'during', 'end', false}
+  animate: false, // Type of layout animation. The option set is {'during', 'end', false}
   tilingPaddingVertical: 10, // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
   tilingPaddingHorizontal: 10, // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
   gravityRangeCompound: 1.5, // Gravity range (constant) for compounds
@@ -325,7 +325,7 @@ const hierarchicalOptions = {
 
 const colaLayoutOptions = {
   name: 'cola',
-  animate: true, // whether to show the layout as it's running
+  animate: false, // whether to show the layout as it's running
   refresh: 1, // number of ticks per frame; higher is faster but more jerky
   maxSimulationTime: 2000, // max length in ms to run the layout
   ungrabifyWhileSimulating: true, // so you can't drag nodes during layout
@@ -822,19 +822,6 @@ export default {
             {
               selector: 'node',
               css: {
-                'background-image': function memoize (node) {
-                  const nodeState = String(node.data('state'))
-                  const STATE = nodeState.toUpperCase()
-                  let icon = states.DEFAULT.icon
-                  if (Object.hasOwnProperty.call(states, STATE)) {
-                    icon = states[STATE].icon
-                  }
-                  return require('@/../public/img/' + String(icon))
-                },
-                'background-fit': 'contain contain',
-                'background-image-opacity': function memoize (node) {
-                  return has(data, 'runpercent') && !isEmpty(data('runpercent')) && data('runpercent') > 0 ? 1.0 : 0.6
-                },
                 'background-color': function memoize (node) {
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
@@ -855,8 +842,6 @@ export default {
                 'text-margin-x': 5,
                 'font-size': '.8em',
                 'min-zoomed-font-size': '.8em',
-                'border-color': '#333',
-                'border-width': '.1em',
                 shape: 'data(shape)',
                 width: '6em',
                 height: '6em',
@@ -1169,8 +1154,7 @@ export default {
               '<rect x="' + xoffset + '" y="' + yoffset + '" width="20" height="20" rx="4" ry="4"  stroke="" fill="' + states[JOBSTATE].colour + '" fill-opacity="1" stroke-opacity="0.8"/>'
               jobsGrid = jobsGrid.concat('', jobSquare)
             })
-            return '<div style="display:relative margin-top: 3em; class="cy-title"><span class="cy-title__label">' + data.task.name +
-            '</span><br>' +
+            return '<div style="display:relative margin-top: 3em; class="cy-title"><span class="cy-title__label">' + data.task.name + '</span><br/>' +
             '<span  class="cy-title__cyclepoint">' +
             data.cyclePoint +
             '</span><br>' +
