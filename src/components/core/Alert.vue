@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="alert">
     <v-alert
       :value="true"
       :color="alert.getColor()"
