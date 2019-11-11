@@ -15,7 +15,6 @@
     -->
     <svg
       class="job"
-      v-bind:class="[status]"
       viewBox="0 0 100 100"
     >
       <!-- the job status icon
@@ -23,6 +22,7 @@
            * let height = 100 - y - stroke-width
       -->
       <rect
+        v-bind:class="[status]"
         x="10" y="10"
         width="80" height="80"
         rx="20" ry="20"
@@ -33,44 +33,13 @@
 </template>
 
 <style lang="scss">
-    .c-job {
-        svg.job {
-            /* scale the icon to the font-size */
-            width: 1em;
-            height: 1em;
-
-            rect {
-                /* if no job status display nothing */
-                fill: transparent;
-                stroke: transparent;
-            }
-
-            &.submitted rect {
-                fill: rgb(125,207,212);
-                stroke: rgb(125,207,212);
-            }
-
-            &.running rect {
-                fill: rgb(106,164,241);
-                stroke: rgb(106,164,241);
-            }
-
-            &.succeeded rect {
-                fill: rgb(81,175,81);
-                stroke: rgb(81,175,81);
-            }
-
-            &.failed rect {
-                fill: rgb(207,72,72);
-                stroke: rgb(207,72,72);
-            }
-
-            &.submit-failed rect {
-                fill: rgb(190,106,192);
-                stroke: rgb(190,106,192);
-            }
-        }
+  .c-job {
+    svg.job {
+      /* scale the icon to the font-size */
+      width: 1em;
+      height: 1em;
     }
+  }
 </style>
 
 <script>
