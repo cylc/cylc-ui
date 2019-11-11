@@ -681,25 +681,27 @@ export default {
           if (!isUndefined(workflows)) {
             each(workflows, (value, key) => {
               each(value, (workflow, key) => {
-                if (Object.hasOwnProperty.call(workflow, 'nodesEdges')) {
-                  const edges = []
-                  if (Object.hasOwnProperty.call(workflow.nodesEdges, 'edges')) {
-                    each(workflow.nodesEdges.edges || [], (edge, key) => {
-                      edges.push({
-                        data: edge
+                if (workflow.id === this.workflowId) {
+                  if (Object.hasOwnProperty.call(workflow, 'nodesEdges')) {
+                    const edges = []
+                    if (Object.hasOwnProperty.call(workflow.nodesEdges, 'edges')) {
+                      each(workflow.nodesEdges.edges || [], (edge, key) => {
+                        edges.push({
+                          data: edge
+                        })
                       })
-                    })
-                  }
-                  elements.edges = edges
-                  const nodes = []
-                  if (Object.hasOwnProperty.call(workflow.nodesEdges, 'nodes')) {
-                    each(workflow.nodesEdges.nodes || [], (node, key) => {
-                      nodes.push({
-                        data: node
+                    }
+                    elements.edges = edges
+                    const nodes = []
+                    if (Object.hasOwnProperty.call(workflow.nodesEdges, 'nodes')) {
+                      each(workflow.nodesEdges.nodes || [], (node, key) => {
+                        nodes.push({
+                          data: node
+                        })
                       })
-                    })
+                    }
+                    elements.nodes = nodes
                   }
-                  elements.nodes = nodes
                 }
               })
             })
