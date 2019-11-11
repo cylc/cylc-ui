@@ -49,6 +49,9 @@
           v-text="link.text"
         />
       </v-list-item>
+      <g-scan
+        :workflows="workflows"
+      />
     </v-layout>
   </v-navigation-drawer>
 </template>
@@ -59,9 +62,12 @@
 import { VList } from 'vuetify/lib/components/VList'
 import Header from '@/components/cylc/Header'
 import i18n from '@/i18n'
+import { mapState } from 'vuex'
+import GScan from '@/components/cylc/gscan/GScan'
 
 export default {
   components: {
+    GScan,
     'c-header': Header,
     // eslint-disable-next-line vue/no-unused-components
     'v-list': VList
@@ -84,6 +90,7 @@ export default {
     responsive: false
   }),
   computed: {
+    ...mapState('workflows', ['workflows']),
     drawer: {
       get: function () {
         return this.$store.state.app.drawer

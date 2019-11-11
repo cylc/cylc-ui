@@ -3,7 +3,7 @@
     <toolbar />
     <div class="c-tree">
       <tree
-        :workflows="currentWorkflow"
+        :workflows="workflowTree"
         :hoverable="false"
         :activable="false"
         :multiple-active="false"
@@ -21,6 +21,7 @@ import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
 import Tree from '@/components/cylc/Tree'
 import Toolbar from '@/components/cylc/Toolbar'
+import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -100,26 +101,36 @@ export default {
 
   data: () => ({
     viewID: '',
-    workflowId: '',
     subscriptions: {},
     isLoading: true
   }),
 
   computed: {
-    ...mapState('workflows', ['workflowTree']),
+    ...mapState('workflows', ['workflows']),
     currentWorkflow: function () {
-      for (const workflow of this.workflowTree) {
+      for (const workflow of this.workflows) {
         if (workflow.name === this.workflowName) {
-          return [workflow]
+          return workflow
         }
       }
-      return []
+      return null
+    },
+    workflowTree: function () {
+      const workflowTree = []
+      if (this.currentWorkflow !== null && Object.hasOwnProperty.call(this.currentWorkflow, 'familyProxies')) {
+        try {
+          workflowTree.push(convertGraphQLWorkflowToTree(this.currentWorkflow))
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error(e)
+        }
+      }
+      return workflowTree
     }
   },
 
   created () {
-    this.workflowId = this.workflowName
-    this.viewID = `Tree(${this.workflowId}): ${Math.random()}`
+    this.viewID = `Tree(${this.workflowName}): ${Math.random()}`
     workflowService.register(
       this,
       {
@@ -143,7 +154,7 @@ export default {
         this.subscriptions[queryName] =
             workflowService.subscribe(
               this,
-              QUERIES[queryName].replace('WORKFLOW_ID', this.workflowId)
+              QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
             )
       }
     },

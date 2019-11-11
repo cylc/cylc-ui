@@ -30,6 +30,8 @@ along with other dependencies with updates available.
 [#291](https://github.com/cylc/cylc-ui/pull/291) - Add families to Tree
 view and component.
 
+[#301](https://github.com/cylc/cylc-ui/pull/301) - Add GScan component.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard

@@ -12,6 +12,7 @@ const checkpoint = {
             "taskProxies": [
                 {
                     "id": "cylc|one|20000101T0000Z|waiting",
+                    "name": "wating",
                     "state": "succeeded",
                     "cyclePoint": "20000101T0000Z",
                     "latestMessage": "succeeded",
@@ -41,6 +42,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000101T0000Z|eventually_succeeded",
+                    "name": "eventually_succeeded",
                     "state": "succeeded",
                     "cyclePoint": "20000101T0000Z",
                     "latestMessage": "succeeded",
@@ -103,6 +105,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000101T0000Z|checkpoint",
+                    name: "checkpoint",
                     "state": "succeeded",
                     "cyclePoint": "20000101T0000Z",
                     "latestMessage": "succeeded",
@@ -132,6 +135,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000101T0000Z|succeeded",
+                    "name": "succeeded",
                     "state": "succeeded",
                     "cyclePoint": "20000101T0000Z",
                     "latestMessage": "succeeded",
@@ -161,6 +165,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000101T0000Z|sleepy",
+                    "name": "sleepy",
                     "state": "succeeded",
                     "cyclePoint": "20000101T0000Z",
                     "latestMessage": "succeeded",
@@ -190,6 +195,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000101T0000Z|retrying",
+                    "name": "retrying",
                     "state": "succeeded",
                     "cyclePoint": "20000101T0000Z",
                     "latestMessage": "failed, retrying in PT5M (after 2019-11-05T22:22:51Z)",
@@ -219,6 +225,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000101T0000Z|failed",
+                    "name": "failed",
                     "state": "failed",
                     "cyclePoint": "20000101T0000Z",
                     "latestMessage": "failed/EXIT",
@@ -248,6 +255,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000102T0000Z|sleepy",
+                    "name": "sleepy",
                     "state": "waiting",
                     "cyclePoint": "20000102T0000Z",
                     "latestMessage": "",
@@ -265,6 +273,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000102T0000Z|eventually_succeeded",
+                    "name": "eventually_succeeded",
                     "state": "succeeded",
                     "cyclePoint": "20000102T0000Z",
                     "latestMessage": "succeeded",
@@ -327,6 +336,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000102T0000Z|checkpoint",
+                    "name": "checkpoint",
                     "state": "running",
                     "cyclePoint": "20000102T0000Z",
                     "latestMessage": "started",
@@ -356,6 +366,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000102T0000Z|waiting",
+                    "name": "waiting",
                     "state": "waiting",
                     "cyclePoint": "20000102T0000Z",
                     "latestMessage": "",
@@ -373,6 +384,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000102T0000Z|failed",
+                    "name": "failed",
                     "state": "failed",
                     "cyclePoint": "20000102T0000Z",
                     "latestMessage": "failed/EXIT",
@@ -402,6 +414,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000102T0000Z|retrying",
+                    "name": "retrying",
                     "state": "retrying",
                     "cyclePoint": "20000102T0000Z",
                     "latestMessage": "failed, retrying in PT5M (after 2019-11-05T22:23:22Z)",
@@ -431,6 +444,7 @@ const checkpoint = {
                 },
                 {
                     "id": "cylc|one|20000102T0000Z|succeeded",
+                    "name": "succeeded",
                     "state": "succeeded",
                     "cyclePoint": "20000102T0000Z",
                     "latestMessage": "succeeded",

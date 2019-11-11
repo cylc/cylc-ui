@@ -11,7 +11,7 @@ import { computePercentProgress } from '@/components/cylc'
  * Every node has data, and a .name property used to display the node in the tree in the UI.
  *
  * @param workflow {object}
- * @returns {Array}
+ * @returns Object
  */
 function convertGraphQLWorkflowToTree (workflow) {
   // the workflow object gets augmented to become a valid node for the tree
@@ -117,7 +117,7 @@ function convertGraphQLWorkflowToTree (workflow) {
     }
     cyclepoint.state = extractGroupState(childStates, false)
   }
-  return [workflow]
+  return workflow
 }
 
 export {
