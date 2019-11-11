@@ -43,6 +43,9 @@ JupyterHub to create the Hub URL (handling base_url).
 
 [#297](https://github.com/cylc/cylc-ui/pull/297) - Support IE and Safari
 
+[#306](https://github.com/cylc/cylc-ui/pull/306) - Dismissing alerts leave
+a blank space in the page
+
 ### Documentation
 
 [#215](https://github.com/cylc/cylc-ui/pull/215) - guide: add beginnings
