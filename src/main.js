@@ -18,8 +18,11 @@ import store from '@/store'
 // GraphQL
 import VueApollo from 'vue-apollo'
 
-import apolloClient from '@/utils/graphql'
+import { createApolloClient } from '@/utils/graphql'
 
+const apolloClient = createApolloClient(
+  `${window.location.pathname}/graphql`
+)
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient
 })
