@@ -681,20 +681,26 @@ export default {
           if (!isUndefined(workflows)) {
             each(workflows, (value, key) => {
               each(value, (workflow, key) => {
-                const edges = []
-                each(workflow.nodesEdges.edges || [], (edge, key) => {
-                  edges.push({
-                    data: edge
-                  })
-                })
-                elements.edges = edges
-                const nodes = []
-                each(workflow.nodesEdges.nodes || [], (node, key) => {
-                  nodes.push({
-                    data: node
-                  })
-                })
-                elements.nodes = nodes
+                if (Object.hasOwnProperty.call(workflow, 'nodesEdges')) {
+                  const edges = []
+                  if (Object.hasOwnProperty.call(workflow.nodesEdges, 'edges')) {
+                    each(workflow.nodesEdges.edges || [], (edge, key) => {
+                      edges.push({
+                        data: edge
+                      })
+                    })
+                  }
+                  elements.edges = edges
+                  const nodes = []
+                  if (Object.hasOwnProperty.call(workflow.nodesEdges, 'nodes')) {
+                    each(workflow.nodesEdges.nodes || [], (node, key) => {
+                      nodes.push({
+                        data: node
+                      })
+                    })
+                  }
+                  elements.nodes = nodes
+                }
               })
             })
           }
@@ -817,9 +823,11 @@ export default {
                 'background-image': function memoize (node) {
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
-                  const icon = states[STATE].icon || states.DEFAULT.icon
-                  const path = require('@/../public/img/' + String(icon))
-                  return path
+                  let icon = states.DEFAULT.icon
+                  if (Object.hasOwnProperty.call(states, STATE)) {
+                    icon = states[STATE].icon
+                  }
+                  return require('@/../public/img/' + String(icon))
                 },
                 'background-fit': 'contain contain',
                 'background-image-opacity': function memoize (node) {
@@ -828,7 +836,11 @@ export default {
                 'background-color': function memoize (node) {
                   const nodeState = String(node.data('state'))
                   const STATE = nodeState.toUpperCase()
-                  return states[STATE].colour || states.DEFAULT.colour
+                  let color = states.DEFAULT.colour
+                  if (Object.hasOwnProperty.call(states, STATE)) {
+                    color = states[STATE].colour
+                  }
+                  return color
                 },
                 // content: 'data(label)',
                 'font-family': 'Avenir, Helvetica, Arial, sans-serif',
