@@ -22,7 +22,6 @@
                       <v-btn
                           v-on="on"
                           class="mt-1 pa-0"
-                          elevation="0"
                           min-width="0"
                           min-height="0"
                           style="font-size: 120%"
