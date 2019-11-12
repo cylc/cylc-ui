@@ -286,7 +286,8 @@ export default {
       if (this.isHeld) {
         classes.push('held')
       }
-      if (['waiting', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(this.status)) {
+      // TODO: remove cylc 7 'ready' state once no longer needed
+      if (['waiting', 'preparing', 'ready', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(this.status)) {
         classes.push(this.status)
       } else {
         // eslint-disable-next-line no-console
