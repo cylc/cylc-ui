@@ -4,10 +4,11 @@
 -->
 
 <template>
-  <span
-    class="c-job"
-    style="display:inline-block; vertical-align:middle"
-  >
+  <span class="job_theme--normal">
+    <span
+      class="c-job"
+      style="display:inline-block; vertical-align:middle"
+    >
     <!-- the task icon SVG
            * comments prefixed `let` are instructions for changing style
            * contain in a 100x100 viewBox so pixels and percent are equal
@@ -29,6 +30,7 @@
         stroke-width="10"
       />
     </svg>
+  </span>
   </span>
 </template>
 
