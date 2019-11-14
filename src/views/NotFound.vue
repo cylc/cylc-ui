@@ -20,7 +20,7 @@
           </v-card-text>
           <v-card-actions>
             <button @click="$router.go(-1)" class="v-btn success">{{ $t('NotFound.goBack') }}</button>
-            <router-link to="/dashboard" tag="button" class="white--text success v-btn">{{ $t('NotFound.toHomepage') }}</router-link>
+            <router-link to="/" tag="button" class="white--text success v-btn">{{ $t('NotFound.toHomepage') }}</router-link>
           </v-card-actions>
         </v-card>
       </v-flex>
