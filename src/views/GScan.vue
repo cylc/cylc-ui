@@ -90,7 +90,9 @@ export default {
       title: this.getPageTitle('App.workflows')
     }
   },
-
+  components: {
+    'material-card': () => import('@/components/material/Card')
+  },
   data: () => ({
     viewID: 'GScan: ' + Math.random(),
     subscriptions: {},

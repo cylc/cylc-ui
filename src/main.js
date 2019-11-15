@@ -6,9 +6,6 @@ import Vue from 'vue'
 import './plugins'
 import vuetify from './plugins/vuetify'
 
-// Components
-import './components'
-
 // Sync router with store
 import { sync } from 'vuex-router-sync'
 
