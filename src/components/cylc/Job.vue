@@ -3,7 +3,7 @@
         which can sit in text.
 -->
 
-<template>
+<template functional>
   <span class="job_theme--normal">
     <span
       class="c-job"
@@ -23,7 +23,7 @@
            * let height = 100 - y - stroke-width
       -->
       <rect
-        v-bind:class="[status]"
+        v-bind:class="[props.status]"
         x="10" y="10"
         width="80" height="80"
         rx="20" ry="20"
@@ -33,16 +33,6 @@
   </span>
   </span>
 </template>
-
-<style lang="scss">
-  .c-job {
-    svg.job {
-      /* scale the icon to the font-size */
-      width: 1em;
-      height: 1em;
-    }
-  }
-</style>
 
 <script>
 export default {
