@@ -16,12 +16,6 @@
 import { mapState } from 'vuex'
 
 export default {
-  data: () => ({
-    links: [
-      { name: 'Website', Link: 'https://cylc.github.io/', route: false },
-      { name: 'About', Link: '/about', route: true }
-    ]
-  }),
   computed: {
     ...mapState(['packageJson', 'environment'])
   }
