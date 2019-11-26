@@ -40,7 +40,7 @@
           r="25"
           stroke-width="50"
           stroke-dasharray="157"
-          :style="`'stroke-dashoffset: ' + ${157 - (157 * (props.progress / 100))}`"
+          :style="`stroke-dashoffset: ${157 - (157 * (props.progress / 100))}`"
         ></circle>
         <!-- dot in the middle (small hub)
                * position in the middle
