@@ -117,8 +117,7 @@ export default {
   },
 
   computed: {
-    ...mapState('app', ['title']),
-    ...mapState('workflows', ['workflows'])
+    ...mapState('app', ['title'])
   },
 
   mounted () {
