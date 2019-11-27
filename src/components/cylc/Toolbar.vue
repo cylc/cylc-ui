@@ -106,6 +106,7 @@ export default {
     responsive: false,
     responsiveInput: false,
     extended: false,
+    // FIXME: remove local state once we have this data in the workflow - https://github.com/cylc/cylc-ui/issues/221
     isStopped: false
   }),
 
