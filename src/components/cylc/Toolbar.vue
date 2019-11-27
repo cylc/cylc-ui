@@ -75,6 +75,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import gql from 'graphql-tag'
+import TaskState from '@/model/TaskState.model'
 
 const HOLD_WORKFLOW = gql`
 mutation HoldWorkflowMutation($workflow: String!) {
@@ -105,7 +106,6 @@ export default {
     responsive: false,
     responsiveInput: false,
     extended: false,
-    isHeld: false,
     isStopped: false
   }),
 
@@ -117,7 +117,10 @@ export default {
   },
 
   computed: {
-    ...mapState('app', ['title'])
+    ...mapState('app', ['title']),
+    isHeld: function () {
+      return this.workflow.status === TaskState.HELD.name.toLowerCase()
+    }
   },
 
   mounted () {
@@ -153,7 +156,6 @@ export default {
           }
         }).then(() => {
           vm.isStopped = false
-          vm.isHeld = false
         })
       } else {
         // hold
@@ -164,7 +166,6 @@ export default {
           }
         }).then(() => {
           vm.isStopped = false
-          vm.isHeld = true
         })
       }
     },
@@ -177,7 +178,6 @@ export default {
         }
       }).then(() => {
         vm.isStopped = true
-        vm.isHeld = false
       })
     },
     toggleExtended () {
