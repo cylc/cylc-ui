@@ -76,10 +76,12 @@ import { mixin } from '@/mixins/index'
 
 export default {
   mixins: [mixin],
+  components: {
+    'material-card': () => import('@/components/material/Card')
+  },
   computed: {
     ...mapState('user', ['user'])
   },
-
   metaInfo () {
     return {
       title: this.getPageTitle('App.userProfile')

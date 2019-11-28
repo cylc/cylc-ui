@@ -59,10 +59,14 @@
 </template>
 
 <script>
+import HelperOffset from '@/components/helper/Offset'
+
 /* eslint-disable */
   export default {
     name: 'MaterialCard',
-
+    components: {
+      'helper-offset': HelperOffset
+    },
     inheritAttrs: false,
 
     props: {
