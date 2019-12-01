@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/cylc/cylc-ui.svg?branch=master)](https://travis-ci.org/cylc/cylc-ui)
+[![Build Status](https://github.com/cylc/cylc-ui/workflows/CI/badge.svg)](https://github.com/cylc/cylc-ui/actions)
 [![codecov](https://codecov.io/gh/cylc/cylc-ui/branch/master/graph/badge.svg)](https://codecov.io/gh/cylc/cylc-ui)
 
 # Cylc UI
