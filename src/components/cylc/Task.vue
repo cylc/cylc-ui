@@ -3,7 +3,7 @@
          which can sit in text.
 -->
 
-<template>
+<template functional>
   <span
     class="c-task"
     style="display:inline-block; vertical-align:middle"
@@ -15,7 +15,10 @@
     -->
     <svg
       class="task"
-      v-bind:class="[classes]"
+      :class="[
+        props.isHeld ? 'held' : '',
+        ['waiting', 'preparing', 'ready', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(props.status) ? props.status : 'unknown'
+      ]"
       viewBox="0 0 100 100"
     >
       <!--
@@ -37,7 +40,7 @@
           r="25"
           stroke-width="50"
           stroke-dasharray="157"
-          v-bind:style="progressStyle"
+          :style="`stroke-dashoffset: ${157 - (157 * (props.progress / 100))}`"
         ></circle>
         <!-- dot in the middle (small hub)
                * position in the middle
@@ -129,133 +132,6 @@
   </span>
 </template>
 
-<style lang="scss">
-    .c-task {
-
-        $foreground: rgb(90,90,90);
-        $background: rgb(255,255,255);
-
-        @mixin disk() {
-            #outline {
-                stroke: $foreground;
-                fill: $foreground;
-            }
-        }
-
-        @mixin outline() {
-            #outline {
-                stroke: $foreground;
-            }
-        }
-
-        @mixin dot() {
-            #dot {
-                fill: $foreground;
-            }
-        }
-
-        @mixin hub() {
-            #hub {
-                fill: $foreground;
-            }
-        }
-
-        @mixin progress() {
-            #progress {
-                fill: transparent;
-                stroke: $foreground;
-                transform-origin: 50% 50%;
-                transform: rotate(-90deg);
-                opacity: 0.4;
-            }
-        }
-
-        @mixin cross($colour) {
-            #cross rect {
-                fill: $colour;
-            }
-        }
-
-        @mixin held() {
-            #held {
-                circle {
-                    stroke: $foreground;
-                    fill: $background;
-                }
-                rect {
-                    fill: $foreground;
-                }
-            }
-        }
-
-        @mixin unknown() {
-            #question-mark {
-              fill: $foreground;
-            }
-        }
-
-        svg.task {
-            /* scale the icon to the font-size */
-            width: 1em;
-            height: 1em;
-
-            circle, rect {
-                /* if no task status display nothing */
-                fill: transparent;
-                stroke: transparent;
-            }
-
-            /* isHeld */
-            &.held {
-              @include held();
-            }
-
-            /* status */
-            &.waiting, &.queued {
-                /* NOTE: queued tasks may acquire an xtrigger or similar */
-                @include outline();
-            }
-
-            &.ready, &.preparing {
-                /* TODO: by cylc 8.0.0 - remove ready state */
-                @include outline();
-                @include dot();
-            }
-
-            &.submitted {
-                @include outline();
-                @include hub();
-            }
-
-            &.running {
-                @include outline();
-                @include hub();
-                @include progress();
-            }
-
-            &.succeeded {
-                @include disk();
-            }
-
-            &.failed {
-                @include disk();
-                @include outline();
-                @include cross($background);
-            }
-
-            &.submit-failed {
-                @include outline();
-                @include cross($foreground);
-            }
-
-            &.unknown {
-              @include outline();
-              @include unknown();
-            }
-        }
-    }
-</style>
-
 <script>
 export default {
   name: 'Task',
@@ -272,29 +148,6 @@ export default {
       type: Number,
       required: false,
       default: 0
-    }
-  },
-  computed: {
-    progressStyle: function () {
-      const progress = 157 - (157 * (this.progress / 100))
-      return {
-        'stroke-dashoffset': progress
-      }
-    },
-    classes: function () {
-      const classes = []
-      if (this.isHeld) {
-        classes.push('held')
-      }
-      // TODO: remove cylc 7 'ready' state once no longer needed
-      if (['waiting', 'preparing', 'ready', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(this.status)) {
-        classes.push(this.status)
-      } else {
-        // eslint-disable-next-line no-console
-        console.error(`Invalid task status: ${this.status}`)
-        classes.push('unknown')
-      }
-      return classes
     }
   }
 }

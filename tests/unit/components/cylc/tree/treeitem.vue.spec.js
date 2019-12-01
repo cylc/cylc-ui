@@ -8,8 +8,7 @@ import TreeItem from '@/components/cylc/TreeItem'
 import {
   simpleWorkflowNode,
   simpleCyclepointNode,
-  simpleTaskNode,
-  simpleJobNode
+  simpleTaskNode
 } from './tree.data'
 
 describe('TreeItem component', () => {
@@ -69,37 +68,6 @@ describe('TreeItem component', () => {
       const task = wrapper.findAll({ name: 'TreeItem' })
       // 4 TreeItem components, 1 for workflow, 1 for cyclepoint, 1 for task, 1 for job
       expect(task.length).to.equal(4)
-    })
-  })
-  describe('Task component', () => {
-    it('should use the Task component for a cyclepoint node', () => {
-      const wrapper = mount(TreeItem, {
-        propsData: {
-          node: simpleCyclepointNode
-        }
-      })
-      const task = wrapper.findAll({ name: 'Task' })
-      expect(task.length).to.equal(1)
-    })
-    it('should use the Task component for a task node', () => {
-      const wrapper = mount(TreeItem, {
-        propsData: {
-          node: simpleTaskNode
-        }
-      })
-      const task = wrapper.findAll({ name: 'Task' })
-      expect(task.length).to.equal(1)
-    })
-  })
-  describe('Job component', () => {
-    it('should use the Job component for a job node', () => {
-      const wrapper = mount(TreeItem, {
-        propsData: {
-          node: simpleJobNode
-        }
-      })
-      const task = wrapper.findAll({ name: 'Job' })
-      expect(task.length).to.equal(1)
     })
   })
 })

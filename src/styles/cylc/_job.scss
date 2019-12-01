@@ -8,6 +8,13 @@ $cjob: ".c-job svg.job rect";
     stroke: transparent;
 }
 
+.c-job {
+    svg.job {
+        /* scale the icon to the font-size */
+        width: 1em;
+        height: 1em;
+    }
+}
 
 .job_theme--normal {
     $teal: rgb(125,207,212);
