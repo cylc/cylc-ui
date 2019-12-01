@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="currentWorkflow.length > 0">
-      <toolbar  :workflow="currentWorkflow[0]" />
+    <div v-if="currentWorkflow">
+      <toolbar :workflow="currentWorkflow" />
     </div>
     <div class="c-tree">
       <tree
