@@ -25,11 +25,11 @@
 
       <!-- control bar elements displayed only when a workflow has been positioned -->
       <template>
-        <a @click="onClickReleaseHold">
+        <a id="workflow-release-hold-button" @click="onClickReleaseHold">
           <v-icon color="#5E5E5E" :disabled="isStopped">{{ isHeld ? 'mdi-play' : 'mdi-pause' }}</v-icon>
         </a>
 
-        <a @click="onClickStop">
+        <a id="workflow-stop-button" @click="onClickStop">
           <v-icon color="#5E5E5E" :disabled="isHeld">mdi-stop</v-icon>
         </a>
 
