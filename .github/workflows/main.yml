@@ -1,0 +1,28 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Cache node modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+    - name: Install
+      run: npm install
+    - name: Lint
+      run: npm run lint -- --no-fix
+    - name: Test
+      run: |
+        npm run coverage:unit
+        bash <(curl -s https://codecov.io/bash)
+    - name: Build
+      run: npm run build
+
