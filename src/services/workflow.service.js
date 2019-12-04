@@ -48,6 +48,7 @@ class SubscriptionWorkflowService extends GQuery {
   }
 
   subscribe (view, query) {
+    this.destructor()
     this.observable = this.request()
     return super.subscribe(view, query)
   }
