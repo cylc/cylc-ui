@@ -1,6 +1,7 @@
 // we mount the tree to include the TreeItem component and other vuetify children components
 import { mount } from '@vue/test-utils'
 import { expect } from 'chai'
+import Vue from 'vue'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
 import * as vuetify from '@/plugins/vuetify'
@@ -69,7 +70,7 @@ describe('Tree component', () => {
       workflowTreeItemNodeActivableSpan.trigger('click')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
     })
-    it('should activate correctly', () => {
+    it('should activate correctly', async () => {
       const wrapper = mount(Tree, {
         propsData: {
           workflows: simpleWorkflowTree4Nodes,
@@ -84,6 +85,7 @@ describe('Tree component', () => {
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
       const workflowTreeItemNodeActivableSpan = workflowTreeItemNode.find('.row .wrap > span')
       workflowTreeItemNodeActivableSpan.trigger('click')
+      await Vue.nextTick()
       expect(workflowTreeItemNode.classes('node--active')).to.equal(true)
     })
   })
