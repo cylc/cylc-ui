@@ -64,7 +64,7 @@ import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 
 const QUERIES = {
   root: `
-    {
+    subscription {
       workflows {
         id
         name

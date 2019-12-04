@@ -81,7 +81,7 @@ import { debounce, each, has, isEmpty, isUndefined, memoize } from 'lodash'
 
 const QUERIES = {
   root: `
-        {
+        subscription {
           workflows(ids: ["WORKFLOW_ID"]) {
             id
             status
