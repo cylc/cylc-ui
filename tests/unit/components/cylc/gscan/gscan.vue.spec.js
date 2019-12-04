@@ -1,14 +1,23 @@
-import { mount, RouterLinkStub } from '@vue/test-utils'
+import { createLocalVue, mount, RouterLinkStub } from '@vue/test-utils'
 import { expect } from 'chai'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
-import * as vuetify from '@/plugins/vuetify'
 import GScan from '@/components/cylc/gscan/GScan'
 import { simpleWorkflowGscanNodes } from './gscan.data'
 
 describe('GScan component', () => {
   it('should display the GScan with valid data', () => {
+    const localVue = createLocalVue()
+    localVue.prototype.$workflowService = {
+      register: function () {
+      },
+      unregister: function () {
+      },
+      subscribe: function () {
+      }
+    }
     const wrapper = mount(GScan, {
+      localVue,
       propsData: {
         workflows: simpleWorkflowGscanNodes
       },
