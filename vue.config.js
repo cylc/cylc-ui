@@ -7,6 +7,7 @@ module.exports = {
   outputDir: 'dist',
   indexPath: 'index.html',
   transpileDependencies: ['vuetify'],
+  runtimeCompiler: true,
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({

@@ -45,14 +45,33 @@
         <!-- TODO: add workflow latest message -->
         <span></span>
 
-        <!-- TODO: enable add view button to add view to a tab/panel -->
-        <!--
         <v-spacer />
 
-        <a class="add-view" @click="onClickAddView">
-          {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
-        </a>
-        -->
+        <v-menu
+          offset-y
+        >
+          <template v-slot:activator="{ on }">
+            <a class="add-view" v-on="on">
+              {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
+            </a>
+          </template>
+          <v-list class="pa-0">
+            <v-list-item
+              class="py-0 px-8 ma-0"
+              @click="onClickAddTreeView"
+            >
+              <v-list-item-title><v-icon>mdi-file-tree</v-icon> Tree</v-list-item-title>
+            </v-list-item>
+          </v-list>
+          <v-list class="pa-0">
+            <v-list-item
+                class="py-0 px-8 ma-0"
+                @click="onClickAddGraphView"
+            >
+              <v-list-item-title><v-icon>mdi-graph</v-icon> Graph</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
 
       <!-- displayed only when extended===true -->
@@ -78,6 +97,7 @@
 import { mapMutations, mapState, mapGetters } from 'vuex'
 import gql from 'graphql-tag'
 import TaskState from '@/model/TaskState.model'
+import { bus } from '@/views/Workflow'
 
 const HOLD_WORKFLOW = gql`
 mutation HoldWorkflowMutation($workflow: String!) {
@@ -180,8 +200,11 @@ export default {
     toggleExtended () {
       this.extended = !this.extended
     },
-    onClickAddView () {
-      // TODO: implement adding views action
+    onClickAddTreeView () {
+      bus.$emit('add:tree')
+    },
+    onClickAddGraphView () {
+      bus.$emit('add:graph')
     }
   }
 }

@@ -8,7 +8,14 @@
 @import "cylc/job";
 @import "cylc/task";
 @import "cylc/dashboard";
+@import "cylc/workflow";
 
 .theme--light.v-application {
   background-color: transparent;
+  .content {
+    height: 100vh;
+  }
+  #core-view {
+    min-height: calc(100vh - 82px);
+  }
 }
