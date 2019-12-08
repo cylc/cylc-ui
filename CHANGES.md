@@ -41,6 +41,9 @@ hold, release, and stop workflows.
 [#280](https://github.com/cylc/cylc-ui/pull/280) - Add WebSockets client
 for GraphQL subscriptions.
 
+[#325](https://github.com/cylc/cylc-ui/pull/325) - Create Workflow
+component with Lumino.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard
