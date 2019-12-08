@@ -1,35 +1,16 @@
 <template>
   <div id="workflow-panel" class="fill-height">
     <toolbar />
-    <div ref="main" id="main" class="pa-4 fill-height"></div>
-    <div v-show="false">
-      <tree-wrapper
-          v-for="widgetId of this.treeWidgetIds"
-          :key="widgetId"
-          :workflows="workflowTree"
-          :widgetId="widgetId"
-      />
-      <graph-wrapper
-          v-for="widgetId of this.graphWidgetIds"
-          :key="widgetId"
-          :widgetId="widgetId"
-      />
-    </div>
+    <workflow :workflow-tree="workflowTree" />
   </div>
 </template>
 
 <script>
-import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
 import { mixin } from '@/mixins/index'
-import { workflowService } from 'workflow-service'
-import Toolbar from '@/components/cylc/Toolbar'
 import { mapState } from 'vuex'
-import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree'
-import Tree from '@/components/cylc/Tree'
-import Vue from 'vue'
-import Graph from '@/components/cylc/Graph'
-
-export const bus = new Vue()
+import Toolbar from '@/components/cylc/Toolbar'
+import Workflow from '@/components/cylc/workflow/Workflow'
+import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -81,106 +62,41 @@ const QUERIES = {
             state
           }
         }
+        nodesEdges {
+          nodes {
+            id
+            label: id
+            parent: firstParent {
+              id
+              state
+            }
+            state
+            cyclePoint
+            task {
+              name
+            }
+            jobs(sort: {keys: ["submit_num"], reverse: true}) {
+              id
+              batchSysName
+              batchSysJobId
+              host
+              startedTime
+              submittedTime
+              finishedTime
+              state
+              submitNum
+            }
+          }
+          edges {
+            id
+            source
+            target
+            label: id
+          }
+        }
       }
     }
   `
-}
-
-const TreeWrapper = Vue.component('tree-wrapper', {
-  name: 'TreeWrapper',
-  props: {
-    widgetId: {
-      type: String,
-      required: true
-    },
-    workflows: {
-      type: Array,
-      required: true
-    }
-  },
-  components: {
-    tree: Tree
-  },
-  mounted () {
-    const widgetElement = document.getElementById(this.widgetId)
-    widgetElement.appendChild(this.$refs[this.widgetId].$el)
-    const vm = this
-    document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', (e) => {
-      vm.$destroy()
-    }, false)
-  },
-  template: `
-    <div>
-      <tree :workflows="workflows" :ref="widgetId" />
-    </div>
-  `
-})
-
-const GraphWrapper = Vue.component('graph-wrapper', {
-  name: 'GraphWrapper',
-  props: {
-    widgetId: {
-      type: String,
-      required: true
-    }
-  },
-  components: {
-    graph: Graph
-  },
-  mounted () {
-    const widgetElement = document.getElementById(this.widgetId)
-    widgetElement.appendChild(this.$refs[this.widgetId].$el)
-    const vm = this
-    document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', (e) => {
-      vm.$destroy()
-    }, false)
-  },
-  template: `
-    <div>
-      <graph :ref="widgetId" />
-    </div>
-  `
-})
-
-/**
- * A widget that will have just a single HTML element to be referenced by the Vue component.
- * Based on the example-dockpanel class ContentWidget.
- */
-class ContentWidget extends Widget {
-  /**
-   * Return a dummy div to be used as parent for the Vue component element.
-   * @param {string} id - widget id
-   * @return HTMLElement
-   */
-  static createNode (id) {
-    const div = document.createElement('div')
-    div.setAttribute('id', id)
-    div.setAttribute('class', 'fill-height')
-    return div
-  }
-
-  /**
-   * @param {string} id - widget id
-   * @param {string} name - widget name (displayed in the tab bar)
-   */
-  constructor (id, name) {
-    super({ node: ContentWidget.createNode(id) })
-    this.id = id
-    // classes and flags
-    this.setFlag(Widget.Flag.DisallowLayout)
-    this.addClass('content')
-    // tab title
-    this.title.label = name
-    this.title.closable = true
-  }
-
-  onCloseRequest (msg) {
-    // remove the Vue component
-    const event = new Event('delete:widgetcomponent')
-    document.getElementById(this.id).dispatchEvent(event)
-    // close widget
-    super.onCloseRequest(msg)
-  }
 }
 
 export default {
@@ -194,8 +110,7 @@ export default {
   },
   components: {
     toolbar: Toolbar,
-    'tree-wrapper': TreeWrapper,
-    'graph-wrapper': GraphWrapper
+    workflow: Workflow
   },
   metaInfo () {
     return {
@@ -205,13 +120,7 @@ export default {
   data: () => ({
     viewID: '',
     subscriptions: {},
-    isLoading: true,
-    // create a box panel, which holds the dock panel, and controls its layout
-    main: new BoxPanel({ direction: 'left-to-right', spacing: 0 }),
-    // create dock panel, which holds the widgets
-    dock: new DockPanel(),
-    treeWidgetIds: [],
-    graphWidgetIds: []
+    isLoading: true
   }),
   computed: {
     ...mapState('workflows', ['workflows']),
@@ -238,38 +147,16 @@ export default {
   },
   created () {
     this.viewID = `Workflow(${this.workflowName}): ${Math.random()}`
-    workflowService.register(
+    this.$workflowService.register(
       this,
       {
         activeCallback: this.setActive
       }
     )
     this.subscribe('root')
-
-    this.dock.id = 'dock'
-    this.main.id = 'main'
-    this.main.addWidget(this.dock)
-    window.onresize = () => { this.main.update() }
-    BoxPanel.setStretch(this.dock, 1)
-    const vm = this
-    bus.$on('add:tree', () => {
-      const id = `tree-widget-${new Date().getTime()}`
-      const contentWidget = new ContentWidget(id, 'tree')
-      vm.dock.addWidget(contentWidget)
-      vm.treeWidgetIds.push(id)
-    })
-    bus.$on('add:graph', () => {
-      const id = `graph-widget-${new Date().getTime()}`
-      const contentWidget = new ContentWidget(id, 'graph')
-      vm.dock.addWidget(contentWidget)
-      vm.graphWidgetIds.push(id)
-    })
-    this.$nextTick(() => {
-      Widget.attach(vm.main, vm.$refs.main)
-    })
   },
   beforeDestroy () {
-    workflowService.unregister(this)
+    this.$workflowService.unregister(this)
   },
   methods: {
     subscribe (queryName) {
@@ -279,7 +166,7 @@ export default {
        */
       if (!(queryName in this.subscriptions)) {
         this.subscriptions[queryName] =
-          workflowService.subscribe(
+          this.$workflowService.subscribe(
             this,
             QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
           )
@@ -291,7 +178,7 @@ export default {
        * @param {string} queryName - Must be in QUERIES.
        */
       if (queryName in this.subscriptions) {
-        workflowService.unsubscribe(
+        this.$workflowService.unsubscribe(
           this.subscriptions[queryName]
         )
       }

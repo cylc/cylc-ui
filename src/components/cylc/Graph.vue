@@ -1043,7 +1043,7 @@ export default {
           zoomFactor: 0.1, // zoom factor per zoom tick
           zoomDelay: 45, // how many ms between zoom ticks
           minZoom: 0.1, // min zoom level
-          maxZoom: 10, // max zoom level
+          maxZoom: 2, // max zoom level
           fitPadding: 50, // padding when fitting
           panSpeed: 10, // how many ms in between pan ticks
           panDistance: 100, // max pan distance per tick

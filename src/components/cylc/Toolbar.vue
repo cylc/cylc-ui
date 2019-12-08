@@ -97,7 +97,7 @@
 import { mapMutations, mapState, mapGetters } from 'vuex'
 import gql from 'graphql-tag'
 import TaskState from '@/model/TaskState.model'
-import { bus } from '@/views/Workflow'
+import { EventBus } from '@/components/cylc/workflow/index'
 
 const HOLD_WORKFLOW = gql`
 mutation HoldWorkflowMutation($workflow: String!) {
@@ -201,10 +201,10 @@ export default {
       this.extended = !this.extended
     },
     onClickAddTreeView () {
-      bus.$emit('add:tree')
+      EventBus.$emit('add:tree')
     },
     onClickAddGraphView () {
-      bus.$emit('add:graph')
+      EventBus.$emit('add:graph')
     }
   }
 }
