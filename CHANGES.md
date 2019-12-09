@@ -32,6 +32,9 @@ view and component.
 
 [#301](https://github.com/cylc/cylc-ui/pull/301) - Add GScan component.
 
+[#327](https://github.com/cylc/cylc-ui/pull/301) - Use live data for the
+dashboard workflows summary.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard
