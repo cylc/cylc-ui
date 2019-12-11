@@ -10,7 +10,7 @@
         <!-- TODO: link with data from the query -->
         <v-data-table
             :headers="workflowsHeader"
-            :items="workflows"
+            :items="workflowsTable"
             hide-default-footer
             hide-default-header>
           <template v-slot:item.count="{ item }">
@@ -122,6 +122,19 @@
 <script>
 import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
+import { workflowService } from 'workflow-service'
+
+const QUERIES = {
+  root: `
+    {
+      workflows {
+        id
+        name
+        status
+      }
+    }
+  `
+}
 
 export default {
   mixins: [mixin],
@@ -132,6 +145,9 @@ export default {
   },
   data () {
     return {
+      viewID: '',
+      subscriptions: {},
+      isLoading: true,
       workflowsHeader: [
         {
           text: 'Count',
@@ -142,20 +158,6 @@ export default {
           text: 'Text',
           sortable: false,
           value: 'text'
-        }
-      ],
-      workflows: [
-        {
-          text: 'Running',
-          count: 0
-        },
-        {
-          text: 'Held',
-          count: 0
-        },
-        {
-          text: 'Stopped',
-          count: 0
         }
       ],
       eventsHeader: [
@@ -175,49 +177,91 @@ export default {
   },
   computed: {
     ...mapState('user', ['user']),
+    ...mapState('workflows', ['workflows']),
     hubUrl: function () {
       if (this.user) {
         return this.user.getHubUrl()
       }
       return '/hub/home'
+    },
+    workflowsTable () {
+      let [running, held, stopped] = [0, 0, 0]
+      for (const workflow of this.workflows) {
+        // TODO: create a src/model/WorkflowState enum later?
+        switch (workflow.status) {
+          case 'running':
+            running += 1
+            break
+          case 'held':
+            held += 1
+            break
+          case 'stopped':
+            stopped += 1
+            break
+        }
+      }
+      return [
+        {
+          text: 'Running',
+          count: running
+        },
+        {
+          text: 'Held',
+          count: held
+        },
+        {
+          text: 'Stopped',
+          count: stopped
+        }
+      ]
+    }
+  },
+  created () {
+    this.viewID = `Dashboard: ${Math.random()}`
+    workflowService.register(
+      this,
+      {
+        activeCallback: this.setActive
+      }
+    )
+    this.subscribe('root')
+  },
+  beforeDestroy () {
+    workflowService.unregister(this)
+  },
+  methods: {
+    subscribe (queryName) {
+      /**
+       * Subscribe this view to a new GraphQL query.
+       * @param {string} queryName - Must be in QUERIES.
+       */
+      if (!(queryName in this.subscriptions)) {
+        this.subscriptions[queryName] =
+          workflowService.subscribe(
+            this,
+            QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
+          )
+      }
+    },
+
+    unsubscribe (queryName) {
+      /**
+       * Unsubscribe this view to a new GraphQL query.
+       * @param {string} queryName - Must be in QUERIES.
+       */
+      if (queryName in this.subscriptions) {
+        workflowService.unsubscribe(
+          this.subscriptions[queryName]
+        )
+      }
+    },
+
+    setActive (isActive) {
+      /** Toggle the isLoading state.
+       * @param {bool} isActive - Are this views subs active.
+       */
+      this.isLoading = !isActive
     }
   }
 }
 </script>
-
-<style>
-.c-dashboard {
-  padding: 0 24px;
-}
-
-/* Items in the bottom menu are left-aligned with the top Workflows&Events
-   entries, so we are required to override some styles from Vuetify components
-   in here.*/
-
-/* to left align items in the dashboard */
-.v-avatar .v-icon {
-  width: auto;
-  height: auto;
-}
-.v-list__tile__action, .v-list__tile__avatar {
-  min-width: auto;
-  margin-left: -10px;
-}
-
-/* otherwise avatar does not left align with component above,
-   !important as the attributes are set in the tag element -->
-.v-avatar {
-  height: auto !important;
-  width: auto !important;
-}
-
-/* otherwise responsive UI ends up with extra space between vertical menu items */
-.v-list {
-  padding: 0 0;
-}
-
-/* to left align items in the dashboard */
-.v-list__tile {
-  padding: 10px 0;
-}
-</style>
