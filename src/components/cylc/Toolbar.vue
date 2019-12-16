@@ -25,12 +25,12 @@
 
       <!-- control bar elements displayed only when a workflow has been positioned -->
       <template>
-        <a @click="onClickPause">
-          <v-icon color="#5E5E5E">mdi-pause</v-icon>
+        <a id="workflow-release-hold-button" @click="onClickReleaseHold">
+          <v-icon color="#5E5E5E" :disabled="isStopped">{{ isHeld ? 'mdi-play' : 'mdi-pause' }}</v-icon>
         </a>
 
-        <a @click="onClickStop">
-          <v-icon color="#5E5E5E">mdi-stop</v-icon>
+        <a id="workflow-stop-button" @click="onClickStop">
+          <v-icon color="#5E5E5E" :disabled="isHeld">mdi-stop</v-icon>
         </a>
 
         <!-- TODO: add control options and call mutations -->
@@ -73,19 +73,55 @@
 </template>
 
 <script>
-
 import { mapMutations, mapState } from 'vuex'
+import gql from 'graphql-tag'
+import TaskState from '@/model/TaskState.model'
+
+const HOLD_WORKFLOW = gql`
+mutation HoldWorkflowMutation($workflow: String!) {
+  holdWorkflow (workflows: [$workflow]) {
+    result
+  }
+}
+`
+
+const RELEASE_WORKFLOW = gql`
+mutation ReleaseWorkflowMutation($workflow: String!) {
+  releaseWorkflow(workflows: [$workflow]){
+    result
+  }
+}
+`
+
+const STOP_WORKFLOW = gql`
+mutation StopWorkflowMutation($workflow: String!) {
+  stopWorkflow (workflows: [$workflow]) {
+    result
+  }
+}
+`
 
 export default {
   data: () => ({
     responsive: false,
     responsiveInput: false,
-    extended: false
+    extended: false,
+    // FIXME: remove local state once we have this data in the workflow - https://github.com/cylc/cylc-ui/issues/221
+    isStopped: false
   }),
+
+  props: {
+    workflow: {
+      type: Object,
+      required: true
+    }
+  },
 
   computed: {
     ...mapState('app', ['title']),
-    ...mapState('workflows', ['workflows'])
+    isHeld: function () {
+      return this.workflow.status === TaskState.HELD.name.toLowerCase()
+    }
   },
 
   mounted () {
@@ -110,11 +146,40 @@ export default {
         this.responsiveInput = true
       }
     },
-    onClickPause () {
-      // TODO: implement the pause action
+    onClickReleaseHold () {
+      const vm = this
+      if (this.isHeld) {
+        // release
+        this.$apollo.mutate({
+          mutation: RELEASE_WORKFLOW,
+          variables: {
+            workflow: this.workflow.id
+          }
+        }).then(() => {
+          vm.isStopped = false
+        })
+      } else {
+        // hold
+        this.$apollo.mutate({
+          mutation: HOLD_WORKFLOW,
+          variables: {
+            workflow: this.workflow.id
+          }
+        }).then(() => {
+          vm.isStopped = false
+        })
+      }
     },
     onClickStop () {
-      // TODO: implement the stop action
+      const vm = this
+      this.$apollo.mutate({
+        mutation: STOP_WORKFLOW,
+        variables: {
+          workflow: this.workflow.id
+        }
+      }).then(() => {
+        vm.isStopped = true
+      })
     },
     toggleExtended () {
       this.extended = !this.extended
