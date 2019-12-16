@@ -56,6 +56,26 @@
     }
   }
 
+  @mixin warning() {
+    #warning {
+      circle {
+        stroke: $background;
+        fill: $foreground;
+      }
+      rect {
+        fill: $background;
+      }
+    }
+  }
+
+  @mixin clockface() {
+    #clockface {
+      circle, rect {
+        fill: $foreground
+      }
+    }
+  }
+
   @mixin unknown() {
     #question-mark {
       fill: $foreground;
@@ -82,6 +102,12 @@
     &.waiting, &.queued {
       /* NOTE: queued tasks may acquire an xtrigger or similar */
       @include outline();
+    }
+
+    &.expired {
+      @include outline();
+      @include warning();
+      @include clockface();
     }
 
     &.ready, &.preparing {

@@ -151,7 +151,8 @@ export default {
       'running',
       'succeeded',
       'failed',
-      'submit-failed'
+      'submit-failed',
+      'expired'
     ]
   })
 }

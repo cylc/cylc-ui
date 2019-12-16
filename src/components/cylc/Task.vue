@@ -17,7 +17,7 @@
       class="task"
       :class="[
         props.isHeld ? 'held' : '',
-        ['waiting', 'preparing', 'ready', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(props.status) ? props.status : 'unknown'
+        ['waiting', 'preparing', 'ready', 'expired', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(props.status) ? props.status : 'unknown'
       ]"
       viewBox="0 0 100 100"
     >
@@ -113,6 +113,56 @@
           x=52.5 y=25
           width="10" height="50"
           rx="5" ry="5"
+        ></rect>
+      </g>
+
+      <!--
+        Warning icon.
+      -->
+      <g
+        id="warning"
+        transform="
+          scale(0.45)
+          translate(125, 0)
+        "
+      >
+        <circle
+          cx="50" cy="50"
+          r="46"
+          stroke-width="10"
+        ></circle>
+        <rect
+          x=45 y=25
+          width="10" height="35"
+          rx="5" ry="5"
+        ></rect>
+        <rect
+          x=45 y=65
+          width="10" height="10"
+          rx="5" ry="5"
+        ></rect>
+      </g>
+
+      <!--
+        Clockface.
+      -->
+      <g
+        id="clockface"
+      >
+        <circle
+          cx="50" cy="50"
+          r="7.5"
+        ></circle>
+        <rect
+          x="47.5" y="12.5"
+          width="5" height="37.5"
+        ></rect>
+        <rect
+          x="47.5" y="25"
+          width="5" height="25"
+          transform="
+            rotate(135, 50, 50)
+          "
         ></rect>
       </g>
 
