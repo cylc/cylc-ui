@@ -54,6 +54,9 @@ JupyterHub to create the Hub URL (handling base_url).
 [#306](https://github.com/cylc/cylc-ui/pull/306) - Dismissing alerts leave
 a blank space in the page
 
+[#341](https://github.com/cylc/cylc-ui/pull/341) - Fix toolbar (responsive
+mode and drawer)
+
 ### Documentation
 
 [#215](https://github.com/cylc/cylc-ui/pull/215) - guide: add beginnings
