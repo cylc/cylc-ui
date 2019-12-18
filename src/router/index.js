@@ -57,9 +57,10 @@ router.beforeResolve((to, from, next) => {
       // When a workflow is being displayed, we set the title to a
       // different value.
       store.commit('app/setTitle', to.params.workflowName)
+      store.commit('workflows/SET_WORKFLOW_NAME', { workflowName: to.params.workflowName })
     } else {
       store.commit('app/setTitle', to.name)
-      store.dispatch('workflows/setWorkflow', { workflowName: null })
+      store.commit('workflows/SET_WORKFLOW_NAME', { workflowName: null })
     }
     store.dispatch('setAlert', null).then(() => {})
   }

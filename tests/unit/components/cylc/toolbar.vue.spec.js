@@ -1,4 +1,4 @@
-import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import Toolbar from '@/components/cylc/Toolbar'
 import TaskState from '@/model/TaskState.model'
@@ -6,12 +6,18 @@ import store from '@/store/index'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 
-const localVue = createLocalVue()
-
 describe('Toolbar component', () => {
   let vuetify
   beforeEach(() => {
     vuetify = new Vuetify()
+    store.state.workflows.workflows = [
+      {
+        id: 'user/id',
+        name: 'test',
+        status: TaskState.RUNNING.name.toLowerCase()
+      }
+    ]
+    store.state.workflows.workflowName = 'test'
   })
   it('should initialize props', () => {
     const wrapper = shallowMount(Toolbar, {
@@ -20,13 +26,8 @@ describe('Toolbar component', () => {
     expect(wrapper.is(Toolbar)).to.equal(true)
   })
   it('should hide and display drawer according to screen viewport size', async () => {
-    store.state.workflows.workflow = {
-      id: 'Workflow Test Toolbar',
-      status: TaskState.RUNNING.name.toLowerCase()
-    }
     // v-app-toolbar when using "app" directive, must also have a v-app. So we need to initialize vuetify
     const wrapper = mount(Toolbar, {
-      localVue,
       vuetify,
       store
     })
@@ -42,10 +43,6 @@ describe('Toolbar component', () => {
     expect(store.state.app.drawer).to.equal(true)
   })
   it('should stop the workflow', async () => {
-    store.state.workflows.workflow = {
-      id: 'Workflow Test Toolbar',
-      status: TaskState.RUNNING.name.toLowerCase()
-    }
     const wrapper = shallowMount(Toolbar, {
       store
     })
@@ -65,10 +62,6 @@ describe('Toolbar component', () => {
     expect(wrapper.vm.$data.isStopped).to.equal(true)
   })
   it('should stop/release the workflow', async () => {
-    store.state.workflows.workflow = {
-      id: 'Workflow Test Toolbar',
-      status: TaskState.RUNNING.name.toLowerCase()
-    }
     const wrapper = shallowMount(Toolbar, {
       store
     })
@@ -78,16 +71,10 @@ describe('Toolbar component', () => {
     wrapper.vm.$apollo = {
       mutate: function () {
         return new Promise((resolve) => {
-          if (store.state.workflows.workflow.status === TaskState.HELD.name.toLowerCase()) {
-            store.state.workflows.workflow = {
-              id: 'Workflow Test Toolbar',
-              status: TaskState.RUNNING.name.toLowerCase()
-            }
+          if (store.state.workflows.workflows[0].status === TaskState.HELD.name.toLowerCase()) {
+            store.state.workflows.workflows[0].status = TaskState.RUNNING.name.toLowerCase()
           } else {
-            store.state.workflows.workflow = {
-              id: 'Workflow Test Toolbar',
-              status: TaskState.HELD.name.toLowerCase()
-            }
+            store.state.workflows.workflows[0].status = TaskState.HELD.name.toLowerCase()
           }
           return resolve(true)
         })
@@ -97,8 +84,6 @@ describe('Toolbar component', () => {
     const toggleLink = wrapper.find('#workflow-release-hold-button')
     toggleLink.trigger('click')
     await Vue.nextTick()
-    console.log(store.state.workflows.workflow.status)
-    console.log(wrapper.vm.isHeld)
     expect(wrapper.vm.isHeld).to.equal(true)
     toggleLink.trigger('click')
     await Vue.nextTick()

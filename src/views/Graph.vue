@@ -4,7 +4,6 @@
 
 <script>
 import Graph from '@/components/cylc/Graph'
-import store from '@/store'
 
 export default {
   components: {
@@ -16,10 +15,6 @@ export default {
       type: String,
       required: true
     }
-  },
-
-  beforeMount () {
-    store.dispatch('workflows/setWorkflow', { workflowName: this.workflowName })
   }
 }
 </script>

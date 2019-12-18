@@ -1,6 +1,19 @@
 const state = {
   workflows: [],
-  workflow: null
+  workflowName: null
+}
+
+const getters = {
+  currentWorkflow: state => {
+    if (state.workflowName !== null) {
+      for (const workflow of state.workflows) {
+        if (state.workflowName === workflow.name) {
+          return workflow
+        }
+      }
+    }
+    return null
+  }
 }
 
 const mutations = {
@@ -9,32 +22,21 @@ const mutations = {
     // deltas to the store
     state.workflows = data
   },
-  SET_WORKFLOW (state, { workflow }) {
-    state.workflow = workflow
+  SET_WORKFLOW_NAME (state, { workflowName }) {
+    state.workflowName = workflowName
   }
 }
 
 const actions = {
   set ({ commit }, data) {
     commit('SET', data)
-  },
-  setWorkflow ({ state, commit }, { workflowName }) {
-    if (workflowName === null) {
-      commit('SET_WORKFLOW', { workflow: null })
-      return
-    }
-    for (const workflow of state.workflows) {
-      // TODO: simplify once we have decided on workflow name vs. workflow id
-      if (workflow.name === workflowName || workflow.id === workflowName) {
-        commit('SET_WORKFLOW', { workflow })
-      }
-    }
   }
 }
 
 export const workflows = {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions
 }
