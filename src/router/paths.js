@@ -40,7 +40,7 @@ export default [
     }
   },
   {
-    path: '/graph/:workflowid',
+    path: '/graph/:workflowName',
     view: 'Graph',
     name: 'graph',
     meta: {

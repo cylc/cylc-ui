@@ -1,10 +1,12 @@
 <template>
   <div>
     <v-app-bar
+      app
       id="core-app-bar"
       dense
       flat
       class="c-toolbar"
+      v-if="workflow || responsive"
     >
       <v-toolbar-title
         class="tertiary--text font-weight-light"
@@ -24,7 +26,7 @@
       </v-toolbar-title>
 
       <!-- control bar elements displayed only when a workflow has been positioned -->
-      <template>
+      <template v-if="workflow">
         <a id="workflow-release-hold-button" @click="onClickReleaseHold">
           <v-icon color="#5E5E5E" :disabled="isStopped">{{ isHeld ? 'mdi-play' : 'mdi-pause' }}</v-icon>
         </a>
@@ -110,15 +112,9 @@ export default {
     isStopped: false
   }),
 
-  props: {
-    workflow: {
-      type: Object,
-      required: true
-    }
-  },
-
   computed: {
     ...mapState('app', ['title']),
+    ...mapState('workflows', ['workflow']),
     isHeld: function () {
       return this.workflow.status === TaskState.HELD.name.toLowerCase()
     }

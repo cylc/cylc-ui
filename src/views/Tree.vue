@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div v-if="currentWorkflow">
-      <toolbar :workflow="currentWorkflow" />
-    </div>
     <div class="c-tree">
       <tree
         :workflows="workflowTree"
@@ -22,8 +19,8 @@ import { workflowService } from 'workflow-service'
 import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
 import Tree from '@/components/cylc/Tree'
-import Toolbar from '@/components/cylc/Toolbar'
 import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
+import store from '@/store'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -91,7 +88,6 @@ export default {
   },
 
   components: {
-    toolbar: Toolbar,
     tree: Tree
   },
 
@@ -129,6 +125,10 @@ export default {
       }
       return workflowTree
     }
+  },
+
+  beforeMount () {
+    store.dispatch('workflows/setWorkflow', { workflowName: this.workflowName })
   },
 
   created () {

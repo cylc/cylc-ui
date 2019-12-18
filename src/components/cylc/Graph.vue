@@ -546,7 +546,7 @@ const expandCollapseOptionsCola = {
 
 export default {
   name: 'Graph',
-  props: ['workflowid'],
+  props: ['workflowName'],
   data: function () {
     return {
       isConnected: false,
@@ -633,7 +633,7 @@ export default {
 
   created (cy) {
     console.debug('CREATED')
-    this.workflowId = this.$route.params.workflowid
+    this.workflowId = this.$route.params.workflowName
     workflowService.register(
       this,
       {

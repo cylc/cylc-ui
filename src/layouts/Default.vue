@@ -1,5 +1,6 @@
 <template>
   <div>
+    <toolbar />
     <drawer />
 
     <v-content>
@@ -18,13 +19,15 @@
 import Alert from '@/components/core/Alert'
 import Drawer from '@/components/cylc/Drawer'
 import Footer from '@/components/core/Footer'
+import Toolbar from '@/components/cylc/Toolbar'
 
 export default {
   name: 'Default',
   components: {
     Alert,
     Drawer,
-    Footer
+    Footer,
+    Toolbar
   }
 }
 </script>
