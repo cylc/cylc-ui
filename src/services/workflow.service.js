@@ -3,8 +3,8 @@ import store from '@/store/'
 import Alert from '@/model/Alert.model'
 
 class SubscriptionWorkflowService extends GQuery {
-  constructor () {
-    super(/* enableWebSockets */ true)
+  constructor (apolloClient) {
+    super(apolloClient)
     /**
      * @type {object}
      */

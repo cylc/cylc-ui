@@ -1,8 +1,6 @@
 import { parse } from 'graphql/language/parser'
 import { print } from 'graphql/language/printer'
 
-import { createApolloClient } from '@/utils/graphql'
-
 function gClone (query) {
   /** Clone a GraphQL query.
    * Why oh why isn't there a better way of doing this in JS!
@@ -73,16 +71,8 @@ class GQuery {
    * GraphQL endpoint for a collection of views with potentially overlapping
    * queries.
    */
-
-  constructor (enableWebSockets = false) {
-    // TODO: revisit this and evaluate other ways to build the GraphQL URL - not safe to rely on window.location (?)
-    const baseUrl = `${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}${window.location.pathname}`
-    const httpUrl = `${window.location.protocol}//${baseUrl}graphql`
-    const wsUrl = `ws://${baseUrl}subscriptions`
-    this.apolloClient = createApolloClient(
-      httpUrl,
-      enableWebSockets ? wsUrl : null
-    )
+  constructor (apolloClient) {
+    this.apolloClient = apolloClient
     this.query = null
     this.subscriptions = []
     this.views = []

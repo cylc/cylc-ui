@@ -146,7 +146,7 @@ export default {
       const vm = this
       if (this.isHeld) {
         // release
-        this.$apollo.mutate({
+        this.$apolloClient.mutate({
           mutation: RELEASE_WORKFLOW,
           variables: {
             workflow: this.currentWorkflow.id
@@ -156,7 +156,7 @@ export default {
         })
       } else {
         // hold
-        this.$apollo.mutate({
+        this.$apolloClient.mutate({
           mutation: HOLD_WORKFLOW,
           variables: {
             workflow: this.currentWorkflow.id
@@ -168,7 +168,7 @@ export default {
     },
     onClickStop () {
       const vm = this
-      this.$apollo.mutate({
+      this.$apolloClient.mutate({
         mutation: STOP_WORKFLOW,
         variables: {
           workflow: this.currentWorkflow.id
