@@ -47,7 +47,7 @@ describe('Toolbar component', () => {
       store
     })
 
-    wrapper.vm.$apollo = {
+    wrapper.vm.$apolloClient = {
       mutate: function () {
         return new Promise((resolve) => {
           return resolve(true)
@@ -68,7 +68,7 @@ describe('Toolbar component', () => {
     wrapper.vm.$data.responsive = true
     await Vue.nextTick()
 
-    wrapper.vm.$apollo = {
+    wrapper.vm.$apolloClient = {
       mutate: function () {
         return new Promise((resolve) => {
           if (store.state.workflows.workflows[0].status === TaskState.HELD.name.toLowerCase()) {
