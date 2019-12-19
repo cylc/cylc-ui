@@ -12,23 +12,18 @@ class SubscriptionWorkflowService extends GQuery {
   }
 
   destructor () {
-    if (this.observable) {
+    if (this.observable !== null) {
       this.observable.unsubscribe()
     }
     this.observable = null
   }
 
-  subscribe (view, query) {
-    this.destructor()
-    this.observable = this.request()
-    return super.subscribe(view, query)
-  }
-
   recompute () {
     this.destructor()
     super.recompute()
-    // query has been recomputed, so subscribe to request again
-    this.observable = this.request()
+    if (this.query !== null) {
+      this.request()
+    }
   }
 
   request () {
@@ -42,7 +37,7 @@ class SubscriptionWorkflowService extends GQuery {
       return null
     }
     const vm = this
-    return this.apolloClient.subscribe({
+    this.observable = this.apolloClient.subscribe({
       query: this.query,
       fetchPolicy: 'no-cache'
     }).subscribe({
@@ -64,6 +59,8 @@ class SubscriptionWorkflowService extends GQuery {
           'setAlert',
           new Alert(err.message, null, 'error')
         )
+      },
+      complete () {
       }
     })
   }
