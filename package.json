@@ -37,6 +37,7 @@
     "graphiql": "^0.17.5",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
+    "infinite-tree": "^1.16.2",
     "jshint": "^2.10.2",
     "nprogress": "^0.2.0",
     "react": "^15.6.2",
