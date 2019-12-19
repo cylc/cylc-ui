@@ -122,7 +122,6 @@
 <script>
 import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
-import { workflowService } from 'workflow-service'
 
 const QUERIES = {
   root: `
@@ -218,7 +217,7 @@ export default {
   },
   created () {
     this.viewID = `Dashboard: ${Math.random()}`
-    workflowService.register(
+    this.$workflowService.register(
       this,
       {
         activeCallback: this.setActive
@@ -227,7 +226,7 @@ export default {
     this.subscribe('root')
   },
   beforeDestroy () {
-    workflowService.unregister(this)
+    this.$workflowService.unregister(this)
   },
   methods: {
     subscribe (queryName) {
@@ -237,7 +236,7 @@ export default {
        */
       if (!(queryName in this.subscriptions)) {
         this.subscriptions[queryName] =
-          workflowService.subscribe(
+          this.$workflowService.subscribe(
             this,
             QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
           )
@@ -250,7 +249,7 @@ export default {
        * @param {string} queryName - Must be in QUERIES.
        */
       if (queryName in this.subscriptions) {
-        workflowService.unsubscribe(
+        this.$workflowService.unsubscribe(
           this.subscriptions[queryName]
         )
       }
