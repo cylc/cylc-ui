@@ -53,12 +53,14 @@ Vue.use(Meta)
 router.beforeResolve((to, from, next) => {
   NProgress.start()
   if (to.name) {
-    if (['tree'].includes(to.name)) {
+    if (['tree', 'graph', 'workflow'].includes(to.name)) {
       // When a workflow is being displayed, we set the title to a
       // different value.
       store.commit('app/setTitle', to.params.workflowName)
+      store.commit('workflows/SET_WORKFLOW_NAME', { workflowName: to.params.workflowName })
     } else {
       store.commit('app/setTitle', to.name)
+      store.commit('workflows/SET_WORKFLOW_NAME', { workflowName: null })
     }
     store.dispatch('setAlert', null).then(() => {})
   }

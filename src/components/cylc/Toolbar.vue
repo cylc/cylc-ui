@@ -1,10 +1,12 @@
 <template>
   <div>
     <v-app-bar
+      app
       id="core-app-bar"
       dense
       flat
       class="c-toolbar"
+      v-if="currentWorkflow || responsive"
     >
       <v-toolbar-title
         class="tertiary--text font-weight-light"
@@ -23,8 +25,8 @@
         <span class="c-toolbar-title">{{ title }}</span>
       </v-toolbar-title>
 
-      <!-- control bar elements displayed only when a workflow has been positioned -->
-      <template>
+      <!-- control bar elements displayed only when there is a current workflow in the store -->
+      <template v-if="currentWorkflow">
         <a id="workflow-release-hold-button" @click="onClickReleaseHold">
           <v-icon color="#5E5E5E" :disabled="isStopped">{{ isHeld ? 'mdi-play' : 'mdi-pause' }}</v-icon>
         </a>
@@ -73,7 +75,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState, mapGetters } from 'vuex'
 import gql from 'graphql-tag'
 import TaskState from '@/model/TaskState.model'
 
@@ -110,17 +112,11 @@ export default {
     isStopped: false
   }),
 
-  props: {
-    workflow: {
-      type: Object,
-      required: true
-    }
-  },
-
   computed: {
     ...mapState('app', ['title']),
+    ...mapGetters('workflows', ['currentWorkflow']),
     isHeld: function () {
-      return this.workflow.status === TaskState.HELD.name.toLowerCase()
+      return this.currentWorkflow.status === TaskState.HELD.name.toLowerCase()
     }
   },
 
@@ -153,7 +149,7 @@ export default {
         this.$apollo.mutate({
           mutation: RELEASE_WORKFLOW,
           variables: {
-            workflow: this.workflow.id
+            workflow: this.currentWorkflow.id
           }
         }).then(() => {
           vm.isStopped = false
@@ -163,7 +159,7 @@ export default {
         this.$apollo.mutate({
           mutation: HOLD_WORKFLOW,
           variables: {
-            workflow: this.workflow.id
+            workflow: this.currentWorkflow.id
           }
         }).then(() => {
           vm.isStopped = false
@@ -175,7 +171,7 @@ export default {
       this.$apollo.mutate({
         mutation: STOP_WORKFLOW,
         variables: {
-          workflow: this.workflow.id
+          workflow: this.currentWorkflow.id
         }
       }).then(() => {
         vm.isStopped = true

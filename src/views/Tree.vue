@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div v-if="currentWorkflow">
-      <toolbar :workflow="currentWorkflow" />
-    </div>
     <div class="c-tree">
       <tree
         :workflows="workflowTree"
@@ -20,9 +17,8 @@
 <script>
 import { workflowService } from 'workflow-service'
 import { mixin } from '@/mixins/index'
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import Tree from '@/components/cylc/Tree'
-import Toolbar from '@/components/cylc/Toolbar'
 import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
 
 // query to retrieve all workflows
@@ -91,7 +87,6 @@ export default {
   },
 
   components: {
-    toolbar: Toolbar,
     tree: Tree
   },
 
@@ -108,15 +103,7 @@ export default {
   }),
 
   computed: {
-    ...mapState('workflows', ['workflows']),
-    currentWorkflow: function () {
-      for (const workflow of this.workflows) {
-        if (workflow.name === this.workflowName) {
-          return workflow
-        }
-      }
-      return null
-    },
+    ...mapGetters('workflows', ['currentWorkflow']),
     workflowTree: function () {
       const workflowTree = []
       if (this.currentWorkflow !== null && Object.hasOwnProperty.call(this.currentWorkflow, 'familyProxies')) {

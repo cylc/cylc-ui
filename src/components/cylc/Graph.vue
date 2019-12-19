@@ -546,7 +546,12 @@ const expandCollapseOptionsCola = {
 
 export default {
   name: 'Graph',
-  props: ['workflowid'],
+  props: {
+    workflowName: {
+      type: String,
+      required: true
+    }
+  },
   data: function () {
     return {
       isConnected: false,
@@ -570,7 +575,6 @@ export default {
       nodesEdges: [],
       workflows: [],
       subscriptions: {},
-      workflowId: '',
       // layout engines
       layoutEngines: [
         'dagre',
@@ -606,7 +610,7 @@ export default {
 
   metaInfo () {
     return {
-      title: this.getPageTitle('App.graph', { name: this.workflowId })
+      title: this.getPageTitle('App.graph', { name: this.workflowName })
     }
   },
 
@@ -633,7 +637,6 @@ export default {
 
   created (cy) {
     console.debug('CREATED')
-    this.workflowId = this.$route.params.workflowid
     workflowService.register(
       this,
       {
@@ -652,7 +655,7 @@ export default {
     subscribe (queryName) {
       const id = workflowService.subscribe(
         this,
-        QUERIES[queryName].replace('WORKFLOW_ID', this.workflowId)
+        QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
       )
       if (!(queryName in this.subscriptions)) {
         this.subscriptions[queryName] = {
@@ -681,7 +684,7 @@ export default {
           if (!isUndefined(workflows)) {
             each(workflows, (value, key) => {
               each(value, (workflow, key) => {
-                if (workflow.id === this.workflowId) {
+                if (workflow.name === this.workflowName) {
                   if (Object.hasOwnProperty.call(workflow, 'nodesEdges')) {
                     const edges = []
                     if (Object.hasOwnProperty.call(workflow.nodesEdges, 'edges')) {
