@@ -122,6 +122,7 @@
 <script>
 import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
+import { getHubUrl } from '@/utils/user'
 
 const QUERIES = {
   root: `
@@ -178,10 +179,7 @@ export default {
     ...mapState('user', ['user']),
     ...mapState('workflows', ['workflows']),
     hubUrl: function () {
-      if (this.user) {
-        return this.user.getHubUrl()
-      }
-      return '/hub/home'
+      return getHubUrl(this.user)
     },
     workflowsTable () {
       let [running, held, stopped] = [0, 0, 0]
