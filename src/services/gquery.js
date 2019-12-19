@@ -3,9 +3,6 @@ import { print } from 'graphql/language/printer'
 
 import { createApolloClient } from '@/utils/graphql'
 
-import Alert from '@/model/Alert.model'
-import store from '@/store/'
-
 function gClone (query) {
   /** Clone a GraphQL query.
    * Why oh why isn't there a better way of doing this in JS!
@@ -167,34 +164,6 @@ class GQuery {
   }
 
   request () {
-    /**
-     * Perform a REST GraphQL request for all subscriptions.
-     */
-    if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
-      console.debug('graphql request:', this.query)
-    }
-    return this.apolloClient.query({
-      query: this.query,
-      fetchPolicy: 'no-cache'
-    }).then((response) => {
-      // commit results
-      store.dispatch(
-        'workflows/set',
-        response.data.workflows
-      )
-      // set all subscriptions to active
-      this.subscriptions
-        .filter(s => s.active === false)
-        .forEach(s => { s.active = true })
-      // run callback functions on the views
-      this.callbackActive()
-    }).catch((error) => {
-      store.dispatch(
-        'setAlert',
-        new Alert(error.message, null, 'error')
-      )
-    })
   }
 
   callbackActive () {

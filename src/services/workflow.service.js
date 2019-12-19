@@ -2,35 +2,6 @@ import { GQuery } from '@/services/gquery'
 import store from '@/store/'
 import Alert from '@/model/Alert.model'
 
-class LiveWorkflowService extends GQuery {
-  /**
-     * WorkflowService for on-line work.
-     * This class provides the functionality required for polling the GraphQL
-     * endpoint.
-     */
-
-  constructor () {
-    super(/* enableWebSockets */ false)
-    this.polling = null
-  }
-
-  destructor () {
-    clearInterval(this.polling)
-  }
-
-  subscribe (view, query) {
-    const ret = super.subscribe(view, query)
-    if (!this.polling) {
-      // start polling when we receive the first subscription
-      this.polling = setInterval(() => {
-        this.request()
-      }, 5000)
-      this.request()
-    }
-    return ret
-  }
-}
-
 class SubscriptionWorkflowService extends GQuery {
   constructor () {
     super(/* enableWebSockets */ true)
@@ -98,5 +69,4 @@ class SubscriptionWorkflowService extends GQuery {
   }
 }
 
-export { LiveWorkflowService, SubscriptionWorkflowService }
 export default SubscriptionWorkflowService
