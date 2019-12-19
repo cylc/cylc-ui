@@ -1,5 +1,5 @@
 <template>
-    <graph></graph>
+    <graph :workflow-name="workflowName"></graph>
 </template>
 
 <script>
