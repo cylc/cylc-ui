@@ -16,118 +16,69 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="my-2">
-    <!-- each workflow is a tree root -->
-    <tree-item
-        v-for="workflow of workflows"
-        :key="workflow.id"
-        :node="workflow"
-        :hoverable="hoverable"
-        :initialExpanded="expanded"
+  <InfiniteTree
+    ref="tree"
+    class-name="tree"
+    :tree-data="treeData"
+    :tab-index="0"
+    :should-load-nodes="shouldLoadNodes"
+    :should-select-node="shouldSelectNode"
+    :on-open-node="onOpenNode"
+    :on-close-node="onCloseNode"
+    :on-select-node="onSelectNode"
     >
-    </tree-item>
-  </div>
+    <!-- eslint-disable-next-line vue/no-unused-vars -->
+    <template slot-scope="{ node, tree }">
+      <div class="tree-node">
+        <span class="tree-text">{{ node.name }}</span>
+      </div>
+    </template>
+  </InfiniteTree>
 </template>
 
 <script>
-import TreeItem from '@/components/cylc/tree/TreeItem'
-import { TreeEventBus } from '@/components/cylc/tree/event-bus'
+import InfiniteTree from '@/components/cylc/InfiniteTree'
 
 export default {
   name: 'Tree',
-  props: {
-    workflows: {
-      type: Array,
-      required: true
-    },
-    hoverable: Boolean,
-    activable: Boolean,
-    multipleActive: Boolean
-  },
   components: {
-    'tree-item': TreeItem
+    InfiniteTree
+  },
+  props: {
+    treeData: {
+      type: [Array, Object],
+      default: () => {
+        return []
+      }
+    }
   },
   data () {
     return {
-      treeItemCache: new Set(),
-      activeCache: new Set(),
-      expandedCache: new Set(),
-      expanded: true,
-      expandedFilter: null,
-      collapseFilter: null
+      node: null,
+      tree: null
     }
   },
-  created () {
-    TreeEventBus.$on('tree-item-created', this.onTreeItemCreated)
-    TreeEventBus.$on('tree-item-destroyed', this.onTreeItemDestroyed)
-    TreeEventBus.$on('tree-item-expanded', this.onTreeItemExpanded)
-    TreeEventBus.$on('tree-item-collapsed', this.onTreeItemCollapsed)
-    TreeEventBus.$on('tree-item-clicked', this.onTreeItemClicked)
-  },
-  destroyed () {
-    // we cannot simply call TreeEventBus.$off() as we may have more trees listening...
-    TreeEventBus.$off('tree-item-created', this.onTreeItemCreated)
-    TreeEventBus.$off('tree-item-destroyed', this.onTreeItemDestroyed)
-    TreeEventBus.$off('tree-item-expanded', this.onTreeItemExpanded)
-    TreeEventBus.$off('tree-item-collapsed', this.onTreeItemCollapsed)
-    TreeEventBus.$off('tree-item-clicked', this.onTreeItemClicked)
+  mounted () {
+    this.tree = this.$refs.tree.tree
   },
   methods: {
-    expandAll (filter = null) {
-      const collection = filter ? [...this.treeItemCache].filter(filter) : this.treeItemCache
-      for (const treeItem of collection) {
-        treeItem.isExpanded = true
-        this.expandedCache.add(treeItem)
-      }
-      this.expanded = true
+    shouldLoadNodes (node) {
+      return !node.hasChildren() && node.loadOnDemand
     },
-    collapseAll (filter = null) {
-      const collection = filter ? [...this.expandedCache].filter(filter) : this.expandedCache
-      for (const treeItem of collection) {
-        treeItem.isExpanded = false
-        this.expandedCache.delete(treeItem)
-      }
-      if (!filter) {
-        this.expanded = false
-      }
+    shouldSelectNode (node) { // Defaults to null
+      return !(!node || (node === this.$refs.tree.tree.getSelectedNode()))
     },
-    onTreeItemExpanded (treeItem) {
-      this.expandedCache.add(treeItem)
-      this.expanded = true
+    onUpdate (node) {
+      this.node = node
     },
-    onTreeItemCollapsed (treeItem) {
-      this.expandedCache.delete(treeItem)
+    onOpenNode (node) {
+      this.onUpdate(node)
     },
-    onTreeItemCreated (treeItem) {
-      this.treeItemCache.add(treeItem)
-      if (treeItem.isExpanded) {
-        this.expandedCache.add(treeItem)
-      }
+    onCloseNode (node) {
+      this.onUpdate(node)
     },
-    onTreeItemDestroyed (treeItem) {
-      // make sure the item is removed from all caches, otherwise we will have a memory leak
-      this.treeItemCache.delete(treeItem)
-      this.expandedCache.delete(treeItem)
-      this.activeCache.delete(treeItem)
-    },
-    onTreeItemClicked (treeItem) {
-      if (this.activable) {
-        if (!this.multipleActive) {
-          // only one item can be active, so make sure everything else that was active is now !active
-          for (const cached of this.activeCache) {
-            if (cached !== treeItem) {
-              cached.active = false
-            }
-          }
-          // empty cache
-          this.activeCache.clear()
-        }
-
-        treeItem.active = !treeItem.active
-        if (treeItem.active) {
-          this.activeCache.add(treeItem)
-        }
-      }
+    onSelectNode (node) {
+      this.onUpdate(node)
     }
   }
 }
