@@ -1,0 +1,33 @@
+@import '~vue-virtual-scroller/dist/vue-virtual-scroller.css';
+@import '~infinite-tree/dist/infinite-tree.css';
+@import '~vuetify/src/styles/styles.sass';
+
+$active-color: #BDD5F7;
+$arrow-size: 15px;
+$leaf-background-color: map-get($grey, 'lighten-3');
+
+.c-tree {
+  .node {
+    line-height: 1.8em;
+
+    .node-data {
+      margin-left: 6px;
+    }
+  }
+  .leaf {
+    padding: 0;
+    margin: 0;
+    .arrow-up {
+      width: 0;
+      height: 0;
+      border-left: $arrow-size solid transparent;
+      border-right: $arrow-size solid transparent;
+      border-bottom: $arrow-size solid $leaf-background-color;
+      display: flex;
+      flex-wrap: nowrap;
+    }
+    .leaf-data {
+      background-color: $leaf-background-color;
+    }
+  }
+}

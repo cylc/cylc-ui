@@ -19,6 +19,47 @@
 import CylcTree from '@/components/cylc/tree/cylc-tree'
 
 /**
+ * These are the properties that are displayed on each Job detail, the leaf node of the tree.
+ * @type {({property: string, title: string}|{property: string, title: string}|{property: string, title: string}|{property: string, title: string}|{property: string, title: string})[]}
+ */
+const JOB_DETAIL_NODE_PROPERTIES = [
+  {
+    title: 'host id',
+    property: 'host'
+  },
+  {
+    title: 'job id',
+    property: 'batchSysJobId'
+  },
+  {
+    title: 'batch sys',
+    property: 'batchSysName'
+  },
+  {
+    title: 'submit time',
+    property: 'submittedTime'
+  },
+  {
+    title: 'start time',
+    property: 'startedTime'
+  },
+  {
+    title: 'finish time',
+    property: 'finishedTime'
+  },
+  {
+    title: 'latest message',
+    property: 'latestMessage'
+  }
+]
+
+/**
+ * The height of each tree item. In the infinite tree, it is used as value for the `.size` property.
+ * @type {number}
+ */
+const TREE_ITEM_SIZE = 32
+
+/**
  * Create a workflow node. Uses the same properties (by reference) as the given workflow,
  * only adding new properties such as type, children, etc.
  *
@@ -51,7 +92,12 @@ function createCyclePointNode (familyProxy) {
       id: familyProxy.cyclePoint,
       name: familyProxy.cyclePoint
     },
-    children: []
+    children: [],
+    // infinite-tree properties
+    size: TREE_ITEM_SIZE,
+    state: {
+      open: true
+    }
   }
 }
 
@@ -67,7 +113,12 @@ function createFamilyProxyNode (familyProxy) {
     id: familyProxy.id,
     type: 'family-proxy',
     node: familyProxy,
-    children: []
+    children: [],
+    // infinite-tree properties
+    size: TREE_ITEM_SIZE,
+    state: {
+      open: true
+    }
   }
 }
 
@@ -89,7 +140,12 @@ function createTaskProxyNode (taskProxy) {
     type: 'task-proxy',
     node: taskProxy,
     expanded: false,
-    children: []
+    children: [],
+    // infinite-tree properties
+    size: TREE_ITEM_SIZE,
+    state: {
+      open: false
+    }
   }
 }
 
@@ -109,7 +165,13 @@ function createJobNode (job, latestMessage = '') {
     id: job.id,
     type: 'job',
     node: job,
-    latestMessage: latestMessage
+    latestMessage: latestMessage,
+    children: [],
+    // infinite-tree properties
+    size: TREE_ITEM_SIZE,
+    state: {
+      open: false
+    }
   }
 }
 

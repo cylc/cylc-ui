@@ -1,17 +1,19 @@
 <template>
+  <!-- NB: we are setting the itemSize to null to use the "Variable size mode" of the vue-virtual-scroller -->
   <RecycleScroller
     page-mode
     key-field="id"
     :class="className"
     :items="tree.nodes"
-    :item-size="rowHeight"
+    :item-size="null"
   >
     <!-- eslint-disable-next-line vue/no-unused-vars -->
     <div slot-scope="{ item, index }">
       <slot
+        name="default"
         v-bind="{
           node: item,
-          tree: tree,
+          tree: tree
         }"
       />
     </div>
@@ -41,7 +43,7 @@ export default {
     },
     autoOpen: {
       type: Boolean,
-      default: true
+      default: false
     },
     selectable: {
       type: Boolean,
@@ -198,19 +200,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-@import '~vue-virtual-scroller/dist/vue-virtual-scroller.css';
-@import '~infinite-tree/dist/infinite-tree.css';
-
-.scroll-box {
-  height: 80vh;
-}
-
-.tree-node {
-  height: 32%;
-  padding: 0 12px;
-  display: flex;
-  align-items: center;
-}
-</style>
