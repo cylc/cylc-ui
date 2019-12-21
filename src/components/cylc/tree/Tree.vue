@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import InfiniteTree from '@/components/cylc/InfiniteTree'
+import InfiniteTree from '@/components/cylc/tree/InfiniteTree'
 
 export default {
   name: 'Tree',
