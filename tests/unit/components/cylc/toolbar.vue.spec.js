@@ -1,4 +1,4 @@
-import { shallowMount, mount } from '@vue/test-utils'
+import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import { expect } from 'chai'
 import Toolbar from '@/components/cylc/Toolbar'
 import TaskState from '@/model/TaskState.model'
@@ -27,9 +27,15 @@ describe('Toolbar component', () => {
   })
   it('should hide and display drawer according to screen viewport size', async () => {
     // v-app-toolbar when using "app" directive, must also have a v-app. So we need to initialize vuetify
+    const localVue = createLocalVue()
+    localVue.use(Vuetify)
     const wrapper = mount(Toolbar, {
+      localVue,
       vuetify,
-      store
+      store,
+      mocks: {
+        $t: () => {} // vue-i18n
+      }
     })
     expect(store.state.app.drawer).to.equal(null)
     // empty wrapper before responsive is set to true
