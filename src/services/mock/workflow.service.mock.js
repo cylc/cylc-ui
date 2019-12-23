@@ -1,6 +1,6 @@
 import { checkpoint } from '@/services/mock/checkpoint.js'
 import { GQuery } from '@/services/gquery'
-import store from '@/store/'
+import store from '@/store/index'
 
 class MockWorkflowService extends GQuery {
   /**
@@ -9,9 +9,9 @@ class MockWorkflowService extends GQuery {
      */
 
   constructor () {
-    super()
+    super(/* enableWebSockets */ false)
     // load mock data
-    store.dispatch('workflows/set', checkpoint.workflows)
+    store.dispatch('workflows/set', checkpoint.workflows).then(() => {})
   }
 
   subscribe (view, query) {
@@ -28,6 +28,6 @@ class MockWorkflowService extends GQuery {
   }
 }
 
-const workflowService = new MockWorkflowService()
+export { MockWorkflowService }
 
-export { workflowService }
+export default MockWorkflowService

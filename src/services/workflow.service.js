@@ -1,34 +1,69 @@
 import { GQuery } from '@/services/gquery'
+import store from '@/store/'
+import Alert from '@/model/Alert.model'
 
-class LiveWorkflowService extends GQuery {
-  /**
-     * WorkflowService for on-line work.
-     * This class provides the functionality required for polling the GraphQL
-     * endpoint.
+class SubscriptionWorkflowService extends GQuery {
+  constructor (apolloClient) {
+    super(apolloClient)
+    /**
+     * @type {object}
      */
-
-  constructor () {
-    super()
-    this.polling = null
+    this.observable = null
   }
 
   destructor () {
-    clearInterval(this.polling)
+    if (this.observable !== null) {
+      this.observable.unsubscribe()
+    }
+    this.observable = null
   }
 
-  subscribe (view, query) {
-    const ret = super.subscribe(view, query)
-    if (!this.polling) {
-      // start polling when we receive the first subscription
-      this.polling = setInterval(() => {
-        this.request()
-      }, 5000)
+  recompute () {
+    this.destructor()
+    super.recompute()
+    if (this.query !== null) {
       this.request()
     }
-    return ret
+  }
+
+  request () {
+    /**
+     * Perform a REST GraphQL request for all subscriptions.
+     */
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('graphql request:', this.query)
+    }
+    if (!this.query) {
+      return null
+    }
+    const vm = this
+    this.observable = this.apolloClient.subscribe({
+      query: this.query,
+      fetchPolicy: 'no-cache'
+    }).subscribe({
+      next (response) {
+        // commit results
+        store.dispatch(
+          'workflows/set',
+          response.data.workflows
+        )
+        // set all subscriptions to active
+        vm.subscriptions
+          .filter(s => s.active === false)
+          .forEach(s => { s.active = true })
+        // run callback functions on the views
+        vm.callbackActive()
+      },
+      error (err) {
+        store.dispatch(
+          'setAlert',
+          new Alert(err.message, null, 'error')
+        )
+      },
+      complete () {
+      }
+    })
   }
 }
 
-const workflowService = new LiveWorkflowService()
-
-export { workflowService }
+export default SubscriptionWorkflowService

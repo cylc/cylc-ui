@@ -63,7 +63,6 @@
 </template>
 
 <script>
-import { workflowService } from 'workflow-service'
 import { mapState } from 'vuex'
 import { mixin } from '@/mixins/index'
 import i18n from '@/i18n'
@@ -71,7 +70,7 @@ import i18n from '@/i18n'
 // query to retrieve all workflows
 const QUERIES = {
   root: `
-      {
+      subscription {
         workflows {
           id
           name
@@ -131,7 +130,7 @@ export default {
   },
 
   created () {
-    workflowService.register(
+    this.$workflowService.register(
       this,
       {
         activeCallback: this.setActive
@@ -141,7 +140,7 @@ export default {
   },
 
   beforeDestroy () {
-    workflowService.unregister(this)
+    this.$workflowService.unregister(this)
   },
 
   methods: {
@@ -154,7 +153,7 @@ export default {
     },
 
     subscribe (queryName) {
-      const id = workflowService.subscribe(
+      const id = this.$workflowService.subscribe(
         this,
         QUERIES[queryName],
         this.setActive
@@ -169,7 +168,7 @@ export default {
 
     unsubscribe (queryName) {
       if (queryName in this.subscriptions) {
-        workflowService.unsubscribe(
+        this.$workflowService.unsubscribe(
           this.subscriptions[queryName].id
         )
       }

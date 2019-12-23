@@ -78,12 +78,10 @@ import VueCytoscape from '@/components/core/Cytoscape.vue'
 import { mixin } from '@/mixins/index'
 // eslint-disable-next-line no-unused-vars
 import { debounce, each, has, isEmpty, isUndefined, memoize } from 'lodash'
-// eslint-disable-next-line no-unused-vars
-import { workflowService } from 'workflow-service'
 
 const QUERIES = {
   root: `
-        {
+        subscription {
           workflows(ids: ["WORKFLOW_ID"]) {
             id
             status
@@ -625,7 +623,7 @@ export default {
     if (tippy) {
       tippy.hide()
     }
-    workflowService.unregister(this)
+    this.$workflowService.unregister(this)
   },
 
   mounted () {
@@ -637,7 +635,7 @@ export default {
 
   created (cy) {
     console.debug('CREATED')
-    workflowService.register(
+    this.$workflowService.register(
       this,
       {
         activeCallback: this.setActive
@@ -653,7 +651,7 @@ export default {
 
   methods: {
     subscribe (queryName) {
-      const id = workflowService.subscribe(
+      const id = this.$workflowService.subscribe(
         this,
         QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
       )
@@ -666,7 +664,7 @@ export default {
 
     unsubscribe (queryName) {
       if (queryName in this.subscriptions) {
-        workflowService.unsubscribe(
+        this.$workflowService.unsubscribe(
           this.subscriptions[queryName].id
         )
       }
