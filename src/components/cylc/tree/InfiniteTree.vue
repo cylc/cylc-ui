@@ -22,7 +22,8 @@
 
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
-import InfiniteTree from 'infinite-tree'
+// TODO: import InifiniteTree from 'infinite-tree' is not working with dependency installed from git commit. Replace once there is a new release of infinite-tree
+import InfiniteTree from '../../../../node_modules/infinite-tree/dist/infinite-tree'
 
 const lcfirst = (str) => {
   str += ''
