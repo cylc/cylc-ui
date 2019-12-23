@@ -31,6 +31,7 @@ export default {
     }
   },
   components: {
+    // TODO: once our components (tree, graph, dot, etc) share a common interface (i.e. same props) we should be able to have a single wrapper
     'tree-wrapper': TreeWrapper,
     'graph-wrapper': GraphWrapper
   },
