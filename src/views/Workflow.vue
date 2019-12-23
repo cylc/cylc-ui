@@ -1,6 +1,5 @@
 <template>
   <div id="workflow-panel" class="fill-height">
-    <toolbar />
     <workflow :workflow-tree="workflowTree" />
   </div>
 </template>
@@ -8,7 +7,6 @@
 <script>
 import { mixin } from '@/mixins/index'
 import { mapState, mapGetters } from 'vuex'
-import Toolbar from '@/components/cylc/Toolbar'
 import Workflow from '@/components/cylc/workflow/Workflow'
 
 // query to retrieve all workflows
@@ -108,7 +106,6 @@ export default {
     }
   },
   components: {
-    toolbar: Toolbar,
     workflow: Workflow
   },
   metaInfo () {
