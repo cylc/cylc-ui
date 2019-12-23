@@ -112,6 +112,13 @@ class WorkflowService extends GQuery {
    * due to issues merging `Workflow` subscriptions with `Delta` subscriptions.
    */
   request () {
+    /**
+     * Perform a REST GraphQL request for all subscriptions.
+     */
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.debug('graphql request:', this.query)
+    }
     if (!this.query) {
       return null
     }
