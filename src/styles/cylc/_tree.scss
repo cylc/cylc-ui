@@ -11,12 +11,14 @@ $leaf-background-color: map-get($grey, 'lighten-3');
     line-height: 1.8em;
 
     .node-data {
-      margin-left: 6px;
+      margin-left: 12px;
     }
   }
   .leaf {
     padding: 0;
     margin: 0;
+    width: 100%;
+    max-width: 100%;
     .arrow-up {
       width: 0;
       height: 0;
