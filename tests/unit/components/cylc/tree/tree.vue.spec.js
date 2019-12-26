@@ -25,7 +25,16 @@ import * as vuetify from '@/plugins/vuetify'
 import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 
-describe('Tree component', () => {
+const cycles = new Map([
+  [
+    'user/workflow1',
+    new Set([
+      '20100101T0000Z'
+    ])
+  ]
+])
+
+describe.skip('Tree component', () => {
   it('should display the tree with valid data', () => {
     const wrapper = mount(Tree, {
       propsData: {
