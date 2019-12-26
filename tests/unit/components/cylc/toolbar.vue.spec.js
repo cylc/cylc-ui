@@ -6,6 +6,34 @@ import store from '@/store/index'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 
+const mockedWorkflowService = {
+  releaseWorkflow: function () {
+    return new Promise((resolve) => {
+      if (store.state.workflows.workflows[0].status === TaskState.HELD.name.toLowerCase()) {
+        store.state.workflows.workflows[0].status = TaskState.RUNNING.name.toLowerCase()
+      } else {
+        store.state.workflows.workflows[0].status = TaskState.HELD.name.toLowerCase()
+      }
+      return resolve(true)
+    })
+  },
+  holdWorkflow: function () {
+    return new Promise((resolve) => {
+      if (store.state.workflows.workflows[0].status === TaskState.HELD.name.toLowerCase()) {
+        store.state.workflows.workflows[0].status = TaskState.RUNNING.name.toLowerCase()
+      } else {
+        store.state.workflows.workflows[0].status = TaskState.HELD.name.toLowerCase()
+      }
+      return resolve(true)
+    })
+  },
+  stopWorkflow: function () {
+    return new Promise((resolve) => {
+      return resolve(true)
+    })
+  }
+}
+
 describe('Toolbar component', () => {
   let vuetify
   beforeEach(() => {
@@ -53,13 +81,8 @@ describe('Toolbar component', () => {
       store
     })
 
-    wrapper.vm.$apolloClient = {
-      mutate: function () {
-        return new Promise((resolve) => {
-          return resolve(true)
-        })
-      }
-    }
+    // mock service
+    wrapper.vm.$workflowService = mockedWorkflowService
 
     const stopLink = wrapper.find('#workflow-stop-button')
     expect(wrapper.vm.$data.isStopped).to.equal(false)
@@ -74,18 +97,8 @@ describe('Toolbar component', () => {
     wrapper.vm.$data.responsive = true
     await Vue.nextTick()
 
-    wrapper.vm.$apolloClient = {
-      mutate: function () {
-        return new Promise((resolve) => {
-          if (store.state.workflows.workflows[0].status === TaskState.HELD.name.toLowerCase()) {
-            store.state.workflows.workflows[0].status = TaskState.RUNNING.name.toLowerCase()
-          } else {
-            store.state.workflows.workflows[0].status = TaskState.HELD.name.toLowerCase()
-          }
-          return resolve(true)
-        })
-      }
-    }
+    // mock service
+    wrapper.vm.$workflowService = mockedWorkflowService
 
     const toggleLink = wrapper.find('#workflow-release-hold-button')
     toggleLink.trigger('click')

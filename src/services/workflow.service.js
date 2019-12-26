@@ -1,10 +1,41 @@
 import { GQuery } from '@/services/gquery'
 import store from '@/store/'
 import Alert from '@/model/Alert.model'
+import { createApolloClient } from '@/utils/graphql'
+import gql from 'graphql-tag'
+
+const HOLD_WORKFLOW = gql`
+mutation HoldWorkflowMutation($workflow: String!) {
+  holdWorkflow (workflows: [$workflow]) {
+    result
+  }
+}
+`
+
+const RELEASE_WORKFLOW = gql`
+mutation ReleaseWorkflowMutation($workflow: String!) {
+  releaseWorkflow(workflows: [$workflow]){
+    result
+  }
+}
+`
+
+const STOP_WORKFLOW = gql`
+mutation StopWorkflowMutation($workflow: String!) {
+  stopWorkflow (workflows: [$workflow]) {
+    result
+  }
+}
+`
 
 class SubscriptionWorkflowService extends GQuery {
-  constructor (apolloClient) {
-    super(apolloClient)
+  constructor () {
+    super()
+    // TODO: revisit this and evaluate other ways to build the GraphQL URL - not safe to rely on window.location (?)
+    const baseUrl = `${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}${window.location.pathname}`
+    const httpUrl = `${window.location.protocol}//${baseUrl}graphql`
+    const wsUrl = `ws://${baseUrl}subscriptions`
+    this.apolloClient = createApolloClient(httpUrl, wsUrl)
     /**
      * @type {object}
      */
@@ -61,6 +92,35 @@ class SubscriptionWorkflowService extends GQuery {
         )
       },
       complete () {
+      }
+    })
+  }
+
+  // mutations
+
+  releaseWorkflow (workflowId) {
+    return this.apolloClient.mutate({
+      mutation: RELEASE_WORKFLOW,
+      variables: {
+        workflow: workflowId
+      }
+    })
+  }
+
+  holdWorkflow (workflowId) {
+    return this.apolloClient.mutate({
+      mutation: HOLD_WORKFLOW,
+      variables: {
+        workflow: workflowId
+      }
+    })
+  }
+
+  stopWorkflow (workflowId) {
+    return this.apolloClient.mutate({
+      mutation: STOP_WORKFLOW,
+      variables: {
+        workflow: workflowId
       }
     })
   }

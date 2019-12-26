@@ -71,8 +71,7 @@ class GQuery {
    * GraphQL endpoint for a collection of views with potentially overlapping
    * queries.
    */
-  constructor (apolloClient) {
-    this.apolloClient = apolloClient
+  constructor () {
     this.query = null
     this.subscriptions = []
     this.views = []

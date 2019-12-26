@@ -95,33 +95,8 @@
 
 <script>
 import { mapMutations, mapState, mapGetters } from 'vuex'
-import gql from 'graphql-tag'
 import TaskState from '@/model/TaskState.model'
 import { EventBus } from '@/components/cylc/workflow/index'
-
-const HOLD_WORKFLOW = gql`
-mutation HoldWorkflowMutation($workflow: String!) {
-  holdWorkflow (workflows: [$workflow]) {
-    result
-  }
-}
-`
-
-const RELEASE_WORKFLOW = gql`
-mutation ReleaseWorkflowMutation($workflow: String!) {
-  releaseWorkflow(workflows: [$workflow]){
-    result
-  }
-}
-`
-
-const STOP_WORKFLOW = gql`
-mutation StopWorkflowMutation($workflow: String!) {
-  stopWorkflow (workflows: [$workflow]) {
-    result
-  }
-}
-`
 
 export default {
   data: () => ({
@@ -162,40 +137,22 @@ export default {
         this.responsiveInput = true
       }
     },
-    onClickReleaseHold () {
+    async onClickReleaseHold () {
       const vm = this
       if (this.isHeld) {
         // release
-        this.$apolloClient.mutate({
-          mutation: RELEASE_WORKFLOW,
-          variables: {
-            workflow: this.currentWorkflow.id
-          }
-        }).then(() => {
-          vm.isStopped = false
-        })
+        await this.$workflowService.releaseWorkflow(this.currentWorkflow.id)
+        vm.isStopped = false
       } else {
         // hold
-        this.$apolloClient.mutate({
-          mutation: HOLD_WORKFLOW,
-          variables: {
-            workflow: this.currentWorkflow.id
-          }
-        }).then(() => {
-          vm.isStopped = false
-        })
+        await this.$workflowService.holdWorkflow(this.currentWorkflow.id)
+        vm.isStopped = false
       }
     },
-    onClickStop () {
+    async onClickStop () {
       const vm = this
-      this.$apolloClient.mutate({
-        mutation: STOP_WORKFLOW,
-        variables: {
-          workflow: this.currentWorkflow.id
-        }
-      }).then(() => {
-        vm.isStopped = true
-      })
+      await this.$workflowService.stopWorkflow(this.currentWorkflow.id)
+      vm.isStopped = true
     },
     toggleExtended () {
       this.extended = !this.extended
