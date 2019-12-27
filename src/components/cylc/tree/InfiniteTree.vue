@@ -156,7 +156,6 @@ export default {
   },
   watch: {
     treeData: {
-      deep: true,
       handler (newValue) {
         this.tree.loadData(newValue)
       }
