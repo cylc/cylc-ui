@@ -11,7 +11,7 @@
       <graph-wrapper
           v-for="widgetId of this.graphWidgetIds"
           :key="widgetId"
-          :workflow-name="workflowTree[0].name"
+          :workflow-name="workflowTree.length > 0 ? workflowTree[0].name : ''"
           :widgetId="widgetId"
       />
     </div>
@@ -20,7 +20,7 @@
 
 <script>
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
-import { ContentWidget, EventBus, GraphWrapper, TreeWrapper } from '@/components/cylc/workflow/index'
+import { ContentWidget, GraphWrapper, TreeWrapper } from '@/components/cylc/workflow/index'
 
 export default {
   name: 'Workflow',
@@ -52,25 +52,23 @@ export default {
     window.onresize = () => { this.main.update() }
     BoxPanel.setStretch(this.dock, 1)
     const vm = this
-    EventBus.$on('add:tree', () => {
-      const id = `tree-widget-${new Date().getTime()}`
-      const contentWidget = new ContentWidget(id, 'tree')
-      vm.dock.addWidget(contentWidget)
-      vm.treeWidgetIds.push(id)
-    })
-    EventBus.$on('add:graph', () => {
-      const id = `graph-widget-${new Date().getTime()}`
-      const contentWidget = new ContentWidget(id, 'graph')
-      vm.dock.addWidget(contentWidget)
-      vm.graphWidgetIds.push(id)
-    })
     this.$nextTick(() => {
       Widget.attach(vm.main, vm.$refs.main)
     })
   },
-  beforeDestroy () {
-    EventBus.$off('add:tree')
-    EventBus.$off('add:graph')
+  methods: {
+    addTreeWidget () {
+      const id = `tree-widget-${new Date().getTime()}`
+      const contentWidget = new ContentWidget(id, 'tree')
+      this.dock.addWidget(contentWidget)
+      this.treeWidgetIds.push(id)
+    },
+    addGraphWidget () {
+      const id = `graph-widget-${new Date().getTime()}`
+      const contentWidget = new ContentWidget(id, 'graph')
+      this.dock.addWidget(contentWidget)
+      this.graphWidgetIds.push(id)
+    }
   }
 }
 </script>

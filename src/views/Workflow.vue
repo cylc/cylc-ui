@@ -1,6 +1,6 @@
 <template>
   <div id="workflow-panel" class="fill-height">
-    <workflow :workflow-tree="workflowTree" />
+    <workflow :workflow-tree="workflowTree" ref="workflow-component" />
   </div>
 </template>
 
@@ -8,11 +8,12 @@
 import { mixin } from '@/mixins/index'
 import { mapState, mapGetters } from 'vuex'
 import Workflow from '@/components/cylc/workflow/Workflow'
+import { EventBus } from '@/components/cylc/workflow/index'
 
 // query to retrieve all workflows
 const QUERIES = {
-  root: `
-    {
+  tree: `
+    subscription {
       workflows(ids: ["WORKFLOW_ID"]) {
         id
         name
@@ -59,6 +60,18 @@ const QUERIES = {
             state
           }
         }
+      }
+    }
+  `,
+  graph: `
+    subscription {
+      workflows(ids: ["WORKFLOW_ID"]) {
+        id
+        name
+        status
+        owner
+        host
+        port
         nodesEdges {
           nodes {
             id
@@ -124,15 +137,34 @@ export default {
   },
   created () {
     this.viewID = `Workflow(${this.workflowName}): ${Math.random()}`
-    this.$workflowService.register(
-      this,
-      {
-        activeCallback: this.setActive
-      }
-    )
-    this.subscribe('root')
+    EventBus.$on('add:tree', () => {
+      // subscribe GraphQL query
+      this.$workflowService.register(
+        this,
+        {
+          activeCallback: this.setActive
+        }
+      )
+      this.subscribe('tree')
+      // add widget that uses the GraphQl query response
+      this.$refs['workflow-component'].addTreeWidget()
+    })
+    EventBus.$on('add:graph', () => {
+      // subscribe GraphQL query
+      this.$workflowService.register(
+        this,
+        {
+          activeCallback: this.setActive
+        }
+      )
+      this.subscribe('graph')
+      // add widget that uses the GraphQl query response
+      this.$refs['workflow-component'].addGraphWidget()
+    })
   },
   beforeDestroy () {
+    EventBus.$off('add:tree')
+    EventBus.$off('add:graph')
     this.$workflowService.unregister(this)
   },
   methods: {
