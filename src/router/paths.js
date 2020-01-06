@@ -32,6 +32,15 @@ export default [
     props: true
   },
   {
+    path: '/workflows/mutations',
+    view: 'Mutations',
+    name: 'mutations',
+    meta: {
+      layout: 'default'
+    },
+    props: true
+  },
+  {
     path: '/user-profile',
     name: i18n.t('App.userProfile'),
     view: 'UserProfile',
