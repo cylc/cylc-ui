@@ -41,6 +41,9 @@ hold, release, and stop workflows.
 [#280](https://github.com/cylc/cylc-ui/pull/280) - Add WebSockets client
 for GraphQL subscriptions.
 
+[#355](https://github.com/cylc/cylc-ui/pull/355) - Use wss when page
+protocol is http:
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard
