@@ -32,7 +32,7 @@ export default [
     props: true
   },
   {
-    path: '/workflows/mutations',
+    path: '/mutations',
     view: 'Mutations',
     name: 'mutations',
     meta: {

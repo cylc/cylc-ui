@@ -1,104 +1,97 @@
 <template>
   <div class="c-mutations">
-    <h1>{{ mutationName }}</h1>
-    <h2>JSON Schema</h2>
-    <pre>{{ mutations[mutationName] }}</pre>
-    <h2>Form</h2>
-    <FormSchema
-      class="form"
-      :schema="mutations[mutationName]"
-      v-model="model"
-      v-if="mutations[mutationName]"
-    >
-      <div class="buttons">
-        <button type="submit">Submit</button>
-      </div>
-    </FormSchema>
+    <h1>Mutations</h1>
+    <ul>
+      <li v-for="mutation in mutations">{{ mutation['name'] }}</li>
+    </ul>
+    <h1>Form</h1>
+    <div v-if="mutations[4]">
+      <v-card
+        class="mx-auto"
+        max-width="500"
+        outlined
+      >
+        <FormGenerator :mutation='mutations[4]' />
+      </v-card>
+    </div>
   </div>
 </template>
 
-<style>
-  .c-mutations > h1, .c-mutations > h2 {
-    color: blue
-  }
-</style>
-
 <script>
 import gql from 'graphql-tag'
-import { buildClientSchema } from 'graphql/utilities/buildClientSchema'
-import { graphqlSync, introspectionQuery } from 'graphql'
-import { fromIntrospectionQuery } from 'graphql-2-json-schema'
-import FormSchema from '@formschema/native'
+import { introspectionQuery, print } from 'graphql'
+
+import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
 
 export default {
   components: {
-    FormSchema
+    FormGenerator
   },
 
   data: () => ({
-    mutationName: 'nudgeWorkflow',
-    mutations: [],
-    model: {}
+    mutations: {}
   }),
 
   created () {
-    this.getMutations()
+    this.getSchema()
   },
 
   methods: {
+    getIntrospectionQuery () {
+      // we are only interested in mutations so can make our life
+      // a little easier by restricting the scope of the default
+      // introspection query
+      var fullIntrospection = gql(introspectionQuery)
+      var mutationQuery = gql(`
+        query {
+          __schema {
+            mutationType {
+              ...FullType
+            }
+          }
+        }
+      `)
+      // NOTE: we are converting to string form then re-parsing
+      // back to a query, as something funny happens when you
+      // try to modify the gql objects by hand.
+      return gql(
+        // the query we actually want to run
+        print(mutationQuery.definitions[0]) +
+        // the fragments which power it
+        print(fullIntrospection.definitions[1]) +
+        print(fullIntrospection.definitions[2]) +
+        print(fullIntrospection.definitions[3])
+      )
+    },
+
+    getSchema () {
+      this.$workflowService.apolloClient.query({
+        query: this.getIntrospectionQuery(),
+        fetchPolicy: 'no-cache'
+      }).then((response) => {
+        this.mutations = response.data.__schema.mutationType.fields
+      })
+    }
+
+    /*
     getGraphqlSchema (introspection) {
-      // graphql introspectionQuery
       return graphqlSync(
         buildClientSchema(introspection['data']),
         introspectionQuery
       ).data
     },
 
-    getJsonSchema (graphqlSchema) {
-      return fromIntrospectionQuery(graphqlSchema)
-    },
-
-    extractMutations (jsonSchema) {
-      const mutations = jsonSchema.properties.Mutation.properties
-      const ret = {}
-      var mutation = {}
-      for (let mutationName in mutations) {
-        // turn these into valid json schema forms
-        // (the translation doesn't work well with mutation types)
-        mutation = {
-          type: 'object',
-          title: mutationName,
-          properties: mutations[mutationName].properties.arguments.properties
-        }
-        // add default metadata (not generated in translation)
-        for (let argumentName in mutation.properties) {
-          mutation.properties[argumentName].attrs = {
-            placeholder: argumentName,
-            title: argumentName
-          }
-        }
-        ret[mutationName] = mutation
-      }
-      return ret
-    },
-
-    getMutations () {
+    getSchema () {
+      // extract graphql schema via introspection
       this.$workflowService.apolloClient.query({
         query: gql(introspectionQuery),
         fetchPolicy: 'no-cache'
       }).then((response) => {
-        // extract graphql schema via introspection
         const graphqlSchema = this.getGraphqlSchema(response)
-
-        // translate graphql schema to json schema
-        const jsonSchema = this.getJsonSchema(graphqlSchema)
-
-        // extract mutations from json schema
-        const mutations = this.extractMutations(jsonSchema)
-
-        this.mutations = mutations
+        this.schema = graphqlSchema
       })
     }
+    */
   }
 
 }
