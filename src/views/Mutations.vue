@@ -116,27 +116,7 @@ export default {
       }).then((response) => {
         this.mutations = response.data.__schema.mutationType.fields
       })
-    }
-
-    /*
-    getGraphqlSchema (introspection) {
-      return graphqlSync(
-        buildClientSchema(introspection['data']),
-        introspectionQuery
-      ).data
     },
-
-    getSchema () {
-      // extract graphql schema via introspection
-      this.$workflowService.apolloClient.query({
-        query: gql(introspectionQuery),
-        fetchPolicy: 'no-cache'
-      }).then((response) => {
-        const graphqlSchema = this.getGraphqlSchema(response)
-        this.schema = graphqlSchema
-      })
-    }
-    */
   }
 
 }

@@ -1,8 +1,9 @@
 <template>
   <component
    v-model="componentValue"
+   :propOverrides="{rules: [(x) => !!x || 'Required!']}"
    :gqlType="gqlType.ofType"
-   :label="label"
+   :label="label + ' (required)'"
    :is="FormInput"
   />
 </template>

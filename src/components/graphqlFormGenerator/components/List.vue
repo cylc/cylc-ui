@@ -5,11 +5,11 @@
     </v-row>
     <v-row
      v-for="(item, index) in value"
-     v-bind="index"
     >
       <v-col cols="10">
         <component
          v-model="value[index]"
+         :propOverrides="{'dense': true}"
          :gqlType="gqlType.ofType"
          :is="FormInput"
          label=""
