@@ -1,18 +1,23 @@
 <template>
   <div class="c-mutations">
-    <h1>Mutations</h1>
-    <ul>
-      <li v-for="mutation in mutations">{{ mutation['name'] }}</li>
-    </ul>
-    <h1>Form</h1>
-    <div v-if="mutations[4]">
+    <div v-if="!loaded">
+      Loading...
+    </div>
+    <div v-if="loaded">
+      <v-select
+        v-if="mutations"
+        v-model="selectedMutation"
+        :items="mutationNames"
+        label="Mutation"
+      />
       <v-card
-        class="mx-auto"
+        v-if="selectedMutation"
+        class="mx-auto d-inline-block"
         max-width="500"
         outlined
       >
-        <!--FormGenerator :mutation='mutations[4]' /-->
-        <FormGenerator :mutation='sampleMutation' />
+        <!--FormGenerator :mutation='sampleMutation' /-->
+        <FormGenerator :mutation='getMutation(selectedMutation)' />
       </v-card>
     </div>
   </div>
@@ -30,6 +35,8 @@ export default {
   },
 
   data: () => ({
+    loaded: false,
+    selectedMutation: null,
     mutations: {},
     sampleMutation: {
       name: 'My Mutation',
@@ -77,6 +84,19 @@ export default {
     }
   }),
 
+  computed: {
+    mutationNames () {
+      const names = []
+      if (!this.mutations) {
+        return names
+      }
+      for (let mutation of this.mutations) {
+        names.push(mutation.name)
+      }
+      return names
+    },
+  },
+
   created () {
     this.getSchema()
   },
@@ -115,8 +135,17 @@ export default {
         fetchPolicy: 'no-cache'
       }).then((response) => {
         this.mutations = response.data.__schema.mutationType.fields
+        this.loaded = true
       })
     },
+
+    getMutation (name) {
+      for (let mutation of this.mutations) {
+        if (mutation.name === name) {
+          return mutation
+        }
+      }
+    }
   }
 
 }

@@ -3,17 +3,12 @@
     <h3>{{ mutation.name }}</h3>
     <p>{{ mutation.description }}</p>
     <form-input
-     v-for="arg in getArguments(mutation)"
-     v-bind:key="arg.label"
-     v-model="model[arg.label]"
-     :gqlType="arg.gqlType"
-     :label="arg.label"
+     v-for="input in inputs"
+     v-bind:key="input.label"
+     v-model="model[input.label]"
+     :gqlType="input.gqlType"
+     :label="input.label"
     />
-    <v-btn
-      @click="meh"
-    >
-      Done
-    </v-btn>
     <v-btn
       @click="reset"
     >
@@ -26,9 +21,6 @@
 <script>
 import { VForm } from 'vuetify/lib/components/VForm'
 import FormInput from '@/components/graphqlFormGenerator/components/FormInput'
-
-// import Vue from 'vue'
-// Vue.component('form-input', FormInput)
 
 export default {
   name: 'form-generator',
@@ -55,7 +47,22 @@ export default {
     this.reset()
   },
 
+  computed: {
+    /* Provide a list of all form inputs for this mutation. */
+    inputs () {
+      const ret = []
+      for (let arg of this.mutation.args) {
+        ret.push({
+          gqlType: arg.type,
+          label: arg.name
+        })
+      }
+      return ret
+    }
+  },
+
   methods: {
+    /* Set this form to its initial conditions. */
     reset () {
       // begin with the initial data
       const model = this.deepcopy(this.initialData || {})
@@ -72,8 +79,9 @@ export default {
           defaultValue = arg.defaultValue
         } else {
           // if no default value is provided choose a sensible null value
-          // NOTE: that if we set null as the default type for a list then
-          //       tried to change it to [] later this would break the Vue model
+          // NOTE: IF we set null as the default type for a list
+          //       THEN tried to change it to [] later this would break
+          //       THIS would break Vue model
           defaultValue = this.getNullValue(arg.type)
         }
         model[arg.name] = defaultValue
@@ -89,18 +97,6 @@ export default {
           obj
         )
       )
-    },
-
-    getArguments (mutations) {
-      // TODO convert to computed?
-      const ret = []
-      for (let arg of mutations.args) {
-        ret.push({
-          gqlType: arg.type,
-          label: arg.name
-        })
-      }
-      return ret
     },
 
     /* Return a null value of a JS type corresponding to the GraphQL type. */
@@ -119,10 +115,6 @@ export default {
         pointer = pointer.ofType
       }
       return ret
-    },
-
-    meh () {
-      this.$refs.output.innerText = JSON.stringify(this.model, null, '  ')
     }
   }
 }
