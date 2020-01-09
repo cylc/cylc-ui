@@ -104,6 +104,45 @@ const QUERIES = {
             label: id
           }
         }
+        taskProxies(sort: { keys: ["cyclePoint"] }) {
+          id
+          state
+          cyclePoint
+          latestMessage
+          firstParent {
+            id
+            name
+            cyclePoint
+            state
+          }
+          task {
+            meanElapsedTime
+            name
+          }
+          jobs(sort: { keys: ["submit_num"], reverse:true }) {
+            id
+            batchSysName
+            batchSysJobId
+            host
+            startedTime
+            submittedTime
+            finishedTime
+            state
+            submitNum
+          }
+        }
+        familyProxies (sort: { keys: ["firstParent"]}) {
+          id
+          name
+          state
+          cyclePoint
+          firstParent {
+            id
+            name
+            cyclePoint
+            state
+          }
+        }
       }
     }
   `
@@ -147,11 +186,7 @@ export default {
       // add widget that uses the GraphQl query response
       this.$refs['workflow-component'].addGraphWidget(`${subscriptionId}`)
     })
-    EventBus.$on('delete:tree', (data) => {
-      const subscriptionId = Number.parseFloat(data.id)
-      this.$workflowService.unsubscribe(subscriptionId)
-    })
-    EventBus.$on('delete:graph', (data) => {
+    EventBus.$on('delete:widget', (data) => {
       const subscriptionId = Number.parseFloat(data.id)
       this.$workflowService.unsubscribe(subscriptionId)
     })
@@ -159,8 +194,7 @@ export default {
   beforeDestroy () {
     EventBus.$off('add:tree')
     EventBus.$off('add:graph')
-    EventBus.$off('delete:tree')
-    EventBus.$off('delete:graph')
+    EventBus.$off('delete:widget')
     this.$workflowService.unregister(this)
   },
   methods: {
