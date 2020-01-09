@@ -1,23 +1,29 @@
 <template>
-  <div>
-    NON_NULL:
-    label({{label}}), value({{value}})
-    <!--PassProps
-      :label="label"
-      :value="value"
-    -->
-      <slot
-      />
-    <!--/PassProps-->
-  </div>
+  <component
+   v-model="componentValue"
+   :gqlType="gqlType.ofType"
+   :label="label"
+   :is="FormInput"
+  />
 </template>
 
 <script>
 import PassProps from 'vue-pass-props'
+import FormInput from '@/components/graphqlFormGenerator/components/FormInput'
 
 export default {
+  name: 'non-null',
+
+  components: {
+    'form-input': FormInput
+  },
+
   props: {
     'value': {
+      required: true
+    },
+    'gqlType': {
+      type: Object,
       required: true
     },
     'label': {
@@ -25,8 +31,20 @@ export default {
       required: true
     }
   },
-  components: {
-    PassProps
+
+  data: () => ({
+    'FormInput': FormInput
+  }),
+
+  computed: {
+    componentValue: {
+      get () {
+        return this.value
+      },
+      set (val) {
+        this.$emit('input', val)
+      }
+    }
   }
 }
 </script>

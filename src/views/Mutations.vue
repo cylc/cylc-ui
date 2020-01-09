@@ -11,7 +11,8 @@
         max-width="500"
         outlined
       >
-        <FormGenerator :mutation='mutations[4]' />
+        <!--FormGenerator :mutation='mutations[4]' /-->
+        <FormGenerator :mutation='sampleMutation' />
       </v-card>
     </div>
   </div>
@@ -29,7 +30,51 @@ export default {
   },
 
   data: () => ({
-    mutations: {}
+    mutations: {},
+    sampleMutation: {
+      name: 'My Mutation',
+      description: 'Test example.',
+      args: [
+        {
+          name: 'MyString',
+          type: {
+            name: 'String',
+            kind: 'SCALAR'
+          }
+        },
+        {
+          name: 'MyInteger',
+          type: {
+            name: 'Int',
+            kind:' SCALAR'
+          }
+        },
+        {
+          name: 'MyNonNull',
+          defaultValue: 'cant null this',
+          type: {
+            name: null,
+            kind: 'NON_NULL',
+            ofType: {
+              name: 'String',
+              kind: 'SCALAR'
+            }
+          }
+        },
+        {
+          name: 'MyStringList',
+          defaultValue: ['a', 'b', 'c'],
+          type: {
+            name: null,
+            kind: 'LIST',
+            ofType: {
+              name: 'String',
+              kind: 'SCALAR'
+            }
+          }
+        }
+      ]
+    }
   }),
 
   created () {
