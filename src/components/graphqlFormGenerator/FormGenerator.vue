@@ -19,8 +19,7 @@
 </template>
 
 <script>
-import { VForm } from 'vuetify/lib/components/VForm'
-import FormInput from '@/components/graphqlFormGenerator/components/FormInput'
+import FormInput from '@/components/graphqlFormGenerator/FormInput'
 
 export default {
   name: 'form-generator',
@@ -108,7 +107,7 @@ export default {
           ret = []
           break
         }
-        if (pointer.kind == 'OBJECT') {
+        if (pointer.kind === 'OBJECT') {
           ret = {}
           break
         }

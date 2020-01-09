@@ -1,33 +1,64 @@
 <template>
+  <!-- NOTE: the is field domes from `props` -->
+  <!-- eslint-disable-next-line vue/require-component-is -->
   <component
    v-model="model"
-   v-bind="Object.assign({}, defaultProps, props, propOverrides)"
+   v-bind="props"
    :label="label"
    :gqlType="gqlType"
   />
 </template>
 
 <script>
+import Vue from 'vue'
+
 import { VTextField } from 'vuetify/lib/components/VTextField'
 import GList from '@/components/graphqlFormGenerator/components/List'
 import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'
 
+/* Vuetify number input component.
+ *
+ * Note: Vuetify doesn't supply a dedicated number field, instead you
+ *       specialise the text field using `type='number'`, this, however,
+ *       does not cast values to `Number` for you so this extension parses
+ *       values to `Number` so they can be used directly in the data model.
+ */
+const VNumberField = Vue.component(
+  'v-number-field',
+  {
+    extends: VTextField,
+    computed: {
+      internalValue: {
+        get () {
+          return this.lazyValue
+        },
+        set (val) {
+          // cast values on `set` operations, note this does not get
+          // called on creation
+          this.lazyValue = Number(val)
+          this.$emit('input', this.lazyValue)
+        }
+      }
+    }
+  })
+
 // default props for all form inputs
 const DEFAULT_PROPS = {
   filled: true,
-  rounded: true,
+  rounded: true
 }
 
 // registry of GraphQL "named types" (e.g. String)
 // {namedType: {is: ComponentClass, prop1: value, ...}}
 const NAMED_TYPES = {
   String: {
-    is: VTextField,
+    is: VTextField
   },
   Int: {
-    is: VTextField,
+    is: VNumberField,
     type: 'number',
     rules: [
+      // TODO: this should work but doesn't seem to be doing anything
       x => Number.isInteger(x) || 'Integer'
     ]
   }
@@ -36,12 +67,12 @@ const NAMED_TYPES = {
 // registry of GraphQL "kinds" (e.g. LIST)
 // {namedType: {is: ComponentClass, prop1: value, ...}}
 const KINDS = {
-    LIST: {
-      is: GList
-    },
-    NON_NULL: {
-      is: GNonNull
-    }
+  LIST: {
+    is: GList
+  },
+  NON_NULL: {
+    is: GNonNull
+  }
 }
 
 export default {
@@ -65,7 +96,7 @@ export default {
     // dictionary of props for overriding default values
     propOverrides: {
       type: Object,
-      default: () => {{}}
+      default: () => {}
     }
   },
 
@@ -107,8 +138,7 @@ export default {
       var componentProps
       if (NAMED_TYPES[name]) {
         componentProps = NAMED_TYPES[name]
-      }
-      else if (KINDS[kind]) {
+      } else if (KINDS[kind]) {
         componentProps = KINDS[kind]
       } else {
         componentProps = NAMED_TYPES['String']

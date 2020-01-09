@@ -7,6 +7,7 @@
     <!-- The List -->
     <v-row
      v-for="(item, index) in value"
+     :key="index"
     >
       <v-col cols="10">
         <!-- The input -->
@@ -55,8 +56,7 @@
 </template>
 
 <script>
-import PassProps from 'vue-pass-props'
-import FormInput from '@/components/graphqlFormGenerator/components/FormInput'
+import FormInput from '@/components/graphqlFormGenerator/FormInput'
 
 export default {
   name: 'non-null',
@@ -107,7 +107,7 @@ export default {
 
   methods: {
     /* Add an item to the list. */
-    add() {
+    add () {
       this.value.push(null)
     },
 

@@ -9,8 +9,7 @@
 </template>
 
 <script>
-import PassProps from 'vue-pass-props'
-import FormInput from '@/components/graphqlFormGenerator/components/FormInput'
+import FormInput from '@/components/graphqlFormGenerator/FormInput'
 
 export default {
   name: 'non-null',

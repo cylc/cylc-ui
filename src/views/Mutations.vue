@@ -53,7 +53,7 @@ export default {
           name: 'MyInteger',
           type: {
             name: 'Int',
-            kind:' SCALAR'
+            kind: 'SCALAR'
           }
         },
         {
@@ -94,7 +94,7 @@ export default {
         names.push(mutation.name)
       }
       return names
-    },
+    }
   },
 
   created () {
