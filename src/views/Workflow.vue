@@ -127,7 +127,6 @@ export default {
     }
   },
   data: () => ({
-    viewID: '',
     subscriptions: {},
     isLoading: true
   }),
@@ -136,66 +135,77 @@ export default {
     ...mapGetters('workflows', ['workflowTree'])
   },
   created () {
-    this.viewID = `Workflow(${this.workflowName}): ${Math.random()}`
     EventBus.$on('add:tree', () => {
       // subscribe GraphQL query
-      this.$workflowService.register(
-        this,
-        {
-          activeCallback: this.setActive
-        }
-      )
-      this.subscribe('tree')
+      const subscriptionId = this.subscribe('tree')
       // add widget that uses the GraphQl query response
-      this.$refs['workflow-component'].addTreeWidget()
+      this.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
     })
     EventBus.$on('add:graph', () => {
       // subscribe GraphQL query
-      this.$workflowService.register(
-        this,
-        {
-          activeCallback: this.setActive
-        }
-      )
-      this.subscribe('graph')
+      const subscriptionId = this.subscribe('graph')
       // add widget that uses the GraphQl query response
-      this.$refs['workflow-component'].addGraphWidget()
+      this.$refs['workflow-component'].addGraphWidget(`${subscriptionId}`)
+    })
+    EventBus.$on('delete:tree', (data) => {
+      const subscriptionId = Number.parseFloat(data.id)
+      this.$workflowService.unsubscribe(subscriptionId)
+    })
+    EventBus.$on('delete:graph', (data) => {
+      const subscriptionId = Number.parseFloat(data.id)
+      this.$workflowService.unsubscribe(subscriptionId)
     })
   },
   beforeDestroy () {
     EventBus.$off('add:tree')
     EventBus.$off('add:graph')
+    EventBus.$off('delete:tree')
+    EventBus.$off('delete:graph')
     this.$workflowService.unregister(this)
   },
   methods: {
+    /**
+     * Subscribe this view to a new GraphQL query.
+     * @param {string} queryName - Must be in QUERIES.
+     * @return {number} subscription ID.
+     */
     subscribe (queryName) {
-      /**
-       * Subscribe this view to a new GraphQL query.
-       * @param {string} queryName - Must be in QUERIES.
-       */
+      // create a view object, used a key by the workflow service
+      const view = {
+        viewID: `Workflow-${queryName}(${this.workflowName}): ${Math.random()}`,
+        subscriptionId: 0
+      }
+      this.$workflowService.register(
+        view,
+        {
+          activeCallback: this.setActive
+        }
+      )
+      const subscriptionId = this.$workflowService.subscribe(
+        view,
+        QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
+      )
+      view.subscriptionId = subscriptionId
       if (!(queryName in this.subscriptions)) {
-        this.subscriptions[queryName] =
-          this.$workflowService.subscribe(
-            this,
-            QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
-          )
+        this.subscriptions[queryName] = []
       }
+      this.subscriptions[queryName].push(view)
+      return subscriptionId
     },
-    unsubscribe (queryName) {
-      /**
-       * Unsubscribe this view to a new GraphQL query.
-       * @param {string} queryName - Must be in QUERIES.
-       */
+    /**
+     * Unsubscribe this view to a new GraphQL query.
+     * @param {string} queryName - Must be in QUERIES.
+     * @param {number} subscriptionId - Subscription ID.
+     */
+    unsubscribe (queryName, subscriptionId) {
       if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName]
-        )
+        this.$workflowService.unsubscribe(subscriptionId)
       }
     },
+    /** Toggle the isLoading state.
+     * @param {bool} isActive - Are this views subs active.
+     */
     setActive (isActive) {
-      /** Toggle the isLoading state.
-       * @param {bool} isActive - Are this views subs active.
-       */
       this.isLoading = !isActive
     }
   }

@@ -57,14 +57,12 @@ export default {
     })
   },
   methods: {
-    addTreeWidget () {
-      const id = `tree-widget-${new Date().getTime()}`
+    addTreeWidget (id) {
       const contentWidget = new ContentWidget(id, 'tree')
       this.dock.addWidget(contentWidget)
       this.treeWidgetIds.push(id)
     },
-    addGraphWidget () {
-      const id = `graph-widget-${new Date().getTime()}`
+    addGraphWidget (id) {
       const contentWidget = new ContentWidget(id, 'graph')
       this.dock.addWidget(contentWidget)
       this.graphWidgetIds.push(id)

@@ -64,6 +64,7 @@ const TreeWrapper = Vue.component('tree-wrapper', {
     widgetElement.appendChild(this.$refs[this.widgetId].$el)
     const vm = this
     document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', () => {
+      EventBus.$emit('delete:tree', { id: vm.widgetId })
       vm.$destroy()
     }, false)
   },
@@ -94,6 +95,7 @@ const GraphWrapper = Vue.component('graph-wrapper', {
     widgetElement.appendChild(this.$refs[this.widgetId].$el)
     const vm = this
     document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', () => {
+      EventBus.$emit('delete:graph', { id: vm.widgetId })
       vm.$destroy()
     }, false)
   },
