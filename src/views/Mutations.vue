@@ -90,7 +90,7 @@ export default {
       if (!this.mutations) {
         return names
       }
-      for (let mutation of this.mutations) {
+      for (const mutation of this.mutations) {
         names.push(mutation.name)
       }
       return names
@@ -106,8 +106,8 @@ export default {
       // we are only interested in mutations so can make our life
       // a little easier by restricting the scope of the default
       // introspection query
-      var fullIntrospection = gql(introspectionQuery)
-      var mutationQuery = gql(`
+      const fullIntrospection = gql(introspectionQuery)
+      const mutationQuery = gql(`
         query {
           __schema {
             mutationType {
@@ -140,7 +140,7 @@ export default {
     },
 
     getMutation (name) {
-      for (let mutation of this.mutations) {
+      for (const mutation of this.mutations) {
         if (mutation.name === name) {
           return mutation
         }

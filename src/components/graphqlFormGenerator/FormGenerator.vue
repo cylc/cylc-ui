@@ -20,6 +20,7 @@
 
 <script>
 import FormInput from '@/components/graphqlFormGenerator/FormInput'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   name: 'form-generator',
@@ -50,7 +51,7 @@ export default {
     /* Provide a list of all form inputs for this mutation. */
     inputs () {
       const ret = []
-      for (let arg of this.mutation.args) {
+      for (const arg of this.mutation.args) {
         ret.push({
           gqlType: arg.type,
           label: arg.name
@@ -64,11 +65,11 @@ export default {
     /* Set this form to its initial conditions. */
     reset () {
       // begin with the initial data
-      const model = this.deepcopy(this.initialData || {})
+      const model = cloneDeep(this.initialData || {})
 
       // then apply default values from the schema
-      var defaultValue
-      for (let arg of this.mutation.args) {
+      let defaultValue
+      for (const arg of this.mutation.args) {
         if (arg.name in model) {
           // if the argument is defined in the initial data leave it unchanged
           continue
@@ -90,18 +91,10 @@ export default {
       this.model = model
     },
 
-    deepcopy (obj) {
-      return JSON.parse(
-        JSON.stringify(
-          obj
-        )
-      )
-    },
-
     /* Return a null value of a JS type corresponding to the GraphQL type. */
     getNullValue (type) {
-      var ret = null
-      var pointer = type
+      let ret = null
+      let pointer = type
       while (pointer) {
         if (pointer.kind === 'LIST') {
           ret = []

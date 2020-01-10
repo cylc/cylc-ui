@@ -36,7 +36,7 @@ export default {
   },
 
   data: () => ({
-    'FormInput': FormInput
+    FormInput: FormInput
   }),
 
   computed: {

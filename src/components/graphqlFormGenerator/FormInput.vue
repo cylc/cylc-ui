@@ -1,5 +1,5 @@
 <template>
-  <!-- NOTE: the is field domes from `props` -->
+  <!-- NOTE: the is field comes from `props` -->
   <!-- eslint-disable-next-line vue/require-component-is -->
   <component
    v-model="model"
@@ -141,8 +141,9 @@ export default {
       } else if (KINDS[kind]) {
         componentProps = KINDS[kind]
       } else {
-        componentProps = NAMED_TYPES['String']
-        console.log(
+        componentProps = NAMED_TYPES.String
+        // eslint-disable-next-line no-console
+        console.error(
           'Warning: falling back to string for ' +
           `type: ${this.gqlType.name}, kind: ${this.gqlType.kind}`
         )
@@ -154,7 +155,7 @@ export default {
 
       // rules is a list so needs special treatment
       ret.rules = []
-      for (let prop in props) {
+      for (const prop in props) {
         if (prop.rules) {
           ret.rules.push(...prop.rules)
         }
