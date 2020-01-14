@@ -20,7 +20,7 @@ jobs:
     - name: Lint
       run: |
         npm run lint -- --no-fix
-        npx lockfile-lint --path package-lock.json --validate-https --allowed-hosts npm
+        DEBUG="lockfile-lint,validate-host-manager" npx lockfile-lint --path package-lock.json --validate-https --allowed-hosts npm
     - name: Test
       run: |
         npm run coverage:unit
