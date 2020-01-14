@@ -17,6 +17,7 @@ import store from '@/store'
 
 // GraphQL client
 import SubscriptionWorkflowService from 'workflow-service'
+import { createApolloClient } from '@/utils/graphql'
 
 // Sync store with router
 sync(store, router)
