@@ -1,3 +1,5 @@
+import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree'
+
 const state = {
   workflows: [],
   workflowName: null
@@ -13,6 +15,17 @@ const getters = {
       }
     }
     return null
+  },
+  workflowTree: (state, getters) => {
+    if (getters.currentWorkflow !== null && Object.hasOwnProperty.call(getters.currentWorkflow, 'familyProxies')) {
+      try {
+        return [convertGraphQLWorkflowToTree(getters.currentWorkflow)]
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e)
+      }
+    }
+    return []
   }
 }
 

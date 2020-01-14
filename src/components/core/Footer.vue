@@ -1,7 +1,7 @@
 <template>
   <v-footer
     id="core-footer"
-    absolute
+    fixed
     height="82"
   >
     <v-spacer/>

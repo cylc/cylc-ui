@@ -45,14 +45,33 @@
         <!-- TODO: add workflow latest message -->
         <span></span>
 
-        <!-- TODO: enable add view button to add view to a tab/panel -->
-        <!--
         <v-spacer />
 
-        <a class="add-view" @click="onClickAddView">
-          {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
-        </a>
-        -->
+        <v-menu
+          offset-y
+        >
+          <template v-slot:activator="{ on }">
+            <a class="add-view" v-on="on">
+              {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
+            </a>
+          </template>
+          <v-list class="pa-0">
+            <v-list-item
+              class="py-0 px-8 ma-0"
+              @click="onClickAddTreeView"
+            >
+              <v-list-item-title><v-icon>mdi-file-tree</v-icon> Tree</v-list-item-title>
+            </v-list-item>
+          </v-list>
+          <v-list class="pa-0">
+            <v-list-item
+                class="py-0 px-8 ma-0"
+                @click="onClickAddGraphView"
+            >
+              <v-list-item-title><v-icon>mdi-graph</v-icon> Graph</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
 
       <!-- displayed only when extended===true -->
@@ -76,32 +95,8 @@
 
 <script>
 import { mapMutations, mapState, mapGetters } from 'vuex'
-import gql from 'graphql-tag'
 import TaskState from '@/model/TaskState.model'
-
-const HOLD_WORKFLOW = gql`
-mutation HoldWorkflowMutation($workflow: String!) {
-  holdWorkflow (workflows: [$workflow]) {
-    result
-  }
-}
-`
-
-const RELEASE_WORKFLOW = gql`
-mutation ReleaseWorkflowMutation($workflow: String!) {
-  releaseWorkflow(workflows: [$workflow]){
-    result
-  }
-}
-`
-
-const STOP_WORKFLOW = gql`
-mutation StopWorkflowMutation($workflow: String!) {
-  stopWorkflow (workflows: [$workflow]) {
-    result
-  }
-}
-`
+import { EventBus } from '@/components/cylc/workflow/index'
 
 export default {
   data: () => ({
@@ -142,46 +137,31 @@ export default {
         this.responsiveInput = true
       }
     },
-    onClickReleaseHold () {
+    async onClickReleaseHold () {
       const vm = this
       if (this.isHeld) {
         // release
-        this.$apolloClient.mutate({
-          mutation: RELEASE_WORKFLOW,
-          variables: {
-            workflow: this.currentWorkflow.id
-          }
-        }).then(() => {
-          vm.isStopped = false
-        })
+        await this.$workflowService.releaseWorkflow(this.currentWorkflow.id)
+        vm.isStopped = false
       } else {
         // hold
-        this.$apolloClient.mutate({
-          mutation: HOLD_WORKFLOW,
-          variables: {
-            workflow: this.currentWorkflow.id
-          }
-        }).then(() => {
-          vm.isStopped = false
-        })
+        await this.$workflowService.holdWorkflow(this.currentWorkflow.id)
+        vm.isStopped = false
       }
     },
-    onClickStop () {
+    async onClickStop () {
       const vm = this
-      this.$apolloClient.mutate({
-        mutation: STOP_WORKFLOW,
-        variables: {
-          workflow: this.currentWorkflow.id
-        }
-      }).then(() => {
-        vm.isStopped = true
-      })
+      await this.$workflowService.stopWorkflow(this.currentWorkflow.id)
+      vm.isStopped = true
     },
     toggleExtended () {
       this.extended = !this.extended
     },
-    onClickAddView () {
-      // TODO: implement adding views action
+    onClickAddTreeView () {
+      EventBus.$emit('add:tree')
+    },
+    onClickAddGraphView () {
+      EventBus.$emit('add:graph')
     }
   }
 }

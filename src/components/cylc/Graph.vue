@@ -79,49 +79,6 @@ import { mixin } from '@/mixins/index'
 // eslint-disable-next-line no-unused-vars
 import { debounce, each, has, isEmpty, isUndefined, memoize } from 'lodash'
 
-const QUERIES = {
-  root: `
-        subscription {
-          workflows(ids: ["WORKFLOW_ID"]) {
-            id
-            status
-            nodesEdges {
-              nodes {
-                id
-                label: id
-                parent: firstParent {
-                  id
-                  state
-                }
-                state
-                cyclePoint
-                task {
-                  name
-                }
-                jobs(sort: {keys: ["submit_num"], reverse: true}) {
-                  id
-                  batchSysName
-                  batchSysJobId
-                  host
-                  startedTime
-                  submittedTime
-                  finishedTime
-                  state
-                  submitNum
-                }
-              }
-              edges {
-                id
-                source
-                target
-                label: id
-              }
-            }
-          }
-        }
-    `
-}
-
 let ur = {}
 let initialised = false
 let layoutOptions = {}
@@ -572,7 +529,6 @@ export default {
       // elements
       nodesEdges: [],
       workflows: [],
-      subscriptions: {},
       // layout engines
       layoutEngines: [
         'dagre',
@@ -623,7 +579,6 @@ export default {
     if (tippy) {
       tippy.hide()
     }
-    this.$workflowService.unregister(this)
   },
 
   mounted () {
@@ -633,43 +588,12 @@ export default {
     })
   },
 
-  created (cy) {
-    console.debug('CREATED')
-    this.$workflowService.register(
-      this,
-      {
-        activeCallback: this.setActive
-      }
-    )
-    this.subscribe('root')
-  },
-
   components: {
     SyncLoader,
     cytoscape: VueCytoscape
   },
 
   methods: {
-    subscribe (queryName) {
-      const id = this.$workflowService.subscribe(
-        this,
-        QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
-      )
-      if (!(queryName in this.subscriptions)) {
-        this.subscriptions[queryName] = {
-          id
-        }
-      }
-    },
-
-    unsubscribe (queryName) {
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName].id
-        )
-      }
-    },
-
     async workflowUpdated (workflows) {
       try {
         if (this.freeze === false) {
@@ -1043,7 +967,7 @@ export default {
           zoomFactor: 0.1, // zoom factor per zoom tick
           zoomDelay: 45, // how many ms between zoom ticks
           minZoom: 0.1, // min zoom level
-          maxZoom: 10, // max zoom level
+          maxZoom: 2, // max zoom level
           fitPadding: 50, // padding when fitting
           panSpeed: 10, // how many ms in between pan ticks
           panDistance: 100, // max pan distance per tick

@@ -29,7 +29,7 @@ const wsUrl = `${window.location.protocol.startsWith('https') ? 'wss' : 'ws'}://
 Vue.prototype.$apolloClient = createApolloClient(httpUrl, wsUrl)
 
 // WorkflowService singleton available application-wide
-const workflowService = new SubscriptionWorkflowService(Vue.prototype.$apolloClient)
+const workflowService = new SubscriptionWorkflowService()
 Vue.prototype.$workflowService = workflowService
 
 Vue.config.productionTip = false

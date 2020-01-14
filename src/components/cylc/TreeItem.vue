@@ -4,6 +4,7 @@
         v-show="depth >= minDepth"
         :class="getNodeClass()"
         :style="getNodeStyle()"
+        no-gutters
     >
       <!-- the node's left icon; used for expand/collapse -->
       <v-flex
@@ -15,7 +16,7 @@
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <v-layout class="node-data" @click="nodeClicked" row wrap v-if="node.__type === 'cyclepoint'">
+      <v-layout class="node-data" @click="nodeClicked" row no-gutters wrap v-if="node.__type === 'cyclepoint'">
         <v-flex shrink>
           <task :status="node.state" :progress=0 />
         </v-flex>
@@ -23,7 +24,7 @@
           <span class="mx-1">{{ node.name }}</span>
         </v-flex>
       </v-layout>
-      <v-layout class="node-data" @click="nodeClicked" row wrap v-else-if="node.__type === 'family'">
+      <v-layout class="node-data" @click="nodeClicked" row no-gutters wrap v-else-if="node.__type === 'family'">
         <v-flex shrink>
           <task :status="node.state" :progress="node.progress" />
         </v-flex>
@@ -31,7 +32,7 @@
           <span class="mx-1">{{ node.name }}</span>
         </v-flex>
       </v-layout>
-      <v-layout class="node-data" @click="nodeClicked" row wrap v-else-if="node.__type === 'task'">
+      <v-layout class="node-data" @click="nodeClicked" row no-gutters wrap v-else-if="node.__type === 'task'">
         <v-flex shrink>
           <task :status="node.state" :progress="node.progress" />
         </v-flex>
@@ -47,7 +48,7 @@
         </v-flex>
       </v-layout>
       <v-layout class="node-data" layout column v-else-if="node.__type === 'job'">
-        <v-layout @click="jobNodeClicked" row wrap>
+        <v-layout @click="jobNodeClicked" row no-gutters wrap>
           <v-flex shrink>
             <job :status="node.state" />
           </v-flex>
@@ -60,7 +61,7 @@
         </v-layout>
         <!-- leaf node -->
       </v-layout>
-      <v-layout class="node-data" row wrap v-else>
+      <v-layout class="node-data" row no-gutters wrap v-else>
         <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
       </v-layout>
     </v-row>

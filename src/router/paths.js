@@ -24,8 +24,8 @@ export default [
   },
   {
     path: '/workflows/:workflowName',
-    view: 'Tree',
-    name: 'tree',
+    view: 'Workflow',
+    name: 'workflow',
     meta: {
       layout: 'default'
     },

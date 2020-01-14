@@ -1,0 +1,45 @@
+@import '~@lumino/default-theme/style/index.css';
+@import '~vuetify/src/styles/styles.sass';
+
+#workflow-panel {
+  #main {
+    display: flex;
+    min-height: calc(100vh - 82px - 56px);
+    .content {
+      min-width: 500px;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      border: 1px solid #C0C0C0;
+      border-top: none;
+      background: white;
+      position: relative;
+      overflow: auto;
+    }
+
+    .p-BoxPanel {
+      flex: 1 1 auto;
+      .p-TabBar-content {
+        padding-left: 0;
+
+        .p-TabBar-tab {
+          border-bottom: 1px solid #C0C0C0;
+        }
+
+        .p-TabBar-tabLabel {
+          font-family: $body-font-family;
+          font-size: $font-size-root;
+        }
+
+        .p-TabBar-tabCloseIcon {
+          color: inherit;
+        }
+
+        .p-TabBar-tabCloseIcon:before {
+          content: 'X';
+        }
+      }
+    }
+  }
+}
