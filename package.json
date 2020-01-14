@@ -23,7 +23,6 @@
     "axios-fetch": "^1.1.0",
     "cytoscape": "^3.9.0",
     "cytoscape-cise": "^1.0.0",
-    "cytoscape-cola": "^2.3.0",
     "cytoscape-cose-bilkent": "^4.0.0",
     "cytoscape-dagre": "^2.2.2",
     "cytoscape-expand-collapse": "^3.1.2",

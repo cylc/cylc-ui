@@ -61,7 +61,6 @@
 
 <script>
 import cytoscape from 'cytoscape'
-import cola from 'cytoscape-cola'
 import dagre from 'cytoscape-dagre'
 import cise from 'cytoscape-cise'
 import coseBilkent from 'cytoscape-cose-bilkent'
@@ -278,54 +277,6 @@ const hierarchicalOptions = {
   transform: function (node, position) { return position } // transform a given node position. Useful for changing flow direction in discrete layouts
 }
 
-const colaLayoutOptions = {
-  name: 'cola',
-  animate: false, // whether to show the layout as it's running
-  refresh: 1, // number of ticks per frame; higher is faster but more jerky
-  maxSimulationTime: 2000, // max length in ms to run the layout
-  ungrabifyWhileSimulating: true, // so you can't drag nodes during layout
-  fit: false, // on every layout reposition of nodes, fit the viewport
-  padding: 30, // padding around the simulation
-  boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-  nodeDimensionsIncludeLabels: true, // whether labels should be included in determining the space used by a node
-  // layout event callbacks
-  ready: function () {
-    this.layoutReady = true
-    this.layoutStopped = false
-  },
-  stop: function () {
-    this.layoutReady = false
-    this.layoutStopped = true
-    this.loading = false
-  },
-  // positioning options
-  randomize: false, // use random node positions at beginning of layout
-  avoidOverlap: true, // if true, prevents overlap of node bounding boxes
-  handleDisconnected: true, // if true, avoids disconnected components from overlapping
-  convergenceThreshold: 0.01, // when the alpha value (system energy) falls below this value, the layout stops
-  // eslint-disable-next-line no-unused-vars
-  nodeSpacing: function (node) {
-    return 100
-  }, // extra spacing around nodes
-  flow: undefined, // use DAG/tree flow layout if specified, e.g. { axis: 'y', minSeparation: 30 }
-  alignment: undefined, // relative alignment constraints on nodes, e.g. function( node ){ return { x: 0, y: 1 } }
-  gapInequalities: undefined, // list of inequality constraints for the gap between the nodes, e.g. [{'axis':'y', 'left':node1, 'right':node2, 'gap':25}]
-
-  // different methods of specifying edge length
-  // each can be a constant numerical value or a function like `function( edge ){ return 2; }`
-  edgeLength: undefined, // sets edge length directly in simulation
-  edgeSymDiffLength: undefined, // symmetric diff edge length in simulation
-  edgeJaccardLength: undefined, // jaccard edge length in simulation
-
-  // iterations of cola algorithm; uses default values on undefined
-  unconstrIter: undefined, // unconstrained initial layout iterations
-  userConstIter: undefined, // initial layout iterations with user-specified constraints
-  allConstIter: undefined, // initial layout iterations with all constraints including non-overlap
-
-  // infinite layout options
-  infinite: false // overrides all other options for a forces-all-the-time mode
-}
-
 // eslint-disable-next-line no-unused-vars
 const popperOptions = {
   content: 'test data',
@@ -465,40 +416,6 @@ const expandCollapseOptionsCoseBilkent = {
   expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
 }
 
-const expandCollapseOptionsCola = {
-  layoutBy: {
-    name: 'cose-bilkent',
-    animate: 'end',
-    randomize: false,
-    fit: false
-  },
-  // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
-  fisheye: false, // whether to perform fisheye view after expand/collapse you can specify a function too
-  animate: false, // whether to animate on drawing changes you can specify a function too
-  ready: function () {}, // callback when expand/collapse initialized
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-    this.loading = false
-    this.setHtmlLabel(this.cy)
-    if (tippy) {
-      tippy.hide()
-    }
-  },
-  undoable: true, // and if undoRedoExtension exists,
-  cueEnabled: true, // Whether cues are enabled
-  // expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
-  expandCollapseCuePosition: function (ele) {
-    return ele.position()
-  },
-  expandCollapseCueSize: 20, // size of expand-collapse cue
-  expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
-  expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
-  collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
-  expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
-}
-
 export default {
   name: 'Graph',
   props: {
@@ -534,7 +451,6 @@ export default {
         'dagre',
         'cose-bilkent',
         'hierarchical',
-        'cola',
         'cise'
       ]
     }
@@ -659,7 +575,6 @@ export default {
       // cytoscape: this is the cytoscape constructor
       try {
         console.debug('PRE-CONFIG')
-        cytoscape.use(cola)
         cytoscape.use(dagre)
         cytoscape.use(cise)
         cytoscape.use(coseBilkent)
@@ -1355,11 +1270,6 @@ export default {
             expandCollapseOptions = expandCollapseOptionsCoseBilkent
             layoutOptions = coseBilkentOptions
             this.doLayout(coseBilkentOptions, expandCollapseOptionsCoseBilkent, false)
-            break
-          case 'cola':
-            expandCollapseOptions = expandCollapseOptionsCola
-            layoutOptions = colaLayoutOptions
-            this.doLayout(colaLayoutOptions, expandCollapseOptionsCola)
             break
           case 'hierarchical':
             cy.elements().hca({
