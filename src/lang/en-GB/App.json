@@ -5,6 +5,5 @@
   "workflow": "Workflow {name}",
   "workflows": "Workflows",
   "notFound": "Not Found",
-  "userProfile": "User Profile",
-  "footer": "NIWA & British Crown (Met Office) & contributors"
+  "userProfile": "User Profile"
 }
