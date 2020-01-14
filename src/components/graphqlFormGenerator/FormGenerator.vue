@@ -7,6 +7,7 @@
      v-bind:key="input.label"
      v-model="model[input.label]"
      :gqlType="input.gqlType"
+     :types="types"
      :label="input.label"
     />
     <v-btn
@@ -33,6 +34,10 @@ export default {
     mutation: {
       type: Object,
       required: true
+    },
+    types: {
+      type: Array,
+      default: () => []
     },
     initialData: {
       type: Object
@@ -76,7 +81,14 @@ export default {
         }
         if (arg.defaultValue) {
           // if a default value is provided in the schema use it
-          defaultValue = arg.defaultValue
+          defaultValue = JSON.parse(
+            // default values arrive as JSON strings in the introspection
+            // result so need to be converted here
+            arg.defaultValue
+          )
+          if (!defaultValue) {
+            defaultValue = this.getNullValue(arg.type)
+          }
         } else {
           // if no default value is provided choose a sensible null value
           // NOTE: IF we set null as the default type for a list
@@ -100,8 +112,22 @@ export default {
           ret = []
           break
         }
-        if (pointer.kind === 'OBJECT') {
+        if (pointer.kind === 'INPUT_OBJECT') {
           ret = {}
+          console.log(pointer)
+          for (const type of this.types) {
+            // TODO: this type iteration is already done in the mixin
+            //       should we use the mixin or a subset there-of here?
+            if (
+              type.name === pointer.name &&
+              type.kind === pointer.kind
+            ) {
+              for (const field of type.inputFields) {
+                ret[field.name] = this.getNullValue(field.type)
+              }
+              break
+            }
+          }
           break
         }
         pointer = pointer.ofType

@@ -11,6 +11,11 @@ export const formElement = {
       type: Object,
       required: true
     },
+    // array of all GraphQL types in the schema
+    types: {
+      type: Array,
+      default: () => []
+    },
     // the form label for this input
     label: {
       type: String,
@@ -42,6 +47,15 @@ export const formElement = {
       set (val) {
         this.$emit('input', val)
       }
+    },
+
+    type () {
+      for (const type of this.types) {
+        if (type.name === this.gqlType.name && type.kind === this.gqlType.kind) {
+          return type
+        }
+      }
+      return null
     }
   }
 }

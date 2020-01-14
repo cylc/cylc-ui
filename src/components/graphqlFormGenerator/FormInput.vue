@@ -6,6 +6,7 @@
    v-bind="props"
    :label="label"
    :gqlType="gqlType"
+   :types="types"
   />
 </template>
 
@@ -13,10 +14,13 @@
 import Vue from 'vue'
 
 import { VTextField } from 'vuetify/lib/components/VTextField'
+import { VSwitch } from 'vuetify/lib/components/VSwitch'
 
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
+import GEnum from '@/components/graphqlFormGenerator/components/Enum'
 import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'
 import GList from '@/components/graphqlFormGenerator/components/List'
+import GObject from '@/components/graphqlFormGenerator/components/Object'
 
 /* Vuetify number input component.
  *
@@ -50,9 +54,26 @@ const DEFAULT_PROPS = {
   rounded: true
 }
 
+const RULES = {
+  integer:
+    x => (!x || Number.isInteger(x)) || 'Integer',
+  noSpaces:
+    x => (!x || !x.includes(' ')) || 'Cannot contain spaces',
+  ISO8601:
+    // ensure only white-listed chars are present
+    x => Boolean(!x || x.match(/^[\dT.,:-]+$/)) || 'Date-time in ISO8601 format',
+  cylcConfigItem:
+    // PERMIT [a][b]c, a, [a] PROHIBIT a[b], [b]a, a], ]a
+    x => Boolean(!x || x.match(/^((\[[^=\]]+\])+)?([^[=\]-]+)?$/)) || 'Invalid',
+  taskID:
+    // PERMIT A.1 PROHIBIT a
+    x => Boolean(!x || x.match(/^(.){1,}\.(.){1,}$/)) || 'Invalid'
+}
+
 // registry of GraphQL "named types" (e.g. String)
 // {namedType: {is: ComponentClass, prop1: value, ...}}
 const NAMED_TYPES = {
+  // GraphQL types
   String: {
     is: VTextField
   },
@@ -60,8 +81,86 @@ const NAMED_TYPES = {
     is: VNumberField,
     type: 'number',
     rules: [
-      // TODO: this should work but doesn't seem to be doing anything
-      x => Number.isInteger(x) || 'Integer'
+      RULES.integer
+    ]
+  },
+  Float: {
+    is: VNumberField,
+    type: 'number'
+  },
+  Boolean: {
+    is: VSwitch,
+    color: 'blue darken-3'
+  },
+  // Cylc types
+  WorkflowName: {
+    is: VTextField,
+    rules: [
+      RULES.noSpaces
+    ]
+  },
+  User: {
+    is: VTextField,
+    rules: [
+      RULES.noSpaces
+    ]
+  },
+  // WorkflowID
+  CyclePoint: {
+    is: VTextField,
+    rules: [
+      RULES.noSpaces,
+      // character whitelist
+      x => Boolean(!x || x.match(/^[\dT]+$/)) || 'Invalid Cycle Point'
+    ]
+  },
+  CyclePointGlob: {
+    is: VTextField,
+    rules: [
+      RULES.noSpaces,
+      // character whitelist
+      x => Boolean(!x || x.match(/^[\dT*]+$/)) || 'Invalid Cycle Point Glob'
+    ]
+  },
+  // BroadcastSetting
+  // TaskStatus
+  // TaskState
+  TaskName: {
+    is: VTextField,
+    rules: [
+      RULES.noSpaces
+    ]
+  },
+  TaskID: {
+    is: VTextField,
+    rules: [
+      RULES.noSpaces,
+      RULES.taskID
+    ]
+  },
+  NamespaceName: {
+    is: VTextField,
+    rules: [
+      RULES.noSpaces
+    ]
+  },
+  NamespaceIDGlob: {
+    is: VTextField,
+    rules: [
+      RULES.noSpaces
+    ]
+  },
+  TimePoint: {
+    is: VTextField,
+    rules: [
+      RULES.noSpaces,
+      RULES.ISO8601
+    ]
+  },
+  RuntimeConfiguration: {
+    is: VTextField,
+    rules: [
+      RULES.cylcConfigItem
     ]
   }
 }
@@ -69,12 +168,20 @@ const NAMED_TYPES = {
 // registry of GraphQL "kinds" (e.g. LIST)
 // {namedType: {is: ComponentClass, prop1: value, ...}}
 const KINDS = {
+  // GraphQL types
+  ENUM: {
+    is: GEnum
+  },
   NON_NULL: {
     is: GNonNull
   },
   LIST: {
     is: GList
+  },
+  INPUT_OBJECT: {
+    is: GObject // happy naming coincidence
   }
+  // Cylc types
 }
 
 export default {
@@ -86,7 +193,7 @@ export default {
     // dictionary of props for overriding default values
     propOverrides: {
       type: Object,
-      default: () => {}
+      default: () => { Object() }
     }
   },
 
@@ -124,12 +231,16 @@ export default {
       }
 
       // merge this in with default and override props
-      const props = [DEFAULT_PROPS, componentProps, this.propOverrides]
-      const ret = Object.assign({}, ...props)
+      const propGroups = [
+        DEFAULT_PROPS,
+        componentProps,
+        this.propOverrides || {}
+      ]
+      const ret = Object.assign({}, ...propGroups)
 
       // rules is a list so needs special treatment
       ret.rules = []
-      for (const prop in props) {
+      for (const prop of propGroups) {
         if (prop.rules) {
           ret.rules.push(...prop.rules)
         }

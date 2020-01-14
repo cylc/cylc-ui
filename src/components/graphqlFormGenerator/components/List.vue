@@ -15,6 +15,7 @@
          v-model="value[index]"
          :propOverrides="{'dense': true}"
          :gqlType="gqlType.ofType"
+         :types="types"
          :is="FormInput"
          label=""
         />
