@@ -1,11 +1,9 @@
 <template>
-  <component
+  <v-select
    v-model="model"
-   :propOverrides="{rules: [x => Boolean(x) || 'Required!']}"
-   :gqlType="gqlType.ofType"
-   :types="types"
    :label="label + ' (required)'"
-   :is="FormInput"
+   :items="type.enumValues"
+   item-text="name"
   />
 </template>
 
@@ -13,7 +11,7 @@
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 
 export default {
-  name: 'g-non-null',
+  name: 'g-enum',
   mixins: [formElement]
 }
 </script>

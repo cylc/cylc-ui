@@ -16,8 +16,10 @@
         max-width="500"
         outlined
       >
-        <!--FormGenerator :mutation='sampleMutation' /-->
-        <FormGenerator :mutation='getMutation(selectedMutation)' />
+        <FormGenerator
+         :mutation='getMutation(selectedMutation)'
+         :types='types'
+        />
       </v-card>
     </div>
   </div>
@@ -36,52 +38,9 @@ export default {
 
   data: () => ({
     loaded: false,
-    selectedMutation: null,
-    mutations: {},
-    sampleMutation: {
-      name: 'My Mutation',
-      description: 'Test example.',
-      args: [
-        {
-          name: 'MyString',
-          type: {
-            name: 'String',
-            kind: 'SCALAR'
-          }
-        },
-        {
-          name: 'MyInteger',
-          type: {
-            name: 'Int',
-            kind: 'SCALAR'
-          }
-        },
-        {
-          name: 'MyNonNull',
-          defaultValue: 'cant null this',
-          type: {
-            name: null,
-            kind: 'NON_NULL',
-            ofType: {
-              name: 'String',
-              kind: 'SCALAR'
-            }
-          }
-        },
-        {
-          name: 'MyStringList',
-          defaultValue: ['a', 'b', 'c'],
-          type: {
-            name: null,
-            kind: 'LIST',
-            ofType: {
-              name: 'String',
-              kind: 'SCALAR'
-            }
-          }
-        }
-      ]
-    }
+    selectedMutation: 'sampleMutation',
+    types: [],
+    mutations: {}
   }),
 
   computed: {
@@ -94,6 +53,77 @@ export default {
         names.push(mutation.name)
       }
       return names
+    },
+
+    sampleMutation () {
+      const args = []
+      for (const type of this.types) {
+        if (
+          type.kind !== 'OBJECT' &&
+          type.name[0] !== '_'
+        ) {
+          args.push({
+            name: type.name,
+            type: {
+              name: type.name,
+              kind: type.kind
+            }
+          })
+        }
+      }
+
+      args.push({
+        name: 'NonNull<String>',
+        defaultValue: '"Can\'t null this"',
+        type: {
+          name: null,
+          kind: 'NON_NULL',
+          ofType: {
+            name: 'String',
+            kind: 'SCALAR'
+          }
+        }
+      })
+
+      args.push({
+        name: 'List<String>',
+        defaultValue: '["abc"]',
+        type: {
+          name: null,
+          kind: 'LIST',
+          ofType: {
+            name: 'String',
+            kind: 'SCALAR'
+          }
+        }
+      })
+
+      args.push({
+        name: 'NonNull<List<NonNull<String>>>',
+        defaultValue: '["abc"]',
+        type: {
+          name: null,
+          kind: 'NON_NULL',
+          ofType: {
+            name: null,
+            kind: 'LIST',
+            ofType: {
+              name: null,
+              kind: 'NON_NULL',
+              ofType: {
+                name: 'String',
+                kind: 'SCALAR'
+              }
+            }
+          }
+        }
+      })
+
+      return {
+        name: 'Sample Mutation',
+        description: 'Example containing all data types present in the schema.',
+        args: args
+      }
     }
   },
 
@@ -113,9 +143,14 @@ export default {
             mutationType {
               ...FullType
             }
+            types {
+              ...FullType
+            }
           }
         }
       `)
+      // TODO: this returns all types, we only need certain ones
+
       // NOTE: we are converting to string form then re-parsing
       // back to a query, as something funny happens when you
       // try to modify the gql objects by hand.
@@ -135,11 +170,15 @@ export default {
         fetchPolicy: 'no-cache'
       }).then((response) => {
         this.mutations = response.data.__schema.mutationType.fields
+        this.types = response.data.__schema.types
         this.loaded = true
       })
     },
 
     getMutation (name) {
+      if (name === 'sampleMutation') {
+        return this.sampleMutation
+      }
       for (const mutation of this.mutations) {
         if (mutation.name === name) {
           return mutation
