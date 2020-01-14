@@ -66,6 +66,9 @@ a blank space in the page
 [#341](https://github.com/cylc/cylc-ui/pull/341) - Fix toolbar (responsive
 mode and drawer)
 
+[#361](https://github.com/cylc/cylc-ui/pull/361) - Remove the unneeded footer
+component
+
 ### Documentation
 
 [#215](https://github.com/cylc/cylc-ui/pull/215) - guide: add beginnings
