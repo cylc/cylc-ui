@@ -221,7 +221,7 @@ export default {
       // layout engines
       layoutEngines: [
         'dagre',
-        'hierarchical',
+        'hierarchical'
       ]
     }
   },
@@ -445,15 +445,7 @@ export default {
                 'min-zoomed-font-size': '.8em',
                 shape: 'data(shape)',
                 width: '6em',
-                height: '6em',
-                // The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
-                'pie-size': '5.6em',
-                'pie-1-background-color': states.RUNNING.colour,
-                'pie-1-background-size': 'mapData(running, 0, 100, 0, 100)',
-                'pie-1-background-opacity': 0.5,
-                'pie-2-background-color': '#333',
-                'pie-2-background-size': 'mapData(todo, 0, 100, 0, 100)',
-                'pie-2-background-opacity': 0.5
+                height: '6em'
               }
             },
             {
@@ -511,8 +503,7 @@ export default {
                 'background-fit': 'contain contain',
                 'background-color': '#b7c0e8',
                 'border-color': '#999',
-                'border-width': '1px',
-                'pie-size': '5.6em'
+                'border-width': '1px'
               }
             }
           ],
