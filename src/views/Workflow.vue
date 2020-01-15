@@ -191,6 +191,13 @@ export default {
       this.$workflowService.unsubscribe(subscriptionId)
     })
   },
+  mounted () {
+    // Create a Tree View for the current workflow by default
+    const subscriptionId = this.subscribe('tree')
+    this.$nextTick(() => {
+      this.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
+    })
+  },
   beforeDestroy () {
     EventBus.$off('add:tree')
     EventBus.$off('add:graph')
