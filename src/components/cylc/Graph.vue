@@ -240,7 +240,6 @@ export default {
 
     workflows: {
       handler: function (newval, oldval) {
-        console.debug('initialising')
         this.workflowUpdated(newval)
       },
       deep: true
@@ -269,7 +268,6 @@ export default {
   },
 
   mounted () {
-    console.debug('MOUNTED')
     this.$store.watch((store) => {
       this.workflows = store.workflows
     })
@@ -345,7 +343,6 @@ export default {
     async preConfig (cytoscape) {
       // cytoscape: this is the cytoscape constructor
       try {
-        console.debug('PRE-CONFIG')
         cytoscape.use(dagre)
         this.cy = cytoscape({
           container: document.getElementById('cytoscape')
@@ -364,7 +361,7 @@ export default {
         if (loaded) {
           this.loading = false
         } else {
-          console.error('there was an error loading the graph view')
+          console.error('error loading the graph view')
         }
       } catch (error) {
         console.error('afterCreated error', error)
@@ -375,27 +372,22 @@ export default {
       try {
         // register extensions
         if (typeof cytoscape('core', 'navigator') !== 'function') {
-          console.debug('registering navigator')
           navigator(cytoscape)
         }
 
         if (typeof cytoscape('core', 'panzoom') !== 'function') {
-          console.debug('registering panzoom')
           panzoom(cytoscape)
         }
 
         if (typeof cytoscape('core', 'undoRedo') !== 'function') {
-          console.debug('registering undoRedo')
           undoRedo(cytoscape)
         }
 
         if (typeof cytoscape('core', 'popper') !== 'function') {
-          console.debug('registering popper')
           popper(cytoscape)
         }
 
         if (typeof cytoscape('core', 'nodeHtmlLabel') !== 'function') {
-          console.debug('registering nodeHtmlLabel')
           nodeHtmlLabel(cytoscape)
         }
       } catch (error) {
@@ -541,7 +533,6 @@ export default {
 
     async initialise (instance) {
       try {
-        console.debug('INITIALISING')
         instance = cytoscape({
           container: document.getElementById('cytoscape')
         })
@@ -557,7 +548,6 @@ export default {
 
     async getGraph (instance) {
       try {
-        console.debug('GETGRAPH')
         await this.registerExtensions()
         layoutOptions = dagreOptions
         await this.runlayout(instance)
@@ -727,7 +717,6 @@ export default {
       try {
         instance.on('tap', 'node', (event) => {
           const node = event.target
-          console.debug('tapped ' + node.id(), node.data())
           const ref = node.popperRef()
           tippy = new Tippy(ref, {
             content: function memoize () {
@@ -864,7 +853,6 @@ export default {
       try {
         instance.on('tap', 'edge', (event) => {
           const edge = event.target
-          console.debug('tapped ' + edge.id(), edge.data())
           edge.addClass('selected')
           const ref = edge.popperRef()
           tippy = new Tippy(ref, {
