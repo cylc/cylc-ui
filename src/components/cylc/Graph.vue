@@ -62,7 +62,6 @@
 <script>
 import cytoscape from 'cytoscape'
 import dagre from 'cytoscape-dagre'
-import cise from 'cytoscape-cise'
 import coseBilkent from 'cytoscape-cose-bilkent'
 import navigator from 'cytoscape-navigator'
 import panzoom from 'cytoscape-panzoom'
@@ -78,7 +77,6 @@ import { mixin } from '@/mixins/index'
 import { debounce, each, has, isEmpty, isUndefined, memoize } from 'lodash'
 
 let ur = {}
-let initialised = false
 let layoutOptions = {}
 let tippy
 const elements = []
@@ -151,67 +149,6 @@ const dagreOptions = {
     this.layoutReady = false
     this.loading = false
   }
-}
-
-const ciseOptions = {
-  name: 'cise',
-  ready: function () {
-    this.layoutReady = true
-    this.layoutStopped = false
-  },
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-  },
-  // ClusterInfo can be a 2D array contaning node id's or a function that returns cluster ids.
-  // For the 2D array option, the index of the array indicates the cluster ID for all elements in
-  // the collection at that index. Unclustered nodes must NOT be present in this array of clusters.
-  //
-  // For the function, it would be given a Cytoscape node and it is expected to return a cluster id
-  // corresponding to that node. Returning negative numbers, null or undefined is fine for unclustered
-  // nodes.
-  // e.g
-  // Array:                                     OR          function(node){
-  //  [['n1','n2','n3'],                                       ...
-  //    ['n5','n6']                                         }
-  //    ['n7', 'n8', 'n9', 'n10']]
-  // clusters: clusterInfo,
-  clusters: function (node) {
-    return node.cyclepoint
-  },
-  // -------- Optional parameters --------
-  animate: false,
-  // number of ticks per frame; higher is faster but more jerky
-  refresh: 20,
-  // Animation duration used for animate:'end'
-  animationDuration: undefined,
-  // Easing for animate:'end'
-  animationEasing: undefined,
-  // Whether to fit the viewport to the repositioned graph
-  // true : Fits at end of layout for animate:false or animate:'end'
-  fit: true,
-  // Padding in rendered co-ordinates around the layout
-  padding: 30,
-  // separation amount between nodes in a cluster
-  // note: increasing this amount will also increase the simulation time
-  nodeSeparation: 100,
-  // Inter-cluster edge length factor
-  // (2.0 means inter-cluster edges should be twice as long as intra-cluster edges)
-  idealInterClusterEdgeLengthCoefficient: 1.4,
-  // Whether to pull on-circle nodes inside of the circle
-  allowNodesInsideCircle: false,
-  // Max percentage of the nodes in a circle that can move inside the circle
-  maxRatioOfNodesInsideCircle: 0.1,
-  // - Lower values give looser springs
-  // - Higher values give tighter springs
-  springCoeff: 0.35,
-  // Node repulsion (non overlapping) multiplier
-  nodeRepulsion: 18000,
-  // Gravity force (constant)
-  gravity: 0.25,
-  // Gravity range (constant)
-  gravityRange: 3.8
 }
 
 const coseBilkentOptions = {
@@ -320,7 +257,6 @@ export default {
         'dagre',
         'cose-bilkent',
         'hierarchical',
-        'cise'
       ]
     }
   },
@@ -339,7 +275,6 @@ export default {
       handler: function (newval, oldval) {
         console.debug('initialising')
         this.workflowUpdated(newval)
-        initialised = true
       },
       deep: true
     }
@@ -445,7 +380,6 @@ export default {
       try {
         console.debug('PRE-CONFIG')
         cytoscape.use(dagre)
-        cytoscape.use(cise)
         cytoscape.use(coseBilkent)
         this.cy = cytoscape({
           container: document.getElementById('cytoscape')
@@ -615,13 +549,6 @@ export default {
                 'border-color': '#999',
                 'border-width': '1px',
                 'pie-size': '5.6em'
-              }
-            },
-            {
-              selector: ':child',
-              style: {
-                'border-color': '#444',
-                'border-width': '1px'
               }
             }
           ],
@@ -856,7 +783,7 @@ export default {
                 runpercent = node.data('runpercent')
               }
               const parent = node.data('parent')
-              let state = node.data('state')
+              const state = node.data('state')
               let jobInfoBlock = '<div>'
               let details
               let jobsquare
@@ -932,9 +859,6 @@ export default {
               '</div>' +
               jobInfoBlock +
               '</div></div>'
-              if (children !== undefined) {
-                state = 'compound node'
-              }
               content.innerHTML =
                 '<div class="header-graph"><strong>task</div></strong><br>' +
                 // '<strong>id <span style="color: #555;">' +
@@ -1067,15 +991,11 @@ export default {
         switch (key) {
           case 'dagre':
             layoutOptions = dagreOptions
-            this.doLayout(dagreOptions, true)
-            break
-          case 'cise':
-            layoutOptions = ciseOptions
-            this.doLayout(ciseOptions, false)
+            this.doLayout(dagreOptions)
             break
           case 'cose-bilkent':
             layoutOptions = coseBilkentOptions
-            this.doLayout(coseBilkentOptions, false)
+            this.doLayout(coseBilkentOptions)
             break
           case 'hierarchical':
             cy.elements().hca({
