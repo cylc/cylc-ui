@@ -14,10 +14,13 @@
         align-bottom
         justify-center
         :outlined='true'
-        class='freeze-button'
+        v-bind:class="{
+          'freeze-button': true,
+          'button-highlight': freeze
+          }"
         @click='freezeGraph("freeze", $event)'
       >
-        freeze
+        freeze layout
       </v-btn>
       <div>
         <v-btn
@@ -29,19 +32,18 @@
           justify-center
           :outlined='true'
           :name='engine'
-          :class='`${engine.replace("-", "")}-button`'
+           v-bind:class="{
+             'layout-button': true,
+             'button-highlight':(engine === layoutName)
+             }"
           @click='switchLayout(`${engine}`, $event)'
         >
           {{ engine }}
         </v-btn>
-        <div
-          id='layout'
-          class='layout-title'
-        >
-          layout: {{layoutName}}
-          <span v-if='freeze'>-frozen</span>
-        </div>
       </div>
+    </div>
+    <div class='graph-warning'>
+    <span>WARNING: POC Graph View: beware of large workflows!</span>
     </div>
     <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
@@ -61,13 +63,9 @@
 
 <script>
 import cytoscape from 'cytoscape'
-import cola from 'cytoscape-cola'
 import dagre from 'cytoscape-dagre'
-import cise from 'cytoscape-cise'
-import coseBilkent from 'cytoscape-cose-bilkent'
 import navigator from 'cytoscape-navigator'
 import panzoom from 'cytoscape-panzoom'
-import expandCollapse from 'cytoscape-expand-collapse'
 import undoRedo from 'cytoscape-undo-redo'
 import popper from 'cytoscape-popper'
 import SyncLoader from 'vue-spinner/src/SyncLoader.vue'
@@ -80,7 +78,6 @@ import { mixin } from '@/mixins/index'
 import { debounce, each, has, isEmpty, isUndefined, memoize } from 'lodash'
 
 let ur = {}
-let initialised = false
 let layoutOptions = {}
 let tippy
 const elements = []
@@ -155,100 +152,6 @@ const dagreOptions = {
   }
 }
 
-const ciseOptions = {
-  name: 'cise',
-  ready: function () {
-    this.layoutReady = true
-    this.layoutStopped = false
-  },
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-  },
-  // ClusterInfo can be a 2D array contaning node id's or a function that returns cluster ids.
-  // For the 2D array option, the index of the array indicates the cluster ID for all elements in
-  // the collection at that index. Unclustered nodes must NOT be present in this array of clusters.
-  //
-  // For the function, it would be given a Cytoscape node and it is expected to return a cluster id
-  // corresponding to that node. Returning negative numbers, null or undefined is fine for unclustered
-  // nodes.
-  // e.g
-  // Array:                                     OR          function(node){
-  //  [['n1','n2','n3'],                                       ...
-  //    ['n5','n6']                                         }
-  //    ['n7', 'n8', 'n9', 'n10']]
-  // clusters: clusterInfo,
-  clusters: function (node) {
-    return node.cyclepoint
-  },
-  // -------- Optional parameters --------
-  animate: false,
-  // number of ticks per frame; higher is faster but more jerky
-  refresh: 20,
-  // Animation duration used for animate:'end'
-  animationDuration: undefined,
-  // Easing for animate:'end'
-  animationEasing: undefined,
-  // Whether to fit the viewport to the repositioned graph
-  // true : Fits at end of layout for animate:false or animate:'end'
-  fit: true,
-  // Padding in rendered co-ordinates around the layout
-  padding: 30,
-  // separation amount between nodes in a cluster
-  // note: increasing this amount will also increase the simulation time
-  nodeSeparation: 100,
-  // Inter-cluster edge length factor
-  // (2.0 means inter-cluster edges should be twice as long as intra-cluster edges)
-  idealInterClusterEdgeLengthCoefficient: 1.4,
-  // Whether to pull on-circle nodes inside of the circle
-  allowNodesInsideCircle: false,
-  // Max percentage of the nodes in a circle that can move inside the circle
-  maxRatioOfNodesInsideCircle: 0.1,
-  // - Lower values give looser springs
-  // - Higher values give tighter springs
-  springCoeff: 0.35,
-  // Node repulsion (non overlapping) multiplier
-  nodeRepulsion: 18000,
-  // Gravity force (constant)
-  gravity: 0.25,
-  // Gravity range (constant)
-  gravityRange: 3.8
-}
-
-const coseBilkentOptions = {
-  name: 'cose-bilkent',
-  ready: function () {
-    this.layoutReady = true
-    this.layoutStopped = false
-  },
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-  },
-  quality: 'default',
-  nodeDimensionsIncludeLabels: false, // Whether to include labels in node dimensions. Useful for avoiding label overlap
-  refresh: 30, // number of ticks per frame higher is faster but more jerky
-  fit: false, // Whether to fit the network view after when done
-  padding: 10, // Padding on fit
-  randomize: true, // Whether to enable incremental mode
-  nodeRepulsion: 24000, // Node repulsion (non overlapping) multiplier
-  idealEdgeLength: 300, // Ideal (intra-graph) edge length
-  // edgeElasticity: 0.45, // Divisor to compute edge forces
-  nestingFactor: 0.1, // Nesting factor (multiplier) to compute ideal edge length for inter-graph edges
-  gravity: 0.5, // Gravity force (constant)
-  numIter: 2500, // Maximum number of iterations to perform
-  tile: true, // Whether to tile disconnected nodes
-  animate: false, // Type of layout animation. The option set is {'during', 'end', false}
-  tilingPaddingVertical: 10, // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
-  tilingPaddingHorizontal: 10, // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
-  gravityRangeCompound: 1.5, // Gravity range (constant) for compounds
-  gravityCompound: 1.0, // Gravity force (constant) for compounds
-  gravityRange: 3.8, // Gravity range (constant)
-  initialEnergyOnIncremental: 0.5 // Initial cooling factor for incremental layout
-}
-
 const hierarchicalOptions = {
   name: 'breadthfirst',
   fit: false, // whether to fit the viewport to the graph
@@ -278,54 +181,6 @@ const hierarchicalOptions = {
   transform: function (node, position) { return position } // transform a given node position. Useful for changing flow direction in discrete layouts
 }
 
-const colaLayoutOptions = {
-  name: 'cola',
-  animate: false, // whether to show the layout as it's running
-  refresh: 1, // number of ticks per frame; higher is faster but more jerky
-  maxSimulationTime: 2000, // max length in ms to run the layout
-  ungrabifyWhileSimulating: true, // so you can't drag nodes during layout
-  fit: false, // on every layout reposition of nodes, fit the viewport
-  padding: 30, // padding around the simulation
-  boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-  nodeDimensionsIncludeLabels: true, // whether labels should be included in determining the space used by a node
-  // layout event callbacks
-  ready: function () {
-    this.layoutReady = true
-    this.layoutStopped = false
-  },
-  stop: function () {
-    this.layoutReady = false
-    this.layoutStopped = true
-    this.loading = false
-  },
-  // positioning options
-  randomize: false, // use random node positions at beginning of layout
-  avoidOverlap: true, // if true, prevents overlap of node bounding boxes
-  handleDisconnected: true, // if true, avoids disconnected components from overlapping
-  convergenceThreshold: 0.01, // when the alpha value (system energy) falls below this value, the layout stops
-  // eslint-disable-next-line no-unused-vars
-  nodeSpacing: function (node) {
-    return 100
-  }, // extra spacing around nodes
-  flow: undefined, // use DAG/tree flow layout if specified, e.g. { axis: 'y', minSeparation: 30 }
-  alignment: undefined, // relative alignment constraints on nodes, e.g. function( node ){ return { x: 0, y: 1 } }
-  gapInequalities: undefined, // list of inequality constraints for the gap between the nodes, e.g. [{'axis':'y', 'left':node1, 'right':node2, 'gap':25}]
-
-  // different methods of specifying edge length
-  // each can be a constant numerical value or a function like `function( edge ){ return 2; }`
-  edgeLength: undefined, // sets edge length directly in simulation
-  edgeSymDiffLength: undefined, // symmetric diff edge length in simulation
-  edgeJaccardLength: undefined, // jaccard edge length in simulation
-
-  // iterations of cola algorithm; uses default values on undefined
-  unconstrIter: undefined, // unconstrained initial layout iterations
-  userConstIter: undefined, // initial layout iterations with user-specified constraints
-  allConstIter: undefined, // initial layout iterations with all constraints including non-overlap
-
-  // infinite layout options
-  infinite: false // overrides all other options for a forces-all-the-time mode
-}
-
 // eslint-disable-next-line no-unused-vars
 const popperOptions = {
   content: 'test data',
@@ -333,170 +188,6 @@ const popperOptions = {
   renderedDimensions: undefined,
   popper: undefined,
   closeOnClickOutside: true
-}
-
-let expandCollapseOptions = {
-  layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
-  // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
-  fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
-  animate: true, // whether to animate on drawing changes you can specify a function too
-  ready: function () {}, // callback when expand/collapse initialized
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-    this.setHtmlLabel(this.cy)
-    if (tippy) {
-      tippy.hide()
-    }
-  },
-  undoable: true, // and if undoRedoExtension exists,
-  cueEnabled: true, // Whether cues are enabled
-  // expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
-  expandCollapseCuePosition: function (ele) {
-    return ele.position()
-  },
-  expandCollapseCueSize: 20, // size of expand-collapse cue
-  expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
-  expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
-  collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
-  expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues,
-}
-
-const expandCollapseOptionsUndefined = {
-  layoutBy: undefined, // to rearrange after expand/collapse. It's just layout options or whole layout function. Choose your side!
-  // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
-  fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
-  animate: false, // whether to animate on drawing changes you can specify a function too
-  ready: function () {}, // callback when expand/collapse initialized
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-    this.setHtmlLabel(this.cy)
-    if (tippy) {
-      tippy.hide()
-    }
-  },
-  undoable: true, // and if undoRedoExtension exists,
-  cueEnabled: true, // Whether cues are enabled
-  // expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
-  expandCollapseCuePosition: function (ele) {
-    return ele.position()
-  },
-  expandCollapseCueSize: 20, // size of expand-collapse cue
-  expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
-  expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
-  collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
-  expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
-}
-
-const expandCollapseOptionsCise = {
-  layoutBy: {
-    name: 'cise',
-    animate: 'end',
-    randomize: false,
-    fit: false
-  },
-  // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
-  fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
-  animate: true, // whether to animate on drawing changes you can specify a function too
-  ready: function () {
-    this.layoutReady = true
-    this.layoutStopped = false
-  }, // callback when expand/collapse initialized
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-    this.loading = false
-    this.setHtmlLabel(this.cy)
-    if (tippy) {
-      tippy.hide()
-    }
-  },
-  undoable: true, // and if undoRedoExtension exists,
-  cueEnabled: true, // Whether cues are enabled
-  // expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
-  expandCollapseCuePosition: function (ele) {
-    return ele.position()
-  },
-  expandCollapseCueSize: 20, // size of expand-collapse cue
-  expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
-  expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
-  collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
-  expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
-}
-
-const expandCollapseOptionsCoseBilkent = {
-  layoutBy: {
-    name: 'cose-bilkent',
-    animate: 'end',
-    randomize: false,
-    fit: false
-  },
-  // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
-  fisheye: true, // whether to perform fisheye view after expand/collapse you can specify a function too
-  animate: true, // whether to animate on drawing changes you can specify a function too
-  ready: function () {
-    this.layoutReady = true
-    this.layoutStopped = false
-  }, // callback when expand/collapse initialized
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-    this.loading = false
-    this.setHtmlLabel(this.cy)
-    if (tippy) {
-      tippy.hide()
-    }
-  },
-  undoable: true, // and if undoRedoExtension exists,
-  cueEnabled: true, // Whether cues are enabled
-  // expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
-  expandCollapseCuePosition: function (ele) {
-    return ele.position()
-  },
-  expandCollapseCueSize: 20, // size of expand-collapse cue
-  expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
-  expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
-  collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
-  expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
-}
-
-const expandCollapseOptionsCola = {
-  layoutBy: {
-    name: 'cose-bilkent',
-    animate: 'end',
-    randomize: false,
-    fit: false
-  },
-  // recommended usage: use cose-bilkent layout with randomize: false to preserve mental map upon expand/collapse
-  fisheye: false, // whether to perform fisheye view after expand/collapse you can specify a function too
-  animate: false, // whether to animate on drawing changes you can specify a function too
-  ready: function () {}, // callback when expand/collapse initialized
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-    this.loading = false
-    this.setHtmlLabel(this.cy)
-    if (tippy) {
-      tippy.hide()
-    }
-  },
-  undoable: true, // and if undoRedoExtension exists,
-  cueEnabled: true, // Whether cues are enabled
-  // expandCollapseCuePosition: 'top-left', // default cue position is top left you can specify a function per node too
-  expandCollapseCuePosition: function (ele) {
-    return ele.position()
-  },
-  expandCollapseCueSize: 20, // size of expand-collapse cue
-  expandCollapseCueLineSize: 16, // size of lines used for drawing plus-minus icons
-  expandCueImage: undefined, // image of expand icon if undefined draw regular expand cue
-  collapseCueImage: undefined, // image of collapse icon if undefined draw regular collapse cue
-  expandCollapseCueSensitivity: 1 // sensitivity of expand-collapse cues
 }
 
 export default {
@@ -532,10 +223,7 @@ export default {
       // layout engines
       layoutEngines: [
         'dagre',
-        'cose-bilkent',
-        'hierarchical',
-        'cola',
-        'cise'
+        'hierarchical'
       ]
     }
   },
@@ -554,7 +242,6 @@ export default {
       handler: function (newval, oldval) {
         console.debug('initialising')
         this.workflowUpdated(newval)
-        initialised = true
       },
       deep: true
     }
@@ -659,10 +346,7 @@ export default {
       // cytoscape: this is the cytoscape constructor
       try {
         console.debug('PRE-CONFIG')
-        cytoscape.use(cola)
         cytoscape.use(dagre)
-        cytoscape.use(cise)
-        cytoscape.use(coseBilkent)
         this.cy = cytoscape({
           container: document.getElementById('cytoscape')
         })
@@ -676,7 +360,6 @@ export default {
       try {
       // load graph data and run layout
         layoutOptions = dagreOptions
-        expandCollapseOptions = expandCollapseOptionsUndefined
         const loaded = await this.initialise(cy)
         if (loaded) {
           this.loading = false
@@ -704,11 +387,6 @@ export default {
         if (typeof cytoscape('core', 'undoRedo') !== 'function') {
           console.debug('registering undoRedo')
           undoRedo(cytoscape)
-        }
-
-        if (typeof cytoscape('core', 'expandCollapse') !== 'function') {
-          console.debug('registering expandCollapse')
-          expandCollapse(cytoscape)
         }
 
         if (typeof cytoscape('core', 'popper') !== 'function') {
@@ -767,17 +445,8 @@ export default {
                 'text-margin-x': 5,
                 'font-size': '.8em',
                 'min-zoomed-font-size': '.8em',
-                shape: 'data(shape)',
                 width: '6em',
-                height: '6em',
-                // The diameter of the pie, measured as a percent of node size (e.g. 100%) or an absolute length (e.g. 25px).
-                'pie-size': '5.6em',
-                'pie-1-background-color': states.RUNNING.colour,
-                'pie-1-background-size': 'mapData(running, 0, 100, 0, 100)',
-                'pie-1-background-opacity': 0.5,
-                'pie-2-background-color': '#333',
-                'pie-2-background-size': 'mapData(todo, 0, 100, 0, 100)',
-                'pie-2-background-opacity': 0.5
+                height: '6em'
               }
             },
             {
@@ -829,38 +498,12 @@ export default {
               style: { opacity: '0.2' }
             },
             {
-              selector: 'node.cy-expand-collapse-collapsed-node',
-              style: {
-                'background-color': function memoize (node) {
-                  const nodeState = String(node.data('state'))
-                  const STATE = nodeState.toUpperCase()
-                  return states[STATE].colour || states.DEFAULT.colour
-                },
-                shape: 'rectangle'
-              }
-            },
-            {
-              selector: 'edge.cy-expand-collapse-meta-edge',
-              style: {
-                'background-color': 'green',
-                shape: 'rectangle'
-              }
-            },
-            {
               selector: ':parent',
               style: {
                 'background-opacity': 0.1,
                 'background-fit': 'contain contain',
                 'background-color': '#b7c0e8',
                 'border-color': '#999',
-                'border-width': '1px',
-                'pie-size': '5.6em'
-              }
-            },
-            {
-              selector: ':child',
-              style: {
-                'border-color': '#444',
                 'border-width': '1px'
               }
             }
@@ -896,17 +539,6 @@ export default {
       }
     },
 
-    async setupExpandCollapse (instance) {
-      try {
-        expandCollapseOptions = expandCollapseOptionsCoseBilkent
-        instance.expandCollapse(expandCollapseOptions)
-        layoutOptions = dagreOptions
-        return instance
-      } catch (error) {
-        console.error('setupExpandCollapse error', error)
-      }
-    },
-
     async initialise (instance) {
       try {
         console.debug('INITIALISING')
@@ -929,8 +561,6 @@ export default {
         await this.registerExtensions()
         layoutOptions = dagreOptions
         await this.runlayout(instance)
-        await this.setupExpandCollapse(instance)
-        instance.expandCollapse(expandCollapseOptions)
         ur = await this.setupUndo(instance)
         this.getPanzoom(instance)
         this.getNavigator(instance)
@@ -1095,28 +725,6 @@ export default {
 
     getInteractivity (instance) {
       try {
-        instance.nodes().on('expandcollapse.beforecollapse', (event) => {
-          if (tippy) {
-            tippy.hide()
-          }
-          this.setHtmlLabel(instance, states)
-        })
-      } catch (error) {
-        console.error('interactivity expandcollapse.beforecollapse error ', error)
-      }
-
-      try {
-        instance.nodes().on('expandcollapse.beforeexpand', (event) => {
-          if (tippy) {
-            tippy.hide()
-          }
-          this.setHtmlLabel(instance, states)
-        })
-      } catch (error) {
-        console.error('interactivity expandcollapse.beforeexpand error ', error)
-      }
-
-      try {
         instance.on('tap', 'node', (event) => {
           const node = event.target
           console.debug('tapped ' + node.id(), node.data())
@@ -1126,13 +734,12 @@ export default {
               const content = document.createElement('div')
               content.id = 'tooltip'
               content.classList.add('node-tooltip')
-              const children = node.data('collapsedChildren')
               let runpercent = 0
               if (has(node.data, 'runpercent')) {
                 runpercent = node.data('runpercent')
               }
               const parent = node.data('parent')
-              let state = node.data('state')
+              const state = node.data('state')
               let jobInfoBlock = '<div>'
               let details
               let jobsquare
@@ -1208,9 +815,6 @@ export default {
               '</div>' +
               jobInfoBlock +
               '</div></div>'
-              if (children !== undefined) {
-                state = 'compound node'
-              }
               content.innerHTML =
                 '<div class="header-graph"><strong>task</div></strong><br>' +
                 // '<strong>id <span style="color: #555;">' +
@@ -1342,24 +946,8 @@ export default {
         const cy = this.cy
         switch (key) {
           case 'dagre':
-            expandCollapseOptions = expandCollapseOptionsUndefined
             layoutOptions = dagreOptions
-            this.doLayout(dagreOptions, expandCollapseOptionsUndefined, true)
-            break
-          case 'cise':
-            expandCollapseOptions = expandCollapseOptionsCise
-            layoutOptions = ciseOptions
-            this.doLayout(ciseOptions, expandCollapseOptionsCise, false)
-            break
-          case 'cose-bilkent':
-            expandCollapseOptions = expandCollapseOptionsCoseBilkent
-            layoutOptions = coseBilkentOptions
-            this.doLayout(coseBilkentOptions, expandCollapseOptionsCoseBilkent, false)
-            break
-          case 'cola':
-            expandCollapseOptions = expandCollapseOptionsCola
-            layoutOptions = colaLayoutOptions
-            this.doLayout(colaLayoutOptions, expandCollapseOptionsCola)
+            this.doLayout(dagreOptions)
             break
           case 'hierarchical':
             cy.elements().hca({
@@ -1376,14 +964,12 @@ export default {
                 }
               ]
             })
-            expandCollapseOptions = expandCollapseOptionsUndefined
             layoutOptions = hierarchicalOptions
-            this.doLayout(hierarchicalOptions, expandCollapseOptionsUndefined)
+            this.doLayout(hierarchicalOptions)
             break
           default:
-            expandCollapseOptions = expandCollapseOptionsUndefined
             layoutOptions = dagreOptions
-            this.doLayout(dagreOptions, expandCollapseOptionsUndefined)
+            this.doLayout(dagreOptions)
             break
         }
       } catch (error) {
@@ -1391,9 +977,8 @@ export default {
       }
     },
 
-    doLayout (layoutOptions, expandCollapseOptions, collapse = false) {
+    doLayout (layoutOptions) {
       try {
-        collapse && initialised ? ur.do('collapseAll') : console.warn('not collapsing this layout')
         this.cy.elements()
           .layout(layoutOptions)
           .run()
@@ -1401,20 +986,6 @@ export default {
         console.error('doLayout error', error)
         return false
       }
-    },
-
-    collapseAll () {
-      if (tippy) {
-        tippy.hide()
-      }
-      ur.do('collapseAll')
-    },
-
-    expandAll () {
-      if (tippy) {
-        tippy.hide()
-      }
-      ur.do('expandAll')
     },
 
     activateKeys (instance) {

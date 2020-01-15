@@ -18,7 +18,7 @@
       z-index: 5;
       width: 200px;
       height: 150px;
-      bottom: 81px;
+      bottom: 0px;
       right: 0px;
       overflow: hidden;
     }
@@ -33,108 +33,44 @@
 
     .spinner {
       position: absolute;
-      top: 710px;
-      left: 130px;
+      bottom: 21px;
+      left: 1px;
       z-index: 99;
     }
 
-    .collapsed-child {
-      opacity: 0;
-      display: none
-      }
-
-    .switchlayout {
+   .switchlayout {
       position: absolute;
-      bottom: 83px;
-      left: 1px;
+      bottom: 40px;
+      left: 0px;
     }
 
-    .dagre-button {
-      text-align: centre;
-      color: slategray;
-      z-index: 4;
-      height: 40px;
-    }
-
-    .cise-button {
-      text-align: centre;
-      color: slategray;
-      z-index: 4;
-      height: 40px;
-      width: 40px;
-      margin-left: 4px;
-    }
-
-    .cosebilkent-button {
-      text-align: centre;
+    .layout-button {
+      text-align: center;
       color: slategray;
       z-index: 4;
       height: 40px;
       margin-left: 4px;
     }
 
-    .hierarchical-button {
-      text-align: centre;
-      color: slategray;
+    .button-highlight {
+       background:yellow;
+    }
+
+    .graph-warning {
+       color:red;
+       background:white;
+       position: absolute;
+       bottom:0px;
+       left:0px;
+       z-index: 4;
+    }
+
+   .freeze-button {
+      text-align: center;
+      color: red;
       z-index: 4;
       height: 40px;
-      margin-left: 4px;
-    }
-
-    .cola-button {
-      text-align: centre;
-      color: slategray;
-      z-index: 4;
-      height: 40px;
-      width: 40px;
-      margin-left: 4px;
-    }
-
-    .collapse-all-button {
-      text-align: centre;
-      color: slategray;
-      font-size: .4em;
-      size: 'x-small';
-      z-index: 4;
-      height: 10px;
-      margin-left: 0.1em;
-      margin-top: 1em;
-      margin-bottom: 1em;
-      margin-right: .4em;
-    }
-
-    .freeze-button {
-      text-align: centre;
-      color: slategray;
-      size: 'small';
-      z-index: 4;
-      height: 10px;
-      margin-top: 1em;
-      margin-bottom: 1em;
-    }
-
-    .layout-title {
-      text-align: left;
-      font-size: .8em;
-      color: #2b2b2b;
-      /* background: #f2f2f2; */
-      text-transform: lowercase;
-      position: absolute;
-      bottom: 64px;
-      left: 1px;
-      z-index: 4;
-    }
-
-    .suite-title {
-      text-align: left;
-      font-size: .8em;
-      color: #2b2b2b;
-      /* background: #f2f2f2; */
-      text-transform: lowercase;
-      position: absolute;
-      bottom: 80px;
-      left: 1px;
-      z-index: 4;
+      margin: 4px;
     }
 
     .node-tooltip {
