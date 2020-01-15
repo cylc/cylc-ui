@@ -18,7 +18,7 @@
       z-index: 5;
       width: 200px;
       height: 150px;
-      bottom: 81px;
+      bottom: 0px;
       right: 0px;
       overflow: hidden;
     }
@@ -33,15 +33,15 @@
 
     .spinner {
       position: absolute;
-      top: 0px;
-      right: 0px;
+      bottom: 10px;
+      left: 0px;
       z-index: 99;
     }
 
    .switchlayout {
       position: absolute;
-      bottom: 83px;
-      left: 1px;
+      bottom: 40px;
+      left: 0px;
     }
 
     .layout-button {
@@ -54,6 +54,15 @@
 
     .button-highlight {
        background:yellow;
+    }
+
+    .graph-warning {
+       color:red;
+       background:white;
+       position: absolute;
+       bottom:0px;
+       left:0px;
+       z-index: 4;
     }
 
    .freeze-button {

@@ -40,14 +40,10 @@
         >
           {{ engine }}
         </v-btn>
-        <div
-          id='layout'
-          class='layout-title'
-        >
-          layout: {{layoutName}}
-          <span style="color:red" v-if='freeze'>(frozen)</span>
-        </div>
       </div>
+    </div>
+    <div class='graph-warning'>
+    <span>WARNING: POC Graph View: beware of large workflows!</span>
     </div>
     <div class='cytoscape-navigator-overlay'>
       <canvas></canvas>
