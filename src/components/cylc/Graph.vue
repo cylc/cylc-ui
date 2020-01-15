@@ -34,7 +34,7 @@
           :name='engine'
            v-bind:class="{
              'layout-button': true,
-             'button-highlight':(engine == layoutName)
+             'button-highlight':(engine === layoutName)
              }"
           @click='switchLayout(`${engine}`, $event)'
         >
