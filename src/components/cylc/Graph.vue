@@ -14,10 +14,13 @@
         align-bottom
         justify-center
         :outlined='true'
-        class='freeze-button'
+        v-bind:class="{
+          'freeze-button': true,
+          'button-highlight': freeze
+          }"
         @click='freezeGraph("freeze", $event)'
       >
-        freeze
+        freeze layout
       </v-btn>
       <div>
         <v-btn
@@ -29,7 +32,10 @@
           justify-center
           :outlined='true'
           :name='engine'
-          :class='`${engine.replace("-", "")}-button`'
+           v-bind:class="{
+             'layout-button': true,
+             'button-highlight':(engine == layoutName)
+             }"
           @click='switchLayout(`${engine}`, $event)'
         >
           {{ engine }}
@@ -39,7 +45,7 @@
           class='layout-title'
         >
           layout: {{layoutName}}
-          <span v-if='freeze'>-frozen</span>
+          <span style="color:red" v-if='freeze'>(frozen)</span>
         </div>
       </div>
     </div>
