@@ -62,7 +62,6 @@
 <script>
 import cytoscape from 'cytoscape'
 import dagre from 'cytoscape-dagre'
-import coseBilkent from 'cytoscape-cose-bilkent'
 import navigator from 'cytoscape-navigator'
 import panzoom from 'cytoscape-panzoom'
 import undoRedo from 'cytoscape-undo-redo'
@@ -151,39 +150,6 @@ const dagreOptions = {
   }
 }
 
-const coseBilkentOptions = {
-  name: 'cose-bilkent',
-  ready: function () {
-    this.layoutReady = true
-    this.layoutStopped = false
-  },
-  stop: function () {
-    this.layoutStopped = true
-    this.layoutReady = false
-    this.loading = false
-  },
-  quality: 'default',
-  nodeDimensionsIncludeLabels: false, // Whether to include labels in node dimensions. Useful for avoiding label overlap
-  refresh: 30, // number of ticks per frame higher is faster but more jerky
-  fit: false, // Whether to fit the network view after when done
-  padding: 10, // Padding on fit
-  randomize: true, // Whether to enable incremental mode
-  nodeRepulsion: 24000, // Node repulsion (non overlapping) multiplier
-  idealEdgeLength: 300, // Ideal (intra-graph) edge length
-  // edgeElasticity: 0.45, // Divisor to compute edge forces
-  nestingFactor: 0.1, // Nesting factor (multiplier) to compute ideal edge length for inter-graph edges
-  gravity: 0.5, // Gravity force (constant)
-  numIter: 2500, // Maximum number of iterations to perform
-  tile: true, // Whether to tile disconnected nodes
-  animate: false, // Type of layout animation. The option set is {'during', 'end', false}
-  tilingPaddingVertical: 10, // Amount of vertical space to put between degree zero nodes during tiling (can also be a function)
-  tilingPaddingHorizontal: 10, // Amount of horizontal space to put between degree zero nodes during tiling (can also be a function)
-  gravityRangeCompound: 1.5, // Gravity range (constant) for compounds
-  gravityCompound: 1.0, // Gravity force (constant) for compounds
-  gravityRange: 3.8, // Gravity range (constant)
-  initialEnergyOnIncremental: 0.5 // Initial cooling factor for incremental layout
-}
-
 const hierarchicalOptions = {
   name: 'breadthfirst',
   fit: false, // whether to fit the viewport to the graph
@@ -255,7 +221,6 @@ export default {
       // layout engines
       layoutEngines: [
         'dagre',
-        'cose-bilkent',
         'hierarchical',
       ]
     }
@@ -380,7 +345,6 @@ export default {
       try {
         console.debug('PRE-CONFIG')
         cytoscape.use(dagre)
-        cytoscape.use(coseBilkent)
         this.cy = cytoscape({
           container: document.getElementById('cytoscape')
         })
@@ -992,10 +956,6 @@ export default {
           case 'dagre':
             layoutOptions = dagreOptions
             this.doLayout(dagreOptions)
-            break
-          case 'cose-bilkent':
-            layoutOptions = coseBilkentOptions
-            this.doLayout(coseBilkentOptions)
             break
           case 'hierarchical':
             cy.elements().hca({
