@@ -443,7 +443,6 @@ export default {
                 'text-margin-x': 5,
                 'font-size': '.8em',
                 'min-zoomed-font-size': '.8em',
-                shape: 'data(shape)',
                 width: '6em',
                 height: '6em'
               }
