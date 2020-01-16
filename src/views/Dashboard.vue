@@ -44,6 +44,19 @@
     <v-layout wrap>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
+          <v-list-item to="/workflows">
+            <v-list-item-avatar size="60" style="font-size: 2em;">
+              <v-icon medium>mdi-table</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title class="title font-weight-thin">
+                Workflows Table
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                View name, host, port, etc. of your workflows
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item to="/user-profile">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon medium>mdi-settings</v-icon>

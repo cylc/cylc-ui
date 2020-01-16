@@ -69,6 +69,9 @@ mode and drawer)
 [#361](https://github.com/cylc/cylc-ui/pull/361) - Remove the unneeded footer
 component
 
+[#370](https://github.com/cylc/cylc-ui/pull/370) - Fix up the old gscan table
+view and move access to the dashboard.
+
 ### Documentation
 
 [#215](https://github.com/cylc/cylc-ui/pull/215) - guide: add beginnings
