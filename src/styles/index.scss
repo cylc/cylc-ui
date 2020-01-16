@@ -4,7 +4,6 @@
 @import "cylc/header";
 @import "cylc/toolbar";
 @import "cylc/drawer";
-@import "cylc/footer";
 @import "cylc/job";
 @import "cylc/task";
 @import "cylc/dashboard";
@@ -14,8 +13,5 @@
   background-color: transparent;
   .content {
     height: 100vh;
-  }
-  #core-view {
-    min-height: calc(100vh - 82px);
   }
 }
