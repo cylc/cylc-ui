@@ -34,7 +34,7 @@ class SubscriptionWorkflowService extends GQuery {
     // TODO: revisit this and evaluate other ways to build the GraphQL URL - not safe to rely on window.location (?)
     const baseUrl = `${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}${window.location.pathname}`
     const httpUrl = `${window.location.protocol}//${baseUrl}graphql`
-    const wsUrl = `ws://${baseUrl}subscriptions`
+    const wsUrl = `${window.location.protocol.startsWith('https') ? 'wss' : 'ws'}://${baseUrl}subscriptions`
     this.apolloClient = createApolloClient(httpUrl, wsUrl)
     /**
      * @type {object}
@@ -42,19 +42,9 @@ class SubscriptionWorkflowService extends GQuery {
     this.observable = null
   }
 
-  destructor () {
-    if (this.observable !== null) {
-      this.observable.unsubscribe()
-    }
-    this.observable = null
-  }
-
   recompute () {
-    this.destructor()
     super.recompute()
-    if (this.query !== null) {
-      this.request()
-    }
+    this.request()
   }
 
   request () {
@@ -68,6 +58,10 @@ class SubscriptionWorkflowService extends GQuery {
       return null
     }
     const vm = this
+    if (this.observable !== null) {
+      this.observable.unsubscribe()
+      this.observable = null
+    }
     this.observable = this.apolloClient.subscribe({
       query: this.query,
       fetchPolicy: 'no-cache'
