@@ -4,10 +4,10 @@
 #workflow-panel {
   #main {
     display: flex;
-    min-height: calc(100vh - 82px - 56px);
+    min-height: calc(100vh - 48px);
     .content {
-      min-width: 500px;
-      min-height: 400px;
+      min-width: 300px;
+      min-height: 300px;
       display: flex;
       flex-direction: column;
       padding: 0;
