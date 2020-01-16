@@ -44,15 +44,11 @@
               slot="item"
               slot-scope="{ item }"
             >
-              <tr>
+              <tr @click="viewWorkflow(item)">
                 <td>{{ item.name }}</td>
                 <td>{{ item.owner }}</td>
                 <td>{{ item.host }}</td>
                 <td>{{ item.port }}</td>
-                <td class="justify-center">
-                  <v-icon small class="mr-2" @click="viewWorkflow(item)">mdi-table-edit</v-icon>
-                  <v-icon small class="mr-2" @click="viewGraph(item)">mdi-vector-polyline</v-icon>
-                </td>
               </tr>
             </template>
           </v-data-table>
@@ -116,11 +112,6 @@ export default {
         sortable: false,
         text: i18n.t('Workflows.tableColumnPort'),
         value: 'port'
-      },
-      {
-        sortable: false,
-        text: i18n.t('Workflows.tableColumnActions'),
-        value: 'actions'
       }
     ]
   }),
@@ -146,10 +137,6 @@ export default {
   methods: {
     viewWorkflow (workflow) {
       this.$router.push({ path: `/workflows/${workflow.name}` })
-    },
-
-    viewGraph (workflow) {
-      this.$router.push({ path: `/graph/${workflow.name}` })
     },
 
     subscribe (queryName) {
