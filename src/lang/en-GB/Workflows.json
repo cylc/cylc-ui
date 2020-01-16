@@ -1,5 +1,5 @@
 {
-  "tableHeader": "Your Workflows",
+  "tableHeader": "Workflows",
   "tableColumnName": "Name",
   "tableColumnOwner": "Owner",
   "tableColumnHost": "Host",

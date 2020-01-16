@@ -44,7 +44,7 @@
               slot="item"
               slot-scope="{ item }"
             >
-              <tr @click="viewWorkflow(item)">
+              <tr style="cursor:pointer" @click="viewWorkflow(item)">
                 <td>{{ item.name }}</td>
                 <td>{{ item.owner }}</td>
                 <td>{{ item.host }}</td>

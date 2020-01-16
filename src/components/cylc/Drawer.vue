@@ -34,7 +34,8 @@
         </v-list-item-action>
         <v-list-item-title>Dashboard</v-list-item-title>
       </v-list-item>
-      <v-subheader>Views</v-subheader>
+      <v-divider />
+      <v-subheader>Workflows</v-subheader>
       <v-list-item
         v-for="(link, index) in viewLinks"
         :key="index+link.text"
@@ -79,12 +80,6 @@ export default {
         icon: 'mdi-view-dashboard',
         text: i18n.t('App.dashboard'),
         view: false
-      },
-      {
-        to: '/workflows',
-        icon: 'mdi-vector-circle',
-        text: i18n.t('App.workflows'),
-        view: true
       }
     ],
     responsive: false
