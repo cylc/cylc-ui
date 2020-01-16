@@ -47,6 +47,16 @@ export function createApolloClient (queryUri, subscriptionUri = null) {
   return new ApolloClient({
     link: link,
     cache: new InMemoryCache(),
+    defaultOptions: {
+      query: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all'
+      },
+      watchQuery: {
+        fetchPolicy: 'no-cache',
+        errorPolicy: 'all'
+      }
+    },
     connectToDevTools: process.env.NODE_ENV !== 'production'
   })
 }
