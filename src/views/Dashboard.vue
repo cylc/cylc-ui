@@ -139,7 +139,7 @@ import { getHubUrl } from '@/utils/user'
 
 const QUERIES = {
   root: `
-    {
+    subscription {
       workflows {
         id
         name
