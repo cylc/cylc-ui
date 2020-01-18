@@ -3,6 +3,7 @@ import store from '@/store/'
 import Alert from '@/model/Alert.model'
 import { createApolloClient } from '@/utils/graphql'
 import gql from 'graphql-tag'
+import debounce from 'lodash.debounce'
 
 const HOLD_WORKFLOW = gql`
 mutation HoldWorkflowMutation($workflow: String!) {
@@ -47,7 +48,9 @@ class SubscriptionWorkflowService extends GQuery {
     this.request()
   }
 
-  request () {
+  request = debounce(this.request_, 1000)
+
+  request_ () {
     /**
      * Perform a REST GraphQL request for all subscriptions.
      */
