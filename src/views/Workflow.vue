@@ -100,7 +100,13 @@ export default {
       // add widget that uses the GraphQl query response
       this.$refs['workflow-component'].addMutationsWidget(`${subscriptionId}`)
     })
-    EventBus.$on('delete:widget', (data) => {
+    EventBus.$on('delete:tree', (data) => {
+      this.$refs['workflow-component'].removeTreeWidget(data.id)
+      const subscriptionId = Number.parseFloat(data.id)
+      this.$workflowService.unsubscribe(subscriptionId)
+    })
+    EventBus.$on('delete:graph', (data) => {
+      this.$refs['workflow-component'].removeGraphWidget(data.id)
       const subscriptionId = Number.parseFloat(data.id)
       if (vm.deltaSubscriptions.includes(subscriptionId)) {
         // if this is a tree widget with a deltas subscription, then stop it if the last widget using it

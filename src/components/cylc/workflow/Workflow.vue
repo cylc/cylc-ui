@@ -128,6 +128,18 @@ export default {
         widgets.push(widget)
       })
       widgets.forEach(widget => widget.close())
+    },
+    removeTreeWidget (id) {
+      const index = this.treeWidgetIds.indexOf(id)
+      if (index > -1) {
+        this.treeWidgetIds.splice(index, 1)
+      }
+    },
+    removeGraphWidget (id) {
+      const index = this.graphWidgetIds.indexOf(id)
+      if (index > -1) {
+        this.graphWidgetIds.splice(index, 1)
+      }
     }
   }
 }
