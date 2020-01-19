@@ -101,7 +101,7 @@ const TreeWrapper = Vue.component('tree-wrapper', {
   methods: {
     delete () {
       // This is captured by the View, that holds subscriptions, and then used to tell which subscription must be turned off
-      EventBus.$emit('delete:widget', { id: this.widgetId })
+      EventBus.$emit('delete:tree', { id: this.widgetId })
       this.$destroy()
     }
   },
@@ -151,7 +151,7 @@ const GraphWrapper = Vue.component('graph-wrapper', {
   methods: {
     delete () {
       // This is captured by the View, that holds subscriptions, and then used to tell which subscription must be turned off
-      EventBus.$emit('delete:widget', { id: this.widgetId })
+      EventBus.$emit('delete:graph', { id: this.widgetId })
       this.$destroy()
     },
     activate () {
