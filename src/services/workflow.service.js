@@ -30,25 +30,26 @@ mutation StopWorkflowMutation($workflow: String!) {
 `
 
 class SubscriptionWorkflowService extends GQuery {
-  constructor () {
+  constructor (client = null) {
     super()
-    // TODO: revisit this and evaluate other ways to build the GraphQL URL - not safe to rely on window.location (?)
-    const baseUrl = `${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}${window.location.pathname}`
-    const httpUrl = `${window.location.protocol}//${baseUrl}graphql`
-    const wsUrl = `${window.location.protocol.startsWith('https') ? 'wss' : 'ws'}://${baseUrl}subscriptions`
-    this.apolloClient = createApolloClient(httpUrl, wsUrl)
+    if (client === null) {
+      // TODO: revisit this and evaluate other ways to build the GraphQL URL - not safe to rely on window.location (?)
+      const baseUrl = `${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}${window.location.pathname}`
+      const httpUrl = `${window.location.protocol}//${baseUrl}graphql`
+      const wsUrl = `${window.location.protocol.startsWith('https') ? 'wss' : 'ws'}://${baseUrl}subscriptions`
+      this.apolloClient = createApolloClient(httpUrl, wsUrl)
+    }
     /**
      * @type {object}
      */
     this.observable = null
+    this.request = debounce(this.request_, 500)
   }
 
   recompute () {
     super.recompute()
     this.request()
   }
-
-  request = debounce(this.request_, 1000)
 
   request_ () {
     /**
