@@ -54,6 +54,13 @@
         :workflows="workflows"
       />
     </v-layout>
+    <template v-slot:append>
+      <div class="px-4 py-2 d-flex justify-center">
+        <span class="grey--text text--darken-2">
+            <strong v-if="environment !== 'PRODUCTION'">{{ environment }}</strong> {{ $t('App.name') }} {{ packageJson.version }}
+          </span>
+      </div>
+    </template>
   </v-navigation-drawer>
 </template>
 
@@ -86,6 +93,7 @@ export default {
   }),
   computed: {
     ...mapState('workflows', ['workflows']),
+    ...mapState(['packageJson', 'environment']),
     drawer: {
       get: function () {
         return this.$store.state.app.drawer
