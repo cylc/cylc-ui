@@ -27,6 +27,12 @@
             mdi-help
           </v-icon>
         </template>
+
+        <template v-slot:append-outer>
+          <!-- pass the "append-outer" slot onto the child component -->
+          <slot name="append-outer"></slot>
+        </template>
+
       </component>
     </template>
     <vue-markdown>{{ help }}</vue-markdown>
@@ -75,7 +81,7 @@ const VNumberField = Vue.component(
 
 // default props for all form inputs
 const DEFAULT_PROPS = {
-  outlined: true,
+  filled: true,
   rounded: true,
   dense: true
 }

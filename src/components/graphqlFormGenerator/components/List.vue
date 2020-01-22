@@ -1,59 +1,50 @@
 <template>
-  <v-container>
-    <!-- The title -->
-    <v-row>
-      {{label}}
-    </v-row>
-    <!-- The List -->
-    <v-row
-     v-for="(item, index) in value"
-     :key="index"
-    >
-      <v-col cols="10">
-        <!-- The input -->
-        <component
-         v-model="value[index]"
-         :propOverrides="{'dense': true}"
-         :gqlType="gqlType.ofType"
-         :types="types"
-         :is="FormInput"
-         label=""
-        />
-        <!--
-          NOTE: we use :is here due to a nested component
-          registration issue.
-        -->
-      </v-col>
-      <v-col cols="2">
-        <!-- The remove row button -->
+  <v-list
+   dense
+   one-line
+  >
+    <v-list-item-title>{{ label }}</v-list-item-title>
+      <v-list-item
+        dense
+        v-for="(item, index) in value"
+        :key="index"
+      >
+        <v-list-item-content>
+          <!-- The input -->
+          <component
+           v-model="value[index]"
+           :propOverrides="{'dense': true}"
+           :gqlType="gqlType.ofType"
+           :types="types"
+           :is="FormInput"
+           label=""
+          >
+            <template v-slot:append-outer>
+              <v-icon
+               @click="remove(index)"
+              >
+                mdi-close-circle
+              </v-icon>
+            </template>
+          </component>
+          <!--
+            NOTE: we use :is here due to a nested component
+            registration issue.
+          -->
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item
+       dense
+      >
         <v-btn
-         class="mx-2"
-         fab
-         dark
-         x-small
-         color="primary"
-         @click="remove(index)"
+         @click="add()"
+         text
         >
-          <v-icon dark>mdi-minus</v-icon>
+          <v-icon>mdi-plus-circle</v-icon>
+          Add Item
         </v-btn>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="2">
-        <!-- The add row button -->
-        <v-btn
-         class="mx-2"
-         fab
-         dark
-         x-small
-         color="primary"
-         @click="add"
-        >
-          <v-icon dark>mdi-plus</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
+      </v-list-item>
+  </v-list>
 </template>
 
 <script>
@@ -72,6 +63,7 @@ export default {
 
     /* Remove the item at `index` from the list. */
     remove (index) {
+      console.log('remove', index)
       this.value.splice(index, 1)
     }
   }
