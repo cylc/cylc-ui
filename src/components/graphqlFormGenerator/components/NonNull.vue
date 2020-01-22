@@ -6,7 +6,13 @@
    :types="types"
    :label="label + ' (required)'"
    :is="FormInput"
-  />
+  >
+    <template v-slot:append-outer>
+      <!-- pass the "append-outer" slot onto the child component -->
+      <slot name="append-outer">
+      </slot>
+    </template>
+  </component>
 </template>
 
 <script>

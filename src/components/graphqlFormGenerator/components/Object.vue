@@ -1,6 +1,5 @@
 <template>
   <v-input
-   v-bind="props"
   >
     <template>
       <component
