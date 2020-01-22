@@ -4,6 +4,18 @@
   <component
    v-model="model"
    v-bind="props"
+   v-mask="props['mask']"
+   v-if="props && props['mask']"
+   :label="label"
+   :gqlType="gqlType"
+   :types="types"
+  />
+  <!-- NOTE: we need a duplicate component without the v-mask directive -->
+  <!-- eslint-disable-next-line vue/require-component-is -->
+  <component
+   v-model="model"
+   v-bind="props"
+   v-else
    :label="label"
    :gqlType="gqlType"
    :types="types"
@@ -12,6 +24,7 @@
 
 <script>
 import Vue from 'vue'
+import { mask } from 'vue-the-mask'
 
 import { VTextField } from 'vuetify/lib/components/VTextField'
 import { VSwitch } from 'vuetify/lib/components/VSwitch'
@@ -59,9 +72,6 @@ const RULES = {
     x => (!x || Number.isInteger(x)) || 'Integer',
   noSpaces:
     x => (!x || !x.includes(' ')) || 'Cannot contain spaces',
-  ISO8601:
-    // ensure only white-listed chars are present
-    x => Boolean(!x || x.match(/^[\dT.,:-]+$/)) || 'Date-time in ISO8601 format',
   cylcConfigItem:
     // PERMIT [a][b]c, a, [a] PROHIBIT a[b], [b]a, a], ]a
     x => Boolean(!x || x.match(/^((\[[^=\]]+\])+)?([^[=\]-]+)?$/)) || 'Invalid',
@@ -93,7 +103,7 @@ const NAMED_TYPES = {
     color: 'blue darken-3'
   },
   // Cylc types
-  WorkflowName: {
+  WorkflowID: {
     is: VTextField,
     rules: [
       RULES.noSpaces
@@ -105,7 +115,6 @@ const NAMED_TYPES = {
       RULES.noSpaces
     ]
   },
-  // WorkflowID
   CyclePoint: {
     is: VTextField,
     rules: [
@@ -133,6 +142,7 @@ const NAMED_TYPES = {
   },
   TaskID: {
     is: VTextField,
+    placeholder: 'name.cycle',
     rules: [
       RULES.noSpaces,
       RULES.taskID
@@ -146,19 +156,19 @@ const NAMED_TYPES = {
   },
   NamespaceIDGlob: {
     is: VTextField,
+    placeholder: 'name[.cycle][:status]',
     rules: [
       RULES.noSpaces
     ]
   },
   TimePoint: {
     is: VTextField,
-    rules: [
-      RULES.noSpaces,
-      RULES.ISO8601
-    ]
+    placeholder: 'yyyy-mm-ddThh:mm:ss',
+    mask: '####-##-##T##:##:##'
   },
   RuntimeConfiguration: {
     is: VTextField,
+    placeholder: '[section]setting',
     rules: [
       RULES.cylcConfigItem
     ]
@@ -188,6 +198,10 @@ export default {
   name: 'g-form-input',
 
   mixins: [formElement],
+
+  directives: {
+    mask
+  },
 
   props: {
     // dictionary of props for overriding default values
