@@ -49,6 +49,15 @@ export default [
     }
   },
   {
+    path: '/tree/:workflowName',
+    view: 'Tree',
+    name: 'tree',
+    meta: {
+      layout: 'default'
+    },
+    props: true
+  },
+  {
     path: '/graph/:workflowName',
     view: 'Graph',
     name: 'graph',
