@@ -1,6 +1,5 @@
 <template>
-  <v-input
-  >
+  <v-input>
     <template>
       <component
        v-for="input in inputs"
@@ -12,6 +11,10 @@
        :label="input.label"
       />
     </template>
+    <template v-slot:append>
+    <!-- resolve the "append-outer" slot here -->
+    <slot name="append-outer"></slot>
+  </template>
   </v-input>
 </template>
 

@@ -24,7 +24,7 @@
           <v-icon
            @click="showHelp = !showHelp"
           >
-            mdi-help
+            mdi-help-circle-outline
           </v-icon>
         </template>
 
