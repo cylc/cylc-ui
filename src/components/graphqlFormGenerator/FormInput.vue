@@ -1,30 +1,42 @@
 <template>
-  <!-- NOTE: the is field comes from `props` -->
-  <!-- eslint-disable-next-line vue/require-component-is -->
-  <component
-   v-model="model"
-   v-bind="props"
-   v-mask="props['mask']"
-   v-if="props && props['mask']"
-   :label="label"
-   :gqlType="gqlType"
-   :types="types"
-  />
-  <!-- NOTE: we need a duplicate component without the v-mask directive -->
-  <!-- eslint-disable-next-line vue/require-component-is -->
-  <component
-   v-model="model"
-   v-bind="props"
-   v-else
-   :label="label"
-   :gqlType="gqlType"
-   :types="types"
-  />
+  <v-tooltip
+    bottom
+    v-model="showHelp"
+  >
+    <template v-slot:activator="{ on }">
+
+      <!-- TODO: try wrapping everyhing in v-input? -->
+
+      <!-- TODO: fix the inputType form alignment thinggy -->
+
+      <!-- NOTE: the is field comes from `props` -->
+      <!-- eslint-disable-next-line vue/require-component-is -->
+      <component
+       v-model="model"
+       v-bind="props"
+       v-mask="props.mask"
+       :label="label"
+       :gqlType="gqlType"
+       :types="types"
+       @blur="showHelp = false"
+      >
+        <template v-slot:append>
+          <v-icon
+           @click="showHelp = !showHelp"
+          >
+            mdi-help
+          </v-icon>
+        </template>
+      </component>
+    </template>
+    <vue-markdown>{{ help }}</vue-markdown>
+  </v-tooltip>
 </template>
 
 <script>
 import Vue from 'vue'
 import { mask } from 'vue-the-mask'
+import VueMarkdown from 'vue-markdown'
 
 import { VTextField } from 'vuetify/lib/components/VTextField'
 import { VSwitch } from 'vuetify/lib/components/VSwitch'
@@ -63,8 +75,9 @@ const VNumberField = Vue.component(
 
 // default props for all form inputs
 const DEFAULT_PROPS = {
-  filled: true,
-  rounded: true
+  outlined: true,
+  rounded: true,
+  dense: true
 }
 
 const RULES = {
@@ -199,8 +212,18 @@ export default {
 
   mixins: [formElement],
 
+  components: {
+    'vue-markdown': VueMarkdown
+  },
+
   directives: {
-    mask
+    mask: (el, binding) => {
+      // only use the mask if one is provided, this allows us to use the
+      // mask directive on elements which it doesn't support
+      if (binding.value) {
+        mask(el, binding)
+      }
+    }
   },
 
   props: {
@@ -212,10 +235,19 @@ export default {
   },
 
   data: () => ({
-    defaultProps: DEFAULT_PROPS
+    defaultProps: DEFAULT_PROPS,
+    showHelp: false
   }),
 
   computed: {
+    help () {
+      // TODO: provide argument help then default to type help if not found
+      if (this.type && this.type.description) {
+        return this.type.description.trim()
+      }
+      return null
+    },
+
     /* The props to pass to the form input.
      *
      * Note, this includes the "is" prop which tells Vue which component class
