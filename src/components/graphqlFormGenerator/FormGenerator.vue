@@ -23,8 +23,14 @@
 import FormInput from '@/components/graphqlFormGenerator/FormInput'
 import cloneDeep from 'lodash/cloneDeep'
 
+import { formModel } from '@/components/graphqlFormGenerator/mixins'
+
 export default {
   name: 'form-generator',
+
+  mixins: [
+    formModel
+  ],
 
   components: {
     'form-input': FormInput
@@ -66,6 +72,14 @@ export default {
     }
   },
 
+  watch: {
+    mutation: function () {
+      // reset the form if the mutation changes
+      // (i.e. this component is being re-used)
+      this.reset()
+    }
+  },
+
   methods: {
     /* Set this form to its initial conditions. */
     reset () {
@@ -101,38 +115,6 @@ export default {
 
       // done
       this.model = model
-    },
-
-    /* Return a null value of a JS type corresponding to the GraphQL type. */
-    getNullValue (type) {
-      let ret = null
-      let pointer = type
-      while (pointer) {
-        if (pointer.kind === 'LIST') {
-          ret = []
-          break
-        }
-        if (pointer.kind === 'INPUT_OBJECT') {
-          ret = {}
-          console.log(pointer)
-          for (const type of this.types) {
-            // TODO: this type iteration is already done in the mixin
-            //       should we use the mixin or a subset there-of here?
-            if (
-              type.name === pointer.name &&
-              type.kind === pointer.kind
-            ) {
-              for (const field of type.inputFields) {
-                ret[field.name] = this.getNullValue(field.type)
-              }
-              break
-            }
-          }
-          break
-        }
-        pointer = pointer.ofType
-      }
-      return ret
     }
   }
 }

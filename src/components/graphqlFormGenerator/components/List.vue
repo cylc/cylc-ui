@@ -48,17 +48,22 @@
 </template>
 
 <script>
-import { formElement } from '@/components/graphqlFormGenerator/mixins'
+import { formElement, formModel } from '@/components/graphqlFormGenerator/mixins'
 
 export default {
   name: 'g-list',
 
-  mixins: [formElement],
+  mixins: [
+    formElement,
+    formModel
+  ],
 
   methods: {
     /* Add an item to the list. */
     add () {
-      this.value.push(null)
+      this.value.push(
+        this.getNullValue(this.gqlType.ofType)
+      )
     },
 
     /* Remove the item at `index` from the list. */

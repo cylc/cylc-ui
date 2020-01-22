@@ -56,6 +56,7 @@ export default {
     },
 
     sampleMutation () {
+      // create a mutation with one argument per input type
       const args = []
       for (const type of this.types) {
         if (
@@ -72,6 +73,7 @@ export default {
         }
       }
 
+      // add a nested NonNull component
       args.push({
         name: 'NonNull<String>',
         defaultValue: '"Can\'t null this"',
@@ -85,6 +87,7 @@ export default {
         }
       })
 
+      // add a nested List component
       args.push({
         name: 'List<String>',
         defaultValue: '["abc"]',
@@ -98,6 +101,7 @@ export default {
         }
       })
 
+      // add a double nested NonNull, List component
       args.push({
         name: 'NonNull<List<NonNull<String>>>',
         defaultValue: '["abc"]',
@@ -113,6 +117,45 @@ export default {
               ofType: {
                 name: 'String',
                 kind: 'SCALAR'
+              }
+            }
+          }
+        }
+      })
+
+      // add a triple nested Object, List component
+      args.push({
+        name: 'List<BroadcastSetting>',
+        defaultValue: '[{"key": "[env]FOO", "value": "foo"}]',
+        type: {
+          name: null,
+          kind: 'LIST',
+          ofType: {
+            name: 'BroadcastSetting',
+            kind: 'INPUT_OBJECT'
+          }
+        }
+      })
+
+      // add a quintuple nested Object just for fun
+      // (if this works all is good!)
+      // NOTE: always debug from the lowest level of nesting
+      // NOTE: BroadcastSetting = NonNull<String>, NonNull<String>
+      args.push({
+        name: 'NonNull<List<NonNull<BroadcastSetting>>>',
+        defaultValue: '[{"key": "[env]FOO", "value": "foo"}]',
+        type: {
+          name: null,
+          kind: 'NON_NULL',
+          ofType: {
+            name: null,
+            kind: 'LIST',
+            ofType: {
+              name: null,
+              kind: 'NON_NULL',
+              ofType: {
+                name: 'BroadcastSetting',
+                kind: 'INPUT_OBJECT'
               }
             }
           }
