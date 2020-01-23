@@ -63,7 +63,10 @@ export const formElement = {
 export const formModel = {
   methods: {
     /* Return a null value of a JS type corresponding to the GraphQL type. */
-    getNullValue (type) {
+    getNullValue (type, types) {
+      if (!types) {
+        types = []
+      }
       let ret = null
       let pointer = type
       while (pointer) {
@@ -75,8 +78,7 @@ export const formModel = {
         }
         if (pointer.kind === 'INPUT_OBJECT') {
           ret = {}
-          console.log(pointer)
-          for (const type of this.types) {
+          for (const type of types) {
             // TODO: this type iteration is already done in the mixin
             //       should we use the mixin or a subset there-of here?
             if (

@@ -62,7 +62,7 @@ export default {
     /* Add an item to the list. */
     add () {
       this.value.push(
-        this.getNullValue(this.gqlType.ofType)
+        this.getNullValue(this.gqlType.ofType, this.types)
       )
     },
 
