@@ -149,14 +149,14 @@ export default {
             arg.defaultValue
           )
           if (!defaultValue) {
-            defaultValue = this.getNullValue(arg.type)
+            defaultValue = this.getNullValue(arg.type, this.types)
           }
         } else {
           // if no default value is provided choose a sensible null value
           // NOTE: IF we set null as the default type for a list
           //       THEN tried to change it to [] later this would break
           //       THIS would break Vue model
-          defaultValue = this.getNullValue(arg.type)
+          defaultValue = this.getNullValue(arg.type, this.types)
         }
         model[arg.name] = defaultValue
       }
