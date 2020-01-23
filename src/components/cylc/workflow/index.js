@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { Widget } from '@lumino/widgets'
 import Tree from '@/components/cylc/Tree'
-import Graph from '@/components/cylc/Graph'
+import Graph from '@/components/cylc/graph/Graph'
 
 /**
  * A widget that will have just a single HTML element to be referenced by the Vue component.
