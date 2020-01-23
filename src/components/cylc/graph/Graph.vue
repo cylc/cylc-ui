@@ -178,6 +178,9 @@ export default {
     const element = document.createElement('div')
     element.setAttribute('class', 'cytoscape')
     this.$el.appendChild(element)
+    // NOTE: Vue will try to create observers for each property in this nested cytoscape object
+    //       and it crashed my browser several times. By freezing it, we tell Vue to not bother
+    //       about it. This isn't a reactive property anyway, just a variable in the component.
     this.cytoscapeInstance = Object.freeze(cytoscape(({
       container: element
     })))
