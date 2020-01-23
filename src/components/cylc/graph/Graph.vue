@@ -8,7 +8,6 @@
     ></SyncLoader>
     <div class='switchlayout'>
       <v-btn
-        id='freeze-button'
         name='freeze'
         :outlined='true'
         :class="{
@@ -26,7 +25,6 @@
         <v-btn
           v-for="engine in layoutEngines"
           :key="engine"
-          :id='`${engine}-button`'
           :outlined='true'
           :name='engine'
           :class="{
@@ -45,7 +43,7 @@
     <div class='graph-warning'>
       <span>WARNING: POC Graph View: beware of large workflows!</span>
     </div>
-    <div class='cytoscape-navigator-overlay'>
+    <div class='cytoscape-navigator-overlay' ref="cytoscape-navigator-overlay">
       <canvas></canvas>
       <div class='cytoscape-navigatorView'></div>
       <div class='cytoscape-navigatorOverlay'></div>
@@ -320,7 +318,7 @@ export default {
      */
     setupNavigator (instance) {
       instance.navigator({
-        container: '.cytoscape-navigator-overlay',
+        container: this.$refs['cytoscape-navigator-overlay'],
         viewLiveFramerate: 0, // set false to update graph pan only on drag end set 0 to do it instantly set a number (frames per second) to update not more than N times per second
         thumbnailEventFramerate: 30, // max thumbnail's updates per second triggered by graph updates
         thumbnailLiveFramerate: false, // max thumbnail's updates per second. Set false to disable
@@ -615,12 +613,9 @@ export default {
 }
 </script>
 
-<style lang="css">
-@import '~tippy.js/themes/light-border.css';
-@import '~@/styles/cytoscape/panzoom.css';
-</style>
-
 <style lang="scss">
 @import '~@/styles/cytoscape/html-label.scss';
 @import '~@/styles/cytoscape/cytoscape-custom.scss';
+@import '~@/styles/cytoscape/panzoom.css';
+@import '~tippy.js/themes/light-border.css';
 </style>

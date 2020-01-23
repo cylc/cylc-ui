@@ -112,7 +112,7 @@ const panzoomDefaults = {
   panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib) scales from this to 1.0
   zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
   fitSelector: undefined, // selector of elements to fit
-  animateOnFit: () => {
+  animateOnFit: function () {
     // whether to animate on fit
     return false
   },
@@ -129,10 +129,10 @@ const cytoscapeDefaultStyle = [
     css: {
       'background-color': (node) => {
         const nodeState = String(node.data('state'))
-        const STATE = nodeState.toUpperCase()
+        const state = nodeState.toUpperCase()
         let color = states.DEFAULT.colour
-        if (Object.hasOwnProperty.call(states, STATE)) {
-          color = states[STATE].colour
+        if (Object.hasOwnProperty.call(states, state)) {
+          color = states[state].colour
         }
         return color
       },
