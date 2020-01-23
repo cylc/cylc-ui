@@ -1,7 +1,38 @@
 <template>
   <v-form validate>
-    <h3>{{ mutation.name }}</h3>
-    <p>{{ mutation.description }}</p>
+    <!-- the mutation title -->
+    <h3
+     style="text-transform: capitalize;"
+    >
+      {{ mutation.name }}
+    </h3>
+
+    <!-- the mutation description -->
+    <v-expansion-panels
+     accordion
+     flat
+     hover
+     v-if="longDescription"
+    >
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          <vue-markdown
+           :source="shortDescription"
+          />
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <vue-markdown
+           :source="longDescription"
+          />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+    <vue-markdown
+     v-else
+     :source="shortDescription"
+    />
+
+    <!-- the form inputs -->
     <form-input
      v-for="input in inputs"
      v-bind:key="input.label"
@@ -10,16 +41,22 @@
      :types="types"
      :label="input.label"
     />
+
+    <!-- the form controls -->
     <v-btn
       @click="reset"
     >
       Reset
     </v-btn>
+
+    <!-- temporary visualisation of the data model -->
     <pre ref="output">{{ model }}</pre>
   </v-form>
 </template>
 
 <script>
+import VueMarkdown from 'vue-markdown'
+
 import FormInput from '@/components/graphqlFormGenerator/FormInput'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -33,6 +70,7 @@ export default {
   ],
 
   components: {
+    'vue-markdown': VueMarkdown,
     'form-input': FormInput
   },
 
@@ -69,6 +107,16 @@ export default {
         })
       }
       return ret
+    },
+
+    /* Return the first line of the description. */
+    shortDescription () {
+      return (this.mutation.description || '').split('\n', 1)[0] || ''
+    },
+
+    /* Return the subsequent lines of the description */
+    longDescription () {
+      return (this.mutation.description || '').split('\n').slice(1).join('\n')
     }
   },
 
