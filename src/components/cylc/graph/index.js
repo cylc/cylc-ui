@@ -116,7 +116,11 @@ const panzoomDefaults = {
     // whether to animate on fit
     return false
   },
-  fitAnimationDuration: 1000 // duration of animation on fit
+  fitAnimationDuration: 1000, // duration of animation on fit
+  sliderHandleIcon: 'mdi mdi-minus',
+  zoomInIcon: 'mdi mdi-plus',
+  zoomOutIcon: 'mdi mdi-minus',
+  resetIcon: 'mdi mdi-arrow-expand-all'
 }
 
 const cytoscapeDefaultStyle = [

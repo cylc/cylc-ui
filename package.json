@@ -38,7 +38,6 @@
     "tippy.js": "^4.3.5",
     "vee-validate": "^3.0.11",
     "vue": "^2.6.10",
-    "vue-cytoscape": "^0.2.10",
     "vue-i18n": "^8.14.1",
     "vue-meta": "^2.3.1",
     "vue-router": "^3.1.3",

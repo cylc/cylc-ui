@@ -50,8 +50,6 @@
       <div class='cytoscape-navigatorView'></div>
       <div class='cytoscape-navigatorOverlay'></div>
     </div>
-    <!-- cytoscape container -->
-    <div id="cytoscape"></div>
   </div>
 </template>
 
@@ -130,44 +128,66 @@ export default {
       graphData: {
         nodes: [],
         edges: []
-      }
+      },
+      cytoscapeInstance: null
     }
   },
 
+  /**
+   * The watchers created by this component.
+   *
+   * The workflows property is mapped by Vuex (mapState). Whenever Vuex changes it, due to
+   * changes to the store, we are automatically notified. Even if the workflows object reference
+   * was not changed, but one of its properties was (deep: true).
+   *
+   * When the workflowUpdated method is executed, it will calculate the graphData, and change it
+   * once done.
+   *
+   * The graphData watcher will react to changes (not deep!) of graphData, and call the function
+   * updateGraph (debounced). This function is responsible for then - as per its name - update
+   * the graph, the layout, any other setting necessary once the nodes and edges have been added
+   * or removed.
+   */
   watch: {
-    graphData: function () {
-      this.updateGraph()
-    },
-
     workflows: {
       handler: function (newValue) {
         this.workflowUpdated(newValue)
       },
       deep: true
+    },
+    graphData: function () {
+      this.updateGraph()
     }
   },
 
-  beforeCreate () {
-    cytoscape.use(dagre)
-  },
-
+  /**
+   * When this component is created, we simply create debounced functions
+   */
   created () {
     this.updateGraph = debounce(this.updateGraph_, 100)
     this.workflowUpdated = debounce(this.workflowUpdated_, 100)
   },
 
   mounted () {
-    const instance = cytoscape({
-      container: document.getElementById('cytoscape')
-    })
+    // create a div for cytoscape, this is an approach similar to vue-cytoscape
+    // but the vue-cytoscape component offers more than what we need, so we imitate
+    // part of its behaviour here, and ignore the rest and handle the graph and cytoscape
+    // settings ourselves.
+    const element = document.createElement('div')
+    element.setAttribute('class', 'cytoscape')
+    this.$el.appendChild(element)
+    this.cytoscapeInstance = Object.freeze(cytoscape(({
+      container: element
+    })))
     this.registerExtensions()
-    this.runLayout(instance)
-    this.setupUndoRedo(instance)
-    this.setupPanzoom(instance)
-    this.setupNavigator(instance)
-    this.setupInteractivity(instance)
-    this.setupEventListeners(instance)
-    this.setupHtmlLabel(instance, states)
+    cytoscape.use(dagre)
+    this.runLayout(this.cytoscapeInstance)
+    this.setupUndoRedo(this.cytoscapeInstance)
+    this.setupPanzoom(this.cytoscapeInstance)
+    this.setupNavigator(this.cytoscapeInstance)
+    this.setupInteractivity(this.cytoscapeInstance)
+    this.setupEventListeners(this.cytoscapeInstance)
+    this.setupHtmlLabel(this.cytoscapeInstance, states)
     this.loading = false
   },
 
@@ -180,18 +200,20 @@ export default {
   },
 
   computed: {
+    // we map all the workflows here, but we have the workflowName prop to filter and know which one is being displayed
     ...mapState('workflows', ['workflows'])
   },
 
   methods: {
     /**
      * @param {[
-       * {
-       *   nodesEdges: {
-       *     edges: [],
-       *     nodes: []
-       *   }
-       * }
+     * {
+     *   name: string,
+     *   nodesEdges: {
+     *     edges: [],
+     *     nodes: []
+     *   }
+     * }
      * ]} workflows - vuex state managed workflows
      */
     workflowUpdated_ (workflows) {
@@ -255,12 +277,13 @@ export default {
     /**
      * Runs the current layout.
      * @param {cytoscape} instance - the cytoscape instance
+     * @param {*} [layoutOptions=null] - the layout options
      * @see https://js.cytoscape.org/#cy.layout
      */
-    runLayout (instance) {
+    runLayout (instance, layoutOptions = null) {
       instance
         .elements()
-        .layout(this.layoutOptions)
+        .layout(layoutOptions || this.layoutOptions)
         .run()
     },
 
@@ -270,7 +293,7 @@ export default {
      */
     setupUndoRedo (instance) {
       const undoRedoOptions = {
-        isDebug: true, // Debug mode for console messages
+        isDebug: false, // Debug mode for console messages
         actions: {}, // actions to be added
         undoableDrag: true, // Whether dragging nodes are undoable can be a function as well
         stackSizeLimit: undefined, // Size limit of undo stack, note that the size of redo stack cannot exceed size of undo stack
@@ -325,13 +348,11 @@ export default {
             }
             const parent = node.data('parent')
             const state = node.data('state')
-            const tasksquare = '<div class="box-task-graph ' + state + '-graph"></div>'
+            const taskSquare = '<div class="box-task-graph ' + state + '-graph"></div>'
             const jobs = node.data('jobs')
-            const parentstring = `<strong>parent <span style="color: #555;">${parent}</span></strong>`
-            const progress = `<br><strong>progress <span style="color: #555;"><br>${runPercent}%</span></strong>`
 
             let jobInfoBlock = '<div>'
-            each(jobs, (job, key) => {
+            for (const job of jobs) {
               const jobId = `<span class="jobid">${job.batchSysJobId}</span>`
               const jobSquare = `<div class="box-job-graph ${job.state}-graph"></div>`
               const details = `<details><summary>${jobId}${jobSquare}</summary>`
@@ -346,27 +367,26 @@ export default {
               jobInfoBlock += `${details}${submitNum}${batchSysName}${batchSysJobId}${host}${startedTime}${submittedTime}${finishedTime}`
               jobInfoBlock += '<hr class="hr-graph">'
               jobInfoBlock += '</details>'
-            })
+            }
             jobInfoBlock += '</div>'
 
-            const jobblock = `${jobInfoBlock}</div></div>`
-            content.innerHTML =
-              '<div class="header-graph"><strong>task</div></strong><br>' +
-              '<strong>name <span style="color: #555;">' +
-              node.data('label') +
-              '</span></strong><br>' +
-              '<strong>state <span style="color: #555; padding-left: 14px;">' +
-              state +
-              '</span></strong>' +
-              tasksquare
+            const jobBlock = `${jobInfoBlock}</div></div>`
+            // TODO: performance improvement for later, check if we can batch the innerHTML changes in a single operation!
+            content.innerHTML = `
+              <div class="header-graph">
+                <strong>task</div></strong>
+                <br/>
+                <strong>name <span style="color: #555;">${node.data('label')}</span></strong>
+                <br/>
+                <strong>state <span style="color: #555; padding-left: 14px;">${state}</span></strong>
+                ${taskSquare}`
             if (state === 'running') {
-              content.innerHTML += progress
+              content.innerHTML += `<br><strong>progress <span style="color: #555;"><br>${runPercent}%</span></strong>`
             }
             if (parent !== undefined) {
-              content.innerHTML += parentstring
+              content.innerHTML += `<strong>parent <span style="color: #555;">${parent}</span></strong>`
             }
-            content.innerHTML += `<hr class="hr-graph"><div class="header-graph"><strong>jobs</div></strong><br>${jobblock}`
-            content.align = 'left'
+            content.innerHTML += `<hr class="hr-graph"><div class="header-graph"><strong>jobs</div></strong><br>${jobBlock}`
             return content
           },
           theme: 'light-border',
@@ -391,56 +411,48 @@ export default {
       instance.on('tap', 'edge', (event) => {
         const edge = event.target
         edge.addClass('selected')
-        const ref = edge.popperRef()
-        this.tippy = new Tippy(ref, {
+        this.tippy = new Tippy(edge.popperRef(), {
           content: () => {
             const content = document.createElement('div')
             content.classList.add('edge-tooltip')
-            content.innerHTML =
-              '<div class="header-graph"><strong>edge</div></strong><br>' +
-              '<strong>owner: <span class="details-graph">' +
-              edge.data('owner') +
-              '</span></strong><br>' +
-              '<strong>name: <span class="details-graph">' +
-              edge.data('name') +
-              '</span></strong><br>' +
-              '<strong>source: <span class="details-graph">' +
-              edge.data('source') +
-              '</span></strong><br>' +
-              '<strong>target: <span class="details-graph">' +
-              edge.data('target') +
-              '</span></strong><br>' +
-              // '<strong>id <span class="details-graph>' +
-              // edge.data('id') +
-              // '</span></strong><br>' +
-              '<strong>label: <span class="details-graph">' +
-              edge.data('label') +
-              '</span></strong></div>'
-            content.align = 'left'
+            content.innerHTML = `
+              <div class="header-graph">
+                <strong>edge</div></strong>
+                <br/>
+                <strong>owner: <span class="details-graph">${edge.data('owner')}</span></strong>
+                <br/>
+                <strong>name: <span class="details-graph">${edge.data('name')}</span></strong>
+                <br/>
+                <strong>source: <span class="details-graph">${edge.data('source')}</span></strong>
+                <br/>
+                <strong>target: <span class="details-graph">${edge.data('target')}</span></strong>
+                <br/>
+                <strong>label: <span class="details-graph">${edge.data('label')}</span></strong>
+              </div>`
             return content
           },
-          theme: 'light-border',
-          trigger: 'manual',
-          arrow: true,
-          placement: 'left',
-          hideOnClick: 'false',
-          delay: [0, 2000],
+          allowHTML: true,
           animation: 'fade',
-          multiple: false,
-          sticky: true,
+          arrow: true,
+          delay: [0, 2000],
+          duration: [250, 275],
           flip: true,
           flipOnUpdate: true,
-          duration: [250, 275],
-          allowHTML: true,
-          interactive: true
+          hideOnClick: 'false',
+          interactive: true,
+          multiple: false,
+          placement: 'left',
+          sticky: true,
+          theme: 'light-border',
+          trigger: 'manual'
         })
         this.tippy.show()
       })
 
       instance.on('click', (_) => {
-        instance.elements().removeClass('semitransp')
-        instance.elements().removeClass('highlight')
-        instance.elements().removeClass('selected')
+        this.cytoscapeInstance.elements().removeClass('semitransp')
+        this.cytoscapeInstance.elements().removeClass('highlight')
+        this.cytoscapeInstance.elements().removeClass('selected')
         if (this.tippy !== null) {
           this.tippy.hide()
         }
@@ -456,9 +468,9 @@ export default {
       document.addEventListener(
         'keydown',
         (event) => {
-          if ((event.metaKey && event.which === 90) || (event.ctrlKey && event.which === 90)) {
+          if ((event.metaKey && event.key === 'Z') || (event.ctrlKey && event.key === 'Z')) {
             instance.undoRedo().undo()
-          } else if ((event.metaKey && event.which === 89) || (event.ctrlKey && event.which === 89)) {
+          } else if ((event.metaKey && event.key === 'Y') || (event.ctrlKey && event.key === 'Y')) {
             instance.undoRedo().redo()
           }
         },
@@ -496,16 +508,16 @@ export default {
               yOffset += offset
             }
             const jobSquare = `<svg width="200" height="130" viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="${xOffset}" y="${yOffset}" width="20" height="20" rx="4" ry="4"  stroke="" fill="${states[jobState].colour}" fill-opacity="1" stroke-opacity="0.8"/>`
+                                <rect x="${xOffset}" y="${yOffset}" width="20" height="20" rx="4" ry="4"  stroke="" fill="${states[jobState].colour}" fill-opacity="1" stroke-opacity="0.8"/>`
             jobsGrid = jobsGrid.concat('', jobSquare)
           })
           return `<div style="position: relative; margin-top: 3em;" class="cy-title">
-                  <span class="cy-title__label">${data.task.name}</span>
-                  <br/>
-                  <span  class="cy-title__cyclepoint">${data.cyclePoint}</span>
-                  <br/>
-                  ${jobsGrid}
-                </div>`
+                    <span class="cy-title__label">${data.task.name}</span>
+                    <br/>
+                    <span  class="cy-title__cyclepoint">${data.cyclePoint}</span>
+                    <br/>
+                    ${jobsGrid}
+                  </div>`
         }
       }])
     },
@@ -527,19 +539,15 @@ export default {
       if (this.tippy !== null) {
         this.tippy.hide()
       }
-      const instance = cytoscape({
-        container: document.getElementById('cytoscape')
-      })
-      instance
+      this.cytoscapeInstance
         .elements()
         .remove()
-      instance
-        .style()
-        .fromJson(cytoscapeDefaultStyle)
+      this.cytoscapeInstance
+        .style(cytoscapeDefaultStyle)
         .update()
-      instance.add(this.graphData)
-      this.setupUndoRedo(instance)
-      const loaded = await instance
+      this.cytoscapeInstance.add(this.graphData)
+      this.setupUndoRedo(this.cytoscapeInstance)
+      const loaded = await this.cytoscapeInstance
         .elements()
         .layout(this.layoutOptions)
         .run()
@@ -551,7 +559,7 @@ export default {
 
     /**
      * Called by the UI when the user switches a layout using some UI component (button/dropdown/etc). Its
-     * responsibility is simply to change the attributes related to the layout, and then fire an updateLayout call.
+     * responsibility is simply to change the attributes related to the layout, and then fi`re an updateLayout call.
      * @param message
      * @param event
      */
@@ -565,35 +573,40 @@ export default {
     /**
      * Called after the user switches layout. Its responsibility is to change the this.layoutOptions (dagre by default)
      * to the correct options, and then call this.doLayout(newOptions).
+     *
+     * We set the this.layoutOptions as in the this.updateGraph it is used to apply the layout to the newly
+     * created elements.
      */
     updateLayout () {
       switch (this.layoutName) {
         case 'dagre':
           this.layoutOptions = dagreOptions
-          this.runLayout(dagreOptions)
+          this.runLayout(this.cytoscapeInstance, dagreOptions)
           break
         case 'hierarchical':
-          this.cytoscapeInstance.elements().hca({
-            mode: 'threshold',
-            threshold: 25,
-            distance: 'euclidean', // euclidean, squaredEuclidean, manhattan, max
-            preference: 'mean', // median, mean, min, max,
-            damping: 0.8, // [0.5 - 1]
-            minIterations: 100, // [optional] The minimum number of iterations the algorithm will run before stopping (default 100).
-            maxIterations: 1000, // [optional] The maximum number of iterations the algorithm will run before stopping (default 1000).
-            attributes: [
-              (node) => {
-                return node.data('weight')
-              }
-            ]
-          })
+          this.cytoscapeInstance
+            .elements()
+            .hca({
+              mode: 'threshold',
+              threshold: 25,
+              distance: 'euclidean', // euclidean, squaredEuclidean, manhattan, max
+              preference: 'mean', // median, mean, min, max,
+              damping: 0.8, // [0.5 - 1]
+              minIterations: 100, // [optional] The minimum number of iterations the algorithm will run before stopping (default 100).
+              maxIterations: 1000, // [optional] The maximum number of iterations the algorithm will run before stopping (default 1000).
+              attributes: [
+                (node) => {
+                  return node.data('weight')
+                }
+              ]
+            })
           this.layoutOptions = hierarchicalOptions
-          this.runLayout(hierarchicalOptions)
+          this.runLayout(this.cytoscapeInstance, hierarchicalOptions)
           break
         default:
           // Should never happen!
           this.layoutOptions = dagreOptions
-          this.runLayout(dagreOptions)
+          this.runLayout(this.cytoscapeInstance, dagreOptions)
           break
       }
     }

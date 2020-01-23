@@ -1,89 +1,92 @@
 .c-graph {
+  width: 100%;
+  // the height of the graph area is 100 viewport-height, minus the height of the toolbar
+  height: calc(100vh - 48px);
+  background-color: #fff;
+  overflow: hidden;
+  z-index: 1;
+
+  .cytoscape {
+    // within the c-graph, so we just tell it to occupy the whole area
     width: 100%;
-    height: 800px;
+    height: 100%;
     background-color: #fff;
-    z-index: 1;
+    z-index: 2;
+  }
 
-    #cytoscape {
-      width: 100%;
-      height: 800px;
-      background-color: #fff;
-      z-index: 2;
-    }
+  .cytoscape-navigator-overlay {
+    position: absolute;
+    border: 1px solid #bacbcc;
+    background: #eafbfc;
+    z-index: 5;
+    width: 200px;
+    height: 150px;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+  }
 
-    .cytoscape-navigator-overlay {
-      position: absolute;
-      border: 1px solid #bacbcc;
-      background: #eafbfc;
-      z-index: 5;
-      width: 200px;
-      height: 150px;
-      bottom: 0px;
-      right: 0px;
-      overflow: hidden;
-    }
+  .cytoscape-navigatorView {
+    border: 1px solid #0a4;
+    border-radius: 4px;
+    background-color: #8af;
+    opacity: 0.2;
+    /* cursor: move; */
+  }
 
-    .cytoscape-navigatorView {
-      border: 1px solid #0a4;
-      border-radius: 4px;
-      background-color: #8af;
-      opacity: 0.2;
-      /* cursor: move; */
-    }
+  .spinner {
+    position: absolute;
+    bottom: 21px;
+    left: 1px;
+    z-index: 99;
+  }
 
-    .spinner {
-      position: absolute;
-      bottom: 21px;
-      left: 1px;
-      z-index: 99;
-    }
+  .switchlayout {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+  }
 
-   .switchlayout {
-      position: absolute;
-      bottom: 40px;
-      left: 0px;
-    }
+  .layout-button {
+    text-align: center;
+    color: slategray;
+    z-index: 4;
+    height: 40px;
+    margin-left: 4px;
+  }
 
-    .layout-button {
-      text-align: center;
-      color: slategray;
-      z-index: 4;
-      height: 40px;
-      margin-left: 4px;
-    }
+  .button-highlight {
+    background: yellow;
+  }
 
-    .button-highlight {
-       background:yellow;
-    }
+  .graph-warning {
+    color: red;
+    background: white;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 4;
+  }
 
-    .graph-warning {
-       color:red;
-       background:white;
-       position: absolute;
-       bottom:0px;
-       left:0px;
-       z-index: 4;
-    }
+  .freeze-button {
+    text-align: center;
+    color: red;
+    z-index: 4;
+    height: 40px;
+    margin: 4px;
+  }
 
-   .freeze-button {
-      text-align: center;
-      color: red;
-      z-index: 4;
-      height: 40px;
-      margin: 4px;
-    }
+  .node-tooltip {
+    font-family: arial, helvetica, sans-serif;
+  }
 
-    .node-tooltip {
-      font-family: arial, helvetica, sans-serif;
-    }
-
-    .edge-tooltip {
-      font-family: arial, helvetica, sans-serif;
-      width: 100%;
-    }
+  .edge-tooltip {
+    font-family: arial, helvetica, sans-serif;
+    width: 100%;
+  }
 }
 
 .tippy-tooltip {
-    background-color: black;
-    font-family:courier;
+  background-color: black;
+  font-family: courier, serif;
 }
