@@ -36,8 +36,12 @@ const mockedWorkflowService = {
 
 describe('Toolbar component', () => {
   let vuetify
+  let $route
   beforeEach(() => {
     vuetify = new Vuetify()
+    $route = {
+      name: 'testRoute'
+    }
     store.state.workflows.workflows = [
       {
         id: 'user/id',
@@ -49,7 +53,10 @@ describe('Toolbar component', () => {
   })
   it('should initialize props', () => {
     const wrapper = shallowMount(Toolbar, {
-      store
+      store,
+      mocks: {
+        $route
+      }
     })
     expect(wrapper.is(Toolbar)).to.equal(true)
   })
@@ -62,6 +69,7 @@ describe('Toolbar component', () => {
       vuetify,
       store,
       mocks: {
+        $route,
         $t: () => {} // vue-i18n
       }
     })
@@ -78,7 +86,10 @@ describe('Toolbar component', () => {
   })
   it('should stop the workflow', async () => {
     const wrapper = shallowMount(Toolbar, {
-      store
+      store,
+      mocks: {
+        $route
+      }
     })
 
     // mock service
@@ -92,7 +103,10 @@ describe('Toolbar component', () => {
   })
   it('should stop/release the workflow', async () => {
     const wrapper = shallowMount(Toolbar, {
-      store
+      store,
+      mocks: {
+        $route
+      }
     })
     wrapper.vm.$data.responsive = true
     await Vue.nextTick()
