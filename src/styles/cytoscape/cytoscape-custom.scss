@@ -46,19 +46,11 @@
     left: 0;
     display: flex;
     flex-direction: column;
-    background: rgba(0, 0, 0, 0.06);
-    color: rgba(0, 0, 0, 0.87);
     z-index: 3;
 
     .layout-button {
       z-index: 4;
       flex: 1 1 max-content;
-      color: rgba(0, 0, 0, 0.87);
-    }
-
-    // fix transparency from switch-layout for text
-    .v-label {
-      color: rgba(1, 1, 1, 0.86);
     }
 
     // prevent v-select width 100% - https://github.com/vuetifyjs/vuetify/issues/6275#issuecomment-546621371

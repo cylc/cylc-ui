@@ -6,23 +6,32 @@
       :size='vueSpinner.size'
       class='spinner'
     ></SyncLoader>
-    <div class='switch-layout ma-0 px-4'>
-      <!-- toggle freeze layout -->
-      <v-switch
-        v-model="freeze"
-        class="layout-button black--text"
-        color="red"
-        label="freeze layout"
-        :inset=true
-      ></v-switch>
-      <!-- choose layout engine -->
-      <v-select
-        class="layout-button"
-        v-model="layoutName"
-        :items="layoutEngines"
-        label="Layout Engine"
-        @change="switchLayout"
-      ></v-select>
+    <div class='switch-layout ma-0'>
+      <v-expansion-panels
+        :value=true
+      >
+        <v-expansion-panel>
+          <v-expansion-panel-header>Layout Options</v-expansion-panel-header>
+          <v-expansion-panel-content>
+          <!-- toggle freeze layout -->
+          <v-switch
+              v-model="freeze"
+              class="layout-button black--text"
+              color="red"
+              label="freeze layout"
+              :inset=true
+          ></v-switch>
+          <!-- choose layout engine -->
+          <v-select
+              class="layout-button"
+              v-model="layoutName"
+              :items="layoutEngines"
+              label="Layout Engine"
+              @change="switchLayout"
+          ></v-select>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </div>
     <v-snackbar
       top
