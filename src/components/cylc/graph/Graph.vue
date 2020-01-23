@@ -298,13 +298,24 @@ export default {
      * Runs the current layout.
      * @param {cytoscape} instance - the cytoscape instance
      * @param {*} [layoutOptions=null] - the layout options
+     * @return {boolean} true if the layout ran successfully, false otherwise (e.g. manually stopped, temperature drop, etc)
      * @see https://js.cytoscape.org/#cy.layout
      */
     runLayout (instance, layoutOptions = null) {
-      instance
-        .elements()
-        .layout(layoutOptions || this.layoutOptions)
-        .run()
+      try {
+        return instance
+          .elements()
+          .layout(layoutOptions || this.layoutOptions)
+          .run()
+      } catch (_) {
+        // This is ignored, but can still be captured in the browser console, by checking the option to break on
+        // exceptions, even if captured.
+        //
+        // The reason we need this, is that if the user has multiple components being displayed, and then closes one
+        // of them while this code is running, it may cause an error saying that the layout is empty.
+        // There is no action that we, or the user, can perform upon such error. Hence this being ignored.
+      }
+      return false
     },
 
     /**
@@ -564,16 +575,12 @@ export default {
         .update()
       this.cytoscapeInstance.add(this.graphData)
       this.setupUndoRedo(this.cytoscapeInstance)
-      const loaded = await this.cytoscapeInstance
-        .elements()
-        .layout(this.layoutOptions)
-        .run()
-      if (!loaded) {
-        throw new Error('There was an error loading the graph view!')
+      const loaded = this.runLayout(this.cytoscapeInstance, this.layoutOptions)
+      if (loaded) {
+        // TODO: in case the graph disappears after a while, we can force it to be painted again by uncommenting the next line.
+        // this.resizeGraph()
+        this.loading = false
       }
-      // TODO: in case the graph disappears after a while, we can force it to be painted again by uncommenting the next line.
-      // this.resizeGraph()
-      this.loading = false
     },
 
     /**
