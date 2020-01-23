@@ -179,12 +179,12 @@ export default {
     })))
     this.registerExtensions()
     cytoscape.use(dagre)
+    this.setupEventListeners()
     this.runLayout(this.cytoscapeInstance)
     this.setupUndoRedo(this.cytoscapeInstance)
     this.setupPanzoom(this.cytoscapeInstance)
     this.setupNavigator(this.cytoscapeInstance)
     this.setupInteractivity(this.cytoscapeInstance)
-    this.setupEventListeners(this.cytoscapeInstance)
     this.setupHtmlLabel(this.cytoscapeInstance, states)
     this.loading = false
   },
@@ -196,6 +196,7 @@ export default {
       this.tippy.hide()
     }
     this.cytoscapeInstance.panzoom('destroy')
+    document.removeEventListener('keydown', this.keydownEventHandler)
   },
 
   computed: {
@@ -461,20 +462,17 @@ export default {
     /**
      * Sets up the event listeners for the instance.
      * NB: remember to remove the event listeners to avoid memory leaks.
-     * @param {cytoscape} instance - the cytoscape instance
      */
-    setupEventListeners (instance) {
-      document.addEventListener(
-        'keydown',
-        (event) => {
-          if ((event.metaKey && event.key === 'Z') || (event.ctrlKey && event.key === 'Z')) {
-            instance.undoRedo().undo()
-          } else if ((event.metaKey && event.key === 'Y') || (event.ctrlKey && event.key === 'Y')) {
-            instance.undoRedo().redo()
-          }
-        },
-        true
-      )
+    setupEventListeners () {
+      document.addEventListener('keydown', this.keydownEventHandler)
+    },
+
+    keydownEventHandler (event) {
+      if ((event.metaKey && event.key === 'Z') || (event.ctrlKey && event.key === 'Z')) {
+        this.cytoscapeInstance.undoRedo().undo()
+      } else if ((event.metaKey && event.key === 'Y') || (event.ctrlKey && event.key === 'Y')) {
+        this.cytoscapeInstance.undoRedo().redo()
+      }
     },
 
     /**
