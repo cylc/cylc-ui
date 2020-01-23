@@ -42,6 +42,12 @@ class ContentWidget extends Widget {
     // close widget
     super.onCloseRequest(msg)
   }
+
+  onActivateRequest (msg) {
+    // Offer an opportunity for components to act when the widget is activated
+    const event = new Event('activate:widgetcomponent')
+    document.getElementById(this.id).dispatchEvent(event)
+  }
 }
 
 const TreeWrapper = Vue.component('tree-wrapper', {
@@ -62,11 +68,17 @@ const TreeWrapper = Vue.component('tree-wrapper', {
   mounted () {
     const widgetElement = document.getElementById(this.widgetId)
     widgetElement.appendChild(this.$refs[this.widgetId].$el)
-    const vm = this
-    document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', () => {
-      EventBus.$emit('delete:widget', { id: vm.widgetId })
-      vm.$destroy()
-    }, false)
+    document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', this.delete)
+  },
+  beforeDestroy () {
+    document.getElementById(this.widgetId).removeEventListener('delete:widgetcomponent', this.delete)
+  },
+  methods: {
+    delete () {
+      // This is captured by the View, that holds subscriptions, and then used to tell which subscription must be turned off
+      EventBus.$emit('delete:widget', { id: this.widgetId })
+      this.$destroy()
+    }
   },
   template: `
     <div>
@@ -93,11 +105,23 @@ const GraphWrapper = Vue.component('graph-wrapper', {
   mounted () {
     const widgetElement = document.getElementById(this.widgetId)
     widgetElement.appendChild(this.$refs[this.widgetId].$el)
-    const vm = this
-    document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', () => {
-      EventBus.$emit('delete:widget', { id: vm.widgetId })
-      vm.$destroy()
-    }, false)
+    document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', this.delete)
+    document.getElementById(this.widgetId).addEventListener('activate:widgetcomponent', this.activate)
+  },
+  beforeDestroy () {
+    document.getElementById(this.widgetId).removeEventListener('delete:widgetcomponent', this.delete)
+    document.getElementById(this.widgetId).removeEventListener('activate:widgetcomponent', this.activate)
+  },
+  methods: {
+    delete () {
+      // This is captured by the View, that holds subscriptions, and then used to tell which subscription must be turned off
+      EventBus.$emit('delete:widget', { id: this.widgetId })
+      this.$destroy()
+    },
+    activate () {
+      // when this widget is activated, we want to tell the wrapped graph that it needs to force-repaint to avoid blank graphs
+      this.$refs[this.widgetId].resizeGraph()
+    }
   },
   template: `
     <div>

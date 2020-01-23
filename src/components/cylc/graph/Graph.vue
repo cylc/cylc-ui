@@ -202,6 +202,10 @@ export default {
         y: 100
       }
     })
+    // Force it to be painted again, so that when added to the DOM it doesn't show a blank graph
+    this.$nextTick(() => {
+      this.resizeGraph()
+    })
     this.loading = false
   },
 
@@ -567,7 +571,19 @@ export default {
       if (!loaded) {
         throw new Error('There was an error loading the graph view!')
       }
+      // TODO: in case the graph disappears after a while, we can force it to be painted again by uncommenting the next line.
+      // this.resizeGraph()
       this.loading = false
+    },
+
+    /**
+     * Triggers a graph resize, forcing it to repaint itself. Useful when the graph nodes and edges have been
+     * modified, or when an older browser doesn't render the graph until it is resized.
+     * @see https://github.com/cytoscape/cytoscape.js/issues/1748
+     * @see https://github.com/cylc/cylc-ui/issues/381#issuecomment-577888098
+     */
+    resizeGraph () {
+      this.cytoscapeInstance.resize()
     },
 
     /**
