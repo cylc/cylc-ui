@@ -3,7 +3,10 @@
     <div v-if="!loaded">
       Loading...
     </div>
-    <div v-if="loaded">
+    <div
+     v-if="loaded"
+     style="padding: 1em;"
+    >
       <v-select
         v-if="mutations"
         v-model="selectedMutation"
@@ -13,6 +16,7 @@
       <v-card
         v-if="selectedMutation"
         class="mx-auto d-inline-block"
+        style="padding: 1em;"
         max-width="500"
         outlined
       >
