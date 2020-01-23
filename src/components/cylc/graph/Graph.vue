@@ -190,6 +190,15 @@ export default {
     this.setupNavigator(this.cytoscapeInstance)
     this.setupInteractivity(this.cytoscapeInstance)
     this.setupHtmlLabel(this.cytoscapeInstance, states)
+    // set the initial zoom-level and pan (position) of the graph
+    // to set only the zoom level, call: this.cytoscapeInstance.zoom(0.5)
+    this.cytoscapeInstance.viewport({
+      zoom: 0.5,
+      pan: {
+        x: 100,
+        y: 100
+      }
+    })
     this.loading = false
   },
 
