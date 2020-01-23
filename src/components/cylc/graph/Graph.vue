@@ -71,7 +71,7 @@ import {
   states,
   dagreOptions,
   hierarchicalOptions,
-  panzoomdefaults,
+  panzoomDefaults,
   cytoscapeDefaultStyle
 } from './index'
 
@@ -287,7 +287,7 @@ export default {
      * @param {cytoscape} instance - the cytoscape instance
      */
     setupPanzoom (instance) {
-      instance.panzoom(panzoomdefaults)
+      instance.panzoom(panzoomDefaults)
     },
 
     /**

@@ -98,7 +98,7 @@ const hierarchicalOptions = {
   transform: function (node, position) { return position } // transform a given node position. Useful for changing flow direction in discrete layouts
 }
 
-const panzoomdefaults = {
+const panzoomDefaults = {
   zoomFactor: 0.1, // zoom factor per zoom tick
   zoomDelay: 45, // how many ms between zoom ticks
   minZoom: 0.1, // min zoom level
@@ -112,7 +112,7 @@ const panzoomdefaults = {
   panIndicatorMinOpacity: 0.5, // min opacity of pan indicator (the draggable nib) scales from this to 1.0
   zoomOnly: false, // a minimal version of the ui only with zooming (useful on systems with bad mousewheel resolution)
   fitSelector: undefined, // selector of elements to fit
-  animateOnFit: function () {
+  animateOnFit: () => {
     // whether to animate on fit
     return false
   },
@@ -210,6 +210,6 @@ export {
   states,
   dagreOptions,
   hierarchicalOptions,
-  panzoomdefaults,
+  panzoomDefaults,
   cytoscapeDefaultStyle
 }
