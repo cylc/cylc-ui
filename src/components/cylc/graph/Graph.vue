@@ -6,7 +6,7 @@
       :size='vueSpinner.size'
       class='spinner'
     ></SyncLoader>
-    <div class='switch-layout ml-4 px-4 mb-4'>
+    <div class='switch-layout ma-0 px-4'>
       <!-- toggle freeze layout -->
       <v-switch
         v-model="freeze"

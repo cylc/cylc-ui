@@ -16,8 +16,7 @@
 
   .cytoscape-navigator-overlay {
     position: absolute;
-    border: 1px solid #bacbcc;
-    background: #eafbfc;
+    background: rgba(0, 0, 0, 0.06);
     z-index: 5;
     width: 200px;
     height: 150px;
@@ -53,13 +52,18 @@
 
     .layout-button {
       z-index: 4;
-      height: 40px;
-      flex: 0.5 1;
+      flex: 1 1 max-content;
       color: rgba(0, 0, 0, 0.87);
     }
 
+    // fix transparency from switch-layout for text
     .v-label {
       color: rgba(1, 1, 1, 0.86);
+    }
+
+    // prevent v-select width 100% - https://github.com/vuetifyjs/vuetify/issues/6275#issuecomment-546621371
+    .v-select__selections input {
+      display: none
     }
   }
 
