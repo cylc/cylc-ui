@@ -197,6 +197,7 @@ export default {
     if (this.tippy !== null) {
       this.tippy.hide()
     }
+    this.cytoscapeInstance.panzoom('destroy')
   },
 
   computed: {
