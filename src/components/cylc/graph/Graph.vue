@@ -6,43 +6,37 @@
       :size='vueSpinner.size'
       class='spinner'
     ></SyncLoader>
-    <div class='switchlayout'>
+    <div class='switch-layout ml-4 px-4 mb-4'>
+      <!-- toggle freeze layout -->
+      <v-switch
+        v-model="freeze"
+        class="layout-button black--text"
+        color="red"
+        label="freeze layout"
+        :inset=true
+      ></v-switch>
+      <!-- choose layout engine -->
+      <v-select
+        class="layout-button"
+        v-model="layoutName"
+        :items="layoutEngines"
+        label="Layout Engine"
+        @change="switchLayout"
+      ></v-select>
+    </div>
+    <v-snackbar
+      top
+      right
+      absolute
+      color="red lighten-1"
+      :timeout=0
+      :value="warning"
+    >
+      WARNING: POC Graph View: beware of large workflows!
       <v-btn
-        name='freeze'
-        :outlined='true'
-        :class="{
-          'freeze-button': true,
-          'button-highlight': freeze
-        }"
-        small
-        align-bottom
-        justify-center
-        @click='freezeGraph("freeze", $event)'
-      >
-        freeze layout
-      </v-btn>
-      <div>
-        <v-btn
-          v-for="engine in layoutEngines"
-          :key="engine"
-          :outlined='true'
-          :name='engine'
-          :class="{
-            'layout-button': true,
-            'button-highlight':(engine === layoutName)
-          }"
-          @click.prevent='switchLayout(`${engine}`, $event)'
-          small
-          align-center
-          justify-center
-        >
-          {{ engine }}
-        </v-btn>
-      </div>
-    </div>
-    <div class='graph-warning'>
-      <span>WARNING: POC Graph View: beware of large workflows!</span>
-    </div>
+        text
+        @click="warning = false"><v-icon>mdi mdi-close</v-icon></v-btn>
+    </v-snackbar>
     <div class='cytoscape-navigator-overlay' ref="cytoscape-navigator-overlay">
       <canvas></canvas>
       <div class='cytoscape-navigatorView'></div>
@@ -87,6 +81,7 @@ export default {
 
   data: function () {
     return {
+      warning: true,
       /**
        * Loading indicator data. Used to tell the component whether it should display the loading status or not,
        * which color to use, etc.
@@ -557,11 +552,10 @@ export default {
     /**
      * Called by the UI when the user switches a layout using some UI component (button/dropdown/etc). Its
      * responsibility is simply to change the attributes related to the layout, and then fi`re an updateLayout call.
-     * @param message
-     * @param event
+     * @param {string} layoutName
      */
-    switchLayout (message, event) {
-      this.layoutName = message
+    switchLayout (layoutName) {
+      this.layoutName = layoutName
       this.layoutReady = true
       this.layoutStopped = false
       this.updateLayout()
