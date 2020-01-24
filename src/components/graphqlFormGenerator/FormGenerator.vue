@@ -48,6 +48,11 @@
     >
       Reset
     </v-btn>
+    <v-btn
+      @click="submit"
+    >
+      Submit
+    </v-btn>
 
     <!-- temporary visualisation of the data model -->
     <pre ref="output">{{ model }}</pre>
@@ -85,6 +90,10 @@ export default {
     },
     initialData: {
       type: Object
+    },
+    callbackSubmit: {
+      // called when the user submits the form
+      type: Function
     }
   },
 
@@ -163,6 +172,13 @@ export default {
 
       // done
       this.model = model
+    },
+
+    submit () {
+      // TODO: validate
+      if (this.callbackSubmit) {
+        this.callbackSubmit(this.model)
+      }
     }
   }
 }

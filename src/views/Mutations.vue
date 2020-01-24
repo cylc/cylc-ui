@@ -13,18 +13,11 @@
         :items="mutationNames"
         label="Mutation"
       />
-      <v-card
-        v-if="selectedMutation"
-        class="mx-auto d-inline-block"
-        style="padding: 1em;"
-        max-width="500"
-        outlined
-      >
-        <FormGenerator
-         :mutation='getMutation(selectedMutation)'
-         :types='types'
-        />
-      </v-card>
+      <mutation
+       v-if="selectedMutation"
+       :spec="getMutation(selectedMutation)"
+       :types="types"
+      />
     </div>
   </div>
 </template>
@@ -33,11 +26,11 @@
 import gql from 'graphql-tag'
 import { introspectionQuery, print } from 'graphql'
 
-import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
+import Mutation from '@/components/cylc/Mutation'
 
 export default {
   components: {
-    FormGenerator
+    Mutation
   },
 
   data: () => ({
