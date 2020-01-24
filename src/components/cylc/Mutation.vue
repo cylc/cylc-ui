@@ -68,7 +68,6 @@ export default {
      *
      * E.G: NonNull<List<String>>  =>  [String]!
      */
-
     formatArgType(arg) {
       const stack = []
       let pointer = arg.type

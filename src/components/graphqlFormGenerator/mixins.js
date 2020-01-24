@@ -69,11 +69,18 @@ export const formModel = {
       }
       let ret = null
       let pointer = type
+      let ofType = null
       while (pointer) {
         if (pointer.kind === 'LIST') {
-          ret = [
-            this.getNullValue(pointer.ofType)
-          ]
+          ofType = this.getNullValue(pointer.ofType)
+          if (ofType) {
+            // this list contains an object
+            ret = [
+              this.getNullValue(pointer.ofType)
+            ]
+          } else {
+            ret = []
+          }
           break
         }
         if (pointer.kind === 'INPUT_OBJECT') {
