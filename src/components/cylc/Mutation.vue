@@ -7,7 +7,7 @@
       outlined
     >
       <FormGenerator
-       :mutation='spec'
+       :mutation='mutation'
        :types='types'
        :callbackSubmit='call'
       />
@@ -16,11 +16,8 @@
       max-width="500"
       outlined
     >
-      <p>The mutation boilerplate</p>
-      <pre>{{ gqlMutation }}</pre>
-      <p>The server response</p>
-      <pre>{{ response }}</pre>
     </v-card>
+    <pre>{{ response }}</pre>
   </v-container>
 </template>
 
@@ -28,6 +25,7 @@
 import gql from 'graphql-tag'
 
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
+import { constructMutation } from '@/utils/graphql'
 
 export default {
   name: 'mutation',
@@ -37,7 +35,7 @@ export default {
   },
 
   props: {
-    spec: {
+    mutation: {
       type: Object,
       required: true
     },
@@ -53,81 +51,23 @@ export default {
   methods: {
     /* Submit this GraphQL mutation request. */
     async call (args) {
+      let result = null
       try {
-        const ret = await this.$workflowService.apolloClient.mutate({
-          mutation: gql(this.gqlMutation),
+        result = await this.$workflowService.apolloClient.mutate({
+          mutation: gql(constructMutation(this.mutation)),
           variables: args
         })
-      } catch(err) {
+      } catch (err) {
         console.log(err)
+        return false
       }
-    },
-
-    /* Return the GraphQL mutation interface representation of an arg
-     * for use with composing mutation request strings.
-     *
-     * E.G: NonNull<List<String>>  =>  [String]!
-     */
-    formatArgType(arg) {
-      const stack = []
-      let pointer = arg.type
-      while (pointer) {
-        stack.push(pointer)
-        if (
-          (
-            pointer.name == null &&
-            pointer.kind == 'LIST'
-          ) || (
-            pointer.name == null &&
-            pointer.kind == 'NON_NULL'
-          )
-        ) {
-          pointer = pointer.ofType
-        } else {
-          break
-        }
+      let responses = result['data'][this.mutation.name]['result']
+      if (responses) {
+        this.response = responses[0].response
+        return true
       }
-      stack.reverse()
-      console.log(stack)
-      let ret = ''
-      for (const pointer of stack) {
-        if (
-          pointer.name == null &&
-          pointer.kind == 'LIST'
-        ) {
-          ret = `[${ret}]`
-        } else if (
-          pointer.name == null &&
-          pointer.kind == 'NON_NULL'
-        ) {
-          ret = ret + '!'
-        } else if (pointer.name) {
-          ret = pointer.name
-        } else {
-          ret = pointer.kind
-        }
-      }
-      return ret
-    }
-  },
-
-  computed: {
-    /* The GraphQL mutation request string for this mutation. */
-    gqlMutation () {
-      const argNames = []
-      const argTypes = []
-      for (const arg of this.spec.args) {
-        argNames.push(`${arg.name}: $${arg.name}`)
-        argTypes.push(`$${arg.name}: ${this.formatArgType(arg)}`)
-      }
-
-      return `
-        mutation ${this.spec.name}(${argTypes.join(', ')}) {
-          ${this.spec.name}(${argNames.join(', ')}) {
-            result
-          }
-        }
-      `
+      this.response = result['data'][this.mutation.name]
+      return false
     }
   }
 }

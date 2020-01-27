@@ -48,21 +48,21 @@
 </template>
 
 <script>
-import { formElement, formModel } from '@/components/graphqlFormGenerator/mixins'
+import { formElement } from '@/components/graphqlFormGenerator/mixins'
+import { getNullValue } from '@/utils/graphql'
 
 export default {
   name: 'g-list',
 
   mixins: [
-    formElement,
-    formModel
+    formElement
   ],
 
   methods: {
     /* Add an item to the list. */
     add () {
       this.value.push(
-        this.getNullValue(this.gqlType.ofType, this.types)
+        getNullValue(this.gqlType.ofType, this.types)
       )
     },
 

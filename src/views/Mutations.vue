@@ -15,7 +15,7 @@
       />
       <mutation
        v-if="selectedMutation"
-       :spec="getMutation(selectedMutation)"
+       :mutation="getMutation(selectedMutation)"
        :types="types"
       />
     </div>
