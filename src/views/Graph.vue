@@ -1,54 +1,57 @@
 <template>
-    <graph :workflow-name="workflowName"></graph>
+  <graph :workflow-name="workflowName"></graph>
 </template>
 
 <script>
-import Graph from '@/components/cylc/Graph'
+import Graph from '@/components/cylc/graph/Graph'
+import { mixin } from '@/mixins'
 
 const QUERIES = {
   root: `
-    subscription {
-      workflows(ids: ["WORKFLOW_ID"]) {
-        id
-        status
-        nodesEdges {
-          nodes {
+  subscription {
+    workflows(ids: ["WORKFLOW_ID"]) {
+      id
+      status
+      nodesEdges {
+        nodes {
+          id
+          label: id
+          parent: firstParent {
             id
-            label: id
-            parent: firstParent {
-              id
-              state
-            }
             state
-            cyclePoint
-            task {
-              name
-            }
-            jobs(sort: {keys: ["submit_num"], reverse: true}) {
-              id
-              batchSysName
-              batchSysJobId
-              host
-              startedTime
-              submittedTime
-              finishedTime
-              state
-              submitNum
-            }
           }
-          edges {
+          state
+          cyclePoint
+          task {
+            name
+          }
+          jobs(sort: {keys: ["submit_num"], reverse: true}) {
             id
-            source
-            target
-            label: id
+            batchSysName
+            batchSysJobId
+            host
+            startedTime
+            submittedTime
+            finishedTime
+            state
+            submitNum
           }
+        }
+        edges {
+          id
+          source
+          target
+          label: id
         }
       }
     }
-  `
+  }
+`
 }
 
 export default {
+  mixins: [mixin],
+
   components: {
     Graph
   },
@@ -57,6 +60,12 @@ export default {
     workflowName: {
       type: String,
       required: true
+    }
+  },
+
+  metaInfo () {
+    return {
+      title: this.getPageTitle('App.graph', { name: this.workflowName })
     }
   },
 
