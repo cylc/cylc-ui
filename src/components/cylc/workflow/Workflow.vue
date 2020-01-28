@@ -14,13 +14,24 @@
           :workflow-name="workflowTree.length > 0 ? workflowTree[0].name : ''"
           :widgetId="widgetId"
       />
+      <mutations-wrapper
+          v-for="widgetId of this.mutationsWidgetIds"
+          :key="widgetId"
+          :workflow-name="workflowTree.length > 0 ? workflowTree[0].name : ''"
+          :widgetId="widgetId"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
-import { ContentWidget, GraphWrapper, TreeWrapper } from '@/components/cylc/workflow/index'
+import {
+  ContentWidget,
+  GraphWrapper,
+  TreeWrapper,
+  MutationsWrapper
+} from '@/components/cylc/workflow/index'
 
 export default {
   name: 'Workflow',
@@ -33,7 +44,8 @@ export default {
   components: {
     // TODO: once our components (tree, graph, dot, etc) share a common interface (i.e. same props) we should be able to have a single wrapper
     'tree-wrapper': TreeWrapper,
-    'graph-wrapper': GraphWrapper
+    'graph-wrapper': GraphWrapper,
+    'mutations-wrapper': MutationsWrapper
   },
   data () {
     return {
@@ -42,7 +54,8 @@ export default {
       // create dock panel, which holds the widgets
       dock: new DockPanel(),
       treeWidgetIds: [],
-      graphWidgetIds: []
+      graphWidgetIds: [],
+      mutationsWidgetIds: []
     }
   },
   created () {
@@ -66,6 +79,11 @@ export default {
       const contentWidget = new ContentWidget(id, 'graph')
       this.dock.addWidget(contentWidget)
       this.graphWidgetIds.push(id)
+    },
+    addMutationsWidget (id) {
+      const contentWidget = new ContentWidget(id, 'mutations')
+      this.dock.addWidget(contentWidget)
+      this.mutationsWidgetIds.push(id)
     }
   }
 }

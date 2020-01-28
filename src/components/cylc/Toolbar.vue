@@ -70,6 +70,12 @@
             >
               <v-list-item-title><v-icon>mdi-graph</v-icon> Graph</v-list-item-title>
             </v-list-item>
+            <v-list-item
+                class="py-0 px-8 ma-0"
+                @click="onClickAddMutationsView"
+            >
+              <v-list-item-title><v-icon>mdi-apple-keyboard-command</v-icon> Mutations</v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
       </template>
@@ -162,6 +168,9 @@ export default {
     },
     onClickAddGraphView () {
       EventBus.$emit('add:graph')
+    },
+    onClickAddMutationsView () {
+      EventBus.$emit('add:mutations')
     }
   }
 }

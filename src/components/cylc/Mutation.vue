@@ -3,7 +3,6 @@
     <v-card
       class="mx-auto d-inline-block"
       style="padding: 1em;"
-      max-width="500"
       outlined
     >
       <FormGenerator
@@ -64,10 +63,13 @@ export default {
 
   props: {
     mutation: {
+      // graphql mutation object as returned by introspection query
       type: Object,
       required: true
     },
     types: {
+      // list of all graphql types as returned by introspection query
+      // (required for resolving InputType objects
       type: Array
     }
   },
@@ -93,7 +95,7 @@ export default {
       }
       console.log(result)
       const responses = result.data[this.mutation.name].result
-      if (responses && responses.length == 1) {
+      if (responses && responses.length === 1) {
         this.status = status.succeeded
         this.response = responses[0].response
         return
