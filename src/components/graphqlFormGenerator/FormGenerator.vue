@@ -53,9 +53,6 @@
     >
       Submit
     </v-btn>
-
-    <!-- temporary visualisation of the data model -->
-    <pre ref="output">{{ model }}</pre>
   </v-form>
 </template>
 
