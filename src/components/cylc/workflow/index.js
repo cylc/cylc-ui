@@ -92,7 +92,7 @@ const TreeWrapper = Vue.component('tree-wrapper', {
   },
   mounted () {
     const widgetElement = document.getElementById(this.widgetId)
-    widgetElement.appendChild(this.$refs[this.widgetId].$el)
+    widgetElement.appendChild(this.$el)
     document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', this.delete)
   },
   beforeDestroy () {
