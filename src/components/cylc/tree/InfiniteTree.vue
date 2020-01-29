@@ -3,7 +3,6 @@
   <RecycleScroller
     page-mode
     key-field="id"
-    :class="className"
     :items="tree.nodes"
     :item-size="null"
   >
@@ -53,10 +52,6 @@ export default {
     tabIndex: {
       type: Number,
       default: 1
-    },
-    className: {
-      type: String,
-      default: 'scroll-box'
     },
     rowHeight: {
       type: Number,
