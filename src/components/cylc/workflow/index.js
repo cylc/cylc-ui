@@ -112,7 +112,7 @@ const TreeWrapper = Vue.component('tree-wrapper', {
         :loading="isLoading"
         type="list-item-avatar-three-line"
         >
-        <tree :workflows="workflows" />
+        <tree :tree-data="workflows" />
       </v-skeleton-loader>
     </div>
   `
