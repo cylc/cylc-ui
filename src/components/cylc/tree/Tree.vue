@@ -74,16 +74,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- Note: the class and styles for a job details panel are different than the other items in this series -->
         <v-container class="leaf" v-else-if="node.__type === 'jobdetails'">
           <div class="arrow-up" :style="getLeafTriangleStyle(node)"></div>
-          <v-col class="leaf-data font-weight-light py-4">
+          <div class="leaf-data font-weight-light py-4">
             <v-row v-for="leafProperty in node.properties" :key="leafProperty.id" no-gutters>
               <v-col xs="4" sm="4" md="4" lg="2" xl="2" no-wrap>
                 <span class="px-4">{{ leafProperty.title }}</span>
               </v-col>
-              <v-col wrap>
+              <v-col no-wrap>
                 <span class="grey--text">{{ node[leafProperty.property] }}</span>
               </v-col>
             </v-row>
-          </v-col>
+          </div>
         </v-container>
         <!-- fallback, not supposed to be used -->
         <div class="node-data" :style="nodeStyle(node)" v-else>
