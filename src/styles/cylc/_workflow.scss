@@ -19,7 +19,7 @@
 @import '~vuetify/src/styles/styles.sass';
 
 #workflow-panel {
-  #main {
+  #main-wrapper {
     display: flex;
     min-height: calc(100vh - 48px);
     .content {

@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <div ref="main" id="main" class="pa-4 fill-height"></div>
+    <div ref="main-wrapper" id="main-wrapper" class="pa-4 fill-height"></div>
     <div v-show="false">
       <tree-wrapper
           v-for="widgetId of this.treeWidgetIds"
@@ -102,7 +102,7 @@ export default {
     BoxPanel.setStretch(this.dock, 1)
     const vm = this
     this.$nextTick(() => {
-      Widget.attach(vm.main, vm.$refs.main)
+      Widget.attach(vm.main, vm.$refs['main-wrapper'])
     })
   },
   methods: {
