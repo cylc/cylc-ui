@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class-name="tree my-2"
     :tree-data="treeData"
     :tab-index="0"
-    :on-open-node="onOpenNode"
-    :on-close-node="onCloseNode"
     >
     <template slot-scope="{ node, tree }" slot="default">
       <div class="node">
@@ -125,7 +123,6 @@ export default {
   },
   data () {
     return {
-      node: null,
       tree: null
     }
   },
@@ -167,15 +164,6 @@ export default {
       } else {
         tree.closeNode(node)
       }
-    },
-    onUpdate (node) {
-      this.node = node
-    },
-    onOpenNode (node) {
-      this.onUpdate(node)
-    },
-    onCloseNode (node) {
-      this.onUpdate(node)
     },
     getLeafTriangleStyle (node) {
       return {
