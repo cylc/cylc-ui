@@ -92,7 +92,12 @@ const TreeWrapper = Vue.component('tree-wrapper', {
   },
   mounted () {
     const widgetElement = document.getElementById(this.widgetId)
+    // move the element from a hidden div, to the Lumino widget
     widgetElement.appendChild(this.$el)
+    // and then re-trigger the event listener creation, as the scrollparent.js code looks for
+    // the parent recursively, and will have found none with a overflow[-x|-y]: auto|scroll.
+    // the .$refs.tree refers to the InfiniteTree component reference, in the Tree component below.
+    this.$refs[this.widgetId].$refs.tree.resetListeners()
     document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', this.delete)
   },
   beforeDestroy () {

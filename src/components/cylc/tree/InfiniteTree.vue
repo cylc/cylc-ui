@@ -2,6 +2,7 @@
   <!-- NB: we are setting the itemSize to null to use the "Variable size mode" of the vue-virtual-scroller -->
   <RecycleScroller
     page-mode
+    ref="scroller"
     key-field="id"
     :items="tree.nodes"
     :item-size="null"
@@ -196,6 +197,12 @@ export default {
 
     this.tree.destroy()
     this.tree = null
+  },
+  methods: {
+    resetListeners () {
+      this.$refs.scroller.removeListeners()
+      this.$refs.scroller.addListeners()
+    }
   }
 }
 </script>
