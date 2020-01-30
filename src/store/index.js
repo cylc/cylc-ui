@@ -20,7 +20,8 @@ const state = {
   environment: process.env.NODE_ENV.toUpperCase(),
   isLoading: false,
   refCount: 0,
-  alert: null
+  alert: null,
+  offline: false
 }
 
 // Actions
@@ -52,6 +53,9 @@ const mutations = {
   },
   SET_ALERT (state, alert) {
     state.alert = alert
+  },
+  SET_OFFLINE (state, offline) {
+    state.offline = offline
   }
 }
 

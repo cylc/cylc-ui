@@ -47,6 +47,9 @@ component with Lumino.
 [#355](https://github.com/cylc/cylc-ui/pull/355) - Use wss when page
 protocol is http:
 
+[#379](https://github.com/cylc/cylc-ui/pull/379) - Add ConnectionStatus
+component.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard
