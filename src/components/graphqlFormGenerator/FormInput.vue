@@ -109,7 +109,7 @@ export default {
       const kind = this.gqlType.kind
       // const ofType = this.gqlType.ofType
 
-      var componentProps
+      let componentProps
       if (NAMED_TYPES[name]) {
         componentProps = NAMED_TYPES[name]
       } else if (KINDS[kind]) {
