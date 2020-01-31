@@ -51,7 +51,7 @@
       <div class="leaf-data font-weight-light py-4 pl-2">
         <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">
           <span class="px-4 leaf-entry-title">{{ leafProperty.title }}</span>
-          <span class="grey--text">{{ node[leafProperty.property] }}</span>
+          <span class="grey--text leaf-entry-value">{{ node[leafProperty.property] }}</span>
         </div>
       </div>
     </div>
@@ -317,6 +317,9 @@ $active-color: #BDD5F7;
           // two elements, and use a v-for with Vue. The v-for element creates an extra
           // wrapper that stops us of being able to use a single parent with display: flex
           min-width: 150px;
+        }
+        .leaf-entry-value {
+          white-space: nowrap;
         }
       }
     }
