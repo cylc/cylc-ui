@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="treeitem">
     <div
         v-show="depth >= minDepth"
         :class="getNodeClass()"
@@ -26,11 +26,13 @@
       <div class="node-data" @click="nodeClicked" v-else-if="node.__type === 'task'">
         <task :status="node.state" :progress="node.progress" />
         <span class="mx-1">{{ node.name }}</span>
-        <!-- Task summary -->
-        <job
-            v-for="(task, index) in node.children"
-            :key="`${task.id}-summary-${index}`"
-            :status="task.state" />
+        <div v-if="!isExpanded" class="node-summary">
+          <!-- Task summary -->
+          <job
+              v-for="(task, index) in node.children"
+              :key="`${task.id}-summary-${index}`"
+              :status="task.state" />
+        </div>
       </div>
       <div class="node-data" v-else-if="node.__type === 'job'">
         <div class="node-data" @click="jobNodeClicked">
@@ -251,62 +253,71 @@ $active-color: #BDD5F7;
   }
 }
 
-.node {
-  line-height: 1.8em;
-  display: flex;
-  flex-wrap: nowrap;
-
-  &--hoverable {
-    @include states()
-  }
-
-  &--active {
-    @include active-state()
-  }
-
-  .node-data {
-    margin-left: 6px;
+.treeitem {
+  display: table;
+  width: 100%;
+  .node {
+    line-height: 1.8em;
     display: flex;
     flex-wrap: nowrap;
-  }
-}
-.type {
-  margin-right: 10px;
-}
 
-$arrow-size: 15px;
-$leaf-background-color: map-get($grey, 'lighten-3');
+    &--hoverable {
+      @include states()
+    }
 
-.leaf {
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: column;
-  .arrow-up {
-    width: 0;
-    height: 0;
-    border-left: $arrow-size solid transparent;
-    border-right: $arrow-size solid transparent;
-    border-bottom: $arrow-size solid $leaf-background-color;
-    display: flex;
-    flex-wrap: nowrap;
+    &--active {
+      @include active-state()
+    }
+
+    .node-data {
+      margin-left: 6px;
+      display: flex;
+      flex-wrap: nowrap;
+      .node-summary {
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+      }
+    }
   }
-  .leaf-data {
+  .type {
+    margin-right: 10px;
+  }
+
+  $arrow-size: 15px;
+  $leaf-background-color: map-get($grey, 'lighten-3');
+
+  .leaf {
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
-    background-color: $leaf-background-color;
-    .leaf-entry {
+    .arrow-up {
+      width: 0;
+      height: 0;
+      border-left: $arrow-size solid transparent;
+      border-right: $arrow-size solid transparent;
+      border-bottom: $arrow-size solid $leaf-background-color;
       display: flex;
       flex-wrap: nowrap;
-      .leaf-entry-title {
-        // This is the minimum width of the left part in a leaf entry, with the title
-        // ATW the longest text is "latest message". This may need some tweaking. It
-        // would be much simpler if we could rely on flex+row, but we have to create
-        // two elements, and use a v-for with Vue. The v-for element creates an extra
-        // wrapper that stops us of being able to use a single parent with display: flex
-        min-width: 150px;
+    }
+    .leaf-data {
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: column;
+      background-color: $leaf-background-color;
+      .leaf-entry {
+        display: flex;
+        flex-wrap: nowrap;
+        .leaf-entry-title {
+          // This is the minimum width of the left part in a leaf entry, with the title
+          // ATW the longest text is "latest message". This may need some tweaking. It
+          // would be much simpler if we could rely on flex+row, but we have to create
+          // two elements, and use a v-for with Vue. The v-for element creates an extra
+          // wrapper that stops us of being able to use a single parent with display: flex
+          min-width: 150px;
+        }
       }
     }
   }
