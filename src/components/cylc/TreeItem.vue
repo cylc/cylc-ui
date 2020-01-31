@@ -16,47 +16,27 @@
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
       <div class="node-data" @click="nodeClicked" v-if="node.__type === 'cyclepoint'">
-        <v-flex shrink>
-          <task :status="node.state" :progress=0 />
-        </v-flex>
-        <v-flex grow>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
+        <task :status="node.state" :progress=0 />
+        <span class="mx-1">{{ node.name }}</span>
       </div>
       <div class="node-data" @click="nodeClicked" v-else-if="node.__type === 'family'">
-        <v-flex shrink>
-          <task :status="node.state" :progress="node.progress" />
-        </v-flex>
-        <v-flex grow>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
+        <task :status="node.state" :progress="node.progress" />
+        <span class="mx-1">{{ node.name }}</span>
       </div>
       <div class="node-data" @click="nodeClicked" v-else-if="node.__type === 'task'">
-        <v-flex shrink>
-          <task :status="node.state" :progress="node.progress" />
-        </v-flex>
-        <v-flex shrink>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
-        <v-flex grow ml-4 v-if="!isExpanded">
-          <!-- Task summary -->
-          <job
-              v-for="(task, index) in node.children"
-              :key="`${task.id}-summary-${index}`"
-              :status="task.state" />
-        </v-flex>
+        <task :status="node.state" :progress="node.progress" />
+        <span class="mx-1">{{ node.name }}</span>
+        <!-- Task summary -->
+        <job
+            v-for="(task, index) in node.children"
+            :key="`${task.id}-summary-${index}`"
+            :status="task.state" />
       </div>
       <div class="node-data" v-else-if="node.__type === 'job'">
         <div class="node-data" @click="jobNodeClicked">
-          <v-flex shrink>
-            <job :status="node.state" />
-          </v-flex>
-          <v-flex>
-            <span class="mx-1">{{ node.name }}</span>
-          </v-flex>
-          <v-flex grow>
-            <span class="grey--text">{{ node.host }}</span>
-          </v-flex>
+          <job :status="node.state" />
+          <span class="mx-1">{{ node.name }}</span>
+          <span class="grey--text">{{ node.host }}</span>
         </div>
         <!-- leaf node -->
       </div>
