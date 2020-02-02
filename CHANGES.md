@@ -75,6 +75,9 @@ component
 [#370](https://github.com/cylc/cylc-ui/pull/370) - Fix up the old gscan table
 view and move access to the dashboard.
 
+[#396](https://github.com/cylc/cylc-ui/pull/396) - Fix leaf and other tree
+nodes layout.
+
 ### Documentation
 
 [#215](https://github.com/cylc/cylc-ui/pull/215) - guide: add beginnings
