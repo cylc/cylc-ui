@@ -16,13 +16,23 @@ import router from '@/router'
 import store from '@/store'
 
 // GraphQL client
+/**
+ * @type SubscriptionWorkflowService
+ */
 import SubscriptionWorkflowService from 'workflow-service'
+import { createGraphQLUrls, createSubscriptionClient } from '@/utils/graphql'
 
 // Sync store with router
 sync(store, router)
 
 // WorkflowService singleton available application-wide
-const workflowService = new SubscriptionWorkflowService()
+// On the offline mode, we do not have a WebSocket link, so we must create a null SubscriptionClient to use an empty link
+const graphQLUrls = createGraphQLUrls()
+let subscriptionClient = null
+if (process.env.NODE_ENV !== 'offline') {
+  subscriptionClient = createSubscriptionClient(graphQLUrls.wsUrl)
+}
+const workflowService = new SubscriptionWorkflowService(graphQLUrls.httpUrl, subscriptionClient)
 Vue.prototype.$workflowService = workflowService
 
 Vue.config.productionTip = false

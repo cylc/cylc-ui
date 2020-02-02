@@ -5,6 +5,7 @@ import Alert from '@/model/Alert.model'
 describe('store', () => {
   beforeEach(() => {
     store.dispatch('setAlert', null)
+    store.state.offline = false
   })
   describe('alerts', () => {
     it('should start with no alert', () => {
@@ -40,6 +41,18 @@ describe('store', () => {
       expect(store.state.refCount).to.equal(0)
       store.dispatch('setLoading', false)
       expect(store.state.refCount).to.equal(0)
+    })
+  })
+  describe('offline', () => {
+    it('should start online so that the component is not rendered for a few seconds', () => {
+      expect(store.state.offline).to.equal(false)
+    })
+    it('should update offline flag correctly', () => {
+      expect(store.state.offline).to.equal(false)
+      store.commit('SET_OFFLINE', true)
+      expect(store.state.offline).to.equal(true)
+      store.commit('SET_OFFLINE', false)
+      expect(store.state.offline).to.equal(false)
     })
   })
 })

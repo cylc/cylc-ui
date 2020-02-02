@@ -1,10 +1,9 @@
 <template>
-  <div>
-    <v-row
+  <div class="treeitem">
+    <div
         v-show="depth >= minDepth"
         :class="getNodeClass()"
         :style="getNodeStyle()"
-        no-gutters
     >
       <!-- the node's left icon; used for expand/collapse -->
       <v-flex
@@ -16,68 +15,46 @@
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <v-layout class="node-data" @click="nodeClicked" row no-gutters wrap v-if="node.__type === 'cyclepoint'">
-        <v-flex shrink>
-          <task :status="node.state" :progress=0 />
-        </v-flex>
-        <v-flex grow>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
-      </v-layout>
-      <v-layout class="node-data" @click="nodeClicked" row no-gutters wrap v-else-if="node.__type === 'family'">
-        <v-flex shrink>
-          <task :status="node.state" :progress="node.progress" />
-        </v-flex>
-        <v-flex grow>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
-      </v-layout>
-      <v-layout class="node-data" @click="nodeClicked" row no-gutters wrap v-else-if="node.__type === 'task'">
-        <v-flex shrink>
-          <task :status="node.state" :progress="node.progress" />
-        </v-flex>
-        <v-flex shrink>
-          <span class="mx-1">{{ node.name }}</span>
-        </v-flex>
-        <v-flex grow ml-4 v-if="!isExpanded">
+      <div class="node-data" @click="nodeClicked" v-if="node.__type === 'cyclepoint'">
+        <task :status="node.state" :progress=0 />
+        <span class="mx-1">{{ node.name }}</span>
+      </div>
+      <div class="node-data" @click="nodeClicked" v-else-if="node.__type === 'family'">
+        <task :status="node.state" :progress="node.progress" />
+        <span class="mx-1">{{ node.name }}</span>
+      </div>
+      <div class="node-data" @click="nodeClicked" v-else-if="node.__type === 'task'">
+        <task :status="node.state" :progress="node.progress" />
+        <span class="mx-1">{{ node.name }}</span>
+        <div v-if="!isExpanded" class="node-summary">
           <!-- Task summary -->
           <job
               v-for="(task, index) in node.children"
               :key="`${task.id}-summary-${index}`"
               :status="task.state" />
-        </v-flex>
-      </v-layout>
-      <v-layout class="node-data" layout column v-else-if="node.__type === 'job'">
-        <v-layout @click="jobNodeClicked" row no-gutters wrap>
-          <v-flex shrink>
-            <job :status="node.state" />
-          </v-flex>
-          <v-flex xs2 md1 lg1>
-            <span class="mx-1">{{ node.name }}</span>
-          </v-flex>
-          <v-flex grow>
-            <span class="grey--text">{{ node.host }}</span>
-          </v-flex>
-        </v-layout>
+        </div>
+      </div>
+      <div class="node-data" v-else-if="node.__type === 'job'">
+        <div class="node-data" @click="jobNodeClicked">
+          <job :status="node.state" />
+          <span class="mx-1">{{ node.name }}</span>
+          <span class="grey--text">{{ node.host }}</span>
+        </div>
         <!-- leaf node -->
-      </v-layout>
-      <v-layout class="node-data" row no-gutters wrap v-else>
+      </div>
+      <div class="node-data" v-else>
         <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
-      </v-layout>
-    </v-row>
-    <v-container class="leaf" v-if="displayLeaf && node.__type === 'job'">
+      </div>
+    </div>
+    <div class="leaf" v-if="displayLeaf && node.__type === 'job'">
       <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
-      <v-col class="leaf-data font-weight-light py-4">
-        <v-row v-for="leafProperty in leafProperties" :key="leafProperty.id" no-gutters>
-          <v-col xs="4" sm="4" md="4" lg="2" xl="2" no-wrap>
-            <span class="px-4">{{ leafProperty.title }}</span>
-          </v-col>
-          <v-col wrap>
-            <span class="grey--text">{{ node[leafProperty.property] }}</span>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-container>
+      <div class="leaf-data font-weight-light py-4 pl-2">
+        <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">
+          <span class="px-4 leaf-entry-title">{{ leafProperty.title }}</span>
+          <span class="grey--text leaf-entry-value">{{ node[leafProperty.property] }}</span>
+        </div>
+      </div>
+    </div>
     <span v-show="isExpanded">
       <!-- component recursion -->
       <TreeItem
@@ -241,7 +218,9 @@ export default {
     getLeafTriangleStyle () {
       const depthDifference = this.depth - this.minDepth
       return {
-        'margin-left': `${depthDifference * NODE_DEPTH_OFFSET}px`
+        // we add half the depth offset to compensate and move the arrow under the job icon, the another 2px
+        // just to center-align it
+        'margin-left': `${(NODE_DEPTH_OFFSET / 2) + 2 + (depthDifference * NODE_DEPTH_OFFSET)}px`
       }
     },
     getNodeClass () {
@@ -274,42 +253,76 @@ $active-color: #BDD5F7;
   }
 }
 
-.node {
-  line-height: 1.8em;
-
-  &--hoverable {
-    @include states()
-  }
-
-  &--active {
-    @include active-state()
-  }
-
-  .node-data {
-    margin-left: 6px;
-  }
-}
-.type {
-  margin-right: 10px;
-}
-
-$arrow-size: 15px;
-$leaf-background-color: map-get($grey, 'lighten-3');
-
-.leaf {
-  padding: 0;
-  margin: 0;
-  .arrow-up {
-    width: 0;
-    height: 0;
-    border-left: $arrow-size solid transparent;
-    border-right: $arrow-size solid transparent;
-    border-bottom: $arrow-size solid $leaf-background-color;
+.treeitem {
+  display: table;
+  width: 100%;
+  .node {
+    line-height: 1.8em;
     display: flex;
     flex-wrap: nowrap;
+
+    &--hoverable {
+      @include states()
+    }
+
+    &--active {
+      @include active-state()
+    }
+
+    .node-data {
+      margin-left: 6px;
+      display: flex;
+      flex-wrap: nowrap;
+      .node-summary {
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: row;
+      }
+    }
   }
-  .leaf-data {
-    background-color: $leaf-background-color;
+  .type {
+    margin-right: 10px;
+  }
+
+  $arrow-size: 15px;
+  $leaf-background-color: map-get($grey, 'lighten-3');
+
+  .leaf {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    .arrow-up {
+      width: 0;
+      height: 0;
+      border-left: $arrow-size solid transparent;
+      border-right: $arrow-size solid transparent;
+      border-bottom: $arrow-size solid $leaf-background-color;
+      display: flex;
+      flex-wrap: nowrap;
+    }
+    .leaf-data {
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: column;
+      background-color: $leaf-background-color;
+      .leaf-entry {
+        display: flex;
+        flex-wrap: nowrap;
+        .leaf-entry-title {
+          // This is the minimum width of the left part in a leaf entry, with the title
+          // ATW the longest text is "latest message". This may need some tweaking. It
+          // would be much simpler if we could rely on flex+row, but we have to create
+          // two elements, and use a v-for with Vue. The v-for element creates an extra
+          // wrapper that stops us of being able to use a single parent with display: flex
+          min-width: 150px;
+        }
+        .leaf-entry-value {
+          white-space: nowrap;
+        }
+      }
+    }
   }
 }
 </style>
