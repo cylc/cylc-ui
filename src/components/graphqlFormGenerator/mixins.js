@@ -11,6 +11,11 @@ export const formElement = {
       type: Object,
       required: true
     },
+    // array of all GraphQL types in the schema
+    types: {
+      type: Array,
+      default: () => []
+    },
     // the form label for this input
     label: {
       type: String,
@@ -42,6 +47,55 @@ export const formElement = {
       set (val) {
         this.$emit('input', val)
       }
+    },
+
+    type () {
+      for (const type of this.types) {
+        if (type.name === this.gqlType.name && type.kind === this.gqlType.kind) {
+          return type
+        }
+      }
+      return null
+    }
+  }
+}
+
+export const formModel = {
+  methods: {
+    /* Return a null value of a JS type corresponding to the GraphQL type. */
+    getNullValue (type, types) {
+      if (!types) {
+        types = []
+      }
+      let ret = null
+      let pointer = type
+      while (pointer) {
+        if (pointer.kind === 'LIST') {
+          ret = [
+            this.getNullValue(pointer.ofType)
+          ]
+          break
+        }
+        if (pointer.kind === 'INPUT_OBJECT') {
+          ret = {}
+          for (const type of types) {
+            // TODO: this type iteration is already done in the mixin
+            //       should we use the mixin or a subset there-of here?
+            if (
+              type.name === pointer.name &&
+              type.kind === pointer.kind
+            ) {
+              for (const field of type.inputFields) {
+                ret[field.name] = this.getNullValue(field.type)
+              }
+              break
+            }
+          }
+          break
+        }
+        pointer = pointer.ofType
+      }
+      return ret
     }
   }
 }

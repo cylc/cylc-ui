@@ -1,11 +1,18 @@
 <template>
   <component
    v-model="model"
-   :propOverrides="{rules: [(x) => !!x || 'Required!']}"
+   :propOverrides="{rules: [x => Boolean(x) || 'Required!']}"
    :gqlType="gqlType.ofType"
+   :types="types"
    :label="label + ' (required)'"
    :is="FormInput"
-  />
+  >
+    <template v-slot:append-outer>
+      <!-- pass the "append-outer" slot onto the child component -->
+      <slot name="append-outer">
+      </slot>
+    </template>
+  </component>
 </template>
 
 <script>

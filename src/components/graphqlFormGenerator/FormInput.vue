@@ -1,100 +1,94 @@
 <template>
-  <!-- NOTE: the is field comes from `props` -->
-  <!-- eslint-disable-next-line vue/require-component-is -->
-  <component
-   v-model="model"
-   v-bind="props"
-   :label="label"
-   :gqlType="gqlType"
-  />
+  <v-tooltip
+    bottom
+    v-model="showHelp"
+  >
+    <template v-slot:activator="{ on }">
+
+      <!-- TODO: try wrapping everyhing in v-input? -->
+
+      <!-- TODO: fix the inputType form alignment thinggy -->
+
+      <!-- NOTE: the is field comes from `props` -->
+      <!-- eslint-disable-next-line vue/require-component-is -->
+      <component
+       v-model="model"
+       v-bind="props"
+       v-mask="props.mask"
+       :label="label"
+       :gqlType="gqlType"
+       :types="types"
+       @blur="showHelp = false"
+      >
+        <template v-slot:append>
+          <v-icon
+           @click="showHelp = !showHelp"
+          >
+            mdi-help-circle-outline
+          </v-icon>
+        </template>
+
+        <template v-slot:append-outer>
+          <!-- pass the "append-outer" slot onto the child component -->
+          <slot name="append-outer"></slot>
+        </template>
+
+      </component>
+    </template>
+    <vue-markdown>{{ help }}</vue-markdown>
+  </v-tooltip>
 </template>
 
 <script>
-import Vue from 'vue'
-
-import { VTextField } from 'vuetify/lib/components/VTextField'
+import { mask } from 'vue-the-mask'
+import VueMarkdown from 'vue-markdown'
 
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
-import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'
-import GList from '@/components/graphqlFormGenerator/components/List'
-
-/* Vuetify number input component.
- *
- * Note: Vuetify doesn't supply a dedicated number field, instead you
- *       specialise the text field using `type='number'`, this, however,
- *       does not cast values to `Number` for you so this extension parses
- *       values to `Number` so they can be used directly in the data model.
- */
-const VNumberField = Vue.component(
-  'v-number-field',
-  {
-    extends: VTextField,
-    computed: {
-      internalValue: {
-        get () {
-          return this.lazyValue
-        },
-        set (val) {
-          // cast values on `set` operations, note this does not get
-          // called on creation
-          this.lazyValue = Number(val)
-          this.$emit('input', this.lazyValue)
-        }
-      }
-    }
-  })
-
-// default props for all form inputs
-const DEFAULT_PROPS = {
-  filled: true,
-  rounded: true
-}
-
-// registry of GraphQL "named types" (e.g. String)
-// {namedType: {is: ComponentClass, prop1: value, ...}}
-const NAMED_TYPES = {
-  String: {
-    is: VTextField
-  },
-  Int: {
-    is: VNumberField,
-    type: 'number',
-    rules: [
-      // TODO: this should work but doesn't seem to be doing anything
-      x => Number.isInteger(x) || 'Integer'
-    ]
-  }
-}
-
-// registry of GraphQL "kinds" (e.g. LIST)
-// {namedType: {is: ComponentClass, prop1: value, ...}}
-const KINDS = {
-  NON_NULL: {
-    is: GNonNull
-  },
-  LIST: {
-    is: GList
-  }
-}
+import VuetifyConfig from '@/components/graphqlFormGenerator/components/vuetify'
 
 export default {
   name: 'g-form-input',
 
   mixins: [formElement],
 
+  components: {
+    'vue-markdown': VueMarkdown
+  },
+
+  directives: {
+    mask: (el, binding) => {
+      // only use the mask if one is provided, this allows us to use the
+      // mask directive on elements which it doesn't support
+      if (binding.value) {
+        mask(el, binding)
+      }
+    }
+  },
+
   props: {
     // dictionary of props for overriding default values
     propOverrides: {
       type: Object,
-      default: () => {}
+      default: () => { Object() }
     }
   },
 
   data: () => ({
-    defaultProps: DEFAULT_PROPS
+    defaultProps: VuetifyConfig.defaultProps,
+    namedTypes: VuetifyConfig.namedTypes,
+    kinds: VuetifyConfig.kinds,
+    showHelp: false
   }),
 
   computed: {
+    help () {
+      // TODO: provide argument help then default to type help if not found
+      if (this.type && this.type.description) {
+        return this.type.description.trim()
+      }
+      return null
+    },
+
     /* The props to pass to the form input.
      *
      * Note, this includes the "is" prop which tells Vue which component class
@@ -110,12 +104,12 @@ export default {
       // const ofType = this.gqlType.ofType
 
       let componentProps
-      if (NAMED_TYPES[name]) {
-        componentProps = NAMED_TYPES[name]
-      } else if (KINDS[kind]) {
-        componentProps = KINDS[kind]
+      if (this.namedTypes[name]) {
+        componentProps = this.namedTypes[name]
+      } else if (this.kinds[kind]) {
+        componentProps = this.kinds[kind]
       } else {
-        componentProps = NAMED_TYPES.String
+        componentProps = this.namedTypes.String
         // eslint-disable-next-line no-console
         console.error(
           'Warning: falling back to string for ' +
@@ -124,12 +118,16 @@ export default {
       }
 
       // merge this in with default and override props
-      const props = [DEFAULT_PROPS, componentProps, this.propOverrides]
-      const ret = Object.assign({}, ...props)
+      const propGroups = [
+        this.defaultProps,
+        componentProps,
+        this.propOverrides || {}
+      ]
+      const ret = Object.assign({}, ...propGroups)
 
       // rules is a list so needs special treatment
       ret.rules = []
-      for (const prop in props) {
+      for (const prop of propGroups) {
         if (prop.rules) {
           ret.rules.push(...prop.rules)
         }

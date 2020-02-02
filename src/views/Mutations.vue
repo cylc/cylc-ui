@@ -3,8 +3,9 @@
     <div v-if="!loaded">
       Loading...
     </div>
-    <div v-if="loaded">
-      <h1>Form Generator</h1>
+    <div v-if="loaded"
+     style="padding: 1em;"
+    >
       <v-select
         v-model="selectedMutation"
         :items="mutationNames"
@@ -13,11 +14,14 @@
       <v-card
         v-if="selectedMutation"
         class="mx-auto d-inline-block"
+        style="padding: 1em;"
         max-width="500"
         outlined
       >
-        <!--FormGenerator :mutation='sampleMutation' /-->
-        <FormGenerator :mutation='getMutation(selectedMutation)' />
+        <FormGenerator
+         :mutation='getMutation(selectedMutation)'
+         :types='types'
+        />
       </v-card>
       <h1>Associator</h1>
       <v-select
@@ -97,8 +101,9 @@ export default {
 
   data: () => ({
     loaded: false,
+    selectedMutation: 'sampleMutation',
+    types: [],
     mutations: {},
-    selectedMutation: null,
     associations: {},
     selectedAssociation: null,
     cylcObjects: {
@@ -120,50 +125,6 @@ export default {
       Job: [
         ['JobID', false]
       ]
-    },
-    sampleMutation: {
-      name: 'My Mutation',
-      description: 'Test example.',
-      args: [
-        {
-          name: 'MyString',
-          type: {
-            name: 'String',
-            kind: 'SCALAR'
-          }
-        },
-        {
-          name: 'MyInteger',
-          type: {
-            name: 'Int',
-            kind: 'SCALAR'
-          }
-        },
-        {
-          name: 'MyNonNull',
-          defaultValue: 'cant null this',
-          type: {
-            name: null,
-            kind: 'NON_NULL',
-            ofType: {
-              name: 'String',
-              kind: 'SCALAR'
-            }
-          }
-        },
-        {
-          name: 'MyStringList',
-          defaultValue: ['a', 'b', 'c'],
-          type: {
-            name: null,
-            kind: 'LIST',
-            ofType: {
-              name: 'String',
-              kind: 'SCALAR'
-            }
-          }
-        }
-      ]
     }
   }),
 
@@ -177,6 +138,120 @@ export default {
         names.push(mutation.name)
       }
       return names
+    },
+
+    sampleMutation () {
+      // create a mutation with one argument per input type
+      const args = []
+      for (const type of this.types) {
+        if (
+          type.kind !== 'OBJECT' &&
+          type.name[0] !== '_'
+        ) {
+          args.push({
+            name: type.name,
+            type: {
+              name: type.name,
+              kind: type.kind
+            }
+          })
+        }
+      }
+
+      // add a nested NonNull component
+      args.push({
+        name: 'NonNull<String>',
+        defaultValue: '"Can\'t null this"',
+        type: {
+          name: null,
+          kind: 'NON_NULL',
+          ofType: {
+            name: 'String',
+            kind: 'SCALAR'
+          }
+        }
+      })
+
+      // add a nested List component
+      args.push({
+        name: 'List<String>',
+        defaultValue: '["abc"]',
+        type: {
+          name: null,
+          kind: 'LIST',
+          ofType: {
+            name: 'String',
+            kind: 'SCALAR'
+          }
+        }
+      })
+
+      // add a double nested NonNull, List component
+      args.push({
+        name: 'NonNull<List<NonNull<String>>>',
+        defaultValue: '["abc"]',
+        type: {
+          name: null,
+          kind: 'NON_NULL',
+          ofType: {
+            name: null,
+            kind: 'LIST',
+            ofType: {
+              name: null,
+              kind: 'NON_NULL',
+              ofType: {
+                name: 'String',
+                kind: 'SCALAR'
+              }
+            }
+          }
+        }
+      })
+
+      // add a triple nested Object, List component
+      args.push({
+        name: 'List<BroadcastSetting>',
+        defaultValue: '[{"key": "[env]FOO", "value": "foo"}]',
+        type: {
+          name: null,
+          kind: 'LIST',
+          ofType: {
+            name: 'BroadcastSetting',
+            kind: 'INPUT_OBJECT'
+          }
+        }
+      })
+
+      // add a quintuple nested Object just for fun
+      // (if this works all is good!)
+      // NOTE: always debug from the lowest level of nesting
+      // NOTE: BroadcastSetting = NonNull<String>, NonNull<String>
+      args.push({
+        name: 'NonNull<List<NonNull<BroadcastSetting>>>',
+        defaultValue: '[{"key": "[env]FOO", "value": "foo"}]',
+        type: {
+          name: null,
+          kind: 'NON_NULL',
+          ofType: {
+            name: null,
+            kind: 'LIST',
+            ofType: {
+              name: null,
+              kind: 'NON_NULL',
+              ofType: {
+                name: 'BroadcastSetting',
+                kind: 'INPUT_OBJECT'
+              }
+            }
+          }
+        }
+      })
+
+      return {
+        name: 'Sample Mutation',
+        description: 'Example containing all data types present in the schema.',
+        args: args
+      }
     }
   },
 
@@ -196,9 +271,14 @@ export default {
             mutationType {
               ...FullType
             }
+            types {
+              ...FullType
+            }
           }
         }
       `)
+      // TODO: this returns all types, we only need certain ones
+
       // NOTE: we are converting to string form then re-parsing
       // back to a query, as something funny happens when you
       // try to modify the gql objects by hand.
@@ -218,12 +298,16 @@ export default {
         fetchPolicy: 'no-cache'
       }).then((response) => {
         this.mutations = response.data.__schema.mutationType.fields
+        this.types = response.data.__schema.types
         this.associate()
         this.loaded = true
       })
     },
 
     getMutation (name) {
+      if (name === 'sampleMutation') {
+        return this.sampleMutation
+      }
       for (const mutation of this.mutations) {
         if (mutation.name === name) {
           return mutation
