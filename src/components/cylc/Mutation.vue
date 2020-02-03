@@ -82,18 +82,15 @@ export default {
       this.status = status.submitted
       let result = null
       try {
-        console.log('here')
         result = await this.$workflowService.apolloClient.mutate({
           mutation: gql(constructMutation(this.mutation)),
           variables: args
         })
-        console.log('there')
       } catch (err) {
-        console.log(err)
+        console.error(err)
         this.status = status.submitFailed
         return
       }
-      console.log(result)
       const responses = result.data[this.mutation.name].result
       if (responses && responses.length === 1) {
         this.status = status.succeeded

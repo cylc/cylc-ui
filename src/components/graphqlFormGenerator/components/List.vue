@@ -68,7 +68,6 @@ export default {
 
     /* Remove the item at `index` from the list. */
     remove (index) {
-      console.log('remove', index)
       this.value.splice(index, 1)
     }
   }

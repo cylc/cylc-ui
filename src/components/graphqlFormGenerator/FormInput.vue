@@ -4,12 +4,8 @@
     v-model="showHelp"
   >
     <template v-slot:activator="{ on }">
-
-      <!-- TODO: try wrapping everyhing in v-input? -->
-
       <!-- TODO: fix the inputType form alignment thinggy -->
-
-      <!-- NOTE: the is field comes from `props` -->
+      <!-- NOTE: the `is` field comes from `props` -->
       <!-- eslint-disable-next-line vue/require-component-is -->
       <component
        v-model="model"
@@ -95,7 +91,7 @@ export default {
      * to use.
      *
      * TODO: move to rule based system to allow changing
-     *       of parent components based on child types
+     *       of parent components based on child types?
      */
     props () {
       // get the default props for this graphQL type
