@@ -47,6 +47,9 @@ component with Lumino.
 [#355](https://github.com/cylc/cylc-ui/pull/355) - Use wss when page
 protocol is http:
 
+[#379](https://github.com/cylc/cylc-ui/pull/379) - Add ConnectionStatus
+component.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard
@@ -71,6 +74,9 @@ component
 
 [#370](https://github.com/cylc/cylc-ui/pull/370) - Fix up the old gscan table
 view and move access to the dashboard.
+
+[#396](https://github.com/cylc/cylc-ui/pull/396) - Fix leaf and other tree
+nodes layout.
 
 ### Documentation
 

@@ -49,6 +49,7 @@
 
         <v-menu
           offset-y
+          v-if="$route.name === 'workflow'"
         >
           <template v-slot:activator="{ on }">
             <a class="add-view" v-on="on">

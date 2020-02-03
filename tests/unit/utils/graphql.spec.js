@@ -2,18 +2,11 @@ import dedent from 'dedent'
 import { expect } from 'chai'
 // need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
 import 'cross-fetch/polyfill'
-import { createApolloClient, getNullValue, iterateType, argumentSignature, constructMutation } from '@/utils/graphql'
+import * as graphql from '@/utils/graphql'
+import store from '@/store'
 
 describe('utils', () => {
   describe('graphql', () => {
-    describe('createApolloClient', () => {
-      it('should create an apollo client', () => {
-        const uri = 'http://localhost:12345'
-        const apolloClient = createApolloClient(uri)
-        expect(apolloClient.link !== null).to.equal(true)
-      })
-    })
-
     describe('iterateType', () => {
       it('Should walk the type tree until it hits a solid foundation', () => {
         const nodes = [
@@ -43,7 +36,7 @@ describe('utils', () => {
         })
 
         const result = []
-        for (const node of iterateType(nodes[0])) {
+        for (const node of graphql.iterateType(nodes[0])) {
           result.push(node)
         }
 
@@ -101,7 +94,7 @@ describe('utils', () => {
           ]
         ].forEach(([type, signature]) => {
           expect(
-            argumentSignature({
+            graphql.argumentSignature({
               name: 'myArgument',
               type: type
             })
@@ -159,7 +152,7 @@ describe('utils', () => {
           ]
         ].forEach((item) => {
           expect(
-            getNullValue(item[0])
+            graphql.getNullValue(item[0])
           ).to.deep.equal(
             item[1]
           )
@@ -190,7 +183,7 @@ describe('utils', () => {
             }
           ]
         }
-        expect(constructMutation(mutation)).to.equal(dedent`
+        expect(graphql.constructMutation(mutation)).to.equal(dedent`
           mutation MyMutation($foo: String, $bar: Int) {
             MyMutation(foo: $foo, bar: $bar) {
               result
@@ -221,13 +214,78 @@ describe('utils', () => {
             }
           ]
         }
-        expect(constructMutation(mutation)).to.equal(dedent`
+        expect(graphql.constructMutation(mutation)).to.equal(dedent`
           mutation MyMutation($myArg: [String]!) {
             MyMutation(myArg: $myArg) {
               result
             }
           }
         `.trim())
+      })
+    })
+
+    describe('ApolloClient', () => {
+      it('should create an apollo client', () => {
+        const apolloClient = graphql.createApolloClient('http://localhost:12345', null)
+        expect(apolloClient.link !== null).to.equal(true)
+        expect(apolloClient.cache !== null).to.equal(true)
+      })
+    })
+
+    describe('SubscriptionClient', () => {
+      beforeEach(() => {
+        store.state.offline = false
+      })
+      it('should create a subscription client', () => {
+        const subscriptionClient = graphql.createSubscriptionClient('ws://localhost:12345', {
+          reconnect: false,
+          lazy: true
+        },
+        {})
+        expect(typeof subscriptionClient.request).to.equal('function')
+      })
+      it('should call the subscription client callbacks', () => {
+        const subscriptionClient = graphql.createSubscriptionClient('ws://localhost:12345', {
+          reconnect: false,
+          lazy: true
+        },
+        {})
+        expect(store.state.offline).to.equal(false)
+
+        let eventName, offline
+        for ({ eventName, offline } of [
+          {
+            eventName: 'connecting',
+            offline: true
+          },
+          {
+            eventName: 'connected',
+            offline: false
+          },
+          {
+            eventName: 'reconnecting',
+            offline: true
+          },
+          {
+            eventName: 'reconnected',
+            offline: false
+          },
+          {
+            eventName: 'disconnected',
+            offline: true
+          }
+        ]) {
+          subscriptionClient.eventEmitter.emit(eventName)
+          expect(store.state.offline).to.equal(offline)
+        }
+      })
+    })
+
+    describe('GraphQL URLs', () => {
+      it('should create the correct URLs', () => {
+        const graphQLUrls = graphql.createGraphQLUrls()
+        expect(graphQLUrls.httpUrl.slice(0, 4)).to.equal('http')
+        expect(graphQLUrls.wsUrl.slice(0, 2)).to.equal('ws')
       })
     })
   })
