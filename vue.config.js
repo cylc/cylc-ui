@@ -37,7 +37,7 @@ module.exports = {
       if (process.env.NODE_ENV === 'test') {
         config.devtool('eval')
       } else {
-        config.devtool('inline-cheap-module-source-map')
+        config.devtool('eval-source-map')
       }
     }
 
