@@ -129,7 +129,7 @@ export function createApolloClient (httpUrl, subscriptionClient) {
  *  2. List
  *  3. String
  *
- * @param type {Object} A type as returned by an introspction query.
+ * @param type {Object} A type as returned by an introspection query.
  * (i.e. an object of the form {name: x, kind: y, ofType: z}
  *
  * @yields {Object} Type objects of the same form as the type argument.
@@ -150,10 +150,7 @@ export function * iterateType (type) {
  *
  * @returns {Object|Array|undefined}
  */
-export function getNullValue (type, types) {
-  if (!types) {
-    types = []
-  }
+export function getNullValue (type, types = []) {
   let ret = null
   let ofType = null
   for (const subType of iterateType(type)) {

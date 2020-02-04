@@ -147,6 +147,13 @@ const MutationsWrapper = Vue.component('mutations-wrapper', {
   components: {
     Mutations
   },
+  methods: {
+    delete () {
+      // This is captured by the View, that holds subscriptions, and then used to tell which subscription must be turned off
+      EventBus.$emit('delete:widget', { id: this.widgetId })
+      this.$destroy()
+    }
+  },
   mounted () {
     const widgetElement = document.getElementById(this.widgetId)
     widgetElement.appendChild(this.$refs[this.widgetId].$el)
@@ -155,6 +162,10 @@ const MutationsWrapper = Vue.component('mutations-wrapper', {
       EventBus.$emit('delete:widget', { id: vm.widgetId })
       vm.$destroy()
     }, false)
+  },
+  beforeDestroy () {
+    document.getElementById(this.widgetId).removeEventListener('delete:widgetcomponent', this.delete)
+    document.getElementById(this.widgetId).removeEventListener('activate:widgetcomponent', this.activate)
   },
   template: `
     <div>
