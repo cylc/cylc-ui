@@ -81,7 +81,7 @@ const NESTED_TYPES = [
         }
       }
     },
-    [null]
+    []
   ],
   [
     {
@@ -121,7 +121,7 @@ const NESTED_TYPES = [
         }
       }
     },
-    [null]
+    []
   ],
   [
     {

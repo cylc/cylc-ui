@@ -2,6 +2,8 @@ import Vue from 'vue'
 import { Widget } from '@lumino/widgets'
 import Tree from '@/components/cylc/Tree'
 import Graph from '@/components/cylc/graph/Graph'
+// import Mutations from '@/components/cylc/Mutations'
+import Mutations from '@/views/Mutations'
 
 /**
  * A widget that will have just a single HTML element to be referenced by the Vue component.
@@ -130,8 +132,50 @@ const GraphWrapper = Vue.component('graph-wrapper', {
   `
 })
 
+const MutationsWrapper = Vue.component('mutations-wrapper', {
+  name: 'MutationsWrapper',
+  props: {
+    widgetId: {
+      type: String,
+      required: true
+    },
+    workflowName: {
+      type: String,
+      required: true
+    }
+  },
+  components: {
+    Mutations
+  },
+  methods: {
+    delete () {
+      // This is captured by the View, that holds subscriptions, and then used to tell which subscription must be turned off
+      EventBus.$emit('delete:widget', { id: this.widgetId })
+      this.$destroy()
+    }
+  },
+  mounted () {
+    const widgetElement = document.getElementById(this.widgetId)
+    widgetElement.appendChild(this.$refs[this.widgetId].$el)
+    const vm = this
+    document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', () => {
+      EventBus.$emit('delete:widget', { id: vm.widgetId })
+      vm.$destroy()
+    }, false)
+  },
+  beforeDestroy () {
+    document.getElementById(this.widgetId).removeEventListener('delete:widgetcomponent', this.delete)
+    document.getElementById(this.widgetId).removeEventListener('activate:widgetcomponent', this.activate)
+  },
+  template: `
+    <div>
+      <Mutations :workflow-name="workflowName" :ref="widgetId" />
+    </div>
+  `
+})
+
 const EventBus = new Vue()
 
 export {
-  ContentWidget, TreeWrapper, GraphWrapper, EventBus
+  ContentWidget, TreeWrapper, GraphWrapper, MutationsWrapper, EventBus
 }

@@ -11,38 +11,11 @@
         :items="mutationNames"
         label="Mutation"
       />
-      <v-card
-        v-if="selectedMutation"
-        class="mx-auto d-inline-block"
-        style="padding: 1em;"
-        max-width="500"
-        outlined
-      >
-        <FormGenerator
-         :mutation='getMutation(selectedMutation)'
-         :types='types'
-        />
-      </v-card>
-      <h1>Associator</h1>
-      <v-select
-        v-model="selectedAssociation"
-        :items="Object.keys(cylcObjects)"
-        label="Cylc Object"
+      <mutation
+       v-if="selectedMutation"
+       :mutation="getMutation(selectedMutation)"
+       :types="types"
       />
-      <ul
-        v-if="selectedAssociation"
-      >
-        <li
-          v-for="association in filterAssociations(selectedAssociation)"
-          v-bind:key="association.name"
-        >
-          <span><b>{{ association.name }}</b></span>
-          <span
-            v-if="association.multiple"
-          > (list)</span>
-          <span><i> - {{ association.argument }}</i></span>
-        </li>
-      </ul>
     </div>
   </div>
 </template>
@@ -51,7 +24,7 @@
 import gql from 'graphql-tag'
 import { introspectionQuery, print } from 'graphql'
 
-import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
+import Mutation from '@/components/cylc/Mutation'
 
 export function associate (mutations, objects) {
   const associations = {}
@@ -96,7 +69,7 @@ export function associate (mutations, objects) {
 
 export default {
   components: {
-    FormGenerator
+    Mutation
   },
 
   data: () => ({

@@ -48,26 +48,24 @@
     >
       Reset
     </v-btn>
-
-    <!-- temporary visualisation of the data model -->
-    <pre ref="output">{{ model }}</pre>
+    <v-btn
+      @click="submit"
+    >
+      Submit
+    </v-btn>
   </v-form>
 </template>
 
 <script>
 import VueMarkdown from 'vue-markdown'
 
-import FormInput from '@/components/graphqlFormGenerator/FormInput'
 import cloneDeep from 'lodash/cloneDeep'
 
-import { formModel } from '@/components/graphqlFormGenerator/mixins'
+import FormInput from '@/components/graphqlFormGenerator/FormInput'
+import { getNullValue } from '@/utils/graphql'
 
 export default {
   name: 'form-generator',
-
-  mixins: [
-    formModel
-  ],
 
   components: {
     'vue-markdown': VueMarkdown,
@@ -85,6 +83,10 @@ export default {
     },
     initialData: {
       type: Object
+    },
+    callbackSubmit: {
+      // called when the user submits the form
+      type: Function
     }
   },
 
@@ -149,20 +151,27 @@ export default {
             arg.defaultValue
           )
           if (!defaultValue) {
-            defaultValue = this.getNullValue(arg.type, this.types)
+            defaultValue = getNullValue(arg.type, this.types)
           }
         } else {
           // if no default value is provided choose a sensible null value
           // NOTE: IF we set null as the default type for a list
           //       THEN tried to change it to [] later this would break
           //       THIS would break Vue model
-          defaultValue = this.getNullValue(arg.type, this.types)
+          defaultValue = getNullValue(arg.type, this.types)
         }
         model[arg.name] = defaultValue
       }
 
       // done
       this.model = model
+    },
+
+    submit () {
+      // TODO: validate
+      if (this.callbackSubmit) {
+        this.callbackSubmit(this.model)
+      }
     }
   }
 }

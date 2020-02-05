@@ -186,6 +186,15 @@ export default {
       // add widget that uses the GraphQl query response
       this.$refs['workflow-component'].addGraphWidget(`${subscriptionId}`)
     })
+    EventBus.$on('add:mutations', () => {
+      // no subscription for this view ATM as we are using the centrally
+      // defined schema
+      // on day it will become a one-off query (though a subscription would work
+      // too as the schema doesn't change during the lifetime of a workflow run
+      const subscriptionId = (new Date()).getTime()
+      // add widget that uses the GraphQl query response
+      this.$refs['workflow-component'].addMutationsWidget(`${subscriptionId}`)
+    })
     EventBus.$on('delete:widget', (data) => {
       const subscriptionId = Number.parseFloat(data.id)
       this.$workflowService.unsubscribe(subscriptionId)
@@ -201,6 +210,7 @@ export default {
   beforeDestroy () {
     EventBus.$off('add:tree')
     EventBus.$off('add:graph')
+    EventBus.$off('add:mutations')
     EventBus.$off('delete:widget')
     this.$workflowService.unregister(this)
   },
