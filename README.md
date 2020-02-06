@@ -89,10 +89,6 @@ the application through an accessibility tool such as [WAVE](https://wave.webaim
 There is also a [browser](https://wave.webaim.org/extension/) extension which makes
 testing the development version much easier.
 
-## Validation
-
-The framework used for validation in this project is [vee-validate](https://baianat.github.io/vee-validate/).
-
 ## JavaScript, ES6, TypeScript
 
 For the moment, the code in this repository is created using ES6, then Babel/WebPack take
