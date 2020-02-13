@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <div class="c-tree">
       <tree-component
-        :tree-data="workflowTree"
+        :tree-data="workflowTree[0].children"
         :hoverable="false"
         :activable="false"
         :multiple-active="false"
