@@ -19,41 +19,6 @@
 import CylcTree from '@/components/cylc/tree/cylc-tree'
 
 /**
- * These are the properties that are displayed on each Job detail, the leaf node of the tree.
- * @type {({property: string, title: string}|{property: string, title: string}|{property: string, title: string}|{property: string, title: string}|{property: string, title: string})[]}
- */
-const JOB_DETAIL_NODE_PROPERTIES = [
-  {
-    title: 'host id',
-    property: 'host'
-  },
-  {
-    title: 'job id',
-    property: 'batchSysJobId'
-  },
-  {
-    title: 'batch sys',
-    property: 'batchSysName'
-  },
-  {
-    title: 'submit time',
-    property: 'submittedTime'
-  },
-  {
-    title: 'start time',
-    property: 'startedTime'
-  },
-  {
-    title: 'finish time',
-    property: 'finishedTime'
-  },
-  {
-    title: 'latest message',
-    property: 'latestMessage'
-  }
-]
-
-/**
  * The height of each tree item. In the infinite tree, it is used as value for the `.size` property.
  * @type {number}
  */
