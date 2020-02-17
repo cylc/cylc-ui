@@ -14,38 +14,38 @@
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <div class="node-data" @click="nodeClicked" v-if="node.__typename === 'CyclePoint'">
-        <task :status="node.state" :progress=0 />
-        <span class="mx-1">{{ node.name }}</span>
+      <div class="node-data" @click="nodeClicked" v-if="node.node.__typename === 'CyclePoint'">
+        <task :status="node.node.state" :progress=0 />
+        <span class="mx-1">{{ node.node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.__typename === 'FamilyProxy'">
-        <task :status="node.state" :progress="node.progress" />
-        <span class="mx-1">{{ node.name }}</span>
+      <div class="node-data" @click="nodeClicked" v-else-if="node.node.__typename === 'FamilyProxy'">
+        <task :status="node.node.state" :progress="node.node.progress" />
+        <span class="mx-1">{{ node.node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.__typename === 'TaskProxy'">
-        <task :status="node.state" :progress="node.progress" />
-        <span class="mx-1">{{ node.name }}</span>
+      <div class="node-data" @click="nodeClicked" v-else-if="node.node.__typename === 'TaskProxy'">
+        <task :status="node.node.state" :progress="node.node.progress" />
+        <span class="mx-1">{{ node.node.name }}</span>
         <div v-if="!isExpanded" class="node-summary">
           <!-- Task summary -->
           <job
-              v-for="(task, index) in node.children"
+              v-for="(task, index) in node.node.children"
               :key="`${task.id}-summary-${index}`"
               :status="task.state" />
         </div>
       </div>
-      <div class="node-data" v-else-if="node.__typename === 'Job'">
+      <div class="node-data" v-else-if="node.node.__typename === 'Job'">
         <div class="node-data" @click="jobNodeClicked">
-          <job :status="node.state" />
-          <span class="mx-1">{{ node.name }}</span>
-          <span class="grey--text">{{ node.host }}</span>
+          <job :status="node.node.state" />
+          <span class="mx-1">#{{ node.node.submitNum }}</span>
+          <span class="grey--text">{{ node.node.host }}</span>
         </div>
         <!-- leaf node -->
       </div>
       <div class="node-data" v-else>
-        <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
+        <span @click="nodeClicked" class="mx-1">{{ node.node.name }}</span>
       </div>
     </div>
-    <div class="leaf" v-if="displayLeaf && node.__typename === 'Job'">
+    <div class="leaf" v-if="displayLeaf && node.node.__typename === 'Job'">
       <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
       <div class="leaf-data font-weight-light py-4 pl-2">
         <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">
@@ -141,7 +141,7 @@ export default {
   },
   computed: {
     hasChildren () {
-      return Object.prototype.hasOwnProperty.call(this.node, 'children')
+      return this.node.children
     }
   },
   created () {
@@ -151,8 +151,8 @@ export default {
     TreeEventBus.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
-    if (Object.prototype.hasOwnProperty.call(this.node, 'expanded')) {
-      this.isExpanded = this.node.expand
+    if (this.node.expanded) {
+      this.isExpanded = this.node.expanded
       this.emitExpandCollapseEvent(this.isExpanded)
     }
   },
