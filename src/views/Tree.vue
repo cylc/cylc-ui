@@ -32,6 +32,7 @@ const QUERIES = {
           port
           taskProxies(sort: { keys: ["cyclePoint"] }) {
             id
+            name
             state
             cyclePoint
             latestMessage
