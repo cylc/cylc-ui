@@ -6,11 +6,12 @@ import { computePercentProgress } from '@/components/cylc'
  * only adding new properties such as type, children, etc.
  *
  * @param workflow {Object} workflow
- * @return {{children: []}}
+ * @return {{id: string, node: Object, children: []}}
  */
 function createWorkflowNode (workflow) {
   return {
-    ...workflow,
+    id: workflow.id,
+    node: workflow,
     children: []
   }
 }
@@ -19,13 +20,16 @@ function createWorkflowNode (workflow) {
  * Create a cycle point node. Uses the family proxy property `cyclePoint`.
  *
  * @param familyProxy {Object} family proxy
- * @return {{children: [], name: *, id: *}}
+ * @return {{id: string, node: Object,children: []}}
  */
 function createCyclePointNode (familyProxy) {
   return {
-    __typename: 'CyclePoint',
     id: familyProxy.cyclePoint,
-    name: familyProxy.cyclePoint,
+    node: {
+      __typename: 'CyclePoint',
+      id: familyProxy.cyclePoint,
+      name: familyProxy.cyclePoint
+    },
     children: []
   }
 }
@@ -35,11 +39,12 @@ function createCyclePointNode (familyProxy) {
  * only adding new properties such as type, children, etc.
  *
  * @param familyProxy {Object} family proxy
- * @return {{children: []}}
+ * @return {{id: string, node: Object, children: []}}
  */
 function createFamilyProxyNode (familyProxy) {
   return {
-    ...familyProxy,
+    id: familyProxy.id,
+    node: familyProxy,
     children: []
   }
 }
@@ -49,14 +54,15 @@ function createFamilyProxyNode (familyProxy) {
  * only adding new properties such as type, name, children, etc.
  *
  * @param taskProxy {Object} task proxy
- * @return {{expanded: boolean, children: [], name: *}}
+ * @return {{id: string, node: Object, expanded: boolean, children: []}}
  */
+// TODO: move expanded state to data later for infinite-tree
 function createTaskProxyNode (taskProxy) {
   return {
-    ...taskProxy,
-    name: taskProxy.task.name,
-    children: [],
-    expanded: false
+    id: taskProxy.id,
+    node: taskProxy,
+    expanded: false,
+    children: []
   }
 }
 
@@ -66,13 +72,14 @@ function createTaskProxyNode (taskProxy) {
  *
  * @param job {Object} job
  * @param latestMessage {string} latest message of the job's task
- * @return {{name: string, latestMessage: *}}
+ * @return {{node: Object, latestMessage: string}}
  */
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
+// TODO: add job-leaf (details) in the hierarchy later for infinite-tree
 function createJobNode (job, latestMessage) {
   return {
-    ...job,
-    name: `#${job.submitNum}`,
+    id: job.id,
+    node: job,
     latestMessage: latestMessage
   }
 }
@@ -96,7 +103,7 @@ function computeTaskProgress (taskProxyNode) {
     // the graphql query is expected to have jobs sorted by submit_num, e.g.:
     // `jobs(sort: { keys: ["submit_num"], reverse:true })`
     const latestJob = taskProxyNode.jobs[0]
-    if (Object.hasOwnProperty.call(latestJob, 'startedTime')) {
+    if (latestJob.startedTime) {
       const startedTime = Date.parse(latestJob.startedTime)
       taskProxyNode.progress = computePercentProgress(startedTime, taskProxyNode.task.meanElapsedTime)
     }
@@ -117,9 +124,9 @@ function computeCyclePointsStates (cyclePointNodes) {
   for (const cyclePointNode of cyclePointNodes) {
     const childStates = []
     for (const child of cyclePointNode.children) {
-      childStates.push(child.state)
+      childStates.push(child.node.state)
     }
-    cyclePointNode.state = extractGroupState(childStates, false)
+    cyclePointNode.node.state = extractGroupState(childStates, false)
   }
 }
 
@@ -142,7 +149,7 @@ function convertGraphQLWorkflowToTree (workflow) {
   const lookup = new Map()
   // build hierarchy of cycle-point with zero or many families, and each family with zero or many other families
   // TODO: most of this for-loop and code within might be removed later: https://github.com/cylc/cylc-ui/issues/354#issuecomment-585003621
-  for (const familyProxy of rootNode.familyProxies) {
+  for (const familyProxy of rootNode.node.familyProxies) {
     const parent = familyProxy.firstParent
     if (!lookup.get(familyProxy.cyclePoint)) {
       // create cycle point node, using family's cycle point info
@@ -182,19 +189,19 @@ function convertGraphQLWorkflowToTree (workflow) {
   })
 
   // simply iterate through tasks, creating the nodes, then attach them to their parents using the lookup map
-  for (const taskProxy of rootNode.taskProxies) {
+  for (const taskProxy of rootNode.node.taskProxies) {
     const taskProxyNode = createTaskProxyNode(taskProxy)
     // if the parent is root, we must instead attach this node to the cyclepoint!
-    if (taskProxyNode.firstParent.name === 'root') {
-      lookup.get(taskProxyNode.firstParent.cyclePoint).children.push(taskProxyNode)
+    if (taskProxyNode.node.firstParent.name === 'root') {
+      lookup.get(taskProxyNode.node.firstParent.cyclePoint).children.push(taskProxyNode)
     } else {
-      lookup.get(taskProxyNode.firstParent.id).children.push(taskProxyNode)
+      lookup.get(taskProxyNode.node.firstParent.id).children.push(taskProxyNode)
     }
-    for (const job of taskProxyNode.jobs) {
-      const jobNode = createJobNode(job, taskProxyNode.latestMessage)
+    for (const job of taskProxyNode.node.jobs) {
+      const jobNode = createJobNode(job, taskProxyNode.node.latestMessage)
       taskProxyNode.children.push(jobNode)
     }
-    computeTaskProgress(taskProxyNode)
+    computeTaskProgress(taskProxyNode.node)
   }
 
   // last step now is to calculate the group-state for cycle-points, based on its direct children's states
