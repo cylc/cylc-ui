@@ -18,7 +18,6 @@
 import { mixin } from '@/mixins/index'
 import { mapGetters } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
-import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -102,19 +101,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters('workflows', ['currentWorkflow']),
-    workflowTree: function () {
-      const workflowTree = []
-      if (this.currentWorkflow !== null && Object.hasOwnProperty.call(this.currentWorkflow, 'familyProxies')) {
-        try {
-          workflowTree.push(convertGraphQLWorkflowToTree(this.currentWorkflow))
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error(e)
-        }
-      }
-      return workflowTree
-    }
+    ...mapGetters('workflows', ['workflowTree'])
   },
 
   created () {
