@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import TreeItem from '@/components/cylc/TreeItem'
+import TreeItem from '@/components/cylc/tree/TreeItem'
 import { TreeEventBus } from '@/components/cylc/tree/event-bus'
 
 export default {

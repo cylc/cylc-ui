@@ -236,7 +236,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '~vuetify/src/styles/styles.sass';
+@import '../../../../node_modules/vuetify/src/styles/styles';
 
 $active-color: #BDD5F7;
 

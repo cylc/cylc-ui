@@ -5,7 +5,7 @@ import Vue from 'vue'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
 import * as vuetify from '@/plugins/vuetify'
-import Tree from '@/components/cylc/Tree'
+import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 
 const cycles = new Map([

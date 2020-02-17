@@ -17,7 +17,7 @@
 <script>
 import { mixin } from '@/mixins/index'
 import { mapGetters } from 'vuex'
-import Tree from '@/components/cylc/Tree'
+import Tree from '@/components/cylc/tree/Tree'
 import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
 
 // query to retrieve all workflows

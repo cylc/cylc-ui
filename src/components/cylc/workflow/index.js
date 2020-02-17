@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { Widget } from '@lumino/widgets'
-import Tree from '@/components/cylc/Tree'
+import Tree from '@/components/cylc/tree/Tree'
 import Graph from '@/components/cylc/graph/Graph'
 // import Mutations from '@/components/cylc/Mutations'
 import Mutations from '@/views/Mutations'

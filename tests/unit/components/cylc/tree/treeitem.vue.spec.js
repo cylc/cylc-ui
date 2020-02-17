@@ -4,7 +4,7 @@ import { expect } from 'chai'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
 import * as vuetify from '@/plugins/vuetify'
-import TreeItem from '@/components/cylc/TreeItem'
+import TreeItem from '@/components/cylc/tree/TreeItem'
 import {
   simpleWorkflowNode,
   simpleCyclepointNode,
