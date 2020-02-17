@@ -25,7 +25,7 @@ describe('Tree component', () => {
         cycles: cycles
       }
     })
-    expect(wrapper.props().workflows[0].__type).to.equal('workflow')
+    expect(wrapper.props().workflows[0].__typename).to.equal('Workflow')
     expect(wrapper.contains('div')).to.equal(true)
   })
   describe('activable', () => {

@@ -18,7 +18,7 @@ describe('TreeItem component', () => {
         node: simpleWorkflowNode
       }
     })
-    expect(wrapper.props().node.__type).to.equal('workflow')
+    expect(wrapper.props().node.__typename).to.equal('Workflow')
   })
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test

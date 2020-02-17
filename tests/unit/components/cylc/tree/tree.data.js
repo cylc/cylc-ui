@@ -4,26 +4,26 @@
 
 const simpleWorkflowTree4Nodes = [
   {
-    __type: 'workflow',
+    __typename: 'Workflow',
     id: 'user/workflow1',
     name: 'workflow1',
     state: 'running',
     children: [
       {
-        __type: 'checkpoint',
+        __typename: 'CyclePoint',
         id: '20100101T0000Z',
         name: '20100101T0000Z',
         state: 'failed',
         children: [
           {
-            __type: 'task',
+            __typename: 'TaskProxy',
             id: 'user/workflow1/20100101T0000Z/foo',
             name: 'foo',
             state: 'failed',
             expanded: false,
             children: [
               {
-                __type: 'job',
+                __typename: 'Job',
                 id: 'user/workflow1/20100101T0000Z/foo/01',
                 name: '#1',
                 startedTime: '2019-08-19T22:44:42Z',

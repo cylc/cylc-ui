@@ -578,32 +578,32 @@ const workflow = {
   ]
 }
 
-const CYCLEPOINT_TYPE = 'cyclepoint'
-const FAMILY_TYPE = 'family'
-const TASK_TYPE = 'task'
+const CYCLEPOINT_TYPE = 'CyclePoint'
+const FAMILY_TYPE = 'FamilyProxy'
+const TASK_TYPE = 'TaskProxy'
 
 describe('Tree component functions', () => {
   const workflowTree = convertGraphQLWorkflowToTree(workflow)
   it('should add cycle points as direct children of the workflow', () => {
     expect(workflowTree.length).to.equal(2)
-    expect(workflowTree[0].__type).to.equal(CYCLEPOINT_TYPE)
-    expect(workflowTree[1].__type).to.equal(CYCLEPOINT_TYPE)
+    expect(workflowTree[0].__typename).to.equal(CYCLEPOINT_TYPE)
+    expect(workflowTree[1].__typename).to.equal(CYCLEPOINT_TYPE)
   })
   it('should add families and tasks as children to cycle points correctly', () => {
     // the first cycle point in the example data contains two families, and two tasks
     const firstCyclePoint = workflowTree[0]
     const children = firstCyclePoint.children
-    expect(children[0].__type).to.equal(FAMILY_TYPE)
-    expect(children[1].__type).to.equal(FAMILY_TYPE)
-    expect(children[2].__type).to.equal(TASK_TYPE)
-    expect(children[2].__type).to.equal(TASK_TYPE)
+    expect(children[0].__typename).to.equal(FAMILY_TYPE)
+    expect(children[1].__typename).to.equal(FAMILY_TYPE)
+    expect(children[2].__typename).to.equal(TASK_TYPE)
+    expect(children[2].__typename).to.equal(TASK_TYPE)
   })
   it('should add families as children to families correctly', () => {
     const firstCyclePoint = workflowTree[0]
     const children = firstCyclePoint.children
-    expect(children[1].__type).to.equal(FAMILY_TYPE)
+    expect(children[1].__typename).to.equal(FAMILY_TYPE)
     expect(children[1].name).to.equal('GOOD')
-    expect(children[1].children[0].__type).to.equal(FAMILY_TYPE)
+    expect(children[1].children[0].__typename).to.equal(FAMILY_TYPE)
     expect(children[1].children[0].name).to.equal('SUCCEEDED')
   })
   it('should set the progress to 0 when meanElapsedTime is 0', () => {

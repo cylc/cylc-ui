@@ -14,15 +14,15 @@
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <div class="node-data" @click="nodeClicked" v-if="node.__type === 'cyclepoint'">
+      <div class="node-data" @click="nodeClicked" v-if="node.__typename === 'CyclePoint'">
         <task :status="node.state" :progress=0 />
         <span class="mx-1">{{ node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.__type === 'family'">
+      <div class="node-data" @click="nodeClicked" v-else-if="node.__typename === 'FamilyProxy'">
         <task :status="node.state" :progress="node.progress" />
         <span class="mx-1">{{ node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.__type === 'task'">
+      <div class="node-data" @click="nodeClicked" v-else-if="node.__typename === 'TaskProxy'">
         <task :status="node.state" :progress="node.progress" />
         <span class="mx-1">{{ node.name }}</span>
         <div v-if="!isExpanded" class="node-summary">
@@ -33,7 +33,7 @@
               :status="task.state" />
         </div>
       </div>
-      <div class="node-data" v-else-if="node.__type === 'job'">
+      <div class="node-data" v-else-if="node.__typename === 'Job'">
         <div class="node-data" @click="jobNodeClicked">
           <job :status="node.state" />
           <span class="mx-1">{{ node.name }}</span>
@@ -45,7 +45,7 @@
         <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
       </div>
     </div>
-    <div class="leaf" v-if="displayLeaf && node.__type === 'job'">
+    <div class="leaf" v-if="displayLeaf && node.__typename === 'Job'">
       <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
       <div class="leaf-data font-weight-light py-4 pl-2">
         <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">

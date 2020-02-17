@@ -6,11 +6,10 @@ import { computePercentProgress } from '@/components/cylc'
  * only adding new properties such as type, children, etc.
  *
  * @param workflow {Object} workflow
- * @return {{children: [], __type: string}}
+ * @return {{children: []}}
  */
 function createWorkflowNode (workflow) {
   return {
-    __type: 'workflow',
     ...workflow,
     children: []
   }
@@ -20,11 +19,11 @@ function createWorkflowNode (workflow) {
  * Create a cycle point node. Uses the family proxy property `cyclePoint`.
  *
  * @param familyProxy {Object} family proxy
- * @return {{children: [], __type: string, name: *, id: *}}
+ * @return {{children: [], name: *, id: *}}
  */
 function createCyclePointNode (familyProxy) {
   return {
-    __type: 'cyclepoint',
+    __typename: 'CyclePoint',
     id: familyProxy.cyclePoint,
     name: familyProxy.cyclePoint,
     children: []
@@ -36,11 +35,10 @@ function createCyclePointNode (familyProxy) {
  * only adding new properties such as type, children, etc.
  *
  * @param familyProxy {Object} family proxy
- * @return {{children: [], __type: string}}
+ * @return {{children: []}}
  */
 function createFamilyProxyNode (familyProxy) {
   return {
-    __type: 'family',
     ...familyProxy,
     children: []
   }
@@ -51,11 +49,10 @@ function createFamilyProxyNode (familyProxy) {
  * only adding new properties such as type, name, children, etc.
  *
  * @param taskProxy {Object} task proxy
- * @return {{expanded: boolean, children: [], __type: string, name: *}}
+ * @return {{expanded: boolean, children: [], name: *}}
  */
 function createTaskProxyNode (taskProxy) {
   return {
-    __type: 'task',
     ...taskProxy,
     name: taskProxy.task.name,
     children: [],
@@ -69,12 +66,11 @@ function createTaskProxyNode (taskProxy) {
  *
  * @param job {Object} job
  * @param latestMessage {string} latest message of the job's task
- * @return {{__type: string, name: string, latestMessage: *}}
+ * @return {{name: string, latestMessage: *}}
  */
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
 function createJobNode (job, latestMessage) {
   return {
-    __type: 'job',
     ...job,
     name: `#${job.submitNum}`,
     latestMessage: latestMessage
