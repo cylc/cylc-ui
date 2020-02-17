@@ -26,7 +26,6 @@ describe('TreeItem component', () => {
       const wrapper = mount(TreeItem, {
         propsData: {
           node: simpleCyclepointNode,
-          minDepth: 0,
           depth: 0
         }
       })
@@ -49,7 +48,6 @@ describe('TreeItem component', () => {
       const wrapper = mount(TreeItem, {
         propsData: {
           node: simpleTaskNode,
-          minDepth: 0,
           depth: 0
         }
       })

@@ -28,31 +28,6 @@ describe('Tree component', () => {
     expect(wrapper.props().workflows[0].__type).to.equal('workflow')
     expect(wrapper.contains('div')).to.equal(true)
   })
-  describe('minimum depth', () => {
-    it('should display workflow with default minDepth=0', () => {
-      const wrapper = mount(Tree, {
-        propsData: {
-          workflows: simpleWorkflowTree4Nodes,
-          cycles: cycles
-        }
-      })
-      const nodes = wrapper.findAll('div.node')
-      expect(nodes.length).to.equal(4)
-      expect(nodes.wrappers[0].isVisible()).to.equal(true)
-    })
-    it('should hide workflow with minDepth=1', () => {
-      const wrapper = mount(Tree, {
-        propsData: {
-          workflows: simpleWorkflowTree4Nodes,
-          cycles: cycles,
-          minDepth: 1
-        }
-      })
-      const nodes = wrapper.findAll('div.node')
-      expect(nodes.length).to.equal(4)
-      expect(nodes.wrappers[0].isVisible()).to.equal(false)
-    })
-  })
   describe('activable', () => {
     it('should not activate by default', () => {
       const wrapper = mount(Tree, {

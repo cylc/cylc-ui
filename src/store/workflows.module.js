@@ -19,7 +19,7 @@ const getters = {
   workflowTree: (state, getters) => {
     if (getters.currentWorkflow !== null && Object.hasOwnProperty.call(getters.currentWorkflow, 'familyProxies')) {
       try {
-        return [convertGraphQLWorkflowToTree(getters.currentWorkflow)]
+        return convertGraphQLWorkflowToTree(getters.currentWorkflow)
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(e)

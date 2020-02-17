@@ -1,7 +1,6 @@
 <template>
   <div class="treeitem">
     <div
-        v-show="depth >= minDepth"
         :class="getNodeClass()"
         :style="getNodeStyle()"
     >
@@ -64,7 +63,6 @@
           :node="child"
           :depth="depth + 1"
           :hoverable="hoverable"
-          :min-depth="minDepth"
           :initialExpanded="initialExpanded"
       ></TreeItem>
     </span>
@@ -94,10 +92,6 @@ export default {
       required: true
     },
     depth: {
-      type: Number,
-      default: 0
-    },
-    minDepth: {
       type: Number,
       default: 0
     },
@@ -201,11 +195,8 @@ export default {
       this.displayLeaf = !this.displayLeaf
     },
     getNodeStyle () {
-      // we need to compensate for the minimum depth set by the user, subtracting it
-      // from the node depth.
-      const depthDifference = this.depth - this.minDepth
       return {
-        'padding-left': `${depthDifference * NODE_DEPTH_OFFSET}px`
+        'padding-left': `${this.depth * NODE_DEPTH_OFFSET}px`
       }
     },
     /**
@@ -216,11 +207,10 @@ export default {
      * left, instead of moving it to the right. Using `depth` to calculate the exact location for the element.
      */
     getLeafTriangleStyle () {
-      const depthDifference = this.depth - this.minDepth
       return {
         // we add half the depth offset to compensate and move the arrow under the job icon, the another 2px
         // just to center-align it
-        'margin-left': `${(NODE_DEPTH_OFFSET / 2) + 2 + (depthDifference * NODE_DEPTH_OFFSET)}px`
+        'margin-left': `${(NODE_DEPTH_OFFSET / 2) + 2 + (this.$depth * NODE_DEPTH_OFFSET)}px`
       }
     },
     getNodeClass () {
