@@ -1,6 +1,9 @@
 <template>
   <div id="workflow-panel" class="fill-height">
-    <workflow :workflow-tree="workflowTree" ref="workflow-component" />
+    <workflow
+      :workflow-name="workflowName"
+      :workflow-tree="workflowTree"
+      ref="workflow-component" />
   </div>
 </template>
 

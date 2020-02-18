@@ -11,13 +11,13 @@
       <graph-wrapper
           v-for="widgetId of this.graphWidgetIds"
           :key="widgetId"
-          :workflow-name="workflowTree.length > 0 ? workflowTree[0].name : ''"
+          :workflow-name="workflowName"
           :widgetId="widgetId"
       />
       <mutations-wrapper
           v-for="widgetId of this.mutationsWidgetIds"
           :key="widgetId"
-          :workflow-name="workflowTree.length > 0 ? workflowTree[0].name : ''"
+          :workflow-name="workflowName"
           :widgetId="widgetId"
       />
     </div>
@@ -38,6 +38,10 @@ export default {
   props: {
     workflowTree: {
       type: Array,
+      required: true
+    },
+    workflowName: {
+      type: String,
       required: true
     }
   },
