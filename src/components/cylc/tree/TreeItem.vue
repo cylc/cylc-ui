@@ -28,9 +28,9 @@
         <div v-if="!isExpanded" class="node-summary">
           <!-- Task summary -->
           <job
-              v-for="(task, index) in node.node.children"
+              v-for="(task, index) in node.children"
               :key="`${task.id}-summary-${index}`"
-              :status="task.state" />
+              :status="task.node.state" />
         </div>
       </div>
       <div class="node-data" v-else-if="node.node.__typename === 'Job'">
