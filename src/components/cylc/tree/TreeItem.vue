@@ -50,7 +50,7 @@
       <div class="leaf-data font-weight-light py-4 pl-2">
         <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">
           <span class="px-4 leaf-entry-title">{{ leafProperty.title }}</span>
-          <span class="grey--text leaf-entry-value">{{ node[leafProperty.property] }}</span>
+          <span class="grey--text leaf-entry-value">{{ node.node[leafProperty.property] }}</span>
         </div>
       </div>
     </div>
