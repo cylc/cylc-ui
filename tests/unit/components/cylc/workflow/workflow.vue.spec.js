@@ -15,7 +15,7 @@ describe('Workflow component', () => {
       }
     })
     await Vue.nextTick()
-    expect(wrapper.props().workflowTree[0].__type).to.equal('workflow')
+    expect(wrapper.props().workflowTree[0].node.__typename).to.equal('Workflow')
     expect(wrapper.contains('div')).to.equal(true)
   })
 })

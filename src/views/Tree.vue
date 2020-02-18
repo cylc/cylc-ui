@@ -17,8 +17,7 @@
 <script>
 import { mixin } from '@/mixins/index'
 import { mapGetters } from 'vuex'
-import Tree from '@/components/cylc/Tree'
-import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree/index'
+import Tree from '@/components/cylc/tree/Tree'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -33,6 +32,7 @@ const QUERIES = {
           port
           taskProxies(sort: { keys: ["cyclePoint"] }) {
             id
+            name
             state
             cyclePoint
             latestMessage
@@ -102,19 +102,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters('workflows', ['currentWorkflow']),
-    workflowTree: function () {
-      const workflowTree = []
-      if (this.currentWorkflow !== null && Object.hasOwnProperty.call(this.currentWorkflow, 'familyProxies')) {
-        try {
-          workflowTree.push(convertGraphQLWorkflowToTree(this.currentWorkflow))
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error(e)
-        }
-      }
-      return workflowTree
-    }
+    ...mapGetters('workflows', ['workflowTree'])
   },
 
   created () {

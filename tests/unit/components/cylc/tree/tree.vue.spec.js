@@ -5,7 +5,7 @@ import Vue from 'vue'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
 import * as vuetify from '@/plugins/vuetify'
-import Tree from '@/components/cylc/Tree'
+import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 
 const cycles = new Map([
@@ -25,33 +25,8 @@ describe('Tree component', () => {
         cycles: cycles
       }
     })
-    expect(wrapper.props().workflows[0].__type).to.equal('workflow')
+    expect(wrapper.props().workflows[0].node.__typename).to.equal('Workflow')
     expect(wrapper.contains('div')).to.equal(true)
-  })
-  describe('minimum depth', () => {
-    it('should display workflow with default minDepth=0', () => {
-      const wrapper = mount(Tree, {
-        propsData: {
-          workflows: simpleWorkflowTree4Nodes,
-          cycles: cycles
-        }
-      })
-      const nodes = wrapper.findAll('div.node')
-      expect(nodes.length).to.equal(4)
-      expect(nodes.wrappers[0].isVisible()).to.equal(true)
-    })
-    it('should hide workflow with minDepth=1', () => {
-      const wrapper = mount(Tree, {
-        propsData: {
-          workflows: simpleWorkflowTree4Nodes,
-          cycles: cycles,
-          minDepth: 1
-        }
-      })
-      const nodes = wrapper.findAll('div.node')
-      expect(nodes.length).to.equal(4)
-      expect(nodes.wrappers[0].isVisible()).to.equal(false)
-    })
   })
   describe('activable', () => {
     it('should not activate by default', () => {

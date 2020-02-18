@@ -4,7 +4,7 @@ import { expect } from 'chai'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
 import * as vuetify from '@/plugins/vuetify'
-import TreeItem from '@/components/cylc/TreeItem'
+import TreeItem from '@/components/cylc/tree/TreeItem'
 import {
   simpleWorkflowNode,
   simpleCyclepointNode,
@@ -18,7 +18,7 @@ describe('TreeItem component', () => {
         node: simpleWorkflowNode
       }
     })
-    expect(wrapper.props().node.__type).to.equal('workflow')
+    expect(wrapper.props().node.node.__typename).to.equal('Workflow')
   })
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
@@ -26,7 +26,6 @@ describe('TreeItem component', () => {
       const wrapper = mount(TreeItem, {
         propsData: {
           node: simpleCyclepointNode,
-          minDepth: 0,
           depth: 0
         }
       })
@@ -49,7 +48,6 @@ describe('TreeItem component', () => {
       const wrapper = mount(TreeItem, {
         propsData: {
           node: simpleTaskNode,
-          minDepth: 0,
           depth: 0
         }
       })

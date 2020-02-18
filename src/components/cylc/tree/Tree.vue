@@ -6,7 +6,6 @@
         :key="workflow.id"
         :node="workflow"
         :hoverable="hoverable"
-        :min-depth="minDepth"
         :initialExpanded="expanded"
     >
     </tree-item>
@@ -14,7 +13,7 @@
 </template>
 
 <script>
-import TreeItem from '@/components/cylc/TreeItem'
+import TreeItem from '@/components/cylc/tree/TreeItem'
 import { TreeEventBus } from '@/components/cylc/tree/event-bus'
 
 export default {
@@ -26,11 +25,7 @@ export default {
     },
     hoverable: Boolean,
     activable: Boolean,
-    multipleActive: Boolean,
-    minDepth: {
-      type: Number,
-      default: 0
-    }
+    multipleActive: Boolean
   },
   components: {
     'tree-item': TreeItem
@@ -64,10 +59,6 @@ export default {
     expandAll (filter = null) {
       const collection = filter ? [...this.treeItemCache].filter(filter) : this.treeItemCache
       for (const treeItem of collection) {
-        if (treeItem.depth < this.minDepth) {
-          // do not touch hidden tree items
-          continue
-        }
         treeItem.isExpanded = true
         this.expandedCache.add(treeItem)
       }
@@ -76,10 +67,6 @@ export default {
     collapseAll (filter = null) {
       const collection = filter ? [...this.expandedCache].filter(filter) : this.expandedCache
       for (const treeItem of collection) {
-        if (treeItem.depth < this.minDepth) {
-          // do not touch hidden tree items
-          continue
-        }
         treeItem.isExpanded = false
         this.expandedCache.delete(treeItem)
       }

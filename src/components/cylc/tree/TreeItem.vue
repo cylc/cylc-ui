@@ -1,7 +1,6 @@
 <template>
   <div class="treeitem">
     <div
-        v-show="depth >= minDepth"
         :class="getNodeClass()"
         :style="getNodeStyle()"
     >
@@ -15,43 +14,43 @@
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <div class="node-data" @click="nodeClicked" v-if="node.__type === 'cyclepoint'">
-        <task :status="node.state" :progress=0 />
-        <span class="mx-1">{{ node.name }}</span>
+      <div class="node-data" @click="nodeClicked" v-if="node.node.__typename === 'CyclePoint'">
+        <task :status="node.node.state" :progress=0 />
+        <span class="mx-1">{{ node.node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.__type === 'family'">
-        <task :status="node.state" :progress="node.progress" />
-        <span class="mx-1">{{ node.name }}</span>
+      <div class="node-data" @click="nodeClicked" v-else-if="node.node.__typename === 'FamilyProxy'">
+        <task :status="node.node.state" :progress="node.node.progress" />
+        <span class="mx-1">{{ node.node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.__type === 'task'">
-        <task :status="node.state" :progress="node.progress" />
-        <span class="mx-1">{{ node.name }}</span>
+      <div class="node-data" @click="nodeClicked" v-else-if="node.node.__typename === 'TaskProxy'">
+        <task :status="node.node.state" :progress="node.node.progress" />
+        <span class="mx-1">{{ node.node.name }}</span>
         <div v-if="!isExpanded" class="node-summary">
           <!-- Task summary -->
           <job
               v-for="(task, index) in node.children"
               :key="`${task.id}-summary-${index}`"
-              :status="task.state" />
+              :status="task.node.state" />
         </div>
       </div>
-      <div class="node-data" v-else-if="node.__type === 'job'">
+      <div class="node-data" v-else-if="node.node.__typename === 'Job'">
         <div class="node-data" @click="jobNodeClicked">
-          <job :status="node.state" />
-          <span class="mx-1">{{ node.name }}</span>
-          <span class="grey--text">{{ node.host }}</span>
+          <job :status="node.node.state" />
+          <span class="mx-1">#{{ node.node.submitNum }}</span>
+          <span class="grey--text">{{ node.node.host }}</span>
         </div>
         <!-- leaf node -->
       </div>
       <div class="node-data" v-else>
-        <span @click="nodeClicked" class="mx-1">{{ node.name }}</span>
+        <span @click="nodeClicked" class="mx-1">{{ node.node.name }}</span>
       </div>
     </div>
-    <div class="leaf" v-if="displayLeaf && node.__type === 'job'">
+    <div class="leaf" v-if="displayLeaf && node.node.__typename === 'Job'">
       <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
       <div class="leaf-data font-weight-light py-4 pl-2">
         <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">
           <span class="px-4 leaf-entry-title">{{ leafProperty.title }}</span>
-          <span class="grey--text leaf-entry-value">{{ node[leafProperty.property] }}</span>
+          <span class="grey--text leaf-entry-value">{{ node.node[leafProperty.property] }}</span>
         </div>
       </div>
     </div>
@@ -64,7 +63,6 @@
           :node="child"
           :depth="depth + 1"
           :hoverable="hoverable"
-          :min-depth="minDepth"
           :initialExpanded="initialExpanded"
       ></TreeItem>
     </span>
@@ -94,10 +92,6 @@ export default {
       required: true
     },
     depth: {
-      type: Number,
-      default: 0
-    },
-    minDepth: {
       type: Number,
       default: 0
     },
@@ -147,7 +141,7 @@ export default {
   },
   computed: {
     hasChildren () {
-      return Object.prototype.hasOwnProperty.call(this.node, 'children')
+      return this.node.children
     }
   },
   created () {
@@ -157,8 +151,8 @@ export default {
     TreeEventBus.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
-    if (Object.prototype.hasOwnProperty.call(this.node, 'expanded')) {
-      this.isExpanded = this.node.expand
+    if (this.node.expanded !== undefined && this.node.expanded !== null) {
+      this.isExpanded = this.node.expanded
       this.emitExpandCollapseEvent(this.isExpanded)
     }
   },
@@ -201,11 +195,8 @@ export default {
       this.displayLeaf = !this.displayLeaf
     },
     getNodeStyle () {
-      // we need to compensate for the minimum depth set by the user, subtracting it
-      // from the node depth.
-      const depthDifference = this.depth - this.minDepth
       return {
-        'padding-left': `${depthDifference * NODE_DEPTH_OFFSET}px`
+        'padding-left': `${this.depth * NODE_DEPTH_OFFSET}px`
       }
     },
     /**
@@ -216,11 +207,10 @@ export default {
      * left, instead of moving it to the right. Using `depth` to calculate the exact location for the element.
      */
     getLeafTriangleStyle () {
-      const depthDifference = this.depth - this.minDepth
       return {
         // we add half the depth offset to compensate and move the arrow under the job icon, the another 2px
         // just to center-align it
-        'margin-left': `${(NODE_DEPTH_OFFSET / 2) + 2 + (depthDifference * NODE_DEPTH_OFFSET)}px`
+        'margin-left': `${(NODE_DEPTH_OFFSET / 2) + 2 + (this.$depth * NODE_DEPTH_OFFSET)}px`
       }
     },
     getNodeClass () {
@@ -236,7 +226,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '~vuetify/src/styles/styles.sass';
+@import '../../../../node_modules/vuetify/src/styles/styles';
 
 $active-color: #BDD5F7;
 
