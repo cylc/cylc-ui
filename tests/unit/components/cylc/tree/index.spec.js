@@ -11,32 +11,33 @@ describe('Tree component functions', () => {
   const workflowTree = convertGraphQLWorkflowToTree(sampleWorkflow1)
   it('should add cycle points as direct children of the workflow', () => {
     expect(workflowTree.length).to.equal(2)
-    expect(workflowTree[0].__typename).to.equal(CYCLEPOINT_TYPE)
-    expect(workflowTree[1].__typename).to.equal(CYCLEPOINT_TYPE)
+    expect(workflowTree[0].node.__typename).to.equal(CYCLEPOINT_TYPE)
+    expect(workflowTree[1].node.__typename).to.equal(CYCLEPOINT_TYPE)
   })
   it('should add families and tasks as children to cycle points correctly', () => {
     // the first cycle point in the example data contains two families, and two tasks
     const firstCyclePoint = workflowTree[0]
     const children = firstCyclePoint.children
-    expect(children[0].__typename).to.equal(FAMILY_TYPE)
-    expect(children[1].__typename).to.equal(FAMILY_TYPE)
-    expect(children[2].__typename).to.equal(TASK_TYPE)
-    expect(children[2].__typename).to.equal(TASK_TYPE)
+    console.log(children)
+    expect(children[0].node.__typename).to.equal(FAMILY_TYPE)
+    expect(children[1].node.__typename).to.equal(FAMILY_TYPE)
+    expect(children[2].node.__typename).to.equal(TASK_TYPE)
+    expect(children[2].node.__typename).to.equal(TASK_TYPE)
   })
   it('should add families as children to families correctly', () => {
     const firstCyclePoint = workflowTree[0]
     const children = firstCyclePoint.children
-    expect(children[1].__typename).to.equal(FAMILY_TYPE)
-    expect(children[1].name).to.equal('GOOD')
-    expect(children[1].children[0].__typename).to.equal(FAMILY_TYPE)
-    expect(children[1].children[0].name).to.equal('SUCCEEDED')
+    expect(children[1].node.__typename).to.equal(FAMILY_TYPE)
+    expect(children[1].node.name).to.equal('GOOD')
+    expect(children[1].children[0].node.__typename).to.equal(FAMILY_TYPE)
+    expect(children[1].children[0].node.name).to.equal('SUCCEEDED')
   })
   it('should set the progress to 0 when meanElapsedTime is 0', () => {
     expect(sampleWorkflow1.taskProxies[11].task.meanElapsedTime).to.equal(7.0)
     expect(sampleWorkflow1.taskProxies[12].task.meanElapsedTime).to.equal(0)
     // when parsed, these two task proxies will become these children of a cyclepoint (was root family before)
-    expect(workflowTree[1].children[4].progress).to.not.equal(0)
-    expect(workflowTree[1].children[5].progress).to.equal(0)
+    expect(workflowTree[1].children[4].node.progress).to.not.equal(0)
+    expect(workflowTree[1].children[5].node.progress).to.equal(0)
   })
   it('should set the progress to 0 when startedTime is greater than now', () => {
     // dispatching here will call new Date() to calculate now, so let's mock it...
@@ -45,7 +46,7 @@ describe('Tree component functions', () => {
     // will return the clock object and the moment 0...
     const workflowTree = convertGraphQLWorkflowToTree(sampleWorkflow1)
     // see test above, where the value is **not** equal 0
-    expect(workflowTree[1].children[4].progress).to.equal(0)
+    expect(workflowTree[1].children[4].node.progress).to.equal(0)
     // remove the mock
     stub.restore()
   })
@@ -63,7 +64,7 @@ describe('Tree component functions', () => {
     // will return the clock object and the moment 0...
     const workflowTree = convertGraphQLWorkflowToTree(copy)
     const task = workflowTree[1].children[4]
-    expect(task.progress).to.equal(100)
+    expect(task.node.progress).to.equal(100)
     // remove the mock
     stub.restore()
   })
@@ -78,7 +79,7 @@ describe('Tree component functions', () => {
     // will return the clock object and the moment 0...
     const workflowTree = convertGraphQLWorkflowToTree(copy)
     const task = workflowTree[1].children[4]
-    expect(task.progress).to.equal(50)
+    expect(task.node.progress).to.equal(50)
     // remove the mock
     stub.restore()
   })

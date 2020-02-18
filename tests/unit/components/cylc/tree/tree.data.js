@@ -4,31 +4,39 @@
 
 const simpleWorkflowTree4Nodes = [
   {
-    __typename: 'Workflow',
     id: 'user/workflow1',
-    name: 'workflow1',
-    state: 'running',
+    node: {
+      __typename: 'Workflow',
+      name: 'workflow1',
+      state: 'running'
+    },
     children: [
       {
-        __typename: 'CyclePoint',
         id: '20100101T0000Z',
-        name: '20100101T0000Z',
-        state: 'failed',
+        node: {
+          __typename: 'CyclePoint',
+          name: '20100101T0000Z',
+          state: 'failed'
+        },
         children: [
           {
-            __typename: 'TaskProxy',
             id: 'user/workflow1/20100101T0000Z/foo',
-            name: 'foo',
-            state: 'failed',
+            node: {
+              __typename: 'TaskProxy',
+              name: 'foo',
+              state: 'failed'
+            },
             expanded: false,
             children: [
               {
-                __typename: 'Job',
                 id: 'user/workflow1/20100101T0000Z/foo/01',
-                name: '#1',
-                startedTime: '2019-08-19T22:44:42Z',
-                state: 'failed',
-                submitNum: 1
+                node: {
+                  __typename: 'Job',
+                  name: '1',
+                  startedTime: '2019-08-19T22:44:42Z',
+                  state: 'failed',
+                  submitNum: 1
+                }
               }
             ]
           }
@@ -40,6 +48,7 @@ const simpleWorkflowTree4Nodes = [
 
 const sampleWorkflow1 = {
   id: 'cylc|one',
+  __typename: 'Workflow',
   name: 'one',
   status: 'running',
   owner: 'cylc',
@@ -48,22 +57,26 @@ const sampleWorkflow1 = {
   taskProxies: [
     {
       id: 'cylc|one|20000101T0000Z|eventually_succeeded',
+      __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|SUCCEEDED',
+        __typename: 'FamilyProxy',
         state: 'succeeded',
         name: 'SUCCEEDED',
         cyclePoint: '20000101T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 0.5,
         name: 'eventually_succeeded'
       },
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|4',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16134',
           host: 'localhost',
@@ -75,6 +88,7 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|3',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16094',
           host: 'localhost',
@@ -86,6 +100,7 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|2',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16056',
           host: 'localhost',
@@ -97,6 +112,7 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '15947',
           host: 'localhost',
@@ -110,6 +126,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|sleepy',
+      __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
       latestMessage: 'succeeded',
@@ -120,12 +137,14 @@ const sampleWorkflow1 = {
         cyclePoint: '20000101T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 1.0,
         name: 'sleepy'
       },
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|sleepy|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16331',
           host: 'localhost',
@@ -139,22 +158,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|succeeded',
+      __typename: 'Job',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|SUCCEEDED',
+        __typename: 'FamilyProxy',
         state: 'succeeded',
         name: 'SUCCEEDED',
         cyclePoint: '20000101T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 1.0,
         name: 'succeeded'
       },
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|succeeded|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '15951',
           host: 'localhost',
@@ -168,22 +191,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|retrying',
+      __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
       latestMessage: 'failed, retrying in PT5M (after 2019-10-23T07:07:39Z)',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|BAD',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'BAD',
         cyclePoint: '20000101T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 0.0,
         name: 'retrying'
       },
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|retrying|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '15948',
           host: 'localhost',
@@ -197,22 +224,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|checkpoint',
+      __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'root',
         cyclePoint: '20000101T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 7.0,
         name: 'checkpoint'
       },
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|checkpoint|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16213',
           host: 'localhost',
@@ -226,22 +257,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|failed',
+      __typename: 'TaskProxy',
       state: 'failed',
       cyclePoint: '20000101T0000Z',
       latestMessage: 'failed/EXIT',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|BAD',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'BAD',
         cyclePoint: '20000101T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 0.0,
         name: 'failed'
       },
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|failed|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16173',
           host: 'localhost',
@@ -255,22 +290,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|waiting',
+      __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'root',
         cyclePoint: '20000101T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 1.0,
         name: 'waiting'
       },
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|waiting|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16332',
           host: 'localhost',
@@ -284,16 +323,19 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|sleepy',
+      __typename: 'TaskProxy',
       state: 'waiting',
       cyclePoint: '20000102T0000Z',
       latestMessage: '',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'root',
         cyclePoint: '20000102T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 1.0,
         name: 'sleepy'
       },
@@ -301,22 +343,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|succeeded',
+      __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000102T0000Z',
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|SUCCEEDED',
+        __typename: 'FamilyProxy',
         state: 'succeeded',
         name: 'SUCCEEDED',
         cyclePoint: '20000102T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 1.0,
         name: 'succeeded'
       },
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|succeeded|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16424',
           host: 'localhost',
@@ -330,22 +376,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|failed',
+      __typename: 'TaskProxy',
       state: 'failed',
       cyclePoint: '20000102T0000Z',
       latestMessage: 'failed/EXIT',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|BAD',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'BAD',
         cyclePoint: '20000102T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 0.0,
         name: 'failed'
       },
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|failed|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16646',
           host: 'localhost',
@@ -359,16 +409,19 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|waiting',
+      __typename: 'TaskProxy',
       state: 'waiting',
       cyclePoint: '20000102T0000Z',
       latestMessage: '',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'root',
         cyclePoint: '20000102T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 1.0,
         name: 'waiting'
       },
@@ -376,22 +429,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|checkpoint',
+      __typename: 'TaskProxy',
       state: 'running',
       cyclePoint: '20000102T0000Z',
       latestMessage: 'started',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'root',
         cyclePoint: '20000102T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 7.0,
         name: 'checkpoint'
       },
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|checkpoint|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16684',
           host: 'localhost',
@@ -405,22 +462,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|checkpoint2',
+      __typename: 'TaskProxy',
       state: 'running',
       cyclePoint: '20000102T0000Z',
       latestMessage: 'started',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'root',
         cyclePoint: '20000102T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 0.0,
         name: 'checkpoint2'
       },
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|checkpoint2|1',
+          __typename: 'TaskProxy',
           batchSysName: 'background',
           batchSysJobId: '16688',
           host: 'localhost',
@@ -434,22 +495,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|eventually_succeeded',
+      __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000102T0000Z',
       latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|SUCCEEDED',
+        __typename: 'FamilyProxy',
         state: 'succeeded',
         name: 'SUCCEEDED',
         cyclePoint: '20000102T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 0.5,
         name: 'eventually_succeeded'
       },
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|4',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16607',
           host: 'localhost',
@@ -461,6 +526,7 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|3',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16569',
           host: 'localhost',
@@ -472,6 +538,7 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|2',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16529',
           host: 'localhost',
@@ -483,6 +550,7 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16420',
           host: 'localhost',
@@ -496,22 +564,26 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|retrying',
+      __typename: 'TaskProxy',
       state: 'retrying',
       cyclePoint: '20000102T0000Z',
       latestMessage: 'failed, retrying in PT5M (after 2019-10-23T07:08:10Z)',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|BAD',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'BAD',
         cyclePoint: '20000102T0000Z'
       },
       task: {
+        __typename: 'Task',
         meanElapsedTime: 0.0,
         name: 'retrying'
       },
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|retrying|1',
+          __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16421',
           host: 'localhost',
@@ -527,6 +599,7 @@ const sampleWorkflow1 = {
   familyProxies: [
     {
       id: 'cylc|one|20000102T0000Z|root',
+      __typename: 'FamilyProxy',
       name: 'root',
       cyclePoint: '20000102T0000Z',
       state: 'failed',
@@ -534,6 +607,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|root',
+      __typename: 'FamilyProxy',
       name: 'root',
       cyclePoint: '20000101T0000Z',
       state: 'failed',
@@ -541,11 +615,13 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|SUCCEEDED',
+      __typename: 'FamilyProxy',
       name: 'SUCCEEDED',
       cyclePoint: '20000101T0000Z',
       state: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|GOOD',
+        __typename: 'FamilyProxy',
         state: 'succeeded',
         name: 'GOOD',
         cyclePoint: '20000101T0000Z'
@@ -553,11 +629,13 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|BAD',
+      __typename: 'FamilyProxy',
       name: 'BAD',
       cyclePoint: '20000101T0000Z',
       state: 'failed',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'root',
         cyclePoint: '20000101T0000Z'
@@ -565,11 +643,13 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|GOOD',
+      __typename: 'FamilyProxy',
       name: 'GOOD',
       cyclePoint: '20000101T0000Z',
       state: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'root',
         cyclePoint: '20000101T0000Z'
@@ -577,11 +657,13 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|SUCCEEDED',
+      __typename: 'FamilyProxy',
       name: 'SUCCEEDED',
       cyclePoint: '20000102T0000Z',
       state: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|GOOD',
+        __typename: 'FamilyProxy',
         state: 'succeeded',
         name: 'GOOD',
         cyclePoint: '20000102T0000Z'
@@ -589,11 +671,13 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|GOOD',
+      __typename: 'FamilyProxy',
       name: 'GOOD',
       cyclePoint: '20000102T0000Z',
       state: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
+        __typename: 'FamilyProxy',
         state: 'failed',
         name: 'root',
         cyclePoint: '20000102T0000Z'
@@ -601,11 +685,13 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|BAD',
+      __typename: 'FamilyProxy',
       name: 'BAD',
       cyclePoint: '20000102T0000Z',
       state: 'failed',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
+        __typename: 'FamilyProxy',
         name: 'root',
         cyclePoint: '20000102T0000Z',
         state: 'failed'

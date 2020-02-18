@@ -151,7 +151,7 @@ export default {
     TreeEventBus.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
-    if (this.node.expanded) {
+    if (this.node.expanded !== undefined && this.node.expanded !== null) {
       this.isExpanded = this.node.expanded
       this.emitExpandCollapseEvent(this.isExpanded)
     }
