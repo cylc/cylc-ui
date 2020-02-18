@@ -14,10 +14,10 @@
             hide-default-footer
             hide-default-header>
           <template v-slot:item.count="{ item }">
-            <span class="headline font-weight-thin">{{ item.count }}</span>
+            <span class="headline font-weight-light">{{ item.count }}</span>
           </template>
           <template v-slot:item.text="{ item }">
-            <span class="title font-weight-thin">{{ item.text }}</span>
+            <span class="title font-weight-light">{{ item.text }}</span>
           </template>
         </v-data-table>
       </v-flex>
@@ -29,10 +29,10 @@
             hide-default-footer
             hide-default-header>
           <template v-slot:item.id="{ item }">
-            <span class="title font-weight-thin">{{ item.id }}</span>
+            <span class="title font-weight-light">{{ item.id }}</span>
           </template>
           <template v-slot:item.text="{ item }">
-            <span class="title font-weight-thin">{{ item.text }}</span>
+            <span class="title font-weight-light">{{ item.text }}</span>
           </template>
           <template v-slot:no-data>
             <td class="title">No events</td>
@@ -49,7 +49,7 @@
               <v-icon medium>mdi-table</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
+              <v-list-item-title class="title font-weight-light">
                 Workflows Table
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -62,7 +62,7 @@
               <v-icon medium>mdi-settings</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
+              <v-list-item-title class="title font-weight-light">
                 Settings
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -75,7 +75,7 @@
               <v-icon medium>mdi-hubspot</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
+              <v-list-item-title class="title font-weight-light">
                 Cylc Hub
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -92,7 +92,7 @@
               <v-icon medium>mdi-book</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
+              <v-list-item-title class="title font-weight-light">
                 Cylc UI Quickstart
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -105,7 +105,7 @@
               <v-icon medium>mdi-book-open-variant</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
+              <v-list-item-title class="title font-weight-light">
                 Suite Design Guide
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -118,7 +118,7 @@
               <v-icon medium>mdi-file-document-box-multiple</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-thin">
+              <v-list-item-title class="title font-weight-light">
                 Documentation
               </v-list-item-title>
               <v-list-item-subtitle>
