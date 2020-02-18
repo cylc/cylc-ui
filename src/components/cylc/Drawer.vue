@@ -13,7 +13,7 @@
       column
       class="pa-0"
     >
-      <c-header />
+      <c-header :user="user.username" />
       <v-list-item
         v-if="responsive"
       >
@@ -94,6 +94,7 @@ export default {
   computed: {
     ...mapState('workflows', ['workflows']),
     ...mapState(['packageJson', 'environment']),
+    ...mapState('user', ['user']),
     drawer: {
       get: function () {
         return this.$store.state.app.drawer
