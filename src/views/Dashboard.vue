@@ -5,7 +5,7 @@
     class="c-dashboard mt-4"
   >
     <v-layout wrap>
-      <v-flex xs6 md6 lg3>
+      <v-flex xs6 md6 lg6>
         <p class="display-1">Workflows</p>
         <!-- TODO: link with data from the query -->
         <v-data-table
@@ -21,7 +21,7 @@
           </template>
         </v-data-table>
       </v-flex>
-      <v-flex xs6 md6 lg9>
+      <v-flex xs6 md6 lg6>
         <p class="display-1">Events</p>
         <v-data-table
             :headers="eventsHeader"
