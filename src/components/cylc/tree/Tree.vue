@@ -23,72 +23,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :tab-index="0"
     >
     <template slot-scope="{ node, tree }" slot="default">
-      <div class="node">
-        <v-layout class="node-data" :style="nodeStyle(node)" wrap v-if="node.node.__typename === 'CyclePoint'">
-          <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
-          <v-flex shrink>
+      <div class="treeitem">
+        <div
+            :class="getNodeClass()"
+            :style="getNodeStyle(node)"
+        >
+          <!-- the node value -->
+          <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
+          <div class="node-data" v-if="node.type === 'cyclepoint'">
+            <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
             <task :status="node.node.state" :progress=0 />
-          </v-flex>
-          <v-flex grow>
             <span class="mx-1">{{ node.node.name }}</span>
-          </v-flex>
-        </v-layout>
-        <v-layout class="node-data" :style="nodeStyle(node)" wrap v-else-if="node.node.__typename === 'FamilyProxy'">
-          <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
-          <v-flex shrink>
-            <task :status="node.state.state" :progress="node.node.progress" />
-          </v-flex>
-          <v-flex grow>
-            <span class="mx-1">{{ node.node.name }}</span>
-          </v-flex>
-        </v-layout>
-        <v-layout class="node-data" :style="nodeStyle(node)" wrap v-else-if="node.node.__typename === 'TaskProxy'">
-          <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
-          <v-flex shrink>
-            <task :status="node.node.state" :progress="node.node.progress" />
-          </v-flex>
-          <v-flex shrink>
-            <span class="mx-1">{{ node.node.name }}</span>
-          </v-flex>
-          <v-flex grow ml-4 v-if="!node.state.open">
-            <!-- Task summary -->
-            <job
-                v-for="(task, index) in node.children"
-                :key="`${task.id}-summary-${index}`"
-                :status="task.node.state" />
-          </v-flex>
-        </v-layout>
-        <v-layout class="node-data" :style="nodeStyle(node)" @click="toggleClick($event, node, tree)" layout column v-else-if="node.node.__typename === 'Job'">
-          <v-layout wrap>
-            <v-flex shrink>
-              <job :status="node.node.state" />
-            </v-flex>
-            <v-flex xs2 md1 lg1>
-              <span class="mx-1">#{{ node.node.submitNum }}</span>
-            </v-flex>
-            <v-flex grow>
-              <span class="grey--text">{{ node.node.host }}</span>
-            </v-flex>
-          </v-layout>
-        </v-layout>
-        <!-- Note: the class and styles for a job details panel are different than the other items in this series -->
-        <v-container class="leaf" v-else-if="node.node.__typename === 'JobDetails'">
-          <div class="arrow-up" :style="getLeafTriangleStyle(node)"></div>
-          <div class="leaf-data font-weight-light py-4">
-            <v-row v-for="leafProperty in jobDetailsNodeProperties" :key="leafProperty.id" no-gutters>
-              <v-col xs="4" sm="4" md="4" lg="2" xl="2" no-wrap>
-                <span class="px-4">{{ leafProperty.title }}</span>
-              </v-col>
-              <v-col no-wrap>
-                <span class="grey--text">{{ node.node[leafProperty.property] }}</span>
-              </v-col>
-            </v-row>
           </div>
-        </v-container>
-        <!-- fallback, not supposed to be used -->
-        <div class="node-data" :style="nodeStyle(node)" v-else>
-          <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
-          <span class="tree-text">{{ node.node.name }}</span>
+          <div class="node-data" v-else-if="node.type === 'family-proxy'">
+            <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
+            <task :status="node.node.state" :progress="node.node.progress" />
+            <span class="mx-1">{{ node.node.name }}</span>
+          </div>
+          <div class="node-data" v-else-if="node.type === 'task-proxy'">
+            <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
+            <task :status="node.node.state" :progress="node.node.progress" />
+            <span class="mx-1">{{ node.node.name }}</span>
+            <div v-if="!node.state.open" class="node-summary">
+              <!-- Task summary -->
+              <job
+                  v-for="(task, index) in node.children"
+                  :key="`${task.id}-summary-${index}`"
+                  :status="task.node.state" />
+            </div>
+          </div>
+          <div class="node-data" @click="toggleClick($event, node, tree)" v-else-if="node.type === 'job'">
+            <div class="node-data">
+              <job :status="node.node.state" />
+              <span class="mx-1">#{{ node.node.submitNum }}</span>
+              <span class="grey--text">{{ node.node.host }}</span>
+            </div>
+          </div>
+          <div class="node-data" v-else>
+            <span class="mx-1">{{ node.node.name }}</span>
+          </div>
+        </div>
+        <div class="leaf" v-if="node.type === 'job-details'">
+          <div class="arrow-up" :style="getLeafTriangleStyle(node)"></div>
+          <div class="leaf-data font-weight-light py-4 pl-2">
+            <div v-for="leafProperty in jobDetailsNodeProperties" :key="leafProperty.id" class="leaf-entry">
+              <span class="px-4 leaf-entry-title">{{ leafProperty.title }}</span>
+              <span class="grey--text leaf-entry-value">{{ node.node[leafProperty.property] }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -132,11 +114,6 @@ export default {
     this.tree = this.$refs.tree.tree
   },
   methods: {
-    nodeStyle (node) {
-      return {
-        'padding-left': `${node.state.depth * NODE_DEPTH_OFFSET}px`
-      }
-    },
     togglerContent (node) {
       const open = node.state.open
       const more = Object.hasOwnProperty.call(node, 'children') && node.children.length > 0
@@ -167,10 +144,31 @@ export default {
         tree.closeNode(node)
       }
     },
+    getTypeStyle (node) {
+      const styles = {}
+      if (this.hasChildren(node)) {
+        styles.cursor = 'pointer'
+      }
+      return styles
+    },
+    getNodeStyle (node) {
+      return {
+        'padding-left': `${node.state.depth * NODE_DEPTH_OFFSET}px`
+      }
+    },
     getLeafTriangleStyle (node) {
       return {
-        'margin-left': `${(node.state.depth - 1) * NODE_DEPTH_OFFSET}px`
+        'margin-left': `${node.state.depth * NODE_DEPTH_OFFSET}px`
       }
+    },
+    getNodeClass () {
+      return {
+        node: true,
+        'ml-3': true
+      }
+    },
+    hasChildren (node) {
+      return node.children
     }
   }
 }

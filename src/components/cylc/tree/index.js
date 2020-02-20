@@ -47,7 +47,7 @@ function createWorkflowNode (workflow) {
  * Create a cycle point node. Uses the family proxy property `cyclePoint`.
  *
  * @param familyProxy {Object} family proxy
- * @return {{id: string, type: string, node: Object, children: []}}
+ * @return {{id: string, type: string, node: Object, children: [], size: number, state: Object}}
  */
 function createCyclePointNode (familyProxy) {
   return {
@@ -71,7 +71,7 @@ function createCyclePointNode (familyProxy) {
  * only adding new properties such as type, children, etc.
  *
  * @param familyProxy {Object} family proxy
- * @return {{id: string, type: string, node: Object, children: []}}
+ * @return {{id: string, type: string, node: Object, children: [], size: number, state: Object}}
  */
 function createFamilyProxyNode (familyProxy) {
   return {
@@ -92,7 +92,7 @@ function createFamilyProxyNode (familyProxy) {
  * only adding new properties such as type, name, children, etc.
  *
  * @param taskProxy {Object} task proxy
- * @return {{id: string, type: string, expanded: boolean, node: Object, children: []}}
+ * @return {{id: string, type: string, expanded: boolean, node: Object, children: [], size: number, state: Object}}
  */
 // TODO: move expanded state to data later for infinite-tree
 function createTaskProxyNode (taskProxy) {
@@ -120,7 +120,7 @@ function createTaskProxyNode (taskProxy) {
  * @param job {Object} job
  * @param [latestMessage] {string} latest message of the job's task, defaults to an empty string
  * @return {{node: Object, latestMessage: string}}
- * @return {{id: string, type: string, node: Object, latestMessage: string}}
+ * @return {{id: string, type: string, node: Object, children: [], latestMessage: string, children: [], size: number, state: Object}}
  */
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
 // TODO: add job-leaf (details) in the hierarchy later for infinite-tree
