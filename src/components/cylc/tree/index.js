@@ -104,7 +104,6 @@ function createTaskProxyNode (taskProxy) {
     id: taskProxy.id,
     type: 'task-proxy',
     node: taskProxy,
-    expanded: false,
     children: [],
     // infinite-tree properties
     size: TREE_ITEM_SIZE,
