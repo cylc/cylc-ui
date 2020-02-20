@@ -43,9 +43,9 @@ describe('Tree component', () => {
     // eslint-disable-next-line no-unused-vars
     const wrapper = shallowMount(Tree, {
       propsData: {
-        treeData: simpleWorkflowTree4Nodes
+        treeData: simpleWorkflowTree4Nodes[0].children
       }
     })
-    expect(wrapper.props().treeData[0].__type).to.equal('workflow')
+    expect(wrapper.props().treeData[0].node.__typename).to.equal('CyclePoint')
   })
 })
