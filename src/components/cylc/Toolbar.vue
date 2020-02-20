@@ -82,8 +82,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <v-list-item-title><v-icon>mdi-file-tree</v-icon> Tree</v-list-item-title>
             </v-list-item>
-          </v-list>
-          <v-list class="pa-0">
             <v-list-item
               class="py-0 px-8 ma-0"
               @click="onClickAddGraphView"
