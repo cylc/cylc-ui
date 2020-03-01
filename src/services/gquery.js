@@ -23,7 +23,11 @@ function getSelections (a) {
   const selections = {}
   for (const selection of a.selectionSet.selections) {
     if (selection.kind === 'Field') {
-      selections[selection.name.value] = selection
+      let key = selection.name.value
+      if (Object.hasOwnProperty.call(selection, 'alias') && selection.alias) {
+        key = selection.alias.value
+      }
+      selections[key] = selection
     }
   }
   return selections
