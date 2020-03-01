@@ -165,14 +165,6 @@ function convertGraphQLWorkflowToTree (workflow) {
   // build hierarchy of cycle-point with zero or many families, and each family with zero or many other families
   // TODO: most of this for-loop and code within might be removed later: https://github.com/cylc/cylc-ui/issues/354#issuecomment-585003621
   for (const familyProxy of rootNode.node.familyProxies) {
-    if (!lookup.get(familyProxy.cyclePoint)) {
-      // create cycle point node, using family's cycle point info
-      const cyclePointNode = createCyclePointNode(familyProxy)
-      lookup.set(cyclePointNode.id, cyclePointNode)
-      // a cycle point must go directly under the workflow
-      rootNode.children.push(cyclePointNode)
-    }
-
     const parent = familyProxy.firstParent
     // skip the root family, which has null as its first parent
     if (parent === null) {
