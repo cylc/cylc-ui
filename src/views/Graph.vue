@@ -5,48 +5,10 @@
 <script>
 import Graph from '@/components/cylc/graph/Graph'
 import { mixin } from '@/mixins'
+import { WORKFLOW_GRAPH_QUERY } from '@/graphql/queries'
 
 const QUERIES = {
-  root: `
-  subscription {
-    workflows(ids: ["WORKFLOW_ID"]) {
-      id
-      status
-      nodesEdges {
-        nodes {
-          id
-          label: id
-          parent: firstParent {
-            id
-            state
-          }
-          state
-          cyclePoint
-          task {
-            name
-          }
-          jobs(sort: {keys: ["submit_num"], reverse: true}) {
-            id
-            batchSysName
-            batchSysJobId
-            host
-            startedTime
-            submittedTime
-            finishedTime
-            state
-            submitNum
-          }
-        }
-        edges {
-          id
-          source
-          target
-          label: id
-        }
-      }
-    }
-  }
-`
+  root: WORKFLOW_GRAPH_QUERY
 }
 
 export default {

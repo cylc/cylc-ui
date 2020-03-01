@@ -136,17 +136,10 @@
 import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
 import { getHubUrl } from '@/utils/user'
+import { DASHBOARD_QUERY } from '@/graphql/queries'
 
 const QUERIES = {
-  root: `
-    subscription {
-      workflows {
-        id
-        name
-        status
-      }
-    }
-  `
+  root: DASHBOARD_QUERY
 }
 
 export default {

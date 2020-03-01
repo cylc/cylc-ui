@@ -18,61 +18,11 @@
 import { mixin } from '@/mixins/index'
 import { mapGetters } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
+import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
 
 // query to retrieve all workflows
 const QUERIES = {
-  root: `
-      subscription {
-        workflows(ids: ["WORKFLOW_ID"]) {
-          id
-          name
-          status
-          owner
-          host
-          port
-          taskProxies(sort: { keys: ["cyclePoint"] }) {
-            id
-            name
-            state
-            cyclePoint
-            latestMessage
-            firstParent {
-              id
-              name
-              cyclePoint
-              state
-            }
-            task {
-              meanElapsedTime
-              name
-            }
-            jobs(sort: { keys: ["submit_num"], reverse:true }) {
-              id
-              batchSysName
-              batchSysJobId
-              host
-              startedTime
-              submittedTime
-              finishedTime
-              state
-              submitNum
-            }
-          }
-          familyProxies (sort: { keys: ["firstParent"]}) {
-            id
-            name
-            state
-            cyclePoint
-            firstParent {
-              id
-              name
-              cyclePoint
-              state
-            }
-          }
-        }
-      }
-    `
+  root: WORKFLOW_TREE_QUERY
 }
 
 export default {

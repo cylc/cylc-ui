@@ -61,42 +61,10 @@
 <script>
 import Job from '@/components/cylc/Job'
 import { getWorkflowSummary } from '@/components/cylc/gscan/index'
+import { GSCAN_QUERY } from '@/graphql/queries'
 
 const QUERIES = {
-  root: `
-    subscription {
-      workflows {
-        id
-        name
-        status
-        owner
-        host
-        port
-        taskProxies(sort: { keys: ["cyclePoint"] }) {
-          id
-          name
-          state
-          cyclePoint
-          latestMessage
-          task {
-            meanElapsedTime
-            name
-          }
-          jobs(sort: { keys: ["submit_num"], reverse:true }) {
-            id
-            batchSysName
-            batchSysJobId
-            host
-            startedTime
-            submittedTime
-            finishedTime
-            state
-            submitNum
-          }
-        }
-      }
-    }
-  `
+  root: GSCAN_QUERY
 }
 
 export default {
