@@ -6,11 +6,13 @@ import { computePercentProgress } from '@/components/cylc'
  * only adding new properties such as type, children, etc.
  *
  * @param workflow {Object} workflow
- * @return {{id: string, node: Object, children: []}}
+ * @return {{node: Object, children: []}}
  */
 function createWorkflowNode (workflow) {
+  // Does not have the infinite-tree properties (size, state, etc) because this node is used only to build the
+  // initial hierarchy. After that it is discarded, and we return its children (Cylc 7 did not display workflows
+  // in the tree).
   return {
-    id: workflow.id,
     node: workflow,
     children: []
   }
@@ -20,13 +22,13 @@ function createWorkflowNode (workflow) {
  * Create a cycle point node. Uses the family proxy property `cyclePoint`.
  *
  * @param familyProxy {Object} family proxy
- * @return {{id: string, node: Object,children: []}}
+ * @return {{id: string, type: string, node: Object, children: []}}
  */
 function createCyclePointNode (familyProxy) {
   return {
     id: familyProxy.cyclePoint,
+    type: 'cyclepoint',
     node: {
-      __typename: 'CyclePoint',
       id: familyProxy.cyclePoint,
       name: familyProxy.cyclePoint
     },
@@ -39,11 +41,12 @@ function createCyclePointNode (familyProxy) {
  * only adding new properties such as type, children, etc.
  *
  * @param familyProxy {Object} family proxy
- * @return {{id: string, node: Object, children: []}}
+ * @return {{id: string, type: string, node: Object, children: []}}
  */
 function createFamilyProxyNode (familyProxy) {
   return {
     id: familyProxy.id,
+    type: 'family-proxy',
     node: familyProxy,
     children: []
   }
@@ -54,12 +57,13 @@ function createFamilyProxyNode (familyProxy) {
  * only adding new properties such as type, name, children, etc.
  *
  * @param taskProxy {Object} task proxy
- * @return {{id: string, node: Object, expanded: boolean, children: []}}
+ * @return {{id: string, type: string, expanded: boolean, node: Object, children: []}}
  */
 // TODO: move expanded state to data later for infinite-tree
 function createTaskProxyNode (taskProxy) {
   return {
     id: taskProxy.id,
+    type: 'task-proxy',
     node: taskProxy,
     expanded: false,
     children: []
@@ -73,12 +77,14 @@ function createTaskProxyNode (taskProxy) {
  * @param job {Object} job
  * @param latestMessage {string} latest message of the job's task
  * @return {{node: Object, latestMessage: string}}
+ * @return {{id: string, type: string, node: Object, children: [], latestMessage: string}}
  */
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
 // TODO: add job-leaf (details) in the hierarchy later for infinite-tree
 function createJobNode (job, latestMessage) {
   return {
     id: job.id,
+    type: 'job',
     node: job,
     latestMessage: latestMessage
   }
@@ -143,14 +149,22 @@ function computeCyclePointsStates (cyclePointNodes) {
  * @returns Object
  */
 function convertGraphQLWorkflowToTree (workflow) {
+  if (workflow === null || !workflow.cyclePoints || !workflow.familyProxies || !workflow.taskProxies) {
+    return []
+  }
   // the workflow object gets augmented to become a valid node for the tree
   const rootNode = createWorkflowNode(workflow)
   // a lookup map to hold the ID's as keys, and object instances as values, will be later used when iterating tasks
   const lookup = new Map()
+  for (const cyclePoint of workflow.cyclePoints) {
+    const cyclePointNode = createCyclePointNode(cyclePoint)
+    lookup.set(cyclePointNode.id, cyclePointNode)
+    // a cycle point must go directly under the workflow
+    rootNode.children.push(cyclePointNode)
+  }
   // build hierarchy of cycle-point with zero or many families, and each family with zero or many other families
   // TODO: most of this for-loop and code within might be removed later: https://github.com/cylc/cylc-ui/issues/354#issuecomment-585003621
   for (const familyProxy of rootNode.node.familyProxies) {
-    const parent = familyProxy.firstParent
     if (!lookup.get(familyProxy.cyclePoint)) {
       // create cycle point node, using family's cycle point info
       const cyclePointNode = createCyclePointNode(familyProxy)
@@ -159,6 +173,7 @@ function convertGraphQLWorkflowToTree (workflow) {
       rootNode.children.push(cyclePointNode)
     }
 
+    const parent = familyProxy.firstParent
     // skip the root family, which has null as its first parent
     if (parent === null) {
       continue
