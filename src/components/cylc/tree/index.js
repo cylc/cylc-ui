@@ -166,8 +166,8 @@ function convertGraphQLWorkflowToTree (workflow) {
   // TODO: most of this for-loop and code within might be removed later: https://github.com/cylc/cylc-ui/issues/354#issuecomment-585003621
   for (const familyProxy of rootNode.node.familyProxies) {
     const parent = familyProxy.firstParent
-    // skip the root family, which has null as its first parent
-    if (parent === null) {
+    // skip the root family, which does not have a parent
+    if (parent === null || parent === undefined) {
       continue
     }
     if (!lookup.get(familyProxy.id)) {
@@ -204,9 +204,12 @@ function convertGraphQLWorkflowToTree (workflow) {
     } else {
       lookup.get(taskProxyNode.node.firstParent.id).children.push(taskProxyNode)
     }
-    for (const job of taskProxyNode.node.jobs) {
-      const jobNode = createJobNode(job, taskProxyNode.node.latestMessage)
-      taskProxyNode.children.push(jobNode)
+    // a task in waiting state may not have any jobs
+    if (taskProxyNode.node.jobs) {
+      for (const job of taskProxyNode.node.jobs) {
+        const jobNode = createJobNode(job, taskProxyNode.node.latestMessage)
+        taskProxyNode.children.push(jobNode)
+      }
     }
     computeTaskProgress(taskProxyNode.node)
   }
