@@ -197,3 +197,15 @@ subscription {
   }
 }
 `
+
+export const WORKFLOWS_TABLE_QUERY = `
+subscription {
+  workflows {
+    id
+    name
+    owner
+    host
+    port
+  }
+}
+`
