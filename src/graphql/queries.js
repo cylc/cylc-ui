@@ -25,7 +25,7 @@
  * @type {string}
  */
 export const WORKFLOW_TREE_QUERY = `
-subscription {
+query {
   workflows(ids: ["WORKFLOW_ID"]) {
     id
     name
@@ -86,7 +86,7 @@ subscription {
  * @type {string}
  */
 export const WORKFLOW_GRAPH_QUERY = `
-subscription {
+query {
   workflows(ids: ["WORKFLOW_ID"]) {
     id
     name
@@ -174,7 +174,7 @@ subscription {
  * @type {string}
  */
 export const DASHBOARD_QUERY = `
-subscription {
+query {
   workflows {
     id
     name
@@ -188,7 +188,7 @@ subscription {
  * @type {string}
  */
 export const GSCAN_QUERY = `
-subscription {
+query {
   workflows {
     id
     name
@@ -223,7 +223,7 @@ subscription {
 `
 
 export const WORKFLOWS_TABLE_QUERY = `
-subscription {
+query {
   workflows {
     id
     name
