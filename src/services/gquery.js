@@ -144,7 +144,7 @@ class GQuery {
     this.recompute()
   }
 
-  subscribe (view, query) {
+  subscribe (view, query, subscription = null) {
     /**
      * Subscribe a new query.
      * @param {Object} view - The view to subscribe the query to.
@@ -156,6 +156,7 @@ class GQuery {
       id,
       view,
       query: parse(query),
+      subscription: subscription,
       active: false
     })
     this.recompute()
