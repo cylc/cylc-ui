@@ -36,7 +36,6 @@ import { mixin } from '@/mixins'
 import { mapState } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
 import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
-import store from '@/store'
 import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree'
 
 // query to retrieve all workflows
@@ -79,6 +78,7 @@ export default {
   watch: {
     workflows: {
       deep: true,
+      immediate: true,
       handler (newValue) {
         this.workflowUpdated(newValue)
       }
@@ -94,7 +94,6 @@ export default {
       }
     )
     this.subscribe('root')
-    this.treeData = store.getters['workflows/workflows']
   },
 
   beforeDestroy () {
