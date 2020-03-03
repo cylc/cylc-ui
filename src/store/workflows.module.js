@@ -45,6 +45,12 @@ const mutations = {
   }
 }
 
+/**
+ * Prune family proxies from a workflow.
+ * @private
+ * @param {[]} [prunedFamilyProxies] array of family proxies
+ * @param {{familyProxies: []}} workflow workflow
+ */
 function pruneFamilyProxies (prunedFamilyProxies, workflow) {
   if (!prunedFamilyProxies || !workflow.familyProxies) {
     return
@@ -60,6 +66,12 @@ function pruneFamilyProxies (prunedFamilyProxies, workflow) {
   })
 }
 
+/**
+ * Prune task proxies from a workflow.
+ * @private
+ * @param {[]} [prunedTaskProxies] array of task proxies
+ * @param {{taskProxies: []}} workflow workflow
+ */
 function pruneTaskProxies (prunedTaskProxies, workflow) {
   if (!prunedTaskProxies || !workflow.taskProxies) {
     return
@@ -74,6 +86,17 @@ function pruneTaskProxies (prunedTaskProxies, workflow) {
   })
 }
 
+/**
+ * Prune jobs from a workflow.
+ * @private
+ * @param {[]} [prunedJobs] array of jobs
+ * @param {{
+ *   taskProxies: [{
+ *     id: String,
+ *     jobs: []
+ *   }]
+ * }} workflow workflow
+ */
 function pruneJobs (prunedJobs, workflow) {
   if (!prunedJobs) {
     return
@@ -95,6 +118,16 @@ function pruneJobs (prunedJobs, workflow) {
   })
 }
 
+/**
+ * Prune data from a workflow.
+ * @private
+ * @param {{
+ *   familyProxies: [],
+ *   taskProxies: [],
+ *   jobs: []
+ * }} pruned
+ * @param workflow [workflow]
+ */
 function pruneData (pruned, workflow) {
   if (!pruned || !workflow) {
     return
