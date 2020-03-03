@@ -48,6 +48,41 @@ const mutations = {
 const actions = {
   set ({ commit }, data) {
     commit('SET', data)
+  },
+  updateDeltas ({ commit, state, getters }, { deltas }) {
+    // First step is to locate the workflow referenced in the deltas
+    const deltasWorkflowId = deltas.workflow.id
+    const workflows = state.workflows
+    let workflowToUpdate = null
+    for (const workflow of workflows) {
+      if (workflow.id === deltasWorkflowId) {
+        workflowToUpdate = workflow
+        break
+      }
+    }
+    // We do not have the workflow?
+    if (workflowToUpdate === null) {
+      return
+    }
+    // Now go through the pruned deltas
+    if (deltas.pruned) {
+      if (deltas.pruned.jobs) {
+        deltas.pruned.jobs.forEach((jobId) => {
+          // eslint-disable-next-line no-unused-vars
+          const [user, workflow, cyclepoint, task, job] = jobId.split('|')
+          for (const taskProxy of workflowToUpdate.taskProxies) {
+            if (taskProxy.jobs && taskProxy.id === [user, workflow, cyclepoint, task].join('|')) {
+              for (const [index, taskProxyJob] of taskProxy.jobs.entries()) {
+                if (taskProxyJob.id === [user, workflow, cyclepoint, task, job].join('|')) {
+                  taskProxy.jobs.splice(index, 1)
+                }
+              }
+            }
+          }
+        })
+      }
+    }
+    commit('SET', workflows)
   }
 }
 

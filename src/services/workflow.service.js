@@ -83,6 +83,8 @@ class SubscriptionWorkflowService extends GQuery {
       query: this.query,
       fetchPolicy: 'no-cache'
     })
+    // HACK: remove it later
+    console.warn = function () {}
     query.subscribeToMore({
       document: gql`
         subscription {
@@ -113,6 +115,8 @@ class SubscriptionWorkflowService extends GQuery {
         if (!subscriptionData.data) {
           return prev
         }
+        const deltas = subscriptionData.data.deltas
+        store.dispatch('workflows/updateDeltas', { deltas })
       }
     })
     this.observable = query
