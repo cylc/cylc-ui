@@ -32,10 +32,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mixin } from '@/mixins/index'
-import { mapGetters, mapState } from 'vuex'
+import { mixin } from '@/mixins'
+import { mapState } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
 import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
+import store from '@/store'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -65,12 +66,22 @@ export default {
   data: () => ({
     viewID: '',
     subscriptions: {},
-    isLoading: true
+    isLoading: true,
+    workflowTree: null
   }),
 
   computed: {
-    ...mapGetters('workflows', ['workflowTree']),
-    ...mapState('user', ['user'])
+    ...mapState('user', ['user']),
+    ...mapState('workflows', ['workflows'])
+  },
+
+  watch: {
+    workflows: {
+      deep: true,
+      handler (newValue) {
+        this.workflows = store.getters['workflows/workflows']
+      }
+    }
   },
 
   created () {
@@ -82,6 +93,7 @@ export default {
       }
     )
     this.subscribe('root')
+    this.workflowTree = store.getters['workflows/workflowTree']
   },
 
   beforeDestroy () {
