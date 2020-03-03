@@ -66,15 +66,32 @@ const actions = {
     }
     // Now go through the pruned deltas
     if (deltas.pruned) {
+      if (deltas.pruned.tasks) {
+        deltas.pruned.tasks.forEach((deltaTaskId) => {
+          console.log(deltaTaskId)
+          const [user, workflow, cyclepoint, task] = deltaTaskId.split('|')
+          const taskProxyId = [user, workflow, cyclepoint, task].join('|')
+          for (const [index, taskProxy] of workflowToUpdate.taskProxies.entries()) {
+            console.log(taskProxy)
+            console.log(taskProxyId)
+            if (taskProxy.id === taskProxyId) {
+              workflowToUpdate.taskProxies.splice(index, 1)
+              break
+            }
+          }
+        })
+      }
       if (deltas.pruned.jobs) {
-        deltas.pruned.jobs.forEach((jobId) => {
-          // eslint-disable-next-line no-unused-vars
-          const [user, workflow, cyclepoint, task, job] = jobId.split('|')
+        deltas.pruned.jobs.forEach((deltaJobId) => {
+          const [user, workflow, cyclepoint, task, job] = deltaJobId.split('|')
+          const taskProxyId = [user, workflow, cyclepoint, task].join('|')
+          const jobId = [user, workflow, cyclepoint, task, job].join('|')
           for (const taskProxy of workflowToUpdate.taskProxies) {
-            if (taskProxy.jobs && taskProxy.id === [user, workflow, cyclepoint, task].join('|')) {
+            if (taskProxy.jobs && taskProxy.id === taskProxyId) {
               for (const [index, taskProxyJob] of taskProxy.jobs.entries()) {
-                if (taskProxyJob.id === [user, workflow, cyclepoint, task, job].join('|')) {
+                if (taskProxyJob.id === jobId) {
                   taskProxy.jobs.splice(index, 1)
+                  break
                 }
               }
             }
