@@ -124,7 +124,10 @@ export function createApolloClient (httpUrl, subscriptionClient) {
 
   return new ApolloClient({
     link: link,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      addTypename: true,
+      dataIdFromObject: object => object.id || null
+    }),
     defaultOptions: {
       query: {
         fetchPolicy: 'no-cache',
