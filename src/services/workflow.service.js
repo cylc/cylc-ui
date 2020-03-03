@@ -90,7 +90,8 @@ class SubscriptionWorkflowService extends GQuery {
         subscription {
           deltas (id: "kinow|five") {
             pruned {
-              tasks
+              familyProxies
+              taskProxies
               jobs
             }
             workflow {

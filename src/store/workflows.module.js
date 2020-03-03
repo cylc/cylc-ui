@@ -45,6 +45,66 @@ const mutations = {
   }
 }
 
+function pruneFamilyProxies (prunedFamilyProxies, workflow) {
+  if (!prunedFamilyProxies || !workflow.familyProxies) {
+    return
+  }
+  prunedFamilyProxies.forEach((deltaFamilyProxyId) => {
+    // eslint-disable-next-line no-unused-vars
+    for (const [index, familyProxy] of workflow.familyProxies.entries()) {
+      if (familyProxy.id === deltaFamilyProxyId) {
+        workflow.familyProxies.splice(index, 1)
+        break
+      }
+    }
+  })
+}
+
+function pruneTaskProxies (prunedTaskProxies, workflow) {
+  if (!prunedTaskProxies || !workflow.taskProxies) {
+    return
+  }
+  prunedTaskProxies.forEach((deltaTaskProxyId) => {
+    for (const [index, taskProxy] of workflow.taskProxies.entries()) {
+      if (taskProxy.id === deltaTaskProxyId) {
+        workflow.taskProxies.splice(index, 1)
+        break
+      }
+    }
+  })
+}
+
+function pruneJobs (prunedJobs, workflow) {
+  if (!prunedJobs) {
+    return
+  }
+  prunedJobs.forEach((deltaJobId) => {
+    // eslint-disable-next-line no-unused-vars
+    const [userName, workflowName, cyclepoint, taskName, jobName] = deltaJobId.split('|')
+    const taskProxyId = [userName, workflowName, cyclepoint, taskName].join('|')
+    workflow.taskProxies.forEach((taskProxy) => {
+      if (taskProxy.jobs && taskProxy.id === taskProxyId) {
+        for (const [index, taskProxyJob] of taskProxy.jobs.entries()) {
+          if (taskProxyJob.id === deltaJobId) {
+            taskProxy.jobs.splice(index, 1)
+            break
+          }
+        }
+      }
+    })
+  })
+}
+
+function pruneData (pruned, workflow) {
+  if (!pruned || !workflow) {
+    return
+  }
+  // Now go through the pruned deltas
+  pruneFamilyProxies(pruned.familyProxies, workflow)
+  pruneTaskProxies(pruned.taskProxies, workflow)
+  pruneJobs(pruned.jobs, workflow)
+}
+
 const actions = {
   set ({ commit }, data) {
     commit('SET', data)
@@ -64,41 +124,7 @@ const actions = {
     if (workflowToUpdate === null) {
       return
     }
-    // Now go through the pruned deltas
-    if (deltas.pruned) {
-      if (deltas.pruned.tasks) {
-        deltas.pruned.tasks.forEach((deltaTaskId) => {
-          console.log(deltaTaskId)
-          const [user, workflow, cyclepoint, task] = deltaTaskId.split('|')
-          const taskProxyId = [user, workflow, cyclepoint, task].join('|')
-          for (const [index, taskProxy] of workflowToUpdate.taskProxies.entries()) {
-            console.log(taskProxy)
-            console.log(taskProxyId)
-            if (taskProxy.id === taskProxyId) {
-              workflowToUpdate.taskProxies.splice(index, 1)
-              break
-            }
-          }
-        })
-      }
-      if (deltas.pruned.jobs) {
-        deltas.pruned.jobs.forEach((deltaJobId) => {
-          const [user, workflow, cyclepoint, task, job] = deltaJobId.split('|')
-          const taskProxyId = [user, workflow, cyclepoint, task].join('|')
-          const jobId = [user, workflow, cyclepoint, task, job].join('|')
-          for (const taskProxy of workflowToUpdate.taskProxies) {
-            if (taskProxy.jobs && taskProxy.id === taskProxyId) {
-              for (const [index, taskProxyJob] of taskProxy.jobs.entries()) {
-                if (taskProxyJob.id === jobId) {
-                  taskProxy.jobs.splice(index, 1)
-                  break
-                }
-              }
-            }
-          }
-        })
-      }
-    }
+    pruneData(deltas.pruned, workflowToUpdate)
     commit('SET', workflows)
   }
 }
