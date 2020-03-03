@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <div class="c-tree">
       <tree
-        :workflows="workflowTree"
+        :workflows="treeData"
         :hoverable="false"
         :activable="false"
         :multiple-active="false"
@@ -37,6 +37,7 @@ import { mapState } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
 import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
 import store from '@/store'
+import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -67,7 +68,7 @@ export default {
     viewID: '',
     subscriptions: {},
     isLoading: true,
-    workflowTree: null
+    treeData: []
   }),
 
   computed: {
@@ -79,7 +80,7 @@ export default {
     workflows: {
       deep: true,
       handler (newValue) {
-        this.workflows = store.getters['workflows/workflows']
+        this.workflowUpdated(newValue)
       }
     }
   },
@@ -93,7 +94,7 @@ export default {
       }
     )
     this.subscribe('root')
-    this.workflowTree = store.getters['workflows/workflowTree']
+    this.treeData = store.getters['workflows/workflows']
   },
 
   beforeDestroy () {
@@ -101,6 +102,14 @@ export default {
   },
 
   methods: {
+    workflowUpdated (workflows) {
+      for (const workflow of workflows) {
+        if (workflow.name === this.workflowName) {
+          this.treeData = convertGraphQLWorkflowToTree(workflow)
+        }
+      }
+    },
+
     /**
      * Subscribe this view to a new GraphQL query.
      * @param {string} queryName - Must be in QUERIES.
