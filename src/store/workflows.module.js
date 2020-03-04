@@ -16,6 +16,7 @@
  */
 
 import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree'
+import merge from 'lodash.merge'
 
 const state = {
   workflows: [],
@@ -44,6 +45,8 @@ const mutations = {
     state.workflowName = workflowName
   }
 }
+
+// --- code related to deltas pruned
 
 /**
  * Prune family proxies from a workflow.
@@ -126,10 +129,10 @@ function pruneJobs (prunedJobs, workflow) {
  *   taskProxies: [],
  *   jobs: []
  * }} pruned
- * @param workflow [workflow]
+ * @param workflow workflow
  */
 function pruneData (pruned, workflow) {
-  if (!pruned || !workflow) {
+  if (!pruned) {
     return
   }
   // Now go through the pruned deltas
@@ -138,10 +141,51 @@ function pruneData (pruned, workflow) {
   pruneJobs(pruned.jobs, workflow)
 }
 
+// --- code related to deltas data added or updated
+
+function addOrUpdateTaskProxies (addedOrUpdatedTaskProxies, workflow) {
+  if (!addedOrUpdatedTaskProxies || !workflow.taskProxies) {
+    return
+  }
+  addedOrUpdatedTaskProxies.forEach((addedOrUpdatedTaskProxy) => {
+    const existingTaskProxy = workflow.taskProxies.find(taskProxy => taskProxy.id === addedOrUpdatedTaskProxy.id)
+    if (!existingTaskProxy) {
+      workflow.taskProxies.push(addedOrUpdatedTaskProxy)
+    } else {
+      merge(existingTaskProxy, addedOrUpdatedTaskProxy)
+    }
+  })
+}
+
+function addOrUpdateData (updatedWorkflow, workflowToUpdate) {
+  workflowToUpdate.status = updatedWorkflow.status
+  addOrUpdateTaskProxies(updatedWorkflow.taskProxies, workflowToUpdate)
+}
+
 const actions = {
   set ({ commit }, data) {
     commit('SET', data)
   },
+  /**
+   *
+   * @param {CallableFunction} commit
+   * @param {{
+   *   workflows: [{
+   *     id: String
+   *   }]
+   * }} state
+   * @param getters
+   * @param {{
+   *   workflow: {
+   *     id: String
+   *   }
+   *   pruned: {
+   *     familyProxies: [],
+   *     taskProxies: [],
+   *     jobs: []
+   *   }
+   * }} deltas
+   */
   updateDeltas ({ commit, state, getters }, { deltas }) {
     // First step is to locate the workflow referenced in the deltas
     const deltasWorkflowId = deltas.workflow.id
@@ -157,6 +201,7 @@ const actions = {
     if (workflowToUpdate === null) {
       return
     }
+    addOrUpdateData(deltas.workflow, workflowToUpdate)
     pruneData(deltas.pruned, workflowToUpdate)
     commit('SET', workflows)
   }
