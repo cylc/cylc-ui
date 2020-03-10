@@ -88,7 +88,7 @@ class SubscriptionWorkflowService extends GQuery {
     query.subscribeToMore({
       document: gql`
         subscription {
-          deltas (id: "kinow|five") {
+          deltas (ids: ["kinow|five"]) {
             pruned {
               familyProxies
               taskProxies
