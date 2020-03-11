@@ -44,8 +44,6 @@ jobs:
           wait-on: http://localhost:8080/
           config_file: cypress.json
           spec: "tests/e2e/**/*"
-          browser: chrome
-          headless: true
         env:
           CYPRESS_baseUrl: http://localhost:8080/
           NODE_ENV: offline
