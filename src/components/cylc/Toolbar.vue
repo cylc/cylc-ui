@@ -14,10 +14,11 @@
         <!-- burger button for mobile -->
         <v-btn
           v-if="responsive"
-          class="default v-btn--simple"
           dark
           icon
           @click.stop="onClickBtn"
+          class="default v-btn--simple"
+          id="toggle-drawer"
         >
           <v-icon>mdi-view-list</v-icon>
         </v-btn>
