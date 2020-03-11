@@ -30,6 +30,9 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage/lcov.info
         fail_ci_if_error: false
+    - name: e2e
+      run: |
+        NODE_ENV=offline npm run test:e2e -- --mode=development
     - name: Build
       run: npm run build
 
