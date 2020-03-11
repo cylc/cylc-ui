@@ -31,8 +31,14 @@ jobs:
         file: ./coverage/lcov.info
         fail_ci_if_error: false
     - name: e2e
-      run: |
-        NODE_ENV=offline npm run test:e2e -- --mode=development
+      uses: cypress-io/github-action@v1
+      with:
+        start: NODE_ENV=offline npm run serve
+        wait-on: http://localhost:8080/
+        config_file: cypress.json
+        spec: "tests/e2e/**/*"
+      env:
+        CYPRESS_baseUrl: http://localhost:8080/
     - name: Build
       run: npm run build
 
