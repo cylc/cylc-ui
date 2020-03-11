@@ -8,5 +8,6 @@ describe('Dashboard', () => {
         .parent()
         .should('have.class', 'v-list-item--active')
     })
+    // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
   })
 })
