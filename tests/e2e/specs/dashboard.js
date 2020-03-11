@@ -1,8 +1,12 @@
-// https://docs.cypress.io/api/introduction/api.html
-
-describe('My First Test', () => {
+describe('Dashboard', () => {
   it('Visits the app root url', () => {
-    cy.visit('/#/')
-    cy.get('.c-toolbar-title').should('contain', 'Dashboard')
+    it('Displays the Dashboard link as active on the left sidebar menu', () => {
+      cy.visit('/#/')
+      cy
+        .get('div .v-list-item__title')
+        .contains('Dashboard')
+        .parent()
+        .should('have.class', 'v-list-item--active')
+    })
   })
 })
