@@ -40,7 +40,7 @@ jobs:
       - name: e2e
         uses: cypress-io/github-action@v1
         with:
-          start: NODE_ENV=offline npm run serve
+          start: npm run serve
           wait-on: http://localhost:8080/
           config_file: cypress.json
           spec: "tests/e2e/**/*"
@@ -48,3 +48,4 @@ jobs:
           headless: true
         env:
           CYPRESS_baseUrl: http://localhost:8080/
+          NODE_ENV: offline
