@@ -14,8 +14,7 @@
         v-if="!$slots.offset"
         :color="color"
         :elevation="elevation"
-        class="v-card--material__header d-flex align-center"
-        dark
+        class="v-card--material__header d-flex align-center text--white"
         min-height="60"
       >
         <slot
