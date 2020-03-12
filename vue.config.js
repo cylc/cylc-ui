@@ -8,6 +8,11 @@ module.exports = {
   indexPath: 'index.html',
   transpileDependencies: ['vuetify'],
   runtimeCompiler: true,
+  pluginOptions: {
+    apollo: {
+      lintGQL: false
+    }
+  },
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({
