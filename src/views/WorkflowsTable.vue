@@ -62,20 +62,11 @@
 import { mapState } from 'vuex'
 import { mixin } from '@/mixins/index'
 import i18n from '@/i18n'
+import { WORKFLOWS_TABLE_QUERY } from '@/graphql/queries'
 
 // query to retrieve all workflows
 const QUERIES = {
-  root: `
-      subscription {
-        workflows {
-          id
-          name
-          owner
-          host
-          port
-        }
-      }
-    `
+  root: WORKFLOWS_TABLE_QUERY
 }
 
 export default {

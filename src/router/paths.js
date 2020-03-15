@@ -17,7 +17,7 @@ export default [
   {
     path: '/workflows',
     name: i18n.t('App.workflows'),
-    view: 'GScan',
+    view: 'WorkflowsTable',
     meta: {
       layout: 'default'
     }

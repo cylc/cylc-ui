@@ -4,6 +4,7 @@ import Alert from '@/model/Alert.model'
 import { createApolloClient } from '@/utils/graphql'
 import gql from 'graphql-tag'
 
+// TODO: remove these once the api-on-the-fly mutations are hooked into the UI
 const HOLD_WORKFLOW = gql`
 mutation HoldWorkflowMutation($workflow: String!) {
   holdWorkflow (workflows: [$workflow]) {
