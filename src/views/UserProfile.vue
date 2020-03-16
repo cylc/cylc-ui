@@ -18,7 +18,7 @@
                     :value="user.username"
                     :label="$t('UserProfile.username')"
                     disabled
-                    id="username"
+                    id="profile-username"
                     aria-disabled="true"
                 />
               </v-flex>
@@ -29,7 +29,7 @@
                     v-model="user.admin"
                     :label="$t('UserProfile.administrator')"
                     disabled
-                    id="admin"
+                    id="profile-admin"
                     aria-disabled="true"
                 />
               </v-flex>
@@ -47,7 +47,7 @@
                     chips
                     multiple
                     disabled
-                    id="groups"
+                    id="profile-groups"
                     aria-disabled="true"
                 />
               </v-flex>
@@ -61,7 +61,7 @@
                     :value="user.created"
                     :label="$t('UserProfile.created')"
                     disabled
-                    id="created"
+                    id="profile-created"
                     aria-disabled="true"
                 />
               </v-flex>

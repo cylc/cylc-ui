@@ -5,7 +5,7 @@ describe('User Profile', () => {
       .get('h4.title')
       .should('be.visible')
       .should('contain', 'Your Profile')
-    cy.get('input#username')
+    cy.get('input#profile-username')
       .should('be.visible')
       .should('be.disabled')
   })
