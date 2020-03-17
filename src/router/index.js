@@ -53,7 +53,7 @@ Vue.use(Meta)
 router.beforeResolve((to, from, next) => {
   NProgress.start()
   if (to.name) {
-    if (['tree', 'graph', 'workflow'].includes(to.name)) {
+    if (to.meta.toolbar) {
       // When a workflow is being displayed, we set the title to a
       // different value.
       store.commit('app/setTitle', to.params.workflowName)

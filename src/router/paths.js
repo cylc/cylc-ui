@@ -27,7 +27,8 @@ export default [
     view: 'Workflow',
     name: 'workflow',
     meta: {
-      layout: 'default'
+      layout: 'default',
+      toolbar: true
     },
     props: true
   },
@@ -53,7 +54,8 @@ export default [
     view: 'Tree',
     name: 'tree',
     meta: {
-      layout: 'default'
+      layout: 'default',
+      toolbar: true
     },
     props: true
   },
@@ -62,7 +64,8 @@ export default [
     view: 'Graph',
     name: 'graph',
     meta: {
-      layout: 'default'
+      layout: 'default',
+      toolbar: true
     },
     props: true
   },
