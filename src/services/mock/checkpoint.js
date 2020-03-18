@@ -7,162 +7,17 @@ const checkpoint = {
             "name": "one",
             "status": "running",
             "owner": "cylc",
-            "host": "ranma",
-            "port": 43026,
+            "host": "cylc-VirtualBox",
+            "port": 43056,
+            "cyclePoints": [
+                {
+                    "cyclePoint": "20000102T0000Z"
+                },
+                {
+                    "cyclePoint": "20000101T0000Z"
+                }
+            ],
             "taskProxies": [
-                {
-                    "id": "cylc|one|20000101T0000Z|waiting",
-                    "name": "wating",
-                    "state": "succeeded",
-                    "cyclePoint": "20000101T0000Z",
-                    "latestMessage": "succeeded",
-                    "firstParent": {
-                        "id": "cylc|one|20000101T0000Z|root",
-                        "name": "root",
-                        "cyclePoint": "20000101T0000Z",
-                        "state": "failed"
-                    },
-                    "task": {
-                        "meanElapsedTime": 1.0,
-                        "name": "waiting"
-                    },
-                    "jobs": [
-                        {
-                            "id": "cylc|one|20000101T0000Z|waiting|1",
-                            "batchSysName": "background",
-                            "batchSysJobId": "29872",
-                            "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:17Z",
-                            "submittedTime": "2019-11-05T22:18:17Z",
-                            "finishedTime": "2019-11-05T22:18:18Z",
-                            "state": "succeeded",
-                            "submitNum": 1
-                        }
-                    ]
-                },
-                {
-                    "id": "cylc|one|20000101T0000Z|eventually_succeeded",
-                    "name": "eventually_succeeded",
-                    "state": "succeeded",
-                    "cyclePoint": "20000101T0000Z",
-                    "latestMessage": "succeeded",
-                    "firstParent": {
-                        "id": "cylc|one|20000101T0000Z|SUCCEEDED",
-                        "name": "SUCCEEDED",
-                        "cyclePoint": "20000101T0000Z",
-                        "state": "succeeded"
-                    },
-                    "task": {
-                        "meanElapsedTime": 1.0,
-                        "name": "eventually_succeeded"
-                    },
-                    "jobs": [
-                        {
-                            "id": "cylc|one|20000101T0000Z|eventually_succeeded|4",
-                            "batchSysName": "background",
-                            "batchSysJobId": "29727",
-                            "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:02Z",
-                            "submittedTime": "2019-11-05T22:18:02Z",
-                            "finishedTime": "2019-11-05T22:18:03Z",
-                            "state": "succeeded",
-                            "submitNum": 4
-                        },
-                        {
-                            "id": "cylc|one|20000101T0000Z|eventually_succeeded|3",
-                            "batchSysName": "background",
-                            "batchSysJobId": "29689",
-                            "host": "localhost",
-                            "startedTime": "2019-11-05T22:17:58Z",
-                            "submittedTime": "2019-11-05T22:17:58Z",
-                            "finishedTime": "2019-11-05T22:17:59Z",
-                            "state": "failed",
-                            "submitNum": 3
-                        },
-                        {
-                            "id": "cylc|one|20000101T0000Z|eventually_succeeded|2",
-                            "batchSysName": "background",
-                            "batchSysJobId": "29651",
-                            "host": "localhost",
-                            "startedTime": "2019-11-05T22:17:54Z",
-                            "submittedTime": "2019-11-05T22:17:54Z",
-                            "finishedTime": "2019-11-05T22:17:55Z",
-                            "state": "failed",
-                            "submitNum": 2
-                        },
-                        {
-                            "id": "cylc|one|20000101T0000Z|eventually_succeeded|1",
-                            "batchSysName": "background",
-                            "batchSysJobId": "29542",
-                            "host": "localhost",
-                            "startedTime": "2019-11-05T22:17:50Z",
-                            "submittedTime": "2019-11-05T22:17:50Z",
-                            "finishedTime": "2019-11-05T22:17:51Z",
-                            "state": "failed",
-                            "submitNum": 1
-                        }
-                    ]
-                },
-                {
-                    "id": "cylc|one|20000101T0000Z|checkpoint",
-                    name: "checkpoint",
-                    "state": "succeeded",
-                    "cyclePoint": "20000101T0000Z",
-                    "latestMessage": "succeeded",
-                    "firstParent": {
-                        "id": "cylc|one|20000101T0000Z|root",
-                        "name": "root",
-                        "cyclePoint": "20000101T0000Z",
-                        "state": "failed"
-                    },
-                    "task": {
-                        "meanElapsedTime": 7.0,
-                        "name": "checkpoint"
-                    },
-                    "jobs": [
-                        {
-                            "id": "cylc|one|20000101T0000Z|checkpoint|1",
-                            "batchSysName": "background",
-                            "batchSysJobId": "29804",
-                            "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:08Z",
-                            "submittedTime": "2019-11-05T22:18:08Z",
-                            "finishedTime": "2019-11-05T22:18:15Z",
-                            "state": "succeeded",
-                            "submitNum": 1
-                        }
-                    ]
-                },
-                {
-                    "id": "cylc|one|20000101T0000Z|succeeded",
-                    "name": "succeeded",
-                    "state": "succeeded",
-                    "cyclePoint": "20000101T0000Z",
-                    "latestMessage": "succeeded",
-                    "firstParent": {
-                        "id": "cylc|one|20000101T0000Z|SUCCEEDED",
-                        "name": "SUCCEEDED",
-                        "cyclePoint": "20000101T0000Z",
-                        "state": "succeeded"
-                    },
-                    "task": {
-                        "meanElapsedTime": 1.0,
-                        "name": "succeeded"
-                    },
-                    "jobs": [
-                        {
-                            "id": "cylc|one|20000101T0000Z|succeeded|1",
-                            "batchSysName": "background",
-                            "batchSysJobId": "29546",
-                            "host": "localhost",
-                            "startedTime": "2019-11-05T22:17:50Z",
-                            "submittedTime": "2019-11-05T22:17:50Z",
-                            "finishedTime": "2019-11-05T22:17:51Z",
-                            "state": "succeeded",
-                            "submitNum": 1
-                        }
-                    ]
-                },
                 {
                     "id": "cylc|one|20000101T0000Z|sleepy",
                     "name": "sleepy",
@@ -183,11 +38,11 @@ const checkpoint = {
                         {
                             "id": "cylc|one|20000101T0000Z|sleepy|1",
                             "batchSysName": "background",
-                            "batchSysJobId": "29871",
+                            "batchSysJobId": "30145",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:17Z",
-                            "submittedTime": "2019-11-05T22:18:17Z",
-                            "finishedTime": "2019-11-05T22:18:18Z",
+                            "startedTime": "2020-03-01T22:57:27Z",
+                            "submittedTime": "2020-03-01T22:57:25Z",
+                            "finishedTime": "2020-03-01T22:57:28Z",
                             "state": "succeeded",
                             "submitNum": 1
                         }
@@ -198,7 +53,7 @@ const checkpoint = {
                     "name": "retrying",
                     "state": "succeeded",
                     "cyclePoint": "20000101T0000Z",
-                    "latestMessage": "failed, retrying in PT5M (after 2019-11-05T22:22:51Z)",
+                    "latestMessage": "failed, retrying in PT5M (after 2020-03-01T23:01:45Z)",
                     "firstParent": {
                         "id": "cylc|one|20000101T0000Z|BAD",
                         "name": "BAD",
@@ -213,11 +68,11 @@ const checkpoint = {
                         {
                             "id": "cylc|one|20000101T0000Z|retrying|1",
                             "batchSysName": "background",
-                            "batchSysJobId": "29543",
+                            "batchSysJobId": "29278",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:17:50Z",
-                            "submittedTime": "2019-11-05T22:17:50Z",
-                            "finishedTime": "2019-11-05T22:17:51Z",
+                            "startedTime": "2020-03-01T22:56:43Z",
+                            "submittedTime": "2020-03-01T22:56:41Z",
+                            "finishedTime": "2020-03-01T22:56:44Z",
                             "state": "failed",
                             "submitNum": 1
                         }
@@ -243,93 +98,165 @@ const checkpoint = {
                         {
                             "id": "cylc|one|20000101T0000Z|failed|1",
                             "batchSysName": "background",
-                            "batchSysJobId": "29766",
+                            "batchSysJobId": "29813",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:05Z",
-                            "submittedTime": "2019-11-05T22:18:05Z",
-                            "finishedTime": "2019-11-05T22:18:06Z",
+                            "startedTime": "2020-03-01T22:57:08Z",
+                            "submittedTime": "2020-03-01T22:57:06Z",
+                            "finishedTime": "2020-03-01T22:57:09Z",
                             "state": "failed",
                             "submitNum": 1
                         }
                     ]
                 },
                 {
-                    "id": "cylc|one|20000102T0000Z|sleepy",
-                    "name": "sleepy",
-                    "state": "waiting",
-                    "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "",
-                    "firstParent": {
-                        "id": "cylc|one|20000102T0000Z|root",
-                        "name": "root",
-                        "cyclePoint": "20000102T0000Z",
-                        "state": "failed"
-                    },
-                    "task": {
-                        "meanElapsedTime": 1.0,
-                        "name": "sleepy"
-                    },
-                    "jobs": []
-                },
-                {
-                    "id": "cylc|one|20000102T0000Z|eventually_succeeded",
+                    "id": "cylc|one|20000101T0000Z|eventually_succeeded",
                     "name": "eventually_succeeded",
                     "state": "succeeded",
-                    "cyclePoint": "20000102T0000Z",
+                    "cyclePoint": "20000101T0000Z",
                     "latestMessage": "succeeded",
                     "firstParent": {
-                        "id": "cylc|one|20000102T0000Z|SUCCEEDED",
+                        "id": "cylc|one|20000101T0000Z|SUCCEEDED",
                         "name": "SUCCEEDED",
-                        "cyclePoint": "20000102T0000Z",
+                        "cyclePoint": "20000101T0000Z",
                         "state": "succeeded"
                     },
                     "task": {
-                        "meanElapsedTime": 1.0,
+                        "meanElapsedTime": 1.5,
                         "name": "eventually_succeeded"
                     },
                     "jobs": [
                         {
-                            "id": "cylc|one|20000102T0000Z|eventually_succeeded|4",
+                            "id": "cylc|one|20000101T0000Z|eventually_succeeded|4",
                             "batchSysName": "background",
-                            "batchSysJobId": "30131",
+                            "batchSysJobId": "29742",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:33Z",
-                            "submittedTime": "2019-11-05T22:18:33Z",
-                            "finishedTime": "2019-11-05T22:18:34Z",
+                            "startedTime": "2020-03-01T22:57:02Z",
+                            "submittedTime": "2020-03-01T22:57:01Z",
+                            "finishedTime": "2020-03-01T22:57:04Z",
                             "state": "succeeded",
                             "submitNum": 4
                         },
                         {
-                            "id": "cylc|one|20000102T0000Z|eventually_succeeded|3",
+                            "id": "cylc|one|20000101T0000Z|eventually_succeeded|3",
                             "batchSysName": "background",
-                            "batchSysJobId": "30093",
+                            "batchSysJobId": "29597",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:29Z",
-                            "submittedTime": "2019-11-05T22:18:29Z",
-                            "finishedTime": "2019-11-05T22:18:30Z",
+                            "startedTime": "2020-03-01T22:56:57Z",
+                            "submittedTime": "2020-03-01T22:56:55Z",
+                            "finishedTime": "2020-03-01T22:56:58Z",
                             "state": "failed",
                             "submitNum": 3
                         },
                         {
-                            "id": "cylc|one|20000102T0000Z|eventually_succeeded|2",
+                            "id": "cylc|one|20000101T0000Z|eventually_succeeded|2",
                             "batchSysName": "background",
-                            "batchSysJobId": "30055",
+                            "batchSysJobId": "29453",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:25Z",
-                            "submittedTime": "2019-11-05T22:18:25Z",
-                            "finishedTime": "2019-11-05T22:18:26Z",
+                            "startedTime": "2020-03-01T22:56:50Z",
+                            "submittedTime": "2020-03-01T22:56:48Z",
+                            "finishedTime": "2020-03-01T22:56:51Z",
                             "state": "failed",
                             "submitNum": 2
                         },
                         {
-                            "id": "cylc|one|20000102T0000Z|eventually_succeeded|1",
+                            "id": "cylc|one|20000101T0000Z|eventually_succeeded|1",
                             "batchSysName": "background",
-                            "batchSysJobId": "29946",
+                            "batchSysJobId": "29277",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:21Z",
-                            "submittedTime": "2019-11-05T22:18:21Z",
-                            "finishedTime": "2019-11-05T22:18:22Z",
+                            "startedTime": "2020-03-01T22:56:43Z",
+                            "submittedTime": "2020-03-01T22:56:41Z",
+                            "finishedTime": "2020-03-01T22:56:44Z",
                             "state": "failed",
+                            "submitNum": 1
+                        }
+                    ]
+                },
+                {
+                    "id": "cylc|one|20000101T0000Z|succeeded",
+                    "name": "succeeded",
+                    "state": "succeeded",
+                    "cyclePoint": "20000101T0000Z",
+                    "latestMessage": "succeeded",
+                    "firstParent": {
+                        "id": "cylc|one|20000101T0000Z|SUCCEEDED",
+                        "name": "SUCCEEDED",
+                        "cyclePoint": "20000101T0000Z",
+                        "state": "succeeded"
+                    },
+                    "task": {
+                        "meanElapsedTime": 2.0,
+                        "name": "succeeded"
+                    },
+                    "jobs": [
+                        {
+                            "id": "cylc|one|20000101T0000Z|succeeded|1",
+                            "batchSysName": "background",
+                            "batchSysJobId": "29280",
+                            "host": "localhost",
+                            "startedTime": "2020-03-01T22:56:43Z",
+                            "submittedTime": "2020-03-01T22:56:41Z",
+                            "finishedTime": "2020-03-01T22:56:45Z",
+                            "state": "succeeded",
+                            "submitNum": 1
+                        }
+                    ]
+                },
+                {
+                    "id": "cylc|one|20000101T0000Z|waiting",
+                    "name": "waiting",
+                    "state": "succeeded",
+                    "cyclePoint": "20000101T0000Z",
+                    "latestMessage": "succeeded",
+                    "firstParent": {
+                        "id": "cylc|one|20000101T0000Z|root",
+                        "name": "root",
+                        "cyclePoint": "20000101T0000Z",
+                        "state": "failed"
+                    },
+                    "task": {
+                        "meanElapsedTime": 1.0,
+                        "name": "waiting"
+                    },
+                    "jobs": [
+                        {
+                            "id": "cylc|one|20000101T0000Z|waiting|1",
+                            "batchSysName": "background",
+                            "batchSysJobId": "30146",
+                            "host": "localhost",
+                            "startedTime": "2020-03-01T22:57:27Z",
+                            "submittedTime": "2020-03-01T22:57:25Z",
+                            "finishedTime": "2020-03-01T22:57:28Z",
+                            "state": "succeeded",
+                            "submitNum": 1
+                        }
+                    ]
+                },
+                {
+                    "id": "cylc|one|20000101T0000Z|checkpoint",
+                    "name": "checkpoint",
+                    "state": "succeeded",
+                    "cyclePoint": "20000101T0000Z",
+                    "latestMessage": "succeeded",
+                    "firstParent": {
+                        "id": "cylc|one|20000101T0000Z|root",
+                        "name": "root",
+                        "cyclePoint": "20000101T0000Z",
+                        "state": "failed"
+                    },
+                    "task": {
+                        "meanElapsedTime": 9.0,
+                        "name": "checkpoint"
+                    },
+                    "jobs": [
+                        {
+                            "id": "cylc|one|20000101T0000Z|checkpoint|1",
+                            "batchSysName": "background",
+                            "batchSysJobId": "29948",
+                            "host": "localhost",
+                            "startedTime": "2020-03-01T22:57:14Z",
+                            "submittedTime": "2020-03-01T22:57:13Z",
+                            "finishedTime": "2020-03-01T22:57:23Z",
+                            "state": "succeeded",
                             "submitNum": 1
                         }
                     ]
@@ -347,18 +274,17 @@ const checkpoint = {
                         "state": "failed"
                     },
                     "task": {
-                        "meanElapsedTime": 7.0,
+                        "meanElapsedTime": 9.0,
                         "name": "checkpoint"
                     },
                     "jobs": [
                         {
                             "id": "cylc|one|20000102T0000Z|checkpoint|1",
                             "batchSysName": "background",
-                            "batchSysJobId": "30210",
+                            "batchSysJobId": "31000",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:39Z",
-                            "submittedTime": "2019-11-05T22:18:39Z",
-                            "finishedTime": "",
+                            "startedTime": "2020-03-01T22:58:03Z",
+                            "submittedTime": "2020-03-01T22:58:01Z",
                             "state": "running",
                             "submitNum": 1
                         }
@@ -369,7 +295,6 @@ const checkpoint = {
                     "name": "waiting",
                     "state": "waiting",
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "",
                     "firstParent": {
                         "id": "cylc|one|20000102T0000Z|root",
                         "name": "root",
@@ -379,8 +304,53 @@ const checkpoint = {
                     "task": {
                         "meanElapsedTime": 1.0,
                         "name": "waiting"
+                    }
+                },
+                {
+                    "id": "cylc|one|20000102T0000Z|sleepy",
+                    "name": "sleepy",
+                    "state": "waiting",
+                    "cyclePoint": "20000102T0000Z",
+                    "firstParent": {
+                        "id": "cylc|one|20000102T0000Z|root",
+                        "name": "root",
+                        "cyclePoint": "20000102T0000Z",
+                        "state": "failed"
                     },
-                    "jobs": []
+                    "task": {
+                        "meanElapsedTime": 1.0,
+                        "name": "sleepy"
+                    }
+                },
+                {
+                    "id": "cylc|one|20000102T0000Z|retrying",
+                    "name": "retrying",
+                    "state": "retrying",
+                    "cyclePoint": "20000102T0000Z",
+                    "latestMessage": "failed, retrying in PT5M (after 2020-03-01T23:02:35Z)",
+                    "firstParent": {
+                        "id": "cylc|one|20000102T0000Z|BAD",
+                        "name": "BAD",
+                        "cyclePoint": "20000102T0000Z",
+                        "state": "failed"
+                    },
+                    "task": {
+                        "meanElapsedTime": 0.0,
+                        "name": "retrying"
+                    },
+                    "jobs": [
+                        {
+                            "id": "cylc|one|20000102T0000Z|retrying|1",
+                            "batchSysName": "background",
+                            "batchSysJobId": "30334",
+                            "host": "localhost",
+                            "startedTime": "2020-03-01T22:57:33Z",
+                            "submittedTime": "2020-03-01T22:57:31Z",
+                            "finishedTime": "2020-03-01T22:57:34Z",
+                            "state": "failed",
+                            "submitNum": 1
+                        }
+                    ]
                 },
                 {
                     "id": "cylc|one|20000102T0000Z|failed",
@@ -402,41 +372,74 @@ const checkpoint = {
                         {
                             "id": "cylc|one|20000102T0000Z|failed|1",
                             "batchSysName": "background",
-                            "batchSysJobId": "30170",
+                            "batchSysJobId": "30862",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:36Z",
-                            "submittedTime": "2019-11-05T22:18:36Z",
-                            "finishedTime": "2019-11-05T22:18:37Z",
+                            "startedTime": "2020-03-01T22:57:57Z",
+                            "submittedTime": "2020-03-01T22:57:56Z",
+                            "finishedTime": "2020-03-01T22:57:58Z",
                             "state": "failed",
                             "submitNum": 1
                         }
                     ]
                 },
                 {
-                    "id": "cylc|one|20000102T0000Z|retrying",
-                    "name": "retrying",
-                    "state": "retrying",
+                    "id": "cylc|one|20000102T0000Z|eventually_succeeded",
+                    "name": "eventually_succeeded",
+                    "state": "succeeded",
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "failed, retrying in PT5M (after 2019-11-05T22:23:22Z)",
+                    "latestMessage": "succeeded",
                     "firstParent": {
-                        "id": "cylc|one|20000102T0000Z|BAD",
-                        "name": "BAD",
+                        "id": "cylc|one|20000102T0000Z|SUCCEEDED",
+                        "name": "SUCCEEDED",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "failed"
+                        "state": "succeeded"
                     },
                     "task": {
-                        "meanElapsedTime": 0.0,
-                        "name": "retrying"
+                        "meanElapsedTime": 1.5,
+                        "name": "eventually_succeeded"
                     },
                     "jobs": [
                         {
-                            "id": "cylc|one|20000102T0000Z|retrying|1",
+                            "id": "cylc|one|20000102T0000Z|eventually_succeeded|4",
                             "batchSysName": "background",
-                            "batchSysJobId": "29947",
+                            "batchSysJobId": "30791",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:21Z",
-                            "submittedTime": "2019-11-05T22:18:21Z",
-                            "finishedTime": "2019-11-05T22:18:22Z",
+                            "startedTime": "2020-03-01T22:57:52Z",
+                            "submittedTime": "2020-03-01T22:57:50Z",
+                            "finishedTime": "2020-03-01T22:57:53Z",
+                            "state": "succeeded",
+                            "submitNum": 4
+                        },
+                        {
+                            "id": "cylc|one|20000102T0000Z|eventually_succeeded|3",
+                            "batchSysName": "background",
+                            "batchSysJobId": "30654",
+                            "host": "localhost",
+                            "startedTime": "2020-03-01T22:57:46Z",
+                            "submittedTime": "2020-03-01T22:57:44Z",
+                            "finishedTime": "2020-03-01T22:57:47Z",
+                            "state": "failed",
+                            "submitNum": 3
+                        },
+                        {
+                            "id": "cylc|one|20000102T0000Z|eventually_succeeded|2",
+                            "batchSysName": "background",
+                            "batchSysJobId": "30506",
+                            "host": "localhost",
+                            "startedTime": "2020-03-01T22:57:39Z",
+                            "submittedTime": "2020-03-01T22:57:38Z",
+                            "finishedTime": "2020-03-01T22:57:40Z",
+                            "state": "failed",
+                            "submitNum": 2
+                        },
+                        {
+                            "id": "cylc|one|20000102T0000Z|eventually_succeeded|1",
+                            "batchSysName": "background",
+                            "batchSysJobId": "30333",
+                            "host": "localhost",
+                            "startedTime": "2020-03-01T22:57:33Z",
+                            "submittedTime": "2020-03-01T22:57:31Z",
+                            "finishedTime": "2020-03-01T22:57:34Z",
                             "state": "failed",
                             "submitNum": 1
                         }
@@ -455,18 +458,18 @@ const checkpoint = {
                         "state": "succeeded"
                     },
                     "task": {
-                        "meanElapsedTime": 1.0,
+                        "meanElapsedTime": 2.0,
                         "name": "succeeded"
                     },
                     "jobs": [
                         {
                             "id": "cylc|one|20000102T0000Z|succeeded|1",
                             "batchSysName": "background",
-                            "batchSysJobId": "29950",
+                            "batchSysJobId": "30337",
                             "host": "localhost",
-                            "startedTime": "2019-11-05T22:18:21Z",
-                            "submittedTime": "2019-11-05T22:18:21Z",
-                            "finishedTime": "2019-11-05T22:18:22Z",
+                            "startedTime": "2020-03-01T22:57:33Z",
+                            "submittedTime": "2020-03-01T22:57:31Z",
+                            "finishedTime": "2020-03-01T22:57:35Z",
                             "state": "succeeded",
                             "submitNum": 1
                         }
@@ -478,15 +481,13 @@ const checkpoint = {
                     "id": "cylc|one|20000102T0000Z|root",
                     "name": "root",
                     "state": "failed",
-                    "cyclePoint": "20000102T0000Z",
-                    "firstParent": null
+                    "cyclePoint": "20000102T0000Z"
                 },
                 {
                     "id": "cylc|one|20000101T0000Z|root",
                     "name": "root",
                     "state": "failed",
-                    "cyclePoint": "20000101T0000Z",
-                    "firstParent": null
+                    "cyclePoint": "20000101T0000Z"
                 },
                 {
                     "id": "cylc|one|20000101T0000Z|SUCCEEDED",

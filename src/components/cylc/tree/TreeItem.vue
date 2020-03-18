@@ -14,15 +14,15 @@
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <div class="node-data" @click="nodeClicked" v-if="node.node.__typename === 'CyclePoint'">
+      <div class="node-data" @click="nodeClicked" v-if="node.type === 'cyclepoint'">
         <task :status="node.node.state" :progress=0 />
         <span class="mx-1">{{ node.node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.node.__typename === 'FamilyProxy'">
+      <div class="node-data" @click="nodeClicked" v-else-if="node.type === 'family-proxy'">
         <task :status="node.node.state" :progress="node.node.progress" />
         <span class="mx-1">{{ node.node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.node.__typename === 'TaskProxy'">
+      <div class="node-data" @click="nodeClicked" v-else-if="node.type === 'task-proxy'">
         <task :status="node.node.state" :progress="node.node.progress" />
         <span class="mx-1">{{ node.node.name }}</span>
         <div v-if="!isExpanded" class="node-summary">
@@ -33,7 +33,7 @@
               :status="task.node.state" />
         </div>
       </div>
-      <div class="node-data" v-else-if="node.node.__typename === 'Job'">
+      <div class="node-data" v-else-if="node.type === 'job'">
         <div class="node-data" @click="jobNodeClicked">
           <job :status="node.node.state" />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
@@ -45,7 +45,7 @@
         <span @click="nodeClicked" class="mx-1">{{ node.node.name }}</span>
       </div>
     </div>
-    <div class="leaf" v-if="displayLeaf && node.node.__typename === 'Job'">
+    <div class="leaf" v-if="displayLeaf && node.type === 'job'">
       <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
       <div class="leaf-data font-weight-light py-4 pl-2">
         <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">
@@ -210,7 +210,7 @@ export default {
       return {
         // we add half the depth offset to compensate and move the arrow under the job icon, the another 2px
         // just to center-align it
-        'margin-left': `${(NODE_DEPTH_OFFSET / 2) + 2 + (this.$depth * NODE_DEPTH_OFFSET)}px`
+        'margin-left': `${(NODE_DEPTH_OFFSET / 2) + 2 + (this.depth * NODE_DEPTH_OFFSET)}px`
       }
     },
     getNodeClass () {

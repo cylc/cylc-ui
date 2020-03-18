@@ -7,25 +7,13 @@ const state = {
 
 const getters = {
   currentWorkflow: state => {
-    if (state.workflowName !== null) {
-      for (const workflow of state.workflows) {
-        if (state.workflowName === workflow.name) {
-          return workflow
-        }
-      }
+    if (state.workflowName === null) {
+      return null
     }
-    return null
+    return state.workflows.find(workflow => workflow.name === state.workflowName) || null
   },
   workflowTree: (state, getters) => {
-    if (getters.currentWorkflow !== null && Object.hasOwnProperty.call(getters.currentWorkflow, 'familyProxies')) {
-      try {
-        return convertGraphQLWorkflowToTree(getters.currentWorkflow)
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(e)
-      }
-    }
-    return []
+    return convertGraphQLWorkflowToTree(getters.currentWorkflow)
   }
 }
 

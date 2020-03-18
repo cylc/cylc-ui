@@ -7,8 +7,12 @@ query = '''
         owner
         host
         port
+        cyclePoints: familyProxies(ids: ["root"]) {
+          cyclePoint
+        }
         taskProxies(sort: { keys: ["cyclePoint"] }) {
             id
+            name
             state
             cyclePoint
             latestMessage

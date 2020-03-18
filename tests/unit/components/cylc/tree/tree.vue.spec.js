@@ -8,32 +8,21 @@ import * as vuetify from '@/plugins/vuetify'
 import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 
-const cycles = new Map([
-  [
-    'user/workflow1',
-    new Set([
-      '20100101T0000Z'
-    ])
-  ]
-])
-
 describe('Tree component', () => {
   it('should display the tree with valid data', () => {
     const wrapper = mount(Tree, {
       propsData: {
-        workflows: simpleWorkflowTree4Nodes,
-        cycles: cycles
+        workflows: simpleWorkflowTree4Nodes[0].children
       }
     })
-    expect(wrapper.props().workflows[0].node.__typename).to.equal('Workflow')
+    expect(wrapper.props().workflows[0].node.__typename).to.equal('CyclePoint')
     expect(wrapper.contains('div')).to.equal(true)
   })
   describe('activable', () => {
     it('should not activate by default', () => {
       const wrapper = mount(Tree, {
         propsData: {
-          workflows: simpleWorkflowTree4Nodes,
-          cycles: cycles
+          workflows: simpleWorkflowTree4Nodes[0].children
         }
       })
       const treeItems = wrapper.findAll({ name: 'TreeItem' })
@@ -48,8 +37,7 @@ describe('Tree component', () => {
     it('should activate correctly', async () => {
       const wrapper = mount(Tree, {
         propsData: {
-          workflows: simpleWorkflowTree4Nodes,
-          cycles: cycles,
+          workflows: simpleWorkflowTree4Nodes[0].children,
           activable: true
         }
       })

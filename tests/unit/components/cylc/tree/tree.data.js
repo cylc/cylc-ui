@@ -54,6 +54,16 @@ const sampleWorkflow1 = {
   owner: 'cylc',
   host: 'ranma',
   port: 43066,
+  cyclePoints: [
+    {
+      __typename: 'FamilyProxy',
+      cyclePoint: '20000101T0000Z'
+    },
+    {
+      __typename: 'FamilyProxy',
+      cyclePoint: '20000102T0000Z'
+    }
+  ],
   taskProxies: [
     {
       id: 'cylc|one|20000101T0000Z|eventually_succeeded',
