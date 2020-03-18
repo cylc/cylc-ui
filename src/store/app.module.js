@@ -1,5 +1,3 @@
-import { set, toggle } from '@/utils/vuex'
-
 const state = {
   drawer: null,
   color: 'success',
@@ -7,11 +5,18 @@ const state = {
 }
 
 const mutations = {
-  setDrawer: set('drawer'),
-  setImage: set('image'),
-  setColor: set('color'),
-  toggleDrawer: toggle('drawer'),
-  setTitle: set('title')
+  setDrawer (state, drawer) {
+    state.drawer = drawer
+  },
+  setColor (state, color) {
+    state.color = color
+  },
+  toggleDrawer (state) {
+    state.drawer = !state.drawer
+  },
+  setTitle (state, title) {
+    state.title = title
+  }
 }
 
 export const app = {
