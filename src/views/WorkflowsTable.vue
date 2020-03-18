@@ -11,48 +11,48 @@
       <v-flex
         md12
       >
-        <material-card
-          :title="$t('Workflows.tableHeader')"
-          :elevation="0"
-          :flat="true"
-          color="grey"
-        >
-          <v-data-table
-            :headers="headers"
-            :items="workflows"
-            :loading="isLoading"
+          <v-alert
+            prominent
+            color="grey lighten-3"
+            icon="mdi-settings"
           >
-            <template slot="no-data" v-if="!isLoading">
-              <v-alert
-                :value="true"
-                color="error"
-                icon="warning">
-                No workflows found for the current user
-              </v-alert>
-            </template>
-            <template
-              slot="headerCell"
-              slot-scope="{ header }"
-            >
-              <span
-                class="subheading font-weight-light text-success text--darken-3"
-                v-text="header.text"
-              />
-            </template>
-            <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
-            <template
-              slot="item"
-              slot-scope="{ item }"
-            >
-              <tr style="cursor:pointer" @click="viewWorkflow(item)">
-                <td>{{ item.name }}</td>
-                <td>{{ item.owner }}</td>
-                <td>{{ item.host }}</td>
-                <td>{{ item.port }}</td>
-              </tr>
-            </template>
-          </v-data-table>
-        </material-card>
+            <h3 class="headline">{{ $t('Workflows.tableHeader') }}</h3>
+          </v-alert>
+        <v-data-table
+          :headers="headers"
+          :items="workflows"
+          :loading="isLoading"
+        >
+          <template slot="no-data" v-if="!isLoading">
+            <v-alert
+              :value="true"
+              color="error"
+              icon="warning">
+              No workflows found for the current user
+            </v-alert>
+          </template>
+          <template
+            slot="headerCell"
+            slot-scope="{ header }"
+          >
+            <span
+              class="subheading font-weight-light text-success text--darken-3"
+              v-text="header.text"
+            />
+          </template>
+          <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
+          <template
+            slot="item"
+            slot-scope="{ item }"
+          >
+            <tr style="cursor:pointer" @click="viewWorkflow(item)">
+              <td>{{ item.name }}</td>
+              <td>{{ item.owner }}</td>
+              <td>{{ item.host }}</td>
+              <td>{{ item.port }}</td>
+            </tr>
+          </template>
+        </v-data-table>
       </v-flex>
     </v-layout>
   </v-container>
@@ -75,9 +75,6 @@ export default {
     return {
       title: this.getPageTitle('App.workflows')
     }
-  },
-  components: {
-    'material-card': () => import('@/components/material/Card')
   },
   data: () => ({
     viewID: 'GScan: ' + Math.random(),
