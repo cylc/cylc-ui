@@ -3,6 +3,7 @@
     bottom
     v-model="showHelp"
   >
+    <!-- eslint-disable-next-line vue/no-unused-vars -->
     <template v-slot:activator="{ on }">
       <!-- TODO: fix the inputType form alignment thinggy -->
       <!-- NOTE: the `is` field comes from `props` -->

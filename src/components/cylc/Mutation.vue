@@ -87,6 +87,7 @@ export default {
           variables: args
         })
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error(err)
         this.status = status.submitFailed
         return
