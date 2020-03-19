@@ -51,6 +51,7 @@ class SubscriptionWorkflowService extends GQuery {
      * Perform a REST GraphQL request for all subscriptions.
      */
     if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
       console.debug('graphql request:', this.query)
     }
     if (!this.query) {

@@ -32,6 +32,7 @@ const actions = {
   setAlert ({ state, commit }, alert) {
     // log to console when the alert is not null (null can mean to remove the alert)
     if (alert !== null) {
+      // eslint-disable-next-line no-console
       console.log(alert)
     }
     if (alert === null || state.alert === null || state.alert.getText() !== alert.getText()) {
