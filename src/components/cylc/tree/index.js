@@ -146,7 +146,7 @@ function computeCyclePointsStates (cyclePointNodes) {
  * Every node has data, and a .name property used to display the node in the tree in the UI.
  *
  * @param workflow {object}
- * @returns Object
+ * @returns Array
  */
 function convertGraphQLWorkflowToTree (workflow) {
   if (workflow === null || !workflow.cyclePoints || !workflow.familyProxies || !workflow.taskProxies) {
@@ -165,17 +165,14 @@ function convertGraphQLWorkflowToTree (workflow) {
   // build hierarchy of cycle-point with zero or many families, and each family with zero or many other families
   // TODO: most of this for-loop and code within might be removed later: https://github.com/cylc/cylc-ui/issues/354#issuecomment-585003621
   for (const familyProxy of rootNode.node.familyProxies) {
-    const parent = familyProxy.firstParent
-    // skip the root family, which does not have a parent
-    if (parent === null || parent === undefined) {
-      continue
-    }
     if (!lookup.get(familyProxy.id)) {
       const familyProxyNode = createFamilyProxyNode(familyProxy)
       lookup.set(familyProxyNode.id, familyProxyNode)
       // we add to the lookup table, but we should not add to the parent just yet, as it could a) not exist, or b) be the root family
     }
 
+    // root family is excluded in the GraphQL query, so firstParent mustn't be null
+    const parent = familyProxy.firstParent
     // if the parent is root, we use the cyclepoint as the parent
     if (parent.name === 'root') {
       lookup.get(familyProxy.cyclePoint).children.push(lookup.get(familyProxy.id))

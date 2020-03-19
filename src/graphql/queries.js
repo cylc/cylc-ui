@@ -44,7 +44,7 @@ subscription {
         submitNum
       }
     }
-    familyProxies (sort: { keys: ["firstParent"]}) {
+    familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}) {
       id
       name
       state

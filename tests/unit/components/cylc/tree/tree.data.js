@@ -608,22 +608,6 @@ const sampleWorkflow1 = {
   ],
   familyProxies: [
     {
-      id: 'cylc|one|20000102T0000Z|root',
-      __typename: 'FamilyProxy',
-      name: 'root',
-      cyclePoint: '20000102T0000Z',
-      state: 'failed',
-      firstParent: null
-    },
-    {
-      id: 'cylc|one|20000101T0000Z|root',
-      __typename: 'FamilyProxy',
-      name: 'root',
-      cyclePoint: '20000101T0000Z',
-      state: 'failed',
-      firstParent: null
-    },
-    {
       id: 'cylc|one|20000101T0000Z|SUCCEEDED',
       __typename: 'FamilyProxy',
       name: 'SUCCEEDED',
