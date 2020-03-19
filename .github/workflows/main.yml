@@ -32,4 +32,18 @@ jobs:
         fail_ci_if_error: false
     - name: Build
       run: npm run build
-
+  cypress-run:
+    runs-on: ubuntu-16.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: e2e
+        uses: cypress-io/github-action@v1
+        with:
+          start: npm run serve
+          wait-on: http://localhost:8080/
+          config_file: cypress.json
+          spec: "tests/e2e/**/*"
+        env:
+          CYPRESS_baseUrl: http://localhost:8080/
+          NODE_ENV: offline

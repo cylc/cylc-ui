@@ -1,12 +1,12 @@
 describe('User Profile', () => {
   it('Visits the user profile', () => {
     cy.visit('/#/user-profile')
-    cy.get('h4.title')
+    cy
+      .get('h3.headline')
       .should('be.visible')
       .should('contain', 'Your Profile')
-    // TODO: offline mode for UserService
-    // cy.get('input#username')
-    //   .should('be.visible')
-    //   .should('be.disabled')
+    cy.get('input#profile-username')
+      .should('be.visible')
+      .should('be.disabled')
   })
 })
