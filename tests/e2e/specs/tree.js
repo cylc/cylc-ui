@@ -19,6 +19,21 @@ describe('Tree component', () => {
       .get('.node-data-job')
       .should('not.be.visible')
   })
+  it('Should make jobs visible when clicking on tasks', () => {
+    cy.visit('/#/workflows/one')
+    cy
+      .get('.node-data-job:first')
+      .should('not.be.visible')
+    // expand the first task proxy we have
+    cy
+      .get('.node-data-task-proxy:first')
+      .prev()
+      .click()
+    // now, consequentially, the first job that we have should also be visible
+    cy
+      .get('.node-data-job:first')
+      .should('be.visible')
+  })
   // it('Should display leaf node triangle with padding', () => {
   //   // this is testing that there is a padding, not necessarily that the leaf node's triangle is exactly under the node
   // }
