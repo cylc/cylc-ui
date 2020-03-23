@@ -224,7 +224,7 @@ export default {
     getNodeDataClass () {
       const classes = {}
       classes['node-data'] = true
-      classes[this.node.type] = true
+      classes[`node-data-${this.node.type}`] = true
       return classes
     }
   }
