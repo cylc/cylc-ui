@@ -1,15 +1,15 @@
 describe('Tree component', () => {
-  it('Should display leaf node with a triangle with left padding', () => {
-    // this is testing that there is a padding, not necessarily that the leaf node's triangle is exactly under the node
+  it('Should display two cycle points for the mocked workflow', () => {
     cy.visit('/#/workflows/one')
     cy
-      .get('#core-app-bar')
-      .should('be.visible')
-  })
-  it('Is NOT displayed when looking at the dashboard', () => {
-    cy.visit('/#/')
-    cy
-      .get('#core-app-bar')
-      .should('not.be.visible')
+      .get('.cyclepoint')
+      .should(($div) => {
+        // by default, in our expected viewport size for tests, both cycle points exist and are visible
+        expect($div).to.have.length(2)
+        expect($div.get(0)).to.contain('20000101T0000Z')
+        expect($div.get(0)).to.be('visible')
+        expect($div.get(1)).to.contain('20000102T0000Z')
+        expect($div.get(1)).to.be('visible')
+      })
   })
 })
