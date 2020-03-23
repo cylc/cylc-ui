@@ -13,6 +13,12 @@ describe('Tree component', () => {
       .get('.node-data-cyclepoint')
       .should('be.visible')
   })
+  it('Should hide jobs by default', () => {
+    cy.visit('/#/workflows/one')
+    cy
+      .get('.node-data-job')
+      .should('not.be.visible')
+  })
   // it('Should display leaf node triangle with padding', () => {
   //   // this is testing that there is a padding, not necessarily that the leaf node's triangle is exactly under the node
   // }
