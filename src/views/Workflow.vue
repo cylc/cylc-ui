@@ -79,7 +79,7 @@ export default {
       this.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
     })
   },
-  beforeDestroy () {
+  beforeRouteLeave () {
     EventBus.$off('add:tree')
     EventBus.$off('add:graph')
     EventBus.$off('add:mutations')
