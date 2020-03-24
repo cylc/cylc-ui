@@ -72,19 +72,26 @@ export default {
       this.$workflowService.unsubscribe(subscriptionId)
     })
   },
-  mounted () {
-    // Create a Tree View for the current workflow by default
-    const subscriptionId = this.subscribe('tree')
-    this.$nextTick(() => {
-      this.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // Create a Tree View for the current workflow by default
+      const subscriptionId = vm.subscribe('tree')
+      vm.$nextTick(() => {
+        vm.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
+      })
     })
   },
-  beforeRouteLeave () {
+  beforeRouteUpdate (to, from, next) {
+    this.isLoading = true
+    next()
+  },
+  beforeRouteLeave (to, from, next) {
     EventBus.$off('add:tree')
     EventBus.$off('add:graph')
     EventBus.$off('add:mutations')
     EventBus.$off('delete:widget')
     this.$workflowService.unregister(this)
+    next()
   },
   methods: {
     /**
