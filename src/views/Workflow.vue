@@ -3,6 +3,7 @@
     <workflow
       :workflow-name="workflowName"
       :workflow-tree="workflowTree"
+      :is-loading="isLoading"
       ref="workflow-component" />
   </div>
 </template>

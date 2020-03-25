@@ -4,6 +4,7 @@ import Tree from '@/components/cylc/tree/Tree'
 import Graph from '@/components/cylc/graph/Graph'
 // import Mutations from '@/components/cylc/Mutations'
 import Mutations from '@/views/Mutations'
+import VSkeletonLoader from 'vuetify/lib/components/VSkeletonLoader'
 
 /**
  * A widget that will have just a single HTML element to be referenced by the Vue component.
@@ -62,10 +63,15 @@ const TreeWrapper = Vue.component('tree-wrapper', {
     workflows: {
       type: Array,
       required: true
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
-    tree: Tree
+    tree: Tree,
+    VSkeletonLoader
   },
   mounted () {
     const widgetElement = document.getElementById(this.widgetId)
@@ -84,7 +90,13 @@ const TreeWrapper = Vue.component('tree-wrapper', {
   },
   template: `
     <div>
-      <tree :workflows="workflows" :ref="widgetId"/>
+      <v-skeleton-loader
+        :ref="widgetId"
+        :loading="isLoading"
+        type="list-item-avatar-three-line"
+        >
+        <tree :workflows="workflows" />
+      </v-skeleton-loader>
     </div>
   `
 })
@@ -99,10 +111,15 @@ const GraphWrapper = Vue.component('graph-wrapper', {
     workflowName: {
       type: String,
       required: true
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
-    graph: Graph
+    graph: Graph,
+    VSkeletonLoader
   },
   mounted () {
     const widgetElement = document.getElementById(this.widgetId)
@@ -122,12 +139,22 @@ const GraphWrapper = Vue.component('graph-wrapper', {
     },
     activate () {
       // when this widget is activated, we want to tell the wrapped graph that it needs to force-repaint to avoid blank graphs
-      this.$refs[this.widgetId].resizeGraph()
+      const children = this.$refs[this.widgetId].$children
+      if (children && children.length > 0) {
+        children[0].resizeGraph()
+      }
     }
   },
   template: `
     <div>
-      <graph :workflow-name="workflowName" :ref="widgetId"/>
+      <v-skeleton-loader
+        :ref="widgetId"
+        :loading="isLoading"
+        height="100"
+        type="list-item-avatar-three-line"
+      >
+        <graph :workflow-name="workflowName" />
+      </v-skeleton-loader>
     </div>
   `
 })
@@ -142,10 +169,15 @@ const MutationsWrapper = Vue.component('mutations-wrapper', {
     workflowName: {
       type: String,
       required: true
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
-    Mutations
+    Mutations,
+    VSkeletonLoader
   },
   methods: {
     delete () {
@@ -169,7 +201,15 @@ const MutationsWrapper = Vue.component('mutations-wrapper', {
   },
   template: `
     <div>
-      <Mutations :workflow-name="workflowName" :ref="widgetId" />
+      <component
+        is="VSkeletonLoader"
+        :ref="widgetId"
+        :loading="isLoading"
+        height="100"
+        type="list-item-avatar-three-line"
+      >
+        <Mutations :workflow-name="workflowName" />
+      </component>
     </div>
   `
 })
