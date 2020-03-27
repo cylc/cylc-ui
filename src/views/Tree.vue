@@ -71,11 +71,11 @@ export default {
   },
 
   methods: {
+    /**
+     * Subscribe this view to a new GraphQL query.
+     * @param {string} queryName - Must be in QUERIES.
+     */
     subscribe (queryName) {
-      /**
-         * Subscribe this view to a new GraphQL query.
-         * @param {string} queryName - Must be in QUERIES.
-         */
       if (!(queryName in this.subscriptions)) {
         this.subscriptions[queryName] =
           this.$workflowService.subscribe(
@@ -85,11 +85,11 @@ export default {
       }
     },
 
+    /**
+     * Unsubscribe this view to a new GraphQL query.
+     * @param {string} queryName - Must be in QUERIES.
+     */
     unsubscribe (queryName) {
-      /**
-         * Unsubscribe this view to a new GraphQL query.
-         * @param {string} queryName - Must be in QUERIES.
-         */
       if (queryName in this.subscriptions) {
         this.$workflowService.unsubscribe(
           this.subscriptions[queryName]
@@ -97,10 +97,10 @@ export default {
       }
     },
 
+    /** Toggle the isLoading state.
+     * @param {bool} isActive - Are this views subs active.
+     */
     setActive (isActive) {
-      /** Toggle the isLoading state.
-         * @param {bool} isActive - Are this views subs active.
-         */
       this.isLoading = !isActive
     }
   }
