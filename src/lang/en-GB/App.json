@@ -1,7 +1,7 @@
 {
   "name": "Cylc UI",
   "dashboard": "Dashboard",
-  "graph": "Graph",
+  "graph": "Graph {name}",
   "workflow": "Workflow {name}",
   "workflows": "Workflows",
   "notFound": "Not Found",
