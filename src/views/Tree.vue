@@ -16,7 +16,7 @@
 
 <script>
 import { mixin } from '@/mixins/index'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
 import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
 
@@ -52,7 +52,8 @@ export default {
   }),
 
   computed: {
-    ...mapGetters('workflows', ['workflowTree'])
+    ...mapGetters('workflows', ['workflowTree']),
+    ...mapState('user', ['user'])
   },
 
   created () {
@@ -77,10 +78,11 @@ export default {
      */
     subscribe (queryName) {
       if (!(queryName in this.subscriptions)) {
+        const workflowId = `${this.user.username}|${this.workflowName}`
         this.subscriptions[queryName] =
           this.$workflowService.subscribe(
             this,
-            QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
+            QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
           )
       }
     },
