@@ -16,14 +16,14 @@ jobs:
         path: node_modules
         key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
     - name: Install
-      run: npm install
+      run: yarn install
     - name: Lint
       run: |
-        npm run lint -- --no-fix
+        yarn run lint -- --no-fix
         DEBUG="lockfile-lint,validate-host-manager" npx lockfile-lint --path package-lock.json --validate-https --allowed-hosts npm
     - name: Test
       run: |
-        npm run coverage:unit
+        yarn run coverage:unit
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
@@ -31,7 +31,7 @@ jobs:
         file: ./coverage/lcov.info
         fail_ci_if_error: false
     - name: Build
-      run: npm run build
+      run: yarn run build
   cypress-run:
     runs-on: ubuntu-16.04
     steps:
@@ -40,7 +40,7 @@ jobs:
       - name: e2e
         uses: cypress-io/github-action@v1
         with:
-          start: npm run serve
+          start: yarn run serve
           wait-on: http://localhost:8080/
           config_file: cypress.json
           spec: "tests/e2e/**/*"
