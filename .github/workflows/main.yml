@@ -20,7 +20,7 @@ jobs:
     - name: Lint
       run: |
         yarn run lint -- --no-fix
-        DEBUG="lockfile-lint,validate-host-manager" npx lockfile-lint --path package-lock.json --validate-https --allowed-hosts npm
+        DEBUG="lockfile-lint,validate-host-manager" npx lockfile-lint --path yarn.lock --validate-https --allowed-hosts npm --allowed-hosts registry.yarnpkg.com
     - name: Test
       run: |
         yarn run coverage:unit
