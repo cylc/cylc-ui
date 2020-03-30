@@ -78,6 +78,10 @@ view and move access to the dashboard.
 [#396](https://github.com/cylc/cylc-ui/pull/396) - Fix leaf and other tree
 nodes layout.
 
+[#432](https://github.com/cylc/cylc-ui/pull/432) - Add loading state to
+Lumino widgets with skeleton loaders, preventing it from displaying the
+data of other workflows for a brief moment.
+
 ### Documentation
 
 [#215](https://github.com/cylc/cylc-ui/pull/215) - guide: add beginnings

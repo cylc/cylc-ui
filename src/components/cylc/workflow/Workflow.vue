@@ -7,18 +7,21 @@
           :key="widgetId"
           :workflows="workflowTree"
           :widgetId="widgetId"
+          :is-loading="isLoading"
       />
       <graph-wrapper
           v-for="widgetId of this.graphWidgetIds"
           :key="widgetId"
           :workflow-name="workflowName"
           :widgetId="widgetId"
+          :is-loading="isLoading"
       />
       <mutations-wrapper
           v-for="widgetId of this.mutationsWidgetIds"
           :key="widgetId"
           :workflow-name="workflowName"
           :widgetId="widgetId"
+          :is-loading="isLoading"
       />
     </div>
   </div>
@@ -43,6 +46,10 @@ export default {
     workflowName: {
       type: String,
       required: true
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
