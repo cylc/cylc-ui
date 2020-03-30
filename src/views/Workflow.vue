@@ -44,6 +44,7 @@ export default {
   }),
   computed: {
     ...mapState('workflows', ['workflows']),
+    ...mapState('user', ['user']),
     ...mapGetters('workflows', ['workflowTree'])
   },
   created () {
@@ -112,9 +113,10 @@ export default {
           activeCallback: this.setActive
         }
       )
+      const workflowId = `${this.user.username}|${this.workflowName}`
       const subscriptionId = this.$workflowService.subscribe(
         view,
-        QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
+        QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
       )
       view.subscriptionId = subscriptionId
       if (!(queryName in this.subscriptions)) {

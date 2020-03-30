@@ -16,7 +16,7 @@
 
 <script>
 import { mixin } from '@/mixins/index'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
 import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
 
@@ -52,7 +52,8 @@ export default {
   }),
 
   computed: {
-    ...mapGetters('workflows', ['workflowTree'])
+    ...mapGetters('workflows', ['workflowTree']),
+    ...mapState('user', ['user'])
   },
 
   created () {
@@ -71,25 +72,26 @@ export default {
   },
 
   methods: {
+    /**
+     * Subscribe this view to a new GraphQL query.
+     * @param {string} queryName - Must be in QUERIES.
+     */
     subscribe (queryName) {
-      /**
-         * Subscribe this view to a new GraphQL query.
-         * @param {string} queryName - Must be in QUERIES.
-         */
       if (!(queryName in this.subscriptions)) {
+        const workflowId = `${this.user.username}|${this.workflowName}`
         this.subscriptions[queryName] =
           this.$workflowService.subscribe(
             this,
-            QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
+            QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
           )
       }
     },
 
+    /**
+     * Unsubscribe this view to a new GraphQL query.
+     * @param {string} queryName - Must be in QUERIES.
+     */
     unsubscribe (queryName) {
-      /**
-         * Unsubscribe this view to a new GraphQL query.
-         * @param {string} queryName - Must be in QUERIES.
-         */
       if (queryName in this.subscriptions) {
         this.$workflowService.unsubscribe(
           this.subscriptions[queryName]
@@ -97,10 +99,10 @@ export default {
       }
     },
 
+    /** Toggle the isLoading state.
+     * @param {bool} isActive - Are this views subs active.
+     */
     setActive (isActive) {
-      /** Toggle the isLoading state.
-         * @param {bool} isActive - Are this views subs active.
-         */
       this.isLoading = !isActive
     }
   }

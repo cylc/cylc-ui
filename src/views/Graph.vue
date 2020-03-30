@@ -6,6 +6,7 @@
 import Graph from '@/components/cylc/graph/Graph'
 import { mixin } from '@/mixins'
 import { WORKFLOW_GRAPH_QUERY } from '@/graphql/queries'
+import { mapState } from 'vuex'
 
 const QUERIES = {
   root: WORKFLOW_GRAPH_QUERY
@@ -37,6 +38,10 @@ export default {
     isLoading: true
   }),
 
+  computed: {
+    ...mapState('user', ['user'])
+  },
+
   created () {
     this.viewID = `Graph(${this.workflowName}): ${Math.random()}`
     this.$workflowService.register(
@@ -54,9 +59,10 @@ export default {
 
   methods: {
     subscribe (queryName) {
+      const workflowId = `${this.user.username}|${this.workflowName}`
       const id = this.$workflowService.subscribe(
         this,
-        QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
+        QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
       )
       if (!(queryName in this.subscriptions)) {
         this.subscriptions[queryName] = {
