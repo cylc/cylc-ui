@@ -151,12 +151,12 @@ export default {
 
     getWorkflowIcon (status) {
       switch (status) {
-        case 'running':
-          return 'mdi-play-circle'
-        case 'held':
-          return 'mdi-pause-octagon'
-        default:
-          return 'mdi-help-circle'
+      case 'running':
+        return 'mdi-play-circle'
+      case 'held':
+        return 'mdi-pause-octagon'
+      default:
+        return 'mdi-help-circle'
       }
     }
   }
