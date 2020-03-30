@@ -43,7 +43,7 @@ For coverage
 
 Or for headless mode
 
-    yarn run test:e2e -- --headless
+    yarn run test:e2e -- --headless --config video=false
 
 ### Lints and fixes files
 
