@@ -1,5 +1,8 @@
 // Code related to GraphQL queries, fragments, variables, etc.
 
+// IMPORTANT: queries here may be used in the offline mode to create mock data. Before removing or renaming
+// queries here, please check under the services/mock folder for occurrences of the variable name.
+
 /**
  * Query used to retrieve data for a workflow Tree view.
  * @type {string}

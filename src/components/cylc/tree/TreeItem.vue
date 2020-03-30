@@ -14,15 +14,15 @@
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <div class="node-data" @click="nodeClicked" v-if="node.type === 'cyclepoint'">
+      <div :class="getNodeDataClass()" @click="nodeClicked" v-if="node.type === 'cyclepoint'">
         <task :status="node.node.state" :progress=0 />
         <span class="mx-1">{{ node.node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.type === 'family-proxy'">
+      <div :class="getNodeDataClass()" @click="nodeClicked" v-else-if="node.type === 'family-proxy'">
         <task :status="node.node.state" :progress="node.node.progress" />
         <span class="mx-1">{{ node.node.name }}</span>
       </div>
-      <div class="node-data" @click="nodeClicked" v-else-if="node.type === 'task-proxy'">
+      <div :class="getNodeDataClass()" @click="nodeClicked" v-else-if="node.type === 'task-proxy'">
         <task :status="node.node.state" :progress="node.node.progress" />
         <span class="mx-1">{{ node.node.name }}</span>
         <div v-if="!isExpanded" class="node-summary">
@@ -33,15 +33,15 @@
               :status="task.node.state" />
         </div>
       </div>
-      <div class="node-data" v-else-if="node.type === 'job'">
-        <div class="node-data" @click="jobNodeClicked">
+      <div :class="getNodeDataClass()" v-else-if="node.type === 'job'">
+        <div :class="getNodeDataClass()" @click="jobNodeClicked">
           <job :status="node.node.state" />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
           <span class="grey--text">{{ node.node.host }}</span>
         </div>
         <!-- leaf node -->
       </div>
-      <div class="node-data" v-else>
+      <div :class="getNodeDataClass()" v-else>
         <span @click="nodeClicked" class="mx-1">{{ node.node.name }}</span>
       </div>
     </div>
@@ -220,6 +220,12 @@ export default {
         'node--active': this.active,
         'ml-3': true
       }
+    },
+    getNodeDataClass () {
+      const classes = {}
+      classes['node-data'] = true
+      classes[`node-data-${this.node.type}`] = true
+      return classes
     }
   }
 }
