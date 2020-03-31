@@ -15,15 +15,27 @@
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
       <div :class="getNodeDataClass()" @click="nodeClicked" v-if="node.type === 'cyclepoint'">
-        <task :status="node.node.state" :progress=0 />
+        <task
+         :status="node.node.state"
+         :isHeld="node.node.isHeld"
+         :progress=0
+        />
         <span class="mx-1">{{ node.node.name }}</span>
       </div>
       <div :class="getNodeDataClass()" @click="nodeClicked" v-else-if="node.type === 'family-proxy'">
-        <task :status="node.node.state" :progress="node.node.progress" />
+        <task
+         :status="node.node.state"
+         :isHeld="node.node.isHeld"
+         :progress="node.node.progress"
+        />
         <span class="mx-1">{{ node.node.name }}</span>
       </div>
       <div :class="getNodeDataClass()" @click="nodeClicked" v-else-if="node.type === 'task-proxy'">
-        <task :status="node.node.state" :progress="node.node.progress" />
+        <task
+         :status="node.node.state"
+         :isHeld="node.node.isHeld"
+         :progress="node.node.progress"
+        />
         <span class="mx-1">{{ node.node.name }}</span>
         <div v-if="!isExpanded" class="node-summary">
           <!-- Task summary -->

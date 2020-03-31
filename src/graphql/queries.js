@@ -23,6 +23,7 @@ subscription {
       id
       name
       state
+      isHeld
       cyclePoint
       latestMessage
       firstParent {
