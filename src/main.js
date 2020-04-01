@@ -46,7 +46,7 @@ new Vue({
   render (h) {
     return h(App, {
       props: {
-        baseUrl: this.$el.attributes['base-url'].value
+        baseUrl: this.$el.attributes['data-base-url'].value
       }
     })
   }
