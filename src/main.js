@@ -43,5 +43,11 @@ new Vue({
   router,
   store,
   vuetify,
-  render: h => h(App)
+  render (h) {
+    return h(App, {
+      props: {
+        baseUrl: this.$el.attributes['base-url'].value
+      }
+    })
+  }
 }).$mount('#app')
