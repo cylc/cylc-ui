@@ -4,13 +4,14 @@
   "private": true,
   "license": "GPL-3.0-only",
   "scripts": {
-    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "build:report": "vue-cli-service build --report",
     "build:watch": "vue-cli-service build --watch --mode development",
-    "lint": "vue-cli-service lint",
+    "checkpoint" : "./src/services/mock/generate",
     "coverage:unit": "nyc vue-cli-service test:unit",
     "dev": "npm run serve",
+    "lint": "vue-cli-service lint",
+    "serve": "vue-cli-service serve",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit"
   },
