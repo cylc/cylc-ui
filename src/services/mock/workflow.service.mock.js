@@ -22,7 +22,7 @@ class MockWorkflowService extends GQuery {
    */
   subscribe (view, query) {
     const id = super.subscribe(view, query)
-    this.subscriptions.every(s => {
+    this.subscriptions.forEach(s => {
       s.active = true
     })
     this.callbackActive()
