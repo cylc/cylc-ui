@@ -6,24 +6,24 @@ import gql from 'graphql-tag'
 
 // TODO: remove these once the api-on-the-fly mutations are hooked into the UI
 const HOLD_WORKFLOW = gql`
-mutation HoldWorkflowMutation($workflow: String!) {
-  holdWorkflow (workflows: [$workflow]) {
+mutation HoldWorkflowMutation($workflow: WorkflowID!) {
+  hold (workflows: [$workflow]) {
     result
   }
 }
 `
 
 const RELEASE_WORKFLOW = gql`
-mutation ReleaseWorkflowMutation($workflow: String!) {
-  releaseWorkflow(workflows: [$workflow]){
+mutation ReleaseWorkflowMutation($workflow: WorkflowID!) {
+  release (workflows: [$workflow]){
     result
   }
 }
 `
 
 const STOP_WORKFLOW = gql`
-mutation StopWorkflowMutation($workflow: String!) {
-  stopWorkflow (workflows: [$workflow]) {
+mutation StopWorkflowMutation($workflow: WorkflowID!) {
+  stop (workflows: [$workflow]) {
     result
   }
 }
