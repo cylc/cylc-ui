@@ -192,15 +192,15 @@ export default {
       for (const workflow of this.workflows) {
         // TODO: create a src/model/WorkflowState enum later?
         switch (workflow.status) {
-          case 'running':
-            running += 1
-            break
-          case 'held':
-            held += 1
-            break
-          case 'stopped':
-            stopped += 1
-            break
+        case 'running':
+          running += 1
+          break
+        case 'held':
+          held += 1
+          break
+        case 'stopped':
+          stopped += 1
+          break
         }
       }
       return [

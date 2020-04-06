@@ -614,35 +614,35 @@ export default {
      */
     updateLayout () {
       switch (this.layoutName) {
-        case 'dagre':
-          this.layoutOptions = dagreOptions
-          this.runLayout(this.cytoscapeInstance, dagreOptions)
-          break
-        case 'hierarchical':
-          this.cytoscapeInstance
-            .elements()
-            .hca({
-              mode: 'threshold',
-              threshold: 25,
-              distance: 'euclidean', // euclidean, squaredEuclidean, manhattan, max
-              preference: 'mean', // median, mean, min, max,
-              damping: 0.8, // [0.5 - 1]
-              minIterations: 100, // [optional] The minimum number of iterations the algorithm will run before stopping (default 100).
-              maxIterations: 1000, // [optional] The maximum number of iterations the algorithm will run before stopping (default 1000).
-              attributes: [
-                (node) => {
-                  return node.data('weight')
-                }
-              ]
-            })
-          this.layoutOptions = hierarchicalOptions
-          this.runLayout(this.cytoscapeInstance, hierarchicalOptions)
-          break
-        default:
-          // Should never happen!
-          this.layoutOptions = dagreOptions
-          this.runLayout(this.cytoscapeInstance, dagreOptions)
-          break
+      case 'dagre':
+        this.layoutOptions = dagreOptions
+        this.runLayout(this.cytoscapeInstance, dagreOptions)
+        break
+      case 'hierarchical':
+        this.cytoscapeInstance
+          .elements()
+          .hca({
+            mode: 'threshold',
+            threshold: 25,
+            distance: 'euclidean', // euclidean, squaredEuclidean, manhattan, max
+            preference: 'mean', // median, mean, min, max,
+            damping: 0.8, // [0.5 - 1]
+            minIterations: 100, // [optional] The minimum number of iterations the algorithm will run before stopping (default 100).
+            maxIterations: 1000, // [optional] The maximum number of iterations the algorithm will run before stopping (default 1000).
+            attributes: [
+              (node) => {
+                return node.data('weight')
+              }
+            ]
+          })
+        this.layoutOptions = hierarchicalOptions
+        this.runLayout(this.cytoscapeInstance, hierarchicalOptions)
+        break
+      default:
+        // Should never happen!
+        this.layoutOptions = dagreOptions
+        this.runLayout(this.cytoscapeInstance, dagreOptions)
+        break
       }
     }
   }

@@ -11,43 +11,43 @@ can use one of the following commands.
 
 ### Project setup
 
-    npm install
+    yarn install
 
 ### Compiles and hot-reloads for development
 
-    npm run serve
+    yarn run serve
 
 ### Compiles and minifies for production
 
-    npm run build
+    yarn run build
 
 ### Compiles and watch for changes for development
 
-    npm run build:watch
+    yarn run build:watch
 
 ### Produce build report
 
-    npm run build:report
+    yarn run build:report
 
 ### Run unit tests
 
-    npm run test:unit
+    yarn run test:unit
 
 For coverage
 
-    npm run coverage:unit
+    yarn run coverage:unit
 
 ### Run functional tests
 
-    npm run test:e2e
+    yarn run test:e2e
 
 Or for headless mode
 
-    npm run test:e2e -- --headless
+    yarn run test:e2e -- --headless --config video=false
 
 ### Lints and fixes files
 
-    npm run lint
+    yarn run lint
 
 ## Integration with the backend Cylc UI server
 
