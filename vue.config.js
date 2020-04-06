@@ -23,7 +23,7 @@ module.exports = {
     ]
   },
   chainWebpack: config => {
-    if (process.env.NODE_ENV === 'test') {
+    if (['test', 'offline'].includes(process.env.NODE_ENV)) {
       config.module.rule('istanbul')
         .test(/\.js$/)
         .include.add(path.resolve('src')).end()
