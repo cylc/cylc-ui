@@ -45,6 +45,10 @@ Or for headless mode
 
     yarn run test:e2e -- --headless --config video=false
 
+For coverage
+
+    npm run coverage:e2e
+
 ### Lints and fixes files
 
     yarn run lint
