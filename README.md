@@ -47,7 +47,7 @@ Or for headless mode
 
 For coverage
 
-    npm run coverage:e2e
+    yarn run coverage:e2e
 
 ### Lints and fixes files
 
