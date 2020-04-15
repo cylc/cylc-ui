@@ -54,6 +54,12 @@ describe('utils', () => {
           // [type, signature]
           [
             {
+              kind: 'TEST_TYPE'
+            },
+            'TEST_TYPE'
+          ],
+          [
+            {
               name: 'String',
               kind: 'SCALAR',
               ofType: null
