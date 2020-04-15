@@ -111,6 +111,7 @@ describe('utils', () => {
               type: 'String',
               kind: 'SCALAR'
             },
+            [],
             null
           ],
           [ // NON_NULL<String> => null
@@ -122,6 +123,7 @@ describe('utils', () => {
                 kind: 'SCALAR'
               }
             },
+            [],
             null
           ],
           [ // LIST<String> => []
@@ -133,7 +135,24 @@ describe('utils', () => {
                 kind: 'SCALAR'
               }
             },
+            [],
             []
+          ],
+          [ // LIST<LIST<String>> => [[]]
+            {
+              type: null,
+              kind: 'LIST',
+              ofType: {
+                type: null,
+                kind: 'LIST',
+                ofType: {
+                  type: 'String',
+                  kind: 'SCALAR'
+                }
+              }
+            },
+            [],
+            [[]]
           ],
           [ // NON_NULL<LIST<String>> => []
             {
@@ -148,13 +167,36 @@ describe('utils', () => {
                 }
               }
             },
+            [],
             []
+          ],
+          [ // INPUT_OBJECT { A } => {A: null}
+            {
+              type: null,
+              kind: 'INPUT_OBJECT',
+              name: 'A'
+            },
+            [
+              {
+                name: 'A',
+                kind: 'INPUT_OBJECT',
+                inputFields: [
+                  {
+                    name: 'A',
+                    type: 'String'
+                  }
+                ]
+              }
+            ],
+            { A: null }
           ]
         ].forEach((item) => {
+          const type = item[0]
+          const types = item[1]
           expect(
-            graphql.getNullValue(item[0])
+            graphql.getNullValue(type, types)
           ).to.deep.equal(
-            item[1]
+            item[2]
           )
         })
       })
