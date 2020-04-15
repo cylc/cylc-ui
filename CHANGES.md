@@ -32,7 +32,7 @@ view and component.
 
 [#301](https://github.com/cylc/cylc-ui/pull/301) - Add GScan component.
 
-[#327](https://github.com/cylc/cylc-ui/pull/301) - Use live data for the
+[#327](https://github.com/cylc/cylc-ui/pull/327) - Use live data for the
 dashboard workflows summary.
 
 [#307](https://github.com/cylc/cylc-ui/pull/307) - Invoke mutations to
