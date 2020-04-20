@@ -37,6 +37,11 @@ export default {
       baseUrl = this.baseUrl !== '' ? this.baseUrl : DEFAULT_URL
     }
     this.setBaseUrl(baseUrl)
+  },
+  mounted () {
+    if (localStorage.fontSize) {
+      document.getElementsByTagName('html')[0].style.fontSize = localStorage.fontSize
+    }
   }
 }
 </script>

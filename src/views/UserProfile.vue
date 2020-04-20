@@ -81,13 +81,25 @@
                 <span>Font size</span>
               </v-flex>
               <v-flex xs9>
-                <v-btn depressed class="mr-2">
+                <v-btn
+                  depressed
+                  id="font-size-reset-button"
+                  class="mr-2"
+                  @click="resetFontSize()">
                   Reset
                 </v-btn>
-                <v-btn depressed class="mx-2">
+                <v-btn
+                  depressed
+                  id="font-size-decrease-button"
+                  class="mx-2"
+                  @click="decreaseFontSize()">
                   <v-icon>mdi-format-font-size-decrease</v-icon>
                 </v-btn>
-                <v-btn depressed class="ml-2">
+                <v-btn
+                  depressed
+                  id="font-size-increase-button"
+                  class="ml-2"
+                  @click="increaseFontSize()">
                   <v-icon>mdi-format-font-size-increase</v-icon>
                 </v-btn>
               </v-flex>
@@ -102,7 +114,15 @@
 
 <script>
 import { mapState } from 'vuex'
-import { mixin } from '@/mixins/index'
+import { mixin } from '@/mixins'
+import {
+  resetFontSize,
+  decreaseFontSize,
+  increaseFontSize,
+  getCurrentFontSize
+} from '@/utils/font-size'
+
+// TODO: update where user preferences are stored after #335
 
 export default {
   mixins: [mixin],
@@ -113,6 +133,12 @@ export default {
     return {
       title: this.getPageTitle('App.userProfile')
     }
+  },
+  methods: {
+    resetFontSize,
+    decreaseFontSize,
+    increaseFontSize,
+    getCurrentFontSize
   }
 }
 </script>

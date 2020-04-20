@@ -1,11 +1,15 @@
 const webpack = require('@cypress/webpack-preprocessor')
 
 module.exports = (on, config) => {
+  const webpackOptions = require('@vue/cli-service/webpack.config')
+  // NOTE: if we do not remove the webpack optimizations, Cypress seems
+  //       to get confused when our JS code imports scss, failing
+  //       silently, and reporting no tests found in Cypress GUI.
+  webpackOptions.optimization = {}
   on('file:preprocessor', webpack({
-    webpackOptions: require('@vue/cli-service/webpack.config'),
+    webpackOptions,
     watchOptions: {}
   }))
-
   return Object.assign({}, config, {
     fixturesFolder: 'tests/e2e/fixtures',
     integrationFolder: 'tests/e2e/specs',
