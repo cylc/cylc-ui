@@ -388,8 +388,8 @@ export default {
               const jobSquare = `<div class="box-job-graph ${job.state}-graph"></div>`
               const details = `<details><summary>${jobId}${jobSquare}</summary>`
               const submitNum = `<br><strong>submit number:  <span style="color: #555;">${job.submitNum}</span></strong>`
-              const batchSysName = `<br><strong>batch sytem name: <span style="color: #555;">${job.batchSysName}</span></strong>`
-              const batchSysJobId = `<br><strong>batch sytem job id: <span style="color: #555;">${job.batchSysJobId}</span></strong>`
+              const batchSysName = `<br><strong>batch system name: <span style="color: #555;">${job.batchSysName}</span></strong>`
+              const batchSysJobId = `<br><strong>batch system job id: <span style="color: #555;">${job.batchSysJobId}</span></strong>`
               const host = `<br><strong>host:  <span style="color: #555;">${job.host}</span></strong>`
               const startedTime = `<br><strong>started time:  <span style="color: #555;">${job.startedTime}</span></strong>`
               const submittedTime = `<br><strong>submitted time:  <span style="color: #555;">${job.submittedTime}</span></strong>`

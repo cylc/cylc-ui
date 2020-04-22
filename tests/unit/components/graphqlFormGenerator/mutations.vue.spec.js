@@ -70,7 +70,7 @@ const objects = {
   bar: [['BAR', false], ['BARS', true]]
 }
 
-// okay so it's a view not a compoent of formgenerator, this functionality
+// okay so it's a view not a component of formgenerator, this functionality
 // will get collected and tidied in a future PR
 describe('Mutations Component', () => {
   it('should associate mutations with objects', () => {

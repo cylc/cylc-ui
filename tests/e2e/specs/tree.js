@@ -54,7 +54,7 @@ describe('Tree component', () => {
       .should('be.visible')
     // and, important, the leaf node has a triangle, as a helper to quickly point the user to its parent
     // job in the tree - i.e. the leaf has a left margin... as the leaves are not root nodes, we
-    // **always** have a margin > 0, unless a bug broke it (which happened before due to a wrong vairable name).
+    // **always** have a margin > 0, unless a bug broke it (which happened before due to a wrong variable name).
     cy
       .get('.leaf:first > .arrow-up')
       .should(($div) => {
