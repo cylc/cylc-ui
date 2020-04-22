@@ -5,7 +5,7 @@ if ! sed --version 2>/dev/null | grep -q 'GNU' 2>/dev/null; then
     exit 1
 fi
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
 CHECK_FILE='checkpoint.js'
 
 cylc reg "one" one
