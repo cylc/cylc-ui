@@ -50,6 +50,9 @@ protocol is http:
 [#379](https://github.com/cylc/cylc-ui/pull/379) - Add ConnectionStatus
 component.
 
+[#446](https://github.com/cylc/cylc-ui/pull/446) - Allow users to
+increase, decrease, and reset UI font size.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard
