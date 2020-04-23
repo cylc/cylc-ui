@@ -11,7 +11,7 @@
     "coverage:unit": "nyc vue-cli-service test:unit",
     "dev": "yarn run serve",
     "lint": "vue-cli-service lint",
-    "serve": "vue-cli-service serve",
+    "serve": "NODE_ENV=offline vue-cli-service serve",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit"
   },
