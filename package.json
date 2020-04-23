@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "build:report": "vue-cli-service build --report",
     "build:watch": "vue-cli-service build --watch --mode development",
-    "checkpoint" : "./src/services/mock/generate",
+    "checkpoint": "./src/services/mock/generate",
     "coverage:unit": "nyc vue-cli-service test:unit",
     "dev": "yarn run serve",
     "lint": "vue-cli-service lint",
@@ -32,7 +32,7 @@
     "cytoscape-undo-redo": "^1.3.1",
     "dedent": "^0.7.0",
     "dotparser": "^0.4.0",
-    "enumify": "^1.0.4",
+    "enumify": "^2.0.0",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "jshint": "^2.10.2",
@@ -50,6 +50,7 @@
     "vuex-router-sync": "^5.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@cypress/webpack-preprocessor": "^4.1.3",
     "@mdi/font": "^4.5.95",
     "@vue/cli-plugin-babel": "^3.12.0",
@@ -88,6 +89,9 @@
     "vue-template-compiler": "^2.6.10",
     "vuetify-loader": "^1.3.0",
     "webpack": "^4.41.0"
+  },
+  "resolutions": {
+    "istanbul-instrumenter-loader/**/istanbul-lib-instrument": "4.0.1"
   },
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
