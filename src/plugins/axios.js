@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import store from '@/store/'
 
 // Lib imports
@@ -18,5 +17,3 @@ axios.interceptors.response.use(function (response) {
   store.dispatch('setLoading', false)
   return Promise.reject(error)
 })
-
-Vue.prototype.$http = axios
