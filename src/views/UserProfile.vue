@@ -8,7 +8,7 @@
           icon="mdi-settings"
         >
           <h3 class="headline">{{ $t('UserProfile.tableHeader') }}</h3>
-          {{ $t('UserProfile.tableSubHeader') }}
+          <p class="body-1">{{ $t('UserProfile.tableSubHeader') }}</p>
         </v-alert>
         <v-form v-if="user !== null">
           <v-container py-0>
@@ -20,6 +20,7 @@
                     disabled
                     id="profile-username"
                     aria-disabled="true"
+                    class="body-1"
                 />
               </v-flex>
             </v-layout>
@@ -31,6 +32,7 @@
                     disabled
                     id="profile-admin"
                     aria-disabled="true"
+                    class="body-1"
                 />
               </v-flex>
             </v-layout>
@@ -44,11 +46,11 @@
                     v-model="user.groups"
                     :label="$t('UserProfile.groups')"
                     attach
-                    chips
                     multiple
                     disabled
                     id="profile-groups"
                     aria-disabled="true"
+                    class="body-1"
                 />
               </v-flex>
             </v-layout>
@@ -63,6 +65,7 @@
                     disabled
                     id="profile-created"
                     aria-disabled="true"
+                    class="body-1"
                 />
               </v-flex>
             </v-layout>

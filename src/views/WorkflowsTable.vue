@@ -28,7 +28,7 @@
               :value="true"
               color="error"
               icon="warning">
-              No workflows found for the current user
+              <p class="body-1">No workflows found for the current user</p>
             </v-alert>
           </template>
           <template

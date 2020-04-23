@@ -7,7 +7,7 @@
       class="ma-0"
       dismissible
     >
-      {{ alert.getText() }}
+      <p class="body-1">{{ alert.getText() }}</p>
     </v-alert>
   </div>
 </template>

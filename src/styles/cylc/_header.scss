@@ -4,11 +4,11 @@
 
   .layout {
     .c-environment-info {
-      font-size: $font-size-root;
+      font-size: 1rem;
       font-weight: map-get($font-weights, 'regular');
 
       .v-chip {
-        font-size: $font-size-root;
+        font-size: 1rem;
         span {
           background-color: map-get($grey, 'lighten-5');
         }
