@@ -113,12 +113,6 @@ export default {
     },
     viewLinks: function () {
       return this.isView(true)
-    },
-    nonViewLinks: function () {
-      return this.isView(false)
-    },
-    items () {
-      return this.$t('Layout.View.items')
     }
   },
   methods: {
