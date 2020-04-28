@@ -55,6 +55,9 @@ query {
       }
       jobs(sort: { keys: ["submit_num"], reverse:true }) {
         id
+        firstParent: taskProxy {
+          id
+        }
         batchSysName
         batchSysJobId
         host

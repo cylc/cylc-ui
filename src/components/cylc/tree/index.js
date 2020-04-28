@@ -17,19 +17,21 @@
 
 import { extractGroupState } from '@/utils/tasks'
 import { computePercentProgress } from '@/components/cylc'
+import CylcTree from '@/components/cylc/tree/tree'
 
 /**
  * Create a workflow node. Uses the same properties (by reference) as the given workflow,
  * only adding new properties such as type, children, etc.
  *
  * @param workflow {Object} workflow
- * @return {{node: Object, children: []}}
+ * @return {{id: string, node: Object, children: []}}
  */
 function createWorkflowNode (workflow) {
   // Does not have the infinite-tree properties (size, state, etc) because this node is used only to build the
   // initial hierarchy. After that it is discarded, and we return its children (Cylc 7 did not display workflows
   // in the tree).
   return {
+    id: workflow.id,
     node: workflow,
     children: []
   }
@@ -153,6 +155,32 @@ function computeCyclePointsStates (cyclePointNodes) {
   }
 }
 
+function createWorkflowTree (workflow) {
+  if (workflow === null || !workflow.cyclePoints || !workflow.familyProxies || !workflow.taskProxies) {
+    return []
+  }
+  // the workflow object gets augmented to become a valid node for the tree
+  const rootNode = createWorkflowNode(workflow)
+  const cylcTree = new CylcTree(rootNode)
+  for (const cyclePoint of workflow.cyclePoints) {
+    const cyclePointNode = createCyclePointNode(cyclePoint)
+    cylcTree.addCyclePoint(cyclePointNode)
+  }
+  for (const familyProxy of workflow.familyProxies) {
+    const familyProxyNode = createFamilyProxyNode(familyProxy)
+    cylcTree.addFamilyProxy(familyProxyNode)
+  }
+  for (const taskProxy of workflow.taskProxies) {
+    const taskProxyNode = createTaskProxyNode(taskProxy)
+    cylcTree.addTaskProxy(taskProxyNode)
+    for (const job of taskProxy.jobs) {
+      const jobNode = createJobNode(job, taskProxy.latestMessage)
+      cylcTree.addJob(jobNode)
+    }
+  }
+  return cylcTree
+}
+
 /**
  * Given a GraphQL response workflow, this function will return the data structure
  * expected by the Vue.js tree component.
@@ -236,5 +264,8 @@ function convertGraphQLWorkflowToTree (workflow) {
 }
 
 export {
-  convertGraphQLWorkflowToTree
+  convertGraphQLWorkflowToTree,
+  createWorkflowTree,
+  computeTaskProgress,
+  computeCyclePointsStates
 }

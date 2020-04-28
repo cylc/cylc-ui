@@ -36,7 +36,7 @@ import { mixin } from '@/mixins'
 import { mapState } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
 import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
-import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree'
+import { createWorkflowTree } from '@/components/cylc/tree'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -104,7 +104,7 @@ export default {
     workflowUpdated (workflows) {
       for (const workflow of workflows) {
         if (workflow.name === this.workflowName) {
-          this.treeData = convertGraphQLWorkflowToTree(workflow)
+          this.treeData = createWorkflowTree(workflow)
         }
       }
     },

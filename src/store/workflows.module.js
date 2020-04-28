@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree'
+import { createWorkflowTree } from '@/components/cylc/tree'
 import merge from 'lodash.merge'
 
 const state = {
@@ -31,7 +31,7 @@ const getters = {
     return state.workflows.find(workflow => workflow.name === state.workflowName) || null
   },
   workflowTree: (state, getters) => {
-    return convertGraphQLWorkflowToTree(getters.currentWorkflow)
+    return createWorkflowTree(getters.currentWorkflow)
   }
 }
 
