@@ -1,4 +1,21 @@
-  .cy-title {
+/**
+ * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+.cy-title {
     text-align: left;
     font-size: 1em;
     width: 130px;
@@ -13,13 +30,13 @@
     color: slategray;
     text-transform: capitalize;
   }
-  
+
   .cy-title__label {
     font-size: 1em;
     overflow-wrap: break-word;
     color: '#333';
   }
-  
+
   .cy-title__state {
     font-size: 0.9em;
   }
@@ -42,7 +59,7 @@
   .cy-title__name {
     font-size: 1.5em;
   }
-  
+
   .cy-title__info {
     font-size: 0.9em;
   }
@@ -74,55 +91,55 @@
     height: 20px;
     margin-left: 1em;
   }
-  
+
   .expired-graph {
     background-color: #fefaff;
   }
-  
+
   .failed-graph {
     background-color: #ff3a2b;
   }
-  
+
   .queued-graph {
     background-color: #fff138;
   }
-  
+
   .ready-graph {
     background-color: #7093FF;
   }
-  
+
   .retrying-graph {
     background-color: #ff3a2b;
   }
-  
+
   .running-graph {
     background-color: #4ab7ff;
   }
-  
+
   .subfailed-graph {
     background-color: #d453ff;
   }
-  
+
   .submitted-graph {
     background-color: #9ef9ff;
   }
-  
+
   .succeeded-graph {
     background-color: #31ff53;
   }
-  
+
   .waiting-graph {
     background-color: #666;
   }
-  
+
   .default-graph {
     background-color: #555;
   }
-  
+
   .UNDEFINED-graph {
     background-color: #444;
   }
-  
+
   .hr-graph {
     width: 100%;
     margin-top: 0.5em;
@@ -133,7 +150,7 @@
     background-color:#666;
     opacity: 0.5;
     }
-  
+
   .header-graph {
     width: 100%;
     height: 1em;

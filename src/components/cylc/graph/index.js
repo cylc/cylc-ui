@@ -1,3 +1,20 @@
+/**
+ * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 // This file probably doesn't need any imports. It is just to offload the cognitive load of reading the Graph.vue,
 // done by moving some structures used over the code here. Probably most of these structures could also be frozen.
 
