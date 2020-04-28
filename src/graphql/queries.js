@@ -85,6 +85,133 @@ query {
 `
 
 /**
+ * Subscription used to update the data retrieved with a query.
+ * @type {string}
+ */
+export const WORKFLOW_TREE_SUBSCRIPTION = `
+subscription ($stripNull: Boolean, $workflowId: ID) {
+  deltas (ids: [$workflowId], stripNull: $stripNull) {
+    id
+    added (stripNull: $stripNull) {
+      cyclePoints: familyProxies(ids: ["root"], stripNull: $stripNull) {
+        cyclePoint
+      }
+      familyProxies (exids: ["root"], stripNull: $stripNull) {
+        id
+        name
+        state
+        cyclePoint
+        firstParent {
+          id
+          name
+          cyclePoint
+          state
+        }
+      }
+      taskProxies (stripNull: $stripNull) {
+        id
+        name
+        state
+        isHeld
+        cyclePoint
+        latestMessage
+        firstParent {
+          id
+          name
+          cyclePoint
+          state
+        }
+        task {
+          meanElapsedTime
+          name
+        }
+      }
+      jobs (stripNull: $stripNull) {
+        id
+        firstParent: taskProxy {
+          id
+        }
+        batchSysName
+        batchSysJobId
+        host
+        startedTime
+        submittedTime
+        finishedTime
+        state
+        submitNum
+      }
+    }
+    updated (stripNull: $stripNull) {
+      workflow (stripNull: $stripNull) {
+        name
+        status
+        owner
+        host
+        port
+      }
+      cyclePoints: familyProxies(ids: ["root"], stripNull: $stripNull) {
+        cyclePoint
+      }
+      familyProxies (exids: ["root"], stripNull: $stripNull) {
+        id
+        name
+        state
+        cyclePoint
+        firstParent {
+          id
+          name
+          cyclePoint
+          state
+        }
+      }
+      taskProxies (stripNull: $stripNull) {
+        id
+        name
+        state
+        isHeld
+        cyclePoint
+        latestMessage
+        firstParent {
+          id
+          name
+          cyclePoint
+          state
+        }
+        task {
+          meanElapsedTime
+          name
+        }
+      }
+      jobs (stripNull: $stripNull) {
+        id
+        firstParent: taskProxy {
+          id
+        }
+        batchSysName
+        batchSysJobId
+        host
+        startedTime
+        submittedTime
+        finishedTime
+        state
+        submitNum
+      }
+    }
+    pruned {
+      # 1. NO CYCLE POINTS, i.e., whenever you prune a family proxy, check
+      # if its parent is a cycle point and if now it is childless (and if
+      # so, remove it!)
+      # 2. family proxies
+      familyProxies
+      taskProxies
+      jobs
+    }
+  }
+}
+
+`
+
+/**
  * Query used to retrieve data for a workflow Graph view.
  * @type {string}
  */

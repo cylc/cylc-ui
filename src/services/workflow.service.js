@@ -20,6 +20,7 @@ import store from '@/store/'
 import Alert from '@/model/Alert.model'
 import { createApolloClient } from '@/utils/graphql'
 import gql from 'graphql-tag'
+import { WORKFLOW_TREE_SUBSCRIPTION } from '@/graphql/queries'
 
 // TODO: remove these once the api-on-the-fly mutations are hooked into the UI
 const HOLD_WORKFLOW = gql`
@@ -89,32 +90,11 @@ class SubscriptionWorkflowService extends GQuery {
     // Modify the query defining a subscription (document) and
     // a callback for when data arrives (updateQuery)
     query.subscribeToMore({
-      document: gql`
-        subscription {
-          deltas (ids: ["kinow|five"]) {
-            pruned {
-              familyProxies
-              taskProxies
-              jobs
-            }
-            workflow {
-              id
-              status
-              tasks {
-                id
-                name
-                meanElapsedTime
-              }
-              jobs {
-                id
-                state
-                batchSysName
-                batchSysJobId
-              }
-            }
-          }
-        }
-      `,
+      document: gql`${WORKFLOW_TREE_SUBSCRIPTION}`,
+      variables: {
+        stripNull: true,
+        workflowId: 'kinow|five'
+      },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) {
           return prev
