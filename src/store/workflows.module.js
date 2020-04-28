@@ -15,10 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createWorkflowTree } from '@/components/cylc/tree'
-import merge from 'lodash.merge'
+// imported for jsdoc type hinting
+// eslint-disable-next-line no-unused-vars
+import CylcTree from '@/components/cylc/tree/tree'
+// import merge from 'lodash.merge'
 
+/**
+ * @type {{
+ *  tree: CylcTree,
+ *  workflowName: string|null,
+ *  workflows: []
+ * }}
+ */
 const state = {
+  tree: null,
   workflows: [],
   workflowName: null
 }
@@ -30,8 +40,12 @@ const getters = {
     }
     return state.workflows.find(workflow => workflow.name === state.workflowName) || null
   },
-  workflowTree: (state, getters) => {
-    return createWorkflowTree(getters.currentWorkflow)
+  /**
+   * Get the current tree children.
+   * @returns {*}
+   */
+  workflowTree: () => {
+    return this.tree.root.children
   }
 }
 
@@ -52,73 +66,39 @@ const mutations = {
  * Prune family proxies from a workflow.
  * @private
  * @param {[]} [prunedFamilyProxies] array of family proxies
- * @param {{familyProxies: []}} workflow workflow
+ * @param {CylcTree} tree
  */
-function pruneFamilyProxies (prunedFamilyProxies, workflow) {
-  if (!prunedFamilyProxies || !workflow.familyProxies) {
+function pruneFamilyProxies (prunedFamilyProxies, tree) {
+  if (!prunedFamilyProxies) {
     return
   }
-  prunedFamilyProxies.forEach((deltaFamilyProxyId) => {
-    // eslint-disable-next-line no-unused-vars
-    for (const [index, familyProxy] of workflow.familyProxies.entries()) {
-      if (familyProxy.id === deltaFamilyProxyId) {
-        workflow.familyProxies.splice(index, 1)
-        break
-      }
-    }
-  })
+  prunedFamilyProxies.map(tree.removeFamilyProxy)
 }
 
 /**
  * Prune task proxies from a workflow.
  * @private
  * @param {[]} [prunedTaskProxies] array of task proxies
- * @param {{taskProxies: []}} workflow workflow
+ * @param {CylcTree} tree
  */
-function pruneTaskProxies (prunedTaskProxies, workflow) {
-  if (!prunedTaskProxies || !workflow.taskProxies) {
+function pruneTaskProxies (prunedTaskProxies, tree) {
+  if (!prunedTaskProxies) {
     return
   }
-  prunedTaskProxies.forEach((deltaTaskProxyId) => {
-    for (const [index, taskProxy] of workflow.taskProxies.entries()) {
-      if (taskProxy.id === deltaTaskProxyId) {
-        workflow.taskProxies.splice(index, 1)
-        break
-      }
-    }
-  })
+  prunedTaskProxies.map(tree.removeTaskProxy)
 }
 
 /**
  * Prune jobs from a workflow.
  * @private
  * @param {[]} [prunedJobs] array of jobs
- * @param {{
- *   taskProxies: [{
- *     id: String,
- *     jobs: []
- *   }]
- * }} workflow workflow
+ * @param {CylcTree} tree
  */
-function pruneJobs (prunedJobs, workflow) {
+function pruneJobs (prunedJobs, tree) {
   if (!prunedJobs) {
     return
   }
-  prunedJobs.forEach((deltaJobId) => {
-    // eslint-disable-next-line no-unused-vars
-    const [userName, workflowName, cyclepoint, taskName, jobName] = deltaJobId.split('|')
-    const taskProxyId = [userName, workflowName, cyclepoint, taskName].join('|')
-    workflow.taskProxies.forEach((taskProxy) => {
-      if (taskProxy.jobs && taskProxy.id === taskProxyId) {
-        for (const [index, taskProxyJob] of taskProxy.jobs.entries()) {
-          if (taskProxyJob.id === deltaJobId) {
-            taskProxy.jobs.splice(index, 1)
-            break
-          }
-        }
-      }
-    })
-  })
+  prunedJobs.map(tree.removeJob)
 }
 
 /**
@@ -129,38 +109,38 @@ function pruneJobs (prunedJobs, workflow) {
  *   taskProxies: [],
  *   jobs: []
  * }} pruned
- * @param workflow workflow
+ * @param {CylcTree} tree
  */
-function pruneData (pruned, workflow) {
-  if (!pruned) {
+function pruneData (pruned, tree) {
+  if (!pruned || !tree) {
     return
   }
   // Now go through the pruned deltas
-  pruneFamilyProxies(pruned.familyProxies, workflow)
-  pruneTaskProxies(pruned.taskProxies, workflow)
-  pruneJobs(pruned.jobs, workflow)
+  pruneFamilyProxies(pruned.familyProxies, tree)
+  pruneTaskProxies(pruned.taskProxies, tree)
+  pruneJobs(pruned.jobs, tree)
 }
 
 // --- code related to deltas data added or updated
 
-function addOrUpdateTaskProxies (addedOrUpdatedTaskProxies, workflow) {
-  if (!addedOrUpdatedTaskProxies || !workflow.taskProxies) {
-    return
-  }
-  addedOrUpdatedTaskProxies.forEach((addedOrUpdatedTaskProxy) => {
-    const existingTaskProxy = workflow.taskProxies.find(taskProxy => taskProxy.id === addedOrUpdatedTaskProxy.id)
-    if (!existingTaskProxy) {
-      workflow.taskProxies.push(addedOrUpdatedTaskProxy)
-    } else {
-      merge(existingTaskProxy, addedOrUpdatedTaskProxy)
-    }
-  })
-}
-
-function addOrUpdateData (updatedWorkflow, workflowToUpdate) {
-  workflowToUpdate.status = updatedWorkflow.status
-  addOrUpdateTaskProxies(updatedWorkflow.taskProxies, workflowToUpdate)
-}
+// function addOrUpdateTaskProxies (addedOrUpdatedTaskProxies, workflow) {
+//   if (!addedOrUpdatedTaskProxies || !workflow.taskProxies) {
+//     return
+//   }
+//   addedOrUpdatedTaskProxies.forEach((addedOrUpdatedTaskProxy) => {
+//     const existingTaskProxy = workflow.taskProxies.find(taskProxy => taskProxy.id === addedOrUpdatedTaskProxy.id)
+//     if (!existingTaskProxy) {
+//       workflow.taskProxies.push(addedOrUpdatedTaskProxy)
+//     } else {
+//       merge(existingTaskProxy, addedOrUpdatedTaskProxy)
+//     }
+//   })
+// }
+//
+// function addData (updatedWorkflow, workflowToUpdate) {
+//   workflowToUpdate.status = updatedWorkflow.status
+//   addOrUpdateTaskProxies(updatedWorkflow.taskProxies, workflowToUpdate)
+// }
 
 const actions = {
   set ({ commit }, data) {
@@ -187,22 +167,9 @@ const actions = {
    * }} deltas
    */
   updateDeltas ({ commit, state, getters }, { deltas }) {
-    // First step is to locate the workflow referenced in the deltas
-    const deltasWorkflowId = deltas.workflow.id
-    const workflows = state.workflows
-    let workflowToUpdate = null
-    for (const workflow of workflows) {
-      if (workflow.id === deltasWorkflowId) {
-        workflowToUpdate = workflow
-        break
-      }
-    }
-    // We do not have the workflow?
-    if (workflowToUpdate === null) {
-      return
-    }
-    addOrUpdateData(deltas.workflow, workflowToUpdate)
-    pruneData(deltas.pruned, workflowToUpdate)
+    // addData(deltas.added)
+    // updateData(deltas.updated)
+    pruneData(deltas.pruned, state.tree)
     commit('SET', workflows)
   }
 }
