@@ -97,6 +97,7 @@ class SubscriptionWorkflowService extends GQuery {
       },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) {
+          // TODO: why return here? What is the return type of this function?
           return prev
         }
         const deltas = subscriptionData.data.deltas
