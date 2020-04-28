@@ -79,12 +79,15 @@ class SubscriptionWorkflowService extends GQuery {
       this.observable = null
     }
     const vm = this
+    // Create a watchable query
     const query = this.apolloClient.watchQuery({
       query: this.query,
       fetchPolicy: 'no-cache'
     })
     // HACK: remove it later
     console.warn = function () {}
+    // Modify the query defining a subscription (document) and
+    // a callback for when data arrives (updateQuery)
     query.subscribeToMore({
       document: gql`
         subscription {
@@ -120,6 +123,7 @@ class SubscriptionWorkflowService extends GQuery {
         store.dispatch('workflows/updateDeltas', { deltas })
       }
     })
+    // Start WebSocket subscription, handling the query result (first next)
     this.observable = query
       .subscribe({
         next (result) {
