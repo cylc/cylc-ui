@@ -156,7 +156,7 @@ function computeCyclePointsStates (cyclePointNodes) {
 }
 
 function createWorkflowTree (workflow) {
-  if (workflow === null || !workflow.cyclePoints || !workflow.familyProxies || !workflow.taskProxies) {
+  if (typeof workflow === 'undefined' || workflow === null || !workflow.cyclePoints || !workflow.familyProxies || !workflow.taskProxies) {
     return []
   }
   // the workflow object gets augmented to become a valid node for the tree

@@ -96,7 +96,7 @@ class SubscriptionWorkflowService extends GQuery {
         workflowId: 'kinow|five'
       },
       updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) {
+        if (typeof subscriptionData.data === 'undefined' || subscriptionData.data === null) {
           // TODO: why return here? What is the return type of this function?
           return prev
         }

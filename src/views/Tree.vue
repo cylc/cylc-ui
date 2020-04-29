@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <div class="c-tree">
       <tree
-        :workflows="treeData"
+        :workflows="workflows"
         :hoverable="false"
         :activable="false"
         :multiple-active="false"
@@ -33,10 +33,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mixin } from '@/mixins'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
 import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
-import { createWorkflowTree } from '@/components/cylc/tree'
+import store from '@/store'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -67,20 +67,25 @@ export default {
     viewID: '',
     subscriptions: {},
     isLoading: true,
-    treeData: []
+    workflows: []
   }),
 
   computed: {
     ...mapState('user', ['user']),
-    ...mapState('workflows', ['workflows'])
+    ...mapState('workflows', ['latestDelta']),
+    ...mapGetters('workflows', ['tree'])
   },
 
   watch: {
-    workflows: {
-      deep: true,
-      immediate: true,
-      handler (newValue) {
-        this.workflowUpdated(newValue)
+    tree: {
+      handler: function (tree) {
+        this.workflows = tree.root.children
+      }
+    },
+    latestDelta: {
+      handler: function () {
+        console.log(store.getters['workflows/tree'])
+        this.workflows = store.getters['workflows/tree'].root.children
       }
     }
   },
@@ -101,14 +106,6 @@ export default {
   },
 
   methods: {
-    workflowUpdated (workflows) {
-      for (const workflow of workflows) {
-        if (workflow.name === this.workflowName) {
-          this.treeData = createWorkflowTree(workflow)
-        }
-      }
-    },
-
     /**
      * Subscribe this view to a new GraphQL query.
      * @param {string} queryName - Must be in QUERIES.

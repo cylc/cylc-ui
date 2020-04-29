@@ -18,6 +18,7 @@
 // imported for jsdoc type hinting
 // eslint-disable-next-line no-unused-vars
 import CylcTree from '@/components/cylc/tree/tree'
+import { createWorkflowTree } from '@/components/cylc/tree'
 // import merge from 'lodash.merge'
 
 /**
@@ -30,7 +31,8 @@ import CylcTree from '@/components/cylc/tree/tree'
 const state = {
   tree: null,
   workflows: [],
-  workflowName: null
+  workflowName: null,
+  latestDelta: 0
 }
 
 const getters = {
@@ -44,8 +46,13 @@ const getters = {
    * Get the current tree children.
    * @returns {*}
    */
-  workflowTree: () => {
-    return this.tree.root.children
+  tree: (state, getters) => {
+    const currentWorkflow = getters.currentWorkflow
+    if (currentWorkflow === null) {
+      return null
+    }
+    console.log('WARN! CREATING TREE!')
+    return createWorkflowTree(currentWorkflow)
   }
 }
 
@@ -72,7 +79,7 @@ function pruneFamilyProxies (prunedFamilyProxies, tree) {
   if (!prunedFamilyProxies) {
     return
   }
-  prunedFamilyProxies.map(tree.removeFamilyProxy)
+  prunedFamilyProxies.forEach(familyProxyNode => tree.removeFamilyProxy(familyProxyNode))
 }
 
 /**
@@ -85,7 +92,7 @@ function pruneTaskProxies (prunedTaskProxies, tree) {
   if (!prunedTaskProxies) {
     return
   }
-  prunedTaskProxies.map(tree.removeTaskProxy)
+  prunedTaskProxies.forEach(taskProxyNode => tree.removeTaskProxy(taskProxyNode))
 }
 
 /**
@@ -98,7 +105,7 @@ function pruneJobs (prunedJobs, tree) {
   if (!prunedJobs) {
     return
   }
-  prunedJobs.map(tree.removeJob)
+  prunedJobs.forEach(jobNode => tree.removeJob(jobNode))
 }
 
 /**
@@ -169,8 +176,9 @@ const actions = {
   updateDeltas ({ commit, state, getters }, { deltas }) {
     // addData(deltas.added)
     // updateData(deltas.updated)
-    pruneData(deltas.pruned, state.tree)
-    commit('SET', workflows)
+    pruneData(deltas.pruned, getters.tree)
+    // now that deltas have been updated, update this state field so others watching it can get notified
+    state.latestDelta = Date.now()
   }
 }
 
