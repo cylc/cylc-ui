@@ -29,8 +29,17 @@ const getters = {
     }
     return state.workflows.find(workflow => workflow.name === state.workflowName) || null
   },
-  workflowTree: (state, getters) => {
+  tree: (state, getters) => {
+    if (getters.currentWorkflow == null) {
+      return null
+    }
     return convertGraphQLWorkflowToTree(getters.currentWorkflow)
+  },
+  workflowTree: (state, getters) => {
+    if (getters.tree === null) {
+      return []
+    }
+    return getters.tree.root.children
   }
 }
 
