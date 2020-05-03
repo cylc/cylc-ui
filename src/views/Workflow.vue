@@ -57,6 +57,7 @@ export default {
   },
   data: () => ({
     subscriptions: {},
+    subscriptionIds: [],
     isLoading: true
   }),
   computed: {
@@ -68,12 +69,14 @@ export default {
     EventBus.$on('add:tree', () => {
       // subscribe GraphQL query
       const subscriptionId = this.subscribe('tree')
+      this.subscriptionIds.push(subscriptionId)
       // add widget that uses the GraphQl query response
       this.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
     })
     EventBus.$on('add:graph', () => {
       // subscribe GraphQL query
       const subscriptionId = this.subscribe('graph')
+      this.subscriptionIds.push(subscriptionId)
       // add widget that uses the GraphQl query response
       this.$refs['workflow-component'].addGraphWidget(`${subscriptionId}`)
     })
@@ -83,11 +86,13 @@ export default {
       // on day it will become a one-off query (though a subscription would work
       // too as the schema doesn't change during the lifetime of a workflow run
       const subscriptionId = (new Date()).getTime()
+      this.subscriptionIds.push(subscriptionId)
       // add widget that uses the GraphQl query response
       this.$refs['workflow-component'].addMutationsWidget(`${subscriptionId}`)
     })
     EventBus.$on('delete:widget', (data) => {
       const subscriptionId = Number.parseFloat(data.id)
+      this.subscriptionIds.splice(this.subscriptionIds.indexOf(subscriptionId), 1)
       this.$workflowService.unsubscribe(subscriptionId)
     })
   },
@@ -95,6 +100,7 @@ export default {
     next(vm => {
       // Create a Tree View for the current workflow by default
       const subscriptionId = vm.subscribe('tree')
+      vm.subscriptionIds.push(subscriptionId)
       vm.$nextTick(() => {
         vm.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
       })
@@ -109,6 +115,9 @@ export default {
     EventBus.$off('add:graph')
     EventBus.$off('add:mutations')
     EventBus.$off('delete:widget')
+    this.subscriptionIds.forEach((subscriptionId) => {
+      this.$workflowService.unsubscribe(subscriptionId)
+    })
     this.$workflowService.unregister(this)
     next()
   },
