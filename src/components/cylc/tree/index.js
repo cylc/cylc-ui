@@ -108,6 +108,10 @@ function createJobNode (job, latestMessage) {
   }
 }
 
+function containsTreeData (workflow) {
+  return workflow !== undefined && workflow !== null && workflow.cyclePoints && workflow.familyProxies && workflow.taskProxies
+}
+
 /**
  * Given a GraphQL response workflow, this function will return the data structure
  * expected by the Vue.js tree component.
@@ -121,7 +125,7 @@ function createJobNode (job, latestMessage) {
  * @returns CylcTree|null
  */
 function convertGraphQLWorkflowToTree (workflow) {
-  if (workflow === null || !workflow.cyclePoints || !workflow.familyProxies || !workflow.taskProxies) {
+  if (!containsTreeData(workflow)) {
     return null
   }
   // the workflow object gets augmented to become a valid node for the tree
@@ -147,5 +151,11 @@ function convertGraphQLWorkflowToTree (workflow) {
 }
 
 export {
+  createWorkflowNode,
+  createCyclePointNode,
+  createFamilyProxyNode,
+  createTaskProxyNode,
+  createJobNode,
+  containsTreeData,
   convertGraphQLWorkflowToTree
 }
