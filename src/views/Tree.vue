@@ -84,8 +84,10 @@ export default {
     this.subscribe('root')
   },
 
-  beforeDestroy () {
+  beforeRouteLeave (to, from, next) {
+    this.unsubscribe('root')
     this.$workflowService.unregister(this)
+    next()
   },
 
   methods: {

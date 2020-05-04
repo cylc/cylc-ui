@@ -56,7 +56,10 @@ export default {
     }
   },
   data: () => ({
-    subscriptions: {},
+    /**
+     * @type {Map<number, Object>}
+     */
+    subscriptions: new Map(),
     isLoading: true
   }),
   computed: {
@@ -88,7 +91,7 @@ export default {
     })
     EventBus.$on('delete:widget', (data) => {
       const subscriptionId = Number.parseFloat(data.id)
-      this.$workflowService.unsubscribe(subscriptionId)
+      this.unsubscribe(subscriptionId)
     })
   },
   beforeRouteEnter (to, from, next) {
@@ -109,6 +112,9 @@ export default {
     EventBus.$off('add:graph')
     EventBus.$off('add:mutations')
     EventBus.$off('delete:widget')
+    Array.from(this.subscriptions.keys()).forEach((subscriptionId) => {
+      this.unsubscribe(subscriptionId)
+    })
     this.$workflowService.unregister(this)
     next()
   },
@@ -136,20 +142,20 @@ export default {
         QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
       )
       view.subscriptionId = subscriptionId
-      if (!(queryName in this.subscriptions)) {
-        this.subscriptions[queryName] = []
+      if (!(subscriptionId in this.subscriptions)) {
+        this.subscriptions.set(subscriptionId, [])
       }
-      this.subscriptions[queryName].push(view)
+      this.subscriptions.get(subscriptionId).push(view)
       return subscriptionId
     },
     /**
      * Unsubscribe this view to a new GraphQL query.
-     * @param {string} queryName - Must be in QUERIES.
      * @param {number} subscriptionId - Subscription ID.
      */
-    unsubscribe (queryName, subscriptionId) {
-      if (queryName in this.subscriptions) {
+    unsubscribe (subscriptionId) {
+      if (this.subscriptions.has(subscriptionId)) {
         this.$workflowService.unsubscribe(subscriptionId)
+        this.subscriptions.delete(subscriptionId)
       }
     },
     /** Toggle the isLoading state.
