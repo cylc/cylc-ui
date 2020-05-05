@@ -71,6 +71,6 @@ const app = new Vue({
 // e2e tests use the offline mode, so here we expose the Vue.js app so Cypress can access it programmatically
 // e.g. window.app.$store and window.app.$workflowService.
 // Ref: https://www.cypress.io/blog/2017/11/28/testing-vue-web-application-with-vuex-data-store-and-rest-backend/
-if (process.env.NODE_ENV === 'offline') {
+if (['test', 'offline'].includes(process.env.NODE_ENV)) {
   window.app = app
 }
