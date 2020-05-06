@@ -64,7 +64,6 @@ export default {
 
   data: () => ({
     viewID: '',
-    subscriptions: {},
     isLoading: true
   }),
 
@@ -85,7 +84,6 @@ export default {
   },
 
   beforeRouteLeave (to, from, next) {
-    this.unsubscribe('root')
     this.$workflowService.unregister(this)
     next()
   },
@@ -96,26 +94,11 @@ export default {
      * @param {string} queryName - Must be in QUERIES.
      */
     subscribe (queryName) {
-      if (!(queryName in this.subscriptions)) {
-        const workflowId = `${this.user.username}|${this.workflowName}`
-        this.subscriptions[queryName] =
-          this.$workflowService.subscribe(
-            this,
-            QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
-          )
-      }
-    },
-
-    /**
-     * Unsubscribe this view to a new GraphQL query.
-     * @param {string} queryName - Must be in QUERIES.
-     */
-    unsubscribe (queryName) {
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName]
-        )
-      }
+      const workflowId = `${this.user.username}|${this.workflowName}`
+      this.$workflowService.subscribe(
+        this,
+        QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
+      )
     },
 
     /** Toggle the isLoading state.

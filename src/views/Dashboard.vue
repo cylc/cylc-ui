@@ -169,7 +169,6 @@ export default {
   data () {
     return {
       viewID: '',
-      subscriptions: {},
       isLoading: true,
       workflowsHeader: [
         {
@@ -247,7 +246,6 @@ export default {
     this.subscribe('root')
   },
   beforeRouteLeave (to, from, next) {
-    this.unsubscribe('root')
     this.$workflowService.unregister(this)
     next()
   },
@@ -257,25 +255,10 @@ export default {
        * Subscribe this view to a new GraphQL query.
        * @param {string} queryName - Must be in QUERIES.
        */
-      if (!(queryName in this.subscriptions)) {
-        this.subscriptions[queryName] =
-          this.$workflowService.subscribe(
-            this,
-            QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
-          )
-      }
-    },
-
-    unsubscribe (queryName) {
-      /**
-       * Unsubscribe this view to a new GraphQL query.
-       * @param {string} queryName - Must be in QUERIES.
-       */
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName]
-        )
-      }
+      this.$workflowService.subscribe(
+        this,
+        QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
+      )
     },
 
     setActive (isActive) {

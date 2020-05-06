@@ -51,7 +51,6 @@ export default {
 
   data: () => ({
     viewID: '',
-    subscriptions: {},
     isLoading: true
   }),
 
@@ -71,7 +70,6 @@ export default {
   },
 
   beforeRouteLeave (to, from, next) {
-    this.unsubscribe('root')
     this.$workflowService.unregister(this)
     next()
   },
@@ -79,23 +77,10 @@ export default {
   methods: {
     subscribe (queryName) {
       const workflowId = `${this.user.username}|${this.workflowName}`
-      const id = this.$workflowService.subscribe(
+      this.$workflowService.subscribe(
         this,
         QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
       )
-      if (!(queryName in this.subscriptions)) {
-        this.subscriptions[queryName] = {
-          id
-        }
-      }
-    },
-
-    unsubscribe (queryName) {
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName].id
-        )
-      }
     },
 
     setActive (isActive) {

@@ -147,18 +147,6 @@ export default {
       }
     },
 
-    unsubscribe (queryName) {
-      /**
-       * Unsubscribe this view to a new GraphQL query.
-       * @param {string} queryName - Must be in QUERIES.
-       */
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName]
-        )
-      }
-    },
-
     setActive (isActive) {
       /** Toggle the isLoading state.
        * @param {bool} isActive - Are this views subs active.

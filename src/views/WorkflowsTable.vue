@@ -95,7 +95,6 @@ export default {
   },
   data: () => ({
     viewID: 'GScan: ' + Math.random(),
-    subscriptions: {},
     isLoading: true,
     headers: [
       {
@@ -136,7 +135,6 @@ export default {
   },
 
   beforeRouteLeave (to, from, next) {
-    this.unsubscribe('root')
     this.$workflowService.unregister(this)
     next()
   },
@@ -147,25 +145,11 @@ export default {
     },
 
     subscribe (queryName) {
-      const id = this.$workflowService.subscribe(
+      this.$workflowService.subscribe(
         this,
         QUERIES[queryName],
         this.setActive
       )
-      if (!(queryName in this.subscriptions)) {
-        this.subscriptions[queryName] = {
-          id,
-          active: false
-        }
-      }
-    },
-
-    unsubscribe (queryName) {
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName].id
-        )
-      }
     },
 
     setActive (isActive) {
