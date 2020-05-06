@@ -59,6 +59,14 @@ describe('WorkflowService subscriptions', () => {
       })
     })
   })
+  it('-> Dashboard -> User Profile, should contain 1 subscription! (GScan only)', () => {
+    cy.visit('/#/')
+    cy.get('[href="#/user-profile"]').click()
+    cy.wait(500)
+    getSubscriptions().then(subscriptions => {
+      expect(subscriptions.length).to.equal(1)
+    })
+  })
   it('-> Dashboard -> Workflows, should contain 2 subscriptions (GScan, Tree)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
