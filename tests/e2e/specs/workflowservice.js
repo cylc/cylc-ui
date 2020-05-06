@@ -62,7 +62,7 @@ describe('WorkflowService subscriptions', () => {
   it('-> Dashboard -> User Profile, should contain 1 subscription! (GScan only)', () => {
     cy.visit('/#/')
     cy.get('[href="#/user-profile"]').click()
-    cy.wait(500)
+    cy.contains('h3', 'Your Profile')
     getSubscriptions().then(subscriptions => {
       expect(subscriptions.length).to.equal(1)
     })
@@ -70,7 +70,8 @@ describe('WorkflowService subscriptions', () => {
   it('-> Dashboard -> Workflows, should contain 2 subscriptions (GScan, Tree)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
-    cy.wait(500)
+    // <div id='main'> is used by Lumino, and its initial tab contains the text tree
+    cy.get('div#main').contains('tree')
     getSubscriptions().then(subscriptions => {
       expect(subscriptions.length).to.equal(2)
       getQuery().then(query => {
@@ -84,9 +85,10 @@ describe('WorkflowService subscriptions', () => {
   it('-> Dashboard -> Workflows -> Dashboard, should contain 2 subscriptions (GScan, Dashboard)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
-    cy.wait(500)
+    // <div id='main'> is used by Lumino, and its initial tab contains the text tree
+    cy.get('div#main').contains('tree')
     cy.get('[href="#/"]').click()
-    cy.wait(500)
+    cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
       expect(subscriptions.length).to.equal(2)
       getQuery().then(query => {
@@ -113,7 +115,7 @@ describe('WorkflowService subscriptions', () => {
   it('-> Tree - > Dashboard, should contain 2 subscriptions (GScan, Tree)', () => {
     cy.visit('/#/tree/one')
     cy.get('[href="#/"]').click()
-    cy.wait(500)
+    cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
       expect(subscriptions.length).to.equal(2)
       getQuery().then(query => {
