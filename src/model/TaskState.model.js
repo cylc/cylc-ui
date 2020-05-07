@@ -40,7 +40,7 @@ class TaskState extends Enumify {
 
   /**
    * Constructor.
-   * @param {String} text
+   * @param {String} name
    */
   constructor (name) {
     super()
