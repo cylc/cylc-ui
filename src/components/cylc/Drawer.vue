@@ -51,6 +51,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-list-item-action>
         <v-list-item-title>Dashboard</v-list-item-title>
       </v-list-item>
+      <v-list-item
+          to="/graphiql"
+          active-class="primary grey--text text--darken-3"
+          class="v-list-item"
+      >
+        <v-list-item-action>
+          <v-icon>mdi-graphql</v-icon>
+        </v-list-item-action>
+        <v-list-item-title>GraphiQL</v-list-item-title>
+      </v-list-item>
       <v-divider />
       <v-subheader>Workflows</v-subheader>
       <v-list-item

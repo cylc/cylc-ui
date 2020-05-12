@@ -54,6 +54,7 @@ class SubscriptionWorkflowService extends GQuery {
    */
   constructor (httpUrl, subscriptionClient) {
     super()
+    this.subscriptionClient = subscriptionClient
     this.apolloClient = createApolloClient(httpUrl, subscriptionClient)
     this.observable = null
   }
