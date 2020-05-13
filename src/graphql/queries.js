@@ -17,6 +17,8 @@
 
 // Code related to GraphQL queries, fragments, variables, etc.
 
+import gql from 'graphql-tag'
+
 // IMPORTANT: queries here may be used in the offline mode to create mock data. Before removing or renaming
 // queries here, please check under the services/mock folder for occurrences of the variable name.
 
@@ -81,6 +83,115 @@ subscription {
       }
     }
   }
+}
+`
+
+export const WORKFLOW_TREE_SUBSCRIPTION = gql`
+subscription ($workflowId: ID) {
+  deltas (workflows: [$workflowId]) {
+    id
+    added {
+      workflow {
+        ...WorkflowData
+        cyclePoints: familyProxies(ids: ["root"], ghosts: true) {
+          cyclePoint
+        }
+        taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
+          ...TaskProxyData
+          jobs(sort: { keys: ["submit_num"], reverse:true }) {
+            ...JobData
+          }
+        }
+        familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
+          ...FamilyProxyData
+        }
+      }
+      cyclePoints: familyProxies(ids: ["root"], ghosts: true) {
+        cyclePoint
+      }
+      familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
+        ...FamilyProxyData
+      }
+      taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
+        ...TaskProxyData
+      }
+      jobs(sort: { keys: ["submit_num"], reverse:true }) {
+        ...JobData
+      }
+    }
+    updated {
+      taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
+        ...TaskProxyData
+      }
+      jobs(sort: { keys: ["submit_num"], reverse:true }) {
+        ...JobData
+      }
+      familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
+        ...FamilyProxyData
+      }
+    }
+    pruned {
+      jobs
+      taskProxies
+      familyProxies
+    }
+  }
+}
+
+fragment WorkflowData on Workflow {
+  id
+  name
+  status
+  owner
+  host
+  port
+}
+
+fragment FamilyProxyData on FamilyProxy {
+  id
+  name
+  state
+  cyclePoint
+  firstParent {
+    id
+    name
+    cyclePoint
+    state
+  }
+}
+
+fragment TaskProxyData on TaskProxy {
+  id
+  name
+  state
+  isHeld
+  cyclePoint
+  latestMessage
+  firstParent {
+    id
+    name
+    cyclePoint
+    state
+  }
+  task {
+    meanElapsedTime
+    name
+  }
+}
+
+fragment JobData on Job {
+  id
+  firstParent: taskProxy {
+    id
+  }
+  batchSysName
+  batchSysJobId
+  host
+  startedTime
+  submittedTime
+  finishedTime
+  state
+  submitNum
 }
 `
 

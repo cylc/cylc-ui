@@ -32,15 +32,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mixin } from '@/mixins/index'
-import { mapGetters, mapState } from 'vuex'
+import { mixin } from '@/mixins'
+import { mapState } from 'vuex'
 import Tree from '@/components/cylc/tree/Tree'
-import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
-
-// query to retrieve all workflows
-const QUERIES = {
-  root: WORKFLOW_TREE_QUERY
-}
+import { WORKFLOW_TREE_SUBSCRIPTION } from '@/graphql/queries'
+import store from '@/store'
+import Alert from '@/model/Alert.model'
+import {
+  convertGraphQLWorkflowToTree,
+  createCyclePointNode,
+  createFamilyProxyNode, createJobNode,
+  createTaskProxyNode
+} from '@/components/cylc/tree'
 
 export default {
   mixins: [mixin],
@@ -65,64 +68,216 @@ export default {
   data: () => ({
     viewID: '',
     subscriptions: {},
-    isLoading: true
+    isLoading: true,
+    observable: null,
+    /**
+     * @type CylcTree
+     */
+    tree: null
   }),
 
   computed: {
-    ...mapGetters('workflows', ['workflowTree']),
-    ...mapState('user', ['user'])
+    ...mapState('user', ['user']),
+    workflowTree () {
+      return this.tree !== null ? this.tree.root.children : []
+    }
   },
 
-  created () {
+  mounted () {
     this.viewID = `Tree(${this.workflowName}): ${Math.random()}`
-    this.$workflowService.register(
-      this,
-      {
-        activeCallback: this.setActive
+    const workflowId = `${this.user.username}|${this.workflowName}`
+    const variables = {
+      workflowId
+    }
+
+    const vm = this
+    this.observable = this.$workflowService.apolloClient.subscribe({
+      query: WORKFLOW_TREE_SUBSCRIPTION,
+      variables: variables,
+      fetchPolicy: 'no-cache'
+    }).subscribe({
+      /**
+       * @param {{
+       *   data: {
+       *     deltas: {
+       *       added: {
+       *         workflow: Object,
+       *         cyclePoints: Object,
+       *         familyProxies: Object,
+       *         taskProxies: Object,
+       *         jobs: Object
+       *       },
+       *       updated: {
+       *         workflow: Object,
+       *         cyclePoints: Object,
+       *         familyProxies: Object,
+       *         taskProxies: Object,
+       *         jobs: Object
+       *       },
+       *       pruned: {
+       *         taskProxies: [string],
+       *         familyProxies: [string],
+       *         jobs: [string]
+       *       }
+       *     }
+       *   }
+       * }} response
+       */
+      next (response) {
+        if (response.data && response.data.deltas) {
+          const deltas = response.data.deltas
+          if (vm.tree === null) {
+            // no tree, this means we **MUST** get the data necessary in the initial burst of data, or fail
+            if (!deltas.added.workflow) {
+              // This is a fatal error, as we don't have a way to proceed
+              vm.observable.unsubscribe()
+              store.dispatch(
+                'setAlert',
+                new Alert('Workflow tree subscription did not return the right initial burst of data', null, 'error')
+              )
+            }
+            const workflow = deltas.added.workflow
+            // A workflow (e.g. five) may not have any families as 'root' is filtered
+            Object.assign(workflow.familyProxies, workflow.familyProxies || {})
+            vm.tree = convertGraphQLWorkflowToTree(workflow)
+          } else {
+            // the tree was created, and now the next messages should contain
+            // 1. new data added under deltas.added (but not in deltas.added.workflow)
+            // 2. data updated in deltas.updated
+            // 3. data pruned in deltas.pruned
+            if (deltas.pruned) {
+              vm.applyDeltasPruned(deltas.pruned)
+            }
+            if (deltas.added) {
+              vm.applyDeltasAdded(deltas.added)
+            }
+            if (deltas.updated) {
+              vm.applyDeltasUpdated(deltas.updated)
+            }
+          }
+        } else {
+          throw Error('Workflow tree subscription did not return data.deltas')
+        }
+      },
+      error (err) {
+        store.dispatch(
+          'setAlert',
+          new Alert(err.message, null, 'error')
+        )
+      },
+      complete () {
       }
-    )
-    this.subscribe('root')
+    })
   },
 
   beforeRouteLeave (to, from, next) {
-    this.unsubscribe('root')
-    this.$workflowService.unregister(this)
+    if (this.observable !== null) {
+      this.observable.unsubscribe()
+    }
     next()
   },
 
   methods: {
-    /**
-     * Subscribe this view to a new GraphQL query.
-     * @param {string} queryName - Must be in QUERIES.
-     */
-    subscribe (queryName) {
-      if (!(queryName in this.subscriptions)) {
-        const workflowId = `${this.user.username}|${this.workflowName}`
-        this.subscriptions[queryName] =
-          this.$workflowService.subscribe(
-            this,
-            QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
-          )
-      }
-    },
-
-    /**
-     * Unsubscribe this view to a new GraphQL query.
-     * @param {string} queryName - Must be in QUERIES.
-     */
-    unsubscribe (queryName) {
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName]
-        )
-      }
-    },
-
     /** Toggle the isLoading state.
      * @param {bool} isActive - Are this views subs active.
      */
     setActive (isActive) {
       this.isLoading = !isActive
+    },
+    /**
+     * Deltas pruned.
+     *
+     * @param {{
+     *   taskProxies: [string],
+     *   familyProxies: [string],
+     *   jobs: [string]
+     * }} pruned
+     */
+    applyDeltasPruned (pruned) {
+      // jobs
+      if (pruned.jobs) {
+        for (const jobId of pruned.jobs) {
+          this.tree.removeJob(jobId)
+        }
+      }
+      // task proxies
+      if (pruned.taskProxies) {
+        for (const taskProxyId of pruned.taskProxies) {
+          this.tree.removeTaskProxy(taskProxyId)
+        }
+      }
+      // family proxies
+      if (pruned.familyProxies) {
+        for (const familyProxyId of pruned.familyProxies) {
+          this.tree.removeFamilyProxy(familyProxyId)
+        }
+      }
+    },
+    /**
+     * Deltas added.
+     *
+     * @param {{
+     *   workflow: Object,
+     *   cyclePoints: [Object],
+     *   familyProxies: [Object],
+     *   taskProxies: [Object],
+     *   jobs: [Object]
+     * }} added
+     */
+    applyDeltasAdded (added) {
+      if (added.cyclePoints) {
+        added.cyclePoints.forEach(cyclePoint => {
+          const cyclePointNode = createCyclePointNode(cyclePoint)
+          this.tree.addCyclePoint(cyclePointNode)
+        })
+      }
+      if (added.familyProxies) {
+        added.familyProxies.forEach(familyProxy => {
+          const familyProxyNode = createFamilyProxyNode(familyProxy)
+          this.tree.addFamilyProxy(familyProxyNode)
+        })
+      }
+      if (added.taskProxies) {
+        added.taskProxies.forEach(taskProxy => {
+          const taskProxyNode = createTaskProxyNode(taskProxy)
+          this.tree.addTaskProxy(taskProxyNode)
+        })
+      }
+      if (added.jobs) {
+        added.jobs.forEach(job => {
+          const jobNode = createJobNode(job, '')
+          this.tree.addJob(jobNode)
+        })
+      }
+    },
+    /**
+     * Deltas updated.
+     *
+     * @param updated {{
+     *   familyProxies: [Object],
+     *   taskProxies: [Object],
+     *   jobs: [Object]
+     * }} updated
+     */
+    applyDeltasUpdated (updated) {
+      if (updated.familyProxies) {
+        updated.familyProxies.forEach(familyProxy => {
+          const familyProxyNode = createFamilyProxyNode(familyProxy)
+          this.tree.updateFamilyProxy(familyProxyNode)
+        })
+      }
+      if (updated.taskProxies) {
+        updated.taskProxies.forEach(taskProxy => {
+          const taskProxyNode = createTaskProxyNode(taskProxy)
+          this.tree.updateTaskProxy(taskProxyNode)
+        })
+      }
+      if (updated.jobs) {
+        updated.jobs.forEach(job => {
+          const jobNode = createJobNode(job, '')
+          this.tree.updateJob(jobNode)
+        })
+      }
     }
   }
 }
