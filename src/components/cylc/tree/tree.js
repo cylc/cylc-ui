@@ -1,6 +1,7 @@
 import { computePercentProgress } from '@/components/cylc'
 import { extractGroupState } from '@/utils/tasks'
 import { merge } from 'lodash'
+import { createFamilyProxyNode } from '@/components/cylc/tree/index'
 
 export const FAMILY_ROOT = 'root'
 
@@ -223,20 +224,39 @@ class CylcTree {
    * }} familyProxy
    */
   addFamilyProxy (familyProxy) {
-    if (familyProxy && !this.lookup.has(familyProxy.id)) {
-      this.lookup.set(familyProxy.id, familyProxy)
-      let parent
-      if (familyProxy.node.firstParent.name === FAMILY_ROOT) {
-        // if the parent is root, we use the cyclepoint as the parent
-        parent = this.lookup.get(familyProxy.node.cyclePoint)
+    // When we receive the families from the GraphQL endpoint, we are sorting by their
+    // firstParent's. However, you may get family proxies out of order when iterating
+    // them. When that happens, you may add a family proxy to the lookup, and only
+    // append it to the parent later.
+    if (familyProxy) {
+      // add if not in the lookup already
+      const existingFamilyProxy = this.lookup.get(familyProxy.id)
+      if (!existingFamilyProxy) {
+        this.lookup.set(familyProxy.id, familyProxy)
       } else {
-        // otherwise its parent is another family proxy node and must already exist
-        parent = this.lookup.get(familyProxy.node.firstParent.id)
+        // We may get a family proxy added twice. The first time is when it is the parent of another
+        // family proxy. In that case, we create an orphan node in the lookup table.
+        // The second time will be node with more information, such as .firstParent {}. When this happens,
+        // we must remember to merge the objects, i.e. augment the existing orphan with the extra
+        // information. That's because GraphQL firstParent brings less data.
+        merge(familyProxy, existingFamilyProxy)
+        this.lookup.set(familyProxy.id, familyProxy)
       }
-      if (parent) {
+      // if we got the parent, let's link parent and child
+      if (familyProxy.node.firstParent) {
+        let parent
+        if (familyProxy.node.firstParent.name === FAMILY_ROOT) {
+          // if the parent is root, we use the cyclepoint as the parent
+          parent = this.lookup.get(familyProxy.node.cyclePoint)
+        } else if (this.lookup.has(familyProxy.node.firstParent.id)) {
+          // if its parent is another family proxy node and must already exist
+          parent = this.lookup.get(familyProxy.node.firstParent.id)
+        } else {
+          // otherwise we create it so task proxies can be added to it as a child
+          parent = createFamilyProxyNode(familyProxy.node.firstParent)
+          this.lookup.set(parent.id, parent)
+        }
         parent.children.push(familyProxy)
-      } else {
-        console.log(`Missing parent ${parent}`)
       }
     }
   }
@@ -300,10 +320,15 @@ class CylcTree {
         // if the parent is root, we must instead attach this node to the cyclepoint!
         parent = this.lookup.get(taskProxy.node.firstParent.cyclePoint)
       } else {
-        // otherwise its parent is another family proxy node and must already exist
+        // otherwise its parent is another family proxy node and **MUST** already exist
         parent = this.lookup.get(taskProxy.node.firstParent.id)
       }
-      parent.children.push(taskProxy)
+      if (!parent) {
+        // eslint-disable-next-line no-console
+        console.error(`Missing parent ${taskProxy.node.firstParent.id}`)
+      } else {
+        parent.children.push(taskProxy)
+      }
     }
   }
 
