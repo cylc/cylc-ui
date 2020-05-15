@@ -103,6 +103,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|4',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|eventually_succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16134',
@@ -115,6 +119,10 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|3',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|eventually_succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16094',
@@ -127,6 +135,10 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|2',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|eventually_succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16056',
@@ -139,6 +151,10 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|1',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|eventually_succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '15947',
@@ -171,6 +187,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|sleepy|1',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|sleepy',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16331',
@@ -185,7 +205,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|succeeded',
-      __typename: 'Job',
+      __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
       latestMessage: 'succeeded',
@@ -204,6 +224,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|succeeded|1',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '15951',
@@ -237,6 +261,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|retrying|1',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|retrying',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '15948',
@@ -270,6 +298,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|checkpoint|1',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|checkpoint',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16213',
@@ -303,6 +335,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|failed|1',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|failed',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16173',
@@ -336,6 +372,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000101T0000Z|waiting|1',
+          firstParent: {
+            id: 'cylc|one|20000101T0000Z|waiting',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16332',
@@ -389,6 +429,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|succeeded|1',
+          firstParent: {
+            id: 'cylc|one|20000102T0000Z|succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16424',
@@ -422,6 +466,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|failed|1',
+          firstParent: {
+            id: 'cylc|one|20000102T0000Z|failed',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16646',
@@ -475,6 +523,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|checkpoint|1',
+          firstParent: {
+            id: 'cylc|one|20000102T0000Z|checkpoint',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16684',
@@ -508,6 +560,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|checkpoint2|1',
+          firstParent: {
+            id: 'cylc|one|20000102T0000Z|checkpoint2',
+            __typename: 'TaskProxy'
+          },
           __typename: 'TaskProxy',
           batchSysName: 'background',
           batchSysJobId: '16688',
@@ -541,6 +597,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|4',
+          firstParent: {
+            id: 'cylc|one|20000102T0000Z|eventually_succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16607',
@@ -553,6 +613,10 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|3',
+          firstParent: {
+            id: 'cylc|one|20000102T0000Z|eventually_succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16569',
@@ -565,6 +629,10 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|2',
+          firstParent: {
+            id: 'cylc|one|20000102T0000Z|eventually_succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16529',
@@ -577,6 +645,10 @@ const sampleWorkflow1 = {
         },
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|1',
+          firstParent: {
+            id: 'cylc|one|20000102T0000Z|eventually_succeeded',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16420',
@@ -610,6 +682,10 @@ const sampleWorkflow1 = {
       jobs: [
         {
           id: 'cylc|one|20000102T0000Z|retrying|1',
+          firstParent: {
+            id: 'cylc|one|20000102T0000Z|retrying',
+            __typename: 'TaskProxy'
+          },
           __typename: 'Job',
           batchSysName: 'background',
           batchSysJobId: '16421',

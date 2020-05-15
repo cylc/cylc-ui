@@ -25,7 +25,8 @@ const FAMILY_TYPE = 'family-proxy'
 const TASK_TYPE = 'task-proxy'
 
 describe('Tree component functions', () => {
-  const workflowTree = convertGraphQLWorkflowToTree(sampleWorkflow1)
+  const cylcTree = convertGraphQLWorkflowToTree(sampleWorkflow1)
+  const workflowTree = cylcTree.root.children
   it('should add cycle points as direct children of the workflow', () => {
     expect(workflowTree.length).to.equal(2)
     expect(workflowTree[0].type).to.equal(CYCLEPOINT_TYPE)
@@ -35,13 +36,13 @@ describe('Tree component functions', () => {
     // the first cycle point in the example data contains two families, and two tasks
     const firstCyclePoint = workflowTree[0]
     const children = firstCyclePoint.children
-    console.log(children)
     expect(children[0].type).to.equal(FAMILY_TYPE)
     expect(children[1].type).to.equal(FAMILY_TYPE)
     expect(children[2].type).to.equal(TASK_TYPE)
     expect(children[2].type).to.equal(TASK_TYPE)
   })
   it('should add families as children to families correctly', () => {
+    const workflowTree = cylcTree.root.children
     const firstCyclePoint = workflowTree[0]
     const children = firstCyclePoint.children
     expect(children[1].type).to.equal(FAMILY_TYPE)
@@ -61,7 +62,7 @@ describe('Tree component functions', () => {
     const stub = sinon.stub(Date, 'now').returns(0)
     // now the clock is set back to moment 0 (19700101...) by sinon, so Date.now() or new Date().getTime()
     // will return the clock object and the moment 0...
-    const workflowTree = convertGraphQLWorkflowToTree(sampleWorkflow1)
+    const workflowTree = convertGraphQLWorkflowToTree(sampleWorkflow1).root.children
     // see test above, where the value is **not** equal 0
     expect(workflowTree[1].children[4].node.progress).to.equal(0)
     // remove the mock
@@ -79,7 +80,7 @@ describe('Tree component functions', () => {
     const stub = sinon.stub(Date, 'now').returns(timeExpectedToComplete + 0.1)
     // now the clock is set back to moment 0 (19700101...) by sinon, so Date.now() or new Date().getTime()
     // will return the clock object and the moment 0...
-    const workflowTree = convertGraphQLWorkflowToTree(copy)
+    const workflowTree = convertGraphQLWorkflowToTree(copy).root.children
     const task = workflowTree[1].children[4]
     expect(task.node.progress).to.equal(100)
     // remove the mock
@@ -94,7 +95,7 @@ describe('Tree component functions', () => {
     const stub = sinon.stub(Date, 'now').returns(startedTime + 500) // so let's make the now() function return started time plus 500 ms (half of meanElapsedTime * 1000)
     // now the clock is set back to moment 0 (19700101...) by sinon, so Date.now() or new Date().getTime()
     // will return the clock object and the moment 0...
-    const workflowTree = convertGraphQLWorkflowToTree(copy)
+    const workflowTree = convertGraphQLWorkflowToTree(copy).root.children
     const task = workflowTree[1].children[4]
     expect(task.node.progress).to.equal(50)
     // remove the mock
