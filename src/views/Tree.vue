@@ -100,6 +100,8 @@ export default {
        * @param {{
        *   data: {
        *     deltas: {
+       *       id: string,
+       *       shutdown: boolean,
        *       added: {
        *         workflow: Object,
        *         cyclePoints: Object,
@@ -126,15 +128,22 @@ export default {
       next (response) {
         if (response.data && response.data.deltas) {
           const deltas = response.data.deltas
+          // first we check whether it is a shutdown response
+          if (deltas.shutdown) {
+            vm.tree = null
+            return
+          }
           if (vm.tree === null) {
-            // no tree, this means we **MUST** get the data necessary in the initial burst of data, or fail
+            // When the tree is null, we have two possible scenarios:
+            //   1. This means that we will receive our initial data burst in deltas.added.workflow
+            //      which we can use to create the tree structure.
+            //   2. Or this means that after the shutdown (when we delete the tree), we received a delta.
+            //      In this case we don't really have any way to fix the tree.
+            // In both cases, actually, the user has little that s/he could do, besides refreshing the
+            // page. So we fail silently and wait for a request with the initial data.
             if (!deltas.added.workflow) {
-              // This is a fatal error, as we don't have a way to proceed
-              vm.observable.unsubscribe()
-              store.dispatch(
-                'setAlert',
-                new Alert('Workflow tree subscription did not return the right initial burst of data', null, 'error')
-              )
+              console.error('Received a delta before the workflow initial data burst')
+              return
             }
             const workflow = deltas.added.workflow
             // A workflow (e.g. five) may not have any families as 'root' is filtered

@@ -90,6 +90,7 @@ export const WORKFLOW_TREE_SUBSCRIPTION = gql`
 subscription ($workflowId: ID) {
   deltas (workflows: [$workflowId]) {
     id
+    shutdown
     added {
       workflow {
         ...WorkflowData
