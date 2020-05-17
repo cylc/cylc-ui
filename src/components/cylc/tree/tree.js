@@ -174,8 +174,6 @@ class CylcTree {
       this.root.children.sort((cyclepoint, anotherCyclepoint) => {
         return cyclepoint.id.localeCompare(anotherCyclepoint.id)
       })
-      // calculate cycle point states
-      computeCyclePointsStates(this.root.children)
     }
   }
 
@@ -191,8 +189,6 @@ class CylcTree {
       const node = this.lookup.get(cyclePoint.id)
       if (node) {
         merge(node, cyclePoint)
-        // calculate cycle point states
-        computeCyclePointsStates(this.root.children)
       }
     }
   }
@@ -209,9 +205,12 @@ class CylcTree {
       this.root.children.sort((cyclepoint, anotherCyclepoint) => {
         return cyclepoint.id.localeCompare(anotherCyclepoint.id)
       })
-      // calculate cycle point states
-      computeCyclePointsStates(this.root.children)
     }
+  }
+
+  tallyCyclePointStates () {
+    // calculate cycle point states
+    computeCyclePointsStates(this.root.children)
   }
 
   // --- Family proxies

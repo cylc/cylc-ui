@@ -149,6 +149,7 @@ export default {
             // A workflow (e.g. five) may not have any families as 'root' is filtered
             Object.assign(workflow.familyProxies, workflow.familyProxies || {})
             vm.tree = convertGraphQLWorkflowToTree(workflow)
+            vm.tree.tallyCyclePointStates()
           } else {
             // the tree was created, and now the next messages should contain
             // 1. new data added under deltas.added (but not in deltas.added.workflow)
@@ -162,6 +163,10 @@ export default {
             }
             if (deltas.updated) {
               vm.applyDeltasUpdated(deltas.updated)
+            }
+            // if added, removed, or updated deltas, we want to re-calculate the cycle point states now
+            if (deltas.pruned || deltas.added || deltas.updated) {
+              vm.tree.tallyCyclePointStates()
             }
           }
         } else {
