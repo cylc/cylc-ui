@@ -294,11 +294,18 @@ class CylcTree {
     } else {
       nodeId = familyProxyId
       node = this.lookup.get(nodeId)
-      parentId = node.firstParent.id
+      if (node.node.firstParent.name === FAMILY_ROOT) {
+        parentId = node.node.cyclePoint
+      } else {
+        parentId = node.node.firstParent.id
+      }
     }
     this.recursivelyRemoveNode(node)
     const parent = this.lookup.get(parentId)
-    parent.children.splice(parent.children.find((node) => node.id === nodeId), 1)
+    // If the parent has already been removed from the lookup map, there won't be any parent here
+    if (parent) {
+      parent.children.splice(parent.children.find((node) => node.id === nodeId), 1)
+    }
   }
 
   // --- Task proxies
