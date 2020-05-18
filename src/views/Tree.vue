@@ -85,109 +85,18 @@ export default {
 
   mounted () {
     this.viewID = `Tree(${this.workflowName}): ${Math.random()}`
-    const workflowId = `${this.user.username}|${this.workflowName}`
-    const variables = {
-      workflowId
-    }
-
-    const vm = this
-    this.observable = this.$workflowService.apolloClient.subscribe({
-      query: WORKFLOW_TREE_SUBSCRIPTION,
-      variables: variables,
-      fetchPolicy: 'no-cache'
-    }).subscribe({
-      /**
-       * @param {{
-       *   data: {
-       *     deltas: {
-       *       id: string,
-       *       shutdown: boolean,
-       *       added: {
-       *         workflow: Object,
-       *         cyclePoints: Object,
-       *         familyProxies: Object,
-       *         taskProxies: Object,
-       *         jobs: Object
-       *       },
-       *       updated: {
-       *         workflow: Object,
-       *         cyclePoints: Object,
-       *         familyProxies: Object,
-       *         taskProxies: Object,
-       *         jobs: Object
-       *       },
-       *       pruned: {
-       *         taskProxies: [string],
-       *         familyProxies: [string],
-       *         jobs: [string]
-       *       }
-       *     }
-       *   }
-       * }} response
-       */
-      next (response) {
-        if (response.data && response.data.deltas) {
-          const deltas = response.data.deltas
-          // first we check whether it is a shutdown response
-          if (deltas.shutdown) {
-            vm.tree = null
-            return
-          }
-          if (vm.tree === null) {
-            // When the tree is null, we have two possible scenarios:
-            //   1. This means that we will receive our initial data burst in deltas.added.workflow
-            //      which we can use to create the tree structure.
-            //   2. Or this means that after the shutdown (when we delete the tree), we received a delta.
-            //      In this case we don't really have any way to fix the tree.
-            // In both cases, actually, the user has little that s/he could do, besides refreshing the
-            // page. So we fail silently and wait for a request with the initial data.
-            if (!deltas.added.workflow) {
-              console.error('Received a delta before the workflow initial data burst')
-              return
-            }
-            const workflow = deltas.added.workflow
-            // A workflow (e.g. five) may not have any families as 'root' is filtered
-            Object.assign(workflow.familyProxies, workflow.familyProxies || {})
-            vm.tree = convertGraphQLWorkflowToTree(workflow)
-            vm.tree.tallyCyclePointStates()
-          } else {
-            // the tree was created, and now the next messages should contain
-            // 1. new data added under deltas.added (but not in deltas.added.workflow)
-            // 2. data updated in deltas.updated
-            // 3. data pruned in deltas.pruned
-            if (deltas.pruned) {
-              vm.applyDeltasPruned(deltas.pruned)
-            }
-            if (deltas.added) {
-              vm.applyDeltasAdded(deltas.added)
-            }
-            if (deltas.updated) {
-              vm.applyDeltasUpdated(deltas.updated)
-            }
-            // if added, removed, or updated deltas, we want to re-calculate the cycle point states now
-            if (deltas.pruned || deltas.added || deltas.updated) {
-              vm.tree.tallyCyclePointStates()
-            }
-          }
-        } else {
-          throw Error('Workflow tree subscription did not return data.deltas')
-        }
-      },
-      error (err) {
-        store.dispatch(
-          'setAlert',
-          new Alert(err.message, null, 'error')
-        )
-      },
-      complete () {
-      }
-    })
+    this.startSubscription(this.workflowName)
   },
 
   beforeRouteLeave (to, from, next) {
-    if (this.observable !== null) {
-      this.observable.unsubscribe()
-    }
+    this.stopSubscription()
+    next()
+  },
+
+  beforeRouteUpdate (to, from, next) {
+    this.stopSubscription()
+    this.tree = null
+    this.startSubscription(to.params.workflowName)
     next()
   },
 
@@ -197,6 +106,113 @@ export default {
      */
     setActive (isActive) {
       this.isLoading = !isActive
+    },
+    startSubscription (workflowName) {
+      const workflowId = `${this.user.username}|${workflowName}`
+      const variables = {
+        workflowId
+      }
+
+      const vm = this
+      this.observable = this.$workflowService.apolloClient.subscribe({
+        query: WORKFLOW_TREE_SUBSCRIPTION,
+        variables: variables,
+        fetchPolicy: 'no-cache'
+      }).subscribe({
+        /**
+         * @param {{
+         *   data: {
+         *     deltas: {
+         *       id: string,
+         *       shutdown: boolean,
+         *       added: {
+         *         workflow: Object,
+         *         cyclePoints: Object,
+         *         familyProxies: Object,
+         *         taskProxies: Object,
+         *         jobs: Object
+         *       },
+         *       updated: {
+         *         workflow: Object,
+         *         cyclePoints: Object,
+         *         familyProxies: Object,
+         *         taskProxies: Object,
+         *         jobs: Object
+         *       },
+         *       pruned: {
+         *         taskProxies: [string],
+         *         familyProxies: [string],
+         *         jobs: [string]
+         *       }
+         *     }
+         *   }
+         * }} response
+         */
+        next (response) {
+          if (response.data && response.data.deltas) {
+            const deltas = response.data.deltas
+            // first we check whether it is a shutdown response
+            if (deltas.shutdown) {
+              vm.tree = null
+              return
+            }
+            if (vm.tree === null) {
+              // When the tree is null, we have two possible scenarios:
+              //   1. This means that we will receive our initial data burst in deltas.added.workflow
+              //      which we can use to create the tree structure.
+              //   2. Or this means that after the shutdown (when we delete the tree), we received a delta.
+              //      In this case we don't really have any way to fix the tree.
+              // In both cases, actually, the user has little that s/he could do, besides refreshing the
+              // page. So we fail silently and wait for a request with the initial data.
+              if (!deltas.added.workflow) {
+                console.error('Received a delta before the workflow initial data burst')
+                return
+              }
+              const workflow = deltas.added.workflow
+              // A workflow (e.g. five) may not have any families as 'root' is filtered
+              Object.assign(workflow.familyProxies, workflow.familyProxies || {})
+              vm.tree = convertGraphQLWorkflowToTree(workflow)
+              vm.tree.tallyCyclePointStates()
+            } else {
+              // the tree was created, and now the next messages should contain
+              // 1. new data added under deltas.added (but not in deltas.added.workflow)
+              // 2. data updated in deltas.updated
+              // 3. data pruned in deltas.pruned
+              if (deltas.pruned) {
+                vm.applyDeltasPruned(deltas.pruned)
+              }
+              if (deltas.added) {
+                vm.applyDeltasAdded(deltas.added)
+              }
+              if (deltas.updated) {
+                vm.applyDeltasUpdated(deltas.updated)
+              }
+              // if added, removed, or updated deltas, we want to re-calculate the cycle point states now
+              if (deltas.pruned || deltas.added || deltas.updated) {
+                vm.tree.tallyCyclePointStates()
+              }
+            }
+          } else {
+            throw Error('Workflow tree subscription did not return data.deltas')
+          }
+        },
+        error (err) {
+          store.dispatch(
+            'setAlert',
+            new Alert(err.message, null, 'error')
+          )
+        },
+        complete () {
+        }
+      })
+    },
+    /**
+     * Stops the current subscription - if any.
+     */
+    stopSubscription () {
+      if (this.observable !== null) {
+        this.observable.unsubscribe()
+      }
     },
     /**
      * Deltas pruned.
