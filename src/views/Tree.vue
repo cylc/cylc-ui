@@ -165,6 +165,7 @@ export default {
               // In both cases, actually, the user has little that s/he could do, besides refreshing the
               // page. So we fail silently and wait for a request with the initial data.
               if (!deltas.added.workflow) {
+                // eslint-disable-next-line no-console
                 console.error('Received a delta before the workflow initial data burst')
                 return
               }
