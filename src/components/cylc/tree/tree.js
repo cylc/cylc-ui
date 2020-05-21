@@ -121,20 +121,45 @@ class CylcTree {
    * Create a tree with an initial root node, representing
    * a workflow in Cylc.
    *
-   * @param {{
+   * @param {null | {
    *   id: string,
    *   node: Object,
    *   children: []
-   * }} workflow
+   * }} [workflow]
    */
   constructor (workflow) {
+    this.lookup = new Map()
     if (!workflow) {
-      throw new Error('Invalid tree root workflow!')
+      this.root = {
+        id: '',
+        node: {},
+        children: []
+      }
+    } else {
+      this.root = workflow
+      this.lookup.set(this.root.id, this.root)
+    }
+  }
+
+  setWorkflow (workflow) {
+    if (!workflow) {
+      throw new Error('You must provide a valid workflow!')
     }
     this.root = workflow
-    this.lookup = new Map([
-      [this.root.id, this.root]
-    ])
+    this.lookup.set(workflow.id, workflow)
+  }
+
+  clear () {
+    this.lookup.clear()
+    this.root = {
+      id: '',
+      node: {},
+      children: []
+    }
+  }
+
+  isEmpty () {
+    return this.lookup.size === 0
   }
 
   /**
