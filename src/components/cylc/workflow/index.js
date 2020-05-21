@@ -19,7 +19,6 @@ import Vue from 'vue'
 import { Widget } from '@lumino/widgets'
 import Tree from '@/components/cylc/tree/Tree'
 import Graph from '@/components/cylc/graph/Graph'
-// import Mutations from '@/components/cylc/Mutations'
 import Mutations from '@/views/Mutations'
 import VSkeletonLoader from 'vuetify/lib/components/VSkeletonLoader'
 
@@ -101,7 +100,7 @@ const TreeWrapper = Vue.component('tree-wrapper', {
   methods: {
     delete () {
       // This is captured by the View, that holds subscriptions, and then used to tell which subscription must be turned off
-      EventBus.$emit('delete:widget', { id: this.widgetId })
+      EventBus.$emit('delete:tree', { id: this.widgetId })
       this.$destroy()
     }
   },
@@ -151,7 +150,7 @@ const GraphWrapper = Vue.component('graph-wrapper', {
   methods: {
     delete () {
       // This is captured by the View, that holds subscriptions, and then used to tell which subscription must be turned off
-      EventBus.$emit('delete:widget', { id: this.widgetId })
+      EventBus.$emit('delete:graph', { id: this.widgetId })
       this.$destroy()
     },
     activate () {
@@ -198,8 +197,6 @@ const MutationsWrapper = Vue.component('mutations-wrapper', {
   },
   methods: {
     delete () {
-      // This is captured by the View, that holds subscriptions, and then used to tell which subscription must be turned off
-      EventBus.$emit('delete:widget', { id: this.widgetId })
       this.$destroy()
     }
   },
@@ -208,7 +205,6 @@ const MutationsWrapper = Vue.component('mutations-wrapper', {
     widgetElement.appendChild(this.$refs[this.widgetId].$el)
     const vm = this
     document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', () => {
-      EventBus.$emit('delete:widget', { id: vm.widgetId })
       vm.$destroy()
     }, false)
   },

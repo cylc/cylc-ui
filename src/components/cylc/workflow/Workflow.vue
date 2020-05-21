@@ -103,6 +103,9 @@ export default {
       this.dock.addWidget(contentWidget)
       this.treeWidgetIds.push(id)
     },
+    removeTreeWidget (id) {
+      this.treeWidgetIds.splice(this.treeWidgetIds.indexOf(id), 1)
+    },
     addGraphWidget (id) {
       const contentWidget = new ContentWidget(id, 'graph')
       this.dock.addWidget(contentWidget)

@@ -109,7 +109,36 @@ function createJobNode (job, latestMessage) {
 }
 
 function containsTreeData (workflow) {
-  return workflow !== undefined && workflow !== null && workflow.cyclePoints && workflow.familyProxies && workflow.taskProxies
+  return workflow !== undefined &&
+    workflow !== null &&
+    workflow.cyclePoints && Array.isArray(workflow.cyclePoints) &&
+    workflow.familyProxies && Array.isArray(workflow.familyProxies) &&
+    workflow.taskProxies && Array.isArray(workflow.taskProxies)
+}
+
+function populateTreeFromGraphQLData (tree, workflow) {
+  if (!tree || !workflow || !containsTreeData(workflow)) {
+    throw new Error('You must provide valid data to populate the tree!')
+  }
+  // the workflow object gets augmented to become a valid node for the tree
+  const rootNode = createWorkflowNode(workflow)
+  tree.setWorkflow(rootNode)
+  for (const cyclePoint of workflow.cyclePoints) {
+    const cyclePointNode = createCyclePointNode(cyclePoint)
+    tree.addCyclePoint(cyclePointNode)
+  }
+  for (const familyProxy of workflow.familyProxies) {
+    const familyProxyNode = createFamilyProxyNode(familyProxy)
+    tree.addFamilyProxy(familyProxyNode)
+  }
+  for (const taskProxy of workflow.taskProxies) {
+    const taskProxyNode = createTaskProxyNode(taskProxy)
+    tree.addTaskProxy(taskProxyNode)
+    for (const job of taskProxy.jobs) {
+      const jobNode = createJobNode(job, taskProxy.latestMessage)
+      tree.addJob(jobNode)
+    }
+  }
 }
 
 /**
@@ -157,5 +186,6 @@ export {
   createTaskProxyNode,
   createJobNode,
   containsTreeData,
-  convertGraphQLWorkflowToTree
+  convertGraphQLWorkflowToTree,
+  populateTreeFromGraphQLData
 }

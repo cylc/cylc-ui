@@ -246,10 +246,8 @@ export default {
     )
     this.subscribe('root')
   },
-  beforeRouteLeave (to, from, next) {
-    this.unsubscribe('root')
+  beforeDestroy () {
     this.$workflowService.unregister(this)
-    next()
   },
   methods: {
     subscribe (queryName) {

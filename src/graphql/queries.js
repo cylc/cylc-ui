@@ -18,126 +18,89 @@
 // Code related to GraphQL queries, fragments, variables, etc.
 
 import gql from 'graphql-tag'
+// eslint-disable-next-line no-unused-vars
+import { DocumentNode } from 'graphql'
 
 // IMPORTANT: queries here may be used in the offline mode to create mock data. Before removing or renaming
 // queries here, please check under the services/mock folder for occurrences of the variable name.
 
 /**
- * Query used to retrieve data for a workflow Tree view.
- * @type {string}
+ * @type {DocumentNode}
  */
-export const WORKFLOW_TREE_QUERY = `
-subscription {
-  workflows(ids: ["WORKFLOW_ID"]) {
-    id
-    name
-    status
-    owner
-    host
-    port
-    cyclePoints: familyProxies(ids: ["root"]) {
-      cyclePoint
-    }
-    taskProxies(sort: { keys: ["cyclePoint"] }) {
-      id
-      name
-      state
-      isHeld
-      cyclePoint
-      latestMessage
-      firstParent {
-        id
-        name
-        cyclePoint
-        state
-      }
-      task {
-        meanElapsedTime
-        name
-      }
-      jobs(sort: { keys: ["submit_num"], reverse:true }) {
-        id
-        firstParent: taskProxy {
-          id
-        }
-        batchSysName
-        batchSysJobId
-        host
-        startedTime
-        submittedTime
-        finishedTime
-        state
-        submitNum
-      }
-    }
-    familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}) {
-      id
-      name
-      state
-      cyclePoint
-      firstParent {
-        id
-        name
-        cyclePoint
-        state
-      }
-    }
+const WORKFLOW_TREE_DELTAS_SUBSCRIPTION = gql`
+subscription OnWorkflowDeltasData ($workflowId: ID) {
+  deltas (workflows: [$workflowId], stripNull: true) {
+   ...WorkflowTreeDeltas
   }
 }
-`
 
-export const WORKFLOW_TREE_SUBSCRIPTION = gql`
-subscription ($workflowId: ID) {
-  deltas (workflows: [$workflowId]) {
-    id
-    shutdown
-    added {
-      workflow {
-        ...WorkflowData
-        cyclePoints: familyProxies(ids: ["root"], ghosts: true) {
-          cyclePoint
-        }
-        taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
-          ...TaskProxyData
-          jobs(sort: { keys: ["submit_num"], reverse:true }) {
-            ...JobData
-          }
-        }
-        familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
-          ...FamilyProxyData
-        }
-      }
-      cyclePoints: familyProxies(ids: ["root"], ghosts: true) {
-        cyclePoint
-      }
-      familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
-        ...FamilyProxyData
-      }
-      taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
-        ...TaskProxyData
-      }
-      jobs(sort: { keys: ["submit_num"], reverse:true }) {
-        ...JobData
-      }
-    }
-    updated {
-      taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
-        ...TaskProxyData
-      }
-      jobs(sort: { keys: ["submit_num"], reverse:true }) {
-        ...JobData
-      }
-      familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
-        ...FamilyProxyData
-      }
-    }
-    pruned {
-      jobs
-      taskProxies
-      familyProxies
-    }
+# TREE DELTAS BEGIN
+
+fragment WorkflowTreeDeltas on Deltas {
+  id
+  shutdown
+  added {
+    ...WorkflowTreeAddedData
+  }
+  updated {
+    ...WorkflowTreeUpdatedData
+  }
+  pruned {
+    ...WorkflowTreePrunedData
   }
 }
+
+fragment WorkflowTreeAddedData on Added {
+  workflow {
+    ...WorkflowData
+    cyclePoints: familyProxies(ids: ["root"], ghosts: true) {
+      cyclePoint
+    }
+    taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
+      ...TaskProxyData
+      jobs(sort: { keys: ["submit_num"], reverse:true }) {
+        ...JobData
+      }
+    }
+    familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
+      ...FamilyProxyData
+    }
+  }
+  cyclePoints: familyProxies(ids: ["root"], ghosts: true) {
+    cyclePoint
+  }
+  familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
+    ...FamilyProxyData
+  }
+  taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
+    ...TaskProxyData
+  }
+  jobs(sort: { keys: ["submit_num"], reverse:true }) {
+    ...JobData
+  }
+}
+
+fragment WorkflowTreeUpdatedData on Updated {
+  taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
+    ...TaskProxyData
+  }
+  jobs(sort: { keys: ["submit_num"], reverse:true }) {
+    ...JobData
+  }
+  familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
+    ...FamilyProxyData
+  }
+}
+
+fragment WorkflowTreePrunedData on Pruned {
+  jobs
+  taskProxies
+  familyProxies
+}
+
+# TREE DELTAS END
+
+# WORKFLOW DATA BEGIN
 
 fragment WorkflowData on Workflow {
   id
@@ -194,13 +157,15 @@ fragment JobData on Job {
   state
   submitNum
 }
+
+# WORKFLOW DATA END
 `
 
 /**
  * Query used to retrieve data for a workflow Graph view.
  * @type {string}
  */
-export const WORKFLOW_GRAPH_QUERY = `
+const WORKFLOW_GRAPH_QUERY = `
 subscription {
   workflows(ids: ["WORKFLOW_ID"]) {
     id
@@ -288,7 +253,7 @@ subscription {
  * Query used to retrieve data for the application Dashboard.
  * @type {string}
  */
-export const DASHBOARD_QUERY = `
+const DASHBOARD_QUERY = `
 subscription {
   workflows {
     id
@@ -302,7 +267,7 @@ subscription {
  * Query used to retrieve data for the GScan sidebar.
  * @type {string}
  */
-export const GSCAN_QUERY = `
+const GSCAN_QUERY = `
 subscription {
   workflows {
     id
@@ -337,14 +302,50 @@ subscription {
 }
 `
 
-export const WORKFLOWS_TABLE_QUERY = `
-subscription {
-  workflows {
-    id
-    name
-    owner
-    host
-    port
+const WORKFLOWS_TABLE_QUERY = `
+  subscription {
+    workflows {
+      id
+      name
+      owner
+      host
+      port
+    }
+  }
+`
+
+// TODO: remove these once the api-on-the-fly mutations are hooked into the UI
+const HOLD_WORKFLOW = gql`
+mutation HoldWorkflowMutation($workflow: WorkflowID!) {
+  hold (workflows: [$workflow]) {
+    result
   }
 }
 `
+
+const RELEASE_WORKFLOW = gql`
+mutation ReleaseWorkflowMutation($workflow: WorkflowID!) {
+  release (workflows: [$workflow]){
+    result
+  }
+}
+`
+
+const STOP_WORKFLOW = gql`
+mutation StopWorkflowMutation($workflow: WorkflowID!) {
+  stop (workflows: [$workflow]) {
+    result
+  }
+}
+`
+
+export {
+  HOLD_WORKFLOW,
+  RELEASE_WORKFLOW,
+  STOP_WORKFLOW,
+  WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
+  WORKFLOW_GRAPH_QUERY,
+  DASHBOARD_QUERY,
+  GSCAN_QUERY,
+  WORKFLOWS_TABLE_QUERY
+}

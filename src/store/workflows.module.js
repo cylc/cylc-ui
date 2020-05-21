@@ -15,12 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { containsTreeData, convertGraphQLWorkflowToTree } from '@/components/cylc/tree'
-
 const state = {
   workflows: [],
-  workflowName: null,
-  tree: null
+  workflowName: null
 }
 
 const getters = {
@@ -29,12 +26,6 @@ const getters = {
       return null
     }
     return state.workflows.find(workflow => workflow.name === state.workflowName) || null
-  },
-  workflowTree: (state) => {
-    if (state.tree === null) {
-      return []
-    }
-    return state.tree.root.children
   }
 }
 
@@ -43,13 +34,6 @@ const mutations = {
     // TODO: when subscriptions are introduced this will have to apply
     // deltas to the store
     state.workflows = data
-    // TODO: At the moment we only ever have tree data in the response, when we are looking at a
-    //       view with a tree. This may need to change if later we allow users to see multiple
-    //       workflows in the same view.
-    const workflow = data.find(workflow => containsTreeData(workflow))
-    // Setting a state.tree instead of a getters.tree allows us to modify this object later with
-    // deltas.
-    state.tree = workflow === null ? null : convertGraphQLWorkflowToTree(workflow)
   },
   SET_WORKFLOW_NAME (state, { workflowName }) {
     state.workflowName = workflowName
