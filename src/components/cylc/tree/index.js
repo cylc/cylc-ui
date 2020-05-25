@@ -79,6 +79,10 @@ function createFamilyProxyNode (familyProxy) {
  */
 // TODO: move expanded state to data later for infinite-tree
 function createTaskProxyNode (taskProxy) {
+  // A TaskProxy could be a ghost node, which doesn't have a state/status yet
+  if (!taskProxy.state) {
+    taskProxy.state = ''
+  }
   return {
     id: taskProxy.id,
     type: 'task-proxy',
@@ -134,9 +138,12 @@ function populateTreeFromGraphQLData (tree, workflow) {
   for (const taskProxy of workflow.taskProxies) {
     const taskProxyNode = createTaskProxyNode(taskProxy)
     tree.addTaskProxy(taskProxyNode)
-    for (const job of taskProxy.jobs) {
-      const jobNode = createJobNode(job, taskProxy.latestMessage)
-      tree.addJob(jobNode)
+    // A TaskProxy could no jobs (yet)
+    if (taskProxy.jobs) {
+      for (const job of taskProxy.jobs) {
+        const jobNode = createJobNode(job, taskProxy.latestMessage)
+        tree.addJob(jobNode)
+      }
     }
   }
 }
