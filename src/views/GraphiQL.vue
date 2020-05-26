@@ -25,7 +25,6 @@ import ReactDOM from 'react-dom'
 import React from 'react'
 import GraphiQL from 'graphiql'
 import { graphQLFetcher, fallbackGraphQLFetcher } from '@/graphql/graphiql'
-import { mapState } from 'vuex'
 
 export default {
   mixins: [mixin],
@@ -36,11 +35,9 @@ export default {
   },
   data () {
     return {
-      fetcher: null
+      fetcher: null,
+      subscription: null
     }
-  },
-  computed: {
-    ...mapState('graphiql', ['activeSubscription'])
   },
   mounted () {
     this.fetcher = this.createFetcher()
@@ -55,8 +52,9 @@ export default {
   beforeRouteLeave (to, from, next) {
     // Important to remember to unsubscribe, otherwise a user may accidentally create several
     // subscriptions/observers, causing performance issues on both frontend and backend.
-    if (this.activeSubscription !== null) {
-      this.activeSubscription.unsubscribe()
+    if (this.subscription !== null) {
+      this.subscription.unsubscribe()
+      this.subscription = null
     }
     next()
   },
@@ -64,7 +62,7 @@ export default {
     createFetcher () {
       const subscriptionClient = this.$workflowService.subscriptionClient
       return subscriptionClient !== null
-        ? graphQLFetcher(subscriptionClient, fallbackGraphQLFetcher) : fallbackGraphQLFetcher
+        ? graphQLFetcher(subscriptionClient, fallbackGraphQLFetcher, this) : fallbackGraphQLFetcher
     }
   }
 }

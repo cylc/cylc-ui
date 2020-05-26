@@ -19,7 +19,6 @@
 
 import { parse } from 'graphql'
 import { createGraphQLUrls } from '@/utils/graphql'
-import store from '@/store'
 
 // TODO: https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher/issues/16
 //       the functions hasSubscriptionOperation and graphQLFetcher are both from
@@ -56,13 +55,16 @@ const hasSubscriptionOperation = function (graphQlParams) {
  *
  * @param {Object|null} subscriptionsClient
  * @param {function} fallbackFetcher
+ * @param {{
+ *   subscription: Object
+ * }} component
  * @returns {function(...[*]=)}
  */
-const graphQLFetcher = function (subscriptionsClient, fallbackFetcher) {
-  let activeSubscription = null
+const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component) {
+  component.subscription = null
   return function (graphQLParams) {
-    if (subscriptionsClient && activeSubscription !== null) {
-      subscriptionsClient.unsubscribe(activeSubscription)
+    if (subscriptionsClient && component.subscription !== null) {
+      subscriptionsClient.unsubscribe(component.subscription)
     }
     if (subscriptionsClient && hasSubscriptionOperation(graphQLParams)) {
       return {
@@ -78,18 +80,14 @@ const graphQLFetcher = function (subscriptionsClient, fallbackFetcher) {
               observer.next(result)
             }
           })
-          activeSubscription = subscription.subscribe((result, err) => {
+          component.subscription = subscription.subscribe((result, err) => {
             if (err) {
               observer.error(err)
             } else {
               observer.next(result)
             }
           })
-          // set the active subscription in the vuex store, so that we can unsubscribe it too
-          // NB: GraphiQL React component also unsubscribes it, we just need to do so in vue-router
-          //     occasionally.
-          store.commit('graphiql/SET_ACTIVE_SUBSCRIPTION', activeSubscription)
-          return activeSubscription
+          return component.subscription
         }
       }
     } else {

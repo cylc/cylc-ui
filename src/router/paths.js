@@ -98,7 +98,7 @@ export default [
     path: '/graphiql',
     view: 'GraphiQL',
     meta: {
-      layout: 'default'
+      layout: 'empty'
     }
   },
   {

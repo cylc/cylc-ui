@@ -30,7 +30,6 @@ import Vuex from 'vuex'
 import { app } from './app.module'
 import { workflows } from './workflows.module'
 import { user } from './user.module'
-import { graphiql } from './graphiql.module'
 
 // State
 const state = {
@@ -92,8 +91,7 @@ const store = new Vuex.Store({
   modules: {
     app,
     workflows,
-    user,
-    graphiql
+    user
   },
   actions,
   mutations,
