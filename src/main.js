@@ -55,7 +55,7 @@ Vue.prototype.$workflowService = workflowService
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-new Vue({
+const app = new Vue({
   i18n,
   router,
   store,
@@ -68,3 +68,9 @@ new Vue({
     })
   }
 }).$mount('#app')
+// e2e tests use the offline mode, so here we expose the Vue.js app so Cypress can access it programmatically
+// e.g. window.app.$store and window.app.$workflowService.
+// Ref: https://www.cypress.io/blog/2017/11/28/testing-vue-web-application-with-vuex-data-store-and-rest-backend/
+if (['test', 'offline'].includes(process.env.NODE_ENV)) {
+  window.app = app
+}

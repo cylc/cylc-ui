@@ -19,12 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div v-if="alert">
     <v-alert
       :value="true"
-      :color="alert.getColor()"
+      :type="alert.getColor()"
       :icon="alert.getIcon()"
-      class="ma-0"
+      :class="getColor(alert.getColor())"
       dismissible
+      tile
+      light
+      colored-border
     >
-      <p class="body-1">{{ alert.getText() }}</p>
+      {{ alert.getText() }}
     </v-alert>
   </div>
 </template>
@@ -33,11 +36,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import {
   mapState
 } from 'vuex'
+
 export default {
   name: 'Alert',
 
+  data () {
+    return {
+      // TODO: remove later when https://github.com/vuetifyjs/vuetify/issues/11021 is fixed
+      colors: new Map([
+        ['error', 'red'],
+        ['success', 'green'],
+        ['warning', 'amber']
+      ])
+    }
+  },
+
   computed: {
     ...mapState(['alert'])
+  },
+
+  methods: {
+    getColor (type) {
+      return this.colors.get(type) || ''
+    }
   }
 }
 </script>
