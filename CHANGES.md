@@ -53,6 +53,10 @@ component.
 [#446](https://github.com/cylc/cylc-ui/pull/446) - Allow users to
 increase, decrease, and reset UI font size.
 
+[#457](https://github.com/cylc/cylc-ui/pull/457) - Add a GraphiQL
+view using graphiql.js that sends queries to the backend graphiql
+endpoint.
+
 ### Fixes
 
 [#275](https://github.com/cylc/cylc-ui/pull/275) - Fix size of dashboard

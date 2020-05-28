@@ -95,6 +95,13 @@ export default [
     }
   },
   {
+    path: '/graphiql',
+    view: 'GraphiQL',
+    meta: {
+      layout: 'empty'
+    }
+  },
+  {
     path: '*',
     view: 'NotFound',
     meta: {
