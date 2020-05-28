@@ -38,6 +38,8 @@ import store from '@/store'
  */
 import SubscriptionWorkflowService from 'workflow-service'
 import { createGraphQLUrls, createSubscriptionClient } from '@/utils/graphql'
+// eslint-disable-next-line no-unused-vars
+import { GQuery } from '@/services/gquery'
 
 // Sync store with router
 sync(store, router)
@@ -50,6 +52,9 @@ if (process.env.NODE_ENV !== 'offline') {
   subscriptionClient = createSubscriptionClient(graphQLUrls.wsUrl)
 }
 const workflowService = new SubscriptionWorkflowService(graphQLUrls.httpUrl, subscriptionClient)
+/**
+ * @type GQuery
+ */
 Vue.prototype.$workflowService = workflowService
 
 Vue.config.productionTip = false
@@ -68,6 +73,7 @@ const app = new Vue({
     })
   }
 }).$mount('#app')
+
 // e2e tests use the offline mode, so here we expose the Vue.js app so Cypress can access it programmatically
 // e.g. window.app.$store and window.app.$workflowService.
 // Ref: https://www.cypress.io/blog/2017/11/28/testing-vue-web-application-with-vuex-data-store-and-rest-backend/

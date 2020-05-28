@@ -71,7 +71,6 @@ export default {
   },
 
   beforeRouteLeave (to, from, next) {
-    this.unsubscribe('root')
     this.$workflowService.unregister(this)
     next()
   },
@@ -87,14 +86,6 @@ export default {
         this.subscriptions[queryName] = {
           id
         }
-      }
-    },
-
-    unsubscribe (queryName) {
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName].id
-        )
       }
     },
 

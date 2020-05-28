@@ -113,11 +113,16 @@ export default {
   beforeRouteUpdate (to, from, next) {
     this.subscription.unsubscribe()
     this.subscription = null
-    this
-      .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, this.variables, this.tree)
-      .then(subscription => {
-        this.subscription = subscription
-      })
+    this.tree.clear()
+    const vm = this
+    // NOTE: this must be done in the nextTick so that vm.variables will use the updated prop!
+    this.$nextTick(() => {
+      vm
+        .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, vm.variables, vm.tree)
+        .then(subscription => {
+          vm.subscription = subscription
+        })
+    })
     next()
   },
 

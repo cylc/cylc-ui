@@ -246,8 +246,9 @@ export default {
     )
     this.subscribe('root')
   },
-  beforeDestroy () {
+  beforeRouteLeave (to, from, next) {
     this.$workflowService.unregister(this)
+    next()
   },
   methods: {
     subscribe (queryName) {
@@ -261,18 +262,6 @@ export default {
             this,
             QUERIES[queryName].replace('WORKFLOW_ID', this.workflowName)
           )
-      }
-    },
-
-    unsubscribe (queryName) {
-      /**
-       * Unsubscribe this view to a new GraphQL query.
-       * @param {string} queryName - Must be in QUERIES.
-       */
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName]
-        )
       }
     },
 
