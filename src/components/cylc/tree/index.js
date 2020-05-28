@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// eslint-disable-next-line no-unused-vars
 import CylcTree from '@/components/cylc/tree/tree'
 
 /**
@@ -120,6 +121,15 @@ function containsTreeData (workflow) {
     workflow.taskProxies && Array.isArray(workflow.taskProxies)
 }
 
+/**
+ * Populate the given tree using the also provided GraphQL workflow object.
+ *
+ * Every node has data, and a .name property used to display the node in the tree in the UI.
+ *
+ * @param tree {null|CylcTree} - A hierarchical tree
+ * @param workflow {null|Object} - GraphQL workflow object
+ * @throws {Error} - If the workflow or tree are either null or invalid (e.g. missing data)
+ */
 function populateTreeFromGraphQLData (tree, workflow) {
   if (!tree || !workflow || !containsTreeData(workflow)) {
     throw new Error('You must provide valid data to populate the tree!')
@@ -148,44 +158,6 @@ function populateTreeFromGraphQLData (tree, workflow) {
   }
 }
 
-/**
- * Given a GraphQL response workflow, this function will return the data structure
- * expected by the Vue.js tree component.
- *
- * The data structure returned will be a tree-like structure, where the root is the workflow
- * node, followed by cycle points, then families, and finally tasks as leaf nodes.
- *
- * Every node has data, and a .name property used to display the node in the tree in the UI.
- *
- * @param workflow {object}
- * @returns CylcTree|null
- */
-function convertGraphQLWorkflowToTree (workflow) {
-  if (!containsTreeData(workflow)) {
-    return null
-  }
-  // the workflow object gets augmented to become a valid node for the tree
-  const rootNode = createWorkflowNode(workflow)
-  const cylcTree = new CylcTree(rootNode)
-  for (const cyclePoint of workflow.cyclePoints) {
-    const cyclePointNode = createCyclePointNode(cyclePoint)
-    cylcTree.addCyclePoint(cyclePointNode)
-  }
-  for (const familyProxy of workflow.familyProxies) {
-    const familyProxyNode = createFamilyProxyNode(familyProxy)
-    cylcTree.addFamilyProxy(familyProxyNode)
-  }
-  for (const taskProxy of workflow.taskProxies) {
-    const taskProxyNode = createTaskProxyNode(taskProxy)
-    cylcTree.addTaskProxy(taskProxyNode)
-    for (const job of taskProxy.jobs) {
-      const jobNode = createJobNode(job, taskProxy.latestMessage)
-      cylcTree.addJob(jobNode)
-    }
-  }
-  return cylcTree
-}
-
 export {
   createWorkflowNode,
   createCyclePointNode,
@@ -193,6 +165,5 @@ export {
   createTaskProxyNode,
   createJobNode,
   containsTreeData,
-  convertGraphQLWorkflowToTree,
   populateTreeFromGraphQLData
 }
