@@ -280,7 +280,12 @@ class CylcTree {
           parent = createFamilyProxyNode(familyProxy.node.firstParent)
           this.lookup.set(parent.id, parent)
         }
-        parent.children.push(familyProxy)
+        // since this method may be called several times for the same family proxy (see comments above), it means
+        // the parent-child could end up repeated by accident; it means we must make sure to create this relationship
+        // exactly once.
+        if (parent.children.length === 0 || !parent.children.find(child => child.id === familyProxy.id)) {
+          parent.children.push(familyProxy)
+        }
       }
     }
   }
