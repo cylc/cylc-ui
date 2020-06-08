@@ -17,7 +17,13 @@
 
 import CylcTree from '@/components/cylc/tree/tree'
 import { expect } from 'chai'
-import { createCyclePointNode, createFamilyProxyNode, createWorkflowNode } from '@/components/cylc/tree'
+import {
+  createCyclePointNode,
+  createFamilyProxyNode,
+  createTaskProxyNode,
+  createWorkflowNode
+} from '@/components/cylc/tree'
+import sinon from 'sinon'
 
 describe('CylcTree', () => {
   it('Should create a tree with a given workflow', () => {
@@ -318,6 +324,255 @@ describe('CylcTree', () => {
       cylcTree.removeFamilyProxy(familyProxy1.id)
       // the cycle point was removed as it was empty
       expect(cylcTree.root.children.length).to.equal(1)
+    })
+  })
+  describe('Task Proxies', () => {
+    let cylcTree
+    let cyclePoint
+    let rootFamilyProxy
+    let familyProxy
+    beforeEach(() => {
+      const workflow = createWorkflowNode({
+        id: 'cylc|workflow'
+      })
+      cylcTree = new CylcTree(workflow)
+      cyclePoint = createCyclePointNode({
+        cyclePoint: 'cylc|workflow|1'
+      })
+      cylcTree.addCyclePoint(cyclePoint)
+      rootFamilyProxy = createFamilyProxyNode({
+        id: 'cylc|workflow|1|root',
+        name: 'root',
+        cyclePoint: cyclePoint.id,
+        firstParent: {
+          id: cyclePoint.id
+        }
+      })
+      cylcTree.addFamilyProxy(rootFamilyProxy)
+      familyProxy = createFamilyProxyNode({
+        id: 'cylc|workflow|1|FAM1',
+        cyclePoint: cyclePoint.id,
+        firstParent: {
+          id: rootFamilyProxy.id,
+          name: rootFamilyProxy.node.name
+        }
+      })
+      cylcTree.addFamilyProxy(familyProxy)
+    })
+    it('Should add task proxies', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: 'running'
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      expect(task.id).to.equal(taskProxyId)
+    })
+    it('Should not add task proxies twice', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: 'running'
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      cylcTree.addTaskProxy(taskProxy)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[1]
+      expect(family.children.length).to.equal(1)
+    })
+    it('Should not add invalid task proxies', () => {
+      cylcTree.addTaskProxy(null)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[0]
+      expect(family.children.length).to.equal(0)
+    })
+    it('Should add task proxies under root family', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: rootFamilyProxy.id,
+          name: rootFamilyProxy.node.name,
+          cyclePoint: cyclePoint.id
+        },
+        state: 'running'
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      const cyclepoint = cylcTree.root.children[0]
+      const rootFamily = cyclepoint.children[0]
+      expect(rootFamily.children.length).to.equal(0)
+      // the cycle point now has root [0], FAM family [1], and foo task [2]
+      expect(cyclepoint.children.length).to.equal(3)
+      const task = cyclepoint.children[2]
+      expect(task.id).to.equal(taskProxyId)
+      const family = cyclepoint.children[0]
+      expect(family.children.length).to.equal(0)
+    })
+    it('Should add task proxies under a family that is under the root family', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: 'running'
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      const cyclepoint = cylcTree.root.children[0]
+      const rootFamily = cyclepoint.children[0]
+      expect(rootFamily.children.length).to.equal(0)
+      const family = cyclepoint.children[1]
+      expect(family.children.length).to.equal(1)
+      const task = family.children[0]
+      expect(task.id).to.equal(taskProxyId)
+    })
+    it('Should add task proxies and report if the parent is invalid', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: '-1'
+        },
+        state: 'running'
+      })
+      const sandbox = sinon.createSandbox()
+      sandbox.stub(console, 'error')
+      cylcTree.addTaskProxy(taskProxy)
+      expect(console.error.calledOnce).to.equal(true)
+      const task = cylcTree.lookup.get(taskProxyId)
+      expect(task.id).to.equal(taskProxyId)
+      sandbox.restore()
+    })
+    it('Should update task proxies', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxyState = 'running'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: taskProxyState
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      expect(task.node.state).to.equal(taskProxyState)
+      taskProxy.node.state = 'waiting'
+      cylcTree.updateTaskProxy(taskProxy)
+      expect(cylcTree.root.children[0].children[1].children[0].node.state).to.equal('waiting')
+    })
+    it('Should not update an invalid task proxy', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxyState = 'running'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: taskProxyState
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      expect(task.node.state).to.equal(taskProxyState)
+      cylcTree.updateTaskProxy(null)
+      expect(cylcTree.root.children[0].children[1].children[0].node.state).to.equal(taskProxyState)
+    })
+    it('Should not update an task proxy if it is not in the tree', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxyState = 'running'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: taskProxyState
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      expect(task.node.state).to.equal(taskProxyState)
+      const orphanTaskProxy = createTaskProxyNode({
+        id: 'NA',
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: taskProxyState
+      })
+      cylcTree.updateTaskProxy(orphanTaskProxy)
+      expect(cylcTree.root.children[0].children[1].children[0].node.state).to.equal(taskProxyState)
+    })
+    it('Should remove task proxies', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxyState = 'running'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: taskProxyState
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      expect(task.node.state).to.equal(taskProxyState)
+      cylcTree.removeTaskProxy(taskProxy.id)
+      expect(cylcTree.root.children[0].children[1].children.length).to.equal(0)
+    })
+    it('Should remove task proxies if added to the root family', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxyState = 'running'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: rootFamilyProxy.id,
+          name: rootFamilyProxy.node.name,
+          cyclePoint: cyclePoint.id
+        },
+        cyclePoint: cyclePoint.id,
+        state: taskProxyState
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      const cyclepoint = cylcTree.root.children[0]
+      const task = cyclepoint.children[2]
+      expect(task.node.state).to.equal(taskProxyState)
+      cylcTree.removeTaskProxy(taskProxy.id)
+      expect(cylcTree.root.children[0].children[0].children.length).to.equal(0)
+      expect(cylcTree.root.children[0].children[0].id).to.equal(rootFamilyProxy.id)
+      expect(cylcTree.root.children[0].children[1].children.length).to.equal(0)
+      expect(cylcTree.root.children[0].children[1].id).to.equal(familyProxy.id)
+    })
+    it('Should not remove task proxies if not added to the tree', () => {
+      const taskProxyId = 'cylc|workflow|1|foo'
+      const taskProxyState = 'running'
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: rootFamilyProxy.id,
+          name: rootFamilyProxy.node.name,
+          cyclePoint: cyclePoint.id
+        },
+        cyclePoint: cyclePoint.id,
+        state: taskProxyState
+      })
+      cylcTree.removeTaskProxy(taskProxy.id)
+      expect(cylcTree.root.children[0].children[0].children.length).to.equal(0)
+      expect(cylcTree.root.children[0].children[0].id).to.equal(rootFamilyProxy.id)
+      expect(cylcTree.root.children[0].children[1].children.length).to.equal(0)
+      expect(cylcTree.root.children[0].children[1].id).to.equal(familyProxy.id)
     })
   })
 })

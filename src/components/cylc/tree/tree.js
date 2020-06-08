@@ -225,7 +225,7 @@ class CylcTree {
     const node = this.lookup.get(cyclePointId)
     if (node) {
       this.recursivelyRemoveNode(node)
-      this.root.children.splice(this.root.children.find((node) => node.id === cyclePointId), 1)
+      this.root.children.splice(this.root.children.indexOf(node), 1)
       // sort cycle points
       this.root.children.sort((cyclepoint, anotherCyclepoint) => {
         return cyclepoint.id.localeCompare(anotherCyclepoint.id)
@@ -333,7 +333,7 @@ class CylcTree {
     const parent = this.lookup.get(parentId)
     // If the parent has already been removed from the lookup map, there won't be any parent here
     if (parent) {
-      parent.children.splice(parent.children.find((node) => node.id === nodeId), 1)
+      parent.children.splice(parent.children.indexOf(node), 1)
     }
   }
 
@@ -399,7 +399,7 @@ class CylcTree {
       } else {
         parent = this.lookup.get(taskProxy.node.firstParent.id)
       }
-      parent.children.splice(parent.children.find((node) => node.id === taskProxy.id), 1)
+      parent.children.splice(parent.children.indexOf(taskProxy), 1)
     }
   }
 
@@ -451,7 +451,7 @@ class CylcTree {
       // re-calculate the job's task progress
       const parent = this.lookup.get(job.node.firstParent.id)
       computeTaskProgress(parent.node)
-      parent.children.splice(parent.children.find((node) => node.id === job.id), 1)
+      parent.children.splice(parent.children.indexOf(job), 1)
     }
   }
 }
