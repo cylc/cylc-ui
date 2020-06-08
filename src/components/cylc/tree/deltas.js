@@ -25,6 +25,21 @@ import {
 import CylcTree from './tree'
 
 /**
+ * Helper object used to iterate pruned deltas data.
+ *
+ * @type {{
+ *   jobs: string,
+ *   taskProxies: string,
+ *   familyProxies: string
+ * }}
+ */
+const PRUNED = {
+  jobs: 'removeJob',
+  taskProxies: 'removeTaskProxy',
+  familyProxies: 'removeFamilyProxy'
+}
+
+/**
  * Deltas pruned.
  *
  * @param {{
@@ -35,24 +50,38 @@ import CylcTree from './tree'
  * @param {CylcTree} tree
  */
 function applyDeltasPruned (pruned, tree) {
-  // jobs
-  if (pruned.jobs) {
-    for (const jobId of pruned.jobs) {
-      tree.removeJob(jobId)
+  Object.keys(PRUNED).forEach(prunedKey => {
+    if (pruned[prunedKey]) {
+      for (const id of pruned[prunedKey]) {
+        tree[PRUNED[prunedKey]](id)
+      }
     }
-  }
-  // task proxies
-  if (pruned.taskProxies) {
-    for (const taskProxyId of pruned.taskProxies) {
-      tree.removeTaskProxy(taskProxyId)
-    }
-  }
-  // family proxies
-  if (pruned.familyProxies) {
-    for (const familyProxyId of pruned.familyProxies) {
-      tree.removeFamilyProxy(familyProxyId)
-    }
-  }
+  })
+}
+
+/**
+ * Helper object used to iterate added deltas data.
+ *
+ * @type {{
+ *   jobs: [
+ *     function(Object, *=): {id: string, type: string, node: Object, latestMessage: string},
+ *     string],
+ *   familyProxies: [
+ *     function(Object): {id: string, type: string, node: Object, children: *[]},
+ *     string],
+ *   taskProxies: [
+ *     function(Object): {id: string, type: string, expanded: boolean, node: Object, children: *[]},
+ *     string],
+ *   cyclePoints: [
+ *     function(Object): {id: string, type: string, node: Object, children: *[]},
+ *     string]
+ *   }}
+ */
+const ADDED = {
+  cyclePoints: [createCyclePointNode, 'addCyclePoint'],
+  familyProxies: [createFamilyProxyNode, 'addFamilyProxy'],
+  taskProxies: [createTaskProxyNode, 'addTaskProxy'],
+  jobs: [createJobNode, 'addJob']
 }
 
 /**
@@ -68,30 +97,37 @@ function applyDeltasPruned (pruned, tree) {
  * @param {CylcTree} tree
  */
 function applyDeltasAdded (added, tree) {
-  if (added.cyclePoints) {
-    added.cyclePoints.forEach(cyclePoint => {
-      const cyclePointNode = createCyclePointNode(cyclePoint)
-      tree.addCyclePoint(cyclePointNode)
-    })
-  }
-  if (added.familyProxies) {
-    added.familyProxies.forEach(familyProxy => {
-      const familyProxyNode = createFamilyProxyNode(familyProxy)
-      tree.addFamilyProxy(familyProxyNode)
-    })
-  }
-  if (added.taskProxies) {
-    added.taskProxies.forEach(taskProxy => {
-      const taskProxyNode = createTaskProxyNode(taskProxy)
-      tree.addTaskProxy(taskProxyNode)
-    })
-  }
-  if (added.jobs) {
-    added.jobs.forEach(job => {
-      const jobNode = createJobNode(job, '')
-      tree.addJob(jobNode)
-    })
-  }
+  Object.keys(ADDED).forEach(addedKey => {
+    if (added[addedKey]) {
+      added[addedKey].forEach(addedData => {
+        const createNodeFunction = ADDED[addedKey][0]
+        const treeFunction = ADDED[addedKey][1]
+        const node = createNodeFunction(addedData)
+        tree[treeFunction](node)
+      })
+    }
+  })
+}
+
+/**
+ * Helper object used to iterate updated deltas data.
+ *
+ * @type {{
+ *   jobs: [
+ *     function(Object, *=): {id: string, type: string, node: Object, latestMessage: string},
+ *     string],
+ *   familyProxies: [
+ *     function(Object): {id: string, type: string, node: Object, children: *[]},
+ *     string],
+ *   taskProxies: [
+ *     function(Object): {id: string, type: string, expanded: boolean, node: Object, children: *[]},
+ *     string
+ *   ]}}
+ */
+const UPDATED = {
+  familyProxies: [createFamilyProxyNode, 'updateFamilyProxy'],
+  taskProxies: [createTaskProxyNode, 'updateTaskProxy'],
+  jobs: [createJobNode, 'updateJob']
 }
 
 /**
@@ -105,24 +141,16 @@ function applyDeltasAdded (added, tree) {
  * @param {CylcTree} tree
  */
 function applyDeltasUpdated (updated, tree) {
-  if (updated.familyProxies) {
-    updated.familyProxies.forEach(familyProxy => {
-      const familyProxyNode = createFamilyProxyNode(familyProxy)
-      tree.updateFamilyProxy(familyProxyNode)
-    })
-  }
-  if (updated.taskProxies) {
-    updated.taskProxies.forEach(taskProxy => {
-      const taskProxyNode = createTaskProxyNode(taskProxy)
-      tree.updateTaskProxy(taskProxyNode)
-    })
-  }
-  if (updated.jobs) {
-    updated.jobs.forEach(job => {
-      const jobNode = createJobNode(job, '')
-      tree.updateJob(jobNode)
-    })
-  }
+  Object.keys(UPDATED).forEach(updatedKey => {
+    if (updated[updatedKey]) {
+      updated[updatedKey].forEach(updatedData => {
+        const updateNodeFunction = UPDATED[updatedKey][0]
+        const treeFunction = UPDATED[updatedKey][1]
+        const node = updateNodeFunction(updatedData)
+        tree[treeFunction](node)
+      })
+    }
+  })
 }
 
 /**

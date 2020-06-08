@@ -98,13 +98,13 @@ function createTaskProxyNode (taskProxy) {
  * only adding new properties such as type, name, etc.
  *
  * @param job {Object} job
- * @param latestMessage {string} latest message of the job's task
+ * @param [latestMessage] {string} latest message of the job's task, defaults to an empty string
  * @return {{node: Object, latestMessage: string}}
  * @return {{id: string, type: string, node: Object, latestMessage: string}}
  */
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
 // TODO: add job-leaf (details) in the hierarchy later for infinite-tree
-function createJobNode (job, latestMessage) {
+function createJobNode (job, latestMessage = '') {
   return {
     id: job.id,
     type: 'job',
