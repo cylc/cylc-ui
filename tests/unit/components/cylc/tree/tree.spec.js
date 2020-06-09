@@ -669,15 +669,21 @@ describe('CylcTree', () => {
     it('Should add jobs', () => {
       expect(taskProxy.node.progress).to.equal(0)
       const jobId = `${taskProxy.id}|1`
+      const fmt = new Intl.DateTimeFormat('en', { year: 'numeric', month: '2-digit', day: '2-digit' })
+      const startedDate = new Date()
+      const startedTime = fmt.format(startedDate)
       const job = createJobNode({
         id: jobId,
         firstParent: {
           id: taskProxy.id
         },
         state: TaskState.FAILED.name.toLowerCase(),
-        startedTime: new Date().toLocaleString()
+        startedTime
       })
+      const sandbox = sinon.createSandbox()
+      sandbox.stub(Date, 'now').returns(startedDate.getTime() + 15000)
       cylcTree.addJob(job)
+      sandbox.restore()
       const cyclepoint = cylcTree.root.children[0]
       const family = cyclepoint.children[0]
       const task = family.children[0]
