@@ -19,7 +19,7 @@ import CylcTree from '@/components/cylc/tree/tree'
 import { expect } from 'chai'
 import {
   createCyclePointNode,
-  createFamilyProxyNode,
+  createFamilyProxyNode, createJobNode,
   createTaskProxyNode,
   createWorkflowNode
 } from '@/components/cylc/tree'
@@ -573,6 +573,207 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children[0].children[0].id).to.equal(rootFamilyProxy.id)
       expect(cylcTree.root.children[0].children[1].children.length).to.equal(0)
       expect(cylcTree.root.children[0].children[1].id).to.equal(familyProxy.id)
+    })
+  })
+  describe('Jobs', () => {
+    let cylcTree
+    let cyclePoint
+    let rootFamilyProxy
+    let familyProxy
+    let taskProxy
+    beforeEach(() => {
+      const workflow = createWorkflowNode({
+        id: 'cylc|workflow'
+      })
+      cylcTree = new CylcTree(workflow)
+      cyclePoint = createCyclePointNode({
+        cyclePoint: 'cylc|workflow|1'
+      })
+      cylcTree.addCyclePoint(cyclePoint)
+      rootFamilyProxy = createFamilyProxyNode({
+        id: 'cylc|workflow|1|root',
+        name: 'root',
+        cyclePoint: cyclePoint.id,
+        firstParent: {
+          id: cyclePoint.id
+        }
+      })
+      cylcTree.addFamilyProxy(rootFamilyProxy)
+      familyProxy = createFamilyProxyNode({
+        id: 'cylc|workflow|1|FAM1',
+        cyclePoint: cyclePoint.id,
+        firstParent: {
+          id: rootFamilyProxy.id,
+          name: rootFamilyProxy.node.name
+        }
+      })
+      cylcTree.addFamilyProxy(familyProxy)
+      taskProxy = createTaskProxyNode({
+        id: 'cylc|workflow|1|foo',
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: 'running'
+      })
+      cylcTree.addTaskProxy(taskProxy)
+    })
+    it('Should add jobs', () => {
+      const jobId = 'cylc|workflow|1|foo|1'
+      const job = createJobNode({
+        id: jobId,
+        firstParent: {
+          id: taskProxy.id
+        },
+        state: 'running'
+      })
+      cylcTree.addJob(job)
+      const cyclepoint = cylcTree.root.children[0]
+      // [0] is the root family, not used
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      const createdJob = task.children[0]
+      expect(createdJob.id).to.equal(jobId)
+    })
+    it('Should not add jobs twice', () => {
+      const jobId = 'cylc|workflow|1|foo|1'
+      const job = createJobNode({
+        id: jobId,
+        firstParent: {
+          id: taskProxy.id
+        },
+        state: 'running'
+      })
+      cylcTree.addJob(job)
+      cylcTree.addJob(job)
+      const cyclepoint = cylcTree.root.children[0]
+      // [0] is the root family, not used
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      const createdJob = task.children[0]
+      expect(createdJob.id).to.equal(jobId)
+      expect(task.children.length).to.equal(1)
+    })
+    it('Should not add invalid jobs', () => {
+      cylcTree.addJob(null)
+      const cyclepoint = cylcTree.root.children[0]
+      // [0] is the root family, not used
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      expect(task.children.length).to.equal(0)
+    })
+    it('Should update jobs', () => {
+      const jobId = 'cylc|workflow|1|foo|1'
+      const state = 'running'
+      const job = createJobNode({
+        id: jobId,
+        firstParent: {
+          id: taskProxy.id
+        },
+        state: state
+      })
+      cylcTree.addJob(job)
+      const cyclepoint = cylcTree.root.children[0]
+      // [0] is the root family, not used
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      const createdJob = task.children[0]
+      expect(createdJob.node.state).to.equal(state)
+      job.node.state = 'waiting'
+      cylcTree.updateJob(job)
+      expect(task.children[0].node.state).equal('waiting')
+    })
+    it('Should not update invalid jobs', () => {
+      const jobId = 'cylc|workflow|1|foo|1'
+      const state = 'running'
+      const job = createJobNode({
+        id: jobId,
+        firstParent: {
+          id: taskProxy.id
+        },
+        state: state
+      })
+      cylcTree.addJob(job)
+      const cyclepoint = cylcTree.root.children[0]
+      // [0] is the root family, not used
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      const createdJob = task.children[0]
+      expect(createdJob.node.state).to.equal(state)
+      cylcTree.updateJob(null)
+      expect(task.children[0].node.state).equal(state)
+      expect(task.children.length).equal(1)
+    })
+    it('Should not update a job if it is not in the tree', () => {
+      const jobId = 'cylc|workflow|1|foo|1'
+      const state = 'running'
+      const job = createJobNode({
+        id: jobId,
+        firstParent: {
+          id: taskProxy.id
+        },
+        state: state
+      })
+      const cyclepoint = cylcTree.root.children[0]
+      // [0] is the root family, not used
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      expect(task.children.length).equal(0)
+      cylcTree.updateJob(job)
+      expect(task.children.length).equal(0)
+    })
+    it('Should remove jobs', () => {
+      const jobId = 'cylc|workflow|1|foo|1'
+      const job = createJobNode({
+        id: jobId,
+        firstParent: {
+          id: taskProxy.id
+        },
+        state: 'running'
+      })
+      cylcTree.addJob(job)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      const createdJob = task.children[0]
+      expect(createdJob.id).to.equal(jobId)
+      cylcTree.removeJob(job.id)
+      expect(cylcTree.root.children[0].children[1].children[0].children.length).to.equal(0)
+    })
+    it('Should not remove invalid jobs', () => {
+      const jobId = 'cylc|workflow|1|foo|1'
+      const job = createJobNode({
+        id: jobId,
+        firstParent: {
+          id: taskProxy.id
+        },
+        state: 'running'
+      })
+      cylcTree.addJob(job)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      const createdJob = task.children[0]
+      expect(createdJob.id).to.equal(jobId)
+      cylcTree.removeJob(null)
+      expect(cylcTree.root.children[0].children[1].children[0].children.length).to.equal(1)
+    })
+    it('Should not remove if job is not in the tree', () => {
+      const jobId = 'cylc|workflow|1|foo|1'
+      const job = createJobNode({
+        id: jobId,
+        firstParent: {
+          id: taskProxy.id
+        },
+        state: 'running'
+      })
+      cylcTree.addJob(job)
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[1]
+      const task = family.children[0]
+      const createdJob = task.children[0]
+      expect(createdJob.id).to.equal(jobId)
+      cylcTree.removeJob('-1')
+      expect(cylcTree.root.children[0].children[1].children[0].children.length).to.equal(1)
     })
   })
 })
