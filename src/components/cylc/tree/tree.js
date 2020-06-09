@@ -2,6 +2,7 @@ import { computePercentProgress } from '@/components/cylc'
 import { extractGroupState } from '@/utils/tasks'
 import { merge } from 'lodash'
 import { createFamilyProxyNode } from '@/components/cylc/tree/index'
+import TaskState from '@/model/TaskState.model'
 
 export const FAMILY_ROOT = 'root'
 
@@ -16,17 +17,35 @@ export const FAMILY_ROOT = 'root'
  * When the progress is successfully computed, the given task proxy node will get an additional property
  * `progress` with type number (integer) between 0 and 100, representing the task progress.
  *
- * @param taskProxyNode {Object} task proxy node
+ * The property will be set in the taskProxy.node.progress property.
+ *
+ * @param taskProxy {{
+ *   id: string,
+ *   node: {
+ *     state: string,
+ *     progress: number,
+ *     task: {
+ *       meanElapsedTime: number
+ *     }
+ *   },
+ *   children: [{
+ *     id: string,
+ *     node: {
+ *       state: string,
+ *       startedTime: string
+ *     }
+ *   }]
+ * }} task proxy
  */
-function computeTaskProgress (taskProxyNode) {
+function computeTaskProgress (taskProxy) {
   // calculate task progress if necessary/possible
-  if (taskProxyNode.state === 'running' && taskProxyNode.jobs && taskProxyNode.jobs.length > 0) {
+  if (taskProxy.node.state === TaskState.RUNNING.name.toLowerCase()) {
     // the graphql query is expected to have jobs sorted by submit_num, e.g.:
     // `jobs(sort: { keys: ["submit_num"], reverse:true })`
-    const latestJob = taskProxyNode.jobs[0]
-    if (latestJob.startedTime) {
-      const startedTime = Date.parse(latestJob.startedTime)
-      taskProxyNode.progress = computePercentProgress(startedTime, taskProxyNode.task.meanElapsedTime)
+    const latestJob = taskProxy.children[0]
+    if (latestJob.node.startedTime) {
+      const startedTime = Date.parse(latestJob.node.startedTime)
+      taskProxy.node.progress = computePercentProgress(startedTime, taskProxy.node.task.meanElapsedTime)
     }
   }
 }
@@ -163,7 +182,7 @@ class CylcTree {
   }
 
   /**
-   * @param {{
+   * @param {null|{
    *   id: string,
    *   node: Object,
    *   children: []
@@ -185,7 +204,7 @@ class CylcTree {
   // --- Cycle points
 
   /**
-   * @param {{
+   * @param {null|{
    *   id: string,
    *   node: Object,
    *   children: []
@@ -203,7 +222,7 @@ class CylcTree {
   }
 
   /**
-   * @param {{
+   * @param {null|{
    *   id: string,
    *   node: Object,
    *   children: []
@@ -219,17 +238,13 @@ class CylcTree {
   }
 
   /**
-   * @param {string} cyclePointId
+   * @param {null|string} cyclePointId
    */
   removeCyclePoint (cyclePointId) {
     const node = this.lookup.get(cyclePointId)
     if (node) {
       this.recursivelyRemoveNode(node)
       this.root.children.splice(this.root.children.indexOf(node), 1)
-      // sort cycle points
-      this.root.children.sort((cyclepoint, anotherCyclepoint) => {
-        return cyclepoint.id.localeCompare(anotherCyclepoint.id)
-      })
     }
   }
 
@@ -241,7 +256,7 @@ class CylcTree {
   // --- Family proxies
 
   /**
-   * @param {{
+   * @param {null|{
    *   id: string,
    *   node: Object,
    *   children: []
@@ -253,6 +268,10 @@ class CylcTree {
     // them. When that happens, you may add a family proxy to the lookup, and only
     // append it to the parent later.
     if (familyProxy) {
+      // ignore the root family
+      if (familyProxy.id.endsWith(`|${FAMILY_ROOT}`)) {
+        return
+      }
       // add if not in the lookup already
       const existingFamilyProxy = this.lookup.get(familyProxy.id)
       if (!existingFamilyProxy) {
@@ -291,7 +310,7 @@ class CylcTree {
   }
 
   /**
-   * @param {{
+   * @param {null|{
    *   id: string,
    *   node: Object,
    *   children: []
@@ -307,13 +326,13 @@ class CylcTree {
   }
 
   /**
-   * @param {string} familyProxyId
+   * @param {null|string} familyProxyId
    */
   removeFamilyProxy (familyProxyId) {
     let node
     let nodeId
     let parentId
-    // when deleting the root family, we can also remove the entire cycle point
+    // NOTE: when deleting the root family, we can also remove the entire cycle point
     if (familyProxyId.endsWith('|root')) {
       // 0 has the owner, 1 has the workflow Id, 2 has the cycle point, and 3 the family name
       const [owner, workflowId, cyclePoint] = familyProxyId.split('|')
@@ -340,7 +359,7 @@ class CylcTree {
   // --- Task proxies
 
   /**
-   * @param {{
+   * @param {null|{
    *   id: string,
    *   node: Object,
    *   children: []
@@ -354,7 +373,7 @@ class CylcTree {
       let parent
       if (taskProxy.node.firstParent.name === FAMILY_ROOT) {
         // if the parent is root, we must instead attach this node to the cyclepoint!
-        parent = this.lookup.get(taskProxy.node.firstParent.cyclePoint)
+        parent = this.lookup.get(taskProxy.node.cyclePoint)
       } else {
         // otherwise its parent is another family proxy node and **MUST** already exist
         parent = this.lookup.get(taskProxy.node.firstParent.id)
@@ -369,7 +388,7 @@ class CylcTree {
   }
 
   /**
-   * @param {{
+   * @param {null|{
    *   id: string,
    *   node: Object,
    *   children: []
@@ -379,14 +398,14 @@ class CylcTree {
     if (taskProxy) {
       const node = this.lookup.get(taskProxy.id)
       if (node) {
-        computeTaskProgress(taskProxy.node)
+        computeTaskProgress(taskProxy)
         merge(node, taskProxy)
       }
     }
   }
 
   /**
-   * @param {string} taskProxyId
+   * @param {null|string} taskProxyId
    */
   removeTaskProxy (taskProxyId) {
     const taskProxy = this.lookup.get(taskProxyId)
@@ -406,7 +425,7 @@ class CylcTree {
   // --- Jobs
 
   /**
-   * @param {{
+   * @param {null|{
    *   id: string,
    *   node: Object,
    *   latestMessage: string
@@ -418,15 +437,16 @@ class CylcTree {
       const parent = this.lookup.get(job.node.firstParent.id)
       parent.children.push(job)
       // re-calculate the job's task progress
-      computeTaskProgress(parent.node)
+      computeTaskProgress(parent)
     }
   }
 
   /**
-   * @param {{
+   * @param {null|{
    *   id: string,
+   *   type: string,
    *   node: Object,
-   *   children: []
+   *   latestMessage: string
    * }} job
    */
   updateJob (job) {
@@ -436,13 +456,13 @@ class CylcTree {
         merge(node, job)
         // re-calculate the job's task progress
         const parent = this.lookup.get(job.node.firstParent.id)
-        computeTaskProgress(parent.node)
+        computeTaskProgress(parent)
       }
     }
   }
 
   /**
-   * @param {string} jobId
+   * @param {null|string} jobId
    */
   removeJob (jobId) {
     const job = this.lookup.get(jobId)
@@ -450,7 +470,7 @@ class CylcTree {
       this.recursivelyRemoveNode(job)
       // re-calculate the job's task progress
       const parent = this.lookup.get(job.node.firstParent.id)
-      computeTaskProgress(parent.node)
+      computeTaskProgress(parent)
       parent.children.splice(parent.children.indexOf(job), 1)
     }
   }
