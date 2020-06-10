@@ -154,7 +154,7 @@ function applyDeltasUpdated (updated, tree) {
 }
 
 /**
- * @param {{
+ * @param {null|{
  *   id: string,
  *   shutdown: boolean,
  *   added: {
@@ -177,10 +177,10 @@ function applyDeltasUpdated (updated, tree) {
  *     jobs: [string]
  *   }
  * }} deltas
- * @param {CylcTree} tree
+ * @param {null|CylcTree} tree
  */
 export function applyDeltas (deltas, tree) {
-  if (deltas) {
+  if (deltas && tree) {
     // first we check whether it is a shutdown response
     if (deltas.shutdown) {
       tree.clear()
@@ -194,7 +194,7 @@ export function applyDeltas (deltas, tree) {
       //      In this case we don't really have any way to fix the tree.
       // In both cases, actually, the user has little that s/he could do, besides refreshing the
       // page. So we fail silently and wait for a request with the initial data.
-      if (!deltas.added.workflow) {
+      if (!deltas.added || !deltas.added.workflow) {
         // eslint-disable-next-line no-console
         console.error('Received a delta before the workflow initial data burst')
         return
