@@ -147,6 +147,9 @@ class CylcTree {
    * }} [workflow]
    */
   constructor (workflow) {
+    /**
+     * @type {Map<string, any>}
+     */
     this.lookup = new Map()
     if (!workflow) {
       this.root = {
@@ -280,10 +283,15 @@ class CylcTree {
         // We may get a family proxy added twice. The first time is when it is the parent of another
         // family proxy. In that case, we create an orphan node in the lookup table.
         // The second time will be node with more information, such as .firstParent {}. When this happens,
-        // we must remember to merge the objects, i.e. augment the existing orphan with the extra
-        // information. That's because GraphQL firstParent brings less data.
-        merge(familyProxy, existingFamilyProxy)
-        this.lookup.set(familyProxy.id, familyProxy)
+        // we must remember to merge the objects.
+        merge(existingFamilyProxy, familyProxy)
+        this.lookup.set(existingFamilyProxy.id, existingFamilyProxy)
+        // NOTE: important, replace the version so that we use the existing one
+        // when linking with the parent node in the tree, not the new GraphQL data
+        familyProxy = existingFamilyProxy
+      }
+      if (!familyProxy.node.state) {
+        familyProxy.node.state = ''
       }
       // if we got the parent, let's link parent and child
       if (familyProxy.node.firstParent) {
@@ -321,6 +329,9 @@ class CylcTree {
       const node = this.lookup.get(familyProxy.id)
       if (node) {
         merge(node, familyProxy)
+        if (!node.node.state) {
+          node.node.state = ''
+        }
       }
     }
   }
@@ -342,17 +353,21 @@ class CylcTree {
     } else {
       nodeId = familyProxyId
       node = this.lookup.get(nodeId)
-      if (node.node.firstParent.name === FAMILY_ROOT) {
-        parentId = node.node.cyclePoint
-      } else {
-        parentId = node.node.firstParent.id
+      if (node) {
+        if (node.node.firstParent.name === FAMILY_ROOT) {
+          parentId = node.node.cyclePoint
+        } else {
+          parentId = node.node.firstParent.id
+        }
       }
     }
-    this.recursivelyRemoveNode(node)
-    const parent = this.lookup.get(parentId)
-    // If the parent has already been removed from the lookup map, there won't be any parent here
-    if (parent) {
-      parent.children.splice(parent.children.indexOf(node), 1)
+    if (node) {
+      this.recursivelyRemoveNode(node)
+      const parent = this.lookup.get(parentId)
+      // If the parent has already been removed from the lookup map, there won't be any parent here
+      if (parent) {
+        parent.children.splice(parent.children.indexOf(node), 1)
+      }
     }
   }
 

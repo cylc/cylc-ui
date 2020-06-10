@@ -213,7 +213,7 @@ describe('CylcTree', () => {
       })
       cylcTree.addFamilyProxy(familyProxy1)
       expect(cylcTree.lookup.get(familyProxyId2).id).to.not.equal(null)
-      expect(cylcTree.lookup.get(familyProxy1.id).node.state).to.equal(undefined)
+      expect(cylcTree.lookup.get(familyProxy1.id).node.state).to.equal('')
       const familyProxy1Again = createFamilyProxyNode({
         id: familyProxyId1,
         state: TaskState.WAITING.name.toLowerCase()
