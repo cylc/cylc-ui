@@ -26,7 +26,6 @@
     "cytoscape": "^3.9.0",
     "cytoscape-dagre": "^2.2.2",
     "cytoscape-expand-collapse": "^3.1.2",
-    "cytoscape-navigator": "^2.0.0",
     "cytoscape-node-html-label": "^1.1.5",
     "cytoscape-panzoom": "^2.5.3",
     "cytoscape-popper": "^1.0.4",

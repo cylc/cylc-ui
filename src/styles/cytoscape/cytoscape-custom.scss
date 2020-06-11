@@ -17,10 +17,12 @@
 
 .c-graph {
   width: 100%;
-  // the height of the graph area is 100 viewport-height, minus the height of the toolbar
-  height: calc(100vh - 48px);
+  height: 100%;
   background-color: #fff;
   overflow: hidden;
+  display: flex;
+  flex: 1;
+  align-items: stretch;
   z-index: 1;
 
   .cytoscape {

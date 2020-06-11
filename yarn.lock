@@ -5420,11 +5420,6 @@ cytoscape-expand-collapse@^3.1.2:
   resolved "https://registry.yarnpkg.com/cytoscape-expand-collapse/-/cytoscape-expand-collapse-3.2.1.tgz#6bdbedf67834ad3491a6abd3248a8959c5aea57c"
   integrity sha512-jJlCW1VJaaU0nhPLqSWYrK+9dltdtpSBZjWk5BxFvA0w2GWp32u3zDv6uvyX0Um7RDN3lqv/7M4eo2LL1V36CQ==
 
-cytoscape-navigator@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/cytoscape-navigator/-/cytoscape-navigator-2.0.1.tgz#c3b82a5329e5e561d91992f6162ea576c03fa7c4"
-  integrity sha512-csflZi8BaUmEr1f6y2xKg9CufpU18Du9CzwA3ybjISClaJcuKMJkIDHLE3sg6GKOdxBVUcHX6aeR5gjTQ66Z6w==
-
 cytoscape-node-html-label@^1.1.5:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/cytoscape-node-html-label/-/cytoscape-node-html-label-1.2.0.tgz#584bb5a222a3a566348e8958dcde2961bb6967ac"
