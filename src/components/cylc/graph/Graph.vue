@@ -63,18 +63,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         text
         @click="warning = false"><v-icon>mdi mdi-close</v-icon></v-btn>
     </v-snackbar>
-    <div class='cytoscape-navigator-overlay' ref="cytoscape-navigator-overlay">
-      <canvas></canvas>
-      <div class='cytoscape-navigatorView'></div>
-      <div class='cytoscape-navigatorOverlay'></div>
-    </div>
   </div>
 </template>
 
 <script>
 import cytoscape from 'cytoscape'
 import dagre from 'cytoscape-dagre'
-import navigator from 'cytoscape-navigator'
 import panzoom from 'cytoscape-panzoom'
 import undoRedo from 'cytoscape-undo-redo'
 import popper from 'cytoscape-popper'
@@ -207,7 +201,6 @@ export default {
     this.runLayout(this.cytoscapeInstance)
     this.setupUndoRedo(this.cytoscapeInstance)
     this.setupPanzoom(this.cytoscapeInstance)
-    this.setupNavigator(this.cytoscapeInstance)
     this.setupInteractivity(this.cytoscapeInstance)
     this.setupHtmlLabel(this.cytoscapeInstance, states)
     // set the initial zoom-level and pan (position) of the graph
@@ -294,9 +287,6 @@ export default {
      * Register the extensions used by Cytoscape for this component.
      */
     registerExtensions () {
-      if (typeof cytoscape('core', 'navigator') !== 'function') {
-        navigator(cytoscape)
-      }
       if (typeof cytoscape('core', 'panzoom') !== 'function') {
         panzoom(cytoscape)
       }
@@ -359,22 +349,6 @@ export default {
      */
     setupPanzoom (instance) {
       instance.panzoom(panzoomDefaults)
-    },
-
-    /**
-     * Sets up the navigator plugin in the instance.
-     * @param {cytoscape} instance - the cytoscape instance
-     */
-    setupNavigator (instance) {
-      instance.navigator({
-        container: this.$refs['cytoscape-navigator-overlay'],
-        viewLiveFramerate: 0, // set false to update graph pan only on drag end set 0 to do it instantly set a number (frames per second) to update not more than N times per second
-        thumbnailEventFramerate: 30, // max thumbnail's updates per second triggered by graph updates
-        thumbnailLiveFramerate: false, // max thumbnail's updates per second. Set false to disable
-        dblClickDelay: 200, // milliseconds
-        removeCustomContainer: true, // destroy the container specified by user on plugin destroy
-        rerenderDelay: 100 // ms to throttle rerender updates to the panzoom for performance
-      })
     },
 
     /**
