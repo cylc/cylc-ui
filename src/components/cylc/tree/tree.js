@@ -353,7 +353,7 @@ class CylcTree {
     } else {
       nodeId = familyProxyId
       node = this.lookup.get(nodeId)
-      if (node && node.firstParent) {
+      if (node && node.node && node.node.firstParent) {
         if (node.node.firstParent.name === FAMILY_ROOT) {
           parentId = node.node.cyclePoint
         } else {

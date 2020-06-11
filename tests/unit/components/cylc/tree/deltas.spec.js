@@ -177,7 +177,11 @@ describe('Deltas', () => {
       })
       cylcTree.addFamilyProxy(familyProxy)
     })
-    it('Should apply updated deltas', () => {
+    it('Should apply pruned deltas', () => {
+      // cyclepoint 1 has 1 family
+      expect(cylcTree.root.children[0].children.length).to.equal(1)
+      // family is empty, note that root family is never added to the tree
+      expect(cylcTree.root.children[0].children[0].children.length).to.equal(0)
       const fakeTree = sinon.spy(cylcTree)
       const deltasPruningFamily = {
         id: WORKFLOW_ID,
@@ -189,6 +193,7 @@ describe('Deltas', () => {
         }
       }
       applyDeltas(deltasPruningFamily, fakeTree)
+      // cycle point is now empty
       expect(cylcTree.root.children[0].children.length).to.equal(0)
       expect(fakeTree.tallyCyclePointStates.called).to.equal(true)
 
@@ -203,6 +208,9 @@ describe('Deltas', () => {
         }
       }
       applyDeltas(deltasPruningCyclePoint, fakeTree)
+      // now the cycle point was removed as well!
+      expect(cylcTree.root.children.length).to.equal(0)
+      expect(fakeTree.tallyCyclePointStates.called).to.equal(true)
     })
   })
 })
