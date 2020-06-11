@@ -485,8 +485,11 @@ class CylcTree {
       this.recursivelyRemoveNode(job)
       // re-calculate the job's task progress
       const parent = this.lookup.get(job.node.firstParent.id)
-      computeTaskProgress(parent)
-      parent.children.splice(parent.children.indexOf(job), 1)
+      // prevent runtime error in case the parent was already removed
+      if (parent) {
+        computeTaskProgress(parent)
+        parent.children.splice(parent.children.indexOf(job), 1)
+      }
     }
   }
 }
