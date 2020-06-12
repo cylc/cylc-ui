@@ -31,7 +31,7 @@ import TaskState from '@/model/TaskState.model'
 describe('Deltas', () => {
   const WORKFLOW_ID = 'cylc|workflow'
   it('Should skip if no deltas provided', () => {
-    expect(applyDeltas, null, null).to.throw(Error)
+    expect(() => applyDeltas(null, null)).to.throw(Error)
   })
   it('Should clear the tree if shutdown is found in the deltas', () => {
     const cylcTree = new CylcTree(createWorkflowNode({
@@ -62,6 +62,29 @@ describe('Deltas', () => {
     expect(console.error.calledOnce).to.equal(true)
     sandbox.restore()
   })
+  it('Should log to console and throw an error if it fails to handle deltas', () => {
+    const sandbox = sinon.createSandbox()
+    sandbox.stub(console, 'error')
+    const deltasAdded = {
+      id: WORKFLOW_ID,
+      shutdown: false,
+      added: {
+        cyclePoints: [
+          {
+            cyclePoint: `${WORKFLOW_ID}|1`
+          }
+        ]
+      }
+    }
+    const cylcTree = new CylcTree(createWorkflowNode({
+      id: WORKFLOW_ID
+    }))
+    sinon.stub(cylcTree, 'addCyclePoint').throws(Error)
+    // let's force the tree to throw an error when adding cycle points, simulating a runtime exception
+    expect(() => applyDeltas(deltasAdded, cylcTree)).to.throw(Error)
+    expect(console.error.calledOnce).to.equal(true)
+    sandbox.restore()
+  })
   describe('Initial data burst', () => {
     let cylcTree
     beforeEach(() => {
@@ -84,6 +107,25 @@ describe('Deltas', () => {
       applyDeltas(deltasWithInitialDataBurst, fakeTree)
       expect(cylcTree.root.id).to.equal(WORKFLOW_ID)
       expect(fakeTree.tallyCyclePointStates.called).to.equal(true)
+    })
+    it('Should log to console and throw an error if it fails to handle the initial data burst', () => {
+      const sandbox = sinon.createSandbox()
+      sandbox.stub(console, 'error')
+      const deltasWithInitialDataBurst = {
+        id: WORKFLOW_ID,
+        shutdown: false,
+        added: {
+          workflow: {
+            id: WORKFLOW_ID,
+            cyclePoints: [],
+            familyProxies: []
+            // taskProxies: [] < --- This means that the workflow is invalid, as it MUST have taskProxies (can be empty)
+          }
+        }
+      }
+      expect(() => applyDeltas(deltasWithInitialDataBurst, cylcTree)).to.throw(Error)
+      expect(console.error.calledOnce).to.equal(true)
+      sandbox.restore()
     })
   })
   describe('Added', () => {

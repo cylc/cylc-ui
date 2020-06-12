@@ -154,6 +154,48 @@ function applyDeltasUpdated (updated, tree) {
 }
 
 /**
+ * Handle the initial data burst of deltas. Should create a tree given a workflow from the GraphQL
+ * data. This tree contains the base structure to which the deltas are applied to.
+ *
+ * @param {Object} deltas - GraphQL deltas
+ * @param {CylcTree} tree - Tree object backed by an array and a Map
+ */
+function handleInitialDataBurst (deltas, tree) {
+  const workflow = deltas.added.workflow
+  // A workflow (e.g. five) may not have any families as 'root' is filtered
+  workflow.familyProxies = workflow.familyProxies || []
+  populateTreeFromGraphQLData(tree, workflow)
+  tree.tallyCyclePointStates()
+}
+
+/**
+ * Handle the deltas. This function receives the new set of deltas, and the tree object. It is assumed
+ * the tree has been correctly created. Except for family proxies, it is expected that other elements
+ * are only created via the deltas.added attribute.
+ *
+ * Family proxies are a special case, due to hierarchy within families, so we have no easy way to grab
+ * the first family from the top of the hierarchy in the deltas.
+ *l
+ * @param {Object} deltas - GraphQL deltas
+ * @param {CylcTree} tree - Tree object backed by an array and a Map
+ */
+function handleDeltas (deltas, tree) {
+  if (deltas.pruned) {
+    applyDeltasPruned(deltas.pruned, tree)
+  }
+  if (deltas.added) {
+    applyDeltasAdded(deltas.added, tree)
+  }
+  if (deltas.updated) {
+    applyDeltasUpdated(deltas.updated, tree)
+  }
+  // if added, removed, or updated deltas, we want to re-calculate the cycle point states now
+  if (deltas.pruned || deltas.added || deltas.updated) {
+    tree.tallyCyclePointStates()
+  }
+}
+
+/**
  * @param {null|{
  *   id: string,
  *   shutdown: boolean,
@@ -199,28 +241,24 @@ export function applyDeltas (deltas, tree) {
         console.error('Received a delta before the workflow initial data burst')
         return
       }
-      const workflow = deltas.added.workflow
-      // A workflow (e.g. five) may not have any families as 'root' is filtered
-      workflow.familyProxies = workflow.familyProxies || []
-      populateTreeFromGraphQLData(tree, workflow)
-      tree.tallyCyclePointStates()
+      try {
+        handleInitialDataBurst(deltas, tree)
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error applying initial data burst for deltas', error, deltas)
+        throw error
+      }
     } else {
       // the tree was created, and now the next messages should contain
       // 1. new data added under deltas.added (but not in deltas.added.workflow)
       // 2. data updated in deltas.updated
       // 3. data pruned in deltas.pruned
-      if (deltas.pruned) {
-        applyDeltasPruned(deltas.pruned, tree)
-      }
-      if (deltas.added) {
-        applyDeltasAdded(deltas.added, tree)
-      }
-      if (deltas.updated) {
-        applyDeltasUpdated(deltas.updated, tree)
-      }
-      // if added, removed, or updated deltas, we want to re-calculate the cycle point states now
-      if (deltas.pruned || deltas.added || deltas.updated) {
-        tree.tallyCyclePointStates()
+      try {
+        handleDeltas(deltas, tree)
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error applying deltas', error, deltas)
+        throw error
       }
     }
   } else {
