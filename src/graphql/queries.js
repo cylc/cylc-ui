@@ -166,7 +166,7 @@ fragment JobData on Job {
  * @type {string}
  */
 const WORKFLOW_GRAPH_QUERY = `
-subscription {
+subscription ($workflowId: ID) {
   workflows(ids: ["WORKFLOW_ID"]) {
     id
     name
@@ -265,7 +265,7 @@ subscription {
 
 /**
  * Query used to retrieve data for the GScan sidebar.
- * @type {string}
+ * @type {DocumentNode}
  */
 const GSCAN_QUERY = `
 subscription {
@@ -302,6 +302,10 @@ subscription {
 }
 `
 
+/**
+ * Subscription used in the view that lists workflows in a table.
+ * @type {string}
+ */
 const WORKFLOWS_TABLE_QUERY = `
   subscription {
     workflows {

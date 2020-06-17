@@ -22,9 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <tree-wrapper
           v-for="widgetId of this.treeWidgetIds"
           :key="widgetId"
-          :workflows="workflowTree"
+          :workflows="workflows"
           :widgetId="widgetId"
-          :is-loading="isLoading"
+          :is-loading="workflowTree === null || workflowTree.root.id === ''"
       />
       <graph-wrapper
           v-for="widgetId of this.graphWidgetIds"
@@ -46,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
+import { each, iter } from '@lumino/algorithm'
 import {
   ContentWidget,
   GraphWrapper,
@@ -57,8 +58,7 @@ export default {
   name: 'Workflow',
   props: {
     workflowTree: {
-      type: Array,
-      required: true
+      type: Object
     },
     workflowName: {
       type: String,
@@ -86,6 +86,14 @@ export default {
       mutationsWidgetIds: []
     }
   },
+  computed: {
+    workflows () {
+      if (!this.workflowTree) {
+        return []
+      }
+      return this.workflowTree.root.children
+    }
+  },
   created () {
     this.dock.id = 'dock'
     this.main.id = 'main'
@@ -103,9 +111,6 @@ export default {
       this.dock.addWidget(contentWidget)
       this.treeWidgetIds.push(id)
     },
-    removeTreeWidget (id) {
-      this.treeWidgetIds.splice(this.treeWidgetIds.indexOf(id), 1)
-    },
     addGraphWidget (id) {
       const contentWidget = new ContentWidget(id, 'graph')
       this.dock.addWidget(contentWidget)
@@ -115,6 +120,14 @@ export default {
       const contentWidget = new ContentWidget(id, 'mutations')
       this.dock.addWidget(contentWidget)
       this.mutationsWidgetIds.push(id)
+    },
+    removeAllWidgets () {
+      const dockWidgets = this.dock.widgets()
+      const widgets = []
+      each(iter(dockWidgets), widget => {
+        widgets.push(widget)
+      })
+      widgets.forEach(widget => widget.close())
     }
   }
 }

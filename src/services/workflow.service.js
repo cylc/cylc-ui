@@ -18,6 +18,7 @@
 import { GQuery } from '@/services/gquery'
 import store from '@/store/'
 import Alert from '@/model/Alert.model'
+
 import { createApolloClient } from '@/utils/graphql'
 import { HOLD_WORKFLOW, RELEASE_WORKFLOW, STOP_WORKFLOW } from '@/graphql/queries'
 /* eslint-disable no-unused-vars */
@@ -26,7 +27,7 @@ import ZenObservable from 'zen-observable'
 import { DocumentNode } from 'graphql'
 /* eslint-enable no-unused-vars */
 
-class SubscriptionWorkflowService extends GQuery {
+class WorkflowService extends GQuery {
   /**
    * @constructor
    * @param {string} httpUrl
@@ -34,27 +35,89 @@ class SubscriptionWorkflowService extends GQuery {
    */
   constructor (httpUrl, subscriptionClient) {
     super()
+    this.query = null
     this.subscriptionClient = subscriptionClient
     this.apolloClient = createApolloClient(httpUrl, subscriptionClient)
+    /**
+     * Observable for a merged query subscription.
+     * @type {ZenObservable.Subscription}
+     */
     this.observable = null
+    /**
+     * Observable for a deltas query subscription.
+     * @type {ZenObservable.Subscription}
+     */
+    this.deltasObservable = null
     this.debug = process.env.NODE_ENV !== 'production'
   }
+
+  // deltas subscriptions
+
+  /**
+   * Create and start a deltas subscription.
+   *
+   * @param query {DocumentNode} - an already parsed GraphQL query (i.e. not a `string`)
+   * @param variables {{}}
+   * @param subscriptionOptions {{
+   *   next: Function,
+   *   error: Function
+   * }}
+   */
+  startDeltasSubscription (query, variables, subscriptionOptions) {
+    if (!query) {
+      throw new Error('You must provide a query for the subscription')
+    }
+    if (!variables) {
+      variables = {}
+    }
+    if (this.debug) {
+      // eslint-disable-next-line no-console
+      console.debug('graphql query:', query.loc.source.body)
+      // eslint-disable-next-line no-console
+      console.debug('graphql variables:', variables)
+    }
+    this.deltasObservable = this.apolloClient.subscribe({
+      query: query,
+      variables: variables,
+      fetchPolicy: 'no-cache'
+    }).subscribe({
+      next (value) {
+        subscriptionOptions.next(value)
+      },
+      error (errorValue) {
+        subscriptionOptions.error(errorValue)
+      }
+    })
+  }
+
+  /**
+   * Stops the current deltas subscription, if set.
+   */
+  stopDeltasSubscription () {
+    if (this.deltasObservable) {
+      this.deltasObservable.unsubscribe()
+    }
+  }
+
+  // subscriptions with query-merging
 
   recompute () {
     super.recompute()
     this.request()
   }
 
+  /**
+   * Perform a REST GraphQL request. The request will use the merged-query
+   * as payload. Deltas are requested in a separate subscription/query,
+   * due to issues merging `Workflow` subscriptions with `Delta` subscriptions.
+   */
   request () {
-    /**
-     * Perform a REST GraphQL request for all subscriptions.
-     */
+    if (!this.query) {
+      return null
+    }
     if (this.debug) {
       // eslint-disable-next-line no-console
       console.debug('graphql request:', this.query)
-    }
-    if (!this.query) {
-      return null
     }
     const vm = this
     if (this.observable !== null) {
@@ -74,7 +137,9 @@ class SubscriptionWorkflowService extends GQuery {
         // set all subscriptions to active
         vm.subscriptions
           .filter(s => s.active === false)
-          .forEach(s => { s.active = true })
+          .forEach(s => {
+            s.active = true
+          })
         // run callback functions on the views
         vm.callbackActive()
       },
@@ -89,6 +154,8 @@ class SubscriptionWorkflowService extends GQuery {
     })
   }
 
+  // TODO: I believe these will be removed once we integrate the api-on-the-fly
+  //       code with other components
   // mutations
 
   releaseWorkflow (workflowId) {
@@ -117,57 +184,6 @@ class SubscriptionWorkflowService extends GQuery {
       }
     })
   }
-
-  // deltas
-
-  /**
-   * Create and start a subscription.
-   *
-   * @param query {DocumentNode} - an already parsed GraphQL query (i.e. not a `string`)
-   * @param variables
-   * @param subscriptionOptions
-   * @returns {Promise<ZenObservable.Subscription>}
-   */
-  startSubscription (query, variables, subscriptionOptions) {
-    if (!query) {
-      throw new Error('You must provide a query for the subscription')
-    }
-    if (!subscriptionOptions || !subscriptionOptions.next || !subscriptionOptions.error) {
-      throw new Error('You must provide the next and error callbacks for the subscription')
-    }
-    if (!variables) {
-      variables = {}
-    }
-    if (this.debug) {
-      // eslint-disable-next-line no-console
-      console.debug('graphql request:', query)
-    }
-    return new Promise((resolve, reject) => {
-      /**
-       * @type {ZenObservable.Subscription<*>}
-       */
-      const subscription = this.apolloClient.subscribe({
-        query: query,
-        variables: variables,
-        fetchPolicy: 'no-cache'
-      }).subscribe({
-        next (value) {
-          subscriptionOptions.next(value)
-        },
-        error (errorValue) {
-          subscriptionOptions.error(errorValue)
-        }
-      })
-      resolve(subscription)
-    })
-  }
-
-  /**
-   * @param subscription {ZenObservable.Subscription} - An active subscription
-   */
-  stopSubscription (subscription) {
-    subscription.unsubscribe()
-  }
 }
 
-export default SubscriptionWorkflowService
+export default WorkflowService

@@ -24,14 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :activable="false"
         :multiple-active="false"
         :min-depth="1"
-        v-if="subscription !== null"
         ref="tree0"
         key="tree0"
       ></tree-component>
-      <v-progress-circular
-        v-else
-        indeterminate
-      ></v-progress-circular>
     </div>
   </div>
 </template>
@@ -42,9 +37,8 @@ import { treeview } from '@/mixins/treeview'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import CylcTree from '@/components/cylc/tree/tree'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
-/* eslint-disable no-unused-vars */
-import ZenObservable from 'zen-observable'
-/* eslint-enable no-unused-vars */
+import Alert from '@/model/Alert.model'
+import { applyDeltas } from '@/components/cylc/tree/deltas'
 
 export default {
   mixins: [
@@ -62,7 +56,7 @@ export default {
   },
 
   components: {
-    treeComponent: TreeComponent
+    TreeComponent
   },
 
   metaInfo () {
@@ -72,12 +66,6 @@ export default {
   },
 
   data: () => ({
-    /**
-     * This holds the view's only active subscription. It must be stopped when
-     * the user navigates away to avoid memory leaks.
-     * @type {null|ZenObservable.Subscription}
-     */
-    subscription: null,
     /**
      * This is the CylcTree, which contains the hierarchical tree data structure.
      * It is created from the GraphQL data, with the only difference that this one
@@ -98,9 +86,14 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm
-        .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, vm.variables, vm.tree)
-        .then(subscription => {
-          vm.subscription = subscription
+        .$workflowService
+        .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, vm.variables, {
+          next: function next (response) {
+            applyDeltas(response.data.deltas, vm.tree)
+          },
+          error: function error (err) {
+            vm.setAlert(new Alert(err.message, null, 'error'))
+          }
         })
     })
   },
@@ -111,16 +104,20 @@ export default {
    * start a new subscription.
    */
   beforeRouteUpdate (to, from, next) {
-    this.subscription.unsubscribe()
-    this.subscription = null
+    this.$workflowService.stopDeltasSubscription()
     this.tree.clear()
     const vm = this
     // NOTE: this must be done in the nextTick so that vm.variables will use the updated prop!
     this.$nextTick(() => {
       vm
-        .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, vm.variables, vm.tree)
-        .then(subscription => {
-          vm.subscription = subscription
+        .$workflowService
+        .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, vm.variables, {
+          next: function next (response) {
+            applyDeltas(response.data.deltas, vm.tree)
+          },
+          error: function error (err) {
+            vm.setAlert(new Alert(err.message, null, 'error'))
+          }
         })
     })
     next()
@@ -131,8 +128,7 @@ export default {
    * data structures used locally.
    */
   beforeRouteLeave (to, from, next) {
-    this.subscription.unsubscribe()
-    this.subscription = null
+    this.$workflowService.stopDeltasSubscription()
     this.tree = null
     next()
   },
@@ -144,7 +140,6 @@ export default {
    */
   beforeDestroy () {
     this.tree = null
-    this.subscription = null
   }
 }
 </script>

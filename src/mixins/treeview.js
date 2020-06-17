@@ -16,8 +16,6 @@
  */
 
 import { mapActions, mapState } from 'vuex'
-import { applyDeltas } from '@/components/cylc/tree/deltas'
-import Alert from '@/model/Alert.model'
 /* eslint-disable no-unused-vars */
 import User from '@/model/User.model'
 /* eslint-enable no-unused-vars */
@@ -62,53 +60,7 @@ const treeview = {
     /**
      * Create a UI alert.
      */
-    ...mapActions(['setAlert']),
-    /**
-     * Start view subscription. This initializes the `subscription` instance variable
-     * of this view.
-     * @return Promise<ZenObservable.Subscription>
-     */
-    startDeltasSubscription (query, variables, tree) {
-      const vm = this
-      // start the subscription query
-      return this.$workflowService.startSubscription(query, variables, {
-        /**
-         * @param {{
-         *   data: {
-         *     deltas: {
-         *       id: string,
-         *       shutdown: boolean,
-         *       added: {
-         *         workflow: Object,
-         *         cyclePoints: Object,
-         *         familyProxies: Object,
-         *         taskProxies: Object,
-         *         jobs: Object
-         *       },
-         *       updated: {
-         *         workflow: Object,
-         *         cyclePoints: Object,
-         *         familyProxies: Object,
-         *         taskProxies: Object,
-         *         jobs: Object
-         *       },
-         *       pruned: {
-         *         taskProxies: [string],
-         *         familyProxies: [string],
-         *         jobs: [string]
-         *       }
-         *     }
-         *   }
-         * }} response
-         */
-        next: function next (response) {
-          applyDeltas(response.data.deltas, tree)
-        },
-        error: function error (err) {
-          vm.setAlert(new Alert(err.message, null, 'error'))
-        }
-      })
-    }
+    ...mapActions(['setAlert'])
   }
 }
 
