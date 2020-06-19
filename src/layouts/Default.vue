@@ -21,14 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <toolbar />
     <drawer />
 
-    <v-content>
+    <v-main>
       <alert />
       <div id="core-view">
         <v-fade-transition mode="out-in">
           <slot/>
         </v-fade-transition>
       </div>
-    </v-content>
+    </v-main>
   </div>
 </template>
 

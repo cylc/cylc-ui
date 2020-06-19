@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-model="drawer"
     app
     floating
-    mobile-break-point="991"
+    mobile-breakpoint="991"
     width="260"
     persistent
     class="fill-height"

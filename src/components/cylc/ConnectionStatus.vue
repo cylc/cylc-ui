@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     top
     color="red"
     class="justify-center"
-    :timeout=0
+    :timeout=-1
     :value="offline"
   >
     <v-icon

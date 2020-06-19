@@ -16,9 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-content>
+  <v-main>
     <slot />
-  </v-content>
+  </v-main>
 </template>
 
 <script>
