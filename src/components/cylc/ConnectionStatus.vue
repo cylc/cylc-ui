@@ -17,11 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-snackbar
-    top
-    color="red"
-    class="justify-center"
+    :value="isOffline"
     :timeout=-1
-    :value="offline"
+    class="justify-center"
+    color="red"
+    top
   >
     <v-icon
       class="mr-2"
@@ -34,12 +34,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 export default {
   name: 'ConnectionStatus',
-  computed: {
-    ...mapState(['offline'])
+
+  props: {
+    /**
+     * Controls whether the connection status alert is visible or not.
+     */
+    isOffline: {
+      type: Boolean,
+      required: true
+    }
   }
 }
 </script>
