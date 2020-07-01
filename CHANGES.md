@@ -58,8 +58,7 @@ view using graphiql.js that sends queries to the backend graphiql
 endpoint.
 
 [#458](https://github.com/cylc/cylc-ui/pull/458) - Add CylcTree and
-use deltas for the Tree view and component. Verify that our subscriptions
-are closed after they are done (both normal and deltas subscriptions).
+use deltas for the Tree view and component.
 
 ### Fixes
 

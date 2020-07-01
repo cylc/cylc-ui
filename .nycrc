@@ -7,7 +7,7 @@
     "src/i18n",
     "src/lang",
     "src/plugins",
-    "src/services/mock/**/*.js",
+    "src/services/mock",
     "src/styles",
     "src/components/index.js"
    ],
