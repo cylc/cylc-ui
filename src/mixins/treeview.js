@@ -20,7 +20,7 @@ import { mapActions, mapState } from 'vuex'
 import User from '@/model/User.model'
 /* eslint-enable no-unused-vars */
 
-const treeview = {
+const datatree = {
   computed: {
     /**
      * We use the user from the store to compute the workflow ID. The view
@@ -65,5 +65,5 @@ const treeview = {
 }
 
 export {
-  treeview
+  datatree
 }

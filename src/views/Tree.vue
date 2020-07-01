@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mixin } from '@/mixins'
-import { treeview } from '@/mixins/treeview'
+import { datatree } from '@/mixins/treeview'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import CylcTree from '@/components/cylc/tree/tree'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
@@ -43,7 +43,7 @@ import { applyDeltas } from '@/components/cylc/tree/deltas'
 export default {
   mixins: [
     mixin,
-    treeview
+    datatree
   ],
 
   name: 'Tree',

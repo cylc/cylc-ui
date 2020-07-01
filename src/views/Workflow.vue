@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mixin } from '@/mixins'
-import { treeview } from '@/mixins/treeview'
+import { datatree } from '@/mixins/treeview'
 import { mapState } from 'vuex'
 import Workflow from '@/components/cylc/workflow/Workflow'
 import { EventBus } from '@/components/cylc/workflow'
@@ -44,7 +44,7 @@ const QUERIES = {
 export default {
   mixins: [
     mixin,
-    treeview
+    datatree
   ],
   name: 'Workflow',
   props: {
