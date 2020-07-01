@@ -94,11 +94,6 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children.length).to.equal(2)
       expect(cylcTree.root.children[1].id).to.equal('2')
     })
-    it('Should not add invalid cycle points', () => {
-      expect(cylcTree.root.children.length).to.equal(0)
-      cylcTree.addCyclePoint(null)
-      expect(cylcTree.root.children.length).to.equal(0)
-    })
     it('Should not add a cycle point twice', () => {
       const cyclePoint1 = createCyclePointNode({
         cyclePoint: '1'
@@ -128,10 +123,6 @@ describe('CylcTree', () => {
         cyclePoint: '1'
       })
       cylcTree.updateCyclePoint(cyclePoint1)
-      expect(cylcTree.root.children.length).to.equal(0)
-    })
-    it('Should not update a cycle point if invalid', () => {
-      cylcTree.updateCyclePoint(null)
       expect(cylcTree.root.children.length).to.equal(0)
     })
     it('Should remove cycle points', () => {
@@ -274,17 +265,6 @@ describe('CylcTree', () => {
       expect(cylcTree.lookup.get(familyProxyId1).id).to.equal(familyProxyId1)
       expect(cylcTree.lookup.get(familyProxyId1).children[0].id).to.equal(familyProxyId2)
     })
-    it('Should not add invalid family proxies', () => {
-      const lookupSize = cylcTree.lookup.size
-      cylcTree.addCyclePoint(null)
-      // root has its two cycle points
-      expect(cylcTree.root.children.length).to.equal(2)
-      // the cycle points are child-less
-      expect(cylcTree.root.children[0].children.length).to.equal(0)
-      expect(cylcTree.root.children[0].children.length).to.equal(0)
-      // nothing added to the lookup map
-      expect(cylcTree.lookup.size).to.equal(lookupSize)
-    })
     it('Should not add a family proxy twice to lookup, nor to its parent', () => {
       const familyProxy1 = createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint2.id}|fam1`,
@@ -314,12 +294,6 @@ describe('CylcTree', () => {
       })
       cylcTree.updateFamilyProxy(familyProxy1)
       expect(cylcTree.lookup.get(familyProxy1.id)).to.equal(undefined)
-    })
-    it('Should not update a family proxy if invalid', () => {
-      cylcTree.updateFamilyProxy(null)
-      expect(cylcTree.root.children.length).to.equal(2)
-      expect(cylcTree.root.children[0].children.length).to.equal(0)
-      expect(cylcTree.root.children[1].children.length).to.equal(0)
     })
     it('Should remove family proxies', () => {
       const rootFamilyProxy = createFamilyProxyNode({
@@ -436,12 +410,6 @@ describe('CylcTree', () => {
       const family = cyclepoint.children[0]
       expect(family.children.length).to.equal(1)
     })
-    it('Should not add invalid task proxies', () => {
-      cylcTree.addTaskProxy(null)
-      const cyclepoint = cylcTree.root.children[0]
-      const family = cyclepoint.children[0]
-      expect(family.children.length).to.equal(0)
-    })
     it('Should add task proxies under root family', () => {
       const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
       const taskProxy = createTaskProxyNode({
@@ -516,24 +484,6 @@ describe('CylcTree', () => {
       taskProxy.node.state = TaskState.WAITING.name.toLowerCase()
       cylcTree.updateTaskProxy(taskProxy)
       expect(cylcTree.root.children[0].children[0].children[0].node.state).to.equal(TaskState.WAITING.name.toLowerCase())
-    })
-    it('Should not update an invalid task proxy', () => {
-      const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
-      const taskProxyState = TaskState.RUNNING.name.toLowerCase()
-      const taskProxy = createTaskProxyNode({
-        id: taskProxyId,
-        firstParent: {
-          id: familyProxy.id
-        },
-        state: taskProxyState
-      })
-      cylcTree.addTaskProxy(taskProxy)
-      const cyclepoint = cylcTree.root.children[0]
-      const family = cyclepoint.children[0]
-      const task = family.children[0]
-      expect(task.node.state).to.equal(taskProxyState)
-      cylcTree.updateTaskProxy(null)
-      expect(cylcTree.root.children[0].children[0].children[0].node.state).to.equal(taskProxyState)
     })
     it('Should not update an task proxy if it is not in the tree', () => {
       const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
@@ -710,13 +660,6 @@ describe('CylcTree', () => {
       expect(createdJob.id).to.equal(jobId)
       expect(task.children.length).to.equal(1)
     })
-    it('Should not add invalid jobs', () => {
-      cylcTree.addJob(null)
-      const cyclepoint = cylcTree.root.children[0]
-      const family = cyclepoint.children[0]
-      const task = family.children[0]
-      expect(task.children.length).to.equal(0)
-    })
     it('Should update jobs', () => {
       const jobId = `${taskProxy.id}|1`
       const state = TaskState.RUNNING.name.toLowerCase()
@@ -736,26 +679,6 @@ describe('CylcTree', () => {
       job.node.state = TaskState.WAITING.name.toLowerCase()
       cylcTree.updateJob(job)
       expect(task.children[0].node.state).equal(TaskState.WAITING.name.toLowerCase())
-    })
-    it('Should not update invalid jobs', () => {
-      const jobId = `${taskProxy.id}|1`
-      const state = TaskState.RUNNING.name.toLowerCase()
-      const job = createJobNode({
-        id: jobId,
-        firstParent: {
-          id: taskProxy.id
-        },
-        state: state
-      })
-      cylcTree.addJob(job)
-      const cyclepoint = cylcTree.root.children[0]
-      const family = cyclepoint.children[0]
-      const task = family.children[0]
-      const createdJob = task.children[0]
-      expect(createdJob.node.state).to.equal(state)
-      cylcTree.updateJob(null)
-      expect(task.children[0].node.state).equal(state)
-      expect(task.children.length).equal(1)
     })
     it('Should not update a job if it is not in the tree', () => {
       const jobId = `${taskProxy.id}|1`

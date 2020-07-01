@@ -185,21 +185,19 @@ class CylcTree {
   }
 
   /**
-   * @param {null|{
+   * @param {{
    *   id: string,
    *   node: Object,
    *   children: []
    * }} node
    */
   recursivelyRemoveNode (node) {
-    if (node) {
-      const stack = [node]
-      while (stack.length > 0) {
-        const n = stack.pop()
-        this.lookup.delete(n.id)
-        if (n.children && n.children.length > 0) {
-          stack.push(...n.children)
-        }
+    const stack = [node]
+    while (stack.length > 0) {
+      const n = stack.pop()
+      this.lookup.delete(n.id)
+      if (n.children && n.children.length > 0) {
+        stack.push(...n.children)
       }
     }
   }
@@ -207,14 +205,14 @@ class CylcTree {
   // --- Cycle points
 
   /**
-   * @param {null|{
+   * @param {{
    *   id: string,
    *   node: Object,
    *   children: []
    * }} cyclePoint
    */
   addCyclePoint (cyclePoint) {
-    if (cyclePoint && !this.lookup.has(cyclePoint.id)) {
+    if (!this.lookup.has(cyclePoint.id)) {
       this.lookup.set(cyclePoint.id, cyclePoint)
       this.root.children.push(cyclePoint)
       // sort cycle points
@@ -225,23 +223,21 @@ class CylcTree {
   }
 
   /**
-   * @param {null|{
+   * @param {{
    *   id: string,
    *   node: Object,
    *   children: []
    * }} cyclePoint
    */
   updateCyclePoint (cyclePoint) {
-    if (cyclePoint) {
-      const node = this.lookup.get(cyclePoint.id)
-      if (node) {
-        merge(node, cyclePoint)
-      }
+    const node = this.lookup.get(cyclePoint.id)
+    if (node) {
+      merge(node, cyclePoint)
     }
   }
 
   /**
-   * @param {null|string} cyclePointId
+   * @param {string} cyclePointId
    */
   removeCyclePoint (cyclePointId) {
     const node = this.lookup.get(cyclePointId)
@@ -259,7 +255,7 @@ class CylcTree {
   // --- Family proxies
 
   /**
-   * @param {null|{
+   * @param {{
    *   id: string,
    *   node: Object,
    *   children: []
@@ -270,78 +266,74 @@ class CylcTree {
     // firstParent's. However, you may get family proxies out of order when iterating
     // them. When that happens, you may add a family proxy to the lookup, and only
     // append it to the parent later.
-    if (familyProxy) {
-      // ignore the root family
-      if (familyProxy.id.endsWith(`|${FAMILY_ROOT}`)) {
-        return
-      }
-      // add if not in the lookup already
-      const existingFamilyProxy = this.lookup.get(familyProxy.id)
-      if (!existingFamilyProxy) {
-        this.lookup.set(familyProxy.id, familyProxy)
+    // ignore the root family
+    if (familyProxy.id.endsWith(`|${FAMILY_ROOT}`)) {
+      return
+    }
+    // add if not in the lookup already
+    const existingFamilyProxy = this.lookup.get(familyProxy.id)
+    if (!existingFamilyProxy) {
+      this.lookup.set(familyProxy.id, familyProxy)
+    } else {
+      // We may get a family proxy added twice. The first time is when it is the parent of another
+      // family proxy. In that case, we create an orphan node in the lookup table.
+      // The second time will be node with more information, such as .firstParent {}. When this happens,
+      // we must remember to merge the objects.
+      merge(existingFamilyProxy, familyProxy)
+      this.lookup.set(existingFamilyProxy.id, existingFamilyProxy)
+      // NOTE: important, replace the version so that we use the existing one
+      // when linking with the parent node in the tree, not the new GraphQL data
+      familyProxy = existingFamilyProxy
+    }
+    // See comment above in the else block. When we get family proxies out of order, we create the parent
+    // nodes if they don't exist in the tree yet, so that we can create the correct hierarchy. Later, we
+    // merge the data of the node. But for a while, the family proxy that we create won't have a state (as
+    // the state is given in the deltas data, and is not available in the `node.firstParent { id }`.
+    if (!familyProxy.node.state) {
+      familyProxy.node.state = ''
+    }
+    // if we got the parent, let's link parent and child
+    if (familyProxy.node.firstParent) {
+      let parent
+      if (familyProxy.node.firstParent.name === FAMILY_ROOT) {
+        // if the parent is root, we use the cyclepoint as the parent
+        parent = this.lookup.get(familyProxy.node.cyclePoint)
+      } else if (this.lookup.has(familyProxy.node.firstParent.id)) {
+        // if its parent is another family proxy node and must already exist
+        parent = this.lookup.get(familyProxy.node.firstParent.id)
       } else {
-        // We may get a family proxy added twice. The first time is when it is the parent of another
-        // family proxy. In that case, we create an orphan node in the lookup table.
-        // The second time will be node with more information, such as .firstParent {}. When this happens,
-        // we must remember to merge the objects.
-        merge(existingFamilyProxy, familyProxy)
-        this.lookup.set(existingFamilyProxy.id, existingFamilyProxy)
-        // NOTE: important, replace the version so that we use the existing one
-        // when linking with the parent node in the tree, not the new GraphQL data
-        familyProxy = existingFamilyProxy
+        // otherwise we create it so task proxies can be added to it as a child
+        parent = createFamilyProxyNode(familyProxy.node.firstParent)
+        this.lookup.set(parent.id, parent)
       }
-      // See comment above in the else block. When we get family proxies out of order, we create the parent
-      // nodes if they don't exist in the tree yet, so that we can create the correct hierarchy. Later, we
-      // merge the data of the node. But for a while, the family proxy that we create won't have a state (as
-      // the state is given in the deltas data, and is not available in the `node.firstParent { id }`.
-      if (!familyProxy.node.state) {
-        familyProxy.node.state = ''
-      }
-      // if we got the parent, let's link parent and child
-      if (familyProxy.node.firstParent) {
-        let parent
-        if (familyProxy.node.firstParent.name === FAMILY_ROOT) {
-          // if the parent is root, we use the cyclepoint as the parent
-          parent = this.lookup.get(familyProxy.node.cyclePoint)
-        } else if (this.lookup.has(familyProxy.node.firstParent.id)) {
-          // if its parent is another family proxy node and must already exist
-          parent = this.lookup.get(familyProxy.node.firstParent.id)
-        } else {
-          // otherwise we create it so task proxies can be added to it as a child
-          parent = createFamilyProxyNode(familyProxy.node.firstParent)
-          this.lookup.set(parent.id, parent)
-        }
-        // since this method may be called several times for the same family proxy (see comments above), it means
-        // the parent-child could end up repeated by accident; it means we must make sure to create this relationship
-        // exactly once.
-        if (parent.children.length === 0 || !parent.children.find(child => child.id === familyProxy.id)) {
-          parent.children.push(familyProxy)
-        }
+      // since this method may be called several times for the same family proxy (see comments above), it means
+      // the parent-child could end up repeated by accident; it means we must make sure to create this relationship
+      // exactly once.
+      if (parent.children.length === 0 || !parent.children.find(child => child.id === familyProxy.id)) {
+        parent.children.push(familyProxy)
       }
     }
   }
 
   /**
-   * @param {null|{
+   * @param {{
    *   id: string,
    *   node: Object,
    *   children: []
    * }} familyProxy
    */
   updateFamilyProxy (familyProxy) {
-    if (familyProxy) {
-      const node = this.lookup.get(familyProxy.id)
-      if (node) {
-        merge(node, familyProxy)
-        if (!node.node.state) {
-          node.node.state = ''
-        }
+    const node = this.lookup.get(familyProxy.id)
+    if (node) {
+      merge(node, familyProxy)
+      if (!node.node.state) {
+        node.node.state = ''
       }
     }
   }
 
   /**
-   * @param {null|string} familyProxyId
+   * @param {string} familyProxyId
    */
   removeFamilyProxy (familyProxyId) {
     let node
@@ -378,14 +370,14 @@ class CylcTree {
   // --- Task proxies
 
   /**
-   * @param {null|{
+   * @param {{
    *   id: string,
    *   node: Object,
    *   children: []
    * }} taskProxy
    */
   addTaskProxy (taskProxy) {
-    if (taskProxy && !this.lookup.has(taskProxy.id)) {
+    if (!this.lookup.has(taskProxy.id)) {
       // progress starts at 0
       taskProxy.node.progress = 0
       this.lookup.set(taskProxy.id, taskProxy)
@@ -407,24 +399,22 @@ class CylcTree {
   }
 
   /**
-   * @param {null|{
+   * @param {{
    *   id: string,
    *   node: Object,
    *   children: []
    * }} taskProxy
    */
   updateTaskProxy (taskProxy) {
-    if (taskProxy) {
-      const node = this.lookup.get(taskProxy.id)
-      if (node) {
-        computeTaskProgress(taskProxy)
-        merge(node, taskProxy)
-      }
+    const node = this.lookup.get(taskProxy.id)
+    if (node) {
+      computeTaskProgress(taskProxy)
+      merge(node, taskProxy)
     }
   }
 
   /**
-   * @param {null|string} taskProxyId
+   * @param {string} taskProxyId
    */
   removeTaskProxy (taskProxyId) {
     const taskProxy = this.lookup.get(taskProxyId)
@@ -444,14 +434,14 @@ class CylcTree {
   // --- Jobs
 
   /**
-   * @param {null|{
+   * @param {{
    *   id: string,
    *   node: Object,
    *   latestMessage: string
    * }} job
    */
   addJob (job) {
-    if (job && !this.lookup.has(job.id)) {
+    if (!this.lookup.has(job.id)) {
       this.lookup.set(job.id, job)
       const parent = this.lookup.get(job.node.firstParent.id)
       parent.children.push(job)
@@ -461,7 +451,7 @@ class CylcTree {
   }
 
   /**
-   * @param {null|{
+   * @param {{
    *   id: string,
    *   type: string,
    *   node: Object,
@@ -469,19 +459,17 @@ class CylcTree {
    * }} job
    */
   updateJob (job) {
-    if (job) {
-      const node = this.lookup.get(job.id)
-      if (node) {
-        merge(node, job)
-        // re-calculate the job's task progress
-        const parent = this.lookup.get(job.node.firstParent.id)
-        computeTaskProgress(parent)
-      }
+    const node = this.lookup.get(job.id)
+    if (node) {
+      merge(node, job)
+      // re-calculate the job's task progress
+      const parent = this.lookup.get(job.node.firstParent.id)
+      computeTaskProgress(parent)
     }
   }
 
   /**
-   * @param {null|string} jobId
+   * @param {string} jobId
    */
   removeJob (jobId) {
     const job = this.lookup.get(jobId)
