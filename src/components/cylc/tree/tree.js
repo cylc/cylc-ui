@@ -290,6 +290,10 @@ class CylcTree {
         // when linking with the parent node in the tree, not the new GraphQL data
         familyProxy = existingFamilyProxy
       }
+      // See comment above in the else block. When we get family proxies out of order, we create the parent
+      // nodes if they don't exist in the tree yet, so that we can create the correct hierarchy. Later, we
+      // merge the data of the node. But for a while, the family proxy that we create won't have a state (as
+      // the state is given in the deltas data, and is not available in the `node.firstParent { id }`.
       if (!familyProxy.node.state) {
         familyProxy.node.state = ''
       }
