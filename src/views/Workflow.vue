@@ -63,6 +63,7 @@ export default {
   },
   data: () => ({
     subscriptions: {},
+    deltaSubscriptions: [],
     /**
      * The CylcTree object, which receives delta updates. We must have only one for this
      * view, and it should contain data only while the tree subscription is active (i.e.
@@ -78,8 +79,9 @@ export default {
     ...mapState('user', ['user'])
   },
   created () {
+    const vm = this
     EventBus.$on('add:tree', () => {
-      const subscriptionId = new Date().getTime()
+      const subscriptionId = this.subscribeDeltas()
       // add widget that uses the GraphQl query response
       this.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
     })
@@ -100,16 +102,22 @@ export default {
     })
     EventBus.$on('delete:widget', (data) => {
       const subscriptionId = Number.parseFloat(data.id)
-      this.$workflowService.unsubscribe(subscriptionId)
+      if (vm.deltaSubscriptions.includes(subscriptionId)) {
+        // if this is a tree widget with a deltas subscription, then stop it if the last widget using it
+        vm.deltaSubscriptions.splice(this.deltaSubscriptions.indexOf(subscriptionId), 1)
+        if (this.deltaSubscriptions.length === 0) {
+          this.$workflowService.stopDeltasSubscription()
+        }
+      } else {
+        // otherwise recompute query and update normal subscription
+        this.$workflowService.unsubscribe(subscriptionId)
+      }
     })
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$nextTick(() => {
-        vm.subscribeToDeltas()
-        // Create a Tree View for the current workflow by default
-        const subscriptionId = new Date().getTime()
-        vm.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
+        EventBus.$emit('add:tree')
       })
     })
   },
@@ -124,9 +132,8 @@ export default {
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
-      this.subscribeToDeltas()
       // Create a Tree View for the current workflow by default
-      const subscriptionId = new Date().getTime()
+      const subscriptionId = this.subscribeDeltas()
       this.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
     })
     next()
@@ -135,6 +142,7 @@ export default {
     EventBus.$off('add:tree')
     EventBus.$off('add:graph')
     EventBus.$off('add:mutations')
+    EventBus.$off('delete:tree')
     EventBus.$off('delete:widget')
     this.$workflowService.unregister(this)
     this.tree.clear()
@@ -142,22 +150,23 @@ export default {
     next()
   },
   methods: {
-    /**
-     * To avoid duplicated code in beforeRouteUpdate and beforeRouteEnter.
-     *
-     * Later this method most likely will be replaced by mixin, or moved to a common place.
-     */
-    subscribeToDeltas () {
-      const vm = this
-      this.$workflowService
-        .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, this.variables, {
-          next: function next (response) {
-            applyDeltas(response.data.deltas, vm.tree)
-          },
-          error: function error (err) {
-            vm.setAlert(new Alert(err.message, null, 'error'))
-          }
-        })
+    subscribeDeltas () {
+      const id = new Date().getTime()
+      // start deltas subscription if not running
+      if (this.deltaSubscriptions.length === 0) {
+        const vm = this
+        this.$workflowService
+          .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, this.variables, {
+            next: function next (response) {
+              applyDeltas(response.data.deltas, vm.tree)
+            },
+            error: function error (err) {
+              vm.setAlert(new Alert(err.message, null, 'error'))
+            }
+          })
+      }
+      this.deltaSubscriptions.push(id)
+      return id
     },
     /**
      * Subscribe this view to a new GraphQL query.
