@@ -25,6 +25,7 @@ module.exports = {
   indexPath: 'index.html',
   transpileDependencies: ['vuetify'],
   runtimeCompiler: true,
+  productionSourceMap: process.env.NODE_ENV !== 'production',
   pluginOptions: {
     apollo: {
       lintGQL: false
