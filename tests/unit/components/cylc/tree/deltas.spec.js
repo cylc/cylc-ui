@@ -17,7 +17,7 @@
 
 import { expect } from 'chai'
 import { applyDeltas } from '@/components/cylc/tree/deltas'
-import CylcTree, { FAMILY_ROOT } from '@/components/cylc/tree/tree'
+import CylcTree, { FAMILY_ROOT } from '@/components/cylc/tree/cylc-tree'
 import {
   createCyclePointNode, createFamilyProxyNode,
   createWorkflowNode

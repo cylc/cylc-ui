@@ -32,7 +32,7 @@ import { mapState } from 'vuex'
 import Workflow from '@/components/cylc/workflow/Workflow'
 import { EventBus } from '@/components/cylc/workflow'
 import { WORKFLOW_GRAPH_QUERY, WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
-import CylcTree from '@/components/cylc/tree/tree'
+import CylcTree from '@/components/cylc/tree/cylc-tree'
 import { applyDeltas } from '@/components/cylc/tree/deltas'
 import Alert from '@/model/Alert.model'
 

@@ -22,7 +22,7 @@ import {
   createTaskProxyNode, populateTreeFromGraphQLData
 } from '@/components/cylc/tree/index'
 // eslint-disable-next-line no-unused-vars
-import CylcTree from './tree'
+import CylcTree from './cylc-tree'
 
 /**
  * Helper object used to iterate pruned deltas data.

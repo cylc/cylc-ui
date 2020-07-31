@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CylcTree, { FAMILY_ROOT } from '@/components/cylc/tree/tree'
+import CylcTree, { FAMILY_ROOT } from '@/components/cylc/tree/cylc-tree'
 import { expect } from 'chai'
 import {
   createCyclePointNode,

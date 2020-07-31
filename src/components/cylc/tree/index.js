@@ -16,7 +16,7 @@
  */
 
 // eslint-disable-next-line no-unused-vars
-import CylcTree from '@/components/cylc/tree/tree'
+import CylcTree from '@/components/cylc/tree/cylc-tree'
 
 /**
  * Create a workflow node. Uses the same properties (by reference) as the given workflow,

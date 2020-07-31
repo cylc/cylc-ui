@@ -22,7 +22,7 @@ import {
 import { expect } from 'chai'
 import sinon from 'sinon'
 import { sampleWorkflow1 } from './tree.data'
-import CylcTree from '@/components/cylc/tree/tree'
+import CylcTree from '@/components/cylc/tree/cylc-tree'
 
 const CYCLEPOINT_TYPE = 'cyclepoint'
 const FAMILY_TYPE = 'family-proxy'
