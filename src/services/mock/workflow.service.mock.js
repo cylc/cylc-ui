@@ -65,18 +65,15 @@ class MockWorkflowService extends GQuery {
     this.subscriptions.push({
       subscription
     })
-    return new Promise((resolve, reject) => {
-      subscriptionOptions.next({
-        data: {
-          deltas: {
-            added: {
-              workflow: checkpoint.workflows[0]
-            }
-          },
-          workflows: checkpoint.workflows
-        }
-      })
-      resolve(subscription)
+    subscriptionOptions.next({
+      data: {
+        deltas: {
+          added: {
+            workflow: checkpoint.workflows[0]
+          }
+        },
+        workflows: checkpoint.workflows
+      }
     })
   }
 
