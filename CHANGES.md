@@ -6,6 +6,32 @@ milestones](https://github.com/cylc/cylc-ui/milestones?state=closed) for each
 release.
 
 -------------------------------------------------------------------------------
+## __cylc-ui-0.3 (2020-??-??)__
+
+Release 0.3 of Cylc UI.
+
+### Backward incompatible changes
+
+None or N/A.
+
+### Enhancements
+
+[#458](https://github.com/cylc/cylc-ui/pull/458) - Add CylcTree and
+use deltas for the Tree view and component.
+
+### Fixes
+
+None.
+
+### Documentation
+
+None.
+
+### Security issues
+
+None.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-0.2 (2020-07-14)__
 
 Release 0.2 of Cylc UI.
@@ -56,9 +82,6 @@ increase, decrease, and reset UI font size.
 [#457](https://github.com/cylc/cylc-ui/pull/457) - Add a GraphiQL
 view using graphiql.js that sends queries to the backend graphiql
 endpoint.
-
-[#458](https://github.com/cylc/cylc-ui/pull/458) - Add CylcTree and
-use deltas for the Tree view and component.
 
 ### Fixes
 
