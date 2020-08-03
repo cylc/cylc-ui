@@ -6,6 +6,31 @@ milestones](https://github.com/cylc/cylc-ui/milestones?state=closed) for each
 release.
 
 -------------------------------------------------------------------------------
+## __cylc-ui-0.3 (2020-??-??)__
+
+Release 0.3 of Cylc UI.
+
+### Backward incompatible changes
+
+None or N/A.
+
+### Enhancements
+
+None.
+
+### Fixes
+
+None.
+
+### Documentation
+
+None.
+
+### Security issues
+
+None.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-0.2 (2020-07-14)__
 
 Release 0.2 of Cylc UI.
