@@ -158,14 +158,24 @@ function createTaskProxyNode (taskProxy) {
  * @return {{id: string, type: string, node: Object, children: [], latestMessage: string, children: [], size: number, state: Object}}
  */
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
-// TODO: add job-leaf (details) in the hierarchy later for infinite-tree
 function createJobNode (job, latestMessage = '') {
+  // add job-leaf (details) in the hierarchy for infinite-tree
+  const jobDetailsNode = {
+    id: `${job.id}-details`,
+    type: 'job-details',
+    node: job,
+    children: [],
+    size: TREE_ITEM_SIZE * 7, // 7 is the number of properties we are displaying
+    state: {
+      open: false
+    }
+  }
   return {
     id: job.id,
     type: 'job',
     node: job,
     latestMessage: latestMessage,
-    children: [],
+    children: [jobDetailsNode],
     // infinite-tree properties
     size: TREE_ITEM_SIZE,
     state: {

@@ -25,24 +25,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <template slot-scope="{ node, tree }" slot="default">
       <div class="treeitem">
         <div
-            :class="getNodeClass()"
-            :style="getNodeStyle(node)"
+          :class="getNodeClass()"
+          :style="getNodeStyle(node)"
         >
+          <!-- the node's left icon; used for expand/collapse -->
+          <!-- NOTE: this is NOT visible when the node type is job or the job details -->
+          <v-flex
+            :class="togglerClass(node)"
+            :style="getTypeStyle(node)"
+            @click="toggleClick($event, node, tree)"
+            v-if="!['job', 'job-details'].includes(node.type)"
+            shrink
+          >
+            <span v-html="togglerContent(node)"></span>
+          </v-flex>
+          <div :class="getNodeDataClass(node)" v-if="node.type === 'cyclepoint'">
+            <task
+              :status="node.node.state"
+              :isHeld="node.node.isHeld"
+              :progress=0
+            />
+            <span class="mx-1">{{ node.node.name }}</span>
+          </div>
           <!-- the node value -->
           <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-          <div class="node-data" v-if="node.type === 'cyclepoint'">
-            <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
-            <task :status="node.node.state" :progress=0 />
+          <div :class="getNodeDataClass(node)" v-else-if="node.type === 'family-proxy'">
+            <task
+              :status="node.node.state"
+              :isHeld="node.node.isHeld"
+              :progress="node.node.progress"
+            />
             <span class="mx-1">{{ node.node.name }}</span>
           </div>
-          <div class="node-data" v-else-if="node.type === 'family-proxy'">
-            <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
-            <task :status="node.node.state" :progress="node.node.progress" />
-            <span class="mx-1">{{ node.node.name }}</span>
-          </div>
-          <div class="node-data" v-else-if="node.type === 'task-proxy'">
-            <a @click="toggleClick($event, node, tree)" :class="togglerClass(node)"><span v-html="togglerContent(node)"></span></a>
-            <task :status="node.node.state" :progress="node.node.progress" />
+          <div :class="getNodeDataClass(node)" v-else-if="node.type === 'task-proxy'">
+            <task
+              :status="node.node.state"
+              :isHeld="node.node.isHeld"
+              :progress="node.node.progress"
+            />
             <span class="mx-1">{{ node.node.name }}</span>
             <div v-if="!node.state.open" class="node-summary">
               <!-- Task summary -->
@@ -52,14 +72,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   :status="task.node.state" />
             </div>
           </div>
-          <div class="node-data" @click="toggleClick($event, node, tree)" v-else-if="node.type === 'job'">
-            <div class="node-data">
+          <div :class="getNodeDataClass(node)" v-else-if="node.type === 'job'">
+            <div :class="getNodeDataClass(node)" @click="toggleClick($event, node, tree)">
               <job :status="node.node.state" />
               <span class="mx-1">#{{ node.node.submitNum }}</span>
               <span class="grey--text">{{ node.node.host }}</span>
             </div>
           </div>
-          <div class="node-data" v-else>
+          <div :class="getNodeDataClass(node)" v-else>
             <span class="mx-1">{{ node.node.name }}</span>
           </div>
         </div>
@@ -118,15 +138,7 @@ export default {
   },
   methods: {
     togglerContent (node) {
-      const open = node.state.open
-      const more = Object.hasOwnProperty.call(node, 'children') && node.children.length > 0
-      let togglerContent = ''
-      if (more && open) {
-        togglerContent = '&#9661;'
-      } else if (more && !open) {
-        togglerContent = '&#9655;'
-      }
-      return togglerContent
+      return node.state.open ? '&#9661;' : '&#9655;'
     },
     togglerClass (node) {
       const open = node.state.open
@@ -169,6 +181,12 @@ export default {
         node: true,
         'ml-3': true
       }
+    },
+    getNodeDataClass (node) {
+      const classes = {}
+      classes['node-data'] = true
+      classes[`node-data-${node.type}`] = true
+      return classes
     },
     hasChildren (node) {
       return node.children
