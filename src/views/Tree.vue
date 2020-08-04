@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <div class="c-tree">
-      <tree
+      <tree-component
         :workflows="workflowTree"
         :hoverable="false"
         :activable="false"
@@ -26,24 +26,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :min-depth="1"
         ref="tree0"
         key="tree0"
-      ></tree>
+      ></tree-component>
     </div>
   </div>
 </template>
 
 <script>
-import { mixin } from '@/mixins/index'
-import { mapGetters, mapState } from 'vuex'
-import Tree from '@/components/cylc/tree/Tree'
-import { WORKFLOW_TREE_QUERY } from '@/graphql/queries'
-
-// query to retrieve all workflows
-const QUERIES = {
-  root: WORKFLOW_TREE_QUERY
-}
+import { mixin } from '@/mixins'
+import { datatree } from '@/mixins/treeview'
+import TreeComponent from '@/components/cylc/tree/Tree.vue'
+import CylcTree from '@/components/cylc/tree/cylc-tree'
+import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+import Alert from '@/model/Alert.model'
+import { applyDeltas } from '@/components/cylc/tree/deltas'
 
 export default {
-  mixins: [mixin],
+  mixins: [
+    mixin,
+    datatree
+  ],
+
+  name: 'Tree',
 
   props: {
     workflowName: {
@@ -53,7 +56,7 @@ export default {
   },
 
   components: {
-    tree: Tree
+    TreeComponent
   },
 
   metaInfo () {
@@ -63,65 +66,80 @@ export default {
   },
 
   data: () => ({
-    viewID: '',
-    subscriptions: {},
-    isLoading: true
+    /**
+     * This is the CylcTree, which contains the hierarchical tree data structure.
+     * It is created from the GraphQL data, with the only difference that this one
+     * contains hierarchy, while the GraphQL is flat-ish.
+     * @type {null|CylcTree}
+     */
+    tree: new CylcTree()
   }),
 
-  computed: {
-    ...mapGetters('workflows', ['workflowTree']),
-    ...mapState('user', ['user'])
+  /**
+   * Called when the user enters the view. This is executed before the component is fully
+   * created. So there is no direct access to things like `.data` or `.computed` properties.
+   * The component also hasn't been bound to the DOM (i.e. before `mounted()`).
+   *
+   * Here is where we create the subscription that populates the `CylcTree` object, and
+   * also applies the deltas whenever data is received from the backend.
+   */
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm
+        .$workflowService
+        .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, vm.variables, {
+          next: function next (response) {
+            applyDeltas(response.data.deltas, vm.tree)
+          },
+          error: function error (err) {
+            vm.setAlert(new Alert(err.message, null, 'error'))
+          }
+        })
+    })
   },
 
-  created () {
-    this.viewID = `Tree(${this.workflowName}): ${Math.random()}`
-    this.$workflowService.register(
-      this,
-      {
-        activeCallback: this.setActive
-      }
-    )
-    this.subscribe('root')
+  /**
+   * Called when the user updates the view's route (e.g. changes URL parameters). We
+   * stop any active subscription and clear data structures used locally. We also
+   * start a new subscription.
+   */
+  beforeRouteUpdate (to, from, next) {
+    this.$workflowService.stopDeltasSubscription()
+    this.tree.clear()
+    const vm = this
+    // NOTE: this must be done in the nextTick so that vm.variables will use the updated prop!
+    this.$nextTick(() => {
+      vm
+        .$workflowService
+        .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, vm.variables, {
+          next: function next (response) {
+            applyDeltas(response.data.deltas, vm.tree)
+          },
+          error: function error (err) {
+            vm.setAlert(new Alert(err.message, null, 'error'))
+          }
+        })
+    })
+    next()
   },
 
+  /**
+   * Called when the user leaves the view. We stop the active subscription and clear
+   * data structures used locally.
+   */
+  beforeRouteLeave (to, from, next) {
+    this.$workflowService.stopDeltasSubscription()
+    this.tree = null
+    next()
+  },
+
+  /**
+   * Called when the view is destroyed. Vue.js does not always destroy views. So
+   * we must not rely on this to clean up objects, or stop subscriptions. That
+   * must be done in the Vue router hooks.
+   */
   beforeDestroy () {
-    this.$workflowService.unregister(this)
-  },
-
-  methods: {
-    /**
-     * Subscribe this view to a new GraphQL query.
-     * @param {string} queryName - Must be in QUERIES.
-     */
-    subscribe (queryName) {
-      if (!(queryName in this.subscriptions)) {
-        const workflowId = `${this.user.username}|${this.workflowName}`
-        this.subscriptions[queryName] =
-          this.$workflowService.subscribe(
-            this,
-            QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
-          )
-      }
-    },
-
-    /**
-     * Unsubscribe this view to a new GraphQL query.
-     * @param {string} queryName - Must be in QUERIES.
-     */
-    unsubscribe (queryName) {
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(
-          this.subscriptions[queryName]
-        )
-      }
-    },
-
-    /** Toggle the isLoading state.
-     * @param {bool} isActive - Are this views subs active.
-     */
-    setActive (isActive) {
-      this.isLoading = !isActive
-    }
+    this.tree = null
   }
 }
 </script>

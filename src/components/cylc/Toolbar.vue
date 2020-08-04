@@ -78,20 +78,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-list-item
               class="py-0 px-8 ma-0"
               @click="onClickAddTreeView"
+              id="toolbar-add-tree-view"
             >
               <v-list-item-title><v-icon>mdi-file-tree</v-icon> Tree</v-list-item-title>
             </v-list-item>
           </v-list>
           <v-list class="pa-0">
             <v-list-item
-                class="py-0 px-8 ma-0"
-                @click="onClickAddGraphView"
+              class="py-0 px-8 ma-0"
+              @click="onClickAddGraphView"
+              id="toolbar-add-graph-view"
             >
               <v-list-item-title><v-icon>mdi-graph</v-icon> Graph</v-list-item-title>
             </v-list-item>
             <v-list-item
                 class="py-0 px-8 ma-0"
                 @click="onClickAddMutationsView"
+                id="toolbar-add-mutations-view"
             >
               <v-list-item-title><v-icon>mdi-apple-keyboard-command</v-icon> Mutations</v-list-item-title>
             </v-list-item>

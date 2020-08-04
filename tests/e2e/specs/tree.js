@@ -19,7 +19,7 @@ describe('Tree component', () => {
   it('Should display two cycle points for the mocked workflow', () => {
     cy.visit('/#/workflows/one')
     cy
-      .get('.node-data-cyclepoint')
+      .get('.node-data-cyclepoint', { timeout: 10000 })
       .should(($div) => {
         // by default, in our expected viewport size for tests, both cycle points exist and are visible
         expect($div).to.have.length(2)
@@ -32,6 +32,9 @@ describe('Tree component', () => {
   })
   it('Should hide jobs by default', () => {
     cy.visit('/#/workflows/one')
+    cy
+      .get('.node-data-cyclepoint')
+      .should('be.visible')
     cy
       .get('.node-data-job')
       .should('not.be.visible')
@@ -84,6 +87,50 @@ describe('Tree component', () => {
         ) {
           throw new Error(`Invalid leaf node margin-left: "${marginLeft}"`)
         }
+      })
+  })
+  it('Should update view correctly', () => {
+    cy.visit('/#/tree/one')
+    cy
+      .get('.node-data-cyclepoint')
+      .should('be.visible')
+    cy
+      .get('.node-data-job:first')
+      .should('not.be.visible')
+    cy
+      .visit('/#/tree/anynamewillstillopenone')
+      .then(() => {
+        cy
+          .get('.node-data-job:first')
+          .should('not.be.visible')
+        cy
+          .get('.node-data-cyclepoint')
+          .should('be.visible')
+        cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
+          // FIXME: likely wrong, but to be fixed later in a follow-up PR to housekeep subscriptions
+          expect(subscriptions.length).to.equal(3)
+        })
+      })
+  })
+  it('Should remove subscriptions correctly when leaving the view', () => {
+    cy.visit('/#/tree/one')
+    cy
+      .get('.node-data-cyclepoint')
+      .should('be.visible')
+    cy
+      .get('.node-data-job:first')
+      .should('not.be.visible')
+    cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
+      expect(subscriptions.length).to.equal(2)
+    })
+    cy
+      .visit('/')
+      .then(() => {
+        cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
+          // It will have 2, GScan + Dashboard, while the /tree/one view has 1 Delta + 1 subscription
+          // (the delta is a different subscription).
+          expect(subscriptions.length).to.equal(2)
+        })
       })
   })
 })

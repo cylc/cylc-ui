@@ -16,7 +16,8 @@ None or N/A.
 
 ### Enhancements
 
-None.
+[#458](https://github.com/cylc/cylc-ui/pull/458) - Add CylcTree and
+use deltas for the Tree view and component.
 
 ### Fixes
 

@@ -58,6 +58,8 @@ module.exports = {
     // https://webpack.js.org/configuration/devtool/
     if (process.env.NODE_ENV !== 'production') {
       if (process.env.NODE_ENV === 'test') {
+        // NOTE: if you need to debug the project with WebStorm (or another IDE) and it fails, try
+        //       change this value for config.devtool('eval-source-map')
         config.devtool('eval')
       } else {
         config.devtool('eval-source-map')
