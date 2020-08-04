@@ -111,7 +111,10 @@ export default {
     }
   },
   mounted () {
+    // the infinite tree
     this.tree = this.$refs.tree.tree
+    // this tree is just the component, not the infinite tree
+    this.$refs.tree.resetListeners()
   },
   methods: {
     togglerContent (node) {

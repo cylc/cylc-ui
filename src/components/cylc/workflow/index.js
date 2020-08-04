@@ -97,7 +97,7 @@ const TreeWrapper = Vue.component('tree-wrapper', {
     // and then re-trigger the event listener creation, as the scrollparent.js code looks for
     // the parent recursively, and will have found none with a overflow[-x|-y]: auto|scroll.
     // the .$refs.tree refers to the InfiniteTree component reference, in the Tree component below.
-    this.$refs[this.widgetId].$refs.tree.resetListeners()
+    // this.$refs[this.widgetId].$refs.tree.resetListeners()
     document.getElementById(this.widgetId).addEventListener('delete:widgetcomponent', this.delete)
   },
   beforeDestroy () {
@@ -113,7 +113,6 @@ const TreeWrapper = Vue.component('tree-wrapper', {
   template: `
     <div>
       <v-skeleton-loader
-        :ref="widgetId"
         :loading="isLoading"
         type="list-item-avatar-three-line"
         >
