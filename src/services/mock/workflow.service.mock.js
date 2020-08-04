@@ -24,9 +24,9 @@ import store from '@/store/index'
  * This class provides the functionality for fetching mock data.
  */
 class MockWorkflowService extends GQuery {
-  constructor () {
+  constructor (httpUrl, subscriptionClient) {
     super(/* enableWebSockets */ false)
-    // load mock data
+    this.query = null
     store.dispatch('workflows/set', checkpoint.workflows).then(() => {})
   }
 
@@ -38,6 +38,7 @@ class MockWorkflowService extends GQuery {
    * @return {number}
    */
   subscribe (view, query) {
+    this.query = query
     const id = super.subscribe(view, query)
     this.subscriptions.forEach(s => {
       s.active = true
@@ -45,8 +46,39 @@ class MockWorkflowService extends GQuery {
     this.callbackActive()
     return id
   }
-}
 
-export { MockWorkflowService }
+  unregister (view) {
+  }
+
+  recompute () {}
+
+  startDeltasSubscription (query, variables, subscriptionOptions) {
+    if (!query.loc.source.body.includes('deltas')) {
+      this.query = query
+    }
+    store.dispatch('workflows/set', checkpoint.workflows).then(() => {})
+    const subscription = {
+      unsubscribe: (subscription) => {
+        this.subscriptions.splice(this.subscriptions.indexOf(subscription), 1)
+      }
+    }
+    this.subscriptions.push({
+      subscription
+    })
+    subscriptionOptions.next({
+      data: {
+        deltas: {
+          added: {
+            workflow: checkpoint.workflows[0]
+          }
+        },
+        workflows: checkpoint.workflows
+      }
+    })
+  }
+
+  stopDeltasSubscription (subscription) {
+  }
+}
 
 export default MockWorkflowService

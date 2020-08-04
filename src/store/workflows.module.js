@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { convertGraphQLWorkflowToTree } from '@/components/cylc/tree'
-
 const state = {
   workflows: [],
   workflowName: null
@@ -28,9 +26,6 @@ const getters = {
       return null
     }
     return state.workflows.find(workflow => workflow.name === state.workflowName) || null
-  },
-  workflowTree: (state, getters) => {
-    return convertGraphQLWorkflowToTree(getters.currentWorkflow)
   }
 }
 
