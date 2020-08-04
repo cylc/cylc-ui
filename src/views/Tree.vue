@@ -17,13 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <div class="c-tree">
+    <div class="c-tree pa-4 fill-height">
       <tree-component
-        :tree-data="workflowTree[0].children"
-        :hoverable="false"
-        :activable="false"
-        :multiple-active="false"
-        :min-depth="1"
+        :tree-data="tree.root.children"
         ref="tree0"
         key="tree0"
       ></tree-component>
