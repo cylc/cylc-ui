@@ -130,9 +130,10 @@ export default {
   inheritAttrs: false,
   data () {
     return {
-      tree: {
-        nodes: []
-      },
+      tree: new InfiniteTree({
+        el: this.$refs.tree,
+        ...this.$props
+      }),
       nodes: [],
       eventHandlers: {
         onContentWillUpdate: null,
@@ -154,28 +155,13 @@ export default {
     treeData: {
       handler (newValue) {
         this.tree.loadData(newValue)
-      }
+        this.nodes = this.tree.nodes
+      },
+      immediate: true
     }
   },
   mounted () {
-    this.tree = new InfiniteTree({
-      el: this.$refs.tree,
-      ...this.$props,
-      data: this.$props.treeData
-    })
-
-    this.tree.update = () => {
-      if (this.onContentWillUpdate) {
-        this.tree.emit('contentWillUpdate')
-      }
-      this.nodes = this.tree.nodes
-      if (this.onContentDidUpdate) {
-        this.$nextTick(function () {
-          this.tree.emit('contentDidUpdate')
-        })
-      }
-    }
-
+    // set up event handlers, if any provided
     Object.keys(this.eventHandlers).forEach(key => {
       if (!this[key]) {
         return
