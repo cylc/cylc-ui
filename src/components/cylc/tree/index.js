@@ -165,7 +165,7 @@ function createJobNode (job, latestMessage = '') {
     type: 'job-details',
     node: job,
     children: [],
-    size: TREE_ITEM_SIZE * 7, // 7 is the number of properties we are displaying
+    size: TREE_ITEM_SIZE * JOB_DETAIL_NODE_PROPERTIES.length, // 7 is the number of properties we are displaying
     state: {
       open: false
     }
