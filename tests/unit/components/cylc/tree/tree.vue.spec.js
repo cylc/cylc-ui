@@ -16,13 +16,13 @@
  */
 
 // we mount the tree to include the TreeItem component and other vuetify children components
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { expect } from 'chai'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
 import * as vuetify from '@/plugins/vuetify'
-import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
+import TreeView from '@/views/Tree'
 
 /// vue-observe-visibility transitive dependency requires it
 global.IntersectionObserver = class IntersectionObserver {
@@ -41,11 +41,16 @@ global.IntersectionObserver = class IntersectionObserver {
 describe('Tree component', () => {
   it('should display the tree with valid data', () => {
     // eslint-disable-next-line no-unused-vars
-    const wrapper = shallowMount(Tree, {
+    const parent = mount(TreeView, {
       propsData: {
-        treeData: simpleWorkflowTree4Nodes[0].children
+        workflowName: simpleWorkflowTree4Nodes[0].id
       }
     })
-    expect(wrapper.props().treeData[0].node.__typename).to.equal('CyclePoint')
+    const tree = parent.vm.$data.tree
+    // add the workflow to the tree, this is the root node now
+    tree.setWorkflow(simpleWorkflowTree4Nodes[0])
+    expect(parent.props().workflowName).to.equal(simpleWorkflowTree4Nodes[0].id)
+    const treeComponent = parent.vm.$refs.tree0
+    expect(treeComponent).to.not.equal(undefined)
   })
 })

@@ -283,7 +283,7 @@ describe('CylcTree', () => {
         id: `${WORKFLOW_ID}|${cyclePoint2.id}|fam1`
       })
       cylcTree.addFamilyProxy(familyProxy1)
-      expect(cylcTree.lookup.get(familyProxy1.id).state).to.equal(undefined)
+      expect(cylcTree.lookup.get(familyProxy1.id).state.open).to.equal(true)
       familyProxy1.state = TaskState.WAITING.name.toLowerCase()
       cylcTree.updateFamilyProxy(familyProxy1)
       expect(cylcTree.lookup.get(familyProxy1.id).state).to.equal(TaskState.WAITING.name.toLowerCase())
@@ -873,8 +873,8 @@ describe('CylcTree', () => {
     })
     it('Should tally the cycle point states if stopped', () => {
       expect(cylcTree.root.children.length).to.equal(2)
-      expect(cylcTree.root.children[0].state).to.equal(undefined)
-      expect(cylcTree.root.children[1].state).to.equal(undefined)
+      expect(cylcTree.root.children[0].state.open).to.equal(true)
+      expect(cylcTree.root.children[1].state.open).to.equal(true)
       cylcTree.tallyCyclePointStates()
       expect(cylcTree.root.children[0].node.state).to.equal(TaskState.SUBMIT_RETRYING.name.toLowerCase())
       expect(cylcTree.root.children[1].node.state).to.equal(TaskState.SUBMIT_RETRYING.name.toLowerCase())
