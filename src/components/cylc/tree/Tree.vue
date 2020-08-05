@@ -72,12 +72,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   :status="task.node.state" />
             </div>
           </div>
-          <div :class="getNodeDataClass(node)" v-else-if="node.type === 'job'">
-            <div :class="getNodeDataClass(node)" @click="toggleClick($event, node, tree)">
-              <job :status="node.node.state" />
-              <span class="mx-1">#{{ node.node.submitNum }}</span>
-              <span class="grey--text">{{ node.node.host }}</span>
-            </div>
+          <div :class="getNodeDataClass(node)" @click="toggleClick($event, node, tree)" v-else-if="node.type === 'job'">
+            <job :status="node.node.state" />
+            <span class="mx-1">#{{ node.node.submitNum }}</span>
+            <span class="grey--text">{{ node.node.host }}</span>
           </div>
           <div :class="getNodeDataClass(node)" v-else>
             <span class="mx-1">{{ node.node.name }}</span>
