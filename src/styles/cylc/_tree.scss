@@ -6,7 +6,6 @@ $active-color: #BDD5F7;
 $arrow-size: 15px;
 $leaf-background-color: map-get($grey, 'lighten-3');
 
-$active-color: #BDD5F7;
 @mixin active-state() {
   background-color: $active-color;
   &:hover {
@@ -56,8 +55,6 @@ $active-color: #BDD5F7;
   .type {
     margin-right: 10px;
   }
-  $arrow-size: 15px;
-  $leaf-background-color: map-get($grey, 'lighten-3');
   .leaf {
     padding: 0;
     margin: 0;
