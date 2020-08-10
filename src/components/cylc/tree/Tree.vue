@@ -37,7 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-if="!['job', 'job-details'].includes(node.type)"
             shrink
           >
-            <span v-html="togglerContent(node)"></span>
           </v-flex>
           <div :class="getNodeDataClass(node)" v-if="node.type === 'cyclepoint'">
             <task
@@ -135,17 +134,12 @@ export default {
     this.$refs.tree.resetListeners()
   },
   methods: {
-    togglerContent (node) {
-      return node.state.open ? '&#9661;' : '&#9655;'
-    },
     togglerClass (node) {
-      const open = node.state.open
-      const more = Object.hasOwnProperty.call(node, 'children') && node.children.length > 0
-      let togglerClass = 'mr-1'
-      if (more && !open) {
-        togglerClass += ' infinite-tree-closed'
+      return {
+        'node-expand-collapse-button': true,
+        'mr-1': true,
+        'infinite-tree-closed': this.hasChildren(node) && !node.state.open
       }
-      return togglerClass
     },
     toggleClick (e, node, tree) {
       e.stopPropagation()
