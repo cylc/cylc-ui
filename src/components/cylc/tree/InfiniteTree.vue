@@ -50,14 +50,6 @@ export default {
       type: Boolean,
       default: false
     },
-    tabIndex: {
-      type: Number,
-      default: 1
-    },
-    rowHeight: {
-      type: Number,
-      default: 32
-    },
     loadNodes: {
       type: Function,
       default: () => {}
