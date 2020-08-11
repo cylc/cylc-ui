@@ -54,7 +54,7 @@ const JOB_DETAIL_NODE_PROPERTIES = [
 ]
 
 /**
- * The height of each tree item. In the infinite tree, it is used as value for the `.size` property.
+ * The height of each tree item in pixels. In the infinite tree, it is used as value for the `.size` property.
  * @type {number}
  */
 const TREE_ITEM_SIZE = 32
