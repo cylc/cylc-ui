@@ -27,6 +27,9 @@ class MockWorkflowService extends GQuery {
   constructor (httpUrl, subscriptionClient) {
     super(/* enableWebSockets */ false)
     this.query = null
+    this.deltasObservable = {
+      closed: true
+    }
     store.dispatch('workflows/set', checkpoint.workflows).then(() => {})
   }
 
