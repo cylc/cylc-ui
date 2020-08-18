@@ -140,7 +140,7 @@ export default {
       // subscribe GraphQL query
       const subscriptionId = this.subscribe('graph')
       // add widget that uses the GraphQl query response
-      this.addGraphWidget(`${subscriptionId}`)
+      this.addGraphWidget(subscriptionId)
     })
     EventBus.$on('add:mutations', () => {
       // no subscription for this view ATM as we are using the centrally
@@ -149,7 +149,7 @@ export default {
       // too as the schema doesn't change during the lifetime of a workflow run
       const subscriptionId = (new Date()).getTime()
       // add widget that uses the GraphQl query response
-      this.addMutationsWidget(`${subscriptionId}`)
+      this.addMutationsWidget(subscriptionId)
     })
     EventBus.$on('delete:widget', (data) => {
       const subscriptionId = Number.parseFloat(data.id)
@@ -201,6 +201,9 @@ export default {
     next()
   },
   methods: {
+    /**
+     * @return {number} subscription ID
+     */
     subscribeDeltas () {
       const id = new Date().getTime()
       // start deltas subscription if not running
@@ -258,18 +261,28 @@ export default {
         this.$workflowService.unsubscribe(subscriptionId)
       }
     },
-    /** Toggle the isLoading state.
+    /**
+     * Toggle the isLoading state.
      * @param {bool} isActive - Are this views subs active.
      */
     setActive (isActive) {
       this.isLoading = !isActive
     },
+    /**
+     * @param {number} id - Subscription ID
+     */
     addTreeWidget (id) {
       Vue.set(this.widgets, id, TreeComponent.name)
     },
+    /**
+     * @param {number} id - Subscription ID
+     */
     addGraphWidget (id) {
       Vue.set(this.widgets, id, GraphComponent.name)
     },
+    /**
+     * @param {number} id - Subscription ID
+     */
     addMutationsWidget (id) {
       Vue.set(this.widgets, id, MutationsView.name)
     },
