@@ -130,7 +130,6 @@ export default {
     }
   },
   created () {
-    const vm = this
     EventBus.$on('add:tree', () => {
       const subscriptionId = this.subscribeDeltas()
       // add widget that uses the GraphQl query response
@@ -151,19 +150,6 @@ export default {
       // add widget that uses the GraphQl query response
       this.addMutationsWidget(subscriptionId)
     })
-    EventBus.$on('delete:widget', (data) => {
-      const subscriptionId = Number.parseFloat(data.id)
-      if (vm.deltaSubscriptions.includes(subscriptionId)) {
-        // if this is a tree widget with a deltas subscription, then stop it if the last widget using it
-        vm.deltaSubscriptions.splice(this.deltaSubscriptions.indexOf(subscriptionId), 1)
-        if (this.deltaSubscriptions.length === 0) {
-          this.$workflowService.stopDeltasSubscription()
-        }
-      } else {
-        // otherwise recompute query and update normal subscription
-        this.$workflowService.unsubscribe(subscriptionId)
-      }
-    })
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -178,6 +164,7 @@ export default {
     this.tree.clear()
     // stop delta subscription if any
     this.$workflowService.stopDeltasSubscription()
+    this.tree.clear()
     // clear all widgets
     this.removeAllWidgets()
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
@@ -194,10 +181,9 @@ export default {
     EventBus.$off('add:graph')
     EventBus.$off('add:mutations')
     EventBus.$off('delete:tree')
-    EventBus.$off('delete:widget')
     this.$workflowService.unregister(this)
-    this.tree.clear()
     this.$workflowService.stopDeltasSubscription()
+    this.tree.clear()
     next()
   },
   methods: {
@@ -213,9 +199,11 @@ export default {
           .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, this.variables, {
             next: function next (response) {
               applyDeltas(response.data.deltas, vm.tree)
+              vm.isLoading = false
             },
             error: function error (err) {
               vm.setAlert(new Alert(err.message, null, 'error'))
+              vm.isLoading = false
             }
           })
       }
@@ -296,6 +284,22 @@ export default {
     },
     onWidgetDeletedEvent (event) {
       Vue.delete(this.widgets, event.id)
+      const vm = this
+      const subscriptionId = Number.parseFloat(event.id)
+      if (vm.deltaSubscriptions.includes(subscriptionId)) {
+        // if this is a tree widget with a deltas subscription, then stop it if the last widget using it
+        vm.deltaSubscriptions.splice(this.deltaSubscriptions.indexOf(subscriptionId), 1)
+        if (this.deltaSubscriptions.length === 0) {
+          this.$workflowService.stopDeltasSubscription()
+          this.tree.clear()
+        }
+      } else {
+        // otherwise recompute query and update normal subscription
+        this.$workflowService.unsubscribe(subscriptionId)
+      }
+      if (Object.entries(this.widgets).length === 0) {
+        this.isLoading = true
+      }
     }
   }
 }
