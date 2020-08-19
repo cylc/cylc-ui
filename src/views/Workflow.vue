@@ -16,12 +16,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div id="workflow-panel" class="fill-height">
-    <workflow
-      :workflow-name="workflowName"
-      :workflow-tree="tree"
-      :is-loading="isLoading"
-      ref="workflow-component" />
+  <div class="workflow-panel fill-height">
+    <lumino
+      ref="lumino"
+      v-on:lumino:deleted="onWidgetDeletedEvent"
+    >
+      <tree-component
+        v-for="widgetId of treeWidgets"
+        :key="widgetId"
+        :id="widgetId"
+        :workflows="tree.root.children"
+      />
+      <graph-component
+          v-for="widgetId of graphWidgets"
+          :key="widgetId"
+          :id="widgetId"
+          :workflow-name="workflowName"
+      />
+      <mutations-view
+          v-for="widgetId of mutationsWidgets"
+          :key="widgetId"
+          :id="widgetId"
+          :workflow-name="workflowName"
+      />
+    </lumino>
   </div>
 </template>
 
@@ -29,12 +47,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mixin } from '@/mixins'
 import { datatree } from '@/mixins/treeview'
 import { mapState } from 'vuex'
-import Workflow from '@/components/cylc/workflow/Workflow'
+import Lumino from '@/components/cylc/workflow/Lumino'
 import { EventBus } from '@/components/cylc/workflow'
 import { WORKFLOW_GRAPH_QUERY, WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import CylcTree from '@/components/cylc/tree/cylc-tree'
 import { applyDeltas } from '@/components/cylc/tree/deltas'
 import Alert from '@/model/Alert.model'
+import { each, iter } from '@lumino/algorithm'
+import TreeComponent from '@/components/cylc/tree/Tree.vue'
+import GraphComponent from '@/components/cylc/graph/Graph.vue'
+import MutationsView from '@/views/Mutations'
+import Vue from 'vue'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -54,7 +77,10 @@ export default {
     }
   },
   components: {
-    workflow: Workflow
+    Lumino,
+    TreeComponent,
+    GraphComponent,
+    MutationsView
   },
   metaInfo () {
     return {
@@ -72,24 +98,48 @@ export default {
      * @type {CylcTree}
      */
     tree: new CylcTree(),
-    isLoading: true
+    isLoading: true,
+    // the widgets added to the view
+    /**
+     * @type {
+     *   Object.<string, string>
+     * }
+     */
+    widgets: {}
   }),
   computed: {
     ...mapState('workflows', ['workflows']),
-    ...mapState('user', ['user'])
+    ...mapState('user', ['user']),
+    treeWidgets () {
+      return Object
+        .entries(this.widgets)
+        .filter(([id, type]) => type === TreeComponent.name)
+        .map(([id, type]) => id)
+    },
+    graphWidgets () {
+      return Object
+        .entries(this.widgets)
+        .filter(([id, type]) => type === GraphComponent.name)
+        .map(([id, type]) => id)
+    },
+    mutationsWidgets () {
+      return Object
+        .entries(this.widgets)
+        .filter(([id, type]) => type === MutationsView.name)
+        .map(([id, type]) => id)
+    }
   },
   created () {
-    const vm = this
     EventBus.$on('add:tree', () => {
       const subscriptionId = this.subscribeDeltas()
       // add widget that uses the GraphQl query response
-      this.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
+      this.addTreeWidget(subscriptionId)
     })
     EventBus.$on('add:graph', () => {
       // subscribe GraphQL query
       const subscriptionId = this.subscribe('graph')
       // add widget that uses the GraphQl query response
-      this.$refs['workflow-component'].addGraphWidget(`${subscriptionId}`)
+      this.addGraphWidget(subscriptionId)
     })
     EventBus.$on('add:mutations', () => {
       // no subscription for this view ATM as we are using the centrally
@@ -98,20 +148,7 @@ export default {
       // too as the schema doesn't change during the lifetime of a workflow run
       const subscriptionId = (new Date()).getTime()
       // add widget that uses the GraphQl query response
-      this.$refs['workflow-component'].addMutationsWidget(`${subscriptionId}`)
-    })
-    EventBus.$on('delete:widget', (data) => {
-      const subscriptionId = Number.parseFloat(data.id)
-      if (vm.deltaSubscriptions.includes(subscriptionId)) {
-        // if this is a tree widget with a deltas subscription, then stop it if the last widget using it
-        vm.deltaSubscriptions.splice(this.deltaSubscriptions.indexOf(subscriptionId), 1)
-        if (this.deltaSubscriptions.length === 0) {
-          this.$workflowService.stopDeltasSubscription()
-        }
-      } else {
-        // otherwise recompute query and update normal subscription
-        this.$workflowService.unsubscribe(subscriptionId)
-      }
+      this.addMutationsWidget(subscriptionId)
     })
   },
   beforeRouteEnter (to, from, next) {
@@ -127,14 +164,15 @@ export default {
     this.tree.clear()
     // stop delta subscription if any
     this.$workflowService.stopDeltasSubscription()
+    this.tree.clear()
     // clear all widgets
-    this.$refs['workflow-component'].removeAllWidgets()
+    this.removeAllWidgets()
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
       // Create a Tree View for the current workflow by default
       const subscriptionId = this.subscribeDeltas()
-      this.$refs['workflow-component'].addTreeWidget(`${subscriptionId}`)
+      this.addTreeWidget(subscriptionId)
     })
     next()
   },
@@ -143,13 +181,15 @@ export default {
     EventBus.$off('add:graph')
     EventBus.$off('add:mutations')
     EventBus.$off('delete:tree')
-    EventBus.$off('delete:widget')
     this.$workflowService.unregister(this)
-    this.tree.clear()
     this.$workflowService.stopDeltasSubscription()
+    this.tree.clear()
     next()
   },
   methods: {
+    /**
+     * @return {number} subscription ID
+     */
     subscribeDeltas () {
       const id = new Date().getTime()
       // start deltas subscription if not running
@@ -159,9 +199,11 @@ export default {
           .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, this.variables, {
             next: function next (response) {
               applyDeltas(response.data.deltas, vm.tree)
+              vm.isLoading = false
             },
             error: function error (err) {
               vm.setAlert(new Alert(err.message, null, 'error'))
+              vm.isLoading = false
             }
           })
       }
@@ -207,11 +249,57 @@ export default {
         this.$workflowService.unsubscribe(subscriptionId)
       }
     },
-    /** Toggle the isLoading state.
+    /**
+     * Toggle the isLoading state.
      * @param {bool} isActive - Are this views subs active.
      */
     setActive (isActive) {
       this.isLoading = !isActive
+    },
+    /**
+     * @param {number} id - Subscription ID
+     */
+    addTreeWidget (id) {
+      Vue.set(this.widgets, id, TreeComponent.name)
+    },
+    /**
+     * @param {number} id - Subscription ID
+     */
+    addGraphWidget (id) {
+      Vue.set(this.widgets, id, GraphComponent.name)
+    },
+    /**
+     * @param {number} id - Subscription ID
+     */
+    addMutationsWidget (id) {
+      Vue.set(this.widgets, id, MutationsView.name)
+    },
+    removeAllWidgets () {
+      const dockWidgets = this.dock.widgets()
+      const widgets = []
+      each(iter(dockWidgets), widget => {
+        widgets.push(widget)
+      })
+      widgets.forEach(widget => widget.close())
+    },
+    onWidgetDeletedEvent (event) {
+      Vue.delete(this.widgets, event.id)
+      const vm = this
+      const subscriptionId = Number.parseFloat(event.id)
+      if (vm.deltaSubscriptions.includes(subscriptionId)) {
+        // if this is a tree widget with a deltas subscription, then stop it if the last widget using it
+        vm.deltaSubscriptions.splice(this.deltaSubscriptions.indexOf(subscriptionId), 1)
+        if (this.deltaSubscriptions.length === 0) {
+          this.$workflowService.stopDeltasSubscription()
+          this.tree.clear()
+        }
+      } else {
+        // otherwise recompute query and update normal subscription
+        this.$workflowService.unsubscribe(subscriptionId)
+      }
+      if (Object.entries(this.widgets).length === 0) {
+        this.isLoading = true
+      }
     }
   }
 }

@@ -85,6 +85,7 @@ export function associate (mutations, objects) {
 }
 
 export default {
+  name: 'Mutations',
   components: {
     Mutation
   },

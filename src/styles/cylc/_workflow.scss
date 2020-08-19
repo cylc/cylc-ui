@@ -18,8 +18,8 @@
 @import '~@lumino/default-theme/style/index.css';
 @import '~vuetify/src/styles/styles.sass';
 
-#workflow-panel {
-  #main {
+.workflow-panel {
+  .main {
     display: flex;
     min-height: calc(100vh - 48px);
     .content {
