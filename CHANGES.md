@@ -19,6 +19,10 @@ None or N/A.
 [#458](https://github.com/cylc/cylc-ui/pull/458) - Add CylcTree and
 use deltas for the Tree view and component.
 
+[#481](https://github.com/cylc/cylc-ui/pull/481) - Update dependencies,
+most important ones were Vue/React, Apollo GraphQL libraries, GraphQL,
+and the development libraries.
+
 ### Fixes
 
 None.
