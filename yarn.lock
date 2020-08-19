@@ -14904,10 +14904,10 @@ vuetify@^2.1.14:
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.2.19.tgz#826f6899267a0f867aff56aff0cf000d07a421e7"
   integrity sha512-6o+wdB77FBTkZsFlF8g3W5paG6CsFWtxv6gjkovOQ1P0nggTX8AbIGYIX7xHiOqG+PvBsoIfOEt2E/x6U/d45g==
 
-vuetify@^2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.3.1.tgz#8c5bdcb15ad7ca9ba2a206a26a65b34ec0ca6c0d"
-  integrity sha512-UdWcoM3MzTD/+o/uH745i5EyK8CluAEQclB41iegHQZmklQQMyBPrIF6BcED9rjV9iFjqeUaIh616T5NqoYr+Q==
+vuetify@^2.3.9:
+  version "2.3.9"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.3.9.tgz#6dcd1de647e1ce2c7cfaebb7068a0cf8929360b3"
+  integrity sha512-E5K9flTvS21tCkHgqDBMl0BY/Rld4SLUaJpQ+sQdL8/2uPcWmWLrdumn4SI8LBFojE0UP1GSaH4zKuxLL36fYg==
 
 vuex-router-sync@^5.0.0:
   version "5.0.0"
