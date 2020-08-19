@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div id="workflow-panel" class="fill-height">
+  <div class="workflow-panel fill-height">
     <lumino
       ref="lumino"
       v-on:lumino:deleted="onWidgetDeletedEvent"
