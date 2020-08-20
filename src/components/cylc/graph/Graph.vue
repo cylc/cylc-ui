@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       right
       absolute
       color="red lighten-1"
-      :timeout=0
+      :timeout=-1
       :value="warning"
     >
       WARNING: POC Graph View: beware of large workflows!

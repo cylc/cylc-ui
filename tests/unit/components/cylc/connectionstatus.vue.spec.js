@@ -15,24 +15,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus'
-import store from '@/store/index'
+import Vuetify from 'vuetify/lib'
+import Vue from 'vue'
+
+// global as per Vuetify docs https://vuetifyjs.com/en/getting-started/unit-testing/#bootstrapping-vuetify
+Vue.use(Vuetify)
+// but also create the local vue as per Vuetify docs-example https://vuetifyjs.com/en/getting-started/unit-testing/#spec-tests
+const localVue = createLocalVue()
 
 describe('ConnectionStatus component', () => {
-  it('hidden when not offline', () => {
-    store.state.offline = false
-    const wrapper = mount(ConnectionStatus, {
-      store
-    })
-    expect(wrapper.contains('div')).to.equal(false)
+  let vuetify
+  beforeEach(() => {
+    vuetify = new Vuetify()
   })
-  it('visible when offline', () => {
-    store.state.offline = true
-    const wrapper = mount(ConnectionStatus, {
-      store
+  // args: isOffline
+  const tests = [
+    {
+      args: [false], expected: false
+    },
+    {
+      args: [true], expected: true
+    }
+  ]
+  tests.forEach(test => {
+    it('correctly hides or displays the connection status alert', () => {
+      const wrapper = mount(ConnectionStatus, {
+        localVue,
+        vuetify,
+        propsData: {
+          isOffline: test.args[0]
+        }
+      })
+      expect(wrapper.props().isOffline).to.equal(test.args[0], `Wrong props value, expected ${test.args[0]}`)
+      const isVisible = wrapper.find('.v-snack__content').isVisible()
+      expect(isVisible).to.equal(test.expected, `Incorrect component visibility: ${isVisible}`)
     })
-    expect(wrapper.contains('div')).to.equal(true)
   })
 })

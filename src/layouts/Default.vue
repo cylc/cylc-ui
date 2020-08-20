@@ -17,18 +17,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <ConnectionStatus />
+    <ConnectionStatus :is-offline="offline" />
     <toolbar />
     <drawer />
 
-    <v-content>
+    <v-main>
       <alert />
       <div id="core-view">
         <v-fade-transition mode="out-in">
           <slot/>
         </v-fade-transition>
       </div>
-    </v-content>
+    </v-main>
   </div>
 </template>
 
@@ -37,14 +37,20 @@ import Alert from '@/components/core/Alert'
 import Drawer from '@/components/cylc/Drawer'
 import Toolbar from '@/components/cylc/Toolbar'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Default',
+
   components: {
     ConnectionStatus,
     Alert,
     Drawer,
     Toolbar
+  },
+
+  computed: {
+    ...mapState(['offline'])
   }
 }
 </script>
