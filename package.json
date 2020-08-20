@@ -56,7 +56,6 @@
     "vue-router": "^3.4.3",
     "vue-spinner": "^1.0.4",
     "vue-the-mask": "^0.11.1",
-    "vuetify": "^2.3.9",
     "vuetify": "^2.2.6",
     "vuex": "^3.5.1",
     "vuex-router-sync": "^5.0.0"
@@ -66,6 +65,7 @@
     "@cypress/code-coverage": "^3.8.1",
     "@cypress/webpack-preprocessor": "^5.4.4",
     "@mdi/font": "^5.5.55",
+    "@vue/babel-preset-app": "^4.5.4",
     "@vue/cli-plugin-babel": "^4.5.4",
     "@vue/cli-plugin-e2e-cypress": "^4.5.4",
     "@vue/cli-plugin-eslint": "^4.5.4",
