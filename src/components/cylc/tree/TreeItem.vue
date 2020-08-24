@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="treeitem">
+  <div class="treeitem" v-show="filtered">
     <div
         :class="getNodeClass()"
         :style="getNodeStyle()"
@@ -169,7 +169,8 @@ export default {
           property: 'latestMessage'
         }
       ],
-      displayLeaf: false
+      displayLeaf: false,
+      filtered: true
     }
   },
   computed: {
