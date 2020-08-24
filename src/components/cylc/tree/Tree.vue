@@ -24,6 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :node="workflow"
         :hoverable="hoverable"
         :initialExpanded="expanded"
+        v-on:tree-item-created="onTreeItemCreated"
+        v-on:tree-item-destroyed="onTreeItemDestroyed"
+        v-on:tree-item-expanded="onTreeItemExpanded"
+        v-on:tree-item-collapsed="onTreeItemCollapsed"
+        v-on:tree-item-clicked="onTreeItemClicked"
     >
     </tree-item>
   </div>
@@ -31,7 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import TreeItem from '@/components/cylc/tree/TreeItem'
-import { TreeEventBus } from '@/components/cylc/tree/event-bus'
 
 export default {
   name: 'Tree',
@@ -56,21 +60,6 @@ export default {
       expandedFilter: null,
       collapseFilter: null
     }
-  },
-  created () {
-    TreeEventBus.$on('tree-item-created', this.onTreeItemCreated)
-    TreeEventBus.$on('tree-item-destroyed', this.onTreeItemDestroyed)
-    TreeEventBus.$on('tree-item-expanded', this.onTreeItemExpanded)
-    TreeEventBus.$on('tree-item-collapsed', this.onTreeItemCollapsed)
-    TreeEventBus.$on('tree-item-clicked', this.onTreeItemClicked)
-  },
-  destroyed () {
-    // we cannot simply call TreeEventBus.$off() as we may have more trees listening...
-    TreeEventBus.$off('tree-item-created', this.onTreeItemCreated)
-    TreeEventBus.$off('tree-item-destroyed', this.onTreeItemDestroyed)
-    TreeEventBus.$off('tree-item-expanded', this.onTreeItemExpanded)
-    TreeEventBus.$off('tree-item-collapsed', this.onTreeItemCollapsed)
-    TreeEventBus.$off('tree-item-clicked', this.onTreeItemClicked)
   },
   methods: {
     expandAll (filter = null) {

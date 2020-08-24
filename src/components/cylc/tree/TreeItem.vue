@@ -93,6 +93,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :depth="depth + 1"
           :hoverable="hoverable"
           :initialExpanded="initialExpanded"
+          v-on:tree-item-created="$listeners['tree-item-created']"
+          v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
+          v-on:tree-item-expanded="$listeners['tree-item-expanded']"
+          v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
+          v-on:tree-item-clicked="$listeners['tree-item-clicked']"
       ></TreeItem>
     </span>
   </div>
@@ -101,7 +106,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
-import { TreeEventBus } from '@/components/cylc/tree/event-bus'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -174,10 +178,10 @@ export default {
     }
   },
   created () {
-    TreeEventBus.$emit('tree-item-created', this)
+    this.$emit('tree-item-created', this)
   },
   beforeDestroy () {
-    TreeEventBus.$emit('tree-item-destroyed', this)
+    this.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
     if (this.node.expanded !== undefined && this.node.expanded !== null) {
@@ -197,9 +201,9 @@ export default {
      */
     emitExpandCollapseEvent (expanded) {
       if (expanded) {
-        TreeEventBus.$emit('tree-item-expanded', this)
+        this.$emit('tree-item-expanded', this)
       } else {
-        TreeEventBus.$emit('tree-item-collapsed', this)
+        this.$emit('tree-item-collapsed', this)
       }
     },
     getTypeStyle () {
@@ -214,7 +218,7 @@ export default {
      * @param {event} e event
      */
     nodeClicked (e) {
-      TreeEventBus.$emit('tree-item-clicked', this)
+      this.$emit('tree-item-clicked', this)
     },
     /**
      * Handler for when a job node was clicked.
