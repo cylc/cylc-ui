@@ -47,7 +47,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           outlined
           placeholder="Filter by task state"
           v-model="tasksFilter.states"
-        ></v-combobox>
+        >
+          <template v-slot:item="slotProps">
+            <Task :status="slotProps.item.value.toLowerCase()" :progress=0 />
+            <span class="ml-2">{{ slotProps.item.value.toLowerCase() }}</span>
+          </template>
+          <template v-slot:selection="slotProps">
+            <div class="mr-2">
+              <Task :status="slotProps.item.value.toLowerCase()" :progress=0 />
+            </div>
+          </template>
+        </v-combobox>
       </v-flex>
       <v-flex
           xs12
@@ -81,6 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import Vue from 'vue'
 import TaskState from '@/model/TaskState.model'
+import Task from '@/components/cylc/Task'
 
 export default {
   name: 'Tree',
@@ -94,6 +105,7 @@ export default {
     multipleActive: Boolean
   },
   components: {
+    Task,
     'tree-item': TreeItem
   },
   data () {
@@ -168,10 +180,11 @@ export default {
           filtered = this.filterNode(child) || filtered
         }
       } else if (node.type === 'task-proxy') {
-        if (this.filterByTaskName()) {
+        if (this.filterByTaskName() && this.filterByTaskState()) {
+          filtered = node.node.name.includes(this.tasksFilter.name) && this.tasksFilterStates.includes(node.node.state)
+        } else if (this.filterByTaskName()) {
           filtered = node.node.name.includes(this.tasksFilter.name)
-        }
-        if (this.filterByTaskState()) {
+        } else if (this.filterByTaskState()) {
           filtered = this.tasksFilterStates.includes(node.node.state)
         }
       }
