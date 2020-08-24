@@ -78,6 +78,13 @@ export default {
       filteredNodes: []
     }
   },
+  watch: {
+    workflows: function () {
+      this.$nextTick(() => {
+        this.filterByTaskName()
+      })
+    }
+  },
   methods: {
     filterByTaskName () {
       if (this.tasksFilter.name && this.tasksFilter.name.trim() !== '') {
