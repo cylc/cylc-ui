@@ -17,17 +17,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="my-2">
-    <v-text-field
-      append-icon="mdi-magnify"
-      clearable
-      dense
-      flat
-      outlined
-      placeholder="Filter by task name"
-      class="mt-2 mx-4"
-      v-model="tasksFilter.name"
-      v-on:keyup.enter="filterByTaskName"
-    ></v-text-field>
+    <v-layout
+      class="mb-1"
+    >
+      <v-flex
+        xs12
+        md5
+        class="mx-3">
+        <v-text-field
+            clearable
+            dense
+            flat
+            hide-details
+            outlined
+            placeholder="Filter by task name"
+            v-model="tasksFilter.name"
+        ></v-text-field>
+      </v-flex>
+      <v-flex
+          xs12
+          md5>
+        <v-combobox
+          :items="taskStates"
+          clearable
+          dense
+          flat
+          hide-details
+          multiple
+          outlined
+          placeholder="Filter by task state"
+          v-model="tasksFilter.states"
+        ></v-combobox>
+      </v-flex>
+      <v-flex
+          xs12
+          md2
+          class="mx-3">
+        <v-btn
+          block
+          outlined
+          @click="filterTasks"
+        >Filter</v-btn>
+      </v-flex>
+    </v-layout>
     <!-- each workflow is a tree root -->
     <tree-item
         v-for="workflow of workflows"
@@ -48,6 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import Vue from 'vue'
+import TaskState from '@/model/TaskState.model'
 
 export default {
   name: 'Tree',
@@ -75,22 +108,52 @@ export default {
         name: '',
         states: []
       },
-      filteredNodes: []
+      filtered: false
+    }
+  },
+  computed: {
+    taskStates: () => {
+      return TaskState.enumValues.map(taskState => {
+        return {
+          text: taskState.name.toLowerCase().replace(/_/g, ' '),
+          value: taskState.name
+        }
+      }).sort((left, right) => {
+        return left.text.localeCompare(right.text)
+      })
+    },
+    tasksFilterStates: function () {
+      return this.tasksFilter.states.map(selectedTaskState => {
+        return selectedTaskState.value.toLowerCase()
+      })
     }
   },
   watch: {
     workflows: function () {
-      this.$nextTick(() => {
-        this.filterByTaskName()
-      })
+      if (this.filtered) {
+        this.$nextTick(() => {
+          this.filterTasks()
+        })
+      }
     }
   },
   methods: {
     filterByTaskName () {
-      if (this.tasksFilter.name && this.tasksFilter.name.trim() !== '') {
+      return this.tasksFilter.name && this.tasksFilter.name.trim() !== ''
+    },
+    filterByTaskState () {
+      return this.tasksFilter.states && this.tasksFilter.states.length > 0
+    },
+    filtersEnabled () {
+      return this.filterByTaskName() || this.filterByTaskState()
+    },
+    filterTasks () {
+      if (this.filtersEnabled()) {
         this.filterNodes(this.workflows)
+        this.filtered = true
       } else {
         this.removeAllFilters()
+        this.filtered = false
       }
     },
     filterNodes (nodes) {
@@ -105,7 +168,12 @@ export default {
           filtered = this.filterNode(child) || filtered
         }
       } else if (node.type === 'task-proxy') {
-        filtered = node.node.name.includes(this.tasksFilter.name)
+        if (this.filterByTaskName()) {
+          filtered = node.node.name.includes(this.tasksFilter.name)
+        }
+        if (this.filterByTaskState()) {
+          filtered = this.tasksFilterStates.includes(node.node.state)
+        }
       }
       this.treeItemCache[node.id].filtered = filtered
       return filtered
