@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import gql from 'graphql-tag'
-import { introspectionQuery, print } from 'graphql'
+import { getIntrospectionQuery as getGraphQLIntrospectionQuery, print } from 'graphql'
 
 import Mutation from '@/components/cylc/Mutation'
 
@@ -255,7 +255,7 @@ export default {
       // we are only interested in mutations so can make our life
       // a little easier by restricting the scope of the default
       // introspection query
-      const fullIntrospection = gql(introspectionQuery)
+      const fullIntrospection = gql(getGraphQLIntrospectionQuery())
       const mutationQuery = gql(`
         query {
           __schema {
