@@ -16,7 +16,7 @@
  */
 
 // we mount the tree to include the TreeItem component and other vuetify children components
-import { mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import Vue from 'vue'
 // import vuetify here so that we do not have warnings in the console output
@@ -24,10 +24,19 @@ import Vue from 'vue'
 import * as vuetify from '@/plugins/vuetify'
 import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
+import Vuetify from 'vuetify'
 
 describe('Tree component', () => {
+  let vuetify
+  beforeEach(() => {
+    vuetify = new Vuetify()
+  })
+  global.requestAnimationFrame = cb => cb()
   it('should display the tree with valid data', () => {
+    const localVue = createLocalVue()
+    localVue.use(Vuetify)
     const wrapper = mount(Tree, {
+      vuetify,
       propsData: {
         workflows: simpleWorkflowTree4Nodes[0].children
       }
@@ -37,7 +46,10 @@ describe('Tree component', () => {
   })
   describe('activable', () => {
     it('should not activate by default', () => {
+      const localVue = createLocalVue()
+      localVue.use(Vuetify)
       const wrapper = mount(Tree, {
+        vuetify,
         propsData: {
           workflows: simpleWorkflowTree4Nodes[0].children
         }
@@ -52,7 +64,10 @@ describe('Tree component', () => {
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
     })
     it('should activate correctly', async () => {
+      const localVue = createLocalVue()
+      localVue.use(Vuetify)
       const wrapper = mount(Tree, {
+        vuetify,
         propsData: {
           workflows: simpleWorkflowTree4Nodes[0].children,
           activable: true
