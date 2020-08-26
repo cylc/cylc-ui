@@ -141,11 +141,14 @@ export default {
     }
   },
   watch: {
-    workflows: function () {
-      if (this.filtered) {
-        this.$nextTick(() => {
-          this.filterTasks()
-        })
+    workflows: {
+      deep: true,
+      handler: function (val, oldVal) {
+        if (this.filtered) {
+          this.$nextTick(() => {
+            this.filterTasks()
+          })
+        }
       }
     }
   },
