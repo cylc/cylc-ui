@@ -23,6 +23,9 @@ use deltas for the Tree view and component.
 most important ones were Vue/React, Apollo GraphQL libraries, GraphQL,
 and the development libraries.
 
+[#483](https://github.com/cylc/cylc-ui/pull/458) - Filter tree item
+by tasks name and tasks states.
+
 ### Fixes
 
 None.
