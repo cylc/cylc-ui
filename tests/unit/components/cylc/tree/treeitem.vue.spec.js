@@ -33,9 +33,17 @@ describe('TreeItem component', () => {
     const wrapper = mount(TreeItem, {
       propsData: {
         node: simpleWorkflowNode
+      },
+      listeners: {
+        'tree-item-created': () => {},
+        'tree-item-destroyed': () => {},
+        'tree-item-expanded': () => {},
+        'tree-item-collapsed': () => {},
+        'tree-item-clicked': () => {}
       }
     })
     expect(wrapper.props().node.node.__typename).to.equal('Workflow')
+    expect(wrapper.vm.$data.filtered).to.equal(true)
   })
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
