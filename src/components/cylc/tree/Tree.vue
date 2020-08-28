@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         md5
         class="mx-3">
         <v-text-field
+          id="c-tree-filter-task-name"
           clearable
           dense
           flat
@@ -38,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           xs12
           md5>
         <v-select
+          id="c-tree-filter-task-states"
           :items="taskStates"
           clearable
           dense
@@ -64,6 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         md2
         class="mx-3">
         <v-btn
+          id="c-tree-filter-btn"
           block
           outlined
           @click="filterTasks"
