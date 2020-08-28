@@ -25,19 +25,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         md5
         class="mx-3">
         <v-text-field
-            clearable
-            dense
-            flat
-            hide-details
-            outlined
-            placeholder="Filter by task name"
-            v-model="tasksFilter.name"
+          clearable
+          dense
+          flat
+          hide-details
+          outlined
+          placeholder="Filter by task name"
+          v-model="tasksFilter.name"
         ></v-text-field>
       </v-flex>
       <v-flex
           xs12
           md5>
-        <v-combobox
+        <v-select
           :items="taskStates"
           clearable
           dense
@@ -57,12 +57,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <Task :status="slotProps.item.value.toLowerCase()" :progress=0 />
             </div>
           </template>
-        </v-combobox>
+        </v-select>
       </v-flex>
       <v-flex
-          xs12
-          md2
-          class="mx-3">
+        xs12
+        md2
+        class="mx-3">
         <v-btn
           block
           outlined
@@ -72,16 +72,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-layout>
     <!-- each workflow is a tree root -->
     <tree-item
-        v-for="workflow of workflows"
-        :key="workflow.id"
-        :node="workflow"
-        :hoverable="hoverable"
-        :initialExpanded="expanded"
-        v-on:tree-item-created="onTreeItemCreated"
-        v-on:tree-item-destroyed="onTreeItemDestroyed"
-        v-on:tree-item-expanded="onTreeItemExpanded"
-        v-on:tree-item-collapsed="onTreeItemCollapsed"
-        v-on:tree-item-clicked="onTreeItemClicked"
+      v-for="workflow of workflows"
+      :key="workflow.id"
+      :node="workflow"
+      :hoverable="hoverable"
+      :initialExpanded="expanded"
+      v-on:tree-item-created="onTreeItemCreated"
+      v-on:tree-item-destroyed="onTreeItemDestroyed"
+      v-on:tree-item-expanded="onTreeItemExpanded"
+      v-on:tree-item-collapsed="onTreeItemCollapsed"
+      v-on:tree-item-clicked="onTreeItemClicked"
     >
     </tree-item>
   </div>
@@ -92,6 +92,7 @@ import TreeItem from '@/components/cylc/tree/TreeItem'
 import Vue from 'vue'
 import TaskState from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
+import clonedeep from 'lodash.clonedeep'
 
 export default {
   name: 'Tree',
@@ -120,7 +121,7 @@ export default {
         name: '',
         states: []
       },
-      filtered: false
+      activeFilters: null
     }
   },
   computed: {
@@ -135,8 +136,8 @@ export default {
       })
     },
     tasksFilterStates: function () {
-      return this.tasksFilter.states.map(selectedTaskState => {
-        return selectedTaskState.value.toLowerCase()
+      return this.activeFilters.states.map(selectedTaskState => {
+        return selectedTaskState.toLowerCase()
       })
     }
   },
@@ -144,9 +145,9 @@ export default {
     workflows: {
       deep: true,
       handler: function (val, oldVal) {
-        if (this.filtered) {
+        if (this.activeFilters !== null) {
           this.$nextTick(() => {
-            this.filterTasks()
+            this.filterNodes(this.workflows)
           })
         }
       }
@@ -154,21 +155,25 @@ export default {
   },
   methods: {
     filterByTaskName () {
-      return this.tasksFilter.name && this.tasksFilter.name.trim() !== ''
+      return this.tasksFilter.name !== undefined &&
+          this.tasksFilter.name !== null &&
+          this.tasksFilter.name.trim() !== ''
     },
     filterByTaskState () {
-      return this.tasksFilter.states && this.tasksFilter.states.length > 0
+      return this.tasksFilter.states !== undefined &&
+          this.tasksFilter.states !== null &&
+          this.tasksFilter.states.length > 0
     },
     filtersEnabled () {
       return this.filterByTaskName() || this.filterByTaskState()
     },
     filterTasks () {
       if (this.filtersEnabled()) {
+        this.activeFilters = clonedeep(this.tasksFilter)
         this.filterNodes(this.workflows)
-        this.filtered = true
       } else {
         this.removeAllFilters()
-        this.filtered = false
+        this.activeFilters = null
       }
     },
     filterNodes (nodes) {
@@ -184,9 +189,9 @@ export default {
         }
       } else if (node.type === 'task-proxy') {
         if (this.filterByTaskName() && this.filterByTaskState()) {
-          filtered = node.node.name.includes(this.tasksFilter.name) && this.tasksFilterStates.includes(node.node.state)
+          filtered = node.node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
         } else if (this.filterByTaskName()) {
-          filtered = node.node.name.includes(this.tasksFilter.name)
+          filtered = node.node.name.includes(this.activeFilters.name)
         } else if (this.filterByTaskState()) {
           filtered = this.tasksFilterStates.includes(node.node.state)
         }
