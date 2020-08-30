@@ -16,9 +16,16 @@
  */
 
 import { expect } from 'chai'
+import sinon from 'sinon'
 import Alert from '@/model/Alert.model.js'
 
 describe('AlertModel', () => {
+  beforeEach(() => {
+    sinon.stub(console, 'log')
+  })
+  afterEach(() => {
+    sinon.restore()
+  })
   describe('constructor', () => {
     it('should be created', () => {
       const text = 'my error'

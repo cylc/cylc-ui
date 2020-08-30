@@ -18,11 +18,16 @@
 import { expect } from 'chai'
 import store from '@/store'
 import Alert from '@/model/Alert.model'
+import sinon from 'sinon'
 
 describe('store', () => {
   beforeEach(() => {
     store.dispatch('setAlert', null)
     store.state.offline = false
+    sinon.stub(console, 'log')
+  })
+  afterEach(() => {
+    sinon.restore()
   })
   describe('alerts', () => {
     it('should start with no alert', () => {
