@@ -158,20 +158,23 @@ export default {
   },
   methods: {
     filterByTaskName () {
-      return this.tasksFilter.name !== undefined &&
-          this.tasksFilter.name !== null &&
-          this.tasksFilter.name.trim() !== ''
+      return this.activeFilters.name !== undefined &&
+          this.activeFilters.name !== null &&
+          this.activeFilters.name.trim() !== ''
     },
     filterByTaskState () {
-      return this.tasksFilter.states !== undefined &&
-          this.tasksFilter.states !== null &&
-          this.tasksFilter.states.length > 0
-    },
-    filtersEnabled () {
-      return this.filterByTaskName() || this.filterByTaskState()
+      return this.activeFilters.states !== undefined &&
+          this.activeFilters.states !== null &&
+          this.activeFilters.states.length > 0
     },
     filterTasks () {
-      if (this.filtersEnabled()) {
+      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
+          this.tasksFilter.name !== null &&
+          this.tasksFilter.name.trim() !== ''
+      const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
+          this.tasksFilter.states !== null &&
+          this.tasksFilter.states.length > 0
+      if (taskNameFilterSet || taskStatesFilterSet) {
         this.activeFilters = clonedeep(this.tasksFilter)
         this.filterNodes(this.workflows)
       } else {

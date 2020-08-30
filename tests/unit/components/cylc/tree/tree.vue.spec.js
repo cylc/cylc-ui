@@ -108,7 +108,7 @@ describe('Tree component', () => {
             workflows: simpleWorkflowTree4Nodes[0].children
           }
         })
-        expect(wrapper.vm.filterByTaskName()).to.equal(false)
+        expect(wrapper.vm.activeFilters).to.equal(null)
       })
       it('should filter by name', () => {
         const wrapper = mountFunction({
@@ -124,7 +124,7 @@ describe('Tree component', () => {
           }
         })
         expect(wrapper.vm.tasksFilter.name).to.equal('foo')
-        expect(wrapper.vm.filterByTaskName()).to.equal(true)
+        expect(wrapper.vm.activeFilters).to.equal(null)
       })
     })
     describe('filter by state', () => {
@@ -134,7 +134,7 @@ describe('Tree component', () => {
             workflows: simpleWorkflowTree4Nodes[0].children
           }
         })
-        expect(wrapper.vm.filterByTaskState()).to.equal(false)
+        expect(wrapper.vm.activeFilters).to.equal(null)
       })
       it('should filter by name', () => {
         const states = [
@@ -150,14 +150,13 @@ describe('Tree component', () => {
           },
           data () {
             return {
-              tasksFilter: {
+              activeFilters: {
                 states
               }
             }
           }
         })
-        expect(wrapper.vm.tasksFilter.states).to.equal(states)
-        expect(wrapper.vm.filterByTaskState()).to.equal(true)
+        expect(wrapper.vm.activeFilters.states).to.equal(states)
       })
     })
     describe('enable filters', () => {
@@ -167,7 +166,7 @@ describe('Tree component', () => {
             workflows: simpleWorkflowTree4Nodes[0].children
           }
         })
-        expect(wrapper.vm.filtersEnabled()).to.equal(false)
+        expect(wrapper.vm.activeFilters).to.equal(null)
       })
       it('should indicate filters are enabled if filtering by task name', () => {
         const wrapper = mountFunction({
@@ -182,16 +181,14 @@ describe('Tree component', () => {
             }
           }
         })
-        expect(wrapper.vm.filtersEnabled()).to.equal(true)
+        wrapper.vm.filterTasks()
+        expect(wrapper.vm.activeFilters.name).to.equal('foo')
       })
       it('should indicate filters are enabled if filtering by task states', () => {
         const states = [
-          {
-            value: TaskState.EXPIRED.name
-          },
-          {
-            value: TaskState.SUBMIT_FAILED.name
-          }]
+          TaskState.EXPIRED.name,
+          TaskState.SUBMIT_FAILED.name
+        ]
         const wrapper = mountFunction({
           propsData: {
             workflows: simpleWorkflowTree4Nodes[0].children
@@ -204,7 +201,8 @@ describe('Tree component', () => {
             }
           }
         })
-        expect(wrapper.vm.filtersEnabled()).to.equal(true)
+        wrapper.vm.filterTasks()
+        expect(wrapper.vm.activeFilters.states).to.deep.equal(states)
       })
     })
     describe('filter tree items', () => {
