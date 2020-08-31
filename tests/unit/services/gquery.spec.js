@@ -20,8 +20,15 @@ import { expect } from 'chai'
 import 'cross-fetch/polyfill'
 import { GQuery } from '@/services/gquery'
 import { parse } from 'graphql/language/parser'
+import sinon from 'sinon'
 
 describe('GQuery', () => {
+  beforeEach(() => {
+    sinon.stub(console, 'debug')
+  })
+  afterEach(() => {
+    sinon.restore()
+  })
   describe('constructor', () => {
     it('should create an object correctly', () => {
       const gquery = new GQuery()
