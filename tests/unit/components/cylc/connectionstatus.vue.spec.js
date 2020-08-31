@@ -19,17 +19,18 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus'
 import Vuetify from 'vuetify/lib'
-import Vue from 'vue'
 
-// global as per Vuetify docs https://vuetifyjs.com/en/getting-started/unit-testing/#bootstrapping-vuetify
-Vue.use(Vuetify)
-// but also create the local vue as per Vuetify docs-example https://vuetifyjs.com/en/getting-started/unit-testing/#spec-tests
 const localVue = createLocalVue()
 
 describe('ConnectionStatus component', () => {
   let vuetify
   beforeEach(() => {
-    vuetify = new Vuetify()
+    vuetify = new Vuetify({
+      theme: { disable: true },
+      icons: {
+        iconfont: 'mdi'
+      }
+    })
   })
   // args: isOffline
   const tests = [
@@ -45,12 +46,19 @@ describe('ConnectionStatus component', () => {
       const wrapper = mount(ConnectionStatus, {
         localVue,
         vuetify,
+        mocks: {
+          $vuetify: {
+            application: {
+              register: () => {}
+            }
+          }
+        },
         propsData: {
           isOffline: test.args[0]
         }
       })
       expect(wrapper.props().isOffline).to.equal(test.args[0], `Wrong props value, expected ${test.args[0]}`)
-      const isVisible = wrapper.find('.v-snack__content').isVisible()
+      const isVisible = wrapper.find('.v-snack__wrapper').element.style.display !== 'none'
       expect(isVisible).to.equal(test.expected, `Incorrect component visibility: ${isVisible}`)
     })
   })
