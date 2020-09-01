@@ -17,13 +17,72 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="my-2">
+    <v-layout
+      class="mb-1"
+    >
+      <v-flex
+        class="ma-0 px-3 column">
+        <v-text-field
+          id="c-tree-filter-task-name"
+          clearable
+          dense
+          flat
+          hide-details
+          outlined
+          placeholder="Filter by task name"
+          v-model="tasksFilter.name"
+        ></v-text-field>
+      </v-flex>
+      <v-flex
+        class="pa-0 ma-0 column">
+        <v-select
+          id="c-tree-filter-task-states"
+          :items="taskStates"
+          clearable
+          dense
+          flat
+          hide-details
+          multiple
+          outlined
+          placeholder="Filter by task state"
+          v-model="tasksFilter.states"
+        >
+          <template v-slot:item="slotProps">
+            <Task :status="slotProps.item.value.toLowerCase()" :progress=0 />
+            <span class="ml-2">{{ slotProps.item.value.toLowerCase() }}</span>
+          </template>
+          <template v-slot:selection="slotProps">
+            <div class="mr-2">
+              <Task :status="slotProps.item.value.toLowerCase()" :progress=0 />
+            </div>
+          </template>
+        </v-select>
+      </v-flex>
+      <v-flex
+        class="ma-0 px-3 column">
+        <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
+                   components don't seem to agree on the height here -->
+        <v-btn
+          id="c-tree-filter-btn"
+          height="40"
+          block
+          outlined
+          @click="filterTasks"
+        >Filter</v-btn>
+      </v-flex>
+    </v-layout>
     <!-- each workflow is a tree root -->
     <tree-item
-        v-for="workflow of workflows"
-        :key="workflow.id"
-        :node="workflow"
-        :hoverable="hoverable"
-        :initialExpanded="expanded"
+      v-for="workflow of workflows"
+      :key="workflow.id"
+      :node="workflow"
+      :hoverable="hoverable"
+      :initialExpanded="expanded"
+      v-on:tree-item-created="onTreeItemCreated"
+      v-on:tree-item-destroyed="onTreeItemDestroyed"
+      v-on:tree-item-expanded="onTreeItemExpanded"
+      v-on:tree-item-collapsed="onTreeItemCollapsed"
+      v-on:tree-item-clicked="onTreeItemClicked"
     >
     </tree-item>
   </div>
@@ -31,7 +90,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import TreeItem from '@/components/cylc/tree/TreeItem'
-import { TreeEventBus } from '@/components/cylc/tree/event-bus'
+import Vue from 'vue'
+import TaskState from '@/model/TaskState.model'
+import Task from '@/components/cylc/Task'
+import clonedeep from 'lodash.clonedeep'
 
 export default {
   name: 'Tree',
@@ -45,36 +107,109 @@ export default {
     multipleActive: Boolean
   },
   components: {
+    Task,
     'tree-item': TreeItem
   },
   data () {
     return {
-      treeItemCache: new Set(),
+      treeItemCache: {},
       activeCache: new Set(),
       expandedCache: new Set(),
       expanded: true,
       expandedFilter: null,
-      collapseFilter: null
+      collapseFilter: null,
+      tasksFilter: {
+        name: '',
+        states: []
+      },
+      activeFilters: null
     }
   },
-  created () {
-    TreeEventBus.$on('tree-item-created', this.onTreeItemCreated)
-    TreeEventBus.$on('tree-item-destroyed', this.onTreeItemDestroyed)
-    TreeEventBus.$on('tree-item-expanded', this.onTreeItemExpanded)
-    TreeEventBus.$on('tree-item-collapsed', this.onTreeItemCollapsed)
-    TreeEventBus.$on('tree-item-clicked', this.onTreeItemClicked)
+  computed: {
+    taskStates: () => {
+      return TaskState.enumValues.map(taskState => {
+        return {
+          text: taskState.name.toLowerCase().replace(/_/g, ' '),
+          value: taskState.name
+        }
+      }).sort((left, right) => {
+        return left.text.localeCompare(right.text)
+      })
+    },
+    tasksFilterStates: function () {
+      return this.activeFilters.states.map(selectedTaskState => {
+        return selectedTaskState.toLowerCase()
+      })
+    }
   },
-  destroyed () {
-    // we cannot simply call TreeEventBus.$off() as we may have more trees listening...
-    TreeEventBus.$off('tree-item-created', this.onTreeItemCreated)
-    TreeEventBus.$off('tree-item-destroyed', this.onTreeItemDestroyed)
-    TreeEventBus.$off('tree-item-expanded', this.onTreeItemExpanded)
-    TreeEventBus.$off('tree-item-collapsed', this.onTreeItemCollapsed)
-    TreeEventBus.$off('tree-item-clicked', this.onTreeItemClicked)
+  watch: {
+    workflows: {
+      deep: true,
+      handler: function (val, oldVal) {
+        if (this.activeFilters !== null) {
+          this.$nextTick(() => {
+            this.filterNodes(this.workflows)
+          })
+        }
+      }
+    }
   },
   methods: {
+    filterByTaskName () {
+      return this.activeFilters.name !== undefined &&
+          this.activeFilters.name !== null &&
+          this.activeFilters.name.trim() !== ''
+    },
+    filterByTaskState () {
+      return this.activeFilters.states !== undefined &&
+          this.activeFilters.states !== null &&
+          this.activeFilters.states.length > 0
+    },
+    filterTasks () {
+      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
+          this.tasksFilter.name !== null &&
+          this.tasksFilter.name.trim() !== ''
+      const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
+          this.tasksFilter.states !== null &&
+          this.tasksFilter.states.length > 0
+      if (taskNameFilterSet || taskStatesFilterSet) {
+        this.activeFilters = clonedeep(this.tasksFilter)
+        this.filterNodes(this.workflows)
+      } else {
+        this.removeAllFilters()
+        this.activeFilters = null
+      }
+    },
+    filterNodes (nodes) {
+      for (const node of nodes) {
+        this.filterNode(node)
+      }
+    },
+    filterNode (node) {
+      let filtered = false
+      if (['cyclepoint', 'family-proxy'].includes(node.type)) {
+        for (const child of node.children) {
+          filtered = this.filterNode(child) || filtered
+        }
+      } else if (node.type === 'task-proxy') {
+        if (this.filterByTaskName() && this.filterByTaskState()) {
+          filtered = node.node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
+        } else if (this.filterByTaskName()) {
+          filtered = node.node.name.includes(this.activeFilters.name)
+        } else if (this.filterByTaskState()) {
+          filtered = this.tasksFilterStates.includes(node.node.state)
+        }
+      }
+      this.treeItemCache[node.id].filtered = filtered
+      return filtered
+    },
+    removeAllFilters () {
+      for (const treeitem of Object.values(this.treeItemCache)) {
+        treeitem.filtered = true
+      }
+    },
     expandAll (filter = null) {
-      const collection = filter ? [...this.treeItemCache].filter(filter) : this.treeItemCache
+      const collection = filter ? [...Object.values(this.treeItemCache)].filter(filter) : Object.values(this.treeItemCache)
       for (const treeItem of collection) {
         treeItem.isExpanded = true
         this.expandedCache.add(treeItem)
@@ -99,14 +234,14 @@ export default {
       this.expandedCache.delete(treeItem)
     },
     onTreeItemCreated (treeItem) {
-      this.treeItemCache.add(treeItem)
+      Vue.set(this.treeItemCache, treeItem.$props.node.id, treeItem)
       if (treeItem.isExpanded) {
         this.expandedCache.add(treeItem)
       }
     },
     onTreeItemDestroyed (treeItem) {
       // make sure the item is removed from all caches, otherwise we will have a memory leak
-      this.treeItemCache.delete(treeItem)
+      Vue.delete(this.treeItemCache, treeItem.id)
       this.expandedCache.delete(treeItem)
       this.activeCache.delete(treeItem)
     },

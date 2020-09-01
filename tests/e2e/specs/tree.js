@@ -133,4 +133,102 @@ describe('Tree component', () => {
         })
       })
   })
+  describe('filters', () => {
+    it('Should not filter by default', () => {
+      cy.visit('/#/tree/one')
+      cy
+        .get('.node-data-task-proxy:visible')
+        .should('have.length', 14)
+      cy
+        .get('.node-data-task-proxy')
+        .contains('sleepy')
+        .should('be.visible')
+      cy
+        .get('.node-data-task-proxy')
+        .contains('succeeded')
+        .should('be.visible')
+    })
+    it('Should filter by task name', () => {
+      cy.visit('/#/tree/one')
+      cy
+        .get('.node-data-task-proxy:visible')
+        .should('have.length', 14)
+      cy
+        .get('.node-data-task-proxy')
+        .contains('sleepy')
+        .should('be.visible')
+      cy
+        .get('.node-data-task-proxy')
+        .contains('succeeded')
+        .should('be.visible')
+      // eep should filter sleepy
+      cy
+        .get('#c-tree-filter-task-name')
+        .type('eep')
+      cy
+        .get('#c-tree-filter-btn')
+        .click()
+      cy
+        .get('.node-data-task-proxy:visible')
+        .should('have.length', 2)
+      cy
+        .get('.node-data-task-proxy')
+        .contains('sleepy')
+        .should('be.visible')
+      cy
+        .get('.node-data-task-proxy')
+        .contains('succeeded')
+        .should('not.be.visible')
+    })
+    it('Should filter by task states', () => {
+      cy.visit('/#/tree/one')
+      cy
+        .get('.node-data-task-proxy')
+        .contains('sleepy')
+        .should('be.visible')
+      cy
+        .get('#c-tree-filter-task-states')
+        .click({ force: true })
+      // click on succeeded and waiting
+      cy
+        .get('.v-list-item')
+        .contains('succeeded')
+        .click({ force: true })
+      cy
+        .get('.v-list-item')
+        .contains('waiting')
+        .click({ force: true })
+      cy
+        .get('#c-tree-filter-btn')
+        .click()
+      cy
+        .get('.node-data-task-proxy:visible')
+        .should('have.length', 10)
+    })
+    it('Should filter by task name and states', () => {
+      cy.visit('/#/tree/one')
+      cy
+        .get('.node-data-task-proxy')
+        .contains('sleepy')
+        .should('be.visible')
+      // eep should filter sleepy
+      cy
+        .get('#c-tree-filter-task-name')
+        .type('eep')
+      cy
+        .get('#c-tree-filter-task-states')
+        .click({ force: true })
+      // click on waiting, the other sleepy is succeeded, but we don't want to see it
+      cy
+        .get('.v-list-item')
+        .contains('waiting')
+        .click({ force: true })
+      cy
+        .get('#c-tree-filter-btn')
+        .click()
+      cy
+        .get('.node-data-task-proxy:visible')
+        .should('have.length', 1)
+    })
+  })
 })

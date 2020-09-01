@@ -22,6 +22,7 @@
 const simpleWorkflowTree4Nodes = [
   {
     id: 'user/workflow1',
+    type: 'workflow',
     node: {
       __typename: 'Workflow',
       name: 'workflow1',
@@ -30,6 +31,7 @@ const simpleWorkflowTree4Nodes = [
     children: [
       {
         id: '20100101T0000Z',
+        type: 'cyclepoint',
         node: {
           __typename: 'CyclePoint',
           name: '20100101T0000Z',
@@ -38,6 +40,7 @@ const simpleWorkflowTree4Nodes = [
         children: [
           {
             id: 'user/workflow1/20100101T0000Z/foo',
+            type: 'task-proxy',
             node: {
               __typename: 'TaskProxy',
               name: 'foo',
@@ -47,6 +50,7 @@ const simpleWorkflowTree4Nodes = [
             children: [
               {
                 id: 'user/workflow1/20100101T0000Z/foo/01',
+                type: 'job',
                 node: {
                   __typename: 'Job',
                   name: '1',

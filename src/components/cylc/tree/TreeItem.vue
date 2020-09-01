@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="treeitem">
+  <div class="treeitem" v-show="filtered">
     <div
         :class="getNodeClass()"
         :style="getNodeStyle()"
@@ -93,6 +93,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :depth="depth + 1"
           :hoverable="hoverable"
           :initialExpanded="initialExpanded"
+          v-on:tree-item-created="$listeners['tree-item-created']"
+          v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
+          v-on:tree-item-expanded="$listeners['tree-item-expanded']"
+          v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
+          v-on:tree-item-clicked="$listeners['tree-item-clicked']"
       ></TreeItem>
     </span>
   </div>
@@ -101,7 +106,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
-import { TreeEventBus } from '@/components/cylc/tree/event-bus'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -165,7 +169,8 @@ export default {
           property: 'latestMessage'
         }
       ],
-      displayLeaf: false
+      displayLeaf: false,
+      filtered: true
     }
   },
   computed: {
@@ -174,10 +179,10 @@ export default {
     }
   },
   created () {
-    TreeEventBus.$emit('tree-item-created', this)
+    this.$emit('tree-item-created', this)
   },
   beforeDestroy () {
-    TreeEventBus.$emit('tree-item-destroyed', this)
+    this.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
     if (this.node.expanded !== undefined && this.node.expanded !== null) {
@@ -197,9 +202,9 @@ export default {
      */
     emitExpandCollapseEvent (expanded) {
       if (expanded) {
-        TreeEventBus.$emit('tree-item-expanded', this)
+        this.$emit('tree-item-expanded', this)
       } else {
-        TreeEventBus.$emit('tree-item-collapsed', this)
+        this.$emit('tree-item-collapsed', this)
       }
     },
     getTypeStyle () {
@@ -214,7 +219,7 @@ export default {
      * @param {event} e event
      */
     nodeClicked (e) {
-      TreeEventBus.$emit('tree-item-clicked', this)
+      this.$emit('tree-item-clicked', this)
     },
     /**
      * Handler for when a job node was clicked.
@@ -259,95 +264,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="scss">
-@import '../../../../node_modules/vuetify/src/styles/styles';
-
-$active-color: #BDD5F7;
-
-@mixin active-state() {
-  background-color: $active-color;
-  &:hover {
-    background-color: $active-color;
-  }
-}
-
-@mixin states() {
-  &:hover {
-    background-color: map-get($grey, 'lighten-3');
-  }
-}
-
-.treeitem {
-  display: table;
-  width: 100%;
-  .node {
-    line-height: 1.8em;
-    display: flex;
-    flex-wrap: nowrap;
-
-    &--hoverable {
-      @include states()
-    }
-
-    &--active {
-      @include active-state()
-    }
-
-    .node-data {
-      margin-left: 6px;
-      display: flex;
-      flex-wrap: nowrap;
-      .node-summary {
-        display: flex;
-        flex-wrap: nowrap;
-        flex-direction: row;
-      }
-    }
-  }
-  .type {
-    margin-right: 10px;
-  }
-
-  $arrow-size: 15px;
-  $leaf-background-color: map-get($grey, 'lighten-3');
-
-  .leaf {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: column;
-    .arrow-up {
-      width: 0;
-      height: 0;
-      border-left: $arrow-size solid transparent;
-      border-right: $arrow-size solid transparent;
-      border-bottom: $arrow-size solid $leaf-background-color;
-      display: flex;
-      flex-wrap: nowrap;
-    }
-    .leaf-data {
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: column;
-      background-color: $leaf-background-color;
-      .leaf-entry {
-        display: flex;
-        flex-wrap: nowrap;
-        .leaf-entry-title {
-          // This is the minimum width of the left part in a leaf entry, with the title
-          // ATW the longest text is "latest message". This may need some tweaking. It
-          // would be much simpler if we could rely on flex+row, but we have to create
-          // two elements, and use a v-for with Vue. The v-for element creates an extra
-          // wrapper that stops us of being able to use a single parent with display: flex
-          min-width: 150px;
-        }
-        .leaf-entry-value {
-          white-space: nowrap;
-        }
-      }
-    }
-  }
-}
-</style>

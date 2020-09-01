@@ -275,7 +275,7 @@ export default {
       Vue.set(this.widgets, id, MutationsView.name)
     },
     removeAllWidgets () {
-      const dockWidgets = this.dock.widgets()
+      const dockWidgets = this.$refs.lumino.dock.widgets()
       const widgets = []
       each(iter(dockWidgets), widget => {
         widgets.push(widget)
