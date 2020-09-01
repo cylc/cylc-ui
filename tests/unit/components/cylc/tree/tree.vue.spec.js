@@ -64,7 +64,7 @@ describe('Tree component', () => {
       }
     })
     expect(wrapper.props().workflows[0].node.__typename).to.equal('CyclePoint')
-    expect(wrapper.contains('div')).to.equal(true)
+    expect(wrapper.find('div')).to.not.equal(null)
   })
   describe('activable', () => {
     it('should not activate by default', () => {
@@ -73,7 +73,7 @@ describe('Tree component', () => {
           workflows: simpleWorkflowTree4Nodes[0].children
         }
       })
-      const treeItems = wrapper.findAll({ name: 'TreeItem' })
+      const treeItems = wrapper.findAllComponents({ name: 'TreeItem' })
       const workflowTreeItem = treeItems.wrappers[0]
       // the workflow tree item node must not be active
       const workflowTreeItemNode = workflowTreeItem.find('div.node')
@@ -89,7 +89,7 @@ describe('Tree component', () => {
           activable: true
         }
       })
-      const treeItems = wrapper.findAll({ name: 'TreeItem' })
+      const treeItems = wrapper.findAllComponents({ name: 'TreeItem' })
       const workflowTreeItem = treeItems.wrappers[0]
       // the workflow tree item node must not be active
       const workflowTreeItemNode = workflowTreeItem.find('div.node')
