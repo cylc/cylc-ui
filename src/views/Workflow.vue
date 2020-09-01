@@ -20,24 +20,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <lumino
       ref="lumino"
       v-on:lumino:deleted="onWidgetDeletedEvent"
+      tab-title-prop="tab-title"
     >
-      <tree-component
+      <v-skeleton-loader
         v-for="widgetId of treeWidgets"
         :key="widgetId"
         :id="widgetId"
-        :workflows="tree.root.children"
-      />
-      <graph-component
-          v-for="widgetId of graphWidgets"
-          :key="widgetId"
-          :id="widgetId"
+        :loading="isLoading"
+        type="list-item-three-line"
+        tab-title="tree"
+      >
+        <tree-component
+          :workflows="tree.root.children"
+        />
+      </v-skeleton-loader>
+      <v-skeleton-loader
+        v-for="widgetId of graphWidgets"
+        :key="widgetId"
+        :id="widgetId"
+        :loading="isLoading"
+        type="list-item-three-line"
+        tab-title="graph"
+      >
+        <graph-component
           :workflow-name="workflowName"
-      />
+        />
+      </v-skeleton-loader>
       <mutations-view
-          v-for="widgetId of mutationsWidgets"
-          :key="widgetId"
-          :id="widgetId"
-          :workflow-name="workflowName"
+        v-for="widgetId of mutationsWidgets"
+        :key="widgetId"
+        :id="widgetId"
+        :workflow-name="workflowName"
+        tab-title="mutations"
       />
     </lumino>
   </div>
