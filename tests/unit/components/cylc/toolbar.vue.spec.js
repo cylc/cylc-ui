@@ -20,8 +20,7 @@ import { expect } from 'chai'
 import Toolbar from '@/components/cylc/Toolbar'
 import TaskState from '@/model/TaskState.model'
 import store from '@/store/index'
-import Vue from 'vue'
-import Vuetify from 'vuetify'
+import Vuetify from 'vuetify/lib'
 
 const mockedWorkflowService = {
   releaseWorkflow: function () {
@@ -51,11 +50,18 @@ const mockedWorkflowService = {
   }
 }
 
+const localVue = createLocalVue()
+
 describe('Toolbar component', () => {
   let vuetify
   let $route
   beforeEach(() => {
-    vuetify = new Vuetify()
+    vuetify = new Vuetify({
+      theme: { disable: true },
+      icons: {
+        iconfont: 'mdi'
+      }
+    })
     $route = {
       name: 'testRoute'
     }
@@ -70,24 +76,28 @@ describe('Toolbar component', () => {
   })
   it('should initialize props', () => {
     const wrapper = shallowMount(Toolbar, {
+      localVue,
+      vuetify,
       store,
       mocks: {
         $route
       }
     })
-    expect(wrapper.is(Toolbar)).to.equal(true)
+    expect(wrapper.element.children[0].className).to.equal('c-toolbar')
   })
   it('should hide and display drawer according to screen viewport size', async () => {
-    // v-app-toolbar when using "app" directive, must also have a v-app. So we need to initialize vuetify
-    const localVue = createLocalVue()
-    localVue.use(Vuetify)
     const wrapper = mount(Toolbar, {
       localVue,
       vuetify,
       store,
       mocks: {
         $route,
-        $t: () => {} // vue-i18n
+        $vuetify: {
+          application: {
+            register: () => {}
+          }
+        },
+        $t: () => {} // vue-i18n,
       }
     })
     expect(store.state.app.drawer).to.equal(null)
@@ -95,9 +105,8 @@ describe('Toolbar component', () => {
     expect(wrapper.find('button.default').exists()).to.equal(false)
     // let's make it responsive, so that the burger menu is visible
     wrapper.vm.$data.responsive = true
-    await Vue.nextTick()
+    await wrapper.vm.$nextTick()
     expect(wrapper.find('button.default').exists()).to.equal(true)
-    expect(wrapper.find('button.default').isVisible()).to.equal(true)
     wrapper.find('button.default').trigger('click')
     expect(store.state.app.drawer).to.equal(true)
   })
@@ -115,7 +124,7 @@ describe('Toolbar component', () => {
     const stopLink = wrapper.find('#workflow-stop-button')
     expect(wrapper.vm.$data.isStopped).to.equal(false)
     stopLink.trigger('click')
-    await Vue.nextTick()
+    await wrapper.vm.$nextTick()
     expect(wrapper.vm.$data.isStopped).to.equal(true)
   })
   it('should stop/release the workflow', async () => {
@@ -126,17 +135,17 @@ describe('Toolbar component', () => {
       }
     })
     wrapper.vm.$data.responsive = true
-    await Vue.nextTick()
+    await wrapper.vm.$nextTick()
 
     // mock service
     wrapper.vm.$workflowService = mockedWorkflowService
 
     const toggleLink = wrapper.find('#workflow-release-hold-button')
     toggleLink.trigger('click')
-    await Vue.nextTick()
+    await wrapper.vm.$nextTick()
     expect(wrapper.vm.isHeld).to.equal(true)
     toggleLink.trigger('click')
-    await Vue.nextTick()
+    await wrapper.vm.$nextTick()
     expect(wrapper.vm.isHeld).to.equal(false)
   })
 })

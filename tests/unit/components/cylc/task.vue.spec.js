@@ -32,6 +32,6 @@ describe('Task component', () => {
         }
       }
     })
-    expect(wrapper.is(Task)).to.equal(true)
+    expect(wrapper.element.className).to.equal('c-task')
   })
 })

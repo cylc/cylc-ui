@@ -29,8 +29,8 @@ import {
 } from './tree.data'
 
 describe('TreeItem component', () => {
-  it('should display the treeitem with valid data', () => {
-    const wrapper = mount(TreeItem, {
+  const mountFunction = options => {
+    return mount(TreeItem, {
       propsData: {
         node: simpleWorkflowNode
       },
@@ -40,15 +40,19 @@ describe('TreeItem component', () => {
         'tree-item-expanded': () => {},
         'tree-item-collapsed': () => {},
         'tree-item-clicked': () => {}
-      }
+      },
+      ...options
     })
+  }
+  it('should display the treeitem with valid data', () => {
+    const wrapper = mountFunction()
     expect(wrapper.props().node.node.__typename).to.equal('Workflow')
     expect(wrapper.vm.$data.filtered).to.equal(true)
   })
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
     it('should display the cycle point expanded by default', () => {
-      const wrapper = mount(TreeItem, {
+      const wrapper = mountFunction({
         propsData: {
           node: simpleCyclepointNode,
           depth: 0
@@ -59,7 +63,7 @@ describe('TreeItem component', () => {
       expect(expandControlElement.text()).to.equal('▽')
     })
     it('should not display the cycle point expanded when set expanded=true', () => {
-      const wrapper = mount(TreeItem, {
+      const wrapper = mountFunction({
         propsData: {
           node: simpleTaskNode,
           initialExpanded: false
@@ -70,7 +74,7 @@ describe('TreeItem component', () => {
       expect(expandControlElement.text()).to.equal('▷')
     })
     it('should not display the task expanded by default', () => {
-      const wrapper = mount(TreeItem, {
+      const wrapper = mountFunction({
         propsData: {
           node: simpleTaskNode,
           depth: 0
@@ -83,12 +87,12 @@ describe('TreeItem component', () => {
   })
   describe('children', () => {
     it('should recursively include other TreeItem components for its children', () => {
-      const wrapper = mount(TreeItem, {
+      const wrapper = mountFunction({
         propsData: {
           node: simpleWorkflowNode
         }
       })
-      const task = wrapper.findAll({ name: 'TreeItem' })
+      const task = wrapper.findAllComponents({ name: 'TreeItem' })
       // 4 TreeItem components, 1 for workflow, 1 for cyclepoint, 1 for task, 1 for job
       expect(task.length).to.equal(4)
     })

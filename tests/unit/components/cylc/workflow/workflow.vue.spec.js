@@ -23,6 +23,16 @@ describe('Workflow component', () => {
   // TODO: Lumino is warning about "Host is not attached"
   it('should display the workflow with valid data', async () => {
     const wrapper = shallowMount(Lumino)
-    expect(wrapper.contains('div')).to.equal(true)
+    // the Component template will be rendered but the element won't be attached to the
+    // document.body, so we add an empty div here to avoid errors such as 'Host is not attached.'
+    const div = document.createElement('div')
+    document.body.appendChild(div)
+    wrapper.vm.$refs.main = div
+    try {
+      await wrapper.vm.$nextTick()
+    } catch (e) {
+      // ignore: expected error, as it will fail to attach the widget to document.body
+    }
+    expect(wrapper.find('div')).to.not.equal(null)
   })
 })

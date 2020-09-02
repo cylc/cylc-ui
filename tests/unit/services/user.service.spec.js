@@ -25,6 +25,7 @@ describe('UserService', () => {
   let sandbox
   beforeEach(() => {
     sandbox = sinon.createSandbox()
+    sandbox.stub(console, 'log')
     store.dispatch('setAlert', null)
   })
   afterEach(() => sandbox.restore())

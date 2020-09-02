@@ -43,7 +43,7 @@ describe('GScan component', () => {
       }
     })
     expect(wrapper.props().workflows[0].name).to.equal('five')
-    expect(wrapper.contains('div')).to.equal(true)
+    expect(wrapper.find('div')).to.not.equal(null)
     expect(wrapper.html()).to.contain('<div class="flex grow">five</div>')
   })
   it('should correctly calculate the workflow summary', () => {
