@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item to="/user-profile">
             <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon medium>mdi-settings</v-icon>
+              <v-icon medium>mdi-cog</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
@@ -132,7 +132,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/documentation">
             <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon medium>mdi-file-document-box-multiple</v-icon>
+              <v-icon medium>mdi-book-multiple</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
