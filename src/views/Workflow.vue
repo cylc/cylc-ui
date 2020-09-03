@@ -16,44 +16,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="workflow-panel fill-height">
-    <lumino
-      ref="lumino"
-      v-on:lumino:deleted="onWidgetDeletedEvent"
-      tab-title-prop="tab-title"
-    >
-      <v-skeleton-loader
-        v-for="widgetId of treeWidgets"
-        :key="widgetId"
-        :id="widgetId"
-        :loading="isLoading"
-        type="list-item-three-line"
-        tab-title="tree"
+  <div>
+    <toolbar
+      v-on:add-tree="this.addTreeWidget"
+      v-on:add-graph="this.addGraphWidget"
+      v-on:add-mutations="this.addMutationsWidget"
+    ></toolbar>
+    <div class="workflow-panel fill-height">
+      <lumino
+        ref="lumino"
+        v-on:lumino:deleted="onWidgetDeletedEvent"
+        tab-title-prop="tab-title"
       >
-        <tree-component
-          :workflows="tree.root.children"
-        />
-      </v-skeleton-loader>
-      <v-skeleton-loader
-        v-for="widgetId of graphWidgets"
-        :key="widgetId"
-        :id="widgetId"
-        :loading="isLoading"
-        type="list-item-three-line"
-        tab-title="graph"
-      >
-        <graph-component
+        <v-skeleton-loader
+          v-for="widgetId of treeWidgets"
+          :key="widgetId"
+          :id="widgetId"
+          :loading="isLoading"
+          type="list-item-three-line"
+          tab-title="tree"
+        >
+          <tree-component
+            :workflows="tree.root.children"
+          />
+        </v-skeleton-loader>
+        <v-skeleton-loader
+          v-for="widgetId of graphWidgets"
+          :key="widgetId"
+          :id="widgetId"
+          :loading="isLoading"
+          type="list-item-three-line"
+          tab-title="graph"
+        >
+          <graph-component
+            :workflow-name="workflowName"
+          />
+        </v-skeleton-loader>
+        <mutations-view
+          v-for="widgetId of mutationsWidgets"
+          :key="widgetId"
+          :id="widgetId"
           :workflow-name="workflowName"
+          tab-title="mutations"
         />
-      </v-skeleton-loader>
-      <mutations-view
-        v-for="widgetId of mutationsWidgets"
-        :key="widgetId"
-        :id="widgetId"
-        :workflow-name="workflowName"
-        tab-title="mutations"
-      />
-    </lumino>
+      </lumino>
+    </div>
   </div>
 </template>
 
@@ -62,7 +69,6 @@ import { mixin } from '@/mixins'
 import { datatree } from '@/mixins/treeview'
 import { mapState } from 'vuex'
 import Lumino from '@/components/cylc/workflow/Lumino'
-import { EventBus } from '@/components/cylc/workflow'
 import { WORKFLOW_GRAPH_QUERY, WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import CylcTree from '@/components/cylc/tree/cylc-tree'
 import { applyDeltas } from '@/components/cylc/tree/deltas'
@@ -72,6 +78,7 @@ import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import GraphComponent from '@/components/cylc/graph/Graph.vue'
 import MutationsView from '@/views/Mutations'
 import Vue from 'vue'
+import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -94,7 +101,8 @@ export default {
     Lumino,
     TreeComponent,
     GraphComponent,
-    MutationsView
+    MutationsView,
+    Toolbar
   },
   metaInfo () {
     return {
@@ -143,32 +151,10 @@ export default {
         .map(([id, type]) => id)
     }
   },
-  created () {
-    EventBus.$on('add:tree', () => {
-      const subscriptionId = this.subscribeDeltas()
-      // add widget that uses the GraphQl query response
-      this.addTreeWidget(subscriptionId)
-    })
-    EventBus.$on('add:graph', () => {
-      // subscribe GraphQL query
-      const subscriptionId = this.subscribe('graph')
-      // add widget that uses the GraphQl query response
-      this.addGraphWidget(subscriptionId)
-    })
-    EventBus.$on('add:mutations', () => {
-      // no subscription for this view ATM as we are using the centrally
-      // defined schema
-      // on day it will become a one-off query (though a subscription would work
-      // too as the schema doesn't change during the lifetime of a workflow run
-      const subscriptionId = (new Date()).getTime()
-      // add widget that uses the GraphQl query response
-      this.addMutationsWidget(subscriptionId)
-    })
-  },
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$nextTick(() => {
-        EventBus.$emit('add:tree')
+        vm.addTreeWidget()
       })
     })
   },
@@ -185,16 +171,11 @@ export default {
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
       // Create a Tree View for the current workflow by default
-      const subscriptionId = this.subscribeDeltas()
-      this.addTreeWidget(subscriptionId)
+      this.addTreeWidget()
     })
     next()
   },
   beforeRouteLeave (to, from, next) {
-    EventBus.$off('add:tree')
-    EventBus.$off('add:graph')
-    EventBus.$off('add:mutations')
-    EventBus.$off('delete:tree')
     this.$workflowService.unregister(this)
     this.$workflowService.stopDeltasSubscription()
     this.tree.clear()
@@ -271,23 +252,28 @@ export default {
       this.isLoading = !isActive
     },
     /**
-     * @param {number} id - Subscription ID
+     * Add a tree widget. Starts a delta subscription if none is running.
      */
-    addTreeWidget (id) {
-      Vue.set(this.widgets, id, TreeComponent.name)
+    addTreeWidget () {
+      const subscriptionId = this.subscribeDeltas()
+      Vue.set(this.widgets, subscriptionId, TreeComponent.name)
     },
     /**
-     * @param {number} id - Subscription ID
+     * Add a graph widget. Will update any existing subscription (query-merge).
      */
-    addGraphWidget (id) {
-      Vue.set(this.widgets, id, GraphComponent.name)
+    addGraphWidget () {
+      const subscriptionId = this.subscribe('graph')
+      Vue.set(this.widgets, subscriptionId, GraphComponent.name)
     },
     /**
-     * @param {number} id - Subscription ID
+     * Add a mutations widget.
      */
-    addMutationsWidget (id) {
-      Vue.set(this.widgets, id, MutationsView.name)
+    addMutationsWidget () {
+      Vue.set(this.widgets, (new Date()).getTime(), MutationsView.name)
     },
+    /**
+     * Remove all the widgets present in the UI.
+     */
     removeAllWidgets () {
       const dockWidgets = this.$refs.lumino.dock.widgets()
       const widgets = []
@@ -296,6 +282,19 @@ export default {
       })
       widgets.forEach(widget => widget.close())
     },
+    /**
+     * Called for each widget removed. Each widget contains a subscription
+     * attached. This method will check if it needs to cancel the
+     * subscription (e.g. we removed the last widget using a deltas
+     * subscription).
+     *
+     * Calling it might change the value of the `isLoading` data
+     * attribute.
+     *
+     * @param {{
+     *   id: string
+     * }} event UI event containing the widget ID (string value, needs to be parsed)
+     */
     onWidgetDeletedEvent (event) {
       Vue.delete(this.widgets, event.id)
       const vm = this
