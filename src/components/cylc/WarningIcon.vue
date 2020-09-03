@@ -115,23 +115,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.c-warn {
-  svg {
-    width: 1em;
-    height: 1em;
-
-    path {
-      /* TODO - move colours to job or app theme */
-      stroke: rgb(170,170,170);
-      fill: rgb(150,150,150);
-    }
-
-    path.active {
-      stroke: rgb(255,122,122);
-      fill: rgb(248,197,102);
-    }
-  }
-}
-</style>
