@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-alert
           prominent
           color="grey lighten-3"
-          icon="mdi-settings"
+          icon="mdi-cog"
         >
           <h3 class="headline">{{ $t('UserProfile.tableHeader') }}</h3>
           <p class="body-1">{{ $t('UserProfile.tableSubHeader') }}</p>
