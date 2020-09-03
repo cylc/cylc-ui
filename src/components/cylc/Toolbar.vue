@@ -197,9 +197,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#core-app-bar a {
-  text-decoration: none;
-}
-</style>
