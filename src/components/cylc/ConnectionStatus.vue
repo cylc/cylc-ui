@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-icon
       class="mr-2"
       color="red lighten-5"
-      size="large">mdi-lan-disconnect</v-icon>
+      size="large">{{ svgPath }}</v-icon>
     <span
       class="red--text text--lighten-5 font-weight-medium"
     >Connection to server lost. You are offline.</span>
@@ -34,6 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { mdiLanDisconnect } from '@mdi/js'
+
 export default {
   name: 'ConnectionStatus',
 
@@ -44,6 +46,12 @@ export default {
     isOffline: {
       type: Boolean,
       required: true
+    }
+  },
+
+  data () {
+    return {
+      svgPath: mdiLanDisconnect
     }
   }
 }

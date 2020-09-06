@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-icon
            @click="showHelp = !showHelp"
           >
-            mdi-help-circle-outline
+            {{ svgPath }}
           </v-icon>
         </template>
 
@@ -56,9 +56,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mask } from 'vue-the-mask'
 import VueMarkdown from 'vue-markdown'
-
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig from '@/components/graphqlFormGenerator/components/vuetify'
+import { mdiHelpCircleOutline } from '@mdi/js'
 
 export default {
   name: 'g-form-input',
@@ -91,7 +91,8 @@ export default {
     defaultProps: VuetifyConfig.defaultProps,
     namedTypes: VuetifyConfig.namedTypes,
     kinds: VuetifyConfig.kinds,
-    showHelp: false
+    showHelp: false,
+    svgPath: mdiHelpCircleOutline
   }),
 
   computed: {

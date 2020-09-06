@@ -1329,10 +1329,10 @@
     "@lumino/signaling" "^1.4.3"
     "@lumino/virtualdom" "^1.7.3"
 
-"@mdi/font@^5.5.55":
+"@mdi/js@^5.5.55":
   version "5.5.55"
-  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-5.5.55.tgz#7f83d640f0692651f5e59558da99975f42114123"
-  integrity sha512-xrVCXiRMz7ubB8mu6ehDhMADmGpLBsk3GWZccs39jWmhoTxatFnOvW8STJjqMGtePPNgGYYu/6m/AJVyMjBxnw==
+  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-5.5.55.tgz#8dc97fbcc47d1f6bfa3343d4f7c7f5c0e2990151"
+  integrity sha512-vbw1QW3M9A4vObU9WmTETTG7n7feC9HSn/3up8ZYk/M3K9fGL9FPtw0+bdASRu1UOBgEsqC9eBhNW10IOcwMIg==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
