@@ -25,10 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     persistent
     class="fill-height"
   >
-    <v-layout
-      tag="v-list"
-      column
-      class="pa-0"
+    <v-list
+      class="pa-0 ma-0"
     >
       <c-header :user="user.username" />
       <v-list-item
@@ -80,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <g-scan
         :workflows="workflows"
       />
-    </v-layout>
+    </v-list>
     <template v-slot:append>
       <div class="px-4 py-2 d-flex justify-center">
         <span class="grey--text text--darken-2">
@@ -94,7 +92,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 // because we use `tag=v-list` and not `v-list`
 // eslint-disable-next-line no-unused-vars
-import { VList } from 'vuetify/lib/components/VList'
 import Header from '@/components/cylc/Header'
 import i18n from '@/i18n'
 import { mapState } from 'vuex'
@@ -103,9 +100,7 @@ import GScan from '@/components/cylc/gscan/GScan'
 export default {
   components: {
     GScan,
-    'c-header': Header,
-    // eslint-disable-next-line vue/no-unused-components
-    'v-list': VList
+    'c-header': Header
   },
   data: () => ({
     links: [
