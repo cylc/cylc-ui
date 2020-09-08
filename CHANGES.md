@@ -19,6 +19,9 @@ None or N/A.
 [#491](https://github.com/cylc/cylc-ui/pull/491) - Update apollo-client
 to @apollo/client (different package ID, also from 2.x to 3.x).
 
+[#492](https://github.com/cylc/cylc-ui/pull/492) - Sort tree view
+by cyclepoints and task names.
+
 [#458](https://github.com/cylc/cylc-ui/pull/458) - Add CylcTree and
 use deltas for the Tree view and component.
 
