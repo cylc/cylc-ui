@@ -53,41 +53,41 @@ fragment WorkflowTreeDeltas on Deltas {
 fragment WorkflowTreeAddedData on Added {
   workflow {
     ...WorkflowData
-    cyclePoints: familyProxies(ids: ["root"], ghosts: true) {
+    cyclePoints: familyProxies (ids: ["root"], ghosts: true) {
       cyclePoint
     }
-    taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
+    taskProxies (sort: { keys: ["name"], reverse: false }, ghosts: true) {
       ...TaskProxyData
       jobs(sort: { keys: ["submit_num"], reverse:true }) {
         ...JobData
       }
     }
-    familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
+    familyProxies (exids: ["root"], sort: { keys: ["name"] }, ghosts: true) {
       ...FamilyProxyData
     }
   }
-  cyclePoints: familyProxies(ids: ["root"], ghosts: true) {
+  cyclePoints: familyProxies (ids: ["root"], ghosts: true) {
     cyclePoint
   }
-  familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
+  familyProxies (exids: ["root"], sort: { keys: ["name"] }, ghosts: true) {
     ...FamilyProxyData
   }
-  taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
+  taskProxies (sort: { keys: ["name"], reverse: false }, ghosts: true) {
     ...TaskProxyData
   }
-  jobs(sort: { keys: ["submit_num"], reverse:true }) {
+  jobs (sort: { keys: ["submit_num"], reverse:true }) {
     ...JobData
   }
 }
 
 fragment WorkflowTreeUpdatedData on Updated {
-  taskProxies(sort: { keys: ["cyclePoint"] }, ghosts: true) {
+  taskProxies (ghosts: true) {
     ...TaskProxyData
   }
-  jobs(sort: { keys: ["submit_num"], reverse:true }) {
+  jobs {
     ...JobData
   }
-  familyProxies (exids: ["root"], sort: { keys: ["firstParent"]}, ghosts: true) {
+  familyProxies (exids: ["root"], ghosts: true) {
     ...FamilyProxyData
   }
 }

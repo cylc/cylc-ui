@@ -215,9 +215,13 @@ class CylcTree {
     if (!this.lookup.has(cyclePoint.id)) {
       this.lookup.set(cyclePoint.id, cyclePoint)
       this.root.children.push(cyclePoint)
-      // sort cycle points
+      // Sort cycle points here.
+      // If the sorting is done in the query only, the first time we
+      // render the component it will be in the correct order. Then
+      // further updates will append to the list. That's why we have
+      // the sorting here and not in the query.
       this.root.children.sort((cyclepoint, anotherCyclepoint) => {
-        return cyclepoint.id.localeCompare(anotherCyclepoint.id)
+        return anotherCyclepoint.id.localeCompare(cyclepoint.id)
       })
     }
   }
