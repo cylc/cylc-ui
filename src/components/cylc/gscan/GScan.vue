@@ -92,6 +92,7 @@ export default {
   props: {
     /**
      * Vanilla workflows object from GraphQL query
+     * @type {{}|null}
      */
     workflows: {
       type: Array,
@@ -113,8 +114,12 @@ export default {
      */
     workflowsSummaries () {
       const workflowSummaries = new Map()
-      for (const workflow of this.workflows) {
-        workflowSummaries.set(workflow.name, getWorkflowSummary(workflow))
+      // with async scan, the workflows list may be null or undefined
+      // see cylc-uiserver PR#150
+      if (this.workflows) {
+        for (const workflow of this.workflows) {
+          workflowSummaries.set(workflow.name, getWorkflowSummary(workflow))
+        }
       }
       return workflowSummaries
     }
