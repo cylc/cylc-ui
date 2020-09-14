@@ -120,11 +120,11 @@ describe('Tree component functions', () => {
     const taskProxyNode = createTaskProxyNode(taskProxy)
     expect(taskProxyNode.node.state).to.equal('')
   })
-  it('should throw an error when the workflow to be populated is invalid', () => {
+  it('should not throw an error when the workflow to be populated is invalid', () => {
     const tree = {}
     const workflow = {}
-    expect(populateTreeFromGraphQLData, null, workflow).to.throw(Error)
-    expect(populateTreeFromGraphQLData, tree, null).to.throw(Error)
-    expect(populateTreeFromGraphQLData, tree, workflow).to.throw(Error)
+    expect(populateTreeFromGraphQLData, null, workflow).to.not.throw(Error)
+    expect(populateTreeFromGraphQLData, tree, null).to.not.throw(Error)
+    expect(populateTreeFromGraphQLData, tree, workflow).to.not.throw(Error)
   })
 })

@@ -108,7 +108,7 @@ describe('Deltas', () => {
       expect(cylcTree.root.id).to.equal(WORKFLOW_ID)
       expect(fakeTree.tallyCyclePointStates.called).to.equal(true)
     })
-    it('Should log to console and throw an error if it fails to handle the initial data burst', () => {
+    it('Should not log to console nor throw an error if it fails to handle the initial data burst', () => {
       const sandbox = sinon.createSandbox()
       sandbox.stub(console, 'error')
       const deltasWithInitialDataBurst = {
@@ -123,8 +123,8 @@ describe('Deltas', () => {
           }
         }
       }
-      expect(() => applyDeltas(deltasWithInitialDataBurst, cylcTree)).to.throw(Error)
-      expect(console.error.calledOnce).to.equal(true)
+      expect(() => applyDeltas(deltasWithInitialDataBurst, cylcTree)).to.not.throw(Error)
+      expect(console.error.calledOnce).to.equal(false)
       sandbox.restore()
     })
   })
