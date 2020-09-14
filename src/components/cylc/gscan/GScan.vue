@@ -16,10 +16,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div>
-    <div v-if="workflows && workflows.length > 0">
-      <div v-for="workflow in workflows" :key="workflow.id">
-        <v-list-item :to="`/workflows/${ workflow.name }`">
+  <div
+    class="c-gscan"
+  >
+    <div
+      v-if="workflows && workflows.length > 0"
+      class="c-gscan-workflows"
+    >
+      <div
+        v-for="workflow in workflows"
+        :key="workflow.id"
+        class="c-gscan-workflow"
+      >
+        <v-list-item
+          :to="`/workflows/${ workflow.name }`"
+          :class="getWorkflowClass(workflow.status)"
+        >
           <v-list-item-action>
             <v-icon>{{ getWorkflowIcon(workflow.status) }}</v-icon>
           </v-list-item-action>
@@ -37,15 +49,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
                       <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
                       <v-btn
-                          v-on="on"
-                          class="mt-1 pa-0"
-                          min-width="0"
-                          min-height="0"
-                          style="font-size: 120%"
-                          :ripple="false"
-                          small
-                          dark
-                          text>
+                        v-on="on"
+                        class="mt-1 pa-0"
+                        min-width="0"
+                        min-height="0"
+                        style="font-size: 120%"
+                        :ripple="false"
+                        small
+                        dark
+                        text
+                      >
                         <job :status="state" />
                       </v-btn>
                     </template>
@@ -92,6 +105,7 @@ export default {
   props: {
     /**
      * Vanilla workflows object from GraphQL query
+     * @type {{}|null}
      */
     workflows: {
       type: Array,
@@ -113,8 +127,12 @@ export default {
      */
     workflowsSummaries () {
       const workflowSummaries = new Map()
-      for (const workflow of this.workflows) {
-        workflowSummaries.set(workflow.name, getWorkflowSummary(workflow))
+      // with async scan, the workflows list may be null or undefined
+      // see cylc-uiserver PR#150
+      if (this.workflows) {
+        for (const workflow of this.workflows) {
+          workflowSummaries.set(workflow.name, getWorkflowSummary(workflow))
+        }
       }
       return workflowSummaries
     }
@@ -174,6 +192,13 @@ export default {
         return 'mdi-pause-octagon'
       default:
         return 'mdi-help-circle'
+      }
+    },
+
+    getWorkflowClass (status) {
+      return {
+        // TODO: replace by constant or enum later (not TaskState as that doesn't have stopped, maybe WorkflowState?)
+        'c-workflow-stopped': status === 'stopped'
       }
     }
   }

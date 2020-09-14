@@ -25,23 +25,26 @@
  */
 function getWorkflowSummary (workflow) {
   const states = new Map()
-  for (const taskProxy of workflow.taskProxies) {
-    // a task in waiting, may not have any jobs
-    if (taskProxy.jobs) {
-      for (const job of taskProxy.jobs) {
-        // TODO: temporary fix, as the backend is sending ready jobs, but they will change in cylc flow&uiserver in the future
-        if (job.state === 'ready') {
-          continue
+  // a stopped workflow, may not have any tasks
+  if (workflow.taskProxies) {
+    for (const taskProxy of workflow.taskProxies) {
+      // a task in waiting, may not have any jobs
+      if (taskProxy.jobs) {
+        for (const job of taskProxy.jobs) {
+          // TODO: temporary fix, as the backend is sending ready jobs, but they will change in cylc flow&uiserver in the future
+          if (job.state === 'ready') {
+            continue
+          }
+          if (!states.has(job.state)) {
+            states.set(job.state, new Set())
+          }
+          states.get(job.state).add(`${taskProxy.name}.${taskProxy.cyclePoint}`)
         }
-        if (!states.has(job.state)) {
-          states.set(job.state, new Set())
-        }
-        states.get(job.state).add(`${taskProxy.name}.${taskProxy.cyclePoint}`)
       }
     }
-  }
-  for (const [stateName, tasksSet] of states.entries()) {
-    states.set(stateName, [...tasksSet].sort())
+    for (const [stateName, tasksSet] of states.entries()) {
+      states.set(stateName, [...tasksSet].sort())
+    }
   }
   return new Map([...states.entries()].sort())
 }

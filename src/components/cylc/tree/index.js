@@ -132,7 +132,10 @@ function containsTreeData (workflow) {
  */
 function populateTreeFromGraphQLData (tree, workflow) {
   if (!tree || !workflow || !containsTreeData(workflow)) {
-    throw new Error('You must provide valid data to populate the tree!')
+    // throw new Error('You must provide valid data to populate the tree!')
+    // a stopped workflow is valid, but won't have anything that we can use
+    // to populate the tree, only workflow data and empty families
+    return
   }
   // the workflow object gets augmented to become a valid node for the tree
   const rootNode = createWorkflowNode(workflow)
