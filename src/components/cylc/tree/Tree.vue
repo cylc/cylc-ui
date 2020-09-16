@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-layout>
     <!-- each workflow is a tree root -->
     <tree-item
-      v-for="workflow of workflows"
+      v-for="workflow of sortedChildren('workflow', workflows)"
       :key="workflow.id"
       :node="workflow"
       :hoverable="hoverable"
@@ -94,9 +94,13 @@ import Vue from 'vue'
 import TaskState from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
 import clonedeep from 'lodash.clonedeep'
+import { treeitem } from '@/mixins/treeitem'
 
 export default {
   name: 'Tree',
+  mixins: [
+    treeitem
+  ],
   props: {
     workflows: {
       type: Array,
