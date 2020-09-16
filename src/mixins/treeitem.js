@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import orderBy from 'lodash/orderBy'
-
 const treeitem = {
   methods: {
     /**
@@ -51,24 +49,56 @@ const treeitem = {
         case 'workflow': {
           // sort workflow children (cycle-points)
           // sort by id descending, so '20100102' comes before '20100101'
-          return orderBy(children, ['id'], 'desc')
+          return [...children].sort((left, right) => {
+            return right.id.localeCompare(left.id)
+          })
         }
         case 'cyclepoint': {
           // sort cycle point children (family-proxies, and task-proxies)
           // first we sort by type ascending, so 'family-proxy' types come before 'task-proxy'
           // then we sort by node name ascending, so 'bar' comes before 'foo'
-          return orderBy(children, [child => child.type, child => child.node.name.toLowerCase()], ['asc', 'asc'])
+          return [...children].sort((left, right) => {
+            // node type
+            if (left.type < right.type) {
+              return -1
+            }
+            if (left.type > right.type) {
+              return 1
+            }
+            // name
+            return left.node.name.toLowerCase()
+              .localeCompare(
+                right.node.name.toLowerCase(),
+                undefined,
+                { numeric: true, sensitivity: 'base' })
+          })
         }
         case 'family-proxy': {
           // sort family-proxy children (family-proxies, and task-proxies)
           // first we sort by type ascending, so 'family-proxy' types come before 'task-proxy'
           // then we sort by node name ascending, so 'bar' comes before 'foo'
-          return orderBy(children, [child => child.type, child => child.node.name.toLowerCase()], ['asc', 'asc'])
+          return [...children].sort((left, right) => {
+            // node type
+            if (left.type < right.type) {
+              return -1
+            }
+            if (left.type > right.type) {
+              return 1
+            }
+            // name
+            return left.node.name.toLowerCase()
+              .localeCompare(
+                right.node.name.toLowerCase(),
+                undefined,
+                { numeric: true, sensitivity: 'base' })
+          })
         }
         case 'task-proxy': {
           // sort task-proxy children (jobs)
           // sort by node submit  descending, so '4' comes before '3'
-          return orderBy(children, ['node.submitNum'], 'desc')
+          return [...children].sort((left, right) => {
+            return right.node.submitNum - left.node.submitNum
+          })
         }
         }
       }

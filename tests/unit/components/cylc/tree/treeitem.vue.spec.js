@@ -161,6 +161,25 @@ describe('TreeItem component', () => {
           { node: { name: 'foo' }, type: 'task-proxy' }
         ]
       },
+      {
+        args: {
+          type: 'family-proxy',
+          children: [
+            { node: { name: 'f01' }, type: 'task-proxy' },
+            { node: { name: 'f1' }, type: 'task-proxy' },
+            { node: { name: 'f10' }, type: 'task-proxy' },
+            { node: { name: 'f0' }, type: 'task-proxy' },
+            { node: { name: 'f2' }, type: 'task-proxy' }
+          ]
+        },
+        expected: [
+          { node: { name: 'f0' }, type: 'task-proxy' },
+          { node: { name: 'f01' }, type: 'task-proxy' },
+          { node: { name: 'f1' }, type: 'task-proxy' },
+          { node: { name: 'f2' }, type: 'task-proxy' },
+          { node: { name: 'f10' }, type: 'task-proxy' }
+        ]
+      },
       // task proxy children (jobs) are sorted by job submit number in descending order
       {
         args: {
