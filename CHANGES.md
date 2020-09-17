@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#497](https://github.com/cylc/cylc-ui/pull/497) - Add a global error
+catcher to the Default layout, to show uncaught errors.
+
 [#491](https://github.com/cylc/cylc-ui/pull/491) - Update apollo-client
 to @apollo/client (different package ID, also from 2.x to 3.x).
 
