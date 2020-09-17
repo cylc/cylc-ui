@@ -38,6 +38,8 @@ import Drawer from '@/components/cylc/Drawer'
 import Toolbar from '@/components/cylc/Toolbar'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus'
 import { mapState } from 'vuex'
+import store from '@/store/'
+import AlertModel from '@/model/Alert.model'
 
 export default {
   name: 'Default',
@@ -51,6 +53,12 @@ export default {
 
   computed: {
     ...mapState(['offline'])
+  },
+
+  errorCaptured (error, vm, info) {
+    if (process.env.NODE_ENV !== 'production') {
+      store.dispatch('setAlert', new AlertModel(error, null, 'error'))
+    }
   }
 }
 </script>
