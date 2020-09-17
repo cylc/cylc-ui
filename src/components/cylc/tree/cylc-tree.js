@@ -215,10 +215,6 @@ class CylcTree {
     if (!this.lookup.has(cyclePoint.id)) {
       this.lookup.set(cyclePoint.id, cyclePoint)
       this.root.children.push(cyclePoint)
-      // sort cycle points
-      this.root.children.sort((cyclepoint, anotherCyclepoint) => {
-        return cyclepoint.id.localeCompare(anotherCyclepoint.id)
-      })
     }
   }
 
