@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="c-gscan-workflows"
     >
       <div
-        v-for="workflow in workflows"
+        v-for="workflow in sortedWorkflows"
         :key="workflow.id"
         class="c-gscan-workflow"
       >
@@ -127,6 +127,32 @@ export default {
     }
   },
   computed: {
+    /**
+     * Sort workflows by type first, showing running workflows first, then held,
+     * and only then stopped. Then sort by name. */
+    sortedWorkflows () {
+      return [...this.workflows].sort((left, right) => {
+        if (left.status !== right.status) {
+          if (left.status === 'stopped') {
+            return 1
+          }
+          if (right.status === 'stopped') {
+            return -1
+          }
+          if (left.status === 'held') {
+            return 1
+          }
+          if (right.status === 'held') {
+            return -1
+          }
+        }
+        return left.name.toLowerCase()
+          .localeCompare(
+            right.name.toLowerCase(),
+            undefined,
+            { numeric: true, sensitivity: 'base' })
+      })
+    },
     /**
      * Compute summary information, where the key is the name of a workflow, the value is another map with the summary.
      * @returns {Map<String, Map>}
