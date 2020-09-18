@@ -15,10 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from 'vue'
+.c-warn {
+  svg {
+    width: 1em;
+    height: 1em;
 
-const EventBus = new Vue()
+    path {
+      /* TODO - move colours to job or app theme */
+      stroke: rgb(170,170,170);
+      fill: rgb(150,150,150);
+    }
 
-export {
-  EventBus
+    path.active {
+      stroke: rgb(255,122,122);
+      fill: rgb(248,197,102);
+    }
+  }
 }

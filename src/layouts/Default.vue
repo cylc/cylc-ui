@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <ConnectionStatus :is-offline="offline" />
-    <toolbar />
+    <toolbar v-if="!workflowViews.includes($route.name)" />
     <drawer />
 
     <v-main>
@@ -49,6 +49,24 @@ export default {
     Alert,
     Drawer,
     Toolbar
+  },
+
+  data () {
+    return {
+      /**
+       * Views that display workflows. For these views, we do not
+       * want to display the default Toolbar—the Workflow view
+       * has its own Toolbar that communicates with the Workflow
+       * component (e.g. the Workflow Toolbar owns a button that
+       * triggers the action to add a new Tree View, so the events
+       * are passed down from the parent Workflow View).
+       */
+      workflowViews: [
+        'workflow',
+        'tree',
+        'graph'
+      ]
+    }
   },
 
   computed: {
