@@ -24,9 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     top
   >
     <v-icon
+      large
       class="mr-2"
       color="red lighten-5"
-      size="large">{{ svgPath }}</v-icon>
+    >{{ svgPath }}</v-icon>
     <span
       class="red--text text--lighten-5 font-weight-medium"
     >Connection to server lost. You are offline.</span>
