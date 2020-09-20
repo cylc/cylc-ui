@@ -26,13 +26,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
     <!-- burger button for mobile -->
     <v-btn
-        dark
-        icon
-        @click.stop="onClickBtn"
-        class="default v-btn--simple"
-        id="toggle-drawer"
+      v-if="responsive"
+      dark
+      icon
+      @click.stop="onClickBtn"
+      class="default v-btn--simple"
+      id="toggle-drawer"
     >
-      <v-icon>mdi-view-list</v-icon>
+      <v-icon>{{ svgPaths.list }}</v-icon>
     </v-btn>
     <!-- title -->
     <v-toolbar-title
@@ -46,13 +47,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <a
         id="workflow-release-hold-button"
         @click="onClickReleaseHold">
-        <v-icon color="#5E5E5E" :disabled="isStopped">{{ isHeld ? 'mdi-play' : 'mdi-pause' }}</v-icon>
+        <v-icon color="#5E5E5E" :disabled="isStopped">{{ isHeld ? svgPaths.run : svgPaths.hold }}</v-icon>
       </a>
 
       <a
         id="workflow-stop-button"
         @click="onClickStop">
-        <v-icon color="#5E5E5E" :disabled="isHeld">mdi-stop</v-icon>
+        <v-icon color="#5E5E5E" :disabled="isHeld">{{ svgPaths.stop }}</v-icon>
       </a>
 
       <!-- TODO: add control options and call mutations -->
@@ -73,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <template v-slot:activator="{ on }">
           <a class="add-view" v-on="on">
-            {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">mdi-plus-circle</v-icon>
+            {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">{{ svgPaths.add }}</v-icon>
           </a>
         </template>
         <v-list class="pa-0">
@@ -82,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @click="$listeners['add-tree']"
             id="toolbar-add-tree-view"
           >
-            <v-list-item-title><v-icon>mdi-file-tree</v-icon> Tree</v-list-item-title>
+            <v-list-item-title><v-icon>{{ svgPaths.tree }}</v-icon> Tree</v-list-item-title>
           </v-list-item>
         </v-list>
         <v-list class="pa-0">
@@ -91,14 +92,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @click="$listeners['add-graph']"
             id="toolbar-add-graph-view"
           >
-            <v-list-item-title><v-icon>mdi-graph</v-icon> Graph</v-list-item-title>
+            <v-list-item-title><v-icon>{{ svgPaths.graph }}</v-icon> Graph</v-list-item-title>
           </v-list-item>
           <v-list-item
             class="py-0 px-8 ma-0"
             @click="$listeners['add-mutations']"
             id="toolbar-add-mutations-view"
           >
-            <v-list-item-title><v-icon>mdi-apple-keyboard-command</v-icon> Mutations</v-list-item-title>
+            <v-list-item-title><v-icon>{{ svgPaths.mutations }}</v-icon> Mutations</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -108,11 +109,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <template v-slot:extension v-if="extended">
       <span style="margin-left: 260px;">
         <a @click="onClickPause">
-          <v-icon color="#5E5E5E">mdi-pause</v-icon>
+          <v-icon color="#5E5E5E">{{ svgPaths.hold }}</v-icon>
         </a>
 
         <a @click="onClickStop">
-          <v-icon color="#5E5E5E">mdi-stop</v-icon>
+          <v-icon color="#5E5E5E">{{ svgPaths.stop }}</v-icon>
         </a>
 
         <span>Other controls added in the future</span>
@@ -125,6 +126,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapGetters, mapState } from 'vuex'
 import toolbar from '@/mixins/toolbar'
 import TaskState from '@/model/TaskState.model'
+import {
+  mdiViewList,
+  mdiPlay,
+  mdiPause,
+  mdiStop,
+  mdiPlusCircle,
+  mdiFileTree,
+  mdiGraph,
+  mdiAppleKeyboardCommand
+} from '@mdi/js'
 
 export default {
   name: 'Toolbar',
@@ -136,7 +147,17 @@ export default {
   data: () => ({
     extended: false,
     // FIXME: remove local state once we have this data in the workflow - https://github.com/cylc/cylc-ui/issues/221
-    isStopped: false
+    isStopped: false,
+    svgPaths: {
+      list: mdiViewList,
+      hold: mdiPause,
+      run: mdiPlay,
+      stop: mdiStop,
+      tree: mdiFileTree,
+      graph: mdiGraph,
+      mutations: mdiAppleKeyboardCommand,
+      add: mdiPlusCircle
+    }
   }),
 
   computed: {
