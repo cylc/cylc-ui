@@ -24,6 +24,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       type="list-item-three-line"
     >
       <div
+        class="d-flex flex-row mx-4 mb-2"
+      >
+        <v-text-field
+          v-model="searchWorkflows"
+          clearable
+          flat
+          dense
+          hide-details
+          outlined
+          placeholder="Search"
+          class="flex-grow-1 flex-column"
+        />
+        <v-btn
+          link
+          icon
+          class="flex-grow-0 flex-column"
+        >
+          <v-icon>mdi-filter</v-icon>
+        </v-btn>
+      </div>
+      <div
         v-if="!isLoading && workflows && workflows.length > 0"
         class="c-gscan-workflows"
       >
@@ -133,7 +154,8 @@ export default {
       viewID: '',
       subscriptions: {},
       isLoading: true,
-      maximumTasksDisplayed: 5
+      maximumTasksDisplayed: 5,
+      searchWorkflows: ''
     }
   },
   computed: {
@@ -173,6 +195,13 @@ export default {
         }
       }
       return workflowSummaries
+    },
+    filteredWorkflows () {
+      let filtered = [...this.workflows]
+      if (this.searchWorkflows && this.searchWorkflows !== '') {
+        filtered = filtered.filter(workflow => workflow.name.includes(this.searchWorkflows))
+      }
+      return filtered
     }
   },
   created () {
