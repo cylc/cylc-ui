@@ -128,8 +128,10 @@ export default {
   },
   computed: {
     /**
-     * Sort workflows by type first, showing running workflows first, then held,
-     * and only then stopped. Then sort by name. */
+     * Sort workflows by type first, showing running or held workflows first,
+     * then stopped. Within each group, workflows are sorted alphabetically
+     * (natural sort).
+     */
     sortedWorkflows () {
       return [...this.workflows].sort((left, right) => {
         if (left.status !== right.status) {
@@ -137,12 +139,6 @@ export default {
             return 1
           }
           if (right.status === 'stopped') {
-            return -1
-          }
-          if (left.status === 'held') {
-            return 1
-          }
-          if (right.status === 'held') {
             return -1
           }
         }
