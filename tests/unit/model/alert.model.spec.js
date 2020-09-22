@@ -29,12 +29,12 @@ describe('AlertModel', () => {
   describe('constructor', () => {
     it('should be created', () => {
       const text = 'my error'
-      const icon = 'mdi-error'
+      const icon = 'error-icon'
       const color = 'success'
       const alert = new Alert(text, icon, color)
-      expect(alert.getText()).to.equal('my error')
-      expect(alert.getIcon()).to.equal('mdi-error')
-      expect(alert.getColor()).to.equal('success')
+      expect(alert.getText()).to.equal(text)
+      expect(alert.getIcon()).to.equal(icon)
+      expect(alert.getColor()).to.equal(color)
     })
   })
 })

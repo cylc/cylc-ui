@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-list three-line>
           <v-list-item to="/workflows">
             <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon medium>mdi-table</v-icon>
+              <v-icon medium>{{ svgPaths.table }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item to="/user-profile">
             <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon medium>mdi-cog</v-icon>
+              <v-icon medium>{{ svgPaths.settings }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item :href=hubUrl>
             <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon medium>mdi-hubspot</v-icon>
+              <v-icon medium>{{ svgPaths.hub }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-list three-line>
           <v-list-item href="#">
             <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon medium>mdi-book</v-icon>
+              <v-icon medium>{{ svgPaths.quickstart }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/doc/built-sphinx/suite-design-guide/suite-design-guide-master.html">
             <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon medium>mdi-book-open-variant</v-icon>
+              <v-icon medium>{{ svgPaths.suite }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
@@ -132,7 +132,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/documentation">
             <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon medium>mdi-book-multiple</v-icon>
+              <v-icon medium>{{ svgPaths.documentation }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
@@ -154,6 +154,7 @@ import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
 import { getHubUrl } from '@/utils/user'
 import { DASHBOARD_QUERY } from '@/graphql/queries'
+import { mdiTable, mdiCog, mdiHubspot, mdiBook, mdiBookOpenVariant, mdiBookMultiple } from '@mdi/js'
 
 const QUERIES = {
   root: DASHBOARD_QUERY
@@ -195,7 +196,15 @@ export default {
           value: 'text'
         }
       ],
-      events: []
+      events: [],
+      svgPaths: {
+        table: mdiTable,
+        settings: mdiCog,
+        hub: mdiHubspot,
+        quickstart: mdiBook,
+        suite: mdiBookOpenVariant,
+        documentation: mdiBookMultiple
+      }
     }
   },
   computed: {

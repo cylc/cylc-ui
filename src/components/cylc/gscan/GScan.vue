@@ -92,6 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Job from '@/components/cylc/Job'
 import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 import { GSCAN_QUERY } from '@/graphql/queries'
+import { mdiPlayCircle, mdiPauseOctagon, mdiHelpCircle } from '@mdi/js'
 
 const QUERIES = {
   root: GSCAN_QUERY
@@ -117,7 +118,12 @@ export default {
       viewID: '',
       subscriptions: {},
       isLoading: true,
-      maximumTasksDisplayed: 5
+      maximumTasksDisplayed: 5,
+      svgPaths: {
+        running: mdiPlayCircle,
+        held: mdiPauseOctagon,
+        unknown: mdiHelpCircle
+      }
     }
   },
   computed: {
@@ -187,11 +193,11 @@ export default {
     getWorkflowIcon (status) {
       switch (status) {
       case 'running':
-        return 'mdi-play-circle'
+        return this.svgPaths.running
       case 'held':
-        return 'mdi-pause-octagon'
+        return this.svgPaths.held
       default:
-        return 'mdi-help-circle'
+        return this.svgPaths.unknown
       }
     },
 

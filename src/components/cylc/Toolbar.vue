@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="default v-btn--simple"
         id="toggle-drawer"
       >
-        <v-icon>mdi-view-list</v-icon>
+        <v-icon>{{ svgPaths.list }}</v-icon>
       </v-btn>
       <!-- title -->
       <span class="c-toolbar-title">{{ title }}</span>
@@ -49,11 +49,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState } from 'vuex'
 import toolbar from '@/mixins/toolbar'
+import {
+  mdiViewList
+} from '@mdi/js'
 
 export default {
   mixins: [
     toolbar
   ],
+
+  data: () => ({
+    svgPaths: {
+      list: mdiViewList
+    }
+  }),
 
   computed: {
     ...mapState('app', ['title'])

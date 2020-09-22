@@ -20,9 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-layout wrap>
       <v-flex xs12 md12>
         <v-alert
+          :icon="svgPaths.settings"
           prominent
           color="grey lighten-3"
-          icon="mdi-cog"
         >
           <h3 class="headline">{{ $t('UserProfile.tableHeader') }}</h3>
           <p class="body-1">{{ $t('UserProfile.tableSubHeader') }}</p>
@@ -110,14 +110,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   id="font-size-decrease-button"
                   class="mx-2"
                   @click="decreaseFontSize()">
-                  <v-icon>mdi-format-font-size-decrease</v-icon>
+                  <v-icon>{{ svgPaths.decrease }}</v-icon>
                 </v-btn>
                 <v-btn
                   depressed
                   id="font-size-increase-button"
                   class="ml-2"
                   @click="increaseFontSize()">
-                  <v-icon>mdi-format-font-size-increase</v-icon>
+                  <v-icon>{{ svgPaths.increase }}</v-icon>
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -138,11 +138,21 @@ import {
   increaseFontSize,
   getCurrentFontSize
 } from '@/utils/font-size'
+import { mdiCog, mdiFormatFontSizeIncrease, mdiFormatFontSizeDecrease } from '@mdi/js'
 
 // TODO: update where user preferences are stored after #335
 
 export default {
   mixins: [mixin],
+  data () {
+    return {
+      svgPaths: {
+        settings: mdiCog,
+        increase: mdiFormatFontSizeIncrease,
+        decrease: mdiFormatFontSizeDecrease
+      }
+    }
+  },
   computed: {
     ...mapState('user', ['user'])
   },

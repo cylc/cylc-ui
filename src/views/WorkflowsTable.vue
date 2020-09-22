@@ -29,9 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         md12
       >
           <v-alert
+            :icon="svgPath"
             prominent
             color="grey lighten-3"
-            icon="mdi-table"
           >
             <h3 class="headline">{{ $t('Workflows.tableHeader') }}</h3>
           </v-alert>
@@ -80,6 +80,7 @@ import { mapState } from 'vuex'
 import { mixin } from '@/mixins/index'
 import i18n from '@/i18n'
 import { WORKFLOWS_TABLE_QUERY } from '@/graphql/queries'
+import { mdiTable } from '@mdi/js'
 
 // query to retrieve all workflows
 const QUERIES = {
@@ -118,7 +119,8 @@ export default {
         text: i18n.t('Workflows.tableColumnPort'),
         value: 'port'
       }
-    ]
+    ],
+    svgPath: mdiTable
   }),
 
   computed: {

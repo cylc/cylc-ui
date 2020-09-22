@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-icon
                @click="remove(index)"
               >
-                mdi-close-circle
+                {{ svgPaths.close }}
               </v-icon>
             </template>
           </component>
@@ -57,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          @click="add()"
          text
         >
-          <v-icon>mdi-plus-circle</v-icon>
+          <v-icon>{{ svgPaths.open }}</v-icon>
           Add Item
         </v-btn>
       </v-list-item>
@@ -67,6 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import { getNullValue } from '@/utils/graphql'
+import { mdiPlusCircle, mdiCloseCircle } from '@mdi/js'
 
 export default {
   name: 'g-list',
@@ -74,6 +75,15 @@ export default {
   mixins: [
     formElement
   ],
+
+  data () {
+    return {
+      svgPaths: {
+        open: mdiPlusCircle,
+        close: mdiCloseCircle
+      }
+    }
+  },
 
   methods: {
     /* Add an item to the list. */
