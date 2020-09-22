@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#493](https://github.com/cylc/cylc-ui/pull/493) - async updates to the
+UI, adding support to stopped workflows.
+
 [#497](https://github.com/cylc/cylc-ui/pull/497) - Add a global error
 catcher to the Default layout, to show uncaught errors.
 
