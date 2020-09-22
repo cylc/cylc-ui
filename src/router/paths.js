@@ -40,7 +40,7 @@ export default [
     }
   },
   {
-    path: '/workflows/:workflowName',
+    path: '/workflows/:workflowName(.*)',
     view: 'Workflow',
     name: 'workflow',
     meta: {
@@ -67,7 +67,7 @@ export default [
     }
   },
   {
-    path: '/tree/:workflowName',
+    path: '/tree/:workflowName(.*)',
     view: 'Tree',
     name: 'tree',
     meta: {
@@ -77,7 +77,7 @@ export default [
     props: true
   },
   {
-    path: '/graph/:workflowName',
+    path: '/graph/:workflowName(.*)',
     view: 'Graph',
     name: 'graph',
     meta: {
