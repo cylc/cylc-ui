@@ -57,14 +57,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div v-if="!isExpanded" class="node-summary">
           <!-- Task summary -->
           <job
-              v-for="(task, index) in node.children"
-              :key="`${task.id}-summary-${index}`"
-              :status="task.node.state" />
+            v-for="(task, index) in node.children"
+            :key="`${task.id}-summary-${index}`"
+            :status="task.node.state"
+            :theme="jobTheme"
+          />
         </div>
       </div>
       <div :class="getNodeDataClass()" v-else-if="node.type === 'job'">
         <div :class="getNodeDataClass()" @click="jobNodeClicked">
-          <job :status="node.node.state" />
+          <job
+            :status="node.node.state"
+            :theme="jobTheme"
+          />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
           <span class="grey--text">{{ node.node.host }}</span>
         </div>
@@ -93,6 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :depth="depth + 1"
           :hoverable="hoverable"
           :initialExpanded="initialExpanded"
+          :job-theme="jobTheme"
           v-on:tree-item-created="$listeners['tree-item-created']"
           v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
           v-on:tree-item-expanded="$listeners['tree-item-expanded']"
@@ -136,7 +142,8 @@ export default {
     initialExpanded: {
       type: Boolean,
       default: true
-    }
+    },
+    jobTheme: String
   },
   data () {
     return {

@@ -21,7 +21,7 @@
 -->
 
 <template functional>
-  <span>
+  <span :class="[props.theme || 'job_theme--default']">
     <span
       class="c-job"
       style="display:inline-block; vertical-align:middle"
@@ -58,6 +58,9 @@ export default {
     status: {
       type: String,
       required: true
+    },
+    theme: {
+      type: String
     }
   }
 }

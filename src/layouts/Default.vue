@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <ConnectionStatus :is-offline="offline" />
     <toolbar v-if="!workflowViews.includes($route.name)" />
-    <drawer />
+    <drawer
+      :job-theme="jobTheme"
+    />
 
     <v-main>
       <alert />
@@ -69,7 +71,10 @@ export default {
   },
 
   computed: {
-    ...mapState(['offline'])
+    ...mapState(['offline']),
+    ...mapState({
+      jobTheme: state => `job_theme--${state.app.jobTheme}`
+    })
   },
 
   errorCaptured (error, vm, info) {

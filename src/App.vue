@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-app class="job_theme--default">
+  <v-app>
     <component :is="layout">
       <router-view/>
     </component>
@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 const DEFAULT_LAYOUT = 'empty'
 const DEFAULT_URL = '/'
@@ -46,7 +46,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setBaseUrl'])
+    ...mapActions(['setBaseUrl']),
+    ...mapMutations(['app/setJobTheme'])
   },
   created () {
     let baseUrl = DEFAULT_URL
@@ -56,9 +57,12 @@ export default {
     this.setBaseUrl(baseUrl)
   },
   mounted () {
+    // set application font-size in HTML top-level element
     if (localStorage.fontSize) {
       document.getElementsByTagName('html')[0].style.fontSize = localStorage.fontSize
     }
+    // set Job icons theme found in LocalStorage in Vuex
+    this['app/setJobTheme'](localStorage.jobTheme)
   }
 }
 </script>

@@ -63,6 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-subheader>Workflows</v-subheader>
       <g-scan
         :workflows="workflows"
+        :job-theme="jobTheme"
       />
     </v-list>
     <template v-slot:append>
@@ -87,6 +88,11 @@ export default {
   components: {
     GScan,
     'c-header': Header
+  },
+  props: {
+    jobTheme: {
+      type: String
+    }
   },
   data: () => ({
     responsive: false,

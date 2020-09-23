@@ -179,7 +179,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { mixin } from '@/mixins'
 import {
   resetFontSize,
@@ -231,20 +231,13 @@ export default {
     resetFontSize,
     decreaseFontSize,
     increaseFontSize,
-    getCurrentFontSize
+    getCurrentFontSize,
+    ...mapMutations(['app/setJobTheme'])
   },
   watch: {
-    jobTheme: (theme) => {
+    jobTheme: function (theme) {
       localStorage.jobTheme = theme
-
-      // set job theme in app
-      const ele = document.getElementById('app')
-      for (const className of ele.classList) {
-        if (className.startsWith('job_theme--')) {
-          ele.classList.remove(className)
-        }
-      }
-      ele.classList.add(`job_theme--${theme}`)
+      this['app/setJobTheme'](theme)
     }
   }
 }
