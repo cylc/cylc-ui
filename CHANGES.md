@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#498](https://github.com/cylc/cylc-ui/pull/498) - Sort GScan workflows
+by type (first running, then held, then stopped), and then by name.
+
 [#493](https://github.com/cylc/cylc-ui/pull/493) - async updates to the
 UI, adding support to stopped workflows.
 
