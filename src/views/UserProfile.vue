@@ -43,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 />
               </v-flex>
             </v-layout>
+
             <v-layout row align-center wrap>
               <v-flex xs3>
                 <span>{{ $t('UserProfile.administrator') }}</span>
@@ -57,6 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 />
               </v-flex>
             </v-layout>
+
             <v-layout row align-center wrap>
               <v-flex xs3>
                 <span>{{ $t('UserProfile.groups') }}</span>
@@ -74,6 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 />
               </v-flex>
             </v-layout>
+
             <v-layout row align-center wrap>
               <v-flex xs3>
                 <span>{{ $t('UserProfile.created') }}</span>
@@ -88,11 +91,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 />
               </v-flex>
             </v-layout>
+
             <v-row mt-4>
               <v-flex xs12>
                 <p class="title">Preferences</p>
               </v-flex>
             </v-row>
+
             <v-layout row align-center wrap>
               <v-flex xs3>
                 <span>Font size</span>
@@ -121,6 +126,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-btn>
               </v-flex>
             </v-layout>
+
+            <v-layout row align-center wrap>
+              <v-flex xs3>
+                <span>Colour Theme</span>
+              </v-flex>
+                <v-radio-group v-model="jobTheme" column>
+                  <table class="c-job-state-table">
+                    <tr>
+                      <th>State</th>
+                      <th
+                        v-for="theme in jobThemes"
+                        v-bind:key="theme"
+                      >
+                        {{theme}}
+                      </th>
+                    </tr>
+                    <tr
+                    >
+                      <td></td>
+                      <td
+                        v-for="theme in jobThemes"
+                        v-bind:key="theme"
+                      >
+                        <v-radio :value="theme" />
+                      </td>
+                    </tr>
+                    <tr
+                      v-for="state in jobStates"
+                      v-bind:key="state"
+                    >
+                      <td>{{state}}</td>
+                      <td
+                        v-for="theme in jobThemes"
+                        v-bind:key="theme"
+                        v-bind:class="[`job_theme--${theme}`]"
+                      >
+                        <job :status="state" />
+                      </td>
+                    </tr>
+                  </table>
+                </v-radio-group>
+              <v-flex xs9>
+              </v-flex>
+            </v-layout>
           </v-container>
         </v-form>
         <v-progress-linear v-else :indeterminate="true" />
@@ -139,18 +188,35 @@ import {
   getCurrentFontSize
 } from '@/utils/font-size'
 import { mdiCog, mdiFormatFontSizeIncrease, mdiFormatFontSizeDecrease } from '@mdi/js'
+import Job from '@/components/cylc/Job'
 
 // TODO: update where user preferences are stored after #335
 
 export default {
   mixins: [mixin],
+  components: {
+    Job
+  },
   data () {
     return {
       svgPaths: {
         settings: mdiCog,
         increase: mdiFormatFontSizeIncrease,
         decrease: mdiFormatFontSizeDecrease
-      }
+      },
+      jobStates: [
+        'submitted',
+        'running',
+        'succeeded',
+        'failed',
+        'submit-failed'
+      ],
+      jobThemes: [
+        'default',
+        'greyscale',
+        'colour_blind'
+      ],
+      jobTheme: localStorage.jobTheme || 'default'
     }
   },
   computed: {
@@ -166,6 +232,35 @@ export default {
     decreaseFontSize,
     increaseFontSize,
     getCurrentFontSize
+  },
+  watch: {
+    jobTheme: (theme) => {
+      localStorage.jobTheme = theme
+
+      // set job theme in app
+      const ele = document.getElementById('app')
+      for (const className of ele.classList) {
+        if (className.startsWith('job_theme--')) {
+          ele.classList.remove(className)
+        }
+      }
+      ele.classList.add(`job_theme--${theme}`)
+    }
   }
 }
 </script>
+
+<style lang="scss">
+table.c-job-state-table {
+  td, th {
+    padding: 0.2em;
+    text-align: center;
+  }
+  .v-radio {
+    /* allow the element to center */
+    display: inline-block;
+    /* jobs are 1em wide, offset the element by half this */
+    padding-left: 0.5em;
+  }
+}
+</style>

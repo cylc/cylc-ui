@@ -21,7 +21,7 @@
 -->
 
 <template functional>
-  <span class="job_theme--normal">
+  <span>
     <span
       class="c-job"
       style="display:inline-block; vertical-align:middle"

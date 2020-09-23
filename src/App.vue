@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-app>
+  <v-app class="job_theme--default">
     <component :is="layout">
       <router-view/>
     </component>
