@@ -54,7 +54,7 @@ fragment WorkflowTreeAddedData on Added {
   workflow {
     ...WorkflowData
     cyclePoints: familyProxies (ids: ["root"], ghosts: true) {
-      cyclePoint
+      ...CyclePointData
     }
     taskProxies (sort: { keys: ["name"], reverse: false }, ghosts: true) {
       ...TaskProxyData
@@ -67,7 +67,7 @@ fragment WorkflowTreeAddedData on Added {
     }
   }
   cyclePoints: familyProxies (ids: ["root"], ghosts: true) {
-    cyclePoint
+    ...CyclePointData
   }
   familyProxies (exids: ["root"], sort: { keys: ["name"] }, ghosts: true) {
     ...FamilyProxyData
@@ -109,6 +109,11 @@ fragment WorkflowData on Workflow {
   owner
   host
   port
+}
+
+fragment CyclePointData on FamilyProxy {
+  id
+  cyclePoint
 }
 
 fragment FamilyProxyData on FamilyProxy {
