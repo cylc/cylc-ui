@@ -38,17 +38,48 @@ function createWorkflowNode (workflow) {
 }
 
 /**
+ * Create a cycle point node ID. Uses the node property `id`.
+ *
+ * It will split the node ID using the separator. And if the number
+ * of tokens is at least three, it will return the three first tokens
+ * joined by the separator too.
+ *
+ * Otherwise returns the node ID.
+ *
+ * For example, given a node with the following ID's:
+ *
+ * - 'a|b|c|d'    results in a cycle point node ID 'a|b|c'
+ * - 'a|b|c|d|e'  results in a cycle point node ID 'a|b|c'
+ * - 'a|b|c'      results in a cycle point node ID 'a|b|c'
+ * - 'a|b'        results in a cycle point node ID 'a|b'
+ * - ''           results in a cycle point node ID ''
+ *
+ * @param node {{
+ *   id: string
+ * }} a tree node
+ * @return {string}
+ */
+function getCyclePointId (node) {
+  const tokens = node.id.split('|')
+  if (tokens.length >= 3) {
+    return tokens.splice(0, 3).join('|')
+  }
+  return node.id
+}
+
+/**
  * Create a cycle point node. Uses the family proxy property `cyclePoint`.
  *
  * @param familyProxy {Object} family proxy
  * @return {{id: string, type: string, node: Object, children: []}}
  */
 function createCyclePointNode (familyProxy) {
+  const id = getCyclePointId(familyProxy)
   return {
-    id: familyProxy.cyclePoint,
+    id: id,
     type: 'cyclepoint',
     node: {
-      id: familyProxy.cyclePoint,
+      id: id,
       name: familyProxy.cyclePoint
     },
     children: []
@@ -168,5 +199,6 @@ export {
   createTaskProxyNode,
   createJobNode,
   containsTreeData,
-  populateTreeFromGraphQLData
+  populateTreeFromGraphQLData,
+  getCyclePointId
 }
