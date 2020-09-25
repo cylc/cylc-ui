@@ -20,7 +20,7 @@ import re
 graphql_module_path = Path(f'{dirname(__file__)}/../../../graphql/')
 queries_file = graphql_module_path / 'queries.js'
 
-workflows_query_variable = 'WORKFLOW_TREE_QUERY'
+workflows_query_variable = 'WORKFLOW_TREE_DELTAS_SUBSCRIPTION'
 
 query = ''
 
@@ -28,7 +28,7 @@ query = ''
 # for js multiline variable
 with queries_file.open() as f:
     query = re.search(
-        rf'const\s+{workflows_query_variable}\s*=\s*`([^`]+)`',
+        rf'const\s+{workflows_query_variable}\s*=\s*gql`([^`]+)`',
         f.read(),
         re.MULTILINE).group(1).strip()
     # replace the placeholder for the workflow ID
@@ -38,7 +38,10 @@ with queries_file.open() as f:
 
 
 wrapper = {
-    'request_string': query
+    'request_string': query,
+    'variables': {
+        'workflowId': 'one'
+    }
 }
 
 import json
