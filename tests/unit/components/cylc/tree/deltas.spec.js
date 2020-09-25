@@ -143,7 +143,8 @@ describe('Deltas', () => {
         added: {
           cyclePoints: [
             {
-              cyclePoint: cyclePointId
+              id: cyclePointId,
+              cyclePoint: '1'
             }
           ]
         }
@@ -163,15 +164,16 @@ describe('Deltas', () => {
         id: WORKFLOW_ID
       }))
       cyclePoint = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint)
       familyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.id}|FAM`,
+        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|FAM`,
         state: TaskState.RUNNING.name.toLowerCase(),
-        cyclePoint: cyclePoint.id,
+        cyclePoint: cyclePoint.node.name,
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint.id}|${FAMILY_ROOT}`,
+          id: `${WORKFLOW_ID}|${cyclePoint.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
         }
       })
@@ -205,15 +207,16 @@ describe('Deltas', () => {
         id: WORKFLOW_ID
       }))
       cyclePoint = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint)
       familyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.id}|FAM`,
+        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|FAM`,
         state: TaskState.RUNNING.name.toLowerCase(),
-        cyclePoint: cyclePoint.id,
+        cyclePoint: cyclePoint.node.name,
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint.id}|${FAMILY_ROOT}`,
+          id: `${WORKFLOW_ID}|${cyclePoint.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
         }
       })
