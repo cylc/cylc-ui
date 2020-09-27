@@ -78,10 +78,12 @@ const sampleWorkflow1 = {
   cyclePoints: [
     {
       __typename: 'FamilyProxy',
+      id: 'cylc|one|20000101T0000Z|root',
       cyclePoint: '20000101T0000Z'
     },
     {
       __typename: 'FamilyProxy',
+      id: 'cylc|one|20000102T0000Z|root',
       cyclePoint: '20000102T0000Z'
     }
   ],

@@ -81,21 +81,24 @@ describe('CylcTree', () => {
     })
     it('Should add cycle points', () => {
       const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       const cyclePoint2 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|2|root`,
         cyclePoint: '2'
       })
       cylcTree.addCyclePoint(cyclePoint1)
       expect(cylcTree.root.children.length).to.equal(1)
-      expect(cylcTree.root.children[0].id).to.equal('1')
+      expect(cylcTree.root.children[0].id).to.equal(`${WORKFLOW_ID}|1`)
 
       cylcTree.addCyclePoint(cyclePoint2)
       expect(cylcTree.root.children.length).to.equal(2)
-      expect(cylcTree.root.children[1].id).to.equal('2')
+      expect(cylcTree.root.children[1].id).to.equal(`${WORKFLOW_ID}|2`)
     })
     it('Should not add a cycle point twice', () => {
       const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint1)
@@ -104,22 +107,24 @@ describe('CylcTree', () => {
     })
     it('Should update cycle points', () => {
       const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint1)
       expect(cylcTree.root.children.length).to.equal(1)
-      expect(cylcTree.root.children[0].id).to.equal('1')
+      expect(cylcTree.root.children[0].id).to.equal(`${WORKFLOW_ID}|1`)
       expect(cylcTree.root.children[0].children.length).to.equal(0)
       cyclePoint1.children.push({
         id: 10
       })
       cylcTree.updateCyclePoint(cyclePoint1)
       expect(cylcTree.root.children.length).to.equal(1)
-      expect(cylcTree.root.children[0].id).to.equal('1')
+      expect(cylcTree.root.children[0].id).to.equal(`${WORKFLOW_ID}|1`)
       expect(cylcTree.root.children[0].children.length).to.equal(1)
     })
     it('Should not update a cycle point if not already in the tree', () => {
       const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.updateCyclePoint(cyclePoint1)
@@ -127,10 +132,12 @@ describe('CylcTree', () => {
     })
     it('Should remove cycle points', () => {
       const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint1)
       const cyclePoint2 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|2|root`,
         cyclePoint: '2'
       })
       cylcTree.addCyclePoint(cyclePoint1)
@@ -140,10 +147,12 @@ describe('CylcTree', () => {
     })
     it('Should remove cycle points', () => {
       const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint1)
       const cyclePoint2 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|2|root`,
         cyclePoint: '2'
       })
       cylcTree.addCyclePoint(cyclePoint1)
@@ -153,6 +162,7 @@ describe('CylcTree', () => {
     })
     it('Should ignore if the cycle point to remove is not in the tree', () => {
       const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.removeCyclePoint(cyclePoint1.id)
@@ -170,9 +180,11 @@ describe('CylcTree', () => {
       })
       cylcTree = new CylcTree(workflow)
       cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cyclePoint2 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|2|root`,
         cyclePoint: '2'
       })
       cylcTree.addCyclePoint(cyclePoint1)
@@ -182,7 +194,7 @@ describe('CylcTree', () => {
       // This is because we may have a family proxy found in a task proxy first parent, or in another
       // family proxy first parent, that is not in the tree yet.
       const familyProxy1 = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint1.id}|fam`
+        id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|fam`
       })
       cylcTree.addFamilyProxy(familyProxy1)
       expect(cylcTree.root.children[0].children.length).to.equal(0)
@@ -194,8 +206,8 @@ describe('CylcTree', () => {
       // then the next time we add it, it is because we found it in the family proxy part of the
       // graphql response. When that happens, we must actually add-update it, merging with the
       // extra data found in graphql family proxies entry.
-      const familyProxyId1 = `${WORKFLOW_ID}|${cyclePoint1.id}|fam1`
-      const familyProxyId2 = `${WORKFLOW_ID}|${cyclePoint1.id}|fam2`
+      const familyProxyId1 = `${WORKFLOW_ID}|${cyclePoint1.node.name}|fam1`
+      const familyProxyId2 = `${WORKFLOW_ID}|${cyclePoint1.node.name}|fam2`
       const familyProxy1 = createFamilyProxyNode({
         id: familyProxyId1,
         firstParent: {
@@ -216,12 +228,12 @@ describe('CylcTree', () => {
       expect(cylcTree.lookup.get(familyProxy1.id).node.state).to.equal(TaskState.WAITING.name.toLowerCase())
     })
     it('Should add family proxies under the cycle point when first parent is root', () => {
-      const familyProxyId1 = `${WORKFLOW_ID}|${cyclePoint1.id}|fam1`
+      const familyProxyId1 = `${WORKFLOW_ID}|${cyclePoint1.node.name}|fam1`
       const familyProxy1 = createFamilyProxyNode({
         id: familyProxyId1,
-        cyclePoint: cyclePoint1.id,
+        cyclePoint: cyclePoint1.node.name,
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint1.id}|${FAMILY_ROOT}`,
+          id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
         }
       })
@@ -229,13 +241,13 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children[0].children[0].id).to.equal(familyProxyId1)
     })
     it('Should add family proxies under another family proxy successfully', () => {
-      const familyProxyId1 = `${WORKFLOW_ID}|${cyclePoint1.id}|fam1`
-      const familyProxyId2 = `${WORKFLOW_ID}|${cyclePoint1.id}|fam2`
+      const familyProxyId1 = `${WORKFLOW_ID}|${cyclePoint1.node.name}|fam1`
+      const familyProxyId2 = `${WORKFLOW_ID}|${cyclePoint1.node.name}|fam2`
       const familyProxy1 = createFamilyProxyNode({
         id: familyProxyId1,
-        cyclePoint: cyclePoint1.id,
+        cyclePoint: cyclePoint1.node.name,
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint1.id}|${FAMILY_ROOT}`,
+          id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
         }
       })
@@ -253,8 +265,8 @@ describe('CylcTree', () => {
     it('Should add family proxies under another family proxy successfully (even if the parent family proxy does not exist in the tree yet!)', () => {
       // We may have a child family proxy, before the parent family proxy is created. In this case, we have to create the
       // parent family proxy, add to the tree, and link parent-child family proxies.
-      const familyProxyId1 = `${WORKFLOW_ID}|${cyclePoint2.id}|fam1`
-      const familyProxyId2 = `${WORKFLOW_ID}|${cyclePoint2.id}|fam1`
+      const familyProxyId1 = `${WORKFLOW_ID}|${cyclePoint2.node.name}|fam1`
+      const familyProxyId2 = `${WORKFLOW_ID}|${cyclePoint2.node.name}|fam1`
       const familyProxy2 = createFamilyProxyNode({
         id: familyProxyId2,
         firstParent: {
@@ -267,10 +279,10 @@ describe('CylcTree', () => {
     })
     it('Should not add a family proxy twice to lookup, nor to its parent', () => {
       const familyProxy1 = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint2.id}|fam1`,
-        cyclePoint: cyclePoint2.id,
+        id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|fam1`,
+        cyclePoint: cyclePoint2.node.name,
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint1.id}|${FAMILY_ROOT}`,
+          id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
         }
       })
@@ -280,7 +292,7 @@ describe('CylcTree', () => {
     })
     it('Should update family proxies', () => {
       const familyProxy1 = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint2.id}|fam1`
+        id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|fam1`
       })
       cylcTree.addFamilyProxy(familyProxy1)
       expect(cylcTree.lookup.get(familyProxy1.id).state).to.equal(undefined)
@@ -290,14 +302,14 @@ describe('CylcTree', () => {
     })
     it('Should not update a family proxy if it is not in the tree', () => {
       const familyProxy1 = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint2.id}|fam1`
+        id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|fam1`
       })
       cylcTree.updateFamilyProxy(familyProxy1)
       expect(cylcTree.lookup.get(familyProxy1.id)).to.equal(undefined)
     })
     it('Should remove family proxies', () => {
       const rootFamilyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint2.id}|${FAMILY_ROOT}`,
+        id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|${FAMILY_ROOT}`,
         name: FAMILY_ROOT,
         cyclePoint: cyclePoint2.id,
         firstParent: {
@@ -310,7 +322,7 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children[1].children.length).to.equal(0)
 
       const childFamilyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint2.id}|fam2`,
+        id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|fam2`,
         cyclePoint: cyclePoint2.id,
         firstParent: {
           id: rootFamilyProxy.id,
@@ -324,7 +336,7 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children[1].children[0].children.length).to.equal(0)
 
       const grandChildFamilyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint2.id}|fam3`,
+        id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|fam3`,
         cyclePoint: cyclePoint2.id,
         firstParent: {
           id: childFamilyProxy.id
@@ -358,21 +370,22 @@ describe('CylcTree', () => {
       })
       cylcTree = new CylcTree(workflow)
       cyclePoint = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint)
       rootFamilyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.id}|${FAMILY_ROOT}`,
+        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|${FAMILY_ROOT}`,
         name: FAMILY_ROOT,
-        cyclePoint: cyclePoint.id,
+        cyclePoint: cyclePoint.node.name,
         firstParent: {
           id: cyclePoint.id
         }
       })
       cylcTree.addFamilyProxy(rootFamilyProxy)
       familyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.id}|FAM1`,
-        cyclePoint: cyclePoint.id,
+        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|FAM1`,
+        cyclePoint: cyclePoint.node.name,
         firstParent: {
           id: rootFamilyProxy.id,
           name: rootFamilyProxy.node.name
@@ -411,14 +424,14 @@ describe('CylcTree', () => {
       expect(family.children.length).to.equal(1)
     })
     it('Should add task proxies under root family', () => {
-      const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
+      const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.node.name}|foo`
       const taskProxy = createTaskProxyNode({
         id: taskProxyId,
         firstParent: {
           id: rootFamilyProxy.id,
           name: rootFamilyProxy.node.name
         },
-        cyclePoint: cyclePoint.id,
+        cyclePoint: cyclePoint.node.name,
         state: TaskState.RUNNING.name.toLowerCase()
       })
       cylcTree.addTaskProxy(taskProxy)
@@ -529,7 +542,7 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children[0].children[0].children.length).to.equal(0)
     })
     it('Should remove task proxies if added to the root family', () => {
-      const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
+      const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.node.name}|foo`
       const taskProxyState = TaskState.RUNNING.name.toLowerCase()
       const taskProxy = createTaskProxyNode({
         id: taskProxyId,
@@ -583,21 +596,22 @@ describe('CylcTree', () => {
       })
       cylcTree = new CylcTree(workflow)
       cyclePoint = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint)
       rootFamilyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.id}|${FAMILY_ROOT}`,
+        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|${FAMILY_ROOT}`,
         name: FAMILY_ROOT,
-        cyclePoint: cyclePoint.id,
+        cyclePoint: cyclePoint.node.name,
         firstParent: {
           id: cyclePoint.id
         }
       })
       cylcTree.addFamilyProxy(rootFamilyProxy)
       familyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.id}|FAM1`,
-        cyclePoint: cyclePoint.id,
+        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|FAM1`,
+        cyclePoint: cyclePoint.node.name,
         firstParent: {
           id: rootFamilyProxy.id,
           name: rootFamilyProxy.node.name
@@ -605,7 +619,7 @@ describe('CylcTree', () => {
       })
       cylcTree.addFamilyProxy(familyProxy)
       taskProxy = createTaskProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.id}|foo`,
+        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|foo`,
         firstParent: {
           id: familyProxy.id
         },
@@ -764,21 +778,22 @@ describe('CylcTree', () => {
       })
       cylcTree = new CylcTree(workflow)
       cyclePoint = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint)
       rootFamilyProxy = createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint.id}|${FAMILY_ROOT}`,
         name: FAMILY_ROOT,
-        cyclePoint: cyclePoint.id,
+        cyclePoint: cyclePoint.node.name,
         firstParent: {
           id: cyclePoint.id
         }
       })
       cylcTree.addFamilyProxy(rootFamilyProxy)
       familyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.id}||FAM1`,
-        cyclePoint: cyclePoint.id,
+        id: `${WORKFLOW_ID}|${cyclePoint.node.name}||FAM1`,
+        cyclePoint: cyclePoint.node.name,
         firstParent: {
           id: rootFamilyProxy.id,
           name: rootFamilyProxy.node.name
@@ -786,7 +801,7 @@ describe('CylcTree', () => {
       })
       cylcTree.addFamilyProxy(familyProxy)
       taskProxy = createTaskProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.id}||foo`,
+        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|foo`,
         firstParent: {
           id: familyProxy.id
         },
@@ -827,45 +842,47 @@ describe('CylcTree', () => {
       })
       cylcTree = new CylcTree(workflow)
       cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
       })
       cylcTree.addCyclePoint(cyclePoint1)
       cylcTree.addFamilyProxy(createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint1.id}|FAM1`,
+        id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|FAM1`,
         state: TaskState.RUNNING.name.toLowerCase(),
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint1.id}|${FAMILY_ROOT}`,
+          id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
         },
         cyclePoint: cyclePoint1.id
       }))
       cylcTree.addFamilyProxy(createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint1.id}|FAM2`,
+        id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|FAM2`,
         state: TaskState.SUBMIT_RETRYING.name.toLowerCase(),
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint1.id}|${FAMILY_ROOT}`,
+          id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
         },
         cyclePoint: cyclePoint1.id
       }))
       cyclePoint2 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|2|root`,
         cyclePoint: '2'
       })
       cylcTree.addCyclePoint(cyclePoint2)
       cylcTree.addFamilyProxy(createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint2.id}|FAM1`,
+        id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|FAM1`,
         state: TaskState.SUBMIT_RETRYING.name.toLowerCase(),
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint2.id}|${FAMILY_ROOT}`,
+          id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
         },
         cyclePoint: cyclePoint2.id
       }))
       cylcTree.addFamilyProxy(createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint2.id}|FAM2`,
+        id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|FAM2`,
         state: TaskState.RUNNING.name.toLowerCase(),
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint2.id}|${FAMILY_ROOT}`,
+          id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
         },
         cyclePoint: cyclePoint2.id
