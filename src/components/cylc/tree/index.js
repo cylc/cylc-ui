@@ -64,7 +64,8 @@ function getCyclePointId (node) {
   if (tokens.length >= 3) {
     return tokens.splice(0, 3).join('|')
   }
-  return node.id
+  const nodeId = node.id ? node.id : 'undefined'
+  throw new Error(`Error extracting cycle point ID from node ID ${nodeId}`)
 }
 
 /**
