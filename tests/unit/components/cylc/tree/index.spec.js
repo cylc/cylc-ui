@@ -17,6 +17,7 @@
 
 import {
   createTaskProxyNode,
+  getCyclePointId,
   populateTreeFromGraphQLData
 } from '@/components/cylc/tree/index'
 import { expect } from 'chai'
@@ -126,5 +127,66 @@ describe('Tree component functions', () => {
     expect(populateTreeFromGraphQLData, null, workflow).to.not.throw(Error)
     expect(populateTreeFromGraphQLData, tree, null).to.not.throw(Error)
     expect(populateTreeFromGraphQLData, tree, workflow).to.not.throw(Error)
+  })
+  it('should extract the cycle point ID', () => {
+    const tests = [
+      {
+        node: {
+          id: ''
+        },
+        expected: Error
+      },
+      {
+        node: {
+          id: null
+        },
+        expected: Error
+      },
+      {
+        node: {
+          id: 'a'
+        },
+        expected: Error
+      },
+      {
+        node: {
+          id: 'a|b'
+        },
+        expected: Error
+      },
+      {
+        node: {
+          id: 'a|b|c'
+        },
+        expected: 'a|b|c'
+      },
+      {
+        node: {
+          id: 'a|b|c|d'
+        },
+        expected: 'a|b|c'
+      },
+      {
+        node: {
+          id: 'a|b|c|d|e'
+        },
+        expected: 'a|b|c'
+      },
+      {
+        node: {
+          id: '|||'
+        },
+        expected: '||'
+      }
+    ]
+    tests.forEach(test => {
+      it('should extract cycle point node ID', () => {
+        if (test.expected === Error) {
+          expect(getCyclePointId(test.args)).to.throw(test.expected)
+        } else {
+          expect(getCyclePointId(test.args)).to.equal(test.expected)
+        }
+      })
+    })
   })
 })
