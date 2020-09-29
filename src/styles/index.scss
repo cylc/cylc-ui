@@ -18,16 +18,18 @@
 @import '~vuetify/src/styles/styles.sass';
 
 @import "cylc/variables";
-@import "cylc/header";
-@import "cylc/toolbar";
+
+@import "cylc/dashboard";
 @import "cylc/drawer";
 @import "cylc/gscan";
+@import "cylc/header";
 @import "cylc/job";
 @import "cylc/task";
-@import "cylc/warning";
-@import "cylc/dashboard";
-@import "cylc/workflow";
+@import "cylc/toolbar";
 @import "cylc/tree";
+@import "cylc/user_profile";
+@import "cylc/warning";
+@import "cylc/workflow";
 
 .theme--light.v-application {
   background-color: transparent;

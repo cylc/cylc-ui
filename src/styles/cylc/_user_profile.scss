@@ -15,27 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const state = {
-  drawer: null,
-  title: null,
-  jobTheme: null
-}
+.c-user-profile {
+  table.c-job-state-table {
+    td, th {
+      padding: 0.2em;
+      text-align: center;
+    }
 
-const mutations = {
-  setDrawer (state, drawer) {
-    state.drawer = drawer
-  },
-  setTitle (state, title) {
-    state.title = title
-  },
-  setJobTheme (state, jobTheme) {
-    localStorage.jobTheme = jobTheme
-    state.jobTheme = jobTheme
+    .v-radio {
+      /* allow the element to center */
+      display: inline-block;
+      /* jobs are 1em wide, offset the element by half this */
+      padding-left: 0.5em;
+    }
   }
-}
-
-export const app = {
-  namespaced: true,
-  state,
-  mutations
 }

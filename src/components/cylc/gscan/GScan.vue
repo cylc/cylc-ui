@@ -59,10 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         dark
                         text
                       >
-                        <job
-                          :status="state"
-                          :theme="jobTheme"
-                        />
+                        <job :status="state" />
                       </v-btn>
                     </template>
                     <!-- tooltip text -->
@@ -115,9 +112,6 @@ export default {
     workflows: {
       type: Array,
       required: true
-    },
-    jobTheme: {
-      type: String
     }
   },
   data () {

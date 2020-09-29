@@ -33,7 +33,7 @@ $cjob: ".c-job svg.job rect";
     }
 }
 
-.job_theme--default {
+@mixin job_theme_default() {
     $teal: rgb(125,207,212);
     $blue: rgb(106,164,241);
     $green: rgb(81,175,81);
@@ -68,8 +68,7 @@ $cjob: ".c-job svg.job rect";
     }
 }
 
-
-.job_theme--greyscale {
+@mixin job_theme_greyscale() {
     $light: rgb(208,208,208);
     $medium: rgb(133,133,133);
     $dark: rgb(0,0,0);
@@ -102,7 +101,7 @@ $cjob: ".c-job svg.job rect";
     }
 }
 
-.job_theme--colour_blind {
+@mixin job_theme_colour-blind() {
     $grey: rgb(152,152,152);
     $success: rgb(108,218,255);
     $error: rgb(146,0,0);
@@ -133,4 +132,31 @@ $cjob: ".c-job svg.job rect";
             stroke: $error;
         }
     }
+}
+
+// job theme as configured by the top-level application
+#app.job_theme--default {
+    @include job_theme_default
+}
+
+#app.job_theme--greyscale {
+    @include job_theme_greyscale
+}
+
+#app.job_theme--colour_blind {
+    @include job_theme_colour_blind
+}
+
+// if overridden elsewhere the new value should take priority
+// (this allows us to override the theme in the user-profile
+#app .job_theme--default {
+    @include job_theme_default
+}
+
+#app .job_theme--greyscale {
+    @include job_theme_greyscale
+}
+
+#app .job_theme--colour_blind {
+    @include job_theme_colour_blind
 }

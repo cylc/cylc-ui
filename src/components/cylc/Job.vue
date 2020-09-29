@@ -21,12 +21,12 @@
 -->
 
 <template functional>
-  <span :class="[props.theme || 'job_theme--default']">
+  <span>
     <span
       class="c-job"
       style="display:inline-block; vertical-align:middle"
     >
-    <!-- the task icon SVG
+    <!-- the job icon SVG
            * comments prefixed `let` are instructions for changing style
            * contain in a 100x100 viewBox so pixels and percent are equal
            * bind the job status here, respond to styling in the CSS
@@ -58,9 +58,6 @@ export default {
     status: {
       type: String,
       required: true
-    },
-    theme: {
-      type: String
     }
   }
 }

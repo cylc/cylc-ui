@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :activable="false"
         :multiple-active="false"
         :min-depth="1"
-        :job-theme="jobTheme"
         ref="tree0"
         key="tree0"
       ></tree-component>
@@ -40,7 +39,6 @@ import CylcTree from '@/components/cylc/tree/cylc-tree'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import Alert from '@/model/Alert.model'
 import { applyDeltas } from '@/components/cylc/tree/deltas'
-import { mapState } from 'vuex'
 
 export default {
   mixins: [
@@ -76,12 +74,6 @@ export default {
      */
     tree: new CylcTree()
   }),
-
-  computed: {
-    ...mapState({
-      jobTheme: state => `job_theme--${state.app.jobTheme}`
-    })
-  },
 
   /**
    * Called when the user enters the view. This is executed before the component is fully

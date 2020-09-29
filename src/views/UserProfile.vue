@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container>
+  <v-container class="c-user-profile">
     <v-layout wrap>
       <v-flex xs12 md12>
         <v-alert
@@ -160,7 +160,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       <td
                         v-for="theme in jobThemes"
                         v-bind:key="theme"
-                        v-bind:class="[`job_theme--${theme}`]"
+                        v-bind:class="[`job_theme--${theme}`, 'job_theme_override']"
                       >
                         <job :status="state" />
                       </td>
@@ -232,28 +232,12 @@ export default {
     decreaseFontSize,
     increaseFontSize,
     getCurrentFontSize,
-    ...mapMutations(['app/setJobTheme'])
+    ...mapMutations('app', ['setJobTheme'])
   },
   watch: {
     jobTheme: function (theme) {
-      localStorage.jobTheme = theme
-      this['app/setJobTheme'](theme)
+      this.setJobTheme(theme)
     }
   }
 }
 </script>
-
-<style lang="scss">
-table.c-job-state-table {
-  td, th {
-    padding: 0.2em;
-    text-align: center;
-  }
-  .v-radio {
-    /* allow the element to center */
-    display: inline-block;
-    /* jobs are 1em wide, offset the element by half this */
-    padding-left: 0.5em;
-  }
-}
-</style>
