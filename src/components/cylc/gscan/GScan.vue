@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               class="flex-grow-0 flex-column"
               @click="showFilterTooltip = !showFilterTooltip"
             >
-              <v-icon>mdi-filter</v-icon>
+              <v-icon>{{ svgPaths.filter }}</v-icon>
             </v-btn>
           </template>
           <v-card
