@@ -245,7 +245,7 @@ export default {
     },
     onTreeItemDestroyed (treeItem) {
       // make sure the item is removed from all caches, otherwise we will have a memory leak
-      Vue.delete(this.treeItemCache, treeItem.id)
+      Vue.delete(this.treeItemCache, treeItem.node.id)
       this.expandedCache.delete(treeItem)
       this.activeCache.delete(treeItem)
     },
