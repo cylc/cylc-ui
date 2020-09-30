@@ -273,4 +273,82 @@ describe('Tree component', () => {
       })
     })
   })
+  describe('Caches', () => {
+    /**
+     * Create a tree item for tests with the caches.
+     * @param {string} id - node ID
+     * @param {boolean} expanded - whether node is expanded or not
+     * @returns {{isExpanded: *, $props: {node: {id: *}}}}
+     */
+    const createTreeItem = (id, expanded) => {
+      return {
+        isExpanded: expanded,
+        $props: {
+          node: {
+            id: id
+          }
+        }
+      }
+    }
+    it('should all be initialized to empty caches', () => {
+      const wrapper = mountFunction({
+        propsData: {
+          workflows: []
+        }
+      })
+      expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(0)
+      expect(wrapper.vm.activeCache.size).to.equal(0)
+      expect(wrapper.vm.expandedCache.size).to.equal(0)
+    })
+    it('should add to the tree item cache', () => {
+      const wrapper = mountFunction({
+        propsData: {
+          workflows: []
+        }
+      })
+      const treeItem = createTreeItem(1, false)
+      wrapper.vm.onTreeItemCreated(treeItem)
+      expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
+      expect(wrapper.vm.activeCache.size).to.equal(0)
+      expect(wrapper.vm.expandedCache.size).to.equal(0)
+    })
+    it('should remove from the tree item cache', () => {
+      const wrapper = mountFunction({
+        propsData: {
+          workflows: []
+        }
+      })
+      const treeItem = createTreeItem(1, false)
+      wrapper.vm.onTreeItemCreated(treeItem)
+      expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
+      wrapper.vm.onTreeItemDestroyed(treeItem)
+      expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(0)
+    })
+    it('should add to the expanded cache', () => {
+      const wrapper = mountFunction({
+        propsData: {
+          workflows: []
+        }
+      })
+      const treeItem = createTreeItem(1, true)
+      wrapper.vm.onTreeItemCreated(treeItem)
+      expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
+      expect(wrapper.vm.activeCache.size).to.equal(0)
+      expect(wrapper.vm.expandedCache.size).to.equal(1)
+    })
+    it('should remove from the expanded cache', () => {
+      const wrapper = mountFunction({
+        propsData: {
+          workflows: []
+        }
+      })
+      const treeItem = createTreeItem(1, true)
+      wrapper.vm.onTreeItemCreated(treeItem)
+      expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
+      expect(wrapper.vm.expandedCache.size).to.equal(1)
+      wrapper.vm.onTreeItemCollapsed(treeItem)
+      expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
+      expect(wrapper.vm.expandedCache.size).to.equal(0)
+    })
+  })
 })
