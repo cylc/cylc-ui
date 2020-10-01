@@ -468,15 +468,12 @@ export default {
         if (!workflowStates.includes(workflow.status)) {
           return false
         }
-        // task states (but only if non-stopped, as otherwise stateTotals will be empty)
-        if (workflow.status === 'running') {
-          const thisWorkflowStates = Object.entries(workflow.stateTotals)
-            .filter(entry => entry[1] > 0)
-            .map(entry => entry[0])
-          const intersection = thisWorkflowStates.filter(item => taskStates.has(item))
-          return intersection.length !== 0
-        }
-        return true
+        // task states
+        const thisWorkflowStates = Object.entries(workflow.stateTotals)
+          .filter(entry => entry[1] > 0)
+          .map(entry => entry[0])
+        const intersection = thisWorkflowStates.filter(item => taskStates.has(item))
+        return intersection.length !== 0
       })
     }
   }
