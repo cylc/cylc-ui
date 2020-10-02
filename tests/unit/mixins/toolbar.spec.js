@@ -22,6 +22,7 @@ import store from '@/store'
 
 describe('Toolbar mixin', () => {
   it('should create the default data correctly', () => {
+    const oldWindow = global.window
     global.window = {
       innerWidth: 10000,
       addEventListener: () => {}
@@ -32,8 +33,10 @@ describe('Toolbar mixin', () => {
     })
     expect(component.vm.$data.responsive).to.equal(false)
     expect(component.vm.$data.responsiveInput).to.equal(true)
+    global.window = oldWindow
   })
   it('should swap the values on responsive', () => {
+    const oldWindow = global.window
     global.window = {
       innerWidth: 1,
       addEventListener: () => {}
@@ -44,8 +47,10 @@ describe('Toolbar mixin', () => {
     })
     expect(component.vm.$data.responsive).to.equal(true)
     expect(component.vm.$data.responsiveInput).to.equal(false)
+    global.window = oldWindow
   })
   it('should swap the values on responsive', () => {
+    const oldWindow = global.window
     global.window = {
       innerWidth: 1,
       addEventListener: () => {}
@@ -56,9 +61,11 @@ describe('Toolbar mixin', () => {
     })
     expect(component.vm.$data.responsive).to.equal(true)
     expect(component.vm.$data.responsiveInput).to.equal(false)
+    global.window = oldWindow
   })
   it('should remove event listeners when destroyed', () => {
     let called = false
+    const oldWindow = global.window
     global.window = {
       addEventListener: () => {},
       removeEventListener: () => {
@@ -71,6 +78,7 @@ describe('Toolbar mixin', () => {
     })
     component.vm.$destroy()
     expect(called).to.equal(true)
+    global.window = oldWindow
   })
   it('should toggle the drawer when clicked', () => {
     store.state.app.drawer = false
@@ -81,5 +89,6 @@ describe('Toolbar mixin', () => {
     })
     component.vm.onClickBtn()
     expect(store.state.app.drawer).to.equal(true)
+    store.state.app.drawer = null
   })
 })
