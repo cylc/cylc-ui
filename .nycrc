@@ -4,6 +4,7 @@
     "node_modules",
     "docs",
     "tests",
+    "src/graphql/graphiql.js",
     "src/i18n",
     "src/lang",
     "src/plugins",
