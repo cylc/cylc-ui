@@ -151,6 +151,7 @@ export default {
      * }}
      */
     onWidgetActivated (customEvent) {
+      // eslint-disable-next-line vue/custom-event-name-casing
       this.$emit('lumino:activated', customEvent.detail)
     },
 
@@ -172,6 +173,7 @@ export default {
         .removeEventListener('lumino:deleted', this.onWidgetDeleted)
       document.getElementById(id)
         .removeEventListener('lumino:activated', this.onWidgetActivated)
+      // eslint-disable-next-line vue/custom-event-name-casing
       this.$emit('lumino:deleted', customEvent.detail)
     }
   }
