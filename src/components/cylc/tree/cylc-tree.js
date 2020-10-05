@@ -1,7 +1,7 @@
 import { computePercentProgress } from '@/components/cylc'
 import { extractGroupState } from '@/utils/tasks'
 import { merge } from 'lodash'
-import { createFamilyProxyNode } from '@/components/cylc/tree/index'
+import { createFamilyProxyNode, getCyclePointId } from '@/components/cylc/tree/index'
 import TaskState from '@/model/TaskState.model'
 
 export const FAMILY_ROOT = 'root'
@@ -288,12 +288,14 @@ class CylcTree {
     if (!familyProxy.node.state) {
       familyProxy.node.state = ''
     }
+
     // if we got the parent, let's link parent and child
     if (familyProxy.node.firstParent) {
       let parent
       if (familyProxy.node.firstParent.name === FAMILY_ROOT) {
         // if the parent is root, we use the cyclepoint as the parent
-        parent = this.lookup.get(familyProxy.node.cyclePoint)
+        const cyclePointId = getCyclePointId(familyProxy)
+        parent = this.lookup.get(cyclePointId)
       } else if (this.lookup.has(familyProxy.node.firstParent.id)) {
         // if its parent is another family proxy node and must already exist
         parent = this.lookup.get(familyProxy.node.firstParent.id)
@@ -338,8 +340,8 @@ class CylcTree {
     // NOTE: when deleting the root family, we can also remove the entire cycle point
     if (familyProxyId.endsWith('|root')) {
       // 0 has the owner, 1 has the workflow Id, 2 has the cycle point, and 3 the family name
-      const [owner, workflowId, cyclePoint] = familyProxyId.split('|')
-      nodeId = cyclePoint
+      const [owner, workflowId] = familyProxyId.split('|')
+      nodeId = getCyclePointId({ id: familyProxyId })
       node = this.lookup.get(nodeId)
       parentId = `${owner}|${workflowId}`
     } else {
@@ -347,7 +349,7 @@ class CylcTree {
       node = this.lookup.get(nodeId)
       if (node && node.node && node.node.firstParent) {
         if (node.node.firstParent.name === FAMILY_ROOT) {
-          parentId = node.node.cyclePoint
+          parentId = getCyclePointId(node)
         } else {
           parentId = node.node.firstParent.id
         }
@@ -380,7 +382,8 @@ class CylcTree {
       let parent
       if (taskProxy.node.firstParent.name === FAMILY_ROOT) {
         // if the parent is root, we must instead attach this node to the cyclepoint!
-        parent = this.lookup.get(taskProxy.node.cyclePoint)
+        const cyclePointId = getCyclePointId(taskProxy)
+        parent = this.lookup.get(cyclePointId)
       } else {
         // otherwise its parent is another family proxy node and **MUST** already exist
         parent = this.lookup.get(taskProxy.node.firstParent.id)
@@ -419,7 +422,8 @@ class CylcTree {
       // Remember that we attach task proxies children of 'root' directly to a cycle point!
       let parent
       if (taskProxy.node.firstParent.id.endsWith('|root')) {
-        parent = this.lookup.get(taskProxy.node.cyclePoint)
+        const cyclePointId = getCyclePointId(taskProxy)
+        parent = this.lookup.get(cyclePointId)
       } else {
         parent = this.lookup.get(taskProxy.node.firstParent.id)
       }

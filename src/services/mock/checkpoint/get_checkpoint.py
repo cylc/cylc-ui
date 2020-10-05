@@ -13,32 +13,96 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from os.path import dirname
-from pathlib import Path
-import re
+# NOTE: The deltas-subscription for the tree view cannot be used here as
+#       cylc-client wouldn't give us a single response payload; but we
+#       can re-use the fragments. If the query for the tree view changes,
+#       just copy the new fragment below, or tweak the query as fit.
+query = '''
+query ($workflowID: ID) {
+  workflows (ids: [$workflowID]) {
+    ...WorkflowData
+    cyclePoints: familyProxies (ids: ["root"], ghosts: true) {
+      ...CyclePointData
+    }
+    taskProxies (sort: { keys: ["name"], reverse: false }, ghosts: true) {
+      ...TaskProxyData
+      jobs(sort: { keys: ["submit_num"], reverse:true }) {
+        ...JobData
+      }
+    }
+    familyProxies (exids: ["root"], sort: { keys: ["name"] }, ghosts: true) {
+      ...FamilyProxyData
+    }
+  }
+}
 
-graphql_module_path = Path(f'{dirname(__file__)}/../../../graphql/')
-queries_file = graphql_module_path / 'queries.js'
+fragment WorkflowData on Workflow {
+  id
+  name
+  status
+  owner
+  host
+  port
+}
 
-workflows_query_variable = 'WORKFLOW_TREE_QUERY'
+fragment CyclePointData on FamilyProxy {
+  id
+  cyclePoint
+}
 
-query = ''
+fragment FamilyProxyData on FamilyProxy {
+  id
+  name
+  state
+  cyclePoint
+  firstParent {
+    id
+    name
+    cyclePoint
+    state
+  }
+}
 
-# use a regex to match anything after the variable name and within ``
-# for js multiline variable
-with queries_file.open() as f:
-    query = re.search(
-        rf'const\s+{workflows_query_variable}\s*=\s*`([^`]+)`',
-        f.read(),
-        re.MULTILINE).group(1).strip()
-    # replace the placeholder for the workflow ID
-    query = query.replace('(ids: ["WORKFLOW_ID"])', '', 1)
-    if query.startswith('subscription'):
-        query = query.replace('subscription', '', 1)
+fragment TaskProxyData on TaskProxy {
+  id
+  name
+  state
+  isHeld
+  cyclePoint
+  latestMessage
+  firstParent {
+    id
+    name
+    cyclePoint
+    state
+  }
+  task {
+    meanElapsedTime
+    name
+  }
+}
 
+fragment JobData on Job {
+  id
+  firstParent: taskProxy {
+    id
+  }
+  batchSysName
+  batchSysJobId
+  host
+  startedTime
+  submittedTime
+  finishedTime
+  state
+  submitNum
+}
+'''
 
 wrapper = {
-    'request_string': query
+    'request_string': query,
+    'variables': {
+        'workflowID': 'one'
+    }
 }
 
 import json

@@ -100,7 +100,6 @@
             # reset stuff
             cylc unhold \
                 "${CYLC_SUITE_NAME}" "sleepy.${CYLC_TASK_CYCLE_POINT}"
-            cylc reset \
-                "${CYLC_SUITE_NAME}" "retrying.${CYLC_TASK_CYCLE_POINT}" \
-                -s 'succeeded'
+            cylc set-outputs \
+		"${CYLC_SUITE_NAME}" "retrying.${CYLC_TASK_CYCLE_POINT}"
         """
