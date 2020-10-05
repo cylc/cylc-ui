@@ -41,6 +41,10 @@ and the development libraries.
 [#483](https://github.com/cylc/cylc-ui/pull/458) - Filter tree item
 by tasks name and tasks states.
 
+[#505](https://github.com/cylc/cylc-ui/pull/505) - Use cycle point ID
+in the tree view structure.
+
+
 ### Fixes
 
 None.
