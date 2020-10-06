@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="mb-1"
     >
       <v-col
-        class="ma-0 py-0 px-3 col-md-5 col-12">
+        class="ma-0 py-0 px-3 col-sm-12 col-md-4">
         <v-text-field
           id="c-tree-filter-task-name"
           clearable
@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         ></v-text-field>
       </v-col>
       <v-col
-        class="ma-0 pa-md-0 col-md-5 col-12">
+        class="ma-0 pa-md-0 col-sm-12 col-md-4">
         <v-select
           id="c-tree-filter-task-states"
           :items="taskStates"
@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-select>
       </v-col>
       <v-col
-        class="ma-0 py-0 px-3 col-md-2 col-sm-12">
+        class="ma-0 py-0 px-3 col-sm-12 col-md-4">
         <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
                    components don't seem to agree on the height here -->
         <v-btn
