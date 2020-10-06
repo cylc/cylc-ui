@@ -151,6 +151,7 @@ export default {
      * }}
      */
     onWidgetActivated (customEvent) {
+      // TODO: remove it if the linter is fixed later #510
       // eslint-disable-next-line vue/custom-event-name-casing
       this.$emit('lumino:activated', customEvent.detail)
     },
@@ -173,6 +174,7 @@ export default {
         .removeEventListener('lumino:deleted', this.onWidgetDeleted)
       document.getElementById(id)
         .removeEventListener('lumino:activated', this.onWidgetActivated)
+      // TODO: remove it if the linter is fixed later #510
       // eslint-disable-next-line vue/custom-event-name-casing
       this.$emit('lumino:deleted', customEvent.detail)
     }
