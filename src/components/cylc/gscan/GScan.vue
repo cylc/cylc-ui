@@ -23,9 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :loading="isLoading"
       type="list-item-three-line"
     >
-      <div
-        class="d-flex flex-row mx-4 mb-2"
-      >
+      <!-- filters -->
+      <div class="d-flex flex-row mx-4 mb-2">
         <v-text-field
           v-model="searchWorkflows"
           clearable
@@ -41,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :close-on-content-click="false"
           offset-x
         >
+          <!-- button to activate the filters tooltip -->
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               v-bind="attrs"
@@ -53,6 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-icon>{{ svgPaths.filter }}</v-icon>
             </v-btn>
           </template>
+          <!-- filters tooltip -->
           <v-card
             max-height="250px"
           >
@@ -65,7 +66,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               >
                 <v-list-item dense>
                   <v-list-item-content ma-0>
-                    <v-list-item-title>{{ filter.title }}</v-list-item-title>
+                    <v-list-item-title>
+                      <v-checkbox
+                        :label="filter.title"
+                        :input-value="allItemsSelected(filter.items)"
+                        value
+                        dense
+                        hide-details
+                        hint="Toggle all"
+                        @click="toggleItemsValues(filter.items)"
+                      ></v-checkbox>
+                    </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
                 <v-divider />
@@ -88,6 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-card>
         </v-menu>
       </div>
+      <!-- data -->
       <div
         v-if="!isLoading && filteredWorkflows && filteredWorkflows.length > 0"
         class="c-gscan-workflows"
@@ -297,7 +309,7 @@ export default {
      * (natural sort).
      */
     sortedWorkflows () {
-      return [...this.workflows].sort((left, right) => {
+      return [...this.filteredWorkflows].sort((left, right) => {
         if (left.status !== right.status) {
           if (left.status === WorkflowState.STOPPED.name) {
             return 1
@@ -477,6 +489,34 @@ export default {
           return intersection.length !== 0
         }
         return true
+      })
+    },
+    /**
+     * Return `true` iff all the items have been selected. `false` otherwise.
+     *
+     * @param {[
+     *   {
+     *     model: boolean
+     *   }
+     * ]} items - filter items
+     * @returns {boolean} - `true` iff all the items have been selected. `false` otherwise
+     */
+    allItemsSelected (items) {
+      return items.every(item => item.model === true)
+    },
+    /**
+     * If every element in the list is `true`, then we will set every element in the
+     * list to `false`. Otherwise, we set all the elements in the list to `true`.
+     * @param {[
+     *   {
+     *     model: boolean
+     *   }
+     * ]} items - filter items
+     */
+    toggleItemsValues (items) {
+      const newValue = !this.allItemsSelected(items)
+      items.forEach(item => {
+        item.model = newValue
       })
     }
   }
