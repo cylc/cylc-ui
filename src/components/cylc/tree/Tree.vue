@@ -16,12 +16,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="my-2">
-    <v-layout
+  <v-container>
+    <v-row
       class="mb-1"
     >
-      <v-flex
-        class="ma-0 px-3 column">
+      <v-col
+        class="ma-0 py-0 px-3 col-sm-12 col-md-4">
         <v-text-field
           id="c-tree-filter-task-name"
           clearable
@@ -32,9 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           placeholder="Filter by task name"
           v-model="tasksFilter.name"
         ></v-text-field>
-      </v-flex>
-      <v-flex
-        class="pa-0 ma-0 column">
+      </v-col>
+      <v-col
+        class="ma-0 pa-md-0 col-sm-12 col-md-4">
         <v-select
           id="c-tree-filter-task-states"
           :items="taskStates"
@@ -57,9 +57,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
           </template>
         </v-select>
-      </v-flex>
-      <v-flex
-        class="ma-0 px-3 column">
+      </v-col>
+      <v-col
+        class="ma-0 py-0 px-3 col-sm-12 col-md-4">
         <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
                    components don't seem to agree on the height here -->
         <v-btn
@@ -69,8 +69,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           outlined
           @click="filterTasks"
         >Filter</v-btn>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
     <!-- each workflow is a tree root -->
     <tree-item
       v-for="workflow of sortedChildren('workflow', workflows)"
@@ -85,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-on:tree-item-clicked="onTreeItemClicked"
     >
     </tree-item>
-  </div>
+  </v-container>
 </template>
 
 <script>
