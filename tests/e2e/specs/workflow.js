@@ -18,81 +18,43 @@
 describe('Workflow view and component/widget', () => {
   it('Should display the Workflow component in the Workflow view, with a Tree widget', () => {
     cy.visit('/#/workflows/one')
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .should('have.length', 1)
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
   })
   it('Should remove the default widget and leave no more widgets', () => {
     cy.visit('/#/workflows/one')
-    cy
-      .get('.lm-TabBar-tabCloseIcon')
-      .click()
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .should('not.exist')
+    cy.get('.lm-TabBar-tabCloseIcon').click()
+    cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
   it('Should be able to add two widgets of the same type', () => {
     cy.visit('/#/workflows/one')
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .should('have.length', 1)
-    cy
-      .get('a.add-view')
-      .click()
-    cy
-      .get('#toolbar-add-tree-view')
-      .click()
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .should('have.length', 2)
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
+    cy.get('a.add-view').click()
+    cy.get('#toolbar-add-tree-view').click()
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
   })
   it('Should be able to add three widgets of different types', () => {
     cy.visit('/#/workflows/one')
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .should('have.length', 1)
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a graph view
-    cy
-      .get('a.add-view')
-      .click()
-    cy
-      .get('#toolbar-add-graph-view')
-      .click()
+    cy.get('a.add-view').click()
+    cy.get('#toolbar-add-graph-view').click()
     // add a mutations view
-    cy
-      .get('a.add-view')
-      .click()
-    cy
-      .get('#toolbar-add-mutations-view')
-      .click()
+    cy.get('a.add-view').click()
+    cy.get('#toolbar-add-mutations-view').click()
     // ensure we have 3 widgets now
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .should('have.length', 3)
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 3)
   })
   it('Should remove widgets added successfully', () => {
     cy.visit('/#/workflows/one')
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .should('have.length', 1)
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a graph view
-    cy
-      .get('a.add-view')
-      .click()
-    cy
-      .get('#toolbar-add-graph-view')
-      .click()
+    cy.get('a.add-view').click()
+    cy.get('#toolbar-add-graph-view').click()
     // ensure we have 2 widgets now
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .should('have.length', 2)
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
     // close all widgets
-    cy
-      .get('.lm-TabBar-tabCloseIcon')
-      .click({ multiple: true })
+    cy.get('.lm-TabBar-tabCloseIcon').click({ multiple: true })
     // ensure we have no widgets now
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .should('not.exist')
+    cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
 })

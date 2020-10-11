@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <toolbar
       v-on:add-tree="this.addTreeWidget"
-      v-on:add-graph="this.addGraphWidget"
       v-on:add-mutations="this.addMutationsWidget"
     ></toolbar>
     <div class="workflow-panel fill-height">
@@ -39,19 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <tree-component
             :workflows="tree.root.children"
           />
-        </v-skeleton-loader>
-        <v-skeleton-loader
-          v-for="widgetId of graphWidgets"
-          :key="widgetId"
-          :id="widgetId"
-          :loading="isLoading"
-          type="list-item-three-line"
-          tab-title="graph"
-        >
-          <graph-component
-            :workflow-name="workflowName"
-          />
-        </v-skeleton-loader>
+        </v-skeleton-loader>      
         <mutations-view
           v-for="widgetId of mutationsWidgets"
           :key="widgetId"
@@ -75,7 +62,6 @@ import { applyDeltas } from '@/components/cylc/tree/deltas'
 import Alert from '@/model/Alert.model'
 import { each, iter } from '@lumino/algorithm'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
-import GraphComponent from '@/components/cylc/graph/Graph.vue'
 import MutationsView from '@/views/Mutations'
 import Vue from 'vue'
 import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
@@ -100,7 +86,6 @@ export default {
   components: {
     Lumino,
     TreeComponent,
-    GraphComponent,
     MutationsView,
     Toolbar
   },
@@ -136,12 +121,6 @@ export default {
       return Object
         .entries(this.widgets)
         .filter(([id, type]) => type === TreeComponent.name)
-        .map(([id, type]) => id)
-    },
-    graphWidgets () {
-      return Object
-        .entries(this.widgets)
-        .filter(([id, type]) => type === GraphComponent.name)
         .map(([id, type]) => id)
     },
     mutationsWidgets () {
@@ -257,13 +236,6 @@ export default {
     addTreeWidget () {
       const subscriptionId = this.subscribeDeltas()
       Vue.set(this.widgets, subscriptionId, TreeComponent.name)
-    },
-    /**
-     * Add a graph widget. Will update any existing subscription (query-merge).
-     */
-    addGraphWidget () {
-      const subscriptionId = this.subscribe('graph')
-      Vue.set(this.widgets, subscriptionId, GraphComponent.name)
     },
     /**
      * Add a mutations widget.
