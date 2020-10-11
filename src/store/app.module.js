@@ -17,16 +17,12 @@
 
 const state = {
   drawer: null,
-  color: 'success',
   title: null
 }
 
 const mutations = {
   setDrawer (state, drawer) {
     state.drawer = drawer
-  },
-  setColor (state, color) {
-    state.color = color
   },
   setTitle (state, title) {
     state.title = title
