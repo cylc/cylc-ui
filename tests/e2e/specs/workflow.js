@@ -32,24 +32,12 @@ describe('Workflow view and component/widget', () => {
     cy.get('#toolbar-add-tree-view').click()
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
   })
-  it('Should be able to add three widgets of different types', () => {
-    cy.visit('/#/workflows/one')
-    cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
-    // add a graph view
-    cy.get('a.add-view').click()
-    cy.get('#toolbar-add-graph-view').click()
-    // add a mutations view
-    cy.get('a.add-view').click()
-    cy.get('#toolbar-add-mutations-view').click()
-    // ensure we have 3 widgets now
-    cy.get('.lm-TabBar-tabLabel').should('have.length', 3)
-  })
   it('Should remove widgets added successfully', () => {
     cy.visit('/#/workflows/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
-    // add a graph view
+    // add a tree view
     cy.get('a.add-view').click()
-    cy.get('#toolbar-add-graph-view').click()
+    cy.get('#toolbar-add-tree-view').click()
     // ensure we have 2 widgets now
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
     // close all widgets
