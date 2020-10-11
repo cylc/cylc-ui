@@ -20,16 +20,26 @@ import store from '@/store'
 import Alert from '@/model/Alert.model'
 import sinon from 'sinon'
 
-describe('store', () => {
+/**
+ * Tests for the store/index module.
+ */
+describe('index', () => {
+  // using sinon to capture console.log
   beforeEach(() => {
-    store.dispatch('setAlert', null)
-    store.state.offline = false
     sinon.stub(console, 'log')
   })
   afterEach(() => {
     sinon.restore()
   })
-  describe('alerts', () => {
+  /**
+   * Tests for store.alert.
+   */
+  describe('alert', () => {
+    const resetState = () => {
+      store.state.alert = null
+    }
+    beforeEach(resetState)
+    afterEach(resetState)
     it('should start with no alert', () => {
       expect(store.state.alert).to.equal(null)
     })
@@ -47,7 +57,33 @@ describe('store', () => {
       expect(store.state.alert).to.equal(null)
     })
   })
-  describe('loading', () => {
+  /**
+   * Tests for store.baseUrl
+   */
+  describe('baseUrl', () => {
+    const resetState = () => {
+      store.state.baseUrl = '/'
+    }
+    beforeEach(resetState)
+    afterEach(resetState)
+    it('should initialize with correct base URL', () => {
+      expect(store.state.baseUrl).to.equal('/')
+    })
+    it('should set a new base URL', () => {
+      const newBaseUrl = 'new-base-url'
+      store.dispatch('setBaseUrl', newBaseUrl)
+      expect(store.state.baseUrl).to.equal(newBaseUrl)
+    })
+  })
+  /**
+   * Tests for store.isLoading.
+   */
+  describe('isLoading', () => {
+    const resetState = () => {
+      store.state.isLoading = false
+    }
+    beforeEach(resetState)
+    afterEach(resetState)
     it('should start with loading false', () => {
       expect(store.state.isLoading).to.equal(false)
       expect(store.state.refCount).to.equal(0)
@@ -65,7 +101,15 @@ describe('store', () => {
       expect(store.state.refCount).to.equal(0)
     })
   })
+  /**
+   * Tests for store.offline.
+   */
   describe('offline', () => {
+    const resetState = () => {
+      store.state.offline = false
+    }
+    beforeEach(resetState)
+    afterEach(resetState)
     it('should start online so that the component is not rendered for a few seconds', () => {
       expect(store.state.offline).to.equal(false)
     })
