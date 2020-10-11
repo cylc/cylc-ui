@@ -28,9 +28,6 @@ const mutations = {
   setColor (state, color) {
     state.color = color
   },
-  toggleDrawer (state) {
-    state.drawer = !state.drawer
-  },
   setTitle (state, title) {
     state.title = title
   }
