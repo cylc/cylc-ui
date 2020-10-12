@@ -15,22 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const state = {
-  drawer: null,
-  title: null
-}
+import { expect } from 'chai'
+import store from '@/store'
 
-const mutations = {
-  setDrawer (state, drawer) {
-    state.drawer = drawer
-  },
-  setTitle (state, title) {
-    state.title = title
-  }
-}
-
-export const app = {
-  namespaced: true,
-  state,
-  mutations
-}
+/**
+ * Tests for the store/user module.
+ */
+describe('user', () => {
+  /**
+   * Tests for store.user.
+   */
+  describe('user', () => {
+    const resetState = () => {
+      store.state.user.user = null
+    }
+    beforeEach(resetState)
+    afterEach(resetState)
+    it('should start with no user', () => {
+      expect(store.state.user.user).to.equal(null)
+    })
+    it('should set user', () => {
+      const user = {
+        id: 1,
+        username: 'cylc'
+      }
+      store.dispatch('user/setUser', user)
+      expect(store.state.user.user).to.deep.equal(user)
+    })
+  })
+})
