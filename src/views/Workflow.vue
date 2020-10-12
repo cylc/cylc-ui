@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <tree-component
             :workflows="tree.root.children"
           />
-        </v-skeleton-loader>      
+        </v-skeleton-loader>
         <mutations-view
           v-for="widgetId of mutationsWidgets"
           :key="widgetId"
