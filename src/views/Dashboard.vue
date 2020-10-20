@@ -163,6 +163,7 @@ import { mapState } from 'vuex'
 import { getHubUrl } from '@/utils/user'
 import { DASHBOARD_QUERY } from '@/graphql/queries'
 import { mdiTable, mdiCog, mdiHubspot, mdiBook, mdiBookOpenVariant, mdiBookMultiple } from '@mdi/js'
+import WorkflowState from '@/model/WorkflowState.mode'
 
 const QUERIES = {
   root: DASHBOARD_QUERY
@@ -226,13 +227,13 @@ export default {
       for (const workflow of this.workflows) {
         // TODO: create a src/model/WorkflowState enum later?
         switch (workflow.status) {
-        case 'running':
+        case WorkflowState.RUNNING.name.toLowerCase():
           running += 1
           break
-        case 'held':
+        case WorkflowState.HELD.name.toLowerCase():
           held += 1
           break
-        case 'stopped':
+        case WorkflowState.STOPPED.name.toLowerCase():
           stopped += 1
           break
         }

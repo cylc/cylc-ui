@@ -93,6 +93,7 @@ import Job from '@/components/cylc/Job'
 import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 import { GSCAN_QUERY } from '@/graphql/queries'
 import { mdiPlayCircle, mdiPauseOctagon, mdiHelpCircle } from '@mdi/js'
+import WorkflowState from '@/model/WorkflowState.mode'
 
 const QUERIES = {
   root: GSCAN_QUERY
@@ -135,10 +136,10 @@ export default {
     sortedWorkflows () {
       return [...this.workflows].sort((left, right) => {
         if (left.status !== right.status) {
-          if (left.status === 'stopped') {
+          if (left.status === WorkflowState.STOPPED.name.toLowerCase()) {
             return 1
           }
-          if (right.status === 'stopped') {
+          if (right.status === WorkflowState.STOPPED.name.toLowerCase()) {
             return -1
           }
         }
@@ -214,9 +215,9 @@ export default {
 
     getWorkflowIcon (status) {
       switch (status) {
-      case 'running':
+      case WorkflowState.RUNNING.name.toLowerCase():
         return this.svgPaths.running
-      case 'held':
+      case WorkflowState.HELD.name.toLowerCase():
         return this.svgPaths.held
       default:
         return this.svgPaths.unknown
@@ -226,7 +227,7 @@ export default {
     getWorkflowClass (status) {
       return {
         // TODO: replace by constant or enum later (not TaskState as that doesn't have stopped, maybe WorkflowState?)
-        'c-workflow-stopped': status === 'stopped'
+        'c-workflow-stopped': status === WorkflowState.STOPPED.name.toLowerCase()
       }
     }
   }
