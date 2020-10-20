@@ -93,7 +93,7 @@ import Job from '@/components/cylc/Job'
 import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 import { GSCAN_QUERY } from '@/graphql/queries'
 import { mdiPlayCircle, mdiPauseOctagon, mdiHelpCircle } from '@mdi/js'
-import WorkflowState from '@/model/WorkflowState.mode'
+import WorkflowState from '@/model/WorkflowState.model'
 
 const QUERIES = {
   root: GSCAN_QUERY
