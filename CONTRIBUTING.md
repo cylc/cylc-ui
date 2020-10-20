@@ -42,6 +42,7 @@ below.
  - Alex Szabó
  - Ash Newport
  - Garrett Walker
+ - Edgardo Ramírez
 
 (All contributors are identifiable with email addresses in the git version
 control logs or otherwise.)
