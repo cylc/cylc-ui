@@ -44,6 +44,8 @@ by tasks name and tasks states.
 [#505](https://github.com/cylc/cylc-ui/pull/505) - Use cycle point ID
 in the tree view structure.
 
+[#522](https://github.com/cylc/cylc-ui/pull/522) - Improve v-select of task state filter in responsive
+
 
 ### Fixes
 
