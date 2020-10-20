@@ -39,7 +39,7 @@ export const FAMILY_ROOT = 'root'
  */
 function computeTaskProgress (taskProxy) {
   // calculate task progress if necessary/possible
-  if (taskProxy.node.state === TaskState.RUNNING.name.toLowerCase() && taskProxy.children.length > 0) {
+  if (taskProxy.node.state === TaskState.RUNNING.name && taskProxy.children.length > 0) {
     // the graphql query is expected to have jobs sorted by submit_num, e.g.:
     // `jobs(sort: { keys: ["submit_num"], reverse:true })`
     const latestJob = taskProxy.children[0]

@@ -23,19 +23,19 @@ import { Enumify } from 'enumify'
 class TaskState extends Enumify {
   // NOTE: the order of the enum values is important to calculate the group states in the UI. Items at
   // the top of the list have preference over the items below in the algorithm.
-  static SUBMIT_FAILED = new TaskState('SUBMIT_FAILED')
-  static FAILED = new TaskState('FAILED')
-  static EXPIRED = new TaskState('EXPIRED')
-  static SUBMIT_RETRYING = new TaskState('SUBMIT_RETRYING')
-  static RETRYING = new TaskState('RETRYING')
-  static RUNNING = new TaskState('RUNNING')
-  static SUBMITTED = new TaskState('SUBMITTED')
-  static READY = new TaskState('READY')
-  static QUEUED = new TaskState('QUEUED')
-  static WAITING = new TaskState('WAITING')
-  static HELD = new TaskState('HELD')
-  static SUCCEEDED = new TaskState('SUCCEEDED')
-  static RUNAHEAD = new TaskState('RUNAHEAD')
+  static SUBMIT_FAILED = new TaskState('submit_failed')
+  static FAILED = new TaskState('failed')
+  static EXPIRED = new TaskState('expired')
+  static SUBMIT_RETRYING = new TaskState('submit_retrying')
+  static RETRYING = new TaskState('retrying')
+  static RUNNING = new TaskState('running')
+  static SUBMITTED = new TaskState('submitted')
+  static READY = new TaskState('ready')
+  static QUEUED = new TaskState('queued')
+  static WAITING = new TaskState('waiting')
+  static HELD = new TaskState('held')
+  static SUCCEEDED = new TaskState('succeeded')
+  static RUNAHEAD = new TaskState('runahead')
   static _ = this.closeEnum()
 
   /**
