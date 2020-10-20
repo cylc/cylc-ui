@@ -23,9 +23,6 @@ import Vue from 'vue'
 import './plugins'
 import vuetify from './plugins/vuetify'
 
-// Sync router with store
-import { sync } from 'vuex-router-sync'
-
 // Application imports
 import App from './App'
 import i18n from '@/i18n'
@@ -38,9 +35,6 @@ import store from '@/store'
  */
 import SubscriptionWorkflowService from 'workflow-service'
 import { createGraphQLUrls, createSubscriptionClient } from '@/utils/graphql'
-
-// Sync store with router
-sync(store, router)
 
 // WorkflowService singleton available application-wide
 // On the offline mode, we do not have a WebSocket link, so we must create a null SubscriptionClient to use an empty link
