@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import TaskState from '@/model/TaskState.model'
+
 describe('Tree component', () => {
   it('Should display cycle points for the mocked workflow', () => {
     cy.visit('/#/workflows/one')
@@ -219,6 +221,25 @@ describe('Tree component', () => {
       cy
         .get('.node-data-task-proxy:visible')
         .should('have.length', 1)
+    })
+
+    it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
+      cy.visit('/#/tree/one')
+      cy
+        .get('#c-tree-filter-task-states')
+        .click({ force: true })
+      // eslint-disable-next-line no-lone-blocks
+      TaskState.enumValues.forEach(state => {
+        cy
+          .get('.v-list-item')
+          .contains(state.name.toLowerCase())
+          .click({ force: true })
+      })
+      cy
+        .get('.v-select__slot')
+        .should($select => {
+          expect($select).to.contain('(+')
+        })
     })
   })
 })

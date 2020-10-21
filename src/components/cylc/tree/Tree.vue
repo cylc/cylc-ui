@@ -56,14 +56,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <span class="ml-2">{{ slotProps.item.value.toLowerCase() }}</span>
           </template>
           <template v-slot:selection="slotProps">
-            <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < 4">
+            <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
               <Task :status="slotProps.item.value.toLowerCase()" :progress=0 />
             </div>
             <span
-              v-if="slotProps.index === 4"
+              v-if="slotProps.index === maximumTasks"
               class="grey--text caption"
             >
-              (+{{ tasksFilter.states.length - 4 }})
+              (+{{ tasksFilter.states.length - maximumTasks }})
             </span>
           </template>
         </v-select>
@@ -138,7 +138,8 @@ export default {
         name: '',
         states: []
       },
-      activeFilters: null
+      activeFilters: null,
+      maximumTasks: 4
     }
   },
   computed: {
