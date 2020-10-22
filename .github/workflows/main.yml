@@ -47,7 +47,6 @@ jobs:
           spec: "tests/e2e/**/*"
         env:
           CYPRESS_baseUrl: http://localhost:8080/
-          NODE_ENV: offline
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
