@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="mb-1"
     >
       <v-col
-        class="ma-0 py-0 px-3 col-sm-12 col-md-4">
+        cols="12"
+        md="4"
+        class="ma-0 py-0 px-3">
         <v-text-field
           id="c-tree-filter-task-name"
           clearable
@@ -34,7 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         ></v-text-field>
       </v-col>
       <v-col
-        class="ma-0 pa-md-0 col-sm-12 col-md-4">
+        cols="12"
+        md="4"
+        class="ma-0 py-md-0 pa-md-0">
         <v-select
           id="c-tree-filter-task-states"
           :items="taskStates"
@@ -52,14 +56,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <span class="ml-2">{{ slotProps.item.value.toLowerCase() }}</span>
           </template>
           <template v-slot:selection="slotProps">
-            <div class="mr-2">
+            <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
               <Task :status="slotProps.item.value.toLowerCase()" :progress=0 />
             </div>
+            <span
+              v-if="slotProps.index === maximumTasks"
+              class="grey--text caption"
+            >
+              (+{{ tasksFilter.states.length - maximumTasks }})
+            </span>
           </template>
         </v-select>
       </v-col>
       <v-col
-        class="ma-0 py-0 px-3 col-sm-12 col-md-4">
+        cols="12"
+        md="4"
+        class="ma-0 py-0 px-3">
         <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
                    components don't seem to agree on the height here -->
         <v-btn
@@ -126,7 +138,8 @@ export default {
         name: '',
         states: []
       },
-      activeFilters: null
+      activeFilters: null,
+      maximumTasks: 4
     }
   },
   computed: {

@@ -42,6 +42,7 @@ below.
  - Alex Szabó
  - Ash Newport
  - Garrett Walker
+ - Edgardo Ramírez
  - Mel Hall
 
 (All contributors are identifiable with email addresses in the git version
