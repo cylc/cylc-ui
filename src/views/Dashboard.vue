@@ -163,6 +163,7 @@ import { mapState } from 'vuex'
 import { getHubUrl } from '@/utils/user'
 import { DASHBOARD_QUERY } from '@/graphql/queries'
 import { mdiTable, mdiCog, mdiHubspot, mdiBook, mdiBookOpenVariant, mdiBookMultiple } from '@mdi/js'
+import WorkflowState from '@/model/WorkflowState.model'
 
 const QUERIES = {
   root: DASHBOARD_QUERY
@@ -222,35 +223,20 @@ export default {
       return getHubUrl(this.user)
     },
     workflowsTable () {
-      let [running, held, stopped] = [0, 0, 0]
+      const table = Object.fromEntries(WorkflowState.enumValues.map(state => [state.name, 0]))
       for (const workflow of this.workflows) {
-        // TODO: create a src/model/WorkflowState enum later?
-        switch (workflow.status) {
-        case 'running':
-          running += 1
-          break
-        case 'held':
-          held += 1
-          break
-        case 'stopped':
-          stopped += 1
-          break
+        if (Object.prototype.hasOwnProperty.call(table, workflow.status)) {
+          table[workflow.status] += 1
         }
       }
-      return [
-        {
-          text: 'Running',
-          count: running
-        },
-        {
-          text: 'Held',
-          count: held
-        },
-        {
-          text: 'Stopped',
-          count: stopped
+      return WorkflowState.enumValues.map(state => {
+        return {
+          text: state.name.charAt(0).toUpperCase() + state.name.slice(1),
+          count: table[state.name]
         }
-      ]
+      }).sort((left, right) => {
+        return left.text.localeCompare(right.text)
+      })
     }
   },
   created () {

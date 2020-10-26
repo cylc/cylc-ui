@@ -47,7 +47,7 @@ const isStoppedOrderedStates = [
 function extractGroupState (childStates, isStopped = false) {
   const states = isStopped ? isStoppedOrderedStates : TaskState.enumValues
   for (const state of states) {
-    if (childStates.includes(state.name.toLowerCase())) {
+    if (childStates.includes(state.name)) {
       return state.name.toLowerCase()
     }
   }

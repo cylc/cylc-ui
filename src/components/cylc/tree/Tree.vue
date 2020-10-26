@@ -146,7 +146,7 @@ export default {
     taskStates: () => {
       return TaskState.enumValues.map(taskState => {
         return {
-          text: taskState.name.toLowerCase().replace(/_/g, ' '),
+          text: taskState.name.replace(/_/g, ' '),
           value: taskState.name
         }
       }).sort((left, right) => {

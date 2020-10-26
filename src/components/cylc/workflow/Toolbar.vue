@@ -164,7 +164,7 @@ export default {
     ...mapState('app', ['title']),
     ...mapGetters('workflows', ['currentWorkflow']),
     isHeld: function () {
-      return this.currentWorkflow.status === TaskState.HELD.name.toLowerCase()
+      return this.currentWorkflow.status === TaskState.HELD.name
     }
   },
 

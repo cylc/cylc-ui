@@ -18,24 +18,14 @@
 import { Enumify } from 'enumify'
 
 /**
- * Cylc valid task states.
+ * Cylc valid workflow states.
  */
-class TaskState extends Enumify {
-  // NOTE: the order of the enum values is important to calculate the group states in the UI. Items at
-  // the top of the list have preference over the items below in the algorithm.
-  static SUBMIT_FAILED = new TaskState('submit_failed')
-  static FAILED = new TaskState('failed')
-  static EXPIRED = new TaskState('expired')
-  static SUBMIT_RETRYING = new TaskState('submit_retrying')
-  static RETRYING = new TaskState('retrying')
-  static RUNNING = new TaskState('running')
-  static SUBMITTED = new TaskState('submitted')
-  static READY = new TaskState('ready')
-  static QUEUED = new TaskState('queued')
-  static WAITING = new TaskState('waiting')
-  static HELD = new TaskState('held')
-  static SUCCEEDED = new TaskState('succeeded')
-  static RUNAHEAD = new TaskState('runahead')
+class WorkflowState extends Enumify {
+  static RUNNING = new WorkflowState('running')
+  static HELD = new WorkflowState('held')
+  static STOPPING = new WorkflowState('stopping')
+  static STOPPED = new WorkflowState('stopped')
+  static ERROR = new WorkflowState('error')
   static _ = this.closeEnum()
 
   /**
@@ -48,4 +38,4 @@ class TaskState extends Enumify {
   }
 }
 
-export default TaskState
+export default WorkflowState
