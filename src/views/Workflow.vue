@@ -56,7 +56,7 @@ import { mixin } from '@/mixins'
 import { datatree } from '@/mixins/treeview'
 import { mapState } from 'vuex'
 import Lumino from '@/components/cylc/workflow/Lumino'
-import { WORKFLOW_GRAPH_QUERY, WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import CylcTree from '@/components/cylc/tree/cylc-tree'
 import { applyDeltas } from '@/components/cylc/tree/deltas'
 import Alert from '@/model/Alert.model'
@@ -65,11 +65,6 @@ import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import MutationsView from '@/views/Mutations'
 import Vue from 'vue'
 import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
-
-// query to retrieve all workflows
-const QUERIES = {
-  graph: WORKFLOW_GRAPH_QUERY
-}
 
 export default {
   mixins: [
@@ -95,7 +90,6 @@ export default {
     }
   },
   data: () => ({
-    subscriptions: {},
     deltaSubscriptions: [],
     /**
      * The CylcTree object, which receives delta updates. We must have only one for this
@@ -115,7 +109,6 @@ export default {
     widgets: {}
   }),
   computed: {
-    ...mapState('workflows', ['workflows']),
     ...mapState('user', ['user']),
     treeWidgets () {
       return Object
@@ -155,7 +148,6 @@ export default {
     next()
   },
   beforeRouteLeave (to, from, next) {
-    this.$workflowService.unregister(this)
     this.$workflowService.stopDeltasSubscription()
     this.tree.clear()
     next()
@@ -183,52 +175,6 @@ export default {
       }
       this.deltaSubscriptions.push(id)
       return id
-    },
-    /**
-     * Subscribe this view to a new GraphQL query.
-     * @param {string} queryName - Must be in QUERIES.
-     * @return {number} subscription ID.
-     */
-    subscribe (queryName) {
-      // create a view object, used a key by the workflow service
-      const view = {
-        viewID: `Workflow-${queryName}(${this.workflowName}): ${Math.random()}`,
-        subscriptionId: 0
-      }
-      this.$workflowService.register(
-        view,
-        {
-          activeCallback: this.setActive
-        }
-      )
-      const workflowId = `${this.user.username}|${this.workflowName}`
-      const subscriptionId = this.$workflowService.subscribe(
-        view,
-        QUERIES[queryName].replace('WORKFLOW_ID', workflowId)
-      )
-      view.subscriptionId = subscriptionId
-      if (!(queryName in this.subscriptions)) {
-        this.subscriptions[queryName] = []
-      }
-      this.subscriptions[queryName].push(view)
-      return subscriptionId
-    },
-    /**
-     * Unsubscribe this view to a new GraphQL query.
-     * @param {string} queryName - Must be in QUERIES.
-     * @param {number} subscriptionId - Subscription ID.
-     */
-    unsubscribe (queryName, subscriptionId) {
-      if (queryName in this.subscriptions) {
-        this.$workflowService.unsubscribe(subscriptionId)
-      }
-    },
-    /**
-     * Toggle the isLoading state.
-     * @param {bool} isActive - Are this views subs active.
-     */
-    setActive (isActive) {
-      this.isLoading = !isActive
     },
     /**
      * Add a tree widget. Starts a delta subscription if none is running.
@@ -278,9 +224,6 @@ export default {
           this.$workflowService.stopDeltasSubscription()
           this.tree.clear()
         }
-      } else {
-        // otherwise recompute query and update normal subscription
-        this.$workflowService.unsubscribe(subscriptionId)
       }
       if (Object.entries(this.widgets).length === 0) {
         this.isLoading = true
