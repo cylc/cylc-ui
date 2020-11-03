@@ -368,6 +368,32 @@ class CylcTree {
   // --- Task proxies
 
   /**
+   * Return a task proxy parent, which may be a family proxy,
+   * or a cycle point (if the parent family is ROOT).
+   *
+   * @private
+   * @param {{
+   *   id: string,
+   *   node: Object,
+   *   children: []
+   * }} taskProxy
+   * @return {null|{
+   *   id: string,
+   *   node: Object,
+   *   children: []
+   * }}
+   */
+  findTaskProxyParent (taskProxy) {
+    if (taskProxy.node.firstParent.name === FAMILY_ROOT) {
+      // if the parent is root, we must instead attach this node to the cyclepoint!
+      const cyclePointId = getCyclePointId(taskProxy)
+      return this.lookup.get(cyclePointId)
+    }
+    // otherwise its parent **MAY** already exist
+    return this.lookup.get(taskProxy.node.firstParent.id)
+  }
+
+  /**
    * @param {{
    *   id: string,
    *   node: Object,
@@ -380,15 +406,7 @@ class CylcTree {
       taskProxy.node.progress = 0
       this.lookup.set(taskProxy.id, taskProxy)
       if (taskProxy.node.firstParent) {
-        let parent
-        if (taskProxy.node.firstParent.name === FAMILY_ROOT) {
-          // if the parent is root, we must instead attach this node to the cyclepoint!
-          const cyclePointId = getCyclePointId(taskProxy)
-          parent = this.lookup.get(cyclePointId)
-        } else {
-          // otherwise its parent is another family proxy node and **MUST** already exist
-          parent = this.lookup.get(taskProxy.node.firstParent.id)
-        }
+        const parent = this.findTaskProxyParent(taskProxy)
         if (!parent) {
           // eslint-disable-next-line no-console
           console.error(`Missing parent ${taskProxy.node.firstParent.id}`)
@@ -423,13 +441,7 @@ class CylcTree {
       this.recursivelyRemoveNode(taskProxy)
       // Remember that we attach task proxies children of 'root' directly to a cycle point!
       if (taskProxy.node.firstParent) {
-        let parent
-        if (taskProxy.node.firstParent.id.endsWith('|root')) {
-          const cyclePointId = getCyclePointId(taskProxy)
-          parent = this.lookup.get(cyclePointId)
-        } else {
-          parent = this.lookup.get(taskProxy.node.firstParent.id)
-        }
+        const parent = this.findTaskProxyParent(taskProxy)
         parent.children.splice(parent.children.indexOf(taskProxy), 1)
       }
     }
