@@ -77,16 +77,6 @@ export default [
     props: true
   },
   {
-    path: '/graph/:workflowName(.*)',
-    view: 'Graph',
-    name: 'graph',
-    meta: {
-      layout: 'default',
-      toolbar: true
-    },
-    props: true
-  },
-  {
     path: '/guide',
     name: 'Guide',
     view: 'Guide',

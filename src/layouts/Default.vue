@@ -63,8 +63,7 @@ export default {
        */
       workflowViews: [
         'workflow',
-        'tree',
-        'graph'
+        'tree'
       ]
     }
   },

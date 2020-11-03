@@ -85,15 +85,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             <v-list-item-title><v-icon>{{ svgPaths.tree }}</v-icon> Tree</v-list-item-title>
           </v-list-item>
-        </v-list>
-        <v-list class="pa-0">
-          <v-list-item
-            class="py-0 px-8 ma-0"
-            @click="$listeners['add-graph']"
-            id="toolbar-add-graph-view"
-          >
-            <v-list-item-title><v-icon>{{ svgPaths.graph }}</v-icon> Graph</v-list-item-title>
-          </v-list-item>
           <v-list-item
             class="py-0 px-8 ma-0"
             @click="$listeners['add-mutations']"
@@ -133,7 +124,6 @@ import {
   mdiStop,
   mdiPlusCircle,
   mdiFileTree,
-  mdiGraph,
   mdiAppleKeyboardCommand
 } from '@mdi/js'
 
@@ -154,7 +144,6 @@ export default {
       run: mdiPlay,
       stop: mdiStop,
       tree: mdiFileTree,
-      graph: mdiGraph,
       mutations: mdiAppleKeyboardCommand,
       add: mdiPlusCircle
     }
