@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#503](https://github.com/cylc/cylc-ui/pull/503) - Add configurable
+colour themes for Cylc job icons.
+
 [#498](https://github.com/cylc/cylc-ui/pull/498) - Sort GScan workflows
 by type (first running, then held, then stopped), and then by name.
 
