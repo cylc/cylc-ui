@@ -26,8 +26,6 @@ class TaskState extends Enumify {
   static SUBMIT_FAILED = new TaskState('submit_failed')
   static FAILED = new TaskState('failed')
   static EXPIRED = new TaskState('expired')
-  static SUBMIT_RETRYING = new TaskState('submit_retrying')
-  static RETRYING = new TaskState('retrying')
   static RUNNING = new TaskState('running')
   static SUBMITTED = new TaskState('submitted')
   static READY = new TaskState('ready')

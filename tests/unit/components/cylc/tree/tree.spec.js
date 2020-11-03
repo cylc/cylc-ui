@@ -830,9 +830,9 @@ describe('CylcTree', () => {
   })
   describe('Tally cycle point states', () => {
     // NOTE: we are using two cycle points with two families each for now, but we can
-    // add more later. In this case, we are also using RUNNING and SUBMIT_RETRYING,
+    // add more later. In this case, we are also using RUNNING and WAITING,
     // as these two influence the state based on whether the isStopped is true or
-    // false, i.e. in one case RUNNING will come first, in the other SUBMIT_RETRYING.
+    // false, i.e. in one case RUNNING will come first, in the other WAITING.
     let cylcTree
     let cyclePoint1
     let cyclePoint2
@@ -857,7 +857,7 @@ describe('CylcTree', () => {
       }))
       cylcTree.addFamilyProxy(createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|FAM2`,
-        state: TaskState.SUBMIT_RETRYING.name.toLowerCase(),
+        state: TaskState.WAITING.name.toLowerCase(),
         firstParent: {
           id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
@@ -871,7 +871,7 @@ describe('CylcTree', () => {
       cylcTree.addCyclePoint(cyclePoint2)
       cylcTree.addFamilyProxy(createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|FAM1`,
-        state: TaskState.SUBMIT_RETRYING.name.toLowerCase(),
+        state: TaskState.WAITING.name.toLowerCase(),
         firstParent: {
           id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
@@ -893,8 +893,8 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children[0].state).to.equal(undefined)
       expect(cylcTree.root.children[1].state).to.equal(undefined)
       cylcTree.tallyCyclePointStates()
-      expect(cylcTree.root.children[0].node.state).to.equal(TaskState.SUBMIT_RETRYING.name.toLowerCase())
-      expect(cylcTree.root.children[1].node.state).to.equal(TaskState.SUBMIT_RETRYING.name.toLowerCase())
+      expect(cylcTree.root.children[0].node.state).to.equal(TaskState.RUNNING.name.toLowerCase())
+      expect(cylcTree.root.children[1].node.state).to.equal(TaskState.RUNNING.name.toLowerCase())
     })
   })
 })
