@@ -379,20 +379,22 @@ class CylcTree {
       // progress starts at 0
       taskProxy.node.progress = 0
       this.lookup.set(taskProxy.id, taskProxy)
-      let parent
-      if (taskProxy.node.firstParent.name === FAMILY_ROOT) {
-        // if the parent is root, we must instead attach this node to the cyclepoint!
-        const cyclePointId = getCyclePointId(taskProxy)
-        parent = this.lookup.get(cyclePointId)
-      } else {
-        // otherwise its parent is another family proxy node and **MUST** already exist
-        parent = this.lookup.get(taskProxy.node.firstParent.id)
-      }
-      if (!parent) {
-        // eslint-disable-next-line no-console
-        console.error(`Missing parent ${taskProxy.node.firstParent.id}`)
-      } else {
-        parent.children.push(taskProxy)
+      if (taskProxy.node.firstParent) {
+        let parent
+        if (taskProxy.node.firstParent.name === FAMILY_ROOT) {
+          // if the parent is root, we must instead attach this node to the cyclepoint!
+          const cyclePointId = getCyclePointId(taskProxy)
+          parent = this.lookup.get(cyclePointId)
+        } else {
+          // otherwise its parent is another family proxy node and **MUST** already exist
+          parent = this.lookup.get(taskProxy.node.firstParent.id)
+        }
+        if (!parent) {
+          // eslint-disable-next-line no-console
+          console.error(`Missing parent ${taskProxy.node.firstParent.id}`)
+        } else {
+          parent.children.push(taskProxy)
+        }
       }
     }
   }
@@ -420,14 +422,16 @@ class CylcTree {
     if (taskProxy) {
       this.recursivelyRemoveNode(taskProxy)
       // Remember that we attach task proxies children of 'root' directly to a cycle point!
-      let parent
-      if (taskProxy.node.firstParent.id.endsWith('|root')) {
-        const cyclePointId = getCyclePointId(taskProxy)
-        parent = this.lookup.get(cyclePointId)
-      } else {
-        parent = this.lookup.get(taskProxy.node.firstParent.id)
+      if (taskProxy.node.firstParent) {
+        let parent
+        if (taskProxy.node.firstParent.id.endsWith('|root')) {
+          const cyclePointId = getCyclePointId(taskProxy)
+          parent = this.lookup.get(cyclePointId)
+        } else {
+          parent = this.lookup.get(taskProxy.node.firstParent.id)
+        }
+        parent.children.splice(parent.children.indexOf(taskProxy), 1)
       }
-      parent.children.splice(parent.children.indexOf(taskProxy), 1)
     }
   }
 
@@ -443,10 +447,12 @@ class CylcTree {
   addJob (job) {
     if (!this.lookup.has(job.id)) {
       this.lookup.set(job.id, job)
-      const parent = this.lookup.get(job.node.firstParent.id)
-      parent.children.push(job)
-      // re-calculate the job's task progress
-      computeTaskProgress(parent)
+      if (job.node.firstParent) {
+        const parent = this.lookup.get(job.node.firstParent.id)
+        parent.children.push(job)
+        // re-calculate the job's task progress
+        computeTaskProgress(parent)
+      }
     }
   }
 
@@ -462,9 +468,11 @@ class CylcTree {
     const node = this.lookup.get(job.id)
     if (node) {
       merge(node, job)
-      // re-calculate the job's task progress
-      const parent = this.lookup.get(job.node.firstParent.id)
-      computeTaskProgress(parent)
+      if (job.node.firstParent) {
+        const parent = this.lookup.get(job.node.firstParent.id)
+        // re-calculate the job's task progress
+        computeTaskProgress(parent)
+      }
     }
   }
 
@@ -475,12 +483,14 @@ class CylcTree {
     const job = this.lookup.get(jobId)
     if (job) {
       this.recursivelyRemoveNode(job)
-      // re-calculate the job's task progress
-      const parent = this.lookup.get(job.node.firstParent.id)
-      // prevent runtime error in case the parent was already removed
-      if (parent) {
-        computeTaskProgress(parent)
-        parent.children.splice(parent.children.indexOf(job), 1)
+      if (job.node.firstParent) {
+        const parent = this.lookup.get(job.node.firstParent.id)
+        // prevent runtime error in case the parent was already removed
+        if (parent) {
+          // re-calculate the job's task progress
+          computeTaskProgress(parent)
+          parent.children.splice(parent.children.indexOf(job), 1)
+        }
       }
     }
   }
