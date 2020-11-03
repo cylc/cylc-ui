@@ -149,7 +149,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         v-for="theme in jobThemes"
                         v-bind:key="theme"
                       >
-                        <v-radio :value="theme" />
+                        <v-radio
+                          :value="theme"
+                          v-bind:id="`input-job-theme-${theme}`"
+                        />
                       </td>
                     </tr>
                     <tr
