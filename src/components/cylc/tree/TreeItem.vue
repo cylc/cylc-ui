@@ -80,6 +80,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
           <span class="grey--text">{{ node.node.host }}</span>
+          <span
+            class="grey--text d-flex flex-nowrap flex-row"
+            v-if="node.node.customMessages.length > 0"
+          >
+            <v-chip
+              v-if="node.node.customMessages.length > 5"
+              color="grey"
+              text-color="grey lighten-5"
+              class="ml-2"
+              small
+              link
+              @click="typeClicked"
+            >{{ node.node.customMessages.length }}+</v-chip>
+            <!-- eslint-disable-next-line vue/no-unused-vars -->
+            <v-tooltip
+              v-for="(customMessage, index) of
+                    node.node.customMessages
+                      .filter(message => message.satisfied)
+                      .slice(0, 5)"
+              :key="index"
+              bottom
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-chip
+                  v-bind="attrs"
+                  v-on="on"
+                  color="grey"
+                  text-color="grey lighten-5"
+                  class="ml-2"
+                  small
+                >{{ customMessage.label }}</v-chip>
+              </template>
+              <span>{{ customMessage.message }}</span>
+            </v-tooltip>
+          </span>
         </div>
       </slot>
       <slot name="job-details" v-else-if="node.type === 'job-details'">
@@ -93,6 +128,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <span class="px-4 leaf-entry-title">{{ jobDetail.title }}</span>
               <span class="grey--text leaf-entry-value">{{ jobDetail.value }}</span>
+            </div>
+            <v-divider class="ml-3 mr-5" />
+            <div class="leaf-entry">
+              <span class="px-4 leaf-entry-title grey--text text--darken-1">outputs</span>
+            </div>
+            <div v-if="node.node.customMessages.length > 0">
+              <div
+                v-for="(customMessage, index) of node.node.customMessages"
+                :key="`${node.node.id}-job-custom-message-${index}`"
+                class="leaf-entry"
+              >
+                <span class="px-4 leaf-entry-title">{{ customMessage.label }}</span>
+                <span class="grey--text leaf-entry-value">{{ customMessage.message }}</span>
+              </div>
+            </div>
+            <div v-else class="leaf-entry">
+              <span class="px-4 leaf-entry-title grey--text text--darken-1">No custom messages</span>
             </div>
           </div>
         </div>

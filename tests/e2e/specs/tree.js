@@ -134,6 +134,54 @@ describe('Tree component', () => {
         })
       })
   })
+  it('Should display message triggers', () => {
+    // TODO: The message triggers are programmatically added in the mocked workflow service.
+    //       If/when the one checkpoint workflow is updated and includes data with custom
+    //       message triggers, we need to update this test accordingly.
+    cy.visit('/#/tree/one')
+    // The "failed" task contains custom messages, so let's expand it first
+    const failedTaskProxy = cy
+      .get('.mx-1')
+      .contains('failed')
+      .parent()
+    const failedTaskProxyTreeNode = failedTaskProxy
+      .parent()
+    failedTaskProxyTreeNode
+      .find('.node-expand-collapse-button')
+      .click({ force: true })
+    // Here the job "#1" of the task-proxy "failed" should be visible,
+    // let's confirm it's showing the "N+" chip...
+    const failedJob = cy
+      .get('.mx-1')
+      .contains('#1')
+      .parent()
+    // eslint-disable-next-line no-lone-blocks
+    {
+      failedJob
+        .should('be.visible')
+      // Let's confirm it shows the "N+" chip (i.e. this task has more N messages)
+      const lastChild = failedJob.children().last()
+      lastChild
+        .children()
+        .first()
+        .should('have.text', '8+')
+    }
+    // Finally, let's verify that expanding the job, will show the custom messages
+    // in the job details...
+    // eslint-disable-next-line no-lone-blocks
+    {
+      // expand the job
+      failedJob
+        .parent()
+        .children()
+        .first()
+        .click({ force: true })
+      cy
+        .get('.leaf-entry-title')
+        .contains('msg-label-14')
+        .should('be.visible')
+    }
+  })
   describe('filters', () => {
     it('Should not filter by default', () => {
       cy.visit('/#/tree/one')

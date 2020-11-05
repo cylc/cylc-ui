@@ -122,7 +122,32 @@ class MockWorkflowService extends GQuery {
   constructor (httpUrl, subscriptionClient) {
     super(/* enableWebSockets */ false)
     this.query = null
-    store.dispatch('workflows/set', checkpoint.workflows).then(() => {})
+    const workflows = checkpoint.workflows
+    const one = workflows[0]
+    let baseTimestamp = new Date().getTime()
+    // TODO: remove if the checkpoint workflow adds message triggers, as this is used
+    //       only for testing in the offline mode.
+    // NOTE: in the query for GraphQL, use a sort on the timestamp value, to make sure
+    //       the elements returned are in order, showing the most recent ones first!
+    const messages = [...Array(15).keys()]
+      .map(i => {
+        const label = `msg-label-${i}`
+        const message = `This is the message of the label ${i}`
+        baseTimestamp += 1000
+        return {
+          label,
+          message,
+          timestamp: baseTimestamp,
+          satisfied: i % 2 === 0
+        }
+      })
+      .sort((a, b) => b.timestamp - a.timestamp)
+    one.taskProxies.forEach(taskProxy => {
+      taskProxy.jobs.forEach(job => {
+        job.customMessages = messages
+      })
+    })
+    store.dispatch('workflows/set', workflows).then(() => {})
     this.loadMutations()
   }
 

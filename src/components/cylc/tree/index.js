@@ -158,7 +158,8 @@ function createJobDetailsNode (job) {
     id: `${job.id}-details`,
     type: 'job-details',
     node: {
-      details
+      details,
+      customMessages: job.customMessages
     }
   }
 }

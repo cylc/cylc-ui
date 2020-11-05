@@ -44,7 +44,8 @@ const simpleWorkflowTree4Nodes = [
             node: {
               __typename: 'TaskProxy',
               name: 'foo',
-              state: 'failed'
+              state: 'failed',
+              prerequisites: []
             },
             expanded: false,
             children: [
@@ -56,7 +57,8 @@ const simpleWorkflowTree4Nodes = [
                   name: '1',
                   startedTime: '2019-08-19T22:44:42Z',
                   state: 'failed',
-                  submitNum: 1
+                  submitNum: 1,
+                  customMessages: []
                 }
               }
             ]
