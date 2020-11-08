@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           outlined
           placeholder="Search"
           class="flex-grow-1 flex-column"
+          id="c-gscan-search-workflows"
         />
         <v-menu
           v-model="showFilterTooltip"
@@ -48,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               link
               icon
               class="flex-grow-0 flex-column"
+              id="c-gscan-filter-tooltip-btn"
               @click="showFilterTooltip = !showFilterTooltip"
             >
               <v-icon>{{ svgPaths.filter }}</v-icon>
