@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#499](https://github.com/cylc/cylc-ui/pull/499) - Add search and
+filter functionalities to GScan.
+
 [#503](https://github.com/cylc/cylc-ui/pull/503) - Add configurable
 colour themes for Cylc job icons.
 
