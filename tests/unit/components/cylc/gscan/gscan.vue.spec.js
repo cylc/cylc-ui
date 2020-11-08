@@ -33,6 +33,10 @@ localVue.prototype.$workflowService = {
 }
 
 describe('GScan component', () => {
+  /**
+   * @param options
+   * @returns {Wrapper<GScan>}
+   */
   const mountFunction = options => {
     return mount(GScan, {
       localVue,
@@ -199,6 +203,49 @@ describe('GScan component', () => {
       expect(summaries.get('five').get('succeeded')[0]).to.equal('bar.20130829T0000Z')
       expect(summaries.get('five').get('succeeded')[1]).to.equal('foo.20130829T0000Z')
       expect(summaries.get('five').get('succeeded')[2]).to.equal('foo.20130829T1200Z')
+    })
+  })
+  describe('filter gscan', () => {
+    describe('filter by name', () => {
+      const workflows = [
+        { id: '1', name: 'new zealand', status: 'held', stateTotals: {} },
+        { id: '2', name: 'zeeland', status: 'running', stateTotals: {} }
+      ]
+      it('should not filter by name by default', async () => {
+        const wrapper = mountFunction({
+          propsData: {
+            workflows
+          }
+        })
+        // read: give me all the workflows in RUNNING/HELD/STOPPED, no
+        //       matter their names or their tasks' states.
+        // no workflow name filtered initially
+        expect(wrapper.vm.searchWorkflows).to.equal('')
+        // every workflow state filter is ON initially
+        const workflowStateFiltersOn = wrapper.vm.filters[0].items
+          .map(filterItem => filterItem.model)
+        expect(workflowStateFiltersOn.every(model => model)).to.equal(true)
+        // every task state filter is OFF initially
+        const taskStateFiltersOn = wrapper.vm.filters[1].items
+          .map(filterItem => filterItem.model)
+        expect(taskStateFiltersOn.some(model => model)).to.equal(false)
+        // we will have the two items being displayed too
+        expect(wrapper.vm.filteredWorkflows.length).to.equal(2)
+      })
+      it('should filter by name', () => {
+        const wrapper = mountFunction({
+          propsData: {
+            workflows
+          },
+          data () {
+            return {
+              searchWorkflows: 'new'
+            }
+          }
+        })
+        expect(wrapper.vm.searchWorkflows).to.equal('new')
+        expect(wrapper.vm.filteredWorkflows.length).to.equal(1)
+      })
     })
   })
 })
