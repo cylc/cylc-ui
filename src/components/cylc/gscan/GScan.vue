@@ -36,9 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-icon>{{ getWorkflowIcon(workflow.status) }}</v-icon>
           </v-list-item-action>
           <v-list-item-title>
-            <v-layout align-center align-content-center wrap>
-              <v-flex grow>{{ workflow.name }}</v-flex>
-              <v-flex shrink ml-4>
+            <v-layout align-center align-content-center nowrap>
+              <v-flex class="c-gscan-workflow-name">{{ workflow.name }}</v-flex>
+              <v-flex shrink>
                 <!-- task summary tooltips -->
                 <span
                   v-for="[state, tasks] in workflowsSummaries.get(workflow.name).entries()"
