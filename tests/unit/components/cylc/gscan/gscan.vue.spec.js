@@ -50,7 +50,7 @@ describe('GScan component', () => {
     })
     expect(wrapper.props().workflows[0].name).to.equal('five')
     expect(wrapper.find('div')).to.not.equal(null)
-    expect(wrapper.html()).to.contain('<div class="flex grow">five</div>')
+    expect(wrapper.html()).to.contain('five')
   })
   describe('Sorting', () => {
     it('should display workflows in alphabetical order', () => {
