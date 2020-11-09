@@ -19,72 +19,77 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div
     class="c-gscan"
   >
-    <div
-      v-if="workflows && workflows.length > 0"
-      class="c-gscan-workflows"
+    <v-skeleton-loader
+      :loading="isLoading"
+      type="list-item-three-line"
     >
       <div
-        v-for="workflow in sortedWorkflows"
-        :key="workflow.id"
-        class="c-gscan-workflow"
+        v-if="!isLoading && workflows && workflows.length > 0"
+        class="c-gscan-workflows"
       >
-        <v-list-item
-          :to="`/workflows/${ workflow.name }`"
-          :class="getWorkflowClass(workflow.status)"
+        <div
+          v-for="workflow in sortedWorkflows"
+          :key="workflow.id"
+          class="c-gscan-workflow"
         >
-          <v-list-item-action>
-            <v-icon>{{ getWorkflowIcon(workflow.status) }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-title>
-            <v-layout align-center align-content-center nowrap>
-              <v-flex class="c-gscan-workflow-name">{{ workflow.name }}</v-flex>
-              <v-flex shrink>
-                <!-- task summary tooltips -->
-                <span
-                  v-for="[state, tasks] in workflowsSummaries.get(workflow.name).entries()"
-                  :key="`${workflow.name}-summary-${state}`"
-                >
-                  <v-tooltip color="black" top>
-                    <template v-slot:activator="{ on }">
-                      <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
-                      <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
-                      <v-btn
-                        v-on="on"
-                        class="mt-1 pa-0"
-                        min-width="0"
-                        min-height="0"
-                        style="font-size: 120%"
-                        :ripple="false"
-                        small
-                        dark
-                        text
-                      >
-                        <job :status="state" />
-                      </v-btn>
-                    </template>
-                    <!-- tooltip text -->
-                    <span>
-                      <span class="grey--text">Recent {{ state }} tasks:</span>
-                      <br/>
-                      <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
-                        {{ task }}<br v-if="index !== tasks.length -1" />
+          <v-list-item
+            :to="`/workflows/${ workflow.name }`"
+            :class="getWorkflowClass(workflow.status)"
+          >
+            <v-list-item-action>
+              <v-icon>{{ getWorkflowIcon(workflow.status) }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>
+              <v-layout align-center align-content-center nowrap>
+                <v-flex class="c-gscan-workflow-name">{{ workflow.name }}</v-flex>
+                <v-flex shrink>
+                  <!-- task summary tooltips -->
+                  <span
+                    v-for="[state, tasks] in workflowsSummaries.get(workflow.name).entries()"
+                    :key="`${workflow.name}-summary-${state}`"
+                  >
+                    <v-tooltip color="black" top>
+                      <template v-slot:activator="{ on }">
+                        <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
+                        <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                        <v-btn
+                          v-on="on"
+                          class="mt-1 pa-0"
+                          min-width="0"
+                          min-height="0"
+                          style="font-size: 120%"
+                          :ripple="false"
+                          small
+                          dark
+                          text
+                        >
+                          <job :status="state" />
+                        </v-btn>
+                      </template>
+                      <!-- tooltip text -->
+                      <span>
+                        <span class="grey--text">Recent {{ state }} tasks:</span>
+                        <br/>
+                        <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
+                          {{ task }}<br v-if="index !== tasks.length -1" />
+                        </span>
+                        <span v-if="tasks.length > maximumTasksDisplayed" class="font-italic">And {{ tasks.length - maximumTasksDisplayed }} more</span>
                       </span>
-                      <span v-if="tasks.length > maximumTasksDisplayed" class="font-italic">And {{ tasks.length - maximumTasksDisplayed }} more</span>
-                    </span>
-                  </v-tooltip>
-                </span>
-              </v-flex>
-            </v-layout>
-          </v-list-item-title>
+                    </v-tooltip>
+                  </span>
+                </v-flex>
+              </v-layout>
+            </v-list-item-title>
+          </v-list-item>
+        </div>
+      </div>
+      <!-- when no workflows are returned in the GraphQL query -->
+      <div v-else>
+        <v-list-item>
+          <v-list-item-title class="grey--text">No workflows found</v-list-item-title>
         </v-list-item>
       </div>
-    </div>
-    <!-- when no workflows are returned in the GraphQL query -->
-    <div v-else>
-      <v-list-item>
-        <v-list-item-title class="grey--text">No workflows found</v-list-item-title>
-      </v-list-item>
-    </div>
+    </v-skeleton-loader>
   </div>
 </template>
 

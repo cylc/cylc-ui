@@ -24,12 +24,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-layout wrap>
       <v-flex xs12 md6 lg6>
         <p class="display-1">Workflows</p>
-        <!-- TODO: link with data from the query -->
-        <v-data-table
-            :headers="workflowsHeader"
-            :items="workflowsTable"
-            hide-default-footer
-            hide-default-header>
+        <v-skeleton-loader
+          :loading="isLoading"
+          type="table-row@3"
+          tile
+        >
+          <v-data-table
+          :headers="workflowsHeader"
+          :items="workflowsTable"
+          hide-default-footer
+          hide-default-header>
           <!-- TODO: remove it if the linter is fixed later #510 -->
           <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.count="{ item }">
@@ -41,6 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <span class="title font-weight-light">{{ item.text }}</span>
           </template>
         </v-data-table>
+        </v-skeleton-loader>
       </v-flex>
       <v-flex xs12 md6 lg6>
         <p class="display-1">Events</p>
