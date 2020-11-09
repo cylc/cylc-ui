@@ -670,7 +670,7 @@ const sampleWorkflow1 = {
     {
       id: 'cylc|one|20000102T0000Z|retrying',
       __typename: 'TaskProxy',
-      state: 'retrying',
+      state: 'waiting',
       cyclePoint: '20000102T0000Z',
       latestMessage: 'failed, retrying in PT5M (after 2019-10-23T07:08:10Z)',
       firstParent: {
