@@ -348,9 +348,39 @@ export function getIntrospectionQuery () {
  *
  * @param {string} cylcObject - The type of object to filter mutations by.
  * @param {Object} tokens - Tokens representing the context of this object.
- * @param {Array} mutations - Array of mutations.
+ * @param {[
+ *   {
+ *     args: [
+ *       {
+ *         _cylcObject: *,
+ *         _required: boolean
+ *       }
+ *     ]
+ *   }
+ * ]} mutations - Array of mutations.
  *
- * @returns {Array} [satisfied, all]
+ * @returns {[
+ *   [
+ *     {
+ *       args: [
+ *         {
+ *           _cylcObject: string,
+ *           _required: boolean
+ *         }
+ *       ]
+ *     }
+ *   ],
+ *   [
+ *     {
+ *       args: [
+ *         {
+ *           _cylcObject: string,
+ *           _required: boolean
+ *         }
+ *       ]
+ *     }
+ *   ]
+ * ]} [satisfied, all]
  */
 export function filterAssociations (cylcObject, tokens, mutations) {
   const satisfied = []
