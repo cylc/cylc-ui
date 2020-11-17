@@ -90,6 +90,10 @@ export default {
     this.$eventBus.on('show-mutations-menu', this.showMutationsMenu)
   },
 
+  beforeDestroy () {
+    this.$eventBus.off('show-mutations-menu', this.showMutationsMenu)
+  },
+
   methods: {
     /* Call a mutation using only the tokens for args. */
     callMutationFromContext (mutation) {
