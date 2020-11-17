@@ -42,13 +42,18 @@ export default {
         const type = getType(tokens)
         const mutations = vnode.context.$workflowService.mutations
         // a closure to use the variables above in the event listener
-        listener = function () {
+        listener = function (e) {
           const componentMutations = filterAssociations(
             type,
             tokens,
             mutations
           )[0]
-          vnode.context.$eventBus.emit('show-mutations-menu', componentMutations)
+          vnode.context.$eventBus.emit('show-mutations-menu', {
+            id: cylcId,
+            tokens: tokens,
+            mutations: componentMutations,
+            event: e
+          })
         }
         el.addEventListener('click', listener)
       },

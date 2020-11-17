@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
+    <CylcObjectMenu />
     <div class="c-tree">
       <tree-component
         :workflows="workflowTree"
@@ -39,6 +40,7 @@ import CylcTree from '@/components/cylc/tree/cylc-tree'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import Alert from '@/model/Alert.model'
 import { applyDeltas } from '@/components/cylc/tree/deltas'
+import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
 
 export default {
   mixins: [
@@ -56,6 +58,7 @@ export default {
   },
 
   components: {
+    CylcObjectMenu,
     TreeComponent
   },
 

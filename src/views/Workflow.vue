@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
+    <CylcObjectMenu />
     <toolbar
       v-on:add-tree="this.addTreeWidget"
       v-on:add-mutations="this.addMutationsWidget"
@@ -65,6 +66,7 @@ import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import MutationsView from '@/views/Mutations'
 import Vue from 'vue'
 import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
+import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
 
 export default {
   mixins: [
@@ -79,6 +81,7 @@ export default {
     }
   },
   components: {
+    CylcObjectMenu,
     Lumino,
     TreeComponent,
     MutationsView,
