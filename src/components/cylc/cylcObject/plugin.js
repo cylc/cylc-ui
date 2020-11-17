@@ -21,6 +21,9 @@ import {
   tokenise
 } from '@/utils/aotf'
 
+// reference to closure listener (needed as we are using variables from another scope)
+let listener = null
+
 /**
  * Cylc Objects plug-in.
  */
@@ -38,14 +41,21 @@ export default {
         const tokens = tokenise(cylcId)
         const type = getType(tokens)
         const mutations = vnode.context.$workflowService.mutations
-        el.addEventListener('click', function () {
+        // a closure to use the variables above in the event listener
+        listener = function () {
           const componentMutations = filterAssociations(
             type,
             tokens,
             mutations
           )[0]
-          vnode.context.$emit('show-mutations-menu', componentMutations)
-        })
+          vnode.context.$eventBus.emit('show-mutations-menu', componentMutations)
+        }
+        el.addEventListener('click', listener)
+      },
+      unbind (el) {
+        // clean up to avoid memory issues
+        el.removeEventListener('show-mutations-menu', listener)
+        listener = null
       }
     })
   }
