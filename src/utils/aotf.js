@@ -387,12 +387,10 @@ export function filterAssociations (cylcObject, tokens, mutations) {
   const all = []
   let requiresInfo = false
   let applies = false
-  let mutation = null
   let alternate = null
-  for (const ind in mutations) {
+  for (const mutation of mutations) {
     requiresInfo = false
     applies = false
-    mutation = mutations[ind]
     for (const arg of mutation.args) {
       if (arg._cylcObject) {
         // alternate cylc object which can satisfy this field, or null
