@@ -169,10 +169,12 @@ export default {
         createElement(
           'circle',
           {
-            cx: '50',
-            cy: '50',
-            r: '46',
-            'stroke-width': '8'
+            attrs: {
+              cx: '50',
+              cy: '50',
+              r: '46',
+              'stroke-width': '8'
+            }
           }
         ),
         createElement(
