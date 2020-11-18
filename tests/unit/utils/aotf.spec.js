@@ -151,8 +151,8 @@ describe('aotf (Api On The Fly)', () => {
 
   describe('filterAssociations', () => {
     it('should filter by Cylc object', () => {
-      const mutations = {
-        foo: {
+      const mutations = [
+        {
           // mutation that operates on workflows and users
           name: 'foo',
           args: [
@@ -168,7 +168,7 @@ describe('aotf (Api On The Fly)', () => {
             }
           ]
         },
-        bar: {
+        {
           // mutation that operates on users
           name: 'bar',
           args: [
@@ -179,7 +179,7 @@ describe('aotf (Api On The Fly)', () => {
             }
           ]
         },
-        baz: {
+        {
           // mutation that operates on workflows but requires additional info
           name: 'baz',
           args: [
@@ -195,7 +195,7 @@ describe('aotf (Api On The Fly)', () => {
             }
           ]
         }
-      }
+      ]
       const tokens = aotf.tokenise('a|b|c|d')
 
       // filter by an object no mutations operate on
