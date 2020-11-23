@@ -161,11 +161,11 @@ describe('GScan component', () => {
       const wrapper = mountFunction({
         propsData: {
           workflows: [
-            { id: 'user|e', name: 'e', status: 'held' },
             { id: 'user|a', name: 'a', status: 'held' },
             { id: 'user|c', name: 'c', status: 'stopped' },
             { id: 'user|b', name: 'b', status: 'running' },
-            { id: 'user|d', name: 'd', status: 'stopped' }
+            { id: 'user|d', name: 'd', status: 'stopped' },
+            { id: 'user|e', name: 'e', status: 'held' }
           ]
         },
         data () {
@@ -372,6 +372,21 @@ describe('GScan component', () => {
         })
         expect(wrapper.vm.filteredWorkflows.length).to.equal(0)
       })
+    })
+  })
+  describe('Workflow link', () => {
+    it('should create an empty link for non-workflow nodes', () => {
+      const link = GScan.methods.workflowLink({})
+      expect(link).to.equal('')
+    })
+    it('should create a link for a workflow node', () => {
+      const link = GScan.methods.workflowLink({
+        type: 'workflow',
+        node: {
+          name: 'name'
+        }
+      })
+      expect(link).to.equal('/workflows/name')
     })
   })
 })

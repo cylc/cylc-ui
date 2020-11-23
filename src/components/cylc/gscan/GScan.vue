@@ -181,6 +181,7 @@ import { mdiFilter } from '@mdi/js'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
 import { createWorkflowNode } from '@/components/cylc/tree/index'
+import TaskState from '@/model/TaskState.model'
 
 const QUERIES = {
   root: GSCAN_QUERY
