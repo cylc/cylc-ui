@@ -31,66 +31,82 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <div :class="getNodeDataClass()" @click="nodeClicked" v-if="node.type === 'cyclepoint'">
-        <task
-          v-cylc-object="node.node.id"
-          :status="node.node.state"
-          :isHeld="node.node.isHeld"
-          :progress=0
-        />
-        <span class="mx-1">{{ node.node.name }}</span>
-      </div>
-      <div :class="getNodeDataClass()" @click="nodeClicked" v-else-if="node.type === 'family-proxy'">
-        <task
-          v-cylc-object="node.node.id"
-          :status="node.node.state"
-          :isHeld="node.node.isHeld"
-          :progress="node.node.progress"
-        />
-        <span class="mx-1">{{ node.node.name }}</span>
-      </div>
-      <div :class="getNodeDataClass()" @click="nodeClicked" v-else-if="node.type === 'task-proxy'">
-        <task
-          v-cylc-object="node.node.id"
-          :status="node.node.state"
-          :isHeld="node.node.isHeld"
-          :progress="node.node.progress"
-        />
-        <span class="mx-1">{{ node.node.name }}</span>
-        <div v-if="!isExpanded" class="node-summary">
-          <!-- Task summary -->
-          <job
-            v-for="(task, index) in node.children"
-            v-cylc-object="node.node.id"
-            :key="`${task.id}-summary-${index}`"
-            :status="task.node.state"
-          />
-        </div>
-      </div>
-      <div :class="getNodeDataClass()" v-else-if="node.type === 'job'">
-        <div :class="getNodeDataClass()" @click="jobNodeClicked">
-          <job
+      <slot name="cyclepoint" v-if="node.type === 'cyclepoint'">
+        <div :class="getNodeDataClass()" @click="nodeClicked">
+          <task
             v-cylc-object="node.node.id"
             :status="node.node.state"
+            :isHeld="node.node.isHeld"
+            :progress=0
           />
-          <span class="mx-1">#{{ node.node.submitNum }}</span>
-          <span class="grey--text">{{ node.node.host }}</span>
+          <span class="mx-1">{{ node.node.name }}</span>
         </div>
-        <!-- leaf node -->
-      </div>
-      <div :class="getNodeDataClass()" v-else>
-        <span @click="nodeClicked" class="mx-1">{{ node.node.name }}</span>
-      </div>
+      </slot>
+      <slot name="family-proxy" v-else-if="node.type === 'family-proxy'">
+        <div :class="getNodeDataClass()" @click="nodeClicked">
+          <task
+            v-cylc-object="node.node.id"
+            :status="node.node.state"
+            :isHeld="node.node.isHeld"
+            :progress="node.node.progress"
+          />
+          <span class="mx-1">{{ node.node.name }}</span>
+        </div>
+      </slot>
+      <slot name="task-proxy" v-else-if="node.type === 'task-proxy'">
+        <div :class="getNodeDataClass()" @click="nodeClicked">
+          <task
+            v-cylc-object="node.node.id"
+            :status="node.node.state"
+            :isHeld="node.node.isHeld"
+            :progress="node.node.progress"
+          />
+          <span class="mx-1">{{ node.node.name }}</span>
+          <div v-if="!isExpanded" class="node-summary">
+            <!-- Task summary -->
+            <job
+              v-for="(task, index) in node.children"
+              v-cylc-object="node.node.id"
+              :key="`${task.id}-summary-${index}`"
+              :status="task.node.state" />
+          </div>
+        </div>
+      </slot>
+      <slot name="job" v-else-if="node.type === 'job'">
+        <div :class="getNodeDataClass()">
+          <div :class="getNodeDataClass()" @click="jobNodeClicked">
+            <job
+              v-cylc-object="node.node.id"
+              :status="node.node.state"
+            />
+            <span class="mx-1">#{{ node.node.submitNum }}</span>
+            <span class="grey--text">{{ node.node.host }}</span>
+          </div>
+          <!-- leaf node -->
+        </div>
+      </slot>
+      <slot
+        v-bind:node="node"
+        name="node"
+        v-else
+      >
+        <div :class="getNodeDataClass()">
+          <span @click="nodeClicked" class="mx-1" v-if="node && node.node">{{ node.node.name }}</span>
+        </div>
+      </slot>
+      <slot></slot>
     </div>
-    <div class="leaf" v-if="displayLeaf && node.type === 'job'">
-      <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
-      <div class="leaf-data font-weight-light py-4 pl-2">
-        <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">
-          <span class="px-4 leaf-entry-title">{{ leafProperty.title }}</span>
-          <span class="grey--text leaf-entry-value">{{ node.node[leafProperty.property] }}</span>
+    <slot name="leaf" v-if="displayLeaf && node.type === 'job'">
+      <div class="leaf">
+        <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
+        <div class="leaf-data font-weight-light py-4 pl-2">
+          <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">
+            <span class="px-4 leaf-entry-title">{{ leafProperty.title }}</span>
+            <span class="grey--text leaf-entry-value">{{ node.node[leafProperty.property] }}</span>
+          </div>
         </div>
       </div>
-    </div>
+    </slot>
     <span v-show="isExpanded">
       <!-- component recursion -->
       <TreeItem
@@ -106,7 +122,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-on:tree-item-expanded="$listeners['tree-item-expanded']"
           v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
           v-on:tree-item-clicked="$listeners['tree-item-clicked']"
-      ></TreeItem>
+      >
+        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
+      </TreeItem>
     </span>
   </div>
 </template>
