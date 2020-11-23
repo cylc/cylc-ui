@@ -281,8 +281,7 @@ export default {
       return {
         node: true,
         'node--hoverable': this.hoverable,
-        'node--active': this.active,
-        'ml-3': true
+        'node--active': this.active
       }
     },
     getNodeDataClass () {

@@ -109,6 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <tree
           :filterable="false"
           :workflows="sortedWorkflows"
+          class="c-gscan-workflow"
         >
           <template v-slot:node="scope">
             <v-list-item
@@ -120,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-action>
               <v-list-item-title>
                 <v-layout align-center align-content-center wrap>
-                  <v-flex grow>{{ scope.node.text }}</v-flex>
+                  <v-flex grow>{{ scope.node.node.name }}</v-flex>
                   <v-flex shrink ml-4 v-if="scope.node.type === 'workflow'">
                     <!-- task summary tooltips -->
                     <span
@@ -152,14 +153,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                           <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                             {{ task }}<br v-if="index !== tasks.length -1" />
                           </span>
-                          <span v-if="tasks.length > maximumTasksDisplayed" class="font-italic">And {{ tasks.length - maximumTasksDisplayed }} more</span>
                         </span>
                       </v-tooltip>
                     </span>
                   </v-flex>
                 </v-layout>
               </v-list-item-title>
-            </v-list-item>
+          </v-list-item>
           </template>
         </tree>
       </div>
@@ -177,9 +177,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 import { GSCAN_QUERY } from '@/graphql/queries'
 import WorkflowState from '@/model/WorkflowState.model'
-import TaskState from '@/model/TaskState.model'
 import { mdiFilter } from '@mdi/js'
+import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
+import { createWorkflowNode } from '@/components/cylc/tree/index'
 
 const QUERIES = {
   root: GSCAN_QUERY
@@ -188,6 +189,7 @@ const QUERIES = {
 export default {
   name: 'GScan',
   components: {
+    Job,
     Tree
   },
   props: {
@@ -321,6 +323,11 @@ export default {
             undefined,
             { numeric: true, sensitivity: 'base' })
       })
+        .map(workflow => {
+          const node = createWorkflowNode(workflow)
+          delete node.children
+          return node
+        })
     },
     /**
      * Compute summary information, where the key is the name of a workflow, the value is another map with the summary.
@@ -332,7 +339,7 @@ export default {
       // see cylc-uiserver PR#150
       if (this.workflows) {
         for (const workflow of this.workflows) {
-          workflowSummaries.set(workflow.name, getWorkflowSummary(workflow))
+          workflowSummaries.set(workflow.id, getWorkflowSummary(workflow))
         }
       }
       return workflowSummaries
@@ -515,6 +522,8 @@ export default {
       items.forEach(item => {
         item.model = newValue
       })
+    },
+
     workflowLink (node) {
       if (node.type === 'workflow') {
         return `/workflows/${ node.node.name }`

@@ -21,6 +21,8 @@
   }
   .c-gscan-workflows {
     .c-gscan-workflow {
+      padding: 0 !important;
+      margin: 0 !important;
       a.c-workflow-stopped {
         opacity: 0.5;
       }
