@@ -86,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-row>
     <!-- each workflow is a tree root -->
     <tree-item
-      v-for="workflow of sortedChildren('workflow', workflows)"
+      v-for="workflow of workflows"
       :key="workflow.id"
       :node="workflow"
       :hoverable="hoverable"

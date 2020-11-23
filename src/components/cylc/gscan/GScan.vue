@@ -310,12 +310,13 @@ export default {
     sortedWorkflows () {
       return [...this.filteredWorkflows].sort((left, right) => {
         if (left.status !== right.status) {
-          if (left.status === WorkflowState.STOPPED.name) {
-            return 1
-          }
-          if (right.status === WorkflowState.STOPPED.name) {
+          if (left.status === WorkflowState.RUNNING.name) {
             return -1
           }
+          if (left.status === WorkflowState.HELD.name) {
+            return -1
+          }
+          return 1
         }
         return left.name
           .localeCompare(
