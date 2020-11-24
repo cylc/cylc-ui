@@ -19,7 +19,7 @@ const webpack = require('@cypress/webpack-preprocessor')
 
 module.exports = (on, config) => {
   // For test coverage
-  on('task', require('@cypress/code-coverage/task'))
+  require('@cypress/code-coverage/task')(on, config)
   const webpackOptions = require('@vue/cli-service/webpack.config')
   // NOTE: if we do not remove the webpack optimizations, Cypress seems
   //       to get confused when our JS code imports scss, failing
