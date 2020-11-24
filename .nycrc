@@ -15,7 +15,7 @@
   "extension": [".js", ".vue"],
   "reporter": ["html", "lcov", "text-summary"],
   "cache": false,
-  "all": true,
+  "all": false,
   "check-coverage": false,
   "instrument": true,
   "sourceMap": true
