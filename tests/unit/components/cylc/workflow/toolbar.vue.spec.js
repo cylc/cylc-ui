@@ -67,7 +67,7 @@ describe('Workflow Toolbar component', () => {
             register: () => {}
           }
         },
-        $t: () => {} // vue-i18n,
+        $t: () => {} // vue-i18n
       }
     })
   }
