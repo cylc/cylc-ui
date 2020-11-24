@@ -20,6 +20,7 @@ module.exports = {
     '@vue/app'
   ],
   plugins: [
-    ['@babel/plugin-proposal-class-properties', { loose: true }]
+    ['@babel/plugin-proposal-class-properties', { loose: true }],
+    ['babel-plugin-istanbul', { extension: ['.js', '.vue'] }]
   ]
 }
