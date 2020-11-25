@@ -45,4 +45,16 @@ describe('Workflow view and component/widget', () => {
     // ensure we have no widgets now
     cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
+  it('Should remove widgets when leaving the Workflow view', () => {
+    cy.visit('/#/workflows/one')
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
+    // add a tree view
+    cy.get('a.add-view').click()
+    cy.get('#toolbar-add-tree-view').click()
+    // ensure we have 2 widgets now
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
+    cy.visit('/#/')
+    // ensure we have no widgets now
+    cy.get('.lm-TabBar-tabLabel').should('not.exist')
+  })
 })
