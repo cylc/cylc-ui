@@ -106,14 +106,6 @@ export default {
       set: function (val) {
         this.$store.commit('app/setDrawer', val)
       }
-    },
-    inputValue: {
-      get () {
-        return this.$store.state.app.drawer
-      },
-      set (val) {
-        this.setDrawer(val)
-      }
     }
   }
 }
