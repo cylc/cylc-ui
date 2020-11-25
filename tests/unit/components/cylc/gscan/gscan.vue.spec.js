@@ -42,10 +42,30 @@ describe('GScan component', () => {
       ...options
     })
   }
+  it('should display a skeleton loader if loading data', () => {
+    const wrapper = mountFunction({
+      propsData: {
+        workflows: simpleWorkflowGscanNodes
+      },
+      data () {
+        return {
+          isLoading: true
+        }
+      }
+    })
+    const skeletonLoader = wrapper.find('.v-skeleton-loader')
+    const isBusy = skeletonLoader.element.getAttribute('aria-busy')
+    expect(isBusy).to.equal('true')
+  })
   it('should display the GScan with valid data', () => {
     const wrapper = mountFunction({
       propsData: {
         workflows: simpleWorkflowGscanNodes
+      },
+      data () {
+        return {
+          isLoading: false
+        }
       }
     })
     expect(wrapper.props().workflows[0].name).to.equal('five')
@@ -63,6 +83,11 @@ describe('GScan component', () => {
             { id: '2', name: 'b', status: 'running' },
             { id: '4', name: 'd', status: 'running' }
           ]
+        },
+        data () {
+          return {
+            isLoading: false
+          }
         }
       })
       const workflowsElements = wrapper.findAll('.c-gscan-workflow')
@@ -83,6 +108,11 @@ describe('GScan component', () => {
             { id: '2', name: 'b', status: 'stopped' },
             { id: '4', name: 'd', status: 'stopped' }
           ]
+        },
+        data () {
+          return {
+            isLoading: false
+          }
         }
       })
       const workflowsElements = wrapper.findAll('.c-gscan-workflow')
@@ -103,6 +133,11 @@ describe('GScan component', () => {
             { id: '2', name: 'b', status: 'running' },
             { id: '4', name: 'd', status: 'stopped' }
           ]
+        },
+        data () {
+          return {
+            isLoading: false
+          }
         }
       })
       const workflowsElements = wrapper.findAll('.c-gscan-workflow')
@@ -123,6 +158,11 @@ describe('GScan component', () => {
             { id: '2', name: 'b', status: 'running' },
             { id: '4', name: 'd', status: 'stopped' }
           ]
+        },
+        data () {
+          return {
+            isLoading: false
+          }
         }
       })
       const workflowsElements = wrapper.findAll('.c-gscan-workflow')
