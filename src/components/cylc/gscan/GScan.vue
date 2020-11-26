@@ -103,11 +103,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
       <!-- data -->
       <div
-        v-if="!isLoading && filteredWorkflows && filteredWorkflows.length > 0"
+        v-if="!isLoading && sortedWorkflows && sortedWorkflows.length > 0"
         class="c-gscan-workflows"
       >
         <div
-          v-for="workflow in filteredWorkflows"
+          v-for="workflow in sortedWorkflows"
           :key="workflow.id"
           class="c-gscan-workflow"
         >
