@@ -38,11 +38,11 @@ export default {
     Vue.directive('cylc-object', {
       bind (el, binding, vnode) {
         const cylcId = binding.value
-        const tokens = tokenise(cylcId)
-        const type = getType(tokens)
         const mutations = vnode.context.$workflowService.mutations
         // a closure to use the variables above in the event listener
         listener = function (e) {
+          const tokens = tokenise(cylcId)
+          const type = getType(tokens)
           const componentMutations = filterAssociations(
             type,
             tokens,
