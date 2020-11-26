@@ -121,15 +121,15 @@ export const compoundFields = {
   },
   NamespaceIDGlob: (tokens) => {
     // expand unspecified fields to '*'
-    return tokens[cylcObjects.Namespace] || '*' +
+    return (tokens[cylcObjects.Namespace] || '*') +
       '.' +
-      tokens[cylcObjects.CyclePoint] || '*'
+      (tokens[cylcObjects.CyclePoint] || '*')
   },
   TaskID: (tokens) => {
     // expand unspecified fields to '*'
-    return tokens[cylcObjects.Task] || '*' +
+    return (tokens[cylcObjects.Task] || '*') +
       '.' +
-      tokens[cylcObjects.CyclePoint] || '*'
+      (tokens[cylcObjects.CyclePoint] || '*')
   }
 }
 
