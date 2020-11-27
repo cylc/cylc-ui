@@ -16,7 +16,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container>
     <v-card
       class="mx-auto d-inline-block"
       style="padding: 1em;"
@@ -26,10 +25,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        :mutation='mutation'
        :types='types'
        :callbackSubmit='call'
+       :initialData='initialData'
+       ref="formGenerator"
       />
       <br />
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="grey"
+          @click="cancel()"
+          text
+        >
+          Cancel
+        </v-btn>
+        <v-btn
+          color="orange"
+          @click="$refs.formGenerator.reset()"
+          text
+        >
+          Reset
+        </v-btn>
+        <v-btn
+          color="blue"
+          @click="$refs.formGenerator.submit()"
+          text
+        >
+          Submit
+        </v-btn>
+      </v-card-actions>
       <p
        style="font-size:1.5em;"
+       v-if="status != 'waiting'"
       >
         <Task
          :status="status"
@@ -39,20 +65,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </p>
       <pre v-if="status === 'failed'">{{ response }}</pre>
     </v-card>
-    <v-card
-      max-width="500"
-      outlined
-    >
-    </v-card>
-  </v-container>
 </template>
 
 <script>
-import gql from 'graphql-tag'
-
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
 import Task from '@/components/cylc/Task'
-import { constructMutation } from '@/utils/aotf'
+import { mutate } from '@/utils/aotf'
 
 // enumeration for the mutation status, maps onto Cylc Task status
 const status = {
@@ -88,6 +106,15 @@ export default {
       // list of all graphql types as returned by introspection query
       // (required for resolving InputType objects
       type: Array
+    },
+    initialData: {
+      type: Object,
+      required: false,
+      default: () => {}
+    },
+    cancel: {
+      type: Function,
+      required: true
     }
   },
 
@@ -97,26 +124,14 @@ export default {
     /* Execute the GraphQL mutation */
     async call (args) {
       this.status = status.submitted
-      let result = null
-      try {
-        result = await this.$workflowService.apolloClient.mutate({
-          mutation: gql(constructMutation(this.mutation)),
-          variables: args
-        })
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error(err)
-        this.status = status.submitFailed
-        return
-      }
-      const responses = result.data[this.mutation.name].result
-      if (responses && responses.length === 1) {
-        this.status = status.succeeded
-        this.response = responses[0].response
-        return
-      }
-      this.response = result
-      this.status = status.failed
+      const promise = mutate(
+        this.mutation,
+        args,
+        this.$workflowService.apolloClient
+      )
+      promise.then((x) => {
+        this.status = x[0].name.replace('_', '-')
+      })
     },
 
     /* Reset this component to it's initial state. */

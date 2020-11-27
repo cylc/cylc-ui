@@ -58,18 +58,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      :types="types"
      :label="input.label"
     />
-
-    <!-- the form controls -->
-    <v-btn
-      @click="reset"
-    >
-      Reset
-    </v-btn>
-    <v-btn
-      @click="submit"
-    >
-      Submit
-    </v-btn>
   </v-form>
 </template>
 

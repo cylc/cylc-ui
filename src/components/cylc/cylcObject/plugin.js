@@ -39,6 +39,7 @@ export default {
       bind (el, binding, vnode) {
         const cylcId = binding.value
         const mutations = vnode.context.$workflowService.mutations
+        const types = vnode.context.$workflowService.types
         // a closure to use the variables above in the event listener
         listener = function (e) {
           const tokens = tokenise(cylcId)
@@ -47,9 +48,10 @@ export default {
             type,
             tokens,
             mutations
-          )[0]
+          )
           vnode.context.$eventBus.emit('show-mutations-menu', {
             id: cylcId,
+            types: types,
             tokens: tokens,
             mutations: componentMutations,
             event: e
