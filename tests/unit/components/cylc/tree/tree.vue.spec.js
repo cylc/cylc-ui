@@ -218,8 +218,7 @@ describe('Tree component', () => {
         // cycle point is displayed (list.filter(() => return filtered=true means OK, filtered=false means remove me)
         expect(taskProxy.filtered).to.equal(true)
         // task proxy is displayed
-        // TODO: fixme
-        // expect(taskProxy.$children[0].filtered).to.equal(true)
+        expect(taskProxy.$children[0].filtered).to.equal(true)
       })
       it('should filter tree items by name', () => {
         const wrapper = mountFunction({
@@ -242,8 +241,7 @@ describe('Tree component', () => {
         // cycle point is displayed (list.filter(() => return filtered=true means OK, filtered=false means remove me)
         expect(taskProxy.filtered).to.equal(false)
         // task proxy is displayed
-        // TODO: fixme
-        // expect(taskProxy.$children[0].filtered).to.equal(false)
+        expect(taskProxy.$children[0].filtered).to.equal(false)
       })
       it('should remove all filters', () => {
         const wrapper = mountFunction({
@@ -266,14 +264,12 @@ describe('Tree component', () => {
         // cycle point is displayed (list.filter(() => return filtered=true means OK, filtered=false means remove me)
         expect(taskProxy.filtered).to.equal(false)
         // task proxy is displayed
-        // TODO: fixme
-        // expect(taskProxy.$children[0].filtered).to.equal(false)
+        expect(taskProxy.$children[0].filtered).to.equal(false)
         wrapper.vm.removeAllFilters()
         // cycle point is displayed (list.filter(() => return filtered=true means OK, filtered=false means remove me)
         expect(taskProxy.filtered).to.equal(true)
         // task proxy is displayed
-        // TODO: fixme
-        // expect(taskProxy.$children[0].filtered).to.equal(true)
+        expect(taskProxy.$children[0].filtered).to.equal(true)
       })
     })
   })
