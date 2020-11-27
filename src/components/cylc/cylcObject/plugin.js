@@ -56,6 +56,7 @@ export default {
           })
         }
         el.addEventListener('click', listener)
+        el.classList.add('c-interactive')
       },
       unbind (el) {
         // clean up to avoid memory issues
