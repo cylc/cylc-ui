@@ -78,6 +78,7 @@ class WorkflowService extends GQuery {
    *   next: Function,
    *   error: Function
    * }}
+   * @returns {Subscription}
    */
   startDeltasSubscription (query, variables, subscriptionOptions) {
     if (!query) {
@@ -92,7 +93,7 @@ class WorkflowService extends GQuery {
       // eslint-disable-next-line no-console
       console.debug('graphql variables:', variables)
     }
-    this.deltasObservable = this.apolloClient.subscribe({
+    return this.apolloClient.subscribe({
       query: query,
       variables: variables,
       fetchPolicy: 'no-cache'
@@ -104,15 +105,6 @@ class WorkflowService extends GQuery {
         subscriptionOptions.error(errorValue)
       }
     })
-  }
-
-  /**
-   * Stops the current deltas subscription, if set.
-   */
-  stopDeltasSubscription () {
-    if (this.deltasObservable) {
-      this.deltasObservable.unsubscribe()
-    }
   }
 
   // subscriptions with query-merging

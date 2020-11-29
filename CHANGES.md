@@ -18,6 +18,8 @@ a shadow underneath, for the Job component.
 [#658](https://github.com/cylc/cylc-ui/pull/658) - Allow user to set the order
 of cycle points.
 
+[#543](https://github.com/cylc/cylc-ui/pull/543) - Use deltas in GScan.
+
 ### Fixes
 
 [#691](https://github.com/cylc/cylc-ui/pull/691) -

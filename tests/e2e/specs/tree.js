@@ -24,7 +24,7 @@ describe('Tree component', () => {
       .get('.node-data-cyclepoint')
       .should(($div) => {
         // by default, in our expected viewport size for tests, both cycle points exist and are visible
-        expect($div.get(0)).to.contain('20000102T0000Z')
+        expect($div.get(0)).to.contain('20000101T0000Z')
       })
     cy
       .get('.node-data-cyclepoint')
@@ -202,7 +202,7 @@ describe('Tree component', () => {
         .should('be.visible')
       cy
         .get('.node-data-task-proxy')
-        .contains('succeeded')
+        .contains('waiting')
         .should('be.visible')
     })
     it('Should filter by task name', () => {
@@ -213,7 +213,7 @@ describe('Tree component', () => {
         .should('be.visible')
       cy
         .get('.node-data-task-proxy')
-        .contains('succeeded')
+        .contains('waiting')
         .should('be.visible')
       // eep should filter sleepy
       cy
@@ -228,34 +228,32 @@ describe('Tree component', () => {
         .should('be.visible')
       cy
         .get('.node-data-task-proxy')
-        .contains('succeeded')
+        .contains('waiting')
         .should('not.be.visible')
     })
     it('Should filter by task states', () => {
       cy.visit('/#/tree/one')
       cy
         .get('.node-data-task-proxy')
-        .contains('sleepy')
+        .contains('failed')
         .should('be.visible')
       cy
         .get('#c-tree-filter-task-states')
         .click({ force: true })
-      // click on succeeded and waiting
       cy
         .get('.v-list-item')
-        .contains('submitted')
+        .contains('expired')
         .click({ force: true })
       cy
         .get('#c-tree-filter-btn')
         .click()
       cy
         .get('.node-data-task-proxy')
-        .contains('sleepy')
+        .contains('failed')
         .should('be.not.visible')
       cy
-        .get('.node-data-task-proxy')
-        .contains('failed')
-        .should('be.visible')
+        .get('.node-data-task-proxy:visible')
+        .should('have.length', 1)
     })
     it('Should filter by task name and states', () => {
       cy.visit('/#/tree/one')
@@ -266,14 +264,14 @@ describe('Tree component', () => {
       // eep should filter sleepy
       cy
         .get('#c-tree-filter-task-name')
-        .type('fail')
+        .type('wait')
       cy
         .get('#c-tree-filter-task-states')
         .click({ force: true })
       // click on waiting, the other sleepy is succeeded, but we don't want to see it
       cy
         .get('.v-list-item')
-        .contains('submitted')
+        .contains('waiting')
         .click({ force: true })
       cy
         .get('#c-tree-filter-btn')

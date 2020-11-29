@@ -19,13 +19,23 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import store from '@/store/index'
 import Alert from '@/components/core/Alert'
+import Vuetify from 'vuetify'
+import Vue from 'vue'
 
 const localVue = createLocalVue()
 
+Vue.use(Vuetify)
+
 describe('Alert', () => {
+  /**
+   * @param options
+   * @returns {Wrapper<Alert>}
+   */
   const mountFunction = options => {
+    const vuetify = new Vuetify()
     return mount(Alert, {
       localVue,
+      vuetify,
       store,
       ...options
     })

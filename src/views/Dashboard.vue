@@ -232,20 +232,20 @@ export default {
   computed: {
     ...mapState('workflows', ['workflows']),
     workflowsTable () {
-      const table = Object.fromEntries(WorkflowState.enumValues.map(state => [state.name, 0]))
-      for (const workflow of this.workflows) {
-        if (Object.prototype.hasOwnProperty.call(table, workflow.status)) {
-          table[workflow.status] += 1
-        }
-      }
-      return WorkflowState.enumValues.map(state => {
-        return {
-          text: state.name.charAt(0).toUpperCase() + state.name.slice(1),
-          count: table[state.name]
-        }
-      }).sort((left, right) => {
-        return left.text.localeCompare(right.text)
-      })
+      const count = this.workflows
+        .map(workflow => workflow.status)
+        .reduce((acc, state) => {
+          acc[state] = (acc[state] || 0) + 1
+          return acc
+        }, {})
+      return WorkflowState.enumValues
+        .sort((left, right) => left.name.localeCompare(right.name))
+        .map(state => {
+          return {
+            text: state.name.charAt(0).toUpperCase() + state.name.slice(1),
+            count: count[state] || 0
+          }
+        })
     }
   },
   created () {
