@@ -77,7 +77,12 @@ export default {
      */
     tree: new CylcTree(null, {
       cyclePointsOrderDesc: localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC
-    })
+    }),
+    /**
+     * Observable for a deltas query subscription.
+     * @type {ZenObservable.Subscription}
+     */
+    deltasObservable: null
   }),
 
   /**
@@ -90,7 +95,7 @@ export default {
    */
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      vm
+      vm.deltasObservable = vm
         .$workflowService
         .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, vm.variables, {
           next: function next (response) {
@@ -109,12 +114,14 @@ export default {
    * start a new subscription.
    */
   beforeRouteUpdate (to, from, next) {
-    this.$workflowService.stopDeltasSubscription()
+    if (this.deltasObservable) {
+      this.deltasObservable.unsubscribe()
+    }
     this.tree.clear()
     const vm = this
     // NOTE: this must be done in the nextTick so that vm.variables will use the updated prop!
     this.$nextTick(() => {
-      vm
+      vm.deltasObservable = vm
         .$workflowService
         .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, vm.variables, {
           next: function next (response) {
@@ -133,7 +140,9 @@ export default {
    * data structures used locally.
    */
   beforeRouteLeave (to, from, next) {
-    this.$workflowService.stopDeltasSubscription()
+    if (this.deltasObservable) {
+      this.deltasObservable.unsubscribe()
+    }
     this.tree = null
     next()
   }

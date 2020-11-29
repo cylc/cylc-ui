@@ -138,7 +138,10 @@ describe('WorkflowService subscriptions', () => {
   })
   it('-> Tree - > Dashboard, should contain 2 subscription (GScan + Dashboard)', () => {
     cy.visit('/#/tree/one')
-    cy.get('[href="#/"]').click()
+    cy
+      .get('.v-list-item')
+      .contains('Dashboard')
+      .click({ force: true })
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
       expect(subscriptions.length).to.equal(2)

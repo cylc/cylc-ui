@@ -94,6 +94,11 @@ export default {
   data: () => ({
     deltaSubscriptions: [],
     /**
+     * Observable for a deltas query subscription.
+     * @type {ZenObservable.Subscription}
+     */
+    deltasObservable: null,
+    /**
      * The CylcTree object, which receives delta updates. We must have only one for this
      * view, and it should contain data only while the tree subscription is active (i.e.
      * there are tree widgets added to the Lumino component).
@@ -139,7 +144,9 @@ export default {
     // clear the tree with current workflow data
     this.tree.clear()
     // stop delta subscription if any
-    this.$workflowService.stopDeltasSubscription()
+    if (this.deltasObservable) {
+      this.deltasObservable.unsubscribe()
+    }
     this.tree.clear()
     // clear all widgets
     this.removeAllWidgets()
@@ -152,7 +159,9 @@ export default {
     })
   },
   beforeRouteLeave (to, from, next) {
-    this.$workflowService.stopDeltasSubscription()
+    if (this.deltasObservable) {
+      this.deltasObservable.unsubscribe()
+    }
     this.tree.clear()
     next()
   },
@@ -165,7 +174,7 @@ export default {
       // start deltas subscription if not running
       if (this.deltaSubscriptions.length === 0) {
         const vm = this
-        this.$workflowService
+        this.deltasObservable = this.$workflowService
           .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, this.variables, {
             next: function next (response) {
               applyDeltas(response.data.deltas, vm.tree)
@@ -227,7 +236,7 @@ export default {
         // if this is a tree widget with a deltas subscription, then stop it if the last widget using it
         vm.deltaSubscriptions.splice(this.deltaSubscriptions.indexOf(subscriptionId), 1)
         if (this.deltaSubscriptions.length === 0) {
-          this.$workflowService.stopDeltasSubscription()
+          this.deltasObservable.unsubscribe()
           this.tree.clear()
         }
       }
