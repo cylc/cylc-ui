@@ -236,35 +236,7 @@ const WORKFLOWS_TABLE_QUERY = `
   }
 `
 
-// TODO: remove these once the api-on-the-fly mutations are hooked into the UI
-const HOLD_WORKFLOW = gql`
-mutation HoldWorkflowMutation($workflow: WorkflowID!) {
-  hold (workflows: [$workflow]) {
-    result
-  }
-}
-`
-
-const RELEASE_WORKFLOW = gql`
-mutation ReleaseWorkflowMutation($workflow: WorkflowID!) {
-  release (workflows: [$workflow]){
-    result
-  }
-}
-`
-
-const STOP_WORKFLOW = gql`
-mutation StopWorkflowMutation($workflow: WorkflowID!) {
-  stop (workflows: [$workflow]) {
-    result
-  }
-}
-`
-
 export {
-  HOLD_WORKFLOW,
-  RELEASE_WORKFLOW,
-  STOP_WORKFLOW,
   WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
   DASHBOARD_QUERY,
   GSCAN_QUERY,

@@ -158,21 +158,21 @@ export default {
   },
 
   methods: {
-    async onClickReleaseHold () {
+    onClickReleaseHold () {
       const vm = this
       if (this.isHeld) {
         // release
-        await this.$workflowService.releaseWorkflow(this.currentWorkflow.id)
+        this.$workflowService.mutate('release', this.currentWorkflow.id)
         vm.isStopped = false
       } else {
         // hold
-        await this.$workflowService.holdWorkflow(this.currentWorkflow.id)
+        this.$workflowService.mutate('hold', this.currentWorkflow.id)
         vm.isStopped = false
       }
     },
     async onClickStop () {
       const vm = this
-      await this.$workflowService.stopWorkflow(this.currentWorkflow.id)
+      this.$workflowService.mutate('stop', this.currentWorkflow.id)
       vm.isStopped = true
     },
     toggleExtended () {
