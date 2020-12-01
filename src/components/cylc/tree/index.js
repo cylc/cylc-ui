@@ -60,11 +60,13 @@ function createWorkflowNode (workflow) {
  * @return {string}
  */
 function getCyclePointId (node) {
-  const tokens = node.id.split('|')
-  if (tokens.length >= 3) {
-    return tokens.splice(0, 3).join('|')
+  if (node && node.id) {
+    const tokens = node.id.split('|')
+    if (tokens.length >= 3) {
+      return tokens.splice(0, 3).join('|')
+    }
   }
-  const nodeId = node.id ? node.id : 'undefined'
+  const nodeId = node && node.id ? node.id : 'undefined'
   throw new Error(`Error extracting cycle point ID from node ID ${nodeId}`)
 }
 

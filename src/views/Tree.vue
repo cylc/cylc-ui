@@ -131,15 +131,6 @@ export default {
     this.$workflowService.stopDeltasSubscription()
     this.tree = null
     next()
-  },
-
-  /**
-   * Called when the view is destroyed. Vue.js does not always destroy views. So
-   * we must not rely on this to clean up objects, or stop subscriptions. That
-   * must be done in the Vue router hooks.
-   */
-  beforeDestroy () {
-    this.tree = null
   }
 }
 </script>

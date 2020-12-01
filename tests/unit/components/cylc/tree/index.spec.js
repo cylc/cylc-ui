@@ -155,6 +155,12 @@ describe('Tree component functions', () => {
         expected: Error
       },
       {
+        noNode: {
+          id: 'a|b'
+        },
+        expected: Error
+      },
+      {
         node: {
           id: 'a|b|c'
         },
@@ -180,13 +186,11 @@ describe('Tree component functions', () => {
       }
     ]
     tests.forEach(test => {
-      it('should extract cycle point node ID', () => {
-        if (test.expected === Error) {
-          expect(getCyclePointId(test.args)).to.throw(test.expected)
-        } else {
-          expect(getCyclePointId(test.args)).to.equal(test.expected)
-        }
-      })
+      if (test.expected === Error) {
+        expect(() => getCyclePointId(test.node)).to.throw(Error)
+      } else {
+        expect(getCyclePointId(test.node)).to.equal(test.expected)
+      }
     })
   })
 })
