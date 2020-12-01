@@ -97,7 +97,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Job from '@/components/cylc/Job'
 import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 import { GSCAN_QUERY } from '@/graphql/queries'
-import { mdiPlayCircle, mdiPauseOctagon, mdiHelpCircle } from '@mdi/js'
 import WorkflowState from '@/model/WorkflowState.model'
 
 const QUERIES = {
@@ -124,12 +123,7 @@ export default {
       viewID: '',
       subscriptions: {},
       isLoading: true,
-      maximumTasksDisplayed: 5,
-      svgPaths: {
-        running: mdiPlayCircle,
-        held: mdiPauseOctagon,
-        unknown: mdiHelpCircle
-      }
+      maximumTasksDisplayed: 5
     }
   },
   computed: {
@@ -141,16 +135,16 @@ export default {
     sortedWorkflows () {
       return [...this.workflows].sort((left, right) => {
         if (left.status !== right.status) {
-          if (left.status === WorkflowState.STOPPED.name.toLowerCase()) {
+          if (left.status === WorkflowState.STOPPED.name) {
             return 1
           }
-          if (right.status === WorkflowState.STOPPED.name.toLowerCase()) {
+          if (right.status === WorkflowState.STOPPED.name) {
             return -1
           }
         }
-        return left.name.toLowerCase()
+        return left.name
           .localeCompare(
-            right.name.toLowerCase(),
+            right.name,
             undefined,
             { numeric: true, sensitivity: 'base' })
       })
@@ -219,20 +213,16 @@ export default {
     },
 
     getWorkflowIcon (status) {
-      switch (status) {
-      case WorkflowState.RUNNING.name.toLowerCase():
-        return this.svgPaths.running
-      case WorkflowState.HELD.name.toLowerCase():
-        return this.svgPaths.held
-      default:
-        return this.svgPaths.unknown
+      let wstatus = WorkflowState.enumValueOf(status.toUpperCase())
+      if (!wstatus) {
+        wstatus = WorkflowState.ERROR
       }
+      return wstatus.icon
     },
 
     getWorkflowClass (status) {
       return {
-        // TODO: replace by constant or enum later (not TaskState as that doesn't have stopped, maybe WorkflowState?)
-        'c-workflow-stopped': status === WorkflowState.STOPPED.name.toLowerCase()
+        'c-workflow-stopped': status === WorkflowState.STOPPED.name
       }
     }
   }

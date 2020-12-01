@@ -17,24 +17,33 @@
 
 import { Enumify } from 'enumify'
 
+import {
+  mdiHelpCircle,
+  mdiPauseCircle,
+  mdiPlayCircle,
+  mdiSkipNextCircle,
+  mdiStopCircle
+} from '@mdi/js'
+
 /**
  * Cylc valid workflow states.
  */
 class WorkflowState extends Enumify {
-  static RUNNING = new WorkflowState('running')
-  static HELD = new WorkflowState('held')
-  static STOPPING = new WorkflowState('stopping')
-  static STOPPED = new WorkflowState('stopped')
-  static ERROR = new WorkflowState('error')
+  static RUNNING = new WorkflowState('running', mdiPlayCircle)
+  static HELD = new WorkflowState('held', mdiPauseCircle)
+  static STOPPING = new WorkflowState('stopping', mdiSkipNextCircle)
+  static STOPPED = new WorkflowState('stopped', mdiStopCircle)
+  static ERROR = new WorkflowState('error', mdiHelpCircle)
   static _ = this.closeEnum()
 
   /**
    * Constructor.
    * @param {String} name
    */
-  constructor (name) {
+  constructor (name, icon) {
     super()
     this.name = name
+    this.icon = icon
   }
 }
 
