@@ -37,7 +37,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :class="getWorkflowClass(workflow.status)"
           >
             <v-list-item-action>
-              <v-icon>{{ getWorkflowIcon(workflow.status) }}</v-icon>
+              <v-tooltip right>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    {{ getWorkflowIcon(workflow.status) }}
+                  </v-icon>
+                </template>
+                <span>{{ workflow.status }}</span>
+              </v-tooltip>
             </v-list-item-action>
             <v-list-item-title>
               <v-layout align-center align-content-center nowrap>
