@@ -16,7 +16,6 @@
  */
 
 // optional file, loaded automatically by @vue/cli-service if present next to package.json
-const webpack = require('webpack')
 const path = require('path')
 
 module.exports = {
