@@ -31,7 +31,7 @@ import NProgress from 'nprogress'
 import store from '@/store'
 import { UserService } from 'user-service'
 
-import '../../node_modules/nprogress/nprogress.css'
+import '../../node_modules/nprogress/css/nprogress.css'
 
 // Routes
 import paths from './paths'
