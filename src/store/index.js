@@ -42,10 +42,6 @@ const state = {
    */
   baseUrl: '/',
   /**
-   * Application environmnet (e.g. offline, development, production), retrieved from NODE_ENV.
-   */
-  environment: process.env.NODE_ENV.toUpperCase(),
-  /**
    * Whether the application is loading or not.
    */
   isLoading: false,

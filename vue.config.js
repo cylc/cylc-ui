@@ -31,17 +31,9 @@ module.exports = {
       lintGQL: false
     }
   },
-  configureWebpack: {
-    plugins: [
-      new webpack.DefinePlugin({
-        'process.env': {
-          PACKAGE_JSON: '"' + escape(JSON.stringify(require('./package.json'))) + '"'
-        }
-      })
-    ]
-  },
   chainWebpack: config => {
-    if (['test', 'offline'].includes(process.env.NODE_ENV)) {
+    const isOffline = ((process.env.VUE_APP_OFFLINE_MODE || 'false').trim().toLowerCase() === 'true')
+    if (isOffline || process.env.NODE_ENV === 'test') {
       config.module.rule('istanbul')
         .test(/\.js$/)
         .include.add(path.resolve('src')).end()
@@ -67,7 +59,6 @@ module.exports = {
     }
 
     // set up aliases for mock services, used when the offline mode is used
-    const isOffline = process.env.NODE_ENV === 'offline'
     const workflowService = isOffline
       ? '@/services/mock/workflow.service.mock'
       : '@/services/workflow.service'

@@ -55,7 +55,7 @@ export default {
   },
   created () {
     let baseUrl = DEFAULT_URL
-    if (process.env.NODE_ENV !== 'offline') {
+    if (!this.$offline) {
       baseUrl = this.baseUrl !== '' ? this.baseUrl : DEFAULT_URL
     }
     this.setBaseUrl(baseUrl)

@@ -18,3 +18,4 @@
 import './axios'
 import './layouts'
 import './cylc-object'
+import './offline'

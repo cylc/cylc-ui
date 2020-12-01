@@ -29,23 +29,7 @@ import i18n from '@/i18n'
 import router from '@/router'
 import store from '@/store'
 
-// GraphQL client
-/**
- * @type SubscriptionWorkflowService
- */
-import SubscriptionWorkflowService from 'workflow-service'
-import { createGraphQLUrls, createSubscriptionClient } from '@/utils/graphql'
 import mitt from 'mitt'
-
-// WorkflowService singleton available application-wide
-// On the offline mode, we do not have a WebSocket link, so we must create a null SubscriptionClient to use an empty link
-const graphQLUrls = createGraphQLUrls()
-let subscriptionClient = null
-if (process.env.NODE_ENV !== 'offline') {
-  subscriptionClient = createSubscriptionClient(graphQLUrls.wsUrl)
-}
-const workflowService = new SubscriptionWorkflowService(graphQLUrls.httpUrl, subscriptionClient)
-Vue.prototype.$workflowService = workflowService
 
 Vue.prototype.$eventBus = mitt()
 
@@ -68,6 +52,6 @@ const app = new Vue({
 // e2e tests use the offline mode, so here we expose the Vue.js app so Cypress can access it programmatically
 // e.g. window.app.$store and window.app.$workflowService.
 // Ref: https://www.cypress.io/blog/2017/11/28/testing-vue-web-application-with-vuex-data-store-and-rest-backend/
-if (['test', 'offline'].includes(process.env.NODE_ENV)) {
+if (process.env.NODE_ENV !== 'production') {
   window.app = app
 }
