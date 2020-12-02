@@ -23,15 +23,17 @@ import UserService from '@/services/user.service'
 import MockUserService from '@/services/mock/user.service.mock'
 
 /**
- * Offline mode plug-in.
+ * Loads the application services.
  *
- * Loads the application offline mode. It uses the `NODE_ENV` variable. Does
- * not reflect the application mode used by webpack.
+ * It uses the `VUE_APP_SERVICES` environment variable to decide whether to use
+ * mocked services, when its value is "offline", or to use normal services.
  */
 const ServicesPlugin = {
   /**
    * @param Vue {object} - Vue application
-   * @param options {*} - options passed to the plug-in (if any)
+   * @param options {{
+   *   offline: boolean
+   * }} - options passed to the plug-in (if any)
    */
   install (Vue, options) {
     const offline = options.offline || false
@@ -69,6 +71,7 @@ const ServicesPlugin = {
   }
 }
 
+// Load the plug-in
 Vue.use(ServicesPlugin, {
   offline: process.env.VUE_APP_SERVICES === 'offline'
 })
