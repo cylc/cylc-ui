@@ -50,10 +50,6 @@ const state = {
    */
   offline: false,
   /**
-   * Contents of package.json.
-   */
-  packageJson: JSON.parse(unescape(process.env.PACKAGE_JSON || '%7B%7D')),
-  /**
    * Number of references that have set the loading state.
    * TODO: we can probably remove it and use a different approach for alerts (see bootstrap toast).
    */
