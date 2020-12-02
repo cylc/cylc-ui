@@ -96,7 +96,7 @@ export default {
         home: mdiHome,
         graphql: mdiGraphql
       },
-      environment: this.$offline ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
+      environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
       version: version
     }
   },

@@ -29,7 +29,6 @@ import Router from 'vue-router'
 import Meta from 'vue-meta'
 import NProgress from 'nprogress'
 import store from '@/store'
-import { UserService } from 'user-service'
 
 import '../../node_modules/nprogress/css/nprogress.css'
 
@@ -86,7 +85,7 @@ router.beforeResolve((to, from, next) => {
 
 router.beforeEach((to, from, next) => {
   if (!store.state.user.user) {
-    UserService.getUserProfile().then(() => {
+    router.app.$userService.getUserProfile().then(() => {
       next()
     })
   } else {

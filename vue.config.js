@@ -31,8 +31,7 @@ module.exports = {
     }
   },
   chainWebpack: config => {
-    const isOffline = ((process.env.VUE_APP_OFFLINE_MODE || 'false').trim().toLowerCase() === 'true')
-    if (isOffline || process.env.NODE_ENV === 'test') {
+    if (process.env.VUE_APP_SERVICES === 'offline' || process.env.NODE_ENV === 'test') {
       config.module.rule('istanbul')
         .test(/\.js$/)
         .include.add(path.resolve('src')).end()
@@ -56,16 +55,5 @@ module.exports = {
         config.devtool('eval-source-map')
       }
     }
-
-    // set up aliases for mock services, used when the offline mode is used
-    const workflowService = isOffline
-      ? '@/services/mock/workflow.service.mock'
-      : '@/services/workflow.service'
-    config.resolve.alias.set('workflow-service', workflowService)
-
-    const userService = isOffline
-      ? '@/services/mock/user.service.mock'
-      : '@/services/user.service'
-    config.resolve.alias.set('user-service', userService)
   }
 }
