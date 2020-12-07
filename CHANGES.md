@@ -52,7 +52,7 @@ in the tree view structure.
 
 ### Fixes
 
-None.
+[#552](https://github.com/cylc/cylc-ui/pull/552) - Move to next route before adding a new tree widget.
 
 ### Documentation
 
