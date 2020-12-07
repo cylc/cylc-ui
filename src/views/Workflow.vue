@@ -139,13 +139,13 @@ export default {
     this.tree.clear()
     // clear all widgets
     this.removeAllWidgets()
+    next()
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
       // Create a Tree View for the current workflow by default
       this.addTreeWidget()
     })
-    next()
   },
   beforeRouteLeave (to, from, next) {
     this.$workflowService.stopDeltasSubscription()
