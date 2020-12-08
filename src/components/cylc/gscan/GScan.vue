@@ -188,6 +188,7 @@ import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 import { GSCAN_QUERY } from '@/graphql/queries'
 import WorkflowState from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
+import { mdiFilter } from '@mdi/js'
 
 const QUERIES = {
   root: GSCAN_QUERY
@@ -214,6 +215,9 @@ export default {
       subscriptions: {},
       isLoading: true,
       maximumTasksDisplayed: 5,
+      svgPaths: {
+        filter: mdiFilter
+      },
       /**
        * The filtered workflows. This is the result of applying the filters
        * on the workflows prop.

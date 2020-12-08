@@ -24,6 +24,8 @@ import { simpleWorkflowGscanNodes } from './gscan.data'
 import WorkflowState from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
 
+global.requestAnimationFrame = cb => cb()
+
 const localVue = createLocalVue()
 localVue.prototype.$workflowService = {
   register: function () {
@@ -209,8 +211,22 @@ describe('GScan component', () => {
   })
   describe('filter gscan', () => {
     const workflows = [
-      { id: '1', name: 'new zealand', status: WorkflowState.HELD.name, stateTotals: {} },
-      { id: '2', name: 'zeeland', status: WorkflowState.RUNNING.name, stateTotals: {} }
+      {
+        id: '1',
+        name: 'new zealand',
+        status: WorkflowState.HELD.name,
+        stateTotals: {
+          [WorkflowState.HELD.name]: 1
+        }
+      },
+      {
+        id: '2',
+        name: 'zeeland',
+        status: WorkflowState.RUNNING.name,
+        stateTotals: {
+          [WorkflowState.RUNNING.name]: 1
+        }
+      }
     ]
     it('should not filter by name, nor by tasks state, but should include all workflow states', () => {
       const wrapper = mountFunction({
