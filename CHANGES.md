@@ -58,6 +58,8 @@ in the tree view structure.
 
 ### Fixes
 
+[#552](https://github.com/cylc/cylc-ui/pull/552) - Move to next route before adding a new tree widget.
+
 [#554](https://github.com/cylc/cylc-ui/pull/554) - Fix icons in the Dashboard.
 
 ### Documentation
