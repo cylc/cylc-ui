@@ -23,8 +23,87 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :loading="isLoading"
       type="list-item-three-line"
     >
+      <!-- filters -->
+      <div class="d-flex flex-row mx-4 mb-2">
+        <v-text-field
+          v-model="searchWorkflows"
+          clearable
+          flat
+          dense
+          hide-details
+          outlined
+          placeholder="Search"
+          class="flex-grow-1 flex-column"
+          id="c-gscan-search-workflows"
+        />
+        <v-menu
+          v-model="showFilterTooltip"
+          :close-on-content-click="false"
+          offset-x
+        >
+          <!-- button to activate the filters tooltip -->
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              v-bind="attrs"
+              v-on="on"
+              link
+              icon
+              class="flex-grow-0 flex-column"
+              id="c-gscan-filter-tooltip-btn"
+              @click="showFilterTooltip = !showFilterTooltip"
+            >
+              <v-icon>{{ svgPaths.filter }}</v-icon>
+            </v-btn>
+          </template>
+          <!-- filters tooltip -->
+          <v-card
+            max-height="250px"
+          >
+            <v-list
+              dense
+            >
+              <div
+                v-for="filter in filters"
+                :key="filter.title"
+              >
+                <v-list-item dense>
+                  <v-list-item-content ma-0>
+                    <v-list-item-title>
+                      <v-checkbox
+                        :label="filter.title"
+                        :input-value="allItemsSelected(filter.items)"
+                        value
+                        dense
+                        hide-details
+                        hint="Toggle all"
+                        @click="toggleItemsValues(filter.items)"
+                      ></v-checkbox>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-divider />
+                <v-list-item
+                  v-for="item in filter.items"
+                  :key="`${filter.title}-${item.text}`"
+                  dense
+                >
+                  <v-list-item-action>
+                    <v-checkbox
+                      :label="item.text"
+                      v-model="item.model"
+                      dense
+                      height="20"
+                    ></v-checkbox>
+                  </v-list-item-action>
+                </v-list-item>
+              </div>
+            </v-list>
+          </v-card>
+        </v-menu>
+      </div>
+      <!-- data -->
       <div
-        v-if="!isLoading && workflows && workflows.length > 0"
+        v-if="!isLoading && sortedWorkflows && sortedWorkflows.length > 0"
         class="c-gscan-workflows"
       >
         <div
@@ -108,6 +187,8 @@ import Job from '@/components/cylc/Job'
 import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 import { GSCAN_QUERY } from '@/graphql/queries'
 import WorkflowState from '@/model/WorkflowState.model'
+import TaskState from '@/model/TaskState.model'
+import { mdiFilter } from '@mdi/js'
 
 const QUERIES = {
   root: GSCAN_QUERY
@@ -133,7 +214,98 @@ export default {
       viewID: '',
       subscriptions: {},
       isLoading: true,
-      maximumTasksDisplayed: 5
+      maximumTasksDisplayed: 5,
+      svgPaths: {
+        filter: mdiFilter
+      },
+      /**
+       * The filtered workflows. This is the result of applying the filters
+       * on the workflows prop.
+       * @type {[
+       *   {
+       *     id: string,
+       *     name: string,
+       *     stateTotals: object,
+       *     status: string
+       *   }
+       * ]}
+       */
+      filteredWorkflows: [],
+      /**
+       * Value to search and filter workflows.
+       * @type {string}
+       */
+      searchWorkflows: '',
+      /**
+       * Variable to control whether the filters tooltip (a menu actually)
+       * is displayed or not (i.e. v-model=this).
+       * @type {boolean}
+       */
+      showFilterTooltip: false,
+      /**
+       * List of filters to be displayed by the template, so that the user
+       * can filter the list of workflows.
+       *
+       * Each entry contains a title and a list of items. Each item contains
+       * the text attribute, which is used as display value in the template.
+       * The value attribute, which may be used if necessary, as it contains
+       * the original value (e.g. an Enum, while title would be some formatted
+       * string). Finally, the model is bound via v-model, and keeps the
+       * value selected in the UI (i.e. if the user checks the "running"
+       * checkbox, the model here will be true, if the user unchecks it,
+       * then it will be false).
+       *
+       * @type {[
+       *   {
+       *     title: string,
+       *     items: [{
+       *       text: string,
+       *       value: object,
+       *       model: boolean
+       *     }]
+       *   }
+       * ]}
+       */
+      filters: [
+        {
+          title: 'workflow state',
+          items: [
+            {
+              text: 'running',
+              value: 'running',
+              model: true
+            },
+            {
+              text: 'held',
+              value: 'held',
+              model: true
+            },
+            {
+              text: 'stopped',
+              value: 'stopped',
+              model: true
+            }
+          ]
+        },
+        {
+          title: 'task state',
+          items: TaskState.enumValues.map(state => {
+            return {
+              text: state.name.toLowerCase(),
+              value: state,
+              model: false
+            }
+          })
+        }
+        // {
+        //   title: 'workflow host',
+        //   items: [] // TODO: will it be in state totals?
+        // },
+        // {
+        //   title: 'cylc version',
+        //   items: [] // TODO: will it be in state totals?
+        // }
+      ]
     }
   },
   computed: {
@@ -143,7 +315,7 @@ export default {
      * (natural sort).
      */
     sortedWorkflows () {
-      return [...this.workflows].sort((left, right) => {
+      return [...this.filteredWorkflows].sort((left, right) => {
         if (left.status !== right.status) {
           if (left.status === WorkflowState.STOPPED.name) {
             return 1
@@ -173,6 +345,40 @@ export default {
         }
       }
       return workflowSummaries
+    }
+  },
+  watch: {
+    /**
+     * If the user changes the list of filters, then we apply
+     * the filters to the list of workflows.
+     */
+    filters: {
+      deep: true,
+      immediate: false,
+      handler: function (newVal, _) {
+        this.filterWorkflows(this.workflows, this.searchWorkflows, newVal)
+      }
+    },
+    /**
+     * If the user changes the workflow name to search/filter,
+     * then we apply the filters to the list of workflows.
+     */
+    searchWorkflows: {
+      immediate: false,
+      handler: function (newVal, _) {
+        this.filterWorkflows(this.workflows, newVal, this.filters)
+      }
+    },
+    /**
+     * If the subscription changes the workflows object (any part of it),
+     * then we apply the filters to the list of workflows.
+     */
+    workflows: {
+      deep: true,
+      immediate: true,
+      handler: function (newVal, _) {
+        this.filterWorkflows(newVal, this.searchWorkflows, this.filters)
+      }
     }
   },
   created () {
@@ -234,6 +440,90 @@ export default {
       return {
         'c-workflow-stopped': status === WorkflowState.STOPPED.name
       }
+    },
+
+    /**
+     * Filter a list of workflows using a given name (could be a part of
+     * a name) and a given list of filters.
+     *
+     * The list of filters may contain workflow states ("running", "stopped",
+     * "held"), and/or task states ("running", "waiting", "submit_failed", etc).
+     *
+     * Does not return any value, but modifies the data variable
+     * filteredWorkflows, used in the template.
+     *
+     * @param {[
+     *  {
+     *   id: string,
+     *   name: string,
+     *   stateTotals: object,
+     *   status: string
+     *  }
+     * ]} workflows list of workflows
+     * @param {string} name
+     * @param {[]} filters
+     */
+    filterWorkflows (workflows, name, filters) {
+      // filter by name
+      this.filteredWorkflows = workflows
+      if (name && name !== '') {
+        this.filteredWorkflows = this.filteredWorkflows
+          .filter(workflow => workflow.name.includes(name))
+      }
+      // get a list of the workflow states we are filtering
+      const workflowStates = filters[0]
+        .items
+        .filter(item => item.model)
+        .map(item => item.value)
+      // get a list of the task states we are filtering
+      const taskStates = new Set(filters[1]
+        .items
+        .filter(item => item.model)
+        .map(item => item.value.name.toLowerCase()))
+      // filter workflows
+      this.filteredWorkflows = this.filteredWorkflows.filter((workflow) => {
+        // workflow states
+        if (!workflowStates.includes(workflow.status)) {
+          return false
+        }
+        // task states
+        if (taskStates.size > 0) {
+          const thisWorkflowStates = Object.entries(workflow.stateTotals)
+            .filter(entry => entry[1] > 0)
+            .map(entry => entry[0])
+          const intersection = thisWorkflowStates.filter(item => taskStates.has(item))
+          return intersection.length !== 0
+        }
+        return true
+      })
+    },
+    /**
+     * Return `true` iff all the items have been selected. `false` otherwise.
+     *
+     * @param {[
+     *   {
+     *     model: boolean
+     *   }
+     * ]} items - filter items
+     * @returns {boolean} - `true` iff all the items have been selected. `false` otherwise
+     */
+    allItemsSelected (items) {
+      return items.every(item => item.model === true)
+    },
+    /**
+     * If every element in the list is `true`, then we will set every element in the
+     * list to `false`. Otherwise, we set all the elements in the list to `true`.
+     * @param {[
+     *   {
+     *     model: boolean
+     *   }
+     * ]} items - filter items
+     */
+    toggleItemsValues (items) {
+      const newValue = !this.allItemsSelected(items)
+      items.forEach(item => {
+        item.model = newValue
+      })
     }
   }
 }

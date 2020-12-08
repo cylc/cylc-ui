@@ -43,6 +43,7 @@ fragment WorkflowData on Workflow {
   owner
   host
   port
+  stateTotals
 }
 
 fragment CyclePointData on FamilyProxy {
