@@ -51,3 +51,7 @@
 :export {
   fontRootSize: $font-size-root;
 }
+
+.c-interactive:hover {
+    cursor: pointer;
+}

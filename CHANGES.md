@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#504](https://github.com/cylc/cylc-ui/pull/504) - Add mutations to the tree
+view to allow interacting with tasks, families and cycles.
+
 [#499](https://github.com/cylc/cylc-ui/pull/499) - Add search and
 filter functionalities to GScan.
 

@@ -35,6 +35,7 @@ import store from '@/store'
  */
 import SubscriptionWorkflowService from 'workflow-service'
 import { createGraphQLUrls, createSubscriptionClient } from '@/utils/graphql'
+import mitt from 'mitt'
 
 // WorkflowService singleton available application-wide
 // On the offline mode, we do not have a WebSocket link, so we must create a null SubscriptionClient to use an empty link
@@ -45,6 +46,8 @@ if (process.env.NODE_ENV !== 'offline') {
 }
 const workflowService = new SubscriptionWorkflowService(graphQLUrls.httpUrl, subscriptionClient)
 Vue.prototype.$workflowService = workflowService
+
+Vue.prototype.$eventBus = mitt()
 
 Vue.config.productionTip = false
 
