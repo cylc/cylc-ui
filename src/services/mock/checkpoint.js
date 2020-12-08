@@ -1,20 +1,3 @@
-/**
- * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /* eslint-disable */
 const checkpoint = {
     "workflows": [
@@ -24,7 +7,18 @@ const checkpoint = {
             "status": "running",
             "owner": "user",
             "host": "localhost",
-            "port": 43015,
+            "port": 43079,
+            "stateTotals": {
+                "waiting": 1,
+                "queued": 0,
+                "expired": 0,
+                "ready": 0,
+                "submit-failed": 0,
+                "submitted": 3,
+                "running": 1,
+                "failed": 0,
+                "succeeded": 0
+            },
             "cyclePoints": [
                 {
                     "id": "user|one|20000102T0000Z|root",
@@ -43,7 +37,7 @@ const checkpoint = {
                         "id": "user|one|20000102T0000Z|root",
                         "name": "root",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "retrying"
+                        "state": "running"
                     },
                     "task": {
                         "meanElapsedTime": 7.0,
@@ -56,10 +50,10 @@ const checkpoint = {
                                 "id": "user|one|20000102T0000Z|checkpoint"
                             },
                             "batchSysName": "background",
-                            "batchSysJobId": "32528",
+                            "batchSysJobId": "61924",
                             "host": "localhost",
-                            "startedTime": "2020-09-28T01:22:35Z",
-                            "submittedTime": "2020-09-28T01:22:34Z",
+                            "startedTime": "2020-11-08T22:57:36Z",
+                            "submittedTime": "2020-11-08T22:57:35Z",
                             "finishedTime": "",
                             "state": "running",
                             "submitNum": 1
@@ -77,7 +71,7 @@ const checkpoint = {
                         "id": "user|one|20000102T0000Z|SUCCEEDED",
                         "name": "SUCCEEDED",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "running"
+                        "state": "submitted"
                     },
                     "task": {
                         "meanElapsedTime": 1.0,
@@ -90,11 +84,11 @@ const checkpoint = {
                                 "id": "user|one|20000102T0000Z|eventually_succeeded"
                             },
                             "batchSysName": "background",
-                            "batchSysJobId": "32464",
+                            "batchSysJobId": "61869",
                             "host": "localhost",
-                            "startedTime": "2020-09-28T01:22:28Z",
-                            "submittedTime": "2020-09-28T01:22:27Z",
-                            "finishedTime": "2020-09-28T01:22:28Z",
+                            "startedTime": "2020-11-08T22:57:29Z",
+                            "submittedTime": "2020-11-08T22:57:28Z",
+                            "finishedTime": "2020-11-08T22:57:29Z",
                             "state": "succeeded",
                             "submitNum": 4
                         },
@@ -104,11 +98,11 @@ const checkpoint = {
                                 "id": "user|one|20000102T0000Z|eventually_succeeded"
                             },
                             "batchSysName": "background",
-                            "batchSysJobId": "32432",
+                            "batchSysJobId": "61842",
                             "host": "localhost",
-                            "startedTime": "2020-09-28T01:22:23Z",
-                            "submittedTime": "2020-09-28T01:22:22Z",
-                            "finishedTime": "2020-09-28T01:22:24Z",
+                            "startedTime": "2020-11-08T22:57:24Z",
+                            "submittedTime": "2020-11-08T22:57:24Z",
+                            "finishedTime": "2020-11-08T22:57:25Z",
                             "state": "failed",
                             "submitNum": 3
                         },
@@ -118,11 +112,11 @@ const checkpoint = {
                                 "id": "user|one|20000102T0000Z|eventually_succeeded"
                             },
                             "batchSysName": "background",
-                            "batchSysJobId": "32398",
+                            "batchSysJobId": "61815",
                             "host": "localhost",
-                            "startedTime": "2020-09-28T01:22:20Z",
-                            "submittedTime": "2020-09-28T01:22:19Z",
-                            "finishedTime": "2020-09-28T01:22:20Z",
+                            "startedTime": "2020-11-08T22:57:20Z",
+                            "submittedTime": "2020-11-08T22:57:19Z",
+                            "finishedTime": "2020-11-08T22:57:20Z",
                             "state": "failed",
                             "submitNum": 2
                         },
@@ -132,11 +126,11 @@ const checkpoint = {
                                 "id": "user|one|20000102T0000Z|eventually_succeeded"
                             },
                             "batchSysName": "background",
-                            "batchSysJobId": "32307",
+                            "batchSysJobId": "61736",
                             "host": "localhost",
-                            "startedTime": "2020-09-28T01:22:14Z",
-                            "submittedTime": "2020-09-28T01:22:14Z",
-                            "finishedTime": "2020-09-28T01:22:15Z",
+                            "startedTime": "2020-11-08T22:57:15Z",
+                            "submittedTime": "2020-11-08T22:57:15Z",
+                            "finishedTime": "2020-11-08T22:57:16Z",
                             "state": "failed",
                             "submitNum": 1
                         }
@@ -153,7 +147,7 @@ const checkpoint = {
                         "id": "user|one|20000102T0000Z|BAD",
                         "name": "BAD",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "retrying"
+                        "state": "submitted"
                     },
                     "task": {
                         "meanElapsedTime": 0.0,
@@ -166,11 +160,11 @@ const checkpoint = {
                                 "id": "user|one|20000102T0000Z|failed"
                             },
                             "batchSysName": "background",
-                            "batchSysJobId": "32497",
+                            "batchSysJobId": "61897",
                             "host": "localhost",
-                            "startedTime": "2020-09-28T01:22:31Z",
-                            "submittedTime": "2020-09-28T01:22:31Z",
-                            "finishedTime": "2020-09-28T01:22:32Z",
+                            "startedTime": "2020-11-08T22:57:32Z",
+                            "submittedTime": "2020-11-08T22:57:32Z",
+                            "finishedTime": "2020-11-08T22:57:33Z",
                             "state": "failed",
                             "submitNum": 1
                         }
@@ -179,15 +173,15 @@ const checkpoint = {
                 {
                     "id": "user|one|20000102T0000Z|retrying",
                     "name": "retrying",
-                    "state": "retrying",
+                    "state": "waiting",
                     "isHeld": false,
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "failed, retrying in PT5M (after 2020-09-28T01:27:16Z)",
+                    "latestMessage": "failed, retrying in PT5M (after 2020-11-08T23:02:16Z)",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|BAD",
                         "name": "BAD",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "retrying"
+                        "state": "submitted"
                     },
                     "task": {
                         "meanElapsedTime": 0.0,
@@ -200,11 +194,11 @@ const checkpoint = {
                                 "id": "user|one|20000102T0000Z|retrying"
                             },
                             "batchSysName": "background",
-                            "batchSysJobId": "32308",
+                            "batchSysJobId": "61737",
                             "host": "localhost",
-                            "startedTime": "2020-09-28T01:22:14Z",
-                            "submittedTime": "2020-09-28T01:22:14Z",
-                            "finishedTime": "2020-09-28T01:22:15Z",
+                            "startedTime": "2020-11-08T22:57:15Z",
+                            "submittedTime": "2020-11-08T22:57:15Z",
+                            "finishedTime": "2020-11-08T22:57:16Z",
                             "state": "failed",
                             "submitNum": 1
                         }
@@ -221,7 +215,7 @@ const checkpoint = {
                         "id": "user|one|20000102T0000Z|root",
                         "name": "root",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "retrying"
+                        "state": "running"
                     },
                     "task": {
                         "meanElapsedTime": 0.0,
@@ -232,15 +226,15 @@ const checkpoint = {
                 {
                     "id": "user|one|20000102T0000Z|succeeded",
                     "name": "succeeded",
-                    "state": "running",
+                    "state": "submitted",
                     "isHeld": false,
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "started",
+                    "latestMessage": "submitted",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|SUCCEEDED",
                         "name": "SUCCEEDED",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "running"
+                        "state": "submitted"
                     },
                     "task": {
                         "meanElapsedTime": 0.0,
@@ -253,11 +247,11 @@ const checkpoint = {
                                 "id": "user|one|20000102T0000Z|succeeded"
                             },
                             "batchSysName": "background",
-                            "batchSysJobId": "32311",
+                            "batchSysJobId": "61739",
                             "host": "localhost",
-                            "startedTime": "2020-09-28T01:22:14Z",
-                            "submittedTime": "2020-09-28T01:22:14Z",
-                            "finishedTime": "2020-09-28T01:22:15Z",
+                            "startedTime": "2020-11-08T22:57:15Z",
+                            "submittedTime": "2020-11-08T22:57:15Z",
+                            "finishedTime": "2020-11-08T22:57:16Z",
                             "state": "succeeded",
                             "submitNum": 1
                         }
@@ -274,7 +268,7 @@ const checkpoint = {
                         "id": "user|one|20000102T0000Z|root",
                         "name": "root",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "retrying"
+                        "state": "running"
                     },
                     "task": {
                         "meanElapsedTime": 0.0,
@@ -287,37 +281,37 @@ const checkpoint = {
                 {
                     "id": "user|one|20000102T0000Z|BAD",
                     "name": "BAD",
-                    "state": "retrying",
+                    "state": "submitted",
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
                         "name": "root",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "retrying"
+                        "state": "running"
                     }
                 },
                 {
                     "id": "user|one|20000102T0000Z|GOOD",
                     "name": "GOOD",
-                    "state": "running",
+                    "state": "submitted",
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
                         "name": "root",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "retrying"
+                        "state": "running"
                     }
                 },
                 {
                     "id": "user|one|20000102T0000Z|SUCCEEDED",
                     "name": "SUCCEEDED",
-                    "state": "running",
+                    "state": "submitted",
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|GOOD",
                         "name": "GOOD",
                         "cyclePoint": "20000102T0000Z",
-                        "state": "running"
+                        "state": "submitted"
                     }
                 }
             ]
