@@ -314,7 +314,7 @@ export default {
           if (left.status === WorkflowState.RUNNING.name) {
             return -1
           }
-          if (left.status === WorkflowState.HELD.name) {
+          if (left.status === WorkflowState.HELD.name && right.status !== WorkflowState.RUNNING.name) {
             return -1
           }
           return 1
