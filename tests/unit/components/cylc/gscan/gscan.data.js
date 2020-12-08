@@ -23,6 +23,7 @@ const simpleWorkflowGscanNodes = [
     owner: 'user',
     host: 'user-VirtualBox',
     port: 43015,
+    stateTotals: [],
     taskProxies: [
       {
         id: 'user|five|20130829T0000Z|foo',

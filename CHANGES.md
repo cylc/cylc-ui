@@ -16,6 +16,12 @@ None or N/A.
 
 ### Enhancements
 
+[#504](https://github.com/cylc/cylc-ui/pull/504) - Add mutations to the tree
+view to allow interacting with tasks, families and cycles.
+
+[#499](https://github.com/cylc/cylc-ui/pull/499) - Add search and
+filter functionalities to GScan.
+
 [#503](https://github.com/cylc/cylc-ui/pull/503) - Add configurable
 colour themes for Cylc job icons.
 
@@ -53,6 +59,8 @@ in the tree view structure.
 ### Fixes
 
 [#552](https://github.com/cylc/cylc-ui/pull/552) - Move to next route before adding a new tree widget.
+
+[#554](https://github.com/cylc/cylc-ui/pull/554) - Fix icons in the Dashboard.
 
 ### Documentation
 

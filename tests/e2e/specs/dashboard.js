@@ -24,5 +24,12 @@ describe('Dashboard', () => {
       .parent()
       .should('have.class', 'v-list-item--active')
   })
+  it('Should display the icons', () => {
+    cy.visit('/#/')
+    cy
+      .get('.c-dashboard .v-icon:first')
+      .find('svg')
+      .should('be.visible')
+  })
   // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
 })

@@ -193,6 +193,7 @@ subscription {
     owner
     host
     port
+    stateTotals
     taskProxies(sort: { keys: ["cyclePoint"] }) {
       id
       name
