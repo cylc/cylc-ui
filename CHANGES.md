@@ -58,7 +58,7 @@ in the tree view structure.
 
 ### Fixes
 
-None.
+[#554](https://github.com/cylc/cylc-ui/pull/554) - Fix icons in the Dashboard.
 
 ### Documentation
 
