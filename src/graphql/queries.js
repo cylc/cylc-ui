@@ -182,7 +182,7 @@ subscription {
 
 /**
  * Query used to retrieve data for the GScan sidebar.
- * @type {DocumentNode}
+ * @type {string}
  */
 const GSCAN_QUERY = `
 subscription {
