@@ -16,7 +16,7 @@
  */
 
 import { expect } from 'chai'
-import { UserService } from '@/services/user.service'
+import UserService from '@/services/user.service'
 import sinon from 'sinon'
 import axios from 'axios'
 import store from '@/store'
@@ -42,7 +42,7 @@ describe('UserService', () => {
         })
       )
       sandbox.stub(axios, 'get').returns(userReturned)
-      return UserService.getUserProfile().then(function () {
+      return new UserService().getUserProfile().then(function () {
         const user = store.state.user.user
         expect(user.username).to.equal('cylc-user-01')
         expect(user.groups.length).to.equal(2)
@@ -57,7 +57,7 @@ describe('UserService', () => {
         statusText: 'Test Status'
       }
       sandbox.stub(axios, 'get').rejects(e)
-      return UserService.getUserProfile().finally(() => {
+      return new UserService().getUserProfile().finally(() => {
         expect(store.state.alert.getText()).to.equal('Test Status')
       })
     })

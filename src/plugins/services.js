@@ -14,33 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import Vue from 'vue'
+import ServicesPlugin from '@/services/plugin'
 
-import UserService from '@/services/user.service'
-import User from '@/model/User.model'
-import store from '@/store/index'
-
-/**
- * Mock user service - for tests and development.
- */
-class MockUserService extends UserService {
-  /**
-   * Gets a pre-defined user profile, used for testing and offline (when
-   * backend is not running).
-   *
-   * @override
-   * @returns {Promise<*>} - a promise that dispatches Vuex action
-   */
-  getUserProfile () {
-    const username = 'cylc'
-    const user = new User(
-      username,
-      ['cylc-developers', 'linux-users'],
-      new Date(),
-      true,
-      `/user/${username}/`
-    )
-    return store.dispatch('user/setUser', user)
-  }
-}
-
-export default MockUserService
+// Load the plug-in
+Vue.use(ServicesPlugin, {
+  offline: process.env.VUE_APP_SERVICES === 'offline'
+})

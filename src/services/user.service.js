@@ -20,8 +20,11 @@ import axios from 'axios'
 import store from '@/store/'
 import Alert from '@/model/Alert.model'
 
-export const UserService = {
-
+class UserService {
+  /**
+   * Gets the user profile from the backend server.
+   * @returns {Promise<*>} - a promise that dispatches Vuex action
+   */
   getUserProfile () {
     return axios.get(`${window.location.pathname}/userprofile`).then((response) => {
       const user = new User(response.data.name, response.data.groups, response.data.created, response.data.admin, response.data.server)
@@ -31,5 +34,6 @@ export const UserService = {
       return store.dispatch('setAlert', alert)
     })
   }
-
 }
+
+export default UserService

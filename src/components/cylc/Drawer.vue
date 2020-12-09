@@ -68,7 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <template v-slot:append>
       <div class="px-4 py-2 d-flex justify-center">
         <span class="grey--text text--darken-2">
-            <strong v-if="environment !== 'PRODUCTION'">{{ environment }}</strong> {{ $t('App.name') }} {{ packageJson.version }}
+            <strong v-if="environment !== 'PRODUCTION'">{{ environment }}</strong> {{ $t('App.name') }} {{ version }}
           </span>
       </div>
     </template>
@@ -82,22 +82,26 @@ import Header from '@/components/cylc/Header'
 import { mapState } from 'vuex'
 import GScan from '@/components/cylc/gscan/GScan'
 import { mdiHome, mdiGraphql } from '@mdi/js'
+import { version } from '@/../package.json'
 
 export default {
   components: {
     GScan,
     'c-header': Header
   },
-  data: () => ({
-    responsive: false,
-    svgPaths: {
-      home: mdiHome,
-      graphql: mdiGraphql
+  data: function () {
+    return {
+      responsive: false,
+      svgPaths: {
+        home: mdiHome,
+        graphql: mdiGraphql
+      },
+      environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
+      version: version
     }
-  }),
+  },
   computed: {
     ...mapState('workflows', ['workflows']),
-    ...mapState(['packageJson', 'environment']),
     ...mapState('user', ['user']),
     drawer: {
       get: function () {
