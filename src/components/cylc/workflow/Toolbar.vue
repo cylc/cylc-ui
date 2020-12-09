@@ -159,21 +159,18 @@ export default {
 
   methods: {
     onClickReleaseHold () {
-      const vm = this
       if (this.isHeld) {
         // release
         this.$workflowService.mutate('release', this.currentWorkflow.id)
-        vm.isStopped = false
       } else {
         // hold
         this.$workflowService.mutate('hold', this.currentWorkflow.id)
-        vm.isStopped = false
       }
+      this.isHeld = !this.isHeld
     },
     async onClickStop () {
-      const vm = this
       this.$workflowService.mutate('stop', this.currentWorkflow.id)
-      vm.isStopped = true
+      this.isStopped = true
     },
     toggleExtended () {
       this.extended = !this.extended
