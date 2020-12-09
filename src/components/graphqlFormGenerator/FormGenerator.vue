@@ -50,14 +50,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     />
 
     <!-- the form inputs -->
-    <form-input
-     v-for="input in inputs"
-     v-bind:key="input.label"
-     v-model="model[input.label]"
-     :gqlType="input.gqlType"
-     :types="types"
-     :label="input.label"
-    />
+    <v-list>
+      <v-list-item
+       v-for="input in inputs"
+       v-bind:key="input.label"
+      >
+        <v-list-item-content>
+        <v-list-item-title>
+          <!-- input label - the display title for this input -->
+          {{ input.label }}
+          <!-- help button - tooltip for more information -->
+          <v-tooltip bottom
+            v-if="input.description"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                v-bind="attrs"
+                v-on="on"
+              >
+                {{ icons.help }}
+              </v-icon>
+            </template>
+            <!-- wrap the tooltip in a div with restricted width to force
+                 line wrapping -->
+            <div
+              style="
+                width: 20vw;
+                text-align: center;
+              "
+            >
+            <vue-markdown>
+              {{ input.description }}
+            </vue-markdown>
+            </div>
+          </v-tooltip>
+        </v-list-item-title>
+          <form-input
+            v-model="model[input.label]"
+            :gqlType="input.gqlType"
+            :types="types"
+            :label="input.label"
+          />
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
   </v-form>
 </template>
 
@@ -65,6 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import VueMarkdown from 'vue-markdown'
 
 import cloneDeep from 'lodash/cloneDeep'
+import { mdiHelpCircleOutline } from '@mdi/js'
 
 import FormInput from '@/components/graphqlFormGenerator/FormInput'
 import { getNullValue } from '@/utils/aotf'
@@ -96,7 +133,10 @@ export default {
   },
 
   data: () => ({
-    model: {}
+    model: {},
+    icons: {
+      help: mdiHelpCircleOutline
+    }
   }),
 
   created () {
@@ -110,7 +150,8 @@ export default {
       for (const arg of this.mutation.args) {
         ret.push({
           gqlType: arg.type,
-          label: arg.name
+          label: arg.name,
+          description: arg.description
         })
       }
       return ret

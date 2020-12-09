@@ -17,10 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-select
+   persistent-hint
    v-model="model"
-   :label="label + ' (required)'"
    :items="type.enumValues"
    item-text="name"
+   :hint="itemDesc"
   />
 </template>
 
@@ -29,6 +30,16 @@ import { formElement } from '@/components/graphqlFormGenerator/mixins'
 
 export default {
   name: 'g-enum',
-  mixins: [formElement]
+  mixins: [formElement],
+  computed: {
+    itemDesc () {
+      for (const item of this.type.enumValues) {
+        if (item.name === this.value) {
+          return item.description
+        }
+      }
+      return ''
+    }
+  }
 }
 </script>

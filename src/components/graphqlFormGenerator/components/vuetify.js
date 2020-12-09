@@ -115,7 +115,7 @@ export default {
       rules: [
         RULES.noSpaces,
         // character whitelist
-        x => Boolean(!x || x.match(/^[\dT]+$/)) || 'Invalid Cycle Point'
+        x => Boolean(!x || x.match(/^[\dT]+(Z|[+-]\d+)?$/)) || 'Invalid Cycle Point'
       ]
     },
     CyclePointGlob: {
