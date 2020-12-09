@@ -39,6 +39,7 @@ class WorkflowState extends Enumify {
   /**
    * Constructor.
    * @param {String} name
+   * @param {String} icon
    */
   constructor (name, icon) {
     super()

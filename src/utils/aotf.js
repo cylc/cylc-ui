@@ -16,7 +16,7 @@
 
 /*
  * Functionality for introspecting mutations, associating them with Cylc
- * objects, filtering and calling mutatons.
+ * objects, filtering and calling mutations.
  *
  * (AOTF == Api On The Fly)
  */
