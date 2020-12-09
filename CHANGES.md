@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#544](https://github.com/cylc/cylc-ui/pull/544) - Enable editing
+mutation inputs and support broadcasts in the UI.
+
 [#574](https://github.com/cylc/cylc-ui/pull/574) - Add collapse all and expand
 all buttons to Tree component.
 

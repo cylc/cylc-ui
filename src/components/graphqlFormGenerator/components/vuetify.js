@@ -24,6 +24,7 @@ import GEnum from '@/components/graphqlFormGenerator/components/Enum'
 import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'
 import GList from '@/components/graphqlFormGenerator/components/List'
 import GObject from '@/components/graphqlFormGenerator/components/Object'
+import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting'
 
 /* Vuetify number input component.
  *
@@ -126,7 +127,9 @@ export default {
         x => Boolean(!x || x.match(/^[\dT*]+$/)) || 'Invalid Cycle Point Glob'
       ]
     },
-    // BroadcastSetting
+    BroadcastSetting: {
+      is: GBroadcastSetting
+    },
     // TaskStatus
     // TaskState
     TaskName: {
