@@ -19,7 +19,7 @@ import { GQuery } from '@/services/gquery'
 import store from '@/store/'
 import Alert from '@/model/Alert.model'
 
-import { createApolloClient } from '@/utils/graphql'
+import { createApolloClient } from '@/graphql'
 /* eslint-disable no-unused-vars */
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 import ZenObservable from 'zen-observable'

@@ -140,6 +140,9 @@ class MockWorkflowService extends GQuery {
     return id
   }
 
+  mutate (mutationName, id) {
+  }
+
   unregister (view) {
   }
 

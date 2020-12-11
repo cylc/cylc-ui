@@ -22,34 +22,6 @@ import WorkflowState from '@/model/WorkflowState.model'
 import store from '@/store/index'
 import Vuetify from 'vuetify/lib'
 
-const mockedWorkflowService = {
-  releaseWorkflow: function () {
-    return new Promise((resolve) => {
-      if (store.state.workflows.workflows[0].status === WorkflowState.HELD.name) {
-        store.state.workflows.workflows[0].status = WorkflowState.RUNNING.name
-      } else {
-        store.state.workflows.workflows[0].status = WorkflowState.HELD.name
-      }
-      return resolve(true)
-    })
-  },
-  holdWorkflow: function () {
-    return new Promise((resolve) => {
-      if (store.state.workflows.workflows[0].status === WorkflowState.HELD.name) {
-        store.state.workflows.workflows[0].status = WorkflowState.RUNNING.name
-      } else {
-        store.state.workflows.workflows[0].status = WorkflowState.HELD.name
-      }
-      return resolve(true)
-    })
-  },
-  stopWorkflow: function () {
-    return new Promise((resolve) => {
-      return resolve(true)
-    })
-  }
-}
-
 const localVue = createLocalVue()
 
 describe('Workflow Toolbar component', () => {

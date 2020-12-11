@@ -16,9 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="c-mutation">
+  <div class="c-mutation-menu-holder">
     <!-- dropdown menu -->
     <v-menu
+      class="c-mutation-menu"
       v-model="showMenu"
       :position-x="x"
       :position-y="y"
@@ -26,7 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       offset-y
       :disabled="!interactive"
     >
-      <v-list dense dark>
+      <v-list
+        dense
+        dark
+        class="c-mutation-menu-list"
+      >
         <v-subheader>
           <h2>
             {{id}}
