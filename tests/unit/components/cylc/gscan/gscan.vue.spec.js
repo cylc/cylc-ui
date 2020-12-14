@@ -20,6 +20,7 @@ import { expect } from 'chai'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
 import GScan from '@/components/cylc/gscan/GScan'
+import TreeItem from '@/components/cylc/tree/TreeItem'
 import { simpleWorkflowGscanNodes } from './gscan.data'
 import WorkflowState from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
@@ -85,11 +86,11 @@ describe('GScan component', () => {
       const wrapper = mountFunction({
         propsData: {
           workflows: [
-            { id: '1', name: 'a', status: 'running' },
-            { id: '5', name: 'e', status: 'running' },
-            { id: '3', name: 'c', status: 'running' },
-            { id: '2', name: 'b', status: 'running' },
-            { id: '4', name: 'd', status: 'running' }
+            { id: 'user|a', name: 'a', status: 'running' },
+            { id: 'user|e', name: 'e', status: 'running' },
+            { id: 'user|c', name: 'c', status: 'running' },
+            { id: 'user|b', name: 'b', status: 'running' },
+            { id: 'user|d', name: 'd', status: 'running' }
           ]
         },
         data () {
@@ -98,7 +99,7 @@ describe('GScan component', () => {
           }
         }
       })
-      const workflowsElements = wrapper.findAll('.c-gscan-workflow')
+      const workflowsElements = wrapper.findAllComponents(TreeItem)
       expect(workflowsElements.length).to.equal(5)
       expect(workflowsElements.at(0).element.textContent).to.equal('a')
       expect(workflowsElements.at(1).element.textContent).to.equal('b')
@@ -110,11 +111,11 @@ describe('GScan component', () => {
       const wrapper = mountFunction({
         propsData: {
           workflows: [
-            { id: '1', name: 'a', status: 'held' },
-            { id: '5', name: 'e', status: 'running' },
-            { id: '3', name: 'c', status: 'stopped' },
-            { id: '2', name: 'b', status: 'stopped' },
-            { id: '4', name: 'd', status: 'stopped' }
+            { id: 'user|e', name: 'e', status: 'held' },
+            { id: 'user|a', name: 'a', status: 'running' },
+            { id: 'user|c', name: 'c', status: 'stopped' },
+            { id: 'user|b', name: 'b', status: 'stopped' },
+            { id: 'user|d', name: 'd', status: 'stopped' }
           ]
         },
         data () {
@@ -123,7 +124,7 @@ describe('GScan component', () => {
           }
         }
       })
-      const workflowsElements = wrapper.findAll('.c-gscan-workflow')
+      const workflowsElements = wrapper.findAllComponents(TreeItem)
       expect(workflowsElements.length).to.equal(5)
       expect(workflowsElements.at(0).element.textContent).to.equal('a')
       expect(workflowsElements.at(1).element.textContent).to.equal('e')
@@ -135,11 +136,11 @@ describe('GScan component', () => {
       const wrapper = mountFunction({
         propsData: {
           workflows: [
-            { id: '5', name: 'e', status: 'held' },
-            { id: '1', name: 'a', status: 'held' },
-            { id: '3', name: 'c', status: 'stopped' },
-            { id: '2', name: 'b', status: 'running' },
-            { id: '4', name: 'd', status: 'stopped' }
+            { id: 'user|e', name: 'e', status: 'held' },
+            { id: 'user|a', name: 'a', status: 'held' },
+            { id: 'user|c', name: 'c', status: 'stopped' },
+            { id: 'user|b', name: 'b', status: 'running' },
+            { id: 'user|d', name: 'd', status: 'stopped' }
           ]
         },
         data () {
@@ -148,10 +149,10 @@ describe('GScan component', () => {
           }
         }
       })
-      const workflowsElements = wrapper.findAll('.c-gscan-workflow')
+      const workflowsElements = wrapper.findAllComponents(TreeItem)
       expect(workflowsElements.length).to.equal(5)
-      expect(workflowsElements.at(0).element.textContent).to.equal('a')
-      expect(workflowsElements.at(1).element.textContent).to.equal('b')
+      expect(workflowsElements.at(0).element.textContent).to.equal('b')
+      expect(workflowsElements.at(1).element.textContent).to.equal('a')
       expect(workflowsElements.at(2).element.textContent).to.equal('e')
       expect(workflowsElements.at(3).element.textContent).to.equal('c')
       expect(workflowsElements.at(4).element.textContent).to.equal('d')
@@ -160,11 +161,11 @@ describe('GScan component', () => {
       const wrapper = mountFunction({
         propsData: {
           workflows: [
-            { id: '5', name: 'e', status: 'held' },
-            { id: '1', name: 'a', status: 'held' },
-            { id: '3', name: 'c', status: 'stopped' },
-            { id: '2', name: 'b', status: 'running' },
-            { id: '4', name: 'd', status: 'stopped' }
+            { id: 'user|a', name: 'a', status: 'held' },
+            { id: 'user|c', name: 'c', status: 'stopped' },
+            { id: 'user|b', name: 'b', status: 'running' },
+            { id: 'user|d', name: 'd', status: 'stopped' },
+            { id: 'user|e', name: 'e', status: 'held' }
           ]
         },
         data () {
@@ -173,10 +174,10 @@ describe('GScan component', () => {
           }
         }
       })
-      const workflowsElements = wrapper.findAll('.c-gscan-workflow')
+      const workflowsElements = wrapper.findAllComponents(TreeItem)
       expect(workflowsElements.length).to.equal(5)
-      expect(workflowsElements.at(0).element.textContent).to.equal('a')
-      expect(workflowsElements.at(1).element.textContent).to.equal('b')
+      expect(workflowsElements.at(0).element.textContent).to.equal('b')
+      expect(workflowsElements.at(1).element.textContent).to.equal('a')
       expect(workflowsElements.at(2).element.textContent).to.equal('e')
       expect(workflowsElements.at(3).element.textContent).to.equal('c')
       expect(workflowsElements.at(4).element.textContent).to.equal('d')
@@ -192,21 +193,21 @@ describe('GScan component', () => {
     it('should correctly calculate the workflow summary', () => {
       const summaries = GScan.computed.workflowsSummaries.call(localThis)
       expect(summaries.size).to.equal(1)
-      expect(summaries.has('five')).to.equal(true)
-      expect(summaries.get('five').has('succeeded')).to.equal(true)
-      expect(summaries.get('five').get('succeeded').includes('foo.20130829T0000Z')).to.equal(true)
-      expect(summaries.get('five').get('succeeded').includes('bar.20130829T0000Z')).to.equal(true)
-      expect(summaries.get('five').get('succeeded').includes('foo.20130829T1200Z')).to.equal(true)
-      expect(summaries.get('five').has('running')).to.equal(true)
-      expect(summaries.get('five').get('running').includes('bar.20130829T1200Z')).to.equal(true)
-      expect(summaries.get('five').get('running').includes('foo.20130830T0000Z')).to.equal(true)
+      expect(summaries.has('user|five')).to.equal(true)
+      expect(summaries.get('user|five').has('succeeded')).to.equal(true)
+      expect(summaries.get('user|five').get('succeeded').includes('foo.20130829T0000Z')).to.equal(true)
+      expect(summaries.get('user|five').get('succeeded').includes('bar.20130829T0000Z')).to.equal(true)
+      expect(summaries.get('user|five').get('succeeded').includes('foo.20130829T1200Z')).to.equal(true)
+      expect(summaries.get('user|five').has('running')).to.equal(true)
+      expect(summaries.get('user|five').get('running').includes('bar.20130829T1200Z')).to.equal(true)
+      expect(summaries.get('user|five').get('running').includes('foo.20130830T0000Z')).to.equal(true)
     })
     it('should return elements in alphabetical order', () => {
       const summaries = GScan.computed.workflowsSummaries.call(localThis)
-      expect(summaries.get('five').get('succeeded').length).to.equal(3)
-      expect(summaries.get('five').get('succeeded')[0]).to.equal('bar.20130829T0000Z')
-      expect(summaries.get('five').get('succeeded')[1]).to.equal('foo.20130829T0000Z')
-      expect(summaries.get('five').get('succeeded')[2]).to.equal('foo.20130829T1200Z')
+      expect(summaries.get('user|five').get('succeeded').length).to.equal(3)
+      expect(summaries.get('user|five').get('succeeded')[0]).to.equal('bar.20130829T0000Z')
+      expect(summaries.get('user|five').get('succeeded')[1]).to.equal('foo.20130829T0000Z')
+      expect(summaries.get('user|five').get('succeeded')[2]).to.equal('foo.20130829T1200Z')
     })
   })
   describe('filter gscan', () => {
@@ -371,6 +372,21 @@ describe('GScan component', () => {
         })
         expect(wrapper.vm.filteredWorkflows.length).to.equal(0)
       })
+    })
+  })
+  describe('Workflow link', () => {
+    it('should create an empty link for non-workflow nodes', () => {
+      const link = GScan.methods.workflowLink({})
+      expect(link).to.equal('')
+    })
+    it('should create a link for a workflow node', () => {
+      const link = GScan.methods.workflowLink({
+        type: 'workflow',
+        node: {
+          name: 'name'
+        }
+      })
+      expect(link).to.equal('/workflows/name')
     })
   })
 })

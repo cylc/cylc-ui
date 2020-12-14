@@ -106,71 +106,62 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="!isLoading && sortedWorkflows && sortedWorkflows.length > 0"
         class="c-gscan-workflows"
       >
-        <div
-          v-for="workflow in sortedWorkflows"
-          :key="workflow.id"
+        <tree
+          :filterable="false"
+          :workflows="sortedWorkflows"
           class="c-gscan-workflow"
         >
-          <v-list-item
-            :to="`/workflows/${ workflow.name }`"
-            :class="getWorkflowClass(workflow.status)"
-          >
-            <v-list-item-action>
-              <v-tooltip right>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    {{ getWorkflowIcon(workflow.status) }}
-                  </v-icon>
-                </template>
-                <span>{{ workflow.status }}</span>
-              </v-tooltip>
-            </v-list-item-action>
-            <v-list-item-title>
-              <v-layout align-center align-content-center nowrap>
-                <v-flex class="c-gscan-workflow-name">{{ workflow.name }}</v-flex>
-                <v-flex shrink>
-                  <!-- task summary tooltips -->
-                  <span
-                    v-for="[state, tasks] in workflowsSummaries.get(workflow.name).entries()"
-                    :key="`${workflow.name}-summary-${state}`"
-                  >
-                    <v-tooltip color="black" top>
-                      <template v-slot:activator="{ on }">
-                        <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
-                        <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
-                        <v-btn
-                          v-on="on"
-                          class="mt-1 pa-0"
-                          min-width="0"
-                          min-height="0"
-                          style="font-size: 120%"
-                          :ripple="false"
-                          small
-                          dark
-                          text
-                        >
-                          <job :status="state" />
-                        </v-btn>
-                      </template>
-                      <!-- tooltip text -->
-                      <span>
-                        <span class="grey--text">Recent {{ state }} tasks:</span>
-                        <br/>
-                        <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
-                          {{ task }}<br v-if="index !== tasks.length -1" />
+          <template v-slot:node="scope">
+            <v-list-item
+              :to="workflowLink(scope.node)"
+              :class="getWorkflowClass(scope.node.node)"
+            >
+              <v-list-item-action v-if="scope.node.type === 'workflow'">
+                <v-icon>{{ getWorkflowIcon(scope.node.node.status) }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-title>
+                <v-layout align-center align-content-center wrap>
+                  <v-flex grow>{{ scope.node.node.name }}</v-flex>
+                  <v-flex shrink ml-4 v-if="scope.node.type === 'workflow'">
+                    <!-- task summary tooltips -->
+                    <span
+                      v-for="[state, tasks] in workflowsSummaries.get(scope.node.id).entries()"
+                      :key="`${scope.node.id}-summary-${state}`"
+                    >
+                      <v-tooltip color="black" top>
+                        <template v-slot:activator="{ on }">
+                          <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
+                          <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                          <v-btn
+                            v-on="on"
+                            class="mt-1 pa-0"
+                            min-width="0"
+                            min-height="0"
+                            style="font-size: 120%"
+                            :ripple="false"
+                            small
+                            dark
+                            text
+                          >
+                            <job :status="state" />
+                          </v-btn>
+                        </template>
+                        <!-- tooltip text -->
+                        <span>
+                          <span class="grey--text">Recent {{ state }} tasks:</span>
+                          <br/>
+                          <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
+                            {{ task }}<br v-if="index !== tasks.length -1" />
+                          </span>
                         </span>
-                        <span v-if="tasks.length > maximumTasksDisplayed" class="font-italic">And {{ tasks.length - maximumTasksDisplayed }} more</span>
-                      </span>
-                    </v-tooltip>
-                  </span>
-                </v-flex>
-              </v-layout>
-            </v-list-item-title>
+                      </v-tooltip>
+                    </span>
+                  </v-flex>
+                </v-layout>
+              </v-list-item-title>
           </v-list-item>
-        </div>
+          </template>
+        </tree>
       </div>
       <!-- when no workflows are returned in the GraphQL query -->
       <div v-else>
@@ -183,12 +174,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Job from '@/components/cylc/Job'
 import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 import { GSCAN_QUERY } from '@/graphql/queries'
 import WorkflowState from '@/model/WorkflowState.model'
-import TaskState from '@/model/TaskState.model'
 import { mdiFilter } from '@mdi/js'
+import Job from '@/components/cylc/Job'
+import Tree from '@/components/cylc/tree/Tree'
+import { createWorkflowNode } from '@/components/cylc/tree/index'
+import TaskState from '@/model/TaskState.model'
 
 const QUERIES = {
   root: GSCAN_QUERY
@@ -197,7 +190,8 @@ const QUERIES = {
 export default {
   name: 'GScan',
   components: {
-    job: Job
+    Job,
+    Tree
   },
   props: {
     /**
@@ -317,12 +311,13 @@ export default {
     sortedWorkflows () {
       return [...this.filteredWorkflows].sort((left, right) => {
         if (left.status !== right.status) {
-          if (left.status === WorkflowState.STOPPED.name) {
-            return 1
-          }
-          if (right.status === WorkflowState.STOPPED.name) {
+          if (left.status === WorkflowState.RUNNING.name) {
             return -1
           }
+          if (left.status === WorkflowState.HELD.name && right.status !== WorkflowState.RUNNING.name) {
+            return -1
+          }
+          return 1
         }
         return left.name
           .localeCompare(
@@ -330,6 +325,11 @@ export default {
             undefined,
             { numeric: true, sensitivity: 'base' })
       })
+        .map(workflow => {
+          const node = createWorkflowNode(workflow)
+          delete node.children
+          return node
+        })
     },
     /**
      * Compute summary information, where the key is the name of a workflow, the value is another map with the summary.
@@ -341,7 +341,7 @@ export default {
       // see cylc-uiserver PR#150
       if (this.workflows) {
         for (const workflow of this.workflows) {
-          workflowSummaries.set(workflow.name, getWorkflowSummary(workflow))
+          workflowSummaries.set(workflow.id, getWorkflowSummary(workflow))
         }
       }
       return workflowSummaries
@@ -436,9 +436,9 @@ export default {
       return wstatus.icon
     },
 
-    getWorkflowClass (status) {
+    getWorkflowClass (node) {
       return {
-        'c-workflow-stopped': status === WorkflowState.STOPPED.name
+        'c-workflow-stopped': node && node.status && node.status === WorkflowState.STOPPED.name
       }
     },
 
@@ -524,6 +524,13 @@ export default {
       items.forEach(item => {
         item.model = newValue
       })
+    },
+
+    workflowLink (node) {
+      if (node.type === 'workflow') {
+        return `/workflows/${ node.node.name }`
+      }
+      return ''
     }
   }
 }

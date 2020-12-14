@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-container>
     <v-row
+      v-if="filterable"
       class="mb-1"
     >
       <v-col
@@ -85,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-row>
     <!-- each workflow is a tree root -->
     <tree-item
-      v-for="workflow of sortedChildren('workflow', workflows)"
+      v-for="workflow of workflows"
       :key="workflow.id"
       :node="workflow"
       :hoverable="hoverable"
@@ -96,6 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-on:tree-item-collapsed="onTreeItemCollapsed"
       v-on:tree-item-clicked="onTreeItemClicked"
     >
+      <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
     </tree-item>
   </v-container>
 </template>
@@ -120,7 +122,11 @@ export default {
     },
     hoverable: Boolean,
     activable: Boolean,
-    multipleActive: Boolean
+    multipleActive: Boolean,
+    filterable: {
+      type: Boolean,
+      default: true
+    }
   },
   components: {
     Task,
