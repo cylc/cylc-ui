@@ -27,6 +27,7 @@ $cjob: ".c-job svg.job rect";
 
 .c-job {
     svg.job {
+        vertical-align: middle;
         /* scale the icon to the font-size */
         width: 1em;
         height: 1em;
