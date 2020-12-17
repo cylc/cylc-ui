@@ -139,7 +139,7 @@ import { treeitem } from '@/mixins/treeitem'
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
  * @type {number} integer
  */
-const NODE_DEPTH_OFFSET = 30
+const NODE_DEPTH_OFFSET = 1.5 // em
 
 export default {
   name: 'TreeItem',
@@ -253,7 +253,7 @@ export default {
     },
     getNodeStyle () {
       return {
-        'padding-left': `${this.node.type === 'job-details' ? 0 : this.depth * NODE_DEPTH_OFFSET}px`
+        'padding-left': `${this.node.type === 'job-details' ? 0 : this.depth * NODE_DEPTH_OFFSET}em`
       }
     },
     /**
@@ -265,9 +265,8 @@ export default {
      */
     getLeafTriangleStyle () {
       return {
-        // we add half the depth offset to compensate and move the arrow under the job icon, the another 2px
-        // just to center-align it
-        'margin-left': `${(this.depth * NODE_DEPTH_OFFSET) - 4 - (NODE_DEPTH_OFFSET / 2)}px`
+        // subtract half of the width of the job component
+        'margin-left': `${(this.depth * NODE_DEPTH_OFFSET) - 0.5}em`
       }
     },
     getNodeClass () {
