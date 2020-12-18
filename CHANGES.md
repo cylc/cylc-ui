@@ -16,6 +16,10 @@ None or N/A.
 
 ### Enhancements
 
+[#560](https://github.com/cylc/cylc-ui/pull/560) - Make job-details a node
+in the tree, expand/collapse control, align tree-leaf-triangle. Also align
+job icons vertically in the middle of the HTML element.
+
 [#504](https://github.com/cylc/cylc-ui/pull/504) - Add mutations to the tree
 view to allow interacting with tasks, families and cycles.
 

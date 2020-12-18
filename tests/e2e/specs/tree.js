@@ -68,6 +68,7 @@ describe('Tree component', () => {
     // but clicking on a visible job should display its leaf node
     cy
       .get('.node-data-job:first')
+      .prev()
       .click()
     cy
       .get('.leaf:first')

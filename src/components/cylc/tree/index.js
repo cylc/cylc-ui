@@ -127,6 +127,46 @@ function createTaskProxyNode (taskProxy) {
   }
 }
 
+function createJobDetailsNode (job) {
+  const details = [
+    {
+      title: 'host id',
+      value: job.host
+    },
+    {
+      title: 'job id',
+      value: job.batchSysJobId
+    },
+    {
+      title: 'batch sys',
+      value: job.batchSysName
+    },
+    {
+      title: 'submit time',
+      value: job.submittedTime
+    },
+    {
+      title: 'start time',
+      value: job.startedTime
+    },
+    {
+      title: 'finish time',
+      value: job.finishedTime
+    },
+    {
+      title: 'latest message',
+      property: job.latestMessage
+    }
+  ]
+  return {
+    id: `${job.id}-details`,
+    type: 'job-details',
+    node: {
+      details
+    }
+  }
+}
+
 /**
  * Create a job node. Contains the same properties (by reference) as the given job,
  * only adding new properties such as type, name, etc.
@@ -134,16 +174,19 @@ function createTaskProxyNode (taskProxy) {
  * @param job {Object} job
  * @param [latestMessage] {string} latest message of the job's task, defaults to an empty string
  * @return {{node: Object, latestMessage: string}}
- * @return {{id: string, type: string, node: Object, latestMessage: string}}
+ * @return {{id: string, type: string, expanded: boolean, latestMessage: string, node: Object, children: []}}
  */
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
 // TODO: add job-leaf (details) in the hierarchy later for infinite-tree
 function createJobNode (job, latestMessage = '') {
+  const jobDetailsNode = createJobDetailsNode(job)
   return {
     id: job.id,
     type: 'job',
+    expanded: false,
     node: job,
-    latestMessage: latestMessage
+    latestMessage: latestMessage,
+    children: [jobDetailsNode]
   }
 }
 

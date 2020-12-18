@@ -73,16 +73,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot name="job" v-else-if="node.type === 'job'">
-        <div :class="getNodeDataClass()">
-          <div :class="getNodeDataClass()" @click="jobNodeClicked">
-            <job
-              v-cylc-object="node.node.id"
-              :status="node.node.state"
-            />
-            <span class="mx-1">#{{ node.node.submitNum }}</span>
-            <span class="grey--text">{{ node.node.host }}</span>
+        <div :class="getNodeDataClass()" @click="nodeClicked">
+          <job
+            v-cylc-object="node.node.id"
+            :status="node.node.state"
+          />
+          <span class="mx-1">#{{ node.node.submitNum }}</span>
+          <span class="grey--text">{{ node.node.host }}</span>
+        </div>
+      </slot>
+      <slot name="job-details" v-else-if="node.type === 'job-details'">
+        <div class="leaf">
+          <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
+          <div class="leaf-data font-weight-light py-4 pl-2">
+            <div
+              v-for="(jobDetail, index) in node.node.details"
+              :key="`${node.node.id}-job-detail-${index}`"
+              class="leaf-entry"
+            >
+              <span class="px-4 leaf-entry-title">{{ jobDetail.title }}</span>
+              <span class="grey--text leaf-entry-value">{{ jobDetail.value }}</span>
+            </div>
           </div>
-          <!-- leaf node -->
         </div>
       </slot>
       <slot
@@ -96,32 +108,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </slot>
       <slot></slot>
     </div>
-    <slot name="leaf" v-if="displayLeaf && node.type === 'job'">
-      <div class="leaf">
-        <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
-        <div class="leaf-data font-weight-light py-4 pl-2">
-          <div v-for="leafProperty in leafProperties" :key="leafProperty.id" class="leaf-entry">
-            <span class="px-4 leaf-entry-title">{{ leafProperty.title }}</span>
-            <span class="grey--text leaf-entry-value">{{ node.node[leafProperty.property] }}</span>
-          </div>
-        </div>
-      </div>
-    </slot>
     <span v-show="isExpanded">
       <!-- component recursion -->
       <TreeItem
-          v-for="child in sortedChildren(node.type, node.children)"
-          ref="treeitem"
-          :key="child.id"
-          :node="child"
-          :depth="depth + 1"
-          :hoverable="hoverable"
-          :initialExpanded="initialExpanded"
-          v-on:tree-item-created="$listeners['tree-item-created']"
-          v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
-          v-on:tree-item-expanded="$listeners['tree-item-expanded']"
-          v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
-          v-on:tree-item-clicked="$listeners['tree-item-clicked']"
+        v-for="child in sortedChildren(node.type, node.children)"
+        ref="treeitem"
+        :key="child.id"
+        :node="child"
+        :depth="depth + 1"
+        :hoverable="hoverable"
+        :initialExpanded="initialExpanded"
+        v-on:tree-item-created="$listeners['tree-item-created']"
+        v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
+        v-on:tree-item-expanded="$listeners['tree-item-expanded']"
+        v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
+        v-on:tree-item-clicked="$listeners['tree-item-clicked']"
       >
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
       </TreeItem>
@@ -138,7 +139,7 @@ import { treeitem } from '@/mixins/treeitem'
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
  * @type {number} integer
  */
-const NODE_DEPTH_OFFSET = 30
+const NODE_DEPTH_OFFSET = 1.5 // em
 
 export default {
   name: 'TreeItem',
@@ -199,7 +200,6 @@ export default {
           property: 'latestMessage'
         }
       ],
-      displayLeaf: false,
       filtered: true
     }
   },
@@ -251,16 +251,9 @@ export default {
     nodeClicked (e) {
       this.$emit('tree-item-clicked', this)
     },
-    /**
-     * Handler for when a job node was clicked.
-     * @param {event} e event
-     */
-    jobNodeClicked (e) {
-      this.displayLeaf = !this.displayLeaf
-    },
     getNodeStyle () {
       return {
-        'padding-left': `${this.depth * NODE_DEPTH_OFFSET}px`
+        'padding-left': `${this.node.type === 'job-details' ? 0 : this.depth * NODE_DEPTH_OFFSET}em`
       }
     },
     /**
@@ -272,9 +265,8 @@ export default {
      */
     getLeafTriangleStyle () {
       return {
-        // we add half the depth offset to compensate and move the arrow under the job icon, the another 2px
-        // just to center-align it
-        'margin-left': `${(NODE_DEPTH_OFFSET / 2) + 2 + (this.depth * NODE_DEPTH_OFFSET)}px`
+        // subtract half of the width of the job component
+        'margin-left': `${(this.depth * NODE_DEPTH_OFFSET) - 0.5}em`
       }
     },
     getNodeClass () {
