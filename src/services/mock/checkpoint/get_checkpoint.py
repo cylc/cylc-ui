@@ -88,8 +88,8 @@ fragment JobData on Job {
   firstParent: taskProxy {
     id
   }
-  batchSysName
-  batchSysJobId
+  jobRunnerName
+  jobId
   host
   startedTime
   submittedTime

@@ -177,11 +177,11 @@ export default {
         },
         {
           title: 'job id',
-          property: 'batchSysJobId'
+          property: 'jobId'
         },
         {
           title: 'batch sys',
-          property: 'batchSysName'
+          property: 'jobRunnerName'
         },
         {
           title: 'submit time',

@@ -153,8 +153,8 @@ fragment JobData on Job {
   firstParent: taskProxy {
     id
   }
-  batchSysName
-  batchSysJobId
+  jobRunnerName
+  jobId
   host
   startedTime
   submittedTime
@@ -206,8 +206,8 @@ subscription {
       }
       jobs(sort: { keys: ["submit_num"], reverse:true }) {
         id
-        batchSysName
-        batchSysJobId
+        jobRunnerName
+        jobId
         host
         startedTime
         submittedTime
