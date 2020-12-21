@@ -38,8 +38,8 @@ const simpleWorkflowGscanNodes = [
         jobs: [
           {
             id: 'user|five|20130829T0000Z|foo|1',
-            batchSysName: 'background',
-            batchSysJobId: '22604',
+            jobRunnerName: 'background',
+            jobId: '22604',
             host: 'localhost',
             startedTime: '2019-11-05T02:55:49Z',
             submittedTime: '2019-11-05T02:55:47Z',
@@ -62,8 +62,8 @@ const simpleWorkflowGscanNodes = [
         jobs: [
           {
             id: 'user|five|20130829T0000Z|bar|1',
-            batchSysName: 'background',
-            batchSysJobId: '25886',
+            jobRunnerName: 'background',
+            jobId: '25886',
             host: 'localhost',
             startedTime: '2019-11-05T02:56:55Z',
             submittedTime: '2019-11-05T02:56:53Z',
@@ -86,8 +86,8 @@ const simpleWorkflowGscanNodes = [
         jobs: [
           {
             id: 'user|five|20130829T1200Z|foo|1',
-            batchSysName: 'background',
-            batchSysJobId: '25887',
+            jobRunnerName: 'background',
+            jobId: '25887',
             host: 'localhost',
             startedTime: '2019-11-05T02:56:55Z',
             submittedTime: '2019-11-05T02:56:53Z',
@@ -110,8 +110,8 @@ const simpleWorkflowGscanNodes = [
         jobs: [
           {
             id: 'user|five|20130829T1200Z|bar|1',
-            batchSysName: 'background',
-            batchSysJobId: '29059',
+            jobRunnerName: 'background',
+            jobId: '29059',
             host: 'localhost',
             startedTime: '2019-11-05T02:58:00Z',
             submittedTime: '2019-11-05T02:57:58Z',
@@ -134,8 +134,8 @@ const simpleWorkflowGscanNodes = [
         jobs: [
           {
             id: 'user|five|20130830T0000Z|foo|1',
-            batchSysName: 'background',
-            batchSysJobId: '29061',
+            jobRunnerName: 'background',
+            jobId: '29061',
             host: 'localhost',
             startedTime: '2019-11-05T02:58:00Z',
             submittedTime: '2019-11-05T02:57:58Z',

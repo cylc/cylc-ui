@@ -135,11 +135,11 @@ function createJobDetailsNode (job) {
     },
     {
       title: 'job id',
-      value: job.batchSysJobId
+      value: job.jobId
     },
     {
       title: 'batch sys',
-      value: job.batchSysName
+      value: job.jobRunnerName
     },
     {
       title: 'submit time',

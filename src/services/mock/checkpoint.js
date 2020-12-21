@@ -49,8 +49,8 @@ const checkpoint = {
                             "firstParent": {
                                 "id": "user|one|20000102T0000Z|checkpoint"
                             },
-                            "batchSysName": "background",
-                            "batchSysJobId": "61924",
+                            "jobRunnerName": "background",
+                            "jobId": "61924",
                             "host": "localhost",
                             "startedTime": "2020-11-08T22:57:36Z",
                             "submittedTime": "2020-11-08T22:57:35Z",
@@ -83,8 +83,8 @@ const checkpoint = {
                             "firstParent": {
                                 "id": "user|one|20000102T0000Z|eventually_succeeded"
                             },
-                            "batchSysName": "background",
-                            "batchSysJobId": "61869",
+                            "jobRunnerName": "background",
+                            "jobId": "61869",
                             "host": "localhost",
                             "startedTime": "2020-11-08T22:57:29Z",
                             "submittedTime": "2020-11-08T22:57:28Z",
@@ -97,8 +97,8 @@ const checkpoint = {
                             "firstParent": {
                                 "id": "user|one|20000102T0000Z|eventually_succeeded"
                             },
-                            "batchSysName": "background",
-                            "batchSysJobId": "61842",
+                            "jobRunnerName": "background",
+                            "jobId": "61842",
                             "host": "localhost",
                             "startedTime": "2020-11-08T22:57:24Z",
                             "submittedTime": "2020-11-08T22:57:24Z",
@@ -111,8 +111,8 @@ const checkpoint = {
                             "firstParent": {
                                 "id": "user|one|20000102T0000Z|eventually_succeeded"
                             },
-                            "batchSysName": "background",
-                            "batchSysJobId": "61815",
+                            "jobRunnerName": "background",
+                            "jobId": "61815",
                             "host": "localhost",
                             "startedTime": "2020-11-08T22:57:20Z",
                             "submittedTime": "2020-11-08T22:57:19Z",
@@ -125,8 +125,8 @@ const checkpoint = {
                             "firstParent": {
                                 "id": "user|one|20000102T0000Z|eventually_succeeded"
                             },
-                            "batchSysName": "background",
-                            "batchSysJobId": "61736",
+                            "jobRunnerName": "background",
+                            "jobId": "61736",
                             "host": "localhost",
                             "startedTime": "2020-11-08T22:57:15Z",
                             "submittedTime": "2020-11-08T22:57:15Z",
@@ -159,8 +159,8 @@ const checkpoint = {
                             "firstParent": {
                                 "id": "user|one|20000102T0000Z|failed"
                             },
-                            "batchSysName": "background",
-                            "batchSysJobId": "61897",
+                            "jobRunnerName": "background",
+                            "jobId": "61897",
                             "host": "localhost",
                             "startedTime": "2020-11-08T22:57:32Z",
                             "submittedTime": "2020-11-08T22:57:32Z",
@@ -193,8 +193,8 @@ const checkpoint = {
                             "firstParent": {
                                 "id": "user|one|20000102T0000Z|retrying"
                             },
-                            "batchSysName": "background",
-                            "batchSysJobId": "61737",
+                            "jobRunnerName": "background",
+                            "jobId": "61737",
                             "host": "localhost",
                             "startedTime": "2020-11-08T22:57:15Z",
                             "submittedTime": "2020-11-08T22:57:15Z",
@@ -246,8 +246,8 @@ const checkpoint = {
                             "firstParent": {
                                 "id": "user|one|20000102T0000Z|succeeded"
                             },
-                            "batchSysName": "background",
-                            "batchSysJobId": "61739",
+                            "jobRunnerName": "background",
+                            "jobId": "61739",
                             "host": "localhost",
                             "startedTime": "2020-11-08T22:57:15Z",
                             "submittedTime": "2020-11-08T22:57:15Z",
