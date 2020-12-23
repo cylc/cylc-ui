@@ -31,10 +31,6 @@ function getWorkflowSummary (workflow) {
       // a task in waiting, may not have any jobs
       if (taskProxy.jobs) {
         for (const job of taskProxy.jobs) {
-          // TODO: temporary fix, as the backend is sending ready jobs, but they will change in cylc flow&uiserver in the future
-          if (job.state === 'ready') {
-            continue
-          }
           if (!states.has(job.state)) {
             states.set(job.state, new Set())
           }
