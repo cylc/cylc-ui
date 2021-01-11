@@ -129,8 +129,7 @@
       @include clockface();
     }
 
-    &.ready, &.preparing {
-      /* TODO: by cylc 8.0.0 - remove ready state */
+    &.preparing {
       @include outline();
       @include dot();
     }

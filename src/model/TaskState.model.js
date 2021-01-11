@@ -28,7 +28,7 @@ class TaskState extends Enumify {
   static EXPIRED = new TaskState('expired')
   static RUNNING = new TaskState('running')
   static SUBMITTED = new TaskState('submitted')
-  static READY = new TaskState('ready')
+  static PREPARING = new TaskState('preparing')
   static QUEUED = new TaskState('queued')
   static WAITING = new TaskState('waiting')
   static HELD = new TaskState('held')

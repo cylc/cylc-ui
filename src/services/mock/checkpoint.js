@@ -12,7 +12,7 @@ const checkpoint = {
                 "waiting": 1,
                 "queued": 0,
                 "expired": 0,
-                "ready": 0,
+                "preparing": 0,
                 "submit-failed": 0,
                 "submitted": 3,
                 "running": 1,
