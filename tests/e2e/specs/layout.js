@@ -21,7 +21,7 @@ describe('Default layout', () => {
     cy.visit('/#/workflows/one')
     cy
       .get('.v-alert')
-      .should('not.be.visible')
+      .should('not.exist')
     cy.window().its('app.$workflowService').then(service => {
       // mock service so that it returns an error
       cy.stub(service, 'subscribe', () => {
