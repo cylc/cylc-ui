@@ -20,12 +20,12 @@ describe('Toolbar component', () => {
     cy.visit('/#/workflows/one')
     cy
       .get('#core-app-bar')
-      .should('be.visible')
+      .should('exist')
   })
   it('Is NOT displayed when looking at the dashboard', () => {
     cy.visit('/#/')
     cy
       .get('#core-app-bar')
-      .should('not.be.visible')
+      .should('not.exist')
   })
 })
