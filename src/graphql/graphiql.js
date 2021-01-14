@@ -18,7 +18,7 @@
 // Code related to GraphiQL
 
 import { parse } from 'graphql'
-import { createGraphQLUrls } from '@/utils/graphql'
+import { createGraphQLUrls } from '@/graphql'
 
 // TODO: https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher/issues/16
 //       the functions hasSubscriptionOperation and graphQLFetcher are both from
