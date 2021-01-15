@@ -389,4 +389,42 @@ describe('GScan component', () => {
       expect(link).to.equal('/workflows/name')
     })
   })
+  describe('Toggle items values', () => {
+    it('should toggle items values to true', () => {
+      const items = [
+        {
+          model: false
+        },
+        {
+          model: false
+        }
+      ]
+      GScan.methods.toggleItemsValues(items)
+      expect(items.every(item => item.model))
+    })
+    it('should toggle items values to false', () => {
+      const items = [
+        {
+          model: true
+        },
+        {
+          model: true
+        }
+      ]
+      GScan.methods.toggleItemsValues(items)
+      expect(!items.every(item => item.model))
+    })
+    it('should toggle items values to false (mixed values)', () => {
+      const items = [
+        {
+          model: true
+        },
+        {
+          model: false
+        }
+      ]
+      GScan.methods.toggleItemsValues(items)
+      expect(!items.every(item => item.model))
+    })
+  })
 })
