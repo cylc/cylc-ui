@@ -31,7 +31,10 @@ const localVue = createLocalVue()
 localVue.prototype.$workflowService = {
   register: function () {
   },
-  unregister: function () {
+  unregister: function (obj) {
+    // we will reset the subscriptions object so tests can confirm
+    // this function has been called
+    obj.subscriptions = {}
   },
   subscribe: function (obj, name) {
     return true
@@ -98,6 +101,16 @@ describe('GScan component', () => {
     expect(wrapper.vm.isLoading).to.equal(false)
     wrapper.vm.setActive(false)
     expect(wrapper.vm.isLoading).to.equal(true)
+  })
+  it('should unregister before being destroyed', () => {
+    const wrapper = mountFunction({
+      propsData: {
+        workflows: []
+      }
+    })
+    expect(wrapper.vm.subscriptions.root).to.equal(true)
+    wrapper.vm.$destroy()
+    expect(wrapper.vm.subscriptions.root).to.equal(undefined)
   })
   describe('Sorting', () => {
     it('should display workflows in alphabetical order', () => {
