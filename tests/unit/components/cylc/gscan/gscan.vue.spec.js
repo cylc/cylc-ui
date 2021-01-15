@@ -373,6 +373,12 @@ describe('GScan component', () => {
       expect(summaries.get('user|five').get('succeeded')[1]).to.equal('foo.20130829T0000Z')
       expect(summaries.get('user|five').get('succeeded')[2]).to.equal('foo.20130829T1200Z')
     })
+    it('should return an empty map when no workflow provided', () => {
+      expect(GScan.computed.workflowsSummaries.call({
+        workflows: []
+      }).size).to.equal(0)
+      expect(GScan.computed.workflowsSummaries.call({}).size).to.equal(0)
+    })
   })
   describe('Workflow link', () => {
     it('should create an empty link for non-workflow nodes', () => {
