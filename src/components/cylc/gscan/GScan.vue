@@ -418,6 +418,7 @@ export default {
         this.$workflowService.unsubscribe(
           this.subscriptions[queryName]
         )
+        delete this.subscriptions[queryName]
       }
     },
 

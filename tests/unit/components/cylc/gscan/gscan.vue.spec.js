@@ -33,7 +33,10 @@ localVue.prototype.$workflowService = {
   },
   unregister: function () {
   },
-  subscribe: function () {
+  subscribe: function (obj, name) {
+    return true
+  },
+  unsubscribe: function () {
   }
 }
 
@@ -80,6 +83,21 @@ describe('GScan component', () => {
     expect(wrapper.props().workflows[0].name).to.equal('five')
     expect(wrapper.find('div')).to.not.equal(null)
     expect(wrapper.html()).to.contain('five')
+  })
+  it('should set loading state', () => {
+    const wrapper = mountFunction({
+      propsData: {
+        workflows: simpleWorkflowGscanNodes
+      },
+      data () {
+        return {
+          isLoading: false
+        }
+      }
+    })
+    expect(wrapper.vm.isLoading).to.equal(false)
+    wrapper.vm.setActive(false)
+    expect(wrapper.vm.isLoading).to.equal(true)
   })
   describe('Sorting', () => {
     it('should display workflows in alphabetical order', () => {
@@ -441,6 +459,60 @@ describe('GScan component', () => {
       ]
       GScan.methods.toggleItemsValues(items)
       expect(!items.every(item => item.model))
+    })
+  })
+  describe('GraphQL subscription', () => {
+    describe('Subscribe', () => {
+      it('should subscribe a new query', () => {
+        const wrapper = mountFunction({
+          propsData: {
+            workflows: []
+          }
+        })
+        // the root query is registered on creation; we also cannot use another query
+        // as the query must exist in the QUERIES global variable...
+        delete wrapper.vm.subscriptions.root
+        expect(wrapper.vm.subscriptions.root).to.equal(undefined)
+        wrapper.vm.subscribe('root')
+        // true because our mocked service returns true; see implementation at the top of this file
+        expect(wrapper.vm.subscriptions.root).to.equal(true)
+      })
+      it('should subscribe a new query once', () => {
+        const wrapper = mountFunction({
+          propsData: {
+            workflows: []
+          }
+        })
+        // force-define the value here
+        wrapper.vm.subscriptions.root = false
+        // normally subscribe would store the result of the $workflowService.subscribe, but it won't
+        // as we have already force-defined it in the line above
+        wrapper.vm.subscribe('root')
+        // true because our mocked service returns true; see implementation at the top of this file
+        expect(wrapper.vm.subscriptions.root).to.equal(false)
+      })
+    })
+    describe('Unsubscribe', () => {
+      it('should unsubscribe an existing query', () => {
+        const wrapper = mountFunction({
+          propsData: {
+            workflows: []
+          }
+        })
+        const queryName = 'root'
+        // let's unsubscribe the root query, subscribed on creation (created method)
+        wrapper.vm.unsubscribe(queryName)
+        expect(wrapper.vm.subscriptions.root).to.equal(undefined)
+      })
+      it('should do nothing if the query was not subscribed', () => {
+        const wrapper = mountFunction({
+          propsData: {
+            workflows: []
+          }
+        })
+        wrapper.vm.unsubscribe('cylc')
+        expect(wrapper.vm.subscriptions.root).to.equal(true)
+      })
     })
   })
 })
