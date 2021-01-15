@@ -183,34 +183,7 @@ describe('GScan component', () => {
       expect(workflowsElements.at(4).element.textContent).to.equal('d')
     })
   })
-  describe('Workflow Summary', () => {
-    let localThis
-    beforeEach(() => {
-      localThis = {
-        workflows: simpleWorkflowGscanNodes
-      }
-    })
-    it('should correctly calculate the workflow summary', () => {
-      const summaries = GScan.computed.workflowsSummaries.call(localThis)
-      expect(summaries.size).to.equal(1)
-      expect(summaries.has('user|five')).to.equal(true)
-      expect(summaries.get('user|five').has('succeeded')).to.equal(true)
-      expect(summaries.get('user|five').get('succeeded').includes('foo.20130829T0000Z')).to.equal(true)
-      expect(summaries.get('user|five').get('succeeded').includes('bar.20130829T0000Z')).to.equal(true)
-      expect(summaries.get('user|five').get('succeeded').includes('foo.20130829T1200Z')).to.equal(true)
-      expect(summaries.get('user|five').has('running')).to.equal(true)
-      expect(summaries.get('user|five').get('running').includes('bar.20130829T1200Z')).to.equal(true)
-      expect(summaries.get('user|five').get('running').includes('foo.20130830T0000Z')).to.equal(true)
-    })
-    it('should return elements in alphabetical order', () => {
-      const summaries = GScan.computed.workflowsSummaries.call(localThis)
-      expect(summaries.get('user|five').get('succeeded').length).to.equal(3)
-      expect(summaries.get('user|five').get('succeeded')[0]).to.equal('bar.20130829T0000Z')
-      expect(summaries.get('user|five').get('succeeded')[1]).to.equal('foo.20130829T0000Z')
-      expect(summaries.get('user|five').get('succeeded')[2]).to.equal('foo.20130829T1200Z')
-    })
-  })
-  describe('filter gscan', () => {
+  describe('Filters', () => {
     const workflows = [
       {
         id: '1',
@@ -374,6 +347,33 @@ describe('GScan component', () => {
       })
     })
   })
+  describe('Workflow summary', () => {
+    let localThis
+    beforeEach(() => {
+      localThis = {
+        workflows: simpleWorkflowGscanNodes
+      }
+    })
+    it('should correctly calculate the workflow summary', () => {
+      const summaries = GScan.computed.workflowsSummaries.call(localThis)
+      expect(summaries.size).to.equal(1)
+      expect(summaries.has('user|five')).to.equal(true)
+      expect(summaries.get('user|five').has('succeeded')).to.equal(true)
+      expect(summaries.get('user|five').get('succeeded').includes('foo.20130829T0000Z')).to.equal(true)
+      expect(summaries.get('user|five').get('succeeded').includes('bar.20130829T0000Z')).to.equal(true)
+      expect(summaries.get('user|five').get('succeeded').includes('foo.20130829T1200Z')).to.equal(true)
+      expect(summaries.get('user|five').has('running')).to.equal(true)
+      expect(summaries.get('user|five').get('running').includes('bar.20130829T1200Z')).to.equal(true)
+      expect(summaries.get('user|five').get('running').includes('foo.20130830T0000Z')).to.equal(true)
+    })
+    it('should return elements in alphabetical order', () => {
+      const summaries = GScan.computed.workflowsSummaries.call(localThis)
+      expect(summaries.get('user|five').get('succeeded').length).to.equal(3)
+      expect(summaries.get('user|five').get('succeeded')[0]).to.equal('bar.20130829T0000Z')
+      expect(summaries.get('user|five').get('succeeded')[1]).to.equal('foo.20130829T0000Z')
+      expect(summaries.get('user|five').get('succeeded')[2]).to.equal('foo.20130829T1200Z')
+    })
+  })
   describe('Workflow link', () => {
     it('should create an empty link for non-workflow nodes', () => {
       const link = GScan.methods.workflowLink({})
@@ -387,6 +387,16 @@ describe('GScan component', () => {
         }
       })
       expect(link).to.equal('/workflows/name')
+    })
+  })
+  describe('Workflow icon', () => {
+    it('should return error if an invalid status is provided', () => {
+      const icon = GScan.methods.getWorkflowIcon('cylc')
+      expect(icon).to.equal(WorkflowState.ERROR.icon)
+    })
+    it('should return the right icon for a valid status', () => {
+      const icon = GScan.methods.getWorkflowIcon('running')
+      expect(icon).to.equal(WorkflowState.RUNNING.icon)
     })
   })
   describe('Toggle items values', () => {
