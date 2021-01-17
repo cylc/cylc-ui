@@ -233,7 +233,34 @@ describe('GScan component', () => {
         }
       }
     ]
-    it('should not filter by name, nor by tasks state, but should include all workflow states', () => {
+    const initialWorkflowStates = WorkflowState.enumValues.map(state => {
+      return {
+        text: state.name,
+        value: state,
+        model: true
+      }
+    })
+    const initialWorkflowTaskStates = TaskState.enumValues.map(state => {
+      return {
+        text: state.name,
+        value: state,
+        model: false
+      }
+    })
+    // utility function to create the list of filters, used by tests below
+    const createStatesFilters = (workflowStates, workflowTaskStates) => {
+      return [
+        {
+          title: 'workflow state',
+          items: workflowStates
+        },
+        {
+          title: 'task state',
+          items: workflowTaskStates
+        }
+      ]
+    }
+    it('should have a default state of no name filter, and all states enabled', () => {
       const wrapper = mountFunction({
         propsData: {
           workflows
@@ -254,127 +281,136 @@ describe('GScan component', () => {
       // we will have the two items being displayed too
       expect(wrapper.vm.filteredWorkflows.length).to.equal(2)
     })
-    describe('filter by name', () => {
+    it('should not filter by name, nor by tasks state by default, but should include all workflow states', () => {
+      const wrapper = mountFunction({
+        propsData: {
+          workflows
+        }
+      })
+      wrapper.vm.filterWorkflows(
+        wrapper.vm.workflows,
+        wrapper.vm.searchWorkflows,
+        wrapper.vm.filters
+      )
+      // we will have the two items being displayed too
+      expect(wrapper.vm.filteredWorkflows.length).to.equal(2)
+    })
+    describe('Filter by workflow name', () => {
       it('should filter by name', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows
+        const tests = [
+          {
+            searchWorkflow: '',
+            expected: 2
           },
-          data () {
-            return {
-              searchWorkflows: 'new'
-            }
+          {
+            searchWorkflow: 'new',
+            expected: 1
+          },
+          {
+            searchWorkflow: 'land',
+            expected: 2
+          },
+          {
+            searchWorkflow: 'dog',
+            expected: 0
           }
+        ]
+        tests.forEach(test => {
+          const wrapper = mountFunction({
+            propsData: {
+              workflows
+            }
+          })
+          expect(wrapper.vm.filteredWorkflows.length).to.equal(2)
+          wrapper.vm.filterWorkflows(wrapper.vm.workflows, test.searchWorkflow, wrapper.vm.filters)
+          expect(wrapper.vm.filteredWorkflows.length).to.equal(test.expected)
         })
-        expect(wrapper.vm.searchWorkflows).to.equal('new')
-        expect(wrapper.vm.filteredWorkflows.length).to.equal(1)
       })
     })
-    describe('filter by workflow state', () => {
+    describe('Filter by workflow state', () => {
       it('should filter by workflow state', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows
+        const tests = [
+          // all states enabled
+          {
+            workflowStates: WorkflowState.enumValues,
+            expected: 2
           },
-          data () {
-            return {
-              searchWorkflows: '',
-              filters: [
-                {
-                  title: 'workflow state',
-                  items: [
-                    {
-                      text: 'running',
-                      value: 'running',
-                      model: true
-                    },
-                    {
-                      text: 'held',
-                      value: 'held',
-                      model: false // remove held workflows!
-                    },
-                    {
-                      text: 'stopped',
-                      value: 'stopped',
-                      model: true
-                    }
-                  ]
-                },
-                {
-                  title: 'task state',
-                  items: TaskState.enumValues.map(state => {
-                    return {
-                      text: state.name.toLowerCase(),
-                      value: state,
-                      model: false
-                    }
-                  })
-                }
-              ]
-            }
+          // enable only the ones we have in our test data set
+          {
+            workflowStates: [WorkflowState.RUNNING, WorkflowState.HELD],
+            expected: 2
+          },
+          // enable just one of the values we have in our test data set
+          {
+            workflowStates: [WorkflowState.RUNNING],
+            expected: 1
+          },
+          // leave the ones we have in our test data set un-checked
+          {
+            workflowStates: [],
+            expected: 0
           }
+        ]
+        tests.forEach(test => {
+          const workflowStates = initialWorkflowStates
+            .map(state => {
+              if (test.workflowStates.includes(state.value)) {
+                return Object.assign({}, state, { model: true })
+              }
+              return Object.assign({}, state, { model: false })
+            })
+          const wrapper = mountFunction({
+            propsData: {
+              workflows
+            }
+          })
+          const filters = createStatesFilters(workflowStates, initialWorkflowTaskStates)
+          wrapper.vm.filterWorkflows(wrapper.vm.workflows, '', filters)
+          expect(wrapper.vm.filteredWorkflows.length).to.equal(test.expected)
         })
-        // here we only have 1 workflow, as the HELD state is not included (see above)
-        expect(wrapper.vm.filteredWorkflows.length).to.equal(1)
       })
     })
-    describe('filter by workflow tasks state', () => {
+    describe('Filter by workflow tasks state', () => {
       it('should filter by workflow tasks state', () => {
-        // `simpleWorkflowGscanNodes` has no tasks in the EXPIRED state, so
-        // enabling that filter should filter-out the workflow
-        const taskStatesFilter = TaskState.enumValues.map(state => {
-          return {
-            text: state.name.toLowerCase(),
-            value: state,
-            model: false
-          }
-        }).map(taskState => {
-          if (taskState.text === TaskState.EXPIRED.name) {
-            return Object.assign(taskState, {
-              model: true
-            })
-          }
-          return taskState
-        })
-        // NOTE: we are using `simpleWorkflowGscanNodes` in this test as it contains tasks/proxies
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowGscanNodes
+        const tests = [
+          // all states enabled
+          {
+            workflowTaskStates: TaskState.enumValues,
+            expected: 2
           },
-          data () {
-            return {
-              filteredWorkflows: [],
-              searchWorkflows: '',
-              filters: [
-                {
-                  title: 'workflow state',
-                  items: [
-                    {
-                      text: 'running',
-                      value: 'running',
-                      model: true
-                    },
-                    {
-                      text: 'held',
-                      value: 'held',
-                      model: true
-                    },
-                    {
-                      text: 'stopped',
-                      value: 'stopped',
-                      model: true
-                    }
-                  ]
-                },
-                {
-                  title: 'task state',
-                  items: taskStatesFilter
-                }
-              ]
-            }
+          // enable only the ones we have in our test data set
+          {
+            workflowTaskStates: [TaskState.RUNNING, TaskState.HELD],
+            expected: 2
+          },
+          // enable just one of the values we have in our test data set
+          {
+            workflowTaskStates: [TaskState.RUNNING],
+            expected: 1
+          },
+          // un-checking means every task state enabled
+          {
+            workflowTaskStates: [],
+            expected: 2
           }
+        ]
+        tests.forEach(test => {
+          const workflowTaskStates = initialWorkflowTaskStates
+            .map(state => {
+              if (test.workflowTaskStates.includes(state.value)) {
+                return Object.assign({}, state, { model: true })
+              }
+              return Object.assign({}, state, { model: false })
+            })
+          const wrapper = mountFunction({
+            propsData: {
+              workflows
+            }
+          })
+          const filters = createStatesFilters(initialWorkflowStates, workflowTaskStates)
+          wrapper.vm.filterWorkflows(wrapper.vm.workflows, '', filters)
+          expect(wrapper.vm.filteredWorkflows.length).to.equal(test.expected)
         })
-        expect(wrapper.vm.filteredWorkflows.length).to.equal(0)
       })
     })
   })

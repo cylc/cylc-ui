@@ -263,29 +263,19 @@ export default {
       filters: [
         {
           title: 'workflow state',
-          items: [
-            {
-              text: 'running',
-              value: 'running',
-              model: true
-            },
-            {
-              text: 'held',
-              value: 'held',
-              model: true
-            },
-            {
-              text: 'stopped',
-              value: 'stopped',
+          items: WorkflowState.enumValues.map(state => {
+            return {
+              text: state.name,
+              value: state,
               model: true
             }
-          ]
+          })
         },
         {
           title: 'task state',
           items: TaskState.enumValues.map(state => {
             return {
-              text: state.name.toLowerCase(),
+              text: state.name,
               value: state,
               model: false
             }
@@ -475,12 +465,12 @@ export default {
       const workflowStates = filters[0]
         .items
         .filter(item => item.model)
-        .map(item => item.value)
+        .map(item => item.value.name)
       // get a list of the task states we are filtering
       const taskStates = new Set(filters[1]
         .items
         .filter(item => item.model)
-        .map(item => item.value.name.toLowerCase()))
+        .map(item => item.value.name))
       // filter workflows
       this.filteredWorkflows = this.filteredWorkflows.filter((workflow) => {
         // workflow states
