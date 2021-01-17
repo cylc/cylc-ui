@@ -16,7 +16,7 @@
  */
 
 import Vue from 'vue'
-import { createGraphQLUrls, createSubscriptionClient } from '@/utils/graphql'
+import { createGraphQLUrls, createSubscriptionClient } from '@/graphql'
 import SubscriptionWorkflowService from '@/services/workflow.service'
 import MockWorkflowService from '@/services/mock/workflow.service.mock'
 import UserService from '@/services/user.service'
