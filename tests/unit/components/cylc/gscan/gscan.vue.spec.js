@@ -113,105 +113,100 @@ describe('GScan component', () => {
     expect(wrapper.vm.subscriptions.root).to.equal(undefined)
   })
   describe('Sorting', () => {
-    it('should display workflows in alphabetical order', () => {
-      const wrapper = mountFunction({
-        propsData: {
-          workflows: [
-            { id: 'user|a', name: 'a', status: 'running' },
-            { id: 'user|e', name: 'e', status: 'running' },
-            { id: 'user|c', name: 'c', status: 'running' },
-            { id: 'user|b', name: 'b', status: 'running' },
-            { id: 'user|d', name: 'd', status: 'running' }
-          ]
-        },
-        data () {
-          return {
-            isLoading: false
-          }
+    const createWorkflows = (namesAndStatuses) => {
+      return namesAndStatuses.map(nameAndStatus => {
+        return {
+          id: `user|${nameAndStatus.name}`,
+          name: nameAndStatus.name,
+          status: nameAndStatus.status.name
         }
       })
-      const workflowsElements = wrapper.findAllComponents(TreeItem)
-      expect(workflowsElements.length).to.equal(5)
-      expect(workflowsElements.at(0).element.textContent).to.equal('a')
-      expect(workflowsElements.at(1).element.textContent).to.equal('b')
-      expect(workflowsElements.at(2).element.textContent).to.equal('c')
-      expect(workflowsElements.at(3).element.textContent).to.equal('d')
-      expect(workflowsElements.at(4).element.textContent).to.equal('e')
-    })
-    it('should display running workflows first, then held, then stopped', () => {
-      const wrapper = mountFunction({
-        propsData: {
-          workflows: [
-            { id: 'user|e', name: 'e', status: 'held' },
-            { id: 'user|a', name: 'a', status: 'running' },
-            { id: 'user|c', name: 'c', status: 'stopped' },
-            { id: 'user|b', name: 'b', status: 'stopped' },
-            { id: 'user|d', name: 'd', status: 'stopped' }
-          ]
+    }
+    it('should sort workflows', () => {
+      const tests = [
+        // already sorted by name
+        {
+          workflows: createWorkflows([
+            { name: 'a', status: WorkflowState.RUNNING },
+            { name: 'b', status: WorkflowState.RUNNING },
+            { name: 'c', status: WorkflowState.RUNNING },
+            { name: 'd', status: WorkflowState.RUNNING },
+            { name: 'e', status: WorkflowState.RUNNING }
+          ]),
+          expected: ['a', 'b', 'c', 'd', 'e']
         },
-        data () {
-          return {
-            isLoading: false
+        // already sorted by status
+        {
+          workflows: createWorkflows([
+            { name: 'a', status: WorkflowState.RUNNING },
+            { name: 'b', status: WorkflowState.RUNNING },
+            { name: 'c', status: WorkflowState.HELD },
+            { name: 'd', status: WorkflowState.HELD },
+            { name: 'e', status: WorkflowState.STOPPED }
+          ]),
+          expected: ['a', 'b', 'c', 'd', 'e']
+        },
+        // sort in alphabetical order
+        {
+          workflows: createWorkflows([
+            { name: 'a', status: WorkflowState.RUNNING },
+            { name: 'e', status: WorkflowState.RUNNING },
+            { name: 'c', status: WorkflowState.RUNNING },
+            { name: 'b', status: WorkflowState.RUNNING },
+            { name: 'd', status: WorkflowState.RUNNING }
+          ]),
+          expected: ['a', 'b', 'c', 'd', 'e']
+        },
+        // running workflows are displayed first, then held, then the rest...
+        {
+          workflows: createWorkflows([
+            { name: 'a', status: WorkflowState.RUNNING },
+            { name: 'e', status: WorkflowState.HELD },
+            { name: 'c', status: WorkflowState.STOPPED },
+            { name: 'b', status: WorkflowState.STOPPED },
+            { name: 'd', status: WorkflowState.STOPPED }
+          ]),
+          expected: ['a', 'e', 'b', 'c', 'd']
+        },
+        // sorted alphabetically within statuses
+        {
+          workflows: createWorkflows([
+            { name: 'e', status: WorkflowState.HELD },
+            { name: 'a', status: WorkflowState.HELD },
+            { name: 'c', status: WorkflowState.STOPPED },
+            { name: 'b', status: WorkflowState.RUNNING },
+            { name: 'd', status: WorkflowState.STOPPED }
+          ]),
+          expected: ['b', 'a', 'e', 'c', 'd']
+        },
+        {
+          workflows: createWorkflows([
+            { name: 'a', status: WorkflowState.HELD },
+            { name: 'c', status: WorkflowState.STOPPED },
+            { name: 'b', status: WorkflowState.RUNNING },
+            { name: 'd', status: WorkflowState.STOPPED },
+            { name: 'e', status: WorkflowState.HELD }
+          ]),
+          expected: ['b', 'a', 'e', 'c', 'd']
+        }
+      ]
+      tests.forEach(test => {
+        const wrapper = mountFunction({
+          propsData: {
+            workflows: test.workflows
+          },
+          data () {
+            return {
+              isLoading: false
+            }
           }
+        })
+        const workflowsElements = wrapper.findAllComponents(TreeItem)
+        expect(workflowsElements.length).to.equal(test.expected.length)
+        for (let i = 0; i < test.expected.length; i++) {
+          expect(test.expected[i]).to.equal(workflowsElements.at(i).element.textContent)
         }
       })
-      const workflowsElements = wrapper.findAllComponents(TreeItem)
-      expect(workflowsElements.length).to.equal(5)
-      expect(workflowsElements.at(0).element.textContent).to.equal('a')
-      expect(workflowsElements.at(1).element.textContent).to.equal('e')
-      expect(workflowsElements.at(2).element.textContent).to.equal('b')
-      expect(workflowsElements.at(3).element.textContent).to.equal('c')
-      expect(workflowsElements.at(4).element.textContent).to.equal('d')
-    })
-    it('should display alphabetically even with mixed statuses', () => {
-      const wrapper = mountFunction({
-        propsData: {
-          workflows: [
-            { id: 'user|e', name: 'e', status: 'held' },
-            { id: 'user|a', name: 'a', status: 'held' },
-            { id: 'user|c', name: 'c', status: 'stopped' },
-            { id: 'user|b', name: 'b', status: 'running' },
-            { id: 'user|d', name: 'd', status: 'stopped' }
-          ]
-        },
-        data () {
-          return {
-            isLoading: false
-          }
-        }
-      })
-      const workflowsElements = wrapper.findAllComponents(TreeItem)
-      expect(workflowsElements.length).to.equal(5)
-      expect(workflowsElements.at(0).element.textContent).to.equal('b')
-      expect(workflowsElements.at(1).element.textContent).to.equal('a')
-      expect(workflowsElements.at(2).element.textContent).to.equal('e')
-      expect(workflowsElements.at(3).element.textContent).to.equal('c')
-      expect(workflowsElements.at(4).element.textContent).to.equal('d')
-    })
-    it('should display alphabetically even with mixed statuses', () => {
-      const wrapper = mountFunction({
-        propsData: {
-          workflows: [
-            { id: 'user|a', name: 'a', status: 'held' },
-            { id: 'user|c', name: 'c', status: 'stopped' },
-            { id: 'user|b', name: 'b', status: 'running' },
-            { id: 'user|d', name: 'd', status: 'stopped' },
-            { id: 'user|e', name: 'e', status: 'held' }
-          ]
-        },
-        data () {
-          return {
-            isLoading: false
-          }
-        }
-      })
-      const workflowsElements = wrapper.findAllComponents(TreeItem)
-      expect(workflowsElements.length).to.equal(5)
-      expect(workflowsElements.at(0).element.textContent).to.equal('b')
-      expect(workflowsElements.at(1).element.textContent).to.equal('a')
-      expect(workflowsElements.at(2).element.textContent).to.equal('e')
-      expect(workflowsElements.at(3).element.textContent).to.equal('c')
-      expect(workflowsElements.at(4).element.textContent).to.equal('d')
     })
   })
   describe('Filters', () => {
