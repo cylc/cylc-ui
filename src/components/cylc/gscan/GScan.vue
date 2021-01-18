@@ -117,7 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :class="getWorkflowClass(scope.node.node)"
             >
               <v-list-item-action v-if="scope.node.type === 'workflow'">
-                <v-icon>{{ getWorkflowIcon(scope.node.node.status) }}</v-icon>
+                <workflow-icon :status="scope.node.node.status" />
               </v-list-item-action>
               <v-list-item-title>
                 <v-layout align-center align-content-center wrap>
@@ -180,8 +180,9 @@ import WorkflowState from '@/model/WorkflowState.model'
 import { mdiFilter } from '@mdi/js'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
-import { createWorkflowNode } from '@/components/cylc/tree/index'
+import { createWorkflowNode } from '@/components/cylc/tree/'
 import TaskState from '@/model/TaskState.model'
+import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
 
 const QUERIES = {
   root: GSCAN_QUERY
@@ -191,7 +192,8 @@ export default {
   name: 'GScan',
   components: {
     Job,
-    Tree
+    Tree,
+    WorkflowIcon
   },
   props: {
     /**
@@ -426,14 +428,6 @@ export default {
        * @param {bool} isActive - Are this views subs active.
        */
       this.isLoading = !isActive
-    },
-
-    getWorkflowIcon (status) {
-      let wstatus = WorkflowState.enumValueOf(status.toUpperCase())
-      if (!wstatus) {
-        wstatus = WorkflowState.ERROR
-      }
-      return wstatus.icon
     },
 
     getWorkflowClass (node) {
