@@ -188,6 +188,24 @@ describe('GScan component', () => {
             { name: 'e', status: WorkflowState.HELD }
           ]),
           expected: ['b', 'a', 'e', 'c', 'd']
+        },
+        // new statuses (stopping, error)
+        {
+          workflows: createWorkflows([
+            { name: 'a', status: WorkflowState.HELD },
+            { name: 'c', status: WorkflowState.STOPPED },
+            { name: 'b', status: WorkflowState.RUNNING },
+            { name: 'd', status: WorkflowState.STOPPED },
+            { name: 'e', status: WorkflowState.HELD },
+            { name: 'f', status: WorkflowState.HELD },
+            { name: 'h', status: WorkflowState.STOPPING },
+            { name: 'g', status: WorkflowState.ERROR },
+            { name: 'j', status: WorkflowState.STOPPING },
+            { name: 'i', status: WorkflowState.STOPPED },
+            { name: 'k', status: WorkflowState.RUNNING },
+            { name: 'l', status: WorkflowState.HELD }
+          ]),
+          expected: ['b', 'k', 'a', 'e', 'f', 'l', 'h', 'j', 'c', 'd', 'i', 'g']
         }
       ]
       tests.forEach(test => {

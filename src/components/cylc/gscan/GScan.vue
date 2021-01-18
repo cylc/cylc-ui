@@ -301,13 +301,9 @@ export default {
     sortedWorkflows () {
       return [...this.filteredWorkflows].sort((left, right) => {
         if (left.status !== right.status) {
-          if (left.status === WorkflowState.RUNNING.name) {
-            return -1
-          }
-          if (left.status === WorkflowState.HELD.name && right.status !== WorkflowState.RUNNING.name) {
-            return -1
-          }
-          return 1
+          const leftState = WorkflowState.enumValueOf(left.status.toUpperCase())
+          const rightState = WorkflowState.enumValueOf(right.status.toUpperCase())
+          return leftState.enumOrdinal - rightState.enumOrdinal
         }
         return left.name
           .localeCompare(
