@@ -32,6 +32,10 @@ export default {
       type: Boolean,
       require: true
     },
+    isQueued: {
+      type: Boolean,
+      require: true
+    },
     progress: {
       type: Number,
       required: false,
@@ -206,6 +210,57 @@ export default {
       ]
     )
     taskIconSvgChildren.push(isHeld)
+    // isQueued - the isQueued portion of the task state.
+    const isQueued = createElement(
+      'g',
+      {
+        attrs: {
+          id: 'queued',
+          transform: 'scale(0.45)'
+        }
+      },
+      [
+        createElement(
+          'circle',
+          {
+            attrs: {
+              cx: '50',
+              cy: '50',
+              r: '46',
+              'stroke-width': '8'
+            }
+          }
+        ),
+        createElement(
+          'rect',
+          {
+            attrs: {
+              x: 32.5,
+              y: 25,
+              width: '10',
+              height: '50',
+              rx: '5',
+              ry: '5'
+            }
+          }
+        ),
+        createElement(
+          'rect',
+          {
+            attrs: {
+              x: 52.5,
+              y: 25,
+              width: '10',
+              height: '50',
+              rx: '5',
+              ry: '5'
+            }
+          }
+        )
+      ]
+    )
+    taskIconSvgChildren.push(isQueued)
+
     // Warning icon.
     const warningIcon = createElement(
       'g',
@@ -330,6 +385,9 @@ export default {
     const taskIconSvgCssClasses = ['task']
     if (context.props.isHeld) {
       taskIconSvgCssClasses.push('held')
+    }
+    if (context.props.isQueued) {
+      taskIconSvgCssClasses.push('queued')
     }
     if (['waiting', 'preparing', 'expired', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(context.props.status)) {
       taskIconSvgCssClasses.push(context.props.status)

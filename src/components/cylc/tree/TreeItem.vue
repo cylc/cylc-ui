@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-cylc-object="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
+            :isQueued="node.node.isQueued"
             :progress=0
           />
           <span class="mx-1">{{ node.node.name }}</span>
@@ -48,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-cylc-object="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
+            :isQueued="node.node.isQueued"
             :progress="node.node.progress"
           />
           <span class="mx-1">{{ node.node.name }}</span>
@@ -59,6 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-cylc-object="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
+            :isQueued="node.node.isQueued"
             :progress="node.node.progress"
           />
           <span class="mx-1">{{ node.node.name }}</span>

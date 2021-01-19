@@ -25,20 +25,20 @@ import Vuetify from 'vuetify/lib'
 const mockedWorkflowService = {
   releaseWorkflow: function () {
     return new Promise((resolve) => {
-      if (store.state.workflows.workflows[0].status === TaskState.HELD.name.toLowerCase()) {
+      if (store.state.workflows.workflows[0].status === 'held') {
         store.state.workflows.workflows[0].status = TaskState.RUNNING.name.toLowerCase()
       } else {
-        store.state.workflows.workflows[0].status = TaskState.HELD.name.toLowerCase()
+        store.state.workflows.workflows[0].status = 'held'
       }
       return resolve(true)
     })
   },
   holdWorkflow: function () {
     return new Promise((resolve) => {
-      if (store.state.workflows.workflows[0].status === TaskState.HELD.name.toLowerCase()) {
+      if (store.state.workflows.workflows[0].status === 'held') {
         store.state.workflows.workflows[0].status = TaskState.RUNNING.name.toLowerCase()
       } else {
-        store.state.workflows.workflows[0].status = TaskState.HELD.name.toLowerCase()
+        store.state.workflows.workflows[0].status = 'held'
       }
       return resolve(true)
     })

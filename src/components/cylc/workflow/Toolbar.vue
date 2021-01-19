@@ -116,7 +116,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapGetters, mapState } from 'vuex'
 import toolbar from '@/mixins/toolbar'
-import TaskState from '@/model/TaskState.model'
 import {
   mdiViewList,
   mdiPlay,
@@ -153,7 +152,7 @@ export default {
     ...mapState('app', ['title']),
     ...mapGetters('workflows', ['currentWorkflow']),
     isHeld: function () {
-      return this.currentWorkflow.status === TaskState.HELD.name
+      return this.currentWorkflow.status === 'held'
     }
   },
 
