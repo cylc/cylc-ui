@@ -33,12 +33,16 @@ $active-color: #BDD5F7;
 }
 
 .treeitem {
-  display: table;
+  display: block;
   width: 100%;
   .node {
     line-height: 1.8em;
-    display: flex;
-    flex-wrap: nowrap;
+    display: block;
+
+    .node-expand-collapse-button {
+      float: left;
+      margin-right: 4px;
+    }
 
     &--hoverable {
       @include states()
