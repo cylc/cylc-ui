@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-col>
       <v-col
         cols="12"
-        md="4"
+        md="3"
         class="ma-0 py-0 px-3">
         <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
                    components don't seem to agree on the height here -->
@@ -82,6 +82,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           outlined
           @click="filterTasks"
         >Filter</v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        md="1"
+        class="ma-0 py-0 px-3">
+        <v-tooltip>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-on="on"
+              @click="expandAll()"
+              icon
+            >
+              <v-icon>{{ svgPaths.expandIcon }}</v-icon>
+            </v-btn>
+          </template>
+          <span>Expand all</span>
+        </v-tooltip>
+        <v-tooltip>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-on="on"
+              @click="collapseAll()"
+              icon
+            >
+              <v-icon>{{ svgPaths.collapseIcon }}</v-icon>
+            </v-btn>
+          </template>
+          <span>Collapse all</span>
+        </v-tooltip>
       </v-col>
     </v-row>
     <!-- each workflow is a tree root -->
@@ -108,6 +137,7 @@ import Vue from 'vue'
 import TaskState from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
 import clonedeep from 'lodash.clonedeep'
+import { mdiPlus, mdiMinus } from '@mdi/js'
 
 export default {
   name: 'Tree',
@@ -141,7 +171,11 @@ export default {
         states: []
       },
       activeFilters: null,
-      maximumTasks: 4
+      maximumTasks: 4,
+      svgPaths: {
+        expandIcon: mdiPlus,
+        collapseIcon: mdiMinus
+      }
     }
   },
   computed: {
