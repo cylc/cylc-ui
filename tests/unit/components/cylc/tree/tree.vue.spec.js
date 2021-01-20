@@ -23,8 +23,27 @@ import Vuetify from 'vuetify/lib'
 import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 import TaskState from '@/model/TaskState.model'
+import TreeItem from '@/components/cylc/tree/TreeItem'
+import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 
 const localVue = createLocalVue()
+localVue.prototype.$eventBus = {
+  emit: () => {}
+}
+localVue.prototype.$workflowService = {
+  register: function () {
+  },
+  unregister: function () {
+  },
+  subscribe: function () {
+  },
+  mutations: [
+    {
+      args: []
+    }
+  ]
+}
+localVue.use(CylcObjectPlugin)
 
 describe('Tree component', () => {
   let vuetify
@@ -39,7 +58,7 @@ describe('Tree component', () => {
   // mount function from Vuetify docs https://vuetifyjs.com/ru/getting-started/unit-testing/
   /**
    * @param options
-   * @returns {Tree}
+   * @returns {Wrapper<Tree>}
    */
   const mountFunction = options => {
     // the mocks.$vuetify is for https://github.com/vuetifyjs/vuetify/issues/9923
@@ -212,13 +231,13 @@ describe('Tree component', () => {
             workflows: simpleWorkflowTree4Nodes[0].children
           }
         })
-        expect(wrapper.vm.$children.length).to.equal(4)
-        const taskProxy = wrapper.vm.$children.find((child) => child.$options._componentTag === 'tree-item')
-        expect(taskProxy).to.not.equal(null)
-        // cycle point is displayed (list.filter(() => return filtered=true means OK, filtered=false means remove me)
-        expect(taskProxy.filtered).to.equal(true)
+        // 3, 1 cycle point, 1 task proxy, and 1 job
+        const treeItems = wrapper.findAllComponents(TreeItem)
+        expect(treeItems.length).to.equal(3)
+        const taskProxy = treeItems.at(1)
+        expect(taskProxy.vm.node.type).to.equal('task-proxy')
         // task proxy is displayed
-        expect(taskProxy.$children[0].filtered).to.equal(true)
+        expect(taskProxy.vm.filtered).to.equal(true)
       })
       it('should filter tree items by name', () => {
         const wrapper = mountFunction({
@@ -235,13 +254,12 @@ describe('Tree component', () => {
         })
         // the task proxy in our test data is "foo", so "bar" filter should have removed it
         wrapper.vm.filterTasks()
-        expect(wrapper.vm.$children.length).to.equal(4)
-        const taskProxy = wrapper.vm.$children.find((child) => child.$options._componentTag === 'tree-item')
-        expect(taskProxy).to.not.equal(null)
-        // cycle point is displayed (list.filter(() => return filtered=true means OK, filtered=false means remove me)
-        expect(taskProxy.filtered).to.equal(false)
+        // 3, 1 cycle point, 1 task proxy, and 1 job
+        const treeItems = wrapper.findAllComponents(TreeItem)
+        expect(treeItems.length).to.equal(3)
+        const taskProxy = treeItems.at(1)
         // task proxy is displayed
-        expect(taskProxy.$children[0].filtered).to.equal(false)
+        expect(taskProxy.vm.filtered).to.equal(false)
       })
       it('should remove all filters', () => {
         const wrapper = mountFunction({
@@ -258,18 +276,15 @@ describe('Tree component', () => {
         })
         // the task proxy in our test data is "foo", so "bar" filter should have removed it
         wrapper.vm.filterTasks()
-        expect(wrapper.vm.$children.length).to.equal(4)
-        const taskProxy = wrapper.vm.$children.find((child) => child.$options._componentTag === 'tree-item')
-        expect(taskProxy).to.not.equal(null)
-        // cycle point is displayed (list.filter(() => return filtered=true means OK, filtered=false means remove me)
-        expect(taskProxy.filtered).to.equal(false)
+        // 3, 1 cycle point, 1 task proxy, and 1 job
+        const treeItems = wrapper.findAllComponents(TreeItem)
+        expect(treeItems.length).to.equal(3)
+        const taskProxy = treeItems.at(1)
         // task proxy is displayed
-        expect(taskProxy.$children[0].filtered).to.equal(false)
+        expect(taskProxy.vm.filtered).to.equal(false)
         wrapper.vm.removeAllFilters()
-        // cycle point is displayed (list.filter(() => return filtered=true means OK, filtered=false means remove me)
-        expect(taskProxy.filtered).to.equal(true)
         // task proxy is displayed
-        expect(taskProxy.$children[0].filtered).to.equal(true)
+        expect(taskProxy.vm.filtered).to.equal(true)
       })
     })
   })
