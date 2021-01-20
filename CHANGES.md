@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#577](https://github.com/cylc/cylc-ui/pull/577) - Improve how GScan behaves
+in responsive mode (smaller viewports).
+
 [#560](https://github.com/cylc/cylc-ui/pull/560) - Make job-details a node
 in the tree, expand/collapse control, align tree-leaf-triangle. Also align
 job icons vertically in the middle of the HTML element.
