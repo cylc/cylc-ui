@@ -16,7 +16,7 @@
  */
 import { computePercentProgress } from '@/components/cylc'
 import { extractGroupState } from '@/utils/tasks'
-import { merge } from 'lodash'
+import { merge, sortedIndex } from 'lodash'
 import { createFamilyProxyNode, getCyclePointId } from '@/components/cylc/tree/index'
 import TaskState from '@/model/TaskState.model'
 
@@ -230,7 +230,15 @@ class CylcTree {
   addCyclePoint (cyclePoint) {
     if (!this.lookup.has(cyclePoint.id)) {
       this.lookup.set(cyclePoint.id, cyclePoint)
-      this.root.children.push(cyclePoint)
+      const parent = this.root
+      const names = this.root.children
+        .map(child => child.node.name)
+        .reverse()
+      const insertIndex = sortedIndex(names, cyclePoint.node.name)
+      // cycle points are inserted in the reverse order, so we have to handle that sortedIndex will give you the
+      // wrong index (except when the list is empty). That's why we reverse the list first, to get the index, and
+      // find where it would be in the not-reversed list.
+      parent.children.splice(parent.children.length - insertIndex, 0, cyclePoint)
     }
   }
 
@@ -324,7 +332,9 @@ class CylcTree {
       // the parent-child could end up repeated by accident; it means we must make sure to create this relationship
       // exactly once.
       if (parent.children.length === 0 || !parent.children.find(child => child.id === familyProxy.id)) {
-        parent.children.push(familyProxy)
+        const names = parent.children.map(child => child.node.name)
+        const insertIndex = sortedIndex(names, familyProxy.node.name)
+        parent.children.splice(insertIndex, 0, familyProxy)
       }
     }
   }
@@ -427,7 +437,9 @@ class CylcTree {
           // eslint-disable-next-line no-console
           console.error(`Missing parent ${taskProxy.node.firstParent.id}`)
         } else {
-          parent.children.push(taskProxy)
+          const names = parent.children.map(child => child.node.name)
+          const insertIndex = sortedIndex(names, taskProxy.node.name)
+          parent.children.splice(insertIndex, 0, taskProxy)
         }
       }
     }
@@ -477,7 +489,9 @@ class CylcTree {
       this.lookup.set(job.id, job)
       if (job.node.firstParent) {
         const parent = this.lookup.get(job.node.firstParent.id)
-        parent.children.push(job)
+        const names = parent.children.map(child => child.node.submitNum)
+        const insertIndex = sortedIndex(names, job.node.submitNum)
+        parent.children.splice(insertIndex, 0, job)
         // re-calculate the job's task progress
         computeTaskProgress(parent)
       }
