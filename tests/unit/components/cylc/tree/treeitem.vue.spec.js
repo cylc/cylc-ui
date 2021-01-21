@@ -27,7 +27,6 @@ import {
   simpleCyclepointNode,
   simpleTaskNode
 } from './tree.data'
-import { treeitem } from '@/mixins/treeitem'
 
 describe('TreeItem component', () => {
   const mountFunction = options => {
@@ -97,111 +96,111 @@ describe('TreeItem component', () => {
       // 4 TreeItem components, 1 for workflow, 1 for cyclepoint, 1 for task, 1 for job
       expect(task.length).to.equal(4)
     })
-  })
-  describe('mixin', () => {
-    const sortTestsData = [
-      // invalid values
-      {
-        args: {
-          type: '',
-          children: []
-        },
-        expected: []
-      },
-      {
-        args: {
-          type: null,
-          children: null
-        },
-        expected: null
-      },
-      // workflow children (cycle points) are sorted by ID in descending order
-      {
-        args: {
-          type: 'workflow',
-          children: [
-            { id: 'workflow|1' },
-            { id: 'workflow|2' }
-          ]
-        },
-        expected: [
-          { id: 'workflow|2' },
-          { id: 'workflow|1' }
-        ]
-      },
-      // cycle point children (family proxies and task proxies) are sorted by type in ascending order, and then name in ascending order
-      {
-        args: {
-          type: 'cyclepoint',
-          children: [
-            { node: { name: 'foo' }, type: 'task-proxy' },
-            { node: { name: 'FAM1' }, type: 'family-proxy' },
-            { node: { name: 'bar' }, type: 'task-proxy' }
-          ]
-        },
-        expected: [
-          { node: { name: 'FAM1' }, type: 'family-proxy' },
-          { node: { name: 'bar' }, type: 'task-proxy' },
-          { node: { name: 'foo' }, type: 'task-proxy' }
-        ]
-      },
-      // family proxy children (family proxies and task proxies) are sorted by type in ascending order, and then name in ascending order
-      {
-        args: {
-          type: 'family-proxy',
-          children: [
-            { node: { name: 'foo' }, type: 'task-proxy' },
-            { node: { name: 'FAM1' }, type: 'family-proxy' },
-            { node: { name: 'bar' }, type: 'task-proxy' }
-          ]
-        },
-        expected: [
-          { node: { name: 'FAM1' }, type: 'family-proxy' },
-          { node: { name: 'bar' }, type: 'task-proxy' },
-          { node: { name: 'foo' }, type: 'task-proxy' }
-        ]
-      },
-      {
-        args: {
-          type: 'family-proxy',
-          children: [
-            { node: { name: 'f01' }, type: 'task-proxy' },
-            { node: { name: 'f1' }, type: 'task-proxy' },
-            { node: { name: 'f10' }, type: 'task-proxy' },
-            { node: { name: 'f0' }, type: 'task-proxy' },
-            { node: { name: 'f2' }, type: 'task-proxy' }
-          ]
-        },
-        expected: [
-          { node: { name: 'f0' }, type: 'task-proxy' },
-          { node: { name: 'f01' }, type: 'task-proxy' },
-          { node: { name: 'f1' }, type: 'task-proxy' },
-          { node: { name: 'f2' }, type: 'task-proxy' },
-          { node: { name: 'f10' }, type: 'task-proxy' }
-        ]
-      },
-      // task proxy children (jobs) are sorted by job submit number in descending order
-      {
-        args: {
-          type: 'task-proxy',
-          children: [
-            { node: { submitNum: '2' } },
-            { node: { submitNum: '1' } },
-            { node: { submitNum: '3' } }
-          ]
-        },
-        expected: [
-          { node: { submitNum: '3' } },
-          { node: { submitNum: '2' } },
-          { node: { submitNum: '1' } }
-        ]
-      }
-    ]
-    sortTestsData.forEach((test) => {
-      it('should order elements correctly', () => {
-        const sorted = treeitem.methods.sortedChildren(test.args.type, test.args.children)
-        expect(sorted).to.deep.equal(test.expected)
-      })
-    })
+  // })
+  // describe('mixin', () => {
+  //   const sortTestsData = [
+  //     // invalid values
+  //     {
+  //       args: {
+  //         type: '',
+  //         children: []
+  //       },
+  //       expected: []
+  //     },
+  //     {
+  //       args: {
+  //         type: null,
+  //         children: null
+  //       },
+  //       expected: null
+  //     },
+  //     // workflow children (cycle points) are sorted by ID in descending order
+  //     {
+  //       args: {
+  //         type: 'workflow',
+  //         children: [
+  //           { id: 'workflow|1' },
+  //           { id: 'workflow|2' }
+  //         ]
+  //       },
+  //       expected: [
+  //         { id: 'workflow|2' },
+  //         { id: 'workflow|1' }
+  //       ]
+  //     },
+  //     // cycle point children (family proxies and task proxies) are sorted by type in ascending order, and then name in ascending order
+  //     {
+  //       args: {
+  //         type: 'cyclepoint',
+  //         children: [
+  //           { node: { name: 'foo' }, type: 'task-proxy' },
+  //           { node: { name: 'FAM1' }, type: 'family-proxy' },
+  //           { node: { name: 'bar' }, type: 'task-proxy' }
+  //         ]
+  //       },
+  //       expected: [
+  //         { node: { name: 'FAM1' }, type: 'family-proxy' },
+  //         { node: { name: 'bar' }, type: 'task-proxy' },
+  //         { node: { name: 'foo' }, type: 'task-proxy' }
+  //       ]
+  //     },
+  //     // family proxy children (family proxies and task proxies) are sorted by type in ascending order, and then name in ascending order
+  //     {
+  //       args: {
+  //         type: 'family-proxy',
+  //         children: [
+  //           { node: { name: 'foo' }, type: 'task-proxy' },
+  //           { node: { name: 'FAM1' }, type: 'family-proxy' },
+  //           { node: { name: 'bar' }, type: 'task-proxy' }
+  //         ]
+  //       },
+  //       expected: [
+  //         { node: { name: 'FAM1' }, type: 'family-proxy' },
+  //         { node: { name: 'bar' }, type: 'task-proxy' },
+  //         { node: { name: 'foo' }, type: 'task-proxy' }
+  //       ]
+  //     },
+  //     {
+  //       args: {
+  //         type: 'family-proxy',
+  //         children: [
+  //           { node: { name: 'f01' }, type: 'task-proxy' },
+  //           { node: { name: 'f1' }, type: 'task-proxy' },
+  //           { node: { name: 'f10' }, type: 'task-proxy' },
+  //           { node: { name: 'f0' }, type: 'task-proxy' },
+  //           { node: { name: 'f2' }, type: 'task-proxy' }
+  //         ]
+  //       },
+  //       expected: [
+  //         { node: { name: 'f0' }, type: 'task-proxy' },
+  //         { node: { name: 'f01' }, type: 'task-proxy' },
+  //         { node: { name: 'f1' }, type: 'task-proxy' },
+  //         { node: { name: 'f2' }, type: 'task-proxy' },
+  //         { node: { name: 'f10' }, type: 'task-proxy' }
+  //       ]
+  //     },
+  //     // task proxy children (jobs) are sorted by job submit number in descending order
+  //     {
+  //       args: {
+  //         type: 'task-proxy',
+  //         children: [
+  //           { node: { submitNum: '2' } },
+  //           { node: { submitNum: '1' } },
+  //           { node: { submitNum: '3' } }
+  //         ]
+  //       },
+  //       expected: [
+  //         { node: { submitNum: '3' } },
+  //         { node: { submitNum: '2' } },
+  //         { node: { submitNum: '1' } }
+  //       ]
+  //     }
+  //   ]
+  //   sortTestsData.forEach((test) => {
+  //     it('should order elements correctly', () => {
+  //       const sorted = treeitem.methods.sortedChildren(test.args.type, test.args.children)
+  //       expect(sorted).to.deep.equal(test.expected)
+  //     })
+  //   })
   })
 })
