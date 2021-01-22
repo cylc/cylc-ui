@@ -60,12 +60,19 @@ describe('Tree component functions', () => {
     expect(children[1].children[0].type).to.equal(FAMILY_TYPE)
     expect(children[1].children[0].node.name).to.equal('SUCCEEDED')
   })
-  it('should set the progress to 0 when meanElapsedTime is 0', () => {
-    expect(sampleWorkflow1.taskProxies[11].task.meanElapsedTime).to.equal(7.0)
-    expect(sampleWorkflow1.taskProxies[12].task.meanElapsedTime).to.equal(0)
-    // when parsed, these two task proxies will become these children of a cyclepoint (was root family before)
-    expect(workflowTree[1].children[4].node.progress).to.not.equal(0)
-    expect(workflowTree[1].children[5].node.progress).to.equal(0)
+  it('should correctly calculate the task proxy progress', () => {
+    const taskProxyWithProgress = sampleWorkflow1.taskProxies[11]
+    expect(taskProxyWithProgress.task.meanElapsedTime).to.equal(7.0)
+    const cyclePoint = workflowTree.find(cyclePoint => cyclePoint.node.name === taskProxyWithProgress.cyclePoint)
+    const taskProxy = cyclePoint.children.find(taskProxy => taskProxy.id === taskProxyWithProgress.id)
+    expect(taskProxy.node.progress).to.equal(100)
+  })
+  it('should set the progress to 0 when the meanElapsedTime is 0', () => {
+    const taskProxyWithoutProgress = sampleWorkflow1.taskProxies[12]
+    expect(taskProxyWithoutProgress.task.meanElapsedTime).to.equal(0)
+    const cyclePoint = workflowTree.find(cyclePoint => cyclePoint.node.name === taskProxyWithoutProgress.cyclePoint)
+    const taskProxy = cyclePoint.children.find(taskProxy => taskProxy.id === taskProxyWithoutProgress.id)
+    expect(taskProxy.node.progress).to.equal(0)
   })
   it('should set the progress to 0 when startedTime is greater than now', () => {
     // dispatching here will call new Date() to calculate now, so let's mock it...
@@ -94,7 +101,8 @@ describe('Tree component functions', () => {
     // will return the clock object and the moment 0...
     const cylcTree = new CylcTree()
     populateTreeFromGraphQLData(cylcTree, sampleWorkflow1)
-    const task = workflowTree[1].children[4]
+    const cyclePoint = workflowTree.find(cyclePoint => cyclePoint.node.name === copy.taskProxies[11].cyclePoint)
+    const task = cyclePoint.children.find(taskProxy => taskProxy.id === copy.taskProxies[11].id)
     expect(task.node.progress).to.equal(100)
     // remove the mock
     stub.restore()
@@ -110,7 +118,8 @@ describe('Tree component functions', () => {
     // will return the clock object and the moment 0...
     const cylcTree = new CylcTree()
     populateTreeFromGraphQLData(cylcTree, sampleWorkflow1)
-    const task = workflowTree[1].children[4]
+    const cyclePoint = workflowTree.find(cyclePoint => cyclePoint.node.name === copy.taskProxies[11].cyclePoint)
+    const task = cyclePoint.children.find(taskProxy => taskProxy.id === copy.taskProxies[11].id)
     expect(task.node.progress).to.equal(50)
     // remove the mock
     stub.restore()

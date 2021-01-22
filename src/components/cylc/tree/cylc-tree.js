@@ -86,6 +86,25 @@ function computeCyclePointsStates (cyclePointNodes) {
   }
 }
 
+function sortTaskProxyOrFamilyProxy (left, right) {
+  // sort cycle point children (family-proxies, and task-proxies)
+  // first we sort by type ascending, so 'family-proxy' types come before 'task-proxy'
+  // then we sort by node name ascending, so 'bar' comes before 'foo'
+  // node type
+  if (left.type < right.type) {
+    return -1
+  }
+  if (left.type > right.type) {
+    return 1
+  }
+  // name
+  return left.node.name.toLowerCase()
+    .localeCompare(
+      right.node.name.toLowerCase(),
+      undefined,
+      { numeric: true, sensitivity: 'base' })
+}
+
 /**
  * A data structure representing the tree used by Cylc.
  *
@@ -332,9 +351,8 @@ class CylcTree {
       // the parent-child could end up repeated by accident; it means we must make sure to create this relationship
       // exactly once.
       if (parent.children.length === 0 || !parent.children.find(child => child.id === familyProxy.id)) {
-        const names = parent.children.map(child => child.node.name)
-        const insertIndex = sortedIndex(names, familyProxy.node.name)
-        parent.children.splice(insertIndex, 0, familyProxy)
+        parent.children.push(familyProxy)
+        parent.children.sort(sortTaskProxyOrFamilyProxy)
       }
     }
   }
@@ -437,9 +455,8 @@ class CylcTree {
           // eslint-disable-next-line no-console
           console.error(`Missing parent ${taskProxy.node.firstParent.id}`)
         } else {
-          const names = parent.children.map(child => child.node.name)
-          const insertIndex = sortedIndex(names, taskProxy.node.name)
-          parent.children.splice(insertIndex, 0, taskProxy)
+          parent.children.push(taskProxy)
+          parent.children.sort(sortTaskProxyOrFamilyProxy)
         }
       }
     }
