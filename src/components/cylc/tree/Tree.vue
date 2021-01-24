@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
-              @click="expandAll((treeitem) => !['job', 'job-details'].includes(treeitem.node.type))"
+              @click="expandAll((treeitem) => !['task-proxy', 'job', 'job-details'].includes(treeitem.node.type))"
               icon
             >
               <v-icon>{{ svgPaths.expandIcon }}</v-icon>
