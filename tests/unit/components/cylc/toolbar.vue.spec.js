@@ -18,9 +18,9 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import { expect } from 'chai'
 import Toolbar from '@/components/cylc/Toolbar'
-import TaskState from '@/model/TaskState.model'
 import store from '@/store/index'
 import Vuetify from 'vuetify/lib'
+import WorkflowState from '@/model/WorkflowState.model'
 
 const localVue = createLocalVue()
 
@@ -58,7 +58,7 @@ describe('Toolbar component', () => {
       {
         id: 'user/id',
         name: 'test',
-        status: TaskState.RUNNING.name.toLowerCase()
+        status: WorkflowState.RUNNING.name
       }
     ]
     store.state.workflows.workflowName = 'test'
