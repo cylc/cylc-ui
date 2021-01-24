@@ -28,7 +28,7 @@ describe('Task component', () => {
       context: {
         props: {
           status: '',
-          isHeld: true
+          isHeld: true,
           isQueued: true
         }
       }
