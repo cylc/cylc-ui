@@ -16,7 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container>
+  <v-container
+    class="ma-0 pa-2"
+  >
     <!-- Toolbar -->
     <v-row
       no-gutters
