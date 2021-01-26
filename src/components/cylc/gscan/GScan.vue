@@ -116,13 +116,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :to="workflowLink(scope.node)"
               :class="getWorkflowClass(scope.node.node)"
             >
-              <v-list-item-action v-if="scope.node.type === 'workflow'">
-                <workflow-icon :status="scope.node.node.status" />
-              </v-list-item-action>
               <v-list-item-title>
-                <v-layout align-center align-content-center wrap>
-                  <v-flex grow>{{ scope.node.node.name }}</v-flex>
-                  <v-flex shrink ml-4 v-if="scope.node.type === 'workflow'">
+                <v-layout align-center align-content-center d-flex flex-wrap>
+                  <v-flex
+                    v-if="scope.node.type === 'workflow'"
+                    class=" c-gscan-workflow-name"
+                    shrink
+                  >
+                    <workflow-icon
+                      :status="scope.node.node.status"
+                      class="mr-2"
+                    />
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <span v-on="on">{{ scope.node.node.name }}</span>
+                      </template>
+                      <span>{{ scope.node.node.name }}</span>
+                    </v-tooltip>
+                  </v-flex>
+                  <v-flex
+                    v-if="scope.node.type === 'workflow'"
+                    class="text-right"
+                  >
                     <!-- task summary tooltips -->
                     <span
                       v-for="[state, tasks] in workflowsSummaries.get(scope.node.id).entries()"
@@ -134,14 +149,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                           <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
                           <v-btn
                             v-on="on"
-                            class="mt-1 pa-0"
+                            class="ma-0 pa-0"
                             min-width="0"
                             min-height="0"
-                            style="font-size: 120%"
+                            style="font-size: 120%; width: auto"
                             :ripple="false"
-                            small
                             dark
-                            text
+                            icon
                           >
                             <job :status="state" />
                           </v-btn>

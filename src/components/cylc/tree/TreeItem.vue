@@ -18,8 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="treeitem" v-show="filtered">
     <div
-        :class="getNodeClass()"
-        :style="getNodeStyle()"
+      :class="getNodeClass()"
+      :style="getNodeStyle()"
     >
       <!-- the node's left icon; used for expand/collapse -->
       <v-flex
