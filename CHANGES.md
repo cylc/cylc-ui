@@ -64,6 +64,8 @@ in the tree view structure.
 
 ### Fixes
 
+[#586](https://github.com/cylc/cylc-ui/pull/586) - Fix updating task states, preventing state="" replacing existing state
+
 [#584](https://github.com/cylc/cylc-ui/pull/584) - Avoid NaN task progress, showing correct progress & icon.
 
 [#552](https://github.com/cylc/cylc-ui/pull/552) - Move to next route before adding a new tree widget.
