@@ -62,8 +62,9 @@ in the tree view structure.
 
 [#522](https://github.com/cylc/cylc-ui/pull/522) - Improve v-select of task state filter in responsive
 
-
 ### Fixes
+
+[#584](https://github.com/cylc/cylc-ui/pull/584) - Avoid NaN task progress, showing correct progress & icon.
 
 [#552](https://github.com/cylc/cylc-ui/pull/552) - Move to next route before adding a new tree widget.
 
