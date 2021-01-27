@@ -114,10 +114,6 @@ function createFamilyProxyNode (familyProxy) {
  */
 // TODO: move expanded state to data later for infinite-tree
 function createTaskProxyNode (taskProxy) {
-  // A TaskProxy could be a ghost node, which doesn't have a state/status yet
-  if (!taskProxy.state) {
-    taskProxy.state = ''
-  }
   return {
     id: taskProxy.id,
     type: 'task-proxy',

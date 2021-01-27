@@ -478,6 +478,14 @@ class CylcTree {
     if (!this.lookup.has(taskProxy.id)) {
       // progress starts at 0
       taskProxy.node.progress = 0
+      // A TaskProxy could be a ghost node, which doesn't have a state/status yet.
+      // Note that we cannot have this if-check in `createTaskProxyNode`, as an
+      // update-delta might not have a state, and we don't want to merge
+      // { state: "" } with an object that contains { state: "running" }, for
+      // example.
+      if (!taskProxy.node.state) {
+        taskProxy.node.state = ''
+      }
       this.lookup.set(taskProxy.id, taskProxy)
       if (taskProxy.node.firstParent) {
         const parent = this.findTaskProxyParent(taskProxy)
