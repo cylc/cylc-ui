@@ -31,13 +31,17 @@ export const FAMILY_ROOT = 'root'
  * @private
  */
 function computePercentProgress (startedTime, meanElapsedTime) {
-  if (!startedTime || !meanElapsedTime) {
+  // Task proxies exist before they start running, so startedTime will be undefined until then;
+  // and "mean elapsed time" is necessarily undefined until the first instance of a task has
+  // completed running (before that, nothing has elapsed to compute the mean of).
+  // This prevents division by undefined or zero, which would set progress to NaN.
+  if (!startedTime || !meanElapsedTime || meanElapsedTime === 0) {
     return 0
   }
 
   const now = Date.now() // milliseconds since 1970-01-01
   // startedTime > now reportedly possible via interaction with `cylc reset`
-  if (startedTime > now || meanElapsedTime === 0) {
+  if (startedTime > now) {
     return 0
   }
 
