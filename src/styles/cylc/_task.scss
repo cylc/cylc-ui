@@ -66,9 +66,11 @@
       circle {
         stroke: $foreground;
         fill: $background;
+      transform: translate(150%, -65%);
       }
       rect {
         fill: $foreground;
+      transform: translate(150%, -65%);
       }
     }
   }

@@ -166,7 +166,7 @@ export default {
       {
         attrs: {
           id: 'held',
-          transform: 'scale(0.45)'
+          transform: 'scale(0.55)'
         }
       },
       [
