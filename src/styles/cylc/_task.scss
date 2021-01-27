@@ -19,7 +19,7 @@
 
   $foreground: rgb(90,90,90);
   $background: rgb(255,255,255);
-  $red: rgb(255,0,0);
+  $orange: rgb(255,0,0);
 
   @mixin disk() {
     #outline {
@@ -76,12 +76,10 @@
 
   @mixin queued() {
     #queued {
-      circle {
-        stroke: $red;
-        fill: $red;
-      }
       rect {
         fill: $foreground;
+        stroke: $foreground;
+        transform: translate(-65%, -65%);
       }
     }
   }
@@ -116,7 +114,7 @@
     /* scale the icon to the font-size */
     width: 1em;
     height: 1em;
-
+    overflow: visible;
     vertical-align: middle;
 
     circle, rect {
@@ -134,7 +132,6 @@
     &.queued {
       @include queued();
     }
-
 
     /* status */
     &.waiting {

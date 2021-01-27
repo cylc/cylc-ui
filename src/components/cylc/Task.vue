@@ -221,13 +221,15 @@ export default {
       },
       [
         createElement(
-          'circle',
+          'rect',
           {
             attrs: {
-              cx: '50',
-              cy: '50',
-              r: '46',
-              'stroke-width': '8'
+              x: 0,
+              y: 0,
+              width: '90',
+              height: '18',
+              rx: '10',
+              ry: '10'
             }
           }
         ),
@@ -235,12 +237,12 @@ export default {
           'rect',
           {
             attrs: {
-              x: 32.5,
-              y: 25,
-              width: '10',
-              height: '50',
-              rx: '5',
-              ry: '5'
+              x: 0,
+              y: 33,
+              width: '90',
+              height: '18',
+              rx: '10',
+              ry: '10'
             }
           }
         ),
@@ -248,12 +250,12 @@ export default {
           'rect',
           {
             attrs: {
-              x: 52.5,
-              y: 25,
-              width: '10',
-              height: '50',
-              rx: '5',
-              ry: '5'
+              x: 0,
+              y: 66,
+              width: '90',
+              height: '18',
+              rx: '10',
+              ry: '10'
             }
           }
         )
