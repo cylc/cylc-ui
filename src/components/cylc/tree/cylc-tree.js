@@ -40,7 +40,8 @@ function computePercentProgress (startedTime, meanElapsedTime) {
   }
 
   const now = Date.now() // milliseconds since 1970-01-01
-  // startedTime > now reportedly possible via interaction with `cylc reset`
+  // This prevents possible issues with clocks of UI/browser & backend server out of sync,
+  // time zone, data issue, etc.
   if (startedTime > now) {
     return 0
   }
