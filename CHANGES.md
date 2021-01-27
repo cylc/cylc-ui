@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#574](https://github.com/cylc/cylc-ui/pull/574) - Add collapse all and expand
+all buttons to Tree component.
+
 [#577](https://github.com/cylc/cylc-ui/pull/577) - Improve how GScan behaves
 in responsive mode (smaller viewports).
 
