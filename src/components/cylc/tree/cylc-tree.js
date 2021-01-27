@@ -31,12 +31,12 @@ export const FAMILY_ROOT = 'root'
  * @private
  */
 function computePercentProgress (startedTime, meanElapsedTime) {
-  // startedTime > now reportedly possible via interaction with `cylc reset`
   if (!startedTime || !meanElapsedTime) {
     return 0
   }
 
   const now = Date.now() // milliseconds since 1970-01-01
+  // startedTime > now reportedly possible via interaction with `cylc reset`
   if (startedTime > now || meanElapsedTime === 0) {
     return 0
   }
