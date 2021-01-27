@@ -29,6 +29,7 @@ import {
  * Cylc valid workflow states.
  */
 class WorkflowState extends Enumify {
+  // NOTE: the order the enum values are created here is used in the UI for sorting
   static RUNNING = new WorkflowState('running', mdiPlayCircle)
   static HELD = new WorkflowState('held', mdiPauseCircle)
   static STOPPING = new WorkflowState('stopping', mdiSkipNextCircle)

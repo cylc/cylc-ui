@@ -279,29 +279,19 @@ export default {
       filters: [
         {
           title: 'workflow state',
-          items: [
-            {
-              text: 'running',
-              value: 'running',
-              model: true
-            },
-            {
-              text: 'held',
-              value: 'held',
-              model: true
-            },
-            {
-              text: 'stopped',
-              value: 'stopped',
+          items: WorkflowState.enumValues.map(state => {
+            return {
+              text: state.name,
+              value: state,
               model: true
             }
-          ]
+          })
         },
         {
           title: 'task state',
           items: TaskState.enumValues.map(state => {
             return {
-              text: state.name.toLowerCase(),
+              text: state.name,
               value: state,
               model: false
             }
@@ -327,13 +317,9 @@ export default {
     sortedWorkflows () {
       return [...this.filteredWorkflows].sort((left, right) => {
         if (left.status !== right.status) {
-          if (left.status === WorkflowState.RUNNING.name) {
-            return -1
-          }
-          if (left.status === WorkflowState.HELD.name && right.status !== WorkflowState.RUNNING.name) {
-            return -1
-          }
-          return 1
+          const leftState = WorkflowState.enumValueOf(left.status.toUpperCase())
+          const rightState = WorkflowState.enumValueOf(right.status.toUpperCase())
+          return leftState.enumOrdinal - rightState.enumOrdinal
         }
         return left.name
           .localeCompare(
@@ -434,6 +420,7 @@ export default {
         this.$workflowService.unsubscribe(
           this.subscriptions[queryName]
         )
+        delete this.subscriptions[queryName]
       }
     },
 
@@ -482,12 +469,12 @@ export default {
       const workflowStates = filters[0]
         .items
         .filter(item => item.model)
-        .map(item => item.value)
+        .map(item => item.value.name)
       // get a list of the task states we are filtering
       const taskStates = new Set(filters[1]
         .items
         .filter(item => item.model)
-        .map(item => item.value.name.toLowerCase()))
+        .map(item => item.value.name))
       // filter workflows
       this.filteredWorkflows = this.filteredWorkflows.filter((workflow) => {
         // workflow states
