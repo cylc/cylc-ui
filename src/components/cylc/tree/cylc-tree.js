@@ -14,13 +14,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { computePercentProgress } from '@/components/cylc'
 import { extractGroupState } from '@/utils/tasks'
 import { merge } from 'lodash'
 import { createFamilyProxyNode, getCyclePointId } from '@/components/cylc/tree/index'
 import TaskState from '@/model/TaskState.model'
 
 export const FAMILY_ROOT = 'root'
+
+/**
+ * Compute percent progress.
+ *
+ * @see https://github.com/cylc/cylc-flow/blob/de7d938496e82dbdfb165938145670dd8e801efd/lib/cylc/gui/updater_tree.py#L248-L263
+ * @param {number|undefined} startedTime in milliseconds since 1970-01-01 00:00:00 UTC, e.g. 1568353099874
+ * @param {number|undefined} meanElapsedTime mean elapsed time in seconds
+ * @returns {number} the percent progress, e.g. 25 (meaning 25% progress)
+ * @private
+ */
+function computePercentProgress (startedTime, meanElapsedTime) {
+  // startedTime > now reportedly possible via interaction with `cylc reset`
+  if (!startedTime || !meanElapsedTime) {
+    return 0
+  }
+
+  const now = Date.now() // milliseconds since 1970-01-01
+  if (startedTime > now || meanElapsedTime === 0) {
+    return 0
+  }
+
+  if (now > startedTime + meanElapsedTime * 1000) {
+    return 100
+  }
+  return 100 * (now - startedTime) / (meanElapsedTime * 1000)
+}
 
 /***
  * Compute the task progress if possible.
