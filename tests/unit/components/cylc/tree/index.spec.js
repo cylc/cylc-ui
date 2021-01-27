@@ -16,7 +16,6 @@
  */
 
 import {
-  createTaskProxyNode,
   getCyclePointId,
   populateTreeFromGraphQLData
 } from '@/components/cylc/tree/index'
@@ -123,12 +122,6 @@ describe('Tree component functions', () => {
     expect(task.node.progress).to.equal(50)
     // remove the mock
     stub.restore()
-  })
-  it('should initialize the task proxy state if undefined', () => {
-    const taskProxy = sampleWorkflow1.taskProxies[0]
-    delete taskProxy.state
-    const taskProxyNode = createTaskProxyNode(taskProxy)
-    expect(taskProxyNode.node.state).to.equal('')
   })
   it('should not throw an error when the workflow to be populated is invalid', () => {
     const tree = {}
