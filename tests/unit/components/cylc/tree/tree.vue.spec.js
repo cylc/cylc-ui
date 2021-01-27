@@ -25,6 +25,7 @@ import { simpleWorkflowTree4Nodes } from './tree.data'
 import TaskState from '@/model/TaskState.model'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import cloneDeep from 'lodash.clonedeep'
 
 const localVue = createLocalVue()
 localVue.prototype.$eventBus = {
@@ -85,7 +86,7 @@ describe('Tree component', () => {
     expect(wrapper.props().workflows[0].node.__typename).to.equal('CyclePoint')
     expect(wrapper.find('div')).to.not.equal(null)
   })
-  describe('activable', () => {
+  describe('Activable', () => {
     it('should not activate by default', () => {
       const wrapper = mountFunction({
         propsData: {
@@ -119,8 +120,8 @@ describe('Tree component', () => {
       expect(workflowTreeItemNode.classes('node--active')).to.equal(true)
     })
   })
-  describe('filter tree', () => {
-    describe('filter by name', () => {
+  describe('Filter', () => {
+    describe('Filter by name', () => {
       it('should not filter by name by default', () => {
         const wrapper = mountFunction({
           propsData: {
@@ -146,7 +147,7 @@ describe('Tree component', () => {
         expect(wrapper.vm.activeFilters).to.equal(null)
       })
     })
-    describe('filter by state', () => {
+    describe('Filter by state', () => {
       it('should not filter by state by default', () => {
         const wrapper = mountFunction({
           propsData: {
@@ -178,7 +179,7 @@ describe('Tree component', () => {
         expect(wrapper.vm.activeFilters.states).to.equal(states)
       })
     })
-    describe('enable filters', () => {
+    describe('Enable filters', () => {
       it('should not have any filters enabled by default', () => {
         const wrapper = mountFunction({
           propsData: {
@@ -224,7 +225,7 @@ describe('Tree component', () => {
         expect(wrapper.vm.activeFilters.states).to.deep.equal(states)
       })
     })
-    describe('filter tree items', () => {
+    describe('Filter tree items', () => {
       it('should not filter the tree items by default', () => {
         const wrapper = mountFunction({
           propsData: {
@@ -364,6 +365,192 @@ describe('Tree component', () => {
       wrapper.vm.onTreeItemCollapsed(treeItem)
       expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
       expect(wrapper.vm.expandedCache.size).to.equal(0)
+    })
+  })
+  describe('Expand-Collapse', () => {
+    // Three collections, one with mixed (expanded/collapsed),
+    // one with all items collapsed, and one with all items expanded.
+    // Enough to cover the possible test scenarios for the
+    // expand-collapse toggle functions.
+    const mixed = {
+      'user|workflow': {
+        id: 'user|workflow',
+        type: 'workflow',
+        isExpanded: false
+      },
+      'user|workflow|1': {
+        id: 'user|workflow|1',
+        type: 'cyclepoint',
+        isExpanded: true
+      }
+    }
+    const allCollapsed = {
+      'user|workflow': {
+        id: 'user|workflow',
+        type: 'workflow',
+        isExpanded: false
+      },
+      'user|workflow|1': {
+        id: 'user|workflow|1',
+        type: 'cyclepoint',
+        isExpanded: false
+      }
+    }
+    const allExpanded = {
+      'user|workflow': {
+        id: 'user|workflow',
+        type: 'workflow',
+        isExpanded: true
+      },
+      'user|workflow|1': {
+        id: 'user|workflow|1',
+        type: 'cyclepoint',
+        isExpanded: true
+      }
+    }
+    // eslint-disable-next-line no-unused-vars
+    const filterWorkflows = (item) => item.type === 'workflow'
+    // eslint-disable-next-line no-unused-vars
+    const filterCyclepoints = (item) => item.type === 'cyclepoint'
+    // eslint-disable-next-line no-unused-vars
+    const filterTaskProxies = (item) => item.type === 'task-proxy'
+    it('should expand items', () => {
+      // we clone the test data structures as the function mutates the objects
+      const tests = [
+        // everything is expanded
+        {
+          filterFunction: null,
+          items: cloneDeep(mixed),
+          expectedExpandedItems: 2
+        },
+        {
+          filterFunction: null,
+          items: cloneDeep(allExpanded),
+          expectedExpandedItems: 2
+        },
+        {
+          filterFunction: null,
+          items: cloneDeep(allCollapsed),
+          expectedExpandedItems: 2
+        },
+        // will expand the collapsed workflow (found with the filter)
+        {
+          filterFunction: filterWorkflows,
+          items: cloneDeep(allCollapsed),
+          expectedExpandedItems: 1
+        },
+        // workflow will stay collapsed
+        {
+          filterFunction: filterCyclepoints,
+          items: cloneDeep(allCollapsed),
+          expectedExpandedItems: 1
+        },
+        // filter won't find any task-proxies, so everything is still collapsed
+        {
+          filterFunction: filterTaskProxies,
+          items: cloneDeep(allCollapsed),
+          expectedExpandedItems: 0
+        }
+      ]
+      tests.forEach(test => {
+        const wrapper = mountFunction({
+          propsData: {
+            workflows: [],
+            expandCollapseToggle: true
+          },
+          data () {
+            return {
+              treeItemCache: test.items
+            }
+          }
+        })
+        const filter = test.filterFunction
+        const treeItemCache = wrapper.vm.treeItemCache
+
+        wrapper.vm.expandAll(filter)
+        expect(wrapper.vm.expanded).to.equal(true)
+
+        const collection = filter ? [...Object.values(treeItemCache)].filter(filter) : Object.values(treeItemCache)
+        for (const item of collection) {
+          expect(item.isExpanded).to.equal(true)
+        }
+        expect([...Object.values(treeItemCache)].filter(
+          item => item.isExpanded).length,
+          `Failed case: ${JSON.stringify(test.items)}`)
+          .to.equal(test.expectedExpandedItems)
+      })
+    })
+    it('should collapse items', () => {
+      // we clone the test data structures as the function mutates the objects
+      const tests = [
+        // everything is collapsed
+        {
+          filterFunction: null,
+          items: cloneDeep(mixed),
+          expectedCollapsedItems: 2
+        },
+        {
+          filterFunction: null,
+          items: cloneDeep(allExpanded),
+          expectedCollapsedItems: 2
+        },
+        {
+          filterFunction: null,
+          items: cloneDeep(allCollapsed),
+          expectedCollapsedItems: 2
+        },
+        // will collapse the expanded workflow (found with the filter)
+        {
+          filterFunction: filterWorkflows,
+          items: cloneDeep(allExpanded),
+          expectedCollapsedItems: 1
+        },
+        // workflow will stay expanded
+        {
+          filterFunction: filterCyclepoints,
+          items: cloneDeep(allExpanded),
+          expectedCollapsedItems: 1
+        },
+        // filter won't find any task-proxies, so everything is still expanded
+        {
+          filterFunction: filterTaskProxies,
+          items: cloneDeep(allExpanded),
+          expectedCollapsedItems: 0
+        }
+      ]
+      tests.forEach(test => {
+        const wrapper = mountFunction({
+          propsData: {
+            workflows: [],
+            expandCollapseToggle: true
+          },
+          data () {
+            return {
+              treeItemCache: test.items
+            }
+          }
+        })
+        // the collapseAll rely on expandedCache being filled correctly
+        Object.values(test.items).forEach(item => {
+          if (item.isExpanded) {
+            wrapper.vm.expandedCache.add(item)
+          }
+        })
+        const filter = test.filterFunction
+        const treeItemCache = wrapper.vm.treeItemCache
+
+        wrapper.vm.collapseAll(filter)
+        expect(wrapper.vm.expanded).to.equal(test.filterFunction !== null)
+
+        const collection = filter ? [...Object.values(treeItemCache)].filter(filter) : Object.values(treeItemCache)
+        for (const item of collection) {
+          expect(item.isExpanded).to.equal(false)
+        }
+        expect([...Object.values(treeItemCache)].filter(
+          item => !item.isExpanded).length,
+          `Failed case: ${JSON.stringify(test.items)}`)
+          .to.equal(test.expectedCollapsedItems)
+      })
     })
   })
 })
