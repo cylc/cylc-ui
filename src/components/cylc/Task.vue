@@ -390,7 +390,7 @@ export default {
     } else if (context.props.isQueued) {
       taskIconSvgCssClasses.push('queued')
     }
-    if (['waiting', 'preparing', 'expired', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(context.props.status)) {
+    if (['waiting', 'preparing', 'expired', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed', 'queued'].includes(context.props.status)) {
       taskIconSvgCssClasses.push(context.props.status)
     } else {
       taskIconSvgCssClasses.push('unknown')

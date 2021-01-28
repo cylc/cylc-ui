@@ -18,9 +18,9 @@
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import { expect } from 'chai'
 import Toolbar from '@/components/cylc/workflow/Toolbar'
+import WorkflowState from '@/model/WorkflowState.model'
 import store from '@/store/index'
 import Vuetify from 'vuetify/lib'
-import WorkflowState from '@/model/WorkflowState.model'
 
 const mockedWorkflowService = {
   releaseWorkflow: function () {

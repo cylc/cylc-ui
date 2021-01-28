@@ -233,7 +233,7 @@ describe('Tree component', () => {
       TaskState.enumValues.forEach(state => {
         cy
           .get('.v-list-item')
-          .contains(state.name.toLowerCase())
+          .contains(state.name)
           .click({ force: true })
       })
       cy

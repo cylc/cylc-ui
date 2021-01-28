@@ -23,7 +23,7 @@ import { Enumify } from 'enumify'
 class TaskState extends Enumify {
   // NOTE: the order of the enum values is important to calculate the group states in the UI. Items at
   // the top of the list have preference over the items below in the algorithm.
-  static SUBMIT_FAILED = new TaskState('submit_failed')
+  static SUBMIT_FAILED = new TaskState('submit-failed')
   static FAILED = new TaskState('failed')
   static EXPIRED = new TaskState('expired')
   static RUNNING = new TaskState('running')

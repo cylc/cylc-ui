@@ -442,7 +442,7 @@ export default {
      * a name) and a given list of filters.
      *
      * The list of filters may contain workflow states ("running", "stopped",
-     * "held"), and/or task states ("running", "waiting", "submit_failed", etc).
+     * "held"), and/or task states ("running", "waiting", "submit-failed", etc).
      *
      * Does not return any value, but modifies the data variable
      * filteredWorkflows, used in the template.
