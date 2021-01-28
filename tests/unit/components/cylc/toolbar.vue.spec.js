@@ -58,7 +58,7 @@ describe('Toolbar component', () => {
       {
         id: 'user/id',
         name: 'test',
-        status: TaskState.RUNNING.name.toLowerCase()
+        status: TaskState.RUNNING.name
       }
     ]
     store.state.workflows.workflowName = 'test'

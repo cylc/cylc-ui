@@ -191,7 +191,7 @@ describe('Deltas', () => {
       cylcTree.addCyclePoint(cyclePoint)
       familyProxy = createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint.node.name}|FAM`,
-        state: TaskState.RUNNING.name.toLowerCase(),
+        state: TaskState.RUNNING.name,
         cyclePoint: cyclePoint.node.name,
         firstParent: {
           id: `${WORKFLOW_ID}|${cyclePoint.node.name}|${FAMILY_ROOT}`,
@@ -208,14 +208,14 @@ describe('Deltas', () => {
           familyProxies: [
             {
               id: familyProxy.id,
-              state: TaskState.FAILED.name.toLowerCase()
+              state: TaskState.FAILED.name
             }
           ]
         }
       }
       const fakeTree = sinon.spy(cylcTree)
       applyDeltas(deltasUpdated, fakeTree)
-      expect(cylcTree.root.children[0].children[0].node.state).to.equal(TaskState.FAILED.name.toLowerCase())
+      expect(cylcTree.root.children[0].children[0].node.state).to.equal(TaskState.FAILED.name)
       expect(fakeTree.tallyCyclePointStates.called).to.equal(true)
     })
   })
@@ -234,7 +234,7 @@ describe('Deltas', () => {
       cylcTree.addCyclePoint(cyclePoint)
       familyProxy = createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint.node.name}|FAM`,
-        state: TaskState.RUNNING.name.toLowerCase(),
+        state: TaskState.RUNNING.name,
         cyclePoint: cyclePoint.node.name,
         firstParent: {
           id: `${WORKFLOW_ID}|${cyclePoint.node.name}|${FAMILY_ROOT}`,
