@@ -387,8 +387,7 @@ export default {
     const taskIconSvgCssClasses = ['task']
     if (context.props.isHeld) {
       taskIconSvgCssClasses.push('held')
-    }
-    if (context.props.isQueued) {
+    } else if (context.props.isQueued) {
       taskIconSvgCssClasses.push('queued')
     }
     if (['waiting', 'preparing', 'expired', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed'].includes(context.props.status)) {
