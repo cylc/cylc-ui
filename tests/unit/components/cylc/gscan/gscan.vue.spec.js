@@ -475,16 +475,6 @@ describe('GScan component', () => {
       expect(link).to.equal('/workflows/name')
     })
   })
-  describe('Workflow icon', () => {
-    it('should return error if an invalid status is provided', () => {
-      const icon = GScan.methods.getWorkflowIcon('cylc')
-      expect(icon).to.equal(WorkflowState.ERROR.icon)
-    })
-    it('should return the right icon for a valid status', () => {
-      const icon = GScan.methods.getWorkflowIcon('running')
-      expect(icon).to.equal(WorkflowState.RUNNING.icon)
-    })
-  })
   describe('Toggle items values', () => {
     it('should toggle items values to true', () => {
       const items = [
