@@ -108,13 +108,9 @@ import Vue from 'vue'
 import TaskState from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
 import clonedeep from 'lodash.clonedeep'
-import { treeitem } from '@/mixins/treeitem'
 
 export default {
   name: 'Tree',
-  mixins: [
-    treeitem
-  ],
   props: {
     workflows: {
       type: Array,

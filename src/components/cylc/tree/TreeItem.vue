@@ -111,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <span v-show="isExpanded">
       <!-- component recursion -->
       <TreeItem
-        v-for="child in sortedChildren(node.type, node.children)"
+        v-for="child in node.children"
         ref="treeitem"
         :key="child.id"
         :node="child"
@@ -133,7 +133,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
-import { treeitem } from '@/mixins/treeitem'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -143,9 +142,6 @@ const NODE_DEPTH_OFFSET = 1.5 // em
 
 export default {
   name: 'TreeItem',
-  mixins: [
-    treeitem
-  ],
   components: {
     task: Task,
     job: Job

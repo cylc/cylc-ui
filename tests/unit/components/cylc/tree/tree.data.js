@@ -91,6 +91,7 @@ const sampleWorkflow1 = {
     {
       id: 'cylc|one|20000101T0000Z|eventually_succeeded',
       __typename: 'TaskProxy',
+      name: 'eventually_succeeded',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
       latestMessage: 'succeeded',
@@ -175,6 +176,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|sleepy',
+      name: 'sleepy',
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
@@ -211,6 +213,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|succeeded',
+      name: 'succeeded',
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
@@ -248,6 +251,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|retrying',
+      name: 'retrying',
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
@@ -285,6 +289,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|checkpoint',
+      name: 'checkpoint',
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
@@ -322,6 +327,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|failed',
+      name: 'failed',
       __typename: 'TaskProxy',
       state: 'failed',
       cyclePoint: '20000101T0000Z',
@@ -359,6 +365,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000101T0000Z|waiting',
+      name: 'waiting',
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
@@ -396,6 +403,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|sleepy',
+      name: 'sleepy',
       __typename: 'TaskProxy',
       state: 'waiting',
       cyclePoint: '20000102T0000Z',
@@ -416,6 +424,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|succeeded',
+      name: 'succeeded',
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000102T0000Z',
@@ -453,6 +462,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|failed',
+      name: 'failed',
       __typename: 'TaskProxy',
       state: 'failed',
       cyclePoint: '20000102T0000Z',
@@ -490,6 +500,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|waiting',
+      name: 'waiting',
       __typename: 'TaskProxy',
       state: 'waiting',
       cyclePoint: '20000102T0000Z',
@@ -510,6 +521,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|checkpoint',
+      name: 'checkpoint',
       __typename: 'TaskProxy',
       state: 'running',
       cyclePoint: '20000102T0000Z',
@@ -547,6 +559,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|checkpoint2',
+      name: 'checkpoint2',
       __typename: 'TaskProxy',
       state: 'running',
       cyclePoint: '20000102T0000Z',
@@ -584,6 +597,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|eventually_succeeded',
+      name: 'eventually_succeeded',
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000102T0000Z',
@@ -669,6 +683,7 @@ const sampleWorkflow1 = {
     },
     {
       id: 'cylc|one|20000102T0000Z|retrying',
+      name: 'retrying',
       __typename: 'TaskProxy',
       state: 'waiting',
       cyclePoint: '20000102T0000Z',
