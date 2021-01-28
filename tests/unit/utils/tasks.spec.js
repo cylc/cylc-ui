@@ -25,10 +25,10 @@ describe('tasks', () => {
       [
         [
           TaskState.FAILED.name.toLowerCase(), // expected
-          [TaskState.WAITING, TaskState.HELD, TaskState.FAILED].map((state) => state.name.toLowerCase())], // childStates
+          [TaskState.WAITING, TaskState.FAILED].map((state) => state.name.toLowerCase())], // childStates
         [
           TaskState.WAITING.name.toLowerCase(),
-          [TaskState.WAITING, TaskState.HELD].map((state) => state.name.toLowerCase())],
+          [TaskState.WAITING].map((state) => state.name.toLowerCase())],
         [
           TaskState.RUNNING.name.toLowerCase(),
           [TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name.toLowerCase())]

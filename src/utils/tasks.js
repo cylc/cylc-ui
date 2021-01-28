@@ -30,8 +30,7 @@ const isStoppedOrderedStates = [
   TaskState.PREPARING,
   TaskState.SUCCEEDED,
   TaskState.QUEUED,
-  TaskState.WAITING,
-  TaskState.HELD
+  TaskState.WAITING
 ]
 
 /**
