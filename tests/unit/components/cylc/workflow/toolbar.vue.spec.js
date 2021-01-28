@@ -25,20 +25,20 @@ import Vuetify from 'vuetify/lib'
 const mockedWorkflowService = {
   releaseWorkflow: function () {
     return new Promise((resolve) => {
-      if (store.state.workflows.workflows[0].status === WorkflowState.HELD.name.toLowerCase()) {
-        store.state.workflows.workflows[0].status = WorkflowState.RUNNING.name.toLowerCase()
+      if (store.state.workflows.workflows[0].status === WorkflowState.HELD.name) {
+        store.state.workflows.workflows[0].status = WorkflowState.RUNNING.name
       } else {
-        store.state.workflows.workflows[0].status = WorkflowState.HELD.name.toLowerCase()
+        store.state.workflows.workflows[0].status = WorkflowState.HELD.name
       }
       return resolve(true)
     })
   },
   holdWorkflow: function () {
     return new Promise((resolve) => {
-      if (store.state.workflows.workflows[0].status === WorkflowState.HELD.name.toLowerCase()) {
-        store.state.workflows.workflows[0].status = WorkflowState.RUNNING.name.toLowerCase()
+      if (store.state.workflows.workflows[0].status === WorkflowState.HELD.name) {
+        store.state.workflows.workflows[0].status = WorkflowState.RUNNING.name
       } else {
-        store.state.workflows.workflows[0].status = WorkflowState.HELD.name.toLowerCase()
+        store.state.workflows.workflows[0].status = WorkflowState.HELD.name
       }
       return resolve(true)
     })
@@ -85,7 +85,7 @@ describe('Workflow Toolbar component', () => {
       {
         id: 'user/id',
         name: 'test',
-        status: WorkflowState.RUNNING.name.toLowerCase()
+        status: WorkflowState.RUNNING.name
       }
     ]
     store.state.workflows.workflowName = 'test'

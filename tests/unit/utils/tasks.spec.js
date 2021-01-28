@@ -24,14 +24,14 @@ describe('tasks', () => {
     it('should return the correct state for the node groups when not stopped', () => {
       [
         [
-          TaskState.FAILED.name.toLowerCase(), // expected
-          [TaskState.WAITING, TaskState.FAILED].map((state) => state.name.toLowerCase())], // childStates
+          TaskState.FAILED.name, // expected
+          [TaskState.WAITING, TaskState.FAILED].map((state) => state.name)], // childStates
         [
-          TaskState.WAITING.name.toLowerCase(),
-          [TaskState.WAITING].map((state) => state.name.toLowerCase())],
+          TaskState.WAITING.name,
+          [TaskState.WAITING].map((state) => state.name)],
         [
-          TaskState.RUNNING.name.toLowerCase(),
-          [TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name.toLowerCase())]
+          TaskState.RUNNING.name,
+          [TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name)]
       ].forEach((val) => {
         const groupState = extractGroupState(val[1], false)
         expect(groupState).to.equal(val[0])
@@ -40,14 +40,14 @@ describe('tasks', () => {
     it('should return the correct state for the node groups when stopped', () => {
       [
         [
-          TaskState.RUNNING.name.toLowerCase(), // expected
-          [TaskState.WAITING, TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name.toLowerCase())], // childStates
+          TaskState.RUNNING.name, // expected
+          [TaskState.WAITING, TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name)], // childStates
         [
-          TaskState.SUCCEEDED.name.toLowerCase(),
-          [TaskState.QUEUED, TaskState.SUCCEEDED].map((state) => state.name.toLowerCase())],
+          TaskState.SUCCEEDED.name,
+          [TaskState.QUEUED, TaskState.SUCCEEDED].map((state) => state.name)],
         [
-          TaskState.RUNNING.name.toLowerCase(),
-          [TaskState.SUBMITTED, TaskState.RUNNING, TaskState.EXPIRED].map((state) => state.name.toLowerCase())]
+          TaskState.RUNNING.name,
+          [TaskState.SUBMITTED, TaskState.RUNNING, TaskState.EXPIRED].map((state) => state.name)]
       ].forEach((val) => {
         const groupState = extractGroupState(val[1], true)
         expect(groupState).to.equal(val[0])
