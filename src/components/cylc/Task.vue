@@ -185,12 +185,12 @@ export default {
           'rect',
           {
             attrs: {
-              x: 32.5,
-              y: 25,
-              width: '10',
-              height: '50',
-              rx: '5',
-              ry: '5'
+              x: 30,
+              y: 20,
+              width: '15',
+              height: '60',
+              rx: '10',
+              ry: '10'
             }
           }
         ),
@@ -198,12 +198,12 @@ export default {
           'rect',
           {
             attrs: {
-              x: 52.5,
-              y: 25,
-              width: '10',
-              height: '50',
-              rx: '5',
-              ry: '5'
+              x: 55,
+              y: 20,
+              width: '15',
+              height: '60',
+              rx: '10',
+              ry: '10'
             }
           }
         )
