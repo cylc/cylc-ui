@@ -116,13 +116,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :to="workflowLink(scope.node)"
               :class="getWorkflowClass(scope.node.node)"
             >
-              <v-list-item-action v-if="scope.node.type === 'workflow'">
-                <workflow-icon :status="scope.node.node.status" />
-              </v-list-item-action>
               <v-list-item-title>
-                <v-layout align-center align-content-center wrap>
-                  <v-flex grow>{{ scope.node.node.name }}</v-flex>
-                  <v-flex shrink ml-4 v-if="scope.node.type === 'workflow'">
+                <v-layout align-center align-content-center d-flex flex-wrap>
+                  <v-flex
+                    v-if="scope.node.type === 'workflow'"
+                    class=" c-gscan-workflow-name"
+                    shrink
+                  >
+                    <workflow-icon
+                      :status="scope.node.node.status"
+                      class="mr-2"
+                    />
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <span v-on="on">{{ scope.node.node.name }}</span>
+                      </template>
+                      <span>{{ scope.node.node.name }}</span>
+                    </v-tooltip>
+                  </v-flex>
+                  <v-flex
+                    v-if="scope.node.type === 'workflow'"
+                    class="text-right"
+                  >
                     <!-- task summary tooltips -->
                     <span
                       v-for="[state, tasks] in workflowsSummaries.get(scope.node.id).entries()"
@@ -134,14 +149,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                           <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
                           <v-btn
                             v-on="on"
-                            class="mt-1 pa-0"
+                            class="ma-0 pa-0"
                             min-width="0"
                             min-height="0"
-                            style="font-size: 120%"
+                            style="font-size: 120%; width: auto"
                             :ripple="false"
-                            small
                             dark
-                            text
+                            icon
                           >
                             <job :status="state" />
                           </v-btn>
@@ -265,29 +279,19 @@ export default {
       filters: [
         {
           title: 'workflow state',
-          items: [
-            {
-              text: 'running',
-              value: 'running',
-              model: true
-            },
-            {
-              text: 'held',
-              value: 'held',
-              model: true
-            },
-            {
-              text: 'stopped',
-              value: 'stopped',
+          items: WorkflowState.enumValues.map(state => {
+            return {
+              text: state.name,
+              value: state,
               model: true
             }
-          ]
+          })
         },
         {
           title: 'task state',
           items: TaskState.enumValues.map(state => {
             return {
-              text: state.name.toLowerCase(),
+              text: state.name,
               value: state,
               model: false
             }
@@ -313,13 +317,9 @@ export default {
     sortedWorkflows () {
       return [...this.filteredWorkflows].sort((left, right) => {
         if (left.status !== right.status) {
-          if (left.status === WorkflowState.RUNNING.name) {
-            return -1
-          }
-          if (left.status === WorkflowState.HELD.name && right.status !== WorkflowState.RUNNING.name) {
-            return -1
-          }
-          return 1
+          const leftState = WorkflowState.enumValueOf(left.status.toUpperCase())
+          const rightState = WorkflowState.enumValueOf(right.status.toUpperCase())
+          return leftState.enumOrdinal - rightState.enumOrdinal
         }
         return left.name
           .localeCompare(
@@ -420,6 +420,7 @@ export default {
         this.$workflowService.unsubscribe(
           this.subscriptions[queryName]
         )
+        delete this.subscriptions[queryName]
       }
     },
 
@@ -441,7 +442,7 @@ export default {
      * a name) and a given list of filters.
      *
      * The list of filters may contain workflow states ("running", "stopped",
-     * "held"), and/or task states ("running", "waiting", "submit_failed", etc).
+     * "held"), and/or task states ("running", "waiting", "submit-failed", etc).
      *
      * Does not return any value, but modifies the data variable
      * filteredWorkflows, used in the template.
@@ -468,12 +469,12 @@ export default {
       const workflowStates = filters[0]
         .items
         .filter(item => item.model)
-        .map(item => item.value)
+        .map(item => item.value.name)
       // get a list of the task states we are filtering
       const taskStates = new Set(filters[1]
         .items
         .filter(item => item.model)
-        .map(item => item.value.name.toLowerCase()))
+        .map(item => item.value.name))
       // filter workflows
       this.filteredWorkflows = this.filteredWorkflows.filter((workflow) => {
         // workflow states

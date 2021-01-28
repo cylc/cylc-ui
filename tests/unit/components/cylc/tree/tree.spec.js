@@ -220,13 +220,13 @@ describe('CylcTree', () => {
       expect(cylcTree.lookup.get(familyProxy1.id).node.state).to.equal('')
       const familyProxy1Again = createFamilyProxyNode({
         id: familyProxyId1,
-        state: TaskState.WAITING.name.toLowerCase()
+        state: TaskState.WAITING.name
       })
       cylcTree.addFamilyProxy(familyProxy1Again)
       expect(cylcTree.root.children[0].children.length).to.equal(0)
       expect(cylcTree.root.children[1].children.length).to.equal(0)
       expect(cylcTree.lookup.get(familyProxy1.id).id).to.not.equal(null)
-      expect(cylcTree.lookup.get(familyProxy1.id).node.state).to.equal(TaskState.WAITING.name.toLowerCase())
+      expect(cylcTree.lookup.get(familyProxy1.id).node.state).to.equal(TaskState.WAITING.name)
     })
     it('Should add family proxies under the cycle point when first parent is root', () => {
       const familyProxyId1 = `${WORKFLOW_ID}|${cyclePoint1.node.name}|fam1`
@@ -299,9 +299,9 @@ describe('CylcTree', () => {
       })
       cylcTree.addFamilyProxy(familyProxy1)
       expect(cylcTree.lookup.get(familyProxy1.id).state).to.equal(undefined)
-      familyProxy1.state = TaskState.WAITING.name.toLowerCase()
+      familyProxy1.state = TaskState.WAITING.name
       cylcTree.updateFamilyProxy(familyProxy1)
-      expect(cylcTree.lookup.get(familyProxy1.id).state).to.equal(TaskState.WAITING.name.toLowerCase())
+      expect(cylcTree.lookup.get(familyProxy1.id).state).to.equal(TaskState.WAITING.name)
     })
     it('Should not update a family proxy if it is not in the tree', () => {
       const familyProxy1 = createFamilyProxyNode({
@@ -403,7 +403,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: familyProxy.id
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addTaskProxy(taskProxy)
       const cyclepoint = cylcTree.root.children[0]
@@ -418,7 +418,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: familyProxy.id
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addTaskProxy(taskProxy)
       cylcTree.addTaskProxy(taskProxy)
@@ -435,7 +435,7 @@ describe('CylcTree', () => {
           name: rootFamilyProxy.node.name
         },
         cyclePoint: cyclePoint.node.name,
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addTaskProxy(taskProxy)
       const cyclepoint = cylcTree.root.children[0]
@@ -456,7 +456,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: familyProxy.id
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addTaskProxy(taskProxy)
       const cyclepoint = cylcTree.root.children[0]
@@ -472,7 +472,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: '-1'
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       const sandbox = sinon.createSandbox()
       sandbox.stub(console, 'error')
@@ -484,7 +484,7 @@ describe('CylcTree', () => {
     })
     it('Should update task proxies', () => {
       const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
-      const taskProxyState = TaskState.RUNNING.name.toLowerCase()
+      const taskProxyState = TaskState.RUNNING.name
       const taskProxy = createTaskProxyNode({
         id: taskProxyId,
         firstParent: {
@@ -497,13 +497,13 @@ describe('CylcTree', () => {
       const family = cyclepoint.children[0]
       const task = family.children[0]
       expect(task.node.state).to.equal(taskProxyState)
-      taskProxy.node.state = TaskState.WAITING.name.toLowerCase()
+      taskProxy.node.state = TaskState.WAITING.name
       cylcTree.updateTaskProxy(taskProxy)
-      expect(cylcTree.root.children[0].children[0].children[0].node.state).to.equal(TaskState.WAITING.name.toLowerCase())
+      expect(cylcTree.root.children[0].children[0].children[0].node.state).to.equal(TaskState.WAITING.name)
     })
     it('Should not update an task proxy if it is not in the tree', () => {
       const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
-      const taskProxyState = TaskState.RUNNING.name.toLowerCase()
+      const taskProxyState = TaskState.RUNNING.name
       const taskProxy = createTaskProxyNode({
         id: taskProxyId,
         firstParent: {
@@ -528,7 +528,7 @@ describe('CylcTree', () => {
     })
     it('Should remove task proxies', () => {
       const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
-      const taskProxyState = TaskState.RUNNING.name.toLowerCase()
+      const taskProxyState = TaskState.RUNNING.name
       const taskProxy = createTaskProxyNode({
         id: taskProxyId,
         firstParent: {
@@ -546,7 +546,7 @@ describe('CylcTree', () => {
     })
     it('Should remove task proxies if added to the root family', () => {
       const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.node.name}|foo`
-      const taskProxyState = TaskState.RUNNING.name.toLowerCase()
+      const taskProxyState = TaskState.RUNNING.name
       const taskProxy = createTaskProxyNode({
         id: taskProxyId,
         firstParent: {
@@ -569,7 +569,7 @@ describe('CylcTree', () => {
     })
     it('Should not remove task proxies if not added to the tree', () => {
       const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
-      const taskProxyState = TaskState.RUNNING.name.toLowerCase()
+      const taskProxyState = TaskState.RUNNING.name
       const taskProxy = createTaskProxyNode({
         id: taskProxyId,
         firstParent: {
@@ -629,7 +629,7 @@ describe('CylcTree', () => {
         task: {
           meanElapsedTime: 3.0
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addTaskProxy(taskProxy)
     })
@@ -644,7 +644,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
-        state: TaskState.FAILED.name.toLowerCase(),
+        state: TaskState.FAILED.name,
         startedTime
       })
       const sandbox = sinon.createSandbox()
@@ -666,7 +666,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addJob(job)
       cylcTree.addJob(job)
@@ -679,7 +679,7 @@ describe('CylcTree', () => {
     })
     it('Should update jobs', () => {
       const jobId = `${taskProxy.id}|1`
-      const state = TaskState.RUNNING.name.toLowerCase()
+      const state = TaskState.RUNNING.name
       const job = createJobNode({
         id: jobId,
         firstParent: {
@@ -693,13 +693,13 @@ describe('CylcTree', () => {
       const task = family.children[0]
       const createdJob = task.children[0]
       expect(createdJob.node.state).to.equal(state)
-      job.node.state = TaskState.WAITING.name.toLowerCase()
+      job.node.state = TaskState.WAITING.name
       cylcTree.updateJob(job)
-      expect(task.children[0].node.state).equal(TaskState.WAITING.name.toLowerCase())
+      expect(task.children[0].node.state).equal(TaskState.WAITING.name)
     })
     it('Should not update a job if it is not in the tree', () => {
       const jobId = `${taskProxy.id}|1`
-      const state = TaskState.RUNNING.name.toLowerCase()
+      const state = TaskState.RUNNING.name
       const job = createJobNode({
         id: jobId,
         firstParent: {
@@ -721,7 +721,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addJob(job)
       const cyclepoint = cylcTree.root.children[0]
@@ -739,7 +739,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addJob(job)
       const cyclepoint = cylcTree.root.children[0]
@@ -757,7 +757,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addJob(job)
       const cyclepoint = cylcTree.root.children[0]
@@ -767,6 +767,34 @@ describe('CylcTree', () => {
       expect(createdJob.id).to.equal(jobId)
       cylcTree.removeJob('-1')
       expect(cylcTree.root.children[0].children[0].children[0].children.length).to.equal(1)
+    })
+    it('Should set progress as zero even if there is no meanElapsedTime (and not NaN)', () => {
+      expect(taskProxy.node.progress).to.equal(0)
+      // a TaskProxy may not have a meanElapsedTime until it has had previous executions to calculate it
+      delete taskProxy.node.task.meanElapsedTime
+      const jobId = `${taskProxy.id}|1`
+      const fmt = new Intl.DateTimeFormat('en', { year: 'numeric', month: '2-digit', day: '2-digit' })
+      const startedDate = new Date()
+      const startedTime = fmt.format(startedDate)
+      const job = createJobNode({
+        id: jobId,
+        firstParent: {
+          id: taskProxy.id
+        },
+        state: TaskState.FAILED.name,
+        startedTime
+      })
+      const sandbox = sinon.createSandbox()
+      sandbox.stub(Date, 'now').returns(startedDate.getTime() + 15000)
+      cylcTree.addJob(job)
+      sandbox.restore()
+      const cyclepoint = cylcTree.root.children[0]
+      const family = cyclepoint.children[0]
+      const task = family.children[0]
+      const createdJob = task.children[0]
+      expect(createdJob.id).to.equal(jobId)
+      // the calculation will have failed since there is no meanElapsedTime, so the progress remains at 0
+      expect(taskProxy.node.progress).to.equal(0)
     })
   })
   describe('Recursive delete nodes', () => {
@@ -808,7 +836,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: familyProxy.id
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addTaskProxy(taskProxy)
     })
@@ -819,7 +847,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
-        state: TaskState.RUNNING.name.toLowerCase()
+        state: TaskState.RUNNING.name
       })
       cylcTree.addJob(job)
       const cyclepoint = cylcTree.root.children[0]
@@ -852,7 +880,7 @@ describe('CylcTree', () => {
       cylcTree.addFamilyProxy(createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|FAM1`,
         name: 'FAM1',
-        state: TaskState.RUNNING.name.toLowerCase(),
+        state: TaskState.RUNNING.name,
         firstParent: {
           id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
@@ -862,7 +890,7 @@ describe('CylcTree', () => {
       cylcTree.addFamilyProxy(createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|FAM2`,
         name: 'FAM2',
-        state: TaskState.WAITING.name.toLowerCase(),
+        state: TaskState.WAITING.name,
         firstParent: {
           id: `${WORKFLOW_ID}|${cyclePoint1.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
@@ -877,7 +905,7 @@ describe('CylcTree', () => {
       cylcTree.addFamilyProxy(createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|FAM1`,
         name: 'FAM1',
-        state: TaskState.WAITING.name.toLowerCase(),
+        state: TaskState.WAITING.name,
         firstParent: {
           id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
@@ -887,7 +915,7 @@ describe('CylcTree', () => {
       cylcTree.addFamilyProxy(createFamilyProxyNode({
         id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|FAM2`,
         name: 'FAM2',
-        state: TaskState.RUNNING.name.toLowerCase(),
+        state: TaskState.RUNNING.name,
         firstParent: {
           id: `${WORKFLOW_ID}|${cyclePoint2.node.name}|${FAMILY_ROOT}`,
           name: FAMILY_ROOT
@@ -900,8 +928,8 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children[0].state).to.equal(undefined)
       expect(cylcTree.root.children[1].state).to.equal(undefined)
       cylcTree.tallyCyclePointStates()
-      expect(cylcTree.root.children[0].node.state).to.equal(TaskState.RUNNING.name.toLowerCase())
-      expect(cylcTree.root.children[1].node.state).to.equal(TaskState.RUNNING.name.toLowerCase())
+      expect(cylcTree.root.children[0].node.state).to.equal(TaskState.RUNNING.name)
+      expect(cylcTree.root.children[1].node.state).to.equal(TaskState.RUNNING.name)
     })
   })
 })

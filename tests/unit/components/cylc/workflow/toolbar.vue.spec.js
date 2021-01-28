@@ -18,27 +18,27 @@
 import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
 import { expect } from 'chai'
 import Toolbar from '@/components/cylc/workflow/Toolbar'
-import TaskState from '@/model/TaskState.model'
+import WorkflowState from '@/model/WorkflowState.model'
 import store from '@/store/index'
 import Vuetify from 'vuetify/lib'
 
 const mockedWorkflowService = {
   releaseWorkflow: function () {
     return new Promise((resolve) => {
-      if (store.state.workflows.workflows[0].status === TaskState.HELD.name.toLowerCase()) {
-        store.state.workflows.workflows[0].status = TaskState.RUNNING.name.toLowerCase()
+      if (store.state.workflows.workflows[0].status === WorkflowState.HELD.name) {
+        store.state.workflows.workflows[0].status = WorkflowState.RUNNING.name
       } else {
-        store.state.workflows.workflows[0].status = TaskState.HELD.name.toLowerCase()
+        store.state.workflows.workflows[0].status = WorkflowState.HELD.name
       }
       return resolve(true)
     })
   },
   holdWorkflow: function () {
     return new Promise((resolve) => {
-      if (store.state.workflows.workflows[0].status === TaskState.HELD.name.toLowerCase()) {
-        store.state.workflows.workflows[0].status = TaskState.RUNNING.name.toLowerCase()
+      if (store.state.workflows.workflows[0].status === WorkflowState.HELD.name) {
+        store.state.workflows.workflows[0].status = WorkflowState.RUNNING.name
       } else {
-        store.state.workflows.workflows[0].status = TaskState.HELD.name.toLowerCase()
+        store.state.workflows.workflows[0].status = WorkflowState.HELD.name
       }
       return resolve(true)
     })
@@ -85,7 +85,7 @@ describe('Workflow Toolbar component', () => {
       {
         id: 'user/id',
         name: 'test',
-        status: TaskState.RUNNING.name.toLowerCase()
+        status: WorkflowState.RUNNING.name
       }
     ]
     store.state.workflows.workflowName = 'test'
