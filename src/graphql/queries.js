@@ -39,7 +39,13 @@ subscription OnWorkflowDeltasData ($workflowId: ID) {
 fragment WorkflowTreeDeltas on Deltas {
   id
   shutdown
-  added {
+  # NOTE: We set stripNull here so that values that are null in the data store
+  # are not stripped. Otherwise we could, for example, receive a task-proxy
+  # without the isHeld false/true entry. That happens when there is no
+  # value for isHeld, and then it is stripped. When stripNull: false is used,
+  # we will actually get the default value from Protobuf (in the case of
+  # isHeld, we will get isHeld: false, which is what we want for the UI).
+  added (stripNull: false) {
     ...WorkflowTreeAddedData
   }
   updated {
