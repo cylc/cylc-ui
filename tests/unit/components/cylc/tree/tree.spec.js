@@ -70,6 +70,30 @@ describe('CylcTree', () => {
     cylcTree.clear()
     expect(cylcTree.isEmpty()).to.equal(true)
   })
+  it('Should warn if we add a non-existent property to a reactive object', () => {
+    const cylcTree = new CylcTree(createWorkflowNode({
+      id: WORKFLOW_ID
+    }))
+    const cyclePoint1 = createCyclePointNode({
+      id: `${WORKFLOW_ID}|1|root`,
+      cyclePoint: '1'
+    })
+    cylcTree.addCyclePoint(cyclePoint1)
+    // Now add a new property to cyclepoint; this is the same that happened in the past (fixed)
+    // when we had an update-delta with properties that did not exist in the data. Issue being that
+    // these new properties are not reactive, but UI components could be using the undefined values.
+    // This resulted in a nasty and difficult to identify bug.
+    const newCyclePoint = createCyclePointNode({
+      id: `${WORKFLOW_ID}|1|root`,
+      cyclePoint: '1'
+    })
+    newCyclePoint.node.superStatus = 'super'
+    const sandbox = sinon.createSandbox()
+    sandbox.stub(console, 'warn')
+    cylcTree.updateCyclePoint(newCyclePoint)
+    expect(console.warn.calledOnce).to.equal(true)
+    sandbox.restore()
+  })
   // cycle points
   describe('Cycle points', () => {
     let cylcTree
