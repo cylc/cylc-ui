@@ -105,7 +105,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div
           class="d-flex flex-nowrap"
         >
-          <v-tooltip>
+          <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-btn
                 v-on="on"
@@ -117,7 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </template>
             <span>Expand all</span>
           </v-tooltip>
-          <v-tooltip>
+          <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-btn
                 v-on="on"
