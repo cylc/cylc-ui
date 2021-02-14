@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <div class="workflow-panel">
-      <div ref="main" class="main py-4 pl-4 fill-height"></div>
+      <div ref="main" class="main pa-2 fill-height"></div>
       <div v-show="false">
         <slot></slot>
       </div>

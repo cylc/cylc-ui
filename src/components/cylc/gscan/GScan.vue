@@ -108,6 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <tree
           :filterable="false"
+          :expand-collapse-toggle="false"
           :workflows="sortedWorkflows"
           class="c-gscan-workflow"
         >

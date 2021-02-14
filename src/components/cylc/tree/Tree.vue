@@ -16,89 +16,142 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container>
+  <v-container
+    class="ma-0 pa-2"
+  >
+    <!-- Toolbar -->
     <v-row
-      v-if="filterable"
-      class="mb-1"
+      no-gutters
+      class="d-flex flex-wrap"
     >
+      <!-- Filters -->
       <v-col
-        cols="12"
-        md="4"
-        class="ma-0 py-0 px-3">
-        <v-text-field
-          id="c-tree-filter-task-name"
-          clearable
-          dense
-          flat
-          hide-details
-          outlined
-          placeholder="Filter by task name"
-          v-model="tasksFilter.name"
-        ></v-text-field>
-      </v-col>
-      <v-col
-        cols="12"
-        md="4"
-        class="ma-0 py-md-0 pa-md-0">
-        <v-select
-          id="c-tree-filter-task-states"
-          :items="taskStates"
-          clearable
-          dense
-          flat
-          hide-details
-          multiple
-          outlined
-          placeholder="Filter by task state"
-          v-model="tasksFilter.states"
+        v-if="filterable"
+        class="grow"
+      >
+        <v-row
+          no-gutters
         >
-          <template v-slot:item="slotProps">
-            <Task :status="slotProps.item.value" :progress=0 />
-            <span class="ml-2">{{ slotProps.item.value }}</span>
-          </template>
-          <template v-slot:selection="slotProps">
-            <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
-              <Task :status="slotProps.item.value" :progress=0 />
-            </div>
-            <span
-              v-if="slotProps.index === maximumTasks"
-              class="grey--text caption"
+          <v-col
+            cols="12"
+            md="5"
+            class="pr-md-2 mb-2 mb-md-0"
+          >
+            <v-text-field
+              id="c-tree-filter-task-name"
+              clearable
+              dense
+              flat
+              hide-details
+              outlined
+              placeholder="Filter by task name"
+              v-model="tasksFilter.name"
+            ></v-text-field>
+          </v-col>
+          <v-col
+            cols="12"
+            md="5"
+            class="pr-md-2 mb-2 mb-md-0"
+          >
+            <v-select
+              id="c-tree-filter-task-states"
+              :items="taskStates"
+              clearable
+              dense
+              flat
+              hide-details
+              multiple
+              outlined
+              placeholder="Filter by task state"
+              v-model="tasksFilter.states"
             >
-              (+{{ tasksFilter.states.length - maximumTasks }})
-            </span>
-          </template>
-        </v-select>
+              <template v-slot:item="slotProps">
+                <Task :status="slotProps.item.value" :progress=0 />
+                <span class="ml-2">{{ slotProps.item.value }}</span>
+              </template>
+              <template v-slot:selection="slotProps">
+                <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
+                  <Task :status="slotProps.item.value" :progress=0 />
+                </div>
+                <span
+                  v-if="slotProps.index === maximumTasks"
+                  class="grey--text caption"
+                >
+            (+{{ tasksFilter.states.length - maximumTasks }})
+          </span>
+              </template>
+            </v-select>
+          </v-col>
+          <v-col
+            cols="12"
+            md="2">
+            <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
+                       components don't seem to agree on the height here -->
+            <v-btn
+              id="c-tree-filter-btn"
+              height="40"
+              block
+              outlined
+              @click="filterTasks"
+            >Filter</v-btn>
+          </v-col>
+        </v-row>
       </v-col>
+      <!-- Expand, collapse all -->
       <v-col
-        cols="12"
-        md="4"
-        class="ma-0 py-0 px-3">
-        <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
-                   components don't seem to agree on the height here -->
-        <v-btn
-          id="c-tree-filter-btn"
-          height="40"
-          block
-          outlined
-          @click="filterTasks"
-        >Filter</v-btn>
+        v-if="expandCollapseToggle"
+        class="shrink"
+      >
+        <div
+          class="d-flex flex-nowrap"
+        >
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                @click="expandAll((treeitem) => !['task-proxy', 'job', 'job-details'].includes(treeitem.node.type))"
+                icon
+              >
+                <v-icon>{{ svgPaths.expandIcon }}</v-icon>
+              </v-btn>
+            </template>
+            <span>Expand all</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                @click="collapseAll()"
+                icon
+              >
+                <v-icon>{{ svgPaths.collapseIcon }}</v-icon>
+              </v-btn>
+            </template>
+            <span>Collapse all</span>
+          </v-tooltip>
+        </div>
       </v-col>
     </v-row>
-    <!-- each workflow is a tree root -->
-    <tree-item
-      v-for="workflow of workflows"
-      :key="workflow.id"
-      :node="workflow"
-      :hoverable="hoverable"
-      :initialExpanded="expanded"
-      v-on:tree-item-created="onTreeItemCreated"
-      v-on:tree-item-destroyed="onTreeItemDestroyed"
-      v-on:tree-item-expanded="onTreeItemExpanded"
-      v-on:tree-item-collapsed="onTreeItemCollapsed"
-      v-on:tree-item-clicked="onTreeItemClicked"
-    >
-      <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
-    </tree-item>
+    <!-- Tree component -->
+    <v-row
+      no-gutters
+      >
+      <!-- each workflow is a tree root -->
+      <tree-item
+        v-for="workflow of workflows"
+        :key="workflow.id"
+        :node="workflow"
+        :hoverable="hoverable"
+        :initialExpanded="expanded"
+        v-on:tree-item-created="onTreeItemCreated"
+        v-on:tree-item-destroyed="onTreeItemDestroyed"
+        v-on:tree-item-expanded="onTreeItemExpanded"
+        v-on:tree-item-collapsed="onTreeItemCollapsed"
+        v-on:tree-item-clicked="onTreeItemClicked"
+      >
+        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
+      </tree-item>
+    </v-row>
   </v-container>
 </template>
 
@@ -108,6 +161,7 @@ import Vue from 'vue'
 import TaskState from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
 import clonedeep from 'lodash.clonedeep'
+import { mdiPlus, mdiMinus } from '@mdi/js'
 
 export default {
   name: 'Tree',
@@ -120,6 +174,10 @@ export default {
     activable: Boolean,
     multipleActive: Boolean,
     filterable: {
+      type: Boolean,
+      default: true
+    },
+    expandCollapseToggle: {
       type: Boolean,
       default: true
     }
@@ -141,7 +199,11 @@ export default {
         states: []
       },
       activeFilters: null,
-      maximumTasks: 4
+      maximumTasks: 4,
+      svgPaths: {
+        expandIcon: mdiPlus,
+        collapseIcon: mdiMinus
+      }
     }
   },
   computed: {
