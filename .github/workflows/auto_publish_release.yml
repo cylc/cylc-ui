@@ -55,7 +55,8 @@ jobs:
           commitish: ${{ env.MERGE_SHA }}
           tag_name: ${{ env.VERSION }}
           release_name: cylc-ui ${{ env.VERSION }}
-          prerelease: ${{ env.PRERELEASE }}
+          # TODO: `npm version` doesn't indicate whether it's a prerelease or not
+          # prerelease: ${{ env.PRERELEASE }}
           draft: false
           body: |
             See [${{ env.CHANGELOG_FILE }}](https://github.com/${{ github.repository }}/blob/master/${{ env.CHANGELOG_FILE }}) for detail.
