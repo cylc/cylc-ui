@@ -81,24 +81,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <span class="mx-1">#{{ node.node.submitNum }}</span>
           <span class="grey--text">{{ node.node.host }}</span>
           <span
-            class="grey--text d-flex flex-nowrap flex-row"
-            v-if="node.node.customMessages.length > 0"
+            class="grey--text d-flex flex-nowrap flex-row align-center"
+            v-if="node.node.customOutputs.length > 0"
           >
             <v-chip
-              v-if="node.node.customMessages.length > 5"
+              v-if="node.node.customOutputs.length > 5"
               color="grey"
               text-color="grey lighten-5"
               class="ml-2"
               small
               link
               @click="typeClicked"
-            >{{ node.node.customMessages.length }}+</v-chip>
-            <!-- eslint-disable-next-line vue/no-unused-vars -->
+            >{{ node.node.customOutputs.length }}+</v-chip>
             <v-tooltip
-              v-for="(customMessage, index) of
-                    node.node.customMessages
-                      .filter(message => message.satisfied)
-                      .slice(0, 5)"
+              v-for="(customOutput, index) of node.node.customOutputs.slice(0, 5)"
               :key="index"
               bottom
             >
@@ -110,9 +106,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   text-color="grey lighten-5"
                   class="ml-2"
                   small
-                >{{ customMessage.label }}</v-chip>
+                >{{ customOutput.label }}</v-chip>
               </template>
-              <span>{{ customMessage.message }}</span>
+              <span>{{ customOutput.message }}</span>
             </v-tooltip>
           </span>
         </div>
@@ -133,14 +129,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div class="leaf-entry">
               <span class="px-4 leaf-entry-title grey--text text--darken-1">outputs</span>
             </div>
-            <div v-if="node.node.customMessages.length > 0">
+            <div v-if="node.node.customOutputs && node.node.customOutputs.length > 0">
               <div
-                v-for="(customMessage, index) of node.node.customMessages"
+                v-for="(customOutput, index) of node.node.customOutputs"
                 :key="`${node.node.id}-job-custom-message-${index}`"
                 class="leaf-entry"
               >
-                <span class="px-4 leaf-entry-title">{{ customMessage.label }}</span>
-                <span class="grey--text leaf-entry-value">{{ customMessage.message }}</span>
+                <span class="px-4 leaf-entry-title">{{ customOutput.label }}</span>
+                <span class="grey--text leaf-entry-value">{{ customOutput.message }}</span>
               </div>
             </div>
             <div v-else class="leaf-entry">

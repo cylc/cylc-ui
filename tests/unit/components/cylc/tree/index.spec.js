@@ -16,6 +16,7 @@
  */
 
 import {
+  createJobNode,
   createTaskProxyNode,
   getCyclePointId,
   populateTreeFromGraphQLData
@@ -201,5 +202,17 @@ describe('Tree component functions', () => {
         expect(getCyclePointId(test.node)).to.equal(test.expected)
       }
     })
+  })
+  it('should create custom outputs', () => {
+    const job = sampleWorkflow1.taskProxies[0].jobs[0]
+    const jobNode = createJobNode(job)
+    // The outputs in the GraphQL returned data (and in our test data) contains
+    // 4 outputs, submitted, started, succeeded, and the out1 custom output.
+    // Here we are verifying that `createJobNode` did its work well, removing
+    // the standard outputs, leaving only 1 custom output as below (eql = deep equal).
+    expect(jobNode.node.customOutputs).to.eql([{
+      label: 'out1',
+      message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
+    }])
   })
 })

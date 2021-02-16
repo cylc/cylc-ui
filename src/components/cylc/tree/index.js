@@ -17,6 +17,7 @@
 
 // eslint-disable-next-line no-unused-vars
 import CylcTree from '@/components/cylc/tree/cylc-tree'
+import TaskOutput from '@/model/TaskOutput'
 
 /**
  * Create a workflow node. Uses the same properties (by reference) as the given workflow,
@@ -154,14 +155,49 @@ function createJobDetailsNode (job) {
       value: job.finishedTime
     }
   ]
+  // NOTE: `node.node.customOutputs` is not from the GraphQL query, but added
+  //       in createJobNode in this module.
   return {
     id: `${job.id}-details`,
     type: 'job-details',
     node: {
-      details,
-      customMessages: job.customMessages
+      customOutputs: createCustomOutputs(job),
+      details
     }
   }
+}
+
+/**
+ * Create the list of custom outputs for a given Job. We filter out any output
+ * that is a standard output (see TaskOutput enum).
+ *
+ * If no outputs or no custom outputs are provided, then we return an empty list.
+ *
+ * @param {{
+ *   taskProxy: {
+ *     outputs: [
+ *       {
+ *         label: string,
+ *         message: string
+ *       }
+ *     ]
+ *   }
+ * }} job - a job
+ * @returns {[
+ *   {
+ *     label: string,
+ *     message: string
+ *   }
+ * ]}
+ */
+function createCustomOutputs (job) {
+  // NOTE: the query has the filter satisfied:true already, no need to filter for that here
+  //       but we want only custom outputs, so we will filter removing the standard outputs
+  const customOutputs = job
+    .taskProxy
+    .outputs
+    .filter(output => !TaskOutput.enumValues.map(taskOutput => taskOutput.name).includes(output.label))
+  return customOutputs || []
 }
 
 /**
@@ -176,6 +212,7 @@ function createJobDetailsNode (job) {
 // TODO: add job-leaf (details) in the hierarchy later for infinite-tree
 function createJobNode (job) {
   const jobDetailsNode = createJobDetailsNode(job)
+  job.customOutputs = createCustomOutputs(job)
   return {
     id: job.id,
     type: 'job',

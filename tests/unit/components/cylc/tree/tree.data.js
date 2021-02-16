@@ -58,7 +58,12 @@ const simpleWorkflowTree4Nodes = [
                   startedTime: '2019-08-19T22:44:42Z',
                   state: 'failed',
                   submitNum: 1,
-                  customMessages: []
+                  customOutputs: [
+                    {
+                      label: 'out1',
+                      message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
+                    }
+                  ]
                 }
               }
             ]
@@ -123,7 +128,27 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:02:50Z',
           finishedTime: '2019-10-23T07:02:51Z',
           state: 'succeeded',
-          submitNum: 4
+          submitNum: 4,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'succeeded',
+                message: 'succeeded'
+              },
+              {
+                label: 'out1',
+                message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
+              }
+            ]
+          }
         },
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|3',
@@ -139,7 +164,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:02:46Z',
           finishedTime: '2019-10-23T07:02:47Z',
           state: 'failed',
-          submitNum: 3
+          submitNum: 3,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         },
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|2',
@@ -155,7 +196,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:02:42Z',
           finishedTime: '2019-10-23T07:02:43Z',
           state: 'failed',
-          submitNum: 2
+          submitNum: 2,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'succeeded',
+                message: 'succeeded'
+              }
+            ]
+          }
         },
         {
           id: 'cylc|one|20000101T0000Z|eventually_succeeded|1',
@@ -171,7 +228,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:02:38Z',
           finishedTime: '2019-10-23T07:02:39Z',
           state: 'failed',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         }
       ]
     },
@@ -207,7 +280,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:05Z',
           finishedTime: '2019-10-23T07:03:06Z',
           state: 'succeeded',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'succeeded',
+                message: 'succeeded'
+              }
+            ]
+          }
         }
       ]
     },
@@ -244,7 +333,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:02:38Z',
           finishedTime: '2019-10-23T07:02:39Z',
           state: 'succeeded',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'succeeded',
+                message: 'succeeded'
+              }
+            ]
+          }
         }
       ]
     },
@@ -281,7 +386,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:02:38Z',
           finishedTime: '2019-10-23T07:02:39Z',
           state: 'failed',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         }
       ]
     },
@@ -318,7 +439,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:02:56Z',
           finishedTime: '2019-10-23T07:03:03Z',
           state: 'succeeded',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'succeeded',
+                message: 'succeeded'
+              }
+            ]
+          }
         }
       ]
     },
@@ -355,7 +492,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:02:53Z',
           finishedTime: '2019-10-23T07:02:54Z',
           state: 'failed',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         }
       ]
     },
@@ -392,7 +545,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:05Z',
           finishedTime: '2019-10-23T07:03:06Z',
           state: 'succeeded',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'succeeded',
+                message: 'succeeded'
+              }
+            ]
+          }
         }
       ]
     },
@@ -449,7 +618,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:09Z',
           finishedTime: '2019-10-23T07:03:10Z',
           state: 'succeeded',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'succeeded',
+                message: 'succeeded'
+              }
+            ]
+          }
         }
       ]
     },
@@ -486,7 +671,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:24Z',
           finishedTime: '2019-10-23T07:03:25Z',
           state: 'failed',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         }
       ]
     },
@@ -543,7 +744,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:27Z',
           finishedTime: '',
           state: 'running',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         }
       ]
     },
@@ -580,7 +797,19 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:27Z',
           finishedTime: '',
           state: 'running',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              }
+            ]
+          }
         }
       ]
     },
@@ -617,7 +846,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:21Z',
           finishedTime: '2019-10-23T07:03:22Z',
           state: 'succeeded',
-          submitNum: 4
+          submitNum: 4,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'succeeded',
+                message: 'succeeded'
+              }
+            ]
+          }
         },
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|3',
@@ -633,7 +878,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:17Z',
           finishedTime: '2019-10-23T07:03:18Z',
           state: 'failed',
-          submitNum: 3
+          submitNum: 3,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         },
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|2',
@@ -649,7 +910,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:13Z',
           finishedTime: '2019-10-23T07:03:14Z',
           state: 'failed',
-          submitNum: 2
+          submitNum: 2,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         },
         {
           id: 'cylc|one|20000102T0000Z|eventually_succeeded|1',
@@ -665,7 +942,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:09Z',
           finishedTime: '2019-10-23T07:03:10Z',
           state: 'failed',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         }
       ]
     },
@@ -702,7 +995,23 @@ const sampleWorkflow1 = {
           submittedTime: '2019-10-23T07:03:09Z',
           finishedTime: '2019-10-23T07:03:10Z',
           state: 'failed',
-          submitNum: 1
+          submitNum: 1,
+          taskProxy: {
+            outputs: [
+              {
+                label: 'submitted',
+                message: 'submitted'
+              },
+              {
+                label: 'started',
+                message: 'started'
+              },
+              {
+                label: 'failed',
+                message: 'failed'
+              }
+            ]
+          }
         }
       ]
     }
