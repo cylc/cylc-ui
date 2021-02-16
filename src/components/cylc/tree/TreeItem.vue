@@ -92,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               small
               link
               @click="typeClicked"
-            >{{ node.node.customOutputs.length }}+</v-chip>
+            >{{ node.node.customOutputs.length - 5 }}+</v-chip>
             <v-tooltip
               v-for="(customOutput, index) of node.node.customOutputs.slice(0, 5)"
               :key="index"
