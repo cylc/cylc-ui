@@ -135,7 +135,6 @@ fragment TaskProxyData on TaskProxy {
   state
   isHeld
   cyclePoint
-  latestMessage
   firstParent {
     id
     name
@@ -199,7 +198,6 @@ subscription {
       name
       state
       cyclePoint
-      latestMessage
       task {
         meanElapsedTime
         name

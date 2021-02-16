@@ -70,7 +70,6 @@ fragment TaskProxyData on TaskProxy {
   state
   isHeld
   cyclePoint
-  latestMessage
   firstParent {
     id
     name

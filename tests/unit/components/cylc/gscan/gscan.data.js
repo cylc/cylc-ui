@@ -30,7 +30,6 @@ const simpleWorkflowGscanNodes = [
         name: 'foo',
         state: 'succeeded',
         cyclePoint: '20130829T0000Z',
-        latestMessage: 'succeeded',
         task: {
           meanElapsedTime: 60,
           name: 'foo'
@@ -54,7 +53,6 @@ const simpleWorkflowGscanNodes = [
         name: 'bar',
         state: 'succeeded',
         cyclePoint: '20130829T0000Z',
-        latestMessage: 'succeeded',
         task: {
           meanElapsedTime: 59.900001525878906,
           name: 'bar'
@@ -78,7 +76,6 @@ const simpleWorkflowGscanNodes = [
         name: 'foo',
         state: 'succeeded',
         cyclePoint: '20130829T1200Z',
-        latestMessage: 'succeeded',
         task: {
           meanElapsedTime: 60,
           name: 'foo'
@@ -102,7 +99,6 @@ const simpleWorkflowGscanNodes = [
         name: 'bar',
         state: 'running',
         cyclePoint: '20130829T1200Z',
-        latestMessage: 'started',
         task: {
           meanElapsedTime: 59.900001525878906,
           name: 'bar'
@@ -126,7 +122,6 @@ const simpleWorkflowGscanNodes = [
         name: 'foo',
         state: 'running',
         cyclePoint: '20130830T0000Z',
-        latestMessage: 'started',
         task: {
           meanElapsedTime: 60,
           name: 'foo'
@@ -150,7 +145,6 @@ const simpleWorkflowGscanNodes = [
         name: 'bar',
         state: 'waiting',
         cyclePoint: '20130830T0000Z',
-        latestMessage: '',
         task: {
           meanElapsedTime: 59.900001525878906,
           name: 'bar'
@@ -162,7 +156,6 @@ const simpleWorkflowGscanNodes = [
         name: 'foo',
         state: 'waiting',
         cyclePoint: '20130830T1200Z',
-        latestMessage: '',
         task: {
           meanElapsedTime: 60,
           name: 'foo'

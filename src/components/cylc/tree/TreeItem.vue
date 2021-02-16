@@ -190,10 +190,6 @@ export default {
         {
           title: 'finish time',
           property: 'finishedTime'
-        },
-        {
-          title: 'latest message',
-          property: 'latestMessage'
         }
       ],
       filtered: true

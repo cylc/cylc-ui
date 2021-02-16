@@ -528,7 +528,6 @@ class CylcTree {
    * @param {{
    *   id: string,
    *   node: Object,
-   *   latestMessage: string
    * }} job
    */
   addJob (job) {
@@ -550,7 +549,6 @@ class CylcTree {
    *   id: string,
    *   type: string,
    *   node: Object,
-   *   latestMessage: string
    * }} job
    */
   updateJob (job) {

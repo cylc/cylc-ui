@@ -94,7 +94,6 @@ const sampleWorkflow1 = {
       name: 'eventually_succeeded',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
-      latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|SUCCEEDED',
         __typename: 'FamilyProxy',
@@ -180,7 +179,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
-      latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
         state: 'failed',
@@ -217,7 +215,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
-      latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|SUCCEEDED',
         __typename: 'FamilyProxy',
@@ -255,7 +252,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
-      latestMessage: 'failed, retrying in PT5M (after 2019-10-23T07:07:39Z)',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|BAD',
         __typename: 'FamilyProxy',
@@ -293,7 +289,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
-      latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
         __typename: 'FamilyProxy',
@@ -331,7 +326,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'failed',
       cyclePoint: '20000101T0000Z',
-      latestMessage: 'failed/EXIT',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|BAD',
         __typename: 'FamilyProxy',
@@ -369,7 +363,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000101T0000Z',
-      latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000101T0000Z|root',
         __typename: 'FamilyProxy',
@@ -407,7 +400,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'waiting',
       cyclePoint: '20000102T0000Z',
-      latestMessage: '',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
         __typename: 'FamilyProxy',
@@ -428,7 +420,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000102T0000Z',
-      latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|SUCCEEDED',
         __typename: 'FamilyProxy',
@@ -466,7 +457,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'failed',
       cyclePoint: '20000102T0000Z',
-      latestMessage: 'failed/EXIT',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|BAD',
         __typename: 'FamilyProxy',
@@ -504,7 +494,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'waiting',
       cyclePoint: '20000102T0000Z',
-      latestMessage: '',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
         __typename: 'FamilyProxy',
@@ -525,7 +514,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'running',
       cyclePoint: '20000102T0000Z',
-      latestMessage: 'started',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
         __typename: 'FamilyProxy',
@@ -563,7 +551,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'running',
       cyclePoint: '20000102T0000Z',
-      latestMessage: 'started',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|root',
         __typename: 'FamilyProxy',
@@ -601,7 +588,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'succeeded',
       cyclePoint: '20000102T0000Z',
-      latestMessage: 'succeeded',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|SUCCEEDED',
         __typename: 'FamilyProxy',
@@ -687,7 +673,6 @@ const sampleWorkflow1 = {
       __typename: 'TaskProxy',
       state: 'waiting',
       cyclePoint: '20000102T0000Z',
-      latestMessage: 'failed, retrying in PT5M (after 2019-10-23T07:08:10Z)',
       firstParent: {
         id: 'cylc|one|20000102T0000Z|BAD',
         __typename: 'FamilyProxy',
