@@ -18,7 +18,10 @@
 import { checkpoint } from '@/services/mock/checkpoint.js'
 import { GQuery } from '@/services/gquery'
 import store from '@/store/index'
-import { processMutations } from '@/utils/aotf'
+import {
+  mutationStatus,
+  processMutations
+} from '@/utils/aotf'
 
 const MUTATIONS = [
   {
@@ -141,6 +144,7 @@ class MockWorkflowService extends GQuery {
   }
 
   mutate (mutationName, id) {
+    return [mutationStatus.SUCCEEDED, {}]
   }
 
   unregister (view) {
@@ -181,7 +185,6 @@ class MockWorkflowService extends GQuery {
     this.mutations = MUTATIONS
     this.types = TYPES
     processMutations(this.mutations, this.types)
-    console.log(this.mutations)
   }
 }
 

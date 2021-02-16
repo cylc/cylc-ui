@@ -95,19 +95,14 @@ export default {
   },
 
   computed: {
-    // TODO: consider using a different model for the input
     model: {
       get () {
         return this.fromObject(this.value)
       },
 
       set (val) {
-        console.log(`# ${val}`)
         const newVal = this.fromString(val)
         if (newVal) {
-          // not good enough :(
-          // e.g. `[a]b` is valid but incomplete?
-          console.log(newVal)
           this.$emit('input', newVal)
         }
       }

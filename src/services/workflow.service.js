@@ -177,7 +177,7 @@ class WorkflowService extends GQuery {
    */
   mutate (mutationName, id) {
     const mutation = this.getMutation(mutationName)
-    mutate(
+    return mutate(
       mutation,
       getMutationArgsFromTokens(
         mutation,
