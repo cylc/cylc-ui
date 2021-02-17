@@ -94,12 +94,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               @click="typeClicked"
             >{{ node.node.customOutputs.length - 5 }}+</v-chip>
             <v-tooltip
-              v-for="(customOutput, index) of node.node.customOutputs.slice(0, 5)"
-              :key="index"
+              v-for="customOutput of node.node.customOutputs.slice(0, 5)"
+              :key="customOutput.id"
               bottom
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-chip
+                  :key="`${customOutput.id}-chip`"
                   v-bind="attrs"
                   v-on="on"
                   color="grey"
@@ -118,8 +119,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
           <div class="leaf-data font-weight-light py-4 pl-2">
             <div
-              v-for="(jobDetail, index) in node.node.details"
-              :key="`${node.node.id}-job-detail-${index}`"
+              v-for="jobDetail in node.node.details"
+              :key="jobDetail.id"
               class="leaf-entry"
             >
               <span class="px-4 leaf-entry-title">{{ jobDetail.title }}</span>
@@ -131,8 +132,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
             <div v-if="node.node.customOutputs && node.node.customOutputs.length > 0">
               <div
-                v-for="(customOutput, index) of node.node.customOutputs"
-                :key="`${node.node.id}-job-custom-message-${index}`"
+                v-for="customOutput of node.node.customOutputs"
+                :key="customOutput.id"
                 class="leaf-entry"
               >
                 <span class="px-4 leaf-entry-title">{{ customOutput.label }}</span>
