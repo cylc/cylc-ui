@@ -18,6 +18,7 @@
 // eslint-disable-next-line no-unused-vars
 import CylcTree from '@/components/cylc/tree/cylc-tree'
 import TaskOutput from '@/model/TaskOutput'
+import Vue from 'vue'
 
 /**
  * Create a workflow node. Uses the same properties (by reference) as the given workflow,
@@ -215,7 +216,7 @@ function createCustomOutputs (job) {
 // TODO: add job-leaf (details) in the hierarchy later for infinite-tree
 function createJobNode (job) {
   const jobDetailsNode = createJobDetailsNode(job)
-  job.customOutputs = createCustomOutputs(job)
+  Vue.set(job, 'customOutputs', createCustomOutputs(job))
   return {
     id: job.id,
     type: 'job',

@@ -17,7 +17,6 @@
 
 import {
   createJobNode,
-  createTaskProxyNode,
   getCyclePointId,
   populateTreeFromGraphQLData
 } from '@/components/cylc/tree/index'
@@ -125,12 +124,6 @@ describe('Tree component functions', () => {
     // remove the mock
     stub.restore()
   })
-  it('should initialize the task proxy state if undefined', () => {
-    const taskProxy = sampleWorkflow1.taskProxies[0]
-    delete taskProxy.state
-    const taskProxyNode = createTaskProxyNode(taskProxy)
-    expect(taskProxyNode.node.state).to.equal('')
-  })
   it('should not throw an error when the workflow to be populated is invalid', () => {
     const tree = {}
     const workflow = {}
@@ -211,6 +204,7 @@ describe('Tree component functions', () => {
     // Here we are verifying that `createJobNode` did its work well, removing
     // the standard outputs, leaving only 1 custom output as below (eql = deep equal).
     expect(jobNode.node.customOutputs).to.eql([{
+      id: 'cylc|one|20000101T0000Z|eventually_succeeded|4-output-out1',
       label: 'out1',
       message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
     }])

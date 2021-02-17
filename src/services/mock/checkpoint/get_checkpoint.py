@@ -95,8 +95,8 @@ fragment JobData on Job {
   finishedTime
   state
   submitNum
-  taskProxy (stripNull: false) {
-    outputs (satisfied: true, sort: { keys: ["timestamp"], reverse: true}) {
+  taskProxy {
+    outputs (satisfied: true, sort: { keys: ["time"], reverse: true}) {
       label
       message
     }

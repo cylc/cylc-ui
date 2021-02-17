@@ -44,8 +44,7 @@ const simpleWorkflowTree4Nodes = [
             node: {
               __typename: 'TaskProxy',
               name: 'foo',
-              state: 'failed',
-              prerequisites: []
+              state: 'failed'
             },
             expanded: false,
             children: [
