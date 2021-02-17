@@ -134,7 +134,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div class="leaf-entry">
               <span class="px-4 leaf-entry-title grey--text text--darken-1">outputs</span>
             </div>
-            <div v-if="node.node.customOutputs && node.node.customOutputs.length > 0">
+            <div
+              v-if="node.node.customOutputs && node.node.customOutputs.length > 0"
+              class="leaf-outputs-entry"
+            >
               <div
                 v-for="customOutput of node.node.customOutputs"
                 :key="customOutput.id"

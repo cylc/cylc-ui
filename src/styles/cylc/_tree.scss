@@ -18,6 +18,18 @@
 @import '../../../node_modules/vuetify/src/styles/styles';
 
 $active-color: #BDD5F7;
+/**
+ * Height of each line/row in the tree. Same as saying “each node in the tree has
+ * $line-height height”.
+ */
+$line-height: 1.8em;
+/**
+ * The number of visible outputs in the job info box, under the “outputs” header.
+ * This value is used with $line-height to calculate the maximum height of the
+ * outputs container. Change this value to 10, and you will have 10 visible outputs
+ * in the job info, the remaining outputs being accessible through a scroll.
+ */
+$visible-outputs: 5;
 
 @mixin active-state() {
   background-color: $active-color;
@@ -36,7 +48,7 @@ $active-color: #BDD5F7;
   display: block;
   width: 100%;
   .node {
-    line-height: 1.8em;
+    line-height: $line-height;
     display: block;
 
     .node-expand-collapse-button {
@@ -105,6 +117,13 @@ $active-color: #BDD5F7;
         .leaf-entry-value {
           white-space: nowrap;
         }
+      }
+      .leaf-outputs-entry {
+        // 5 outputs, plus a buffer of 1.0em that appears to give the scroll just the
+        // right space to show the N items in the scroll (without the buffer the last
+        // item is partially hidden).
+        max-height: calc(#{$line-height} * #{$visible-outputs} + 1.0em);
+        overflow-y: scroll;
       }
     }
   }
