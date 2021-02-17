@@ -115,10 +115,6 @@ function createFamilyProxyNode (familyProxy) {
  */
 // TODO: move expanded state to data later for infinite-tree
 function createTaskProxyNode (taskProxy) {
-  // A TaskProxy could be a ghost node, which doesn't have a state/status yet
-  if (!taskProxy.state) {
-    taskProxy.state = ''
-  }
   return {
     id: taskProxy.id,
     type: 'task-proxy',
@@ -155,6 +151,7 @@ function createJobDetailsNode (job) {
       value: job.finishedTime
     }
   ]
+
   // NOTE: `node.node.customOutputs` is not from the GraphQL query, but added
   //       in createJobNode in this module.
   return {
@@ -174,6 +171,7 @@ function createJobDetailsNode (job) {
  * If no outputs or no custom outputs are provided, then we return an empty list.
  *
  * @param {{
+ *   id: string,
  *   taskProxy: {
  *     outputs: [
  *       {
@@ -197,6 +195,11 @@ function createCustomOutputs (job) {
     .taskProxy
     .outputs
     .filter(output => !TaskOutput.enumValues.map(taskOutput => taskOutput.name).includes(output.label))
+    .map(output => {
+      return Object.assign({}, output, {
+        id: `${job.id}-output-${output.label}`
+      })
+    })
   return customOutputs || []
 }
 
