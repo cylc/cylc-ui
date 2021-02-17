@@ -32,7 +32,6 @@ const checkpoint = {
                     "state": "running",
                     "isHeld": false,
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "started",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
                         "name": "root",
@@ -66,7 +65,6 @@ const checkpoint = {
                     "state": "submitted",
                     "isHeld": false,
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "submitted",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|SUCCEEDED",
                         "name": "SUCCEEDED",
@@ -142,7 +140,6 @@ const checkpoint = {
                     "state": "submitted",
                     "isHeld": false,
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "submitted",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|BAD",
                         "name": "BAD",
@@ -176,7 +173,6 @@ const checkpoint = {
                     "state": "waiting",
                     "isHeld": false,
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "failed, retrying in PT5M (after 2020-11-08T23:02:16Z)",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|BAD",
                         "name": "BAD",
@@ -210,7 +206,6 @@ const checkpoint = {
                     "state": "",
                     "isHeld": false,
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
                         "name": "root",
@@ -229,7 +224,6 @@ const checkpoint = {
                     "state": "submitted",
                     "isHeld": false,
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "submitted",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|SUCCEEDED",
                         "name": "SUCCEEDED",
@@ -263,7 +257,6 @@ const checkpoint = {
                     "state": "",
                     "isHeld": false,
                     "cyclePoint": "20000102T0000Z",
-                    "latestMessage": "",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
                         "name": "root",

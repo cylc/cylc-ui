@@ -152,10 +152,6 @@ function createJobDetailsNode (job) {
     {
       title: 'finish time',
       value: job.finishedTime
-    },
-    {
-      title: 'latest message',
-      property: job.latestMessage
     }
   ]
   return {
@@ -172,20 +168,18 @@ function createJobDetailsNode (job) {
  * only adding new properties such as type, name, etc.
  *
  * @param job {Object} job
- * @param [latestMessage] {string} latest message of the job's task, defaults to an empty string
- * @return {{node: Object, latestMessage: string}}
- * @return {{id: string, type: string, expanded: boolean, latestMessage: string, node: Object, children: []}}
+ * @return {{node: Object}}
+ * @return {{id: string, type: string, expanded: boolean, node: Object, children: []}}
  */
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
 // TODO: add job-leaf (details) in the hierarchy later for infinite-tree
-function createJobNode (job, latestMessage = '') {
+function createJobNode (job) {
   const jobDetailsNode = createJobDetailsNode(job)
   return {
     id: job.id,
     type: 'job',
     expanded: false,
     node: job,
-    latestMessage: latestMessage,
     children: [jobDetailsNode]
   }
 }
@@ -231,7 +225,7 @@ function populateTreeFromGraphQLData (tree, workflow) {
     // A TaskProxy could no jobs (yet)
     if (taskProxy.jobs) {
       for (const job of taskProxy.jobs) {
-        const jobNode = createJobNode(job, taskProxy.latestMessage)
+        const jobNode = createJobNode(job)
         tree.addJob(jobNode)
       }
     }

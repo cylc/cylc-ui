@@ -64,7 +64,7 @@ function applyDeltasPruned (pruned, tree) {
  *
  * @type {{
  *   jobs: [
- *     function(Object, *=): {id: string, type: string, node: Object, latestMessage: string},
+ *     function(Object, *=): {id: string, type: string, node: Object},
  *     string],
  *   familyProxies: [
  *     function(Object): {id: string, type: string, node: Object, children: *[]},
@@ -114,7 +114,7 @@ function applyDeltasAdded (added, tree) {
  *
  * @type {{
  *   jobs: [
- *     function(Object, *=): {id: string, type: string, node: Object, latestMessage: string},
+ *     function(Object, *=): {id: string, type: string, node: Object},
  *     string],
  *   familyProxies: [
  *     function(Object): {id: string, type: string, node: Object, children: *[]},
