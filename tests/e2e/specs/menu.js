@@ -18,19 +18,23 @@
 describe('CylcObject Menu component', () => {
   it('Is displayed when a Cylc object is clicked on', () => {
     cy.visit('/#/workflows/one')
-    // it should not by displayed on load
+
     cy
-      .get('.c-mutation:first')
-      .get('.v-menu__content:first')
-      .should('not.be.visible')
-    // click on the first interactive thing
-    cy
+      // it should not by displayed on load
+      .get('.c-mutation-menu:first')
+      .children()
+      .should('have.length', 0)
+
+      // click on the first interactive thing
       .get('.c-interactive:first')
       .click()
       .then(() => {
         // the menu should now be open
         cy
-          .get('.c-mutation:first')
+          .get('.c-mutation-menu-list:first')
+          .should('be.visible')
+          .children()
+          .should('have.length', 2)
           .get('.v-menu__content:first')
           .should('be.visible')
       })
