@@ -163,7 +163,7 @@ describe('Tree component', () => {
       const lastChild = failedJob.children().last()
       lastChild
         .children()
-        .first()
+        .last()
         .should('have.text', '+3')
     }
     // Finally, let's verify that expanding the job, will show the custom messages
@@ -174,7 +174,7 @@ describe('Tree component', () => {
       failedJob
         .parent()
         .children()
-        .first()
+        .last()
         .click({ force: true })
       cy
         .get('.leaf-entry-title')

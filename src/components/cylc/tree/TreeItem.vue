@@ -88,15 +88,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="grey--text d-flex flex-nowrap flex-row align-center"
             v-if="node.node.customOutputs.length > 0"
           >
-            <v-chip
-              v-if="node.node.customOutputs.length > 5"
-              color="grey"
-              text-color="grey lighten-5"
-              class="ml-2"
-              small
-              link
-              @click="typeClicked"
-            >+{{ node.node.customOutputs.length - 5 }}</v-chip>
             <v-tooltip
               v-for="customOutput of node.node.customOutputs.slice(0, 5)"
               :key="customOutput.id"
@@ -115,6 +106,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </template>
               <span>{{ customOutput.message }}</span>
             </v-tooltip>
+            <v-chip
+              v-if="node.node.customOutputs.length > 5"
+              color="grey"
+              text-color="grey lighten-5"
+              class="ml-2"
+              small
+              link
+              @click="typeClicked"
+            >+{{ node.node.customOutputs.length - 5 }}</v-chip>
           </span>
         </div>
       </slot>
