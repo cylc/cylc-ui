@@ -36,19 +36,19 @@ export const FAMILY_ROOT = 'root'
  * @param {*} source - the source object
  */
 function mergeWithCustomizer (objValue, srcValue, key, object, source) {
-  // 1. object[key], or objValue, is undefined
-  //    meaning the destination object does not have the property
-  //    so let's add it with reactivity!
-  if (objValue === undefined) {
-    Vue.set(object, `${key}`, srcValue)
-    return object[key]
-  }
-  // 2. object[key], or objValue, is defined but without reactivity
-  //    this means somehow the object got a new property that is not reactive
-  //    so let's now make it reactive with the new value!
-  if (object && object[key] && !object[key].__ob__) {
-    Vue.set(object, `${key}`, srcValue)
-    return object[key]
+  if (srcValue !== undefined) {
+    // 1. object[key], or objValue, is undefined
+    //    meaning the destination object does not have the property
+    //    so let's add it with reactivity!
+    if (objValue === undefined) {
+      Vue.set(object, `${key}`, srcValue)
+    }
+    // 2. object[key], or objValue, is defined but without reactivity
+    //    this means somehow the object got a new property that is not reactive
+    //    so let's now make it reactive with the new value!
+    if (object[key] && !object[key].__ob__) {
+      Vue.set(object, `${key}`, srcValue)
+    }
   }
 }
 

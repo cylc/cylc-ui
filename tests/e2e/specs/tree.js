@@ -164,7 +164,7 @@ describe('Tree component', () => {
       lastChild
         .children()
         .first()
-        .should('have.text', '8+')
+        .should('have.text', '3+')
     }
     // Finally, let's verify that expanding the job, will show the custom messages
     // in the job details...

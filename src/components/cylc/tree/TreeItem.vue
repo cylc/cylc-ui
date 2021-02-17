@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <task
             v-cylc-object="node.node.id"
+            :key="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :progress=0
@@ -46,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <task
             v-cylc-object="node.node.id"
+            :key="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :progress="node.node.progress"
@@ -57,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <task
             v-cylc-object="node.node.id"
+            :key="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :progress="node.node.progress"
@@ -76,6 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <job
             v-cylc-object="node.node.id"
+            :key="node.node.id"
             :status="node.node.state"
           />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
@@ -152,7 +156,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-else
       >
         <div :class="getNodeDataClass()">
-          <span @click="nodeClicked" class="mx-1" v-if="node && node.node">{{ node.node.name }}</span>
+          <span
+            v-if="node && node.node"
+            @click="nodeClicked"
+            :key="node.node.id"
+            class="mx-1">{{ node.node.name }}</span>
         </div>
       </slot>
       <slot></slot>
