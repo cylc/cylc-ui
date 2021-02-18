@@ -192,6 +192,10 @@ function createJobDetailsNode (job) {
 function createCustomOutputs (job) {
   // NOTE: the query has the filter satisfied:true already, no need to filter for that here
   //       but we want only custom outputs, so we will filter removing the standard outputs
+  if (!job || !job.taskProxy || !job.taskProxy.outputs) {
+    return []
+  }
+
   const customOutputs = job
     .taskProxy
     .outputs
