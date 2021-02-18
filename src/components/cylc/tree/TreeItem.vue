@@ -89,8 +89,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-if="node.node.customOutputs.length > 0"
           >
             <v-tooltip
-              v-for="customOutput of [...node.node.customOutputs].slice(0, 5)"
-              :key="`${customOutput.id}-chip`"
+              v-for="(customOutput, index) of [...node.node.customOutputs].slice(0, 5)"
+              :key="`output-chip-${index}`"
               bottom
             >
               <template v-slot:activator="{ on, attrs }">
