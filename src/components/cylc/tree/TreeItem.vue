@@ -89,13 +89,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-if="node.node.customOutputs.length > 0"
           >
             <v-tooltip
-              v-for="customOutput of node.node.customOutputs.slice(0, 5)"
-              :key="customOutput.id"
+              v-for="customOutput of [...node.node.customOutputs].slice(0, 5)"
+              :key="`${customOutput.id}-chip`"
               bottom
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-chip
-                  :key="`${customOutput.id}-chip`"
                   v-bind="attrs"
                   v-on="on"
                   color="grey"
@@ -140,7 +139,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <div
                 v-for="customOutput of node.node.customOutputs"
-                :key="customOutput.id"
+                :key="`${customOutput.id}-leaf`"
                 class="leaf-entry"
               >
                 <span class="px-4 leaf-entry-title">{{ customOutput.label }}</span>

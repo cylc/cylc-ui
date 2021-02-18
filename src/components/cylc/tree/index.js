@@ -159,7 +159,7 @@ function createJobDetailsNode (job) {
     id: `${job.id}-details`,
     type: 'job-details',
     node: {
-      customOutputs: createCustomOutputs(job),
+      customOutputs: job.customOutputs,
       details
     }
   }
@@ -215,8 +215,8 @@ function createCustomOutputs (job) {
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
 // TODO: add job-leaf (details) in the hierarchy later for infinite-tree
 function createJobNode (job) {
-  const jobDetailsNode = createJobDetailsNode(job)
   Vue.set(job, 'customOutputs', createCustomOutputs(job))
+  const jobDetailsNode = createJobDetailsNode(job)
   return {
     id: job.id,
     type: 'job',
