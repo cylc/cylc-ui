@@ -28,13 +28,18 @@ import {
   print
 } from 'graphql'
 import {
+  mdiBullhorn,
   mdiCloseCircle,
   mdiCog,
   mdiCursorPointer,
   mdiDelete,
+  mdiEmail,
+  mdiGraph,
   mdiPause,
   mdiPlay,
-  mdiRefreshCircle
+  mdiRefreshCircle,
+  mdiReload,
+  mdiStop
 } from '@mdi/js'
 import TaskState from '@/model/TaskState.model'
 
@@ -44,11 +49,17 @@ import TaskState from '@/model/TaskState.model'
  */
 export const mutationIcons = {
   '': mdiCog, // default fallback
+  broadcast: mdiBullhorn,
   hold: mdiPause,
-  release: mdiPlay,
   kill: mdiCloseCircle,
+  message: mdiEmail,
+  play: mdiPlay,
   poll: mdiRefreshCircle,
+  release: mdiPlay,
+  reload: mdiReload,
   remove: mdiDelete,
+  setOutputs: mdiGraph,
+  stop: mdiStop,
   trigger: mdiCursorPointer
 }
 
