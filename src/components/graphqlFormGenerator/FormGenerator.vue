@@ -56,35 +56,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        v-bind:key="input.label"
       >
         <v-list-item-content>
-        <v-list-item-title>
-          <!-- input label - the display title for this input -->
-          {{ input.label }}
-          <!-- help button - tooltip for more information -->
-          <v-tooltip bottom
-            v-if="input.description"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon
-                v-bind="attrs"
-                v-on="on"
-              >
-                {{ icons.help }}
-              </v-icon>
-            </template>
-            <!-- wrap the tooltip in a div with restricted width to force
-                 line wrapping -->
-            <div
-              style="
-                width: 20vw;
-                text-align: center;
-              "
+          <v-list-item-title>
+            <!-- input label - the display title for this input -->
+            {{ input.label }}
+            <!-- help button - tooltip for more information -->
+            <v-tooltip bottom
+              v-if="input.description"
             >
-            <vue-markdown>
-              {{ input.description }}
-            </vue-markdown>
-            </div>
-          </v-tooltip>
-        </v-list-item-title>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  {{ icons.help }}
+                </v-icon>
+              </template>
+              <!-- wrap the tooltip in a div with restricted width to force
+                   line wrapping -->
+              <div
+                style="
+                  width: 20vw;
+                  text-align: center;
+                "
+              >
+              <vue-markdown>
+                {{ input.description }}
+              </vue-markdown>
+              </div>
+            </v-tooltip>
+          </v-list-item-title>
           <form-input
             v-model="model[input.label]"
             :gqlType="input.gqlType"

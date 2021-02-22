@@ -183,13 +183,14 @@ export default {
       )
     },
     enabled () {
-      // object holding the states of controlls that are supposed to be enabled
+      // object holding the states of controls that are supposed to be enabled
       // NOTE: this is a temporary solution until we are able to subscribe to
       // mutations to tell when they have completed
       return {
         holdToggle: (
           // the play/pause button
           !this.isStopped &&
+          !this.expecting.stop &&
           this.currentWorkflow.status !== WorkflowState.STOPPING.name &&
           (
             this.expecting.held === null ||

@@ -57,7 +57,7 @@ function mockWorkflowService () {
 
 describe('Api On The Fly', () => {
   describe('cylc-object', () => {
-    it('correctly associates obejects with mutations', () => {
+    it('correctly associates objects with mutations', () => {
       cy.visit('/#/workflows/one')
 
       // expand the second task so that its job is visible

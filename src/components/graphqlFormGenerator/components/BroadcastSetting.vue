@@ -29,24 +29,29 @@ export default {
   mixins: [formElement],
 
   methods: {
+    /** Split a given string from the left.
+     *
+     * @param {string} The string to split.
+     * @param {string} The string to split it by.
+     * @param {n} The maximum number of times to split the string.
+     * @returns {[string]}
+     */
     lsplit (string_, separator, n) {
       const split = string_.split(separator)
       if (split.length <= n) {
         return split
       }
-      const out = split.slice(0, n - 1)
-      out.push(split.slice(n - 1).join(separator))
-      return out
+      return [split.shift(), split.join(separator)]
     },
 
     fromString (string_) {
       const [lhs, rhs] = this.lsplit(string_, '=', 2)
       if (rhs === undefined) {
-        return
+        return null
       }
       // const [lhs, rhs] = JavaSplit(string_, '=', 2)
       if (lhs === 'inherit') {
-        return
+        return null
         // return 'ERROR: cannot broadcast inheritance'
       }
       const rdict = {}

@@ -205,11 +205,7 @@ class WorkflowService extends GQuery {
   /** Return a mutation by name.
    */
   getMutation (mutationName) {
-    for (const mutation of this.mutations) {
-      if (mutation.name === mutationName) {
-        return mutation
-      }
-    }
+    return this.mutations.find(mutation => mutation.name === mutationName)
   }
 }
 
