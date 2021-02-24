@@ -207,24 +207,27 @@ describe('aotf (Api On The Fly)', () => {
           mutations
         )
       // no results
-      ).to.deep.equal([[], []])
+      ).to.deep.equal([])
 
       // filter by workflow
-      const [satisfied, all] = aotf.filterAssociations(
+      const all = aotf.filterAssociations(
         // filter by the "workflow" object
         aotf.cylcObjects.Workflow,
         tokens,
         mutations
       )
       expect(
-        satisfied.map((item) => { return item.name }).sort()
-      ).to.deep.equal([
-        'foo'
-      ])
-      expect(
-        all.map((item) => { return item.name }).sort()
+        all.map((item) => { return item[0].name }).sort()
       ).to.deep.equal([
         'baz', // because of the required argument
+        'foo'
+      ])
+
+      expect(
+        all
+          .filter((item) => { return !item[1] })
+          .map((item) => { return item[0].name }).sort()
+      ).to.deep.equal([
         'foo'
       ])
     })

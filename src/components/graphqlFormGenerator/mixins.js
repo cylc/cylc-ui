@@ -33,11 +33,6 @@ export const formElement = {
       type: Array,
       default: () => []
     },
-    // the form label for this input
-    label: {
-      type: String,
-      required: true
-    },
     // the value (v-model is actually syntactic sugar for this)
     value: {
       required: true
@@ -71,6 +66,14 @@ export const formElement = {
         if (type.name === this.gqlType.name && type.kind === this.gqlType.kind) {
           return type
         }
+      }
+      return null
+    },
+
+    help () {
+      // TODO: provide argument help then default to type help if not found
+      if (this.type && this.type.description) {
+        return this.type.description.trim()
       }
       return null
     }

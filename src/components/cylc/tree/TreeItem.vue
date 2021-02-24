@@ -65,10 +65,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div v-if="!isExpanded" class="node-summary">
             <!-- Task summary -->
             <job
-              v-for="(task, index) in node.children"
-              v-cylc-object="node.node.id"
-              :key="`${task.id}-summary-${index}`"
-              :status="task.node.state" />
+              v-for="(job, index) in node.children"
+              v-cylc-object="job.id"
+              :key="`${job.id}-summary-${index}`"
+              :status="job.node.state" />
           </div>
         </div>
       </slot>

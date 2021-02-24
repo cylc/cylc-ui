@@ -20,7 +20,6 @@ import store from '@/store/'
 import Alert from '@/model/Alert.model'
 
 import { createApolloClient } from '@/graphql'
-import { HOLD_WORKFLOW, RELEASE_WORKFLOW, STOP_WORKFLOW } from '@/graphql/queries'
 /* eslint-disable no-unused-vars */
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 import ZenObservable from 'zen-observable'
@@ -28,6 +27,9 @@ import { DocumentNode } from 'graphql'
 /* eslint-enable no-unused-vars */
 
 import {
+  getMutationArgsFromTokens,
+  tokenise,
+  mutate,
   getIntrospectionQuery,
   processMutations
 } from '@/utils/aotf'
@@ -166,37 +168,27 @@ class WorkflowService extends GQuery {
     })
   }
 
-  // TODO: I believe these will be removed once we integrate the api-on-the-fly
-  //       code with other components
-  // mutations
-
-  releaseWorkflow (workflowId) {
-    return this.apolloClient.mutate({
-      mutation: RELEASE_WORKFLOW,
-      variables: {
-        workflow: workflowId
-      }
-    })
+  /** Call a mutation on the given identifier.
+   *
+   * Will only work if no additional information (other than the identifier
+   * itself) is required.
+   *
+   * Requires an absolute identifier (i.e. must include the workflow name).
+   */
+  mutate (mutationName, id) {
+    const mutation = this.getMutation(mutationName)
+    return mutate(
+      mutation,
+      getMutationArgsFromTokens(
+        mutation,
+        tokenise(id)
+      ),
+      this.apolloClient
+    )
   }
 
-  holdWorkflow (workflowId) {
-    return this.apolloClient.mutate({
-      mutation: HOLD_WORKFLOW,
-      variables: {
-        workflow: workflowId
-      }
-    })
-  }
-
-  stopWorkflow (workflowId) {
-    return this.apolloClient.mutate({
-      mutation: STOP_WORKFLOW,
-      variables: {
-        workflow: workflowId
-      }
-    })
-  }
-
+  /** Load mutations for internal use from GraphQL introspection.
+   */
   loadMutations () {
     // TODO: this assumes all workflows use the same schema which is and
     // isn't necessarily true, not quite sure, come back to this later
@@ -208,6 +200,12 @@ class WorkflowService extends GQuery {
       this.types = response.data.__schema.types
       processMutations(this.mutations, this.types)
     })
+  }
+
+  /** Return a mutation by name.
+   */
+  getMutation (mutationName) {
+    return this.mutations.find(mutation => mutation.name === mutationName)
   }
 }
 

@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    :propOverrides="{rules: [x => Boolean(x) || 'Required!']}"
    :gqlType="gqlType.ofType"
    :types="types"
-   :label="label + ' (required)'"
+   label="(required)"
    :is="FormInput"
   >
     <template v-slot:append-outer>

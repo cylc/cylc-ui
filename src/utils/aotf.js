@@ -368,23 +368,13 @@ export function getIntrospectionQuery () {
  *           _required: boolean
  *         }
  *       ]
- *     }
- *   ],
- *   [
- *     {
- *       args: [
- *         {
- *           _cylcObject: string,
- *           _required: boolean
- *         }
- *       ]
- *     }
+ *     },
+ *     requiresInfo: boolean
  *   ]
  * ]} [satisfied, all]
  */
 export function filterAssociations (cylcObject, tokens, mutations) {
-  const satisfied = []
-  const all = []
+  const ret = []
   let requiresInfo = false
   let applies = false
   let alternate = null
@@ -416,12 +406,11 @@ export function filterAssociations (cylcObject, tokens, mutations) {
     if (!applies) {
       continue
     }
-    all.push(mutation)
-    if (!requiresInfo) {
-      satisfied.push(mutation)
-    }
+    ret.push(
+      [mutation, requiresInfo]
+    )
   }
-  return [satisfied, all]
+  return ret
 }
 
 /** Walk a GraphQL type yielding all composite types on route.
@@ -562,7 +551,7 @@ export function getMutationArgsFromTokens (mutation, tokens) {
   for (const arg of mutation.args) {
     alternate = alternateFields[arg._cylcType]
     for (let token in tokens) {
-      if (arg._cylcObject && [token, alternate].indexOf(arg._cylcObject)) {
+      if (arg._cylcObject && [token, alternate].indexOf(arg._cylcObject) >= 0) {
         if (arg._cylcObject === alternate) {
           token = alternate
         }
@@ -596,6 +585,12 @@ export function getMutationArgsFromTokens (mutation, tokens) {
  */
 export async function mutate (mutation, args, apolloClient) {
   let result = null
+  // eslint-disable-next-line no-console
+  console.debug([
+    `mutation(${mutation.name})`,
+    constructMutation(mutation),
+    args
+  ])
   try {
     result = await apolloClient.mutate({
       mutation: gql(constructMutation(mutation)),
@@ -604,11 +599,12 @@ export async function mutate (mutation, args, apolloClient) {
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(err)
-    return [mutationStatus.submitFailed, err]
+    return [TaskState.SUBMIT_FAILED, err]
   }
   const responses = result.data[mutation.name].result
   if (responses && responses.length === 1) {
-    return [mutationStatus.submitted, responses[0].response]
+    return [TaskState.SUBMITTED, responses[0].response]
   }
-  return [mutationStatus.submitFailed, result]
+
+  return [TaskState.SUBMIT_FAILED, result]
 }

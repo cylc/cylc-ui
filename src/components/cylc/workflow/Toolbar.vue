@@ -47,13 +47,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <a
         id="workflow-release-hold-button"
         @click="onClickReleaseHold">
-        <v-icon color="#5E5E5E" :disabled="isStopped">{{ isHeld ? svgPaths.run : svgPaths.hold }}</v-icon>
+        <v-icon
+          color="#5E5E5E"
+          :disabled="!enabled.holdToggle"
+        >
+          {{ isHeld ? svgPaths.run : svgPaths.hold }}
+        </v-icon>
       </a>
 
       <a
         id="workflow-stop-button"
         @click="onClickStop">
-        <v-icon color="#5E5E5E" :disabled="isHeld">{{ svgPaths.stop }}</v-icon>
+        <v-icon
+          color="#5E5E5E"
+          :disabled="!enabled.stopToggle"
+        >
+          {{ svgPaths.stop }}
+        </v-icon>
       </a>
 
       <!-- TODO: add control options and call mutations -->
@@ -127,6 +137,10 @@ import {
   mdiAppleKeyboardCommand
 } from '@mdi/js'
 
+import {
+  mutationStatus
+} from '@/utils/aotf'
+
 export default {
   name: 'Toolbar',
 
@@ -137,7 +151,6 @@ export default {
   data: () => ({
     extended: false,
     // FIXME: remove local state once we have this data in the workflow - https://github.com/cylc/cylc-ui/issues/221
-    isStopped: false,
     svgPaths: {
       list: mdiViewList,
       hold: mdiPause,
@@ -146,34 +159,83 @@ export default {
       tree: mdiFileTree,
       mutations: mdiAppleKeyboardCommand,
       add: mdiPlusCircle
+    },
+    expecting: {
+      // store state from mutations in order to compute the "enabled" attrs
+      held: null,
+      stop: null
     }
   }),
 
   computed: {
     ...mapState('app', ['title']),
     ...mapGetters('workflows', ['currentWorkflow']),
-    isHeld: function () {
-      return this.currentWorkflow.status === WorkflowState.HELD.name
+    isHeld () {
+      return (
+        this.currentWorkflow &&
+        this.currentWorkflow.status === WorkflowState.HELD.name
+      )
+    },
+    isStopped () {
+      return (
+        !this.currentWorkflow ||
+        this.currentWorkflow.status === WorkflowState.STOPPED.name
+      )
+    },
+    enabled () {
+      // object holding the states of controls that are supposed to be enabled
+      // NOTE: this is a temporary solution until we are able to subscribe to
+      // mutations to tell when they have completed
+      return {
+        holdToggle: (
+          // the play/pause button
+          !this.isStopped &&
+          !this.expecting.stop &&
+          this.currentWorkflow.status !== WorkflowState.STOPPING.name &&
+          (
+            this.expecting.held === null ||
+            this.expecting.held === this.currentWorkflow.isHeld
+          )
+        ),
+        stopToggle: (
+          // the stop button
+          !this.isStopped &&
+          (
+            this.expecting.stop === null ||
+            this.expecting.stop === this.currentWorkflow.isStopped
+          )
+        )
+      }
+    }
+  },
+
+  watch: {
+    isHeld () {
+      this.expecting.held = null
+    },
+    isStopped () {
+      this.expecting.stop = null
     }
   },
 
   methods: {
-    async onClickReleaseHold () {
-      const vm = this
-      if (this.isHeld) {
-        // release
-        await this.$workflowService.releaseWorkflow(this.currentWorkflow.id)
-        vm.isStopped = false
-      } else {
-        // hold
-        await this.$workflowService.holdWorkflow(this.currentWorkflow.id)
-        vm.isStopped = false
+    onClickReleaseHold () {
+      const ret = this.$workflowService.mutate(
+        this.isHeld ? 'release' : 'hold',
+        this.currentWorkflow.id
+      )
+      if (ret[0] === mutationStatus.SUCCEEDED) {
+        this.expecting.held = !this.isHeld
       }
     },
     async onClickStop () {
-      const vm = this
-      await this.$workflowService.stopWorkflow(this.currentWorkflow.id)
-      vm.isStopped = true
+      const ret = this.$workflowService.mutate(
+        'stop',
+        this.currentWorkflow.id
+      )
+      if (ret[0] === mutationStatus.SUCCEEDED) {
+        this.expecting.stop = WorkflowState.STOPPING
+      }
     },
     toggleExtended () {
       this.extended = !this.extended

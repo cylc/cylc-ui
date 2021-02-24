@@ -18,6 +18,101 @@
 import { checkpoint } from '@/services/mock/checkpoint.js'
 import { GQuery } from '@/services/gquery'
 import store from '@/store/index'
+import {
+  mutationStatus,
+  processMutations
+} from '@/utils/aotf'
+
+const MUTATIONS = [
+  {
+    name: 'workflowMutation',
+    _title: 'Workflow Mutation',
+    description: `
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+
+      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+      enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+      aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
+      in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+      officia deserunt mollit anim id est laborum.
+    `,
+    args: [
+      {
+        name: 'workflow',
+        type: {
+          name: 'workflowID',
+          kind: null
+        }
+      }
+    ]
+  },
+  {
+    name: 'cycleMutation',
+    _title: 'Cycle Mutation',
+    description: 'cycle',
+    args: [
+      {
+        name: 'workflow',
+        type: {
+          name: 'workflowID',
+          kind: null
+        }
+      },
+      {
+        name: 'cycle',
+        type: {
+          name: 'CyclePoint',
+          kind: null
+        }
+      }
+    ]
+  },
+  {
+    name: 'namespaceMutation',
+    _title: 'Namespace Mutation',
+    description: 'namespace',
+    args: [
+      {
+        name: 'workflow',
+        type: {
+          name: 'workflowID',
+          kind: null
+        }
+      },
+      {
+        name: 'namespace',
+        type: {
+          name: 'NamespaceName',
+          kind: null
+        }
+      }
+    ]
+  },
+  {
+    name: 'jobMutation',
+    _title: 'Job Mutation',
+    description: 'job',
+    args: [
+      {
+        name: 'workflow',
+        type: {
+          name: 'workflowID',
+          kind: null
+        }
+      },
+      {
+        name: 'job',
+        type: {
+          name: 'JobID',
+          kind: null
+        }
+      }
+    ]
+  }
+]
+
+const TYPES = []
 
 /**
  * Stand-in WorkflowService for off-line work.
@@ -27,8 +122,8 @@ class MockWorkflowService extends GQuery {
   constructor (httpUrl, subscriptionClient) {
     super(/* enableWebSockets */ false)
     this.query = null
-    this.mutations = []
     store.dispatch('workflows/set', checkpoint.workflows).then(() => {})
+    this.loadMutations()
   }
 
   /**
@@ -46,6 +141,10 @@ class MockWorkflowService extends GQuery {
     })
     this.callbackActive()
     return id
+  }
+
+  mutate (mutationName, id) {
+    return [mutationStatus.SUCCEEDED, {}]
   }
 
   unregister (view) {
@@ -79,6 +178,13 @@ class MockWorkflowService extends GQuery {
   }
 
   stopDeltasSubscription (subscription) {
+
+  }
+
+  loadMutations () {
+    this.mutations = MUTATIONS
+    this.types = TYPES
+    processMutations(this.mutations, this.types)
   }
 }
 

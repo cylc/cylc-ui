@@ -29,7 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        v-model="model"
        v-bind="props"
        v-mask="props.mask"
-       :label="label"
        :gqlType="gqlType"
        :types="types"
        @blur="showHelp = false"
@@ -96,14 +95,6 @@ export default {
   }),
 
   computed: {
-    help () {
-      // TODO: provide argument help then default to type help if not found
-      if (this.type && this.type.description) {
-        return this.type.description.trim()
-      }
-      return null
-    },
-
     /* The props to pass to the form input.
      *
      * Note, this includes the "is" prop which tells Vue which component class

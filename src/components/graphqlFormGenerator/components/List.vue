@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    dense
    one-line
   >
-    <v-list-item-title>{{ label }}</v-list-item-title>
+    <v-list-item-content>
       <v-list-item
         dense
         v-for="(item, index) in value"
@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            :gqlType="gqlType.ofType"
            :types="types"
            :is="FormInput"
-           label=""
           >
             <template v-slot:append-outer>
               <v-icon
@@ -61,6 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           Add Item
         </v-btn>
       </v-list-item>
+    </v-list-item-content>
   </v-list>
 </template>
 

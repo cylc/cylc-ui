@@ -16,9 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="c-mutation">
+  <div class="c-mutation-menu-holder">
     <!-- dropdown menu -->
     <v-menu
+      class="c-mutation-menu"
       v-model="showMenu"
       :position-x="x"
       :position-y="y"
@@ -26,14 +27,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       offset-y
       :disabled="!interactive"
     >
-      <v-list dense>
-        <v-subheader>{{id}}</v-subheader>
-        <v-list-item-group color="primary">
+      <v-list
+        dense
+        dark
+        class="c-mutation-menu-list"
+      >
+        <v-subheader>
+          <h2>
+            {{id}}
+          </h2>
+        </v-subheader>
+        <v-list-item-group
+          color="primary"
+          v-if="mutations"
+        >
           <v-list-item two-line
-            v-for="mutation in mutations"
+            v-for="[mutation, requiresInfo] in mutations"
             :key="mutation.name"
-            @click="callMutationFromContext(mutation)"
+            @click.stop="enact(mutation, requiresInfo)"
           >
+            <!--@click="callMutationFromContext(mutation)"-->
             <v-list-item-icon>
               <div style="font-size:0.5rem;">
                 <v-icon medium>{{ mutation._icon }}</v-icon>
@@ -48,13 +61,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-subtitle>
             </v-list-item-content>
             <!-- This is how to add buttons for standard operations later -->
-            <!--<v-list-item-action>-->
-            <!--  <v-btn small rounded color="primary" dark>Foo</v-btn>-->
-            <!--</v-list-item-action>-->
+            <v-list-item-action>
+              <v-btn
+                small rounded
+                color="primary"
+                dark
+                @click.stop="openDialog(mutation)"
+              >
+                Edit
+              </v-btn>
+            </v-list-item-action>
           </v-list-item>
         </v-list-item-group>
       </v-list>
     </v-menu>
+    <v-dialog
+      v-model="dialog"
+      max-width="500"
+      v-if="dialogMutation"
+    >
+      <Mutation
+        :mutation="dialogMutation"
+        :initialData="initialData(dialogMutation, tokens)"
+        :cancel="closeDialog"
+        :types="types"
+        ref="mutationComponent"
+      />
+    </v-dialog>
   </div>
 </template>
 
@@ -63,9 +96,14 @@ import {
   getMutationArgsFromTokens,
   mutate
 } from '@/utils/aotf'
+import Mutation from '@/components/cylc/Mutation'
 
 export default {
   name: 'CylcObjectMenu',
+
+  components: {
+    Mutation
+  },
 
   props: {
     interactive: {
@@ -82,7 +120,10 @@ export default {
       mutations: [],
       tokens: [],
       x: 0,
-      y: 0
+      y: 0,
+      dialog: false,
+      dialogMutation: null,
+      types: []
     }
   },
 
@@ -95,22 +136,31 @@ export default {
   },
 
   methods: {
+    openDialog (mutation) {
+      this.dialog = mutation
+      this.dialogMutation = mutation
+    },
+
+    closeDialog () {
+      this.dialog = null
+      this.dialogMutation = null
+    },
+
     /* Call a mutation using only the tokens for args. */
     callMutationFromContext (mutation) {
       // eslint-disable-next-line no-console
       console.debug(`mutation: ${mutation._title} ${this.id}`)
-      const promise = mutate(
+      mutate(
         mutation,
         getMutationArgsFromTokens(mutation, this.tokens),
         this.$workflowService.apolloClient
       )
-      promise.then((status, ret) => {
-        // eslint-disable-next-line no-console
-        console.debug(status, ret)
-      })
+      this.showMenu = false
     },
-    showMutationsMenu ({ id, tokens, mutations, event }) {
+
+    showMutationsMenu ({ id, types, tokens, mutations, event }) {
       this.id = id
+      this.types = types
       this.tokens = tokens
       this.mutations = mutations
       this.x = event.clientX
@@ -118,6 +168,18 @@ export default {
       this.$nextTick(() => {
         this.showMenu = true
       })
+    },
+
+    initialData (mutation, tokens) {
+      return getMutationArgsFromTokens(mutation, tokens)
+    },
+
+    enact (mutation, requiresInfo) {
+      if (requiresInfo) {
+        this.openDialog(mutation)
+      } else {
+        this.callMutationFromContext(mutation)
+      }
     }
   }
 }
