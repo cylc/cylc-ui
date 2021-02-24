@@ -16,6 +16,8 @@ None or N/A.
 
 ### Enhancements
 
+[#530](https://github.com/cylc/cylc-ui/pull/530) - Display message triggers.
+
 [#544](https://github.com/cylc/cylc-ui/pull/544) - Enable editing
 mutation inputs and support broadcasts in the UI.
 
