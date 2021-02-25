@@ -195,7 +195,6 @@ function createFamilyProxyNode (familyProxy) {
  * @param {GraphQLData} taskProxy
  * @return {TaskProxyNode}
  */
-// TODO: move expanded state to data later for infinite-tree
 function createTaskProxyNode (taskProxy) {
   return {
     id: taskProxy.id,
@@ -330,8 +329,6 @@ function createCustomOutputs (job) {
  * @param {JobGraphQLData} job
  * @return {JobNode}
  */
-// TODO: re-work the latest message, as this is the task latest message, not the job's...
-// TODO: add job-leaf (details) in the hierarchy later for infinite-tree
 function createJobNode (job) {
   Vue.set(job, 'customOutputs', createCustomOutputs(job))
   const jobDetailsNode = createJobDetailsNode(job)
