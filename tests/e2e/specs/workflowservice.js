@@ -43,7 +43,7 @@ const getFirstSelection = (query) => query.definitions[0].selectionSet.selection
  * it should bring every entry under the workflow in the GraphQL query. For example, it could bring name, port, owner,
  * taskProxies, familyProxies, etc (as strings).
  * @param {Object} selection
- * @returns {[String]}
+ * @returns {Array<String>}
  */
 // eslint-disable-next-line no-unused-vars
 const getSelectionSetNames = (selection) => selection.selectionSet.selections.map((selection) => selection.alias ? selection.alias.value : selection.name.value)

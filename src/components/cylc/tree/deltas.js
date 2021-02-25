@@ -19,19 +19,12 @@ import {
   createCyclePointNode,
   createFamilyProxyNode,
   createJobNode,
-  createTaskProxyNode, populateTreeFromGraphQLData
-} from '@/components/cylc/tree/index'
-// eslint-disable-next-line no-unused-vars
-import CylcTree from './cylc-tree'
+  createTaskProxyNode
+} from '@/components/cylc/tree/tree-nodes'
+import { populateTreeFromGraphQLData } from '@/components/cylc/tree/index'
 
 /**
  * Helper object used to iterate pruned deltas data.
- *
- * @type {{
- *   jobs: string,
- *   taskProxies: string,
- *   familyProxies: string
- * }}
  */
 const PRUNED = {
   jobs: 'removeJob',
@@ -40,13 +33,16 @@ const PRUNED = {
 }
 
 /**
+ * @typedef {Object} DeltasPruned
+ * @property {Array<string>} taskProxies - IDs of task proxies removed
+ * @property {Array<string>} familyProxies - IDs of family proxies removed
+ * @property {Array<string>} jobs - IDs of jobs removed
+ */
+
+/**
  * Deltas pruned.
  *
- * @param {{
- *   taskProxies: [string],
- *   familyProxies: [string],
- *   jobs: [string]
- * }} pruned
+ * @param {DeltasPruned} pruned - deltas pruned
  * @param {CylcTree} tree
  */
 function applyDeltasPruned (pruned, tree) {
@@ -61,21 +57,6 @@ function applyDeltasPruned (pruned, tree) {
 
 /**
  * Helper object used to iterate added deltas data.
- *
- * @type {{
- *   jobs: [
- *     function(Object, *=): {id: string, type: string, node: Object},
- *     string],
- *   familyProxies: [
- *     function(Object): {id: string, type: string, node: Object, children: *[]},
- *     string],
- *   taskProxies: [
- *     function(Object): {id: string, type: string, expanded: boolean, node: Object, children: *[]},
- *     string],
- *   cyclePoints: [
- *     function(Object): {id: string, type: string, node: Object, children: *[]},
- *     string]
- *   }}
  */
 const ADDED = {
   cyclePoints: [createCyclePointNode, 'addCyclePoint'],
@@ -85,15 +66,18 @@ const ADDED = {
 }
 
 /**
+ * @typedef {Object} DeltasAdded
+ * @property {Object} workflow
+ * @property {Array<Object>} cyclePoints
+ * @property {Array<Object>} familyProxies
+ * @property {Array<Object>} taskProxies
+ * @property {Array<Object>} jobs
+ */
+
+/**
  * Deltas added.
  *
- * @param {{
- *   workflow: Object,
- *   cyclePoints: [Object],
- *   familyProxies: [Object],
- *   taskProxies: [Object],
- *   jobs: [Object]
- * }} added
+ * @param {DeltasAdded} added
  * @param {CylcTree} tree
  */
 function applyDeltasAdded (added, tree) {
@@ -111,18 +95,6 @@ function applyDeltasAdded (added, tree) {
 
 /**
  * Helper object used to iterate updated deltas data.
- *
- * @type {{
- *   jobs: [
- *     function(Object, *=): {id: string, type: string, node: Object},
- *     string],
- *   familyProxies: [
- *     function(Object): {id: string, type: string, node: Object, children: *[]},
- *     string],
- *   taskProxies: [
- *     function(Object): {id: string, type: string, expanded: boolean, node: Object, children: *[]},
- *     string
- *   ]}}
  */
 const UPDATED = {
   familyProxies: [createFamilyProxyNode, 'updateFamilyProxy'],
@@ -131,13 +103,16 @@ const UPDATED = {
 }
 
 /**
+ * @typedef {Object} DeltasUpdated
+ * @property {Array<Object>} familyProxies
+ * @property {Array<Object>} taskProxies
+ * @property {Array<Object>} jobs
+ */
+
+/**
  * Deltas updated.
  *
- * @param updated {{
- *   familyProxies: [Object],
- *   taskProxies: [Object],
- *   jobs: [Object]
- * }} updated
+ * @param updated {DeltasUpdated} updated
  * @param {CylcTree} tree
  */
 function applyDeltasUpdated (updated, tree) {
@@ -154,10 +129,19 @@ function applyDeltasUpdated (updated, tree) {
 }
 
 /**
+ * @typedef {Object} Deltas
+ * @property {string} id
+ * @property {boolean} shutdown
+ * @property {?DeltasAdded} added
+ * @property {?DeltasUpdated} updated
+ * @property {?DeltasPruned} pruned
+ */
+
+/**
  * Handle the initial data burst of deltas. Should create a tree given a workflow from the GraphQL
  * data. This tree contains the base structure to which the deltas are applied to.
  *
- * @param {Object} deltas - GraphQL deltas
+ * @param {Deltas} deltas - GraphQL deltas
  * @param {CylcTree} tree - Tree object backed by an array and a Map
  */
 function handleInitialDataBurst (deltas, tree) {
@@ -176,7 +160,7 @@ function handleInitialDataBurst (deltas, tree) {
  * Family proxies are a special case, due to hierarchy within families, so we have no easy way to grab
  * the first family from the top of the hierarchy in the deltas.
  *l
- * @param {Object} deltas - GraphQL deltas
+ * @param {Deltas} deltas - GraphQL deltas
  * @param {CylcTree} tree - Tree object backed by an array and a Map
  */
 function handleDeltas (deltas, tree) {
@@ -196,30 +180,8 @@ function handleDeltas (deltas, tree) {
 }
 
 /**
- * @param {null|{
- *   id: string,
- *   shutdown: boolean,
- *   added: {
- *     workflow: Object,
- *     cyclePoints: Object,
- *     familyProxies: Object,
- *     taskProxies: Object,
- *     jobs: Object
- *   },
- *   updated: {
- *     workflow: Object,
- *     cyclePoints: Object,
- *     familyProxies: Object,
- *     taskProxies: Object,
- *     jobs: Object
- *   },
- *   pruned: {
- *     taskProxies: [string],
- *     familyProxies: [string],
- *     jobs: [string]
- *   }
- * }} deltas
- * @param {null|CylcTree} tree
+ * @param {?Deltas} deltas
+ * @param {?CylcTree} tree
  */
 export function applyDeltas (deltas, tree) {
   if (deltas && tree) {
