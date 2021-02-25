@@ -501,6 +501,26 @@ describe('CylcTree', () => {
       cylcTree.updateTaskProxy(taskProxy)
       expect(cylcTree.root.children[0].children[0].children[0].node.state).to.equal(TaskState.WAITING.name)
     })
+    it('Should not change the state of an existing task proxy when updating it', () => {
+      const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
+      const taskProxyState = TaskState.RUNNING.name
+      const taskProxy = createTaskProxyNode({
+        id: taskProxyId,
+        firstParent: {
+          id: familyProxy.id
+        },
+        state: taskProxyState
+      })
+      cylcTree.addTaskProxy(taskProxy)
+      expect(cylcTree.root.children[0].children[0].children[0].node.state).to.equal(TaskState.RUNNING.name)
+
+      // state="running", now a delta without state should NOT change the existing state
+      const updateTaskProxy = createTaskProxyNode({
+        id: taskProxyId
+      })
+      cylcTree.updateTaskProxy(updateTaskProxy)
+      expect(cylcTree.root.children[0].children[0].children[0].node.state).to.equal(TaskState.RUNNING.name)
+    })
     it('Should not update an task proxy if it is not in the tree', () => {
       const taskProxyId = `${WORKFLOW_ID}|${cyclePoint.id}|foo`
       const taskProxyState = TaskState.RUNNING.name

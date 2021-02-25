@@ -17,6 +17,8 @@
 
 // eslint-disable-next-line no-unused-vars
 import CylcTree from '@/components/cylc/tree/cylc-tree'
+import TaskOutput from '@/model/TaskOutput'
+import Vue from 'vue'
 
 /**
  * Create a workflow node. Uses the same properties (by reference) as the given workflow,
@@ -114,10 +116,6 @@ function createFamilyProxyNode (familyProxy) {
  */
 // TODO: move expanded state to data later for infinite-tree
 function createTaskProxyNode (taskProxy) {
-  // A TaskProxy could be a ghost node, which doesn't have a state/status yet
-  if (!taskProxy.state) {
-    taskProxy.state = ''
-  }
   return {
     id: taskProxy.id,
     type: 'task-proxy',
@@ -154,13 +152,60 @@ function createJobDetailsNode (job) {
       value: job.finishedTime
     }
   ]
+
+  // NOTE: `node.node.customOutputs` is not from the GraphQL query, but added
+  //       in createJobNode in this module.
   return {
     id: `${job.id}-details`,
     type: 'job-details',
     node: {
+      customOutputs: job.customOutputs,
       details
     }
   }
+}
+
+/**
+ * Create the list of custom outputs for a given Job. We filter out any output
+ * that is a standard output (see TaskOutput enum).
+ *
+ * If no outputs or no custom outputs are provided, then we return an empty list.
+ *
+ * @param {{
+ *   id: string,
+ *   taskProxy: {
+ *     outputs: [
+ *       {
+ *         label: string,
+ *         message: string
+ *       }
+ *     ]
+ *   }
+ * }} job - a job
+ * @returns {[
+ *   {
+ *     label: string,
+ *     message: string
+ *   }
+ * ]}
+ */
+function createCustomOutputs (job) {
+  // NOTE: the query has the filter satisfied:true already, no need to filter for that here
+  //       but we want only custom outputs, so we will filter removing the standard outputs
+  if (!job || !job.taskProxy || !job.taskProxy.outputs) {
+    return []
+  }
+
+  const customOutputs = job
+    .taskProxy
+    .outputs
+    .filter(output => !TaskOutput.enumValues.map(taskOutput => taskOutput.name).includes(output.label))
+    .map(output => {
+      return Object.assign({}, output, {
+        id: `${job.id}-output-${output.label}`
+      })
+    })
+  return customOutputs || []
 }
 
 /**
@@ -174,6 +219,7 @@ function createJobDetailsNode (job) {
 // TODO: re-work the latest message, as this is the task latest message, not the job's...
 // TODO: add job-leaf (details) in the hierarchy later for infinite-tree
 function createJobNode (job) {
+  Vue.set(job, 'customOutputs', createCustomOutputs(job))
   const jobDetailsNode = createJobDetailsNode(job)
   return {
     id: job.id,

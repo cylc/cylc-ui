@@ -15,11 +15,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { extractGroupState } from '@/utils/tasks'
-import { merge, sortedIndex } from 'lodash'
+import { mergeWith, sortedIndex } from 'lodash'
 import { createFamilyProxyNode, getCyclePointId } from '@/components/cylc/tree/index'
 import TaskState from '@/model/TaskState.model'
+import Vue from 'vue'
 
 export const FAMILY_ROOT = 'root'
+
+/**
+ * Only effectively used if we return something. Otherwise Lodash will use its default merge
+ * function. We use it here not to mutate objects, but to check that we are not losing
+ * reactivity in Vue by adding a non-reactive property into an existing object (which should
+ * be reactive and used in the node tree component).
+ *
+ * @see https://docs-lodash.com/v4/merge-with/
+ * @param {*} objValue - destination value in the existing object (same as object[key])
+ * @param {*} srcValue - source value from the object with new values to be merged
+ * @param {string} key - name of the property being merged (used to access object[key])
+ * @param {*} object - the object being mutated (original, destination, the value is retrieved with object[key])
+ * @param {*} source - the source object
+ */
+function mergeWithCustomizer (objValue, srcValue, key, object, source) {
+  if (srcValue !== undefined) {
+    // 1. object[key], or objValue, is undefined
+    //    meaning the destination object does not have the property
+    //    so let's add it with reactivity!
+    if (objValue === undefined) {
+      Vue.set(object, `${key}`, srcValue)
+    }
+    // 2. object[key], or objValue, is defined but without reactivity
+    //    this means somehow the object got a new property that is not reactive
+    //    so let's now make it reactive with the new value!
+    if (object[key] && !object[key].__ob__) {
+      Vue.set(object, `${key}`, srcValue)
+    }
+  }
+}
 
 /**
  * Compute percent progress.
@@ -301,7 +332,7 @@ class CylcTree {
   updateCyclePoint (cyclePoint) {
     const node = this.lookup.get(cyclePoint.id)
     if (node) {
-      merge(node, cyclePoint)
+      mergeWith(node, cyclePoint, mergeWithCustomizer)
     }
   }
 
@@ -348,7 +379,7 @@ class CylcTree {
       // family proxy. In that case, we create an orphan node in the lookup table.
       // The second time will be node with more information, such as .firstParent {}. When this happens,
       // we must remember to merge the objects.
-      merge(existingFamilyProxy, familyProxy)
+      mergeWith(existingFamilyProxy, familyProxy, mergeWithCustomizer)
       this.lookup.set(existingFamilyProxy.id, existingFamilyProxy)
       // NOTE: important, replace the version so that we use the existing one
       // when linking with the parent node in the tree, not the new GraphQL data
@@ -397,7 +428,7 @@ class CylcTree {
   updateFamilyProxy (familyProxy) {
     const node = this.lookup.get(familyProxy.id)
     if (node) {
-      merge(node, familyProxy)
+      mergeWith(node, familyProxy, mergeWithCustomizer)
       if (!node.node.state) {
         node.node.state = ''
       }
@@ -478,6 +509,14 @@ class CylcTree {
     if (!this.lookup.has(taskProxy.id)) {
       // progress starts at 0
       taskProxy.node.progress = 0
+      // A TaskProxy could be a ghost node, which doesn't have a state/status yet.
+      // Note that we cannot have this if-check in `createTaskProxyNode`, as an
+      // update-delta might not have a state, and we don't want to merge
+      // { state: "" } with an object that contains { state: "running" }, for
+      // example.
+      if (!taskProxy.node.state) {
+        taskProxy.node.state = ''
+      }
       this.lookup.set(taskProxy.id, taskProxy)
       if (taskProxy.node.firstParent) {
         const parent = this.findTaskProxyParent(taskProxy)
@@ -503,7 +542,7 @@ class CylcTree {
     const node = this.lookup.get(taskProxy.id)
     if (node) {
       computeTaskProgress(taskProxy)
-      merge(node, taskProxy)
+      mergeWith(node, taskProxy, mergeWithCustomizer)
     }
   }
 
@@ -554,7 +593,7 @@ class CylcTree {
   updateJob (job) {
     const node = this.lookup.get(job.id)
     if (node) {
-      merge(node, job)
+      mergeWith(node, job, mergeWithCustomizer)
       if (job.node.firstParent) {
         const parent = this.lookup.get(job.node.firstParent.id)
         // re-calculate the job's task progress

@@ -90,7 +90,8 @@ describe('Tree component', () => {
     it('should not activate by default', () => {
       const wrapper = mountFunction({
         propsData: {
-          workflows: simpleWorkflowTree4Nodes[0].children
+          workflows: simpleWorkflowTree4Nodes[0].children,
+          filterable: false
         }
       })
       const treeItems = wrapper.findAllComponents({ name: 'TreeItem' })

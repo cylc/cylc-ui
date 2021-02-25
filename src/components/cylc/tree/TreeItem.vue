@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <task
             v-cylc-object="node.node.id"
+            :key="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :progress=0
@@ -46,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <task
             v-cylc-object="node.node.id"
+            :key="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :progress="node.node.progress"
@@ -57,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <task
             v-cylc-object="node.node.id"
+            :key="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :progress="node.node.progress"
@@ -76,10 +79,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <job
             v-cylc-object="node.node.id"
+            :key="node.node.id"
             :status="node.node.state"
           />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
           <span class="grey--text">{{ node.node.host }}</span>
+          <span
+            class="grey--text d-flex flex-nowrap flex-row align-center"
+            v-if="node.node.customOutputs.length > 0"
+          >
+            <!--
+              We had a tricky bug in #530 due to the :key here. In summary, the list
+              that is backing this component changes. It contains zero or more entries,
+              up to N (5 at the time of writing).
+              Initially we used `:key=customOutput.id` here. But Vue tried to avoid
+              changing the DOM elements, which caused some elements to be out of order
+              in the final rendered UI (as Vue was trying to optimize and keep the
+              DOM elements in-place whenever possible).
+              That behaviour is not deterministic, so sometimes you would have the list
+              in order. The fix was to use a key that combines a string with the list
+              iteration `index` (the `:key` value must be unique, so we used output-chip
+              prefix).
+              @see https://github.com/cylc/cylc-ui/pull/530#issuecomment-781076619
+            -->
+            <v-tooltip
+              v-for="(customOutput, index) of [...node.node.customOutputs].slice(0, 5)"
+              :key="`output-chip-${index}`"
+              bottom
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-chip
+                  v-bind="attrs"
+                  v-on="on"
+                  color="grey"
+                  text-color="grey lighten-5"
+                  class="ml-2"
+                  small
+                >{{ customOutput.label }}</v-chip>
+              </template>
+              <span>{{ customOutput.message }}</span>
+            </v-tooltip>
+            <v-chip
+              v-if="node.node.customOutputs.length > 5"
+              color="grey"
+              text-color="grey lighten-5"
+              class="ml-2"
+              small
+              link
+              @click="typeClicked"
+            >+{{ node.node.customOutputs.length - 5 }}</v-chip>
+          </span>
         </div>
       </slot>
       <slot name="job-details" v-else-if="node.type === 'job-details'">
@@ -87,12 +136,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
           <div class="leaf-data font-weight-light py-4 pl-2">
             <div
-              v-for="(jobDetail, index) in node.node.details"
-              :key="`${node.node.id}-job-detail-${index}`"
+              v-for="jobDetail in node.node.details"
+              :key="jobDetail.id"
               class="leaf-entry"
             >
               <span class="px-4 leaf-entry-title">{{ jobDetail.title }}</span>
               <span class="grey--text leaf-entry-value">{{ jobDetail.value }}</span>
+            </div>
+            <v-divider class="ml-3 mr-5" />
+            <div class="leaf-entry">
+              <span class="px-4 leaf-entry-title grey--text text--darken-1">outputs</span>
+            </div>
+            <div
+              v-if="node.node.customOutputs && node.node.customOutputs.length > 0"
+              class="leaf-outputs-entry"
+            >
+              <div
+                v-for="customOutput of node.node.customOutputs"
+                :key="`${customOutput.id}-leaf`"
+                class="leaf-entry"
+              >
+                <span class="px-4 leaf-entry-title">{{ customOutput.label }}</span>
+                <span class="grey--text leaf-entry-value">{{ customOutput.message }}</span>
+              </div>
+            </div>
+            <div v-else class="leaf-entry">
+              <span class="px-4 leaf-entry-title grey--text text--darken-1">No custom messages</span>
             </div>
           </div>
         </div>
@@ -103,7 +172,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-else
       >
         <div :class="getNodeDataClass()">
-          <span @click="nodeClicked" class="mx-1" v-if="node && node.node">{{ node.node.name }}</span>
+          <span
+            v-if="node && node.node"
+            @click="nodeClicked"
+            :key="node.node.id"
+            class="mx-1">{{ node.node.name }}</span>
         </div>
       </slot>
       <slot></slot>
