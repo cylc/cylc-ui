@@ -260,4 +260,30 @@ describe('Api On The Fly', () => {
         })
     })
   })
+
+  describe('Mutation Button', () => {
+    it('should list all workflow mutations', () => {
+      cy.visit('/#/workflows/one')
+
+      // mock the mutation method
+      mockWorkflowService()
+
+      // click the mutations button
+      cy
+        .get('#workflow-mutate-button')
+        .should('be.visible')
+        .click()
+        // this should open the mutations menu
+        .get('.c-mutation-menu-list:first')
+        .should('exist')
+        .should('be.visible')
+        // the workflow should be the subject of the mutation selection
+        .find('h2:first')
+        .should('have.text', ' user|one ')
+        // it should list the four workflow mutations
+        .get('.c-mutation-menu-list:first')
+        .find('.v-list-item')
+        .should('have.length', 4)
+    })
+  })
 })

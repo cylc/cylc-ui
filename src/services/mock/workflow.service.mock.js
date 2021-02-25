@@ -41,7 +41,7 @@ const MUTATIONS = [
       {
         name: 'workflow',
         type: {
-          name: 'workflowID',
+          name: 'WorkflowID',
           kind: null
         }
       }
@@ -55,7 +55,7 @@ const MUTATIONS = [
       {
         name: 'workflow',
         type: {
-          name: 'workflowID',
+          name: 'WorkflowID',
           kind: null
         }
       },
@@ -76,7 +76,7 @@ const MUTATIONS = [
       {
         name: 'workflow',
         type: {
-          name: 'workflowID',
+          name: 'WorkflowID',
           kind: null
         }
       },
@@ -97,7 +97,7 @@ const MUTATIONS = [
       {
         name: 'workflow',
         type: {
-          name: 'workflowID',
+          name: 'WorkflowID',
           kind: null
         }
       },

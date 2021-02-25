@@ -44,34 +44,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <!-- control bar elements displayed only when there is a current workflow in the store -->
     <template v-if="currentWorkflow">
-      <a
+      <v-icon
+        id="workflow-mutate-button"
+        color="#5E5E5E"
+        v-cylc-object="currentWorkflow.id"
+      >
+        {{ svgPaths.menu }}
+      </v-icon>
+
+      <v-icon
         id="workflow-release-hold-button"
-        @click="onClickReleaseHold">
-        <v-icon
-          color="#5E5E5E"
-          :disabled="!enabled.holdToggle"
-        >
-          {{ isHeld ? svgPaths.run : svgPaths.hold }}
-        </v-icon>
-      </a>
+        color="#5E5E5E"
+        :disabled="!enabled.holdToggle"
+        @click="onClickReleaseHold"
+      >
+        {{ isHeld ? svgPaths.run : svgPaths.hold }}
+      </v-icon>
 
-      <a
+      <v-icon
         id="workflow-stop-button"
-        @click="onClickStop">
-        <v-icon
-          color="#5E5E5E"
-          :disabled="!enabled.stopToggle"
-        >
-          {{ svgPaths.stop }}
-        </v-icon>
-      </a>
-
-      <!-- TODO: add control options and call mutations -->
-      <!--
-      <a>
-        <v-chip color="#E7E7E7" @click="toggleExtended">{{ $t('Toolbar.control') }}</v-chip>
-      </a>
-      -->
+        color="#5E5E5E"
+        :disabled="!enabled.stopToggle"
+        @click="onClickStop"
+      >
+        {{ svgPaths.stop }}
+      </v-icon>
 
       <!-- TODO: add workflow latest message -->
       <span></span>
@@ -134,7 +131,8 @@ import {
   mdiStop,
   mdiPlusCircle,
   mdiFileTree,
-  mdiAppleKeyboardCommand
+  mdiAppleKeyboardCommand,
+  mdiMicrosoftXboxControllerMenu
 } from '@mdi/js'
 
 import {
@@ -158,7 +156,8 @@ export default {
       stop: mdiStop,
       tree: mdiFileTree,
       mutations: mdiAppleKeyboardCommand,
-      add: mdiPlusCircle
+      add: mdiPlusCircle,
+      menu: mdiMicrosoftXboxControllerMenu
     },
     expecting: {
       // store state from mutations in order to compute the "enabled" attrs
