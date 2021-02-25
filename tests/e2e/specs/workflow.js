@@ -57,7 +57,7 @@ describe('Workflow view and component/widget', () => {
     // ensure we have no widgets now
     cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
-  it('Should remove widgets when udpating the Workflow view', () => {
+  it('Should remove widgets when updating the Workflow view', () => {
     cy.visit('/#/workflows/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
