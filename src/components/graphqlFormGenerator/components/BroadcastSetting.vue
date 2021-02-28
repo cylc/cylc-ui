@@ -83,7 +83,9 @@ export default {
       let ptr = object_
       let ret = ''
       while (ptr) {
-        for (const key in ptr) {
+        const keys = Object.keys(ptr)
+        if (keys && keys.length !== 0) {
+          const key = keys[0]
           ptr = ptr[key]
           if (typeof ptr === 'object') {
             ret += `[${key}]`
@@ -91,8 +93,6 @@ export default {
             ret += `${key}=${ptr}`
             ptr = null
           }
-          // only allow one definition per item
-          break
         }
       }
       return ret
