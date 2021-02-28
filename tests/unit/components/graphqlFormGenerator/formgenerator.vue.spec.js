@@ -168,15 +168,25 @@ const NESTED_TYPES = [
   ]
 ]
 
+const localVue = createLocalVue()
+
 Vue.use(Vuetify)
 
 describe('FormGenerator Component', () => {
-  it('should display mutation name and description', () => {
-    const localVue = createLocalVue()
+  /**
+   * @param {*} options
+   * @returns {Wrapper<FormGenerator>}
+   */
+  const mountFunction = options => {
     const vuetify = new Vuetify()
-    const wrapper = mount(FormGenerator, {
+    return mount(FormGenerator, {
       localVue,
       vuetify,
+      ...options
+    })
+  }
+  it('should display mutation name and description', () => {
+    const wrapper = mountFunction({
       propsData: {
         mutation: BASIC_MUTATION
       }
@@ -187,11 +197,7 @@ describe('FormGenerator Component', () => {
   })
 
   it('should parse default values from the schema for simple types', () => {
-    const localVue = createLocalVue()
-    const vuetify = new Vuetify()
-    const wrapper = mount(FormGenerator, {
-      localVue,
-      vuetify,
+    const wrapper = mountFunction({
       propsData: {
         mutation: BASIC_MUTATION
       }
@@ -204,11 +210,7 @@ describe('FormGenerator Component', () => {
 
   it('should parse default values from the schema for nested types', () => {
     NESTED_TYPES.forEach(([type, defaultValue]) => {
-      const localVue = createLocalVue()
-      const vuetify = new Vuetify()
-      const wrapper = mount(FormGenerator, {
-        localVue,
-        vuetify,
+      const wrapper = mountFunction({
         propsData: {
           mutation: {
             name: type.name + 'Mutation',
@@ -228,11 +230,7 @@ describe('FormGenerator Component', () => {
     NESTED_TYPES.forEach(([type, defaultValue]) => {
       type = cloneDeep(type)
       delete type.defaultValue
-      const localVue = createLocalVue()
-      const vuetify = new Vuetify()
-      const wrapper = mount(FormGenerator, {
-        localVue,
-        vuetify,
+      const wrapper = mountFunction({
         propsData: {
           mutation: {
             name: type.name + 'Mutation',
@@ -249,11 +247,7 @@ describe('FormGenerator Component', () => {
   })
 
   it('should handle initial data', () => {
-    const localVue = createLocalVue()
-    const vuetify = new Vuetify()
-    const wrapper = mount(FormGenerator, {
-      localVue,
-      vuetify,
+    const wrapper = mountFunction({
       propsData: {
         mutation: BASIC_MUTATION,
         initialData: {
@@ -268,11 +262,7 @@ describe('FormGenerator Component', () => {
   })
 
   it('should reset to initial conditions', () => {
-    const localVue = createLocalVue()
-    const vuetify = new Vuetify()
-    const wrapper = mount(FormGenerator, {
-      localVue,
-      vuetify,
+    const wrapper = mountFunction({
       propsData: {
         mutation: BASIC_MUTATION,
         initialData: {
