@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createLocalVue, mount } from '@vue/test-utils'
+import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { expect } from 'chai'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
 import WorkflowState from '@/model/WorkflowState.model'
@@ -28,7 +28,7 @@ describe('WorkflowIcon', () => {
    * @returns {Wrapper<WorkflowIcon>} - component test wrapper
    */
   const mountFunction = options => {
-    return mount(WorkflowIcon, {
+    return shallowMount(WorkflowIcon, {
       localVue,
       ...options
     })

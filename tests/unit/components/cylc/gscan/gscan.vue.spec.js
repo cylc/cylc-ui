@@ -17,13 +17,13 @@
 
 import { createLocalVue, mount, RouterLinkStub } from '@vue/test-utils'
 import { expect } from 'chai'
-// import vuetify here so that we do not have warnings in the console output
-// eslint-disable-next-line no-unused-vars
 import GScan from '@/components/cylc/gscan/GScan'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import { simpleWorkflowGscanNodes } from './gscan.data'
 import WorkflowState from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
+import Vuetify from 'vuetify'
+import Vue from 'vue'
 
 global.requestAnimationFrame = cb => cb()
 
@@ -43,14 +43,18 @@ localVue.prototype.$workflowService = {
   }
 }
 
+Vue.use(Vuetify)
+
 describe('GScan component', () => {
   /**
    * @param options
    * @returns {Wrapper<GScan>}
    */
   const mountFunction = options => {
+    const vuetify = new Vuetify()
     return mount(GScan, {
       localVue,
+      vuetify,
       stubs: {
         RouterLink: RouterLinkStub
       },
