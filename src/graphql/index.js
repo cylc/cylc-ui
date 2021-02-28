@@ -112,7 +112,8 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     uri: httpUrl
   })
 
-  const wsLink = subscriptionClient !== null ? new WebSocketLink(subscriptionClient)
+  const wsLink = subscriptionClient !== null
+    ? new WebSocketLink(subscriptionClient)
     : new ApolloLink() // return an empty link, useful for testing, offline mode, etc
 
   const link = split(
