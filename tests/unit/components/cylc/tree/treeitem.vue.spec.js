@@ -16,7 +16,7 @@
  */
 
 // we mount the tree to include the TreeItem component and other vuetify children components
-import { mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
@@ -27,10 +27,22 @@ import {
   simpleCyclepointNode,
   simpleTaskNode
 } from './tree.data'
+import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+
+const localVue = createLocalVue()
+// load cylc-object directive
+localVue.prototype.$workflowService = {
+  mutations: []
+}
+localVue.prototype.$eventBus = {
+  emit: () => {}
+}
+localVue.use(CylcObjectPlugin)
 
 describe('TreeItem component', () => {
   const mountFunction = options => {
     return mount(TreeItem, {
+      localVue,
       propsData: {
         node: simpleWorkflowNode
       },
