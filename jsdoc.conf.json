@@ -1,0 +1,26 @@
+{
+  "tags": {
+    "allowUnknownTags": true
+  },
+  "source": {
+    "include": ["."],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "exclude": [
+      ".github",
+      ".nyc_output",
+      "coverage",
+      "dist",
+      "docs",
+      "node_modules",
+      "public"
+    ]
+  },
+  "plugins": [],
+  "recurseDepth": 10,
+  "opts": {
+    "destination": "./docs/jsdoc",
+    "encoding": "utf8",
+    "recurse": true,
+    "private": true
+  }
+}

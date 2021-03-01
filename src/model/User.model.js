@@ -15,15 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @typedef {Object} User
+ * @property {string} username - user name
+ * @property {Array<string>} groups - user groups
+ * @property {string} created - date when the user was created
+ * @property {boolean} admin - whether the user is an administrator or not
+ * @property {string} server - server URL
+ */
 export default class User {
   constructor (username, groups, created, admin, server) {
     this.username = username
     this.groups = groups
     this.created = created
     this.admin = admin
-    /**
-     * @type {string} - server URL
-     */
     this.server = server
   }
 }

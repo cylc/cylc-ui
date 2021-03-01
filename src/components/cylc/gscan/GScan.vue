@@ -195,7 +195,7 @@ import WorkflowState from '@/model/WorkflowState.model'
 import { mdiFilter } from '@mdi/js'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
-import { createWorkflowNode } from '@/components/cylc/tree/'
+import { createWorkflowNode } from '@/components/cylc/tree/tree-nodes'
 import TaskState from '@/model/TaskState.model'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
 

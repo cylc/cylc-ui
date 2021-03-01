@@ -21,7 +21,7 @@ import CylcTree, { FAMILY_ROOT } from '@/components/cylc/tree/cylc-tree'
 import {
   createCyclePointNode, createFamilyProxyNode,
   createWorkflowNode
-} from '@/components/cylc/tree'
+} from '@/components/cylc/tree/tree-nodes'
 import sinon from 'sinon'
 import TaskState from '@/model/TaskState.model'
 

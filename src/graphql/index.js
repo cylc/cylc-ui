@@ -30,7 +30,6 @@ import store from '@/store'
 /**
  * Create the HTTP and WebSocket URLs for an ApolloClient.
  *
- * @private
  * @return {{wsUrl: string, httpUrl: string}}
  * @private
  */

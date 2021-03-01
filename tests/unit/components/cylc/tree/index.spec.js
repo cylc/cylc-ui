@@ -17,7 +17,9 @@
 
 import {
   createJobNode,
-  getCyclePointId,
+  getCyclePointId
+} from '@/components/cylc/tree/tree-nodes'
+import {
   populateTreeFromGraphQLData
 } from '@/components/cylc/tree/index'
 import { expect } from 'chai'

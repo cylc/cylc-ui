@@ -16,7 +16,7 @@
  */
 import { extractGroupState } from '@/utils/tasks'
 import { mergeWith, sortedIndex } from 'lodash'
-import { createFamilyProxyNode, getCyclePointId } from '@/components/cylc/tree/index'
+import { createFamilyProxyNode, getCyclePointId } from '@/components/cylc/tree/tree-nodes'
 import TaskState from '@/model/TaskState.model'
 import Vue from 'vue'
 
@@ -29,8 +29,8 @@ export const FAMILY_ROOT = 'root'
  * be reactive and used in the node tree component).
  *
  * @see https://docs-lodash.com/v4/merge-with/
- * @param {*} objValue - destination value in the existing object (same as object[key])
- * @param {*} srcValue - source value from the object with new values to be merged
+ * @param {?*} objValue - destination value in the existing object (same as object[key])
+ * @param {?*} srcValue - source value from the object with new values to be merged
  * @param {string} key - name of the property being merged (used to access object[key])
  * @param {*} object - the object being mutated (original, destination, the value is retrieved with object[key])
  * @param {*} source - the source object
@@ -56,8 +56,8 @@ function mergeWithCustomizer (objValue, srcValue, key, object, source) {
  * Compute percent progress.
  *
  * @see https://github.com/cylc/cylc-flow/blob/de7d938496e82dbdfb165938145670dd8e801efd/lib/cylc/gui/updater_tree.py#L248-L263
- * @param {number|undefined} startedTime in milliseconds since 1970-01-01 00:00:00 UTC, e.g. 1568353099874
- * @param {number|undefined} meanElapsedTime mean elapsed time in seconds
+ * @param {?number} startedTime in milliseconds since 1970-01-01 00:00:00 UTC, e.g. 1568353099874
+ * @param {?number} meanElapsedTime mean elapsed time in seconds
  * @returns {number} the percent progress, e.g. 25 (meaning 25% progress)
  * @private
  */
@@ -96,23 +96,7 @@ function computePercentProgress (startedTime, meanElapsedTime) {
  *
  * The property will be set in the taskProxy.node.progress property.
  *
- * @param taskProxy {{
- *   id: string,
- *   node: {
- *     state: string,
- *     progress: number,
- *     task: {
- *       meanElapsedTime: number
- *     }
- *   },
- *   children: [{
- *     id: string,
- *     node: {
- *       state: string,
- *       startedTime: string
- *     }
- *   }]
- * }} task proxy
+ * @param taskProxy {TaskProxyNode} task proxy
  */
 function computeTaskProgress (taskProxy) {
   // calculate task progress if necessary/possible
@@ -135,7 +119,7 @@ function computeTaskProgress (taskProxy) {
  * After the state is successfully computed, each cycle point node gets an additional property `state`
  * with type string, representing the cycle point state.
  *
- * @param cyclePointNodes {Array} list of cycle point nodes.
+ * @param {Array<CyclePointNode>} cyclePointNodes list of cycle point nodes.
  */
 function computeCyclePointsStates (cyclePointNodes) {
   for (const cyclePointNode of cyclePointNodes) {
@@ -147,6 +131,11 @@ function computeCyclePointsStates (cyclePointNodes) {
   }
 }
 
+/**
+ * @param {FamilyProxyNode} left
+ * @param {FamilyProxyNode} right
+ * @returns {number}
+ */
 function sortTaskProxyOrFamilyProxy (left, right) {
   // sort cycle point children (family-proxies, and task-proxies)
   // first we sort by type ascending, so 'family-proxy' types come before 'task-proxy'
@@ -165,6 +154,12 @@ function sortTaskProxyOrFamilyProxy (left, right) {
       undefined,
       { numeric: true, sensitivity: 'base' })
 }
+
+/**
+ * @typedef {Object} CylcTree
+ * @property {Map<string, Object>} lookup - lookup map used to access objects without iteration
+ * @property {TreeNode} root - tree root
+ */
 
 /**
  * A data structure representing the tree used by Cylc.
@@ -230,22 +225,17 @@ function sortTaskProxyOrFamilyProxy (left, right) {
  * And when a node is removed, it gets removed from its parent's `.children`
  * array, and the node and each of its children get removed from the
  * lookup map as well.
+ *
+ * @class
  */
 class CylcTree {
   /**
    * Create a tree with an initial root node, representing
    * a workflow in Cylc.
    *
-   * @param {null | {
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }} [workflow]
+   * @param {?WorkflowNode} workflow
    */
   constructor (workflow) {
-    /**
-     * @type {Map<string, any>}
-     */
     this.lookup = new Map()
     if (!workflow) {
       this.root = {
@@ -259,6 +249,9 @@ class CylcTree {
     }
   }
 
+  /**
+   * @param {WorkflowNode} workflow
+   */
   setWorkflow (workflow) {
     if (!workflow) {
       throw new Error('You must provide a valid workflow!')
@@ -276,16 +269,15 @@ class CylcTree {
     }
   }
 
+  /**
+   * @returns {boolean}
+   */
   isEmpty () {
     return this.lookup.size === 0
   }
 
   /**
-   * @param {{
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }} node
+   * @param {TreeNode} node
    */
   recursivelyRemoveNode (node) {
     const stack = [node]
@@ -301,11 +293,7 @@ class CylcTree {
   // --- Cycle points
 
   /**
-   * @param {{
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }} cyclePoint
+   * @param {CyclePointNode} cyclePoint
    */
   addCyclePoint (cyclePoint) {
     if (!this.lookup.has(cyclePoint.id)) {
@@ -323,11 +311,7 @@ class CylcTree {
   }
 
   /**
-   * @param {{
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }} cyclePoint
+   * @param {CyclePointNode} cyclePoint
    */
   updateCyclePoint (cyclePoint) {
     const node = this.lookup.get(cyclePoint.id)
@@ -355,11 +339,7 @@ class CylcTree {
   // --- Family proxies
 
   /**
-   * @param {{
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }} familyProxy
+   * @param {FamilyProxyNode} familyProxy
    */
   addFamilyProxy (familyProxy) {
     // When we receive the families from the GraphQL endpoint, we are sorting by their
@@ -419,11 +399,7 @@ class CylcTree {
   }
 
   /**
-   * @param {{
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }} familyProxy
+   * @param {FamilyProxyNode} familyProxy
    */
   updateFamilyProxy (familyProxy) {
     const node = this.lookup.get(familyProxy.id)
@@ -477,16 +453,8 @@ class CylcTree {
    * or a cycle point (if the parent family is ROOT).
    *
    * @private
-   * @param {{
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }} taskProxy
-   * @return {null|{
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }}
+   * @param {TaskProxyNode} taskProxy
+   * @return {?TaskProxyNode}
    */
   findTaskProxyParent (taskProxy) {
     if (taskProxy.node.firstParent.name === FAMILY_ROOT) {
@@ -499,11 +467,7 @@ class CylcTree {
   }
 
   /**
-   * @param {{
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }} taskProxy
+   * @param {TaskProxyNode} taskProxy
    */
   addTaskProxy (taskProxy) {
     if (!this.lookup.has(taskProxy.id)) {
@@ -532,11 +496,7 @@ class CylcTree {
   }
 
   /**
-   * @param {{
-   *   id: string,
-   *   node: Object,
-   *   children: []
-   * }} taskProxy
+   * @param {TaskProxyNode} taskProxy
    */
   updateTaskProxy (taskProxy) {
     const node = this.lookup.get(taskProxy.id)
@@ -564,10 +524,7 @@ class CylcTree {
   // --- Jobs
 
   /**
-   * @param {{
-   *   id: string,
-   *   node: Object,
-   * }} job
+   * @param {JobNode} job
    */
   addJob (job) {
     if (!this.lookup.has(job.id)) {
@@ -584,11 +541,7 @@ class CylcTree {
   }
 
   /**
-   * @param {{
-   *   id: string,
-   *   type: string,
-   *   node: Object,
-   * }} job
+   * @param {JobNode} job
    */
   updateJob (job) {
     const node = this.lookup.get(job.id)

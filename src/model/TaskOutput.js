@@ -17,6 +17,10 @@
 
 import { Enumify } from 'enumify'
 
+/**
+ * @typedef {Object} TaskOutput
+ * @property {string} name - enum name
+ */
 class TaskOutput extends Enumify {
   // @see: https://cylc.github.io/cylc-admin/proposal-state-names.html#outputs
   // @see: https://github.com/cylc/cylc-flow/blob/bb79a6e03437927ecf97deb6a34fa8f1e7ab0835/cylc/flow/task_outputs.py

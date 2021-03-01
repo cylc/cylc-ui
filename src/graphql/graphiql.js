@@ -51,14 +51,17 @@ const hasSubscriptionOperation = function (graphQlParams) {
 }
 
 /**
+ * @typedef SubscribableComponent
+ * @property {?Object} subscription - GraphQL subscription
+ */
+
+/**
  * The GraphQL fetcher function.
  *
- * @param {Object|null} subscriptionsClient
+ * @param {?Object} subscriptionsClient
  * @param {function} fallbackFetcher
- * @param {{
- *   subscription: Object
- * }} component
- * @returns {function(...[*]=)}
+ * @param {SubscribableComponent} component
+ * @returns {function}
  */
 const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component) {
   component.subscription = null

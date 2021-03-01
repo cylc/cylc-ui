@@ -351,6 +351,17 @@ export function getIntrospectionQuery () {
 }
 
 /**
+ * @typedef {Object} MutationArgs
+ * @property {string} _cylcObject
+ * @property {boolean} _required
+ */
+
+/**
+ * @typedef {Object} Mutation
+ * @property {Array<MutationArgs>} args
+ */
+
+/**
  * Filter for mutations that relate to the given Cylc object.
  *
  * Returns an array with two values:
@@ -359,30 +370,8 @@ export function getIntrospectionQuery () {
  *
  * @param {string} cylcObject - The type of object to filter mutations by.
  * @param {Object} tokens - Tokens representing the context of this object.
- * @param {[
- *   {
- *     args: [
- *       {
- *         _cylcObject: *,
- *         _required: boolean
- *       }
- *     ]
- *   }
- * ]} mutations - Array of mutations.
- *
- * @returns {[
- *   [
- *     {
- *       args: [
- *         {
- *           _cylcObject: string,
- *           _required: boolean
- *         }
- *       ]
- *     },
- *     requiresInfo: boolean
- *   ]
- * ]} [satisfied, all]
+ * @param {Array<Mutation>} mutations - Array of mutations.
+ * @returns {Array<Array<bool|Mutation>>}
  */
 export function filterAssociations (cylcObject, tokens, mutations) {
   const ret = []
