@@ -31,10 +31,10 @@ export default {
   methods: {
     /** Split a given string from the left.
      *
-     * @param {string} The string to split.
-     * @param {string} The string to split it by.
-     * @param {n} The maximum number of times to split the string.
-     * @returns {[string]}
+     * @param {string} string_ - The string to split.
+     * @param {string} separator - The string to split it by.
+     * @param {number} n - The maximum number of times to split the string.
+     * @returns {Array<string>}
      */
     lsplit (string_, separator, n) {
       const split = string_.split(separator)
