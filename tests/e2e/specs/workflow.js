@@ -15,7 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Mutations from '@/views/Mutations'
+
 describe('Workflow view and component/widget', () => {
+  afterEach(() => {
+    cy
+      .get('.v-alert')
+      .should('not.exist')
+  })
   it('Should display the Workflow component in the Workflow view, with a Tree widget', () => {
     cy.visit('/#/workflows/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
@@ -31,6 +38,18 @@ describe('Workflow view and component/widget', () => {
     cy.get('a.add-view').click()
     cy.get('#toolbar-add-tree-view').click()
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
+  })
+  it('Should be able to add two widgets of different types', () => {
+    cy.visit('/#/workflows/one')
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
+    cy.get('a.add-view').click()
+    cy.get('#toolbar-add-mutations-view').click()
+    cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
+    cy
+      .get('.lm-TabBar-tabLabel')
+      .contains(Mutations.name.toLowerCase())
+      .click({ force: true })
+    cy.get('h3').contains('Sample Mutation').should('be.visible')
   })
   it('Should remove widgets added successfully', () => {
     cy.visit('/#/workflows/one')
