@@ -153,6 +153,21 @@ class MockWorkflowService extends GQuery {
     })
     store.dispatch('workflows/set', workflows).then(() => {})
     this.loadMutations()
+    // mutations and types are both initiliazed in loadMutations
+    this.apolloClient = {
+      query: () => new Promise((resolve) => {
+        resolve({
+          data: {
+            __schema: {
+              mutationType: {
+                fields: this.mutations
+              },
+              types: this.types
+            }
+          }
+        })
+      })
+    }
   }
 
   /**
