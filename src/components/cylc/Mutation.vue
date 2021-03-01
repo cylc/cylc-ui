@@ -136,6 +136,7 @@ export default {
 
     /* Reset this component to it's initial state. */
     reset () {
+      this.$refs.formGenerator.reset()
       Object.assign(this.$data, initialState())
     }
   },
