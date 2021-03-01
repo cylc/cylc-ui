@@ -62,7 +62,8 @@ export default {
     createFetcher () {
       const subscriptionClient = this.$workflowService.subscriptionClient
       return subscriptionClient !== null
-        ? graphQLFetcher(subscriptionClient, fallbackGraphQLFetcher, this) : fallbackGraphQLFetcher
+        ? graphQLFetcher(subscriptionClient, fallbackGraphQLFetcher, this)
+        : fallbackGraphQLFetcher
     }
   }
 }

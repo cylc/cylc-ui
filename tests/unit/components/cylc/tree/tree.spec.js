@@ -290,8 +290,6 @@ describe('CylcTree', () => {
       })
       cylcTree.addFamilyProxy(familyProxy1)
       cylcTree.addFamilyProxy(familyProxy1)
-      console.log(cyclePoint2.id)
-      console.log(cylcTree.root.children[0])
       expect(cylcTree.root.children[0].children.length).to.equal(1)
     })
     it('Should update family proxies', () => {

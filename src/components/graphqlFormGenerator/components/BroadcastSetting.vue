@@ -31,10 +31,10 @@ export default {
   methods: {
     /** Split a given string from the left.
      *
-     * @param {string} The string to split.
-     * @param {string} The string to split it by.
-     * @param {n} The maximum number of times to split the string.
-     * @returns {[string]}
+     * @param {string} string_ - The string to split.
+     * @param {string} separator - The string to split it by.
+     * @param {number} n - The maximum number of times to split the string.
+     * @returns {Array<string>}
      */
     lsplit (string_, separator, n) {
       const split = string_.split(separator)
@@ -83,7 +83,9 @@ export default {
       let ptr = object_
       let ret = ''
       while (ptr) {
-        for (const key in ptr) {
+        const keys = Object.keys(ptr)
+        if (keys && keys.length !== 0) {
+          const key = keys[0]
           ptr = ptr[key]
           if (typeof ptr === 'object') {
             ret += `[${key}]`
@@ -91,8 +93,6 @@ export default {
             ret += `${key}=${ptr}`
             ptr = null
           }
-          // only allow one definition per item
-          break
         }
       }
       return ret
