@@ -167,6 +167,11 @@ export default {
       this.y = event.clientY
       this.$nextTick(() => {
         this.showMenu = true
+        if (this.$refs && this.$refs.mutationComponent) {
+          // reset the mutation component if present
+          // (this is because we re-use the same component)
+          this.$refs.mutationComponent.reset()
+        }
       })
     },
 
