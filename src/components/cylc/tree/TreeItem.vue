@@ -57,6 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </slot>
       <slot name="task-proxy" v-else-if="node.type === 'task-proxy'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
+          <!-- Task summary -->
           <task
             v-cylc-object="node.node.id"
             :key="node.node.id"
@@ -64,15 +65,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :isHeld="node.node.isHeld"
             :progress="node.node.progress"
           />
-          <span class="mx-1">{{ node.node.name }}</span>
           <div v-if="!isExpanded" class="node-summary">
-            <!-- Task summary -->
+            <!-- most recent job summary -->
             <job
-              v-for="(job, index) in node.children"
+              v-for="(job, index) in node.children.slice(0, 1)"
               v-cylc-object="job.id"
               :key="`${job.id}-summary-${index}`"
-              :status="job.node.state" />
+              :status="job.node.state"
+              style="margin-left: 0.25em;"
+            />
           </div>
+          <span class="mx-1">{{ node.node.name }}</span>
         </div>
       </slot>
       <slot name="job" v-else-if="node.type === 'job'">
