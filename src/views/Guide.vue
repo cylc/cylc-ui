@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 v-for="state in states"
               >
                 <td style="font-size: 2em;">
-                  <task :status="state" :progress="33" />
+                  <task :status="state"/>
                 </td>
                 <td>
                   <span>{{ state }}</span>

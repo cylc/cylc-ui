@@ -23,7 +23,6 @@ import {
   populateTreeFromGraphQLData
 } from '@/components/cylc/tree/index'
 import { expect } from 'chai'
-import sinon from 'sinon'
 import { sampleWorkflow1 } from './tree.data'
 import CylcTree from '@/components/cylc/tree/cylc-tree'
 
@@ -61,70 +60,6 @@ describe('Tree component functions', () => {
     expect(children[1].node.name).to.equal('GOOD')
     expect(children[1].children[0].type).to.equal(FAMILY_TYPE)
     expect(children[1].children[0].node.name).to.equal('SUCCEEDED')
-  })
-  it('should correctly calculate the task proxy progress', () => {
-    const taskProxyWithProgress = sampleWorkflow1.taskProxies[11]
-    expect(taskProxyWithProgress.task.meanElapsedTime).to.equal(7.0)
-    const cyclePoint = workflowTree.find(cyclePoint => cyclePoint.node.name === taskProxyWithProgress.cyclePoint)
-    const taskProxy = cyclePoint.children.find(taskProxy => taskProxy.id === taskProxyWithProgress.id)
-    expect(taskProxy.node.progress).to.equal(100)
-  })
-  it('should set the progress to 0 when the meanElapsedTime is 0', () => {
-    const taskProxyWithoutProgress = sampleWorkflow1.taskProxies[12]
-    expect(taskProxyWithoutProgress.task.meanElapsedTime).to.equal(0)
-    const cyclePoint = workflowTree.find(cyclePoint => cyclePoint.node.name === taskProxyWithoutProgress.cyclePoint)
-    const taskProxy = cyclePoint.children.find(taskProxy => taskProxy.id === taskProxyWithoutProgress.id)
-    expect(taskProxy.node.progress).to.equal(0)
-  })
-  it('should set the progress to 0 when startedTime is greater than now', () => {
-    // dispatching here will call new Date() to calculate now, so let's mock it...
-    const stub = sinon.stub(Date, 'now').returns(0)
-    // now the clock is set back to moment 0 (19700101...) by sinon, so Date.now() or new Date().getTime()
-    // will return the clock object and the moment 0...
-    const cylcTree = new CylcTree()
-    populateTreeFromGraphQLData(cylcTree, sampleWorkflow1)
-    const workflowTree = cylcTree.root.children
-    // see test above, where the value is **not** equal 0
-    expect(workflowTree[1].children[4].node.progress).to.equal(0)
-    // remove the mock
-    stub.restore()
-  })
-  it('should set the progress to 100 when now() is greater than elapsedTime', () => {
-    // avoid changing original test data
-    const copy = Object.assign({}, sampleWorkflow1)
-    // dispatching here will call new Date() to calculate now, so let's mock it...
-    const startedTime = Date.parse(copy.taskProxies[11].jobs[0].startedTime)
-    copy.taskProxies[11].task.meanElapsedTime = 1.0
-    const meanElapsedTime = copy.taskProxies[11].task.meanElapsedTime
-    const timeExpectedToComplete = startedTime + meanElapsedTime * 1000
-    // even if 0.1 greater than the timeExpectedToComplete, it will be 100
-    const stub = sinon.stub(Date, 'now').returns(timeExpectedToComplete + 0.1)
-    // now the clock is set back to moment 0 (19700101...) by sinon, so Date.now() or new Date().getTime()
-    // will return the clock object and the moment 0...
-    const cylcTree = new CylcTree()
-    populateTreeFromGraphQLData(cylcTree, sampleWorkflow1)
-    const cyclePoint = workflowTree.find(cyclePoint => cyclePoint.node.name === copy.taskProxies[11].cyclePoint)
-    const task = cyclePoint.children.find(taskProxy => taskProxy.id === copy.taskProxies[11].id)
-    expect(task.node.progress).to.equal(100)
-    // remove the mock
-    stub.restore()
-  })
-  it('should compute the progress percent', () => {
-    // avoid changing original test data
-    const copy = Object.assign({}, sampleWorkflow1)
-    // dispatching here will call new Date() to calculate now, so let's mock it...
-    const startedTime = Date.parse(copy.taskProxies[11].jobs[0].startedTime)
-    copy.taskProxies[11].task.meanElapsedTime = 1.0
-    const stub = sinon.stub(Date, 'now').returns(startedTime + 500) // so let's make the now() function return started time plus 500 ms (half of meanElapsedTime * 1000)
-    // now the clock is set back to moment 0 (19700101...) by sinon, so Date.now() or new Date().getTime()
-    // will return the clock object and the moment 0...
-    const cylcTree = new CylcTree()
-    populateTreeFromGraphQLData(cylcTree, sampleWorkflow1)
-    const cyclePoint = workflowTree.find(cyclePoint => cyclePoint.node.name === copy.taskProxies[11].cyclePoint)
-    const task = cyclePoint.children.find(taskProxy => taskProxy.id === copy.taskProxies[11].id)
-    expect(task.node.progress).to.equal(50)
-    // remove the mock
-    stub.restore()
   })
   it('should not throw an error when the workflow to be populated is invalid', () => {
     const tree = {}

@@ -20,6 +20,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          which can sit in text.
 -->
 <script>
+import TaskState from '@/model/TaskState.model'
+
+/* Compute the style attribute that makes the progress animation work. */
+function getRunningStyle (context) {
+  if (
+    context.props.status === TaskState.RUNNING.name &&
+    context.props.startTime &&
+    context.props.estimatedDuration
+  ) {
+    const startTime = Date.parse(context.props.startTime)
+    const now = Date.now()
+    const elapsedTime = ((now - startTime) / 1000)
+    return `
+      animation-name: c-task-progress-animation;
+      /* clock position should be proportional to elapsed time */
+      animation-timing-function: linear;
+      /* run this animation once and only once /*
+      animation-iteration-count: 1;
+      /* the duration of the animation (the estimated task run time) */
+      animation-duration: ${context.props.estimatedDuration}s;
+      /* start the animation at the right point (note negative duration) */
+      animation-delay: -${elapsedTime}s;
+      /* stay at 100% once the animation has finished */
+      animation-fill-mode: forwards;
+    `
+  }
+  return ''
+}
+
 export default {
   name: 'Task',
   functional: true,
@@ -36,7 +65,12 @@ export default {
       type: Boolean,
       require: true
     },
-    progress: {
+    startTime: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    estimatedDuration: {
       type: Number,
       required: false,
       default: 0
@@ -69,7 +103,7 @@ export default {
               r: '25',
               'stroke-width': '50',
               'stroke-dasharray': '157',
-              style: `stroke-dashoffset: ${157 - (157 * (context.props.progress / 100))}`
+              style: getRunningStyle(context)
             }
           }
         ),

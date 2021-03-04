@@ -653,7 +653,6 @@ describe('CylcTree', () => {
       cylcTree.addTaskProxy(taskProxy)
     })
     it('Should add jobs', () => {
-      expect(taskProxy.node.progress).to.equal(0)
       const jobId = `${taskProxy.id}|1`
       const fmt = new Intl.DateTimeFormat('en', { year: 'numeric', month: '2-digit', day: '2-digit' })
       const startedDate = new Date()
@@ -675,8 +674,6 @@ describe('CylcTree', () => {
       const task = family.children[0]
       const createdJob = task.children[0]
       expect(createdJob.id).to.equal(jobId)
-      // should have updated the parent progress now
-      expect(taskProxy.node.progress).to.be.greaterThan(0)
     })
     it('Should not add jobs twice', () => {
       const jobId = `${taskProxy.id}|1`
@@ -786,34 +783,6 @@ describe('CylcTree', () => {
       expect(createdJob.id).to.equal(jobId)
       cylcTree.removeJob('-1')
       expect(cylcTree.root.children[0].children[0].children[0].children.length).to.equal(1)
-    })
-    it('Should set progress as zero even if there is no meanElapsedTime (and not NaN)', () => {
-      expect(taskProxy.node.progress).to.equal(0)
-      // a TaskProxy may not have a meanElapsedTime until it has had previous executions to calculate it
-      delete taskProxy.node.task.meanElapsedTime
-      const jobId = `${taskProxy.id}|1`
-      const fmt = new Intl.DateTimeFormat('en', { year: 'numeric', month: '2-digit', day: '2-digit' })
-      const startedDate = new Date()
-      const startedTime = fmt.format(startedDate)
-      const job = createJobNode({
-        id: jobId,
-        firstParent: {
-          id: taskProxy.id
-        },
-        state: TaskState.FAILED.name,
-        startedTime
-      })
-      const sandbox = sinon.createSandbox()
-      sandbox.stub(Date, 'now').returns(startedDate.getTime() + 15000)
-      cylcTree.addJob(job)
-      sandbox.restore()
-      const cyclepoint = cylcTree.root.children[0]
-      const family = cyclepoint.children[0]
-      const task = family.children[0]
-      const createdJob = task.children[0]
-      expect(createdJob.id).to.equal(jobId)
-      // the calculation will have failed since there is no meanElapsedTime, so the progress remains at 0
-      expect(taskProxy.node.progress).to.equal(0)
     })
   })
   describe('Recursive delete nodes', () => {
