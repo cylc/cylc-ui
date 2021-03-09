@@ -20,7 +20,7 @@ import { Enumify } from 'enumify'
 /**
  * Cylc valid task states.
  */
-class TaskState extends Enumify {
+export class TaskState extends Enumify {
   // NOTE: the order of the enum values is important to calculate the group states in the UI. Items at
   // the top of the list have preference over the items below in the algorithm.
   static SUBMIT_FAILED = new TaskState('submit-failed')
@@ -42,5 +42,19 @@ class TaskState extends Enumify {
     this.name = name
   }
 }
+
+/**
+ * Task states ordered for display purposes.
+ */
+export const TaskStateUserOrder = [
+  TaskState.WAITING,
+  TaskState.PREPARING,
+  TaskState.SUBMITTED,
+  TaskState.RUNNING,
+  TaskState.SUCCEEDED,
+  TaskState.SUBMIT_FAILED,
+  TaskState.FAILED,
+  TaskState.EXPIRED
+]
 
 export default TaskState
