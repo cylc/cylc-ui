@@ -29,7 +29,6 @@ class TaskState extends Enumify {
   static RUNNING = new TaskState('running')
   static SUBMITTED = new TaskState('submitted')
   static PREPARING = new TaskState('preparing')
-  static QUEUED = new TaskState('queued')
   static WAITING = new TaskState('waiting')
   static SUCCEEDED = new TaskState('succeeded')
   static _ = this.closeEnum()

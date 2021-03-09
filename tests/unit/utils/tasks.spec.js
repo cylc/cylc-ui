@@ -44,7 +44,7 @@ describe('tasks', () => {
           [TaskState.WAITING, TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name)], // childStates
         [
           TaskState.SUCCEEDED.name,
-          [TaskState.QUEUED, TaskState.SUCCEEDED].map((state) => state.name)],
+          [TaskState.SUCCEEDED].map((state) => state.name)],
         [
           TaskState.RUNNING.name,
           [TaskState.SUBMITTED, TaskState.RUNNING, TaskState.EXPIRED].map((state) => state.name)]

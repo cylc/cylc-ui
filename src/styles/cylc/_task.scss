@@ -66,9 +66,21 @@
       circle {
         stroke: $foreground;
         fill: $background;
+        transform: translate(-68%, -68%);
       }
       rect {
         fill: $foreground;
+        transform: translate(-68%, -68%);
+      }
+    }
+  }
+
+  @mixin queued() {
+    #queued {
+      rect {
+        fill: $foreground;
+        stroke: $foreground;
+        transform: translate(-65%, -65%);
       }
     }
   }
@@ -103,7 +115,7 @@
     /* scale the icon to the font-size */
     width: 1em;
     height: 1em;
-
+    overflow: visible;
     vertical-align: middle;
 
     circle, rect {
@@ -117,9 +129,13 @@
       @include held();
     }
 
+    /* isQueued */
+    &.queued {
+      @include queued();
+    }
+
     /* status */
-    &.waiting, &.queued {
-      /* NOTE: queued tasks may acquire an xtrigger or similar */
+    &.waiting {
       @include outline();
     }
 

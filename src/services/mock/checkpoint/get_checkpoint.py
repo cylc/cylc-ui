@@ -69,6 +69,7 @@ fragment TaskProxyData on TaskProxy {
   name
   state
   isHeld
+  isQueued
   cyclePoint
   firstParent {
     id

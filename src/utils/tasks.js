@@ -29,7 +29,6 @@ const isStoppedOrderedStates = [
   TaskState.EXPIRED,
   TaskState.PREPARING,
   TaskState.SUCCEEDED,
-  TaskState.QUEUED,
   TaskState.WAITING
 ]
 

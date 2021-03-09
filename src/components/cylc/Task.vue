@@ -32,6 +32,10 @@ export default {
       type: Boolean,
       require: true
     },
+    isQueued: {
+      type: Boolean,
+      require: true
+    },
     progress: {
       type: Number,
       required: false,
@@ -162,7 +166,7 @@ export default {
       {
         attrs: {
           id: 'held',
-          transform: 'scale(0.45)'
+          transform: 'scale(0.55)'
         }
       },
       [
@@ -181,12 +185,12 @@ export default {
           'rect',
           {
             attrs: {
-              x: 32.5,
-              y: 25,
-              width: '10',
-              height: '50',
-              rx: '5',
-              ry: '5'
+              x: 30,
+              y: 20,
+              width: '15',
+              height: '60',
+              rx: '10',
+              ry: '10'
             }
           }
         ),
@@ -194,18 +198,71 @@ export default {
           'rect',
           {
             attrs: {
-              x: 52.5,
-              y: 25,
-              width: '10',
-              height: '50',
-              rx: '5',
-              ry: '5'
+              x: 55,
+              y: 20,
+              width: '15',
+              height: '60',
+              rx: '10',
+              ry: '10'
             }
           }
         )
       ]
     )
     taskIconSvgChildren.push(isHeld)
+    // isQueued - the isQueued portion of the task state.
+    const isQueued = createElement(
+      'g',
+      {
+        attrs: {
+          id: 'queued',
+          transform: 'scale(0.45)'
+        }
+      },
+      [
+        createElement(
+          'rect',
+          {
+            attrs: {
+              x: 0,
+              y: 0,
+              width: '90',
+              height: '18',
+              rx: '10',
+              ry: '10'
+            }
+          }
+        ),
+        createElement(
+          'rect',
+          {
+            attrs: {
+              x: 0,
+              y: 33,
+              width: '90',
+              height: '18',
+              rx: '10',
+              ry: '10'
+            }
+          }
+        ),
+        createElement(
+          'rect',
+          {
+            attrs: {
+              x: 0,
+              y: 66,
+              width: '90',
+              height: '18',
+              rx: '10',
+              ry: '10'
+            }
+          }
+        )
+      ]
+    )
+    taskIconSvgChildren.push(isQueued)
+
     // Warning icon.
     const warningIcon = createElement(
       'g',
@@ -330,6 +387,8 @@ export default {
     const taskIconSvgCssClasses = ['task']
     if (context.props.isHeld) {
       taskIconSvgCssClasses.push('held')
+    } else if (context.props.isQueued) {
+      taskIconSvgCssClasses.push('queued')
     }
     if (['waiting', 'preparing', 'expired', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed', 'queued'].includes(context.props.status)) {
       taskIconSvgCssClasses.push(context.props.status)

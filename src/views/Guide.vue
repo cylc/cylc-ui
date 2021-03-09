@@ -117,6 +117,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-list-tile-content>
 
               </v-list-tile>
+              <v-list-tile>
+                  <v-list-tile-avatar>
+                    <task
+                      style="font-size: 2em;"
+                      status="waiting"
+                      :isQueued="true"
+                    />
+                  </v-list-tile-avatar>
+                  <v-list-tile-content>
+                    <v-list-tile-title>
+                      Queued
+                    </v-list-tile-title>
+                    <v-list-tile-sub-title>
+                      Task queued for job submission
+                    </v-list-tile-sub-title>
+                  </v-list-tile-content>
+
+              </v-list-tile>
+
             </v-list>
           </v-card-text>
         </v-card>

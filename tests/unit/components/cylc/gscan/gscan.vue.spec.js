@@ -238,7 +238,7 @@ describe('GScan component', () => {
         name: 'new zealand',
         status: WorkflowState.HELD.name,
         stateTotals: {
-          [TaskState.QUEUED.name]: 1
+          [TaskState.FAILED.name]: 1
         }
       },
       {
@@ -246,7 +246,7 @@ describe('GScan component', () => {
         name: 'zeeland',
         status: WorkflowState.RUNNING.name,
         stateTotals: {
-          [WorkflowState.RUNNING.name]: 1
+          [TaskState.RUNNING.name]: 1
         }
       }
     ]
@@ -397,7 +397,7 @@ describe('GScan component', () => {
           },
           // enable only the ones we have in our test data set
           {
-            workflowTaskStates: [TaskState.RUNNING, TaskState.QUEUED],
+            workflowTaskStates: [TaskState.RUNNING, TaskState.FAILED],
             expected: 2
           },
           // enable just one of the values we have in our test data set

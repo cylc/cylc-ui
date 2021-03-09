@@ -10,7 +10,6 @@ const checkpoint = {
             "port": 43079,
             "stateTotals": {
                 "waiting": 1,
-                "queued": 0,
                 "expired": 0,
                 "preparing": 0,
                 "submit-failed": 0,
@@ -31,6 +30,7 @@ const checkpoint = {
                     "name": "checkpoint",
                     "state": "running",
                     "isHeld": false,
+                    "isQueued": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
@@ -64,6 +64,7 @@ const checkpoint = {
                     "name": "eventually_succeeded",
                     "state": "submitted",
                     "isHeld": false,
+                    "isQueued": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|SUCCEEDED",
@@ -139,6 +140,7 @@ const checkpoint = {
                     "name": "failed",
                     "state": "submitted",
                     "isHeld": false,
+                    "isQueued": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|BAD",
@@ -172,6 +174,7 @@ const checkpoint = {
                     "name": "retrying",
                     "state": "waiting",
                     "isHeld": false,
+                    "isQueued": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|BAD",
@@ -205,6 +208,7 @@ const checkpoint = {
                     "name": "sleepy",
                     "state": "",
                     "isHeld": false,
+                    "isQueued": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
@@ -223,6 +227,7 @@ const checkpoint = {
                     "name": "succeeded",
                     "state": "submitted",
                     "isHeld": false,
+                    "isQueued": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|SUCCEEDED",
@@ -256,6 +261,7 @@ const checkpoint = {
                     "name": "waiting",
                     "state": "",
                     "isHeld": false,
+                    "isQueued": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
