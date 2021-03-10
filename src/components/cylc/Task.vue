@@ -410,8 +410,7 @@ export default {
     //       https://github.com/vuejs/vue-loader/issues/1433
     const attrs = Object.assign(context.data, {
       attrs: {
-        class: 'c-task',
-        style: 'display:inline-block; vertical-align:middle'
+        class: 'c-task'
       }
     })
     return createElement(
