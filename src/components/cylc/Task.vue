@@ -34,8 +34,8 @@ function getRunningStyle (context) {
     const elapsedTime = ((now - startTime) / 1000)
     return `
       animation-name: c-task-progress-animation;
-      /* clock position should be proportional to elapsed time */
-      animation-timing-function: linear;
+      /* restrict the number of frames in the animation for performance */
+      animation-timing-function: steps(50);
       /* run this animation once and only once /*
       animation-iteration-count: 1;
       /* the duration of the animation (the estimated task run time) */
