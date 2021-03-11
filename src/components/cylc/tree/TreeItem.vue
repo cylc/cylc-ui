@@ -39,7 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :isQueued="node.node.isQueued"
-            :progress=0
           />
           <span class="mx-1">{{ node.node.name }}</span>
         </div>
@@ -52,7 +51,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :isQueued="node.node.isQueued"
-            :progress="node.node.progress"
           />
           <span class="mx-1">{{ node.node.name }}</span>
         </div>
@@ -66,7 +64,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :isQueued="node.node.isQueued"
-            :progress="node.node.progress"
+            :startTime="taskStartTime(node)"
+            :estimatedDuration="taskEstimatedDuration(node)"
           />
           <div v-if="!isExpanded" class="node-summary">
             <!-- most recent job summary -->
@@ -212,6 +211,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
+import TaskState from '@/model/TaskState.model'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -352,6 +352,28 @@ export default {
       classes['node-data'] = true
       classes[`node-data-${this.node.type}`] = true
       return classes
+    },
+    taskStartTime (taskProxy) {
+      if (
+        taskProxy.node.state === TaskState.RUNNING.name &&
+        taskProxy.children.length > 0 &&
+        taskProxy.children[0] &&
+        taskProxy.children[0].node &&
+        taskProxy.children[0].node.startedTime
+      ) {
+        return taskProxy.children[0].node.startedTime
+      }
+      return null
+    },
+    taskEstimatedDuration (taskProxy) {
+      if (
+        taskProxy.node &&
+        taskProxy.node.task &&
+        taskProxy.node.task.meanElapsedTime
+      ) {
+        return taskProxy.node.task.meanElapsedTime
+      }
+      return null
     }
   }
 }

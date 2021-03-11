@@ -57,10 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        style="font-size:1.5em;"
        v-if="status != 'waiting'"
       >
-        <Task
-         :status="status"
-         :progress="0"
-        />
+        <Task :status="status"/>
         {{ status }}
       </p>
       <pre v-if="status === 'failed'">{{ response }}</pre>

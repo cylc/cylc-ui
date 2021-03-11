@@ -66,12 +66,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-model="tasksFilter.states"
             >
               <template v-slot:item="slotProps">
-                <Task :status="slotProps.item.value" :progress=0 />
+                <Task :status="slotProps.item.value"/>
                 <span class="ml-2">{{ slotProps.item.value }}</span>
               </template>
               <template v-slot:selection="slotProps">
                 <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
-                  <Task :status="slotProps.item.value" :progress=0 />
+                  <Task :status="slotProps.item.value"/>
                 </div>
                 <span
                   v-if="slotProps.index === maximumTasks"
