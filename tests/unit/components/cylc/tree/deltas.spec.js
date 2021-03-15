@@ -79,9 +79,9 @@ describe('Deltas', () => {
     const cylcTree = new CylcTree(createWorkflowNode({
       id: WORKFLOW_ID
     }))
-    sinon.stub(cylcTree, 'addCyclePoint').throws(Error)
     // let's force the tree to throw an error when adding cycle points, simulating a runtime exception
-    expect(() => applyDeltas(deltasAdded, cylcTree)).to.throw(Error)
+    sinon.stub(cylcTree, 'addCyclePoint').throws(Error)
+    applyDeltas(deltasAdded, cylcTree)
     expect(console.error.calledOnce).to.equal(true)
     sandbox.restore()
   })
