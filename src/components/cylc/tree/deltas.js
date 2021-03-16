@@ -49,7 +49,12 @@ function applyDeltasPruned (pruned, tree) {
   Object.keys(PRUNED).forEach(prunedKey => {
     if (pruned[prunedKey]) {
       for (const id of pruned[prunedKey]) {
-        tree[PRUNED[prunedKey]](id)
+        try {
+          tree[PRUNED[prunedKey]](id)
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Error applying pruned-delta, will continue processing the remaining data', error, id)
+        }
       }
     }
   })
@@ -84,10 +89,15 @@ function applyDeltasAdded (added, tree) {
   Object.keys(ADDED).forEach(addedKey => {
     if (added[addedKey]) {
       added[addedKey].forEach(addedData => {
-        const createNodeFunction = ADDED[addedKey][0]
-        const treeFunction = ADDED[addedKey][1]
-        const node = createNodeFunction(addedData)
-        tree[treeFunction](node)
+        try {
+          const createNodeFunction = ADDED[addedKey][0]
+          const treeFunction = ADDED[addedKey][1]
+          const node = createNodeFunction(addedData)
+          tree[treeFunction](node)
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Error applying added-delta, will continue processing the remaining data', error, addedData)
+        }
       })
     }
   })
@@ -119,10 +129,15 @@ function applyDeltasUpdated (updated, tree) {
   Object.keys(UPDATED).forEach(updatedKey => {
     if (updated[updatedKey]) {
       updated[updatedKey].forEach(updatedData => {
-        const updateNodeFunction = UPDATED[updatedKey][0]
-        const treeFunction = UPDATED[updatedKey][1]
-        const node = updateNodeFunction(updatedData)
-        tree[treeFunction](node)
+        try {
+          const updateNodeFunction = UPDATED[updatedKey][0]
+          const treeFunction = UPDATED[updatedKey][1]
+          const node = updateNodeFunction(updatedData)
+          tree[treeFunction](node)
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Error applying updated-delta, will continue processing the remaining data', error, updatedData)
+        }
       })
     }
   })
