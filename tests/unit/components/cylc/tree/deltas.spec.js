@@ -24,11 +24,18 @@ import {
 } from '@/components/cylc/tree/tree-nodes'
 import sinon from 'sinon'
 import TaskState from '@/model/TaskState.model'
+import store from '@/store'
 
 /**
  * Tests for the tree deltas module.
  */
 describe('Deltas', () => {
+  beforeEach(() => {
+    sinon.stub(console, 'log')
+  })
+  afterEach(() => {
+    sinon.restore()
+  })
   const WORKFLOW_ID = 'cylc|workflow'
   it('Should skip if no deltas provided', () => {
     expect(() => applyDeltas(null, null)).to.throw(Error)
@@ -84,6 +91,7 @@ describe('Deltas', () => {
     applyDeltas(deltasAdded, cylcTree)
     expect(console.error.calledOnce).to.equal(true)
     sandbox.restore()
+    expect(store.state.alert.getText()).to.have.string('added-delta')
   })
   it('Should log to console and throw an error if it fails to handle deltas on the first data burst', () => {
     const sandbox = sinon.createSandbox()
@@ -105,6 +113,7 @@ describe('Deltas', () => {
     expect(() => applyDeltas(deltasAdded, cylcTree)).to.throw(Error)
     expect(console.error.calledOnce).to.equal(true)
     sandbox.restore()
+    expect(store.state.alert.getText()).to.have.string('initial data burst')
   })
   describe('Initial data burst', () => {
     let cylcTree

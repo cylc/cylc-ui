@@ -22,6 +22,8 @@ import {
   createTaskProxyNode
 } from '@/components/cylc/tree/tree-nodes'
 import { populateTreeFromGraphQLData } from '@/components/cylc/tree/index'
+import store from '@/store/'
+import AlertModel from '@/model/Alert.model'
 
 /**
  * Helper object used to iterate pruned deltas data.
@@ -54,6 +56,7 @@ function applyDeltasPruned (pruned, tree) {
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Error applying pruned-delta, will continue processing the remaining data', error, id)
+          store.dispatch('setAlert', new AlertModel('Error applying pruned-delta, see browser console logs for more', null, 'error'))
         }
       }
     }
@@ -97,6 +100,7 @@ function applyDeltasAdded (added, tree) {
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Error applying added-delta, will continue processing the remaining data', error, addedData)
+          store.dispatch('setAlert', new AlertModel('Error applying added-delta, see browser console logs for more', null, 'error'))
         }
       })
     }
@@ -137,6 +141,7 @@ function applyDeltasUpdated (updated, tree) {
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Error applying updated-delta, will continue processing the remaining data', error, updatedData)
+          store.dispatch('setAlert', new AlertModel('Error applying updated-delta, see browser console logs for more', null, 'error'))
         }
       })
     }
@@ -216,6 +221,7 @@ export function applyDeltas (deltas, tree) {
       if (!deltas.added || !deltas.added.workflow) {
         // eslint-disable-next-line no-console
         console.error('Received a delta before the workflow initial data burst')
+        store.dispatch('setAlert', new AlertModel('Received a delta before the workflow initial data burst', null, 'error'))
         return
       }
       try {
@@ -223,6 +229,7 @@ export function applyDeltas (deltas, tree) {
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error applying initial data burst for deltas', error, deltas)
+        store.dispatch('setAlert', new AlertModel('Error applying initial data burst for deltas', null, 'error'))
         throw error
       }
     } else {
@@ -234,7 +241,7 @@ export function applyDeltas (deltas, tree) {
         handleDeltas(deltas, tree)
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error('Error applying deltas', error, deltas)
+        console.error('Unexpected error applying deltas', error, deltas)
         throw error
       }
     }
