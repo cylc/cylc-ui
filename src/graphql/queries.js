@@ -200,6 +200,7 @@ subscription {
     host
     port
     stateTotals
+    latestStateTasks
     taskProxies(sort: { keys: ["cyclePoint"] }) {
       id
       name
