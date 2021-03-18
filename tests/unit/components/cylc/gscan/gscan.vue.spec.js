@@ -144,8 +144,8 @@ describe('GScan component', () => {
           workflows: createWorkflows([
             { name: 'a', status: WorkflowState.RUNNING },
             { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'c', status: WorkflowState.HELD },
-            { name: 'd', status: WorkflowState.HELD },
+            { name: 'c', status: WorkflowState.PAUSED },
+            { name: 'd', status: WorkflowState.PAUSED },
             { name: 'e', status: WorkflowState.STOPPED }
           ]),
           expected: ['a', 'b', 'c', 'd', 'e']
@@ -161,11 +161,11 @@ describe('GScan component', () => {
           ]),
           expected: ['a', 'b', 'c', 'd', 'e']
         },
-        // running workflows are displayed first, then held, then the rest...
+        // running workflows are displayed first, then paused, then the rest...
         {
           workflows: createWorkflows([
             { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'e', status: WorkflowState.HELD },
+            { name: 'e', status: WorkflowState.PAUSED },
             { name: 'c', status: WorkflowState.STOPPED },
             { name: 'b', status: WorkflowState.STOPPED },
             { name: 'd', status: WorkflowState.STOPPED }
@@ -175,8 +175,8 @@ describe('GScan component', () => {
         // sorted alphabetically within statuses
         {
           workflows: createWorkflows([
-            { name: 'e', status: WorkflowState.HELD },
-            { name: 'a', status: WorkflowState.HELD },
+            { name: 'e', status: WorkflowState.PAUSED },
+            { name: 'a', status: WorkflowState.PAUSED },
             { name: 'c', status: WorkflowState.STOPPED },
             { name: 'b', status: WorkflowState.RUNNING },
             { name: 'd', status: WorkflowState.STOPPED }
@@ -185,29 +185,29 @@ describe('GScan component', () => {
         },
         {
           workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.HELD },
+            { name: 'a', status: WorkflowState.PAUSED },
             { name: 'c', status: WorkflowState.STOPPED },
             { name: 'b', status: WorkflowState.RUNNING },
             { name: 'd', status: WorkflowState.STOPPED },
-            { name: 'e', status: WorkflowState.HELD }
+            { name: 'e', status: WorkflowState.PAUSED }
           ]),
           expected: ['b', 'a', 'e', 'c', 'd']
         },
         // new statuses (stopping, error)
         {
           workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.HELD },
+            { name: 'a', status: WorkflowState.PAUSED },
             { name: 'c', status: WorkflowState.STOPPED },
             { name: 'b', status: WorkflowState.RUNNING },
             { name: 'd', status: WorkflowState.STOPPED },
-            { name: 'e', status: WorkflowState.HELD },
-            { name: 'f', status: WorkflowState.HELD },
+            { name: 'e', status: WorkflowState.PAUSED },
+            { name: 'f', status: WorkflowState.PAUSED },
             { name: 'h', status: WorkflowState.STOPPING },
             { name: 'g', status: WorkflowState.ERROR },
             { name: 'j', status: WorkflowState.STOPPING },
             { name: 'i', status: WorkflowState.STOPPED },
             { name: 'k', status: WorkflowState.RUNNING },
-            { name: 'l', status: WorkflowState.HELD }
+            { name: 'l', status: WorkflowState.PAUSED }
           ]),
           expected: ['b', 'k', 'a', 'e', 'f', 'l', 'h', 'j', 'c', 'd', 'i', 'g']
         }
@@ -236,7 +236,7 @@ describe('GScan component', () => {
       {
         id: '1',
         name: 'new zealand',
-        status: WorkflowState.HELD.name,
+        status: WorkflowState.PAUSED.name,
         stateTotals: {
           [TaskState.FAILED.name]: 1
         }
@@ -283,7 +283,7 @@ describe('GScan component', () => {
           workflows
         }
       })
-      // read: give me all the workflows in RUNNING/HELD/STOPPED, no
+      // read: give me all the workflows in RUNNING/PAUSED/STOPPED, no
       //       matter their names or their tasks' states.
       // no workflow name filtered initially
       expect(wrapper.vm.searchWorkflows).to.equal('')
@@ -354,7 +354,7 @@ describe('GScan component', () => {
           },
           // enable only the ones we have in our test data set
           {
-            workflowStates: [WorkflowState.RUNNING, WorkflowState.HELD],
+            workflowStates: [WorkflowState.RUNNING, WorkflowState.PAUSED],
             expected: 2
           },
           // enable just one of the values we have in our test data set

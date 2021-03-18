@@ -311,7 +311,7 @@ export default {
   },
   computed: {
     /**
-     * Sort workflows by type first, showing running or held workflows first,
+     * Sort workflows by type first, showing running or paused workflows first,
      * then stopped. Within each group, workflows are sorted alphabetically
      * (natural sort).
      */
@@ -443,7 +443,8 @@ export default {
      * a name) and a given list of filters.
      *
      * The list of filters may contain workflow states ("running", "stopped",
-     * "held"), and/or task states ("running", "waiting", "submit-failed", etc).
+     * "paused"), and/or task states ("running", "waiting", "submit-failed",
+     * etc).
      *
      * Does not return any value, but modifies the data variable
      * filteredWorkflows, used in the template.
