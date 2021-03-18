@@ -158,7 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                             dark
                             icon
                           >
-                            <job :status="state" />
+                            <task :status="state" />
                           </v-btn>
                         </template>
                         <!-- tooltip text -->
@@ -192,7 +192,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { GSCAN_QUERY } from '@/graphql/queries'
 import WorkflowState from '@/model/WorkflowState.model'
 import { mdiFilter } from '@mdi/js'
-import Job from '@/components/cylc/Job'
+import Task from '@/components/cylc/Task'
 import Tree from '@/components/cylc/tree/Tree'
 import { createWorkflowNode } from '@/components/cylc/tree/tree-nodes'
 import TaskState from '@/model/TaskState.model'
@@ -205,7 +205,7 @@ const QUERIES = {
 export default {
   name: 'GScan',
   components: {
-    Job,
+    Task,
     Tree,
     WorkflowIcon
   },
