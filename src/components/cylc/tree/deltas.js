@@ -56,7 +56,7 @@ function applyDeltasPruned (pruned, tree) {
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Error applying pruned-delta, will continue processing the remaining data', error, id)
-          store.dispatch('setAlert', new AlertModel('Error applying pruned-delta, see browser console logs for more', null, 'error'))
+          store.dispatch('setAlert', new AlertModel('Error applying pruned-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state', null, 'error'))
         }
       }
     }
@@ -100,7 +100,7 @@ function applyDeltasAdded (added, tree) {
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Error applying added-delta, will continue processing the remaining data', error, addedData)
-          store.dispatch('setAlert', new AlertModel('Error applying added-delta, see browser console logs for more', null, 'error'))
+          store.dispatch('setAlert', new AlertModel('Error applying added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state', null, 'error'))
         }
       })
     }
@@ -141,7 +141,7 @@ function applyDeltasUpdated (updated, tree) {
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Error applying updated-delta, will continue processing the remaining data', error, updatedData)
-          store.dispatch('setAlert', new AlertModel('Error applying updated-delta, see browser console logs for more', null, 'error'))
+          store.dispatch('setAlert', new AlertModel('Error applying updated-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state', null, 'error'))
         }
       })
     }
@@ -221,7 +221,7 @@ export function applyDeltas (deltas, tree) {
       if (!deltas.added || !deltas.added.workflow) {
         // eslint-disable-next-line no-console
         console.error('Received a delta before the workflow initial data burst')
-        store.dispatch('setAlert', new AlertModel('Received a delta before the workflow initial data burst', null, 'error'))
+        store.dispatch('setAlert', new AlertModel('Received a delta before the workflow initial data burst. Please reload your browser tab to retrieve the full flow state', null, 'error'))
         return
       }
       try {
@@ -229,7 +229,7 @@ export function applyDeltas (deltas, tree) {
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error applying initial data burst for deltas', error, deltas)
-        store.dispatch('setAlert', new AlertModel('Error applying initial data burst for deltas', null, 'error'))
+        store.dispatch('setAlert', new AlertModel('Error applying initial data burst for deltas. Please reload your browser tab to retrieve the full flow state', null, 'error'))
         throw error
       }
     } else {
