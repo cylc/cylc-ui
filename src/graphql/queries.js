@@ -200,7 +200,13 @@ subscription {
     host
     port
     stateTotals
-    latestStateTasks
+    latestStateTasks(states: [
+      "failed",
+      "preparing",
+      "submit-failed",
+      "submitted",
+      "running"
+    ])
     taskProxies(sort: { keys: ["cyclePoint"] }) {
       id
       name
