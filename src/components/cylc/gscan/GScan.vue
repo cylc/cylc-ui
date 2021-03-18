@@ -163,7 +163,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </template>
                         <!-- tooltip text -->
                         <span>
-                          <span class="grey--text">Recent {{ state }} tasks:</span>
+                          <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                           <br/>
                           <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                             {{ task }}<br v-if="index !== tasks.length -1" />
@@ -512,6 +512,23 @@ export default {
         return `/workflows/${ node.node.name }`
       }
       return ''
+    },
+
+    /**
+     * Count how many tasks we have in a given state. The state will have
+     * been retrieved from `latestStateTasks`. And the list of tasks in
+     * each states is from the `stateTotals`. This gives us the number of
+     * active tasks in a given state (`latestStateTasks` includes old tasks).
+     *
+     * @param {WorkflowGraphQLData} workflow - the workflow object retrieved from GraphQL
+     * @param {string} state - a workflow state
+     * @returns {number|*} - the number of tasks in the given state
+     */
+    countTasksInState (workflow, state) {
+      if (Object.hasOwnProperty.call(workflow.stateTotals, state)) {
+        return workflow.stateTotals[state]
+      }
+      return 0
     }
   }
 }
