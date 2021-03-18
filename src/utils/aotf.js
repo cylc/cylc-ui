@@ -392,9 +392,7 @@ export function filterAssociations (cylcObject, tokens, mutations) {
           // this isn't the object type we are filtering for, but it'll do
           applies = true
         }
-        if (tokens[cylcObject]) {
-          // this can be satisfied by the context
-        } else if (arg._required) {
+        if (arg._required && !tokens[arg._cylcObject]) {
           // this cannot be satisfied by the context
           requiresInfo = true
         }
