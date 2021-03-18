@@ -143,6 +143,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <span
                       v-for="[state, tasks] in Object.entries(scope.node.node.latestStateTasks)"
                       :key="`${scope.node.id}-summary-${state}`"
+                      :class="getTaskStateClasses(scope.node.node, state)"
                     >
                       <v-tooltip color="black" top>
                         <template v-slot:activator="{ on }">
@@ -529,6 +530,11 @@ export default {
         return workflow.stateTotals[state]
       }
       return 0
+    },
+
+    getTaskStateClasses (workflow, state) {
+      const tasksInState = this.countTasksInState(workflow, state)
+      return tasksInState === 0 ? ['empty-state'] : []
     }
   }
 }

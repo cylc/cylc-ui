@@ -31,6 +31,10 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+
+      span.empty-state {
+        opacity: 0.2;
+      }
     }
   }
 }
