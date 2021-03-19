@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#623](https://github.com/cylc/cylc-ui/pull/623) - Display errors from
+mutations.
+
 [#598](https://github.com/cylc/cylc-ui/pull/598) - Add mutation button
 
 [#530](https://github.com/cylc/cylc-ui/pull/530) - Display message triggers.

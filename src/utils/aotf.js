@@ -41,7 +41,10 @@ import {
   mdiReload,
   mdiStop
 } from '@mdi/js'
+
+import AlertModel from '@/model/Alert.model'
 import TaskState from '@/model/TaskState.model'
+import store from '@/store/'
 
 /**
  * Associates icons with mutations by name.
@@ -575,6 +578,33 @@ export function getMutationArgsFromTokens (mutation, tokens) {
 }
 
 /**
+ * Handle an error in a called mutation.
+ *
+ * @param {string} mutationName
+ * @param {string} message - error message to display
+ * @param {*} response - raw GraphQL response or null
+ *
+ * @returns {Array} [status, message]
+ */
+function _mutateError (mutationName, message, response) {
+  // log the response
+  if (response) {
+    // eslint-disable-next-line no-console
+    console.error('mutation response', response)
+  }
+
+  // open a user alert
+  store.dispatch('setAlert', new AlertModel(
+    `command failed: ${mutationName} - ${message}`,
+    null,
+    'error')
+  )
+
+  // format a response
+  return [TaskState.SUBMIT_FAILED, message]
+}
+
+/**
  * Call a mutation.
  *
  * @param {Object} mutation
@@ -584,27 +614,44 @@ export function getMutationArgsFromTokens (mutation, tokens) {
  * @returns {Array} [status, result]
  */
 export async function mutate (mutation, args, apolloClient) {
-  let result = null
+  let response = null
   // eslint-disable-next-line no-console
   console.debug([
     `mutation(${mutation.name})`,
     constructMutation(mutation),
     args
   ])
+
   try {
-    result = await apolloClient.mutate({
+    // call the mutation
+    response = await apolloClient.mutate({
       mutation: gql(constructMutation(mutation)),
       variables: args
     })
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err)
-    return [TaskState.SUBMIT_FAILED, err]
-  }
-  const responses = result.data[mutation.name].result
-  if (responses && responses.length === 1) {
-    return [TaskState.SUBMITTED, responses[0].response]
+    // mutation failed (client-server error e.g. variable format, syntax error)
+    return _mutateError(mutation.name, err, null)
   }
 
-  return [TaskState.SUBMIT_FAILED, result]
+  if (response.errors) {
+    // mutation returned errors (server error)
+    return _mutateError(mutation.name, response.errors[0].message, response)
+  }
+
+  try {
+    const result = response.data[mutation.name].result
+    if (Array.isArray(result) && result.length === 2) {
+      // regular [commandSucceeded, message] format
+      if (result[0] === true) {
+        // success
+        return [TaskState.SUBMITTED, result[1]]
+      }
+      // failure (Cylc error, e.g. could not find workflow <x>)
+      return _mutateError(mutation.name, result[1], response)
+    }
+    // command in a different format (e.g. info command)
+    return [TaskState.SUBMITTED, result]
+  } catch {
+    return _mutateError(mutation.name, 'invalid response', response)
+  }
 }
