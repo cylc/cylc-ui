@@ -231,12 +231,12 @@ describe('Api On The Fly', () => {
 
       // click the hold-release button
       cy
-        .get('#workflow-release-hold-button')
+        .get('#workflow-play-pause-button')
         .should('be.visible')
         .click()
         .then(() => {
           expect(mutations.length).to.equal(1)
-          expect(mutations[0]).to.equal('hold')
+          expect(mutations[0]).to.equal('pause')
         })
     })
   })

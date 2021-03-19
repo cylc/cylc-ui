@@ -31,7 +31,7 @@ import {
 class WorkflowState extends Enumify {
   // NOTE: the order the enum values are created here is used in the UI for sorting
   static RUNNING = new WorkflowState('running', mdiPlayCircle)
-  static HELD = new WorkflowState('held', mdiPauseCircle)
+  static PAUSED = new WorkflowState('paused', mdiPauseCircle)
   static STOPPING = new WorkflowState('stopping', mdiSkipNextCircle)
   static STOPPED = new WorkflowState('stopped', mdiStopCircle)
   static ERROR = new WorkflowState('error', mdiHelpCircle)

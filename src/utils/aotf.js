@@ -36,10 +36,13 @@ import {
   mdiEmail,
   mdiGraph,
   mdiPause,
+  mdiPauseCircleOutline,
   mdiPlay,
+  mdiPlayCircleOutline,
   mdiRefreshCircle,
   mdiReload,
-  mdiStop
+  mdiStop,
+  mdiWifi
 } from '@mdi/js'
 import TaskState from '@/model/TaskState.model'
 
@@ -50,14 +53,17 @@ import TaskState from '@/model/TaskState.model'
 export const mutationIcons = {
   '': mdiCog, // default fallback
   broadcast: mdiBullhorn,
-  hold: mdiPause,
+  hold: mdiPauseCircleOutline, // to distinguish from pause
   kill: mdiCloseCircle,
   message: mdiEmail,
+  pause: mdiPause,
+  ping: mdiWifi,
   play: mdiPlay,
   poll: mdiRefreshCircle,
-  release: mdiPlay,
+  release: mdiPlayCircleOutline, // to distinguish from play
   reload: mdiReload,
   remove: mdiDelete,
+  resume: mdiPlay,
   setOutputs: mdiGraph,
   stop: mdiStop,
   trigger: mdiCursorPointer
