@@ -16,6 +16,9 @@ None or N/A.
 
 ### Enhancements
 
+[#616](https://github.com/cylc/cylc-ui/pull/616) - Alert the user if there are
+any errors processing deltas.
+
 [#623](https://github.com/cylc/cylc-ui/pull/623) - Display errors from
 mutations.
 
