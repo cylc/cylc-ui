@@ -231,6 +231,88 @@ describe('aotf (Api On The Fly)', () => {
         'foo'
       ])
     })
+    it('should determine when additional info is required', () => {
+      // some test mutations
+      const mutations = [
+        {
+          // second argument is optional -> no info required
+          name: 'a',
+          args: [
+            {
+              name: 'arg1',
+              _cylcObject: aotf.cylcObjects.Workflow,
+              _required: true
+            },
+            {
+              name: 'arg2',
+              _cylcObject: null,
+              _required: false
+            }
+          ]
+        },
+        {
+          // second argument is required -> info is required
+          name: 'b',
+          args: [
+            {
+              name: 'arg1',
+              _cylcObject: aotf.cylcObjects.Workflow,
+              _required: true
+            },
+            {
+              name: 'arg2',
+              _cylcObject: null,
+              _required: true
+            }
+          ]
+        },
+        {
+          // second argument is required -> info is required unless
+          // a cycle point is present in the context
+          name: 'c',
+          args: [
+            {
+              name: 'arg1',
+              _cylcObject: aotf.cylcObjects.Workflow,
+              _required: true
+            },
+            {
+              name: 'arg2',
+              _cylcObject: aotf.cylcObjects.CyclePoint,
+              _required: true
+            }
+          ]
+        }
+      ]
+
+      // filter mutations from the context of the workflow
+      const out1 = aotf.filterAssociations(
+        aotf.cylcObjects.Workflow,
+        aotf.tokenise('a|b'),
+        mutations
+      )
+      expect(
+        out1.map((item) => { return [item[0].name, item[1]] }).sort()
+      ).to.deep.equal([
+        ['a', false],
+        ['b', true],
+        ['c', true] // no cycle point in the context -> info required
+      ])
+
+      // filter mutations from the context of a cycle point
+      const out2 = aotf.filterAssociations(
+        aotf.cylcObjects.Workflow,
+        aotf.tokenise('a|b|c'),
+        mutations
+      )
+      expect(
+        out2.map((item) => { return [item[0].name, item[1]] }).sort()
+      ).to.deep.equal([
+        ['a', false],
+        ['b', true],
+        ['c', false] // cycle point in the context -> no info is required
+      ])
+    })
 
     describe('iterateType', () => {
       it('Should walk the type tree until it hits a solid foundation', () => {

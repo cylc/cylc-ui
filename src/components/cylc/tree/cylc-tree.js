@@ -17,7 +17,6 @@
 import { extractGroupState } from '@/utils/tasks'
 import { mergeWith, sortedIndex } from 'lodash'
 import { createFamilyProxyNode, getCyclePointId } from '@/components/cylc/tree/tree-nodes'
-import TaskState from '@/model/TaskState.model'
 import Vue from 'vue'
 
 export const FAMILY_ROOT = 'root'
@@ -48,65 +47,6 @@ function mergeWithCustomizer (objValue, srcValue, key, object, source) {
     //    so let's now make it reactive with the new value!
     if (object[key] && !object[key].__ob__) {
       Vue.set(object, `${key}`, srcValue)
-    }
-  }
-}
-
-/**
- * Compute percent progress.
- *
- * @see https://github.com/cylc/cylc-flow/blob/de7d938496e82dbdfb165938145670dd8e801efd/lib/cylc/gui/updater_tree.py#L248-L263
- * @param {?number} startedTime in milliseconds since 1970-01-01 00:00:00 UTC, e.g. 1568353099874
- * @param {?number} meanElapsedTime mean elapsed time in seconds
- * @returns {number} the percent progress, e.g. 25 (meaning 25% progress)
- * @private
- */
-function computePercentProgress (startedTime, meanElapsedTime) {
-  // Task proxies exist before they start running, so startedTime will be undefined until then;
-  // and "mean elapsed time" is necessarily undefined until the first instance of a task has
-  // completed running (before that, nothing has elapsed to compute the mean of).
-  // This prevents division by undefined or zero, which would set progress to NaN.
-  if (!startedTime || !meanElapsedTime || meanElapsedTime === 0) {
-    return 0
-  }
-
-  const now = Date.now() // milliseconds since 1970-01-01
-  // This prevents possible issues with clocks of UI/browser & backend server out of sync,
-  // time zone, data issue, etc.
-  if (startedTime > now) {
-    return 0
-  }
-
-  if (now > startedTime + meanElapsedTime * 1000) {
-    return 100
-  }
-  return 100 * (now - startedTime) / (meanElapsedTime * 1000)
-}
-
-/***
- * Compute the task progress if possible.
- *
- * Only applicable when the task is in the "running" state, and when it has one or more jobs.
- *
- * The formula used to compute the progress is the same as in Cylc 7, using `meanElapsedTime` task property,
- * the latest job's `startedTime`, and the current time.
- *
- * When the progress is successfully computed, the given task proxy node will get an additional property
- * `progress` with type number (integer) between 0 and 100, representing the task progress.
- *
- * The property will be set in the taskProxy.node.progress property.
- *
- * @param taskProxy {TaskProxyNode} task proxy
- */
-function computeTaskProgress (taskProxy) {
-  // calculate task progress if necessary/possible
-  if (taskProxy.node.state === TaskState.RUNNING.name && taskProxy.children.length > 0) {
-    // the graphql query is expected to have jobs sorted by submit_num, e.g.:
-    // `jobs(sort: { keys: ["submit_num"], reverse:true })`
-    const latestJob = taskProxy.children[0]
-    if (latestJob.node.startedTime) {
-      const startedTime = Date.parse(latestJob.node.startedTime)
-      taskProxy.node.progress = computePercentProgress(startedTime, taskProxy.node.task.meanElapsedTime)
     }
   }
 }
@@ -501,7 +441,6 @@ class CylcTree {
   updateTaskProxy (taskProxy) {
     const node = this.lookup.get(taskProxy.id)
     if (node) {
-      computeTaskProgress(taskProxy)
       mergeWith(node, taskProxy, mergeWithCustomizer)
     }
   }
@@ -534,8 +473,6 @@ class CylcTree {
         const names = parent.children.map(child => child.node.submitNum)
         const insertIndex = sortedIndex(names, job.node.submitNum)
         parent.children.splice(insertIndex, 0, job)
-        // re-calculate the job's task progress
-        computeTaskProgress(parent)
       }
     }
   }
@@ -547,11 +484,6 @@ class CylcTree {
     const node = this.lookup.get(job.id)
     if (node) {
       mergeWith(node, job, mergeWithCustomizer)
-      if (job.node.firstParent) {
-        const parent = this.lookup.get(job.node.firstParent.id)
-        // re-calculate the job's task progress
-        computeTaskProgress(parent)
-      }
     }
   }
 
@@ -567,7 +499,6 @@ class CylcTree {
         // prevent runtime error in case the parent was already removed
         if (parent) {
           // re-calculate the job's task progress
-          computeTaskProgress(parent)
           parent.children.splice(parent.children.indexOf(job), 1)
         }
       }

@@ -53,12 +53,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-icon>
 
       <v-icon
-        id="workflow-release-hold-button"
+        id="workflow-play-pause-button"
         color="#5E5E5E"
-        :disabled="!enabled.holdToggle"
+        :disabled="!enabled.pauseToggle"
         @click="onClickReleaseHold"
       >
-        {{ isHeld ? svgPaths.run : svgPaths.hold }}
+        {{ isPaused ? svgPaths.run : svgPaths.hold }}
       </v-icon>
 
       <v-icon
@@ -161,7 +161,7 @@ export default {
     },
     expecting: {
       // store state from mutations in order to compute the "enabled" attrs
-      held: null,
+      paused: null,
       stop: null
     }
   }),
@@ -169,10 +169,10 @@ export default {
   computed: {
     ...mapState('app', ['title']),
     ...mapGetters('workflows', ['currentWorkflow']),
-    isHeld () {
+    isPaused () {
       return (
         this.currentWorkflow &&
-        this.currentWorkflow.status === WorkflowState.HELD.name
+        this.currentWorkflow.status === WorkflowState.PAUSED.name
       )
     },
     isStopped () {
@@ -186,14 +186,14 @@ export default {
       // NOTE: this is a temporary solution until we are able to subscribe to
       // mutations to tell when they have completed
       return {
-        holdToggle: (
+        pauseToggle: (
           // the play/pause button
           !this.isStopped &&
           !this.expecting.stop &&
           this.currentWorkflow.status !== WorkflowState.STOPPING.name &&
           (
-            this.expecting.held === null ||
-            this.expecting.held === this.currentWorkflow.isHeld
+            this.expecting.paused === null ||
+            this.expecting.paused === this.currentWorkflow.isPaused
           )
         ),
         stopToggle: (
@@ -209,8 +209,8 @@ export default {
   },
 
   watch: {
-    isHeld () {
-      this.expecting.held = null
+    isPaused () {
+      this.expecting.paused = null
     },
     isStopped () {
       this.expecting.stop = null
@@ -220,11 +220,11 @@ export default {
   methods: {
     onClickReleaseHold () {
       const ret = this.$workflowService.mutate(
-        this.isHeld ? 'release' : 'hold',
+        this.isPaused ? 'resume' : 'pause',
         this.currentWorkflow.id
       )
       if (ret[0] === mutationStatus.SUCCEEDED) {
-        this.expecting.held = !this.isHeld
+        this.expecting.paused = !this.isPaused
       }
     },
     async onClickStop () {

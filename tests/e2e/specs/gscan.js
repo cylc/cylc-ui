@@ -72,7 +72,7 @@ describe('GScan component', () => {
     cy
       .get('[role="menu"]:visible')
       .find('.v-label')
-      .contains('held')
+      .contains('pause')
       .click({ force: true })
     // OK
     cy

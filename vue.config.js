@@ -17,6 +17,7 @@
 
 // optional file, loaded automatically by @vue/cli-service if present next to package.json
 const path = require('path')
+const CircularDependencyPlugin = require('circular-dependency-plugin')
 
 module.exports = {
   publicPath: '',
@@ -30,8 +31,33 @@ module.exports = {
       lintGQL: false
     }
   },
+  configureWebpack: {
+    plugins: [
+      new CircularDependencyPlugin({
+        exclude: /node_modules|public|tests|docs|dist|src\/components\/graphqlFormGenerator/,
+        include: /src/,
+        failOnError: true,
+        allowAsyncCycles: false,
+        cwd: process.cwd(),
+        onDetected ({ module: webpackModuleRecord, paths, compilation }) {
+          compilation.errors.push(new Error(`Cyclic dependency: ${paths.join(' -> ')}`))
+        }
+      })
+    ]
+  },
   chainWebpack: config => {
-    if (process.env.VUE_APP_SERVICES === 'offline' || process.env.NODE_ENV === 'test') {
+    if (process.env.NODE_ENV !== 'production') {
+      // devtool for test and other modes
+      // https://webpack.js.org/configuration/devtool/
+      if (process.env.NODE_ENV === 'test') {
+        // NOTE: if you need to debug the project with WebStorm (or another IDE) and it fails, try
+        //       change this value for config.devtool('eval-source-map')
+        config.devtool('eval')
+      } else {
+        config.devtool('eval-source-map')
+      }
+
+      // coverage
       config.module.rule('istanbul')
         .test(/\.js$/)
         .include.add(path.resolve('src')).end()
@@ -40,20 +66,10 @@ module.exports = {
         .options({ esModules: true })
         .before('babel-loader')
 
+      // resolve modules in devtool
       config.output
         .devtoolModuleFilenameTemplate('[absolute-resource-path]')
         .devtoolFallbackModuleFilenameTemplate('[absolute-resource-path]?[hash]')
-    }
-
-    // https://webpack.js.org/configuration/devtool/
-    if (process.env.NODE_ENV !== 'production') {
-      if (process.env.NODE_ENV === 'test') {
-        // NOTE: if you need to debug the project with WebStorm (or another IDE) and it fails, try
-        //       change this value for config.devtool('eval-source-map')
-        config.devtool('eval')
-      } else {
-        config.devtool('eval-source-map')
-      }
     }
   }
 }

@@ -45,7 +45,8 @@ $visible-outputs: 5;
 }
 
 .treeitem {
-  display: block;
+  display:inline-block;
+  vertical-align:middle;
   width: 100%;
   .node {
     line-height: $line-height;
@@ -73,6 +74,10 @@ $visible-outputs: 5;
         flex-wrap: nowrap;
         flex-direction: row;
       }
+    }
+
+    .c-task {
+      font-size: 1.2em;
     }
   }
   .type {

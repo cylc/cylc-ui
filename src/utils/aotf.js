@@ -36,10 +36,13 @@ import {
   mdiEmail,
   mdiGraph,
   mdiPause,
+  mdiPauseCircleOutline,
   mdiPlay,
+  mdiPlayCircleOutline,
   mdiRefreshCircle,
   mdiReload,
-  mdiStop
+  mdiStop,
+  mdiWifi
 } from '@mdi/js'
 
 import AlertModel from '@/model/Alert.model'
@@ -53,14 +56,17 @@ import store from '@/store/'
 export const mutationIcons = {
   '': mdiCog, // default fallback
   broadcast: mdiBullhorn,
-  hold: mdiPause,
+  hold: mdiPauseCircleOutline, // to distinguish from pause
   kill: mdiCloseCircle,
   message: mdiEmail,
+  pause: mdiPause,
+  ping: mdiWifi,
   play: mdiPlay,
   poll: mdiRefreshCircle,
-  release: mdiPlay,
+  release: mdiPlayCircleOutline, // to distinguish from play
   reload: mdiReload,
   remove: mdiDelete,
+  resume: mdiPlay,
   setOutputs: mdiGraph,
   stop: mdiStop,
   trigger: mdiCursorPointer
@@ -395,9 +401,7 @@ export function filterAssociations (cylcObject, tokens, mutations) {
           // this isn't the object type we are filtering for, but it'll do
           applies = true
         }
-        if (tokens[cylcObject]) {
-          // this can be satisfied by the context
-        } else if (arg._required) {
+        if (arg._required && !tokens[arg._cylcObject]) {
           // this cannot be satisfied by the context
           requiresInfo = true
         }
