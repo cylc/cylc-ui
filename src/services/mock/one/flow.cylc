@@ -28,7 +28,7 @@
         P1D = """
                 sleepy[-P1D] & waiting[-P1D] =>
                 SUCCEEDED:succeed-all & retrying
-                SUCCEEDED:succeed-all => failed
+                succeeded & retrying:fail => failed
                 failed:fail => checkpoint => sleepy & waiting
                 sleepy => !failed
             """
@@ -82,17 +82,14 @@
         """
 
     [[checkpoint]]
-        inherit = root
+        inherit = SUCCEEDED
         script = """
-            # allow workflow's state to settle
-            sleep 5
-
             # take a checkpoint
-            CHECK="${CYLC_SUITE_DEF_PATH}/../checkpoint/get_checkpoint.py"
+            CHECK="get_checkpoint.py"
             cylc client \
                 "${CYLC_SUITE_NAME}" \
                 graphql \
-                <<< "$(python3 "${CHECK}")" \
+                <<< "$("${CHECK}")" \
                 > checkpoint
 
             # reset stuff
