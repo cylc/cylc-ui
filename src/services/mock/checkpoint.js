@@ -18,6 +18,11 @@ const checkpoint = {
                 "failed": 0,
                 "succeeded": 0
             },
+            "latestStateTasks": {
+                "running": [
+                    "running-task"
+                ]
+            },
             "cyclePoints": [
                 {
                     "id": "user|one|20000102T0000Z|root",
