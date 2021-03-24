@@ -19,6 +19,7 @@ import { expect } from 'chai'
 // need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
 import 'cross-fetch/polyfill'
 import * as graphql from '@/graphql'
+import * as utils from '@/utils/urls'
 import store from '@/store'
 
 describe('utils', () => {
@@ -82,7 +83,7 @@ describe('utils', () => {
 
     describe('GraphQL URLs', () => {
       it('should create the correct URLs', () => {
-        const graphQLUrls = graphql.createGraphQLUrls()
+        const graphQLUrls = utils.createGraphQLUrls()
         expect(graphQLUrls.httpUrl.slice(0, 4)).to.equal('http')
         expect(graphQLUrls.wsUrl.slice(0, 2)).to.equal('ws')
       })
