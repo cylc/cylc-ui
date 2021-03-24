@@ -31,6 +31,14 @@ module.exports = {
       lintGQL: false
     }
   },
+  devServer: {
+    proxy: {
+      '^/userprofile': {
+        target: 'http://localhost:3000/',
+        changeOrigin: true
+      }
+    }
+  },
   configureWebpack: {
     plugins: [
       new CircularDependencyPlugin({

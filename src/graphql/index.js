@@ -28,23 +28,6 @@ import { SubscriptionClient } from 'subscriptions-transport-ws'
 import store from '@/store'
 
 /**
- * Create the HTTP and WebSocket URLs for an ApolloClient.
- *
- * @return {{wsUrl: string, httpUrl: string}}
- * @private
- */
-export function createGraphQLUrls () {
-  // TODO: revisit this and evaluate other ways to build the GraphQL URL - not safe to rely on window.location (?)
-  const baseUrl = `${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}${window.location.pathname}`
-  const httpUrl = `${window.location.protocol}//${baseUrl}graphql`
-  const wsUrl = `${window.location.protocol.startsWith('https') ? 'wss' : 'ws'}://${baseUrl}subscriptions`
-  return {
-    httpUrl: httpUrl,
-    wsUrl: wsUrl
-  }
-}
-
-/**
  * Create a subscription client.
  *
  * @private

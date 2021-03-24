@@ -22,11 +22,18 @@ import Alert from '@/model/Alert.model'
 
 class UserService {
   /**
+   * @param {string} baseUrl - HTTP base URL used to access JupyterHub REST API
+   */
+  constructor (baseUrl) {
+    this.baseUrl = baseUrl
+  }
+
+  /**
    * Gets the user profile from the backend server.
    * @returns {Promise<*>} - a promise that dispatches Vuex action
    */
   getUserProfile () {
-    return axios.get(`${window.location.pathname}/userprofile`).then((response) => {
+    return axios.get(`${this.baseUrl}userprofile`).then((response) => {
       const user = new User(response.data.name, response.data.groups, response.data.created, response.data.admin, response.data.server)
       return store.dispatch('user/setUser', user)
     }).catch((error) => {
