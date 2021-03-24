@@ -121,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-layout align-center align-content-center d-flex flex-wrap>
                   <v-flex
                     v-if="scope.node.type === 'workflow'"
-                    class=" c-gscan-workflow-name"
+                    class="c-gscan-workflow-name"
                     shrink
                   >
                     <workflow-icon
@@ -137,7 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-flex>
                   <v-flex
                     v-if="scope.node.type === 'workflow'"
-                    class="text-right"
+                    class="text-right c-gscan-workflow-states"
                   >
                     <!-- task summary tooltips -->
                     <span
