@@ -16,11 +16,11 @@
  */
 
 import Vue from 'vue'
-import { createGraphQLUrls, createSubscriptionClient } from '@/graphql'
+import { createGraphQLUrls, getBaseUrl } from '@/utils/urls'
+import { createSubscriptionClient } from '@/graphql'
 import SubscriptionWorkflowService from '@/services/workflow.service'
 import MockWorkflowService from '@/services/mock/workflow.service.mock'
 import UserService from '@/services/user.service'
-import MockUserService from '@/services/mock/user.service.mock'
 
 /**
  * A plugin that loads the application services.
@@ -38,7 +38,7 @@ export default {
   install (Vue, options) {
     const offline = options.offline || false
     this._createWorkflowService(offline)
-    this._installUserService(offline)
+    this._installUserService()
   },
 
   /**
@@ -58,15 +58,14 @@ export default {
   },
 
   /**
-   * Creates a user service for the application. If the mode is offline, then
-   * a mocked service is used.
+   * Creates a user service for the application.
    *
    * The service is available as `Vue.$userService`.
    *
-   * @param {boolean} offline - whether the application is in offline mode or not
    * @private
    */
-  _installUserService (offline) {
-    Vue.prototype.$userService = offline ? new MockUserService() : new UserService()
+  _installUserService () {
+    const baseUrl = getBaseUrl()
+    Vue.prototype.$userService = new UserService(baseUrl)
   }
 }
