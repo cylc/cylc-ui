@@ -30,7 +30,7 @@ jobs:
 
       - name: Set the package version
         run: |
-          npm version $VERSION
+          npm version ${{ github.event.inputs.version }}
 
       - name: Update "released on" date in changelog
         continue-on-error: true
