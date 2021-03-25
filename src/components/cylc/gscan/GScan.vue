@@ -516,7 +516,7 @@ export default {
     },
 
     /**
-     * Get number of tasks we have in a given state. The states are retrieved 
+     * Get number of tasks we have in a given state. The states are retrieved
      * from `latestStateTasks`, and the number of tasks in each state is from
      * the `stateTotals`. (`latestStateTasks` includes old tasks).
      *
