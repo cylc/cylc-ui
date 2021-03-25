@@ -516,10 +516,9 @@ export default {
     },
 
     /**
-     * Count how many tasks we have in a given state. The state will have
-     * been retrieved from `latestStateTasks`. And the list of tasks in
-     * each states is from the `stateTotals`. This gives us the number of
-     * active tasks in a given state (`latestStateTasks` includes old tasks).
+     * Get number of tasks we have in a given state. The states are retrieved 
+     * from `latestStateTasks`, and the number of tasks in each state is from
+     * the `stateTotals`. (`latestStateTasks` includes old tasks).
      *
      * @param {WorkflowGraphQLData} workflow - the workflow object retrieved from GraphQL
      * @param {string} state - a workflow state
