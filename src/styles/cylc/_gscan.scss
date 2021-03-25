@@ -30,6 +30,13 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        flex-basis: 60%;
+      }
+      .c-gscan-workflow-states {
+        flex-basis: 40%;
+        span.empty-state {
+          opacity: 0.2;
+        }
       }
     }
   }

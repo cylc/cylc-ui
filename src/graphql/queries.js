@@ -200,27 +200,13 @@ subscription {
     host
     port
     stateTotals
-    taskProxies(sort: { keys: ["cyclePoint"] }) {
-      id
-      name
-      state
-      cyclePoint
-      task {
-        meanElapsedTime
-        name
-      }
-      jobs(sort: { keys: ["submit_num"], reverse:true }) {
-        id
-        jobRunnerName
-        jobId
-        host
-        startedTime
-        submittedTime
-        finishedTime
-        state
-        submitNum
-      }
-    }
+    latestStateTasks(states: [
+      "failed",
+      "preparing",
+      "submit-failed",
+      "submitted",
+      "running"
+    ])
   }
 }
 `
@@ -231,7 +217,7 @@ subscription {
  */
 const WORKFLOWS_TABLE_QUERY = `
   subscription {
-    workflows {
+    workflows (ignoreInterval: 0) {
       id
       name
       owner

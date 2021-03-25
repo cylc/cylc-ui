@@ -122,7 +122,8 @@ describe('GScan component', () => {
         return {
           id: `user|${nameAndStatus.name}`,
           name: nameAndStatus.name,
-          status: nameAndStatus.status.name
+          status: nameAndStatus.status.name,
+          latestStateTasks: []
         }
       })
     }
@@ -429,39 +430,6 @@ describe('GScan component', () => {
           expect(wrapper.vm.filteredWorkflows.length).to.equal(test.expected)
         })
       })
-    })
-  })
-  describe('Workflow summary', () => {
-    let localThis
-    beforeEach(() => {
-      localThis = {
-        workflows: simpleWorkflowGscanNodes
-      }
-    })
-    it('should correctly calculate the workflow summary', () => {
-      const summaries = GScan.computed.workflowsSummaries.call(localThis)
-      expect(summaries.size).to.equal(1)
-      expect(summaries.has('user|five')).to.equal(true)
-      expect(summaries.get('user|five').has('succeeded')).to.equal(true)
-      expect(summaries.get('user|five').get('succeeded').includes('foo.20130829T0000Z')).to.equal(true)
-      expect(summaries.get('user|five').get('succeeded').includes('bar.20130829T0000Z')).to.equal(true)
-      expect(summaries.get('user|five').get('succeeded').includes('foo.20130829T1200Z')).to.equal(true)
-      expect(summaries.get('user|five').has('running')).to.equal(true)
-      expect(summaries.get('user|five').get('running').includes('bar.20130829T1200Z')).to.equal(true)
-      expect(summaries.get('user|five').get('running').includes('foo.20130830T0000Z')).to.equal(true)
-    })
-    it('should return elements in alphabetical order', () => {
-      const summaries = GScan.computed.workflowsSummaries.call(localThis)
-      expect(summaries.get('user|five').get('succeeded').length).to.equal(3)
-      expect(summaries.get('user|five').get('succeeded')[0]).to.equal('bar.20130829T0000Z')
-      expect(summaries.get('user|five').get('succeeded')[1]).to.equal('foo.20130829T0000Z')
-      expect(summaries.get('user|five').get('succeeded')[2]).to.equal('foo.20130829T1200Z')
-    })
-    it('should return an empty map when no workflow provided', () => {
-      expect(GScan.computed.workflowsSummaries.call({
-        workflows: []
-      }).size).to.equal(0)
-      expect(GScan.computed.workflowsSummaries.call({}).size).to.equal(0)
     })
   })
   describe('Workflow link', () => {

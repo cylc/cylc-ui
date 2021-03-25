@@ -38,6 +38,8 @@ import Vue from 'vue'
  * @property {string} owner
  * @property {string} host
  * @property {string} port
+ * @property {Object} stateTotals
+ * @property {Array<string>} latestStateTasks
  * @property {?Array<GraphQLData>} cyclePoints
  * @property {?Array<GraphQLData>} familyProxies
  * @property {?Array<GraphQLData>} taskProxies

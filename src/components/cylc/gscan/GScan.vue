@@ -121,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-layout align-center align-content-center d-flex flex-wrap>
                   <v-flex
                     v-if="scope.node.type === 'workflow'"
-                    class=" c-gscan-workflow-name"
+                    class="c-gscan-workflow-name"
                     shrink
                   >
                     <workflow-icon
@@ -137,12 +137,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-flex>
                   <v-flex
                     v-if="scope.node.type === 'workflow'"
-                    class="text-right"
+                    class="text-right c-gscan-workflow-states"
                   >
                     <!-- task summary tooltips -->
                     <span
-                      v-for="[state, tasks] in workflowsSummaries.get(scope.node.id).entries()"
+                      v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.node.latestStateTasks))"
                       :key="`${scope.node.id}-summary-${state}`"
+                      :class="getTaskStateClasses(scope.node.node, state)"
                     >
                       <v-tooltip color="black" top>
                         <template v-slot:activator="{ on }">
@@ -163,7 +164,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </template>
                         <!-- tooltip text -->
                         <span>
-                          <span class="grey--text">Recent {{ state }} tasks:</span>
+                          <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                           <br/>
                           <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                             {{ task }}<br v-if="index !== tasks.length -1" />
@@ -189,7 +190,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { getWorkflowSummary } from '@/components/cylc/gscan/index'
 import { GSCAN_QUERY } from '@/graphql/queries'
 import WorkflowState from '@/model/WorkflowState.model'
 import { mdiFilter } from '@mdi/js'
@@ -333,21 +333,6 @@ export default {
           delete node.children
           return node
         })
-    },
-    /**
-     * Compute summary information, where the key is the name of a workflow, the value is another map with the summary.
-     * @returns {Map<String, Map>}
-     */
-    workflowsSummaries () {
-      const workflowSummaries = new Map()
-      // with async scan, the workflows list may be null or undefined
-      // see cylc-uiserver PR#150
-      if (this.workflows) {
-        for (const workflow of this.workflows) {
-          workflowSummaries.set(workflow.id, getWorkflowSummary(workflow))
-        }
-      }
-      return workflowSummaries
     }
   },
   watch: {
@@ -528,6 +513,42 @@ export default {
         return `/workflows/${ node.node.name }`
       }
       return ''
+    },
+
+    /**
+     * Get number of tasks we have in a given state. The states are retrieved 
+     * from `latestStateTasks`, and the number of tasks in each state is from
+     * the `stateTotals`. (`latestStateTasks` includes old tasks).
+     *
+     * @param {WorkflowGraphQLData} workflow - the workflow object retrieved from GraphQL
+     * @param {string} state - a workflow state
+     * @returns {number|*} - the number of tasks in the given state
+     */
+    countTasksInState (workflow, state) {
+      if (Object.hasOwnProperty.call(workflow.stateTotals, state)) {
+        return workflow.stateTotals[state]
+      }
+      return 0
+    },
+
+    getTaskStateClasses (workflow, state) {
+      const tasksInState = this.countTasksInState(workflow, state)
+      return tasksInState === 0 ? ['empty-state'] : []
+    },
+
+    // TODO: temporary filter, remove after b0 - https://github.com/cylc/cylc-ui/pull/617#issuecomment-805343847
+    getLatestStateTasks (latestStateTasks) {
+      // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
+      const validValues = [
+        TaskState.SUBMITTED.name,
+        TaskState.SUBMIT_FAILED.name,
+        TaskState.RUNNING.name,
+        TaskState.SUCCEEDED.name,
+        TaskState.FAILED.name
+      ]
+      return latestStateTasks.filter(entry => {
+        return validValues.includes(entry[0])
+      })
     }
   }
 }
