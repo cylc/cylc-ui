@@ -217,7 +217,7 @@ subscription {
  */
 const WORKFLOWS_TABLE_QUERY = `
   subscription {
-    workflows {
+    workflows (ignoreInterval: 0) {
       id
       name
       owner
