@@ -19,6 +19,7 @@ import { checkpoint } from '@/services/mock/checkpoint.js'
 import { GQuery } from '@/services/gquery'
 import store from '@/store/index'
 import {
+  cylcObjects,
   mutationStatus,
   processMutations
 } from '@/utils/aotf'
@@ -111,6 +112,9 @@ const MUTATIONS = [
     ]
   }
 ]
+
+const primaryMutations = {}
+primaryMutations[cylcObjects.Workflow] = ['workflowMutation']
 
 const TYPES = []
 
@@ -229,6 +233,7 @@ class MockWorkflowService extends GQuery {
     this.mutations = MUTATIONS
     this.types = TYPES
     processMutations(this.mutations, this.types)
+    this.primaryMutations = primaryMutations
   }
 }
 

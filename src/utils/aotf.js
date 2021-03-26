@@ -87,6 +87,29 @@ export const cylcObjects = Object.freeze({
 })
 
 /**
+ * Most important mutations for each object type.
+ */
+export const primaryMutations = {}
+primaryMutations[cylcObjects.Workflow] = [
+  'play',
+  'pause',
+  'stop',
+  'reload'
+]
+primaryMutations[cylcObjects.CyclePoint] = [
+  'hold',
+  'release',
+  'trigger',
+  'kill'
+]
+primaryMutations[cylcObjects.Namespace] = [
+  'hold',
+  'release',
+  'trigger',
+  'kill'
+]
+
+/**
  * Cylc "objects" in hierarchy order.
  *
  * Note, this is the order they would appear in a tree representation.

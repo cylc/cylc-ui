@@ -1,0 +1,15 @@
+.c-menu {
+  width: 25em;
+  max-height: 60vh;
+  overflow-y: scroll;
+
+  .c-title {
+    font-size: 1rem;
+  }
+
+  .c-description {
+    opacity: 0.7;
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+}
