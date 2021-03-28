@@ -51,6 +51,7 @@ const getSelectionSetNames = (selection) => selection.selectionSet.selections.ma
 describe('WorkflowService subscriptions', () => {
   it('-> Dashboard, should contain 2 subscriptions (GScan + Dashboard)', () => {
     cy.visit('/#/')
+    cy.get('.c-header').should('exist')
     getSubscriptions().then(subscriptions => {
       expect(subscriptions.length).to.equal(2)
       // FIXME: enable later if/when using a graphql-tag object instead of string for query,
@@ -114,6 +115,7 @@ describe('WorkflowService subscriptions', () => {
   })
   it('-> Tree, should contain 2 subscription (GScan)', () => {
     cy.visit('/#/tree/one')
+    cy.get('.c-header').should('exist')
     getSubscriptions().then(subscriptions => {
       // FIXME: likely wrong, but to be fixed later in a follow-up PR to housekeep subscriptions
       expect(subscriptions.length).to.equal(2)
