@@ -46,6 +46,14 @@ module.exports = {
     ]
   },
   chainWebpack: config => {
+    config
+      .resolve
+      .alias
+      .set('react', 'preact/compat')
+    config
+      .resolve
+      .alias
+      .set('react-dom', 'preact/compat')
     if (process.env.NODE_ENV !== 'production') {
       // devtool for test and other modes
       // https://webpack.js.org/configuration/devtool/
