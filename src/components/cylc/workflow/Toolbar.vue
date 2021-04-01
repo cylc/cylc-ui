@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-btn>
     <!-- title -->
     <v-toolbar-title
-      class="tertiary--text font-weight-light"
+      class="font-weight-light"
     >
       <span class="c-toolbar-title">{{ title }}</span>
     </v-toolbar-title>
@@ -81,23 +81,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <template v-slot:activator="{ on }">
           <a class="add-view" v-on="on">
-            {{ $t('Toolbar.addView') }} <v-icon color="#5995EB">{{ svgPaths.add }}</v-icon>
+            <v-icon class="icon" color="#5995EB">{{ svgPaths.add }}</v-icon>
+            <span class="label">
+              {{ $t('Toolbar.addView') }}
+            </span>
           </a>
         </template>
         <v-list class="pa-0">
           <v-list-item
-            class="py-0 px-8 ma-0"
-            @click="$listeners['add-tree']"
-            id="toolbar-add-tree-view"
+            v-bind:class="[
+              'py-0',
+              'px-8',
+              'ma-0',
+              'c-add-view',
+              `c-add-view-${ view.name }`
+            ]"
+            :id="`toolbar-add-${ view.name }-view`"
+            @click="$listeners['add']"
+            v-for="view in views"
+            v-bind:key="view.title"
           >
-            <v-list-item-title><v-icon>{{ svgPaths.tree }}</v-icon> Tree</v-list-item-title>
-          </v-list-item>
-          <v-list-item
-            class="py-0 px-8 ma-0"
-            @click="$listeners['add-mutations']"
-            id="toolbar-add-mutations-view"
-          >
-            <v-list-item-title><v-icon>{{ svgPaths.mutations }}</v-icon> Mutations</v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>{{ view.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ view.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -125,14 +132,14 @@ import { mapGetters, mapState } from 'vuex'
 import toolbar from '@/mixins/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import {
-  mdiViewList,
-  mdiPlay,
-  mdiPause,
-  mdiStop,
-  mdiPlusCircle,
-  mdiFileTree,
   mdiAppleKeyboardCommand,
-  mdiMicrosoftXboxControllerMenu
+  mdiFileTree,
+  mdiMicrosoftXboxControllerMenu,
+  mdiPause,
+  mdiPlay,
+  mdiPlusBoxMultiple,
+  mdiStop,
+  mdiViewList
 } from '@mdi/js'
 
 import {
@@ -150,20 +157,32 @@ export default {
     extended: false,
     // FIXME: remove local state once we have this data in the workflow - https://github.com/cylc/cylc-ui/issues/221
     svgPaths: {
-      list: mdiViewList,
+      add: mdiPlusBoxMultiple,
       hold: mdiPause,
+      list: mdiViewList,
+      menu: mdiMicrosoftXboxControllerMenu,
       run: mdiPlay,
-      stop: mdiStop,
-      tree: mdiFileTree,
-      mutations: mdiAppleKeyboardCommand,
-      add: mdiPlusCircle,
-      menu: mdiMicrosoftXboxControllerMenu
+      stop: mdiStop
     },
     expecting: {
       // store state from mutations in order to compute the "enabled" attrs
       paused: null,
       stop: null
-    }
+    },
+    views: [
+      {
+        name: 'tree',
+        title: 'Tree',
+        icon: mdiFileTree
+
+      },
+      {
+        name: 'mutations',
+        title: 'Mutations',
+        icon: mdiAppleKeyboardCommand
+
+      }
+    ]
   }),
 
   computed: {
