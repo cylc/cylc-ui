@@ -155,7 +155,7 @@ fragment JobData on Job {
   }
   jobRunnerName
   jobId
-  host
+  platform
   startedTime
   submittedTime
   finishedTime

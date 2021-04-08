@@ -88,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :status="node.node.state"
           />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
-          <span class="grey--text">{{ node.node.host }}</span>
+          <span class="grey--text">{{ node.node.platform }}</span>
           <span
             class="grey--text d-flex flex-nowrap flex-row align-center"
             v-if="node.node.customOutputs.length > 0"
@@ -247,8 +247,8 @@ export default {
       isExpanded: this.initialExpanded,
       leafProperties: [
         {
-          title: 'host id',
-          property: 'host'
+          title: 'platform',
+          property: 'platform'
         },
         {
           title: 'job id',
