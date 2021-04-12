@@ -40,7 +40,7 @@
     "preact": "^10.5.13",
     "preact-compat": "^3.19.0",
     "vue": "^2.6.12",
-    "vue-i18n": "^9.1.4",
+    "vue-i18n": "^8.24.2",
     "vue-markdown": "^2.2.4",
     "vue-meta": "^2.4.0",
     "vue-router": "^3.5.1",
