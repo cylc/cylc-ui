@@ -212,7 +212,7 @@ function createTaskProxyNode (taskProxy) {
  * @property {Object} firstParent
  * @property {string} firstParent.id
  * @property {string} state
- * @property {string} host - job host (e.g. localhost)
+ * @property {string} platform - job platform (e.g. localhost)
  * @property {string} jobId - job ID (e.g. PID)
  * @property {string} jobRunnerName - job runner name (e.g. PBS)
  * @property {string} submittedTime - time job was submitted
@@ -249,8 +249,8 @@ function createTaskProxyNode (taskProxy) {
 function createJobDetailsNode (job) {
   const details = [
     {
-      title: 'host id',
-      value: job.host
+      title: 'platform',
+      value: job.platform
     },
     {
       title: 'job id',

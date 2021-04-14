@@ -6,7 +6,15 @@ milestones](https://github.com/cylc/cylc-ui/milestones?state=closed) for each
 release.
 
 -------------------------------------------------------------------------------
-## __cylc-ui-0.3 (<span actions:bind='release-date'>Released 2021-03-25</span>)__
+## __cylc-ui-0.4 (<span actions:bind='release-date'>Due 2021-04</span>)__
+
+### Enhancements
+
+[#641](https://github.com/cylc/cylc-ui/pull/641/files) -
+Display the new "platform" for jobs rather than the legacy "host" value.
+
+-------------------------------------------------------------------------------
+## __cylc-ui-0.3 (Released 2021-03-25)__
 
 Release 0.3 of Cylc UI.
 
