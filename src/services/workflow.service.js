@@ -27,11 +27,12 @@ import { DocumentNode } from 'graphql'
 /* eslint-enable no-unused-vars */
 
 import {
-  getMutationArgsFromTokens,
-  tokenise,
-  mutate,
   getIntrospectionQuery,
-  processMutations
+  getMutationArgsFromTokens,
+  mutate,
+  primaryMutations,
+  processMutations,
+  tokenise
 } from '@/utils/aotf'
 
 class WorkflowService extends GQuery {
@@ -61,6 +62,7 @@ class WorkflowService extends GQuery {
     this.mutations = null
     this.types = null
     this.associations = null
+    this.primaryMutations = primaryMutations
 
     this.loadMutations()
   }

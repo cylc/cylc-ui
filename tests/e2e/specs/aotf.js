@@ -119,7 +119,7 @@ describe('Api On The Fly', () => {
               .should('have.length', 1)
               .get('.v-list-item__title:first')
               .should('have.text', test.mutationTitle)
-              .get('.v-list-item__subtitle:first')
+              .get('.c-description:first')
               .should('have.text', test.mutationText)
           })
         // click outside of the menu
@@ -191,7 +191,7 @@ describe('Api On The Fly', () => {
       // click on the first mutation
       cy
         .get('.c-mutation-menu-list:first')
-        .find('.v-list-item__action > .v-btn')
+        .find('.v-list-item__action > .v-icon')
         .should('exist')
         .should('be.visible')
         .click()
@@ -277,13 +277,26 @@ describe('Api On The Fly', () => {
         .get('.c-mutation-menu-list:first')
         .should('exist')
         .should('be.visible')
-        // the workflow should be the subject of the mutation selection
-        .find('h2:first')
-        .should('have.text', ' user|one ')
-        // it should list the four workflow mutations
+        // it should list the one default workflow mutation
+        // (see workflowService.primaryMutations)
         .get('.c-mutation-menu-list:first')
         .find('.v-list-item')
-        .should('have.length', 4)
+        .should('have.length', 2) // +1 because of the "see more" button
+        // toggle the menu to "see more" items
+        .find('.v-btn:first')
+        .click()
+        // it should now list the four workflow mutations
+        .get('.c-mutation-menu-list:first')
+        .find('.v-list-item')
+        .should('have.length', 5) // +1 because of the "see less" button
+        // toggle the menu to "see less" items
+        .find('.v-btn:first')
+        .click()
+        // it should list the one default workflow mutation
+        // (see workflowService.primaryMutations)
+        .get('.c-mutation-menu-list:first')
+        .find('.v-list-item')
+        .should('have.length', 2) // +1 because of the "see more" button
     })
   })
 })

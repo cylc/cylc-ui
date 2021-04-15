@@ -51,6 +51,7 @@ export default {
           )
           vnode.context.$eventBus.emit('show-mutations-menu', {
             id: cylcId,
+            type: type,
             types: types,
             tokens: tokens,
             mutations: componentMutations,

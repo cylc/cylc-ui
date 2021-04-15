@@ -24,6 +24,10 @@ None or N/A.
 
 ### Enhancements
 
+[#636](https://github.com/cylc/cylc-ui/pull/636) -
+Improve the appearance of mutation menus and display an expandable short list
+of commands.
+
 [#616](https://github.com/cylc/cylc-ui/pull/616) - Alert the user if there are
 any errors processing deltas.
 

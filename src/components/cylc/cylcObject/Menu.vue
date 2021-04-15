@@ -19,60 +19,61 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div class="c-mutation-menu-holder">
     <!-- dropdown menu -->
     <v-menu
+      offset-y
       class="c-mutation-menu"
       v-model="showMenu"
       :position-x="x"
       :position-y="y"
       v-on:show-mutations-menu="showMutationsMenu"
-      offset-y
       :disabled="!interactive"
+      @input="closeMenu"
     >
       <v-list
-        dense
         dark
         class="c-mutation-menu-list"
       >
-        <v-subheader>
-          <h2>
-            {{id}}
-          </h2>
-        </v-subheader>
-        <v-list-item-group
-          color="primary"
-          v-if="mutations"
+        <v-list-item
+          v-for="[mutation, requiresInfo] in displayMutations"
+          :key="mutation.name"
+          @click.stop="enact(mutation, requiresInfo)"
+          class="c-mutation"
         >
-          <v-list-item two-line
-            v-for="[mutation, requiresInfo] in mutations"
-            :key="mutation.name"
-            @click.stop="enact(mutation, requiresInfo)"
+          <v-list-item-avatar>
+            <v-icon large>{{ mutation._icon }}</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title v-html="mutation._title" />
+            <!--
+            don't use v-list-item-description here, vuetify will standardise
+            line heights and cuts off text that overspills this way we can
+            have the required number of lines of text
+            -->
+            <span class="c-description">{{ mutation._shortDescription }}</span>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-icon
+             medium
+             class="float-right"
+             @click.stop="openDialog(mutation)"
+            >
+              {{ icons.pencil }}
+            </v-icon>
+          </v-list-item-action>
+        </v-list-item>
+        <v-list-item
+          v-if="canExpand"
+        >
+          <v-list-item-content
+            @click="expandCollapse"
+            @click.stop.prevent
           >
-            <!--@click="callMutationFromContext(mutation)"-->
-            <v-list-item-icon>
-              <div style="font-size:0.5rem;">
-                <v-icon medium>{{ mutation._icon }}</v-icon>
-              </div>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>
-                <span>{{mutation._title}}</span>
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <span>{{mutation._shortDescription}}</span>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-            <!-- This is how to add buttons for standard operations later -->
-            <v-list-item-action>
-              <v-btn
-                small rounded
-                color="primary"
-                dark
-                @click.stop="openDialog(mutation)"
-              >
-                Edit
-              </v-btn>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list-item-group>
+            <v-btn
+              rounded
+            >
+              {{ expanded ? 'See Less' : 'See More' }}
+            </v-btn>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-menu>
     <v-dialog
@@ -97,6 +98,9 @@ import {
   mutate
 } from '@/utils/aotf'
 import Mutation from '@/components/cylc/Mutation'
+import {
+  mdiPencil
+} from '@mdi/js'
 
 export default {
   name: 'CylcObjectMenu',
@@ -115,15 +119,20 @@ export default {
 
   data () {
     return {
-      showMenu: false,
-      id: '',
-      mutations: [],
-      tokens: [],
-      x: 0,
-      y: 0,
+      allMutations: [],
       dialog: false,
       dialogMutation: null,
-      types: []
+      expanded: false,
+      id: '',
+      mutations: [],
+      showMenu: false,
+      tokens: [],
+      types: [],
+      x: 0,
+      y: 0,
+      icons: {
+        pencil: mdiPencil
+      }
     }
   },
 
@@ -135,15 +144,54 @@ export default {
     this.$eventBus.off('show-mutations-menu', this.showMutationsMenu)
   },
 
+  computed: {
+    canExpand () {
+      if (!this.mutations) {
+        return false
+      }
+      if (this.$workflowService.primaryMutations[this.type]) {
+        return true
+      }
+      return false
+    },
+
+    displayMutations () {
+      if (!this.mutations) {
+        return []
+      }
+      const shortList = this.$workflowService.primaryMutations[this.type]
+      if (!this.expanded && shortList) {
+        return this.mutations.filter(
+          (x) => {
+            return shortList.includes(x[0].name)
+          }
+        ).sort(
+          (x, y) => {
+            return shortList.indexOf(x[0].name) - shortList.indexOf(y[0].name)
+          }
+        )
+      }
+      return this.mutations
+    }
+  },
+
   methods: {
     openDialog (mutation) {
       this.dialog = mutation
       this.dialogMutation = mutation
     },
 
+    closeMenu () {
+      this.expanded = false
+    },
+
     closeDialog () {
       this.dialog = null
       this.dialogMutation = null
+    },
+
+    expandCollapse () {
+      this.expanded = !this.expanded
     },
 
     /* Call a mutation using only the tokens for args. */
@@ -158,11 +206,14 @@ export default {
       this.showMenu = false
     },
 
-    showMutationsMenu ({ id, types, tokens, mutations, event }) {
+    showMutationsMenu ({ id, type, types, tokens, mutations, event }) {
       this.id = id
+      this.type = type
       this.types = types
       this.tokens = tokens
-      this.mutations = mutations
+      this.mutations = mutations.sort(
+        (a, b) => a[0].name.localeCompare(b[0].name)
+      )
       this.x = event.clientX
       this.y = event.clientY
       this.$nextTick(() => {

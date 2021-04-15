@@ -28,9 +28,7 @@ describe('Mutations component', () => {
       .click({ force: true })
     cy
       .get('.c-mutation-menu-list')
-      .find('span')
-      .contains('Edit')
-      .parent()
+      .find('.v-list-item__action')
       .click()
   }
   const submitMutationForms = () => {
