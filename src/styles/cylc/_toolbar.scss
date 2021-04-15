@@ -26,14 +26,20 @@
 .c-toolbar {
   background-color: map-get($grey, 'lighten-4') !important;
 
+  .v-toolbar__title {
+    // clear default padding (too much space on the left)
+    padding: 0!important;
+  }
+
   .c-toolbar-title, .add-view {
-    font-size: 1.4rem;
     color: $font-default-color;
     font-weight: map-get($font-weights, medium);
   }
 
   .c-toolbar-title {
-    padding-right: 12px;
+    font-size: 1.4rem;
+    // put some space between the title and the icons that follow
+    padding-right: 0.5rem;
   }
 
   span {
@@ -41,5 +47,18 @@
   }
 
   .add-view {
+    // force overflow onto a new line where we can hide it
+    height: 1.1em;
+    overflow: hidden;
+
+    .label {
+      float: left;
+      font-size: 1rem;
+      margin-right: 0.5em;
+    }
+
+    .icon {
+      float: right;
+    }
   }
 }

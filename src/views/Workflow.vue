@@ -19,8 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <CylcObjectMenu />
     <toolbar
-      v-on:add-tree="this.addTreeWidget"
-      v-on:add-mutations="this.addMutationsWidget"
+      v-on:add="this.addView"
     ></toolbar>
     <div class="workflow-panel fill-height">
       <lumino
@@ -129,7 +128,7 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$nextTick(() => {
-        vm.addTreeWidget()
+        vm.addView('tree')
       })
     })
   },
@@ -147,7 +146,7 @@ export default {
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
       // Create a Tree View for the current workflow by default
-      this.addTreeWidget()
+      this.addView('tree')
     })
   },
   beforeRouteLeave (to, from, next) {
@@ -180,17 +179,19 @@ export default {
       return id
     },
     /**
-     * Add a tree widget. Starts a delta subscription if none is running.
+     * Add a new view widget.
+     *
+     * TODO: These views should all have a standard interface.
      */
-    addTreeWidget () {
-      const subscriptionId = this.subscribeDeltas()
-      Vue.set(this.widgets, subscriptionId, TreeComponent.name)
-    },
-    /**
-     * Add a mutations widget.
-     */
-    addMutationsWidget () {
-      Vue.set(this.widgets, (new Date()).getTime(), MutationsView.name)
+    addView (view) {
+      if (view === 'tree') {
+        const subscriptionId = this.subscribeDeltas()
+        Vue.set(this.widgets, subscriptionId, TreeComponent.name)
+      } else if (view === 'mutations') {
+        Vue.set(this.widgets, (new Date()).getTime(), MutationsView.name)
+      } else {
+        throw Error(`Unknown view "${view}"`)
+      }
     },
     /**
      * Remove all the widgets present in the UI.
