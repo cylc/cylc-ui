@@ -163,7 +163,11 @@ export default {
       if (!this.expanded && shortList) {
         return this.mutations.filter(
           (x) => {
-            return shortList.indexOf(x[0].name) >= 0
+            return shortList.includes(x[0].name)
+          }
+        ).sort(
+          (x, y) => {
+            return shortList.indexOf(x[0].name) - shortList.indexOf(y[0].name)
           }
         )
       }
@@ -207,7 +211,9 @@ export default {
       this.type = type
       this.types = types
       this.tokens = tokens
-      this.mutations = mutations.sort()
+      this.mutations = mutations.sort(
+        (a, b) => a[0].name.localeCompare(b[0].name)
+      )
       this.x = event.clientX
       this.y = event.clientY
       this.$nextTick(() => {
