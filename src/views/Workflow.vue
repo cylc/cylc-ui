@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <CylcObjectMenu />
     <toolbar
-      v-on:add="this.clickAddView"
+      v-on:add="this.addView"
     ></toolbar>
     <div class="workflow-panel fill-height">
       <lumino
@@ -177,27 +177,6 @@ export default {
       }
       this.deltaSubscriptions.push(id)
       return id
-    },
-    /**
-     * Handle click events on elements designed to add new views.
-     *
-     * Clickable element must have the ID "c-add-view-<name-of-view>".
-     */
-    clickAddView (e) {
-      let ele = e.target
-      while (ele && !ele.classList.contains('c-add-view')) {
-        // go up the element tree until we find the c-add-view list item
-        ele = ele.parentElement
-      }
-      if (!ele) {
-        return
-      }
-      // const cls = ele.classList.filter(
-      const cls = Array.from(ele.classList.values()).filter(
-        (x) => { return x.startsWith('c-add-view-') }
-      )[0]
-      // extract the name of the view from the element id
-      this.addView(cls.replace('c-add-view-', ''))
     },
     /**
      * Add a new view widget.

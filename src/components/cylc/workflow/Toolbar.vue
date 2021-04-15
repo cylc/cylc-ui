@@ -89,17 +89,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </template>
         <v-list class="pa-0">
           <v-list-item
-            v-bind:class="[
-              'py-0',
-              'px-8',
-              'ma-0',
-              'c-add-view',
-              `c-add-view-${ view.name }`
-            ]"
             :id="`toolbar-add-${ view.name }-view`"
-            @click="$listeners['add']"
             v-for="view in views"
-            v-bind:key="view.title"
+            :key="view.title"
+            @click="$listeners['add'](view.name)"
+            class="py-0 px-8 ma-0 c-add-view"
           >
             <v-list-item-icon>
               <v-icon>{{ view.icon }}</v-icon>
