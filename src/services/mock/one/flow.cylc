@@ -15,7 +15,7 @@
 
 [meta]
     description = """
-        A simple suite which demonstrates tasks in different states.
+        A simple workflow which demonstrates tasks in different states.
     """
 
 [cylc]
@@ -44,7 +44,7 @@
     [[succeeded]]
         inherit = SUCCEEDED
         script = """
-            cylc hold "${CYLC_SUITE_NAME}" "sleepy.${CYLC_TASK_CYCLE_POINT}"
+            cylc hold "${CYLC_WORKFLOW_NAME}" "sleepy.${CYLC_TASK_CYCLE_POINT}"
         """
 
     [[eventually_succeeded]]
@@ -90,16 +90,16 @@
             sleep 5
 
             # take a checkpoint
-            CHECK="${CYLC_SUITE_DEF_PATH}/../checkpoint/get_checkpoint.py"
+            CHECK="${CYLC_WORKFLOW_DEF_PATH}/../checkpoint/get_checkpoint.py"
             cylc client \
-                "${CYLC_SUITE_NAME}" \
+                "${CYLC_WORKFLOW_NAME}" \
                 graphql \
                 <<< "$(python3 "${CHECK}")" \
                 > checkpoint
 
             # reset stuff
             cylc unhold \
-                "${CYLC_SUITE_NAME}" "sleepy.${CYLC_TASK_CYCLE_POINT}"
+                "${CYLC_WORKFLOW_NAME}" "sleepy.${CYLC_TASK_CYCLE_POINT}"
             cylc set-outputs \
-		"${CYLC_SUITE_NAME}" "retrying.${CYLC_TASK_CYCLE_POINT}"
+		"${CYLC_WORKFLOW_NAME}" "retrying.${CYLC_TASK_CYCLE_POINT}"
         """
