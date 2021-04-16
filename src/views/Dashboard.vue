@@ -132,11 +132,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/doc/built-sphinx/suite-design-guide/suite-design-guide-master.html">
             <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.suite }}</v-icon>
+              <v-icon large>{{ svgPaths.workflow }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
-                Suite Design Guide
+                Workflow Design Guide
               </v-list-item-title>
               <v-list-item-subtitle>
                 How to make complex Cylc and Rose workflows simpler and easier to maintain
@@ -216,7 +216,7 @@ export default {
         settings: mdiCog,
         hub: mdiHubspot,
         quickstart: mdiBook,
-        suite: mdiBookOpenVariant,
+        workflow: mdiBookOpenVariant,
         documentation: mdiBookMultiple
       }
     }
