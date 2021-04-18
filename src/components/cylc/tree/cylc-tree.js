@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { extractGroupState } from '@/utils/tasks'
-import { mergeWith, sortedIndex } from 'lodash'
+import { mergeWith } from 'lodash'
 import { createFamilyProxyNode, getCyclePointId } from '@/components/cylc/tree/tree-nodes'
 import Vue from 'vue'
 
@@ -72,6 +72,7 @@ function computeCyclePointsStates (cyclePointNodes) {
 }
 
 /**
+ * @private
  * @param {FamilyProxyNode} left
  * @param {FamilyProxyNode} right
  * @returns {number}
@@ -93,6 +94,59 @@ function sortTaskProxyOrFamilyProxy (left, right) {
       right.node.name.toLowerCase(),
       undefined,
       { numeric: true, sensitivity: 'base' })
+}
+
+/**
+ * Declare function used in sortedIndexBy.
+ *
+ * @callback SortedIndexByIteratee
+ * @param {object} any object
+ * @returns {string}
+ */
+
+/**
+ * Given a list of elements, and a value to be added to the list, we
+ * perform a simple binary search of the list to determine the next
+ * index where the value can be inserted, so that the list remains
+ * sorted.
+ *
+ * This function uses localeCompare, which will respect the numeric
+ * collation.
+ *
+ * This is a simplified version of lodash's function with the same
+ * name, but that respects natural order for numbers, i.e. [1, 2, 10].
+ * Not [1, 10, 2].
+ *
+ * @private
+ * @param array {Array<object>} - list of string values, or of objects with string values
+ * @param value {object} - a value to be inserted in the list, or an object wrapping the value (see iteratee)
+ * @param iteratee {SortedIndexByIteratee=} - an optional function used to return the value of the element of the list}
+ * @param comparator {function=} - function used to compare the newValue with otherValues in the list
+ */
+function sortedIndexBy (array, value, iteratee, comparator) {
+  if (!array || array.length === 0 || !value) {
+    return 0
+  }
+  // If given a function, use it. Otherwise, simply use identity function.
+  const iterateeFunction = iteratee || ((value) => value)
+  // If given a function, use it. Otherwise, simply use locale sort with numeric enabled
+  const comparatorFunction = comparator || ((left, right) => left.localeCompare(right, undefined, { numeric: true, sensitivity: 'base' }) > 0)
+  let low = 0
+  let high = array.length
+
+  const newValue = iterateeFunction(value)
+
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2)
+    const midValue = iterateeFunction(array[mid])
+    const higher = comparatorFunction(newValue, midValue)
+    if (higher) {
+      low = mid + 1
+    } else {
+      high = mid
+    }
+  }
+  return high
 }
 
 /**
@@ -239,10 +293,13 @@ class CylcTree {
     if (!this.lookup.has(cyclePoint.id)) {
       this.lookup.set(cyclePoint.id, cyclePoint)
       const parent = this.root
-      const names = this.root.children
-        .map(child => child.node.name)
-        .reverse()
-      const insertIndex = sortedIndex(names, cyclePoint.node.name)
+      // reverse to put cyclepoints in ascending order (i.e. 1, 2, 3)
+      const cyclePoints = [...parent.children].reverse()
+      const insertIndex = sortedIndexBy(
+        cyclePoints,
+        cyclePoint,
+        (c) => c.node.name
+      )
       // cycle points are inserted in the reverse order, so we have to handle that sortedIndex will give you the
       // wrong index (except when the list is empty). That's why we reverse the list first, to get the index, and
       // find where it would be in the not-reversed list.
@@ -332,8 +389,13 @@ class CylcTree {
       // the parent-child could end up repeated by accident; it means we must make sure to create this relationship
       // exactly once.
       if (parent.children.length === 0 || !parent.children.find(child => child.id === familyProxy.id)) {
-        parent.children.push(familyProxy)
-        parent.children.sort(sortTaskProxyOrFamilyProxy)
+        const sortedIndex = sortedIndexBy(
+          parent.children,
+          familyProxy,
+          null,
+          sortTaskProxyOrFamilyProxy
+        )
+        parent.children.splice(sortedIndex, 0, familyProxy)
       }
     }
   }
@@ -428,8 +490,13 @@ class CylcTree {
           // eslint-disable-next-line no-console
           console.error(`Missing parent ${taskProxy.node.firstParent.id}`)
         } else {
-          parent.children.push(taskProxy)
-          parent.children.sort(sortTaskProxyOrFamilyProxy)
+          const sortedIndex = sortedIndexBy(
+            parent.children,
+            taskProxy,
+            null,
+            sortTaskProxyOrFamilyProxy
+          )
+          parent.children.splice(sortedIndex, 0, taskProxy)
         }
       }
     }
@@ -470,8 +537,10 @@ class CylcTree {
       this.lookup.set(job.id, job)
       if (job.node.firstParent) {
         const parent = this.lookup.get(job.node.firstParent.id)
-        const names = parent.children.map(child => child.node.submitNum)
-        const insertIndex = sortedIndex(names, job.node.submitNum)
+        const insertIndex = sortedIndexBy(
+          parent.children,
+          job,
+          (j) => `${j.node.submitNum}`)
         parent.children.splice(insertIndex, 0, job)
       }
     }
