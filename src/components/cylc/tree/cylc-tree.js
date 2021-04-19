@@ -97,11 +97,20 @@ function sortTaskProxyOrFamilyProxy (left, right) {
 }
 
 /**
- * Declare function used in sortedIndexBy.
+ * Declare function used in sortedIndexBy for creating the iteratee.
  *
  * @callback SortedIndexByIteratee
- * @param {object} any object
+ * @param {object} value - any object
  * @returns {string}
+ */
+
+/**
+ * Declare function used in sortedIndexBy as a comparator.
+ *
+ * @callback SortedIndexByComparator
+ * @param {string} left - left parameter
+ * @param {string} right - right parameter
+ * @returns {number} - -1 is left is lower than right, 0 if the same, 1 otherwise
  */
 
 /**
@@ -121,7 +130,7 @@ function sortTaskProxyOrFamilyProxy (left, right) {
  * @param array {Array<object>} - list of string values, or of objects with string values
  * @param value {object} - a value to be inserted in the list, or an object wrapping the value (see iteratee)
  * @param iteratee {SortedIndexByIteratee=} - an optional function used to return the value of the element of the list}
- * @param comparator {function=} - function used to compare the newValue with otherValues in the list
+ * @param comparator {SortedIndexByComparator=} - function used to compare the newValue with otherValues in the list
  */
 function sortedIndexBy (array, value, iteratee, comparator) {
   if (!array || array.length === 0 || !value) {
