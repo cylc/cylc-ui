@@ -153,7 +153,7 @@ function sortTaskProxyOrFamilyProxy (leftObject, leftValue, rightObject, rightVa
  * @param array {Array<object>} - list of string values, or of objects with string values
  * @param value {object} - a value to be inserted in the list, or an object wrapping the value (see iteratee)
  * @param iteratee {SortedIndexByIteratee=} - an optional function used to return the value of the element of the list}
- * @param comparator {SortedIndexByComparator=SortTaskProxyOrFamilyProxyComparator} - function used to compare the newValue with otherValues in the list
+ * @param comparator {SortedIndexByComparator=} - function used to compare the newValue with otherValues in the list
  */
 function sortedIndexBy (array, value, iteratee, comparator) {
   if (!array || array.length === 0 || !value) {
