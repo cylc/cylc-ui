@@ -72,28 +72,60 @@ function computeCyclePointsStates (cyclePointNodes) {
 }
 
 /**
- * @private
- * @param {FamilyProxyNode} left
- * @param {FamilyProxyNode} right
+ * The default comparator used to compare strings for cycle points, family proxies names,
+ * task proxies names, and jobs.
+ *
+ * @param left {string}
+ * @param right {string}
  * @returns {number}
+ * @constructor
  */
-function sortTaskProxyOrFamilyProxy (left, right) {
+const DEFAULT_COMPARATOR = (left, right) => {
+  return left.toLowerCase()
+    .localeCompare(
+      right.toLowerCase(),
+      undefined,
+      {
+        numeric: true,
+        sensitivity: 'base'
+      }
+    )
+}
+
+/**
+ * Declare function used in sortedIndexBy as a comparator.
+ *
+ * @private
+ * @callback SortedIndexByComparator
+ * @param {object} leftObject - left parameter object
+ * @param {string} leftValue - left parameter value
+ * @param {object} rightObject - right parameter object
+ * @param {string} rightValue - right parameter value
+ * @returns {boolean} - true if leftValue is higher than rightValue
+ */
+
+/**
+ * @private
+ * @typedef {SortedIndexByComparator} SortTaskProxyOrFamilyProxyComparator
+ * @param {TaskProxyNode|FamilyProxyNode} leftObject
+ * @param {string} leftValue
+ * @param {TaskProxyNode|FamilyProxyNode} rightObject
+ * @param {string} rightValue
+ * @returns {boolean}
+ */
+function sortTaskProxyOrFamilyProxy (leftObject, leftValue, rightObject, rightValue) {
   // sort cycle point children (family-proxies, and task-proxies)
   // first we sort by type ascending, so 'family-proxy' types come before 'task-proxy'
   // then we sort by node name ascending, so 'bar' comes before 'foo'
   // node type
-  if (left.type < right.type) {
+  if (leftObject.type < rightObject.type) {
     return -1
   }
-  if (left.type > right.type) {
+  if (leftObject.type > rightObject.type) {
     return 1
   }
   // name
-  return left.node.name.toLowerCase()
-    .localeCompare(
-      right.node.name.toLowerCase(),
-      undefined,
-      { numeric: true, sensitivity: 'base' })
+  return DEFAULT_COMPARATOR(leftValue, rightValue) > 0
 }
 
 /**
@@ -102,15 +134,6 @@ function sortTaskProxyOrFamilyProxy (left, right) {
  * @callback SortedIndexByIteratee
  * @param {object} value - any object
  * @returns {string}
- */
-
-/**
- * Declare function used in sortedIndexBy as a comparator.
- *
- * @callback SortedIndexByComparator
- * @param {string} left - left parameter
- * @param {string} right - right parameter
- * @returns {number} - -1 is left is lower than right, 0 if the same, 1 otherwise
  */
 
 /**
@@ -130,7 +153,7 @@ function sortTaskProxyOrFamilyProxy (left, right) {
  * @param array {Array<object>} - list of string values, or of objects with string values
  * @param value {object} - a value to be inserted in the list, or an object wrapping the value (see iteratee)
  * @param iteratee {SortedIndexByIteratee=} - an optional function used to return the value of the element of the list}
- * @param comparator {SortedIndexByComparator=} - function used to compare the newValue with otherValues in the list
+ * @param comparator {SortedIndexByComparator=SortTaskProxyOrFamilyProxyComparator} - function used to compare the newValue with otherValues in the list
  */
 function sortedIndexBy (array, value, iteratee, comparator) {
   if (!array || array.length === 0 || !value) {
@@ -139,7 +162,7 @@ function sortedIndexBy (array, value, iteratee, comparator) {
   // If given a function, use it. Otherwise, simply use identity function.
   const iterateeFunction = iteratee || ((value) => value)
   // If given a function, use it. Otherwise, simply use locale sort with numeric enabled
-  const comparatorFunction = comparator || ((left, right) => left.localeCompare(right, undefined, { numeric: true, sensitivity: 'base' }) > 0)
+  const comparatorFunction = comparator || ((leftObject, leftValue, rightObject, rightValue) => DEFAULT_COMPARATOR(leftValue, rightValue) > 0)
   let low = 0
   let high = array.length
 
@@ -148,7 +171,7 @@ function sortedIndexBy (array, value, iteratee, comparator) {
   while (low < high) {
     const mid = Math.floor((low + high) / 2)
     const midValue = iterateeFunction(array[mid])
-    const higher = comparatorFunction(newValue, midValue)
+    const higher = comparatorFunction(value, newValue, array[mid], midValue)
     if (higher) {
       low = mid + 1
     } else {
@@ -401,7 +424,7 @@ class CylcTree {
         const sortedIndex = sortedIndexBy(
           parent.children,
           familyProxy,
-          null,
+          (f) => f.node.name,
           sortTaskProxyOrFamilyProxy
         )
         parent.children.splice(sortedIndex, 0, familyProxy)
@@ -502,7 +525,7 @@ class CylcTree {
           const sortedIndex = sortedIndexBy(
             parent.children,
             taskProxy,
-            null,
+            (t) => t.node.name,
             sortTaskProxyOrFamilyProxy
           )
           parent.children.splice(sortedIndex, 0, taskProxy)
