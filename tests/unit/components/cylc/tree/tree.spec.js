@@ -31,6 +31,93 @@ import TaskState from '@/model/TaskState.model'
  * Tests for the CylcTree class.
  */
 describe('CylcTree', () => {
+  describe('sortedIndexBy', () => {
+    it('should assign 0 when given an empty array', () => {
+      const workflow = createWorkflowNode({
+        id: WORKFLOW_ID
+      })
+      const cylcTree = new CylcTree(workflow)
+      const cyclePoint = createCyclePointNode({
+        id: 'cylc|workflow|1',
+        cyclePoint: '1'
+      })
+      cylcTree.addCyclePoint(cyclePoint)
+      expect(cylcTree.root.children[0].id).to.equal(cyclePoint.id)
+    })
+    it('should use numeric/natural sort for cycle points', () => {
+      const workflow = createWorkflowNode({
+        id: WORKFLOW_ID
+      })
+      const cylcTree = new CylcTree(workflow)
+      const cyclePoints = ['1', '10', '100', '2', '3', '4']
+      for (const cyclePoint of cyclePoints) {
+        cylcTree.addCyclePoint(createCyclePointNode({
+          id: `cylc|workflow|${cyclePoint}`,
+          cyclePoint: cyclePoint
+        }))
+      }
+      // NB: cycle points are sorted in reverse order by default
+      const expectedOrder = ['100', '10', '4', '3', '2', '1']
+      expectedOrder.forEach((expected, index) => {
+        expect(cylcTree.root.children[index].node.name).to.equal(expected)
+      })
+    })
+    it('should use numeric/natural sort for families and tasks, using the object type as well', () => {
+      const workflow = createWorkflowNode({
+        id: WORKFLOW_ID
+      })
+      const cylcTree = new CylcTree(workflow)
+      cylcTree.addCyclePoint(createCyclePointNode({
+        id: 'cylc|workflow|1',
+        cyclePoint: '1'
+      }))
+      // 2 families, 10FAM and 1FAM under the cyclepoint 1 (must be sorted as 1FAM and 10FAM)
+      cylcTree.addFamilyProxy(createFamilyProxyNode({
+        id: 'cylc|workflow|1|10FAM',
+        name: '10FAM',
+        firstParent: {
+          name: 'root'
+        }
+      }))
+      cylcTree.addFamilyProxy(createFamilyProxyNode({
+        id: 'cylc|workflow|1|1FAM',
+        name: '1FAM',
+        firstParent: {
+          name: 'root'
+        }
+      }))
+      // 3 tasks, 1TASK, 100TASK, 2TASK under the cyclepoint 1 (must be sorted as 1TASK, 2TASK, and 10TASK)
+      cylcTree.addTaskProxy(createTaskProxyNode({
+        id: 'cylc|workflow|1|1TASK',
+        name: '1TASK',
+        firstParent: {
+          name: 'root'
+        }
+      }))
+      cylcTree.addTaskProxy(createTaskProxyNode({
+        id: 'cylc|workflow|1|10TASK',
+        name: '10TASK',
+        firstParent: {
+          name: 'root'
+        }
+      }))
+      cylcTree.addTaskProxy(createTaskProxyNode({
+        id: 'cylc|workflow|1|2TASK',
+        name: '2TASK',
+        firstParent: {
+          name: 'root'
+        }
+      }))
+
+      // Now we must have the families before the tasks, and everything sorted
+      const expectedChildren = ['1FAM', '10FAM', '1TASK', '2TASK', '10TASK']
+      const cyclePoint = cylcTree.root.children[0]
+      const children = cyclePoint.children
+      expectedChildren.forEach((expected, index) => {
+        expect(children[index].node.name).to.equal(expected)
+      })
+    })
+  })
   const WORKFLOW_ID = 'cylc|workflow'
   it('Should create a tree with a given workflow', () => {
     const cylcTree = new CylcTree(createWorkflowNode({
