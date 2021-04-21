@@ -156,7 +156,7 @@ function sortTaskProxyOrFamilyProxy (leftObject, leftValue, rightObject, rightVa
  * @param comparator {SortedIndexByComparator=} - function used to compare the newValue with otherValues in the list
  */
 function sortedIndexBy (array, value, iteratee, comparator) {
-  if (!array || array.length === 0 || !value) {
+  if (array.length === 0) {
     return 0
   }
   // If given a function, use it. Otherwise, simply use identity function.
