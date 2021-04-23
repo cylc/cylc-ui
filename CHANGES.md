@@ -6,11 +6,20 @@ milestones](https://github.com/cylc/cylc-ui/milestones?state=closed) for each
 release.
 
 -------------------------------------------------------------------------------
-## __cylc-ui-0.4 (<span actions:bind='release-date'>Released 2021-04-16</span>)__
+## __cylc-ui-0.5 (<span actions:bind='release-date'>Released 2021-??-??</span>)__
+
+### Fixes
+
+[#649](https://github.com/cylc/cylc-ui/pull/649) - Avoid re-sorting a
+sorted array, instead adding a new element in its sorted index (respecting
+locale, and numeric on).
+
+-------------------------------------------------------------------------------
+## __cylc-ui-0.4 (Released 2021-04-16)__
 
 ### Enhancements
 
-[#641](https://github.com/cylc/cylc-ui/pull/641/files) -
+[#641](https://github.com/cylc/cylc-ui/pull/641) -
 Display the new "platform" for jobs rather than the legacy "host" value.
 
 -------------------------------------------------------------------------------
