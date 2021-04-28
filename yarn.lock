@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@apollo/client@^3.3.14":
-  version "3.3.14"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.3.14.tgz#b077f42e17941dbf4c62c4f41bf83c0828872d09"
-  integrity sha512-z7YwMvF9grmpWUG+26e3gPcBAOA/r/Ci5gwK7JVm3bGYG9kKqG8MF6sMXEbuwTsFseE4duSp0icJ6tdzxJhhlA==
+"@apollo/client@^3.3.15":
+  version "3.3.15"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.3.15.tgz#bdd230894aac4beb8ade2b472a1d3c9ea6152812"
+  integrity sha512-/WQmNvLEZMA0mA3u+FkEPTXKzxZD/KhyO7WlbKcy3zKGrXKza83tAbNMzsitQE7DTcSc3DLEcIu1Z5Rc7PFq0Q==
   dependencies:
     "@graphql-typed-document-node/core" "^3.0.0"
     "@types/zen-observable" "^0.8.0"
@@ -1228,12 +1228,13 @@
     through2 "^2.0.0"
     watchify "3.11.1"
 
-"@cypress/code-coverage@^3.9.4":
-  version "3.9.4"
-  resolved "https://registry.yarnpkg.com/@cypress/code-coverage/-/code-coverage-3.9.4.tgz#1e82b7061d7b136a99b464e2730d4cf40167bac9"
-  integrity sha512-mFUl1MmfqeQe08eONKnAv9uWXRVW2RprqaYf3lJkI5tEhEAP+I9zB+cmjQWKe15vfmadKxqaLStVNYLM0rpYGA==
+"@cypress/code-coverage@^3.9.5":
+  version "3.9.5"
+  resolved "https://registry.yarnpkg.com/@cypress/code-coverage/-/code-coverage-3.9.5.tgz#28fbd00c716f28aada5467c170008fe0c21b70d6"
+  integrity sha512-hdABt7EWvLHyfxwrrJkK4gWjBcEE+aTTHm5VgSkHjeIoE9G4rZtS4Zesa9PYbm9r2e7FPYA+ROPER9oMgRKDQg==
   dependencies:
     "@cypress/browserify-preprocessor" "3.0.1"
+    chalk "4.1.1"
     dayjs "1.10.4"
     debug "4.3.1"
     execa "4.1.0"
@@ -1404,128 +1405,128 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
-"@lumino/algorithm@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@lumino/algorithm/-/algorithm-1.4.0.tgz#9bc821a02717e93d43abfc9956e5cec23bdad1fc"
-  integrity sha512-ptFtwall4bCmK+0WQiCin7pY10GphgZU9cupF8SCXYS/nUkQaV60mvWhB8V3WNQf/fOBawzU3hygdXGthfHK9A==
-
-"@lumino/collections@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@lumino/collections/-/collections-1.4.0.tgz#f1f21661beee99a93602dad26bd1af6c5c1038d9"
-  integrity sha512-yEADfxJ9U+ihmofUkOeW7+S2whU0TpuHgmrVDNs1hsMqD1zX7cjNA8EXZ5uUA6dPKjZ1ulzepAwlWe80GXsgeg==
-  dependencies:
-    "@lumino/algorithm" "^1.4.0"
-
-"@lumino/commands@^1.13.0":
-  version "1.13.0"
-  resolved "https://registry.yarnpkg.com/@lumino/commands/-/commands-1.13.0.tgz#e2ad0f4b42a0db4803d2e56a8fcff7799ab41dde"
-  integrity sha512-BDfp1OWyRvwu0JrGd3GP+u9G5AiM52tJzf+bI1p/urtzBVZp/6exOo2LdZuThps14gzYF3CeCE5JjbxCPj+a5g==
-  dependencies:
-    "@lumino/algorithm" "^1.4.0"
-    "@lumino/coreutils" "^1.6.0"
-    "@lumino/disposable" "^1.5.0"
-    "@lumino/domutils" "^1.3.0"
-    "@lumino/keyboard" "^1.3.0"
-    "@lumino/signaling" "^1.5.0"
-    "@lumino/virtualdom" "^1.9.0"
-
-"@lumino/coreutils@^1.6.0":
+"@lumino/algorithm@^1.6.0":
   version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@lumino/coreutils/-/coreutils-1.6.0.tgz#dde3c1fd8dba4f4b617bc6ee3ef9c2bdef51b5d3"
-  integrity sha512-hwUkRfwn8Rnb94VbQSt7O5QwVZ+0A+PbL77V7fzjy9o3+ICdTDqpo5m6bhOoNmSz5m/dWcSD4YSpuGtUNunVEw==
+  resolved "https://registry.yarnpkg.com/@lumino/algorithm/-/algorithm-1.6.0.tgz#771e7896cd94e660f9b58a52f80e1bb255de1d41"
+  integrity sha512-NMOcm5Yr9nXz5gokS/K4jHBbUMQYBkvDXl1n51XWdcz0LY+oGuIKPhjazhUgmbNRehzdZBj5hMMd1+htYWeVKQ==
 
-"@lumino/datagrid@^0.21.1":
-  version "0.21.1"
-  resolved "https://registry.yarnpkg.com/@lumino/datagrid/-/datagrid-0.21.1.tgz#7e73be441084469919e693ca17965566f24b4f1f"
-  integrity sha512-rWXThNQGyn/eOs+7T1WIkH29Bg+NYpJR5OroouPu/03gZJcKNxdwSoVTIZGZLu3Bb+f+lU7P/aVbh+eh6TrWAQ==
+"@lumino/collections@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@lumino/collections/-/collections-1.6.0.tgz#7d3e94cee26409b0cd719c1934bdda471e6a5662"
+  integrity sha512-ZETm0/xF0oUHV03sOXNOfFI1EEpS317HvN5n+fZBJvCNZIrJkWmKD8QuxcfwHb7AChKUhXlVHhDbWlb1LKnd7g==
   dependencies:
-    "@lumino/algorithm" "^1.4.0"
-    "@lumino/coreutils" "^1.6.0"
-    "@lumino/disposable" "^1.5.0"
-    "@lumino/domutils" "^1.3.0"
-    "@lumino/dragdrop" "^1.8.0"
-    "@lumino/keyboard" "^1.3.0"
-    "@lumino/messaging" "^1.5.0"
-    "@lumino/signaling" "^1.5.0"
-    "@lumino/widgets" "^1.20.0"
+    "@lumino/algorithm" "^1.6.0"
 
-"@lumino/default-theme@^0.11.0":
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/@lumino/default-theme/-/default-theme-0.11.0.tgz#2a777b7f74496dc593554677589a1de9b6e44e1f"
-  integrity sha512-63DUyUy1ChOKMCmuVq45Evh2vdZk3CCYr26Ote/r/Fr1FZnbzIi96PeJXVn5MmmYDIVqfhvLVlScPJj/tve2aw==
+"@lumino/commands@^1.15.0":
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/@lumino/commands/-/commands-1.15.0.tgz#06eb94fb4b34cad59f35b1fcaf473e8d2047f779"
+  integrity sha512-JOE68KfbR9xw5YTfcwo+9E0PSWidifEMAcOC/aXd7iSzfsCRknMTcMQIUGL277IU7J7CJvoe10DUE5QKwTmX+g==
   dependencies:
-    "@lumino/dragdrop" "^1.8.0"
-    "@lumino/widgets" "^1.20.0"
+    "@lumino/algorithm" "^1.6.0"
+    "@lumino/coreutils" "^1.8.0"
+    "@lumino/disposable" "^1.7.0"
+    "@lumino/domutils" "^1.5.0"
+    "@lumino/keyboard" "^1.5.0"
+    "@lumino/signaling" "^1.7.0"
+    "@lumino/virtualdom" "^1.11.0"
 
-"@lumino/disposable@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@lumino/disposable/-/disposable-1.5.0.tgz#5dd4f108a34b3cb24576fc14ecda9fc1e0361aee"
-  integrity sha512-Qq/vyMxacSxUjISXHTNz2ccAJdO7j/J771PUuU0VZc3oR80oTTyakUyoH2AciSAuN9AaeTEHsG1qv75JHqYoIg==
-  dependencies:
-    "@lumino/algorithm" "^1.4.0"
-    "@lumino/signaling" "^1.5.0"
-
-"@lumino/domutils@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@lumino/domutils/-/domutils-1.3.0.tgz#e9c181c18db0e6bde5f0b05b41c71d3892cdc2b2"
-  integrity sha512-JvejySp2BrzRSAQ3DfTgPP4/x7yI/OouD5fCkeET83YLsOkcrFHwd2aehFEeVeo+WIg57ADv+CYh7+bZPgrkCw==
-
-"@lumino/dragdrop@^1.8.0":
+"@lumino/coreutils@^1.8.0":
   version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@lumino/dragdrop/-/dragdrop-1.8.0.tgz#a95524fc5433bb95dcc4bc8fb40a0b9cc9973c6d"
-  integrity sha512-jDHrUGqM5RWS2QoKlxN1xLRqtlia+aM+6FiQdYa0p4I4UTX/IYdKgPhWfeH1iLk/7TLUM5p7SAOCZlHXYN2dYg==
+  resolved "https://registry.yarnpkg.com/@lumino/coreutils/-/coreutils-1.8.0.tgz#4feb3ccbfbc3efc8e395a90f22b5a938fbad959a"
+  integrity sha512-OvCsaASUqOE7R6Dxngyk4/b5QMOjyRUNxuZuuL+fx+JvGKZFZ/B2c9LYtAJ9mDmQ1BQiGNV/qSpL4o7x8PCfjw==
+
+"@lumino/datagrid@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@lumino/datagrid/-/datagrid-0.23.0.tgz#1c050aaa970e2378b0eeae4591d91de2eed48970"
+  integrity sha512-NZVsUbW+fqMnLqLuBvzsO5riYZdrc/AAenPJQCBNVdWzOEF1Cyjhu3TDzChjgYebj6btoo/mdrwgknRAQ7NlNQ==
   dependencies:
-    "@lumino/coreutils" "^1.6.0"
-    "@lumino/disposable" "^1.5.0"
+    "@lumino/algorithm" "^1.6.0"
+    "@lumino/coreutils" "^1.8.0"
+    "@lumino/disposable" "^1.7.0"
+    "@lumino/domutils" "^1.5.0"
+    "@lumino/dragdrop" "^1.10.0"
+    "@lumino/keyboard" "^1.5.0"
+    "@lumino/messaging" "^1.7.0"
+    "@lumino/signaling" "^1.7.0"
+    "@lumino/widgets" "^1.22.0"
 
-"@lumino/keyboard@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@lumino/keyboard/-/keyboard-1.3.0.tgz#09ccafcb1daed6fc3343585c2df673c381df53e6"
-  integrity sha512-F9KHfqya2+4elMQ2X+TB4FVlY/5uLGhft1eZ8h1sAYD6p4HG2onFHlSk2byaIdE8fybjrxDUSH7x15Q6bn9yJw==
+"@lumino/default-theme@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@lumino/default-theme/-/default-theme-0.13.0.tgz#240061769283d7ae5814c6a7950597b727c80b7e"
+  integrity sha512-RF5BqeQhO0HvcdaLQhR/Uzs3GCNGqLjMAu/wAg/SejcTKt7+9WgSOjnJpJCG3t9+RZ7A948VMerfzrQeBNX5MA==
+  dependencies:
+    "@lumino/dragdrop" "^1.10.0"
+    "@lumino/widgets" "^1.22.0"
 
-"@lumino/messaging@^1.5.0":
+"@lumino/disposable@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@lumino/disposable/-/disposable-1.7.0.tgz#539463490cb42e8d2dc46b5ff7cc291f4f1a8d07"
+  integrity sha512-3mWi11ko3XVY63BPwvys7MXrbFddA2i+gp72d0wAKM2NDDUopVPikMHhJpjGJcw+otjahzXYiTewxPDEau9dYg==
+  dependencies:
+    "@lumino/algorithm" "^1.6.0"
+    "@lumino/signaling" "^1.7.0"
+
+"@lumino/domutils@^1.5.0":
   version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@lumino/messaging/-/messaging-1.5.0.tgz#0e1ad5a9d9379928d659c766513e3c05f926cc00"
-  integrity sha512-LzxjA18ncc3tksgE2JlIUCeTvnsrsYsaSxgl1QniAsYMcKd+9f7VN4f6Wq42ouPZtE+dJosQ35mji2+5Ao/tGA==
+  resolved "https://registry.yarnpkg.com/@lumino/domutils/-/domutils-1.5.0.tgz#fdba0cfe404b4817e63aa064f63b3c965655e76e"
+  integrity sha512-dZ0Aa+/qhvfPc1aa5kX4LLGE3B6BW1XmJa0R1XVCEpAFY3cZiujuQWmhYHJtZPrOiqn0UtioT2OpqnWdtCWc0A==
+
+"@lumino/dragdrop@^1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@lumino/dragdrop/-/dragdrop-1.10.0.tgz#2fddacfee055e660dd33dd9a3cfbd8fbba811673"
+  integrity sha512-A3cNLcp09zygOprWmLTkLZCQYNq3dJfN+mhni4IZizqCTkKbTCEzo2/IwoCWvy+ABKft8d/A9Y40wFW6yJ9OyA==
   dependencies:
-    "@lumino/algorithm" "^1.4.0"
-    "@lumino/collections" "^1.4.0"
+    "@lumino/coreutils" "^1.8.0"
+    "@lumino/disposable" "^1.7.0"
 
-"@lumino/properties@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@lumino/properties/-/properties-1.3.0.tgz#5d5a2420f6476d9af9a225ddad2f94419158d16b"
-  integrity sha512-yJZ9QLvOYSoFmy/DlqB6MC/7ZiStZ173K8WKG622tcOTGfU7aqDxJq1Y0s9v3qSEIc9XlGKvYksM9yd416nlmQ==
-
-"@lumino/signaling@^1.5.0":
+"@lumino/keyboard@^1.5.0":
   version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@lumino/signaling/-/signaling-1.5.0.tgz#4bda1f7e70a775e3a8129fd5ed968b49fc213159"
-  integrity sha512-yUrSHJq2N/c9Ro4BWKWAkO7YKA0mkHcN+1AkerUPr1/0ecQP+IoPbk+SdYPQXsKAqY9uQuG3AQkqE56ps75peQ==
-  dependencies:
-    "@lumino/algorithm" "^1.4.0"
+  resolved "https://registry.yarnpkg.com/@lumino/keyboard/-/keyboard-1.5.0.tgz#c12213822dd2645c412e8689aecd4a2726113ac6"
+  integrity sha512-/uF9xqHYVbIkser2Q6UIv7VWrzThr1fxAmSOShjSoKGocL0XHeaBaCOMezSaVxnJ1wm1ciNdhMsjscVM8Inp7g==
 
-"@lumino/virtualdom@^1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@lumino/virtualdom/-/virtualdom-1.9.0.tgz#228c881209f7db12f50f32183e863a6d7472dacc"
-  integrity sha512-llWONY4O2GDk3gGIjQJQ8ji1wikPE+fk/rVMUbWSPkUSQOR9CEZmuXvuMbnNwFfXPSPPm20WaTFLysJ4mANrqw==
+"@lumino/messaging@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@lumino/messaging/-/messaging-1.7.0.tgz#32542f9e9a266fd5b3f71842f70cfe141e016d93"
+  integrity sha512-QYWf9QGIGD0Oes104zw7mVln4S8yRije2mZhNNRBjkYcDuQlPW+eRSuC5LwAMsFnGymBlUPwPbKOUEO2RbhAtg==
   dependencies:
-    "@lumino/algorithm" "^1.4.0"
+    "@lumino/algorithm" "^1.6.0"
+    "@lumino/collections" "^1.6.0"
 
-"@lumino/widgets@^1.20.0":
-  version "1.20.0"
-  resolved "https://registry.yarnpkg.com/@lumino/widgets/-/widgets-1.20.0.tgz#a8751d68d126144df67d67f651b85c865d1fd9df"
-  integrity sha512-kJxfwlw+i7jmDHqxdaiw7ztq3JbS48u8wEMPpd7JI5dnEOBBkbvukvvHBNhfU3gLF/xttPokCCQiysMFlU/u7w==
+"@lumino/properties@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@lumino/properties/-/properties-1.5.0.tgz#7e8638e84c51bb110c5a69f91ca8b0e40b2c3fca"
+  integrity sha512-YqpJE6/1Wkjrie0E+ypu+yzd55B5RlvKYMnQs3Ox+SrJsnNBhA6Oj44EhVf8SUTuHgn1t/mm+LvbswKN5RM4+g==
+
+"@lumino/signaling@^1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@lumino/signaling/-/signaling-1.7.0.tgz#76da4738bf8f19e7da6de1d457a54220e2140670"
+  integrity sha512-a5kd11Sf04jTfpzxCr7TOBD2o5YvItA4IGwiOoG+QR6sPR0Rwmcf47fPItqXo5st58iNIblC3F+c264N+Me+gg==
   dependencies:
-    "@lumino/algorithm" "^1.4.0"
-    "@lumino/commands" "^1.13.0"
-    "@lumino/coreutils" "^1.6.0"
-    "@lumino/disposable" "^1.5.0"
-    "@lumino/domutils" "^1.3.0"
-    "@lumino/dragdrop" "^1.8.0"
-    "@lumino/keyboard" "^1.3.0"
-    "@lumino/messaging" "^1.5.0"
-    "@lumino/properties" "^1.3.0"
-    "@lumino/signaling" "^1.5.0"
-    "@lumino/virtualdom" "^1.9.0"
+    "@lumino/algorithm" "^1.6.0"
+
+"@lumino/virtualdom@^1.11.0":
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/@lumino/virtualdom/-/virtualdom-1.11.0.tgz#468b4d28a07e2b8988dc583b4aab40e37dc6955e"
+  integrity sha512-G0sIx4pLYbgJ4w+SIgsCYQgKP/GBrWgjh8wcumD6XpaYZNivJv4c01xITYYlh7FU61jZmMWMrxtZztArNRDSqg==
+  dependencies:
+    "@lumino/algorithm" "^1.6.0"
+
+"@lumino/widgets@^1.22.0":
+  version "1.22.0"
+  resolved "https://registry.yarnpkg.com/@lumino/widgets/-/widgets-1.22.0.tgz#3a4f036d78f197190f94c90b8438dba812c71cbe"
+  integrity sha512-7wzkYp/n51CdIFI28b8kDB+/tfZp6c11otWow2ZLVKaS+/LkbkQaJ+SfyFMG2GO/qTcjDwDkNZc7hBqNm42KgA==
+  dependencies:
+    "@lumino/algorithm" "^1.6.0"
+    "@lumino/commands" "^1.15.0"
+    "@lumino/coreutils" "^1.8.0"
+    "@lumino/disposable" "^1.7.0"
+    "@lumino/domutils" "^1.5.0"
+    "@lumino/dragdrop" "^1.10.0"
+    "@lumino/keyboard" "^1.5.0"
+    "@lumino/messaging" "^1.7.0"
+    "@lumino/properties" "^1.5.0"
+    "@lumino/signaling" "^1.7.0"
+    "@lumino/virtualdom" "^1.11.0"
 
 "@mdi/js@^5.9.55":
   version "5.9.55"
@@ -3787,6 +3788,14 @@ chalk@4.1.0, chalk@^4.0.0, chalk@^4.1.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
+chalk@4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.1.tgz#c80b3fab28bf6371e6863325eee67e618b77e6ad"
+  integrity sha512-diHzdDKxcU+bAsUboHLPEDQiw0qEe0qd7SYUn3HgcFlWgbDcfLGswOHYeGrHKzG9z6UYf01d9VFMfZxPM1xZSg==
+  dependencies:
+    ansi-styles "^4.1.0"
+    supports-color "^7.1.0"
+
 chalk@^1.0.0, chalk@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-1.1.3.tgz#a8115c55e4a702fe4d150abd3872822a7e09fc98"
@@ -3840,10 +3849,10 @@ check-types@^8.0.3:
   resolved "https://registry.yarnpkg.com/check-types/-/check-types-8.0.3.tgz#3356cca19c889544f2d7a95ed49ce508a0ecf552"
   integrity sha512-YpeKZngUmG65rLudJ4taU7VLkOCTMhNl/u4ctNC56LQS/zJTyNH0Lrtwm1tfTsbLlwvlfsA2d1c8vCf/Kh2KwQ==
 
-"chokidar@>=2.0.0 <4.0.0", chokidar@^3.4.1:
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.4.2.tgz#38dc8e658dec3809741eb3ef7bb0a47fe424232d"
-  integrity sha512-IZHaDeBeI+sZJRX7lGcXsdzgvZqKv6sECqsbErJA4mHWfpRrD8B97kSFN4cQz6nGBGiuFia1MKR4d6c1o8Cv7A==
+"chokidar@>=3.0.0 <4.0.0":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.1.tgz#ee9ce7bbebd2b79f49f304799d5468e31e14e68a"
+  integrity sha512-9+s+Od+W0VJJzawDma/gvBNQqkTiqYTWLuZoyAsivsI4AaWTCzHG06/TMjsf1cYe9Cb97UCEhjz7HvnPk2p/tw==
   dependencies:
     anymatch "~3.1.1"
     braces "~3.0.2"
@@ -3851,9 +3860,9 @@ check-types@^8.0.3:
     is-binary-path "~2.1.0"
     is-glob "~4.0.1"
     normalize-path "~3.0.0"
-    readdirp "~3.4.0"
+    readdirp "~3.5.0"
   optionalDependencies:
-    fsevents "~2.1.2"
+    fsevents "~2.3.1"
 
 chokidar@^2.0.0, chokidar@^2.0.4, chokidar@^2.1.1, chokidar@^2.1.8:
   version "2.1.8"
@@ -3873,6 +3882,21 @@ chokidar@^2.0.0, chokidar@^2.0.4, chokidar@^2.1.1, chokidar@^2.1.8:
     upath "^1.1.1"
   optionalDependencies:
     fsevents "^1.2.7"
+
+chokidar@^3.4.1:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.4.2.tgz#38dc8e658dec3809741eb3ef7bb0a47fe424232d"
+  integrity sha512-IZHaDeBeI+sZJRX7lGcXsdzgvZqKv6sECqsbErJA4mHWfpRrD8B97kSFN4cQz6nGBGiuFia1MKR4d6c1o8Cv7A==
+  dependencies:
+    anymatch "~3.1.1"
+    braces "~3.0.2"
+    glob-parent "~5.1.0"
+    is-binary-path "~2.1.0"
+    is-glob "~4.0.1"
+    normalize-path "~3.0.0"
+    readdirp "~3.4.0"
+  optionalDependencies:
+    fsevents "~2.1.2"
 
 chownr@^1.1.1, chownr@^1.1.2:
   version "1.1.4"
@@ -4930,10 +4954,10 @@ cyclist@^1.0.1:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
 
-cypress@^3.8.3, cypress@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/cypress/-/cypress-7.0.1.tgz#8603f84d828fd4c5462a856f55cef5642e4ce573"
-  integrity sha512-dMZmZDo+x3jslEQiXRGQlMmMVMhe4JpMHQ6g1unMGXTUsapU1EXlnubevmKmqZ1IQpntAlDKmx8dupOTd3oW+g==
+cypress@^3.8.3, cypress@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-7.2.0.tgz#6a3364e18972f898fff1fb12c1ff747939e45ddc"
+  integrity sha512-lHHGay+YsffDn4M0bkkwezylBVHUpwwhtqte4LNPrFRCHy77X38+1PUe3neFb3glVTM+rbILtTN6FhO2djcOuQ==
   dependencies:
     "@cypress/listr-verbose-renderer" "^0.4.1"
     "@cypress/request" "^2.88.5"
@@ -6063,10 +6087,10 @@ eslint@^6.7.2:
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
 
-eslint@^7.24.0:
-  version "7.24.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.24.0.tgz#2e44fa62d93892bfdb100521f17345ba54b8513a"
-  integrity sha512-k9gaHeHiFmGCDQ2rEfvULlSLruz6tgfA8DEn+rY9/oYPFFTlz55mM/Q/Rij1b2Y42jwZiK3lXvNTw6w6TXzcKQ==
+eslint@^7.25.0:
+  version "7.25.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.25.0.tgz#1309e4404d94e676e3e831b3a3ad2b050031eb67"
+  integrity sha512-TVpSovpvCNpLURIScDRB6g5CYu/ZFq9GfX2hLNIV4dSBKxIWojeDODvYl3t0k0VtMxYeR8OXPCFE5+oHMlGfhw==
   dependencies:
     "@babel/code-frame" "7.12.11"
     "@eslint/eslintrc" "^0.4.0"
@@ -6895,6 +6919,11 @@ fsevents@~2.1.2:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.1.3.tgz#fb738703ae8d2f9fe900c33836ddebee8b97f23e"
   integrity sha512-Auw9a4AxqWpa9GUfj370BMPzzyncfBABW8Mab7BGWBYDj4Isgq+cDKtx0i6u9jcX9pQDnswsaaOTgTmA5pEjuQ==
+
+fsevents@~2.3.1:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
+  integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
 
 function-bind@^1.1.1:
   version "1.1.1"
@@ -11656,6 +11685,13 @@ readdirp@~3.4.0:
   dependencies:
     picomatch "^2.2.1"
 
+readdirp@~3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/readdirp/-/readdirp-3.5.0.tgz#9ba74c019b15d365278d2e91bb8c48d7b4d42c9e"
+  integrity sha512-cMhu7c/8rdhkHXWsY+osBhfSy0JikwpHK/5+imo+LpeasTF8ouErHrlYkwT0++njiyuDvc7OFY5T3ukvZ8qmFQ==
+  dependencies:
+    picomatch "^2.2.1"
+
 rechoir@^0.6.2:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
@@ -12149,12 +12185,12 @@ sass-loader@^10.1.1:
     schema-utils "^3.0.0"
     semver "^7.3.2"
 
-sass@^1.32.8:
-  version "1.32.8"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.32.8.tgz#f16a9abd8dc530add8834e506878a2808c037bdc"
-  integrity sha512-Sl6mIeGpzjIUZqvKnKETfMf0iDAswD9TNlv13A7aAF3XZlRPMq4VvJWBC2N2DXbp94MQVdNSFG6LfF/iOXrPHQ==
+sass@^1.32.11:
+  version "1.32.11"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.32.11.tgz#b236b3ea55c76602c2ef2bd0445f0db581baa218"
+  integrity sha512-O9tRcob/fegUVSIV1ihLLZcftIOh0AF1VpKgusUfLqnb2jQ0GLDwI5ivv1FYWivGv8eZ/AwntTyTzjcHu0c/qw==
   dependencies:
-    chokidar ">=2.0.0 <4.0.0"
+    chokidar ">=3.0.0 <4.0.0"
 
 sax@~1.2.4:
   version "1.2.4"
@@ -13893,10 +13929,10 @@ vue-cli-plugin-vuetify-essentials@^0.8.3:
   resolved "https://registry.yarnpkg.com/vue-cli-plugin-vuetify-essentials/-/vue-cli-plugin-vuetify-essentials-0.8.3.tgz#d5ed993c51cbdb7284055e6bf1d575e1a61c291d"
   integrity sha512-u7qGnt4QiDaFRdQZXmTOM1vWBvbRYqg0J8yVYMqFYdXbeErCyn/RPAH4T3NuQSdM3djhyNYPrDXmlynUkkrOEQ==
 
-vue-cli-plugin-vuetify@^2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/vue-cli-plugin-vuetify/-/vue-cli-plugin-vuetify-2.3.1.tgz#9e45a686902351320e876881d057eb69c646a22b"
-  integrity sha512-96NLmCE12FalyWSxbfFerbOKSwuPq5b4zYRei5BRLbdCBq+YgmCMv8zgZl8Rx/kR/91T4i8XZDCNgfQ78mpQ3A==
+vue-cli-plugin-vuetify@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-vuetify/-/vue-cli-plugin-vuetify-2.4.0.tgz#e3eca6a51592a1610b2006296efc31c52981b031"
+  integrity sha512-0gBy6TYeC5ez/Zya4wMLWXFQ+axKCbrZPc6OfOb5eXTLeUHqSTeyqbsqh0e8zxwBv0VJiQXdjyoY73UHhsb17A==
   dependencies:
     null-loader "^3.0.0"
     semver "^7.1.2"
@@ -13931,7 +13967,7 @@ vue-hot-reload-api@^2.3.0:
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
 
-vue-i18n@^8.24.2:
+vue-i18n@^8.24.3:
   version "8.24.3"
   resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.24.3.tgz#2233ae11ec59e8204df58a28fc41afe9754e3b41"
   integrity sha512-uKAYzGbwGIJndY7JwhQwIGi1uyvErWkBfFwooOtjcNnIfMbAR49ad5dT/MiykrJ9pCcgvnocFjFsNLtTzyW+rg==
@@ -14042,10 +14078,10 @@ vuetify@^2.1.14:
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.3.9.tgz#6dcd1de647e1ce2c7cfaebb7068a0cf8929360b3"
   integrity sha512-E5K9flTvS21tCkHgqDBMl0BY/Rld4SLUaJpQ+sQdL8/2uPcWmWLrdumn4SI8LBFojE0UP1GSaH4zKuxLL36fYg==
 
-vuetify@^2.4.9:
-  version "2.4.9"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.4.9.tgz#c4ccf4cf3dc81d426da78913c32d47ab33ede38f"
-  integrity sha512-IS+ZKCk4+RhN8PW9mw6dLSGy0hnFZ0YwOg0Ga+sr9bngbSOI6nw0p+Y/U00vRw8DPScqUmK5cSrI8RhiaTpXow==
+vuetify@^2.4.11:
+  version "2.4.11"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.4.11.tgz#3aba19a32cd89c5dce523260f589cf95d90e2dce"
+  integrity sha512-xFNwr95tFRfbyGNg5DBuUkWaKazMBr+ptzoSSL4PGrI0qItY5Vuusxh+ETPtjUXxwz76v5zVtGvF5rWvGQjy7A==
 
 vuex@^3.6.2:
   version "3.6.2"
