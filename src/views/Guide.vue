@@ -99,70 +99,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-list
               three-line
             >
-              <v-list-tile>
-                <v-list-tile-avatar>
+              <v-list-item>
+                <v-list-item-icon>
                   <task
                     style="font-size: 2em;"
                     status="waiting"
                     :isHeld="true"
                   />
-                </v-list-tile-avatar>
-                <v-list-tile-content>
-                  <v-list-tile-title>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
                     Held
-                  </v-list-tile-title>
-                  <v-list-tile-sub-title>
+                  </v-list-item-title>
+                  <v-list-item-sub-title>
                     When a task is "held" no new job submissions will be made
-                  </v-list-tile-sub-title>
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-list-tile>
-                  <v-list-tile-avatar>
+                  </v-list-item-sub-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                  <v-list-item-icon>
                     <task
                       style="font-size: 2em;"
                       status="waiting"
                       :isQueued="true"
                     />
-                  </v-list-tile-avatar>
-                  <v-list-tile-content>
-                    <v-list-tile-title>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
                       Queued
-                    </v-list-tile-title>
-                    <v-list-tile-sub-title>
+                    </v-list-item-title>
+                    <v-list-item-sub-title>
                       Task queued for job submission
-                    </v-list-tile-sub-title>
-                  </v-list-tile-content>
+                    </v-list-item-sub-title>
+                  </v-list-item-content>
 
-              </v-list-tile>
+              </v-list-item>
 
             </v-list>
           </v-card-text>
         </v-card>
       </v-flex>
-    </div>
-
-    <v-divider></v-divider>
-
-    <h2 id="some-other-section">
-      Some Other Section
-    </h2>
-
-    <div class="card-grid">
-
-      <v-flex
-        md6
-        xs12
-      >
-        <v-card>
-          <v-card-title>
-            <p class="display-1 text--primary">Foo</p>
-          </v-card-title>
-          <v-card-text>
-            foo
-          </v-card-text>
-        </v-card>
-      </v-flex>
-
     </div>
 
   </v-container>

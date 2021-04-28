@@ -117,7 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-flex>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-item href="#">
+          <v-list-item href="#/guide">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.quickstart }}</v-icon>
             </v-list-item-avatar>
@@ -130,7 +130,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item href="https://cylc.github.io/doc/built-sphinx/suite-design-guide/suite-design-guide-master.html">
+          <!-- TODO: change from latest to stable once out of beta -->
+          <v-list-item href="https://cylc.github.io/cylc-doc/latest/html/suite-design-guide/index.html">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.workflow }}</v-icon>
             </v-list-item-avatar>
@@ -143,7 +144,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item href="https://cylc.github.io/documentation">
+          <!-- TODO: change from latest to stable once out of beta -->
+          <v-list-item href="https://cylc.github.io/cylc-doc/latest/html/index.html">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.documentation }}</v-icon>
             </v-list-item-avatar>
