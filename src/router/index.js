@@ -30,7 +30,7 @@ import Meta from 'vue-meta'
 import NProgress from 'nprogress'
 import store from '@/store'
 
-import '../../node_modules/nprogress/css/nprogress.css'
+import 'nprogress/css/nprogress.css'
 
 // Routes
 import paths from './paths'

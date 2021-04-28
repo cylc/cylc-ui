@@ -60,7 +60,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.14.3, @babel/core@npm:^7.11.0, @babel/core@npm:^7.7.5":
+"@babel/core@npm:7.14.3, @babel/core@npm:^7.11.0, @babel/core@npm:^7.13.16, @babel/core@npm:^7.7.5":
   version: 7.14.3
   resolution: "@babel/core@npm:7.14.3"
   dependencies:
@@ -3579,6 +3579,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"argparse@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "argparse@npm:2.0.1"
+  checksum: 83644b56493e89a254bae05702abf3a1101b4fa4d0ca31df1c9985275a5a5bd47b3c27b7fa0b71098d41114d8ca000e6ed90cad764b306f8a503665e4d517ced
+  languageName: node
+  linkType: hard
+
 "arr-diff@npm:^4.0.0":
   version: 4.0.0
   resolution: "arr-diff@npm:4.0.0"
@@ -6524,6 +6531,7 @@ __metadata:
   resolution: "cylc-ui@workspace:."
   dependencies:
     "@apollo/client": ^3.3.16
+    "@babel/core": ^7.13.16
     "@babel/eslint-parser": ^7.13.14
     "@babel/plugin-proposal-class-properties": ^7.13.0
     "@cypress/code-coverage": ^3.9.5
@@ -6540,6 +6548,7 @@ __metadata:
     "@vue/cli-plugin-unit-mocha": ^4.5.13
     "@vue/cli-service": ^4.5.13
     "@vue/test-utils": ^1.2.0
+    autoprefixer: ^9.8.6
     axios: ^0.21.1
     axios-fetch: ^1.1.0
     babel-eslint: ^10.1.0
@@ -6561,21 +6570,26 @@ __metadata:
     eslint-config-vuetify: ^0.5.0
     eslint-plugin-import: ^2.22.1
     eslint-plugin-node: ^11.1.0
+    eslint-plugin-promise: ^5.1.0
     eslint-plugin-vue: ^7.9.0
     graphiql: ^1.4.1
     graphql: ^15.5.0
+    graphql-language-service-utils: ^2.5.2
     graphql-tag: ^2.12.4
     istanbul-instrumenter-loader: ^3.0.1
     istanbul-lib-coverage: ^3.0.0
     jshint: ^2.12.0
     json-server: ^0.16.3
     lodash: ^4.17.21
+    markdown-it: ^12.0.6
     mitt: ^2.1.0
     nprogress: ^1.0.0-1
     null-loader: ^4.0.1
     nyc: ^15.1.0
+    postcss: ^8.2.13
     preact: ^10.5.13
     preact-compat: ^3.19.0
+    regenerator-runtime: ^0.13.7
     sass: ^1.32.12
     sass-loader: ^10.1.1
     sinon: ^10.0.0
@@ -6598,6 +6612,7 @@ __metadata:
     vuetify-loader: ^1.7.2
     vuex: ^3.6.2
     webpack: ^4.46.0
+    zen-observable: ^0.8.15
   languageName: unknown
   linkType: soft
 
@@ -7600,6 +7615,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"entities@npm:~2.1.0":
+  version: 2.1.0
+  resolution: "entities@npm:2.1.0"
+  checksum: a10a877e489586a3f6a691fe49bf3fc4e58f06c8e80522f08214a5150ba457e7017b447d4913a3fa041bda06ee4c92517baa4d8d75373eaa79369e9639225ffd
+  languageName: node
+  linkType: hard
+
 "enumify@npm:^2.0.0":
   version: 2.0.0
   resolution: "enumify@npm:2.0.0"
@@ -7962,6 +7984,15 @@ __metadata:
   version: 4.3.1
   resolution: "eslint-plugin-promise@npm:4.3.1"
   checksum: 3a6f4180008bb3b7106371ed49060c9bca06ba5cffa82fb249f83d2c4fcf94bbefd468a837bff1164dd52066fe1be7ff2d126b212aaa8fe13e681916e78b1618
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-promise@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "eslint-plugin-promise@npm:5.1.0"
+  peerDependencies:
+    eslint: ^7.0.0
+  checksum: e62947aaea6882951a1a9f5fe3e3c7925b8dcc222338f7979bd1495ba0f0dc701820116b108be1e801f6e5156eb9a928142f29c659fd21a5d65a4be495bb327d
   languageName: node
   linkType: hard
 
@@ -9711,7 +9742,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"graphql-language-service-utils@npm:^2.5.1":
+"graphql-language-service-utils@npm:^2.5.1, graphql-language-service-utils@npm:^2.5.2":
   version: 2.5.2
   resolution: "graphql-language-service-utils@npm:2.5.2"
   dependencies:
@@ -12015,6 +12046,15 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"linkify-it@npm:^3.0.1":
+  version: 3.0.2
+  resolution: "linkify-it@npm:3.0.2"
+  dependencies:
+    uc.micro: ^1.0.1
+  checksum: 08e14854ec3c29e3578311b1cd95e469952a27f191633189a23890628939fc45c6d84fa4495abb9f7f06e60f73a31b8881d834214864d46db914a09ffc7889ae
+  languageName: node
+  linkType: hard
+
 "linkify-it@npm:~1.2.2":
   version: 1.2.4
   resolution: "linkify-it@npm:1.2.4"
@@ -12652,6 +12692,21 @@ fsevents@~2.3.1:
   bin:
     markdown-it: bin/markdown-it.js
   checksum: 69f5ee640cbebb451b80d3cce308fff7230767e05c0f8c206a1e413775b7a6e5a08e91e9f3ec59f9b5c5a45493f9ce7ac089379cffb60c9d3e6677ed9d535086
+  languageName: node
+  linkType: hard
+
+"markdown-it@npm:^12.0.6":
+  version: 12.0.6
+  resolution: "markdown-it@npm:12.0.6"
+  dependencies:
+    argparse: ^2.0.1
+    entities: ~2.1.0
+    linkify-it: ^3.0.1
+    mdurl: ^1.0.1
+    uc.micro: ^1.0.5
+  bin:
+    markdown-it: bin/markdown-it.js
+  checksum: 5988f3f68ede314fce680f9bfe279f8af7fcaa4b53cce865d654ae5209ed7707f84685fa242cd9898b046e2a5fabdd5fe730f422d677b2ef36f4a00e32eaab22
   languageName: node
   linkType: hard
 
@@ -13357,7 +13412,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.1.16":
+"nanoid@npm:^3.1.16, nanoid@npm:^3.1.23":
   version: 3.1.23
   resolution: "nanoid@npm:3.1.23"
   bin:
@@ -15207,6 +15262,17 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"postcss@npm:^8.2.13":
+  version: 8.2.15
+  resolution: "postcss@npm:8.2.15"
+  dependencies:
+    colorette: ^1.2.2
+    nanoid: ^3.1.23
+    source-map: ^0.6.1
+  checksum: 07c309e5318843cdbb240b19101c8c679e19cb88544811de921dd9125118d6c0603afe925da7f2ac928dd7d4c0c6380ccdedf032400af5013210a3f145baca5d
+  languageName: node
+  linkType: hard
+
 "preact-compat@npm:^3.19.0":
   version: 3.19.0
   resolution: "preact-compat@npm:3.19.0"
@@ -15890,7 +15956,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.4":
+"regenerator-runtime@npm:^0.13.4, regenerator-runtime@npm:^0.13.7":
   version: 0.13.8
   resolution: "regenerator-runtime@npm:0.13.8"
   checksum: 5f89699ab578301e3f47fe323d2a9e19ed4b7302481b37ce96843602be3a5cb1e5b66a07c1500e69d4710c1dd6fa3b3f3e56d188ef56df4c17a744d853ac36ed
@@ -19824,7 +19890,7 @@ resolve@1.1.7:
   languageName: node
   linkType: hard
 
-"zen-observable@npm:^0.8.14":
+"zen-observable@npm:^0.8.14, zen-observable@npm:^0.8.15":
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: b7289084bc1fc74a559b7259faa23d3214b14b538a8843d2b001a35e27147833f4107590b1b44bf5bc7f6dfe6f488660d3a3725f268e09b3925b3476153b7821

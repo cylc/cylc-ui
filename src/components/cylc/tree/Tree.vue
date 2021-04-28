@@ -160,7 +160,7 @@ import TreeItem from '@/components/cylc/tree/TreeItem'
 import Vue from 'vue'
 import TaskState from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
-import clonedeep from 'lodash.clonedeep'
+import cloneDeep from 'lodash/cloneDeep'
 import { mdiPlus, mdiMinus } from '@mdi/js'
 
 export default {
@@ -254,7 +254,7 @@ export default {
           this.tasksFilter.states !== null &&
           this.tasksFilter.states.length > 0
       if (taskNameFilterSet || taskStatesFilterSet) {
-        this.activeFilters = clonedeep(this.tasksFilter)
+        this.activeFilters = cloneDeep(this.tasksFilter)
         this.filterNodes(this.workflows)
       } else {
         this.removeAllFilters()
