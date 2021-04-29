@@ -65,6 +65,10 @@ export default {
       type: Boolean,
       require: true
     },
+    isRunahead: {
+      type: Boolean,
+      require: true
+    },
     startTime: {
       type: String,
       required: false,
@@ -297,6 +301,30 @@ export default {
     )
     taskIconSvgChildren.push(isQueued)
 
+    // isRunahead - the isRunahead portion of the task state.
+    const isRunahead = createElement(
+      'g',
+      {
+        attrs: {
+          id: 'runahead',
+          transform: 'scale(0.45)'
+        }
+      },
+      [
+        createElement(
+          'circle',
+          {
+            attrs: {
+              cx: 40,
+              cy: 30,
+              r: '40'
+            }
+          }
+        )
+      ]
+    )
+    taskIconSvgChildren.push(isRunahead)
+
     // Warning icon.
     const warningIcon = createElement(
       'g',
@@ -423,8 +451,10 @@ export default {
       taskIconSvgCssClasses.push('held')
     } else if (context.props.isQueued) {
       taskIconSvgCssClasses.push('queued')
+    } else if (context.props.isRunahead) {
+      taskIconSvgCssClasses.push('runahead')
     }
-    if (['waiting', 'preparing', 'expired', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed', 'queued'].includes(context.props.status)) {
+    if (['waiting', 'preparing', 'expired', 'submitted', 'running', 'succeeded', 'failed', 'submit-failed', 'queued', 'runahead'].includes(context.props.status)) {
       taskIconSvgCssClasses.push(context.props.status)
     } else {
       taskIconSvgCssClasses.push('unknown')

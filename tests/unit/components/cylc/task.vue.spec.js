@@ -29,7 +29,8 @@ describe('Task component', () => {
         props: {
           status: '',
           isHeld: true,
-          isQueued: true
+          isQueued: true,
+          isRunahead: true
         }
       }
     })

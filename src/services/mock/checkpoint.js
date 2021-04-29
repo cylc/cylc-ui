@@ -36,6 +36,7 @@ const checkpoint = {
                     "state": "running",
                     "isHeld": false,
                     "isQueued": false,
+                    "isRunahead": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
@@ -70,6 +71,7 @@ const checkpoint = {
                     "state": "submitted",
                     "isHeld": false,
                     "isQueued": false,
+                    "isRunahead": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|SUCCEEDED",
@@ -146,6 +148,7 @@ const checkpoint = {
                     "state": "submitted",
                     "isHeld": false,
                     "isQueued": false,
+                    "isRunahead": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|BAD",
@@ -180,6 +183,7 @@ const checkpoint = {
                     "state": "waiting",
                     "isHeld": false,
                     "isQueued": false,
+                    "isRunahead": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|BAD",
@@ -214,6 +218,7 @@ const checkpoint = {
                     "state": "",
                     "isHeld": false,
                     "isQueued": false,
+                    "isRunahead": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
@@ -233,6 +238,7 @@ const checkpoint = {
                     "state": "submitted",
                     "isHeld": false,
                     "isQueued": false,
+                    "isRunahead": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|SUCCEEDED",
@@ -267,6 +273,7 @@ const checkpoint = {
                     "state": "",
                     "isHeld": false,
                     "isQueued": false,
+                    "isRunahead": false,
                     "cyclePoint": "20000102T0000Z",
                     "firstParent": {
                         "id": "user|one|20000102T0000Z|root",
