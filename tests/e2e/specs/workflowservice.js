@@ -77,7 +77,7 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
-    cy.get('div#main').should('contain', 'tree')
+    cy.get('div#main', { timeout: 10000 }).should('contain', 'tree')
     getSubscriptions().then(subscriptions => {
       // FIXME: likely wrong, but to be fixed later in a follow-up PR to housekeep subscriptions
       expect(subscriptions.length).to.equal(3)
@@ -95,7 +95,7 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
-    cy.get('div#main').should('contain', 'tree')
+    cy.get('div#main', { timeout: 10000 }).should('contain', 'tree')
     cy.get('[href="#/"]').click()
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
