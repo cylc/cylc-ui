@@ -132,9 +132,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       Task queued for job submission
                     </v-list-item-sub-title>
                   </v-list-item-content>
-
               </v-list-item>
-
+              <v-list-item>
+                  <v-list-item-icon>
+                    <task
+                      style="font-size: 2em;"
+                      status="waiting"
+                      :isRunahead="true"
+                    />
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      Runahead
+                    </v-list-item-title>
+                    <v-list-item-sub-title>
+                      Task held back by runahead limiting
+                    </v-list-item-sub-title>
+                  </v-list-item-content>
+              </v-list-item>
             </v-list>
           </v-card-text>
         </v-card>

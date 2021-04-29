@@ -98,6 +98,16 @@
     }
   }
 
+  @mixin runahead() {
+    #runahead {
+      circle {
+        fill: $foreground;
+        stroke: $foreground;
+        transform: translate(-65%, -65%);
+      }
+    }
+  }
+
   @mixin warning() {
     #warning {
       circle {
@@ -145,6 +155,11 @@
     /* isQueued */
     &.queued {
       @include queued();
+    }
+
+    /* isRunahead */
+    &.runahead {
+      @include runahead();
     }
 
     /* status */

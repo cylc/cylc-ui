@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :isQueued="node.node.isQueued"
+            :isRunahead="node.node.isRunahead"
           />
           <span class="mx-1">{{ node.node.name }}</span>
         </div>
@@ -51,6 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :isQueued="node.node.isQueued"
+            :isRunahead="node.node.isRunahead"
           />
           <span class="mx-1">{{ node.node.name }}</span>
         </div>
@@ -64,6 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :status="node.node.state"
             :isHeld="node.node.isHeld"
             :isQueued="node.node.isQueued"
+            :isRunahead="node.node.isRunahead"
             :startTime="taskStartTime(node)"
             :estimatedDuration="taskEstimatedDuration(node)"
           />
