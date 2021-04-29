@@ -74,6 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-cylc-object="job.id"
               :key="`${job.id}-summary-${index}`"
               :status="job.node.state"
+              :multiple="node.children.length > 1"
               style="margin-left: 0.25em;"
             />
           </div>

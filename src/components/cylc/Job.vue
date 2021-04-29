@@ -27,19 +27,42 @@ export default {
     status: {
       type: String,
       required: true
+    },
+    multiple: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   render: function (createElement, context) {
     // the job status icon
     //   * let width = 100 - x - stroke-width
     //   * let height = 100 - y - stroke-width
+    const DEFAULT_SIZE = '80'
+    const MULTIPLE_ITEMS_SIZE = '60'
+    const DEFAULT_XY = '10'
+    const MULTIPLE_ITEMS_XY = '30'
+    const width = context.props.multiple ? MULTIPLE_ITEMS_SIZE : DEFAULT_SIZE
+    const height = context.props.multiple ? MULTIPLE_ITEMS_SIZE : DEFAULT_SIZE
     const jobStatusIcon = createElement('rect', {
       attrs: {
         class: context.props.status,
-        x: '10',
-        y: '10',
-        width: '80',
-        height: '80',
+        x: DEFAULT_XY,
+        y: DEFAULT_XY,
+        width: width,
+        height: height,
+        rx: '20',
+        ry: '20',
+        'stroke-width': '10'
+      }
+    })
+    const jobStatusIconShadow = createElement('rect', {
+      attrs: {
+        class: 'job-shadow',
+        x: MULTIPLE_ITEMS_XY,
+        y: MULTIPLE_ITEMS_XY,
+        width: width,
+        height: height,
         rx: '20',
         ry: '20',
         'stroke-width': '10'
@@ -49,12 +72,16 @@ export default {
     //   * comments prefixed `let` are instructions for changing style
     //   * contain in a 100x100 viewBox so pixels and percent are equal
     //   * bind the job status here, respond to styling in the CSS
+    const jobIconChildren = [jobStatusIcon]
+    if (context.props.multiple) {
+      jobIconChildren.splice(0, 0, jobStatusIconShadow)
+    }
     const jobIconSvg = createElement('svg', {
       attrs: {
         class: 'job',
         viewBox: '0 0 100 100'
       }
-    }, [jobStatusIcon])
+    }, jobIconChildren)
     // NOTE: context.data MUST be passed to ensure directives are
     //       passed down to the functional components
     //       https://github.com/vuejs/vue-loader/issues/1433
