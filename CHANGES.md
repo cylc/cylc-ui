@@ -8,6 +8,11 @@ release.
 -------------------------------------------------------------------------------
 ## __cylc-ui-0.5 (<span actions:bind='release-date'>Released 2021-??-??</span>)__
 
+### Enhancements
+
+[#657](https://github.com/cylc/cylc-ui/pull/657) - Display a different icon, with
+a shadow underneath, for the Job component.
+
 ### Fixes
 
 [#649](https://github.com/cylc/cylc-ui/pull/649) - Avoid re-sorting a
