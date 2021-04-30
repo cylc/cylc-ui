@@ -131,47 +131,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-flex xs3>
                 <span>Colour Theme</span>
               </v-flex>
-                <v-radio-group v-model="jobTheme" column>
-                  <table class="c-job-state-table">
-                    <tr>
-                      <th>State</th>
-                      <th
-                        v-for="theme in jobThemes"
-                        v-bind:key="theme"
-                      >
-                        {{theme}}
-                      </th>
-                    </tr>
-                    <tr
+              <v-radio-group v-model="jobTheme" column>
+                <table class="c-job-state-table">
+                  <tr>
+                    <th>State</th>
+                    <th
+                      v-for="theme in jobThemes"
+                      :key="theme"
                     >
-                      <td></td>
-                      <td
-                        v-for="theme in jobThemes"
-                        v-bind:key="theme"
-                      >
-                        <v-radio
-                          :value="theme"
-                          v-bind:id="`input-job-theme-${theme}`"
-                        />
-                      </td>
-                    </tr>
-                    <tr
-                      v-for="state in jobStates"
-                      v-bind:key="state"
+                      {{theme}}
+                    </th>
+                  </tr>
+                  <tr
+                  >
+                    <td></td>
+                    <td
+                      v-for="theme in jobThemes"
+                      :key="theme"
                     >
-                      <td>{{state}}</td>
-                      <td
-                        v-for="theme in jobThemes"
-                        v-bind:key="theme"
-                        v-bind:class="[`job_theme--${theme}`, 'job_theme_override']"
-                      >
-                        <job :status="state" />
-                      </td>
-                    </tr>
-                  </table>
-                </v-radio-group>
+                      <v-radio
+                        :value="theme"
+                        :id="`input-job-theme-${theme}`"
+                      />
+                    </td>
+                  </tr>
+                  <tr
+                    v-for="state in jobStates"
+                    :key="state"
+                  >
+                    <td>{{state}}</td>
+                    <td
+                      v-for="theme in jobThemes"
+                      :key="theme"
+                      :class="[`job_theme--${theme}`, 'job_theme_override']"
+                    >
+                      <job :status="state" />
+                    </td>
+                  </tr>
+                </table>
+              </v-radio-group>
               <v-flex xs9>
               </v-flex>
+            </v-layout>
+
+            <v-layout row align-center wrap>
+              <v-flex xs3>
+                <span>Cycle points descending?</span>
+              </v-flex>
+              <v-checkbox
+                v-model="cyclePointsOrderDesc">
+              </v-checkbox>
             </v-layout>
           </v-container>
         </v-form>
@@ -203,6 +212,7 @@ export default {
   },
   data () {
     return {
+      cyclePointsOrderDesc: true,
       svgPaths: {
         settings: mdiCog,
         increase: mdiFormatFontSizeIncrease,
@@ -225,6 +235,11 @@ export default {
       title: this.getPageTitle('App.userProfile')
     }
   },
+  mounted () {
+    if (localStorage.cyclePointsOrderDesc) {
+      this.cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
+    }
+  },
   methods: {
     resetFontSize,
     decreaseFontSize,
@@ -235,6 +250,10 @@ export default {
   watch: {
     jobTheme: function (theme) {
       this.setJobTheme(theme)
+    },
+    cyclePointsOrderDesc (newOrder) {
+      localStorage.setItem('cyclePointsOrderDesc', newOrder)
+      this.cyclePointsOrderDesc = newOrder
     }
   }
 }
