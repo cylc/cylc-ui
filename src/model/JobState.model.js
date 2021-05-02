@@ -19,16 +19,15 @@ import { Enumify } from 'enumify'
 
 /**
  * Cylc valid job states.
+ *
+ * @see https://cylc.github.io/cylc-admin/proposal-state-names.html#taskjob-states
  */
 class JobState extends Enumify {
-  static SUBMIT_FAILED = new JobState('submit_failed')
-  static FAILED = new JobState('failed')
-  static RUNNING = new JobState('running')
   static SUBMITTED = new JobState('submitted')
-  static READY = new JobState('ready')
-  static QUEUED = new JobState('queued')
-  static HELD = new JobState('held')
+  static SUBMIT_FAILED = new JobState('submit-failed')
+  static RUNNING = new JobState('running')
   static SUCCEEDED = new JobState('succeeded')
+  static FAILED = new JobState('failed')
   static _ = this.closeEnum()
 
   /**
