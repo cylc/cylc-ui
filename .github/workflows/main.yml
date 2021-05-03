@@ -22,8 +22,6 @@ jobs:
       - name: Lint
         run: |
           yarn run lint --no-fix
-          # blocked by https://github.com/lirantal/lockfile-lint/issues/101
-          # DEBUG="lockfile-lint,validate-host-manager" npx lockfile-lint --path yarn.lock --validate-https --allowed-hosts npm --allowed-hosts registry.yarnpkg.com
       - name: Test
         run: |
           yarn run coverage:unit
