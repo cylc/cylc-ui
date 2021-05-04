@@ -176,7 +176,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
             <v-layout row align-center wrap>
               <v-flex xs3>
-                <span>Cycle points descending?</span>
+                <span>Latest cycle point at top</span>
               </v-flex>
               <v-checkbox
                 v-model="cyclePointsOrderDesc">
