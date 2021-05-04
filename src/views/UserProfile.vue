@@ -192,6 +192,7 @@ import {
 } from '@/utils/font-size'
 import { mdiCog, mdiFormatFontSizeIncrease, mdiFormatFontSizeDecrease } from '@mdi/js'
 import Job from '@/components/cylc/Job'
+import JobState from '@/model/JobState.model'
 
 // TODO: update where user preferences are stored after #335
 
@@ -207,13 +208,7 @@ export default {
         increase: mdiFormatFontSizeIncrease,
         decrease: mdiFormatFontSizeDecrease
       },
-      jobStates: [
-        'submitted',
-        'running',
-        'succeeded',
-        'failed',
-        'submit-failed'
-      ],
+      jobStates: JobState.enumValues.map(state => state.name),
       jobThemes: [
         'default',
         'greyscale',
