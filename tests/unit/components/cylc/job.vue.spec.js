@@ -39,8 +39,8 @@ describe('Job component', () => {
     const wrapper = mount(Job, {
       context: {
         props: {
-          status: '',
-          multiple: true
+          status: 'failed',
+          'previous-state': 'submit-failed'
         }
       }
     })
