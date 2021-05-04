@@ -31,7 +31,7 @@ describe('Alert component', () => {
     })
     cy
       .get('.v-alert')
-      .contains(errorMessage)
+      .should('contain', errorMessage)
   })
   it('Uses the right color for success', () => {
     cy.visit('/#/')
