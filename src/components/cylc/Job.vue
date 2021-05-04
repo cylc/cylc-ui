@@ -20,6 +20,8 @@
         which can sit in text.
 -->
 <script>
+import isEmpty from 'lodash/isEmpty'
+
 export default {
   name: 'Job',
   functional: true,
@@ -28,10 +30,9 @@ export default {
       type: String,
       required: true
     },
-    multiple: {
-      type: Boolean,
-      required: false,
-      default: false
+    previousState: {
+      type: String,
+      required: false
     }
   },
   render: function (createElement, context) {
@@ -39,11 +40,11 @@ export default {
     //   * let width = 100 - x - stroke-width
     //   * let height = 100 - y - stroke-width
     const DEFAULT_SIZE = '80'
-    const MULTIPLE_ITEMS_SIZE = '60'
+    const PREVIOUS_STATE_ITEMS_SIZE = '60'
     const DEFAULT_XY = '10'
-    const MULTIPLE_ITEMS_XY = '30'
-    const width = context.props.multiple ? MULTIPLE_ITEMS_SIZE : DEFAULT_SIZE
-    const height = context.props.multiple ? MULTIPLE_ITEMS_SIZE : DEFAULT_SIZE
+    const PREVIOUS_STATE_ITEMS_XY = '30'
+    const width = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
+    const height = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
     const jobStatusIcon = createElement('rect', {
       attrs: {
         class: context.props.status,
@@ -56,25 +57,26 @@ export default {
         'stroke-width': '10'
       }
     })
-    const jobStatusIconShadow = createElement('rect', {
-      attrs: {
-        class: 'job-shadow',
-        x: MULTIPLE_ITEMS_XY,
-        y: MULTIPLE_ITEMS_XY,
-        width: width,
-        height: height,
-        rx: '20',
-        ry: '20',
-        'stroke-width': '10'
-      }
-    })
     // the job icon SVG
     //   * comments prefixed `let` are instructions for changing style
     //   * contain in a 100x100 viewBox so pixels and percent are equal
     //   * bind the job status here, respond to styling in the CSS
     const jobIconChildren = [jobStatusIcon]
-    if (context.props.multiple) {
-      jobIconChildren.splice(0, 0, jobStatusIconShadow)
+    if (context.props.previousState) {
+      const previousStateIconSvg = createElement('rect', {
+        attrs: {
+          class: `${context.props.previousState}`,
+          x: PREVIOUS_STATE_ITEMS_XY,
+          y: PREVIOUS_STATE_ITEMS_XY,
+          width: width,
+          height: height,
+          rx: '20',
+          ry: '20',
+          opacity: '50%',
+          'stroke-width': '10'
+        }
+      })
+      jobIconChildren.splice(0, 0, previousStateIconSvg)
     }
     const jobIconSvg = createElement('svg', {
       attrs: {
