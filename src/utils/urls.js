@@ -41,7 +41,7 @@ export function createGraphQLUrls () {
   const baseUrl = getBaseUrl()
   const httpUrl = `${baseUrl}graphql`
   const websocketsProtocol = baseUrl.startsWith('https') ? 'wss:' : 'ws:'
-  const wsUrl = `${websocketsProtocol}//${baseUrl}subscriptions`
+  const wsUrl = `${websocketsProtocol}//${baseUrl.substring(baseUrl.indexOf('//'))}subscriptions`
   return {
     httpUrl: httpUrl,
     wsUrl: wsUrl
