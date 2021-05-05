@@ -40,9 +40,9 @@ export default {
     //   * let width = 100 - x - stroke-width
     //   * let height = 100 - y - stroke-width
     const DEFAULT_SIZE = '80'
-    const PREVIOUS_STATE_ITEMS_SIZE = '60'
+    const PREVIOUS_STATE_ITEMS_SIZE = '65'
     const DEFAULT_XY = '10'
-    const PREVIOUS_STATE_ITEMS_XY = '30'
+    const PREVIOUS_STATE_ITEMS_XY = '25'
     const width = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
     const height = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
     const jobStatusIcon = createElement('rect', {
@@ -52,8 +52,8 @@ export default {
         y: DEFAULT_XY,
         width: width,
         height: height,
-        rx: '20',
-        ry: '20',
+        rx: '15',
+        ry: '15',
         'stroke-width': '10'
       }
     })
@@ -70,8 +70,8 @@ export default {
           y: PREVIOUS_STATE_ITEMS_XY,
           width: width,
           height: height,
-          rx: '20',
-          ry: '20',
+          rx: '15',
+          ry: '15',
           opacity: '50%',
           'stroke-width': '10'
         }
