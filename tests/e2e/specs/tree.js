@@ -125,7 +125,7 @@ describe('Tree component', () => {
       expect(subscriptions.length).to.equal(2)
     })
     cy
-      .visit('/')
+      .visit('/#/')
       .then(() => {
         cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
           // It will have 2, GScan + Dashboard, while the /tree/one view has 1 Delta + 1 subscription
