@@ -9,14 +9,14 @@
     "build:watch": "vue-cli-service build --watch --mode development",
     "checkpoint": "./src/services/mock/generate",
     "coverage:unit": "nyc vue-cli-service test:unit",
-    "coverage:e2e": "bash -c 'concurrently --names \"SERVER,TESTS\" --prefix-colors \"yellow,blue\" --kill-others \"yarn run serve:jupyterhub\" \"nyc vue-cli-service test:e2e --mode offline ${0}\"'",
+    "coverage:e2e": "bash -c 'concurrently --names \"SERVER,TESTS\" --prefix-colors \"yellow,blue\" --success \"first\" --kill-others \"yarn run serve:jupyterhub\" \"nyc vue-cli-service test:e2e --mode offline ${0}\"'",
     "dev": "yarn run serve",
     "docs": "jsdoc -c jsdoc.conf.json",
     "lint": "vue-cli-service lint",
-    "serve": "concurrently --names 'SERVER,CLIENT' --prefix-colors 'yellow,blue' --kill-others 'yarn run serve:jupyterhub' 'yarn run serve:vue'",
+    "serve": "concurrently --names 'SERVER,CLIENT' --prefix-colors 'yellow,blue' --success \"first\" --kill-others 'yarn run serve:jupyterhub' 'yarn run serve:vue'",
     "serve:vue": "vue-cli-service serve --mode offline",
     "serve:jupyterhub": "json-server ./src/services/mock/db.json",
-    "test:e2e": "bash -c 'concurrently --names \"SERVER,TESTS\" --prefix-colors \"yellow,blue\" --kill-others \"yarn run serve:jupyterhub\" \"vue-cli-service test:e2e --mode offline ${0}\"'",
+    "test:e2e": "bash -c 'concurrently --names \"SERVER,TESTS\" --prefix-colors \"yellow,blue\" --success \"first\" --kill-others \"yarn run serve:jupyterhub\" \"vue-cli-service test:e2e --mode offline ${0}\"'",
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
