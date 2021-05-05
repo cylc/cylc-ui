@@ -871,6 +871,58 @@ describe('CylcTree', () => {
       cylcTree.removeJob('-1')
       expect(cylcTree.root.children[0].children[0].children[0].children.length).to.equal(1)
     })
+    it('Should display most recent jobs at the top', () => {
+      const workflow = createWorkflowNode({
+        id: WORKFLOW_ID
+      })
+      const cylcTree = new CylcTree(workflow)
+      cylcTree.addCyclePoint(createCyclePointNode({
+        id: 'cylc|workflow|1',
+        cyclePoint: '1'
+      }))
+      cylcTree.addTaskProxy(createTaskProxyNode({
+        id: 'cylc|workflow|1|1TASK',
+        name: '1TASK',
+        firstParent: {
+          name: 'root'
+        }
+      }))
+      cylcTree.addJob(createJobNode({
+        id: 'cylc|workflow|1|1TASK|1',
+        name: '1',
+        state: TaskState.FAILED.name,
+        submitNum: 1,
+        firstParent: {
+          id: 'cylc|workflow|1|1TASK'
+        }
+      }))
+      cylcTree.addJob(createJobNode({
+        id: 'cylc|workflow|1|1TASK|2',
+        name: '2',
+        state: TaskState.FAILED.name,
+        submitNum: 2,
+        firstParent: {
+          id: 'cylc|workflow|1|1TASK'
+        }
+      }))
+      cylcTree.addJob(createJobNode({
+        id: 'cylc|workflow|1|1TASK|3',
+        name: '3',
+        state: TaskState.SUCCEEDED.name,
+        submitNum: 3,
+        firstParent: {
+          id: 'cylc|workflow|1|1TASK'
+        }
+      }))
+
+      const expectedJobs = ['3', '2', '1']
+      const cyclePoint = cylcTree.root.children[0]
+      const taskProxy = cyclePoint.children[0]
+      const children = taskProxy.children
+      expectedJobs.forEach((expected, index) => {
+        expect(children[index].node.name).to.equal(expected)
+      })
+    })
   })
   describe('Recursive delete nodes', () => {
     let cylcTree
