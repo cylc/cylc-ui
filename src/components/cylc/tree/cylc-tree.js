@@ -573,7 +573,7 @@ class CylcTree {
           parent.children,
           job,
           (j) => `${j.node.submitNum}`)
-        parent.children.splice(insertIndex, 0, job)
+        parent.children.splice(parent.children.length - insertIndex, 0, job)
       }
     }
   }
