@@ -21,7 +21,7 @@ describe('Tree component', () => {
   it('Should display cycle points for the mocked workflow', () => {
     cy.visit('/#/workflows/one')
     cy
-      .get('.node-data-cyclepoint', { timeout: 10000 })
+      .get('.node-data-cyclepoint')
       .should(($div) => {
         // by default, in our expected viewport size for tests, both cycle points exist and are visible
         expect($div.get(0)).to.contain('20000102T0000Z')
