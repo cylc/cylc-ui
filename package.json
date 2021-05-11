@@ -95,7 +95,7 @@
     "webpack": "^4.46.0"
   },
   "resolutions": {
-    "cypress": "^7.2.0",
+    "cypress": "^7.3.0",
     "istanbul-instrumenter-loader/**/istanbul-lib-instrument": "4.0.1"
   },
   "bugs": {
