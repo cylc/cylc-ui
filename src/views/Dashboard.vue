@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <p class="display-1">Workflows</p>
         <v-skeleton-loader
           :loading="isLoading"
+          :height="`${workflowsTable.length * 50}px`"
           type="table-row@3"
           tile
         >
@@ -50,10 +51,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-flex xs12 md6 lg6>
         <p class="display-1">Events</p>
         <v-data-table
-            :headers="eventsHeader"
-            :items="events"
-            hide-default-footer
-            hide-default-header>
+          :headers="eventsHeader"
+          :items="events"
+          hide-default-footer
+          hide-default-header
+        >
           <!-- TODO: remove it if the linter is fixed later #510 -->
           <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.id="{ item }">
