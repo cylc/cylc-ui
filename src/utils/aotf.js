@@ -678,7 +678,7 @@ export async function mutate (mutation, args, apolloClient) {
     }
     // command in a different format (e.g. info command)
     return [TaskState.SUBMITTED, result]
-  } catch {
+  } catch (error) {
     return _mutateError(mutation.name, 'invalid response', response)
   }
 }
