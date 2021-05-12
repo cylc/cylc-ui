@@ -74,13 +74,15 @@ module.exports = {
       }
 
       // coverage
-      config.module.rule('istanbul')
-        .test(/\.js$/)
-        .include.add(path.resolve('src')).end()
-        .use('istanbul-instrumenter-loader')
-        .loader('istanbul-instrumenter-loader')
-        .options({ esModules: true })
-        .before('babel-loader')
+      if (process.env.coverage === 'true') {
+        config.module.rule('istanbul')
+          .test(/\.js$/)
+          .include.add(path.resolve('src')).end()
+          .use('istanbul-instrumenter-loader')
+          .loader('istanbul-instrumenter-loader')
+          .options({ esModules: true })
+          .after('cache-loader')
+      }
 
       // resolve modules in devtool
       config.output
