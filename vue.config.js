@@ -23,7 +23,11 @@ module.exports = {
   publicPath: '',
   outputDir: 'dist',
   indexPath: 'index.html',
-  transpileDependencies: ['vuetify', 'graphql-language-service-interface', 'graphql-language-service-parser'],
+  transpileDependencies: [
+    'graphql-language-service-interface',
+    'graphql-language-service-parser',
+    'vuetify'
+  ],
   runtimeCompiler: true,
   productionSourceMap: process.env.NODE_ENV !== 'production',
   pluginOptions: {

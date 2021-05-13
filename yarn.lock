@@ -605,6 +605,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-proposal-optional-chaining@npm:^7.14.2":
+  version: 7.14.2
+  resolution: "@babel/plugin-proposal-optional-chaining@npm:7.14.2"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.13.0
+    "@babel/helper-skip-transparent-expression-wrappers": ^7.12.1
+    "@babel/plugin-syntax-optional-chaining": ^7.8.3
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 29336a5170a9c363c8e80dec2d90e0e236eecfe10647eaf7baca8a48530f837b6612674d880781ff8996b07b557768a46cdecd44e944d4dad4cd7e6fa181ac84
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-proposal-private-methods@npm:^7.13.0":
   version: 7.13.0
   resolution: "@babel/plugin-proposal-private-methods@npm:7.13.0"
@@ -3962,7 +3975,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:^8.1.0":
+"babel-loader@npm:^8.1.0, babel-loader@npm:^8.2.2":
   version: 8.2.2
   resolution: "babel-loader@npm:8.2.2"
   dependencies:
@@ -6568,6 +6581,7 @@ __metadata:
     "@babel/core": ^7.13.16
     "@babel/eslint-parser": ^7.13.14
     "@babel/plugin-proposal-class-properties": ^7.13.0
+    "@babel/plugin-proposal-optional-chaining": ^7.14.2
     "@cypress/code-coverage": ^3.9.5
     "@cypress/webpack-preprocessor": ^5.7.0
     "@lumino/algorithm": ^1.6.0
@@ -6587,6 +6601,7 @@ __metadata:
     axios: ^0.21.1
     axios-fetch: ^1.1.0
     babel-eslint: ^10.1.0
+    babel-loader: ^8.2.2
     babel-plugin-istanbul: ^6.0.0
     babel-runtime: ^6.26.0
     bufferutil: ^4.0.3
