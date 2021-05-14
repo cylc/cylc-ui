@@ -15,12 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module.exports = {
-  presets: [
+module.exports = (api) => {
+  api.cache(true)
+  const presets = [
     '@vue/app'
-  ],
-  plugins: [
+  ]
+  const plugins = [
     ['@babel/plugin-proposal-class-properties', { loose: true }],
+    ['@babel/plugin-proposal-private-methods', { loose: true }],
+    ['@babel/plugin-proposal-nullish-coalescing-operator'],
+    ['@babel/plugin-proposal-optional-chaining'],
     ['babel-plugin-istanbul', { extension: ['.js', '.vue'] }]
   ]
+  return { presets, plugins }
 }
