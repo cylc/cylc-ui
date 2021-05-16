@@ -67,7 +67,8 @@ function computeCyclePointsStates (cyclePointNodes) {
     for (const child of cyclePointNode.children) {
       childStates.push(child.node.state)
     }
-    cyclePointNode.node.state = extractGroupState(childStates, false)
+    const cyclePointState = extractGroupState(childStates, false)
+    Vue.set(cyclePointNode.node, 'state', cyclePointState)
   }
 }
 
