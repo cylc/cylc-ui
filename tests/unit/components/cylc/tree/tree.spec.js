@@ -26,6 +26,7 @@ import {
 } from '@/components/cylc/tree/tree-nodes'
 import sinon from 'sinon'
 import TaskState from '@/model/TaskState.model'
+import Vue from 'vue'
 
 /**
  * Tests for the CylcTree class.
@@ -256,6 +257,32 @@ describe('CylcTree', () => {
       })
       cylcTree.removeCyclePoint(cyclePoint1.id)
       expect(cylcTree.root.children.length).to.equal(0)
+    })
+    it('Should tally cyclepoints keeping reactivity', () => {
+      // Pretend this is the data returned from GraphQL.
+      const node = {
+        id: `${WORKFLOW_ID}|1|root`,
+        cyclePoint: '1'
+      }
+      // And this is part of the CylcTree that will be passed to a Vue component.
+      const cyclePoint = createCyclePointNode(node)
+      cylcTree.addCyclePoint(cyclePoint)
+      // Instead of creating a full-blown component, let's imitate what it does
+      // creating a reactive pointer to the cylcTree (as if it had been passed
+      // via props to a component).
+      const reactive = Vue.observable(cylcTree)
+      // And now let's pretend we have received a delta and need to tally the
+      // cyclepoint state.
+      reactive.tallyCyclePointStates()
+      // The .tallyCyclePointStates function will have created the .state property,
+      // and since this property is used in a template, now the test must verify
+      // that .state is reactive!
+      const reactiveNode = reactive.root.children[0].node
+      const stateReactiveGetter = Object.getOwnPropertyDescriptor(reactiveNode, 'state').get
+      // When you add a property in a JS object, the property descriptor contains a .value
+      // property, not not a .get nor a .set. Whereas when Vue creates an observable for you,
+      // it kindly provides the getter and setter, used/monitored in the template.
+      expect(stateReactiveGetter).to.not.equal(undefined)
     })
   })
   // family proxies
