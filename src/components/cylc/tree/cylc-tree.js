@@ -68,6 +68,8 @@ function computeCyclePointsStates (cyclePointNodes) {
       childStates.push(child.node.state)
     }
     const cyclePointState = extractGroupState(childStates, false)
+    // Initially the .node object retrieved from the GraphQL endpoint does
+    // not have the .state property. So we need to ask Vue to make it reactive.
     Vue.set(cyclePointNode.node, 'state', cyclePointState)
   }
 }
