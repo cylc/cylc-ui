@@ -19,6 +19,11 @@ a shadow underneath, for the Job component.
 sorted array, instead adding a new element in its sorted index (respecting
 locale, and numeric on).
 
+[#676](https://github.com/cylc/cylc-ui/pull/676) - Fix the reactivity of the
+cycle point icon state. After this, the Task icon used to summarize the cycle
+point state should be updated to reflect the overall state based on the states
+of its children nodes.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-0.4 (Released 2021-04-16)__
 
