@@ -42,11 +42,7 @@ const app = new Vue({
   store,
   vuetify,
   render (h) {
-    return h(App, {
-      props: {
-        baseUrl: this.$el.attributes['data-base-url'].value
-      }
-    })
+    return h(App)
   }
 }).$mount('#app')
 // e2e tests use the offline mode, so here we expose the Vue.js app so Cypress can access it programmatically

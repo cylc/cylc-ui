@@ -16,8 +16,7 @@
  */
 
 import Vue from 'vue'
-import { createGraphQLUrls, getBaseUrl } from '@/utils/urls'
-import { createSubscriptionClient } from '@/graphql'
+import { createSubscriptionClient, createGraphQLUrls } from '@/graphql'
 import SubscriptionWorkflowService from '@/services/workflow.service'
 import MockWorkflowService from '@/services/mock/workflow.service.mock'
 import UserService from '@/services/user.service'
@@ -65,7 +64,6 @@ export default {
    * @private
    */
   _installUserService () {
-    const baseUrl = getBaseUrl()
-    Vue.prototype.$userService = new UserService(baseUrl)
+    Vue.prototype.$userService = new UserService()
   }
 }

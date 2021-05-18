@@ -24,22 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
 const DEFAULT_LAYOUT = 'empty'
-const DEFAULT_URL = '/'
 
 export default {
-  props: {
-    /**
-     * This is the application baseUrl, given by the Python backend or by the mocked
-     * offline mode.
-     */
-    baseUrl: {
-      type: String,
-      default: DEFAULT_URL
-    }
-  },
   computed: {
     ...mapState('app', ['jobTheme']),
     layout () {
@@ -50,15 +39,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setBaseUrl']),
     ...mapMutations('app', ['setJobTheme'])
-  },
-  created () {
-    let baseUrl = DEFAULT_URL
-    if (process.env.VUE_APP_SERVICES !== 'offline') {
-      baseUrl = this.baseUrl !== '' ? this.baseUrl : DEFAULT_URL
-    }
-    this.setBaseUrl(baseUrl)
   },
   mounted () {
     // set application font-size in HTML top-level element

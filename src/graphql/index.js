@@ -25,7 +25,23 @@ import {
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
+import { createUrl } from '@/utils/urls'
 import store from '@/store'
+
+/**
+ * Create the HTTP and WebSocket URLs for an ApolloClient.
+ *
+ * @return {{wsUrl: string, httpUrl: string}}
+ * @private
+ */
+export function createGraphQLUrls () {
+  const httpUrl = createUrl('graphql')
+  const wsUrl = createUrl('subscriptions', true)
+  return {
+    httpUrl: httpUrl,
+    wsUrl: wsUrl
+  }
+}
 
 /**
  * Create a subscription client.

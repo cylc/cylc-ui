@@ -167,7 +167,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mixin } from '@/mixins/index'
 import { mapState } from 'vuex'
-import { getHubUrl } from '@/utils/user'
+import { createUrl } from '@/utils/urls'
 import { DASHBOARD_QUERY } from '@/graphql/queries'
 import { mdiTable, mdiCog, mdiHubspot, mdiBook, mdiBookOpenVariant, mdiBookMultiple } from '@mdi/js'
 import WorkflowState from '@/model/WorkflowState.model'
@@ -220,15 +220,12 @@ export default {
         quickstart: mdiBook,
         workflow: mdiBookOpenVariant,
         documentation: mdiBookMultiple
-      }
+      },
+      hubUrl: createUrl('/hub/home')
     }
   },
   computed: {
-    ...mapState('user', ['user']),
     ...mapState('workflows', ['workflows']),
-    hubUrl: function () {
-      return getHubUrl(this.user)
-    },
     workflowsTable () {
       const table = Object.fromEntries(WorkflowState.enumValues.map(state => [state.name, 0]))
       for (const workflow of this.workflows) {
