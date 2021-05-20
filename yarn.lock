@@ -605,19 +605,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-proposal-optional-chaining@npm:^7.14.2":
-  version: 7.14.2
-  resolution: "@babel/plugin-proposal-optional-chaining@npm:7.14.2"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.13.0
-    "@babel/helper-skip-transparent-expression-wrappers": ^7.12.1
-    "@babel/plugin-syntax-optional-chaining": ^7.8.3
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 29336a5170a9c363c8e80dec2d90e0e236eecfe10647eaf7baca8a48530f837b6612674d880781ff8996b07b557768a46cdecd44e944d4dad4cd7e6fa181ac84
-  languageName: node
-  linkType: hard
-
 "@babel/plugin-proposal-private-methods@npm:^7.13.0":
   version: 7.13.0
   resolution: "@babel/plugin-proposal-private-methods@npm:7.13.0"
