@@ -186,6 +186,43 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children[0].id).to.equal(`${WORKFLOW_ID}|2`)
       expect(cylcTree.root.children[1].id).to.equal(`${WORKFLOW_ID}|1`)
     })
+    it('Should add cycle points sorted ASC by default', () => {
+      const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
+        cyclePoint: '2'
+      })
+      const cyclePoint2 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|2|root`,
+        cyclePoint: '1'
+      })
+      cylcTree.addCyclePoint(cyclePoint1)
+      expect(cylcTree.root.children.length).to.equal(1)
+      expect(cylcTree.root.children[0].id).to.equal(`${WORKFLOW_ID}|1`)
+
+      cylcTree.addCyclePoint(cyclePoint2)
+      expect(cylcTree.root.children.length).to.equal(2)
+      expect(cylcTree.root.children[0].id).to.equal(`${WORKFLOW_ID}|1`)
+      expect(cylcTree.root.children[1].id).to.equal(`${WORKFLOW_ID}|2`)
+    })
+    it('Should add cycle points sorted DESC if cyclePointsOrderDesc', () => {
+      cylcTree.options.cyclePointsOrderDesc = true
+      const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
+        cyclePoint: '2'
+      })
+      const cyclePoint2 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|2|root`,
+        cyclePoint: '1'
+      })
+      cylcTree.addCyclePoint(cyclePoint1)
+      expect(cylcTree.root.children.length).to.equal(1)
+      expect(cylcTree.root.children[0].id).to.equal(`${WORKFLOW_ID}|1`)
+
+      cylcTree.addCyclePoint(cyclePoint2)
+      expect(cylcTree.root.children.length).to.equal(2)
+      expect(cylcTree.root.children[0].id).to.equal(`${WORKFLOW_ID}|2`)
+      expect(cylcTree.root.children[1].id).to.equal(`${WORKFLOW_ID}|1`)
+    })
     it('Should not add a cycle point twice', () => {
       const cyclePoint1 = createCyclePointNode({
         id: `${WORKFLOW_ID}|1|root`,

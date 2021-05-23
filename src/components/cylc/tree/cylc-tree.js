@@ -267,7 +267,7 @@ class CylcTree {
    */
   constructor (workflow, options) {
     const defaults = {
-      cyclePointsOrderDesc: true
+      cyclePointsOrderDesc: false
     }
     this.options = Object.assign(defaults, options)
     this.lookup = new Map()
@@ -341,12 +341,9 @@ class CylcTree {
         (c) => c.node.name
       )
       if (this.options.cyclePointsOrderDesc) {
-        // cycle points are inserted in the reverse order, so we have to handle that sortedIndex will give you the
-        // wrong index (except when the list is empty). That's why we reverse the list first, to get the index, and
-        // find where it would be in the not-reversed list.
-        parent.children.splice(parent.children.length - insertIndex, 0, cyclePoint)
-      } else {
         parent.children.splice(insertIndex, 0, cyclePoint)
+      } else {
+        parent.children.splice(parent.children.length - insertIndex, 0, cyclePoint)
       }
     }
   }
