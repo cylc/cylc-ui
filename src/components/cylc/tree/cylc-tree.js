@@ -334,8 +334,8 @@ class CylcTree {
     if (!this.lookup.has(cyclePoint.id)) {
       this.lookup.set(cyclePoint.id, cyclePoint)
       const parent = this.root
-      // reverse to put cyclepoints in ascending order (i.e. 1, 2, 3)
-      const cyclePoints = [...parent.children].reverse()
+      // when DESC mode, reverse to put cyclepoints in ascending order (i.e. 1, 2, 3)
+      const cyclePoints = this.options.cyclePointsOrderDesc ? [...parent.children].reverse() : parent.children
       const insertIndex = sortedIndexBy(
         cyclePoints,
         cyclePoint,

@@ -118,6 +118,31 @@ describe('CylcTree', () => {
         expect(children[index].node.name).to.equal(expected)
       })
     })
+    it('should sort cyclepoints ascending correctly', () => {
+      const workflow = createWorkflowNode({
+        id: WORKFLOW_ID
+      })
+      const cylcTree = new CylcTree(workflow, {
+        cyclePointsOrderDesc: false
+      })
+      cylcTree.addCyclePoint(createCyclePointNode({
+        id: 'cylc|workflow|7',
+        cyclePoint: '7'
+      }))
+      cylcTree.addCyclePoint(createCyclePointNode({
+        id: 'cylc|workflow|5',
+        cyclePoint: '5'
+      }))
+      cylcTree.addCyclePoint(createCyclePointNode({
+        id: 'cylc|workflow|6',
+        cyclePoint: '6'
+      }))
+      const expectedChildren = ['5', '6', '7']
+      const cyclePoints = cylcTree.root.children
+      expectedChildren.forEach((expected, index) => {
+        expect(cyclePoints[index].node.name).to.equal(expected)
+      })
+    })
   })
   const WORKFLOW_ID = 'cylc|workflow'
   it('Should create a tree with a given workflow', () => {
