@@ -101,7 +101,7 @@ export default {
      * @type {CylcTree}
      */
     tree: new CylcTree(null, {
-      cyclePointsOrderDesc: localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : false
+      cyclePointsOrderDesc: localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC
     }),
     isLoading: true,
     // the widgets added to the view

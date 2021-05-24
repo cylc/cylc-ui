@@ -179,7 +179,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <span>Latest cycle point at top</span>
               </v-flex>
               <v-checkbox
-                v-model="cyclePointsOrderDesc">
+                v-model="cyclePointsOrderDesc"
+                id="input-cyclepoints-order"
+              >
               </v-checkbox>
             </v-layout>
           </v-container>
@@ -202,6 +204,7 @@ import {
 import { mdiCog, mdiFormatFontSizeIncrease, mdiFormatFontSizeDecrease } from '@mdi/js'
 import Job from '@/components/cylc/Job'
 import JobState from '@/model/JobState.model'
+import CylcTree from '@/components/cylc/tree/cylc-tree'
 
 // TODO: update where user preferences are stored after #335
 
@@ -212,7 +215,7 @@ export default {
   },
   data () {
     return {
-      cyclePointsOrderDesc: true,
+      cyclePointsOrderDesc: CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC,
       svgPaths: {
         settings: mdiCog,
         increase: mdiFormatFontSizeIncrease,

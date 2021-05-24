@@ -258,6 +258,7 @@ function sortedIndexBy (array, value, iteratee, comparator) {
  * @class
  */
 class CylcTree {
+  static DEFAULT_CYCLE_POINTS_ORDER_DESC = true
   /**
    * Create a tree with an initial root node, representing
    * a workflow in Cylc.
@@ -267,7 +268,7 @@ class CylcTree {
    */
   constructor (workflow, options) {
     const defaults = {
-      cyclePointsOrderDesc: false
+      cyclePointsOrderDesc: CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC
     }
     this.options = Object.assign(defaults, options)
     this.lookup = new Map()
@@ -341,9 +342,9 @@ class CylcTree {
         (c) => c.node.name
       )
       if (this.options.cyclePointsOrderDesc) {
-        parent.children.splice(insertIndex, 0, cyclePoint)
-      } else {
         parent.children.splice(parent.children.length - insertIndex, 0, cyclePoint)
+      } else {
+        parent.children.splice(insertIndex, 0, cyclePoint)
       }
     }
   }
