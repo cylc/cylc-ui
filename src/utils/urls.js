@@ -23,7 +23,7 @@
  * @param {string} url - the URL
  * @returns {string} - a URL without unnecessary double forward-slashes
  */
-function unslash (url) {
+function normalize (url) {
   return url.replace(/([^:]\/)\/+/g, '$1')
 }
 
@@ -45,7 +45,7 @@ function getBaseUrl (websockets = false) {
   const host = window.location.host
   const baseUrl = `${protocol}//${host}`
   const pathname = window.location.pathname
-  return unslash(new URL(pathname, baseUrl).href)
+  return normalize(new URL(pathname, baseUrl).href)
 }
 
 /**
@@ -61,7 +61,7 @@ function createUrl (path, websockets = false) {
   const url = [baseUrl, path]
     .map(part => part.trim())
     .join('/')
-  return unslash(url)
+  return normalize(url)
 }
 
 export {
