@@ -68,7 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 v-for="state of states"
               >
                 <td style="font-size: 2em;">
-                  <!-- set times to make the progrees change -->
+                  <!-- set times to make the progress change -->
                   <task
                     :status="state.name"
                     :startTime="Date.now()"
