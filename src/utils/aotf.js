@@ -47,7 +47,7 @@ import {
 
 import AlertModel from '@/model/Alert.model'
 import TaskState from '@/model/TaskState.model'
-import store from '@/store/'
+import store from '@/store/index'
 
 /**
  * Associates icons with mutations by name.

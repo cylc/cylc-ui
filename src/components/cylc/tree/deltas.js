@@ -22,7 +22,7 @@ import {
   createTaskProxyNode
 } from '@/components/cylc/tree/tree-nodes'
 import { populateTreeFromGraphQLData } from '@/components/cylc/tree/index'
-import store from '@/store/'
+import store from '@/store/index'
 import AlertModel from '@/model/Alert.model'
 
 /**
