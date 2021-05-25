@@ -258,13 +258,19 @@ function sortedIndexBy (array, value, iteratee, comparator) {
  * @class
  */
 class CylcTree {
+  static DEFAULT_CYCLE_POINTS_ORDER_DESC = true
   /**
    * Create a tree with an initial root node, representing
    * a workflow in Cylc.
    *
    * @param {?WorkflowNode} workflow
+   * @param {*} options
    */
-  constructor (workflow) {
+  constructor (workflow, options) {
+    const defaults = {
+      cyclePointsOrderDesc: CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC
+    }
+    this.options = Object.assign(defaults, options)
     this.lookup = new Map()
     if (!workflow) {
       this.root = {
@@ -328,17 +334,18 @@ class CylcTree {
     if (!this.lookup.has(cyclePoint.id)) {
       this.lookup.set(cyclePoint.id, cyclePoint)
       const parent = this.root
-      // reverse to put cyclepoints in ascending order (i.e. 1, 2, 3)
-      const cyclePoints = [...parent.children].reverse()
+      // when DESC mode, reverse to put cyclepoints in ascending order (i.e. 1, 2, 3)
+      const cyclePoints = this.options.cyclePointsOrderDesc ? [...parent.children].reverse() : parent.children
       const insertIndex = sortedIndexBy(
         cyclePoints,
         cyclePoint,
         (c) => c.node.name
       )
-      // cycle points are inserted in the reverse order, so we have to handle that sortedIndex will give you the
-      // wrong index (except when the list is empty). That's why we reverse the list first, to get the index, and
-      // find where it would be in the not-reversed list.
-      parent.children.splice(parent.children.length - insertIndex, 0, cyclePoint)
+      if (this.options.cyclePointsOrderDesc) {
+        parent.children.splice(parent.children.length - insertIndex, 0, cyclePoint)
+      } else {
+        parent.children.splice(insertIndex, 0, cyclePoint)
+      }
     }
   }
 

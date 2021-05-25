@@ -37,7 +37,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      const cylcTree = new CylcTree(workflow)
+      const cylcTree = new CylcTree(workflow, {})
       const cyclePoint = createCyclePointNode({
         id: 'cylc|workflow|1',
         cyclePoint: '1'
@@ -49,7 +49,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      const cylcTree = new CylcTree(workflow)
+      const cylcTree = new CylcTree(workflow, {})
       const cyclePoints = ['1', '10', '100', '2', '3', '4']
       for (const cyclePoint of cyclePoints) {
         cylcTree.addCyclePoint(createCyclePointNode({
@@ -67,7 +67,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      const cylcTree = new CylcTree(workflow)
+      const cylcTree = new CylcTree(workflow, {})
       cylcTree.addCyclePoint(createCyclePointNode({
         id: 'cylc|workflow|1',
         cyclePoint: '1'
@@ -118,12 +118,37 @@ describe('CylcTree', () => {
         expect(children[index].node.name).to.equal(expected)
       })
     })
+    it('should sort cyclepoints ascending correctly', () => {
+      const workflow = createWorkflowNode({
+        id: WORKFLOW_ID
+      })
+      const cylcTree = new CylcTree(workflow, {
+        cyclePointsOrderDesc: false
+      })
+      cylcTree.addCyclePoint(createCyclePointNode({
+        id: 'cylc|workflow|7',
+        cyclePoint: '7'
+      }))
+      cylcTree.addCyclePoint(createCyclePointNode({
+        id: 'cylc|workflow|5',
+        cyclePoint: '5'
+      }))
+      cylcTree.addCyclePoint(createCyclePointNode({
+        id: 'cylc|workflow|6',
+        cyclePoint: '6'
+      }))
+      const expectedChildren = ['5', '6', '7']
+      const cyclePoints = cylcTree.root.children
+      expectedChildren.forEach((expected, index) => {
+        expect(cyclePoints[index].node.name).to.equal(expected)
+      })
+    })
   })
   const WORKFLOW_ID = 'cylc|workflow'
   it('Should create a tree with a given workflow', () => {
     const cylcTree = new CylcTree(createWorkflowNode({
       id: WORKFLOW_ID
-    }))
+    }), {})
     expect(cylcTree.root.id).to.equal(WORKFLOW_ID)
   })
   it('Should create a tree without a workflow', () => {
@@ -145,7 +170,7 @@ describe('CylcTree', () => {
   it('Should clear the tree and lookup map', () => {
     const cylcTree = new CylcTree(createWorkflowNode({
       id: WORKFLOW_ID
-    }))
+    }), {})
     cylcTree.lookup.set('name', 'abc')
     cylcTree.clear()
     expect(cylcTree.lookup.size).to.equal(0)
@@ -154,7 +179,7 @@ describe('CylcTree', () => {
   it('Should return true for isEmpty if empty, false otherwise', () => {
     const cylcTree = new CylcTree(createWorkflowNode({
       id: '1'
-    }))
+    }), {})
     expect(cylcTree.isEmpty()).to.equal(false)
     cylcTree.clear()
     expect(cylcTree.isEmpty()).to.equal(true)
@@ -166,7 +191,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      cylcTree = new CylcTree(workflow)
+      cylcTree = new CylcTree(workflow, {})
     })
     it('Should add cycle points', () => {
       const cyclePoint1 = createCyclePointNode({
@@ -185,6 +210,43 @@ describe('CylcTree', () => {
       expect(cylcTree.root.children.length).to.equal(2)
       expect(cylcTree.root.children[0].id).to.equal(`${WORKFLOW_ID}|2`)
       expect(cylcTree.root.children[1].id).to.equal(`${WORKFLOW_ID}|1`)
+    })
+    it('Should add cycle points sorted DESC by default', () => {
+      const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
+        cyclePoint: '1'
+      })
+      const cyclePoint2 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|2|root`,
+        cyclePoint: '2'
+      })
+      cylcTree.addCyclePoint(cyclePoint1)
+      expect(cylcTree.root.children.length).to.equal(1)
+      expect(cylcTree.root.children[0].id).to.equal(cyclePoint1.id)
+
+      cylcTree.addCyclePoint(cyclePoint2)
+      expect(cylcTree.root.children.length).to.equal(2)
+      expect(cylcTree.root.children[0].id).to.equal(cyclePoint2.id)
+      expect(cylcTree.root.children[1].id).to.equal(cyclePoint1.id)
+    })
+    it('Should add cycle points sorted ASC if !cyclePointsOrderDesc', () => {
+      cylcTree.options.cyclePointsOrderDesc = !CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC
+      const cyclePoint1 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|1|root`,
+        cyclePoint: '1'
+      })
+      const cyclePoint2 = createCyclePointNode({
+        id: `${WORKFLOW_ID}|2|root`,
+        cyclePoint: '2'
+      })
+      cylcTree.addCyclePoint(cyclePoint2)
+      expect(cylcTree.root.children.length).to.equal(1)
+      expect(cylcTree.root.children[0].id).to.equal(cyclePoint2.id)
+
+      cylcTree.addCyclePoint(cyclePoint1)
+      expect(cylcTree.root.children.length).to.equal(2)
+      expect(cylcTree.root.children[0].id).to.equal(cyclePoint1.id)
+      expect(cylcTree.root.children[1].id).to.equal(cyclePoint2.id)
     })
     it('Should not add a cycle point twice', () => {
       const cyclePoint1 = createCyclePointNode({
@@ -294,7 +356,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      cylcTree = new CylcTree(workflow)
+      cylcTree = new CylcTree(workflow, {})
       cyclePoint1 = createCyclePointNode({
         id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
@@ -484,7 +546,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      cylcTree = new CylcTree(workflow)
+      cylcTree = new CylcTree(workflow, {})
       cyclePoint = createCyclePointNode({
         id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
@@ -730,7 +792,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      cylcTree = new CylcTree(workflow)
+      cylcTree = new CylcTree(workflow, {})
       cyclePoint = createCyclePointNode({
         id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
@@ -902,7 +964,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      const cylcTree = new CylcTree(workflow)
+      const cylcTree = new CylcTree(workflow, {})
       cylcTree.addCyclePoint(createCyclePointNode({
         id: 'cylc|workflow|1',
         cyclePoint: '1'
@@ -961,7 +1023,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      cylcTree = new CylcTree(workflow)
+      cylcTree = new CylcTree(workflow, {})
       cyclePoint = createCyclePointNode({
         id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
@@ -1025,7 +1087,7 @@ describe('CylcTree', () => {
       const workflow = createWorkflowNode({
         id: WORKFLOW_ID
       })
-      cylcTree = new CylcTree(workflow)
+      cylcTree = new CylcTree(workflow, {})
       cyclePoint1 = createCyclePointNode({
         id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'

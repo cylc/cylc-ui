@@ -75,7 +75,9 @@ export default {
      * contains hierarchy, while the GraphQL is flat-ish.
      * @type {null|CylcTree}
      */
-    tree: new CylcTree()
+    tree: new CylcTree(null, {
+      cyclePointsOrderDesc: localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC
+    })
   }),
 
   /**

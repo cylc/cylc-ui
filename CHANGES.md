@@ -13,6 +13,9 @@ release.
 [#657](https://github.com/cylc/cylc-ui/pull/657) - Display a different icon, with
 a shadow underneath, for the Job component.
 
+[#658](https://github.com/cylc/cylc-ui/pull/658) - Allow user to set the order
+of cycle points.
+
 ### Fixes
 
 [#649](https://github.com/cylc/cylc-ui/pull/649) - Avoid re-sorting a
