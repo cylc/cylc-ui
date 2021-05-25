@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-card-actions>
       <p
        style="font-size:1.5em;"
-       v-if="status != 'waiting'"
+       v-if="status !== 'waiting'"
       >
         <Task :status="status"/>
         {{ status }}
