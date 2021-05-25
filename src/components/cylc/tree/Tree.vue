@@ -226,7 +226,7 @@ export default {
   watch: {
     workflows: {
       deep: true,
-      handler: function (val, oldVal) {
+      handler: function () {
         if (this.activeFilters !== null) {
           this.$nextTick(() => {
             this.filterNodes(this.workflows)
