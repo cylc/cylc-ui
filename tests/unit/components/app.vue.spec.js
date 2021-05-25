@@ -69,12 +69,14 @@ describe('App', () => {
     })
     global.localStorage = window.localStorage
   })
-  it('should create the App with the correct base URL', () => {
-    const wrapper = mountFunction({
-      propsData: {
-        baseUrl: 'home'
-      }
-    })
-    expect(wrapper.props().baseUrl).to.equal('home')
+  it('should create the App with the correct theme', () => {
+    const wrapper = mountFunction()
+    expect(wrapper.vm.jobTheme).to.equal('default')
+    expect(wrapper.vm.jobThemeClass).to.equal('job_theme--default')
+  })
+  it('should create the App with the correct layout', () => {
+    const wrapper = mountFunction()
+    // default is empty, unless the route specifies another layout
+    expect(wrapper.vm.layout).to.equal('empty-layout')
   })
 })

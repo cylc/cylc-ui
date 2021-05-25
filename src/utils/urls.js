@@ -16,34 +16,54 @@
  */
 
 /**
- * Get the application base URL (JupyterHub). Always includes trailing slash.
- * @returns {string} - application base URL (JupyterHub) with trailing slash
+ * Remove double forward-slashes from URL's. It avoids the slashes that
+ * are preceded by ':', so that the slashes in the URL protocol are kept.
+ *
+ * @private
+ * @param {string} url - the URL
+ * @returns {string} - a URL without unnecessary double forward-slashes
  */
-export function getBaseUrl () {
-  const port = window.location.port ? ':' + window.location.port : ''
-  const baseUrl = `${window.location.protocol}//${window.location.hostname}${port}${window.location.pathname}`
-  if (baseUrl.endsWith('//')) {
-    return baseUrl.substring(0, baseUrl.length - 1)
-  } else if (baseUrl.endsWith('/')) {
-    return baseUrl
-  }
-  return `${baseUrl}/`
+function normalize (url) {
+  return url.replace(/([^:]\/)\/+/g, '$1')
 }
 
 /**
- * Create the HTTP and WebSocket URLs for an ApolloClient.
+ * Get the application base URL. If the URL will be used for WebSockets, a boolean parameter
+ * can be passed so that the protocol can be corrected (when HTTPS, we want WSS, otherwise
+ * we will have WS).
  *
- * @return {{wsUrl: string, httpUrl: string}}
+ * The returned URL does not include the query search params (i.e. excludes ?redirectTo=/hub/login).
+ *
  * @private
+ * @param {boolean} websockets - whether the URL will be used for websockets or not
+ * @returns {string} - the application base URL, containing protocol, hostname, port, and pathname
  */
-export function createGraphQLUrls () {
-  // TODO: revisit this and evaluate other ways to build the GraphQL URL - not safe to rely on window.location (?)
-  const baseUrl = getBaseUrl()
-  const httpUrl = `${baseUrl}graphql`
-  const websocketsProtocol = baseUrl.startsWith('https') ? 'wss:' : 'ws:'
-  const wsUrl = `${websocketsProtocol}//${baseUrl.substring(baseUrl.indexOf('//'))}subscriptions`
-  return {
-    httpUrl: httpUrl,
-    wsUrl: wsUrl
-  }
+function getBaseUrl (websockets = false) {
+  const protocol = websockets
+    ? window.location.protocol.startsWith('https') ? 'wss:' : 'ws:'
+    : window.location.protocol
+  const host = window.location.host
+  const baseUrl = `${protocol}//${host}`
+  const pathname = window.location.pathname
+  return normalize(new URL(pathname, baseUrl).href)
+}
+
+/**
+ * Create a new URL, combining the application base URL with the given URL
+ * path.
+ *
+ * @param {string} path - path to be used when creating a new URL (e.g. /users)
+ * @param {boolean} websockets - whether the URL will be used for websockets or not
+ * @returns {string} - the new URL, preceded by the base URL (e.g. https://hub:8080/users/cylc/users)
+ */
+function createUrl (path, websockets = false) {
+  const baseUrl = getBaseUrl(websockets)
+  const url = [baseUrl, path]
+    .map(part => part.trim())
+    .join('/')
+  return normalize(url)
+}
+
+export {
+  createUrl
 }

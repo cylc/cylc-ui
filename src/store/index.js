@@ -38,10 +38,6 @@ const state = {
    */
   alert: null,
   /**
-   * Application base URL (set by the backend).
-   */
-  baseUrl: '/',
-  /**
    * Whether the application is loading or not.
    */
   isLoading: false,
@@ -70,9 +66,6 @@ const actions = {
     if (alert === null || state.alert === null || state.alert.getText() !== alert.getText()) {
       commit('SET_ALERT', alert)
     }
-  },
-  setBaseUrl ({ commit }, baseUrl) {
-    commit('SET_BASE_URL', baseUrl)
   }
 }
 
@@ -92,9 +85,6 @@ const mutations = {
   },
   SET_OFFLINE (state, offline) {
     state.offline = offline
-  },
-  SET_BASE_URL (state, baseUrl) {
-    state.baseUrl = baseUrl
   }
 }
 

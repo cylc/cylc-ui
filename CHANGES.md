@@ -32,6 +32,10 @@ of its children nodes.
 [#641](https://github.com/cylc/cylc-ui/pull/641) -
 Display the new "platform" for jobs rather than the legacy "host" value.
 
+[#677](https://github.com/cylc/cylc-ui/pull/677) -
+Create a urls module to simplify how we concatenate strings to create
+URLs.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-0.3 (Released 2021-03-25)__
 

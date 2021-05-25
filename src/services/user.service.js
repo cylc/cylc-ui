@@ -19,21 +19,15 @@ import User from '@/model/User.model'
 import axios from 'axios'
 import store from '@/store/'
 import Alert from '@/model/Alert.model'
+import { createUrl } from '@/utils/urls'
 
 class UserService {
-  /**
-   * @param {string} baseUrl - HTTP base URL used to access JupyterHub REST API
-   */
-  constructor (baseUrl) {
-    this.baseUrl = baseUrl
-  }
-
   /**
    * Gets the user profile from the backend server.
    * @returns {Promise<*>} - a promise that dispatches Vuex action
    */
   getUserProfile () {
-    return axios.get(`${this.baseUrl}userprofile`).then((response) => {
+    return axios.get(createUrl('userprofile')).then((response) => {
       const user = new User(response.data.name, response.data.groups, response.data.created, response.data.admin, response.data.server)
       return store.dispatch('user/setUser', user)
     }).catch((error) => {

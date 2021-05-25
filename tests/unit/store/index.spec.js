@@ -58,24 +58,6 @@ describe('index', () => {
     })
   })
   /**
-   * Tests for store.baseUrl
-   */
-  describe('baseUrl', () => {
-    const resetState = () => {
-      store.state.baseUrl = '/'
-    }
-    beforeEach(resetState)
-    afterEach(resetState)
-    it('should initialize with correct base URL', () => {
-      expect(store.state.baseUrl).to.equal('/')
-    })
-    it('should set a new base URL', () => {
-      const newBaseUrl = 'new-base-url'
-      store.dispatch('setBaseUrl', newBaseUrl)
-      expect(store.state.baseUrl).to.equal(newBaseUrl)
-    })
-  })
-  /**
    * Tests for store.isLoading.
    */
   describe('isLoading', () => {
