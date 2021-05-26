@@ -27,6 +27,9 @@ cycle point icon state. After this, the Task icon used to summarize the cycle
 point state should be updated to reflect the overall state based on the states
 of its children nodes.
 
+[#669](https://github.com/cylc/cylc-ui/pull/669) - Define the height
+of each table row, and specify the Skeleton height to avoid content shift.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-0.4 (Released 2021-04-16)__
 
