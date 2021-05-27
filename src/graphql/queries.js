@@ -28,7 +28,7 @@ import { DocumentNode } from 'graphql'
  * @type {DocumentNode}
  */
 const WORKFLOW_TREE_DELTAS_SUBSCRIPTION = gql`
-subscription OnWorkflowDeltasData ($workflowId: ID) {
+subscription OnWorkflowTreeDeltasData ($workflowId: ID) {
   deltas (workflows: [$workflowId], stripNull: true) {
    ...WorkflowTreeDeltas
   }
@@ -178,7 +178,7 @@ fragment JobData on Job {
  * @type {string}
  */
 const DASHBOARD_QUERY = `
-subscription {
+subscription DashboardSubscriptionQuery {
   workflows {
     id
     name
@@ -192,7 +192,7 @@ subscription {
  * @type {string}
  */
 const GSCAN_QUERY = `
-subscription {
+subscription GscanSubscriptionQuery {
   workflows {
     id
     name
@@ -217,15 +217,15 @@ subscription {
  * @type {string}
  */
 const WORKFLOWS_TABLE_QUERY = `
-  subscription {
-    workflows (ignoreInterval: 0) {
-      id
-      name
-      owner
-      host
-      port
-    }
+subscription WorkflowsTableQuery {
+  workflows (ignoreInterval: 0) {
+    id
+    name
+    owner
+    host
+    port
   }
+}
 `
 
 export {

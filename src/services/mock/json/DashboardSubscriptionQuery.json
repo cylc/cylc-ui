@@ -1,0 +1,9 @@
+{
+  "workflows": [
+    {
+      "id": "user|one",
+      "name": "one",
+      "status": "running"
+    }
+  ]
+}

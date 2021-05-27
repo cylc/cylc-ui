@@ -15,7 +15,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {
+  MUTATIONS
+} from '../support/graphql'
+
 describe('Mutations component', () => {
+  beforeEach(() => {
+    cy
+      .intercept('/graphql', (req) => {
+        const query = req.body.query
+        if (query.includes('__schema')) {
+          req.reply({
+            data: {
+              __schema: {
+                mutationType: {
+                  fields: MUTATIONS
+                },
+                types: []
+              }
+            }
+          })
+        } else {
+          console.log(req)
+          req.reply({
+            data: {
+              [req.body.operationName]: {
+                result: [true, {}],
+                __typename: req.body.operationName.charAt(0).toUpperCase() + req.body.operationName.slice(1)
+              }
+            }
+          })
+        }
+      })
+      .as('HoldMutationQuery')
+  })
   /**
    * @param {string} nodeName - the tree node name, to search for and open the mutations form
    */
@@ -28,12 +61,22 @@ describe('Mutations component', () => {
       .click({ force: true })
     cy
       .get('.c-mutation-menu-list')
+      .should('be.visible')
       .find('.v-list-item__action')
+      .first()
       .click()
   }
   const submitMutationForms = () => {
     cy.visit('/#/workflows/one')
+    cy.window().its('app.$workflowService').then(service => {
+      // mock the apollo client's mutate method to catch low-level calls
+      service.primaryMutations = {
+        workflow: ['workflowMutation']
+      }
+    })
+    cy.get('.treeitem').should('be.visible')
     openMutationsForm('BAD')
+    cy.wait(['@HoldMutationQuery'])
     // fill mocked mutation form with any data
     cy
       .get('.v-dialog')
@@ -60,7 +103,7 @@ describe('Mutations component', () => {
   it('should submit a mutation form', () => {
     submitMutationForms()
   })
-  it.only('should not remember data after submitting a mutation form', () => {
+  it('should not remember data after submitting a mutation form', () => {
     submitMutationForms()
     // close submit form (not clicking on cancel, as it appears to clear the form, but outside the dialog)
     cy

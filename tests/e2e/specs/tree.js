@@ -108,8 +108,12 @@ describe('Tree component', () => {
           .get('.node-data-cyclepoint')
           .should('be.visible')
         cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-          // FIXME: likely wrong, but to be fixed later in a follow-up PR to housekeep subscriptions
-          expect(subscriptions.length).to.equal(3)
+          // Only the GScan subscription
+          expect(subscriptions.length).to.equal(1)
+        })
+        cy.window().its('app.$workflowService.deltasObservable').then(deltasObservable => {
+          // Only the GScan subscription
+          expect(deltasObservable.closed).to.equal(false)
         })
       })
   })
@@ -122,17 +126,24 @@ describe('Tree component', () => {
       .get('.node-data-job:first')
       .should('not.be.visible')
     cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-      expect(subscriptions.length).to.equal(2)
+      expect(subscriptions.length).to.equal(1)
+    })
+    cy.window().its('app.$workflowService.deltasObservable').then(deltasObservable => {
+      // Only the GScan subscription
+      expect(deltasObservable.closed).to.equal(false)
     })
     cy
       .visit('/#/')
-      .then(() => {
-        cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-          // It will have 2, GScan + Dashboard, while the /tree/one view has 1 Delta + 1 subscription
-          // (the delta is a different subscription).
-          expect(subscriptions.length).to.equal(2)
-        })
+    cy.get('.c-dashboard').should('be.visible')
+    cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
+      // It will have 2, GScan + Dashboard, while the /tree/one view has 1 Delta + 1 subscription
+      // (the delta is a different subscription).
+      expect(subscriptions.length).to.equal(2)
+      cy.window().its('app.$workflowService.deltasObservable').then(deltasObservable => {
+        // Now the deltas-subscription should be closed.
+        expect(deltasObservable.closed).to.equal(true)
       })
+    })
   })
   it('Should display message triggers', () => {
     // TODO: The message triggers are programmatically added in the mocked workflow service.
@@ -178,7 +189,7 @@ describe('Tree component', () => {
         .click({ force: true })
       cy
         .get('.leaf-entry-title')
-        .contains('msg-label-14')
+        .contains('msg-label-8')
         .should('be.visible')
     }
   })

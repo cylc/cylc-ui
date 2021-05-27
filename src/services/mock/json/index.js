@@ -15,29 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-describe('CylcObject Menu component', () => {
-  it('Is displayed when a Cylc object is clicked on', () => {
-    cy.visit('/#/workflows/one')
+const DashboardSubscriptionQuery = require('./DashboardSubscriptionQuery.json')
+const IntrospectionQuery = require('./IntrospectionQuery.json')
+const GscanSubscriptionQuery = require('./GscanSubscriptionQuery.json')
+const OnWorkflowTreeDeltasData = require('./OnWorkflowTreeDeltasData.json')
+const WorkflowsTableQuery = require('./WorkflowsTableQuery.json')
+const userProfile = require('./userprofile.json')
 
-    cy
-      // it should not by displayed on load
-      .get('.c-mutation-menu:first')
-      .children()
-      .should('have.length', 0)
-
-      // click on the first interactive thing
-      .get('.c-interactive:first')
-      .click()
-      .then(() => {
-        // the menu should now be open
-        // length is 5, as 4 plus show more
-        cy
-          .get('.c-mutation-menu-list:first')
-          .should('be.visible')
-          .children()
-          .should('have.length', 5)
-          .get('.v-menu__content:first')
-          .should('be.visible')
-      })
-  })
-})
+module.exports = {
+  DashboardSubscriptionQuery,
+  IntrospectionQuery,
+  GscanSubscriptionQuery,
+  OnWorkflowTreeDeltasData,
+  WorkflowsTableQuery,
+  userProfile
+}

@@ -20,7 +20,7 @@ if ! sed --version 2>/dev/null | grep -q 'GNU' 2>/dev/null; then
 fi
 
 cd "$(dirname "$0")" || exit 1
-CHECK_FILE='checkpoint.js'
+CHECK_FILE='json/OnWorkflowTreeDeltasData.json'
 
 cylc reg "one" one
 if cylc run "one" --fcp=20000102T0000Z --no-detach; then
@@ -34,10 +34,7 @@ else
 fi
 
 sed -i \
-    -e "1s|^|const checkpoint = |" \
-    -e "1s|^|/* eslint-disable */\n|" \
     -e "s|$USER|user|g" \
     -e "s|$(hostname)|localhost|g" \
     -e "s|$(hostname | tr '[:upper:]' '[:lower:]')|localhost|g" \
-    -e "\$s|$|\nexport { checkpoint }|" \
     "${CHECK_FILE}"
