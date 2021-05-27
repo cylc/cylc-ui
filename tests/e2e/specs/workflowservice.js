@@ -17,6 +17,8 @@
 
 // Tests for the WorkflowService subscriptions. Not necessarily GraphQL subscriptions!
 
+const deltasObservable = () => cy.window().its('app.$workflowService.deltasObservable')
+
 /**
  * Helper function to retrieve the subscriptions.
  * @returns {Cypress.Chainable<any>}
@@ -70,18 +72,18 @@ describe('WorkflowService subscriptions', () => {
     cy.get('[href="#/user-profile"]').click()
     cy.contains('h3', 'Your Profile')
     getSubscriptions().then(subscriptions => {
-      // FIXME: likely wrong, but to be fixed later in a follow-up PR to housekeep subscriptions
-      expect(subscriptions.length).to.equal(2)
+      // Only GScan subscription
+      expect(subscriptions.length).to.equal(1)
     })
   })
-  it('-> Dashboard -> Workflows, should contain 3 subscription (GScan)', () => {
+  it('-> Dashboard -> Workflows, should contain 1 subscription (GScan) and 1 delta-subscription (Tree)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
     cy.get('div#main').should('contain', 'tree')
     getSubscriptions().then(subscriptions => {
-      // FIXME: likely wrong, but to be fixed later in a follow-up PR to housekeep subscriptions
-      expect(subscriptions.length).to.equal(3)
+      // Only GScan subscription
+      expect(subscriptions.length).to.equal(1)
       // FIXME: enable later if/when using a graphql-tag object instead of string for query,
       //        this way we can validate we have nodes/fragments in the query, instead of string-matching.
       // getQuery().then(query => {
@@ -91,8 +93,11 @@ describe('WorkflowService subscriptions', () => {
       //   expect(getSelectionSetNames(firstSelection)).to.not.include('cyclePoints')
       // })
     })
+    deltasObservable().then(deltasObservable => {
+      expect(deltasObservable.closed).to.equal(false)
+    })
   })
-  it('-> Dashboard -> Workflows -> Dashboard, should contain 4 subscription (GScan + Dashboard)', () => {
+  it('-> Dashboard -> Workflows -> Dashboard, should contain 2 subscription (GScan + Dashboard)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
@@ -100,8 +105,7 @@ describe('WorkflowService subscriptions', () => {
     cy.get('[href="#/"]').click()
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
-      // FIXME: likely wrong, but to be fixed later in a follow-up PR to housekeep subscriptions
-      expect(subscriptions.length).to.equal(4)
+      expect(subscriptions.length).to.equal(2)
       // FIXME: enable later if/when using a graphql-tag object instead of string for query,
       //        this way we can validate we have nodes/fragments in the query, instead of string-matching.
       // getQuery().then(query => {
@@ -113,12 +117,12 @@ describe('WorkflowService subscriptions', () => {
       // })
     })
   })
-  it('-> Tree, should contain 2 subscription (GScan)', () => {
+  it('-> Tree, should contain 1 subscription (GScan) and 1 delta-subscription (Tree)', () => {
     cy.visit('/#/tree/one')
     cy.get('.c-header').should('exist')
     getSubscriptions().then(subscriptions => {
-      // FIXME: likely wrong, but to be fixed later in a follow-up PR to housekeep subscriptions
-      expect(subscriptions.length).to.equal(2)
+      // Only GScan subscription
+      expect(subscriptions.length).to.equal(1)
       // FIXME: enable later if/when using a graphql-tag object instead of string for query,
       //        this way we can validate we have nodes/fragments in the query, instead of string-matching.
       // getQuery().then(query => {
@@ -128,14 +132,16 @@ describe('WorkflowService subscriptions', () => {
       //   expect(getSelectionSetNames(firstSelection)).to.not.include('cyclePoints')
       // })
     })
+    deltasObservable().then(deltasObservable => {
+      expect(deltasObservable.closed).to.equal(false)
+    })
   })
-  it('-> Tree - > Dashboard, should contain 3 subscription (GScan + Dashboard)', () => {
+  it('-> Tree - > Dashboard, should contain 2 subscription (GScan + Dashboard)', () => {
     cy.visit('/#/tree/one')
     cy.get('[href="#/"]').click()
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
-      // FIXME: likely wrong, but to be fixed later in a follow-up PR to housekeep subscriptions
-      expect(subscriptions.length).to.equal(3)
+      expect(subscriptions.length).to.equal(2)
       // FIXME: enable later if/when using a graphql-tag object instead of string for query,
       //        this way we can validate we have nodes/fragments in the query, instead of string-matching.
       // getQuery().then(query => {

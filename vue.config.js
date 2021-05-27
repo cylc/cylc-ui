@@ -37,9 +37,14 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '^/userprofile': {
+      '(^/userprofile|^/graphql)': {
         target: 'http://localhost:3000/',
         changeOrigin: true
+      },
+      '^/subscriptions': {
+        target: 'http://localhost:3000/',
+        changeOrigin: true,
+        ws: true
       }
     }
   },
