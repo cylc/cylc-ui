@@ -36,6 +36,7 @@ describe('GraphiQL', () => {
     //     1. Query
     //     2. Variables
     //     3. Results
+    cy.intercept('/graphql*').as('GraphQLQuery')
     cy.get('.CodeMirror')
       .then((editors) => {
         editors[0].CodeMirror.setValue(query)
@@ -45,19 +46,21 @@ describe('GraphiQL', () => {
         expect(editors[1].CodeMirror.getValue()).to.equal('')
         expect(editors[2].CodeMirror.getValue()).to.equal('')
       })
-      .then(() => {
-        cy.get('.execute-button')
-          .click()
-        // https://stackoverflow.com/a/48916050
-        cy.get('.resultWrap')
-          .find('.spinner')
-          .should('not.exist')
-      })
-      .then(() => {
-        cy.get('.CodeMirror')
-          .then((editors) => {
-            expect(editors[2].CodeMirror.getValue()).to.contain('user|one')
-          })
+    // TODO: CodeMirror seems to have a delay to actually set the value to the underlying
+    //       textarea. Which can cause the test below to fail as the query submitted is
+    //       the default commented-out text, instead of the given query above.
+    cy.wait(500)
+    cy.get('.execute-button')
+      .click()
+    cy.wait('@GraphQLQuery')
+    // https://stackoverflow.com/a/48916050
+    cy.get('.resultWrap')
+      .find('.spinner')
+      .should('not.exist')
+    cy.get('.CodeMirror')
+      .then((editors) => {
+        expect(editors[0].CodeMirror.getValue()).to.equal(query)
+        expect(editors[2].CodeMirror.getValue()).to.contain('user|one')
       })
   })
 })
