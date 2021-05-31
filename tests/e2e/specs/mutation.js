@@ -53,6 +53,17 @@ describe('Mutations component', () => {
    * @param {string} nodeName - the tree node name, to search for and open the mutations form
    */
   const openMutationsForm = (nodeName) => {
+    // check that the skeleton does not exist
+    cy.get('.lm-Widget')
+      .find('.v-skeleton-loader')
+      .then((loader) => {
+        const firstChild = loader.children('div').first()
+        // The skeleton may, or may not, still be displaying in the UI...
+        if (firstChild.attr('class').includes('skeleton')) {
+          cy.wrap(firstChild)
+            .should('not.exist')
+        }
+      })
     cy
       .get('span')
       .contains(nodeName)
