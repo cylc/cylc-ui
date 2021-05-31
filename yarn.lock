@@ -6562,7 +6562,7 @@ __metadata:
     core-js: 3
     cross-env: ^7.0.3
     cross-fetch: ^3.1.4
-    cypress: ^7.3.0
+    cypress: ^7.4.0
     dedent: ^0.7.0
     dotparser: ^1.0.0
     enumify: ^2.0.0
@@ -6619,7 +6619,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"cypress@npm:^7.3.0":
+"cypress@npm:^7.4.0":
   version: 7.4.0
   resolution: "cypress@npm:7.4.0"
   dependencies:
