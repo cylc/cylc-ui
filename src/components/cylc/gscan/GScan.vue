@@ -118,7 +118,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :class="getWorkflowClass(scope.node.node)"
             >
               <v-list-item-title>
-                <v-layout align-center align-content-center d-flex flex-wrap>
+                <v-layout align-center align-content-center d-flex flex-nowrap>
                   <v-flex
                     v-if="scope.node.type === 'workflow'"
                     class="c-gscan-workflow-name"
