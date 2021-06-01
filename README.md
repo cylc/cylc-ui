@@ -7,9 +7,84 @@
 
 ## Building
 
-This project was created with the [vue-cli](https://cli.vuejs.org/). Plugins
-can be added through the vue-cli utility, and for building the project, you
-can use one of the following commands.
+This project was created with the [vue-cli](https://cli.vuejs.org/).
+
+Vue CLI wraps Webpack, Babel, and other utilities. If you need to
+customize Webpack, then you will have to modify the `vue.config.js`
+file.
+
+Its syntax is different than what you may find in Webpack documentation
+or other websites.
+
+```js
+# webpack
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        loader: 'some-loader',
+        options: {
+          someOption: true
+        }
+      }
+    ]
+  }
+}
+
+# vue.config.js
+module.exports = {
+  chainWebpack: config => {
+    config.module.rule('js')
+      .test(/\.js$/)
+      .use('some-loader')
+      .loader('some-loader')
+      .options({
+        someOption: true
+      })
+  }
+}
+```
+
+If you need to customize Babel, take a look at the `babel.config.js`
+file. But if you want to transpile dependencies you must update the
+`transpileDependencies` array in `vue.config.js`.
+
+```js
+# babel.config.js
+module.exports = (api) => {
+  api.cache(true)
+  const presets = [
+    '@vue/app'
+  ]
+  const plugins = [
+    ['@babel/plugin-proposal-class-properties', { loose: true }]
+  ]
+  return { presets, plugins }
+}
+```
+
+The example above enables class properties (e.g. static properties used in
+enumify's Enums) for the code. But dependencies are not transpiled. So you
+will have to remember to update `vue.config.js`.
+
+```js
+# vue.config.js
+module.exports = {
+  publicPath: '',
+  outputDir: 'dist',
+  indexPath: 'index.html',
+  transpileDependencies: [
+    // now the project should build fine, and the code in the dependency
+    // below can use class properties without any errors. Other dependencies
+    // are not transpiled, so if any of those dependencies use class
+    // properties in the exported code, then our build may fail, unless
+    // we include each library here.
+    'some-dependency-using-class-properties'
+  ],
+  // ...
+}
+```
 
 ### Project setup
 

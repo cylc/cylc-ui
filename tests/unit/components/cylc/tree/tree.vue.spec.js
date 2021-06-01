@@ -25,7 +25,7 @@ import { simpleWorkflowTree4Nodes } from './tree.data'
 import TaskState from '@/model/TaskState.model'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
-import cloneDeep from 'lodash.clonedeep'
+import cloneDeep from 'lodash/cloneDeep'
 
 const localVue = createLocalVue()
 localVue.prototype.$eventBus = {

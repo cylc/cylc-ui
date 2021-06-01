@@ -23,7 +23,11 @@ module.exports = {
   publicPath: '',
   outputDir: 'dist',
   indexPath: 'index.html',
-  transpileDependencies: ['vuetify', 'graphql-language-service-interface', 'graphql-language-service-parser'],
+  transpileDependencies: [
+    'graphql-language-service-interface',
+    'graphql-language-service-parser',
+    'vuetify'
+  ],
   runtimeCompiler: true,
   productionSourceMap: process.env.NODE_ENV !== 'production',
   pluginOptions: {
@@ -74,13 +78,15 @@ module.exports = {
       }
 
       // coverage
-      config.module.rule('istanbul')
-        .test(/\.js$/)
-        .include.add(path.resolve('src')).end()
-        .use('istanbul-instrumenter-loader')
-        .loader('istanbul-instrumenter-loader')
-        .options({ esModules: true })
-        .before('babel-loader')
+      if (process.env.coverage === 'true') {
+        config.module.rule('istanbul')
+          .test(/\.js$/)
+          .include.add(path.resolve('src')).end()
+          .use('istanbul-instrumenter-loader')
+          .loader('istanbul-instrumenter-loader')
+          .options({ esModules: true })
+          .after('cache-loader')
+      }
 
       // resolve modules in devtool
       config.output
