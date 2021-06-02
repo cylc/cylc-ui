@@ -22,7 +22,8 @@ import {
   mdiPauseCircle,
   mdiPlayCircle,
   mdiSkipNextCircle,
-  mdiStopCircle
+  mdiStopCircle,
+  mdiFolderPlus
 } from '@mdi/js'
 
 /**
@@ -34,6 +35,7 @@ class WorkflowState extends Enumify {
   static PAUSED = new WorkflowState('paused', mdiPauseCircle)
   static STOPPING = new WorkflowState('stopping', mdiSkipNextCircle)
   static STOPPED = new WorkflowState('stopped', mdiStopCircle)
+  static INSTALLED = new WorkflowState('installed', mdiFolderPlus)
   static ERROR = new WorkflowState('error', mdiHelpCircle)
   static _ = this.closeEnum()
 
