@@ -10,6 +10,8 @@ release.
 
 ### Enhancements
 
+[#656](https://github.com/cylc/cylc-ui/pull/656) - Show runhead-limited tasks.
+
 [#657](https://github.com/cylc/cylc-ui/pull/657) - Display a different icon, with
 a shadow underneath, for the Job component.
 
