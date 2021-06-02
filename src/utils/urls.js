@@ -38,14 +38,20 @@ function normalize (url) {
  * @param {boolean} websockets - whether the URL will be used for websockets or not
  * @returns {string} - the application base URL, containing protocol, hostname, port, and pathname
  */
-function getBaseUrl (websockets = false) {
+function getBaseUrl (websockets = false, baseonly = false) {
   const protocol = websockets
     ? window.location.protocol.startsWith('https') ? 'wss:' : 'ws:'
     : window.location.protocol
   const host = window.location.host
+  console.log('HOST', host)
   const baseUrl = `${protocol}//${host}`
-  const pathname = window.location.pathname
-  return normalize(new URL(pathname, baseUrl).href)
+  console.log(baseonly)
+  if (baseonly) {
+    return normalize(new URL(baseUrl).href)
+  } else {
+    const pathname = window.location.pathname
+    return normalize(new URL(pathname, baseUrl).href)
+  }
 }
 
 /**
@@ -56,11 +62,12 @@ function getBaseUrl (websockets = false) {
  * @param {boolean} websockets - whether the URL will be used for websockets or not
  * @returns {string} - the new URL, preceded by the base URL (e.g. https://hub:8080/users/cylc/users)
  */
-function createUrl (path, websockets = false) {
-  const baseUrl = getBaseUrl(websockets)
+function createUrl (path, websockets = false, baseonly = false) {
+  const baseUrl = getBaseUrl(websockets, baseonly)
   const url = [baseUrl, path]
     .map(part => part.trim())
     .join('/')
+  console.log(url)
   return normalize(url)
 }
 
