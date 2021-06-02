@@ -165,6 +165,42 @@
               "firstParent": {
                 "id": "user|one|20000102T0000Z|failed"
               },
+              "taskProxy": {
+                "outputs": [
+                  {
+                    "label": "msg-label-1",
+                    "message": "This is the message of label 1"
+                  },
+                  {
+                    "label": "msg-label-2",
+                    "message": "This is the message of label 2"
+                  },
+                  {
+                    "label": "msg-label-3",
+                    "message": "This is the message of label 3"
+                  },
+                  {
+                    "label": "msg-label-4",
+                    "message": "This is the message of label 4"
+                  },
+                  {
+                    "label": "msg-label-5",
+                    "message": "This is the message of label 5"
+                  },
+                  {
+                    "label": "msg-label-6",
+                    "message": "This is the message of label 6"
+                  },
+                  {
+                    "label": "msg-label-7",
+                    "message": "This is the message of label 7"
+                  },
+                  {
+                    "label": "msg-label-8",
+                    "message": "This is the message of label 8"
+                  }
+                ]
+              },
               "jobRunnerName": "background",
               "jobId": "61897",
               "platform": "localhost",
