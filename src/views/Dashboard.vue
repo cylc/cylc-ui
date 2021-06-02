@@ -226,7 +226,7 @@ export default {
         workflow: mdiBookOpenVariant,
         documentation: mdiBookMultiple
       },
-      hubUrl: createUrl('/hub/home')
+      hubUrl: createUrl('/hub/home', false, true)
     }
   },
   computed: {
