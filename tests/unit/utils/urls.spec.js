@@ -36,6 +36,13 @@ describe('urls', () => {
         location: DEFAULT_LOCATION
       },
       {
+        path: '',
+        websockets: false,
+        baseOnly: true,
+        expected: `${PROTOCOL}//${HOST}/`,
+        location: DEFAULT_LOCATION
+      },
+      {
         path: 'subscriptions',
         websockets: false,
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}subscriptions`,
@@ -94,7 +101,12 @@ describe('urls', () => {
         global.window = {
           location: test.location
         }
-        expect(createUrl(test.path, test.websockets)).to.equal(test.expected)
+        // || false just to prevent accidental undefined values
+        const url = createUrl(
+          test.path,
+          test.websockets || false,
+          test.baseOnly || false)
+        expect(url).to.equal(test.expected)
       } finally {
         global.window = originalWindow
       }
