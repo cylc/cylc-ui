@@ -43,9 +43,7 @@ function getBaseUrl (websockets = false, baseonly = false) {
     ? window.location.protocol.startsWith('https') ? 'wss:' : 'ws:'
     : window.location.protocol
   const host = window.location.host
-  console.log('HOST', host)
   const baseUrl = `${protocol}//${host}`
-  console.log(baseonly)
   if (baseonly) {
     return normalize(new URL(baseUrl).href)
   } else {
@@ -67,7 +65,6 @@ function createUrl (path, websockets = false, baseonly = false) {
   const url = [baseUrl, path]
     .map(part => part.trim())
     .join('/')
-  console.log(url)
   return normalize(url)
 }
 
