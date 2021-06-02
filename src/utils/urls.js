@@ -34,18 +34,21 @@ function normalize (url) {
  *
  * The returned URL does not include the query search params (i.e. excludes ?redirectTo=/hub/login).
  *
+ * The parameter `baseOnly` can be used to define whether the final URL will incl
+ *
  * @private
  * @param {boolean} websockets - whether the URL will be used for websockets or not
+ * @param {boolean} baseOnly - whether to use only the base URL or not when creating the new URL
  * @returns {string} - the application base URL, containing protocol, hostname, port, and pathname
  */
-function getBaseUrl (websockets = false, baseonly = false) {
+function getBaseUrl (websockets = false, baseOnly = false) {
   const protocol = websockets
     ? window.location.protocol.startsWith('https') ? 'wss:' : 'ws:'
     : window.location.protocol
   const host = window.location.host
   const baseUrl = `${protocol}//${host}`
-  if (baseonly) {
-    return normalize(new URL(baseUrl).href)
+  if (baseOnly) {
+    return normalize(baseUrl)
   } else {
     const pathname = window.location.pathname
     return normalize(new URL(pathname, baseUrl).href)
@@ -58,10 +61,11 @@ function getBaseUrl (websockets = false, baseonly = false) {
  *
  * @param {string} path - path to be used when creating a new URL (e.g. /users)
  * @param {boolean} websockets - whether the URL will be used for websockets or not
+ * @param {boolean} baseOnly - whether to use only the base URL or not when creating the new URL
  * @returns {string} - the new URL, preceded by the base URL (e.g. https://hub:8080/users/cylc/users)
  */
-function createUrl (path, websockets = false, baseonly = false) {
-  const baseUrl = getBaseUrl(websockets, baseonly)
+function createUrl (path, websockets = false, baseOnly = false) {
+  const baseUrl = getBaseUrl(websockets, baseOnly)
   const url = [baseUrl, path]
     .map(part => part.trim())
     .join('/')
