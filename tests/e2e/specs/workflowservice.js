@@ -23,7 +23,7 @@ const deltasObservable = () => cy.window().its('app.$workflowService.deltasObser
  * Helper function to retrieve the subscriptions.
  * @returns {Cypress.Chainable<any>}
  */
-const getSubscriptions = () => cy.window().its('app.$workflowService.subscriptions')
+const getSubscriptions = () => cy.window().its('app.$workflowService.subscriptionClient.operations')
 
 /**
  * Helper function to retrieve the query.
@@ -55,49 +55,32 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getSubscriptions().then(subscriptions => {
-      expect(subscriptions.length).to.equal(2)
-      // FIXME: enable later if/when using a graphql-tag object instead of string for query,
-      //        this way we can validate we have nodes/fragments in the query, instead of string-matching.
-      // getQuery().then(query => {
-      //   const firstSelection = getFirstSelection(query)
-      //   expect(firstSelection.name.value).to.equal('workflows')
-      //   // the GScan and Dashboard queries do not use cyclePoints, while the Tree query does
-      //   // so test to confirm cyclePoints is not present
-      //   expect(getSelectionSetNames(firstSelection)).to.not.include('cyclePoints')
-      // })
+      expect(Object.keys(subscriptions).length).to.equal(2)
     })
   })
-  it('-> Dashboard -> User Profile, should contain 2 subscription (GScan)', () => {
+  it('-> Dashboard -> User Profile, should contain 1 subscription (GScan)', () => {
     cy.visit('/#/')
     cy.get('[href="#/user-profile"]').click()
     cy.contains('h3', 'Your Profile')
     getSubscriptions().then(subscriptions => {
       // Only GScan subscription
-      expect(subscriptions.length).to.equal(1)
+      expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
-  it('-> Dashboard -> Workflows, should contain 1 subscription (GScan) and 1 delta-subscription (Tree)', () => {
+  it('-> Dashboard -> Workflows, should contain 2 subscriptions (GScan + Tree)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
     cy.get('div#main').should('contain', 'tree')
     getSubscriptions().then(subscriptions => {
       // Only GScan subscription
-      expect(subscriptions.length).to.equal(1)
-      // FIXME: enable later if/when using a graphql-tag object instead of string for query,
-      //        this way we can validate we have nodes/fragments in the query, instead of string-matching.
-      // getQuery().then(query => {
-      //   const firstSelection = getFirstSelection(query)
-      //   expect(firstSelection.name.value).to.equal('workflows')
-      //   // the GScan query does not uses cycle points, so it must not be present
-      //   expect(getSelectionSetNames(firstSelection)).to.not.include('cyclePoints')
-      // })
+      expect(Object.keys(subscriptions).length).to.equal(2)
     })
     deltasObservable().then(deltasObservable => {
       expect(deltasObservable.closed).to.equal(false)
     })
   })
-  it('-> Dashboard -> Workflows -> Dashboard, should contain 2 subscription (GScan + Dashboard)', () => {
+  it('-> Dashboard -> Workflows -> Dashboard, should contain 2 subscriptions (GScan + Dashboard)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
@@ -105,32 +88,15 @@ describe('WorkflowService subscriptions', () => {
     cy.get('[href="#/"]').click()
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
-      expect(subscriptions.length).to.equal(2)
-      // FIXME: enable later if/when using a graphql-tag object instead of string for query,
-      //        this way we can validate we have nodes/fragments in the query, instead of string-matching.
-      // getQuery().then(query => {
-      //   const firstSelection = getFirstSelection(query)
-      //   expect(firstSelection.name.value).to.equal('workflows')
-      //   // the GScan and Dashboard queries do not use cyclePoints, while the Tree query does
-      //   // so test to confirm cyclePoints is not present
-      //   expect(getSelectionSetNames(firstSelection)).to.not.include('cyclePoints')
-      // })
+      expect(Object.keys(subscriptions).length).to.equal(2)
     })
   })
-  it('-> Tree, should contain 1 subscription (GScan) and 1 delta-subscription (Tree)', () => {
+  it('-> Tree, should contain 2 subscriptions (GScan + Tree)', () => {
     cy.visit('/#/tree/one')
     cy.get('.c-header').should('exist')
     getSubscriptions().then(subscriptions => {
       // Only GScan subscription
-      expect(subscriptions.length).to.equal(1)
-      // FIXME: enable later if/when using a graphql-tag object instead of string for query,
-      //        this way we can validate we have nodes/fragments in the query, instead of string-matching.
-      // getQuery().then(query => {
-      //   const firstSelection = getFirstSelection(query)
-      //   expect(firstSelection.name.value).to.equal('workflows')
-      //   // the GScan query does not uses cycle points, so it must not be present
-      //   expect(getSelectionSetNames(firstSelection)).to.not.include('cyclePoints')
-      // })
+      expect(Object.keys(subscriptions).length).to.equal(2)
     })
     deltasObservable().then(deltasObservable => {
       expect(deltasObservable.closed).to.equal(false)
@@ -144,16 +110,7 @@ describe('WorkflowService subscriptions', () => {
       .click({ force: true })
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
-      expect(subscriptions.length).to.equal(2)
-      // FIXME: enable later if/when using a graphql-tag object instead of string for query,
-      //        this way we can validate we have nodes/fragments in the query, instead of string-matching.
-      // getQuery().then(query => {
-      //   const firstSelection = getFirstSelection(query)
-      //   expect(firstSelection.name.value).to.equal('workflows')
-      //   // the GScan and Dashboard queries do not use cyclePoints, while the Tree query does
-      //   // so test to confirm cyclePoints is not present
-      //   expect(getSelectionSetNames(firstSelection)).to.not.include('cyclePoints')
-      // })
+      expect(Object.keys(subscriptions).length).to.equal(2)
     })
   })
 })

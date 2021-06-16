@@ -43,12 +43,12 @@ describe('workflows', () => {
           name: 'cylc'
         }
       ]
-      store.dispatch('workflows/set', workflows)
+      store.dispatch('workflows/setWorkflows', workflows)
       expect(store.state.workflows.workflows).to.deep.equal(workflows)
     })
     it('should set workflow name', () => {
       const workflowName = 'cylc'
-      store.commit('workflows/SET_WORKFLOW_NAME', { workflowName })
+      store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
       expect(store.state.workflows.workflowName).to.equal(workflowName)
     })
     it('should get the current workflow', () => {
@@ -59,10 +59,8 @@ describe('workflows', () => {
           name: 'cylc'
         }
       ]
-      store.dispatch('workflows/set', workflows)
-      store.commit('workflows/SET_WORKFLOW_NAME', {
-        workflowName: workflows[0].name
-      })
+      store.dispatch('workflows/setWorkflows', workflows)
+      store.commit('workflows/SET_WORKFLOW_NAME', workflows[0].name)
       expect(store.getters['workflows/currentWorkflow']).to.deep.equal(workflows[0])
     })
   })
