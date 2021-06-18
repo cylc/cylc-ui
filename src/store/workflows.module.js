@@ -14,9 +14,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import applyDeltasGScan from '@/components/cylc/gscan/deltas'
+import applyDeltasLookup from '@/components/cylc/workflow/deltas'
+import applyDeltasTree from '@/components/cylc/tree/deltas'
+import Alert from '@/model/Alert.model'
+import { clear } from '@/components/cylc/tree/index'
 
 const state = {
+  /**
+   * @type {Object.<String, Object>}
+   */
+  lookup: {},
+  /**
+   * This is the CylcTree, which contains the hierarchical tree data structure.
+   * It is created from the GraphQL data, with the only difference that this one
+   * contains hierarchy, while the lookup (not workflow.lookup) is flat-ish.
+   *
+   * The nodes in the .tree property have a reference or pointer (.node) to the
+   * data in the lookup map above, to avoid data duplication.
+   *
+   * @type {Workflow}
+   */
+  workflow: {
+    tree: {},
+    lookup: {}
+  },
+  /**
+   * @type {Array<Object>}
+   */
   workflows: [],
+  /**
+   * @type {String}
+   */
   workflowName: null
 }
 
@@ -25,24 +54,88 @@ const getters = {
     if (state.workflowName === null) {
       return null
     }
-    return state.workflows.find(workflow => workflow.name === state.workflowName) || null
+    return Object.values(state.workflows)
+      .find(workflow => workflow.name === state.workflowName)
   }
 }
 
 const mutations = {
-  SET (state, data) {
-    // TODO: when subscriptions are introduced this will have to apply
-    // deltas to the store
+  SET_WORKFLOWS (state, data) {
     state.workflows = data
   },
-  SET_WORKFLOW_NAME (state, { workflowName }) {
-    state.workflowName = workflowName
+  SET_WORKFLOW_NAME (state, data) {
+    state.workflowName = data
+  },
+  SET_WORKFLOW (state, data) {
+    state.workflow = data
+  },
+  SET_LOOKUP (state, data) {
+    state.lookup = data
+  },
+  CLEAR_WORKFLOW (state) {
+    clear(state.workflow)
+    state.workflow = {
+      tree: {
+        id: '',
+        type: 'workflow',
+        children: []
+      },
+      lookup: {}
+    }
   }
 }
 
 const actions = {
-  set ({ commit }, data) {
-    commit('SET', data)
+  setWorkflowName ({ commit }, data) {
+    commit('SET_WORKFLOW_NAME', data)
+  },
+  applyWorkflowsDeltas ({ commit, state }, data) {
+    // modifying state directly in an action results in warnings...
+    const workflows = Object.assign({}, state.workflows)
+    applyDeltasGScan(data, workflows)
+    commit('SET_WORKFLOWS', workflows)
+  },
+  clearWorkflows ({ commit }) {
+    commit('SET_WORKFLOWS', [])
+  },
+  applyWorkflowDeltas ({ commit, state }, data) {
+    // modifying state directly in an action results in warnings...
+    const lookup = Object.assign({}, state.lookup)
+    const result = applyDeltasLookup(data, lookup)
+    if (result.errors.length === 0) {
+      commit('SET_LOOKUP', lookup)
+    }
+    result.errors.forEach(error => {
+      commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+      // eslint-disable-next-line no-console
+      console.warn(...error)
+    })
+  },
+  clearWorkflow ({ commit }) {
+    commit('SET_LOOKUP', {})
+  },
+  applyTreeDeltas ({ commit, state }, data) {
+    // modifying state directly in an action results in warnings...
+    const workflow = state.workflow
+    const lookup = state.lookup
+    // TODO: this could be an options object stored in the Vuex store, in some module...
+    const options = {
+      cyclePointsOrderDesc: localStorage.cyclePointsOrderDesc
+        ? JSON.parse(localStorage.cyclePointsOrderDesc)
+        : true
+    }
+    const result = applyDeltasTree(data, workflow, lookup, options)
+    if (result.errors.length === 0) {
+      commit('SET_WORKFLOW', workflow)
+    }
+    result.errors.forEach(error => {
+      commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+      // eslint-disable-next-line no-console
+      console.warn(...error)
+    })
+  },
+  clearTree ({ commit }) {
+    commit('CLEAR_WORKFLOW')
   }
 }
 

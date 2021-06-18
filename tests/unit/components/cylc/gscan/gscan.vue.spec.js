@@ -17,13 +17,15 @@
 
 import { createLocalVue, mount, RouterLinkStub } from '@vue/test-utils'
 import { expect } from 'chai'
-import GScan from '@/components/cylc/gscan/GScan'
-import TreeItem from '@/components/cylc/tree/TreeItem'
+import Vue from 'vue'
+import Vuex from 'vuex'
+import Vuetify from 'vuetify'
 import { simpleWorkflowGscanNodes } from './gscan.data'
+import storeOptions from '@/store/options'
 import WorkflowState from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
-import Vuetify from 'vuetify'
-import Vue from 'vue'
+import GScan from '@/components/cylc/gscan/GScan'
+import TreeItem from '@/components/cylc/tree/TreeItem'
 
 global.requestAnimationFrame = cb => cb()
 
@@ -52,8 +54,16 @@ localVue.prototype.$workflowService = {
 }
 
 Vue.use(Vuetify)
+Vue.use(Vuex)
 
 describe('GScan component', () => {
+  const store = new Vuex.Store(storeOptions)
+  const resetState = () => {
+    store.commit('workflows/SET_WORKFLOWS', [])
+    store.commit('workflows/SET_WORKFLOW_NAME', null)
+  }
+  beforeEach(resetState)
+  afterEach(resetState)
   /**
    * @param options
    * @returns {Wrapper<GScan>}
@@ -63,6 +73,7 @@ describe('GScan component', () => {
     return mount(GScan, {
       localVue,
       vuetify,
+      store,
       stubs: {
         RouterLink: RouterLinkStub
       },
@@ -71,11 +82,9 @@ describe('GScan component', () => {
   }
   it('should display a skeleton loader if loading data', () => {
     const wrapper = mountFunction({
-      data () {
-        return {
-          isLoading: true,
-          workflowsTracker: 1,
-          workflows: simpleWorkflowGscanNodes
+      computed: {
+        isLoading () {
+          return true
         }
       }
     })
@@ -84,49 +93,11 @@ describe('GScan component', () => {
     expect(isBusy).to.equal('true')
   })
   it('should display the GScan with valid data', () => {
-    const wrapper = mountFunction({
-      data () {
-        return {
-          isLoading: false,
-          workflowsTracker: 1,
-          workflows: simpleWorkflowGscanNodes
-        }
-      }
-    })
-    expect([...wrapper.vm.$data.workflows.values()][0].name).to.equal('five')
+    store.commit('workflows/SET_WORKFLOWS', simpleWorkflowGscanNodes)
+    const wrapper = mountFunction({})
+    expect(wrapper.vm.workflows[0].name).to.equal('five')
     expect(wrapper.find('div')).to.not.equal(null)
     expect(wrapper.html()).to.contain('five')
-  })
-  it('should destroy observables (force update)', () => {
-    const wrapper = mountFunction({
-      data () {
-        return {
-          isLoading: false,
-          workflowsTracker: 1,
-          workflows: simpleWorkflowGscanNodes
-        }
-      }
-    })
-    expect(wrapper.vm.$data.deltasObservable).to.not.equal(null)
-    wrapper.vm.$destroy()
-    // .deltasObservable is NOT RxJS/JS Observable; it is a mocked object, see at the top of this file for more. The
-    // .unsubscribe property is defined for ease of testing here.
-    expect(wrapper.vm.$data.deltasObservable.unsubscribed).to.equal(true)
-  })
-  it('should set loading state', () => {
-    const wrapper = mountFunction({
-      propsData: {
-        workflows: simpleWorkflowGscanNodes
-      },
-      data () {
-        return {
-          isLoading: false
-        }
-      }
-    })
-    expect(wrapper.vm.isLoading).to.equal(false)
-    wrapper.vm.setActive(false)
-    expect(wrapper.vm.isLoading).to.equal(true)
   })
   describe('Sorting', () => {
     const createWorkflows = (namesAndStatuses) => {
@@ -226,15 +197,8 @@ describe('GScan component', () => {
         }
       ]
       tests.forEach(test => {
-        const wrapper = mountFunction({
-          data () {
-            return {
-              isLoading: false,
-              workflowsTracker: 1,
-              workflows: test.workflows
-            }
-          }
-        })
+        store.commit('workflows/SET_WORKFLOWS', test.workflows)
+        const wrapper = mountFunction()
         const workflowsElements = wrapper.findAllComponents(TreeItem)
         expect(workflowsElements.length).to.equal(test.expected.length)
         for (let i = 0; i < test.expected.length; i++) {
@@ -290,15 +254,8 @@ describe('GScan component', () => {
       ]
     }
     it('should have a default state of no name filter, and all states enabled', () => {
-      const wrapper = mountFunction({
-        data () {
-          return {
-            isLoading: false,
-            workflowsTracker: 1,
-            workflows: workflows
-          }
-        }
-      })
+      store.commit('workflows/SET_WORKFLOWS', workflows)
+      const wrapper = mountFunction({})
       // read: give me all the workflows in RUNNING/PAUSED/STOPPED, no
       //       matter their names or their tasks' states.
       // no workflow name filtered initially
@@ -315,13 +272,8 @@ describe('GScan component', () => {
       expect(wrapper.vm.filteredWorkflows.length).to.equal(2)
     })
     it('should not filter by name, nor by tasks state by default, but should include all workflow states', () => {
-      const wrapper = mountFunction({
-        data () {
-          return {
-            workflows: workflows
-          }
-        }
-      })
+      store.commit('workflows/SET_WORKFLOWS', workflows)
+      const wrapper = mountFunction({})
       wrapper.vm.filterWorkflows(
         wrapper.vm.workflows,
         wrapper.vm.searchWorkflows,
@@ -351,13 +303,8 @@ describe('GScan component', () => {
           }
         ]
         tests.forEach(test => {
-          const wrapper = mountFunction({
-            data () {
-              return {
-                workflows: workflows
-              }
-            }
-          })
+          store.commit('workflows/SET_WORKFLOWS', workflows)
+          const wrapper = mountFunction({})
           expect(wrapper.vm.filteredWorkflows.length).to.equal(2)
           wrapper.vm.filterWorkflows(wrapper.vm.workflows, test.searchWorkflow, wrapper.vm.filters)
           expect(wrapper.vm.filteredWorkflows.length).to.equal(test.expected)
@@ -396,13 +343,8 @@ describe('GScan component', () => {
               }
               return Object.assign({}, state, { model: false })
             })
-          const wrapper = mountFunction({
-            data () {
-              return {
-                workflows: workflows
-              }
-            }
-          })
+          store.commit('workflows/SET_WORKFLOWS', workflows)
+          const wrapper = mountFunction({})
           const filters = createStatesFilters(workflowStates, initialWorkflowTaskStates)
           wrapper.vm.filterWorkflows(wrapper.vm.workflows, '', filters)
           expect(wrapper.vm.filteredWorkflows.length).to.equal(test.expected)
@@ -441,13 +383,8 @@ describe('GScan component', () => {
               }
               return Object.assign({}, state, { model: false })
             })
-          const wrapper = mountFunction({
-            data () {
-              return {
-                workflows: workflows
-              }
-            }
-          })
+          store.commit('workflows/SET_WORKFLOWS', workflows)
+          const wrapper = mountFunction({})
           const filters = createStatesFilters(initialWorkflowStates, workflowTaskStates)
           wrapper.vm.filterWorkflows(wrapper.vm.workflows, '', filters)
           expect(wrapper.vm.filteredWorkflows.length).to.equal(test.expected)
