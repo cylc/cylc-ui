@@ -14,7 +14,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
 <template>
   <div
     class="c-gscan"
@@ -145,33 +144,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       :key="`${scope.node.id}-summary-${state}`"
                       :class="getTaskStateClasses(scope.node.node, state)"
                     >
-                      <v-tooltip color="black" top>
-                        <template v-slot:activator="{ on }">
-                          <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
-                          <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
-                          <v-btn
-                            v-on="on"
-                            class="ma-0 pa-0"
-                            min-width="0"
-                            min-height="0"
-                            style="font-size: 120%; width: auto"
-                            :ripple="false"
-                            dark
-                            icon
-                          >
-                            <job :status="state" />
-                          </v-btn>
-                        </template>
-                        <!-- tooltip text -->
-                        <span>
-                          <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
-                          <br/>
-                          <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
-                            {{ task }}<br v-if="index !== tasks.length -1" />
-                          </span>
+                    <v-tooltip color="black" top>
+                      <template v-slot:activator="{ on }">
+                        <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
+                        <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                        <v-btn
+                          v-on="on"
+                          class="ma-0 pa-0"
+                          min-width="0"
+                          min-height="0"
+                          style="font-size: 120%; width: auto"
+                          :ripple="false"
+                          dark
+                          icon
+                        >
+                          <job :status="state" />
+                        </v-btn>
+                      </template>
+                      <!-- tooltip text -->
+                      <span>
+                        <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                        <br/>
+                        <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
+                          {{ task }}<br v-if="index !== tasks.length -1" />
                         </span>
-                      </v-tooltip>
-                    </span>
+                      </span>
+                    </v-tooltip>
+                  </span>
                   </v-flex>
                 </v-layout>
               </v-list-item-title>
@@ -190,20 +189,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
-import WorkflowState from '@/model/WorkflowState.model'
+import { mapState } from 'vuex'
 import { mdiFilter } from '@mdi/js'
+import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import JobState from '@/model/JobState.model'
+import TaskState from '@/model/TaskState.model'
+import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import WorkflowState from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
-import { createWorkflowNode } from '@/components/cylc/tree/tree-nodes'
-import TaskState from '@/model/TaskState.model'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
-import JobState from '@/model/JobState.model'
-import Vue from 'vue'
-import { mergeWith } from 'lodash'
-import { mergeWithCustomizer } from '@/components/cylc/common/merge'
-import Alert from '@/model/Alert.model'
-import store from '@/store/'
+import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
+import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
   name: 'GScan',
@@ -212,9 +209,18 @@ export default {
     Tree,
     WorkflowIcon
   },
+  mixins: [
+    subscriptionComponentMixin
+  ],
   data () {
     return {
-      isLoading: true,
+      query: new SubscriptionQuery(
+        GSCAN_DELTAS_SUBSCRIPTION,
+        {},
+        'root',
+        ['workflows/applyWorkflowsDeltas'],
+        ['workflows/clearWorkflows']
+      ),
       maximumTasksDisplayed: 5,
       svgPaths: {
         filter: mdiFilter
@@ -299,16 +305,11 @@ export default {
         //   title: 'cylc version',
         //   items: [] // TODO: will it be in state totals?
         // }
-      ],
-      workflows: {},
-      /**
-       * Observable for a deltas query subscription.
-       * @type {ZenObservable.Subscription}
-       */
-      deltasObservable: null
+      ]
     }
   },
   computed: {
+    ...mapState('workflows', ['workflows']),
     /**
      * Sort workflows by type first, showing running or paused workflows first,
      * then stopped. Within each group, workflows are sorted alphabetically
@@ -328,9 +329,7 @@ export default {
             { numeric: true, sensitivity: 'base' })
       })
         .map(workflow => {
-          const node = createWorkflowNode(workflow)
-          delete node.children
-          return node
+          return createWorkflowNode(workflow)
         })
     }
   },
@@ -363,48 +362,7 @@ export default {
       }
     }
   },
-  created () {
-    const vm = this
-    this.deltasObservable = this.$workflowService.startDeltasSubscription(GSCAN_DELTAS_SUBSCRIPTION, {}, {
-      next: function next (response) {
-        const added = response.data.deltas.added
-        const updated = response.data.deltas.updated
-        const pruned = response.data.deltas.pruned
-        if (added && added.workflow && added.workflow.status) {
-          Vue.set(vm.workflows, added.workflow.id, added.workflow)
-        }
-        if (updated && updated.workflow && vm.workflows[updated.workflow.id]) {
-          mergeWith(vm.workflows[updated.workflow.id], updated.workflow, mergeWithCustomizer)
-        }
-        if (pruned && pruned.workflow) {
-          Vue.delete(vm.workflows, pruned.workflow)
-        }
-        // TODO: document what is using this data in Vuex store
-        store.dispatch(
-          'workflows/set',
-          Object.values(vm.workflows)
-        )
-        vm.isLoading = false
-      },
-      error: function error (err) {
-        vm.setAlert(new Alert(err.message, null, 'error'))
-        vm.isLoading = false
-      }
-    })
-  },
-  beforeDestroy () {
-    if (this.deltasObservable) {
-      this.deltasObservable.unsubscribe()
-    }
-  },
   methods: {
-    setActive (isActive) {
-      /** Toggle the isLoading state.
-       * @param {bool} isActive - Are this views subs active.
-       */
-      this.isLoading = !isActive
-    },
-
     getWorkflowClass (node) {
       return {
         'c-workflow-stopped': node && node.status && node.status === WorkflowState.STOPPED.name

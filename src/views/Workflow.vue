@@ -35,8 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           type="list-item-three-line"
           tab-title="tree"
         >
-          <tree-component
-            :workflows="tree.root.children"
+          <tree-view
+            :workflow-name="workflowName"
           />
         </v-skeleton-loader>
         <mutations-view
@@ -52,37 +52,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mixin } from '@/mixins'
-import { datatree } from '@/mixins/treeview'
-import { mapState } from 'vuex'
-import Lumino from '@/components/cylc/workflow/Lumino'
-import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
-import CylcTree from '@/components/cylc/tree/cylc-tree'
-import { applyDeltas } from '@/components/cylc/tree/deltas'
-import Alert from '@/model/Alert.model'
-import { each, iter } from '@lumino/algorithm'
-import TreeComponent from '@/components/cylc/tree/Tree.vue'
-import MutationsView from '@/views/Mutations'
 import Vue from 'vue'
-import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
+import { each, iter } from '@lumino/algorithm'
+import pageMixin from '@/mixins'
+import graphqlMixin from '@/mixins/graphql'
+import subscriptionViewMixin from '@/mixins/subscriptionView'
+import ViewState from '@/model/ViewState.model'
+import { createWidgetId } from '@/components/cylc/workflow/index'
+import Lumino from '@/components/cylc/workflow/Lumino'
+import Toolbar from '@/components/cylc/workflow/Toolbar'
 import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
+import MutationsView from '@/views/Mutations'
+import TreeView from '@/views/Tree'
+import { mapState } from 'vuex'
 
 export default {
-  mixins: [
-    mixin,
-    datatree
-  ],
   name: 'Workflow',
-  props: {
-    workflowName: {
-      type: String,
-      required: true
-    }
-  },
+  mixins: [
+    pageMixin,
+    graphqlMixin,
+    subscriptionViewMixin
+  ],
   components: {
     CylcObjectMenu,
     Lumino,
-    TreeComponent,
+    TreeView,
     MutationsView,
     Toolbar
   },
@@ -92,37 +86,19 @@ export default {
     }
   },
   data: () => ({
-    deltaSubscriptions: [],
     /**
-     * Observable for a deltas query subscription.
-     * @type {ZenObservable.Subscription}
-     */
-    deltasObservable: null,
-    /**
-     * The CylcTree object, which receives delta updates. We must have only one for this
-     * view, and it should contain data only while the tree subscription is active (i.e.
-     * there are tree widgets added to the Lumino component).
+     * The widgets added to the view.
      *
-     * @type {CylcTree}
-     */
-    tree: new CylcTree(null, {
-      cyclePointsOrderDesc: localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC
-    }),
-    isLoading: true,
-    // the widgets added to the view
-    /**
-     * @type {
-     *   Object.<string, string>
-     * }
+     * @type {Object.<String, String>}
      */
     widgets: {}
   }),
   computed: {
-    ...mapState('user', ['user']),
+    ...mapState('workflows', ['workflow']),
     treeWidgets () {
       return Object
         .entries(this.widgets)
-        .filter(([id, type]) => type === TreeComponent.name)
+        .filter(([id, type]) => type === TreeView.name)
         .map(([id, type]) => id)
     },
     mutationsWidgets () {
@@ -135,19 +111,11 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$nextTick(() => {
-        vm.addView('tree')
+        vm.addView(TreeView.name)
       })
     })
   },
   beforeRouteUpdate (to, from, next) {
-    this.isLoading = true
-    // clear the tree with current workflow data
-    this.tree.clear()
-    // stop delta subscription if any
-    if (this.deltasObservable) {
-      this.deltasObservable.unsubscribe()
-    }
-    this.tree.clear()
     // clear all widgets
     this.removeAllWidgets()
     next()
@@ -155,54 +123,36 @@ export default {
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
       // Create a Tree View for the current workflow by default
-      this.addView('tree')
+      this.addView(TreeView.name)
     })
   },
   beforeRouteLeave (to, from, next) {
-    if (this.deltasObservable) {
-      this.deltasObservable.unsubscribe()
-    }
-    this.tree.clear()
+    // clear all widgets
+    this.removeAllWidgets()
     next()
   },
   methods: {
     /**
-     * @return {number} subscription ID
-     */
-    subscribeDeltas () {
-      const id = new Date().getTime()
-      // start deltas subscription if not running
-      if (this.deltaSubscriptions.length === 0) {
-        const vm = this
-        this.deltasObservable = this.$workflowService
-          .startDeltasSubscription(WORKFLOW_TREE_DELTAS_SUBSCRIPTION, this.variables, {
-            next: function next (response) {
-              applyDeltas(response.data.deltas, vm.tree)
-              vm.isLoading = false
-            },
-            error: function error (err) {
-              vm.setAlert(new Alert(err.message, null, 'error'))
-              vm.isLoading = false
-            }
-          })
-      }
-      this.deltaSubscriptions.push(id)
-      return id
-    },
-    /**
      * Add a new view widget.
-     *
-     * TODO: These views should all have a standard interface.
      */
     addView (view) {
-      if (view === 'tree') {
-        const subscriptionId = this.subscribeDeltas()
-        Vue.set(this.widgets, subscriptionId, TreeComponent.name)
-      } else if (view === 'mutations') {
-        Vue.set(this.widgets, (new Date()).getTime(), MutationsView.name)
-      } else {
+      switch (view) {
+      case TreeView.name:
+        Vue.set(this.widgets, createWidgetId(), TreeView.name)
+        break
+      case MutationsView.name:
+        Vue.set(this.widgets, createWidgetId(), MutationsView.name)
+        break
+      default:
         throw Error(`Unknown view "${view}"`)
       }
+      this.$nextTick(() => {
+        // Views use navigation-guards to start the pending subscriptions. But we don't have
+        // this in this view. We must pretend we are doing the beforeRouteEnter here, and
+        // call the .startSubscriptions function, so that the WorkflowService will take care
+        // of loading the pending subscriptions (like the ones created by the new view).
+        this.$workflowService.startSubscriptions()
+      })
     },
     /**
      * Remove all the widgets present in the UI.
@@ -230,18 +180,11 @@ export default {
      */
     onWidgetDeletedEvent (event) {
       Vue.delete(this.widgets, event.id)
-      const vm = this
-      const subscriptionId = Number.parseFloat(event.id)
-      if (vm.deltaSubscriptions.includes(subscriptionId)) {
-        // if this is a tree widget with a deltas subscription, then stop it if the last widget using it
-        vm.deltaSubscriptions.splice(this.deltaSubscriptions.indexOf(subscriptionId), 1)
-        if (this.deltaSubscriptions.length === 0) {
-          this.deltasObservable.unsubscribe()
-          this.tree.clear()
-        }
-      }
+      // If we have no more widgets in the view, then we are not loading, not complete, not error,
+      // but back to beginning. When a widget is added, if it uses a query, then the mixins will
+      // take care to set the state to LOADING and then COMPLETE (and hopefully not ERROR).
       if (Object.entries(this.widgets).length === 0) {
-        this.isLoading = true
+        this.viewState = ViewState.NO_STATE
       }
     }
   }
