@@ -24,6 +24,43 @@ import {
 // reference to closure listener (needed as we are using variables from another scope)
 let listener = null
 
+function bind (el, binding, vnode) {
+  const mutations = vnode.context.$workflowService.mutations
+  const types = vnode.context.$workflowService.types
+  // a closure to use the variables above in the event listener
+  listener = function (e) {
+    const cylcId = binding.value
+    const tokens = tokenise(cylcId)
+    const type = getType(tokens)
+    const componentMutations = filterAssociations(
+      type,
+      tokens,
+      mutations
+    )
+    vnode.context.$eventBus.emit('show-mutations-menu', {
+      id: cylcId,
+      type: type,
+      types: types,
+      tokens: tokens,
+      mutations: componentMutations,
+      event: e
+    })
+  }
+  el.addEventListener('click', listener)
+  el.classList.add('c-interactive')
+}
+
+function unbind (el) {
+  // clean up to avoid memory issues
+  el.removeEventListener('show-mutations-menu', listener)
+  listener = null
+}
+
+function update (el, binding, newVnode, oldVnode) {
+  unbind(el)
+  bind(el, binding, newVnode)
+}
+
 /**
  * Cylc Objects plug-in.
  */
@@ -36,36 +73,9 @@ export default {
   install (Vue, options) {
     // add a global directive
     Vue.directive('cylc-object', {
-      bind (el, binding, vnode) {
-        const cylcId = binding.value
-        const mutations = vnode.context.$workflowService.mutations
-        const types = vnode.context.$workflowService.types
-        // a closure to use the variables above in the event listener
-        listener = function (e) {
-          const tokens = tokenise(cylcId)
-          const type = getType(tokens)
-          const componentMutations = filterAssociations(
-            type,
-            tokens,
-            mutations
-          )
-          vnode.context.$eventBus.emit('show-mutations-menu', {
-            id: cylcId,
-            type: type,
-            types: types,
-            tokens: tokens,
-            mutations: componentMutations,
-            event: e
-          })
-        }
-        el.addEventListener('click', listener)
-        el.classList.add('c-interactive')
-      },
-      unbind (el) {
-        // clean up to avoid memory issues
-        el.removeEventListener('show-mutations-menu', listener)
-        listener = null
-      }
+      bind,
+      unbind,
+      update
     })
   }
 }
