@@ -52,9 +52,7 @@ const actions = {
       // eslint-disable-next-line no-console
       console.log(alert)
     }
-    if (alert === null || state.alert === null || state.alert.getText() !== alert.getText()) {
-      commit('SET_ALERT', alert)
-    }
+    commit('SET_ALERT', alert)
   }
 }
 
