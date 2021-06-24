@@ -20,6 +20,9 @@ of cycle points.
 
 ### Fixes
 
+[#691](https://github.com/cylc/cylc-ui/pull/691) -
+Fix bug that could cause mutations to be run against the wrong workflow.
+
 [#649](https://github.com/cylc/cylc-ui/pull/649) - Avoid re-sorting a
 sorted array, instead adding a new element in its sorted index (respecting
 locale, and numeric on).
