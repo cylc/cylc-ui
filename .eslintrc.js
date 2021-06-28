@@ -22,8 +22,8 @@ module.exports = {
   },
   extends: [
     'standard',
-    'plugin:vue/essential',
-    'eslint:recommended'
+    'eslint:recommended',
+    'plugin:vue/essential'
   ],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
