@@ -448,7 +448,7 @@ export default {
         })
       const summary = workflowStates
         .map(stateTotal => `${stateTotal[0]}, ${stateTotal[1]}`)
-        .join(',')
+        .join(', ')
       return workflowStates
         .map(stateTotal => {
           return {
