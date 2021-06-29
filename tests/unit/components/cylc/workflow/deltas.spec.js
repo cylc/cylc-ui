@@ -16,8 +16,12 @@
  */
 
 import { expect } from 'chai'
+import sinon from 'sinon'
+import Vue from 'vue'
 import applyWorkflowDeltas from '@/components/cylc/workflow/deltas'
 import WorkflowState from '@/model/WorkflowState.model'
+
+const sandbox = sinon.createSandbox()
 
 describe('Workflow component', () => {
   let lookup
@@ -28,6 +32,9 @@ describe('Workflow component', () => {
       id: 'cylc|test',
       status: WorkflowState.PAUSED
     }
+  })
+  afterEach(() => {
+    sandbox.restore()
   })
   describe('Deltas', () => {
     describe('Added', () => {
@@ -41,6 +48,22 @@ describe('Workflow component', () => {
         }
         applyWorkflowDeltas(data, lookup)
         expect(lookup[newWorkflow.id]).to.deep.equal(newWorkflow)
+      })
+      it('should collect errors', () => {
+        const data = {
+          deltas: {
+            added: {
+              workflow: newWorkflow
+            }
+          }
+        }
+        const stub = sandbox.stub(Vue, 'set')
+        stub.callsFake(() => {
+          throw new Error('test')
+        })
+        const result = applyWorkflowDeltas(data, lookup)
+        expect(result.errors.length).to.equal(1)
+        expect(result.errors[0][1].message).to.contain('test')
       })
     })
     describe('Updated', () => {
@@ -75,6 +98,22 @@ describe('Workflow component', () => {
         }
         applyWorkflowDeltas(data, lookup)
         expect(lookup[newWorkflow.id].status).to.equal(WorkflowState.PAUSED)
+      })
+      it('should collect errors', () => {
+        const data = {
+          deltas: {
+            updated: {
+              workflow: newWorkflow
+            }
+          }
+        }
+        const stub = sandbox.stub(Vue, 'set')
+        stub.callsFake(() => {
+          throw new Error('test')
+        })
+        const result = applyWorkflowDeltas(data, lookup)
+        expect(result.errors.length).to.equal(1)
+        expect(result.errors[0][1].message).to.contain('test')
       })
     })
     describe('Pruned', () => {
