@@ -22,6 +22,14 @@ import { clear } from '@/components/cylc/tree/index'
 
 const state = {
   /**
+   * This stores workflow data as a hashmap/dictionary. The keys
+   * are the ID's of the entities returned from GraphQL.
+   *
+   * The values of the dictionary hold the GraphQL data returned as-is.
+   *
+   * The intention is for workflow views to look up data in this structure
+   * and re-use, instead of duplicating it.
+   *
    * @type {Object.<String, Object>}
    */
   lookup: {},
@@ -40,10 +48,19 @@ const state = {
     lookup: {}
   },
   /**
+   * This contains a list of workflows returned from GraphQL and is used by components
+   * such as GScan, Dashboard, and WorkflowsTable.
+   *
    * @type {Array<Object>}
    */
   workflows: [],
   /**
+   * This holds the name of the current workflow. This is set by VueRouter
+   * and is used to decide what's the current workflow. It is used in conjunction
+   * with the workflows/workflows (above) when finding the current workflow and
+   * using it, for instance, to create the GraphQL variables of a workflow
+   * view (see mixins used in the Tree View).
+   *
    * @type {String}
    */
   workflowName: null
