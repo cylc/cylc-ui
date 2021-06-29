@@ -222,13 +222,13 @@ function addWorkflow (workflowNode, workflow, options) {
  * @param {*} options
  */
 function addCyclePoint (cyclePoint, workflow, options) {
-  const cyclePointsOrderDesc = options.cyclePointsOrderDesc !== undefined
-    ? options.cyclePointsOrderDesc
-    : DEFAULT_CYCLE_POINTS_ORDER_DESC
   if (!workflow.lookup[cyclePoint.id]) {
     Vue.set(workflow.lookup, cyclePoint.id, cyclePoint)
     const parent = workflow.tree
     // when DESC mode, reverse to put cyclepoints in ascending order (i.e. 1, 2, 3)
+    const cyclePointsOrderDesc = options.cyclePointsOrderDesc !== undefined
+      ? options.cyclePointsOrderDesc
+      : DEFAULT_CYCLE_POINTS_ORDER_DESC
     const cyclePoints = cyclePointsOrderDesc ? [...parent.children].reverse() : parent.children
     const insertIndex = sortedIndexBy(
       cyclePoints,
