@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import applyDeltasGScan from '@/components/cylc/gscan/deltas'
+import applyDeltasWorkflows from '@/components/cylc/gscan/deltas'
 import applyDeltasLookup from '@/components/cylc/workflow/deltas'
 import applyDeltasTree from '@/components/cylc/tree/deltas'
 import Alert from '@/model/Alert.model'
@@ -109,7 +109,7 @@ const actions = {
   applyWorkflowsDeltas ({ commit, state }, data) {
     // modifying state directly in an action results in warnings...
     const workflows = Object.assign({}, state.workflows)
-    applyDeltasGScan(data, workflows)
+    applyDeltasWorkflows(data, workflows)
     commit('SET_WORKFLOWS', workflows)
   },
   clearWorkflows ({ commit }) {
