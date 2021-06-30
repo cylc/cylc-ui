@@ -46,6 +46,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :workflow-name="workflowName"
           tab-title="mutations"
         />
+        <subscriptions-view
+          v-for="widgetId of subscriptionsWidgets"
+          :key="widgetId"
+          :id="widgetId"
+          :workflow-name="workflowName"
+          tab-title="subscriptions"
+        />
       </lumino>
     </div>
   </div>
@@ -63,6 +70,7 @@ import Lumino from '@/components/cylc/workflow/Lumino'
 import Toolbar from '@/components/cylc/workflow/Toolbar'
 import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
 import MutationsView from '@/views/Mutations'
+import SubscriptionsView from '@/components/cylc/Subscriptions'
 import TreeView from '@/views/Tree'
 import { mapState } from 'vuex'
 
@@ -78,6 +86,7 @@ export default {
     Lumino,
     TreeView,
     MutationsView,
+    SubscriptionsView,
     Toolbar
   },
   metaInfo () {
@@ -105,6 +114,12 @@ export default {
       return Object
         .entries(this.widgets)
         .filter(([id, type]) => type === MutationsView.name)
+        .map(([id, type]) => id)
+    },
+    subscriptionsWidgets () {
+      return Object
+        .entries(this.widgets)
+        .filter(([id, type]) => type === SubscriptionsView.name)
         .map(([id, type]) => id)
     }
   },
@@ -142,6 +157,9 @@ export default {
         break
       case MutationsView.name:
         Vue.set(this.widgets, createWidgetId(), MutationsView.name)
+        break
+      case SubscriptionsView.name:
+        Vue.set(this.widgets, createWidgetId(), SubscriptionsView.name)
         break
       default:
         throw Error(`Unknown view "${view}"`)

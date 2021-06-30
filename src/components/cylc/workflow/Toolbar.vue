@@ -125,6 +125,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapGetters, mapState } from 'vuex'
 import {
   mdiAppleKeyboardCommand,
+  mdiBroadcast,
   mdiFileTree,
   mdiMicrosoftXboxControllerMenu,
   mdiPause,
@@ -137,6 +138,7 @@ import toolbar from '@/mixins/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import TreeView from '@/views/Tree'
 import MutationsView from '@/views/Mutations'
+import SubscriptionsView from '@/components/cylc/Subscriptions'
 
 import {
   mutationStatus
@@ -174,7 +176,10 @@ export default {
       {
         name: MutationsView.name,
         icon: mdiAppleKeyboardCommand
-
+      },
+      {
+        name: SubscriptionsView.name,
+        icon: mdiBroadcast
       }
     ]
   }),
