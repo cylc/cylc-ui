@@ -53,6 +53,10 @@ describe('WorkflowService', () => {
    */
   let service
   /**
+   * @type {DocumentNode}
+   */
+  let query
+  /**
    * @type {SubscriptionQuery}
    */
   let subscriptionQuery
@@ -80,13 +84,14 @@ describe('WorkflowService', () => {
     sandbox.stub(WorkflowService.prototype, 'loadMutations').returns({})
     service = new WorkflowService(url, subscriptionClient)
     // subscription query
-    subscriptionQuery = new SubscriptionQuery(
-      gql`
+    query = gql`
         query {
           workflows {
             id
           }
-        }`,
+        }`
+    subscriptionQuery = new SubscriptionQuery(
+      query,
       {
         workflowId: 'cylc|test'
       },
@@ -155,8 +160,11 @@ describe('WorkflowService', () => {
       startDeltasSubscriptionStub.callsFake(myStartDeltasSubscription)
       // we need to add a callback to be called...
       subscriptionQuery.actionNames.push('workflows/setWorkflowName')
+      subscription.reload = true
       service.startSubscription(subscription)
       expect(store.state.workflows.workflowName).to.equal(workflowName)
+      // after a subscription has been started, the reload flag must be set to false
+      expect(subscription.reload).to.equal(false)
     })
     describe('ViewState', () => {
       it('should set the view state to COMPLETE when it successfully starts a subscription', () => {
@@ -259,6 +267,47 @@ describe('WorkflowService', () => {
       service.recompute(service.subscriptions.root)
       const finalQuery = print(service.subscriptions.root.query.query)
       expect(expectedQuery1).to.equal(finalQuery)
+    })
+    it('should not add duplicate action names', () => {
+      const newActionNames = ['a', 'b', 'c']
+      subscriptionQuery.actionNames.push(...newActionNames)
+      subscriptionQuery.tearDownActionNames.push(...newActionNames)
+      const newSubscriptionQuery = new SubscriptionQuery(
+        query,
+        subscriptionQuery.variables,
+        subscriptionQuery.name,
+        newActionNames,
+        newActionNames
+      )
+      const anotherView = {
+        _uid: 'anotherView',
+        query: newSubscriptionQuery
+      }
+      service.subscribe(anotherView)
+      // Same action names, Lodash's union should add to list like a set
+      expect(subscriptionQuery.actionNames).to.deep.equal(newActionNames)
+      expect(subscriptionQuery.tearDownActionNames).to.deep.equal(newActionNames)
+    })
+    it('should add new action names', () => {
+      const baseActionNames = ['a', 'b', 'c']
+      subscriptionQuery.actionNames.push(...baseActionNames)
+      subscriptionQuery.tearDownActionNames.push(...baseActionNames)
+      const newActionNames = ['d', 'e', 'f', 'a']
+      const newSubscriptionQuery = new SubscriptionQuery(
+        query,
+        subscriptionQuery.variables,
+        subscriptionQuery.name,
+        newActionNames,
+        newActionNames
+      )
+      const anotherView = {
+        _uid: 'anotherView',
+        query: newSubscriptionQuery
+      }
+      service.subscribe(anotherView)
+      // Same action names, Lodash's union should add to list like a set
+      expect(subscription.actionNames).to.deep.equal([...baseActionNames, 'd', 'e', 'f'])
+      expect(subscription.tearDownActionNames).to.deep.equal([...baseActionNames, 'd', 'e', 'f'])
     })
     it('should throw an error if there are no subscribers', () => {
       delete subscription.subscribers[view._uid]

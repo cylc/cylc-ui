@@ -200,6 +200,7 @@ class WorkflowService {
       this.subscriptions[subscription.query.name] = subscription
       // All done!
       subscription.handleViewState(ViewState.COMPLETE, null)
+      subscription.reload = false
     } catch (e) {
       subscription.handleViewState(ViewState.ERROR, e)
     }
@@ -300,8 +301,8 @@ class WorkflowService {
           throw new Error('Error recomputing subscription: Query variables do not match.')
         }
         this.mergeQueries(baseSubscriber.query.query, subscriber.query.query)
-        union(subscription.actionNames, subscriber.query.actionNames)
-        union(subscription.tearDownActionNames, subscriber.query.tearDownActionNames)
+        subscription.actionNames = union(subscription.actionNames, subscriber.query.actionNames)
+        subscription.tearDownActionNames = union(subscription.tearDownActionNames, subscriber.query.tearDownActionNames)
       })
     const finalQuery = print(baseSubscriber.query.query)
     // TODO: consider using a better approach than print(a) === print(b)
