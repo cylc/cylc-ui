@@ -124,7 +124,6 @@ subscription OnWorkflowTreeDeltasData ($workflowId: ID) {
 
 fragment WorkflowTreeDeltas on Deltas {
   id
-  shutdown
   added {
     ...WorkflowTreeAddedData
   }
@@ -204,7 +203,6 @@ subscription GscanSubscriptionQuery {
 
 fragment GScanTreeDeltas on Deltas {
   id
-  shutdown
   added {
     ...GscanAddedData
   }
@@ -243,7 +241,6 @@ const DASHBOARD_DELTAS_SUBSCRIPTION = gql`
 subscription DashboardSubscriptionQuery {
   deltas (stripNull: true) {
     id
-    shutdown
     added {
       workflow {
         ...WorkflowData
@@ -272,7 +269,6 @@ const WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION = gql`
 subscription WorkflowsTableQuery {
   deltas (stripNull: true) {
     id
-    shutdown
     added {
       workflow {
         ...WorkflowData

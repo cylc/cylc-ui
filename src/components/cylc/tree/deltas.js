@@ -24,6 +24,7 @@ import {
   createTaskProxyNode
 } from '@/components/cylc/tree/nodes'
 import * as CylcTree from '@/components/cylc/tree/index'
+import WorkflowState from '@/model/WorkflowState.model'
 
 /**
  * Helper object used to iterate added deltas data.
@@ -213,11 +214,13 @@ function handleDeltas (deltas, workflow, lookup, options) {
  */
 export default function (data, workflow, lookup, options) {
   const deltas = data.deltas
-  // first we check whether it is a shutdown response
-  if (deltas.shutdown) {
-    CylcTree.clear(workflow)
-    return {
-      errors: []
+  // first we check whether it is a new start
+  if (deltas && deltas.added && deltas.added.workflow) {
+    if (deltas.added.workflow.status === WorkflowState.RUNNING.name) {
+      // The workflow could be stopped. In this case when restarted (cold or hot)
+      // it would be hard to apply the new deltas keeping the UI state valid. So
+      // for now we clear the tree, and start from scratch rebuilding it.
+      CylcTree.clear(workflow)
     }
   }
   // Safe check in case the tree is empty.
@@ -248,7 +251,6 @@ export default function (data, workflow, lookup, options) {
   // 1. data added in deltas.added
   // 2. data updated in deltas.updated
   // 3. data pruned in deltas.pruned
-  // 4. a delta with some data, and the .shutdown flag telling us the workflow has stopped
   try {
     return handleDeltas(deltas, workflow, lookup, options)
   } catch (error) {

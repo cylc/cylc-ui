@@ -23,7 +23,6 @@
 /**
  * @typedef {Object} Deltas
  * @property {string} id
- * @property {boolean} shutdown
  * @property {?DeltasAdded} added
  * @property {?DeltasUpdated} updated
  * @property {?DeltasPruned} pruned
