@@ -20,6 +20,34 @@ of cycle points.
 
 [#543](https://github.com/cylc/cylc-ui/pull/543) - Use deltas in GScan.
 
+[#234](https://github.com/cylc/cylc-ui/pull/234) - Use query variables
+in GraphQL instead of string replace.
+
+[#209](https://github.com/cylc/cylc-ui/pull/209) - WorkflowService doesn't
+work with nodesEdges, edges, or any other top level entry.
+
+[#160](https://github.com/cylc/cylc-ui/pull/160) - Reduce duplicated code
+when using WorkflowService.
+
+[#356](https://github.com/cylc/cylc-ui/pull/356) - Use graphql-tag instead
+of Strings for GraphQL queries, fragments.
+
+[#388](https://github.com/cylc/cylc-ui/pull/388) - Prevent unnecessary
+subscription requests.
+
+[#453](https://github.com/cylc/cylc-ui/pull/453) - Confirm we don't have
+subscriptions outliving the views/use, to avoid performance issues, and
+add unit/e2e tests.
+
+[#661](https://github.com/cylc/cylc-ui/pull/661) - Avoid data duplication
+in added deltas.
+
+[#684](https://github.com/cylc/cylc-ui/pull/684) - Create a single object
+to receive the deltas of workflow-subscriptions.
+
+[#625](https://github.com/cylc/cylc-ui/pull/625) - alert: repeated errors
+are ignored.
+
 ### Fixes
 
 [#691](https://github.com/cylc/cylc-ui/pull/691) -
@@ -36,6 +64,14 @@ of its children nodes.
 
 [#669](https://github.com/cylc/cylc-ui/pull/669) - Define the height
 of each table row, and specify the Skeleton height to avoid content shift.
+
+[#416](https://github.com/cylc/cylc-ui/pull/416) - WorkflowService/GQuery
+fetches more data than what it needs when GScan + a view/component are used.
+
+[#688](https://github.com/cylc/cylc-ui/pull/688) - gscan: installed workflows.
+
+[#671](https://github.com/cylc/cylc-ui/pull/671) - UI shows loading state
+forever if no workflows exist.
 
 -------------------------------------------------------------------------------
 ## __cylc-ui-0.4 (Released 2021-04-16)__
