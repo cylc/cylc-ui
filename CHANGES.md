@@ -173,6 +173,13 @@ in the tree view structure.
 
 [#554](https://github.com/cylc/cylc-ui/pull/554) - Fix icons in the Dashboard.
 
+[#556](https://github.com/cylc/cylc-ui/issues/556) - UI sees old and new state
+of a re-run flow.
+
+[#700](https://github.com/cylc/cylc-ui/issues/700) - Use WorkflowState to control Tree view state,
+ignoring the shutdown property. This fixes console messages like "Received a delta before
+the workflow initial data burst".
+
 ### Documentation
 
 None.
