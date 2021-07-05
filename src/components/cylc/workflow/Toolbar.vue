@@ -96,7 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="py-0 px-8 ma-0 c-add-view"
           >
             <v-list-item-icon>
-              <v-icon>{{ view.icon }}</v-icon>
+              <v-icon>{{ view.data().widget.icon }}</v-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ view.name }}</v-list-item-title>
           </v-list-item>
@@ -124,8 +124,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapGetters, mapState } from 'vuex'
 import {
-  mdiAppleKeyboardCommand,
-  mdiFileTree,
   mdiMicrosoftXboxControllerMenu,
   mdiPause,
   mdiPlay,
@@ -135,8 +133,6 @@ import {
 } from '@mdi/js'
 import toolbar from '@/mixins/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
-import TreeView from '@/views/Tree'
-import MutationsView from '@/views/Mutations'
 
 import {
   mutationStatus
@@ -144,11 +140,15 @@ import {
 
 export default {
   name: 'Toolbar',
-
   mixins: [
     toolbar
   ],
-
+  props: {
+    views: {
+      type: Array,
+      required: true
+    }
+  },
   data: () => ({
     extended: false,
     // FIXME: remove local state once we have this data in the workflow - https://github.com/cylc/cylc-ui/issues/221
@@ -164,21 +164,8 @@ export default {
       // store state from mutations in order to compute the "enabled" attrs
       paused: null,
       stop: null
-    },
-    views: [
-      {
-        name: TreeView.name,
-        icon: mdiFileTree
-
-      },
-      {
-        name: MutationsView.name,
-        icon: mdiAppleKeyboardCommand
-
-      }
-    ]
+    }
   }),
-
   computed: {
     ...mapState('app', ['title']),
     ...mapGetters('workflows', ['currentWorkflow']),
@@ -220,7 +207,6 @@ export default {
       }
     }
   },
-
   watch: {
     isPaused () {
       this.expecting.paused = null
@@ -229,7 +215,6 @@ export default {
       this.expecting.stop = null
     }
   },
-
   methods: {
     onClickReleaseHold () {
       const ret = this.$workflowService.mutate(
