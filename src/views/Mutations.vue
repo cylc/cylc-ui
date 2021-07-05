@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import gql from 'graphql-tag'
 import { getIntrospectionQuery as getGraphQLIntrospectionQuery, print } from 'graphql'
-
+import { mdiAppleKeyboardCommand } from '@mdi/js'
 import Mutation from '@/components/cylc/Mutation'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 
@@ -117,6 +117,10 @@ export default {
       Job: [
         ['JobID', false]
       ]
+    },
+    widget: {
+      title: 'mutations',
+      icon: mdiAppleKeyboardCommand
     }
   }),
   computed: {

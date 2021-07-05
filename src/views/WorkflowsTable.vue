@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         md12
       >
           <v-alert
-            :icon="svgPath"
+            :icon="svgPath.table"
             prominent
             color="grey lighten-3"
           >
@@ -125,7 +125,9 @@ export default {
         value: 'port'
       }
     ],
-    svgPath: mdiTable
+    svgPath: {
+      table: mdiTable
+    }
   }),
   computed: {
     ...mapState('workflows', ['workflows']),

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <CylcObjectMenu />
     <toolbar
+      :views="views"
       v-on:add="this.addView"
     ></toolbar>
     <div class="workflow-panel fill-height">
@@ -28,24 +29,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         tab-title-prop="tab-title"
       >
         <v-skeleton-loader
-          v-for="widgetId of treeWidgets"
-          :key="widgetId"
-          :id="widgetId"
+          v-for="(view, id) of widgets"
+          :key="id"
+          :id="id"
           :loading="isLoading"
+          :tab-title="view.data().widget.title"
           type="list-item-three-line"
-          tab-title="tree"
         >
-          <tree-view
+          <component
+            :is="view"
             :workflow-name="workflowName"
           />
         </v-skeleton-loader>
-        <mutations-view
-          v-for="widgetId of mutationsWidgets"
-          :key="widgetId"
-          :id="widgetId"
-          :workflow-name="workflowName"
-          tab-title="mutations"
-        />
       </lumino>
     </div>
   </div>
@@ -76,8 +71,6 @@ export default {
   components: {
     CylcObjectMenu,
     Lumino,
-    TreeView,
-    MutationsView,
     Toolbar
   },
   metaInfo () {
@@ -91,22 +84,30 @@ export default {
      *
      * @type {Object.<String, String>}
      */
-    widgets: {}
+    widgets: {},
+    /**
+     * A list of Vue views or components. These components must provide a .widget
+     * property/data with the title and icon properties.
+     *
+     * Each view in this list will be available from the Toolbar to be added as
+     * a widget.
+     *
+     * @type {Object[]}
+     */
+    views: [
+      TreeView,
+      MutationsView
+    ]
   }),
+  created () {
+    // We need to load each view used by this view/component.
+    // See "local-registration" in Vue.js documentation.
+    this.views.forEach(view => {
+      this.$options.components[view.name] = view
+    })
+  },
   computed: {
-    ...mapState('workflows', ['workflow']),
-    treeWidgets () {
-      return Object
-        .entries(this.widgets)
-        .filter(([id, type]) => type === TreeView.name)
-        .map(([id, type]) => id)
-    },
-    mutationsWidgets () {
-      return Object
-        .entries(this.widgets)
-        .filter(([id, type]) => type === MutationsView.name)
-        .map(([id, type]) => id)
-    }
+    ...mapState('workflows', ['workflow'])
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -134,18 +135,17 @@ export default {
   methods: {
     /**
      * Add a new view widget.
+     *
+     * @type {String} viewName - the name of the view to be added (Vue component name).
      */
-    addView (view) {
-      switch (view) {
-      case TreeView.name:
-        Vue.set(this.widgets, createWidgetId(), TreeView.name)
-        break
-      case MutationsView.name:
-        Vue.set(this.widgets, createWidgetId(), MutationsView.name)
-        break
-      default:
-        throw Error(`Unknown view "${view}"`)
+    addView (viewName) {
+      const view = this.views
+        .filter(v => v.name === viewName)
+        .slice(0)[0]
+      if (!view) {
+        throw Error(`Unknown view "${viewName}"`)
       }
+      Vue.set(this.widgets, createWidgetId(), view)
       this.$nextTick(() => {
         // Views use navigation-guards to start the pending subscriptions. But we don't have
         // this in this view. We must pretend we are doing the beforeRouteEnter here, and

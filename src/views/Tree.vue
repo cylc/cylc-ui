@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState } from 'vuex'
+import { mdiFileTree } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -58,6 +59,14 @@ export default {
   metaInfo () {
     return {
       title: this.getPageTitle('App.workflow', { name: this.workflowName })
+    }
+  },
+  data () {
+    return {
+      widget: {
+        title: 'tree',
+        icon: mdiFileTree
+      }
     }
   },
   computed: {
