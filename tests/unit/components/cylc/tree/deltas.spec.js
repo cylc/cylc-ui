@@ -18,6 +18,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import TaskState from '@/model/TaskState.model'
+import WorkflowState from '@/model/WorkflowState.model'
 import * as CylcTree from '@/components/cylc/tree/index'
 import applyWorkflowDeltas from '@/components/cylc/workflow/deltas'
 import applyTreeDeltas from '@/components/cylc/tree/deltas'
@@ -49,20 +50,37 @@ describe('Deltas', () => {
   it('Should skip if no deltas provided', () => {
     expect(() => applyTreeDeltas(null, null, null)).to.throw(Error)
   })
-  it('Should clear the tree if shutdown is found in the deltas', () => {
+  it('Should clear the tree if the worfklow started', () => {
     const workflowNode = createWorkflowNode({
       id: WORKFLOW_ID
     })
     CylcTree.addWorkflow(workflowNode, workflow, {})
-    expect(Object.keys(workflow.lookup).length).to.equal(1)
-    const result = applyTreeDeltas({
+    const cyclePointNode = createCyclePointNode({
+      id: `${WORKFLOW_ID}|1`,
+      cyclePoint: 1
+    })
+    CylcTree.addCyclePoint(cyclePointNode, workflow, {})
+    // The lookup now has the workflow and the cycle point nodes
+    expect(Object.keys(workflow.lookup).length).to.equal(2)
+    // Then we send a delta with the workflow added, and with the state
+    // of running.
+    const deltas = {
       deltas: {
         id: WORKFLOW_ID,
-        shutdown: true
+        added: {
+          workflow: {
+            id: WORKFLOW_ID,
+            status: WorkflowState.RUNNING.name
+          }
+        }
       }
-    }, workflow, lookup, {})
+    }
+    applyWorkflowDeltas(deltas, lookup)
+    const result = applyTreeDeltas(deltas, workflow, lookup, {})
     expectNoErrors(result)
-    expect(Object.keys(workflow.lookup).length).to.equal(0)
+    // The tree will have been cleared, and the new workflow node added, so
+    // the lookup now will have only one node (the workflow).
+    expect(Object.keys(workflow.lookup).length).to.equal(1)
   })
   it('Should not tally the cycle point states unless deltas were provided', () => {
     const workflowNode = createWorkflowNode({
