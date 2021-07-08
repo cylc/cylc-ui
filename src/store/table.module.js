@@ -26,7 +26,7 @@ const mutations = {
 }
 
 export const table = {
-  namespace: true,
+  namespaced: true,
   state,
   mutations
 }
