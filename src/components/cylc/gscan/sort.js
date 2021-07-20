@@ -16,7 +16,7 @@
  */
 
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
-import WorkflowState from '@/model/WorkflowState.model'
+import { WorkflowStateOrder } from '@/model/WorkflowState.model'
 
 export const WORKFLOW_TYPES_ORDER = ['workflow-name-part', 'workflow']
 
@@ -40,23 +40,18 @@ export const WORKFLOW_TYPES_ORDER = ['workflow-name-part', 'workflow']
  * @returns {boolean|number}
  */
 export function sortWorkflowNamePartNodeOrWorkflowNode (leftObject, leftValue, rightObject, rightValue) {
-  if (leftObject.node.type !== rightObject.node.type) {
+  if (leftObject.type !== rightObject.type) {
     return WORKFLOW_TYPES_ORDER.indexOf(leftObject.node.type) - WORKFLOW_TYPES_ORDER.indexOf(rightObject.node.type)
   }
   if (leftObject.node.status !== rightObject.node.status) {
-    const leftState = WorkflowState.enumValueOf(leftObject.node.status.toUpperCase())
-    const rightState = WorkflowState.enumValueOf(rightObject.node.status.toUpperCase())
-    // FIXME: waiting for https://github.com/cylc/cylc-ui/pull/703
-    //        which fixes another issue in GScan... Note to self,
-    //        look at the DIFF in GitHub when resolving conflicts!
-    if (!leftState || !leftState.enumOrdinal) {
-      return 1
+    const leftStateOrder = WorkflowStateOrder.get(leftObject.node.status)
+    const rightStateOrder = WorkflowStateOrder.get(rightObject.node.status)
+    // Here we compare the order of states, not the states since some states
+    // are grouped together, like RUNNING, PAUSED, and STOPPING.
+    if (leftStateOrder !== rightStateOrder) {
+      return leftStateOrder - rightStateOrder
     }
-    if (!rightState || !rightState.enumOrdinal) {
-      return -1
-    }
-    return leftState.enumOrdinal - rightState.enumOrdinal
   }
   // name
-  return DEFAULT_COMPARATOR(leftValue, rightValue) > 0
+  return DEFAULT_COMPARATOR(leftValue, rightValue)
 }
