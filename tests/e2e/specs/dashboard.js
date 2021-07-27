@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { WorkflowStateOrder } from '@/model/WorkflowState.model'
+
 describe('Dashboard', () => {
   it('Displays the Dashboard link as active on the left sidebar menu', () => {
     cy.visit('/#/')
@@ -30,6 +32,17 @@ describe('Dashboard', () => {
       .get('.c-dashboard .v-icon:first')
       .find('svg')
       .should('be.visible')
+  })
+  it.only('Should display the states in order', () => {
+    cy.visit('/#/')
+    cy
+      .get('#dashboard-workflows table tbody tr')
+      .first()
+      .find('td')
+      .then($tdElement => {
+        return $tdElement[1].textContent.toLowerCase()
+      })
+      .should('equal', [...WorkflowStateOrder.entries()][0][0])
   })
   // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
 })

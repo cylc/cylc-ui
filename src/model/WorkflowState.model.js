@@ -29,7 +29,7 @@ import {
 /**
  * Cylc valid workflow states.
  */
-class WorkflowState extends Enumify {
+export class WorkflowState extends Enumify {
   // NOTE: the order the enum values are created here is used in the UI for sorting
   static RUNNING = new WorkflowState('running', mdiPlayCircle)
   static PAUSED = new WorkflowState('paused', mdiPauseCircle)
@@ -50,5 +50,19 @@ class WorkflowState extends Enumify {
     this.icon = icon
   }
 }
+
+/**
+ * Workflow states ordered for display purposes.
+ * @type {Map} - Using a map to prevent more unexpected sorting issues
+ * @see https://stackoverflow.com/questions/5525795/does-javascript-guarantee-object-property-order/38218582#38218582
+ */
+export const WorkflowStateOrder = new Map([
+  [WorkflowState.RUNNING.name, 0],
+  [WorkflowState.PAUSED.name, 0],
+  [WorkflowState.STOPPING.name, 0],
+  [WorkflowState.STOPPED.name, 1],
+  [WorkflowState.INSTALLED.name, 2],
+  [WorkflowState.ERROR.name, 3]
+])
 
 export default WorkflowState

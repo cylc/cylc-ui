@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :loading="isLoading"
           hide-default-footer
           hide-default-header
+          id="dashboard-workflows"
         >
           <v-progress-linear slot="progress" color="grey" indeterminate></v-progress-linear>
           <!-- TODO: remove it if the linter is fixed later #510 -->
@@ -176,7 +177,7 @@ import pageMixin from '@/mixins/index'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
-import WorkflowState from '@/model/WorkflowState.model'
+import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { DASHBOARD_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
@@ -247,7 +248,7 @@ export default {
           return acc
         }, {})
       return WorkflowState.enumValues
-        .sort((left, right) => left.name.localeCompare(right.name))
+        .sort((left, right) => WorkflowStateOrder.get(left) - WorkflowStateOrder.get(right))
         .map(state => {
           return {
             text: state.name.charAt(0).toUpperCase() + state.name.slice(1),
