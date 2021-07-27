@@ -316,16 +316,9 @@ export default {
      * (natural sort).
      */
     sortedWorkflows () {
-      // Create a new object with state.name => order.
-      const workflowStateOrder = Object.fromEntries(
-        WorkflowStateOrder
-          .map(([state, order]) => {
-            return [state.name, order]
-          })
-      )
       return [...this.filteredWorkflows].sort((left, right) => {
-        const leftStateOrder = workflowStateOrder[left.status]
-        const rightStateOrder = workflowStateOrder[right.status]
+        const leftStateOrder = WorkflowStateOrder.get(left.status)
+        const rightStateOrder = WorkflowStateOrder.get(right.status)
         // Here we compare the order of states, not the states since some states
         // are grouped together, like RUNNING, PAUSED, and STOPPING.
         if (leftStateOrder !== rightStateOrder) {
