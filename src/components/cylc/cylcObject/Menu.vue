@@ -149,10 +149,7 @@ export default {
       if (!this.mutations) {
         return false
       }
-      if (this.$workflowService.primaryMutations[this.type]) {
-        return true
-      }
-      return false
+      return !!this.$workflowService.primaryMutations[this.type]
     },
 
     displayMutations () {
