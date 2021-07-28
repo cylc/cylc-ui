@@ -207,10 +207,10 @@ export function tokenise (id) {
   if (!id) {
     return {}
   }
-  id = id.split('|')
+  const parts = id.split('|')
   const ret = {}
-  for (let ind = 0; ind < id.length; ind++) {
-    ret[identifierOrder[ind]] = id[ind]
+  for (let ind = 0; ind < parts.length; ind++) {
+    ret[identifierOrder[ind]] = parts[ind]
   }
   return ret
 }
