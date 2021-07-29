@@ -6,6 +6,15 @@ milestones](https://github.com/cylc/cylc-ui/milestones?state=closed) for each
 release.
 
 -------------------------------------------------------------------------------
+## __cylc-ui-0.6 (<span actions:bind='release-date'>Released 2021-??-??</span>)__
+
+### Enhancements
+
+[#502](https://github.com/cylc/cylc-ui/pull/502) - Hierarchical GScan.
+
+### Fixes
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-0.5 (<span actions:bind='release-date'>Released 2021-07-28</span>)__
 
 ### Enhancements
@@ -47,8 +56,6 @@ to receive the deltas of workflow-subscriptions.
 
 [#625](https://github.com/cylc/cylc-ui/pull/625) - alert: repeated errors
 are ignored.
-
-[#502](https://github.com/cylc/cylc-ui/pull/502) - Hierarchical GScan.
 
 ### Fixes
 
