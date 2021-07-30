@@ -12,6 +12,10 @@ release.
 
 [#502](https://github.com/cylc/cylc-ui/pull/502) - Hierarchical GScan.
 
+[#711](https://github.com/cylc/cylc-ui/pull/711) -
+Support Jupyter Server conversion. (the CylcUIServer has been converted
+to a Jupyter Server extension).
+
 ### Fixes
 
 -------------------------------------------------------------------------------

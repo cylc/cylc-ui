@@ -24,11 +24,17 @@
  * @property {string} server - server URL
  */
 export default class User {
-  constructor (username, groups, created, admin, server) {
+  constructor (username, groups, created, admin, server, owner) {
+    // the authenticated user
+    // (full info only available when authenticated via the hub)
     this.username = username
     this.groups = groups
     this.created = created
     this.admin = admin
-    this.server = server
+    this.server = server || '?' // server can be unset
+    // the UIS owner
+    // (i.e. the user who's workflows we are looking at)
+    // (this might not be the authenticated user for multi-user setups)
+    this.owner = owner
   }
 }
