@@ -49,9 +49,8 @@ jobs:
             browser: firefox
           - os: ubuntu-latest
             browser: chrome
-          # TODO: uncomment after #590
-          # - os: macos-latest
-          #   browser: edge
+          - os: macos-latest
+            browser: edge
     steps:
       - name: Checkout
         uses: actions/checkout@v2
