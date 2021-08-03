@@ -49,8 +49,9 @@ jobs:
             browser: firefox
           - os: ubuntu-latest
             browser: chrome
-          - os: macos-latest
-            browser: edge
+# TODO: re-enable once macos build is stable #590
+#          - os: macos-latest
+#            browser: edge
     steps:
       - name: Checkout
         uses: actions/checkout@v2
