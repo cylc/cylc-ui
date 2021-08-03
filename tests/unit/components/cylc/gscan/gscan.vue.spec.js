@@ -211,7 +211,7 @@ describe('GScan component', () => {
             { name: 'k', status: WorkflowState.RUNNING },
             { name: 'l', status: WorkflowState.PAUSED }
           ]),
-          expected: ['b', 'k', 'a', 'e', 'f', 'l', 'h', 'j', 'c', 'd', 'i', 'g']
+          expected: ['a', 'b', 'e', 'f', 'h', 'j', 'k', 'l', 'c', 'd', 'i', 'g']
         },
         // sorting by type too
         {
