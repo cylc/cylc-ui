@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import '~vuetify/src/styles/styles';
+
 .c-header {
   background-color: map-get($grey, 'lighten-3');
   display: block;

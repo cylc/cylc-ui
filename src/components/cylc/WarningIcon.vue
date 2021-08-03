@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <path
             :d="path()"
             :stroke-width="strokeWidth()"
-          v-bind:class="{'active': active}"
+            v-bind:class="{'active': active}"
           />
         </svg>
       </template>

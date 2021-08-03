@@ -207,10 +207,10 @@ export function tokenise (id) {
   if (!id) {
     return {}
   }
-  id = id.split('|')
+  const parts = id.split('|')
   const ret = {}
-  for (let ind = 0; ind < id.length; ind++) {
-    ret[identifierOrder[ind]] = id[ind]
+  for (let ind = 0; ind < parts.length; ind++) {
+    ret[identifierOrder[ind]] = parts[ind]
   }
   return ret
 }
@@ -613,7 +613,7 @@ export function getMutationArgsFromTokens (mutation, tokens) {
  *
  * @returns {Array} [status, message]
  */
-function _mutateError (mutationName, message, response) {
+async function _mutateError (mutationName, message, response) {
   // log the response
   if (response) {
     // eslint-disable-next-line no-console
@@ -621,7 +621,7 @@ function _mutateError (mutationName, message, response) {
   }
 
   // open a user alert
-  store.dispatch('setAlert', new AlertModel(
+  await store.dispatch('setAlert', new AlertModel(
     `command failed: ${mutationName} - ${message}`,
     null,
     'error')
