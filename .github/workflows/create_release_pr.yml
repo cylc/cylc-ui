@@ -20,6 +20,9 @@ jobs:
       - name: Sanitise workflow inputs # Should be 1st step
         uses: cylc/release-actions/stage-1/sanitize-inputs@v1
 
+      - name: Check CONTRIBUTING.md
+        uses: cylc/release-actions/check-shortlog@v1
+
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
