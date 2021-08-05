@@ -16,7 +16,7 @@
  */
 
 import { expect } from 'chai'
-import { createUrl } from '@/utils/urls'
+import { createUrl, getUserNameFromUrl } from '@/utils/urls'
 
 describe('urls', () => {
   const PROTOCOL = 'https:'
@@ -27,6 +27,19 @@ describe('urls', () => {
     host: HOST,
     pathname: PATHNAME
   }
+  let originalWindow
+  before(() => {
+    originalWindow = global.window
+    Object.defineProperty(window, 'location', {
+      value: {
+        pathname: ''
+      },
+      writable: true
+    })
+  })
+  afterEach(() => {
+    global.window = originalWindow
+  })
   it('should create new URLs', () => {
     const tests = [
       {
@@ -110,6 +123,40 @@ describe('urls', () => {
       } finally {
         global.window = originalWindow
       }
+    })
+  })
+  it('should get username from URL', () => {
+    const tests = [
+      {
+        fallbackUsername: 'cylc',
+        pathname: '/',
+        expected: 'cylc'
+      },
+      {
+        fallbackUsername: 'cylc',
+        pathname: '',
+        expected: 'cylc'
+      },
+      {
+        fallbackUsername: 'cylc',
+        pathname: null,
+        expected: 'cylc'
+      },
+      {
+        fallbackUsername: 'cylc',
+        pathname: undefined,
+        expected: 'cylc'
+      },
+      {
+        fallbackUsername: 'cylc',
+        pathname: '/user/research/',
+        expected: 'research'
+      }
+    ]
+    tests.forEach(test => {
+      window.location.pathname = test.pathname
+      const username = getUserNameFromUrl(test.fallbackUsername)
+      expect(username).to.equal(test.expected)
     })
   })
 })

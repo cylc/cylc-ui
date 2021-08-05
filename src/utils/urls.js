@@ -72,6 +72,28 @@ function createUrl (path, websockets = false, baseOnly = false) {
   return normalize(url)
 }
 
+/**
+ * Get the user name from the current browser URL. If the `window.location.pathname`
+ * object is not available (e.g. running without a browser?) then the
+ * fallback given value is returned.
+ *
+ * The expected URL format is <protocol>://<hostname>:<port>/user/<username>/. The returned
+ * value will be either the <username> or the given fallback username.
+ *
+ * @param {string} fallbackValue - fallback value
+ * @returns {string} - the
+ */
+function getUserNameFromUrl (fallbackValue) {
+  return window.location.pathname
+    ? window.location.pathname
+      .split('/')
+      .filter(s => s !== '')
+      .slice(1, 2)
+      .shift() || fallbackValue
+    : fallbackValue
+}
+
 export {
-  createUrl
+  createUrl,
+  getUserNameFromUrl
 }

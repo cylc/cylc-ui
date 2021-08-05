@@ -19,6 +19,7 @@ import { mapState } from 'vuex'
 
 // eslint-disable-next-line no-unused-vars
 import User from '@/model/User.model'
+import { getUserNameFromUrl } from '@/utils/urls'
 
 /**
  * A mixin that contains data used for a GraphQL subscription, such as the
@@ -51,7 +52,8 @@ export default {
      * @return {string} - the Workflow ID used in this view
      */
     workflowId () {
-      return `${this.user.username}|${this.workflowName}`
+      const username = getUserNameFromUrl(this.user.username)
+      return `${username}|${this.workflowName}`
     },
     /**
      * GraphQL query variables.
