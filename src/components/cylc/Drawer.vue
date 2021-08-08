@@ -19,12 +19,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-navigation-drawer
     v-model="drawer"
     app
+    absolute
     floating
     mobile-breakpoint="991"
     width="260"
-    persistent
     class="fill-height"
   >
+    <!--
+       color is #eee copying the drawer top-part color. Needs to be applied here since applying in the
+       scss files does not work. The v-btn Vuetify component appears to calculate the hover color based
+       on the given color="" value. Using the scss/css, the hover is not activated.
+    -->
+    <v-btn
+      absolute
+      right
+      x-small
+      fab
+      depressed
+      color="#eeeeee"
+      id="drawer-toggle-btn"
+      @click="drawer = !drawer"
+    >
+      <v-icon
+        v-if="drawer"
+        color="#999999"
+      >
+        {{ svgPaths.left }}
+      </v-icon>
+      <v-icon
+        v-else
+        color="#999999"
+      >
+        {{ svgPaths.right }}
+      </v-icon>
+    </v-btn>
     <v-list
       class="pa-0 ma-0"
     >
@@ -79,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Header from '@/components/cylc/Header'
 import { mapState } from 'vuex'
 import GScan from '@/components/cylc/gscan/GScan'
-import { mdiHome, mdiGraphql } from '@mdi/js'
+import { mdiHome, mdiGraphql, mdiChevronDoubleLeft, mdiChevronDoubleRight } from '@mdi/js'
 import { version } from '@/../package.json'
 
 export default {
@@ -92,7 +120,9 @@ export default {
       responsive: false,
       svgPaths: {
         home: mdiHome,
-        graphql: mdiGraphql
+        graphql: mdiGraphql,
+        left: mdiChevronDoubleLeft,
+        right: mdiChevronDoubleRight
       },
       environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
       version: version

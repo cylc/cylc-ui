@@ -19,6 +19,17 @@
 
 /* this is not in our styles/material-dashboard, so we need to force-override */
 .v-navigation-drawer {
+  // overflow so we see the button to toggle the drawer
+  overflow: visible !important;
+  // toolbar has z-index 5; since the toggle-button appears over the toolbar, z-index 6 it is
+  z-index: 6;
+  #drawer-toggle-btn {
+    // toolbar height is 48px, using 24px puts the button at the center/middle of the toolbar
+    // (since we translated(x, -50%) the button below
+    top: 24px;
+    // translate(x, y) in 2d space so we move it to the right and up (relative to width/height)
+    transform: translate(100%, -50%);
+  }
   background-color: map-get($grey, 'lighten-4') !important;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
@@ -39,4 +50,8 @@
     padding-left: 15px;
     padding-right: 15px;
   }
+}
+
+.v-navigation-drawer--close {
+  visibility: unset !important;
 }
