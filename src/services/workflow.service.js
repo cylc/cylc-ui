@@ -32,6 +32,7 @@ import { createApolloClient } from '@/graphql/index'
 /* eslint-disable no-unused-vars */
 import { DocumentNode, print } from 'graphql'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
+import mergeQueries from '@/graphql/merge'
 /* eslint-enable no-unused-vars */
 
 class WorkflowService {
@@ -287,6 +288,9 @@ class WorkflowService {
 
     // We will use the first subscriber to compare its variables, and also will
     // merge other queries into its base query, in-place.
+    /**
+     * @type {Vue}
+     */
     const baseSubscriber = subscribers[0]
 
     // Reset.
@@ -297,10 +301,13 @@ class WorkflowService {
 
     subscribers.slice(1)
       .forEach(subscriber => {
+        // NB: We can remove this check if we so want, as the library used to combine queries
+        //     supports merging variables too. Only issue would be the possibility of merging
+        //     subscriptions for different workflows by accident...
         if (!isEqual(subscriber.query.variables, baseSubscriber.query.variables)) {
           throw new Error('Error recomputing subscription: Query variables do not match.')
         }
-        this.mergeQueries(baseSubscriber.query.query, subscriber.query.query)
+        baseSubscriber.query.query = mergeQueries(baseSubscriber.query.query, subscriber.query.query)
         subscription.actionNames = union(subscription.actionNames, subscriber.query.actionNames)
         subscription.tearDownActionNames = union(subscription.tearDownActionNames, subscriber.query.tearDownActionNames)
       })
@@ -313,64 +320,6 @@ class WorkflowService {
     }
     // And here we set the new merged-query. Voila!
     subscription.query.query = baseSubscriber.query.query
-  }
-
-  gClone (query) {
-    /** Clone a GraphQL query.
-     * Why oh why isn't there a better way of doing this in JS!
-     * @param {Object} query - Parsed GraphQL query.
-     * @return {Object} Deep clone of the provided query.
-     */
-    // TODO - consider serialising via parse(print(query));
-    return JSON.parse(JSON.stringify(query))
-  }
-
-  getSelections (a) {
-    /**
-     * Return map of selections present on a node.
-     * @param {Object} a - Node of GraphQL query.
-     * @return {Object} All selections present on this node.
-     */
-    if (!a.selectionSet || !a.selectionSet.selections) {
-      return {}
-    }
-    const selections = {}
-    for (const selection of a.selectionSet.selections) {
-      if (selection.kind === 'Field') {
-        let key = selection.name.value
-        if (selection.alias) {
-          key = selection.alias.value
-        }
-        selections[key] = selection
-      }
-    }
-    return selections
-  }
-
-  mergeSelection (a, b) {
-    /**
-     * Merge node b into node a (modifies a in-place).
-     * @param {Object} a - Node of a GraphQL query.
-     * @param {Object} b - Node of a GraphQL query.
-     */
-    const aSel = this.getSelections(a)
-    const bSel = this.getSelections(b)
-    for (const selection in bSel) {
-      if (!(selection in aSel)) {
-        a.selectionSet.selections.push(this.gClone(bSel[selection]))
-      } else {
-        this.mergeSelection(aSel[selection], bSel[selection])
-      }
-    }
-  }
-
-  mergeQueries (a, b) {
-    /**
-     * Merge two graphql schema (modifies a in-place).
-     * @param {Object} a - Parsed GraphQL query.
-     * @param {Object} b - Parsed GraphQL query.
-     */
-    this.mergeSelection(a.definitions[0], b.definitions[0])
   }
 }
 
