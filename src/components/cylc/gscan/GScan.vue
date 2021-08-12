@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :filterable="false"
           :expand-collapse-toggle="false"
           :workflows="filteredWorkflows"
-          class="c-gscan-workflow"
+          class="c-gscan-workflow ma-0 pl-2"
         >
           <template v-slot:node="scope">
             <v-list-item
