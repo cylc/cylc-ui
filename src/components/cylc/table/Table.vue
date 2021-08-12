@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               hide-details
               outlined
               placeholder="Filter by task name"
-              v-model="tasksFilter.name"
+              v-model.trim="tasksFilter.name"
             ></v-text-field>
           </v-col>
           <v-col
@@ -243,7 +243,7 @@ export default {
       return this.activeFilters &&
         this.activeFilters.name !== undefined &&
         this.activeFilters.name !== null &&
-        this.activeFilters.name.trim() !== ''
+        this.activeFilters.name !== ''
     },
     filterByTaskState () {
       return this.activeFilters &&
@@ -254,7 +254,7 @@ export default {
     filterTasks () {
       const taskNameFilterSet = this.tasksFilter.name !== undefined &&
         this.tasksFilter.name !== null &&
-        this.tasksFilter.name.trim() !== ''
+        this.tasksFilter.name !== ''
       const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
         this.tasksFilter.states !== null &&
         this.tasksFilter.states.length > 0
