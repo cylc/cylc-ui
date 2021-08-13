@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :filterable="false"
           :expand-collapse-toggle="false"
           :workflows="filteredWorkflows"
-          class="c-gscan-workflow ma-0 pl-2"
+          class="c-gscan-workflow ma-0 pa-0"
         >
           <template v-slot:node="scope">
             <v-list-item
@@ -128,10 +128,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     v-else-if="scope.node.type === 'workflow'"
                     class="c-gscan-workflow-name"
                   >
-                    <workflow-icon
-                      :status="scope.node.node.status"
-                      class="mr-2"
-                    />
+                    <span class="mr-2">
+                      <workflow-icon
+                        :status="scope.node.node.status"
+                      />
+                    </span>
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
                         <span v-on="on">{{ scope.node.name }}</span>
