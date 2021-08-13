@@ -137,7 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-list-item-content>
           </v-list-item>
           <!-- TODO: change from latest to stable once out of beta -->
-          <v-list-item href="https://cylc.github.io/cylc-doc/latest/html/suite-design-guide/index.html">
+          <v-list-item href="https://cylc.github.io/cylc-doc/latest/html/workflow-design-guide/index.html">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.workflow }}</v-icon>
             </v-list-item-avatar>
@@ -146,7 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 Workflow Design Guide
               </v-list-item-title>
               <v-list-item-subtitle>
-                How to make complex Cylc and Rose workflows simpler and easier to maintain
+                How to make complex Cylc workflows and Rose suites simpler and easier to maintain
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
