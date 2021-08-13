@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <CylcObjectMenu />
-    <div class="c-tree">
+    <div class="c-tree pa-2">
       <tree-component
         :workflows="workflows"
         :hoverable="false"
