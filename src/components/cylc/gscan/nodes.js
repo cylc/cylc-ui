@@ -57,10 +57,9 @@ function newWorkflowNode (workflow, part) {
  *
  * @param {string} id
  * @param {string} part
- * @param {string} status
  * @return {WorkflowNamePartGScanNode}
  */
-function newWorkflowPartNode (id, part, status) {
+function newWorkflowPartNode (id, part) {
   return {
     id: `workflow-name-part-${id}`,
     name: part,
@@ -68,7 +67,8 @@ function newWorkflowPartNode (id, part, status) {
     node: {
       id: id,
       name: part,
-      status: status
+      status: '',
+      latestStateTasks: []
     },
     children: []
   }
