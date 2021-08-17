@@ -136,11 +136,11 @@ function addNodeToTree (node, nodes) {
   //       in this case we do not want to confuse the research part-name with
   //       the research workflow.
   const existingNode = nodes.find((existingNode) => existingNode.id === node.id)
-  if (existingNode && existingNode.children) {
+  if (existingNode && node.children) {
     // This means we found an existing node with children nodes. The only situation where it occurs is when
     // we are iterating a workflow-name-part (e.g. "research" or "workflowA" of "research/workflowA/run1",
     // not "run1" since it is a terminal node).
-    for (const child of existingNode.children) {
+    for (const child of node.children) {
       // Recursion. Note that we are changing the `nodes` to the children of the existing node.
       addNodeToTree(child, existingNode.children)
     }
