@@ -57,9 +57,10 @@ function newWorkflowNode (workflow, part) {
  *
  * @param {string} id
  * @param {string} part
+ * @param {string} status
  * @return {WorkflowNamePartGScanNode}
  */
-function newWorkflowPartNode (id, part) {
+function newWorkflowPartNode (id, part, status) {
   return {
     id: `workflow-name-part-${id}`,
     name: part,
@@ -67,7 +68,7 @@ function newWorkflowPartNode (id, part) {
     node: {
       id: id,
       name: part,
-      status: ''
+      status: status
     },
     children: []
   }
@@ -107,7 +108,7 @@ function createWorkflowNode (workflow, hierarchy) {
     // we actually want to use the name parts separator `/`.
     prefix = prefix.includes('/') ? `${prefix}/${part}` : `${prefix}|${part}`
     const partNode = parts.length !== 0
-      ? newWorkflowPartNode(prefix, part)
+      ? newWorkflowPartNode(prefix, part, workflow.status)
       : newWorkflowNode(workflow, part)
 
     if (rootNode === null) {
@@ -135,7 +136,15 @@ function addNodeToTree (node, nodes) {
   //       in this case we do not want to confuse the research part-name with
   //       the research workflow.
   const existingNode = nodes.find((existingNode) => existingNode.id === node.id)
-  if (!existingNode) {
+  if (existingNode && existingNode.children) {
+    // This means we found an existing node with children nodes. The only situation where it occurs is when
+    // we are iterating a workflow-name-part (e.g. "research" or "workflowA" of "research/workflowA/run1",
+    // not "run1" since it is a terminal node).
+    for (const child of existingNode.children) {
+      // Recursion. Note that we are changing the `nodes` to the children of the existing node.
+      addNodeToTree(child, existingNode.children)
+    }
+  } else {
     // Here we calculate what is the index for this element. If we decide to have ASC and DESC,
     // then we just need to invert the location of the element, something like
     // `sortedIndex = (array.length - sortedIndex)`.
@@ -146,14 +155,8 @@ function addNodeToTree (node, nodes) {
       sortWorkflowNamePartNodeOrWorkflowNode
     )
     nodes.splice(sortedIndex, 0, node)
-  } else {
-    if (node.children) {
-      for (const child of node.children) {
-        // Recursion. Note that we are changing the `nodes` to the children of the existing node.
-        addNodeToTree(child, existingNode.children)
-      }
-    }
   }
+  // Existing & no-children shouldn't happen, but if it does, well, we just ignore it. No harm done.
   return nodes
 }
 
