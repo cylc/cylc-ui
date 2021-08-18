@@ -142,7 +142,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-flex>
                   <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
                   <v-flex
-                    v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
+                    v-if="scope.node.node.latestStateTasks"
                     class="text-right c-gscan-workflow-states"
                   >
                     <WorkflowStateSummary

@@ -57,9 +57,10 @@ function newWorkflowNode (workflow, part) {
  *
  * @param {string} id
  * @param {string} part
- * @return {WorkflowNamePartGScanNode}
+ * @param {WorkflowGraphQLData} workflow
+ * @return {WorkflowGraphQLData}
  */
-function newWorkflowPartNode (id, part) {
+function newWorkflowPartNode (id, part, workflow) {
   return {
     id: `workflow-name-part-${id}`,
     name: part,
@@ -68,7 +69,8 @@ function newWorkflowPartNode (id, part) {
       id: id,
       name: part,
       status: '',
-      latestStateTasks: []
+      stateTotals: workflow.stateTotals,
+      latestStateTasks: workflow.latestStateTasks
     },
     children: []
   }
@@ -108,7 +110,7 @@ function createWorkflowNode (workflow, hierarchy) {
     // we actually want to use the name parts separator `/`.
     prefix = prefix.includes('/') ? `${prefix}/${part}` : `${prefix}|${part}`
     const partNode = parts.length !== 0
-      ? newWorkflowPartNode(prefix, part, workflow.status)
+      ? newWorkflowPartNode(prefix, part, workflow)
       : newWorkflowNode(workflow, part)
 
     if (rootNode === null) {
