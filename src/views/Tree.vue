@@ -70,7 +70,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflow']),
+    ...mapState('tree', ['workflow']),
     workflows () {
       return this.workflow &&
         this.workflow.tree &&
@@ -84,12 +84,12 @@ export default {
         this.variables,
         'workflow',
         [
-          'workflows/applyWorkflowDeltas',
-          'workflows/applyTreeDeltas'
+          'tree/applyWorkflowDeltas',
+          'tree/applyTreeDeltas'
         ],
         [
-          'workflows/clearWorkflow',
-          'workflows/clearTree'
+          'tree/clearWorkflow',
+          'tree/clearTree'
         ]
       )
     }

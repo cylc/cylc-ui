@@ -15,38 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import applyDeltasWorkflows from '@/components/cylc/gscan/deltas'
-import applyDeltasLookup from '@/components/cylc/workflow/deltas'
-import applyDeltasTree from '@/components/cylc/tree/deltas'
-import Alert from '@/model/Alert.model'
-import { clear } from '@/components/cylc/tree/index'
 
 const state = {
-  /**
-   * This stores workflow data as a hashmap/dictionary. The keys
-   * are the ID's of the entities returned from GraphQL.
-   *
-   * The values of the dictionary hold the GraphQL data returned as-is.
-   *
-   * The intention is for workflow views to look up data in this structure
-   * and re-use, instead of duplicating it.
-   *
-   * @type {Object.<String, Object>}
-   */
-  lookup: {},
-  /**
-   * This is the CylcTree, which contains the hierarchical tree data structure.
-   * It is created from the GraphQL data, with the only difference that this one
-   * contains hierarchy, while the lookup (not workflow.lookup) is flat-ish.
-   *
-   * The nodes in the .tree property have a reference or pointer (.node) to the
-   * data in the lookup map above, to avoid data duplication.
-   *
-   * @type {Workflow}
-   */
-  workflow: {
-    tree: {},
-    lookup: {}
-  },
   /**
    * This contains workflows returned from GraphQL indexed by their ID's. And is used by components
    * such as GScan, Dashboard, and WorkflowsTable.
@@ -82,23 +52,6 @@ const mutations = {
   },
   SET_WORKFLOW_NAME (state, data) {
     state.workflowName = data
-  },
-  SET_WORKFLOW (state, data) {
-    state.workflow = data
-  },
-  SET_LOOKUP (state, data) {
-    state.lookup = data
-  },
-  CLEAR_WORKFLOW (state) {
-    clear(state.workflow)
-    state.workflow = {
-      tree: {
-        id: '',
-        type: 'workflow',
-        children: []
-      },
-      lookup: {}
-    }
   }
 }
 
@@ -114,45 +67,6 @@ const actions = {
   },
   clearWorkflows ({ commit }) {
     commit('SET_WORKFLOWS', [])
-  },
-  applyWorkflowDeltas ({ commit, state }, data) {
-    // modifying state directly in an action results in warnings...
-    const lookup = Object.assign({}, state.lookup)
-    const result = applyDeltasLookup(data, lookup)
-    if (result.errors.length === 0) {
-      commit('SET_LOOKUP', lookup)
-    }
-    result.errors.forEach(error => {
-      commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
-      // eslint-disable-next-line no-console
-      console.warn(...error)
-    })
-  },
-  clearWorkflow ({ commit }) {
-    commit('SET_LOOKUP', {})
-  },
-  applyTreeDeltas ({ commit, state }, data) {
-    // modifying state directly in an action results in warnings...
-    const workflow = state.workflow
-    const lookup = state.lookup
-    // TODO: this could be an options object stored in the Vuex store, in some module...
-    const options = {
-      cyclePointsOrderDesc: localStorage.cyclePointsOrderDesc
-        ? JSON.parse(localStorage.cyclePointsOrderDesc)
-        : true
-    }
-    const result = applyDeltasTree(data, workflow, lookup, options)
-    if (result.errors.length === 0) {
-      commit('SET_WORKFLOW', workflow)
-    }
-    result.errors.forEach(error => {
-      commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
-      // eslint-disable-next-line no-console
-      console.warn(...error)
-    })
-  },
-  clearTree ({ commit }) {
-    commit('CLEAR_WORKFLOW')
   }
 }
 
