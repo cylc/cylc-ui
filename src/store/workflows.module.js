@@ -14,35 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { clear } from '@/components/cylc/tree/index'
+import applyDeltasWorkflows from '@/components/cylc/gscan/deltas'
 
 const state = {
-  /**
-   * This stores workflow data as a hashmap/dictionary. The keys
-   * are the ID's of the entities returned from GraphQL.
-   *
-   * The values of the dictionary hold the GraphQL data returned as-is.
-   *
-   * The intention is for workflow views to look up data in this structure
-   * and re-use, instead of duplicating it.
-   *
-   * @type {Object.<String, Object>}
-   */
-  lookup: {},
-  /**
-   * This is the CylcTree, which contains the hierarchical tree data structure.
-   * It is created from the GraphQL data, with the only difference that this one
-   * contains hierarchy, while the lookup (not workflow.lookup) is flat-ish.
-   *
-   * The nodes in the .tree property have a reference or pointer (.node) to the
-   * data in the lookup map above, to avoid data duplication.
-   *
-   * @type {Workflow}
-   */
-  workflow: {
-    tree: {},
-    lookup: {}
-  },
   /**
    * This contains workflows returned from GraphQL indexed by their ID's. And is used by components
    * such as GScan, Dashboard, and WorkflowsTable.
@@ -78,27 +52,23 @@ const mutations = {
   },
   SET_WORKFLOWS (state, data) {
     state.workflows = data
-  },
-  SET_WORKFLOW (state, data) {
-    state.workflow = data
-  },
-  SET_LOOKUP (state, data) {
-    state.lookup = data
-  },
-  CLEAR_WORKFLOW (state) {
-    clear(state.workflow)
-    state.workflow = {
-      tree: {
-        id: '',
-        type: 'workflow',
-        children: []
-      },
-      lookup: {}
-    }
   }
 }
 
-const actions = {}
+const actions = {
+  setWorkflowName ({ commit }, data) {
+    commit('SET_WORKFLOW_NAME', data)
+  },
+  applyWorkflowsDeltas ({ commit, state }, data) {
+    // modifying state directly in an action results in warnings...
+    const workflows = Object.assign({}, state.workflows)
+    applyDeltasWorkflows(data, workflows)
+    commit('SET_WORKFLOWS', workflows)
+  },
+  clearWorkflows ({ commit }) {
+    commit('SET_WORKFLOWS', [])
+  }
+}
 
 export const workflows = {
   namespaced: true,

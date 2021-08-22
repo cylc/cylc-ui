@@ -19,7 +19,6 @@ import i18n from '@/i18n'
 
 /**
  * Here we can define the operations that are common to components/views.
- * @type {{methods: {setPageTitle(*=, *=): string}}}
  */
 export default {
   /**

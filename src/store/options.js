@@ -19,6 +19,7 @@
 import { app } from './app.module'
 import { workflows } from './workflows.module'
 import { user } from './user.module'
+import { tree } from './tree.module'
 
 // State
 const state = {
@@ -80,7 +81,8 @@ export default {
   modules: {
     app,
     workflows,
-    user
+    user,
+    tree
   },
   actions,
   mutations,
