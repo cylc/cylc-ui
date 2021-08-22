@@ -48,12 +48,12 @@ const state = {
     lookup: {}
   },
   /**
-   * This contains a list of workflows returned from GraphQL and is used by components
+   * This contains workflows returned from GraphQL indexed by their ID's. And is used by components
    * such as GScan, Dashboard, and WorkflowsTable.
    *
-   * @type {Array<WorkflowGraphQLData>}
+   * @type {Object.<string, WorkflowGraphQLData>}
    */
-  workflows: [],
+  workflows: {},
   /**
    * This holds the name of the current workflow. This is set by VueRouter
    * and is used to decide what's the current workflow. It is used in conjunction
