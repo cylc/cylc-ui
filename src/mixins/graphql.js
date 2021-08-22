@@ -56,7 +56,7 @@ export default {
     /**
      * GraphQL query variables.
      *
-     * @returns {{workflowId: string}}
+     * @returns {Object.<string, string>}
      */
     variables () {
       return {
