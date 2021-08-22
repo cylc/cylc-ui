@@ -18,10 +18,24 @@ import Vue from 'vue'
 import { mergeWith } from 'lodash'
 import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 
-export default function (data, workflows) {
-  const added = data.deltas.added
-  const updated = data.deltas.updated
-  const pruned = data.deltas.pruned
+const DELTAS = {
+  added: applyDeltasAdded,
+  updated: applyDeltasUpdated,
+  pruned: applyDeltasPruned
+}
+
+function handleDeltas (deltas, workflows) {
+  const errors = []
+  Object.keys(DELTAS).forEach(key => {
+    if (deltas[key]) {
+      const handlingFunction = DELTAS[key]
+      const result = handlingFunction(deltas[key], workflows)
+      errors.push(...result.errors)
+    }
+  })
+  const added = deltas.added
+  const updated = deltas.updated
+  const pruned = deltas.pruned
   if (added && added.workflow && added.workflow.status) {
     Vue.set(workflows, added.workflow.id, added.workflow)
   }
@@ -30,5 +44,25 @@ export default function (data, workflows) {
   }
   if (pruned && pruned.workflow) {
     Vue.delete(workflows, pruned.workflow)
+  }
+  return errors
+}
+
+export default function (data, workflows) {
+  const deltas = data.deltas
+  try {
+    return handleDeltas(deltas, workflows)
+  } catch (error) {
+    return {
+      errors: [
+        [
+          'Unexpected error applying deltas',
+          error,
+          deltas,
+          workflow,
+          lookup
+        ]
+      ]
+    }
   }
 }

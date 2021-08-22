@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { mergeWith } from 'lodash'
+import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
 import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/sort'
 
