@@ -94,7 +94,7 @@ import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 const KEYS = ['workflow', 'cyclePoints', 'familyProxies', 'taskProxies', 'jobs']
 
 /**
- * @param {DeltasAdded|Object} added
+ * @param {DeltasAdded} added
  * @param {Object.<String, Object>} lookup
  * @return {Result}
  */
@@ -126,7 +126,7 @@ function applyDeltasAdded (added, lookup) {
 /**
  * Deltas updated.
  *
- * @param updated {DeltasUpdated|Object} updated
+ * @param updated {DeltasUpdated} updated
  * @param {Object.<String, Object>} lookup
  * @return {Result}
  */
@@ -164,7 +164,7 @@ function applyDeltasUpdated (updated, lookup) {
 /**
  * Deltas pruned.
  *
- * @param {DeltasPruned|Object} pruned - deltas pruned
+ * @param {DeltasPruned} pruned - deltas pruned
  * @param {Object.<String, Object>} lookup
  * @return {Result}
  */
@@ -182,8 +182,37 @@ function applyDeltasPruned (pruned, lookup) {
   }
 }
 
-export {
-  applyDeltasAdded,
-  applyDeltasUpdated,
-  applyDeltasPruned
+/**
+ * A function that simply applies the deltas to a lookup object.
+ *
+ * The entries in deltas will be the value of the lookup, and their ID's
+ * will be the keys.
+ *
+ * This function can be used with any lookup-like structure. When
+ * entries are updated it will merge with a customizer maintaining
+ * the Vue reactivity.
+ *
+ * @param {GraphQLResponseData} data
+ * @param {Object.<String, Object>} lookup
+ */
+export default function (data, lookup) {
+  const added = data.deltas.added
+  const updated = data.deltas.updated
+  const pruned = data.deltas.pruned
+  const errors = []
+  if (added) {
+    const result = applyDeltasAdded(added, lookup)
+    errors.push(...result.errors)
+  }
+  if (updated) {
+    const result = applyDeltasUpdated(updated, lookup)
+    errors.push(...result.errors)
+  }
+  if (pruned) {
+    const result = applyDeltasPruned(pruned, lookup)
+    errors.push(...result.errors)
+  }
+  return {
+    errors
+  }
 }

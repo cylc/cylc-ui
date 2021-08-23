@@ -14,7 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import applyDeltasWorkflows from '@/components/cylc/gscan/deltas'
+import Vue from 'vue'
+import Alert from '@/model/Alert.model'
+import applyDeltasGscan from '@/components/cylc/gscan/deltas'
 
 const state = {
   /**
@@ -24,6 +26,9 @@ const state = {
    * @type {Object.<string, WorkflowGraphQLData>}
    */
   workflows: {},
+  gscan: {
+    tree: {}
+  },
   /**
    * This holds the name of the current workflow. This is set by VueRouter
    * and is used to decide what's the current workflow. It is used in conjunction
@@ -47,6 +52,17 @@ const getters = {
 }
 
 const mutations = {
+  SET_GSCAN (state, data) {
+    state.gscan = data
+  },
+  CLEAR_GSCAN (state) {
+    Object.keys(state.gscan.tree).forEach(key => {
+      Vue.delete(state.gscan.tree, key)
+    })
+    state.gscan = {
+      tree: {}
+    }
+  },
   SET_WORKFLOW_NAME (state, data) {
     state.workflowName = data
   },
@@ -67,6 +83,25 @@ const actions = {
   },
   clearWorkflows ({ commit }) {
     commit('SET_WORKFLOWS', [])
+  },
+  applyGScanDeltas ({ commit, state }, data) {
+    // TODO
+    const gscan = state.gscan
+    const options = {
+      hierarchical: true
+    }
+    const result = applyDeltasGscan(data, gscan, options)
+    if (result.errors.length === 0) {
+      commit('SET_GSCAN', gscan)
+    }
+    result.errors.forEach(error => {
+      commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+      // eslint-disable-next-line no-console
+      console.warn(...error)
+    })
+  },
+  clearGScan ({ commit }) {
+    commit('CLEAR_GSCAN')
   }
 }
 
