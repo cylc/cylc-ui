@@ -15,10 +15,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @typedef {Object} GScan
+ */
+
+/**
+ * @typedef {Object<String, TreeNode>} Lookup
+ */
+
+/**
+ * @typedef {Object<String, TreeNode>} Tree
+ */
+
+/**
+ * @param {WorkflowGraphQLData} workflow
+ * @param {GScan} gscan
+ * @param {*} options
+ */
 function addWorkflow (workflow, gscan, options) {
 
 }
 
+/**
+ * @param {WorkflowGraphQLData} workflow
+ * @param {GScan} gscan
+ * @param {*} options
+ */
+function updateWorkflow (workflow, gscan, options) {
+
+}
+
+/**
+ * @param {WorkflowGraphQLData} workflow
+ * @param {GScan} gscan
+ * @param {*} options
+ */
+function removeWorkflow (workflow, gscan, options) {
+
+}
+
 export {
-  addWorkflow
+  addWorkflow,
+  updateWorkflow,
+  removeWorkflow
 }
