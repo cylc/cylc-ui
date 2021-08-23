@@ -114,7 +114,7 @@ function applyDeltasUpdated (updated, workflow, lookup, options) {
           }
         } catch (error) {
           result.errors.push([
-            'Error applying added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+            'Error applying updated-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
             error,
             updatedData,
             workflow,
