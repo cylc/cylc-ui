@@ -19,7 +19,7 @@ import { sortedIndexBy } from '@/components/cylc/common/sort'
 import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/sort'
 
 /**
- * @typedef {Object} WorkflowGScanNode
+ * @typedef {Object} TreeNode
  * @property {String} id
  * @property {String} name
  * @property {String} type
@@ -27,11 +27,11 @@ import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/
  */
 
 /**
- * @typedef {Object} WorkflowNamePartGScanNode
- * @property {String} id
- * @property {String} name
- * @property {String} type
- * @property {WorkflowGraphQLData} node
+ * @typedef {TreeNode} WorkflowGScanNode
+ */
+
+/**
+ * @typedef {TreeNode} WorkflowNamePartGScanNode
  * @property {Array<WorkflowNamePartGScanNode>} children
  */
 

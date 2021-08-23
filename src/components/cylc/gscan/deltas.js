@@ -14,9 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { addWorkflow, updateWorkflow, removeWorkflow } from '@/components/cylc/gscan/index'
 import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
-import { addWorkflow } from '@/components/cylc/gscan/index'
 
+/**
+ * Deltas added.
+ *
+ * @param {DeltasAdded} added
+ * @param {GScan} gscan
+ * @param {*} options
+ * @returns {Result}
+ */
 function applyDeltasAdded (added, gscan, options) {
   const result = {
     errors: []
@@ -39,16 +47,72 @@ function applyDeltasAdded (added, gscan, options) {
   return result
 }
 
-function applyDeltasUpdated () {
+/**
+ * Deltas updated.
+ *
+ * @param {DeltasUpdated} updated
+ * @param {GScan} gscan
+ * @param {*} options
+ * @returns {Result}
+ */
+function applyDeltasUpdated (updated, gscan, options) {
   const result = {
     errors: []
+  }
+  if (updated.workflow) {
+    const updatedData = updated.workflow
+    const hierarchical = options.hierarchical || true
+    try {
+      const existingData = gscan.lookup[updatedData.id]
+      if (!existingData) {
+        result.errors.push([
+          `Updated node [${updatedData.id}] not found in workflow lookup`,
+          updatedData,
+          gscan,
+          options
+        ])
+      } else {
+        const workflowNode = createWorkflowNode(updatedData, hierarchical)
+        updateWorkflow(workflowNode, gscan, options)
+      }
+    } catch (error) {
+      result.errors.push([
+        'Error applying updated-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+        error,
+        updatedData,
+        gscan,
+        options
+      ])
+    }
   }
   return result
 }
 
-function applyDeltasPruned () {
+/**
+ * Deltas pruned.
+ *
+ * @param {DeltasPruned} pruned
+ * @param {GScan} gscan
+ * @param {*} options
+ * @returns {Result}
+ */
+function applyDeltasPruned (pruned, gscan, options) {
   const result = {
     errors: []
+  }
+  if (pruned.workflow) {
+    const workflowId = pruned.workflow
+    try {
+      removeWorkflow(workflowId, gscan, options)
+    } catch (error) {
+      result.errors.push([
+        'Error applying pruned-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+        error,
+        workflowId,
+        gscan,
+        options
+      ])
+    }
   }
   return result
 }
@@ -60,8 +124,14 @@ const DELTAS = {
 }
 
 /**
+ * Handle the deltas. This function receives the new set of deltas, and the GScan object.
+ *
+ * The GScan object contains a tree property that holds the hierarchical (or not) GScan,
+ * and a lookup helper dictionary used for ease of access to leaf or intermediary tree
+ * nodes.
+ *
  * @param {Deltas} deltas
- * @param {*} gscan
+ * @param {GScan} gscan
  * @param {*} options
  * @returns {Result}
  */
@@ -82,7 +152,7 @@ function handleDeltas (deltas, gscan, options) {
 /**
  * @param {GraphQLResponseData} data
  * @param {*} gscan
- * @param {*}options
+ * @param {*} options
  * @returns {Result}
  */
 export default function (data, gscan, options) {
