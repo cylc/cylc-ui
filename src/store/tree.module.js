@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { clear } from '@/components/cylc/tree'
-import applyDeltasLookup from '@/components/cylc/workflow/deltas'
+import applyDeltasLookup from '@/components/cylc/common/deltas'
 import Alert from '@/model/Alert.model'
 import applyDeltasTree from '@/components/cylc/tree/deltas'
 
