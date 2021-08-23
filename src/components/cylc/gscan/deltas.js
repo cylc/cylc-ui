@@ -14,80 +14,94 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import Vue from 'vue'
-import { mergeWith } from 'lodash'
-import { mergeWithCustomizer } from '@/components/cylc/common/merge'
+import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
+import { addWorkflow } from '@/components/cylc/gscan/index'
 
-/**
- * @param {DeltasAdded|Object} added
- * @param {Array<WorkflowGraphQLData>} workflows
- * @return {Result}
- */
-function applyDeltasAdded (added, workflows) {
+function applyDeltasAdded (added, gscan, options) {
   const result = {
     errors: []
   }
-  if (added && added.workflow && added.workflow.status) {
+  if (added.workflow) {
+    const hierarchical = options.hierarchical || true
+    const workflowNode = createWorkflowNode(added.workflow, hierarchical)
     try {
-      Vue.set(workflows, added.workflow.id, added.workflow)
+      addWorkflow(workflowNode, gscan, options)
     } catch (error) {
       result.errors.push([
         'Error applying GScan added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
         error,
-        added,
-        workflows
+        added.workflow,
+        gscan,
+        options
       ])
     }
   }
   return result
 }
 
-/**
- * @param {DeltasUpdated|Object} updated
- * @param {Array<WorkflowGraphQLData>} workflows
- * @return {Result}
- */
-function applyDeltasUpdated (updated, workflows) {
+function applyDeltasUpdated () {
   const result = {
     errors: []
-  }
-  try {
-    if (updated && updated.workflow && workflows[updated.workflow.id]) {
-      mergeWith(workflows[updated.workflow.id], updated.workflow, mergeWithCustomizer)
-    }
-  } catch (error) {
-    result.errors.push([
-      'Error applying GScan updated-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
-      error,
-      updated,
-      workflows
-    ])
   }
   return result
 }
 
-/**
- * @param {DeltasPruned|Object} pruned
- * @param {Array<WorkflowGraphQLData>} workflows
- * @return {Result}
- */
-function applyDeltasPruned (pruned, workflows) {
+function applyDeltasPruned () {
   const result = {
     errors: []
   }
-  try {
-    if (pruned && pruned.workflow) {
-      Vue.delete(workflows, pruned.workflow)
-    }
-  } catch (error) {
-    result.errors.push([
-      'Error applying GScan pruned-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
-      error,
-      pruned,
-      workflows
-    ])
-  }
   return result
+}
+
+const DELTAS = {
+  added: applyDeltasAdded,
+  updated: applyDeltasUpdated,
+  pruned: applyDeltasPruned
+}
+
+/**
+ * @param {Deltas} deltas
+ * @param {*} gscan
+ * @param {*} options
+ * @returns {Result}
+ */
+function handleDeltas (deltas, gscan, options) {
+  const errors = []
+  Object.keys(DELTAS).forEach(key => {
+    if (deltas[key]) {
+      const handlingFunction = DELTAS[key]
+      const result = handlingFunction(deltas[key], gscan, options)
+      errors.push(...result.errors)
+    }
+  })
+  return {
+    errors
+  }
+}
+
+/**
+ * @param {GraphQLResponseData} data
+ * @param {*} gscan
+ * @param {*}options
+ * @returns {Result}
+ */
+export default function (data, gscan, options) {
+  const deltas = data.deltas
+  try {
+    return handleDeltas(deltas, gscan, options)
+  } catch (error) {
+    return {
+      errors: [
+        [
+          'Unexpected error applying gscan deltas',
+          error,
+          deltas,
+          gscan,
+          options
+        ]
+      ]
+    }
+  }
 }
 
 export {

@@ -16,6 +16,7 @@
  */
 import Vue from 'vue'
 import Alert from '@/model/Alert.model'
+import applyDeltasLookup from '@/components/cylc/common/deltas'
 import applyDeltasGscan from '@/components/cylc/gscan/deltas'
 
 const state = {
@@ -78,14 +79,13 @@ const actions = {
   applyWorkflowsDeltas ({ commit, state }, data) {
     // modifying state directly in an action results in warnings...
     const workflows = Object.assign({}, state.workflows)
-    applyDeltasWorkflows(data, workflows)
+    applyDeltasLookup(data, workflows)
     commit('SET_WORKFLOWS', workflows)
   },
   clearWorkflows ({ commit }) {
     commit('SET_WORKFLOWS', [])
   },
   applyGScanDeltas ({ commit, state }, data) {
-    // TODO
     const gscan = state.gscan
     const options = {
       hierarchical: true
