@@ -210,6 +210,7 @@ function handleDeltas (deltas, workflow, lookup, options) {
  * @param {Workflow} workflow
  * @param {Lookup} lookup
  * @param {*} options
+ * @return {Result}
  */
 export default function (data, workflow, lookup, options) {
   const deltas = data.deltas
@@ -251,11 +252,12 @@ export default function (data, workflow, lookup, options) {
     return {
       errors: [
         [
-          'Unexpected error applying deltas',
+          'Unexpected error applying tree deltas',
           error,
           deltas,
           workflow,
-          lookup
+          lookup,
+          options
         ]
       ]
     }

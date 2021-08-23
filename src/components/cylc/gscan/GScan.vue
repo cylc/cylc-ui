@@ -206,7 +206,7 @@ import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
-import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
+// import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
@@ -226,7 +226,9 @@ export default {
         GSCAN_DELTAS_SUBSCRIPTION,
         {},
         'root',
-        ['workflows/applyWorkflowsDeltas'],
+        [
+          'workflows/applyGScanDeltas'
+        ],
         ['workflows/clearWorkflows']
       ),
       maximumTasksDisplayed: 5,
@@ -310,16 +312,16 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflows']),
-    workflowNodes () {
-      // NOTE: In case we decide to allow the user to switch between hierarchical and flat
-      //       gscan view, then all we need to do is just pass a boolean data-property to
-      //       the `createWorkflowNode` function below. Then reactivity will take care of
-      //       the rest.
-      const reducer = (acc, workflow) => addNodeToTree(createWorkflowNode(workflow, /* hierarchy */true), acc)
-      return Object.values(this.workflows)
-        .reduce(reducer, [])
-    },
+    ...mapState('workflows', ['workflows', 'gscan']),
+    // workflowNodes () {
+    //   // NOTE: In case we decide to allow the user to switch between hierarchical and flat
+    //   //       gscan view, then all we need to do is just pass a boolean data-property to
+    //   //       the `createWorkflowNode` function below. Then reactivity will take care of
+    //   //       the rest.
+    //   const reducer = (acc, workflow) => addNodeToTree(createWorkflowNode(workflow, /* hierarchy */true), acc)
+    //   return Object.values(this.workflows)
+    //     .reduce(reducer, [])
+    // },
     /**
      * @return {Array<String>}
      */
@@ -348,7 +350,7 @@ export default {
       deep: true,
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree.children || [], this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     },
     /**
@@ -358,13 +360,13 @@ export default {
     searchWorkflows: {
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, newVal, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree.children || [], newVal, this.workflowStates, this.taskStates)
       }
     },
-    workflowNodes: {
+    gscan: {
       immediate: true,
       handler: function () {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree.children || [], this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     }
   },
