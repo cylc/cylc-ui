@@ -27,8 +27,13 @@ const state = {
    * @type {Object.<string, WorkflowGraphQLData>}
    */
   workflows: {},
+  /**
+   * This is the data structure used by GScan component. The tree holds the hierarchical GScan,
+   * and the lookup is a helper structure for quick access to nodes in the tree.
+   */
   gscan: {
-    tree: {}
+    tree: {},
+    lookup: {}
   },
   /**
    * This holds the name of the current workflow. This is set by VueRouter
@@ -57,11 +62,14 @@ const mutations = {
     state.gscan = data
   },
   CLEAR_GSCAN (state) {
-    Object.keys(state.gscan.tree).forEach(key => {
-      Vue.delete(state.gscan.tree, key)
-    })
+    for (const property of ['tree', 'lookup']) {
+      Object.keys(state.gscan[property]).forEach(key => {
+        Vue.delete(state.gscan[property], key)
+      })
+    }
     state.gscan = {
-      tree: {}
+      tree: {},
+      lookup: {}
     }
   },
   SET_WORKFLOW_NAME (state, data) {
