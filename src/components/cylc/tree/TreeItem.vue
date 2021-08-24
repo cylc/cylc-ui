@@ -194,7 +194,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- component recursion -->
       <TreeItem
         v-for="child in node.children"
-        ref="treeitem"
         :key="child.id"
         :node="child"
         :depth="depth + 1"
@@ -205,6 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-on:tree-item-expanded="$listeners['tree-item-expanded']"
         v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
         v-on:tree-item-clicked="$listeners['tree-item-clicked']"
+
       >
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
       </TreeItem>
@@ -249,7 +249,7 @@ export default {
       active: false,
       selected: false,
       isExpanded: this.initialExpanded,
-      leafProperties: [
+      leafProperties: Object.freeze([
         {
           title: 'platform',
           property: 'platform'
@@ -274,7 +274,7 @@ export default {
           title: 'finish time',
           property: 'finishedTime'
         }
-      ],
+      ]),
       filtered: true
     }
   },
@@ -284,11 +284,7 @@ export default {
     }
   },
   created () {
-    // console.log(`TreeItem ${this.node.id} created!`)
     this.$emit('tree-item-created', this)
-  },
-  updated () {
-    // console.log(`TreeItem ${this.node.id} updated!`)
   },
   beforeDestroy () {
     this.$emit('tree-item-destroyed', this)
