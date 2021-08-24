@@ -313,7 +313,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflows', 'gscan']),
+    ...mapState('workflows', ['gscan']),
     // workflowNodes () {
     //   // NOTE: In case we decide to allow the user to switch between hierarchical and flat
     //   //       gscan view, then all we need to do is just pass a boolean data-property to
@@ -351,7 +351,7 @@ export default {
       deep: true,
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree.children || [], this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree, this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     },
     /**
@@ -361,13 +361,14 @@ export default {
     searchWorkflows: {
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree.children || [], newVal, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree, newVal, this.workflowStates, this.taskStates)
       }
     },
     gscan: {
       immediate: true,
+      deep: true,
       handler: function () {
-        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree.children || [], this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree, this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     }
   },

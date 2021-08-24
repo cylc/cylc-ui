@@ -21,7 +21,7 @@ import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
  * Deltas added.
  *
  * @param {DeltasAdded} added
- * @param {GScan} gscan
+ * @param {import('./index').GScan} gscan
  * @param {*} options
  * @returns {Result}
  */
@@ -51,7 +51,7 @@ function applyDeltasAdded (added, gscan, options) {
  * Deltas updated.
  *
  * @param {DeltasUpdated} updated
- * @param {GScan} gscan
+ * @param {import('./index').GScan} gscan
  * @param {*} options
  * @returns {Result}
  */
@@ -61,7 +61,6 @@ function applyDeltasUpdated (updated, gscan, options) {
   }
   if (updated.workflow) {
     const updatedData = updated.workflow
-    const hierarchical = options.hierarchical || true
     try {
       const existingData = gscan.lookup[updatedData.id]
       if (!existingData) {
@@ -72,7 +71,8 @@ function applyDeltasUpdated (updated, gscan, options) {
           options
         ])
       } else {
-        const workflowNode = createWorkflowNode(updatedData, hierarchical)
+        // TODO: hierarchy is always false here?
+        const workflowNode = createWorkflowNode(updatedData, false)
         updateWorkflow(workflowNode, gscan, options)
       }
     } catch (error) {
@@ -92,7 +92,7 @@ function applyDeltasUpdated (updated, gscan, options) {
  * Deltas pruned.
  *
  * @param {DeltasPruned} pruned
- * @param {GScan} gscan
+ * @param {import('./index').GScan} gscan
  * @param {*} options
  * @returns {Result}
  */
@@ -100,6 +100,7 @@ function applyDeltasPruned (pruned, gscan, options) {
   const result = {
     errors: []
   }
+  // TODO: why not pruned.workflows???
   if (pruned.workflow) {
     const workflowId = pruned.workflow
     try {
