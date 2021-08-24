@@ -218,6 +218,9 @@ export default {
       })
     },
     tasksFilterStates: function () {
+      if (!this.activeFilters) {
+        return []
+      }
       return this.activeFilters.states.map(selectedTaskState => {
         return selectedTaskState
       })
