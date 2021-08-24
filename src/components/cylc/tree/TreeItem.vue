@@ -284,7 +284,11 @@ export default {
     }
   },
   created () {
+    // console.log(`TreeItem ${this.node.id} created!`)
     this.$emit('tree-item-created', this)
+  },
+  updated () {
+    // console.log(`TreeItem ${this.node.id} updated!`)
   },
   beforeDestroy () {
     this.$emit('tree-item-destroyed', this)

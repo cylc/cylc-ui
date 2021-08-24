@@ -32,7 +32,7 @@ const state = {
    * and the lookup is a helper structure for quick access to nodes in the tree.
    */
   gscan: {
-    tree: {},
+    tree: [],
     lookup: {}
   },
   /**
@@ -71,7 +71,7 @@ const mutations = {
       })
     }
     state.gscan = {
-      tree: {},
+      tree: [],
       lookup: {}
     }
   },

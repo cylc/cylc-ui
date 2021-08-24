@@ -85,7 +85,7 @@ function newWorkflowPartNode (id, part) {
  *
  * @param {WorkflowGraphQLData} workflow
  * @param {boolean} hierarchy - whether to parse the Workflow name and create a hierarchy or not
- * @returns {WorkflowGScanNode|WorkflowNamePartGScanNode|null}
+ * @returns {TreeNode}
  */
 function createWorkflowNode (workflow, hierarchy) {
   if (!hierarchy) {
