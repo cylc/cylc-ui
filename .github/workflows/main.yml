@@ -31,7 +31,7 @@ jobs:
           config_file: jsdoc.conf.json
         # TODO: upload to GH pages?
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.0.2
+        uses: codecov/codecov-action@v2.0.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
@@ -70,7 +70,7 @@ jobs:
         env:
           CYPRESS_baseUrl: http://localhost:8080/
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.0.2
+        uses: codecov/codecov-action@v2.0.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
