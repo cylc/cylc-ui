@@ -7070,7 +7070,7 @@ __metadata:
     preact: ^10.5.14
     preact-compat: ^3.19.0
     regenerator-runtime: ^0.13.7
-    sass: ~1.35.2
+    sass: ~1.38.1
     sass-loader: ^10.2.0
     sinon: ^11.1.1
     standard: ^16.0.3
@@ -16028,14 +16028,14 @@ resolve@1.1.7:
   languageName: node
   linkType: hard
 
-"sass@npm:~1.35.2":
-  version: 1.35.2
-  resolution: "sass@npm:1.35.2"
+"sass@npm:~1.38.1":
+  version: 1.38.2
+  resolution: "sass@npm:1.38.2"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
   bin:
     sass: sass.js
-  checksum: bae338ac88d5a2f6d99dd3fc8f3ac84a93419eaa2d38ee877ddd844f6996f21b0005ed074e9eadb28bb08c4a3c2dc379a01cd6fe47352a9857870d33f69273ef
+  checksum: 41a0cf4539562dbe114d375cca3bbc090eeb13286d02367e772a09282c5bc4232226f1fbe08edbcc958f2dda9e17bc4c4aedd4da87c5aa4a4e3b816202913b33
   languageName: node
   linkType: hard
 
