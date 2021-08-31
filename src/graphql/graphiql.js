@@ -18,7 +18,7 @@
 // Code related to GraphiQL
 
 import { parse } from 'graphql'
-import { createGraphQLUrls } from '@/graphql/index'
+import { createGraphQLUrls, getCylcHeaders } from '@/graphql/index'
 
 // TODO: https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher/issues/16
 //       the functions hasSubscriptionOperation and graphQLFetcher are both from
@@ -113,7 +113,8 @@ function fallbackGraphQLFetcher (graphQLParams) {
       method: 'post',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...getCylcHeaders()
       },
       body: JSON.stringify(graphQLParams),
       credentials: 'include'

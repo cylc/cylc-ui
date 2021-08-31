@@ -26,7 +26,14 @@ class UserService {
    */
   getUserProfile () {
     return axios.get(createUrl('userprofile')).then((response) => {
-      return new User(response.data.name, response.data.groups, response.data.created, response.data.admin, response.data.server)
+      return new User(
+        response.data.name,
+        response.data.groups,
+        response.data.created,
+        response.data.admin,
+        response.data.server,
+        response.data.owner
+      )
     })
   }
 }
