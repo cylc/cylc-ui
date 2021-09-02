@@ -82,6 +82,7 @@ import { mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import GScanCallback from '@/components/cylc/gscan/callbacks'
 import { WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
@@ -100,8 +101,9 @@ export default {
       WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION,
       {},
       'root',
-      ['workflows/applyWorkflowsDeltas'],
-      []
+      [
+        new GScanCallback()
+      ]
     ),
     headers: [
       {

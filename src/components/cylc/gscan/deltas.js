@@ -18,17 +18,80 @@ import Vue from 'vue'
 import { mergeWith } from 'lodash'
 import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 
-export default function (data, workflows) {
-  const added = data.deltas.added
-  const updated = data.deltas.updated
-  const pruned = data.deltas.pruned
+/**
+ * @param {DeltasAdded|Object} added
+ * @param {Array<WorkflowGraphQLData>} workflows
+ * @return {Result}
+ */
+function applyDeltasAdded (added, workflows) {
+  const result = {
+    errors: []
+  }
   if (added && added.workflow && added.workflow.status) {
-    Vue.set(workflows, added.workflow.id, added.workflow)
+    try {
+      Vue.set(workflows, added.workflow.id, added.workflow)
+    } catch (error) {
+      result.errors.push([
+        'Error applying GScan added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+        error,
+        added,
+        workflows
+      ])
+    }
   }
-  if (updated && updated.workflow && workflows[updated.workflow.id]) {
-    mergeWith(workflows[updated.workflow.id], updated.workflow, mergeWithCustomizer)
+  return result
+}
+
+/**
+ * @param {DeltasUpdated|Object} updated
+ * @param {Array<WorkflowGraphQLData>} workflows
+ * @return {Result}
+ */
+function applyDeltasUpdated (updated, workflows) {
+  const result = {
+    errors: []
   }
-  if (pruned && pruned.workflow) {
-    Vue.delete(workflows, pruned.workflow)
+  try {
+    if (updated && updated.workflow && workflows[updated.workflow.id]) {
+      mergeWith(workflows[updated.workflow.id], updated.workflow, mergeWithCustomizer)
+    }
+  } catch (error) {
+    result.errors.push([
+      'Error applying GScan updated-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+      error,
+      updated,
+      workflows
+    ])
   }
+  return result
+}
+
+/**
+ * @param {DeltasPruned|Object} pruned
+ * @param {Array<WorkflowGraphQLData>} workflows
+ * @return {Result}
+ */
+function applyDeltasPruned (pruned, workflows) {
+  const result = {
+    errors: []
+  }
+  try {
+    if (pruned && pruned.workflow) {
+      Vue.delete(workflows, pruned.workflow)
+    }
+  } catch (error) {
+    result.errors.push([
+      'Error applying GScan pruned-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+      error,
+      pruned,
+      workflows
+    ])
+  }
+  return result
+}
+
+export {
+  applyDeltasAdded,
+  applyDeltasUpdated,
+  applyDeltasPruned
 }

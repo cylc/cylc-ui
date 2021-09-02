@@ -15,6 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import pick from 'lodash/pick'
+import isArray from 'lodash/isArray'
+import Vue from 'vue'
+import mergeWith from 'lodash/mergeWith'
+import { mergeWithCustomizer } from '@/components/cylc/common/merge'
+
 /**
  * @typedef {Object} GraphQLResponseData
  * @property {Deltas} deltas
@@ -79,3 +85,104 @@
  * @property {Array<string>} familyProxies - IDs of family proxies removed
  * @property {Array<string>} jobs - IDs of jobs removed
  */
+
+/**
+ * @typedef {Object} Result
+ * @property {Array<Object>} errors
+ */
+
+const KEYS = ['workflow', 'cyclePoints', 'familyProxies', 'taskProxies', 'jobs']
+
+/**
+ * @param {DeltasAdded|Object} added
+ * @param {Object.<String, Object>} lookup
+ * @return {Result}
+ */
+function applyDeltasAdded (added, lookup) {
+  const result = {
+    errors: []
+  }
+  for (const addedValue of Object.values(pick(added, KEYS))) {
+    const items = isArray(addedValue) ? addedValue : [addedValue]
+    for (const addedData of items) {
+      // An example for a data without .id, is the empty delta with __typename: "Added". It does occur, and can cause runtime errors.
+      if (addedData.id) {
+        try {
+          Vue.set(lookup, addedData.id, addedData)
+        } catch (error) {
+          result.errors.push([
+            'Error applying Lookup added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+            error,
+            addedData,
+            lookup
+          ])
+        }
+      }
+    }
+  }
+  return result
+}
+
+/**
+ * Deltas updated.
+ *
+ * @param updated {DeltasUpdated|Object} updated
+ * @param {Object.<String, Object>} lookup
+ * @return {Result}
+ */
+function applyDeltasUpdated (updated, lookup) {
+  const result = {
+    errors: []
+  }
+  for (const updatedValue of Object.values(pick(updated, KEYS))) {
+    const items = isArray(updatedValue) ? updatedValue : [updatedValue]
+    for (const updatedData of items) {
+      // An example for a data without .id, is the empty delta with __typename: "Updated". It does occur, and can cause runtime errors.
+      if (updatedData.id) {
+        try {
+          const existingNode = lookup[updatedData.id]
+          if (existingNode) {
+            mergeWith(existingNode, updatedData, mergeWithCustomizer)
+          } else {
+            // TODO: we are adding in the updated. Is that OK? Should we revisit it later perhaps?
+            Vue.set(lookup, updatedData.id, updatedData)
+          }
+        } catch (error) {
+          result.errors.push([
+            'Error applying Lookup updated-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+            error,
+            updatedData,
+            lookup
+          ])
+        }
+      }
+    }
+  }
+  return result
+}
+
+/**
+ * Deltas pruned.
+ *
+ * @param {DeltasPruned|Object} pruned - deltas pruned
+ * @param {Object.<String, Object>} lookup
+ * @return {Result}
+ */
+function applyDeltasPruned (pruned, lookup) {
+  for (const prunedData of Object.values(pick(pruned, KEYS))) {
+    for (const id of prunedData) {
+      if (lookup[id]) {
+        delete lookup[id]
+      }
+    }
+  }
+  return {
+    errors: []
+  }
+}
+
+export {
+  applyDeltasAdded,
+  applyDeltasUpdated,
+  applyDeltasPruned
+}

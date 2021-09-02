@@ -179,6 +179,7 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import GScanCallback from '@/components/cylc/gscan/callbacks'
 import { DASHBOARD_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
@@ -199,8 +200,9 @@ export default {
         DASHBOARD_DELTAS_SUBSCRIPTION,
         {},
         'root',
-        ['workflows/applyWorkflowsDeltas'],
-        []
+        [
+          new GScanCallback()
+        ]
       ),
       workflowsHeader: [
         {

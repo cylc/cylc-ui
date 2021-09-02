@@ -33,7 +33,7 @@ import { createApolloClient } from '@/graphql/index'
 import { DocumentNode, print } from 'graphql'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 import mergeQueries from '@/graphql/merge'
-/* eslint-enable no-unused-vars */
+import Alert from '@/model/Alert.model'
 
 class WorkflowService {
   /**
@@ -189,9 +189,33 @@ class WorkflowService {
         subscription.query.variables,
         {
           next: function next (response) {
-            subscription.actionNames.forEach(actionName => {
-              store.dispatch(actionName, response.data).then(() => {})
-            })
+            if (subscription.callbacks.length === 0) {
+              return
+            }
+            /**
+             * @type {Deltas}
+             */
+            const deltas = response.data.deltas || {}
+            const added = deltas.added || {}
+            const updated = deltas.updated || {}
+            const pruned = deltas.pruned || {}
+            const errors = []
+            for (const callback of subscription.callbacks) {
+              callback.before(deltas, store, errors)
+              callback.onAdded(added, store, errors)
+              callback.onUpdated(updated, store, errors)
+              callback.commit(store, errors)
+            }
+            for (const callback of [...subscription.callbacks].reverse()) {
+              callback.onPruned(pruned, store, errors)
+              callback.after(deltas, store, errors)
+              callback.commit(store, errors)
+            }
+            for (const error of errors) {
+              store.commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+              // eslint-disable-next-line no-console
+              console.warn(...error)
+            }
           },
           error: function error (err) {
             subscription.handleViewState(ViewState.ERROR, err)
@@ -269,9 +293,9 @@ class WorkflowService {
       console.debug(`Stopping subscription ${subscription.query.name}`)
     }
     subscription.observable.unsubscribe()
-    subscription.tearDownActionNames.forEach(actionName => {
-      store.dispatch(actionName).then(() => {})
-    })
+    for (const callback of subscription.callbacks) {
+      callback.tearDown(store)
+    }
     delete this.subscriptions[subscription.query.name]
   }
 
@@ -296,21 +320,18 @@ class WorkflowService {
     // Reset.
     const initialQuery = print(baseSubscriber.query.query)
     subscription.query.query = baseSubscriber.query.query
-    subscription.actionNames = baseSubscriber.query.actionNames
-    subscription.tearDownActionNames = baseSubscriber.query.tearDownActionNames
+    subscription.callbacks = baseSubscriber.query.callbacks
 
-    subscribers.slice(1)
-      .forEach(subscriber => {
-        // NB: We can remove this check if we so want, as the library used to combine queries
-        //     supports merging variables too. Only issue would be the possibility of merging
-        //     subscriptions for different workflows by accident...
-        if (!isEqual(subscriber.query.variables, baseSubscriber.query.variables)) {
-          throw new Error('Error recomputing subscription: Query variables do not match.')
-        }
-        baseSubscriber.query.query = mergeQueries(baseSubscriber.query.query, subscriber.query.query)
-        subscription.actionNames = union(subscription.actionNames, subscriber.query.actionNames)
-        subscription.tearDownActionNames = union(subscription.tearDownActionNames, subscriber.query.tearDownActionNames)
-      })
+    for (const subscriber of subscribers.slice(1)) {
+      // NB: We can remove this check if we so want, as the library used to combine queries
+      //     supports merging variables too. Only issue would be the possibility of merging
+      //     subscriptions for different workflows by accident...
+      if (!isEqual(subscriber.query.variables, baseSubscriber.query.variables)) {
+        throw new Error('Error recomputing subscription: Query variables do not match.')
+      }
+      baseSubscriber.query.query = mergeQueries(baseSubscriber.query.query, subscriber.query.query)
+      subscription.callbacks = union(subscription.callbacks, subscriber.query.callbacks)
+    }
     const finalQuery = print(baseSubscriber.query.query)
     // TODO: consider using a better approach than print(a) === print(b)
     // If we changed the query due to query-merging, then we know we must reload its

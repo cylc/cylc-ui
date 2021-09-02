@@ -39,10 +39,11 @@ const ADDED = {
 /**
  * Deltas added.
  *
- * @param {DeltasAdded} added
+ * @param {DeltasAdded|Object} added
  * @param {Workflow} workflow
  * @param {Lookup} lookup
  * @param {*} options
+ * @return {Result}
  */
 function applyDeltasAdded (added, workflow, lookup, options) {
   const result = {
@@ -60,7 +61,7 @@ function applyDeltasAdded (added, workflow, lookup, options) {
           CylcTree[treeFunction](node, workflow, options)
         } catch (error) {
           result.errors.push([
-            'Error applying added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+            'Error applying Tree added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
             error,
             addedData,
             workflow,
@@ -85,7 +86,7 @@ const UPDATED = {
 /**
  * Deltas updated.
  *
- * @param updated {DeltasUpdated} updated
+ * @param updated {DeltasUpdated|Object} updated
  * @param {Workflow} workflow
  * @param {Lookup} lookup
  * @param {*} options
@@ -101,7 +102,7 @@ function applyDeltasUpdated (updated, workflow, lookup, options) {
           const existingData = lookup[updatedData.id]
           if (!existingData) {
             result.errors.push([
-              `Updated node [${updatedData.id}] not found in workflow lookup`,
+              `Updated node [${updatedData.id}] not found in Tree workflow lookup`,
               updatedData,
               workflow,
               lookup
@@ -114,7 +115,7 @@ function applyDeltasUpdated (updated, workflow, lookup, options) {
           }
         } catch (error) {
           result.errors.push([
-            'Error applying added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+            'Error applying Tree added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
             error,
             updatedData,
             workflow,
@@ -139,7 +140,7 @@ const PRUNED = {
 /**
  * Deltas pruned.
  *
- * @param {DeltasPruned} pruned - deltas pruned
+ * @param {DeltasPruned|Object} pruned - deltas pruned
  * @param {Workflow} workflow
  * @param {Lookup} lookup
  * @param {*} options
@@ -155,7 +156,7 @@ function applyDeltasPruned (pruned, workflow, lookup, options) {
           CylcTree[PRUNED[prunedKey]](id, workflow, options)
         } catch (error) {
           result.errors.push([
-            'Error applying pruned-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+            'Error applying Tree pruned-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
             error,
             prunedKey,
             workflow,
@@ -168,96 +169,8 @@ function applyDeltasPruned (pruned, workflow, lookup, options) {
   return result
 }
 
-const DELTAS = {
-  added: applyDeltasAdded,
-  updated: applyDeltasUpdated,
-  pruned: applyDeltasPruned
-}
-
-/**
- * Handle the deltas. This function receives the new set of deltas, and the tree object. It is assumed
- * the tree has been correctly created. Except for family proxies, it is expected that other elements
- * are only created via the deltas.added attribute.
- *
- * Family proxies are a special case, due to hierarchy within families, so we have no easy way to grab
- * the first family from the top of the hierarchy in the deltas.
- *l
- * @param {Deltas} deltas - GraphQL deltas
- * @param {Workflow} workflow - Tree object
- * @param {Lookup} lookup
- * @param {*} options
- */
-function handleDeltas (deltas, workflow, lookup, options) {
-  const errors = []
-  Object.keys(DELTAS).forEach(key => {
-    if (deltas[key]) {
-      const handlingFunction = DELTAS[key]
-      const result = handlingFunction(deltas[key], workflow, lookup, options)
-      errors.push(...result.errors)
-    }
-  })
-  // if added, removed, or updated deltas, we want to re-calculate the cycle point states now
-  if (deltas.pruned || deltas.added || deltas.updated) {
-    CylcTree.tallyCyclePointStates(workflow)
-  }
-  return {
-    errors
-  }
-}
-
-/**
- * @param {GraphQLResponseData} data
- * @param {Workflow} workflow
- * @param {Lookup} lookup
- * @param {*} options
- */
-export default function (data, workflow, lookup, options) {
-  const deltas = data.deltas
-  // first we check whether it is a new initial-data-burst
-  if (deltas && deltas.added && deltas.added.workflow) {
-    CylcTree.clear(workflow)
-  }
-  // Safe check in case the tree is empty.
-  if (CylcTree.isEmpty(workflow)) {
-    // When the tree is empty, we have two possible scenarios:
-    //   1. This means that we will receive our initial data burst in deltas.added
-    //      which we can use to create the tree structure.
-    //   2. Or this means that after the shutdown (when we delete the tree), we received a delta.
-    //      In this case we don't really have any way to fix the tree.
-    // In both cases, actually, the user has little that s/he could do, besides refreshing the
-    // page. So we fail silently and wait for a request with the initial data.
-    //
-    // We need at least a deltas.added.workflow in the deltas data, since it is the root node.
-    if (!deltas.added || !deltas.added.workflow) {
-      return {
-        errors: [
-          [
-            'Received a delta before the workflow initial data burst',
-            deltas.added,
-            workflow,
-            lookup
-          ]
-        ]
-      }
-    }
-  }
-  // the tree was created, and now the next messages should contain
-  // 1. data added in deltas.added
-  // 2. data updated in deltas.updated
-  // 3. data pruned in deltas.pruned
-  try {
-    return handleDeltas(deltas, workflow, lookup, options)
-  } catch (error) {
-    return {
-      errors: [
-        [
-          'Unexpected error applying deltas',
-          error,
-          deltas,
-          workflow,
-          lookup
-        ]
-      ]
-    }
-  }
+export {
+  applyDeltasAdded,
+  applyDeltasUpdated,
+  applyDeltasPruned
 }
