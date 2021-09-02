@@ -48,13 +48,9 @@ class Subscription {
      */
     this.subscribers = {}
     /**
-     * @type {String[]}
+     * @type {DeltasCallback[]}
      */
-    this.actionNames = []
-    /**
-     * @type {String[]}
-     */
-    this.tearDownActionNames = []
+    this.callbacks = []
     this.reload = false
     this.debug = debug
   }

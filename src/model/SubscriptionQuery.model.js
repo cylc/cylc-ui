@@ -35,15 +35,13 @@ class SubscriptionQuery {
    * @param {DocumentNode} query
    * @param {Object.<String, String>} variables
    * @param {String} name
-   * @param {Array<String>} actionNames
-   * @param {Array<String>} tearDownActionNames
+   * @param {Array<DeltasCallback>} callbacks
    */
-  constructor (query, variables, name, actionNames, tearDownActionNames) {
+  constructor (query, variables, name, callbacks) {
     this.query = query
     this.variables = variables
     this.name = name
-    this.actionNames = actionNames
-    this.tearDownActionNames = tearDownActionNames
+    this.callbacks = callbacks
   }
 }
 
