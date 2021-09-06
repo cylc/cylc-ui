@@ -24,7 +24,6 @@ import {
   createTaskProxyNode
 } from '@/components/cylc/tree/nodes'
 import * as CylcTree from '@/components/cylc/tree/index'
-import WorkflowState from '@/model/WorkflowState.model'
 
 /**
  * Helper object used to iterate added deltas data.
@@ -214,14 +213,9 @@ function handleDeltas (deltas, workflow, lookup, options) {
  */
 export default function (data, workflow, lookup, options) {
   const deltas = data.deltas
-  // first we check whether it is a new start
+  // first we check whether it is a new initial-data-burst
   if (deltas && deltas.added && deltas.added.workflow) {
-    if (deltas.added.workflow.status === WorkflowState.RUNNING.name) {
-      // The workflow could be stopped. In this case when restarted (cold or hot)
-      // it would be hard to apply the new deltas keeping the UI state valid. So
-      // for now we clear the tree, and start from scratch rebuilding it.
-      CylcTree.clear(workflow)
-    }
+    CylcTree.clear(workflow)
   }
   // Safe check in case the tree is empty.
   if (CylcTree.isEmpty(workflow)) {
