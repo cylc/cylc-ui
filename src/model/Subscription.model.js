@@ -19,6 +19,12 @@ import ViewState from '@/model/ViewState.model'
 import Alert from '@/model/Alert.model'
 
 /**
+ * @typedef {Vue} View
+ * @property {ViewState} viewState
+ * @property {SubscriptionQuery} query
+ */
+
+/**
  * A view or component subscription. Views or components will declare a SubscriptionQuery,
  * that will be used to create a Subscription.
  *
@@ -44,7 +50,7 @@ class Subscription {
      */
     this.observable = null
     /**
-     * @type {Object.<String, Vue>}
+     * @type {Object.<String, View>}
      */
     this.subscribers = {}
     /**

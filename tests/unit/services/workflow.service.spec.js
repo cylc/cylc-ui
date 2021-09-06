@@ -25,17 +25,17 @@ import gql from 'graphql-tag'
 import 'cross-fetch/polyfill'
 import Subscription from '@/model/Subscription.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import storeOptions from '@/store/options'
 import WorkflowService from '@/services/workflow.service'
 import * as graphqlModule from '@/graphql/index'
 import ViewState from '@/model/ViewState.model'
+import WorkflowCallback from '@/components/cylc/common/callbacks'
+import TreeCallback from '@/components/cylc/tree/callbacks'
 
 const sandbox = sinon.createSandbox()
 
 Vue.use(Vuex)
 
 describe('WorkflowService', () => {
-  const store = new Vuex.Store(storeOptions)
   /**
    * @type {String}
    */
@@ -61,7 +61,7 @@ describe('WorkflowService', () => {
    */
   let subscriptionQuery
   /**
-   * @type {Vue}
+   * @type {View}
    */
   let view
   /**
@@ -96,14 +96,13 @@ describe('WorkflowService', () => {
         workflowId: 'cylc|test'
       },
       'root',
-      [],
       [])
     // Subscription
     subscription = new Subscription(subscriptionQuery, true)
     service.subscriptions[subscriptionQuery.name] = subscription
     // Add one View as subscriber to Subscription
     /**
-     * @type {Vue}
+     * @type {View}
      */
     view = {
       _uid: 'view',
@@ -159,10 +158,9 @@ describe('WorkflowService', () => {
         'startDeltasSubscription')
       startDeltasSubscriptionStub.callsFake(myStartDeltasSubscription)
       // we need to add a callback to be called...
-      subscriptionQuery.actionNames.push('workflows/setWorkflowName')
+      subscriptionQuery.callbacks.push()
       subscription.reload = true
       service.startSubscription(subscription)
-      expect(store.state.workflows.workflowName).to.equal(workflowName)
       // after a subscription has been started, the reload flag must be set to false
       expect(subscription.reload).to.equal(false)
     })
@@ -218,10 +216,9 @@ describe('WorkflowService', () => {
         }`,
         subscriptionQuery.variables,
         'root',
-        [],
         [])
       /**
-       * @type {Vue}
+       * @type {View}
        */
       const view1 = {
         _uid: 'view1',
@@ -242,10 +239,9 @@ describe('WorkflowService', () => {
       }`,
         subscriptionQuery.variables,
         'root',
-        [],
         [])
       /**
-       * @type {Vue}
+       * @type {View}
        */
       const view2 = {
         _uid: 'view2',
@@ -269,15 +265,16 @@ describe('WorkflowService', () => {
       expect(expectedQuery1).to.equal(finalQuery)
     })
     it('should not add duplicate action names', () => {
-      const newActionNames = ['a', 'b', 'c']
-      subscriptionQuery.actionNames.push(...newActionNames)
-      subscriptionQuery.tearDownActionNames.push(...newActionNames)
+      const newCallbacks = [
+        new WorkflowCallback(),
+        new TreeCallback()
+      ]
+      subscriptionQuery.callbacks.push(...newCallbacks)
       const newSubscriptionQuery = new SubscriptionQuery(
         query,
         subscriptionQuery.variables,
         subscriptionQuery.name,
-        newActionNames,
-        newActionNames
+        newCallbacks
       )
       const anotherView = {
         _uid: 'anotherView',
@@ -285,20 +282,17 @@ describe('WorkflowService', () => {
       }
       service.subscribe(anotherView)
       // Same action names, Lodash's union should add to list like a set
-      expect(subscriptionQuery.actionNames).to.deep.equal(newActionNames)
-      expect(subscriptionQuery.tearDownActionNames).to.deep.equal(newActionNames)
+      expect(subscriptionQuery.callbacks).to.deep.equal(newCallbacks)
     })
     it('should add new action names', () => {
-      const baseActionNames = ['a', 'b', 'c']
-      subscriptionQuery.actionNames.push(...baseActionNames)
-      subscriptionQuery.tearDownActionNames.push(...baseActionNames)
-      const newActionNames = ['d', 'e', 'f', 'a']
+      const baseCallbacks = [new WorkflowCallback()]
+      subscriptionQuery.callbacks.push(...baseCallbacks)
+      const newCallbacks = [new TreeCallback()]
       const newSubscriptionQuery = new SubscriptionQuery(
         query,
         subscriptionQuery.variables,
         subscriptionQuery.name,
-        newActionNames,
-        newActionNames
+        newCallbacks
       )
       const anotherView = {
         _uid: 'anotherView',
@@ -306,8 +300,7 @@ describe('WorkflowService', () => {
       }
       service.subscribe(anotherView)
       // Same action names, Lodash's union should add to list like a set
-      expect(subscription.actionNames).to.deep.equal([...baseActionNames, 'd', 'e', 'f'])
-      expect(subscription.tearDownActionNames).to.deep.equal([...baseActionNames, 'd', 'e', 'f'])
+      expect(subscription.callbacks).to.deep.equal([...baseCallbacks, new TreeCallback()])
     })
     it('should throw an error if there are no subscribers', () => {
       delete subscription.subscribers[view._uid]
@@ -320,7 +313,6 @@ describe('WorkflowService', () => {
           invalidVariable: true
         },
         'test',
-        [],
         [])
       subscription.subscribers[anotherQuery.name] = {
         _uid: 'view',
@@ -365,17 +357,6 @@ describe('WorkflowService', () => {
       expect(service.subscriptions[subscription.query.name]).to.not.equal(null)
       service.stopSubscription(subscription)
       expect(service.subscriptions[subscription.query.name]).to.equal(undefined)
-    })
-    it('should call the tear down callbacks', () => {
-      subscription.observable = {
-        unsubscribe: () => {}
-      }
-      const workflows = [1, 2, 3]
-      store.commit('workflows/SET_WORKFLOWS', workflows)
-      subscription.tearDownActionNames.push('workflows/clearWorkflows')
-      expect(store.state.workflows.workflows).to.deep.equal(workflows)
-      service.stopSubscription(subscription)
-      expect(store.state.workflows.workflows).to.deep.equal([])
     })
   })
 })

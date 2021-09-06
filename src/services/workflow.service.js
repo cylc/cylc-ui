@@ -123,7 +123,7 @@ class WorkflowService {
   // --- GraphQL query subscriptions
 
   /**
-   * @param {Vue} componentOrView
+   * @param {View} componentOrView
    * @returns {Subscription}
    */
   getOrCreateSubscription (componentOrView) {
@@ -136,7 +136,7 @@ class WorkflowService {
   }
 
   /**
-   * @param {Vue} componentOrView
+   * @param {View} componentOrView
    */
   subscribe (componentOrView) {
     // First we retrieve the existing, or create a new subscription (and add to the pool).

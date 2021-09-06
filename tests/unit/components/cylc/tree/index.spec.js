@@ -19,8 +19,12 @@ import {
   createJobNode,
   getCyclePointId
 } from '@/components/cylc/tree/nodes'
-import handleTreeDeltas from '@/components/cylc/tree/deltas'
-import handleWorkflowDeltas from '@/components/cylc/workflow/deltas'
+import {
+  applyDeltasAdded as applyTreeDeltasAdded
+} from '@/components/cylc/tree/deltas'
+import {
+  applyDeltasAdded as applyWorkflowDeltasAdded
+} from '@/components/cylc/common/deltas'
 import { expect } from 'chai'
 import { sampleWorkflow1 } from './tree.data'
 import * as CylcTree from '@/components/cylc/tree/index'
@@ -42,18 +46,17 @@ describe('Tree component functions', () => {
     CylcTree.clear(workflow)
     const options = {}
     const initialDataBurstData = {
-      deltas: {
-        id: sampleWorkflow1.workflow.id,
-        shutdown: false,
-        added: sampleWorkflow1,
-        updated: {},
-        pruned: []
-      }
+      id: sampleWorkflow1.workflow.id,
+      shutdown: false,
+      added: sampleWorkflow1,
+      updated: {},
+      pruned: []
     }
     // populate the global lookup first
-    handleWorkflowDeltas(initialDataBurstData, lookup)
+    applyWorkflowDeltasAdded(initialDataBurstData.added, lookup)
     // then pass the lookup to the tree-deltas (it re-uses the data from the global lookup)
-    handleTreeDeltas(initialDataBurstData, workflow, lookup, options)
+    const results = applyTreeDeltasAdded(initialDataBurstData.added, workflow, lookup, options)
+    expect(results.errors.length).to.equal(0, results.errors.join('. '))
     workflowTree = workflow.tree.children
   })
   it('should add cycle points as direct children of the workflow', () => {

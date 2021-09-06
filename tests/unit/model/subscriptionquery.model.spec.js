@@ -17,6 +17,7 @@
 
 import { expect } from 'chai'
 import gql from 'graphql-tag'
+import DeltasCallback from '@/services/callbacks'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 
 describe('SubscriptionQuery model', () => {
@@ -27,18 +28,14 @@ describe('SubscriptionQuery model', () => {
         workflowId: 'cylc|cylc'
       }
       const name = 'root'
-      const actionNames = [
-        'setUp'
+      const callbacks = [
+        new DeltasCallback()
       ]
-      const tearDownActionNames = [
-        'tearDown'
-      ]
-      const subscriptionQuery = new SubscriptionQuery(query, variables, name, actionNames, tearDownActionNames)
+      const subscriptionQuery = new SubscriptionQuery(query, variables, name, callbacks)
       expect(subscriptionQuery.query).to.equal(query)
       expect(subscriptionQuery.variables).to.deep.equal(variables)
       expect(subscriptionQuery.name).to.equal(name)
-      expect(subscriptionQuery.actionNames).to.deep.equal(actionNames)
-      expect(subscriptionQuery.tearDownActionNames).to.deep.equal(tearDownActionNames)
+      expect(subscriptionQuery.callbacks).to.deep.equal(callbacks)
     })
   })
 })

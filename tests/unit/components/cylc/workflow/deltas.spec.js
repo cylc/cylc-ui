@@ -18,7 +18,7 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import Vue from 'vue'
-import applyWorkflowDeltas from '@/components/cylc/workflow/deltas'
+import { applyDeltasAdded, applyDeltasUpdated, applyDeltasPruned } from '@/components/cylc/common/deltas'
 import WorkflowState from '@/model/WorkflowState.model'
 
 const sandbox = sinon.createSandbox()
@@ -39,43 +39,37 @@ describe('Workflow component', () => {
   describe('Deltas', () => {
     describe('Added', () => {
       it('should apply added deltas', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
+        const deltas = {
+          added: {
+            workflow: newWorkflow
           }
         }
-        applyWorkflowDeltas(data, lookup)
+        applyDeltasAdded(deltas.added, lookup)
         expect(lookup[newWorkflow.id]).to.deep.equal(newWorkflow)
       })
       it('should collect errors', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
+        const deltas = {
+          added: {
+            workflow: newWorkflow
           }
         }
         const stub = sandbox.stub(Vue, 'set')
         stub.callsFake(() => {
           throw new Error('test')
         })
-        const result = applyWorkflowDeltas(data, lookup)
+        const result = applyDeltasAdded(deltas.added, lookup)
         expect(result.errors.length).to.equal(1)
         expect(result.errors[0][1].message).to.contain('test')
       })
     })
     describe('Updated', () => {
       it('should apply updated deltas', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
+        const deltas = {
+          added: {
+            workflow: newWorkflow
           }
         }
-        applyWorkflowDeltas(data, lookup)
+        applyDeltasAdded(deltas.added, lookup)
         expect(lookup[newWorkflow.id].status).to.equal(WorkflowState.PAUSED)
         newWorkflow.status = WorkflowState.STOPPED
         const updateData = {
@@ -85,56 +79,48 @@ describe('Workflow component', () => {
             }
           }
         }
-        applyWorkflowDeltas(updateData, lookup)
+        applyDeltasUpdated(updateData, lookup)
         expect(lookup[newWorkflow.id].status).to.equal(WorkflowState.STOPPED)
       })
       it('should create/add when the item updated is not in the lookup yet', () => {
-        const data = {
-          deltas: {
-            updated: {
-              workflow: newWorkflow
-            }
+        const deltas = {
+          updated: {
+            workflow: newWorkflow
           }
         }
-        applyWorkflowDeltas(data, lookup)
+        applyDeltasUpdated(deltas.updated, lookup)
         expect(lookup[newWorkflow.id].status).to.equal(WorkflowState.PAUSED)
       })
       it('should collect errors', () => {
-        const data = {
-          deltas: {
-            updated: {
-              workflow: newWorkflow
-            }
+        const deltas = {
+          updated: {
+            workflow: newWorkflow
           }
         }
         const stub = sandbox.stub(Vue, 'set')
         stub.callsFake(() => {
           throw new Error('test')
         })
-        const result = applyWorkflowDeltas(data, lookup)
+        const result = applyDeltasUpdated(deltas.updated, lookup)
         expect(result.errors.length).to.equal(1)
         expect(result.errors[0][1].message).to.contain('test')
       })
     })
     describe('Pruned', () => {
       it('should apply pruned deltas', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
+        const deltasAdded = {
+          added: {
+            workflow: newWorkflow
           }
         }
-        applyWorkflowDeltas(data, lookup)
+        applyDeltasAdded(deltasAdded.added, lookup)
         expect(lookup[newWorkflow.id]).to.deep.equal(newWorkflow)
-        const prunedData = {
-          deltas: {
-            pruned: {
-              workflow: newWorkflow.id
-            }
+        const deltasPruned = {
+          pruned: {
+            workflow: newWorkflow.id
           }
         }
-        applyWorkflowDeltas(prunedData, lookup)
+        applyDeltasPruned(deltasPruned.pruned, lookup)
         expect(lookup[newWorkflow.id]).to.equal(undefined)
       })
     })
