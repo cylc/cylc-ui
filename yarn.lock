@@ -6386,9 +6386,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "concurrently@npm:6.2.0"
+"concurrently@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "concurrently@npm:6.2.1"
   dependencies:
     chalk: ^4.1.0
     date-fns: ^2.16.1
@@ -6401,7 +6401,7 @@ __metadata:
     yargs: ^16.2.0
   bin:
     concurrently: bin/concurrently.js
-  checksum: 2934121e6662eccf3381bb73083583dc4cc4bcbf0ac381d69d5e8137fd1f8c305dc62fd3f9982285a17aa9e1878403955ef8a4f9c15ce428e5d9bc967d4476c7
+  checksum: 818ad5ac708df146948a2c4ac8c6a3845040454d13a4bab952ed02a52c167b5c04832d935b460e9549c239d6d05252132a94a8b2437ec9de0fff240b29225d14
   languageName: node
   linkType: hard
 
@@ -7046,7 +7046,7 @@ __metadata:
     bufferutil: ^4.0.3
     chai: ^4.3.4
     circular-dependency-plugin: ^5.2.2
-    concurrently: ^6.2.0
+    concurrently: ^6.2.1
     core-js: 3
     cross-env: ^7.0.3
     cross-fetch: ^3.1.4
