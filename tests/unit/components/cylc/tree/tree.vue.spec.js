@@ -323,7 +323,7 @@ describe('Tree component', () => {
           workflows: []
         }
       })
-      const treeItem = createTreeItem(1, false)
+      const treeItem = createTreeItem('1', false)
       wrapper.vm.onTreeItemCreated(treeItem)
       expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
       expect(wrapper.vm.activeCache.size).to.equal(0)
@@ -335,7 +335,7 @@ describe('Tree component', () => {
           workflows: []
         }
       })
-      const treeItem = createTreeItem(1, false)
+      const treeItem = createTreeItem('1', false)
       wrapper.vm.onTreeItemCreated(treeItem)
       expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
       wrapper.vm.onTreeItemDestroyed(treeItem)
@@ -347,7 +347,7 @@ describe('Tree component', () => {
           workflows: []
         }
       })
-      const treeItem = createTreeItem(1, true)
+      const treeItem = createTreeItem('1', true)
       wrapper.vm.onTreeItemCreated(treeItem)
       expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
       expect(wrapper.vm.activeCache.size).to.equal(0)
@@ -359,7 +359,7 @@ describe('Tree component', () => {
           workflows: []
         }
       })
-      const treeItem = createTreeItem(1, true)
+      const treeItem = createTreeItem('1', true)
       wrapper.vm.onTreeItemCreated(treeItem)
       expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
       expect(wrapper.vm.expandedCache.size).to.equal(1)

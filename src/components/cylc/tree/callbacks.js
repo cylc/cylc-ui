@@ -16,8 +16,9 @@
  */
 
 import DeltasCallback from '@/services/callbacks'
-import * as CylcTree from '@/components/cylc/tree/index'
 import {
+  before,
+  after,
   applyDeltasAdded,
   applyDeltasUpdated,
   applyDeltasPruned
@@ -46,39 +47,15 @@ class TreeCallback extends DeltasCallback {
   before (deltas, store, errors) {
     const lookup = store.state.workflows.lookup
     const workflow = store.state.workflows.workflow
-    // first we check whether it is a new initial-data-burst
-    if (deltas && deltas.added && deltas.added.workflow) {
-      CylcTree.clear(workflow)
-    }
-    // Safe check in case the tree is empty.
-    if (CylcTree.isEmpty(workflow)) {
-      // When the tree is empty, we have two possible scenarios:
-      //   1. This means that we will receive our initial data burst in deltas.added
-      //      which we can use to create the tree structure.
-      //   2. Or this means that after the shutdown (when we delete the tree), we received a delta.
-      //      In this case we don't really have any way to fix the tree.
-      // In both cases, actually, the user has little that s/he could do, besides refreshing the
-      // page. So we fail silently and wait for a request with the initial data.
-      //
-      // We need at least a deltas.added.workflow in the deltas data, since it is the root node.
-      if (!deltas.added || !deltas.added.workflow) {
-        errors.push([
-          'Received a Tree delta before the workflow initial data burst',
-          deltas.added,
-          workflow,
-          lookup
-        ])
-      }
-    }
     this.workflow = Object.assign({}, workflow)
     this.lookup = Object.assign({}, lookup)
+    const results = before(deltas, this.workflow, this.lookup)
+    errors.push(...results.errors)
   }
 
   after (deltas, store, errors) {
-    // if added, removed, or updated deltas, we want to re-calculate the cycle point states now
-    if (deltas.pruned || deltas.added || deltas.updated) {
-      CylcTree.tallyCyclePointStates(this.workflow)
-    }
+    const results = after(deltas, this.workflow, null)
+    errors.push(...results.errors)
   }
 
   tearDown (store, errors) {

@@ -170,7 +170,8 @@ function applyDeltasUpdated (updated, lookup) {
  */
 function applyDeltasPruned (pruned, lookup) {
   for (const prunedData of Object.values(pick(pruned, KEYS))) {
-    for (const id of prunedData) {
+    const items = isArray(prunedData) ? prunedData : [prunedData]
+    for (const id of items) {
       if (lookup[id]) {
         delete lookup[id]
       }

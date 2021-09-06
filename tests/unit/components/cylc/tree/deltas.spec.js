@@ -20,8 +20,18 @@ import sinon from 'sinon'
 import TaskState from '@/model/TaskState.model'
 import WorkflowState from '@/model/WorkflowState.model'
 import * as CylcTree from '@/components/cylc/tree/index'
-import applyWorkflowDeltas from '@/components/cylc/workflow/deltas'
-import applyTreeDeltas from '@/components/cylc/tree/deltas'
+import {
+  applyDeltasAdded as applyWorkflowDeltasAdded,
+  applyDeltasUpdated as applyWorkflowDeltasUpdated,
+  applyDeltasPruned as applyWorkflowDeltasPruned
+} from '@/components/cylc/common/deltas'
+import {
+  before as beforeApplyingTreeDeltas,
+  after as afterApplyingTreeDeltas,
+  applyDeltasAdded as applyTreeDeltasAdded,
+  applyDeltasUpdated as applyTreeDeltasUpdated,
+  applyDeltasPruned as applyTreeDeltasPruned
+} from '@/components/cylc/tree/deltas'
 import { createCyclePointNode, createFamilyProxyNode, createWorkflowNode } from '@/components/cylc/tree/nodes'
 
 const sandbox = sinon.createSandbox()
@@ -48,9 +58,9 @@ describe('Deltas', () => {
   }
   const WORKFLOW_ID = 'cylc|workflow'
   it('Should skip if no deltas provided', () => {
-    expect(() => applyTreeDeltas(null, null, null)).to.throw(Error)
+    expect(() => applyTreeDeltasAdded(null, null, null, null)).to.throw(Error)
   })
-  it('Should clear the tree if the worfklow started', () => {
+  it('Should clear the tree if the workflow started', () => {
     const workflowNode = createWorkflowNode({
       id: WORKFLOW_ID
     })
@@ -65,19 +75,17 @@ describe('Deltas', () => {
     // Then we send a delta with the workflow added, and with the state
     // of running.
     const deltas = {
-      deltas: {
-        id: WORKFLOW_ID,
-        added: {
-          workflow: {
-            id: WORKFLOW_ID,
-            status: WorkflowState.RUNNING.name
-          }
+      id: WORKFLOW_ID,
+      added: {
+        workflow: {
+          id: WORKFLOW_ID,
+          status: WorkflowState.RUNNING.name
         }
       }
     }
-    applyWorkflowDeltas(deltas, lookup)
-    const result = applyTreeDeltas(deltas, workflow, lookup, {})
-    expectNoErrors(result)
+    expectNoErrors(beforeApplyingTreeDeltas(deltas, workflow, lookup))
+    expectNoErrors(applyWorkflowDeltasAdded(deltas.added, lookup))
+    expectNoErrors(applyTreeDeltasAdded(deltas.added, workflow, lookup, {}))
     // The tree will have been cleared, and the new workflow node added, so
     // the lookup now will have only one node (the workflow).
     expect(Object.keys(workflow.lookup).length).to.equal(1)
@@ -94,12 +102,16 @@ describe('Deltas', () => {
         shutdown: false
       }
     }
-    const result = applyTreeDeltas(data, workflow, lookup, {})
+    let result = beforeApplyingTreeDeltas(data, workflow, lookup)
+    expectNoErrors(result)
+    result = applyTreeDeltasAdded(data, workflow, lookup, {})
+    expectNoErrors(result)
+    result = afterApplyingTreeDeltas(data, workflow, lookup)
     expectNoErrors(result)
     expect(fakeTree.tallyCyclePointStates.called).to.equal(false)
   })
   it('Should warn if the initial data burst has invalid data', () => {
-    const result = applyTreeDeltas({
+    const result = beforeApplyingTreeDeltas({
       deltas: {
         shutdown: false
       }
@@ -108,66 +120,60 @@ describe('Deltas', () => {
     expect(result.errors[0][0]).to.contain('delta before the workflow')
   })
   it('Should log to console and throw an error if it fails to handle deltas', () => {
-    const deltasAdded = {
-      deltas: {
+    const deltas = {
+      id: WORKFLOW_ID,
+      shutdown: false,
+      added: {
+        workflow: {
+          id: WORKFLOW_ID
+        },
+        cyclePoints: [
+          {
+            id: `${WORKFLOW_ID}|1|root`,
+            cyclePoint: `${WORKFLOW_ID}|1`
+          }
+        ]
+      }
+    }
+    // let's force the tree to throw an error when adding cycle points, simulating a runtime exception
+    sandbox.stub(CylcTree, 'addCyclePoint').throws(new Error('fake error'))
+    expectNoErrors(applyWorkflowDeltasAdded(deltas.added, lookup))
+    const result = applyTreeDeltasAdded(deltas.added, workflow, lookup, {})
+    expect(result.errors.length).to.equal(1)
+    expect(result.errors[0][0]).to.contain('added-delta')
+  })
+  it('Should log to console and throw an error if it fails to handle deltas on the first data burst', () => {
+    const deltas = {
+      id: WORKFLOW_ID,
+      shutdown: false,
+      added: {
+        workflow: {
+          id: `user|${WORKFLOW_ID}`
+        }
+      }
+    }
+    sandbox.stub(CylcTree, 'tallyCyclePointStates').throws(new Error('fake error'))
+    // let's force the tree to throw an error when handling the first data burst, simulating a runtime exception
+    const result = afterApplyingTreeDeltas(deltas, workflow, lookup)
+    expect(result.errors.length).to.equal(1)
+    expect(result.errors[0][0].toLowerCase()).to.contain('error tallying')
+  })
+  describe('Initial data burst', () => {
+    it('Should create the CylcTree structure using the initial data burst', () => {
+      const deltasWithInitialDataBurst = {
         id: WORKFLOW_ID,
         shutdown: false,
         added: {
           workflow: {
             id: WORKFLOW_ID
           },
-          cyclePoints: [
-            {
-              id: `${WORKFLOW_ID}|1|root`,
-              cyclePoint: `${WORKFLOW_ID}|1`
-            }
-          ]
+          cyclePoints: [],
+          familyProxies: [],
+          taskProxies: []
         }
       }
-    }
-    // let's force the tree to throw an error when adding cycle points, simulating a runtime exception
-    sandbox.stub(CylcTree, 'addCyclePoint').throws(new Error('fake error'))
-    expectNoErrors(applyWorkflowDeltas(deltasAdded, lookup))
-    const result = applyTreeDeltas(deltasAdded, workflow, lookup, {})
-    expect(result.errors.length).to.equal(1)
-    expect(result.errors[0][0]).to.contain('added-delta')
-  })
-  it('Should log to console and throw an error if it fails to handle deltas on the first data burst', () => {
-    const deltasAdded = {
-      deltas: {
-        id: WORKFLOW_ID,
-        shutdown: false,
-        added: {
-          workflow: {
-            id: `user|${WORKFLOW_ID}`
-          }
-        }
-      }
-    }
-    sandbox.stub(CylcTree, 'tallyCyclePointStates').throws(new Error('fake error'))
-    // let's force the tree to throw an error when handling the first data burst, simulating a runtime exception
-    const result = applyTreeDeltas(deltasAdded, workflow, lookup, {})
-    expect(result.errors.length).to.equal(1)
-    expect(result.errors[0][0]).to.contain('error applying deltas')
-  })
-  describe('Initial data burst', () => {
-    it('Should create the CylcTree structure using the initial data burst', () => {
-      const deltasWithInitialDataBurst = {
-        deltas: {
-          id: WORKFLOW_ID,
-          shutdown: false,
-          added: {
-            workflow: {
-              id: WORKFLOW_ID
-            },
-            cyclePoints: [],
-            familyProxies: [],
-            taskProxies: []
-          }
-        }
-      }
-      applyWorkflowDeltas(deltasWithInitialDataBurst, lookup)
-      applyTreeDeltas(deltasWithInitialDataBurst, workflow, lookup, {})
+      applyWorkflowDeltasAdded(deltasWithInitialDataBurst.added, lookup)
+      applyTreeDeltasAdded(deltasWithInitialDataBurst.added, workflow, lookup, {})
       expect(workflow.tree.id).to.equal(WORKFLOW_ID)
     })
   })
@@ -179,57 +185,55 @@ describe('Deltas', () => {
     })
     it('Should apply added deltas', () => {
       const cyclePointId = `${WORKFLOW_ID}|1`
-      const deltasAdded = {
-        deltas: {
-          id: WORKFLOW_ID,
-          shutdown: false,
-          added: {
-            cyclePoints: [
-              {
-                id: cyclePointId,
-                cyclePoint: '1'
-              }
-            ]
-          }
+      const deltas = {
+        id: WORKFLOW_ID,
+        shutdown: false,
+        added: {
+          cyclePoints: [
+            {
+              id: cyclePointId,
+              cyclePoint: '1'
+            }
+          ]
         }
       }
-      applyWorkflowDeltas(deltasAdded, lookup)
-      applyTreeDeltas(deltasAdded, workflow, lookup, {})
+      applyWorkflowDeltasAdded(deltas.added, lookup)
+      applyTreeDeltasAdded(deltas.added, workflow, lookup, {})
       expect(workflow.tree.children[0].id).to.equal(cyclePointId)
     })
     it('should collect errors', () => {
       const cyclePointId = `${WORKFLOW_ID}|1`
-      const deltasAdded = {
-        deltas: {
-          id: WORKFLOW_ID,
-          shutdown: false,
-          added: {
-            cyclePoints: [
-              {
-                id: cyclePointId,
-                cyclePoint: '1'
-              }
-            ]
-          }
+      const deltas = {
+        id: WORKFLOW_ID,
+        shutdown: false,
+        added: {
+          cyclePoints: [
+            {
+              id: cyclePointId,
+              cyclePoint: '1'
+            }
+          ]
         }
       }
-      applyWorkflowDeltas(deltasAdded, lookup)
+      applyWorkflowDeltasAdded(deltas.added, lookup)
       const stub = sandbox.stub(CylcTree, 'addCyclePoint')
       stub.callsFake(() => {
         throw new Error('test')
       })
-      const result = applyTreeDeltas(deltasAdded, workflow, lookup, {})
+      const result = applyTreeDeltasAdded(deltas.added, workflow, lookup, {})
       expect(result.errors.length).to.equal(1)
       expect(result.errors[0][1].message).to.contain('test')
     })
   })
   describe('Updated', () => {
+    let workflowNode
     let cyclePoint
     let familyProxy
     beforeEach(() => {
-      CylcTree.addWorkflow(createWorkflowNode({
+      workflowNode = createWorkflowNode({
         id: WORKFLOW_ID
-      }), workflow, {})
+      })
+      CylcTree.addWorkflow(workflowNode, workflow, {})
       cyclePoint = createCyclePointNode({
         id: `${WORKFLOW_ID}|1|root`,
         cyclePoint: '1'
@@ -246,68 +250,61 @@ describe('Deltas', () => {
       })
       CylcTree.addFamilyProxy(familyProxy, workflow, {})
     })
-    it('Should apply updated deltas', () => {
-      const deltasUpdated = {
-        deltas: {
-          id: WORKFLOW_ID,
-          shutdown: false,
-          updated: {
-            familyProxies: [
-              {
-                id: familyProxy.id,
-                state: TaskState.FAILED.name
-              }
-            ]
-          }
+    it('should apply updated deltas', () => {
+      const deltas = {
+        id: WORKFLOW_ID,
+        shutdown: false,
+        updated: {
+          familyProxies: [
+            {
+              id: familyProxy.id,
+              state: TaskState.FAILED.name
+            }
+          ]
         }
       }
-      let result = applyWorkflowDeltas(deltasUpdated, lookup)
-      expectNoErrors(result)
-      result = applyTreeDeltas(deltasUpdated, workflow, lookup, {})
-      expectNoErrors(result)
+      expectNoErrors(applyWorkflowDeltasUpdated(deltas.updated, lookup))
+      expectNoErrors(applyTreeDeltasUpdated(deltas.updated, workflow, lookup, {}))
       expect(workflow.tree.children[0].children[0].node.state).to.equal(TaskState.FAILED.name)
     })
     it('should throw an error if updating an item that is not in the global lookup', () => {
-      const deltasUpdated = {
-        deltas: {
-          id: WORKFLOW_ID,
-          shutdown: false,
-          updated: {
-            familyProxies: [
-              {
-                id: familyProxy.id,
-                state: TaskState.FAILED.name
-              }
-            ]
-          }
+      const deltas = {
+        id: WORKFLOW_ID,
+        shutdown: false,
+        updated: {
+          familyProxies: [
+            {
+              id: familyProxy.id,
+              state: TaskState.FAILED.name
+            }
+          ]
         }
       }
       // applyWorkflowDeltas(deltasUpdated, lookup)
-      const result = applyTreeDeltas(deltasUpdated, workflow, lookup, {})
+      const result = applyTreeDeltasUpdated(deltas.updated, workflow, lookup, {})
       expect(result.errors.length).to.equal(1)
       expect(result.errors[0][0]).to.contain('not found')
     })
     it('should collect errors', () => {
-      const deltasUpdated = {
-        deltas: {
-          id: WORKFLOW_ID,
-          shutdown: false,
-          updated: {
-            familyProxies: [
-              {
-                id: familyProxy.id,
-                state: TaskState.FAILED.name
-              }
-            ]
-          }
+      const deltas = {
+        id: WORKFLOW_ID,
+        shutdown: false,
+        updated: {
+          familyProxies: [
+            {
+              id: familyProxy.id,
+              state: TaskState.FAILED.name
+            }
+          ]
         }
       }
-      applyWorkflowDeltas(deltasUpdated, lookup)
+      lookup[familyProxy.id] = familyProxy
+      applyTreeDeltasUpdated(deltas.updated, workflow, lookup, {})
       const stub = sandbox.stub(CylcTree, 'updateFamilyProxy')
       stub.callsFake(() => {
         throw new Error('test')
       })
-      const result = applyTreeDeltas(deltasUpdated, workflow, lookup, {})
+      const result = applyTreeDeltasUpdated(deltas.updated, workflow, lookup, {})
       expect(result.errors.length).to.equal(1)
       expect(result.errors[0][1].message).to.contain('test')
     })
@@ -342,54 +339,49 @@ describe('Deltas', () => {
       // family is empty, note that root family is never added to the tree
       expect(workflow.tree.children[0].children[0].children.length).to.equal(0)
       const deltasPruningFamily = {
-        deltas: {
-          id: WORKFLOW_ID,
-          shutdown: false,
-          pruned: {
-            familyProxies: [
-              familyProxy.id
-            ]
-          }
+        id: WORKFLOW_ID,
+        shutdown: false,
+        pruned: {
+          familyProxies: [
+            familyProxy.id
+          ]
         }
       }
-      applyTreeDeltas(deltasPruningFamily, workflow, lookup, {})
+      applyWorkflowDeltasPruned(deltasPruningFamily.pruned, lookup)
+      applyTreeDeltasPruned(deltasPruningFamily.pruned, workflow, lookup, {})
       // cycle point is now empty
       expect(workflow.tree.children[0].children.length).to.equal(0)
 
       // when you prune the root family, the cycle point must be removed too
       const deltasPruningCyclePoint = {
-        deltas: {
-          id: WORKFLOW_ID,
-          shutdown: false,
-          pruned: {
-            familyProxies: [
-              familyProxy.node.firstParent.id
-            ]
-          }
+        id: WORKFLOW_ID,
+        shutdown: false,
+        pruned: {
+          familyProxies: [
+            familyProxy.node.firstParent.id
+          ]
         }
       }
-      const result = applyTreeDeltas(deltasPruningCyclePoint, workflow, lookup, {})
+      const result = applyTreeDeltasPruned(deltasPruningCyclePoint.pruned, workflow, lookup, {})
       expectNoErrors(result)
       // now the cycle point was removed as well!
       expect(workflow.tree.children.length).to.equal(0)
     })
     it('should collect errors', () => {
       const deltasPruningFamily = {
-        deltas: {
-          id: WORKFLOW_ID,
-          shutdown: false,
-          pruned: {
-            familyProxies: [
-              familyProxy.id
-            ]
-          }
+        id: WORKFLOW_ID,
+        shutdown: false,
+        pruned: {
+          familyProxies: [
+            familyProxy.id
+          ]
         }
       }
       const stub = sandbox.stub(CylcTree, 'removeFamilyProxy')
       stub.callsFake(() => {
         throw new Error('test')
       })
-      const result = applyTreeDeltas(deltasPruningFamily, workflow, lookup, {})
+      const result = applyTreeDeltasPruned(deltasPruningFamily.pruned, workflow, lookup, {})
       expect(result.errors.length).to.equal(1)
       expect(result.errors[0][1].message).to.contain('test')
     })

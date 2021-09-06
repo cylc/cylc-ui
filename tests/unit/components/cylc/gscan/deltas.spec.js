@@ -17,7 +17,11 @@
 
 import { expect } from 'chai'
 import WorkflowState from '@/model/WorkflowState.model'
-import applyWorkflowsDeltas from '@/components/cylc/gscan/deltas'
+import {
+  applyDeltasAdded,
+  applyDeltasUpdated,
+  applyDeltasPruned
+} from '@/components/cylc/gscan/deltas'
 
 describe('GScan component', () => {
   let workflows
@@ -32,59 +36,49 @@ describe('GScan component', () => {
   describe('Deltas', () => {
     describe('Added', () => {
       it('should apply added deltas', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
+        const deltas = {
+          added: {
+            workflow: newWorkflow
           }
         }
-        applyWorkflowsDeltas(data, workflows)
+        applyDeltasAdded(deltas.added, workflows)
         expect(workflows[newWorkflow.id]).to.not.equal(undefined)
       })
     })
     describe('Updated', () => {
       it('should apply updated deltas', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
+        const deltasAdded = {
+          added: {
+            workflow: newWorkflow
           }
         }
-        applyWorkflowsDeltas(data, workflows)
+        applyDeltasAdded(deltasAdded.added, workflows)
         expect(workflows[newWorkflow.id].status).to.equal(WorkflowState.PAUSED)
         newWorkflow.status = WorkflowState.STOPPED
-        const updateData = {
-          deltas: {
-            updated: {
-              workflow: newWorkflow
-            }
+        const deltasUpdated = {
+          updated: {
+            workflow: newWorkflow
           }
         }
-        applyWorkflowsDeltas(updateData, workflows)
+        applyDeltasUpdated(deltasUpdated.updated, workflows)
         expect(workflows[newWorkflow.id].status).to.equal(WorkflowState.STOPPED)
       })
     })
     describe('Pruned', () => {
       it('should apply pruned deltas', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
+        const deltasAdded = {
+          added: {
+            workflow: newWorkflow
           }
         }
-        applyWorkflowsDeltas(data, workflows)
+        applyDeltasAdded(deltasAdded.added, workflows)
         expect(workflows[newWorkflow.id]).to.not.equal(undefined)
-        const prunedData = {
-          deltas: {
-            pruned: {
-              workflow: newWorkflow.id
-            }
+        const deltasPruned = {
+          pruned: {
+            workflow: newWorkflow.id
           }
         }
-        applyWorkflowsDeltas(prunedData, workflows)
+        applyDeltasPruned(deltasPruned.pruned, workflows)
         expect(workflows[newWorkflow.id]).to.equal(undefined)
       })
     })

@@ -21,6 +21,7 @@ import gql from 'graphql-tag'
 import Subscription from '@/model/Subscription.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import ViewState from '@/model/ViewState.model'
+import WorkflowCallback from '@/components/cylc/common/callbacks'
 
 describe('SubscriptionQuery model', () => {
   const query = gql`query { workflow { id } }`
@@ -28,16 +29,13 @@ describe('SubscriptionQuery model', () => {
     workflowId: 'cylc|cylc'
   }
   const name = 'root'
-  const actionNames = [
-    'setUp'
-  ]
-  const tearDownActionNames = [
-    'tearDown'
+  const callbacks = [
+    new WorkflowCallback()
   ]
   let subscriptionQuery
   beforeEach(() => {
     sinon.stub(console, 'debug')
-    subscriptionQuery = new SubscriptionQuery(query, variables, name, actionNames, tearDownActionNames)
+    subscriptionQuery = new SubscriptionQuery(query, variables, name, callbacks)
   })
   afterEach(() => {
     sinon.restore()
@@ -49,8 +47,7 @@ describe('SubscriptionQuery model', () => {
       expect(subscription.query).to.equal(subscriptionQuery)
       expect(subscription.observable).to.equal(null)
       expect(Object.keys(subscription.subscribers).length).to.equal(0)
-      expect(subscription.actionNames.length).to.equal(0)
-      expect(subscription.tearDownActionNames.length).to.equal(0)
+      expect(subscription.callbacks.length).to.equal(0)
       expect(subscription.reload).to.equal(false)
       expect(subscription.debug).to.equal(debug)
     })
@@ -91,7 +88,8 @@ describe('SubscriptionQuery model', () => {
         const subscription = new Subscription(subscriptionQuery, test.debug)
         subscription.subscribers[1] = {
           viewState: null,
-          setAlert: () => {}
+          setAlert: () => {
+          }
         }
         subscription.handleViewState(test.viewState, test.context)
         Object.values(subscription.subscribers).forEach(subscriber => {
