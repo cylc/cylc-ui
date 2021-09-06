@@ -35,6 +35,13 @@ const sandbox = sinon.createSandbox()
 
 Vue.use(Vuex)
 
+if (!global.localStorage) {
+  global.localStorage = {
+    getItem () { return '{}' },
+    setItem () {}
+  }
+}
+
 describe('WorkflowService', () => {
   /**
    * @type {String}
@@ -264,7 +271,7 @@ describe('WorkflowService', () => {
       const finalQuery = print(service.subscriptions.root.query.query)
       expect(expectedQuery1).to.equal(finalQuery)
     })
-    it('should not add duplicate action names', () => {
+    it('should not add duplicate callbacks', () => {
       const newCallbacks = [
         new WorkflowCallback(),
         new TreeCallback()
@@ -281,10 +288,10 @@ describe('WorkflowService', () => {
         query: newSubscriptionQuery
       }
       service.subscribe(anotherView)
-      // Same action names, Lodash's union should add to list like a set
+      // Same callbacks, Lodash's union should add to list like a set
       expect(subscriptionQuery.callbacks).to.deep.equal(newCallbacks)
     })
-    it('should add new action names', () => {
+    it('should add new callbacks', () => {
       const baseCallbacks = [new WorkflowCallback()]
       subscriptionQuery.callbacks.push(...baseCallbacks)
       const newCallbacks = [new TreeCallback()]
@@ -299,7 +306,7 @@ describe('WorkflowService', () => {
         query: newSubscriptionQuery
       }
       service.subscribe(anotherView)
-      // Same action names, Lodash's union should add to list like a set
+      // Same callbacks, Lodash's union should add to list like a set
       expect(subscription.callbacks).to.deep.equal([...baseCallbacks, new TreeCallback()])
     })
     it('should throw an error if there are no subscribers', () => {
