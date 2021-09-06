@@ -167,9 +167,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:^7.14.7":
-  version: 7.14.7
-  resolution: "@babel/eslint-parser@npm:7.14.7"
+"@babel/eslint-parser@npm:^7.15.4":
+  version: 7.15.4
+  resolution: "@babel/eslint-parser@npm:7.15.4"
   dependencies:
     eslint-scope: ^5.1.1
     eslint-visitor-keys: ^2.1.0
@@ -177,7 +177,7 @@ __metadata:
   peerDependencies:
     "@babel/core": ">=7.11.0"
     eslint: ">=7.5.0"
-  checksum: d6bfe209f22af8e17e8b1bc7c598bfa9eaab15b89aeab686840ed22d1177f3bb68817a0c01d1e1be778c13bf9ecd07543f8b2bd93ae5fb65f9d9a955a40dd851
+  checksum: e4406f3eeef8f5217fd930cbd2032188afbf191cdf5719244de8822f895934a2b4e14a4663b6336bc0d6fabeef5ab3a001815ed69f4639890431f8dfd9c09073
   languageName: node
   linkType: hard
 
@@ -7018,7 +7018,7 @@ __metadata:
   dependencies:
     "@apollo/client": ^3.3.21
     "@babel/core": ^7.14.8
-    "@babel/eslint-parser": ^7.14.7
+    "@babel/eslint-parser": ^7.15.4
     "@babel/plugin-proposal-class-properties": ^7.14.5
     "@babel/plugin-proposal-optional-chaining": ^7.14.5
     "@babel/preset-env": ^7.14.8
