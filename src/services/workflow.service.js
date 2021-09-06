@@ -16,7 +16,7 @@
  */
 
 import isEqual from 'lodash/isEqual'
-import union from 'lodash/union'
+import unionBy from 'lodash/unionBy'
 import ViewState from '@/model/ViewState.model'
 import Subscription from '@/model/Subscription.model'
 import {
@@ -330,7 +330,9 @@ class WorkflowService {
         throw new Error('Error recomputing subscription: Query variables do not match.')
       }
       baseSubscriber.query.query = mergeQueries(baseSubscriber.query.query, subscriber.query.query)
-      subscription.callbacks = union(subscription.callbacks, subscriber.query.callbacks)
+      // Combine the arrays of callbacks, creating an array of unique callbacks.
+      // The callbacks are compared by their class/constructor name.
+      subscription.callbacks = unionBy(subscription.callbacks, subscriber.query.callbacks, (callback) => callback.constructor.name)
     }
     const finalQuery = print(baseSubscriber.query.query)
     // TODO: consider using a better approach than print(a) === print(b)
