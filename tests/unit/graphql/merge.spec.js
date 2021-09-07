@@ -249,6 +249,7 @@ describe('mergeQueries', () => {
       
       fragment Jobs on Job {
         id
+        name
       }
       `
       const queryB = gql`query B {
@@ -257,7 +258,6 @@ describe('mergeQueries', () => {
       }
       
       fragment Jobs on Job {
-        id
         name
         status
       }
