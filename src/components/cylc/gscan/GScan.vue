@@ -146,7 +146,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     class="text-right c-gscan-workflow-states"
                   >
                     <WorkflowStateSummary
-                      :node="scope.node"
+                      :node-id="scope.node.id"
+                      :latest-state-tasks="scope.node.node.latestStateTasks"
+                      :state-totals="scope.node.node.stateTotals"
                     />
                   </v-flex>
                 </v-layout>

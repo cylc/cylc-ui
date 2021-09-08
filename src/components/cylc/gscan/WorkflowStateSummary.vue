@@ -19,9 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <!-- task summary tooltips -->
   <span>
     <span
-      v-for="[state, tasks] in getLatestStateTasks(Object.entries(node.node.latestStateTasks))"
-      :key="`${node.id}-summary-${state}`"
-      :class="getTaskStateClasses(node.node.stateTotals, state)"
+      v-for="[state, tasks] in validLatestStateTasks"
+      :key="`${nodeId}-summary-${state}`"
+      :class="getTaskStateClasses(state)"
     >
       <v-tooltip color="black" top>
         <template v-slot:activator="{ on }">
@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </template>
         <!-- tooltip text -->
         <span>
-          <span class="grey--text">{{ countTasksInState(node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+          <span class="grey--text">{{ countTasksInState(state) }} {{ state }}. Recent {{ state }} tasks:</span>
           <br/>
           <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
             {{ task }}<br v-if="index !== tasks.length -1" />
@@ -56,10 +56,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Job from '@/components/cylc/Job'
 import TaskState from '@/model/TaskState.model'
+
+/**
+ * Valid states for a latestStateTasks. See computed variable validLatestStateTasks.
+ */
+const VALID_STATES = Object.freeze([
+  TaskState.SUBMITTED.name,
+  TaskState.SUBMIT_FAILED.name,
+  TaskState.RUNNING.name,
+  TaskState.SUCCEEDED.name,
+  TaskState.FAILED.name
+])
+
 export default {
   name: 'WorkflowStateSummary',
   props: {
-    node: {
+    nodeId: {
+      type: String,
+      required: true
+    },
+    /**
+     * @type {Object}
+     */
+    latestStateTasks: {
+      type: Object,
+      required: true
+    },
+    stateTotals: {
       type: Object,
       required: true
     },
@@ -71,39 +94,39 @@ export default {
   components: {
     Job
   },
+  computed: {
+    // TODO: temporary filter, remove after b0 - https://github.com/cylc/cylc-ui/pull/617#issuecomment-805343847
+    /**
+     * @return {Object}
+     */
+    validLatestStateTasks () {
+      // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
+      return Object.entries(this.latestStateTasks).filter(entry => {
+        return VALID_STATES.includes(entry[0])
+      })
+    }
+  },
   methods: {
     /**
      * Get number of tasks we have in a given state. The states are retrieved
      * from `latestStateTasks`, and the number of tasks in each state is from
      * the `stateTotals`. (`latestStateTasks` includes old tasks).
      *
-     * @param {Object} stateTotals - the workflow object retrieved from GraphQL
-     * @param {string} state - a workflow state
-     * @returns {number|*} - the number of tasks in the given state
+     * @param {String} state - a workflow state
+     * @returns {Number} - the number of tasks in the given state
      */
-    countTasksInState (stateTotals, state) {
-      if (Object.hasOwnProperty.call(stateTotals, state)) {
-        return stateTotals[state]
-      }
-      return 0
+    countTasksInState (state) {
+      return this.stateTotals[state] || 0
     },
-    getTaskStateClasses (stateTotals, state) {
-      const tasksInState = this.countTasksInState(stateTotals, state)
-      return tasksInState === 0 ? ['empty-state'] : []
-    },
-    // TODO: temporary filter, remove after b0 - https://github.com/cylc/cylc-ui/pull/617#issuecomment-805343847
-    getLatestStateTasks (latestStateTasks) {
-      // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
-      const validValues = [
-        TaskState.SUBMITTED.name,
-        TaskState.SUBMIT_FAILED.name,
-        TaskState.RUNNING.name,
-        TaskState.SUCCEEDED.name,
-        TaskState.FAILED.name
-      ]
-      return latestStateTasks.filter(entry => {
-        return validValues.includes(entry[0])
-      })
+    /**
+     * Defines the CSS class for a state. Useful for handling empty states, when
+     * we need to compensate for no children HTML elements.
+     *
+     * @param {String} state - a workflow state
+     * @return {Array<String>} - a list of CSS classes (can be empty).
+     */
+    getTaskStateClasses (state) {
+      return this.countTasksInState(state) === 0 ? ['empty-state'] : []
     }
   }
 }
