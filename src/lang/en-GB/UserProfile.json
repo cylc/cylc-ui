@@ -4,5 +4,6 @@
   "username": "Username",
   "administrator": "Administrator",
   "groups": "Groups",
-  "created": "Created"
+  "created": "Created",
+  "permissions": "Authorized Operations"
 }

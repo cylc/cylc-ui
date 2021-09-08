@@ -91,7 +91,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 />
               </v-flex>
             </v-layout>
-
+            <v-layout row align-center wrap>
+              <v-flex xs3>
+                <span>{{ $t('UserProfile.permissions') }}</span>
+              </v-flex>
+              <v-flex xs9>
+                <v-select
+                    :items="user.permissions"
+                    v-model="user.permissions"
+                    attach
+                    multiple
+                    disabled
+                    id="profile-permissions"
+                    aria-disabled="true"
+                    class="body-1"
+                />
+              </v-flex>
+            </v-layout>
             <v-row mt-4>
               <v-flex xs12>
                 <p class="title">Preferences</p>

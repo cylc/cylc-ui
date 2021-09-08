@@ -32,7 +32,8 @@ class UserService {
         response.data.created,
         response.data.admin,
         response.data.server,
-        response.data.owner
+        response.data.owner,
+        response.data.permissions
       )
     })
   }

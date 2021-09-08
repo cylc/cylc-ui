@@ -24,7 +24,7 @@
  * @property {string} server - server URL
  */
 export default class User {
-  constructor (username, groups, created, admin, server, owner) {
+  constructor (username, groups, created, admin, server, owner, permissions) {
     // the authenticated user
     // (full info only available when authenticated via the hub)
     this.username = username
@@ -36,5 +36,6 @@ export default class User {
     // (i.e. the user who's workflows we are looking at)
     // (this might not be the authenticated user for multi-user setups)
     this.owner = owner
+    this.permissions = permissions
   }
 }

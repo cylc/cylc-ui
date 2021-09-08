@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="c-environment-info">
         <v-chip outlined color="grey lighten-1" text-color="grey darken-4">{{ user }}</v-chip>
         <span class="at">@</span>
-        <v-chip outlined color="grey lighten-1" text-color="grey darken-4">{{ environment }}</v-chip>
+        <v-chip outlined color="grey lighten-1" text-color="grey darken-4">authbranch</v-chip>
       </div>
     </v-layout>
   </v-list-item-action-text>

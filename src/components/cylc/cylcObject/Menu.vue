@@ -33,13 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="c-mutation-menu-list"
       >
         <v-list-item
-          v-for="[mutation, requiresInfo] in displayMutations"
+          v-for="[mutation, requiresInfo, authorised] in displayMutations"
           :key="mutation.name"
+          :disable=!authorised
           @click.stop="enact(mutation, requiresInfo)"
           class="c-mutation"
         >
           <v-list-item-avatar>
-            <v-icon large>{{ mutation._icon }}</v-icon>
+            <v-icon :disabled=!authorised large>{{ mutation._icon }}</v-icon>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title v-html="mutation._title" />
@@ -52,6 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item-content>
           <v-list-item-action>
             <v-icon
+             :disabled=!authorised
              medium
              class="float-right"
              @click.stop="openDialog(mutation)"
@@ -101,6 +103,7 @@ import Mutation from '@/components/cylc/Mutation'
 import {
   mdiPencil
 } from '@mdi/js'
+import { mapState } from 'vuex'
 
 export default {
   name: 'CylcObjectMenu',
@@ -151,14 +154,26 @@ export default {
       }
       return !!this.$workflowService.primaryMutations[this.type]
     },
-
+    ...mapState('user', ['user']),
+    userPermissions () {
+      return this.user.permissions.map((str) => str.toLowerCase())
+    },
+    authorizedMutations () {
+      return this.mutations
+        .filter(mutation => this.userPermissions.includes(mutation[0].name.toLowerCase()))
+        .map(mutation => {
+          mutation[2] = true
+          return mutation
+        })
+    },
     displayMutations () {
-      if (!this.mutations) {
+      if (!this.mutations || this.user.permissions.length < 2) {
         return []
       }
       const shortList = this.$workflowService.primaryMutations[this.type]
+
       if (!this.expanded && shortList) {
-        return this.mutations.filter(
+        return this.authorizedMutations.filter(
           (x) => {
             return shortList.includes(x[0].name)
           }
@@ -168,7 +183,7 @@ export default {
           }
         )
       }
-      return this.mutations
+      return this.authorizedMutations
     }
   },
 

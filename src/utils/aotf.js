@@ -408,10 +408,12 @@ export function getIntrospectionQuery () {
 export function filterAssociations (cylcObject, tokens, mutations) {
   const ret = []
   let requiresInfo = false
+  let authorised = false
   let applies = false
   let alternate = null
   for (const mutation of mutations) {
     requiresInfo = false
+    authorised = false
     applies = false
     for (const arg of mutation.args) {
       if (arg._cylcObject) {
@@ -437,7 +439,7 @@ export function filterAssociations (cylcObject, tokens, mutations) {
       continue
     }
     ret.push(
-      [mutation, requiresInfo]
+      [mutation, requiresInfo, authorised]
     )
   }
   return ret
