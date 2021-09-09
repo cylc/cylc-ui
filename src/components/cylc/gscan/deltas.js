@@ -14,8 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { addWorkflow, updateWorkflow, removeWorkflow } from '@/components/cylc/gscan/index'
-import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
+import * as GScanTree from '@/components/cylc/gscan/index'
 
 /**
  * Deltas added.
@@ -30,10 +29,9 @@ function applyDeltasAdded (added, gscan, options) {
     errors: []
   }
   if (added.workflow) {
-    const hierarchical = options.hierarchical || true
-    const workflowNode = createWorkflowNode(added.workflow, hierarchical)
+    const workflow = added.workflow
     try {
-      addWorkflow(workflowNode, gscan, options)
+      GScanTree.addWorkflow(workflow, gscan, options)
     } catch (error) {
       result.errors.push([
         'Error applying added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
@@ -60,26 +58,14 @@ function applyDeltasUpdated (updated, gscan, options) {
     errors: []
   }
   if (updated.workflow) {
-    const updatedData = updated.workflow
+    const workflow = updated.workflow
     try {
-      const existingData = gscan.lookup[updatedData.id]
-      if (!existingData) {
-        result.errors.push([
-          `Updated node [${updatedData.id}] not found in workflow lookup`,
-          updatedData,
-          gscan,
-          options
-        ])
-      } else {
-        // TODO: hierarchy is always false here?
-        const workflowNode = createWorkflowNode(updatedData, false)
-        updateWorkflow(workflowNode, gscan, options)
-      }
+      GScanTree.updateWorkflow(workflow, gscan, options)
     } catch (error) {
       result.errors.push([
         'Error applying updated-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
         error,
-        updatedData,
+        workflow,
         gscan,
         options
       ])
@@ -100,11 +86,12 @@ function applyDeltasPruned (pruned, gscan, options) {
   const result = {
     errors: []
   }
-  // TODO: why not pruned.workflows???
+  // TBD: why not workflows? We have that in the jsdoc for DeltasPruned, and I believe
+  //      that's how other queries return the data.
   if (pruned.workflow) {
     const workflowId = pruned.workflow
     try {
-      removeWorkflow(workflowId, gscan, options)
+      GScanTree.removeWorkflow(workflowId, gscan, options)
     } catch (error) {
       result.errors.push([
         'Error applying pruned-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
@@ -137,17 +124,17 @@ const DELTAS = {
  * @returns {Result}
  */
 function handleDeltas (deltas, gscan, options) {
-  const errors = []
+  const results = {
+    errors: []
+  }
   Object.keys(DELTAS).forEach(key => {
     if (deltas[key]) {
       const handlingFunction = DELTAS[key]
       const result = handlingFunction(deltas[key], gscan, options)
-      errors.push(...result.errors)
+      results.errors.push(...result.errors)
     }
   })
-  return {
-    errors
-  }
+  return results
 }
 
 /**

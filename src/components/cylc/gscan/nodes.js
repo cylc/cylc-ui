@@ -25,7 +25,6 @@ import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/
  * @property {String} type
  * @property {WorkflowGraphQLData} node
  */
-
 /**
  * @typedef {TreeNode} WorkflowGScanNode
  */
@@ -85,7 +84,7 @@ function newWorkflowPartNode (id, part) {
  *
  * @param {WorkflowGraphQLData} workflow
  * @param {boolean} hierarchy - whether to parse the Workflow name and create a hierarchy or not
- * @returns {TreeNode}
+ * @returns {TreeNode|null}
  */
 function createWorkflowNode (workflow, hierarchy) {
   if (!hierarchy) {

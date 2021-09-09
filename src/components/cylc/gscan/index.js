@@ -14,6 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import Vue from 'vue'
+import { mergeWith } from 'lodash'
+import { sortedIndexBy } from '@/components/cylc/common/sort'
+import { mergeWithCustomizer } from '@/components/cylc/common/merge'
+import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/sort'
+import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
 
 /**
  * @typedef {Object} GScan
@@ -25,9 +31,6 @@
  * @typedef {Object<String, TreeNode>} Lookup
  */
 
-import { sortedIndexBy } from '@/components/cylc/common/sort'
-import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/sort'
-
 /**
  * @param {TreeNode} workflow
  * @param {GScan} gscan
@@ -36,7 +39,8 @@ import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/
 function addWorkflow (workflow, gscan, options) {
   const hierarchical = options.hierarchical || true
   if (hierarchical) {
-    addHierarchicalWorkflow(workflow, gscan.lookup, gscan.tree, options)
+    const workflowNode = createWorkflowNode(workflow, hierarchical)
+    addHierarchicalWorkflow(workflowNode, gscan.lookup, gscan.tree, options)
   } else {
     gscan.lookup[workflow.id] = workflow
     gscan.tree.push(workflow)
@@ -44,10 +48,15 @@ function addWorkflow (workflow, gscan, options) {
 }
 
 /**
+ * This function is private. It receives a lookup and tree instead of a GScan object (as in other
+ * functions of this module). This is required as we apply recursion for adding nodes into the tree,
+ * but we replace the tree and pass only a sub-tree.
+ *
  * @param workflow
  * @param {Lookup} lookup
  * @param {Array<TreeNode>} tree
  * @param {*} options
+ * @private
  */
 function addHierarchicalWorkflow (workflow, lookup, tree, options) {
   if (!lookup[workflow.id]) {
@@ -78,24 +87,34 @@ function addHierarchicalWorkflow (workflow, lookup, tree, options) {
     // we will have to merge the hierarchies
     const existingNode = lookup[workflow.id]
     // TODO: combine states summaries?
-    // Copy array since we will iterate it, and modify existingNode.children
     if (existingNode.children) {
+      // Copy array since we will iterate it, and modify existingNode.children
       const children = [...workflow.children]
       for (const child of children) {
         // Recursion
         addHierarchicalWorkflow(child, lookup, existingNode.children, options)
       }
+    } else {
+      // Here we have an existing workflow node. Let's merge it.
+      mergeWith(existingNode, workflow, mergeWithCustomizer)
     }
   }
 }
 
 /**
- * @param {TreeNode} workflow
+ * @param {WorkflowGraphQLData} workflow
  * @param {GScan} gscan
  * @param {*} options
  */
 function updateWorkflow (workflow, gscan, options) {
-
+  // We don't care whether it is hierarchical or not here, since we can quickly
+  // access the node via the GScan lookup.
+  const existingData = gscan.lookup[workflow.id]
+  if (!existingData) {
+    throw new Error(`Updated node [${workflow.id}] not found in workflow lookup`)
+  }
+  mergeWith(existingData.node, workflow, mergeWithCustomizer)
+  Vue.set(gscan.lookup, existingData.id, existingData)
 }
 
 /**
