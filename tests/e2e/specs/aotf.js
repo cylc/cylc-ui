@@ -29,6 +29,13 @@ function mockApolloClient () {
     service.primaryMutations = {
       workflow: ['workflowMutation']
     }
+    service.mutations = [[
+      {
+        name: 'workflowMutation'
+      }, true, true]]
+    cy.window().its('app.$store').then(store => {
+      store.user.permissions = ['workflowMutation', 'moo', 'baa']
+    })
     service.apolloClient.mutate = (args) => {
       // log this for later
       mutations.push(args)

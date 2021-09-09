@@ -167,7 +167,8 @@ export default {
         })
     },
     displayMutations () {
-      if (!this.mutations || this.user.permissions.length < 2) {
+      if (!this.mutations) {
+      // || this.user.permissions.length < 2) {
         return []
       }
       const shortList = this.$workflowService.primaryMutations[this.type]
@@ -187,6 +188,25 @@ export default {
     }
   },
 
+  //   displayMutations () {
+  //     if (!this.mutations) {
+  //       return []
+  //     }
+  //     const shortList = this.$workflowService.primaryMutations[this.type]
+  //     if (!this.expanded && shortList) {
+  //       return this.mutations.filter(
+  //         (x) => {
+  //           return shortList.includes(x[0].name)
+  //         }
+  //       ).sort(
+  //         (x, y) => {
+  //           return shortList.indexOf(x[0].name) - shortList.indexOf(y[0].name)
+  //         }
+  //       )
+  //     }
+  //     return this.mutations
+  //   }
+  // },
   methods: {
     openDialog (mutation) {
       this.dialog = mutation
