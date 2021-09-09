@@ -430,6 +430,7 @@ function removeJob (jobId, workflow, options) {
         parent.children.splice(parent.children.indexOf(job), 1)
       }
     }
+    // TODO: for later, I believe this has already been deleted above? In recursively...
     Vue.delete(workflow.lookup, jobId)
   }
 }
