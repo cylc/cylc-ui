@@ -15,16 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { sortedIndexBy } from '@/components/cylc/common/sort'
-import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/sort'
+// TODO: move to the `options` parameter that is passed to deltas; ideally it would be stored in DB or localstorage.
+const DEFAULT_PARTS_SEPARATOR = '|'
+const DEFAULT_NAMES_SEPARATOR = '/'
 
 /**
  * @typedef {Object} TreeNode
  * @property {String} id
- * @property {String} name
+ * @property {String|null} name
  * @property {String} type
  * @property {WorkflowGraphQLData} node
  */
+
 /**
  * @typedef {TreeNode} WorkflowGScanNode
  */
@@ -35,11 +37,59 @@ import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/
  */
 
 /**
+ * Create a workflow node for GScan component.
+ *
+ * If the `hierarchy` parameter is `true`, then the workflow name will be split by
+ * `/`'s. For each part, a new `WorkflowNamePart` will be added in the hierarchy.
+ * With the final node being the last part of the name.
+ *
+ * The last part of a workflow name may be the workflow name (e.g. `five`), or its
+ * run ID (e.g. `run1`, if workflow name is `five/run1`).
+ *
+ * @param {WorkflowGraphQLData} workflow
+ * @param {boolean} hierarchy - whether to parse the Workflow name and create a hierarchy or not
+ * @param {String} partsSeparator - separator for workflow name parts (e.g. '|' as in 'part1|part2|...')
+ * @param {String} namesSeparator - separator used for workflow and run names (e.g. '/' as in 'workflow/run1')
+ * @returns {TreeNode|null}
+ */
+function createWorkflowNode (workflow, hierarchy, partsSeparator = DEFAULT_PARTS_SEPARATOR, namesSeparator = DEFAULT_NAMES_SEPARATOR) {
+  if (!hierarchy) {
+    return newWorkflowNode(workflow, null)
+  }
+  const workflowNameParts = parseWorkflowNameParts(workflow.id, partsSeparator, namesSeparator)
+  let prefix = workflowNameParts.user
+  // The root node, returned in this function.
+  let rootNode = null
+  // And a helper used when iterating the array...
+  let currentNode = null
+  for (const part of workflowNameParts.parts) {
+    prefix = prefix === null ? part : `${prefix}${partsSeparator}${part}`
+    const partNode = newWorkflowPartNode(prefix, part)
+    if (rootNode === null) {
+      rootNode = currentNode = partNode
+    } else {
+      currentNode.children.push(partNode)
+      currentNode = partNode
+    }
+  }
+  const workflowNode = newWorkflowNode(workflow, workflowNameParts.name)
+
+  if (currentNode === null) {
+    // We will return the workflow node only. It will be appended directly to the tree as a new leaf.
+    rootNode = workflowNode
+  } else {
+    // Add the workflow node to the end of the branch as a leaf. Note that the top of the branch is returned in this case.
+    currentNode.children.push(workflowNode)
+  }
+  return rootNode
+}
+
+/**
  * Create a new Workflow Node.
  *
  * @private
  * @param {WorkflowGraphQLData} workflow
- * @param {string|null} part
+ * @param {String|null} part
  * @returns {WorkflowGScanNode}
  */
 function newWorkflowNode (workflow, part) {
@@ -60,11 +110,11 @@ function newWorkflowNode (workflow, part) {
  */
 function newWorkflowPartNode (id, part) {
   return {
-    id: `workflow-name-part-${id}`,
+    id,
     name: part,
     type: 'workflow-name-part',
     node: {
-      id: id,
+      id,
       name: part,
       status: ''
     },
@@ -73,90 +123,75 @@ function newWorkflowPartNode (id, part) {
 }
 
 /**
- * Create a workflow node for GScan component.
- *
- * If the `hierarchy` parameter is `true`, then the workflow name will be split by
- * `/`'s. For each part, a new `WorkflowNamePart` will be added in the hierarchy.
- * With the final node being the last part of the name.
- *
- * The last part of a workflow name may be the workflow name (e.g. `five`), or its
- * run ID (e.g. `run1`, if workflow name is `five/run1`).
- *
- * @param {WorkflowGraphQLData} workflow
- * @param {boolean} hierarchy - whether to parse the Workflow name and create a hierarchy or not
- * @returns {TreeNode|null}
+ * @typedef {Object} ParsedWorkflowNameParts
+ * @property {String} workflowId - workflow ID
+ * @property {String} partsSeparator - parts separator parameter used to parse the name
+ * @property {String} namesSeparator - names separator parameter used to parse the name
+ * @property {String} user - parsed workflow user/owner
+ * @property {String} workflowName - original workflow name
+ * @property {Array<String>} parts - workflow name parts
+ * @property {String} name - workflow name (last part, used to display nodes in the GScan tree)
  */
-function createWorkflowNode (workflow, hierarchy) {
-  if (!hierarchy) {
-    return newWorkflowNode(workflow, null)
-  }
-  const workflowIdParts = workflow.id.split('|')
-  // The prefix contains all the ID parts, except for the workflow name.
-  let prefix = workflowIdParts.slice(0, workflowIdParts.length - 1)
-  // The name is here.
-  const workflowName = workflow.name
-  const parts = workflowName.split('/')
-  // Returned node...
-  let rootNode = null
-  // And a helper used when iterating the array...
-  let currentNode = null
-  while (parts.length > 0) {
-    const part = parts.shift()
-    // For the first part, we need to add an ID separator `|`, but for the other parts
-    // we actually want to use the name parts separator `/`.
-    prefix = prefix.includes('/') ? `${prefix}/${part}` : `${prefix}|${part}`
-    const partNode = parts.length !== 0
-      ? newWorkflowPartNode(prefix, part)
-      : newWorkflowNode(workflow, part)
 
-    if (rootNode === null) {
-      rootNode = currentNode = partNode
-    } else {
-      currentNode.children.push(partNode)
-      currentNode = partNode
-    }
-  }
-  return rootNode
+/**
+ * Return the workflow name parts as an array of node IDs. The first node in the array is the top of the
+ * branch, with the workflow node ID at its other end, as a leaf-node.
+ *
+ * @param {ParsedWorkflowNameParts} workflowNameParts
+ * @return {Array<String>}
+ */
+function getWorkflowNamePartsNodesIds (workflowNameParts) {
+  let prefix = workflowNameParts.user
+  const nodesIds = workflowNameParts.parts
+    .map(part => {
+      prefix = `${prefix}${workflowNameParts.partsSeparator}${part}`
+      return prefix
+    })
+  nodesIds.push(workflowNameParts.workflowId)
+  return nodesIds
 }
 
 /**
- * Add the new hierarchical node to the list of existing nodes.
+ * Parses the workflow name parts. A simple name such as `user|workflow-name` will return a structure
+ * with each part of the name, including the given parameters of this function (to simplify sending
+ * the data to other methods).
  *
- * New nodes are added in order.
+ * More complicated names such as `user|top/level/other/leaf` return the structure with an array of
+ * each name part too. This is useful for functions that need to manipulate the tree of GScan nodes,
+ * and necessary as we don't have this information from the server (only the name which doesn't
+ * split the name parts).
  *
- * @param {WorkflowGScanNode|WorkflowNamePartGScanNode} node
- * @param {Array<WorkflowGScanNode|WorkflowNamePartGScanNode>} nodes
- * @return {Array<WorkflowGScanNode|WorkflowNamePartGScanNode>}
+ * @param {String} workflowId - Workflow ID
+ * @param {String} partsSeparator - separator for workflow name parts (e.g. '|' as in 'user|research/workflow/run1')
+ * @param {String} namesSeparator - separator used for workflow and run names (e.g. '/' as in 'research/workflow/run1')
+ * @return {ParsedWorkflowNameParts}
  */
-function addNodeToTree (node, nodes) {
-  // N.B.: We must compare nodes by ID, not only by part-name,
-  //       since we can have research/nwp/run1 workflow, and research workflow;
-  //       in this case we do not want to confuse the research part-name with
-  //       the research workflow.
-  const existingNode = nodes.find((existingNode) => existingNode.id === node.id)
-  if (!existingNode) {
-    // Here we calculate what is the index for this element. If we decide to have ASC and DESC,
-    // then we just need to invert the location of the element, something like
-    // `sortedIndex = (array.length - sortedIndex)`.
-    const sortedIndex = sortedIndexBy(
-      nodes,
-      node,
-      (n) => n.name,
-      sortWorkflowNamePartNodeOrWorkflowNode
-    )
-    nodes.splice(sortedIndex, 0, node)
-  } else {
-    if (node.children) {
-      for (const child of node.children) {
-        // Recursion. Note that we are changing the `nodes` to the children of the existing node.
-        addNodeToTree(child, existingNode.children)
-      }
-    }
+function parseWorkflowNameParts (workflowId, partsSeparator = DEFAULT_PARTS_SEPARATOR, namesSeparator = DEFAULT_NAMES_SEPARATOR) {
+  if (!workflowId || workflowId.trim() === '') {
+    throw new Error('Missing ID for workflow name parts')
   }
-  return nodes
+  const idParts = workflowId.split(partsSeparator)
+  if (idParts.length !== 2) {
+    throw new Error(`Invalid parts found, expected at least 2 parts in ${workflowId}`)
+  }
+  const user = idParts[0]
+  const workflowName = idParts[1]
+  const parts = workflowName.split(namesSeparator)
+  // The name, used for display in the tree. Can be a workflow name like 'd', or a runN like 'run1'.
+  const name = parts.pop()
+  return {
+    workflowId,
+    partsSeparator,
+    namesSeparator,
+    user, // user
+    workflowName, // a/b/c/d/run1
+    parts, // [a, b, c, d]
+    name // run1
+  }
 }
 
 export {
-  addNodeToTree,
-  createWorkflowNode
+  createWorkflowNode,
+  getWorkflowNamePartsNodesIds,
+  parseWorkflowNameParts
 }
