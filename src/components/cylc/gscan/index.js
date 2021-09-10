@@ -19,7 +19,11 @@ import { mergeWith } from 'lodash'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
 import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/sort'
-import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
+import {
+  createWorkflowNode,
+  getWorkflowNamePartsNodesIds,
+  parseWorkflowNameParts
+} from '@/components/cylc/gscan/nodes'
 
 /**
  * @typedef {Object} GScan
@@ -31,7 +35,11 @@ import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
  * @typedef {Object<String, TreeNode>} Lookup
  */
 
+// --- Added
+
 /**
+ * Add a new workflow to the GScan data structure.
+ *
  * @param {TreeNode} workflow
  * @param {GScan} gscan
  * @param {*} options
@@ -89,6 +97,7 @@ function addHierarchicalWorkflow (workflow, lookup, tree, options) {
     // TODO: combine states summaries?
     if (existingNode.children) {
       // Copy array since we will iterate it, and modify existingNode.children
+      // (see the tree.splice above.)
       const children = [...workflow.children]
       for (const child of children) {
         // Recursion
@@ -101,10 +110,14 @@ function addHierarchicalWorkflow (workflow, lookup, tree, options) {
   }
 }
 
+// --- Updated
+
 /**
+ * Update a workflow in the GScan data structure.
+ *
  * @param {WorkflowGraphQLData} workflow
  * @param {GScan} gscan
- * @param {*} options
+ * @param {Object} options
  */
 function updateWorkflow (workflow, gscan, options) {
   // We don't care whether it is hierarchical or not here, since we can quickly
@@ -114,16 +127,114 @@ function updateWorkflow (workflow, gscan, options) {
     throw new Error(`Updated node [${workflow.id}] not found in workflow lookup`)
   }
   mergeWith(existingData.node, workflow, mergeWithCustomizer)
+  const hierarchical = options.hierarchical || true
+  if (hierarchical) {
+    updateHierarchicalWorkflow(existingData, gscan.lookup, gscan.tree, options)
+  }
+  // TODO: create workflow hierarchy (from workflow object), then iterate
+  //       it and use lookup to fetch the existing node. Finally, combine
+  //       the gscan states (latestStateTasks & stateTotals).
   Vue.set(gscan.lookup, existingData.id, existingData)
 }
 
+function updateHierarchicalWorkflow (existingData, lookup, tree, options) {
+  // We need to sort its parent again.
+  const workflowNameParts = parseWorkflowNameParts(existingData.id)
+  const nodesIds = getWorkflowNamePartsNodesIds(workflowNameParts)
+  // Discard the last since it's the workflow ID that we already have
+  // in the `existingData` object. Now if not empty, we have our parent.
+  nodesIds.pop()
+  const parentId = nodesIds.length > 0 ? nodesIds.pop() : null
+  const parent = parentId ? lookup[parentId] : tree
+  if (!parent) {
+    throw new Error(`Invalid orphan hierarchical node: ${existingData.id}`)
+  }
+  const siblings = parent.children
+  // Where is this node at the moment?
+  const currentIndex = siblings.findIndex(node => node.id === existingData.id)
+  // Where should it be now?
+  const sortedIndex = sortedIndexBy(
+    parent.children,
+    existingData,
+    (n) => n.name,
+    sortWorkflowNamePartNodeOrWorkflowNode
+  )
+  // If it is not where it is, we need to add it to its correct location.
+  if (currentIndex !== sortedIndex) {
+    // siblings.splice(currentIndex, 1)
+    // siblings.splice(sortedIndex, 0, existingData)
+    Vue.delete(siblings, currentIndex)
+    Vue.set(siblings, sortedIndex, existingData)
+  }
+}
+
+// -- Pruned
+
 /**
- * @param {TreeNode} workflow
+ * Remove the workflow with ID equals to the given `workflowId` from the GScan data structure.
+ *
+ * @param {String} workflowId
  * @param {GScan} gscan
  * @param {*} options
  */
-function removeWorkflow (workflow, gscan, options) {
+function removeWorkflow (workflowId, gscan, options) {
+  const workflow = gscan.lookup[workflowId]
+  if (!workflow) {
+    throw new Error(`Pruned node [${workflow.id}] not found in workflow lookup`)
+  }
+  const hierarchical = options.hierarchical || true
+  if (hierarchical) {
+    removeHierarchicalWorkflow(workflowId, gscan.lookup, gscan.tree, options)
+  } else {
+    removeNode(workflowId, gscan.lookup, gscan.tree)
+  }
+}
 
+/**
+ * This function is private. It removes the workflow associated with the given `workflowId` from the
+ * lookup, and also proceeds to remove the leaf-node with the workflow node, and all of its parents that
+ * do not have any other descendants.
+ *
+ * @param {String} workflowId - Existing workflow ID
+ * @param {Lookup} lookup
+ * @param {Array<TreeNode>} tree
+ * @param {Object} options
+ * @private
+ */
+function removeHierarchicalWorkflow (workflowId, lookup, tree, options) {
+  const workflowNameParts = parseWorkflowNameParts(workflowId)
+  const nodesIds = getWorkflowNamePartsNodesIds(workflowNameParts)
+  // We start from the leaf-node, going upward to make sure we don't leave nodes with no children.
+  for (let i = nodesIds.length - 1; i >= 0; i--) {
+    const nodeId = nodesIds[i]
+    const node = lookup[nodeId]
+    if (node.children && node.children.length > 0) {
+      // We stop as soon as we find a node that still has children.
+      break
+    }
+    // Now we can remove the node from the lookup, and from its parents children array.
+    const previousIndex = i - 1
+    const parentId = previousIndex >= 0 ? nodesIds[previousIndex] : null
+    if (parentId && !lookup[parentId]) {
+      throw new Error(`Failed to locate parent ${parentId} in GScan lookup`)
+    }
+    const parentChildren = parentId ? lookup[parentId].children : tree
+    removeNode(nodeId, lookup, parentChildren)
+  }
+}
+
+/**
+ * @param {String} id - ID of the tree node
+ * @param {Array<TreeNode>} tree
+ * @param {Lookup} lookup
+ * @private
+ */
+function removeNode (id, lookup, tree) {
+  Vue.delete(lookup, id)
+  const treeNode = tree.find(node => node.id === id)
+  if (treeNode) {
+    Vue.delete(tree, tree.indexOf(treeNode))
+  }
 }
 
 export {
