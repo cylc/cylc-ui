@@ -16,6 +16,10 @@ release.
 Support Jupyter Server conversion. (the CylcUIServer has been converted
 to a Jupyter Server extension).
 
+[#728](https://github.com/cylc/cylc-ui/pull/728) -
+Display authorized mutations in the User Profile and disable unauthorized
+mutations in the menu.
+
 ### Fixes
 
 -------------------------------------------------------------------------------
