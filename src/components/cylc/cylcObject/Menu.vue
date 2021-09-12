@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-list-item
           v-for="[mutation, requiresInfo, authorised] in displayMutations"
           :key="mutation.name"
-          :disable=!authorised
+          :disabled=!authorised
           @click.stop="enact(mutation, requiresInfo)"
           class="c-mutation"
         >
@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!--
             don't use v-list-item-description here, vuetify will standardise
             line heights and cuts off text that overspills this way we can
-            have the required number of lines of text
+            have the required number of lines of text.
             -->
             <span class="c-description">{{ mutation._shortDescription }}</span>
           </v-list-item-content>
@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @click="expandCollapse"
             @click.stop.prevent
           >
-            <v-btn
+            <v-btn id="lessMoreButton"
               rounded
             >
               {{ expanded ? 'See Less' : 'See More' }}
@@ -160,15 +160,15 @@ export default {
     },
     authorizedMutations () {
       return this.mutations
-        .filter(mutation => this.userPermissions.includes(mutation[0].name.toLowerCase()))
         .map(mutation => {
-          mutation[2] = true
+          if (this.userPermissions.includes(mutation[0].name.toLowerCase())) {
+            mutation[2] = true
+          }
           return mutation
         })
     },
     displayMutations () {
-      if (!this.mutations) {
-      // || this.user.permissions.length < 2) {
+      if (!this.mutations || this.user.permissions.length < 2) {
         return []
       }
       const shortList = this.$workflowService.primaryMutations[this.type]
@@ -188,25 +188,6 @@ export default {
     }
   },
 
-  //   displayMutations () {
-  //     if (!this.mutations) {
-  //       return []
-  //     }
-  //     const shortList = this.$workflowService.primaryMutations[this.type]
-  //     if (!this.expanded && shortList) {
-  //       return this.mutations.filter(
-  //         (x) => {
-  //           return shortList.includes(x[0].name)
-  //         }
-  //       ).sort(
-  //         (x, y) => {
-  //           return shortList.indexOf(x[0].name) - shortList.indexOf(y[0].name)
-  //         }
-  //       )
-  //     }
-  //     return this.mutations
-  //   }
-  // },
   methods: {
     openDialog (mutation) {
       this.dialog = mutation

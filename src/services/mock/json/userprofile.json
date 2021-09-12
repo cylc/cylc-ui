@@ -11,6 +11,7 @@
     "play", "ping", "remove", "resume", "setgraphwindowextent",
     "setholdpoint", "setoutputs", "setverbosity", "stop", "trigger", "read",
     "broadcast", "ext-trigger", "pause", "kill", "message", "poll", "release",
-    "releaseholdpoint", "reload"
+    "releaseholdpoint", "reload", "workflowMutation", "cycleMutation",
+    "jobMutation", "namespaceMutation"
 ]
 }

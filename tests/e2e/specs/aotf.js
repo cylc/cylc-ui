@@ -29,13 +29,6 @@ function mockApolloClient () {
     service.primaryMutations = {
       workflow: ['workflowMutation']
     }
-    service.mutations = [[
-      {
-        name: 'workflowMutation'
-      }, true, true]]
-    cy.window().its('app.$store').then(store => {
-      store.user.permissions = ['workflowMutation', 'moo', 'baa']
-    })
     service.apolloClient.mutate = (args) => {
       // log this for later
       mutations.push(args)
@@ -325,12 +318,17 @@ describe('Api On The Fly', () => {
         // toggle the menu to "see more" items
         .find('.v-btn:first')
         .click({ force: true })
-        // it should now list the four workflow mutations
+        // it should now list the five workflow mutations
         .get('.c-mutation-menu-list:first')
         .find('.v-list-item')
-        .should('have.length', 5) // +1 because of the "see less" button
+        .should('have.length', 6) // +1 because of the "see less" button
+        // should have unauthorised mutation disabled
+        .get('.c-mutation-menu-list:first')
+        .find('.v-list-item:nth-child(4)')
+        .should('exist')
+        .should('have.class', 'v-list-item--disabled')
         // toggle the menu to "see less" items
-        .find('.v-btn:first')
+        .get('#lessMoreButton')
         .click()
         // it should list the one default workflow mutation
         // (see workflowService.primaryMutations)

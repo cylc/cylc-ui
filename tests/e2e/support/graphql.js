@@ -39,6 +39,22 @@ const MUTATIONS = [
     ]
   },
   {
+    name: 'unauthorisedMutation',
+    _title: 'Unauthorised Mutation',
+    description: `
+      A mutation user will not be authorised for.
+    `,
+    args: [
+      {
+        name: 'workflow',
+        type: {
+          name: 'WorkflowID',
+          kind: null
+        }
+      }
+    ]
+  },
+  {
     name: 'cycleMutation',
     _title: 'Cycle Mutation',
     description: 'cycle',
