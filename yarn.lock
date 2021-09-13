@@ -4743,6 +4743,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"autoprefixer@npm:^10.3.4":
+  version: 10.3.4
+  resolution: "autoprefixer@npm:10.3.4"
+  dependencies:
+    browserslist: ^4.16.8
+    caniuse-lite: ^1.0.30001252
+    colorette: ^1.3.0
+    fraction.js: ^4.1.1
+    normalize-range: ^0.1.2
+    postcss-value-parser: ^4.1.0
+  peerDependencies:
+    postcss: ^8.1.0
+  bin:
+    autoprefixer: bin/autoprefixer
+  checksum: fa037d78767158f3fd9b30e27870590824bddc7e38ffadf22b697e1a9d23b32cb4a164bef01e94b7820c8d719117ca5028db1764855fb6146fb2776d7bffe0e9
+  languageName: node
+  linkType: hard
+
 "autoprefixer@npm:^9.8.6":
   version: 9.8.6
   resolution: "autoprefixer@npm:9.8.6"
@@ -5511,6 +5529,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"browserslist@npm:^4.16.8":
+  version: 4.17.0
+  resolution: "browserslist@npm:4.17.0"
+  dependencies:
+    caniuse-lite: ^1.0.30001254
+    colorette: ^1.3.0
+    electron-to-chromium: ^1.3.830
+    escalade: ^3.1.1
+    node-releases: ^1.1.75
+  bin:
+    browserslist: cli.js
+  checksum: 9b45ec283d7ba1513bd8be6143dadb34a65e8be7f7210b3a2bce947e019184408df6126238e54f8061e9be74362b19d04eaba739b3ee0d5d41d57ac0ae5fe4cd
+  languageName: node
+  linkType: hard
+
 "buffer-crc32@npm:~0.2.3":
   version: 0.2.13
   resolution: "buffer-crc32@npm:0.2.13"
@@ -5833,6 +5866,13 @@ __metadata:
   version: 1.0.30001240
   resolution: "caniuse-lite@npm:1.0.30001240"
   checksum: 94322e3e9f6735bce665632a1c8eeeeab8e7247e3436307456ffc1f229be63dab2b33184e9ebf7dcff0c6cf6b8ce22a083c5aca4ca25595f66d8a8bd8da0845b
+  languageName: node
+  linkType: hard
+
+"caniuse-lite@npm:^1.0.30001252, caniuse-lite@npm:^1.0.30001254":
+  version: 1.0.30001256
+  resolution: "caniuse-lite@npm:1.0.30001256"
+  checksum: 4f9b44e07cdf35e410c9b503dd410051281a9281b198456b5987d22d94ffdeb3e60b784067d4eb06f76ec55855deb8715ffaa16234aa5b55d2dbda290ab304dc
   languageName: node
   linkType: hard
 
@@ -6384,6 +6424,13 @@ __metadata:
   version: 1.2.2
   resolution: "colorette@npm:1.2.2"
   checksum: 69fec14ddaedd0f5b00e4bae40dc4bc61f7050ebdc82983a595d6fd64e650b9dc3c033fff378775683138e992e0ddd8717ac7c7cec4d089679dcfbe3cd921b04
+  languageName: node
+  linkType: hard
+
+"colorette@npm:^1.3.0":
+  version: 1.4.0
+  resolution: "colorette@npm:1.4.0"
+  checksum: 01c3c16058b182a4ab4c126a65a75faa4d38a20fa7c845090b25453acec6c371bb2c5dceb0a2338511f17902b9d1a9af0cadd8509c9403894b79311032c256c3
   languageName: node
   linkType: hard
 
@@ -7164,7 +7211,7 @@ __metadata:
     "@vue/cli-plugin-unit-mocha": ^4.5.13
     "@vue/cli-service": ^4.5.13
     "@vue/test-utils": ^1.2.2
-    autoprefixer: ^9.8.6
+    autoprefixer: ^10.3.4
     axios: ^0.21.4
     axios-fetch: ^1.1.0
     babel-eslint: ^10.1.0
@@ -7998,6 +8045,13 @@ __metadata:
   version: 1.3.743
   resolution: "electron-to-chromium@npm:1.3.743"
   checksum: ea9526335f835cab6b6e9755c8eb24c24a88827eac4849943914f35c43442c7f36b983d3c3062d126f742750bf1332ed2d0f2966b0695f8dd37fc75f77561ef5
+  languageName: node
+  linkType: hard
+
+"electron-to-chromium@npm:^1.3.830":
+  version: 1.3.836
+  resolution: "electron-to-chromium@npm:1.3.836"
+  checksum: 81f65cd1ce8136df768130f6709587c4538c980b5ad0b975f5fa64180d69ed52ac0179de521a30b7ae7e1810a1a73c34df723ab5650a44a820085a9e4c5d50f0
   languageName: node
   linkType: hard
 
@@ -9420,6 +9474,13 @@ __metadata:
   version: 0.2.0
   resolution: "forwarded@npm:0.2.0"
   checksum: fd27e2394d8887ebd16a66ffc889dc983fbbd797d5d3f01087c020283c0f019a7d05ee85669383d8e0d216b116d720fc0cef2f6e9b7eb9f4c90c6e0bc7fd28e6
+  languageName: node
+  linkType: hard
+
+"fraction.js@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "fraction.js@npm:4.1.1"
+  checksum: e5a1f81d73e32aabf4fbd6581a7b3dfabd9a449ceb97c7e71ed2931dd0607095622341100d7819741eb9b435eb4e0d4a040a69e411dc943fa9b3a3872f3a2e0f
   languageName: node
   linkType: hard
 
@@ -13520,6 +13581,13 @@ fsevents@^1.2.7:
   version: 1.1.72
   resolution: "node-releases@npm:1.1.72"
   checksum: 84dacd44e6595c76e3097b69051b24bf5c3bdb374efc9bef343200ffa183fce10a31ba1c763af51d897ba0f6d00cd1e10eb34a03146688ce4cb051f1d80c402b
+  languageName: node
+  linkType: hard
+
+"node-releases@npm:^1.1.75":
+  version: 1.1.75
+  resolution: "node-releases@npm:1.1.75"
+  checksum: 74028e7d193c9c5986b2f6bb51f4f6405a3f144599bbb19751c81faece52af8eb3f5abac40cbcd11ead44be3f856be125aa71fbb8dd8bf0c7f90caa94179ee51
   languageName: node
   linkType: hard
 
