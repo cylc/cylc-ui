@@ -111,7 +111,7 @@
     "zen-observable": "^0.8.15"
   },
   "resolutions": {
-    "cypress": "^7.4.0"
+    "cypress": "^8.4.0"
   },
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
