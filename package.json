@@ -20,7 +20,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "@apollo/client": "^3.3.21",
+    "@apollo/client": "^3.4.11",
     "@lumino/algorithm": "^1.6.2",
     "@lumino/datagrid": "^0.30.0",
     "@lumino/default-theme": "^0.17.2",
