@@ -16,7 +16,6 @@
  */
 
 import isEqual from 'lodash/isEqual'
-import unionBy from 'lodash/unionBy'
 import ViewState from '@/model/ViewState.model'
 import Subscription from '@/model/Subscription.model'
 import {
@@ -332,7 +331,11 @@ class WorkflowService {
       baseSubscriber.query.query = mergeQueries(baseSubscriber.query.query, subscriber.query.query)
       // Combine the arrays of callbacks, creating an array of unique callbacks.
       // The callbacks are compared by their class/constructor name.
-      subscription.callbacks = unionBy(subscription.callbacks, subscriber.query.callbacks, (callback) => callback.constructor.name)
+      for (const callback of subscriber.query.callbacks) {
+        if (!subscription.callbacks.find(element => element.constructor.name === callback.constructor.name)) {
+          subscription.callbacks.push(callback)
+        }
+      }
     }
     const finalQuery = print(baseSubscriber.query.query)
     // TODO: consider using a better approach than print(a) === print(b)
