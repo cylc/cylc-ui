@@ -252,7 +252,11 @@ function mergeValues (valueA, valueB) {
   case 'NullValue':
     break
   case 'ListValue':
-    valueA.values.push(...valueB.values)
+    for (const value of valueB.values) {
+      if (!valueA.values.find(element => element.kind === value.kind && element.value === value.value)) {
+        valueA.values.push(value)
+      }
+    }
     break
   case 'ObjectValue': {
     // this is literally an object in the GraphQL query, e.g.:

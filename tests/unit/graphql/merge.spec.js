@@ -204,40 +204,60 @@ describe('mergeQueries', () => {
         })
       })
       describe('Values', () => {
-      })
-      it('should merge arguments', () => {
-        const queryA = gql`query A {
-          jobs (sort: true, name: "a", keys: ["a", "b"], expired: 100, flag: $flag, test: null) { id }
-        }`
-        const queryB = gql`query B {
-          jobs (keys: ["c"], age: 10, expired: 100, flag: $flag, test: null) { name }
-        }`
-        const merged = mergeQueries(queryA, queryB)
-        const expected = gql`query A {
-          jobs (sort: true, name: "a", keys: ["a", "b", "c"], expired: 100, flag: $flag, test: null, age: 10) { id name }
-        }`
-        assertQueriesAreEqual(merged, expected)
-      })
-      it('should merge arguments with objects', () => {
-        // Objects tests are a bit longer, so breaking into two basic tests
-        const queryA = gql`query A {
-          jobs (user: { id: 1, name: "cylc" }) {
-            id
-          }
-        }`
-        const queryB = gql`query B {
-          jobs (user: { id: 1, name: "cylc" }) {
-            name
-          }
-        }`
-        const merged = mergeQueries(queryA, queryB)
-        const expected = gql`query A {
-          jobs (user: { id: 1, name: "cylc" }) {
-            id
-            name
-          }
-        }`
-        assertQueriesAreEqual(merged, expected)
+        it('should merge arguments', () => {
+          const queryA = gql`query A {
+            jobs (sort: true, name: "a", keys: ["a", "b"], expired: 100, flag: $flag, test: null) { id }
+          }`
+          const queryB = gql`query B {
+            jobs (keys: ["c"], age: 10, expired: 100, flag: $flag, test: null) { name }
+          }`
+          const merged = mergeQueries(queryA, queryB)
+          const expected = gql`query A {
+            jobs (sort: true, name: "a", keys: ["a", "b", "c"], expired: 100, flag: $flag, test: null, age: 10) { id name }
+          }`
+          assertQueriesAreEqual(merged, expected)
+        })
+        it('should merge arguments with objects', () => {
+          // Objects tests are a bit longer, so breaking into two basic tests
+          const queryA = gql`query A {
+            jobs (user: { id: 1, name: "cylc" }) {
+              id
+            }
+          }`
+          const queryB = gql`query B {
+            jobs (user: { id: 1, name: "cylc" }) {
+              name
+            }
+          }`
+          const merged = mergeQueries(queryA, queryB)
+          const expected = gql`query A {
+            jobs (user: { id: 1, name: "cylc" }) {
+              id
+              name
+            }
+          }`
+          assertQueriesAreEqual(merged, expected)
+        })
+        it('should merge arguments with lists', () => {
+          const queryA = gql`query A {
+            jobs (workflows: ["root", "test"]) {
+              id
+            }
+          }`
+          const queryB = gql`query B {
+            jobs (workflows: ["root", "airplane"]) {
+              name
+            }
+          }`
+          const merged = mergeQueries(queryA, queryB)
+          const expected = gql`query A {
+            jobs (workflows: ["root", "test", "airplane"]) {
+              id
+              name
+            }
+          }`
+          assertQueriesAreEqual(merged, expected)
+        })
       })
     })
   })
