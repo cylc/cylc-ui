@@ -46,12 +46,21 @@ import {
  */
 function addWorkflow (workflow, gscan, options) {
   const hierarchical = options.hierarchical || true
+  const workflowNode = createWorkflowNode(workflow, hierarchical)
   if (hierarchical) {
-    const workflowNode = createWorkflowNode(workflow, hierarchical)
-    addHierarchicalWorkflow(workflowNode, gscan.lookup, gscan.tree, options)
+    // TBD: We need the leaf node to propagate states, and this is done here since the
+    //      addHierarchicalWorkflow has recursion. There might be a better way for
+    //      handling this though?
+    let leafNode = workflowNode
+    while (leafNode.children) {
+      // [0] because this is not really a sparse tree, but more like a linked-list since
+      // we created the node with createWorkflowNode.
+      leafNode = leafNode.children[0]
+    }
+    addHierarchicalWorkflow(workflowNode, leafNode, gscan.lookup, gscan.tree, options)
   } else {
-    gscan.lookup[workflow.id] = workflow
-    gscan.tree.push(workflow)
+    gscan.lookup[workflow.id] = workflowNode
+    gscan.tree.push(workflowNode)
   }
 }
 
@@ -60,18 +69,19 @@ function addWorkflow (workflow, gscan, options) {
  * functions of this module). This is required as we apply recursion for adding nodes into the tree,
  * but we replace the tree and pass only a sub-tree.
  *
+ * @param workflowOrPart
  * @param workflow
  * @param {Lookup} lookup
  * @param {Array<TreeNode>} tree
  * @param {*} options
  * @private
  */
-function addHierarchicalWorkflow (workflow, lookup, tree, options) {
-  if (!lookup[workflow.id]) {
-    // a new node, let's add this node and its descendants to the lookup
-    lookup[workflow.id] = workflow
-    if (workflow.children) {
-      const stack = [...workflow.children]
+function addHierarchicalWorkflow (workflowOrPart, workflow, lookup, tree, options) {
+  if (!lookup[workflowOrPart.id]) {
+    // A new node. Let's add this node and its descendants to the lookup.
+    lookup[workflowOrPart.id] = workflowOrPart
+    if (workflowOrPart.children) {
+      const stack = [...workflowOrPart.children]
       while (stack.length) {
         const currentNode = stack.shift()
         lookup[currentNode.id] = currentNode
@@ -80,32 +90,38 @@ function addHierarchicalWorkflow (workflow, lookup, tree, options) {
         }
       }
     }
-    // and now add the top-level node to the tree
-    // Here we calculate what is the index for this element. If we decide to have ASC and DESC,
-    // then we just need to invert the location of the element, something like
-    // `sortedIndex = (array.length - sortedIndex)`.
+    // And now add the node to the tree. Here we calculate what is the index for this element.
+    // If we decide to have ASC and DESC, then we just need to invert the location of the node,
+    // something like `sortedIndex = (array.length - sortedIndex)`.
     const sortedIndex = sortedIndexBy(
       tree,
-      workflow,
+      workflowOrPart,
       (n) => n.name,
       sortWorkflowNamePartNodeOrWorkflowNode
     )
-    tree.splice(sortedIndex, 0, workflow)
+    tree.splice(sortedIndex, 0, workflowOrPart)
   } else {
-    // we will have to merge the hierarchies
-    const existingNode = lookup[workflow.id]
-    // TODO: combine states summaries?
+    // The node exists in the lookup, so must exist in the tree too. We will have to merge the hierarchies.
+    const existingNode = lookup[workflowOrPart.id]
     if (existingNode.children) {
+      // Propagate workflow states to its ancestor.
+      if (workflow.node.latestStateTasks && workflow.node.stateTotals) {
+        existingNode.node.descendantsLatestStateTasks[workflow.id] = workflow.node.latestStateTasks
+        existingNode.node.descendantsStateTotal[workflow.id] = workflow.node.stateTotals
+        tallyPropagatedStates(existingNode.node)
+      }
       // Copy array since we will iterate it, and modify existingNode.children
       // (see the tree.splice above.)
-      const children = [...workflow.children]
+      const children = [...workflowOrPart.children]
       for (const child of children) {
-        // Recursion
-        addHierarchicalWorkflow(child, lookup, existingNode.children, options)
+        // Recursion!
+        addHierarchicalWorkflow(child, workflow, lookup, existingNode.children, options)
       }
     } else {
-      // Here we have an existing workflow node. Let's merge it.
-      mergeWith(existingNode, workflow, mergeWithCustomizer)
+      // Here we have an existing workflow node (only child-less). Let's merge it.
+      // It should not happen actually, since this is adding a workflow. Maybe throw
+      // an error instead?
+      mergeWith(existingNode, workflowOrPart, mergeWithCustomizer)
     }
   }
 }
@@ -129,24 +145,21 @@ function updateWorkflow (workflow, gscan, options) {
   mergeWith(existingData.node, workflow, mergeWithCustomizer)
   const hierarchical = options.hierarchical || true
   if (hierarchical) {
+    // But now we need to propagate the states up to its ancestors, if any.
     updateHierarchicalWorkflow(existingData, gscan.lookup, gscan.tree, options)
   }
-  // TODO: create workflow hierarchy (from workflow object), then iterate
-  //       it and use lookup to fetch the existing node. Finally, combine
-  //       the gscan states (latestStateTasks & stateTotals).
   Vue.set(gscan.lookup, existingData.id, existingData)
 }
 
 function updateHierarchicalWorkflow (existingData, lookup, tree, options) {
-  // We need to sort its parent again.
   const workflowNameParts = parseWorkflowNameParts(existingData.id)
+  // nodesIds contains the list of GScan tree nodes, with the workflow being a leaf node.
   const nodesIds = getWorkflowNamePartsNodesIds(workflowNameParts)
-  // Discard the last since it's the workflow ID that we already have
-  // in the `existingData` object. Now if not empty, we have our parent.
-  nodesIds.pop()
+  const workflowId = nodesIds.pop()
   const parentId = nodesIds.length > 0 ? nodesIds.pop() : null
   const parent = parentId ? lookup[parentId] : tree
   if (!parent) {
+    // This is only possible if the parent was missing from the lookup... Never supposed to happen.
     throw new Error(`Invalid orphan hierarchical node: ${existingData.id}`)
   }
   const siblings = parent.children
@@ -154,17 +167,70 @@ function updateHierarchicalWorkflow (existingData, lookup, tree, options) {
   const currentIndex = siblings.findIndex(node => node.id === existingData.id)
   // Where should it be now?
   const sortedIndex = sortedIndexBy(
-    parent.children,
+    siblings,
     existingData,
     (n) => n.name,
     sortWorkflowNamePartNodeOrWorkflowNode
   )
-  // If it is not where it is, we need to add it to its correct location.
+  // If it is not where it must be, we need to move it to its correct location.
   if (currentIndex !== sortedIndex) {
-    // siblings.splice(currentIndex, 1)
-    // siblings.splice(sortedIndex, 0, existingData)
-    Vue.delete(siblings, currentIndex)
-    Vue.set(siblings, sortedIndex, existingData)
+    // First we remove the element from where it was.
+    siblings.splice(currentIndex, 1)
+    if (sortedIndex < currentIndex) {
+      // Now, if we must move the element to a position that is less than where it was, we can simply move it;
+      siblings.splice(sortedIndex, 0, existingData)
+    } else {
+      // however, if we are moving it down/later, we must compensate for itself. i.e. the sortedIndex is considering
+      // the element itself. So we subtract one from its position.
+      siblings.splice(sortedIndex - 1, 0, existingData)
+    }
+  }
+  // Finally, we need to propagate the state totals and latest state tasks,
+  // but only if we have a parent (otherwise we are at the top-most level).
+  if (parentId) {
+    const workflow = lookup[workflowId]
+    const latestStateTasks = workflow.node.latestStateTasks
+    const stateTotals = workflow.node.stateTotals
+    // Installed workflows do not have any state.
+    if (latestStateTasks && stateTotals) {
+      for (const parentNodeId of [...nodesIds, parentId]) {
+        const parentNode = lookup[parentNodeId]
+        if (parentNode.latestStateTasks && parentNode.stateTotals) {
+          mergeWith(parentNode.node.descendantsLatestStateTasks[workflow.id], latestStateTasks, mergeWithCustomizer)
+          mergeWith(parentNode.node.descendantsStateTotal[workflow.id], stateTotals, mergeWithCustomizer)
+          tallyPropagatedStates(parentNode.node)
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Computes the latestStateTasks of each node. The latestStateTasks and
+ * stateTotals of a workflow-name-part are not reactive, but are calculated
+ * based on the values of descendantsLatestStateTasks and descendantsStateTotal,
+ * so we need to keep these in sync any time we add or update descendants.
+ *
+ * @param {WorkflowGraphQLData} node
+ */
+function tallyPropagatedStates (node) {
+  for (const latestStateTasks of Object.values(node.descendantsLatestStateTasks)) {
+    for (const state of Object.keys(latestStateTasks)) {
+      if (node.latestStateTasks[state]) {
+        node.latestStateTasks[state].push(...latestStateTasks[state])
+      } else {
+        Vue.set(node.latestStateTasks, state, latestStateTasks[state])
+      }
+    }
+  }
+  for (const stateTotals of Object.values(node.descendantsStateTotal)) {
+    for (const state of Object.keys(stateTotals)) {
+      if (node.stateTotals[state]) {
+        Vue.set(node.stateTotals, state, node.stateTotals[state] + stateTotals[state])
+      } else {
+        Vue.set(node.stateTotals, state, stateTotals[state])
+      }
+    }
   }
 }
 
@@ -205,21 +271,32 @@ function removeHierarchicalWorkflow (workflowId, lookup, tree, options) {
   const workflowNameParts = parseWorkflowNameParts(workflowId)
   const nodesIds = getWorkflowNamePartsNodesIds(workflowNameParts)
   // We start from the leaf-node, going upward to make sure we don't leave nodes with no children.
+  const removedNodeIds = []
   for (let i = nodesIds.length - 1; i >= 0; i--) {
     const nodeId = nodesIds[i]
     const node = lookup[nodeId]
+    // If we have children nodes, we MUST not remove the node from the GScan tree, since
+    // it contains other workflows branches. Instead, we must only remove the propagated
+    // states.
     if (node.children && node.children.length > 0) {
-      // We stop as soon as we find a node that still has children.
-      break
+      // If we pruned a workflow that was installed, these states are undefined!
+      if (node.node.descendantsLatestStateTasks && node.node.descendantsStateTotal) {
+        for (const removedNodeId of removedNodeIds) {
+          Vue.delete(node.node.descendantsLatestStateTasks, removedNodeId)
+          Vue.delete(node.node.descendantsStateTotal, removedNodeId)
+        }
+      }
+    } else {
+      // Now we can remove the node from the lookup, and from its parents children array.
+      const previousIndex = i - 1
+      const parentId = previousIndex >= 0 ? nodesIds[previousIndex] : null
+      if (parentId && !lookup[parentId]) {
+        throw new Error(`Failed to locate parent ${parentId} in GScan lookup`)
+      }
+      const parentChildren = parentId ? lookup[parentId].children : tree
+      removeNode(nodeId, lookup, parentChildren)
+      removedNodeIds.push(nodeId)
     }
-    // Now we can remove the node from the lookup, and from its parents children array.
-    const previousIndex = i - 1
-    const parentId = previousIndex >= 0 ? nodesIds[previousIndex] : null
-    if (parentId && !lookup[parentId]) {
-      throw new Error(`Failed to locate parent ${parentId} in GScan lookup`)
-    }
-    const parentChildren = parentId ? lookup[parentId].children : tree
-    removeNode(nodeId, lookup, parentChildren)
   }
 }
 

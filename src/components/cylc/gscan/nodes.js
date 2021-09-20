@@ -50,7 +50,7 @@ const DEFAULT_NAMES_SEPARATOR = '/'
  * @param {boolean} hierarchy - whether to parse the Workflow name and create a hierarchy or not
  * @param {String} partsSeparator - separator for workflow name parts (e.g. '|' as in 'part1|part2|...')
  * @param {String} namesSeparator - separator used for workflow and run names (e.g. '/' as in 'workflow/run1')
- * @returns {TreeNode|null}
+ * @returns {TreeNode}
  */
 function createWorkflowNode (workflow, hierarchy, partsSeparator = DEFAULT_PARTS_SEPARATOR, namesSeparator = DEFAULT_NAMES_SEPARATOR) {
   if (!hierarchy) {
@@ -64,7 +64,7 @@ function createWorkflowNode (workflow, hierarchy, partsSeparator = DEFAULT_PARTS
   let currentNode = null
   for (const part of workflowNameParts.parts) {
     prefix = prefix === null ? part : `${prefix}${partsSeparator}${part}`
-    const partNode = newWorkflowPartNode(prefix, part)
+    const partNode = newWorkflowPartNode(prefix, part, workflow.id, workflow.latestStateTasks, workflow.stateTotals)
     if (rootNode === null) {
       rootNode = currentNode = partNode
     } else {
@@ -87,10 +87,10 @@ function createWorkflowNode (workflow, hierarchy, partsSeparator = DEFAULT_PARTS
 /**
  * Create a new Workflow Node.
  *
- * @private
  * @param {WorkflowGraphQLData} workflow
  * @param {String|null} part
  * @returns {WorkflowGScanNode}
+ * @private
  */
 function newWorkflowNode (workflow, part) {
   return {
@@ -106,17 +106,29 @@ function newWorkflowNode (workflow, part) {
  *
  * @param {string} id
  * @param {string} part
+ * @param {string} workflowId
+ * @param {Object} latestStateTasks
+ * @param {Object} stateTotals
  * @return {WorkflowNamePartGScanNode}
  */
-function newWorkflowPartNode (id, part) {
+function newWorkflowPartNode (id, part, workflowId, latestStateTasks = [], stateTotals = []) {
   return {
     id,
     name: part,
     type: 'workflow-name-part',
     node: {
       id,
+      workflowId,
       name: part,
-      status: ''
+      status: '',
+      descendantsLatestStateTasks: {
+        [workflowId]: latestStateTasks
+      },
+      descendantsStateTotal: {
+        [workflowId]: stateTotals
+      },
+      latestStateTasks: {},
+      stateTotals: {}
     },
     children: []
   }
