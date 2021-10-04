@@ -3,6 +3,7 @@ if (typeof window !== 'undefined') {
   window.global = window
 }
 
+import Alert from '@/components/core/Alert.vue'
 import Job from '@/components/cylc/Job.vue'
 // import Menu from '@/components/cylc/cylcObject/Menu'
 // Otherwise we get 'Uncaught ReferenceError: global is not defined' from 'at Object../node_modules/markdown-it-toc-and-anchor/dist/index.js'
@@ -10,10 +11,14 @@ const Menu = require('@/components/cylc/cylcObject/Menu.vue').default
 import Task from '@/components/cylc/Task.vue'
 import '@/styles/index.scss'
 import Vuetify from 'vuetify'
+import store from '@/store/index'
 
 export default ({ Vue, options, router, siteData }) => {
   Vue.use(Vuetify);
   options.vuetify = new Vuetify({})
+  Vue.use(store);
+  Vue.mixin({ store: store })
+  Vue.component('alert', Alert)
   Vue.component('menu', Menu)
   Vue.component('job', Job)
   Vue.component('task', Task)
