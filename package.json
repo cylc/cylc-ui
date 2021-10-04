@@ -73,7 +73,7 @@
     "bufferutil": "^4.0.3",
     "chai": "^4.3.4",
     "circular-dependency-plugin": "^5.2.2",
-    "concurrently": "^6.2.1",
+    "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
     "cross-fetch": "^3.1.4",
     "cypress": "^8.4.0",
