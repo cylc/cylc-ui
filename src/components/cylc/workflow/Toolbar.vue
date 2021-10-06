@@ -181,6 +181,11 @@ export default {
         this.currentWorkflow.status === WorkflowState.STOPPED.name
       )
     },
+    isInstalled () {
+      return (
+        this.currentWorkflow && this.currentWorkflow.status === WorkflowState.INSTALLED.name
+      )
+    },
     enabled () {
       // object holding the states of controls that are supposed to be enabled
       // NOTE: this is a temporary solution until we are able to subscribe to
@@ -188,6 +193,7 @@ export default {
       return {
         pauseToggle: (
           // the play/pause button
+          !this.isInstalled &&
           !this.isStopped &&
           !this.expecting.stop &&
           this.currentWorkflow.status !== WorkflowState.STOPPING.name &&
@@ -198,6 +204,7 @@ export default {
         ),
         stopToggle: (
           // the stop button
+          !this.isInstalled &&
           !this.isStopped &&
           (
             this.expecting.stop === null ||
