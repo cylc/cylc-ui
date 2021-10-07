@@ -328,7 +328,7 @@ describe('Api On The Fly', () => {
         .should('exist')
         .should('have.class', 'v-list-item--disabled')
         // toggle the menu to "see less" items
-        .get('#lessMoreButton')
+        .get('#less-more-button')
         .click()
         // it should list the one default workflow mutation
         // (see workflowService.primaryMutations)

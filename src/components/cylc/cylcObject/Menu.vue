@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @click="expandCollapse"
             @click.stop.prevent
           >
-            <v-btn id="lessMoreButton"
+            <v-btn id="less-more-button"
               rounded
             >
               {{ expanded ? 'See Less' : 'See More' }}
