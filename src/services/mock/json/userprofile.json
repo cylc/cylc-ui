@@ -8,10 +8,29 @@
   "admin": true,
   "server": "/user/cylc/",
   "permissions": [
-    "play", "ping", "remove", "resume", "setgraphwindowextent",
-    "setholdpoint", "setoutputs", "setverbosity", "stop", "trigger", "read",
-    "broadcast", "ext-trigger", "pause", "kill", "message", "poll", "release",
-    "releaseholdpoint", "reload", "workflowMutation", "cycleMutation",
-    "jobMutation", "namespaceMutation"
-]
+    "play",
+    "ping",
+    "remove",
+    "resume",
+    "setgraphwindowextent",
+    "setholdpoint",
+    "setoutputs",
+    "setverbosity",
+    "stop",
+    "trigger",
+    "read",
+    "broadcast",
+    "ext-trigger",
+    "pause",
+    "kill",
+    "message",
+    "poll",
+    "release",
+    "releaseholdpoint",
+    "reload",
+    "workflowMutation",
+    "cycleMutation",
+    "jobMutation",
+    "namespaceMutation"
+  ]
 }
