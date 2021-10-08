@@ -49,14 +49,15 @@ describe('index', () => {
       expect(store.state.alert).to.equal(null)
     })
     it('should set alert', () => {
-      store.dispatch('setAlert', new Alert('my-alert', '', ''))
-      expect(store.state.alert.getText()).to.equal('my-alert')
+      const text = 'my-alert'
+      store.dispatch('setAlert', new Alert(text, '', ''))
+      expect(store.state.alert.text).to.equal(text)
       // repeating an alert with same text does not change anything
-      store.dispatch('setAlert', new Alert('my-alert', '', ''))
-      expect(store.state.alert.getText()).to.equal('my-alert')
+      store.dispatch('setAlert', new Alert(text, '', ''))
+      expect(store.state.alert.text).to.equal(text)
       // but if the text is different, it will use the new value
       store.dispatch('setAlert', new Alert('my-alert-2', '', ''))
-      expect(store.state.alert.getText()).to.equal('my-alert-2')
+      expect(store.state.alert.text).to.equal('my-alert-2')
       // and we can reset the state
       store.dispatch('setAlert', null)
       expect(store.state.alert).to.equal(null)
