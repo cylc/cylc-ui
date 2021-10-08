@@ -32,9 +32,9 @@ describe('Alert model', () => {
       const icon = 'error-icon'
       const color = 'success'
       const alert = new Alert(text, icon, color)
-      expect(alert.getText()).to.equal(text)
-      expect(alert.getIcon()).to.equal(icon)
-      expect(alert.getColor()).to.equal(color)
+      expect(alert.text).to.equal(text)
+      expect(alert.icon).to.equal(icon)
+      expect(alert.color).to.equal(color)
     })
   })
 })

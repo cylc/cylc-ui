@@ -21,16 +21,4 @@ export default class Alert {
     this.icon = icon
     this.color = color
   }
-
-  getText () {
-    return this.text
-  }
-
-  getIcon () {
-    return this.icon
-  }
-
-  getColor () {
-    return this.color
-  }
 }

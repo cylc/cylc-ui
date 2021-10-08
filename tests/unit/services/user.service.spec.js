@@ -69,7 +69,7 @@ describe('UserService', () => {
           return store.dispatch('setAlert', alert)
         })
         .finally(() => {
-          expect(store.state.alert.getText()).to.equal('Test Status')
+          expect(store.state.alert.text).to.equal('Test Status')
         })
     })
   })

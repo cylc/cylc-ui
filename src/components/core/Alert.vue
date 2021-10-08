@@ -19,9 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div v-if="alert">
     <v-alert
       :value="true"
-      :type="alert.getColor()"
-      :icon="alert.getIcon()"
-      :class="getColor(alert.getColor())"
+      :type="alert.color"
+      :icon="alert.icon"
+      :class="getColor(alert.color)"
       dismissible
       tile
       light
@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <template v-slot:close="props">
         <v-icon @click="closeAlert(props.toggle)">{{ svgPaths.close }}</v-icon>
       </template>
-      {{ alert.getText() }}
+      {{ alert.text }}
     </v-alert>
   </div>
 </template>
