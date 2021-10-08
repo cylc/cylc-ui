@@ -46,6 +46,7 @@ below.
  - Edgardo Ramírez
  - Mel Hall
  - Ronnie Dutta
+ - Carol Barno
 <!-- end-shortlog -->
 
 (All contributors are identifiable with email addresses in the git version
