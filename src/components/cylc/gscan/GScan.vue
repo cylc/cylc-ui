@@ -131,6 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <span class="mr-2">
                       <workflow-icon
                         :status="scope.node.node.status"
+                        :statusMsg="scope.node.node.statusMsg"
                       />
                     </span>
                     <v-tooltip top>

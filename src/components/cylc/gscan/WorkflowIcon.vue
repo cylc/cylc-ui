@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{ getIcon() }}
       </v-icon>
     </template>
-    <span>{{ status }}</span>
+    <span>{{ statusMsg || status }}</span>
   </v-tooltip>
 </template>
 
@@ -41,6 +41,10 @@ export default {
   props: {
     status: {
       required: true,
+      type: String
+    },
+    statusMsg: {
+      required: false,
       type: String
     }
   },

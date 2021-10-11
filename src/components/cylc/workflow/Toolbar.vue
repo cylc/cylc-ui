@@ -70,8 +70,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{ svgPaths.stop }}
       </v-icon>
 
-      <!-- TODO: add workflow latest message -->
-      <span></span>
+      <!-- workflow status message -->
+      <span class="status-msg">
+        {{ statusMsg }}
+      </span>
 
       <v-spacer />
 
@@ -180,6 +182,9 @@ export default {
         !this.currentWorkflow ||
         this.currentWorkflow.status === WorkflowState.STOPPED.name
       )
+    },
+    statusMsg () {
+      return this.currentWorkflow.statusMsg || ''
     },
     enabled () {
       // object holding the states of controls that are supposed to be enabled
