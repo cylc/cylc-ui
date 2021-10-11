@@ -45,8 +45,9 @@
     padding-right: 0.5rem;
   }
 
-  span {
-    color: $font-default-color;
+  .status-msg {
+    color: $font-dimished-color;
+    padding-left: 1rem;
   }
 
   .add-view {

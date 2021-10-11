@@ -29,6 +29,7 @@ fragment WorkflowData on Workflow {
   id
   name
   status
+  statusMsg
   owner
   host
   port
