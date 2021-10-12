@@ -33,7 +33,7 @@ describe('workflows', () => {
   const resetState = () => {
     store.state.workflows.lookup = {}
     store.state.workflows.workflow = {
-      tree: {},
+      tree: [],
       lookup: {}
     }
     store.state.workflows.workflows = []
@@ -44,7 +44,7 @@ describe('workflows', () => {
   describe('State', () => {
     it('should start with empty lookup, empty workflow, no workflows, and no workflow name', () => {
       expect(Object.keys(store.state.workflows.lookup).length).to.deep.equal(0)
-      expect(store.state.workflows.workflow).to.deep.equal({ tree: {}, lookup: {} })
+      expect(store.state.workflows.workflow).to.deep.equal({ tree: [], lookup: {} })
       expect(store.state.workflows.workflows.length).to.equal(0)
       expect(store.state.workflows.workflowName).to.equal(null)
     })
@@ -79,38 +79,85 @@ describe('workflows', () => {
       store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
       expect(store.state.workflows.workflowName).to.equal(workflowName)
     })
-    it('should set workflow', () => {
+    it('should set gscan', () => {
       const workflow = {
-        tree: {
-          test: 1
-        },
+        tree: [
+          {
+            test: 1
+          }
+        ],
         lookup: {
           test: 1
         }
       }
-      store.commit('workflows/SET_WORKFLOW', workflow)
-      expect(store.state.workflows.workflow).to.deep.equal(workflow)
+      store.commit('workflows/SET_GSCAN', workflow)
+      expect(store.state.workflows.gscan).to.deep.equal(workflow)
     })
-    it('should set lookup', () => {
-      const lookup = {
-        test: 1
-      }
-      store.commit('workflows/SET_LOOKUP', lookup)
-      expect(store.state.workflows.lookup).to.deep.equal(lookup)
-    })
-    it('should clear workflow', () => {
+    it('should clear gscan', () => {
       const workflow = {
-        tree: {
-          test: 1
-        },
+        tree: [
+          {
+            test: 1
+          }
+        ],
         lookup: {
           test: 1
         }
       }
-      store.commit('workflows/SET_WORKFLOW', workflow)
-      expect(store.state.workflows.workflow).to.deep.equal(workflow)
-      store.commit('workflows/CLEAR_WORKFLOW', workflow)
-      expect(store.state.workflows.workflow).to.not.deep.equal(workflow)
+      store.commit('workflows/SET_GSCAN', workflow)
+      expect(store.state.workflows.gscan.tree.length).to.equal(1)
+      expect(Object.keys(store.state.workflows.gscan.lookup).length).to.equal(1)
+      store.commit('workflows/CLEAR_GSCAN')
+      expect(store.state.workflows.gscan.tree.length).to.equal(0)
+      expect(Object.keys(store.state.workflows.gscan.lookup).length).to.equal(0)
+    })
+  })
+  describe('Actions', () => {
+    it('should apply workflows deltas', () => {
+      const data = {
+        deltas: {
+          added: {
+            workflow: {
+              id: 'cylc|test',
+              status: 'test'
+            }
+          }
+        }
+      }
+      store.dispatch('workflows/applyWorkflowsDeltas', data)
+      store.dispatch('workflows/applyGScanDeltas', data)
+      expect(store.state.workflows.workflows['cylc|test']).to.not.equal(undefined)
+    })
+    it('should clear workflows', () => {
+      const workflows = {
+        'cylc|cylc': {
+          id: 'cylc|cylc',
+          name: 'cylc'
+        }
+      }
+      store.commit('workflows/SET_WORKFLOWS', workflows)
+      expect(store.state.workflows.workflows).to.deep.equal(workflows)
+      store.dispatch('workflows/clearWorkflows')
+      expect(store.state.workflows.workflows).to.not.deep.equal(workflows)
+    })
+    it('should set workflow name', () => {
+      const workflowName = 'cylc'
+      store.dispatch('workflows/setWorkflowName', workflowName)
+      expect(store.state.workflows.workflowName).to.equal(workflowName)
+    })
+    it('should apply workflow deltas', () => {
+      const data = {
+        deltas: {
+          added: {
+            workflow: {
+              id: 'cylc|test',
+              status: 'test'
+            }
+          }
+        }
+      }
+      store.dispatch('workflows/applyGScanDeltas', data)
+      expect(store.state.workflows.gscan.lookup['cylc|test']).to.not.equal(undefined)
     })
   })
 })

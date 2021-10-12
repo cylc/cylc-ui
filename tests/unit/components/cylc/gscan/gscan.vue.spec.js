@@ -230,8 +230,8 @@ describe('GScan component', () => {
         }
       ]
       tests.forEach(test => {
-        store.commit('workflows/SET_WORKFLOWS', test.workflows)
-        const wrapper = mountFunction()
+        store.dispatch('workflows/SET_WORKFLOWS', test.workflows)
+        const wrapper = mountFunction({})
         // We will have all TreeItem elements, workflow-name-part's, and workflow's.
         const workflowsElements = wrapper.findAllComponents(TreeItem)
           .filter((treeItem) => {
