@@ -27,10 +27,6 @@ const state = {
    */
   alert: null,
   /**
-   * Whether the application is loading or not.
-   */
-  isLoading: false,
-  /**
    * Whether the application is offline or not.
    */
   offline: false,
