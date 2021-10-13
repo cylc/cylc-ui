@@ -17,7 +17,8 @@
     "serve:vue": "vue-cli-service serve --mode offline",
     "serve:jupyterhub": "nodemon src/services/mock/json-server.js",
     "test:e2e": "bash -c 'concurrently --names \"SERVER,TESTS\" --prefix-colors \"yellow,blue\" --success \"first\" --kill-others \"yarn run serve:jupyterhub\" \"vue-cli-service test:e2e --mode offline ${0}\"'",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "test": "yarn run test:unit || exit 1; yarn run test:e2e"
   },
   "dependencies": {
     "@apollo/client": "^3.4.15",
