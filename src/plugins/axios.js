@@ -17,19 +17,15 @@
 
 // Lib imports
 import axios from 'axios'
-import store from '@/store/index'
 
 axios.interceptors.request.use(function (config) {
-  store.dispatch('setLoading', true).then(() => {})
   return config
 }, function (error) {
   return Promise.reject(error)
 })
 
 axios.interceptors.response.use(function (response) {
-  store.dispatch('setLoading', false).then(() => {})
   return response
 }, function (error) {
-  store.dispatch('setLoading', false).then(() => {})
   return Promise.reject(error)
 })
