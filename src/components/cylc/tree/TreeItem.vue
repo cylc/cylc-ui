@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-flex
         class="node-expand-collapse-button"
         shrink
+        v-if="hasChildren || node.type !== 'workflow'"
         @click="typeClicked"
         :style="getTypeStyle()"
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
