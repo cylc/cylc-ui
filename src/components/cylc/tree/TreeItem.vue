@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-flex
         class="node-expand-collapse-button"
         shrink
-        v-if="hasChildren"
         @click="typeClicked"
         :style="getTypeStyle()"
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
@@ -280,7 +279,7 @@ export default {
   },
   computed: {
     hasChildren () {
-      return this.node.children
+      return Boolean(this.node.children && this.node.children.length)
     }
   },
   created () {
@@ -313,9 +312,13 @@ export default {
       }
     },
     getTypeStyle () {
-      const styles = {}
+      const styles = {
+        'user-select': 'none'
+      }
       if (this.hasChildren) {
         styles.cursor = 'pointer'
+      } else {
+        styles.visibility = 'hidden'
       }
       return styles
     },
