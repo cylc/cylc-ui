@@ -25,9 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-flex
         class="node-expand-collapse-button"
         shrink
-        v-if="hasChildren || node.type !== 'workflow'"
-        @click="typeClicked"
-        :style="getTypeStyle()"
+        v-if="hasChildren || node.type !== 'workflow' /* Don't render for GScan leafs */"
+        @click="toggleExpandCollapse"
+        :style="expandCollapseBtnStyle"
       >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
@@ -135,7 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               class="ml-2"
               small
               link
-              @click="typeClicked"
+              @click="toggleExpandCollapse"
             >+{{ node.node.customOutputs.length - 5 }}</v-chip>
           </span>
         </div>
@@ -280,7 +280,18 @@ export default {
   },
   computed: {
     hasChildren () {
-      return Boolean(this.node.children && this.node.children.length)
+      return this.node.children?.length
+    },
+    expandCollapseBtnStyle () {
+      const styles = {
+        'user-select': 'none'
+      }
+      if (this.hasChildren) {
+        styles.cursor = 'pointer'
+      } else {
+        styles.visibility = 'hidden'
+      }
+      return styles
     }
   },
   created () {
@@ -296,7 +307,7 @@ export default {
     }
   },
   methods: {
-    typeClicked () {
+    toggleExpandCollapse () {
       this.isExpanded = !this.isExpanded
       this.emitExpandCollapseEvent(this.isExpanded)
     },
@@ -311,17 +322,6 @@ export default {
       } else {
         this.$emit('tree-item-collapsed', this)
       }
-    },
-    getTypeStyle () {
-      const styles = {
-        'user-select': 'none'
-      }
-      if (this.hasChildren) {
-        styles.cursor = 'pointer'
-      } else {
-        styles.visibility = 'hidden'
-      }
-      return styles
     },
     /**
      * Handler for when any node of the tree was clicked, except jobs.
