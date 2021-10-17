@@ -27,6 +27,7 @@ import TaskState from '@/model/TaskState.model'
 import GScan from '@/components/cylc/gscan/GScan'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
+import applyGScanDeltas from '@/components/cylc/gscan/deltas'
 
 global.requestAnimationFrame = cb => cb()
 
@@ -94,9 +95,18 @@ describe('GScan component', () => {
     expect(isBusy).to.equal('true')
   })
   it('should display the GScan with valid data', () => {
-    store.commit('workflows/SET_WORKFLOWS', simpleWorkflowGscanNodes)
+    const node = createWorkflowNode(simpleWorkflowGscanNodes[0], true)
+    const gscan = {
+      lookup: {
+        [node.id]: node
+      },
+      tree: [
+        node
+      ]
+    }
+    store.commit('workflows/SET_GSCAN', gscan)
     const wrapper = mountFunction({})
-    expect(wrapper.vm.workflows[0].name).to.equal('five')
+    expect(wrapper.vm.gscan.tree[0].name).to.equal('five')
     expect(wrapper.find('div')).to.not.equal(null)
     expect(wrapper.html()).to.contain('five')
   })
@@ -121,10 +131,11 @@ describe('GScan component', () => {
     const createWorkflows = (namesAndStatuses) => {
       return namesAndStatuses.map(nameAndStatus => {
         return {
-          id: `user|${nameAndStatus.name}`,
+          id: nameAndStatus.id,
           name: nameAndStatus.name,
           status: nameAndStatus.status.name,
-          latestStateTasks: []
+          stateTotals: {},
+          latestStateTasks: {}
         }
       })
     }
@@ -133,111 +144,127 @@ describe('GScan component', () => {
         // already sorted by name
         {
           workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'c', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.RUNNING },
-            { name: 'e', status: WorkflowState.RUNNING }
+            { id: 'cylc|a', name: 'a', status: WorkflowState.RUNNING },
+            { id: 'cylc|b', name: 'b', status: WorkflowState.RUNNING },
+            { id: 'cylc|c', name: 'c', status: WorkflowState.RUNNING },
+            { id: 'cylc|d', name: 'd', status: WorkflowState.RUNNING },
+            { id: 'cylc|e', name: 'e', status: WorkflowState.RUNNING }
           ]),
           expected: ['a', 'b', 'c', 'd', 'e']
         },
         // already sorted by status
         {
           workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'c', status: WorkflowState.PAUSED },
-            { name: 'd', status: WorkflowState.PAUSED },
-            { name: 'e', status: WorkflowState.STOPPED }
+            { id: 'cylc|a', name: 'a', status: WorkflowState.RUNNING },
+            { id: 'cylc|b', name: 'b', status: WorkflowState.RUNNING },
+            { id: 'cylc|c', name: 'c', status: WorkflowState.PAUSED },
+            { id: 'cylc|d', name: 'd', status: WorkflowState.PAUSED },
+            { id: 'cylc|e', name: 'e', status: WorkflowState.STOPPED }
           ]),
           expected: ['a', 'b', 'c', 'd', 'e']
         },
         // sort in alphabetical order
         {
           workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'e', status: WorkflowState.RUNNING },
-            { name: 'c', status: WorkflowState.RUNNING },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.RUNNING }
+            { id: 'cylc|a', name: 'a', status: WorkflowState.RUNNING },
+            { id: 'cylc|e', name: 'e', status: WorkflowState.RUNNING },
+            { id: 'cylc|c', name: 'c', status: WorkflowState.RUNNING },
+            { id: 'cylc|b', name: 'b', status: WorkflowState.RUNNING },
+            { id: 'cylc|d', name: 'd', status: WorkflowState.RUNNING }
           ]),
           expected: ['a', 'b', 'c', 'd', 'e']
         },
         // running/paused/stopping grouped together and sorted, then the rest...
         {
           workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'e', status: WorkflowState.PAUSED },
-            { name: 'c', status: WorkflowState.STOPPED },
-            { name: 'b', status: WorkflowState.STOPPED },
-            { name: 'd', status: WorkflowState.STOPPED }
+            { id: 'cylc|a', name: 'a', status: WorkflowState.RUNNING },
+            { id: 'cylc|e', name: 'e', status: WorkflowState.PAUSED },
+            { id: 'cylc|c', name: 'c', status: WorkflowState.STOPPED },
+            { id: 'cylc|b', name: 'b', status: WorkflowState.STOPPED },
+            { id: 'cylc|d', name: 'd', status: WorkflowState.STOPPED }
           ]),
           expected: ['a', 'e', 'b', 'c', 'd']
         },
         // sorted alphabetically within statuses (running/paused/stopping are grouped together)
         {
           workflows: createWorkflows([
-            { name: 'e', status: WorkflowState.PAUSED },
-            { name: 'a', status: WorkflowState.PAUSED },
-            { name: 'c', status: WorkflowState.STOPPED },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.STOPPED }
+            { id: 'cylc|e', name: 'e', status: WorkflowState.PAUSED },
+            { id: 'cylc|a', name: 'a', status: WorkflowState.PAUSED },
+            { id: 'cylc|c', name: 'c', status: WorkflowState.STOPPED },
+            { id: 'cylc|b', name: 'b', status: WorkflowState.RUNNING },
+            { id: 'cylc|d', name: 'd', status: WorkflowState.STOPPED }
           ]),
           expected: ['a', 'b', 'e', 'c', 'd']
         },
         {
           workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.PAUSED },
-            { name: 'c', status: WorkflowState.STOPPED },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.STOPPED },
-            { name: 'e', status: WorkflowState.PAUSED }
+            { id: 'cylc|a', name: 'a', status: WorkflowState.PAUSED },
+            { id: 'cylc|c', name: 'c', status: WorkflowState.STOPPED },
+            { id: 'cylc|b', name: 'b', status: WorkflowState.RUNNING },
+            { id: 'cylc|d', name: 'd', status: WorkflowState.STOPPED },
+            { id: 'cylc|e', name: 'e', status: WorkflowState.PAUSED }
           ]),
           expected: ['a', 'b', 'e', 'c', 'd']
         },
         // new statuses (stopping, error)
         {
           workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.PAUSED },
-            { name: 'c', status: WorkflowState.STOPPED },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.STOPPED },
-            { name: 'e', status: WorkflowState.PAUSED },
-            { name: 'f', status: WorkflowState.PAUSED },
-            { name: 'h', status: WorkflowState.STOPPING },
-            { name: 'g', status: WorkflowState.ERROR },
-            { name: 'j', status: WorkflowState.STOPPING },
-            { name: 'i', status: WorkflowState.STOPPED },
-            { name: 'k', status: WorkflowState.RUNNING },
-            { name: 'l', status: WorkflowState.PAUSED }
+            { id: 'cylc|a', name: 'a', status: WorkflowState.PAUSED },
+            { id: 'cylc|c', name: 'c', status: WorkflowState.STOPPED },
+            { id: 'cylc|b', name: 'b', status: WorkflowState.RUNNING },
+            { id: 'cylc|d', name: 'd', status: WorkflowState.STOPPED },
+            { id: 'cylc|e', name: 'e', status: WorkflowState.PAUSED },
+            { id: 'cylc|f', name: 'f', status: WorkflowState.PAUSED },
+            { id: 'cylc|h', name: 'h', status: WorkflowState.STOPPING },
+            { id: 'cylc|g', name: 'g', status: WorkflowState.ERROR },
+            { id: 'cylc|j', name: 'j', status: WorkflowState.STOPPING },
+            { id: 'cylc|i', name: 'i', status: WorkflowState.STOPPED },
+            { id: 'cylc|k', name: 'k', status: WorkflowState.RUNNING },
+            { id: 'cylc|l', name: 'l', status: WorkflowState.PAUSED }
           ]),
           expected: ['a', 'b', 'e', 'f', 'h', 'j', 'k', 'l', 'c', 'd', 'i', 'g']
         },
         // sorting by type too
         {
           workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'a/b', status: WorkflowState.RUNNING }
+            { id: 'cylc|a/run2', name: 'run2', status: WorkflowState.RUNNING },
+            { id: 'cylc|a/b/run1', name: 'run1', status: WorkflowState.RUNNING }
           ]),
-          expected: ['b', 'a']
+          expected: ['run1', 'run2']
         },
         {
           workflows: createWorkflows([
-            { name: 'a/b', status: WorkflowState.RUNNING },
-            { name: 'a', status: WorkflowState.RUNNING }
+            { id: 'cylc|a/b/run1', name: 'run1', status: WorkflowState.RUNNING },
+            { id: 'cylc|a/run2', name: 'run2', status: WorkflowState.RUNNING }
           ]),
-          expected: ['b', 'a']
+          expected: ['run1', 'run2']
         }
       ]
       tests.forEach(test => {
-        store.dispatch('workflows/SET_WORKFLOWS', test.workflows)
+        const gscan = {
+          lookup: {},
+          tree: []
+        }
+        for (const workflow of test.workflows) {
+          const addedData = {
+            deltas: {
+              added: {
+                workflow
+              }
+            }
+          }
+          applyGScanDeltas(addedData, gscan, {})
+        }
+        store.commit('workflows/SET_GSCAN', gscan)
         const wrapper = mountFunction({})
         // We will have all TreeItem elements, workflow-name-part's, and workflow's.
         const workflowsElements = wrapper.findAllComponents(TreeItem)
           .filter((treeItem) => {
             return treeItem.vm.node.type === 'workflow'
           })
-        expect(workflowsElements.length).to.equal(test.expected.length)
+        expect(workflowsElements.length).to.equal(
+          test.expected.length,
+          `Length of sorted and expected not matching for given ${JSON.stringify(test.workflows)} using ${test.expected}`)
         for (let i = 0; i < test.expected.length; i++) {
           expect(test.expected[i]).to.equal(
             workflowsElements.at(i).element.textContent,
@@ -250,7 +277,7 @@ describe('GScan component', () => {
   describe('Filters', () => {
     const workflows = [
       {
-        id: 'user|1',
+        id: 'user|new_zealand',
         name: 'new zealand',
         status: WorkflowState.PAUSED.name,
         stateTotals: {
@@ -258,7 +285,7 @@ describe('GScan component', () => {
         }
       },
       {
-        id: 'user|2',
+        id: 'user|zeeland',
         name: 'zeeland',
         status: WorkflowState.RUNNING.name,
         stateTotals: {
@@ -278,7 +305,7 @@ describe('GScan component', () => {
         stateTotals: {}
       },
       {
-        id: 'user|research',
+        id: 'user|research/run1',
         name: 'research',
         status: WorkflowState.STOPPED.name,
         stateTotals: {}
@@ -327,8 +354,31 @@ describe('GScan component', () => {
         }
       ]
     }
+    let gscan
+    beforeEach(() => {
+      gscan = {
+        lookup: {},
+        tree: []
+      }
+      for (const workflow of workflows) {
+        const addedData = {
+          deltas: {
+            added: {
+              workflow
+            }
+          }
+        }
+        applyGScanDeltas(addedData, gscan, {})
+      }
+    })
+    afterEach(() => {
+      store.commit('workflows/SET_GSCAN', {
+        lookup: {},
+        tree: []
+      })
+    })
     it('should have a default state of no name filter, and all states enabled', () => {
-      store.commit('workflows/SET_WORKFLOWS', workflows)
+      store.commit('workflows/SET_GSCAN', gscan)
       const wrapper = mountFunction({})
       // read: give me all the workflows in RUNNING/PAUSED/STOPPED, no
       //       matter their names or their tasks' states.
@@ -347,17 +397,17 @@ describe('GScan component', () => {
       expect(filtered.length).to.equal(5)
     })
     it('should not filter by name, nor by tasks state by default, but should include all workflow states', () => {
-      store.commit('workflows/SET_WORKFLOWS', workflows)
+      store.commit('workflows/SET_GSCAN', gscan)
       const wrapper = mountFunction({})
       wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
-        wrapper.vm.workflowNodes,
+        wrapper.vm.gscan.tree,
         wrapper.vm.searchWorkflows,
         wrapper.vm.workflowStates,
         wrapper.vm.taskStates
       )
       // we will have the two items being displayed too
       const filtered = getWorkflows(wrapper.vm.filteredWorkflows)
-      const raw = getWorkflows(wrapper.vm.workflowNodes)
+      const raw = getWorkflows(wrapper.vm.gscan.tree)
       expect(filtered.length).to.equal(raw.length)
     })
     describe('Filter by workflow name', () => {
@@ -389,13 +439,13 @@ describe('GScan component', () => {
           }
         ]
         tests.forEach(test => {
-          store.commit('workflows/SET_WORKFLOWS', workflows)
+          store.commit('workflows/SET_GSCAN', gscan)
           const wrapper = mountFunction({})
           let filtered = getWorkflows(wrapper.vm.filteredWorkflows)
-          const raw = getWorkflows(wrapper.vm.workflowNodes)
+          const raw = getWorkflows(wrapper.vm.gscan.tree)
           expect(filtered.length).to.equal(raw.length)
           wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
-            wrapper.vm.workflowNodes,
+            wrapper.vm.gscan.tree,
             test.searchWorkflow,
             wrapper.vm.workflowStates,
             wrapper.vm.taskStates)
@@ -436,11 +486,11 @@ describe('GScan component', () => {
               }
               return Object.assign({}, state, { model: false })
             })
-          store.commit('workflows/SET_WORKFLOWS', workflows)
+          store.commit('workflows/SET_GSCAN', gscan)
           const wrapper = mountFunction({})
           const filters = createStatesFilters(workflowStates, initialWorkflowTaskStates)
           wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
-            wrapper.vm.workflowNodes,
+            wrapper.vm.gscan.tree,
             '',
             filters[0]
               .items
@@ -487,11 +537,11 @@ describe('GScan component', () => {
               }
               return Object.assign({}, state, { model: false })
             })
-          store.commit('workflows/SET_WORKFLOWS', workflows)
+          store.commit('workflows/SET_GSCAN', gscan)
           const wrapper = mountFunction({})
           const filters = createStatesFilters(initialWorkflowStates, workflowTaskStates)
           wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
-            wrapper.vm.workflowNodes,
+            wrapper.vm.gscan.tree,
             '',
             filters[0]
               .items
