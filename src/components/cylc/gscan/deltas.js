@@ -20,7 +20,7 @@ import * as GScanTree from '@/components/cylc/gscan/index'
  * Deltas added.
  *
  * @param {DeltasAdded} added
- * @param {import('./index').GScan} gscan
+ * @param {GScan} gscan
  * @param {*} options
  * @returns {Result}
  */
@@ -49,7 +49,7 @@ function applyDeltasAdded (added, gscan, options) {
  * Deltas updated.
  *
  * @param {DeltasUpdated} updated
- * @param {import('./index').GScan} gscan
+ * @param {GScan} gscan
  * @param {*} options
  * @returns {Result}
  */
@@ -78,7 +78,7 @@ function applyDeltasUpdated (updated, gscan, options) {
  * Deltas pruned.
  *
  * @param {DeltasPruned} pruned
- * @param {import('./index').GScan} gscan
+ * @param {GScan} gscan
  * @param {*} options
  * @returns {Result}
  */
