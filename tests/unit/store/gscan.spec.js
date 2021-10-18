@@ -25,23 +25,25 @@ Vue.use(Vuex)
 /**
  * Tests for the store/tree module.
  */
-describe('tree', () => {
+describe('gscan', () => {
   const store = new Vuex.Store(storeOptions)
   if (!global.localStorage) {
     global.localStorage = {}
   }
   const resetState = () => {
-    store.state.tree.lookup = {}
-    store.state.tree.workflow = {
-      tree: {},
-      lookup: {}
-    }
+    store.state.gscan.gscan = {}
+    store.state.workflows.lookup = {}
   }
   beforeEach(resetState)
   afterEach(resetState)
+  describe('State', () => {
+    it('should start with empty gscan', () => {
+      expect(Object.keys(store.state.gscan.gscan).length).to.deep.equal(0)
+    })
+  })
   describe('Mutations', () => {
-    it('should set tree workflow', () => {
-      const tree = {
+    it('should set gscan', () => {
+      const gscan = {
         tree: [
           {
             test: 1
@@ -51,8 +53,8 @@ describe('tree', () => {
           test: 1
         }
       }
-      store.commit('tree/SET_WORKFLOW', tree)
-      expect(store.state.tree.workflow).to.deep.equal(tree)
+      store.commit('gscan/SET_GSCAN', gscan)
+      expect(store.state.gscan.gscan).to.deep.equal(gscan)
     })
   })
 })

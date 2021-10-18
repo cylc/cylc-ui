@@ -182,37 +182,8 @@ function applyDeltasPruned (pruned, lookup) {
   }
 }
 
-/**
- * A function that simply applies the deltas to a lookup object.
- *
- * The entries in deltas will be the value of the lookup, and their ID's
- * will be the keys.
- *
- * This function can be used with any lookup-like structure. When
- * entries are updated it will merge with a customizer maintaining
- * the Vue reactivity.
- *
- * @param {GraphQLResponseData} data
- * @param {Object.<String, Object>} lookup
- */
-export default function (data, lookup) {
-  const added = data.deltas.added
-  const updated = data.deltas.updated
-  const pruned = data.deltas.pruned
-  const errors = []
-  if (added) {
-    const result = applyDeltasAdded(added, lookup)
-    errors.push(...result.errors)
-  }
-  if (updated) {
-    const result = applyDeltasUpdated(updated, lookup)
-    errors.push(...result.errors)
-  }
-  if (pruned) {
-    const result = applyDeltasPruned(pruned, lookup)
-    errors.push(...result.errors)
-  }
-  return {
-    errors
-  }
+export {
+  applyDeltasAdded,
+  applyDeltasUpdated,
+  applyDeltasPruned
 }

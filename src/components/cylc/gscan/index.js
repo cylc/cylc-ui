@@ -35,6 +35,17 @@ import {
  * @typedef {Object<String, TreeNode>} Lookup
  */
 
+/**
+ * @param {GScan} gscan
+ */
+function clear (gscan) {
+  ['tree', 'lookup'].forEach(each => {
+    Object.keys(gscan[each]).forEach(key => {
+      Vue.delete(gscan[each], key)
+    })
+  })
+}
+
 // --- Added
 
 /**
@@ -238,6 +249,7 @@ function removeNode (id, lookup, tree) {
 }
 
 export {
+  clear,
   addWorkflow,
   updateWorkflow,
   removeWorkflow

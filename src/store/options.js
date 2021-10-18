@@ -20,6 +20,7 @@ import { app } from './app.module'
 import { workflows } from './workflows.module'
 import { user } from './user.module'
 import { tree } from './tree.module'
+import { gscan } from './gscan.module'
 
 // State
 const state = {
@@ -82,7 +83,8 @@ export default {
     app,
     workflows,
     user,
-    tree
+    tree,
+    gscan
   },
   actions,
   mutations,

@@ -14,27 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import Vue from 'vue'
-import Alert from '@/model/Alert.model'
-import applyDeltasLookup from '@/components/cylc/common/deltas'
-import applyDeltasGscan from '@/components/cylc/gscan/deltas'
 
 const state = {
   /**
-   * This contains workflows returned from GraphQL indexed by their ID's. And is used by components
-   * such as GScan, Dashboard, and WorkflowsTable.
+   * This stores workflow data as a hashmap/dictionary. The keys
+   * are the ID's of the entities returned from GraphQL.
    *
-   * @type {Object.<string, WorkflowGraphQLData>}
+   * The values of the dictionary hold the GraphQL data returned as-is.
+   *
+   * The intention is for workflow views to look up data in this structure
+   * and re-use, instead of duplicating it.
+   *
+   * @type {Object.<String, Object>}
    */
-  workflows: {},
-  /**
-   * This is the data structure used by GScan component. The tree holds the hierarchical GScan,
-   * and the lookup is a helper structure for quick access to nodes in the tree.
-   */
-  gscan: {
-    tree: [],
-    lookup: {}
-  },
+  lookup: {},
   /**
    * This holds the name of the current workflow. This is set by VueRouter
    * and is used to decide what's the current workflow. It is used in conjunction
@@ -52,64 +45,17 @@ const getters = {
     if (state.workflowName === null) {
       return null
     }
-    return Object.values(state.workflows)
+    return Object.values(state.lookup)
       .find(workflow => workflow.name === state.workflowName)
   }
 }
 
 const mutations = {
-  SET_GSCAN (state, data) {
-    state.gscan = data
-  },
-  CLEAR_GSCAN (state) {
-    for (const property of ['tree', 'lookup']) {
-      Object.keys(state.gscan[property]).forEach(key => {
-        Vue.delete(state.gscan[property], key)
-      })
-    }
-    state.gscan = {
-      tree: [],
-      lookup: {}
-    }
+  SET_LOOKUP (state, data) {
+    state.lookup = data
   },
   SET_WORKFLOW_NAME (state, data) {
     state.workflowName = data
-  },
-  SET_WORKFLOWS (state, data) {
-    state.workflows = data
-  }
-}
-
-const actions = {
-  setWorkflowName ({ commit }, data) {
-    commit('SET_WORKFLOW_NAME', data)
-  },
-  applyWorkflowsDeltas ({ commit, state }, data) {
-    // modifying state directly in an action results in warnings...
-    const workflows = Object.assign({}, state.workflows)
-    applyDeltasLookup(data, workflows)
-    commit('SET_WORKFLOWS', workflows)
-  },
-  clearWorkflows ({ commit }) {
-    commit('SET_WORKFLOWS', [])
-  },
-  applyGScanDeltas ({ commit, state }, data) {
-    const gscan = state.gscan
-    const options = {
-      hierarchical: true
-    }
-    const result = applyDeltasGscan(data, gscan, options)
-    if (result.errors.length === 0) {
-      commit('SET_GSCAN', gscan)
-    }
-    result.errors.forEach(error => {
-      commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
-      // eslint-disable-next-line no-console
-      console.warn(...error)
-    })
-  },
-  clearGScan ({ commit }) {
-    commit('CLEAR_GSCAN')
   }
 }
 
@@ -117,6 +63,5 @@ export const workflows = {
   namespaced: true,
   state,
   getters,
-  mutations,
-  actions
+  mutations
 }

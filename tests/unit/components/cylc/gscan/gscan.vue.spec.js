@@ -27,7 +27,7 @@ import TaskState from '@/model/TaskState.model'
 import GScan from '@/components/cylc/gscan/GScan'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
-import applyGScanDeltas from '@/components/cylc/gscan/deltas'
+import { applyDeltasAdded } from '@/components/cylc/gscan/deltas'
 
 global.requestAnimationFrame = cb => cb()
 
@@ -61,7 +61,7 @@ Vue.use(Vuex)
 describe('GScan component', () => {
   const store = new Vuex.Store(storeOptions)
   const resetState = () => {
-    store.commit('workflows/SET_WORKFLOWS', [])
+    store.commit('workflows/SET_LOOKUP', [])
     store.commit('workflows/SET_WORKFLOW_NAME', null)
   }
   beforeEach(resetState)
@@ -83,6 +83,16 @@ describe('GScan component', () => {
     })
   }
   it('should display a skeleton loader if loading data', () => {
+    const node = createWorkflowNode(simpleWorkflowGscanNodes[0], true)
+    const gscan = {
+      lookup: {
+        [node.id]: node
+      },
+      tree: [
+        node
+      ]
+    }
+    store.commit('gscan/SET_GSCAN', gscan)
     const wrapper = mountFunction({
       computed: {
         isLoading () {
@@ -104,7 +114,7 @@ describe('GScan component', () => {
         node
       ]
     }
-    store.commit('workflows/SET_GSCAN', gscan)
+    store.commit('gscan/SET_GSCAN', gscan)
     const wrapper = mountFunction({})
     expect(wrapper.vm.gscan.tree[0].name).to.equal('five')
     expect(wrapper.find('div')).to.not.equal(null)
@@ -246,16 +256,12 @@ describe('GScan component', () => {
           tree: []
         }
         for (const workflow of test.workflows) {
-          const addedData = {
-            deltas: {
-              added: {
-                workflow
-              }
-            }
+          const added = {
+            workflow
           }
-          applyGScanDeltas(addedData, gscan, {})
+          applyDeltasAdded(added, gscan, {})
         }
-        store.commit('workflows/SET_GSCAN', gscan)
+        store.commit('gscan/SET_GSCAN', gscan)
         const wrapper = mountFunction({})
         // We will have all TreeItem elements, workflow-name-part's, and workflow's.
         const workflowsElements = wrapper.findAllComponents(TreeItem)
@@ -361,24 +367,20 @@ describe('GScan component', () => {
         tree: []
       }
       for (const workflow of workflows) {
-        const addedData = {
-          deltas: {
-            added: {
-              workflow
-            }
-          }
+        const added = {
+          workflow
         }
-        applyGScanDeltas(addedData, gscan, {})
+        applyDeltasAdded(added, gscan, {})
       }
     })
     afterEach(() => {
-      store.commit('workflows/SET_GSCAN', {
+      store.commit('gscan/SET_GSCAN', {
         lookup: {},
         tree: []
       })
     })
     it('should have a default state of no name filter, and all states enabled', () => {
-      store.commit('workflows/SET_GSCAN', gscan)
+      store.commit('gscan/SET_GSCAN', gscan)
       const wrapper = mountFunction({})
       // read: give me all the workflows in RUNNING/PAUSED/STOPPED, no
       //       matter their names or their tasks' states.
@@ -397,7 +399,7 @@ describe('GScan component', () => {
       expect(filtered.length).to.equal(5)
     })
     it('should not filter by name, nor by tasks state by default, but should include all workflow states', () => {
-      store.commit('workflows/SET_GSCAN', gscan)
+      store.commit('gscan/SET_GSCAN', gscan)
       const wrapper = mountFunction({})
       wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
         wrapper.vm.gscan.tree,
@@ -439,7 +441,7 @@ describe('GScan component', () => {
           }
         ]
         tests.forEach(test => {
-          store.commit('workflows/SET_GSCAN', gscan)
+          store.commit('gscan/SET_GSCAN', gscan)
           const wrapper = mountFunction({})
           let filtered = getWorkflows(wrapper.vm.filteredWorkflows)
           const raw = getWorkflows(wrapper.vm.gscan.tree)
@@ -486,7 +488,7 @@ describe('GScan component', () => {
               }
               return Object.assign({}, state, { model: false })
             })
-          store.commit('workflows/SET_GSCAN', gscan)
+          store.commit('gscan/SET_GSCAN', gscan)
           const wrapper = mountFunction({})
           const filters = createStatesFilters(workflowStates, initialWorkflowTaskStates)
           wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
@@ -537,7 +539,7 @@ describe('GScan component', () => {
               }
               return Object.assign({}, state, { model: false })
             })
-          store.commit('workflows/SET_GSCAN', gscan)
+          store.commit('gscan/SET_GSCAN', gscan)
           const wrapper = mountFunction({})
           const filters = createStatesFilters(initialWorkflowStates, workflowTaskStates)
           wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(

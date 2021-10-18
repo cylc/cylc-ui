@@ -17,7 +17,7 @@
 
 import { expect } from 'chai'
 import WorkflowState from '@/model/WorkflowState.model'
-import applyGScanDeltas from '@/components/cylc/gscan/deltas'
+import { applyDeltasAdded, applyDeltasUpdated, applyDeltasPruned } from '@/components/cylc/gscan/deltas'
 
 describe('GScan component', () => {
   let gscan
@@ -35,60 +35,40 @@ describe('GScan component', () => {
   describe('Deltas', () => {
     describe('Added', () => {
       it('should apply added deltas', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
-          }
+        const added = {
+          workflow: newWorkflow
         }
-        applyGScanDeltas(data, gscan, {})
+        applyDeltasAdded(added, gscan, {})
         expect(gscan.lookup[newWorkflow.id]).to.not.equal(undefined)
         expect(gscan.tree[0]).to.not.equal(undefined)
       })
     })
     describe('Updated', () => {
       it('should apply updated deltas', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
-          }
+        const added = {
+          workflow: newWorkflow
         }
-        applyGScanDeltas(data, gscan, {})
+        applyDeltasAdded(added, gscan, {})
         expect(gscan.lookup[newWorkflow.id].node.status).to.equal(WorkflowState.PAUSED)
         newWorkflow.status = WorkflowState.STOPPED
-        const updateData = {
-          deltas: {
-            updated: {
-              workflow: newWorkflow
-            }
-          }
+        const updated = {
+          workflow: newWorkflow
         }
-        applyGScanDeltas(updateData, gscan, {})
+        applyDeltasUpdated(updated, gscan, {})
         expect(gscan.lookup[newWorkflow.id].node.status).to.equal(WorkflowState.STOPPED)
       })
     })
     describe('Pruned', () => {
       it('should apply pruned deltas', () => {
-        const data = {
-          deltas: {
-            added: {
-              workflow: newWorkflow
-            }
-          }
+        const added = {
+          workflow: newWorkflow
         }
-        applyGScanDeltas(data, gscan, {})
+        applyDeltasAdded(added, gscan, {})
         expect(gscan.lookup[newWorkflow.id]).to.not.equal(undefined)
-        const prunedData = {
-          deltas: {
-            pruned: {
-              workflow: newWorkflow.id
-            }
-          }
+        const pruned = {
+          workflow: newWorkflow.id
         }
-        applyGScanDeltas(prunedData, gscan, {})
+        applyDeltasPruned(pruned, gscan, {})
         expect(gscan.lookup[newWorkflow.id]).to.equal(undefined)
       })
     })

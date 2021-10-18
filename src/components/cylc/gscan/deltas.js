@@ -105,63 +105,6 @@ function applyDeltasPruned (pruned, gscan, options) {
   return result
 }
 
-const DELTAS = {
-  added: applyDeltasAdded,
-  updated: applyDeltasUpdated,
-  pruned: applyDeltasPruned
-}
-
-/**
- * Handle the deltas. This function receives the new set of deltas, and the GScan object.
- *
- * The GScan object contains a tree property that holds the hierarchical (or not) GScan,
- * and a lookup helper dictionary used for ease of access to leaf or intermediary tree
- * nodes.
- *
- * @param {Deltas} deltas
- * @param {GScan} gscan
- * @param {*} options
- * @returns {Result}
- */
-function handleDeltas (deltas, gscan, options) {
-  const results = {
-    errors: []
-  }
-  Object.keys(DELTAS).forEach(key => {
-    if (deltas[key]) {
-      const handlingFunction = DELTAS[key]
-      const result = handlingFunction(deltas[key], gscan, options)
-      results.errors.push(...result.errors)
-    }
-  })
-  return results
-}
-
-/**
- * @param {GraphQLResponseData} data
- * @param {*} gscan
- * @param {*} options
- * @returns {Result}
- */
-export default function (data, gscan, options) {
-  const deltas = data.deltas
-  try {
-    return handleDeltas(deltas, gscan, options)
-  } catch (error) {
-    return {
-      errors: [
-        [
-          'Unexpected error applying gscan deltas',
-          error,
-          deltas,
-          gscan,
-          options
-        ]
-      ]
-    }
-  }
-}
-
 export {
   applyDeltasAdded,
   applyDeltasUpdated,

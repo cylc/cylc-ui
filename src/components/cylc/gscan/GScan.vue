@@ -285,7 +285,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['gscan']),
+    ...mapState('gscan', ['gscan']),
     // workflowNodes () {
     //   // NOTE: In case we decide to allow the user to switch between hierarchical and flat
     //   //       gscan view, then all we need to do is just pass a boolean data-property to

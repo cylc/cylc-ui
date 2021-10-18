@@ -17,28 +17,22 @@
 
 const state = {
   /**
-   * This is the CylcTree, which contains the hierarchical tree data structure.
-   * It is created from the GraphQL data, with the only difference that this one
-   * contains hierarchy, while the lookup (not workflow.lookup) is flat-ish.
-   *
-   * The nodes in the .tree property have a reference or pointer (.node) to the
-   * data in the lookup map above, to avoid data duplication.
-   *
-   * @type {Workflow}
+   * This is the data structure used by GScan component. The tree holds the hierarchical GScan,
+   * and the lookup is a helper structure for quick access to nodes in the tree.
    */
-  workflow: {
-    tree: {},
+  gscan: {
+    tree: [],
     lookup: {}
   }
 }
 
 const mutations = {
-  SET_WORKFLOW (state, data) {
-    state.workflow = data
+  SET_GSCAN (state, data) {
+    state.gscan = data
   }
 }
 
-export const tree = {
+export const gscan = {
   namespaced: true,
   state,
   mutations
