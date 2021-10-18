@@ -1,9 +1,12 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
 
 jobs:
-  build:
+  unit-test-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -11,7 +14,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: '12'
+          node-version: '16'
       - name: Cache node modules
         uses: actions/cache@v2.1.6
         with:
@@ -24,14 +27,14 @@ jobs:
           yarn run lint --no-fix
       - name: Test
         run: |
-          yarn run coverage:unit
+          yarn run coverage:unit --colors
       - name: Docs
         uses: andstor/jsdoc-action@v1
         with:
           config_file: jsdoc.conf.json
         # TODO: upload to GH pages?
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.1.0
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
@@ -58,7 +61,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: '12'
+          node-version: '16'
       - name: e2e
         uses: cypress-io/github-action@v2
         with:
@@ -70,7 +73,7 @@ jobs:
         env:
           CYPRESS_baseUrl: http://localhost:8080/
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2.1.0
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
