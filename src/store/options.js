@@ -27,10 +27,6 @@ const state = {
    */
   alert: null,
   /**
-   * Whether the application is loading or not.
-   */
-  isLoading: false,
-  /**
    * Whether the application is offline or not.
    */
   offline: false,
@@ -43,9 +39,6 @@ const state = {
 
 // Actions
 const actions = {
-  setLoading ({ commit }, isLoading) {
-    commit('SET_LOADING', isLoading)
-  },
   setAlert ({ state, commit }, alert) {
     // log to console when the alert is not null (null can mean to remove the alert)
     if (alert !== null) {
@@ -58,15 +51,6 @@ const actions = {
 
 // Mutations
 const mutations = {
-  SET_LOADING (state, isLoading) {
-    if (isLoading) {
-      state.refCount++
-      state.isLoading = isLoading
-    } else if (state.refCount > 0) {
-      state.refCount--
-      state.isLoading = (state.refCount > 0)
-    }
-  },
   SET_ALERT (state, alert) {
     state.alert = alert
   },

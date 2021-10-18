@@ -64,32 +64,6 @@ describe('index', () => {
     })
   })
   /**
-   * Tests for store.isLoading.
-   */
-  describe('isLoading', () => {
-    const resetState = () => {
-      store.state.isLoading = false
-    }
-    beforeEach(resetState)
-    afterEach(resetState)
-    it('should start with loading false', () => {
-      expect(store.state.isLoading).to.equal(false)
-      expect(store.state.refCount).to.equal(0)
-    })
-    it('should update refCount correctly', () => {
-      expect(store.state.refCount).to.equal(0)
-      store.dispatch('setLoading', true)
-      store.dispatch('setLoading', true)
-      expect(store.state.refCount).to.equal(2)
-      store.dispatch('setLoading', false)
-      expect(store.state.refCount).to.equal(1)
-      store.dispatch('setLoading', false)
-      expect(store.state.refCount).to.equal(0)
-      store.dispatch('setLoading', false)
-      expect(store.state.refCount).to.equal(0)
-    })
-  })
-  /**
    * Tests for store.offline.
    */
   describe('offline', () => {
