@@ -18,6 +18,7 @@
 // we mount the tree to include the TreeItem component and other vuetify children components
 import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
+import Vuetify from 'vuetify/lib'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
 import * as vuetify from '@/plugins/vuetify'
@@ -40,9 +41,14 @@ localVue.prototype.$eventBus = {
 localVue.use(CylcObjectPlugin)
 
 describe('TreeItem component', () => {
+  let vuetify
+  beforeEach(() => {
+    vuetify = new Vuetify()
+  })
   const mountFunction = options => {
     return mount(TreeItem, {
       localVue,
+      vuetify,
       propsData: {
         node: simpleWorkflowNode
       },
@@ -72,7 +78,7 @@ describe('TreeItem component', () => {
       })
       expect(wrapper.props().initialExpanded).to.equal(true)
       const expandControlElement = wrapper.find('.node-expand-collapse-button')
-      expect(expandControlElement.text()).to.equal('▽')
+      expect(expandControlElement.classes()).to.contain('expanded')
     })
     it('should not display the cycle point expanded when set expanded=true', () => {
       const wrapper = mountFunction({

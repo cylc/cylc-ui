@@ -17,18 +17,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="treeitem" v-show="filtered">
-    <div
-      :class="getNodeClass()"
-      :style="getNodeStyle()"
+    <v-flex
+      class="node d-flex align-center"
+      :class="nodeClass"
+      :style="nodeStyle"
     >
       <!-- the node's left icon; used for expand/collapse -->
-      <v-flex
+      <v-icon
+        aria-label="Expand/collapse"
+        role="img"
+        :aria-hidden="`${Boolean(!hasChildren)}`"
         class="node-expand-collapse-button"
-        shrink
-        v-if="hasChildren || node.type !== 'workflow' /* Don't render for GScan leafs */"
+        v-if="shouldRenderExpandCollapseBtn"
         @click="toggleExpandCollapse"
         :style="expandCollapseBtnStyle"
-      >{{ isExpanded ? '&#9661;' : '&#9655;' }}</v-flex>
+      >{{ icons.mdiChevronRight }}</v-icon>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
       <slot name="cyclepoint" v-if="node.type === 'cyclepoint'">
@@ -142,7 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </slot>
       <slot name="job-details" v-else-if="node.type === 'job-details'">
         <div class="leaf">
-          <div class="arrow-up" :style="getLeafTriangleStyle()"></div>
+          <div class="arrow-up" :style="leafTriangleStyle"></div>
           <div class="leaf-data font-weight-light py-4 pl-2">
             <div
               v-for="jobDetail in node.node.details"
@@ -189,7 +192,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot></slot>
-    </div>
+    </v-flex>
     <span v-show="isExpanded">
       <!-- component recursion -->
       <TreeItem
@@ -213,6 +216,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { mdiChevronRight } from '@mdi/js'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 import TaskState from '@/model/TaskState.model'
@@ -249,6 +253,7 @@ export default {
       active: false,
       selected: false,
       isExpanded: this.initialExpanded,
+      filtered: true,
       leafProperties: [
         {
           title: 'platform',
@@ -275,23 +280,56 @@ export default {
           property: 'finishedTime'
         }
       ],
-      filtered: true
+      icons: {
+        mdiChevronRight
+      }
     }
   },
   computed: {
     hasChildren () {
       return this.node.children?.length
     },
-    expandCollapseBtnStyle () {
-      const styles = {
-        'user-select': 'none'
+    /** Get the node indentation in units of em. */
+    nodeIndentation () {
+      return this.depth * NODE_DEPTH_OFFSET
+      // Note: this should actually depend on the expand/collapse icon size, but
+      // fortuitously, the vuetify default icon size is 24px which is 1.5em for
+      // a font-size of 16px
+    },
+    nodeStyle () {
+      return {
+        'padding-left': `${this.node.type === 'job-details' ? 0 : this.nodeIndentation}em`
       }
-      if (this.hasChildren) {
-        styles.cursor = 'pointer'
-      } else {
+    },
+    nodeClass () {
+      return {
+        'node--hoverable': this.hoverable,
+        'node--active': this.active,
+        expanded: this.isExpanded
+      }
+    },
+    expandCollapseBtnStyle () {
+      const styles = {}
+      if (!this.hasChildren) {
         styles.visibility = 'hidden'
       }
       return styles
+    },
+    /**
+     * Whether the expand collapse button for this TreeItem should be rendered.
+     *
+     * Note for workflow leafs it will still be rendered but be hidden. This is
+     * to maintain the correct indentation.
+     */
+    shouldRenderExpandCollapseBtn () {
+      return this.hasChildren || !['workflow', 'job-details'].includes(this.node.type)
+      // Do not render for GSscan leafs or job details
+    },
+    /** Make the job details triangle point to the job icon */
+    leafTriangleStyle () {
+      return {
+        'margin-left': `${this.nodeIndentation}em`
+      }
     }
   },
   created () {
@@ -329,31 +367,6 @@ export default {
      */
     nodeClicked (e) {
       this.$emit('tree-item-clicked', this)
-    },
-    getNodeStyle () {
-      return {
-        'padding-left': `${this.node.type === 'job-details' ? 0 : this.depth * NODE_DEPTH_OFFSET}em`
-      }
-    },
-    /**
-     * All nodes have the same padding-left. However, the job leaf node needs special care, as it will occupy the
-     * whole content area.
-     *
-     * For this, we calculate it similarly to `getNodeStyle` but doing the reverse, to move the element to the
-     * left, instead of moving it to the right. Using `depth` to calculate the exact location for the element.
-     */
-    getLeafTriangleStyle () {
-      return {
-        // subtract half of the width of the job component
-        'margin-left': `${(this.depth * NODE_DEPTH_OFFSET) - 0.5}em`
-      }
-    },
-    getNodeClass () {
-      return {
-        node: true,
-        'node--hoverable': this.hoverable,
-        'node--active': this.active
-      }
     },
     getNodeDataClass () {
       const classes = {}
