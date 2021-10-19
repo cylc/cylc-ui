@@ -241,9 +241,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflows']),
+    ...mapState('workflows', ['lookup']),
     workflowsTable () {
-      const count = Object.values(this.workflows)
+      const count = Object.values(this.lookup)
         .map(workflow => workflow.status)
         .reduce((acc, state) => {
           acc[state] = (acc[state] || 0) + 1
