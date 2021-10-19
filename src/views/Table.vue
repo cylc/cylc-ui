@@ -38,6 +38,8 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
+import WorkflowCallback from '@/components/cylc/common/callbacks'
+import TableCallback from '@/components/cylc/table/callbacks'
 import { WORKFLOW_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
@@ -64,7 +66,7 @@ export default {
     }
   }),
   computed: {
-    ...mapState('workflows', ['table']),
+    ...mapState('table', ['table']),
     tasks () {
       return Object.values(this.table)
     },
@@ -74,12 +76,8 @@ export default {
         this.variables,
         'workflow',
         [
-          'workflows/applyWorkflowDeltas',
-          'workflows/applyTableDeltas'
-        ],
-        [
-          'workflows/clearWorkflow',
-          'workflows/clearTable'
+          new WorkflowCallback(),
+          new TableCallback()
         ]
       )
     }

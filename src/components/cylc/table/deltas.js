@@ -17,8 +17,35 @@
 
 import { mergeWith } from 'lodash'
 import Vue from 'vue'
-import WorkflowState from '@/model/WorkflowState.model'
 import { mergeWithCustomizer } from '@/components/cylc/common/merge'
+
+function before (deltas, table, lookup) {
+  const result = {
+    errors: []
+  }
+  // first we check whether it is a new initial-data-burst
+  if (deltas && deltas.added && deltas.added.workflow) {
+    Object.keys(table).forEach(key => {
+      Vue.delete(table, key)
+    })
+  }
+  // Safe check in case the table is empty.
+  if (Object.keys(table).length === 0) {
+    if (!deltas.added || !deltas.added.workflow) {
+      return {
+        errors: [
+          [
+            'Received a Table delta before the workflow initial data burst',
+            deltas.added,
+            table,
+            lookup
+          ]
+        ]
+      }
+    }
+  }
+  return result
+}
 
 /**
  * Deltas added.
@@ -140,76 +167,9 @@ function applyDeltasPruned (pruned, table, lookup) {
   return result
 }
 
-const DELTAS = {
-  added: applyDeltasAdded,
-  updated: applyDeltasUpdated,
-  pruned: applyDeltasPruned
-}
-
-/**
- * Handle the deltas for the table view.
- *
- * It will use the tasks and jobs of the deltas.
- *
- * @param deltas
- * @param table
- * @param {Lookup} lookup
- */
-function handleDeltas (deltas, table, lookup) {
-  const errors = []
-  Object.keys(DELTAS).forEach(key => {
-    if (deltas[key]) {
-      const handlingFunction = DELTAS[key]
-      const result = handlingFunction(deltas[key], table, lookup)
-      errors.push(...result.errors)
-    }
-  })
-  return {
-    errors
-  }
-}
-
-/**
- * @param {GraphQLResponseData} data
- * @param {Table} table
- * @param {Lookup} lookup
- */
-export default function (data, table, lookup) {
-  const deltas = data.deltas
-  // first we check whether it is a new start
-  if (deltas && deltas.added && deltas.added.workflow) {
-    if (deltas.added.workflow.status === WorkflowState.RUNNING.name) {
-      // Clear the existing table data, if any
-      Object.keys(table).forEach(key => {
-        Vue.delete(table, key)
-      })
-    }
-  }
-  // Safe check in case the table is empty.
-  if (Object.keys(table).length === 0) {
-    if (!deltas.added || !deltas.added.workflow) {
-      return {
-        errors: [
-          [
-            'Received a delta before the workflow initial data burst',
-            deltas.added,
-            table
-          ]
-        ]
-      }
-    }
-  }
-  try {
-    return handleDeltas(deltas, table, lookup)
-  } catch (error) {
-    return {
-      errors: [
-        [
-          'Unexpected error applying deltas',
-          error,
-          deltas
-        ]
-      ]
-    }
-  }
+export {
+  before,
+  applyDeltasAdded,
+  applyDeltasUpdated,
+  applyDeltasPruned
 }

@@ -323,7 +323,7 @@ fragment WorkflowTableAddedData on Added {
   workflow {
     ...WorkflowData
   }
-  taskProxies(sort: {keys: ["name"], reverse: false}, ghosts: true) {
+  taskProxies(sort: {keys: ["cyclePoint"], reverse: false}, ghosts: true) {
     ...TaskProxyData
   }
   jobs(sort: {keys: ["submit_num"], reverse: true}) {
