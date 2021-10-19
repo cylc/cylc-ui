@@ -41,14 +41,10 @@ localVue.prototype.$eventBus = {
 localVue.use(CylcObjectPlugin)
 
 describe('TreeItem component', () => {
-  let vuetify
-  beforeEach(() => {
-    vuetify = new Vuetify()
-  })
   const mountFunction = options => {
     return mount(TreeItem, {
       localVue,
-      vuetify,
+      vuetify: new Vuetify(),
       propsData: {
         node: simpleWorkflowNode
       },
@@ -76,20 +72,16 @@ describe('TreeItem component', () => {
           depth: 0
         }
       })
-      expect(wrapper.props().initialExpanded).to.equal(true)
-      const expandControlElement = wrapper.find('.node-expand-collapse-button')
-      expect(expandControlElement.classes()).to.contain('expanded')
+      expectExpanded(wrapper, true)
     })
-    it('should not display the cycle point expanded when set expanded=true', () => {
+    it('should not display the cycle point expanded when set expanded=false', () => {
       const wrapper = mountFunction({
         propsData: {
-          node: simpleTaskNode,
+          node: simpleCyclepointNode,
           initialExpanded: false
         }
       })
-      expect(wrapper.props().initialExpanded).to.equal(false)
-      const expandControlElement = wrapper.find('.node-expand-collapse-button')
-      expect(expandControlElement.text()).to.equal('▷')
+      expectExpanded(wrapper, false)
     })
     it('should not display the task expanded by default', () => {
       const wrapper = mountFunction({
@@ -98,9 +90,7 @@ describe('TreeItem component', () => {
           depth: 0
         }
       })
-      expect(wrapper.props().initialExpanded).to.equal(true)
-      const expandControlElement = wrapper.find('.node-expand-collapse-button')
-      expect(expandControlElement.text()).to.equal('▷')
+      expectExpanded(wrapper, false)
     })
   })
   describe('children', () => {
@@ -222,3 +212,15 @@ describe('TreeItem component', () => {
   //   })
   })
 })
+
+/**
+ * Helper function for expecting TreeItem to be expanded or collapsed.
+ *
+ * @param {Wrapper} wrapper - Vue Wrapper.
+ * @param {boolean} expanded - If true, expect TreeItem to be expanded, else collapsed.
+ */
+function expectExpanded (wrapper, expanded) {
+  expect(wrapper.vm.isExpanded).to.equal(expanded)
+  const nodeDiv = wrapper.find('.node')
+  expect(nodeDiv.classes('expanded')).to.equal(expanded)
+}
