@@ -86,6 +86,7 @@ describe('TreeItem component', () => {
     expect(wrapper.props().node.node.__typename).to.equal('Workflow')
     expect(wrapper.vm.$data.filtered).to.equal(true)
   })
+
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
     it('should display the cycle point expanded by default', () => {
@@ -116,6 +117,26 @@ describe('TreeItem component', () => {
       expect(wrapper).to.not.be.expanded()
     })
   })
+
+  describe('expand/collapse button click', () => {
+    const wrapper = mountFunction({
+      propsData: {
+        node: simpleTaskNode,
+        initialExpanded: false
+      }
+    })
+    expect(wrapper).to.not.be.expanded()
+    const expandCollapseBtn = wrapper.find('.node-expand-collapse-button')
+    it('should expand if currently collapsed', async () => {
+      await expandCollapseBtn.trigger('click')
+      expect(wrapper).to.be.expanded()
+    })
+    it('should collapse if currently expanded', async () => {
+      await expandCollapseBtn.trigger('click')
+      expect(wrapper).to.not.be.expanded()
+    })
+  })
+
   describe('children', () => {
     it('should recursively include other TreeItem components for its children', () => {
       const wrapper = mountFunction({
