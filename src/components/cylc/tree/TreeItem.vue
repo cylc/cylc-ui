@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-icon
         aria-label="Expand/collapse"
         role="img"
-        :aria-hidden="`${Boolean(!hasChildren)}`"
+        aria-hidden="false"
         class="node-expand-collapse-button"
         v-if="shouldRenderExpandCollapseBtn"
         @click="toggleExpandCollapse"
@@ -287,7 +287,7 @@ export default {
   },
   computed: {
     hasChildren () {
-      return this.node.children?.length
+      return Boolean(this.node.children?.length)
     },
     /** Get the node indentation in units of em. */
     nodeIndentation () {

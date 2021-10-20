@@ -17,7 +17,7 @@
 
 // we mount the tree to include the TreeItem component and other vuetify children components
 import { createLocalVue, mount } from '@vue/test-utils'
-import { expect } from 'chai'
+import { Assertion, expect } from 'chai'
 import Vuetify from 'vuetify/lib'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
@@ -29,6 +29,29 @@ import {
   simpleTaskNode
 } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+
+/**
+ * Helper function for expecting TreeItem to be expanded.
+ * Usage:
+ *   expect(wrapper).to.be.expanded()
+ *   // or expect it to be collapsed:
+ *   expect(wrapper).to.not.be.expanded()
+ */
+Assertion.addMethod('expanded', function () {
+  // this._obj is the TreeItem Wrapper
+  const wrapper = this._obj
+  this.assert(
+    wrapper.vm.isExpanded === true,
+    'expected the isExpanded data property to be true',
+    'expected the isExpanded data property to be false'
+  )
+  const nodeDiv = wrapper.find('.node')
+  this.assert(
+    nodeDiv.classes('expanded') === true,
+    'expected the .node DOM element to have the "expanded" class',
+    'expected the .node DOM element not to have the "expanded" class'
+  )
+})
 
 const localVue = createLocalVue()
 // load cylc-object directive
@@ -72,7 +95,7 @@ describe('TreeItem component', () => {
           depth: 0
         }
       })
-      expectExpanded(wrapper, true)
+      expect(wrapper).to.be.expanded()
     })
     it('should not display the cycle point expanded when set expanded=false', () => {
       const wrapper = mountFunction({
@@ -81,7 +104,7 @@ describe('TreeItem component', () => {
           initialExpanded: false
         }
       })
-      expectExpanded(wrapper, false)
+      expect(wrapper).to.not.be.expanded()
     })
     it('should not display the task expanded by default', () => {
       const wrapper = mountFunction({
@@ -90,7 +113,7 @@ describe('TreeItem component', () => {
           depth: 0
         }
       })
-      expectExpanded(wrapper, false)
+      expect(wrapper).to.not.be.expanded()
     })
   })
   describe('children', () => {
@@ -212,15 +235,3 @@ describe('TreeItem component', () => {
   //   })
   })
 })
-
-/**
- * Helper function for expecting TreeItem to be expanded or collapsed.
- *
- * @param {Wrapper} wrapper - Vue Wrapper.
- * @param {boolean} expanded - If true, expect TreeItem to be expanded, else collapsed.
- */
-function expectExpanded (wrapper, expanded) {
-  expect(wrapper.vm.isExpanded).to.equal(expanded)
-  const nodeDiv = wrapper.find('.node')
-  expect(nodeDiv.classes('expanded')).to.equal(expanded)
-}
