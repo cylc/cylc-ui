@@ -28,17 +28,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-expansion-panels
      accordion
      flat
-     hover
-     v-if="longDescription"
+     v-bind="longDescription ? { hover: true } : { readonly: true }"
     >
-      <v-expansion-panel>
-        <v-expansion-panel-header>
+      <v-expansion-panel
+        class="mutation-desc"
+      >
+        <v-expansion-panel-header
+          v-bind="longDescription ? {} : {
+            expandIcon: null,
+            style: {
+              cursor: 'default'
+            }
+          }"
+        >
           <vue-markdown
            :source="shortDescription"
            :breaks="false"
           />
         </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        <v-expansion-panel-content
+          v-if="longDescription"
+        >
           <vue-markdown
            :source="longDescription"
            :breaks="false"
@@ -46,11 +56,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    <vue-markdown
-     v-else
-     :source="shortDescription"
-     :breaks="false"
-    />
+
+    <v-divider></v-divider>
 
     <!-- the form inputs -->
     <v-list>
