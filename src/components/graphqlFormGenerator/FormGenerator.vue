@@ -35,11 +35,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-expansion-panel-header>
           <vue-markdown
            :source="shortDescription"
+           :breaks="false"
           />
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <vue-markdown
            :source="longDescription"
+           :breaks="false"
           />
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -47,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <vue-markdown
      v-else
      :source="shortDescription"
+     :breaks="false"
     />
 
     <!-- the form inputs -->
@@ -79,9 +82,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   text-align: center;
                 "
               >
-              <vue-markdown>
-                {{ input.description }}
-              </vue-markdown>
+                <vue-markdown :breaks="false">
+                  {{ input.description }}
+                </vue-markdown>
               </div>
             </v-tooltip>
           </v-list-item-title>
@@ -159,12 +162,11 @@ export default {
 
     /* Return the first line of the description. */
     shortDescription () {
-      return (this.mutation.description || '').split('\n', 1)[0] || ''
+      return this.mutation.description?.split('\n\n', 1)[0] || ''
     },
-
     /* Return the subsequent lines of the description */
     longDescription () {
-      return (this.mutation.description || '').split('\n').slice(1).join('\n')
+      return this.mutation.description?.split('\n\n').slice(1).join('\n\n')
     }
   },
 
