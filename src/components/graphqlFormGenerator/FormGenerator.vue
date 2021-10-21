@@ -74,18 +74,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   {{ icons.help }}
                 </v-icon>
               </template>
-              <!-- wrap the tooltip in a div with restricted width to force
-                   line wrapping -->
-              <div
-                style="
-                  width: 20vw;
-                  text-align: center;
-                "
-              >
-                <vue-markdown :breaks="false">
-                  {{ input.description }}
-                </vue-markdown>
-              </div>
+              <vue-markdown :breaks="false">
+                {{ input.description }}
+              </vue-markdown>
             </v-tooltip>
           </v-list-item-title>
           <form-input
