@@ -59,7 +59,7 @@
     "@babel/preset-env": "^7.14.8",
     "@cypress/code-coverage": "^3.9.11",
     "@cypress/webpack-preprocessor": "^5.9.1",
-    "@mdi/js": "^6.1.95",
+    "@mdi/js": "^6.4.95",
     "@vue/babel-preset-app": "^4.5.13",
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-e2e-cypress": "^4.5.13",
