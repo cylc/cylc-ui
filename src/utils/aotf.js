@@ -41,8 +41,7 @@ import {
   mdiPlayCircleOutline,
   mdiRefreshCircle,
   mdiReload,
-  mdiStop,
-  mdiWifi
+  mdiStop
 } from '@mdi/js'
 
 import AlertModel from '@/model/Alert.model'
@@ -60,7 +59,6 @@ export const mutationIcons = {
   kill: mdiCloseCircle,
   message: mdiEmail,
   pause: mdiPause,
-  ping: mdiWifi,
   play: mdiPlay,
   poll: mdiRefreshCircle,
   release: mdiPlayCircleOutline, // to distinguish from play

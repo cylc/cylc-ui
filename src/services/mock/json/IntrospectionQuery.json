@@ -1778,43 +1778,6 @@
             "__typename": "__Field"
           },
           {
-            "name": "ping",
-            "description": "Send a test message to a running workflow.",
-            "args": [
-              {
-                "name": "workflows",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "WorkflowID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "__typename": "__Type"
-                },
-                "defaultValue": null,
-                "__typename": "__InputValue"
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Ping",
-              "ofType": null,
-              "__typename": "__Type"
-            },
-            "isDeprecated": false,
-            "deprecationReason": null,
-            "__typename": "__Field"
-          },
-          {
             "name": "reload",
             "description": "Tell a workflow to reload its definition at run time.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
             "args": [
@@ -11280,43 +11243,6 @@
               "__typename": "__Field"
             },
             {
-              "name": "ping",
-              "description": "Send a test message to a running workflow.",
-              "args": [
-                {
-                  "name": "workflows",
-                  "description": null,
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "LIST",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "WorkflowID",
-                        "ofType": null,
-                        "__typename": "__Type"
-                      },
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "OBJECT",
-                "name": "Ping",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
               "name": "reload",
               "description": "Tell a workflow to reload its definition at run time.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
               "args": [
@@ -12521,32 +12447,6 @@
           "kind": "OBJECT",
           "name": "Pause",
           "description": "Pause a workflow.",
-          "fields": [
-            {
-              "name": "result",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
-          "kind": "OBJECT",
-          "name": "Ping",
-          "description": "Send a test message to a running workflow.",
           "fields": [
             {
               "name": "result",
