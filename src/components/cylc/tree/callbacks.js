@@ -16,6 +16,7 @@
  */
 
 import DeltasCallback from '@/services/callbacks'
+import { clear } from '@/components/cylc/tree'
 import {
   before,
   after,
@@ -45,10 +46,10 @@ class TreeCallback extends DeltasCallback {
   }
 
   before (deltas, store, errors) {
-    const lookup = store.state.workflows.lookup
-    const workflow = store.state.workflows.workflow
+    // If it were TS, we would use a ReadOnly type here...
+    this.lookup = store.state.workflows.lookup
+    const workflow = store.state.tree.workflow
     this.workflow = Object.assign({}, workflow)
-    this.lookup = Object.assign({}, lookup)
     const results = before(deltas, this.workflow, this.lookup)
     errors.push(...results.errors)
   }
@@ -59,9 +60,10 @@ class TreeCallback extends DeltasCallback {
   }
 
   tearDown (store, errors) {
-    store.commit('workflows/CLEAR_WORKFLOW')
-    this.workflow = null
+    clear(this.workflow)
+    store.commit('tree/SET_WORKFLOW', this.workflow)
     this.lookup = null
+    this.workflow = null
   }
 
   onAdded (added, store, errors) {
@@ -80,7 +82,7 @@ class TreeCallback extends DeltasCallback {
   }
 
   commit (store, errors) {
-    store.commit('workflows/SET_WORKFLOW', this.workflow)
+    store.commit('tree/SET_WORKFLOW', this.workflow)
   }
 }
 

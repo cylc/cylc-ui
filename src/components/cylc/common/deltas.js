@@ -94,7 +94,7 @@ import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 const KEYS = ['workflow', 'cyclePoints', 'familyProxies', 'taskProxies', 'jobs']
 
 /**
- * @param {DeltasAdded|Object} added
+ * @param {DeltasAdded} added
  * @param {Object.<String, Object>} lookup
  * @return {Result}
  */
@@ -126,7 +126,7 @@ function applyDeltasAdded (added, lookup) {
 /**
  * Deltas updated.
  *
- * @param updated {DeltasUpdated|Object} updated
+ * @param updated {DeltasUpdated} updated
  * @param {Object.<String, Object>} lookup
  * @return {Result}
  */
@@ -164,7 +164,7 @@ function applyDeltasUpdated (updated, lookup) {
 /**
  * Deltas pruned.
  *
- * @param {DeltasPruned|Object} pruned - deltas pruned
+ * @param {DeltasPruned} pruned - deltas pruned
  * @param {Object.<String, Object>} lookup
  * @return {Result}
  */

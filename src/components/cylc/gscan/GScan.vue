@@ -143,42 +143,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-flex>
                   <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
                   <v-flex
-                    v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
+                    v-if="scope.node.node.latestStateTasks"
                     class="text-right c-gscan-workflow-states"
                   >
-                    <!-- task summary tooltips -->
-                    <span
-                      v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.node.latestStateTasks))"
-                      :key="`${scope.node.id}-summary-${state}`"
-                      :class="getTaskStateClasses(scope.node.node, state)"
-                    >
-                    <v-tooltip color="black" top>
-                      <template v-slot:activator="{ on }">
-                        <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
-                        <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
-                        <v-btn
-                          v-on="on"
-                          class="ma-0 pa-0"
-                          min-width="0"
-                          min-height="0"
-                          style="font-size: 120%; width: auto"
-                          :ripple="false"
-                          dark
-                          icon
-                        >
-                          <job :status="state" />
-                        </v-btn>
-                      </template>
-                      <!-- tooltip text -->
-                      <span>
-                        <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
-                        <br/>
-                        <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
-                          {{ task }}<br v-if="index !== tasks.length -1" />
-                        </span>
-                      </span>
-                    </v-tooltip>
-                  </span>
+                    <WorkflowStateSummary
+                      :node-id="scope.node.id"
+                      :latest-state-tasks="scope.node.node.latestStateTasks"
+                      :state-totals="scope.node.node.stateTotals"
+                    />
                   </v-flex>
                 </v-layout>
               </v-list-item-title>
@@ -204,10 +176,10 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TaskState from '@/model/TaskState.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
-import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
+import WorkflowStateSummary from '@/components/cylc/gscan/WorkflowStateSummary'
+// import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
 import GScanCallback from '@/components/cylc/gscan/callbacks'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
@@ -215,9 +187,9 @@ import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 export default {
   name: 'GScan',
   components: {
-    Job,
     Tree,
-    WorkflowIcon
+    WorkflowIcon,
+    WorkflowStateSummary
   },
   mixins: [
     subscriptionComponentMixin
@@ -313,16 +285,16 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflows']),
-    workflowNodes () {
-      // NOTE: In case we decide to allow the user to switch between hierarchical and flat
-      //       gscan view, then all we need to do is just pass a boolean data-property to
-      //       the `createWorkflowNode` function below. Then reactivity will take care of
-      //       the rest.
-      const reducer = (acc, workflow) => addNodeToTree(createWorkflowNode(workflow, /* hierarchy */true), acc)
-      return Object.values(this.workflows)
-        .reduce(reducer, [])
-    },
+    ...mapState('gscan', ['gscan']),
+    // workflowNodes () {
+    //   // NOTE: In case we decide to allow the user to switch between hierarchical and flat
+    //   //       gscan view, then all we need to do is just pass a boolean data-property to
+    //   //       the `createWorkflowNode` function below. Then reactivity will take care of
+    //   //       the rest.
+    //   const reducer = (acc, workflow) => addNodeToTree(createWorkflowNode(workflow, /* hierarchy */true), acc)
+    //   return Object.values(this.workflows)
+    //     .reduce(reducer, [])
+    // },
     /**
      * @return {Array<String>}
      */
@@ -351,7 +323,7 @@ export default {
       deep: true,
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree, this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     },
     /**
@@ -361,13 +333,14 @@ export default {
     searchWorkflows: {
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, newVal, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree, newVal, this.workflowStates, this.taskStates)
       }
     },
-    workflowNodes: {
+    gscan: {
       immediate: true,
+      deep: true,
       handler: function () {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.gscan.tree, this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     }
   },
@@ -415,42 +388,6 @@ export default {
         return `/workflows/${ node.node.name }`
       }
       return ''
-    },
-
-    /**
-     * Get number of tasks we have in a given state. The states are retrieved
-     * from `latestStateTasks`, and the number of tasks in each state is from
-     * the `stateTotals`. (`latestStateTasks` includes old tasks).
-     *
-     * @param {WorkflowGraphQLData} workflow - the workflow object retrieved from GraphQL
-     * @param {string} state - a workflow state
-     * @returns {number|*} - the number of tasks in the given state
-     */
-    countTasksInState (workflow, state) {
-      if (Object.hasOwnProperty.call(workflow.stateTotals, state)) {
-        return workflow.stateTotals[state]
-      }
-      return 0
-    },
-
-    getTaskStateClasses (workflow, state) {
-      const tasksInState = this.countTasksInState(workflow, state)
-      return tasksInState === 0 ? ['empty-state'] : []
-    },
-
-    // TODO: temporary filter, remove after b0 - https://github.com/cylc/cylc-ui/pull/617#issuecomment-805343847
-    getLatestStateTasks (latestStateTasks) {
-      // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
-      const validValues = [
-        TaskState.SUBMITTED.name,
-        TaskState.SUBMIT_FAILED.name,
-        TaskState.RUNNING.name,
-        TaskState.SUCCEEDED.name,
-        TaskState.FAILED.name
-      ]
-      return latestStateTasks.filter(entry => {
-        return validValues.includes(entry[0])
-      })
     }
   }
 }

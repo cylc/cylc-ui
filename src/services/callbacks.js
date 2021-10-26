@@ -37,21 +37,21 @@ class DeltasCallback {
   tearDown (store, errors) {}
 
   /**
-   * @param {DeltasAdded|Object} added
+   * @param {DeltasAdded} added
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
   onAdded (added, store, errors) {}
 
   /**
-   * @param {DeltasUpdated|Object} updated
+   * @param {DeltasUpdated} updated
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
   onUpdated (updated, store, errors) {}
 
   /**
-   * @param {DeltasPruned|Object} pruned -
+   * @param {DeltasPruned} pruned -
    * @param {Vuex} store - Vuex store
    * @param {Array<Object>} errors
    */

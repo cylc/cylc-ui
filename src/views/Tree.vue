@@ -72,7 +72,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflow']),
+    ...mapState('tree', ['workflow']),
     workflows () {
       return this.workflow &&
         this.workflow.tree &&

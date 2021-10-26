@@ -21,6 +21,7 @@ import {
   applyDeltasPruned
 } from '@/components/cylc/gscan/deltas'
 import DeltasCallback from '@/services/callbacks'
+import { clear } from '@/components/cylc/gscan/index'
 
 /**
  * Provisional GScan callback until https://github.com/cylc/cylc-ui/pull/736
@@ -29,37 +30,41 @@ import DeltasCallback from '@/services/callbacks'
 class GScanCallback extends DeltasCallback {
   constructor () {
     super()
-    this.workflows = null
+    this.lookup = null
+    this.gscan = null
   }
 
   before (deltas, store, errors) {
-    this.workflows = Object.assign({}, store.state.workflows.workflows)
+    // If it were TS, we would use a ReadOnly type here...
+    this.lookup = store.state.workflows.lookup
+    const gscan = store.state.gscan.gscan
+    this.gscan = Object.assign({}, gscan)
   }
 
   tearDown (store, errors) {
-    store.commit('workflows/SET_WORKFLOWS', {})
-    this.workflows = null
+    clear(this.gscan)
+    store.commit('gscan/SET_GSCAN', this.gscan)
+    this.lookup = null
+    this.gscan = null
   }
 
   onAdded (added, store, errors) {
-    this.workflows = Object.assign(this.workflows, store.state.workflows.workflows)
-    const results = applyDeltasAdded(added, this.workflows)
+    const results = applyDeltasAdded(added, this.gscan, {})
     errors.push(...results.errors)
   }
 
   onUpdated (updated, store, errors) {
-    const results = applyDeltasUpdated(updated, this.workflows)
+    const results = applyDeltasUpdated(updated, this.gscan, {})
     errors.push(...results.errors)
   }
 
   onPruned (pruned, store, errors) {
-    this.workflows = Object.assign(this.workflows, store.state.workflows.workflows)
-    const results = applyDeltasPruned(pruned, this.workflows)
+    const results = applyDeltasPruned(pruned, this.gscan, {})
     errors.push(...results.errors)
   }
 
   commit (store, errors) {
-    store.commit('workflows/SET_WORKFLOWS', this.workflows)
+    store.commit('gscan/SET_GSCAN', this.gscan)
   }
 }
 

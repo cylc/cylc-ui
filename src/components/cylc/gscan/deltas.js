@@ -14,28 +14,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import Vue from 'vue'
-import { mergeWith } from 'lodash'
-import { mergeWithCustomizer } from '@/components/cylc/common/merge'
+import * as GScanTree from '@/components/cylc/gscan/index'
 
 /**
- * @param {DeltasAdded|Object} added
- * @param {Array<WorkflowGraphQLData>} workflows
- * @return {Result}
+ * Deltas added.
+ *
+ * @param {DeltasAdded} added
+ * @param {GScan} gscan
+ * @param {*} options
+ * @returns {Result}
  */
-function applyDeltasAdded (added, workflows) {
+function applyDeltasAdded (added, gscan, options) {
   const result = {
     errors: []
   }
-  if (added && added.workflow && added.workflow.status) {
+  if (added.workflow) {
+    const workflow = added.workflow
     try {
-      Vue.set(workflows, added.workflow.id, added.workflow)
+      GScanTree.addWorkflow(workflow, gscan, options)
     } catch (error) {
       result.errors.push([
         'Error applying GScan added-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
         error,
-        added,
-        workflows
+        added.workflow,
+        gscan,
+        options
       ])
     }
   }
@@ -43,49 +46,61 @@ function applyDeltasAdded (added, workflows) {
 }
 
 /**
- * @param {DeltasUpdated|Object} updated
- * @param {Array<WorkflowGraphQLData>} workflows
- * @return {Result}
+ * Deltas updated.
+ *
+ * @param {DeltasUpdated} updated
+ * @param {GScan} gscan
+ * @param {*} options
+ * @returns {Result}
  */
-function applyDeltasUpdated (updated, workflows) {
+function applyDeltasUpdated (updated, gscan, options) {
   const result = {
     errors: []
   }
-  try {
-    if (updated && updated.workflow && workflows[updated.workflow.id]) {
-      mergeWith(workflows[updated.workflow.id], updated.workflow, mergeWithCustomizer)
+  if (updated.workflow) {
+    const workflow = updated.workflow
+    try {
+      GScanTree.updateWorkflow(workflow, gscan, options)
+    } catch (error) {
+      result.errors.push([
+        'Error applying updated-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+        error,
+        workflow,
+        gscan,
+        options
+      ])
     }
-  } catch (error) {
-    result.errors.push([
-      'Error applying GScan updated-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
-      error,
-      updated,
-      workflows
-    ])
   }
   return result
 }
 
 /**
- * @param {DeltasPruned|Object} pruned
- * @param {Array<WorkflowGraphQLData>} workflows
- * @return {Result}
+ * Deltas pruned.
+ *
+ * @param {DeltasPruned} pruned
+ * @param {GScan} gscan
+ * @param {*} options
+ * @returns {Result}
  */
-function applyDeltasPruned (pruned, workflows) {
+function applyDeltasPruned (pruned, gscan, options) {
   const result = {
     errors: []
   }
-  try {
-    if (pruned && pruned.workflow) {
-      Vue.delete(workflows, pruned.workflow)
+  // TBD: why not workflows? We have that in the jsdoc for DeltasPruned, and I believe
+  //      that's how other queries return the data.
+  if (pruned.workflow) {
+    const workflowId = pruned.workflow
+    try {
+      GScanTree.removeWorkflow(workflowId, gscan, options)
+    } catch (error) {
+      result.errors.push([
+        'Error applying pruned-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+        error,
+        workflowId,
+        gscan,
+        options
+      ])
     }
-  } catch (error) {
-    result.errors.push([
-      'Error applying GScan pruned-delta, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
-      error,
-      pruned,
-      workflows
-    ])
   }
   return result
 }

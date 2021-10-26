@@ -32,85 +32,45 @@ describe('workflows', () => {
   }
   const resetState = () => {
     store.state.workflows.lookup = {}
-    store.state.workflows.workflow = {
-      tree: {},
-      lookup: {}
-    }
-    store.state.workflows.workflows = []
     store.state.workflows.workflowName = null
   }
   beforeEach(resetState)
   afterEach(resetState)
   describe('State', () => {
-    it('should start with empty lookup, empty workflow, no workflows, and no workflow name', () => {
+    it('should start with empty lookup and no workflow name', () => {
       expect(Object.keys(store.state.workflows.lookup).length).to.deep.equal(0)
-      expect(store.state.workflows.workflow).to.deep.equal({ tree: {}, lookup: {} })
-      expect(store.state.workflows.workflows.length).to.equal(0)
       expect(store.state.workflows.workflowName).to.equal(null)
     })
   })
   describe('Getters', () => {
     it('should get the current workflow', () => {
       expect(store.getters['workflows/currentWorkflow']).to.equal(null)
-      const workflows = {
+      const lookup = {
         'cylc|cylc': {
           id: 'cylc|cylc',
           name: 'cylc'
         }
       }
-      store.commit('workflows/SET_WORKFLOWS', workflows)
-      store.commit('workflows/SET_WORKFLOW_NAME', workflows['cylc|cylc'].name)
-      expect(store.getters['workflows/currentWorkflow']).to.deep.equal(workflows['cylc|cylc'])
+      store.commit('workflows/SET_LOOKUP', lookup)
+      store.commit('workflows/SET_WORKFLOW_NAME', lookup['cylc|cylc'].name)
+      expect(store.getters['workflows/currentWorkflow']).to.deep.equal(lookup['cylc|cylc'])
     })
   })
   describe('Mutations', () => {
     it('should set workflows', () => {
-      const workflows = {
+      const lookup = {
         'cylc|cylc': {
           id: 'cylc|cylc',
           name: 'cylc'
         }
       }
-      store.commit('workflows/SET_WORKFLOWS', workflows)
-      expect(store.state.workflows.workflows).to.deep.equal(workflows)
+      store.commit('workflows/SET_LOOKUP', lookup)
+      expect(store.state.workflows.lookup).to.deep.equal(lookup)
     })
     it('should set workflow name', () => {
       const workflowName = 'cylc'
       store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
       expect(store.state.workflows.workflowName).to.equal(workflowName)
-    })
-    it('should set workflow', () => {
-      const workflow = {
-        tree: {
-          test: 1
-        },
-        lookup: {
-          test: 1
-        }
-      }
-      store.commit('workflows/SET_WORKFLOW', workflow)
-      expect(store.state.workflows.workflow).to.deep.equal(workflow)
-    })
-    it('should set lookup', () => {
-      const lookup = {
-        test: 1
-      }
-      store.commit('workflows/SET_LOOKUP', lookup)
-      expect(store.state.workflows.lookup).to.deep.equal(lookup)
-    })
-    it('should clear workflow', () => {
-      const workflow = {
-        tree: {
-          test: 1
-        },
-        lookup: {
-          test: 1
-        }
-      }
-      store.commit('workflows/SET_WORKFLOW', workflow)
-      expect(store.state.workflows.workflow).to.deep.equal(workflow)
-      store.commit('workflows/CLEAR_WORKFLOW', workflow)
-      expect(store.state.workflows.workflow).to.not.deep.equal(workflow)
     })
   })
 })

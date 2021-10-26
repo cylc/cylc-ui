@@ -50,7 +50,7 @@ export class WorkflowState extends Enumify {
 
 /**
  * Workflow states ordered for display purposes.
- * @type {Map} - Using a map to prevent more unexpected sorting issues
+ * @type {Map}
  * @see https://stackoverflow.com/questions/5525795/does-javascript-guarantee-object-property-order/38218582#38218582
  */
 export const WorkflowStateOrder = new Map([

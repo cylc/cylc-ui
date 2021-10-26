@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { clear } from '@/components/cylc/tree/index'
 
 const state = {
   /**
@@ -29,27 +28,6 @@ const state = {
    * @type {Object.<String, Object>}
    */
   lookup: {},
-  /**
-   * This is the CylcTree, which contains the hierarchical tree data structure.
-   * It is created from the GraphQL data, with the only difference that this one
-   * contains hierarchy, while the lookup (not workflow.lookup) is flat-ish.
-   *
-   * The nodes in the .tree property have a reference or pointer (.node) to the
-   * data in the lookup map above, to avoid data duplication.
-   *
-   * @type {Workflow}
-   */
-  workflow: {
-    tree: {},
-    lookup: {}
-  },
-  /**
-   * This contains a list of workflows returned from GraphQL and is used by components
-   * such as GScan, Dashboard, and WorkflowsTable.
-   *
-   * @type {Object.<String, WorkflowGraphQLData>}
-   */
-  workflows: {},
   /**
    * This holds the name of the current workflow. This is set by VueRouter
    * and is used to decide what's the current workflow. It is used in conjunction
@@ -67,43 +45,23 @@ const getters = {
     if (state.workflowName === null) {
       return null
     }
-    return Object.values(state.workflows)
+    return Object.values(state.lookup)
       .find(workflow => workflow.name === state.workflowName)
   }
 }
 
 const mutations = {
-  SET_WORKFLOW_NAME (state, data) {
-    state.workflowName = data
-  },
-  SET_WORKFLOWS (state, data) {
-    state.workflows = data
-  },
-  SET_WORKFLOW (state, data) {
-    state.workflow = data
-  },
   SET_LOOKUP (state, data) {
     state.lookup = data
   },
-  CLEAR_WORKFLOW (state) {
-    clear(state.workflow)
-    state.workflow = {
-      tree: {
-        id: '',
-        type: 'workflow',
-        children: []
-      },
-      lookup: {}
-    }
+  SET_WORKFLOW_NAME (state, data) {
+    state.workflowName = data
   }
 }
-
-const actions = {}
 
 export const workflows = {
   namespaced: true,
   state,
   getters,
-  mutations,
-  actions
+  mutations
 }

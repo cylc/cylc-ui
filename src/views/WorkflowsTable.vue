@@ -132,9 +132,9 @@ export default {
     }
   }),
   computed: {
-    ...mapState('workflows', ['workflows']),
+    ...mapState('workflows', ['lookup']),
     workflowsTable () {
-      return Object.values(this.workflows)
+      return Object.values(this.lookup)
     }
   },
   methods: {

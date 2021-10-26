@@ -38,7 +38,7 @@ import Vue from 'vue'
  * Create a workflow node. Uses the same properties (by reference) as the given workflow,
  * only adding new properties such as type, children, etc.
  *
- * @param workflow {WorkflowGraphQLData} workflow
+ * @param {WorkflowGraphQLData} workflow workflow
  * @return {WorkflowNode}
  */
 function createWorkflowNode (workflow) {
@@ -70,7 +70,7 @@ function createWorkflowNode (workflow) {
  * - 'a|b'        results in a cycle point node ID 'a|b'
  * - ''           results in a cycle point node ID ''
  *
- * @param node {GraphQLData} a tree node
+ * @param {GraphQLData} node a tree node
  * @throws {Error} - if there was an error extracting the cycle point ID
  * @return {string} - the cycle point ID
  */

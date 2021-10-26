@@ -15,25 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import i18n from '@/i18n'
-
-/**
- * Here we can define the operations that are common to components/views.
- */
-export default {
+const state = {
   /**
-   * Automatically created methods for components.
+   * This is the CylcTree, which contains the hierarchical tree data structure.
+   * It is created from the GraphQL data, with the only difference that this one
+   * contains hierarchy, while the lookup (not workflow.lookup) is flat-ish.
+   *
+   * The nodes in the .tree property have a reference or pointer (.node) to the
+   * data in the lookup map above, to avoid data duplication.
+   *
+   * @type {Workflow}
    */
-  methods: {
-    /**
-     * i18n-enabled operation, to get the title respecting the locale used
-     * in the application settings.
-     * @param key {string} i18n key
-     * @param params {object} optional object key=value used in the i18n message
-     * @returns {string}
-     */
-    getPageTitle: function (key, params = {}) {
-      return `${i18n.t('App.name')} | ${i18n.t(key, params)}`
-    }
+  workflow: {
+    tree: {},
+    lookup: {}
   }
+}
+
+const mutations = {
+  SET_WORKFLOW (state, data) {
+    state.workflow = data
+  }
+}
+
+export const tree = {
+  namespaced: true,
+  state,
+  mutations
 }

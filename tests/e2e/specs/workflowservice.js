@@ -30,7 +30,7 @@ describe('WorkflowService subscriptions', () => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
-  it('-> Dashboard -> User Profile, should contain 1 subscription (GScan)', () => {
+  it('-> Dashboard -> User Profile, should contain 1 subscription ("root" = GScan)', () => {
     cy.visit('/#/')
     cy.get('[href="#/user-profile"]').click({ force: true })
     cy.contains('h3', 'Your Profile')
@@ -39,11 +39,11 @@ describe('WorkflowService subscriptions', () => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
-  it('-> Dashboard -> Workflows, should contain 2 subscriptions (GScan + Tree)', () => {
+  it('-> Dashboard -> Workflows, should contain 2 subscriptions ("root" = GScan + Dashboard, and "workflow" = Tree)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click({ force: true })
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
-    cy.get('div#main').find('.c-tree')
+    cy.get('div#main').find('.c-task')
     getSubscriptions().then(subscriptions => {
       // GScan subscription "root" and the subscription "workflow" used by the Tree view
       expect(Object.keys(subscriptions).length).to.equal(2)
@@ -51,18 +51,18 @@ describe('WorkflowService subscriptions', () => {
       expect(subscriptions.workflow.observable.closed).to.equal(false)
     })
   })
-  it('-> Dashboard -> Workflows -> Dashboard, should contain 2 subscriptions (GScan + Dashboard)', () => {
+  it('-> Dashboard -> Workflows -> Dashboard, should contain 1 subscriptions ("root" = GScan + Dashboard)', () => {
     cy.visit('/#/')
-    cy.get('[href="#/workflows/one"]').click()
+    cy.get('[href="#/workflows/one"]').click({ force: true })
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
-    cy.get('div#main').find('.c-tree')
+    cy.get('div#main').find('.c-task')
     cy.get('[href="#/"]').click({ force: true })
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
-  it('-> Tree, should contain 2 subscriptions (GScan + Tree)', () => {
+  it('-> Tree, should contain 2 subscriptions ("root" = GScan + Dashboard, and "workflow" = Tree)', () => {
     cy.visit('/#/tree/one')
     cy.get('.c-header').should('exist')
     getSubscriptions().then(subscriptions => {
