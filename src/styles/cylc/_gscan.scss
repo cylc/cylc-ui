@@ -44,30 +44,7 @@
       }
 
       .treeitem {
-        /**
-         * The styles in this class are based off the v-list-item styles.
-         */
-        .node-expand-collapse-button {
-          margin: 0;
-          letter-spacing: normal;
-          min-height: 48px;
-          /**
-            1.5rem is the space the TreeItem component prepends for each hierarchy level in the tree.
-            4px is half the padding we are using for .v-list-item (see below).
-           */
-          width: calc(1.5rem + 4px);
-          outline: none;
-          padding: 0;
-          position: relative;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
         .node {
-          display: flex;
-          align-items: center;
-
           .v-list-item {
             padding: 0 8px;
             @include hover;

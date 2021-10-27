@@ -52,9 +52,13 @@ $visible-outputs: 5;
     line-height: $line-height;
     display: block;
 
-    .node-expand-collapse-button {
-      float: left;
-      margin-right: 4px;
+    .node-expand-collapse-button::after {
+      // This is the icon's highlight circle that appears when focused
+      transform: none; // Prevent Vuetify enlargening it
+    }
+
+    &.expanded .node-expand-collapse-button {
+      transform: rotate(90deg);
     }
 
     &--hoverable {
