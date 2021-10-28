@@ -59,7 +59,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.15.8, @babel/core@npm:^7.11.0, @babel/core@npm:^7.14.8, @babel/core@npm:^7.7.5":
+"@babel/core@npm:7.15.8, @babel/core@npm:^7.11.0, @babel/core@npm:^7.12.3, @babel/core@npm:^7.14.8, @babel/core@npm:^7.7.5":
   version: 7.15.8
   resolution: "@babel/core@npm:7.15.8"
   dependencies:
@@ -394,7 +394,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.15.4, @babel/parser@npm:^7.15.8, @babel/parser@npm:^7.4.5, @babel/parser@npm:^7.7.0":
+"@babel/parser@npm:^7.14.7, @babel/parser@npm:^7.15.4, @babel/parser@npm:^7.15.8, @babel/parser@npm:^7.4.5, @babel/parser@npm:^7.7.0":
   version: 7.15.8
   resolution: "@babel/parser@npm:7.15.8"
   bin:
@@ -1922,10 +1922,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdi/js@npm:^6.1.95":
-  version: 6.2.95
-  resolution: "@mdi/js@npm:6.2.95"
-  checksum: 85f33d0bbb0665ef048dbcae8759eb7b17db35594f1e471c71946fb36ea8416d3c21b3a1013bb587c7293f2c84d97af6ed791a6904625abdae7ec96a75569e5e
+"@mdi/js@npm:^6.4.95":
+  version: 6.4.95
+  resolution: "@mdi/js@npm:6.4.95"
+  checksum: 76055821b0b611090f1fadff3cb93b0d2c05f7c52778a0e8966abe1c85d3aae8312c497e91882bb8cb02bf9235edda901da944099553afb2dbacafb11ed40b18
   languageName: node
   linkType: hard
 
@@ -3730,16 +3730,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-istanbul@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "babel-plugin-istanbul@npm:6.0.0"
+"babel-plugin-istanbul@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "babel-plugin-istanbul@npm:6.1.1"
   dependencies:
     "@babel/helper-plugin-utils": ^7.0.0
     "@istanbuljs/load-nyc-config": ^1.0.0
     "@istanbuljs/schema": ^0.1.2
-    istanbul-lib-instrument: ^4.0.0
+    istanbul-lib-instrument: ^5.0.4
     test-exclude: ^6.0.0
-  checksum: bc586cf088ec471a98a474ef0e9361ace61947da2a3e54162f1e1ab712a1a81a88007639e8aff7db2fc8678ae7c671e696e6edd6ccf72db8e6af86f0628d5a08
+  checksum: cb4fd95738219f232f0aece1116628cccff16db891713c4ccb501cddbbf9272951a5df81f2f2658dfdf4b3e7b236a9d5cbcf04d5d8c07dd5077297339598061a
   languageName: node
   linkType: hard
 
@@ -4692,7 +4692,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:4.1.2, chalk@npm:^4.0.0, chalk@npm:^4.1.0":
+"chalk@npm:4.1.2, chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.2":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
@@ -5918,7 +5918,7 @@ __metadata:
     "@lumino/datagrid": ^0.32.0
     "@lumino/default-theme": ^0.19.0
     "@lumino/widgets": ^1.24.0
-    "@mdi/js": ^6.1.95
+    "@mdi/js": ^6.4.95
     "@vue/babel-preset-app": ^4.5.13
     "@vue/cli-plugin-babel": ^4.5.13
     "@vue/cli-plugin-e2e-cypress": ^4.5.13
@@ -5931,7 +5931,7 @@ __metadata:
     axios-fetch: ^1.1.0
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.2
-    babel-plugin-istanbul: ^6.0.0
+    babel-plugin-istanbul: ^6.1.1
     babel-runtime: ^6.26.0
     bufferutil: ^4.0.5
     chai: ^4.3.4
@@ -5959,7 +5959,7 @@ __metadata:
     graphql-tag: ~2.12.5
     istanbul-instrumenter-loader: ^3.0.1
     istanbul-lib-coverage: ^3.0.0
-    json-server: ^0.16.3
+    json-server: ^0.17.0
     lodash: ^4.17.21
     markdown-it: ^12.1.0
     mitt: ^3.0.0
@@ -5970,7 +5970,7 @@ __metadata:
     preact: ^10.5.14
     preact-compat: ^3.19.0
     regenerator-runtime: ^0.13.7
-    sass: ~1.41.1
+    sass: ~1.43.4
     sass-loader: ^10.2.0
     sinon: ^11.1.2
     standard: ^16.0.4
@@ -7579,7 +7579,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express-urlrewrite@npm:^1.3.0":
+"express-urlrewrite@npm:^1.4.0":
   version: 1.4.0
   resolution: "express-urlrewrite@npm:1.4.0"
   dependencies:
@@ -10124,6 +10124,13 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"istanbul-lib-coverage@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "istanbul-lib-coverage@npm:3.2.0"
+  checksum: a2a545033b9d56da04a8571ed05c8120bf10e9bce01cf8633a3a2b0d1d83dff4ac4fe78d6d5673c27fc29b7f21a41d75f83a36be09f82a61c367b56aa73c1ff9
+  languageName: node
+  linkType: hard
+
 "istanbul-lib-hook@npm:^3.0.0":
   version: 3.0.0
   resolution: "istanbul-lib-hook@npm:3.0.0"
@@ -10157,6 +10164,19 @@ fsevents@~2.3.2:
     istanbul-lib-coverage: ^3.0.0
     semver: ^6.3.0
   checksum: fa1171d3022b1bb8f6a734042620ac5d9ee7dc80f3065a0bb12863e9f0494d0eefa3d86608fcc0254ab2765d29d7dad8bdc42e5f8df2f9a1fbe85ccc59d76cb9
+  languageName: node
+  linkType: hard
+
+"istanbul-lib-instrument@npm:^5.0.4":
+  version: 5.1.0
+  resolution: "istanbul-lib-instrument@npm:5.1.0"
+  dependencies:
+    "@babel/core": ^7.12.3
+    "@babel/parser": ^7.14.7
+    "@istanbuljs/schema": ^0.1.2
+    istanbul-lib-coverage: ^3.2.0
+    semver: ^6.3.0
+  checksum: 8b82e733c69fe9f94d2e21f3e5760c9bedb110329aa75df4bd40df95f1cac3bf38767e43f35b125cc547ceca7376b72ce7d95cc5238b7e9088345c7b589233d3
   languageName: node
   linkType: hard
 
@@ -10445,33 +10465,33 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"json-server@npm:^0.16.3":
-  version: 0.16.3
-  resolution: "json-server@npm:0.16.3"
+"json-server@npm:^0.17.0":
+  version: 0.17.0
+  resolution: "json-server@npm:0.17.0"
   dependencies:
     body-parser: ^1.19.0
-    chalk: ^4.1.0
+    chalk: ^4.1.2
     compression: ^1.7.4
     connect-pause: ^0.1.1
     cors: ^2.8.5
     errorhandler: ^1.5.1
     express: ^4.17.1
-    express-urlrewrite: ^1.3.0
+    express-urlrewrite: ^1.4.0
     json-parse-helpfulerror: ^1.0.3
-    lodash: ^4.17.20
-    lodash-id: ^0.14.0
+    lodash: ^4.17.21
+    lodash-id: ^0.14.1
     lowdb: ^1.0.0
     method-override: ^3.0.0
     morgan: ^1.10.0
-    nanoid: ^3.1.16
+    nanoid: ^3.1.23
     please-upgrade-node: ^3.2.0
     pluralize: ^8.0.0
     server-destroy: ^1.0.1
-    update-notifier: ^5.0.1
-    yargs: ^16.1.1
+    update-notifier: ^5.1.0
+    yargs: ^17.0.1
   bin:
     json-server: lib/cli/bin.js
-  checksum: 2d2087c0ea698bb2568f44c13bdbf07ad4503315563924cbbaa85e1fae8ec6d29e73e35341fbcd91282c2f72b6a39aacd215cdcfd6642945b6bcf7bced07b2ef
+  checksum: c0086ae0eeb7600105fd7ba266c4551a56476d215c4a498bb690f5aa0eddad2723cc0f9f62443fec41dd92cf90f5ac2ae7586f99b017d5cd39f476ef15c87934
   languageName: node
   linkType: hard
 
@@ -10891,7 +10911,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"lodash-id@npm:^0.14.0":
+"lodash-id@npm:^0.14.1":
   version: 0.14.1
   resolution: "lodash-id@npm:0.14.1"
   checksum: de4c96f5c3a0908a897f828dee70472b99861ad8d43a2b00b7fa5724684bf8c9b8e4c47eeb2d1fac63f2f01f0f34344335f0ea4fb6c8a4f02aa63a9a8715db9f
@@ -11915,7 +11935,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.1.16, nanoid@npm:^3.1.28":
+"nanoid@npm:^3.1.23, nanoid@npm:^3.1.28":
   version: 3.1.30
   resolution: "nanoid@npm:3.1.30"
   bin:
@@ -14751,14 +14771,14 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"sass@npm:~1.41.1":
-  version: 1.41.1
-  resolution: "sass@npm:1.41.1"
+"sass@npm:~1.43.4":
+  version: 1.43.4
+  resolution: "sass@npm:1.43.4"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
   bin:
     sass: sass.js
-  checksum: a5dcf0e80f068ecaf0feb7603acfbb0ce30885dde58ef1f03b2f153973aed075525d4e539ab5fdf7fbff47a66033716270f64579eafa17b7e4591f404281e1d6
+  checksum: 9af80105dabd32752c60b4557115832982cf1019c02c952db6a26c61a3e18dc95044c896685e6e9a6d6dd6643fc411ecf2ea4a8a431a8a08a7510a45d5a492ae
   languageName: node
   linkType: hard
 
@@ -16716,7 +16736,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"update-notifier@npm:^5.0.1, update-notifier@npm:^5.1.0":
+"update-notifier@npm:^5.1.0":
   version: 5.1.0
   resolution: "update-notifier@npm:5.1.0"
   dependencies:
@@ -17821,7 +17841,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"yargs@npm:^16.0.0, yargs@npm:^16.1.1, yargs@npm:^16.2.0":
+"yargs@npm:^16.0.0, yargs@npm:^16.2.0":
   version: 16.2.0
   resolution: "yargs@npm:16.2.0"
   dependencies:
@@ -17833,6 +17853,21 @@ resolve@^2.0.0-next.3:
     y18n: ^5.0.5
     yargs-parser: ^20.2.2
   checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^17.0.1":
+  version: 17.2.1
+  resolution: "yargs@npm:17.2.1"
+  dependencies:
+    cliui: ^7.0.2
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.0
+    y18n: ^5.0.5
+    yargs-parser: ^20.2.2
+  checksum: 451aac46f82da776f436018feed0244bc0e7b4355f7e397bcb53d34c691b177c0d71db3dda9653760e1bc240254d8b763a252ff918ef9e235a8d202e2909c4eb
   languageName: node
   linkType: hard
 
