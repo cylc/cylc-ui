@@ -18,6 +18,9 @@ to a Jupyter Server extension).
 
 ### Fixes
 
+[#824](https://github.com/cylc/cylc-ui/pull/844) - Fix handling of task/job
+"preparing" state.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-0.5 (<span actions:bind='release-date'>Released 2021-07-28</span>)__
 
