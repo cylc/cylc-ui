@@ -23,6 +23,7 @@ import { Enumify } from 'enumify'
  * @see https://cylc.github.io/cylc-admin/proposal-state-names.html#taskjob-states
  */
 class JobState extends Enumify {
+  static PREPARING = new JobState('preparing')
   static SUBMITTED = new JobState('submitted')
   static SUBMIT_FAILED = new JobState('submit-failed')
   static RUNNING = new JobState('running')
