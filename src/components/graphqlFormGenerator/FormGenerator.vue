@@ -16,7 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-form validate>
+  <v-form
+    validate
+    class="c-mutation-form"
+  >
     <!-- the mutation title -->
     <h3
      style="text-transform: capitalize;"
