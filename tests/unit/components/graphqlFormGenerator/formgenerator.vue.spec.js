@@ -274,4 +274,46 @@ describe('FormGenerator Component', () => {
     wrapper.vm.reset()
     expect(wrapper.vm.$data.model).to.deep.equal(before)
   })
+
+  describe('Mutation descriptions', () => {
+    const mountWithDescription = (desc) => mountFunction({
+      propsData: {
+        mutation: {
+          name: 'Darmok',
+          description: desc,
+          args: []
+        }
+      }
+    })
+    describe('For a single line description', () => {
+      const desc = 'Lorem ipsum.'
+      const wrapper = mountWithDescription(desc)
+      describe('.shortDescription', () => {
+        it('should be the whole description', () => {
+          expect(wrapper.vm.shortDescription).to.equal(desc)
+        })
+      })
+      describe('.longDescription', () => {
+        it('should be empty', () => {
+          expect(wrapper.vm.longDescription).to.equal('')
+        })
+      })
+    })
+    describe('For a multiline description', () => {
+      const shortDesc = 'Darmok and Jalad at\nTanagra.'
+      const longDesc = 'Shaka when the\nwalls fell.\n\nTemba, his arms wide.'
+      const desc = `${shortDesc}\n\n${longDesc}`
+      const wrapper = mountWithDescription(desc)
+      describe('.shortDescription', () => {
+        it('should be the bit before the first double newline', () => {
+          expect(wrapper.vm.shortDescription).to.equal(shortDesc)
+        })
+      })
+      describe('.longDescription', () => {
+        it('should be everything after the first double newline', () => {
+          expect(wrapper.vm.longDescription).to.equal(longDesc)
+        })
+      })
+    })
+  })
 })

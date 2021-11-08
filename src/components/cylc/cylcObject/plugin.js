@@ -67,8 +67,8 @@ function update (el, binding, newVnode, oldVnode) {
 export default {
   /**
    * Called when the Vue application is created, and this plug-in is loaded.
-   * @param Vue {object} - Vue application
-   * @param options {*} - options passed to the plug-in (if any)
+   * @param {object} Vue - Vue application
+   * @param {*} options - options passed to the plug-in (if any)
    */
   install (Vue, options) {
     // add a global directive

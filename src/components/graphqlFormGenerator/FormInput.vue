@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       </component>
     </template>
-    <vue-markdown>{{ help }}</vue-markdown>
+    <vue-markdown :breaks="false">{{ help }}</vue-markdown>
   </v-tooltip>
 </template>
 

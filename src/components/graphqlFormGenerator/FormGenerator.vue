@@ -16,7 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-form validate>
+  <v-form
+    validate
+    class="c-mutation-form"
+  >
     <!-- the mutation title -->
     <h3
      style="text-transform: capitalize;"
@@ -28,26 +31,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-expansion-panels
      accordion
      flat
-     hover
-     v-if="longDescription"
+     v-bind="longDescription ? { hover: true } : { readonly: true }"
     >
-      <v-expansion-panel>
-        <v-expansion-panel-header>
+      <v-expansion-panel
+        class="mutation-desc"
+      >
+        <v-expansion-panel-header
+          v-bind="longDescription ? {} : {
+            expandIcon: null,
+            style: {
+              cursor: 'default'
+            }
+          }"
+        >
           <vue-markdown
            :source="shortDescription"
+           :breaks="false"
           />
         </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        <v-expansion-panel-content
+          v-if="longDescription"
+        >
           <vue-markdown
            :source="longDescription"
+           :breaks="false"
           />
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    <vue-markdown
-     v-else
-     :source="shortDescription"
-    />
+
+    <v-divider></v-divider>
 
     <!-- the form inputs -->
     <v-list>
@@ -71,18 +84,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   {{ icons.help }}
                 </v-icon>
               </template>
-              <!-- wrap the tooltip in a div with restricted width to force
-                   line wrapping -->
-              <div
-                style="
-                  width: 20vw;
-                  text-align: center;
-                "
-              >
-              <vue-markdown>
+              <vue-markdown :breaks="false">
                 {{ input.description }}
               </vue-markdown>
-              </div>
             </v-tooltip>
           </v-list-item-title>
           <form-input
@@ -159,12 +163,11 @@ export default {
 
     /* Return the first line of the description. */
     shortDescription () {
-      return (this.mutation.description || '').split('\n', 1)[0] || ''
+      return this.mutation.description?.split('\n\n', 1)[0] || ''
     },
-
     /* Return the subsequent lines of the description */
     longDescription () {
-      return (this.mutation.description || '').split('\n').slice(1).join('\n')
+      return this.mutation.description?.split('\n\n').slice(1).join('\n\n')
     }
   },
 
