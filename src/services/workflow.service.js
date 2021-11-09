@@ -145,6 +145,21 @@ class WorkflowService {
       subscription.subscribers[componentOrView._uid] = componentOrView
       // Then we recompute the query, checking if variables match, and action name is set.
       this.recompute(subscription)
+      // regardless of whether this results in a restart, we take this opertunity to preset the componentOrView store if needed
+      const errors = []
+      // if the callbacks class has an init method defined, use it
+      for (const callback of subscription.callbacks) {
+        // if any of the views currently using this subscription have an init hook, trigger it (which will check if its needed)
+        if (callback.init) {
+          callback.init(store, errors)
+          for (const error of errors) {
+            store.commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+            // eslint-disable-next-line no-console
+            console.warn(...error)
+            subscription.handleViewState(ViewState.ERROR, error('Error presetting view state'))
+          }
+        }
+      }
     }
     // Otherwise we are calling subscribe for a component or view already subscribed.
   }
@@ -181,12 +196,6 @@ class WorkflowService {
       this.stopSubscription(subscription)
     }
 
-    const errors = []
-    // if the callbacks class has an init method defined, use it
-    if (subscription.callbacks.init) {
-      subscription.callbacks.init(store, errors)
-    }
-
     try {
       // Then start subscription.
       subscription.observable = this.startDeltasSubscription(
@@ -204,6 +213,7 @@ class WorkflowService {
             const added = deltas.added || {}
             const updated = deltas.updated || {}
             const pruned = deltas.pruned || {}
+            const errors = []
             for (const callback of subscription.callbacks) {
               callback.before(deltas, store, errors)
               callback.onAdded(added, store, errors)
@@ -347,8 +357,7 @@ class WorkflowService {
     // If we changed the query due to query-merging, then we know we must reload its
     // GraphQL subscription (i.e. stop subscription, start a new one with the server).
     if (initialQuery !== finalQuery) {
-      console.log('This may be reloaded here: 435')
-      subscription.reload = true
+      // subscription.reload = true
     }
     // And here we set the new merged-query. Voila!
     subscription.query.query = baseSubscriber.query.query

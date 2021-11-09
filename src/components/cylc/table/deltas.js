@@ -19,71 +19,47 @@ import { mergeWith } from 'lodash'
 import Vue from 'vue'
 import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 
-function init (store, table) {
+function init (deltas, table) {
   const result = {
     errors: []
   }
-
-  // Only init if the table is empty
-  if (Object.keys(table).length === 0) {
-    // if the workflows store has already been set (by another view)
-    if (store.workflows &&
-        store.workflows.workflow &&
-        store.workflows.workflow.lookup &&
-        store.state.workflows.lookup) {
-      const lookup = store.state.workflows.lookup
-      const globalLookupValues = Object.values(store.workflows.workflow.lookup)
-      const taskProxies = globalLookupValues.filter(lookup => lookup.type === 'task-proxy')
-      const jobs = globalLookupValues.filter(lookup => lookup.type === 'job')
-
-      if (taskProxies) {
-        for (const taskProxy of taskProxies) {
-          console.log('Trying to add task proxy for the first time', JSON.stringify(taskProxy))
-          try {
-            // const latestJob = jobs.find(job => job.node.firstParent.id === taskProxy.id)
-            Vue.set(table, taskProxy.id, {
-              id: taskProxy.id,
-              node: lookup[taskProxy.id],
-              // latestJob: latestJob ? lookup[latestJob.id] : {}
-              latestJob: {}
-            })
-          } catch (error) {
-            result.errors.push([
-              'Error applying initial-delta for table task proxy the first time, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
-              error,
-              taskProxy,
-              globalLookupValues,
-              table,
-              lookup
-            ])
-          }
-        }
+  for (const taskProxy of deltas.taskProxies) {
+    try {
+      // const latestJob = jobs.find(job => job.node.firstParent.id === taskProxy.id)
+      Vue.set(table, taskProxy.id, {
+        id: taskProxy.id,
+        node: deltas.globalLookup[taskProxy.id].node,
+        latestJob: {}
+      })
+    } catch (error) {
+      result.errors.push([
+        'Error applying initial-delta for table task proxy the first time, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+        error,
+        taskProxy,
+        deltas.globalLookup,
+        table
+      ])
+    }
+  }
+  for (const job of deltas.jobs) {
+    try {
+      const jobHandle = deltas.globalLookup[job.id].node
+      const existingEntry = table[jobHandle.firstParent.id]
+      if (existingEntry) {
+        const latestJobSubmitNum = existingEntry.latestJob.submitNum || 0
+        const latestJob = latestJobSubmitNum < jobHandle.submitNum
+          ? deltas.globalLookup[jobHandle.id].node
+          : existingEntry.latestJob
+        Vue.set(existingEntry, 'latestJob', latestJob)
       }
-      if (jobs) {
-        for (const job of jobs) {
-          console.log('Trying to add job for the first time', JSON.stringify(job))
-          try {
-            const jobHandle = lookup[job.id]
-            const existingEntry = table[jobHandle.firstParent.id]
-            if (existingEntry) {
-              const latestJobSubmitNum = existingEntry.latestJob.submitNum || 0
-              const latestJob = latestJobSubmitNum < jobHandle.submitNum
-                ? lookup[jobHandle.id]
-                : existingEntry.latestJob
-              Vue.set(existingEntry, 'latestJob', latestJob)
-            }
-          } catch (error) {
-            result.errors.push([
-              'Error applying initial-delta for table job, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
-              error,
-              job,
-              globalLookupValues,
-              table,
-              lookup
-            ])
-          }
-        }
-      }
+    } catch (error) {
+      result.errors.push([
+        'Error applying initial-delta for table job, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+        error,
+        job,
+        deltas.globalLookup,
+        table
+      ])
     }
   }
   return result
