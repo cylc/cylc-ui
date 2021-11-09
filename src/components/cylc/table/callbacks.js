@@ -35,18 +35,26 @@ class TableCallback extends DeltasCallback {
     const table = store.state.table.table
     // if the table store isn't defined, pull the needed deltas from the current workflow lookup and prepopulate the view
     if (typeof table === 'undefined' || Object.keys(table).length === 0) {
-      const globalLookup = store.state.workflows.workflow.lookup
-      const globalLookupValues = Object.values(globalLookup)
-      const initialBurstData = {
-        // this is needed so we can 'symlink' instead of setting up new objects where they aren't needed
-        globalLookup,
-        taskProxies: globalLookupValues.filter(lookup => lookup.type === 'task-proxy'),
-        jobs: globalLookupValues.filter(lookup => lookup.type === 'job')
+      try {
+        const globalLookup = store.state.workflows.workflow.lookup
+        const globalLookupValues = Object.values(globalLookup)
+        const initialBurstData = {
+          // this is needed so we can 'symlink' instead of setting up new objects where they aren't needed
+          globalLookup,
+          taskProxies: globalLookupValues.filter(lookup => lookup.type === 'task-proxy'),
+          jobs: globalLookupValues.filter(lookup => lookup.type === 'job')
+        }
+        const results = init(initialBurstData, table)
+        // finally, set the callback table to the value of the store so future callbacks can function as expected
+        this.table = Object.assign({}, table)
+        errors.push(...results.errors)
+      } catch (error) {
+        errors.push([
+          'Error trying to initialize the table view store, possibly because the workflow store has not yet been initialized',
+          error,
+          store.state
+        ])
       }
-      const results = init(initialBurstData, table)
-      // finally, set the callback table to the value of the store so future callbacks can function as expected
-      this.table = Object.assign({}, table)
-      errors.push(...results.errors)
     }
   }
 

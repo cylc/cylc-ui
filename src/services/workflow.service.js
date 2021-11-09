@@ -357,7 +357,7 @@ class WorkflowService {
     // If we changed the query due to query-merging, then we know we must reload its
     // GraphQL subscription (i.e. stop subscription, start a new one with the server).
     if (initialQuery !== finalQuery) {
-      // subscription.reload = true
+      subscription.reload = true
     }
     // And here we set the new merged-query. Voila!
     subscription.query.query = baseSubscriber.query.query
