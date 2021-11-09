@@ -181,6 +181,12 @@ class WorkflowService {
       this.stopSubscription(subscription)
     }
 
+    const errors = []
+    // if the callbacks class has an init method defined, use it
+    if (subscription.callbacks.init) {
+      subscription.callbacks.init(store, errors)
+    }
+
     try {
       // Then start subscription.
       subscription.observable = this.startDeltasSubscription(
@@ -198,7 +204,6 @@ class WorkflowService {
             const added = deltas.added || {}
             const updated = deltas.updated || {}
             const pruned = deltas.pruned || {}
-            const errors = []
             for (const callback of subscription.callbacks) {
               callback.before(deltas, store, errors)
               callback.onAdded(added, store, errors)
@@ -342,6 +347,7 @@ class WorkflowService {
     // If we changed the query due to query-merging, then we know we must reload its
     // GraphQL subscription (i.e. stop subscription, start a new one with the server).
     if (initialQuery !== finalQuery) {
+      console.log('This may be reloaded here: 435')
       subscription.reload = true
     }
     // And here we set the new merged-query. Voila!

@@ -17,6 +17,7 @@
 
 import DeltasCallback from '@/services/callbacks'
 import {
+  init,
   before,
   applyDeltasAdded,
   applyDeltasUpdated,
@@ -28,6 +29,11 @@ class TableCallback extends DeltasCallback {
     super()
     this.table = null
     this.lookup = null
+  }
+
+  init (store, errors) {
+    const results = init(store)
+    errors.push(...results.errors)
   }
 
   before (deltas, store, errors) {
@@ -51,12 +57,12 @@ class TableCallback extends DeltasCallback {
   }
 
   onUpdated (updated, store, errors) {
-    const results = applyDeltasUpdated(updated, this.workflow, this.lookup)
+    const results = applyDeltasUpdated(updated, this.table, this.lookup)
     errors.push(...results.errors)
   }
 
   onPruned (pruned, store, errors) {
-    const results = applyDeltasPruned(pruned, this.workflow, this.lookup)
+    const results = applyDeltasPruned(pruned, this.table, this.lookup)
     errors.push(...results.errors)
   }
 

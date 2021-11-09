@@ -122,7 +122,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <Task
                   v-cylc-object="item.id"
                   :status="item.node.state"
-                  :startTime="taskStartTime(item, item.latestJob)"
+                  :startTime="taskStartTime(item.node, item.latestJob)"
                   :estimatedDuration="taskEstimatedDuration(item.node)"
                 />
               </div>

@@ -17,6 +17,12 @@
 
 class DeltasCallback {
   /**
+   * @param {Vuex} store
+   * @param {Array<Object>} errors
+   */
+  init (store, errors) {}
+
+  /**
    * @param {Deltas} deltas
    * @param {Vuex} store
    * @param {Array<Object>} errors

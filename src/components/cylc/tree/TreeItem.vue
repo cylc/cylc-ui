@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :isHeld="node.node.isHeld"
             :isQueued="node.node.isQueued"
             :isRunahead="node.node.isRunahead"
-            :startTime="taskStartTime(node.node, latestJob(node.node))"
+            :startTime="taskStartTime(node.node, latestJob(node))"
             :estimatedDuration="taskEstimatedDuration(node.node)"
           />
           <div v-if="!isExpanded" class="node-summary">

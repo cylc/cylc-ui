@@ -50,7 +50,19 @@ function extractGroupState (childStates, isStopped = false) {
 }
 
 function taskStartTime (taskProxy, job) {
-  return (taskProxy && job && taskProxy.state === TaskState.RUNNING.name) ? job.startedTime : null
+  console.log('Start')
+
+  console.log(taskProxy)
+  console.log(job)
+  console.log(typeof taskProxy === 'object' && typeof job === 'object' && taskProxy.state === TaskState.RUNNING.name)
+  console.log(taskProxy.state === TaskState.RUNNING.name)
+  console.log(typeof taskProxy === 'object' && typeof job === 'object')
+  console.log(taskProxy.state)
+  console.log(TaskState.RUNNING.name)
+
+  console.log('Stop')
+  // we need the actual node of the 'job' object as this contains the start time
+  return (typeof taskProxy === 'object' && typeof job === 'object' && taskProxy.state === TaskState.RUNNING.name) ? job.startedTime : null
 }
 
 function taskEstimatedDuration (taskProxy) {
@@ -66,7 +78,7 @@ function taskEstimatedDuration (taskProxy) {
 
 function latestJob (taskProxy) {
   if (taskProxy && taskProxy.children && taskProxy.children.length > 0) {
-    return taskProxy.children[0]
+    return taskProxy.children[0].node
   }
   return null
 }
