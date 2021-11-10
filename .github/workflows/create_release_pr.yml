@@ -20,13 +20,13 @@ jobs:
       - name: Sanitise workflow inputs # Should be 1st step
         uses: cylc/release-actions/stage-1/sanitize-inputs@v1
 
-      - name: Check CONTRIBUTING.md
-        uses: cylc/release-actions/check-shortlog@v1
-
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
           ref: ${{ env.BASE_REF }}
+
+      - name: Check CONTRIBUTING.md
+        uses: cylc/release-actions/check-shortlog@v1
 
       - name: Create & checkout PR branch
         uses: cylc/release-actions/stage-1/checkout-pr-branch@v1
