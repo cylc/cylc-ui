@@ -53,9 +53,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-icon>
 
       <v-icon
+        id="workflow-play-button"
+        color="#5E5E5E"
+        :disabled="!enabled.playToggle"
+        v-if="!isRunning"
+        @click="onClickPlay"
+      >
+        {{ svgPaths.run }}
+      </v-icon>
+
+      <v-icon
         id="workflow-play-pause-button"
         color="#5E5E5E"
         :disabled="!enabled.pauseToggle"
+        v-if="isRunning"
         @click="onClickReleaseHold"
       >
         {{ isPaused ? svgPaths.run : svgPaths.hold }}
@@ -164,6 +175,7 @@ export default {
     },
     expecting: {
       // store state from mutations in order to compute the "enabled" attrs
+      play: null,
       paused: null,
       stop: null
     }
@@ -171,6 +183,16 @@ export default {
   computed: {
     ...mapState('app', ['title']),
     ...mapGetters('workflows', ['currentWorkflow']),
+    isRunning () {
+      return (
+        this.currentWorkflow &&
+        (
+          this.currentWorkflow.status === WorkflowState.RUNNING.name ||
+          this.currentWorkflow.status === WorkflowState.PAUSED.name ||
+          this.currentWorkflow.status === WorkflowState.STOPPING.name
+        )
+      )
+    },
     isPaused () {
       return (
         this.currentWorkflow &&
@@ -191,6 +213,14 @@ export default {
       // NOTE: this is a temporary solution until we are able to subscribe to
       // mutations to tell when they have completed
       return {
+        playToggle: (
+          // the play button (for the play from stopped scenario)
+          this.isStopped &&
+          (
+            this.expecting.play === null ||
+            this.expecting.play === this.currentWorkflow.isRunning
+          )
+        ),
         pauseToggle: (
           // the play/pause button
           !this.isStopped &&
@@ -213,6 +243,9 @@ export default {
     }
   },
   watch: {
+    isRunning () {
+      this.expecting.play = null
+    },
     isPaused () {
       this.expecting.paused = null
     },
@@ -221,6 +254,15 @@ export default {
     }
   },
   methods: {
+    onClickPlay () {
+      const ret = this.$workflowService.mutate(
+        'play',
+        this.currentWorkflow.id
+      )
+      if (ret[0] === mutationStatus.SUCCEEDED) {
+        this.expecting.play = !this.isRunning
+      }
+    },
     onClickReleaseHold () {
       const ret = this.$workflowService.mutate(
         this.isPaused ? 'resume' : 'pause',
