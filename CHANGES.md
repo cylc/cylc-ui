@@ -20,7 +20,17 @@ to a Jupyter Server extension).
 Display authorized mutations in the User Profile and disable unauthorized
 mutations in the menu.
 
+[#749](https://github.com/cylc/cylc-ui/pull/749)
+& [#834](https://github.com/cylc/cylc-ui/issues/834)
+- Miscellaneous improvements to the processing of delta updates.
+
 ### Fixes
+
+[#748](https://github.com/cylc/cylc-ui/issues/748)
+& [#805](https://github.com/cylc/cylc-ui/pull/805)
+& [#806](https://github.com/cylc/cylc-ui/pull/806)
+- Fix issues with the workflow status and play/pause/stop buttons not
+updating correctly & enable starting a workflow from stopped.
 
 -------------------------------------------------------------------------------
 ## __cylc-ui-0.5 (<span actions:bind='release-date'>Released 2021-07-28</span>)__
