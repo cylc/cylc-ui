@@ -40,7 +40,8 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
 import WorkflowCallback from '@/components/cylc/common/callbacks'
 import TableCallback from '@/components/cylc/table/callbacks'
-import { WORKFLOW_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+// import { WORKFLOW_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '../graphql/queries'
 
 export default {
   mixins: [
@@ -72,7 +73,11 @@ export default {
     },
     query () {
       return new SubscriptionQuery(
-        WORKFLOW_TABLE_DELTAS_SUBSCRIPTION,
+        // this is disabled for now as differences in the fragment names are causing the
+        // subscription to be reloaded when its merged. This will need to be re-enabled in
+        // future, if we need more information then the currently active WORKFLOW_TREE_DELTAS_SUBSCRIPTION provides
+        // WORKFLOW_TABLE_DELTAS_SUBSCRIPTION,
+        WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
         this.variables,
         'workflow',
         [
