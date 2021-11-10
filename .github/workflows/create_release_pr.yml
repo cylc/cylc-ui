@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ env.BASE_REF }}
+          fetch-depth: 0  # need to fetch all commits to check contributors
 
       - name: Check CONTRIBUTING.md
         uses: cylc/release-actions/check-shortlog@v1
