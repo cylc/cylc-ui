@@ -6,7 +6,7 @@ milestones](https://github.com/cylc/cylc-ui/milestones?state=closed) for each
 release.
 
 -------------------------------------------------------------------------------
-## __cylc-ui-0.6 (<span actions:bind='release-date'>Released 2021-??-??</span>)__
+## __cylc-ui-0.6 (<span actions:bind='release-date'>Released 2021-11-10</span>)__
 
 ### Enhancements
 
