@@ -38,16 +38,19 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Create ZIP archive
+        working-directory: dist
         run: |
-          cd dist && zip -r ../cylc-ui-${{ env.VERSION }}-dist.zip *
+          filename="cylc-ui-${VERSION}-dist.zip"
+          zip -r "../$filename" *
+          echo "ZIP_ARCHIVE=$filename" >> $GITHUB_ENV
 
       - name: sha256sum
         run: |
-          SHA256SUM=$(sha256sum cylc-ui-${{ env.VERSION }}-dist.zip)
+          SHA256SUM=$(sha256sum ${{ env.ZIP_ARCHIVE }})
           echo "SHA256SUM=$SHA256SUM" >> $GITHUB_ENV
 
       - name: Publish GitHub release
-        id: create_release
+        id: create-release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +64,7 @@ jobs:
           body: |
             See [${{ env.CHANGELOG_FILE }}](https://github.com/${{ github.repository }}/blob/master/${{ env.CHANGELOG_FILE }}) for detail.
 
-            sha256sum ${{ env.SHA256SUM }}
+            sha256sum: ${{ env.SHA256SUM }}
           # TODO: Get topmost changelog section somehow and use that as the body?
 
       - name: Upload Release Asset
@@ -70,9 +73,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-          asset_path: ./cylc-ui-${{ env.VERSION }}-dist.zip
-          asset_name: cylc-ui-${{ env.VERSION }}-dist.zip
+          upload_url: ${{ steps.create-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./${{ env.ZIP_ARCHIVE }}
+          asset_name: ${{ env.ZIP_ARCHIVE }}
           asset_content_type: application/zip
 
       - name: Comment on the release PR with the results & next steps
