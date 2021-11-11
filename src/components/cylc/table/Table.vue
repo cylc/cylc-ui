@@ -122,6 +122,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <Task
                   v-cylc-object="item.id"
                   :status="item.node.state"
+                  :isHeld="item.node.isHeld"
+                  :isQueued="item.node.isQueued"
+                  :isRunahead="item.node.isRunahead"
                   :startTime="taskStartTime(item.node, item.latestJob)"
                   :estimatedDuration="taskEstimatedDuration(item.node)"
                 />
