@@ -145,7 +145,9 @@ describe('tasks', () => {
         {
           taskProxy: {
             children: [
-              1
+              {
+                node: 1
+              }
             ]
           },
           expected: 1

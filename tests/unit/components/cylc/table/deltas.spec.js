@@ -21,8 +21,7 @@ import Vue from 'vue'
 import JobState from '@/model/JobState.model'
 import TaskState from '@/model/TaskState.model'
 import WorkflowState from '@/model/WorkflowState.model'
-import applyWorkflowDeltas from '@/components/cylc/workflow/deltas'
-import applyTreeDeltas from '@/components/cylc/table/deltas'
+import { init, before, applyDeltasAdded, applyDeltasUpdated, applyDeltasPruned } from '@/components/cylc/table/deltas'
 
 const sandbox = sinon.createSandbox()
 
@@ -44,23 +43,48 @@ describe('Deltas', () => {
     expect(result.errors.length).to.equal(0, result.errors.join('. '))
   }
   const WORKFLOW_ID = 'cylc|workflow'
-  it('Should clear the table if the workflow started', () => {
-    // create 5 tasks
-    [...Array(5).keys()].forEach(i => {
-      table[i] = {
-        id: i,
-        node: {
-          id: i
-        },
-        latestJob: null
+
+  describe('Created', () => {
+    it('Should create a table store from the existing workflow lookup', () => {
+      // create 5 tasks
+      lookup = {
+        1: {
+          node: {}
+        }
       }
+      const deltas = {
+        taskProxies: [
+          {
+            id: 1
+          }
+        ],
+        jobs: [],
+        globalLookup: lookup
+      }
+
+      const result = init(deltas, table)
+      expectNoErrors(result)
+      expect(Object.keys(table).length).to.equal(1)
     })
-    // The table now should have 5 entries.
-    expect(Object.keys(table).length).to.equal(5)
-    // Then we send a delta with the workflow added, and with the state
-    // of running.
-    const deltas = {
-      deltas: {
+  })
+
+  describe('Before', () => {
+    it('Should clear the table if the workflow started', () => {
+      // create 5 tasks
+      [...Array(5).keys()].forEach(i => {
+        table[i] = {
+          id: i,
+          node: {
+            id: i
+          },
+          latestJob: null
+        }
+      })
+      // The table now should have 5 entries.
+      expect(Object.keys(table).length).to.equal(5)
+      // Then we send a delta with the workflow added, and with the state
+      // of running.
+      const deltas = {
         id: WORKFLOW_ID,
         added: {
           workflow: {
@@ -75,14 +99,14 @@ describe('Deltas', () => {
           ]
         }
       }
-    }
-    applyWorkflowDeltas(deltas, lookup)
-    const result = applyTreeDeltas(deltas, table, lookup)
-    expectNoErrors(result)
-    // The table will have been cleared, and the new task proxy added, so
-    // the table now will have only one entry (the task proxy).
-    expect(Object.keys(table).length).to.equal(1)
+      // applyWorkflowDeltas(deltas, lookup)
+      const result = before(deltas, table, lookup)
+      expectNoErrors(result)
+      // The table will have been cleared
+      expect(Object.keys(table).length).to.equal(0)
+    })
   })
+
   describe('Added', () => {
     it('Should apply added deltas', () => {
       // create 5 tasks
@@ -99,40 +123,44 @@ describe('Deltas', () => {
       expect(Object.keys(table).length).to.equal(5)
       // Then we send a delta with the workflow added, and with the state
       // of running.
-      const deltas = {
-        deltas: {
-          id: WORKFLOW_ID,
-          added: {
-            taskProxies: [
-              {
-                id: 10,
-                state: TaskState.RUNNING.name
-              },
-              {
-                id: 11,
-                state: TaskState.WAITING.name
-              }
-            ],
-            jobs: [
-              {
-                id: 100,
-                submitNum: 1,
-                firstParent: {
-                  id: 11
-                }
-              }
-            ]
+      lookup = {
+        100: {
+          id: 100,
+          submitNum: 1,
+          firstParent: {
+            id: 11
           }
         }
       }
-      applyWorkflowDeltas(deltas, lookup)
-      const result = applyTreeDeltas(deltas, table, lookup)
+      const deltas = {
+        taskProxies: [
+          {
+            id: 10,
+            state: TaskState.RUNNING.name
+          },
+          {
+            id: 11,
+            state: TaskState.WAITING.name
+          }
+        ],
+        jobs: [
+          {
+            id: 100,
+            submitNum: 1,
+            firstParent: {
+              id: 11
+            }
+          }
+        ]
+      }
+      const result = applyDeltasAdded(deltas, table, lookup)
       expectNoErrors(result)
       // The table will have been cleared, and the new task proxy added, so
       // the table now will have only one entry (the task proxy).
       expect(Object.keys(table).length).to.equal(7)
       expect(table[11].latestJob.id).to.equal(100)
     })
+
     it('Should collect errors', () => {
       // create 5 tasks
       [...Array(5).keys()].forEach(i => {
@@ -149,41 +177,37 @@ describe('Deltas', () => {
       // Then we send a delta with the workflow added, and with the state
       // of running.
       const deltas = {
-        deltas: {
-          id: WORKFLOW_ID,
-          added: {
-            taskProxies: [
-              {
-                id: 10,
-                state: TaskState.RUNNING.name
-              },
-              {
-                id: 11,
-                state: TaskState.WAITING.name
-              }
-            ],
-            jobs: [
-              {
-                id: 100,
-                submitNum: 1,
-                firstParent: {
-                  id: 11
-                }
-              }
-            ]
+        taskProxies: [
+          {
+            id: 10,
+            state: TaskState.RUNNING.name
+          },
+          {
+            id: 11,
+            state: TaskState.WAITING.name
           }
-        }
+        ],
+        jobs: [
+          {
+            id: 100,
+            submitNum: 1,
+            firstParent: {
+              id: 11
+            }
+          }
+        ]
       }
-      applyWorkflowDeltas(deltas, lookup)
+      // applyWorkflowDeltas(deltas, lookup)
       const stub = sandbox.stub(Vue, 'set')
       stub.callsFake(() => {
         throw new Error('test')
       })
-      const result = applyTreeDeltas(deltas, table, lookup)
+      const result = applyDeltasAdded(deltas, table, lookup)
       expect(result.errors.length).to.equal(2)
       expect(result.errors[0][1].message).to.contain('test')
     })
   })
+
   describe('Updated', () => {
     beforeEach(() => {
       // create 5 tasks
@@ -214,70 +238,61 @@ describe('Deltas', () => {
       expect(table[1].node.state).to.equal(TaskState.RUNNING.name)
       expect(table[1].latestJob.state).to.equal(JobState.RUNNING.name)
       const deltas = {
-        deltas: {
-          id: WORKFLOW_ID,
-          updated: {
-            taskProxies: [
-              {
-                id: 1,
-                state: TaskState.FAILED.name
-              }
-            ],
-            jobs: [
-              {
-                id: 11,
-                submitNum: 1,
-                firstParent: {
-                  id: 1
-                },
-                state: JobState.SUBMIT_FAILED.name
-              }
-            ]
+        taskProxies: [
+          {
+            id: 1,
+            state: TaskState.FAILED.name
           }
-        }
+        ],
+        jobs: [
+          {
+            id: 11,
+            submitNum: 1,
+            firstParent: {
+              id: 1
+            },
+            state: JobState.SUBMIT_FAILED.name
+          }
+        ]
       }
-      applyWorkflowDeltas(deltas, lookup)
-      const result = applyTreeDeltas(deltas, table, lookup)
+      const result = applyDeltasUpdated(deltas, table, lookup)
       expectNoErrors(result)
       expect(table[1].node.state).to.equal(TaskState.FAILED.name)
       expect(table[1].latestJob.state).to.equal(JobState.SUBMIT_FAILED.name)
     })
+
     it('Should collect errors', () => {
       expect(table[1].node.state).to.equal(TaskState.RUNNING.name)
       expect(table[1].latestJob.state).to.equal(JobState.RUNNING.name)
       const deltas = {
-        deltas: {
-          id: WORKFLOW_ID,
-          updated: {
-            taskProxies: [
-              {
-                id: 1,
-                state: TaskState.FAILED.name
-              }
-            ],
-            jobs: [
-              {
-                id: 11,
-                submitNum: 1,
-                firstParent: {
-                  id: 1
-                },
-                state: JobState.SUBMIT_FAILED.name
-              }
-            ]
+        taskProxies: [
+          {
+            id: 1,
+            state: TaskState.FAILED.name
           }
-        }
+        ],
+        jobs: [
+          {
+            id: 11,
+            submitNum: 1,
+            firstParent: {
+              id: 1
+            },
+            state: JobState.SUBMIT_FAILED.name
+          }
+        ]
       }
-      applyWorkflowDeltas(deltas, lookup)
       const stub = sandbox.stub(Vue, 'set')
       stub.callsFake(() => {
         throw new Error('test')
       })
-      const result = applyTreeDeltas(deltas, table, lookup)
-      expect(result.errors.length).to.equal(1)
+      const result = applyDeltasUpdated(deltas, table, lookup)
+      // we actually throw two exceptions as the job merge also called Vue.set
+      expect(result.errors.length).to.equal(2)
       expect(result.errors[0][1].message).to.contain('test')
     })
   })
+
   describe('Pruned', () => {
     beforeEach(() => {
       // create 5 tasks
@@ -315,20 +330,15 @@ describe('Deltas', () => {
       expect(table[1]).to.not.equal(undefined)
       expect(table[2].latestJob).to.not.equal(undefined)
       const deltas = {
-        deltas: {
-          id: WORKFLOW_ID,
-          pruned: {
-            taskProxies: [
-              1
-            ],
-            jobs: [
-              12
-            ]
-          }
-        }
+        taskProxies: [
+          1
+        ],
+        jobs: [
+          12
+        ]
       }
-      applyWorkflowDeltas(deltas, lookup)
-      const result = applyTreeDeltas(deltas, table, lookup)
+      // applyWorkflowDeltas(deltas, lookup)
+      const result = applyDeltasPruned(deltas, table, lookup)
       expectNoErrors(result)
       expect(table[1]).to.equal(undefined)
       expect(table[2].latestJob).to.deep.equal({})

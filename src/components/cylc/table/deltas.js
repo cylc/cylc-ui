@@ -78,16 +78,14 @@ function before (deltas, table, lookup) {
   // Safe check in case the table is empty.
   if (Object.keys(table).length === 0) {
     if (!deltas.added || !deltas.added.workflow) {
-      return {
-        errors: [
-          [
-            'Received a Table delta before the workflow initial data burst',
-            deltas.added,
-            table,
-            lookup
-          ]
+      result.errors.push(
+        [
+          'Received a Table delta before the workflow initial data burst',
+          deltas.added,
+          table,
+          lookup
         ]
-      }
+      )
     }
   }
   return result
@@ -165,18 +163,40 @@ function applyDeltasUpdated (updated, table, lookup) {
   }
   if (updated.taskProxies) {
     for (const taskProxy of updated.taskProxies) {
-      if (table[taskProxy.id]) {
-        mergeWith(table[taskProxy.id].node, taskProxy, mergeWithCustomizer)
+      try {
+        if (table[taskProxy.id]) {
+          mergeWith(table[taskProxy.id].node, taskProxy, mergeWithCustomizer)
+        }
+      } catch (error) {
+        result.errors.push([
+          'Error applying updated-delta for table task proxy, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+          error,
+          taskProxy,
+          updated,
+          table,
+          lookup
+        ])
       }
     }
   }
   if (updated.jobs) {
     for (const job of updated.jobs) {
-      if (job.firstParent && job.firstParent.id) {
-        const existingTask = table[job.firstParent.id]
-        if (existingTask && existingTask.latestJob.id === job.id) {
-          mergeWith(existingTask.latestJob, job, mergeWithCustomizer)
+      try {
+        if (job.firstParent && job.firstParent.id) {
+          const existingTask = table[job.firstParent.id]
+          if (existingTask && existingTask.latestJob.id === job.id) {
+            mergeWith(existingTask.latestJob, job, mergeWithCustomizer)
+          }
         }
+      } catch (error) {
+        result.errors.push([
+          'Error applying updated-delta for table job, see browser console logs for more. Please reload your browser tab to retrieve the full flow state',
+          error,
+          job,
+          updated,
+          table,
+          lookup
+        ])
       }
     }
   }

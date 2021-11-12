@@ -51,7 +51,7 @@ function extractGroupState (childStates, isStopped = false) {
 
 function taskStartTime (taskProxy, job) {
   // we need the actual node of the 'job' object as this contains the start time
-  return (typeof taskProxy === 'object' && typeof job === 'object' && taskProxy.state === TaskState.RUNNING.name) ? job.startedTime : null
+  return (taskProxy && job) && (typeof taskProxy === 'object' && typeof job === 'object') && (taskProxy.state && taskProxy.state === TaskState.RUNNING.name) ? job.startedTime : null
 }
 
 function taskEstimatedDuration (taskProxy) {
