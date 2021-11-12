@@ -1648,20 +1648,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphiql/toolkit@npm:^0.2.0":
-  version: 0.2.2
-  resolution: "@graphiql/toolkit@npm:0.2.2"
+"@graphiql/toolkit@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@graphiql/toolkit@npm:0.4.0"
   dependencies:
-    "@n1ru4l/push-pull-async-iterable-iterator": ^2.1.4
-    graphql-ws: ^4.3.2
+    "@n1ru4l/push-pull-async-iterable-iterator": ^3.0.0
+    graphql-ws: ^4.9.0
     meros: ^1.1.4
-    subscriptions-transport-ws: ^0.9.18
   peerDependencies:
-    graphql: ">= v14.5.0 <= 15.5.0"
-  dependenciesMeta:
-    subscriptions-transport-ws:
-      optional: true
-  checksum: c92d8ff858566dd586dc6885141d934c6eb5b787dbfb28109d55af75ea6033414a034645cc2361f336b398aea5a29ff02f414361f6d0dc1f5a6b966a5fff9ec3
+    graphql: ">= 15.5.0 <= 16.0.0-experimental-stream-defer.5"
+  checksum: 18b82d5023dbdca63c3d16cf0a67b3e9a05d86494dea5d002f7795cb80f00f8da0cce92ddbad2daea5b262d507114fceefc1d33ebb8a3329fcc62977c678df65
   languageName: node
   linkType: hard
 
@@ -2067,10 +2063,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@n1ru4l/push-pull-async-iterable-iterator@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "@n1ru4l/push-pull-async-iterable-iterator@npm:2.1.4"
-  checksum: 52cd59b9502db34d51e591b83f3dc1a15ab7c0cd923fefc9eadc00a55b9213cc683d0216edc4ed4050ffae01b3da66a6d0b14acd0cbd483678304ecfc1e313b8
+"@n1ru4l/push-pull-async-iterable-iterator@npm:^3.0.0":
+  version: 3.1.0
+  resolution: "@n1ru4l/push-pull-async-iterable-iterator@npm:3.1.0"
+  checksum: 1762a3c9b8c131e575c375450a408360551ae47b7c481c8115a73e2533ded134cc1d365e02c8c058c281b8b91764041568a0525250346c64fe57825877d4d5ab
   languageName: node
   linkType: hard
 
@@ -3814,12 +3810,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.22.0":
-  version: 0.22.0
-  resolution: "axios@npm:0.22.0"
+"axios@npm:^0.24.0":
+  version: 0.24.0
+  resolution: "axios@npm:0.24.0"
   dependencies:
     follow-redirects: ^1.14.4
-  checksum: 83dc4d02e180f69aa9f0d1d0d50b84ec3603517230d58b4c3720ebd440c7e64ea86c5e892dc6e19061608e8e1103504a709d8baa4051c4b7652101b523d04b63
+  checksum: 468cf496c08a6aadfb7e699bebdac02851e3043d4e7d282350804ea8900e30d368daa6e3cd4ab83b8ddb5a3b1e17a5a21ada13fc9cebd27b74828f47a4236316
   languageName: node
   linkType: hard
 
@@ -5237,20 +5233,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codemirror-graphql@npm:^1.0.0":
-  version: 1.0.2
-  resolution: "codemirror-graphql@npm:1.0.2"
+"codemirror-graphql@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "codemirror-graphql@npm:1.1.0"
   dependencies:
-    graphql-language-service-interface: ^2.8.2
-    graphql-language-service-parser: ^1.9.0
+    graphql-language-service-interface: ^2.9.0
+    graphql-language-service-parser: ^1.10.0
   peerDependencies:
-    codemirror: ^5.54.0
-    graphql: ">= v14.5.0 <= 15.5.0"
-  checksum: c064ae858d97d8a3d10dbca08137909b90daca49d0cafad80147257969955d213022eb05eb1af0055e1264143594b93e1976e226da6e40dc5e454bd6d64e0560
+    codemirror: ^5.58.2
+    graphql: ">= 15.5.0 <= 16.0.0-experimental-stream-defer.5"
+  checksum: abfa711716d9033c0b754338aa4e46f41b584f53243cd3ec1a3e519ea9deba78739c53d1ff344e1cbec34259fe17f5115c84a4aa2af1f6e63188ece4dc625398
   languageName: node
   linkType: hard
 
-"codemirror@npm:^5.54.0":
+"codemirror@npm:^5.58.2":
   version: 5.63.3
   resolution: "codemirror@npm:5.63.3"
   checksum: f805b92f1aea98a6c21b0bf79263ccd428c7fe38aa664f4aa91397746ecba867389da3c0f8c605acbdc8c15590800fcb19b063fa3273e4733e42789abb5ff2ba
@@ -6108,7 +6104,7 @@ __metadata:
     "@vue/cli-service": ^4.5.13
     "@vue/test-utils": ^1.2.2
     autoprefixer: ^9.8.6
-    axios: ^0.22.0
+    axios: ^0.24.0
     axios-fetch: ^1.1.0
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.2
@@ -6121,7 +6117,7 @@ __metadata:
     core-js: 3
     cross-env: ^7.0.3
     cross-fetch: ^3.1.4
-    cypress: ^8.4.0
+    cypress: ^9.0.0
     dedent: ^0.7.0
     dotparser: ^1.1.0
     enumify: ^2.0.0
@@ -6130,11 +6126,11 @@ __metadata:
     eslint-import-resolver-node: ^0.3.6
     eslint-plugin-import: ^2.23.4
     eslint-plugin-node: ^11.1.0
-    eslint-plugin-promise: ^5.1.0
+    eslint-plugin-promise: ^5.1.1
     eslint-plugin-vue: ^7.19.1
     express: ^4.17.1
     express-ws: ^5.0.2
-    graphiql: ~1.4.2
+    graphiql: ~1.5.1
     graphql: ~15.7.2
     graphql-language-service-utils: ^2.5.3
     graphql-tag: ~2.12.5
@@ -7025,13 +7021,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"entities@npm:~2.0.0":
-  version: 2.0.3
-  resolution: "entities@npm:2.0.3"
-  checksum: 5a7899fcc622e0d76afdeafe4c58a6b40ae3a8ee4772e5825a648c11a2ca324a9a02515386f512e466baac4aeb551f3d3b79eaece5cd98369b9f8601be336b1a
-  languageName: node
-  linkType: hard
-
 "entities@npm:~2.1.0":
   version: 2.1.0
   resolution: "entities@npm:2.1.0"
@@ -7159,7 +7148,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-html@npm:~1.0.3":
+"escape-html@npm:^1.0.3, escape-html@npm:~1.0.3":
   version: 1.0.3
   resolution: "escape-html@npm:1.0.3"
   checksum: 6213ca9ae00d0ab8bccb6d8d4e0a98e76237b2410302cf7df70aaa6591d509a2a37ce8998008cbecae8fc8ffaadf3fb0229535e6a145f3ce0b211d060decbb24
@@ -7345,7 +7334,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-promise@npm:^5.1.0, eslint-plugin-promise@npm:~5.1.0":
+"eslint-plugin-promise@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "eslint-plugin-promise@npm:5.1.1"
+  peerDependencies:
+    eslint: ^7.0.0
+  checksum: 97ffd570265ed9677b4103ba3fb18b19fa3471eb6581c5c3c426bcec249c9e89cfac735e5ddb403a794cab7fda1b53be151a30e1d3b71485630d7f28e1bb1ad6
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-promise@npm:~5.1.0":
   version: 5.1.0
   resolution: "eslint-plugin-promise@npm:5.1.0"
   peerDependencies:
@@ -8732,48 +8730,49 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"graphiql@npm:~1.4.2":
-  version: 1.4.2
-  resolution: "graphiql@npm:1.4.2"
+"graphiql@npm:~1.5.1":
+  version: 1.5.1
+  resolution: "graphiql@npm:1.5.1"
   dependencies:
-    "@graphiql/toolkit": ^0.2.0
-    codemirror: ^5.54.0
-    codemirror-graphql: ^1.0.0
+    "@graphiql/toolkit": ^0.4.0
+    codemirror: ^5.58.2
+    codemirror-graphql: ^1.1.0
     copy-to-clipboard: ^3.2.0
     dset: ^3.1.0
     entities: ^2.0.0
-    graphql-language-service: ^3.1.2
-    markdown-it: ^10.0.0
+    escape-html: ^1.0.3
+    graphql-language-service: ^3.2.1
+    markdown-it: ^12.2.0
   peerDependencies:
-    graphql: ">= v14.5.0 <= 15.5.0"
-    react: ^16.8.0
-    react-dom: ^16.8.0
-  checksum: de764d6e18238bd5aaf8d3657ba004be7153fc11f12f773a35aa3a711fa0e5806dc6fe7beb625ab3a02d78942d10eaae69c2ff25112fbb801dfac9dc20930074
+    graphql: ">= 15.5.0 <= 16.0.0-experimental-stream-defer.5"
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 235cc30e14817c2e62b0ae0a6b336ef59b3e30c05f220a2112c82e1882fcd6f7c790ecdd48f1f1569a6abeeb158a20d72bcca6291b69fbb803b4b7caab9ed4eb
   languageName: node
   linkType: hard
 
-"graphql-language-service-interface@npm:^2.8.2":
-  version: 2.8.4
-  resolution: "graphql-language-service-interface@npm:2.8.4"
+"graphql-language-service-interface@npm:^2.9.0, graphql-language-service-interface@npm:^2.9.1":
+  version: 2.9.1
+  resolution: "graphql-language-service-interface@npm:2.9.1"
   dependencies:
-    graphql-language-service-parser: ^1.9.0
-    graphql-language-service-types: ^1.8.0
-    graphql-language-service-utils: ^2.5.1
+    graphql-language-service-parser: ^1.10.0
+    graphql-language-service-types: ^1.8.3
+    graphql-language-service-utils: ^2.6.0
     vscode-languageserver-types: ^3.15.1
   peerDependencies:
-    graphql: ">= v14.5.0 <= 15.5.0"
-  checksum: f4786bb123734150c303b53f54e75df7bed11e9b364478c31b9c31d4d2c82f22fe014f18b8620b0156f51d4fdc6e692b77878b57f5f1d6715cd36c8c4d83ec74
+    graphql: ">= 15.5.0 <= 16.0.0-experimental-stream-defer.5"
+  checksum: fa62f277357ef20ac882029543b375dcef301ae06015c39b260a0a6476b376d8c0e7c55112ad3fde9a0af7f821313d9c8f2fa7b8388d652fd9615cb108987724
   languageName: node
   linkType: hard
 
-"graphql-language-service-parser@npm:^1.9.0":
-  version: 1.9.2
-  resolution: "graphql-language-service-parser@npm:1.9.2"
+"graphql-language-service-parser@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "graphql-language-service-parser@npm:1.10.0"
   dependencies:
     graphql-language-service-types: ^1.8.0
   peerDependencies:
-    graphql: ">= v14.5.0 <= 15.5.0"
-  checksum: cc51e91584e28bc34c09199f98e9991e201fac3a22eae30f4ee59de58642cd03832d92c1c6a6883a4d4baeb3dca81cac7c58f24790e262506c54065e0066d52a
+    graphql: ">= 15.5.0 <= 16.0.0-experimental-stream-defer.5"
+  checksum: 868679e27e9f1bfdf2f300a3373b4c2e4aa55a3434a9e4a31f648d9c501da718be52727925b2c83b02b87f81ce1e68fb2ca2471ca1b8bf7165aad3b239d6c323
   languageName: node
   linkType: hard
 
@@ -8786,7 +8785,16 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"graphql-language-service-utils@npm:^2.5.1, graphql-language-service-utils@npm:^2.5.3":
+"graphql-language-service-types@npm:^1.8.3":
+  version: 1.8.3
+  resolution: "graphql-language-service-types@npm:1.8.3"
+  peerDependencies:
+    graphql: ">= 15.5.0 <= 16.0.0-experimental-stream-defer.5"
+  checksum: 41a0992d96380a094289bbf02d848613713886e673ed3245978b6736d804914a5b81955c4e990ff94a1ba4e36cc49ab9a036df369e0b13963340c70c3cf40003
+  languageName: node
+  linkType: hard
+
+"graphql-language-service-utils@npm:^2.5.3":
   version: 2.5.3
   resolution: "graphql-language-service-utils@npm:2.5.3"
   dependencies:
@@ -8798,17 +8806,31 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"graphql-language-service@npm:^3.1.2":
-  version: 3.1.4
-  resolution: "graphql-language-service@npm:3.1.4"
+"graphql-language-service-utils@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "graphql-language-service-utils@npm:2.6.0"
   dependencies:
-    graphql-language-service-interface: ^2.8.2
-    graphql-language-service-types: ^1.8.0
+    graphql-language-service-types: ^1.8.3
+    nullthrows: ^1.0.0
   peerDependencies:
-    graphql: ">= v14.5.0 <= 15.5.0"
+    graphql: ">= 15.5.0 <= 16.0.0-experimental-stream-defer.5"
+  checksum: 086c3a9d619f6c52da8a6cc0f2a8f9ed3df93eadb9f7dc728d2dd82409fa9e5fa120f33adbeeee97f8fd4ef50ee23effc3ad112b748d848fca18c62fa6a3a542
+  languageName: node
+  linkType: hard
+
+"graphql-language-service@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "graphql-language-service@npm:3.2.1"
+  dependencies:
+    graphql-language-service-interface: ^2.9.1
+    graphql-language-service-parser: ^1.10.0
+    graphql-language-service-types: ^1.8.3
+    graphql-language-service-utils: ^2.6.0
+  peerDependencies:
+    graphql: ">= 15.5.0 <= 16.0.0-experimental-stream-defer.5"
   bin:
     graphql: dist/temp-bin.js
-  checksum: f19568b3174ed18dbca17d0a08e9229c981c8a78a58c3df4f4f152084292676df8889ad435f496c121f86c3ec3326d03edb040a209a119bdd7a44c1691d59756
+  checksum: 35916f97828edffb44f1149632b46e8120579b829529b06b9b9e597bc7ad469650298cb00d52cc7f1f941d0859e7ce40cbdcf83b61828d9610b137e74709f4b6
   languageName: node
   linkType: hard
 
@@ -8823,7 +8845,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"graphql-ws@npm:^4.3.2":
+"graphql-ws@npm:^4.9.0":
   version: 4.9.0
   resolution: "graphql-ws@npm:4.9.0"
   peerDependencies:
@@ -10943,15 +10965,6 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"linkify-it@npm:^2.0.0":
-  version: 2.2.0
-  resolution: "linkify-it@npm:2.2.0"
-  dependencies:
-    uc.micro: ^1.0.1
-  checksum: d198871d0b3f3cfdb745dae564bfd6743474f20cd0ef1057e6ca29451834749e7f3da52b59b4de44e98f31a1e5c71bdad160490d4ae54de251cbcde57e4d7837
-  languageName: node
-  linkType: hard
-
 "linkify-it@npm:^3.0.1":
   version: 3.0.3
   resolution: "linkify-it@npm:3.0.3"
@@ -11462,22 +11475,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"markdown-it@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "markdown-it@npm:10.0.0"
-  dependencies:
-    argparse: ^1.0.7
-    entities: ~2.0.0
-    linkify-it: ^2.0.0
-    mdurl: ^1.0.1
-    uc.micro: ^1.0.5
-  bin:
-    markdown-it: bin/markdown-it.js
-  checksum: 69f5ee640cbebb451b80d3cce308fff7230767e05c0f8c206a1e413775b7a6e5a08e91e9f3ec59f9b5c5a45493f9ce7ac089379cffb60c9d3e6677ed9d535086
-  languageName: node
-  linkType: hard
-
-"markdown-it@npm:^12.1.0":
+"markdown-it@npm:^12.1.0, markdown-it@npm:^12.2.0":
   version: 12.2.0
   resolution: "markdown-it@npm:12.2.0"
   dependencies:
@@ -16041,7 +16039,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"subscriptions-transport-ws@npm:^0.9.18, subscriptions-transport-ws@npm:^0.9.19":
+"subscriptions-transport-ws@npm:^0.9.19":
   version: 0.9.19
   resolution: "subscriptions-transport-ws@npm:0.9.19"
   dependencies:
