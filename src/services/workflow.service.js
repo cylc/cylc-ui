@@ -128,6 +128,7 @@ class WorkflowService {
   getOrCreateSubscription (componentOrView) {
     const queryName = componentOrView.query.name
     let subscription = this.subscriptions[queryName]
+    // note, this will force a return of the FIRST query of the SAME name as any subsequent queries
     if (!subscription) {
       subscription = this.subscriptions[queryName] = new Subscription(componentOrView.query)
     }
@@ -346,8 +347,14 @@ class WorkflowService {
       baseSubscriber.query.query = mergeQueries(baseSubscriber.query.query, subscriber.query.query)
       // Combine the arrays of callbacks, creating an array of unique callbacks.
       // The callbacks are compared by their class/constructor name.
+
       for (const callback of subscriber.query.callbacks) {
-        if (!subscription.callbacks.find(element => element.constructor.name === callback.constructor.name)) {
+        // comparing by constructor name does not work as the minifier normalizer these names and because we have two subscriptions and the normalized
+        // callback names are assigned to these independently, from what looks like a predefined set of possible options [t,n]
+        // So this block wont work as it compares and decides it already exists when it doesn't
+
+        // Im not entirely happy with this, but it will work for now. Force a check of the keys of the callback model object
+        if (!subscription.callbacks.find(element => (element.constructor.name === callback.constructor.name && Object.keys(element) === Object.keys(callback)))) {
           subscription.callbacks.push(callback)
         }
       }
