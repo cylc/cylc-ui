@@ -39,6 +39,9 @@ module.exports = {
     ],
     'template-curly-spacing': [
       'off'
+    ],
+    'vue/multi-word-component-names': [
+      'off'
     ]
   },
   parserOptions: {
