@@ -40,9 +40,9 @@ module.exports = {
     'template-curly-spacing': [
       'off'
     ],
-    'vue/multi-word-component-names': ['error', {
-      ignores: []
-    }]
+    'vue/multi-word-component-names': [
+      'off'
+    ]
   },
   parserOptions: {
     parser: 'babel-eslint'
