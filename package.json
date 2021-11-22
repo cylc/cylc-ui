@@ -92,7 +92,7 @@
     "istanbul-lib-coverage": "^3.0.0",
     "json-server": "^0.17.0",
     "markdown-it": "^12.1.0",
-    "nodemon": "^2.0.13",
+    "nodemon": "^2.0.15",
     "nyc": "^15.1.0",
     "postcss": "^8.3.6",
     "regenerator-runtime": "^0.13.7",
