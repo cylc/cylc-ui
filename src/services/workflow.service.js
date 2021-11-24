@@ -352,9 +352,19 @@ class WorkflowService {
         // comparing by constructor name does not work as the minifier normalizer these names and because we have two subscriptions and the normalized
         // callback names are assigned to these independently, from what looks like a predefined set of possible options [t,n]
         // So this block wont work as it compares and decides it already exists when it doesn't
-
-        // Im not entirely happy with this, but it will work for now. Force a check of the keys of the callback model object
-        if (!subscription.callbacks.find(element => (element.constructor.name === callback.constructor.name && Object.keys(element) === Object.keys(callback)))) {
+        if (!subscription.callbacks.find(element => {
+          const elementObjectKeys = Object.keys(element)
+          const callbackObjectKeys = Object.keys(callback)
+          // this fall through approach is a bit easier to read and should conserve some memory as object keys dont need to be recalculated each time
+          if (element.constructor.name === callback.constructor.name) {
+            if (elementObjectKeys.length === callbackObjectKeys.length) {
+              if (elementObjectKeys.sort().join() === callbackObjectKeys.sort().join()) {
+                return true
+              }
+            }
+          }
+          return false
+        })) {
           subscription.callbacks.push(callback)
         }
       }
