@@ -128,6 +128,7 @@ class WorkflowService {
   getOrCreateSubscription (componentOrView) {
     const queryName = componentOrView.query.name
     let subscription = this.subscriptions[queryName]
+    // note, this will force a return of the FIRST query of the SAME name as any subsequent queries
     if (!subscription) {
       subscription = this.subscriptions[queryName] = new Subscription(componentOrView.query)
     }
@@ -145,6 +146,21 @@ class WorkflowService {
       subscription.subscribers[componentOrView._uid] = componentOrView
       // Then we recompute the query, checking if variables match, and action name is set.
       this.recompute(subscription)
+      // regardless of whether this results in a restart, we take this opertunity to preset the componentOrView store if needed
+      const errors = []
+      // if the callbacks class has an init method defined, use it
+      for (const callback of subscription.callbacks) {
+        // if any of the views currently using this subscription have an init hook, trigger it (which will check if its needed)
+        if (callback.init) {
+          callback.init(store, errors)
+          for (const error of errors) {
+            store.commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+            // eslint-disable-next-line no-console
+            console.warn(...error)
+            subscription.handleViewState(ViewState.ERROR, error('Error presetting view state'))
+          }
+        }
+      }
     }
     // Otherwise we are calling subscribe for a component or view already subscribed.
   }
@@ -331,8 +347,24 @@ class WorkflowService {
       baseSubscriber.query.query = mergeQueries(baseSubscriber.query.query, subscriber.query.query)
       // Combine the arrays of callbacks, creating an array of unique callbacks.
       // The callbacks are compared by their class/constructor name.
+
       for (const callback of subscriber.query.callbacks) {
-        if (!subscription.callbacks.find(element => element.constructor.name === callback.constructor.name)) {
+        // comparing by constructor name does not work as the minifier normalizer these names and because we have two subscriptions and the normalized
+        // callback names are assigned to these independently, from what looks like a predefined set of possible options [t,n]
+        // So this block wont work as it compares and decides it already exists when it doesn't
+        if (!subscription.callbacks.find(element => {
+          const elementObjectKeys = Object.keys(element)
+          const callbackObjectKeys = Object.keys(callback)
+          // this fall through approach is a bit easier to read and should conserve some memory as object keys dont need to be recalculated each time
+          if (element.constructor.name === callback.constructor.name) {
+            if (elementObjectKeys.length === callbackObjectKeys.length) {
+              if (elementObjectKeys.sort().join() === callbackObjectKeys.sort().join()) {
+                return true
+              }
+            }
+          }
+          return false
+        })) {
           subscription.callbacks.push(callback)
         }
       }

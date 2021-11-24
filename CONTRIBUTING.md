@@ -47,6 +47,8 @@ below.
  - Mel Hall
  - Ronnie Dutta
  - Carol Barno
+ - Giuliano Serrao
+ - Aaron Cole
 <!-- end-shortlog -->
 
 (All contributors are identifiable with email addresses in the git version
