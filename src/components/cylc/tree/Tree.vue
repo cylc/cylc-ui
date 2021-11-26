@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <v-col
             cols="12"
-            md="5"
+            md="6"
             class="pr-md-2 mb-2 mb-md-0"
           >
             <v-text-field
@@ -46,12 +46,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               outlined
               placeholder="Filter by task name"
               v-model="tasksFilter.name"
+              @change="filterTasks"
             ></v-text-field>
           </v-col>
           <v-col
             cols="12"
-            md="5"
-            class="pr-md-2 mb-2 mb-md-0"
+            md="6"
+            class="mb-2 mb-md-0"
           >
             <v-select
               id="c-tree-filter-task-states"
@@ -64,6 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               outlined
               placeholder="Filter by task state"
               v-model="tasksFilter.states"
+              @change="filterTasks"
             >
               <template v-slot:item="slotProps">
                 <Task :status="slotProps.item.value"/>
@@ -81,19 +83,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </span>
               </template>
             </v-select>
-          </v-col>
-          <v-col
-            cols="12"
-            md="2">
-            <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
-                       components don't seem to agree on the height here -->
-            <v-btn
-              id="c-tree-filter-btn"
-              height="40"
-              block
-              outlined
-              @click="filterTasks"
-            >Filter</v-btn>
           </v-col>
         </v-row>
       </v-col>

@@ -17,24 +17,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-    class="c-table ma-0 pa-2"
+    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
   >
     <!-- Toolbar -->
     <v-row
-      no-gutters
-        class="d-flex flex-wrap"
+        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
     >
       <!-- Filters -->
       <v-col
         v-if="filterable"
-        class="grow"
+        class=""
       >
-        <v-row
-          no-gutters
-        >
+        <v-row class="no-gutters">
           <v-col
             cols="12"
-            md="5"
+            md="6"
             class="pr-md-2 mb-2 mb-md-0"
           >
             <v-text-field
@@ -46,12 +43,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               outlined
               placeholder="Filter by task name"
               v-model.trim="tasksFilter.name"
+              @change="filterTasks"
             ></v-text-field>
           </v-col>
           <v-col
             cols="12"
-            md="5"
-            class="pr-md-2 mb-2 mb-md-0"
+            md="6"
+            class="mb-2 mb-md-0"
           >
             <v-select
               id="c-table-filter-task-states"
@@ -64,6 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               outlined
               placeholder="Filter by task state"
               v-model="tasksFilter.states"
+              @change="filterTasks"
             >
               <template v-slot:item="slotProps">
                 <Task :status="slotProps.item.value"/>
@@ -82,70 +81,102 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </template>
             </v-select>
           </v-col>
-          <v-col
-            cols="12"
-            md="2">
-            <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
-                       components don't seem to agree on the height here -->
-            <v-btn
-              id="c-table-filter-btn"
-              height="40"
-              block
-              outlined
-              @click="filterTasks"
-            >Filter</v-btn>
-          </v-col>
         </v-row>
       </v-col>
     </v-row>
-    <v-data-table
-      :headers="headers"
-      :items="filteredTasks"
-    >
-      <template
-        slot="headerCell"
-        slot-scope="{ header }"
+    <v-row
+      no-gutters
+      class="flex-grow-1 position-relative"
       >
-        <span
-            class="subheading font-weight-light text-success text--darken-3"
-            v-text="header.text"
-          />
-      </template>
-      <template
-          slot="item"
-          slot-scope="{ item }"
+      <v-col
+        cols="12"
+        class="overflow-y-scroll mh-100 position-relative"
+      >
+        <v-container
+            fluid
+          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
         >
-        <tr>
-          <td>
-            <div class="d-flex align-content-center flex-nowrap">
-              <div class="mr-1">
-                <Task
-                  v-cylc-object="item.id"
-                  :status="item.node.state"
-                  :isHeld="item.node.isHeld"
-                  :isQueued="item.node.isQueued"
-                  :isRunahead="item.node.isRunahead"
-                  :startTime="taskStartTime(item.node, item.latestJob)"
-                  :estimatedDuration="taskEstimatedDuration(item.node)"
+          <v-data-table
+            :headers="headers"
+            :items="filteredTasks"
+            :single-expand="false"
+            :expanded.sync="expanded"
+            item-key="id"
+            show-expand
+          >
+            <template
+              slot="headerCell"
+              slot-scope="{ header }"
+            >
+              <span
+                  class="subheading font-weight-light text-success text--darken-3"
+                  v-text="header.text"
                 />
-              </div>
-              <div class="mr-1">
-                <Job :status="item.node.state" />
-              </div>
-              <div>{{ item.node.name }}</div>
-            </div>
-          </td>
-          <td>{{ item.node.cyclePoint }}</td>
-          <td>{{ item.latestJob.platform }}</td>
-          <td>{{ item.latestJob.jobRunnerName }}</td>
-          <td>{{ item.latestJob.jobId }}</td>
-          <td>{{ item.latestJob.submittedTime }}</td>
-          <td>{{ item.latestJob.startedTime }}</td>
-          <td>{{ item.latestJob.finishedTime }}</td>
-          <td>{{ item.meanElapsedTime }}</td>
-        </tr>
-      </template>
-    </v-data-table>
+            </template>
+            <template
+                slot="item"
+                slot-scope="{ item }"
+              >
+              <tr>
+                <td>
+                  <div class="d-flex align-content-center flex-nowrap">
+                    <div class="mr-1">
+                      <Task
+                        v-cylc-object="item.id"
+                        :status="item.node.state"
+                        :isHeld="item.node.isHeld"
+                        :isQueued="item.node.isQueued"
+                        :isRunahead="item.node.isRunahead"
+                        :startTime="taskStartTime(item.node, item.latestJob)"
+                        :estimatedDuration="taskEstimatedDuration(item.node)"
+                      />
+                    </div>
+                    <div class="mr-1">
+                      <Job :status="item.node.state" />
+                    </div>
+                    <div>{{ item.node.name }}</div>
+                  </div>
+                </td>
+                <td>{{ item.node.cyclePoint }}</td>
+                <td>{{ item.latestJob.platform }}</td>
+                <td>{{ item.latestJob.jobRunnerName }}</td>
+                <td>{{ item.latestJob.jobId }}</td>
+                <td>{{ item.latestJob.submittedTime }}</td>
+                <td>{{ item.latestJob.startedTime }}</td>
+                <td>{{ item.latestJob.finishedTime }}</td>
+                <td>{{ item.meanElapsedTime }}</td>
+                <td>
+                  <v-btn icon class="v-data-table__expand-icon" @click="expanded.push(item)" v-if="item.jobs.length > 0 && !expanded.includes(item)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-hidden="true" class="v-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>
+                  </v-btn>
+                  <v-btn icon class="v-data-table__expand-icon v-data-table__expand-icon--active" @click="expanded.splice(expanded.indexOf(item), 1)" v-if="item.jobs.length > 0 && expanded.includes(item)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-hidden="true" class="v-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>
+                  </v-btn>
+                </td>
+              </tr>
+            </template>
+            <template v-slot:expanded-item="{ item }">
+<!--                v-slot:expanded-item="{ headers, item }">-->
+<!--              <td :colspan="headers.length">-->
+<!--                More info about {{ item.node.id }}-->
+<!--              </td>-->
+              <tr v-bind:key="job.id" v-for="job in item.jobs">
+                <td></td>
+                <td></td>
+                <td>{{ job.platform }}</td>
+                <td>{{ job.jobRunnerName }}</td>
+                <td>{{ job.jobId }}</td>
+                <td>{{ job.submittedTime }}</td>
+                <td>{{ job.startedTime }}</td>
+                <td>{{ job.finishedTime }}</td>
+                <td></td>
+                <td></td>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-container>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -174,6 +205,7 @@ export default {
   },
   data () {
     return {
+      expanded: [],
       headers: [
         {
           text: 'Task'
@@ -201,6 +233,10 @@ export default {
         },
         {
           text: 'dT-mean'
+        },
+        {
+          text: 'jobs',
+          value: 'data-table-expand'
         }
       ],
       tasksFilter: {
