@@ -160,9 +160,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!--              <td :colspan="headers.length">-->
 <!--                More info about {{ item.node.id }}-->
 <!--              </td>-->
-              <tr v-bind:key="job.id" v-for="job in item.jobs">
-                <td></td>
-                <td></td>
+              <tr v-bind:key="job.id" v-for="job in item.jobs" class="grey lighten-5">
+                <td>
+<!--                  <div class="d-flex align-content-center flex-nowrap">-->
+<!--                    <div class="mr-1">-->
+<!--                      <Task-->
+<!--                        v-cylc-object="item.id"-->
+<!--                        :status="item.node.state"-->
+<!--                        :isHeld="item.node.isHeld"-->
+<!--                        :isQueued="item.node.isQueued"-->
+<!--                        :isRunahead="item.node.isRunahead"-->
+<!--                        :startTime="taskStartTime(item.node, item.latestJob)"-->
+<!--                        :estimatedDuration="taskEstimatedDuration(item.node)"-->
+<!--                      />-->
+<!--                    </div>-->
+<!--                    <div class="mr-1">-->
+<!--                      <Job :status="item.node.state" />-->
+<!--                    </div>-->
+<!--                    <div>{{ item.node.name }}</div>-->
+<!--                  </div>-->
+                </td>
+                <td>
+                  <!--{{ item.node.cyclePoint }}-->
+                </td>
                 <td>{{ job.platform }}</td>
                 <td>{{ job.jobRunnerName }}</td>
                 <td>{{ job.jobId }}</td>
@@ -235,7 +255,7 @@ export default {
           text: 'dT-mean'
         },
         {
-          text: 'jobs',
+          text: '',
           value: 'data-table-expand'
         }
       ],

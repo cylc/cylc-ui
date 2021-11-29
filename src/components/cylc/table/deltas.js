@@ -234,12 +234,14 @@ function applyDeltasPruned (pruned, table, lookup) {
       // TODO: should we use an internal lookup for table too? To replace this loop by a quick O(1) operation
       //       to fetch the existing job with its ID, and then its existing parent task?
       const parentTask = Object.values(table).find(entry => entry.latestJob && entry.latestJob.id === jobId)
-      if (parentTask && parentTask.latestJob) {
-        Vue.set(parentTask, 'latestJob', {})
-      }
-      const parentsJobsReferenceIndex = parentTask.jobs.findIndex(job => job.id === jobId)
-      if (parentsJobsReferenceIndex) {
-        Vue.set(parentTask, 'jobs', parentTask.jobs.splice(parentsJobsReferenceIndex, 1))
+      if (parentTask) {
+        if (parentTask.latestJob) {
+          Vue.set(parentTask, 'latestJob', {})
+        }
+        const parentsJobsReferenceIndex = parentTask.jobs.findIndex(job => job.id === jobId)
+        if (parentsJobsReferenceIndex) {
+          Vue.set(parentTask, 'jobs', parentTask.jobs.splice(parentsJobsReferenceIndex, 1))
+        }
       }
     })
   }
