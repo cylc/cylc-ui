@@ -132,7 +132,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       />
                     </div>
                     <div class="mr-1">
-                      <Job :status="item.node.state" />
+                      <Job
+                        :status="item.node.state"
+                        :previous-state="item.jobs.length > 1 ? item.jobs[1].state : ''"
+                      />
                     </div>
                     <div>{{ item.node.name }}</div>
                   </div>
@@ -162,23 +165,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!--              </td>-->
               <tr v-bind:key="job.id" v-for="job in item.jobs" class="grey lighten-5">
                 <td>
-<!--                  <div class="d-flex align-content-center flex-nowrap">-->
-<!--                    <div class="mr-1">-->
-<!--                      <Task-->
-<!--                        v-cylc-object="item.id"-->
-<!--                        :status="item.node.state"-->
-<!--                        :isHeld="item.node.isHeld"-->
-<!--                        :isQueued="item.node.isQueued"-->
-<!--                        :isRunahead="item.node.isRunahead"-->
-<!--                        :startTime="taskStartTime(item.node, item.latestJob)"-->
-<!--                        :estimatedDuration="taskEstimatedDuration(item.node)"-->
-<!--                      />-->
-<!--                    </div>-->
-<!--                    <div class="mr-1">-->
-<!--                      <Job :status="item.node.state" />-->
-<!--                    </div>-->
-<!--                    <div>{{ item.node.name }}</div>-->
-<!--                  </div>-->
+                  <div class="d-flex align-content-center flex-nowrap">
+                    <div class="mr-1">
+                      <job
+                        v-cylc-object="job.id"
+                        :key="`${job.id}-summary-${index}`"
+                        :status="job.state"
+                        style="margin-left: 1.3em;"
+                      />
+                      <span class="mx-1">#{{ job.submitNum }}</span>
+                    </div>
+                  </div>
                 </td>
                 <td>
                   <!--{{ item.node.cyclePoint }}-->
@@ -228,7 +225,7 @@ export default {
       expanded: [],
       headers: [
         {
-          text: 'Task'
+          text: 'Task / Job'
         },
         {
           text: 'Cycle Point'
