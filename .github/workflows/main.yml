@@ -4,6 +4,7 @@ on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   unit-test-and-build:
@@ -11,28 +12,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: '16'
-      - name: Cache node modules
-        uses: actions/cache@v2.1.6
-        with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
+          cache: yarn
+
       - name: Install
         run: yarn install
+
       - name: Lint
         run: |
           yarn run lint --no-fix
+
       - name: Test
         run: |
           yarn run coverage:unit --colors
+
       - name: Docs
         uses: andstor/jsdoc-action@v1
         with:
           config_file: jsdoc.conf.json
         # TODO: upload to GH pages?
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
@@ -40,8 +43,10 @@ jobs:
           file: ./coverage/lcov.info
           flags: unittests
           fail_ci_if_error: false
+
       - name: Build
         run: yarn run build
+
 
   cypress-run:
     runs-on: ${{ matrix.os }}
@@ -58,10 +63,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: '16'
+
       - name: e2e
         uses: cypress-io/github-action@v2
         with:
@@ -72,6 +79,7 @@ jobs:
           browser: ${{ matrix.browser }}
         env:
           CYPRESS_baseUrl: http://localhost:8080/
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
