@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               outlined
               placeholder="Filter by task name"
               v-model.trim="tasksFilter.name"
-              @change="filterTasks"
+              @keyup="filterTasks"
             ></v-text-field>
           </v-col>
           <v-col

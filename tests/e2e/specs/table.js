@@ -85,11 +85,8 @@ describe('Table view', () => {
         .get('.v-list-item')
         .contains(TaskState.RUNNING.name)
         .click({ force: true })
-      // cy
-      //   .get('#c-table-filter-btn')
-      //   .click({ force: true })
       cy
-        .get('td > div.d-flex > div', { timeout: 2000 })
+        .get('td > div.d-flex > div')
         .contains('checkpoint')
         .should('be.visible')
       cy
@@ -110,21 +107,15 @@ describe('Table view', () => {
         .get('.v-list-item')
         .contains(TaskState.SUBMITTED.name)
         .click({ force: true })
-      // cy
-      //   .get('#c-table-filter-btn')
-      //   .click({ force: true })
       cy
-        .get('.c-table table > tbody > tr', { timeout: 2000 })
+        .get('.c-table table > tbody > tr')
         .should('have.length', 3)
         .should('be.visible')
       cy
         .get('#c-table-filter-task-name')
         .type(TaskState.FAILED.name)
-      // cy
-      //   .get('#c-table-filter-btn')
-      //   .click()
       cy
-        .get('td > div.d-flex > div', { timeout: 2000 })
+        .get('td > div.d-flex > div')
         .contains(TaskState.FAILED.name)
         .should('be.visible')
     })
