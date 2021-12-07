@@ -214,8 +214,11 @@ describe('Tree view', () => {
       cy
         .get('#c-tree-filter-task-name')
         .type('eep')
+      // cy
+      //   .get('#c-tree-filter-btn')
+      //   .click()
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task-proxy', { timeout: 3000 })
         .contains('sleepy')
         .should('be.visible')
       cy
@@ -236,8 +239,11 @@ describe('Tree view', () => {
         .get('.v-list-item')
         .contains(TaskState.RUNNING.name)
         .click({ force: true })
+      // cy
+      //   .get('#c-tree-filter-btn')
+      //   .click()
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task-proxy', { timeout: 3000 })
         .contains(TaskState.FAILED.name)
         .should('be.not.visible')
       cy
@@ -262,8 +268,11 @@ describe('Tree view', () => {
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
         .click({ force: true })
+      // cy
+      //   .get('#c-tree-filter-btn')
+      //   .click()
       cy
-        .get('.node-data-task-proxy:visible')
+        .get('.node-data-task-proxy:visible', { timeout: 3000 })
         .should('have.length', 1)
     })
 
