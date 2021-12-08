@@ -95,3 +95,12 @@
 .mw-100 {
   max-width: 100%;
 }
+
+.hide-scroll-bars::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scroll-bars {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

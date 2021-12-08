@@ -17,12 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-    class="ma-0 pa-0"
+    fluid
+    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
   >
     <!-- Toolbar -->
     <v-row
-      no-gutters
-      class="d-flex flex-wrap"
+        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
     >
       <!-- Filters -->
       <v-col
@@ -121,25 +121,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </v-col>
     </v-row>
-    <!-- Tree component -->
     <v-row
       no-gutters
+      class="flex-grow-1 position-relative"
       >
-      <!-- each workflow is a tree root -->
-      <tree-item
-        v-for="workflow of workflows"
-        :key="workflow.id"
-        :node="workflow"
-        :hoverable="hoverable"
-        :initialExpanded="expanded"
-        v-on:tree-item-created="onTreeItemCreated"
-        v-on:tree-item-destroyed="onTreeItemDestroyed"
-        v-on:tree-item-expanded="onTreeItemExpanded"
-        v-on:tree-item-collapsed="onTreeItemCollapsed"
-        v-on:tree-item-clicked="onTreeItemClicked"
+      <v-col
+        cols="12"
+        class="overflow-y-scroll mh-100 position-relative hide-scroll-bars"
       >
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
-      </tree-item>
+        <v-container
+            fluid
+          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
+        >
+          <tree-item
+            v-for="workflow of workflows"
+            :key="workflow.id"
+            :node="workflow"
+            :hoverable="hoverable"
+            :initialExpanded="expanded"
+            v-on:tree-item-created="onTreeItemCreated"
+            v-on:tree-item-destroyed="onTreeItemDestroyed"
+            v-on:tree-item-expanded="onTreeItemExpanded"
+            v-on:tree-item-collapsed="onTreeItemCollapsed"
+            v-on:tree-item-clicked="onTreeItemClicked"
+          >
+            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
+          </tree-item>
+        </v-container>
+      </v-col>
     </v-row>
   </v-container>
 </template>

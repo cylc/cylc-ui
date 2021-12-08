@@ -6235,7 +6235,7 @@ __metadata:
     vue-spinner: ^1.0.4
     vue-template-compiler: ^2.6.14
     vue-the-mask: ^0.11.1
-    vuetify: ^2.5.9
+    vuetify: ^2.6.1
     vuetify-loader: ^1.7.3
     vuex: ^3.6.2
     webpack: ^4.46.0
@@ -17467,12 +17467,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"vuetify@npm:^2.5.9":
-  version: 2.5.10
-  resolution: "vuetify@npm:2.5.10"
+"vuetify@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "vuetify@npm:2.6.1"
   peerDependencies:
     vue: ^2.6.4
-  checksum: 3cbb3cb96d63daffdf44ffe0e57c44fb8970eb74d196eaca9ca257990d560a97b6d21ca9415e24435bbb54057d89b3d2392d97e3bf3bb6efd16f1202e846c64d
+  checksum: 76a66a52bdd5ce67baf81fee79c97cd128f4d3519ef531b9a76b85dfdf04ffd42559ca4da1bc75e0c5666a8ae88225cc4b4a7b36e868b38e902a1529fca8f6d8
   languageName: node
   linkType: hard
 
