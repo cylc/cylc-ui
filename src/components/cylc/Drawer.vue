@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     mobile-breakpoint="991"
     width="260"
     persistent
-    class="fill-height "
+    class="fill-height"
   >
     <div class="d-flex flex-column h-100">
       <v-list

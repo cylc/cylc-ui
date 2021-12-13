@@ -315,9 +315,9 @@ export default {
             valueB = typeof taskB.node.name !== 'undefined' ? taskB.node.name : ''
             return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
           case 'Cycle Point':
-            valueA = taskA.node.cyclePoint !== '' && typeof taskA.node.cyclePoint !== 'undefined' ? (new Date(taskA.node.cyclePoint)).getTime() : 0
-            valueB = taskB.node.cyclePoint !== '' && typeof taskB.node.cyclePoint !== 'undefined' ? (new Date(taskB.node.cyclePoint)).getTime() : 0
-            return sortDesc ? valueB - valueA : valueA - valueB
+            valueA = taskA.node.cyclePoint !== '' && typeof taskA.node.cyclePoint !== 'undefined' ? String(taskA.node.cyclePoint) : ''
+            valueB = taskB.node.cyclePoint !== '' && typeof taskB.node.cyclePoint !== 'undefined' ? String(taskB.node.cyclePoint) : ''
+            return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
           case 'Jobs':
             valueA = typeof taskA.jobs !== 'undefined' ? taskA.jobs.length : 0
             valueB = typeof taskB.jobs !== 'undefined' ? taskB.jobs.length : 0
