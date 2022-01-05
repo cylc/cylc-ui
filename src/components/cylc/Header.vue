@@ -57,7 +57,7 @@ export default {
     },
     environment: {
       type: String,
-      default: 'development'
+      default: window.location.host
     }
   }
 }
