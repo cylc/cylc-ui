@@ -10,6 +10,9 @@ release.
 
 ### Enhancements
 
+[#873](https://github.com/cylc/cylc-ui/pull/873) - Header now displays hostname
+rather than 'development'.
+
 [#502](https://github.com/cylc/cylc-ui/pull/502) - Hierarchical GScan.
 
 [#711](https://github.com/cylc/cylc-ui/pull/711) -
