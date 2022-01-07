@@ -53,21 +53,21 @@ describe('workflows', () => {
     it('should get the current workflow', () => {
       expect(store.getters['workflows/currentWorkflow']).to.equal(null)
       const workflows = {
-        'cylc|cylc': {
-          id: 'cylc|cylc',
+        '~cylc/cylc': {
+          id: '~cylc/cylc',
           name: 'cylc'
         }
       }
       store.commit('workflows/SET_WORKFLOWS', workflows)
-      store.commit('workflows/SET_WORKFLOW_NAME', workflows['cylc|cylc'].name)
-      expect(store.getters['workflows/currentWorkflow']).to.deep.equal(workflows['cylc|cylc'])
+      store.commit('workflows/SET_WORKFLOW_NAME', workflows['~cylc/cylc'].name)
+      expect(store.getters['workflows/currentWorkflow']).to.deep.equal(workflows['~cylc/cylc'])
     })
   })
   describe('Mutations', () => {
     it('should set workflows', () => {
       const workflows = {
-        'cylc|cylc': {
-          id: 'cylc|cylc',
+        '~cylc/cylc': {
+          id: '~cylc/cylc',
           name: 'cylc'
         }
       }

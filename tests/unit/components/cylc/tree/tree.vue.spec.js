@@ -374,37 +374,37 @@ describe('Tree component', () => {
     // Enough to cover the possible test scenarios for the
     // expand-collapse toggle functions.
     const mixed = {
-      'user|workflow': {
-        id: 'user|workflow',
+      '~user/workflow': {
+        id: '~user/workflow',
         type: 'workflow',
         isExpanded: false
       },
-      'user|workflow|1': {
-        id: 'user|workflow|1',
+      '~user/workflow//1': {
+        id: '~user/workflow//1',
         type: 'cyclepoint',
         isExpanded: true
       }
     }
     const allCollapsed = {
-      'user|workflow': {
-        id: 'user|workflow',
+      '~user/workflow': {
+        id: '~user/workflow',
         type: 'workflow',
         isExpanded: false
       },
-      'user|workflow|1': {
-        id: 'user|workflow|1',
+      '~user/workflow//1': {
+        id: '~user/workflow//1',
         type: 'cyclepoint',
         isExpanded: false
       }
     }
     const allExpanded = {
-      'user|workflow': {
-        id: 'user|workflow',
+      '~user/workflow': {
+        id: '~user/workflow',
         type: 'workflow',
         isExpanded: true
       },
-      'user|workflow|1': {
-        id: 'user|workflow|1',
+      '~user/workflow//1': {
+        id: '~user/workflow//1',
         type: 'cyclepoint',
         isExpanded: true
       }

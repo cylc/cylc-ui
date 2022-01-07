@@ -17,6 +17,7 @@
 import Vue from 'vue'
 import { mergeWith } from 'lodash'
 import { extractGroupState } from '@/utils/tasks'
+import { Tokens } from '@/utils/uid'
 import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
 import { sortTaskProxyOrFamilyProxy } from '@/components/cylc/tree/sort'
@@ -184,7 +185,8 @@ function addFamilyProxy (familyProxy, workflow, options) {
   // them. When that happens, you may add a family proxy to the lookup, and only
   // append it to the parent later.
   // ignore the root family
-  if (familyProxy.id.endsWith(`|${FAMILY_ROOT}`)) {
+  const tokens = new Tokens(familyProxy.id)
+  if (tokens.task === 'root') {
     return
   }
   // add if not in the lookup already
@@ -352,12 +354,12 @@ function removeFamilyProxy (familyProxyId, workflow, options) {
   let nodeId
   let parentId
   // NOTE: when deleting the root family, we can also remove the entire cycle point
-  if (familyProxyId.endsWith('|root')) {
+  const tokens = new Tokens(familyProxyId)
+  if (tokens.task === FAMILY_ROOT) {
     // 0 has the owner, 1 has the workflow Id, 2 has the cycle point, and 3 the family name
-    const [owner, workflowId] = familyProxyId.split('|')
     nodeId = getCyclePointId({ id: familyProxyId })
     node = workflow.lookup[nodeId]
-    parentId = `${owner}|${workflowId}`
+    parentId = tokens.workflow_id
   } else {
     nodeId = familyProxyId
     node = workflow.lookup[nodeId]

@@ -16,14 +16,15 @@
  */
 import TaskState from '@/model/TaskState.model'
 import JobState from '@/model/JobState.model'
+import { Tokens } from '@/utils/uid'
 
-const BASE_ID = 'cylc|workflow|1'
+const BASE_TOKENS = new Tokens('~cylc/workflow//1')
 
 const simpleTableTasks = [
   {
-    id: `${BASE_ID}|taskA`,
+    id: BASE_TOKENS.clone({ task: 'taskA' }).id,
     node: {
-      id: `${BASE_ID}|taskA`,
+      id: BASE_TOKENS.clone({ task: 'taskA' }).id,
       state: TaskState.RUNNING.name,
       name: 'taskA',
       meanElapsedTime: 2000
@@ -39,18 +40,18 @@ const simpleTableTasks = [
     }
   },
   {
-    id: `${BASE_ID}|taskB`,
+    id: BASE_TOKENS.clone({ task: 'taskB' }).id,
     node: {
-      id: `${BASE_ID}|taskB`,
+      id: BASE_TOKENS.clone({ task: 'taskB' }).id,
       state: TaskState.WAITING.name,
       name: 'taskB'
     },
     latestJob: {}
   },
   {
-    id: `${BASE_ID}|taskC`,
+    id: BASE_TOKENS.clone({ task: 'taskC' }).id,
     node: {
-      id: `${BASE_ID}|taskC`,
+      id: BASE_TOKENS.clone({ task: 'taskC' }).id,
       state: TaskState.SUBMITTED.name,
       name: 'taskC'
     },

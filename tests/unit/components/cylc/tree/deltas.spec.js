@@ -20,6 +20,7 @@ import sinon from 'sinon'
 import TaskState from '@/model/TaskState.model'
 import WorkflowState from '@/model/WorkflowState.model'
 import * as CylcTree from '@/components/cylc/tree/index'
+import { Tokens } from '@/utils/uid'
 import {
   applyDeltasAdded as applyWorkflowDeltasAdded,
   applyDeltasUpdated as applyWorkflowDeltasUpdated,
@@ -56,7 +57,8 @@ describe('Deltas', () => {
   const expectNoErrors = (result) => {
     expect(result.errors.length).to.equal(0, result.errors.join('. '))
   }
-  const WORKFLOW_ID = 'cylc|workflow'
+  const WORKFLOW_ID = '~cylc/workflow'
+  const WORKFLOW_TOKENS = new Tokens(WORKFLOW_ID)
   it('Should skip if no deltas provided', () => {
     expect(() => applyTreeDeltasAdded(null, null, null, null)).to.throw(Error)
   })
@@ -66,7 +68,7 @@ describe('Deltas', () => {
     })
     CylcTree.addWorkflow(workflowNode, workflow, {})
     const cyclePointNode = createCyclePointNode({
-      id: `${WORKFLOW_ID}|1`,
+      id: WORKFLOW_TOKENS.clone({ cycle: '1' }).id,
       cyclePoint: 1
     })
     CylcTree.addCyclePoint(cyclePointNode, workflow, {})
@@ -129,8 +131,11 @@ describe('Deltas', () => {
         },
         cyclePoints: [
           {
-            id: `${WORKFLOW_ID}|1|root`,
-            cyclePoint: `${WORKFLOW_ID}|1`
+            id: WORKFLOW_TOKENS.clone({
+              cycle: '1',
+              task: CylcTree.FAMILY_ROOT
+            }).id,
+            cyclePoint: WORKFLOW_TOKENS.clone({ cycle: '1' }).id
           }
         ]
       }
@@ -148,7 +153,7 @@ describe('Deltas', () => {
       shutdown: false,
       added: {
         workflow: {
-          id: `user|${WORKFLOW_ID}`
+          id: `~user/${WORKFLOW_ID}`
         }
       }
     }
@@ -184,7 +189,8 @@ describe('Deltas', () => {
       }), workflow, {})
     })
     it('Should apply added deltas', () => {
-      const cyclePointId = `${WORKFLOW_ID}|1`
+      const cyclePointTokens = WORKFLOW_TOKENS.clone({ cycle: '1' })
+      const cyclePointId = cyclePointTokens.id
       const deltas = {
         id: WORKFLOW_ID,
         shutdown: false,
@@ -202,7 +208,7 @@ describe('Deltas', () => {
       expect(workflow.tree.children[0].id).to.equal(cyclePointId)
     })
     it('should collect errors', () => {
-      const cyclePointId = `${WORKFLOW_ID}|1`
+      const cyclePointId = WORKFLOW_TOKENS.clone({ cycle: '1' }).id
       const deltas = {
         id: WORKFLOW_ID,
         shutdown: false,
@@ -235,16 +241,25 @@ describe('Deltas', () => {
       })
       CylcTree.addWorkflow(workflowNode, workflow, {})
       cyclePoint = createCyclePointNode({
-        id: `${WORKFLOW_ID}|1|root`,
+        id: WORKFLOW_TOKENS.clone({
+          cycle: '1',
+          task: CylcTree.FAMILY_ROOT
+        }).id,
         cyclePoint: '1'
       })
       CylcTree.addCyclePoint(cyclePoint, workflow, {})
       familyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|FAM`,
+        id: WORKFLOW_TOKENS.clone({
+          cycle: cyclePoint.node.name,
+          task: 'FAM'
+        }).id,
         state: TaskState.RUNNING.name,
         cyclePoint: cyclePoint.node.name,
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint.node.name}|${CylcTree.FAMILY_ROOT}`,
+          id: WORKFLOW_TOKENS.clone({
+            cycle: cyclePoint.node.name,
+            task: CylcTree.FAMILY_ROOT
+          }).id,
           name: CylcTree.FAMILY_ROOT
         }
       })
@@ -318,16 +333,25 @@ describe('Deltas', () => {
       })
       CylcTree.addWorkflow(workflowNode, workflow, {})
       cyclePoint = createCyclePointNode({
-        id: `${WORKFLOW_ID}|1|root`,
+        id: WORKFLOW_TOKENS.clone({
+          cycle: '1',
+          task: CylcTree.FAMILY_ROOT
+        }).id,
         cyclePoint: '1'
       })
       CylcTree.addCyclePoint(cyclePoint, workflow, {})
       familyProxy = createFamilyProxyNode({
-        id: `${WORKFLOW_ID}|${cyclePoint.node.name}|FAM`,
+        id: WORKFLOW_TOKENS.clone({
+          cycle: cyclePoint.node.name,
+          task: 'FAM'
+        }).id,
         state: TaskState.RUNNING.name,
         cyclePoint: cyclePoint.node.name,
         firstParent: {
-          id: `${WORKFLOW_ID}|${cyclePoint.node.name}|${CylcTree.FAMILY_ROOT}`,
+          id: WORKFLOW_TOKENS.clone({
+            cycle: cyclePoint.node.name,
+            task: CylcTree.FAMILY_ROOT
+          }).id,
           name: CylcTree.FAMILY_ROOT
         }
       })

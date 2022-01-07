@@ -5812,7 +5812,7 @@
               "args": [
                 {
                   "name": "ids",
-                  "description": "Node IDs, cycle point and/or-just family/task namespace:\n    [\"foo.1234\", \"1234|foo\", \"FAM.1234\", \"FAM.*\"]",
+                  "description": "Node IDs, cycle point and/or-just family/task namespace:\n    [\"1234/foo\", \"1234/FAM\", \"*/FAM\"]",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -13062,7 +13062,7 @@
               "args": [
                 {
                   "name": "workflows",
-                  "description": "List of full ID, i.e. `owner|name`",
+                  "description": "List of full ID, i.e. `~owner/name`",
                   "type": {
                     "kind": "LIST",
                     "name": null,

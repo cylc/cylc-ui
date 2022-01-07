@@ -26,7 +26,7 @@ import WorkflowCallback from '@/components/cylc/common/callbacks'
 describe('SubscriptionQuery model', () => {
   const query = gql`query { workflow { id } }`
   const variables = {
-    workflowId: 'cylc|cylc'
+    workflowId: '~cylc/cylc'
   }
   const name = 'root'
   const callbacks = [

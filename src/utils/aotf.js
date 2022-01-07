@@ -47,6 +47,7 @@ import {
 import AlertModel from '@/model/Alert.model'
 import TaskState from '@/model/TaskState.model'
 import store from '@/store/index'
+import { Tokens } from '@/utils/uid'
 
 /**
  * Associates icons with mutations by name.
@@ -76,10 +77,14 @@ export const mutationIcons = {
  * These are things that mutations can operate on like tasks and cycle points.
  */
 export const cylcObjects = Object.freeze({
+  // <Object>:<Token>
+  // TODO: unify this into the UID code better
+  // Where Object is used by aotf to associate things with mutations.
+  // And Token is the UID token (@/utils/uid).
   User: 'user',
   Workflow: 'workflow',
-  CyclePoint: 'cycle point',
-  Namespace: 'namespace',
+  CyclePoint: 'cycle',
+  Namespace: 'task',
   // Task: 'task',
   Job: 'job'
 })
@@ -154,7 +159,7 @@ mutationMapping[cylcObjects.Job] = [
 export const compoundFields = {
   WorkflowID: (tokens) => {
     if (tokens[cylcObjects.User]) {
-      return `${tokens[cylcObjects.User]}|${tokens[cylcObjects.Workflow]}`
+      return `~${tokens[cylcObjects.User]}/${tokens[cylcObjects.Workflow]}`
     }
     // don't provide user if not specified
     // (will fallback to the UIs user)
@@ -162,15 +167,19 @@ export const compoundFields = {
   },
   NamespaceIDGlob: (tokens) => {
     // expand unspecified fields to '*'
-    return (tokens[cylcObjects.Namespace] || '*') +
-      '.' +
-      (tokens[cylcObjects.CyclePoint] || '*')
+    return (
+      (tokens[cylcObjects.CyclePoint] || '*') +
+      '/' +
+      (tokens[cylcObjects.Namespace] || '*')
+    )
   },
   TaskID: (tokens) => {
     // expand unspecified fields to '*'
-    return (tokens[cylcObjects.Task] || '*') +
-      '.' +
-      (tokens[cylcObjects.CyclePoint] || '*')
+    return (
+      (tokens[cylcObjects.CyclePoint] || '*') +
+      '/' +
+      (tokens[cylcObjects.Task] || '*')
+    )
   }
 }
 
@@ -202,13 +211,16 @@ Object.freeze(mutationStatus)
  * @returns {Object}
  * */
 export function tokenise (id) {
+  // TODO: unify this into the UID code better
   if (!id) {
     return {}
   }
-  const parts = id.split('|')
+  const tokens = new Tokens(id)
   const ret = {}
-  for (let ind = 0; ind < parts.length; ind++) {
-    ret[identifierOrder[ind]] = parts[ind]
+  for (const token of Object.values(cylcObjects)) {
+    if (tokens[token]) {
+      ret[token] = tokens[token]
+    }
   }
   return ret
 }

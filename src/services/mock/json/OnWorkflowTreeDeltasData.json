@@ -1,9 +1,9 @@
 {
   "workflow": {
-    "id": "user|one",
+    "id": "~user/one",
     "name": "one",
     "status": "running",
-    "owner": "user",
+    "owner": "~user",
     "host": "localhost",
     "port": 43079,
     "stateTotals": {
@@ -24,42 +24,42 @@
   },
   "cyclePoints": [
     {
-      "id": "user|one|20000102T0000Z|root",
+      "id": "~user/one//20000102T0000Z/root",
       "cyclePoint": "20000102T0000Z"
     }
   ],
   "familyProxies": [
     {
-      "id": "user|one|20000102T0000Z|BAD",
+      "id": "~user/one//20000102T0000Z/BAD",
       "name": "BAD",
       "state": "submitted",
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|root",
+        "id": "~user/one//20000102T0000Z/root",
         "name": "root",
         "cyclePoint": "20000102T0000Z",
         "state": "running"
       }
     },
     {
-      "id": "user|one|20000102T0000Z|GOOD",
+      "id": "~user/one//20000102T0000Z/GOOD",
       "name": "GOOD",
       "state": "submitted",
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|root",
+        "id": "~user/one//20000102T0000Z/root",
         "name": "root",
         "cyclePoint": "20000102T0000Z",
         "state": "running"
       }
     },
     {
-      "id": "user|one|20000102T0000Z|SUCCEEDED",
+      "id": "~user/one//20000102T0000Z/SUCCEEDED",
       "name": "SUCCEEDED",
       "state": "submitted",
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|GOOD",
+        "id": "~user/one//20000102T0000Z/GOOD",
         "name": "GOOD",
         "cyclePoint": "20000102T0000Z",
         "state": "submitted"
@@ -68,7 +68,7 @@
   ],
   "taskProxies": [
     {
-      "id": "user|one|20000102T0000Z|checkpoint",
+      "id": "~user/one//20000102T0000Z/checkpoint",
       "name": "checkpoint",
       "state": "running",
       "isHeld": false,
@@ -76,7 +76,7 @@
       "isRunahead": false,
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|root",
+        "id": "~user/one//20000102T0000Z/root",
         "name": "root",
         "cyclePoint": "20000102T0000Z",
         "state": "running"
@@ -87,7 +87,7 @@
       }
     },
     {
-      "id": "user|one|20000102T0000Z|eventually_succeeded",
+      "id": "~user/one//20000102T0000Z/eventually_succeeded",
       "name": "eventually_succeeded",
       "state": "submitted",
       "isHeld": false,
@@ -95,7 +95,7 @@
       "isRunahead": false,
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|SUCCEEDED",
+        "id": "~user/one//20000102T0000Z/SUCCEEDED",
         "name": "SUCCEEDED",
         "cyclePoint": "20000102T0000Z",
         "state": "submitted"
@@ -106,7 +106,7 @@
       }
     },
     {
-      "id": "user|one|20000102T0000Z|failed",
+      "id": "~user/one//20000102T0000Z/failed",
       "name": "failed",
       "state": "submitted",
       "isHeld": false,
@@ -114,7 +114,7 @@
       "isRunahead": false,
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|BAD",
+        "id": "~user/one//20000102T0000Z/BAD",
         "name": "BAD",
         "cyclePoint": "20000102T0000Z",
         "state": "submitted"
@@ -125,7 +125,7 @@
       }
     },
     {
-      "id": "user|one|20000102T0000Z|retrying",
+      "id": "~user/one//20000102T0000Z/retrying",
       "name": "retrying",
       "state": "waiting",
       "isHeld": false,
@@ -133,7 +133,7 @@
       "isRunahead": false,
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|BAD",
+        "id": "~user/one//20000102T0000Z/BAD",
         "name": "BAD",
         "cyclePoint": "20000102T0000Z",
         "state": "submitted"
@@ -144,7 +144,7 @@
       }
     },
     {
-      "id": "user|one|20000102T0000Z|sleepy",
+      "id": "~user/one//20000102T0000Z/sleepy",
       "name": "sleepy",
       "state": "",
       "isHeld": false,
@@ -152,7 +152,7 @@
       "isRunahead": false,
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|root",
+        "id": "~user/one//20000102T0000Z/root",
         "name": "root",
         "cyclePoint": "20000102T0000Z",
         "state": "running"
@@ -163,7 +163,7 @@
       }
     },
     {
-      "id": "user|one|20000102T0000Z|succeeded",
+      "id": "~user/one//20000102T0000Z/succeeded",
       "name": "succeeded",
       "state": "submitted",
       "isHeld": false,
@@ -171,7 +171,7 @@
       "isRunahead": false,
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|SUCCEEDED",
+        "id": "~user/one//20000102T0000Z/SUCCEEDED",
         "name": "SUCCEEDED",
         "cyclePoint": "20000102T0000Z",
         "state": "submitted"
@@ -182,7 +182,7 @@
       }
     },
     {
-      "id": "user|one|20000102T0000Z|waiting",
+      "id": "~user/one//20000102T0000Z/waiting",
       "name": "waiting",
       "state": "",
       "isHeld": false,
@@ -190,7 +190,7 @@
       "isRunahead": false,
       "cyclePoint": "20000102T0000Z",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|root",
+        "id": "~user/one//20000102T0000Z/root",
         "name": "root",
         "cyclePoint": "20000102T0000Z",
         "state": "running"
@@ -203,9 +203,9 @@
   ],
   "jobs": [
     {
-      "id": "user|one|20000102T0000Z|checkpoint|1",
+      "id": "~user/one//20000102T0000Z/checkpoint/1",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|checkpoint"
+        "id": "~user/one//20000102T0000Z/checkpoint"
       },
       "jobRunnerName": "background",
       "jobId": "61924",
@@ -217,9 +217,9 @@
       "submitNum": 1
     },
     {
-      "id": "user|one|20000102T0000Z|eventually_succeeded|4",
+      "id": "~user/one//20000102T0000Z/eventually_succeeded/4",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|eventually_succeeded"
+        "id": "~user/one//20000102T0000Z/eventually_succeeded"
       },
       "jobRunnerName": "background",
       "jobId": "61869",
@@ -231,9 +231,9 @@
       "submitNum": 4
     },
     {
-      "id": "user|one|20000102T0000Z|eventually_succeeded|3",
+      "id": "~user/one//20000102T0000Z/eventually_succeeded/3",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|eventually_succeeded"
+        "id": "~user/one//20000102T0000Z/eventually_succeeded"
       },
       "jobRunnerName": "background",
       "jobId": "61842",
@@ -245,9 +245,9 @@
       "submitNum": 3
     },
     {
-      "id": "user|one|20000102T0000Z|eventually_succeeded|2",
+      "id": "~user/one//20000102T0000Z/eventually_succeeded/2",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|eventually_succeeded"
+        "id": "~user/one//20000102T0000Z/eventually_succeeded"
       },
       "jobRunnerName": "background",
       "jobId": "61815",
@@ -259,9 +259,9 @@
       "submitNum": 2
     },
     {
-      "id": "user|one|20000102T0000Z|eventually_succeeded|1",
+      "id": "~user/one//20000102T0000Z/eventually_succeeded/1",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|eventually_succeeded"
+        "id": "~user/one//20000102T0000Z/eventually_succeeded"
       },
       "jobRunnerName": "background",
       "jobId": "61736",
@@ -273,9 +273,9 @@
       "submitNum": 1
     },
     {
-      "id": "user|one|20000102T0000Z|failed|1",
+      "id": "~user/one//20000102T0000Z/failed/1",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|failed"
+        "id": "~user/one//20000102T0000Z/failed"
       },
       "taskProxy": {
         "outputs": [
@@ -323,9 +323,9 @@
       "submitNum": 1
     },
     {
-      "id": "user|one|20000102T0000Z|retrying|1",
+      "id": "~user/one//20000102T0000Z/retrying/1",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|retrying"
+        "id": "~user/one//20000102T0000Z/retrying"
       },
       "jobRunnerName": "background",
       "jobId": "61737",
@@ -337,9 +337,9 @@
       "submitNum": 1
     },
     {
-      "id": "user|one|20000102T0000Z|succeeded|1",
+      "id": "~user/one//20000102T0000Z/succeeded/1",
       "firstParent": {
-        "id": "user|one|20000102T0000Z|succeeded"
+        "id": "~user/one//20000102T0000Z/succeeded"
       },
       "jobRunnerName": "background",
       "jobId": "61739",
