@@ -39,9 +39,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </svg>
       </div>
       <div class="c-environment-info">
-        <v-chip outlined color="grey lighten-1" text-color="grey darken-4">{{ user }}</v-chip>
+        <v-chip id="username" outlined color="grey lighten-1" text-color="grey darken-4">{{ user }}</v-chip>
         <span class="at">@</span>
-        <v-chip outlined color="grey lighten-1" text-color="grey darken-4">{{ environment }}</v-chip>
+        <v-chip id="host" outlined color="grey lighten-1" text-color="grey darken-4">{{ environment }}</v-chip>
       </div>
     </v-layout>
   </v-list-item-action-text>
@@ -57,7 +57,7 @@ export default {
     },
     environment: {
       type: String,
-      default: 'development'
+      default: window.location.host
     }
   }
 }
