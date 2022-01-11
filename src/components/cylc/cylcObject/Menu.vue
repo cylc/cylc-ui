@@ -43,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-icon :disabled=!authorised large>{{ mutation._icon }}</v-icon>
           </v-list-item-avatar>
           <v-list-item-content>
+            <!-- Is this safe against XSS scripting? -->
             <v-list-item-title v-html="mutation._title" />
             <!--
             don't use v-list-item-description here, vuetify will standardise
