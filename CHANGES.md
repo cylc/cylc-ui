@@ -6,12 +6,21 @@ milestones](https://github.com/cylc/cylc-ui/milestones?state=closed) for each
 release.
 
 -------------------------------------------------------------------------------
-## __cylc-ui-0.6 (<span actions:bind='release-date'>Released 2021-11-10</span>)__
+## __cylc-ui-1.0.0 (<span actions:bind='release-date'>Pending Release</span>)__
 
 ### Enhancements
 
+[#876](https://github.com/cylc/cylc-ui/pull/876) -
+Convert to use the new Cylc "Universal Identifier".
+
 [#873](https://github.com/cylc/cylc-ui/pull/873) - Header now displays hostname
 rather than 'development'.
+
+
+-------------------------------------------------------------------------------
+## __cylc-ui-0.6 (<span actions:bind='release-date'>Released 2021-11-10</span>)__
+
+### Enhancements
 
 [#502](https://github.com/cylc/cylc-ui/pull/502) - Hierarchical GScan.
 
