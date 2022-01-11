@@ -36,12 +36,6 @@ Vue.prototype.$eventBus = mitt()
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-/*
-This is where the main app is created:
-- What are all the objects (?) being fed in?
-- What is render (h) doing?
-- What is ``$mount('#app')``?
-*/
 const app = new Vue({
   i18n,
   router,
