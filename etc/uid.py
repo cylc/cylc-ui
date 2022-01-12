@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Script for updating the UID regex from the cylc-flow source code."""
+
 import os
 from pathlib import Path
 import re
@@ -47,7 +49,6 @@ def format_regex(name, regex):
     pattern = regex.pattern
     pattern = strip_comments(pattern)
     pattern = strip_named_groups(pattern)
-    pattern = re.sub(r'\?<\w+>', '', pattern)
     pattern = dedent(pattern).strip()  # strip leading / trailing whitespace
     # format as JS code
     return (
