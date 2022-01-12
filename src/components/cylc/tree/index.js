@@ -186,7 +186,7 @@ function addFamilyProxy (familyProxy, workflow, options) {
   // append it to the parent later.
   // ignore the root family
   const tokens = new Tokens(familyProxy.id)
-  if (tokens.task === 'root') {
+  if (tokens.task === FAMILY_ROOT) {
     return
   }
   // add if not in the lookup already
