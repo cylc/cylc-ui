@@ -29,7 +29,7 @@ describe('Workflow component', () => {
   beforeEach(() => {
     lookup = {}
     newWorkflow = {
-      id: 'cylc|test',
+      id: '~cylc/test',
       status: WorkflowState.PAUSED
     }
   })

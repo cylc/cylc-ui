@@ -17,6 +17,7 @@
 
 import TaskOutput from '@/model/TaskOutput.model'
 import Vue from 'vue'
+import { Tokens } from '@/utils/uid'
 
 /**
  * A node of the tree, with the GraphQL data objects organized
@@ -64,11 +65,11 @@ function createWorkflowNode (workflow) {
  *
  * For example, given a node with the following ID's:
  *
- * - 'a|b|c|d'    results in a cycle point node ID 'a|b|c'
- * - 'a|b|c|d|e'  results in a cycle point node ID 'a|b|c'
- * - 'a|b|c'      results in a cycle point node ID 'a|b|c'
- * - 'a|b'        results in a cycle point node ID 'a|b'
- * - ''           results in a cycle point node ID ''
+ * - '~a/b//c/d'    results in a cycle point node ID '~a/b//c'
+ * - '~a/b//c/d/e'  results in a cycle point node ID '~a/b//c'
+ * - '~a/b//c'      results in a cycle point node ID '~a/b//c'
+ * - '~a/b'         results in a cycle point node ID '~a/b'
+ * - ''             results in a cycle point node ID ''
  *
  * @param node {GraphQLData} a tree node
  * @throws {Error} - if there was an error extracting the cycle point ID
@@ -76,9 +77,13 @@ function createWorkflowNode (workflow) {
  */
 function getCyclePointId (node) {
   if (node && node.id) {
-    const tokens = node.id.split('|')
-    if (tokens.length >= 3) {
-      return tokens.splice(0, 3).join('|')
+    const tokens = new Tokens(node.id)
+    if (tokens.cycle) {
+      return tokens.clone({
+        // wipe the task & job, return the cycle ID
+        task: undefined,
+        job: undefined
+      }).id
     }
   }
   const nodeId = node && node.id ? node.id : 'undefined'

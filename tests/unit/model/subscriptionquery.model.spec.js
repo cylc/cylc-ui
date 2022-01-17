@@ -25,7 +25,7 @@ describe('SubscriptionQuery model', () => {
     it('should be created', () => {
       const query = gql`query { workflow { id } }`
       const variables = {
-        workflowId: 'cylc|cylc'
+        workflowId: '~cylc/cylc'
       }
       const name = 'root'
       const callbacks = [

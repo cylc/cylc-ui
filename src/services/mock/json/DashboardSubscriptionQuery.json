@@ -1,6 +1,6 @@
 {
   "workflow": {
-    "id": "user|one",
+    "id": "~user/one",
     "name": "one",
     "status": "running"
   }

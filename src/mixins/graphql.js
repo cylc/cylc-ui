@@ -38,8 +38,7 @@ export default {
     /**
      * We use the user from the store to compute the workflow ID. The view
      * has only the workflow name from the Vue route. We then combine it
-     * with the user name and the default divider '|' to create the workflow
-     * ID.
+     * with the user name to create the workflow ID.
      *
      * @return {User}
      */
@@ -51,7 +50,7 @@ export default {
      * @return {string} - the Workflow ID used in this view
      */
     workflowId () {
-      return `${this.user.owner}|${this.workflowName}`
+      return `~${this.user.owner}/${this.workflowName}`
     },
     /**
      * GraphQL query variables.

@@ -21,7 +21,7 @@ query = '''
 query ($workflowID: ID) {
   workflows (ids: [$workflowID]) {
     ...WorkflowData
-    cyclePoints: familyProxies (ids: ["root"], ghosts: true) {
+    cyclePoints: familyProxies (ids: ["*/root"], ghosts: true) {
       ...CyclePointData
     }
     taskProxies (sort: { keys: ["name"], reverse: false }, ghosts: true) {
@@ -30,7 +30,7 @@ query ($workflowID: ID) {
         ...JobData
       }
     }
-    familyProxies (exids: ["root"], sort: { keys: ["name"] }, ghosts: true) {
+    familyProxies (exids: ["*/root"], sort: { keys: ["name"] }, ghosts: true) {
       ...FamilyProxyData
     }
   }

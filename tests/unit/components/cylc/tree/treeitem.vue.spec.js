@@ -171,13 +171,13 @@ describe('TreeItem component', () => {
   //       args: {
   //         type: 'workflow',
   //         children: [
-  //           { id: 'workflow|1' },
-  //           { id: 'workflow|2' }
+  //           { id: 'workflow//1' },
+  //           { id: 'workflow//2' }
   //         ]
   //       },
   //       expected: [
-  //         { id: 'workflow|2' },
-  //         { id: 'workflow|1' }
+  //         { id: 'workflow//2' },
+  //         { id: 'workflow//1' }
   //       ]
   //     },
   //     // cycle point children (family proxies and task proxies) are sorted by type in ascending order, and then name in ascending order

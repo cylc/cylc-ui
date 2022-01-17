@@ -17,7 +17,7 @@
 
 const simpleWorkflowGscanNodes = [
   {
-    id: 'user|five',
+    id: '~user/five',
     name: 'five',
     status: 'running',
     owner: 'user',

@@ -103,7 +103,7 @@ describe('GScan component', () => {
   describe('Nodes', () => {
     it('should create nodes and workflow name part nodes', () => {
       const workflow = {
-        id: 'user|a/b/c',
+        id: '~user/a/b/c',
         name: 'a/b/c',
         status: WorkflowState.PAUSED.name,
         stateTotals: {
@@ -114,14 +114,14 @@ describe('GScan component', () => {
       expect(nodeHierarchy.name).to.equal('a')
       const node = createWorkflowNode(workflow, false)
       expect(node.name).to.equal(null)
-      expect(node.id).to.equal('user|a/b/c')
+      expect(node.id).to.equal('~user/a/b/c')
     })
   })
   describe('Sorting', () => {
     const createWorkflows = (namesAndStatuses) => {
       return namesAndStatuses.map(nameAndStatus => {
         return {
-          id: `user|${nameAndStatus.name}`,
+          id: `~user/${nameAndStatus.name}`,
           name: nameAndStatus.name,
           status: nameAndStatus.status.name,
           latestStateTasks: []
@@ -250,7 +250,7 @@ describe('GScan component', () => {
   describe('Filters', () => {
     const workflows = [
       {
-        id: 'user|1',
+        id: '~user/1',
         name: 'new zealand',
         status: WorkflowState.PAUSED.name,
         stateTotals: {
@@ -258,7 +258,7 @@ describe('GScan component', () => {
         }
       },
       {
-        id: 'user|2',
+        id: '~user/2',
         name: 'zeeland',
         status: WorkflowState.RUNNING.name,
         stateTotals: {
@@ -266,19 +266,19 @@ describe('GScan component', () => {
         }
       },
       {
-        id: 'user|research/test/a/run1',
+        id: '~user/research/test/a/run1',
         name: 'research/test/a/run1',
         status: WorkflowState.PAUSED.name,
         stateTotals: {}
       },
       {
-        id: 'user|research/test/b/run1',
+        id: '~user/research/test/b/run1',
         name: 'research/test/b/run1',
         status: WorkflowState.PAUSED.name,
         stateTotals: {}
       },
       {
-        id: 'user|research',
+        id: '~user/research',
         name: 'research',
         status: WorkflowState.STOPPED.name,
         stateTotals: {}

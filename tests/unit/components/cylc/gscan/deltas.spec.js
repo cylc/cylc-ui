@@ -29,7 +29,7 @@ describe('GScan component', () => {
   beforeEach(() => {
     workflows = {}
     newWorkflow = {
-      id: 'cylc|test',
+      id: '~cylc/test',
       status: WorkflowState.PAUSED
     }
   })

@@ -98,45 +98,39 @@ describe('Tree component functions', () => {
       },
       {
         node: {
-          id: 'a'
+          id: '~a'
         },
         expected: Error
       },
       {
         node: {
-          id: 'a|b'
+          id: '~a/b'
         },
         expected: Error
       },
       {
         noNode: {
-          id: 'a|b'
+          id: '~a/b'
         },
         expected: Error
       },
       {
         node: {
-          id: 'a|b|c'
+          id: '~a/b//c'
         },
-        expected: 'a|b|c'
+        expected: '~a/b//c'
       },
       {
         node: {
-          id: 'a|b|c|d'
+          id: '~a/b//c/d'
         },
-        expected: 'a|b|c'
+        expected: '~a/b//c'
       },
       {
         node: {
-          id: 'a|b|c|d|e'
+          id: '~a/b//c/d/e'
         },
-        expected: 'a|b|c'
-      },
-      {
-        node: {
-          id: '|||'
-        },
-        expected: '||'
+        expected: '~a/b//c'
       }
     ]
     tests.forEach(test => {
@@ -155,7 +149,7 @@ describe('Tree component functions', () => {
     // Here we are verifying that `createJobNode` did its work well, removing
     // the standard outputs, leaving only 1 custom output as below (eql = deep equal).
     expect(jobNode.node.customOutputs).to.eql([{
-      id: 'cylc|one|20000101T0000Z|eventually_succeeded|4-output-out1',
+      id: '~cylc/one//20000101T0000Z/eventually_succeeded/4-output-out1',
       label: 'out1',
       message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
     }])

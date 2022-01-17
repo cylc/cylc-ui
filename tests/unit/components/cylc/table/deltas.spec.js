@@ -42,7 +42,7 @@ describe('Deltas', () => {
   const expectNoErrors = (result) => {
     expect(result.errors.length).to.equal(0, result.errors.join('. '))
   }
-  const WORKFLOW_ID = 'cylc|workflow'
+  const WORKFLOW_ID = '~cylc/workflow'
 
   describe('Created', () => {
     it('Should create a table store from the existing workflow lookup', () => {

@@ -27,15 +27,15 @@ describe('aotf (Api On The Fly)', () => {
       const tokens = {}
       expect(aotf.tokenise(null)).to.deep.equal(tokens)
       tokens[aotf.cylcObjects.User] = 'a'
-      expect(aotf.tokenise('a')).to.deep.equal(tokens)
+      expect(aotf.tokenise('~a')).to.deep.equal(tokens)
       tokens[aotf.cylcObjects.Workflow] = 'b'
-      expect(aotf.tokenise('a|b')).to.deep.equal(tokens)
+      expect(aotf.tokenise('~a/b')).to.deep.equal(tokens)
       tokens[aotf.cylcObjects.CyclePoint] = 'c'
-      expect(aotf.tokenise('a|b|c')).to.deep.equal(tokens)
+      expect(aotf.tokenise('~a/b//c')).to.deep.equal(tokens)
       tokens[aotf.cylcObjects.Namespace] = 'd'
-      expect(aotf.tokenise('a|b|c|d')).to.deep.equal(tokens)
+      expect(aotf.tokenise('~a/b//c/d')).to.deep.equal(tokens)
       tokens[aotf.cylcObjects.Job] = 'e'
-      expect(aotf.tokenise('a|b|c|d|e')).to.deep.equal(tokens)
+      expect(aotf.tokenise('~a/b//c/d/e')).to.deep.equal(tokens)
     })
   })
 
@@ -196,7 +196,7 @@ describe('aotf (Api On The Fly)', () => {
           ]
         }
       ]
-      const tokens = aotf.tokenise('a|b|c|d')
+      const tokens = aotf.tokenise('~a/b//c/d')
 
       // filter by an object no mutations operate on
       expect(
@@ -288,7 +288,7 @@ describe('aotf (Api On The Fly)', () => {
       // filter mutations from the context of the workflow
       const out1 = aotf.filterAssociations(
         aotf.cylcObjects.Workflow,
-        aotf.tokenise('a|b'),
+        aotf.tokenise('~a/b'),
         mutations
       )
       expect(
@@ -302,7 +302,7 @@ describe('aotf (Api On The Fly)', () => {
       // filter mutations from the context of a cycle point
       const out2 = aotf.filterAssociations(
         aotf.cylcObjects.Workflow,
-        aotf.tokenise('a|b|c'),
+        aotf.tokenise('~a/b//c'),
         mutations
       )
       expect(
@@ -600,11 +600,11 @@ describe('aotf (Api On The Fly)', () => {
             }
           ]
         }
-        const tokens = aotf.tokenise('a|b')
+        const tokens = aotf.tokenise('~a/b')
         expect(
           aotf.getMutationArgsFromTokens(mutation, tokens)
         ).to.deep.equal({
-          arg1: ['a|b'],
+          arg1: ['~a/b'],
           arg2: 42
         })
       })

@@ -45,8 +45,8 @@ describe('table', () => {
   describe('Mutations', () => {
     it('should set table', () => {
       const table = {
-        'cylc|cylc': {
-          id: 'cylc|cylc',
+        '~cylc/cylc': {
+          id: '~cylc/cylc',
           name: 'cylc'
         }
       }

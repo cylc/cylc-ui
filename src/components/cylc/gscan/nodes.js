@@ -17,6 +17,7 @@
 
 import { sortedIndexBy } from '@/components/cylc/common/sort'
 import { sortWorkflowNamePartNodeOrWorkflowNode } from '@/components/cylc/gscan/sort'
+import { Tokens } from '@/utils/uid'
 
 /**
  * @typedef {Object} WorkflowGScanNode
@@ -91,32 +92,34 @@ function createWorkflowNode (workflow, hierarchy) {
   if (!hierarchy) {
     return newWorkflowNode(workflow, null)
   }
-  const workflowIdParts = workflow.id.split('|')
-  // The prefix contains all the ID parts, except for the workflow name.
-  let prefix = workflowIdParts.slice(0, workflowIdParts.length - 1)
-  // The name is here.
-  const workflowName = workflow.name
-  const parts = workflowName.split('/')
-  // Returned node...
-  let rootNode = null
-  // And a helper used when iterating the array...
-  let currentNode = null
-  while (parts.length > 0) {
-    const part = parts.shift()
-    // For the first part, we need to add an ID separator `|`, but for the other parts
-    // we actually want to use the name parts separator `/`.
-    prefix = prefix.includes('/') ? `${prefix}/${part}` : `${prefix}|${part}`
-    const partNode = parts.length !== 0
-      ? newWorkflowPartNode(prefix, part)
-      : newWorkflowNode(workflow, part)
 
-    if (rootNode === null) {
-      rootNode = currentNode = partNode
-    } else {
-      currentNode.children.push(partNode)
-      currentNode = partNode
-    }
+  // obtain the workflow hierarchy
+  const workflowTokens = new Tokens(workflow.id)
+  const tokensList = workflowTokens.workflowHierarchy()
+
+  // iterate over down until the node above the workflow
+  const children = []
+  for (const [part, tokens] of tokensList.slice(0, -1)) {
+    children.push(
+      newWorkflowPartNode(tokens.workflow_id, part)
+    )
   }
+  const tokensThing = tokensList.slice(-1)[0]
+
+  // add the workflow to the bottom
+  children.push(
+    newWorkflowNode(workflow, tokensThing[0])
+  )
+
+  // return the head node
+  let rootNode
+  if (children.length > 0) {
+    rootNode = children.shift()
+    rootNode.children = children
+  } else {
+    rootNode = children[0]
+  }
+
   return rootNode
 }
 

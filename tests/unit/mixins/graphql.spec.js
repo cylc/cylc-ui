@@ -46,7 +46,7 @@ describe('GraphQL mixin', () => {
     })
     const variables = component.vm.variables
     const expected = {
-      workflowId: `${user.owner}|${workflowName}`
+      workflowId: `~${user.owner}/${workflowName}`
     }
     expect(variables).to.deep.equal(expected)
   })
