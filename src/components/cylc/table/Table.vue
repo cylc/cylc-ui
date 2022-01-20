@@ -45,6 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               placeholder="Filter by task name"
               v-model.trim="tasksFilter.name"
               @keyup="filterTasks"
+              @click:clear="clearInput"
+              ref="filterNameInput"
             ></v-text-field>
           </v-col>
           <v-col
@@ -91,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
       <v-col
         cols="12"
-        class="overflow-y-scroll mh-100 position-relative hide-scroll-bars"
+        class="overflow-y-scroll mh-100 position-relative"
       >
         <v-container
           fluid
@@ -114,10 +116,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <th class="px-2" v-bind:key="header.id" v-for="(header) in headers">
                     <v-btn x-small plain @click="toggleColumnSort(header.text)" v-text="header.text"></v-btn>
                     <v-btn icon x-small class="v-data-table__expand-icon" @click="toggleColumnSortDirection(header.text)" v-if="sortBy.includes(header.text) && sortDesc[sortBy.indexOf(header.text)]">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-hidden="true" class="v-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>
+                      <v-icon>{{ icons.mdiArrowDown }}</v-icon>
                     </v-btn>
                     <v-btn icon x-small class="v-data-table__expand-icon v-data-table__expand-icon--active" @click="toggleColumnSortDirection(header.text)" v-if="sortBy.includes(header.text) && !sortDesc[sortBy.indexOf(header.text)]">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-hidden="true" class="v-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>
+                      <v-icon>{{ icons.mdiArrowDown }}</v-icon>
                     </v-btn>
                   </th>
                 </tr>
@@ -152,10 +154,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </td>
                 <td>
                   <v-btn icon class="v-data-table__expand-icon" @click="expanded.push(item)" v-if="item.jobs.length > 0 && !expanded.includes(item)">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-hidden="true" class="v-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>
+                    <v-icon>{{ icons.mdiChevronDown }}</v-icon>
                   </v-btn>
                   <v-btn icon class="v-data-table__expand-icon v-data-table__expand-icon--active" @click="expanded.splice(expanded.indexOf(item), 1)" v-if="item.jobs.length > 0 && expanded.includes(item)">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-hidden="true" class="v-icon__svg"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"></path></svg>
+                    <v-icon>{{ icons.mdiChevronDown }}</v-icon>
                   </v-btn>
                 </td>
                 <td>{{ item.node.cyclePoint }}</td>
@@ -213,6 +215,7 @@ import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 import cloneDeep from 'lodash/cloneDeep'
 import { taskStartTime, taskEstimatedDuration } from '@/utils/tasks'
+import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
 
 export default {
   name: 'TableComponent',
@@ -232,6 +235,10 @@ export default {
   },
   data () {
     return {
+      icons: {
+        mdiChevronDown,
+        mdiArrowDown
+      },
       sortBy: [],
       sortDesc: [],
       expanded: [],
@@ -362,7 +369,7 @@ export default {
     toggleColumnSort (headingText) {
       if (this.sortBy.indexOf(headingText) < 0) {
         this.sortBy.push(headingText)
-        this.sortDesc.push(true)
+        this.sortDesc.push(false)
       } else {
         this.sortBy.splice(this.sortBy.indexOf(headingText), 1)
         this.sortDesc.splice(this.sortBy.indexOf(headingText), 1)
@@ -395,6 +402,11 @@ export default {
       } else {
         this.activeFilters = null
       }
+    },
+    clearInput (event) {
+      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
+      this.tasksFilter.name = null
+      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
     },
     taskStartTime,
     taskEstimatedDuration

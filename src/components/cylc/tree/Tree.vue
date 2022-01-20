@@ -47,6 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               placeholder="Filter by task name"
               v-model="tasksFilter.name"
               @keyup="filterTasks"
+              @click:clear="clearInput"
+              ref="filterNameInput"
             ></v-text-field>
           </v-col>
           <v-col
@@ -127,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
       <v-col
         cols="12"
-        class="overflow-y-scroll mh-100 position-relative hide-scroll-bars"
+        class="overflow-y-scroll mh-100 position-relative"
       >
         <v-container
             fluid
@@ -258,6 +260,11 @@ export default {
         this.removeAllFilters()
         this.activeFilters = null
       }
+    },
+    clearInput (event) {
+      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
+      this.tasksFilter.name = null
+      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
     },
     filterNodes (nodes) {
       for (const node of nodes) {
