@@ -115,74 +115,117 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-slot:node="scope">
             <v-list-item
               :to="workflowLink(scope.node)"
-              :class="getWorkflowClass(scope.node.node)"
+              :class="shouldHideDropdown(scope)"
             >
-              <v-list-item-title>
-                <v-layout align-center align-content-center d-flex flex-nowrap>
-                  <v-flex
-                    v-if="scope.node.type === 'workflow-name-part'"
-                    class="c-gscan-workflow-name"
-                  >
-                    <span>{{ scope.node.node.name || scope.node.id }}</span>
-                  </v-flex>
-                  <v-flex
-                    v-else-if="scope.node.type === 'workflow'"
-                    class="c-gscan-workflow-name"
-                  >
-                    <span class="mr-2">
-                      <workflow-icon
-                        :status="scope.node.node.status"
-                        :statusMsg="scope.node.node.statusMsg"
-                      />
-                    </span>
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <span v-on="on">{{ scope.node.name }}</span>
-                      </template>
-                      <span>{{ scope.node.id }}</span>
-                    </v-tooltip>
-                  </v-flex>
-                  <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
-                  <v-flex
-                    v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
-                    class="text-right c-gscan-workflow-states"
-                  >
-                    <!-- task summary tooltips -->
-                    <span
-                      v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.node.latestStateTasks))"
-                      :key="`${scope.node.id}-summary-${state}`"
-                      :class="getTaskStateClasses(scope.node.node, state)"
+              <div>
+                <v-list-item-title>
+                  <v-layout align-center align-content-center d-flex flex-nowrap>
+                    <v-flex
+                      v-if="scope.node.type === 'workflow-name-part'"
+                      class="c-gscan-workflow-name"
                     >
-                    <v-tooltip color="black" top>
-                      <template v-slot:activator="{ on }">
-                        <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
-                        <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
-                        <v-btn
-                          v-on="on"
-                          class="ma-0 pa-0"
-                          min-width="0"
-                          min-height="0"
-                          style="font-size: 120%; width: auto"
-                          :ripple="false"
-                          dark
-                          icon
+                      <span v-if="scope.node.child" class="mr-2">
+                        <workflow-icon
+                          :status="scope.node.child.node.status"
+                          :statusMsg="scope.node.child.node.statusMsg"
+                        />
+                      </span>
+                      <span>{{ scope.node.node.name || scope.node.id }}</span>
+                      <span v-if="scope.node.child && scope.node.child.node.latestStateTasks">
+                        <span
+                          v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.child.node.latestStateTasks))"
+                          :key="`${scope.node.id}-summary-${state}`"
+                          :class="getTaskStateClasses(scope.node.child.node, state)"
                         >
-                          <job :status="state" />
-                        </v-btn>
-                      </template>
-                      <!-- tooltip text -->
-                      <span>
-                        <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
-                        <br/>
-                        <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
-                          {{ task }}<br v-if="index !== tasks.length -1" />
+                          <v-tooltip color="black" top>
+                            <template v-slot:activator="{ on }">
+                              <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
+                              <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                              <v-btn
+                                v-on="on"
+                                class="ma-0 pa-0"
+                                min-width="0"
+                                min-height="0"
+                                style="font-size: 120%; width: auto"
+                                :ripple="false"
+                                dark
+                                icon
+                              >
+                                <job :status="state" />
+                              </v-btn>
+                            </template>
+                            <!-- tooltip text -->
+                            <span>
+                              <span class="grey--text">{{ countTasksInState(scope.node.child.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                              <br/>
+                              <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
+                                {{ task }}<br v-if="index !== tasks.length -1" />
+                              </span>
+                            </span>
+                          </v-tooltip>
                         </span>
                       </span>
-                    </v-tooltip>
-                  </span>
-                  </v-flex>
-                </v-layout>
-              </v-list-item-title>
+                    </v-flex>
+                    <v-flex
+                      v-else-if="scope.node.type === 'workflow'"
+                      class="c-gscan-workflow-name"
+                    >
+                      <span class="mr-2">
+                        <workflow-icon
+                          :status="scope.node.node.status"
+                          :statusMsg="scope.node.node.statusMsg"
+                        />
+                      </span>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <span v-on="on">{{ scope.node.name }}</span>
+                        </template>
+                        <span>{{ scope.node.id }}</span>
+                      </v-tooltip>
+                    </v-flex>
+                    <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
+                    <v-flex
+                      v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
+                      class="text-right c-gscan-workflow-states"
+                    >
+                      <!-- task summary tooltips -->
+                      <span
+                        v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.node.latestStateTasks))"
+                        :key="`${scope.node.id}-summary-${state}`"
+                        :class="getTaskStateClasses(scope.node.node, state)"
+                      >
+                      <v-tooltip color="black" top>
+                        <template v-slot:activator="{ on }">
+                          <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
+                          <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                          <v-btn
+                            v-on="on"
+                            class="ma-0 pa-0"
+                            min-width="0"
+                            min-height="0"
+                            style="font-size: 120%; width: auto"
+                            :ripple="false"
+                            dark
+                            icon
+                          >
+                            <job :status="state" />
+                          </v-btn>
+                        </template>
+                        <!-- tooltip text -->
+                        <span>
+                          <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                          <br/>
+                          <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
+                            {{ task }}<br v-if="index !== tasks.length -1" />
+                          </span>
+                        </span>
+                      </v-tooltip>
+                    </span>
+                    </v-flex>
+                  </v-layout>
+                </v-list-item-title>
+              </div>
+
             </v-list-item>
           </template>
         </tree>
@@ -378,7 +421,9 @@ export default {
         'c-workflow-stopped': node && node.status && node.status === WorkflowState.STOPPED.name
       }
     },
-
+    shouldHideDropdown (scope) {
+      return scope.node.child ? ' hide-dropdown' : ''
+    },
     filterHierarchically,
 
     /**

@@ -121,5 +121,17 @@ export function filterHierarchically (workflows, name, workflowStates, taskState
     }
     return result
   }
-  return workflows.reduce(filterChildren, [])
+  const returnedArray = workflows.reduce(filterChildren, [])
+  returnedArray.map(workflow => {
+    // this is needed in cases where we only have one child so we can display the menu as 'collapsed'
+    if (workflow.children.length === 1) {
+      workflow.node.name = (workflow.node.name || workflow.node.id) + '/' + workflow.children[0].name
+      if (workflow.children[0]) {
+        workflow.child = workflow.children[0]
+        workflow.children = []
+      }
+    }
+    return workflow
+  })
+  return returnedArray
 }
