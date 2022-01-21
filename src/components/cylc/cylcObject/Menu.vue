@@ -200,6 +200,10 @@ export default {
     },
     typeAndStatusText () {
       let ret = this.type
+      if (ret === 'task' && !('isHeld' in this.node)) {
+        // TODO: better way of checking if a 'task' is actually a family?
+        ret = 'family'
+      }
       if (ret !== 'workflow') {
         ret += ' - '
         ret += this.node.state || 'state unknown'
