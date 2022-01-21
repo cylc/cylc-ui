@@ -61,8 +61,8 @@ const RULES = {
     // PERMIT [a][b]c, a, [a] PROHIBIT a[b], [b]a, a], ]a
     x => Boolean(!x || x.match(/^((\[[^=\]]+\])+)?([^[=\]-]+)?$/)) || 'Invalid',
   taskID:
-    // PERMIT A.1 PROHIBIT a
-    x => Boolean(!x || x.match(/^(.){1,}\.(.){1,}$/)) || 'Invalid'
+    // PERMIT 1/a PROHIBIT a, 1
+    x => Boolean(!x || x.match(/^(.){1,}\/(.){1,}$/)) || 'Invalid'
 }
 
 export default {
@@ -140,7 +140,7 @@ export default {
     },
     TaskID: {
       is: VTextField,
-      placeholder: 'name.cycle',
+      placeholder: 'cycle/task',
       rules: [
         RULES.noSpaces,
         RULES.taskID
@@ -154,7 +154,7 @@ export default {
     },
     NamespaceIDGlob: {
       is: VTextField,
-      placeholder: 'name[.cycle][:status]',
+      placeholder: 'cycle[/task][:status]',
       rules: [
         RULES.noSpaces
       ]
