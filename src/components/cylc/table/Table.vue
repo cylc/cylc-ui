@@ -120,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div class="d-flex align-content-center flex-nowrap">
               <div class="mr-1">
                 <Task
-                  v-cylc-object="item.id"
+                  v-cylc-object="item.node"
                   :status="item.node.state"
                   :isHeld="item.node.isHeld"
                   :isQueued="item.node.isQueued"
