@@ -129,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
       <v-col
         cols="12"
-        class="overflow-y-scroll mh-100 position-relative"
+        class="mh-100 position-relative"
       >
         <v-container
             fluid
