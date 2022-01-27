@@ -22,6 +22,9 @@ Convert to use the new Cylc "Universal Identifier".
 [#873](https://github.com/cylc/cylc-ui/pull/873) - Header now displays hostname
 rather than 'development'.
 
+[#891](https://github.com/cylc/cylc-ui/pull/891) - Clicking on cycles, tasks
+or jobs now shows the relevant ID and status.
+
 [#839](https://github.com/cylc/cylc-ui/pull/839) - Appearance improvements.
 
 -------------------------------------------------------------------------------
