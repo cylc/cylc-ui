@@ -25,44 +25,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     persistent
     class="fill-height"
   >
-    <v-list
-      class="pa-0 ma-0"
-    >
-      <c-header :user="user.username" />
-      <v-list-item
-        v-if="responsive"
+    <div class="d-flex flex-column h-100">
+      <v-list
+        class="pa-0 ma-0 flex-grow-0 d-flex flex-column"
       >
-        <v-text-field
-          class="purple-input search-input"
-          label="Search..."
-          color="purple"
-        />
-      </v-list-item>
+        <c-header class="pb-5" :user="user.username" />
+        <v-list-item
+          v-if="responsive"
+        >
+          <v-text-field
+            class="purple-input search-input"
+            label="Search..."
+            color="purple"
+          />
+        </v-list-item>
 
-      <v-list-item
-        to="/"
-        active-class="primary grey--text text--darken-3"
-        class="v-list-item"
+        <v-list-item
+          to="/"
+          active-class="primary grey--text text--darken-3"
+        >
+          <v-list-item-action>
+            <v-icon>{{ svgPaths.home }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-title>Dashboard</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item
+          to="/graphiql"
+          active-class="primary grey--text text--darken-3"
+          class="v-list-item"
+        >
+          <v-list-item-action>
+            <v-icon>{{ svgPaths.graphql }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-title>GraphiQL</v-list-item-title>
+        </v-list-item>
+        <v-divider class="" />
+        <v-subheader class="py-3">Workflows</v-subheader>
+      </v-list>
+
+      <v-list
+        class="pa-0 ma-0 flex-grow-1 d-flex flex-column"
       >
-        <v-list-item-action>
-          <v-icon>{{ svgPaths.home }}</v-icon>
-        </v-list-item-action>
-        <v-list-item-title>Dashboard</v-list-item-title>
-      </v-list-item>
-      <v-list-item
-        to="/graphiql"
-        active-class="primary grey--text text--darken-3"
-        class="v-list-item"
-      >
-        <v-list-item-action>
-          <v-icon>{{ svgPaths.graphql }}</v-icon>
-        </v-list-item-action>
-        <v-list-item-title>GraphiQL</v-list-item-title>
-      </v-list-item>
-      <v-divider />
-      <v-subheader>Workflows</v-subheader>
-      <g-scan />
-    </v-list>
+        <g-scan class="h-100" />
+      </v-list>
+    </div>
     <template v-slot:append>
       <div class="px-4 py-2 d-flex justify-center">
         <span class="grey--text text--darken-2">

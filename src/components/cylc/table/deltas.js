@@ -25,11 +25,11 @@ function init (deltas, table) {
   }
   for (const taskProxy of deltas.taskProxies) {
     try {
-      // const latestJob = jobs.find(job => job.node.firstParent.id === taskProxy.id)
       Vue.set(table, taskProxy.id, {
         id: taskProxy.id,
         node: deltas.globalLookup[taskProxy.id].node,
-        latestJob: {}
+        latestJob: {},
+        jobs: []
       })
     } catch (error) {
       result.errors.push([
@@ -51,6 +51,9 @@ function init (deltas, table) {
           ? deltas.globalLookup[jobHandle.id].node
           : existingEntry.latestJob
         Vue.set(existingEntry, 'latestJob', latestJob)
+        // ether way we want a reference to this job for the table view so add it to the list
+        existingEntry.jobs.push(deltas.globalLookup[jobHandle.id].node)
+        Vue.set(existingEntry, 'jobs', existingEntry.jobs)
       }
     } catch (error) {
       result.errors.push([
@@ -109,7 +112,8 @@ function applyDeltasAdded (added, table, lookup) {
         Vue.set(table, taskProxy.id, {
           id: taskProxy.id,
           node: lookup[taskProxy.id],
-          latestJob: {}
+          latestJob: {},
+          jobs: []
         })
       } catch (error) {
         result.errors.push([
@@ -133,6 +137,8 @@ function applyDeltasAdded (added, table, lookup) {
             ? lookup[job.id]
             : existingEntry.latestJob
           Vue.set(existingEntry, 'latestJob', latestJob)
+          existingEntry.jobs.push(latestJob)
+          Vue.set(existingEntry, 'jobs', existingEntry.jobs)
         }
       } catch (error) {
         result.errors.push([
@@ -187,6 +193,9 @@ function applyDeltasUpdated (updated, table, lookup) {
           if (existingTask && existingTask.latestJob.id === job.id) {
             mergeWith(existingTask.latestJob, job, mergeWithCustomizer)
           }
+          if (existingTask.jobs.indexOf(job) > -1) {
+            mergeWith(existingTask.jobs[existingTask.jobs.indexOf(job)], job, mergeWithCustomizer)
+          }
         }
       } catch (error) {
         result.errors.push([
@@ -225,8 +234,14 @@ function applyDeltasPruned (pruned, table, lookup) {
       // TODO: should we use an internal lookup for table too? To replace this loop by a quick O(1) operation
       //       to fetch the existing job with its ID, and then its existing parent task?
       const parentTask = Object.values(table).find(entry => entry.latestJob && entry.latestJob.id === jobId)
-      if (parentTask && parentTask.latestJob) {
-        Vue.set(parentTask, 'latestJob', {})
+      if (parentTask) {
+        if (parentTask.latestJob) {
+          Vue.set(parentTask, 'latestJob', {})
+        }
+        const parentsJobsReferenceIndex = parentTask.jobs.findIndex(job => job.id === jobId)
+        if (parentsJobsReferenceIndex) {
+          Vue.set(parentTask, 'jobs', parentTask.jobs.splice(parentsJobsReferenceIndex, 1))
+        }
       }
     })
   }

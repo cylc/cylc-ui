@@ -17,12 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-    class="ma-0 pa-0"
+    fluid
+    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
   >
     <!-- Toolbar -->
     <v-row
-      no-gutters
-      class="d-flex flex-wrap"
+        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
     >
       <!-- Filters -->
       <v-col
@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <v-col
             cols="12"
-            md="5"
+            md="6"
             class="pr-md-2 mb-2 mb-md-0"
           >
             <v-text-field
@@ -46,12 +46,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               outlined
               placeholder="Filter by task name"
               v-model="tasksFilter.name"
+              @keyup="filterTasks"
+              @click:clear="clearInput"
+              ref="filterNameInput"
             ></v-text-field>
           </v-col>
           <v-col
             cols="12"
-            md="5"
-            class="pr-md-2 mb-2 mb-md-0"
+            md="6"
+            class="mb-2 mb-md-0"
           >
             <v-select
               id="c-tree-filter-task-states"
@@ -64,6 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               outlined
               placeholder="Filter by task state"
               v-model="tasksFilter.states"
+              @change="filterTasks"
             >
               <template v-slot:item="slotProps">
                 <Task :status="slotProps.item.value"/>
@@ -81,19 +85,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </span>
               </template>
             </v-select>
-          </v-col>
-          <v-col
-            cols="12"
-            md="2">
-            <!-- TODO: we shouldn't need to set the height (px) here, but for some reason the Vuetify
-                       components don't seem to agree on the height here -->
-            <v-btn
-              id="c-tree-filter-btn"
-              height="40"
-              block
-              outlined
-              @click="filterTasks"
-            >Filter</v-btn>
           </v-col>
         </v-row>
       </v-col>
@@ -132,25 +123,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </v-col>
     </v-row>
-    <!-- Tree component -->
     <v-row
       no-gutters
+      class="flex-grow-1 position-relative"
       >
-      <!-- each workflow is a tree root -->
-      <tree-item
-        v-for="workflow of workflows"
-        :key="workflow.id"
-        :node="workflow"
-        :hoverable="hoverable"
-        :initialExpanded="expanded"
-        v-on:tree-item-created="onTreeItemCreated"
-        v-on:tree-item-destroyed="onTreeItemDestroyed"
-        v-on:tree-item-expanded="onTreeItemExpanded"
-        v-on:tree-item-collapsed="onTreeItemCollapsed"
-        v-on:tree-item-clicked="onTreeItemClicked"
+      <v-col
+        cols="12"
+        class="mh-100 position-relative"
       >
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
-      </tree-item>
+        <v-container
+            fluid
+          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
+        >
+          <tree-item
+            v-for="workflow of workflows"
+            :key="workflow.id"
+            :node="workflow"
+            :hoverable="hoverable"
+            :initialExpanded="expanded"
+            v-on:tree-item-created="onTreeItemCreated"
+            v-on:tree-item-destroyed="onTreeItemDestroyed"
+            v-on:tree-item-expanded="onTreeItemExpanded"
+            v-on:tree-item-collapsed="onTreeItemCollapsed"
+            v-on:tree-item-clicked="onTreeItemClicked"
+          >
+            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
+          </tree-item>
+        </v-container>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -260,6 +260,11 @@ export default {
         this.removeAllFilters()
         this.activeFilters = null
       }
+    },
+    clearInput (event) {
+      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
+      this.tasksFilter.name = null
+      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
     },
     filterNodes (nodes) {
       for (const node of nodes) {

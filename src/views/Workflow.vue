@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <component
             :is="view"
             :workflow-name="workflowName"
+              class="h-100"
           />
         </v-skeleton-loader>
       </lumino>
