@@ -10,12 +10,19 @@ release.
 
 ### Enhancements
 
+[#672](https://github.com/cylc/cylc-ui/pull/672),
+[#861](https://github.com/cylc/cylc-ui/pull/861) - Added the workflow table view.
+
+[#861](https://github.com/cylc/cylc-ui/pull/861) - Instant task filtering in
+the workflow tree and table views.
+
 [#876](https://github.com/cylc/cylc-ui/pull/876) -
 Convert to use the new Cylc "Universal Identifier".
 
 [#873](https://github.com/cylc/cylc-ui/pull/873) - Header now displays hostname
 rather than 'development'.
 
+[#839](https://github.com/cylc/cylc-ui/pull/839) - Appearance improvements.
 
 -------------------------------------------------------------------------------
 ## __cylc-ui-0.6 (<span actions:bind='release-date'>Released 2021-11-10</span>)__
@@ -35,6 +42,9 @@ mutations in the menu.
 [#749](https://github.com/cylc/cylc-ui/pull/749)
 & [#834](https://github.com/cylc/cylc-ui/issues/834)
 - Miscellaneous improvements to the processing of delta updates.
+
+[#731](https://github.com/cylc/cylc-ui/pull/731),
+[#810](https://github.com/cylc/cylc-ui/pull/810) - Appearance improvements.
 
 ### Fixes
 
