@@ -20,10 +20,12 @@ describe('CylcObject Menu component', () => {
     cy.visit('/#/workflows/one')
 
     cy
-      // it should not by displayed on load
+      // wait for view to load
+      .get('.c-interactive:first')
+
+      // menu should not by displayed on load
       .get('.c-mutation-menu:first')
-      .children()
-      .should('have.length', 0)
+      .should('not.exist')
 
       // click on the first interactive thing
       .get('.c-interactive:first')

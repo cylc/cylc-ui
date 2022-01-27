@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- dropdown menu -->
     <v-menu
       offset-y
-      class="c-mutation-menu"
+      content-class="c-mutation-menu"
       v-model="showMenu"
       :position-x="x"
       :position-y="y"
