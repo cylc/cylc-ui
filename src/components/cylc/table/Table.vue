@@ -145,6 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </div>
                     <div class="mr-1">
                       <Job
+                        v-cylc-object="item.node"
                         :status="item.node.state"
                         :previous-state="item.jobs.length > 1 ? item.jobs[1].state : ''"
                       />
@@ -179,8 +180,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td>
                   <div class="d-flex align-content-center flex-nowrap">
                     <div class="mr-1">
-                      <job
-                        v-cylc-object="job.node"
+                      <Job
+                        v-cylc-object="job"
                         :key="`${job.id}-summary-${index}`"
                         :status="job.state"
                         style="margin-left: 1.3em;"
