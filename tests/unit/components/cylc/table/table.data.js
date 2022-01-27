@@ -37,7 +37,8 @@ const simpleTableTasks = [
       startedTime: new Date(),
       finishedTime: null,
       state: JobState.RUNNING.name
-    }
+    },
+    jobs: []
   },
   {
     id: BASE_TOKENS.clone({ task: 'taskB' }).id,
@@ -46,7 +47,8 @@ const simpleTableTasks = [
       state: TaskState.WAITING.name,
       name: 'taskB'
     },
-    latestJob: {}
+    latestJob: {},
+    jobs: []
   },
   {
     id: BASE_TOKENS.clone({ task: 'taskC' }).id,
@@ -55,7 +57,8 @@ const simpleTableTasks = [
       state: TaskState.SUBMITTED.name,
       name: 'taskC'
     },
-    latestJob: {}
+    latestJob: {},
+    jobs: []
   }
 ]
 

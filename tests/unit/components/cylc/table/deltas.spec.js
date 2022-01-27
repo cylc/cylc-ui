@@ -225,7 +225,8 @@ describe('Deltas', () => {
             firstParent: {
               id: i
             }
-          }
+          },
+          jobs: []
         }
       })
     })
@@ -314,7 +315,8 @@ describe('Deltas', () => {
         table[i] = {
           id: i,
           node: taskProxy,
-          latestJob: job
+          latestJob: job,
+          jobs: []
         }
       })
     })

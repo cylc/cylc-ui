@@ -16,14 +16,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
   <div
-    class="c-gscan"
+    class="c-gscan h-100"
   >
     <v-skeleton-loader
       :loading="isLoading"
       type="list-item-three-line"
+      class=" d-flex flex-column h-100"
     >
       <!-- filters -->
-      <div class="d-flex flex-row mx-4 mb-2">
+      <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
         <v-text-field
           v-model="searchWorkflows"
           clearable
@@ -103,7 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- data -->
       <div
         v-if="!isLoading && filteredWorkflows && filteredWorkflows.length > 0"
-        class="c-gscan-workflows"
+        class="c-gscan-workflows flex-grow-1"
       >
         <tree
           :filterable="false"

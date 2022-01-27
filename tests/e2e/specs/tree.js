@@ -215,9 +215,6 @@ describe('Tree view', () => {
         .get('#c-tree-filter-task-name')
         .type('eep')
       cy
-        .get('#c-tree-filter-btn')
-        .click()
-      cy
         .get('.node-data-task-proxy')
         .contains('sleepy')
         .should('be.visible')
@@ -239,9 +236,6 @@ describe('Tree view', () => {
         .get('.v-list-item')
         .contains(TaskState.RUNNING.name)
         .click({ force: true })
-      cy
-        .get('#c-tree-filter-btn')
-        .click()
       cy
         .get('.node-data-task-proxy')
         .contains(TaskState.FAILED.name)
@@ -268,9 +262,6 @@ describe('Tree view', () => {
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
         .click({ force: true })
-      cy
-        .get('#c-tree-filter-btn')
-        .click()
       cy
         .get('.node-data-task-proxy:visible')
         .should('have.length', 1)

@@ -16,9 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div>
+  <div class="h-100">
     <CylcObjectMenu />
-    <div class="c-table">
+    <div class="c-table h-100">
       <table-component
         :tasks="tasks"
         ref="table0"
