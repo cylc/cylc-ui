@@ -71,7 +71,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.3",
     "babel-plugin-istanbul": "^6.1.1",
-    "bufferutil": "^4.0.5",
+    "bufferutil": "^4.0.6",
     "chai": "^4.3.4",
     "circular-dependency-plugin": "^5.2.2",
     "concurrently": "^6.3.0",
