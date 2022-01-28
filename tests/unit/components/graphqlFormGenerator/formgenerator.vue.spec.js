@@ -293,25 +293,25 @@ describe('FormGenerator Component', () => {
           expect(wrapper.vm.shortDescription).to.equal(desc)
         })
       })
-      describe('.longDescription', () => {
+      describe('.extendedDescription', () => {
         it('should be empty', () => {
-          expect(wrapper.vm.longDescription).to.equal('')
+          expect(wrapper.vm.extendedDescription).to.equal('')
         })
       })
     })
     describe('For a multiline description', () => {
       const shortDesc = 'Darmok and Jalad at\nTanagra.'
-      const longDesc = 'Shaka when the\nwalls fell.\n\nTemba, his arms wide.'
-      const desc = `${shortDesc}\n\n${longDesc}`
+      const extendedDesc = 'Shaka when the\nwalls fell.\n\nTemba, his arms wide.'
+      const desc = `${shortDesc}\n\n${extendedDesc}`
       const wrapper = mountWithDescription(desc)
       describe('.shortDescription', () => {
         it('should be the bit before the first double newline', () => {
           expect(wrapper.vm.shortDescription).to.equal(shortDesc)
         })
       })
-      describe('.longDescription', () => {
+      describe('.extendedDescription', () => {
         it('should be everything after the first double newline', () => {
-          expect(wrapper.vm.longDescription).to.equal(longDesc)
+          expect(wrapper.vm.extendedDescription).to.equal(extendedDesc)
         })
       })
     })

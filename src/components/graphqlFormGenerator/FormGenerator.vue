@@ -31,13 +31,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-expansion-panels
      accordion
      flat
-     v-bind="longDescription ? { hover: true } : { readonly: true }"
+     v-bind="extendedDescription ? { hover: true } : { readonly: true }"
     >
       <v-expansion-panel
         class="mutation-desc"
       >
         <v-expansion-panel-header
-          v-bind="longDescription ? {} : {
+          v-bind="extendedDescription ? {} : {
             expandIcon: null,
             style: {
               cursor: 'default'
@@ -50,10 +50,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           />
         </v-expansion-panel-header>
         <v-expansion-panel-content
-          v-if="longDescription"
+          v-if="extendedDescription"
         >
           <vue-markdown
-           :source="longDescription"
+           :source="extendedDescription"
            :breaks="false"
           />
         </v-expansion-panel-content>
@@ -108,7 +108,11 @@ import cloneDeep from 'lodash/cloneDeep'
 import { mdiHelpCircleOutline } from '@mdi/js'
 
 import FormInput from '@/components/graphqlFormGenerator/FormInput'
-import { getNullValue } from '@/utils/aotf'
+import {
+  getNullValue,
+  getMutationShortDesc,
+  getMutationExtendedDesc
+} from '@/utils/aotf'
 
 export default {
   name: 'form-generator',
@@ -163,11 +167,11 @@ export default {
 
     /* Return the first line of the description. */
     shortDescription () {
-      return this.mutation.description?.split('\n\n', 1)[0] || ''
+      return getMutationShortDesc(this.mutation.description)
     },
     /* Return the subsequent lines of the description */
-    longDescription () {
-      return this.mutation.description?.split('\n\n').slice(1).join('\n\n')
+    extendedDescription () {
+      return getMutationExtendedDesc(this.mutation.description)
     }
   },
 

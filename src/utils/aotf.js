@@ -269,15 +269,35 @@ export function camelToWords (camel) {
  * @param {object} types - Types as returned by introspection query.
  */
 export function processMutations (mutations, types) {
-  let descLines = null
   for (const mutation of mutations) {
-    descLines = mutation.description.split(/\n+/)
     mutation._title = camelToWords(mutation.name)
     mutation._icon = mutationIcons[mutation.name] || mutationIcons['']
-    mutation._shortDescription = descLines[0]
-    mutation._help = descLines.slice(1).join('\n')
+    mutation._shortDescription = getMutationShortDesc(mutation.description)
+    mutation._help = getMutationExtendedDesc(mutation.description)
     processArguments(mutation, types)
   }
+}
+
+/**
+ * Get the first part of a mutation description (up to the first double newline).
+ *
+ * @export
+ * @param {str|undefined} text - Full mutation description.
+ * @return {str}
+ */
+export function getMutationShortDesc (text) {
+  return text?.split('\n\n', 1)[0] || ''
+}
+
+/**
+ * Get the rest of a mutation description (after the first double newline).
+ *
+ * @export
+ * @param {str|undefined} text - Full mutation description.
+ * @return {str|undefined}
+ */
+export function getMutationExtendedDesc (text) {
+  return text?.split('\n\n').slice(1).join('\n\n')
 }
 
 /* Add special fields to mutations args from a GraphQL introspection query. */
