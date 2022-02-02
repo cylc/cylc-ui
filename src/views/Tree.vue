@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <CylcObjectMenu />
     <div class="c-tree pa-2 h-100">
       <tree-component
         :workflows="workflows"
@@ -41,7 +40,6 @@ import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import WorkflowCallback from '@/components/cylc/common/callbacks'
-import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
 import TreeComponent from '@/components/cylc/tree/Tree'
 import TreeCallback from '@/components/cylc/tree/callbacks'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
@@ -55,7 +53,6 @@ export default {
   ],
   name: 'Tree',
   components: {
-    CylcObjectMenu,
     TreeComponent
   },
   metaInfo () {
