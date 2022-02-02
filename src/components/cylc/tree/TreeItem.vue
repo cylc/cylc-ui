@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot name="cyclepoint" v-if="node.type === 'cyclepoint'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <task
-            v-cylc-object="node.node.id"
+            v-cylc-object="node.node"
             :key="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot name="family-proxy" v-else-if="node.type === 'family-proxy'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <task
-            v-cylc-object="node.node.id"
+            v-cylc-object="node.node"
             :key="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <!-- Task summary -->
           <task
-            v-cylc-object="node.node.id"
+            v-cylc-object="node.node"
             :key="node.node.id"
             :status="node.node.state"
             :isHeld="node.node.isHeld"
@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!-- most recent job summary -->
             <job
               v-for="(job, index) in node.children.slice(0, 1)"
-              v-cylc-object="job.id"
+              v-cylc-object="job.node"
               :key="`${job.id}-summary-${index}`"
               :status="job.node.state"
               :previous-state="node.children.length > 1 ? node.children[1].node.state : ''"
@@ -90,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot name="job" v-else-if="node.type === 'job'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <job
-            v-cylc-object="node.node.id"
+            v-cylc-object="node.node"
             :key="node.node.id"
             :status="node.node.state"
           />

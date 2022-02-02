@@ -19,7 +19,6 @@
 
 @import "cylc/variables";
 
-@import "cylc/aotf";
 @import "cylc/dashboard";
 @import "cylc/drawer";
 @import "cylc/gscan";
@@ -34,6 +33,7 @@
 @import "cylc/workflow";
 @import "cylc/tooltip";
 @import "cylc/mutation_form";
+@import "cylc/menu";
 
 .theme--light.v-application {
   background-color: transparent;

@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-icon
         id="workflow-mutate-button"
         color="#5E5E5E"
-        v-cylc-object="currentWorkflow.id"
+        v-cylc-object="currentWorkflow"
       >
         {{ svgPaths.menu }}
       </v-icon>

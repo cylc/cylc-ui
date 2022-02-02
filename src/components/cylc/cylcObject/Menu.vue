@@ -20,63 +20,73 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- dropdown menu -->
     <v-menu
       offset-y
-      class="c-mutation-menu"
+      content-class="c-mutation-menu"
       v-model="showMenu"
       :position-x="x"
       :position-y="y"
-      v-on:show-mutations-menu="showMutationsMenu"
+      @show-mutations-menu="showMutationsMenu"
       :disabled="!interactive"
       @input="closeMenu"
+      dark
     >
-      <v-list
-        dark
-        class="c-mutation-menu-list"
-      >
-        <v-list-item
-          v-for="[mutation, requiresInfo, authorised] in displayMutations"
-          :key="mutation.name"
-          :disabled=!authorised
-          @click.stop="enact(mutation, requiresInfo)"
-          class="c-mutation"
+      <v-card>
+        <v-card-title class="text-h6">
+          {{ id }}
+        </v-card-title>
+        <v-card-subtitle>
+          {{ typeAndStatusText }}
+        </v-card-subtitle>
+        <v-divider v-if="displayMutations.length"></v-divider>
+        <v-list
+          v-if="displayMutations.length"
+          class="c-mutation-menu-list"
         >
-          <v-list-item-avatar>
-            <v-icon :disabled=!authorised large>{{ mutation._icon }}</v-icon>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title v-html="mutation._title" />
-            <!--
-            don't use v-list-item-description here, vuetify will standardise
-            line heights and cuts off text that overspills this way we can
-            have the required number of lines of text.
-            -->
-            <span class="c-description">{{ mutation._shortDescription }}</span>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-icon
-             :disabled=!authorised
-             medium
-             class="float-right"
-             @click.stop="openDialog(mutation)"
-            >
-              {{ icons.pencil }}
-            </v-icon>
-          </v-list-item-action>
-        </v-list-item>
-        <v-list-item
-          v-if="canExpand"
-        >
-          <v-list-item-content
-            @click="expandCollapse"
-            @click.stop.prevent
+          <v-list-item
+            v-for="[mutation, requiresInfo, authorised] in displayMutations"
+            :key="mutation.name"
+            :disabled=!authorised
+            @click.stop="enact(mutation, requiresInfo)"
+            class="c-mutation"
           >
-            <v-btn id="less-more-button"
-              rounded
+            <v-list-item-avatar>
+              <v-icon :disabled=!authorised large>{{ mutation._icon }}</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title v-html="mutation._title" />
+              <!--
+              don't use v-list-item-description here, vuetify will standardise
+              line heights and cuts off text that overspills this way we can
+              have the required number of lines of text.
+              -->
+              <span class="c-description">{{ mutation._shortDescription }}</span>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-icon
+                :disabled=!authorised
+                medium
+                class="float-right"
+                @click.stop="openDialog(mutation)"
+              >
+                {{ icons.pencil }}
+              </v-icon>
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item
+            v-if="canExpand"
+          >
+            <v-list-item-content
+              @click="expandCollapse"
+              @click.stop.prevent
             >
-              {{ expanded ? 'See Less' : 'See More' }}
-            </v-btn>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+              <v-btn id="less-more-button"
+                rounded
+              >
+                {{ expanded ? 'See Less' : 'See More' }}
+              </v-btn>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
     </v-menu>
     <v-dialog
       v-model="dialog"
@@ -127,10 +137,12 @@ export default {
       dialogMutation: null,
       expanded: false,
       id: '',
+      node: {},
       mutations: [],
       showMenu: false,
       tokens: [],
       types: [],
+      type: '',
       x: 0,
       y: 0,
       icons: {
@@ -185,6 +197,27 @@ export default {
         )
       }
       return this.authorizedMutations
+    },
+    typeAndStatusText () {
+      let ret = this.type
+      if (ret === 'task' && !('isHeld' in this.node)) {
+        // TODO: better way of checking if a 'task' is actually a family?
+        ret = 'family'
+      }
+      if (ret !== 'workflow') {
+        ret += ' - '
+        ret += this.node.state || 'state unknown'
+        if (this.node.isHeld) {
+          ret += ' (held)'
+        }
+        if (this.node.isQueued) {
+          ret += ' (queued)'
+        }
+        if (this.node.isRunahead) {
+          ret += ' (runahead)'
+        }
+      }
+      return ret
     }
   },
 
@@ -219,11 +252,12 @@ export default {
       this.showMenu = false
     },
 
-    showMutationsMenu ({ id, type, types, tokens, mutations, event }) {
+    showMutationsMenu ({ id, type, types, tokens, mutations, node, event }) {
       this.id = id
       this.type = type
       this.types = types
       this.tokens = tokens
+      this.node = node
       this.mutations = mutations.sort(
         (a, b) => a[0].name.localeCompare(b[0].name)
       )
