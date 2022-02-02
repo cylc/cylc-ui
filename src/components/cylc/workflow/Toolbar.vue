@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- burger button for mobile -->
     <v-btn
       v-if="responsive"
-      dark
       icon
       @click.stop="onClickBtn"
       class="default v-btn--simple"
