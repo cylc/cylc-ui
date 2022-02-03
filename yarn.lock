@@ -4802,12 +4802,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.24.0":
-  version: 0.24.0
-  resolution: "axios@npm:0.24.0"
+"axios@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "axios@npm:0.25.0"
   dependencies:
-    follow-redirects: ^1.14.4
-  checksum: 468cf496c08a6aadfb7e699bebdac02851e3043d4e7d282350804ea8900e30d368daa6e3cd4ab83b8ddb5a3b1e17a5a21ada13fc9cebd27b74828f47a4236316
+    follow-redirects: ^1.14.7
+  checksum: 2a8a3787c05f2a0c9c3878f49782357e2a9f38945b93018fb0c4fd788171c43dceefbb577988628e09fea53952744d1ecebde234b561f1e703aa43e0a598a3ad
   languageName: node
   linkType: hard
 
@@ -7216,7 +7216,7 @@ __metadata:
     "@vue/cli-service": ^4.5.13
     "@vue/test-utils": ^1.2.2
     autoprefixer: ^9.8.6
-    axios: ^0.24.0
+    axios: ^0.25.0
     axios-fetch: ^1.1.0
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.3
@@ -7250,7 +7250,6 @@ __metadata:
     istanbul-lib-coverage: ^3.0.0
     json-server: ^0.17.0
     lodash: ^4.17.21
-    markdown-it: ^12.1.0
     mitt: ^3.0.0
     nodemon: ^2.0.15
     nprogress: ^1.0.0-1
@@ -7273,7 +7272,7 @@ __metadata:
     vue-i18n: ^8.27.0
     vue-markdown: ^2.2.4
     vue-meta: ^2.4.0
-    vue-router: ^3.5.2
+    vue-router: ^3.5.3
     vue-spinner: ^1.0.4
     vue-template-compiler: ^2.6.14
     vue-the-mask: ^0.11.1
@@ -9386,13 +9385,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.4":
+"follow-redirects@npm:^1.0.0":
   version: 1.14.4
   resolution: "follow-redirects@npm:1.14.4"
   peerDependenciesMeta:
     debug:
       optional: true
   checksum: d4ce74cf5c6f363168b97e706b914eb9ffb6bf4d4c6d8f8330b93088d9b90e566611ddbcf0e42c8ed5fd17598dfeda1d19230d3e9d6d6c6b4d1c10ec3a0b99be
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.14.7":
+  version: 1.14.7
+  resolution: "follow-redirects@npm:1.14.7"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: f6d03e5e30877431065bca0d1b2e3db93949eb799d368a5c07ea8a4b71205f0349a3f8f0191bf13a07c93885522834dca1dc8e527dc99a772c6911fba24edc5f
   languageName: node
   linkType: hard
 
@@ -12713,9 +12722,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"markdown-it@npm:^12.1.0, markdown-it@npm:^12.2.0":
-  version: 12.2.0
-  resolution: "markdown-it@npm:12.2.0"
+"markdown-it@npm:^12.2.0":
+  version: 12.3.2
+  resolution: "markdown-it@npm:12.3.2"
   dependencies:
     argparse: ^2.0.1
     entities: ~2.1.0
@@ -12724,7 +12733,7 @@ fsevents@~2.3.2:
     uc.micro: ^1.0.5
   bin:
     markdown-it: bin/markdown-it.js
-  checksum: 8e3d6646edf8e7ef19ed707c59d16741bd40804f1e7567407efd2f346ae0f7ddcdeada83e7affebd21b9d7d947b27fc60fd795a970461785030a4e52e750122b
+  checksum: 890555711c1c00fa03b936ca2b213001a3b9b37dea140d8445ae4130ce16628392aad24b12e2a0a9935336ca5951f2957a38f4e5309a2e38eab44e25ff32a41e
   languageName: node
   linkType: hard
 
@@ -18631,10 +18640,10 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^3.5.2":
-  version: 3.5.2
-  resolution: "vue-router@npm:3.5.2"
-  checksum: 342049e7cb0e4974879c57f9ecce342c180a1abce8df71137f902b201faa18d0a65c44936cbd4e9d62d5770d8f95395d73a5e05efa255475817f350bf7a094d1
+"vue-router@npm:^3.5.3":
+  version: 3.5.3
+  resolution: "vue-router@npm:3.5.3"
+  checksum: 7b2cc0d41ff2a8ec3da45761f29e14d0998119f47e4887f54e17eb534f7b4823acb778302891b0aa3a10c62ae8ba999393d7891cc08d36f02ea87aa268e2a36c
   languageName: node
   linkType: hard
 
