@@ -101,7 +101,7 @@
     "standard": "^16.0.4",
     "subscriptions-transport-ws": "^0.9.19",
     "svgo": "^2.3.1",
-    "utf-8-validate": "^5.0.6",
+    "utf-8-validate": "^5.0.8",
     "vue-cli-plugin-eslint-config-vuetify": "0.0.3",
     "vue-cli-plugin-vuetify": "^2.4.2",
     "vue-cli-plugin-vuetify-essentials": "^0.8.3",
