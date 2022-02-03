@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <CylcObjectMenu />
     <div class="c-table h-100">
       <table-component
         :tasks="tasks"
@@ -37,7 +36,6 @@ import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
 import WorkflowCallback from '@/components/cylc/common/callbacks'
 import TableCallback from '@/components/cylc/table/callbacks'
 // import { WORKFLOW_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
@@ -52,7 +50,6 @@ export default {
   ],
   name: 'Table',
   components: {
-    CylcObjectMenu,
     TableComponent
   },
   metaInfo () {
