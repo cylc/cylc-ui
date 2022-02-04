@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            :gqlType="gqlType.ofType"
            :types="types"
            :is="FormInput"
+            ref="inputs"
           >
             <template v-slot:append-outer>
               <v-icon
@@ -68,6 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import { getNullValue } from '@/utils/aotf'
 import { mdiPlusCircle, mdiCloseCircle } from '@mdi/js'
+import Vue from 'vue'
 
 export default {
   name: 'g-list',
@@ -88,9 +90,20 @@ export default {
   methods: {
     /* Add an item to the list. */
     add () {
+      const newInput = getNullValue(this.gqlType.ofType, this.types)
       this.value.push(
-        getNullValue(this.gqlType.ofType, this.types)
+        newInput
       )
+      // this is not ideal, but I believe whats happening is the orignal tick creates the new 'component'
+      // from the new array item, and the next tick actually creates the content of the component (including the input)
+      Vue.nextTick(() => {
+        Vue.nextTick(() => {
+          const toolTip = this.$refs.inputs[this.$refs.inputs.length - 1].$el
+          if (toolTip && toolTip.parentNode) {
+            toolTip.parentNode.querySelector('input').focus()
+          }
+        })
+      })
     },
 
     /* Remove the item at `index` from the list. */
