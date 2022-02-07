@@ -23,7 +23,7 @@
   "dependencies": {
     "@apollo/client": "^3.4.17",
     "@lumino/algorithm": "^1.9.0",
-    "@lumino/datagrid": "^0.32.0",
+    "@lumino/datagrid": "^0.35.1",
     "@lumino/default-theme": "^0.20.0",
     "@lumino/widgets": "^1.24.0",
     "axios": "^0.25.0",
