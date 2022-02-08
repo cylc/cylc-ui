@@ -100,7 +100,10 @@ export default {
         Vue.nextTick(() => {
           const toolTip = this.$refs.inputs[this.$refs.inputs.length - 1].$el
           if (toolTip && toolTip.parentNode) {
-            toolTip.parentNode.querySelector('input').focus()
+            const newInput = toolTip.parentNode.querySelector('input')
+            if (newInput) {
+              newInput.focus()
+            }
           }
         })
       })
