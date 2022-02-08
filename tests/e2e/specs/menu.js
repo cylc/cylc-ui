@@ -16,30 +16,25 @@
  */
 
 describe('CylcObject Menu component', () => {
-  it('Is displayed when a Cylc object is clicked on', () => {
+  it('should not be displayed initially on load', () => {
     cy.visit('/#/workflows/one')
-
-    cy
-      // wait for view to load
-      .get('.c-interactive:first')
-
-      // menu should not by displayed on load
+    cy.get('.c-interactive:first') // wait for view to load
       .get('.c-mutation-menu:first')
       .should('not.exist')
+  })
 
+  it('is displayed when a Cylc object is clicked on', () => {
+    cy
       // click on the first interactive thing
       .get('.c-interactive:first')
       .click()
-      .then(() => {
-        // the menu should now be open
-        // length is 5, as 4 plus show more
-        cy
-          .get('.c-mutation-menu-list:first')
-          .should('be.visible')
-          .children()
-          .should('have.length', 5)
-          .get('.v-menu__content:first')
-          .should('be.visible')
-      })
+      // the menu should now be open
+      .get('.c-mutation-menu-list:first')
+      .should('be.visible')
+      // length is 5, as 4 plus show more
+      .children()
+      .should('have.length', 5)
+      .get('.c-mutation-menu')
+      .should('be.visible')
   })
 })

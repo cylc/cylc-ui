@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="c-mutation-menu-holder">
+  <div>
     <!-- dropdown menu -->
     <v-menu
       offset-y
@@ -265,11 +265,9 @@ export default {
       this.y = event.clientY
       this.$nextTick(() => {
         this.showMenu = true
-        if (this.$refs && this.$refs.mutationComponent) {
-          // reset the mutation component if present
-          // (this is because we re-use the same component)
-          this.$refs.mutationComponent.reset()
-        }
+        // reset the mutation component if present
+        // (this is because we re-use the same component)
+        this.$refs?.mutationComponent?.reset()
       })
     },
 
