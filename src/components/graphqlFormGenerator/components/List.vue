@@ -94,17 +94,12 @@ export default {
       this.value.push(
         newInput
       )
-      // this is not ideal, but I believe whats happening is the orignal tick creates the new 'component'
-      // from the new array item, and the next tick actually creates the content of the component (including the input)
+      // this is not ideal, but I believe whats happening is the new (wrapper) component is created over the first tick from the new array item
+      // the component content is created over the next tick (including the input)
       Vue.nextTick(() => {
         Vue.nextTick(() => {
-          const toolTip = this.$refs.inputs[this.$refs.inputs.length - 1].$el
-          if (toolTip && toolTip.parentNode) {
-            const newInput = toolTip.parentNode.querySelector('input')
-            if (newInput) {
-              newInput.focus()
-            }
-          }
+          // get the latest input ref (which is a tooltip for some reason), get its parent, then the input itself and focus() it (if it exists)
+          this.$refs.inputs[this.$refs.inputs.length - 1].$el?.parentNode?.querySelector('input')?.focus()
         })
       })
     },
