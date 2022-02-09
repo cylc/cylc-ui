@@ -41,6 +41,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
+          name: '${{ github.job }}'
           flags: unittests
           fail_ci_if_error: false
 
@@ -85,5 +86,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
+          name: '${{ github.job }} ${{ matrix.os }} ${{ matrix.browser }}'
           flags: e2e
           fail_ci_if_error: false
