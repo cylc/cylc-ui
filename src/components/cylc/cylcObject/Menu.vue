@@ -26,10 +26,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :position-y="y"
       @show-mutations-menu="showMutationsMenu"
       :disabled="!interactive"
-      @input="closeMenu"
+      :close-on-content-click="false"
+      :close-on-click="false"
+      v-click-outside="{ handler: onClickOutside, include: clickOutsideInclude }"
       dark
     >
-      <v-card>
+      <!-- NOTE: because the `attach` prop is not true, the actual DOM element
+      containing the stuff below is not the `.v-menu` div, but a completely
+      separate `.v-menu__content` div created by vuetify
+      (the `.v-menu` div is actually empty). -->
+      <v-card ref="menuContent">
         <v-card-title class="text-h6">
           {{ id }}
         </v-card-title>
@@ -227,13 +233,43 @@ export default {
       this.dialogMutation = mutation
     },
 
-    closeMenu () {
-      this.expanded = false
-    },
-
     closeDialog () {
       this.dialog = null
       this.dialogMutation = null
+    },
+
+    /**
+     * Handler for clicking outside menu (close it).
+     *
+     * We override vuetify default handling because we don't want to
+     * close when clicking on another cylc object.
+     *
+     * @param {Event} e - the click event
+     */
+    onClickOutside (e) {
+      this.showMenu = false
+      this.expanded = false
+      if (e.target?.classList.contains('c-interactive')) {
+        this.$nextTick(() => {
+          // Wait until next tick so that the menu briefly closes + reopens
+          // giving more indication to user that it has changed
+          this.showMenu = true
+        })
+      }
+    },
+
+    /**
+     * Return array of elements that count as "inside" for the
+     * close-on-click-outside functionality.
+     *
+     * @returns {Array<HTMLElement>}
+     */
+    clickOutsideInclude () {
+      // Need this to tell vuetify what the actual content DOM element is
+      // instead of the empty `this.$el` (see note at top).
+      const el = this.$refs.menuContent?.$el
+      // (Return empty array if element not yet loaded)
+      return el ? [el] : []
     },
 
     expandCollapse () {
