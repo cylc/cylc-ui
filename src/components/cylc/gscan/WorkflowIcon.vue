@@ -16,17 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-tooltip right>
-    <template v-slot:activator="{ on, attrs }">
-      <v-icon
-        v-bind="attrs"
-        v-on="on"
-      >
-        {{ getIcon() }}
-      </v-icon>
-    </template>
-    <span>{{ statusMsg || status }}</span>
-  </v-tooltip>
+  <v-icon>
+    {{ getIcon() }}
+  </v-icon>
 </template>
 
 <script>
