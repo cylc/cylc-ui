@@ -56,8 +56,15 @@
   fontRootSize: $font-size-root;
 }
 
-.c-interactive:hover {
+.c-interactive {
+  &:hover {
     cursor: pointer;
+  }
+
+  svg {
+    // Prevent click handler from thinking the svg is the target
+    pointer-events: none;
+  }
 }
 
 .position-relative {

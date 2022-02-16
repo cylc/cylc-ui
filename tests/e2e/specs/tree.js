@@ -188,6 +188,7 @@ describe('Tree view', () => {
         .should('be.visible')
     }
   })
+
   describe('filters', () => {
     it('Should not filter by default', () => {
       cy.visit('/#/tree/one')

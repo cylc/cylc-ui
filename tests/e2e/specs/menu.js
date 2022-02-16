@@ -16,30 +16,87 @@
  */
 
 describe('CylcObject Menu component', () => {
-  it('Is displayed when a Cylc object is clicked on', () => {
+  const collapsedWorkflowMenuLength = 5 // (4 mutations + "show more" btn)
+  const expandedWorkflowMenuLength = 20
+
+  it('should not be displayed initially on load', () => {
     cy.visit('/#/workflows/one')
-
-    cy
-      // wait for view to load
-      .get('.c-interactive:first')
-
-      // menu should not by displayed on load
+    cy.get('.c-interactive:first') // wait for view to load
       .get('.c-mutation-menu:first')
       .should('not.exist')
+  })
 
+  it('is displayed when a Cylc object is clicked on', () => {
+    cy
       // click on the first interactive thing
       .get('.c-interactive:first')
       .click()
-      .then(() => {
-        // the menu should now be open
-        // length is 5, as 4 plus show more
-        cy
-          .get('.c-mutation-menu-list:first')
-          .should('be.visible')
-          .children()
-          .should('have.length', 5)
-          .get('.v-menu__content:first')
-          .should('be.visible')
+      // the menu should now be open
+      .get('.c-mutation-menu-list:first')
+      .should('be.visible')
+      .children()
+      .should('have.length', collapsedWorkflowMenuLength)
+      .get('.c-mutation-menu')
+      .should('be.visible')
+  })
+
+  it('expands when "show more" is clicked', () => {
+    cy.get('#less-more-button')
+      .click()
+      .get('.c-mutation-menu-list')
+      .should('be.visible')
+      .children()
+      .should('have.length', expandedWorkflowMenuLength)
+  })
+
+  it('closes when clicking outside of the menu', () => {
+    // Click on hidden element to avoid clicking on anything unexpected
+    cy.get('noscript')
+      .click({ force: true })
+      .get('.c-mutation-menu-list:first')
+      .should('not.be.visible')
+  })
+
+  it('should be collapsed next time it is opened', () => {
+    cy.get('.c-interactive:first')
+      .click()
+      .get('.c-mutation-menu-list')
+      .should('be.visible')
+      .children()
+      .should('have.length', collapsedWorkflowMenuLength)
+  })
+
+  it('updates when clicking on a different Cylc object', () => {
+    let firstID
+    cy.get('.c-mutation-menu')
+      .should('be.visible')
+      .find('.v-card__title')
+      .then(($el) => {
+        firstID = $el.text()
       })
+      // Now click on other Cylc object
+      .get('.c-interactive').eq(2)
+      .click({ force: true })
+      .get('.c-mutation-menu')
+      .should('be.visible')
+      .find('.v-card__title')
+      .should(($el) => {
+        expect($el.text()).not.to.equal(firstID)
+      })
+  })
+
+  it('should not close when clicking inside menu', () => {
+    cy.get('.v-card__title')
+      .click()
+      .get('.c-mutation-menu')
+      .should('be.visible')
+  })
+
+  it('closes when clicking on mutation', () => {
+    cy.get('.c-mutation-menu-list')
+      .find('.c-mutation:not([aria-disabled]):first')
+      .click()
+      .get('.c-mutation-menu')
+      .should('not.be.visible')
   })
 })

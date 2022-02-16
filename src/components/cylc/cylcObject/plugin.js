@@ -53,7 +53,7 @@ function bind (el, binding, vnode) {
 
 function unbind (el) {
   // clean up to avoid memory issues
-  el.removeEventListener('show-mutations-menu', listener)
+  el.removeEventListener('click', listener)
   listener = null
 }
 
