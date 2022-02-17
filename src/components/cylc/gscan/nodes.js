@@ -58,7 +58,7 @@ function newWorkflowNode (workflow, part) {
  *
  * @param {string} id
  * @param {string} part
- * @return {WorkflowNamePartGScanNode}
+ * @return {WorkflowNamePartGScanNode|WorkflowGScanNode}
  */
 function newWorkflowPartNode (id, part) {
   return {
@@ -97,29 +97,18 @@ function createWorkflowNode (workflow, hierarchy) {
   const workflowTokens = new Tokens(workflow.id)
   const tokensList = workflowTokens.workflowHierarchy()
 
-  // iterate over down until the node above the workflow
-  const children = []
-  for (const [part, tokens] of tokensList.slice(0, -1)) {
-    children.push(
-      newWorkflowPartNode(tokens.workflow_id, part)
-    )
-  }
-  const tokensThing = tokensList.slice(-1)[0]
-
-  // add the workflow to the bottom
-  children.push(
-    newWorkflowNode(workflow, tokensThing[0])
+  const leafNode = newWorkflowNode(workflow, tokensList.pop()[0])
+  // iterate over flat hierarchy list, creating node objects and nesting them
+  // (bottom to top):
+  const rootNode = tokensList.reduceRight(
+    (prev, current) => {
+      const [part, tokens] = current
+      const node = newWorkflowPartNode(tokens.workflow_id, part)
+      node.children.push(prev)
+      return node
+    },
+    leafNode // initial value for reducer
   )
-
-  // return the head node
-  let rootNode
-  if (children.length > 0) {
-    rootNode = children.shift()
-    rootNode.children = children
-  } else {
-    rootNode = children[0]
-  }
-
   return rootNode
 }
 
