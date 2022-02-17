@@ -128,7 +128,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     v-if="scope.node.type === 'workflow-name-part'"
                     class="c-gscan-workflow-name"
                   >
-                    <span>{{ scope.node.node.name || scope.node.id }}</span>
+                    <div v-if="scope.node.children && scope.node.children.length === 1" class="flex c-gscan-workflow-name">
+                      <span v-if="scope.node.children && scope.node.children.length === 1" class="mr-2">
+                        <workflow-icon
+                          :status="scope.node.children[0].node.status"
+                          :statusMsg="scope.node.children[0].node.statusMsg"
+                        />
+                      </span>
+                      {{ ( scope.node.node.name || scope.node.node.id ) + '/' + scope.node.children[0].name }}
+                    </div>
+                    <div v-else class="flex c-gscan-workflow-name">
+                      {{ scope.node.node.name || scope.node.id }}
+                    </div>
+                  </v-flex>
+                  <v-flex
+                    v-if="scope.node.type === 'workflow-name-part' && scope.node.children && scope.node.children.length === 1 && scope.node.children[0].node.latestStateTasks"
+                    class="text-right c-gscan-workflow-states"
+                  >
+                      <span
+                        v-for="[state, tasks] in getOnlyActiveStates(scope.node.children[0].node)"
+                        :key="`${scope.node.id}-summary-${state}`"
+                        :class="getTaskStateClasses(scope.node.children[0].node, state)"
+                      >
+                      <v-tooltip color="black" top>
+                        <template v-slot:activator="{ on }">
+                          <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
+                          <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                          <v-btn
+                            v-on="on"
+                            class="ma-0 pa-0"
+                            min-width="0"
+                            min-height="0"
+                            style="font-size: 120%; width: auto"
+                            :ripple="false"
+                            dark
+                            icon
+                          >
+                            <job :status="state" />
+                          </v-btn>
+                        </template>
+                        <!-- tooltip text -->
+                        <span>
+                          <span class="grey--text">{{ countTasksInState(scope.node.children[0].node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                          <br/>
+                          <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
+                            {{ task }}<br v-if="index !== tasks.length -1" />
+                          </span>
+                        </span>
+                      </v-tooltip>
+                    </span>
                   </v-flex>
                   <v-flex
                     v-else-if="scope.node.type === 'workflow'"
@@ -445,6 +493,25 @@ export default {
       return latestStateTasks.filter(entry => {
         return validValues.includes(entry[0])
       })
+    },
+
+    getOnlyActiveStates (node) {
+      const latestStateTasks = Object.entries(node.latestStateTasks)
+      console.log('latestStateTasks', latestStateTasks)
+      // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
+      const validValues = [
+        TaskState.SUBMITTED.name,
+        TaskState.SUBMIT_FAILED.name,
+        TaskState.RUNNING.name,
+        TaskState.SUCCEEDED.name,
+        TaskState.FAILED.name
+      ]
+      const latestStateTasksObj = latestStateTasks.filter(entry => {
+        return validValues.includes(entry[0]) && this.countTasksInState(node, entry[0])
+      })
+      console.log(latestStateTasksObj)
+      return latestStateTasksObj
+      // return []
     }
   }
 }
