@@ -27,6 +27,11 @@ or jobs now shows the relevant ID and status.
 
 [#839](https://github.com/cylc/cylc-ui/pull/839) - Appearance improvements.
 
+### Fixes
+
+[#927](https://github.com/cylc/cylc-ui/pull/927) - Fix bug where mutation
+menu would disappear when clicking on another task/cycle point/etc.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-0.6 (<span actions:bind='release-date'>Released 2021-11-10</span>)__
 
