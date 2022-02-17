@@ -110,8 +110,24 @@ describe('GScan component', () => {
           [TaskState.FAILED.name]: 1
         }
       }
+
+      // nested mode
       const nodeHierarchy = createWorkflowNode(workflow, true)
-      expect(nodeHierarchy.name).to.equal('a')
+      const ret = [nodeHierarchy.name]
+      const stack = [nodeHierarchy]
+      let snode
+      while (stack.length) {
+        snode = stack.pop()
+        if (snode && snode.children) {
+          for (const child of snode.children) {
+            ret.push(child.name)
+            stack.push(child)
+          }
+        }
+      }
+      expect(ret).to.deep.equal(['a', 'b', 'c'])
+
+      // flat mode
       const node = createWorkflowNode(workflow, false)
       expect(node.name).to.equal(null)
       expect(node.id).to.equal('~user/a/b/c')
