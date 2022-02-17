@@ -5,9 +5,9 @@ __metadata:
   version: 4
   cacheKey: 8
 
-"@apollo/client@npm:^3.4.17":
-  version: 3.5.3
-  resolution: "@apollo/client@npm:3.5.3"
+"@apollo/client@npm:^3.5.8":
+  version: 3.5.9
+  resolution: "@apollo/client@npm:3.5.9"
   dependencies:
     "@graphql-typed-document-node/core": ^3.0.0
     "@wry/context": ^0.6.0
@@ -18,7 +18,7 @@ __metadata:
     optimism: ^0.16.1
     prop-types: ^15.7.2
     symbol-observable: ^4.0.0
-    ts-invariant: ^0.9.0
+    ts-invariant: ^0.9.4
     tslib: ^2.3.0
     zen-observable-ts: ^1.2.0
   peerDependencies:
@@ -30,7 +30,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 935f432fd59f84141f6b6ab2e092ed92cba6ad3deeecb7fc3f7e01266d162b3b26a0bc98f1635d458b5cf3c839ae2d7d139bde594fb6dfa1de1afeee610f4aff
+  checksum: b5d827f82ea565e57371c8697b627a1f2944712b8e32d04c6859495cfb11516644f5c7799c7f44d5a898fbd4204a412e5288adf42c69a2f89da0fa1591b358e5
   languageName: node
   linkType: hard
 
@@ -3658,10 +3658,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/cli-overlay@npm:^4.5.14":
-  version: 4.5.14
-  resolution: "@vue/cli-overlay@npm:4.5.14"
-  checksum: 55ce76325fab2f5469b60f0e108e98fa8fa76adb4517e1d14669665f1d5ab57fa348250b28b31aee912dced14f9a8dbc12f1d52b82f7bd27fd5e992928c45e68
+"@vue/cli-overlay@npm:^4.5.15":
+  version: 4.5.15
+  resolution: "@vue/cli-overlay@npm:4.5.15"
+  checksum: 94475116874196cf0123e93543ca111266708141f0b3095cd4535846c02fadf32fe398aa7e7fe94cb77dfcb19dac007a503ccb8c6a614dd80b7d67bdc127a082
   languageName: node
   linkType: hard
 
@@ -3712,44 +3712,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/cli-plugin-router@npm:^4.5.14":
-  version: 4.5.14
-  resolution: "@vue/cli-plugin-router@npm:4.5.14"
+"@vue/cli-plugin-router@npm:^4.5.15":
+  version: 4.5.15
+  resolution: "@vue/cli-plugin-router@npm:4.5.15"
   dependencies:
-    "@vue/cli-shared-utils": ^4.5.14
+    "@vue/cli-shared-utils": ^4.5.15
   peerDependencies:
     "@vue/cli-service": ^3.0.0 || ^4.0.0-0
-  checksum: 3a5a3a207e8a2670e5170efd45bcde485922dca098ad1daa7dc0225bc22fc1fa13631a025cd7faaabb109f368c532acb65ec593cca6351708928e14935c2ea54
+  checksum: f0f2f40d54492cdb6be6326e4e9ad860204b3992b7f04d7d14f4d2623a2aa64c0ab0e9d8c87db06bba5846583c0b25df2eef08c50a9a6d46b59b6377bec945b6
   languageName: node
   linkType: hard
 
-"@vue/cli-plugin-unit-mocha@npm:^4.5.13":
-  version: 4.5.14
-  resolution: "@vue/cli-plugin-unit-mocha@npm:4.5.14"
+"@vue/cli-plugin-unit-mocha@npm:^4.5.15":
+  version: 4.5.15
+  resolution: "@vue/cli-plugin-unit-mocha@npm:4.5.15"
   dependencies:
-    "@vue/cli-shared-utils": ^4.5.14
+    "@vue/cli-shared-utils": ^4.5.15
     jsdom: ^15.2.1
     jsdom-global: ^3.0.2
     mocha: ^6.2.2
     mochapack: ^1.1.15
   peerDependencies:
     "@vue/cli-service": ^3.0.0 || ^4.0.0-0
-  checksum: 4d5b1c49383f00dfb1878956a02aa026ed7eeeae03ed047fb951bf9d1ec6951627c014d67380bdb6a125d88c4d72389215f4a44b318cd1fda2027a7822f07a3c
+  checksum: 53241081bd54be74243beb5c5ae7f506328ac575cbf4ebe15c5177130449998cf0bf43486911520bd5a152cd97bcdc2fe9504bc8b1583bd55d23cf90fac1e22e
   languageName: node
   linkType: hard
 
-"@vue/cli-plugin-vuex@npm:^4.5.14":
-  version: 4.5.14
-  resolution: "@vue/cli-plugin-vuex@npm:4.5.14"
+"@vue/cli-plugin-vuex@npm:^4.5.15":
+  version: 4.5.15
+  resolution: "@vue/cli-plugin-vuex@npm:4.5.15"
   peerDependencies:
     "@vue/cli-service": ^3.0.0 || ^4.0.0-0
-  checksum: a82af0a2ce4794c7f73a3f7e7edc7ca4512cd5acb168973e56467282e0ad4bce0c2707309f8dcb566113dbb91df2eaa440c482a26d900b8a2cb3ac90cfece6e3
+  checksum: 0fe2110280c13076dce0e10dfeb8be5b6c82e6209822b0dd527399c95afd3b4ef1d986fc8545905a2340f0302a46acf02b8e4f64ac975e2d7248927a13141687
   languageName: node
   linkType: hard
 
-"@vue/cli-service@npm:^4.5.13":
-  version: 4.5.14
-  resolution: "@vue/cli-service@npm:4.5.14"
+"@vue/cli-service@npm:^4.5.15":
+  version: 4.5.15
+  resolution: "@vue/cli-service@npm:4.5.15"
   dependencies:
     "@intervolga/optimize-cssnano-plugin": ^1.0.5
     "@soda/friendly-errors-webpack-plugin": ^1.7.1
@@ -3757,10 +3757,10 @@ __metadata:
     "@types/minimist": ^1.2.0
     "@types/webpack": ^4.0.0
     "@types/webpack-dev-server": ^3.11.0
-    "@vue/cli-overlay": ^4.5.14
-    "@vue/cli-plugin-router": ^4.5.14
-    "@vue/cli-plugin-vuex": ^4.5.14
-    "@vue/cli-shared-utils": ^4.5.14
+    "@vue/cli-overlay": ^4.5.15
+    "@vue/cli-plugin-router": ^4.5.15
+    "@vue/cli-plugin-vuex": ^4.5.15
+    "@vue/cli-shared-utils": ^4.5.15
     "@vue/component-compiler-utils": ^3.1.2
     "@vue/preload-webpack-plugin": ^1.1.0
     "@vue/web-component-wrapper": ^1.2.0
@@ -3830,7 +3830,7 @@ __metadata:
       optional: true
   bin:
     vue-cli-service: bin/vue-cli-service.js
-  checksum: ed983044584eba5d011cdab67512327eb99c39aff994a99dcc605dc1b3d3ee0f6afd94215c86bdbc6d9791f3dcde601b9f2a79a08eedc690833a081f20cf2ab7
+  checksum: a054de4a67a2be140c63b788aeb1301fea8549a7b8055b3de5a7830de9d9a27678c48c2a8e0ded737857695db3f370ceb24995fee97c4e48f7dd92c406773dfc
   languageName: node
   linkType: hard
 
@@ -6557,9 +6557,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "concurrently@npm:6.3.0"
+"concurrently@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "concurrently@npm:7.0.0"
   dependencies:
     chalk: ^4.1.0
     date-fns: ^2.16.1
@@ -6570,8 +6570,8 @@ __metadata:
     tree-kill: ^1.2.2
     yargs: ^16.2.0
   bin:
-    concurrently: bin/concurrently.js
-  checksum: fb68236899259a3b0c05d27db608ee9150f11fc785552c14937e5e1421c9448d03704cdc2acb5f842a91c465d50005b4229f348eb9594d84cbef54e5a93ffde7
+    concurrently: dist/bin/concurrently.js
+  checksum: 1be78f24bf814f097adaf2e61a37563eb73f12272bbeda90e3e616a23525f793268e22a3c6aedf34e5bad44459f7c30ee053c617905416ba11ce2bee55f089a5
   languageName: node
   linkType: hard
 
@@ -7195,7 +7195,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "cylc-ui@workspace:."
   dependencies:
-    "@apollo/client": ^3.4.17
+    "@apollo/client": ^3.5.8
     "@babel/core": ^7.14.8
     "@babel/eslint-parser": ^7.16.5
     "@babel/plugin-proposal-class-properties": ^7.14.5
@@ -7212,8 +7212,8 @@ __metadata:
     "@vue/cli-plugin-babel": ^4.5.15
     "@vue/cli-plugin-e2e-cypress": ^4.5.13
     "@vue/cli-plugin-eslint": ^4.5.13
-    "@vue/cli-plugin-unit-mocha": ^4.5.13
-    "@vue/cli-service": ^4.5.13
+    "@vue/cli-plugin-unit-mocha": ^4.5.15
+    "@vue/cli-service": ^4.5.15
     "@vue/test-utils": ^1.2.2
     autoprefixer: ^9.8.6
     axios: ^0.25.0
@@ -7225,7 +7225,7 @@ __metadata:
     bufferutil: ^4.0.6
     chai: ^4.3.6
     circular-dependency-plugin: ^5.2.2
-    concurrently: ^6.3.0
+    concurrently: ^7.0.0
     core-js: 3
     cross-env: ^7.0.3
     cross-fetch: ^3.1.5
@@ -17881,12 +17881,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"ts-invariant@npm:^0.9.0":
-  version: 0.9.3
-  resolution: "ts-invariant@npm:0.9.3"
+"ts-invariant@npm:^0.9.4":
+  version: 0.9.4
+  resolution: "ts-invariant@npm:0.9.4"
   dependencies:
     tslib: ^2.1.0
-  checksum: 593c096b8ae21073eb6a0faa76db76752c1e929ca9042b02cedab64dd78d67b8b73fb4b965857e889a2df492fdfb2f9737b486640e212d32dc6b39d188c9151c
+  checksum: c9e5726361fa266916966b2070605f8664b6dd1d8b0ef7565dbf056abb6a87be26195985ef62dd97aeb0894cf2f4ad5b7f0d89dadadc197eaa38e99222afa29c
   languageName: node
   linkType: hard
 
