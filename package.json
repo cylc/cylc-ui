@@ -21,7 +21,7 @@
     "test": "yarn run test:unit || exit 1; yarn run coverage:e2e --headless"
   },
   "dependencies": {
-    "@apollo/client": "^3.4.17",
+    "@apollo/client": "^3.5.9",
     "@lumino/algorithm": "^1.9.0",
     "@lumino/datagrid": "^0.32.0",
     "@lumino/default-theme": "^0.20.0",
