@@ -178,11 +178,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </div>
         </div>
       </slot>
-      <slot
-        v-bind:node="node"
-        name="node"
-        v-else
-      >
+      <slot v-bind:node="node" name="node" v-else>
+        <div :class="getNodeDataClass()" @click="nodeClicked">
+          <task
+            v-cylc-object="node.node"
+            :key="node.node.id"
+            :status="node.node.state"
+            :isHeld="node.node.isHeld"
+            :isQueued="node.node.isQueued"
+            :isRunahead="node.node.isRunahead"
+          />
+          <span class="mx-1">{{ node.node.name }}</span>
+        </div>
         <div :class="getNodeDataClass()">
           <span
             v-if="node && node.node"
@@ -253,7 +260,7 @@ export default {
     return {
       active: false,
       selected: false,
-      isExpanded: this.initialExpanded,
+      isExpanded: undefined,
       filtered: true,
       leafProperties: [
         {
@@ -344,6 +351,17 @@ export default {
     if (this.node.expanded !== undefined && this.node.expanded !== null) {
       this.isExpanded = this.node.expanded
       this.emitExpandCollapseEvent(this.isExpanded)
+    }
+  },
+  watch: {
+    node: {
+      deep: true,
+      handler: function () {
+        if (this.initialExpanded && this.isExpanded === undefined && this.node.children && this.node.children.length > 1) {
+          this.isExpanded = true
+          this.emitExpandCollapseEvent(this.isExpanded)
+        }
+      }
     }
   },
   methods: {
