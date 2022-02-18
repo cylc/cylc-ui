@@ -88,47 +88,73 @@ module.exports = {
 
 ### Project setup
 
-    yarn install
+```
+yarn install
+```
 
-### Compiles and hot-reloads for development
+### Compiles and hot-reloads demo mode for development
 
-    yarn run serve
+```
+yarn run serve
+```
 
 ### Compiles and minifies for production
 
-    yarn run build
+```
+yarn run build
+```
 
 ### Compiles and watch for changes for development
 
-    yarn run build:watch
+```
+yarn run build:watch
+```
 
 ### Produce build report
 
-    yarn run build:report
+```
+yarn run build:report
+```
 
 ### Run unit tests
 
-    yarn run test:unit
+```
+yarn run test:unit
+```
 
-For coverage
+Useful opts:
+- `--watch`: watch for changes (allows re-running tests much quicker)
+- `--bail`: exit after first test failure
+- `--colors`: enables coloured output in VSCode integrated terminal
 
-    yarn run coverage:unit
+For coverage:
+```
+yarn run coverage:unit
+```
 
 ### Run functional tests
 
-    yarn run test:e2e
+```
+yarn run test:e2e
+```
 
 Or for headless mode
 
-    yarn run test:e2e -- --headless --config video=false
+```
+yarn run test:e2e -- --headless --config video=false
+```
 
 For coverage
 
-    yarn run coverage:e2e
+```
+yarn run coverage:e2e
+```
 
 ### Lints and fixes files
 
-    yarn run lint
+```
+yarn run lint
+```
 
 ## Integration with the backend Cylc UI server
 

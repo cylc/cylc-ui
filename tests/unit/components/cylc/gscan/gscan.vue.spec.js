@@ -16,7 +16,7 @@
  */
 
 import { createLocalVue, mount, RouterLinkStub } from '@vue/test-utils'
-import { expect } from 'chai'
+import chai, { expect } from 'chai'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Vuetify from 'vuetify'
@@ -27,6 +27,9 @@ import TaskState from '@/model/TaskState.model'
 import GScan from '@/components/cylc/gscan/GScan'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
+
+// Print full objects when tests fail
+chai.config.truncateThreshold = 0
 
 global.requestAnimationFrame = cb => cb()
 
