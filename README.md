@@ -1,5 +1,4 @@
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/cylc-ui/badges/version.svg)](https://anaconda.org/conda-forge/cylc-ui)
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/cylc-ui/badges/downloads.svg)](https://anaconda.org/conda-forge/cylc-ui)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cylc/cylc-ui)](https://github.com/cylc/cylc-ui/releases)
 [![Build Status](https://github.com/cylc/cylc-ui/workflows/CI/badge.svg)](https://github.com/cylc/cylc-ui/actions)
 [![codecov](https://codecov.io/gh/cylc/cylc-ui/branch/master/graph/badge.svg)](https://codecov.io/gh/cylc/cylc-ui)
 

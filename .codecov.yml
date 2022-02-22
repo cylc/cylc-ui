@@ -1,0 +1,27 @@
+# Codecov settings
+# After modifying this file, it might be worth to validate it:
+# see https://api.codecov.io/validate
+
+codecov:
+  require_ci_to_pass: true
+
+coverage:
+  precision: 2
+  round: down
+  # define the colour bar limits here (red...green)
+  range: "75...100"
+
+  # diff type
+  status:
+    project:
+      default:
+        # fail if coverage below this:
+        target: '85%'
+        # fail if coverage drops by this much:
+        threshold: '2%'
+    patch:
+      default:
+        target: '85%'
+
+# turn off comments to pull requests
+comment: false
