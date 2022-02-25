@@ -22,15 +22,14 @@ describe('GScan component', () => {
       .get('.c-gscan-workflow')
       .should('have.length', 1)
   })
+
   it('should filter by workflow name', () => {
-    cy.visit('/#/')
-    cy
-      .get('#c-gscan-search-workflows')
+    cy.get('#c-gscan-search-workflows')
       .type('abc')
-    cy
       .get('.c-gscan-workflow')
       .should('have.length', 0)
   })
+
   it('should filter by workflow state', () => {
     cy.visit('/#/')
     cy
@@ -45,6 +44,7 @@ describe('GScan component', () => {
       .get('.c-gscan-workflow')
       .should('have.length', 0)
   })
+
   it('should filter by workflow tasks state', () => {
     cy.visit('/#/')
     cy
@@ -59,6 +59,7 @@ describe('GScan component', () => {
       .get('.c-gscan-workflow')
       .should('have.length', 0)
   })
+
   it('should filter by workflow name, state, and tasks states', () => {
     cy.visit('/#/')
     // OK
@@ -83,5 +84,22 @@ describe('GScan component', () => {
     cy
       .get('.c-gscan-workflow')
       .should('have.length', 1)
+  })
+
+  it('shows mutations menu when clicking on workflow icon', () => {
+    cy.visit('/#/')
+    cy.get('.c-gscan-workflows')
+      .find('a.v-list-item:first')
+      .find('.v-icon')
+      .click()
+      .get('.c-mutation-menu')
+      .should('be.visible')
+      .find('.v-card__title')
+      .should(($el) => {
+        expect($el.text().trim()).to.equal('~user/one')
+      })
+      .get('.c-mutation-menu-list:first')
+      .children()
+      .should('have.length.greaterThan', 2)
   })
 })
