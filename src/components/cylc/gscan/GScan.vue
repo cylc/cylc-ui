@@ -113,9 +113,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="c-gscan-workflow ma-0 pa-0"
         >
           <template v-slot:node="scope">
+            <span class="mr-2">
+              <workflow-icon
+                :status="scope.node.node.status"
+                :statusMsg="scope.node.node.statusMsg"
+                v-cylc-object="scope.node.node"
+              />
+            </span>
             <v-list-item
               :to="workflowLink(scope.node)"
-              :class="getWorkflowClass(scope.node.node)"
             >
               <v-list-item-title>
                 <v-layout align-center align-content-center d-flex flex-nowrap>
@@ -129,13 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     v-else-if="scope.node.type === 'workflow'"
                     class="c-gscan-workflow-name"
                   >
-                    <span class="mr-2">
-                      <workflow-icon
-                        :status="scope.node.node.status"
-                        :statusMsg="scope.node.node.statusMsg"
-                        v-cylc-object="scope.node.node"
-                      />
-                    </span>
+
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
                         <span v-on="on">{{ scope.node.name }}</span>
@@ -374,12 +374,6 @@ export default {
     }
   },
   methods: {
-    getWorkflowClass (node) {
-      return {
-        'c-workflow-stopped': node && node.status && node.status === WorkflowState.STOPPED.name
-      }
-    },
-
     filterHierarchically,
 
     /**
