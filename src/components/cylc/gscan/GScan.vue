@@ -113,16 +113,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="c-gscan-workflow ma-0 pa-0"
         >
           <template v-slot:node="scope">
-            <span
+            <workflow-icon
               class="mr-2"
               v-if="scope.node.type === 'workflow'"
-            >
-              <workflow-icon
-                :status="scope.node.node.status"
-                :statusMsg="scope.node.node.statusMsg"
-                v-cylc-object="scope.node.node"
-              />
-            </span>
+              :status="scope.node.node.status"
+              v-cylc-object="scope.node.node"
+            />
             <v-list-item
               :to="workflowLink(scope.node)"
             >

@@ -34,10 +34,6 @@ export default {
     status: {
       required: true,
       type: String
-    },
-    statusMsg: {
-      required: false,
-      type: String
     }
   },
 
