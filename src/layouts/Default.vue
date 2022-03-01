@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <ConnectionStatus :is-offline="offline" />
     <toolbar v-if="!workflowViews.includes($route.name)" />
     <drawer />
+    <CylcObjectMenu/>
 
     <v-main>
       <alert />
@@ -40,12 +41,14 @@ import Alert from '@/components/core/Alert'
 import Drawer from '@/components/cylc/Drawer'
 import Toolbar from '@/components/cylc/Toolbar'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus'
+import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
 
 export default {
   name: 'Default',
 
   components: {
     ConnectionStatus,
+    CylcObjectMenu,
     Alert,
     Drawer,
     Toolbar

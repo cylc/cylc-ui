@@ -113,7 +113,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="c-gscan-workflow ma-0 pa-0"
         >
           <template v-slot:node="scope">
-            <span class="mr-2">
+            <span
+              class="mr-2"
+              v-if="scope.node.type === 'workflow'"
+            >
               <workflow-icon
                 :status="scope.node.node.status"
                 :statusMsg="scope.node.node.statusMsg"
@@ -135,7 +138,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     v-else-if="scope.node.type === 'workflow'"
                     class="c-gscan-workflow-name"
                   >
-
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
                         <span v-on="on">{{ scope.node.name }}</span>
