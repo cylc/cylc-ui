@@ -58,8 +58,10 @@ function unbind (el) {
 }
 
 function update (el, binding, newVnode, oldVnode) {
-  unbind(el)
-  bind(el, binding, newVnode)
+  if (binding.value !== binding.oldValue) {
+    unbind(el)
+    bind(el, binding, newVnode)
+  }
 }
 
 /**
