@@ -219,6 +219,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiChevronRight } from '@mdi/js'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
+import { WorkflowState } from '@/model/WorkflowState.model'
 import { taskStartTime, taskEstimatedDuration, latestJob } from '@/utils/tasks'
 
 /**
@@ -305,6 +306,7 @@ export default {
       return {
         'node--hoverable': this.hoverable,
         'node--active': this.active,
+        'c-workflow-stopped': this.node?.node?.status === WorkflowState.STOPPED.name,
         expanded: this.isExpanded
       }
     },

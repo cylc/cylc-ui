@@ -68,20 +68,25 @@ describe('CylcObject Menu component', () => {
 
   it('updates when clicking on a different Cylc object', () => {
     let firstID
-    cy.get('.c-mutation-menu')
+    cy.visit('/#/workflows/one')
+      .get('.node-data-cyclepoint:first')
+      .find('.c-interactive:first')
+      .click()
+      .get('.c-mutation-menu')
       .should('be.visible')
       .find('.v-card__title')
       .then(($el) => {
-        firstID = $el.text()
+        firstID = $el.text().trim()
       })
       // Now click on other Cylc object
-      .get('.c-interactive').eq(2)
-      .click({ force: true })
+      .get('.node-data-task-proxy:first')
+      .find('.c-interactive:first')
+      .click({ force: true }) // force in case underneath menu
       .get('.c-mutation-menu')
       .should('be.visible')
       .find('.v-card__title')
       .should(($el) => {
-        expect($el.text()).not.to.equal(firstID)
+        expect($el.text().trim()).not.to.equal(firstID)
       })
   })
 
@@ -92,7 +97,7 @@ describe('CylcObject Menu component', () => {
       .should('be.visible')
   })
 
-  it('closes when clicking on mutation', () => {
+  it('closes when clicking on task mutation', () => {
     cy.get('.c-mutation-menu-list')
       .find('.c-mutation:not([aria-disabled]):first')
       .click()

@@ -6,6 +6,12 @@ milestones](https://github.com/cylc/cylc-ui/milestones?state=closed) for each
 release.
 
 -------------------------------------------------------------------------------
+## __cylc-ui-1.1.0 (<span actions:bind='release-date'></span>)__
+
+[#928](https://github.com/cylc/cylc-ui/pull/928) - Enable accessing mutations menu
+from GScan.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-1.0.0 (<span actions:bind='release-date'>Released 2022-02-17</span>)__
 
 ### Enhancements

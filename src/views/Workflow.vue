@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <CylcObjectMenu />
     <toolbar
       :views="views"
       v-on:add="this.addView"
@@ -58,7 +57,6 @@ import ViewState from '@/model/ViewState.model'
 import { createWidgetId } from '@/components/cylc/workflow/index'
 import Lumino from '@/components/cylc/workflow/Lumino'
 import Toolbar from '@/components/cylc/workflow/Toolbar'
-import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
 import MutationsView from '@/views/Mutations'
 import TableView from '@/views/Table'
 import TreeView from '@/views/Tree'
@@ -71,7 +69,6 @@ export default {
     subscriptionViewMixin
   ],
   components: {
-    CylcObjectMenu,
     Lumino,
     Toolbar
   },
