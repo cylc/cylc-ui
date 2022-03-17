@@ -17,12 +17,14 @@
 
 @import 'variables';
 @import '~vuetify/src/styles/styles';
+@import '~vuetify/src/components/VIcon/_variables.scss';
 
 .v-toolbar {
   min-height: inherit !important;
 
   .v-toolbar__content {
     min-height: inherit !important;
+    column-gap: 0.5rem;
   }
 }
 
@@ -39,30 +41,33 @@
     font-weight: map-get($font-weights, medium);
   }
 
-  .c-toolbar-title {
-    font-size: 1.4rem;
-    // put some space between the title and the icons that follow
-    padding-right: 0.5rem;
-  }
-
   .status-msg {
     color: $font-dimished-color;
-    padding-left: 1rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    // make this shrink more than title (can see status in mutation menu if needed):
+    flex-shrink: 10;
+    // override vuetify .text-* class letter spacing:
+    letter-spacing: normal !important;
   }
 
   .add-view {
-    // force overflow onto a new line where we can hide it
-    height: 1.1em;
+    column-gap: 0.5rem;
+    // force overflow onto a new line where we can hide it:
+    max-height: $icon-size;
+    min-width: $icon-size;
+    flex-wrap: wrap;
     overflow: hidden;
+    row-gap: 30px;
+    // make this shrink before anything else in the toolbar:
+    flex-shrink: 100000;
 
     .label {
-      float: left;
       font-size: 1rem;
-      margin-right: 0.5em;
-    }
-
-    .icon {
-      float: right;
+      // this only gets clipped after getting hidden (forced to overflow on new line)
+      white-space: nowrap;
+      text-overflow: clip;
     }
   }
 }

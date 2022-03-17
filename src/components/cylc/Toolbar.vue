@@ -15,8 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- Cylc UI Toolbar. Used to display the page title in responsive mode, and
-     to display a burger button to hide the drawer component. -->
+<!-- Cylc UI Toolbar. Used to display the type of view in responsive mode
+(narrow viewports), and to display a burger button to hide the drawer
+component. Note: this is not used for the workflow view, see
+./workflow/Toolbar.vue instead. -->
+
 <template>
   <v-app-bar
     app
@@ -27,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-if="responsive"
   >
     <v-toolbar-title
-      class="tertiary--text font-weight-light"
+      class="tertiary--text"
     >
       <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
       <!-- burger button for mobile -->
