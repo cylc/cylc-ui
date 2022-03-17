@@ -35,6 +35,11 @@
 @import "cylc/mutation_form";
 @import "cylc/menu";
 
+html {
+  // Only show scrollbar when needed:
+  overflow-y: auto;
+}
+
 .theme--light.v-application {
   background-color: transparent;
   .content {
