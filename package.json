@@ -76,7 +76,7 @@
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
     "cross-fetch": "^3.1.5",
-    "cypress": "^9.3.1",
+    "cypress": "^9.5.2",
     "eslint": "^7.31.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-import-resolver-node": "^0.3.6",
