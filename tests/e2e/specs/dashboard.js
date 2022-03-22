@@ -44,5 +44,12 @@ describe('Dashboard', () => {
       })
       .should('equal', [...WorkflowStateOrder.entries()][0][0])
   })
+  it.only('Should not display the cylc hub button in single user mode', () => {
+    cy
+      .visit('/#/')
+      .get('.container > :nth-child(3) > :nth-child(1)')
+      .find('#cylc-hub-button')
+      .should('not.exist')
+  })
   // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
 })

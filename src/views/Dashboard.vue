@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item :href=hubUrl>
+          <v-list-item :id = "cylc-hub-button" v-if=multiUserMode :href=hubUrl>
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.hub }}</v-icon>
             </v-list-item-avatar>
@@ -257,6 +257,13 @@ export default {
             count: count[state.name] || 0
           }
         })
+    },
+    ...mapState('user', ['user']),
+    multiUserMode () {
+      if (this.user.mode === 'single user') {
+        return false
+      }
+      return true
     }
   }
 }

@@ -31,6 +31,8 @@
     "workflowMutation",
     "cycleMutation",
     "jobMutation",
-    "namespaceMutation"
-  ]
+    "namespaceMutation",
+    "hold"
+  ],
+  "mode": "single user"
 }
