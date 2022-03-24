@@ -1,24 +1,20 @@
-Bruno Kinoshita            <kinow@users.noreply.github.com> <bruno.kinoshita@niwa.co.nz>
-Bruno Kinoshita            <kinow@users.noreply.github.com> Bruno P. Kinoshita
-David Sutherland           <davidwollow@gmail.com>
-Edgardo Ramírez            <soldiercrp@gmail.com>
-Garrett Walker             <garbwalk@ut.utm.edu>
-Giuliano Serrao            <giulianoserrao@gmail.com>
-Giuliano Serrao            <80932386+giulianoserrao@users.noreply.github.com> Juliano Serrao
-Hilary Oliver              <h.oliver@niwa.co.nz> <hilary.j.oliver@gmail.com>
-Hilary Oliver              <h.oliver@niwa.co.nz> Hilary James Oliver
-Martin Ryan                <MartinRyan@users.noreply.github.com> Martin Ryan <martynmryan@gmail.com>
-Matt Shin                  <matthew.shin@metoffice.gov.uk>
-Mel Hall                   <37735232+datamel@users.noreply.github.com>                                 Melanie Hall             <37735232+datamel@users.noreply.github.com>
-Oliver Sanders             <oliver.sanders@metoffice.gov.uk>
-Ronnie Dutta               <61982285+MetRonnie@users.noreply.github.com>
-Sadie Bartholomew          <sadie.bartholomew@metoffice.gov.uk> Sadie Bartholomew   <30274190+sadielbartholomew@users.noreply.github.com>
-Sadie Bartholomew          <sadie.bartholomew@metoffice.gov.uk> Sadie L. Bartholomew <30274190+sadielbartholomew@users.noreply.github.com>
-Alex Szabó                 <kreatemore@gmail.com> Szabó Alex <kreatemore@gmail.com>
-Tim Pillinger              <26465611+wxtim@users.noreply.github.com> <tim.pillinger@metoffice.gov.uk>
-Ash Newport                <anewport@dxc.com>                                                             anewport                <anewport@dxc.com>
-dependabot[bot]            <49699333+dependabot[bot]@users.noreply.github.com>
-github-actions[bot]        <41898282+github-actions[bot]@users.noreply.github.com>
-Carol Barno                <carol.barno.dev@gmail.com>
-Carol Barno                <cbarno@innovexsolutions.co.ke>
-Aaron Cole                 <aaron@epiphron.co.nz>
+# FORMAT: <proper-name>  <proper-email>  <commit-name>  <commit-email>   
+# Omit commit-name or commit-email if same as proper
+
+Bruno Kinoshita       <kinow@apache.org>                                               <kinow@users.noreply.github.com>
+Bruno Kinoshita       <kinow@apache.org>                       Bruno P. Kinoshita      <bruno.kinoshita@niwa.co.nz>
+Giuliano Serrao       <giulianoserrao@gmail.com>               giulianoserrao
+Hilary Oliver         <hilary.j.oliver@gmail.com>                                      <h.oliver@niwa.co.nz> 
+Hilary Oliver         <hilary.j.oliver@gmail.com>              Hilary James Oliver
+Martin Ryan           <martynmryan@gmail.com>                                          <MartinRyan@users.noreply.github.com>
+Mel Hall              <mel.hall@metoffice.gov.uk>                                      <37735232+datamel@users.noreply.github.com>
+Mel Hall              <mel.hall@metoffice.gov.uk>              Melanie Hall            <37735232+datamel@users.noreply.github.com>
+Ronnie Dutta          <ronnie.dutta@metoffice.gov.uk>                                  <61982285+MetRonnie@users.noreply.github.com>
+Sadie Bartholomew     <sadie.bartholomew@metoffice.gov.uk>     Sadie L. Bartholomew    <30274190+sadielbartholomew@users.noreply.github.com>
+Alex Szabó            <kreatemore@gmail.com>                   Szabó Alex
+Tim Pillinger         <tim.pillinger@metoffice.gov.uk>                                 <26465611+wxtim@users.noreply.github.com> 
+Tim Pillinger         <tim.pillinger@metoffice.gov.uk>         wxtim
+Ash Newport           <anewport@dxc.com>                       anewport
+dependabot[bot]       <dependabot@noreply.github.com>                                  <49699333+dependabot[bot]@users.noreply.github.com>   
+github-actions[bot]   <github-actions@no-reply.github.com>                             <41898282+github-actions[bot]@users.noreply.github.com>
+Carol Barno           <carol.barno.dev@gmail.com>                                      <32536886+CarolBarno@users.noreply.github.com> 
