@@ -24,6 +24,7 @@ import { simpleWorkflowGscanNodes } from './gscan.data'
 import storeOptions from '@/store/options'
 import WorkflowState from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
+import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import GScan from '@/components/cylc/gscan/GScan'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
@@ -58,6 +59,7 @@ localVue.prototype.$workflowService = {
     types: []
   })
 }
+localVue.use(CylcObjectPlugin)
 
 Vue.use(Vuetify)
 Vue.use(Vuex)
