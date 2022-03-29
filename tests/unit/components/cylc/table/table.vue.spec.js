@@ -34,11 +34,12 @@ localVue.prototype.$workflowService = {
   register () {},
   unregister () {},
   subscribe () {},
-  mutations: [
-    {
-      args: []
-    }
-  ]
+  mutationsAndTypes: Promise.resolve({
+    mutations: [
+      { args: [] }
+    ],
+    types: []
+  })
 }
 localVue.use(CylcObjectPlugin)
 

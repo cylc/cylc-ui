@@ -52,7 +52,11 @@ localVue.prototype.$workflowService = {
         this.unsubscribed = true
       }
     }
-  }
+  },
+  mutationsAndTypes: Promise.resolve({
+    mutations: [],
+    types: []
+  })
 }
 
 Vue.use(Vuetify)

@@ -34,6 +34,12 @@ import { SubscriptionClient } from 'subscriptions-transport-ws'
 import mergeQueries from '@/graphql/merge'
 import Alert from '@/model/Alert.model'
 
+/**
+ * @typedef {Object} MutationsAndTypes
+ * @property {Array<Object>} mutations
+ * @property {Array<Object>} types
+ */
+
 class WorkflowService {
   /**
    * @constructor
@@ -61,12 +67,10 @@ class WorkflowService {
     this.subscriptions = {}
 
     // mutations defaults
-    this.mutations = null
-    this.types = null
     this.associations = null
     this.primaryMutations = primaryMutations
 
-    this.loadMutations()
+    this.mutationsAndTypes = this.loadMutations()
   }
 
   // --- Mutations
@@ -81,6 +85,7 @@ class WorkflowService {
    *
    * @param {String} mutationName
    * @param {String} id
+   * @returns {Promise}
    */
   mutate (mutationName, id) {
     const mutation = this.getMutation(mutationName)
@@ -96,18 +101,20 @@ class WorkflowService {
 
   /**
    * Load mutations for internal use from GraphQL introspection.
+   *
+   * @returns {Promise<MutationsAndTypes>}
    */
-  loadMutations () {
+  async loadMutations () {
     // TODO: this assumes all workflows use the same schema which is and
     //       isn't necessarily true, not quite sure, come back to this later.
-    this.apolloClient.query({
+    const response = await this.apolloClient.query({
       query: getIntrospectionQuery(),
       fetchPolicy: 'no-cache'
-    }).then((response) => {
-      this.mutations = response.data.__schema.mutationType.fields
-      this.types = response.data.__schema.types
-      processMutations(this.mutations, this.types)
     })
+    const mutations = response.data.__schema.mutationType.fields
+    const types = response.data.__schema.types
+    processMutations(mutations, types)
+    return { mutations, types }
   }
 
   /**
