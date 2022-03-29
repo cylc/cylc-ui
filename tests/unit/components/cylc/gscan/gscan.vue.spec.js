@@ -35,19 +35,17 @@ global.requestAnimationFrame = cb => cb()
 
 const localVue = createLocalVue()
 localVue.prototype.$workflowService = {
-  register: function () {
-  },
-  unregister: function (obj) {
+  register () {},
+  unregister (obj) {
     // we will reset the subscriptions object so tests can confirm
     // this function has been called
     obj.subscriptions = {}
   },
-  subscribe: function (obj, name) {
+  subscribe (obj, name) {
     return true
   },
-  unsubscribe: function () {
-  },
-  startDeltasSubscription: function () {
+  unsubscribe () {},
+  startDeltasSubscription () {
     return {
       unsubscribed: false,
       unsubscribe () {

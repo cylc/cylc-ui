@@ -28,15 +28,12 @@ Vue.use(Vuetify)
 
 const localVue = createLocalVue()
 localVue.prototype.$eventBus = {
-  emit: () => {}
+  emit () {}
 }
 localVue.prototype.$workflowService = {
-  register: function () {
-  },
-  unregister: function () {
-  },
-  subscribe: function () {
-  },
+  register () {},
+  unregister () {},
+  subscribe () {},
   mutations: [
     {
       args: []
