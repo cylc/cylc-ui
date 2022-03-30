@@ -33,7 +33,7 @@ describe('Dashboard', () => {
       .find('svg')
       .should('be.visible')
   })
-  it.only('Should display the states in order', () => {
+  it('Should display the states in order', () => {
     cy.visit('/#/')
     cy
       .get('#dashboard-workflows table tbody tr')
