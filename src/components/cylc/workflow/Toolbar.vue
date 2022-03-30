@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<!-- Toolbar for the workflow view -->
+
 <template>
   <v-app-bar
     app
@@ -36,52 +38,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-btn>
     <!-- title -->
     <v-toolbar-title
-      class="font-weight-light"
+      class="text-md-h6 text-subtitle-1"
     >
       <span class="c-toolbar-title">{{ title }}</span>
     </v-toolbar-title>
 
     <!-- control bar elements displayed only when there is a current workflow in the store -->
     <template v-if="currentWorkflow">
-      <v-icon
-        id="workflow-mutate-button"
-        color="#5E5E5E"
-        v-cylc-object="currentWorkflow"
-      >
-        {{ svgPaths.menu }}
-      </v-icon>
+      <div class="c-workflow-controls flex-shrink-0">
+        <v-icon
+          id="workflow-mutate-button"
+          color="#5E5E5E"
+          v-cylc-object="currentWorkflow"
+        >
+          {{ svgPaths.menu }}
+        </v-icon>
 
-      <v-icon
-        id="workflow-play-button"
-        color="#5E5E5E"
-        :disabled="!enabled.playToggle"
-        v-if="!isRunning"
-        @click="onClickPlay"
-      >
-        {{ svgPaths.run }}
-      </v-icon>
+        <v-icon
+          id="workflow-play-button"
+          color="#5E5E5E"
+          :disabled="!enabled.playToggle"
+          v-if="!isRunning"
+          @click="onClickPlay"
+        >
+          {{ svgPaths.run }}
+        </v-icon>
 
-      <v-icon
-        id="workflow-play-pause-button"
-        color="#5E5E5E"
-        :disabled="!enabled.pauseToggle"
-        v-if="isRunning"
-        @click="onClickReleaseHold"
-      >
-        {{ isPaused ? svgPaths.run : svgPaths.hold }}
-      </v-icon>
+        <v-icon
+          id="workflow-play-pause-button"
+          color="#5E5E5E"
+          :disabled="!enabled.pauseToggle"
+          v-if="isRunning"
+          @click="onClickReleaseHold"
+        >
+          {{ isPaused ? svgPaths.run : svgPaths.hold }}
+        </v-icon>
 
-      <v-icon
-        id="workflow-stop-button"
-        color="#5E5E5E"
-        :disabled="!enabled.stopToggle"
-        @click="onClickStop"
-      >
-        {{ svgPaths.stop }}
-      </v-icon>
+        <v-icon
+          id="workflow-stop-button"
+          color="#5E5E5E"
+          :disabled="!enabled.stopToggle"
+          @click="onClickStop"
+        >
+          {{ svgPaths.stop }}
+        </v-icon>
+      </div>
 
       <!-- workflow status message -->
-      <span class="status-msg">
+      <span class="status-msg text-md-body-1 text-body-2">
         {{ statusMsg }}
       </span>
 
@@ -92,7 +96,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="$route.name === 'workflow'"
       >
         <template v-slot:activator="{ on }">
-          <a class="add-view" v-on="on">
+          <a
+            class="add-view d-flex flex-row-reverse align-items-center"
+            v-on="on">
             <v-icon class="icon" color="#5995EB">{{ svgPaths.add }}</v-icon>
             <span class="label">
               {{ $t('Toolbar.addView') }}

@@ -210,8 +210,10 @@ export default {
         // TODO: better way of checking if a 'task' is actually a family?
         ret = 'family'
       }
-      if (ret !== 'workflow') {
-        ret += ' - '
+      ret += ' - '
+      if (this.type === 'workflow') {
+        ret += this.node.statusMsg || 'state unknown'
+      } else {
         ret += this.node.state || 'state unknown'
         if (this.node.isHeld) {
           ret += ' (held)'
