@@ -243,13 +243,13 @@ fragment WorkflowTreeAddedData on Added {
   workflow {
     ...WorkflowData
   }
-  cyclePoints: familyProxies (ids: ["*/root"], ghosts: true) {
+  cyclePoints: familyProxies (ids: ["*/root"]) {
     ...CyclePointData
   }
-  familyProxies (exids: ["*/root"], sort: { keys: ["name"] }, ghosts: true) {
+  familyProxies (exids: ["*/root"], sort: { keys: ["name"] }) {
     ...FamilyProxyData
   }
-  taskProxies (sort: { keys: ["cyclePoint"], reverse: false }, ghosts: true) {
+  taskProxies (sort: { keys: ["cyclePoint"], reverse: false }) {
     ...TaskProxyData
   }
   jobs (sort: { keys: ["submit_num"], reverse:true }) {
@@ -258,13 +258,13 @@ fragment WorkflowTreeAddedData on Added {
 }
 
 fragment WorkflowTreeUpdatedData on Updated {
-  taskProxies (ghosts: true) {
+  taskProxies {
     ...TaskProxyData
   }
   jobs {
     ...JobData
   }
-  familyProxies (exids: ["*/root"], ghosts: true) {
+  familyProxies (exids: ["*/root"]) {
     ...FamilyProxyData
   }
 }
@@ -323,7 +323,7 @@ fragment WorkflowTableAddedData on Added {
   workflow {
     ...WorkflowData
   }
-  taskProxies(sort: {keys: ["cyclePoint"], reverse: false}, ghosts: true) {
+  taskProxies(sort: {keys: ["cyclePoint"], reverse: false}) {
     ...TaskProxyData
   }
   jobs(sort: {keys: ["submit_num"], reverse: true}) {
@@ -332,7 +332,7 @@ fragment WorkflowTableAddedData on Added {
 }
 
 fragment WorkflowTableUpdatedData on Updated {
-  taskProxies(ghosts: true) {
+  taskProxies {
     ...TaskProxyData
   }
   jobs {
