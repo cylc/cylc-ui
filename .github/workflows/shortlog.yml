@@ -5,6 +5,8 @@ on:
   pull_request:
     paths:
       - 'CONTRIBUTING.md'
+      - '.github/workflows/shortlog.yml'
+      - '.mailmap'
 
 jobs:
   test:
