@@ -345,13 +345,14 @@ export function processArguments (mutation, types) {
     required = false
     cylcObject = null
     cylcType = null
+    if (pointer && pointer.kind === 'NON_NULL') {
+      required = true
+    }
     while (pointer) {
       // walk down the nested type tree
       if (pointer.kind === 'LIST') {
         multiple = true
-      } else if (pointer.kind === 'NON_NULL') {
-        required = true
-      } else if (pointer.name) {
+      } else if (pointer.kind !== 'NON_NULL' && pointer.name) {
         for (const objectName in mutationMapping) {
           for (
             const [type, impliesMultiple] of mutationMapping[objectName]
