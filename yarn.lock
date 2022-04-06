@@ -7209,7 +7209,7 @@ __metadata:
     sass-loader: ^10.2.0
     sinon: ^12.0.1
     standard: ^16.0.4
-    subscriptions-transport-ws: ^0.9.19
+    subscriptions-transport-ws: ^0.11.0
     svgo: ^2.3.1
     utf-8-validate: ^5.0.8
     vue: ^2.6.14
@@ -17391,9 +17391,9 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"subscriptions-transport-ws@npm:^0.9.19":
-  version: 0.9.19
-  resolution: "subscriptions-transport-ws@npm:0.9.19"
+"subscriptions-transport-ws@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "subscriptions-transport-ws@npm:0.11.0"
   dependencies:
     backo2: ^1.0.2
     eventemitter3: ^3.1.0
@@ -17401,8 +17401,8 @@ resolve@^2.0.0-next.3:
     symbol-observable: ^1.0.4
     ws: ^5.2.0 || ^6.0.0 || ^7.0.0
   peerDependencies:
-    graphql: ">=0.10.0"
-  checksum: 6979b36e03c0a48e33836cb412941e41bae8743767dff2aa453159cfffa983b879cc80cd4e744e82afbf11062c66899c37f5dca0281253ee240098ada0078533
+    graphql: ^15.7.2 || ^16.0.0
+  checksum: cc2e98d5c9d89c44d2e15eca188781c6ebae13d1661c42a99cee9d2897aebe2a22bc118eefff83244a79c88ee4ea24d46973ebf26ae7cb47ac1857fb8ee2c947
   languageName: node
   linkType: hard
 
