@@ -106,19 +106,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item id = "cylc-hub-button" v-if=multiUserMode :href=hubUrl>
+          <v-tooltip :disabled=multiUserMode bottom>
+            <template v-slot:activator="{ on }">
+          <div v-on="on" >
+          <v-list-item id = "cylc-hub-button" :disabled=!multiUserMode :href=hubUrl>
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.hub }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Cylc Hub
-              </v-list-item-title>
+                <v-list-item-title class="title font-weight-light">
+                  Cylc Hub
+                </v-list-item-title>
               <v-list-item-subtitle>
                 Visit the Hub to manage your running UI Servers
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
+          </div>
+            </template>
+            <span>Only available in multi user mode.</span>
+          </v-tooltip>
         </v-list>
       </v-flex>
       <v-flex xs12 md6 lg6>
@@ -129,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="title font-weight-light">
-                Cylc UI Quickstart
+                Cylc UI Quickstart2
               </v-list-item-title>
               <v-list-item-subtitle>
                 Learn how to use the Cylc UI
