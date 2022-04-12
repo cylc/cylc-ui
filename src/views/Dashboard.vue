@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-tooltip :disabled=multiUserMode bottom>
             <template v-slot:activator="{ on }">
           <div v-on="on" >
-          <v-list-item id = "cylc-hub-button" :disabled=!multiUserMode :href=hubUrl>
+          <v-list-item :disabled=!multiUserMode :href=hubUrl>
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.hub }}</v-icon>
             </v-list-item-avatar>
@@ -124,7 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           </div>
             </template>
-            <span>Only available in multi user mode.</span>
+            <span>You are not running Cylc UI via Cylc Hub.</span>
           </v-tooltip>
         </v-list>
       </v-flex>

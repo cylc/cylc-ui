@@ -94,7 +94,7 @@ describe('Table view', () => {
         .should('have.length', 1)
         .should('be.visible')
     })
-    it.only('Should filter by task name and states', () => {
+    it('Should filter by task name and states', () => {
       cy.visit('/#/table/one')
       cy
         .get('.c-table table > tbody > tr')

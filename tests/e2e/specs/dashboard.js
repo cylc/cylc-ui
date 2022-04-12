@@ -33,7 +33,7 @@ describe('Dashboard', () => {
       .find('svg')
       .should('be.visible')
   })
-  it.only('Should display the states in order', () => {
+  it('Should display the states in order', () => {
     cy.visit('/#/')
     cy
       .get('#dashboard-workflows table tbody tr')
@@ -43,15 +43,6 @@ describe('Dashboard', () => {
         return $tdElement[1].textContent.toLowerCase()
       })
       .should('equal', [...WorkflowStateOrder.entries()][0][0])
-  })
-  it.only('Should disable the cylc hub button with a tooltip in single user mode', () => {
-    cy
-      .visit('/#/')
-      .get('.container > :nth-child(3) > :nth-child(1)')
-      .find('#cylc-hub-button')
-      .should('be.disabled')
-      .trigger('mouseover').invoke('show')
-      .contains('Only available in multi user mode')
   })
   // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
 })
