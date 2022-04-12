@@ -84,6 +84,7 @@ describe('GScan component', () => {
       ...options
     })
   }
+
   it('should display a skeleton loader if loading data', () => {
     const wrapper = mountFunction({
       computed: {
@@ -96,6 +97,7 @@ describe('GScan component', () => {
     const isBusy = skeletonLoader.element.getAttribute('aria-busy')
     expect(isBusy).to.equal('true')
   })
+
   it('should display the GScan with valid data', () => {
     store.commit('workflows/SET_WORKFLOWS', simpleWorkflowGscanNodes)
     const wrapper = mountFunction({})
@@ -103,23 +105,34 @@ describe('GScan component', () => {
     expect(wrapper.find('div')).to.not.equal(null)
     expect(wrapper.html()).to.contain('five')
   })
-  describe('Nodes', () => {
-    it('should create nodes and workflow name part nodes', () => {
-      const workflow = {
-        id: '~user/a/b/c',
-        name: 'a/b/c',
-        status: WorkflowState.PAUSED.name,
-        stateTotals: {
-          [TaskState.FAILED.name]: 1
-        }
+
+  describe('createWorkflowNode', () => {
+    const workflow = {
+      id: '~user/a/b/c',
+      name: 'a/b/c',
+      status: WorkflowState.PAUSED.name,
+      stateTotals: {
+        [TaskState.FAILED.name]: 1
       }
-      const nodeHierarchy = createWorkflowNode(workflow, true)
-      expect(nodeHierarchy.name).to.equal('a')
+    }
+    it('correctly creates a flat node', () => {
       const node = createWorkflowNode(workflow, false)
       expect(node.name).to.equal(null)
       expect(node.id).to.equal('~user/a/b/c')
     })
+    it('correctly creates a node hierarchy', () => {
+      const nodeHierarchy = createWorkflowNode(workflow, true)
+      expect(nodeHierarchy).to.deep.nested.include({
+        name: 'a',
+        'children[0].name': 'b',
+        'children[0].children[0].name': 'c'
+      })
+      expect(nodeHierarchy).to.not.have.nested.property(
+        'children[0].children[0].children'
+      )
+    })
   })
+
   describe('Sorting', () => {
     const createWorkflows = (namesAndStatuses) => {
       return namesAndStatuses.map(nameAndStatus => {
