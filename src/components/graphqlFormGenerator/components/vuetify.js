@@ -62,7 +62,9 @@ const RULES = {
     x => Boolean(!x || x.match(/^((\[[^=\]]+\])+)?([^[=\]-]+)?$/)) || 'Invalid',
   taskID:
     // PERMIT 1/a PROHIBIT a, 1
-    x => Boolean(!x || x.match(/^(.){1,}\/(.){1,}$/)) || 'Invalid'
+    x => Boolean(!x || x.match(/^(.){1,}\/(.){1,}$/)) || 'Invalid',
+  flow:
+    x => Boolean(!x || x.match(/(^\d+$|^(all|new|none)$)/)) || 'Invalid'
 }
 
 export default {
@@ -169,6 +171,13 @@ export default {
       placeholder: '[section]setting',
       rules: [
         RULES.cylcConfigItem
+      ]
+    },
+    Flow: {
+      is: VTextField,
+      placeholder: 'flow number',
+      rules: [
+        RULES.flow
       ]
     }
   },
