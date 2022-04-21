@@ -50,6 +50,17 @@ import store from '@/store/index'
 import { Tokens } from '@/utils/uid'
 
 /**
+ * @typedef {Object} MutationArgs
+ * @property {string} _cylcObject
+ * @property {boolean} _required
+ */
+
+/**
+ * @typedef {Object} Mutation
+ * @property {Array<MutationArgs>} args
+ */
+
+/**
  * Associates icons with mutations by name.
  * {mutation.name: svgIcon}
  */
@@ -319,7 +330,7 @@ export function getMutationExtendedDesc (text) {
  *   _required:
  *     true if this field must be provided for the mutation to be called.
  *
- * @param {object} mutation - One Mutation as returned by introspection query.
+ * @param {Mutation} mutation - One Mutation as returned by introspection query.
  * @param {object} types - Types as returned by introspection query.
  */
 export function processArguments (mutation, types) {
@@ -411,17 +422,6 @@ export function getIntrospectionQuery () {
     print(fullIntrospection.definitions[3])
   )
 }
-
-/**
- * @typedef {Object} MutationArgs
- * @property {string} _cylcObject
- * @property {boolean} _required
- */
-
-/**
- * @typedef {Object} Mutation
- * @property {Array<MutationArgs>} args
- */
 
 /**
  * Filter for mutations that relate to the given Cylc object.

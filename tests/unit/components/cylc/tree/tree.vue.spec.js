@@ -29,20 +29,18 @@ import cloneDeep from 'lodash/cloneDeep'
 
 const localVue = createLocalVue()
 localVue.prototype.$eventBus = {
-  emit: () => {}
+  emit () {}
 }
 localVue.prototype.$workflowService = {
-  register: function () {
-  },
-  unregister: function () {
-  },
-  subscribe: function () {
-  },
-  mutations: [
-    {
-      args: []
-    }
-  ]
+  register () {},
+  unregister () {},
+  subscribe () {},
+  mutationsAndTypes: Promise.resolve({
+    mutations: [
+      { args: [] }
+    ],
+    types: []
+  })
 }
 localVue.use(CylcObjectPlugin)
 

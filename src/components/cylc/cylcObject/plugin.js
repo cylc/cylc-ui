@@ -23,35 +23,43 @@ import {
 
 // reference to closure listener (needed as we are using variables from another scope)
 let listener = null
+let cancelBind = false
 
 function bind (el, binding, vnode) {
-  const mutations = vnode.context.$workflowService.mutations
-  const types = vnode.context.$workflowService.types
-  // a closure to use the variables above in the event listener
-  listener = function (e) {
-    const cylcId = binding.value.id
-    const tokens = tokenise(cylcId)
-    const type = getType(tokens)
-    const componentMutations = filterAssociations(
-      type,
-      tokens,
-      mutations
-    )
-    vnode.context.$eventBus.emit('show-mutations-menu', {
-      id: cylcId,
-      type: type,
-      types: types,
-      tokens: tokens,
-      mutations: componentMutations,
-      node: binding.value,
-      event: e
-    })
-  }
-  el.addEventListener('click', listener)
-  el.classList.add('c-interactive')
+  cancelBind = false
+  // await graphql query to get mutations
+  vnode.context.$workflowService.mutationsAndTypes.then(({ mutations, types }) => {
+    if (cancelBind) { // operation has been cancelled by unbind()
+      return
+    }
+    // a closure to use the variables above in the event listener
+    listener = function (e) {
+      const cylcId = binding.value.id
+      const tokens = tokenise(cylcId)
+      const type = getType(tokens)
+      const componentMutations = filterAssociations(
+        type,
+        tokens,
+        mutations
+      )
+      vnode.context.$eventBus.emit('show-mutations-menu', {
+        id: cylcId,
+        type: type,
+        types: types,
+        tokens: tokens,
+        mutations: componentMutations,
+        node: binding.value,
+        event: e
+      })
+    }
+    el.addEventListener('click', listener)
+    el.classList.add('c-interactive')
+  })
 }
 
 function unbind (el) {
+  // cancel async part of bind
+  cancelBind = true
   // clean up to avoid memory issues
   el.removeEventListener('click', listener)
   listener = null

@@ -56,7 +56,10 @@ Assertion.addMethod('expanded', function () {
 const localVue = createLocalVue()
 // load cylc-object directive
 localVue.prototype.$workflowService = {
-  mutations: []
+  mutationsAndTypes: Promise.resolve({
+    mutations: [],
+    types: []
+  })
 }
 localVue.prototype.$eventBus = {
   emit: () => {}

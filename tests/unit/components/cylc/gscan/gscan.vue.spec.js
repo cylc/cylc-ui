@@ -24,6 +24,7 @@ import { simpleWorkflowGscanNodes } from './gscan.data'
 import storeOptions from '@/store/options'
 import WorkflowState from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
+import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import GScan from '@/components/cylc/gscan/GScan'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
@@ -35,27 +36,30 @@ global.requestAnimationFrame = cb => cb()
 
 const localVue = createLocalVue()
 localVue.prototype.$workflowService = {
-  register: function () {
-  },
-  unregister: function (obj) {
+  register () {},
+  unregister (obj) {
     // we will reset the subscriptions object so tests can confirm
     // this function has been called
     obj.subscriptions = {}
   },
-  subscribe: function (obj, name) {
+  subscribe (obj, name) {
     return true
   },
-  unsubscribe: function () {
-  },
-  startDeltasSubscription: function () {
+  unsubscribe () {},
+  startDeltasSubscription () {
     return {
       unsubscribed: false,
       unsubscribe () {
         this.unsubscribed = true
       }
     }
-  }
+  },
+  mutationsAndTypes: Promise.resolve({
+    mutations: [],
+    types: []
+  })
 }
+localVue.use(CylcObjectPlugin)
 
 Vue.use(Vuetify)
 Vue.use(Vuex)
