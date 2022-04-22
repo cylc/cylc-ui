@@ -95,7 +95,7 @@
     "nyc": "^15.1.0",
     "postcss": "^8.3.6",
     "regenerator-runtime": "^0.13.7",
-    "sass": "~1.49.0",
+    "sass": "~1.50.0",
     "sass-loader": "^10.2.0",
     "sinon": "^12.0.1",
     "standard": "^16.0.4",
