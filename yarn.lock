@@ -7223,7 +7223,7 @@ __metadata:
     eslint-plugin-import: ^2.23.4
     eslint-plugin-no-only-tests: ^2.6.0
     eslint-plugin-node: ^11.1.0
-    eslint-plugin-promise: ^5.1.1
+    eslint-plugin-promise: ^6.0.0
     eslint-plugin-vue: ^8.4.0
     express: ^4.17.2
     express-ws: ^5.0.2
@@ -8464,12 +8464,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-promise@npm:^5.1.1":
-  version: 5.1.1
-  resolution: "eslint-plugin-promise@npm:5.1.1"
+"eslint-plugin-promise@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "eslint-plugin-promise@npm:6.0.0"
   peerDependencies:
-    eslint: ^7.0.0
-  checksum: 97ffd570265ed9677b4103ba3fb18b19fa3471eb6581c5c3c426bcec249c9e89cfac735e5ddb403a794cab7fda1b53be151a30e1d3b71485630d7f28e1bb1ad6
+    eslint: ^7.0.0 || ^8.0.0
+  checksum: 7e761507c51267b77e4ad710e7c8938aa4f8f69b975886034e57497a1816e9527eda364e25aac03d1b4e0df2e738ba98e49ad075d028824fcfea533a1419751c
   languageName: node
   linkType: hard
 
