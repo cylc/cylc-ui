@@ -25,7 +25,7 @@
     "@lumino/algorithm": "^1.9.1",
     "@lumino/default-theme": "^0.21.1",
     "@lumino/widgets": "^1.31.1",
-    "axios": "^0.26.0",
+    "axios": "^0.27.0",
     "axios-fetch": "^1.1.0",
     "babel-runtime": "^6.26.0",
     "core-js": "3",
