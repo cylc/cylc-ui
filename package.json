@@ -61,7 +61,7 @@
     "@mdi/js": "^6.5.95",
     "@vue/babel-preset-app": "^4.5.13",
     "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-e2e-cypress": "^4.5.13",
+    "@vue/cli-plugin-e2e-cypress": "^5.0.4",
     "@vue/cli-plugin-eslint": "^4.5.13",
     "@vue/cli-plugin-unit-mocha": "^5.0.1",
     "@vue/cli-service": "^4.5.15",
@@ -76,7 +76,7 @@
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
     "cross-fetch": "^3.1.5",
-    "cypress": "^9.3.1",
+    "cypress": "^9.6.0",
     "eslint": "^7.31.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-import-resolver-node": "^0.3.6",
@@ -109,9 +109,6 @@
     "vuetify-loader": "^1.7.3",
     "webpack": "^4.46.0",
     "zen-observable": "^0.8.15"
-  },
-  "resolutions": {
-    "cypress": "^8.4.0"
   },
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
