@@ -67,7 +67,6 @@ class WorkflowService {
     this.subscriptions = {}
 
     // mutations defaults
-    this.associations = null
     this.primaryMutations = primaryMutations
 
     this.mutationsAndTypes = this.loadMutations()
@@ -85,11 +84,11 @@ class WorkflowService {
    *
    * @param {String} mutationName
    * @param {String} id
-   * @returns {Promise}
+   * @returns {Promise<Array>}
    */
-  mutate (mutationName, id) {
-    const mutation = this.getMutation(mutationName)
-    return mutate(
+  async mutate (mutationName, id) {
+    const mutation = await this.getMutation(mutationName)
+    return await mutate(
       mutation,
       getMutationArgsFromTokens(
         mutation,
@@ -121,9 +120,11 @@ class WorkflowService {
    * Return a mutation by name.
    *
    * @param {String} mutationName
+   * @returns {Promise<Object>}
    */
-  getMutation (mutationName) {
-    return this.mutations.find(mutation => mutation.name === mutationName)
+  async getMutation (mutationName) {
+    const { mutations } = await this.mutationsAndTypes
+    return mutations.find(mutation => mutation.name === mutationName)
   }
 
   // --- GraphQL query subscriptions

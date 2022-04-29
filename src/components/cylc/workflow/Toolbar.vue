@@ -260,31 +260,34 @@ export default {
   },
   methods: {
     onClickPlay () {
-      const ret = this.$workflowService.mutate(
+      this.$workflowService.mutate(
         'play',
         this.currentWorkflow.id
-      )
-      if (ret[0] === mutationStatus.SUCCEEDED) {
-        this.expecting.play = !this.isRunning
-      }
+      ).then(ret => {
+        if (ret[0] === mutationStatus.SUCCEEDED) {
+          this.expecting.play = !this.isRunning
+        }
+      })
     },
     onClickReleaseHold () {
-      const ret = this.$workflowService.mutate(
+      this.$workflowService.mutate(
         this.isPaused ? 'resume' : 'pause',
         this.currentWorkflow.id
-      )
-      if (ret[0] === mutationStatus.SUCCEEDED) {
-        this.expecting.paused = !this.isPaused
-      }
+      ).then(ret => {
+        if (ret[0] === mutationStatus.SUCCEEDED) {
+          this.expecting.paused = !this.isPaused
+        }
+      })
     },
     async onClickStop () {
-      const ret = this.$workflowService.mutate(
+      this.$workflowService.mutate(
         'stop',
         this.currentWorkflow.id
-      )
-      if (ret[0] === mutationStatus.SUCCEEDED) {
-        this.expecting.stop = WorkflowState.STOPPING
-      }
+      ).then(ret => {
+        if (ret[0] === mutationStatus.SUCCEEDED) {
+          this.expecting.stop = WorkflowState.STOPPING
+        }
+      })
     },
     toggleExtended () {
       this.extended = !this.extended
