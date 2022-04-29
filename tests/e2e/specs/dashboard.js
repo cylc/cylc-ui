@@ -44,7 +44,7 @@ describe('Dashboard', () => {
       })
       .should('equal', [...WorkflowStateOrder.entries()][0][0])
   })
-  it('Should have disabled cylc hub button', () => {
+  it('Should have disabled cylc hub button in single user mode', () => {
     cy.visit('/#/')
     cy
       .get('#cylc-hub-button')
