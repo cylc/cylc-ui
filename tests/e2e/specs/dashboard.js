@@ -44,5 +44,11 @@ describe('Dashboard', () => {
       })
       .should('equal', [...WorkflowStateOrder.entries()][0][0])
   })
+  it('Should have disabled cylc hub button in single user mode', () => {
+    cy.visit('/#/')
+    cy
+      .get('#cylc-hub-button')
+      .should('have.class', 'v-list-item--disabled')
+  })
   // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
 })
