@@ -61,6 +61,12 @@ import { Tokens } from '@/utils/uid'
  */
 
 /**
+ * @typedef {Object} Response
+ * @property {TaskState} status
+ * @property {str} message
+ */
+
+/**
  * Associates icons with mutations by name.
  * {mutation.name: svgIcon}
  */
@@ -644,7 +650,7 @@ export function getMutationArgsFromTokens (mutation, tokens) {
  * @param {string} message - error message to display
  * @param {*} response - raw GraphQL response or null
  *
- * @returns {Array} [status, message]
+ * @returns {Promise<Response>} {status, msg}
  */
 async function _mutateError (mutationName, message, response) {
   // log the response
@@ -661,7 +667,10 @@ async function _mutateError (mutationName, message, response) {
   )
 
   // format a response
-  return [TaskState.SUBMIT_FAILED, message]
+  return {
+    status: TaskState.SUBMIT_FAILED,
+    message
+  }
 }
 
 /**
@@ -671,7 +680,7 @@ async function _mutateError (mutationName, message, response) {
  * @param {Object} args
  * @param {ApolloClient} apolloClient
  *
- * @returns {Array} [status, result]
+ * @returns {Promise<Response>} {status, msg}
  */
 export async function mutate (mutation, args, apolloClient) {
   let response = null
@@ -704,13 +713,19 @@ export async function mutate (mutation, args, apolloClient) {
       // regular [commandSucceeded, message] format
       if (result[0] === true) {
         // success
-        return [TaskState.SUBMITTED, result[1]]
+        return {
+          status: TaskState.SUBMITTED,
+          message: result[1]
+        }
       }
       // failure (Cylc error, e.g. could not find workflow <x>)
       return _mutateError(mutation.name, result[1], response)
     }
     // command in a different format (e.g. info command)
-    return [TaskState.SUBMITTED, result]
+    return {
+      status: TaskState.SUBMITTED,
+      message: result
+    }
   } catch (error) {
     return _mutateError(mutation.name, 'invalid response', response)
   }

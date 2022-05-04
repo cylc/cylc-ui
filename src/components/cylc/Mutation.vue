@@ -121,13 +121,12 @@ export default {
     /* Execute the GraphQL mutation */
     async call (args) {
       this.status = status.submitted
-      const promise = mutate(
+      mutate(
         this.mutation,
         args,
         this.$workflowService.apolloClient
-      )
-      promise.then((x) => {
-        this.status = x[0].name.replace('_', '-')
+      ).then(response => {
+        this.status = response.status.name.replace('_', '-')
       })
     },
 
