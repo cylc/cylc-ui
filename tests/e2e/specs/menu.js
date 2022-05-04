@@ -27,9 +27,7 @@ describe('CylcObject Menu component', () => {
   })
 
   it('is displayed when a Cylc object is clicked on', () => {
-    cy
-      // click on the first interactive thing
-      .get('.c-interactive:first')
+    cy.get('#workflow-mutate-button.c-interactive')
       .click()
       // the menu should now be open
       .get('.c-mutation-menu-list:first')
@@ -58,7 +56,7 @@ describe('CylcObject Menu component', () => {
   })
 
   it('should be collapsed next time it is opened', () => {
-    cy.get('.c-interactive:first')
+    cy.get('#workflow-mutate-button')
       .click()
       .get('.c-mutation-menu-list')
       .should('be.visible')

@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { Deferred } from '../../util'
+
 // Tests for the WorkflowService subscriptions. Not necessarily GraphQL subscriptions!
+
 /**
  * Helper function to retrieve the subscriptions.
  * @returns {Cypress.Chainable<any>}
@@ -30,6 +33,7 @@ describe('WorkflowService subscriptions', () => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
+
   it('-> Dashboard -> User Profile, should contain 1 subscription (GScan)', () => {
     cy.visit('/#/')
     cy.get('[href="#/user-profile"]').click({ force: true })
@@ -39,6 +43,7 @@ describe('WorkflowService subscriptions', () => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
+
   it('-> Dashboard -> Workflows, should contain 2 subscriptions (GScan + Tree)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click({ force: true })
@@ -51,6 +56,7 @@ describe('WorkflowService subscriptions', () => {
       expect(subscriptions.workflow.observable.closed).to.equal(false)
     })
   })
+
   it('-> Dashboard -> Workflows -> Dashboard, should contain 2 subscriptions (GScan + Dashboard)', () => {
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
@@ -62,6 +68,7 @@ describe('WorkflowService subscriptions', () => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
+
   it('-> Tree, should contain 2 subscriptions (GScan + Tree)', () => {
     cy.visit('/#/tree/one')
     cy.get('.c-header').should('exist')
@@ -72,6 +79,7 @@ describe('WorkflowService subscriptions', () => {
       expect(subscriptions.workflow.observable.closed).to.equal(false)
     })
   })
+
   it('-> Tree - > Dashboard, should contain 1 subscription ("root" = GScan + Dashboard)', () => {
     cy.visit('/#/tree/one')
     cy
@@ -82,5 +90,53 @@ describe('WorkflowService subscriptions', () => {
     getSubscriptions().then(subscriptions => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
+  })
+})
+
+describe('WorkflowService mutations', () => {
+  it('handles asynchronously loaded mutations properly', () => {
+    const deferred = new Deferred()
+    cy.intercept('/graphql', req => {
+      if (req.body.query?.startsWith('mutation')) {
+        // equivalent to `.as('mutation')`:
+        req.alias = 'mutation'
+      } else if (req.body.query?.includes('__schema')) {
+        // Defer the response to the query that loads the mutations
+        req.continue(res => {
+          // Return unfulfilled promise; Cypress will wait for us to resolve it
+          // before sending the response
+          return deferred.promise
+        })
+      }
+    })
+    cy.visit('/#/workflows/one')
+    // Before mutations have loaded
+    cy
+      // Mutations menu should not be able to open yet
+      .get('#workflow-mutate-button')
+      .should('not.have.class', 'c-interactive')
+      .click()
+      .get('.c-mutation-menu-list')
+      .should('not.exist')
+      // Play/stop buttons in toolbar should wait for mutations before sending the mutation
+      .get('#workflow-stop-button')
+      .click()
+      // Now load mutations
+      .then(() => {
+        deferred.resolve()
+        cy.log('Mutations now loaded')
+      })
+    // After mutations have loaded
+    cy
+      // Mutations menu should be openable
+      .get('#workflow-mutate-button.c-interactive')
+      .click()
+      .get('.c-mutation-menu')
+      .should('be.visible')
+      // Earlier click of stop button should come through
+      .wait('@mutation').then(({ request }) => {
+        // debugger
+        expect(request.body.operationName).to.equal('stop')
+      })
   })
 })
