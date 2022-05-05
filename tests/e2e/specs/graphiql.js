@@ -60,7 +60,7 @@ describe('GraphiQL', () => {
     cy.get('.CodeMirror')
       .then((editors) => {
         expect(editors[0].CodeMirror.getValue()).to.equal(query)
-        expect(editors[2].CodeMirror.getValue()).to.contain('~user/one')
+        expect(editors[3].CodeMirror.getValue()).to.contain('~user/one')
       })
   })
 })
