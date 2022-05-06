@@ -23,6 +23,7 @@ module.exports = {
     'no-only-tests'
   ],
   rules: {
-    'no-only-tests/no-only-tests': 'error'
+    'no-console': 'off',
+    'no-only-tests/no-only-tests': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   }
 }
