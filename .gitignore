@@ -31,6 +31,11 @@ selenium-debug.log*
 *.sln
 *.sw*
 
+# Editor-related config that we may want to commit down the line,
+# just not yet
+jsconfig.json
+vue-shim.d.js
+
 # Yarn
 .yarn/*
 !.yarn/patches
