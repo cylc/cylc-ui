@@ -28,16 +28,25 @@ import {
 } from '@/utils/aotf'
 import store from '@/store/index'
 import { createApolloClient } from '@/graphql/index'
-/* eslint-disable no-unused-vars */
-import { DocumentNode, print } from 'graphql'
-import { SubscriptionClient } from 'subscriptions-transport-ws'
+import { print } from 'graphql'
 import mergeQueries from '@/graphql/merge'
 import Alert from '@/model/Alert.model'
+
+/** @typedef {import('@/components/cylc/common/deltas').Deltas} Deltas */
+/** @typedef {import('@/utils/aotf').MutationResponse} MutationResponse */
+/** @typedef {import('graphql').DocumentNode} DocumentNode */
+/** @typedef {import('subscriptions-transport-ws').SubscriptionClient} SubscriptionClient */
 
 /**
  * @typedef {Object} MutationsAndTypes
  * @property {Array<Object>} mutations
  * @property {Array<Object>} types
+ */
+
+/**
+ * @typedef {Object} SubscriptionOptions
+ * @property {Function} next
+ * @property {Function} error
  */
 
 class WorkflowService {
@@ -84,7 +93,7 @@ class WorkflowService {
    *
    * @param {String} mutationName
    * @param {String} id
-   * @returns {Promise<Array>}
+   * @returns {Promise<MutationResponse>}
    */
   async mutate (mutationName, id) {
     const mutation = await this.getMutation(mutationName)
@@ -259,12 +268,9 @@ class WorkflowService {
    * Observable being created to monitor the subscription. Apollo Client is
    * used here to create the observer and the subscription.
    *
-   * @param query {DocumentNode} - an already parsed GraphQL query (i.e. not a `string`)
-   * @param variables {{}}
-   * @param subscriptionOptions {{
-   *   next: Function,
-   *   error: Function
-   * }}
+   * @param {DocumentNode} query - an already parsed GraphQL query (i.e. not a `string`)
+   * @param {Object} variables
+   * @param {SubscriptionOptions} subscriptionOptions - { next(), error() }
    * @returns {Subscription}
    */
   startDeltasSubscription (query, variables, subscriptionOptions) {

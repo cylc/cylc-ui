@@ -25,8 +25,8 @@ import storeOptions from '@/store/options'
 import WorkflowState from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
-import GScan from '@/components/cylc/gscan/GScan'
-import TreeItem from '@/components/cylc/tree/TreeItem'
+import GScan from '@/components/cylc/gscan/GScan.vue'
+import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
 
 // Print full objects when tests fail

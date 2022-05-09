@@ -49,6 +49,8 @@ import TaskState from '@/model/TaskState.model'
 import store from '@/store/index'
 import { Tokens } from '@/utils/uid'
 
+/** @typedef {import('@apollo/client').ApolloClient} ApolloClient */
+
 /**
  * @typedef {Object} MutationArgs
  * @property {string} _cylcObject
@@ -61,9 +63,9 @@ import { Tokens } from '@/utils/uid'
  */
 
 /**
- * @typedef {Object} Response
+ * @typedef {Object} MutationResponse
  * @property {TaskState} status
- * @property {str} message
+ * @property {string} message
  */
 
 /**
@@ -299,8 +301,8 @@ export function processMutations (mutations, types) {
  * Get the first part of a mutation description (up to the first double newline).
  *
  * @export
- * @param {str|undefined} text - Full mutation description.
- * @return {str}
+ * @param {string|undefined} text - Full mutation description.
+ * @return {string}
  */
 export function getMutationShortDesc (text) {
   return text?.split('\n\n', 1)[0] || ''
@@ -310,8 +312,8 @@ export function getMutationShortDesc (text) {
  * Get the rest of a mutation description (after the first double newline).
  *
  * @export
- * @param {str|undefined} text - Full mutation description.
- * @return {str|undefined}
+ * @param {string|undefined} text - Full mutation description.
+ * @return {string|undefined}
  */
 export function getMutationExtendedDesc (text) {
   return text?.split('\n\n').slice(1).join('\n\n')
@@ -440,7 +442,7 @@ export function getIntrospectionQuery () {
  * @param {string} cylcObject - The type of object to filter mutations by.
  * @param {Object} tokens - Tokens representing the context of this object.
  * @param {Array<Mutation>} mutations - Array of mutations.
- * @returns {Array<Array<bool|Mutation>>}
+ * @returns {Array<Array<boolean|Mutation>>}
  */
 export function filterAssociations (cylcObject, tokens, mutations) {
   const ret = []
@@ -489,7 +491,7 @@ export function filterAssociations (cylcObject, tokens, mutations) {
  *  2. List
  *  3. String
  *
- * @param type {Object} A type as returned by an introspection query.
+ * @param {Object} type - A type as returned by an introspection query.
  * (i.e. an object of the form {name: x, kind: y, ofType: z}
  *
  * @yields {Object} Type objects of the same form as the type argument.
@@ -503,9 +505,9 @@ export function * iterateType (type) {
 
 /** Return an appropriate null value for the specified type.
  *
- * @param type {Object} A type field as returned by an introspection query.
+ * @param {Object} type - A type field as returned by an introspection query.
  * (an object of the form {name: x, kind: y, ofType: z}).
- * @param types {Array} An array of all types present in the schema.
+ * @param {Array} types - An array of all types present in the schema.
  * (optional: used to resolve InputObjectType fields).
  *
  * @returns {Object|Array|undefined}
@@ -551,7 +553,7 @@ export function getNullValue (type, types = []) {
  *
  * E.G: NonNull<List<String>>  =>  [String]!
  *
- * @param arg {Object} An argument from a introspection query.
+ * @param {Object} arg - An argument from a introspection query.
  *
  * @returns {string} A type string for use in a client query / mutation.
  */
@@ -581,7 +583,7 @@ export function argumentSignature (arg) {
 
 /** Construct a mutation string from a mutation introspection.
  *
- * @param mutation {Object} A mutation as returned by an introspection query.
+ * @param {Object} mutation - A mutation as returned by an introspection query.
  *
  * @returns {string} A mutation string for a client to send to the server.
  */
@@ -650,7 +652,7 @@ export function getMutationArgsFromTokens (mutation, tokens) {
  * @param {string} message - error message to display
  * @param {*} response - raw GraphQL response or null
  *
- * @returns {Promise<Response>} {status, msg}
+ * @returns {Promise<MutationResponse>} {status, msg}
  */
 async function _mutateError (mutationName, message, response) {
   // log the response
@@ -680,7 +682,7 @@ async function _mutateError (mutationName, message, response) {
  * @param {Object} args
  * @param {ApolloClient} apolloClient
  *
- * @returns {Promise<Response>} {status, msg}
+ * @returns {Promise<MutationResponse>} {status, msg}
  */
 export async function mutate (mutation, args, apolloClient) {
   let response = null

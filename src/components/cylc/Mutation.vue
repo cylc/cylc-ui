@@ -65,8 +65,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
-import Task from '@/components/cylc/Task'
+import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
+import Task from '@/components/cylc/Task.vue'
 import { mutate } from '@/utils/aotf'
 
 // enumeration for the mutation status, maps onto Cylc Task status
