@@ -33,7 +33,7 @@
     "dotparser": "^1.1.0",
     "enumify": "^2.0.0",
     "graphiql": "~1.8.0",
-    "graphql": "~15.8.0",
+    "graphql": "~16.5.0",
     "graphql-tag": "~2.12.6",
     "lodash": "^4.17.21",
     "mitt": "^3.0.0",
