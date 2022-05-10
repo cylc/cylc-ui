@@ -84,7 +84,7 @@
     "eslint-plugin-no-only-tests": "^2.6.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-vue": "^8.4.0",
+    "eslint-plugin-vue": "^8.7.1",
     "express": "^4.17.2",
     "express-ws": "^5.0.2",
     "graphql-language-service-utils": "^2.5.3",
