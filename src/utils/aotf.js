@@ -49,7 +49,10 @@ import TaskState from '@/model/TaskState.model'
 import store from '@/store/index'
 import { Tokens } from '@/utils/uid'
 
-/** @typedef {import('@apollo/client').ApolloClient} ApolloClient */
+// Typedef imports
+/* eslint-disable no-unused-vars, no-duplicate-imports */
+import { ApolloClient } from '@apollo/client'
+/* eslint-enable no-unused-vars, no-duplicate-imports */
 
 /**
  * @typedef {Object} MutationArgs

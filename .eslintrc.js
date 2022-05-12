@@ -42,7 +42,9 @@ module.exports = {
     ],
     'vue/multi-word-component-names': [
       'off'
-    ]
+    ],
+    'import/no-duplicates': 'off',
+    'no-duplicate-imports': 'error'
   },
   parserOptions: {
     parser: 'babel-eslint'

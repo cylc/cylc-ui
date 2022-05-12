@@ -32,10 +32,13 @@ import { print } from 'graphql'
 import mergeQueries from '@/graphql/merge'
 import Alert from '@/model/Alert.model'
 
-/** @typedef {import('@/components/cylc/common/deltas').Deltas} Deltas */
-/** @typedef {import('@/utils/aotf').MutationResponse} MutationResponse */
-/** @typedef {import('graphql').DocumentNode} DocumentNode */
-/** @typedef {import('subscriptions-transport-ws').SubscriptionClient} SubscriptionClient */
+// Typedef imports
+/* eslint-disable no-unused-vars, no-duplicate-imports */
+import { Deltas } from '@/components/cylc/common/deltas'
+import { MutationResponse } from '@/utils/aotf'
+import { DocumentNode } from 'graphql'
+import { SubscriptionClient } from 'subscriptions-transport-ws'
+/* eslint-enable no-unused-vars, no-duplicate-imports */
 
 /**
  * @typedef {Object} MutationsAndTypes
