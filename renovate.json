@@ -2,6 +2,7 @@
   "extends": [
     "config:base"
   ],
+  "labels": ["dependencies", "javascript"],
   "packageRules": [
     {
       "matchPackagePatterns": [
@@ -9,5 +10,8 @@
       ],
       "rangeStrategy": "replace"
     }
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "addLabels": ["security"]
+  }
 }
