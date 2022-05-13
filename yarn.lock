@@ -133,8 +133,8 @@ __metadata:
   linkType: hard
 
 "@babel/eslint-parser@npm:^7.16.5":
-  version: 7.16.5
-  resolution: "@babel/eslint-parser@npm:7.16.5"
+  version: 7.17.0
+  resolution: "@babel/eslint-parser@npm:7.17.0"
   dependencies:
     eslint-scope: ^5.1.1
     eslint-visitor-keys: ^2.1.0
@@ -142,7 +142,7 @@ __metadata:
   peerDependencies:
     "@babel/core": ">=7.11.0"
     eslint: ^7.5.0 || ^8.0.0
-  checksum: 7d4fe169b371bdce3caab64d6434f251c661cef86e01e320f4e2f81bed159d1f366138e18abb7386d40032cd4972fce723ec9af8b9895d5559fa7caff52efbab
+  checksum: 1cedd9998dd89f779bbc5496531e3ef1b43d6f4fb7209ed5088938292b81287302cb47c0923ce074e84e83aa41b236b09bfecacdf20770f4cbfade2de9519c10
   languageName: node
   linkType: hard
 
@@ -3532,8 +3532,8 @@ __metadata:
   linkType: hard
 
 "@vue/babel-preset-app@npm:^4.5.13":
-  version: 4.5.14
-  resolution: "@vue/babel-preset-app@npm:4.5.14"
+  version: 4.5.17
+  resolution: "@vue/babel-preset-app@npm:4.5.17"
   dependencies:
     "@babel/core": ^7.11.0
     "@babel/helper-compilation-targets": ^7.9.6
@@ -3560,7 +3560,7 @@ __metadata:
       optional: true
     vue:
       optional: true
-  checksum: afc87bbb57640381873ac081687fdc8a3e802de535de4ab7424d5487162afabfd05b47913b7f782e10f882d67e1175ecf85ea81f6006feefdbaec9df579fc7da
+  checksum: 26a84b75ce2e06065cbab0f2c59818649270d7eaa87abcc03a4235e1dca39e2ccd53f5eee0a88ed0e19a9c6ef66654ca21cb2948b4c92ccfc5f5ae938dff2131
   languageName: node
   linkType: hard
 
@@ -4849,15 +4849,6 @@ __metadata:
   version: 1.11.0
   resolution: "aws4@npm:1.11.0"
   checksum: 5a00d045fd0385926d20ebebcfba5ec79d4482fe706f63c27b324d489a04c68edb0db99ed991e19eda09cb8c97dc2452059a34d97545cebf591d7a2b5a10999f
-  languageName: node
-  linkType: hard
-
-"axios-fetch@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "axios-fetch@npm:1.1.0"
-  dependencies:
-    node-fetch: ^2.0.0
-  checksum: 1ec69396b84305c2c90cb8006e935d25c3145b2593c46ef6275517d68fe583996bd4d322e75748fbae08a474ebaa9be9f63dfcd384ca922807529009ecab5861
   languageName: node
   linkType: hard
 
@@ -6889,17 +6880,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:3, core-js@npm:^3.6.5":
-  version: 3.18.3
-  resolution: "core-js@npm:3.18.3"
-  checksum: 4aa5017992c18b0a09ded6c7dbf3c3880b27b6ade97a522dba332f52381466978d441317e5aad49f0684e9241aecc450e3e72c550ddaccfc9fb1e69c5908e53c
-  languageName: node
-  linkType: hard
-
 "core-js@npm:^2.4.0, core-js@npm:^2.6.5":
   version: 2.6.12
   resolution: "core-js@npm:2.6.12"
   checksum: 44fa9934a85f8c78d61e0c8b7b22436330471ffe59ec5076fe7f324d6e8cf7f824b14b1c81ca73608b13bdb0fef035bd820989bf059767ad6fa13123bb8bd016
+  languageName: node
+  linkType: hard
+
+"core-js@npm:^3.6.5":
+  version: 3.18.3
+  resolution: "core-js@npm:3.18.3"
+  checksum: 4aa5017992c18b0a09ded6c7dbf3c3880b27b6ade97a522dba332f52381466978d441317e5aad49f0684e9241aecc450e3e72c550ddaccfc9fb1e69c5908e53c
   languageName: node
   linkType: hard
 
@@ -7317,21 +7308,17 @@ __metadata:
     "@vue/test-utils": ^1.2.2
     autoprefixer: ^9.8.6
     axios: ^0.27.0
-    axios-fetch: ^1.1.0
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.3
     babel-plugin-istanbul: ^6.1.1
-    babel-runtime: ^6.26.0
     bufferutil: ^4.0.6
     chai: ^4.3.6
     circular-dependency-plugin: ^5.2.2
     concurrently: ^7.0.0
-    core-js: 3
     cross-env: ^7.0.3
     cross-fetch: ^3.1.5
     cypress: ^9.6.0
     dedent: ^0.7.0
-    dotparser: ^1.1.0
     enumify: ^2.0.0
     eslint: ^7.31.0
     eslint-config-standard: ^16.0.3
@@ -7374,7 +7361,6 @@ __metadata:
     vue-markdown: ^2.2.4
     vue-meta: ^2.4.0
     vue-router: ^3.5.3
-    vue-spinner: ^1.0.4
     vue-template-compiler: ^2.6.14
     vue-the-mask: ^0.11.1
     vuetify: ^2.6.1
@@ -7549,11 +7535,11 @@ __metadata:
   linkType: hard
 
 "decache@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "decache@npm:4.6.0"
+  version: 4.6.1
+  resolution: "decache@npm:4.6.1"
   dependencies:
     callsite: ^1.0.0
-  checksum: 65bd86440a84aeb7cf76a8dbd22d207e561eac621bc73500347a9a0802f14e72222fd794b4b778a419e3d736a01ec263124e1ba39db6778c3b86a42f487a279c
+  checksum: 3e8cf879ecad1ebc1a0fed782d008ea4f331c2a3688de3b3f18fca03e51b3aa829be90ee0b7c6e1ebc0b0a0f4e911529efdfb3cef28d69b9605131b7c69daea9
   languageName: node
   linkType: hard
 
@@ -8047,13 +8033,6 @@ __metadata:
   version: 8.6.0
   resolution: "dotenv@npm:8.6.0"
   checksum: 38e902c80b0666ab59e9310a3d24ed237029a7ce34d976796349765ac96b8d769f6df19090f1f471b77a25ca391971efde8a1ea63bb83111bd8bec8e5cc9b2cd
-  languageName: node
-  linkType: hard
-
-"dotparser@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "dotparser@npm:1.1.0"
-  checksum: acea875357a4da28bd1f8c18f2b81e699549564d7af95b565fb366613132079521b95ad0fadefe1305bacdf87b33364ab102be43ec90e42c893ad9b87d0a5d28
   languageName: node
   linkType: hard
 
@@ -13792,15 +13771,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.0.0":
-  version: 2.6.5
-  resolution: "node-fetch@npm:2.6.5"
-  dependencies:
-    whatwg-url: ^5.0.0
-  checksum: 4e83db450718e70762882f00d96f647a7f2f3170035225934ddd5450cb1d91ef339ceb180d3687bcb0a6ed78c3fa5636ce8d3e44ec81ab59e0224ebf8965f65f
-  languageName: node
-  linkType: hard
-
 "node-forge@npm:^0.10.0":
   version: 0.10.0
   resolution: "node-forge@npm:0.10.0"
@@ -19064,13 +19034,6 @@ resolve@^2.0.0-next.3:
   version: 3.5.3
   resolution: "vue-router@npm:3.5.3"
   checksum: 7b2cc0d41ff2a8ec3da45761f29e14d0998119f47e4887f54e17eb534f7b4823acb778302891b0aa3a10c62ae8ba999393d7891cc08d36f02ea87aa268e2a36c
-  languageName: node
-  linkType: hard
-
-"vue-spinner@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "vue-spinner@npm:1.0.4"
-  checksum: 4c5c8d2abac0b79098dd621ddc5fa9890fb7a7f3a7ad603884d96c4430fb8060c69fcd3f9c7fef6922e90b87c495e77f7c47d8efdd462149cbb0d9b221eadc37
   languageName: node
   linkType: hard
 
