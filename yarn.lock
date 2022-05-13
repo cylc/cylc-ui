@@ -6278,7 +6278,6 @@ __metadata:
     "@vue/cli-plugin-unit-mocha": ^5.0.1
     "@vue/cli-service": ^4.5.15
     "@vue/test-utils": ^1.2.2
-    autoprefixer: ^9.8.6
     axios: ^0.27.0
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.3
@@ -6315,10 +6314,8 @@ __metadata:
     nodemon: ^2.0.15
     nprogress: ^1.0.0-1
     nyc: ^15.1.0
-    postcss: ^8.3.6
     preact: ^10.6.6
     preact-compat: ^3.19.0
-    regenerator-runtime: ^0.13.7
     sass: ~1.51.0
     sass-loader: ^10.2.0
     sinon: ^13.0.0
@@ -6340,7 +6337,6 @@ __metadata:
     vuetify-loader: ^1.7.3
     vuex: ^3.6.2
     webpack: ^4.46.0
-    zen-observable: ^0.8.15
   languageName: unknown
   linkType: soft
 
@@ -12547,7 +12543,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.1.23, nanoid@npm:^3.3.3":
+"nanoid@npm:^3.1.23":
   version: 3.3.4
   resolution: "nanoid@npm:3.3.4"
   bin:
@@ -14289,17 +14285,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.3.6":
-  version: 8.4.13
-  resolution: "postcss@npm:8.4.13"
-  dependencies:
-    nanoid: ^3.3.3
-    picocolors: ^1.0.0
-    source-map-js: ^1.0.2
-  checksum: 514fb3552805a5d039a2d6b4df3e73f657001716ca93c0d57e6067b0473abdea70276d80afc96005c9aaff82ed5d98062bd97724d3f47ca400fba0b5e9e436ed
-  languageName: node
-  linkType: hard
-
 "preact-compat@npm:^3.19.0":
   version: 3.19.0
   resolution: "preact-compat@npm:3.19.0"
@@ -14837,7 +14822,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.4, regenerator-runtime@npm:^0.13.7":
+"regenerator-runtime@npm:^0.13.4":
   version: 0.13.9
   resolution: "regenerator-runtime@npm:0.13.9"
   checksum: 65ed455fe5afd799e2897baf691ca21c2772e1a969d19bb0c4695757c2d96249eb74ee3553ea34a91062b2a676beedf630b4c1551cc6299afb937be1426ec55e
@@ -15888,7 +15873,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"source-map-js@npm:>=0.6.2 <2.0.0, source-map-js@npm:^1.0.2":
+"source-map-js@npm:>=0.6.2 <2.0.0":
   version: 1.0.2
   resolution: "source-map-js@npm:1.0.2"
   checksum: c049a7fc4deb9a7e9b481ae3d424cc793cb4845daa690bc5a05d428bf41bf231ced49b4cf0c9e77f9d42fdb3d20d6187619fc586605f5eabe995a316da8d377c
@@ -18674,7 +18659,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"zen-observable@npm:0.8.15, zen-observable@npm:^0.8.15":
+"zen-observable@npm:0.8.15":
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: b7289084bc1fc74a559b7259faa23d3214b14b538a8843d2b001a35e27147833f4107590b1b44bf5bc7f6dfe6f488660d3a3725f268e09b3925b3476153b7821
