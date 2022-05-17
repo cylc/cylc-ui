@@ -1980,13 +1980,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/default-theme@npm:^0.21.1":
-  version: 0.21.1
-  resolution: "@lumino/default-theme@npm:0.21.1"
+"@lumino/default-theme@npm:^0.22.0":
+  version: 0.22.0
+  resolution: "@lumino/default-theme@npm:0.22.0"
   dependencies:
     "@lumino/dragdrop": ^1.14.0
-    "@lumino/widgets": ^1.31.1
-  checksum: 7add3081e9a4b05ee144c62d6e8f28b1ad0311090ce9e88c31631ead49023ce281fee19e5318fa8c0edb93f7d95b7f47e461c221655f9892db2aac086b01d3f1
+    "@lumino/widgets": ^1.32.0
+  checksum: aeb842e6adf43e865e636eb408b9c031f7afc27f3f63bc1e64d158823354b6c19eeff8940041e21aeff08eab5714d66a58814d95ce5706094618a78b6519c1d4
   languageName: node
   linkType: hard
 
@@ -2059,7 +2059,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/widgets@npm:^1.31.1":
+"@lumino/widgets@npm:^1.31.1, @lumino/widgets@npm:^1.32.0":
   version: 1.32.0
   resolution: "@lumino/widgets@npm:1.32.0"
   dependencies:
@@ -6268,7 +6268,7 @@ __metadata:
     "@cypress/code-coverage": ^3.9.12
     "@cypress/webpack-preprocessor": ^5.11.0
     "@lumino/algorithm": ^1.9.1
-    "@lumino/default-theme": ^0.21.1
+    "@lumino/default-theme": ^0.22.0
     "@lumino/widgets": ^1.31.1
     "@mdi/js": ^6.5.95
     "@vue/babel-preset-app": ^4.5.13
