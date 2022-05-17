@@ -85,6 +85,10 @@ module.exports = {
 }
 ```
 
+`@vue/babel-preset-app` uses `@babel/preset-env` and the `browserslist` config
+(`.browserslistrc`) to determine the polyfills needed. See
+https://cli.vuejs.org/guide/browser-compatibility.html.
+
 ### Project setup
 
 ```
