@@ -6318,7 +6318,7 @@ __metadata:
     preact-compat: ^3.19.0
     sass: ~1.51.0
     sass-loader: ^10.2.0
-    sinon: ^13.0.0
+    sinon: ^14.0.0
     standard: ^17.0.0
     subscriptions-transport-ws: ^0.11.0
     svgo: ^2.3.1
@@ -15712,9 +15712,9 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"sinon@npm:^13.0.0":
-  version: 13.0.2
-  resolution: "sinon@npm:13.0.2"
+"sinon@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "sinon@npm:14.0.0"
   dependencies:
     "@sinonjs/commons": ^1.8.3
     "@sinonjs/fake-timers": ^9.1.2
@@ -15722,7 +15722,7 @@ resolve@^2.0.0-next.3:
     diff: ^5.0.0
     nise: ^5.1.1
     supports-color: ^7.2.0
-  checksum: 237f21c8c4a8b31574c71b1b9f4c0f74a63dde5c0e86bd116effa4ce63c52467bd45fb4034a8fa32656a7919d9b19fc7b108ca9e1e6e3144f3735da96dad2877
+  checksum: b2aeeb0cdc2cd30f904ccbcd60bae4e1b3dcf3aeeface09c1832db0336be0dbaa461f3b91b769bed84f05c83d45d5072a9da7ee14bc7289daeda2a1214fe173c
   languageName: node
   linkType: hard
 
