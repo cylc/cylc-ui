@@ -50,15 +50,6 @@ export default [
     props: true
   },
   {
-    path: '/mutations',
-    view: 'Mutations',
-    name: 'mutations',
-    meta: {
-      layout: 'default'
-    },
-    props: true
-  },
-  {
     path: '/user-profile',
     name: i18n.t('App.userProfile'),
     view: 'UserProfile',
