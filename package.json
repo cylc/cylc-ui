@@ -23,7 +23,7 @@
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@lumino/algorithm": "^1.9.1",
-    "@lumino/default-theme": "^0.21.1",
+    "@lumino/default-theme": "^0.22.0",
     "@lumino/widgets": "^1.31.1",
     "axios": "^0.27.0",
     "core-js": "3",
