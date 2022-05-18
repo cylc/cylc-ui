@@ -17,7 +17,7 @@ ones in. -->
 
 [#967](https://github.com/cylc/cylc-ui/pull/967) - Appearance improvements.
 
-[#1027](https://github.com/cylc/cylc-ui/pull/967) - Remove development
+[#1027](https://github.com/cylc/cylc-ui/pull/1027) - Remove development
 "Mutations View".
 
 ### Fixes
