@@ -57,7 +57,6 @@ import ViewState from '@/model/ViewState.model'
 import { createWidgetId } from '@/components/cylc/workflow/index'
 import Lumino from '@/components/cylc/workflow/Lumino'
 import Toolbar from '@/components/cylc/workflow/Toolbar'
-import MutationsView from '@/views/Mutations'
 import TableView from '@/views/Table'
 import TreeView from '@/views/Tree'
 
@@ -95,8 +94,7 @@ export default {
      */
     views: [
       TreeView,
-      TableView,
-      MutationsView
+      TableView
     ]
   }),
   created () {

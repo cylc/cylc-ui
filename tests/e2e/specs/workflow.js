@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Mutations from '@/views/Mutations'
-
 describe('Workflow view and component/widget', () => {
   afterEach(() => {
     cy
@@ -43,13 +41,8 @@ describe('Workflow view and component/widget', () => {
     cy.visit('/#/workflows/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     cy.get('a.add-view').click()
-    cy.get('#toolbar-add-Mutations-view').click()
+    cy.get('#toolbar-add-Table-view').click()
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
-    cy
-      .get('.lm-TabBar-tabLabel')
-      .contains(Mutations.name.toLowerCase())
-      .click({ force: true })
-    cy.get('h3').contains('Sample Mutation').should('be.visible')
   })
   it('Should remove widgets added successfully', () => {
     cy.visit('/#/workflows/one')
