@@ -112,30 +112,32 @@ describe('WorkflowService mutations', () => {
     cy.visit('/#/workflows/one')
     // Before mutations have loaded
     cy
-      // Mutations menu should not be able to open yet
-      .get('#workflow-mutate-button')
-      .should('not.have.class', 'c-interactive')
-      .click()
-      .get('.c-mutation-menu-list')
-      .should('not.exist')
       // Play/stop buttons in toolbar should wait for mutations before sending the mutation
       .get('#workflow-stop-button')
       .click()
-      // Now load mutations
-      .then(() => {
-        deferred.resolve()
-        cy.log('Mutations now loaded')
-      })
-    // After mutations have loaded
-    cy
-      // Mutations menu should be openable
+      // Mutations menu should show skeleton loader
       .get('#workflow-mutate-button.c-interactive')
       .click()
       .get('.c-mutation-menu')
+      .find('.v-skeleton-loader:first')
+      .should('be.visible')
+      .get('.c-mutation-menu-list')
+      .should('not.exist')
+      // Now load mutations
+      .then(() => {
+        cy.log('Now load the mutations')
+        deferred.resolve()
+      })
+    // After mutations have loaded
+    cy
+      // Skeleton loader should be gone, list of mutations now shown
+      .get('.c-mutation-menu')
+      .find('.v-skeleton-loader')
+      .should('not.exist')
+      .get('.c-mutation-menu-list')
       .should('be.visible')
       // Earlier click of stop button should come through
       .wait('@mutation').then(({ request }) => {
-        // debugger
         expect(request.body.operationName).to.equal('stop')
       })
   })
