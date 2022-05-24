@@ -197,6 +197,7 @@ describe('aotf (Api On The Fly)', () => {
         }
       ]
       const tokens = aotf.tokenise('~a/b//c/d')
+      const permissions = []
 
       // filter by an object no mutations operate on
       expect(
@@ -204,7 +205,8 @@ describe('aotf (Api On The Fly)', () => {
           // filter by the "namespace" object
           aotf.cylcObjects.Namespace,
           tokens,
-          mutations
+          mutations,
+          permissions
         )
       // no results
       ).to.deep.equal([])
@@ -214,29 +216,23 @@ describe('aotf (Api On The Fly)', () => {
         // filter by the "workflow" object
         aotf.cylcObjects.Workflow,
         tokens,
-        mutations
+        mutations,
+        permissions
       )
       expect(
-        all.map((item) => { return item[0].name }).sort()
+        all.map((item) => [item.mutation.name, item.requiresInfo]).sort()
       ).to.deep.equal([
-        'baz', // because of the required argument
-        'foo'
-      ])
-
-      expect(
-        all
-          .filter((item) => { return !item[1] })
-          .map((item) => { return item[0].name }).sort()
-      ).to.deep.equal([
-        'foo'
+        ['baz', true],
+        ['foo', false]
       ])
     })
+
     it('should determine when additional info is required', () => {
       // some test mutations
       const mutations = [
         {
           // second argument is optional -> no info required
-          name: 'a',
+          name: 'argon',
           args: [
             {
               name: 'arg1',
@@ -252,7 +248,7 @@ describe('aotf (Api On The Fly)', () => {
         },
         {
           // second argument is required -> info is required
-          name: 'b',
+          name: 'boron',
           args: [
             {
               name: 'arg1',
@@ -269,7 +265,7 @@ describe('aotf (Api On The Fly)', () => {
         {
           // second argument is required -> info is required unless
           // a cycle point is present in the context
-          name: 'c',
+          name: 'carbon',
           args: [
             {
               name: 'arg1',
@@ -284,329 +280,359 @@ describe('aotf (Api On The Fly)', () => {
           ]
         }
       ]
+      const permissions = []
 
       // filter mutations from the context of the workflow
       const out1 = aotf.filterAssociations(
         aotf.cylcObjects.Workflow,
         aotf.tokenise('~a/b'),
-        mutations
+        mutations,
+        permissions
       )
       expect(
-        out1.map((item) => { return [item[0].name, item[1]] }).sort()
+        out1.map((item) => [item.mutation.name, item.requiresInfo]).sort()
       ).to.deep.equal([
-        ['a', false],
-        ['b', true],
-        ['c', true] // no cycle point in the context -> info required
+        ['argon', false],
+        ['boron', true],
+        ['carbon', true] // no cycle point in the context -> info required
       ])
 
       // filter mutations from the context of a cycle point
       const out2 = aotf.filterAssociations(
         aotf.cylcObjects.Workflow,
         aotf.tokenise('~a/b//c'),
-        mutations
+        mutations,
+        permissions
       )
       expect(
-        out2.map((item) => { return [item[0].name, item[1]] }).sort()
+        out2.map((item) => [item.mutation.name, item.requiresInfo]).sort()
       ).to.deep.equal([
-        ['a', false],
-        ['b', true],
-        ['c', false] // cycle point in the context -> no info is required
+        ['argon', false],
+        ['boron', true],
+        ['carbon', false] // cycle point in the context -> no info is required
       ])
     })
 
-    describe('iterateType', () => {
-      it('Should walk the type tree until it hits a solid foundation', () => {
-        const nodes = [
-          {
-            name: null,
-            kind: 'NON_NULL'
-          },
-          {
-            name: null,
-            kind: 'LIST'
-          },
-          {
-            name: null,
-            kind: 'NON_NULL'
-          },
-          {
-            name: 'MyInputObject',
-            kind: 'INPUT_OBJECT'
-          }
-        ]
+    it('should filter by permissions', () => {
+      const args = [{
+        name: 'arg1',
+        _cylcObject: aotf.cylcObjects.Workflow,
+        _required: true
+      }]
+      const mutations = [
+        { name: 'argon', args },
+        { name: 'boron', args },
+        { name: 'carbon', args }
+      ]
+      const permissions = ['carbon', 'argon']
 
-        // chain these nodes together using the ofType field
-        let prev = nodes[0]
-        nodes.slice(1).forEach((node) => {
-          prev.ofType = node
-          prev = node
-        })
+      expect(
+        aotf.filterAssociations(
+          aotf.cylcObjects.Workflow,
+          aotf.tokenise('~a/b'),
+          mutations,
+          permissions
+        ).map(x => [x.mutation.name, x.authorised]).sort()
+      ).to.deep.equal([
+        ['argon', true],
+        ['boron', false],
+        ['carbon', true]
+      ])
+    })
+  })
 
-        const result = []
-        for (const node of aotf.iterateType(nodes[0])) {
-          result.push(node)
+  describe('iterateType', () => {
+    it('Should walk the type tree until it hits a solid foundation', () => {
+      const nodes = [
+        {
+          name: null,
+          kind: 'NON_NULL'
+        },
+        {
+          name: null,
+          kind: 'LIST'
+        },
+        {
+          name: null,
+          kind: 'NON_NULL'
+        },
+        {
+          name: 'MyInputObject',
+          kind: 'INPUT_OBJECT'
         }
+      ]
 
+      // chain these nodes together using the ofType field
+      let prev = nodes[0]
+      nodes.slice(1).forEach((node) => {
+        prev.ofType = node
+        prev = node
+      })
+
+      const result = []
+      for (const node of aotf.iterateType(nodes[0])) {
+        result.push(node)
+      }
+
+      expect(
+        result
+      ).to.deep.equal(
+        nodes
+      )
+    })
+  })
+
+  describe('getNullValue', () => {
+    it('should pick appropriate default types', () => {
+      [
+        [ // String => null
+          {
+            type: 'String',
+            kind: 'SCALAR'
+          },
+          [],
+          null
+        ],
+        [ // NON_NULL<String> => null
+          {
+            type: null,
+            kind: 'NON_NULL',
+            ofType: {
+              type: 'String',
+              kind: 'SCALAR'
+            }
+          },
+          [],
+          null
+        ],
+        [ // LIST<String> => []
+          {
+            type: null,
+            kind: 'LIST',
+            ofType: {
+              type: 'String',
+              kind: 'SCALAR'
+            }
+          },
+          [],
+          []
+        ],
+        [ // LIST<LIST<String>> => [[]]
+          {
+            type: null,
+            kind: 'LIST',
+            ofType: {
+              type: null,
+              kind: 'LIST',
+              ofType: {
+                type: 'String',
+                kind: 'SCALAR'
+              }
+            }
+          },
+          [],
+          [[]]
+        ],
+        [ // NON_NULL<LIST<String>> => []
+          {
+            type: null,
+            kind: 'NON_NULL',
+            ofType: {
+              type: null,
+              kind: 'LIST',
+              ofType: {
+                type: 'String',
+                kind: 'SCALAR'
+              }
+            }
+          },
+          [],
+          []
+        ],
+        [ // INPUT_OBJECT { A } => {A: null}
+          {
+            type: null,
+            kind: 'INPUT_OBJECT',
+            name: 'A'
+          },
+          [
+            {
+              name: 'A',
+              kind: 'INPUT_OBJECT',
+              inputFields: [
+                {
+                  name: 'A',
+                  type: 'String'
+                }
+              ]
+            }
+          ],
+          { A: null }
+        ]
+      ].forEach((item) => {
+        const type = item[0]
+        const types = item[1]
         expect(
-          result
+          aotf.getNullValue(type, types)
         ).to.deep.equal(
-          nodes
+          item[2]
         )
       })
     })
+  })
 
-    describe('getNullValue', () => {
-      it('should pick appropriate default types', () => {
+  describe('argumentSignature', () => {
+    it('should correctly render the signature', () => {
+      [
+        // [type, signature]
         [
-          [ // String => null
-            {
-              type: 'String',
-              kind: 'SCALAR'
-            },
-            [],
-            null
-          ],
-          [ // NON_NULL<String> => null
-            {
-              type: null,
-              kind: 'NON_NULL',
-              ofType: {
-                type: 'String',
-                kind: 'SCALAR'
-              }
-            },
-            [],
-            null
-          ],
-          [ // LIST<String> => []
-            {
-              type: null,
-              kind: 'LIST',
-              ofType: {
-                type: 'String',
-                kind: 'SCALAR'
-              }
-            },
-            [],
-            []
-          ],
-          [ // LIST<LIST<String>> => [[]]
-            {
-              type: null,
-              kind: 'LIST',
-              ofType: {
-                type: null,
-                kind: 'LIST',
-                ofType: {
-                  type: 'String',
-                  kind: 'SCALAR'
-                }
-              }
-            },
-            [],
-            [[]]
-          ],
-          [ // NON_NULL<LIST<String>> => []
-            {
-              type: null,
-              kind: 'NON_NULL',
-              ofType: {
-                type: null,
-                kind: 'LIST',
-                ofType: {
-                  type: 'String',
-                  kind: 'SCALAR'
-                }
-              }
-            },
-            [],
-            []
-          ],
-          [ // INPUT_OBJECT { A } => {A: null}
-            {
-              type: null,
-              kind: 'INPUT_OBJECT',
-              name: 'A'
-            },
-            [
-              {
-                name: 'A',
-                kind: 'INPUT_OBJECT',
-                inputFields: [
-                  {
-                    name: 'A',
-                    type: 'String'
-                  }
-                ]
-              }
-            ],
-            { A: null }
-          ]
-        ].forEach((item) => {
-          const type = item[0]
-          const types = item[1]
-          expect(
-            aotf.getNullValue(type, types)
-          ).to.deep.equal(
-            item[2]
-          )
-        })
-      })
-    })
-
-    describe('argumentSignature', () => {
-      it('should correctly render the signature', () => {
+          {
+            kind: 'TEST_TYPE'
+          },
+          'TEST_TYPE'
+        ],
         [
-          // [type, signature]
-          [
-            {
-              kind: 'TEST_TYPE'
-            },
-            'TEST_TYPE'
-          ],
-          [
-            {
+          {
+            name: 'String',
+            kind: 'SCALAR',
+            ofType: null
+          },
+          'String'
+        ],
+        [
+          {
+            name: null,
+            kind: 'NON_NULL',
+            ofType: {
               name: 'String',
               kind: 'SCALAR',
               ofType: null
-            },
-            'String'
-          ],
-          [
-            {
+            }
+          },
+          'String!'
+        ],
+        [
+          {
+            name: null,
+            kind: 'NON_NULL',
+            ofType: {
               name: null,
-              kind: 'NON_NULL',
+              kind: 'LIST',
               ofType: {
-                name: 'String',
-                kind: 'SCALAR',
-                ofType: null
+                name: null,
+                kind: 'NON_NULL',
+                ofType: {
+                  name: 'String',
+                  kind: 'SCALAR',
+                  ofType: null
+                }
               }
-            },
-            'String!'
-          ],
-          [
-            {
+            }
+          },
+          '[String!]!'
+        ]
+      ].forEach(([type, signature]) => {
+        expect(
+          aotf.argumentSignature({
+            name: 'myArgument',
+            type: type
+          })
+        ).to.equal(signature)
+      })
+    })
+  })
+
+  describe('constructMutation', () => {
+    it('populates with basic argument inputs', () => {
+      const mutation = {
+        name: 'MyMutation',
+        args: [
+          {
+            name: 'foo',
+            type: {
+              name: 'String',
+              kind: 'SCALAR',
+              ofType: null
+            }
+          },
+          {
+            name: 'bar',
+            type: {
+              name: 'Int',
+              kind: 'SCALAR',
+              ofType: null
+            }
+          }
+        ]
+      }
+      expect(aotf.constructMutation(mutation)).to.equal(dedent`
+        mutation MyMutation($foo: String, $bar: Int) {
+          MyMutation(foo: $foo, bar: $bar) {
+            result
+          }
+        }
+      `.trim())
+    })
+
+    it('handles nested types', () => {
+      const mutation = {
+        name: 'MyMutation',
+        args: [
+          {
+            name: 'myArg',
+            type: {
               name: null,
               kind: 'NON_NULL',
               ofType: {
                 name: null,
                 kind: 'LIST',
                 ofType: {
-                  name: null,
-                  kind: 'NON_NULL',
-                  ofType: {
-                    name: 'String',
-                    kind: 'SCALAR',
-                    ofType: null
-                  }
-                }
-              }
-            },
-            '[String!]!'
-          ]
-        ].forEach(([type, signature]) => {
-          expect(
-            aotf.argumentSignature({
-              name: 'myArgument',
-              type: type
-            })
-          ).to.equal(signature)
-        })
-      })
-    })
-
-    describe('constructMutation', () => {
-      it('populates with basic argument inputs', () => {
-        const mutation = {
-          name: 'MyMutation',
-          args: [
-            {
-              name: 'foo',
-              type: {
-                name: 'String',
-                kind: 'SCALAR',
-                ofType: null
-              }
-            },
-            {
-              name: 'bar',
-              type: {
-                name: 'Int',
-                kind: 'SCALAR',
-                ofType: null
-              }
-            }
-          ]
-        }
-        expect(aotf.constructMutation(mutation)).to.equal(dedent`
-          mutation MyMutation($foo: String, $bar: Int) {
-            MyMutation(foo: $foo, bar: $bar) {
-              result
-            }
-          }
-        `.trim())
-      })
-
-      it('handles nested types', () => {
-        const mutation = {
-          name: 'MyMutation',
-          args: [
-            {
-              name: 'myArg',
-              type: {
-                name: null,
-                kind: 'NON_NULL',
-                ofType: {
-                  name: null,
-                  kind: 'LIST',
-                  ofType: {
-                    name: 'String',
-                    kind: 'SCALAR',
-                    ofType: null
-                  }
+                  name: 'String',
+                  kind: 'SCALAR',
+                  ofType: null
                 }
               }
             }
-          ]
-        }
-        expect(aotf.constructMutation(mutation)).to.equal(dedent`
-          mutation MyMutation($myArg: [String]!) {
-            MyMutation(myArg: $myArg) {
-              result
-            }
           }
-        `.trim())
-      })
-    })
-
-    describe('getMutationArgsFromTokens', () => {
-      it('extracts info from tokens to populate the arguments', () => {
-        const mutation = {
-          name: 'foo',
-          args: [
-            {
-              name: 'arg1',
-              _cylcType: 'WorkflowID',
-              _cylcObject: aotf.cylcObjects.Workflow,
-              _multiple: true,
-              _default: null
-            },
-            {
-              name: 'arg2',
-              _cylcType: null,
-              _cylcObject: null,
-              _multiple: false,
-              _default: 42
-            }
-          ]
+        ]
+      }
+      expect(aotf.constructMutation(mutation)).to.equal(dedent`
+        mutation MyMutation($myArg: [String]!) {
+          MyMutation(myArg: $myArg) {
+            result
+          }
         }
-        const tokens = aotf.tokenise('~a/b')
-        expect(
-          aotf.getMutationArgsFromTokens(mutation, tokens)
-        ).to.deep.equal({
-          arg1: ['~a/b'],
-          arg2: 42
-        })
+      `.trim())
+    })
+  })
+
+  describe('getMutationArgsFromTokens', () => {
+    it('extracts info from tokens to populate the arguments', () => {
+      const mutation = {
+        name: 'foo',
+        args: [
+          {
+            name: 'arg1',
+            _cylcType: 'WorkflowID',
+            _cylcObject: aotf.cylcObjects.Workflow,
+            _multiple: true,
+            _default: null
+          },
+          {
+            name: 'arg2',
+            _cylcType: null,
+            _cylcObject: null,
+            _multiple: false,
+            _default: 42
+          }
+        ]
+      }
+      const tokens = aotf.tokenise('~a/b')
+      expect(
+        aotf.getMutationArgsFromTokens(mutation, tokens)
+      ).to.deep.equal({
+        arg1: ['~a/b'],
+        arg2: 42
       })
     })
   })

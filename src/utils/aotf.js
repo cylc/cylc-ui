@@ -61,14 +61,22 @@ import { ApolloClient } from '@apollo/client'
  */
 
 /**
- * @typedef {Object} Mutation
- * @property {Array<MutationArgs>} args
+ * @typedef {object} Mutation
+ * @property {string} name
+ * @property {MutationArgs[]} args
  */
 
 /**
  * @typedef {Object} MutationResponse
  * @property {TaskState} status
  * @property {string} message
+ */
+
+/**
+ * @typedef {object} FilteredMutation
+ * @property {Mutation} mutation
+ * @property {boolean} requiresInfo
+ * @property {boolean} authorised
  */
 
 /**
@@ -438,25 +446,24 @@ export function getIntrospectionQuery () {
 /**
  * Filter for mutations that relate to the given Cylc object.
  *
- * Returns an array with two values:
- * - Matching mutations minus those which require additional information.
- * - All matching mutations.
+ * Returns an array of objects containing matching mutations and the following properties:
+ * - Does the mutation require additional info?
+ * - Is the user authorised to perform the mutation?
  *
  * @param {string} cylcObject - The type of object to filter mutations by.
- * @param {Object} tokens - Tokens representing the context of this object.
- * @param {Array<Mutation>} mutations - Array of mutations.
- * @returns {Array<Array<boolean|Mutation>>}
+ * @param {object} tokens - Tokens representing the context of this object.
+ * @param {Mutation[]} mutations - Array of mutations.
+ * @param {string[]} permissions - List of permissions for the user.
+ * @returns {FilteredMutation[]}
  */
-export function filterAssociations (cylcObject, tokens, mutations) {
+export function filterAssociations (cylcObject, tokens, mutations, permissions) {
   const ret = []
-  let requiresInfo = false
-  let authorised = false
-  let applies = false
-  let alternate = null
+  permissions = permissions.map(x => x.toLowerCase())
   for (const mutation of mutations) {
-    requiresInfo = false
-    authorised = false
-    applies = false
+    let requiresInfo = false
+    let authorised = false
+    let applies = false
+    let alternate = null
     for (const arg of mutation.args) {
       if (arg._cylcObject) {
         // alternate cylc object which can satisfy this field, or null
@@ -480,8 +487,11 @@ export function filterAssociations (cylcObject, tokens, mutations) {
     if (!applies) {
       continue
     }
+    if (permissions.includes(mutation.name.toLowerCase())) {
+      authorised = true
+    }
     ret.push(
-      [mutation, requiresInfo, authorised]
+      { mutation, requiresInfo, authorised }
     )
   }
   return ret

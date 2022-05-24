@@ -15,22 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  getType,
-  tokenise
-} from '@/utils/aotf'
-
 // reference to closure listeners (needed as we are using variables from another scope)
 const listeners = new WeakMap()
 
 function bind (el, binding, vnode) {
   const listener = function (e) {
     const cylcId = binding.value.id
-    const tokens = tokenise(cylcId)
     vnode.context.$eventBus.emit('show-mutations-menu', {
       id: cylcId,
-      type: getType(tokens),
-      tokens: tokens,
       node: binding.value,
       event: e
     })
