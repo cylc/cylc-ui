@@ -49,6 +49,11 @@ import TaskState from '@/model/TaskState.model'
 import store from '@/store/index'
 import { Tokens } from '@/utils/uid'
 
+// Typedef imports
+/* eslint-disable no-unused-vars, no-duplicate-imports */
+import { ApolloClient } from '@apollo/client'
+/* eslint-enable no-unused-vars, no-duplicate-imports */
+
 /**
  * @typedef {Object} MutationArgs
  * @property {string} _cylcObject
@@ -56,8 +61,22 @@ import { Tokens } from '@/utils/uid'
  */
 
 /**
- * @typedef {Object} Mutation
- * @property {Array<MutationArgs>} args
+ * @typedef {object} Mutation
+ * @property {string} name
+ * @property {MutationArgs[]} args
+ */
+
+/**
+ * @typedef {Object} MutationResponse
+ * @property {TaskState} status
+ * @property {string} message
+ */
+
+/**
+ * @typedef {object} FilteredMutation
+ * @property {Mutation} mutation
+ * @property {boolean} requiresInfo
+ * @property {boolean} authorised
  */
 
 /**
@@ -293,8 +312,8 @@ export function processMutations (mutations, types) {
  * Get the first part of a mutation description (up to the first double newline).
  *
  * @export
- * @param {str|undefined} text - Full mutation description.
- * @return {str}
+ * @param {string|undefined} text - Full mutation description.
+ * @return {string}
  */
 export function getMutationShortDesc (text) {
   return text?.split('\n\n', 1)[0] || ''
@@ -304,8 +323,8 @@ export function getMutationShortDesc (text) {
  * Get the rest of a mutation description (after the first double newline).
  *
  * @export
- * @param {str|undefined} text - Full mutation description.
- * @return {str|undefined}
+ * @param {string|undefined} text - Full mutation description.
+ * @return {string|undefined}
  */
 export function getMutationExtendedDesc (text) {
   return text?.split('\n\n').slice(1).join('\n\n')
@@ -427,25 +446,24 @@ export function getIntrospectionQuery () {
 /**
  * Filter for mutations that relate to the given Cylc object.
  *
- * Returns an array with two values:
- * - Matching mutations minus those which require additional information.
- * - All matching mutations.
+ * Returns an array of objects containing matching mutations and the following properties:
+ * - Does the mutation require additional info?
+ * - Is the user authorised to perform the mutation?
  *
  * @param {string} cylcObject - The type of object to filter mutations by.
- * @param {Object} tokens - Tokens representing the context of this object.
- * @param {Array<Mutation>} mutations - Array of mutations.
- * @returns {Array<Array<bool|Mutation>>}
+ * @param {object} tokens - Tokens representing the context of this object.
+ * @param {Mutation[]} mutations - Array of mutations.
+ * @param {string[]} permissions - List of permissions for the user.
+ * @returns {FilteredMutation[]}
  */
-export function filterAssociations (cylcObject, tokens, mutations) {
+export function filterAssociations (cylcObject, tokens, mutations, permissions) {
   const ret = []
-  let requiresInfo = false
-  let authorised = false
-  let applies = false
-  let alternate = null
+  permissions = permissions.map(x => x.toLowerCase())
   for (const mutation of mutations) {
-    requiresInfo = false
-    authorised = false
-    applies = false
+    let requiresInfo = false
+    let authorised = false
+    let applies = false
+    let alternate = null
     for (const arg of mutation.args) {
       if (arg._cylcObject) {
         // alternate cylc object which can satisfy this field, or null
@@ -469,8 +487,11 @@ export function filterAssociations (cylcObject, tokens, mutations) {
     if (!applies) {
       continue
     }
+    if (permissions.includes(mutation.name.toLowerCase())) {
+      authorised = true
+    }
     ret.push(
-      [mutation, requiresInfo, authorised]
+      { mutation, requiresInfo, authorised }
     )
   }
   return ret
@@ -483,7 +504,7 @@ export function filterAssociations (cylcObject, tokens, mutations) {
  *  2. List
  *  3. String
  *
- * @param type {Object} A type as returned by an introspection query.
+ * @param {Object} type - A type as returned by an introspection query.
  * (i.e. an object of the form {name: x, kind: y, ofType: z}
  *
  * @yields {Object} Type objects of the same form as the type argument.
@@ -497,9 +518,9 @@ export function * iterateType (type) {
 
 /** Return an appropriate null value for the specified type.
  *
- * @param type {Object} A type field as returned by an introspection query.
+ * @param {Object} type - A type field as returned by an introspection query.
  * (an object of the form {name: x, kind: y, ofType: z}).
- * @param types {Array} An array of all types present in the schema.
+ * @param {Array} types - An array of all types present in the schema.
  * (optional: used to resolve InputObjectType fields).
  *
  * @returns {Object|Array|undefined}
@@ -545,7 +566,7 @@ export function getNullValue (type, types = []) {
  *
  * E.G: NonNull<List<String>>  =>  [String]!
  *
- * @param arg {Object} An argument from a introspection query.
+ * @param {Object} arg - An argument from a introspection query.
  *
  * @returns {string} A type string for use in a client query / mutation.
  */
@@ -575,7 +596,7 @@ export function argumentSignature (arg) {
 
 /** Construct a mutation string from a mutation introspection.
  *
- * @param mutation {Object} A mutation as returned by an introspection query.
+ * @param {Object} mutation - A mutation as returned by an introspection query.
  *
  * @returns {string} A mutation string for a client to send to the server.
  */
@@ -644,7 +665,7 @@ export function getMutationArgsFromTokens (mutation, tokens) {
  * @param {string} message - error message to display
  * @param {*} response - raw GraphQL response or null
  *
- * @returns {Array} [status, message]
+ * @returns {Promise<MutationResponse>} {status, msg}
  */
 async function _mutateError (mutationName, message, response) {
   // log the response
@@ -661,7 +682,10 @@ async function _mutateError (mutationName, message, response) {
   )
 
   // format a response
-  return [TaskState.SUBMIT_FAILED, message]
+  return {
+    status: TaskState.SUBMIT_FAILED,
+    message
+  }
 }
 
 /**
@@ -671,7 +695,7 @@ async function _mutateError (mutationName, message, response) {
  * @param {Object} args
  * @param {ApolloClient} apolloClient
  *
- * @returns {Array} [status, result]
+ * @returns {Promise<MutationResponse>} {status, msg}
  */
 export async function mutate (mutation, args, apolloClient) {
   let response = null
@@ -704,13 +728,19 @@ export async function mutate (mutation, args, apolloClient) {
       // regular [commandSucceeded, message] format
       if (result[0] === true) {
         // success
-        return [TaskState.SUBMITTED, result[1]]
+        return {
+          status: TaskState.SUBMITTED,
+          message: result[1]
+        }
       }
       // failure (Cylc error, e.g. could not find workflow <x>)
       return _mutateError(mutation.name, result[1], response)
     }
     // command in a different format (e.g. info command)
-    return [TaskState.SUBMITTED, result]
+    return {
+      status: TaskState.SUBMITTED,
+      message: result
+    }
   } catch (error) {
     return _mutateError(mutation.name, 'invalid response', response)
   }

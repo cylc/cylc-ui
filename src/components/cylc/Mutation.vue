@@ -65,8 +65,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
-import Task from '@/components/cylc/Task'
+import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
+import Task from '@/components/cylc/Task.vue'
 import { mutate } from '@/utils/aotf'
 
 // enumeration for the mutation status, maps onto Cylc Task status
@@ -121,13 +121,12 @@ export default {
     /* Execute the GraphQL mutation */
     async call (args) {
       this.status = status.submitted
-      const promise = mutate(
+      mutate(
         this.mutation,
         args,
         this.$workflowService.apolloClient
-      )
-      promise.then((x) => {
-        this.status = x[0].name.replace('_', '-')
+      ).then(response => {
+        this.status = response.status.name.replace('_', '-')
       })
     },
 

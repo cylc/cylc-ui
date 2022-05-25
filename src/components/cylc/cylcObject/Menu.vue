@@ -42,13 +42,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-card-subtitle>
           {{ typeAndStatusText }}
         </v-card-subtitle>
-        <v-divider v-if="displayMutations.length"></v-divider>
+        <v-divider v-if="primaryMutations.length || displayMutations.length"></v-divider>
+        <v-skeleton-loader
+          v-if="isLoadingMutations && primaryMutations.length"
+          type="list-item-avatar-two-line@3"
+          min-width="400"
+        >
+        </v-skeleton-loader>
         <v-list
           v-if="displayMutations.length"
           class="c-mutation-menu-list"
         >
           <v-list-item
-            v-for="[mutation, requiresInfo, authorised] in displayMutations"
+            v-for="{ mutation, requiresInfo, authorised } in displayMutations"
             :key="mutation.name"
             :disabled=!authorised
             @click.stop="enact(mutation, requiresInfo)"
@@ -112,8 +118,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import {
+  filterAssociations,
   getMutationArgsFromTokens,
-  mutate
+  getType,
+  mutate,
+  tokenise
 } from '@/utils/aotf'
 import Mutation from '@/components/cylc/Mutation'
 import {
@@ -138,13 +147,13 @@ export default {
 
   data () {
     return {
-      allMutations: [],
       dialog: false,
       dialogMutation: null,
       expanded: false,
       id: '',
       node: {},
       mutations: [],
+      isLoadingMutations: true,
       showMenu: false,
       tokens: [],
       types: [],
@@ -166,43 +175,26 @@ export default {
   },
 
   computed: {
+    primaryMutations () {
+      return this.$workflowService.primaryMutations[this.type] || []
+    },
     canExpand () {
-      if (!this.mutations) {
-        return false
-      }
-      return !!this.$workflowService.primaryMutations[this.type]
+      return this.primaryMutations.length && this.mutations.length > this.primaryMutations.length
     },
     ...mapState('user', ['user']),
-    userPermissions () {
-      return this.user.permissions.map((str) => str.toLowerCase())
-    },
-    authorizedMutations () {
-      return this.mutations
-        .map(mutation => {
-          if (this.userPermissions.includes(mutation[0].name.toLowerCase())) {
-            mutation[2] = true
-          }
-          return mutation
-        })
-    },
     displayMutations () {
-      if (!this.mutations || this.user.permissions.length < 2) {
+      if (!this.mutations.length || this.user.permissions.length < 2) {
         return []
       }
-      const shortList = this.$workflowService.primaryMutations[this.type]
-
-      if (!this.expanded && shortList) {
-        return this.authorizedMutations.filter(
-          (x) => {
-            return shortList.includes(x[0].name)
-          }
+      const shortList = this.primaryMutations
+      if (!this.expanded && shortList.length) {
+        return this.mutations.filter(
+          x => shortList.includes(x.mutation.name)
         ).sort(
-          (x, y) => {
-            return shortList.indexOf(x[0].name) - shortList.indexOf(y[0].name)
-          }
+          (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
         )
       }
-      return this.authorizedMutations
+      return this.mutations
     },
     typeAndStatusText () {
       let ret = this.type
@@ -290,17 +282,28 @@ export default {
       this.showMenu = false
     },
 
-    showMutationsMenu ({ id, type, types, tokens, mutations, node, event }) {
+    showMutationsMenu ({ id, node, event }) {
       this.id = id
-      this.type = type
-      this.types = types
-      this.tokens = tokens
+      this.tokens = tokenise(id)
+      this.type = getType(this.tokens)
       this.node = node
-      this.mutations = mutations.sort(
-        (a, b) => a[0].name.localeCompare(b[0].name)
-      )
       this.x = event.clientX
       this.y = event.clientY
+      // await graphql query to get mutations
+      this.$workflowService.mutationsAndTypes.then(({ mutations, types }) => {
+        // if mutations are slow to load then there will be a delay before they are reactively
+        // displayed in the menu (this is what the skeleton-loader is for)
+        this.isLoadingMutations = false
+        this.types = types
+        this.mutations = filterAssociations(
+          this.type,
+          this.tokens,
+          mutations,
+          this.user.permissions
+        ).sort(
+          (a, b) => a.mutation.name.localeCompare(b.mutation.name)
+        )
+      })
       this.$nextTick(() => {
         this.showMenu = true
         // reset the mutation component if present

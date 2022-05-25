@@ -15,38 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module.exports = {
-  root: true,
-  env: {
-    node: true
-  },
-  extends: [
-    'standard',
-    'eslint:recommended',
-    'plugin:vue/essential'
-  ],
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    indent: [
-      'error',
-      2,
-      {
-        ignoredNodes: [
-          'TemplateLiteral'
-        ]
-      }
-    ],
-    'template-curly-spacing': [
-      'off'
-    ],
-    'vue/multi-word-component-names': [
-      'off'
-    ],
-    'import/no-duplicates': 'off',
-    'no-duplicate-imports': 'error'
-  },
-  parserOptions: {
-    parser: 'babel-eslint'
+/**
+ * Create a promise that can be manually resolved.
+ *
+ * Usage:
+ *   const deferred = new Deferred()
+ *   deferred.promise.then(doSomething)
+ *   deferred.resolve()
+ */
+export class Deferred {
+  constructor () {
+    this.promise = new Promise(resolve => {
+      this.resolve = resolve
+    })
   }
 }

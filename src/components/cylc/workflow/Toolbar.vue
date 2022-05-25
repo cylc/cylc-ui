@@ -273,8 +273,8 @@ export default {
       this.$workflowService.mutate(
         this.isPaused ? 'resume' : 'pause',
         this.currentWorkflow.id
-      ).then(ret => {
-        if (ret[0] === mutationStatus.SUCCEEDED) {
+      ).then(response => {
+        if (response.status === mutationStatus.SUCCEEDED) {
           this.expecting.paused = !this.isPaused
         }
       })
@@ -283,8 +283,8 @@ export default {
       this.$workflowService.mutate(
         'stop',
         this.currentWorkflow.id
-      ).then(ret => {
-        if (ret[0] === mutationStatus.SUCCEEDED) {
+      ).then(response => {
+        if (response.status === mutationStatus.SUCCEEDED) {
           this.expecting.stop = WorkflowState.STOPPING
         }
       })

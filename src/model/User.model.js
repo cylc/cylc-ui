@@ -16,12 +16,15 @@
  */
 
 /**
- * @typedef {Object} User
+ * @typedef {object} User
  * @property {string} username - user name
- * @property {Array<string>} groups - user groups
+ * @property {string[]} groups - user groups
  * @property {string} created - date when the user was created
  * @property {boolean} admin - whether the user is an administrator or not
  * @property {string} server - server URL
+ * @property {string} owner - UIS owner
+ * @property {string[]} permissions - list of permissions
+ * @property {string} mode - single or multi user mode
  */
 export default class User {
   constructor (username, groups, created, admin, server, owner, permissions, mode) {
