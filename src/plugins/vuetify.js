@@ -24,7 +24,9 @@ import Vuetify from 'vuetify/lib'
 Vue.use(Vuetify)
 
 export default new Vuetify({
-  theme: { disable: true },
+  theme: {
+    // dark: true
+  },
   icons: {
     iconfont: 'mdiSvg'
   }

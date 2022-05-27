@@ -16,12 +16,14 @@
  */
 
 @import '~vuetify/src/styles/styles';
+@import '../util.scss';
 
 /* this is not in our styles/material-dashboard, so we need to force-override */
 .v-navigation-drawer {
-  background-color: map-get($grey, 'lighten-4') !important;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
+
+  @include theme-dependent(background-color, $grey, 4);
 
   .v-list__tile {
     border-radius: 4px;

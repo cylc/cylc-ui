@@ -15,24 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import '~vuetify/src/styles/styles';
-@import '../util.scss';
-
-.c-header {
-  display: block;
-
-  @include theme-dependent(background-color, $grey, 3);
-
-  .layout {
-    .c-environment-info {
-      font-size: 1rem;
-      font-weight: map-get($font-weights, 'regular');
-
-      .v-chip {
-        font-size: 1rem;
-        @include theme-dependent(background-color, $grey, 5, !important);
-        @include theme-dependent(border-color, $grey, 1, !important);
-      }
+@mixin theme-dependent($prop, $color, $intensity, $important: null) {
+  // Set the specified color property in a way that just works regardless of
+  // whether the theme is light or dark.
+  // If light theme, lighten the specified color by the specified intensity;
+  // if dark, darken.
+  @each $theme in 'light', 'dark' {
+    .theme--#{$theme} & {
+      #{$prop}: map-get($color, '#{$theme}en-#{$intensity}') $important;
     }
   }
 }

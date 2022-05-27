@@ -34,15 +34,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-if="responsive"
         >
           <v-text-field
-            class="purple-input search-input"
+            class="search-input"
             label="Search..."
-            color="purple"
           />
         </v-list-item>
 
         <v-list-item
           to="/"
-          active-class="primary grey--text text--darken-3"
         >
           <v-list-item-action>
             <v-icon>{{ svgPaths.home }}</v-icon>
@@ -52,7 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-list-item
           to="/graphiql"
-          active-class="primary grey--text text--darken-3"
           class="v-list-item"
         >
           <v-list-item-action>
@@ -72,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
     <template v-slot:append>
       <div class="px-4 py-2 d-flex justify-center">
-        <span class="grey--text text--darken-2">
+        <span class="text--secondary">
           <strong v-if="environment !== 'PRODUCTION'">{{ environment }}</strong> {{ $t('App.name') }} {{ version }}
         </span>
       </div>
