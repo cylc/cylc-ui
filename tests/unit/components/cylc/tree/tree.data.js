@@ -68,6 +68,75 @@ const simpleWorkflowTree4Nodes = [
             ]
           }
         ]
+      },
+      {
+        id: '20100102T0000Z',
+        type: 'cyclepoint',
+        node: {
+          __typename: 'CyclePoint',
+          name: '20100102T0000Z',
+          state: 'failed'
+        },
+        children: [
+          {
+            id: '~user/workflow1//20100102T0000Z/foo',
+            type: 'task-proxy',
+            node: {
+              __typename: 'TaskProxy',
+              name: 'foo',
+              state: 'failed'
+            },
+            expanded: false,
+            children: [
+              {
+                id: '~user/workflow1//20100102T0000Z/foo/01',
+                type: 'job',
+                node: {
+                  __typename: 'Job',
+                  name: '1',
+                  startedTime: '2019-08-19T22:44:42Z',
+                  state: 'failed',
+                  submitNum: 1,
+                  customOutputs: [
+                    {
+                      label: 'out1',
+                      message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            id: '~user/workflow1//20100102T0000Z/boo',
+            type: 'task-proxy',
+            node: {
+              __typename: 'TaskProxy',
+              name: 'boo',
+              state: 'failed'
+            },
+            expanded: false,
+            children: [
+              {
+                id: '~user/workflow1//20100102T0000Z/boo/01',
+                type: 'job',
+                node: {
+                  __typename: 'Job',
+                  name: '2',
+                  startedTime: '2019-08-19T22:44:42Z',
+                  state: 'failed',
+                  submitNum: 1,
+                  customOutputs: [
+                    {
+                      label: 'out1',
+                      message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
       }
     ]
   }
@@ -1081,6 +1150,7 @@ const sampleWorkflow1 = {
 
 const simpleWorkflowNode = simpleWorkflowTree4Nodes[0]
 const simpleCyclepointNode = simpleWorkflowTree4Nodes[0].children[0]
+const simpleCyclepointNodeMultiChild = simpleWorkflowTree4Nodes[0].children[1]
 const simpleTaskNode = simpleCyclepointNode.children[0]
 const simpleJobNode = simpleTaskNode.children[0]
 
@@ -1088,6 +1158,7 @@ export {
   simpleWorkflowTree4Nodes,
   simpleWorkflowNode,
   simpleCyclepointNode,
+  simpleCyclepointNodeMultiChild,
   simpleTaskNode,
   simpleJobNode,
   sampleWorkflow1

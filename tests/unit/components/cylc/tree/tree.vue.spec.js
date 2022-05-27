@@ -233,7 +233,7 @@ describe('Tree component', () => {
         })
         // 3, 1 cycle point, 1 task proxy, and 1 job
         const treeItems = wrapper.findAllComponents(TreeItem)
-        expect(treeItems.length).to.equal(3)
+        expect(treeItems.length).to.equal(8)
         const taskProxy = treeItems.at(1)
         expect(taskProxy.vm.node.type).to.equal('task-proxy')
         // task proxy is displayed
@@ -256,7 +256,7 @@ describe('Tree component', () => {
         wrapper.vm.filterTasks()
         // 3, 1 cycle point, 1 task proxy, and 1 job
         const treeItems = wrapper.findAllComponents(TreeItem)
-        expect(treeItems.length).to.equal(3)
+        expect(treeItems.length).to.equal(8)
         const taskProxy = treeItems.at(1)
         // task proxy is displayed
         expect(taskProxy.vm.filtered).to.equal(false)
@@ -278,7 +278,7 @@ describe('Tree component', () => {
         wrapper.vm.filterTasks()
         // 3, 1 cycle point, 1 task proxy, and 1 job
         const treeItems = wrapper.findAllComponents(TreeItem)
-        expect(treeItems.length).to.equal(3)
+        expect(treeItems.length).to.equal(8)
         const taskProxy = treeItems.at(1)
         // task proxy is displayed
         expect(taskProxy.vm.filtered).to.equal(false)

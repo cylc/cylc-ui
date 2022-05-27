@@ -26,6 +26,7 @@ import TreeItem from '@/components/cylc/tree/TreeItem'
 import {
   simpleWorkflowNode,
   simpleCyclepointNode,
+  simpleCyclepointNodeMultiChild,
   simpleTaskNode
 } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
@@ -92,10 +93,19 @@ describe('TreeItem component', () => {
 
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
-    it('should display the cycle point expanded by default', () => {
+    it('should not display the cycle point expanded by default (if only one child is present)', () => {
       const wrapper = mountFunction({
         propsData: {
           node: simpleCyclepointNode,
+          depth: 0
+        }
+      })
+      expect(wrapper).not.to.be.expanded()
+    })
+    it('should display the cycle point expanded by default (if more then one child is present)', () => {
+      const wrapper = mountFunction({
+        propsData: {
+          node: simpleCyclepointNodeMultiChild,
           depth: 0
         }
       })
@@ -149,7 +159,7 @@ describe('TreeItem component', () => {
       })
       const task = wrapper.findAllComponents({ name: 'TreeItem' })
       // 4 TreeItem components, 1 for workflow, 1 for cyclepoint, 1 for task, 1 for job
-      expect(task.length).to.equal(4)
+      expect(task.length).to.equal(9)
     })
   // })
   // describe('mixin', () => {

@@ -348,15 +348,15 @@ export default {
     this.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
-    if (this.node.expanded !== undefined && this.node.expanded !== null) {
-      this.isExpanded = this.node.expanded
-      this.emitExpandCollapseEvent(this.isExpanded)
-    }
+    this.isExpanded = this.node.children?.length > 1 && this.initialExpanded ? true : this.node.expanded
+    this.emitExpandCollapseEvent(this.isExpanded)
   },
   watch: {
     node: {
       deep: true,
       handler: function () {
+        // in case this trips anyone else up. Because we dont always get a full hydrated result instantly, on the next change iteration
+        // this checks if we were supposed to be expanded
         if (this.initialExpanded && this.isExpanded === undefined && this.node.children && this.node.children.length > 1) {
           this.isExpanded = true
           this.emitExpandCollapseEvent(this.isExpanded)
