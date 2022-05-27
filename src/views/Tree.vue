@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <div class="c-tree pa-2 h-100">
+    <div class="c-tree pa-2 h-100" data-cy="tree-view">
       <tree-component
         :workflows="workflows"
         :hoverable="false"

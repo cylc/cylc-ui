@@ -232,7 +232,7 @@ describe('Api On The Fly', () => {
         .should('have.length', 1)
 
         // click the submit button
-        .find('.v-card__actions :nth-child(4)')
+        .find('[data-cy=submit]')
         .click()
         .then(() => {
           // this should execute one mutation...

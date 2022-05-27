@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        :callbackSubmit='call'
        :initialData='initialData'
        ref="formGenerator"
+       v-model="isValid"
       />
       <br />
       <v-card-actions>
@@ -35,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           color="grey"
           @click="cancel()"
           text
+          data-cy="cancel"
         >
           Cancel
         </v-btn>
@@ -42,13 +44,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           color="orange"
           @click="$refs.formGenerator.reset()"
           text
+          data-cy="reset"
         >
           Reset
         </v-btn>
         <v-btn
           color="blue"
           @click="$refs.formGenerator.submit()"
+          :disabled="!isValid"
           text
+          data-cy="submit"
         >
           Submit
         </v-btn>
@@ -79,11 +84,12 @@ const status = {
 }
 Object.freeze(status)
 
-// the "data" function, defined here so we can easily reset the component
-const initialState = () => ({
+// initial state defined here so we can easily reset the component data
+const initialState = {
   response: '',
   status: status.waiting
-})
+}
+Object.freeze(initialState)
 
 export default {
   name: 'mutation',
@@ -115,7 +121,10 @@ export default {
     }
   },
 
-  data: initialState,
+  data: () => ({
+    ...initialState,
+    isValid: false
+  }),
 
   methods: {
     /* Execute the GraphQL mutation */
@@ -133,7 +142,7 @@ export default {
     /* Reset this component to it's initial state. */
     reset () {
       this.$refs.formGenerator.reset()
-      Object.assign(this.$data, initialState())
+      Object.assign(this.$data, initialState)
     }
   },
 
