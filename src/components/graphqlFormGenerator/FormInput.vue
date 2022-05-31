@@ -23,15 +23,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- eslint-disable-next-line vue/no-unused-vars -->
     <template v-slot:activator="{ on }">
       <!-- TODO: fix the inputType form alignment thinggy -->
-      <!-- NOTE: the `is` field comes from `props` -->
+      <!-- NOTE: the `is` field comes from `props` v-bind -->
       <!-- eslint-disable-next-line vue/require-component-is -->
       <component
-       v-model="model"
-       v-bind="props"
-       v-mask="props.mask"
-       :gqlType="gqlType"
-       :types="types"
-       @blur="showHelp = false"
+        v-model="model"
+        v-bind="props"
+        v-mask="props.mask"
+        :gqlType="gqlType"
+        :types="types"
+        @blur="showHelp = false"
       >
         <template v-slot:append>
           <v-icon
@@ -117,8 +117,8 @@ export default {
       } else {
         componentProps = this.namedTypes.String
         // eslint-disable-next-line no-console
-        console.error(
-          'Warning: falling back to string for ' +
+        console.warn(
+          'Falling back to string for ' +
           `type: ${this.gqlType.name}, kind: ${this.gqlType.kind}`
         )
       }

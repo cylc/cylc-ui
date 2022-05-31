@@ -29,12 +29,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-list-item-content>
           <!-- The input -->
           <component
-           v-model="value[index]"
-           :propOverrides="{'dense': true}"
-           :gqlType="gqlType.ofType"
-           :types="types"
-           :is="FormInput"
-            ref="inputs"
+            v-model="value[index]"
+            :propOverrides="{dense: true}"
+            :gqlType="gqlType.ofType"
+            :types="types"
+            :is="FormInput"
+             ref="inputs"
           >
             <template v-slot:append-outer>
               <v-icon

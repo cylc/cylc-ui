@@ -17,12 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <component
-   v-model="model"
-   :propOverrides="{rules: [x => Boolean(x) || 'Required!']}"
-   :gqlType="gqlType.ofType"
-   :types="types"
-   label="(required)"
-   :is="FormInput"
+    v-model="model"
+    :propOverrides="{rules: [x => Boolean(x) || 'Required!']}"
+    :gqlType="gqlType.ofType"
+    :types="types"
+    label="(required)"
+    :is="FormInput"
   >
     <template v-slot:append-outer>
       <!-- pass the "append-outer" slot onto the child component -->
