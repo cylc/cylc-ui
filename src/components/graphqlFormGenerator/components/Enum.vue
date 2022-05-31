@@ -19,9 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-select
     persistent-hint
     v-model="model"
+    v-bind="$attrs"
     :items="type.enumValues"
     item-text="name"
     :hint="itemDesc"
+    placeholder="Select an option"
   />
 </template>
 
