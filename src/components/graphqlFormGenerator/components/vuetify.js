@@ -164,7 +164,10 @@ export default {
     TimePoint: {
       is: VTextField,
       placeholder: 'yyyy-mm-ddThh:mm:ss',
-      mask: '####-##-##T##:##:##'
+      mask: '####-##-##T##:##:##',
+      rules: [
+        x => Boolean(!x || x.match(/^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2})?)?)?)?)?$/)) || 'Invalid'
+      ]
     },
     RuntimeConfiguration: {
       is: VTextField,
