@@ -142,7 +142,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </div>
                   </v-flex>
                   <v-flex
-                    v-if="scope.node.type === 'workflow-name-part' && scope.node.children && scope.node.children.length === 1 && scope.node.children[0].node.latestStateTasks"
+                    v-if="scope.node.type === 'workflow-name-part' && scope.node.children"
                     class="text-right c-gscan-workflow-states"
                   >
                       <span
