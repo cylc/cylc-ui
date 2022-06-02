@@ -496,7 +496,8 @@ export default {
     },
 
     getOnlyActiveStates (node) {
-      const latestStateTasks = Object.entries(node.latestStateTasks)
+      const latestStateTasks = node.latestStateTasks ? Object.entries(node.latestStateTasks) : []
+
       // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
       const validValues = [
         TaskState.SUBMITTED.name,
@@ -505,11 +506,9 @@ export default {
         TaskState.SUCCEEDED.name,
         TaskState.FAILED.name
       ]
-      const latestStateTasksObj = latestStateTasks.filter(entry => {
+      return latestStateTasks.filter(entry => {
         return validValues.includes(entry[0]) && this.countTasksInState(node, entry[0])
       })
-      return latestStateTasksObj
-      // return []
     }
   }
 }
