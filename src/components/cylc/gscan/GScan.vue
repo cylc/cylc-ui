@@ -166,7 +166,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                           dark
                           icon
                         >
-                          <job :status="state" />
+                          <task :status="state"
+                            :startTime="Date.now()"
+                            :estimatedDuration="30"
+                          />
                         </v-btn>
                       </template>
                       <!-- tooltip text -->
@@ -204,7 +207,7 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TaskState from '@/model/TaskState.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import Job from '@/components/cylc/Job'
+import Task from '@/components/cylc/Task'
 import Tree from '@/components/cylc/tree/Tree'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
 import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
@@ -215,7 +218,7 @@ import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 export default {
   name: 'GScan',
   components: {
-    Job,
+    Task,
     Tree,
     WorkflowIcon
   },
