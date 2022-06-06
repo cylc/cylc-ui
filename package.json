@@ -1,6 +1,6 @@
 {
   "name": "cylc-ui",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "license": "GPL-3.0-only",
   "scripts": {
@@ -72,9 +72,10 @@
     "cross-fetch": "^3.1.5",
     "cypress": "^9.6.0",
     "eslint": "^8.0.0",
-    "eslint-config-standard": "^16.0.3",
+    "eslint-config-standard": "^17.0.0",
     "eslint-import-resolver-node": "^0.3.6",
     "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-n": "15.2.1",
     "eslint-plugin-no-only-tests": "^2.6.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0",
@@ -87,7 +88,7 @@
     "json-server": "^0.17.0",
     "nodemon": "^2.0.15",
     "nyc": "^15.1.0",
-    "sass": "~1.51.0",
+    "sass": "~1.52.0",
     "sass-loader": "^10.2.0",
     "sinon": "^14.0.0",
     "standard": "^17.0.0",
