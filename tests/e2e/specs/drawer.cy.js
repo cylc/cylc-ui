@@ -22,6 +22,9 @@ describe('Drawer component', () => {
       .get('.v-navigation-drawer')
       .should('be.visible')
   })
+  it('it should have a width of 260', () => {
+    cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.lt', 360)
+  })
   it('Is NOT displayed when mode is mobile', () => {
     // when the window dimension is below a mobile-threshold, the app sets state.app.drawer as false
     // and then the drawer is hidden
