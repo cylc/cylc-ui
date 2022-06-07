@@ -22,7 +22,7 @@ describe('Drawer component', () => {
       .get('.v-navigation-drawer')
       .should('be.visible')
   })
-  it('it should have a width of 260', () => {
+  it('it should have a width of 360', () => {
     cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.lt', 360)
   })
   it('Is NOT displayed when mode is mobile', () => {
