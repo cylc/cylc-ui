@@ -38,4 +38,13 @@ describe('Drawer component', () => {
       .get('#toggle-drawer')
       .should('be.visible')
   })
+  it('should drag to trigger resize', () => {
+    cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.lt', 360)
+    cy.get('.v-navigation-drawer__border')
+      .trigger('mousedown', { which: 1 })
+      .trigger('mousemove', { clientX: 100 })
+      .trigger('mouseup', { force: true })
+    cy.get('.v-navigation-drawer__border')
+      .invoke('innerWidth').should('be.lt', 460)
+  })
 })
