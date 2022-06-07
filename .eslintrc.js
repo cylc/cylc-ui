@@ -47,6 +47,6 @@ module.exports = {
     'no-duplicate-imports': 'error'
   },
   parserOptions: {
-    parser: 'babel-eslint'
+    parser: '@babel/eslint-parser'
   }
 }
