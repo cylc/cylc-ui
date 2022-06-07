@@ -18,10 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-navigation-drawer
     v-model="drawer"
+    ref="drawer"
     app
     floating
+    hide-overlay
     mobile-breakpoint="991"
-    width="260"
+    :width="navigation.width"
     persistent
     class="fill-height"
   >
@@ -99,7 +101,11 @@ export default {
         graphql: mdiGraphql
       },
       environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
-      version
+      version,
+      navigation: {
+        width: 260,
+        borderSize: 3
+      }
     }
   },
   computed: {
@@ -112,6 +118,58 @@ export default {
         this.$store.commit('app/setDrawer', val)
       }
     }
+  },
+  methods: {
+    setBorderWidth () {
+      const i = this.$refs.drawer.$el.querySelector(
+        '.v-navigation-drawer__border'
+      )
+      i.style.width = this.navigation.borderSize + 'px'
+      i.style.cursor = 'ew-resize'
+    },
+    setEvents () {
+      const minSize = this.navigation.borderSize
+      const el = this.$refs.drawer.$el
+      const drawerBorder = el.querySelector('.v-navigation-drawer__border')
+      const direction = el.classList.contains('v-navigation-drawer--right')
+        ? 'right'
+        : 'left'
+
+      function resize (e) {
+        document.body.style.cursor = 'ew-resize'
+        const f =
+          direction === 'right'
+            ? document.body.scrollWidth - e.clientX
+            : e.clientX
+        el.style.width = f + 'px'
+      }
+
+      drawerBorder.addEventListener(
+        'mousedown',
+        (e) => {
+          if (e.offsetX < minSize) {
+            el.style.transition = 'initial'
+            document.addEventListener('mousemove', resize, false)
+          }
+        },
+        false
+      )
+
+      document.addEventListener(
+        'mouseup',
+        () => {
+          el.style.transition = ''
+          this.navigation.width = el.style.width
+          document.body.style.cursor = ''
+          document.removeEventListener('mousemove', resize, false)
+        },
+        false
+      )
+    }
+  },
+  mounted () {
+    this.setBorderWidth()
+    this.setEvents()
   }
 }
 </script>
