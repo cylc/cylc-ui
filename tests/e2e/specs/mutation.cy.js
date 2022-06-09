@@ -138,6 +138,11 @@ describe('Mutations component', () => {
     // Form should be valid initially
     cy.get('[data-cy=submit]').as('submit')
       .should('not.be.disabled')
+      .should('not.have.class', 'error--text')
+      // Indirect test for "form invalid" tooltip by checking aria-expanded attribute
+      // (not ideal but it's way too troublesome to test visibility of .v-tooltip__content)
+      .trigger('mouseenter')
+      .should('have.attr', 'aria-expanded', 'false') // should not be visible
     // Now type invalid input
     cy.get('.c-mutation-form')
       .find('.v-list-item__title')
@@ -149,6 +154,9 @@ describe('Mutations component', () => {
       .get('@textField')
       .should('have.class', 'error--text')
       .get('@submit')
-      .should('be.disabled')
+      .should('have.class', 'error--text')
+      .trigger('mouseenter')
+      .should('have.attr', 'aria-expanded', 'true') // tooltip should be visible
+      .should('not.be.disabled') // user can still submit if they really want to
   })
 })

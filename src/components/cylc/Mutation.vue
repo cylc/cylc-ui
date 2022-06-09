@@ -48,15 +48,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           Reset
         </v-btn>
-        <v-btn
-          color="blue"
-          @click="$refs.formGenerator.submit()"
-          :disabled="!isValid"
-          text
-          data-cy="submit"
+        <v-tooltip
+          top
+          color="error"
+          :disabled="isValid"
         >
-          Submit
-        </v-btn>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              text
+              :color="isValid ? 'primary' : 'error'"
+              @click="$refs.formGenerator.submit()"
+              v-bind="attrs"
+              v-on="on"
+              data-cy="submit"
+            >
+              Submit
+            </v-btn>
+          </template>
+          <span>Form contains invalid or missing values!</span>
+        </v-tooltip>
       </v-card-actions>
       <p
        style="font-size:1.5em;"
