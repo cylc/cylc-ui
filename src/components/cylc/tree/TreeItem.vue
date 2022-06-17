@@ -265,7 +265,7 @@ export default {
           property: 'jobId'
         },
         {
-          title: 'batch sys',
+          title: 'job runner',
           property: 'jobRunnerName'
         },
         {

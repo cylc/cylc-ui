@@ -235,7 +235,7 @@ function createJobDetailsNode (job) {
       value: job.jobId
     },
     {
-      title: 'batch sys',
+      title: 'job runner',
       value: job.jobRunnerName
     },
     {
