@@ -69,6 +69,41 @@ $cjob: ".c-job svg.job rect";
     }
 }
 
+@mixin job_theme_cylc7() {
+    $grey: rgb(173,165,165);
+    $green: rgb(0,193,64);
+    $green2: rgb(161,207,37);
+    $red: rgb(255,0,0);
+    $red2: rgb(255,136,204);
+
+    #{$cjob} {
+        &.submitted {
+            fill: $green2;
+            stroke: $green2;
+        }
+
+        &.running {
+            fill: $green;
+            stroke: $green;
+        }
+
+        &.succeeded {
+            fill: $grey;
+            stroke: $grey;
+        }
+
+        &.failed {
+            fill: $red;
+            stroke: $red;
+        }
+
+        &.submit-failed {
+            fill: $red2;
+            stroke: $red2;
+        }
+    }
+}
+
 @mixin job_theme_greyscale() {
     $light: rgb(208,208,208);
     $medium: rgb(133,133,133);
@@ -140,6 +175,10 @@ $cjob: ".c-job svg.job rect";
     @include job_theme_default
 }
 
+#app.job_theme--cylc7 {
+    @include job_theme_cylc7
+}
+
 #app.job_theme--greyscale {
     @include job_theme_greyscale
 }
@@ -152,6 +191,10 @@ $cjob: ".c-job svg.job rect";
 // (this allows us to override the theme in the user-profile
 #app .job_theme--default {
     @include job_theme_default
+}
+
+#app .job_theme--cylc7 {
+    @include job_theme_cylc7
 }
 
 #app .job_theme--greyscale {

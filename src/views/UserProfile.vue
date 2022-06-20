@@ -241,7 +241,8 @@ export default {
       jobThemes: [
         'default',
         'greyscale',
-        'colour_blind'
+        'colour_blind',
+        'cylc7'
       ],
       jobTheme: localStorage.jobTheme || 'default'
     }
