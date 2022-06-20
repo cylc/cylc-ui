@@ -28,6 +28,10 @@ menu would show the wrong workflow.
 [#1027](https://github.com/cylc/cylc-ui/pull/1027) - Remove development
 "Mutations View".
 
+[#1053](https://github.com/cylc/cylc-ui/pull/1053) - Add optional Cylc 7 colour
+theme for job icons.
+
+
 ### Fixes
 
 [#979](https://github.com/cylc/cylc-ui/pull/979) - Fix bug where the mutations
