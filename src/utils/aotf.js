@@ -35,6 +35,7 @@ import {
   mdiDelete,
   mdiEmail,
   mdiGraph,
+  mdiMinusCircleOutline,
   mdiPause,
   mdiPauseCircleOutline,
   mdiPlay,
@@ -86,6 +87,7 @@ import { ApolloClient } from '@apollo/client'
 export const mutationIcons = {
   '': mdiCog, // default fallback
   broadcast: mdiBullhorn,
+  clean: mdiDelete,
   hold: mdiPauseCircleOutline, // to distinguish from pause
   kill: mdiCloseCircle,
   message: mdiEmail,
@@ -94,7 +96,7 @@ export const mutationIcons = {
   poll: mdiRefreshCircle,
   release: mdiPlayCircleOutline, // to distinguish from play
   reload: mdiReload,
-  remove: mdiDelete,
+  remove: mdiMinusCircleOutline,
   resume: mdiPlay,
   setOutputs: mdiGraph,
   stop: mdiStop,
@@ -127,7 +129,8 @@ primaryMutations[cylcObjects.Workflow] = [
   'play',
   'pause',
   'stop',
-  'reload'
+  'reload',
+  'clean'
 ]
 primaryMutations[cylcObjects.CyclePoint] = [
   'hold',
