@@ -6431,7 +6431,7 @@ __metadata:
     nyc: ^15.1.0
     preact: ^10.6.6
     preact-compat: ^3.19.0
-    sass: ~1.52.0
+    sass: ~1.53.0
     sass-loader: ^10.2.0
     sinon: ^14.0.0
     standard: ^17.0.0
@@ -15257,16 +15257,16 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"sass@npm:~1.52.0":
-  version: 1.52.0
-  resolution: "sass@npm:1.52.0"
+"sass@npm:~1.53.0":
+  version: 1.53.0
+  resolution: "sass@npm:1.53.0"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
     immutable: ^4.0.0
     source-map-js: ">=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: 7405b6de76d6df3ebea06a3af30e3a0690738e4bf72f519ec07a7bd700f1a2bb7324f0d60c070fdc6b6c58eff869da0a3de02f3fcd4a6387c1319b2d8162d08a
+  checksum: 4bcb0617d6a4d1f2c089a1cb5c32f65a9ee874b23559f2742fab07cf8478fb74ad20c0730cf9f93915d7dbfc258901f89970674228c3ac91c3883a0a62a0ddab
   languageName: node
   linkType: hard
 
