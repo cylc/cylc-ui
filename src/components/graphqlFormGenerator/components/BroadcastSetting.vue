@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-text-field
     v-model="model"
+    :hint="type.description"
   />
 </template>
 
