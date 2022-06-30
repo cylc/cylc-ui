@@ -77,7 +77,7 @@ jobs:
         with:
           start: yarn run serve --hide=CLIENT  # turn off build output because it's absurdly long
           wait-on: http://localhost:8080/
-          config-file: cypress.json
+          config-file: cypress.config.js
           spec: "tests/e2e/**/*"
           browser: ${{ matrix.browser }}
         env:
