@@ -48,13 +48,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       </component>
     </template>
-    <vue-markdown :breaks="false">{{ help }}</vue-markdown>
+    <Markdown :markdown="help" />
   </v-tooltip>
 </template>
 
 <script>
 import { mask } from 'vue-the-mask'
-import VueMarkdown from 'vue-markdown'
+import Markdown from '@/components/Markdown'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
@@ -65,7 +65,7 @@ export default {
   mixins: [formElement],
 
   components: {
-    'vue-markdown': VueMarkdown
+    Markdown
   },
 
   directives: {
