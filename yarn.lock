@@ -1430,6 +1430,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cypress/vue@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@cypress/vue@npm:4.0.0"
+  dependencies:
+    "@vue/test-utils": 2.0.0-rc.19
+  peerDependencies:
+    "@cypress/webpack-dev-server": "*"
+    cypress: ">=7.0.0"
+    vue: ">=3.0.0"
+  peerDependenciesMeta:
+    "@cypress/webpack-dev-server":
+      optional: true
+  checksum: 69226317cf2245d855c4b33521cbcf923cc3533b605094615a4496b2f5069f4e7d7fe986df1f705a474e29f1134d33989a29672933d487ba0fd721408df1c70e
+  languageName: node
+  linkType: hard
+
 "@cypress/webpack-preprocessor@npm:^5.11.0":
   version: 5.12.0
   resolution: "@cypress/webpack-preprocessor@npm:5.12.0"
@@ -2720,16 +2736,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/cli-plugin-e2e-cypress@npm:^5.0.4":
-  version: 5.0.6
-  resolution: "@vue/cli-plugin-e2e-cypress@npm:5.0.6"
+"@vue/cli-plugin-e2e-cypress@npm:^5.0.5":
+  version: 5.0.8
+  resolution: "@vue/cli-plugin-e2e-cypress@npm:5.0.8"
   dependencies:
-    "@vue/cli-shared-utils": ^5.0.6
+    "@vue/cli-shared-utils": ^5.0.8
     eslint-plugin-cypress: ^2.11.2
   peerDependencies:
     "@vue/cli-service": ^3.0.0 || ^4.0.0 || ^5.0.0-0
     cypress: "*"
-  checksum: 643e0810b75923f6a0f5ce408680a9309b350c290e3a1cb3020f93eed074e4069a5f141f286caf498bcfe2ed4c085f6e38861feb1707d906434a89c9d6768852
+  checksum: c68e6aaa31ab9fea8624ef31f8e8fc600d18654b49226c85a0df061d597f9d9a4dff0c4f8c1951baebc4480783f7d5fe24710005f32433847837d2decd5a00a3
   languageName: node
   linkType: hard
 
@@ -2911,6 +2927,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vue/cli-shared-utils@npm:^5.0.8":
+  version: 5.0.8
+  resolution: "@vue/cli-shared-utils@npm:5.0.8"
+  dependencies:
+    "@achrinza/node-ipc": ^9.2.5
+    chalk: ^4.1.2
+    execa: ^1.0.0
+    joi: ^17.4.0
+    launch-editor: ^2.2.1
+    lru-cache: ^6.0.0
+    node-fetch: ^2.6.7
+    open: ^8.0.2
+    ora: ^5.3.0
+    read-pkg: ^5.1.1
+    semver: ^7.3.4
+    strip-ansi: ^6.0.0
+  checksum: 20c0c9e6411b861ac7c25427cf84081c09c113ab09c602480850af6974fcf5c5ef18197ed4fa62093cea3f6631975bfe69fb42e99d19c8ed1884de0c4e6d555d
+  languageName: node
+  linkType: hard
+
 "@vue/component-compiler-utils@npm:^3.1.0, @vue/component-compiler-utils@npm:^3.1.2":
   version: 3.3.0
   resolution: "@vue/component-compiler-utils@npm:3.3.0"
@@ -2938,6 +2974,15 @@ __metadata:
     html-webpack-plugin: ">=2.26.0"
     webpack: ">=4.0.0"
   checksum: 91afc6f0f018ac52d1e88d3414cb577264148e236b7e27b8e9269c571a2da7efd06d14fb940e146ea1760111284fee139ead7bc523c944f52f667d9125035f25
+  languageName: node
+  linkType: hard
+
+"@vue/test-utils@npm:2.0.0-rc.19":
+  version: 2.0.0-rc.19
+  resolution: "@vue/test-utils@npm:2.0.0-rc.19"
+  peerDependencies:
+    vue: ^3.0.1
+  checksum: 6c0096b0bf4861c6edd5d11a18d0e2c6643bcad17219b43ca8bef01816e82edd5153662310407e32fb2a51b56f6de58cb62165121c55c66da1ceecd50b3d7806
   languageName: node
   linkType: hard
 
@@ -6139,6 +6184,7 @@ __metadata:
     "@babel/plugin-proposal-optional-chaining": ^7.16.7
     "@babel/preset-env": ^7.14.8
     "@cypress/code-coverage": ^3.9.12
+    "@cypress/vue": ^4.0.0
     "@cypress/webpack-preprocessor": ^5.11.0
     "@lumino/algorithm": ^1.9.1
     "@lumino/default-theme": ^0.22.0
@@ -6146,7 +6192,7 @@ __metadata:
     "@mdi/js": ^6.5.95
     "@vue/babel-preset-app": ^4.5.13
     "@vue/cli-plugin-babel": ^4.5.15
-    "@vue/cli-plugin-e2e-cypress": ^5.0.4
+    "@vue/cli-plugin-e2e-cypress": ^5.0.5
     "@vue/cli-plugin-eslint": ^5.0.4
     "@vue/cli-plugin-unit-mocha": ^5.0.1
     "@vue/cli-service": ^4.5.18
@@ -6161,7 +6207,7 @@ __metadata:
     core-js: 3
     cross-env: ^7.0.3
     cross-fetch: ^3.1.5
-    cypress: ^9.6.0
+    cypress: ^10.3.0
     dedent: ^0.7.0
     enumify: ^2.0.0
     eslint: ^8.0.0
@@ -6211,9 +6257,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"cypress@npm:^9.6.0":
-  version: 9.7.0
-  resolution: "cypress@npm:9.7.0"
+"cypress@npm:^10.3.0":
+  version: 10.3.0
+  resolution: "cypress@npm:10.3.0"
   dependencies:
     "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
@@ -6259,7 +6305,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 45df7c85bc7ec2e187153ff2b98bf5106d2313d70e2367a5742b5269a9e82d3fdd730d5bbc32ac8da72aeb120a52f9384c2ba4e2fc86b532f68440f22d700fc9
+  checksum: 9cc6d8cd087d7c79f07ad83b8ef9b183f44cf816499bba53e1cee2b6f987d0a6893be209fcd47660cdd0e8456bd132813abe8a6bd15f446d9c96e0129be2de29
   languageName: node
   linkType: hard
 

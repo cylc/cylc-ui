@@ -55,4 +55,12 @@ export const TaskStateUserOrder = [
   TaskState.EXPIRED
 ]
 
+export const JobStates = [
+  TaskState.SUBMITTED,
+  TaskState.RUNNING,
+  TaskState.SUCCEEDED,
+  TaskState.FAILED,
+  TaskState.SUBMIT_FAILED
+]
+
 export default TaskState
