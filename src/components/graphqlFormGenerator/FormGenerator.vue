@@ -44,17 +44,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
           }"
         >
-          <vue-markdown
-           :source="shortDescription"
-           :breaks="false"
+          <Markdown
+           :markdown="shortDescription"
           />
         </v-expansion-panel-header>
         <v-expansion-panel-content
           v-if="extendedDescription"
         >
-          <vue-markdown
-           :source="extendedDescription"
-           :breaks="false"
+          <Markdown
+           :markdown="extendedDescription"
           />
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -84,9 +82,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   {{ icons.help }}
                 </v-icon>
               </template>
-              <vue-markdown :breaks="false">
-                {{ input.description }}
-              </vue-markdown>
+              <Markdown
+                :markdown="input.description"
+              />
             </v-tooltip>
           </v-list-item-title>
           <form-input
@@ -102,11 +100,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import VueMarkdown from 'vue-markdown'
-
 import cloneDeep from 'lodash/cloneDeep'
 import { mdiHelpCircleOutline } from '@mdi/js'
 
+import Markdown from '@/components/Markdown'
 import FormInput from '@/components/graphqlFormGenerator/FormInput'
 import {
   getNullValue,
@@ -118,7 +115,7 @@ export default {
   name: 'form-generator',
 
   components: {
-    'vue-markdown': VueMarkdown,
+    Markdown,
     'form-input': FormInput
   },
 
