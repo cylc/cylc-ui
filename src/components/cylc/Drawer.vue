@@ -102,7 +102,7 @@ export default {
         graphql: mdiGraphql
       },
       environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
-      version: version
+      version
     }
   },
   computed: {

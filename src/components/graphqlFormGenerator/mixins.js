@@ -40,7 +40,7 @@ export const formElement = {
   },
 
   data: () => ({
-    FormInput: FormInput
+    FormInput
   }),
 
   computed: {

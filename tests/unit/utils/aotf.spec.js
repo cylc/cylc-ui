@@ -535,7 +535,7 @@ describe('aotf (Api On The Fly)', () => {
         expect(
           aotf.argumentSignature({
             name: 'myArgument',
-            type: type
+            type
           })
         ).to.equal(signature)
       })
