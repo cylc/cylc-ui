@@ -12067,11 +12067,11 @@ __metadata:
   linkType: hard
 
 "nanoid@npm:3.1.20":
-  version: 3.1.20
-  resolution: "nanoid@npm:3.1.20"
+  version: 3.2.0
+  resolution: "nanoid@npm:3.2.0"
   bin:
     nanoid: bin/nanoid.cjs
-  checksum: f6246023d5d8313c2c16be05c18cdb189a6de50ab6418b513b34086eda4aabd12866b2cbe435548c760dc43cf11830b26b14b113afde47305398e3345795e433
+  checksum: 3d1d5a69fea84e538057cf64106e713931c4ef32af344068ecff153ff91252f39b0f2b472e09b0dfff43ac3cf520c92938d90e6455121fe93976e23660f4fccc
   languageName: node
   linkType: hard
 
