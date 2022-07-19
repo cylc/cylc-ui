@@ -300,7 +300,7 @@ describe('Tree component', () => {
         isExpanded: expanded,
         $props: {
           node: {
-            id: id
+            id
           }
         }
       }

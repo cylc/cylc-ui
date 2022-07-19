@@ -39,8 +39,8 @@ export function createGraphQLUrls () {
   const httpUrl = createUrl('graphql')
   const wsUrl = createUrl('subscriptions', true)
   return {
-    httpUrl: httpUrl,
-    wsUrl: wsUrl
+    httpUrl,
+    wsUrl
   }
 }
 

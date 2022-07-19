@@ -290,8 +290,8 @@ class WorkflowService {
       console.debug('graphql variables:', variables)
     }
     return this.apolloClient.subscribe({
-      query: query,
-      variables: variables,
+      query,
+      variables,
       fetchPolicy: 'no-cache'
     }).subscribe({
       next (value) {

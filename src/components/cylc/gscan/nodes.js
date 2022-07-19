@@ -66,7 +66,7 @@ function newWorkflowPartNode (id, part) {
     name: part,
     type: 'workflow-name-part',
     node: {
-      id: id,
+      id,
       name: part,
       status: ''
     },

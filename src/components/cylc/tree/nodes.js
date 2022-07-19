@@ -118,10 +118,10 @@ function getCyclePointId (node) {
 function createCyclePointNode (familyProxy) {
   const id = getCyclePointId(familyProxy)
   return {
-    id: id,
+    id,
     type: 'cyclepoint',
     node: {
-      id: id,
+      id,
       name: familyProxy.cyclePoint
     },
     children: []

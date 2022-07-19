@@ -57,7 +57,7 @@ describe('CylcTree', () => {
       for (const cyclePoint of cyclePoints) {
         CylcTree.addCyclePoint(createCyclePointNode({
           id: `~cylc/workflow//${cyclePoint}`,
-          cyclePoint: cyclePoint
+          cyclePoint
         }), workflow, {})
       }
       // NB: cycle points are sorted in reverse order by default
@@ -832,7 +832,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
-        state: state
+        state
       })
       CylcTree.addJob(job, workflow, {})
       const cyclepoint = workflow.tree.children[0]
@@ -852,7 +852,7 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
-        state: state
+        state
       })
       const cyclepoint = workflow.tree.children[0]
       const family = cyclepoint.children[0]
