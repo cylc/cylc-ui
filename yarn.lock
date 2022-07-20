@@ -2011,10 +2011,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdi/js@npm:^6.5.95":
-  version: 6.7.96
-  resolution: "@mdi/js@npm:6.7.96"
-  checksum: 8c8f6acb8fd3f856a92ffe2405e258ee5aa84cf541fda1c0a564c9c8bbf935cf2b6a6100cf97d41e9ada1ccb59e4b138d4c712e075f759d7595e21ef1cff84b5
+"@mdi/js@npm:^7.0.0":
+  version: 7.0.96
+  resolution: "@mdi/js@npm:7.0.96"
+  checksum: 4bcc4542a2d8ba9e706a754333e90ce2677616709d3776016b83be59c7219e7514308dbca6e62c7dd38436b3c5d251b8769679c90e354f971b090fa2ebcbc4fe
   languageName: node
   linkType: hard
 
@@ -6266,7 +6266,7 @@ __metadata:
     "@lumino/algorithm": ^1.9.1
     "@lumino/default-theme": ^0.22.0
     "@lumino/widgets": ^1.31.1
-    "@mdi/js": ^6.5.95
+    "@mdi/js": ^7.0.0
     "@vue/babel-preset-app": ^4.5.13
     "@vue/cli-plugin-babel": ^4.5.15
     "@vue/cli-plugin-e2e-cypress": ^5.0.5
