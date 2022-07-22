@@ -11,12 +11,20 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 -------------------------------------------------------------------------------
+## __cylc-ui-1.3.0 (<span actions:bind='release-date'>Upcoming</span>)__
+
+### Enhancements
+
+[#1073](https://github.com/cylc/cylc-ui/pull/1073) - Improve validation of the
+command edit form.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-1.2.1 (<span actions:bind='release-date'>Released 2022-05-30</span>)__
 
 ### Fixes
 
-[#1011](https://github.com/cylc/cylc-ui/pull/1011) - Fix bug where the mutations
-menu would show the wrong workflow.
+[#1011](https://github.com/cylc/cylc-ui/pull/1011) - Fix bug where the
+workflow commands menu would show the wrong workflow.
 
 -------------------------------------------------------------------------------
 ## __cylc-ui-1.2.0 (<span actions:bind='release-date'>Released 2022-05-19</span>)__
@@ -30,7 +38,7 @@ menu would show the wrong workflow.
 
 ### Fixes
 
-[#979](https://github.com/cylc/cylc-ui/pull/979) - Fix bug where the mutations
+[#979](https://github.com/cylc/cylc-ui/pull/979) - Fix bug where the commands
 menu could sometimes break.
 
 -------------------------------------------------------------------------------
@@ -38,8 +46,8 @@ menu could sometimes break.
 
 ### Enhancements
 
-[#928](https://github.com/cylc/cylc-ui/pull/928) - Enable accessing mutations menu
-from GScan.
+[#928](https://github.com/cylc/cylc-ui/pull/928) - Enable accessing the workflow
+commands menu from GScan (sidebar).
 
 -------------------------------------------------------------------------------
 ## __cylc-ui-1.0.0 (<span actions:bind='release-date'>Released 2022-02-17</span>)__
@@ -65,7 +73,7 @@ or jobs now shows the relevant ID and status.
 
 ### Fixes
 
-[#927](https://github.com/cylc/cylc-ui/pull/927) - Fix bug where mutation
+[#927](https://github.com/cylc/cylc-ui/pull/927) - Fix bug where the commands
 menu would disappear when clicking on another task/cycle point/etc.
 
 -------------------------------------------------------------------------------
@@ -80,8 +88,8 @@ Support Jupyter Server conversion. (the CylcUIServer has been converted
 to a Jupyter Server extension).
 
 [#728](https://github.com/cylc/cylc-ui/pull/728) -
-Display authorized mutations in the User Profile and disable unauthorized
-mutations in the menu.
+Display authorized commands in the User Profile and disable unauthorized
+commands in the commands menu.
 
 [#749](https://github.com/cylc/cylc-ui/pull/749)
 & [#834](https://github.com/cylc/cylc-ui/issues/834)
@@ -146,7 +154,7 @@ are ignored.
 ### Fixes
 
 [#691](https://github.com/cylc/cylc-ui/pull/691) -
-Fix bug that could cause mutations to be run against the wrong workflow.
+Fix bug that could cause commands to be run against the wrong workflow.
 
 [#649](https://github.com/cylc/cylc-ui/pull/649) - Avoid re-sorting a
 sorted array, instead adding a new element in its sorted index (respecting
@@ -192,24 +200,24 @@ None or N/A.
 ### Enhancements
 
 [#636](https://github.com/cylc/cylc-ui/pull/636) -
-Improve the appearance of mutation menus and display an expandable short list
+Improve the appearance of commands menus and display an expandable short list
 of commands.
 
 [#616](https://github.com/cylc/cylc-ui/pull/616) - Alert the user if there are
 any errors processing deltas.
 
 [#623](https://github.com/cylc/cylc-ui/pull/623) - Display errors from
-mutations.
+commands.
 
 [#607](https://github.com/cylc/cylc-ui/pull/607) - Animate task progress
 using average run times.
 
-[#598](https://github.com/cylc/cylc-ui/pull/598) - Add mutation button
+[#598](https://github.com/cylc/cylc-ui/pull/598) - Add workflow commands menu.
 
 [#530](https://github.com/cylc/cylc-ui/pull/530) - Display message triggers.
 
 [#544](https://github.com/cylc/cylc-ui/pull/544) - Enable editing
-mutation inputs and support broadcasts in the UI.
+command inputs and support broadcasts in the UI.
 
 [#574](https://github.com/cylc/cylc-ui/pull/574) - Add collapse all and expand
 all buttons to Tree component.
@@ -221,7 +229,7 @@ in responsive mode (smaller viewports).
 in the tree, expand/collapse control, align tree-leaf-triangle. Also align
 job icons vertically in the middle of the HTML element.
 
-[#504](https://github.com/cylc/cylc-ui/pull/504) - Add mutations to the tree
+[#504](https://github.com/cylc/cylc-ui/pull/504) - Add commands menu to the tree
 view to allow interacting with tasks, families and cycles.
 
 [#499](https://github.com/cylc/cylc-ui/pull/499) - Add search and
