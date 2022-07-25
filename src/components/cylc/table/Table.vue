@@ -240,8 +240,8 @@ export default {
         mdiChevronDown,
         mdiArrowDown
       },
-      sortBy: [],
-      sortDesc: [],
+      sortBy: ['Cycle Point'],
+      sortDesc: [true],
       expanded: [],
       headers: [
         {
