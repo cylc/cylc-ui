@@ -114,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <thead>
                 <tr>
                   <th class="px-2" v-bind:key="header.id" v-for="(header) in headers">
-                    <v-btn x-small plain @click="toggleColumnSort(header.text)">{{ header.text }}</v-btn>
+                    <v-btn small plain @click="toggleColumnSort(header.text)">{{ header.text }}</v-btn>
                     <v-btn icon x-small class="v-data-table__expand-icon" @click="toggleColumnSortDirection(header.text)" v-if="sortBy.includes(header.text) && sortDesc[sortBy.indexOf(header.text)]">
                       <v-icon>{{ icons.mdiArrowDown }}</v-icon>
                     </v-btn>
