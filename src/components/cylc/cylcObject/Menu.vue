@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-icon :disabled=!authorised large>{{ mutation._icon }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title v-html="mutation._title" />
+              <v-list-item-title>{{ mutation._title }}</v-list-item-title>
               <!--
               don't use v-list-item-description here, vuetify will standardise
               line heights and cuts off text that overspills this way we can
