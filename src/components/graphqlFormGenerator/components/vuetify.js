@@ -50,11 +50,16 @@ const VNumberField = Vue.component(
         }
       }
     }
-  })
+  }
+)
+
+const RE = {
+  cyclePoint: '\\d+(T\\d+(Z|[+-]\\d+)?)?'
+}
 
 const RULES = {
   integer:
-    x => (!x || Number.isInteger(x)) || 'Integer',
+    x => (!x || Number.isInteger(x)) || 'Must be integer',
   noSpaces:
     x => (!x || !x.includes(' ')) || 'Cannot contain spaces',
   cylcConfigItem:
@@ -118,7 +123,7 @@ export default {
       rules: [
         RULES.noSpaces,
         // character whitelist
-        x => Boolean(!x || x.match(/^[\dT]+(Z|[+-]\d+)?$/)) || 'Invalid Cycle Point'
+        x => Boolean(!x || x.match(`^${RE.cyclePoint}$`)) || 'Invalid Cycle Point'
       ]
     },
     CyclePointGlob: {
@@ -131,6 +136,12 @@ export default {
     },
     BroadcastSetting: {
       is: GBroadcastSetting
+    },
+    BroadcastCyclePoint: {
+      is: VTextField,
+      rules: [
+        x => Boolean(!x || x.match(`^(${RE.cyclePoint}|\\*)$`)) || 'Must be "*" or a valid cycle point'
+      ]
     },
     // TaskStatus
     // TaskState
@@ -164,7 +175,10 @@ export default {
     TimePoint: {
       is: VTextField,
       placeholder: 'yyyy-mm-ddThh:mm:ss',
-      mask: '####-##-##T##:##:##'
+      mask: '####-##-##T##:##:##',
+      rules: [
+        x => Boolean(!x || x.match(/^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2})?)?)?)?)?$/)) || 'Invalid'
+      ]
     },
     RuntimeConfiguration: {
       is: VTextField,

@@ -15,16 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { upperFirst } from 'lodash'
 import {
   MUTATIONS
 } from '../support/graphql'
 
 describe('Mutations component', () => {
   beforeEach(() => {
+    // Patch graphql responses
     cy
       .intercept('/graphql', (req) => {
         const query = req.body.query
-        if (query.includes('__schema')) {
+        if (query.includes('__schema')) { // query that loads mutations
           req.reply({
             data: {
               __schema: {
@@ -35,13 +37,13 @@ describe('Mutations component', () => {
               }
             }
           })
-        } else {
+        } else { // mutation
           console.log(req)
           req.reply({
             data: {
               [req.body.operationName]: {
                 result: [true, {}],
-                __typename: req.body.operationName.charAt(0).toUpperCase() + req.body.operationName.slice(1)
+                __typename: upperFirst(req.body.operationName)
               }
             }
           })
@@ -49,23 +51,24 @@ describe('Mutations component', () => {
       })
       .as('HoldMutationQuery')
   })
+
   /**
    * @param {string} nodeName - the tree node name, to search for and open the mutations form
    */
   const openMutationsForm = (nodeName) => {
-    // check that the skeleton does not exist
-    cy.get('.lm-Widget')
-      .find('.v-skeleton-loader')
-      .then((loader) => {
-        const firstChild = loader.children('div').first()
-        // The skeleton may, or may not, still be displaying in the UI...
-        if (firstChild.attr('class') && firstChild.attr('class').includes('skeleton')) {
-          cy.wrap(firstChild)
-            .should('not.exist')
-        }
-      })
-    cy
-      .get('span')
+    cy.window().its('app.$workflowService').then(service => {
+      // mock the apollo client's mutate method to catch low-level calls
+      service.primaryMutations = {
+        workflow: ['workflowMutation']
+      }
+    })
+    cy.get('[data-cy=tree-view]').as('treeView')
+      .find('.treeitem')
+      .find('.c-task')
+      .should('be.visible')
+    // cy.wait(['@HoldMutationQuery'])
+    cy.get('@treeView')
+      .find('span')
       .contains(nodeName)
       .parent()
       .find('.c-task')
@@ -77,21 +80,10 @@ describe('Mutations component', () => {
       .should('be.visible')
       .click({ force: true })
   }
+
   const submitMutationForms = () => {
     cy.visit('/#/workflows/one')
-    cy.window().its('app.$workflowService').then(service => {
-      // mock the apollo client's mutate method to catch low-level calls
-      service.primaryMutations = {
-        workflow: ['workflowMutation']
-      }
-    })
-    cy
-      .get('.c-tree')
-      .get('.treeitem')
-      .get('.c-task')
-      .should('be.visible')
     openMutationsForm('BAD')
-    cy.wait(['@HoldMutationQuery'])
     // fill mocked mutation form with any data
     cy
       .get('.v-dialog')
@@ -115,9 +107,11 @@ describe('Mutations component', () => {
           .should('be.visible')
       })
   }
+
   it('should submit a mutation form', () => {
     submitMutationForms()
   })
+
   it('should not remember data after submitting a mutation form', () => {
     submitMutationForms()
     // close submit form (not clicking on cancel, as it appears to clear the form, but outside the dialog)
@@ -136,5 +130,33 @@ describe('Mutations component', () => {
             cy.wrap($el).should('not.contain.value', 'ABC')
           })
       })
+  })
+
+  it('should validate the form', () => {
+    cy.visit('/#/workflows/one')
+    openMutationsForm('checkpoint')
+    // Form should be valid initially
+    cy.get('[data-cy=submit]').as('submit')
+      .should('not.be.disabled')
+      .should('not.have.class', 'error--text')
+      // Indirect test for "form invalid" tooltip by checking aria-expanded attribute
+      // (not ideal but it's way too troublesome to test visibility of .v-tooltip__content)
+      .trigger('mouseenter')
+      .should('have.attr', 'aria-expanded', 'false') // should not be visible
+    // Now type invalid input
+    cy.get('.c-mutation-form')
+      .find('.v-list-item__title')
+      .contains('workflow')
+      .parent()
+      .find('.v-input.v-text-field:first').as('textField')
+      .find('input[type="text"]')
+      .type(' ') // (spaces should not be allowed)
+      .get('@textField')
+      .should('have.class', 'error--text')
+      .get('@submit')
+      .should('have.class', 'error--text')
+      .trigger('mouseenter')
+      .should('have.attr', 'aria-expanded', 'true') // tooltip should be visible
+      .should('not.be.disabled') // user can still submit if they really want to
   })
 })

@@ -17,8 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-form
-    validate
     class="c-mutation-form"
+    :value="value"
+    @input="$emit('input', $event)"
   >
     <!-- the mutation title -->
     <h3
@@ -120,6 +121,12 @@ export default {
   },
 
   props: {
+    value: {
+      // validity of form
+      type: Boolean,
+      required: true,
+      default: () => false
+    },
     mutation: {
       type: Object,
       required: true
@@ -218,7 +225,6 @@ export default {
     },
 
     submit () {
-      // TODO: validate
       if (this.callbackSubmit) {
         this.callbackSubmit(this.model)
       }

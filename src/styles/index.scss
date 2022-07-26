@@ -103,3 +103,9 @@ html {
 .mw-100 {
   max-width: 100%;
 }
+
+// Fix lack of margin for v-card-actions button with tooltip
+// https://github.com/vuetifyjs/vuetify/issues/9756
+.v-application--is-ltr .v-card__actions > .v-btn + .v-tooltip + .v-btn {
+  margin-left: 8px;
+}
