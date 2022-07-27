@@ -11,7 +11,7 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 -------------------------------------------------------------------------------
-## __cylc-ui-1.3.0 (<span actions:bind='release-date'>Upcoming</span>)__
+## __cylc-ui-1.3.0 (<span actions:bind='release-date'>Released 2022-07-27</span>)__
 
 ### Enhancements
 
