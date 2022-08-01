@@ -4,7 +4,29 @@
 
 # Cylc UI
 
-## Building
+## Installation
+
+Install the [UI Server](https://github.com/cylc/cylc-uiserver) which bundles
+the UI.
+
+## Copyright and Terms of Use
+
+Copyright (C) 2018-<span actions:bind='current-year'>2022</span> NIWA & British Crown (Met Office) & Contributors.
+
+Cylc is free software: you can redistribute it and/or modify it under the terms
+of the GNU General Public License as published by the Free Software Foundation,
+either version 3 of the License, or (at your option) any later version.
+
+Cylc is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+Cylc.  If not, see [GNU licenses](http://www.gnu.org/licenses/).
+
+## Developers
+
+### Building
 
 This project was created with the [vue-cli](https://cli.vuejs.org/).
 
@@ -89,37 +111,37 @@ module.exports = {
 (`.browserslistrc`) to determine the polyfills needed. See
 https://cli.vuejs.org/guide/browser-compatibility.html.
 
-### Project setup
+#### Project setup
 
 ```
 yarn install
 ```
 
-### Compiles and hot-reloads demo mode for development
+#### Compiles and hot-reloads demo mode for development
 
 ```
 yarn run serve
 ```
 
-### Compiles and minifies for production
+#### Compiles and minifies for production
 
 ```
 yarn run build
 ```
 
-### Compiles and watch for changes for development
+#### Compiles and watch for changes for development
 
 ```
 yarn run build:watch
 ```
 
-### Produce build report
+#### Produce build report
 
 ```
 yarn run build:report
 ```
 
-### Run unit tests
+#### Run unit tests
 
 ```
 yarn run test:unit
@@ -135,7 +157,7 @@ For coverage:
 yarn run coverage:unit
 ```
 
-### Run functional tests
+#### Run functional tests
 
 ```
 yarn run test:e2e
@@ -153,13 +175,13 @@ For coverage
 yarn run coverage:e2e
 ```
 
-### Lints and fixes files
+#### Lints and fixes files
 
 ```
 yarn run lint
 ```
 
-## Integration with the backend Cylc UI server
+### Integration with the backend Cylc UI server
 
 In the previous section _"Compiles and watch for changes for development"_,
 there is part of the solution for the integration with the backend Cylc UI Server.
@@ -177,7 +199,7 @@ or both - projects. Changes done in your Tornado application should reflect imme
 or upon process restart. While the changes done in your Vue.js application
 will be automatically handled by your `build:watch` command.
 
-## Internationalization
+### Internationalization
 
 This project utilizes [vue-i18n](https://kazupon.github.io/vue-i18n/) for
 internationalization. While this project is not part of Vue.js, it is maintained
@@ -191,7 +213,7 @@ The locale is defined by a variable `$i18n`, which is accessible in each
 component. So in a component you should be able to change the locale -
 if necessary - by calling `this.$i18n.locale = 'pt-BR'`.
 
-## Accessibility
+### Accessibility
 
 After applying changes to the code, might be a good idea to pass the new version of
 the application through an accessibility tool such as [WAVE](https://wave.webaim.org/).
@@ -199,7 +221,7 @@ the application through an accessibility tool such as [WAVE](https://wave.webaim
 There is also a [browser](https://wave.webaim.org/extension/) extension which makes
 testing the development version much easier.
 
-## JavaScript, ES6, TypeScript
+### JavaScript, ES6, TypeScript
 
 For the moment, the code in this repository is created using ES6, then Babel/WebPack take
 care to produce the final JavaScript code executed on browsers.
@@ -216,18 +238,3 @@ So for the time being, we are continuing with ES6, and once we have chosen the p
 dependencies, we can assess the amount of work to adopt TypeScript given our code base,
 ability of other developers to adapt to TypeScript, and the ease of use of the libraries
 in our code base.
-
-## Copyright and Terms of Use
-
-Copyright (C) 2018-<span actions:bind='current-year'>2022</span> NIWA & British Crown (Met Office) & Contributors.
-
-Cylc is free software: you can redistribute it and/or modify it under the terms
-of the GNU General Public License as published by the Free Software Foundation,
-either version 3 of the License, or (at your option) any later version.
-
-Cylc is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-Cylc.  If not, see [GNU licenses](http://www.gnu.org/licenses/).
