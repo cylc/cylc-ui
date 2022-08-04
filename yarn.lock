@@ -6262,7 +6262,7 @@ __metadata:
     eslint-config-standard: ^17.0.0
     eslint-import-resolver-node: ^0.3.6
     eslint-plugin-import: ^2.23.4
-    eslint-plugin-no-only-tests: ^2.6.0
+    eslint-plugin-no-only-tests: ^3.0.0
     eslint-plugin-promise: ^6.0.0
     eslint-plugin-vue: ^9.0.0
     express: ^4.17.2
@@ -7457,10 +7457,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-no-only-tests@npm:^2.6.0":
-  version: 2.6.0
-  resolution: "eslint-plugin-no-only-tests@npm:2.6.0"
-  checksum: 4e3c9cc7e09c13e855fd7af4a8969128f766dcf32a0680715ebcaa903c7fe44db8e45e994c8b908443a6019cbd9ea1b51f413bf968a0c58214aded930a863df9
+"eslint-plugin-no-only-tests@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "eslint-plugin-no-only-tests@npm:3.0.0"
+  checksum: b0e21da64e9df03e2a9ed44306c8c1e94fca3c662f03367f8af95107b1f4bf84d6e1b339d014cba83d6b0fead080c45243e73a5932f3842d62488cbc4aa8153e
   languageName: node
   linkType: hard
 
