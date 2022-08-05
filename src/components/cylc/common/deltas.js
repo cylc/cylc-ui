@@ -91,7 +91,7 @@ import { mergeWithCustomizer } from '@/components/cylc/common/merge'
  * @property {Array<Object>} errors
  */
 
-const KEYS = ['workflow', 'cyclePoints', 'familyProxies', 'taskProxies', 'jobs']
+const KEYS = ['workflow', 'cyclePoints', 'familyProxies', 'taskProxies', 'jobs', 'edges']
 
 /**
  * @param {DeltasAdded|Object} added

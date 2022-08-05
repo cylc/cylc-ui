@@ -310,7 +310,13 @@ function mergeDefinitions (definitionA, definitionB) {
   // Optional validation, we can remove it later if we decide to accept queries
   // with different variables.
   if (!isEqual(definitionAVariables, definitionBVariables)) {
-    throw new Error('The queries must have the same variable definitions')
+    console.log(definitionAVariables)
+    console.log(definitionBVariables)
+    throw new Error(`
+      The queries must have the same variable definitions
+      A: ${definitionAVariables}
+      B: ${definitionBVariables}
+    `)
   }
   // N.B: we are not merging variables, since we know they are identical already (above).
   definition.directives = mergeDirectives(definitionA.directives, definitionB.directives)

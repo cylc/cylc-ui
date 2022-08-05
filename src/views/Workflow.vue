@@ -59,6 +59,7 @@ import Lumino from '@/components/cylc/workflow/Lumino'
 import Toolbar from '@/components/cylc/workflow/Toolbar'
 import TableView from '@/views/Table'
 import TreeView from '@/views/Tree'
+import GraphView from '@/views/Graph'
 
 export default {
   name: 'Workflow',
@@ -94,7 +95,8 @@ export default {
      */
     views: [
       TreeView,
-      TableView
+      TableView,
+      GraphView
     ]
   }),
   created () {
