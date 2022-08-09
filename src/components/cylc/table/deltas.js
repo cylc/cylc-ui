@@ -136,8 +136,10 @@ function applyDeltasAdded (added, table, lookup) {
           const latestJob = latestJobSubmitNum < job.submitNum
             ? lookup[job.id]
             : existingEntry.latestJob
+          // FIXME: Couldn't we avoid setting table[existing.id].latestJob multiple times here?
+          //        If a task has 100 jobs, in the worst case we will call Vue.set 100 times?
           Vue.set(existingEntry, 'latestJob', latestJob)
-          existingEntry.jobs.push(latestJob)
+          existingEntry.jobs.push(job)
           Vue.set(existingEntry, 'jobs', existingEntry.jobs)
         }
       } catch (error) {
