@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container>
-    <h1 class="ma-0">Guide</h1>
+    <h1 class="ma-0">Cylc UI Quick Start</h1>
     <!--
       TODO: make sections linkable
 
@@ -29,20 +29,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -->
 
     <h2 id="task-and-job-states">
-      Task And Job States
+      Understanding Tasks &amp; Jobs
     </h2>
-    <!-- TODO document difference between tasks and jobs -->
+
+    <p>
+      <b>Tasks</b> represent single units of activity in a Cylc workflow.<br/>
+      <b>Jobs</b> are real processes submitted by Cylc to perform a task's activity.<br/>
+      One task can have multiple jobs due to automatic retries or manual triggering.
+    </p>
+
     <div class="card-grid">
 
       <v-flex
         md6
         xs12
       >
-        <v-card>
+        <v-card outlined>
           <v-card-title primary-title>
-            <p class="display-1 text--primary">Task State Vs Job State</p>
+            <p class="display-1 text--primary">Task &amp; Job States</p>
           </v-card-title>
+
           <v-card-text>
+            Tasks represent future and past jobs as well as current jobs.<br/>
+            A <b>waiting</b> task that already has job(s) will <b>retry</b>.
             <table id="task-job-state-table">
               <tr>
                 <td>Task</td>
@@ -52,14 +61,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <tr>
                 <td>
                   <p>
-                    The status of the task in the workflow.
+                    The status of a task in the workflow.
                   </p>
                 </td>
                 <td></td>
                 <td>
                   <p>
-                    The status of a single job submission,
-                    one task can have multiple jobs.
+                    The status of a single job submission.
                   </p>
                 </td>
               </tr>
@@ -91,9 +99,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         md5
         xs12
       >
-        <v-card>
+        <v-card outlined>
           <v-card-title primary-title>
-            <p class="display-1 text--primary">Special Task States</p>
+            <p class="display-1 text--primary">Task State Modifiers</p>
           </v-card-title>
           <v-card-text>
             <v-list
@@ -112,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     Held
                   </v-list-item-title>
                   <v-list-item-sub-title>
-                    When a task is "held" no new job submissions will be made
+                    Task won't submit jobs until released from hold.
                   </v-list-item-sub-title>
                 </v-list-item-content>
               </v-list-item>
@@ -129,7 +137,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       Queued
                     </v-list-item-title>
                     <v-list-item-sub-title>
-                      Task queued for job submission
+                      Task ready but delayed by a queue.<br/>
+                      Queues restrict the number of active tasks.
                     </v-list-item-sub-title>
                   </v-list-item-content>
               </v-list-item>
@@ -146,7 +155,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       Runahead
                     </v-list-item-title>
                     <v-list-item-sub-title>
-                      Task held back by runahead limiting
+                      Task ready but delayed by runahead limiting.<br/>
+                      This restricts the number of active cycle points.
                     </v-list-item-sub-title>
                   </v-list-item-content>
               </v-list-item>
