@@ -50,8 +50,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-card-title>
 
           <v-card-text>
-            Tasks represent future and past jobs as well as current jobs.<br/>
-            A <b>waiting</b> task that already has job(s) will <b>retry</b>.
+            <p>
+              Tasks represent future and past jobs as well as current jobs.<br/>
+              A <b>waiting</b> task that already has job(s) will <b>retry</b>.
+            </p>
             <table id="task-job-state-table">
               <tr>
                 <td>Task</td>
