@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-list-item-action>
               <v-icon
                 :disabled=!authorised
-                medium
+                x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
               >
