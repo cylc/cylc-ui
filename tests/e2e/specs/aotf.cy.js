@@ -220,10 +220,10 @@ describe('Api On The Fly', () => {
       // click on the first mutation
       cy
         .get('.c-mutation-menu-list:first')
-        .find('.v-list-item__action > .v-icon')
+        .find('[data-cy=mutation-edit]')
         .should('exist')
         .should('be.visible')
-        .click({ force: true })
+        .click()
 
       // this should open the mutation editor
       cy
@@ -316,8 +316,8 @@ describe('Api On The Fly', () => {
         .find('.v-list-item')
         .should('have.length', 2) // +1 because of the "see more" button
         // toggle the menu to "see more" items
-        .find('.v-btn:first')
-        .click({ force: true })
+        .find('#less-more-button')
+        .click()
         // it should now list the five workflow mutations
         .get('.c-mutation-menu-list:first')
         .find('.v-list-item')

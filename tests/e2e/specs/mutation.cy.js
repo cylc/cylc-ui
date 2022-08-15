@@ -72,13 +72,13 @@ describe('Mutations component', () => {
       .contains(nodeName)
       .parent()
       .find('.c-task')
-      .click({ force: true })
+      .click()
     cy
       .get('.c-mutation-menu-list:first')
-      .find('.v-list-item__action > .v-icon')
+      .find('[data-cy=mutation-edit]')
       .should('exist')
       .should('be.visible')
-      .click({ force: true })
+      .click()
   }
 
   const submitMutationForms = () => {
