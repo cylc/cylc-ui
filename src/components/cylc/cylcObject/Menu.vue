@@ -73,14 +73,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <span class="c-description">{{ mutation._shortDescription }}</span>
             </v-list-item-content>
             <v-list-item-action>
-              <v-icon
+              <v-btn
+                icon
                 :disabled=!authorised
-                medium
+                x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
+                data-cy="mutation-edit"
               >
-                {{ icons.pencil }}
-              </v-icon>
+                <v-icon>{{ icons.pencil }}</v-icon>
+              </v-btn>
             </v-list-item-action>
           </v-list-item>
           <v-list-item
