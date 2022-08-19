@@ -74,13 +74,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-list-item-content>
             <v-list-item-action>
               <v-btn
+                icon
                 :disabled=!authorised
                 x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
                 data-cy="mutation-edit"
-                outlined
-                width=80%
               >
                 <v-icon>{{ icons.pencil }}</v-icon>
               </v-btn>
