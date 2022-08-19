@@ -29,6 +29,7 @@ class WorkflowCallback extends DeltasCallback {
 
   before (deltas, store, errors) {
     this.lookup = Object.assign({}, store.state.workflows.lookup)
+    store.commit('workflows/CREATE_CYLC_TREE')
   }
 
   tearDown (store, errors) {
@@ -38,11 +39,13 @@ class WorkflowCallback extends DeltasCallback {
 
   onAdded (added, store, errors) {
     const results = applyDeltasAdded(added, this.lookup)
+    store.commit('workflows/UPDATE', added)
     errors.push(...results.errors)
   }
 
   onUpdated (updated, store, errors) {
     const results = applyDeltasUpdated(updated, this.lookup)
+    store.commit('workflows/UPDATE', updated)
     errors.push(...results.errors)
   }
 

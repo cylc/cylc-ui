@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       />
     </svg-->
 
+    <!--
     Lookup:
     <ul>
       <li
@@ -37,10 +38,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </li>
     </ul>
 
-    {{ nodes }}
+    Tree:
+    <pre>{{ cylcTree }}</pre>
+    -->
 
     <br />
     <ul>
+      <li>
+        Workflow IDs
+        <ul>
+          <li
+            v-for="workflowID of workflowIDs"
+            v-bind:key="workflowID"
+          >
+            {{ workflowID }}
+          </li>
+        </ul>
+      </li>
       <li>
         Nodes
         <ul>
@@ -48,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-for="node of nodes"
             v-bind:key="node.id"
           >
-            {{ node.name}}
+            {{ node.name }}
           </li>
         </ul>
       </li>
@@ -59,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-for="edge of edges"
             v-bind:key="edge.id"
           >
-            {{ edge.source }} -- {{edge.target}
+          {{ edge.node.source }} -- {{ edge.node.target }}
           </li>
         </ul>
       </li>
@@ -164,7 +178,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflow', 'workflows', 'lookup']),
+    ...mapState('workflows', ['lookup', 'cylcTree']),
     query () {
       return new SubscriptionQuery(
         QUERY,
@@ -176,31 +190,38 @@ export default {
         ]
       )
     },
-    nodes () {
-      const nodes = []
-      debugger
-      for (const cycle of this.workflows || []) {
-        if (!cycle.children) {
-          continue
+    workflowIDs () {
+      return [`~osanders/${this.workflowName}`]
+    },
+    workflows () {
+      const ret = []
+      for (const workflowID in this.cylcTree.$workflows || []) {
+        console.log(`% ${workflowID} ${this.workflowIDs}`)
+        if (this.workflowIDs.includes(workflowID)) {
+          ret.push(this.cylcTree.$workflows[workflowID])
         }
-        const stack = [...cycle.children]
-        while (stack.length > 0) {
-          const item = stack.pop()
-          if (item === undefined) {
-            break
-          } else if (item.type === 'task-proxy') {
-            // return tasks
-            nodes.push(item.node)
-          } else {
-            // flatten families
-            stack.push(item.children)
+      }
+      return ret
+    },
+    nodes () {
+      const ret = []
+      for (const workflow of this.workflows) {
+        for (const cycle of workflow.children || []) {
+          for (const task of cycle.children || []) {
+            ret.push(task)
           }
         }
       }
-      return nodes
+      return ret
     },
     edges () {
-      return this.workflow.nodesEdges.edges || []
+      const ret = []
+      for (const workflow of this.workflows) {
+        for (const edge of workflow.$edges || []) {
+          ret.push(edge)
+        }
+      }
+      return ret
     }
   }
 }

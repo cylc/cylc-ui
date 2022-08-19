@@ -317,6 +317,32 @@ class Tokens {
       }
     }
   }
+
+  tree () {
+    // TODO: handle no user etc!!!
+    const ret = []
+    if (this.user) {
+      ret.push(['user', this.user])
+      if (this.workflow) {
+        const parts = this.workflow.split('/')
+        const last = parts.pop()
+        for (const part of parts) {
+          ret.push(['workflow-part', part])
+        }
+        ret.push(['workflow', last])
+        if (this.cycle && this.cycle[0] !== '$') {
+          ret.push(['cycle', this.cycle])
+          if (this.task) {
+            ret.push(['task', this.task])
+            if (this.job) {
+              ret.push(['job', this.job])
+            }
+          }
+        }
+      }
+    }
+    return ret
+  }
 }
 
 export { Tokens }

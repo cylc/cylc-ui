@@ -98,7 +98,7 @@ const KEYS = ['workflow', 'cyclePoints', 'familyProxies', 'taskProxies', 'jobs',
  * @param {Object.<String, Object>} lookup
  * @return {Result}
  */
-function applyDeltasAdded (added, lookup) {
+function applyDeltasAdded (added, lookup, tree) {
   const result = {
     errors: []
   }
@@ -107,6 +107,7 @@ function applyDeltasAdded (added, lookup) {
     for (const addedData of items) {
       // An example for a data without .id, is the empty delta with __typename: "Added". It does occur, and can cause runtime errors.
       if (addedData.id) {
+        // update the flat store
         try {
           Vue.set(lookup, addedData.id, addedData)
         } catch (error) {
@@ -117,6 +118,25 @@ function applyDeltasAdded (added, lookup) {
             lookup
           ])
         }
+
+        // update the tree
+        // TODO: this should be moved into the store?
+        // const idParts = addedData.id.split('/')
+        // const last = idParts.pop()
+        // let pointer = tree
+        // try {
+        //   for (const part of idParts) {
+        //     if (pointer[part] === undefined) {
+        //       Vue.set(pointer, part, {})
+        //     }
+        //     pointer = pointer[part]
+        //   }
+        //   Vue.set(pointer, last, addedData)
+        // } catch (error) {
+        //   result.errors.push([
+        //     `Error applying Tree added-delta... ${error}`
+        //   ])
+        // }
       }
     }
   }
@@ -130,7 +150,7 @@ function applyDeltasAdded (added, lookup) {
  * @param {Object.<String, Object>} lookup
  * @return {Result}
  */
-function applyDeltasUpdated (updated, lookup) {
+function applyDeltasUpdated (updated, lookup, tree) {
   const result = {
     errors: []
   }
@@ -139,6 +159,7 @@ function applyDeltasUpdated (updated, lookup) {
     for (const updatedData of items) {
       // An example for a data without .id, is the empty delta with __typename: "Updated". It does occur, and can cause runtime errors.
       if (updatedData.id) {
+        // update the flat store
         try {
           const existingNode = lookup[updatedData.id]
           if (existingNode) {
@@ -155,6 +176,21 @@ function applyDeltasUpdated (updated, lookup) {
             lookup
           ])
         }
+
+        // update the tree
+        // TODO: this should be moved into the store?
+        // const idParts = updatedData.id.split('/')
+        // let pointer = tree
+        // for (const part of idParts) {
+        //   pointer = pointer[part]
+        // }
+        // try {
+        //   mergeWith(pointer, updatedData, mergeWithCustomizer)
+        // } catch (error) {
+        //   result.errors.push([
+        //     `Error applying Lookup updated-delta...${error}`
+        //   ])
+        // }
       }
     }
   }
