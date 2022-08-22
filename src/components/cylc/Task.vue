@@ -78,6 +78,11 @@ export default {
       type: Number,
       required: false,
       default: 0
+    },
+    svg: {
+      type: Boolean,
+      require: false,
+      default: false
     }
   },
   render: function (createElement, context) {
@@ -458,6 +463,17 @@ export default {
       taskIconSvgCssClasses.push(context.props.status)
     } else {
       taskIconSvgCssClasses.push('unknown')
+    }
+    if (context.props.svg) {
+      return createElement(
+        'g',
+        { class: 'c-task' },
+        [createElement(
+          'g',
+          { class: taskIconSvgCssClasses.join(' ') },
+          taskIconSvgChildren
+        )]
+      )
     }
     const taskIconSvg = createElement(
       'svg',

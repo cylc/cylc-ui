@@ -21,6 +21,7 @@ import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 import Vue from 'vue'
 import { clear } from '@/components/cylc/tree/index'
 import { Tokens } from '@/utils/uid'
+import { sortedIndexBy } from '@/components/cylc/common/sort'
 
 const state = {
   /**
@@ -35,7 +36,10 @@ const state = {
    * @type {Object.<String, Object>}
    */
   lookup: {},
-  cylcTree: {},
+  cylcTree: {
+    $index: {},
+    children: []
+  },
   /**
    * This is the CylcTree, which contains the hierarchical tree data structure.
    * It is created from the GraphQL data, with the only difference that this one
@@ -76,10 +80,272 @@ const getters = {
     }
     return Object.values(state.workflows)
       .find(workflow => workflow.name === state.workflowName)
+  },
+  getTree: state => {
+    const ret = {}
+    if (state.cylcTree?.children === undefined) {
+      return ret
+    }
+    const stack = [...state.cylcTree.children]
+    let pointer
+    let item
+    while (stack.length) {
+      item = stack.shift()
+      pointer = ret
+
+      // eslint-disable-next-line
+      for (const [partType, partName] of item.tokens.tree()) {
+        if (!pointer[partName]) {
+          pointer[partName] = {}
+        }
+        pointer = pointer[partName]
+      }
+
+      for (const child of item.children || []) {
+        stack.push(child)
+      }
+    }
+    return ret
   }
 }
 
+function createTree (state) {
+  console.log('@@ Create')
+  if (state.cylcTree) {
+    return
+  }
+  const tree = {
+    $index: {}
+  }
+  Vue.set(tree, 'children', [])
+  state.cylcTree = tree
+  console.log('@@')
+}
+
+function clearTree (state) {
+  console.log('@@ CLEAR')
+  for (const child of state.cylcTree.children) {
+    remove(state, child.id)
+  }
+  console.log('@@')
+}
+
+// index methods
+function addIndex (state, node) {
+  if (state.cylcTree.$index[node.id] === undefined) {
+    console.log(`$i ++ ${node.id}`)
+    // this is a new node => create it
+    // state.cylcTree.$index[node.id] = node
+    Vue.set(state.cylcTree.$index, node.id, node)
+    return true
+  } else {
+    console.log(`$i += ${node.id}`)
+    // this node is already in the store => update it
+    mergeWith(state.cylcTree.$index[node.id], node, mergeWithCustomizer)
+    return false
+  }
+}
+
+function removeIndex (state, id) {
+  console.log(`$i -- ${id}`)
+  Vue.delete(state.cylcTree.$index, id)
+}
+
+function getIndex (state, id) {
+  return state.cylcTree.$index[id]
+}
+
+// tree methods
+function addChild (parentNode, childNode) {
+  console.log(`$t ++ ${childNode.id}`)
+  // determine which list to add this node to
+  let key = 'children'
+  if (childNode.type === '$namespace') {
+    key = '$namespaces'
+  } else if (childNode.type === '$edge') {
+    key = '$edges'
+  }
+
+  if (childNode.type === 'workflow') {
+    // create additional indexes for workflow nodes
+    Vue.set(childNode, '$edges', [])
+    Vue.set(childNode, '$namespaces', [])
+  }
+
+  // insert the child preserving sort order
+  const index = sortedIndexBy(
+    parentNode[key],
+    childNode,
+    (n) => n.name // sort by node name
+  )
+  parentNode[key].splice(index, 0, childNode)
+}
+
+function removeChild (node) {
+  console.log(`$t -- ${node.id}`)
+  let key = 'children'
+  if (node.type === '$namesapce') {
+    key = '$namespaces'
+  } else if (node.type === '$edge') {
+    key = '$edges'
+  }
+  node.parent.children.splice(
+    node.parent[key].indexOf(node), 1
+  )
+}
+
+function removeTree (node) {
+  let pointer
+  const stack = [...node.children]
+  const remove = []
+  while (stack.length) {
+    pointer = stack.pop()
+    stack.push(...(pointer.children || []))
+    remove.push(pointer)
+  }
+  for (pointer of remove.reverse()) {
+    removeIndex(state, pointer.id)
+    removeChild(pointer)
+  }
+  removeIndex(state, node.id)
+  removeChild(node)
+}
+
+function cleanParents (node) {
+  let pointer = node
+  while (pointer.parent) {
+    if (pointer.type !== 'workflow') {
+      // don't prune workflow nodes
+      // (this requires an explicit instruction to do so)
+      if (pointer.children.length === 0) {
+        // node has no children -> prune it
+        removeIndex(state, node.id)
+        removeChild(pointer)
+      } else {
+        // node has children stop here
+        break
+      }
+    }
+    pointer = pointer.parent
+  }
+}
+
+// data methods
+function update (state, updatedData) {
+  const tokens = new Tokens(updatedData.id)
+  const id = tokens.id
+  console.log(`@ += ${id}`)
+
+  // update the index (flat data)
+  // Note: this merges any updated data into the index node
+  addIndex(state, updatedData)
+
+  const tree = tokens.tree()
+  let type = null
+  let name = null
+  // let key = null
+  if (tokens.namespace) {
+    type = '$namespace'
+    name = tokens.namespace
+    // key = '$namespaces'
+  } else if (tokens.edge) {
+    type = '$edge'
+    name = tokens.id
+    // key = '$edges'
+  } else {
+    tree.pop()
+    type = tokens.lowestToken()
+    name = tokens[tokens.lowestToken()]
+    // key = 'children'
+  }
+
+  let pointer = state.cylcTree
+  let temp = null
+  let tempIndex = null
+  let children = null
+  for (const [partType, partName, partTokens] of tree) {
+    children = pointer.children.filter(
+      item => { return item.name === partName }
+    )
+    if (!children.length) {
+      // create intermediate node...
+      // ...add a tree item
+      temp = {
+        id: partTokens.id,
+        tokens: partTokens,
+        name: partName,
+        type: partType,
+        parent: pointer
+      }
+      Vue.set(temp, 'children', [])
+      // ...update the index
+      tempIndex = { id: partTokens.id, treeNode: temp }
+      temp.node = tempIndex
+      addIndex(state, tempIndex)
+      // ...register with tree parent
+      addChild(pointer, temp)
+      pointer = temp
+    } else {
+      pointer = children[0]
+    }
+  }
+
+  if (pointer.children.filter(child => child.id === id).length) {
+    // node already in the tree
+    return
+  }
+
+  const treeNode = {
+    id,
+    tokens,
+    name,
+    type,
+    parent: pointer,
+    node: state.cylcTree.$index[id]
+  }
+  Vue.set(treeNode, 'children', [])
+  // getIndex(state, id).treeNode = treeNode
+  const indexNode = getIndex(state, id)
+  Vue.set(indexNode, 'treeNode', treeNode)
+  addChild(pointer, treeNode)
+}
+
+function remove (state, prunedID) {
+  const tokens = new Tokens(prunedID)
+  const id = tokens.id
+  console.log(`@ -- ${id}`)
+
+  const node = getIndex(state, id)
+
+  if (node === undefined) {
+    // node never existed in the store => ignore
+    return
+  }
+
+  const treeNode = node.treeNode
+
+  if (treeNode.type === '$edge') {
+    // remove edge node
+    treeNode.parent.$edges.splice(
+      treeNode.parent.$edges.indexOf(treeNode), 1
+    )
+  } else if (treeNode.type === '$namespace') {
+    // remove namespace node
+    treeNode.parent.$namespaces.splice(
+      treeNode.parent.$namespaces.indexOf(treeNode), 1
+    )
+  } else {
+    // remove ~user[/DIR...]/workflow//cycle[/FAM...]/task/job node
+    removeTree(treeNode)
+    cleanParents(treeNode.parent)
+  }
+
+  // remove the node from the store
+  Vue.delete(state.cylcTree.$index, id)
+}
+
 const mutations = {
+  // the old callback methods
   SET_WORKFLOW_NAME (state, data) {
     state.workflowName = data
   },
@@ -92,14 +358,6 @@ const mutations = {
   SET_LOOKUP (state, data) {
     state.lookup = data
   },
-  CREATE_CYLC_TREE (state, data) {
-    const tree = {
-      $workflows: {}
-    }
-    Vue.set(tree, 'children', [])
-    // Vue.set(tree, '$workflows', [])
-    state.cylcTree = tree
-  },
   CLEAR_WORKFLOW (state) {
     clear(state.workflow)
     state.workflow = {
@@ -111,124 +369,34 @@ const mutations = {
       lookup: {}
     }
   },
-  UPDATE (state, updated) {
+  // the new cylc tree methods
+  CREATE: createTree,
+  UPDATE: update,
+  UPDATE_DELTAS (state, updated) {
+    console.log('@ UPDATE')
     for (const updatedValue of Object.values(pick(updated, KEYS))) {
       const items = isArray(updatedValue) ? updatedValue : [updatedValue]
       for (const updatedData of items) {
         if (updatedData.id) {
-          const tokens = new Tokens(updatedData.id)
-          const id = tokens.id
-          console.log(`# ${id}`)
-          const tree = tokens.tree()
-          let type = null
-          let key = null
-          const name = tokens[tokens.lowestToken()]
-          if (tokens.namespace) {
-            type = '$namespace'
-            key = '$namespaces'
-          } else if (tokens.edge) {
-            type = '$edge'
-            key = '$edges'
-          } else {
-            tree.pop()
-            type = tokens.lowestToken()
-            key = 'children'
-          }
-
-          // iterate / construct transient nodes
-          let pointer = state.cylcTree
-          let children = null
-          const partialTokens = new Tokens('~x')
-          for (const [partType, partName] of tree) {
-            // construct the ID of this level of the tree
-            if (['workflow-part', 'workflow'].indexOf(partType) > -1) {
-              if (partialTokens.workflow) {
-                partialTokens.workflow = `${partialTokens.workflow}/${partName}`
-              } else {
-                partialTokens.workflow = partName
-              }
-            } else {
-              partialTokens[partType] = partName
-            }
-            partialTokens.compute()
-
-            // add a children list if not present
-            if (pointer.children === undefined) {
-              Vue.set(pointer, 'children', [])
-            }
-
-            // retrieve this intermediate item if it exists
-            children = pointer.children.filter(
-              item => { return item.name === partName }
-            )
-
-            // create this intermediate item if it does not exist
-            if (!children.length) {
-              const childTokens = partialTokens.clone()
-              children = [{
-                id: childTokens.id,
-                name: partName,
-                type: partType
-              }]
-              pointer.children.push(children[0])
-            }
-
-            // if (
-            //   partType === 'workflow' &&
-            //   !state.cylcTree.$workflows.includes(partialTokens.workflow)
-            // ) {
-            //   state.cylcTree.$workflows.push(children[0])
-            // }
-
-            if (
-              partType === 'workflow' &&
-              !state.cylcTree.$workflows[partialTokens.workflow_id]
-            ) {
-              state.cylcTree.$workflows[partialTokens.workflow_id] = children[0]
-              console.log(`@ ${Object.keys(state.cylcTree.$workflows)}`)
-            }
-
-            if (children[0] === undefined) {
-              debugger
-            }
-            pointer = children[0]
-          }
-
-          // add the list this item is to be inserted into if it doesn't exist
-          if (pointer[key] === undefined) {
-            Vue.set(pointer, key, [])
-          }
-
-          // retrieve this item if it exists
-          const treeItems = pointer[key].filter(
-            item => { return item.id === id }
-          )
-
-          if (treeItems.length) {
-            const item = treeItems[0]
-            if (item.node === undefined) {
-              // there is no node yet => add it
-              item.node = updatedData
-            } else {
-              // there is a node => merge into it
-              mergeWith(item.node, updatedData, mergeWithCustomizer)
-            }
-          } else {
-            // there is no tree item => create one
-            pointer[key].push({
-              id,
-              name,
-              type,
-              node: updatedData
-            })
-          }
+          update(state, updatedData)
         }
       }
     }
+    console.log('@@')
   },
-  REMOVE (state, pruned) {
-    // TODO!!!
-  }
+  REMOVE: remove,
+  REMOVE_DELTAS (state, pruned) {
+    console.log('@ REMOVE')
+    Object.keys(pick(pruned, KEYS)).forEach(prunedKey => {
+      if (pruned[prunedKey]) {
+        for (const prunedID of pruned[prunedKey]) {
+          remove(state, prunedID)
+        }
+      }
+    })
+    console.log('@@')
+  },
+  CLEAR: clearTree
 }
 
 // TODO: iterate these in order? or is that even necessary with this implementation?

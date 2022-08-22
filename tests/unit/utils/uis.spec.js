@@ -212,5 +212,66 @@ describe('Universal ID (UID)', () => {
         new Tokens('c', true).lowestToken()
       ).to.equal('cycle')
     })
+
+    it('should yield the tree to this token', () => {
+      expect(
+        new Tokens('~u/w1/w2/w3//c/t/01').tree()
+      ).to.deep.equal([
+        [
+          'user',
+          'u',
+          new Tokens('~u')
+        ],
+        [
+          'workflow-part',
+          'w1',
+          new Tokens('~u/w1')
+        ],
+        [
+          'workflow-part',
+          'w2',
+          new Tokens('~u/w1/w2')
+        ],
+        [
+          'workflow',
+          'w3',
+          new Tokens('~u/w1/w2/w3')
+        ],
+        [
+          'cycle',
+          'c',
+          new Tokens('~u/w1/w2/w3//c')
+        ],
+        [
+          'task',
+          't',
+          new Tokens('~u/w1/w2/w3//c/t')
+        ],
+        [
+          'job',
+          '01',
+          new Tokens('~u/w1/w2/w3//c/t/01')
+        ]
+      ])
+      expect(
+        new Tokens('~u/w//c').tree()
+      ).to.deep.equal([
+        [
+          'user',
+          'u',
+          new Tokens('~u')
+        ],
+        [
+          'workflow',
+          'w',
+          new Tokens('~u/w')
+        ],
+        [
+          'cycle',
+          'c',
+          new Tokens('~u/w//c')
+        ]
+      ])
+    })
   })
 })

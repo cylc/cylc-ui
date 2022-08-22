@@ -322,20 +322,34 @@ class Tokens {
     // TODO: handle no user etc!!!
     const ret = []
     if (this.user) {
-      ret.push(['user', this.user])
+      let tokens = new Tokens(`~${this.user}`)
+      ret.push(['user', this.user, tokens])
       if (this.workflow) {
         const parts = this.workflow.split('/')
         const last = parts.pop()
         for (const part of parts) {
-          ret.push(['workflow-part', part])
+          if (!tokens.workflow) {
+            tokens = tokens.clone({ workflow: part })
+          } else {
+            tokens = tokens.clone({ workflow: `${tokens.workflow}/${part}` })
+          }
+          ret.push(['workflow-part', part, tokens])
         }
-        ret.push(['workflow', last])
+        if (tokens.workflow) {
+          tokens = tokens.clone({ workflow: `${tokens.workflow}/${last}` })
+        } else {
+          tokens = tokens.clone({ workflow: last })
+        }
+        ret.push(['workflow', last, tokens])
         if (this.cycle && this.cycle[0] !== '$') {
-          ret.push(['cycle', this.cycle])
+          tokens = tokens.clone({ cycle: this.cycle })
+          ret.push(['cycle', this.cycle, tokens])
           if (this.task) {
-            ret.push(['task', this.task])
+            tokens = tokens.clone({ task: this.task })
+            ret.push(['task', this.task, tokens])
             if (this.job) {
-              ret.push(['job', this.job])
+              tokens = tokens.clone({ job: this.job })
+              ret.push(['job', this.job, tokens])
             }
           }
         }
