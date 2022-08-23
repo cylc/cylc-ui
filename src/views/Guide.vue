@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container>
-    <h1 class="ma-0">Guide</h1>
+    <h1 class="ma-0">Cylc UI Quick Start</h1>
     <!--
       TODO: make sections linkable
 
@@ -28,40 +28,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             * tracks scroll position
     -->
 
-    <h2 id="task-and-job-states">
-      Task And Job States
-    </h2>
-    <!-- TODO document difference between tasks and jobs -->
     <div class="card-grid">
 
       <v-flex
-        md6
+        md5
         xs12
       >
-        <v-card>
+        <v-card outlined>
           <v-card-title primary-title>
-            <p class="display-1 text--primary">Task State Vs Job State</p>
+            <p class="display-1 text--primary">Tasks &amp; Jobs</p>
           </v-card-title>
           <v-card-text>
+            <p>
+              A <b>task</b> represents a single unit of activity in a workflow.
+            </p>
+            <p>
+              A <b>job</b> performs the activity of a task, by means of a
+              <b>job script</b> submitted to a <b>job runner</b>.
+            </p>
+            <p>
+              One task can have multiple jobs, by automatic retry or manual
+              triggering.
+            </p>
+         </v-card-text>
             <table id="task-job-state-table">
               <tr>
                 <td>Task</td>
                 <td></td>
                 <td>Job</td>
-              </tr>
-              <tr>
-                <td>
-                  <p>
-                    The status of the task in the workflow.
-                  </p>
-                </td>
-                <td></td>
-                <td>
-                  <p>
-                    The status of a single job submission,
-                    one task can have multiple jobs.
-                  </p>
-                </td>
               </tr>
               <tr
                 v-bind:key="state.name.name"
@@ -83,6 +77,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </td>
               </tr>
             </table>
+          <v-card-text>
+            <p>
+              A <b>waiting task</b> with <b>failed jobs</b> will
+              <b>retry</b> after a delay.
+            </p>
+            <p>
+              A <b>task</b> can only fail if it runs out of retries.
+            </p>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -91,14 +93,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         md5
         xs12
       >
-        <v-card>
+        <v-card outlined>
           <v-card-title primary-title>
-            <p class="display-1 text--primary">Special Task States</p>
+            <p class="display-1 text--primary">Why Are We Waiting?</p>
           </v-card-title>
           <v-card-text>
-            <v-list
+            <p>
+              Why has my task not started to run yet?
+            </p>
+           <v-list
               three-line
             >
+              <v-list-item>
+                <v-list-item-icon>
+                  <task
+                    style="font-size: 2em;"
+                    status="waiting"
+                  />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Waiting
+                  </v-list-item-title>
+                  <v-list-item-sub-title>
+                    The task is not ready to run yet - it is still waiting on
+                    upstream <b>dependencies</b> or <b>xtriggers</b>.
+                  </v-list-item-sub-title>
+                </v-list-item-content>
+              </v-list-item>
               <v-list-item>
                 <v-list-item-icon>
                   <task
@@ -112,7 +134,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     Held
                   </v-list-item-title>
                   <v-list-item-sub-title>
-                    When a task is "held" no new job submissions will be made
+                    The task won't run unless <b>released</b> from hold.
+                    Tasks can be held before they are ready to run
+                    (or after, prior to retriggering).
                   </v-list-item-sub-title>
                 </v-list-item-content>
               </v-list-item>
@@ -129,7 +153,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       Queued
                     </v-list-item-title>
                     <v-list-item-sub-title>
-                      Task queued for job submission
+                      The task is ready to run but is held back by a queue,
+                      which restricts the number of active tasks.
                     </v-list-item-sub-title>
                   </v-list-item-content>
               </v-list-item>
@@ -146,11 +171,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       Runahead
                     </v-list-item-title>
                     <v-list-item-sub-title>
-                      Task held back by runahead limiting
+                      The task is ready to run but is beyond the runahead limit,
+                      which restricts the number of active cycle points.
                     </v-list-item-sub-title>
                   </v-list-item-content>
               </v-list-item>
             </v-list>
+            <p>
+            <em>Note: tasks downstream of queued (or runahead limited) tasks
+               are not themselves shown as queued (or runahead limited)
+               because they are not otherwise ready to run yet.</em>
+             </p>
+            <p>
+              <em>Note: external triggers (e.g. clock triggers) are not yet
+               exposed in the UI.</em>
+             </p>
           </v-card-text>
         </v-card>
       </v-flex>
