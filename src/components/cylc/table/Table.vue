@@ -126,8 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </thead>
             </template>
             <template
-              slot="item"
-              slot-scope="{ item }"
+              v-slot:item="{ item }"
             >
               <tr>
                 <td>
@@ -145,14 +144,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </div>
                     <div class="mr-1">
                       <Job
-                        v-if="item.jobs.length === 0"
-                        v-cylc-object="item.node"
-                        :status="item.node.state"
-                        :previous-state="item.jobs.length > 1 ? item.jobs[1].state : ''"
-                      />
-                      <!-- most recent job summary -->
-                      <Job
-                        v-else
+                        v-if="item.jobs.length"
+                        v-cylc-object="item.jobs[0]"
                         :status="item.jobs[0].state"
                         :previous-state="item.jobs.length > 1 ? item.jobs[1].state : ''"
                       />
@@ -187,7 +180,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td>
                   <div class="d-flex align-content-center flex-nowrap">
                     <div class="mr-1">
-                      <job
+                      <Job
                         v-cylc-object="job"
                         :key="`${job.id}-summary-${index}`"
                         :status="job.state"

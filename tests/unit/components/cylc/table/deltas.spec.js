@@ -130,6 +130,20 @@ describe('Deltas', () => {
           firstParent: {
             id: 11
           }
+        },
+        101: {
+          id: 101,
+          submitNum: 3,
+          firstParent: {
+            id: 11
+          }
+        },
+        102: {
+          id: 102,
+          submitNum: 2,
+          firstParent: {
+            id: 11
+          }
         }
       }
       const deltas = {
@@ -150,6 +164,20 @@ describe('Deltas', () => {
             firstParent: {
               id: 11
             }
+          },
+          {
+            id: 101,
+            submitNum: 3,
+            firstParent: {
+              id: 11
+            }
+          },
+          {
+            id: 102,
+            submitNum: 2,
+            firstParent: {
+              id: 11
+            }
           }
         ]
       }
@@ -158,7 +186,9 @@ describe('Deltas', () => {
       // The table will have been cleared, and the new task proxy added, so
       // the table now will have only one entry (the task proxy).
       expect(Object.keys(table).length).to.equal(7)
-      expect(table[11].latestJob.id).to.equal(100)
+      expect(table[11].latestJob.id).to.equal(101)
+      // Jobs should be sorted newest to oldest
+      expect(table[11].jobs.map(j => j.submitNum)).to.deep.equal([3, 2, 1])
     })
 
     it('Should collect errors', () => {

@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
       <slot name="cyclepoint" v-if="node.type === 'cyclepoint'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
-          <task
+          <Task
             v-cylc-object="node.node"
             :key="node.node.id"
             :status="node.node.state"
@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </slot>
       <slot name="family-proxy" v-else-if="node.type === 'family-proxy'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
-          <task
+          <Task
             v-cylc-object="node.node"
             :key="node.node.id"
             :status="node.node.state"
@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot name="task-proxy" v-else-if="node.type === 'task-proxy'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <!-- Task summary -->
-          <task
+          <Task
             v-cylc-object="node.node"
             :key="node.node.id"
             :status="node.node.state"
@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           />
           <div v-if="!isExpanded" class="node-summary">
             <!-- most recent job summary -->
-            <job
+            <Job
               v-for="(job, index) in node.children.slice(0, 1)"
               v-cylc-object="job.node"
               :key="`${job.id}-summary-${index}`"
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </slot>
       <slot name="job" v-else-if="node.type === 'job'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
-          <job
+          <Job
             v-cylc-object="node.node"
             :key="node.node.id"
             :status="node.node.state"
@@ -231,8 +231,8 @@ const NODE_DEPTH_OFFSET = 1.5 // em
 export default {
   name: 'TreeItem',
   components: {
-    task: Task,
-    job: Job
+    Task,
+    Job
   },
   props: {
     node: {
