@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-navigation-drawer
     v-model="drawer"
-    ref="drawer"
+    ref="drawerRef"
     app
     floating
     hide-overlay
@@ -120,48 +120,46 @@ export default {
     }
   },
   methods: {
+    getDrawerElement () {
+      return this.$refs.drawerRef.$el
+    },
     setBorderWidth () {
-      const i = this.$refs.drawer.$el.querySelector(
+      const i = this.$refs.drawerRef.$el.querySelector(
         '.v-navigation-drawer__border'
       )
       i.style.width = this.navigation.borderSize + 'px'
       i.style.cursor = 'ew-resize'
     },
-    setEvents () {
-      const minSize = this.navigation.borderSize
-      const el = this.$refs.drawer.$el
-      const drawerBorder = el.querySelector('.v-navigation-drawer__border')
+    resize (e) {
+      document.body.style.cursor = 'ew-resize'
+      const el = this.getDrawerElement()
       const direction = el.classList.contains('v-navigation-drawer--right')
         ? 'right'
         : 'left'
-
-      function resize (e) {
-        document.body.style.cursor = 'ew-resize'
-        const f =
-          direction === 'right'
-            ? document.body.scrollWidth - e.clientX
-            : e.clientX
-        el.style.width = f + 'px'
-      }
-
+      const f = direction === 'right' ? document.body.scrollWidth - e.clientX : e.clientX
+      el.style.width = f + 'px'
+    },
+    setEvents () {
+      const minSize = this.navigation.borderSize
+      const el = this.getDrawerElement()
+      const drawerBorder = el.querySelector('.v-navigation-drawer__border')
       drawerBorder.addEventListener(
         'mousedown',
         (e) => {
           if (e.offsetX < minSize) {
             el.style.transition = 'initial'
-            document.addEventListener('mousemove', resize, false)
+            document.addEventListener('mousemove', this.resize, false)
           }
         },
         false
       )
-
       document.addEventListener(
         'mouseup',
         () => {
           el.style.transition = ''
           this.navigation.width = el.style.width
           document.body.style.cursor = ''
-          document.removeEventListener('mousemove', resize, false)
+          document.removeEventListener('mousemove', this.resize, false)
           // this slightly hacky timeout is used to ensure a browser redraw forced the lumino tabs to be resized when the drag event has finished
           setTimeout(() => {
             window.dispatchEvent(new Event('resize'))
