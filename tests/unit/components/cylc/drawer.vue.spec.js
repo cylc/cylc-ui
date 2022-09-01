@@ -22,56 +22,77 @@ import Drawer from '../../../../src/components/cylc/Drawer'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import Vuex from 'vuex'
-import { user } from '../../../../src/store/user.module'
-import { app } from '../../../../src/store/app.module'
 
 import sinon from 'sinon'
 
 Vue.use(Vuex)
 Vue.use(Vuetify)
 
-let localVue
 let vuetify
 let wrapper
 
-const sandbox = sinon.createSandbox()
+const mountFunction = options => {
+  const localVue = createLocalVue()
 
-describe('Drawer', () => {
-  localVue = createLocalVue() // because of vuetify, we should use a localVue instance
-
+  // note these are truly 'mocked' because I ran into issues with the state being tainted across multiple unit-tests
   const store = new Vuex.Store({
     modules: {
-      user,
-      app
+      app: {
+        namespaced: true,
+        state: {
+          drawer: {}
+        },
+        mutations: {
+          setDrawer (state, drawer) {
+            state.drawer = drawer
+          }
+        }
+      },
+      user: {
+        namespaced: true,
+        state: {
+          user: {
+            username: 'test username'
+          }
+        },
+        mutations: {
+          SET_USER (state, user) {
+            state.user = user
+          }
+        }
+      }
     }
   })
-  store.commit('user/SET_USER', { username: 'testusername' })
+
   vuetify = new Vuetify()
 
-  beforeEach(() => {
-    wrapper = mount(Drawer, {
-      localVue,
-      vuetify,
-      store,
-      mocks: {
-        $t: () => {}
-      },
-      stubs: {
-        Header: true,
-        GScan: true,
-        RouterLink: true
+  return mount(Drawer, {
+    localVue,
+    vuetify,
+    store,
+    mocks: {
+      $t: () => {
       }
-    })
+    },
+    stubs: {
+      Header: true,
+      GScan: true,
+      RouterLink: true
+    },
+    ...options
   })
+}
 
-  const createBubbledEvent = (type, props = {}) => {
-    const event = new Event(type, { bubbles: true })
-    Object.assign(event, props)
-    return event
-  }
-
-  it('should create the drawer', async () => {
-    await wrapper.vm.$nextTick() // we have to wait until vue rerender the components content
+describe('Drawer', () => {
+  it('should create the drawer and successfully trigger a resize', async () => {
+    const createBubbledEvent = (type, props = {}) => {
+      const event = new Event(type, { bubbles: true })
+      Object.assign(event, props)
+      return event
+    }
+    const sandbox = sinon.createSandbox()
+    wrapper = mountFunction()
+    await wrapper.vm.$nextTick()
     expect(wrapper.find('div.d-flex.flex-column.h-100').exists()).to.equal(true)
     const spyFunction = sandbox.spy(wrapper.vm, 'resize')
 
@@ -84,9 +105,5 @@ describe('Drawer', () => {
     )
 
     expect(spyFunction.called).to.equal(true)
-  })
-
-  afterEach(() => {
-    sandbox.restore()
   })
 })

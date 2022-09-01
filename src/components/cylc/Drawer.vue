@@ -124,7 +124,7 @@ export default {
       return this.$refs.drawerRef.$el
     },
     setBorderWidth () {
-      const i = this.$refs.drawerRef.$el.querySelector(
+      const i = this.getDrawerElement().querySelector(
         '.v-navigation-drawer__border'
       )
       i.style.width = this.navigation.borderSize + 'px'
