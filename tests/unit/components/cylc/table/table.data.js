@@ -27,7 +27,8 @@ const simpleTableTasks = [
       id: BASE_TOKENS.clone({ task: 'taskA' }).id,
       state: TaskState.RUNNING.name,
       name: 'taskA',
-      meanElapsedTime: 2000
+      meanElapsedTime: 2000,
+      cyclePoint: '20000101T0000Z'
     },
     latestJob: {
       platform: 'localhost',
@@ -45,7 +46,8 @@ const simpleTableTasks = [
     node: {
       id: BASE_TOKENS.clone({ task: 'taskB' }).id,
       state: TaskState.WAITING.name,
-      name: 'taskB'
+      name: 'taskB',
+      cyclePoint: '20000102T0000Z'
     },
     latestJob: {},
     jobs: []
@@ -55,7 +57,8 @@ const simpleTableTasks = [
     node: {
       id: BASE_TOKENS.clone({ task: 'taskC' }).id,
       state: TaskState.SUBMITTED.name,
-      name: 'taskC'
+      name: 'taskC',
+      cyclePoint: '20000103T0000Z'
     },
     latestJob: {},
     jobs: []
