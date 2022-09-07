@@ -149,6 +149,10 @@ export default {
           if (e.offsetX < minSize) {
             el.style.transition = 'initial'
             document.addEventListener('mousemove', this.resize, false)
+            if (e.stopPropagation) e.stopPropagation()
+            if (e.preventDefault) e.preventDefault()
+            e.bubbles = false
+            return false
           }
         },
         false
