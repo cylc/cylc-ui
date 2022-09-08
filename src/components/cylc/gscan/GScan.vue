@@ -133,6 +133,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         <workflow-icon
                           :status="scope.node.children[0].node.status"
                           :statusMsg="scope.node.children[0].node.statusMsg"
+                          v-cylc-object="scope.node.children[0].node"
                         />
                       </span>
                       {{ ( scope.node.node.name || scope.node.node.id ) + '/' + scope.node.children[0].name }}
@@ -142,13 +143,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </div>
                   </v-flex>
                   <v-flex
-                    v-if="scope.node.type === 'workflow-name-part' && scope.node.children"
+                    v-if="scope.node.type === 'workflow-name-part'"
                     class="text-right c-gscan-workflow-states"
                   >
                       <span
-                        v-for="[state, tasks] in getOnlyActiveStates(scope.node.children[0].node)"
+                        v-for="[state, tasks] in getRecursiveActiveStates(scope.node)"
                         :key="`${scope.node.id}-summary-${state}`"
-                        :class="getTaskStateClasses(scope.node.children[0].node, state)"
+                        :class="!getRecursiveTaskStateTotals(scope.node, state) ? ['empty-state'] : []"
                       >
                       <v-tooltip color="black" top>
                         <template v-slot:activator="{ on }">
@@ -169,7 +170,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </template>
                         <!-- tooltip text -->
                         <span>
-                          <span class="grey--text">{{ countTasksInState(scope.node.children[0].node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                          <span class="grey--text">{{ getRecursiveTaskStateTotals(scope.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                           <br/>
                           <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                             {{ task }}<br v-if="index !== tasks.length -1" />
@@ -196,9 +197,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   >
                     <!-- task summary tooltips -->
                     <span
-                      v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.node.latestStateTasks))"
+                      v-for="[state, tasks] in getRecursiveActiveStates(scope.node)"
                       :key="`${scope.node.id}-summary-${state}`"
-                      :class="getTaskStateClasses(scope.node.node, state)"
+                      :class="!getRecursiveTaskStateTotals(scope.node, state) ? ['empty-state'] : []"
                     >
                     <v-tooltip color="black" top>
                       <template v-slot:activator="{ on }">
@@ -219,7 +220,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       </template>
                       <!-- tooltip text -->
                       <span>
-                        <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                        <span class="grey--text">{{ getRecursiveTaskStateTotals(scope.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                         <br/>
                         <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                           {{ task }}<br v-if="index !== tasks.length -1" />
@@ -459,30 +460,25 @@ export default {
       return ''
     },
 
-    /**
-     * Get number of tasks we have in a given state. The states are retrieved
-     * from `latestStateTasks`, and the number of tasks in each state is from
-     * the `stateTotals`. (`latestStateTasks` includes old tasks).
-     *
-     * @param {WorkflowGraphQLData} workflow - the workflow object retrieved from GraphQL
-     * @param {string} state - a workflow state
-     * @returns {number|*} - the number of tasks in the given state
-     */
-    countTasksInState (workflow, state) {
-      if (Object.hasOwnProperty.call(workflow.stateTotals, state)) {
-        return workflow.stateTotals[state]
+    getRecursiveTaskStateTotals (node, state) {
+      let tasksInState = 0
+      const searchChildren = (children) => {
+        children.forEach(child => {
+          if (child.node && child.node.stateTotals) {
+            if (Object.hasOwnProperty.call(child.node.stateTotals, state)) {
+              tasksInState += Object.hasOwnProperty.call(child.node.stateTotals, state) ? child.node.stateTotals[state] : 0
+            }
+          }
+          const recursiveChildren = child.node.children || child.children
+          if (recursiveChildren && recursiveChildren.length > 0) {
+            searchChildren(recursiveChildren)
+          }
+        })
       }
-      return 0
+      searchChildren(node.children && node.children.length > 0 ? node.children : [node])
+      return tasksInState
     },
-
-    getTaskStateClasses (workflow, state) {
-      const tasksInState = this.countTasksInState(workflow, state)
-      return tasksInState === 0 ? ['empty-state'] : []
-    },
-
-    // TODO: temporary filter, remove after b0 - https://github.com/cylc/cylc-ui/pull/617#issuecomment-805343847
-    getLatestStateTasks (latestStateTasks) {
-      // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
+    getRecursiveActiveStates (node) {
       const validValues = [
         TaskState.SUBMITTED.name,
         TaskState.SUBMIT_FAILED.name,
@@ -490,25 +486,27 @@ export default {
         TaskState.SUCCEEDED.name,
         TaskState.FAILED.name
       ]
-      return latestStateTasks.filter(entry => {
-        return validValues.includes(entry[0])
-      })
-    },
-
-    getOnlyActiveStates (node) {
-      const latestStateTasks = node.latestStateTasks ? Object.entries(node.latestStateTasks) : []
-
-      // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
-      const validValues = [
-        TaskState.SUBMITTED.name,
-        TaskState.SUBMIT_FAILED.name,
-        TaskState.RUNNING.name,
-        TaskState.SUCCEEDED.name,
-        TaskState.FAILED.name
-      ]
-      return latestStateTasks.filter(entry => {
-        return validValues.includes(entry[0]) && this.countTasksInState(node, entry[0])
-      })
+      const states = {}
+      const searchChildren = (children) => {
+        children.forEach(child => {
+          if (child.node && child.node.latestStateTasks && Object.entries(child.node.latestStateTasks)) {
+            Object.entries(child.node.latestStateTasks).filter(entry => {
+              return validValues.includes(entry[0])
+            }).forEach(entry => {
+              if (!states[entry[0]]) {
+                states[entry[0]] = []
+              }
+              states[entry[0]] = states[entry[0]].concat(entry[1])
+            })
+          }
+          const recursiveChildren = child.node.children || child.children
+          if (recursiveChildren && recursiveChildren.length > 0) {
+            searchChildren(recursiveChildren)
+          }
+        })
+      }
+      searchChildren(node.children && node.children.length > 0 ? node.children : [node])
+      return Object.entries(states)
     }
   }
 }
