@@ -116,7 +116,8 @@ export default {
       },
       set (val) {
         if (val) {
-          this.navigation.width = Number(this.navigation.width.replace('px', '')) < 260 ? '260px' : this.navigation.width
+          const newWidth = typeof this.navigation.width === 'string' ? Number(this.navigation.width.replace('px', '')) : this.navigation.width
+          this.navigation.width = newWidth < 260 ? 260 : newWidth
         }
         this.$store.commit('app/setDrawer', val)
       }
@@ -154,7 +155,6 @@ export default {
             document.addEventListener('mousemove', this.resize, false)
             if (e.stopPropagation) e.stopPropagation()
             if (e.preventDefault) e.preventDefault()
-            e.bubbles = false
             return false
           }
         },
