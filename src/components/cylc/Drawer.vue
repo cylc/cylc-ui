@@ -111,10 +111,13 @@ export default {
   computed: {
     ...mapState('user', ['user']),
     drawer: {
-      get: function () {
+      get () {
         return this.$store.state.app.drawer
       },
-      set: function (val) {
+      set (val) {
+        if (val) {
+          this.navigation.width = Number(this.navigation.width.replace('px', '')) < 260 ? '260px' : this.navigation.width
+        }
         this.$store.commit('app/setDrawer', val)
       }
     }
