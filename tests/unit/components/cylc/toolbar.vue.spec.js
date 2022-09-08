@@ -109,6 +109,5 @@ describe('Toolbar component', () => {
       responsive: true
     })
     expect(wrapper.find('button.default').exists()).to.equal(true)
-    wrapper.find('button.default').trigger('click')
   })
 })
