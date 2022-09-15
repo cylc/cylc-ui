@@ -274,7 +274,7 @@ export default {
       const ret = []
       for (const id in this.cylcTree.$index || {}) {
         if (this.workflowIDs.includes(id)) {
-          ret.push(this.cylcTree.$index[id].treeNode)
+          ret.push(this.cylcTree.$index[id])
         }
       }
       return ret

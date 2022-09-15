@@ -82,6 +82,7 @@ const getters = {
       .find(workflow => workflow.name === state.workflowName)
   },
   getTree: state => {
+    console.log('getTree')
     const ret = {}
     if (state.cylcTree?.children === undefined) {
       return ret
@@ -105,6 +106,7 @@ const getters = {
         stack.push(child)
       }
     }
+    console.log('/getTree')
     return ret
   }
 }
@@ -115,7 +117,8 @@ function createTree (state) {
     return
   }
   const tree = {
-    $index: {}
+    $index: {},
+    id: '$root'
   }
   Vue.set(tree, 'children', [])
   state.cylcTree = tree
@@ -131,18 +134,11 @@ function clearTree (state) {
 }
 
 // index methods
-function addIndex (state, node) {
-  if (state.cylcTree.$index[node.id] === undefined) {
-    console.log(`$i ++ ${node.id}`)
+function addIndex (state, id, treeNode) {
+  if (state.cylcTree.$index[id] === undefined) {
     // this is a new node => create it
-    // state.cylcTree.$index[node.id] = node
-    Vue.set(state.cylcTree.$index, node.id, node)
-    return true
-  } else {
-    console.log(`$i += ${node.id}`)
-    // this node is already in the store => update it
-    mergeWith(state.cylcTree.$index[node.id], node, mergeWithCustomizer)
-    return false
+    console.log(`$i ++ ${id}`)
+    Vue.set(state.cylcTree.$index, id, treeNode)
   }
 }
 
@@ -152,6 +148,11 @@ function removeIndex (state, id) {
 }
 
 function getIndex (state, id) {
+  if (id === '$root') {
+    // speial ID maps onto the tree root element
+    // (note this avoids a circular reference which VueX does not like)
+    return state.cylcTree
+  }
   return state.cylcTree.$index[id]
 }
 
@@ -181,7 +182,7 @@ function addChild (parentNode, childNode) {
   parentNode[key].splice(index, 0, childNode)
 }
 
-function removeChild (node) {
+function removeChild (state, node) {
   console.log(`$t -- ${node.id}`)
   let key = 'children'
   if (node.type === '$namesapce') {
@@ -189,12 +190,13 @@ function removeChild (node) {
   } else if (node.type === '$edge') {
     key = '$edges'
   }
-  node.parent.children.splice(
-    node.parent[key].indexOf(node), 1
+  const parentNode = getIndex(state, node.parent)
+  parentNode.children.splice(
+    parentNode[key].indexOf(node), 1
   )
 }
 
-function removeTree (node) {
+function removeTree (state, node) {
   let pointer
   const stack = [...node.children]
   const remove = []
@@ -205,13 +207,13 @@ function removeTree (node) {
   }
   for (pointer of remove.reverse()) {
     removeIndex(state, pointer.id)
-    removeChild(pointer)
+    removeChild(state, pointer)
   }
   removeIndex(state, node.id)
-  removeChild(node)
+  removeChild(state, node)
 }
 
-function cleanParents (node) {
+function cleanParents (state, node) {
   let pointer = node
   while (pointer.parent) {
     if (pointer.type !== 'workflow') {
@@ -220,13 +222,13 @@ function cleanParents (node) {
       if (pointer.children.length === 0) {
         // node has no children -> prune it
         removeIndex(state, node.id)
-        removeChild(pointer)
+        removeChild(state, pointer)
       } else {
         // node has children stop here
         break
       }
     }
-    pointer = pointer.parent
+    pointer = getIndex(state, pointer.parent)
   }
 }
 
@@ -236,10 +238,25 @@ function update (state, updatedData) {
   const id = tokens.id
   console.log(`@ += ${id}`)
 
-  // update the index (flat data)
-  // Note: this merges any updated data into the index node
-  addIndex(state, updatedData)
+  let treeItem = getIndex(state, id)
+  if (treeItem) {
+    // node already exists -> update it
+    mergeWith(treeItem.node, updatedData, mergeWithCustomizer)
+    return
+  }
 
+  // create a new tree item
+  let treeParent
+  [treeParent, treeItem] = createTreeNode(state, id, tokens, updatedData)
+
+  // add the new item to the tree
+  addChild(treeParent, treeItem)
+
+  // add an entry for this item into the index
+  addIndex(state, id, treeItem)
+}
+
+function createTreeNode (state, id, tokens, node) {
   const tree = tokens.tree()
   let type = null
   let name = null
@@ -260,8 +277,7 @@ function update (state, updatedData) {
   }
 
   let pointer = state.cylcTree
-  let temp = null
-  let tempIndex = null
+  let intermediateItem = null
   let children = null
   for (const [partType, partName, partTokens] of tree) {
     children = pointer.children.filter(
@@ -270,21 +286,25 @@ function update (state, updatedData) {
     if (!children.length) {
       // create intermediate node...
       // ...add a tree item
-      temp = {
+      intermediateItem = {
         id: partTokens.id,
-        tokens: partTokens,
         name: partName,
-        type: partType,
-        parent: pointer
+        node: {
+          // create a blank node with just the ID in it
+          // when this item is added to the store later this node will be
+          // updated in place
+          id: partTokens.id
+        },
+        parent: pointer.id,
+        tokens: partTokens,
+        type: partType
       }
-      Vue.set(temp, 'children', [])
-      // ...update the index
-      tempIndex = { id: partTokens.id, treeNode: temp }
-      temp.node = tempIndex
-      addIndex(state, tempIndex)
-      // ...register with tree parent
-      addChild(pointer, temp)
-      pointer = temp
+      Vue.set(intermediateItem, 'children', [])
+      // add child to the tree
+      addChild(pointer, intermediateItem)
+      // register child in the index
+      addIndex(state, partTokens.id, intermediateItem)
+      pointer = intermediateItem
     } else {
       pointer = children[0]
     }
@@ -300,14 +320,12 @@ function update (state, updatedData) {
     tokens,
     name,
     type,
-    parent: pointer,
-    node: state.cylcTree.$index[id]
+    parent: pointer.id,
+    node
   }
   Vue.set(treeNode, 'children', [])
-  // getIndex(state, id).treeNode = treeNode
-  const indexNode = getIndex(state, id)
-  Vue.set(indexNode, 'treeNode', treeNode)
-  addChild(pointer, treeNode)
+
+  return [pointer, treeNode]
 }
 
 function remove (state, prunedID) {
@@ -315,29 +333,28 @@ function remove (state, prunedID) {
   const id = tokens.id
   console.log(`@ -- ${id}`)
 
-  const node = getIndex(state, id)
-
-  if (node === undefined) {
-    // node never existed in the store => ignore
+  const treeNode = getIndex(state, id)
+  if (treeNode === undefined) {
+    // treeNode never existed in the store => ignore
     return
   }
 
-  const treeNode = node.treeNode
-
+  const parentNode = getIndex(state, treeNode.parent)
   if (treeNode.type === '$edge') {
     // remove edge node
-    treeNode.parent.$edges.splice(
-      treeNode.parent.$edges.indexOf(treeNode), 1
+    parentNode.$edges.splice(
+      parentNode.$edges.indexOf(treeNode), 1
     )
   } else if (treeNode.type === '$namespace') {
     // remove namespace node
-    treeNode.parent.$namespaces.splice(
-      treeNode.parent.$namespaces.indexOf(treeNode), 1
+    parentNode.$namespaces.splice(
+      parentNode.$namespaces.indexOf(treeNode), 1
     )
   } else {
     // remove ~user[/DIR...]/workflow//cycle[/FAM...]/task/job node
-    removeTree(treeNode)
-    cleanParents(treeNode.parent)
+    console.log(treeNode.id, parentNode.id)
+    removeTree(state, treeNode)
+    cleanParents(state, parentNode)
   }
 
   // remove the node from the store
@@ -390,6 +407,7 @@ const mutations = {
     Object.keys(pick(pruned, KEYS)).forEach(prunedKey => {
       if (pruned[prunedKey]) {
         for (const prunedID of pruned[prunedKey]) {
+          console.log(`REMOVE ${prunedID}`)
           remove(state, prunedID)
         }
       }

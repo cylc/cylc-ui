@@ -19,6 +19,7 @@ import { expect } from 'chai'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import storeOptions from '@/store/options'
+// import { Tokens } from '@/utils/uid'
 
 Vue.use(Vuex)
 
@@ -347,12 +348,6 @@ describe.only('cylc tree', () => {
     // adding/updating is performed via the same UPDATE interface
     store.commit('workflows/CREATE')
 
-    function stripTreeNode (node) {
-      const ret = Object.assign({}, node)
-      delete ret.treeNode
-      return ret
-    }
-
     // add a node
     store.commit(
       'workflows/UPDATE',
@@ -362,7 +357,7 @@ describe.only('cylc tree', () => {
         bar: 2
       }
     )
-    expect(stripTreeNode(getNode('~a'))).to.deep.equal({
+    expect(getNode('~a').node).to.deep.equal({
       id: '~a',
       foo: 1,
       bar: 2
@@ -377,7 +372,7 @@ describe.only('cylc tree', () => {
         baz: 4 // add
       }
     )
-    expect(stripTreeNode(getNode('~a'))).to.deep.equal({
+    expect(getNode('~a').node).to.deep.equal({
       id: '~a',
       foo: 1, // old (not updated)
       bar: 3, // new (updated)
@@ -393,7 +388,7 @@ describe.only('cylc tree', () => {
     store.commit('workflows/UPDATE', { id: '~a/b//c/d/e', a: 2 })
 
     const _tree = store.state.workflows.cylcTree
-    expect(_tree.id).to.equal(undefined)
+    expect(_tree.id).to.equal('$root')
     expect(_tree.type).to.equal(undefined)
     expect(_tree.children.length).to.equal(1)
 
@@ -539,4 +534,75 @@ describe.only('cylc tree', () => {
       '~a/a1x//$namespace|c'
     ])
   })
+
+  /* it('looks like', () => {
+    store.commit('workflows/CREATE')
+
+    store.commit('workflows/UPDATE', { id: '~a/b//', x: 1 })
+    store.commit('workflows/UPDATE', { id: '~a/b//1/x', x: 2 })
+    store.commit('workflows/UPDATE', { id: '~a/b//1/y', x: 3 })
+    store.commit('workflows/UPDATE', { id: '~a/b//$edge|1/x|1/y', x: 4 })
+
+    const tree = {
+      children: [
+        {
+          id: '~a',
+          tokens: new Tokens('~a'),
+          type: 'user',
+          node: { id: '~a' },
+          children: [
+            {
+              id: '~a/b',
+              tokens: new Tokens('~a/b'),
+              type: 'workflow',
+              node: { id: '~a/b', x: 1 },
+              $edges: [
+                {
+                  id: '~a/b//$edge|1/x|1/y',
+                  type: 'edge',
+                  node: { id: '~a/b//$edge|1/x|1/y', x: 4 }
+                }
+              ],
+              $namespaces: [
+              ],
+              children: [
+                {
+                  id: '~a/b//1',
+                  tokens: new Tokens('~a/b//1'),
+                  type: 'cycle',
+                  node: { id: '~a/b//1' },
+                  children: [
+                    {
+                      id: '~a/b//1/x',
+                      tokens: new Tokens('~a/b//1/x'),
+                      type: 'task',
+                      node: { id: '~a/b//1/x', x: 2 },
+                      children: []
+                    },
+                    {
+                      id: '~a/b//1/y',
+                      tokens: new Tokens('~a/b//1/y'),
+                      type: 'task',
+                      node: { id: '~a/b//1/y', x: 3 },
+                      children: []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    tree.$index = {
+      '~a': tree.children[0],
+      '~a/b': tree.children[0].children[0],
+      '~a/b//1': tree.children[0].children[0].children[0],
+      '~a/b//1/x': tree.children[0].children[0].children[0].children[0],
+      '~a/b//1/y': tree.children[0].children[0].children[0].children[1],
+      '~a/b//$edge|1/x|1/y': tree.children[0].children[0].$edges[0]
+    }
+
+    expect(store.state.workflows.cylcTree).to.deep.equal(tree)
+  }) */
 })
