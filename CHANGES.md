@@ -10,6 +10,13 @@ creating a new release entry be sure to copy & paste the span tag with the
 `actions:bind` attribute, which is used by a regex to find the text to be
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
+
+## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Pending</span>)__
+
+### Fixes
+
+[#1075](https://github.com/cylc/cylc-ui/pull/1075) - Reverse default sort order
+of the table view so it matches the tree view.
 -------------------------------------------------------------------------------
 ## __cylc-ui-1.3.0 (<span actions:bind='release-date'>Released 2022-07-27</span>)__
 

@@ -240,8 +240,8 @@ export default {
         mdiChevronDown,
         mdiArrowDown
       },
-      sortBy: [],
-      sortDesc: [],
+      sortBy: ['Cycle Point'],
+      sortDesc: [localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : true],
       expanded: [],
       headers: [
         {
