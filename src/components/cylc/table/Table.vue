@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <!-- Toolbar -->
     <v-row
-        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
+      class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
     >
       <!-- Filters -->
       <v-col
@@ -79,8 +79,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   v-if="slotProps.index === maximumTasks"
                   class="grey--text caption"
                 >
-            (+{{ tasksFilter.states.length - maximumTasks }})
-          </span>
+                  (+{{ tasksFilter.states.length - maximumTasks }})
+                </span>
               </template>
             </v-select>
           </v-col>
@@ -126,9 +126,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </thead>
             </template>
             <template
-                slot="item"
-                slot-scope="{ item }"
-              >
+              v-slot:item="{ item }"
+            >
               <tr>
                 <td>
                   <div class="d-flex align-content-center flex-nowrap">
@@ -145,8 +144,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </div>
                     <div class="mr-1">
                       <Job
-                        v-cylc-object="item.node"
-                        :status="item.node.state"
+                        v-if="item.jobs.length"
+                        v-cylc-object="item.jobs[0]"
+                        :status="item.jobs[0].state"
                         :previous-state="item.jobs.length > 1 ? item.jobs[1].state : ''"
                       />
                     </div>

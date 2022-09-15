@@ -133,12 +133,15 @@ function applyDeltasAdded (added, table, lookup) {
         const existingEntry = table[job.firstParent.id]
         if (existingEntry) {
           const latestJobSubmitNum = existingEntry.latestJob.submitNum || 0
-          const latestJob = latestJobSubmitNum < job.submitNum
-            ? lookup[job.id]
-            : existingEntry.latestJob
-          Vue.set(existingEntry, 'latestJob', latestJob)
-          existingEntry.jobs.push(latestJob)
-          Vue.set(existingEntry, 'jobs', existingEntry.jobs)
+          if (job.submitNum > latestJobSubmitNum) {
+            existingEntry.latestJob = lookup[job.id]
+            // Add latest to front of jobs array
+            existingEntry.jobs.unshift(job)
+          } else {
+            // Ought to sort jobs array newest to oldest
+            existingEntry.jobs.push(job)
+            existingEntry.jobs.sort((a, b) => b.submitNum - a.submitNum)
+          }
         }
       } catch (error) {
         result.errors.push([
