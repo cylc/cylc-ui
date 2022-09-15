@@ -99,7 +99,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           fluid
           class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
         >
-          {{  }}
           <v-data-table
             :headers.sync="headers"
             :items.sync="filteredTasks"
