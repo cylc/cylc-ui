@@ -217,6 +217,7 @@ import Job from '@/components/cylc/Job'
 import cloneDeep from 'lodash/cloneDeep'
 import { taskStartTime, taskEstimatedDuration } from '@/utils/tasks'
 import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
+import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 
 export default {
   name: 'TableComponent',
@@ -321,11 +322,11 @@ export default {
           case 'Task':
             valueA = typeof taskA.node.name !== 'undefined' ? taskA.node.name : ''
             valueB = typeof taskB.node.name !== 'undefined' ? taskB.node.name : ''
-            return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
+            return sortDesc ? DEFAULT_COMPARATOR(valueB, valueA) : DEFAULT_COMPARATOR(valueA, valueB)
           case 'Cycle Point':
             valueA = taskA.node.cyclePoint !== '' && typeof taskA.node.cyclePoint !== 'undefined' ? String(taskA.node.cyclePoint) : ''
             valueB = taskB.node.cyclePoint !== '' && typeof taskB.node.cyclePoint !== 'undefined' ? String(taskB.node.cyclePoint) : ''
-            return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
+            return sortDesc ? DEFAULT_COMPARATOR(valueB, valueA) : DEFAULT_COMPARATOR(valueA, valueB)
           case 'Jobs':
             valueA = typeof taskA.jobs !== 'undefined' ? taskA.jobs.length : 0
             valueB = typeof taskB.jobs !== 'undefined' ? taskB.jobs.length : 0
@@ -333,7 +334,7 @@ export default {
           case 'Host':
             valueA = typeof taskA.latestJob.platform !== 'undefined' ? taskA.latestJob.platform : ''
             valueB = typeof taskB.latestJob.platform !== 'undefined' ? taskB.latestJob.platform : ''
-            return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
+            return sortDesc ? DEFAULT_COMPARATOR(valueB, valueA) : DEFAULT_COMPARATOR(valueA, valueB)
           case 'Job System':
             valueA = typeof taskA.latestJob.jobRunnerName !== 'undefined' ? taskA.latestJob.jobRunnerName : ''
             valueB = typeof taskB.latestJob.jobRunnerName !== 'undefined' ? taskB.latestJob.jobRunnerName : ''
