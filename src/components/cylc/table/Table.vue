@@ -320,28 +320,28 @@ export default {
           const sortDesc = this.sortDesc[this.sortBy.indexOf(sortByProperty)]
           switch (sortByProperty) {
           case 'Task':
-            valueA = typeof taskA.node.name !== 'undefined' ? taskA.node.name : ''
-            valueB = typeof taskB.node.name !== 'undefined' ? taskB.node.name : ''
+            valueA = taskA.node.name ?? ''
+            valueB = taskB.node.name ?? ''
             return sortDesc ? DEFAULT_COMPARATOR(valueB, valueA) : DEFAULT_COMPARATOR(valueA, valueB)
           case 'Cycle Point':
             valueA = taskA.node.cyclePoint !== '' && typeof taskA.node.cyclePoint !== 'undefined' ? String(taskA.node.cyclePoint) : ''
             valueB = taskB.node.cyclePoint !== '' && typeof taskB.node.cyclePoint !== 'undefined' ? String(taskB.node.cyclePoint) : ''
             return sortDesc ? DEFAULT_COMPARATOR(valueB, valueA) : DEFAULT_COMPARATOR(valueA, valueB)
           case 'Jobs':
-            valueA = typeof taskA.jobs !== 'undefined' ? taskA.jobs.length : 0
-            valueB = typeof taskB.jobs !== 'undefined' ? taskB.jobs.length : 0
+            valueA = taskA.jobs?.length ?? 0
+            valueB = taskB.jobs?.length ?? 0
             return sortDesc ? valueB - valueA : valueA - valueB
           case 'Host':
-            valueA = typeof taskA.latestJob.platform !== 'undefined' ? taskA.latestJob.platform : ''
-            valueB = typeof taskB.latestJob.platform !== 'undefined' ? taskB.latestJob.platform : ''
+            valueA = taskA.latestJob.platform ?? ''
+            valueB = taskB.latestJob.platform ?? ''
             return sortDesc ? DEFAULT_COMPARATOR(valueB, valueA) : DEFAULT_COMPARATOR(valueA, valueB)
           case 'Job System':
-            valueA = typeof taskA.latestJob.jobRunnerName !== 'undefined' ? taskA.latestJob.jobRunnerName : ''
-            valueB = typeof taskB.latestJob.jobRunnerName !== 'undefined' ? taskB.latestJob.jobRunnerName : ''
+            valueA = taskA.latestJob.jobRunnerName ?? ''
+            valueB = taskB.latestJob.jobRunnerName ?? ''
             return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
           case 'Job ID':
-            valueA = typeof taskA.latestJob.jobId !== 'undefined' ? taskA.latestJob.jobId : 0
-            valueB = typeof taskB.latestJob.jobId !== 'undefined' ? taskB.latestJob.jobId : 0
+            valueA = taskA.latestJob.jobId ?? 0
+            valueB = taskB.latestJob.jobId ?? 0
             return sortDesc ? valueB - valueA : valueA - valueB
           case 'T-submit':
             valueA = taskA.latestJob.submittedTime !== '' && typeof taskA.latestJob.submittedTime !== 'undefined' ? (new Date(taskA.latestJob.submittedTime)).getTime() : 0
@@ -356,8 +356,8 @@ export default {
             valueB = taskB.latestJob.finishedTime !== '' && typeof taskB.latestJob.finishedTime !== 'undefined' ? (new Date(taskB.latestJob.finishedTime)).getTime() : 0
             return sortDesc ? valueB - valueA : valueA - valueB
           case 'dT-mean':
-            valueA = typeof taskA.meanElapsedTime !== 'undefined' ? taskA.meanElapsedTime : 0
-            valueB = typeof taskB.meanElapsedTime !== 'undefined' ? taskB.meanElapsedTime : 0
+            valueA = taskA.meanElapsedTime ?? 0
+            valueB = taskB.meanElapsedTime ?? 0
             return sortDesc ? valueB - valueA : valueA - valueB
           default:
             return 0
