@@ -74,7 +74,7 @@ describe('Table component', () => {
     })
   }
   global.requestAnimationFrame = cb => cb()
-  it('should enforce the newest job first policy', async () => {
+  it('should sort cycle point column descending by default', async () => {
     const wrapper = mountFunction({
       propsData: {
         tasks: simpleTableTasks
@@ -85,14 +85,10 @@ describe('Table component', () => {
     expect(wrapper.vm.tasks[wrapper.vm.filteredTasks.length - 1].node.cyclePoint).to.equal('20000103T0000Z')
     expect(wrapper.vm.tasks[0].node.cyclePoint).to.equal('20000101T0000Z')
 
-    // check the filtered tasks  have the cycle points from high to low
-    expect(wrapper.vm.filteredTasks[wrapper.vm.filteredTasks.length - 1].node.cyclePoint).to.equal('20000101T0000Z')
-    expect(wrapper.vm.filteredTasks[0].node.cyclePoint).to.equal('20000103T0000Z')
-
-    // check that the actual html markup is also correct
+    // check that the html have the cycle points from high to low
     await wrapper.vm.$nextTick()
     expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element.innerHTML).to.equal('20000103T0000Z')
-    expect(wrapper.find('table > tbody > tr:nth-child(' + String(wrapper.vm.filteredTasks.length) + ') > td:nth-child(3)').element.innerHTML).to.equal('20000101T0000Z')
+    expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.filteredTasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal('20000101T0000Z')
   })
   it('should display the table with valid data', () => {
     const wrapper = mountFunction({

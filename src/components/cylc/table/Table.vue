@@ -203,7 +203,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import { taskStartTime, taskEstimatedDuration } from '@/utils/tasks'
 import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
-import { datetimeSort } from '@/components/cylc/table/sort'
+import { datetimeComparator } from '@/components/cylc/table/sort'
 
 export default {
   name: 'TableComponent',
@@ -259,27 +259,27 @@ export default {
         {
           text: 'Job ID',
           value: 'latestJob.jobId',
-          sort: (a, b) => a ?? 0 - b ?? 0
+          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         },
         {
           text: 'T-submit',
           value: 'latestJob.submittedTime',
-          sort: datetimeSort
+          sort: datetimeComparator
         },
         {
           text: 'T-start',
           value: 'latestJob.startedTime',
-          sort: datetimeSort
+          sort: datetimeComparator
         },
         {
           text: 'T-finish',
           value: 'latestJob.finishedTime',
-          sort: datetimeSort
+          sort: datetimeComparator
         },
         {
           text: 'dT-mean',
           value: 'meanElapsedTime',
-          sort: (a, b) => a ?? 0 - b ?? 0
+          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
       ],
       tasksFilter: {

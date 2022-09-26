@@ -16,16 +16,17 @@
  */
 
 /**
- * Compare function for sorting datetime strings, that might possibly be
- * nullish or empty strings.
+ * Comparator function for sorting datetime strings. Note: nullish or empty
+ * strings are treated as infinity.
  *
  * @export
  * @param {*} a - The first element for comparison.
  * @param {*} b - The second element for comparison.
  * @return {number} A number > 0 if a > b, or < 0 if a < b, or 0 if a === b
  */
-export function datetimeSort (a, b) {
-  const valueA = a !== '' && typeof a !== 'undefined' ? (new Date(a)).getTime() : 0
-  const valueB = b !== '' && typeof b !== 'undefined' ? (new Date(b)).getTime() : 0
-  return valueA - valueB
+export function datetimeComparator (a, b) {
+  a = (a ?? '') === '' ? Infinity : new Date(a).getTime()
+  b = (b ?? '') === '' ? Infinity : new Date(b).getTime()
+  // Avoid return NaN for a === b === Infinity
+  return a === b ? 0 : a - b
 }
