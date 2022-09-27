@@ -18,11 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <!-- the controls -->
-    <v-btn
-      @click="this.refresh"
-    >
-      Refresh
-    </v-btn>
     <span>Spacing: {{ spacing.toPrecision(4) }}</span>
     <v-btn
       @click="this.increaseSpacing"
@@ -94,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-// import Vue from 'vue'
+import Vue from 'vue'
 import gql from 'graphql-tag'
 import { mapState } from 'vuex'
 import { mdiFileTree } from '@mdi/js'
@@ -432,9 +427,33 @@ export default {
       // wipe the rendered graph
       // this.graphNodes = []
       this.graphEdges = []
-      this.nodeTransformations = {}
+      // this.nodeTransformations = {}
+
+      // TODO: this a lot better!
+      let keep = null
+      for (const id in this.nodeTransformations) {
+        // remove the transformations we no longer need
+        // leave behind the remainder to avoid causing graph flicker
+        // we will update them in translate()
+        keep = false
+        for (const node of nodes) {
+          if (node.id === id) {
+            keep = true
+            break
+          }
+        }
+        if (!keep) {
+          Vue.delete(
+            this.nodeTransformations,
+            id
+          )
+        }
+      }
 
       // remove nodes no longer present in the graph
+      // TODO: this method is buggy hence calling it multiple times!
+      updateArray(this.graphNodes, nodes)
+      updateArray(this.graphNodes, nodes)
       updateArray(this.graphNodes, nodes)
 
       // wait for DOM / graphical updates to happen, then layout the graph
@@ -445,6 +464,9 @@ export default {
     async wait (callback, nodes, edges) {
       // wait for DOM updates and graphical rendering to complete, then run the
       // callback
+
+      // TODO: the two nextTicks are needed
+      // the requestAnimationFrames probably aren't
 
       await new Promise(requestAnimationFrame)
       await new Promise(requestAnimationFrame)
