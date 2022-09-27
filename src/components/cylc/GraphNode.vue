@@ -17,10 +17,14 @@
       <task
         :svg="true"
         :status="task.node.state"
-        v-cylc-object="task.node"
       />
     </symbol>
-    <use :href="`#${nodeID}`" x="0" y="0" width="100" height="100" />
+    <use
+      :href="`#${nodeID}`"
+      x="0" y="0"
+      width="100" height="100"
+      v-cylc-object="task.node"
+    />
 
     <text
       x="120" y="35"
@@ -50,7 +54,6 @@
         <job
           :svg="true"
           :status="job.node.state"
-          v-cylc-object="job.node"
         />
       </g>
     </g>
