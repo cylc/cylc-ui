@@ -20,6 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- the controls -->
     <span>Spacing: {{ spacing.toPrecision(4) }}</span>
     <v-btn
+      @click="this.transpose"
+    >
+      Transpose
+    </v-btn>
+    <v-btn
       @click="this.increaseSpacing"
     >
       Increase
@@ -248,6 +253,8 @@ export default {
         title: 'graph',
         icon: mdiFileTree
       },
+      // the graph orientation
+      orientation: 'TB',
       // the auto-refresh timer
       refreshTimer: null,
       // the spacing between nodes
@@ -328,6 +335,15 @@ export default {
       // decrease graph layout node spacing by 10%
       this.spacing = this.spacing * (10 / 11)
     },
+    transpose () {
+      if (this.orientation === 'LR') {
+        this.orientation = 'TB'
+      } else {
+        this.orientation = 'LR'
+      }
+      this.graphID = null
+      this.refresh()
+    },
     getNodes () {
       // list graph nodes from the store (non reactive list)
       const ret = []
@@ -365,10 +381,17 @@ export default {
     getDotCode (nodeDimensions, nodes, edges) {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
+      let spacing = this.spacing
+      if (this.orientation === 'LR') {
+        // transposed graphs need more space because the edges can start
+        // anywhere on the node
+        spacing = spacing * 1.5
+      }
       // NOTE: graphviz defaults nodesep=0.25 ranksep=0.5
       // increase the normal sep values to better space our larger nodes
-      ret.push(`  nodesep=${this.spacing}`)
-      ret.push(`  ranksep=${this.spacing * 2}`)
+      ret.push(`  rankdir=${this.orientation}`)
+      ret.push(`  nodesep=${spacing}`)
+      ret.push(`  ranksep=${spacing * 2}`)
       ret.push('  node [shape="rect"]')
       for (const node of nodes) {
         // use an HTML-like GraphViz node label to allow fine control over
@@ -396,8 +419,20 @@ export default {
           ]
         `)
       }
-      for (const edge of edges) {
-        ret.push(`  "${edge.node.source}":out -> "${edge.node.target}":in`)
+      if (this.orientation === 'TB') {
+        // top-bottom orientation
+        // route edges from the bottom of the source task *icon* to the top of
+        // the destination task *icon*
+        for (const edge of edges) {
+          ret.push(`  "${edge.node.source}":out -> "${edge.node.target}":in`)
+        }
+      } else {
+        // left-right orientation
+        // route edges from anywhere on the node of the source task to anywhere
+        // on the task *node* of the destination task *icon*
+        for (const edge of edges) {
+          ret.push(`  "${edge.node.source}" -> "${edge.node.target}":task`)
+        }
       }
       ret.push('}')
       return ret.join('\n')
