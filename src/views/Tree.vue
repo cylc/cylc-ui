@@ -39,9 +39,7 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import WorkflowCallback from '@/components/cylc/common/callbacks'
 import TreeComponent from '@/components/cylc/tree/Tree'
-import TreeCallback from '@/components/cylc/tree/callbacks'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
@@ -82,10 +80,7 @@ export default {
         WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
         this.variables,
         'workflow',
-        [
-          new WorkflowCallback(),
-          new TreeCallback()
-        ]
+        []
       )
     }
   }

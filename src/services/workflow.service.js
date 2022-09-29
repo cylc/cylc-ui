@@ -31,6 +31,7 @@ import { createApolloClient } from '@/graphql/index'
 import { print } from 'graphql'
 import mergeQueries from '@/graphql/merge'
 import Alert from '@/model/Alert.model'
+import CylcTreeCallback from '@/services/treeCallback'
 
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
@@ -82,6 +83,8 @@ class WorkflowService {
     this.primaryMutations = primaryMutations
 
     this.mutationsAndTypes = this.loadMutations()
+
+    this.globalCallback = new CylcTreeCallback()
   }
 
   // --- Mutations
@@ -168,6 +171,8 @@ class WorkflowService {
       this.recompute(subscription)
       // regardless of whether this results in a restart, we take this opertunity to preset the componentOrView store if needed
       const errors = []
+      // start the global callback first
+      this.globalCallback.init(store, errors)
       // if the callbacks class has an init method defined, use it
       for (const callback of subscription.callbacks) {
         // if any of the views currently using this subscription have an init hook, trigger it (which will check if its needed)
@@ -204,7 +209,10 @@ class WorkflowService {
   startSubscription (subscription) {
     if (this.debug) {
       // eslint-disable-next-line no-console
-      console.debug(`Starting subscription ${subscription.query.name}`, subscription)
+      console.debug(
+        `Starting subscription ${subscription.query.name}`,
+        subscription
+      )
     }
     subscription.handleViewState(ViewState.LOADING, null)
 
@@ -212,10 +220,13 @@ class WorkflowService {
     if (subscription.observable !== null) {
       if (this.debug) {
         // eslint-disable-next-line no-console
-        console.debug(`Subscription for query [${subscription.query.name}] already running. Stopping it...`)
+        console.debug(
+          `Subscription for query [${subscription.query.name}] already running. Stopping it...`)
       }
       this.stopSubscription(subscription)
     }
+
+    const globalCallback = this.globalCallback
 
     try {
       // Then start subscription.
@@ -224,9 +235,6 @@ class WorkflowService {
         subscription.query.variables,
         {
           next: function next (response) {
-            if (subscription.callbacks.length === 0) {
-              return
-            }
             /**
              * @type {Deltas}
              */
@@ -235,6 +243,16 @@ class WorkflowService {
             const updated = deltas.updated || {}
             const pruned = deltas.pruned || {}
             const errors = []
+
+            // run the global callback first
+            globalCallback.onAdded(added, store, errors)
+            globalCallback.onUpdated(updated, store, errors)
+            globalCallback.onPruned(pruned, store, errors)
+
+            // then run the local callbacks if there are any
+            if (subscription.callbacks.length === 0) {
+              return
+            }
             for (const callback of subscription.callbacks) {
               callback.before(deltas, store, errors)
               callback.onAdded(added, store, errors)
@@ -247,12 +265,17 @@ class WorkflowService {
               callback.commit(store, errors)
             }
             for (const error of errors) {
-              store.commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+              store.commit(
+                'SET_ALERT',
+                new Alert(error[0], null, 'error'),
+                { root: true }
+              )
               // eslint-disable-next-line no-console
               console.warn(...error)
             }
           },
           error: function error (err) {
+            console.log('BUGGERED')
             subscription.handleViewState(ViewState.ERROR, err)
           }
         }
@@ -263,6 +286,7 @@ class WorkflowService {
       subscription.reload = false
     } catch (e) {
       subscription.handleViewState(ViewState.ERROR, e)
+      debugger
     }
   }
 

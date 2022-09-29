@@ -98,7 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <span class="grey--text">{{ node.node.platform }}</span>
           <span
             class="grey--text d-flex flex-nowrap flex-row align-center"
-            v-if="node.node.customOutputs.length > 0"
+            v-if="node.node.customOutputs && node.node.customOutputs.length > 0"
           >
             <!--
               We had a tricky bug in #530 due to the :key here. In summary, the list
@@ -248,13 +248,17 @@ export default {
       type: Boolean,
       default: true
     }
+    // treeItemCache: {
+    //   type: Object,
+    //   required: true
+    // }
   },
   data () {
     return {
       active: false,
       selected: false,
-      isExpanded: this.initialExpanded,
-      filtered: true,
+      // isExpanded: this.initialExpanded,
+      // filtered: true,
       leafProperties: [
         {
           title: 'platform',
@@ -283,10 +287,18 @@ export default {
       ],
       icons: {
         mdiChevronRight
-      }
+      },
+      isExpanded: false, // TODO
+      filtered: true
     }
   },
   computed: {
+    // isExpanded () {
+    //   return this.treeItemCache[this.node.id].expanded
+    // },
+    // filtered () {
+    //   return this.treeItemCache[this.node.id].filtered
+    // },
     hasChildren () {
       return Boolean(this.node.children?.length)
     },

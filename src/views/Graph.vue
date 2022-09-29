@@ -109,14 +109,15 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-// import WorkflowCallback from '@/components/cylc/common/callbacks'
-import CylcTreeCallback from '@/services/treeCallback'
+// import CylcTreeCallback from '@/services/treeCallback'
 import GraphNode from '@/components/cylc/GraphNode'
 import { graphviz } from '@hpcc-js/wasm'
 import * as svgPanZoom from 'svg-pan-zoom'
 
-// NOTE: use TaskProxies not nodesEdges{nodes} to list nodes to allow
-// request overlap with other views (notably the tree view)
+// NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
+// the tree view uses which allows the requests to overlap with this and other
+// views. Data overlap is good because it reduces the amount of data we need
+// to request / store / process.
 const QUERY = gql`
 fragment GraphEdgeData on Edge {
   id
@@ -316,8 +317,9 @@ export default {
         this.variables,
         'workflow',
         [
-          // new WorkflowCallback()
-          new CylcTreeCallback()
+          // TODO: this callback should be run automatically
+          // (only one instance for all views)
+          // new CylcTreeCallback()
         ]
       )
     },
@@ -483,6 +485,12 @@ export default {
       // extract the graph (non reactive lists of nodes & edges)
       const nodes = this.getNodes()
       const edges = this.getEdges()
+
+      if (!nodes.length || !edges.length) {
+        // we can't graph this, reset and wait for something to draw
+        this.graphID = null
+        return
+      }
 
       // compute the graph ID
       const graphID = this.hashGraph(nodes, edges)
