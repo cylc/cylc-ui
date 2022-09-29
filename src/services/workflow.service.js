@@ -35,15 +35,15 @@ import Alert from '@/model/Alert.model'
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
 import { Deltas } from '@/components/cylc/common/deltas'
-import { MutationResponse } from '@/utils/aotf'
+import { GQLType, Mutation, MutationResponse } from '@/utils/aotf'
 import { DocumentNode } from 'graphql'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 /* eslint-enable no-unused-vars, no-duplicate-imports */
 
 /**
  * @typedef {Object} MutationsAndTypes
- * @property {Array<Object>} mutations
- * @property {Array<Object>} types
+ * @property {Mutation[]} mutations
+ * @property {GQLType[]} types
  */
 
 /**
@@ -56,7 +56,7 @@ class WorkflowService {
   /**
    * @constructor
    * @param {string} httpUrl
-   * @param {SubscriptionClient|null} subscriptionClient
+   * @param {?SubscriptionClient} subscriptionClient
    */
   constructor (httpUrl, subscriptionClient) {
     this.debug = process.env.NODE_ENV !== 'production'
@@ -74,7 +74,7 @@ class WorkflowService {
      * The Apollo Client GraphQL subscription can be accessed via the Subscription
      * attribute `.observable`, or via the `.subscriptionClient`.
      *
-     * @type {Object.<String, Subscription>}
+     * @type {Object.<string, Subscription>}
      */
     this.subscriptions = {}
 
@@ -94,8 +94,8 @@ class WorkflowService {
    *
    * Requires an absolute identifier (i.e. must include the workflow name).
    *
-   * @param {String} mutationName
-   * @param {String} id
+   * @param {string} mutationName
+   * @param {string} id
    * @returns {Promise<MutationResponse>}
    */
   async mutate (mutationName, id) {
@@ -123,7 +123,7 @@ class WorkflowService {
       fetchPolicy: 'no-cache'
     })
     const mutations = response.data.__schema.mutationType.fields
-    const types = response.data.__schema.types
+    const { types } = response.data.__schema
     processMutations(mutations, types)
     return { mutations, types }
   }
@@ -131,8 +131,8 @@ class WorkflowService {
   /**
    * Return a mutation by name.
    *
-   * @param {String} mutationName
-   * @returns {Promise<Object>}
+   * @param {string} mutationName
+   * @returns {Promise<Mutation=>}
    */
   async getMutation (mutationName) {
     const { mutations } = await this.mutationsAndTypes

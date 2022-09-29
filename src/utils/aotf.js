@@ -53,18 +53,40 @@ import { Tokens } from '@/utils/uid'
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
 import { ApolloClient } from '@apollo/client'
+import { IntrospectionInputType } from 'graphql'
 /* eslint-enable no-unused-vars, no-duplicate-imports */
 
 /**
- * @typedef {Object} MutationArgs
- * @property {string} _cylcObject
- * @property {boolean} _required
+ * @typedef {Object} GQLType
+ * @property {string} name
+ * @property {string} kind
+ * @property {?GQLType} ofType
  */
 
 /**
- * @typedef {object} Mutation
+ * @typedef {Object} MutationArg
  * @property {string} name
- * @property {MutationArgs[]} args
+ * @property {string} description
+ * @property {GQLType} type
+ * @property {?string} defaultValue
+ * @property {string=} _title
+ * @property {string=} _cylcObject
+ * @property {string=} _cylcType
+ * @property {boolean=} _required
+ * @property {boolean=} _multiple
+ * @property {*=} _default
+ */
+
+/**
+ * @typedef {Object} Mutation
+ * @property {string} name
+ * @property {string} description
+ * @property {MutationArg[]} args
+ * @property {GQLType} type
+ * @property {string=} _title
+ * @property {string=} _icon
+ * @property {string=} _shortDescription
+ * @property {string=} _help
  */
 
 /**
@@ -74,7 +96,7 @@ import { ApolloClient } from '@apollo/client'
  */
 
 /**
- * @typedef {object} FilteredMutation
+ * @typedef {Object} FilteredMutation
  * @property {Mutation} mutation
  * @property {boolean} requiresInfo
  * @property {boolean} authorised
@@ -298,8 +320,8 @@ export function camelToWords (camel) {
  *   _help
  *     The remainder of the mutation description.
  *
- * @param {object} mutations - Mutations as returned by introspection query.
- * @param {object} types - Types as returned by introspection query.
+ * @param {Mutation} mutations - Mutations as returned by introspection query.
+ * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
  */
 export function processMutations (mutations, types) {
   for (const mutation of mutations) {
@@ -315,7 +337,7 @@ export function processMutations (mutations, types) {
  * Get the first part of a mutation description (up to the first double newline).
  *
  * @export
- * @param {string|undefined} text - Full mutation description.
+ * @param {string=} text - Full mutation description.
  * @return {string}
  */
 export function getMutationShortDesc (text) {
@@ -326,8 +348,8 @@ export function getMutationShortDesc (text) {
  * Get the rest of a mutation description (after the first double newline).
  *
  * @export
- * @param {string|undefined} text - Full mutation description.
- * @return {string|undefined}
+ * @param {string=} text - Full mutation description.
+ * @return {string=}
  */
 export function getMutationExtendedDesc (text) {
   return text?.split('\n\n').slice(1).join('\n\n')
@@ -353,7 +375,7 @@ export function getMutationExtendedDesc (text) {
  *     true if this field must be provided for the mutation to be called.
  *
  * @param {Mutation} mutation - One Mutation as returned by introspection query.
- * @param {object} types - Types as returned by introspection query.
+ * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
  */
 export function processArguments (mutation, types) {
   let pointer = null
@@ -367,7 +389,7 @@ export function processArguments (mutation, types) {
     required = false
     cylcObject = null
     cylcType = null
-    if (pointer && pointer.kind === 'NON_NULL') {
+    if (pointer?.kind === 'NON_NULL') {
       required = true
     }
     while (pointer) {
@@ -507,10 +529,10 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
  *  2. List
  *  3. String
  *
- * @param {Object} type - A type as returned by an introspection query.
+ * @param {GQLType} type - A type as returned by an introspection query.
  * (i.e. an object of the form {name: x, kind: y, ofType: z}
  *
- * @yields {Object} Type objects of the same form as the type argument.
+ * @yields {GQLType} Type objects of the same form as the type argument.
  */
 export function * iterateType (type) {
   while (type) {
@@ -521,12 +543,12 @@ export function * iterateType (type) {
 
 /** Return an appropriate null value for the specified type.
  *
- * @param {Object} type - A type field as returned by an introspection query.
+ * @param {GQLType} type - A type field as returned by an introspection query.
  * (an object of the form {name: x, kind: y, ofType: z}).
- * @param {Array} types - An array of all types present in the schema.
+ * @param {IntrospectionInputType[]=} types - An array of all types present in the schema.
  * (optional: used to resolve InputObjectType fields).
  *
- * @returns {Object|Array|undefined}
+ * @returns {Object|Object[]|null}
  */
 export function getNullValue (type, types = []) {
   let ret = null
@@ -569,7 +591,7 @@ export function getNullValue (type, types = []) {
  *
  * E.G: NonNull<List<String>>  =>  [String]!
  *
- * @param {Object} arg - An argument from a introspection query.
+ * @param {MutationArg} arg - An argument from a introspection query.
  *
  * @returns {string} A type string for use in a client query / mutation.
  */
@@ -599,7 +621,7 @@ export function argumentSignature (arg) {
 
 /** Construct a mutation string from a mutation introspection.
  *
- * @param {Object} mutation - A mutation as returned by an introspection query.
+ * @param {Mutation} mutation - A mutation as returned by an introspection query.
  *
  * @returns {string} A mutation string for a client to send to the server.
  */
@@ -626,19 +648,18 @@ export function constructMutation (mutation) {
  * Return default arguments for the provided mutation filling in what
  * information we can from the context tokens.
  *
- * @param {Object} mutation
+ * @param {Mutation} mutation
  * @param {Object} tokens
  *
  * @returns {Object}
  * */
 export function getMutationArgsFromTokens (mutation, tokens) {
   const argspec = {}
-  let value = null
-  let alternate = null
+  let value
   for (const arg of mutation.args) {
-    alternate = alternateFields[arg._cylcType]
+    const alternate = alternateFields[arg._cylcType]
     for (let token in tokens) {
-      if (arg._cylcObject && [token, alternate].indexOf(arg._cylcObject) >= 0) {
+      if (arg._cylcObject && [token, alternate].includes(arg._cylcObject)) {
         if (arg._cylcObject === alternate) {
           token = alternate
         }
@@ -694,7 +715,7 @@ async function _mutateError (mutationName, message, response) {
 /**
  * Call a mutation.
  *
- * @param {Object} mutation
+ * @param {Mutation} mutation
  * @param {Object} args
  * @param {ApolloClient} apolloClient
  *

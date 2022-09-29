@@ -225,12 +225,12 @@ export default {
 
   methods: {
     openDialog (mutation) {
-      this.dialog = mutation
+      this.dialog = true
       this.dialogMutation = mutation
     },
 
     closeDialog () {
-      this.dialog = null
+      this.dialog = false
       this.dialogMutation = null
     },
 

@@ -88,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               />
             </v-tooltip>
           </v-list-item-title>
-          <form-input
+          <FormInput
             v-model="model[input.label]"
             :gqlType="input.gqlType"
             :types="types"
@@ -117,7 +117,7 @@ export default {
 
   components: {
     Markdown,
-    'form-input': FormInput
+    FormInput
   },
 
   props: {
