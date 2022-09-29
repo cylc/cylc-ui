@@ -1,11 +1,6 @@
 <template>
   <g>
-
-    <!--
-      :isHeld="task.node.isHeld"
-      :isRunahead="task.node.isRunahead"
-      :isQueued
-    -->
+    <!-- the task icon -->
     <symbol :id="nodeID" viewBox="0 0 100 100">
       <!--
         Use a "symbol" for the task node in order to apply a viewBox to it.
@@ -14,10 +9,7 @@
         works the BBox of a task icon is greater than this 100x100 box for
         running tasks.
       -->
-      <task
-        :svg="true"
-        :status="task.node.state"
-      />
+      <SVGTask :task="task.node" />
     </symbol>
     <use
       :href="`#${nodeID}`"
@@ -26,18 +18,23 @@
       v-cylc-object="task.node"
     />
 
+    <!-- the task name -->
     <text
       x="120" y="35"
       font-size="50"
     >
       {{ task.tokens.task }}
     </text>
+
+    <!-- the cycle point -->
     <text
       x="120" y="65"
       font-size="25"
     >
       {{ task.tokens.cycle }}
     </text>
+
+    <!-- the job(s) -->
     <g
       transform="
         translate(120, 75)
@@ -61,13 +58,13 @@
 </template>
 
 <script>
-import Task from '@/components/cylc/Task'
+import SVGTask from '@/components/cylc/SVGTask'
 import Job from '@/components/cylc/Job'
 
 export default {
   name: 'GraphNode',
   components: {
-    Task,
+    SVGTask,
     Job
   },
   props: {
