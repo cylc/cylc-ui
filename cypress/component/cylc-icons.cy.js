@@ -23,15 +23,18 @@ import Job from '@/components/cylc/Job'
 // higher resolution screenshot
 const TaskComponent = {
   template: `
-    <span style="font-size: 200px">
+    <span style="font-size: 200px; margin-top: 400px">
       <task
         :status="status"
         :startTime="startTime"
         :estimatedDuration="100"
+        :isHeld="isHeld"
+        :isQueued="isQueued"
+        :isRunahead="isRunahead"
       />
     </span>
   `,
-  props: ['status'],
+  props: ['status', 'isHeld', 'isQueued', 'isRunahead'],
   components: { Task },
   data: () => ({
     // set the progress indicator for running tasks to ~33%
@@ -61,6 +64,19 @@ describe('cylc icons', () => {
         cy.get('.c-task svg.task').last().screenshot(
           `task-${state.name}`,
           { overwrite: true, disableTimersAndAnimations: false }
+        )
+      }
+    })
+
+    it.only('renders for each modifier', () => {
+      for (const modifier of ['isHeld', 'isQueued', 'isRunahead']) {
+        const propsData = {}
+        propsData.status = 'waiting'
+        propsData[modifier] = true
+        cy.mount(TaskComponent, { propsData })
+        cy.get('.c-task svg.task').last().screenshot(
+          `task-${modifier}`,
+          { overwrite: true }
         )
       }
     })
