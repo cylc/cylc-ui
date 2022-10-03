@@ -68,12 +68,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               @change="filterTasks"
             >
               <template v-slot:item="slotProps">
-                <Task :status="slotProps.item.value"/>
+                <Task :task="{ state: slotProps.item.value }" />
                 <span class="ml-2">{{ slotProps.item.value }}</span>
               </template>
               <template v-slot:selection="slotProps">
                 <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
-                  <Task :status="slotProps.item.value"/>
+                  <Task :task="{ state: slotProps.item.value }" />
                 </div>
                 <span
                   v-if="slotProps.index === maximumTasks"
@@ -125,12 +125,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <div class="mr-1">
                       <Task
                         v-cylc-object="item.node"
-                        :status="item.node.state"
-                        :isHeld="item.node.isHeld"
-                        :isQueued="item.node.isQueued"
-                        :isRunahead="item.node.isRunahead"
+                        :task="item.node"
                         :startTime="taskStartTime(item.node, item.latestJob)"
-                        :estimatedDuration="taskEstimatedDuration(item.node)"
                       />
                     </div>
                     <div class="mr-1">

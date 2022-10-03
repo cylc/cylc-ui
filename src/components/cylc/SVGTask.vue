@@ -1,33 +1,58 @@
+<!--
+Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- SVG task icon
+  This SVG component is designed to sit within a 100x100 box with
+  "task modifiers increasing this to 130x130 (consider modifiers like
+  superscript or unicode modifiers)
+-->
+
 <template>
   <g
     class="c8-task"
     :class="{
-      waiting: task.status === 'waiting',
-      preparing: task.status === 'preparing',
-      submitted: task.status === 'submitted',
-      running: task.status === 'running',
-      succeeded: task.status === 'succeeded',
-      failed: task.status === 'failed',
-      'submit-failed': task.status === 'submit-failed',
-      expired: task.status === 'expired',
+      waiting: task.state === 'waiting',
+      preparing: task.state === 'preparing',
+      submitted: task.state === 'submitted',
+      running: task.state === 'running',
+      succeeded: task.state === 'succeeded',
+      failed: task.state === 'failed',
+      'submit-failed': task.state === 'submit-failed',
+      expired: task.state === 'expired',
       held: task.isHeld,
       queued: task.isQueued && !task.isHeld,
       runahead: task.isRunahead && !(task.isHeld || task.isQueued),
     }"
   >
+    <!--rect x="0" y="0" width="130" height="130" stroke-width="5" style="stroke: red; fill: none;" /-->
+    <!--rect x="0" y="0" width="100" height="100" style="fill: rgb(240, 200, 200);" /-->
     <g class="status">
       <circle
         class="outline"
-        cx="55"
-        cy="55"
-        r="40"
+        cx="50"
+        cy="50"
+        r="45"
         stroke-width="10"
       />
       <!-- TODO: this progress needs re-calibration -->
       <circle
         class="progress"
-        cx="45"
-        cy="55"
+        cx="50"
+        cy="50"
         r="20"
         stroke-width="50"
         stroke-dasharray="157"
@@ -35,100 +60,104 @@
       />
       <circle
         class="dot"
-        cx="55"
-        cy="55"
+        cx="50"
+        cy="50"
         r="7"
       />
       <circle
         class="hub"
-        cx="55"
-        cy="55"
-        r="13"
+        cx="50"
+        cy="50"
+        r="16"
       />
-      <g class="cross">
+      <g
+        class="cross"
+        transform="rotate(45, 50, 50)"
+      >
         <rect
-          x="52.5"
-          y="22.5"
-          width="10"
-          height="55"
-          transform="rotate(45, 50, 50)"
-          rx="5"
-          ry="5"
+          x="43"
+          y="15"
+          width="14"
+          height="70"
+          rx="7.5"
+          ry="7.5"
         />
         <rect
-          x="45"
-          y="30"
-          width="10"
-          height="55"
-          transform="rotate(-45, 50, 50)"
-          rx="5"
-          ry="5"
+          x="15"
+          y="43"
+          width="70"
+          height="14"
+          rx="7.5"
+          ry="7.5"
         />
       </g>
     </g>
-    <g class="modifier">
+    <g
+      class="modifier"
+      :transform="getModiferTransform()"
+    >
       <circle
         class="outline"
-        cx="13.5"
-        cy="13.5"
-        r="11.5"
-        stroke-width="3"
+        cx="50"
+        cy="50"
+        r="40"
+        stroke-width="10"
       />
       <g
         class="held"
       >
         <rect
-          x="8"
-          y="6"
-          width="5"
-          height="15"
-          rx="2.5"
-          ry="2.5"
+          x="30"
+          y="25"
+          width="16"
+          height="50"
+          rx="10"
+          ry="10"
         />
         <rect
-          x="14"
-          y="6"
-          width="5"
-          height="15"
-          rx="2.5"
-          ry="2.5"
+          x="54"
+          y="25"
+          width="16"
+          height="50"
+          rx="10"
+          ry="10"
         />
       </g>
       <g
         class="queued"
       >
         <rect
-          x="6"
-          y="6"
-          width="15"
-          height="4"
-          rx="2.5"
-          ry="2.5"
+          x="28.75"
+          y="24.5"
+          width="42.5"
+          height="15"
+          rx="10"
+          ry="10"
         />
         <rect
-          x="6"
-          y="11.5"
-          width="15"
-          height="4"
-          rx="2.5"
-          ry="2.5"
+          x="28.75"
+          y="42.5"
+          width="42.5"
+          height="15"
+          rx="10"
+          ry="10"
         />
         <rect
-          x="6"
-          y="17"
-          width="15"
-          height="4"
-          rx="2.5"
-          ry="2.5"
+          x="28.75"
+          y="60.5"
+          width="42.5"
+          height="15"
+          rx="10"
+          ry="10"
         />
       </g>
       <g
         class="runahead"
       >
         <circle
-          cx="13.5"
-          cy="13.5"
-          r="5"
+          cx="50"
+          cy="50"
+          r="20"
         />
       </g>
     </g>
@@ -143,23 +172,32 @@ export default {
   props: {
     task: {
       required: true
+    },
+    startTime: {
+      // TODO: aim to remove this in due course
+      // (we should be able to obtain this directly from the task)
+      required: false
+    },
+    modifierSize: {
+      type: Number,
+      default: 0.6
     }
   },
   methods: {
     getRunningStyle () {
       if (
-        this.task.status === TaskState.RUNNING.name &&
-        this.task.startTime &&
-        this.task.estimatedDuration
+        this.task.state === TaskState.RUNNING.name &&
+        this.startTime &&
+        this.task.meanElapsedTime
       ) {
-        const startTime = Date.parse(this.task.startTime)
+        const startTime = Date.parse(this.startTime)
         const now = Date.now()
         const elapsedTime = ((now - startTime) / 1000)
         const ret = `
           animation-name: c8-task-progress-animation;
           animation-timing-function: steps(50);
           animation-iteration-count: 1;
-          animation-duration: ${this.task.estimatedDuration}s;
+          animation-duration: ${this.task.meanElapsedTime}s;
           animation-delay: -${elapsedTime}s;
           animation-fill-mode: forwards;
         `
@@ -167,6 +205,13 @@ export default {
         return ret.replace('\n', ' ')
       }
       return ''
+    },
+    getModiferTransform () {
+      const translation = (this.modifierSize * -100) - 5
+      return `
+        scale(${this.modifierSize}, ${this.modifierSize})
+        translate(${translation}, ${translation})
+      `
     }
   }
 }

@@ -39,10 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <Task
             v-cylc-object="node.node"
             :key="node.node.id"
-            :status="node.node.state"
-            :isHeld="node.node.isHeld"
-            :isQueued="node.node.isQueued"
-            :isRunahead="node.node.isRunahead"
+            :task="node.node"
           />
           <span class="mx-1">{{ node.node.name }}</span>
         </div>
@@ -52,10 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <Task
             v-cylc-object="node.node"
             :key="node.node.id"
-            :status="node.node.state"
-            :isHeld="node.node.isHeld"
-            :isQueued="node.node.isQueued"
-            :isRunahead="node.node.isRunahead"
+            :task="node.node"
           />
           <span class="mx-1">{{ node.node.name }}</span>
         </div>
@@ -66,12 +60,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <Task
             v-cylc-object="node.node"
             :key="node.node.id"
-            :status="node.node.state"
-            :isHeld="node.node.isHeld"
-            :isQueued="node.node.isQueued"
-            :isRunahead="node.node.isRunahead"
+            :task="node.node"
             :startTime="taskStartTime(node.node, latestJob(node))"
-            :estimatedDuration="taskEstimatedDuration(node.node)"
           />
           <div v-if="!isExpanded" class="node-summary">
             <!-- most recent job summary -->

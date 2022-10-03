@@ -72,15 +72,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :transform="nodeTransformations[node.id]"
         >
           <GraphNode
-            :task="node"
+            :task="node.node"
+            :jobs="node.children"
           />
         </g>
+        <!-- the edges
+          NOTE: This transformation is a static fudge factor to keep the node
+          and edge layers aligned. It will need to be adjusted if the
+          GraphNode component is changed.
+        -->
         <g
           transform="
-            translate(10, -15)
+            translate(45, 5)
           "
         >
-          <!-- the edges -->
           <g
             v-for="(edgePath, index) in graphEdges"
             :key="index"

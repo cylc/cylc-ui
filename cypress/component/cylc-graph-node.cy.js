@@ -26,50 +26,45 @@ function makeTaskNode (id, jobStates) {
     const jobTokens = tokens.clone({ job: `0${itt}` })
     jobs.push({
       id: jobTokens.id,
-      tokens: jobTokens,
       name: jobTokens.job,
-      type: 'job',
-      node: {
-        id: jobTokens.id,
-        status: jobState
-      }
+      status: jobState
     })
     itt++
   }
-  return {
-    id: tokens.id,
-    tokens,
-    name: tokens.task,
-    type: 'task',
-    children: jobs,
-    node: {
+  return [
+    {
       id: tokens.id,
-      state: jobs.length ? jobs[0].node.status : 'waiting'
-    }
-  }
+      name: tokens.task,
+      cyclePoint: tokens.cycle,
+      state: jobs.length ? jobs[0].status : 'waiting',
+      isHeld: true
+    },
+    jobs
+  ]
 }
 
 const GraphNodeSVG = {
   template: `
     <svg id="app" class="job_theme--default" width="100%" height="100%">
-      <GraphNode :task="task" />
+      <GraphNode :task="task" :jobs="jobs" />
     </svg>
   `,
-  props: ['task'],
+  props: ['task', 'jobs'],
   components: { GraphNode }
 }
 
 describe('graph node component', () => {
   it('works', () => {
+    const [task, jobs] = makeTaskNode(
+      '~a/b//20000101T0000Z/task_name',
+      ['running', 'failed', 'failed', 'failed']
+    )
+    console.log(task)
+    console.log(jobs)
     cy.mount(
       GraphNodeSVG,
       {
-        propsData: {
-          task: makeTaskNode(
-            '~a/b//20000101T0000Z/task_name',
-            ['running', 'failed', 'failed', 'failed']
-          )
-        }
+        propsData: { task, jobs }
       }
     )
   })
