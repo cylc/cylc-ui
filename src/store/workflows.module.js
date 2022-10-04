@@ -156,6 +156,12 @@ function getIndex (state, id) {
   return state.cylcTree.$index[id]
 }
 
+function hasChild (node, id, attr = 'id', childAttr = 'children') {
+  return node[childAttr].filter(
+    item => { return item[attr] === id }
+  ).length === 1
+}
+
 // tree methods
 function addChild (parentNode, childNode) {
   console.log(`$t ++ ${childNode.id}`)
@@ -165,6 +171,8 @@ function addChild (parentNode, childNode) {
     key = '$namespaces'
   } else if (childNode.type === '$edge') {
     key = '$edges'
+  } else if (parentNode.type === 'cycle' && childNode.type === 'family') {
+    key = 'familyTree'
   }
 
   if (childNode.type === 'workflow') {
@@ -182,7 +190,7 @@ function addChild (parentNode, childNode) {
   parentNode[key].splice(index, 0, childNode)
 }
 
-function removeChild (state, node) {
+function removeChild (state, node, parentNode = null) {
   console.log(`$t -- ${node.id}`)
   let key = 'children'
   if (node.type === '$namesapce') {
@@ -190,7 +198,14 @@ function removeChild (state, node) {
   } else if (node.type === '$edge') {
     key = '$edges'
   }
-  const parentNode = getIndex(state, node.parent)
+  if (!parentNode) {
+    parentNode = getIndex(state, node.parent)
+  }
+  if (!parentNode) {
+    // parent node no longer in the store
+    // (this should not happen)
+    return
+  }
   parentNode.children.splice(
     parentNode[key].indexOf(node), 1
   )
@@ -232,6 +247,30 @@ function cleanParents (state, node) {
   }
 }
 
+function applyInheritance (state, node) {
+  if (node.type === 'family') {
+    const childTasks = node.node.childTasks || []
+
+    // add new tasks
+    for (const child of childTasks) {
+      if (!hasChild(node, child.id)) {
+        // child has been added to childTasks
+        const childNode = getIndex(state, child.id)
+        if (childNode) {
+          addChild(node, getIndex(state, child.id))
+        }
+      }
+    }
+
+    // remove old tasks
+    for (const child of node.children.filter(child => child.type === 'task')) {
+      if (childTasks.filter(x => x.id === child.id).length === 0) {
+        removeChild(state, child, node)
+      }
+    }
+  }
+}
+
 // data methods
 function update (state, updatedData) {
   const tokens = new Tokens(updatedData.id)
@@ -242,25 +281,67 @@ function update (state, updatedData) {
   if (treeItem) {
     // node already exists -> update it
     mergeWith(treeItem.node, updatedData, mergeWithCustomizer)
+    applyInheritance(state, treeItem)
     return
   }
 
   // create a new tree item
   let treeParent
-  [treeParent, treeItem] = createTreeNode(state, id, tokens, updatedData)
+  const ret = createTreeNode(state, id, tokens, updatedData)
+  if (!ret) {
+    // node already exists, nothing more to do here
+    return
+  }
+  [treeParent, treeItem] = ret
 
   // add the new item to the tree
   addChild(treeParent, treeItem)
+  applyInheritance(state, treeItem)
 
   // add an entry for this item into the index
   addIndex(state, id, treeItem)
 }
 
+function getFamilyTree (tokens, node) {
+  // tree = [type, name, tokens]
+  const ret = []
+
+  // extract the tree up intil the cycle point
+  let lastTokens
+  for (const [type, name, iTokens] of tokens.tree()) {
+    ret.push([type, name, iTokens])
+    lastTokens = iTokens
+    if (type === 'cycle') {
+      break
+    }
+  }
+
+  // add family levels below the cycle point
+  const familyPath = []
+  for (const ancestor of node.ancestors || []) {
+    familyPath.push(ancestor.name)
+    ret.push([
+      'family',
+      ancestor.name,
+      lastTokens.clone({ task: ancestor.name })
+    ])
+  }
+
+  // add the family itself
+  familyPath.push(node.name)
+  ret.push([
+    'family',
+    node.name,
+    lastTokens.clone({ task: node.name })
+  ])
+
+  return ret
+}
+
 function createTreeNode (state, id, tokens, node) {
-  const tree = tokens.tree()
+  let tree = tokens.tree()
   let type = null
   let name = null
-  // let key = null
   if (tokens.namespace) {
     type = '$namespace'
     name = tokens.namespace
@@ -269,18 +350,29 @@ function createTreeNode (state, id, tokens, node) {
     type = '$edge'
     name = tokens.id
     // key = '$edges'
+  } else if (node.__typename === 'FamilyProxy') {
+    type = 'family'
+    name = tokens.task
+    tree = getFamilyTree(tokens, node)
+    tokens = tree.pop()[2]
+    id = tokens.id
   } else {
     tree.pop()
     type = tokens.lowestToken()
     name = tokens[tokens.lowestToken()]
-    // key = 'children'
   }
 
   let pointer = state.cylcTree
   let intermediateItem = null
   let children = null
+  let childAttribute = null
   for (const [partType, partName, partTokens] of tree) {
-    children = pointer.children.filter(
+    if (pointer.type === 'cycle' && type === 'family') {
+      childAttribute = 'familyTree'
+    } else {
+      childAttribute = 'children'
+    }
+    children = pointer[childAttribute].filter(
       item => { return item.name === partName }
     )
     if (!children.length) {
@@ -300,6 +392,9 @@ function createTreeNode (state, id, tokens, node) {
         type: partType
       }
       Vue.set(intermediateItem, 'children', [])
+      if (partType === 'cycle') {
+        Vue.set(intermediateItem, 'familyTree', [])
+      }
       // add child to the tree
       addChild(pointer, intermediateItem)
       // register child in the index
@@ -324,7 +419,9 @@ function createTreeNode (state, id, tokens, node) {
     node
   }
   Vue.set(treeNode, 'children', [])
-
+  if (type === 'cycle') {
+    Vue.set(treeNode, 'familyTree', [])
+  }
   return [pointer, treeNode]
 }
 
@@ -417,8 +514,10 @@ const mutations = {
   CLEAR: clearTree
 }
 
-// TODO: iterate these in order? or is that even necessary with this implementation?
-const KEYS = ['workflow', 'cyclePoints', 'familyProxies', 'taskProxies', 'jobs', 'edges']
+// NOTE: deltas are applied in the order listed here
+// NOTE: we must create tasks before families (note cycles ARE families
+// because of the way we request them)
+const KEYS = ['workflow', 'taskProxies', 'cyclePoints', 'familyProxies', 'jobs', 'edges']
 
 const actions = {}
 

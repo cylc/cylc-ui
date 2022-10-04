@@ -34,35 +34,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >{{ icons.mdiChevronRight }}</v-icon>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <slot name="cyclepoint" v-if="node.type === 'cyclepoint'">
+      <slot name="cyclepoint" v-if="node.type === 'cycle'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <Task
             v-cylc-object="node.node"
-            :key="node.node.id"
+            :key="node.id"
             :task="node.node"
           />
-          <span class="mx-1">{{ node.node.name }}</span>
+          <span class="mx-1">{{ node.name }}</span>
         </div>
       </slot>
-      <slot name="family-proxy" v-else-if="node.type === 'family-proxy'">
+      <slot name="family-proxy" v-else-if="node.type === 'family'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <Task
             v-cylc-object="node.node"
-            :key="node.node.id"
+            :key="node.id"
             :task="node.node"
           />
-          <span class="mx-1">{{ node.node.name }}</span>
+          <span class="mx-1">{{ node.name }}</span>
         </div>
       </slot>
-      <slot name="task-proxy" v-else-if="node.type === 'task-proxy'">
+      <slot name="task-proxy" v-else-if="node.type === 'task'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <!-- Task summary -->
           <Task
             v-cylc-object="node.node"
-            :key="node.node.id"
+            :key="node.id"
             :task="node.node"
             :startTime="taskStartTime(node.node, latestJob(node))"
           />
+          <!-- TODO: we shouldn't be storing the job in the task node -->
           <div v-if="!isExpanded" class="node-summary">
             <!-- most recent job summary -->
             <Job
@@ -74,14 +75,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               style="margin-left: 0.25em;"
             />
           </div>
-          <span class="mx-1">{{ node.node.name }}</span>
+          <span class="mx-1">{{ node.name }}</span>
         </div>
       </slot>
       <slot name="job" v-else-if="node.type === 'job'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <Job
             v-cylc-object="node.node"
-            :key="node.node.id"
+            :key="node.id"
             :status="node.node.state"
           />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
@@ -138,12 +139,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div class="arrow-up" :style="leafTriangleStyle"></div>
           <div class="leaf-data font-weight-light py-4 pl-2">
             <div
-              v-for="jobDetail in node.node.details"
-              :key="jobDetail.id"
+              v-for="item in leafProperties"
+              :key="item.property"
               class="leaf-entry"
             >
-              <span class="px-4 leaf-entry-title">{{ jobDetail.title }}</span>
-              <span class="grey--text leaf-entry-value">{{ jobDetail.value }}</span>
+              <span class="px-4 leaf-entry-title">{{ item.title }}</span>
+              <span class="grey--text leaf-entry-value">{{ node.node[item.property] }}</span>
             </div>
             <v-divider class="ml-3 mr-5" />
             <div class="leaf-entry">
@@ -177,8 +178,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <span
             v-if="node && node.node"
             @click="nodeClicked"
-            :key="node.node.id"
-            class="mx-1">{{ node.node.name }}</span>
+            :key="node.id"
+            class="mx-1">{{ node.name }}</span>
         </div>
       </slot>
       <slot></slot>
@@ -186,7 +187,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <span v-show="isExpanded">
       <!-- component recursion -->
       <TreeItem
+        v-if="node.type== 'job'"
+        ref="treeitem"
+        :key="'${node.id}-job-details'"
+        :node="{
+          id: '${node.id}-job-details',
+          type: 'job-details',
+          node: node.node
+        }"
+        :depth="depth + 1"
+        :hoverable="hoverable"
+        :initialExpanded="initialExpanded"
+        v-on:tree-item-created="$listeners['tree-item-created']"
+        v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
+        v-on:tree-item-expanded="$listeners['tree-item-expanded']"
+        v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
+        v-on:tree-item-clicked="$listeners['tree-item-clicked']"
+      />
+      <TreeItem
+        v-else-if="node.type== 'cycle'"
+        v-for="child in node.familyTree"
+        ref="treeitem"
+        :key="child.id"
+        :node="child"
+        :depth="depth + 1"
+        :hoverable="hoverable"
+        :initialExpanded="initialExpanded"
+        v-on:tree-item-created="$listeners['tree-item-created']"
+        v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
+        v-on:tree-item-expanded="$listeners['tree-item-expanded']"
+        v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
+        v-on:tree-item-clicked="$listeners['tree-item-clicked']"
+      />
+      <TreeItem
         v-for="child in node.children"
+        v-else
         ref="treeitem"
         :key="child.id"
         :node="child"

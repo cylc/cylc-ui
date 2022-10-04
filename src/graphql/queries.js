@@ -46,13 +46,21 @@ fragment WorkflowData on Workflow {
 
 const CYCLEPOINT_DATA_FRAGMENT = `
 fragment CyclePointData on FamilyProxy {
+  __typename
   id
   cyclePoint
+  ancestors {
+    name
+  }
+  childTasks {
+    id
+  }
 }
 `
 
 const FAMILY_PROXY_DATA_FRAGMENT = `
 fragment FamilyProxyData on FamilyProxy {
+  __typename
   id
   name
   state
@@ -62,6 +70,12 @@ fragment FamilyProxyData on FamilyProxy {
     name
     cyclePoint
     state
+  }
+  ancestors {
+    name
+  }
+  childTasks {
+    id
   }
 }
 `

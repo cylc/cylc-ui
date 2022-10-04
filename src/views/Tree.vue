@@ -67,13 +67,18 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflow']),
+    ...mapState('workflows', ['cylcTree']),
+    workflowIDs () {
+      return [this.workflowId]
+    },
     workflows () {
-      return this.workflow &&
-        this.workflow.tree &&
-        this.workflow.tree.children
-        ? this.workflow.tree.children
-        : []
+      const ret = []
+      for (const id in this.cylcTree.$index || {}) {
+        if (this.workflowIDs.includes(id)) {
+          ret.push(this.cylcTree.$index[id])
+        }
+      }
+      return ret
     },
     query () {
       return new SubscriptionQuery(

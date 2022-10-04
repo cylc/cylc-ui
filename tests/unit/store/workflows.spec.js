@@ -535,74 +535,126 @@ describe.only('cylc tree', () => {
     ])
   })
 
-  /* it('looks like', () => {
+  it('has family values', () => {
     store.commit('workflows/CREATE')
 
-    store.commit('workflows/UPDATE', { id: '~a/b//', x: 1 })
-    store.commit('workflows/UPDATE', { id: '~a/b//1/x', x: 2 })
-    store.commit('workflows/UPDATE', { id: '~a/b//1/y', x: 3 })
-    store.commit('workflows/UPDATE', { id: '~a/b//$edge|1/x|1/y', x: 4 })
+    // insert a nested family in a single operation
+    store.commit(
+      'workflows/UPDATE',
+      {
+        id: '~u/w//1/PENGUIN',
+        name: 'PENGUIN',
+        ancestors: [
+          { name: 'root' },
+          { name: 'ANIMAL' }
+        ],
+        __typename: 'FamilyProxy'
+      }
+    )
 
-    const tree = {
-      children: [
-        {
-          id: '~a',
-          tokens: new Tokens('~a'),
-          type: 'user',
-          node: { id: '~a' },
-          children: [
-            {
-              id: '~a/b',
-              tokens: new Tokens('~a/b'),
-              type: 'workflow',
-              node: { id: '~a/b', x: 1 },
-              $edges: [
-                {
-                  id: '~a/b//$edge|1/x|1/y',
-                  type: 'edge',
-                  node: { id: '~a/b//$edge|1/x|1/y', x: 4 }
-                }
-              ],
-              $namespaces: [
-              ],
-              children: [
-                {
-                  id: '~a/b//1',
-                  tokens: new Tokens('~a/b//1'),
-                  type: 'cycle',
-                  node: { id: '~a/b//1' },
-                  children: [
-                    {
-                      id: '~a/b//1/x',
-                      tokens: new Tokens('~a/b//1/x'),
-                      type: 'task',
-                      node: { id: '~a/b//1/x', x: 2 },
-                      children: []
-                    },
-                    {
-                      id: '~a/b//1/y',
-                      tokens: new Tokens('~a/b//1/y'),
-                      type: 'task',
-                      node: { id: '~a/b//1/y', x: 3 },
-                      children: []
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-    tree.$index = {
-      '~a': tree.children[0],
-      '~a/b': tree.children[0].children[0],
-      '~a/b//1': tree.children[0].children[0].children[0],
-      '~a/b//1/x': tree.children[0].children[0].children[0].children[0],
-      '~a/b//1/y': tree.children[0].children[0].children[0].children[1],
-      '~a/b//$edge|1/x|1/y': tree.children[0].children[0].$edges[0]
-    }
+    // the family tree can be found on the cycle node
+    const cycle = store.state.workflows.cylcTree.$index['~u/w//1']
+    expect(cycle.type).to.equal('cycle')
+    expect(cycle.id).to.equal('~u/w//1')
+    expect(cycle.children).to.deep.equal([])
+    expect(cycle.familyTree.length).to.equal(1)
 
-    expect(store.state.workflows.cylcTree).to.deep.equal(tree)
-  }) */
+    // the tree contains "first parent" family tree starting at root...
+    const root = cycle.familyTree[0]
+    expect(root.name).to.equal('root')
+    expect(root.type).to.equal('family')
+    expect(root.children.length).to.equal(1)
+
+    // ...including all intermediate families...
+    const animal = root.children[0]
+    expect(animal.name).to.equal('ANIMAL')
+    expect(animal.type).to.equal('family')
+    expect(animal.children.length).to.equal(1)
+
+    // ...down to the bottom level family
+    const penguin = animal.children[0]
+    expect(penguin.name).to.equal('PENGUIN')
+    expect(penguin.type).to.equal('family')
+    expect(penguin.children.length).to.equal(0)
+
+    // add families which are already present to test handing of duplicate
+    // additions
+    store.commit('workflows/UPDATE', { id: '~u/w//1/root', foo: 1 })
+    store.commit('workflows/UPDATE', { id: '~u/w//1/ANIMAL', foo: 2 })
+    store.commit('workflows/UPDATE', { id: '~u/w//1/PENGUIN', foo: 3 })
+
+    // the nodes should be updated with the new information
+    // no duplicate nodes should have been created
+    expect(cycle.children).to.deep.equal([])
+    expect(cycle.familyTree.length).to.equal(1)
+    expect(root.type).to.equal('family')
+    expect(root.children.length).to.equal(1)
+    expect(root.node.foo).to.equal(1)
+    expect(animal.type).to.equal('family')
+    expect(animal.children.length).to.equal(1)
+    expect(animal.node.foo).to.equal(2)
+    expect(penguin.children.length).to.equal(0)
+    expect(penguin.node.foo).to.equal(3)
+
+    // test adding tasks
+    store.commit('workflows/UPDATE', { id: '~u/w//1/adelie' })
+    store.commit('workflows/UPDATE', { id: '~u/w//1/gentoo' })
+    store.commit('workflows/UPDATE', { id: '~u/w//1/jeffes' })
+    store.commit('workflows/UPDATE', { id: '~u/w//1/great-auk' })
+    store.commit(
+      'workflows/UPDATE',
+      {
+        id: '~u/w//1/PENGUIN',
+        childTasks: [
+          { id: '~u/w//1/adelie' },
+          { id: '~u/w//1/gentoo' },
+          { id: '~u/w//1/jeffes' }
+        ]
+      }
+    )
+    store.commit(
+      'workflows/UPDATE',
+      {
+        id: '~u/w//1/ANIMAL',
+        childTasks: [
+          { id: '~u/w//1/great-auk' }
+        ]
+      }
+    )
+
+    // the tasks should be added under the correct families in the familyTree
+    expect(cycle.children.length).to.equal(4)
+    expect(cycle.familyTree.length).to.equal(1)
+    expect(root.children.length).to.equal(1)
+    expect(animal.children.map(node => node.id)).to.deep.equal([
+      '~u/w//1/great-auk',
+      '~u/w//1/PENGUIN'
+    ])
+    expect(penguin.children.map(node => node.id)).to.deep.equal([
+      '~u/w//1/adelie',
+      '~u/w//1/gentoo',
+      '~u/w//1/jeffes'
+    ])
+
+    // test removing task (1/adelie)
+    store.commit(
+      'workflows/UPDATE',
+      {
+        id: '~u/w//1/PENGUIN',
+        childTasks: [
+          // the childTasks should change triggering an update
+          { id: '~u/w//1/gentoo' },
+          { id: '~u/w//1/jeffes' }
+        ]
+      }
+    )
+    store.commit('workflows/REMOVE', '~u/w//1/adelie')
+
+    // 1/adelie should have been removed from both the regular and family trees
+    expect(cycle.children.length).to.equal(3)
+    expect(penguin.children.map(node => node.id)).to.deep.equal([
+      '~u/w//1/gentoo',
+      '~u/w//1/jeffes'
+    ])
+  })
 })
