@@ -124,13 +124,19 @@ import * as svgPanZoom from 'svg-pan-zoom'
 // views. Data overlap is good because it reduces the amount of data we need
 // to request / store / process.
 const QUERY = gql`
-fragment GraphEdgeData on Edge {
+subscription WorkflowGraphSubscription ($workflowId: ID) {
+  deltas(workflows: [$workflowId], stripNull: true) {
+    ...Deltas
+  }
+}
+
+fragment EdgeData on Edge {
   id
   source
   target
 }
 
-fragment GraphNodeData on TaskProxy {
+fragment TaskProxyData on TaskProxy {
   id
   state
   isHeld
@@ -139,54 +145,52 @@ fragment GraphNodeData on TaskProxy {
   name
 }
 
-fragment GraphJobData on Job {
+fragment JobData on Job {
   id
   state
   name
 }
 
-fragment GraphAddedDelta on Added {
+fragment AddedDelta on Added {
   edges {
-    ...GraphEdgeData
+    ...EdgeData
   }
   taskProxies {
-    ...GraphNodeData
+    ...TaskProxyData
   }
   jobs {
-    ...GraphJobData
+    ...JobData
   }
 }
 
-fragment GraphUpdatedDelta on Updated {
+fragment UpdatedDelta on Updated {
   edges {
-    ...GraphEdgeData
+    ...EdgeData
   }
   taskProxies {
-    ...GraphNodeData
+    ...TaskProxyData
   }
   jobs {
-    ...GraphJobData
+    ...JobData
   }
 }
 
-fragment GraphDeltas on Deltas {
+fragment PrunedDelta on Pruned {
+  workflow
+  edges
+  taskProxies
+  jobs
+}
+
+fragment Deltas on Deltas {
   added {
-    ...GraphAddedDelta
+    ...AddedDelta
   }
   updated {
-    ...GraphUpdatedDelta
+    ...UpdatedDelta
   }
   pruned {
-    workflow
-    edges
-    taskProxies
-    jobs
-  }
-}
-
-subscription OnWorkflowTreeDeltasData($workflowId: ID) {
-  deltas(workflows: [$workflowId], stripNull: true) {
-    ...GraphDeltas
+    ...PrunedDelta
   }
 }
 `

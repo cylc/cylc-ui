@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import gql from 'graphql-tag'
 import isEqual from 'lodash/isEqual'
 import ViewState from '@/model/ViewState.model'
 import Subscription from '@/model/Subscription.model'
@@ -418,7 +419,7 @@ class WorkflowService {
       subscription.reload = true
     }
     // And here we set the new merged-query. Voila!
-    subscription.query.query = baseSubscriber.query.query
+    subscription.query.query = gql(finalQuery)
   }
 }
 

@@ -204,7 +204,7 @@ ${WORKFLOW_DATA_FRAGMENT}
  * @type {DocumentNode}
  */
 const WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION = gql`
-subscription WorkflowsTableQuery {
+subscription Workflow {
   deltas (stripNull: true) {
     id
     added {
@@ -232,28 +232,28 @@ ${WORKFLOW_DATA_FRAGMENT}
  * @type {DocumentNode}
  */
 const WORKFLOW_TREE_DELTAS_SUBSCRIPTION = gql`
-subscription OnWorkflowTreeDeltasData ($workflowId: ID) {
+subscription Workflow ($workflowId: ID) {
   deltas (workflows: [$workflowId], stripNull: true) {
-   ...WorkflowTreeDeltas
+   ...Deltas
   }
 }
 
 # TREE DELTAS BEGIN
 
-fragment WorkflowTreeDeltas on Deltas {
+fragment Deltas on Deltas {
   id
   added {
-    ...WorkflowTreeAddedData
+    ...AddedDelta
   }
   updated {
-    ...WorkflowTreeUpdatedData
+    ...UpdatedDelta
   }
   pruned {
-    ...WorkflowTreePrunedData
+    ...PrunedDelta
   }
 }
 
-fragment WorkflowTreeAddedData on Added {
+fragment AddedDelta on Added {
   workflow {
     ...WorkflowData
   }
@@ -271,7 +271,7 @@ fragment WorkflowTreeAddedData on Added {
   }
 }
 
-fragment WorkflowTreeUpdatedData on Updated {
+fragment UpdatedDelta on Updated {
   taskProxies {
     ...TaskProxyData
   }
@@ -283,7 +283,7 @@ fragment WorkflowTreeUpdatedData on Updated {
   }
 }
 
-fragment WorkflowTreePrunedData on Pruned {
+fragment PrunedDelta on Pruned {
   familyProxies
   taskProxies
   jobs
@@ -312,28 +312,28 @@ ${JOB_DATA_FRAGMENT}
  * @type {DocumentNode}
  */
 const WORKFLOW_TABLE_DELTAS_SUBSCRIPTION = gql`
-subscription OnWorkflowTableDeltasData ($workflowId: ID) {
+subscription Workflow ($workflowId: ID) {
   deltas(workflows: [$workflowId], stripNull: true) {
-    ...WorkflowTableDeltas
+    ...Deltas
   }
 }
 
 # TABLE DELTAS BEGIN
 
-fragment WorkflowTableDeltas on Deltas {
+fragment Deltas on Deltas {
   id
   added {
-    ...WorkflowTableAddedData
+    ...AddedDelta
   }
   updated {
-    ...WorkflowTableUpdatedData
+    ...UpdatedDelta
   }
   pruned {
-    ...WorkflowTablePrunedData
+    ...PrunedDelta
   }
 }
 
-fragment WorkflowTableAddedData on Added {
+fragment AddedDelta on Added {
   workflow {
     ...WorkflowData
   }
@@ -345,7 +345,7 @@ fragment WorkflowTableAddedData on Added {
   }
 }
 
-fragment WorkflowTableUpdatedData on Updated {
+fragment UpdatedDelta on Updated {
   taskProxies {
     ...TaskProxyData
   }
@@ -354,7 +354,7 @@ fragment WorkflowTableUpdatedData on Updated {
   }
 }
 
-fragment WorkflowTablePrunedData on Pruned {
+fragment PrunedDelta on Pruned {
   taskProxies
   jobs
 }
