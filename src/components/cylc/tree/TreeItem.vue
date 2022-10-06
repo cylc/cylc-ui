@@ -206,7 +206,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       />
       <TreeItem
         v-else-if="node.type== 'cycle'"
-        v-for="child in node.familyTree"
+        v-for="child in node.familyTree[0].children"
         ref="treeitem"
         :key="child.id"
         :node="child"
@@ -325,7 +325,12 @@ export default {
     //   return this.treeItemCache[this.node.id].filtered
     // },
     hasChildren () {
-      return Boolean(this.node.children?.length)
+      return (
+        // "job" nodes have auto-generated "job-detail" nodes
+        this.node.type === 'job' ||
+        // otherwise look to see whether there are any children
+        Boolean(this.node.children?.length)
+      )
     },
     /** Get the node indentation in units of em. */
     nodeIndentation () {

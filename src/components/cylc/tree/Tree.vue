@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:activator="{ on }">
               <v-btn
                 v-on="on"
-                @click="expandAll((treeitem) => !['task-proxy', 'job', 'job-details'].includes(treeitem.node.type))"
+                @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
                 icon
               >
                 <v-icon>{{ svgPaths.expandIcon }}</v-icon>
@@ -273,13 +273,13 @@ export default {
     },
     filterNode (node) {
       let filtered = false
-      if (['cyclepoint', 'family-proxy'].includes(node.type)) {
+      if (['workflow', 'cycle', 'family'].includes(node.type)) {
         for (const child of node.children) {
           filtered = this.filterNode(child) || filtered
         }
-      } else if (node.type === 'task-proxy') {
+      } else if (node.type === 'task') {
         if (this.filterByTaskName() && this.filterByTaskState()) {
-          filtered = node.node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
+          filtered = node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
         } else if (this.filterByTaskName()) {
           filtered = node.node.name.includes(this.activeFilters.name)
         } else if (this.filterByTaskState()) {
