@@ -108,7 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Vue from 'vue'
 import gql from 'graphql-tag'
 import { mapState } from 'vuex'
-import { mdiFileTree } from '@mdi/js'
+import { mdiGraph } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -267,7 +267,7 @@ export default {
     return {
       widget: {
         title: 'graph',
-        icon: mdiFileTree
+        icon: mdiGraph
       },
       // the graph orientation
       orientation: 'TB',
