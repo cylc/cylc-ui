@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div>
+  <div style="width: 100%; height: 100%">
     <!-- the controls -->
     <v-btn
       @click="this.transpose"
