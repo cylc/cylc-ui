@@ -36,8 +36,6 @@ import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import WorkflowCallback from '@/components/cylc/common/callbacks'
-import TableCallback from '@/components/cylc/table/callbacks'
 // import { WORKFLOW_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '../graphql/queries'
 
@@ -64,9 +62,29 @@ export default {
     }
   }),
   computed: {
-    ...mapState('table', ['table']),
+    ...mapState('workflows', ['cylcTree']),
+    workflowIDs () {
+      return [this.workflowId]
+    },
+    workflows () {
+      const ret = []
+      for (const id in this.cylcTree.$index || {}) {
+        if (this.workflowIDs.includes(id)) {
+          ret.push(this.cylcTree.$index[id])
+        }
+      }
+      return ret
+    },
     tasks () {
-      return Object.values(this.table)
+      const ret = []
+      for (const workflow of this.workflows) {
+        for (const cycle of workflow.children) {
+          for (const task of cycle.children) {
+            ret.push(task)
+          }
+        }
+      }
+      return ret
     },
     query () {
       return new SubscriptionQuery(
@@ -79,10 +97,7 @@ export default {
         // we really should consider giving these unique names, as technically they are just use as the subscription names
         // By using a unique name, we can avoid callback merging errors like the one documented line 350 in the workflow.service.js file
         'workflow',
-        [
-          new WorkflowCallback(),
-          new TableCallback()
-        ]
+        []
       )
     }
   }

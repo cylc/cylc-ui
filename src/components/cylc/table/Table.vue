@@ -131,31 +131,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </div>
                     <div class="mr-1">
                       <Job
-                        v-if="item.jobs.length"
-                        v-cylc-object="item.jobs[0]"
-                        :status="item.jobs[0].state"
-                        :previous-state="item.jobs.length > 1 ? item.jobs[1].state : ''"
+                        v-cylc-object="item.node"
+                        :status="item.node.state"
+                        :previous-state="getPreviousJobNode(item).state"
                       />
                     </div>
                     <div>{{ item.node.name }}</div>
                   </div>
                 </td>
                 <td>
-                  <v-btn icon class="v-data-table__expand-icon" @click="expanded.push(item)" v-if="item.jobs.length > 0 && !expanded.includes(item)">
+                  <v-btn
+                    icon
+                    class="v-data-table__expand-icon"
+                    @click="expanded.push(item)"
+                    v-if="(item.children|| []).length > 0 && !expanded.includes(item)"
+                  >
                     <v-icon>{{ icons.mdiChevronDown }}</v-icon>
                   </v-btn>
-                  <v-btn icon class="v-data-table__expand-icon v-data-table__expand-icon--active" @click="expanded.splice(expanded.indexOf(item), 1)" v-if="item.jobs.length > 0 && expanded.includes(item)">
+                  <v-btn icon class="v-data-table__expand-icon v-data-table__expand-icon--active" @click="expanded.splice(expanded.indexOf(item), 1)" v-if="(item.children || []).length > 0 && expanded.includes(item)">
                     <v-icon>{{ icons.mdiChevronDown }}</v-icon>
                   </v-btn>
                 </td>
                 <td>{{ item.node.cyclePoint }}</td>
-                <td>{{ item.latestJob.platform }}</td>
-                <td>{{ item.latestJob.jobRunnerName }}</td>
-                <td>{{ item.latestJob.jobId }}</td>
-                <td>{{ item.latestJob.submittedTime }}</td>
-                <td>{{ item.latestJob.startedTime }}</td>
-                <td>{{ item.latestJob.finishedTime }}</td>
-                <td>{{ item.meanElapsedTime }}</td>
+                <td>{{ getLatestJobNode(item).platform }}</td>
+                <td>{{ getLatestJobNode(item).jobRunnerName }}</td>
+                <td>{{ getLatestJobNode(item).jobId }}</td>
+                <td>{{ getLatestJobNode(item).submittedTime }}</td>
+                <td>{{ getLatestJobNode(item).startedTime }}</td>
+                <td>{{ getLatestJobNode(item).finishedTime }}</td>
+                <td>{{ item.node.meanElapsedTime }}</td>
               </tr>
             </template>
             <template v-slot:expanded-item="{ item }">
@@ -163,17 +167,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!--              <td :colspan="headers.length">-->
 <!--                More info about {{ item.node.id }}-->
 <!--              </td>-->
-              <tr v-bind:key="job.id" v-for="(job, index) in item.jobs" class="grey lighten-5">
+              <tr
+                v-bind:key="job.id"
+                v-for="(job, index) in item.children"
+                class="grey lighten-5"
+              >
                 <td>
                   <div class="d-flex align-content-center flex-nowrap">
                     <div class="mr-1">
                       <Job
-                        v-cylc-object="job"
+                        v-cylc-object="job.node"
                         :key="`${job.id}-summary-${index}`"
-                        :status="job.state"
+                        :status="job.node.state"
                         style="margin-left: 1.3em;"
                       />
-                      <span class="mx-1">#{{ job.submitNum }}</span>
+                      <span class="mx-1">#{{ job.node.submitNum }}</span>
                     </div>
                   </div>
                 </td>
@@ -181,12 +189,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td>
                   <!--{{ item.node.cyclePoint }}-->
                 </td>
-                <td>{{ job.platform }}</td>
-                <td>{{ job.jobRunnerName }}</td>
-                <td>{{ job.jobId }}</td>
-                <td>{{ job.submittedTime }}</td>
-                <td>{{ job.startedTime }}</td>
-                <td>{{ job.finishedTime }}</td>
+                <td>{{job.node.platform }}</td>
+                <td>{{job.node.jobRunnerName }}</td>
+                <td>{{job.node.jobId }}</td>
+                <td>{{job.node.submittedTime }}</td>
+                <td>{{job.node.startedTime }}</td>
+                <td>{{job.node.finishedTime }}</td>
                 <td></td>
               </tr>
             </template>
@@ -250,32 +258,32 @@ export default {
         },
         {
           text: 'Host',
-          value: 'latestJob.platform',
+          value: 'getLatestJobNode(node).platform',
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
           text: 'Job System',
-          value: 'latestJob.jobRunnerName',
+          value: 'getLatestJobNode(node).jobRunnerName',
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
           text: 'Job ID',
-          value: 'latestJob.jobId',
+          value: 'getLatestJobNode(node).jobId',
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         },
         {
           text: 'T-submit',
-          value: 'latestJob.submittedTime',
+          value: 'getLatestJobNode(node).submittedTime',
           sort: datetimeComparator
         },
         {
           text: 'T-start',
-          value: 'latestJob.startedTime',
+          value: 'getLatestJobNode(node).startedTime',
           sort: datetimeComparator
         },
         {
           text: 'T-finish',
-          value: 'latestJob.finishedTime',
+          value: 'getLatestJobNode(node).finishedTime',
           sort: datetimeComparator
         },
         {
@@ -318,10 +326,27 @@ export default {
           return this.tasksFilterStates.includes(task.node.state)
         }
         return true
+
       })
     }
   },
   methods: {
+    getLatestJobNode (taskNode) {
+      if (taskNode.children.length === 0) {
+        // handle a task with no jobs
+        return {}
+      }
+      // return the last job
+      return taskNode.children.slice(-1)[0].node
+    },
+    getPreviousJobNode (taskNode) {
+      if (taskNode.children.length < 2) {
+        // handle a task with no jobs
+        return {}
+      }
+      // return the penultimate job
+      return taskNode.children.slice(-2, -1)[0].node
+    },
     filterByTaskName () {
       return this.activeFilters &&
         this.activeFilters.name !== undefined &&
