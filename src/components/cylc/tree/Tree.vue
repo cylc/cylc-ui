@@ -136,9 +136,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
         >
           <tree-item
-            v-for="workflow of workflows"
-            :key="workflow.id"
-            :node="workflow"
+            v-for="child of rootChildren"
+            :key="child.id"
+            :node="child"
             :hoverable="hoverable"
             :initialExpanded="expanded"
             v-on:tree-item-created="onTreeItemCreated"
@@ -207,6 +207,18 @@ export default {
     }
   },
   computed: {
+    rootChildren () {
+      // array of nodes at the top of the tree
+      if (this.workflows.length === 1) {
+        // if there is only one workflow we return its children
+        // (i.e. cycle points)
+        return this.workflows[0].children
+      } else {
+        // if there are multiple children we need to include the workflow
+        // nodes to allow us to differentiate between them
+        return this.workflows
+      }
+    },
     taskStates: () => {
       return TaskState.enumValues.map(taskState => {
         return {
