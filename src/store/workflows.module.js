@@ -331,8 +331,8 @@ function getFamilyTree (tokens, node) {
   familyPath.push(node.name)
   ret.push([
     'family',
-    node.name,
-    lastTokens.clone({ task: node.name })
+    tokens[tokens.lowestToken()],
+    tokens
   ])
 
   return ret
@@ -447,9 +447,12 @@ function remove (state, prunedID) {
     parentNode.$namespaces.splice(
       parentNode.$namespaces.indexOf(treeNode), 1
     )
+  } else if (treeNode.type === 'family') {
+    const firstParent = getIndex(state, treeNode.node.ancestors.slice(-1).id)
+    // remove family proxy node
+    removeChild(state, treeNode, firstParent)
   } else {
-    // remove ~user[/DIR...]/workflow//cycle[/FAM...]/task/job node
-    console.log(treeNode.id, parentNode.id)
+    // remove ~user[/path/to...]/workflow//cycle/task/job node
     removeTree(state, treeNode)
     cleanParents(state, parentNode)
   }
@@ -504,7 +507,6 @@ const mutations = {
     Object.keys(pick(pruned, KEYS)).forEach(prunedKey => {
       if (pruned[prunedKey]) {
         for (const prunedID of pruned[prunedKey]) {
-          console.log(`REMOVE ${prunedID}`)
           remove(state, prunedID)
         }
       }

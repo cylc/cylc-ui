@@ -657,4 +657,69 @@ describe.only('cylc tree', () => {
       '~u/w//1/jeffes'
     ])
   })
+
+  it('has family divisions', () => {
+    store.commit('workflows/CREATE')
+
+    // add a family and some tasks
+    store.commit('workflows/UPDATE', { id: '~u/w//1/adelie' })
+    store.commit('workflows/UPDATE', { id: '~u/w//1/gentoo' })
+    store.commit('workflows/UPDATE', { id: '~u/w//1/jeffes' })
+    store.commit('workflows/UPDATE', { id: '~u/w//1/great-auk' })
+    store.commit(
+      'workflows/UPDATE',
+      {
+        id: '~u/w//1/PENGUIN',
+        childTasks: [
+          { id: '~u/w//1/adelie' },
+          { id: '~u/w//1/gentoo' },
+          { id: '~u/w//1/jeffes' }
+        ],
+        ancestors: [
+          { name: 'root' }
+        ],
+        __typename: 'FamilyProxy'
+      }
+    )
+    // remove a family
+    store.commit('workflows/REMOVE', '~u/w//1/PENGUIN')
+    const cycle = store.state.workflows.cylcTree.$index['~u/w//1']
+
+    // the family tree should be destroyed...
+    expect(cycle.familyTree.map(node => node.id)).to.deep.equal([
+      '~u/w//1/root'
+    ])
+    expect(cycle.familyTree[0].children.map(node => node.id)).to.deep.equal([])
+
+    // ... however, the task tree should remain
+    expect(cycle.children.map(node => node.id)).to.deep.equal([
+      '~u/w//1/adelie',
+      '~u/w//1/gentoo',
+      '~u/w//1/great-auk',
+      '~u/w//1/jeffes'
+    ])
+  })
+
+  it('welcomes cycles to the family', () => {
+    // we subscribe to cycle points by subscribing to instances of the "root"
+    // family
+    // we need to ensure that these cycle point nodes don't mess with family
+    // logic
+    store.commit('workflows/CREATE')
+
+    // add a family and some tasks
+    store.commit(
+      'workflows/UPDATE',
+      {
+        id: '~u/w//1/root',
+        __typename: 'FamilyProxy'
+      }
+    )
+
+    const cycle = store.state.workflows.cylcTree.$index['~u/w//1']
+    expect(cycle.children.length).to.equal(0)
+    expect(cycle.familyTree.map(c => c.id)).to.deep.equal([
+      '~u/w//1/root'
+    ])
+  })
 })
