@@ -357,9 +357,9 @@ function createTreeNode (state, id, tokens, node) {
     tokens = tree.pop()[2]
     id = tokens.id
   } else {
-    tree.pop()
-    type = tokens.lowestToken()
-    name = tokens[tokens.lowestToken()]
+    const last = tree.pop()
+    type = last[0]
+    name = last[1]
   }
 
   let pointer = state.cylcTree

@@ -722,4 +722,38 @@ describe.only('cylc tree', () => {
       '~u/w//1/root'
     ])
   })
+
+  it('should not duplicate workflows between subscriptions', () => {
+    // We have per-workflow and global subscriptions, both of which will
+    // request workflow data. We need to make sure these don't result in
+    // duplicated nodes.
+    store.commit('workflows/CREATE')
+
+    store.commit(
+      'workflows/UPDATE',
+      {
+        id: '~u/a/b/c'
+      }
+    )
+
+    store.commit(
+      'workflows/UPDATE',
+      {
+        id: '~u/a/b/c//1/x'
+      }
+    )
+
+    const user = store.state.workflows.cylcTree.$index['~u']
+    expect(user.children.map(c => c.id)).to.deep.equal([
+      '~u/a'
+    ])
+    const workflowA = user.children[0]
+    expect(workflowA.children.map(c => c.id)).to.deep.equal([
+      '~u/a/b'
+    ])
+    const workflowB = workflowA.children[0]
+    expect(workflowB.children.map(c => c.id)).to.deep.equal([
+      '~u/a/b/c'
+    ])
+  })
 })
