@@ -78,8 +78,10 @@ const getters = {
     if (state.workflowName === null) {
       return null
     }
-    return Object.values(state.workflows)
-      .find(workflow => workflow.name === state.workflowName)
+    console.log(state.workflowName)
+    return getIndex(state, state.workflowName).id
+    // return Object.values(state.workflows)
+    //   .find(workflow => workflow.name === state.workflowName)
   },
   getTree: state => {
     console.log('getTree')
