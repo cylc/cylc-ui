@@ -132,13 +132,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="mh-100 position-relative"
       >
         <v-container
-            fluid
+          fluid
           class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
         >
           <tree-item
             v-for="child of rootChildren"
             :key="child.id"
             :node="child"
+            :stopOn="stopOn"
             :hoverable="hoverable"
             :initialExpanded="expanded"
             v-on:tree-item-created="onTreeItemCreated"
@@ -169,6 +170,13 @@ export default {
     workflows: {
       type: Array,
       required: true
+    },
+    stopOn: {
+      // Array of node types to stop recursion on
+      // i.e. don't show child nodes below the provided types
+      type: Array,
+      required: false,
+      default: () => []
     },
     hoverable: Boolean,
     activable: Boolean,

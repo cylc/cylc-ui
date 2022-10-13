@@ -103,13 +103,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
       <!-- data -->
       <div
-        v-if="!isLoading && filteredWorkflows && filteredWorkflows.length > 0"
+        v-if="!isLoading"
         class="c-gscan-workflows flex-grow-1"
       >
         <tree
           :filterable="false"
           :expand-collapse-toggle="false"
-          :workflows="filteredWorkflows"
+          :workflows="workflows"
+          :stopOn="['workflow']"
           class="c-gscan-workflow ma-0 pa-0"
         >
           <template v-slot:node="scope">
@@ -125,10 +126,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-list-item-title>
                 <v-layout align-center align-content-center d-flex flex-nowrap>
                   <v-flex
-                    v-if="scope.node.type === 'workflow-name-part'"
+                    v-if="scope.node.type === 'workflow-part'"
                     class="c-gscan-workflow-name"
                   >
-                    <span>{{ scope.node.node.name || scope.node.id }}</span>
+                    <span>{{ scope.node.name || scope.node.id }}</span>
                   </v-flex>
                   <v-flex
                     v-else-if="scope.node.type === 'workflow'"
@@ -207,9 +208,8 @@ import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
-import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
+// import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
-import GScanCallback from '@/components/cylc/gscan/callbacks'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
@@ -228,9 +228,7 @@ export default {
         GSCAN_DELTAS_SUBSCRIPTION,
         {},
         'root',
-        [
-          new GScanCallback()
-        ]
+        []
       ),
       maximumTasksDisplayed: 5,
       svgPaths: {
@@ -313,15 +311,21 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflows']),
+    ...mapState('workflows', ['cylcTree']),
+    workflows () {
+      // TODO: this more nicely
+      return this.cylcTree.children
+    },
     workflowNodes () {
       // NOTE: In case we decide to allow the user to switch between hierarchical and flat
       //       gscan view, then all we need to do is just pass a boolean data-property to
       //       the `createWorkflowNode` function below. Then reactivity will take care of
       //       the rest.
-      const reducer = (acc, workflow) => addNodeToTree(createWorkflowNode(workflow, /* hierarchy */true), acc)
-      return Object.values(this.workflows)
-        .reduce(reducer, [])
+
+      // const reducer = (acc, workflow) => addNodeToTree(createWorkflowNode(workflow, /* hierarchy */true), acc)
+      // return Object.values(this.workflows)
+      //   .reduce(reducer, [])
+      return []
     },
     /**
      * @return {Array<String>}
@@ -406,7 +410,7 @@ export default {
 
     workflowLink (node) {
       if (node.type === 'workflow') {
-        return `/workflows/${ node.node.name }`
+        return `/workflows/${ node.tokens.workflow }`
       }
       return ''
     },

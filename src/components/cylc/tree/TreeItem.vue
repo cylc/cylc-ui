@@ -184,7 +184,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </slot>
       <slot></slot>
     </v-flex>
-    <span v-show="isExpanded">
+    <span
+      v-show="isExpanded"
+      v-if="!stopOn.includes(node.type)"
+    >
       <!-- component recursion -->
       <TreeItem
         v-if="node.type== 'job'"
@@ -196,6 +199,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           node: node.node
         }"
         :depth="depth + 1"
+        :stopOn="stopOn"
         :hoverable="hoverable"
         :initialExpanded="initialExpanded"
         v-on:tree-item-created="$listeners['tree-item-created']"
@@ -211,6 +215,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :key="child.id"
         :node="child"
         :depth="depth + 1"
+        :stopOn="stopOn"
         :hoverable="hoverable"
         :initialExpanded="initialExpanded"
         v-on:tree-item-created="$listeners['tree-item-created']"
@@ -226,6 +231,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :key="child.id"
         :node="child"
         :depth="depth + 1"
+        :stopOn="stopOn"
         :hoverable="hoverable"
         :initialExpanded="initialExpanded"
         v-on:tree-item-created="$listeners['tree-item-created']"
@@ -267,6 +273,13 @@ export default {
     depth: {
       type: Number,
       default: 0
+    },
+    stopOn: {
+      // Array of node types to stop recursion on
+      // i.e. don't show child nodes below the provided types
+      type: Array,
+      required: false,
+      default: () => []
     },
     hoverable: Boolean,
     initialExpanded: {
@@ -325,6 +338,11 @@ export default {
     //   return this.treeItemCache[this.node.id].filtered
     // },
     hasChildren () {
+      if (this.stopOn.includes(this.node.type)) {
+        // don't show children if the tree has been configured to stop at
+        // this level
+        return false
+      }
       return (
         // "job" nodes have auto-generated "job-detail" nodes
         this.node.type === 'job' ||

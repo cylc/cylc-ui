@@ -73,6 +73,7 @@ export default {
     },
     workflows () {
       const ret = []
+      // TODO: this much more efficiently!!!!
       for (const id in this.cylcTree.$index || {}) {
         if (this.workflowIDs.includes(id)) {
           ret.push(this.cylcTree.$index[id])

@@ -131,34 +131,34 @@ fragment JobData on Job {
  * @type {DocumentNode}
  */
 const GSCAN_DELTAS_SUBSCRIPTION = gql`
-subscription GscanSubscriptionQuery {
+subscription App {
   deltas (stripNull: true) {
-    ...GScanTreeDeltas
+    ...Deltas
   }
 }
 
 # GSCAN DELTAS BEGIN
 
-fragment GScanTreeDeltas on Deltas {
+fragment Deltas on Deltas {
   id
   added {
-    ...GscanAddedData
+    ...AddedDelta
   }
   updated {
-    ...GscanUpdatedData
+    ...UpdatedDelta
   }
   pruned {
     workflow
   }
 }
 
-fragment GscanAddedData on Added {
+fragment AddedDelta on Added {
   workflow {
     ...WorkflowData
   }
 }
 
-fragment GscanUpdatedData on Updated {
+fragment UpdatedDelta on Updated {
   workflow {
     ...WorkflowData
   }
@@ -176,22 +176,36 @@ ${WORKFLOW_DATA_FRAGMENT}
  * @see https://github.com/cylc/cylc-ui/issues/94
  */
 const DASHBOARD_DELTAS_SUBSCRIPTION = gql`
-subscription DashboardSubscriptionQuery {
+subscription App {
   deltas (stripNull: true) {
-    id
-    added {
-      workflow {
-        ...WorkflowData
-      }
-    }
-    updated {
-      workflow {
-        ...WorkflowData
-      }
-    }
-    pruned {
-      workflow
-    }
+    ...Deltas
+  }
+}
+
+# GSCAN DELTAS BEGIN
+
+fragment Deltas on Deltas {
+  id
+  added {
+    ...AddedDelta
+  }
+  updated {
+    ...UpdatedDelta
+  }
+  pruned {
+    workflow
+  }
+}
+
+fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
   }
 }
 
