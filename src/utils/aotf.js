@@ -91,6 +91,19 @@ import { IntrospectionInputType } from 'graphql'
  */
 
 /**
+ * @typedef {Object} Query
+ * @property {string} name
+ * @property {MutationArg[]} args
+ * @property {Array} fields
+ */
+
+/**
+ * @typedef {Object} Field
+ * @property {string} name - lowercase field name
+ * @property {Field[]=} fields - list of sub-fields
+ */
+
+/**
  * @typedef {Object} MutationResponse
  * @property {TaskState} status
  * @property {string} message
@@ -324,6 +337,49 @@ export function camelToWords (camel) {
 }
 
 /**
+ * Find the GraphQL object with the given name.
+ *
+ * @export
+ * @template {Object} T
+ * @param {T[]} objs - List of GraphQL objects, which have a property 'name'
+ * @param {string} name - Name to match
+ * @return {T=}
+ */
+export function findByName (objs, name) {
+  return objs.find(type => type.name === name)
+}
+
+/**
+ * Use the introspection type to extract all fields for a query/mutation if
+ * no fields are given.
+ *
+ * This allows you to do a query and return all fields without having to list
+ * them all out.
+ *
+ * @param {IntrospectionInputType} type - GraphQL type that we are looking for fields in.
+ * @param {?Field[]} fields - Subset of fields on the above type to extract. If nullish, extract all fields (if any).
+ * @param {IntrospectionInputType[]} types - Full list of GraphQL types from introspection query.
+ * @return {?Field[]}
+ */
+export function extractFields (type, fields, types) {
+  fields ??= type.fields // extract all fields if none given
+  if (!fields) {
+    return null
+  }
+  return fields.map(field => {
+    const gqlField = findByName(type.fields, field.name)
+    if (!gqlField) {
+      throw new Error(`No such field "${field.name}" on type "${type.name}"`)
+    }
+    const fieldType = findByName(types, getBaseType(gqlField.type).name)
+    return {
+      name: field.name,
+      fields: extractFields(fieldType, field.fields, types)
+    }
+  })
+}
+
+/**
  * Process mutations from an introspection query.
  *
  * This adds some computed fields prefixed with an underscore for later use:
@@ -454,10 +510,13 @@ export function getIntrospectionQuery () {
   // a little easier by restricting the scope of the default
   // introspection query
   const fullIntrospection = gql(getGraphQLIntrospectionQuery())
-  const mutationQuery = gql(`
+  const query = gql(`
     query {
       __schema {
         mutationType {
+          ...FullType
+        }
+        queryType {
           ...FullType
         }
         types {
@@ -466,14 +525,14 @@ export function getIntrospectionQuery () {
       }
     }
   `)
-  // TODO: this returns all types, we only need certain ones
+  // TODO: this returns all queries & types, we only need certain ones
 
   // NOTE: we are converting to string form then re-parsing
   // back to a query, as something funny happens when you
   // try to modify the gql objects by hand.
   return gql(
     // the query we actually want to run
-    print(mutationQuery.definitions[0]) +
+    print(query.definitions[0]) +
     // the fragments which power it
     print(fullIntrospection.definitions[1]) +
     print(fullIntrospection.definitions[2]) +
@@ -551,6 +610,19 @@ export function * iterateType (type) {
     yield type
     type = type.ofType
   }
+}
+
+/**
+ * Walk a GraphQL type and return the final base type.
+ *
+ * E.G. NonNull<List<String>> would return String.
+ *
+ * @export
+ * @param {GQLType} type
+ * @return {GQLType}
+ */
+export function getBaseType (type) {
+  return [...iterateType(type)].pop()
 }
 
 /** Return an appropriate null value for the specified type.
@@ -653,6 +725,48 @@ export function constructMutation (mutation) {
     }
   `.trim()
 }
+/**
+ * Construct a query string from a query object.
+ *
+ * @export
+ * @param {Query} query
+ * @return {string}
+ */
+export function constructQueryStr (query) {
+  const argNames = []
+  const argTypes = []
+  for (const arg of query.args) {
+    argTypes.push(`$${arg.name}: ${argumentSignature(arg)}`)
+    argNames.push(`${arg.name}: $${arg.name}`)
+  }
+
+  /**
+   * @param {Field[]} fields
+   * @param {number} indentLevel
+   * @return {string}
+   */
+  const constructFieldsStr = (fields, indentLevel) => {
+    return fields.map(
+      field => {
+        let ret = '  '.repeat(indentLevel) + field.name
+        if (field.fields) {
+          ret += ' {\n'
+          ret += constructFieldsStr(field.fields, indentLevel + 1)
+          ret += '\n' + '  '.repeat(indentLevel) + '}'
+        }
+        return ret
+      }
+    ).join('\n')
+  }
+
+  return [
+    `query ${query.name}(${argTypes.join(', ')}) {`,
+    `  ${query.name}(${argNames.join(', ')}) {`,
+    constructFieldsStr(query.fields, 2),
+    '  }',
+    '}'
+  ].join('\n').trim()
+}
 
 /**
  * Return any arguments for the mutation which can be determined from tokens.
@@ -728,25 +842,27 @@ async function _mutateError (mutationName, message, response) {
  * Call a mutation.
  *
  * @param {Mutation} mutation
- * @param {Object} args
+ * @param {Object} variables
  * @param {ApolloClient} apolloClient
+ * @param {string=} cylcID
  *
  * @returns {Promise<MutationResponse>} {status, msg}
  */
-export async function mutate (mutation, args, apolloClient) {
+export async function mutate (mutation, variables, apolloClient, cylcID) {
+  const mutationStr = constructMutation(mutation)
   let response = null
   // eslint-disable-next-line no-console
   console.debug([
     `mutation(${mutation.name})`,
-    constructMutation(mutation),
-    args
+    mutationStr,
+    variables
   ])
 
   try {
     // call the mutation
     response = await apolloClient.mutate({
-      mutation: gql(constructMutation(mutation)),
-      variables: args
+      mutation: gql(mutationStr),
+      variables
     })
   } catch (err) {
     // mutation failed (client-server error e.g. variable format, syntax error)
@@ -780,4 +896,28 @@ export async function mutate (mutation, args, apolloClient) {
   } catch (error) {
     return _mutateError(mutation.name, 'invalid response', response)
   }
+}
+
+/**
+ * Send a GraphQL query.
+ *
+ * @export
+ * @param {Query} query - Query to send
+ * @param {Object} variables - Query variables
+ * @param {ApolloClient} apolloClient
+ */
+export async function query (query, variables, apolloClient) {
+  const queryStr = constructQueryStr(query)
+  // eslint-disable-next-line no-console
+  console.debug([
+    `query(${query.name})`,
+    queryStr,
+    variables
+  ])
+
+  const response = await apolloClient.query({
+    query: gql(queryStr),
+    variables
+  })
+  console.log(response)
 }

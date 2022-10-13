@@ -68,6 +68,7 @@ describe('Api On The Fly', () => {
       .intercept('/graphql', {
         data: {
           __schema: {
+            queryType: {},
             mutationType: {
               fields: MUTATIONS
             },

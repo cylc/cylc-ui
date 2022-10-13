@@ -19,11 +19,15 @@ import isEqual from 'lodash/isEqual'
 import ViewState from '@/model/ViewState.model'
 import Subscription from '@/model/Subscription.model'
 import {
+  extractFields,
+  findByName,
+  getBaseType,
   getIntrospectionQuery,
   getMutationArgsFromTokens,
   mutate,
   primaryMutations,
   processMutations,
+  query,
   tokenise
 } from '@/utils/aotf'
 import store from '@/store/index'
@@ -35,15 +39,16 @@ import Alert from '@/model/Alert.model'
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
 import { Deltas } from '@/components/cylc/common/deltas'
-import { GQLType, Mutation, MutationResponse } from '@/utils/aotf'
-import { DocumentNode } from 'graphql'
+import { Mutation, MutationResponse, Query } from '@/utils/aotf'
+import { DocumentNode, IntrospectionInputType } from 'graphql'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 /* eslint-enable no-unused-vars, no-duplicate-imports */
 
 /**
  * @typedef {Object} MutationsAndTypes
  * @property {Mutation[]} mutations
- * @property {GQLType[]} types
+ * @property {Mutation[]} queries
+ * @property {IntrospectionInputType[]} types
  */
 
 /**
@@ -111,6 +116,25 @@ class WorkflowService {
   }
 
   /**
+   * Send a query.
+   *
+   * @param {string} queryName
+   * @param {string[]} argNames
+   * @param {Field[]} fields
+   * @param {Object} variables
+   * @return {Promise<Object>}
+   * @memberof WorkflowService
+   */
+  async query (queryName, argNames, fields, variables) {
+    const queryObj = await this.getQuery(queryName, argNames, fields)
+    return await query(
+      queryObj,
+      variables,
+      this.apolloClient
+    )
+  }
+
+  /**
    * Load mutations for internal use from GraphQL introspection.
    *
    * @returns {Promise<MutationsAndTypes>}
@@ -123,9 +147,10 @@ class WorkflowService {
       fetchPolicy: 'no-cache'
     })
     const mutations = response.data.__schema.mutationType.fields
+    const queries = response.data.__schema.queryType.fields
     const { types } = response.data.__schema
     processMutations(mutations, types)
-    return { mutations, types }
+    return { mutations, queries, types }
   }
 
   /**
@@ -136,7 +161,28 @@ class WorkflowService {
    */
   async getMutation (mutationName) {
     const { mutations } = await this.mutationsAndTypes
-    return mutations.find(mutation => mutation.name === mutationName)
+    return findByName(mutations, mutationName)
+  }
+
+  /**
+   * Return a GraphQL query for a type, containing the given fields.
+   *
+   * @param {string} queryName - Name of the GraphQL query available in the schema.
+   * @param {string[]} argNames - Names of args to supply in the query (note: the variables (i.e. values of the args) are supplied elsewhere).
+   * @param {Field[]} fields - Fields to include in the query.
+   * @return {Promise<Query>}
+   */
+  async getQuery (queryName, argNames, fields) {
+    const { queries, types } = await this.mutationsAndTypes
+    const queryObj = findByName(queries, queryName)
+    const typeName = getBaseType(queryObj.type).name
+    const type = findByName(types, typeName)
+
+    return {
+      name: queryName,
+      args: queryObj.args.filter(({ name }) => argNames.includes(name)),
+      fields: extractFields(type, fields, types)
+    }
   }
 
   // --- GraphQL query subscriptions

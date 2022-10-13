@@ -30,6 +30,7 @@ describe('Mutations component', () => {
           req.reply({
             data: {
               __schema: {
+                queryType: {},
                 mutationType: {
                   fields: MUTATIONS
                 },
