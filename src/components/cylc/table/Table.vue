@@ -110,6 +110,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             item-key="id"
             show-expand
           >
+
+            <!-- eslint-disable-next-line -->
+            <template v-slot:header.node_task_meanElapsedTime="{ header }">
+              <span v-html="header.text"></span>
+            </template>
+
             <template
               v-slot:item="{ item }"
             >
@@ -153,7 +159,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td>{{ item.latestJob.submittedTime }}</td>
                 <td>{{ item.latestJob.startedTime }}</td>
                 <td>{{ item.latestJob.finishedTime }}</td>
-                <td>{{ item.meanElapsedTime }}</td>
+                <td>{{ (item.node.task.meanElapsedTime).toFixed() }}</td>
               </tr>
             </template>
             <template v-slot:expanded-item="{ item }">
@@ -233,7 +239,7 @@ export default {
       headers: [
         {
           text: 'Task',
-          value: 'node.name',
+          value: 'node_name',
           sort: DEFAULT_COMPARATOR
         },
         {
@@ -243,42 +249,42 @@ export default {
         },
         {
           text: 'Cycle Point',
-          value: 'node.cyclePoint',
+          value: 'node_cyclePoint',
           sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
         },
         {
-          text: 'Host',
-          value: 'latestJob.platform',
+          text: 'Platform',
+          value: 'latestJob_platform',
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          text: 'Job System',
+          text: 'Job Runner',
           value: 'latestJob.jobRunnerName',
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
           text: 'Job ID',
-          value: 'latestJob.jobId',
+          value: 'latestJob_jobId',
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         },
         {
-          text: 'T-submit',
-          value: 'latestJob.submittedTime',
+          text: 'T-Submit',
+          value: 'latestJob_submittedTime',
           sort: datetimeComparator
         },
         {
-          text: 'T-start',
-          value: 'latestJob.startedTime',
+          text: 'T-Start',
+          value: 'latestJob_startedTime',
           sort: datetimeComparator
         },
         {
-          text: 'T-finish',
-          value: 'latestJob.finishedTime',
+          text: 'T-Finish',
+          value: 'latestJob_finishedTime',
           sort: datetimeComparator
         },
         {
-          text: 'dT-mean',
-          value: 'meanElapsedTime',
+          text: '&Delta;T-Mean',
+          value: 'node_task_meanElapsedTime',
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
       ],
