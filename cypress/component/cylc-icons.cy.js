@@ -36,7 +36,7 @@ const TaskComponent = {
   data: () => ({
     // set the progress indicator for running tasks to ~33%
     // 33% of the 100s duration in milliseconds (0.33 * 100s * 1000ms/s)
-    startTime: String(new Date(Date.now() - 33333).toISOString())
+    startTime: new Date(Date.now() - 33333).toISOString()
   })
 }
 

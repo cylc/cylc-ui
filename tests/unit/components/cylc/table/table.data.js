@@ -34,8 +34,8 @@ const simpleTableTasks = [
       platform: 'localhost',
       jobRunnerName: 'background',
       jobId: '1',
-      submittedTime: new Date(),
-      startedTime: new Date(),
+      submittedTime: new Date().toISOString(),
+      startedTime: new Date().toISOString(),
       finishedTime: null,
       state: JobState.RUNNING.name
     },

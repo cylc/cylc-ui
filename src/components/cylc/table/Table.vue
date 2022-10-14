@@ -100,31 +100,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
         >
           <v-data-table
-            :headers.sync="headers"
-            :items.sync="filteredTasks"
+            :headers="headers"
+            :items="filteredTasks"
             :single-expand="false"
             :expanded.sync="expanded"
-            :hide-default-header="true"
+            multi-sort
+            :sort-by.sync="sortBy"
+            :sort-desc.sync="sortDesc"
             item-key="id"
             show-expand
           >
-            <template
-              v-slot:header="{ props: { headers } }"
-            >
-              <thead>
-                <tr>
-                  <th class="px-2" v-bind:key="header.id" v-for="(header) in headers">
-                    <v-btn small plain @click="toggleColumnSort(header.text)">{{ header.text }}</v-btn>
-                    <v-btn icon x-small class="v-data-table__expand-icon" @click="toggleColumnSortDirection(header.text)" v-if="sortBy.includes(header.text) && sortDesc[sortBy.indexOf(header.text)]">
-                      <v-icon>{{ icons.mdiArrowDown }}</v-icon>
-                    </v-btn>
-                    <v-btn icon x-small class="v-data-table__expand-icon v-data-table__expand-icon--active" @click="toggleColumnSortDirection(header.text)" v-if="sortBy.includes(header.text) && !sortDesc[sortBy.indexOf(header.text)]">
-                      <v-icon>{{ icons.mdiArrowDown }}</v-icon>
-                    </v-btn>
-                  </th>
-                </tr>
-              </thead>
-            </template>
             <template
               v-slot:item="{ item }"
             >
@@ -217,6 +202,8 @@ import Job from '@/components/cylc/Job'
 import cloneDeep from 'lodash/cloneDeep'
 import { taskStartTime, taskEstimatedDuration } from '@/utils/tasks'
 import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
+import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
+import { datetimeComparator } from '@/components/cylc/table/sort'
 
 export default {
   name: 'TableComponent',
@@ -240,40 +227,59 @@ export default {
         mdiChevronDown,
         mdiArrowDown
       },
-      sortBy: ['Cycle Point'],
+      sortBy: ['node.cyclePoint'],
       sortDesc: [localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : true],
       expanded: [],
       headers: [
         {
-          text: 'Task'
+          text: 'Task',
+          value: 'node.name',
+          sort: DEFAULT_COMPARATOR
         },
         {
           text: 'Jobs',
-          value: 'data-table-expand'
+          value: 'data-table-expand',
+          sortable: false
         },
         {
-          text: 'Cycle Point'
+          text: 'Cycle Point',
+          value: 'node.cyclePoint',
+          sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
         },
         {
-          text: 'Host'
+          text: 'Host',
+          value: 'latestJob.platform',
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          text: 'Job System'
+          text: 'Job System',
+          value: 'latestJob.jobRunnerName',
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          text: 'Job ID'
+          text: 'Job ID',
+          value: 'latestJob.jobId',
+          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         },
         {
-          text: 'T-submit'
+          text: 'T-submit',
+          value: 'latestJob.submittedTime',
+          sort: datetimeComparator
         },
         {
-          text: 'T-start'
+          text: 'T-start',
+          value: 'latestJob.startedTime',
+          sort: datetimeComparator
         },
         {
-          text: 'T-finish'
+          text: 'T-finish',
+          value: 'latestJob.finishedTime',
+          sort: datetimeComparator
         },
         {
-          text: 'dT-mean'
+          text: 'dT-mean',
+          value: 'meanElapsedTime',
+          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
       ],
       tasksFilter: {
@@ -301,84 +307,19 @@ export default {
     filteredTasks () {
       const filterByName = this.filterByTaskName()
       const filterByState = this.filterByTaskState()
-      let filteredSortedTasks = this.tasks
-        .filter(task => {
-          if (filterByName && filterByState) {
-            return task.node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(task.node.state)
-          } else if (filterByName) {
-            return task.node.name.includes(this.activeFilters.name)
-          } else if (filterByState) {
-            return this.tasksFilterStates.includes(task.node.state)
-          }
-          return true
-        })
-      this.sortBy.forEach(sortByProperty => {
-        filteredSortedTasks = filteredSortedTasks.sort((taskA, taskB) => {
-          let valueA
-          let valueB
-          const sortDesc = this.sortDesc[this.sortBy.indexOf(sortByProperty)]
-          switch (sortByProperty) {
-          case 'Task':
-            valueA = typeof taskA.node.name !== 'undefined' ? taskA.node.name : ''
-            valueB = typeof taskB.node.name !== 'undefined' ? taskB.node.name : ''
-            return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
-          case 'Cycle Point':
-            valueA = taskA.node.cyclePoint !== '' && typeof taskA.node.cyclePoint !== 'undefined' ? String(taskA.node.cyclePoint) : ''
-            valueB = taskB.node.cyclePoint !== '' && typeof taskB.node.cyclePoint !== 'undefined' ? String(taskB.node.cyclePoint) : ''
-            return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
-          case 'Jobs':
-            valueA = typeof taskA.jobs !== 'undefined' ? taskA.jobs.length : 0
-            valueB = typeof taskB.jobs !== 'undefined' ? taskB.jobs.length : 0
-            return sortDesc ? valueB - valueA : valueA - valueB
-          case 'Host':
-            valueA = typeof taskA.latestJob.platform !== 'undefined' ? taskA.latestJob.platform : ''
-            valueB = typeof taskB.latestJob.platform !== 'undefined' ? taskB.latestJob.platform : ''
-            return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
-          case 'Job System':
-            valueA = typeof taskA.latestJob.jobRunnerName !== 'undefined' ? taskA.latestJob.jobRunnerName : ''
-            valueB = typeof taskB.latestJob.jobRunnerName !== 'undefined' ? taskB.latestJob.jobRunnerName : ''
-            return sortDesc ? valueB.localeCompare(valueA) : valueA.localeCompare(valueB)
-          case 'Job ID':
-            valueA = typeof taskA.latestJob.jobId !== 'undefined' ? taskA.latestJob.jobId : 0
-            valueB = typeof taskB.latestJob.jobId !== 'undefined' ? taskB.latestJob.jobId : 0
-            return sortDesc ? valueB - valueA : valueA - valueB
-          case 'T-submit':
-            valueA = taskA.latestJob.submittedTime !== '' && typeof taskA.latestJob.submittedTime !== 'undefined' ? (new Date(taskA.latestJob.submittedTime)).getTime() : 0
-            valueB = taskB.latestJob.submittedTime !== '' && typeof taskB.latestJob.submittedTime !== 'undefined' ? (new Date(taskB.latestJob.submittedTime)).getTime() : 0
-            return sortDesc ? valueB - valueA : valueA - valueB
-          case 'T-start':
-            valueA = taskA.latestJob.startedTime !== '' && typeof taskA.latestJob.startedTime !== 'undefined' ? (new Date(taskA.latestJob.startedTime)).getTime() : 0
-            valueB = taskB.latestJob.startedTime !== '' && typeof taskB.latestJob.startedTime !== 'undefined' ? (new Date(taskB.latestJob.startedTime)).getTime() : 0
-            return sortDesc ? valueB - valueA : valueA - valueB
-          case 'T-finish':
-            valueA = taskA.latestJob.finishedTime !== '' && typeof taskA.latestJob.finishedTime !== 'undefined' ? (new Date(taskA.latestJob.finishedTime)).getTime() : 0
-            valueB = taskB.latestJob.finishedTime !== '' && typeof taskB.latestJob.finishedTime !== 'undefined' ? (new Date(taskB.latestJob.finishedTime)).getTime() : 0
-            return sortDesc ? valueB - valueA : valueA - valueB
-          case 'dT-mean':
-            valueA = typeof taskA.meanElapsedTime !== 'undefined' ? taskA.meanElapsedTime : 0
-            valueB = typeof taskB.meanElapsedTime !== 'undefined' ? taskB.meanElapsedTime : 0
-            return sortDesc ? valueB - valueA : valueA - valueB
-          default:
-            return 0
-          }
-        })
+      return this.tasks.filter(task => {
+        if (filterByName && filterByState) {
+          return task.node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(task.node.state)
+        } else if (filterByName) {
+          return task.node.name.includes(this.activeFilters.name)
+        } else if (filterByState) {
+          return this.tasksFilterStates.includes(task.node.state)
+        }
+        return true
       })
-      return filteredSortedTasks
     }
   },
   methods: {
-    toggleColumnSort (headingText) {
-      if (this.sortBy.indexOf(headingText) < 0) {
-        this.sortBy.push(headingText)
-        this.sortDesc.push(false)
-      } else {
-        this.sortBy.splice(this.sortBy.indexOf(headingText), 1)
-        this.sortDesc.splice(this.sortBy.indexOf(headingText), 1)
-      }
-    },
-    toggleColumnSortDirection (headingText) {
-      this.sortDesc.splice(this.sortBy.indexOf(headingText), 1, !this.sortDesc[this.sortBy.indexOf(headingText)])
-    },
     filterByTaskName () {
       return this.activeFilters &&
         this.activeFilters.name !== undefined &&

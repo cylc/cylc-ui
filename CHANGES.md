@@ -17,6 +17,10 @@ ones in. -->
 
 [#1075](https://github.com/cylc/cylc-ui/pull/1075) - Reverse default sort order
 of the table view so it matches the tree view.
+
+[#1107](https://github.com/cylc/cylc-ui/pull/1107) - Use natural sort for table
+view cycle point column.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-1.3.0 (<span actions:bind='release-date'>Released 2022-07-27</span>)__
 
