@@ -15,6 +15,9 @@ ones in. -->
 
 ### Fixes
 
+[#1112](https://github.com/cylc/cylc-ui/pull/1112) - Fix "mean delta-T" column
+of the table view.
+
 [#1075](https://github.com/cylc/cylc-ui/pull/1075) - Reverse default sort order
 of the table view so it matches the tree view.
 
