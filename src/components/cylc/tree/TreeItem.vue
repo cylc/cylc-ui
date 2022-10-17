@@ -152,7 +152,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :key="jobDetail.id"
               class="leaf-entry"
             >
-              <span class="px-4 leaf-entry-title">{{ jobDetail.title }}</span>
+              <span class="px-4 leaf-entry-title" v-html="jobDetail.title"></span>
               <span class="grey--text leaf-entry-value">{{ jobDetail.value }}</span>
             </div>
             <v-divider class="ml-3 mr-5" />

@@ -231,27 +231,27 @@ function createJobDetailsNode (job) {
       value: job.platform
     },
     {
-      title: 'job id',
-      value: job.jobId
-    },
-    {
       title: 'job runner',
       value: job.jobRunnerName
     },
     {
-      title: 'submit time',
+      title: 'job id',
+      value: job.jobId
+    },
+    {
+      title: 'T-submit',
       value: job.submittedTime
     },
     {
-      title: 'start time',
+      title: 'T-start',
       value: job.startedTime
     },
     {
-      title: 'finish time',
+      title: 'T-finish',
       value: job.finishedTime
     },
     {
-      title: 'dT-mean',
+      title: '&Delta;T-mean',
       value: (job.taskProxy.task.meanElapsedTime).toFixed()
     }
   ]
