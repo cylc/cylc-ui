@@ -255,32 +255,6 @@ export default {
       selected: false,
       isExpanded: this.initialExpanded,
       filtered: true,
-      leafProperties: [
-        {
-          title: 'platform',
-          property: 'platform'
-        },
-        {
-          title: 'job id',
-          property: 'jobId'
-        },
-        {
-          title: 'job runner',
-          property: 'jobRunnerName'
-        },
-        {
-          title: 'submit time',
-          property: 'submittedTime'
-        },
-        {
-          title: 'start time',
-          property: 'startedTime'
-        },
-        {
-          title: 'finish time',
-          property: 'finishedTime'
-        }
-      ],
       icons: {
         mdiChevronRight
       }

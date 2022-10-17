@@ -249,6 +249,10 @@ function createJobDetailsNode (job) {
     {
       title: 'finish time',
       value: job.finishedTime
+    },
+    {
+      title: 'dT-mean',
+      value: (job.taskProxy.task.meanElapsedTime).toFixed()
     }
   ]
 
