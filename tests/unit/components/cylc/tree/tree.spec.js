@@ -793,6 +793,11 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
+        },
         state: TaskState.FAILED.name,
         startedTime
       })
@@ -813,6 +818,11 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
+        },
         state: TaskState.RUNNING.name
       })
       CylcTree.addJob(job, workflow, {})
@@ -831,6 +841,11 @@ describe('CylcTree', () => {
         id: jobId,
         firstParent: {
           id: taskProxy.id
+        },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
         },
         state
       })
@@ -852,6 +867,11 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
+        },
         state
       })
       const cyclepoint = workflow.tree.children[0]
@@ -867,6 +887,11 @@ describe('CylcTree', () => {
         id: jobId,
         firstParent: {
           id: taskProxy.id
+        },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
         },
         state: TaskState.RUNNING.name
       })
@@ -886,6 +911,11 @@ describe('CylcTree', () => {
         firstParent: {
           id: taskProxy.id
         },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
+        },
         state: TaskState.RUNNING.name
       })
       CylcTree.addJob(job, workflow, {})
@@ -903,6 +933,11 @@ describe('CylcTree', () => {
         id: jobId,
         firstParent: {
           id: taskProxy.id
+        },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
         },
         state: TaskState.RUNNING.name
       })
@@ -923,6 +958,11 @@ describe('CylcTree', () => {
         submitNum: 2,
         firstParent: {
           id: taskProxy.id
+        },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
         }
       }), workflow, {})
       CylcTree.addJob(createJobNode({
@@ -932,6 +972,11 @@ describe('CylcTree', () => {
         submitNum: 3,
         firstParent: {
           id: taskProxy.id
+        },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
         }
       }), workflow, {})
       CylcTree.addJob(createJobNode({
@@ -941,6 +986,11 @@ describe('CylcTree', () => {
         submitNum: 1,
         firstParent: {
           id: taskProxy.id
+        },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
         }
       }), workflow, {})
 
@@ -999,6 +1049,11 @@ describe('CylcTree', () => {
         id: jobId,
         firstParent: {
           id: taskProxy.id
+        },
+        taskProxy: {
+          task: {
+            meanElapsedTime: 10
+          }
         },
         state: TaskState.RUNNING.name
       })

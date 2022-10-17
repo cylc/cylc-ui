@@ -484,6 +484,9 @@ const sampleWorkflow1 = {
       state: 'succeeded',
       submitNum: 4,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -520,6 +523,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 3,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -552,6 +558,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 2,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -584,6 +593,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -616,6 +628,9 @@ const sampleWorkflow1 = {
       state: 'succeeded',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -648,6 +663,9 @@ const sampleWorkflow1 = {
       state: 'succeeded',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -680,6 +698,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -712,6 +733,9 @@ const sampleWorkflow1 = {
       state: 'succeeded',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -744,6 +768,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -776,6 +803,9 @@ const sampleWorkflow1 = {
       state: 'succeeded',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -808,6 +838,9 @@ const sampleWorkflow1 = {
       state: 'succeeded',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -840,6 +873,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -872,6 +908,9 @@ const sampleWorkflow1 = {
       state: 'running',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -904,6 +943,9 @@ const sampleWorkflow1 = {
       state: 'running',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -932,6 +974,9 @@ const sampleWorkflow1 = {
       state: 'succeeded',
       submitNum: 4,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -964,6 +1009,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 3,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -996,6 +1044,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 2,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -1028,6 +1079,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
@@ -1060,6 +1114,9 @@ const sampleWorkflow1 = {
       state: 'failed',
       submitNum: 1,
       taskProxy: {
+        task: {
+          meanElapsedTime: 10
+        },
         outputs: [
           {
             label: 'submitted',
