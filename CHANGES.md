@@ -26,6 +26,9 @@ view cycle point column.
 
 ### Enhancements
 
+[#1114](https://github.com/cylc/cylc-ui/pull/1114) - Show mean delta-T (task
+run time) in tree view job leaf.
+
 [#1073](https://github.com/cylc/cylc-ui/pull/1073) - Improve validation of the
 command edit form.
 
