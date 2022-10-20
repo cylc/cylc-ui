@@ -231,12 +231,12 @@ function createJobDetailsNode (job) {
       value: job.platform
     },
     {
-      title: 'job runner',
-      value: job.jobRunnerName
-    },
-    {
       title: 'job id',
       value: job.jobId
+    },
+    {
+      title: 'job runner',
+      value: job.jobRunnerName
     },
     {
       title: 'T-submit',

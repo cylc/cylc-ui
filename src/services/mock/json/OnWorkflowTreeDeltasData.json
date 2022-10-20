@@ -278,6 +278,9 @@
         "id": "~user/one//20000102T0000Z/failed"
       },
       "taskProxy": {
+        "task": {
+            "meanElapsedTime": 10
+        },
         "outputs": [
           {
             "label": "msg-label-1",
