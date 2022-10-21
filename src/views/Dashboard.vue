@@ -33,8 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           id="dashboard-workflows"
         >
           <v-progress-linear slot="progress" color="grey" indeterminate></v-progress-linear>
-          <!-- TODO: remove it if the linter is fixed later #510 -->
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.count="{ item }">
             <v-skeleton-loader
               :loading="isLoading"
@@ -45,8 +43,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <span class="headline font-weight-light">{{ item.count }}</span>
             </v-skeleton-loader>
           </template>
-          <!-- TODO: remove it if the linter is fixed later #510 -->
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.text="{ item }">
             <span class="title font-weight-light">{{ item.text }}</span>
           </template>
@@ -60,13 +56,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           hide-default-footer
           hide-default-header
         >
-          <!-- TODO: remove it if the linter is fixed later #510 -->
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.id="{ item }">
             <span class="title font-weight-light">{{ item.id }}</span>
           </template>
-          <!-- TODO: remove it if the linter is fixed later #510 -->
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.text="{ item }">
             <span class="title font-weight-light">{{ item.text }}</span>
           </template>
