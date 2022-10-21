@@ -22,7 +22,6 @@ import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
-import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -119,108 +118,17 @@ describe('Tree component', () => {
     })
   })
   describe('Filter', () => {
-    describe('Filter by name', () => {
-      it('should not filter by name by default', () => {
+    describe('Default', () => {
+      it('should not filter by name or state by default', () => {
         const wrapper = mountFunction({
           propsData: {
             workflows: simpleWorkflowTree4Nodes[0].children
           }
         })
-        expect(wrapper.vm.activeFilters).to.equal(null)
-      })
-      it('should filter by name', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                name: 'foo'
-              }
-            }
-          }
+        expect(wrapper.vm.tasksFilter).to.deep.equal({
+          name: '',
+          states: []
         })
-        expect(wrapper.vm.tasksFilter.name).to.equal('foo')
-        expect(wrapper.vm.activeFilters).to.equal(null)
-      })
-    })
-    describe('Filter by state', () => {
-      it('should not filter by state by default', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          }
-        })
-        expect(wrapper.vm.activeFilters).to.equal(null)
-      })
-      it('should filter by name', () => {
-        const states = [
-          {
-            value: TaskState.EXPIRED.name
-          },
-          {
-            value: TaskState.SUBMIT_FAILED.name
-          }]
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              activeFilters: {
-                states
-              }
-            }
-          }
-        })
-        expect(wrapper.vm.activeFilters.states).to.equal(states)
-      })
-    })
-    describe('Enable filters', () => {
-      it('should not have any filters enabled by default', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          }
-        })
-        expect(wrapper.vm.activeFilters).to.equal(null)
-      })
-      it('should indicate filters are enabled if filtering by task name', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                name: 'foo'
-              }
-            }
-          }
-        })
-        wrapper.vm.filterTasks()
-        expect(wrapper.vm.activeFilters.name).to.equal('foo')
-      })
-      it('should indicate filters are enabled if filtering by task states', () => {
-        const states = [
-          TaskState.EXPIRED.name,
-          TaskState.SUBMIT_FAILED.name
-        ]
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                states
-              }
-            }
-          }
-        })
-        wrapper.vm.filterTasks()
-        expect(wrapper.vm.activeFilters.states).to.deep.equal(states)
       })
     })
   })

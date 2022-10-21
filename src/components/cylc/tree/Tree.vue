@@ -70,19 +70,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               @change="filterTasks"
             >
               <template v-slot:item="slotProps">
-                <Task :task="{ state: slotProps.item.value }" />
-                <span class="ml-2">{{ slotProps.item.value }}</span>
+                <Task :task="{ state: slotProps.item }" />
+                <span class="ml-2">{{ slotProps.item }}</span>
               </template>
               <template v-slot:selection="slotProps">
                 <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
-                  <Task :task="{ state: slotProps.item.value }" />
+                  <Task :task="{ state: slotProps.item }" />
                 </div>
                 <span
                   v-if="slotProps.index === maximumTasks"
                   class="grey--text caption"
                 >
-            (+{{ tasksFilter.states.length - maximumTasks }})
-          </span>
+                  (+{{ tasksFilter.states.length - maximumTasks }})
+                </span>
               </template>
             </v-select>
           </v-col>
@@ -159,9 +159,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import Vue from 'vue'
-import cloneDeep from 'lodash/cloneDeep'
 import { mdiPlus, mdiMinus } from '@mdi/js'
-import TaskState from '@/model/TaskState.model'
+import { TaskStateUserOrder } from '@/model/TaskState.model'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import Task from '@/components/cylc/Task'
 import { getNodeChildren } from '@/components/cylc/tree/util'
@@ -226,7 +225,7 @@ export default {
         name: '',
         states: []
       },
-      activeFilters: null,
+      taskStates: TaskStateUserOrder.map(ts => ts.name),
       maximumTasks: 4,
       svgPaths: {
         expandIcon: mdiPlus,
@@ -263,27 +262,18 @@ export default {
         return this.workflows
       }
     },
-    taskStates: () => {
-      return TaskState.enumValues.map(taskState => {
-        return {
-          text: taskState.name.replace(/_/g, ' '),
-          value: taskState.name
-        }
-      }).sort((left, right) => {
-        return left.text.localeCompare(right.text)
-      })
+    filterByTaskName () {
+      return Boolean(this.tasksFilter.name?.trim())
     },
-    tasksFilterStates: function () {
-      return this.activeFilters.states.map(selectedTaskState => {
-        return selectedTaskState
-      })
+    filterByTaskState () {
+      return Boolean(this.tasksFilter.states?.length)
     }
   },
   watch: {
     workflows: {
       deep: true,
       handler: function () {
-        if (this.activeFilters !== null) {
+        if (this.filterByTaskName || this.filterByTaskState) {
           this.$nextTick(() => {
             this.filterNodes(this.workflows)
           })
@@ -292,29 +282,11 @@ export default {
     }
   },
   methods: {
-    filterByTaskName () {
-      return this.activeFilters.name !== undefined &&
-          this.activeFilters.name !== null &&
-          this.activeFilters.name.trim() !== ''
-    },
-    filterByTaskState () {
-      return this.activeFilters.states !== undefined &&
-          this.activeFilters.states !== null &&
-          this.activeFilters.states.length > 0
-    },
     filterTasks () {
-      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
-          this.tasksFilter.name !== null &&
-          this.tasksFilter.name.trim() !== ''
-      const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
-          this.tasksFilter.states !== null &&
-          this.tasksFilter.states.length > 0
-      if (taskNameFilterSet || taskStatesFilterSet) {
-        this.activeFilters = cloneDeep(this.tasksFilter)
+      if (this.filterByTaskName || this.filterByTaskState) {
         this.filterNodes(this.workflows)
       } else {
         this.removeAllFilters()
-        this.activeFilters = null
       }
     },
     clearInput (event) {
@@ -340,12 +312,12 @@ export default {
           filtered = this.filterNode(child) || filtered
         }
       } else if (node.type === 'task') {
-        if (this.filterByTaskName() && this.filterByTaskState()) {
-          filtered = node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
-        } else if (this.filterByTaskName()) {
-          filtered = node.name.includes(this.activeFilters.name)
-        } else if (this.filterByTaskState()) {
-          filtered = this.tasksFilterStates.includes(node.node.state)
+        if (this.filterByTaskName && this.filterByTaskState) {
+          filtered = node.name.includes(this.tasksFilter.name) && this.tasksFilter.states.includes(node.node.state)
+        } else if (this.filterByTaskName) {
+          filtered = node.name.includes(this.tasksFilter.name)
+        } else if (this.filterByTaskState) {
+          filtered = this.tasksFilter.states.includes(node.node.state)
         }
       }
       if (!this.treeItemCache[node.id]) {

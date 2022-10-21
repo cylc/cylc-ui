@@ -183,25 +183,12 @@ describe('Tree view', () => {
   })
 
   describe('filters', () => {
-    it('Should not filter by default', () => {
-      cy.visit('/#/tree/one')
-      cy
-        .get('.node-data-task')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.node-data-task')
-        .contains('waiting')
-        .should('be.visible')
-    })
     it('Should filter by task name', () => {
       cy.visit('/#/tree/one')
+      // Should not filter by default
       cy
-        .get('.node-data-task')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.node-data-task')
+        .get('.node-data-task:visible')
+        .should('have.length', 7)
         .contains('waiting')
         .should('be.visible')
       // eep should filter sleepy
@@ -242,23 +229,21 @@ describe('Tree view', () => {
       cy.visit('/#/tree/one')
       cy
         .get('.node-data-task')
-        .contains('sleepy')
+        .contains('failed')
         .should('be.visible')
-      // retry should filter retry
       cy
         .get('#c-tree-filter-task-name')
-        .type('retry')
+        .type('i')
       cy
         .get('#c-tree-filter-task-states')
         .click({ force: true })
-      // click on waiting, the retry is succeeded, but we don't want to see it
-      cy
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
         .click({ force: true })
       cy
         .get('.node-data-task:visible')
         .should('have.length', 1)
+        .contains('retrying')
     })
 
     it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
@@ -268,13 +253,14 @@ describe('Tree view', () => {
         .click({ force: true })
       // eslint-disable-next-line no-lone-blocks
       TaskState.enumValues.forEach(state => {
-        cy
-          .get('.v-list-item')
+        cy.get('.v-list-item')
           .contains(state.name)
           .click({ force: true })
       })
-      cy
-        .get('.v-select__slot')
+      // Click outside to close dropdown
+      cy.get('noscript')
+        .click({ force: true })
+      cy.get('.v-select__slot')
         .should($select => {
           expect($select).to.contain('(+')
         })
