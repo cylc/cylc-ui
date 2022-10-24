@@ -19,9 +19,9 @@
  * Declare function used in sortedIndexBy as a comparator.
  *
  * @callback SortedIndexByComparator
- * @param {object} leftObject - left parameter object
+ * @param {Object} leftObject - left parameter object
  * @param {string} leftValue - left parameter value
- * @param {object} rightObject - right parameter object
+ * @param {Object} rightObject - right parameter object
  * @param {string} rightValue - right parameter value
  * @returns {boolean} - true if leftValue is higher than rightValue
  */

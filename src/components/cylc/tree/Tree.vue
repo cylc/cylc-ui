@@ -163,6 +163,7 @@ import { mdiPlus, mdiMinus } from '@mdi/js'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import Task from '@/components/cylc/Task'
+import { matchNode } from '@/components/cylc/common/filter'
 import { getNodeChildren } from '@/components/cylc/tree/util'
 
 export default {
@@ -312,13 +313,7 @@ export default {
           filtered = this.filterNode(child) || filtered
         }
       } else if (node.type === 'task') {
-        if (this.filterByTaskName && this.filterByTaskState) {
-          filtered = node.name.includes(this.tasksFilter.name) && this.tasksFilter.states.includes(node.node.state)
-        } else if (this.filterByTaskName) {
-          filtered = node.name.includes(this.tasksFilter.name)
-        } else if (this.filterByTaskState) {
-          filtered = this.tasksFilter.states.includes(node.node.state)
-        }
+        filtered = matchNode(node.node, this.tasksFilter.name, this.tasksFilter.states)
       }
       if (!this.treeItemCache[node.id]) {
         this.treeItemCache[node.id] = {}

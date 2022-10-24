@@ -224,6 +224,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
+import { matchNode } from '@/components/cylc/common/filter'
 
 export default {
   name: 'TableComponent',
@@ -325,21 +326,7 @@ export default {
       return this.activeFilters.states
     },
     filteredTasks () {
-      const filterByName = this.filterByTaskName()
-      const filterByState = this.filterByTaskState()
-      return this.tasks.filter(task => {
-        if (filterByName && filterByState) {
-          return (
-            task.task.name.includes(this.activeFilters.name) &&
-            this.tasksFilterStates.includes(task.task.node.state)
-          )
-        } else if (filterByName) {
-          return task.task.name.includes(this.activeFilters.name)
-        } else if (filterByState) {
-          return this.tasksFilterStates.includes(task.task.node.state)
-        }
-        return true
-      })
+      return this.tasks.filter(({ task }) => matchNode(task.node, this.tasksFilter.name, this.tasksFilter.states))
     }
   },
   methods: {
