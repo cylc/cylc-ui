@@ -46,6 +46,12 @@ module.exports = {
     'vue/no-reserved-component-names': [
       'off'
     ],
+    'vue/valid-v-slot': [
+      'error',
+      {
+        allowModifiers: true
+      }
+    ],
     'import/no-duplicates': 'off',
     'no-duplicate-imports': 'error'
   },

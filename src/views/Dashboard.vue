@@ -33,8 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           id="dashboard-workflows"
         >
           <v-progress-linear slot="progress" color="grey" indeterminate></v-progress-linear>
-          <!-- TODO: remove it if the linter is fixed later #510 -->
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.count="{ item }">
             <v-skeleton-loader
               :loading="isLoading"
@@ -45,8 +43,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <span class="headline font-weight-light">{{ item.count }}</span>
             </v-skeleton-loader>
           </template>
-          <!-- TODO: remove it if the linter is fixed later #510 -->
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.text="{ item }">
             <span class="title font-weight-light">{{ item.text }}</span>
           </template>
@@ -60,13 +56,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           hide-default-footer
           hide-default-header
         >
-          <!-- TODO: remove it if the linter is fixed later #510 -->
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.id="{ item }">
             <span class="title font-weight-light">{{ item.id }}</span>
           </template>
-          <!-- TODO: remove it if the linter is fixed later #510 -->
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template v-slot:item.text="{ item }">
             <span class="title font-weight-light">{{ item.text }}</span>
           </template>
@@ -141,8 +133,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <!-- TODO: change from latest to stable once out of beta -->
-          <v-list-item href="https://cylc.github.io/cylc-doc/latest/html/workflow-design-guide/index.html">
+          <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/workflow-design-guide/index.html" target="_blank">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.workflow }}</v-icon>
             </v-list-item-avatar>
@@ -155,8 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <!-- TODO: change from latest to stable once out of beta -->
-          <v-list-item href="https://cylc.github.io/cylc-doc/latest/html/index.html">
+          <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/index.html" target="_blank">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.documentation }}</v-icon>
             </v-list-item-avatar>
