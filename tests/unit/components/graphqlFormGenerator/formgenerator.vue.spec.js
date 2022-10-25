@@ -185,16 +185,6 @@ describe('FormGenerator Component', () => {
       ...options
     })
   }
-  it('should display mutation name and description', () => {
-    const wrapper = mountFunction({
-      propsData: {
-        mutation: BASIC_MUTATION
-      }
-    })
-    const html = wrapper.html()
-    expect(html).to.contain('My Mutation')
-    expect(html).to.contain('Test example.')
-  })
 
   it('should parse default values from the schema for simple types', () => {
     const wrapper = mountFunction({
@@ -273,47 +263,5 @@ describe('FormGenerator Component', () => {
     const before = wrapper.vm.$data.model
     wrapper.vm.reset()
     expect(wrapper.vm.$data.model).to.deep.equal(before)
-  })
-
-  describe('Mutation descriptions', () => {
-    const mountWithDescription = (desc) => mountFunction({
-      propsData: {
-        mutation: {
-          name: 'Darmok',
-          description: desc,
-          args: []
-        }
-      }
-    })
-    describe('For a single line description', () => {
-      const desc = 'Lorem ipsum.'
-      const wrapper = mountWithDescription(desc)
-      describe('.shortDescription', () => {
-        it('should be the whole description', () => {
-          expect(wrapper.vm.shortDescription).to.equal(desc)
-        })
-      })
-      describe('.extendedDescription', () => {
-        it('should be empty', () => {
-          expect(wrapper.vm.extendedDescription).to.equal('')
-        })
-      })
-    })
-    describe('For a multiline description', () => {
-      const shortDesc = 'Darmok and Jalad at\nTanagra.'
-      const extendedDesc = 'Shaka when the\nwalls fell.\n\nTemba, his arms wide.'
-      const desc = `${shortDesc}\n\n${extendedDesc}`
-      const wrapper = mountWithDescription(desc)
-      describe('.shortDescription', () => {
-        it('should be the bit before the first double newline', () => {
-          expect(wrapper.vm.shortDescription).to.equal(shortDesc)
-        })
-      })
-      describe('.extendedDescription', () => {
-        it('should be everything after the first double newline', () => {
-          expect(wrapper.vm.extendedDescription).to.equal(extendedDesc)
-        })
-      })
-    })
   })
 })

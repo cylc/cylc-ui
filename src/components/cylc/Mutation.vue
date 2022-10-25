@@ -17,10 +17,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
     <v-card
-      class="mx-auto d-inline-block"
+      class="c-mutation-dialog mx-auto d-inline-block"
       style="padding: 1em;"
       outlined
     >
+      <!-- the mutation title -->
+      <h3
+      style="text-transform: capitalize;"
+      >
+        {{ mutation._title }}
+      </h3>
+
+      <!-- the mutation description -->
+      <v-expansion-panels
+      accordion
+      flat
+      v-bind="extendedDescription ? { hover: true } : { readonly: true }"
+      >
+        <v-expansion-panel
+          class="mutation-desc"
+        >
+          <v-expansion-panel-header
+            v-bind="extendedDescription ? {} : {
+              expandIcon: null,
+              style: {
+                cursor: 'default'
+              }
+            }"
+          >
+            <Markdown :markdown="shortDescription"/>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content
+            v-if="extendedDescription"
+          >
+            <Markdown :markdown="extendedDescription"/>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+
+      <v-divider></v-divider>
       <FormGenerator
        :mutation='mutation'
        :types='types'
@@ -81,8 +116,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
+import Markdown from '@/components/Markdown'
 import Task from '@/components/cylc/Task.vue'
-import { mutate } from '@/utils/aotf'
+import {
+  mutate,
+  getMutationShortDesc,
+  getMutationExtendedDesc
+} from '@/utils/aotf'
 
 // enumeration for the mutation status, maps onto Cylc Task status
 const status = {
@@ -106,6 +146,7 @@ export default {
 
   components: {
     FormGenerator,
+    Markdown,
     Task
   },
 
@@ -135,6 +176,17 @@ export default {
     ...initialState,
     isValid: false
   }),
+
+  computed: {
+    /* Return the first line of the description. */
+    shortDescription () {
+      return getMutationShortDesc(this.mutation.description)
+    },
+    /* Return the subsequent lines of the description */
+    extendedDescription () {
+      return getMutationExtendedDesc(this.mutation.description)
+    }
+  },
 
   methods: {
     /* Execute the GraphQL mutation */

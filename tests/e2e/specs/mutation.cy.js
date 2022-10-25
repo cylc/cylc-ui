@@ -145,7 +145,7 @@ describe('Mutations component', () => {
       .trigger('mouseenter')
       .should('have.attr', 'aria-expanded', 'false') // should not be visible
     // Now type invalid input
-    cy.get('.c-mutation-form')
+    cy.get('.c-mutation-dialog')
       .find('.v-list-item__title')
       .contains('workflow')
       .parent()
