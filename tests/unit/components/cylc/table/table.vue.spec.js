@@ -107,9 +107,6 @@ describe('Table component', () => {
             tasks: simpleTableTasks
           }
         })
-        expect(wrapper.vm.activeFilters).to.equal(null)
-        expect(wrapper.vm.filteredTasks.length).to.equal(3)
-        wrapper.vm.filterTasks()
         expect(wrapper.vm.filteredTasks.length).to.equal(3)
       })
       it('should filter by name', () => {
@@ -125,8 +122,6 @@ describe('Table component', () => {
             }
           }
         })
-        expect(wrapper.vm.filteredTasks.length).to.equal(3)
-        wrapper.vm.filterTasks()
         expect(wrapper.vm.filteredTasks.length).to.equal(1)
       })
       it('should filter by task state', () => {
@@ -145,8 +140,6 @@ describe('Table component', () => {
             }
           }
         })
-        expect(wrapper.vm.filteredTasks.length).to.equal(3)
-        wrapper.vm.filterTasks()
         expect(wrapper.vm.filteredTasks.length).to.equal(1)
       })
       it('should filter by task name and state', () => {
@@ -165,8 +158,6 @@ describe('Table component', () => {
             }
           }
         })
-        expect(wrapper.vm.filteredTasks.length).to.equal(3)
-        wrapper.vm.filterTasks()
         expect(wrapper.vm.filteredTasks.length).to.equal(0)
       })
     })

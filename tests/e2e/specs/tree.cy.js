@@ -183,26 +183,31 @@ describe('Tree view', () => {
   })
 
   describe('filters', () => {
+    const initialNumTasks = 7
     it('Should filter by task name', () => {
       cy.visit('/#/tree/one')
       // Should not filter by default
       cy
         .get('.node-data-task:visible')
-        .should('have.length', 7)
+        .should('have.length', initialNumTasks)
         .contains('waiting')
-        .should('be.visible')
       // eep should filter sleepy
       cy
-        .get('#c-tree-filter-task-name')
+        .get('[data-cy=filter-task-name]')
         .type('eep')
       cy
-        .get('.node-data-task')
+        .get('.node-data-task:visible')
+        .should('have.length.lessThan', initialNumTasks)
         .contains('sleepy')
-        .should('be.visible')
       cy
         .get('.node-data-task')
         .contains('waiting')
         .should('not.be.visible')
+      // It should stop filtering when input is cleared
+      cy.get('[data-cy=filter-task-name]')
+        .clear()
+        .get('.node-data-task:visible')
+        .should('have.length', initialNumTasks)
     })
     it('Should filter by task states', () => {
       cy.visit('/#/tree/one')
@@ -211,7 +216,7 @@ describe('Tree view', () => {
         .contains(TaskState.FAILED.name)
         .should('be.visible')
       cy
-        .get('#c-tree-filter-task-states')
+        .get('[data-cy=filter-task-states]')
         .click({ force: true })
       cy
         .get('.v-list-item')
@@ -232,10 +237,10 @@ describe('Tree view', () => {
         .contains('failed')
         .should('be.visible')
       cy
-        .get('#c-tree-filter-task-name')
+        .get('[data-cy=filter-task-name]')
         .type('i')
       cy
-        .get('#c-tree-filter-task-states')
+        .get('[data-cy=filter-task-states]')
         .click({ force: true })
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
@@ -249,7 +254,7 @@ describe('Tree view', () => {
     it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
       cy.visit('/#/tree/one')
       cy
-        .get('#c-tree-filter-task-states')
+        .get('[data-cy=filter-task-states]')
         .click({ force: true })
       // eslint-disable-next-line no-lone-blocks
       TaskState.enumValues.forEach(state => {

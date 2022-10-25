@@ -29,64 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="filterable"
         class="grow"
       >
-        <v-row
-          no-gutters
-        >
-          <v-col
-            cols="12"
-            md="6"
-            class="pr-md-2 mb-2 mb-md-0"
-          >
-            <v-text-field
-              id="c-tree-filter-task-name"
-              clearable
-              dense
-              flat
-              hide-details
-              outlined
-              placeholder="Filter by task name"
-              v-model="tasksFilter.name"
-              @keyup="filterTasks"
-              @click:clear="clearInput"
-              ref="filterNameInput"
-            ></v-text-field>
-          </v-col>
-          <v-col
-            cols="12"
-            md="6"
-            class="mb-2 mb-md-0"
-          >
-            <v-select
-              id="c-tree-filter-task-states"
-              :items="taskStates"
-              clearable
-              dense
-              flat
-              hide-details
-              multiple
-              outlined
-              placeholder="Filter by task state"
-              v-model="tasksFilter.states"
-              @change="filterTasks"
-            >
-              <template v-slot:item="slotProps">
-                <Task :task="{ state: slotProps.item }" />
-                <span class="ml-2">{{ slotProps.item }}</span>
-              </template>
-              <template v-slot:selection="slotProps">
-                <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
-                  <Task :task="{ state: slotProps.item }" />
-                </div>
-                <span
-                  v-if="slotProps.index === maximumTasks"
-                  class="grey--text caption"
-                >
-                  (+{{ tasksFilter.states.length - maximumTasks }})
-                </span>
-              </template>
-            </v-select>
-          </v-col>
-        </v-row>
+        <TaskFilter v-model="tasksFilter"/>
       </v-col>
       <!-- Expand, collapse all -->
       <v-col
@@ -160,9 +103,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Vue from 'vue'
 import { mdiPlus, mdiMinus } from '@mdi/js'
-import { TaskStateUserOrder } from '@/model/TaskState.model'
 import TreeItem from '@/components/cylc/tree/TreeItem'
-import Task from '@/components/cylc/Task'
+import TaskFilter from '@/components/cylc/TaskFilter'
 import { matchNode } from '@/components/cylc/common/filter'
 import { getNodeChildren } from '@/components/cylc/tree/util'
 
@@ -211,7 +153,7 @@ export default {
     }
   },
   components: {
-    Task,
+    TaskFilter,
     TreeItem
   },
   data () {
@@ -222,12 +164,7 @@ export default {
       expanded: true,
       expandedFilter: null,
       collapseFilter: null,
-      tasksFilter: {
-        name: '',
-        states: []
-      },
-      taskStates: TaskStateUserOrder.map(ts => ts.name),
-      maximumTasks: 4,
+      tasksFilter: {},
       svgPaths: {
         expandIcon: mdiPlus,
         collapseIcon: mdiMinus
@@ -271,9 +208,13 @@ export default {
     }
   },
   watch: {
+    tasksFilter: {
+      deep: true,
+      handler: 'filterTasks'
+    },
     workflows: {
       deep: true,
-      handler: function () {
+      handler () {
         if (this.filterByTaskName || this.filterByTaskState) {
           this.$nextTick(() => {
             this.filterNodes(this.workflows)
@@ -289,11 +230,6 @@ export default {
       } else {
         this.removeAllFilters()
       }
-    },
-    clearInput (event) {
-      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
-      this.tasksFilter.name = null
-      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
     },
     filterNodes (nodes) {
       for (const node of nodes) {

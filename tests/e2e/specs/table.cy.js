@@ -33,10 +33,10 @@ describe('Table view', () => {
         .should('have.length', 7)
         .should('be.visible')
       cy
-        .get('#c-table-filter-task-name')
+        .get('[data-cy=filter-task-name]')
         .should('be.empty')
       cy
-        .get('#c-table-filter-task-states')
+        .get('[data-cy=filter-task-states]')
         .parent()
         .parent()
         .find('input[type="hidden"]')
@@ -54,7 +54,7 @@ describe('Table view', () => {
         .should('be.visible')
       // eep should filter sleepy
       cy
-        .get('#c-table-filter-task-name')
+        .get('[data-cy=filter-task-name]')
         .type('eep')
       cy
         .get('td > div.d-flex > div')
@@ -76,7 +76,7 @@ describe('Table view', () => {
         .contains(TaskState.FAILED.name)
         .should('be.visible')
       cy
-        .get('#c-table-filter-task-states')
+        .get('[data-cy=filter-task-states]')
         .click({ force: true })
       cy
         .get('.v-list-item')
@@ -98,7 +98,7 @@ describe('Table view', () => {
         .should('have.length', 7)
         .should('be.visible')
       cy
-        .get('#c-table-filter-task-states')
+        .get('[data-cy=filter-task-states]')
         .click({ force: true })
       cy
         .get('.v-list-item')
@@ -109,7 +109,7 @@ describe('Table view', () => {
         .should('have.length', 2)
         .should('be.visible')
       cy
-        .get('#c-table-filter-task-name')
+        .get('[data-cy=filter-task-name]')
         .type('eventually')
       cy
         .get('td > div.d-flex > div')

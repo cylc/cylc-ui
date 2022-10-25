@@ -125,10 +125,7 @@ describe('Tree component', () => {
             workflows: simpleWorkflowTree4Nodes[0].children
           }
         })
-        expect(wrapper.vm.tasksFilter).to.deep.equal({
-          name: '',
-          states: []
-        })
+        expect(wrapper.vm.tasksFilter).to.deep.equal({})
       })
     })
   })
