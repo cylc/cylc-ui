@@ -13,6 +13,11 @@ ones in. -->
 
 ## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Pending</span>)__
 
+### Enhancements
+
+[#1124](https://github.com/cylc/cylc-ui/pull/1075) - Table view: More options
+for number of tasks per page.
+
 ### Fixes
 
 [#1075](https://github.com/cylc/cylc-ui/pull/1075) - Reverse default sort order
