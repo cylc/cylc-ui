@@ -16,8 +16,8 @@
  */
 
 describe('CylcObject Menu component', () => {
-  const collapsedWorkflowMenuLength = 5 // (4 mutations + "show more" btn)
-  const expandedWorkflowMenuLength = 20
+  const collapsedWorkflowMenuLength = 6 // (5 mutations + "show more" btn)
+  const expandedWorkflowMenuLength = 21
 
   it('should not be displayed initially on load', () => {
     cy.visit('/#/workflows/one')

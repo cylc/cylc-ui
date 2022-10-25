@@ -1,43 +1,4 @@
 {
-  "errors": [
-    {
-      "message": "",
-      "locations": [
-        {
-          "line": 80,
-          "column": 3
-        }
-      ],
-      "path": [
-        "__schema",
-        "mutationType",
-        "fields",
-        9,
-        "args",
-        3,
-        "defaultValue"
-      ]
-    },
-    {
-      "message": "",
-      "locations": [
-        {
-          "line": 80,
-          "column": 3
-        }
-      ],
-      "path": [
-        "__schema",
-        "types",
-        26,
-        "fields",
-        9,
-        "args",
-        3,
-        "defaultValue"
-      ]
-    }
-  ],
   "data": {
     "__schema": {
       "queryType": {
@@ -656,6 +617,18 @@
                 "__typename": "__InputValue"
               },
               {
+                "name": "isRunahead",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
                 "name": "mindepth",
                 "description": null,
                 "type": {
@@ -1074,6 +1047,18 @@
                 "__typename": "__InputValue"
               },
               {
+                "name": "isRunahead",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
                 "name": "mindepth",
                 "description": null,
                 "type": {
@@ -1346,6 +1331,18 @@
                 "__typename": "__InputValue"
               },
               {
+                "name": "isRunahead",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
                 "name": "distance",
                 "description": null,
                 "type": {
@@ -1430,11 +1427,11 @@
         "fields": [
           {
             "name": "broadcast",
-            "description": "Override or add new [runtime] config in targeted namespaces.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can target any [runtime] namespace for all cycles or\nfor a specific cycle. If a task is affected by specific-cycle and\nall-cycle broadcasts at once, the specific takes precedence. If\na task is affected by broadcasts to multiple ancestor\nnamespaces, the result is determined by normal [runtime]\ninheritance. In other words, it follows this order:\n\n`all:root -> all:FAM -> all:task -> tag:root -> tag:FAM ->\ntag:task`\n\nBroadcasts persist, even across restarts, until they expire\nwhen their target cycle point is older than the oldest current in\nthe workflow, or until they are explicitly cancelled with this\ncommand.  All-cycle broadcasts do not expire.\n\nFor each task the final effect of all broadcasts to all namespaces\nis computed on the fly just prior to job submission.  The\n`--cancel` and `--clear` options simply cancel (remove) active\nbroadcasts, they do not act directly on the final task-level\nresult. Consequently, for example, you cannot broadcast to \"all\ncycles except Tn\" with an all-cycle broadcast followed by a cancel\nto Tn (there is no direct broadcast to Tn to cancel); and you\ncannot broadcast to \"all members of FAMILY except member_n\" with a\ngeneral broadcast to FAMILY followed by a cancel to member_n (there\nis no direct broadcast to member_n to cancel).",
+            "description": "Override `[runtime]` configurations in a running workflow.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can set/override any `[runtime]` configuration for all\ncycles or for a specific cycle. If a task is affected by\nspecific-cycle and all-cycle broadcasts at the same time, the\nspecific takes precedence.\n\nBroadcasts can also target all tasks, specific tasks or families of\ntasks. If a task is affected by broadcasts to multiple ancestor\nnamespaces (tasks it inherits from), the result is determined by\nnormal `[runtime]` inheritance.\n\nBroadcasts are applied at the time of job submission.\n\nBroadcasts persist, even across restarts. Broadcasts made to\nspecific cycle points will expire when the cycle point is older\nthan the oldest active cycle point in the workflow.\n\nActive broadcasts can be revoked using the \"clear\" mode.\nAny broadcasts matching the specified cycle points and\nnamespaces will be revoked.\n\nNote: a \"clear\" broadcast for a specific cycle or namespace does\n*not* clear all-cycle or all-namespace broadcasts.",
             "args": [
               {
                 "name": "cutoff",
-                "description": "Clear broadcasts earlier than cutoff cycle point.",
+                "description": "Clear broadcasts earlier than cutoff cycle point. (for use with \"Expire\" mode).",
                 "type": {
                   "kind": "SCALAR",
                   "name": "CyclePoint",
@@ -1446,13 +1443,13 @@
               },
               {
                 "name": "cyclePoints",
-                "description": "List of cycle points to target or `*` to cancel all all-cycle\nbroadcasts without canceling all specific-cycle broadcasts.",
+                "description": "List of cycle points to target (or `*` to cancel all all-cycle\nbroadcasts without canceling all specific-cycle broadcasts).",
                 "type": {
                   "kind": "LIST",
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "CyclePoint",
+                    "name": "BroadcastCyclePoint",
                     "ofType": null,
                     "__typename": "__Type"
                   },
@@ -1480,7 +1477,7 @@
               },
               {
                 "name": "namespaces",
-                "description": "Target namespaces.",
+                "description": "List of namespaces (tasks or families) to target.",
                 "type": {
                   "kind": "LIST",
                   "name": null,
@@ -1497,7 +1494,7 @@
               },
               {
                 "name": "settings",
-                "description": "The cylc namespace for the setting to modify.",
+                "description": "The `[runtime]` configuration to override with this broadcast\n(e.g. `script = true` or `[environment]ANSWER=42`).",
                 "type": {
                   "kind": "LIST",
                   "name": null,
@@ -1547,7 +1544,7 @@
           },
           {
             "name": "extTrigger",
-            "description": "Report an external event message to a scheduler.\n\nIt is expected that a task in the workflow has registered the same\nmessage as an external trigger - a special prerequisite to be\nsatisfied by an external system, via this command, rather than by\ntriggering off other tasks.\n\nThe ID argument should uniquely distinguish one external trigger\nevent from the next. When a task's external trigger is satisfied by\nan incoming message, the message ID is broadcast to all downstream\ntasks in the cycle point as `$CYLC_EXT_TRIGGER_ID` so that they can\nuse it - e.g. to identify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".",
+            "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".",
             "args": [
               {
                 "name": "id",
@@ -1618,7 +1615,7 @@
           },
           {
             "name": "message",
-            "description": "Record task job messages.\n\nSend task job messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nTask jobs use this to record and report status such\nas success and failure. Applications run by task jobs can use\nthis command to report messages and to report registered task\noutputs.",
+            "description": "Record task messages.\n\nSend messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nJobs use this to record and report status such\nas success and failure. Applications run by jobs can use\nthis command to report messages and to report registered task\noutputs.",
             "args": [
               {
                 "name": "eventTime",
@@ -1706,7 +1703,7 @@
           },
           {
             "name": "pause",
-            "description": "Pause a workflow.",
+            "description": "Pause a workflow.\n\nThis suspends submission of tasks.",
             "args": [
               {
                 "name": "workflows",
@@ -1743,7 +1740,7 @@
           },
           {
             "name": "reload",
-            "description": "Tell a workflow to reload its definition at run time.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
+            "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
             "args": [
               {
                 "name": "workflows",
@@ -1925,7 +1922,7 @@
           },
           {
             "name": "stop",
-            "description": "Tell a scheduler to shut down,\nor stop a specified flow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.",
+            "description": "Tell a workflow to shut down or stop a specified\nflow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.\n\nTasks that become ready after the shutdown is ordered will be\nsubmitted immediately if the workflow is restarted.\nRemaining task event handlers, job poll and kill commands, will\nbe executed prior to shutdown, unless\nthe stop mode is `Now`.",
             "args": [
               {
                 "name": "clockTime",
@@ -1952,11 +1949,11 @@
                 "__typename": "__InputValue"
               },
               {
-                "name": "flowLabel",
-                "description": "Label of flow to sterilise.",
+                "name": "flowNum",
+                "description": "Number of flow to stop.",
                 "type": {
                   "kind": "SCALAR",
-                  "name": "String",
+                  "name": "Int",
                   "ofType": null,
                   "__typename": "__Type"
                 },
@@ -1972,7 +1969,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "\"Clean\"",
                 "__typename": "__InputValue"
               },
               {
@@ -2076,7 +2073,7 @@
           },
           {
             "name": "releaseHoldPoint",
-            "description": "Release all tasks and unset the workflow hold point, if set.",
+            "description": "Release all tasks and unset the workflow hold point, if set.\n\nHeld tasks do not submit their jobs even if ready to run.",
             "args": [
               {
                 "name": "workflows",
@@ -2113,7 +2110,7 @@
           },
           {
             "name": "hold",
-            "description": "Hold tasks within a workflow.",
+            "description": "Hold tasks within a workflow.\n\nHeld tasks do not submit their jobs even if ready to run.",
             "args": [
               {
                 "name": "tasks",
@@ -2172,7 +2169,7 @@
           },
           {
             "name": "kill",
-            "description": "Kill jobs of active tasks and update their statuses accordingly.",
+            "description": "Kill running or submitted jobs.",
             "args": [
               {
                 "name": "tasks",
@@ -2231,7 +2228,7 @@
           },
           {
             "name": "poll",
-            "description": "Poll (query) task jobs to verify and update their statuses.",
+            "description": "Poll (query) jobs to verify and update their statuses.\n\nThis checks the job status file and queries the\njob runner on the job platform.\n\nPollable tasks are those in the n=0 window with\nan associated job ID, including incomplete finished\ntasks.",
             "args": [
               {
                 "name": "tasks",
@@ -2411,6 +2408,18 @@
             "description": "Artificially mark task outputs as completed.\n\nThis allows you to manually intervene with Cylc's scheduling\nalgorithm by artificially satisfying outputs of tasks.\n\nBy default this makes tasks appear as if they succeeded.",
             "args": [
               {
+                "name": "flowNum",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
                 "name": "outputs",
                 "description": "List of task outputs to satisfy.",
                 "type": {
@@ -2487,15 +2496,49 @@
             "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).",
             "args": [
               {
-                "name": "reflow",
-                "description": null,
+                "name": "flow",
+                "description": "The flow(s) to trigger these tasks in.\n\nThis should be a list of flow numbers OR a single-item list\ncontaining one of the following three strings:\n\n* all - Triggered tasks belong to all active flows\n  (default).\n* new - Triggered tasks are assigned to a new flow.\n* none - Triggered tasks do not belong to any flow.",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Flow",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[\"all\"]",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "flowDescr",
+                "description": "If starting a new flow, this field can be used to provide the\nnew flow with a description for later reference.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "flowWait",
+                "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduled to\n\"continue on\" from this task until the flow has caught up\nwith it.",
                 "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "false",
                 "__typename": "__InputValue"
               },
               {
@@ -2555,7 +2598,7 @@
           },
           {
             "name": "play",
-            "description": "Start, resume or un-pause a workflow run.",
+            "description": "Start, resume or restart a workflow run.",
             "args": [
               {
                 "name": "abortIfAnyTaskFails",
@@ -2606,20 +2649,8 @@
                 "__typename": "__InputValue"
               },
               {
-                "name": "hold",
-                "description": "Hold workflow immediately on starting.",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "defaultValue": null,
-                "__typename": "__InputValue"
-              },
-              {
-                "name": "holdPoint",
-                "description": "Set hold cycle point. Hold workflow AFTER all tasks have PASSED\nthis cycle point.",
+                "name": "holdCyclePoint",
+                "description": "Hold all tasks after this cycle point.",
                 "type": {
                   "kind": "SCALAR",
                   "name": "CyclePoint",
@@ -2679,7 +2710,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "\"Live\"",
                 "__typename": "__InputValue"
               },
               {
@@ -2692,6 +2723,18 @@
                   "__typename": "__Type"
                 },
                 "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "pause",
+                "description": "Pause workflow immediately on starting.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
                 "__typename": "__InputValue"
               },
               {
@@ -2779,16 +2822,134 @@
             "isDeprecated": false,
             "deprecationReason": null,
             "__typename": "__Field"
+          },
+          {
+            "name": "clean",
+            "description": "Clean a workflow from the run directory.",
+            "args": [
+              {
+                "name": "localOnly",
+                "description": "Only clean on the local filesystem (not remote hosts).",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "remoteOnly",
+                "description": "Only clean on remote hosts (not the local filesystem).",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "rm",
+                "description": "Only clean the specified subdirectories or files in\nthe run directory, rather than the whole run.\n\nA colon separated list that accepts globs,\ne.g. ``.service/db:log:share:work/2020*``.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "\"\"",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "workflows",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "WorkflowID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Clean",
+              "ofType": null,
+              "__typename": "__Type"
+            },
+            "isDeprecated": false,
+            "deprecationReason": null,
+            "__typename": "__Field"
+          },
+          {
+            "name": "editRuntime",
+            "description": "Edit a task or family's `[runtime]` section.\n\nThis only applies for the cycle point of the chosen task/family\ninstance.",
+            "args": [
+              {
+                "name": "cylcID",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "FrozenID",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "runtime",
+                "description": "`[runtime]` section of the task",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "RuntimeItem",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[]",
+                "__typename": "__InputValue"
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "EditRuntime",
+              "ofType": null,
+              "__typename": "__Type"
+            },
+            "isDeprecated": false,
+            "deprecationReason": null,
+            "__typename": "__Field"
           }
         ],
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
         "possibleTypes": null,
-        "__typename": "__Type"
-      },
-      "subscriptionType": {
-        "name": "Subscriptions",
         "__typename": "__Type"
       },
       "types": [
@@ -3408,6 +3569,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -3826,6 +3999,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -4098,6 +4283,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "distance",
                   "description": null,
                   "type": {
@@ -4185,14 +4382,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -4646,6 +4838,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -4830,6 +5034,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -4919,7 +5135,7 @@
             },
             {
               "name": "jobs",
-              "description": "Task jobs.",
+              "description": "Jobs.",
               "args": [
                 {
                   "name": "ids",
@@ -5305,6 +5521,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "distance",
                   "description": null,
                   "type": {
@@ -5456,20 +5684,6 @@
               "__typename": "__Field"
             },
             {
-              "name": "newestRunaheadCyclePoint",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
               "name": "newestActiveCyclePoint",
               "description": null,
               "args": [],
@@ -5541,6 +5755,20 @@
             },
             {
               "name": "isQueuedTotal",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "isRunaheadTotal",
               "description": null,
               "args": [],
               "type": {
@@ -5729,6 +5957,20 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
+            },
+            {
+              "name": "pruned",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -5780,14 +6022,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -5815,6 +6052,20 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "NodeMeta",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "runtime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Runtime",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -5936,6 +6187,18 @@
                 },
                 {
                   "name": "isQueued",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isRunahead",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -6317,6 +6580,256 @@
           "__typename": "__Type"
         },
         {
+          "kind": "OBJECT",
+          "name": "Runtime",
+          "description": "\nSubset of runtime fields.\n\nExisting on 3 different node types:\n- Task/family definition (from the flow.cylc file)\n- Task/family cycle instance (includes any broadcasts on top\n  of the definition)\n- Job (a record of what was run for a particular submit)\n",
+          "fields": [
+            {
+              "name": "platform",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "script",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "initScript",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "envScript",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "errScript",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "exitScript",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "preScript",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "postScript",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "workSubDir",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "executionPollingIntervals",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "executionRetryDelays",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "executionTimeLimit",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "submissionPollingIntervals",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "submissionRetryDelays",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "directives",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "environment",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "outputs",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
           "kind": "SCALAR",
           "name": "Float",
           "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point). ",
@@ -6337,14 +6850,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -6395,6 +6903,20 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "Task",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "runtime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Runtime",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -6459,12 +6981,40 @@
               "__typename": "__Field"
             },
             {
-              "name": "flowLabel",
+              "name": "isRunahead",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "flowNums",
               "description": null,
               "args": [],
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "flowWait",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -6493,20 +7043,6 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "latestMessage",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -6815,7 +7351,7 @@
             },
             {
               "name": "jobs",
-              "description": "Task jobs.",
+              "description": "Jobs.",
               "args": [
                 {
                   "name": "ids",
@@ -7046,6 +7582,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -7230,6 +7778,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -7398,6 +7958,18 @@
                 },
                 {
                   "name": "isQueued",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isRunahead",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -7980,14 +8552,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -8172,48 +8739,6 @@
               "__typename": "__Field"
             },
             {
-              "name": "envScript",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "errScript",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "exitScript",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
               "name": "executionTimeLimit",
               "description": null,
               "args": [],
@@ -8242,124 +8767,12 @@
               "__typename": "__Field"
             },
             {
-              "name": "initScript",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
               "name": "jobLogDir",
               "description": null,
               "args": [],
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "postScript",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "preScript",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "script",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "workSubDir",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "environment",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "directives",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "paramVar",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -8404,6 +8817,20 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
+            },
+            {
+              "name": "runtime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Runtime",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -8422,14 +8849,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -8508,6 +8930,20 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "Family",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "runtime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Runtime",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -8606,6 +9042,34 @@
             },
             {
               "name": "isQueuedTotal",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "isRunahead",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "isRunaheadTotal",
               "description": null,
               "args": [],
               "type": {
@@ -8718,6 +9182,18 @@
                 },
                 {
                   "name": "isQueued",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isRunahead",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -8913,6 +9389,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -9086,6 +9574,18 @@
                 },
                 {
                   "name": "isQueued",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isRunahead",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -9276,6 +9776,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -9380,14 +9892,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -9415,6 +9922,20 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "NodeMeta",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "runtime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Runtime",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -9522,6 +10043,18 @@
                 },
                 {
                   "name": "isQueued",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isRunahead",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -10295,14 +10828,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -10508,14 +11036,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -10541,14 +11064,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -10715,11 +11233,11 @@
           "fields": [
             {
               "name": "broadcast",
-              "description": "Override or add new [runtime] config in targeted namespaces.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can target any [runtime] namespace for all cycles or\nfor a specific cycle. If a task is affected by specific-cycle and\nall-cycle broadcasts at once, the specific takes precedence. If\na task is affected by broadcasts to multiple ancestor\nnamespaces, the result is determined by normal [runtime]\ninheritance. In other words, it follows this order:\n\n`all:root -> all:FAM -> all:task -> tag:root -> tag:FAM ->\ntag:task`\n\nBroadcasts persist, even across restarts, until they expire\nwhen their target cycle point is older than the oldest current in\nthe workflow, or until they are explicitly cancelled with this\ncommand.  All-cycle broadcasts do not expire.\n\nFor each task the final effect of all broadcasts to all namespaces\nis computed on the fly just prior to job submission.  The\n`--cancel` and `--clear` options simply cancel (remove) active\nbroadcasts, they do not act directly on the final task-level\nresult. Consequently, for example, you cannot broadcast to \"all\ncycles except Tn\" with an all-cycle broadcast followed by a cancel\nto Tn (there is no direct broadcast to Tn to cancel); and you\ncannot broadcast to \"all members of FAMILY except member_n\" with a\ngeneral broadcast to FAMILY followed by a cancel to member_n (there\nis no direct broadcast to member_n to cancel).",
+              "description": "Override `[runtime]` configurations in a running workflow.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can set/override any `[runtime]` configuration for all\ncycles or for a specific cycle. If a task is affected by\nspecific-cycle and all-cycle broadcasts at the same time, the\nspecific takes precedence.\n\nBroadcasts can also target all tasks, specific tasks or families of\ntasks. If a task is affected by broadcasts to multiple ancestor\nnamespaces (tasks it inherits from), the result is determined by\nnormal `[runtime]` inheritance.\n\nBroadcasts are applied at the time of job submission.\n\nBroadcasts persist, even across restarts. Broadcasts made to\nspecific cycle points will expire when the cycle point is older\nthan the oldest active cycle point in the workflow.\n\nActive broadcasts can be revoked using the \"clear\" mode.\nAny broadcasts matching the specified cycle points and\nnamespaces will be revoked.\n\nNote: a \"clear\" broadcast for a specific cycle or namespace does\n*not* clear all-cycle or all-namespace broadcasts.",
               "args": [
                 {
                   "name": "cutoff",
-                  "description": "Clear broadcasts earlier than cutoff cycle point.",
+                  "description": "Clear broadcasts earlier than cutoff cycle point. (for use with \"Expire\" mode).",
                   "type": {
                     "kind": "SCALAR",
                     "name": "CyclePoint",
@@ -10731,13 +11249,13 @@
                 },
                 {
                   "name": "cyclePoints",
-                  "description": "List of cycle points to target or `*` to cancel all all-cycle\nbroadcasts without canceling all specific-cycle broadcasts.",
+                  "description": "List of cycle points to target (or `*` to cancel all all-cycle\nbroadcasts without canceling all specific-cycle broadcasts).",
                   "type": {
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "CyclePoint",
+                      "name": "BroadcastCyclePoint",
                       "ofType": null,
                       "__typename": "__Type"
                     },
@@ -10765,7 +11283,7 @@
                 },
                 {
                   "name": "namespaces",
-                  "description": "Target namespaces.",
+                  "description": "List of namespaces (tasks or families) to target.",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -10782,7 +11300,7 @@
                 },
                 {
                   "name": "settings",
-                  "description": "The cylc namespace for the setting to modify.",
+                  "description": "The `[runtime]` configuration to override with this broadcast\n(e.g. `script = true` or `[environment]ANSWER=42`).",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -10832,7 +11350,7 @@
             },
             {
               "name": "extTrigger",
-              "description": "Report an external event message to a scheduler.\n\nIt is expected that a task in the workflow has registered the same\nmessage as an external trigger - a special prerequisite to be\nsatisfied by an external system, via this command, rather than by\ntriggering off other tasks.\n\nThe ID argument should uniquely distinguish one external trigger\nevent from the next. When a task's external trigger is satisfied by\nan incoming message, the message ID is broadcast to all downstream\ntasks in the cycle point as `$CYLC_EXT_TRIGGER_ID` so that they can\nuse it - e.g. to identify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".",
+              "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".",
               "args": [
                 {
                   "name": "id",
@@ -10903,7 +11421,7 @@
             },
             {
               "name": "message",
-              "description": "Record task job messages.\n\nSend task job messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nTask jobs use this to record and report status such\nas success and failure. Applications run by task jobs can use\nthis command to report messages and to report registered task\noutputs.",
+              "description": "Record task messages.\n\nSend messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nJobs use this to record and report status such\nas success and failure. Applications run by jobs can use\nthis command to report messages and to report registered task\noutputs.",
               "args": [
                 {
                   "name": "eventTime",
@@ -10991,7 +11509,7 @@
             },
             {
               "name": "pause",
-              "description": "Pause a workflow.",
+              "description": "Pause a workflow.\n\nThis suspends submission of tasks.",
               "args": [
                 {
                   "name": "workflows",
@@ -11028,7 +11546,7 @@
             },
             {
               "name": "reload",
-              "description": "Tell a workflow to reload its definition at run time.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
+              "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
               "args": [
                 {
                   "name": "workflows",
@@ -11210,7 +11728,7 @@
             },
             {
               "name": "stop",
-              "description": "Tell a scheduler to shut down,\nor stop a specified flow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.",
+              "description": "Tell a workflow to shut down or stop a specified\nflow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.\n\nTasks that become ready after the shutdown is ordered will be\nsubmitted immediately if the workflow is restarted.\nRemaining task event handlers, job poll and kill commands, will\nbe executed prior to shutdown, unless\nthe stop mode is `Now`.",
               "args": [
                 {
                   "name": "clockTime",
@@ -11237,11 +11755,11 @@
                   "__typename": "__InputValue"
                 },
                 {
-                  "name": "flowLabel",
-                  "description": "Label of flow to sterilise.",
+                  "name": "flowNum",
+                  "description": "Number of flow to stop.",
                   "type": {
                     "kind": "SCALAR",
-                    "name": "String",
+                    "name": "Int",
                     "ofType": null,
                     "__typename": "__Type"
                   },
@@ -11257,7 +11775,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "\"Clean\"",
                   "__typename": "__InputValue"
                 },
                 {
@@ -11361,7 +11879,7 @@
             },
             {
               "name": "releaseHoldPoint",
-              "description": "Release all tasks and unset the workflow hold point, if set.",
+              "description": "Release all tasks and unset the workflow hold point, if set.\n\nHeld tasks do not submit their jobs even if ready to run.",
               "args": [
                 {
                   "name": "workflows",
@@ -11398,7 +11916,7 @@
             },
             {
               "name": "hold",
-              "description": "Hold tasks within a workflow.",
+              "description": "Hold tasks within a workflow.\n\nHeld tasks do not submit their jobs even if ready to run.",
               "args": [
                 {
                   "name": "tasks",
@@ -11457,7 +11975,7 @@
             },
             {
               "name": "kill",
-              "description": "Kill jobs of active tasks and update their statuses accordingly.",
+              "description": "Kill running or submitted jobs.",
               "args": [
                 {
                   "name": "tasks",
@@ -11516,7 +12034,7 @@
             },
             {
               "name": "poll",
-              "description": "Poll (query) task jobs to verify and update their statuses.",
+              "description": "Poll (query) jobs to verify and update their statuses.\n\nThis checks the job status file and queries the\njob runner on the job platform.\n\nPollable tasks are those in the n=0 window with\nan associated job ID, including incomplete finished\ntasks.",
               "args": [
                 {
                   "name": "tasks",
@@ -11696,6 +12214,18 @@
               "description": "Artificially mark task outputs as completed.\n\nThis allows you to manually intervene with Cylc's scheduling\nalgorithm by artificially satisfying outputs of tasks.\n\nBy default this makes tasks appear as if they succeeded.",
               "args": [
                 {
+                  "name": "flowNum",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "outputs",
                   "description": "List of task outputs to satisfy.",
                   "type": {
@@ -11772,15 +12302,49 @@
               "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).",
               "args": [
                 {
-                  "name": "reflow",
-                  "description": null,
+                  "name": "flow",
+                  "description": "The flow(s) to trigger these tasks in.\n\nThis should be a list of flow numbers OR a single-item list\ncontaining one of the following three strings:\n\n* all - Triggered tasks belong to all active flows\n  (default).\n* new - Triggered tasks are assigned to a new flow.\n* none - Triggered tasks do not belong to any flow.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "Flow",
+                        "ofType": null,
+                        "__typename": "__Type"
+                      },
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[\"all\"]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "flowDescr",
+                  "description": "If starting a new flow, this field can be used to provide the\nnew flow with a description for later reference.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "flowWait",
+                  "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduled to\n\"continue on\" from this task until the flow has caught up\nwith it.",
                   "type": {
                     "kind": "SCALAR",
                     "name": "Boolean",
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "false",
                   "__typename": "__InputValue"
                 },
                 {
@@ -11840,7 +12404,7 @@
             },
             {
               "name": "play",
-              "description": "Start, resume or un-pause a workflow run.",
+              "description": "Start, resume or restart a workflow run.",
               "args": [
                 {
                   "name": "abortIfAnyTaskFails",
@@ -11891,20 +12455,8 @@
                   "__typename": "__InputValue"
                 },
                 {
-                  "name": "hold",
-                  "description": "Hold workflow immediately on starting.",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "holdPoint",
-                  "description": "Set hold cycle point. Hold workflow AFTER all tasks have PASSED\nthis cycle point.",
+                  "name": "holdCyclePoint",
+                  "description": "Hold all tasks after this cycle point.",
                   "type": {
                     "kind": "SCALAR",
                     "name": "CyclePoint",
@@ -11964,7 +12516,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "\"Live\"",
                   "__typename": "__InputValue"
                 },
                 {
@@ -11977,6 +12529,18 @@
                     "__typename": "__Type"
                   },
                   "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "pause",
+                  "description": "Pause workflow immediately on starting.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
                   "__typename": "__InputValue"
                 },
                 {
@@ -12064,6 +12628,128 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
+            },
+            {
+              "name": "clean",
+              "description": "Clean a workflow from the run directory.",
+              "args": [
+                {
+                  "name": "localOnly",
+                  "description": "Only clean on the local filesystem (not remote hosts).",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "remoteOnly",
+                  "description": "Only clean on remote hosts (not the local filesystem).",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "rm",
+                  "description": "Only clean the specified subdirectories or files in\nthe run directory, rather than the whole run.\n\nA colon separated list that accepts globs,\ne.g. ``.service/db:log:share:work/2020*``.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"\"",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "workflows",
+                  "description": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "LIST",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "WorkflowID",
+                        "ofType": null,
+                        "__typename": "__Type"
+                      },
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Clean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "editRuntime",
+              "description": "Edit a task or family's `[runtime]` section.\n\nThis only applies for the cycle point of the chosen task/family\ninstance.",
+              "args": [
+                {
+                  "name": "cylcID",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "FrozenID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "runtime",
+                  "description": "`[runtime]` section of the task",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "LIST",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "RuntimeItem",
+                        "ofType": null,
+                        "__typename": "__Type"
+                      },
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "EditRuntime",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -12075,7 +12761,7 @@
         {
           "kind": "OBJECT",
           "name": "Broadcast",
-          "description": "Override or add new [runtime] config in targeted namespaces.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can target any [runtime] namespace for all cycles or\nfor a specific cycle. If a task is affected by specific-cycle and\nall-cycle broadcasts at once, the specific takes precedence. If\na task is affected by broadcasts to multiple ancestor\nnamespaces, the result is determined by normal [runtime]\ninheritance. In other words, it follows this order:\n\n`all:root -> all:FAM -> all:task -> tag:root -> tag:FAM ->\ntag:task`\n\nBroadcasts persist, even across restarts, until they expire\nwhen their target cycle point is older than the oldest current in\nthe workflow, or until they are explicitly cancelled with this\ncommand.  All-cycle broadcasts do not expire.\n\nFor each task the final effect of all broadcasts to all namespaces\nis computed on the fly just prior to job submission.  The\n`--cancel` and `--clear` options simply cancel (remove) active\nbroadcasts, they do not act directly on the final task-level\nresult. Consequently, for example, you cannot broadcast to \"all\ncycles except Tn\" with an all-cycle broadcast followed by a cancel\nto Tn (there is no direct broadcast to Tn to cancel); and you\ncannot broadcast to \"all members of FAMILY except member_n\" with a\ngeneral broadcast to FAMILY followed by a cancel to member_n (there\nis no direct broadcast to member_n to cancel).",
+          "description": "Override `[runtime]` configurations in a running workflow.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can set/override any `[runtime]` configuration for all\ncycles or for a specific cycle. If a task is affected by\nspecific-cycle and all-cycle broadcasts at the same time, the\nspecific takes precedence.\n\nBroadcasts can also target all tasks, specific tasks or families of\ntasks. If a task is affected by broadcasts to multiple ancestor\nnamespaces (tasks it inherits from), the result is determined by\nnormal `[runtime]` inheritance.\n\nBroadcasts are applied at the time of job submission.\n\nBroadcasts persist, even across restarts. Broadcasts made to\nspecific cycle points will expire when the cycle point is older\nthan the oldest active cycle point in the workflow.\n\nActive broadcasts can be revoked using the \"clear\" mode.\nAny broadcasts matching the specified cycle points and\nnamespaces will be revoked.\n\nNote: a \"clear\" broadcast for a specific cycle or namespace does\n*not* clear all-cycle or all-namespace broadcasts.",
           "fields": [
             {
               "name": "result",
@@ -12110,6 +12796,17 @@
           "__typename": "__Type"
         },
         {
+          "kind": "SCALAR",
+          "name": "BroadcastCyclePoint",
+          "description": "A cycle point or `*`.",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
           "kind": "ENUM",
           "name": "BroadcastMode",
           "description": null,
@@ -12126,14 +12823,14 @@
             },
             {
               "name": "Clear",
-              "description": "Revoke an existing broadcast.",
+              "description": "Clear existing broadcasts globally or for specified cycle points and namespaces if provided.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
             },
             {
               "name": "Expire",
-              "description": "Expire an existing broadcast.",
+              "description": "Clear all broadcasts for cycle points earlier than the provided cutoff.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
@@ -12156,7 +12853,7 @@
         {
           "kind": "SCALAR",
           "name": "BroadcastSetting",
-          "description": "A [runtime] key=value configuration for a namespace.\n\nShould be a key=value pair where sections are wrapped with square\nbrackets.\n\nExamples:\n    script=true\n    [environment]ANSWER=42\n\nNested sections should only have one set of square brackets e.g:\n\n    [section][subsection][subsubsection]=value",
+          "description": "A `[runtime]` configuration for a namespace.\n\nShould be a `key=value` pair where sections are wrapped with square\nbrackets.\n\nExamples:\n    script=true\n    [environment]ANSWER=42\n\nNested sections should only have one set of square brackets e.g:\n\n    [section][subsection][subsubsection]=value",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -12178,7 +12875,7 @@
         {
           "kind": "OBJECT",
           "name": "ExtTrigger",
-          "description": "Report an external event message to a scheduler.\n\nIt is expected that a task in the workflow has registered the same\nmessage as an external trigger - a special prerequisite to be\nsatisfied by an external system, via this command, rather than by\ntriggering off other tasks.\n\nThe ID argument should uniquely distinguish one external trigger\nevent from the next. When a task's external trigger is satisfied by\nan incoming message, the message ID is broadcast to all downstream\ntasks in the cycle point as `$CYLC_EXT_TRIGGER_ID` so that they can\nuse it - e.g. to identify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".",
+          "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".",
           "fields": [
             {
               "name": "result",
@@ -12204,7 +12901,7 @@
         {
           "kind": "OBJECT",
           "name": "Message",
-          "description": "Record task job messages.\n\nSend task job messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nTask jobs use this to record and report status such\nas success and failure. Applications run by task jobs can use\nthis command to report messages and to report registered task\noutputs.",
+          "description": "Record task messages.\n\nSend messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nJobs use this to record and report status such\nas success and failure. Applications run by jobs can use\nthis command to report messages and to report registered task\noutputs.",
           "fields": [
             {
               "name": "result",
@@ -12230,7 +12927,7 @@
         {
           "kind": "OBJECT",
           "name": "Pause",
-          "description": "Pause a workflow.",
+          "description": "Pause a workflow.\n\nThis suspends submission of tasks.",
           "fields": [
             {
               "name": "result",
@@ -12256,7 +12953,7 @@
         {
           "kind": "OBJECT",
           "name": "Reload",
-          "description": "Tell a workflow to reload its definition at run time.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
+          "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
           "fields": [
             {
               "name": "result",
@@ -12428,7 +13125,7 @@
         {
           "kind": "OBJECT",
           "name": "Stop",
-          "description": "Tell a scheduler to shut down,\nor stop a specified flow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.",
+          "description": "Tell a workflow to shut down or stop a specified\nflow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.\n\nTasks that become ready after the shutdown is ordered will be\nsubmitted immediately if the workflow is restarted.\nRemaining task event handlers, job poll and kill commands, will\nbe executed prior to shutdown, unless\nthe stop mode is `Now`.",
           "fields": [
             {
               "name": "result",
@@ -12542,7 +13239,7 @@
         {
           "kind": "OBJECT",
           "name": "ReleaseHoldPoint",
-          "description": "Release all tasks and unset the workflow hold point, if set.",
+          "description": "Release all tasks and unset the workflow hold point, if set.\n\nHeld tasks do not submit their jobs even if ready to run.",
           "fields": [
             {
               "name": "result",
@@ -12568,7 +13265,7 @@
         {
           "kind": "OBJECT",
           "name": "Hold",
-          "description": "Hold tasks within a workflow.",
+          "description": "Hold tasks within a workflow.\n\nHeld tasks do not submit their jobs even if ready to run.",
           "fields": [
             {
               "name": "result",
@@ -12605,7 +13302,7 @@
         {
           "kind": "OBJECT",
           "name": "Kill",
-          "description": "Kill jobs of active tasks and update their statuses accordingly.",
+          "description": "Kill running or submitted jobs.",
           "fields": [
             {
               "name": "result",
@@ -12631,7 +13328,7 @@
         {
           "kind": "OBJECT",
           "name": "Poll",
-          "description": "Poll (query) task jobs to verify and update their statuses.",
+          "description": "Poll (query) jobs to verify and update their statuses.\n\nThis checks the job status file and queries the\njob runner on the job platform.\n\nPollable tasks are those in the n=0 window with\nan associated job ID, including incomplete finished\ntasks.",
           "fields": [
             {
               "name": "result",
@@ -12759,9 +13456,20 @@
           "__typename": "__Type"
         },
         {
+          "kind": "SCALAR",
+          "name": "Flow",
+          "description": "An integer or one of all, new or none.",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
           "kind": "OBJECT",
           "name": "Play",
-          "description": "Start, resume or un-pause a workflow run.",
+          "description": "Start, resume or restart a workflow run.",
           "fields": [
             {
               "name": "result",
@@ -12837,6 +13545,80 @@
         },
         {
           "kind": "OBJECT",
+          "name": "Clean",
+          "description": "Clean a workflow from the run directory.",
+          "fields": [
+            {
+              "name": "result",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "EditRuntime",
+          "description": "Edit a task or family's `[runtime]` section.\n\nThis only applies for the cycle point of the chosen task/family\ninstance.",
+          "fields": [
+            {
+              "name": "result",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "SCALAR",
+          "name": "FrozenID",
+          "description": "A ID that cannot be altered in the UI mutation form.\n\nIt can only specified through which family/task is clicked on.",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "SCALAR",
+          "name": "RuntimeItem",
+          "description": "A task's `[runtime]` item as a string TODO",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
           "name": "Subscriptions",
           "description": "Multi-Workflow root level subscriptions.",
           "fields": [
@@ -12846,7 +13628,7 @@
               "args": [
                 {
                   "name": "workflows",
-                  "description": "List of full ID, i.e. `~owner/name`",
+                  "description": "List of full ID, i.e. `~user/workflow_id`",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -13807,6 +14589,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -14417,6 +15211,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -14785,6 +15591,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "distance",
                   "description": null,
                   "type": {
@@ -14920,14 +15738,9 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -15264,6 +16077,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -15353,7 +16178,7 @@
             },
             {
               "name": "jobs",
-              "description": "Task jobs.",
+              "description": "Jobs.",
               "args": [
                 {
                   "name": "ids",
@@ -15710,6 +16535,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -16010,9 +16847,1032 @@
             }
           ],
           "inputFields": null,
-          "interfaces": [],
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "Delta",
+              "ofType": null,
+              "__typename": "__Type"
+            }
+          ],
           "enumValues": null,
           "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "INTERFACE",
+          "name": "Delta",
+          "description": "Interface for delta types.\n\nSince we usually subscribe to the same fields for both added/updated\ndeltas this interface makes writing fragments easier.\n\nNOTE: This interface is specialised to the \"added\" type, other types must\noverride fields as required.",
+          "fields": [
+            {
+              "name": "families",
+              "description": "Family definitions.",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "true",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Family",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "familyProxies",
+              "description": "Family cycle instances.",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "states",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exstates",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isHeld",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isQueued",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "true",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "FamilyProxy",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "jobs",
+              "description": "Jobs.",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "states",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exstates",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "true",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Job",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "tasks",
+              "description": "Task definitions.",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "true",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Task",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "taskProxies",
+              "description": "Task cycle instances.",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "states",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exstates",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isHeld",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isQueued",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "true",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "TaskProxy",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "edges",
+              "description": "Graph edges",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "states",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exstates",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "true",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Edge",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "workflow",
+              "description": "Global workflow info.",
+              "args": [
+                {
+                  "name": "stripNull",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "true",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Workflow",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": [
+            {
+              "kind": "OBJECT",
+              "name": "Added",
+              "ofType": null,
+              "__typename": "__Type"
+            },
+            {
+              "kind": "OBJECT",
+              "name": "Updated",
+              "ofType": null,
+              "__typename": "__Type"
+            }
+          ],
           "__typename": "__Type"
         },
         {
@@ -16243,6 +18103,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -16332,7 +18204,7 @@
             },
             {
               "name": "jobs",
-              "description": "Task jobs.",
+              "description": "Jobs.",
               "args": [
                 {
                   "name": "ids",
@@ -16689,6 +18561,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "mindepth",
                   "description": null,
                   "type": {
@@ -16989,7 +18873,14 @@
             }
           ],
           "inputFields": null,
-          "interfaces": [],
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "Delta",
+              "ofType": null,
+              "__typename": "__Type"
+            }
+          ],
           "enumValues": null,
           "possibleTypes": null,
           "__typename": "__Type"
@@ -16999,6 +18890,20 @@
           "name": "Pruned",
           "description": "WFS Nodes/Edges that have been removed.",
           "fields": [
+            {
+              "name": "workflow",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
             {
               "name": "families",
               "description": null,
@@ -18105,66 +20010,9 @@
           "__typename": "__Type"
         }
       ],
-      "directives": [
-        {
-          "name": "include",
-          "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
-          "locations": [
-            "FIELD",
-            "FRAGMENT_SPREAD",
-            "INLINE_FRAGMENT"
-          ],
-          "args": [
-            {
-              "name": "if",
-              "description": "Included when true.",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "defaultValue": null,
-              "__typename": "__InputValue"
-            }
-          ],
-          "__typename": "__Directive"
-        },
-        {
-          "name": "skip",
-          "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
-          "locations": [
-            "FIELD",
-            "FRAGMENT_SPREAD",
-            "INLINE_FRAGMENT"
-          ],
-          "args": [
-            {
-              "name": "if",
-              "description": "Skipped when true.",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "defaultValue": null,
-              "__typename": "__InputValue"
-            }
-          ],
-          "__typename": "__Directive"
-        }
-      ]
+      "__typename": "__Schema"
     }
-  }
+  },
+  "loading": false,
+  "networkStatus": 7
 }

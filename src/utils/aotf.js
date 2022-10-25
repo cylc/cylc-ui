@@ -513,10 +513,10 @@ export function getIntrospectionQuery () {
   const query = gql(`
     query {
       __schema {
-        mutationType {
+        queryType {
           ...FullType
         }
-        queryType {
+        mutationType {
           ...FullType
         }
         types {

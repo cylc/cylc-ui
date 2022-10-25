@@ -32,7 +32,8 @@
     "cycleMutation",
     "jobMutation",
     "namespaceMutation",
-    "hold"
+    "hold",
+    "editRuntime"
   ],
   "mode": "single user"
 }

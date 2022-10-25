@@ -21,6 +21,8 @@ const GscanSubscriptionQuery = require('./GscanSubscriptionQuery.json')
 const OnWorkflowTreeDeltasData = require('./OnWorkflowTreeDeltasData.json')
 const OnWorkflowTableDeltasData = require('./OnWorkflowTableDeltasData.json')
 const userProfile = require('./userprofile.json')
+const TaskProxyQuery = require('./TaskProxyQuery.json')
+const FamilyProxyQuery = require('./FamilyProxyQuery.json')
 
 module.exports = {
   DashboardSubscriptionQuery,
@@ -28,5 +30,7 @@ module.exports = {
   GscanSubscriptionQuery,
   OnWorkflowTreeDeltasData,
   OnWorkflowTableDeltasData,
-  userProfile
+  userProfile,
+  TaskProxyQuery,
+  FamilyProxyQuery
 }

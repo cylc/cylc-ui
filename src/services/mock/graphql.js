@@ -39,7 +39,9 @@ const DATA_MAPPING = {
     deltas: {
       added: data.OnWorkflowTableDeltasData
     }
-  }
+  },
+  taskProxy: data.TaskProxyQuery,
+  familyProxy: data.FamilyProxyQuery
 }
 
 /**
