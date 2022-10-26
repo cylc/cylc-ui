@@ -113,7 +113,7 @@ export function filterHierarchically (workflows, name, workflowStates, taskState
         result.push(workflowNode)
         return result
       }
-    } else if (workflowNode.type === 'workflow-name-part' && workflowNode.children.length) {
+    } else if (workflowNode.type === 'workflow-part' && workflowNode.children.length) {
       const children = workflowNode.children.reduce(filterChildren, [])
       if (children.length) {
         result.push({ ...workflowNode, children })

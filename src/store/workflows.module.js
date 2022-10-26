@@ -429,6 +429,7 @@ function createTreeNode (state, id, tokens, node) {
 }
 
 function remove (state, prunedID) {
+  console.log(`@ ## ${prunedID}`)
   const tokens = new Tokens(prunedID)
   const id = tokens.id
   console.log(`@ -- ${id}`)
@@ -507,11 +508,16 @@ const mutations = {
   REMOVE: remove,
   REMOVE_DELTAS (state, pruned) {
     console.log('@ REMOVE')
-    Object.keys(pick(pruned, KEYS)).forEach(prunedKey => {
+    Object.keys(pick(pruned, PRUNED_KEYS_MULT)).forEach(prunedKey => {
       if (pruned[prunedKey]) {
         for (const prunedID of pruned[prunedKey]) {
           remove(state, prunedID)
         }
+      }
+    })
+    Object.keys(pick(pruned, PRUNED_KEYS_SING)).forEach(prunedKey => {
+      if (pruned[prunedKey]) {
+        remove(state, pruned[prunedKey])
       }
     })
     console.log('@@')
@@ -523,6 +529,11 @@ const mutations = {
 // NOTE: we must create tasks before families (note cycles ARE families
 // because of the way we request them)
 const KEYS = ['workflow', 'taskProxies', 'cyclePoints', 'familyProxies', 'jobs', 'edges']
+
+// Pruned keys which return arrays of pruned IDs
+const PRUNED_KEYS_MULT = ['taskProxies', 'familyProxies', 'jobs', 'edges']
+// Pruned keys which contain single pruned IDs
+const PRUNED_KEYS_SING = ['workflow']
 
 const actions = {}
 

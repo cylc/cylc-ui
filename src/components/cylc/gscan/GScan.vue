@@ -112,6 +112,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :workflows="workflows"
           :stopOn="['workflow']"
           class="c-gscan-workflow ma-0 pa-0"
+          ref="tree"
         >
           <template v-slot:node="scope">
             <workflow-icon
@@ -210,7 +211,9 @@ import Tree from '@/components/cylc/tree/Tree'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
 // import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
+import { gscanWorkflowCompValue } from '@/components/cylc/gscan/sort'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+import { sortedIndexBy } from '@/components/cylc/common/sort'
 
 export default {
   name: 'GScan',
@@ -313,19 +316,26 @@ export default {
   computed: {
     ...mapState('workflows', ['cylcTree']),
     workflows () {
-      // TODO: this more nicely
-      return this.cylcTree.children
-    },
-    workflowNodes () {
-      // NOTE: In case we decide to allow the user to switch between hierarchical and flat
-      //       gscan view, then all we need to do is just pass a boolean data-property to
-      //       the `createWorkflowNode` function below. Then reactivity will take care of
-      //       the rest.
-
-      // const reducer = (acc, workflow) => addNodeToTree(createWorkflowNode(workflow, /* hierarchy */true), acc)
-      // return Object.values(this.workflows)
-      //   .reduce(reducer, [])
-      return []
+      if (!this.cylcTree.children.length) {
+        // no user in the data store (i.e. data loading)
+        return []
+      }
+      // return a list of top-level workflows / workflow-parts sorted
+      // according to 1-status and 2-id.
+      const tree = []
+      for (const workflowTree of this.cylcTree.children[0].children) {
+        // insert this workflow / workflow-part in sort order
+        tree.splice(
+          sortedIndexBy(
+            tree,
+            workflowTree,
+            (n) => gscanWorkflowCompValue(n)
+          ),
+          0,
+          workflowTree
+        )
+      }
+      return tree
     },
     /**
      * @return {Array<String>}
@@ -355,7 +365,7 @@ export default {
       deep: true,
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     },
     /**
@@ -365,13 +375,42 @@ export default {
     searchWorkflows: {
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, newVal, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.workflows, newVal, this.workflowStates, this.taskStates)
       }
     },
-    workflowNodes: {
+    workflows: {
+      deep: true, // TODO (remove deep?)
       immediate: true,
       handler: function () {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
+      }
+    },
+    filteredWorkflows: {
+      deep: true,
+      immediate: true,
+      handler: function () {
+        // build a list of IDs to display
+        // TODO: refactor the this.filterHierarchically code to make this nicer
+        const ids = []
+        const stack = [...this.filteredWorkflows]
+        let item
+        while (stack.length) {
+          // item = stack.splice(-1)[0]
+          item = stack.pop()
+          if (['workflow', 'workflow-part'].includes(item.type)) {
+            ids.push(item.id)
+            stack.push(...item.children)
+          }
+        }
+        // set the filtered attr on the treeItemCache of the tree nodes
+        if (!this.$refs.tree) {
+          // tree component has not been created yet
+          return
+        }
+        const cache = this.$refs.tree.treeItemCache
+        for (const id in cache) {
+          cache[id].filtered = ids.includes(id)
+        }
       }
     }
   },

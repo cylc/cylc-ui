@@ -74,7 +74,7 @@ export const DEFAULT_COMPARATOR = (left, right) => {
  * @param comparator {SortedIndexByComparator=} - function used to compare the newValue with otherValues in the list
  * @return {number} - sorted index
  */
-export function sortedIndexBy (array, value, iteratee, options) {
+export function sortedIndexBy (array, value, iteratee, options = {}) {
   // comparator, reverse = false) {
   if (array.length === 0) {
     return 0
