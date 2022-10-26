@@ -182,10 +182,13 @@ function addChild (parentNode, childNode) {
   }
 
   // insert the child preserving sort order
+  // if ([].includes(childNode.type)) {}
+  const reverse = ['cycle', 'job'].includes(childNode.type)
   const index = sortedIndexBy(
     parentNode[key],
     childNode,
-    (n) => n.name // sort by node name
+    (n) => n.name, // sort by node name
+    { reverse }
   )
   parentNode[key].splice(index, 0, childNode)
 }

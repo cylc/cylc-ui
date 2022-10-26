@@ -135,7 +135,7 @@ function addNodeToTree (node, nodes) {
       nodes,
       node,
       (n) => n.name,
-      sortWorkflowNamePartNodeOrWorkflowNode
+      { comparator: sortWorkflowNamePartNodeOrWorkflowNode }
     )
     nodes.splice(sortedIndex, 0, node)
   } else {

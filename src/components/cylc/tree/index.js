@@ -235,7 +235,7 @@ function addFamilyProxy (familyProxy, workflow, options) {
         parent.children,
         familyProxy,
         (f) => f.node.name,
-        sortTaskProxyOrFamilyProxy
+        { comparator: sortTaskProxyOrFamilyProxy }
       )
       parent.children.splice(sortedIndex, 0, familyProxy)
     }
@@ -306,7 +306,7 @@ function addTaskProxy (taskProxy, workflow, options) {
           parent.children,
           taskProxy,
           (t) => t.node.name,
-          sortTaskProxyOrFamilyProxy
+          { comparator: sortTaskProxyOrFamilyProxy }
         )
         parent.children.splice(sortedIndex, 0, taskProxy)
       }

@@ -74,14 +74,15 @@ export const DEFAULT_COMPARATOR = (left, right) => {
  * @param comparator {SortedIndexByComparator=} - function used to compare the newValue with otherValues in the list
  * @return {number} - sorted index
  */
-export function sortedIndexBy (array, value, iteratee, comparator) {
+export function sortedIndexBy (array, value, iteratee, options) {
+  // comparator, reverse = false) {
   if (array.length === 0) {
     return 0
   }
   // If given a function, use it. Otherwise, simply use identity function.
   const iterateeFunction = iteratee || ((value) => value)
   // If given a function, use it. Otherwise, simply use locale sort with numeric enabled
-  const comparatorFunction = comparator || ((leftObject, leftValue, rightObject, rightValue) => DEFAULT_COMPARATOR(leftValue, rightValue))
+  const comparatorFunction = options.comparator || ((leftObject, leftValue, rightObject, rightValue) => DEFAULT_COMPARATOR(leftValue, rightValue))
   let low = 0
   let high = array.length
 
@@ -90,7 +91,10 @@ export function sortedIndexBy (array, value, iteratee, comparator) {
   while (low < high) {
     const mid = Math.floor((low + high) / 2)
     const midValue = iterateeFunction(array[mid])
-    const higher = comparatorFunction(value, newValue, array[mid], midValue)
+    let higher = comparatorFunction(value, newValue, array[mid], midValue)
+    if (options.reverse) {
+      higher = higher * -1
+    }
     if (higher > 0) {
       low = mid + 1
     } else {
