@@ -224,7 +224,8 @@ export default {
   .c8-task {
     .status {
       .outline {
-        fill: none;
+        // NOTE: ensure the outline is filled so that it can be clicked
+        fill: $background;
         stroke: $foreground;
       }
       .progress {
