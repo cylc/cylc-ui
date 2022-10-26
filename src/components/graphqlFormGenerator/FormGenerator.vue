@@ -125,14 +125,6 @@ export default {
     }
   },
 
-  watch: {
-    mutation: function () {
-      // reset the form if the mutation changes
-      // (i.e. this component is being re-used)
-      this.reset()
-    }
-  },
-
   methods: {
     /* Set this form to its initial conditions. */
     reset () {

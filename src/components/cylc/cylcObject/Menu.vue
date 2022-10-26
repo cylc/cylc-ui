@@ -112,6 +112,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :initialData="initialData(dialogMutation, tokens)"
         :cancel="closeDialog"
         :types="types"
+        :key="dialogKey /* Enables re-render of component each time dialog opened */"
         ref="mutationComponent"
       />
     </v-dialog>
@@ -151,6 +152,7 @@ export default {
     return {
       dialog: false,
       dialogMutation: null,
+      dialogKey: false,
       expanded: false,
       id: '',
       node: {},
@@ -227,6 +229,8 @@ export default {
     openDialog (mutation) {
       this.dialog = true
       this.dialogMutation = mutation
+      // Tell Vue to re-render the dialog component:
+      this.dialogKey = !this.dialogKey
     },
 
     closeDialog () {
@@ -306,12 +310,7 @@ export default {
           (a, b) => a.mutation.name.localeCompare(b.mutation.name)
         )
       })
-      this.$nextTick(() => {
-        this.showMenu = true
-        // reset the mutation component if present
-        // (this is because we re-use the same component)
-        this.$refs?.mutationComponent?.reset()
-      })
+      this.showMenu = true
     },
 
     initialData (mutation, tokens) {

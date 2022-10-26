@@ -199,20 +199,6 @@ export default {
       ).then(response => {
         this.status = response.status.name.replace('_', '-')
       })
-    },
-
-    /* Reset this component to it's initial state. */
-    reset () {
-      this.$refs.formGenerator.reset()
-      Object.assign(this.$data, initialState)
-    }
-  },
-
-  watch: {
-    mutation: function () {
-      // reset the form if the mutation changes
-      // (i.e. this component is being re-used)
-      this.reset()
     }
   }
 
