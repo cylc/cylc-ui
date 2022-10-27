@@ -288,7 +288,7 @@ export default {
       this.id = id
       this.tokens = tokenise(id)
       this.type = getType(this.tokens)
-      this.node = node
+      this.node = node.node
       this.x = event.clientX
       this.y = event.clientY
       // await graphql query to get mutations
