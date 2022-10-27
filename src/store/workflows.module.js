@@ -216,21 +216,31 @@ function removeChild (state, node, parentNode = null) {
   )
 }
 
-function removeTree (state, node) {
+function removeTree (state, node, removeParent = true) {
   let pointer
-  const stack = [...node.children]
+  const stack = [
+    ...node.children || [],
+    ...node.familyTree || [],
+    ...node.$namespaces || [],
+    ...node.$edges || []
+  ]
   const remove = []
   while (stack.length) {
     pointer = stack.pop()
     stack.push(...(pointer.children || []))
+    stack.push(...(pointer.familyTree || []))
+    stack.push(...(pointer.$namespaces || []))
+    stack.push(...(pointer.$edges || []))
     remove.push(pointer)
   }
   for (pointer of remove.reverse()) {
     removeIndex(state, pointer.id)
     removeChild(state, pointer)
   }
-  removeIndex(state, node.id)
-  removeChild(state, node)
+  if (removeParent) {
+    removeIndex(state, node.id)
+    removeChild(state, node)
+  }
 }
 
 function cleanParents (state, node) {
@@ -431,7 +441,6 @@ function createTreeNode (state, id, tokens, node) {
 }
 
 function remove (state, prunedID) {
-  console.log(`@ ## ${prunedID}`)
   const tokens = new Tokens(prunedID)
   const id = tokens.id
   console.log(`@ -- ${id}`)
@@ -507,7 +516,9 @@ const mutations = {
     }
     console.log('@@')
   },
+  // remove an ID
   REMOVE: remove,
+  // remove all IDs contained in a delta
   REMOVE_DELTAS (state, pruned) {
     console.log('@ REMOVE')
     Object.keys(pick(pruned, PRUNED_KEYS_MULT)).forEach(prunedKey => {
@@ -522,6 +533,15 @@ const mutations = {
         remove(state, pruned[prunedKey])
       }
     })
+    console.log('@@')
+  },
+  // remove all children of a node
+  REMOVE_CHILDREN (state, id) {
+    console.log('@ REMOVE CHILDREN')
+    const workflow = getIndex(state, id)
+    if (workflow) {
+      removeTree(state, workflow, false)
+    }
     console.log('@@')
   },
   CLEAR: clearTree

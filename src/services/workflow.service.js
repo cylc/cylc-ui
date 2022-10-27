@@ -353,6 +353,23 @@ class WorkflowService {
     for (const callback of subscription.callbacks) {
       callback.tearDown(store)
     }
+    if (subscription.query.name === 'workflow') {
+      // Remove all children in the store for each workflow in the subscription.
+      // This is how the store gets housekept when we change workflow.
+      //
+      // Because of this we cannot request cycles/edges/families/namespaces
+      // in the global subscription.
+      //
+      // Longer term the solution is to have views provide lists of the fields
+      // they require for tasks/cycles/namespaces etc and have the
+      // WorkflowService construct the query from this information. That way the
+      // WorkflowService will know what data to remove when a subscription is
+      // stopped.
+      store.commit(
+        'workflows/REMOVE_CHILDREN',
+        subscription.query.variables.workflowId
+      )
+    }
     delete this.subscriptions[subscription.query.name]
   }
 

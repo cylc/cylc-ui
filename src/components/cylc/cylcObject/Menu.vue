@@ -199,6 +199,10 @@ export default {
       return this.mutations
     },
     typeAndStatusText () {
+      if (!this.node) {
+        // can happen briefly when switching workflows
+        return
+      }
       let ret = this.type
       if (ret === 'task' && !('isHeld' in this.node)) {
         // TODO: better way of checking if a 'task' is actually a family?
