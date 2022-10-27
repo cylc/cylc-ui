@@ -111,6 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :expand-collapse-toggle="false"
           :workflows="workflows"
           :stopOn="['workflow']"
+          :autoExpandTypes="['workflow-part', 'workflow']"
           class="c-gscan-workflow ma-0 pa-0"
           ref="tree"
         >

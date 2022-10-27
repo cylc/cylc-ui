@@ -141,7 +141,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :node="child"
             :stopOn="stopOn"
             :hoverable="hoverable"
-            :initialExpanded="expanded"
+            :autoExpandTypes="autoExpandTypes"
             v-on:tree-item-created="onTreeItemCreated"
             v-on:tree-item-destroyed="onTreeItemDestroyed"
             v-on:tree-item-expanded="onTreeItemExpanded"
@@ -188,6 +188,13 @@ export default {
     expandCollapseToggle: {
       type: Boolean,
       default: true
+    },
+    autoExpandTypes: {
+      // Array of Cylc "types" (e.g. workflow, cycle, etc) to be auto-expanded
+      // on initial load
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   components: {

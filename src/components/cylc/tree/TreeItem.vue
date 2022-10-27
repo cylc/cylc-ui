@@ -201,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :depth="depth + 1"
         :stopOn="stopOn"
         :hoverable="hoverable"
-        :initialExpanded="initialExpanded"
+        :autoExpandTypes="autoExpandTypes"
         v-on:tree-item-created="$listeners['tree-item-created']"
         v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
         v-on:tree-item-expanded="$listeners['tree-item-expanded']"
@@ -217,7 +217,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :depth="depth + 1"
         :stopOn="stopOn"
         :hoverable="hoverable"
-        :initialExpanded="initialExpanded"
+        :autoExpandTypes="autoExpandTypes"
         v-on:tree-item-created="$listeners['tree-item-created']"
         v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
         v-on:tree-item-expanded="$listeners['tree-item-expanded']"
@@ -233,7 +233,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :depth="depth + 1"
         :stopOn="stopOn"
         :hoverable="hoverable"
-        :initialExpanded="initialExpanded"
+        :autoExpandTypes="autoExpandTypes"
         v-on:tree-item-created="$listeners['tree-item-created']"
         v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
         v-on:tree-item-expanded="$listeners['tree-item-expanded']"
@@ -282,9 +282,10 @@ export default {
       default: () => []
     },
     hoverable: Boolean,
-    initialExpanded: {
-      type: Boolean,
-      default: true
+    autoExpandTypes: {
+      type: Array,
+      required: false,
+      default: () => []
     }
     // treeItemCache: {
     //   type: Object,
@@ -295,7 +296,6 @@ export default {
     return {
       active: false,
       selected: false,
-      // isExpanded: this.initialExpanded,
       // filtered: true,
       leafProperties: [
         {
@@ -326,7 +326,7 @@ export default {
       icons: {
         mdiChevronRight
       },
-      isExpanded: false, // TODO
+      isExpanded: false,
       filtered: true
     }
   },
@@ -401,10 +401,9 @@ export default {
     this.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
-    if (this.node.expanded !== undefined && this.node.expanded !== null) {
-      this.isExpanded = this.node.expanded
-      this.emitExpandCollapseEvent(this.isExpanded)
-    }
+    // apply auto-expand rules when a treeitem is created
+    this.isExpanded = this.autoExpandTypes.includes(this.node.type)
+    this.emitExpandCollapseEvent(this.isExpanded)
   },
   methods: {
     toggleExpandCollapse () {
