@@ -72,6 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         r="16"
         stroke-width="50"
         stroke-dasharray="157"
+        transform="rotate(-90, 0, 0)"
         :style="getRunningStyle()"
       />
       <!-- dot
@@ -272,7 +273,6 @@ export default {
         fill: transparent;
         stroke: $foreground;
         transform-origin: 50% 50%;
-        transform: rotate(-90deg);
         opacity: 0.4;
         /* 0% progress */
         stroke-dashoffset: 157;
