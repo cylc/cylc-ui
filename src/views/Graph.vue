@@ -115,6 +115,11 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
 import GraphNode from '@/components/cylc/GraphNode'
+import {
+  posToPath,
+  nonCryptoHash,
+  updateArray
+} from '@/utils/graph-utils'
 import { graphviz } from '@hpcc-js/wasm'
 import * as svgPanZoom from 'svg-pan-zoom'
 
@@ -193,57 +198,6 @@ fragment Deltas on Deltas {
   }
 }
 `
-
-function posToPath (pos) {
-  // the last point comes first, followed by the others in order I.E:
-  // -1, 0, 1, 2, ... -3, -2
-  const parts = pos.substring(2).split(' ').map(x => x.split(','))
-  const [last] = parts.splice(0, 1)
-  let path = null
-  for (const part of parts) {
-    if (!path) {
-      path = `M${part[0]} -${part[1]}, C`
-    } else {
-      path = path + ` ${part[0]} -${part[1]},`
-    }
-  }
-  path = path + ` L ${last[0]} -${last[1]}`
-  return path
-}
-
-/* TODO: everything! */
-// eslint-disable-next-line no-extend-native
-String.prototype.nonCryptoHash = function () {
-  let hash = 0
-  let i
-  let chr
-  if (this.length === 0) return hash
-  for (i = 0; i < this.length; i++) {
-    chr = this.charCodeAt(i)
-    hash = ((hash << 5) - hash) + chr
-    hash |= 0 // Convert to 32bit integer
-  }
-  return hash
-}
-
-function updateArray (before, after) {
-  // remove old items
-  for (const item of before) {
-    if (after.indexOf(after) === -1) {
-      console.log(`NODE-- ${item.id}`)
-      before.splice(
-        before.indexOf(item), 1
-      )
-    }
-  }
-  // insert new items
-  for (const item of after) {
-    if (before.indexOf(item) === -1) {
-      console.log(`NODE++ ${item.id}`)
-      before.push(item)
-    }
-  }
-}
 
 export default {
   mixins: [
@@ -461,10 +415,10 @@ export default {
     },
     hashGraph (nodes, edges) {
       // generate a hash for this list of nodes and edges
-      return (
+      return nonCryptoHash(
         nodes.map(n => n.id).reduce((x, y) => { return x + y }) +
         edges.map(n => n.id).reduce((x, y) => { return x + y })
-      ).nonCryptoHash()
+      )
     },
     reset () {
       // pan / zoom so that the graph is centered and in frame
