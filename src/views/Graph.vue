@@ -202,13 +202,12 @@ function posToPath (pos) {
   let path = null
   for (const part of parts) {
     if (!path) {
-      path = `M${part[0]},-${part[1]} C`
+      path = `M${part[0]} -${part[1]}, C`
     } else {
-      path = path + ` ${part[0]},-${part[1]}`
+      path = path + ` ${part[0]} -${part[1]},`
     }
   }
-  path = path + ` ${last[0]},-${last[1]}`
-  console.log(`% ${pos}\n${path}`)
+  path = path + ` L ${last[0]} -${last[1]}`
   return path
 }
 
