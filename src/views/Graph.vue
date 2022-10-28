@@ -42,7 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <!-- the graph -->
     <svg
-      id="graphgraph"
       width="100%"
       height="100%"
       ref="graph"
@@ -289,31 +288,36 @@ export default {
     }
   },
   mounted () {
-    this.panZoomWidget = svgPanZoom(
-      document.getElementById('graphgraph'),
-      {
-        // NOTE: fix must be false otherwise it's trying to measure up before
-        // the viewport is loaded or something like that which causes
-        // NaN values to end up in the transformation matrix
-        // TODO: enable the "thumbnail" viewer (i.e. minimap, see svg-pan-zoom)
-        viewportSelector: '.svg-pan-zoom_viewport',
-        panEnabled: true,
-        controlIconsEnabled: false,
-        zoomEnabled: true,
-        dblClickZoomEnabled: true,
-        mouseWheelZoomEnabled: true,
-        preventMouseEventsDefault: true,
-        zoomScaleSensitivity: 0.2,
-        minZoom: 0.01, // how zoomed out we can go
-        maxZoom: 10, // how zoomed in we can go
-        fit: false,
-        contain: false,
-        center: true,
-        refreshRate: 'auto'
-      }
-    )
-
-    this.refreshTimer = setInterval(this.refresh, 2000)
+    // allow render to happen before we go configuring svgPanZoom
+    const self = this
+    this.$nextTick(function () {
+      // NOTE: Initiating svgPanZoom may result in some "violation" warnings
+      // see https://github.com/bumbu/svg-pan-zoom/issues/408
+      self.panZoomWidget = svgPanZoom(
+        self.$refs.graph,
+        {
+          // NOTE: fix must be false otherwise it's trying to measure up before
+          // the viewport is loaded or something like that which causes
+          // NaN values to end up in the transformation matrix
+          // TODO: enable the "thumbnail" viewer (i.e. minimap, see svg-pan-zoom)
+          viewportSelector: '.svg-pan-zoom_viewport',
+          panEnabled: true,
+          controlIconsEnabled: false,
+          zoomEnabled: true,
+          dblClickZoomEnabled: true,
+          mouseWheelZoomEnabled: true,
+          preventMouseEventsDefault: true,
+          zoomScaleSensitivity: 0.2,
+          minZoom: 0.01, // how zoomed out we can go
+          maxZoom: 10, // how zoomed in we can go
+          fit: false,
+          contain: false,
+          center: true,
+          refreshRate: 'auto'
+        }
+      )
+      self.refreshTimer = setInterval(self.refresh, 2000)
+    })
   },
   beforeDestroy () {
     clearInterval(this.refreshTimer)
@@ -464,16 +468,16 @@ export default {
       ).nonCryptoHash()
     },
     reset () {
-      // TODO: this code was taken from:
+      // pan / zoom so that the graph is centered and in frame
+      this.panZoomTo(
+        this.$refs.graph.getElementsByClassName('svg-pan-zoom_viewport')[0]
+      )
+    },
+    panZoomTo (ele) {
+      // pan / zoom so that the provided SVG element is centered and in frame
+      // Acknowledgment: Code adapted from suggestion from @iftahh in
       // https://github.com/bumbu/svg-pan-zoom/issues/381
-      // it would need an attribution if left in
-      // but it doesn't work properly for some reason
-      // better than nothing though...
-
       this.panZoomWidget.resize()
-
-      const ele = this.$refs.graph
-        .getElementsByClassName('svg-pan-zoom_viewport')[0]
       const bbox = ele.getBBox()
       const { width, height, realZoom } = this.panZoomWidget.getSizes()
 
