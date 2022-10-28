@@ -38,9 +38,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       runahead: task.isRunahead && !(task.isHeld || task.isQueued),
     }"
   >
-    <!--rect x="0" y="0" width="130" height="130" stroke-width="5" style="stroke: red; fill: none;" /-->
-    <!--rect x="0" y="0" width="100" height="100" style="fill: rgb(240, 200, 200);" /-->
+    <!-- status
+
+      Represents the task status, e.g. waiting, running, succeeded0
+    -->
     <g class="status">
+      <!-- outline
+
+        The circle outline of the task icon.
+      -->
       <circle
         class="outline"
         cx="50"
@@ -48,28 +54,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         r="45"
         stroke-width="10"
       />
-      <!-- TODO: this progress needs re-calibration -->
+      <!-- progress animation
+
+        This circle provides the clockface progress indicator. It uses a CSS
+        trick where we set the "stroke" of the circle to a dashed line
+        (i.e. - - - -), we animate it by adjusting the "stroke-dashoffset".
+
+        If you change any of these numbers the progress may require
+        re-calibration. To do this, disable the animation and manually adjust
+        the "stroke-dashoffset" to find the new values for 0% and 100%.
+        Then copy these values to the corresponding CSS animation keyframes.
+      -->
       <circle
         class="progress"
         cx="50"
         cy="50"
-        r="20"
+        r="16"
         stroke-width="50"
         stroke-dasharray="157"
         :style="getRunningStyle()"
       />
+      <!-- dot
+
+        A small dot at the centre of the outline used to represent the preparing
+        state.
+      -->
       <circle
         class="dot"
         cx="50"
         cy="50"
         r="7"
       />
+      <!-- hub
+
+        A larger dot at the centre of the outline used to represent the submitted
+        state. This is the "hub" at the centre of the progress animation for a
+        running task.
+      -->
       <circle
         class="hub"
         cx="50"
         cy="50"
         r="16"
       />
+      <!-- cross
+
+        The "x" in the centre of the outline used to represent failure.
+      -->
       <g
         class="cross"
         transform="rotate(45, 50, 50)"
@@ -92,6 +123,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
       </g>
     </g>
+    <!-- modifier
+
+      Represents any task state modifiers e.g. isHeld, isRunahead, isQueued
+    -->
     <g
       class="modifier"
       :transform="getModiferTransform()"
@@ -174,8 +209,11 @@ export default {
       required: true
     },
     startTime: {
+      // The start time as an ISO8601 date-time string in expanded format
+      // e.g. 2022-10-26T13:43:45Z
       // TODO: aim to remove this in due course
       // (we should be able to obtain this directly from the task)
+      type: String,
       required: false
     },
     modifierSize: {
@@ -190,8 +228,11 @@ export default {
         this.startTime &&
         this.task.meanElapsedTime
       ) {
+        // job start time in ms
         const startTime = Date.parse(this.startTime)
+        // current time in ms
         const now = Date.now()
+        // job elapsed time in s
         const elapsedTime = ((now - startTime) / 1000)
         const ret = `
           animation-name: c8-task-progress-animation;
@@ -201,7 +242,6 @@ export default {
           animation-delay: -${elapsedTime}s;
           animation-fill-mode: forwards;
         `
-        console.log(ret)
         return ret.replace('\n', ' ')
       }
       return ''
@@ -280,6 +320,9 @@ export default {
     &.running .status .hub {
       fill: $foreground;
     }
+    &.running .status .progress {
+      fill: $foreground;
+    }
 
     &.succeeded .status .outline {
       fill: $foreground;
@@ -334,14 +377,16 @@ export default {
   /* TODO: expired task state */
 
   @keyframes c8-task-progress-animation {
+    // 157 = 0%
+    //  56 = 100%
     from {
-      /* 0% progress */
+      /* 0% progress (plus a couple of percent) */
       stroke-dashoffset: 150;
 
     }
     to {
       /* 100% progress */
-      stroke-dashoffset: 0;
+      stroke-dashoffset: 56;
     }
   }
 </style>

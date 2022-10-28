@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <span class="c-task">
     <svg viewBox="0 0 100 100" class="task">
-      <SVGTask :task="task" />
+      <SVGTask :task="task" :startTime="startTime" />
     </svg>
   </span>
 </template>
@@ -48,3 +48,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .c-task {
+    .task {
+      /* scale the icon to the font-size */
+      width: 1em;
+      height: 1em;
+      overflow: visible;
+      vertical-align: middle;
+    }
+  }
+</style>
