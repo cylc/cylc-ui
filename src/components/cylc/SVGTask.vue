@@ -226,7 +226,7 @@ export default {
       if (
         this.task.state === TaskState.RUNNING.name &&
         this.startTime &&
-        this.task.meanElapsedTime
+        this.task.task.meanElapsedTime
       ) {
         // job start time in ms
         const startTime = Date.parse(this.startTime)
@@ -238,7 +238,7 @@ export default {
           animation-name: c8-task-progress-animation;
           animation-timing-function: steps(50);
           animation-iteration-count: 1;
-          animation-duration: ${this.task.meanElapsedTime}s;
+          animation-duration: ${this.task.task.meanElapsedTime}s;
           animation-delay: -${elapsedTime}s;
           animation-fill-mode: forwards;
         `
