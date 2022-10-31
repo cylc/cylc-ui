@@ -347,15 +347,19 @@ export default {
       }
       return ret
     },
-    getNodeDimensions () {
+    getNodeDimensions (nodes) {
       // get the dimensions of currently rendered graph nodes
       // (we feed these dimensions into the GraphViz dot code to improve layout)
       const ret = {}
-      for (const id in this.$refs) {
-        const elements = this.$refs[id]
-        if (elements.length) {
-          ret[id] = elements[0].getBBox()
+      let bbox
+      for (const node of nodes) {
+        const elements = this.$refs[node.id]
+        bbox = elements[0].getBBox()
+        if (!bbox) {
+          console.warn(`Could not load BBox for ${node.id}`)
+          bbox = { width: 100, height: 100 }
         }
+        ret[node.id] = bbox
       }
       return ret
     },
@@ -542,7 +546,7 @@ export default {
       // re-layout the graph after any new nodes have been rendered
 
       // generate the GraphViz dot code
-      const nodeDimensions = this.getNodeDimensions()
+      const nodeDimensions = this.getNodeDimensions(nodes)
       const dotCode = this.getDotCode(nodeDimensions, nodes, edges)
 
       // run the layout algorithm
