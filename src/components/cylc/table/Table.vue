@@ -109,6 +109,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :sort-desc.sync="sortDesc"
             item-key="id"
             show-expand
+            dense
+            :footer-props="{
+              itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
+              showFirstLastPage: true
+            }"
+            :options="{ itemsPerPage: 50 }"
           >
             <template
               v-slot:item="{ item }"
