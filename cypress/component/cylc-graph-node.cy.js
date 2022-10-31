@@ -76,10 +76,21 @@ function makeTaskNode (id, state, jobStates) {
 const GraphNodeSVG = {
   template: `
     <svg id="app" class="job_theme--default" width="100%" height="100%">
-      <GraphNode :task="task" :jobs="jobs" />
+      <GraphNode :task="task" :jobs="jobs" :maxJobs="maxJobs" />
     </svg>
   `,
-  props: ['task', 'jobs'],
+  props: {
+    'task': {
+      required: true
+    },
+    'jobs': {
+      required: true
+    },
+    'maxJobs': {
+      default: 6,
+      required: false
+    }
+  },
   components: { GraphNode }
 }
 
@@ -96,16 +107,48 @@ describe('graph node component', () => {
         propsData: { task, jobs }
       }
     )
+    // there should be 4 jobs
     cy.get('.c-graph-node:last .jobs')
       .children()
       .should('have.length', 4)
+    // there shouldn't be a job overflow indicator
+    cy.get('.c-graph-node:last .job-overflow').should('not.exist')
+
     cy.get('.c-graph-node').last().parent().screenshot(
       `graph-node-multiple-jobs`,
       { overwrite: true, disableTimersAndAnimations: false }
     )
   })
 
-  it.only('Renders for each task state', () => {
+  it('Hides excessive numbers of jobs', () => {
+    const [task, jobs] = makeTaskNode(
+      '~a/b//20000101T0000Z/task_name',
+      'failed',
+      ['running', 'failed', 'failed', 'failed', 'failed', 'failed']
+    )
+    cy.mount(
+      GraphNodeSVG,
+      {
+        propsData: { task, jobs, maxJobs: 4 }
+      }
+    )
+    // there should be <maxJobs> jobs
+    cy.get('.c-graph-node:last .jobs')
+      .children()
+      .should('have.length', 4)
+    // there should be a job overflow indicator with the number of overflow jobs
+    cy.get('.c-graph-node:last .job-overflow')
+      .should('exist')
+      .get('text')
+      .contains('+2')
+
+    cy.get('.c-graph-node').last().parent().screenshot(
+      `graph-node-overflow-jobs`,
+      { overwrite: true, disableTimersAndAnimations: false }
+    )
+  })
+
+  it('Renders for each task state', () => {
     let task
     let jobs
     let jobStates

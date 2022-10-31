@@ -66,10 +66,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         scale(0.25, 0.25)
       "
     >
-      <!-- TODO: cut off aftyer X jobs -->
       <g
         class="jobs"
-        v-for="(job, index) in jobs"
+        v-for="(job, index) in jobsForDisplay"
         :key="job.id"
         :transform="
           `translate(${index * 100}, 0)`
@@ -79,6 +78,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :svg="true"
           :status="job.node.state"
         />
+      </g>
+      <!-- overflow indicator if there are surplus jobs -->
+      <g
+        class="job-overflow"
+        v-if="numOverflowJobs"
+        :transform="
+          `translate(${maxJobs * 100}, 0)`
+        "
+      >
+        <text
+          x="25"
+          y="75"
+          font-size="80"
+        >
+          +{{ numOverflowJobs }}
+        </text>
       </g>
     </g>
   </g>
@@ -100,6 +115,11 @@ export default {
     },
     jobs: {
       require: true
+    },
+    maxJobs: {
+      // maximum number of jobs to display before using an overflow indicator
+      default: 6,
+      require: false
     }
   },
   computed: {
@@ -111,6 +131,26 @@ export default {
         return this.jobs[0].node.startedTime
       }
       return undefined
+    },
+    jobsForDisplay () {
+      // the first `this.maxJobs` items of `this.jobs`
+      const ret = []
+      let ind = 0
+      for (const job of this.jobs) {
+        if (ind >= this.maxJobs) {
+          break
+        }
+        ret.push(job)
+        ind++
+      }
+      return ret
+    },
+    numOverflowJobs () {
+      // the number of overflowing (i.e. hidden) jobs
+      if (this.jobs.length > this.maxJobs) {
+        return this.jobs.length - this.maxJobs
+      }
+      return 0
     }
   }
 }
