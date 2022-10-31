@@ -15,32 +15,62 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { TaskStateUserOrder, JobStates } from '@/model/TaskState.model'
 import GraphNode from '@/components/cylc/GraphNode'
 import { Tokens } from '@/utils/uid'
 
-function makeTaskNode (id, jobStates) {
+const MEAN_ELAPSED_TIME = 10000
+
+function getStartTime(percent) {
+  // TODO: avoid duplication
+  return String(
+    new Date(
+      // the current time in ms
+      Date.now() -
+      // minus the elapsed time in ms
+      (
+        (MEAN_ELAPSED_TIME * 1000) *
+        (percent / 100)
+      )
+    ).toISOString()
+  )
+}
+
+function makeTaskNode (id, state, jobStates) {
   const tokens = new Tokens(id)
   const jobs = []
   let itt = 1
+  let job
   for (const jobState of jobStates) {
     const jobTokens = tokens.clone({ job: `0${itt}` })
-    jobs.push({
+    job = {
       id: jobTokens.id,
       name: jobTokens.job,
-      status: jobState
-    })
+      node: {
+        state: jobState
+      }
+    }
+    if ( jobState === 'running') { // TODO constant
+      job.node.startedTime = getStartTime(50)
+    }
+    jobs.push(job)
     itt++
   }
-  return [
-    {
-      id: tokens.id,
-      name: tokens.task,
+
+  const task = {
+    id: tokens.id,
+    name: tokens.task,
+    node: {
       cyclePoint: tokens.cycle,
-      state: jobs.length ? jobs[0].status : 'waiting',
-      isHeld: true
-    },
-    jobs
-  ]
+      isHeld: false,
+      state,
+      task: {
+        meanElapsedTime: MEAN_ELAPSED_TIME
+      }
+    }
+  }
+
+  return [task, jobs]
 }
 
 const GraphNodeSVG = {
@@ -54,18 +84,101 @@ const GraphNodeSVG = {
 }
 
 describe('graph node component', () => {
-  it('works', () => {
+  it('Renders multiple jobs', () => {
     const [task, jobs] = makeTaskNode(
       '~a/b//20000101T0000Z/task_name',
+      'failed',
       ['running', 'failed', 'failed', 'failed']
     )
-    console.log(task)
-    console.log(jobs)
     cy.mount(
       GraphNodeSVG,
       {
         propsData: { task, jobs }
       }
     )
+    cy.get('.c-graph-node:last .jobs')
+      .children()
+      .should('have.length', 4)
+    cy.get('.c-graph-node').last().parent().screenshot(
+      `graph-node-multiple-jobs`,
+      { overwrite: true, disableTimersAndAnimations: false }
+    )
+  })
+
+  it.only('Renders for each task state', () => {
+    let task
+    let jobs
+    let jobStates
+    for (const state of TaskStateUserOrder) {
+      jobStates = []
+      for (const jobState of JobStates) {
+        if (state.name === jobState.name) {
+          jobStates = [state.name]
+          break
+        }
+      }
+      [task, jobs] = makeTaskNode(
+        `~a/b//20000101T0000Z/${state.name}`,
+        state.name,
+        jobStates
+      )
+      console.log(jobs)
+      cy.mount(GraphNodeSVG, { propsData: { task, jobs } })
+      cy.get('.c-graph-node').last().parent().screenshot(
+        `graph-node-${state.name}`,
+        { overwrite: true, disableTimersAndAnimations: false }
+      )
+    }
+  })
+
+  it('Renders for each task modifier', () => {
+    let task
+    let jobs
+    let jobStates
+    for (const modifier of ['isHeld', 'isQueued', 'isRunahead']) {
+      [task, jobs] = makeTaskNode(
+        `~a/b//20000101T0000Z/${modifier}`,
+        'waiting',
+        []
+      )
+      task.node[modifier] = true
+      cy.mount(GraphNodeSVG, { propsData: { task, jobs } })
+      cy.get('.c-graph-node').last().parent().screenshot(
+        `graph-node-${modifier}`,
+        { overwrite: true, disableTimersAndAnimations: false }
+      )
+    }
+  })
+
+  it('Animates task progress', () => {
+    let task
+    let jobs
+    for (const percent of [0, 25, 50, 75, 100]) {
+      [task, jobs] = makeTaskNode(
+        `~a/b//${percent}/running`,
+        'running',
+        ['running']
+      )
+      jobs[0].node.startedTime = getStartTime(percent)
+      cy.mount(GraphNodeSVG, { propsData: { task, jobs } })
+      cy.get('.c-graph-node').last().parent().screenshot(
+        `graph-node-running-${percent}`,
+        { overwrite: true, disableTimersAndAnimations: false }
+      )
+      // check the progress animation
+      .get('.c8-task:last .status > .progress')
+        // the animation duration should be equal to the expected job duration
+        .should('have.css', 'animation-duration', `${MEAN_ELAPSED_TIME}s`)
+        // the offset should be set to the "percent" of the expected job duration
+        .should('have.css', 'animation-delay')
+        .and('match', /([\d\.]+)s/) // NOTE the delay should be negative
+        .then((number) => {
+          // convert the duration string into a number that we can test
+          cy.wrap(Number(number.match(/([\d\.]+)s/)[1]))
+            // ensure this number is ±5 from the expected value
+            // (give it a little bit of margin to allow for timing error)
+            .should('closeTo', MEAN_ELAPSED_TIME * (percent / 100), 5)
+        })
+    }
   })
 })

@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         r="16"
         stroke-width="50"
         stroke-dasharray="157"
-        transform="rotate(-90, 0, 0)"
+        :transform="progressTransform()"
         :style="getRunningStyle()"
       />
       <!-- dot
@@ -218,8 +218,15 @@ export default {
       required: false
     },
     modifierSize: {
+      // Scale the size of the task state modifier
       type: Number,
       default: 0.6
+    },
+    coordinateOffset: {
+      // You may need to provide this if encorporating this icon into a viewBox
+      // otherwise the progress indicator may end up in the wrong place.
+      type: Number,
+      default: 0
     }
   },
   methods: {
@@ -253,6 +260,9 @@ export default {
         scale(${this.modifierSize}, ${this.modifierSize})
         translate(${translation}, ${translation})
       `
+    },
+    progressTransform () {
+      return `rotate(-90, ${this.coordinateOffset}, ${this.coordinateOffset})`
     }
   }
 }

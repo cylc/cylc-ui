@@ -81,7 +81,9 @@ function makeTask (
     isHeld,
     isQueued,
     isRunahead,
-    meanElapsedTime: MEAN_ELAPSED_TIME  // NOTE time in seconds
+    task: {
+      meanElapsedTime: MEAN_ELAPSED_TIME  // NOTE time in seconds
+    }
   }
 }
 
@@ -140,7 +142,6 @@ describe('Task component', () => {
             // (give it a little bit of margin to allow for timing error)
             .should('closeTo', MEAN_ELAPSED_TIME * (percent / 100), 5)
         })
-
     }
   })
   it('Renders for each task modifier', () => {

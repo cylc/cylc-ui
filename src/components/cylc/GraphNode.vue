@@ -16,23 +16,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <g>
+  <g class="c-graph-node">
     <!-- the task icon -->
     <symbol :id="nodeID" viewBox="-40 -40 140 140">
       <!--
         Use a "symbol" for the task node in order to apply a viewBox to it.
-        This is to prevent the task icon from overflowing the 100x100 box it
-        is supposed to be contained in. Due to the way the progress icon
-        works the BBox of a task icon is greater than this 100x100 box for
-        running tasks.
+        This both contains it and makes it clickable.
+
+        NOTE: Due to the viewBox we use here the coordinate system ends up
+        offset by -20px. This doesn't impact most things, however, rotations
+        can be sensitive to this change causing the rotated elements to end up
+        in the wrong places. To counteract this we provide the coordinate offset
+        to the task component.
       -->
-      <SVGTask :task="task" :modifierSize="0.5" />
+      <SVGTask
+        :task="task.node"
+        :modifierSize="0.5"
+        :startTime="startTime"
+        :coordinateOffset="-20"
+      />
     </symbol>
     <use
       :href="`#${nodeID}`"
       x="0" y="0"
       width="150" height="150"
-      v-cylc-object="task"
+      v-cylc-object="task.node"
     />
 
     <!-- the task name -->
@@ -48,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       x="180" y="110"
       font-size="25"
     >
-      {{ task.cyclePoint }}
+      {{ task.node.cyclePoint }}
     </text>
 
     <!-- the job(s) -->
@@ -58,7 +66,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         scale(0.25, 0.25)
       "
     >
+      <!-- TODO: cut off aftyer X jobs -->
       <g
+        class="jobs"
         v-for="(job, index) in jobs"
         :key="job.id"
         :transform="
@@ -67,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <job
           :svg="true"
-          :status="job.status"
+          :status="job.node.state"
         />
       </g>
     </g>
@@ -95,6 +105,12 @@ export default {
   computed: {
     nodeID () {
       return `graph-node-${this.task.id}`
+    },
+    startTime () {
+      if (this.jobs.length) {
+        return this.jobs[0].node.startedTime
+      }
+      return undefined
     }
   }
 }

@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :transform="nodeTransformations[node.id]"
         >
           <GraphNode
-            :task="node.node"
+            :task="node"
             :jobs="node.children"
           />
         </g>
@@ -143,16 +143,21 @@ fragment EdgeData on Edge {
 fragment TaskProxyData on TaskProxy {
   id
   state
+  cyclePoint
   isHeld
   isRunahead
   isQueued
   name
+  task {
+    meanElapsedTime
+  }
 }
 
 fragment JobData on Job {
   id
   state
   name
+  startedTime
 }
 
 fragment AddedDelta on Added {
