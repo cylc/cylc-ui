@@ -274,7 +274,7 @@ fragment AddedDelta on Added {
   cyclePoints: familyProxies (ids: ["*/root"]) {
     ...CyclePointData
   }
-  familyProxies (exids: ["*/root"], sort: { keys: ["name"] }) {
+  familyProxies (sort: { keys: ["name"] }) {
     ...FamilyProxyData
   }
   taskProxies (sort: { keys: ["cyclePoint"], reverse: false }) {
@@ -292,7 +292,7 @@ fragment UpdatedDelta on Updated {
   jobs {
     ...JobData
   }
-  familyProxies (exids: ["*/root"]) {
+  familyProxies {
     ...FamilyProxyData
   }
 }
