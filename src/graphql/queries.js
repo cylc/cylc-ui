@@ -117,7 +117,7 @@ fragment JobData on Job {
   state
   submitNum
   taskProxy {
-    outputs (satisfied: true, sort: { keys: ["time"], reverse: true}) {
+    outputs (satisfied: true) {
       label
       message
     }
@@ -274,13 +274,13 @@ fragment AddedDelta on Added {
   cyclePoints: familyProxies (ids: ["*/root"]) {
     ...CyclePointData
   }
-  familyProxies (sort: { keys: ["name"] }) {
+  familyProxies {
     ...FamilyProxyData
   }
-  taskProxies (sort: { keys: ["cyclePoint"], reverse: false }) {
+  taskProxies {
     ...TaskProxyData
   }
-  jobs (sort: { keys: ["submit_num"], reverse:true }) {
+  jobs {
     ...JobData
   }
 }
@@ -351,10 +351,10 @@ fragment AddedDelta on Added {
   workflow {
     ...WorkflowData
   }
-  taskProxies(sort: {keys: ["cyclePoint"], reverse: false}) {
+  taskProxies {
     ...TaskProxyData
   }
-  jobs(sort: {keys: ["submit_num"], reverse: true}) {
+  jobs {
     ...JobData
   }
 }
