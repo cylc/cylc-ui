@@ -237,7 +237,13 @@ subscription Workflow {
   }
 }
 
-${WORKFLOW_DATA_FRAGMENT}
+fragment WorkflowData on Workflow {
+  id
+  status
+  owner
+  host
+  port
+}
 `
 
 /**

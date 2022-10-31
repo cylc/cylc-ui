@@ -62,11 +62,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             slot="item"
             slot-scope="{ item }"
           >
-            <tr style="cursor:pointer" @click="viewWorkflow(item)">
-              <td>{{ item.name }}</td>
-              <td>{{ item.owner }}</td>
-              <td>{{ item.host }}</td>
-              <td>{{ item.port }}</td>
+            <tr>
+              <td width="1em">
+                <WorkflowIcon
+                  :status="item.node.status"
+                  v-cylc-object="item.node"
+                />
+              </td>
+              <td style="cursor:pointer" @click="viewWorkflow(item)">
+                {{ item.tokens.workflow }}
+              </td>
+              <td style="cursor:pointer" @click="viewWorkflow(item)">
+                {{ item.node.status }}
+              </td>
+              <td style="cursor:pointer" @click="viewWorkflow(item)">
+                {{ item.node.owner }}
+              </td>
+              <td style="cursor:pointer" @click="viewWorkflow(item)">
+                {{ item.node.host }}
+              </td>
+              <td style="cursor:pointer" @click="viewWorkflow(item)">
+                {{ item.node.port }}
+              </td>
             </tr>
           </template>
         </v-data-table>
@@ -82,8 +99,8 @@ import { mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import GScanCallback from '@/components/cylc/gscan/callbacks'
 import { WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
 
 export default {
   name: 'WorkflowsTable',
@@ -96,16 +113,22 @@ export default {
       title: this.getPageTitle('App.workflows')
     }
   },
+  components: {
+    WorkflowIcon
+  },
   data: () => ({
     query: new SubscriptionQuery(
       WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION,
       {},
       'root',
-      [
-        new GScanCallback()
-      ]
+      []
     ),
     headers: [
+      {
+        sortable: false,
+        text: '',
+        value: 'icon'
+      },
       {
         sortable: true,
         text: i18n.t('Workflows.tableColumnName'),
@@ -113,18 +136,23 @@ export default {
       },
       {
         sortable: true,
+        text: 'Status',
+        value: 'node.status'
+      },
+      {
+        sortable: true,
         text: i18n.t('Workflows.tableColumnOwner'),
-        value: 'owner'
+        value: 'node.owner'
       },
       {
         sortable: true,
         text: i18n.t('Workflows.tableColumnHost'),
-        value: 'host'
+        value: 'node.host'
       },
       {
         sortable: false,
         text: i18n.t('Workflows.tableColumnPort'),
-        value: 'port'
+        value: 'node.port'
       }
     ],
     svgPath: {
@@ -132,14 +160,28 @@ export default {
     }
   }),
   computed: {
-    ...mapState('workflows', ['workflows']),
+    ...mapState('workflows', ['cylcTree']),
+    workflows () {
+      const workflows = []
+      const stack = [...this.cylcTree.children]
+      let item
+      while (stack.length) {
+        item = stack.pop()
+        if (['workflow-part', 'user'].includes(item.type)) {
+          stack.push(...item.children)
+        } else if (item.type === 'workflow') {
+          workflows.push(item)
+        }
+      }
+      return workflows
+    },
     workflowsTable () {
       return Object.values(this.workflows)
     }
   },
   methods: {
     viewWorkflow (workflow) {
-      this.$router.push({ path: `/workflows/${workflow.name}` })
+      this.$router.push({ path: `/workflows/${workflow.tokens.workflow}` })
     }
   }
 }
