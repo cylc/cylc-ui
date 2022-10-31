@@ -132,7 +132,7 @@ fragment JobData on Job {
  */
 const GSCAN_DELTAS_SUBSCRIPTION = gql`
 subscription App {
-  deltas (stripNull: true) {
+  deltas {
     ...Deltas
   }
 }
@@ -144,7 +144,7 @@ fragment Deltas on Deltas {
   added {
     ...AddedDelta
   }
-  updated {
+  updated (stripNull: true) {
     ...UpdatedDelta
   }
   pruned {
@@ -177,7 +177,7 @@ ${WORKFLOW_DATA_FRAGMENT}
  */
 const DASHBOARD_DELTAS_SUBSCRIPTION = gql`
 subscription App {
-  deltas (stripNull: true) {
+  deltas {
     ...Deltas
   }
 }
@@ -189,7 +189,7 @@ fragment Deltas on Deltas {
   added {
     ...AddedDelta
   }
-  updated {
+  updated (stripNull: true) {
     ...UpdatedDelta
   }
   pruned {
@@ -219,14 +219,14 @@ ${WORKFLOW_DATA_FRAGMENT}
  */
 const WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION = gql`
 subscription Workflow {
-  deltas (stripNull: true) {
+  deltas {
     id
     added {
       workflow {
         ...WorkflowData
       }
     }
-    updated {
+    updated (stripNull: true) {
       workflow {
         ...WorkflowData
       }
@@ -247,7 +247,7 @@ ${WORKFLOW_DATA_FRAGMENT}
  */
 const WORKFLOW_TREE_DELTAS_SUBSCRIPTION = gql`
 subscription Workflow ($workflowId: ID) {
-  deltas (workflows: [$workflowId], stripNull: true) {
+  deltas (workflows: [$workflowId]) {
    ...Deltas
   }
 }
@@ -259,7 +259,7 @@ fragment Deltas on Deltas {
   added {
     ...AddedDelta
   }
-  updated {
+  updated (stripNull: true) {
     ...UpdatedDelta
   }
   pruned {
@@ -327,7 +327,7 @@ ${JOB_DATA_FRAGMENT}
  */
 const WORKFLOW_TABLE_DELTAS_SUBSCRIPTION = gql`
 subscription Workflow ($workflowId: ID) {
-  deltas(workflows: [$workflowId], stripNull: true) {
+  deltas(workflows: [$workflowId]) {
     ...Deltas
   }
 }
@@ -339,7 +339,7 @@ fragment Deltas on Deltas {
   added {
     ...AddedDelta
   }
-  updated {
+  updated (stripNull: true) {
     ...UpdatedDelta
   }
   pruned {

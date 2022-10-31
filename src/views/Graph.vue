@@ -129,7 +129,7 @@ import * as svgPanZoom from 'svg-pan-zoom'
 // to request / store / process.
 const QUERY = gql`
 subscription WorkflowGraphSubscription ($workflowId: ID) {
-  deltas(workflows: [$workflowId], stripNull: true) {
+  deltas(workflows: [$workflowId]) {
     ...Deltas
   }
 }
@@ -195,7 +195,7 @@ fragment Deltas on Deltas {
   added {
     ...AddedDelta
   }
-  updated {
+  updated (stripNull: true) {
     ...UpdatedDelta
   }
   pruned {
