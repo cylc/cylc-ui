@@ -46,20 +46,3 @@ export function nonCryptoHash (string) {
   }
   return hash
 }
-
-export function updateArray (before, after) {
-  // remove old items
-  for (const item of before) {
-    if (after.indexOf(after) === -1) {
-      before.splice(
-        before.indexOf(item), 1
-      )
-    }
-  }
-  // insert new items
-  for (const item of after) {
-    if (before.indexOf(item) === -1) {
-      before.push(item)
-    }
-  }
-}

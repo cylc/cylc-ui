@@ -19,7 +19,6 @@ import { expect } from 'chai'
 import {
   posToPath,
   nonCryptoHash,
-  updateArray
 } from '@/utils/graph-utils'
 
 describe('Graph functionality', () => {
@@ -46,15 +45,6 @@ describe('Graph functionality', () => {
   describe('nonCryptoHash', () => {
     it('Converts a string to a stable hash', () => {
       expect(nonCryptoHash('foo')).to.equal(101574)
-    })
-  })
-
-  describe('updateArray', () => {
-    it('Updates one Array to match the contents of another', () => {
-      const before = [1, 2, 3]
-      const after = [2, 3, 4]
-      updateArray(before, after)
-      expect(before).to.deep.equal(after)
     })
   })
 })

@@ -117,8 +117,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import GraphNode from '@/components/cylc/GraphNode'
 import {
   posToPath,
-  nonCryptoHash,
-  updateArray
+  nonCryptoHash
 } from '@/utils/graph-utils'
 import { graphviz } from '@hpcc-js/wasm'
 import * as svgPanZoom from 'svg-pan-zoom'
@@ -501,10 +500,7 @@ export default {
       }
 
       // remove nodes no longer present in the graph
-      // TODO: this method is buggy hence calling it multiple times!
-      updateArray(this.graphNodes, nodes)
-      updateArray(this.graphNodes, nodes)
-      updateArray(this.graphNodes, nodes)
+      this.graphNodes = nodes
 
       // wait for DOM / graphical updates to happen, then layout the graph
       // we do this because we need to wait for and new nodes to be rendered
