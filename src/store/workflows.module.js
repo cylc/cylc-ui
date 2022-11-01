@@ -19,48 +19,14 @@ import isArray from 'lodash/isArray'
 import mergeWith from 'lodash/mergeWith'
 import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 import Vue from 'vue'
-import { clear } from '@/components/cylc/tree/index'
 import { Tokens } from '@/utils/uid'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
 
 const state = {
-  /**
-   * This stores workflow data as a hashmap/dictionary. The keys
-   * are the ID's of the entities returned from GraphQL.
-   *
-   * The values of the dictionary hold the GraphQL data returned as-is.
-   *
-   * The intention is for workflow views to look up data in this structure
-   * and re-use, instead of duplicating it.
-   *
-   * @type {Object.<String, Object>}
-   */
-  lookup: {},
   cylcTree: {
     $index: {},
     children: []
   },
-  /**
-   * This is the CylcTree, which contains the hierarchical tree data structure.
-   * It is created from the GraphQL data, with the only difference that this one
-   * contains hierarchy, while the lookup (not workflow.lookup) is flat-ish.
-   *
-   * The nodes in the .tree property have a reference or pointer (.node) to the
-   * data in the lookup map above, to avoid data duplication.
-   *
-   * @type {Workflow}
-   */
-  workflow: {
-    tree: {},
-    lookup: {}
-  },
-  /**
-   * This contains a list of workflows returned from GraphQL and is used by components
-   * such as GScan, Dashboard, and WorkflowsTable.
-   *
-   * @type {Object.<String, WorkflowGraphQLData>}
-   */
-  workflows: {},
   /**
    * This holds the name of the current workflow. This is set by VueRouter
    * and is used to decide what's the current workflow. It is used in conjunction
@@ -480,26 +446,6 @@ const mutations = {
   // the old callback methods
   SET_WORKFLOW_NAME (state, data) {
     state.workflowName = data
-  },
-  SET_WORKFLOWS (state, data) {
-    state.workflows = data
-  },
-  SET_WORKFLOW (state, data) {
-    state.workflow = data
-  },
-  SET_LOOKUP (state, data) {
-    state.lookup = data
-  },
-  CLEAR_WORKFLOW (state) {
-    clear(state.workflow)
-    state.workflow = {
-      tree: {
-        id: '',
-        type: 'workflow',
-        children: []
-      },
-      lookup: {}
-    }
   },
   // the new cylc tree methods
   CREATE: createTree,

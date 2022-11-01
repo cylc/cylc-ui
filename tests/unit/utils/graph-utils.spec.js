@@ -18,7 +18,7 @@
 import { expect } from 'chai'
 import {
   posToPath,
-  nonCryptoHash,
+  nonCryptoHash
 } from '@/utils/graph-utils'
 
 describe('Graph functionality', () => {

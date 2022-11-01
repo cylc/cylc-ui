@@ -195,6 +195,17 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    autoStripTypes: {
+      // If there is only one child of the root node and its type is listed in
+      // this array then it will be stripped from the tree.
+      // Use this to avoid displaying unnecessary nodes, e.g. if there is only
+      // one workflow in the tree and this is set to ['workflow'] then the
+      // workflow node will be stripped, leaving behind its cycle points as
+      // root nodes.
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   components: {
@@ -224,7 +235,10 @@ export default {
   computed: {
     rootChildren () {
       // array of nodes at the top of the tree
-      if (this.workflows.length === 1) {
+      if (
+        this.workflows.length === 1 &&
+        this.autoStripTypes.includes(this.workflows[0].type)
+      ) {
         // if there is only one workflow we return its children
         // (i.e. cycle points)
         return this.workflows[0].children
@@ -312,6 +326,9 @@ export default {
         } else if (this.filterByTaskState()) {
           filtered = this.tasksFilterStates.includes(node.node.state)
         }
+      }
+      if (!this.treeItemCache[node.id]) {
+        this.treeItemCache[node.id] = {}
       }
       this.treeItemCache[node.id].filtered = filtered
       return filtered

@@ -296,7 +296,7 @@ export default {
     return {
       active: false,
       selected: false,
-      // filtered: true,
+      filtered: true,
       leafProperties: [
         {
           title: 'platform',
@@ -326,8 +326,7 @@ export default {
       icons: {
         mdiChevronRight
       },
-      isExpanded: false,
-      filtered: true
+      isExpanded: false
     }
   },
   computed: {
@@ -434,13 +433,6 @@ export default {
       classes['node-data'] = true
       classes[`node-data-${this.node.type}`] = true
       return classes
-    },
-    getFamilies (node) {
-      const rootFamily = node.familyTree[0]
-      if (!rootFamily) {
-        return []
-      }
-      return rootFamily.children
     },
     taskStartTime,
     taskEstimatedDuration,

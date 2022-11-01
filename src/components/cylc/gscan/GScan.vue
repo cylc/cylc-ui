@@ -210,11 +210,9 @@ import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
-// import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
-import { gscanWorkflowCompValue } from '@/components/cylc/gscan/sort'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
-import { sortedIndexBy } from '@/components/cylc/common/sort'
+import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 
 export default {
   name: 'GScan',
@@ -317,26 +315,11 @@ export default {
   computed: {
     ...mapState('workflows', ['cylcTree']),
     workflows () {
-      if (!this.cylcTree.children.length) {
+      if (!this.cylcTree?.children.length) {
         // no user in the data store (i.e. data loading)
         return []
       }
-      // return a list of top-level workflows / workflow-parts sorted
-      // according to 1-status and 2-id.
-      const tree = []
-      for (const workflowTree of this.cylcTree.children[0].children) {
-        // insert this workflow / workflow-part in sort order
-        tree.splice(
-          sortedIndexBy(
-            tree,
-            workflowTree,
-            (n) => gscanWorkflowCompValue(n)
-          ),
-          0,
-          workflowTree
-        )
-      }
-      return tree
+      return sortedWorkflowTree(this.cylcTree)
     },
     /**
      * @return {Array<String>}
@@ -380,14 +363,12 @@ export default {
       }
     },
     workflows: {
-      deep: true, // TODO (remove deep?)
       immediate: true,
       handler: function () {
         this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     },
     filteredWorkflows: {
-      deep: true,
       immediate: true,
       handler: function () {
         // build a list of IDs to display

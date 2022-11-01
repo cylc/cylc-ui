@@ -30,16 +30,21 @@ const simpleTableTasks = [
       meanElapsedTime: 2000,
       cyclePoint: '20000101T0000Z'
     },
-    latestJob: {
-      platform: 'localhost',
-      jobRunnerName: 'background',
-      jobId: '1',
-      submittedTime: new Date().toISOString(),
-      startedTime: new Date().toISOString(),
-      finishedTime: null,
-      state: JobState.RUNNING.name
-    },
-    jobs: []
+    children: [
+      {
+        id: BASE_TOKENS.clone({ task: 'taskA', job: '01' }).id,
+        node: {
+          platform: 'localhost',
+          jobRunnerName: 'background',
+          jobId: '1',
+          submittedTime: new Date().toISOString(),
+          startedTime: new Date().toISOString(),
+          finishedTime: null,
+          state: JobState.RUNNING.name
+        },
+        children: []
+      }
+    ]
   },
   {
     id: BASE_TOKENS.clone({ task: 'taskB' }).id,
@@ -49,8 +54,7 @@ const simpleTableTasks = [
       name: 'taskB',
       cyclePoint: '20000102T0000Z'
     },
-    latestJob: {},
-    jobs: []
+    children: []
   },
   {
     id: BASE_TOKENS.clone({ task: 'taskC' }).id,
@@ -60,8 +64,7 @@ const simpleTableTasks = [
       name: 'taskC',
       cyclePoint: '20000103T0000Z'
     },
-    latestJob: {},
-    jobs: []
+    children: []
   }
 ]
 

@@ -23,7 +23,6 @@ import Vuetify from 'vuetify/lib'
 import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 import TaskState from '@/model/TaskState.model'
-import TreeItem from '@/components/cylc/tree/TreeItem'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -222,69 +221,6 @@ describe('Tree component', () => {
         })
         wrapper.vm.filterTasks()
         expect(wrapper.vm.activeFilters.states).to.deep.equal(states)
-      })
-    })
-    describe('Filter tree items', () => {
-      it('should not filter the tree items by default', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          }
-        })
-        // 3, 1 cycle point, 1 task proxy, and 1 job
-        const treeItems = wrapper.findAllComponents(TreeItem)
-        expect(treeItems.length).to.equal(3)
-        const taskProxy = treeItems.at(1)
-        expect(taskProxy.vm.node.type).to.equal('task-proxy')
-        // task proxy is displayed
-        expect(taskProxy.vm.filtered).to.equal(true)
-      })
-      it('should filter tree items by name', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                name: 'bar'
-              }
-            }
-          }
-        })
-        // the task proxy in our test data is "foo", so "bar" filter should have removed it
-        wrapper.vm.filterTasks()
-        // 3, 1 cycle point, 1 task proxy, and 1 job
-        const treeItems = wrapper.findAllComponents(TreeItem)
-        expect(treeItems.length).to.equal(3)
-        const taskProxy = treeItems.at(1)
-        // task proxy is displayed
-        expect(taskProxy.vm.filtered).to.equal(false)
-      })
-      it('should remove all filters', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                name: 'bar'
-              }
-            }
-          }
-        })
-        // the task proxy in our test data is "foo", so "bar" filter should have removed it
-        wrapper.vm.filterTasks()
-        // 3, 1 cycle point, 1 task proxy, and 1 job
-        const treeItems = wrapper.findAllComponents(TreeItem)
-        expect(treeItems.length).to.equal(3)
-        const taskProxy = treeItems.at(1)
-        // task proxy is displayed
-        expect(taskProxy.vm.filtered).to.equal(false)
-        wrapper.vm.removeAllFilters()
-        // task proxy is displayed
-        expect(taskProxy.vm.filtered).to.equal(true)
       })
     })
   })

@@ -36,7 +36,6 @@ import CylcTreeCallback from '@/services/treeCallback'
 
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
-import { Deltas } from '@/components/cylc/common/deltas'
 import { MutationResponse } from '@/utils/aotf'
 import { DocumentNode } from 'graphql'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
@@ -236,9 +235,6 @@ class WorkflowService {
         subscription.query.variables,
         {
           next: function next (response) {
-            /**
-             * @type {Deltas}
-             */
             const deltas = response.data.deltas || {}
             const added = deltas.added || {}
             const updated = deltas.updated || {}

@@ -15,54 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
-import { WorkflowStateOrder } from '@/model/WorkflowState.model'
-
-export const WORKFLOW_TYPES_ORDER = ['workflow-part', 'workflow']
-
-/**
- * @typedef {SortedIndexByComparator} SortTaskProxyOrFamilyProxyComparator
- * @param {TaskProxyNode|FamilyProxyNode} leftObject
- * @param {string} leftValue
- * @param {TaskProxyNode|FamilyProxyNode} rightObject
- * @param {string} rightValue
- * @returns {boolean}
- */
-
-/**
- * Sort workflows by type first, showing running or paused workflows first,
- * then stopped. Within each group, workflows are sorted alphabetically
- * (natural sort).
- * @param leftObject
- * @param leftValue
- * @param rightObject
- * @param rightValue
- * @returns {boolean|number}
- */
-export function sortWorkflowNamePartNodeOrWorkflowNode (leftObject, leftValue, rightObject, rightValue) {
-  if (leftObject.type !== rightObject.type) {
-    return WORKFLOW_TYPES_ORDER.indexOf(leftObject.type) - WORKFLOW_TYPES_ORDER.indexOf(rightObject.type)
-  }
-  if (leftObject.node.status !== rightObject.node.status) {
-    const leftStateOrder = WorkflowStateOrder.get(leftObject.node.status)
-    const rightStateOrder = WorkflowStateOrder.get(rightObject.node.status)
-    // Here we compare the order of states, not the states since some states
-    // are grouped together, like RUNNING, PAUSED, and STOPPING.
-    if (leftStateOrder !== rightStateOrder) {
-      return leftStateOrder - rightStateOrder
-    }
-  }
-  // name
-  return DEFAULT_COMPARATOR(leftValue, rightValue)
-}
-
-const WORKFLOW_STATE_ORDER = {
-  running: 1,
-  paused: 1,
-  stopping: 1,
-  stopped: 2,
-  undefined: 9
-}
+import {
+  sortedIndexBy
+} from '@/components/cylc/common/sort'
+import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 
 /* Return an integer suitable for alphabetical sorting of workflow states.
  *
@@ -70,22 +26,25 @@ const WORKFLOW_STATE_ORDER = {
  * value for it as defined in WORKFLOW_STATE_ORDER.
  *
  */
-function getWorkflowTreeSortValue (node) {
+export function getWorkflowTreeSortValue (node) {
   if (node.type === 'workflow') {
-    return WORKFLOW_STATE_ORDER[node.node.status]
+    return WorkflowStateOrder.get(node.node.status)
   }
   let ret = 9
   let temp = 9
   let item
   const stack = [...node.children]
-  while (ret !== WORKFLOW_STATE_ORDER.running && stack.length) {
+  while (
+    ret !== WorkflowStateOrder.get(WorkflowState.RUNNING.name) &&
+    stack.length
+  ) {
     // NOTE: if one workflow is running (top sort order) then we don't
     // need to keep searching as nothing can elevate the sort order further
     item = stack.pop()
     if (item.type === 'workflow-part') {
       stack.push(...item.children)
     } else if (item.type === 'workflow') {
-      temp = WORKFLOW_STATE_ORDER[item.node.status]
+      temp = WorkflowStateOrder.get(item.node.status)
       if (temp < ret) {
         ret = temp
       }
@@ -98,8 +57,31 @@ function getWorkflowTreeSortValue (node) {
  *
  * Sorts workflows by:
  * 1) State
- * 2) ID
+ * 2) Type (i.e. sort "workflow-part" before "workflow")
+ * 3) ID
  */
-export function gscanWorkflowCompValue (node) {
-  return `${getWorkflowTreeSortValue(node)}_${node.id}`
+function gscanWorkflowCompValue (node) {
+  const typeValue = node.type === 'workflow-part' ? 'a' : 'z'
+  return `${getWorkflowTreeSortValue(node)}_${typeValue}_${node.id}`
+}
+
+/* Returns a sorted list of top-level workflows / workflow-parts.
+ *
+ * Sorts according to getWorkflowTreeSortValue.
+ */
+export function sortedWorkflowTree (cylcTree) {
+  const tree = []
+  for (const workflowTree of cylcTree.children[0].children) {
+    // insert this workflow / workflow-part in sort order
+    tree.splice(
+      sortedIndexBy(
+        tree,
+        workflowTree,
+        (n) => gscanWorkflowCompValue(n)
+      ),
+      0,
+      workflowTree
+    )
+  }
+  return tree
 }

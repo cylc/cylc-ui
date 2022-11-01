@@ -215,7 +215,6 @@ import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize }
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
 import Job from '@/components/cylc/Job'
 import JobState from '@/model/JobState.model'
-import * as CylcTree from '@/components/cylc/tree/index'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 
 // TODO: update where user preferences are stored after #335
@@ -231,7 +230,7 @@ export default {
   },
   data () {
     return {
-      cyclePointsOrderDesc: CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC,
+      cyclePointsOrderDesc: false, // TODO
       svgPaths: {
         settings: mdiCog,
         increase: mdiFormatFontSizeIncrease,

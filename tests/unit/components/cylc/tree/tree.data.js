@@ -30,40 +30,48 @@ const simpleWorkflowTree4Nodes = [
     },
     children: [
       {
-        id: '20100101T0000Z',
-        type: 'cyclepoint',
+        id: '~user/workflow1//20100101T0000Z',
+        type: 'cycle',
         node: {
           __typename: 'CyclePoint',
           name: '20100101T0000Z',
           state: 'failed'
         },
-        children: [
+        children: [],
+        familyTree: [
           {
-            id: '~user/workflow1//20100101T0000Z/foo',
-            type: 'task-proxy',
-            node: {
-              __typename: 'TaskProxy',
-              name: 'foo',
-              state: 'failed'
-            },
-            expanded: false,
+            id: '~user/workflow1//20100101T0000Z/root',
+            type: 'family',
             children: [
               {
-                id: '~user/workflow1//20100101T0000Z/foo/01',
-                type: 'job',
+                id: '~user/workflow1//20100101T0000Z/foo',
+                type: 'task',
                 node: {
-                  __typename: 'Job',
-                  name: '1',
-                  startedTime: '2019-08-19T22:44:42Z',
-                  state: 'failed',
-                  submitNum: 1,
-                  customOutputs: [
-                    {
-                      label: 'out1',
-                      message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
-                    }
-                  ]
-                }
+                  __typename: 'TaskProxy',
+                  name: 'foo',
+                  state: 'failed'
+                },
+                expanded: false,
+                children: [
+                  {
+                    id: '~user/workflow1//20100101T0000Z/foo/01',
+                    type: 'job',
+                    node: {
+                      __typename: 'Job',
+                      name: '1',
+                      startedTime: '2019-08-19T22:44:42Z',
+                      state: 'failed',
+                      submitNum: 1,
+                      customOutputs: [
+                        {
+                          label: 'out1',
+                          message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
+                        }
+                      ]
+                    },
+                    children: []
+                  }
+                ]
               }
             ]
           }
@@ -1081,7 +1089,7 @@ const sampleWorkflow1 = {
 
 const simpleWorkflowNode = simpleWorkflowTree4Nodes[0]
 const simpleCyclepointNode = simpleWorkflowTree4Nodes[0].children[0]
-const simpleTaskNode = simpleCyclepointNode.children[0]
+const simpleTaskNode = simpleCyclepointNode.familyTree[0].children[0]
 const simpleJobNode = simpleTaskNode.children[0]
 
 export {
