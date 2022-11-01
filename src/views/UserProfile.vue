@@ -200,6 +200,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               >
               </v-checkbox>
             </v-layout>
+            <v-layout row align-center wrap>
+              <v-flex xs3>
+                <span>Default to table view</span>
+              </v-flex>
+              <v-checkbox
+                v-model="defaultTableView"
+                id="input-default-tableview"
+              >
+              </v-checkbox>
+            </v-layout>
           </v-container>
         </v-form>
         <v-progress-linear v-else :indeterminate="true" />
@@ -232,6 +242,7 @@ export default {
   data () {
     return {
       cyclePointsOrderDesc: CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC,
+      defaultTableView: false,
       svgPaths: {
         settings: mdiCog,
         increase: mdiFormatFontSizeIncrease,
@@ -258,6 +269,9 @@ export default {
     if (localStorage.cyclePointsOrderDesc) {
       this.cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
     }
+    if (localStorage.defaultTableView) {
+      this.defaultTableView = JSON.parse(localStorage.defaultTableView)
+    }
   },
   methods: {
     resetFontSize,
@@ -273,6 +287,10 @@ export default {
     cyclePointsOrderDesc (newOrder) {
       localStorage.setItem('cyclePointsOrderDesc', newOrder)
       this.cyclePointsOrderDesc = newOrder
+    },
+    defaultTableView (preferTableViewBoolean) {
+      localStorage.setItem('defaultTableView', preferTableViewBoolean)
+      this.defaultTableView = preferTableViewBoolean
     }
   }
 }

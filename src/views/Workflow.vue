@@ -77,6 +77,7 @@ export default {
     }
   },
   data: () => ({
+    defaultView: localStorage.defaultTableView ? TableView.name : TreeView.name,
     /**
      * The widgets added to the view.
      *
@@ -108,9 +109,11 @@ export default {
     ...mapState('workflows', ['workflow', 'table'])
   },
   beforeRouteEnter (to, from, next) {
+    // we dont have access to this in these callbacks
+    const defaultView = localStorage.defaultTableView ? TreeView.name : TableView.name
     next(vm => {
       vm.$nextTick(() => {
-        vm.addView(TreeView.name)
+        vm.addView(defaultView)
       })
     })
   },
@@ -118,11 +121,14 @@ export default {
     // clear all widgets
     this.removeAllWidgets()
     next()
+    // we dont have access to this in these callbacks
+    const defaultView = localStorage.defaultTableView ? TreeView.name : TableView.name
+    // console.log('this', this)
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
-      // Create a Tree View for the current workflow by default
-      this.addView(TreeView.name)
+      // Create a Tree View for the current workflow using ether the default or the user selected preference
+      this.addView(defaultView)
     })
   },
   beforeRouteLeave (to, from, next) {
