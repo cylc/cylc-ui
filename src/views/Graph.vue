@@ -18,27 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div style="width: 100%; height: 100%">
     <!-- the controls -->
-    <v-btn
-      @click="this.transpose"
-    >
-      Transpose
-    </v-btn>
-    <v-btn
-      @click="this.reset"
-    >
-      Reset
-    </v-btn>
-    <span>Spacing: {{ spacing.toPrecision(4) }}</span>
-    <v-btn
-      @click="this.increaseSpacing"
-    >
-      Increase
-    </v-btn>
-    <v-btn
-      @click="this.decreaseSpacing"
-    >
-      Decrease
-    </v-btn>
+    <ViewToolbar :groups="groups" @setOption="setOption" />
 
     <!-- the graph -->
     <svg
@@ -56,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           markerHeight="8"
           orient="auto"
         >
-          <path d="M 0 0 L 8 4 L 0 8 z" fill="black" />
+          <path d="M 0 0 L 8 4 L 0 8 z" fill="rgb(90,90,90)" />
         </marker>
       </defs>
       <g
@@ -91,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             <path
               :d="edgePath"
-              stroke="black"
+              stroke="rgb(90,90,90)"
               stroke-width="5"
               fill="none"
               marker-end="url(#arrow-end)"
@@ -107,7 +87,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Vue from 'vue'
 import gql from 'graphql-tag'
 import { mapState } from 'vuex'
-import { mdiGraph } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -115,12 +94,22 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
 import GraphNode from '@/components/cylc/GraphNode'
+import ViewToolbar from '@/components/cylc/ViewToolbar'
 import {
   posToPath,
   nonCryptoHash
 } from '@/utils/graph-utils'
 import { graphviz } from '@hpcc-js/wasm'
 import * as svgPanZoom from 'svg-pan-zoom'
+import {
+  mdiGraph,
+  mdiTimer,
+  mdiImageFilterCenterFocus,
+  mdiArrowCollapse,
+  mdiArrowExpand,
+  mdiRefresh,
+  mdiFileRotateRight
+} from '@mdi/js'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
 // the tree view uses which allows the requests to overlap with this and other
@@ -212,7 +201,8 @@ export default {
   ],
   name: 'Graph',
   components: {
-    GraphNode
+    GraphNode,
+    ViewToolbar
   },
   metaInfo () {
     return {
@@ -241,7 +231,55 @@ export default {
       // used to avoid needlessly re-laying-out the graph when not needed
       graphID: null,
       // instance of system which provides pan/zoom/navigation support
-      panZoomWidget: null
+      panZoomWidget: null,
+      transpose: false,
+      autoRefresh: true,
+      groups: [
+        {
+          title: 'Graph',
+          controls: [
+            {
+              title: 'Refresh',
+              icon: mdiRefresh,
+              action: 'callback',
+              callback: this.refresh,
+              disableIf: ['autoRefresh']
+            },
+            {
+              title: 'Auto Refresh',
+              icon: mdiTimer,
+              action: 'toggle',
+              value: true,
+              key: 'autoRefresh'
+            },
+            {
+              title: 'Transpose',
+              icon: mdiFileRotateRight,
+              action: 'toggle',
+              value: false,
+              key: 'transpose'
+            },
+            {
+              title: 'Centre',
+              icon: mdiImageFilterCenterFocus,
+              action: 'callback',
+              callback: this.reset
+            },
+            {
+              title: 'Increase Spacing',
+              icon: mdiArrowExpand,
+              action: 'callback',
+              callback: this.increaseSpacing
+            },
+            {
+              title: 'Decrease Spacing',
+              icon: mdiArrowCollapse,
+              action: 'callback',
+              callback: this.decreaseSpacing
+            }
+          ]
+        }
+      ]
     }
   },
   mounted () {
@@ -273,7 +311,7 @@ export default {
           refreshRate: 'auto'
         }
       )
-      self.refreshTimer = setInterval(self.refresh, 2000)
+      self.updateTimer()
     })
   },
   beforeDestroy () {
@@ -307,6 +345,18 @@ export default {
     }
   },
   methods: {
+    setOption (option, value) {
+      Vue.set(this, option, value)
+    },
+    updateTimer () {
+      // turn the timer on or off depending on the value of autoRefresh
+      if (this.autoRefresh) {
+        this.refreshTimer = setInterval(this.refresh, 2000)
+      } else {
+        clearInterval(this.refreshTimer)
+        this.refreshTimer = null
+      }
+    },
     increaseSpacing () {
       // increase graph layout node spacing by 10%
       this.spacing = this.spacing * 1.1
@@ -314,15 +364,6 @@ export default {
     decreaseSpacing () {
       // decrease graph layout node spacing by 10%
       this.spacing = this.spacing * (10 / 11)
-    },
-    transpose () {
-      if (this.orientation === 'LR') {
-        this.orientation = 'TB'
-      } else {
-        this.orientation = 'LR'
-      }
-      this.graphID = null
-      this.refresh()
     },
     getNodes () {
       // list graph nodes from the store (non reactive list)
@@ -366,14 +407,14 @@ export default {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
       let spacing = this.spacing
-      if (this.orientation === 'LR') {
+      if (this.transpose) {
         // transposed graphs need more space because the edges can start
         // anywhere on the node
         spacing = spacing * 1.5
       }
       // NOTE: graphviz defaults nodesep=0.25 ranksep=0.5
       // increase the normal sep values to better space our larger nodes
-      ret.push(`  rankdir=${this.orientation}`)
+      ret.push(`  rankdir=${(this.transpose) ? 'LR' : 'TB'}`)
       ret.push(`  nodesep=${spacing}`)
       ret.push(`  ranksep=${spacing * 2}`)
       ret.push('  node [shape="rect"]')
@@ -403,19 +444,19 @@ export default {
           ]
         `)
       }
-      if (this.orientation === 'TB') {
-        // top-bottom orientation
-        // route edges from the bottom of the source task *icon* to the top of
-        // the destination task *icon*
-        for (const edge of edges) {
-          ret.push(`  "${edge.node.source}":out -> "${edge.node.target}":in`)
-        }
-      } else {
+      if (this.transpose) {
         // left-right orientation
         // route edges from anywhere on the node of the source task to anywhere
         // on the task *node* of the destination task *icon*
         for (const edge of edges) {
           ret.push(`  "${edge.node.source}" -> "${edge.node.target}":task`)
+        }
+      } else {
+        // top-bottom orientation
+        // route edges from the bottom of the source task *icon* to the top of
+        // the destination task *icon*
+        for (const edge of edges) {
+          ret.push(`  "${edge.node.source}":out -> "${edge.node.target}":in`)
         }
       }
       ret.push('}')
@@ -568,6 +609,22 @@ export default {
           this.graphEdges.push(posToPath(edge.pos))
         }
       })
+    }
+  },
+  watch: {
+    transpose () {
+      // refresh the graph when the transpose option is changed
+      this.graphID = null
+      this.refresh()
+    },
+    spacing () {
+      // refresh the graph when the spacing is changed
+      this.graphID = null
+      this.refresh()
+    },
+    autoRefresh () {
+      // toggle the timer when autoRefresh is changed
+      this.updateTimer()
     }
   }
 }
