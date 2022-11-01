@@ -190,7 +190,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <!-- component recursion -->
       <TreeItem
-        v-if="node.type== 'job'"
+        v-if="node.type === 'job'"
         ref="treeitem"
         :key="'${node.id}-job-details'"
         :node="{
@@ -209,8 +209,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-on:tree-item-clicked="$listeners['tree-item-clicked']"
       />
       <TreeItem
-        v-else-if="node.type== 'cycle'"
-        v-for="child in node.familyTree[0].children"
+        v-else-if="node.type === 'cycle'"
+        v-for="child in getFamilies(node)"
         ref="treeitem"
         :key="child.id"
         :node="child"
@@ -434,6 +434,13 @@ export default {
       classes['node-data'] = true
       classes[`node-data-${this.node.type}`] = true
       return classes
+    },
+    getFamilies (node) {
+      const rootFamily = node.familyTree[0]
+      if (!rootFamily) {
+        return []
+      }
+      return rootFamily.children
     },
     taskStartTime,
     taskEstimatedDuration,
