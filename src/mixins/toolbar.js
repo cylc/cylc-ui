@@ -32,10 +32,12 @@ export default {
   mounted () {
     this.onResponsiveInverted()
     window.addEventListener('resize', this.onResponsiveInverted)
+    document.querySelector('.v-navigation-drawer')?.addEventListener('resize', this.onResponsiveInverted)
   },
 
   beforeDestroy () {
     window.removeEventListener('resize', this.onResponsiveInverted)
+    document.querySelector('.v-navigation-drawer')?.removeEventListener('resize', this.onResponsiveInverted)
   },
 
   methods: {
@@ -44,7 +46,10 @@ export default {
       this.setDrawer(!this.$store.state.app.drawer)
     },
     onResponsiveInverted () {
-      if (window.innerWidth < 991) {
+      if (document.querySelector('.v-navigation-drawer')?.clientWidth < 5) {
+        this.setDrawer(false)
+      }
+      if (window.innerWidth < 991 || document.querySelector('.v-navigation-drawer')?.clientWidth < 5) {
         this.responsive = true
         this.responsiveInput = false
       } else {
