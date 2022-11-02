@@ -20,8 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     bottom
     v-model="showHelp"
   >
-    <!-- eslint-disable-next-line vue/no-unused-vars -->
-    <template v-slot:activator="{ on }">
+    <!-- Note: tooltip activated by v-model so doesn't need `on` listeners -->
+    <template v-slot:activator="{}">
       <!-- TODO: fix the inputType form alignment thinggy -->
       <!-- NOTE: the `is` field comes from `props` v-bind -->
       <!-- eslint-disable-next-line vue/require-component-is -->
@@ -37,12 +37,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-icon
            @click="showHelp = !showHelp"
           >
-            {{ svgPath }}
+            {{ $options.icons.mdiHelpCircleOutline }}
           </v-icon>
         </template>
 
         <template
-          v-if="vuetifyAppendOuterComponents.includes(props.is)"
+          v-if="$options.vuetifyAppendOuterComponents.includes(props.is)"
           v-slot:append-outer
         >
           <!-- pass the "append-outer" slot onto the child component -->
@@ -105,11 +105,7 @@ export default {
     defaultProps: VuetifyConfig.defaultProps,
     namedTypes: VuetifyConfig.namedTypes,
     kinds: VuetifyConfig.kinds,
-    showHelp: false,
-    svgPath: mdiHelpCircleOutline,
-    vuetifyAppendOuterComponents: [
-      VTextField, VTextarea
-    ]
+    showHelp: false
   }),
 
   computed: {
@@ -143,6 +139,14 @@ export default {
 
       return ret
     }
-  }
+  },
+
+  // Misc options:
+  icons: {
+    mdiHelpCircleOutline
+  },
+  vuetifyAppendOuterComponents: [
+    VTextField, VTextarea
+  ]
 }
 </script>
