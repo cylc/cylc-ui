@@ -192,9 +192,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <TreeItem
         v-if="node.type === 'job'"
         ref="treeitem"
-        :key="'${node.id}-job-details'"
+        :key="`${node.id}-job-details`"
         :node="{
-          id: '${node.id}-job-details',
+          id: `${node.id}-job-details`,
           type: 'job-details',
           node: node.node
         }"
@@ -202,6 +202,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :stopOn="stopOn"
         :hoverable="hoverable"
         :autoExpandTypes="autoExpandTypes"
+        :cyclePointsOrderDesc="cyclePointsOrderDesc"
         v-on:tree-item-created="$listeners['tree-item-created']"
         v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
         v-on:tree-item-expanded="$listeners['tree-item-expanded']"
@@ -209,24 +210,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-on:tree-item-clicked="$listeners['tree-item-clicked']"
       />
       <TreeItem
-        v-else-if="node.type === 'cycle'"
-        v-for="child in getFamilies(node)"
-        ref="treeitem"
-        :key="child.id"
-        :node="child"
-        :depth="depth + 1"
-        :stopOn="stopOn"
-        :hoverable="hoverable"
-        :autoExpandTypes="autoExpandTypes"
-        v-on:tree-item-created="$listeners['tree-item-created']"
-        v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
-        v-on:tree-item-expanded="$listeners['tree-item-expanded']"
-        v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
-        v-on:tree-item-clicked="$listeners['tree-item-clicked']"
-      />
-      <TreeItem
-        v-for="child in node.children"
         v-else
+        v-for="child in nodeChildren"
         ref="treeitem"
         :key="child.id"
         :node="child"
@@ -234,13 +219,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :stopOn="stopOn"
         :hoverable="hoverable"
         :autoExpandTypes="autoExpandTypes"
+        :cyclePointsOrderDesc="cyclePointsOrderDesc"
         v-on:tree-item-created="$listeners['tree-item-created']"
         v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
         v-on:tree-item-expanded="$listeners['tree-item-expanded']"
         v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
         v-on:tree-item-clicked="$listeners['tree-item-clicked']"
       >
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
+        <!-- add scoped slots
+
+          These allow components to register their own templats, e.g. GScan
+          adds a template for rendering workflow nodes here.
+        -->
+        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+          <slot :name="slot" v-bind="scope"/>
+        </template>
       </TreeItem>
     </span>
   </div>
@@ -252,6 +245,7 @@ import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import { taskStartTime, taskEstimatedDuration, latestJob } from '@/utils/tasks'
+import { getNodeChildren } from '@/components/cylc/tree/util'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -280,6 +274,11 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    cyclePointsOrderDesc: {
+      type: Boolean,
+      required: false,
+      default: true
     },
     hoverable: Boolean,
     autoExpandTypes: {
@@ -348,6 +347,10 @@ export default {
         // otherwise look to see whether there are any children
         Boolean(this.node.children?.length)
       )
+    },
+    nodeChildren () {
+      // returns child nodes folling the family tree and following sort order
+      return getNodeChildren(this.node, this.cyclePointsOrderDesc)
     },
     /** Get the node indentation in units of em. */
     nodeIndentation () {

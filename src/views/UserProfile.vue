@@ -230,7 +230,7 @@ export default {
   },
   data () {
     return {
-      cyclePointsOrderDesc: false, // TODO
+      cyclePointsOrderDesc: true, // default
       svgPaths: {
         settings: mdiCog,
         increase: mdiFormatFontSizeIncrease,

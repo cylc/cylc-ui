@@ -142,6 +142,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :stopOn="stopOn"
             :hoverable="hoverable"
             :autoExpandTypes="autoExpandTypes"
+            :cyclePointsOrderDesc="cyclePointsOrderDesc"
             v-on:tree-item-created="onTreeItemCreated"
             v-on:tree-item-destroyed="onTreeItemDestroyed"
             v-on:tree-item-expanded="onTreeItemExpanded"
@@ -163,6 +164,7 @@ import { mdiPlus, mdiMinus } from '@mdi/js'
 import TaskState from '@/model/TaskState.model'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import Task from '@/components/cylc/Task'
+import { getNodeChildren } from '@/components/cylc/tree/util'
 
 export default {
   name: 'Tree',
@@ -229,8 +231,20 @@ export default {
       svgPaths: {
         expandIcon: mdiPlus,
         collapseIcon: mdiMinus
-      }
+      },
+      cyclePointsOrderDesc: true
     }
+  },
+  mounted () {
+    // set cyclePointsOrderDesc
+    // NOTE: this isn't reactive, however, changing the value requires
+    // navigating away from this view so it doesn't have to be
+    // TODO: make this a view-specific configuration
+    let cyclePointsOrderDesc = true
+    if (localStorage.cyclePointsOrderDesc) {
+      cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
+    }
+    this.cyclePointsOrderDesc = cyclePointsOrderDesc
   },
   computed: {
     rootChildren () {
@@ -241,7 +255,7 @@ export default {
       ) {
         // if there is only one workflow we return its children
         // (i.e. cycle points)
-        return this.workflows[0].children
+        return getNodeChildren(this.workflows[0], this.cyclePointsOrderDesc)
       } else {
         // if there are multiple children we need to include the workflow
         // nodes to allow us to differentiate between them
