@@ -22,8 +22,8 @@ describe('Drawer component', () => {
       .get('.v-navigation-drawer')
       .should('be.visible')
   })
-  it('it should have a width of 360', () => {
-    cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.lt', 360)
+  it('it should have a width of 260', () => {
+    cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.eq', 260)
   })
   it('Is NOT displayed when mode is mobile', () => {
     // when the window dimension is below a mobile-threshold, the app sets state.app.drawer as false
@@ -39,7 +39,7 @@ describe('Drawer component', () => {
       .should('be.visible')
   })
   it('should drag to trigger resize', () => {
-    cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.lt', 360)
+    cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.eq', 260)
     cy.get('.v-navigation-drawer__border')
       .trigger('mousedown', { which: 1 })
       .trigger('mousemove', { clientX: 100 })
