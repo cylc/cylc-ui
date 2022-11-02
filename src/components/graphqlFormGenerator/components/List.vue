@@ -71,6 +71,13 @@ export default {
     formElement
   ],
 
+  props: {
+    addAtStart: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   data () {
     return {
       svgPaths: {
@@ -84,15 +91,19 @@ export default {
     /** Add an item to the list. */
     add () {
       const newInput = getNullValue(this.gqlType.ofType, this.types)
-      this.value.push(
-        newInput
-      )
+      let index = 0
+      if (this.addAtStart) {
+        this.value.unshift(newInput)
+      } else {
+        index = this.value.length
+        this.value.push(newInput)
+      }
       // this is not ideal, but I believe whats happening is the new (wrapper) component is created over the first tick from the new array item
       // the component content is created over the next tick (including the input)
       Vue.nextTick(() => {
         Vue.nextTick(() => {
           // get the latest input ref (which is a tooltip for some reason), get its parent, then the input itself and focus() it (if it exists)
-          this.$refs.inputs[this.$refs.inputs.length - 1].$el?.parentNode?.querySelector('input')?.focus()
+          this.$refs.inputs[index].$el?.parentNode?.querySelector('input')?.focus()
         })
       })
     },

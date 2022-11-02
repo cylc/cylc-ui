@@ -107,7 +107,8 @@ export default {
               name: 'KeyValPair',
               kind: 'INPUT_OBJECT'
             }
-          }
+          },
+          addAtStart: true
         }
       },
       kinds: VuetifyConfig.kinds,
