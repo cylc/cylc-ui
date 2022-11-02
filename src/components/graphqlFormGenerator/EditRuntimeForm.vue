@@ -60,8 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiHelpCircleOutline } from '@mdi/js'
 import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
 import { VTextarea } from 'vuetify/lib/components'
-import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
-import GList from '@/components/graphqlFormGenerator/components/List'
+import VuetifyConfig, { getComponentProps, RUNTIME_SETTING } from '@/components/graphqlFormGenerator/components/vuetify'
 import { findByName, mutate } from '@/utils/aotf'
 import { Tokens } from '@/utils/uid'
 
@@ -99,20 +98,8 @@ export default {
           rows: '1',
           autoGrow: true,
           style: 'font-family: monospace;'
-        },
-        GenericScalar: {
-          is: GList,
-          gqlType: {
-            kind: 'LIST',
-            ofType: {
-              name: 'KeyValPair',
-              kind: 'INPUT_OBJECT'
-            }
-          },
-          addAtStart: true
         }
       },
-      kinds: VuetifyConfig.kinds,
       icons: {
         help: mdiHelpCircleOutline
       }
@@ -151,11 +138,10 @@ export default {
       this.type = findByName(this.types, model.__typename)
       // Do not want GQL internal '__typename' field to show up in the form
       delete model.__typename
-      // Due to how broadcast works, we cannot modify/remove pre-existing keys,
-      // so mark as frozen
+      // Due to how broadcast works, we cannot rename the keys of/remove
+      // pre-existing key-val settings, so mark as frozen
       for (const fieldName of Object.keys(model)) {
-        const typeName = findByName(this.type.fields, fieldName).type.name
-        if (typeName === 'GenericScalar') {
+        if (findByName(this.type.fields, fieldName).type.ofType?.name === RUNTIME_SETTING) {
           for (const item of model[fieldName]) {
             item.frozenKey = true
           }
@@ -238,7 +224,7 @@ export default {
       const gqlType = findByName(this.type.fields, fieldName).type
       return {
         gqlType,
-        ...getComponentProps(gqlType, this.namedTypes, this.kinds)
+        ...getComponentProps(gqlType, this.namedTypes, VuetifyConfig.kinds)
       }
     },
 

@@ -68,12 +68,6 @@ export default {
     }
   },
 
-  data: () => ({
-    defaultProps: VuetifyConfig.defaultProps,
-    namedTypes: VuetifyConfig.namedTypes,
-    kinds: VuetifyConfig.kinds
-  }),
-
   computed: {
     /* The props to pass to the form input.
      *
@@ -85,11 +79,11 @@ export default {
      */
     props () {
       // get the default props for this graphQL type
-      const componentProps = getComponentProps(this.gqlType, this.namedTypes, this.kinds)
+      const componentProps = getComponentProps(this.gqlType, VuetifyConfig.namedTypes, VuetifyConfig.kinds)
 
       // merge this in with default and override props
       const propGroups = [
-        this.defaultProps,
+        VuetifyConfig.defaultProps,
         componentProps,
         this.propOverrides || {}
       ]

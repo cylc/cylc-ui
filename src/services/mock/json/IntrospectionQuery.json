@@ -6582,7 +6582,7 @@
         {
           "kind": "OBJECT",
           "name": "Runtime",
-          "description": "\nSubset of runtime fields.\n\nExisting on 3 different node types:\n- Task/family definition (from the flow.cylc file)\n- Task/family cycle instance (includes any broadcasts on top\n  of the definition)\n- Job (a record of what was run for a particular submit)\n",
+          "description": "Subset of runtime fields.\n\nExisting on 3 different node types:\n- Task/family definition (from the flow.cylc file)\n- Task/family cycle instance (includes any broadcasts on top\n  of the definition)\n- Job (a record of what was run for a particular submit)",
           "fields": [
             {
               "name": "platform",
@@ -6785,9 +6785,14 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null,
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "RuntimeSetting",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -6799,9 +6804,14 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null,
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "RuntimeSetting",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -6813,8 +6823,53 @@
               "description": null,
               "args": [],
               "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "RuntimeSetting",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "RuntimeSetting",
+          "description": "Key = val setting",
+          "fields": [
+            {
+              "name": "key",
+              "description": null,
+              "args": [],
+              "type": {
                 "kind": "SCALAR",
-                "name": "GenericScalar",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "value",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null,
                 "__typename": "__Type"
               },

@@ -449,34 +449,27 @@ describe('aotf (Api On The Fly)', () => {
           [],
           []
         ],
-        [ // INPUT_OBJECT { A } => {A: null}
+        [ // OBJECT { A } => { foo: null, bar: null }
           {
-            type: null,
-            kind: 'INPUT_OBJECT',
+            kind: 'OBJECT',
             name: 'A'
           },
           [
             {
               name: 'A',
-              kind: 'INPUT_OBJECT',
-              inputFields: [
-                {
-                  name: 'A',
-                  type: 'String'
-                }
+              kind: 'OBJECT',
+              fields: [
+                { name: 'foo', type: 'String' },
+                { name: 'bar', type: 'String' }
               ]
             }
           ],
-          { A: null }
+          { foo: null, bar: null }
         ]
-      ].forEach((item) => {
-        const type = item[0]
-        const types = item[1]
+      ].forEach(([type, types, expected]) => {
         expect(
           aotf.getNullValue(type, types)
-        ).to.deep.equal(
-          item[2]
-        )
+        ).to.deep.equal(expected)
       })
     })
   })

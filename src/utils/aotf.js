@@ -636,34 +636,21 @@ export function getBaseType (type) {
  */
 export function getNullValue (type, types = []) {
   let ret = null
-  let ofType = null
   for (const subType of iterateType(type)) {
     if (subType.kind === 'LIST') {
-      ofType = getNullValue(subType.ofType)
-      if (ofType) {
-        // this list contains an object
-        ret = [
-          getNullValue(subType.ofType)
-        ]
-      } else {
-        ret = []
-      }
+      const ofType = getNullValue(subType.ofType, types)
+      ret = ofType ? [ofType] : []
       break
     }
-    if (subType.kind === 'INPUT_OBJECT') {
+    if (subType.kind === 'OBJECT') {
       ret = {}
-      for (const type of types) {
-        // TODO: this type iteration is already done in the mixin
-        //       should we use the mixin or a subset there-of here?
-        if (
-          type.name === subType.name &&
-          type.kind === subType.kind
-        ) {
-          for (const field of type.inputFields) {
-            ret[field.name] = getNullValue(field.type)
-          }
-          break
-        }
+      // TODO: this type iteration is already done in the mixin
+      //       should we use the mixin or a subset there-of here?
+      const type = types.find(({ name, kind }) => (
+        name === subType.name && kind === subType.kind
+      ))
+      for (const field of type.fields) {
+        ret[field.name] = getNullValue(field.type, types)
       }
       break
     }

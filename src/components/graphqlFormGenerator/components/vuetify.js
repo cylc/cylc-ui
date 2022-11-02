@@ -78,6 +78,8 @@ const RULES = {
     x => Boolean(!x || x.match(/(^\d+$|^(all|new|none)$)/)) || 'Invalid'
 }
 
+export const RUNTIME_SETTING = 'RuntimeSetting'
+
 export default {
   defaultProps: {
     // default props for all form inputs
@@ -197,40 +199,37 @@ export default {
         RULES.flow
       ]
     },
-    KeyValPair: {
+    [RUNTIME_SETTING]: {
       is: GMapItem
     }
   },
 
   kinds: {
     // registry of GraphQL "kinds" (e.g. LIST)
-    // { kind: { is: ComponentClass, prop1: value, ... } }
-    ENUM: {
+    // { kind: (ofType) => ({ is: ComponentClass, prop1: value, ... }) }
+    ENUM: (ofType) => ({
       is: GEnum
-    },
-    NON_NULL: {
+    }),
+    NON_NULL: (ofType) => ({
       is: GNonNull
-    },
-    LIST: {
-      is: GList
-    },
-    INPUT_OBJECT: {
+    }),
+    LIST: (ofType) => ({
+      is: GList,
+      addAtStart: ofType?.name === RUNTIME_SETTING
+    }),
+    OBJECT: (ofType) => ({
       is: GObject // happy naming coincidence
-    }
+    })
   }
 }
 
 export function getComponentProps (gqlType, namedTypes, kinds) {
-  const { name, kind } = gqlType
-  if (namedTypes[name]) {
-    return namedTypes[name]
-  } else if (kinds[kind]) {
-    return kinds[kind]
-  } else {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `Falling back to string for type: ${name}, kind: ${kind}`
-    )
-    return namedTypes.String
+  const { name, kind, ofType } = gqlType
+  const ret = namedTypes[name] ?? kinds[kind]?.(ofType)
+  if (ret) {
+    return ret
   }
+  // eslint-disable-next-line no-console
+  console.warn(`Falling back to string for type: ${name}, kind: ${kind}`)
+  return namedTypes.String
 }

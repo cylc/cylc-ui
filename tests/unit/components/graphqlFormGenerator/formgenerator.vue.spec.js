@@ -18,7 +18,7 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
 import { expect } from 'chai'
-import cloneDeep from 'lodash/cloneDeep'
+import { cloneDeep } from 'lodash'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 
@@ -47,10 +47,10 @@ const BASIC_MUTATION = {
   ]
 }
 
-const INPUT_OBJECT = {
-  name: 'MyInputObject',
-  kind: 'INPUT_OBJECT',
-  inputFields: [
+const CUSTOM_OBJECT = {
+  name: 'MyObject',
+  kind: 'OBJECT',
+  fields: [
     {
       name: 'MyString',
       type: {
@@ -104,19 +104,19 @@ const NESTED_TYPES = [
   ],
   [
     {
-      // input objects are a little more interesting
-      name: 'List<MyInputObject>',
+      // general objects are a little more interesting
+      name: 'List<MyObject>',
       defaultValue: '[{"key": "[env]FOO", "value": "foo"}]',
       type: {
         name: null,
         kind: 'LIST',
         ofType: {
-          name: 'MyInputObject',
-          kind: 'INPUT_OBJECT'
+          name: 'MyObject',
+          kind: 'OBJECT'
         }
       }
     },
-    [{}]
+    [{ MyString: null, MyInteger: null }]
   ],
   [
     {
@@ -145,7 +145,7 @@ const NESTED_TYPES = [
   [
     {
       // too deep dammit
-      name: 'NonNull<List<NonNull<MyInputObject>>>',
+      name: 'NonNull<List<NonNull<MyObject>>>',
       defaultValue: '[{"key": "[env]FOO", "value": "foo"}]',
       type: {
         name: null,
@@ -157,16 +157,25 @@ const NESTED_TYPES = [
             name: null,
             kind: 'NON_NULL',
             ofType: {
-              name: 'MyInputObject',
-              kind: 'INPUT_OBJECT'
+              name: 'MyObject',
+              kind: 'OBJECT'
             }
           }
         }
       }
     },
-    [{}]
+    [{ MyString: null, MyInteger: null }]
   ]
 ]
+
+/**
+ * Return the data.model for a wrapper.
+ *
+ * NOTE: clones to avoid "TypeError: Cannot convert a Symbol value to a string"
+ */
+function getModel (wrapper) {
+  return cloneDeep(wrapper.vm.$data.model)
+}
 
 const localVue = createLocalVue()
 
@@ -192,7 +201,7 @@ describe('FormGenerator Component', () => {
         mutation: BASIC_MUTATION
       }
     })
-    expect(wrapper.vm.$data.model).to.deep.equal({
+    expect(getModel(wrapper)).to.deep.equal({
       MyString: 'MyDefault',
       MyInteger: null
     })
@@ -207,12 +216,11 @@ describe('FormGenerator Component', () => {
             description: 'Beef Wellington',
             args: [type]
           },
-          types: [INPUT_OBJECT]
+          types: [CUSTOM_OBJECT]
         }
       })
-      const expected = {}
-      expected[type.name] = JSON.parse(type.defaultValue)
-      expect(wrapper.vm.$data.model).to.deep.equal(expected)
+      const expected = { [type.name]: JSON.parse(type.defaultValue) }
+      expect(getModel(wrapper)).to.deep.equal(expected)
     })
   })
 
@@ -227,12 +235,11 @@ describe('FormGenerator Component', () => {
             description: 'Beef Wellington',
             args: [type]
           },
-          types: [INPUT_OBJECT]
+          types: [CUSTOM_OBJECT]
         }
       })
-      const expected = {}
-      expected[type.name] = defaultValue
-      expect(wrapper.vm.$data.model).to.deep.equal(expected)
+      const expected = { [type.name]: defaultValue }
+      expect(getModel(wrapper)).to.deep.equal(expected)
     })
   })
 
@@ -245,7 +252,7 @@ describe('FormGenerator Component', () => {
         }
       }
     })
-    expect(wrapper.vm.$data.model).to.deep.equal({
+    expect(getModel(wrapper)).to.deep.equal({
       MyString: 'Foo',
       MyInteger: null
     })
@@ -260,8 +267,8 @@ describe('FormGenerator Component', () => {
         }
       }
     })
-    const before = wrapper.vm.$data.model
+    const before = getModel(wrapper)
     wrapper.vm.reset()
-    expect(wrapper.vm.$data.model).to.deep.equal(before)
+    expect(getModel(wrapper)).to.deep.equal(before)
   })
 })
