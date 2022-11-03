@@ -21,19 +21,19 @@ describe('Tree view', () => {
   it('Should display cycle points for the mocked workflow', () => {
     cy.visit('/#/workflows/one')
     cy
-      .get('.node-data-cyclepoint')
+      .get('.node-data-cycle')
       .should(($div) => {
         // by default, in our expected viewport size for tests, both cycle points exist and are visible
         expect($div.get(0)).to.contain('20000102T0000Z')
       })
     cy
-      .get('.node-data-cyclepoint')
+      .get('.node-data-cycle')
       .should('be.visible')
   })
   it('Should hide jobs by default', () => {
     cy.visit('/#/workflows/one')
     cy
-      .get('.node-data-cyclepoint')
+      .get('.node-data-cycle')
       .should('be.visible')
     cy
       .get('.node-data-job')
@@ -46,7 +46,7 @@ describe('Tree view', () => {
       .should('not.be.visible')
     // expand the first task proxy we have
     cy
-      .get('.node-data-task-proxy:first')
+      .get('.node-data-task:first')
       .prev()
       .click()
     // now, consequentially, the first job that we have should also be visible
@@ -58,7 +58,7 @@ describe('Tree view', () => {
     // this is testing that there is a margin, not necessarily that the leaf node's triangle is exactly under the node
     cy.visit('/#/workflows/one')
     cy
-      .get('.node-data-task-proxy:first')
+      .get('.node-data-task:first')
       .prev()
       .click()
     // no jobs, and no leaves are visible initially
@@ -93,8 +93,8 @@ describe('Tree view', () => {
   it('Should update view correctly', () => {
     cy.visit('/#/tree/one')
     cy
-      .get('.node-data-cyclepoint')
-      .should('be.visible')
+      .get('.node-data-cycle')
+      .should('have.length', 1)
     cy
       .get('.node-data-job:first')
       .should('not.be.visible')
@@ -102,11 +102,8 @@ describe('Tree view', () => {
       .visit('/#/tree/anynamewillstillopenone')
       .then(() => {
         cy
-          .get('.node-data-job:first')
-          .should('not.be.visible')
-        cy
-          .get('.node-data-cyclepoint')
-          .should('be.visible')
+          .get('.node-data')
+          .should('have.length', 0)
         cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
           // GScan 'root' subscription, and the 'workflow' subscription used by the Tree view
           expect(Object.keys(subscriptions).length).to.equal(2)
@@ -118,7 +115,7 @@ describe('Tree view', () => {
   it('Should remove subscriptions correctly when leaving the view', () => {
     cy.visit('/#/tree/one')
     cy
-      .get('.node-data-cyclepoint')
+      .get('.node-data-cycle')
       .should('be.visible')
     cy
       .get('.node-data-job:first')
@@ -141,74 +138,71 @@ describe('Tree view', () => {
     })
   })
   it('Should display message triggers', () => {
-    // TODO: The message triggers are programmatically added in the mocked workflow service.
-    //       If/when the one checkpoint workflow is updated and includes data with custom
-    //       message triggers, we need to update this test accordingly.
     cy.visit('/#/tree/one')
-    // The "failed" task contains custom messages, so let's expand it first
-    const failedTaskProxy = cy
+
+    // find the task proxy
+    const taskProxy = cy
       .get('.mx-1')
-      .contains('failed')
+      .contains('eventually_succeeded')
       .parent()
-    const failedTaskProxyTreeNode = failedTaskProxy
       .parent()
-    failedTaskProxyTreeNode
+
+    taskProxy
+      // expand the job nodes
       .find('.node-expand-collapse-button')
       .click({ force: true })
-    // Here the job "#1" of the task-proxy "failed" should be visible,
-    // let's confirm it's showing the "N+" chip...
-    const failedJob = cy
-      .get('.mx-1')
-      .contains('#1')
       .parent()
-    // eslint-disable-next-line no-lone-blocks
-    {
-      failedJob
-        .should('be.visible')
-      // Let's confirm it shows the "N+" chip (i.e. this task has more N messages)
-      const lastChild = failedJob.children().last()
-      lastChild
-        .children()
-        .last()
-        .should('have.text', '+3')
-    }
-    // Finally, let's verify that expanding the job, will show the custom messages
-    // in the job details...
-    // eslint-disable-next-line no-lone-blocks
-    {
-      // expand the job
-      failedJob
-        .parent()
-        .children()
-        .last()
-        .click({ force: true })
-      cy
-        .get('.leaf-entry-title')
-        .contains('msg-label-8')
-        .should('be.visible')
-    }
+      .parent()
+
+      // the jobs should be visible
+      .find('.node-data-job')
+      .should('be.visible')
+
+      // the first job should have 5 outputs (the maximum number we display)
+      .first()
+      .find('.message-output')
+      .should('have.length', 5)
+
+      // the remainder should be referenced in an overflow counter +2
+      .parent()
+      .contains('+2')
+      .parent()
+      .parent()
+      .parent()
+      .parent()
+
+      // expand the job details node
+      .find('.node-expand-collapse-button')
+      .click({ force: true })
+
+      // all 7 outputs/messages should be listed in the job-details
+      .parent()
+      .parent()
+      .find('.job-details')
+      .find('.output')
+      .should('have.length', 7)
   })
 
   describe('filters', () => {
     it('Should not filter by default', () => {
       cy.visit('/#/tree/one')
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains('sleepy')
         .should('be.visible')
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains('waiting')
         .should('be.visible')
     })
     it('Should filter by task name', () => {
       cy.visit('/#/tree/one')
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains('sleepy')
         .should('be.visible')
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains('waiting')
         .should('be.visible')
       // eep should filter sleepy
@@ -216,18 +210,18 @@ describe('Tree view', () => {
         .get('#c-tree-filter-task-name')
         .type('eep')
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains('sleepy')
         .should('be.visible')
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains('waiting')
         .should('not.be.visible')
     })
     it('Should filter by task states', () => {
       cy.visit('/#/tree/one')
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains(TaskState.FAILED.name)
         .should('be.visible')
       cy
@@ -238,17 +232,17 @@ describe('Tree view', () => {
         .contains(TaskState.RUNNING.name)
         .click({ force: true })
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains(TaskState.FAILED.name)
         .should('be.not.visible')
       cy
-        .get('.node-data-task-proxy:visible')
+        .get('.node-data-task:visible')
         .should('have.length', 1)
     })
     it('Should filter by task name and states', () => {
       cy.visit('/#/tree/one')
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains('sleepy')
         .should('be.visible')
       // retry should filter retry
@@ -264,7 +258,7 @@ describe('Tree view', () => {
         .contains(TaskState.WAITING.name)
         .click({ force: true })
       cy
-        .get('.node-data-task-proxy:visible')
+        .get('.node-data-task:visible')
         .should('have.length', 1)
     })
 

@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <span class="grey--text">{{ node.node.platform }}</span>
           <span
             class="grey--text d-flex flex-nowrap flex-row align-center"
-            v-if="node.node.customOutputs && node.node.customOutputs.length > 0"
+            v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
           >
             <!--
               We had a tricky bug in #530 due to the :key here. In summary, the list
@@ -106,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               @see https://github.com/cylc/cylc-ui/pull/530#issuecomment-781076619
             -->
             <v-tooltip
-              v-for="(customOutput, index) of [...node.node.customOutputs].slice(0, 5)"
+              v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
               :key="`output-chip-${index}`"
               bottom
             >
@@ -114,28 +114,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-chip
                   v-bind="attrs"
                   v-on="on"
-                  color="grey"
-                  text-color="grey lighten-5"
-                  class="ml-2"
+                  :color="customOutput.isMessage ? 'light-grey' : 'grey'"
+                  :text-color="customOutput.isMessage ? 'black' : 'white'"
+                  class="ml-2 message-output"
                   small
                 >{{ customOutput.label }}</v-chip>
               </template>
               <span>{{ customOutput.message }}</span>
             </v-tooltip>
             <v-chip
-              v-if="node.node.customOutputs.length > 5"
+              v-if="jobMessageOutputs.length > 5"
               color="grey"
               text-color="grey lighten-5"
               class="ml-2"
               small
               link
               @click="toggleExpandCollapse"
-            >+{{ node.node.customOutputs.length - 5 }}</v-chip>
+            >+{{ jobMessageOutputs.length - 5 }}</v-chip>
           </span>
         </div>
       </slot>
       <slot name="job-details" v-else-if="node.type === 'job-details'">
-        <div class="leaf">
+        <div class="leaf job-details">
           <div class="arrow-up" :style="leafTriangleStyle"></div>
           <div class="leaf-data font-weight-light py-4 pl-2">
             <div
@@ -151,13 +151,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <span class="px-4 leaf-entry-title grey--text text--darken-1">outputs</span>
             </div>
             <div
-              v-if="node.node.customOutputs && node.node.customOutputs.length > 0"
+              v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
               class="leaf-outputs-entry"
             >
               <div
-                v-for="customOutput of node.node.customOutputs"
-                :key="`${customOutput.id}-leaf`"
-                class="leaf-entry"
+                v-for="customOutput of jobMessageOutputs"
+                :key="customOutput.label"
+                class="leaf-entry output"
               >
                 <span class="px-4 leaf-entry-title">{{ customOutput.label }}</span>
                 <span class="grey--text leaf-entry-value">{{ customOutput.message }}</span>
@@ -244,7 +244,12 @@ import { mdiChevronRight } from '@mdi/js'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import { taskStartTime, taskEstimatedDuration, latestJob } from '@/utils/tasks'
+import {
+  taskStartTime,
+  taskEstimatedDuration,
+  latestJob,
+  jobMessageOutputs
+} from '@/utils/tasks'
 import { getNodeChildren } from '@/components/cylc/tree/util'
 
 /**
@@ -394,6 +399,9 @@ export default {
       return {
         'margin-left': `${this.nodeIndentation}em`
       }
+    },
+    jobMessageOutputs () {
+      return jobMessageOutputs(this.node)
     }
   },
   created () {

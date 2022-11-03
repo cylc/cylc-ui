@@ -116,6 +116,7 @@ fragment JobData on Job {
   finishedTime
   state
   submitNum
+  messages
   taskProxy {
     outputs (satisfied: true) {
       label
@@ -124,6 +125,7 @@ fragment JobData on Job {
   }
 }
 `
+// TODO: outputs should be requested on the TaskProxy field
 
 /**
  * Query used to retrieve data for the GScan component.

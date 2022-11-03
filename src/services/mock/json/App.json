@@ -267,7 +267,17 @@
           "submittedTime": "2020-11-08T22:57:28Z",
           "finishedTime": "2020-11-08T22:57:29Z",
           "state": "succeeded",
-          "submitNum": 4
+          "submitNum": 4,
+          "messages": ["started", "foo", "bar", "baz", "pub", "qux", "x", "y"],
+          "taskProxy": {
+            "outputs": [
+              {"label": "foo", "message": "foo message"},
+              {"label": "bar", "message": "bar message"},
+              {"label": "baz", "message": "baz message"},
+              {"label": "pub", "message": "pub message"},
+              {"label": "qux", "message": "qux message"}
+            ]
+          }
         },
         {
           "id": "~user/one//20000102T0000Z/eventually_succeeded/3",
@@ -281,7 +291,13 @@
           "submittedTime": "2020-11-08T22:57:24Z",
           "finishedTime": "2020-11-08T22:57:25Z",
           "state": "failed",
-          "submitNum": 3
+          "submitNum": 3,
+          "messages": ["started", "foo", "failed/ERR"],
+          "taskProxy": {
+            "outputs": [
+              {"label": "foo", "message": "foo message"}
+            ]
+          }
         },
         {
           "id": "~user/one//20000102T0000Z/eventually_succeeded/2",
@@ -295,7 +311,8 @@
           "submittedTime": "2020-11-08T22:57:19Z",
           "finishedTime": "2020-11-08T22:57:20Z",
           "state": "failed",
-          "submitNum": 2
+          "submitNum": 2,
+          "messages": ["started", "failed/ERR"]
         },
         {
           "id": "~user/one//20000102T0000Z/eventually_succeeded/1",
@@ -309,7 +326,8 @@
           "submittedTime": "2020-11-08T22:57:15Z",
           "finishedTime": "2020-11-08T22:57:16Z",
           "state": "failed",
-          "submitNum": 1
+          "submitNum": 1,
+          "messages": ["started", "failed/ERR"]
         },
         {
           "id": "~user/one//20000102T0000Z/failed/1",
