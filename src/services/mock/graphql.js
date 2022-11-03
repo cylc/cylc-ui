@@ -24,6 +24,7 @@ const data = require('./json/index')
  */
 const DATA_MAPPING = {
   IntrospectionQuery: data.IntrospectionQuery,
+  App: data.App,
   OnWorkflowTreeDeltasData: {
     deltas: {
       added: data.OnWorkflowTreeDeltasData
