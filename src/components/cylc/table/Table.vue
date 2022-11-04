@@ -107,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             multi-sort
             :sort-by.sync="sortBy"
             :sort-desc.sync="sortDesc"
-            item-key="id"
+            item-key="task.id"
             show-expand
             dense
             :footer-props="{
@@ -124,19 +124,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <div class="d-flex align-content-center flex-nowrap">
                     <div class="mr-1">
                       <Task
-                        v-cylc-object="item.node"
-                        :task="item.node"
-                        :startTime="taskStartTime(item.node, item.latestJob)"
+                        v-cylc-object="item.task.node"
+                        :task="item.task.node"
+                        :startTime="taskStartTime(item.task.node, (item.latestJob || {}).node)"
                       />
                     </div>
                     <div class="mr-1">
                       <Job
-                        v-cylc-object="item.node"
-                        :status="item.node.state"
-                        :previous-state="getPreviousJobNode(item).state"
+                        v-cylc-object="item.task.node"
+                        :status="item.task.node.state"
+                        :previous-state="((item.previousJob || {}).node || {}).state"
                       />
                     </div>
-                    <div>{{ item.node.name }}</div>
+                    <div>{{ item.task.node.name }}</div>
                   </div>
                 </td>
                 <td>
@@ -144,22 +144,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     icon
                     class="v-data-table__expand-icon"
                     @click="expanded.push(item)"
-                    v-if="(item.children|| []).length > 0 && !expanded.includes(item)"
+                    v-if="
+                      (item.task.children|| []).length > 0 &&
+                      !expanded.includes(item)
+                    "
                   >
                     <v-icon>{{ icons.mdiChevronDown }}</v-icon>
                   </v-btn>
-                  <v-btn icon class="v-data-table__expand-icon v-data-table__expand-icon--active" @click="expanded.splice(expanded.indexOf(item), 1)" v-if="(item.children || []).length > 0 && expanded.includes(item)">
+                  <v-btn
+                    icon
+                    class="v-data-table__expand-icon v-data-table__expand-icon--active"
+                    @click="expanded.splice(expanded.indexOf(item), 1)"
+                    v-if="
+                      (item.task.children || []).length > 0 &&
+                      expanded.includes(item)
+                    "
+                  >
                     <v-icon>{{ icons.mdiChevronDown }}</v-icon>
                   </v-btn>
                 </td>
-                <td>{{ item.node.cyclePoint }}</td>
-                <td>{{ getLatestJobNode(item).platform }}</td>
-                <td>{{ getLatestJobNode(item).jobRunnerName }}</td>
-                <td>{{ getLatestJobNode(item).jobId }}</td>
-                <td>{{ getLatestJobNode(item).submittedTime }}</td>
-                <td>{{ getLatestJobNode(item).startedTime }}</td>
-                <td>{{ getLatestJobNode(item).finishedTime }}</td>
-                <td>{{ item.node.meanElapsedTime }}</td>
+                <td>{{ item.task.node.cyclePoint }}</td>
+                <td>{{ ((item.latestJob || {}).node || {}).platform }}</td>
+                <td>{{ ((item.latestJob || {}).node || {}).jobRunnerName }}</td>
+                <td>{{ ((item.latestJob || {}).node || {}).jobId }}</td>
+                <td>{{ ((item.latestJob || {}).node || {}).submittedTime }}</td>
+                <td>{{ ((item.latestJob || {}).node || {}).startedTime }}</td>
+                <td>{{ ((item.latestJob || {}).node || {}).finishedTime }}</td>
+                <td>{{ item.task.node.meanElapsedTime }}</td>
               </tr>
             </template>
             <template v-slot:expanded-item="{ item }">
@@ -169,7 +180,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!--              </td>-->
               <tr
                 v-bind:key="job.id"
-                v-for="(job, index) in item.children"
+                v-for="(job, index) in item.task.children"
                 class="grey lighten-5"
               >
                 <td>
@@ -237,13 +248,13 @@ export default {
         mdiChevronDown,
         mdiArrowDown
       },
-      sortBy: ['node.cyclePoint'],
+      sortBy: ['task.node.cyclePoint'],
       sortDesc: [localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : true],
       expanded: [],
       headers: [
         {
           text: 'Task',
-          value: 'node.name',
+          value: 'task.node.name',
           sort: DEFAULT_COMPARATOR
         },
         {
@@ -253,42 +264,42 @@ export default {
         },
         {
           text: 'Cycle Point',
-          value: 'node.cyclePoint',
+          value: 'task.node.cyclePoint',
           sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
         },
         {
-          text: 'Host',
-          value: 'getLatestJobNode(node).platform',
+          text: 'Platform',
+          value: 'latestJob.node.platform',
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
           text: 'Job System',
-          value: 'getLatestJobNode(node).jobRunnerName',
+          value: 'latestJob.node.jobRunnerName',
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
           text: 'Job ID',
-          value: 'getLatestJobNode(node).jobId',
-          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
+          value: 'latestJob.node.jobId',
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
           text: 'T-submit',
-          value: 'getLatestJobNode(node).submittedTime',
-          sort: datetimeComparator
+          value: 'latestJob.node.submittedTime',
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
           text: 'T-start',
-          value: 'getLatestJobNode(node).startedTime',
-          sort: datetimeComparator
+          value: 'latestJob.node.startedTime',
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
           text: 'T-finish',
-          value: 'getLatestJobNode(node).finishedTime',
-          sort: datetimeComparator
+          value: 'latestJob.node.finishedTime',
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
           text: 'dT-mean',
-          value: 'meanElapsedTime',
+          value: 'task.meanElapsedTime',
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
       ],
@@ -319,34 +330,20 @@ export default {
       const filterByState = this.filterByTaskState()
       return this.tasks.filter(task => {
         if (filterByName && filterByState) {
-          return task.node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(task.node.state)
+          return (
+            task.task.node.name.includes(this.activeFilters.name) &&
+            this.tasksFilterStates.includes(task.task.node.state)
+          )
         } else if (filterByName) {
-          return task.node.name.includes(this.activeFilters.name)
+          return task.task.node.name.includes(this.activeFilters.name)
         } else if (filterByState) {
-          return this.tasksFilterStates.includes(task.node.state)
+          return this.tasksFilterStates.includes(task.task.node.state)
         }
         return true
-
       })
     }
   },
   methods: {
-    getLatestJobNode (taskNode) {
-      if (taskNode.children.length === 0) {
-        // handle a task with no jobs
-        return {}
-      }
-      // return the last job
-      return taskNode.children.slice(-1)[0].node
-    },
-    getPreviousJobNode (taskNode) {
-      if (taskNode.children.length < 2) {
-        // handle a task with no jobs
-        return {}
-      }
-      // return the penultimate job
-      return taskNode.children.slice(-2, -1)[0].node
-    },
     filterByTaskName () {
       return this.activeFilters &&
         this.activeFilters.name !== undefined &&

@@ -82,8 +82,8 @@ describe('Table component', () => {
     })
 
     // check the the raw task data has the cycle points from lowest to highest
-    expect(wrapper.vm.tasks[wrapper.vm.filteredTasks.length - 1].node.cyclePoint).to.equal('20000103T0000Z')
-    expect(wrapper.vm.tasks[0].node.cyclePoint).to.equal('20000101T0000Z')
+    expect(wrapper.vm.tasks[wrapper.vm.filteredTasks.length - 1].task.node.cyclePoint).to.equal('20000103T0000Z')
+    expect(wrapper.vm.tasks[0].task.node.cyclePoint).to.equal('20000101T0000Z')
 
     // check that the html have the cycle points from high to low
     await wrapper.vm.$nextTick()
@@ -96,7 +96,7 @@ describe('Table component', () => {
         tasks: simpleTableTasks
       }
     })
-    expect(wrapper.props().tasks[0].node.name).to.equal('taskA')
+    expect(wrapper.props().tasks[0].task.node.name).to.equal('taskA')
     expect(wrapper.find('div')).to.not.equal(null)
   })
   describe('Filter', () => {

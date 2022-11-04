@@ -22,49 +22,73 @@ const BASE_TOKENS = new Tokens('~cylc/workflow//1')
 
 const simpleTableTasks = [
   {
-    id: BASE_TOKENS.clone({ task: 'taskA' }).id,
-    node: {
+    task: {
       id: BASE_TOKENS.clone({ task: 'taskA' }).id,
-      state: TaskState.RUNNING.name,
-      name: 'taskA',
-      meanElapsedTime: 2000,
-      cyclePoint: '20000101T0000Z'
+      node: {
+        id: BASE_TOKENS.clone({ task: 'taskA' }).id,
+        state: TaskState.RUNNING.name,
+        name: 'taskA',
+        meanElapsedTime: 2000,
+        cyclePoint: '20000101T0000Z'
+      },
+      children: [
+        {
+          id: BASE_TOKENS.clone({ task: 'taskA', job: '01' }).id,
+          node: {
+            platform: 'localhost',
+            jobRunnerName: 'background',
+            jobId: '1',
+            submittedTime: new Date().toISOString(),
+            startedTime: new Date().toISOString(),
+            finishedTime: null,
+            state: JobState.RUNNING.name
+          },
+          children: []
+        }
+      ]
     },
-    children: [
-      {
-        id: BASE_TOKENS.clone({ task: 'taskA', job: '01' }).id,
-        node: {
-          platform: 'localhost',
-          jobRunnerName: 'background',
-          jobId: '1',
-          submittedTime: new Date().toISOString(),
-          startedTime: new Date().toISOString(),
-          finishedTime: null,
-          state: JobState.RUNNING.name
-        },
-        children: []
-      }
-    ]
+    latestJob: {
+      id: BASE_TOKENS.clone({ task: 'taskA', job: '01' }).id,
+      node: {
+        platform: 'localhost',
+        jobRunnerName: 'background',
+        jobId: '1',
+        submittedTime: new Date().toISOString(),
+        startedTime: new Date().toISOString(),
+        finishedTime: null,
+        state: JobState.RUNNING.name
+      },
+      children: []
+    },
+    previousJob: null
   },
   {
-    id: BASE_TOKENS.clone({ task: 'taskB' }).id,
-    node: {
+    task: {
       id: BASE_TOKENS.clone({ task: 'taskB' }).id,
-      state: TaskState.WAITING.name,
-      name: 'taskB',
-      cyclePoint: '20000102T0000Z'
+      node: {
+        id: BASE_TOKENS.clone({ task: 'taskB' }).id,
+        state: TaskState.WAITING.name,
+        name: 'taskB',
+        cyclePoint: '20000102T0000Z'
+      },
+      children: []
     },
-    children: []
+    latestJob: null,
+    previousJob: null
   },
   {
-    id: BASE_TOKENS.clone({ task: 'taskC' }).id,
-    node: {
+    task: {
       id: BASE_TOKENS.clone({ task: 'taskC' }).id,
-      state: TaskState.SUBMITTED.name,
-      name: 'taskC',
-      cyclePoint: '20000103T0000Z'
+      node: {
+        id: BASE_TOKENS.clone({ task: 'taskC' }).id,
+        state: TaskState.SUBMITTED.name,
+        name: 'taskC',
+        cyclePoint: '20000103T0000Z'
+      },
+      children: []
     },
-    children: []
+    latestJob: null,
+    previousJob: null
   }
 ]
 
