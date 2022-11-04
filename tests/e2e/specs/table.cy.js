@@ -102,18 +102,18 @@ describe('Table view', () => {
         .click({ force: true })
       cy
         .get('.v-list-item')
-        .contains(TaskState.SUBMITTED.name)
+        .contains(TaskState.SUCCEEDED.name)
         .click({ force: true })
       cy
         .get('.c-table table > tbody > tr')
-        .should('have.length', 3)
+        .should('have.length', 2)
         .should('be.visible')
       cy
         .get('#c-table-filter-task-name')
-        .type(TaskState.FAILED.name)
+        .type('eventually')
       cy
         .get('td > div.d-flex > div')
-        .contains(TaskState.FAILED.name)
+        .contains('eventually')
         .should('be.visible')
     })
   })

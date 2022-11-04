@@ -67,7 +67,7 @@ describe('CylcObject Menu component', () => {
   it('updates when clicking on a different Cylc object', () => {
     let firstID
     cy.visit('/#/workflows/one')
-      .get('.node-data-cyclepoint:first')
+      .get('.node-data-cycle:first')
       .find('.c-interactive:first')
       .click()
       .get('.c-mutation-menu')
@@ -77,7 +77,7 @@ describe('CylcObject Menu component', () => {
         firstID = $el.text().trim()
       })
       // Now click on other Cylc object
-      .get('.node-data-task-proxy:first')
+      .get('.node-data-task:first')
       .find('.c-interactive:first')
       .click({ force: true }) // force in case underneath menu
       .get('.c-mutation-menu')

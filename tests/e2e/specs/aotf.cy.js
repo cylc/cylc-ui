@@ -95,25 +95,25 @@ describe('Api On The Fly', () => {
       const tests = [
         // cycle point
         {
-          selector: '.node-data-cyclepoint > .c-task:first',
+          selector: '.node-data-cycle > .c-task:first',
           mutationTitle: 'Cycle Mutation',
           mutationText: 'cycle'
         },
         // family
         {
-          selector: '.node-data-family-proxy > .c-task:first',
+          selector: '.node-data-family > .c-task:first',
           mutationTitle: 'Namespace Mutation',
           mutationText: 'namespace'
         },
         // task
         {
-          selector: '.node-data-task-proxy > .c-task:first',
+          selector: '.node-data-task > .c-task:first',
           mutationTitle: 'Namespace Mutation',
           mutationText: 'namespace'
         },
         // job (in task summary)
         {
-          selector: '.node-data-task-proxy > .node-summary > .c-job:first',
+          selector: '.node-data-task > .node-summary > .c-job:first',
           mutationTitle: 'Job Mutation',
           mutationText: 'job'
         },
@@ -168,7 +168,7 @@ describe('Api On The Fly', () => {
 
       // open the mutation menu
       cy
-        .get('.node-data-cyclepoint > .c-task:first')
+        .get('.node-data-cycle > .c-task:first')
         .should('exist')
         .should('be.visible')
         .click()
@@ -212,7 +212,7 @@ describe('Api On The Fly', () => {
 
       // open the mutation menu
       cy
-        .get('.node-data-cyclepoint > .c-task:first')
+        .get('.node-data-cycle > .c-task:first')
         .should('exist')
         .should('be.visible')
         .click()
