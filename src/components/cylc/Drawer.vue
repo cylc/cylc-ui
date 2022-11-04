@@ -144,19 +144,16 @@ export default {
       el.style.width = f + 'px'
     },
     setEvents () {
-      const minSize = this.navigation.borderSize
       const el = this.getDrawerElement()
       const drawerBorder = el.querySelector('.v-navigation-drawer__border')
       drawerBorder.addEventListener(
         'mousedown',
         (e) => {
-          if (e.offsetX < minSize) {
-            el.style.transition = 'initial'
-            document.addEventListener('mousemove', this.resize, false)
-            if (e.stopPropagation) e.stopPropagation()
-            if (e.preventDefault) e.preventDefault()
-            return false
-          }
+          el.style.transition = 'initial'
+          document.addEventListener('mousemove', this.resize, false)
+          if (e.stopPropagation) e.stopPropagation()
+          if (e.preventDefault) e.preventDefault()
+          return false
         },
         false
       )
