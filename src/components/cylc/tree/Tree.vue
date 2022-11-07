@@ -328,7 +328,13 @@ export default {
     },
     filterNode (node) {
       let filtered = false
-      if (['workflow', 'cycle', 'family'].includes(node.type)) {
+      if (node.type === 'cycle') {
+        // follow the family tree from cycle point nodes
+        for (const child of node.familyTree[0]?.children || []) {
+          filtered = this.filterNode(child) || filtered
+        }
+      } else if (['workflow', 'family'].includes(node.type)) {
+        // follow children for workflow or family nodes
         for (const child of node.children) {
           filtered = this.filterNode(child) || filtered
         }
