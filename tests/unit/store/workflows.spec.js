@@ -531,8 +531,9 @@ describe('cylc tree', () => {
     expect(cycle.familyTree.length).to.equal(1)
     expect(root.children.length).to.equal(1)
     expect(animal.children.map(node => node.id)).to.deep.equal([
-      '~u/w//1/great-auk',
-      '~u/w//1/PENGUIN'
+      // NOTE: families should sort before tasks
+      '~u/w//1/PENGUIN',
+      '~u/w//1/great-auk'
     ])
     expect(penguin.children.map(node => node.id)).to.deep.equal([
       '~u/w//1/adelie',

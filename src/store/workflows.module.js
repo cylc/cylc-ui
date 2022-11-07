@@ -150,12 +150,20 @@ function addChild (parentNode, childNode) {
   }
 
   // insert the child preserving sort order
-  // if ([].includes(childNode.type)) {}
+  let comparator
+  if (['cycle', 'family'].includes(parentNode.type)) {
+    // sort by type, then name
+    // (this makes families sort before tasks in the graph)
+    comparator = (n) => `${n.type}-${n.name}`
+  } else {
+    // sort by name
+    comparator = (n) => n.name
+  }
   const reverse = ['cycle', 'job'].includes(childNode.type)
   const index = sortedIndexBy(
     parentNode[key],
     childNode,
-    (n) => n.name, // sort by node name
+    comparator,
     { reverse }
   )
   parentNode[key].splice(index, 0, childNode)
