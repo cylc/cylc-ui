@@ -126,7 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       <Task
                         v-cylc-object="item.task.node"
                         :task="item.task.node"
-                        :startTime="taskStartTime(item.task.node, (item.latestJob || {}).node)"
+                        :startTime="((item.latestJob || {}).node || {}).startedTime"
                       />
                     </div>
                     <div class="mr-1">
@@ -221,7 +221,6 @@ import TaskState from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 import cloneDeep from 'lodash/cloneDeep'
-import { taskStartTime, taskEstimatedDuration } from '@/utils/tasks'
 import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
@@ -373,9 +372,7 @@ export default {
       // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
       this.tasksFilter.name = null
       this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
-    },
-    taskStartTime,
-    taskEstimatedDuration
+    }
   }
 }
 </script>

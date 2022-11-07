@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-cylc-object="node.node"
             :key="node.id"
             :task="node.node"
-            :startTime="taskStartTime(node.node, latestJob(node))"
+            :startTime="(latestJob(node) || {}).startedTime"
           />
           <!-- TODO: we shouldn't be storing the job in the task node -->
           <div v-if="!isExpanded" class="node-summary">
@@ -249,8 +249,6 @@ import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import {
-  taskStartTime,
-  taskEstimatedDuration,
   latestJob,
   jobMessageOutputs
 } from '@/utils/tasks'
@@ -449,8 +447,6 @@ export default {
       classes[`node-data-${this.node.type}`] = true
       return classes
     },
-    taskStartTime,
-    taskEstimatedDuration,
     latestJob
   }
 }
