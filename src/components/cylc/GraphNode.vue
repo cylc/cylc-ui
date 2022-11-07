@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       x="180" y="110"
       font-size="25"
     >
-      {{ task.node.cyclePoint }}
+      {{ task.tokens.cycle }}
     </text>
 
     <!-- the job(s) -->

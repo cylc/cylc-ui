@@ -136,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         :previous-state="((item.previousJob || {}).node || {}).state"
                       />
                     </div>
-                    <div>{{ item.task.node.name }}</div>
+                    <div>{{ item.task.name }}</div>
                   </div>
                 </td>
                 <td>
@@ -163,7 +163,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <v-icon>{{ icons.mdiChevronDown }}</v-icon>
                   </v-btn>
                 </td>
-                <td>{{ item.task.node.cyclePoint }}</td>
+                <td>{{ item.task.tokens.cycle }}</td>
                 <td>{{ ((item.latestJob || {}).node || {}).platform }}</td>
                 <td>{{ ((item.latestJob || {}).node || {}).jobRunnerName }}</td>
                 <td>{{ ((item.latestJob || {}).node || {}).jobId }}</td>
@@ -198,7 +198,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </td>
                 <td></td>
                 <td>
-                  <!--{{ item.node.cyclePoint }}-->
+                  <!--{{ item.tokens.cycle }}-->
                 </td>
                 <td>{{job.node.platform }}</td>
                 <td>{{job.node.jobRunnerName }}</td>
@@ -248,13 +248,13 @@ export default {
         mdiChevronDown,
         mdiArrowDown
       },
-      sortBy: ['task.node.cyclePoint'],
+      sortBy: ['task.tokens.cycle'],
       sortDesc: [localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : true],
       expanded: [],
       headers: [
         {
           text: 'Task',
-          value: 'task.node.name',
+          value: 'task.name',
           sort: DEFAULT_COMPARATOR
         },
         {
@@ -264,7 +264,7 @@ export default {
         },
         {
           text: 'Cycle Point',
-          value: 'task.node.cyclePoint',
+          value: 'task.tokens.cycle',
           sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
         },
         {
@@ -331,11 +331,11 @@ export default {
       return this.tasks.filter(task => {
         if (filterByName && filterByState) {
           return (
-            task.task.node.name.includes(this.activeFilters.name) &&
+            task.task.name.includes(this.activeFilters.name) &&
             this.tasksFilterStates.includes(task.task.node.state)
           )
         } else if (filterByName) {
-          return task.task.node.name.includes(this.activeFilters.name)
+          return task.task.name.includes(this.activeFilters.name)
         } else if (filterByState) {
           return this.tasksFilterStates.includes(task.task.node.state)
         }

@@ -336,7 +336,7 @@ export default {
         if (this.filterByTaskName() && this.filterByTaskState()) {
           filtered = node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
         } else if (this.filterByTaskName()) {
-          filtered = node.node.name.includes(this.activeFilters.name)
+          filtered = node.name.includes(this.activeFilters.name)
         } else if (this.filterByTaskState()) {
           filtered = this.tasksFilterStates.includes(node.node.state)
         }

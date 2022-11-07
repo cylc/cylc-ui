@@ -234,7 +234,7 @@ export default {
       if (
         this.task.state === TaskState.RUNNING.name &&
         this.startTime &&
-        this.task.task.meanElapsedTime
+        this.task.task?.meanElapsedTime
       ) {
         // job start time in ms
         const startTime = Date.parse(this.startTime)

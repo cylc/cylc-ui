@@ -27,7 +27,6 @@ import { DocumentNode } from 'graphql'
 const WORKFLOW_DATA_FRAGMENT = `
 fragment WorkflowData on Workflow {
   id
-  name
   status
   statusMsg
   owner
@@ -48,7 +47,7 @@ const CYCLEPOINT_DATA_FRAGMENT = `
 fragment CyclePointData on FamilyProxy {
   __typename
   id
-  cyclePoint
+  state
   ancestors {
     name
   }
@@ -62,15 +61,7 @@ const FAMILY_PROXY_DATA_FRAGMENT = `
 fragment FamilyProxyData on FamilyProxy {
   __typename
   id
-  name
   state
-  cyclePoint
-  firstParent {
-    id
-    name
-    cyclePoint
-    state
-  }
   ancestors {
     name
   }
@@ -83,21 +74,12 @@ fragment FamilyProxyData on FamilyProxy {
 const TASK_PROXY_DATA_FRAGMENT = `
 fragment TaskProxyData on TaskProxy {
   id
-  name
   state
   isHeld
   isQueued
   isRunahead
-  cyclePoint
-  firstParent {
-    id
-    name
-    cyclePoint
-    state
-  }
   task {
     meanElapsedTime
-    name
   }
 }
 `
@@ -105,9 +87,6 @@ fragment TaskProxyData on TaskProxy {
 const JOB_DATA_FRAGMENT = `
 fragment JobData on Job {
   id
-  firstParent: taskProxy {
-    id
-  }
   jobRunnerName
   jobId
   platform
@@ -125,7 +104,9 @@ fragment JobData on Job {
   }
 }
 `
-// TODO: outputs should be requested on the TaskProxy field
+// TODO: We should really be requesting the outputs on the taskProxy field
+// rather than the job field as this results in duplication. This will require
+// a little refactoring (i.e. extracting the parent task proxy from the store)
 
 /**
  * Query used to retrieve data for the GScan component.

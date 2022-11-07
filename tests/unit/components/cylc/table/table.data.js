@@ -24,16 +24,19 @@ const simpleTableTasks = [
   {
     task: {
       id: BASE_TOKENS.clone({ task: 'taskA' }).id,
+      name: 'taskA',
+      tokens: { task: 'taskA', cycle: '20000101T0000Z' },
       node: {
         id: BASE_TOKENS.clone({ task: 'taskA' }).id,
         state: TaskState.RUNNING.name,
         name: 'taskA',
-        meanElapsedTime: 2000,
-        cyclePoint: '20000101T0000Z'
+        meanElapsedTime: 2000
       },
       children: [
         {
           id: BASE_TOKENS.clone({ task: 'taskA', job: '01' }).id,
+          name: '01',
+          tokens: { task: 'taskA', cycle: '20000101T0000Z' },
           node: {
             platform: 'localhost',
             jobRunnerName: 'background',
@@ -49,6 +52,8 @@ const simpleTableTasks = [
     },
     latestJob: {
       id: BASE_TOKENS.clone({ task: 'taskA', job: '01' }).id,
+      name: '01',
+      tokens: { task: 'taskA', cycle: '20000101T0000Z' },
       node: {
         platform: 'localhost',
         jobRunnerName: 'background',
@@ -65,6 +70,8 @@ const simpleTableTasks = [
   {
     task: {
       id: BASE_TOKENS.clone({ task: 'taskB' }).id,
+      name: 'taskB',
+      tokens: { task: 'taskB', cycle: '20000102T0000Z' },
       node: {
         id: BASE_TOKENS.clone({ task: 'taskB' }).id,
         state: TaskState.WAITING.name,
@@ -79,6 +86,8 @@ const simpleTableTasks = [
   {
     task: {
       id: BASE_TOKENS.clone({ task: 'taskC' }).id,
+      name: 'taskC',
+      tokens: { task: 'taskC', cycle: '20000103T0000Z' },
       node: {
         id: BASE_TOKENS.clone({ task: 'taskC' }).id,
         state: TaskState.SUBMITTED.name,
