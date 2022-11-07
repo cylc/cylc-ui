@@ -23,7 +23,7 @@ export function posToPath (pos) {
   let path = null
   for (const part of parts) {
     if (!path) {
-      path = `M${part[0]} -${part[1]}, C`
+      path = `M${part[0]} -${part[1]} C`
     } else {
       path = path + ` ${part[0]} -${part[1]},`
     }
