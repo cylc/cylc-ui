@@ -272,7 +272,6 @@ class WorkflowService {
             }
           },
           error: function error (err) {
-            console.log('BUGGERED')
             subscription.handleViewState(ViewState.ERROR, err)
           }
         }
@@ -283,7 +282,6 @@ class WorkflowService {
       subscription.reload = false
     } catch (e) {
       subscription.handleViewState(ViewState.ERROR, e)
-      debugger
     }
   }
 

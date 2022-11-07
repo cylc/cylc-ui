@@ -310,8 +310,6 @@ function mergeDefinitions (definitionA, definitionB) {
   // Optional validation, we can remove it later if we decide to accept queries
   // with different variables.
   if (!isEqual(definitionAVariables, definitionBVariables)) {
-    console.log(definitionAVariables)
-    console.log(definitionBVariables)
     throw new Error(`
       The queries must have the same variable definitions
       A: ${definitionAVariables}

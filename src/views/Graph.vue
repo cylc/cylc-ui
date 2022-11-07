@@ -396,7 +396,6 @@ export default {
         const elements = this.$refs[node.id]
         bbox = elements[0].getBBox()
         if (!bbox) {
-          console.warn(`Could not load BBox for ${node.id}`)
           bbox = { width: 100, height: 100 }
         }
         ret[node.id] = bbox

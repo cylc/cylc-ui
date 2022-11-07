@@ -44,13 +44,10 @@ const getters = {
     if (state.workflowName === null) {
       return null
     }
-    console.log(state.workflowName)
     return getIndex(state, state.workflowName).id
-    // return Object.values(state.workflows)
-    //   .find(workflow => workflow.name === state.workflowName)
   },
   getTree: state => {
-    console.log('getTree')
+    // TODO: consider moving into test code
     const ret = {}
     if (state.cylcTree?.children === undefined) {
       return ret
@@ -74,13 +71,12 @@ const getters = {
         stack.push(child)
       }
     }
-    console.log('/getTree')
     return ret
   }
 }
 
 function createTree (state) {
-  console.log('@@ Create')
+  // console.log('@@ Create')
   if (state.cylcTree) {
     return
   }
@@ -90,28 +86,28 @@ function createTree (state) {
   }
   Vue.set(tree, 'children', [])
   state.cylcTree = tree
-  console.log('@@')
+  // console.log('@@')
 }
 
 function clearTree (state) {
-  console.log('@@ CLEAR')
+  // console.log('@@ CLEAR')
   for (const child of state.cylcTree.children) {
     remove(state, child.id)
   }
-  console.log('@@')
+  // console.log('@@')
 }
 
 // index methods
 function addIndex (state, id, treeNode) {
   if (state.cylcTree.$index[id] === undefined) {
     // this is a new node => create it
-    console.log(`$i ++ ${id}`)
+    // console.log(`$i ++ ${id}`)
     Vue.set(state.cylcTree.$index, id, treeNode)
   }
 }
 
 function removeIndex (state, id) {
-  console.log(`$i -- ${id}`)
+  // console.log(`$i -- ${id}`)
   Vue.delete(state.cylcTree.$index, id)
 }
 
@@ -132,7 +128,7 @@ function hasChild (node, id, attr = 'id', childAttr = 'children') {
 
 // tree methods
 function addChild (parentNode, childNode) {
-  console.log(`$t ++ ${childNode.id}`)
+  // console.log(`$t ++ ${childNode.id}`)
   // determine which list to add this node to
   let key = 'children'
   if (childNode.type === '$namespace') {
@@ -170,7 +166,7 @@ function addChild (parentNode, childNode) {
 }
 
 function removeChild (state, node, parentNode = null) {
-  console.log(`$t -- ${node.id}`)
+  // console.log(`$t -- ${node.id}`)
   let key = 'children'
   if (node.type === '$namesapce') {
     key = '$namespaces'
@@ -264,7 +260,7 @@ function applyInheritance (state, node) {
 function update (state, updatedData) {
   const tokens = new Tokens(updatedData.id)
   const id = tokens.id
-  console.log(`@ += ${id}`)
+  // console.log(`@ += ${id}`)
 
   let treeItem = getIndex(state, id)
   if (treeItem) {
@@ -417,7 +413,7 @@ function createTreeNode (state, id, tokens, node) {
 function remove (state, prunedID) {
   const tokens = new Tokens(prunedID)
   const id = tokens.id
-  console.log(`@ -- ${id}`)
+  // console.log(`@ -- ${id}`)
 
   const treeNode = getIndex(state, id)
   if (treeNode === undefined) {
@@ -459,7 +455,7 @@ const mutations = {
   CREATE: createTree,
   UPDATE: update,
   UPDATE_DELTAS (state, updated) {
-    console.log('@ UPDATE')
+    // console.log('@ UPDATE')
     for (const updatedValue of Object.values(pick(updated, KEYS))) {
       const items = isArray(updatedValue) ? updatedValue : [updatedValue]
       for (const updatedData of items) {
@@ -468,13 +464,13 @@ const mutations = {
         }
       }
     }
-    console.log('@@')
+    // console.log('@@')
   },
   // remove an ID
   REMOVE: remove,
   // remove all IDs contained in a delta
   REMOVE_DELTAS (state, pruned) {
-    console.log('@ REMOVE')
+    // console.log('@ REMOVE')
     Object.keys(pick(pruned, PRUNED_KEYS_MULT)).forEach(prunedKey => {
       if (pruned[prunedKey]) {
         for (const prunedID of pruned[prunedKey]) {
@@ -487,16 +483,16 @@ const mutations = {
         remove(state, pruned[prunedKey])
       }
     })
-    console.log('@@')
+    // console.log('@@')
   },
   // remove all children of a node
   REMOVE_CHILDREN (state, id) {
-    console.log('@ REMOVE CHILDREN')
+    // console.log('@ REMOVE CHILDREN')
     const workflow = getIndex(state, id)
     if (workflow) {
       removeTree(state, workflow, false)
     }
-    console.log('@@')
+    // console.log('@@')
   },
   CLEAR: clearTree
 }

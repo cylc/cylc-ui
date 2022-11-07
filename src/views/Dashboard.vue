@@ -236,16 +236,11 @@ export default {
     ...mapState('user', ['user']),
     ...mapState('workflows', ['cylcTree']),
     workflows () {
-      console.log('COMPUTED CALLED')
-      // for (const child of this.cylcTree.children) {
-      //   console.log(`child ${child.id}`)
-      // }
       const ret = []
       const stack = [...this.cylcTree.children]
       let item
       while (stack.length > 0) {
         item = stack.splice(0, 1)[0]
-        console.log(`%stack ${item.id}`)
         if (item.type === 'workflow') {
           ret.push(item)
         } else if (['workflow-part', 'user'].includes(item.type)) {
