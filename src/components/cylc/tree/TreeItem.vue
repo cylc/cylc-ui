@@ -36,6 +36,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
       <slot name="cyclepoint" v-if="node.type === 'cycle'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
+          <!-- NOTE: cycle point nodes don't have any data associated with them
+            at present so we must use the root family node for the task icon.
+            We don't use this for the v-cylc-object as that would set the node
+            type to family. -->
           <Task
             v-cylc-object="node.node"
             :key="node.id"
