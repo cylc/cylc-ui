@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <Task
             v-cylc-object="node.node"
             :key="node.id"
-            :task="node.node"
+            :task="node.familyTree[0].node"
           />
           <span class="mx-1">{{ node.name }}</span>
         </div>
