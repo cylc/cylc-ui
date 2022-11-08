@@ -23,7 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <span class="c-task">
     <svg viewBox="0 0 100 100" class="task">
-      <SVGTask :task="task" :startTime="startTime" />
+      <SVGTask
+        :task="task"
+        :startTime="startTime"
+        :modifierSize="modifierSize"
+      />
     </svg>
   </span>
 </template>
@@ -41,6 +45,11 @@ export default {
       // TODO: aim to remove this in due course
       // (we should be able to obtain this directly from the task)
       required: false
+    },
+    modifierSize: {
+      // Scale the size of the task state modifier
+      type: Number,
+      default: 0.7
     }
   },
   components: {

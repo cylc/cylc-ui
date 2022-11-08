@@ -46,6 +46,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- outline
 
         The circle outline of the task icon.
+
+        NOTE: If changing the radius or stroke of the circle then the values
+        in getModiferTransform must be updated.
       -->
       <circle
         class="outline"
@@ -123,15 +126,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           ry="7.5"
         />
       </g>
+      <!-- expired
+
+      -->
+      <g
+        class="expired"
+      >
+        <rect
+          x="50"
+          y="46"
+          width="42"
+          height="8"
+          rx="5"
+          ry="5"
+          transform="rotate(-90, 50, 50)"
+        />
+        <rect
+          x="50"
+          y="46"
+          width="30"
+          height="8"
+          rx="5"
+          ry="5"
+          transform="rotate(45, 50, 50)"
+        />
+      </g>
     </g>
     <!-- modifier
 
-      Represents any task state modifiers e.g. isHeld, isRunahead, isQueued
+      Represents any task state modifiers e.g. isHeld, isRunahead, isQueued.
+
+      It is positioned above and to the left of the ".status". When used in the
+      "Task" component this overflows the 100x100 box (i.e. like superscript
+      text).
     -->
     <g
       class="modifier"
       :transform="getModiferTransform()"
     >
+      <!-- modifier
+
+        The circle outline of the modifier which is displayed for some modifier
+        states.
+
+        NOTE: If changing the radius or stroke of the circle then the values
+        in getModiferTransform must be updated to match.
+      -->
       <circle
         class="outline"
         cx="50"
@@ -139,6 +179,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         r="40"
         stroke-width="10"
       />
+      <!-- held
+
+        Paused icon representing isHeld.
+      -->
       <g
         class="held"
       >
@@ -159,34 +203,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           ry="10"
         />
       </g>
+      <!-- queued
+
+        Burger bar-like icon representing isQueued.
+      -->
       <g
         class="queued"
       >
         <rect
-          x="28.75"
-          y="24.5"
-          width="42.5"
-          height="15"
+          x="20"
+          y="20"
+          width="60"
+          height="16"
           rx="10"
           ry="10"
         />
         <rect
-          x="28.75"
-          y="42.5"
-          width="42.5"
-          height="15"
+          x="20"
+          y="41"
+          width="60"
+          height="16"
           rx="10"
           ry="10"
         />
         <rect
-          x="28.75"
-          y="60.5"
-          width="42.5"
-          height="15"
+          x="20"
+          y="62"
+          width="60"
+          height="16"
           rx="10"
           ry="10"
         />
       </g>
+      <!-- runahead
+
+        Dot icon representing isRunahead.
+      -->
       <g
         class="runahead"
       >
@@ -220,7 +272,7 @@ export default {
     modifierSize: {
       // Scale the size of the task state modifier
       type: Number,
-      default: 0.6
+      default: 0.7
     },
     coordinateOffset: {
       // You may need to provide this if encorporating this icon into a viewBox
@@ -255,7 +307,28 @@ export default {
       return ''
     },
     getModiferTransform () {
-      const translation = (this.modifierSize * -100) - 5
+      // Returns the translation required to position the ".modifier" nicely in
+      // relation to the ".status".
+
+      // Both ".status" and ".modifier" are centered at (50, 50), we need to
+      // move ".modifier" up and to the left so that the two don't touch and
+      // have a sensible gap between them
+
+      // translation = -(
+      //   # (1) the x/y translation to the edge of ".modifier"
+      //   (
+      //     (.modifier.outline.width + .modifier.outline.stroke)
+      //     * modifierSize * sin(45)
+      //   )
+      //   # (2) the x/y translation to the edge of ".status"
+      //   (.status.outline.width + .status.outline.stroke) * sin(45)
+      // )
+      const translation = -(
+        // (1) the x/y translation to the edge of ".modifier"
+        (35.35 * this.modifierSize) +
+        // (2) the x/y translation to the edge of ".status"
+        42.42
+      )
       return `
         scale(${this.modifierSize}, ${this.modifierSize})
         translate(${translation}, ${translation})
@@ -296,6 +369,10 @@ export default {
         stroke: none;
       }
       .cross rect {
+        fill: none;
+        stroke: none;
+      }
+      .expired rect {
         fill: none;
         stroke: none;
       }
@@ -356,6 +433,18 @@ export default {
       }
     }
 
+    &.expired .status {
+      .outline {
+        fill: $foreground;
+      }
+      .dot {
+        fill: $background;
+      }
+      .expired rect {
+        fill: $background;
+      }
+    }
+
     &.held .modifier {
       .outline {
         stroke: $foreground;
@@ -366,9 +455,6 @@ export default {
     }
 
     &.queued .modifier {
-      .outline {
-        stroke: $foreground;
-      }
       .queued rect {
         fill: $foreground;
       }
@@ -383,8 +469,6 @@ export default {
       }
     }
   }
-
-  /* TODO: expired task state */
 
   @keyframes c8-task-progress-animation {
     // 157 = 0%

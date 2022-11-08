@@ -19,30 +19,6 @@ import { TaskStateUserOrder, JobStates } from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 
-// wrap the Task component to allow us to bump up the font-size for a
-// higher resolution screenshot
-// const TaskComponent = {
-//   template: `
-//     <span style="font-size: 200px; margin-top: 400px">
-//       <task
-//         :status="status"
-//         :startTime="startTime"
-//         :estimatedDuration="100"
-//         :isHeld="isHeld"
-//         :isQueued="isQueued"
-//         :isRunahead="isRunahead"
-//       />
-//     </span>
-//   `,
-//   props: ['status', 'isHeld', 'isQueued', 'isRunahead'],
-//   components: { Task },
-//   data: () => ({
-//     // set the progress indicator for running tasks to ~33%
-//     // 33% of the 100s duration in milliseconds (0.33 * 100s * 1000ms/s)
-//     startTime: new Date(Date.now() - 33333).toISOString()
-//   })
-// }
-
 // wrap the Job component to allow us to bump up the font-size for a
 // higher resolution screenshot
 const JobComponent = {
@@ -56,14 +32,16 @@ const JobComponent = {
   components: { Job }
 }
 
+// wrap the Task component to allow us to bump up the font-size for a
+// higher resolution screenshot
 const TaskComponent = {
   // NOTE: we set the font-size to boost the screenshot resolution
   template: `
     <div style="font-size: 200px; margin: 100px;">
-      <Task :task="task" :startTime="startTime" />
+      <Task :task="task" :startTime="startTime" :modifierSize="modifierSize" />
     </div>
   `,
-  props: ['task', 'startTime'],
+  props: ['task', 'startTime', 'modifierSize'],
   components: { Task }
 }
 
@@ -82,12 +60,12 @@ function makeTask (
     isQueued,
     isRunahead,
     task: {
-      meanElapsedTime: MEAN_ELAPSED_TIME  // NOTE time in seconds
+      meanElapsedTime: MEAN_ELAPSED_TIME // NOTE time in seconds
     }
   }
 }
 
-function getStartTime(percent) {
+function getStartTime (percent) {
   return String(
     new Date(
       // the current time in ms
@@ -104,8 +82,8 @@ function getStartTime(percent) {
 describe('Task component', () => {
   it('Renders for each task state', () => {
     for (const state of TaskStateUserOrder) {
-      const task = makeTask(status=state.name)
-      cy.mount(TaskComponent, { propsData: { task: task } })
+      const task = makeTask(state.name)
+      cy.mount(TaskComponent, { propsData: { task } })
       cy.get('.c8-task').last().parent().screenshot(
         `task-${state.name}`,
         { overwrite: true, disableTimersAndAnimations: false }
@@ -113,13 +91,13 @@ describe('Task component', () => {
     }
   })
   it('Animates the running icon', () => {
-    const task = makeTask(status='running')
+    const task = makeTask('running')
     for (const percent of [0, 25, 50, 75, 100]) {
       cy.mount(
         TaskComponent,
         {
           propsData: {
-            task: task,
+            task,
             startTime: getStartTime(percent)
           }
         }
@@ -128,8 +106,8 @@ describe('Task component', () => {
         `task-running-${percent}`,
         { overwrite: true, disableTimersAndAnimations: false }
       )
-      // check the progress animation
-      .get('.c8-task:last .status > .progress')
+        // check the progress animation
+        .get('.c8-task:last .status > .progress')
         // the animation duration should be equal to the expected job duration
         .should('have.css', 'animation-duration', `${MEAN_ELAPSED_TIME}s`)
         // the offset should be set to the "percent" of the expected job duration
@@ -149,9 +127,24 @@ describe('Task component', () => {
     for (const modifier of ['isHeld', 'isQueued', 'isRunahead']) {
       task = makeTask()
       task[modifier] = true
-      cy.mount(TaskComponent, { propsData: { task: task } })
+      cy.mount(TaskComponent, { propsData: { task } })
       cy.get('.c8-task').last().screenshot(
         `task-${modifier}`,
+        {
+          overwrite: true,
+          disableTimersAndAnimations: false,
+          padding: [10, 5, 5, 10]
+        }
+      )
+    }
+  })
+  it('Renders different modifier sizes', () => {
+    const task = makeTask()
+    task.isHeld = true
+    for (const modifierSize of [0.2, 0.4, 0.6, 0.8]) {
+      cy.mount(TaskComponent, { propsData: { task, modifierSize } })
+      cy.get('.c8-task').last().screenshot(
+        `task-modifier-size-${modifierSize}`,
         {
           overwrite: true,
           disableTimersAndAnimations: false,
