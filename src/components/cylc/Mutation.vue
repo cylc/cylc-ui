@@ -72,7 +72,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        style="font-size:1.5em;"
        v-if="status !== 'waiting'"
       >
-        <Task :status="status"/>
         {{ status }}
       </p>
       <pre v-if="status === 'failed'">{{ response }}</pre>
@@ -81,7 +80,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
-import Task from '@/components/cylc/Task.vue'
 import { mutate } from '@/utils/aotf'
 
 // enumeration for the mutation status, maps onto Cylc Task status
@@ -105,8 +103,7 @@ export default {
   name: 'mutation',
 
   components: {
-    FormGenerator,
-    Task
+    FormGenerator
   },
 
   props: {

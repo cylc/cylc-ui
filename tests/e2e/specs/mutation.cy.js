@@ -101,10 +101,6 @@ describe('Mutations component', () => {
           .contains('Submit')
           .parent()
           .click()
-        // we should now have a c-task icon
-        cy
-          .get('.c-task')
-          .should('be.visible')
       })
   }
 
