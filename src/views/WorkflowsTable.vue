@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import i18n from '@/i18n'
 import { mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
@@ -161,19 +161,9 @@ export default {
   }),
   computed: {
     ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getNodes']),
     workflows () {
-      const workflows = []
-      const stack = [...this.cylcTree.children]
-      let item
-      while (stack.length) {
-        item = stack.pop()
-        if (['workflow-part', 'user'].includes(item.type)) {
-          stack.push(...item.children)
-        } else if (item.type === 'workflow') {
-          workflows.push(item)
-        }
-      }
-      return workflows
+      return this.getNodes('workflow')
     },
     workflowsTable () {
       return Object.values(this.workflows)

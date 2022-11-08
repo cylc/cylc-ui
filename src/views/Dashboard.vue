@@ -166,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { mdiBook, mdiBookMultiple, mdiBookOpenVariant, mdiCog, mdiHubspot, mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -235,19 +235,9 @@ export default {
   computed: {
     ...mapState('user', ['user']),
     ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getNodes']),
     workflows () {
-      const ret = []
-      const stack = [...this.cylcTree.children]
-      let item
-      while (stack.length > 0) {
-        item = stack.splice(0, 1)[0]
-        if (item.type === 'workflow') {
-          ret.push(item)
-        } else if (['workflow-part', 'user'].includes(item.type)) {
-          stack.push(...item.children)
-        }
-      }
-      return ret
+      return this.getNodes('workflow')
     },
     workflowsTable () {
       const count = Object.values(this.workflows)

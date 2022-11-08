@@ -22,6 +22,15 @@ import Vue from 'vue'
 import { Tokens } from '@/utils/uid'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
 
+const NODE_TYPES = [
+  'user',
+  'workflow-part',
+  'workflow',
+  'cycle',
+  'task',
+  'job'
+]
+
 const state = {
   cylcTree: {
     $index: {},
@@ -37,6 +46,47 @@ const state = {
    * @type {String}
    */
   workflowName: null
+}
+
+const getters = {
+  /* Return matching nodes from the store.
+   *
+   * - Specify the type of node you want to find using nodeType.
+   * - Specify any IDs you want to filter for by specifying ids, or omit
+   *   this argument to return all.
+   *
+   * Note: This walks the tree from the root node down to the level specified
+   * by nodeType every time a node in the tree to this point is added or
+   * removed. E.G. if you request 'workflow' nodes, then this node list
+   * will be recomputed every time a workflow is added or removed (delta batching
+   * may reduce the actual call count).
+   */
+  getNodes: (state) => (nodeType, ids) => {
+    if (!NODE_TYPES.includes(nodeType)) {
+      throw new Error(`Invalid node type: ${nodeType}`)
+    }
+
+    // node types which are above "nodeType" in the tree
+    const parentNodeTypes = NODE_TYPES.slice(0, NODE_TYPES.indexOf(nodeType))
+
+    // walk the tree looking for nodeType nodes
+    let item
+    const ret = []
+    const stack = [...state.cylcTree.children]
+    while (stack.length) {
+      item = stack.pop()
+      if (parentNodeTypes.includes(item.type)) {
+        // this is above "nodeTyoe" in the tree, look through its child nodes
+        stack.push(...item.children)
+      } else if (
+        item.type === nodeType &&
+        (!ids || ids.includes(item.id))
+      ) {
+        ret.push(item)
+      }
+    }
+    return ret
+  }
 }
 
 /* Initialise the data store. */
@@ -517,6 +567,7 @@ const actions = {}
 export const workflows = {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions
 }

@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { mdiFileTree } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
@@ -70,18 +70,12 @@ export default {
   },
   computed: {
     ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getNodes']),
     workflowIDs () {
       return [this.workflowId]
     },
     workflows () {
-      const ret = []
-      // TODO: this much more efficiently!!!!
-      for (const id in this.cylcTree.$index || {}) {
-        if (this.workflowIDs.includes(id)) {
-          ret.push(this.cylcTree.$index[id])
-        }
-      }
-      return ret
+      return this.getNodes('workflow', this.workflowIDs)
     },
     query () {
       return new SubscriptionQuery(

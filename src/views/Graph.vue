@@ -86,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Vue from 'vue'
 import gql from 'graphql-tag'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -318,7 +318,8 @@ export default {
     clearInterval(this.refreshTimer)
   },
   computed: {
-    ...mapState('workflows', ['lookup', 'cylcTree']),
+    ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getNodes']),
     query () {
       return new SubscriptionQuery(
         QUERY,
@@ -335,13 +336,7 @@ export default {
       return [this.workflowId]
     },
     workflows () {
-      const ret = []
-      for (const id in this.cylcTree.$index || {}) {
-        if (this.workflowIDs.includes(id)) {
-          ret.push(this.cylcTree.$index[id])
-        }
-      }
-      return ret
+      return this.getNodes('workflow', this.workflowIDs)
     }
   },
   methods: {
@@ -365,7 +360,7 @@ export default {
       // decrease graph layout node spacing by 10%
       this.spacing = this.spacing * (10 / 11)
     },
-    getNodes () {
+    getGraphNodes () {
       // list graph nodes from the store (non reactive list)
       const ret = []
       for (const workflow of this.workflows) {
@@ -377,7 +372,7 @@ export default {
       }
       return ret
     },
-    getEdges () {
+    getGraphEdges () {
       // list graph edges from the store (non reactive list)
       const ret = []
       for (const workflow of this.workflows) {
@@ -497,8 +492,8 @@ export default {
       // refresh the graph layout if required
 
       // extract the graph (non reactive lists of nodes & edges)
-      const nodes = this.getNodes()
-      const edges = this.getEdges()
+      const nodes = this.getGraphNodes()
+      const edges = this.getGraphEdges()
 
       if (!nodes.length || !edges.length) {
         // we can't graph this, reset and wait for something to draw
