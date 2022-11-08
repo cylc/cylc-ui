@@ -22,6 +22,34 @@ import storeOptions from '@/store/options'
 
 Vue.use(Vuex)
 
+function getTree (store) {
+  const cylcTree = store.state.workflows.cylcTree
+  const ret = {}
+  if (cylcTree?.children === undefined) {
+    return ret
+  }
+  const stack = [...cylcTree.children]
+  let pointer
+  let item
+  while (stack.length) {
+    item = stack.shift()
+    pointer = ret
+
+    // eslint-disable-next-line
+    for (const [partType, partName] of item.tokens.tree()) {
+      if (!pointer[partName]) {
+        pointer[partName] = {}
+      }
+      pointer = pointer[partName]
+    }
+
+    for (const child of item.children || []) {
+      stack.push(child)
+    }
+  }
+  return ret
+}
+
 describe('cylc tree', () => {
   const store = new Vuex.Store(storeOptions)
   if (!global.localStorage) {
@@ -32,9 +60,6 @@ describe('cylc tree', () => {
   }
   beforeEach(resetState)
   afterEach(resetState)
-  function getTree () {
-    return store.getters['workflows/getTree']
-  }
   function getNode (id) {
     return store.state.workflows.cylcTree.$index[id]
   }
@@ -48,11 +73,11 @@ describe('cylc tree', () => {
     const tree = store.state.workflows.cylcTree
     expect(tree.children).to.deep.equal([])
     expect(Object.keys(tree.$index)).to.deep.equal([])
-    expect(getTree()).to.deep.equal({})
+    expect(getTree(store)).to.deep.equal({})
 
     // add a job to the store
     store.commit('workflows/UPDATE', { id: '~a/b//c/d/e' })
-    expect(getTree()).to.deep.equal({
+    expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           c: {
@@ -68,7 +93,7 @@ describe('cylc tree', () => {
     store.commit('workflows/CLEAR')
     expect(tree.children).to.deep.equal([]) // children removed at top level
     expect(Object.keys(tree.$index)).to.deep.equal([]) // tree empty
-    expect(getTree()).to.deep.equal({}) // index empty
+    expect(getTree(store)).to.deep.equal({}) // index empty
   })
 
   it('adds', () => {
@@ -77,7 +102,7 @@ describe('cylc tree', () => {
 
     // add a job
     store.commit('workflows/UPDATE', { id: '~a/b//c/d/e' })
-    expect(getTree()).to.deep.equal({
+    expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           c: {
@@ -98,7 +123,7 @@ describe('cylc tree', () => {
 
     // add another job for the same task
     store.commit('workflows/UPDATE', { id: '~a/b//c/d/f' })
-    expect(getTree()).to.deep.equal({
+    expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           c: {
@@ -121,7 +146,7 @@ describe('cylc tree', () => {
 
     // add another cycle for the same workflow
     store.commit('workflows/UPDATE', { id: '~a/b//g' })
-    expect(getTree()).to.deep.equal({
+    expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           c: {
@@ -154,7 +179,7 @@ describe('cylc tree', () => {
       store.commit('workflows/UPDATE', { id: '~a/b//c/d/e' })
       store.commit('workflows/UPDATE', { id: '~a/b//c/d/f' })
       store.commit('workflows/UPDATE', { id: '~a/b//g' })
-      expect(getTree()).to.deep.equal({
+      expect(getTree(store)).to.deep.equal({
         a: {
           b: {
             c: {
@@ -181,19 +206,19 @@ describe('cylc tree', () => {
     // remove a user from the tree
     addNodes()
     store.commit('workflows/REMOVE', '~a')
-    expect(getTree()).to.deep.equal({})
+    expect(getTree(store)).to.deep.equal({})
     expect(getIndex()).to.deep.equal([])
 
     // remove a workflow from the tree
     addNodes()
     store.commit('workflows/REMOVE', '~a/b')
-    expect(getTree()).to.deep.equal({})
+    expect(getTree(store)).to.deep.equal({})
     expect(getIndex()).to.deep.equal([])
 
     // remove a cycle from the tree
     addNodes()
     store.commit('workflows/REMOVE', '~a/b//c')
-    expect(getTree()).to.deep.equal({
+    expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           g: {}
@@ -209,7 +234,7 @@ describe('cylc tree', () => {
     // remove a task from the tree
     addNodes()
     store.commit('workflows/REMOVE', '~a/b//c/d')
-    expect(getTree()).to.deep.equal({
+    expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           g: {}
@@ -225,7 +250,7 @@ describe('cylc tree', () => {
     // remove a job from the tree
     addNodes()
     store.commit('workflows/REMOVE', '~a/b//c/d/e')
-    expect(getTree()).to.deep.equal({
+    expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           c: {

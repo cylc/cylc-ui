@@ -39,42 +39,7 @@ const state = {
   workflowName: null
 }
 
-const getters = {
-  currentWorkflow: state => {
-    if (state.workflowName === null) {
-      return null
-    }
-    return getIndex(state, state.workflowName).id
-  },
-  getTree: state => {
-    // TODO: consider moving into test code
-    const ret = {}
-    if (state.cylcTree?.children === undefined) {
-      return ret
-    }
-    const stack = [...state.cylcTree.children]
-    let pointer
-    let item
-    while (stack.length) {
-      item = stack.shift()
-      pointer = ret
-
-      // eslint-disable-next-line
-      for (const [partType, partName] of item.tokens.tree()) {
-        if (!pointer[partName]) {
-          pointer[partName] = {}
-        }
-        pointer = pointer[partName]
-      }
-
-      for (const child of item.children || []) {
-        stack.push(child)
-      }
-    }
-    return ret
-  }
-}
-
+/* Initialise the data store. */
 function createTree (state) {
   // console.log('@@ Create')
   if (state.cylcTree) {
@@ -89,6 +54,7 @@ function createTree (state) {
   // console.log('@@')
 }
 
+/* Wipe everything in the store. */
 function clearTree (state) {
   // console.log('@@ CLEAR')
   for (const child of state.cylcTree.children) {
@@ -97,7 +63,7 @@ function clearTree (state) {
   // console.log('@@')
 }
 
-// index methods
+/* Add a node to the global $index (flat lookup). */
 function addIndex (state, id, treeNode) {
   if (state.cylcTree.$index[id] === undefined) {
     // this is a new node => create it
@@ -106,11 +72,13 @@ function addIndex (state, id, treeNode) {
   }
 }
 
+/* Remove a node from the global $index (flat lookup). */
 function removeIndex (state, id) {
   // console.log(`$i -- ${id}`)
   Vue.delete(state.cylcTree.$index, id)
 }
 
+/* Retrieve a node from the global $index (flat lookup). */
 function getIndex (state, id) {
   if (id === '$root') {
     // speial ID maps onto the tree root element
@@ -120,16 +88,21 @@ function getIndex (state, id) {
   return state.cylcTree.$index[id]
 }
 
+/* Return true if a node has at least one child.
+ *
+ * Defaults to looking in node.children, set childAttr to use a different
+ * tree (e.g. familyTree).
+ */
 function hasChild (node, id, attr = 'id', childAttr = 'children') {
   return node[childAttr].filter(
     item => { return item[attr] === id }
   ).length === 1
 }
 
-// tree methods
+/* Add a child node under a parent Node */
 function addChild (parentNode, childNode) {
-  // console.log(`$t ++ ${childNode.id}`)
   // determine which list to add this node to
+  // console.log(`$t ++ ${childNode.id}`)
   let key = 'children'
   if (childNode.type === '$namespace') {
     key = '$namespaces'
@@ -165,6 +138,7 @@ function addChild (parentNode, childNode) {
   parentNode[key].splice(index, 0, childNode)
 }
 
+/* Remove a child node from a parent node. */
 function removeChild (state, node, parentNode = null) {
   // console.log(`$t -- ${node.id}`)
   let key = 'children'
@@ -186,6 +160,11 @@ function removeChild (state, node, parentNode = null) {
   )
 }
 
+/* Recursively remove a node and anything underneath it.
+ *
+ * Set removeParent to also remove the parent node (convenience method to avoid
+ * parent lookup).
+ * */
 function removeTree (state, node, removeParent = true) {
   let pointer
   const stack = [
@@ -213,6 +192,10 @@ function removeTree (state, node, removeParent = true) {
   }
 }
 
+/* Remove any childless parents above this node.
+ *
+ * This removes tasks / cycles / families etc, but stops at workflows.
+ * */
 function cleanParents (state, node) {
   let pointer = node
   while (pointer.parent) {
@@ -232,6 +215,9 @@ function cleanParents (state, node) {
   }
 }
 
+/* Build / housekeep the familyTree based on the family information containined
+ * in this node.
+ */
 function applyInheritance (state, node) {
   if (node.type === 'family') {
     const childTasks = node.node.childTasks || []
@@ -256,7 +242,12 @@ function applyInheritance (state, node) {
   }
 }
 
-// data methods
+/* Add or update data in the store.
+ *
+ * UpdatedData must have an ID. This will create a node if it does not exist
+ * and update it if it does. This will also create any parent nodes in the tree
+ * if they are not present.
+ */
 function update (state, updatedData) {
   const tokens = new Tokens(updatedData.id)
   const id = tokens.id
@@ -287,11 +278,15 @@ function update (state, updatedData) {
   addIndex(state, id, treeItem)
 }
 
+/* Return the family hierarchy leading to a node.
+ *
+ * This is the family equivalent to "Tokens.tree".
+ */
 function getFamilyTree (tokens, node) {
   // tree = [type, name, tokens]
   const ret = []
 
-  // extract the tree up intil the cycle point
+  // extract the tree up until the cycle point
   let lastTokens
   for (const [type, name, iTokens] of tokens.tree()) {
     ret.push([type, name, iTokens])
@@ -323,6 +318,10 @@ function getFamilyTree (tokens, node) {
   return ret
 }
 
+/* Create a node for insertion into the tree.
+ *
+ * This will create any parent nodes that are not present in the tree.
+ */
 function createTreeNode (state, id, tokens, node) {
   let tree = tokens.tree()
   let type = null
@@ -410,6 +409,12 @@ function createTreeNode (state, id, tokens, node) {
   return [pointer, treeNode]
 }
 
+/* Remove an ID from the tree.
+ *
+ * - If the node has children they will also be removed.
+ * - The tree nodes and index entries will both be wiped.
+ * - If the node is not in the store this will return (no error).
+ */
 function remove (state, prunedID) {
   const tokens = new Tokens(prunedID)
   const id = tokens.id
@@ -512,7 +517,6 @@ const actions = {}
 export const workflows = {
   namespaced: true,
   state,
-  getters,
   mutations,
   actions
 }
