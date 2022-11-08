@@ -253,6 +253,7 @@ describe('Universal ID (UID)', () => {
           new Tokens('~u/w1/w2/w3//c/t/01')
         ]
       ])
+
       expect(
         new Tokens('~u/w//c').tree()
       ).to.deep.equal([
@@ -270,6 +271,16 @@ describe('Universal ID (UID)', () => {
           'cycle',
           'c',
           new Tokens('~u/w//c')
+        ]
+      ])
+
+      expect(
+        new Tokens('~u').tree()
+      ).to.deep.equal([
+        [
+          'user',
+          'u',
+          new Tokens('~u')
         ]
       ])
     })

@@ -14,9 +14,6 @@ the first time you build.
 cp node_modules//@hpcc-js/wasm/dist/graphvizlib.wasm dist/js/
 ```
 
-Also use PORT="" in HTML-like markup to move the arrow onto the node rather
-than the node label.
-
 ## Installation
 
 Install the [UI Server](https://github.com/cylc/cylc-uiserver) which bundles

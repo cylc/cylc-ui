@@ -107,6 +107,7 @@ fragment JobData on Job {
 // TODO: We should really be requesting the outputs on the taskProxy field
 // rather than the job field as this results in duplication. This will require
 // a little refactoring (i.e. extracting the parent task proxy from the store)
+// See https://github.com/cylc/cylc-ui/issues/1135
 
 /**
  * Query used to retrieve data for the GScan component.

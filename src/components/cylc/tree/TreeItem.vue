@@ -67,7 +67,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :task="node.node"
             :startTime="(latestJob(node) || {}).startedTime"
           />
-          <!-- TODO: we shouldn't be storing the job in the task node -->
           <div v-if="!isExpanded" class="node-summary">
             <!-- most recent job summary -->
             <Job
@@ -293,10 +292,6 @@ export default {
       required: false,
       default: () => []
     }
-    // treeItemCache: {
-    //   type: Object,
-    //   required: true
-    // }
   },
   data () {
     return {
@@ -336,12 +331,6 @@ export default {
     }
   },
   computed: {
-    // isExpanded () {
-    //   return this.treeItemCache[this.node.id].expanded
-    // },
-    // filtered () {
-    //   return this.treeItemCache[this.node.id].filtered
-    // },
     hasChildren () {
       if (this.stopOn.includes(this.node.type)) {
         // don't show children if the tree has been configured to stop at

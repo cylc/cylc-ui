@@ -319,7 +319,6 @@ class Tokens {
   }
 
   tree () {
-    // TODO: handle no user etc!!!
     const ret = []
     if (this.user) {
       let tokens = new Tokens(`~${this.user}`)

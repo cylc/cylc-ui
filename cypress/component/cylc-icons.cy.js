@@ -18,6 +18,10 @@
 import { TaskStateUserOrder, JobStates } from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
+import {
+  MEAN_ELAPSED_TIME,
+  getStartTime
+} from './utils/task'
 
 // wrap the Job component to allow us to bump up the font-size for a
 // higher resolution screenshot
@@ -45,9 +49,6 @@ const TaskComponent = {
   components: { Task }
 }
 
-// mean elapsed time for the task in seconds
-const MEAN_ELAPSED_TIME = 10000
-
 function makeTask (
   state = 'waiting',
   isHeld = false,
@@ -63,20 +64,6 @@ function makeTask (
       meanElapsedTime: MEAN_ELAPSED_TIME // NOTE time in seconds
     }
   }
-}
-
-function getStartTime (percent) {
-  return String(
-    new Date(
-      // the current time in ms
-      Date.now() -
-      // minus the elapsed time in ms
-      (
-        (MEAN_ELAPSED_TIME * 1000) *
-        (percent / 100)
-      )
-    ).toISOString()
-  )
 }
 
 describe('Task component', () => {

@@ -18,23 +18,10 @@
 import { TaskStateUserOrder, JobStates } from '@/model/TaskState.model'
 import GraphNode from '@/components/cylc/GraphNode'
 import { Tokens } from '@/utils/uid'
-
-const MEAN_ELAPSED_TIME = 10000
-
-function getStartTime(percent) {
-  // TODO: avoid duplication
-  return String(
-    new Date(
-      // the current time in ms
-      Date.now() -
-      // minus the elapsed time in ms
-      (
-        (MEAN_ELAPSED_TIME * 1000) *
-        (percent / 100)
-      )
-    ).toISOString()
-  )
-}
+import {
+  MEAN_ELAPSED_TIME,
+  getStartTime
+} from './utils/task'
 
 function makeTaskNode (id, state, jobStates) {
   const tokens = new Tokens(id)
@@ -50,7 +37,7 @@ function makeTaskNode (id, state, jobStates) {
         state: jobState
       }
     }
-    if ( jobState === 'running') { // TODO constant
+    if (jobState === 'running') { // TODO constant
       job.node.startedTime = getStartTime(50)
     }
     jobs.push(job)
@@ -60,6 +47,7 @@ function makeTaskNode (id, state, jobStates) {
   const task = {
     id: tokens.id,
     name: tokens.task,
+    tokens,
     node: {
       cyclePoint: tokens.cycle,
       isHeld: false,
@@ -80,13 +68,13 @@ const GraphNodeSVG = {
     </svg>
   `,
   props: {
-    'task': {
+    task: {
       required: true
     },
-    'jobs': {
+    jobs: {
       required: true
     },
-    'maxJobs': {
+    maxJobs: {
       default: 6,
       required: false
     }
@@ -177,7 +165,6 @@ describe('graph node component', () => {
   it('Renders for each task modifier', () => {
     let task
     let jobs
-    let jobStates
     for (const modifier of ['isHeld', 'isQueued', 'isRunahead']) {
       [task, jobs] = makeTaskNode(
         `~a/b//20000101T0000Z/${modifier}`,

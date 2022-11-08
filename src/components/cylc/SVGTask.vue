@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <!-- status
 
-      Represents the task status, e.g. waiting, running, succeeded0
+      Represents the task status, e.g. waiting, running, succeeded.
     -->
     <g class="status">
       <!-- outline
