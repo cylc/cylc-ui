@@ -39,6 +39,7 @@ describe('Drawer component', () => {
       .should('be.visible')
   })
   it('should drag to trigger resize', () => {
+    cy.visit('/#/')
     cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.eq', 260)
     cy.get('.v-navigation-drawer__border')
       .trigger('mousedown', { which: 1 })
