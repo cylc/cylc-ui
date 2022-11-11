@@ -18,10 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-navigation-drawer
     v-model="drawer"
+    ref="drawerRef"
     app
     floating
+    hide-overlay
     mobile-breakpoint="991"
-    width="260"
+    :width="navigation.width"
     persistent
     class="fill-height"
   >
@@ -99,19 +101,81 @@ export default {
         graphql: mdiGraphql
       },
       environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
-      version
+      version,
+      navigation: {
+        width: 260,
+        borderSize: 3
+      }
     }
   },
   computed: {
     ...mapState('user', ['user']),
     drawer: {
-      get: function () {
+      get () {
         return this.$store.state.app.drawer
       },
-      set: function (val) {
+      set (val) {
+        if (val) {
+          const newWidth = typeof this.navigation.width === 'string' ? Number(this.navigation.width.replace('px', '')) : this.navigation.width
+          this.navigation.width = newWidth < 260 ? 260 : newWidth
+        }
         this.$store.commit('app/setDrawer', val)
       }
     }
+  },
+  methods: {
+    getDrawerElement () {
+      return this.$refs.drawerRef.$el
+    },
+    setBorderWidth () {
+      const i = this.getDrawerElement().querySelector(
+        '.v-navigation-drawer__border'
+      )
+      i.style.width = this.navigation.borderSize + 'px'
+      i.style.cursor = 'ew-resize'
+    },
+    resize (e) {
+      document.body.style.cursor = 'ew-resize'
+      const el = this.getDrawerElement()
+      const direction = el.classList.contains('v-navigation-drawer--right')
+        ? 'right'
+        : 'left'
+      const f = direction === 'right' ? document.body.scrollWidth - e.clientX : e.clientX
+      el.style.width = f + 'px'
+    },
+    setEvents () {
+      const el = this.getDrawerElement()
+      const drawerBorder = el.querySelector('.v-navigation-drawer__border')
+      drawerBorder.addEventListener(
+        'mousedown',
+        (e) => {
+          el.style.transition = 'initial'
+          document.addEventListener('mousemove', this.resize, false)
+          if (e.stopPropagation) e.stopPropagation()
+          if (e.preventDefault) e.preventDefault()
+          return false
+        },
+        false
+      )
+      document.addEventListener(
+        'mouseup',
+        () => {
+          el.style.transition = ''
+          this.navigation.width = el.style.width
+          document.body.style.cursor = ''
+          document.removeEventListener('mousemove', this.resize, false)
+          // this slightly hacky timeout is used to ensure a browser redraw forced the lumino tabs to be resized when the drag event has finished
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'))
+          }, 600)
+        },
+        false
+      )
+    }
+  },
+  mounted () {
+    this.setBorderWidth()
+    this.setEvents()
   }
 }
 </script>
