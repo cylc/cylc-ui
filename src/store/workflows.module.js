@@ -144,9 +144,9 @@ function getIndex (state, id) {
  * tree (e.g. familyTree).
  */
 function hasChild (node, id, attr = 'id', childAttr = 'children') {
-  return node[childAttr].filter(
-    item => { return item[attr] === id }
-  ).length === 1
+  return node[childAttr].some(
+    item => item[attr] === id
+  )
 }
 
 /* Add a child node under a parent Node */
@@ -278,7 +278,7 @@ function applyInheritance (state, node) {
         // child has been added to childTasks
         const childNode = getIndex(state, child.id)
         if (childNode) {
-          addChild(node, getIndex(state, child.id))
+          addChild(node, childNode)
         }
       }
     }
@@ -347,9 +347,7 @@ function getFamilyTree (tokens, node) {
   }
 
   // add family levels below the cycle point
-  const familyPath = []
   for (const ancestor of node.ancestors || []) {
-    familyPath.push(ancestor.name)
     ret.push([
       'family',
       ancestor.name,
@@ -358,7 +356,6 @@ function getFamilyTree (tokens, node) {
   }
 
   // add the family itself
-  familyPath.push(node.name)
   ret.push([
     'family',
     tokens[tokens.lowestToken()],
@@ -439,7 +436,7 @@ function createTreeNode (state, id, tokens, node) {
     }
   }
 
-  if (pointer.children.filter(child => child.id === id).length) {
+  if (pointer.children.some(child => child.id === id)) {
     // node already in the tree
     return
   }

@@ -56,13 +56,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           />
         </g>
         <!-- the edges
-          NOTE: This transformation is a static fudge factor to keep the node
-          and edge layers aligned. It will need to be adjusted if the
-          GraphNode component is changed.
+          NOTE: These transformations are static fudge factors to keep the node
+          and edge layers aligned. They will need to be adjusted if the
+          GraphNode component layout / dimensions are changed.
         -->
         <g
-          transform="
-            translate(45, 5)
+          :transform="
+            (transpose) ? 'translate(15, 30)' : 'translate(45, 5)'
           "
         >
           <g
@@ -408,10 +408,12 @@ export default {
       }
       // NOTE: graphviz defaults nodesep=0.25 ranksep=0.5
       // increase the normal sep values to better space our larger nodes
-      ret.push(`  rankdir=${(this.transpose) ? 'LR' : 'TB'}`)
-      ret.push(`  nodesep=${spacing}`)
-      ret.push(`  ranksep=${spacing * 2}`)
-      ret.push('  node [shape="rect"]')
+      ret.push(
+        `  rankdir=${(this.transpose) ? 'LR' : 'TB'}`,
+        `  nodesep=${spacing}`,
+        `  ranksep=${spacing * 2}`,
+        '  node [shape="rect"]'
+      )
       for (const node of nodes) {
         // use an HTML-like GraphViz node label to allow fine control over
         // where edges are routed from and to using "ports"

@@ -111,15 +111,17 @@ export default {
   },
   props: {
     task: {
+      type: Object,
       required: true
     },
     jobs: {
-      require: true
+      type: Array,
+      required: true
     },
     maxJobs: {
       // maximum number of jobs to display before using an overflow indicator
       default: 6,
-      require: false
+      required: false
     }
   },
   computed: {
@@ -127,23 +129,11 @@ export default {
       return `graph-node-${this.task.id}`
     },
     startTime () {
-      if (this.jobs.length) {
-        return this.jobs[0].node.startedTime
-      }
-      return undefined
+      return this.jobs?.[0]?.node?.startedTime
     },
     jobsForDisplay () {
       // the first `this.maxJobs` items of `this.jobs`
-      const ret = []
-      let ind = 0
-      for (const job of this.jobs) {
-        if (ind >= this.maxJobs) {
-          break
-        }
-        ret.push(job)
-        ind++
-      }
-      return ret
+      return this.jobs.slice(0, this.maxJobs)
     },
     numOverflowJobs () {
       // the number of overflowing (i.e. hidden) jobs
