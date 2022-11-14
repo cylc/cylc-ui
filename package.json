@@ -90,7 +90,6 @@
     "standard": "^17.0.0",
     "subscriptions-transport-ws": "^0.11.0",
     "utf-8-validate": "^5.0.9",
-    "vue-cli-plugin-eslint-config-vuetify": "0.0.3",
     "vue-cli-plugin-vuetify": "^2.4.2",
     "vue-cli-plugin-vuetify-essentials": "^0.8.3",
     "vue-template-compiler": "^2.6.14",
