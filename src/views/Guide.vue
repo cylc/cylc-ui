@@ -64,9 +64,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td style="font-size: 2em;">
                   <!-- set times to make the progress change -->
                   <task
-                    :status="state.name"
+                    :task="{
+                      state: state.name,
+                      task: {meanElapsedTime: 30}
+                    }"
                     :startTime="Date.now()"
-                    :estimatedDuration="30"
                   />
                 </td>
                 <td>
@@ -108,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-list-item-icon>
                   <task
                     style="font-size: 2em;"
-                    status="waiting"
+                    :task="{state: 'waiting'}"
                   />
                 </v-list-item-icon>
                 <v-list-item-content>
@@ -125,8 +127,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-list-item-icon>
                   <task
                     style="font-size: 2em;"
-                    status="waiting"
-                    :isHeld="true"
+                    :task="{state: 'waiting', isHeld: true}"
                   />
                 </v-list-item-icon>
                 <v-list-item-content>
@@ -141,40 +142,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>
-                  <v-list-item-icon>
-                    <task
-                      style="font-size: 2em;"
-                      status="waiting"
-                      :isQueued="true"
-                    />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      Queued
-                    </v-list-item-title>
-                    <v-list-item-sub-title>
-                      The task is ready to run but is held back by a queue,
-                      which restricts the number of active tasks.
-                    </v-list-item-sub-title>
-                  </v-list-item-content>
+                <v-list-item-icon>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'waiting', isQueued: true}"
+                  />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Queued
+                  </v-list-item-title>
+                  <v-list-item-sub-title>
+                    The task is ready to run but is held back by a queue,
+                    which restricts the number of active tasks.
+                  </v-list-item-sub-title>
+                </v-list-item-content>
               </v-list-item>
               <v-list-item>
-                  <v-list-item-icon>
-                    <task
-                      style="font-size: 2em;"
-                      status="waiting"
-                      :isRunahead="true"
-                    />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      Runahead
-                    </v-list-item-title>
-                    <v-list-item-sub-title>
-                      The task is ready to run but is beyond the runahead limit,
-                      which restricts the number of active cycle points.
-                    </v-list-item-sub-title>
-                  </v-list-item-content>
+                <v-list-item-icon>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'waiting', isRunahead: true}"
+                  />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Runahead
+                  </v-list-item-title>
+                  <v-list-item-sub-title>
+                    The task is ready to run but is beyond the runahead limit,
+                    which restricts the number of active cycle points.
+                  </v-list-item-sub-title>
+                </v-list-item-content>
               </v-list-item>
             </v-list>
             <p>
