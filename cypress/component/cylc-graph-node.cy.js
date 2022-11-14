@@ -83,10 +83,10 @@ const GraphNodeSVG = {
 }
 
 describe('graph node component', () => {
-  it('Renders multiple jobs', () => {
+  it('Renders with multiple jobs', () => {
     const [task, jobs] = makeTaskNode(
       '~a/b//20000101T0000Z/task_name',
-      'failed',
+      'running',
       ['running', 'failed', 'failed', 'failed']
     )
     cy.mount(
@@ -111,7 +111,7 @@ describe('graph node component', () => {
   it('Hides excessive numbers of jobs', () => {
     const [task, jobs] = makeTaskNode(
       '~a/b//20000101T0000Z/task_name',
-      'failed',
+      'running',
       ['running', 'failed', 'failed', 'failed', 'failed', 'failed']
     )
     cy.mount(

@@ -43,36 +43,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-cylc-object="task.node"
     />
 
-    <!-- the task name -->
-    <text
-      x="180" y="80"
-      font-size="50"
-    >
-      {{ task.name }}
-    </text>
+    <g :transform="labelTransform">
+      <!-- the task name -->
+      <text
+        x="180" y="70"
+        font-size="45"
+      >
+        {{ task.name }}
+      </text>
 
-    <!-- the cycle point -->
-    <text
-      x="180" y="110"
-      font-size="25"
-    >
-      {{ task.tokens.cycle }}
-    </text>
+      <!-- the cycle point -->
+      <text
+        x="180" y="105"
+        font-size="30"
+      >
+        {{ task.tokens.cycle }}
+      </text>
+    </g>
 
     <!-- the job(s) -->
     <g
       transform="
-        translate(180, 120)
-        scale(0.25, 0.25)
+        translate(180, 115)
+        scale(0.3, 0.3)
       "
     >
       <g
         class="jobs"
         v-for="(job, index) in jobsForDisplay"
         :key="job.id"
-        :transform="
-          `translate(${index * 100}, 0)`
-        "
+        :transform="`
+          translate(${index * 100 + ((index === 0) ? 0 : previousJobOffset)}, 0)
+          scale(${ (index === 0) ? mostRecentJobScale : '1' })
+        `"
       >
         <job
           :svg="true"
@@ -83,9 +86,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <g
         class="job-overflow"
         v-if="numOverflowJobs"
-        :transform="
-          `translate(${maxJobs * 100}, 0)`
-        "
+        :transform="`
+          translate(${(maxJobs * 100) + 20}, 0)
+        `"
       >
         <text
           x="25"
@@ -122,6 +125,11 @@ export default {
       // maximum number of jobs to display before using an overflow indicator
       default: 6,
       required: false
+    },
+    mostRecentJobScale: {
+      // the size of the most recent job icon relative to any previos jobs
+      default: 1.2,
+      require: false
     }
   },
   computed: {
@@ -141,6 +149,19 @@ export default {
         return this.jobs.length - this.maxJobs
       }
       return 0
+    },
+    labelTransform () {
+      // if there are no jobs then nudge the text (task / cycle) down a little
+      // so that it is centered on the task icon
+      if (this.jobs.length) {
+        return ''
+      }
+      return 'translate(0, 15)'
+    },
+    previousJobOffset () {
+      // the most recent job is larger so all subsequent jobs need to be bumped
+      // along a bit further to account for this
+      return (this.mostRecentJobScale * 100) - 100 // y offset in px
     }
   }
 }
