@@ -286,33 +286,9 @@ export default {
     // allow render to happen before we go configuring svgPanZoom
     const self = this
     this.$nextTick(function () {
-      // NOTE: Initiating svgPanZoom may result in some "violation" warnings
-      // see https://github.com/bumbu/svg-pan-zoom/issues/408
-      self.panZoomWidget = svgPanZoom(
-        self.$refs.graph,
-        {
-          // NOTE: fix must be false otherwise it's trying to measure up before
-          // the viewport is loaded or something like that which causes
-          // NaN values to end up in the transformation matrix
-          // TODO: enable the "thumbnail" viewer (i.e. minimap, see svg-pan-zoom)
-          viewportSelector: '.svg-pan-zoom_viewport',
-          panEnabled: true,
-          controlIconsEnabled: false,
-          zoomEnabled: true,
-          dblClickZoomEnabled: true,
-          mouseWheelZoomEnabled: true,
-          preventMouseEventsDefault: true,
-          zoomScaleSensitivity: 0.2,
-          minZoom: 0.01, // how zoomed out we can go
-          maxZoom: 10, // how zoomed in we can go
-          fit: false,
-          contain: false,
-          center: true,
-          refreshRate: 'auto'
-        }
-      )
       self.updateTimer()
     })
+    this.mountSVGPanZoom()
   },
   beforeDestroy () {
     clearInterval(this.refreshTimer)
@@ -340,6 +316,55 @@ export default {
     }
   },
   methods: {
+    mountSVGPanZoom () {
+      // Check the SVG is ready:
+      // * The SVG document must be rendered with someting in it before we can
+      //   mount the svgPanZoom widget (because it needs to determine the
+      //   documents dimensions).
+      const children = this.$refs.graph.children
+      if (
+        // there should be at least two children (defs and one group)
+        children.length < 2 ||
+        // the first item (after defs) should have measurable dimensions
+        !children[1].getBBox() ||
+        // and it's dimensions should be non-zero
+        children[1].getBBox().width === 0
+      ) {
+        // the SVG is not ready yet, give it time, we'll re-try when the
+        // graph layout changes
+        return
+      }
+
+      // Initialise the svgPanZoom component:
+      // * Initiating svgPanZoom may result in some "violation" warnings
+      //   see https://github.com/bumbu/svg-pan-zoom/issues/408.
+      this.panZoomWidget = svgPanZoom(
+        this.$refs.graph,
+        {
+          // NOTE: fix must be false otherwise it's trying to measure up before
+          // the viewport is loaded or something like that which causes
+          // NaN values to end up in the transformation matrix
+          // TODO: enable the "thumbnail" viewer (i.e. minimap, see svg-pan-zoom)
+          viewportSelector: '.svg-pan-zoom_viewport',
+          panEnabled: true,
+          controlIconsEnabled: false,
+          zoomEnabled: true,
+          dblClickZoomEnabled: true,
+          mouseWheelZoomEnabled: true,
+          preventMouseEventsDefault: true,
+          zoomScaleSensitivity: 0.2,
+          minZoom: 0.01, // how zoomed out we can go
+          maxZoom: 10, // how zoomed in we can go
+          fit: false,
+          contain: false,
+          center: true,
+          refreshRate: 'auto'
+        }
+      )
+
+      // Center the view after load:
+      this.reset()
+    },
     setOption (option, value) {
       Vue.set(this, option, value)
     },
@@ -475,6 +500,10 @@ export default {
       // pan / zoom so that the provided SVG element is centered and in frame
       // Acknowledgment: Code adapted from suggestion from @iftahh in
       // https://github.com/bumbu/svg-pan-zoom/issues/381
+      if (!this.panZoomWidget) {
+        // the svgPanZoom widget has not been mounted yet
+        return
+      }
       this.panZoomWidget.resize()
       const bbox = ele.getBBox()
       const { width, height, realZoom } = this.panZoomWidget.getSizes()
@@ -605,6 +634,11 @@ export default {
           this.graphEdges.push(posToPath(edge.pos))
         }
       })
+
+      if (!this.panZoomWidget) {
+        // mount the svgPanZoom widget on first load
+        this.mountSVGPanZoom()
+      }
     }
   },
   watch: {
