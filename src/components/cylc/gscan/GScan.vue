@@ -128,9 +128,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     v-if="scope.node.type === 'workflow-name-part'"
                     class="c-gscan-workflow-name"
                   >
-                    <div v-if="scope.node.children && scope.node.children.length === 1" class="flex c-gscan-workflow-name">
+                    <div v-if="scope.node.children && scope.node.children.length === 1" class="flex c-gscan-workflow-name" :class="scope.node.children[0].node.status === 'stopped' ? 'c-workflow-stopped' : ''">
                       <span v-if="scope.node.children && scope.node.children.length === 1" class="mr-2">
                         <workflow-icon
+                          v-if="scope.node.children[0].node.status.length > 0"
                           :status="scope.node.children[0].node.status"
                           :statusMsg="scope.node.children[0].node.statusMsg"
                           v-cylc-object="scope.node.children[0].node"
