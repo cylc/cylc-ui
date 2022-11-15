@@ -16,9 +16,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div style="width: 100%; height: 100%">
+  <div class="c-graph" style="width: 100%; height: 100%">
     <!-- the controls -->
-    <ViewToolbar :groups="groups" @setOption="setOption" />
+    <ViewToolbar
+      :groups="groups"
+      @setOption="setOption"
+    />
 
     <!-- the graph -->
     <svg
@@ -659,3 +662,16 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .c-graph {
+    .c-view-toolbar {
+      // turn the view toolbar into a floating component
+      position: fixed;
+      background-color: rgba(240,240,240,0.9);
+      border-radius: 0.75em;
+      margin: 0.25em;
+      padding: 0.4em;
+    }
+  }
+</style>
