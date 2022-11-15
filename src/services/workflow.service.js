@@ -324,7 +324,6 @@ class WorkflowService {
   }
 
   unsubscribe (componentOrView) {
-    console.warn('unsubscribe')
     const subscription = this.subscriptions[componentOrView.query.name]
     if (!subscription) {
       // eslint-disable-next-line no-console
@@ -390,7 +389,6 @@ class WorkflowService {
    */
   recompute (subscription) {
     const subscribers = Object.values(subscription.subscribers)
-    console.log(`recompute(${subscribers.length})`)
     if (subscribers.length === 0) {
       throw new Error('Error recomputing subscription: No Subscribers.')
     }

@@ -205,7 +205,7 @@ function removeChild (state, node, parentNode = null) {
     // (this should not happen)
     return
   }
-  parentNode.children.splice(
+  parentNode[key].splice(
     parentNode[key].indexOf(node), 1
   )
 }
@@ -219,24 +219,30 @@ function removeTree (state, node, removeParent = true) {
   let pointer
   const stack = [
     ...node.children || [],
-    ...node.familyTree || [],
+    ...node.familyTree || []
+  ]
+  const removeIndicies = [
     ...node.$namespaces || [],
     ...node.$edges || []
   ]
-  const remove = []
+  const removeNodes = []
   while (stack.length) {
+    // walk the tree under the provided node to list nodes and indices for
+    // deletion
     pointer = stack.pop()
     stack.push(...(pointer.children || []))
     stack.push(...(pointer.familyTree || []))
-    stack.push(...(pointer.$namespaces || []))
-    stack.push(...(pointer.$edges || []))
-    remove.push(pointer)
+    removeIndicies.push(...(pointer.$namespaces || []))
+    removeIndicies.push(...(pointer.$edges || []))
+    removeNodes.push(pointer)
   }
-  for (pointer of remove.reverse()) {
+  for (pointer of [...removeIndicies, ...removeNodes.reverse()]) {
+    // remove indexes first, then remove tree nodes from the bottom up
     removeIndex(state, pointer.id)
     removeChild(state, pointer)
   }
   if (removeParent) {
+    // remove the parent of the provided node if requested
     removeIndex(state, node.id)
     removeChild(state, node)
   }
