@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { cloneDeep } from 'lodash'
 import gql from 'graphql-tag'
 import isEqual from 'lodash/isEqual'
 import ViewState from '@/model/ViewState.model'
@@ -84,7 +85,9 @@ class WorkflowService {
 
     this.mutationsAndTypes = this.loadMutations()
 
+    // create & start the global callback
     this.globalCallback = new CylcTreeCallback()
+    this.globalCallback.init(store, [])
   }
 
   // --- Mutations
@@ -171,8 +174,6 @@ class WorkflowService {
       this.recompute(subscription)
       // regardless of whether this results in a restart, we take this opertunity to preset the componentOrView store if needed
       const errors = []
-      // start the global callback first
-      this.globalCallback.init(store, errors)
       // if the callbacks class has an init method defined, use it
       for (const callback of subscription.callbacks) {
         // if any of the views currently using this subscription have an init hook, trigger it (which will check if its needed)
@@ -223,7 +224,7 @@ class WorkflowService {
         console.debug(
           `Subscription for query [${subscription.query.name}] already running. Stopping it...`)
       }
-      this.stopSubscription(subscription)
+      this.stopSubscription(subscription, true)
     }
 
     const globalCallback = this.globalCallback
@@ -323,6 +324,7 @@ class WorkflowService {
   }
 
   unsubscribe (componentOrView) {
+    console.warn('unsubscribe')
     const subscription = this.subscriptions[componentOrView.query.name]
     if (!subscription) {
       // eslint-disable-next-line no-console
@@ -335,9 +337,23 @@ class WorkflowService {
     if (Object.keys(subscription.subscribers).length === 0) {
       this.stopSubscription(subscription)
     }
+    // TODO: recompute, unsubscribe and wipe unwanted store data
+    // see https://github.com/cylc/cylc-ui/issues/1131
+    // * The subscription has changed, there may be data we no longer need
+    // * Recompute the subscription.
+    // * Reload the subscription if needed.
+    // * Remove objects requested before which are no longer needed.
+    // this.recompute(subscription)
+    // this.startSubscriptions()
+    // store.commit(...)
   }
 
-  stopSubscription (subscription) {
+  /* Stop a subscription.
+   *
+   * If the subscription is the "workflow" subscription the datastore
+   * housekeeping will be invoked unless `reload === true`.
+   */
+  stopSubscription (subscription, reload) {
     // Stop WebSockets subscription.
     if (this.debug) {
       // eslint-disable-next-line no-console
@@ -347,7 +363,7 @@ class WorkflowService {
     for (const callback of subscription.callbacks) {
       callback.tearDown(store)
     }
-    if (subscription.query.name === 'workflow') {
+    if (!reload && subscription.query.name === 'workflow') {
       // Remove all children in the store for each workflow in the subscription.
       // This is how the store gets housekept when we change workflow.
       //
@@ -374,37 +390,44 @@ class WorkflowService {
    */
   recompute (subscription) {
     const subscribers = Object.values(subscription.subscribers)
+    console.log(`recompute(${subscribers.length})`)
     if (subscribers.length === 0) {
       throw new Error('Error recomputing subscription: No Subscribers.')
     }
 
     // We will use the first subscriber to compare its variables, and also will
-    // merge other queries into its base query, in-place.
+    // merge other queries into a copy of the base query
     /**
      * @type {Vue}
      */
     const baseSubscriber = subscribers[0]
 
     // Reset.
-    const initialQuery = print(baseSubscriber.query.query)
-    subscription.query.query = baseSubscriber.query.query
+    const initialQuery = subscription.query.query
+    let finalQuery = cloneDeep(initialQuery)
+    // subscription.query.query = baseSubscriber.query.query
     subscription.callbacks = baseSubscriber.query.callbacks
 
     for (const subscriber of subscribers.slice(1)) {
-      // NB: We can remove this check if we so want, as the library used to combine queries
-      //     supports merging variables too. Only issue would be the possibility of merging
-      //     subscriptions for different workflows by accident...
+      // NB: We can remove this check if we so want, as the library used to
+      // combine queries supports merging variables too. Only issue would be
+      // the possibility of merging subscriptions for different workflows by
+      // accident...
       if (!isEqual(subscriber.query.variables, baseSubscriber.query.variables)) {
         throw new Error('Error recomputing subscription: Query variables do not match.')
       }
-      baseSubscriber.query.query = mergeQueries(baseSubscriber.query.query, subscriber.query.query)
-      // Combine the arrays of callbacks, creating an array of unique callbacks.
-      // The callbacks are compared by their class/constructor name.
+      finalQuery = mergeQueries(finalQuery, subscriber.query.query)
+      // Combine the arrays of callbacks, creating an array of unique
+      // callbacks.  The callbacks are compared by their class/constructor
+      // name.
 
       for (const callback of subscriber.query.callbacks) {
-        // comparing by constructor name does not work as the minifier normalizer these names and because we have two subscriptions and the normalized
-        // callback names are assigned to these independently, from what looks like a predefined set of possible options [t,n]
-        // So this block wont work as it compares and decides it already exists when it doesn't
+        // comparing by constructor name does not work as the minifier
+        // normalizer these names and because we have two subscriptions and the
+        // normalized callback names are assigned to these independently, from
+        // what looks like a predefined set of possible options [t,n] So this
+        // block wont work as it compares and decides it already exists when it
+        // doesn't
         if (!subscription.callbacks.find(element => {
           const elementObjectKeys = Object.keys(element)
           const callbackObjectKeys = Object.keys(callback)
@@ -422,15 +445,18 @@ class WorkflowService {
         }
       }
     }
-    const finalQuery = print(baseSubscriber.query.query)
     // TODO: consider using a better approach than print(a) === print(b)
-    // If we changed the query due to query-merging, then we know we must reload its
-    // GraphQL subscription (i.e. stop subscription, start a new one with the server).
-    if (initialQuery !== finalQuery) {
+    // If we changed the query due to query-merging, then we know we must
+    // reload its GraphQL subscription (i.e. stop subscription, start a new one
+    // with the server).
+    if (print(initialQuery) !== print(finalQuery)) {
       subscription.reload = true
+      // And here we set the new merged-query. Voila!
+      // NOTE: we-recreate the gql object because it contains derived attributes
+      // which may only get updated by doing this
+      // see https://github.com/cylc/cylc-ui/issues/1110
+      subscription.query.query = gql(print(finalQuery))
     }
-    // And here we set the new merged-query. Voila!
-    subscription.query.query = gql(finalQuery)
   }
 }
 
