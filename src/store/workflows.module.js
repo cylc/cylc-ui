@@ -16,8 +16,6 @@
  */
 import pick from 'lodash/pick'
 import isArray from 'lodash/isArray'
-import mergeWith from 'lodash/mergeWith'
-import { mergeWithCustomizer } from '@/components/cylc/common/merge'
 import Vue from 'vue'
 import { Tokens } from '@/utils/uid'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
@@ -30,6 +28,13 @@ const NODE_TYPES = [
   'task',
   'job'
 ]
+
+/* Merge an update into a reactive blob of data */
+export function merge (data, update) {
+  for (const [key, value] of Object.entries(update || {})) {
+    Vue.set(data, key, value)
+  }
+}
 
 const state = {
   cylcTree: {
@@ -312,7 +317,7 @@ function update (state, updatedData) {
   let treeItem = getIndex(state, id)
   if (treeItem) {
     // node already exists -> update it
-    mergeWith(treeItem.node, updatedData, mergeWithCustomizer)
+    merge(treeItem.node, updatedData)
     applyInheritance(state, treeItem)
     return
   }
