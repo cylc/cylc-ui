@@ -71,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <g
             v-for="(edgePath, index) in graphEdges"
             :key="index"
+            :ref="`edge-${index}`"
           >
             <path
               :d="edgePath"
@@ -235,8 +236,12 @@ export default {
       graphID: null,
       // instance of system which provides pan/zoom/navigation support
       panZoomWidget: null,
+      // if true layout is left-right is false it is top-bottom
       transpose: false,
+      // if true the graph layout will be updated on a timer
       autoRefresh: true,
+      // true if layout is in progress
+      updating: false,
       groups: [
         {
           title: 'Graph',
@@ -417,9 +422,9 @@ export default {
       let bbox
       for (const node of nodes) {
         const elements = this.$refs[node.id]
-        bbox = elements[0].getBBox()
+        bbox = elements[0]?.getBBox()
         if (!bbox) {
-          bbox = { width: 100, height: 100 }
+          throw Error(`Node ${node.id} not rendered`)
         }
         ret[node.id] = bbox
       }
@@ -524,6 +529,11 @@ export default {
     },
     async refresh () {
       // refresh the graph layout if required
+      if (this.updating) {
+        // prevent parallel layout
+        return
+      }
+      this.updating = true
 
       // extract the graph (non reactive lists of nodes & edges)
       const nodes = this.getGraphNodes()
@@ -532,6 +542,7 @@ export default {
       if (!nodes.length || !edges.length) {
         // we can't graph this, reset and wait for something to draw
         this.graphID = null
+        this.updating = false
         return
       }
 
@@ -539,104 +550,108 @@ export default {
       const graphID = this.hashGraph(nodes, edges)
       if (this.graphID === graphID) {
         // the graph has not changed => do nothing
+        this.updating = false
         return
       }
 
       // wipe the rendered graph
-      // this.graphNodes = []
-      this.graphEdges = []
-      // this.nodeTransformations = {}
-
-      // TODO: this a lot better!
-      let keep = null
+      // wipe old graph edges
+      this.graphEdges = [] // wipe old graph edges
+      // wipe old node transformations
+      const nodeIds = nodes.map((n) => n.id)
       for (const id in this.nodeTransformations) {
-        // remove the transformations we no longer need
-        // leave behind the remainder to avoid causing graph flicker
-        // we will update them in translate()
-        keep = false
-        for (const node of nodes) {
-          if (node.id === id) {
-            keep = true
-            break
-          }
-        }
-        if (!keep) {
+        if (!nodeIds.includes(id)) { // this node has been removed
           Vue.delete(
             this.nodeTransformations,
             id
           )
         }
       }
-
-      // remove nodes no longer present in the graph
+      // wipe old nodes
       this.graphNodes = nodes
 
-      // wait for DOM / graphical updates to happen, then layout the graph
-      // we do this because we need to wait for and new nodes to be rendered
-      // before we can get the node dimensions required for layout
-      await this.wait(async () => { await this.layout(nodes, edges) })
+      // obtain the node dimensions to use in the layout
+      // NOTE: need to wait for the nodes to all be rendered before we can
+      // measure them
+      let nodeDimensions
+      await this.waitFor(() => {
+        try {
+          nodeDimensions = this.getNodeDimensions(nodes)
+          return true // all nodes rendered
+        } catch {
+          return false // one or more nodes awaiting render
+        }
+      })
 
+      // layout the graph
+      try {
+        await this.layout(nodes, edges, nodeDimensions)
+      } catch (e) {
+        // something went wrong, allow the layout to retry later
+        this.graphID = null
+        this.updating = false
+        // eslint-disable-next-line no-console
+        console.warn(e)
+        return
+      }
+
+      // re-center the SVG if this was the first layout or if the orientation
+      // was changed
       if (!this.graphID) {
-        // this was the first layout or the layout was changed (e.g. transpose)
-        await this.wait(async () => { this.reset() })
+        const lastEdgeID = `edge-${edges.length - 1}`
+        await this.waitFor(() => {
+          // wait for the last edge of the graph to be rendered
+          const lastEdge = this.$refs[lastEdgeID]
+          return lastEdge && lastEdge[0] && lastEdge[0].getBBox()
+        })
+        this.reset()
       }
 
       this.graphID = graphID
+      this.updating = false
     },
-    async wait (callback) {
-      // wait for DOM updates and graphical rendering to complete, then run the
-      // callback
-
-      // TODO: the two nextTicks are needed
-      // the requestAnimationFrames probably aren't
-
-      await new Promise(requestAnimationFrame)
-      await new Promise(requestAnimationFrame)
-      this.$nextTick(async function () {
-        // DOM updated to node/edge removal
+    async waitFor (callback, retries = 10) {
+      // wait for things to render
+      // Will return when the callback returns something truthy.
+      // OR after the configured number of retries
+      for (let retry = 0; retry < retries; retry++) {
+        if (callback()) {
+          break
+        }
         await new Promise(requestAnimationFrame)
-        await new Promise(requestAnimationFrame)
-        // graphics updated to chanes
-        this.$nextTick(async function () {
-          // DOM updated to node addition
-          await new Promise(requestAnimationFrame)
-          await new Promise(requestAnimationFrame)
-
-          // ok, we're ready, run the update
-          await callback()
-        })
-      })
+        await this.$nextTick()
+      }
     },
-    async layout (nodes, edges) {
+    async layout (nodes, edges, nodeDimensions) {
       // re-layout the graph after any new nodes have been rendered
 
       // generate the GraphViz dot code
-      const nodeDimensions = this.getNodeDimensions(nodes)
       const dotCode = this.getDotCode(nodeDimensions, nodes, edges)
 
       // run the layout algorithm
-      graphviz.layout(dotCode, 'json').then((jsonString) => {
-        const json = JSON.parse(jsonString)
+      const jsonString = await graphviz.layout(dotCode, 'json')
+      const json = JSON.parse(jsonString)
+      console.log(json)
 
-        // update graph node positions
-        for (const obj of json.objects) {
-          const [x, y] = obj.pos.split(',')
-          const bbox = nodeDimensions[obj.name]
-          // translations:
-          // 1. The graphviz node coordinates
-          // 2. Centers the node on this coordinate
-          // TODO convert (2) to maths OR fix it to avoid recomputation?
-          this.nodeTransformations[obj.name] = `
-            translate(${x}, -${y})
-            translate(-${bbox.width / 2}, -${bbox.height / 2})
-          `
-        }
-        // update edge paths
-        this.graphEdges.length = 0 // empty array
-        for (const edge of json.edges || []) {
-          this.graphEdges.push(posToPath(edge.pos))
-        }
-      })
+      // update graph node positions
+      for (const obj of json.objects) {
+        const [x, y] = obj.pos.split(',')
+        console.log(obj.name)
+        const bbox = nodeDimensions[obj.name]
+        // translations:
+        // 1. The graphviz node coordinates
+        // 2. Centers the node on this coordinate
+        // TODO convert (2) to maths OR fix it to avoid recomputation?
+        this.nodeTransformations[obj.name] = `
+          translate(${x}, -${y})
+          translate(-${bbox.width / 2}, -${bbox.height / 2})
+        `
+      }
+      // update edge paths
+      this.graphEdges.length = 0 // empty array
+      for (const edge of json.edges || []) {
+        this.graphEdges.push(posToPath(edge.pos))
+      }
 
       if (!this.panZoomWidget) {
         // mount the svgPanZoom widget on first load
