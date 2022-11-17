@@ -97,7 +97,9 @@ export default {
       TreeView,
       TableView,
       GraphView
-    ]
+    ],
+    // environment e.g. 'PRODUCTION'
+    environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase()
   }),
   created () {
     // We need to load each view used by this view/component.
@@ -105,8 +107,13 @@ export default {
     this.views.forEach(view => {
       this.$options.components[view.name] = view
     })
-  },
-  computed: {
+
+    if (this.environment !== 'PRODUCTION') {
+      // dynamically load development views that we don't want in production
+      import('@/views/SimpleTree').then((SimpleTreeView) => {
+        this.views.push(SimpleTreeView.default)
+      })
+    }
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {

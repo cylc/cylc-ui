@@ -519,7 +519,7 @@ const mutations = {
   UPDATE: update,
   UPDATE_DELTAS (state, updated) {
     // eslint-disable-next-line no-console
-    console.log('@ UPDATE')
+    // console.log('@ UPDATE')
     for (const updatedValue of Object.values(pick(updated, KEYS))) {
       const items = isArray(updatedValue) ? updatedValue : [updatedValue]
       for (const updatedData of items) {
@@ -529,7 +529,7 @@ const mutations = {
       }
     }
     // eslint-disable-next-line no-console
-    console.log('@@')
+    // console.log('@@')
   },
   // remove an ID
   REMOVE: remove,
