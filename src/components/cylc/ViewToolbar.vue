@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <!-- control -->
       <div
-        class="control"
+        :class="['control', iControl.key]"
         v-for="iControl in iGroup.iControls"
         :key="iControl.title"
       >
@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-slot:activator="{ on, attrs }">
             <v-icon
               large
+              :class="iControl.title"
               :disabled="iControl.disabled"
               :color="iControl.color"
               @click="iControl.callback"

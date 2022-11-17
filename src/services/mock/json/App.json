@@ -407,6 +407,58 @@
           "state": "succeeded",
           "submitNum": 1
         }
+      ],
+      "edges": [
+        {
+          "id": "~user/one//$edge|20000102T0000Z/sleepy|20000102T0000Z/succeeded",
+          "source": "~user/one//20000102T0000Z/sleepy",
+          "target": "~user/one//20000102T0000Z/succeeded"
+        },
+        {
+          "id": "~user/one//$edge|20000102T0000Z/waiting|20000102T0000Z/succeeded",
+          "source": "~user/one//20000102T0000Z/waiting",
+          "target": "~user/one//20000102T0000Z/succeeded"
+        },
+        {
+          "id": "~user/one//$edge|20000102T0000Z/sleepy|20000102T0000Z/eventually_succeeded",
+          "source": "~user/one//20000102T0000Z/sleepy",
+          "target": "~user/one//20000102T0000Z/eventually_succeeded"
+        },
+        {
+          "id": "~user/one//$edge|20000102T0000Z/waiting|20000102T0000Z/eventually_succeeded",
+          "source": "~user/one//20000102T0000Z/waiting",
+          "target": "~user/one//20000102T0000Z/eventually_succeeded"
+        },
+        {
+          "id": "~user/one//$edge|20000102T0000Z/sleepy|20000102T0000Z/retrying",
+          "source": "~user/one//20000102T0000Z/sleepy",
+          "target": "~user/one//20000102T0000Z/retrying"
+        },
+        {
+          "id": "~user/one//$edge|20000102T0000Z/waiting|20000102T0000Z/retrying",
+          "source": "~user/one//20000102T0000Z/waiting",
+          "target": "~user/one//20000102T0000Z/retrying"
+        },
+        {
+          "id": "~user/one//$edge|20000102T0000Z/succeeded|20000102T0000Z/failed",
+          "source": "~user/one//20000102T0000Z/succeeded",
+          "target": "~user/one//20000102T0000Z/failed"
+        },
+        {
+          "id": "~user/one//$edge|20000102T0000Z/eventually_succeeded|20000102T0000Z/failed",
+          "source": "~user/one//20000102T0000Z/eventually_succeeded",
+          "target": "~user/one//20000102T0000Z/failed"
+        },
+        {
+          "id": "~user/one//$edge|20000102T0000Z/checkpoint|20000102T0000Z/sleepy",
+          "source": "~user/one//20000102T0000Z/checkpoint",
+          "target": "~user/one//20000102T0000Z/sleepy"
+        },
+        {
+          "id": "~user/one//$edge|20000102T0000Z/checkpoint|20000102T0000Z/waiting",
+          "source": "~user/one//20000102T0000Z/checkpoint",
+          "target": "~user/one//20000102T0000Z/waiting"
+        }
       ]
     }
   }

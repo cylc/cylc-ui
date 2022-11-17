@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       width="100%"
       height="100%"
       ref="graph"
+      class="graph"
     >
       <defs>
         <marker
@@ -52,6 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :id="node.id"
           :ref="node.id"
           :transform="nodeTransformations[node.id]"
+          class="graph-node-container"
         >
           <GraphNode
             :task="node"
@@ -64,6 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           GraphNode component layout / dimensions are changed.
         -->
         <g
+          class="edges"
           :transform="
             (transpose) ? 'translate(15, 30)' : 'translate(45, 5)'
           "
@@ -90,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Vue from 'vue'
 import gql from 'graphql-tag'
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -302,18 +305,13 @@ export default {
     clearInterval(this.refreshTimer)
   },
   computed: {
-    ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
     query () {
       return new SubscriptionQuery(
         QUERY,
         this.variables,
         'workflow',
-        [
-          // TODO: this callback should be run automatically
-          // (only one instance for all views)
-          // new CylcTreeCallback()
-        ]
+        []
       )
     },
     workflowIDs () {
@@ -397,8 +395,8 @@ export default {
       // list graph nodes from the store (non reactive list)
       const ret = []
       for (const workflow of this.workflows) {
-        for (const cycle of workflow.children || []) {
-          for (const task of cycle.children || []) {
+        for (const cycle of workflow.children) {
+          for (const task of cycle.children) {
             ret.push(task)
           }
         }
@@ -631,12 +629,10 @@ export default {
       // run the layout algorithm
       const jsonString = await graphviz.layout(dotCode, 'json')
       const json = JSON.parse(jsonString)
-      console.log(json)
 
       // update graph node positions
       for (const obj of json.objects) {
         const [x, y] = obj.pos.split(',')
-        console.log(obj.name)
         const bbox = nodeDimensions[obj.name]
         // translations:
         // 1. The graphviz node coordinates
