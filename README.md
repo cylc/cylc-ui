@@ -4,16 +4,6 @@
 
 # Cylc UI
 
-## TODO
-
-I haven't managed to configure webpack to pass through the WASM files yet
-so for the moment you have to manually copy the wasm file over into dist
-the first time you build.
-
-```bash
-cp node_modules//@hpcc-js/wasm/dist/graphvizlib.wasm dist/js/
-```
-
 ## Installation
 
 Install the [UI Server](https://github.com/cylc/cylc-uiserver) which bundles
