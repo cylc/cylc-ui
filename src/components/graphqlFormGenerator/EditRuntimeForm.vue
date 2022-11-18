@@ -58,11 +58,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiHelpCircleOutline } from '@mdi/js'
-import { startCase } from 'lodash'
+import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
 import { VTextarea } from 'vuetify/lib/components'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import GList from '@/components/graphqlFormGenerator/components/List'
-import { findByName } from '@/utils/aotf'
+import { findByName, mutate } from '@/utils/aotf'
+import { Tokens } from '@/utils/uid'
 
 export default {
   name: 'EditRuntimeForm',
@@ -136,39 +137,94 @@ export default {
 
   methods: {
     /** Set this form to its initial conditions. */
-    reset () {
+    async reset () {
       const queryName = this.cylcObject.isFamily ? 'familyProxy' : 'taskProxy'
       const queryField = 'runtime'
       this.loading = true
       this.isValid = false
-      this.$workflowService.query(
+      const result = await this.$workflowService.query(
         queryName,
         { id: this.cylcObject.id },
         [{ name: queryField }]
-      ).then(result => {
-        const model = result[queryName][queryField]
-        this.type = findByName(this.types, model.__typename)
-        delete model.__typename
-        // Due to how broadcast works, we cannot modify/remove pre-existing keys,
-        // so mark as frozen
-        for (const fieldName of Object.keys(model)) {
-          const typeName = findByName(this.type.fields, fieldName).type.name
-          if (typeName === 'GenericScalar') {
-            for (const item of model[fieldName]) {
-              item.frozenKey = true
-            }
+      )
+      const model = cloneDeep(result[queryName][queryField])
+      this.type = findByName(this.types, model.__typename)
+      // Do not want GQL internal '__typename' field to show up in the form
+      delete model.__typename
+      // Due to how broadcast works, we cannot modify/remove pre-existing keys,
+      // so mark as frozen
+      for (const fieldName of Object.keys(model)) {
+        const typeName = findByName(this.type.fields, fieldName).type.name
+        if (typeName === 'GenericScalar') {
+          for (const item of model[fieldName]) {
+            item.frozenKey = true
           }
         }
-        this.model = model
-        this.loading = false
-        // (this.isValid gets set by form v-model)
-      })
+      }
+      this.model = model
+      this.initialData = cloneDeep(model)
+      this.loading = false
+      // (this.isValid gets set by form v-model)
     },
 
-    submit () {
-      if (this.callbackSubmit) {
-        this.callbackSubmit(this.model)
+    async submit () {
+      const tokens = new Tokens(this.cylcObject.id)
+      const settings = this.getBroadcastData()
+      if (!settings.length) {
+        // eslint-disable-next-line no-console
+        console.warn('No changes to broadcast') // TODO
+        return
       }
+      const args = {
+        cutoff: null,
+        cyclePoints: [tokens.cycle],
+        mode: 'Set',
+        namespaces: [tokens.task],
+        settings,
+        workflows: [tokens.workflow_id]
+      }
+      const mutation = await this.$workflowService.getMutation('broadcast')
+      await mutate(
+        mutation,
+        args,
+        this.$workflowService.apolloClient
+      )
+    },
+
+    /**
+     * Return the changed items in the form in a format suitable for cylc broadcast.
+     *
+     * Converts the camel case field names to snake case.
+     *
+     * @return {Object[]}
+     */
+    getBroadcastData () {
+      const ret = []
+      for (let [field, val] of Object.entries(this.model)) {
+        const initialVal = this.initialData[field]
+        if (!isEqual(val, initialVal)) {
+          field = snakeCase(field)
+          if (isArray(val)) {
+            for (const obj of val) {
+              // Expect this to be { key?, value?, frozenKey? } object
+              if (obj.key != null && (
+                // new item:
+                !obj.frozenKey ||
+                // altered existing item:
+                obj.value !== initialVal.find(({ key }) => key === obj.key).value
+              )) {
+                // Convert { key: x, value: y } to { x: y }
+                ret.push({
+                  [field]: { [obj.key]: obj.value }
+                })
+              }
+            }
+          } else {
+            ret.push({ [field]: val })
+          }
+        }
+      }
+      return ret
     },
 
     /**
