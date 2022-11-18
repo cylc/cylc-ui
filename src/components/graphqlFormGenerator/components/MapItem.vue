@@ -18,16 +18,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Form input component for "key = value" pair -->
 
 <template>
-  <v-row dense no-gutters>
+  <v-row
+    class="c-key-val"
+    dense
+    no-gutters
+  >
     <v-col cols="4">
-      <v-text-field
-        placeholder="key"
-        v-model="value.key"
-        dense
-        filled
-      />
+      <v-tooltip v-bind="tooltipProps">
+        <template v-slot:activator="{ on }">
+          <div v-on="on">
+            <v-text-field
+              placeholder="key"
+              v-model="value.key"
+              :disabled="value.frozenKey"
+              dense
+              filled
+            />
+          </div>
+        </template>
+        <span>Pre-existing settings cannot be renamed</span>
+      </v-tooltip>
     </v-col>
-    <v-col cols="auto" class="c-key-val-sep">
+    <v-col cols="auto">
       <span>=</span>
     </v-col>
     <v-col>
@@ -38,8 +50,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         filled
       />
     </v-col>
-    <v-col cols="auto" class="c-key-val-sep">
-      <slot name="append-outer"/>
+    <v-col cols="auto">
+      <v-tooltip v-bind="tooltipProps">
+        <template v-slot:activator="{ on }">
+          <div v-on="on">
+            <slot
+              name="append-outer"
+              :disabled="value.frozenKey"
+            />
+          </div>
+        </template>
+        <span>Pre-existing settings cannot be removed</span>
+      </v-tooltip>
     </v-col>
   </v-row>
 </template>
@@ -52,6 +74,16 @@ export default {
 
   mixins: [
     formElement
-  ]
+  ],
+
+  computed: {
+    tooltipProps () {
+      return {
+        top: true,
+        disabled: !this.value.frozenKey,
+        openDelay: 400
+      }
+    }
+  }
 }
 </script>

@@ -32,18 +32,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :is="FormInput"
             ref="inputs"
           >
-            <template v-slot:append-outer>
+            <!-- NOTE: we use :is here due to a nested component registration issue. -->
+            <template v-slot:append-outer="slotProps">
               <v-icon
-               @click="remove(index)"
+                @click="remove(index)"
+                v-bind="slotProps"
+                class="remove-btn"
               >
                 {{ svgPaths.close }}
               </v-icon>
             </template>
           </component>
-          <!--
-            NOTE: we use :is here due to a nested component
-            registration issue.
-          -->
         </v-list-item-content>
       </v-list-item>
       <v-list-item>
@@ -52,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          text
         >
           <v-icon>{{ svgPaths.open }}</v-icon>
-          Add Item
+          <span>Add Item</span>
         </v-btn>
       </v-list-item>
     </v-list-item-content>
@@ -82,7 +81,7 @@ export default {
   },
 
   methods: {
-    /* Add an item to the list. */
+    /** Add an item to the list. */
     add () {
       const newInput = getNullValue(this.gqlType.ofType, this.types)
       this.value.push(
@@ -98,7 +97,7 @@ export default {
       })
     },
 
-    /* Remove the item at `index` from the list. */
+    /** Remove the item at `index` from the list. */
     remove (index) {
       this.value.splice(index, 1)
     }

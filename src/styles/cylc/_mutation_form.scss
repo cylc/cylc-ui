@@ -31,17 +31,30 @@
     }
   }
 
-  .c-key-val-sep {
-    height: $text-field-filled-full-width-outlined-single-line-slot-min-height;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    $margin: 8px;
-    margin-left: $margin;
-    margin-right: $margin;
+  .theme--light.v-icon.remove-btn.v-icon--disabled {
+    color: rgba(0, 0, 0, 0.12) !important;
+  }
 
-    &:last-child {
-      margin-right: 0;
+  .c-key-val {
+    .theme--light.v-input--is-disabled input {
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .col-auto {
+      height: $text-field-filled-full-width-outlined-single-line-slot-min-height;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      $margin: 8px;
+      margin-left: $margin;
+      margin-right: $margin;
+
+      &:first-child {
+        margin-left: 0;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
     }
   }
 }

@@ -88,7 +88,7 @@ export default {
 
   data () {
     return {
-      type: findByName(this.types, 'Runtime'),
+      type: undefined,
       loading: true,
       model: {},
       namedTypes: {
@@ -145,7 +145,20 @@ export default {
         { id: this.cylcObject.id },
         [{ name: queryField }]
       ).then(result => {
-        this.model = result[queryName][queryField]
+        const model = result[queryName][queryField]
+        this.type = findByName(this.types, model.__typename)
+        delete model.__typename
+        // Due to how broadcast works, we cannot modify/remove pre-existing keys,
+        // so mark as frozen
+        for (const fieldName of Object.keys(model)) {
+          const typeName = findByName(this.type.fields, fieldName).type.name
+          if (typeName === 'GenericScalar') {
+            for (const item of model[fieldName]) {
+              item.frozenKey = true
+            }
+          }
+        }
+        this.model = model
         this.loading = false
         // (this.isValid gets set by form v-model)
       })

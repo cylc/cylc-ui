@@ -41,9 +41,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-icon>
         </template>
 
-        <template v-slot:append-outer>
+        <template
+          v-if="vuetifyAppendOuterComponents.includes(props.is)"
+          v-slot:append-outer
+        >
           <!-- pass the "append-outer" slot onto the child component -->
-          <slot name="append-outer"></slot>
+          <!-- Note: unable to use scoped slot (i.e. v-slot:append-outer="slotProps")
+          in Vuetify 2 because of https://github.com/vuetifyjs/vuetify/issues/10215 -->
+          <slot name="append-outer"/>
+        </template>
+        <template
+          v-else
+          v-slot:append-outer="slotProps"
+        >
+          <slot
+            name="append-outer"
+            v-bind="slotProps"
+          />
         </template>
 
       </component>
@@ -58,6 +72,7 @@ import Markdown from '@/components/Markdown'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
+import { VTextarea, VTextField } from 'vuetify/lib/components'
 
 export default {
   name: 'g-form-input',
@@ -91,7 +106,10 @@ export default {
     namedTypes: VuetifyConfig.namedTypes,
     kinds: VuetifyConfig.kinds,
     showHelp: false,
-    svgPath: mdiHelpCircleOutline
+    svgPath: mdiHelpCircleOutline,
+    vuetifyAppendOuterComponents: [
+      VTextField, VTextarea
+    ]
   }),
 
   computed: {
