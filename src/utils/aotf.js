@@ -40,6 +40,7 @@ import {
   mdiPauseCircleOutline,
   mdiPlay,
   mdiPlayCircleOutline,
+  mdiPlaylistEdit,
   mdiRefreshCircle,
   mdiReload,
   mdiStop
@@ -122,7 +123,8 @@ export const mutationIcons = {
   resume: mdiPlay,
   setOutputs: mdiGraph,
   stop: mdiStop,
-  trigger: mdiCursorPointer
+  trigger: mdiCursorPointer,
+  editRuntime: mdiPlaylistEdit
 }
 
 /**
@@ -182,9 +184,12 @@ const identifierOrder = [
 ]
 
 /**
- * Mapping of mutation argument types to Cylc "objects".
+ * Mapping of mutation argument types to Cylc "objects" (workflow, cycle,
+ * task etc.).
  *
- * This is used to work out what objects a mutation operates on.
+ * This is used to work out what objects a mutation operates on and
+ * auto-populate the input element in the mutation form based on the object
+ * that was clicked on.
  *
  * object: [[typeName: String, impliesMultiple: Boolean]]
  */
@@ -199,11 +204,12 @@ mutationMapping[cylcObjects.CyclePoint] = [
 ]
 mutationMapping[cylcObjects.Namespace] = [
   ['NamespaceName', false],
-  ['NamespaceIDGlob', true]
+  ['NamespaceIDGlob', true],
+  ['FrozenID', false]
 ]
-mutationMapping[cylcObjects.Task] = [
-  ['TaskID', false]
-]
+// mutationMapping[cylcObjects.Task] = [
+//   ['TaskID', false]
+// ]
 mutationMapping[cylcObjects.Job] = [
   ['JobID', false]
 ]
@@ -220,31 +226,41 @@ export const compoundFields = {
     // (will fallback to the UIs user)
     return tokens[cylcObjects.Workflow]
   },
-  NamespaceIDGlob: (tokens) => {
+  NamespaceIDGlob: (tokens) => (
     // expand unspecified fields to '*'
-    return (
-      (tokens[cylcObjects.CyclePoint] || '*') +
-      '/' +
-      (tokens[cylcObjects.Namespace] || '*')
-    )
-  },
-  TaskID: (tokens) => {
+    (tokens[cylcObjects.CyclePoint] || '*') +
+    '/' +
+    (tokens[cylcObjects.Namespace] || '*')
+  ),
+  TaskID: (tokens) => (
     // expand unspecified fields to '*'
+    (tokens[cylcObjects.CyclePoint] || '*') +
+    '/' +
+    tokens[cylcObjects.Namespace]
+  ),
+  FrozenID (tokens) {
     return (
-      (tokens[cylcObjects.CyclePoint] || '*') +
+      this.WorkflowID(tokens) +
+      '//' +
+      tokens[cylcObjects.CyclePoint] +
       '/' +
-      (tokens[cylcObjects.Task] || '*')
+      tokens[cylcObjects.Namespace]
     )
   }
 }
 
 /**
  * Namespaces which can be used to satisfy a field representing a different
- * object
+ * object.
+ *
+ * This is used to work out what objects a mutation operates on.
  */
-export const alternateFields = {}
-// cycle points can be used as namespace identifiers
-alternateFields.NamespaceIDGlob = cylcObjects.CyclePoint
+export const alternateFields = {
+  // cycle points can be used as namespace identifiers
+  NamespaceIDGlob: cylcObjects.CyclePoint,
+  // only namespaces (task, family) can have [runtime] items
+  RuntimeItem: cylcObjects.Namespace
+}
 
 /**
  * Used to communicate the status of requested mutations.
@@ -355,15 +371,14 @@ export function getMutationExtendedDesc (text) {
   return text?.split('\n\n').slice(1).join('\n\n')
 }
 
-/* Add special fields to mutations args from a GraphQL introspection query. */
 /**
- * Process mutation arguments from an introspection query.
+ * Process mutation arguments from a GraphQL introspection query.
  *
  * This adds some computed fields prefixed with an underscore for later use:
  *   _title:
  *     Human-readable name for the mutation.
  *   _cylcObject:
- *     The Cylc Object this field relates to if any (e.g. Task).
+ *     The Cylc Object this field relates to if any (e.g. Cycle, Task etc.).
  *   _cylcType:
  *     The underlying GraphQL type that provides this relationship
  *     (e.g. taskID).
@@ -397,13 +412,11 @@ export function processArguments (mutation, types) {
       if (pointer.kind === 'LIST') {
         multiple = true
       } else if (pointer.kind !== 'NON_NULL' && pointer.name) {
+        cylcType = pointer.name
         for (const objectName in mutationMapping) {
-          for (
-            const [type, impliesMultiple] of mutationMapping[objectName]
-          ) {
+          for (const [type, impliesMultiple] of mutationMapping[objectName]) {
             if (pointer.name === type) {
               cylcObject = objectName
-              cylcType = pointer.name
               if (impliesMultiple) {
                 multiple = true
               }
@@ -488,16 +501,10 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
     let requiresInfo = false
     let authorised = false
     let applies = false
-    let alternate = null
     for (const arg of mutation.args) {
       if (arg._cylcObject) {
-        // alternate cylc object which can satisfy this field, or null
-        alternate = alternateFields[arg._cylcType]
         if (arg._cylcObject === cylcObject) {
           // this is the object type we are filtering for
-          applies = true
-        } else if (alternate === cylcObject) {
-          // this isn't the object type we are filtering for, but it'll do
           applies = true
         }
         if (arg._required && !tokens[arg._cylcObject]) {
@@ -507,6 +514,11 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
       } else if (arg._required) {
         // this is a required argument
         requiresInfo = true
+      }
+      // is there an alternate cylc object which can satisfy this field?
+      if (alternateFields[arg._cylcType] === cylcObject) {
+        // this might not be the object type we're filtering for, but it'll do
+        applies = true
       }
     }
     if (!applies) {
