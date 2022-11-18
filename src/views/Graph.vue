@@ -493,7 +493,7 @@ export default {
       // generate a hash for this list of nodes and edges
       return nonCryptoHash(
         nodes.map(n => n.id).reduce((x, y) => { return x + y }) +
-        edges.map(n => n.id).reduce((x, y) => { return x + y })
+        edges.map(n => n.id).reduce((x, y) => { return x + y }, 1)
       )
     },
     reset () {
@@ -537,7 +537,7 @@ export default {
       const nodes = this.getGraphNodes()
       const edges = this.getGraphEdges()
 
-      if (!nodes.length || !edges.length) {
+      if (!nodes.length) {
         // we can't graph this, reset and wait for something to draw
         this.graphID = null
         this.updating = false
