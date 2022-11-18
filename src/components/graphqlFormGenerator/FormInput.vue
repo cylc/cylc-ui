@@ -15,56 +15,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<template>
-  <v-tooltip
-    bottom
-    v-model="showHelp"
-  >
-    <!-- Note: tooltip activated by v-model so doesn't need `on` listeners -->
-    <template v-slot:activator="{}">
-      <!-- TODO: fix the inputType form alignment thinggy -->
-      <!-- NOTE: the `is` field comes from `props` v-bind -->
-      <!-- eslint-disable-next-line vue/require-component-is -->
-      <component
-        v-model="model"
-        v-bind="props"
-        v-mask="props.mask"
-        :gqlType="gqlType"
-        :types="types"
-        @blur="showHelp = false"
-      >
-        <template v-slot:append>
-          <v-icon
-           @click="showHelp = !showHelp"
-          >
-            {{ $options.icons.mdiHelpCircleOutline }}
-          </v-icon>
-        </template>
-
-        <template
-          v-if="$options.vuetifyAppendOuterComponents.includes(props.is)"
-          v-slot:append-outer
-        >
-          <!-- pass the "append-outer" slot onto the child component -->
-          <!-- Note: unable to use scoped slot (i.e. v-slot:append-outer="slotProps")
-          in Vuetify 2 because of https://github.com/vuetifyjs/vuetify/issues/10215 -->
-          <slot name="append-outer"/>
-        </template>
-        <template
-          v-else
-          v-slot:append-outer="slotProps"
-        >
-          <slot
-            name="append-outer"
-            v-bind="slotProps"
-          />
-        </template>
-
-      </component>
-    </template>
-    <Markdown :markdown="help" />
-  </v-tooltip>
-</template>
+<!--
+This is a convenience component that wraps an input component, allowing
+dynamically created inputs.
+-->
 
 <script>
 import { mask } from 'vue-the-mask'
@@ -72,7 +26,20 @@ import Markdown from '@/components/Markdown'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
-import { VTextarea, VTextField } from 'vuetify/lib/components'
+import { VIcon, VTooltip } from 'vuetify/lib/components'
+
+/**
+ * Workaround Vuetify (v2) component issue where non-scoped slots would not appear in
+ * this.$scopedSlots, preventing the slot from rendering.
+ *
+ * Taken from https://stackoverflow.com/a/67412844/3217306
+ *
+ * @param fn - Function meant for the value of slot in the data-object's "scopedSlots"
+ */
+function vuetifyScopedSlotShim (fn) {
+  fn.proxy = true
+  return fn
+}
 
 export default {
   name: 'g-form-input',
@@ -104,8 +71,7 @@ export default {
   data: () => ({
     defaultProps: VuetifyConfig.defaultProps,
     namedTypes: VuetifyConfig.namedTypes,
-    kinds: VuetifyConfig.kinds,
-    showHelp: false
+    kinds: VuetifyConfig.kinds
   }),
 
   computed: {
@@ -141,12 +107,68 @@ export default {
     }
   },
 
-  // Misc options:
-  icons: {
-    mdiHelpCircleOutline
-  },
-  vuetifyAppendOuterComponents: [
-    VTextField, VTextarea
-  ]
+  render (createElement) {
+    // https://v2.vuejs.org/v2/guide/render-function.html
+
+    const createHelpIcon = () => createElement(
+      VTooltip,
+      {
+        props: {
+          bottom: true
+        },
+        scopedSlots: {
+          activator: ({ on }) => createElement(
+            VIcon,
+            {
+              on,
+              style: {
+                cursor: 'default'
+              }
+            },
+            [mdiHelpCircleOutline]
+          ),
+          default: () => createElement(
+            Markdown,
+            {
+              props: {
+                markdown: this.help
+              }
+            }
+          )
+        }
+      }
+    )
+
+    // Some components implement custom v-model
+    // (https://v2.vuejs.org/v2/guide/components-custom-events.html#Customizing-Component-v-model)
+    const vModel = this.props.is.options?.model || { prop: 'value', event: 'input' }
+
+    return createElement(
+      this.props.is,
+      {
+        props: {
+          ...this.props,
+          [vModel.prop]: this.model,
+          gqlType: this.gqlType,
+          types: this.types
+        },
+        on: {
+          [vModel.event]: (value) => {
+            this.model = value
+          }
+        },
+        scopedSlots: {
+          append: vuetifyScopedSlotShim(
+            createHelpIcon
+          ),
+          'append-outer': vuetifyScopedSlotShim(
+            // pass the "append-outer" slot onto the child component
+            (slotProps) => this.$scopedSlots['append-outer']?.(slotProps)
+          )
+        }
+      }
+    )
+  }
+
 }
 </script>
