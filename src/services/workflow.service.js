@@ -19,6 +19,7 @@ import { isEqual } from 'lodash'
 import ViewState from '@/model/ViewState.model'
 import Subscription from '@/model/Subscription.model'
 import {
+  dummyMutations,
   extractFields,
   findByName,
   getBaseType,
@@ -149,6 +150,7 @@ class WorkflowService {
     const mutations = response.data.__schema.mutationType.fields
     const queries = response.data.__schema.queryType.fields
     const { types } = response.data.__schema
+    mutations.push(...dummyMutations)
     processMutations(mutations, types)
     return { mutations, queries, types }
   }

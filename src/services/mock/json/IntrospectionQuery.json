@@ -2895,55 +2895,6 @@
             "isDeprecated": false,
             "deprecationReason": null,
             "__typename": "__Field"
-          },
-          {
-            "name": "editRuntime",
-            "description": "Edit a task or family's `[runtime]` section.\n\nThis only applies for the cycle point of the chosen task/family\ninstance.",
-            "args": [
-              {
-                "name": "cylcID",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "FrozenID",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "defaultValue": null,
-                "__typename": "__InputValue"
-              },
-              {
-                "name": "runtime",
-                "description": "`[runtime]` section of the task",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "RuntimeItem",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "__typename": "__Type"
-                },
-                "defaultValue": "[]",
-                "__typename": "__InputValue"
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "EditRuntime",
-              "ofType": null,
-              "__typename": "__Type"
-            },
-            "isDeprecated": false,
-            "deprecationReason": null,
-            "__typename": "__Field"
           }
         ],
         "inputFields": null,
@@ -6847,7 +6798,7 @@
         {
           "kind": "OBJECT",
           "name": "RuntimeSetting",
-          "description": "Key = val setting",
+          "description": "Key = val setting, e.g. for [runtime][X][environment]",
           "fields": [
             {
               "name": "key",
@@ -12756,55 +12707,6 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
-            },
-            {
-              "name": "editRuntime",
-              "description": "Edit a task or family's `[runtime]` section.\n\nThis only applies for the cycle point of the chosen task/family\ninstance.",
-              "args": [
-                {
-                  "name": "cylcID",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "FrozenID",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "runtime",
-                  "description": "`[runtime]` section of the task",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "LIST",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "RuntimeItem",
-                        "ofType": null,
-                        "__typename": "__Type"
-                      },
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "OBJECT",
-                "name": "EditRuntime",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -13620,54 +13522,6 @@
           ],
           "inputFields": null,
           "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
-          "kind": "OBJECT",
-          "name": "EditRuntime",
-          "description": "Edit a task or family's `[runtime]` section.\n\nThis only applies for the cycle point of the chosen task/family\ninstance.",
-          "fields": [
-            {
-              "name": "result",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
-          "kind": "SCALAR",
-          "name": "FrozenID",
-          "description": "A ID that cannot be altered in the UI mutation form.\n\nIt can only specified through which family/task is clicked on.",
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
-          "kind": "SCALAR",
-          "name": "RuntimeItem",
-          "description": "A task's `[runtime]` item as a string TODO",
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
           "enumValues": null,
           "possibleTypes": null,
           "__typename": "__Type"
