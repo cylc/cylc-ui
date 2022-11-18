@@ -16,13 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-list
-   dense
-   one-line
-  >
+  <v-list dense>
     <v-list-item-content>
       <v-list-item
-        dense
         v-for="(item, index) in value"
         :key="index"
       >
@@ -34,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :gqlType="gqlType.ofType"
             :types="types"
             :is="FormInput"
-             ref="inputs"
+            ref="inputs"
           >
             <template v-slot:append-outer>
               <v-icon
@@ -50,9 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           -->
         </v-list-item-content>
       </v-list-item>
-      <v-list-item
-       dense
-      >
+      <v-list-item>
         <v-btn
          @click="add()"
          text

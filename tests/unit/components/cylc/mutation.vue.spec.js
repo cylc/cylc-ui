@@ -21,6 +21,8 @@ import { expect } from 'chai'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 
+const cylcObject = { id: '~u/w//1/t', isFamily: false }
+
 const BASIC_MUTATION = {
   name: 'myMutation',
   description: 'Test example.',
@@ -64,6 +66,7 @@ describe('Mutation Component', () => {
   it('should display mutation name and description', () => {
     const wrapper = mountFunction({
       propsData: {
+        cylcObject,
         mutation: BASIC_MUTATION,
         cancel: () => {}
       }
@@ -76,6 +79,7 @@ describe('Mutation Component', () => {
   describe('Mutation descriptions', () => {
     const mountWithDescription = (desc) => mountFunction({
       propsData: {
+        cylcObject,
         mutation: {
           name: 'Darmok',
           description: desc,

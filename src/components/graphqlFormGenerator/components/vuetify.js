@@ -25,6 +25,7 @@ import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'
 import GList from '@/components/graphqlFormGenerator/components/List'
 import GObject from '@/components/graphqlFormGenerator/components/Object'
 import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting'
+import GMapItem from '@/components/graphqlFormGenerator/components/MapItem'
 
 /* Vuetify number input component.
  *
@@ -33,7 +34,7 @@ import GBroadcastSetting from '@/components/graphqlFormGenerator/components/Broa
  *       does not cast values to `Number` for you so this extension parses
  *       values to `Number` so they can be used directly in the data model.
  */
-const VNumberField = Vue.component(
+export const VNumberField = Vue.component(
   'v-number-field',
   {
     extends: VTextField,
@@ -48,6 +49,11 @@ const VNumberField = Vue.component(
           this.lazyValue = Number(val)
           this.$emit('input', this.lazyValue)
         }
+      }
+    },
+    props: {
+      type: {
+        default: 'number'
       }
     }
   }
@@ -76,7 +82,6 @@ export default {
   defaultProps: {
     // default props for all form inputs
     filled: true,
-    rounded: true,
     dense: true
   },
 
@@ -90,14 +95,12 @@ export default {
     },
     Int: {
       is: VNumberField,
-      type: 'number',
       rules: [
         RULES.integer
       ]
     },
     Float: {
-      is: VNumberField,
-      type: 'number'
+      is: VNumberField
     },
     Boolean: {
       is: VSwitch,
@@ -193,12 +196,15 @@ export default {
       rules: [
         RULES.flow
       ]
+    },
+    KeyValPair: {
+      is: GMapItem
     }
   },
 
   kinds: {
     // registry of GraphQL "kinds" (e.g. LIST)
-    // {namedType: {is: ComponentClass, prop1: value, ...}}
+    // { kind: { is: ComponentClass, prop1: value, ... } }
     ENUM: {
       is: GEnum
     },
@@ -211,5 +217,20 @@ export default {
     INPUT_OBJECT: {
       is: GObject // happy naming coincidence
     }
+  }
+}
+
+export function getComponentProps (gqlType, namedTypes, kinds) {
+  const { name, kind } = gqlType
+  if (namedTypes[name]) {
+    return namedTypes[name]
+  } else if (kinds[kind]) {
+    return kinds[kind]
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `Falling back to string for type: ${name}, kind: ${kind}`
+    )
+    return namedTypes.String
   }
 }

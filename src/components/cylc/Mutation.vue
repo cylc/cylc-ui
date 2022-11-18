@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
     <v-card
-      class="c-mutation-dialog mx-auto d-inline-block"
+      class="mx-auto d-inline-block"
       style="padding: 1em;"
       outlined
     >
@@ -55,14 +55,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel>
       </v-expansion-panels>
 
-      <v-divider></v-divider>
+      <v-divider/>
+      <EditRuntimeForm
+        v-if="mutation.name === 'editRuntime'"
+        v-bind="{
+          cylcObject,
+          types
+        }"
+        ref="form"
+        v-model="isValid"
+      />
       <FormGenerator
-       :mutation='mutation'
-       :types='types'
-       :callbackSubmit='call'
-       :initialData='initialData'
-       ref="formGenerator"
-       v-model="isValid"
+        v-else
+        v-bind="{
+          mutation,
+          types,
+          callbackSubmit: call,
+          initialData
+        }"
+        ref="form"
+        v-model="isValid"
       />
       <br />
       <v-card-actions>
@@ -77,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-btn>
         <v-btn
           color="orange"
-          @click="$refs.formGenerator.reset()"
+          @click="$refs.form.reset()"
           text
           data-cy="reset"
         >
@@ -92,7 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-btn
               text
               :color="isValid ? 'primary' : 'error'"
-              @click="$refs.formGenerator.submit()"
+              @click="$refs.form.submit()"
               v-bind="attrs"
               v-on="on"
               data-cy="submit"
@@ -116,6 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
+import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
 import Markdown from '@/components/Markdown'
 import Task from '@/components/cylc/Task.vue'
 import {
@@ -145,6 +158,7 @@ export default {
   name: 'mutation',
 
   components: {
+    EditRuntimeForm,
     FormGenerator,
     Markdown,
     Task
@@ -153,6 +167,11 @@ export default {
   props: {
     mutation: {
       // graphql mutation object as returned by introspection query
+      type: Object,
+      required: true
+    },
+    cylcObject: {
+      // { id, isFamily }
       type: Object,
       required: true
     },

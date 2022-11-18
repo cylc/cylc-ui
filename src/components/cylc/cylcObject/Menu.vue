@@ -104,11 +104,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-menu>
     <v-dialog
       v-model="dialog"
-      max-width="500"
+      max-width="700px"
+      content-class="c-mutation-dialog"
       v-if="dialogMutation"
     >
       <Mutation
         :mutation="dialogMutation"
+        :cylcObject="{ id, isFamily }"
         :initialData="initialData(dialogMutation, tokens)"
         :cancel="closeDialog"
         :types="types"
@@ -200,10 +202,13 @@ export default {
       }
       return this.mutations
     },
+    isFamily () {
+      // TODO: better way of checking if a 'task' is actually a family?
+      return this.type === 'task' && !('isHeld' in this.node)
+    },
     typeAndStatusText () {
       let ret = this.type
-      if (ret === 'task' && !('isHeld' in this.node)) {
-        // TODO: better way of checking if a 'task' is actually a family?
+      if (self.isFamily) {
         ret = 'family'
       }
       ret += ' - '

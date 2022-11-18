@@ -905,6 +905,7 @@ export async function mutate (mutation, variables, apolloClient, cylcID) {
  * @param {Query} query - Query to send
  * @param {Object} variables - Query variables
  * @param {ApolloClient} apolloClient
+ * @return {Promise<Object>}
  */
 export async function query (query, variables, apolloClient) {
   const queryStr = constructQueryStr(query)
@@ -919,5 +920,5 @@ export async function query (query, variables, apolloClient) {
     query: gql(queryStr),
     variables
   })
-  console.log(response)
+  return response.data
 }

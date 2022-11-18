@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import isEqual from 'lodash/isEqual'
+import { isEqual } from 'lodash'
 import ViewState from '@/model/ViewState.model'
 import Subscription from '@/model/Subscription.model'
 import {
@@ -119,17 +119,17 @@ class WorkflowService {
    * Send a query.
    *
    * @param {string} queryName
-   * @param {string[]} argNames
+   * @param {Object} args
    * @param {Field[]} fields
    * @param {Object} variables
    * @return {Promise<Object>}
    * @memberof WorkflowService
    */
-  async query (queryName, argNames, fields, variables) {
-    const queryObj = await this.getQuery(queryName, argNames, fields)
+  async query (queryName, args, fields) {
+    const queryObj = await this.getQuery(queryName, Object.keys(args), fields)
     return await query(
       queryObj,
-      variables,
+      args,
       this.apolloClient
     )
   }

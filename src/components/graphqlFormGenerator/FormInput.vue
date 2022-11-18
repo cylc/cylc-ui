@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mask } from 'vue-the-mask'
 import Markdown from '@/components/Markdown'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
-import VuetifyConfig from '@/components/graphqlFormGenerator/components/vuetify'
+import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
 
 export default {
@@ -105,23 +105,7 @@ export default {
      */
     props () {
       // get the default props for this graphQL type
-      const name = this.gqlType.name
-      const kind = this.gqlType.kind
-      // const ofType = this.gqlType.ofType
-
-      let componentProps
-      if (this.namedTypes[name]) {
-        componentProps = this.namedTypes[name]
-      } else if (this.kinds[kind]) {
-        componentProps = this.kinds[kind]
-      } else {
-        componentProps = this.namedTypes.String
-        // eslint-disable-next-line no-console
-        console.warn(
-          'Falling back to string for ' +
-          `type: ${this.gqlType.name}, kind: ${this.gqlType.kind}`
-        )
-      }
+      const componentProps = getComponentProps(this.gqlType, this.namedTypes, this.kinds)
 
       // merge this in with default and override props
       const propGroups = [
