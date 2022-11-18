@@ -16,19 +16,18 @@
  */
 
 import {
-  mutationStatus
+  mutationStatus,
+  processMutations
 } from '@/utils/aotf'
 import {
   MUTATIONS
 } from '../support/graphql'
+import { cloneDeep } from 'lodash'
 
 function mockApolloClient () {
   const mutations = []
   cy.window().its('app.$workflowService').then(service => {
     // mock the apollo client's mutate method to catch low-level calls
-    service.primaryMutations = {
-      workflow: ['workflowMutation']
-    }
     service.apolloClient.mutate = (args) => {
       // log this for later
       mutations.push(args)
@@ -48,9 +47,6 @@ function mockWorkflowService () {
   const mutations = []
   cy.window().its('app.$workflowService').then(service => {
     // mock the workflow service's mutate method to catch high-level calls
-    service.primaryMutations = {
-      workflow: ['workflowMutation']
-    }
     service.mutate = (args) => {
       // log this for later
       mutations.push(args)
@@ -64,24 +60,28 @@ function mockWorkflowService () {
 
 describe('Api On The Fly', () => {
   beforeEach(() => {
-    cy
-      .intercept('/graphql', {
-        data: {
-          __schema: {
-            queryType: {},
-            mutationType: {
-              fields: MUTATIONS
-            },
-            types: []
-          }
-        }
+    cy.intercept('/graphql', req => {
+      if (req.body.query.includes('__schema')) {
+        req.alias = 'IntrospectQuery' // equivalent to `.as('IntrospectQuery')`
+      }
+    })
+    cy.visit('/#/workflows/one')
+    cy.window().its('app.$workflowService').then(service => {
+      const mutations = cloneDeep(MUTATIONS)
+      processMutations(mutations, [])
+      // mock the apollo client's mutate method to catch low-level calls
+      service.mutationsAndTypes = Promise.resolve({
+        mutations,
+        types: [],
+        queries: []
       })
-      .as('IntrospectQuery')
+      service.primaryMutations = {
+        workflow: ['workflowMutation']
+      }
+    })
   })
   describe('cylc-object', () => {
     it('correctly associates objects with mutations', () => {
-      cy.visit('/#/workflows/one')
-
       mockApolloClient()
 
       cy.wait(['@IntrospectQuery'])

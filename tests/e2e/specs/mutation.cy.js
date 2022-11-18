@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { upperFirst } from 'lodash'
+import { processMutations } from '@/utils/aotf'
+import { cloneDeep, upperFirst } from 'lodash'
 import {
   MUTATIONS
 } from '../support/graphql'
@@ -26,19 +27,7 @@ describe('Mutations component', () => {
     cy
       .intercept('/graphql', (req) => {
         const query = req.body.query
-        if (query.includes('__schema')) { // query that loads mutations
-          req.reply({
-            data: {
-              __schema: {
-                queryType: {},
-                mutationType: {
-                  fields: MUTATIONS
-                },
-                types: []
-              }
-            }
-          })
-        } else { // mutation
+        if (!query.includes('__schema')) { // is a mutation
           console.log(req)
           req.reply({
             data: {
@@ -50,7 +39,6 @@ describe('Mutations component', () => {
           })
         }
       })
-      .as('HoldMutationQuery')
   })
 
   /**
@@ -58,7 +46,14 @@ describe('Mutations component', () => {
    */
   const openMutationsForm = (nodeName) => {
     cy.window().its('app.$workflowService').then(service => {
+      const mutations = cloneDeep(MUTATIONS)
+      processMutations(mutations, [])
       // mock the apollo client's mutate method to catch low-level calls
+      service.mutationsAndTypes = Promise.resolve({
+        mutations,
+        types: [],
+        queries: []
+      })
       service.primaryMutations = {
         workflow: ['workflowMutation']
       }
@@ -67,7 +62,6 @@ describe('Mutations component', () => {
       .find('.treeitem')
       .find('.c-task')
       .should('be.visible')
-    // cy.wait(['@HoldMutationQuery'])
     cy.get('@treeView')
       .find('span')
       .contains(nodeName)

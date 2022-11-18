@@ -88,6 +88,8 @@ import { IntrospectionInputType } from 'graphql'
  * @property {string=} _icon
  * @property {string=} _shortDescription
  * @property {string=} _help
+ * @property {string=} _appliesTo - type of cylc object this mutation applies to (if cannot determine from args)
+ * @property {boolean=} _requiresInfo - whether this mutation needs more info than the cylc object it is operating on (if cannot determine from args)
  */
 
 /**
@@ -217,8 +219,7 @@ mutationMapping[cylcObjects.CyclePoint] = [
 ]
 mutationMapping[cylcObjects.Namespace] = [
   ['NamespaceName', false],
-  ['NamespaceIDGlob', true],
-  ['FrozenID', false]
+  ['NamespaceIDGlob', true]
 ]
 // mutationMapping[cylcObjects.Task] = [
 //   ['TaskID', false]
@@ -250,16 +251,7 @@ export const compoundFields = {
     (tokens[cylcObjects.CyclePoint] || '*') +
     '/' +
     tokens[cylcObjects.Namespace]
-  ),
-  FrozenID (tokens) {
-    return (
-      this.WorkflowID(tokens) +
-      '//' +
-      tokens[cylcObjects.CyclePoint] +
-      '/' +
-      tokens[cylcObjects.Namespace]
-    )
-  }
+  )
 }
 
 /**
@@ -270,9 +262,7 @@ export const compoundFields = {
  */
 export const alternateFields = {
   // cycle points can be used as namespace identifiers
-  NamespaceIDGlob: cylcObjects.CyclePoint,
-  // only namespaces (task, family) can have [runtime] items
-  RuntimeItem: cylcObjects.Namespace
+  NamespaceIDGlob: cylcObjects.CyclePoint
 }
 
 /**
@@ -287,6 +277,33 @@ mutationStatus[TaskState.SUCCEEDED] = TaskState.SUCCEEDED
 mutationStatus[TaskState.FAILED] = TaskState.FAILED
 mutationStatus[TaskState.SUBMIT_FAILED] = TaskState.SUBMIT_FAILED
 Object.freeze(mutationStatus)
+
+/**
+ * List of commands to add to the mutations from the schema.
+ *
+ * @type {Mutation[]}
+ */
+export const dummyMutations = [
+  {
+    name: 'editRuntime',
+    description: dedent`
+      Edit a task or family's \`[runtime]\` section.
+
+      This only applies for the cycle point of the chosen task/family instance.`,
+    args: [],
+    _appliesTo: cylcObjects.Namespace,
+    _requiresInfo: true
+  }
+]
+
+/**
+ * Map real mutations to dummy mutations with the same permission level.
+ *
+ * @type {{string: string[]}}
+ */
+const dummyMutationsPermissionsMap = Object.freeze({
+  broadcast: Object.freeze(['editRuntime'])
+})
 
 /**
  * Translate a global ID into a token dictionary.
@@ -555,11 +572,16 @@ export function getIntrospectionQuery () {
  */
 export function filterAssociations (cylcObject, tokens, mutations, permissions) {
   const ret = []
+  for (const [permission, equivalents] of Object.entries(dummyMutationsPermissionsMap)) {
+    if (permissions.includes(permission)) {
+      permissions.push(...equivalents)
+    }
+  }
   permissions = permissions.map(x => x.toLowerCase())
   for (const mutation of mutations) {
-    let requiresInfo = false
-    let authorised = false
-    let applies = false
+    const authorised = permissions.includes(mutation.name.toLowerCase())
+    let requiresInfo = mutation._requiresInfo ?? false
+    let applies = mutation._appliesTo === cylcObject
     for (const arg of mutation.args) {
       if (arg._cylcObject) {
         if (arg._cylcObject === cylcObject) {
@@ -582,9 +604,6 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
     }
     if (!applies) {
       continue
-    }
-    if (permissions.includes(mutation.name.toLowerCase())) {
-      authorised = true
     }
     ret.push(
       { mutation, requiresInfo, authorised }
