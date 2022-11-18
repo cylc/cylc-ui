@@ -102,7 +102,7 @@ import { IntrospectionInputType } from 'graphql'
 /**
  * @typedef {Object} Field
  * @property {string} name - lowercase field name
- * @property {Field[]=} fields - list of sub-fields
+ * @property {(Field[])=} fields - list of sub-fields
  */
 
 /**
@@ -648,7 +648,7 @@ export function getBaseType (type) {
  *
  * @param {GQLType} type - A type field as returned by an introspection query.
  * (an object of the form {name: x, kind: y, ofType: z}).
- * @param {IntrospectionInputType[]=} types - An array of all types present in the schema.
+ * @param {(IntrospectionInputType[])=} types - An array of all types present in the schema.
  * (optional: used to resolve InputObjectType fields).
  *
  * @returns {Object|Object[]|null}
