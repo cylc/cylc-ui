@@ -42,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             type to family. -->
           <Task
             v-cylc-object="node.node"
+            v-if="node.familyTree"
             :key="node.id"
             :task="node.familyTree[0].node"
           />
