@@ -518,7 +518,8 @@ const mutations = {
   CREATE: createTree,
   UPDATE: update,
   UPDATE_DELTAS (state, updated) {
-    // console.log('@ UPDATE')
+    // eslint-disable-next-line no-console
+    console.log('@ UPDATE')
     for (const updatedValue of Object.values(pick(updated, KEYS))) {
       const items = isArray(updatedValue) ? updatedValue : [updatedValue]
       for (const updatedData of items) {
@@ -527,7 +528,8 @@ const mutations = {
         }
       }
     }
-    // console.log('@@')
+    // eslint-disable-next-line no-console
+    console.log('@@')
   },
   // remove an ID
   REMOVE: remove,
