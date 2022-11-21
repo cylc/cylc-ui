@@ -70,7 +70,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-bind="{
           mutation,
           types,
-          callbackSubmit: call,
           initialData
         }"
         ref="form"
@@ -104,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-btn
               text
               :color="isValid ? 'primary' : 'error'"
-              @click="$refs.form.submit()"
+              @click="submit"
               v-bind="attrs"
               v-on="on"
               data-cy="submit"
@@ -132,27 +131,24 @@ import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.v
 import Markdown from '@/components/Markdown'
 import Task from '@/components/cylc/Task.vue'
 import {
-  mutate,
   getMutationShortDesc,
   getMutationExtendedDesc
 } from '@/utils/aotf'
 
 // enumeration for the mutation status, maps onto Cylc Task status
-const status = {
+const status = Object.freeze({
   waiting: 'waiting',
   submitted: 'submitted',
   succeeded: 'succeeded',
   failed: 'failed',
   submitFailed: 'submit-failed'
-}
-Object.freeze(status)
+})
 
 // initial state defined here so we can easily reset the component data
-const initialState = {
+const initialState = Object.freeze({
   response: '',
   status: status.waiting
-}
-Object.freeze(initialState)
+})
 
 export default {
   name: 'mutation',
@@ -209,14 +205,10 @@ export default {
 
   methods: {
     /* Execute the GraphQL mutation */
-    async call (args) {
+    submit () {
       this.status = status.submitted
-      mutate(
-        this.mutation,
-        args,
-        this.$workflowService.apolloClient
-      ).then(response => {
-        this.status = response.status.name.replace('_', '-')
+      this.$refs.form.submit().then(({ status }) => {
+        this.status = status.name.replace('_', '-')
       })
     }
   }

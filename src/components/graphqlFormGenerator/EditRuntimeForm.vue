@@ -170,11 +170,15 @@ export default {
         workflows: [tokens.workflow_id]
       }
       const mutation = await this.$workflowService.getMutation('broadcast')
-      await mutate(
+      const response = await mutate(
         mutation,
         args,
         this.$workflowService.apolloClient
       )
+      // Reset after submission (no need to await)
+      // TODO: remove this if we decide to auto close mutation forms on submission
+      this.reset()
+      return response
     },
 
     /**

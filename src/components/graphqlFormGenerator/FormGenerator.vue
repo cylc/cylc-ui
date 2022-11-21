@@ -65,7 +65,7 @@ import { mdiHelpCircleOutline } from '@mdi/js'
 
 import Markdown from '@/components/Markdown'
 import FormInput from '@/components/graphqlFormGenerator/FormInput'
-import { getNullValue } from '@/utils/aotf'
+import { getNullValue, mutate } from '@/utils/aotf'
 
 export default {
   name: 'form-generator',
@@ -92,10 +92,6 @@ export default {
     },
     initialData: {
       type: Object
-    },
-    callbackSubmit: {
-      // called when the user submits the form
-      type: Function
     }
   },
 
@@ -162,10 +158,12 @@ export default {
       this.model = model
     },
 
-    submit () {
-      if (this.callbackSubmit) {
-        this.callbackSubmit(this.model)
-      }
+    async submit () {
+      return await mutate(
+        this.mutation,
+        this.model,
+        this.$workflowService.apolloClient
+      )
     }
   }
 }
