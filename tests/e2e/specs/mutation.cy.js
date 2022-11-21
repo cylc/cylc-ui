@@ -24,21 +24,20 @@ import {
 describe('Mutations component', () => {
   beforeEach(() => {
     // Patch graphql responses
-    cy
-      .intercept('/graphql', (req) => {
-        const query = req.body.query
-        if (!query.includes('__schema')) { // is a mutation
-          console.log(req)
-          req.reply({
-            data: {
-              [req.body.operationName]: {
-                result: [true, {}],
-                __typename: upperFirst(req.body.operationName)
-              }
+    cy.intercept('/graphql', (req) => {
+      const { query } = req.body
+      if (query.startsWith('mutation')) {
+        console.log(req)
+        req.reply({
+          data: {
+            [req.body.operationName]: {
+              result: [true, {}],
+              __typename: upperFirst(req.body.operationName)
             }
-          })
-        }
-      })
+          }
+        })
+      }
+    })
   })
 
   /**

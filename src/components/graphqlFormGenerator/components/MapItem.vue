@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :disabled="value.frozenKey"
               dense
               filled
+              class="c-input-key"
             />
           </div>
         </template>
@@ -48,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-model="value.value"
         dense
         filled
+        class="c-input-val"
       />
     </v-col>
     <v-col cols="auto">

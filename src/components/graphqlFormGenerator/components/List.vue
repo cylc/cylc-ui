@@ -49,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
          @click="add()"
          text
+         data-cy="add"
         >
           <v-icon>{{ svgPaths.open }}</v-icon>
           <span>Add Item</span>

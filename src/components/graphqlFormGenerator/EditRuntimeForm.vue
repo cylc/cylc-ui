@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-form
       v-else
       v-model="isValid"
+      class="c-edit-runtime-form"
     >
       <v-list>
         <v-list-item
@@ -36,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :key="key"
         >
           <v-list-item-content>
-            <v-list-item-title>
+            <v-list-item-title class="c-input-label">
               <!-- input label - the display title for this input -->
               {{ startCase(key) }}
             </v-list-item-title>
