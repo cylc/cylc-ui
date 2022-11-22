@@ -15,6 +15,10 @@ ones in. -->
 
 ### Enhancements
 
+[#1144](https://github.com/cylc/cylc-ui/pull/1144) - Add "Edit Runtime"
+command, a more convenient way to perform broadcasts by viewing and editing a
+task/family's runtime configuration.
+
 [#1124](https://github.com/cylc/cylc-ui/pull/1075) - Table view: More options
 for number of tasks per page.
 
