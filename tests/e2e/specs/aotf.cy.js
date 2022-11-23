@@ -70,7 +70,7 @@ describe('Api On The Fly', () => {
       const mutations = cloneDeep(MUTATIONS)
       processMutations(mutations, [])
       // mock the apollo client's mutate method to catch low-level calls
-      service.mutationsAndTypes = Promise.resolve({
+      service.introspection = Promise.resolve({
         mutations,
         types: [],
         queries: []

@@ -88,7 +88,7 @@ describe('WorkflowService', () => {
     subscriptionClient = null
     sandbox.stub(graphqlModule, 'createApolloClient').returns(apolloClient)
     // TODO: really load some mutations
-    sandbox.stub(WorkflowService.prototype, 'loadMutations').returns(
+    sandbox.stub(WorkflowService.prototype, 'loadTypes').returns(
       Promise.resolve({
         mutations: [],
         types: []

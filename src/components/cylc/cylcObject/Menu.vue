@@ -301,7 +301,7 @@ export default {
       this.x = event.clientX
       this.y = event.clientY
       // await graphql query to get mutations
-      this.$workflowService.mutationsAndTypes.then(({ mutations, types }) => {
+      this.$workflowService.introspection.then(({ mutations, types }) => {
         // if mutations are slow to load then there will be a delay before they are reactively
         // displayed in the menu (this is what the skeleton-loader is for)
         this.isLoadingMutations = false

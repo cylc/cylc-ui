@@ -54,7 +54,7 @@ localVue.prototype.$workflowService = {
       }
     }
   },
-  mutationsAndTypes: Promise.resolve({
+  introspection: Promise.resolve({
     mutations: [],
     types: []
   })

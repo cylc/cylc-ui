@@ -46,7 +46,7 @@ import { SubscriptionClient } from 'subscriptions-transport-ws'
 /* eslint-enable no-unused-vars, no-duplicate-imports */
 
 /**
- * @typedef {Object} MutationsAndTypes
+ * @typedef {Object} IntrospectionObj
  * @property {Mutation[]} mutations
  * @property {Mutation[]} queries
  * @property {IntrospectionInputType[]} types
@@ -87,7 +87,7 @@ class WorkflowService {
     // mutations defaults
     this.primaryMutations = primaryMutations
 
-    this.mutationsAndTypes = this.loadMutations()
+    this.introspection = this.loadTypes()
   }
 
   // --- Mutations
@@ -136,11 +136,11 @@ class WorkflowService {
   }
 
   /**
-   * Load mutations for internal use from GraphQL introspection.
+   * Load mutations, queries and types from GraphQL introspection.
    *
-   * @returns {Promise<MutationsAndTypes>}
+   * @returns {Promise<IntrospectionObj>}
    */
-  async loadMutations () {
+  async loadTypes () {
     // TODO: this assumes all workflows use the same schema which is and
     //       isn't necessarily true, not quite sure, come back to this later.
     const response = await this.apolloClient.query({
@@ -162,7 +162,7 @@ class WorkflowService {
    * @returns {Promise<Mutation=>}
    */
   async getMutation (mutationName) {
-    const { mutations } = await this.mutationsAndTypes
+    const { mutations } = await this.introspection
     return findByName(mutations, mutationName)
   }
 
@@ -175,7 +175,7 @@ class WorkflowService {
    * @return {Promise<Query>}
    */
   async getQuery (queryName, argNames, fields) {
-    const { queries, types } = await this.mutationsAndTypes
+    const { queries, types } = await this.introspection
     const queryObj = findByName(queries, queryName)
     const typeName = getBaseType(queryObj.type).name
     const type = findByName(types, typeName)
