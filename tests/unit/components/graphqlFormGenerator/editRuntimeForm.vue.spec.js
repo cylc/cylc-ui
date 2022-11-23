@@ -20,13 +20,13 @@ import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm'
 import { expect } from 'chai'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
-import { IntrospectionQuery, TaskProxyQuery } from '@/services/mock/json'
+import { IntrospectionQuery, taskProxy } from '@/services/mock/json'
 import { cloneDeep } from 'lodash'
 
 // suppress "ReferenceError: requestAnimationFrame is not defined" errors
 // global.requestAnimationFrame = cb => cb()
 
-/** NOTE: update this if updating src/services/mock/json/TaskProxyQuery.json */
+/** NOTE: update this if updating src/services/mock/json/taskProxy.json */
 const INITIAL_DATA = {
   platform: '',
   script:
@@ -74,7 +74,7 @@ const localVue = createLocalVue()
 
 localVue.prototype.$workflowService = {
   query () {
-    return Promise.resolve(TaskProxyQuery.data)
+    return Promise.resolve(taskProxy.data)
   }
 }
 

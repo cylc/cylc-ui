@@ -317,6 +317,45 @@ class Tokens {
       }
     }
   }
+
+  tree () {
+    const ret = []
+    if (this.user) {
+      let tokens = new Tokens(`~${this.user}`)
+      ret.push(['user', this.user, tokens])
+      if (this.workflow) {
+        const parts = this.workflow.split('/')
+        const last = parts.pop()
+        for (const part of parts) {
+          if (!tokens.workflow) {
+            tokens = tokens.clone({ workflow: part })
+          } else {
+            tokens = tokens.clone({ workflow: `${tokens.workflow}/${part}` })
+          }
+          ret.push(['workflow-part', part, tokens])
+        }
+        if (tokens.workflow) {
+          tokens = tokens.clone({ workflow: `${tokens.workflow}/${last}` })
+        } else {
+          tokens = tokens.clone({ workflow: last })
+        }
+        ret.push(['workflow', last, tokens])
+        if (this.cycle && this.cycle[0] !== '$') {
+          tokens = tokens.clone({ cycle: this.cycle })
+          ret.push(['cycle', this.cycle, tokens])
+          if (this.task) {
+            tokens = tokens.clone({ task: this.task })
+            ret.push(['task', this.task, tokens])
+            if (this.job) {
+              tokens = tokens.clone({ job: this.job })
+              ret.push(['job', this.job, tokens])
+            }
+          }
+        }
+      }
+    }
+    return ret
+  }
 }
 
 export { Tokens }

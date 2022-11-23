@@ -19,10 +19,21 @@ ones in. -->
 command, a more convenient way to perform broadcasts by viewing and editing a
 task/family's runtime configuration.
 
+[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
+Graph view: A new view which displays tasks and dependencies as a graph (like
+the Cylc 7 graph view).
+
+[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
+Tree view: Task messages are now shown along with outputs.
+
 [#1124](https://github.com/cylc/cylc-ui/pull/1075) - Table view: More options
 for number of tasks per page.
 
 ### Fixes
+
+[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
+Tree view: Task outputs are now correctly associated with the jobs that created
+them.
 
 [#1075](https://github.com/cylc/cylc-ui/pull/1075) - Reverse default sort order
 of the table view so it matches the tree view.

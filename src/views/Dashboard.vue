@@ -39,8 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :max-width="50"
               type="table-cell"
               tile
-              >
-                <span class="headline font-weight-light">{{ item.count }}</span>
+            >
+              <span class="headline font-weight-light">{{ item.count }}</span>
             </v-skeleton-loader>
           </template>
           <template v-slot:item.text="{ item }">
@@ -166,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { mdiBook, mdiBookMultiple, mdiBookOpenVariant, mdiCog, mdiHubspot, mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -174,7 +174,6 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import GScanCallback from '@/components/cylc/gscan/callbacks'
 import { DASHBOARD_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
@@ -195,9 +194,7 @@ export default {
         DASHBOARD_DELTAS_SUBSCRIPTION,
         {},
         'root',
-        [
-          new GScanCallback()
-        ]
+        []
       ),
       workflowsHeader: [
         {
@@ -236,10 +233,15 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflows']),
+    ...mapState('user', ['user']),
+    ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getNodes']),
+    workflows () {
+      return this.getNodes('workflow')
+    },
     workflowsTable () {
       const count = Object.values(this.workflows)
-        .map(workflow => workflow.status)
+        .map(workflow => workflow.node.status)
         .reduce((acc, state) => {
           acc[state] = (acc[state] || 0) + 1
           return acc
@@ -253,7 +255,6 @@ export default {
           }
         })
     },
-    ...mapState('user', ['user']),
     multiUserMode () {
       return this.user.mode !== 'single user'
     }

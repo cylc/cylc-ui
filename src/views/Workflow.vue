@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <toolbar
       :views="views"
+      :workflow-name="workflowName"
       v-on:add="this.addView"
     ></toolbar>
     <div class="workflow-panel fill-height">
@@ -38,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <component
             :is="view"
             :workflow-name="workflowName"
-              class="h-100"
+            class="h-100"
           />
         </v-skeleton-loader>
       </lumino>
@@ -48,7 +49,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import Vue from 'vue'
-import { mapState } from 'vuex'
 import { each, iter } from '@lumino/algorithm'
 import pageMixin from '@/mixins'
 import graphqlMixin from '@/mixins/graphql'
@@ -59,6 +59,7 @@ import Lumino from '@/components/cylc/workflow/Lumino'
 import Toolbar from '@/components/cylc/workflow/Toolbar'
 import TableView from '@/views/Table'
 import TreeView from '@/views/Tree'
+import GraphView from '@/views/Graph'
 
 export default {
   name: 'Workflow',
@@ -94,7 +95,8 @@ export default {
      */
     views: [
       TreeView,
-      TableView
+      TableView,
+      GraphView
     ]
   }),
   created () {
@@ -105,7 +107,6 @@ export default {
     })
   },
   computed: {
-    ...mapState('workflows', ['workflow', 'table'])
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {

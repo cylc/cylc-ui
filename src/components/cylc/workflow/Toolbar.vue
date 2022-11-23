@@ -140,7 +140,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import {
   mdiMicrosoftXboxControllerMenu,
   mdiPause,
@@ -151,6 +151,7 @@ import {
 } from '@mdi/js'
 import toolbar from '@/mixins/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
+import graphql from '@/mixins/graphql'
 
 import {
   mutationStatus
@@ -159,7 +160,8 @@ import {
 export default {
   name: 'Toolbar',
   mixins: [
-    toolbar
+    toolbar,
+    graphql
   ],
   props: {
     views: {
@@ -187,31 +189,35 @@ export default {
   }),
   computed: {
     ...mapState('app', ['title']),
-    ...mapGetters('workflows', ['currentWorkflow']),
+    ...mapState('user', ['user']),
+    ...mapState('workflows', ['cylcTree']),
+    currentWorkflow () {
+      return this.cylcTree.$index[this.workflowId]
+    },
     isRunning () {
       return (
         this.currentWorkflow &&
         (
-          this.currentWorkflow.status === WorkflowState.RUNNING.name ||
-          this.currentWorkflow.status === WorkflowState.PAUSED.name ||
-          this.currentWorkflow.status === WorkflowState.STOPPING.name
+          this.currentWorkflow.node.status === WorkflowState.RUNNING.name ||
+          this.currentWorkflow.node.status === WorkflowState.PAUSED.name ||
+          this.currentWorkflow.node.status === WorkflowState.STOPPING.name
         )
       )
     },
     isPaused () {
       return (
         this.currentWorkflow &&
-        this.currentWorkflow.status === WorkflowState.PAUSED.name
+        this.currentWorkflow.node.status === WorkflowState.PAUSED.name
       )
     },
     isStopped () {
       return (
         !this.currentWorkflow ||
-        this.currentWorkflow.status === WorkflowState.STOPPED.name
+        this.currentWorkflow.node.status === WorkflowState.STOPPED.name
       )
     },
     statusMsg () {
-      return this.currentWorkflow.statusMsg || ''
+      return this.currentWorkflow.node.statusMsg || ''
     },
     enabled () {
       // object holding the states of controls that are supposed to be enabled
@@ -223,17 +229,17 @@ export default {
           this.isStopped &&
           (
             this.expecting.play === null ||
-            this.expecting.play === this.currentWorkflow.isRunning
+            this.expecting.play === this.isRunning
           )
         ),
         pauseToggle: (
           // the play/pause button
           !this.isStopped &&
           !this.expecting.stop &&
-          this.currentWorkflow.status !== WorkflowState.STOPPING.name &&
+          this.currentWorkflow.node.status !== WorkflowState.STOPPING.name &&
           (
             this.expecting.paused === null ||
-            this.expecting.paused === this.currentWorkflow.isPaused
+            this.expecting.paused === this.isPaused
           )
         ),
         stopToggle: (
@@ -241,7 +247,7 @@ export default {
           !this.isStopped &&
           (
             this.expecting.stop === null ||
-            this.expecting.stop === this.currentWorkflow.isStopped
+            this.expecting.stop === this.isStopped
           )
         )
       }

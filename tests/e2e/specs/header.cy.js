@@ -25,7 +25,7 @@ describe('Header Component', () => {
       .get('#username > .v-chip__content')
       .should('exist')
       .should('be.visible')
-      .contains('cylc')
+      .contains('user')
       .get('#host > .v-chip__content')
       .should('exist')
       .should('be.visible')

@@ -16,7 +16,7 @@
  */
 
 /* css namespace for job element */
-$cjob: ".c-job svg.job rect";
+$cjob: ".c-job .job rect";
 
 
 #{$cjob} {
@@ -26,7 +26,7 @@ $cjob: ".c-job svg.job rect";
 }
 
 .c-job {
-    svg.job {
+    .job {
         vertical-align: middle;
         /* scale the icon to the font-size */
         width: 1em;

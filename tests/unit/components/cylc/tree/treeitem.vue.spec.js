@@ -92,29 +92,19 @@ describe('TreeItem component', () => {
 
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
-    it('should display the cycle point expanded by default', () => {
-      const wrapper = mountFunction({
+    it('should expand nodes when configured', () => {
+      let wrapper = mountFunction({
         propsData: {
           node: simpleCyclepointNode,
-          depth: 0
+          autoExpandTypes: ['cycle']
         }
       })
       expect(wrapper).to.be.expanded()
-    })
-    it('should not display the cycle point expanded when set expanded=false', () => {
-      const wrapper = mountFunction({
-        propsData: {
-          node: simpleCyclepointNode,
-          initialExpanded: false
-        }
-      })
-      expect(wrapper).to.not.be.expanded()
-    })
-    it('should not display the task expanded by default', () => {
-      const wrapper = mountFunction({
+
+      wrapper = mountFunction({
         propsData: {
           node: simpleTaskNode,
-          depth: 0
+          autoExpandTypes: ['cycle']
         }
       })
       expect(wrapper).to.not.be.expanded()
@@ -148,8 +138,8 @@ describe('TreeItem component', () => {
         }
       })
       const task = wrapper.findAllComponents({ name: 'TreeItem' })
-      // 4 TreeItem components, 1 for workflow, 1 for cyclepoint, 1 for task, 1 for job
-      expect(task.length).to.equal(4)
+      // 5 TreeItem components, 1 for workflow, 1 for cyclepoint, 1 for task, 1 for job, 1 for job-details
+      expect(task.length).to.equal(5)
     })
   // })
   // describe('mixin', () => {

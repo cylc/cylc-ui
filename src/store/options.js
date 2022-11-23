@@ -18,7 +18,6 @@
 // Modules
 import { app } from './app.module'
 import { workflows } from './workflows.module'
-import { table } from './table.module'
 import { user } from './user.module'
 
 // State
@@ -65,7 +64,6 @@ export default {
   modules: {
     app,
     workflows,
-    table,
     user
   },
   actions,

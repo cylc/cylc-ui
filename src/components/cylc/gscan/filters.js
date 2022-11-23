@@ -23,7 +23,7 @@ import JobState from '@/model/JobState.model'
  * @returns {boolean}
  */
 export function filterByName (workflow, name) {
-  return workflow.node.name.toLowerCase().includes(name.toLowerCase())
+  return workflow.name.toLowerCase().includes(name.toLowerCase())
 }
 
 /**
@@ -113,7 +113,7 @@ export function filterHierarchically (workflows, name, workflowStates, taskState
         result.push(workflowNode)
         return result
       }
-    } else if (workflowNode.type === 'workflow-name-part' && workflowNode.children.length) {
+    } else if (workflowNode.type === 'workflow-part' && workflowNode.children.length) {
       const children = workflowNode.children.reduce(filterChildren, [])
       if (children.length) {
         result.push({ ...workflowNode, children })

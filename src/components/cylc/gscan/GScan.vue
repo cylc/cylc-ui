@@ -103,14 +103,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
       <!-- data -->
       <div
-        v-if="!isLoading && filteredWorkflows && filteredWorkflows.length > 0"
+        v-if="!isLoading"
         class="c-gscan-workflows flex-grow-1"
       >
         <tree
           :filterable="false"
           :expand-collapse-toggle="false"
-          :workflows="filteredWorkflows"
+          :workflows="workflows"
+          :stopOn="['workflow']"
+          :autoExpandTypes="['workflow-part', 'workflow']"
           class="c-gscan-workflow ma-0 pa-0"
+          ref="tree"
         >
           <template v-slot:node="scope">
             <workflow-icon
@@ -125,10 +128,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-list-item-title>
                 <v-layout align-center align-content-center d-flex flex-nowrap>
                   <v-flex
-                    v-if="scope.node.type === 'workflow-name-part'"
+                    v-if="scope.node.type === 'workflow-part'"
                     class="c-gscan-workflow-name"
                   >
-                    <span>{{ scope.node.node.name || scope.node.id }}</span>
+                    <span>{{ scope.node.name || scope.node.id }}</span>
                   </v-flex>
                   <v-flex
                     v-else-if="scope.node.type === 'workflow'"
@@ -207,10 +210,9 @@ import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
-import { addNodeToTree, createWorkflowNode } from '@/components/cylc/gscan/nodes'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
-import GScanCallback from '@/components/cylc/gscan/callbacks'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 
 export default {
   name: 'GScan',
@@ -228,9 +230,7 @@ export default {
         GSCAN_DELTAS_SUBSCRIPTION,
         {},
         'root',
-        [
-          new GScanCallback()
-        ]
+        []
       ),
       maximumTasksDisplayed: 5,
       svgPaths: {
@@ -313,15 +313,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('workflows', ['workflows']),
-    workflowNodes () {
-      // NOTE: In case we decide to allow the user to switch between hierarchical and flat
-      //       gscan view, then all we need to do is just pass a boolean data-property to
-      //       the `createWorkflowNode` function below. Then reactivity will take care of
-      //       the rest.
-      const reducer = (acc, workflow) => addNodeToTree(createWorkflowNode(workflow, /* hierarchy */true), acc)
-      return Object.values(this.workflows)
-        .reduce(reducer, [])
+    ...mapState('workflows', ['cylcTree']),
+    workflows () {
+      if (!this.cylcTree?.children.length) {
+        // no user in the data store (i.e. data loading)
+        return []
+      }
+      return sortedWorkflowTree(this.cylcTree)
     },
     /**
      * @return {Array<String>}
@@ -351,7 +349,7 @@ export default {
       deep: true,
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     },
     /**
@@ -361,13 +359,40 @@ export default {
     searchWorkflows: {
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, newVal, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.workflows, newVal, this.workflowStates, this.taskStates)
       }
     },
-    workflowNodes: {
+    workflows: {
       immediate: true,
       handler: function () {
-        this.filteredWorkflows = this.filterHierarchically(this.workflowNodes, this.searchWorkflows, this.workflowStates, this.taskStates)
+        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
+      }
+    },
+    filteredWorkflows: {
+      immediate: true,
+      handler: function () {
+        // build a list of IDs to display
+        // TODO: refactor the this.filterHierarchically code to make this nicer
+        const ids = []
+        const stack = [...this.filteredWorkflows]
+        let item
+        while (stack.length) {
+          // item = stack.splice(-1)[0]
+          item = stack.pop()
+          if (['workflow', 'workflow-part'].includes(item.type)) {
+            ids.push(item.id)
+            stack.push(...item.children)
+          }
+        }
+        // set the filtered attr on the treeItemCache of the tree nodes
+        if (!this.$refs.tree) {
+          // tree component has not been created yet
+          return
+        }
+        const cache = this.$refs.tree.treeItemCache
+        for (const id in cache) {
+          cache[id].filtered = ids.includes(id)
+        }
       }
     }
   },
@@ -406,7 +431,7 @@ export default {
 
     workflowLink (node) {
       if (node.type === 'workflow') {
-        return `/workflows/${ node.node.name }`
+        return `/workflows/${ node.tokens.workflow }`
       }
       return ''
     },

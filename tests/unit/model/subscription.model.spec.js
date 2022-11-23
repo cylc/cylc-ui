@@ -21,7 +21,6 @@ import gql from 'graphql-tag'
 import Subscription from '@/model/Subscription.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import ViewState from '@/model/ViewState.model'
-import WorkflowCallback from '@/components/cylc/common/callbacks'
 
 describe('SubscriptionQuery model', () => {
   const query = gql`query { workflow { id } }`
@@ -29,9 +28,7 @@ describe('SubscriptionQuery model', () => {
     workflowId: '~cylc/cylc'
   }
   const name = 'root'
-  const callbacks = [
-    new WorkflowCallback()
-  ]
+  const callbacks = []
   let subscriptionQuery
   beforeEach(() => {
     sinon.stub(console, 'debug')

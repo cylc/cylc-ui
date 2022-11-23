@@ -20,14 +20,26 @@ import chai, { expect } from 'chai'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Vuetify from 'vuetify'
-import { simpleWorkflowGscanNodes } from './gscan.data'
 import storeOptions from '@/store/options'
-import WorkflowState from '@/model/WorkflowState.model'
+import {
+  WorkflowState,
+  WorkflowStateOrder
+} from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import GScan from '@/components/cylc/gscan/GScan.vue'
-import TreeItem from '@/components/cylc/tree/TreeItem.vue'
-import { createWorkflowNode } from '@/components/cylc/gscan/nodes'
+import {
+  getWorkflowTreeSortValue,
+  sortedWorkflowTree
+} from '@/components/cylc/gscan/sort.js'
+import {
+  filterHierarchically
+} from '@/components/cylc/gscan/filters'
+
+import {
+  TEST_TREE,
+  listTree
+} from './utils'
 
 // Print full objects when tests fail
 chai.config.truncateThreshold = 0
@@ -67,7 +79,6 @@ Vue.use(Vuex)
 describe('GScan component', () => {
   const store = new Vuex.Store(storeOptions)
   const resetState = () => {
-    store.commit('workflows/SET_WORKFLOWS', [])
     store.commit('workflows/SET_WORKFLOW_NAME', null)
   }
   beforeEach(resetState)
@@ -102,431 +113,163 @@ describe('GScan component', () => {
     expect(isBusy).to.equal('true')
   })
 
-  it('should display the GScan with valid data', () => {
-    store.commit('workflows/SET_WORKFLOWS', simpleWorkflowGscanNodes)
-    const wrapper = mountFunction({})
-    expect(wrapper.vm.workflows[0].name).to.equal('five')
-    expect(wrapper.find('div')).to.not.equal(null)
-    expect(wrapper.html()).to.contain('five')
-  })
-
-  describe('createWorkflowNode', () => {
-    const workflow = {
-      id: '~user/a/b/c',
-      name: 'a/b/c',
-      status: WorkflowState.PAUSED.name,
-      stateTotals: {
-        [TaskState.FAILED.name]: 1
-      }
-    }
-    it('correctly creates a flat node', () => {
-      const node = createWorkflowNode(workflow, false)
-      expect(node.name).to.equal(null)
-      expect(node.id).to.equal('~user/a/b/c')
-    })
-    it('correctly creates a node hierarchy', () => {
-      const nodeHierarchy = createWorkflowNode(workflow, true)
-      expect(nodeHierarchy).to.deep.nested.include({
-        name: 'a',
-        'children[0].name': 'b',
-        'children[0].children[0].name': 'c'
-      })
-      expect(nodeHierarchy).to.not.have.nested.property(
-        'children[0].children[0].children'
-      )
-    })
-  })
-
   describe('Sorting', () => {
-    const createWorkflows = (namesAndStatuses) => {
-      return namesAndStatuses.map(nameAndStatus => {
-        return {
-          id: `~user/${nameAndStatus.name}`,
-          name: nameAndStatus.name,
-          status: nameAndStatus.status.name,
-          latestStateTasks: []
-        }
-      })
-    }
-    it('should sort workflows', () => {
-      const tests = [
-        // already sorted by name
-        {
-          workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'c', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.RUNNING },
-            { name: 'e', status: WorkflowState.RUNNING }
-          ]),
-          expected: ['a', 'b', 'c', 'd', 'e']
-        },
-        // already sorted by status
-        {
-          workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'c', status: WorkflowState.PAUSED },
-            { name: 'd', status: WorkflowState.PAUSED },
-            { name: 'e', status: WorkflowState.STOPPED }
-          ]),
-          expected: ['a', 'b', 'c', 'd', 'e']
-        },
-        // sort in alphabetical order
-        {
-          workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'e', status: WorkflowState.RUNNING },
-            { name: 'c', status: WorkflowState.RUNNING },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.RUNNING }
-          ]),
-          expected: ['a', 'b', 'c', 'd', 'e']
-        },
-        // running/paused/stopping grouped together and sorted, then the rest...
-        {
-          workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'e', status: WorkflowState.PAUSED },
-            { name: 'c', status: WorkflowState.STOPPED },
-            { name: 'b', status: WorkflowState.STOPPED },
-            { name: 'd', status: WorkflowState.STOPPED }
-          ]),
-          expected: ['a', 'e', 'b', 'c', 'd']
-        },
-        // sorted alphabetically within statuses (running/paused/stopping are grouped together)
-        {
-          workflows: createWorkflows([
-            { name: 'e', status: WorkflowState.PAUSED },
-            { name: 'a', status: WorkflowState.PAUSED },
-            { name: 'c', status: WorkflowState.STOPPED },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.STOPPED }
-          ]),
-          expected: ['a', 'b', 'e', 'c', 'd']
-        },
-        {
-          workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.PAUSED },
-            { name: 'c', status: WorkflowState.STOPPED },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.STOPPED },
-            { name: 'e', status: WorkflowState.PAUSED }
-          ]),
-          expected: ['a', 'b', 'e', 'c', 'd']
-        },
-        // new statuses (stopping, error)
-        {
-          workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.PAUSED },
-            { name: 'c', status: WorkflowState.STOPPED },
-            { name: 'b', status: WorkflowState.RUNNING },
-            { name: 'd', status: WorkflowState.STOPPED },
-            { name: 'e', status: WorkflowState.PAUSED },
-            { name: 'f', status: WorkflowState.PAUSED },
-            { name: 'h', status: WorkflowState.STOPPING },
-            { name: 'g', status: WorkflowState.ERROR },
-            { name: 'j', status: WorkflowState.STOPPING },
-            { name: 'i', status: WorkflowState.STOPPED },
-            { name: 'k', status: WorkflowState.RUNNING },
-            { name: 'l', status: WorkflowState.PAUSED }
-          ]),
-          expected: ['a', 'b', 'e', 'f', 'h', 'j', 'k', 'l', 'c', 'd', 'i', 'g']
-        },
-        // sorting by type too
-        {
-          workflows: createWorkflows([
-            { name: 'a', status: WorkflowState.RUNNING },
-            { name: 'a/b', status: WorkflowState.RUNNING }
-          ]),
-          expected: ['b', 'a']
-        },
-        {
-          workflows: createWorkflows([
-            { name: 'a/b', status: WorkflowState.RUNNING },
-            { name: 'a', status: WorkflowState.RUNNING }
-          ]),
-          expected: ['b', 'a']
-        }
-      ]
-      tests.forEach(test => {
-        store.commit('workflows/SET_WORKFLOWS', test.workflows)
-        const wrapper = mountFunction()
-        // We will have all TreeItem elements, workflow-name-part's, and workflow's.
-        const workflowsElements = wrapper.findAllComponents(TreeItem)
-          .filter((treeItem) => {
-            return treeItem.vm.node.type === 'workflow'
+    it('should set workflow sort order by status', () => {
+      // for each worflow state ...
+      for (const workflowState of WorkflowState) {
+        // ... except ERROR
+        if (workflowState === WorkflowState.ERROR) { continue }
+
+        // it should associate a workflow with the correct sort order
+        expect(
+          getWorkflowTreeSortValue({
+            type: 'workflow',
+            node: { status: workflowState.name },
+            children: []
           })
-        expect(workflowsElements.length).to.equal(test.expected.length)
-        for (let i = 0; i < test.expected.length; i++) {
-          expect(test.expected[i]).to.equal(
-            workflowsElements.at(i).element.textContent,
-            `Sort failed for given ${JSON.stringify(test.workflows)} using ${test.expected}`
-          )
-        }
-      })
+        ).to.equal(WorkflowStateOrder.get(workflowState.name))
+
+        // it should associate a nested workflow with the correct sort order
+        expect(
+          getWorkflowTreeSortValue({
+            type: 'workflow-part',
+            node: {},
+            children: [
+              {
+                type: 'workflow',
+                node: { status: workflowState.name },
+                children: []
+              },
+              {
+                // a workflow with no state shouldn't mess with the sort order
+                type: 'workflow',
+                node: { status: undefined },
+                children: []
+              }
+            ]
+          })
+        ).to.equal(WorkflowStateOrder.get(workflowState.name))
+      }
+    })
+    it('should sort workflows', () => {
+      // it should sort by status then name
+      expect(
+        listTree(sortedWorkflowTree(TEST_TREE))
+      ).to.deep.equal([
+        '~u/b', '~u/c', '~u/a/x1', '~u/a/x2'
+      ])
     })
   })
+
   describe('Filters', () => {
-    const workflows = [
-      {
-        id: '~user/1',
-        name: 'new zealand',
-        status: WorkflowState.PAUSED.name,
-        stateTotals: {
-          [TaskState.FAILED.name]: 1
-        }
-      },
-      {
-        id: '~user/2',
-        name: 'zeeland',
-        status: WorkflowState.RUNNING.name,
-        stateTotals: {
-          [TaskState.RUNNING.name]: 1
-        }
-      },
-      {
-        id: '~user/research/test/a/run1',
-        name: 'research/test/a/run1',
-        status: WorkflowState.PAUSED.name,
-        stateTotals: {}
-      },
-      {
-        id: '~user/research/test/b/run1',
-        name: 'research/test/b/run1',
-        status: WorkflowState.PAUSED.name,
-        stateTotals: {}
-      },
-      {
-        id: '~user/research',
-        name: 'research',
-        status: WorkflowState.STOPPED.name,
-        stateTotals: {}
-      }
-    ]
-    const initialWorkflowStates = WorkflowState.enumValues.map(state => {
-      return {
-        text: state.name,
-        value: state,
-        model: true
-      }
+    it("shouldn't filter out workflows incorrectly", () => {
+      expect(
+        listTree(
+          filterHierarchically(
+            sortedWorkflowTree(TEST_TREE),
+            // don't filter by name
+            null,
+            // filter for all workflow states
+            [...WorkflowStateOrder.keys()],
+            // filter for all task states
+            []
+          )
+        )
+      ).to.deep.equal(['~u/b', '~u/c', '~u/a/x1', '~u/a/x2'])
     })
-    const initialWorkflowTaskStates = TaskState.enumValues.map(state => {
-      return {
-        text: state.name,
-        value: state,
-        model: false
-      }
+    it('should filter by workflow state', () => {
+      expect(
+        listTree(
+          filterHierarchically(
+            sortedWorkflowTree(TEST_TREE),
+            // don't filter by name
+            null,
+            [WorkflowState.RUNNING.name],
+            // filter for all task states
+            []
+          )
+        )
+      ).to.deep.equal(['~u/c'])
+      expect(
+        listTree(
+          filterHierarchically(
+            sortedWorkflowTree(TEST_TREE),
+            // don't filter by name
+            null,
+            [WorkflowState.STOPPING.name],
+            // filter for all task states
+            []
+          )
+        )
+      ).to.deep.equal(['~u/b'])
+      expect(
+        listTree(
+          filterHierarchically(
+            sortedWorkflowTree(TEST_TREE),
+            // don't filter by name
+            null,
+            [WorkflowState.STOPPED.name],
+            // filter for all task states
+            []
+          )
+        )
+      ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
     })
-    /**
-     * Helper function to retrieve the workflows in a nested hierarchy.
-     *
-     * @param {Array<WorkflowGScanNode|WorkflowNamePartGScanNode>} hierarchicalWorkflows
-     * @returns {Array<WorkflowGScanNode|WorkflowNamePartGScanNode>}
-     */
-    const getWorkflows = (hierarchicalWorkflows) => {
-      const reducer = (result, workflowNode) => {
-        if (workflowNode.type === 'workflow-name-part') {
-          return workflowNode.children.reduce(reducer, result)
-        }
-        result.push(workflowNode)
-        return result
-      }
-      return hierarchicalWorkflows.reduce(reducer, [])
-    }
-    // utility function to create the list of filters, used by tests below
-    const createStatesFilters = (workflowStates, workflowTaskStates) => {
-      return [
-        {
-          title: 'workflow state',
-          items: workflowStates
-        },
-        {
-          title: 'task state',
-          items: workflowTaskStates
-        }
-      ]
-    }
-    it('should have a default state of no name filter, and all states enabled', () => {
-      store.commit('workflows/SET_WORKFLOWS', workflows)
-      const wrapper = mountFunction({})
-      // read: give me all the workflows in RUNNING/PAUSED/STOPPED, no
-      //       matter their names or their tasks' states.
-      // no workflow name filtered initially
-      expect(wrapper.vm.searchWorkflows).to.equal('')
-      // every workflow state filter is ON initially
-      const workflowStateFiltersOn = wrapper.vm.filters[0].items
-        .map(filterItem => filterItem.model)
-      expect(workflowStateFiltersOn.every(model => model)).to.equal(true)
-      // every task state filter is OFF initially
-      const taskStateFiltersOn = wrapper.vm.filters[1].items
-        .map(filterItem => filterItem.model)
-      expect(taskStateFiltersOn.some(model => model)).to.equal(false)
-      // we will have the two items being displayed too
-      const filtered = getWorkflows(wrapper.vm.filteredWorkflows)
-      expect(filtered.length).to.equal(5)
+    it('should filter by workflow name', () => {
+      expect(
+        listTree(
+          filterHierarchically(
+            sortedWorkflowTree(TEST_TREE),
+            'x',
+            // filter for all workflow states
+            [...WorkflowStateOrder.keys()],
+            // filter for all task states
+            []
+          )
+        )
+      ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
+      // check it isn't matching the user name
+      expect(
+        listTree(
+          filterHierarchically(
+            sortedWorkflowTree(TEST_TREE),
+            'u',
+            // filter for all workflow states
+            [...WorkflowStateOrder.keys()],
+            // filter for all task states
+            []
+          )
+        )
+      ).to.deep.equal([])
     })
-    it('should not filter by name, nor by tasks state by default, but should include all workflow states', () => {
-      store.commit('workflows/SET_WORKFLOWS', workflows)
-      const wrapper = mountFunction({})
-      wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
-        wrapper.vm.workflowNodes,
-        wrapper.vm.searchWorkflows,
-        wrapper.vm.workflowStates,
-        wrapper.vm.taskStates
-      )
-      // we will have the two items being displayed too
-      const filtered = getWorkflows(wrapper.vm.filteredWorkflows)
-      const raw = getWorkflows(wrapper.vm.workflowNodes)
-      expect(filtered.length).to.equal(raw.length)
-    })
-    describe('Filter by workflow name', () => {
-      it('should filter by name', () => {
-        const tests = [
-          {
-            searchWorkflow: '',
-            expected: 5
-          },
-          {
-            searchWorkflow: 'new',
-            expected: 1
-          },
-          {
-            searchWorkflow: 'NEW',
-            expected: 1
-          },
-          {
-            searchWorkflow: 'neW',
-            expected: 1
-          },
-          {
-            searchWorkflow: 'land',
-            expected: 2
-          },
-          {
-            searchWorkflow: 'dog',
-            expected: 0
-          }
-        ]
-        tests.forEach(test => {
-          store.commit('workflows/SET_WORKFLOWS', workflows)
-          const wrapper = mountFunction({})
-          let filtered = getWorkflows(wrapper.vm.filteredWorkflows)
-          const raw = getWorkflows(wrapper.vm.workflowNodes)
-          expect(filtered.length).to.equal(raw.length)
-          wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
-            wrapper.vm.workflowNodes,
-            test.searchWorkflow,
-            wrapper.vm.workflowStates,
-            wrapper.vm.taskStates)
-          filtered = getWorkflows(wrapper.vm.filteredWorkflows)
-          expect(filtered.length).to.equal(test.expected)
-        })
-      })
-    })
-    describe('Filter by workflow state', () => {
-      it('should filter by workflow state', () => {
-        const tests = [
-          // all states enabled
-          {
-            workflowStates: WorkflowState.enumValues,
-            expected: 5
-          },
-          // enable only the ones we have in our test data set
-          {
-            workflowStates: [WorkflowState.RUNNING, WorkflowState.PAUSED],
-            expected: 4
-          },
-          // enable just one of the values we have in our test data set
-          {
-            workflowStates: [WorkflowState.RUNNING],
-            expected: 1
-          },
-          // leave the ones we have in our test data set un-checked
-          {
-            workflowStates: [],
-            expected: 0
-          }
-        ]
-        tests.forEach(test => {
-          const workflowStates = initialWorkflowStates
-            .map(state => {
-              if (test.workflowStates.includes(state.value)) {
-                return Object.assign({}, state, { model: true })
-              }
-              return Object.assign({}, state, { model: false })
-            })
-          store.commit('workflows/SET_WORKFLOWS', workflows)
-          const wrapper = mountFunction({})
-          const filters = createStatesFilters(workflowStates, initialWorkflowTaskStates)
-          wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
-            wrapper.vm.workflowNodes,
-            '',
-            filters[0]
-              .items
-              .filter(item => item.model)
-              .map(item => item.value.name),
-            filters[1]
-              .items
-              .filter(item => item.model)
-              .map(item => item.value.name))
-          const filtered = getWorkflows(wrapper.vm.filteredWorkflows)
-          expect(filtered.length).to.equal(test.expected)
-        })
-      })
-    })
-    describe('Filter by workflow tasks state', () => {
-      it('should filter by workflow tasks state', () => {
-        const tests = [
-          // all states enabled
-          {
-            workflowTaskStates: TaskState.enumValues,
-            expected: 2
-          },
-          // enable only the ones we have in our test data set
-          {
-            workflowTaskStates: [TaskState.RUNNING, TaskState.FAILED],
-            expected: 2
-          },
-          // enable just one of the values we have in our test data set
-          {
-            workflowTaskStates: [TaskState.RUNNING],
-            expected: 1
-          },
-          // un-checking means every task state enabled
-          {
-            workflowTaskStates: [],
-            expected: 5
-          }
-        ]
-        tests.forEach(test => {
-          const workflowTaskStates = initialWorkflowTaskStates
-            .map(state => {
-              if (test.workflowTaskStates.includes(state.value)) {
-                return Object.assign({}, state, { model: true })
-              }
-              return Object.assign({}, state, { model: false })
-            })
-          store.commit('workflows/SET_WORKFLOWS', workflows)
-          const wrapper = mountFunction({})
-          const filters = createStatesFilters(initialWorkflowStates, workflowTaskStates)
-          wrapper.vm.filteredWorkflows = wrapper.vm.filterHierarchically(
-            wrapper.vm.workflowNodes,
-            '',
-            filters[0]
-              .items
-              .filter(item => item.model)
-              .map(item => item.value.name),
-            filters[1]
-              .items
-              .filter(item => item.model)
-              .map(item => item.value.name))
-          const filtered = getWorkflows(wrapper.vm.filteredWorkflows)
-          expect(filtered.length).to.equal(test.expected)
-        })
-      })
+    it('should filter by workflow state totals', () => {
+      expect(
+        listTree(
+          filterHierarchically(
+            sortedWorkflowTree(TEST_TREE),
+            null,
+            // filter for all workflow states
+            [...WorkflowStateOrder.keys()],
+            // filter for all task states
+            [TaskState.RUNNING.name]
+          )
+        )
+      ).to.deep.equal(['~u/b'])
+      expect(
+        listTree(
+          filterHierarchically(
+            sortedWorkflowTree(TEST_TREE),
+            null,
+            // filter for all workflow states
+            [...WorkflowStateOrder.keys()],
+            // filter for all task states
+            [TaskState.SUBMITTED.name]
+          )
+        )
+      ).to.deep.equal(['~u/c'])
     })
   })
+
   describe('Workflow link', () => {
     it('should create an empty link for non-workflow nodes', () => {
       const link = GScan.methods.workflowLink({})
@@ -535,13 +278,12 @@ describe('GScan component', () => {
     it('should create a link for a workflow node', () => {
       const link = GScan.methods.workflowLink({
         type: 'workflow',
-        node: {
-          name: 'name'
-        }
+        tokens: { workflow: 'a/b/c' }
       })
-      expect(link).to.equal('/workflows/name')
+      expect(link).to.equal('/workflows/a/b/c')
     })
   })
+
   describe('Toggle items values', () => {
     it('should toggle items values to true', () => {
       const items = [

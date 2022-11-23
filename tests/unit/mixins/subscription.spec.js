@@ -75,7 +75,7 @@ describe('Subscription mixin', () => {
     }
   })
   it('should set the application alert', () => {
-    expect(store.state.alert).to.equal(null)
+    store.state.alert = null
     const Component = {
       mixins: [subscriptionMixin],
       render () {}
