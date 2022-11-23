@@ -104,6 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               text
               :color="isValid ? 'primary' : 'error'"
               @click="submit"
+              :loading="submitting"
               v-bind="attrs"
               v-on="on"
               data-cy="submit"
@@ -114,14 +115,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <span>Form contains invalid or missing values!</span>
         </v-tooltip>
       </v-card-actions>
-      <p
-       style="font-size:1.5em;"
-       v-if="status !== 'waiting'"
+      <v-snackbar
+        v-model="showSnackbar"
+        v-bind="snackbarProps"
+        data-cy="response-snackbar"
       >
-        <Task :status="status"/>
-        {{ status }}
-      </p>
-      <pre v-if="status === 'failed'">{{ response }}</pre>
+        {{ response.msg }}
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            @click="showSnackbar = false"
+            icon
+            v-bind="attrs"
+            data-cy="snackbar-close"
+          >
+            <v-icon>
+              {{ $options.icons.close }}
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-card>
 </template>
 
@@ -129,26 +141,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
 import Markdown from '@/components/Markdown'
-import Task from '@/components/cylc/Task.vue'
 import {
   getMutationShortDesc,
   getMutationExtendedDesc
 } from '@/utils/aotf'
-
-// enumeration for the mutation status, maps onto Cylc Task status
-const status = Object.freeze({
-  waiting: 'waiting',
-  submitted: 'submitted',
-  succeeded: 'succeeded',
-  failed: 'failed',
-  submitFailed: 'submit-failed'
-})
-
-// initial state defined here so we can easily reset the component data
-const initialState = Object.freeze({
-  response: '',
-  status: status.waiting
-})
+import { mdiClose } from '@mdi/js'
 
 export default {
   name: 'mutation',
@@ -156,8 +153,7 @@ export default {
   components: {
     EditRuntimeForm,
     FormGenerator,
-    Markdown,
-    Task
+    Markdown
   },
 
   props: {
@@ -188,8 +184,12 @@ export default {
   },
 
   data: () => ({
-    ...initialState,
-    isValid: false
+    isValid: false,
+    submitting: false,
+    response: {
+      msg: null,
+      level: 'warn'
+    }
   }),
 
   computed: {
@@ -200,18 +200,53 @@ export default {
     /* Return the subsequent lines of the description */
     extendedDescription () {
       return getMutationExtendedDesc(this.mutation.description)
+    },
+    showSnackbar: {
+      get () {
+        return Boolean(this.response.msg)
+      },
+      set (val) {
+        if (!val) this.response.msg = null
+      }
+    },
+    snackbarProps () {
+      return this.response.level === 'error'
+        ? {
+          timeout: -1,
+          color: 'red accent-2',
+          dark: true
+        }
+        : {
+          timeout: 4e3,
+          color: 'amber accent-2',
+          light: true
+        }
     }
   },
 
   methods: {
     /* Execute the GraphQL mutation */
     submit () {
-      this.status = status.submitted
-      this.$refs.form.submit().then(({ status }) => {
-        this.status = status.name.replace('_', '-')
+      this.submitting = true
+      this.$refs.form.submit().then(response => {
+        this.submitting = false
+        if (response.status.name.includes('failed')) {
+          this.response.msg = response.message
+          this.response.level = 'error'
+        } else if (response.status.name === 'warn') {
+          this.response.msg = response.message
+          this.response.level = 'warn'
+        } else {
+          // Close the form on success
+          this.cancel()
+        }
       })
     }
-  }
+  },
 
+  // Misc options
+  icons: {
+    close: mdiClose
+  }
 }
 </script>

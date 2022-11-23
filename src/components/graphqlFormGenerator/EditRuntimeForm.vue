@@ -158,9 +158,12 @@ export default {
       const tokens = new Tokens(this.cylcObject.id)
       const settings = this.getBroadcastData()
       if (!settings.length) {
-        // eslint-disable-next-line no-console
-        console.warn('No changes to broadcast') // TODO
-        return
+        return {
+          message: 'No changes were made',
+          status: {
+            name: 'warn'
+          }
+        }
       }
       const args = {
         cutoff: null,
@@ -171,15 +174,11 @@ export default {
         workflows: [tokens.workflow_id]
       }
       const mutation = await this.$workflowService.getMutation('broadcast')
-      const response = await mutate(
+      return await mutate(
         mutation,
         args,
         this.$workflowService.apolloClient
       )
-      // Reset after submission (no need to await)
-      // TODO: remove this if we decide to auto close mutation forms on submission
-      this.reset()
-      return response
     },
 
     /**

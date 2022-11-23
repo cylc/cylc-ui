@@ -125,6 +125,47 @@ describe('Edit Runtime form', () => {
           ]
         })
       })
+      // Form should close
+      .get('.c-mutation-dialog')
+      .should('not.exist')
+  })
+
+  it('handles a form with zero diff', () => {
+    openMenu('retrying')
+    getMenuItem().click()
+
+    getInputListItem('Outputs')
+      // Add an empty item
+      .find('button[data-cy="add"]')
+      .click()
+    getInputListItem('Env Script')
+      // Re-type the same thing into an input
+      .find('textarea')
+      .as('input')
+      .invoke('val')
+      .then(val => {
+        cy.get('@input')
+          .clear()
+          .type(val)
+      })
+
+    // Submit form
+    cy
+      .then(() => {
+        expect(receivedMutations.length).to.eq(0)
+      })
+      .get('[data-cy="submit"]')
+      .click()
+      .then(() => {
+        expect(receivedMutations.length).to.eq(0)
+      })
+      .get('[data-cy="response-snackbar"]')
+      .find('div[role="status"]')
+      .invoke('text')
+      .should('include', 'No changes were made')
+      // Form should stay open
+      .get('.c-mutation-dialog')
+      .should('be.visible')
   })
 
   it('shows Edit Runtime as an option for namespaces only', () => {
