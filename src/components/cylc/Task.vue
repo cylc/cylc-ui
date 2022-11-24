@@ -42,8 +42,6 @@ export default {
       required: true
     },
     startTime: {
-      // TODO: aim to remove this in due course
-      // (we should be able to obtain this directly from the task)
       required: false
     },
     modifierSize: {

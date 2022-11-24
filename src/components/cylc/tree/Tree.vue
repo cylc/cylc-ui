@@ -240,6 +240,7 @@ export default {
     // NOTE: this isn't reactive, however, changing the value requires
     // navigating away from this view so it doesn't have to be
     // TODO: make this a view-specific configuration
+    // https://github.com/cylc/cylc-ui/issues/1146
     let cyclePointsOrderDesc = true
     if (localStorage.cyclePointsOrderDesc) {
       cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
