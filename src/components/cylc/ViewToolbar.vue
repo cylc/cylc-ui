@@ -52,10 +52,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 export default {
+  name: 'ViewToolbar',
   props: {
     groups: {
       required: true,
       type: Array
+      /*
+        groups: [
+          {
+            // display name
+            title: String,
+            // list of controls in this group
+            controls: [
+              {
+                // display name
+                title: String,
+                // unique key:
+                // * Provided with "setOption" events.
+                // * Used by enableIf/disableIf
+                // * Added to the control's class list for testing.
+                key: String
+                // action to perform when clicked:
+                // * toggle - toggle true/false
+                // * callback - call the provided callback
+                action: String
+                // for use with action='callback'
+                callback: Fuction
+                // list of keys
+                // only enable this control if all of the listed controls have
+                // truthy values
+                enableif
+                // list of keys
+                // disable this control if any of the listed controls have
+                // truthy values
+                disableIf
+              }
+            ]
+          }
+        ]
+      */
     }
   },
   computed: {
@@ -120,7 +155,7 @@ export default {
   },
   methods: {
     toggle (control, e) {
-      // toogle a boolean value
+      // toggle a boolean value
       // NOTE: undefined is interpreted is false
       control.value = !control.value
       this.$emit('setOption', control.key, control.value)
@@ -149,14 +184,31 @@ export default {
 
 <style lang="scss">
   .c-view-toolbar {
+    // give the toolbar a little respect space
     padding: 0.5rem 0 0.5rem 0;
 
     .group {
+      // put a bit of space between the groups
       padding-right: 0.5rem;
       display: inline-block;
 
+      &:before {
+        // place a divider between groups
+        content: '|';
+        font-size: 2rem;
+        position: relative;
+        top: 0.5rem; // because the font is x2 nudge it down 1/2
+        color: rgb(200, 200, 200);
+      }
+      &:first-child:before {
+        // don't add a divider on the first group
+        content: '';
+      }
+
       .control {
+        // put a bit of space between the controls
         padding: 0 0 0 0.5rem;
+        // make them sit side-by-side
         display: inline-block;
       }
     }

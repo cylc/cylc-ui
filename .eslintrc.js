@@ -19,11 +19,13 @@ module.exports = {
   root: true,
   env: {
     node: true
+    // 'cypress/globals': true
   },
   extends: [
     'standard',
     'eslint:recommended',
-    'plugin:vue/essential'
+    'plugin:vue/essential',
+    'plugin:cypress/recommended'
   ],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
