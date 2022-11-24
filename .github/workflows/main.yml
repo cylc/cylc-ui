@@ -58,8 +58,16 @@ jobs:
         include:
           - os: ubuntu-20.04
             browser: firefox
+            type: 'e2e'
+          - os: ubuntu-20.04
+            browser: firefox
+            type: 'component'
           - os: ubuntu-latest
             browser: chrome
+            type: 'e2e'
+          - os: ubuntu-latest
+            browser: chrome
+            type: 'component'
 # TODO: re-enable once macos build is stable #590
 #          - os: macos-latest
 #            browser: edge
@@ -72,13 +80,17 @@ jobs:
         with:
           node-version: '16'
 
-      - name: e2e
+      - name: Test
         uses: cypress-io/github-action@v4
         with:
           start: yarn run serve --hide=CLIENT  # turn off build output because it's absurdly long
           wait-on: http://localhost:8080/
           config-file: cypress.config.js
-          spec: "tests/e2e/**/*"
+          component: ${{ matrix.type == 'component' }}
+          spec: |
+            tests/e2e/**/*
+            cypress/component/*
+            cypress/component/**/*
           browser: ${{ matrix.browser }}
         env:
           CYPRESS_baseUrl: http://localhost:8080/
@@ -94,6 +106,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
-          name: '${{ github.job }} ${{ matrix.os }} ${{ matrix.browser }}'
-          flags: e2e
+          name: '${{ github.job }} ${{ matrix.os }} ${{ matrix.browser }} ${{ matrix.type }}'
+          flags: ${{ matrix.type }}
           fail_ci_if_error: false
