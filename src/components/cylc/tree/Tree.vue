@@ -70,12 +70,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               @change="filterTasks"
             >
               <template v-slot:item="slotProps">
-                <Task :status="slotProps.item.value"/>
+                <Task :task="{ state: slotProps.item.value }" />
                 <span class="ml-2">{{ slotProps.item.value }}</span>
               </template>
               <template v-slot:selection="slotProps">
                 <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
-                  <Task :status="slotProps.item.value"/>
+                  <Task :task="{ state: slotProps.item.value }" />
                 </div>
                 <span
                   v-if="slotProps.index === maximumTasks"
@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:activator="{ on }">
               <v-btn
                 v-on="on"
-                @click="expandAll((treeitem) => !['task-proxy', 'job', 'job-details'].includes(treeitem.node.type))"
+                @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
                 icon
               >
                 <v-icon>{{ svgPaths.expandIcon }}</v-icon>
@@ -132,15 +132,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="mh-100 position-relative"
       >
         <v-container
-            fluid
+          fluid
           class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
         >
           <tree-item
-            v-for="workflow of workflows"
-            :key="workflow.id"
-            :node="workflow"
+            v-for="child of rootChildren"
+            :key="child.id"
+            :node="child"
+            :stopOn="stopOn"
             :hoverable="hoverable"
-            :initialExpanded="expanded"
+            :autoExpandTypes="autoExpandTypes"
+            :cyclePointsOrderDesc="cyclePointsOrderDesc"
             v-on:tree-item-created="onTreeItemCreated"
             v-on:tree-item-destroyed="onTreeItemDestroyed"
             v-on:tree-item-expanded="onTreeItemExpanded"
@@ -162,6 +164,7 @@ import { mdiPlus, mdiMinus } from '@mdi/js'
 import TaskState from '@/model/TaskState.model'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import Task from '@/components/cylc/Task'
+import { getNodeChildren } from '@/components/cylc/tree/util'
 
 export default {
   name: 'Tree',
@@ -169,6 +172,13 @@ export default {
     workflows: {
       type: Array,
       required: true
+    },
+    stopOn: {
+      // Array of node types to stop recursion on
+      // i.e. don't show child nodes below the provided types
+      type: Array,
+      required: false,
+      default: () => []
     },
     hoverable: Boolean,
     activable: Boolean,
@@ -180,6 +190,24 @@ export default {
     expandCollapseToggle: {
       type: Boolean,
       default: true
+    },
+    autoExpandTypes: {
+      // Array of Cylc "types" (e.g. workflow, cycle, etc) to be auto-expanded
+      // on initial load
+      type: Array,
+      required: false,
+      default: () => []
+    },
+    autoStripTypes: {
+      // If there is only one child of the root node and its type is listed in
+      // this array then it will be stripped from the tree.
+      // Use this to avoid displaying unnecessary nodes, e.g. if there is only
+      // one workflow in the tree and this is set to ['workflow'] then the
+      // workflow node will be stripped, leaving behind its cycle points as
+      // root nodes.
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   components: {
@@ -203,10 +231,38 @@ export default {
       svgPaths: {
         expandIcon: mdiPlus,
         collapseIcon: mdiMinus
-      }
+      },
+      cyclePointsOrderDesc: true
     }
   },
+  mounted () {
+    // set cyclePointsOrderDesc
+    // NOTE: this isn't reactive, however, changing the value requires
+    // navigating away from this view so it doesn't have to be
+    // TODO: make this a view-specific configuration
+    // https://github.com/cylc/cylc-ui/issues/1146
+    let cyclePointsOrderDesc = true
+    if (localStorage.cyclePointsOrderDesc) {
+      cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
+    }
+    this.cyclePointsOrderDesc = cyclePointsOrderDesc
+  },
   computed: {
+    rootChildren () {
+      // array of nodes at the top of the tree
+      if (
+        this.workflows.length === 1 &&
+        this.autoStripTypes.includes(this.workflows[0].type)
+      ) {
+        // if there is only one workflow we return its children
+        // (i.e. cycle points)
+        return getNodeChildren(this.workflows[0], this.cyclePointsOrderDesc)
+      } else {
+        // if there are multiple children we need to include the workflow
+        // nodes to allow us to differentiate between them
+        return this.workflows
+      }
+    },
     taskStates: () => {
       return TaskState.enumValues.map(taskState => {
         return {
@@ -273,18 +329,27 @@ export default {
     },
     filterNode (node) {
       let filtered = false
-      if (['cyclepoint', 'family-proxy'].includes(node.type)) {
+      if (node.type === 'cycle') {
+        // follow the family tree from cycle point nodes
+        for (const child of node.familyTree[0]?.children || []) {
+          filtered = this.filterNode(child) || filtered
+        }
+      } else if (['workflow', 'family'].includes(node.type)) {
+        // follow children for workflow or family nodes
         for (const child of node.children) {
           filtered = this.filterNode(child) || filtered
         }
-      } else if (node.type === 'task-proxy') {
+      } else if (node.type === 'task') {
         if (this.filterByTaskName() && this.filterByTaskState()) {
-          filtered = node.node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
+          filtered = node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
         } else if (this.filterByTaskName()) {
-          filtered = node.node.name.includes(this.activeFilters.name)
+          filtered = node.name.includes(this.activeFilters.name)
         } else if (this.filterByTaskState()) {
           filtered = this.tasksFilterStates.includes(node.node.state)
         }
+      }
+      if (!this.treeItemCache[node.id]) {
+        this.treeItemCache[node.id] = {}
       }
       this.treeItemCache[node.id].filtered = filtered
       return filtered

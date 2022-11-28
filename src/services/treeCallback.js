@@ -15,45 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import DeltasCallback from '@/services/callbacks'
-import {
-  applyDeltasAdded,
-  applyDeltasUpdated,
-  applyDeltasPruned
-} from '@/components/cylc/common/deltas'
 
-class WorkflowCallback extends DeltasCallback {
-  constructor () {
-    super()
-    this.lookup = null
-  }
-
-  before (deltas, store, errors) {
-    this.lookup = Object.assign({}, store.state.workflows.lookup)
+class CylcTreeCallback extends DeltasCallback {
+  init (store, errors) {
+    if (!this.inited) {
+      // only init once
+      store.commit('workflows/CREATE')
+      this.inited = true
+    }
   }
 
   tearDown (store, errors) {
-    store.commit('workflows/SET_LOOKUP', {})
-    this.lookup = null
+    // never tear down, this callback lives for the live of the UI
   }
 
   onAdded (added, store, errors) {
-    const results = applyDeltasAdded(added, this.lookup)
-    errors.push(...results.errors)
+    // console.log('ADDED', added)
+    store.commit('workflows/UPDATE_DELTAS', added)
   }
 
   onUpdated (updated, store, errors) {
-    const results = applyDeltasUpdated(updated, this.lookup)
-    errors.push(...results.errors)
+    // console.log('UPDATED', updated)
+    store.commit('workflows/UPDATE_DELTAS', updated)
   }
 
   onPruned (pruned, store, errors) {
-    const results = applyDeltasPruned(pruned, this.lookup)
-    errors.push(...results.errors)
+    store.commit('workflows/REMOVE_DELTAS', pruned)
   }
 
-  commit (store, errors) {
-    store.commit('workflows/SET_LOOKUP', this.lookup)
-  }
+  // this callback does not need the before and commit methods
+  before (a, b, c) {}
+  commit (a, b, c) {}
 }
 
-export default WorkflowCallback
+export default CylcTreeCallback

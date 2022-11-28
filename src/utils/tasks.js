@@ -16,6 +16,7 @@
  */
 
 import TaskState from '@/model/TaskState.model'
+import { TASK_OUTPUT_NAMES } from '@/model/TaskOutput.model'
 
 /**
  * States used when the parent is stopped.
@@ -49,22 +50,6 @@ function extractGroupState (childStates, isStopped = false) {
   return ''
 }
 
-function taskStartTime (taskProxy, job) {
-  // we need the actual node of the 'job' object as this contains the start time
-  return (taskProxy && job) && (typeof taskProxy === 'object' && typeof job === 'object') && (taskProxy.state && taskProxy.state === TaskState.RUNNING.name) ? job.startedTime : null
-}
-
-function taskEstimatedDuration (taskProxy) {
-  if (
-    taskProxy &&
-    taskProxy.task &&
-    taskProxy.task.meanElapsedTime
-  ) {
-    return taskProxy.task.meanElapsedTime
-  }
-  return null
-}
-
 function latestJob (taskProxy) {
   if (taskProxy && taskProxy.children && taskProxy.children.length > 0) {
     return taskProxy.children[0].node
@@ -72,9 +57,51 @@ function latestJob (taskProxy) {
   return null
 }
 
+/** Returns an array of task messages and custom outputs for a job node.
+ *
+ * Requires the following fields:
+ * job {
+ *   messages
+ *   TaskProxy {
+ *     outputs {
+ *       label
+ *       message
+ *     }
+ *   }
+ * }
+ */
+function jobMessageOutputs (jobNode) {
+  const ret = []
+  let messageOutput
+
+  for (const message of jobNode.node.messages || []) {
+    if (TASK_OUTPUT_NAMES.includes(message)) {
+      continue
+    }
+    messageOutput = null
+    for (const output of jobNode.node.taskProxy?.outputs || []) {
+      if (message === output.label) {
+        messageOutput = output
+        break
+      }
+    }
+    if (messageOutput) {
+      // add an output to the list
+      ret.push(messageOutput)
+    } else {
+      // add a message to the list and make it look like an output
+      ret.push({
+        label: message,
+        message: `Task Message: ${message}`,
+        isMessage: true
+      })
+    }
+  }
+  return ret
+}
+
 export {
   extractGroupState,
-  taskStartTime,
-  taskEstimatedDuration,
-  latestJob
+  latestJob,
+  jobMessageOutputs
 }

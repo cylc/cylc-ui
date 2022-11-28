@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
@@ -36,8 +36,6 @@ import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import WorkflowCallback from '@/components/cylc/common/callbacks'
-import TableCallback from '@/components/cylc/table/callbacks'
 // import { WORKFLOW_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '../graphql/queries'
 
@@ -64,9 +62,38 @@ export default {
     }
   }),
   computed: {
-    ...mapState('table', ['table']),
+    ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getNodes']),
+    workflowIDs () {
+      return [this.workflowId]
+    },
+    workflows () {
+      return this.getNodes('workflow', this.workflowIDs)
+    },
     tasks () {
-      return Object.values(this.table)
+      const ret = []
+      let latestJob
+      let previousJob
+      for (const workflow of this.workflows) {
+        for (const cycle of workflow.children) {
+          for (const task of cycle.children) {
+            latestJob = null
+            previousJob = null
+            if (task.children.length) {
+              latestJob = task.children.slice(-1)[0]
+              if (task.children.length > 1) {
+                previousJob = task.children.slice(-2)[0]
+              }
+            }
+            ret.push({
+              task,
+              latestJob,
+              previousJob
+            })
+          }
+        }
+      }
+      return ret
     },
     query () {
       return new SubscriptionQuery(
@@ -79,10 +106,7 @@ export default {
         // we really should consider giving these unique names, as technically they are just use as the subscription names
         // By using a unique name, we can avoid callback merging errors like the one documented line 350 in the workflow.service.js file
         'workflow',
-        [
-          new WorkflowCallback(),
-          new TableCallback()
-        ]
+        []
       )
     }
   }

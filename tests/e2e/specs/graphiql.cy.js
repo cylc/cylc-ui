@@ -16,7 +16,7 @@
  */
 
 // query used for the graphiql test
-const query = `query GscanSubscriptionQuery {
+const query = `query App {
   workflows {
     id
   }

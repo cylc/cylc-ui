@@ -28,8 +28,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import WorkflowService from '@/services/workflow.service'
 import * as graphqlModule from '@/graphql/index'
 import ViewState from '@/model/ViewState.model'
-import WorkflowCallback from '@/components/cylc/common/callbacks'
-import TreeCallback from '@/components/cylc/tree/callbacks'
+import { TreeCallback, WorkflowCallback } from './testCallback'
 
 const sandbox = sinon.createSandbox()
 

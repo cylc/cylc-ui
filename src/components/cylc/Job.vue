@@ -33,6 +33,11 @@ export default {
     previousState: {
       type: String,
       required: false
+    },
+    svg: {
+      type: Boolean,
+      require: false,
+      default: false
     }
   },
   render: function (createElement, context) {
@@ -77,6 +82,17 @@ export default {
         }
       })
       jobIconChildren.splice(0, 0, previousStateIconSvg)
+    }
+    if (context.props.svg) {
+      return createElement(
+        'g',
+        { class: 'c-job' },
+        [createElement(
+          'g',
+          { class: 'job' },
+          jobIconChildren
+        )]
+      )
     }
     const jobIconSvg = createElement('svg', {
       attrs: {

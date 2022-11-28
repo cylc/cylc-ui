@@ -24,22 +24,7 @@ const data = require('./json/index')
  */
 const DATA_MAPPING = {
   IntrospectionQuery: data.IntrospectionQuery,
-  OnWorkflowTreeDeltasData: {
-    deltas: {
-      added: data.OnWorkflowTreeDeltasData
-    }
-  },
-  DashboardSubscriptionQuery: data.DashboardSubscriptionQuery,
-  GscanSubscriptionQuery: {
-    deltas: {
-      added: data.GscanSubscriptionQuery
-    }
-  },
-  OnWorkflowTableDeltasData: {
-    deltas: {
-      added: data.OnWorkflowTableDeltasData
-    }
-  }
+  App: data.App
 }
 
 /**

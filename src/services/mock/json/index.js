@@ -15,18 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const DashboardSubscriptionQuery = require('./DashboardSubscriptionQuery.json')
 const IntrospectionQuery = require('./IntrospectionQuery.json')
-const GscanSubscriptionQuery = require('./GscanSubscriptionQuery.json')
-const OnWorkflowTreeDeltasData = require('./OnWorkflowTreeDeltasData.json')
-const OnWorkflowTableDeltasData = require('./OnWorkflowTableDeltasData.json')
 const userProfile = require('./userprofile.json')
+const App = require('./App')
 
 module.exports = {
-  DashboardSubscriptionQuery,
   IntrospectionQuery,
-  GscanSubscriptionQuery,
-  OnWorkflowTreeDeltasData,
-  OnWorkflowTableDeltasData,
-  userProfile
+  userProfile,
+  App
 }

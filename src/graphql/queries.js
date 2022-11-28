@@ -27,7 +27,6 @@ import { DocumentNode } from 'graphql'
 const WORKFLOW_DATA_FRAGMENT = `
 fragment WorkflowData on Workflow {
   id
-  name
   status
   statusMsg
   owner
@@ -46,22 +45,28 @@ fragment WorkflowData on Workflow {
 
 const CYCLEPOINT_DATA_FRAGMENT = `
 fragment CyclePointData on FamilyProxy {
+  __typename
   id
-  cyclePoint
+  state
+  ancestors {
+    name
+  }
+  childTasks {
+    id
+  }
 }
 `
 
 const FAMILY_PROXY_DATA_FRAGMENT = `
 fragment FamilyProxyData on FamilyProxy {
+  __typename
   id
-  name
   state
-  cyclePoint
-  firstParent {
-    id
+  ancestors {
     name
-    cyclePoint
-    state
+  }
+  childTasks {
+    id
   }
 }
 `
@@ -69,21 +74,12 @@ fragment FamilyProxyData on FamilyProxy {
 const TASK_PROXY_DATA_FRAGMENT = `
 fragment TaskProxyData on TaskProxy {
   id
-  name
   state
   isHeld
   isQueued
   isRunahead
-  cyclePoint
-  firstParent {
-    id
-    name
-    cyclePoint
-    state
-  }
   task {
     meanElapsedTime
-    name
   }
 }
 `
@@ -91,9 +87,6 @@ fragment TaskProxyData on TaskProxy {
 const JOB_DATA_FRAGMENT = `
 fragment JobData on Job {
   id
-  firstParent: taskProxy {
-    id
-  }
   jobRunnerName
   jobId
   platform
@@ -102,14 +95,19 @@ fragment JobData on Job {
   finishedTime
   state
   submitNum
+  messages
   taskProxy {
-    outputs (satisfied: true, sort: { keys: ["time"], reverse: true}) {
+    outputs (satisfied: true) {
       label
       message
     }
   }
 }
 `
+// TODO: We should really be requesting the outputs on the taskProxy field
+// rather than the job field as this results in duplication. This will require
+// a little refactoring (i.e. extracting the parent task proxy from the store)
+// See https://github.com/cylc/cylc-ui/issues/1135
 
 /**
  * Query used to retrieve data for the GScan component.
@@ -117,34 +115,34 @@ fragment JobData on Job {
  * @type {DocumentNode}
  */
 const GSCAN_DELTAS_SUBSCRIPTION = gql`
-subscription GscanSubscriptionQuery {
-  deltas (stripNull: true) {
-    ...GScanTreeDeltas
+subscription App {
+  deltas {
+    ...Deltas
   }
 }
 
 # GSCAN DELTAS BEGIN
 
-fragment GScanTreeDeltas on Deltas {
+fragment Deltas on Deltas {
   id
   added {
-    ...GscanAddedData
+    ...AddedDelta
   }
-  updated {
-    ...GscanUpdatedData
+  updated (stripNull: true) {
+    ...UpdatedDelta
   }
   pruned {
     workflow
   }
 }
 
-fragment GscanAddedData on Added {
+fragment AddedDelta on Added {
   workflow {
     ...WorkflowData
   }
 }
 
-fragment GscanUpdatedData on Updated {
+fragment UpdatedDelta on Updated {
   workflow {
     ...WorkflowData
   }
@@ -162,22 +160,36 @@ ${WORKFLOW_DATA_FRAGMENT}
  * @see https://github.com/cylc/cylc-ui/issues/94
  */
 const DASHBOARD_DELTAS_SUBSCRIPTION = gql`
-subscription DashboardSubscriptionQuery {
-  deltas (stripNull: true) {
-    id
-    added {
-      workflow {
-        ...WorkflowData
-      }
-    }
-    updated {
-      workflow {
-        ...WorkflowData
-      }
-    }
-    pruned {
-      workflow
-    }
+subscription App {
+  deltas {
+    ...Deltas
+  }
+}
+
+# GSCAN DELTAS BEGIN
+
+fragment Deltas on Deltas {
+  id
+  added {
+    ...AddedDelta
+  }
+  updated (stripNull: true) {
+    ...UpdatedDelta
+  }
+  pruned {
+    workflow
+  }
+}
+
+fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
   }
 }
 
@@ -190,15 +202,15 @@ ${WORKFLOW_DATA_FRAGMENT}
  * @type {DocumentNode}
  */
 const WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION = gql`
-subscription WorkflowsTableQuery {
-  deltas (stripNull: true) {
+subscription Workflow {
+  deltas {
     id
     added {
       workflow {
         ...WorkflowData
       }
     }
-    updated {
+    updated (stripNull: true) {
       workflow {
         ...WorkflowData
       }
@@ -209,7 +221,13 @@ subscription WorkflowsTableQuery {
   }
 }
 
-${WORKFLOW_DATA_FRAGMENT}
+fragment WorkflowData on Workflow {
+  id
+  status
+  owner
+  host
+  port
+}
 `
 
 /**
@@ -218,58 +236,58 @@ ${WORKFLOW_DATA_FRAGMENT}
  * @type {DocumentNode}
  */
 const WORKFLOW_TREE_DELTAS_SUBSCRIPTION = gql`
-subscription OnWorkflowTreeDeltasData ($workflowId: ID) {
-  deltas (workflows: [$workflowId], stripNull: true) {
-   ...WorkflowTreeDeltas
+subscription Workflow ($workflowId: ID) {
+  deltas (workflows: [$workflowId]) {
+   ...Deltas
   }
 }
 
 # TREE DELTAS BEGIN
 
-fragment WorkflowTreeDeltas on Deltas {
+fragment Deltas on Deltas {
   id
   added {
-    ...WorkflowTreeAddedData
+    ...AddedDelta
   }
-  updated {
-    ...WorkflowTreeUpdatedData
+  updated (stripNull: true) {
+    ...UpdatedDelta
   }
   pruned {
-    ...WorkflowTreePrunedData
+    ...PrunedDelta
   }
 }
 
-fragment WorkflowTreeAddedData on Added {
+fragment AddedDelta on Added {
   workflow {
     ...WorkflowData
   }
   cyclePoints: familyProxies (ids: ["*/root"]) {
     ...CyclePointData
   }
-  familyProxies (exids: ["*/root"], sort: { keys: ["name"] }) {
+  familyProxies {
     ...FamilyProxyData
   }
-  taskProxies (sort: { keys: ["cyclePoint"], reverse: false }) {
-    ...TaskProxyData
-  }
-  jobs (sort: { keys: ["submit_num"], reverse:true }) {
-    ...JobData
-  }
-}
-
-fragment WorkflowTreeUpdatedData on Updated {
   taskProxies {
     ...TaskProxyData
   }
   jobs {
     ...JobData
   }
-  familyProxies (exids: ["*/root"]) {
+}
+
+fragment UpdatedDelta on Updated {
+  taskProxies {
+    ...TaskProxyData
+  }
+  jobs {
+    ...JobData
+  }
+  familyProxies {
     ...FamilyProxyData
   }
 }
 
-fragment WorkflowTreePrunedData on Pruned {
+fragment PrunedDelta on Pruned {
   familyProxies
   taskProxies
   jobs
@@ -298,40 +316,31 @@ ${JOB_DATA_FRAGMENT}
  * @type {DocumentNode}
  */
 const WORKFLOW_TABLE_DELTAS_SUBSCRIPTION = gql`
-subscription OnWorkflowTableDeltasData ($workflowId: ID) {
-  deltas(workflows: [$workflowId], stripNull: true) {
-    ...WorkflowTableDeltas
+subscription Workflow ($workflowId: ID) {
+  deltas(workflows: [$workflowId]) {
+    ...Deltas
   }
 }
 
 # TABLE DELTAS BEGIN
 
-fragment WorkflowTableDeltas on Deltas {
+fragment Deltas on Deltas {
   id
   added {
-    ...WorkflowTableAddedData
+    ...AddedDelta
   }
-  updated {
-    ...WorkflowTableUpdatedData
+  updated (stripNull: true) {
+    ...UpdatedDelta
   }
   pruned {
-    ...WorkflowTablePrunedData
+    ...PrunedDelta
   }
 }
 
-fragment WorkflowTableAddedData on Added {
+fragment AddedDelta on Added {
   workflow {
     ...WorkflowData
   }
-  taskProxies(sort: {keys: ["cyclePoint"], reverse: false}) {
-    ...TaskProxyData
-  }
-  jobs(sort: {keys: ["submit_num"], reverse: true}) {
-    ...JobData
-  }
-}
-
-fragment WorkflowTableUpdatedData on Updated {
   taskProxies {
     ...TaskProxyData
   }
@@ -340,7 +349,16 @@ fragment WorkflowTableUpdatedData on Updated {
   }
 }
 
-fragment WorkflowTablePrunedData on Pruned {
+fragment UpdatedDelta on Updated {
+  taskProxies {
+    ...TaskProxyData
+  }
+  jobs {
+    ...JobData
+  }
+}
+
+fragment PrunedDelta on Pruned {
   taskProxies
   jobs
 }

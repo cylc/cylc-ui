@@ -15,25 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { mount } from '@vue/test-utils'
-import { expect } from 'chai'
-// import vuetify here so that we do not have warnings in the console output
-// eslint-disable-next-line no-unused-vars
-import * as vuetify from '@/plugins/vuetify'
-import Task from '@/components/cylc/Task'
+// mean elapsed time for the task in seconds
+export const MEAN_ELAPSED_TIME = 10000
 
-describe('Task component', () => {
-  it('should initialize props', () => {
-    const wrapper = mount(Task, {
-      context: {
-        props: {
-          status: '',
-          isHeld: true,
-          isQueued: true,
-          isRunahead: true
-        }
-      }
-    })
-    expect(wrapper.element.className).to.equal('c-task')
-  })
-})
+export function getStartTime (percent) {
+  return String(
+    new Date(
+      // the current time in ms
+      Date.now() -
+      // minus the elapsed time in ms
+      (
+        (MEAN_ELAPSED_TIME * 1000) *
+        (percent / 100)
+      )
+    ).toISOString()
+  )
+}

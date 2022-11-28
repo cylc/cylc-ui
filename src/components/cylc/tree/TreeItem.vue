@@ -34,44 +34,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >{{ icons.mdiChevronRight }}</v-icon>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <slot name="cyclepoint" v-if="node.type === 'cyclepoint'">
+      <slot name="cyclepoint" v-if="node.type === 'cycle'">
+        <div :class="getNodeDataClass()" @click="nodeClicked">
+          <!-- NOTE: cycle point nodes don't have any data associated with them
+            at present so we must use the root family node for the task icon.
+            We don't use this for the v-cylc-object as that would set the node
+            type to family. -->
+          <Task
+            v-cylc-object="node.node"
+            v-if="node.familyTree"
+            :key="node.id"
+            :task="node.familyTree[0].node"
+          />
+          <span class="mx-1">{{ node.name }}</span>
+        </div>
+      </slot>
+      <slot name="family-proxy" v-else-if="node.type === 'family'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <Task
             v-cylc-object="node.node"
-            :key="node.node.id"
-            :status="node.node.state"
-            :isHeld="node.node.isHeld"
-            :isQueued="node.node.isQueued"
-            :isRunahead="node.node.isRunahead"
+            :key="node.id"
+            :task="node.node"
           />
-          <span class="mx-1">{{ node.node.name }}</span>
+          <span class="mx-1">{{ node.name }}</span>
         </div>
       </slot>
-      <slot name="family-proxy" v-else-if="node.type === 'family-proxy'">
-        <div :class="getNodeDataClass()" @click="nodeClicked">
-          <Task
-            v-cylc-object="node.node"
-            :key="node.node.id"
-            :status="node.node.state"
-            :isHeld="node.node.isHeld"
-            :isQueued="node.node.isQueued"
-            :isRunahead="node.node.isRunahead"
-          />
-          <span class="mx-1">{{ node.node.name }}</span>
-        </div>
-      </slot>
-      <slot name="task-proxy" v-else-if="node.type === 'task-proxy'">
+      <slot name="task-proxy" v-else-if="node.type === 'task'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <!-- Task summary -->
           <Task
             v-cylc-object="node.node"
-            :key="node.node.id"
-            :status="node.node.state"
-            :isHeld="node.node.isHeld"
-            :isQueued="node.node.isQueued"
-            :isRunahead="node.node.isRunahead"
-            :startTime="taskStartTime(node.node, latestJob(node))"
-            :estimatedDuration="taskEstimatedDuration(node.node)"
+            :key="node.id"
+            :task="node.node"
+            :startTime="(latestJob(node) || {}).startedTime"
           />
           <div v-if="!isExpanded" class="node-summary">
             <!-- most recent job summary -->
@@ -84,21 +79,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               style="margin-left: 0.25em;"
             />
           </div>
-          <span class="mx-1">{{ node.node.name }}</span>
+          <span class="mx-1">{{ node.name }}</span>
         </div>
       </slot>
       <slot name="job" v-else-if="node.type === 'job'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <Job
             v-cylc-object="node.node"
-            :key="node.node.id"
+            :key="node.id"
             :status="node.node.state"
           />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
           <span class="grey--text">{{ node.node.platform }}</span>
           <span
             class="grey--text d-flex flex-nowrap flex-row align-center"
-            v-if="node.node.customOutputs.length > 0"
+            v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
           >
             <!--
               We had a tricky bug in #530 due to the :key here. In summary, the list
@@ -115,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               @see https://github.com/cylc/cylc-ui/pull/530#issuecomment-781076619
             -->
             <v-tooltip
-              v-for="(customOutput, index) of [...node.node.customOutputs].slice(0, 5)"
+              v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
               :key="`output-chip-${index}`"
               bottom
             >
@@ -123,50 +118,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-chip
                   v-bind="attrs"
                   v-on="on"
-                  color="grey"
-                  text-color="grey lighten-5"
-                  class="ml-2"
+                  :color="customOutput.isMessage ? 'light-grey' : 'grey'"
+                  :text-color="customOutput.isMessage ? 'black' : 'white'"
+                  class="ml-2 message-output"
                   small
                 >{{ customOutput.label }}</v-chip>
               </template>
               <span>{{ customOutput.message }}</span>
             </v-tooltip>
             <v-chip
-              v-if="node.node.customOutputs.length > 5"
+              v-if="jobMessageOutputs.length > 5"
               color="grey"
               text-color="grey lighten-5"
               class="ml-2"
               small
               link
               @click="toggleExpandCollapse"
-            >+{{ node.node.customOutputs.length - 5 }}</v-chip>
+            >+{{ jobMessageOutputs.length - 5 }}</v-chip>
           </span>
         </div>
       </slot>
       <slot name="job-details" v-else-if="node.type === 'job-details'">
-        <div class="leaf">
+        <div class="leaf job-details">
           <div class="arrow-up" :style="leafTriangleStyle"></div>
           <div class="leaf-data font-weight-light py-4 pl-2">
             <div
-              v-for="jobDetail in node.node.details"
-              :key="jobDetail.id"
+              v-for="item in leafProperties"
+              :key="item.property"
               class="leaf-entry"
             >
-              <span class="px-4 leaf-entry-title">{{ jobDetail.title }}</span>
-              <span class="grey--text leaf-entry-value">{{ jobDetail.value }}</span>
+              <span class="px-4 leaf-entry-title">{{ item.title }}</span>
+              <span class="grey--text leaf-entry-value">{{ node.node[item.property] }}</span>
             </div>
             <v-divider class="ml-3 mr-5" />
             <div class="leaf-entry">
               <span class="px-4 leaf-entry-title grey--text text--darken-1">outputs</span>
             </div>
             <div
-              v-if="node.node.customOutputs && node.node.customOutputs.length > 0"
+              v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
               class="leaf-outputs-entry"
             >
               <div
-                v-for="customOutput of node.node.customOutputs"
-                :key="`${customOutput.id}-leaf`"
-                class="leaf-entry"
+                v-for="customOutput of jobMessageOutputs"
+                :key="customOutput.label"
+                class="leaf-entry output"
               >
                 <span class="px-4 leaf-entry-title">{{ customOutput.label }}</span>
                 <span class="grey--text leaf-entry-value">{{ customOutput.message }}</span>
@@ -187,29 +182,62 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <span
             v-if="node && node.node"
             @click="nodeClicked"
-            :key="node.node.id"
-            class="mx-1">{{ node.node.name }}</span>
+            :key="node.id"
+            class="mx-1">{{ node.name }}</span>
         </div>
       </slot>
       <slot></slot>
     </v-flex>
-    <span v-show="isExpanded">
+    <span
+      v-show="isExpanded"
+      v-if="!stopOn.includes(node.type)"
+    >
       <!-- component recursion -->
       <TreeItem
-        v-for="child in node.children"
+        v-if="node.type === 'job'"
+        ref="treeitem"
+        :key="`${node.id}-job-details`"
+        :node="{
+          id: `${node.id}-job-details`,
+          type: 'job-details',
+          node: node.node
+        }"
+        :depth="depth + 1"
+        :stopOn="stopOn"
+        :hoverable="hoverable"
+        :autoExpandTypes="autoExpandTypes"
+        :cyclePointsOrderDesc="cyclePointsOrderDesc"
+        v-on:tree-item-created="$listeners['tree-item-created']"
+        v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
+        v-on:tree-item-expanded="$listeners['tree-item-expanded']"
+        v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
+        v-on:tree-item-clicked="$listeners['tree-item-clicked']"
+      />
+      <TreeItem
+        v-else
+        v-for="child in nodeChildren"
         ref="treeitem"
         :key="child.id"
         :node="child"
         :depth="depth + 1"
+        :stopOn="stopOn"
         :hoverable="hoverable"
-        :initialExpanded="initialExpanded"
+        :autoExpandTypes="autoExpandTypes"
+        :cyclePointsOrderDesc="cyclePointsOrderDesc"
         v-on:tree-item-created="$listeners['tree-item-created']"
         v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
         v-on:tree-item-expanded="$listeners['tree-item-expanded']"
         v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
         v-on:tree-item-clicked="$listeners['tree-item-clicked']"
       >
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
+        <!-- add scoped slots
+
+          These allow components to register their own templats, e.g. GScan
+          adds a template for rendering workflow nodes here.
+        -->
+        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+          <slot :name="slot" v-bind="scope"/>
+        </template>
       </TreeItem>
     </span>
   </div>
@@ -220,7 +248,11 @@ import { mdiChevronRight } from '@mdi/js'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import { taskStartTime, taskEstimatedDuration, latestJob } from '@/utils/tasks'
+import {
+  latestJob,
+  jobMessageOutputs
+} from '@/utils/tasks'
+import { getNodeChildren } from '@/components/cylc/tree/util'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -243,17 +275,29 @@ export default {
       type: Number,
       default: 0
     },
-    hoverable: Boolean,
-    initialExpanded: {
+    stopOn: {
+      // Array of node types to stop recursion on
+      // i.e. don't show child nodes below the provided types
+      type: Array,
+      required: false,
+      default: () => []
+    },
+    cyclePointsOrderDesc: {
       type: Boolean,
+      required: false,
       default: true
+    },
+    hoverable: Boolean,
+    autoExpandTypes: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   data () {
     return {
       active: false,
       selected: false,
-      isExpanded: this.initialExpanded,
       filtered: true,
       leafProperties: [
         {
@@ -283,12 +327,27 @@ export default {
       ],
       icons: {
         mdiChevronRight
-      }
+      },
+      isExpanded: false
     }
   },
   computed: {
     hasChildren () {
-      return Boolean(this.node.children?.length)
+      if (this.stopOn.includes(this.node.type)) {
+        // don't show children if the tree has been configured to stop at
+        // this level
+        return false
+      }
+      return (
+        // "job" nodes have auto-generated "job-detail" nodes
+        this.node.type === 'job' ||
+        // otherwise look to see whether there are any children
+        Boolean(this.node.children?.length)
+      )
+    },
+    nodeChildren () {
+      // returns child nodes folling the family tree and following sort order
+      return getNodeChildren(this.node, this.cyclePointsOrderDesc)
     },
     /** Get the node indentation in units of em. */
     nodeIndentation () {
@@ -332,6 +391,9 @@ export default {
       return {
         'margin-left': `${this.nodeIndentation}em`
       }
+    },
+    jobMessageOutputs () {
+      return jobMessageOutputs(this.node)
     }
   },
   created () {
@@ -341,10 +403,9 @@ export default {
     this.$emit('tree-item-destroyed', this)
   },
   beforeMount () {
-    if (this.node.expanded !== undefined && this.node.expanded !== null) {
-      this.isExpanded = this.node.expanded
-      this.emitExpandCollapseEvent(this.isExpanded)
-    }
+    // apply auto-expand rules when a treeitem is created
+    this.isExpanded = this.autoExpandTypes.includes(this.node.type)
+    this.emitExpandCollapseEvent(this.isExpanded)
   },
   methods: {
     toggleExpandCollapse () {
@@ -376,8 +437,6 @@ export default {
       classes[`node-data-${this.node.type}`] = true
       return classes
     },
-    taskStartTime,
-    taskEstimatedDuration,
     latestJob
   }
 }

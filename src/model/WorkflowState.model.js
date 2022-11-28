@@ -54,11 +54,11 @@ export class WorkflowState extends Enumify {
  * @see https://stackoverflow.com/questions/5525795/does-javascript-guarantee-object-property-order/38218582#38218582
  */
 export const WorkflowStateOrder = new Map([
-  [WorkflowState.RUNNING.name, 0],
-  [WorkflowState.PAUSED.name, 0],
-  [WorkflowState.STOPPING.name, 0],
-  [WorkflowState.STOPPED.name, 1],
-  [WorkflowState.ERROR.name, 3]
+  [WorkflowState.RUNNING.name, 1],
+  [WorkflowState.PAUSED.name, 1],
+  [WorkflowState.STOPPING.name, 1],
+  [WorkflowState.STOPPED.name, 2],
+  [undefined, 9]
 ])
 
 export default WorkflowState

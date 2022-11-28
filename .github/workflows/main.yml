@@ -83,6 +83,12 @@ jobs:
         env:
           CYPRESS_baseUrl: http://localhost:8080/
 
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: tests/e2e/screenshots
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:

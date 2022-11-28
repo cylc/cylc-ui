@@ -19,14 +19,15 @@ describe('GScan component', () => {
   it('should show all workflows by default', () => {
     cy.visit('/#/')
     cy
-      .get('.c-gscan-workflow')
+      .get('.treeitem:visible')
       .should('have.length', 1)
   })
 
   it('should filter by workflow name', () => {
-    cy.get('#c-gscan-search-workflows')
+    cy.visit('/#/')
+      .get('#c-gscan-search-workflows')
       .type('abc')
-      .get('.c-gscan-workflow')
+      .get('.treeitem:visible')
       .should('have.length', 0)
   })
 
@@ -41,7 +42,7 @@ describe('GScan component', () => {
       .contains('running')
       .click({ force: true })
     cy
-      .get('.c-gscan-workflow')
+      .get('.treeitem:visible')
       .should('have.length', 0)
   })
 
@@ -53,10 +54,10 @@ describe('GScan component', () => {
     cy
       .get('[role="menu"]:visible')
       .find('.v-label')
-      .contains('failed')
+      .contains('submit-failed')
       .click({ force: true })
     cy
-      .get('.c-gscan-workflow')
+      .get('.treeitem:visible')
       .should('have.length', 0)
   })
 
@@ -79,10 +80,10 @@ describe('GScan component', () => {
     cy
       .get('[role="menu"]:visible')
       .find('.v-label')
-      .contains('submitted')
+      .contains('stopped')
       .click({ force: true })
     cy
-      .get('.c-gscan-workflow')
+      .get('.treeitem:visible')
       .should('have.length', 1)
   })
 

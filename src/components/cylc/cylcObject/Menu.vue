@@ -199,24 +199,31 @@ export default {
       return this.mutations
     },
     typeAndStatusText () {
+      if (!this.node) {
+        // can happen briefly when switching workflows
+        return
+      }
       let ret = this.type
       if (ret === 'task' && !('isHeld' in this.node)) {
         // TODO: better way of checking if a 'task' is actually a family?
         ret = 'family'
       }
-      ret += ' - '
-      if (this.type === 'workflow') {
-        ret += this.node.statusMsg || 'state unknown'
-      } else {
-        ret += this.node.state || 'state unknown'
-        if (this.node.isHeld) {
-          ret += ' (held)'
-        }
-        if (this.node.isQueued) {
-          ret += ' (queued)'
-        }
-        if (this.node.isRunahead) {
-          ret += ' (runahead)'
+      if (this.type !== 'cycle') {
+        // NOTE: cycle point nodes don't have associated node data at present
+        ret += ' - '
+        if (this.type === 'workflow') {
+          ret += this.node.statusMsg || 'state unknown'
+        } else {
+          ret += this.node.state || 'state unknown'
+          if (this.node.isHeld) {
+            ret += ' (held)'
+          }
+          if (this.node.isQueued) {
+            ret += ' (queued)'
+          }
+          if (this.node.isRunahead) {
+            ret += ' (runahead)'
+          }
         }
       }
       return ret
