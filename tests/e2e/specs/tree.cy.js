@@ -141,13 +141,12 @@ describe('Tree view', () => {
     cy.visit('/#/tree/one')
 
     // find the task proxy
-    const taskProxy = cy
+    cy
       .get('.mx-1')
       .contains('eventually_succeeded')
       .parent()
       .parent()
 
-    taskProxy
       // expand the job nodes
       .find('.node-expand-collapse-button')
       .click({ force: true })

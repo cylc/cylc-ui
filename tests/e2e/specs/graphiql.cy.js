@@ -49,6 +49,7 @@ describe('GraphiQL', () => {
     // TODO: CodeMirror seems to have a delay to actually set the value to the underlying
     //       textarea. Which can cause the test below to fail as the query submitted is
     //       the default commented-out text, instead of the given query above.
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     cy.get('.execute-button')
       .click()
