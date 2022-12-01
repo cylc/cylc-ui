@@ -35,6 +35,16 @@ Vue.prototype.$eventBus = mitt()
 
 Vue.config.productionTip = false
 
+if (location.search) {
+  // Vue Router puts the "hash" (#) after the "search" (?) for some reason.
+  // But the router fails to read the search parameters because of this?
+  // See this rather confusing issue for details:
+  //   https://github.com/vuejs/vue-router/issues/2125
+  // In the mean time we have to hack the path ourselves to reverse the order
+  // of the "?" and "#" parts so that the router can work with it.
+  location.replace(location.pathname + location.hash + location.search)
+}
+
 /* eslint-disable no-new */
 const app = new Vue({
   i18n,
