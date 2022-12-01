@@ -23,7 +23,8 @@ module.exports = {
   extends: [
     'standard',
     'eslint:recommended',
-    'plugin:vue/essential'
+    'plugin:vue/essential',
+    'plugin:cypress/recommended'
   ],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',

@@ -30,6 +30,7 @@ function checkGraphLayoutPerformed ($el, depth = 0) {
   if (depth > 10) {
     expect('graph loaded').to.equal(true)
   } else if (typeof $el[0].__vue__.graphID !== 'number') {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy
       .wait(1000)
       .then(() => { checkGraphLayoutPerformed($el, depth + 1) })
