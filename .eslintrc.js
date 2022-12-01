@@ -19,7 +19,6 @@ module.exports = {
   root: true,
   env: {
     node: true
-    // 'cypress/globals': true
   },
   extends: [
     'standard',
