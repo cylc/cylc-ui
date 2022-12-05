@@ -96,7 +96,6 @@ const getters = {
 
 /* Initialise the data store. */
 function createTree (state) {
-  // console.log('@@ Create')
   if (state.cylcTree) {
     return
   }
@@ -106,37 +105,32 @@ function createTree (state) {
   }
   Vue.set(tree, 'children', [])
   state.cylcTree = tree
-  // console.log('@@')
 }
 
 /* Wipe everything in the store. */
 function clearTree (state) {
-  // console.log('@@ CLEAR')
   for (const child of state.cylcTree.children) {
     remove(state, child.id)
   }
-  // console.log('@@')
 }
 
 /* Add a node to the global $index (flat lookup). */
 function addIndex (state, id, treeNode) {
   if (state.cylcTree.$index[id] === undefined) {
     // this is a new node => create it
-    // console.log(`$i ++ ${id}`)
     Vue.set(state.cylcTree.$index, id, treeNode)
   }
 }
 
 /* Remove a node from the global $index (flat lookup). */
 function removeIndex (state, id) {
-  // console.log(`$i -- ${id}`)
   Vue.delete(state.cylcTree.$index, id)
 }
 
 /* Retrieve a node from the global $index (flat lookup). */
 function getIndex (state, id) {
   if (id === '$root') {
-    // speial ID maps onto the tree root element
+    // special ID maps onto the tree root element
     // (note this avoids a circular reference which VueX does not like)
     return state.cylcTree
   }
@@ -157,7 +151,6 @@ function hasChild (node, id, attr = 'id', childAttr = 'children') {
 /* Add a child node under a parent Node */
 function addChild (parentNode, childNode) {
   // determine which list to add this node to
-  // console.log(`$t ++ ${childNode.id}`)
   let key = 'children'
   if (childNode.type === '$namespace') {
     key = '$namespaces'
@@ -195,9 +188,8 @@ function addChild (parentNode, childNode) {
 
 /* Remove a child node from a parent node. */
 function removeChild (state, node, parentNode = null) {
-  // console.log(`$t -- ${node.id}`)
   let key = 'children'
-  if (node.type === '$namesapce') {
+  if (node.type === '$namespace') {
     key = '$namespaces'
   } else if (node.type === '$edge') {
     key = '$edges'
@@ -312,7 +304,6 @@ function applyInheritance (state, node) {
 function update (state, updatedData) {
   const tokens = new Tokens(updatedData.id)
   const id = tokens.id
-  // console.log(`@ += ${id}`)
 
   let treeItem = getIndex(state, id)
   if (treeItem) {
@@ -476,7 +467,6 @@ function createTreeNode (state, id, tokens, node) {
 function remove (state, prunedID) {
   const tokens = new Tokens(prunedID)
   const id = tokens.id
-  // console.log(`@ -- ${id}`)
 
   const treeNode = getIndex(state, id)
   if (treeNode === undefined) {
@@ -518,8 +508,6 @@ const mutations = {
   CREATE: createTree,
   UPDATE: update,
   UPDATE_DELTAS (state, updated) {
-    // eslint-disable-next-line no-console
-    console.log('@ UPDATE')
     for (const updatedValue of Object.values(pick(updated, KEYS))) {
       const items = isArray(updatedValue) ? updatedValue : [updatedValue]
       for (const updatedData of items) {
@@ -528,14 +516,11 @@ const mutations = {
         }
       }
     }
-    // eslint-disable-next-line no-console
-    console.log('@@')
   },
   // remove an ID
   REMOVE: remove,
   // remove all IDs contained in a delta
   REMOVE_DELTAS (state, pruned) {
-    // console.log('@ REMOVE')
     Object.keys(pick(pruned, PRUNED_KEYS_MULT)).forEach(prunedKey => {
       if (pruned[prunedKey]) {
         for (const prunedID of pruned[prunedKey]) {
@@ -548,16 +533,13 @@ const mutations = {
         remove(state, pruned[prunedKey])
       }
     })
-    // console.log('@@')
   },
   // remove all children of a node
   REMOVE_CHILDREN (state, id) {
-    // console.log('@ REMOVE CHILDREN')
     const workflow = getIndex(state, id)
     if (workflow) {
       removeTree(state, workflow, false)
     }
-    // console.log('@@')
   },
   CLEAR: clearTree
 }
