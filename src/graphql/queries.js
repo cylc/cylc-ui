@@ -197,6 +197,22 @@ ${WORKFLOW_DATA_FRAGMENT}
 `
 
 /**
+ * Query used to retrieve data for the Log view.
+ *
+ * @type {DocumentNode}
+*/
+// const LOGS_SUBSCRIPTION_2 = gql`
+// subscription LogData ($workflowId: ID) {
+// logs (workflows: [$workflowId], stripNull: true)
+//   }
+// `
+const LOGS_SUBSCRIPTION = gql`
+subscription LogData {
+logs (workflows: ["foo"])
+}
+`
+
+/**
  * Query used to retrieve data for the WorkflowsTable view.
  *
  * @type {DocumentNode}
@@ -380,6 +396,7 @@ ${JOB_DATA_FRAGMENT}
 export {
   GSCAN_DELTAS_SUBSCRIPTION,
   DASHBOARD_DELTAS_SUBSCRIPTION,
+  LOGS_SUBSCRIPTION,
   WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION,
   WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
   WORKFLOW_TABLE_DELTAS_SUBSCRIPTION
