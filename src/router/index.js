@@ -69,10 +69,6 @@ Vue.use(Meta)
 
 router.beforeResolve((to, from, next) => {
   NProgress.start()
-  if ('token' in to.query) {
-    // Remove ?token from the query, we only need it on load.
-    router.replace({ query: {} })
-  }
   if (to.name) {
     let title
     let workflowName
