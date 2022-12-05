@@ -73,6 +73,7 @@ export default {
       return Object.values(this.logs.scheduler_logs)
     },
     query () {
+      debugger
       return new SubscriptionQuery(
         LOGS_SUBSCRIPTION,
         this.variables,

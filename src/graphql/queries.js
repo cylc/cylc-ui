@@ -201,16 +201,16 @@ ${WORKFLOW_DATA_FRAGMENT}
  *
  * @type {DocumentNode}
 */
-// const LOGS_SUBSCRIPTION_2 = gql`
-// subscription LogData ($workflowId: ID) {
-// logs (workflows: [$workflowId], stripNull: true)
-//   }
-// `
 const LOGS_SUBSCRIPTION = gql`
-subscription LogData {
-logs (workflows: ["foo"])
-}
+subscription LogData ($workflowId: ID) {
+logs (workflows: [$workflowId], stripNull: true)
+  }
 `
+// const LOGS_SUBSCRIPTION_2 = gql`
+// subscription LogData {
+// logs (workflows: ["foo"])
+// }
+// `
 
 /**
  * Query used to retrieve data for the WorkflowsTable view.

@@ -286,9 +286,7 @@ class WorkflowService {
               }
               const errors = []
               for (const callback of subscription.callbacks) {
-                // callback.before(response.data.logs, store, errors)
                 callback.onAdded(response.data.logs, store, errors)
-                // callback.onUpdated(response.data.logs, store, errors)
                 callback.commit(store, errors)
               }
             },
