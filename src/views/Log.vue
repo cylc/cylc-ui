@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <VTextField v-model="workflow" />
     <div class="c-log pa-2 h-100" data-cy="log-view">
       <log-component
-        :logs="getlogs"
+        :logs="lines"
         ref="log0"
         key="log0"
       ></log-component>
@@ -38,8 +38,22 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import LogComponent from '@/components/cylc/log/Log'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { LOGS_SUBSCRIPTION } from '@/graphql/queries'
-import LogsCallback from '@/components/cylc/log/callbacks'
-// import V-text whatever
+
+class LogsCallback {
+  constructor (lines) {
+    this.lines = lines
+  }
+
+  tearDown (store, errors) {
+  }
+
+  onAdded (added, store, errors) {
+    this.lines.push(...added)
+  }
+
+  commit (store, errors) {
+  }
+}
 
 export default {
   mixins: [
@@ -64,28 +78,19 @@ export default {
         title: 'logs',
         icon: mdiFileDocumentMultipleOutline
       },
-      workflow: '',
-      cycle: '',
-      task: '',
-      job: ''
+      lines: []
     }
   },
   // text boxes in here
   computed: {
     ...mapState('workflows', ['logs']),
-    getlogs () {
-      if (!this.logs.scheduler_logs) {
-        return Object.values(this.logs)
-      }
-      return Object.values(this.logs.scheduler_logs)
-    },
     query () {
       return new SubscriptionQuery(
         LOGS_SUBSCRIPTION,
         this.variables,
         `log-query-${this._uid}`,
         [
-          new LogsCallback()
+          new LogsCallback(this.lines)
         ]
       )
     },

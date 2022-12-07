@@ -22,10 +22,6 @@ export default {
     logs: {
       type: Array,
       required: true
-    },
-    workflowName: {
-      type: String,
-      required: true
     }
   }
 

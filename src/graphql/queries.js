@@ -201,14 +201,9 @@ ${WORKFLOW_DATA_FRAGMENT}
  *
  * @type {DocumentNode}
 */
-// const LOGS_SUBSCRIPTION = gql`
-// subscription LogData ($workflowId: ID) {
-// logs (workflows: [$workflowId], stripNull: true)
-//   }
-// `
 const LOGS_SUBSCRIPTION = gql`
-  subscription LogData {
-  logs (workflows: ["foo"])
+subscription LogData ($workflowId: ID) {
+  logs (workflows: [$workflowId])
 }
 `
 // const LOGS_SUBSCRIPTION = gql`
