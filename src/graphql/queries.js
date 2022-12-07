@@ -201,16 +201,24 @@ ${WORKFLOW_DATA_FRAGMENT}
  *
  * @type {DocumentNode}
 */
-const LOGS_SUBSCRIPTION = gql`
-subscription LogData ($workflowId: ID) {
-logs (workflows: [$workflowId], stripNull: true)
-  }
-`
-// const LOGS_SUBSCRIPTION_2 = gql`
-// subscription LogData {
-// logs (workflows: ["foo"])
-// }
+// const LOGS_SUBSCRIPTION = gql`
+// subscription LogData ($workflowId: ID) {
+// logs (workflows: [$workflowId], stripNull: true)
+//   }
 // `
+const LOGS_SUBSCRIPTION = gql`
+  subscription LogData {
+  logs (workflows: ["foo"])
+}
+`
+// const LOGS_SUBSCRIPTION = gql`
+//   subscription LogData ($workflowID: String, $task: String!) {
+//   logs (workflow: $workflowID, task: $task)
+// }
+
+// subscription($workflow: String, $task: String!) {
+//   jobs(workflow: $workflow, task: $task)
+// }
 
 /**
  * Query used to retrieve data for the WorkflowsTable view.
