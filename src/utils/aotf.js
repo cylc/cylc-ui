@@ -297,6 +297,13 @@ export const dummyMutations = [
     args: [],
     _appliesTo: cylcObjects.Namespace,
     _requiresInfo: true
+  },
+  {
+    name: 'log',
+    description: 'View the logs.',
+    args: [],
+    _appliesTo: cylcObjects.Namespace,
+    _requiresInfo: true
   }
 ]
 
@@ -306,7 +313,8 @@ export const dummyMutations = [
  * @type {{string: string[]}}
  */
 const dummyMutationsPermissionsMap = Object.freeze({
-  broadcast: Object.freeze(['editRuntime'])
+  broadcast: Object.freeze(['editRuntime']),
+  hold: Object.freeze(['log'])
 })
 
 /**

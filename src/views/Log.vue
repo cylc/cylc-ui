@@ -154,9 +154,6 @@ export default {
         ]
       )
     },
-    setLogFile () {
-      return this.logFile
-    },
     workflowNamePrefix () {
       return `${this.workflowId}//`
     },
