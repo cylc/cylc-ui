@@ -32,6 +32,11 @@ export default {
     workflowName: {
       type: String,
       required: true
+    },
+    initialOptions: {
+      // any parameters used to open this view
+      type: Object,
+      required: true
     }
   },
   computed: {

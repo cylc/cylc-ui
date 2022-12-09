@@ -230,6 +230,17 @@ export default {
 
   methods: {
     openDialog (mutation) {
+      if (mutation.name === 'log') {
+        this.$eventBus.emit(
+          'add-view',
+          {
+            viewName: 'Graph',
+            initialOptions: { a: 1, b: 2, c: 3 }
+          }
+        )
+        return
+      }
+
       this.dialog = true
       this.dialogMutation = mutation
       // Tell Vue to re-render the dialog component:
