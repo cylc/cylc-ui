@@ -35,14 +35,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       containing the stuff below is not the `.v-menu` div, but a completely
       separate `.v-menu__content` div created by vuetify
       (the `.v-menu` div is actually empty). -->
-      <v-card ref="menuContent">
+      <v-card
+        ref="menuContent"
+        v-if="node"
+      >
         <v-card-title class="text-h6">
-          {{ id }}
+          {{ node.id }}
         </v-card-title>
         <v-card-subtitle>
           {{ typeAndStatusText }}
         </v-card-subtitle>
-        <v-divider v-if="primaryMutations.length || displayMutations.length"></v-divider>
+        <v-divider v-if="primaryMutations.length || displayMutations.length" />
         <v-skeleton-loader
           v-if="isLoadingMutations && primaryMutations.length"
           type="list-item-avatar-two-line@3"
@@ -110,8 +113,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <Mutation
         :mutation="dialogMutation"
-        :cylcObject="{ id, isFamily }"
-        :initialData="initialData(dialogMutation, tokens)"
+        :cylcObject="node"
+        :initialData="initialData(dialogMutation, node.tokens)"
         :cancel="closeDialog"
         :types="types"
         :key="dialogKey /* Enables re-render of component each time dialog opened */"
@@ -125,9 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import {
   filterAssociations,
   getMutationArgsFromTokens,
-  getType,
-  mutate,
-  tokenise
+  mutate
 } from '@/utils/aotf'
 import Mutation from '@/components/cylc/Mutation'
 import {
@@ -156,14 +157,11 @@ export default {
       dialogMutation: null,
       dialogKey: false,
       expanded: false,
-      id: '',
-      node: {},
+      node: null,
       mutations: [],
       isLoadingMutations: true,
       showMenu: false,
-      tokens: [],
       types: [],
-      type: '',
       x: 0,
       y: 0,
       icons: {
@@ -182,7 +180,7 @@ export default {
 
   computed: {
     primaryMutations () {
-      return this.$workflowService.primaryMutations[this.type] || []
+      return this.$workflowService.primaryMutations[this.node.type] || []
     },
     canExpand () {
       return this.primaryMutations.length && this.mutations.length > this.primaryMutations.length
@@ -202,33 +200,26 @@ export default {
       }
       return this.mutations
     },
-    isFamily () {
-      // TODO: better way of checking if a 'task' is actually a family?
-      return this.type === 'task' && !('isHeld' in this.node)
-    },
     typeAndStatusText () {
       if (!this.node) {
         // can happen briefly when switching workflows
         return
       }
-      let ret = this.type
-      if (self.isFamily) {
-        ret = 'family'
-      }
-      if (this.type !== 'cycle') {
+      let ret = this.node.type
+      if (this.node.type !== 'cycle') {
         // NOTE: cycle point nodes don't have associated node data at present
         ret += ' - '
-        if (this.type === 'workflow') {
-          ret += this.node.statusMsg || 'state unknown'
+        if (this.node.type === 'workflow') {
+          ret += this.node.node.statusMsg || 'state unknown'
         } else {
-          ret += this.node.state || 'state unknown'
-          if (this.node.isHeld) {
+          ret += this.node.node.state || 'state unknown'
+          if (this.node.node.isHeld) {
             ret += ' (held)'
           }
-          if (this.node.isQueued) {
+          if (this.node.node.isQueued) {
             ret += ' (queued)'
           }
-          if (this.node.isRunahead) {
+          if (this.node.node.isRunahead) {
             ret += ' (runahead)'
           }
         }
@@ -291,19 +282,16 @@ export default {
     /* Call a mutation using only the tokens for args. */
     callMutationFromContext (mutation) {
       // eslint-disable-next-line no-console
-      console.debug(`mutation: ${mutation._title} ${this.id}`)
+      console.debug(`mutation: ${mutation._title} ${this.node.id}`)
       mutate(
         mutation,
-        getMutationArgsFromTokens(mutation, this.tokens),
+        getMutationArgsFromTokens(mutation, this.node.tokens),
         this.$workflowService.apolloClient
       )
       this.showMenu = false
     },
 
-    showMutationsMenu ({ id, node, event }) {
-      this.id = id
-      this.tokens = tokenise(id)
-      this.type = getType(this.tokens)
+    showMutationsMenu ({ node, event }) {
       this.node = node
       this.x = event.clientX
       this.y = event.clientY
@@ -313,9 +301,14 @@ export default {
         // displayed in the menu (this is what the skeleton-loader is for)
         this.isLoadingMutations = false
         this.types = types
+        let type = this.node.type
+        if (type === 'family') {
+          // show the same mutation list for families as for tasks
+          type = 'task'
+        }
         this.mutations = filterAssociations(
-          this.type,
-          this.tokens,
+          type,
+          this.node.tokens,
           mutations,
           this.user.permissions
         ).sort(

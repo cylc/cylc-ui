@@ -23,16 +23,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <!-- the mutation title -->
       <h3
-      style="text-transform: capitalize;"
+        style="text-transform: capitalize;"
       >
         {{ mutation._title }}
       </h3>
 
       <!-- the mutation description -->
       <v-expansion-panels
-      accordion
-      flat
-      v-bind="extendedDescription ? { hover: true } : { readonly: true }"
+        accordion
+        flat
+        v-bind="extendedDescription ? { hover: true } : { readonly: true }"
       >
         <v-expansion-panel
           class="mutation-desc"
@@ -163,7 +163,7 @@ export default {
       required: true
     },
     cylcObject: {
-      // { id, isFamily }
+      // data store node
       type: Object,
       required: true
     },

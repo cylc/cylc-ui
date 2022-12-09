@@ -183,6 +183,8 @@ primaryMutations[cylcObjects.Namespace] = [
   'trigger',
   'kill'
 ]
+// handle families the same as tasks
+primaryMutations.family = primaryMutations[cylcObjects.Namespace]
 
 /**
  * Cylc "objects" in hierarchy order.

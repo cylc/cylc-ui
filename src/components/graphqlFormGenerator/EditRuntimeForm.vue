@@ -63,7 +63,6 @@ import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
 import { VTextarea } from 'vuetify/lib/components'
 import VuetifyConfig, { getComponentProps, RUNTIME_SETTING } from '@/components/graphqlFormGenerator/components/vuetify'
 import { findByName, mutate } from '@/utils/aotf'
-import { Tokens } from '@/utils/uid'
 
 export default {
   name: 'EditRuntimeForm',
@@ -76,7 +75,7 @@ export default {
       default: () => false
     },
     cylcObject: {
-      // { id, isFamily }
+      // data store node
       type: Object,
       required: true
     },
@@ -126,7 +125,9 @@ export default {
   methods: {
     /** Set this form to its initial conditions. */
     async reset () {
-      const queryName = this.cylcObject.isFamily ? 'familyProxy' : 'taskProxy'
+      const queryName = (
+        this.cylcObject.type === 'family' ? 'familyProxy' : 'taskProxy'
+      )
       const queryField = 'runtime'
       this.loading = true
       this.isValid = false
@@ -155,7 +156,7 @@ export default {
     },
 
     async submit () {
-      const tokens = new Tokens(this.cylcObject.id)
+      const tokens = this.cylcObject.tokens
       const settings = this.getBroadcastData()
       if (!settings.length) {
         return {

@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             We don't use this for the v-cylc-object as that would set the node
             type to family. -->
           <Task
-            v-cylc-object="node.node"
+            v-cylc-object="node"
             v-if="node.familyTree"
             :key="node.id"
             :task="node.familyTree[0].node"
@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot name="family-proxy" v-else-if="node.type === 'family'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <Task
-            v-cylc-object="node.node"
+            v-cylc-object="node"
             :key="node.id"
             :task="node.node"
           />
@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <!-- Task summary -->
           <Task
-            v-cylc-object="node.node"
+            v-cylc-object="node"
             :key="node.id"
             :task="node.node"
             :startTime="(latestJob(node) || {}).startedTime"
@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!-- most recent job summary -->
             <Job
               v-for="(job, index) in node.children.slice(0, 1)"
-              v-cylc-object="job.node"
+              v-cylc-object="job"
               :key="`${job.id}-summary-${index}`"
               :status="job.node.state"
               :previous-state="node.children.length > 1 ? node.children[1].node.state : ''"
@@ -85,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot name="job" v-else-if="node.type === 'job'">
         <div :class="getNodeDataClass()" @click="nodeClicked">
           <Job
-            v-cylc-object="node.node"
+            v-cylc-object="node"
             :key="node.id"
             :status="node.node.state"
           />
