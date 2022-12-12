@@ -101,12 +101,8 @@ describe('WorkflowService mutations', () => {
         // equivalent to `.as('mutation')`:
         req.alias = 'mutation'
       } else if (req.body.query?.includes('__schema')) {
-        // Defer the response to the query that loads the mutations
-        req.continue(res => {
-          // Return unfulfilled promise; Cypress will wait for us to resolve it
-          // before sending the response
-          return deferred.promise
-        })
+        // Cypress will await promise before continuing with the request
+        return deferred.promise
       }
     })
     cy.visit('/#/workflows/one')

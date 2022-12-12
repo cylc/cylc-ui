@@ -120,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               class="mr-2"
               v-if="scope.node.type === 'workflow'"
               :status="scope.node.node.status"
-              v-cylc-object="scope.node.node"
+              v-cylc-object="scope.node"
             />
             <v-list-item
               :to="workflowLink(scope.node)"

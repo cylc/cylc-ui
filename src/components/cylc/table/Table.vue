@@ -124,14 +124,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <div class="d-flex align-content-center flex-nowrap">
                     <div class="mr-1">
                       <Task
-                        v-cylc-object="item.task.node"
+                        v-cylc-object="item.task"
                         :task="item.task.node"
                         :startTime="((item.latestJob || {}).node || {}).startedTime"
                       />
                     </div>
                     <div class="mr-1">
                       <Job
-                        v-cylc-object="item.task.node"
+                        v-cylc-object="item.task"
                         :status="item.task.node.state"
                         :previous-state="((item.previousJob || {}).node || {}).state"
                       />
@@ -187,7 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <div class="d-flex align-content-center flex-nowrap">
                     <div class="mr-1">
                       <Job
-                        v-cylc-object="job.node"
+                        v-cylc-object="job"
                         :key="`${job.id}-summary-${index}`"
                         :status="job.node.state"
                         style="margin-left: 1.3em;"

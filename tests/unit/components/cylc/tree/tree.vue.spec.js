@@ -34,7 +34,7 @@ localVue.prototype.$workflowService = {
   register () {},
   unregister () {},
   subscribe () {},
-  mutationsAndTypes: Promise.resolve({
+  introspection: Promise.resolve({
     mutations: [
       { args: [] }
     ],

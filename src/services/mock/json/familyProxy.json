@@ -1,0 +1,26 @@
+{
+  "data": {
+    "familyProxy": {
+      "runtime": {
+        "platform": "",
+        "script": "",
+        "initScript": "",
+        "envScript": "",
+        "errScript": "",
+        "exitScript": "",
+        "preScript": "echo Terminus",
+        "postScript": "",
+        "workSubDir": "",
+        "executionPollingIntervals": "",
+        "executionRetryDelays": "",
+        "executionTimeLimit": "None",
+        "submissionPollingIntervals": "",
+        "submissionRetryDelays": "",
+        "directives": [],
+        "environment": [],
+        "outputs": [],
+        "__typename": "Runtime"
+      }
+    }
+  }
+}

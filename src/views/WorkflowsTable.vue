@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <td width="1em">
                 <WorkflowIcon
                   :status="item.node.status"
-                  v-cylc-object="item.node"
+                  v-cylc-object="item"
                 />
               </td>
               <td style="cursor:pointer" @click="viewWorkflow(item)">

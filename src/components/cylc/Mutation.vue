@@ -21,13 +21,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       style="padding: 1em;"
       outlined
     >
+      <!-- the mutation title -->
+      <h3
+        style="text-transform: capitalize;"
+      >
+        {{ mutation._title }}
+      </h3>
+
+      <!-- the mutation description -->
+      <v-expansion-panels
+        accordion
+        flat
+        v-bind="extendedDescription ? { hover: true } : { readonly: true }"
+      >
+        <v-expansion-panel
+          class="mutation-desc"
+        >
+          <v-expansion-panel-header
+            v-bind="extendedDescription ? {} : {
+              expandIcon: null,
+              style: {
+                cursor: 'default'
+              }
+            }"
+          >
+            <Markdown :markdown="shortDescription"/>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content
+            v-if="extendedDescription"
+          >
+            <Markdown :markdown="extendedDescription"/>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+
+      <v-divider/>
+      <EditRuntimeForm
+        v-if="mutation.name === 'editRuntime'"
+        v-bind="{
+          cylcObject,
+          types
+        }"
+        ref="form"
+        v-model="isValid"
+      />
       <FormGenerator
-       :mutation='mutation'
-       :types='types'
-       :callbackSubmit='call'
-       :initialData='initialData'
-       ref="formGenerator"
-       v-model="isValid"
+        v-else
+        v-bind="{
+          mutation,
+          types,
+          initialData
+        }"
+        ref="form"
+        v-model="isValid"
       />
       <br />
       <v-card-actions>
@@ -42,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-btn>
         <v-btn
           color="orange"
-          @click="$refs.formGenerator.reset()"
+          @click="$refs.form.reset()"
           text
           data-cy="reset"
         >
@@ -57,7 +103,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-btn
               text
               :color="isValid ? 'primary' : 'error'"
-              @click="$refs.formGenerator.submit()"
+              @click="submit"
+              :loading="submitting"
               v-bind="attrs"
               v-on="on"
               data-cy="submit"
@@ -68,47 +115,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <span>Form contains invalid or missing values!</span>
         </v-tooltip>
       </v-card-actions>
-      <p
-       style="font-size:1.5em;"
-       v-if="status !== 'waiting'"
+      <v-snackbar
+        v-model="showSnackbar"
+        v-bind="snackbarProps"
+        data-cy="response-snackbar"
       >
-        {{ status }}
-      </p>
-      <pre v-if="status === 'failed'">{{ response }}</pre>
+        {{ response.msg }}
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            @click="showSnackbar = false"
+            icon
+            v-bind="attrs"
+            data-cy="snackbar-close"
+          >
+            <v-icon>
+              {{ $options.icons.close }}
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-card>
 </template>
 
 <script>
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
-import { mutate } from '@/utils/aotf'
-
-// enumeration for the mutation status, maps onto Cylc Task status
-const status = {
-  waiting: 'waiting',
-  submitted: 'submitted',
-  succeeded: 'succeeded',
-  failed: 'failed',
-  submitFailed: 'submit-failed'
-}
-Object.freeze(status)
-
-// initial state defined here so we can easily reset the component data
-const initialState = {
-  response: '',
-  status: status.waiting
-}
-Object.freeze(initialState)
+import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
+import Markdown from '@/components/Markdown'
+import {
+  getMutationShortDesc,
+  getMutationExtendedDesc
+} from '@/utils/aotf'
+import { mdiClose } from '@mdi/js'
 
 export default {
   name: 'mutation',
 
   components: {
-    FormGenerator
+    EditRuntimeForm,
+    FormGenerator,
+    Markdown
   },
 
   props: {
     mutation: {
       // graphql mutation object as returned by introspection query
+      type: Object,
+      required: true
+    },
+    cylcObject: {
+      // data store node
       type: Object,
       required: true
     },
@@ -129,37 +184,69 @@ export default {
   },
 
   data: () => ({
-    ...initialState,
-    isValid: false
+    isValid: false,
+    submitting: false,
+    response: {
+      msg: null,
+      level: 'warn'
+    }
   }),
 
-  methods: {
-    /* Execute the GraphQL mutation */
-    async call (args) {
-      this.status = status.submitted
-      mutate(
-        this.mutation,
-        args,
-        this.$workflowService.apolloClient
-      ).then(response => {
-        this.status = response.status.name.replace('_', '-')
-      })
+  computed: {
+    /* Return the first line of the description. */
+    shortDescription () {
+      return getMutationShortDesc(this.mutation.description)
     },
-
-    /* Reset this component to it's initial state. */
-    reset () {
-      this.$refs.formGenerator.reset()
-      Object.assign(this.$data, initialState)
+    /* Return the subsequent lines of the description */
+    extendedDescription () {
+      return getMutationExtendedDesc(this.mutation.description)
+    },
+    showSnackbar: {
+      get () {
+        return Boolean(this.response.msg)
+      },
+      set (val) {
+        if (!val) this.response.msg = null
+      }
+    },
+    snackbarProps () {
+      return this.response.level === 'error'
+        ? {
+          timeout: -1,
+          color: 'red accent-2',
+          dark: true
+        }
+        : {
+          timeout: 4e3,
+          color: 'amber accent-2',
+          light: true
+        }
     }
   },
 
-  watch: {
-    mutation: function () {
-      // reset the form if the mutation changes
-      // (i.e. this component is being re-used)
-      this.reset()
+  methods: {
+    /* Execute the GraphQL mutation */
+    submit () {
+      this.submitting = true
+      this.$refs.form.submit().then(response => {
+        this.submitting = false
+        if (response.status.name.includes('failed')) {
+          this.response.msg = response.message
+          this.response.level = 'error'
+        } else if (response.status.name === 'warn') {
+          this.response.msg = response.message
+          this.response.level = 'warn'
+        } else {
+          // Close the form on success
+          this.cancel()
+        }
+      })
     }
-  }
+  },
 
+  // Misc options
+  icons: {
+    close: mdiClose
+  }
 }
 </script>

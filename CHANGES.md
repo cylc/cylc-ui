@@ -15,6 +15,10 @@ ones in. -->
 
 ### Enhancements
 
+[#1144](https://github.com/cylc/cylc-ui/pull/1144) - Add "Edit Runtime"
+command, a more convenient way to perform broadcasts by viewing and editing a
+task/family's runtime configuration.
+
 [#1108](https://github.com/cylc/cylc-ui/pull/1108) -
 Graph view: A new view which displays tasks and dependencies as a graph (like
 the Cylc 7 graph view).

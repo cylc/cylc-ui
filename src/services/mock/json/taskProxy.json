@@ -1,0 +1,44 @@
+{
+  "data": {
+    "taskProxy": {
+      "runtime": {
+        "platform": "",
+        "script": "sleep 4\nif [[ \"$CYLC_TASK_SUBMIT_NUMBER\" > 1 ]]; then\n    false\nfi",
+        "initScript": "",
+        "envScript": "echo Anacreon",
+        "errScript": "",
+        "exitScript": "",
+        "preScript": "echo Terminus",
+        "postScript": "",
+        "workSubDir": "",
+        "executionPollingIntervals": "",
+        "executionRetryDelays": "PT2M, PT2M, PT2M, PT2M, PT2M, PT5M",
+        "executionTimeLimit": "PT2H",
+        "submissionPollingIntervals": "",
+        "submissionRetryDelays": "",
+        "directives": [
+          {
+            "key": "--nodes",
+            "value": "5"
+          },
+          {
+            "key": "--account",
+            "value": "h_seldon"
+          }
+        ],
+        "environment": [
+          {
+            "key": "FACTION",
+            "value": "Foundation"
+          },
+          {
+            "key": "MAYOR",
+            "value": "Hardin"
+          }
+        ],
+        "outputs": [],
+        "__typename": "Runtime"
+      }
+    }
+  }
+}

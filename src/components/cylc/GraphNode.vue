@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :href="`#${nodeID}`"
       x="0" y="0"
       width="150" height="150"
-      v-cylc-object="task.node"
+      v-cylc-object="task"
     />
 
     <g :transform="labelTransform">

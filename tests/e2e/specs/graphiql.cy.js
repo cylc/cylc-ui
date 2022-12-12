@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// query used for the graphiql test
+/** query used for the graphiql test */
 const query = `query App {
   workflows {
     id

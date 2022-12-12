@@ -20,9 +20,7 @@ const listeners = new WeakMap()
 
 function bind (el, binding, vnode) {
   const listener = function (e) {
-    const cylcId = binding.value.id
     vnode.context.$eventBus.emit('show-mutations-menu', {
-      id: cylcId,
       node: binding.value,
       event: e
     })
