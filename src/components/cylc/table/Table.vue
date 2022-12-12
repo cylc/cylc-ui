@@ -115,7 +115,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td>{{ ((item.latestJob || {}).node || {}).submittedTime }}</td>
                 <td>{{ ((item.latestJob || {}).node || {}).startedTime }}</td>
                 <td>{{ ((item.latestJob || {}).node || {}).finishedTime }}</td>
-                <td>{{ item.task.node.meanElapsedTime }}</td>
+                <td>{{ dtMean(item.task) }}</td>
               </tr>
             </template>
             <template v-slot:expanded-item="{ item }">
@@ -244,7 +244,7 @@ export default {
         },
         {
           text: 'dT-mean',
-          value: 'task.meanElapsedTime',
+          value: 'task.node.task.meanElapsedTime',
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
       ],
@@ -254,6 +254,17 @@ export default {
   computed: {
     filteredTasks () {
       return this.tasks.filter(({ task }) => matchNode(task.node, this.tasksFilter.name, this.tasksFilter.states))
+    }
+  },
+  methods: {
+    dtMean (taskNode) {
+      const ret = taskNode.node?.task?.meanElapsedTime
+      if (ret) {
+        return ret.toFixed()
+      }
+      // the meanElapsedTime can be undefined (e.g. task has not run before)
+      // return "undefined" rather than a number for these cases
+      return undefined
     }
   }
 }

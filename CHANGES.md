@@ -34,6 +34,9 @@ New tabs now open on top.
 
 ### Fixes
 
+[#1164](https://github.com/cylc/cylc-ui/pull/1164) -
+Fix the mean run time column in the table view.
+
 [#1108](https://github.com/cylc/cylc-ui/pull/1108) -
 Tree view: Task outputs are now correctly associated with the jobs that created
 them.
