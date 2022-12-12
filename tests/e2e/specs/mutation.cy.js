@@ -127,7 +127,6 @@ describe('Mutations component', () => {
       cy.get('[data-cy="submit"]')
         .click()
         .should('have.class', 'v-btn--loading')
-        .wait(500)
         .get('.c-mutation-dialog')
         .should('be.visible')
         // Now let mutation response through
