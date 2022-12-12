@@ -197,7 +197,7 @@ function addChild (parentNode, childNode) {
 function removeChild (state, node, parentNode = null) {
   // console.log(`$t -- ${node.id}`)
   let key = 'children'
-  if (node.type === '$namesapce') {
+  if (node.type === '$namespace') {
     key = '$namespaces'
   } else if (node.type === '$edge') {
     key = '$edges'
@@ -518,8 +518,7 @@ const mutations = {
   CREATE: createTree,
   UPDATE: update,
   UPDATE_DELTAS (state, updated) {
-    // eslint-disable-next-line no-console
-    console.log('@ UPDATE')
+    // console.log('@ UPDATE')
     for (const updatedValue of Object.values(pick(updated, KEYS))) {
       const items = isArray(updatedValue) ? updatedValue : [updatedValue]
       for (const updatedData of items) {
@@ -528,8 +527,7 @@ const mutations = {
         }
       }
     }
-    // eslint-disable-next-line no-console
-    console.log('@@')
+    // console.log('@@')
   },
   // remove an ID
   REMOVE: remove,
