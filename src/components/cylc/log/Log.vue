@@ -1,7 +1,14 @@
+<!-- <template> -->
+  <!-- <div> -->
+    <!-- <div v-for="log in logs" :key="log">{{log}}</div> -->
+  <!-- </div> -->
+<!-- </template> -->
+<!--  -->
+<!--  -->
+
 <template>
-  <!-- <div id="editor" style="width: 500px; height: 500px"></div> -->
   <div>
-    <div v-for="log in logs" :key="log">{{log}}</div>
+      <div v-for="log in logs" :key="log">{{log}}</div>
   </div>
 </template>
 
@@ -21,11 +28,11 @@ export default {
       required: true
     }
   }
-  // async mounted () {
-  //   loader.init().then((monaco) => {
-  //     monaco.editor.create(document.getElementById('editor'))
-  //   },
 
 }
+// async mounted () {
+//   loader.init().then((monaco) => {
+//     monaco.editor.create(document.getElementById('editor'))
+//   },
 
 </script>

@@ -273,7 +273,7 @@ class WorkflowService {
       }
       this.stopSubscription(subscription, true)
     }
-    if (subscription.query.name === 'log-query') {
+    if (subscription.query.name.startsWith('log-query')) {
       try {
         // Then start subscription.
         subscription.observable = this.startDeltasSubscription(

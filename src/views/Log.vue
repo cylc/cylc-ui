@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
+    <VTextField v-model="workflow" />
     <div class="c-log pa-2 h-100" data-cy="log-view">
       <log-component
         :logs="getlogs"
@@ -38,6 +39,7 @@ import LogComponent from '@/components/cylc/log/Log'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { LOGS_SUBSCRIPTION } from '@/graphql/queries'
 import LogsCallback from '@/components/cylc/log/callbacks'
+// import V-text whatever
 
 export default {
   mixins: [
@@ -49,6 +51,7 @@ export default {
   name: 'Log',
   components: {
     LogComponent
+    // V-text here
   },
   metaInfo () {
     return {
@@ -60,10 +63,14 @@ export default {
       widget: {
         title: 'logs',
         icon: mdiFileDocumentMultipleOutline
-      }
+      },
+      workflow: '',
+      cycle: '',
+      task: '',
+      job: ''
     }
   },
-
+  // text boxes in here
   computed: {
     ...mapState('workflows', ['logs']),
     getlogs () {
@@ -73,15 +80,19 @@ export default {
       return Object.values(this.logs.scheduler_logs)
     },
     query () {
-      debugger
       return new SubscriptionQuery(
         LOGS_SUBSCRIPTION,
         this.variables,
-        'log-query',
+        `log-query-${this._uid}`,
         [
           new LogsCallback()
         ]
       )
+    },
+    methods: {
+      set_id () {
+        // this.variables =
+      }
     }
   }
 }
