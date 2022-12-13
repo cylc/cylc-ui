@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :close-on-content-click="false"
       :close-on-click="false"
       v-click-outside="{ handler: onClickOutside, include: clickOutsideInclude }"
+      max-height="50vh"
       dark
     >
       <!-- NOTE: because the `attach` prop is not true, the actual DOM element
@@ -276,6 +277,14 @@ export default {
     },
 
     expandCollapse () {
+      /**
+       * Before expanding we check whether this.y in in the bottom half of
+       * the viewport. If it is, we modify this.y to be in the top half
+      **/
+      const halfPageheight = document.body.clientHeight / 2
+      if (!this.expanded && this.y > halfPageheight) {
+        this.y = this.y - halfPageheight
+      }
       this.expanded = !this.expanded
     },
 

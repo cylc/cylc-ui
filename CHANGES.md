@@ -31,6 +31,9 @@ for number of tasks per page.
 
 ### Fixes
 
+[#1167](https://github.com/cylc/cylc-ui/pull/1168) - Prevent mutations menu
+jumping when expanded.
+
 [#1108](https://github.com/cylc/cylc-ui/pull/1108) -
 Tree view: Task outputs are now correctly associated with the jobs that created
 them.
