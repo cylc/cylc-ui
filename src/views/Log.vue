@@ -17,7 +17,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <VTextField v-model="workflow" />
+    <v-form>
+      <v-container>
+        <v-row :justify="start">
+          <!-- <v-col cols="12" md="2" align-self="end">
+            <v-text-field
+              outlined
+              dense
+              disabled
+              flat
+              value="workflow"
+          ></v-text-field>
+        </v-col> -->
+
+          <v-col cols="12" md="4" >
+          <v-text-field
+          v-model="jobSearch"
+          clearable
+          flat
+          dense
+          hide-details
+          :prefix="workflowNamePrefix"
+          outlined
+          placeholder="Type cycle/task/job name here"
+          class="flex-grow-1 flex-column"
+          id="c-log-search-workflows"
+        ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="1">
+            <v-btn color="primary" @click="set_id">Search</v-btn>
+            </v-col>
+            </v-row>
+      </v-container>
+    </v-form>
+
     <div class="c-log pa-2 h-100" data-cy="log-view">
       <log-component
         :logs="lines"
@@ -93,6 +126,9 @@ export default {
           new LogsCallback(this.lines)
         ]
       )
+    },
+    workflowNamePrefix () {
+      return `~${this.user.owner}/${this.workflowName}/`
     },
     methods: {
       set_id () {
