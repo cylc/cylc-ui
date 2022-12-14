@@ -283,7 +283,7 @@ export default {
       **/
       const halfPageheight = document.body.clientHeight / 2
       if (!this.expanded && this.y > halfPageheight) {
-        this.y = this.y - halfPageheight
+        this.y = document.body.clientHeight - 20
       }
       this.expanded = !this.expanded
     },
