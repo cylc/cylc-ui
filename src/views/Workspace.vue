@@ -63,6 +63,7 @@ import TableView from '@/views/Table'
 import TreeView from '@/views/Tree'
 import GraphView from '@/views/Graph'
 import LogView from '@/views/Log'
+import AnalysisView from '@/views/Analysis'
 
 export default {
   name: 'Workflow',
@@ -113,6 +114,7 @@ export default {
       TableView,
       GraphView,
       LogView
+      AnalysisView
     ]
 
   }),
