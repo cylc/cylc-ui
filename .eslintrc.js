@@ -15,50 +15,87 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const LEVEL = process.env.NODE_ENV === 'production' ? 'error' : 'warn'
+
 module.exports = {
   root: true,
   env: {
-    node: true
+    node: true,
   },
   extends: [
-    'standard',
     'eslint:recommended',
     'plugin:vue/essential',
-    'plugin:cypress/recommended'
+    'plugin:cypress/recommended',
   ],
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
-    'no-unreachable': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
-    'no-unused-vars': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+    'no-console': LEVEL,
+    'no-debugger': LEVEL,
+    'no-unreachable': LEVEL,
+    'no-unused-vars': LEVEL,
+    'max-len': [
+      LEVEL,
+      {
+        code: 80,
+        comments: 80,
+        ignoreUrls: true,
+      },
+    ],
+    'comma-dangle': [
+      LEVEL,
+      // 'only-multiline'
+      'always-multiline',
+    ],
+    'func-call-spacing': [
+      LEVEL,
+      'never',
+    ],
+    'function-call-argument-newline': [
+      LEVEL,
+      'consistent',
+    ],
+    'function-paren-newline': [
+      LEVEL,
+      'multiline-arguments',
+    ],
     indent: [
-      'error',
+      LEVEL,
       2,
       {
         ignoredNodes: [
-          'TemplateLiteral'
-        ]
-      }
+          'TemplateLiteral',
+        ],
+      },
+    ],
+    'key-spacing': [
+      LEVEL,
+    ],
+    'operator-linebreak': [
+      LEVEL,
+      'before',
+    ],
+    'linebreak-style': [
+      'error',
+      'unix',
     ],
     'template-curly-spacing': [
-      'off'
+      'off',
     ],
     'vue/multi-word-component-names': [
-      'off'
+      'off',
     ],
     'vue/no-reserved-component-names': [
-      'off'
+      'off',
     ],
     'vue/valid-v-slot': [
       'error',
       {
-        allowModifiers: true
-      }
+        allowModifiers: true,
+      },
     ],
     'import/no-duplicates': 'off',
-    'no-duplicate-imports': 'error'
+    'no-duplicate-imports': 'error',
   },
   parserOptions: {
-    parser: '@babel/eslint-parser'
-  }
+    parser: '@babel/eslint-parser',
+  },
 }
