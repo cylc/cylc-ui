@@ -123,5 +123,15 @@ export default [
       showSidebar: false
     },
     props: true
-  }
+  },
+  {
+    path: '/analysis/:workflowName(.*)',
+    view: 'Analysis',
+    name: 'analysis',
+    meta: {
+      layout: 'default',
+      toolbar: true
+    },
+    props: true
+  },
 ]
