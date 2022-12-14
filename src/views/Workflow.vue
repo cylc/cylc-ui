@@ -60,6 +60,7 @@ import Toolbar from '@/components/cylc/workflow/Toolbar'
 import TableView from '@/views/Table'
 import TreeView from '@/views/Tree'
 import GraphView from '@/views/Graph'
+import AnalysisView from '@/views/Analysis'
 
 export default {
   name: 'Workflow',
@@ -96,7 +97,8 @@ export default {
     views: [
       TreeView,
       TableView,
-      GraphView
+      GraphView,
+      AnalysisView
     ]
   }),
   created () {
