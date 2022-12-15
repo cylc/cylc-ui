@@ -17,37 +17,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
+    <!-- <pre>
+      {{ $data }}
+    </pre> -->
     <v-form>
       <v-container>
         <v-row :justify="start">
-          <!-- <v-col cols="12" md="2" align-self="end">
-            <v-text-field
-              outlined
-              dense
-              disabled
-              flat
-              value="workflow"
-          ></v-text-field>
-        </v-col> -->
-
           <v-col cols="12" md="4" >
-          <v-text-field
-          v-model="jobSearch"
-          clearable
-          flat
-          dense
-          hide-details
-          :prefix="workflowNamePrefix"
-          outlined
-          placeholder="Type cycle/task/job name here"
-          class="flex-grow-1 flex-column"
-          id="c-log-search-workflows"
-        ></v-text-field>
+            <v-text-field
+            v-model="jobSearch"
+            clearable
+            flat
+            dense
+            hint="Type cycle/task/job to view job log"
+            :prefix="workflowNamePrefix"
+            outlined
+            placeholder="cycle/task/job"
+            class="flex-grow-1 flex-column"
+            id="c-log-search-box"
+            ></v-text-field>
+          </v-col>
+          <v-col
+            cols="12"
+            md="4">
+            <v-select
+              label="Select Job Log File"
+              :items="logfiles"
+              filled
+              v-model="selectedLogFile"
+              dense
+              outlined>
+            </v-select>
+          </v-col>
+          <v-col  v-show="selectedLogFile === 'other'" cols="12" md="3">
+            <v-text-field
+              v-model="logFileEntered"
+              placeholder="Enter Job File Name Here"
+              dense
+              clearable
+              outlined
+              >
+            </v-text-field>
           </v-col>
           <v-col cols="12" md="1">
-            <v-btn color="primary" @click="set_id">Search</v-btn>
-            </v-col>
-            </v-row>
+            <v-btn
+              color="primary"
+              dense
+              outlined
+              @click="set_id">Search</v-btn>
+          </v-col>
+        </v-row>
       </v-container>
     </v-form>
 
@@ -107,10 +126,18 @@ export default {
   },
   data () {
     return {
+      logfiles: ['job.out',
+        'job.err',
+        'job',
+        'job-activity.log',
+        'job.status',
+        'job.xtrace',
+        'other'],
       widget: {
         title: 'logs',
         icon: mdiFileDocumentMultipleOutline
       },
+      selectedLogFile: 'job.out',
       lines: []
     }
   },
@@ -127,12 +154,16 @@ export default {
         ]
       )
     },
+    setLogFile () {
+      return this.logFile
+    },
     workflowNamePrefix () {
-      return `~${this.user.owner}/${this.workflowName}/`
+      return `${this.workflowId}//`
     },
     methods: {
       set_id () {
-        // this.variables =
+        // this.variables.id = this.jobSearch
+        // this.variables.file =
       }
     }
   }
