@@ -38,13 +38,5 @@ export default {
   },
   beforeDestroy () {
     this.$workflowService.unsubscribe(this)
-  },
-  watch: {
-    query (query) {
-      console.error('QUERY CHANGED')
-      // if the query changes, unsubscribe & re-subscribe
-      this.$workflowService.unsubscribe(this)
-      this.$workflowService.subscribe(this)
-    }
   }
 }

@@ -14,7 +14,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
+<style>
+.v-application--is-ltr .v-text-field__prefix {
+  text-align: right;
+  padding-right: 0px;
+  color: blue;
+}
+</style>
 <template>
   <div class="h-100">
     <!-- <pre>
@@ -61,10 +67,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-col>
           <v-col cols="12" md="1">
             <v-btn
+              :disabled="isDisabled(jobSearch, selectedLogFile)"
               color="primary"
               dense
               outlined
-              @click="set_id">Search</v-btn>
+              @click="set_id(selectedLogFile, logFileEntered, jobSearch)">Search</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -81,12 +88,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { mdiFileDocumentMultipleOutline } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
-import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import subscriptionMixin from '@/mixins/subscriptionComponent'
 import LogComponent from '@/components/cylc/log/Log'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { LOGS_SUBSCRIPTION } from '@/graphql/queries'
@@ -111,13 +117,12 @@ export default {
   mixins: [
     pageMixin,
     graphqlMixin,
-    subscriptionComponentMixin,
+    subscriptionMixin,
     subscriptionViewMixin
   ],
   name: 'Log',
   components: {
     LogComponent
-    // V-text here
   },
   metaInfo () {
     return {
@@ -137,13 +142,14 @@ export default {
         title: 'logs',
         icon: mdiFileDocumentMultipleOutline
       },
-      selectedLogFile: 'job.out',
-      lines: []
+      selectedLogFile: '',
+      lines: [],
+      jobSearch: '',
+      logFileEntered: ''
     }
   },
   // text boxes in here
   computed: {
-    ...mapState('workflows', ['logs']),
     query () {
       return new SubscriptionQuery(
         LOGS_SUBSCRIPTION,
@@ -155,12 +161,30 @@ export default {
       )
     },
     workflowNamePrefix () {
-      return `${this.workflowId}//`
+      return `${this.workflowName}//`
+    }
+  },
+  methods: {
+    set_id (selectedLogFile, logFileEntered, jobSearch) {
+      this.$data.lines = []
+      this.$workflowService.unsubscribe(this)
+      this.variables.task = jobSearch
+      this.variables.file = this.getFileName(selectedLogFile, logFileEntered)
+      this.$workflowService.subscribe(this)
+      this.$workflowService.startSubscriptions()
     },
-    methods: {
-      set_id () {
-        // this.variables.id = this.jobSearch
-        // this.variables.file =
+    getFileName (selectedLogFile, logFileEntered) {
+      if (selectedLogFile === 'other' && logFileEntered) {
+        return logFileEntered
+      } else {
+        return selectedLogFile
+      }
+    },
+    isDisabled (jobSearch, selectedLogFile) {
+      if (jobSearch && selectedLogFile) {
+        return false
+      } else {
+        return true
       }
     }
   }

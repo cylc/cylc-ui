@@ -60,11 +60,14 @@ export default {
     /**
      * GraphQL query variables.
      *
-     * @returns {{workflowId: string}}
+     * @returns {{workflowId: string, workflowName: string}}
      */
     variables () {
       return {
-        workflowId: this.workflowId
+        workflowId: this.workflowId,
+        workflowName: this.workflowName,
+        task: '',
+        file: ''
       }
     }
   }

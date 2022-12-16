@@ -308,16 +308,6 @@ export const dummyMutations = [
 ]
 
 /**
- * Map real mutations to dummy mutations with the same permission level.
- *
- * @type {{string: string[]}}
- */
-const dummyMutationsPermissionsMap = Object.freeze({
-  broadcast: Object.freeze(['editRuntime']),
-  hold: Object.freeze(['log'])
-})
-
-/**
  * Translate a global ID into a token dictionary.
  *
  * @param {string} id
