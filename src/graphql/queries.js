@@ -206,14 +206,6 @@ subscription LogData ($workflowName: ID, $task: String, $file: String) {
   logs (workflow: $workflowName, task:$task, file: $file)
 }
 `
-// const LOGS_SUBSCRIPTION = gql`
-//   subscription LogData ($workflowID: String, $task: String!) {
-//   logs (workflow: $workflowID, task: $task)
-// }
-
-// subscription($workflow: String, $task: String!) {
-//   jobs(workflow: $workflow, task: $task)
-// }
 
 /**
  * Query used to retrieve data for the WorkflowsTable view.

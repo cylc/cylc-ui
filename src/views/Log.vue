@@ -23,9 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </style>
 <template>
   <div class="h-100">
-    <!-- <pre>
-      {{ $data }}
-    </pre> -->
     <v-form>
       <v-container>
         <v-row :justify="start">
@@ -148,7 +145,6 @@ export default {
       logFileEntered: ''
     }
   },
-  // text boxes in here
   computed: {
     query () {
       return new SubscriptionQuery(
