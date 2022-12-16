@@ -31,7 +31,6 @@ class LogsCallback {
   onAdded (added, store, errors) {
     this.logs = Object.assign({}, store.state.workflows.logs)
     const logs = isArray(added) ? added : [added]
-    console.log('onAdded!! ' + added[0])
     try {
       if (!this.logs.scheduler_logs) {
         Vue.set(this.logs, 'scheduler_logs', logs)

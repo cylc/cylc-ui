@@ -166,7 +166,6 @@ export default {
       if (!view) {
         throw Error(`Unknown view "${viewName}"`)
       }
-      console.error(viewName, initialOptions)
       Vue.set(
         this.widgets,
         createWidgetId(),
