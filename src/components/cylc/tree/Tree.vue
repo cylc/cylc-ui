@@ -45,6 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 v-on="on"
                 @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
                 icon
+                data-cy="expand-all"
               >
                 <v-icon>{{ svgPaths.expandIcon }}</v-icon>
               </v-btn>
@@ -57,6 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 v-on="on"
                 @click="collapseAll()"
                 icon
+                data-cy="collapse-all"
               >
                 <v-icon>{{ svgPaths.collapseIcon }}</v-icon>
               </v-btn>
@@ -251,10 +253,9 @@ export default {
       } else if (node.type === 'task') {
         filtered = matchNode(node.node, this.tasksFilter.name, this.tasksFilter.states)
       }
-      if (!this.treeItemCache[node.id]) {
-        this.treeItemCache[node.id] = {}
+      if (this.treeItemCache[node.id]) {
+        this.treeItemCache[node.id].filtered = filtered
       }
-      this.treeItemCache[node.id].filtered = filtered
       return filtered
     },
     removeAllFilters () {

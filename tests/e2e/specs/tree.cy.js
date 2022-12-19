@@ -250,25 +250,60 @@ describe('Tree view', () => {
         .should('have.length', 1)
         .contains('retrying')
     })
+  })
 
-    it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
+  describe('Expand/collapse all buttons', () => {
+    it('Collapses and expands as expected', () => {
       cy.visit('/#/tree/one')
-      cy
-        .get('[data-cy=filter-task-states]')
-        .click({ force: true })
-      // eslint-disable-next-line no-lone-blocks
-      TaskState.enumValues.forEach(state => {
-        cy.get('.v-list-item')
-          .contains(state.name)
-          .click({ force: true })
-      })
-      // Click outside to close dropdown
-      cy.get('noscript')
-        .click({ force: true })
-      cy.get('.v-select__slot')
-        .should($select => {
-          expect($select).to.contain('(+')
-        })
+      cy.get('.node-data-task')
+        .contains('sleepy')
+        .as('sleepyTask')
+        .should('be.visible')
+      cy.get('[data-cy=collapse-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('not.be.visible')
+        .get('[data-cy=expand-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('be.visible')
     })
+    it('Works when tasks are being filtered', () => {
+      cy.visit('/#/tree/one')
+      cy.get('.node-data-task')
+        .contains('sleepy')
+        .as('sleepyTask')
+        .should('be.visible')
+      cy.get('[data-cy=filter-task-name]')
+        .type('sleep')
+      cy.get('[data-cy=collapse-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('not.be.visible')
+        .get('[data-cy=expand-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('be.visible')
+    })
+  })
+
+  it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
+    cy.visit('/#/tree/one')
+    cy
+      .get('[data-cy=filter-task-states]')
+      .click({ force: true })
+    // eslint-disable-next-line no-lone-blocks
+    TaskState.enumValues.forEach(state => {
+      cy.get('.v-list-item')
+        .contains(state.name)
+        .click({ force: true })
+    })
+    // Click outside to close dropdown
+    cy.get('noscript')
+      .click({ force: true })
+    cy.get('.v-select__slot')
+      .should($select => {
+        expect($select).to.contain('(+')
+      })
   })
 })
