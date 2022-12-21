@@ -325,11 +325,11 @@ export default {
       const children = this.$refs.graph.children
       if (
         // there should be at least two children (defs and one group)
-        children.length < 2 ||
+        children.length < 2
         // the first item (after defs) should have measurable dimensions
-        !children[1].getBBox() ||
+        || !children[1].getBBox()
         // and it's dimensions should be non-zero
-        children[1].getBBox().width === 0
+        || children[1].getBBox().width === 0
       ) {
         // the SVG is not ready yet, give it time, we'll re-try when the
         // graph layout changes
@@ -435,7 +435,7 @@ export default {
         `  rankdir=${this.transpose ? 'LR' : 'TB'}`,
         `  nodesep=${spacing}`,
         `  ranksep=${spacing * 2}`,
-        '  node [shape="rect"]'
+        '  node [shape="rect"]',
       )
       for (const node of nodes) {
         // use an HTML-like GraphViz node label to allow fine control over
@@ -488,18 +488,18 @@ export default {
           .map((n) => n.id)
           .reduce((x, y) => {
             return x + y
-          }) +
-          edges
+          })
+          + edges
             .map((n) => n.id)
             .reduce((x, y) => {
               return x + y
-            }, 1)
+            }, 1),
       )
     },
     reset() {
       // pan / zoom so that the graph is centered and in frame
       this.panZoomTo(
-        this.$refs.graph.getElementsByClassName('svg-pan-zoom_viewport')[0]
+        this.$refs.graph.getElementsByClassName('svg-pan-zoom_viewport')[0],
       )
     },
     panZoomTo(ele) {

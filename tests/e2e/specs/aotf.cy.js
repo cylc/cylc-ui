@@ -177,7 +177,7 @@ describe('Api On The Fly', () => {
 
           // ...which should be the cycleMutation...
           expect(mutation.mutation.definitions[0].name.value).to.equal(
-            'cycleMutation'
+            'cycleMutation',
           )
 
           // ...which should be called with the cycle point of the selected node
@@ -227,7 +227,7 @@ describe('Api On The Fly', () => {
 
           // ...which should be the cycleMutation...
           expect(mutation.mutation.definitions[0].name.value).to.equal(
-            'cycleMutation'
+            'cycleMutation',
           )
 
           // ...which should be called with the cycle point of the selected node

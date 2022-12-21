@@ -85,7 +85,7 @@ export default {
         WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
         this.variables,
         'workflow',
-        []
+        [],
       )
     },
   },

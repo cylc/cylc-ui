@@ -346,7 +346,7 @@ export default {
       return uniq(
         this.filters[1].items
           .filter((item) => item.model)
-          .map((item) => item.value.name)
+          .map((item) => item.value.name),
       )
     },
   },
@@ -363,7 +363,7 @@ export default {
           this.workflows,
           this.searchWorkflows,
           this.workflowStates,
-          this.taskStates
+          this.taskStates,
         )
       },
     },
@@ -378,7 +378,7 @@ export default {
           this.workflows,
           newVal,
           this.workflowStates,
-          this.taskStates
+          this.taskStates,
         )
       },
     },
@@ -389,7 +389,7 @@ export default {
           this.workflows,
           this.searchWorkflows,
           this.workflowStates,
-          this.taskStates
+          this.taskStates,
         )
       },
     },

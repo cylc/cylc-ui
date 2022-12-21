@@ -61,13 +61,13 @@ describe('ConnectionStatus component', () => {
       })
       expect(wrapper.props().isOffline).to.equal(
         test.args[0],
-        `Wrong props value, expected ${test.args[0]}`
+        `Wrong props value, expected ${test.args[0]}`,
       )
-      const isVisible =
-        wrapper.find('.v-snack__wrapper').element.style.display !== 'none'
+      const isVisible
+        = wrapper.find('.v-snack__wrapper').element.style.display !== 'none'
       expect(isVisible).to.equal(
         test.expected,
-        `Incorrect component visibility: ${isVisible}`
+        `Incorrect component visibility: ${isVisible}`,
       )
     })
   })

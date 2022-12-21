@@ -105,7 +105,7 @@ describe('urls', () => {
         const url = createUrl(
           test.path,
           test.websockets || false,
-          test.baseOnly || false
+          test.baseOnly || false,
         )
         expect(url).to.equal(test.expected)
       } finally {

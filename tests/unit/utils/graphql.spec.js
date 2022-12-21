@@ -32,7 +32,7 @@ describe('utils', () => {
       it('should create an apollo client', () => {
         const apolloClient = graphql.createApolloClient(
           'http://localhost:12345',
-          null
+          null,
         )
         expect(apolloClient.link !== null).to.equal(true)
         expect(apolloClient.cache !== null).to.equal(true)
@@ -51,7 +51,7 @@ describe('utils', () => {
             reconnect: false,
             lazy: true,
           },
-          {}
+          {},
         )
         expect(typeof subscriptionClient.request).to.equal('function')
       })
@@ -62,7 +62,7 @@ describe('utils', () => {
             reconnect: false,
             lazy: true,
           },
-          {}
+          {},
         )
         expect(store.state.offline).to.equal(false)
 

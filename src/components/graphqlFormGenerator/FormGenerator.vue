@@ -138,7 +138,7 @@ export default {
           defaultValue = JSON.parse(
             // default values arrive as JSON strings in the introspection
             // result so need to be converted here
-            arg.defaultValue
+            arg.defaultValue,
           )
           if (!defaultValue) {
             defaultValue = getNullValue(arg.type, this.types)
@@ -161,7 +161,7 @@ export default {
       return await mutate(
         this.mutation,
         this.model,
-        this.$workflowService.apolloClient
+        this.$workflowService.apolloClient,
       )
     },
   },

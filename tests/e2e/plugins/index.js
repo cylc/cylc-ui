@@ -30,7 +30,7 @@ module.exports = (on, config) => {
     webpack({
       webpackOptions,
       watchOptions: {},
-    })
+    }),
   )
   return Object.assign({}, config, {
     fixturesFolder: 'tests/e2e/fixtures',

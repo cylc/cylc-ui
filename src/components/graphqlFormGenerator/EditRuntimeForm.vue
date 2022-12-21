@@ -128,15 +128,15 @@ export default {
   methods: {
     /** Set this form to its initial conditions. */
     async reset() {
-      const queryName =
-        this.cylcObject.type === 'family' ? 'familyProxy' : 'taskProxy'
+      const queryName
+        = this.cylcObject.type === 'family' ? 'familyProxy' : 'taskProxy'
       const queryField = 'runtime'
       this.loading = true
       this.isValid = false
       const result = await this.$workflowService.query(
         queryName,
         { id: this.cylcObject.id },
-        [{ name: queryField }]
+        [{ name: queryField }],
       )
       const model = cloneDeep(result[queryName][queryField])
       this.type = findByName(this.types, model.__typename)
@@ -146,8 +146,8 @@ export default {
       // pre-existing key-val settings, so mark as frozen
       for (const fieldName of Object.keys(model)) {
         if (
-          findByName(this.type.fields, fieldName).type.ofType?.name ===
-          RUNTIME_SETTING
+          findByName(this.type.fields, fieldName).type.ofType?.name
+          === RUNTIME_SETTING
         ) {
           for (const item of model[fieldName]) {
             item.frozenKey = true
@@ -200,12 +200,12 @@ export default {
             for (const obj of val) {
               // Expect this to be { key?, value?, frozenKey? } object
               if (
-                obj.key != null &&
+                obj.key != null
                 // new item:
-                (!obj.frozenKey ||
+                && (!obj.frozenKey
                   // altered existing item:
-                  obj.value !==
-                    initialVal.find(({ key }) => key === obj.key).value)
+                  || obj.value
+                    !== initialVal.find(({ key }) => key === obj.key).value)
               ) {
                 // Convert { key: x, value: y } to { x: y }
                 ret.push({

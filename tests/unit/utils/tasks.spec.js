@@ -22,7 +22,7 @@ import { extractGroupState, latestJob } from '@/utils/tasks'
 describe('tasks', () => {
   describe('extractGroupState', () => {
     it('should return the correct state for the node groups when not stopped', () => {
-      ;[
+      [
         [
           TaskState.FAILED.name, // expected
           [TaskState.WAITING, TaskState.FAILED].map((state) => state.name),
@@ -41,11 +41,11 @@ describe('tasks', () => {
       })
     })
     it('should return the correct state for the node groups when stopped', () => {
-      ;[
+      [
         [
           TaskState.RUNNING.name, // expected
           [TaskState.WAITING, TaskState.SUBMITTED, TaskState.RUNNING].map(
-            (state) => state.name
+            (state) => state.name,
           ),
         ], // childStates
         [
@@ -55,7 +55,7 @@ describe('tasks', () => {
         [
           TaskState.RUNNING.name,
           [TaskState.SUBMITTED, TaskState.RUNNING, TaskState.EXPIRED].map(
-            (state) => state.name
+            (state) => state.name,
           ),
         ],
       ].forEach((val) => {

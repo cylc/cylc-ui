@@ -120,7 +120,7 @@ describe('GScan component', () => {
             type: 'workflow',
             node: { status: workflowState.name },
             children: [],
-          })
+          }),
         ).to.equal(WorkflowStateOrder.get(workflowState.name))
 
         // it should associate a nested workflow with the correct sort order
@@ -141,7 +141,7 @@ describe('GScan component', () => {
                 children: [],
               },
             ],
-          })
+          }),
         ).to.equal(WorkflowStateOrder.get(workflowState.name))
       }
     })
@@ -167,9 +167,9 @@ describe('GScan component', () => {
             // filter for all workflow states
             [...WorkflowStateOrder.keys()],
             // filter for all task states
-            []
-          )
-        )
+            [],
+          ),
+        ),
       ).to.deep.equal(['~u/b', '~u/c', '~u/a/x1', '~u/a/x2'])
     })
     it('should filter by workflow state', () => {
@@ -181,9 +181,9 @@ describe('GScan component', () => {
             null,
             [WorkflowState.RUNNING.name],
             // filter for all task states
-            []
-          )
-        )
+            [],
+          ),
+        ),
       ).to.deep.equal(['~u/c'])
       expect(
         listTree(
@@ -193,9 +193,9 @@ describe('GScan component', () => {
             null,
             [WorkflowState.STOPPING.name],
             // filter for all task states
-            []
-          )
-        )
+            [],
+          ),
+        ),
       ).to.deep.equal(['~u/b'])
       expect(
         listTree(
@@ -205,9 +205,9 @@ describe('GScan component', () => {
             null,
             [WorkflowState.STOPPED.name],
             // filter for all task states
-            []
-          )
-        )
+            [],
+          ),
+        ),
       ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
     })
     it('should filter by workflow name', () => {
@@ -219,9 +219,9 @@ describe('GScan component', () => {
             // filter for all workflow states
             [...WorkflowStateOrder.keys()],
             // filter for all task states
-            []
-          )
-        )
+            [],
+          ),
+        ),
       ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
       // check it isn't matching the user name
       expect(
@@ -232,9 +232,9 @@ describe('GScan component', () => {
             // filter for all workflow states
             [...WorkflowStateOrder.keys()],
             // filter for all task states
-            []
-          )
-        )
+            [],
+          ),
+        ),
       ).to.deep.equal([])
     })
     it('should filter by workflow state totals', () => {
@@ -246,9 +246,9 @@ describe('GScan component', () => {
             // filter for all workflow states
             [...WorkflowStateOrder.keys()],
             // filter for all task states
-            [TaskState.RUNNING.name]
-          )
-        )
+            [TaskState.RUNNING.name],
+          ),
+        ),
       ).to.deep.equal(['~u/b'])
       expect(
         listTree(
@@ -258,9 +258,9 @@ describe('GScan component', () => {
             // filter for all workflow states
             [...WorkflowStateOrder.keys()],
             // filter for all task states
-            [TaskState.SUBMITTED.name]
-          )
-        )
+            [TaskState.SUBMITTED.name],
+          ),
+        ),
       ).to.deep.equal(['~u/c'])
     })
   })

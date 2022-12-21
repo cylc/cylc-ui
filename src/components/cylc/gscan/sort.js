@@ -33,8 +33,8 @@ export function getWorkflowTreeSortValue(node) {
   let item
   const stack = [...node.children]
   while (
-    ret !== WorkflowStateOrder.get(WorkflowState.RUNNING.name) &&
-    stack.length
+    ret !== WorkflowStateOrder.get(WorkflowState.RUNNING.name)
+    && stack.length
   ) {
     // NOTE: if one workflow is running (top sort order) then we don't
     // need to keep searching as nothing can elevate the sort order further
@@ -74,7 +74,7 @@ export function sortedWorkflowTree(cylcTree) {
     tree.splice(
       sortedIndexBy(tree, workflowTree, (n) => gscanWorkflowCompValue(n)),
       0,
-      workflowTree
+      workflowTree,
     )
   }
   return tree

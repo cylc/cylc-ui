@@ -84,7 +84,7 @@ function getCurrentFontSize() {
 function expectedFontSize(
   increase,
   clicks,
-  initialFontSize = parseFloat(INITIAL_FONT_SIZE)
+  initialFontSize = parseFloat(INITIAL_FONT_SIZE),
 ) {
   const ratio = increase ? 1.2 : 0.8
   return initialFontSize * Math.pow(ratio, clicks)

@@ -339,8 +339,8 @@ export default {
       return this.tasks.filter((task) => {
         if (filterByName && filterByState) {
           return (
-            task.task.name.includes(this.activeFilters.name) &&
-            this.tasksFilterStates.includes(task.task.node.state)
+            task.task.name.includes(this.activeFilters.name)
+            && this.tasksFilterStates.includes(task.task.node.state)
           )
         } else if (filterByName) {
           return task.task.name.includes(this.activeFilters.name)
@@ -354,29 +354,29 @@ export default {
   methods: {
     filterByTaskName() {
       return (
-        this.activeFilters &&
-        this.activeFilters.name !== undefined &&
-        this.activeFilters.name !== null &&
-        this.activeFilters.name !== ''
+        this.activeFilters
+        && this.activeFilters.name !== undefined
+        && this.activeFilters.name !== null
+        && this.activeFilters.name !== ''
       )
     },
     filterByTaskState() {
       return (
-        this.activeFilters &&
-        this.activeFilters.states !== undefined &&
-        this.activeFilters.states !== null &&
-        this.activeFilters.states.length > 0
+        this.activeFilters
+        && this.activeFilters.states !== undefined
+        && this.activeFilters.states !== null
+        && this.activeFilters.states.length > 0
       )
     },
     filterTasks() {
-      const taskNameFilterSet =
-        this.tasksFilter.name !== undefined &&
-        this.tasksFilter.name !== null &&
-        this.tasksFilter.name !== ''
-      const taskStatesFilterSet =
-        this.tasksFilter.states !== undefined &&
-        this.tasksFilter.states !== null &&
-        this.tasksFilter.states.length > 0
+      const taskNameFilterSet
+        = this.tasksFilter.name !== undefined
+        && this.tasksFilter.name !== null
+        && this.tasksFilter.name !== ''
+      const taskStatesFilterSet
+        = this.tasksFilter.states !== undefined
+        && this.tasksFilter.states !== null
+        && this.tasksFilter.states.length > 0
       if (taskNameFilterSet || taskStatesFilterSet) {
         this.activeFilters = cloneDeep(this.tasksFilter)
       } else {

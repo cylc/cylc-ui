@@ -137,8 +137,8 @@ export default {
       is: VTextField,
       rules: [
         (x) =>
-          Boolean(!x || x.match(`^(${RE.cyclePoint}|\\*)$`)) ||
-          'Must be "*" or a valid cycle point',
+          Boolean(!x || x.match(`^(${RE.cyclePoint}|\\*)$`))
+          || 'Must be "*" or a valid cycle point',
       ],
     },
     // TaskStatus
@@ -168,8 +168,8 @@ export default {
       rules: [
         (x) =>
           Boolean(
-            !x ||
-              x.match(/^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2})?)?)?)?)?$/)
+            !x
+              || x.match(/^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2})?)?)?)?)?$/),
           ) || 'Invalid',
       ],
     },

@@ -94,8 +94,8 @@ describe('Tree component', () => {
       // the workflow tree item node must not be active
       const workflowTreeItemNode = workflowTreeItem.find('div.node')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
-      const workflowTreeItemNodeActivableSpan =
-        workflowTreeItemNode.find('.node-data > span')
+      const workflowTreeItemNodeActivableSpan
+        = workflowTreeItemNode.find('.node-data > span')
       workflowTreeItemNodeActivableSpan.trigger('click')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
     })
@@ -111,8 +111,8 @@ describe('Tree component', () => {
       // the workflow tree item node must not be active
       const workflowTreeItemNode = workflowTreeItem.find('div.node')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
-      const workflowTreeItemNodeActivableSpan =
-        workflowTreeItemNode.find('.node-data > span')
+      const workflowTreeItemNodeActivableSpan
+        = workflowTreeItemNode.find('.node-data > span')
       workflowTreeItemNodeActivableSpan.trigger('click')
       await Vue.nextTick()
       expect(workflowTreeItemNode.classes('node--active')).to.equal(true)
@@ -412,7 +412,7 @@ describe('Tree component', () => {
         expect(
           [...Object.values(treeItemCache)].filter((item) => item.isExpanded)
             .length,
-          `Failed case: ${JSON.stringify(test.items)}`
+          `Failed case: ${JSON.stringify(test.items)}`,
         ).to.equal(test.expectedExpandedItems)
       })
     })
@@ -487,7 +487,7 @@ describe('Tree component', () => {
         expect(
           [...Object.values(treeItemCache)].filter((item) => !item.isExpanded)
             .length,
-          `Failed case: ${JSON.stringify(test.items)}`
+          `Failed case: ${JSON.stringify(test.items)}`,
         ).to.equal(test.expectedCollapsedItems)
       })
     })

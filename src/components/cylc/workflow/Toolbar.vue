@@ -197,22 +197,22 @@ export default {
     },
     isRunning() {
       return (
-        this.currentWorkflow &&
-        (this.currentWorkflow.node.status === WorkflowState.RUNNING.name ||
-          this.currentWorkflow.node.status === WorkflowState.PAUSED.name ||
-          this.currentWorkflow.node.status === WorkflowState.STOPPING.name)
+        this.currentWorkflow
+        && (this.currentWorkflow.node.status === WorkflowState.RUNNING.name
+          || this.currentWorkflow.node.status === WorkflowState.PAUSED.name
+          || this.currentWorkflow.node.status === WorkflowState.STOPPING.name)
       )
     },
     isPaused() {
       return (
-        this.currentWorkflow &&
-        this.currentWorkflow.node.status === WorkflowState.PAUSED.name
+        this.currentWorkflow
+        && this.currentWorkflow.node.status === WorkflowState.PAUSED.name
       )
     },
     isStopped() {
       return (
-        !this.currentWorkflow ||
-        this.currentWorkflow.node.status === WorkflowState.STOPPED.name
+        !this.currentWorkflow
+        || this.currentWorkflow.node.status === WorkflowState.STOPPED.name
       )
     },
     statusMsg() {
@@ -225,21 +225,21 @@ export default {
       return {
         playToggle:
           // the play button (for the play from stopped scenario)
-          this.isStopped &&
-          (this.expecting.play === null ||
-            this.expecting.play === this.isRunning),
+          this.isStopped
+          && (this.expecting.play === null
+            || this.expecting.play === this.isRunning),
         pauseToggle:
           // the play/pause button
-          !this.isStopped &&
-          !this.expecting.stop &&
-          this.currentWorkflow.node.status !== WorkflowState.STOPPING.name &&
-          (this.expecting.paused === null ||
-            this.expecting.paused === this.isPaused),
+          !this.isStopped
+          && !this.expecting.stop
+          && this.currentWorkflow.node.status !== WorkflowState.STOPPING.name
+          && (this.expecting.paused === null
+            || this.expecting.paused === this.isPaused),
         stopToggle:
           // the stop button
-          !this.isStopped &&
-          (this.expecting.stop === null ||
-            this.expecting.stop === this.isStopped),
+          !this.isStopped
+          && (this.expecting.stop === null
+            || this.expecting.stop === this.isStopped),
       }
     },
   },

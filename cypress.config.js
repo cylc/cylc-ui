@@ -19,13 +19,13 @@ module.exports = defineConfig({
       return require('./tests/e2e/plugins/index.js')(on, config)
     },
     specPattern: 'tests/e2e/specs/**/*.cy.{js,jsx,ts,tsx}',
-    supportFile: 'tests/e2e/support/index.js'
+    supportFile: 'tests/e2e/support/index.js',
   },
 
   component: {
     devServer: {
       framework: 'vue-cli',
-      bundler: 'webpack'
-    }
-  }
+      bundler: 'webpack',
+    },
+  },
 })

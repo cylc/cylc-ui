@@ -36,15 +36,15 @@ function getWorkflowStates(stateTotals) {
   return !stateTotals
     ? []
     : Object.entries(stateTotals)
-        .filter((stateTotal) => {
-          // GraphQL will return all the task states possible in a workflow, but we
-          // only want the states that have an equivalent state for a job. So we filter
-          // out the states that do not exist for jobs, and that have active tasks in
-          // the workflow (no point keeping the empty states, as they are not to be
-          // displayed).
-          return jobStates.includes(stateTotal[0]) && stateTotal[1] > 0
-        })
-        .map((stateTotal) => stateTotal[0])
+      .filter((stateTotal) => {
+        // GraphQL will return all the task states possible in a workflow, but we
+        // only want the states that have an equivalent state for a job. So we filter
+        // out the states that do not exist for jobs, and that have active tasks in
+        // the workflow (no point keeping the empty states, as they are not to be
+        // displayed).
+        return jobStates.includes(stateTotal[0]) && stateTotal[1] > 0
+      })
+      .map((stateTotal) => stateTotal[0])
 }
 
 /**
@@ -61,7 +61,7 @@ export function filterByState(workflow, workflowStates, taskStates) {
   // task states
   if (taskStates.length > 0) {
     const intersection = getWorkflowStates(workflow.node.stateTotals).filter(
-      (item) => taskStates.includes(item)
+      (item) => taskStates.includes(item),
     )
     return intersection.length !== 0
   }
@@ -110,7 +110,7 @@ export function filterHierarchically(
   workflows,
   name,
   workflowStates,
-  taskStates
+  taskStates,
 ) {
   const filterChildren = (result, workflowNode) => {
     if (workflowNode.type === 'workflow') {
@@ -119,8 +119,8 @@ export function filterHierarchically(
         return result
       }
     } else if (
-      workflowNode.type === 'workflow-part' &&
-      workflowNode.children.length
+      workflowNode.type === 'workflow-part'
+      && workflowNode.children.length
     ) {
       const children = workflowNode.children.reduce(filterChildren, [])
       if (children.length) {

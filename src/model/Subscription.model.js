@@ -80,7 +80,7 @@ class Subscription {
           console.debug(
             `Subscription error: ${context.message}`,
             viewState,
-            context
+            context,
           )
         }
       })

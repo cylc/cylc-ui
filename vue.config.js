@@ -26,27 +26,27 @@ module.exports = {
   transpileDependencies: [
     'graphql-language-service-interface',
     'graphql-language-service-parser',
-    'vuetify'
+    'vuetify',
   ],
   runtimeCompiler: true,
   productionSourceMap: process.env.NODE_ENV !== 'production',
   pluginOptions: {
     apollo: {
-      lintGQL: false
-    }
+      lintGQL: false,
+    },
   },
   devServer: {
     proxy: {
       '(^/userprofile|^/graphql)': {
         target: 'http://localhost:3000/',
-        changeOrigin: true
+        changeOrigin: true,
       },
       '^/subscriptions': {
         target: 'http://localhost:3000/',
         changeOrigin: true,
-        ws: true
-      }
-    }
+        ws: true,
+      },
+    },
   },
   configureWebpack: {
     plugins: [
@@ -58,9 +58,9 @@ module.exports = {
         cwd: process.cwd(),
         onDetected ({ module: webpackModuleRecord, paths, compilation }) {
           compilation.errors.push(new Error(`Cyclic dependency: ${paths.join(' -> ')}`))
-        }
-      })
-    ]
+        },
+      }),
+    ],
   },
   chainWebpack: config => {
     config.module
@@ -103,5 +103,5 @@ module.exports = {
         .devtoolModuleFilenameTemplate('[absolute-resource-path]')
         .devtoolFallbackModuleFilenameTemplate('[absolute-resource-path]?[hash]')
     }
-  }
+  },
 }

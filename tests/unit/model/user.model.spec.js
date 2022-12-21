@@ -35,7 +35,7 @@ describe('User model', () => {
         admin,
         server,
         owner,
-        permissions
+        permissions,
       )
       expect(user.username).to.equal(name)
       expect(user.groups.length === 2).to.equal(admin)

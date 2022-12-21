@@ -52,7 +52,7 @@ export default {
     const client = createSubscriptionClient(graphQLUrls.wsUrl)
     Vue.prototype.$workflowService = new SubscriptionWorkflowService(
       graphQLUrls.httpUrl,
-      client
+      client,
     )
   },
 

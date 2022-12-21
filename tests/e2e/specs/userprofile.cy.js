@@ -42,7 +42,7 @@ describe('User Profile', () => {
       const currentFontSize = getCurrentFontSize()
       const expectedNewSize = expectedFontSize(true, clicks)
       expect(Math.round(expectedNewSize)).to.be.equal(
-        Math.round(currentFontSize)
+        Math.round(currentFontSize),
       )
       cy.get('button#font-size-reset-button').click()
     })
@@ -59,7 +59,7 @@ describe('User Profile', () => {
       const currentFontSize = getCurrentFontSize()
       const expectedNewSize = expectedFontSize(false, clicks)
       expect(Math.round(expectedNewSize)).to.be.equal(
-        Math.round(currentFontSize)
+        Math.round(currentFontSize),
       )
       cy.get('button#font-size-reset-button').click()
     })
@@ -78,7 +78,7 @@ describe('User Profile', () => {
         const currentFontSize = getCurrentFontSize()
         const expectedNewSize = parseFloat(INITIAL_FONT_SIZE)
         expect(Math.round(expectedNewSize)).to.be.equal(
-          Math.round(currentFontSize)
+          Math.round(currentFontSize),
         )
       })
     })

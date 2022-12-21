@@ -39,7 +39,7 @@ describe('Alert component', () => {
       cy.wrap(store).invoke(
         'commit',
         'SET_ALERT',
-        new Alert('An alert', null, 'success')
+        new Alert('An alert', null, 'success'),
       )
       cy.get('.v-alert').then(($alertElements) => {
         const backgroundColor = window.getComputedStyle($alertElements[0])[
@@ -58,7 +58,7 @@ describe('Alert component', () => {
       cy.wrap(store).invoke(
         'commit',
         'SET_ALERT',
-        new Alert('An alert', null, 'warning')
+        new Alert('An alert', null, 'warning'),
       )
       cy.get('.v-alert').then(($alertElements) => {
         const backgroundColor = window.getComputedStyle($alertElements[0])[
@@ -77,7 +77,7 @@ describe('Alert component', () => {
       cy.wrap(store).invoke(
         'commit',
         'SET_ALERT',
-        new Alert('An alert', null, 'error')
+        new Alert('An alert', null, 'error'),
       )
       cy.get('.v-alert').then(($alertElements) => {
         const backgroundColor = window.getComputedStyle($alertElements[0])[

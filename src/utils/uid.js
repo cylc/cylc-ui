@@ -282,7 +282,7 @@ class Tokens {
   clone(fields = null) {
     const ret = Object.create(
       Object.getPrototypeOf(this),
-      Object.getOwnPropertyDescriptors(this)
+      Object.getOwnPropertyDescriptors(this),
     )
     if (fields) {
       ret.set(fields)

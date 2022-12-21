@@ -35,7 +35,7 @@ export default class User {
     server,
     owner,
     permissions,
-    mode
+    mode,
   ) {
     // the authenticated user
     // (full info only available when authenticated via the hub)

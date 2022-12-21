@@ -100,7 +100,7 @@ export default {
           viewBox: '0 0 100 100',
         },
       },
-      jobIconChildren
+      jobIconChildren,
     )
     // NOTE: context.data MUST be passed to ensure directives are
     //       passed down to the functional components

@@ -276,9 +276,9 @@ export default {
   methods: {
     getRunningStyle() {
       if (
-        this.task.state === TaskState.RUNNING.name &&
-        this.startTime &&
-        this.task.task?.meanElapsedTime
+        this.task.state === TaskState.RUNNING.name
+        && this.startTime
+        && this.task.task?.meanElapsedTime
       ) {
         // job start time in ms
         const startTime = Date.parse(this.startTime)
@@ -318,9 +318,9 @@ export default {
       const translation = -(
         // (1) the x/y translation to the edge of ".modifier"
         (
-          35.35 * this.modifierSize +
+          35.35 * this.modifierSize
           // (2) the x/y translation to the edge of ".status"
-          42.42
+          + 42.42
         )
       )
       return `

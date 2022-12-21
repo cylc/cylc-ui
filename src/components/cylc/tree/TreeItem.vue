@@ -402,9 +402,9 @@ export default {
       }
       return (
         // "job" nodes have auto-generated "job-detail" nodes
-        this.node.type === 'job' ||
+        this.node.type === 'job'
         // otherwise look to see whether there are any children
-        Boolean(this.node.children?.length)
+        || Boolean(this.node.children?.length)
       )
     },
     nodeChildren() {
@@ -449,8 +449,8 @@ export default {
      */
     shouldRenderExpandCollapseBtn() {
       return (
-        this.hasChildren ||
-        !['workflow', 'job-details'].includes(this.node.type)
+        this.hasChildren
+        || !['workflow', 'job-details'].includes(this.node.type)
       )
       // Do not render for GSscan leafs or job details
     },

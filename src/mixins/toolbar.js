@@ -54,8 +54,8 @@ export default {
         this.setDrawer(false)
       }
       if (
-        window.innerWidth < 991 ||
-        document.querySelector('.v-navigation-drawer')?.clientWidth < 5
+        window.innerWidth < 991
+        || document.querySelector('.v-navigation-drawer')?.clientWidth < 5
       ) {
         this.responsive = true
         this.responsiveInput = false

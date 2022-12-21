@@ -86,7 +86,7 @@ export default {
       const componentProps = getComponentProps(
         this.gqlType,
         VuetifyConfig.namedTypes,
-        VuetifyConfig.kinds
+        VuetifyConfig.kinds,
       )
 
       // merge this in with default and override props
@@ -127,7 +127,7 @@ export default {
                   cursor: 'default',
                 },
               },
-              [mdiHelpCircleOutline]
+              [mdiHelpCircleOutline],
             ),
           default: () =>
             createElement(Markdown, {
@@ -161,7 +161,7 @@ export default {
         append: vuetifyScopedSlotShim(createHelpIcon),
         'append-outer': vuetifyScopedSlotShim(
           // pass the "append-outer" slot onto the child component
-          (slotProps) => this.$scopedSlots['append-outer']?.(slotProps)
+          (slotProps) => this.$scopedSlots['append-outer']?.(slotProps),
         ),
       },
     })

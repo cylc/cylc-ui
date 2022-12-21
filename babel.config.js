@@ -18,7 +18,7 @@
 module.exports = (api) => {
   api.cache(true)
   const presets = [
-    '@vue/app'
+    '@vue/app',
   ]
   const plugins = [
     ['@babel/plugin-proposal-class-properties', { loose: true }],
@@ -26,7 +26,7 @@ module.exports = (api) => {
     ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
     ['@babel/plugin-proposal-nullish-coalescing-operator'],
     ['@babel/plugin-proposal-optional-chaining'],
-    ['babel-plugin-istanbul', { extension: ['.js', '.vue'] }]
+    ['babel-plugin-istanbul', { extension: ['.js', '.vue'] }],
   ]
   return { presets, plugins }
 }

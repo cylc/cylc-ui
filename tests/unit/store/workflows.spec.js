@@ -369,10 +369,10 @@ describe('cylc tree', () => {
 
     // the special nodes should appear in the global index
     expect(_tree.$index['~a/b//$namespace|foo'].id).to.equal(
-      '~a/b//$namespace|foo'
+      '~a/b//$namespace|foo',
     )
     expect(_tree.$index['~a/b//$edge|1/foo|2/foo'].id).to.equal(
-      '~a/b//$edge|1/foo|2/foo'
+      '~a/b//$edge|1/foo|2/foo',
     )
 
     // they should also appear in the workflow's special indexes
@@ -601,7 +601,7 @@ describe('cylc tree', () => {
       '~u/w//1/root',
     ])
     expect(cycle.familyTree[0].children.map((node) => node.id)).to.deep.equal(
-      []
+      [],
     )
 
     // ... however, the task tree should remain

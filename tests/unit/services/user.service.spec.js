@@ -45,8 +45,7 @@ describe('UserService', () => {
             created: '2019-01-01',
             admin: true,
           },
-        })
-      )
+        }))
       sandbox.stub(axios, 'get').returns(userReturned)
       return new UserService().getUserProfile().then(function (user) {
         expect(user.username).to.equal('cylc-user-01')

@@ -207,15 +207,15 @@ export default {
     snackbarProps() {
       return this.response.level === 'error'
         ? {
-            timeout: -1,
-            color: 'red accent-2',
-            dark: true,
-          }
+          timeout: -1,
+          color: 'red accent-2',
+          dark: true,
+        }
         : {
-            timeout: 4e3,
-            color: 'amber accent-2',
-            light: true,
-          }
+          timeout: 4e3,
+          color: 'amber accent-2',
+          light: true,
+        }
     },
   },
 

@@ -115,8 +115,8 @@ export default {
       },
       set(val) {
         if (val) {
-          const newWidth =
-            typeof this.navigation.width === 'string'
+          const newWidth
+            = typeof this.navigation.width === 'string'
               ? Number(this.navigation.width.replace('px', ''))
               : this.navigation.width
           this.navigation.width = newWidth < 260 ? 260 : newWidth
@@ -131,7 +131,7 @@ export default {
     },
     setBorderWidth() {
       const i = this.getDrawerElement().querySelector(
-        '.v-navigation-drawer__border'
+        '.v-navigation-drawer__border',
       )
       i.style.width = this.navigation.borderSize + 'px'
       i.style.cursor = 'ew-resize'
@@ -142,8 +142,8 @@ export default {
       const direction = el.classList.contains('v-navigation-drawer--right')
         ? 'right'
         : 'left'
-      const f =
-        direction === 'right'
+      const f
+        = direction === 'right'
           ? document.body.scrollWidth - e.clientX
           : e.clientX
       el.style.width = f + 'px'
@@ -160,7 +160,7 @@ export default {
           if (e.preventDefault) e.preventDefault()
           return false
         },
-        false
+        false,
       )
       document.addEventListener(
         'mouseup',
@@ -174,7 +174,7 @@ export default {
             window.dispatchEvent(new Event('resize'))
           }, 600)
         },
-        false
+        false,
       )
     },
   },

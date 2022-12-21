@@ -49,10 +49,10 @@ function mergeQueries(queryA, queryB) {
   }
   // Find the operation definitions for the two queries.
   const queryADefinitions = queryA.definitions.filter(
-    (definition) => definition.kind === 'OperationDefinition'
+    (definition) => definition.kind === 'OperationDefinition',
   )
   const queryBDefinitions = queryB.definitions.filter(
-    (definition) => definition.kind === 'OperationDefinition'
+    (definition) => definition.kind === 'OperationDefinition',
   )
   // More validations...
   if (queryADefinitions.length !== 1 || queryBDefinitions.length !== 1) {
@@ -61,14 +61,14 @@ function mergeQueries(queryA, queryB) {
   // Merge the query definitions.
   const definition = mergeDefinitions(
     queryADefinitions[0],
-    queryBDefinitions[0]
+    queryBDefinitions[0],
   )
   // Merge the fragments.
   const queryAFragments = queryA.definitions.filter(
-    (definition) => definition.kind === 'FragmentDefinition'
+    (definition) => definition.kind === 'FragmentDefinition',
   )
   const queryBFragments = queryB.definitions.filter(
-    (definition) => definition.kind === 'FragmentDefinition'
+    (definition) => definition.kind === 'FragmentDefinition',
   )
   const fragments = mergeFragments(queryAFragments, queryBFragments)
   // Finally return the merged definitions and fragments (loc in the AST nodes is not important).
@@ -102,11 +102,11 @@ function mergeFragments(fragmentsA, fragmentsB) {
       // Else we need to merge the fragments.
       existingFragment.selectionSet = mergeSelectionSets(
         existingFragment.selectionSet,
-        fragment.selectionSet
+        fragment.selectionSet,
       )
       existingFragment.directives = mergeDirectives(
         existingFragment.directives,
-        fragment.directives
+        fragment.directives,
       )
     }
   })
@@ -126,7 +126,7 @@ function mergeSelectionSets(selectionSetA, selectionSetB) {
   }
   if ((!selectionSetA && selectionSetB) || (selectionSetA && !selectionSetB)) {
     throw new Error(
-      'Selection sets must be either both undefined, or both defined'
+      'Selection sets must be either both undefined, or both defined',
     )
   }
   const selectionSet = selectionSetA
@@ -137,7 +137,7 @@ function mergeSelectionSets(selectionSetA, selectionSetB) {
   selectionSet.selections.forEach((selection) => {
     if (selection.kind === 'InlineFragment') {
       throw new Error(
-        'Found a selection of type "InlineFragment". Only "Field" and "FragmentSpread" are supported'
+        'Found a selection of type "InlineFragment". Only "Field" and "FragmentSpread" are supported',
       )
     }
     const selectionName = selection.alias
@@ -148,7 +148,7 @@ function mergeSelectionSets(selectionSetA, selectionSetB) {
   selectionSetB.selections.forEach((field) => {
     if (field.kind === 'InlineFragment') {
       throw new Error(
-        'Found a selection of type "InlineFragment". Only "Field" and "FragmentSpread" are supported'
+        'Found a selection of type "InlineFragment". Only "Field" and "FragmentSpread" are supported',
       )
     }
     const selectionName = field.alias ? field.alias.value : field.name.value
@@ -160,21 +160,21 @@ function mergeSelectionSets(selectionSetA, selectionSetB) {
     } else {
       if (existingField.kind !== field.kind) {
         throw new Error(
-          `Cannot merge selections "${selectionName}" with type ${existingField.kind} and ${field.kind}`
+          `Cannot merge selections "${selectionName}" with type ${existingField.kind} and ${field.kind}`,
         )
       }
       existingField.directives = mergeDirectives(
         existingField.directives,
-        field.directives
+        field.directives,
       )
       existingField.arguments = mergeArguments(
         existingField.arguments,
-        field.arguments
+        field.arguments,
       )
       // NB: recursion
       existingField.selectionSet = mergeSelectionSets(
         existingField.selectionSet,
-        field.selectionSet
+        field.selectionSet,
       )
       // We do not merge fragment spread... after all, how can we merge
       // ...Fragment and ...Fragment?
@@ -205,7 +205,7 @@ function mergeFields(fieldA, fieldB) {
     // NB: possible recursion here
     field.selectionSet = mergeSelectionSets(
       field.selectionSet,
-      fieldB.selectionSet
+      fieldB.selectionSet,
     )
   }
   return field
@@ -234,12 +234,12 @@ function mergeArguments(argumentsA, argumentsB) {
     } else {
       if (existingArgument.value.kind !== argument.value.kind) {
         throw new Error(
-          `Cannot merge arguments "${existingArgument.name.value}" and "${argument.name.value}" with different types "${existingArgument.kind}" and "${argument.kind}"`
+          `Cannot merge arguments "${existingArgument.name.value}" and "${argument.name.value}" with different types "${existingArgument.kind}" and "${argument.kind}"`,
         )
       }
       existingArgument.value = mergeValues(
         existingArgument.value,
-        argument.value
+        argument.value,
       )
     }
   })
@@ -279,57 +279,57 @@ export function removeAstLoc(node) {
  */
 function mergeValues(valueA, valueB) {
   switch (valueA.kind) {
-    case 'Variable':
-      if (valueA.name.value !== valueB.name.value) {
-        throw new Error(
-          `Cannot merge VariableNode's with different variables "${valueA.name.value}" and "${valueB.name.value}"`
-        )
-      }
-      break
-    case 'BooleanValue':
-    case 'StringValue':
-    case 'IntValue':
-    case 'FloatValue':
-      if (valueA.value !== valueB.value) {
-        throw new Error(`Cannot merge ${valueA.kind}'s with different values`)
-      }
-      break
-    case 'NullValue':
-      break
-    case 'ListValue':
-      for (const value of valueB.values) {
-        if (
-          !valueA.values.find(
-            (element) =>
-              element.kind === value.kind && element.value === value.value
-          )
-        ) {
-          valueA.values.push(value)
-        }
-      }
-      break
-    case 'ObjectValue': {
-      // this is literally an object in the GraphQL query, e.g.:
-      // taskProxy {
-      //   outputs (satisfied: true, sort: { keys: ["time"], reverse: true}) {
-      //     label
-      //     message
-      //   }
-      // }
-      // The sort: {} is an object with properties keys and reverse...
-      // In order to compare the two objects, first we must omit the loc (source code location from AST...)
-      const objectA = removeAstLoc(valueA)
-      const objectB = removeAstLoc(valueB)
-      if (!isEqual(objectA, objectB)) {
-        throw new Error(
-          'Cannot merge two object values if they have different properties'
-        )
-      }
-      break
+  case 'Variable':
+    if (valueA.name.value !== valueB.name.value) {
+      throw new Error(
+          `Cannot merge VariableNode's with different variables "${valueA.name.value}" and "${valueB.name.value}"`,
+      )
     }
-    case 'EnumValue':
-    default:
-      throw new Error(`Unsupported value nodes to merge of kind ${valueA.kind}`)
+    break
+  case 'BooleanValue':
+  case 'StringValue':
+  case 'IntValue':
+  case 'FloatValue':
+    if (valueA.value !== valueB.value) {
+      throw new Error(`Cannot merge ${valueA.kind}'s with different values`)
+    }
+    break
+  case 'NullValue':
+    break
+  case 'ListValue':
+    for (const value of valueB.values) {
+      if (
+        !valueA.values.find(
+          (element) =>
+            element.kind === value.kind && element.value === value.value,
+        )
+      ) {
+        valueA.values.push(value)
+      }
+    }
+    break
+  case 'ObjectValue': {
+    // this is literally an object in the GraphQL query, e.g.:
+    // taskProxy {
+    //   outputs (satisfied: true, sort: { keys: ["time"], reverse: true}) {
+    //     label
+    //     message
+    //   }
+    // }
+    // The sort: {} is an object with properties keys and reverse...
+    // In order to compare the two objects, first we must omit the loc (source code location from AST...)
+    const objectA = removeAstLoc(valueA)
+    const objectB = removeAstLoc(valueB)
+    if (!isEqual(objectA, objectB)) {
+      throw new Error(
+        'Cannot merge two object values if they have different properties',
+      )
+    }
+    break
+  }
+  case 'EnumValue':
+  default:
+    throw new Error(`Unsupported value nodes to merge of kind ${valueA.kind}`)
   }
   return valueA
 }
@@ -342,8 +342,8 @@ function mergeValues(valueA, valueB) {
  */
 function mergeDirectives(directivesA, directivesB) {
   if (
-    (directivesA && directivesA.length) ||
-    (directivesB && directivesB.length)
+    (directivesA && directivesA.length)
+    || (directivesB && directivesB.length)
   ) {
     throw new Error('Directives found, but not implemented')
   }
@@ -374,11 +374,11 @@ function mergeDefinitions(definitionA, definitionB) {
   // N.B: we are not merging variables, since we know they are identical already (above).
   definition.directives = mergeDirectives(
     definitionA.directives,
-    definitionB.directives
+    definitionB.directives,
   )
   definition.selectionSet = mergeSelectionSets(
     definitionA.selectionSet,
-    definitionB.selectionSet
+    definitionB.selectionSet,
   )
   return definition
 }

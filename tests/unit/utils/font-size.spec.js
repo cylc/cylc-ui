@@ -50,22 +50,22 @@ describe('Font Size', () => {
   })
   it('Should calculate expected font size correctly', () => {
     expect(TESTING_INITIAL_VALUE).to.be.equal(
-      fontSize.expectedFontSize(true, 0, TESTING_INITIAL_VALUE)
+      fontSize.expectedFontSize(true, 0, TESTING_INITIAL_VALUE),
     )
     expect(TESTING_INITIAL_VALUE).to.be.equal(
-      fontSize.expectedFontSize(false, 0, TESTING_INITIAL_VALUE)
+      fontSize.expectedFontSize(false, 0, TESTING_INITIAL_VALUE),
     )
     expect(TESTING_INITIAL_VALUE * 1.2).to.be.equal(
-      fontSize.expectedFontSize(true, 1, TESTING_INITIAL_VALUE)
+      fontSize.expectedFontSize(true, 1, TESTING_INITIAL_VALUE),
     )
     expect(TESTING_INITIAL_VALUE * 1.2 * 1.2).to.be.equal(
-      fontSize.expectedFontSize(true, 2, TESTING_INITIAL_VALUE)
+      fontSize.expectedFontSize(true, 2, TESTING_INITIAL_VALUE),
     )
     expect(TESTING_INITIAL_VALUE * 0.8).to.be.equal(
-      fontSize.expectedFontSize(false, 1, TESTING_INITIAL_VALUE)
+      fontSize.expectedFontSize(false, 1, TESTING_INITIAL_VALUE),
     )
     expect(TESTING_INITIAL_VALUE * 0.8 * 0.8).to.be.equal(
-      fontSize.expectedFontSize(false, 2, TESTING_INITIAL_VALUE)
+      fontSize.expectedFontSize(false, 2, TESTING_INITIAL_VALUE),
     )
   })
   it('Should return the correct current font size', () => {
@@ -76,7 +76,7 @@ describe('Font Size', () => {
     fontSize.increaseFontSize()
     fontSize.increaseFontSize()
     expect(TESTING_INITIAL_VALUE * 1.2 * 1.2).to.be.equal(
-      fontSize.expectedFontSize(true, 2, TESTING_INITIAL_VALUE)
+      fontSize.expectedFontSize(true, 2, TESTING_INITIAL_VALUE),
     )
   })
   it('Should decrease the font size correctly', () => {
@@ -84,7 +84,7 @@ describe('Font Size', () => {
     fontSize.decreaseFontSize()
     fontSize.decreaseFontSize()
     expect(TESTING_INITIAL_VALUE * 0.8 * 0.8).to.be.equal(
-      fontSize.expectedFontSize(false, 2, TESTING_INITIAL_VALUE)
+      fontSize.expectedFontSize(false, 2, TESTING_INITIAL_VALUE),
     )
   })
   it('Should reset the font size correctly', () => {

@@ -64,8 +64,8 @@ export const formElement = {
     type() {
       for (const type of this.types) {
         if (
-          type.name === this.gqlType.name &&
-          type.kind === this.gqlType.kind
+          type.name === this.gqlType.name
+          && type.kind === this.gqlType.kind
         ) {
           return type
         }

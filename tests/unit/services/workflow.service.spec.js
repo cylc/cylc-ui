@@ -93,7 +93,7 @@ describe('WorkflowService', () => {
       Promise.resolve({
         mutations: [],
         types: [],
-      })
+      }),
     )
     service = new WorkflowService(url, subscriptionClient)
     // subscription query
@@ -110,7 +110,7 @@ describe('WorkflowService', () => {
         workflowId: '~cylc/test',
       },
       'root',
-      []
+      [],
     )
     // Subscription
     subscription = new Subscription(subscriptionQuery, true)
@@ -146,7 +146,7 @@ describe('WorkflowService', () => {
       const newSubscription = service.getOrCreateSubscription(view)
       expect(Object.keys(service.subscriptions).length).to.equal(1)
       expect(service.subscriptions[view.query.name]).to.deep.equal(
-        newSubscription
+        newSubscription,
       )
     })
   })
@@ -170,13 +170,13 @@ describe('WorkflowService', () => {
       const myStartDeltasSubscription = (
         query,
         variables,
-        subscriptionOptions
+        subscriptionOptions,
       ) => {
         subscriptionOptions.next({ data: workflowName })
       }
       const startDeltasSubscriptionStub = sandbox.stub(
         service,
-        'startDeltasSubscription'
+        'startDeltasSubscription',
       )
       startDeltasSubscriptionStub.callsFake(myStartDeltasSubscription)
       // we need to add a callback to be called...
@@ -189,38 +189,38 @@ describe('WorkflowService', () => {
     describe('ViewState', () => {
       it('should set the view state to COMPLETE when it successfully starts a subscription', () => {
         expect(subscription.subscribers[view._uid].viewState).to.equal(
-          ViewState.NO_STATE
+          ViewState.NO_STATE,
         )
         service.startSubscription(subscription)
         expect(subscription.subscribers[view._uid].viewState).to.equal(
-          ViewState.COMPLETE
+          ViewState.COMPLETE,
         )
       })
       it('should set the view state to ERROR if it fails to start the deltas subscription', () => {
         expect(subscription.subscribers[view._uid].viewState).to.equal(
-          ViewState.NO_STATE
+          ViewState.NO_STATE,
         )
         const stub = sandbox.stub(service, 'startDeltasSubscription')
         stub.throws()
         service.startSubscription(subscription)
         expect(subscription.subscribers[view._uid].viewState).to.equal(
-          ViewState.ERROR
+          ViewState.ERROR,
         )
       })
       it('should set the view state to COMPLETE when it successfully starts a subscription', () => {
         expect(subscription.subscribers[view._uid].viewState).to.equal(
-          ViewState.NO_STATE
+          ViewState.NO_STATE,
         )
         const myStartDeltasSubscription = (
           query,
           variables,
-          subscriptionOptions
+          subscriptionOptions,
         ) => {
           subscriptionOptions.error('test')
         }
         const startDeltasSubscriptionStub = sandbox.stub(
           service,
-          'startDeltasSubscription'
+          'startDeltasSubscription',
         )
         startDeltasSubscriptionStub.callsFake(myStartDeltasSubscription)
         const spy = sandbox.spy(subscription, 'handleViewState')
@@ -256,7 +256,7 @@ describe('WorkflowService', () => {
         `,
         subscriptionQuery.variables,
         'root',
-        []
+        [],
       )
       /**
        * @type {View}
@@ -281,7 +281,7 @@ describe('WorkflowService', () => {
         `,
         subscriptionQuery.variables,
         'root',
-        []
+        [],
       )
       /**
        * @type {View}
@@ -314,7 +314,7 @@ describe('WorkflowService', () => {
         query,
         subscriptionQuery.variables,
         subscriptionQuery.name,
-        newCallbacks
+        newCallbacks,
       )
       const anotherView = {
         _uid: 'anotherView',
@@ -332,7 +332,7 @@ describe('WorkflowService', () => {
         query,
         subscriptionQuery.variables,
         subscriptionQuery.name,
-        newCallbacks
+        newCallbacks,
       )
       const anotherView = {
         _uid: 'anotherView',
@@ -364,7 +364,7 @@ describe('WorkflowService', () => {
           invalidVariable: true,
         },
         'test',
-        []
+        [],
       )
       subscription.subscribers[anotherQuery.name] = {
         _uid: 'view',

@@ -23,7 +23,7 @@ describe('Universal ID (UID)', () => {
     it('should tokenise string IDs', () => {
       // full ID
       expect(
-        Object.assign({}, new Tokens('~user/workflow//cycle/task/01'))
+        Object.assign({}, new Tokens('~user/workflow//cycle/task/01')),
       ).to.deep.equal({
         user: 'user',
         workflow: 'workflow',
@@ -69,7 +69,7 @@ describe('Universal ID (UID)', () => {
     it('should tokenise data store IDs', () => {
       // namespaces (i.e. task/family definitions)
       expect(
-        Object.assign({}, new Tokens('$namespace|foo', true))
+        Object.assign({}, new Tokens('$namespace|foo', true)),
       ).to.deep.equal({
         user: undefined,
         workflow: undefined,
@@ -85,7 +85,7 @@ describe('Universal ID (UID)', () => {
 
       // edges
       expect(
-        Object.assign({}, new Tokens('$edge|1/a|1/b', true))
+        Object.assign({}, new Tokens('$edge|1/a|1/b', true)),
       ).to.deep.equal({
         user: undefined,
         workflow: undefined,

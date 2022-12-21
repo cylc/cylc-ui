@@ -31,8 +31,8 @@ describe('Workflow view and component/widget', () => {
         const firstChild = loader.children('div').first()
         // The skeleton may, or may not, still be displaying in the UI...
         if (
-          firstChild.attr('class') &&
-          firstChild.attr('class').includes('skeleton')
+          firstChild.attr('class')
+          && firstChild.attr('class').includes('skeleton')
         ) {
           cy.wrap(firstChild).should('not.exist')
         }

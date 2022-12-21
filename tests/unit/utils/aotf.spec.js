@@ -206,8 +206,8 @@ describe('aotf (Api On The Fly)', () => {
           aotf.cylcObjects.Namespace,
           tokens,
           mutations,
-          permissions
-        )
+          permissions,
+        ),
         // no results
       ).to.deep.equal([])
 
@@ -217,10 +217,10 @@ describe('aotf (Api On The Fly)', () => {
         aotf.cylcObjects.Workflow,
         tokens,
         mutations,
-        permissions
+        permissions,
       )
       expect(
-        all.map((item) => [item.mutation.name, item.requiresInfo]).sort()
+        all.map((item) => [item.mutation.name, item.requiresInfo]).sort(),
       ).to.deep.equal([
         ['baz', true],
         ['foo', false],
@@ -287,10 +287,10 @@ describe('aotf (Api On The Fly)', () => {
         aotf.cylcObjects.Workflow,
         aotf.tokenise('~a/b'),
         mutations,
-        permissions
+        permissions,
       )
       expect(
-        out1.map((item) => [item.mutation.name, item.requiresInfo]).sort()
+        out1.map((item) => [item.mutation.name, item.requiresInfo]).sort(),
       ).to.deep.equal([
         ['argon', false],
         ['boron', true],
@@ -302,10 +302,10 @@ describe('aotf (Api On The Fly)', () => {
         aotf.cylcObjects.Workflow,
         aotf.tokenise('~a/b//c'),
         mutations,
-        permissions
+        permissions,
       )
       expect(
-        out2.map((item) => [item.mutation.name, item.requiresInfo]).sort()
+        out2.map((item) => [item.mutation.name, item.requiresInfo]).sort(),
       ).to.deep.equal([
         ['argon', false],
         ['boron', true],
@@ -334,10 +334,10 @@ describe('aotf (Api On The Fly)', () => {
             aotf.cylcObjects.Workflow,
             aotf.tokenise('~a/b'),
             mutations,
-            permissions
+            permissions,
           )
           .map((x) => [x.mutation.name, x.authorised])
-          .sort()
+          .sort(),
       ).to.deep.equal([
         ['argon', true],
         ['boron', false],
@@ -385,7 +385,7 @@ describe('aotf (Api On The Fly)', () => {
 
   describe('getNullValue', () => {
     it('should pick appropriate default types', () => {
-      ;[
+      [
         [
           // String => null
           {
@@ -481,7 +481,7 @@ describe('aotf (Api On The Fly)', () => {
 
   describe('argumentSignature', () => {
     it('should correctly render the signature', () => {
-      ;[
+      [
         // [type, signature]
         [
           {
@@ -534,7 +534,7 @@ describe('aotf (Api On The Fly)', () => {
           aotf.argumentSignature({
             name: 'myArgument',
             type,
-          })
+          }),
         ).to.equal(signature)
       })
     })
@@ -570,7 +570,7 @@ describe('aotf (Api On The Fly)', () => {
             result
           }
         }
-      `.trim()
+      `.trim(),
       )
     })
 
@@ -603,7 +603,7 @@ describe('aotf (Api On The Fly)', () => {
             result
           }
         }
-      `.trim()
+      `.trim(),
       )
     })
   })
@@ -701,8 +701,8 @@ describe('aotf (Api On The Fly)', () => {
               fields: [{ name: 'location' }],
             },
           ],
-          types
-        )
+          types,
+        ),
       ).to.deep.equal([
         {
           name: 'criminalAllegations',
@@ -721,8 +721,8 @@ describe('aotf (Api On The Fly)', () => {
         aotf.extractFields(
           personType,
           [{ name: 'width' }, { name: 'height' }],
-          types
-        )
+          types,
+        ),
       ).to.deep.equal([
         { name: 'width', fields: null },
         { name: 'height', fields: null },

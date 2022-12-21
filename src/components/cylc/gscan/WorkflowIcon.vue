@@ -46,7 +46,7 @@ export default {
     getIcon() {
       // TBD: enumValueOf returned the wrong value?
       const state = [...WorkflowState.enumValues].find(
-        (state) => state.name === this.status
+        (state) => state.name === this.status,
       )
       if (!state || state.length === 0) {
         return WorkflowState.ERROR.icon

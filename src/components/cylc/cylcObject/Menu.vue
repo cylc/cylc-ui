@@ -192,8 +192,8 @@ export default {
     },
     canExpand() {
       return (
-        this.primaryMutations.length &&
-        this.mutations.length > this.primaryMutations.length
+        this.primaryMutations.length
+        && this.mutations.length > this.primaryMutations.length
       )
     },
     ...mapState('user', ['user']),
@@ -207,8 +207,8 @@ export default {
           .filter((x) => shortList.includes(x.mutation.name))
           .sort(
             (x, y) =>
-              shortList.indexOf(x.mutation.name) -
-              shortList.indexOf(y.mutation.name)
+              shortList.indexOf(x.mutation.name)
+              - shortList.indexOf(y.mutation.name),
           )
       }
       return this.mutations
@@ -299,7 +299,7 @@ export default {
       mutate(
         mutation,
         getMutationArgsFromTokens(mutation, this.node.tokens),
-        this.$workflowService.apolloClient
+        this.$workflowService.apolloClient,
       )
       this.showMenu = false
     },
@@ -323,7 +323,7 @@ export default {
           type,
           this.node.tokens,
           mutations,
-          this.user.permissions
+          this.user.permissions,
         ).sort((a, b) => a.mutation.name.localeCompare(b.mutation.name))
       })
       this.showMenu = true

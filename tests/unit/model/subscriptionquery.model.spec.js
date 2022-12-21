@@ -39,7 +39,7 @@ describe('SubscriptionQuery model', () => {
         query,
         variables,
         name,
-        callbacks
+        callbacks,
       )
       expect(subscriptionQuery.query).to.equal(query)
       expect(subscriptionQuery.variables).to.deep.equal(variables)

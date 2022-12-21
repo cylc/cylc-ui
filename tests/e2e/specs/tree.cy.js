@@ -54,10 +54,10 @@ describe('Tree view', () => {
     cy.get('.leaf:first > .arrow-up').should(($div) => {
       const marginLeft = $div.get(0).style.marginLeft
       if (
-        marginLeft === undefined ||
-        marginLeft === '' ||
-        marginLeft === '0' ||
-        marginLeft === '0px'
+        marginLeft === undefined
+        || marginLeft === ''
+        || marginLeft === '0'
+        || marginLeft === '0px'
       ) {
         throw new Error(`Invalid leaf node margin-left: "${marginLeft}"`)
       }

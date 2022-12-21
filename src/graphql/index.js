@@ -77,7 +77,7 @@ export function createSubscriptionClient(wsUrl, options = {}, wsImpl = null) {
       reconnect: true,
       lazy: false,
     },
-    options
+    options,
   )
   const subscriptionClient = new SubscriptionClient(wsUrl, opts, wsImpl)
   // these are the available hooks in the subscription client lifecycle
@@ -129,8 +129,8 @@ export function createApolloClient(httpUrl, subscriptionClient) {
     uri: httpUrl,
   })
 
-  const wsLink =
-    subscriptionClient !== null
+  const wsLink
+    = subscriptionClient !== null
       ? new WebSocketLink(subscriptionClient)
       : new ApolloLink() // return an empty link, useful for testing, offline mode, etc
 
@@ -138,12 +138,12 @@ export function createApolloClient(httpUrl, subscriptionClient) {
     ({ query }) => {
       const definition = getMainDefinition(query)
       return (
-        definition.kind === 'OperationDefinition' &&
-        definition.operation === 'subscription'
+        definition.kind === 'OperationDefinition'
+        && definition.operation === 'subscription'
       )
     },
     wsLink,
-    httpLink
+    httpLink,
   )
 
   const wsAuthLink = setContext((_, { headers }) => {

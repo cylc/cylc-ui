@@ -139,7 +139,7 @@ export default {
       WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION,
       {},
       'root',
-      []
+      [],
     ),
     headers: [
       {

@@ -43,13 +43,13 @@ Assertion.addMethod('expanded', function () {
   this.assert(
     wrapper.vm.isExpanded === true,
     'expected the isExpanded data property to be true',
-    'expected the isExpanded data property to be false'
+    'expected the isExpanded data property to be false',
   )
   const nodeDiv = wrapper.find('.node')
   this.assert(
     nodeDiv.classes('expanded') === true,
     'expected the .node DOM element to have the "expanded" class',
-    'expected the .node DOM element not to have the "expanded" class'
+    'expected the .node DOM element not to have the "expanded" class',
   )
 })
 

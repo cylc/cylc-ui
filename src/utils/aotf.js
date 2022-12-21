@@ -235,14 +235,14 @@ export const compoundFields = {
   },
   NamespaceIDGlob: (tokens) =>
     // expand unspecified fields to '*'
-    (tokens[cylcObjects.CyclePoint] || '*') +
-    '/' +
-    (tokens[cylcObjects.Namespace] || '*'),
+    (tokens[cylcObjects.CyclePoint] || '*')
+    + '/'
+    + (tokens[cylcObjects.Namespace] || '*'),
   TaskID: (tokens) =>
     // expand unspecified fields to '*'
-    (tokens[cylcObjects.CyclePoint] || '*') +
-    '/' +
-    tokens[cylcObjects.Namespace],
+    (tokens[cylcObjects.CyclePoint] || '*')
+    + '/'
+    + tokens[cylcObjects.Namespace],
 }
 
 /**
@@ -540,11 +540,11 @@ export function getIntrospectionQuery() {
   // try to modify the gql objects by hand.
   return gql(
     // the query we actually want to run
-    print(query.definitions[0]) +
+    print(query.definitions[0])
       // the fragments which power it
-      print(fullIntrospection.definitions[1]) +
-      print(fullIntrospection.definitions[2]) +
-      print(fullIntrospection.definitions[3])
+      + print(fullIntrospection.definitions[1])
+      + print(fullIntrospection.definitions[2])
+      + print(fullIntrospection.definitions[3]),
   )
 }
 
@@ -564,7 +564,7 @@ export function getIntrospectionQuery() {
 export function filterAssociations(cylcObject, tokens, mutations, permissions) {
   const ret = []
   for (const [permission, equivalents] of Object.entries(
-    dummyMutationsPermissionsMap
+    dummyMutationsPermissionsMap,
   )) {
     if (permissions.includes(permission)) {
       permissions.push(...equivalents)
@@ -657,7 +657,7 @@ export function getNullValue(type, types = []) {
       // TODO: this type iteration is already done in the mixin
       //       should we use the mixin or a subset there-of here?
       const type = types.find(
-        ({ name, kind }) => name === subType.name && kind === subType.kind
+        ({ name, kind }) => name === subType.name && kind === subType.kind,
       )
       for (const field of type.fields) {
         ret[field.name] = getNullValue(field.type, types)
@@ -823,8 +823,8 @@ async function _mutateError(mutationName, message, response) {
     new AlertModel(
       `command failed: ${mutationName} - ${message}`,
       null,
-      'error'
-    )
+      'error',
+    ),
   )
 
   // format a response

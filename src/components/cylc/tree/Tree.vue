@@ -261,8 +261,8 @@ export default {
     rootChildren() {
       // array of nodes at the top of the tree
       if (
-        this.workflows.length === 1 &&
-        this.autoStripTypes.includes(this.workflows[0].type)
+        this.workflows.length === 1
+        && this.autoStripTypes.includes(this.workflows[0].type)
       ) {
         // if there is only one workflow we return its children
         // (i.e. cycle points)
@@ -306,27 +306,27 @@ export default {
   methods: {
     filterByTaskName() {
       return (
-        this.activeFilters.name !== undefined &&
-        this.activeFilters.name !== null &&
-        this.activeFilters.name.trim() !== ''
+        this.activeFilters.name !== undefined
+        && this.activeFilters.name !== null
+        && this.activeFilters.name.trim() !== ''
       )
     },
     filterByTaskState() {
       return (
-        this.activeFilters.states !== undefined &&
-        this.activeFilters.states !== null &&
-        this.activeFilters.states.length > 0
+        this.activeFilters.states !== undefined
+        && this.activeFilters.states !== null
+        && this.activeFilters.states.length > 0
       )
     },
     filterTasks() {
-      const taskNameFilterSet =
-        this.tasksFilter.name !== undefined &&
-        this.tasksFilter.name !== null &&
-        this.tasksFilter.name.trim() !== ''
-      const taskStatesFilterSet =
-        this.tasksFilter.states !== undefined &&
-        this.tasksFilter.states !== null &&
-        this.tasksFilter.states.length > 0
+      const taskNameFilterSet
+        = this.tasksFilter.name !== undefined
+        && this.tasksFilter.name !== null
+        && this.tasksFilter.name.trim() !== ''
+      const taskStatesFilterSet
+        = this.tasksFilter.states !== undefined
+        && this.tasksFilter.states !== null
+        && this.tasksFilter.states.length > 0
       if (taskNameFilterSet || taskStatesFilterSet) {
         this.activeFilters = cloneDeep(this.tasksFilter)
         this.filterNodes(this.workflows)
@@ -361,9 +361,9 @@ export default {
         }
       } else if (node.type === 'task') {
         if (this.filterByTaskName() && this.filterByTaskState()) {
-          filtered =
-            node.name.includes(this.activeFilters.name) &&
-            this.tasksFilterStates.includes(node.node.state)
+          filtered
+            = node.name.includes(this.activeFilters.name)
+            && this.tasksFilterStates.includes(node.node.state)
         } else if (this.filterByTaskName()) {
           filtered = node.name.includes(this.activeFilters.name)
         } else if (this.filterByTaskState()) {

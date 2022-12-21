@@ -52,7 +52,7 @@ export default {
         fetcher: this.fetcher,
         defaultVariableEditorOpen: false,
       }),
-      this.$refs.graphiql
+      this.$refs.graphiql,
     )
   },
   beforeRouteLeave(to, from, next) {

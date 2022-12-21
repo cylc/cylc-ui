@@ -106,8 +106,8 @@ describe('Mutation Component', () => {
     })
     describe('For a multiline description', () => {
       const shortDesc = 'Darmok and Jalad at\nTanagra.'
-      const extendedDesc =
-        'Shaka when the\nwalls fell.\n\nTemba, his arms wide.'
+      const extendedDesc
+        = 'Shaka when the\nwalls fell.\n\nTemba, his arms wide.'
       const desc = `${shortDesc}\n\n${extendedDesc}`
       const wrapper = mountWithDescription(desc)
       describe('.shortDescription', () => {

@@ -21,19 +21,19 @@ import { datetimeComparator } from '@/components/cylc/table/sort'
 describe('datetimeComparator()', () => {
   it('should rank datetime strings appropriately', () => {
     expect(
-      datetimeComparator('2022-09-26T12:30:00Z', '2022-09-26T12:30:01Z')
+      datetimeComparator('2022-09-26T12:30:00Z', '2022-09-26T12:30:01Z'),
     ).to.be.lessThan(0)
     expect(
-      datetimeComparator('2022-09-26T12:30:01Z', '2022-09-26T12:30:00Z')
+      datetimeComparator('2022-09-26T12:30:01Z', '2022-09-26T12:30:00Z'),
     ).to.be.greaterThan(0)
     expect(
-      datetimeComparator('2022-09-26T12:30:00Z', '2022-09-26T12:30:00Z')
+      datetimeComparator('2022-09-26T12:30:00Z', '2022-09-26T12:30:00Z'),
     ).to.equal(0)
   })
   it('should rank nullish as higher than proper datetimes', () => {
     expect(datetimeComparator('', '2022-09-26T12:30:00Z')).to.be.greaterThan(0)
     expect(
-      datetimeComparator(undefined, '2022-09-26T12:30:00Z')
+      datetimeComparator(undefined, '2022-09-26T12:30:00Z'),
     ).to.be.greaterThan(0)
     expect(datetimeComparator(undefined, '')).to.equal(0)
   })

@@ -251,7 +251,7 @@ export default {
         DASHBOARD_DELTAS_SUBSCRIPTION,
         {},
         'root',
-        []
+        [],
       ),
       workflowsHeader: [
         {
@@ -306,7 +306,7 @@ export default {
       return WorkflowState.enumValues
         .sort(
           (left, right) =>
-            WorkflowStateOrder.get(left) - WorkflowStateOrder.get(right)
+            WorkflowStateOrder.get(left) - WorkflowStateOrder.get(right),
         )
         .map((state) => {
           return {
