@@ -23,15 +23,24 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 describe('SubscriptionQuery model', () => {
   describe('constructor', () => {
     it('should be created', () => {
-      const query = gql`query { workflow { id } }`
+      const query = gql`
+        query {
+          workflow {
+            id
+          }
+        }
+      `
       const variables = {
-        workflowId: '~cylc/cylc'
+        workflowId: '~cylc/cylc',
       }
       const name = 'root'
-      const callbacks = [
-        new DeltasCallback()
-      ]
-      const subscriptionQuery = new SubscriptionQuery(query, variables, name, callbacks)
+      const callbacks = [new DeltasCallback()]
+      const subscriptionQuery = new SubscriptionQuery(
+        query,
+        variables,
+        name,
+        callbacks
+      )
       expect(subscriptionQuery.query).to.equal(query)
       expect(subscriptionQuery.variables).to.deep.equal(variables)
       expect(subscriptionQuery.name).to.equal(name)

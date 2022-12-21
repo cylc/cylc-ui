@@ -17,22 +17,22 @@
 
 @import '~vuetify/src/styles/styles.sass';
 
-@import "cylc/variables";
+@import 'cylc/variables';
 
-@import "cylc/dashboard";
-@import "cylc/drawer";
-@import "cylc/gscan";
-@import "cylc/header";
-@import "cylc/job";
-@import "cylc/toolbar";
-@import "cylc/tree";
-@import "cylc/table";
-@import "cylc/user_profile";
-@import "cylc/warning";
-@import "cylc/workflow";
-@import "cylc/tooltip";
-@import "cylc/mutation_form";
-@import "cylc/menu";
+@import 'cylc/dashboard';
+@import 'cylc/drawer';
+@import 'cylc/gscan';
+@import 'cylc/header';
+@import 'cylc/job';
+@import 'cylc/toolbar';
+@import 'cylc/tree';
+@import 'cylc/table';
+@import 'cylc/user_profile';
+@import 'cylc/warning';
+@import 'cylc/workflow';
+@import 'cylc/tooltip';
+@import 'cylc/mutation_form';
+@import 'cylc/menu';
 
 html {
   // Only show scrollbar when needed:
@@ -72,11 +72,11 @@ html {
 }
 
 .position-relative {
-  position: relative
+  position: relative;
 }
 
 .position-absolute {
-  position: absolute
+  position: absolute;
 }
 
 .left-0 {

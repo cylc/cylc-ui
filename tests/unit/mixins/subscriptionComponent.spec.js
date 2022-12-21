@@ -25,34 +25,32 @@ describe('Subscription Component mixin', () => {
   let workflowService
   beforeEach(() => {
     workflowService = {
-      subscribe (componentOrView) {
+      subscribe(componentOrView) {
         componentOrView.subscribed = true
       },
-      unsubscribe (componentOrView) {
+      unsubscribe(componentOrView) {
         componentOrView.subscribed = false
-      }
+      },
     }
     localVue.prototype.$workflowService = workflowService
   })
   it('should provide a hook for when the component is created', () => {
     const Component = {
       mixins: [subscriptionComponentMixin],
-      render () {
-      }
+      render() {},
     }
     const component = shallowMount(Component, {
-      localVue
+      localVue,
     })
     expect(component.vm.subscribed).to.equal(true)
   })
   it('should provide a hook for when the component is destroyed', () => {
     const Component = {
       mixins: [subscriptionComponentMixin],
-      render () {
-      }
+      render() {},
     }
     const component = shallowMount(Component, {
-      localVue
+      localVue,
     })
     expect(component.vm.subscribed).to.equal(true)
     component.vm.$destroy()

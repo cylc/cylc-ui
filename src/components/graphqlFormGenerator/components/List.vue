@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <!-- The input -->
           <component
             v-model="value[index]"
-            :propOverrides="{dense: true}"
+            :propOverrides="{ dense: true }"
             :gqlType="gqlType.ofType"
             :types="types"
             :is="FormInput"
@@ -47,9 +47,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-list-item>
       <v-list-item>
         <v-btn
-         @click="add()"
-         text
-         data-cy="add"
+          @click="add()"
+          text
+          data-cy="add"
         >
           <v-icon>{{ svgPaths.open }}</v-icon>
           <span>Add Item</span>
@@ -68,29 +68,27 @@ import Vue from 'vue'
 export default {
   name: 'g-list',
 
-  mixins: [
-    formElement
-  ],
+  mixins: [formElement],
 
   props: {
     addAtStart: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
-  data () {
+  data() {
     return {
       svgPaths: {
         open: mdiPlusCircle,
-        close: mdiCloseCircle
-      }
+        close: mdiCloseCircle,
+      },
     }
   },
 
   methods: {
     /** Add an item to the list. */
-    add () {
+    add() {
       const newInput = getNullValue(this.gqlType.ofType, this.types)
       let index = 0
       if (this.addAtStart) {
@@ -104,15 +102,17 @@ export default {
       Vue.nextTick(() => {
         Vue.nextTick(() => {
           // get the latest input ref (which is a tooltip for some reason), get its parent, then the input itself and focus() it (if it exists)
-          this.$refs.inputs[index].$el?.parentNode?.querySelector('input')?.focus()
+          this.$refs.inputs[index].$el?.parentNode
+            ?.querySelector('input')
+            ?.focus()
         })
       })
     },
 
     /** Remove the item at `index` from the list. */
-    remove (index) {
+    remove(index) {
       this.value.splice(index, 1)
-    }
-  }
+    },
+  },
 }
 </script>

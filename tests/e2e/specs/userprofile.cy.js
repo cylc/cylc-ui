@@ -19,20 +19,15 @@ import {
   getCurrentFontSize,
   expectedFontSize,
   resetFontSize,
-  INITIAL_FONT_SIZE
+  INITIAL_FONT_SIZE,
 } from '@/utils/font-size'
 // import * as CylcTree from '@/components/cylc/tree/index'
 
 describe('User Profile', () => {
   it('Visits the user profile', () => {
     cy.visit('/#/user-profile')
-    cy
-      .get('h3.headline')
-      .should('be.visible')
-      .should('contain', 'Your Profile')
-    cy.get('input#profile-username')
-      .should('be.visible')
-      .should('be.disabled')
+    cy.get('h3.headline').should('be.visible').should('contain', 'Your Profile')
+    cy.get('input#profile-username').should('be.visible').should('be.disabled')
   })
   it('Increases the font size', () => {
     resetFontSize()
@@ -46,10 +41,10 @@ describe('User Profile', () => {
       }
       const currentFontSize = getCurrentFontSize()
       const expectedNewSize = expectedFontSize(true, clicks)
-      expect(Math.round(expectedNewSize)).to.be.equal(Math.round(currentFontSize))
-      cy
-        .get('button#font-size-reset-button')
-        .click()
+      expect(Math.round(expectedNewSize)).to.be.equal(
+        Math.round(currentFontSize)
+      )
+      cy.get('button#font-size-reset-button').click()
     })
   })
   it('Decreases the font size', () => {
@@ -63,10 +58,10 @@ describe('User Profile', () => {
       }
       const currentFontSize = getCurrentFontSize()
       const expectedNewSize = expectedFontSize(false, clicks)
-      expect(Math.round(expectedNewSize)).to.be.equal(Math.round(currentFontSize))
-      cy
-        .get('button#font-size-reset-button')
-        .click()
+      expect(Math.round(expectedNewSize)).to.be.equal(
+        Math.round(currentFontSize)
+      )
+      cy.get('button#font-size-reset-button').click()
     })
   })
   it('Resets the font size', () => {
@@ -82,21 +77,21 @@ describe('User Profile', () => {
         $resetButton.trigger('click')
         const currentFontSize = getCurrentFontSize()
         const expectedNewSize = parseFloat(INITIAL_FONT_SIZE)
-        expect(Math.round(expectedNewSize)).to.be.equal(Math.round(currentFontSize))
+        expect(Math.round(expectedNewSize)).to.be.equal(
+          Math.round(currentFontSize)
+        )
       })
     })
   })
   it('Sets the job theme', () => {
     cy.visit('/#/user-profile')
-    cy.get('#input-job-theme-default')
-      .click({ force: true })
+    cy.get('#input-job-theme-default').click({ force: true })
     // set the job theme to normal
     cy.get('.c-gscan:first .c-job:first rect:first')
       .should('have.css', 'fill')
       .then(($fill1) => {
         // set the job theme to greyscale
-        cy.get('#input-job-theme-greyscale')
-          .click({ force: true })
+        cy.get('#input-job-theme-greyscale').click({ force: true })
         cy.get('.c-gscan:first .c-job:first rect:first')
           .should('have.css', 'fill')
           // make sure that the job has changed colour

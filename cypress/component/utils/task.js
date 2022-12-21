@@ -18,16 +18,13 @@
 // mean elapsed time for the task in seconds
 export const MEAN_ELAPSED_TIME = 10000
 
-export function getStartTime (percent) {
+export function getStartTime(percent) {
   return String(
     new Date(
       // the current time in ms
       Date.now() -
-      // minus the elapsed time in ms
-      (
-        (MEAN_ELAPSED_TIME * 1000) *
-        (percent / 100)
-      )
+        // minus the elapsed time in ms
+        MEAN_ELAPSED_TIME * 1000 * (percent / 100)
     ).toISOString()
   )
 }

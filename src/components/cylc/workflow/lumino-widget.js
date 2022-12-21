@@ -34,7 +34,7 @@ export default class LuminoWidget extends Widget {
    * @param name {string} text displayed in the widget tab
    * @param closable {boolean} flag that controls whether the tab can be closed or not
    */
-  constructor (id, name, closable = true) {
+  constructor(id, name, closable = true) {
     super({ node: LuminoWidget.createNode(id) })
     this.id = id
     this.name = name
@@ -52,14 +52,14 @@ export default class LuminoWidget extends Widget {
    * @param {string} id - widget id
    * @return HTMLElement
    */
-  static createNode (id) {
+  static createNode(id) {
     const div = document.createElement('div')
     div.setAttribute('id', id)
     div.setAttribute('class', 'fill-height')
     return div
   }
 
-  onActivateRequest (msg) {
+  onActivateRequest(msg) {
     // Emit an event so that the Vue component knows that it was activated
     const event = new CustomEvent('lumino:activated', this._getEventDetails())
     document.getElementById(this.id).dispatchEvent(event)
@@ -67,7 +67,7 @@ export default class LuminoWidget extends Widget {
     super.onActivateRequest(msg)
   }
 
-  onCloseRequest (msg) {
+  onCloseRequest(msg) {
     // Emit an event so that the Vue component knows that it needs to be removed too
     const event = new CustomEvent('lumino:deleted', this._getEventDetails())
     document.getElementById(this.id).dispatchEvent(event)
@@ -88,13 +88,13 @@ export default class LuminoWidget extends Widget {
    * }}
    * @private
    */
-  _getEventDetails () {
+  _getEventDetails() {
     return {
       detail: {
         id: this.id,
         name: this.name,
-        closable: this.closable
-      }
+        closable: this.closable,
+      },
     }
   }
 }

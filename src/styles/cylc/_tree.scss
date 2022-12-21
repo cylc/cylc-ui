@@ -17,7 +17,7 @@
 
 @import '~vuetify/src/styles/styles';
 
-$active-color: #BDD5F7;
+$active-color: #bdd5f7;
 /**
  * Height of each line/row in the tree. Same as saying “each node in the tree has
  * $line-height height”.
@@ -45,8 +45,8 @@ $visible-outputs: 5;
 }
 
 .treeitem {
-  display:inline-block;
-  vertical-align:middle;
+  display: inline-block;
+  vertical-align: middle;
   width: 100%;
   .node {
     line-height: $line-height;
@@ -62,11 +62,11 @@ $visible-outputs: 5;
     }
 
     &--hoverable {
-      @include states()
+      @include states();
     }
 
     &--active {
-      @include active-state()
+      @include active-state();
     }
 
     .node-data {
@@ -80,7 +80,8 @@ $visible-outputs: 5;
       }
     }
 
-    .c-task, .c-job {
+    .c-task,
+    .c-job {
       font-size: 1.2em;
     }
   }
@@ -131,7 +132,7 @@ $visible-outputs: 5;
         // 5 outputs, plus a buffer of 1.0em that appears to give the scroll just the
         // right space to show the N items in the scroll (without the buffer the last
         // item is partially hidden).
-        max-height: calc(#{$line-height} * #{$visible-outputs} + 1.0em);
+        max-height: calc(#{$line-height} * #{$visible-outputs} + 1em);
         overflow-y: scroll;
       }
     }

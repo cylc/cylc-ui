@@ -37,7 +37,7 @@ export default {
      * @param {number} n - The maximum number of times to split the string.
      * @returns {Array<string>}
      */
-    lsplit (string_, separator, n) {
+    lsplit(string_, separator, n) {
       const split = string_.split(separator)
       if (split.length <= n) {
         return split
@@ -45,7 +45,7 @@ export default {
       return [split.shift(), split.join(separator)]
     },
 
-    fromString (string_) {
+    fromString(string_) {
       const [lhs, rhs] = this.lsplit(string_, '=', 2)
       if (rhs === undefined) {
         return null
@@ -80,7 +80,7 @@ export default {
       return rdict
     },
 
-    fromObject (object_) {
+    fromObject(object_) {
       let ptr = object_
       let ret = ''
       while (ptr) {
@@ -97,22 +97,22 @@ export default {
         }
       }
       return ret
-    }
+    },
   },
 
   computed: {
     model: {
-      get () {
+      get() {
         return this.fromObject(this.value)
       },
 
-      set (val) {
+      set(val) {
         const newVal = this.fromString(val)
         if (newVal) {
           this.$emit('input', newVal)
         }
-      }
-    }
-  }
+      },
+    },
+  },
 }
 </script>

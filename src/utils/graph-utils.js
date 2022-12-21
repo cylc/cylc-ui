@@ -15,10 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export function posToPath (pos) {
+export function posToPath(pos) {
   // the last point comes first, followed by the others in order I.E:
   // -1, 0, 1, 2, ... -3, -2
-  const parts = pos.substring(2).split(' ').map(x => x.split(','))
+  const parts = pos
+    .substring(2)
+    .split(' ')
+    .map((x) => x.split(','))
   const [last] = parts.splice(0, 1)
   let path = null
   for (const part of parts) {
@@ -34,14 +37,14 @@ export function posToPath (pos) {
 
 /* TODO: everything! */
 // eslint-disable-next-line no-extend-native
-export function nonCryptoHash (string) {
+export function nonCryptoHash(string) {
   let hash = 0
   let i
   let chr
   if (string.length === 0) return hash
   for (i = 0; i < string.length; i++) {
     chr = string.charCodeAt(i)
-    hash = ((hash << 5) - hash) + chr
+    hash = (hash << 5) - hash + chr
     hash |= 0 // Convert to 32bit integer
   }
   return hash

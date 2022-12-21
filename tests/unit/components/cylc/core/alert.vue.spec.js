@@ -33,13 +33,13 @@ describe('Alert', () => {
    * @param options
    * @returns {Wrapper<Alert>}
    */
-  const mountFunction = options => {
+  const mountFunction = (options) => {
     const vuetify = new Vuetify()
     return mount(Alert, {
       localVue,
       vuetify,
       store,
-      ...options
+      ...options,
     })
   }
   it('should have the colors data', () => {

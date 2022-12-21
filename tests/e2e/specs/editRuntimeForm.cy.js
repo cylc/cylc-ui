@@ -31,9 +31,9 @@ describe('Edit Runtime form', () => {
           data: {
             [body.operationName]: {
               result: [true, {}],
-              __typename: upperFirst(body.operationName)
-            }
-          }
+              __typename: upperFirst(body.operationName),
+            },
+          },
         })
       }
     })
@@ -44,7 +44,8 @@ describe('Edit Runtime form', () => {
    * @param {string} nodeName - the tree node name, to search for and open the mutations form
    */
   const openMenu = (nodeName) => {
-    cy.get('[data-cy=tree-view]').as('treeView')
+    cy.get('[data-cy=tree-view]')
+      .as('treeView')
       .find('.c-task')
       .should('be.visible')
     cy.get('@treeView')
@@ -53,8 +54,7 @@ describe('Edit Runtime form', () => {
       .parent()
       .find('.c-task')
       .click({ force: true })
-    cy.get('#less-more-button')
-      .click()
+    cy.get('#less-more-button').click()
   }
 
   /** Get the Edit Runtime command from the menu */
@@ -82,9 +82,7 @@ describe('Edit Runtime form', () => {
     openMenu('retrying')
     getMenuItem().click()
 
-    getInputListItem('Init Script')
-      .find('.v-input')
-      .type('echo Kalgan')
+    getInputListItem('Init Script').find('.v-input').type('echo Kalgan')
     getInputListItem('Environment')
       .as('envInput')
       // Pre-existing items' keys should be immutable
@@ -108,10 +106,9 @@ describe('Edit Runtime form', () => {
       .type('Dorothy')
 
     // Submit form
-    cy
-      .then(() => {
-        expect(receivedMutations.length).to.eq(0)
-      })
+    cy.then(() => {
+      expect(receivedMutations.length).to.eq(0)
+    })
       .get('[data-cy="submit"]')
       .click()
       .then(() => {
@@ -121,8 +118,8 @@ describe('Edit Runtime form', () => {
           settings: [
             { init_script: 'echo Kalgan' },
             { environment: { HORSE: 'Dorothy' } },
-            { environment: { FACTION: '2nd Foundation' } }
-          ]
+            { environment: { FACTION: '2nd Foundation' } },
+          ],
         })
       })
       // Form should close
@@ -143,17 +140,14 @@ describe('Edit Runtime form', () => {
       .find('textarea')
       .as('input')
       .invoke('val')
-      .then(val => {
-        cy.get('@input')
-          .clear()
-          .type(val)
+      .then((val) => {
+        cy.get('@input').clear().type(val)
       })
 
     // Submit form
-    cy
-      .then(() => {
-        expect(receivedMutations.length).to.eq(0)
-      })
+    cy.then(() => {
+      expect(receivedMutations.length).to.eq(0)
+    })
       .get('[data-cy="submit"]')
       .click()
       .then(() => {

@@ -25,7 +25,8 @@
 
 /* eslint-disable */
 
-const UNIVERSAL_ID = new RegExp(`
+const UNIVERSAL_ID = new RegExp(
+  `
     (?=.)
         (?:
           (?:
@@ -88,9 +89,11 @@ const UNIVERSAL_ID = new RegExp(`
           )?
         )?
         $
-`.replace(/[\s\n\r]/g, ''))
+`.replace(/[\s\n\r]/g, '')
+)
 
-const RELATIVE_ID = new RegExp(`
+const RELATIVE_ID = new RegExp(
+  `
     ^
         //
         ([^~\/:\n]+)
@@ -119,11 +122,12 @@ const RELATIVE_ID = new RegExp(`
           )?
         )?
     $
-`.replace(/[\s\n\r]/g, ''))
+`.replace(/[\s\n\r]/g, '')
+)
 
 /* eslint-enable */
 
-function detokenise (tokens, workflow = true, relative = true) {
+function detokenise(tokens, workflow = true, relative = true) {
   let parts = []
   let ret = ''
 
@@ -186,7 +190,7 @@ class Tokens {
 
   static KEYS = ['user', 'workflow', 'cycle', 'task', 'job']
 
-  constructor (id, relative = false) {
+  constructor(id, relative = false) {
     let match
     let user
     let workflow
@@ -240,7 +244,7 @@ class Tokens {
     this.compute()
   }
 
-  compute () {
+  compute() {
     this.id = detokenise(this)
 
     if (this.cycle && this.cycle.startsWith('$namespace|')) {
@@ -262,7 +266,7 @@ class Tokens {
     this.relative_id = detokenise(this, false, true)
   }
 
-  set (fields) {
+  set(fields) {
     for (const [key, value] of Object.entries(fields)) {
       if (Tokens.KEYS.indexOf(key) === -1) {
         throw new Error(`Invalid key: ${key}`)
@@ -275,7 +279,7 @@ class Tokens {
     this.compute()
   }
 
-  clone (fields = null) {
+  clone(fields = null) {
     const ret = Object.create(
       Object.getPrototypeOf(this),
       Object.getOwnPropertyDescriptors(this)
@@ -286,7 +290,7 @@ class Tokens {
     return ret
   }
 
-  workflowHierarchy () {
+  workflowHierarchy() {
     const hier = []
     const tokensList = []
     let tokens
@@ -301,14 +305,14 @@ class Tokens {
         // wipe the relative tokens in-case they were set
         cycle: undefined,
         task: undefined,
-        job: undefined
+        job: undefined,
       })
       tokensList.push([part, tokens])
     }
     return tokensList
   }
 
-  lowestToken () {
+  lowestToken() {
     let key
     for (let ind = Tokens.KEYS.length; ind >= 0; ind--) {
       key = Tokens.KEYS[ind]
@@ -318,7 +322,7 @@ class Tokens {
     }
   }
 
-  tree () {
+  tree() {
     const ret = []
     if (this.user) {
       let tokens = new Tokens(`~${this.user}`)

@@ -23,7 +23,7 @@
  * @param {string} url - the URL
  * @returns {string} - a URL without unnecessary double forward-slashes
  */
-function normalize (url) {
+function normalize(url) {
   return url.replace(/([^:]\/)\/+/g, '$1')
 }
 
@@ -41,9 +41,11 @@ function normalize (url) {
  * @param {boolean} baseOnly - whether to use only the base URL or not when creating the new URL
  * @returns {string} - the application base URL, containing protocol, hostname, port, and pathname
  */
-function getBaseUrl (websockets = false, baseOnly = false) {
+function getBaseUrl(websockets = false, baseOnly = false) {
   const protocol = websockets
-    ? window.location.protocol.startsWith('https') ? 'wss:' : 'ws:'
+    ? window.location.protocol.startsWith('https')
+      ? 'wss:'
+      : 'ws:'
     : window.location.protocol
   const host = window.location.host
   const baseUrl = `${protocol}//${host}`
@@ -64,14 +66,10 @@ function getBaseUrl (websockets = false, baseOnly = false) {
  * @param {boolean} baseOnly - whether to use only the base URL or not when creating the new URL
  * @returns {string} - the new URL, preceded by the base URL (e.g. https://hub:8080/users/cylc/users)
  */
-function createUrl (path, websockets = false, baseOnly = false) {
+function createUrl(path, websockets = false, baseOnly = false) {
   const baseUrl = getBaseUrl(websockets, baseOnly)
-  const url = [baseUrl, path]
-    .map(part => part.trim())
-    .join('/')
+  const url = [baseUrl, path].map((part) => part.trim()).join('/')
   return normalize(url)
 }
 
-export {
-  createUrl
-}
+export { createUrl }

@@ -42,27 +42,27 @@ import { mapActions, mapState } from 'vuex'
 export default {
   name: 'Alert',
 
-  data () {
+  data() {
     return {
       // TODO: remove later when https://github.com/vuetifyjs/vuetify/issues/11021 is fixed
       colors: new Map([
         ['error', 'red'],
         ['success', 'green'],
-        ['warning', 'amber']
+        ['warning', 'amber'],
       ]),
       svgPaths: {
-        close: mdiClose
-      }
+        close: mdiClose,
+      },
     }
   },
 
   computed: {
-    ...mapState(['alert'])
+    ...mapState(['alert']),
   },
 
   methods: {
     ...mapActions(['setAlert']),
-    getColor (type) {
+    getColor(type) {
       return this.colors.get(type) || ''
     },
     /**
@@ -71,10 +71,10 @@ export default {
      * @param {Function} toggleFunction - the original Vuetify toggle function
      * @see https://vuetifyjs.com/en/api/v-alert/
      */
-    closeAlert (toggleFunction) {
+    closeAlert(toggleFunction) {
       this.setAlert(null)
       toggleFunction()
-    }
-  }
+    },
+  },
 }
 </script>

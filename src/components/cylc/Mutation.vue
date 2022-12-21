@@ -16,135 +16,130 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-    <v-card
-      class="mx-auto d-inline-block"
-      style="padding: 1em;"
-      outlined
+  <v-card
+    class="mx-auto d-inline-block"
+    style="padding: 1em"
+    outlined
+  >
+    <!-- the mutation title -->
+    <h3 style="text-transform: capitalize">
+      {{ mutation._title }}
+    </h3>
+
+    <!-- the mutation description -->
+    <v-expansion-panels
+      accordion
+      flat
+      v-bind="extendedDescription ? { hover: true } : { readonly: true }"
     >
-      <!-- the mutation title -->
-      <h3
-        style="text-transform: capitalize;"
-      >
-        {{ mutation._title }}
-      </h3>
+      <v-expansion-panel class="mutation-desc">
+        <v-expansion-panel-header
+          v-bind="
+            extendedDescription
+              ? {}
+              : {
+                  expandIcon: null,
+                  style: {
+                    cursor: 'default',
+                  },
+                }
+          "
+        >
+          <Markdown :markdown="shortDescription" />
+        </v-expansion-panel-header>
+        <v-expansion-panel-content v-if="extendedDescription">
+          <Markdown :markdown="extendedDescription" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
 
-      <!-- the mutation description -->
-      <v-expansion-panels
-        accordion
-        flat
-        v-bind="extendedDescription ? { hover: true } : { readonly: true }"
+    <v-divider />
+    <EditRuntimeForm
+      v-if="mutation.name === 'editRuntime'"
+      v-bind="{
+        cylcObject,
+        types,
+      }"
+      ref="form"
+      v-model="isValid"
+    />
+    <FormGenerator
+      v-else
+      v-bind="{
+        mutation,
+        types,
+        initialData,
+      }"
+      ref="form"
+      v-model="isValid"
+    />
+    <br />
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="grey"
+        @click="cancel()"
+        text
+        data-cy="cancel"
       >
-        <v-expansion-panel
-          class="mutation-desc"
-        >
-          <v-expansion-panel-header
-            v-bind="extendedDescription ? {} : {
-              expandIcon: null,
-              style: {
-                cursor: 'default'
-              }
-            }"
-          >
-            <Markdown :markdown="shortDescription"/>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content
-            v-if="extendedDescription"
-          >
-            <Markdown :markdown="extendedDescription"/>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-
-      <v-divider/>
-      <EditRuntimeForm
-        v-if="mutation.name === 'editRuntime'"
-        v-bind="{
-          cylcObject,
-          types
-        }"
-        ref="form"
-        v-model="isValid"
-      />
-      <FormGenerator
-        v-else
-        v-bind="{
-          mutation,
-          types,
-          initialData
-        }"
-        ref="form"
-        v-model="isValid"
-      />
-      <br />
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="grey"
-          @click="cancel()"
-          text
-          data-cy="cancel"
-        >
-          Cancel
-        </v-btn>
-        <v-btn
-          color="orange"
-          @click="$refs.form.reset()"
-          text
-          data-cy="reset"
-        >
-          Reset
-        </v-btn>
-        <v-tooltip
-          top
-          color="error"
-          :disabled="isValid"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              text
-              :color="isValid ? 'primary' : 'error'"
-              @click="submit"
-              :loading="submitting"
-              v-bind="attrs"
-              v-on="on"
-              data-cy="submit"
-            >
-              Submit
-            </v-btn>
-          </template>
-          <span>Form contains invalid or missing values!</span>
-        </v-tooltip>
-      </v-card-actions>
-      <v-snackbar
-        v-model="showSnackbar"
-        v-bind="snackbarProps"
-        data-cy="response-snackbar"
+        Cancel
+      </v-btn>
+      <v-btn
+        color="orange"
+        @click="$refs.form.reset()"
+        text
+        data-cy="reset"
       >
-        {{ response.msg }}
-        <template v-slot:action="{ attrs }">
+        Reset
+      </v-btn>
+      <v-tooltip
+        top
+        color="error"
+        :disabled="isValid"
+      >
+        <template v-slot:activator="{ on, attrs }">
           <v-btn
-            @click="showSnackbar = false"
-            icon
+            text
+            :color="isValid ? 'primary' : 'error'"
+            @click="submit"
+            :loading="submitting"
             v-bind="attrs"
-            data-cy="snackbar-close"
+            v-on="on"
+            data-cy="submit"
           >
-            <v-icon>
-              {{ $options.icons.close }}
-            </v-icon>
+            Submit
           </v-btn>
         </template>
-      </v-snackbar>
-    </v-card>
+        <span>Form contains invalid or missing values!</span>
+      </v-tooltip>
+    </v-card-actions>
+    <v-snackbar
+      v-model="showSnackbar"
+      v-bind="snackbarProps"
+      data-cy="response-snackbar"
+    >
+      {{ response.msg }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          @click="showSnackbar = false"
+          icon
+          v-bind="attrs"
+          data-cy="snackbar-close"
+        >
+          <v-icon>
+            {{ $options.icons.close }}
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+  </v-card>
 </template>
 
 <script>
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
 import Markdown from '@/components/Markdown'
-import {
-  getMutationShortDesc,
-  getMutationExtendedDesc
-} from '@/utils/aotf'
+import { getMutationShortDesc, getMutationExtendedDesc } from '@/utils/aotf'
 import { mdiClose } from '@mdi/js'
 
 export default {
@@ -153,34 +148,34 @@ export default {
   components: {
     EditRuntimeForm,
     FormGenerator,
-    Markdown
+    Markdown,
   },
 
   props: {
     mutation: {
       // graphql mutation object as returned by introspection query
       type: Object,
-      required: true
+      required: true,
     },
     cylcObject: {
       // data store node
       type: Object,
-      required: true
+      required: true,
     },
     types: {
       // list of all graphql types as returned by introspection query
       // (required for resolving InputType objects
-      type: Array
+      type: Array,
     },
     initialData: {
       type: Object,
       required: false,
-      default: () => {}
+      default: () => {},
     },
     cancel: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data: () => ({
@@ -188,47 +183,47 @@ export default {
     submitting: false,
     response: {
       msg: null,
-      level: 'warn'
-    }
+      level: 'warn',
+    },
   }),
 
   computed: {
     /* Return the first line of the description. */
-    shortDescription () {
+    shortDescription() {
       return getMutationShortDesc(this.mutation.description)
     },
     /* Return the subsequent lines of the description */
-    extendedDescription () {
+    extendedDescription() {
       return getMutationExtendedDesc(this.mutation.description)
     },
     showSnackbar: {
-      get () {
+      get() {
         return Boolean(this.response.msg)
       },
-      set (val) {
+      set(val) {
         if (!val) this.response.msg = null
-      }
+      },
     },
-    snackbarProps () {
+    snackbarProps() {
       return this.response.level === 'error'
         ? {
-          timeout: -1,
-          color: 'red accent-2',
-          dark: true
-        }
+            timeout: -1,
+            color: 'red accent-2',
+            dark: true,
+          }
         : {
-          timeout: 4e3,
-          color: 'amber accent-2',
-          light: true
-        }
-    }
+            timeout: 4e3,
+            color: 'amber accent-2',
+            light: true,
+          }
+    },
   },
 
   methods: {
     /* Execute the GraphQL mutation */
-    submit () {
+    submit() {
       this.submitting = true
-      this.$refs.form.submit().then(response => {
+      this.$refs.form.submit().then((response) => {
         this.submitting = false
         if (response.status.name.includes('failed')) {
           this.response.msg = response.message
@@ -241,12 +236,12 @@ export default {
           this.cancel()
         }
       })
-    }
+    },
   },
 
   // Misc options
   icons: {
-    close: mdiClose
-  }
+    close: mdiClose,
+  },
 }
 </script>

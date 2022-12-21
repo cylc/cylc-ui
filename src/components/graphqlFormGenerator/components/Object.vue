@@ -19,12 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-input>
     <template>
       <component
-       v-for="input in inputs"
-       v-bind:key="input.label"
-       v-model="model[input.label]"
-       :is="FormInput"
-       :gqlType="input.gqlType"
-       :types="types"
+        v-for="input in inputs"
+        v-bind:key="input.label"
+        v-model="model[input.label]"
+        :is="FormInput"
+        :gqlType="input.gqlType"
+        :types="types"
       />
     </template>
     <template v-slot:append-outer>
@@ -43,12 +43,12 @@ export default {
   mixins: [formElement],
 
   computed: {
-    inputs () {
-      return this.type.fields.map(field => ({
+    inputs() {
+      return this.type.fields.map((field) => ({
         gqlType: field.type,
-        label: field.name
+        label: field.name,
       }))
-    }
-  }
+    },
+  },
 }
 </script>

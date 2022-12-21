@@ -21,9 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="c-table ma-0 pa-2 h-100 flex-column d-flex"
   >
     <!-- Toolbar -->
-    <v-row
-      class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
-    >
+    <v-row class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0">
       <!-- Filters -->
       <v-col
         v-if="filterable"
@@ -72,7 +70,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <span class="ml-2">{{ slotProps.item.value }}</span>
               </template>
               <template v-slot:selection="slotProps">
-                <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
+                <div
+                  class="mr-2"
+                  v-if="slotProps.index >= 0 && slotProps.index < maximumTasks"
+                >
                   <Task :task="{ state: slotProps.item.value }" />
                 </div>
                 <span
@@ -90,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-row
       no-gutters
       class="flex-grow-1 position-relative"
-      >
+    >
       <v-col
         cols="12"
         class="mh-100 position-relative"
@@ -112,13 +113,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             dense
             :footer-props="{
               itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
-              showFirstLastPage: true
+              showFirstLastPage: true,
             }"
             :options="{ itemsPerPage: 50 }"
           >
-            <template
-              v-slot:item="{ item }"
-            >
+            <template v-slot:item="{ item }">
               <tr>
                 <td>
                   <div class="d-flex align-content-center flex-nowrap">
@@ -126,14 +125,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       <Task
                         v-cylc-object="item.task"
                         :task="item.task.node"
-                        :startTime="((item.latestJob || {}).node || {}).startedTime"
+                        :startTime="
+                          ((item.latestJob || {}).node || {}).startedTime
+                        "
                       />
                     </div>
                     <div class="mr-1">
                       <Job
                         v-cylc-object="item.task"
                         :status="item.task.node.state"
-                        :previous-state="((item.previousJob || {}).node || {}).state"
+                        :previous-state="
+                          ((item.previousJob || {}).node || {}).state
+                        "
                       />
                     </div>
                     <div>{{ item.task.name }}</div>
@@ -145,7 +148,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     class="v-data-table__expand-icon"
                     @click="expanded.push(item)"
                     v-if="
-                      (item.task.children|| []).length > 0 &&
+                      (item.task.children || []).length > 0 &&
                       !expanded.includes(item)
                     "
                   >
@@ -174,10 +177,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </tr>
             </template>
             <template v-slot:expanded-item="{ item }">
-<!--                v-slot:expanded-item="{ headers, item }">-->
-<!--              <td :colspan="headers.length">-->
-<!--                More info about {{ item.node.id }}-->
-<!--              </td>-->
+              <!--                v-slot:expanded-item="{ headers, item }">-->
+              <!--              <td :colspan="headers.length">-->
+              <!--                More info about {{ item.node.id }}-->
+              <!--              </td>-->
               <tr
                 v-bind:key="job.id"
                 v-for="(job, index) in item.task.children"
@@ -190,7 +193,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         v-cylc-object="job"
                         :key="`${job.id}-summary-${index}`"
                         :status="job.node.state"
-                        style="margin-left: 1.3em;"
+                        style="margin-left: 1.3em"
                       />
                       <span class="mx-1">#{{ job.node.submitNum }}</span>
                     </div>
@@ -200,12 +203,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td>
                   <!--{{ item.tokens.cycle }}-->
                 </td>
-                <td>{{job.node.platform }}</td>
-                <td>{{job.node.jobRunnerName }}</td>
-                <td>{{job.node.jobId }}</td>
-                <td>{{job.node.submittedTime }}</td>
-                <td>{{job.node.startedTime }}</td>
-                <td>{{job.node.finishedTime }}</td>
+                <td>{{ job.node.platform }}</td>
+                <td>{{ job.node.jobRunnerName }}</td>
+                <td>{{ job.node.jobId }}</td>
+                <td>{{ job.node.submittedTime }}</td>
+                <td>{{ job.node.startedTime }}</td>
+                <td>{{ job.node.finishedTime }}</td>
                 <td></td>
               </tr>
             </template>
@@ -230,104 +233,110 @@ export default {
   props: {
     tasks: {
       type: Array,
-      required: true
+      required: true,
     },
     filterable: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   components: {
     Task,
-    Job
+    Job,
   },
-  data () {
+  data() {
     return {
       icons: {
         mdiChevronDown,
-        mdiArrowDown
+        mdiArrowDown,
       },
       sortBy: ['task.tokens.cycle'],
-      sortDesc: [localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : true],
+      sortDesc: [
+        localStorage.cyclePointsOrderDesc
+          ? JSON.parse(localStorage.cyclePointsOrderDesc)
+          : true,
+      ],
       expanded: [],
       headers: [
         {
           text: 'Task',
           value: 'task.name',
-          sort: DEFAULT_COMPARATOR
+          sort: DEFAULT_COMPARATOR,
         },
         {
           text: 'Jobs',
           value: 'data-table-expand',
-          sortable: false
+          sortable: false,
         },
         {
           text: 'Cycle Point',
           value: 'task.tokens.cycle',
-          sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
+          sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? '')),
         },
         {
           text: 'Platform',
           value: 'latestJob.node.platform',
-          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? ''),
         },
         {
           text: 'Job System',
           value: 'latestJob.node.jobRunnerName',
-          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? ''),
         },
         {
           text: 'Job ID',
           value: 'latestJob.node.jobId',
-          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? ''),
         },
         {
           text: 'T-submit',
           value: 'latestJob.node.submittedTime',
-          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? ''),
         },
         {
           text: 'T-start',
           value: 'latestJob.node.startedTime',
-          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? ''),
         },
         {
           text: 'T-finish',
           value: 'latestJob.node.finishedTime',
-          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? ''),
         },
         {
           text: 'dT-mean',
           value: 'task.meanElapsedTime',
-          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
-        }
+          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0),
+        },
       ],
       tasksFilter: {
         name: '',
-        states: []
+        states: [],
       },
       activeFilters: null,
-      maximumTasks: 4
+      maximumTasks: 4,
     }
   },
   computed: {
-    taskStates () {
-      return TaskState.enumValues.map(taskState => {
-        return {
-          text: taskState.name.replace(/_/g, ' '),
-          value: taskState.name
-        }
-      }).sort((left, right) => {
-        return left.text.localeCompare(right.text)
-      })
+    taskStates() {
+      return TaskState.enumValues
+        .map((taskState) => {
+          return {
+            text: taskState.name.replace(/_/g, ' '),
+            value: taskState.name,
+          }
+        })
+        .sort((left, right) => {
+          return left.text.localeCompare(right.text)
+        })
     },
-    tasksFilterStates () {
+    tasksFilterStates() {
       return this.activeFilters.states
     },
-    filteredTasks () {
+    filteredTasks() {
       const filterByName = this.filterByTaskName()
       const filterByState = this.filterByTaskState()
-      return this.tasks.filter(task => {
+      return this.tasks.filter((task) => {
         if (filterByName && filterByState) {
           return (
             task.task.name.includes(this.activeFilters.name) &&
@@ -340,26 +349,32 @@ export default {
         }
         return true
       })
-    }
+    },
   },
   methods: {
-    filterByTaskName () {
-      return this.activeFilters &&
+    filterByTaskName() {
+      return (
+        this.activeFilters &&
         this.activeFilters.name !== undefined &&
         this.activeFilters.name !== null &&
         this.activeFilters.name !== ''
+      )
     },
-    filterByTaskState () {
-      return this.activeFilters &&
+    filterByTaskState() {
+      return (
+        this.activeFilters &&
         this.activeFilters.states !== undefined &&
         this.activeFilters.states !== null &&
         this.activeFilters.states.length > 0
+      )
     },
-    filterTasks () {
-      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
+    filterTasks() {
+      const taskNameFilterSet =
+        this.tasksFilter.name !== undefined &&
         this.tasksFilter.name !== null &&
         this.tasksFilter.name !== ''
-      const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
+      const taskStatesFilterSet =
+        this.tasksFilter.states !== undefined &&
         this.tasksFilter.states !== null &&
         this.tasksFilter.states.length > 0
       if (taskNameFilterSet || taskStatesFilterSet) {
@@ -368,11 +383,13 @@ export default {
         this.activeFilters = null
       }
     },
-    clearInput (event) {
+    clearInput(event) {
       // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
       this.tasksFilter.name = null
-      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
-    }
-  }
+      this.$refs.filterNameInput.$el
+        .querySelector('input')
+        .dispatchEvent(new Event('keyup'))
+    },
+  },
 }
 </script>

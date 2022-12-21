@@ -20,7 +20,10 @@
 -->
 
 <template>
-  <div class="markdown" v-html="html"></div>
+  <div
+    class="markdown"
+    v-html="html"
+  ></div>
 </template>
 
 <script>
@@ -32,18 +35,18 @@ export default {
   props: {
     markdown: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data: () => ({
-    md: new MarkdownIt()
+    md: new MarkdownIt(),
   }),
 
   computed: {
-    html () {
+    html() {
       return this.md.render(this.markdown)
-    }
-  }
+    },
+  },
 }
 </script>

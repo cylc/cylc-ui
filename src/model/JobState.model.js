@@ -34,7 +34,7 @@ class JobState extends Enumify {
    * Constructor.
    * @param {String} name
    */
-  constructor (name) {
+  constructor(name) {
     super()
     this.name = name
   }

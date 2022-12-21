@@ -18,24 +18,24 @@
 const state = {
   drawer: null,
   title: null,
-  jobTheme: null
+  jobTheme: null,
 }
 
 const mutations = {
-  setDrawer (state, drawer) {
+  setDrawer(state, drawer) {
     state.drawer = drawer
   },
-  setTitle (state, title) {
+  setTitle(state, title) {
     state.title = title
   },
-  setJobTheme (state, jobTheme) {
+  setJobTheme(state, jobTheme) {
     localStorage.jobTheme = jobTheme
     state.jobTheme = jobTheme
-  }
+  },
 }
 
 export const app = {
   namespaced: true,
   state,
-  mutations
+  mutations,
 }

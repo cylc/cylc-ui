@@ -35,6 +35,6 @@ export default {
      */
     getPageTitle: function (key, params = {}) {
       return `${i18n.t('App.name')} | ${i18n.t(key, params)}`
-    }
-  }
+    },
+  },
 }

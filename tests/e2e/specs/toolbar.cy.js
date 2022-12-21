@@ -18,14 +18,10 @@
 describe('Toolbar component', () => {
   it('Is displayed when we are looking at a workflow', () => {
     cy.visit('/#/workflows/one')
-    cy
-      .get('#core-app-bar')
-      .should('exist')
+    cy.get('#core-app-bar').should('exist')
   })
   it('Is NOT displayed when looking at the dashboard', () => {
     cy.visit('/#/')
-    cy
-      .get('#core-app-bar')
-      .should('not.exist')
+    cy.get('#core-app-bar').should('not.exist')
   })
 })

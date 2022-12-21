@@ -35,7 +35,7 @@ export class TaskState extends Enumify {
    * Constructor.
    * @param {String} name
    */
-  constructor (name) {
+  constructor(name) {
     super()
     this.name = name
   }
@@ -52,7 +52,7 @@ export const TaskStateUserOrder = [
   TaskState.SUCCEEDED,
   TaskState.SUBMIT_FAILED,
   TaskState.FAILED,
-  TaskState.EXPIRED
+  TaskState.EXPIRED,
 ]
 
 export const JobStates = [
@@ -60,7 +60,7 @@ export const JobStates = [
   TaskState.RUNNING,
   TaskState.SUCCEEDED,
   TaskState.FAILED,
-  TaskState.SUBMIT_FAILED
+  TaskState.SUBMIT_FAILED,
 ]
 
 export default TaskState

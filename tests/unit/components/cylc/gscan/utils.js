@@ -41,15 +41,15 @@ export const TEST_TREE = {
               id: '~u/a/x1',
               name: 'x1',
               type: 'workflow',
-              node: { status: WorkflowState.STOPPED.name }
+              node: { status: WorkflowState.STOPPED.name },
             },
             {
               id: '~u/a/x2',
               name: 'x2',
               type: 'workflow',
-              node: { status: WorkflowState.STOPPED.name }
-            }
-          ]
+              node: { status: WorkflowState.STOPPED.name },
+            },
+          ],
         },
         {
           id: '~u/b',
@@ -57,8 +57,8 @@ export const TEST_TREE = {
           type: 'workflow',
           node: {
             status: WorkflowState.STOPPING.name,
-            stateTotals: RUNNING_STATE_TOTALS
-          }
+            stateTotals: RUNNING_STATE_TOTALS,
+          },
         },
         {
           id: '~u/c',
@@ -66,15 +66,15 @@ export const TEST_TREE = {
           type: 'workflow',
           node: {
             status: WorkflowState.RUNNING.name,
-            stateTotals: SUBMITTED_STATE_TOTALS
-          }
-        }
-      ]
-    }
-  ]
+            stateTotals: SUBMITTED_STATE_TOTALS,
+          },
+        },
+      ],
+    },
+  ],
 }
 
-export function listTree (gscanTree) {
+export function listTree(gscanTree) {
   // return a flat list of workflow ids for all workflow nodes in the
   // tree, preserving sort order
   const ret = []

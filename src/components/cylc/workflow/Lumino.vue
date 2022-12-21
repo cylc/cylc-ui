@@ -17,7 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <div class="workflow-panel">
-      <div ref="main" class="main pa-2 fill-height"></div>
+      <div
+        ref="main"
+        class="main pa-2 fill-height"
+      ></div>
       <div v-show="false">
         <slot></slot>
       </div>
@@ -58,20 +61,20 @@ export default {
      */
     tabTitleProp: {
       type: String,
-      default: 'name'
-    }
+      default: 'name',
+    },
   },
 
   /**
    * Data for the Lumino component
    */
-  data () {
+  data() {
     return {
       // create a box panel, which holds the dock panel, and controls its layout
       main: new BoxPanel({ direction: 'left-to-right', spacing: 0 }),
       // create dock panel, which holds the widgets
       dock: new DockPanel(),
-      widgets: []
+      widgets: [],
     }
   },
 
@@ -79,11 +82,13 @@ export default {
    * Here we define the ID's for the Lumino DOM elements, and add the Dock panel to the main
    * Box panel. In the next tick of Vue, the DOM element and the Vue element/ref are attached.
    */
-  created () {
+  created() {
     this.dock.id = 'dock'
     this.main.id = 'main'
     this.main.addWidget(this.dock)
-    window.onresize = () => { this.main.update() }
+    window.onresize = () => {
+      this.main.update()
+    }
     BoxPanel.setStretch(this.dock, 1)
     const vm = this
     this.$nextTick(() => {
@@ -99,7 +104,7 @@ export default {
    *
    * The removal is handled via event listeners from Lumino.
    */
-  updated () {
+  updated() {
     this.syncWidgets()
   },
 
@@ -108,13 +113,15 @@ export default {
      * Iterates through the component children, looking for newly created
      * components, and then creates a related Lumino Widget for this component.
      */
-    syncWidgets () {
+    syncWidgets() {
       const tabTitleProp = this.$props.tabTitleProp
       this.$children
-        .filter(child => !this.widgets.includes(child.$attrs.id))
-        .forEach(newChild => {
+        .filter((child) => !this.widgets.includes(child.$attrs.id))
+        .forEach((newChild) => {
           const id = `${newChild.$attrs.id}`
-          const name = newChild.$attrs[tabTitleProp] ? newChild.$attrs[tabTitleProp] : newChild.$options.name
+          const name = newChild.$attrs[tabTitleProp]
+            ? newChild.$attrs[tabTitleProp]
+            : newChild.$options.name
           this.addWidget(id, name)
           this.$nextTick(() => {
             document.getElementById(id).appendChild(newChild.$el)
@@ -126,15 +133,17 @@ export default {
      * Create a widget.
      *
      */
-    addWidget (id, name) {
+    addWidget(id, name) {
       this.widgets.push(id)
       const luminoWidget = new LuminoWidget(id, name, /* closable */ true)
       this.dock.addWidget(luminoWidget)
       // give time for Lumino's widget DOM element to be created
       this.$nextTick(() => {
-        document.getElementById(id)
+        document
+          .getElementById(id)
           .addEventListener('lumino:activated', this.onWidgetActivated)
-        document.getElementById(id)
+        document
+          .getElementById(id)
           .addEventListener('lumino:deleted', this.onWidgetDeleted)
       })
     },
@@ -150,7 +159,7 @@ export default {
      *   }
      * }}
      */
-    onWidgetActivated (customEvent) {
+    onWidgetActivated(customEvent) {
       // TODO: remove it if the linter is fixed later #510
       // eslint-disable-next-line vue/custom-event-name-casing
       this.$emit('lumino:activated', customEvent.detail)
@@ -167,17 +176,19 @@ export default {
      *   }
      * }}
      */
-    onWidgetDeleted (customEvent) {
+    onWidgetDeleted(customEvent) {
       const id = customEvent.detail.id
       this.widgets.splice(this.widgets.indexOf(id), 1)
-      document.getElementById(id)
+      document
+        .getElementById(id)
         .removeEventListener('lumino:deleted', this.onWidgetDeleted)
-      document.getElementById(id)
+      document
+        .getElementById(id)
         .removeEventListener('lumino:activated', this.onWidgetActivated)
       // TODO: remove it if the linter is fixed later #510
       // eslint-disable-next-line vue/custom-event-name-casing
       this.$emit('lumino:deleted', customEvent.detail)
-    }
-  }
+    },
+  },
 }
 </script>

@@ -22,7 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <span class="c-task">
-    <svg viewBox="0 0 100 100" class="task">
+    <svg
+      viewBox="0 0 100 100"
+      class="task"
+    >
       <SVGTask
         :task="task"
         :startTime="startTime"
@@ -39,31 +42,31 @@ export default {
   name: 'Task',
   props: {
     task: {
-      required: true
+      required: true,
     },
     startTime: {
-      required: false
+      required: false,
     },
     modifierSize: {
       // Scale the size of the task state modifier
       type: Number,
-      default: 0.7
-    }
+      default: 0.7,
+    },
   },
   components: {
-    SVGTask
-  }
+    SVGTask,
+  },
 }
 </script>
 
 <style lang="scss">
-  .c-task {
-    .task {
-      /* scale the icon to the font-size */
-      width: 1em;
-      height: 1em;
-      overflow: visible;
-      vertical-align: middle;
-    }
+.c-task {
+  .task {
+    /* scale the icon to the font-size */
+    width: 1em;
+    height: 1em;
+    overflow: visible;
+    vertical-align: middle;
   }
+}
 </style>

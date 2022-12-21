@@ -29,13 +29,13 @@
 }
 
 .c-toolbar {
-
   .v-toolbar__title {
     // clear default padding (too much space on the left)
-    padding: 0!important;
+    padding: 0 !important;
   }
 
-  .c-toolbar-title, .add-view {
+  .c-toolbar-title,
+  .add-view {
     color: $font-default-color;
     font-weight: map-get($font-weights, medium);
   }

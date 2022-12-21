@@ -17,7 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <div class="c-tree pa-2 h-100" data-cy="tree-view">
+    <div
+      class="c-tree pa-2 h-100"
+      data-cy="tree-view"
+    >
       <tree-component
         :workflows="workflows"
         :hoverable="false"
@@ -49,42 +52,42 @@ export default {
     pageMixin,
     graphqlMixin,
     subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionViewMixin,
   ],
   name: 'Tree',
   components: {
-    TreeComponent
+    TreeComponent,
   },
-  metaInfo () {
+  metaInfo() {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: this.getPageTitle('App.workflow', { name: this.workflowName }),
     }
   },
-  data () {
+  data() {
     return {
       widget: {
         title: 'tree',
-        icon: mdiFileTree
-      }
+        icon: mdiFileTree,
+      },
     }
   },
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
-    workflowIDs () {
+    workflowIDs() {
       return [this.workflowId]
     },
-    workflows () {
+    workflows() {
       return this.getNodes('workflow', this.workflowIDs)
     },
-    query () {
+    query() {
       return new SubscriptionQuery(
         WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
         this.variables,
         'workflow',
         []
       )
-    }
-  }
+    },
+  },
 }
 </script>

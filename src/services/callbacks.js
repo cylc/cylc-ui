@@ -20,54 +20,54 @@ class DeltasCallback {
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
-  init (store, errors) {}
+  init(store, errors) {}
 
   /**
    * @param {Deltas} deltas
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
-  before (deltas, store, errors) {}
+  before(deltas, store, errors) {}
 
   /**
    * @param {Deltas} deltas
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
-  after (deltas, store, errors) {}
+  after(deltas, store, errors) {}
 
   /**
    * @param {Vuex} store - Vuex store
    * @param {Array<Object>} errors
    */
-  tearDown (store, errors) {}
+  tearDown(store, errors) {}
 
   /**
    * @param {DeltasAdded|Object} added
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
-  onAdded (added, store, errors) {}
+  onAdded(added, store, errors) {}
 
   /**
    * @param {DeltasUpdated|Object} updated
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
-  onUpdated (updated, store, errors) {}
+  onUpdated(updated, store, errors) {}
 
   /**
    * @param {DeltasPruned|Object} pruned -
    * @param {Vuex} store - Vuex store
    * @param {Array<Object>} errors
    */
-  onPruned (pruned, store, errors) {}
+  onPruned(pruned, store, errors) {}
 
   /**
    * @param {Vuex} store - Vuex store
    * @param {Array<Object>} errors
    */
-  commit (store, errors) {}
+  commit(store, errors) {}
 }
 
 export default DeltasCallback

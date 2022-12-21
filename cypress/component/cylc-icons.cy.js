@@ -18,10 +18,7 @@
 import { TaskStateUserOrder, JobStates } from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
-import {
-  MEAN_ELAPSED_TIME,
-  getStartTime
-} from './utils/task'
+import { MEAN_ELAPSED_TIME, getStartTime } from './utils/task'
 
 // wrap the Job component to allow us to bump up the font-size for a
 // higher resolution screenshot
@@ -33,7 +30,7 @@ const JobComponent = {
     </span>
   `,
   props: ['status'],
-  components: { Job }
+  components: { Job },
 }
 
 // wrap the Task component to allow us to bump up the font-size for a
@@ -46,10 +43,10 @@ const TaskComponent = {
     </div>
   `,
   props: ['task', 'startTime', 'modifierSize'],
-  components: { Task }
+  components: { Task },
 }
 
-function makeTask (
+function makeTask(
   state = 'waiting',
   isHeld = false,
   isQueued = false,
@@ -61,8 +58,8 @@ function makeTask (
     isQueued,
     isRunahead,
     task: {
-      meanElapsedTime: MEAN_ELAPSED_TIME // NOTE time in seconds
-    }
+      meanElapsedTime: MEAN_ELAPSED_TIME, // NOTE time in seconds
+    },
   }
 }
 
@@ -71,28 +68,31 @@ describe('Task component', () => {
     for (const state of TaskStateUserOrder) {
       const task = makeTask(state.name)
       cy.mount(TaskComponent, { propsData: { task } })
-      cy.get('.c8-task').last().parent().screenshot(
-        `task-${state.name}`,
-        { overwrite: true, disableTimersAndAnimations: false }
-      )
+      cy.get('.c8-task')
+        .last()
+        .parent()
+        .screenshot(`task-${state.name}`, {
+          overwrite: true,
+          disableTimersAndAnimations: false,
+        })
     }
   })
   it('Animates the running icon', () => {
     const task = makeTask('running')
     for (const percent of [0, 25, 50, 75, 100]) {
-      cy.mount(
-        TaskComponent,
-        {
-          propsData: {
-            task,
-            startTime: getStartTime(percent)
-          }
-        }
-      )
-      cy.get('.c8-task').last().parent().screenshot(
-        `task-running-${percent}`,
-        { overwrite: true, disableTimersAndAnimations: false }
-      )
+      cy.mount(TaskComponent, {
+        propsData: {
+          task,
+          startTime: getStartTime(percent),
+        },
+      })
+      cy.get('.c8-task')
+        .last()
+        .parent()
+        .screenshot(`task-running-${percent}`, {
+          overwrite: true,
+          disableTimersAndAnimations: false,
+        })
         // check the progress animation
         .get('.c8-task:last .status > .progress')
         // the animation duration should be equal to the expected job duration
@@ -115,14 +115,13 @@ describe('Task component', () => {
       task = makeTask()
       task[modifier] = true
       cy.mount(TaskComponent, { propsData: { task } })
-      cy.get('.c8-task').last().screenshot(
-        `task-${modifier}`,
-        {
+      cy.get('.c8-task')
+        .last()
+        .screenshot(`task-${modifier}`, {
           overwrite: true,
           disableTimersAndAnimations: false,
-          padding: [10, 5, 5, 10]
-        }
-      )
+          padding: [10, 5, 5, 10],
+        })
     }
   })
   it('Renders different modifier sizes', () => {
@@ -130,14 +129,13 @@ describe('Task component', () => {
     task.isHeld = true
     for (const modifierSize of [0.2, 0.4, 0.6, 0.8]) {
       cy.mount(TaskComponent, { propsData: { task, modifierSize } })
-      cy.get('.c8-task').last().screenshot(
-        `task-modifier-size-${modifierSize}`,
-        {
+      cy.get('.c8-task')
+        .last()
+        .screenshot(`task-modifier-size-${modifierSize}`, {
           overwrite: true,
           disableTimersAndAnimations: false,
-          padding: [10, 5, 5, 10]
-        }
-      )
+          padding: [10, 5, 5, 10],
+        })
     }
   })
 })
@@ -146,10 +144,9 @@ describe('Job component', () => {
   it('renders for each job state', () => {
     for (const state of JobStates) {
       cy.mount(JobComponent, { propsData: { status: state.name } })
-      cy.get('.c-job svg').last().screenshot(
-        `job-${state.name}`,
-        { overwrite: true }
-      )
+      cy.get('.c-job svg')
+        .last()
+        .screenshot(`job-${state.name}`, { overwrite: true })
     }
   })
 })

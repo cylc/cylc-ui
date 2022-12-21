@@ -30,7 +30,7 @@ const simpleTableTasks = [
         id: BASE_TOKENS.clone({ task: 'taskA' }).id,
         state: TaskState.RUNNING.name,
         name: 'taskA',
-        meanElapsedTime: 2000
+        meanElapsedTime: 2000,
       },
       children: [
         {
@@ -44,11 +44,11 @@ const simpleTableTasks = [
             submittedTime: new Date().toISOString(),
             startedTime: new Date().toISOString(),
             finishedTime: null,
-            state: JobState.RUNNING.name
+            state: JobState.RUNNING.name,
           },
-          children: []
-        }
-      ]
+          children: [],
+        },
+      ],
     },
     latestJob: {
       id: BASE_TOKENS.clone({ task: 'taskA', job: '01' }).id,
@@ -61,11 +61,11 @@ const simpleTableTasks = [
         submittedTime: new Date().toISOString(),
         startedTime: new Date().toISOString(),
         finishedTime: null,
-        state: JobState.RUNNING.name
+        state: JobState.RUNNING.name,
       },
-      children: []
+      children: [],
     },
-    previousJob: null
+    previousJob: null,
   },
   {
     task: {
@@ -76,12 +76,12 @@ const simpleTableTasks = [
         id: BASE_TOKENS.clone({ task: 'taskB' }).id,
         state: TaskState.WAITING.name,
         name: 'taskB',
-        cyclePoint: '20000102T0000Z'
+        cyclePoint: '20000102T0000Z',
       },
-      children: []
+      children: [],
     },
     latestJob: null,
-    previousJob: null
+    previousJob: null,
   },
   {
     task: {
@@ -92,15 +92,13 @@ const simpleTableTasks = [
         id: BASE_TOKENS.clone({ task: 'taskC' }).id,
         state: TaskState.SUBMITTED.name,
         name: 'taskC',
-        cyclePoint: '20000103T0000Z'
+        cyclePoint: '20000103T0000Z',
       },
-      children: []
+      children: [],
     },
     latestJob: null,
-    previousJob: null
-  }
+    previousJob: null,
+  },
 ]
 
-export {
-  simpleTableTasks
-}
+export { simpleTableTasks }

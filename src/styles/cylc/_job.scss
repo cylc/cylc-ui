@@ -16,148 +16,147 @@
  */
 
 /* css namespace for job element */
-$cjob: ".c-job .job rect";
-
+$cjob: '.c-job .job rect';
 
 #{$cjob} {
-    /* if no job status display nothing */
-    fill: transparent;
-    stroke: transparent;
+  /* if no job status display nothing */
+  fill: transparent;
+  stroke: transparent;
 }
 
 .c-job {
-    .job {
-        vertical-align: middle;
-        /* scale the icon to the font-size */
-        width: 1em;
-        height: 1em;
-    }
+  .job {
+    vertical-align: middle;
+    /* scale the icon to the font-size */
+    width: 1em;
+    height: 1em;
+  }
 }
 
 @mixin job_theme_default() {
-    $teal: rgb(109,213,194);
-    $blue: rgb(106,164,241);
-    $green: rgb(81,175,81);
-    $red: rgb(207,72,72);
-    $pink: rgb(190,106,192);
+  $teal: rgb(109, 213, 194);
+  $blue: rgb(106, 164, 241);
+  $green: rgb(81, 175, 81);
+  $red: rgb(207, 72, 72);
+  $pink: rgb(190, 106, 192);
 
-    #{$cjob} {
-        &.submitted {
-            fill: $teal;
-            stroke: $teal;
-        }
-
-        &.running {
-            fill: $blue;
-            stroke: $blue;
-        }
-
-        &.succeeded {
-            fill: $green;
-            stroke: $green;
-        }
-
-        &.failed {
-            fill: $red;
-            stroke: $red;
-        }
-
-        &.submit-failed {
-            fill: $pink;
-            stroke: $pink;
-        }
+  #{$cjob} {
+    &.submitted {
+      fill: $teal;
+      stroke: $teal;
     }
+
+    &.running {
+      fill: $blue;
+      stroke: $blue;
+    }
+
+    &.succeeded {
+      fill: $green;
+      stroke: $green;
+    }
+
+    &.failed {
+      fill: $red;
+      stroke: $red;
+    }
+
+    &.submit-failed {
+      fill: $pink;
+      stroke: $pink;
+    }
+  }
 }
 
 @mixin job_theme_greyscale() {
-    $light: rgb(208,208,208);
-    $medium: rgb(133,133,133);
-    $dark: rgb(0,0,0);
+  $light: rgb(208, 208, 208);
+  $medium: rgb(133, 133, 133);
+  $dark: rgb(0, 0, 0);
 
-    #{$cjob} {
-        &.submitted {
-            fill: transparent;
-            stroke: $light;
-        }
-
-        &.running {
-            fill: $light;
-            stroke: $light;
-        }
-
-        &.succeeded {
-            fill: $medium;
-            stroke: $medium;
-        }
-
-        &.failed {
-            fill: $dark;
-            stroke: $dark;
-        }
-
-        &.submit-failed {
-            fill: transparent;
-            stroke: $dark;
-        }
+  #{$cjob} {
+    &.submitted {
+      fill: transparent;
+      stroke: $light;
     }
+
+    &.running {
+      fill: $light;
+      stroke: $light;
+    }
+
+    &.succeeded {
+      fill: $medium;
+      stroke: $medium;
+    }
+
+    &.failed {
+      fill: $dark;
+      stroke: $dark;
+    }
+
+    &.submit-failed {
+      fill: transparent;
+      stroke: $dark;
+    }
+  }
 }
 
 @mixin job_theme_colour-blind() {
-    $grey: rgb(152,152,152);
-    $success: rgb(108,218,255);
-    $error: rgb(146,0,0);
+  $grey: rgb(152, 152, 152);
+  $success: rgb(108, 218, 255);
+  $error: rgb(146, 0, 0);
 
-    #{$cjob} {
-        &.submitted {
-            fill: transparent;
-            stroke: $grey;
-        }
-
-        &.running {
-            fill: $grey;
-            stroke: $grey;
-        }
-
-        &.succeeded {
-            fill: $success;
-            stroke: $success;
-        }
-
-        &.failed {
-            fill: $error;
-            stroke: $error;
-        }
-
-        &.submit-failed {
-            fill: transparent;
-            stroke: $error;
-        }
+  #{$cjob} {
+    &.submitted {
+      fill: transparent;
+      stroke: $grey;
     }
+
+    &.running {
+      fill: $grey;
+      stroke: $grey;
+    }
+
+    &.succeeded {
+      fill: $success;
+      stroke: $success;
+    }
+
+    &.failed {
+      fill: $error;
+      stroke: $error;
+    }
+
+    &.submit-failed {
+      fill: transparent;
+      stroke: $error;
+    }
+  }
 }
 
 // job theme as configured by the top-level application
 #app.job_theme--default {
-    @include job_theme_default
+  @include job_theme_default;
 }
 
 #app.job_theme--greyscale {
-    @include job_theme_greyscale
+  @include job_theme_greyscale;
 }
 
 #app.job_theme--colour_blind {
-    @include job_theme_colour_blind
+  @include job_theme_colour_blind;
 }
 
 // if overridden elsewhere the new value should take priority
 // (this allows us to override the theme in the user-profile
 #app .job_theme--default {
-    @include job_theme_default
+  @include job_theme_default;
 }
 
 #app .job_theme--greyscale {
-    @include job_theme_greyscale
+  @include job_theme_greyscale;
 }
 
 #app .job_theme--colour_blind {
-    @include job_theme_colour_blind
+  @include job_theme_colour_blind;
 }

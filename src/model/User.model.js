@@ -27,7 +27,16 @@
  * @property {string} mode - single or multi user mode
  */
 export default class User {
-  constructor (username, groups, created, admin, server, owner, permissions, mode) {
+  constructor(
+    username,
+    groups,
+    created,
+    admin,
+    server,
+    owner,
+    permissions,
+    mode
+  ) {
     // the authenticated user
     // (full info only available when authenticated via the hub)
     this.username = username

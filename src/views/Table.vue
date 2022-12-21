@@ -44,33 +44,33 @@ export default {
     pageMixin,
     graphqlMixin,
     subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionViewMixin,
   ],
   name: 'Table',
   components: {
-    TableComponent
+    TableComponent,
   },
-  metaInfo () {
+  metaInfo() {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: this.getPageTitle('App.workflow', { name: this.workflowName }),
     }
   },
   data: () => ({
     widget: {
       title: 'table',
-      icon: mdiTable
-    }
+      icon: mdiTable,
+    },
   }),
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
-    workflowIDs () {
+    workflowIDs() {
       return [this.workflowId]
     },
-    workflows () {
+    workflows() {
       return this.getNodes('workflow', this.workflowIDs)
     },
-    tasks () {
+    tasks() {
       const ret = []
       let latestJob
       let previousJob
@@ -88,14 +88,14 @@ export default {
             ret.push({
               task,
               latestJob,
-              previousJob
+              previousJob,
             })
           }
         }
       }
       return ret
     },
-    query () {
+    query() {
       return new SubscriptionQuery(
         // this is disabled for now as differences in the fragment names are causing the
         // subscription to be reloaded when its merged. This will need to be re-enabled in
@@ -108,7 +108,7 @@ export default {
         'workflow',
         []
       )
-    }
-  }
+    },
+  },
 }
 </script>

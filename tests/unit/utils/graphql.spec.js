@@ -30,7 +30,10 @@ describe('utils', () => {
   describe('graphql', () => {
     describe('ApolloClient', () => {
       it('should create an apollo client', () => {
-        const apolloClient = graphql.createApolloClient('http://localhost:12345', null)
+        const apolloClient = graphql.createApolloClient(
+          'http://localhost:12345',
+          null
+        )
         expect(apolloClient.link !== null).to.equal(true)
         expect(apolloClient.cache !== null).to.equal(true)
       })
@@ -46,9 +49,10 @@ describe('utils', () => {
           'ws://localhost:12345',
           {
             reconnect: false,
-            lazy: true
+            lazy: true,
           },
-          {})
+          {}
+        )
         expect(typeof subscriptionClient.request).to.equal('function')
       })
       it('should call the subscription client callbacks', () => {
@@ -56,33 +60,34 @@ describe('utils', () => {
           'ws://localhost:12345',
           {
             reconnect: false,
-            lazy: true
+            lazy: true,
           },
-          {})
+          {}
+        )
         expect(store.state.offline).to.equal(false)
 
         let eventName, expectedOffline
         for ({ eventName, expectedOffline } of [
           {
             eventName: 'connecting',
-            expectedOffline: true
+            expectedOffline: true,
           },
           {
             eventName: 'connected',
-            expectedOffline: false
+            expectedOffline: false,
           },
           {
             eventName: 'reconnecting',
-            expectedOffline: true
+            expectedOffline: true,
           },
           {
             eventName: 'reconnected',
-            expectedOffline: false
+            expectedOffline: false,
           },
           {
             eventName: 'disconnected',
-            expectedOffline: true
-          }
+            expectedOffline: true,
+          },
         ]) {
           subscriptionClient.eventEmitter.emit(eventName)
           expect(store.state.offline).to.equal(expectedOffline)

@@ -34,29 +34,29 @@ const state = {
    * Number of references that have set the loading state.
    * TODO: we can probably remove it and use a different approach for alerts (see bootstrap toast).
    */
-  refCount: 0
+  refCount: 0,
 }
 
 // Actions
 const actions = {
-  setAlert ({ state, commit }, alert) {
+  setAlert({ state, commit }, alert) {
     // log to console when the alert is not null (null can mean to remove the alert)
     if (alert !== null) {
       // eslint-disable-next-line no-console
       console.log(alert)
     }
     commit('SET_ALERT', alert)
-  }
+  },
 }
 
 // Mutations
 const mutations = {
-  SET_ALERT (state, alert) {
+  SET_ALERT(state, alert) {
     state.alert = alert
   },
-  SET_OFFLINE (state, offline) {
+  SET_OFFLINE(state, offline) {
     state.offline = offline
-  }
+  },
 }
 
 // Create a new store
@@ -64,9 +64,9 @@ export default {
   modules: {
     app,
     workflows,
-    user
+    user,
   },
   actions,
   mutations,
-  state
+  state,
 }

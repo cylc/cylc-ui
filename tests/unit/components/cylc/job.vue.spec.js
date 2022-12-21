@@ -28,9 +28,9 @@ describe('Job component', () => {
       context: {
         props: {
           status: '',
-          multiple: false
-        }
-      }
+          multiple: false,
+        },
+      },
     })
     expect(wrapper.element.className).to.equal('c-job')
     expect(wrapper.get('.job').element.childElementCount).to.equal(1)
@@ -40,9 +40,9 @@ describe('Job component', () => {
       context: {
         props: {
           status: 'failed',
-          'previous-state': 'submit-failed'
-        }
-      }
+          'previous-state': 'submit-failed',
+        },
+      },
     })
     // The shadow is added as an extra child element for the Job SVG (two rects).
     expect(wrapper.get('.job').element.childElementCount).to.equal(2)

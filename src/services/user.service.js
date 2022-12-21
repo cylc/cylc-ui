@@ -24,7 +24,7 @@ class UserService {
    * Gets the user profile from the backend server.
    * @returns {Promise<*>} - a promise that dispatches Vuex action
    */
-  getUserProfile () {
+  getUserProfile() {
     return axios.get(createUrl('userprofile')).then(({ data }) => {
       return new User(
         data.name,

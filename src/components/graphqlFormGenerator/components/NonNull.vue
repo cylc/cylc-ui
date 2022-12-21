@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <component
     v-model="model"
-    :propOverrides="{rules: [nonNullRule]}"
+    :propOverrides="{ rules: [nonNullRule] }"
     :gqlType="gqlType.ofType"
     :types="types"
     label="(required)"
@@ -26,8 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <template v-slot:append-outer>
       <!-- pass the "append-outer" slot onto the child component -->
-      <slot name="append-outer">
-      </slot>
+      <slot name="append-outer"> </slot>
     </template>
   </component>
 </template>
@@ -39,8 +38,8 @@ export default {
   name: 'g-non-null',
   mixins: [formElement],
   methods: {
-    nonNullRule: // disallow empty array/string or nullish
-      x => Boolean(x?.length ?? x != null) || 'Required'
-  }
+    // disallow empty array/string or nullish
+    nonNullRule: (x) => Boolean(x?.length ?? x != null) || 'Required',
+  },
 }
 </script>

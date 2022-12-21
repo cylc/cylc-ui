@@ -29,17 +29,15 @@ import subscriptionMixin from '@/mixins/subscription'
  * @see WorkflowService
  */
 export default {
-  mixins: [
-    subscriptionMixin
-  ],
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
+  mixins: [subscriptionMixin],
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
       vm.$workflowService.startSubscriptions()
     })
   },
-  beforeRouteUpdate (to, from, next) {
-    next(vm => {
+  beforeRouteUpdate(to, from, next) {
+    next((vm) => {
       vm.$workflowService.startSubscriptions()
     })
-  }
+  },
 }

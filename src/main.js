@@ -41,9 +41,9 @@ const app = new Vue({
   router,
   store,
   vuetify,
-  render (h) {
+  render(h) {
     return h(App)
-  }
+  },
 }).$mount('#app')
 // e2e tests use the offline mode, so here we expose the Vue.js app so Cypress can access it programmatically
 // e.g. window.app.$store and window.app.$workflowService.

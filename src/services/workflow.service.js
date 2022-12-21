@@ -30,7 +30,7 @@ import {
   primaryMutations,
   processMutations,
   query,
-  tokenise
+  tokenise,
 } from '@/utils/aotf'
 import store from '@/store/index'
 import { createApolloClient } from '@/graphql/index'
@@ -65,7 +65,7 @@ class WorkflowService {
    * @param {string} httpUrl
    * @param {?SubscriptionClient} subscriptionClient
    */
-  constructor (httpUrl, subscriptionClient) {
+  constructor(httpUrl, subscriptionClient) {
     this.debug = process.env.NODE_ENV !== 'production'
 
     this.subscriptionClient = subscriptionClient
@@ -109,14 +109,11 @@ class WorkflowService {
    * @param {string} id
    * @returns {Promise<MutationResponse>}
    */
-  async mutate (mutationName, id) {
+  async mutate(mutationName, id) {
     const mutation = await this.getMutation(mutationName)
     return await mutate(
       mutation,
-      getMutationArgsFromTokens(
-        mutation,
-        tokenise(id)
-      ),
+      getMutationArgsFromTokens(mutation, tokenise(id)),
       this.apolloClient
     )
   }
@@ -131,13 +128,9 @@ class WorkflowService {
    * @return {Promise<Object>}
    * @memberof WorkflowService
    */
-  async query (queryName, args, fields) {
+  async query(queryName, args, fields) {
     const queryObj = await this.getQuery(queryName, Object.keys(args), fields)
-    return await query(
-      queryObj,
-      args,
-      this.apolloClient
-    )
+    return await query(queryObj, args, this.apolloClient)
   }
 
   /**
@@ -145,12 +138,12 @@ class WorkflowService {
    *
    * @returns {Promise<IntrospectionObj>}
    */
-  async loadTypes () {
+  async loadTypes() {
     // TODO: this assumes all workflows use the same schema which is and
     //       isn't necessarily true, not quite sure, come back to this later.
     const response = await this.apolloClient.query({
       query: getIntrospectionQuery(),
-      fetchPolicy: 'no-cache'
+      fetchPolicy: 'no-cache',
     })
     const mutations = response.data.__schema.mutationType.fields
     const queries = response.data.__schema.queryType.fields
@@ -166,7 +159,7 @@ class WorkflowService {
    * @param {string} mutationName
    * @returns {Promise<Mutation=>}
    */
-  async getMutation (mutationName) {
+  async getMutation(mutationName) {
     const { mutations } = await this.introspection
     return findByName(mutations, mutationName)
   }
@@ -179,7 +172,7 @@ class WorkflowService {
    * @param {Field[]} fields - Fields to include in the query.
    * @return {Promise<Query>}
    */
-  async getQuery (queryName, argNames, fields) {
+  async getQuery(queryName, argNames, fields) {
     const { queries, types } = await this.introspection
     const queryObj = findByName(queries, queryName)
     const typeName = getBaseType(queryObj.type).name
@@ -188,7 +181,7 @@ class WorkflowService {
     return {
       name: queryName,
       args: queryObj.args.filter(({ name }) => argNames.includes(name)),
-      fields: extractFields(type, fields, types)
+      fields: extractFields(type, fields, types),
     }
   }
 
@@ -198,12 +191,14 @@ class WorkflowService {
    * @param {View} componentOrView
    * @returns {Subscription}
    */
-  getOrCreateSubscription (componentOrView) {
+  getOrCreateSubscription(componentOrView) {
     const queryName = componentOrView.query.name
     let subscription = this.subscriptions[queryName]
     // note, this will force a return of the FIRST query of the SAME name as any subsequent queries
     if (!subscription) {
-      subscription = this.subscriptions[queryName] = new Subscription(componentOrView.query)
+      subscription = this.subscriptions[queryName] = new Subscription(
+        componentOrView.query
+      )
     }
     return subscription
   }
@@ -211,7 +206,7 @@ class WorkflowService {
   /**
    * @param {View} componentOrView
    */
-  subscribe (componentOrView) {
+  subscribe(componentOrView) {
     // First we retrieve the existing, or create a new subscription (and add to the pool).
     const subscription = this.getOrCreateSubscription(componentOrView)
     if (!subscription.subscribers[componentOrView._uid]) {
@@ -227,10 +222,15 @@ class WorkflowService {
         if (callback.init) {
           callback.init(store, errors)
           for (const error of errors) {
-            store.commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+            store.commit('SET_ALERT', new Alert(error[0], null, 'error'), {
+              root: true,
+            })
             // eslint-disable-next-line no-console
             console.warn(...error)
-            subscription.handleViewState(ViewState.ERROR, error('Error presetting view state'))
+            subscription.handleViewState(
+              ViewState.ERROR,
+              error('Error presetting view state')
+            )
           }
         }
       }
@@ -241,12 +241,15 @@ class WorkflowService {
   /**
    * Start any pending subscriptions.
    */
-  startSubscriptions () {
-    const pendingSubscriptions = Object.values(this.subscriptions)
-      .filter(subscription => {
+  startSubscriptions() {
+    const pendingSubscriptions = Object.values(this.subscriptions).filter(
+      (subscription) => {
         return subscription.observable === null || subscription.reload
-      })
-    pendingSubscriptions.forEach(subscription => this.startSubscription(subscription))
+      }
+    )
+    pendingSubscriptions.forEach((subscription) =>
+      this.startSubscription(subscription)
+    )
   }
 
   /**
@@ -254,7 +257,7 @@ class WorkflowService {
    *
    * @param {Subscription} subscription
    */
-  startSubscription (subscription) {
+  startSubscription(subscription) {
     if (this.debug) {
       // eslint-disable-next-line no-console
       console.debug(
@@ -269,7 +272,8 @@ class WorkflowService {
       if (this.debug) {
         // eslint-disable-next-line no-console
         console.debug(
-          `Subscription for query [${subscription.query.name}] already running. Stopping it...`)
+          `Subscription for query [${subscription.query.name}] already running. Stopping it...`
+        )
       }
       this.stopSubscription(subscription, true)
     }
@@ -282,7 +286,7 @@ class WorkflowService {
         subscription.query.query,
         subscription.query.variables,
         {
-          next: function next (response) {
+          next: function next(response) {
             const deltas = response.data.deltas || {}
             const added = deltas.added || {}
             const updated = deltas.updated || {}
@@ -310,18 +314,16 @@ class WorkflowService {
               callback.commit(store, errors)
             }
             for (const error of errors) {
-              store.commit(
-                'SET_ALERT',
-                new Alert(error[0], null, 'error'),
-                { root: true }
-              )
+              store.commit('SET_ALERT', new Alert(error[0], null, 'error'), {
+                root: true,
+              })
               // eslint-disable-next-line no-console
               console.warn(...error)
             }
           },
-          error: function error (err) {
+          error: function error(err) {
             subscription.handleViewState(ViewState.ERROR, err)
-          }
+          },
         }
       )
       this.subscriptions[subscription.query.name] = subscription
@@ -343,7 +345,7 @@ class WorkflowService {
    * @param {SubscriptionOptions} subscriptionOptions - { next(), error() }
    * @returns {Subscription}
    */
-  startDeltasSubscription (query, variables, subscriptionOptions) {
+  startDeltasSubscription(query, variables, subscriptionOptions) {
     if (!query) {
       throw new Error('You must provide a query for the subscription')
     }
@@ -356,25 +358,29 @@ class WorkflowService {
       // eslint-disable-next-line no-console
       console.debug('graphql variables:', variables)
     }
-    return this.apolloClient.subscribe({
-      query,
-      variables,
-      fetchPolicy: 'no-cache'
-    }).subscribe({
-      next (value) {
-        subscriptionOptions.next(value)
-      },
-      error (errorValue) {
-        subscriptionOptions.error(errorValue)
-      }
-    })
+    return this.apolloClient
+      .subscribe({
+        query,
+        variables,
+        fetchPolicy: 'no-cache',
+      })
+      .subscribe({
+        next(value) {
+          subscriptionOptions.next(value)
+        },
+        error(errorValue) {
+          subscriptionOptions.error(errorValue)
+        },
+      })
   }
 
-  unsubscribe (componentOrView) {
+  unsubscribe(componentOrView) {
     const subscription = this.subscriptions[componentOrView.query.name]
     if (!subscription) {
       // eslint-disable-next-line no-console
-      console.warn(`Could not unsubscribe [${componentOrView.query.name}]: Not Found`)
+      console.warn(
+        `Could not unsubscribe [${componentOrView.query.name}]: Not Found`
+      )
       return
     }
     // Remove viewOrComponent subscriber
@@ -399,7 +405,7 @@ class WorkflowService {
    * If the subscription is the "workflow" subscription the datastore
    * housekeeping will be invoked unless `reload === true`.
    */
-  stopSubscription (subscription, reload) {
+  stopSubscription(subscription, reload) {
     // Stop WebSockets subscription.
     if (this.debug) {
       // eslint-disable-next-line no-console
@@ -434,7 +440,7 @@ class WorkflowService {
   /**
    * @param {Subscription} subscription
    */
-  recompute (subscription) {
+  recompute(subscription) {
     const subscribers = Object.values(subscription.subscribers)
     if (subscribers.length === 0) {
       throw new Error('Error recomputing subscription: No Subscribers.')
@@ -458,8 +464,12 @@ class WorkflowService {
       // combine queries supports merging variables too. Only issue would be
       // the possibility of merging subscriptions for different workflows by
       // accident...
-      if (!isEqual(subscriber.query.variables, baseSubscriber.query.variables)) {
-        throw new Error('Error recomputing subscription: Query variables do not match.')
+      if (
+        !isEqual(subscriber.query.variables, baseSubscriber.query.variables)
+      ) {
+        throw new Error(
+          'Error recomputing subscription: Query variables do not match.'
+        )
       }
       finalQuery = mergeQueries(finalQuery, subscriber.query.query)
       // Combine the arrays of callbacks, creating an array of unique
@@ -473,19 +483,24 @@ class WorkflowService {
         // what looks like a predefined set of possible options [t,n] So this
         // block wont work as it compares and decides it already exists when it
         // doesn't
-        if (!subscription.callbacks.find(element => {
-          const elementObjectKeys = Object.keys(element)
-          const callbackObjectKeys = Object.keys(callback)
-          // this fall through approach is a bit easier to read and should conserve some memory as object keys dont need to be recalculated each time
-          if (element.constructor.name === callback.constructor.name) {
-            if (elementObjectKeys.length === callbackObjectKeys.length) {
-              if (elementObjectKeys.sort().join() === callbackObjectKeys.sort().join()) {
-                return true
+        if (
+          !subscription.callbacks.find((element) => {
+            const elementObjectKeys = Object.keys(element)
+            const callbackObjectKeys = Object.keys(callback)
+            // this fall through approach is a bit easier to read and should conserve some memory as object keys dont need to be recalculated each time
+            if (element.constructor.name === callback.constructor.name) {
+              if (elementObjectKeys.length === callbackObjectKeys.length) {
+                if (
+                  elementObjectKeys.sort().join() ===
+                  callbackObjectKeys.sort().join()
+                ) {
+                  return true
+                }
               }
             }
-          }
-          return false
-        })) {
+            return false
+          })
+        ) {
           subscription.callbacks.push(callback)
         }
       }

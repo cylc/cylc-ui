@@ -33,8 +33,8 @@ export default {
   props: {
     status: {
       required: true,
-      type: String
-    }
+      type: String,
+    },
   },
 
   methods: {
@@ -43,15 +43,16 @@ export default {
      * not valid, we return a pre-defined error icon.
      * @returns {String} - status, one of the WorkflowState enum values
      */
-    getIcon () {
+    getIcon() {
       // TBD: enumValueOf returned the wrong value?
-      const state = [...WorkflowState.enumValues]
-        .find(state => state.name === this.status)
+      const state = [...WorkflowState.enumValues].find(
+        (state) => state.name === this.status
+      )
       if (!state || state.length === 0) {
         return WorkflowState.ERROR.icon
       }
       return state.icon
-    }
-  }
+    },
+  },
 }
 </script>

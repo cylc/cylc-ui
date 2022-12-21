@@ -25,7 +25,7 @@ import dedent from 'dedent'
 import gql from 'graphql-tag'
 import {
   getIntrospectionQuery as getGraphQLIntrospectionQuery,
-  print
+  print,
 } from 'graphql'
 import {
   mdiBullhorn,
@@ -43,7 +43,7 @@ import {
   mdiPlaylistEdit,
   mdiRefreshCircle,
   mdiReload,
-  mdiStop
+  mdiStop,
 } from '@mdi/js'
 
 import AlertModel from '@/model/Alert.model'
@@ -139,7 +139,7 @@ export const mutationIcons = {
   setOutputs: mdiGraph,
   stop: mdiStop,
   trigger: mdiCursorPointer,
-  editRuntime: mdiPlaylistEdit
+  editRuntime: mdiPlaylistEdit,
 }
 
 /**
@@ -157,7 +157,7 @@ export const cylcObjects = Object.freeze({
   CyclePoint: 'cycle',
   Namespace: 'task',
   // Task: 'task',
-  Job: 'job'
+  Job: 'job',
 })
 
 /**
@@ -169,20 +169,15 @@ primaryMutations[cylcObjects.Workflow] = [
   'pause',
   'stop',
   'reload',
-  'clean'
+  'clean',
 ]
 primaryMutations[cylcObjects.CyclePoint] = [
   'hold',
   'release',
   'trigger',
-  'kill'
+  'kill',
 ]
-primaryMutations[cylcObjects.Namespace] = [
-  'hold',
-  'release',
-  'trigger',
-  'kill'
-]
+primaryMutations[cylcObjects.Namespace] = ['hold', 'release', 'trigger', 'kill']
 // handle families the same as tasks
 primaryMutations.family = primaryMutations[cylcObjects.Namespace]
 
@@ -197,7 +192,7 @@ const identifierOrder = [
   cylcObjects.CyclePoint,
   cylcObjects.Namespace,
   // cylcObjects.Task,
-  cylcObjects.Job
+  cylcObjects.Job,
 ]
 
 /**
@@ -212,23 +207,19 @@ const identifierOrder = [
  */
 export const mutationMapping = {}
 mutationMapping[cylcObjects.User] = []
-mutationMapping[cylcObjects.Workflow] = [
-  ['WorkflowID', false]
-]
+mutationMapping[cylcObjects.Workflow] = [['WorkflowID', false]]
 mutationMapping[cylcObjects.CyclePoint] = [
   ['CyclePoint', false],
-  ['CyclePointGlob', true]
+  ['CyclePointGlob', true],
 ]
 mutationMapping[cylcObjects.Namespace] = [
   ['NamespaceName', false],
-  ['NamespaceIDGlob', true]
+  ['NamespaceIDGlob', true],
 ]
 // mutationMapping[cylcObjects.Task] = [
 //   ['TaskID', false]
 // ]
-mutationMapping[cylcObjects.Job] = [
-  ['JobID', false]
-]
+mutationMapping[cylcObjects.Job] = [['JobID', false]]
 
 /**
  * Mutation argument types which are derived from more than one token.
@@ -242,18 +233,16 @@ export const compoundFields = {
     // (will fallback to the UIs user)
     return tokens[cylcObjects.Workflow]
   },
-  NamespaceIDGlob: (tokens) => (
+  NamespaceIDGlob: (tokens) =>
     // expand unspecified fields to '*'
     (tokens[cylcObjects.CyclePoint] || '*') +
     '/' +
-    (tokens[cylcObjects.Namespace] || '*')
-  ),
-  TaskID: (tokens) => (
+    (tokens[cylcObjects.Namespace] || '*'),
+  TaskID: (tokens) =>
     // expand unspecified fields to '*'
     (tokens[cylcObjects.CyclePoint] || '*') +
     '/' +
-    tokens[cylcObjects.Namespace]
-  )
+    tokens[cylcObjects.Namespace],
 }
 
 /**
@@ -264,7 +253,7 @@ export const compoundFields = {
  */
 export const alternateFields = {
   // cycle points can be used as namespace identifiers
-  NamespaceIDGlob: cylcObjects.CyclePoint
+  NamespaceIDGlob: cylcObjects.CyclePoint,
 }
 
 /**
@@ -294,8 +283,8 @@ export const dummyMutations = [
       This only applies for the cycle point of the chosen task/family instance.`,
     args: [],
     _appliesTo: cylcObjects.Namespace,
-    _requiresInfo: true
-  }
+    _requiresInfo: true,
+  },
 ]
 
 /**
@@ -304,7 +293,7 @@ export const dummyMutations = [
  * @type {{string: string[]}}
  */
 const dummyMutationsPermissionsMap = Object.freeze({
-  broadcast: Object.freeze(['editRuntime'])
+  broadcast: Object.freeze(['editRuntime']),
 })
 
 /**
@@ -313,7 +302,7 @@ const dummyMutationsPermissionsMap = Object.freeze({
  * @param {string} id
  * @returns {Object}
  * */
-export function tokenise (id) {
+export function tokenise(id) {
   // TODO: unify this into the UID code better
   if (!id) {
     return {}
@@ -334,7 +323,7 @@ export function tokenise (id) {
  * @param {Object} tokens
  * @returns {String}
  * */
-export function getType (tokens) {
+export function getType(tokens) {
   let last = null
   let item = null
   for (const key of identifierOrder) {
@@ -350,7 +339,7 @@ export function getType (tokens) {
 /**
  * Convert camel case to words.
  */
-export function camelToWords (camel) {
+export function camelToWords(camel) {
   const result = (camel || '').replace(/([A-Z])/g, ' $1')
   return result.charAt(0).toUpperCase() + result.slice(1)
 }
@@ -364,8 +353,8 @@ export function camelToWords (camel) {
  * @param {string} name - Name to match
  * @return {T=}
  */
-export function findByName (objs, name) {
-  return objs.find(type => type.name === name)
+export function findByName(objs, name) {
+  return objs.find((type) => type.name === name)
 }
 
 /**
@@ -380,12 +369,12 @@ export function findByName (objs, name) {
  * @param {IntrospectionInputType[]} types - Full list of GraphQL types from introspection query.
  * @return {?Field[]}
  */
-export function extractFields (type, fields, types) {
+export function extractFields(type, fields, types) {
   fields ??= type.fields // extract all fields if none given
   if (!fields) {
     return null
   }
-  return fields.map(field => {
+  return fields.map((field) => {
     const gqlField = findByName(type.fields, field.name)
     if (!gqlField) {
       throw new Error(`No such field "${field.name}" on type "${type.name}"`)
@@ -393,7 +382,7 @@ export function extractFields (type, fields, types) {
     const fieldType = findByName(types, getBaseType(gqlField.type).name)
     return {
       name: field.name,
-      fields: extractFields(fieldType, field.fields, types)
+      fields: extractFields(fieldType, field.fields, types),
     }
   })
 }
@@ -414,7 +403,7 @@ export function extractFields (type, fields, types) {
  * @param {Mutation} mutations - Mutations as returned by introspection query.
  * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
  */
-export function processMutations (mutations, types) {
+export function processMutations(mutations, types) {
   for (const mutation of mutations) {
     mutation._title = camelToWords(mutation.name)
     mutation._icon = mutationIcons[mutation.name] || mutationIcons['']
@@ -431,7 +420,7 @@ export function processMutations (mutations, types) {
  * @param {string=} text - Full mutation description.
  * @return {string}
  */
-export function getMutationShortDesc (text) {
+export function getMutationShortDesc(text) {
   return text?.split('\n\n', 1)[0] || ''
 }
 
@@ -442,7 +431,7 @@ export function getMutationShortDesc (text) {
  * @param {string=} text - Full mutation description.
  * @return {string=}
  */
-export function getMutationExtendedDesc (text) {
+export function getMutationExtendedDesc(text) {
   return text?.split('\n\n').slice(1).join('\n\n')
 }
 
@@ -467,7 +456,7 @@ export function getMutationExtendedDesc (text) {
  * @param {Mutation} mutation - One Mutation as returned by introspection query.
  * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
  */
-export function processArguments (mutation, types) {
+export function processArguments(mutation, types) {
   let pointer = null
   let multiple = null
   let required = null
@@ -524,7 +513,7 @@ export function processArguments (mutation, types) {
 /**
  * Return a GraphQL introspection query for obtaining mutations and types.
  */
-export function getIntrospectionQuery () {
+export function getIntrospectionQuery() {
   // we are only interested in mutations so can make our life
   // a little easier by restricting the scope of the default
   // introspection query
@@ -552,10 +541,10 @@ export function getIntrospectionQuery () {
   return gql(
     // the query we actually want to run
     print(query.definitions[0]) +
-    // the fragments which power it
-    print(fullIntrospection.definitions[1]) +
-    print(fullIntrospection.definitions[2]) +
-    print(fullIntrospection.definitions[3])
+      // the fragments which power it
+      print(fullIntrospection.definitions[1]) +
+      print(fullIntrospection.definitions[2]) +
+      print(fullIntrospection.definitions[3])
   )
 }
 
@@ -572,14 +561,16 @@ export function getIntrospectionQuery () {
  * @param {string[]} permissions - List of permissions for the user.
  * @returns {FilteredMutation[]}
  */
-export function filterAssociations (cylcObject, tokens, mutations, permissions) {
+export function filterAssociations(cylcObject, tokens, mutations, permissions) {
   const ret = []
-  for (const [permission, equivalents] of Object.entries(dummyMutationsPermissionsMap)) {
+  for (const [permission, equivalents] of Object.entries(
+    dummyMutationsPermissionsMap
+  )) {
     if (permissions.includes(permission)) {
       permissions.push(...equivalents)
     }
   }
-  permissions = permissions.map(x => x.toLowerCase())
+  permissions = permissions.map((x) => x.toLowerCase())
   for (const mutation of mutations) {
     const authorised = permissions.includes(mutation.name.toLowerCase())
     let requiresInfo = mutation._requiresInfo ?? false
@@ -607,9 +598,7 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
     if (!applies) {
       continue
     }
-    ret.push(
-      { mutation, requiresInfo, authorised }
-    )
+    ret.push({ mutation, requiresInfo, authorised })
   }
   return ret
 }
@@ -626,7 +615,7 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
  *
  * @yields {GQLType} Type objects of the same form as the type argument.
  */
-export function * iterateType (type) {
+export function* iterateType(type) {
   while (type) {
     yield type
     type = type.ofType
@@ -642,7 +631,7 @@ export function * iterateType (type) {
  * @param {GQLType} type
  * @return {GQLType}
  */
-export function getBaseType (type) {
+export function getBaseType(type) {
   return [...iterateType(type)].pop()
 }
 
@@ -655,7 +644,7 @@ export function getBaseType (type) {
  *
  * @returns {Object|Object[]|null}
  */
-export function getNullValue (type, types = []) {
+export function getNullValue(type, types = []) {
   let ret = null
   for (const subType of iterateType(type)) {
     if (subType.kind === 'LIST') {
@@ -667,9 +656,9 @@ export function getNullValue (type, types = []) {
       ret = {}
       // TODO: this type iteration is already done in the mixin
       //       should we use the mixin or a subset there-of here?
-      const type = types.find(({ name, kind }) => (
-        name === subType.name && kind === subType.kind
-      ))
+      const type = types.find(
+        ({ name, kind }) => name === subType.name && kind === subType.kind
+      )
       for (const field of type.fields) {
         ret[field.name] = getNullValue(field.type, types)
       }
@@ -687,20 +676,14 @@ export function getNullValue (type, types = []) {
  *
  * @returns {string} A type string for use in a client query / mutation.
  */
-export function argumentSignature (arg) {
+export function argumentSignature(arg) {
   const stack = [...iterateType(arg.type)]
   stack.reverse()
   let ret = ''
   for (const type of stack) {
-    if (
-      type.name === null &&
-      type.kind === 'LIST'
-    ) {
+    if (type.name === null && type.kind === 'LIST') {
       ret = `[${ret}]`
-    } else if (
-      type.name === null &&
-      type.kind === 'NON_NULL'
-    ) {
+    } else if (type.name === null && type.kind === 'NON_NULL') {
       ret = ret + '!'
     } else if (type.name) {
       ret = type.name
@@ -717,7 +700,7 @@ export function argumentSignature (arg) {
  *
  * @returns {string} A mutation string for a client to send to the server.
  */
-export function constructMutation (mutation) {
+export function constructMutation(mutation) {
   const argNames = []
   const argTypes = []
   for (const arg of mutation.args) {
@@ -740,7 +723,7 @@ export function constructMutation (mutation) {
  * @param {Query} query
  * @return {string}
  */
-export function constructQueryStr (query) {
+export function constructQueryStr(query) {
   const argNames = []
   const argTypes = []
   for (const arg of query.args) {
@@ -754,8 +737,8 @@ export function constructQueryStr (query) {
    * @return {string}
    */
   const constructFieldsStr = (fields, indentLevel) => {
-    return fields.map(
-      field => {
+    return fields
+      .map((field) => {
         let ret = '  '.repeat(indentLevel) + field.name
         if (field.fields) {
           ret += ' {\n'
@@ -763,8 +746,8 @@ export function constructQueryStr (query) {
           ret += '\n' + '  '.repeat(indentLevel) + '}'
         }
         return ret
-      }
-    ).join('\n')
+      })
+      .join('\n')
   }
 
   return [
@@ -772,8 +755,10 @@ export function constructQueryStr (query) {
     `  ${query.name}(${argNames.join(', ')}) {`,
     constructFieldsStr(query.fields, 2),
     '  }',
-    '}'
-  ].join('\n').trim()
+    '}',
+  ]
+    .join('\n')
+    .trim()
 }
 
 /**
@@ -787,7 +772,7 @@ export function constructQueryStr (query) {
  *
  * @returns {Object}
  * */
-export function getMutationArgsFromTokens (mutation, tokens) {
+export function getMutationArgsFromTokens(mutation, tokens) {
   const argspec = {}
   let value
   for (const arg of mutation.args) {
@@ -825,7 +810,7 @@ export function getMutationArgsFromTokens (mutation, tokens) {
  *
  * @returns {Promise<MutationResponse>} {status, msg}
  */
-async function _mutateError (mutationName, message, response) {
+async function _mutateError(mutationName, message, response) {
   // log the response
   if (response) {
     // eslint-disable-next-line no-console
@@ -833,16 +818,19 @@ async function _mutateError (mutationName, message, response) {
   }
 
   // open a user alert
-  await store.dispatch('setAlert', new AlertModel(
-    `command failed: ${mutationName} - ${message}`,
-    null,
-    'error')
+  await store.dispatch(
+    'setAlert',
+    new AlertModel(
+      `command failed: ${mutationName} - ${message}`,
+      null,
+      'error'
+    )
   )
 
   // format a response
   return {
     status: TaskState.SUBMIT_FAILED,
-    message
+    message,
   }
 }
 
@@ -856,21 +844,17 @@ async function _mutateError (mutationName, message, response) {
  *
  * @returns {Promise<MutationResponse>} {status, msg}
  */
-export async function mutate (mutation, variables, apolloClient, cylcID) {
+export async function mutate(mutation, variables, apolloClient, cylcID) {
   const mutationStr = constructMutation(mutation)
   let response = null
   // eslint-disable-next-line no-console
-  console.debug([
-    `mutation(${mutation.name})`,
-    mutationStr,
-    variables
-  ])
+  console.debug([`mutation(${mutation.name})`, mutationStr, variables])
 
   try {
     // call the mutation
     response = await apolloClient.mutate({
       mutation: gql(mutationStr),
-      variables
+      variables,
     })
   } catch (err) {
     // mutation failed (client-server error e.g. variable format, syntax error)
@@ -890,7 +874,7 @@ export async function mutate (mutation, variables, apolloClient, cylcID) {
         // success
         return {
           status: TaskState.SUBMITTED,
-          message: result[1]
+          message: result[1],
         }
       }
       // failure (Cylc error, e.g. could not find workflow <x>)
@@ -899,7 +883,7 @@ export async function mutate (mutation, variables, apolloClient, cylcID) {
     // command in a different format (e.g. info command)
     return {
       status: TaskState.SUBMITTED,
-      message: result
+      message: result,
     }
   } catch (error) {
     return _mutateError(mutation.name, 'invalid response', response)
@@ -915,18 +899,14 @@ export async function mutate (mutation, variables, apolloClient, cylcID) {
  * @param {ApolloClient} apolloClient
  * @return {Promise<Object>}
  */
-export async function query (query, variables, apolloClient) {
+export async function query(query, variables, apolloClient) {
   const queryStr = constructQueryStr(query)
   // eslint-disable-next-line no-console
-  console.debug([
-    `query(${query.name})`,
-    queryStr,
-    variables
-  ])
+  console.debug([`query(${query.name})`, queryStr, variables])
 
   const response = await apolloClient.query({
     query: gql(queryStr),
-    variables
+    variables,
   })
   return response.data
 }

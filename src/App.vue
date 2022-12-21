@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-app :class="jobThemeClass">
     <component :is="layout">
-      <router-view/>
+      <router-view />
     </component>
   </v-app>
 </template>
@@ -31,32 +31,33 @@ const DEFAULT_LAYOUT = 'empty'
 export default {
   computed: {
     ...mapState('app', ['jobTheme']),
-    layout () {
+    layout() {
       return (this.$route.meta.layout || DEFAULT_LAYOUT) + '-layout'
     },
-    jobThemeClass () {
+    jobThemeClass() {
       return `job_theme--${this.jobTheme}`
-    }
+    },
   },
   methods: {
-    ...mapMutations('app', ['setJobTheme'])
+    ...mapMutations('app', ['setJobTheme']),
   },
-  mounted () {
+  mounted() {
     // set application font-size in HTML top-level element
     if (localStorage.fontSize) {
-      document.getElementsByTagName('html')[0].style.fontSize = localStorage.fontSize
+      document.getElementsByTagName('html')[0].style.fontSize =
+        localStorage.fontSize
     }
     // set Job icons theme found in LocalStorage in Vuex
     this.setJobTheme(localStorage.jobTheme || 'default')
-  }
+  },
 }
 </script>
 
 <style lang="scss">
-  @import '~@/styles/index.scss';
+@import '~@/styles/index.scss';
 
-  /* Remove in 1.2 */
-  .v-datatable thead th.column.sortable i {
-    vertical-align: unset;
-  }
+/* Remove in 1.2 */
+.v-datatable thead th.column.sortable i {
+  vertical-align: unset;
+}
 </style>

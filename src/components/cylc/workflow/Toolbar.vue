@@ -37,9 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-icon>{{ svgPaths.list }}</v-icon>
     </v-btn>
     <!-- title -->
-    <v-toolbar-title
-      class="text-md-h6 text-subtitle-1"
-    >
+    <v-toolbar-title class="text-md-h6 text-subtitle-1">
       <span class="c-toolbar-title">{{ title }}</span>
     </v-toolbar-title>
 
@@ -98,8 +96,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <template v-slot:activator="{ on }">
           <a
             class="add-view d-flex flex-row-reverse align-items-center"
-            v-on="on">
-            <v-icon class="icon" color="#5995EB">{{ svgPaths.add }}</v-icon>
+            v-on="on"
+          >
+            <v-icon
+              class="icon"
+              color="#5995EB"
+              >{{ svgPaths.add }}</v-icon
+            >
             <span class="label">
               {{ $t('Toolbar.addView') }}
             </span>
@@ -107,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </template>
         <v-list class="pa-0">
           <v-list-item
-            :id="`toolbar-add-${ view.name }-view`"
+            :id="`toolbar-add-${view.name}-view`"
             v-for="view in views"
             :key="view.name"
             @click="$listeners['add'](view.name)"
@@ -123,8 +126,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </template>
 
     <!-- displayed only when extended===true -->
-    <template v-slot:extension v-if="extended">
-      <span style="margin-left: 260px;">
+    <template
+      v-slot:extension
+      v-if="extended"
+    >
+      <span style="margin-left: 260px">
         <a @click="onClickPause">
           <v-icon color="#5E5E5E">{{ svgPaths.hold }}</v-icon>
         </a>
@@ -147,27 +153,22 @@ import {
   mdiPlay,
   mdiPlusBoxMultiple,
   mdiStop,
-  mdiViewList
+  mdiViewList,
 } from '@mdi/js'
 import toolbar from '@/mixins/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import graphql from '@/mixins/graphql'
 
-import {
-  mutationStatus
-} from '@/utils/aotf'
+import { mutationStatus } from '@/utils/aotf'
 
 export default {
   name: 'Toolbar',
-  mixins: [
-    toolbar,
-    graphql
-  ],
+  mixins: [toolbar, graphql],
   props: {
     views: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   data: () => ({
     extended: false,
@@ -178,126 +179,112 @@ export default {
       list: mdiViewList,
       menu: mdiMicrosoftXboxControllerMenu,
       run: mdiPlay,
-      stop: mdiStop
+      stop: mdiStop,
     },
     expecting: {
       // store state from mutations in order to compute the "enabled" attrs
       play: null,
       paused: null,
-      stop: null
-    }
+      stop: null,
+    },
   }),
   computed: {
     ...mapState('app', ['title']),
     ...mapState('user', ['user']),
     ...mapState('workflows', ['cylcTree']),
-    currentWorkflow () {
+    currentWorkflow() {
       return this.cylcTree.$index[this.workflowId]
     },
-    isRunning () {
+    isRunning() {
       return (
         this.currentWorkflow &&
-        (
-          this.currentWorkflow.node.status === WorkflowState.RUNNING.name ||
+        (this.currentWorkflow.node.status === WorkflowState.RUNNING.name ||
           this.currentWorkflow.node.status === WorkflowState.PAUSED.name ||
-          this.currentWorkflow.node.status === WorkflowState.STOPPING.name
-        )
+          this.currentWorkflow.node.status === WorkflowState.STOPPING.name)
       )
     },
-    isPaused () {
+    isPaused() {
       return (
         this.currentWorkflow &&
         this.currentWorkflow.node.status === WorkflowState.PAUSED.name
       )
     },
-    isStopped () {
+    isStopped() {
       return (
         !this.currentWorkflow ||
         this.currentWorkflow.node.status === WorkflowState.STOPPED.name
       )
     },
-    statusMsg () {
+    statusMsg() {
       return this.currentWorkflow.node.statusMsg || ''
     },
-    enabled () {
+    enabled() {
       // object holding the states of controls that are supposed to be enabled
       // NOTE: this is a temporary solution until we are able to subscribe to
       // mutations to tell when they have completed
       return {
-        playToggle: (
+        playToggle:
           // the play button (for the play from stopped scenario)
           this.isStopped &&
-          (
-            this.expecting.play === null ||
-            this.expecting.play === this.isRunning
-          )
-        ),
-        pauseToggle: (
+          (this.expecting.play === null ||
+            this.expecting.play === this.isRunning),
+        pauseToggle:
           // the play/pause button
           !this.isStopped &&
           !this.expecting.stop &&
           this.currentWorkflow.node.status !== WorkflowState.STOPPING.name &&
-          (
-            this.expecting.paused === null ||
-            this.expecting.paused === this.isPaused
-          )
-        ),
-        stopToggle: (
+          (this.expecting.paused === null ||
+            this.expecting.paused === this.isPaused),
+        stopToggle:
           // the stop button
           !this.isStopped &&
-          (
-            this.expecting.stop === null ||
-            this.expecting.stop === this.isStopped
-          )
-        )
+          (this.expecting.stop === null ||
+            this.expecting.stop === this.isStopped),
       }
-    }
+    },
   },
   watch: {
-    isRunning () {
+    isRunning() {
       this.expecting.play = null
     },
-    isPaused () {
+    isPaused() {
       this.expecting.paused = null
     },
-    isStopped () {
+    isStopped() {
       this.expecting.stop = null
-    }
+    },
   },
   methods: {
-    onClickPlay () {
-      this.$workflowService.mutate(
-        'play',
-        this.currentWorkflow.id
-      ).then(ret => {
-        if (ret[0] === mutationStatus.SUCCEEDED) {
-          this.expecting.play = !this.isRunning
-        }
-      })
+    onClickPlay() {
+      this.$workflowService
+        .mutate('play', this.currentWorkflow.id)
+        .then((ret) => {
+          if (ret[0] === mutationStatus.SUCCEEDED) {
+            this.expecting.play = !this.isRunning
+          }
+        })
     },
-    onClickReleaseHold () {
-      this.$workflowService.mutate(
-        this.isPaused ? 'resume' : 'pause',
-        this.currentWorkflow.id
-      ).then(response => {
-        if (response.status === mutationStatus.SUCCEEDED) {
-          this.expecting.paused = !this.isPaused
-        }
-      })
+    onClickReleaseHold() {
+      this.$workflowService
+        .mutate(this.isPaused ? 'resume' : 'pause', this.currentWorkflow.id)
+        .then((response) => {
+          if (response.status === mutationStatus.SUCCEEDED) {
+            this.expecting.paused = !this.isPaused
+          }
+        })
     },
-    async onClickStop () {
-      this.$workflowService.mutate(
-        'stop',
-        this.currentWorkflow.id
-      ).then(response => {
-        if (response.status === mutationStatus.SUCCEEDED) {
-          this.expecting.stop = WorkflowState.STOPPING
-        }
-      })
+    async onClickStop() {
+      this.$workflowService
+        .mutate('stop', this.currentWorkflow.id)
+        .then((response) => {
+          if (response.status === mutationStatus.SUCCEEDED) {
+            this.expecting.stop = WorkflowState.STOPPING
+          }
+        })
     },
-    toggleExtended () {
+    toggleExtended() {
       this.extended = !this.extended
-    }
-  }
+    },
+  },
 }
 </script>

@@ -22,7 +22,7 @@ import JobState from '@/model/JobState.model'
  * @param {string} name - name filter
  * @returns {boolean}
  */
-export function filterByName (workflow, name) {
+export function filterByName(workflow, name) {
   return workflow.name.toLowerCase().includes(name.toLowerCase())
 }
 
@@ -31,21 +31,20 @@ export function filterByName (workflow, name) {
  * @param stateTotals {Object} - object with the keys being states, and values the count
  * @return {Array<String>}
  */
-function getWorkflowStates (stateTotals) {
-  const jobStates = JobState.enumValues.map(jobState => jobState.name)
+function getWorkflowStates(stateTotals) {
+  const jobStates = JobState.enumValues.map((jobState) => jobState.name)
   return !stateTotals
     ? []
-    : Object
-      .entries(stateTotals)
-      .filter(stateTotal => {
-        // GraphQL will return all the task states possible in a workflow, but we
-        // only want the states that have an equivalent state for a job. So we filter
-        // out the states that do not exist for jobs, and that have active tasks in
-        // the workflow (no point keeping the empty states, as they are not to be
-        // displayed).
-        return jobStates.includes(stateTotal[0]) && stateTotal[1] > 0
-      })
-      .map(stateTotal => stateTotal[0])
+    : Object.entries(stateTotals)
+        .filter((stateTotal) => {
+          // GraphQL will return all the task states possible in a workflow, but we
+          // only want the states that have an equivalent state for a job. So we filter
+          // out the states that do not exist for jobs, and that have active tasks in
+          // the workflow (no point keeping the empty states, as they are not to be
+          // displayed).
+          return jobStates.includes(stateTotal[0]) && stateTotal[1] > 0
+        })
+        .map((stateTotal) => stateTotal[0])
 }
 
 /**
@@ -54,15 +53,16 @@ function getWorkflowStates (stateTotals) {
  * @param {Array<String>} taskStates
  * @returns {boolean}
  */
-export function filterByState (workflow, workflowStates, taskStates) {
+export function filterByState(workflow, workflowStates, taskStates) {
   // workflow states
   if (!workflowStates.includes(workflow.node.status)) {
     return false
   }
   // task states
   if (taskStates.length > 0) {
-    const intersection = getWorkflowStates(workflow.node.stateTotals)
-      .filter(item => taskStates.includes(item))
+    const intersection = getWorkflowStates(workflow.node.stateTotals).filter(
+      (item) => taskStates.includes(item)
+    )
     return intersection.length !== 0
   }
   return true
@@ -82,7 +82,7 @@ export function filterByState (workflow, workflowStates, taskStates) {
  * @param {Array<String>} taskStates
  * @return {boolean} - true if the workflow is accepted, false otherwise
  */
-function filterWorkflow (workflow, name, workflowStates, taskStates) {
+function filterWorkflow(workflow, name, workflowStates, taskStates) {
   let filtered = false
   // Filter by name.
   if (name && name !== '') {
@@ -106,14 +106,22 @@ function filterWorkflow (workflow, name, workflowStates, taskStates) {
  * @returns {Array<WorkflowGScanNode|WorkflowNamePartGScanNode>} - filtered workflows
  * @see https://stackoverflow.com/questions/45289854/how-to-effectively-filter-tree-view-retaining-its-existing-structure
  */
-export function filterHierarchically (workflows, name, workflowStates, taskStates) {
+export function filterHierarchically(
+  workflows,
+  name,
+  workflowStates,
+  taskStates
+) {
   const filterChildren = (result, workflowNode) => {
     if (workflowNode.type === 'workflow') {
       if (filterWorkflow(workflowNode, name, workflowStates, taskStates)) {
         result.push(workflowNode)
         return result
       }
-    } else if (workflowNode.type === 'workflow-part' && workflowNode.children.length) {
+    } else if (
+      workflowNode.type === 'workflow-part' &&
+      workflowNode.children.length
+    ) {
       const children = workflowNode.children.reduce(filterChildren, [])
       if (children.length) {
         result.push({ ...workflowNode, children })

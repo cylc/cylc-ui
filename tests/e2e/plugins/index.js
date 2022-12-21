@@ -25,15 +25,18 @@ module.exports = (on, config) => {
   //       to get confused when our JS code imports scss, failing
   //       silently, and reporting no tests found in Cypress GUI.
   webpackOptions.optimization = {}
-  on('file:preprocessor', webpack({
-    webpackOptions,
-    watchOptions: {}
-  }))
+  on(
+    'file:preprocessor',
+    webpack({
+      webpackOptions,
+      watchOptions: {},
+    })
+  )
   return Object.assign({}, config, {
     fixturesFolder: 'tests/e2e/fixtures',
     specPattern: 'tests/e2e/specs',
     screenshotsFolder: 'tests/e2e/screenshots',
     videosFolder: 'tests/e2e/videos',
-    supportFile: 'tests/e2e/support/index.js'
+    supportFile: 'tests/e2e/support/index.js',
   })
 }

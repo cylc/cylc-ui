@@ -30,13 +30,11 @@ import subscriptionMixin from '@/mixins/subscription'
  * @see WorkflowService
  */
 export default {
-  mixins: [
-    subscriptionMixin
-  ],
-  created () {
+  mixins: [subscriptionMixin],
+  created() {
     this.$workflowService.subscribe(this)
   },
-  beforeDestroy () {
+  beforeDestroy() {
     this.$workflowService.unsubscribe(this)
-  }
+  },
 }

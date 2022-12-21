@@ -19,5 +19,5 @@ import ServicesPlugin from '@/services/plugin'
 
 // Load the plug-in
 Vue.use(ServicesPlugin, {
-  offline: process.env.VUE_APP_SERVICES === 'offline'
+  offline: process.env.VUE_APP_SERVICES === 'offline',
 })

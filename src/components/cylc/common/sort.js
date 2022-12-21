@@ -36,15 +36,10 @@
  * @constructor
  */
 export const DEFAULT_COMPARATOR = (left, right) => {
-  return left.toLowerCase()
-    .localeCompare(
-      right.toLowerCase(),
-      undefined,
-      {
-        numeric: true,
-        sensitivity: 'base'
-      }
-    )
+  return left.toLowerCase().localeCompare(right.toLowerCase(), undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  })
 }
 
 /**
@@ -74,7 +69,7 @@ export const DEFAULT_COMPARATOR = (left, right) => {
  * @param {SortedIndexByComparator=} comparator - function used to compare the newValue with otherValues in the list
  * @return {number} - sorted index
  */
-export function sortedIndexBy (array, value, iteratee, options = {}) {
+export function sortedIndexBy(array, value, iteratee, options = {}) {
   // comparator, reverse = false) {
   if (array.length === 0) {
     return 0
@@ -82,7 +77,10 @@ export function sortedIndexBy (array, value, iteratee, options = {}) {
   // If given a function, use it. Otherwise, simply use identity function.
   const iterateeFunction = iteratee || ((value) => value)
   // If given a function, use it. Otherwise, simply use locale sort with numeric enabled
-  const comparatorFunction = options.comparator || ((leftObject, leftValue, rightObject, rightValue) => DEFAULT_COMPARATOR(leftValue, rightValue))
+  const comparatorFunction =
+    options.comparator ||
+    ((leftObject, leftValue, rightObject, rightValue) =>
+      DEFAULT_COMPARATOR(leftValue, rightValue))
   let low = 0
   let high = array.length
 

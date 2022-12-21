@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-snackbar
     :value="isOffline"
-    :timeout=-1
+    :timeout="-1"
     class="justify-center"
     color="red"
     top
@@ -27,10 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       large
       class="mr-2"
       color="red lighten-5"
-    >{{ svgPath }}</v-icon>
-    <span
-      class="red--text text--lighten-5 font-weight-medium"
-    >Connection to server lost. You are offline.</span>
+      >{{ svgPath }}</v-icon
+    >
+    <span class="red--text text--lighten-5 font-weight-medium"
+      >Connection to server lost. You are offline.</span
+    >
   </v-snackbar>
 </template>
 
@@ -46,14 +47,14 @@ export default {
      */
     isOffline: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
-  data () {
+  data() {
     return {
-      svgPath: mdiLanDisconnect
+      svgPath: mdiLanDisconnect,
     }
-  }
+  },
 }
 </script>

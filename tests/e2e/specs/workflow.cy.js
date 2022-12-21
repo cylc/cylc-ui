@@ -17,9 +17,7 @@
 
 describe('Workflow view and component/widget', () => {
   afterEach(() => {
-    cy
-      .get('.v-alert')
-      .should('not.exist')
+    cy.get('.v-alert').should('not.exist')
   })
 
   it('Should display the Workflow component in the Workflow view, with a Tree widget', () => {
@@ -32,9 +30,11 @@ describe('Workflow view and component/widget', () => {
       .then((loader) => {
         const firstChild = loader.children('div').first()
         // The skeleton may, or may not, still be displaying in the UI...
-        if (firstChild.attr('class') && firstChild.attr('class').includes('skeleton')) {
-          cy.wrap(firstChild)
-            .should('not.exist')
+        if (
+          firstChild.attr('class') &&
+          firstChild.attr('class').includes('skeleton')
+        ) {
+          cy.wrap(firstChild).should('not.exist')
         }
       })
   })

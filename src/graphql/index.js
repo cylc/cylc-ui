@@ -20,7 +20,7 @@ import {
   ApolloLink,
   HttpLink,
   InMemoryCache,
-  split
+  split,
 } from '@apollo/client'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
@@ -35,12 +35,12 @@ import { createUrl } from '@/utils/urls'
  * @return {{wsUrl: string, httpUrl: string}}
  * @private
  */
-export function createGraphQLUrls () {
+export function createGraphQLUrls() {
   const httpUrl = createUrl('graphql')
   const wsUrl = createUrl('subscriptions', true)
   return {
     httpUrl,
-    wsUrl
+    wsUrl,
   }
 }
 
@@ -49,7 +49,7 @@ export function createGraphQLUrls () {
  *
  * - Adds X-XSRFToken header for hubless token based auth.
  */
-export function getCylcHeaders () {
+export function getCylcHeaders() {
   const xsrfToken = document.cookie.match('\\b_xsrf=([^;]*)\\b')
   const cylcHeaders = {}
   if (Array.isArray(xsrfToken) && xsrfToken.length > 0) {
@@ -71,11 +71,14 @@ export function getCylcHeaders () {
  * @param {*} wsImpl
  * @return {SubscriptionClient} a subscription client
  */
-export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
-  const opts = Object.assign({
-    reconnect: true,
-    lazy: false
-  }, options)
+export function createSubscriptionClient(wsUrl, options = {}, wsImpl = null) {
+  const opts = Object.assign(
+    {
+      reconnect: true,
+      lazy: false,
+    },
+    options
+  )
   const subscriptionClient = new SubscriptionClient(wsUrl, opts, wsImpl)
   // these are the available hooks in the subscription client lifecycle
   subscriptionClient.onConnecting(() => {
@@ -121,19 +124,23 @@ export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
  * @param {SubscriptionClient|null} subscriptionClient
  * @returns {ApolloClient} an ApolloClient
  */
-export function createApolloClient (httpUrl, subscriptionClient) {
+export function createApolloClient(httpUrl, subscriptionClient) {
   const httpLink = new HttpLink({
-    uri: httpUrl
+    uri: httpUrl,
   })
 
-  const wsLink = subscriptionClient !== null
-    ? new WebSocketLink(subscriptionClient)
-    : new ApolloLink() // return an empty link, useful for testing, offline mode, etc
+  const wsLink =
+    subscriptionClient !== null
+      ? new WebSocketLink(subscriptionClient)
+      : new ApolloLink() // return an empty link, useful for testing, offline mode, etc
 
   const link = split(
     ({ query }) => {
       const definition = getMainDefinition(query)
-      return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
+      return (
+        definition.kind === 'OperationDefinition' &&
+        definition.operation === 'subscription'
+      )
     },
     wsLink,
     httpLink
@@ -144,8 +151,8 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     return {
       headers: {
         ...headers,
-        ...getCylcHeaders()
-      }
+        ...getCylcHeaders(),
+      },
     }
   })
 
@@ -155,13 +162,13 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     defaultOptions: {
       query: {
         fetchPolicy: 'no-cache',
-        errorPolicy: 'all'
+        errorPolicy: 'all',
       },
       watchQuery: {
         fetchPolicy: 'no-cache',
-        errorPolicy: 'all'
-      }
+        errorPolicy: 'all',
+      },
     },
-    connectToDevTools: process.env.NODE_ENV !== 'production'
+    connectToDevTools: process.env.NODE_ENV !== 'production',
   })
 }

@@ -37,63 +37,61 @@ import DeltasCallback from '@/services/callbacks'
 // * https://github.com/cylc/cylc-ui/blob/a3005b07f20f456bb2b855f19fab2a082affdece/src/components/cylc/common/callbacks.js
 
 export class TreeCallback extends DeltasCallback {
-  constructor () {
+  constructor() {
     super()
     this.workflow = null
     this.lookup = null
   }
 
-  before (deltas, store, errors) {
+  before(deltas, store, errors) {
     const lookup = store.state.workflows.lookup
     const workflow = store.state.workflows.workflow
     this.workflow = Object.assign({}, workflow)
     this.lookup = Object.assign({}, lookup)
   }
 
-  after (deltas, store, errors) {
-  }
+  after(deltas, store, errors) {}
 
-  tearDown (store, errors) {
+  tearDown(store, errors) {
     this.workflow = null
     this.lookup = null
   }
 
-  onAdded (added, store, errors) {}
+  onAdded(added, store, errors) {}
 
-  onUpdated (updated, store, errors) {}
+  onUpdated(updated, store, errors) {}
 
-  onPruned (pruned, store, errors) {}
+  onPruned(pruned, store, errors) {}
 
-  commit (store, errors) {}
+  commit(store, errors) {}
 }
 
 export class WorkflowCallback extends DeltasCallback {
-  constructor () {
+  constructor() {
     super()
     this.workflow = null
     this.lookup = null
   }
 
-  before (deltas, store, errors) {
+  before(deltas, store, errors) {
     const lookup = store.state.workflows.lookup
     const workflow = store.state.workflows.workflow
     this.workflow = Object.assign({}, workflow)
     this.lookup = Object.assign({}, lookup)
   }
 
-  after (deltas, store, errors) {
-  }
+  after(deltas, store, errors) {}
 
-  tearDown (store, errors) {
+  tearDown(store, errors) {
     this.workflow = null
     this.lookup = null
   }
 
-  onAdded (added, store, errors) {}
+  onAdded(added, store, errors) {}
 
-  onUpdated (updated, store, errors) {}
+  onUpdated(updated, store, errors) {}
 
-  onPruned (pruned, store, errors) {}
+  onPruned(pruned, store, errors) {}
 
-  commit (store, errors) {}
+  commit(store, errors) {}
 }

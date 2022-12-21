@@ -34,14 +34,14 @@ export default {
   name: 'g-enum',
   mixins: [formElement],
   computed: {
-    itemDesc () {
+    itemDesc() {
       for (const item of this.type.enumValues) {
         if (item.name === this.value) {
           return item.description
         }
       }
       return ''
-    }
-  }
+    },
+  },
 }
 </script>

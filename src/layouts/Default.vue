@@ -20,13 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <ConnectionStatus :is-offline="offline" />
     <toolbar v-if="!workflowViews.includes($route.name)" />
     <drawer />
-    <CylcObjectMenu/>
+    <CylcObjectMenu />
 
     <v-main>
       <alert />
       <div id="core-view">
         <v-fade-transition mode="out-in">
-          <slot/>
+          <slot />
         </v-fade-transition>
       </div>
     </v-main>
@@ -51,10 +51,10 @@ export default {
     CylcObjectMenu,
     Alert,
     Drawer,
-    Toolbar
+    Toolbar,
   },
 
-  data () {
+  data() {
     return {
       /**
        * Views that display workflows. For these views, we do not
@@ -64,22 +64,18 @@ export default {
        * triggers the action to add a new Tree or Table View, so the events
        * are passed down from the parent Workflow View).
        */
-      workflowViews: [
-        'workflow',
-        'tree',
-        'table'
-      ]
+      workflowViews: ['workflow', 'tree', 'table'],
     }
   },
 
   computed: {
-    ...mapState(['offline'])
+    ...mapState(['offline']),
   },
 
-  errorCaptured (error, vm, info) {
+  errorCaptured(error, vm, info) {
     if (process.env.NODE_ENV !== 'production') {
       store.dispatch('setAlert', new AlertModel(error, null, 'error'))
     }
-  }
+  },
 }
 </script>

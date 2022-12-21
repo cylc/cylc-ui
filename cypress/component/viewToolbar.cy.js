@@ -15,11 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  mdiCog,
-  mdiGestureTap,
-  mdiToggleSwitch
-} from '@mdi/js'
+import { mdiCog, mdiGestureTap, mdiToggleSwitch } from '@mdi/js'
 import ViewToolbar from '@/components/cylc/ViewToolbar'
 
 describe('View Toolbar Component', () => {
@@ -28,13 +24,10 @@ describe('View Toolbar Component', () => {
     const setOption = cy.spy().as('setOptionSpy')
 
     // mount 'em
-    cy.vmount(
-      ViewToolbar,
-      {
-        propsData: { groups },
-        listeners: { setOption }
-      }
-    )
+    cy.vmount(ViewToolbar, {
+      propsData: { groups },
+      listeners: { setOption },
+    })
     // add the classes Vuetify requires
     cy.addVuetifyStyles(cy)
 
@@ -44,7 +37,7 @@ describe('View Toolbar Component', () => {
   it('loads, toggles and runs callbacks ', () => {
     // set up a handler for callback events
     const callbacks = []
-    function myCallback () {
+    function myCallback() {
       callbacks.push(true)
     }
 
@@ -58,22 +51,21 @@ describe('View Toolbar Component', () => {
             icon: mdiToggleSwitch,
             action: 'toggle',
             value: true,
-            key: 'toggle'
+            key: 'toggle',
           },
           {
             title: 'Callback',
             icon: mdiGestureTap,
             action: 'callback',
             callback: myCallback,
-            key: 'callback'
-          }
-        ]
-      }
+            key: 'callback',
+          },
+        ],
+      },
     ])
 
     // test all controls rendered
-    cy
-      .get('.group')
+    cy.get('.group')
       .should('have.length', 1)
       .get('.control')
       .should('have.length', 2)
@@ -101,8 +93,7 @@ describe('View Toolbar Component', () => {
 
     // test action=callback
     expect(callbacks).to.have.length(0)
-    cy
-      .get('.control.callback .v-icon')
+    cy.get('.control.callback .v-icon')
       // clicking the icon should fire the callback
       .click({ force: true })
       .then(() => {
@@ -126,24 +117,24 @@ describe('View Toolbar Component', () => {
             value: true,
             key: 'foo',
             enableIf: ['bar'],
-            disableIf: ['baz']
+            disableIf: ['baz'],
           },
           {
             title: 'Bar',
             icon: mdiCog,
             action: 'toggle',
             value: true,
-            key: 'bar'
+            key: 'bar',
           },
           {
             title: 'Baz',
             icon: mdiCog,
             action: 'toggle',
             value: false,
-            key: 'baz'
-          }
-        ]
-      }
+            key: 'baz',
+          },
+        ],
+      },
     ])
 
     cy
@@ -188,16 +179,16 @@ describe('View Toolbar Component', () => {
             icon: mdiCog,
             action: 'toggle',
             value: true,
-            key: 'foo'
+            key: 'foo',
           },
           {
             title: 'Bar',
             icon: mdiCog,
             action: 'toggle',
             value: false,
-            key: 'bar'
-          }
-        ]
+            key: 'bar',
+          },
+        ],
       },
       {
         title: 'Group 2',
@@ -207,17 +198,17 @@ describe('View Toolbar Component', () => {
             icon: mdiCog,
             action: 'toggle',
             value: true,
-            key: 'baz'
+            key: 'baz',
           },
           {
             title: 'Pub',
             icon: mdiCog,
             action: 'toggle',
             value: false,
-            key: 'pub'
-          }
-        ]
-      }
+            key: 'pub',
+          },
+        ],
+      },
     ])
     // TODO: visual regression test
     // https://github.com/cylc/cylc-ui/issues/178

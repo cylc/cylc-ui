@@ -37,31 +37,25 @@ Cypress.Commands.add('mount', mount)
 Vue.use(Vuetify)
 Cypress.Commands.add('vmount', (component, options = {}) => {
   const vuetify = new Vuetify()
-  return mount(
-    component,
-    {
-      vuetify,
-      ...options
-    }
-  )
+  return mount(component, {
+    vuetify,
+    ...options,
+  })
 })
 
 // add required classes to the Cypress root element
 // e.g. cy.addVuetifyStyles(cy)
 // use this if you need Vuetify styles to be applied
 Cypress.Commands.add('addVuetifyStyles', (cy) => {
-  cy
-    .document()
-    .then((foo) => {
-      const classList = foo.children[0].classList
-      if (!classList.contains('v-application')) {
-        foo.children[0].classList.add(
-          'v-application',
-          'v-application--is-ltr',
-          'theme--light',
-          'job_theme--default'
-        )
-      }
-    })
+  cy.document().then((foo) => {
+    const classList = foo.children[0].classList
+    if (!classList.contains('v-application')) {
+      foo.children[0].classList.add(
+        'v-application',
+        'v-application--is-ltr',
+        'theme--light',
+        'job_theme--default'
+      )
+    }
+  })
 })
-

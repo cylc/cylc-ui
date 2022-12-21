@@ -61,7 +61,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiHelpCircleOutline } from '@mdi/js'
 import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
 import { VTextarea } from 'vuetify/lib/components'
-import VuetifyConfig, { getComponentProps, RUNTIME_SETTING } from '@/components/graphqlFormGenerator/components/vuetify'
+import VuetifyConfig, {
+  getComponentProps,
+  RUNTIME_SETTING,
+} from '@/components/graphqlFormGenerator/components/vuetify'
 import { findByName, mutate } from '@/utils/aotf'
 
 export default {
@@ -72,21 +75,21 @@ export default {
       // validity of form
       type: Boolean,
       required: true,
-      default: () => false
+      default: () => false,
     },
     cylcObject: {
       // data store node
       type: Object,
-      required: true
+      required: true,
     },
     types: {
       // introspection types
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
 
-  data () {
+  data() {
     return {
       type: undefined,
       loading: true,
@@ -97,37 +100,36 @@ export default {
           is: VTextarea,
           rows: '1',
           autoGrow: true,
-          style: 'font-family: monospace;'
-        }
+          style: 'font-family: monospace;',
+        },
       },
       icons: {
-        help: mdiHelpCircleOutline
-      }
+        help: mdiHelpCircleOutline,
+      },
     }
   },
 
-  created () {
+  created() {
     this.reset()
   },
 
   computed: {
     isValid: {
-      get () {
+      get() {
         return this.value
       },
-      set (value) {
+      set(value) {
         // Update 'value' prop by notifying parent component's v-model for this component
         this.$emit('input', value)
-      }
-    }
+      },
+    },
   },
 
   methods: {
     /** Set this form to its initial conditions. */
-    async reset () {
-      const queryName = (
+    async reset() {
+      const queryName =
         this.cylcObject.type === 'family' ? 'familyProxy' : 'taskProxy'
-      )
       const queryField = 'runtime'
       this.loading = true
       this.isValid = false
@@ -143,7 +145,10 @@ export default {
       // Due to how broadcast works, we cannot rename the keys of/remove
       // pre-existing key-val settings, so mark as frozen
       for (const fieldName of Object.keys(model)) {
-        if (findByName(this.type.fields, fieldName).type.ofType?.name === RUNTIME_SETTING) {
+        if (
+          findByName(this.type.fields, fieldName).type.ofType?.name ===
+          RUNTIME_SETTING
+        ) {
           for (const item of model[fieldName]) {
             item.frozenKey = true
           }
@@ -155,15 +160,15 @@ export default {
       // (this.isValid gets set by form v-model)
     },
 
-    async submit () {
+    async submit() {
       const tokens = this.cylcObject.tokens
       const settings = this.getBroadcastData()
       if (!settings.length) {
         return {
           message: 'No changes were made',
           status: {
-            name: 'warn'
-          }
+            name: 'warn',
+          },
         }
       }
       const args = {
@@ -172,14 +177,10 @@ export default {
         mode: 'Set',
         namespaces: [tokens.task],
         settings,
-        workflows: [tokens.workflow_id]
+        workflows: [tokens.workflow_id],
       }
       const mutation = await this.$workflowService.getMutation('broadcast')
-      return await mutate(
-        mutation,
-        args,
-        this.$workflowService.apolloClient
-      )
+      return await mutate(mutation, args, this.$workflowService.apolloClient)
     },
 
     /**
@@ -189,7 +190,7 @@ export default {
      *
      * @return {Object[]}
      */
-    getBroadcastData () {
+    getBroadcastData() {
       const ret = []
       for (let [field, val] of Object.entries(this.model)) {
         const initialVal = this.initialData[field]
@@ -198,15 +199,17 @@ export default {
           if (isArray(val)) {
             for (const obj of val) {
               // Expect this to be { key?, value?, frozenKey? } object
-              if (obj.key != null && (
+              if (
+                obj.key != null &&
                 // new item:
-                !obj.frozenKey ||
-                // altered existing item:
-                obj.value !== initialVal.find(({ key }) => key === obj.key).value
-              )) {
+                (!obj.frozenKey ||
+                  // altered existing item:
+                  obj.value !==
+                    initialVal.find(({ key }) => key === obj.key).value)
+              ) {
                 // Convert { key: x, value: y } to { x: y }
                 ret.push({
-                  [field]: { [obj.key]: obj.value }
+                  [field]: { [obj.key]: obj.value },
                 })
               }
             }
@@ -225,15 +228,15 @@ export default {
      * @param {string} fieldName
      * @return {Object}
      */
-    getInputProps (fieldName) {
+    getInputProps(fieldName) {
       const gqlType = findByName(this.type.fields, fieldName).type
       return {
         gqlType,
-        ...getComponentProps(gqlType, this.namedTypes, VuetifyConfig.kinds)
+        ...getComponentProps(gqlType, this.namedTypes, VuetifyConfig.kinds),
       }
     },
 
-    startCase
-  }
+    startCase,
+  },
 }
 </script>

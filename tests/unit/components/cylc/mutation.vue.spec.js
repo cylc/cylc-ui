@@ -32,18 +32,18 @@ const BASIC_MUTATION = {
       defaultValue: '"MyDefault"',
       type: {
         name: 'String',
-        kind: 'SCALAR'
-      }
+        kind: 'SCALAR',
+      },
     },
     {
       name: 'MyInteger',
       type: {
         name: 'Int',
-        kind: 'SCALAR'
-      }
-    }
+        kind: 'SCALAR',
+      },
+    },
   ],
-  _title: 'My Mutation'
+  _title: 'My Mutation',
 }
 
 const localVue = createLocalVue()
@@ -59,7 +59,7 @@ describe('Mutation Component', () => {
     return mount(Mutation, {
       localVue,
       vuetify,
-      ...options
+      ...options,
     })
   }
 
@@ -68,8 +68,8 @@ describe('Mutation Component', () => {
       propsData: {
         cylcObject,
         mutation: BASIC_MUTATION,
-        cancel: () => {}
-      }
+        cancel: () => {},
+      },
     })
     const html = wrapper.html()
     expect(html).to.contain('My Mutation')
@@ -77,18 +77,19 @@ describe('Mutation Component', () => {
   })
 
   describe('Mutation descriptions', () => {
-    const mountWithDescription = (desc) => mountFunction({
-      propsData: {
-        cylcObject,
-        mutation: {
-          name: 'Darmok',
-          description: desc,
-          args: [],
-          _title: 'Darmok'
+    const mountWithDescription = (desc) =>
+      mountFunction({
+        propsData: {
+          cylcObject,
+          mutation: {
+            name: 'Darmok',
+            description: desc,
+            args: [],
+            _title: 'Darmok',
+          },
+          cancel: () => {},
         },
-        cancel: () => {}
-      }
-    })
+      })
     describe('For a single line description', () => {
       const desc = 'Lorem ipsum.'
       const wrapper = mountWithDescription(desc)
@@ -105,7 +106,8 @@ describe('Mutation Component', () => {
     })
     describe('For a multiline description', () => {
       const shortDesc = 'Darmok and Jalad at\nTanagra.'
-      const extendedDesc = 'Shaka when the\nwalls fell.\n\nTemba, his arms wide.'
+      const extendedDesc =
+        'Shaka when the\nwalls fell.\n\nTemba, his arms wide.'
       const desc = `${shortDesc}\n\n${extendedDesc}`
       const wrapper = mountWithDescription(desc)
       describe('.shortDescription', () => {

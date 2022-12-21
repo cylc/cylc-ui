@@ -23,7 +23,7 @@ describe('Index mixin', () => {
   it('should display the application title correctly', () => {
     const component = shallowMount({
       mixins: [pageMixin],
-      render () {}
+      render() {},
     })
     const title = component.vm.getPageTitle('App.dashboard')
     expect(title).to.equal('Cylc UI | Dashboard')

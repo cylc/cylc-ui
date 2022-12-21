@@ -36,7 +36,7 @@ class TaskOutput extends Enumify {
    * Constructor.
    * @param {String} name
    */
-  constructor (name) {
+  constructor(name) {
     super()
     this.name = name
   }
@@ -48,7 +48,7 @@ export const TASK_OUTPUT_NAMES = [
   TaskOutput.SUCCEEDED.name,
   TaskOutput.SUBMIT_FAILED.name,
   TaskOutput.FAILED.name,
-  TaskOutput.EXPIRED.name
+  TaskOutput.EXPIRED.name,
 ]
 
 export default TaskOutput

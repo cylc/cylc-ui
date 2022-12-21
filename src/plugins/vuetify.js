@@ -28,6 +28,6 @@ export default new Vuetify({
     // dark: true
   },
   icons: {
-    iconfont: 'mdiSvg'
-  }
+    iconfont: 'mdiSvg',
+  },
 })

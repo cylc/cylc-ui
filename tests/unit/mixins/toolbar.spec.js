@@ -30,11 +30,11 @@ describe('Toolbar mixin', () => {
     const oldWindow = global.window
     global.window = {
       innerWidth: 10000,
-      addEventListener: () => {}
+      addEventListener: () => {},
     }
     const component = shallowMount({
       mixins: [mixin],
-      render () {}
+      render() {},
     })
     expect(component.vm.$data.responsive).to.equal(false)
     expect(component.vm.$data.responsiveInput).to.equal(true)
@@ -44,11 +44,11 @@ describe('Toolbar mixin', () => {
     const oldWindow = global.window
     global.window = {
       innerWidth: 1,
-      addEventListener: () => {}
+      addEventListener: () => {},
     }
     const component = shallowMount({
       mixins: [mixin],
-      render () {}
+      render() {},
     })
     expect(component.vm.$data.responsive).to.equal(true)
     expect(component.vm.$data.responsiveInput).to.equal(false)
@@ -58,11 +58,11 @@ describe('Toolbar mixin', () => {
     const oldWindow = global.window
     global.window = {
       innerWidth: 1,
-      addEventListener: () => {}
+      addEventListener: () => {},
     }
     const component = shallowMount({
       mixins: [mixin],
-      render () {}
+      render() {},
     })
     expect(component.vm.$data.responsive).to.equal(true)
     expect(component.vm.$data.responsiveInput).to.equal(false)
@@ -75,11 +75,11 @@ describe('Toolbar mixin', () => {
       addEventListener: () => {},
       removeEventListener: () => {
         called = true
-      }
+      },
     }
     const component = shallowMount({
       mixins: [mixin],
-      render () {}
+      render() {},
     })
     component.vm.$destroy()
     expect(called).to.equal(true)
@@ -89,8 +89,8 @@ describe('Toolbar mixin', () => {
     store.state.app.drawer = false
     const component = shallowMount({
       mixins: [mixin],
-      render () {},
-      store
+      render() {},
+      store,
     })
     component.vm.onClickBtn()
     expect(store.state.app.drawer).to.equal(true)

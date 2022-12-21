@@ -43,7 +43,7 @@ class Subscription {
    * @param {SubscriptionQuery} query
    * @param {boolean} debug
    */
-  constructor (query, debug = false) {
+  constructor(query, debug = false) {
     this.query = query
     /**
      * @type {ZenObservable}
@@ -65,10 +65,10 @@ class Subscription {
    * @param {ViewState} viewState
    * @param {*} context
    */
-  handleViewState (viewState, context) {
+  handleViewState(viewState, context) {
     const _this = this
     if (viewState !== ViewState.ERROR) {
-      Object.values(this.subscribers).forEach(subscriber => {
+      Object.values(this.subscribers).forEach((subscriber) => {
         subscriber.viewState = viewState
       })
     } else {
@@ -77,7 +77,11 @@ class Subscription {
         subscriber.setAlert(new Alert(context.message, null, 'error'))
         if (_this.debug) {
           // eslint-disable-next-line no-console
-          console.debug(`Subscription error: ${context.message}`, viewState, context)
+          console.debug(
+            `Subscription error: ${context.message}`,
+            viewState,
+            context
+          )
         }
       })
     }

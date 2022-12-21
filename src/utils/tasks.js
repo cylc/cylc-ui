@@ -30,7 +30,7 @@ const isStoppedOrderedStates = [
   TaskState.EXPIRED,
   TaskState.PREPARING,
   TaskState.SUCCEEDED,
-  TaskState.WAITING
+  TaskState.WAITING,
 ]
 
 /**
@@ -40,7 +40,7 @@ const isStoppedOrderedStates = [
  * @returns {string} a valid Task State name, or null if not found
  * @link @see https://github.com/cylc/cylc-flow/blob/d66ae5c3ce8c749c8178d1cd53cb8c81d1560346/lib/cylc/task_state_prop.py
  */
-function extractGroupState (childStates, isStopped = false) {
+function extractGroupState(childStates, isStopped = false) {
   const states = isStopped ? isStoppedOrderedStates : TaskState.enumValues
   for (const state of states) {
     if (childStates.includes(state.name)) {
@@ -50,7 +50,7 @@ function extractGroupState (childStates, isStopped = false) {
   return ''
 }
 
-function latestJob (taskProxy) {
+function latestJob(taskProxy) {
   if (taskProxy && taskProxy.children && taskProxy.children.length > 0) {
     return taskProxy.children[0].node
   }
@@ -70,7 +70,7 @@ function latestJob (taskProxy) {
  *   }
  * }
  */
-function jobMessageOutputs (jobNode) {
+function jobMessageOutputs(jobNode) {
   const ret = []
   let messageOutput
 
@@ -93,15 +93,11 @@ function jobMessageOutputs (jobNode) {
       ret.push({
         label: message,
         message: `Task Message: ${message}`,
-        isMessage: true
+        isMessage: true,
       })
     }
   }
   return ret
 }
 
-export {
-  extractGroupState,
-  latestJob,
-  jobMessageOutputs
-}
+export { extractGroupState, latestJob, jobMessageOutputs }

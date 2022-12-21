@@ -27,28 +27,28 @@ describe('WorkflowIcon', () => {
    * @param {Object} options - component options
    * @returns {Wrapper<WorkflowIcon>} - component test wrapper
    */
-  const mountFunction = options => {
+  const mountFunction = (options) => {
     return shallowMount(WorkflowIcon, {
       localVue,
-      ...options
+      ...options,
     })
   }
   it('should create a workflow-icon component with the right icon', () => {
     const tests = [
       {
         status: '',
-        expected: WorkflowState.ERROR.icon
+        expected: WorkflowState.ERROR.icon,
       },
       {
         status: WorkflowState.STOPPED.name,
-        expected: WorkflowState.STOPPED.icon
-      }
+        expected: WorkflowState.STOPPED.icon,
+      },
     ]
-    tests.forEach(test => {
+    tests.forEach((test) => {
       const wrapper = mountFunction({
         propsData: {
-          status: test.status
-        }
+          status: test.status,
+        },
       })
       expect(wrapper.vm.getIcon()).to.equal(test.expected)
     })

@@ -15,70 +15,71 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  mutationStatus,
-  processMutations
-} from '@/utils/aotf'
-import {
-  MUTATIONS
-} from '../support/graphql'
+import { mutationStatus, processMutations } from '@/utils/aotf'
+import { MUTATIONS } from '../support/graphql'
 import { cloneDeep } from 'lodash'
 
-function mockApolloClient () {
+function mockApolloClient() {
   const mutations = []
-  cy.window().its('app.$workflowService').then(service => {
-    // mock the apollo client's mutate method to catch low-level calls
-    service.apolloClient.mutate = (args) => {
-      // log this for later
-      mutations.push(args)
-      // return something roughly the same shape as what graphql would
-      const ret = {}
-      ret.data = {}
-      ret.data[`${args.mutation.definitions[0].name.value}`] = {
-        result: []
+  cy.window()
+    .its('app.$workflowService')
+    .then((service) => {
+      // mock the apollo client's mutate method to catch low-level calls
+      service.apolloClient.mutate = (args) => {
+        // log this for later
+        mutations.push(args)
+        // return something roughly the same shape as what graphql would
+        const ret = {}
+        ret.data = {}
+        ret.data[`${args.mutation.definitions[0].name.value}`] = {
+          result: [],
+        }
+        return ret
       }
-      return ret
-    }
-  })
+    })
   return mutations
 }
 
-function mockWorkflowService () {
+function mockWorkflowService() {
   const mutations = []
-  cy.window().its('app.$workflowService').then(service => {
-    // mock the workflow service's mutate method to catch high-level calls
-    service.mutate = (args) => {
-      // log this for later
-      mutations.push(args)
-      // return something roughly the same shape as what the workflow
-      // service would
-      return [mutationStatus.SUCCEEDED, {}]
-    }
-  })
+  cy.window()
+    .its('app.$workflowService')
+    .then((service) => {
+      // mock the workflow service's mutate method to catch high-level calls
+      service.mutate = (args) => {
+        // log this for later
+        mutations.push(args)
+        // return something roughly the same shape as what the workflow
+        // service would
+        return [mutationStatus.SUCCEEDED, {}]
+      }
+    })
   return mutations
 }
 
 describe('Api On The Fly', () => {
   beforeEach(() => {
-    cy.intercept('/graphql', req => {
+    cy.intercept('/graphql', (req) => {
       if (req.body.query.includes('__schema')) {
         req.alias = 'IntrospectQuery' // equivalent to `.as('IntrospectQuery')`
       }
     })
     cy.visit('/#/workflows/one')
-    cy.window().its('app.$workflowService').then(service => {
-      const mutations = cloneDeep(MUTATIONS)
-      processMutations(mutations, [])
-      // mock the apollo client's mutate method to catch low-level calls
-      service.introspection = Promise.resolve({
-        mutations,
-        types: [],
-        queries: []
+    cy.window()
+      .its('app.$workflowService')
+      .then((service) => {
+        const mutations = cloneDeep(MUTATIONS)
+        processMutations(mutations, [])
+        // mock the apollo client's mutate method to catch low-level calls
+        service.introspection = Promise.resolve({
+          mutations,
+          types: [],
+          queries: [],
+        })
+        service.primaryMutations = {
+          workflow: ['workflowMutation'],
+        }
       })
-      service.primaryMutations = {
-        workflow: ['workflowMutation']
-      }
-    })
   })
   describe('cylc-object', () => {
     it('correctly associates objects with mutations', () => {
@@ -87,9 +88,9 @@ describe('Api On The Fly', () => {
       cy.wait(['@IntrospectQuery'])
 
       // expand the second task so that its job is visible
-      cy
-        .get(':nth-child(2) > .node > .node-data > .c-task:first')
-        .parent().parent()
+      cy.get(':nth-child(2) > .node > .node-data > .c-task:first')
+        .parent()
+        .parent()
         .find('.node-expand-collapse-button:first')
         .click()
 
@@ -98,50 +99,44 @@ describe('Api On The Fly', () => {
         {
           selector: '.node-data-cycle > .c-task:first',
           mutationTitle: 'Cycle Mutation',
-          mutationText: 'cycle'
+          mutationText: 'cycle',
         },
         // family
         {
           selector: '.node-data-family > .c-task:first',
           mutationTitle: 'Namespace Mutation',
-          mutationText: 'namespace'
+          mutationText: 'namespace',
         },
         // task
         {
           selector: '.node-data-task > .c-task:first',
           mutationTitle: 'Namespace Mutation',
-          mutationText: 'namespace'
+          mutationText: 'namespace',
         },
         // job (in task summary)
         {
           selector: '.node-data-task > .node-summary > .c-job:first',
           mutationTitle: 'Job Mutation',
-          mutationText: 'job'
+          mutationText: 'job',
         },
         // job (expanded)
         {
           selector: '.node-data-job:visible > .c-job',
           mutationTitle: 'Job Mutation',
-          mutationText: 'job'
-        }
+          mutationText: 'job',
+        },
       ]
 
       for (const test of tests) {
         // click on a cycle point node
-        cy
-          .get(test.selector)
-          .should('exist')
-          .should('be.visible')
-          .click()
+        cy.get(test.selector).should('exist').should('be.visible').click()
         // ensure it opens the mutation menu
-        cy
-          .get('.c-mutation-menu-list:first')
+        cy.get('.c-mutation-menu-list:first')
           .should('exist')
           .should('be.visible')
           .within(() => {
             // ensure the mutation menu is associated with the correct object
-            cy
-              .get('.v-list-item')
+            cy.get('.v-list-item')
               .should('have.length', 1)
               .get('.v-list-item__title:first')
               .should('have.text', test.mutationTitle)
@@ -149,13 +144,9 @@ describe('Api On The Fly', () => {
               .should('have.text', test.mutationText)
           })
         // click outside of the menu
-        cy
-          .get('.workflow-panel:first')
-          .click({ force: true })
+        cy.get('.workflow-panel:first').click({ force: true })
         // ensure that the menu has closed
-        cy
-          .get('.c-mutation-menu-list')
-          .should('not.be.visible')
+        cy.get('.c-mutation-menu-list').should('not.be.visible')
       }
     })
 
@@ -168,15 +159,13 @@ describe('Api On The Fly', () => {
       cy.wait(['@IntrospectQuery'])
 
       // open the mutation menu
-      cy
-        .get('.node-data-cycle > .c-task:first')
+      cy.get('.node-data-cycle > .c-task:first')
         .should('exist')
         .should('be.visible')
         .click()
 
       // click on the first mutation
-      cy
-        .get('.c-mutation-menu-list:first')
+      cy.get('.c-mutation-menu-list:first')
         .find('.v-list-item__content:first')
         .should('exist')
         .should('be.visible')
@@ -187,8 +176,9 @@ describe('Api On The Fly', () => {
           const mutation = mutations[0]
 
           // ...which should be the cycleMutation...
-          expect(mutation.mutation.definitions[0].name.value)
-            .to.equal('cycleMutation')
+          expect(mutation.mutation.definitions[0].name.value).to.equal(
+            'cycleMutation'
+          )
 
           // ...which should be called with the cycle point of the selected node
           // as an argument
@@ -207,28 +197,23 @@ describe('Api On The Fly', () => {
       cy.wait(['@IntrospectQuery'])
 
       // before we do anything the mutation editor should be closed
-      cy
-        .get('.v-dialog')
-        .should('have.length', 0)
+      cy.get('.v-dialog').should('have.length', 0)
 
       // open the mutation menu
-      cy
-        .get('.node-data-cycle > .c-task:first')
+      cy.get('.node-data-cycle > .c-task:first')
         .should('exist')
         .should('be.visible')
         .click()
 
       // click on the first mutation
-      cy
-        .get('.c-mutation-menu-list:first')
+      cy.get('.c-mutation-menu-list:first')
         .find('[data-cy=mutation-edit]')
         .should('exist')
         .should('be.visible')
         .click()
 
       // this should open the mutation editor
-      cy
-        .get('.v-dialog')
+      cy.get('.v-dialog')
         .should('be.visible')
         .should('have.length', 1)
 
@@ -241,8 +226,9 @@ describe('Api On The Fly', () => {
           const mutation = mutations[0]
 
           // ...which should be the cycleMutation...
-          expect(mutation.mutation.definitions[0].name.value)
-            .to.equal('cycleMutation')
+          expect(mutation.mutation.definitions[0].name.value).to.equal(
+            'cycleMutation'
+          )
 
           // ...which should be called with the cycle point of the selected node
           // as an argument
@@ -260,8 +246,7 @@ describe('Api On The Fly', () => {
       expect(mutations.length).to.equal(0)
 
       // click the hold-release button
-      cy
-        .get('#workflow-play-pause-button')
+      cy.get('#workflow-play-pause-button')
         .should('be.visible')
         .click()
         .then(() => {
@@ -282,8 +267,7 @@ describe('Api On The Fly', () => {
       cy.wait(['@IntrospectQuery'])
 
       // click the hold-release button
-      cy
-        .get('#workflow-stop-button')
+      cy.get('#workflow-stop-button')
         .should('be.visible')
         .click()
         .then(() => {
@@ -303,8 +287,7 @@ describe('Api On The Fly', () => {
       cy.wait(['@IntrospectQuery'])
 
       // click the mutations button
-      cy
-        .get('#workflow-mutate-button')
+      cy.get('#workflow-mutate-button')
         .should('be.visible')
         .click()
         // this should open the mutations menu

@@ -20,17 +20,10 @@ import Vue from 'vue'
 import { Tokens } from '@/utils/uid'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
 
-const NODE_TYPES = [
-  'user',
-  'workflow-part',
-  'workflow',
-  'cycle',
-  'task',
-  'job'
-]
+const NODE_TYPES = ['user', 'workflow-part', 'workflow', 'cycle', 'task', 'job']
 
 /* Merge an update into a reactive blob of data */
-export function merge (data, update) {
+export function merge(data, update) {
   for (const [key, value] of Object.entries(update || {})) {
     Vue.set(data, key, value)
   }
@@ -39,7 +32,7 @@ export function merge (data, update) {
 const state = {
   cylcTree: {
     $index: {},
-    children: []
+    children: [],
   },
   /**
    * This holds the name of the current workflow. This is set by VueRouter
@@ -50,7 +43,7 @@ const state = {
    *
    * @type {String}
    */
-  workflowName: null
+  workflowName: null,
 }
 
 const getters = {
@@ -83,26 +76,23 @@ const getters = {
       if (parentNodeTypes.includes(item.type)) {
         // this is above "nodeTyoe" in the tree, look through its child nodes
         stack.push(...item.children)
-      } else if (
-        item.type === nodeType &&
-        (!ids || ids.includes(item.id))
-      ) {
+      } else if (item.type === nodeType && (!ids || ids.includes(item.id))) {
         ret.push(item)
       }
     }
     return ret
-  }
+  },
 }
 
 /* Initialise the data store. */
-function createTree (state) {
+function createTree(state) {
   // console.log('@@ Create')
   if (state.cylcTree) {
     return
   }
   const tree = {
     $index: {},
-    id: '$root'
+    id: '$root',
   }
   Vue.set(tree, 'children', [])
   state.cylcTree = tree
@@ -110,7 +100,7 @@ function createTree (state) {
 }
 
 /* Wipe everything in the store. */
-function clearTree (state) {
+function clearTree(state) {
   // console.log('@@ CLEAR')
   for (const child of state.cylcTree.children) {
     remove(state, child.id)
@@ -119,7 +109,7 @@ function clearTree (state) {
 }
 
 /* Add a node to the global $index (flat lookup). */
-function addIndex (state, id, treeNode) {
+function addIndex(state, id, treeNode) {
   if (state.cylcTree.$index[id] === undefined) {
     // this is a new node => create it
     // console.log(`$i ++ ${id}`)
@@ -128,13 +118,13 @@ function addIndex (state, id, treeNode) {
 }
 
 /* Remove a node from the global $index (flat lookup). */
-function removeIndex (state, id) {
+function removeIndex(state, id) {
   // console.log(`$i -- ${id}`)
   Vue.delete(state.cylcTree.$index, id)
 }
 
 /* Retrieve a node from the global $index (flat lookup). */
-function getIndex (state, id) {
+function getIndex(state, id) {
   if (id === '$root') {
     // speial ID maps onto the tree root element
     // (note this avoids a circular reference which VueX does not like)
@@ -148,14 +138,12 @@ function getIndex (state, id) {
  * Defaults to looking in node.children, set childAttr to use a different
  * tree (e.g. familyTree).
  */
-function hasChild (node, id, attr = 'id', childAttr = 'children') {
-  return node[childAttr].some(
-    item => item[attr] === id
-  )
+function hasChild(node, id, attr = 'id', childAttr = 'children') {
+  return node[childAttr].some((item) => item[attr] === id)
 }
 
 /* Add a child node under a parent Node */
-function addChild (parentNode, childNode) {
+function addChild(parentNode, childNode) {
   // determine which list to add this node to
   // console.log(`$t ++ ${childNode.id}`)
   let key = 'children'
@@ -184,17 +172,14 @@ function addChild (parentNode, childNode) {
     comparator = (n) => n.name
   }
   const reverse = ['cycle', 'job'].includes(childNode.type)
-  const index = sortedIndexBy(
-    parentNode[key],
-    childNode,
-    comparator,
-    { reverse }
-  )
+  const index = sortedIndexBy(parentNode[key], childNode, comparator, {
+    reverse,
+  })
   parentNode[key].splice(index, 0, childNode)
 }
 
 /* Remove a child node from a parent node. */
-function removeChild (state, node, parentNode = null) {
+function removeChild(state, node, parentNode = null) {
   // console.log(`$t -- ${node.id}`)
   let key = 'children'
   if (node.type === '$namespace') {
@@ -210,9 +195,7 @@ function removeChild (state, node, parentNode = null) {
     // (this should not happen)
     return
   }
-  parentNode[key].splice(
-    parentNode[key].indexOf(node), 1
-  )
+  parentNode[key].splice(parentNode[key].indexOf(node), 1)
 }
 
 /* Recursively remove a node and anything underneath it.
@@ -220,16 +203,10 @@ function removeChild (state, node, parentNode = null) {
  * Set removeParent to also remove the parent node (convenience method to avoid
  * parent lookup).
  * */
-function removeTree (state, node, removeParent = true) {
+function removeTree(state, node, removeParent = true) {
   let pointer
-  const stack = [
-    ...node.children || [],
-    ...node.familyTree || []
-  ]
-  const removeIndicies = [
-    ...node.$namespaces || [],
-    ...node.$edges || []
-  ]
+  const stack = [...(node.children || []), ...(node.familyTree || [])]
+  const removeIndicies = [...(node.$namespaces || []), ...(node.$edges || [])]
   const removeNodes = []
   while (stack.length) {
     // walk the tree under the provided node to list nodes and indices for
@@ -257,7 +234,7 @@ function removeTree (state, node, removeParent = true) {
  *
  * This removes tasks / cycles / families etc, but stops at workflows.
  * */
-function cleanParents (state, node) {
+function cleanParents(state, node) {
   let pointer = node
   while (pointer.parent) {
     if (pointer.type !== 'workflow') {
@@ -279,7 +256,7 @@ function cleanParents (state, node) {
 /* Build / housekeep the familyTree based on the family information containined
  * in this node.
  */
-function applyInheritance (state, node) {
+function applyInheritance(state, node) {
   if (node.type === 'family') {
     const childTasks = node.node.childTasks || []
 
@@ -295,8 +272,10 @@ function applyInheritance (state, node) {
     }
 
     // remove old tasks
-    for (const child of node.children.filter(child => child.type === 'task')) {
-      if (childTasks.filter(x => x.id === child.id).length === 0) {
+    for (const child of node.children.filter(
+      (child) => child.type === 'task'
+    )) {
+      if (childTasks.filter((x) => x.id === child.id).length === 0) {
         removeChild(state, child, node)
       }
     }
@@ -309,7 +288,7 @@ function applyInheritance (state, node) {
  * and update it if it does. This will also create any parent nodes in the tree
  * if they are not present.
  */
-function update (state, updatedData) {
+function update(state, updatedData) {
   const tokens = new Tokens(updatedData.id)
   const id = tokens.id
   // console.log(`@ += ${id}`)
@@ -329,7 +308,7 @@ function update (state, updatedData) {
     // node already exists, nothing more to do here
     return
   }
-  [treeParent, treeItem] = ret
+  ;[treeParent, treeItem] = ret
 
   // add the new item to the tree
   addChild(treeParent, treeItem)
@@ -343,7 +322,7 @@ function update (state, updatedData) {
  *
  * This is the family equivalent to "Tokens.tree".
  */
-function getFamilyTree (tokens, node) {
+function getFamilyTree(tokens, node) {
   // tree = [type, name, tokens]
   const ret = []
 
@@ -362,16 +341,12 @@ function getFamilyTree (tokens, node) {
     ret.push([
       'family',
       ancestor.name,
-      lastTokens.clone({ task: ancestor.name })
+      lastTokens.clone({ task: ancestor.name }),
     ])
   }
 
   // add the family itself
-  ret.push([
-    'family',
-    tokens[tokens.lowestToken()],
-    tokens
-  ])
+  ret.push(['family', tokens[tokens.lowestToken()], tokens])
 
   return ret
 }
@@ -380,7 +355,7 @@ function getFamilyTree (tokens, node) {
  *
  * This will create any parent nodes that are not present in the tree.
  */
-function createTreeNode (state, id, tokens, node) {
+function createTreeNode(state, id, tokens, node) {
   let tree = tokens.tree()
   let type = null
   let name = null
@@ -414,9 +389,9 @@ function createTreeNode (state, id, tokens, node) {
     } else {
       childAttribute = 'children'
     }
-    children = pointer[childAttribute].filter(
-      item => { return item.name === partName }
-    )
+    children = pointer[childAttribute].filter((item) => {
+      return item.name === partName
+    })
     if (!children.length) {
       // create intermediate node...
       // ...add a tree item
@@ -427,11 +402,11 @@ function createTreeNode (state, id, tokens, node) {
           // create a blank node with just the ID in it
           // when this item is added to the store later this node will be
           // updated in place
-          id: partTokens.id
+          id: partTokens.id,
         },
         parent: pointer.id,
         tokens: partTokens,
-        type: partType
+        type: partType,
       }
       Vue.set(intermediateItem, 'children', [])
       if (partType === 'cycle') {
@@ -447,7 +422,7 @@ function createTreeNode (state, id, tokens, node) {
     }
   }
 
-  if (pointer.children.some(child => child.id === id)) {
+  if (pointer.children.some((child) => child.id === id)) {
     // node already in the tree
     return
   }
@@ -458,7 +433,7 @@ function createTreeNode (state, id, tokens, node) {
     name,
     type,
     parent: pointer.id,
-    node
+    node,
   }
   Vue.set(treeNode, 'children', [])
   if (type === 'cycle') {
@@ -473,7 +448,7 @@ function createTreeNode (state, id, tokens, node) {
  * - The tree nodes and index entries will both be wiped.
  * - If the node is not in the store this will return (no error).
  */
-function remove (state, prunedID) {
+function remove(state, prunedID) {
   const tokens = new Tokens(prunedID)
   const id = tokens.id
   // console.log(`@ -- ${id}`)
@@ -487,14 +462,10 @@ function remove (state, prunedID) {
   const parentNode = getIndex(state, treeNode.parent)
   if (treeNode.type === '$edge') {
     // remove edge node
-    parentNode.$edges.splice(
-      parentNode.$edges.indexOf(treeNode), 1
-    )
+    parentNode.$edges.splice(parentNode.$edges.indexOf(treeNode), 1)
   } else if (treeNode.type === '$namespace') {
     // remove namespace node
-    parentNode.$namespaces.splice(
-      parentNode.$namespaces.indexOf(treeNode), 1
-    )
+    parentNode.$namespaces.splice(parentNode.$namespaces.indexOf(treeNode), 1)
   } else if (treeNode.type === 'family') {
     const firstParent = getIndex(state, treeNode.node.ancestors.slice(-1).id)
     // remove family proxy node
@@ -511,13 +482,13 @@ function remove (state, prunedID) {
 
 const mutations = {
   // the old callback methods
-  SET_WORKFLOW_NAME (state, data) {
+  SET_WORKFLOW_NAME(state, data) {
     state.workflowName = data
   },
   // the new cylc tree methods
   CREATE: createTree,
   UPDATE: update,
-  UPDATE_DELTAS (state, updated) {
+  UPDATE_DELTAS(state, updated) {
     // console.log('@ UPDATE')
     for (const updatedValue of Object.values(pick(updated, KEYS))) {
       const items = isArray(updatedValue) ? updatedValue : [updatedValue]
@@ -532,16 +503,16 @@ const mutations = {
   // remove an ID
   REMOVE: remove,
   // remove all IDs contained in a delta
-  REMOVE_DELTAS (state, pruned) {
+  REMOVE_DELTAS(state, pruned) {
     // console.log('@ REMOVE')
-    Object.keys(pick(pruned, PRUNED_KEYS_MULT)).forEach(prunedKey => {
+    Object.keys(pick(pruned, PRUNED_KEYS_MULT)).forEach((prunedKey) => {
       if (pruned[prunedKey]) {
         for (const prunedID of pruned[prunedKey]) {
           remove(state, prunedID)
         }
       }
     })
-    Object.keys(pick(pruned, PRUNED_KEYS_SING)).forEach(prunedKey => {
+    Object.keys(pick(pruned, PRUNED_KEYS_SING)).forEach((prunedKey) => {
       if (pruned[prunedKey]) {
         remove(state, pruned[prunedKey])
       }
@@ -549,7 +520,7 @@ const mutations = {
     // console.log('@@')
   },
   // remove all children of a node
-  REMOVE_CHILDREN (state, id) {
+  REMOVE_CHILDREN(state, id) {
     // console.log('@ REMOVE CHILDREN')
     const workflow = getIndex(state, id)
     if (workflow) {
@@ -557,13 +528,20 @@ const mutations = {
     }
     // console.log('@@')
   },
-  CLEAR: clearTree
+  CLEAR: clearTree,
 }
 
 // NOTE: deltas are applied in the order listed here
 // NOTE: we must create tasks before families (note cycles ARE families
 // because of the way we request them)
-const KEYS = ['workflow', 'taskProxies', 'cyclePoints', 'familyProxies', 'jobs', 'edges']
+const KEYS = [
+  'workflow',
+  'taskProxies',
+  'cyclePoints',
+  'familyProxies',
+  'jobs',
+  'edges',
+]
 
 // Pruned keys which return arrays of pruned IDs
 const PRUNED_KEYS_MULT = ['taskProxies', 'familyProxies', 'jobs', 'edges']
@@ -577,5 +555,5 @@ export const workflows = {
   state,
   getters,
   mutations,
-  actions
+  actions,
 }

@@ -63,18 +63,14 @@ import GraphView from '@/views/Graph'
 
 export default {
   name: 'Workflow',
-  mixins: [
-    pageMixin,
-    graphqlMixin,
-    subscriptionViewMixin
-  ],
+  mixins: [pageMixin, graphqlMixin, subscriptionViewMixin],
   components: {
     Lumino,
-    Toolbar
+    Toolbar,
   },
-  metaInfo () {
+  metaInfo() {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: this.getPageTitle('App.workflow', { name: this.workflowName }),
     }
   },
   data: () => ({
@@ -93,29 +89,24 @@ export default {
      *
      * @type {Object[]}
      */
-    views: [
-      TreeView,
-      TableView,
-      GraphView
-    ]
+    views: [TreeView, TableView, GraphView],
   }),
-  created () {
+  created() {
     // We need to load each view used by this view/component.
     // See "local-registration" in Vue.js documentation.
-    this.views.forEach(view => {
+    this.views.forEach((view) => {
       this.$options.components[view.name] = view
     })
   },
-  computed: {
-  },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
+  computed: {},
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
       vm.$nextTick(() => {
         vm.addView(TreeView.name)
       })
     })
   },
-  beforeRouteUpdate (to, from, next) {
+  beforeRouteUpdate(to, from, next) {
     // clear all widgets
     this.removeAllWidgets()
     next()
@@ -126,7 +117,7 @@ export default {
       this.addView(TreeView.name)
     })
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     // clear all widgets
     this.removeAllWidgets()
     next()
@@ -137,10 +128,8 @@ export default {
      *
      * @type {String} viewName - the name of the view to be added (Vue component name).
      */
-    addView (viewName) {
-      const view = this.views
-        .filter(v => v.name === viewName)
-        .slice(0)[0]
+    addView(viewName) {
+      const view = this.views.filter((v) => v.name === viewName).slice(0)[0]
       if (!view) {
         throw Error(`Unknown view "${viewName}"`)
       }
@@ -156,13 +145,13 @@ export default {
     /**
      * Remove all the widgets present in the UI.
      */
-    removeAllWidgets () {
+    removeAllWidgets() {
       const dockWidgets = this.$refs.lumino.dock.widgets()
       const widgets = []
-      each(iter(dockWidgets), widget => {
+      each(iter(dockWidgets), (widget) => {
         widgets.push(widget)
       })
-      widgets.forEach(widget => widget.close())
+      widgets.forEach((widget) => widget.close())
     },
     /**
      * Called for each widget removed. Each widget contains a subscription
@@ -177,7 +166,7 @@ export default {
      *   id: string
      * }} event UI event containing the widget ID (string value, needs to be parsed)
      */
-    onWidgetDeletedEvent (event) {
+    onWidgetDeletedEvent(event) {
       Vue.delete(this.widgets, event.id)
       // If we have no more widgets in the view, then we are not loading, not complete, not error,
       // but back to beginning. When a widget is added, if it uses a query, then the mixins will
@@ -185,7 +174,7 @@ export default {
       if (Object.entries(this.widgets).length === 0) {
         this.viewState = ViewState.NO_STATE
       }
-    }
-  }
+    },
+  },
 }
 </script>

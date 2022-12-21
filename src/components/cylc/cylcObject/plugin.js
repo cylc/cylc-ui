@@ -18,11 +18,11 @@
 // reference to closure listeners (needed as we are using variables from another scope)
 const listeners = new WeakMap()
 
-function bind (el, binding, vnode) {
+function bind(el, binding, vnode) {
   const listener = function (e) {
     vnode.context.$eventBus.emit('show-mutations-menu', {
       node: binding.value,
-      event: e
+      event: e,
     })
   }
   el.addEventListener('click', listener)
@@ -30,13 +30,13 @@ function bind (el, binding, vnode) {
   listeners.set(el, listener)
 }
 
-function unbind (el) {
+function unbind(el) {
   // Clean up to avoid memory issues
   el.removeEventListener('click', listeners.get(el))
   listeners.delete(el)
 }
 
-function update (el, binding, newVnode, oldVnode) {
+function update(el, binding, newVnode, oldVnode) {
   if (binding.value !== binding.oldValue) {
     unbind(el)
     bind(el, binding, newVnode)
@@ -52,12 +52,12 @@ export default {
    * @param {object} Vue - Vue application
    * @param {*} options - options passed to the plug-in (if any)
    */
-  install (Vue, options) {
+  install(Vue, options) {
     // add a global directive
     Vue.directive('cylc-object', {
       bind,
       unbind,
-      update
+      update,
     })
-  }
+  },
 }

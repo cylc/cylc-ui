@@ -28,18 +28,16 @@ Vue.use(Vuetify)
 
 const localVue = createLocalVue()
 localVue.prototype.$eventBus = {
-  emit () {}
+  emit() {},
 }
 localVue.prototype.$workflowService = {
-  register () {},
-  unregister () {},
-  subscribe () {},
+  register() {},
+  unregister() {},
+  subscribe() {},
   introspection: Promise.resolve({
-    mutations: [
-      { args: [] }
-    ],
-    types: []
-  })
+    mutations: [{ args: [] }],
+    types: [],
+  }),
 }
 localVue.use(CylcObjectPlugin)
 
@@ -49,8 +47,8 @@ describe('Table component', () => {
     vuetify = new Vuetify({
       theme: { disable: true },
       icons: {
-        iconfont: 'mdi'
-      }
+        iconfont: 'mdi',
+      },
     })
   })
   // mount function from Vuetify docs https://vuetifyjs.com/ru/getting-started/unit-testing/
@@ -58,43 +56,52 @@ describe('Table component', () => {
    * @param options
    * @returns {Wrapper<Tree>}
    */
-  const mountFunction = options => {
+  const mountFunction = (options) => {
     // the mocks.$vuetify is for https://github.com/vuetifyjs/vuetify/issues/9923
     return mount(Table, {
       localVue,
       mocks: {
         $vuetify: {
           lang: {
-            t: (val) => val
-          }
-        }
+            t: (val) => val,
+          },
+        },
       },
       vuetify,
-      ...options
+      ...options,
     })
   }
-  global.requestAnimationFrame = cb => cb()
+  global.requestAnimationFrame = (cb) => cb()
   it('should sort cycle point column descending by default', async () => {
     const wrapper = mountFunction({
       propsData: {
-        tasks: simpleTableTasks
-      }
+        tasks: simpleTableTasks,
+      },
     })
 
     // check the the raw task data has the cycle points from lowest to highest
-    expect(wrapper.vm.tasks[wrapper.vm.filteredTasks.length - 1].task.tokens.cycle).to.equal('20000103T0000Z')
+    expect(
+      wrapper.vm.tasks[wrapper.vm.filteredTasks.length - 1].task.tokens.cycle
+    ).to.equal('20000103T0000Z')
     expect(wrapper.vm.tasks[0].task.tokens.cycle).to.equal('20000101T0000Z')
 
     // check that the html have the cycle points from high to low
     await wrapper.vm.$nextTick()
-    expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element.innerHTML).to.equal('20000103T0000Z')
-    expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.filteredTasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal('20000101T0000Z')
+    expect(
+      wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element
+        .innerHTML
+    ).to.equal('20000103T0000Z')
+    expect(
+      wrapper.find(
+        `table > tbody > tr:nth-child(${wrapper.vm.filteredTasks.length}) > td:nth-child(3)`
+      ).element.innerHTML
+    ).to.equal('20000101T0000Z')
   })
   it('should display the table with valid data', () => {
     const wrapper = mountFunction({
       propsData: {
-        tasks: simpleTableTasks
-      }
+        tasks: simpleTableTasks,
+      },
     })
     expect(wrapper.props().tasks[0].task.name).to.equal('taskA')
     expect(wrapper.find('div')).to.not.equal(null)
@@ -104,8 +111,8 @@ describe('Table component', () => {
       it('should not filter by name or tasks by default', () => {
         const wrapper = mountFunction({
           propsData: {
-            tasks: simpleTableTasks
-          }
+            tasks: simpleTableTasks,
+          },
         })
         expect(wrapper.vm.activeFilters).to.equal(null)
         expect(wrapper.vm.filteredTasks.length).to.equal(3)
@@ -115,15 +122,15 @@ describe('Table component', () => {
       it('should filter by name', () => {
         const wrapper = mountFunction({
           propsData: {
-            tasks: simpleTableTasks
+            tasks: simpleTableTasks,
           },
-          data () {
+          data() {
             return {
               tasksFilter: {
-                name: 'taskA'
-              }
+                name: 'taskA',
+              },
             }
-          }
+          },
         })
         expect(wrapper.vm.filteredTasks.length).to.equal(3)
         wrapper.vm.filterTasks()
@@ -132,18 +139,16 @@ describe('Table component', () => {
       it('should filter by task state', () => {
         const wrapper = mountFunction({
           propsData: {
-            tasks: simpleTableTasks
+            tasks: simpleTableTasks,
           },
-          data () {
+          data() {
             return {
               tasksFilter: {
                 name: '',
-                states: [
-                  TaskState.WAITING.name
-                ]
-              }
+                states: [TaskState.WAITING.name],
+              },
             }
-          }
+          },
         })
         expect(wrapper.vm.filteredTasks.length).to.equal(3)
         wrapper.vm.filterTasks()
@@ -152,18 +157,16 @@ describe('Table component', () => {
       it('should filter by task name and state', () => {
         const wrapper = mountFunction({
           propsData: {
-            tasks: simpleTableTasks
+            tasks: simpleTableTasks,
           },
-          data () {
+          data() {
             return {
               tasksFilter: {
                 name: 'taskA',
-                states: [
-                  TaskState.WAITING.name
-                ]
-              }
+                states: [TaskState.WAITING.name],
+              },
             }
-          }
+          },
         })
         expect(wrapper.vm.filteredTasks.length).to.equal(3)
         wrapper.vm.filterTasks()

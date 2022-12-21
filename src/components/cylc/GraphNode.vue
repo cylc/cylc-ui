@@ -18,7 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <g class="c-graph-node">
     <!-- the task icon -->
-    <symbol :id="nodeID" viewBox="-40 -40 140 140">
+    <symbol
+      :id="nodeID"
+      viewBox="-40 -40 140 140"
+    >
       <!--
         Use a "symbol" for the task node in order to apply a viewBox to it.
         This both contains it and makes it clickable.
@@ -38,15 +41,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </symbol>
     <use
       :href="`#${nodeID}`"
-      x="0" y="0"
-      width="150" height="150"
+      x="0"
+      y="0"
+      width="150"
+      height="150"
       v-cylc-object="task"
     />
 
     <g :transform="labelTransform">
       <!-- the task name -->
       <text
-        x="180" y="70"
+        x="180"
+        y="70"
         font-size="45"
       >
         {{ task.name }}
@@ -54,7 +60,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <!-- the cycle point -->
       <text
-        x="180" y="105"
+        x="180"
+        y="105"
         font-size="30"
       >
         {{ task.tokens.cycle }}
@@ -73,8 +80,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-for="(job, index) in jobsForDisplay"
         :key="job.id"
         :transform="`
-          translate(${index * 100 + ((index === 0) ? 0 : previousJobOffset)}, 0)
-          scale(${ (index === 0) ? mostRecentJobScale : '1' })
+          translate(${index * 100 + (index === 0 ? 0 : previousJobOffset)}, 0)
+          scale(${index === 0 ? mostRecentJobScale : '1'})
         `"
       >
         <job
@@ -87,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="job-overflow"
         v-if="numOverflowJobs"
         :transform="`
-          translate(${(maxJobs * 100) + 20}, 0)
+          translate(${maxJobs * 100 + 20}, 0)
         `"
       >
         <text
@@ -110,47 +117,47 @@ export default {
   name: 'GraphNode',
   components: {
     SVGTask,
-    Job
+    Job,
   },
   props: {
     task: {
       type: Object,
-      required: true
+      required: true,
     },
     jobs: {
       type: Array,
-      required: true
+      required: true,
     },
     maxJobs: {
       // maximum number of jobs to display before using an overflow indicator
       default: 6,
-      required: false
+      required: false,
     },
     mostRecentJobScale: {
       // the size of the most recent job icon relative to any previos jobs
       default: 1.2,
-      required: false
-    }
+      required: false,
+    },
   },
   computed: {
-    nodeID () {
+    nodeID() {
       return `graph-node-${this.task.id}`
     },
-    startTime () {
+    startTime() {
       return this.jobs?.[0]?.node?.startedTime
     },
-    jobsForDisplay () {
+    jobsForDisplay() {
       // the first `this.maxJobs` items of `this.jobs`
       return this.jobs.slice(0, this.maxJobs)
     },
-    numOverflowJobs () {
+    numOverflowJobs() {
       // the number of overflowing (i.e. hidden) jobs
       if (this.jobs.length > this.maxJobs) {
         return this.jobs.length - this.maxJobs
       }
       return 0
     },
-    labelTransform () {
+    labelTransform() {
       // if there are no jobs then nudge the text (task / cycle) down a little
       // so that it is centered on the task icon
       if (this.jobs.length) {
@@ -158,11 +165,11 @@ export default {
       }
       return 'translate(0, 15)'
     },
-    previousJobOffset () {
+    previousJobOffset() {
       // the most recent job is larger so all subsequent jobs need to be bumped
       // along a bit further to account for this
-      return (this.mostRecentJobScale * 100) - 100 // y offset in px
-    }
-  }
+      return this.mostRecentJobScale * 100 - 100 // y offset in px
+    },
+  },
 }
 </script>

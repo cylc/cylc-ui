@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function waitForGraphLayout () {
+function waitForGraphLayout() {
   // wait for the initial graph layout to be performed
-  cy
-    .get('.c-graph:first')
-    .then(($el) => { checkGraphLayoutPerformed($el) })
+  cy.get('.c-graph:first').then(($el) => {
+    checkGraphLayoutPerformed($el)
+  })
 }
 
-function checkGraphLayoutPerformed ($el, depth = 0) {
+function checkGraphLayoutPerformed($el, depth = 0) {
   // Check if the graphID has been set (indicating successful layout) or wait
   // one second.
   // This is a recursive function which will be called up to 10 times. We can't
@@ -31,9 +31,9 @@ function checkGraphLayoutPerformed ($el, depth = 0) {
     expect('graph loaded').to.equal(true)
   } else if (typeof $el[0].__vue__.graphID !== 'number') {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy
-      .wait(1000)
-      .then(() => { checkGraphLayoutPerformed($el, depth + 1) })
+    cy.wait(1000).then(() => {
+      checkGraphLayoutPerformed($el, depth + 1)
+    })
   }
 }
 

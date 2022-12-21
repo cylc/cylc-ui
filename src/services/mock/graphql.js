@@ -38,7 +38,7 @@ const DATA_MAPPING = data
  * @param {string} query - GraphQL query
  * @returns {string} operation name, or empty string if not found
  */
-function getOperationName (query) {
+function getOperationName(query) {
   const regexp = /\s*(subscription|query|mutation)\s+([a-zA-Z0-9_]+)/
   const match = regexp.exec(query)
   if (match && match.length >= 3) {
@@ -53,7 +53,7 @@ function getOperationName (query) {
  * @param {string} operationName - GraphQL query operation name (e.g. GScanQuery, WorkflowTableQuery, etc)
  * @returns {*} GraphQL response
  */
-function getGraphQLQueryResponse (operationName) {
+function getGraphQLQueryResponse(operationName) {
   // Return the data if we have that in the DATA_MAPPING dict
   return DATA_MAPPING[operationName] || {}
 }
@@ -65,7 +65,7 @@ function getGraphQLQueryResponse (operationName) {
  * @param {*} request - Express HTTP GraphQL request
  * @returns {*} GraphQL response
  */
-function handleGraphQLRequest (request) {
+function handleGraphQLRequest(request) {
   const isSchemaQuery = request.body.query.includes('__schema')
   const operationName = isSchemaQuery
     ? 'IntrospectionQuery'
@@ -76,5 +76,5 @@ function handleGraphQLRequest (request) {
 module.exports = {
   getOperationName,
   getGraphQLQueryResponse,
-  handleGraphQLRequest
+  handleGraphQLRequest,
 }

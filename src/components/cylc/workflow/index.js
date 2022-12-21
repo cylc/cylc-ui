@@ -18,10 +18,8 @@
 /**
  * @returns {String} an ID for a new Widget
  */
-function createWidgetId () {
-  return `${(new Date()).getTime()}`
+function createWidgetId() {
+  return `${new Date().getTime()}`
 }
 
-export {
-  createWidgetId
-}
+export { createWidgetId }

@@ -28,17 +28,17 @@ import { mapActions } from 'vuex'
  * @see Alert
  */
 export default {
-  data () {
+  data() {
     return {
-      viewState: ViewState.NO_STATE
+      viewState: ViewState.NO_STATE,
     }
   },
   computed: {
-    isLoading () {
+    isLoading() {
       return this.viewState === ViewState.LOADING
-    }
+    },
   },
   methods: {
-    ...mapActions(['setAlert'])
-  }
+    ...mapActions(['setAlert']),
+  },
 }

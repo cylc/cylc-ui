@@ -36,14 +36,12 @@ import 'nprogress/css/nprogress.css'
 import paths from './paths'
 import Alert from '@/model/Alert.model'
 
-function route (path) {
+function route(path) {
   const copy = Object.assign({}, path)
   const view = copy.view
   return Object.assign(copy, {
     name: path.name || view,
-    component: (resolve) => import(
-      `@/views/${view}.vue`
-    ).then(resolve)
+    component: (resolve) => import(`@/views/${view}.vue`).then(resolve),
   })
 }
 
@@ -52,9 +50,9 @@ Vue.use(Router)
 // Create a new router
 const router = new Router({
   mode: 'hash',
-  routes: paths.map(path => route(path)),
+  routes: paths.map((path) => route(path)),
   //  .concat([{ path: '*', redirect: '/dashboard' }]),
-  scrollBehavior (to, from, savedPosition) {
+  scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
     }
@@ -62,7 +60,7 @@ const router = new Router({
       return { selector: to.hash }
     }
     return { x: 0, y: 0 }
-  }
+  },
 })
 
 Vue.use(Meta)
@@ -90,12 +88,13 @@ router.beforeResolve((to, from, next) => {
 
 router.beforeEach((to, from, next) => {
   if (!store.state.user.user) {
-    router.app.$userService.getUserProfile()
+    router.app.$userService
+      .getUserProfile()
       .then((user) => {
         store.commit('user/SET_USER', user)
         next()
       })
-      .catch(error => {
+      .catch((error) => {
         const alert = new Alert(error, null, 'error')
         return store.dispatch('setAlert', alert)
       })

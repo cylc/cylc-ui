@@ -34,13 +34,11 @@ describe('Universal ID (UID)', () => {
         workflow_id: '~user/workflow',
         relative_id: 'cycle/task/01',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
 
       // workflow ID fragment
-      expect(
-        Object.assign({}, new Tokens('~user'))
-      ).to.deep.equal({
+      expect(Object.assign({}, new Tokens('~user'))).to.deep.equal({
         user: 'user',
         workflow: undefined,
         cycle: undefined,
@@ -50,13 +48,11 @@ describe('Universal ID (UID)', () => {
         workflow_id: '~user',
         relative_id: '',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
 
       // relative ID fragment
-      expect(
-        Object.assign({}, new Tokens('cycle', true))
-      ).to.deep.equal({
+      expect(Object.assign({}, new Tokens('cycle', true))).to.deep.equal({
         user: undefined,
         workflow: undefined,
         cycle: 'cycle',
@@ -66,7 +62,7 @@ describe('Universal ID (UID)', () => {
         workflow_id: '',
         relative_id: 'cycle',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
     })
 
@@ -84,7 +80,7 @@ describe('Universal ID (UID)', () => {
         workflow_id: '',
         relative_id: '',
         namespace: 'foo',
-        edge: undefined
+        edge: undefined,
       })
 
       // edges
@@ -100,7 +96,7 @@ describe('Universal ID (UID)', () => {
         workflow_id: '',
         relative_id: '',
         namespace: undefined,
-        edge: [new Tokens('1/a', true), new Tokens('1/b', true)]
+        edge: [new Tokens('1/a', true), new Tokens('1/b', true)],
       })
     })
 
@@ -119,9 +115,7 @@ describe('Universal ID (UID)', () => {
       b.set({ workflow: 'x', task: 't' })
 
       // "a" should be unchanged
-      expect(
-        Object.assign({}, a)
-      ).to.deep.equal({
+      expect(Object.assign({}, a)).to.deep.equal({
         user: undefined,
         workflow: 'w',
         cycle: 'c',
@@ -131,13 +125,11 @@ describe('Universal ID (UID)', () => {
         workflow_id: 'w',
         relative_id: 'c',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
 
       // "b" should be updated
-      expect(
-        Object.assign({}, b)
-      ).to.deep.equal({
+      expect(Object.assign({}, b)).to.deep.equal({
         user: undefined,
         workflow: 'x',
         cycle: 'c',
@@ -147,7 +139,7 @@ describe('Universal ID (UID)', () => {
         workflow_id: 'x',
         relative_id: 'c/t',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
 
       // should be able to wipe tokens using "undefined"
@@ -158,9 +150,7 @@ describe('Universal ID (UID)', () => {
     it('should clone and set in the same operation', () => {
       const a = new Tokens('w//c')
       const b = a.clone({ cycle: 'd', task: 't' })
-      expect(
-        Object.assign({}, b)
-      ).to.deep.equal({
+      expect(Object.assign({}, b)).to.deep.equal({
         user: undefined,
         workflow: 'w',
         cycle: 'd',
@@ -170,7 +160,7 @@ describe('Universal ID (UID)', () => {
         workflow_id: 'w',
         relative_id: 'd/t',
         namespace: undefined,
-        edge: undefined
+        edge: undefined,
       })
     })
 
@@ -180,108 +170,42 @@ describe('Universal ID (UID)', () => {
         ['a', new Tokens('~u/a')],
         ['b', new Tokens('~u/a/b')],
         ['c', new Tokens('~u/a/b/c')],
-        ['d', new Tokens('~u/a/b/c/d')]
+        ['d', new Tokens('~u/a/b/c/d')],
       ])
     })
 
     it('should return the lowest token', () => {
       // absolute
-      expect(
-        new Tokens('~u/w//c/t/01').lowestToken()
-      ).to.equal('job')
-      expect(
-        new Tokens('~u/w//c/t').lowestToken()
-      ).to.equal('task')
-      expect(
-        new Tokens('~u/w//c').lowestToken()
-      ).to.equal('cycle')
-      expect(
-        new Tokens('~u/w').lowestToken()
-      ).to.equal('workflow')
-      expect(
-        new Tokens('~u').lowestToken()
-      ).to.equal('user')
+      expect(new Tokens('~u/w//c/t/01').lowestToken()).to.equal('job')
+      expect(new Tokens('~u/w//c/t').lowestToken()).to.equal('task')
+      expect(new Tokens('~u/w//c').lowestToken()).to.equal('cycle')
+      expect(new Tokens('~u/w').lowestToken()).to.equal('workflow')
+      expect(new Tokens('~u').lowestToken()).to.equal('user')
       // relative
-      expect(
-        new Tokens('c/t/01', true).lowestToken()
-      ).to.equal('job')
-      expect(
-        new Tokens('c/t', true).lowestToken()
-      ).to.equal('task')
-      expect(
-        new Tokens('c', true).lowestToken()
-      ).to.equal('cycle')
+      expect(new Tokens('c/t/01', true).lowestToken()).to.equal('job')
+      expect(new Tokens('c/t', true).lowestToken()).to.equal('task')
+      expect(new Tokens('c', true).lowestToken()).to.equal('cycle')
     })
 
     it('should yield the tree to this token', () => {
-      expect(
-        new Tokens('~u/w1/w2/w3//c/t/01').tree()
-      ).to.deep.equal([
-        [
-          'user',
-          'u',
-          new Tokens('~u')
-        ],
-        [
-          'workflow-part',
-          'w1',
-          new Tokens('~u/w1')
-        ],
-        [
-          'workflow-part',
-          'w2',
-          new Tokens('~u/w1/w2')
-        ],
-        [
-          'workflow',
-          'w3',
-          new Tokens('~u/w1/w2/w3')
-        ],
-        [
-          'cycle',
-          'c',
-          new Tokens('~u/w1/w2/w3//c')
-        ],
-        [
-          'task',
-          't',
-          new Tokens('~u/w1/w2/w3//c/t')
-        ],
-        [
-          'job',
-          '01',
-          new Tokens('~u/w1/w2/w3//c/t/01')
-        ]
+      expect(new Tokens('~u/w1/w2/w3//c/t/01').tree()).to.deep.equal([
+        ['user', 'u', new Tokens('~u')],
+        ['workflow-part', 'w1', new Tokens('~u/w1')],
+        ['workflow-part', 'w2', new Tokens('~u/w1/w2')],
+        ['workflow', 'w3', new Tokens('~u/w1/w2/w3')],
+        ['cycle', 'c', new Tokens('~u/w1/w2/w3//c')],
+        ['task', 't', new Tokens('~u/w1/w2/w3//c/t')],
+        ['job', '01', new Tokens('~u/w1/w2/w3//c/t/01')],
       ])
 
-      expect(
-        new Tokens('~u/w//c').tree()
-      ).to.deep.equal([
-        [
-          'user',
-          'u',
-          new Tokens('~u')
-        ],
-        [
-          'workflow',
-          'w',
-          new Tokens('~u/w')
-        ],
-        [
-          'cycle',
-          'c',
-          new Tokens('~u/w//c')
-        ]
+      expect(new Tokens('~u/w//c').tree()).to.deep.equal([
+        ['user', 'u', new Tokens('~u')],
+        ['workflow', 'w', new Tokens('~u/w')],
+        ['cycle', 'c', new Tokens('~u/w//c')],
       ])
 
-      expect(
-        new Tokens('~u').tree()
-      ).to.deep.equal([
-        [
-          'user',
-          'u',
-          new Tokens('~u')
-        ]
+      expect(new Tokens('~u').tree()).to.deep.equal([
+        ['user', 'u', new Tokens('~u')],
       ])
     })
   })

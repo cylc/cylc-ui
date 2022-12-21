@@ -129,9 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- expired
 
       -->
-      <g
-        class="expired"
-      >
+      <g class="expired">
         <rect
           x="50"
           y="46"
@@ -183,9 +181,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         Paused icon representing isHeld.
       -->
-      <g
-        class="held"
-      >
+      <g class="held">
         <rect
           x="30"
           y="25"
@@ -207,9 +203,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         Burger bar-like icon representing isQueued.
       -->
-      <g
-        class="queued"
-      >
+      <g class="queued">
         <rect
           x="20"
           y="20"
@@ -239,9 +233,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         Dot icon representing isRunahead.
       -->
-      <g
-        class="runahead"
-      >
+      <g class="runahead">
         <circle
           cx="50"
           cy="50"
@@ -259,7 +251,7 @@ export default {
   name: 'SVGTask',
   props: {
     task: {
-      required: true
+      required: true,
     },
     startTime: {
       // The start time as an ISO8601 date-time string in expanded format
@@ -267,22 +259,22 @@ export default {
       // TODO: aim to remove this in due course
       // (we should be able to obtain this directly from the task)
       type: String,
-      required: false
+      required: false,
     },
     modifierSize: {
       // Scale the size of the task state modifier
       type: Number,
-      default: 0.7
+      default: 0.7,
     },
     coordinateOffset: {
       // You may need to provide this if encorporating this icon into a viewBox
       // otherwise the progress indicator may end up in the wrong place.
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   methods: {
-    getRunningStyle () {
+    getRunningStyle() {
       if (
         this.task.state === TaskState.RUNNING.name &&
         this.startTime &&
@@ -293,7 +285,7 @@ export default {
         // current time in ms
         const now = Date.now()
         // job elapsed time in s
-        const elapsedTime = ((now - startTime) / 1000)
+        const elapsedTime = (now - startTime) / 1000
         const ret = `
           animation-name: c8-task-progress-animation;
           animation-timing-function: steps(50);
@@ -306,7 +298,7 @@ export default {
       }
       return ''
     },
-    getModiferTransform () {
+    getModiferTransform() {
       // Returns the translation required to position the ".modifier" nicely in
       // relation to the ".status".
 
@@ -325,162 +317,163 @@ export default {
       // )
       const translation = -(
         // (1) the x/y translation to the edge of ".modifier"
-        (35.35 * this.modifierSize) +
-        // (2) the x/y translation to the edge of ".status"
-        42.42
+        (
+          35.35 * this.modifierSize +
+          // (2) the x/y translation to the edge of ".status"
+          42.42
+        )
       )
       return `
         scale(${this.modifierSize}, ${this.modifierSize})
         translate(${translation}, ${translation})
       `
     },
-    progressTransform () {
+    progressTransform() {
       return `rotate(-90, ${this.coordinateOffset}, ${this.coordinateOffset})`
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="scss">
-  $foreground: rgb(90,90,90);
-  $background: rgb(255,255,255);
+$foreground: rgb(90, 90, 90);
+$background: rgb(255, 255, 255);
 
-  .c8-task {
-    .status {
-      .outline {
-        // NOTE: ensure the outline is filled so that it can be clicked
-        fill: $background;
-        stroke: $foreground;
-      }
-      .progress {
-        fill: transparent;
-        stroke: $foreground;
-        transform-origin: 50% 50%;
-        opacity: 0.4;
-        /* 0% progress */
-        stroke-dashoffset: 157;
-      }
-      .dot {
-        fill: none;
-        stroke: none;
-      }
-      .hub {
-        fill: none;
-        stroke: none;
-      }
-      .cross rect {
-        fill: none;
-        stroke: none;
-      }
-      .expired rect {
-        fill: none;
-        stroke: none;
-      }
+.c8-task {
+  .status {
+    .outline {
+      // NOTE: ensure the outline is filled so that it can be clicked
+      fill: $background;
+      stroke: $foreground;
     }
-    .modifier {
-      .outline {
-        fill: none;
-        stroke: none;
-      }
-      .held rect {
-        fill: none;
-        stroke: none;
-      }
-      .queued rect {
-        fill: none;
-        stroke: none;
-      }
-      .runahead circle {
-        fill: none;
-        stroke: none;
-      }
+    .progress {
+      fill: transparent;
+      stroke: $foreground;
+      transform-origin: 50% 50%;
+      opacity: 0.4;
+      /* 0% progress */
+      stroke-dashoffset: 157;
     }
-
-    &.preparing .status .dot {
-      fill: $foreground;
+    .dot {
+      fill: none;
+      stroke: none;
     }
-
-    &.submitted .status .dot {
-      fill: $foreground;
+    .hub {
+      fill: none;
+      stroke: none;
     }
-
-    &.running .status .hub {
-      fill: $foreground;
+    .cross rect {
+      fill: none;
+      stroke: none;
     }
-    &.running .status .progress {
-      fill: $foreground;
+    .expired rect {
+      fill: none;
+      stroke: none;
     }
-
-    &.succeeded .status .outline {
-      fill: $foreground;
+  }
+  .modifier {
+    .outline {
+      fill: none;
+      stroke: none;
     }
-
-    &.failed .status {
-      .outline {
-        fill: $foreground;
-      }
-      .cross rect {
-        fill: $background;
-      }
+    .held rect {
+      fill: none;
+      stroke: none;
     }
-
-    &.submit-failed .status {
-      .outline {
-        fill: $background;
-      }
-      .cross rect {
-        fill: $foreground;
-      }
+    .queued rect {
+      fill: none;
+      stroke: none;
     }
-
-    &.expired .status {
-      .outline {
-        fill: $foreground;
-      }
-      .dot {
-        fill: $background;
-      }
-      .expired rect {
-        fill: $background;
-      }
-    }
-
-    &.held .modifier {
-      .outline {
-        stroke: $foreground;
-      }
-      .held rect {
-        fill: $foreground;
-      }
-    }
-
-    &.queued .modifier {
-      .queued rect {
-        fill: $foreground;
-      }
-    }
-
-    &.runahead .modifier {
-      .outline {
-        stroke: $foreground;
-      }
-      .runahead circle {
-        fill: $foreground;
-      }
+    .runahead circle {
+      fill: none;
+      stroke: none;
     }
   }
 
-  @keyframes c8-task-progress-animation {
-    // 157 = 0%
-    //  56 = 100%
-    from {
-      /* 0% progress (plus a couple of percent) */
-      stroke-dashoffset: 150;
+  &.preparing .status .dot {
+    fill: $foreground;
+  }
 
+  &.submitted .status .dot {
+    fill: $foreground;
+  }
+
+  &.running .status .hub {
+    fill: $foreground;
+  }
+  &.running .status .progress {
+    fill: $foreground;
+  }
+
+  &.succeeded .status .outline {
+    fill: $foreground;
+  }
+
+  &.failed .status {
+    .outline {
+      fill: $foreground;
     }
-    to {
-      /* 100% progress */
-      stroke-dashoffset: 56;
+    .cross rect {
+      fill: $background;
     }
   }
+
+  &.submit-failed .status {
+    .outline {
+      fill: $background;
+    }
+    .cross rect {
+      fill: $foreground;
+    }
+  }
+
+  &.expired .status {
+    .outline {
+      fill: $foreground;
+    }
+    .dot {
+      fill: $background;
+    }
+    .expired rect {
+      fill: $background;
+    }
+  }
+
+  &.held .modifier {
+    .outline {
+      stroke: $foreground;
+    }
+    .held rect {
+      fill: $foreground;
+    }
+  }
+
+  &.queued .modifier {
+    .queued rect {
+      fill: $foreground;
+    }
+  }
+
+  &.runahead .modifier {
+    .outline {
+      stroke: $foreground;
+    }
+    .runahead circle {
+      fill: $foreground;
+    }
+  }
+}
+
+@keyframes c8-task-progress-animation {
+  // 157 = 0%
+  //  56 = 100%
+  from {
+    /* 0% progress (plus a couple of percent) */
+    stroke-dashoffset: 150;
+  }
+  to {
+    /* 100% progress */
+    stroke-dashoffset: 56;
+  }
+}
 </style>

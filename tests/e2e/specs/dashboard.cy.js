@@ -20,35 +20,28 @@ import { WorkflowStateOrder } from '@/model/WorkflowState.model'
 describe('Dashboard', () => {
   it('Displays the Dashboard link as active on the left sidebar menu', () => {
     cy.visit('/#/')
-    cy
-      .get('div.v-list-item__title')
+    cy.get('div.v-list-item__title')
       .contains('Dashboard')
       .parent()
       .should('have.class', 'v-list-item--active')
   })
   it('Should display the icons', () => {
     cy.visit('/#/')
-    cy
-      .get('.c-dashboard .v-icon:first')
-      .find('svg')
-      .should('be.visible')
+    cy.get('.c-dashboard .v-icon:first').find('svg').should('be.visible')
   })
   it('Should display the states in order', () => {
     cy.visit('/#/')
-    cy
-      .get('#dashboard-workflows table tbody tr')
+    cy.get('#dashboard-workflows table tbody tr')
       .first()
       .find('td')
-      .then($tdElement => {
+      .then(($tdElement) => {
         return $tdElement[1].textContent.toLowerCase()
       })
       .should('equal', [...WorkflowStateOrder.entries()][0][0])
   })
   it('Should have disabled cylc hub button in single user mode', () => {
     cy.visit('/#/')
-    cy
-      .get('#cylc-hub-button')
-      .should('have.class', 'v-list-item--disabled')
+    cy.get('#cylc-hub-button').should('have.class', 'v-list-item--disabled')
   })
   // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
 })

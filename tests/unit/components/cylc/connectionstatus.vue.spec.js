@@ -28,20 +28,22 @@ describe('ConnectionStatus component', () => {
     vuetify = new Vuetify({
       theme: { disable: true },
       icons: {
-        iconfont: 'mdi'
-      }
+        iconfont: 'mdi',
+      },
     })
   })
   // args: isOffline
   const tests = [
     {
-      args: [false], expected: false
+      args: [false],
+      expected: false,
     },
     {
-      args: [true], expected: true
-    }
+      args: [true],
+      expected: true,
+    },
   ]
-  tests.forEach(test => {
+  tests.forEach((test) => {
     it('correctly hides or displays the connection status alert', () => {
       const wrapper = mount(ConnectionStatus, {
         localVue,
@@ -49,17 +51,24 @@ describe('ConnectionStatus component', () => {
         mocks: {
           $vuetify: {
             application: {
-              register: () => {}
-            }
-          }
+              register: () => {},
+            },
+          },
         },
         propsData: {
-          isOffline: test.args[0]
-        }
+          isOffline: test.args[0],
+        },
       })
-      expect(wrapper.props().isOffline).to.equal(test.args[0], `Wrong props value, expected ${test.args[0]}`)
-      const isVisible = wrapper.find('.v-snack__wrapper').element.style.display !== 'none'
-      expect(isVisible).to.equal(test.expected, `Incorrect component visibility: ${isVisible}`)
+      expect(wrapper.props().isOffline).to.equal(
+        test.args[0],
+        `Wrong props value, expected ${test.args[0]}`
+      )
+      const isVisible =
+        wrapper.find('.v-snack__wrapper').element.style.display !== 'none'
+      expect(isVisible).to.equal(
+        test.expected,
+        `Incorrect component visibility: ${isVisible}`
+      )
     })
   })
 })

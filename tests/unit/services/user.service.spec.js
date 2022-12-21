@@ -37,33 +37,33 @@ describe('UserService', () => {
   afterEach(() => sandbox.restore())
   describe('getUserProfile returns the logged-in user profile information', () => {
     it('should return user profile object', () => {
-      const userReturned = new Promise((resolve) => resolve(
-        {
+      const userReturned = new Promise((resolve) =>
+        resolve({
           data: {
             name: 'cylc-user-01',
             groups: ['root', 'wheel'],
             created: '2019-01-01',
-            admin: true
-          }
+            admin: true,
+          },
         })
       )
       sandbox.stub(axios, 'get').returns(userReturned)
-      return new UserService().getUserProfile()
-        .then(function (user) {
-          expect(user.username).to.equal('cylc-user-01')
-          expect(user.groups.length).to.equal(2)
-          expect(user.created).to.equal('2019-01-01')
-          expect(user.admin).to.equal(true)
-        })
+      return new UserService().getUserProfile().then(function (user) {
+        expect(user.username).to.equal('cylc-user-01')
+        expect(user.groups.length).to.equal(2)
+        expect(user.created).to.equal('2019-01-01')
+        expect(user.admin).to.equal(true)
+      })
     })
     it('should add an alert on error', () => {
       expect(store.state.alert).to.equal(null)
       const e = new Error('mock error')
       e.response = {
-        statusText: 'Test Status'
+        statusText: 'Test Status',
       }
       sandbox.stub(axios, 'get').rejects(e)
-      return new UserService().getUserProfile()
+      return new UserService()
+        .getUserProfile()
         .catch((error) => {
           const alert = new Alert(error.response.statusText, null, 'error')
           return store.dispatch('setAlert', alert)

@@ -74,18 +74,16 @@ import { formElement } from '@/components/graphqlFormGenerator/mixins'
 export default {
   name: 'g-map-item',
 
-  mixins: [
-    formElement
-  ],
+  mixins: [formElement],
 
   computed: {
-    tooltipProps () {
+    tooltipProps() {
       return {
         top: true,
         disabled: !this.value.frozenKey,
-        openDelay: 400
+        openDelay: 400,
       }
-    }
-  }
+    },
+  },
 }
 </script>

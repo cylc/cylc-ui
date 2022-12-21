@@ -33,10 +33,10 @@ const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
-      }
-    ]
+          kind: null,
+        },
+      },
+    ],
   },
   {
     name: 'unauthorisedMutation',
@@ -49,10 +49,10 @@ const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
-      }
-    ]
+          kind: null,
+        },
+      },
+    ],
   },
   {
     name: 'cycleMutation',
@@ -63,17 +63,17 @@ const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
+          kind: null,
+        },
       },
       {
         name: 'cycle',
         type: {
           name: 'CyclePoint',
-          kind: null
-        }
-      }
-    ]
+          kind: null,
+        },
+      },
+    ],
   },
   {
     name: 'namespaceMutation',
@@ -84,17 +84,17 @@ const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
+          kind: null,
+        },
       },
       {
         name: 'namespace',
         type: {
           name: 'NamespaceName',
-          kind: null
-        }
-      }
-    ]
+          kind: null,
+        },
+      },
+    ],
   },
   {
     name: 'jobMutation',
@@ -105,20 +105,18 @@ const MUTATIONS = [
         name: 'workflow',
         type: {
           name: 'WorkflowID',
-          kind: null
-        }
+          kind: null,
+        },
       },
       {
         name: 'job',
         type: {
           name: 'JobID',
-          kind: null
-        }
-      }
-    ]
-  }
+          kind: null,
+        },
+      },
+    ],
+  },
 ]
 
-export {
-  MUTATIONS
-}
+export { MUTATIONS }

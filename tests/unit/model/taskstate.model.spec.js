@@ -16,10 +16,7 @@
  */
 
 import { expect } from 'chai'
-import {
-  TaskState,
-  TaskStateUserOrder
-} from '@/model/TaskState.model'
+import { TaskState, TaskStateUserOrder } from '@/model/TaskState.model'
 
 describe('TaskState model', () => {
   describe('TaskStateUserOrder', () => {

@@ -17,9 +17,7 @@
 
 import { processMutations } from '@/utils/aotf'
 import { cloneDeep, upperFirst } from 'lodash'
-import {
-  MUTATIONS
-} from '../support/graphql'
+import { MUTATIONS } from '../support/graphql'
 import { Deferred } from '../../util'
 
 describe('Mutations component', () => {
@@ -31,7 +29,8 @@ describe('Mutations component', () => {
    * @param {string} nodeName - the tree node name, to search for and open the mutations form
    */
   const openMutationsForm = (nodeName) => {
-    cy.get('[data-cy=tree-view]').as('treeView')
+    cy.get('[data-cy=tree-view]')
+      .as('treeView')
       .find('.treeitem')
       .find('.c-task')
       .should('be.visible')
@@ -41,8 +40,7 @@ describe('Mutations component', () => {
       .parent()
       .find('.c-task')
       .click()
-    cy
-      .get('.c-mutation-menu-list:first')
+    cy.get('.c-mutation-menu-list:first')
       .find('[data-cy=mutation-edit]:first')
       .should('exist')
       .should('be.visible')
@@ -51,18 +49,20 @@ describe('Mutations component', () => {
 
   /** Patch the list of available mutations */
   const mockMutations = () => {
-    cy.window().its('app.$workflowService').then(service => {
-      const mutations = cloneDeep(MUTATIONS)
-      processMutations(mutations, [])
-      service.introspection = Promise.resolve({
-        mutations,
-        types: [],
-        queries: []
+    cy.window()
+      .its('app.$workflowService')
+      .then((service) => {
+        const mutations = cloneDeep(MUTATIONS)
+        processMutations(mutations, [])
+        service.introspection = Promise.resolve({
+          mutations,
+          types: [],
+          queries: [],
+        })
+        service.primaryMutations = {
+          workflow: ['workflowMutation'],
+        }
       })
-      service.primaryMutations = {
-        workflow: ['workflowMutation']
-      }
-    })
   }
 
   describe('Successful submission', () => {
@@ -77,9 +77,9 @@ describe('Mutations component', () => {
             data: {
               [req.body.operationName]: {
                 result: [true, {}],
-                __typename: upperFirst(req.body.operationName)
-              }
-            }
+                __typename: upperFirst(req.body.operationName),
+              },
+            },
           })
         }
       })
@@ -91,11 +91,10 @@ describe('Mutations component', () => {
       cy.get('.v-dialog')
         .within(() => {
           // type anything in the text inputs
-          cy.get('input[type="text"]')
-            .each(($el) => {
-              cy.wrap($el).clear()
-              cy.wrap($el).type('ABC')
-            })
+          cy.get('input[type="text"]').each(($el) => {
+            cy.wrap($el).clear()
+            cy.wrap($el).type('ABC')
+          })
         })
         // click on the submit button
         .get('[data-cy="submit"]')
@@ -106,18 +105,16 @@ describe('Mutations component', () => {
 
       // It should not remember data after submission
       openMutationsForm('BAD')
-      cy.get('.v-dialog')
-        .within(() => {
-          cy.get('input[type="text"]')
-            .each(($el) => {
-              cy.wrap($el).should('not.contain.value', 'ABC')
-            })
+      cy.get('.v-dialog').within(() => {
+        cy.get('input[type="text"]').each(($el) => {
+          cy.wrap($el).should('not.contain.value', 'ABC')
         })
+      })
     })
 
     it('should stay open while submitting', () => {
       const deferred = new Deferred()
-      cy.intercept('/graphql', req => {
+      cy.intercept('/graphql', (req) => {
         if (req.body.query.startsWith('mutation')) {
           // Cypress will await promise before continuing with the request
           return deferred.promise
@@ -169,7 +166,8 @@ describe('Mutations component', () => {
     mockMutations()
     openMutationsForm('checkpoint')
     // Form should be valid initially
-    cy.get('[data-cy=submit]').as('submit')
+    cy.get('[data-cy=submit]')
+      .as('submit')
       .should('not.be.disabled')
       .should('not.have.class', 'error--text')
       // Indirect test for "form invalid" tooltip by checking aria-expanded attribute
@@ -181,7 +179,8 @@ describe('Mutations component', () => {
       .find('.v-list-item__title')
       .contains('workflow')
       .parent()
-      .find('.v-input.v-text-field:first').as('textField')
+      .find('.v-input.v-text-field:first')
+      .as('textField')
       .find('input[type="text"]')
       .type(' ') // (spaces should not be allowed)
       .get('@textField')

@@ -21,17 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="c-table ma-0 pa-2 h-100 flex-column d-flex"
   >
     <!-- Toolbar -->
-    <v-row
-        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
-    >
+    <v-row class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0">
       <!-- Filters -->
       <v-col
         v-if="filterable"
         class="grow"
       >
-        <v-row
-          no-gutters
-        >
+        <v-row no-gutters>
           <v-col
             cols="12"
             md="6"
@@ -74,15 +70,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <span class="ml-2">{{ slotProps.item.value }}</span>
               </template>
               <template v-slot:selection="slotProps">
-                <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
+                <div
+                  class="mr-2"
+                  v-if="slotProps.index >= 0 && slotProps.index < maximumTasks"
+                >
                   <Task :task="{ state: slotProps.item.value }" />
                 </div>
                 <span
                   v-if="slotProps.index === maximumTasks"
                   class="grey--text caption"
                 >
-            (+{{ tasksFilter.states.length - maximumTasks }})
-          </span>
+                  (+{{ tasksFilter.states.length - maximumTasks }})
+                </span>
               </template>
             </v-select>
           </v-col>
@@ -93,14 +92,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="expandCollapseToggle"
         class="shrink"
       >
-        <div
-          class="d-flex flex-nowrap"
-        >
+        <div class="d-flex flex-nowrap">
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-btn
                 v-on="on"
-                @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
+                @click="
+                  expandAll(
+                    (treeitem) =>
+                      !['task', 'job', 'job-details'].includes(
+                        treeitem.node.type
+                      )
+                  )
+                "
                 icon
               >
                 <v-icon>{{ svgPaths.expandIcon }}</v-icon>
@@ -126,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-row
       no-gutters
       class="flex-grow-1 position-relative"
-      >
+    >
       <v-col
         cols="12"
         class="mh-100 position-relative"
@@ -149,7 +153,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-on:tree-item-collapsed="onTreeItemCollapsed"
             v-on:tree-item-clicked="onTreeItemClicked"
           >
-            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
+            <template
+              v-for="(_, slot) of $scopedSlots"
+              v-slot:[slot]="scope"
+              ><slot
+                :name="slot"
+                v-bind="scope"
+            /></template>
           </tree-item>
         </v-container>
       </v-col>
@@ -171,32 +181,32 @@ export default {
   props: {
     workflows: {
       type: Array,
-      required: true
+      required: true,
     },
     stopOn: {
       // Array of node types to stop recursion on
       // i.e. don't show child nodes below the provided types
       type: Array,
       required: false,
-      default: () => []
+      default: () => [],
     },
     hoverable: Boolean,
     activable: Boolean,
     multipleActive: Boolean,
     filterable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     expandCollapseToggle: {
       type: Boolean,
-      default: true
+      default: true,
     },
     autoExpandTypes: {
       // Array of Cylc "types" (e.g. workflow, cycle, etc) to be auto-expanded
       // on initial load
       type: Array,
       required: false,
-      default: () => []
+      default: () => [],
     },
     autoStripTypes: {
       // If there is only one child of the root node and its type is listed in
@@ -207,14 +217,14 @@ export default {
       // root nodes.
       type: Array,
       required: false,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   components: {
     Task,
-    TreeItem
+    TreeItem,
   },
-  data () {
+  data() {
     return {
       treeItemCache: {},
       activeCache: new Set(),
@@ -224,18 +234,18 @@ export default {
       collapseFilter: null,
       tasksFilter: {
         name: '',
-        states: []
+        states: [],
       },
       activeFilters: null,
       maximumTasks: 4,
       svgPaths: {
         expandIcon: mdiPlus,
-        collapseIcon: mdiMinus
+        collapseIcon: mdiMinus,
       },
-      cyclePointsOrderDesc: true
+      cyclePointsOrderDesc: true,
     }
   },
-  mounted () {
+  mounted() {
     // set cyclePointsOrderDesc
     // NOTE: this isn't reactive, however, changing the value requires
     // navigating away from this view so it doesn't have to be
@@ -248,7 +258,7 @@ export default {
     this.cyclePointsOrderDesc = cyclePointsOrderDesc
   },
   computed: {
-    rootChildren () {
+    rootChildren() {
       // array of nodes at the top of the tree
       if (
         this.workflows.length === 1 &&
@@ -264,20 +274,22 @@ export default {
       }
     },
     taskStates: () => {
-      return TaskState.enumValues.map(taskState => {
-        return {
-          text: taskState.name.replace(/_/g, ' '),
-          value: taskState.name
-        }
-      }).sort((left, right) => {
-        return left.text.localeCompare(right.text)
-      })
+      return TaskState.enumValues
+        .map((taskState) => {
+          return {
+            text: taskState.name.replace(/_/g, ' '),
+            value: taskState.name,
+          }
+        })
+        .sort((left, right) => {
+          return left.text.localeCompare(right.text)
+        })
     },
     tasksFilterStates: function () {
-      return this.activeFilters.states.map(selectedTaskState => {
+      return this.activeFilters.states.map((selectedTaskState) => {
         return selectedTaskState
       })
-    }
+    },
   },
   watch: {
     workflows: {
@@ -288,27 +300,33 @@ export default {
             this.filterNodes(this.workflows)
           })
         }
-      }
-    }
+      },
+    },
   },
   methods: {
-    filterByTaskName () {
-      return this.activeFilters.name !== undefined &&
-          this.activeFilters.name !== null &&
-          this.activeFilters.name.trim() !== ''
+    filterByTaskName() {
+      return (
+        this.activeFilters.name !== undefined &&
+        this.activeFilters.name !== null &&
+        this.activeFilters.name.trim() !== ''
+      )
     },
-    filterByTaskState () {
-      return this.activeFilters.states !== undefined &&
-          this.activeFilters.states !== null &&
-          this.activeFilters.states.length > 0
+    filterByTaskState() {
+      return (
+        this.activeFilters.states !== undefined &&
+        this.activeFilters.states !== null &&
+        this.activeFilters.states.length > 0
+      )
     },
-    filterTasks () {
-      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
-          this.tasksFilter.name !== null &&
-          this.tasksFilter.name.trim() !== ''
-      const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
-          this.tasksFilter.states !== null &&
-          this.tasksFilter.states.length > 0
+    filterTasks() {
+      const taskNameFilterSet =
+        this.tasksFilter.name !== undefined &&
+        this.tasksFilter.name !== null &&
+        this.tasksFilter.name.trim() !== ''
+      const taskStatesFilterSet =
+        this.tasksFilter.states !== undefined &&
+        this.tasksFilter.states !== null &&
+        this.tasksFilter.states.length > 0
       if (taskNameFilterSet || taskStatesFilterSet) {
         this.activeFilters = cloneDeep(this.tasksFilter)
         this.filterNodes(this.workflows)
@@ -317,17 +335,19 @@ export default {
         this.activeFilters = null
       }
     },
-    clearInput (event) {
+    clearInput(event) {
       // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
       this.tasksFilter.name = null
-      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
+      this.$refs.filterNameInput.$el
+        .querySelector('input')
+        .dispatchEvent(new Event('keyup'))
     },
-    filterNodes (nodes) {
+    filterNodes(nodes) {
       for (const node of nodes) {
         this.filterNode(node)
       }
     },
-    filterNode (node) {
+    filterNode(node) {
       let filtered = false
       if (node.type === 'cycle') {
         // follow the family tree from cycle point nodes
@@ -341,7 +361,9 @@ export default {
         }
       } else if (node.type === 'task') {
         if (this.filterByTaskName() && this.filterByTaskState()) {
-          filtered = node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
+          filtered =
+            node.name.includes(this.activeFilters.name) &&
+            this.tasksFilterStates.includes(node.node.state)
         } else if (this.filterByTaskName()) {
           filtered = node.name.includes(this.activeFilters.name)
         } else if (this.filterByTaskState()) {
@@ -354,21 +376,25 @@ export default {
       this.treeItemCache[node.id].filtered = filtered
       return filtered
     },
-    removeAllFilters () {
+    removeAllFilters() {
       for (const treeitem of Object.values(this.treeItemCache)) {
         treeitem.filtered = true
       }
     },
-    expandAll (filter = null) {
-      const collection = filter ? [...Object.values(this.treeItemCache)].filter(filter) : Object.values(this.treeItemCache)
+    expandAll(filter = null) {
+      const collection = filter
+        ? [...Object.values(this.treeItemCache)].filter(filter)
+        : Object.values(this.treeItemCache)
       for (const treeItem of collection) {
         treeItem.isExpanded = true
         this.expandedCache.add(treeItem)
       }
       this.expanded = true
     },
-    collapseAll (filter = null) {
-      const collection = filter ? [...this.expandedCache].filter(filter) : this.expandedCache
+    collapseAll(filter = null) {
+      const collection = filter
+        ? [...this.expandedCache].filter(filter)
+        : this.expandedCache
       for (const treeItem of collection) {
         treeItem.isExpanded = false
         this.expandedCache.delete(treeItem)
@@ -377,26 +403,26 @@ export default {
         this.expanded = false
       }
     },
-    onTreeItemExpanded (treeItem) {
+    onTreeItemExpanded(treeItem) {
       this.expandedCache.add(treeItem)
       this.expanded = true
     },
-    onTreeItemCollapsed (treeItem) {
+    onTreeItemCollapsed(treeItem) {
       this.expandedCache.delete(treeItem)
     },
-    onTreeItemCreated (treeItem) {
+    onTreeItemCreated(treeItem) {
       Vue.set(this.treeItemCache, treeItem.$props.node.id, treeItem)
       if (treeItem.isExpanded) {
         this.expandedCache.add(treeItem)
       }
     },
-    onTreeItemDestroyed (treeItem) {
+    onTreeItemDestroyed(treeItem) {
       // make sure the item is removed from all caches, otherwise we will have a memory leak
       Vue.delete(this.treeItemCache, treeItem.$props.node.id)
       this.expandedCache.delete(treeItem)
       this.activeCache.delete(treeItem)
     },
-    onTreeItemClicked (treeItem) {
+    onTreeItemClicked(treeItem) {
       if (this.activable) {
         if (!this.multipleActive) {
           // only one item can be active, so make sure everything else that was active is now !active
@@ -414,7 +440,7 @@ export default {
           this.activeCache.add(treeItem)
         }
       }
-    }
-  }
+    },
+  },
 }
 </script>

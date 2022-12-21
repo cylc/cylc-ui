@@ -28,7 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :disabled="!interactive"
       :close-on-content-click="false"
       :close-on-click="false"
-      v-click-outside="{ handler: onClickOutside, include: clickOutsideInclude }"
+      v-click-outside="{
+        handler: onClickOutside,
+        include: clickOutsideInclude,
+      }"
       dark
     >
       <!-- NOTE: because the `attach` prop is not true, the actual DOM element
@@ -59,12 +62,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-list-item
             v-for="{ mutation, requiresInfo, authorised } in displayMutations"
             :key="mutation.name"
-            :disabled=!authorised
+            :disabled="!authorised"
             @click.stop="enact(mutation, requiresInfo)"
             class="c-mutation"
           >
             <v-list-item-avatar>
-              <v-icon :disabled=!authorised large>{{ mutation._icon }}</v-icon>
+              <v-icon
+                :disabled="!authorised"
+                large
+                >{{ mutation._icon }}</v-icon
+              >
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>{{ mutation._title }}</v-list-item-title>
@@ -73,12 +80,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               line heights and cuts off text that overspills this way we can
               have the required number of lines of text.
               -->
-              <span class="c-description">{{ mutation._shortDescription }}</span>
+              <span class="c-description">{{
+                mutation._shortDescription
+              }}</span>
             </v-list-item-content>
             <v-list-item-action>
               <v-btn
                 icon
-                :disabled=!authorised
+                :disabled="!authorised"
                 x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
@@ -88,14 +97,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-btn>
             </v-list-item-action>
           </v-list-item>
-          <v-list-item
-            v-if="canExpand"
-          >
+          <v-list-item v-if="canExpand">
             <v-list-item-content
               @click="expandCollapse"
               @click.stop.prevent
             >
-              <v-btn id="less-more-button"
+              <v-btn
+                id="less-more-button"
                 rounded
               >
                 {{ expanded ? 'See Less' : 'See More' }}
@@ -117,7 +125,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :initialData="initialData(dialogMutation, node.tokens)"
         :cancel="closeDialog"
         :types="types"
-        :key="dialogKey /* Enables re-render of component each time dialog opened */"
+        :key="
+          dialogKey /* Enables re-render of component each time dialog opened */
+        "
         ref="mutationComponent"
       />
     </v-dialog>
@@ -128,30 +138,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import {
   filterAssociations,
   getMutationArgsFromTokens,
-  mutate
+  mutate,
 } from '@/utils/aotf'
 import Mutation from '@/components/cylc/Mutation'
-import {
-  mdiPencil
-} from '@mdi/js'
+import { mdiPencil } from '@mdi/js'
 import { mapState } from 'vuex'
 
 export default {
   name: 'CylcObjectMenu',
 
   components: {
-    Mutation
+    Mutation,
   },
 
   props: {
     interactive: {
       type: Boolean,
       required: false,
-      default: true
-    }
+      default: true,
+    },
   },
 
-  data () {
+  data() {
     return {
       dialog: false,
       dialogMutation: null,
@@ -165,42 +173,47 @@ export default {
       x: 0,
       y: 0,
       icons: {
-        pencil: mdiPencil
-      }
+        pencil: mdiPencil,
+      },
     }
   },
 
-  mounted () {
+  mounted() {
     this.$eventBus.on('show-mutations-menu', this.showMutationsMenu)
   },
 
-  beforeDestroy () {
+  beforeDestroy() {
     this.$eventBus.off('show-mutations-menu', this.showMutationsMenu)
   },
 
   computed: {
-    primaryMutations () {
+    primaryMutations() {
       return this.$workflowService.primaryMutations[this.node.type] || []
     },
-    canExpand () {
-      return this.primaryMutations.length && this.mutations.length > this.primaryMutations.length
+    canExpand() {
+      return (
+        this.primaryMutations.length &&
+        this.mutations.length > this.primaryMutations.length
+      )
     },
     ...mapState('user', ['user']),
-    displayMutations () {
+    displayMutations() {
       if (!this.mutations.length || this.user.permissions.length < 2) {
         return []
       }
       const shortList = this.primaryMutations
       if (!this.expanded && shortList.length) {
-        return this.mutations.filter(
-          x => shortList.includes(x.mutation.name)
-        ).sort(
-          (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
-        )
+        return this.mutations
+          .filter((x) => shortList.includes(x.mutation.name))
+          .sort(
+            (x, y) =>
+              shortList.indexOf(x.mutation.name) -
+              shortList.indexOf(y.mutation.name)
+          )
       }
       return this.mutations
     },
-    typeAndStatusText () {
+    typeAndStatusText() {
       if (!this.node) {
         // can happen briefly when switching workflows
         return
@@ -225,18 +238,18 @@ export default {
         }
       }
       return ret
-    }
+    },
   },
 
   methods: {
-    openDialog (mutation) {
+    openDialog(mutation) {
       this.dialog = true
       this.dialogMutation = mutation
       // Tell Vue to re-render the dialog component:
       this.dialogKey = !this.dialogKey
     },
 
-    closeDialog () {
+    closeDialog() {
       this.dialog = false
       this.dialogMutation = null
     },
@@ -249,7 +262,7 @@ export default {
      *
      * @param {Event} e - the click event
      */
-    onClickOutside (e) {
+    onClickOutside(e) {
       this.showMenu = false
       this.expanded = false
       if (e.target?.classList.contains('c-interactive')) {
@@ -267,7 +280,7 @@ export default {
      *
      * @returns {Array<HTMLElement>}
      */
-    clickOutsideInclude () {
+    clickOutsideInclude() {
       // Need this to tell vuetify what the actual content DOM element is
       // instead of the empty `this.$el` (see note at top).
       const el = this.$refs.menuContent?.$el
@@ -275,12 +288,12 @@ export default {
       return el ? [el] : []
     },
 
-    expandCollapse () {
+    expandCollapse() {
       this.expanded = !this.expanded
     },
 
     /* Call a mutation using only the tokens for args. */
-    callMutationFromContext (mutation) {
+    callMutationFromContext(mutation) {
       // eslint-disable-next-line no-console
       console.debug(`mutation: ${mutation._title} ${this.node.id}`)
       mutate(
@@ -291,7 +304,7 @@ export default {
       this.showMenu = false
     },
 
-    showMutationsMenu ({ node, event }) {
+    showMutationsMenu({ node, event }) {
       this.node = node
       this.x = event.clientX
       this.y = event.clientY
@@ -311,24 +324,22 @@ export default {
           this.node.tokens,
           mutations,
           this.user.permissions
-        ).sort(
-          (a, b) => a.mutation.name.localeCompare(b.mutation.name)
-        )
+        ).sort((a, b) => a.mutation.name.localeCompare(b.mutation.name))
       })
       this.showMenu = true
     },
 
-    initialData (mutation, tokens) {
+    initialData(mutation, tokens) {
       return getMutationArgsFromTokens(mutation, tokens)
     },
 
-    enact (mutation, requiresInfo) {
+    enact(mutation, requiresInfo) {
       if (requiresInfo) {
         this.openDialog(mutation)
       } else {
         this.callMutationFromContext(mutation)
       }
-    }
-  }
+    },
+  },
 }
 </script>

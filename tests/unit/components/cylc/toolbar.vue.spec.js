@@ -38,23 +38,23 @@ describe('Toolbar component', () => {
       app: {
         namespaced: true,
         state: {
-          drawer: null
-        }
+          drawer: null,
+        },
       },
       workflows: {
         namespaced: true,
         state: {
           workflow: {
             tree: {},
-            lookup: {}
+            lookup: {},
           },
           workflowName: null,
-          workflows: {}
-        }
-      }
-    }
+          workflows: {},
+        },
+      },
+    },
   })
-  const mountFunction = options => {
+  const mountFunction = (options) => {
     return mount(Toolbar, {
       localVue,
       vuetify,
@@ -63,30 +63,30 @@ describe('Toolbar component', () => {
         $route,
         $vuetify: {
           application: {
-            register: () => {}
-          }
+            register: () => {},
+          },
         },
-        $t: () => {} // vue-i18n,
+        $t: () => {}, // vue-i18n,
       },
-      ...options
+      ...options,
     })
   }
   beforeEach(() => {
     vuetify = new Vuetify({
       theme: { disable: true },
       icons: {
-        iconfont: 'mdi'
-      }
+        iconfont: 'mdi',
+      },
     })
     $route = {
-      name: 'testRoute'
+      name: 'testRoute',
     }
     store.state.workflows.workflows = [
       {
         id: 'user/id',
         name: 'test',
-        status: WorkflowState.RUNNING.name
-      }
+        status: WorkflowState.RUNNING.name,
+      },
     ]
     store.state.workflows.workflowName = 'test'
   })
@@ -99,14 +99,14 @@ describe('Toolbar component', () => {
     const wrapper = mountFunction()
     await wrapper.vm.$nextTick()
     await wrapper.setData({
-      responsive: false
+      responsive: false,
     })
     expect(store.state.app.drawer).to.equal(null)
     // empty wrapper before responsive is set to true
     expect(wrapper.find('button.default').exists()).to.equal(false)
     // let's make it responsive, so that the burger menu is visible
     await wrapper.setData({
-      responsive: true
+      responsive: true,
     })
     expect(wrapper.find('button.default').exists()).to.equal(true)
   })

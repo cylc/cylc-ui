@@ -22,15 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <span
     class="c-warn"
-    style="display:inline-block; vertical-align:middle"
+    style="display: inline-block; vertical-align: middle"
   >
     <v-tooltip
       bottom
       :disabled="!message"
     >
-      <template
-        v-slot:activator="{ on }"
-      >
+      <template v-slot:activator="{ on }">
         <svg
           viewBox="0 0 100 100"
           v-on="on"
@@ -39,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <path
             :d="path()"
             :stroke-width="strokeWidth()"
-            v-bind:class="{'active': active}"
+            v-bind:class="{ active: active }"
           />
         </svg>
       </template>
@@ -65,16 +63,16 @@ const y2 = 92
 const PATH = pathJoin([
   ['M', x1 + sw, y1 + hsw],
   ['L', x2 - sw, y1 + hsw],
-  ['L', ((x2 - x1) / 2) + x1, y2 - sw],
+  ['L', (x2 - x1) / 2 + x1, y2 - sw],
   ['L', x1 + sw, y1 + hsw],
-  ['Z', '', '']
+  ['Z', '', ''],
 ])
 
-function nodeJoin (item) {
+function nodeJoin(item) {
   return `${item[0]}${item.slice(1).join(' ')}`
 }
 
-function pathJoin (list) {
+function pathJoin(list) {
   return list.reduce((ret, item, ind) => {
     if (ind === 1) {
       ret = nodeJoin(ret)
@@ -87,31 +85,31 @@ export default {
   name: 'Warning',
   data: function () {
     return {
-      active: this.startActive
+      active: this.startActive,
     }
   },
   props: {
     message: {
       type: String,
-      required: false
+      required: false,
     },
     startActive: {
       type: Boolean,
-      required: false
-    }
+      required: false,
+    },
   },
   methods: {
-    path () {
+    path() {
       return PATH
     },
 
-    strokeWidth () {
+    strokeWidth() {
       return sw
     },
 
-    deactivate () {
+    deactivate() {
       this.active = false
-    }
-  }
+    },
+  },
 }
 </script>

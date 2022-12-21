@@ -26,7 +26,7 @@ describe('Subscription View mixin', () => {
   let workflowService
   beforeEach(() => {
     workflowService = {
-      startSubscriptions: () => {}
+      startSubscriptions: () => {},
     }
     sinon.spy(workflowService)
     localVue.prototype.$workflowService = workflowService
@@ -34,7 +34,7 @@ describe('Subscription View mixin', () => {
   it('should provide a navigation guard for when the view is visited', () => {
     const component = Object.assign(subscriptionViewMixin)
     const vm = {
-      $workflowService: workflowService
+      $workflowService: workflowService,
     }
     component.beforeRouteEnter(null, null, (callback) => {
       callback(vm)
@@ -44,7 +44,7 @@ describe('Subscription View mixin', () => {
   it('should provide a navigation guard for when the view is updated', () => {
     const component = Object.assign(subscriptionViewMixin)
     const vm = {
-      $workflowService: workflowService
+      $workflowService: workflowService,
     }
     component.beforeRouteUpdate(null, null, (callback) => {
       callback(vm)

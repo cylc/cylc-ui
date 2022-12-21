@@ -17,8 +17,7 @@
  */
 describe('Header Component', () => {
   it('test username@host', () => {
-    cy
-      .visit('/#/')
+    cy.visit('/#/')
       .get('.c-environment-info')
       .should('exist')
       .should('be.visible')

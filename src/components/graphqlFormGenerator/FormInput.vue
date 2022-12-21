@@ -24,7 +24,9 @@ dynamically created inputs.
 import { mask } from 'vue-the-mask'
 import Markdown from '@/components/Markdown'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
-import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
+import VuetifyConfig, {
+  getComponentProps,
+} from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
 import { VIcon, VTooltip } from 'vuetify/lib/components'
 
@@ -36,7 +38,7 @@ import { VIcon, VTooltip } from 'vuetify/lib/components'
  *
  * @param fn - Function meant for the value of slot in the data-object's "scopedSlots"
  */
-function vuetifyScopedSlotShim (fn) {
+function vuetifyScopedSlotShim(fn) {
   fn.proxy = true
   return fn
 }
@@ -47,7 +49,7 @@ export default {
   mixins: [formElement],
 
   components: {
-    Markdown
+    Markdown,
   },
 
   directives: {
@@ -57,15 +59,17 @@ export default {
       if (binding.value) {
         mask(el, binding)
       }
-    }
+    },
   },
 
   props: {
     // dictionary of props for overriding default values
     propOverrides: {
       type: Object,
-      default: () => { Object() }
-    }
+      default: () => {
+        Object()
+      },
+    },
   },
 
   computed: {
@@ -77,15 +81,19 @@ export default {
      * TODO: move to rule based system to allow changing
      *       of parent components based on child types?
      */
-    props () {
+    props() {
       // get the default props for this graphQL type
-      const componentProps = getComponentProps(this.gqlType, VuetifyConfig.namedTypes, VuetifyConfig.kinds)
+      const componentProps = getComponentProps(
+        this.gqlType,
+        VuetifyConfig.namedTypes,
+        VuetifyConfig.kinds
+      )
 
       // merge this in with default and override props
       const propGroups = [
         VuetifyConfig.defaultProps,
         componentProps,
-        this.propOverrides || {}
+        this.propOverrides || {},
       ]
       const ret = Object.assign({}, ...propGroups)
 
@@ -98,71 +106,65 @@ export default {
       }
 
       return ret
-    }
+    },
   },
 
-  render (createElement) {
+  render(createElement) {
     // https://v2.vuejs.org/v2/guide/render-function.html
 
-    const createHelpIcon = () => createElement(
-      VTooltip,
-      {
+    const createHelpIcon = () =>
+      createElement(VTooltip, {
         props: {
-          bottom: true
+          bottom: true,
         },
         scopedSlots: {
-          activator: ({ on }) => createElement(
-            VIcon,
-            {
-              on,
-              style: {
-                cursor: 'default'
-              }
-            },
-            [mdiHelpCircleOutline]
-          ),
-          default: () => createElement(
-            Markdown,
-            {
+          activator: ({ on }) =>
+            createElement(
+              VIcon,
+              {
+                on,
+                style: {
+                  cursor: 'default',
+                },
+              },
+              [mdiHelpCircleOutline]
+            ),
+          default: () =>
+            createElement(Markdown, {
               props: {
-                markdown: this.help
-              }
-            }
-          )
-        }
-      }
-    )
+                markdown: this.help,
+              },
+            }),
+        },
+      })
 
     // Some components implement custom v-model
     // (https://v2.vuejs.org/v2/guide/components-custom-events.html#Customizing-Component-v-model)
-    const vModel = this.props.is.options?.model || { prop: 'value', event: 'input' }
+    const vModel = this.props.is.options?.model || {
+      prop: 'value',
+      event: 'input',
+    }
 
-    return createElement(
-      this.props.is,
-      {
-        props: {
-          ...this.props,
-          [vModel.prop]: this.model,
-          gqlType: this.gqlType,
-          types: this.types
+    return createElement(this.props.is, {
+      props: {
+        ...this.props,
+        [vModel.prop]: this.model,
+        gqlType: this.gqlType,
+        types: this.types,
+      },
+      on: {
+        [vModel.event]: (value) => {
+          this.model = value
         },
-        on: {
-          [vModel.event]: (value) => {
-            this.model = value
-          }
-        },
-        scopedSlots: {
-          append: vuetifyScopedSlotShim(
-            createHelpIcon
-          ),
-          'append-outer': vuetifyScopedSlotShim(
-            // pass the "append-outer" slot onto the child component
-            (slotProps) => this.$scopedSlots['append-outer']?.(slotProps)
-          )
-        }
-      }
-    )
-  }
-
+      },
+      scopedSlots: {
+        append: vuetifyScopedSlotShim(createHelpIcon),
+        'append-outer': vuetifyScopedSlotShim(
+          // pass the "append-outer" slot onto the child component
+          (slotProps) => this.$scopedSlots['append-outer']?.(slotProps)
+        ),
+      },
+    })
+  },
 }
 </script>

@@ -28,7 +28,15 @@ describe('User model', () => {
       const server = '/cylc/user/john.foe'
       const owner = 'john.goe'
       const permissions = ['play', 'ping', 'read']
-      const user = new User(name, groups, created, admin, server, owner, permissions)
+      const user = new User(
+        name,
+        groups,
+        created,
+        admin,
+        server,
+        owner,
+        permissions
+      )
       expect(user.username).to.equal(name)
       expect(user.groups.length === 2).to.equal(admin)
       expect(user.admin).to.equal(true)

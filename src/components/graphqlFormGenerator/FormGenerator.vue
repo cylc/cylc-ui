@@ -31,7 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!-- input label - the display title for this input -->
             {{ input.label }}
             <!-- help button - tooltip for more information -->
-            <v-tooltip bottom
+            <v-tooltip
+              bottom
               v-if="input.description"
             >
               <template v-slot:activator="{ on, attrs }">
@@ -42,9 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   {{ icons.help }}
                 </v-icon>
               </template>
-              <Markdown
-                :markdown="input.description"
-              />
+              <Markdown :markdown="input.description" />
             </v-tooltip>
           </v-list-item-title>
           <FormInput
@@ -72,7 +71,7 @@ export default {
 
   components: {
     Markdown,
-    FormInput
+    FormInput,
   },
 
   props: {
@@ -80,50 +79,50 @@ export default {
       // validity of form
       type: Boolean,
       required: false,
-      default: () => false
+      default: () => false,
     },
     mutation: {
       type: Object,
-      required: true
+      required: true,
     },
     types: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     initialData: {
-      type: Object
-    }
+      type: Object,
+    },
   },
 
   data: () => ({
     model: {},
     icons: {
-      help: mdiHelpCircleOutline
-    }
+      help: mdiHelpCircleOutline,
+    },
   }),
 
-  created () {
+  created() {
     this.reset()
   },
 
   computed: {
     /* Provide a list of all form inputs for this mutation. */
-    inputs () {
+    inputs() {
       const ret = []
       for (const arg of this.mutation.args) {
         ret.push({
           gqlType: arg.type,
           label: arg.name,
-          description: arg.description
+          description: arg.description,
         })
       }
       return ret
-    }
+    },
   },
 
   methods: {
     /* Set this form to its initial conditions. */
-    reset () {
+    reset() {
       // begin with the initial data
       const model = cloneDeep(this.initialData || {})
 
@@ -158,13 +157,13 @@ export default {
       this.model = model
     },
 
-    async submit () {
+    async submit() {
       return await mutate(
         this.mutation,
         this.model,
         this.$workflowService.apolloClient
       )
-    }
-  }
+    },
+  },
 }
 </script>

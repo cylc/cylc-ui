@@ -18,9 +18,7 @@
 describe('GScan component', () => {
   it('should show all workflows by default', () => {
     cy.visit('/#/')
-    cy
-      .get('.treeitem:visible')
-      .should('have.length', 1)
+    cy.get('.treeitem:visible').should('have.length', 1)
   })
 
   it('should filter by workflow name', () => {
@@ -33,58 +31,40 @@ describe('GScan component', () => {
 
   it('should filter by workflow state', () => {
     cy.visit('/#/')
-    cy
-      .get('#c-gscan-filter-tooltip-btn')
-      .click({ force: true })
-    cy
-      .get('[role="menu"]:visible')
+    cy.get('#c-gscan-filter-tooltip-btn').click({ force: true })
+    cy.get('[role="menu"]:visible')
       .find('.v-label')
       .contains('running')
       .click({ force: true })
-    cy
-      .get('.treeitem:visible')
-      .should('have.length', 0)
+    cy.get('.treeitem:visible').should('have.length', 0)
   })
 
   it('should filter by workflow tasks state', () => {
     cy.visit('/#/')
-    cy
-      .get('#c-gscan-filter-tooltip-btn')
-      .click({ force: true })
-    cy
-      .get('[role="menu"]:visible')
+    cy.get('#c-gscan-filter-tooltip-btn').click({ force: true })
+    cy.get('[role="menu"]:visible')
       .find('.v-label')
       .contains('submit-failed')
       .click({ force: true })
-    cy
-      .get('.treeitem:visible')
-      .should('have.length', 0)
+    cy.get('.treeitem:visible').should('have.length', 0)
   })
 
   it('should filter by workflow name, state, and tasks states', () => {
     cy.visit('/#/')
     // OK
-    cy
-      .get('#c-gscan-search-workflows')
-      .type('on')
-    cy
-      .get('#c-gscan-filter-tooltip-btn')
-      .click({ force: true })
+    cy.get('#c-gscan-search-workflows').type('on')
+    cy.get('#c-gscan-filter-tooltip-btn').click({ force: true })
     // OK
-    cy
-      .get('[role="menu"]:visible')
+    cy.get('[role="menu"]:visible')
       .find('.v-label')
       .contains('pause')
       .click({ force: true })
     // OK
-    cy
-      .get('[role="menu"]:visible')
+    cy.get('[role="menu"]:visible')
       .find('.v-label')
       .contains('stopped')
       .click({ force: true })
-    cy
-      .get('.treeitem:visible')
-      .should('have.length', 1)
+    cy.get('.treeitem:visible').should('have.length', 1)
   })
 
   it('shows mutations menu when clicking on workflow icon', () => {

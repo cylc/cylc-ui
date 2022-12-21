@@ -32,45 +32,45 @@ describe('App', () => {
   const store = new Vuex.Store(storeOptions)
   let vuetify
   let $route
-  const mountFunction = options => {
+  const mountFunction = (options) => {
     return mount(App, {
       localVue,
       vuetify,
       store,
       components: {
-        'empty-layout': Empty
+        'empty-layout': Empty,
       },
       stubs: ['router-link', 'router-view'],
       mocks: {
         $route,
         $vuetify: {
           application: {
-            register: () => {}
+            register: () => {},
           },
           theme: {
             dark: false,
             isDark: function () {
               return this.dark
-            }
-          }
+            },
+          },
         },
-        $t: () => {} // vue-i18n
+        $t: () => {}, // vue-i18n
       },
-      ...options
+      ...options,
     })
   }
   beforeEach(() => {
     $route = {
       name: 'app',
       meta: {
-        layout: 'empty'
-      }
+        layout: 'empty',
+      },
     }
     vuetify = new Vuetify({
       theme: { disable: true },
       icons: {
-        iconfont: 'mdi'
-      }
+        iconfont: 'mdi',
+      },
     })
     global.localStorage = window.localStorage
   })

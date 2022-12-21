@@ -26,9 +26,7 @@ const query = `query App {
 describe('GraphiQL', () => {
   it('should load the GraphiQL application', () => {
     cy.visit('/#/graphiql')
-    cy
-      .get('.title')
-      .should('be.visible')
+    cy.get('.title').should('be.visible')
   })
   it('should execute a GraphQL query and get a valid response', () => {
     cy.visit('/#/graphiql')
@@ -37,31 +35,26 @@ describe('GraphiQL', () => {
     //     2. Variables
     //     3. Results
     cy.intercept('/graphql*').as('GraphQLQuery')
-    cy.get('.CodeMirror')
-      .then((editors) => {
-        editors[0].CodeMirror.setValue(query)
-        // This appears to force the CodeMirror command above to be executed, or at least
-        // waited for.
-        expect(editors[0].CodeMirror.getValue()).to.equal(query)
-        expect(editors[1].CodeMirror.getValue()).to.equal('')
-        expect(editors[2].CodeMirror.getValue()).to.equal('')
-      })
+    cy.get('.CodeMirror').then((editors) => {
+      editors[0].CodeMirror.setValue(query)
+      // This appears to force the CodeMirror command above to be executed, or at least
+      // waited for.
+      expect(editors[0].CodeMirror.getValue()).to.equal(query)
+      expect(editors[1].CodeMirror.getValue()).to.equal('')
+      expect(editors[2].CodeMirror.getValue()).to.equal('')
+    })
     // TODO: CodeMirror seems to have a delay to actually set the value to the underlying
     //       textarea. Which can cause the test below to fail as the query submitted is
     //       the default commented-out text, instead of the given query above.
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
-    cy.get('.execute-button')
-      .click()
+    cy.get('.execute-button').click()
     cy.wait('@GraphQLQuery')
     // https://stackoverflow.com/a/48916050
-    cy.get('.resultWrap')
-      .find('.spinner')
-      .should('not.exist')
-    cy.get('.CodeMirror')
-      .then((editors) => {
-        expect(editors[0].CodeMirror.getValue()).to.equal(query)
-        expect(editors[3].CodeMirror.getValue()).to.contain('~user/one')
-      })
+    cy.get('.resultWrap').find('.spinner').should('not.exist')
+    cy.get('.CodeMirror').then((editors) => {
+      expect(editors[0].CodeMirror.getValue()).to.equal(query)
+      expect(editors[3].CodeMirror.getValue()).to.contain('~user/one')
+    })
   })
 })

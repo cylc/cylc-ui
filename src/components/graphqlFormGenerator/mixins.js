@@ -19,28 +19,28 @@ import FormInput from '@/components/graphqlFormGenerator/FormInput'
 
 export const formElement = {
   components: {
-    'form-input': FormInput
+    'form-input': FormInput,
   },
 
   props: {
     // the GraphQL type this input represents
     gqlType: {
       type: Object,
-      required: true
+      required: true,
     },
     // array of all GraphQL types in the schema
     types: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     // the value (v-model is actually syntactic sugar for this)
     value: {
-      required: true
-    }
+      required: true,
+    },
   },
 
   data: () => ({
-    FormInput
+    FormInput,
   }),
 
   computed: {
@@ -52,30 +52,33 @@ export const formElement = {
      * and be managed by Vue correctly.
      */
     model: {
-      get () {
+      get() {
         return this.value
       },
 
-      set (val) {
+      set(val) {
         this.$emit('input', val)
-      }
+      },
     },
 
-    type () {
+    type() {
       for (const type of this.types) {
-        if (type.name === this.gqlType.name && type.kind === this.gqlType.kind) {
+        if (
+          type.name === this.gqlType.name &&
+          type.kind === this.gqlType.kind
+        ) {
           return type
         }
       }
       return null
     },
 
-    help () {
+    help() {
       // TODO: provide argument help then default to type help if not found
       if (this.type && this.type.description) {
         return this.type.description.trim()
       }
       return null
-    }
-  }
+    },
+  },
 }

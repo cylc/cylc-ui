@@ -33,7 +33,7 @@ export default {
    *   offline: boolean
    * }} - options passed to the plug-in (if any)
    */
-  install (Vue, options) {
+  install(Vue, options) {
     const offline = options.offline || false
     this._installWorkflowService(offline)
     this._installUserService()
@@ -47,12 +47,13 @@ export default {
    * @private
    * @param {boolean} offline
    */
-  _installWorkflowService (offline) {
+  _installWorkflowService(offline) {
     const graphQLUrls = createGraphQLUrls()
     const client = createSubscriptionClient(graphQLUrls.wsUrl)
     Vue.prototype.$workflowService = new SubscriptionWorkflowService(
       graphQLUrls.httpUrl,
-      client)
+      client
+    )
   },
 
   /**
@@ -62,7 +63,7 @@ export default {
    *
    * @private
    */
-  _installUserService () {
+  _installUserService() {
     Vue.prototype.$userService = new UserService()
-  }
+  },
 }

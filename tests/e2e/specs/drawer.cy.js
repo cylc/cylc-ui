@@ -18,9 +18,7 @@
 describe('Drawer component', () => {
   it('Is displayed when mode is desktop', () => {
     cy.visit('/#/')
-    cy
-      .get('.v-navigation-drawer')
-      .should('be.visible')
+    cy.get('.v-navigation-drawer').should('be.visible')
   })
   it('it should have a width of 260', () => {
     cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.eq', 260)
@@ -30,13 +28,9 @@ describe('Drawer component', () => {
     // and then the drawer is hidden
     cy.viewport(320, 480)
     cy.visit('/#/')
-    cy
-      .get('.v-navigation-drawer')
-      .should('not.be.visible')
+    cy.get('.v-navigation-drawer').should('not.be.visible')
     // besides the above, now the user should see a link to display the drawer
-    cy
-      .get('#toggle-drawer')
-      .should('be.visible')
+    cy.get('#toggle-drawer').should('be.visible')
   })
   it('should drag to trigger resize', () => {
     cy.visit('/#/')
@@ -45,8 +39,7 @@ describe('Drawer component', () => {
       .trigger('mousedown', { which: 1 })
       .trigger('mousemove', { clientX: 0, clientY: 500 })
       .trigger('mouseup', { force: true })
-    cy.get('.v-navigation-drawer')
-      .invoke('innerWidth').should('be.eq', 0)
+    cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.eq', 0)
     cy.get('#toggle-drawer').should('exist')
   })
 })

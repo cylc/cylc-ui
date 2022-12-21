@@ -31,7 +31,7 @@ Vue.use(Vuetify)
 let vuetify
 let wrapper
 
-const mountFunction = options => {
+const mountFunction = (options) => {
   const localVue = createLocalVue()
 
   // note these are truly 'mocked' because I ran into issues with the state being tainted across multiple unit-tests
@@ -40,28 +40,28 @@ const mountFunction = options => {
       app: {
         namespaced: true,
         state: {
-          drawer: {}
+          drawer: {},
         },
         mutations: {
-          setDrawer (state, drawer) {
+          setDrawer(state, drawer) {
             state.drawer = drawer
-          }
-        }
+          },
+        },
       },
       user: {
         namespaced: true,
         state: {
           user: {
-            username: 'test username'
-          }
+            username: 'test username',
+          },
         },
         mutations: {
-          SET_USER (state, user) {
+          SET_USER(state, user) {
             state.user = user
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   })
 
   vuetify = new Vuetify()
@@ -71,15 +71,14 @@ const mountFunction = options => {
     vuetify,
     store,
     mocks: {
-      $t: () => {
-      }
+      $t: () => {},
     },
     stubs: {
       Header: true,
       GScan: true,
-      RouterLink: true
+      RouterLink: true,
     },
-    ...options
+    ...options,
   })
 }
 
@@ -96,9 +95,9 @@ describe('Drawer', () => {
     expect(wrapper.find('div.d-flex.flex-column.h-100').exists()).to.equal(true)
     const spyFunction = sandbox.spy(wrapper.vm, 'resize')
 
-    wrapper.find('div.v-navigation-drawer__border').element.dispatchEvent(
-      createBubbledEvent('mousedown', { offsetX: 1 })
-    )
+    wrapper
+      .find('div.v-navigation-drawer__border')
+      .element.dispatchEvent(createBubbledEvent('mousedown', { offsetX: 1 }))
 
     document.dispatchEvent(
       createBubbledEvent('mousemove', { clientX: 100, clientY: 0, offsetX: 50 })

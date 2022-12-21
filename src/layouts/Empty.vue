@@ -23,10 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 export default {
-  name: 'Empty'
+  name: 'Empty',
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

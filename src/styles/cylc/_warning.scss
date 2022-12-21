@@ -22,13 +22,13 @@
 
     path {
       /* TODO - move colours to job or app theme */
-      stroke: rgb(170,170,170);
-      fill: rgb(150,150,150);
+      stroke: rgb(170, 170, 170);
+      fill: rgb(150, 150, 150);
     }
 
     path.active {
-      stroke: rgb(255,122,122);
-      fill: rgb(248,197,102);
+      stroke: rgb(255, 122, 122);
+      fill: rgb(248, 197, 102);
     }
   }
 }

@@ -17,11 +17,7 @@
 
 // http://kazupon.github.io/vue-i18n/en/messages.html
 
-const requireLang = require.context(
-  '@/lang',
-  true,
-  /\.json$/
-)
+const requireLang = require.context('@/lang', true, /\.json$/)
 
 const messages = {}
 
@@ -33,9 +29,7 @@ for (const file of requireLang.keys()) {
   path.reduce((o, s, i) => {
     if (o[s]) return o[s]
 
-    o[s] = i + 1 === path.length
-      ? requireLang(file)
-      : {}
+    o[s] = i + 1 === path.length ? requireLang(file) : {}
 
     return o[s]
   }, messages)

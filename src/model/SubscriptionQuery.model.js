@@ -37,7 +37,7 @@ class SubscriptionQuery {
    * @param {String} name
    * @param {Array<DeltasCallback>} callbacks
    */
-  constructor (query, variables, name, callbacks) {
+  constructor(query, variables, name, callbacks) {
     this.query = query
     this.variables = variables
     this.name = name

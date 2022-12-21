@@ -30,7 +30,7 @@ const INITIAL_FONT_SIZE = styles.fontRootSize
  *
  * @param {string} [initialFontSize] initial font size, defaults to the Vuetify value
  */
-function resetFontSize (initialFontSize = INITIAL_FONT_SIZE) {
+function resetFontSize(initialFontSize = INITIAL_FONT_SIZE) {
   localStorage.fontSize = initialFontSize
   document.getElementsByTagName('html')[0].style.fontSize = initialFontSize
 }
@@ -38,7 +38,7 @@ function resetFontSize (initialFontSize = INITIAL_FONT_SIZE) {
 /**
  * Decrease the HTML element font size by 20%.
  */
-function decreaseFontSize () {
+function decreaseFontSize() {
   const currentFontSize = this.getCurrentFontSize()
   const newFontSize = `${currentFontSize * 0.8}px`
   localStorage.fontSize = newFontSize
@@ -48,7 +48,7 @@ function decreaseFontSize () {
 /**
  * Increase the HTML element font size by 20%.
  */
-function increaseFontSize () {
+function increaseFontSize() {
   const currentFontSize = this.getCurrentFontSize()
   const newFontSize = `${currentFontSize * 1.2}px`
   localStorage.fontSize = newFontSize
@@ -60,7 +60,7 @@ function increaseFontSize () {
  *
  * @returns {number} current font size
  */
-function getCurrentFontSize () {
+function getCurrentFontSize() {
   if (localStorage.fontSize) {
     return parseFloat(localStorage.fontSize)
   }
@@ -81,9 +81,13 @@ function getCurrentFontSize () {
  * @param {number} [initialFontSize] initial font size, defaults to the Vuetify value
  * @returns {number}
  */
-function expectedFontSize (increase, clicks, initialFontSize = parseFloat(INITIAL_FONT_SIZE)) {
+function expectedFontSize(
+  increase,
+  clicks,
+  initialFontSize = parseFloat(INITIAL_FONT_SIZE)
+) {
   const ratio = increase ? 1.2 : 0.8
-  return initialFontSize * (Math.pow(ratio, clicks))
+  return initialFontSize * Math.pow(ratio, clicks)
 }
 
 export {
@@ -92,5 +96,5 @@ export {
   increaseFontSize,
   getCurrentFontSize,
   expectedFontSize,
-  INITIAL_FONT_SIZE
+  INITIAL_FONT_SIZE,
 }

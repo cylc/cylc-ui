@@ -23,13 +23,14 @@ import { Deferred } from '../../util'
  * Helper function to retrieve the subscriptions.
  * @returns {Cypress.Chainable<any>}
  */
-const getSubscriptions = () => cy.window().its('app.$workflowService.subscriptions')
+const getSubscriptions = () =>
+  cy.window().its('app.$workflowService.subscriptions')
 
 describe('WorkflowService subscriptions', () => {
   it('-> Dashboard, should contain 1 subscriptions ("root" = GScan + Dashboard)', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
-    getSubscriptions().then(subscriptions => {
+    getSubscriptions().then((subscriptions) => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
@@ -38,7 +39,7 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('[href="#/user-profile"]').click({ force: true })
     cy.contains('h3', 'Your Profile')
-    getSubscriptions().then(subscriptions => {
+    getSubscriptions().then((subscriptions) => {
       // Only GScan subscription "root"
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
@@ -49,7 +50,7 @@ describe('WorkflowService subscriptions', () => {
     cy.get('[href="#/workflows/one"]').click({ force: true })
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
     cy.get('div#main').find('.c-tree')
-    getSubscriptions().then(subscriptions => {
+    getSubscriptions().then((subscriptions) => {
       // GScan subscription "root" and the subscription "workflow" used by the Tree view
       expect(Object.keys(subscriptions).length).to.equal(2)
       expect(subscriptions.root.observable.closed).to.equal(false)
@@ -64,7 +65,7 @@ describe('WorkflowService subscriptions', () => {
     cy.get('div#main').find('.c-tree')
     cy.get('[href="#/"]').click({ force: true })
     cy.get('div.c-dashboard')
-    getSubscriptions().then(subscriptions => {
+    getSubscriptions().then((subscriptions) => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
@@ -72,7 +73,7 @@ describe('WorkflowService subscriptions', () => {
   it('-> Tree, should contain 2 subscriptions (GScan + Tree)', () => {
     cy.visit('/#/tree/one')
     cy.get('.c-header').should('exist')
-    getSubscriptions().then(subscriptions => {
+    getSubscriptions().then((subscriptions) => {
       // GScan subscription "root" and the subscription "workflow" used by the Tree view
       expect(Object.keys(subscriptions).length).to.equal(2)
       expect(subscriptions.root.observable.closed).to.equal(false)
@@ -82,12 +83,9 @@ describe('WorkflowService subscriptions', () => {
 
   it('-> Tree - > Dashboard, should contain 1 subscription ("root" = GScan + Dashboard)', () => {
     cy.visit('/#/tree/one')
-    cy
-      .get('.v-list-item')
-      .contains('Dashboard')
-      .click({ force: true })
+    cy.get('.v-list-item').contains('Dashboard').click({ force: true })
     cy.get('div.c-dashboard')
-    getSubscriptions().then(subscriptions => {
+    getSubscriptions().then((subscriptions) => {
       expect(Object.keys(subscriptions).length).to.equal(1)
     })
   })
@@ -96,7 +94,7 @@ describe('WorkflowService subscriptions', () => {
 describe('WorkflowService mutations', () => {
   it('handles asynchronously loaded mutations properly', () => {
     const deferred = new Deferred()
-    cy.intercept('/graphql', req => {
+    cy.intercept('/graphql', (req) => {
       if (req.body.query?.startsWith('mutation')) {
         // equivalent to `.as('mutation')`:
         req.alias = 'mutation'
@@ -133,7 +131,8 @@ describe('WorkflowService mutations', () => {
       .get('.c-mutation-menu-list')
       .should('be.visible')
       // Earlier click of stop button should come through
-      .wait('@mutation').then(({ request }) => {
+      .wait('@mutation')
+      .then(({ request }) => {
         expect(request.body.operationName).to.equal('stop')
       })
   })

@@ -20,23 +20,18 @@ import TaskState from '@/model/TaskState.model'
 describe('Table view', () => {
   it('Should display the mocked workflow', () => {
     cy.visit('/#/table/one')
-    cy
-      .get('.c-table table > tbody > tr')
+    cy.get('.c-table table > tbody > tr')
       .should('have.length', 7)
       .should('be.visible')
   })
   describe('Filters', () => {
     it('Should not filter by default', () => {
       cy.visit('/#/table/one')
-      cy
-        .get('.c-table table > tbody > tr')
+      cy.get('.c-table table > tbody > tr')
         .should('have.length', 7)
         .should('be.visible')
-      cy
-        .get('#c-table-filter-task-name')
-        .should('be.empty')
-      cy
-        .get('#c-table-filter-task-states')
+      cy.get('#c-table-filter-task-name').should('be.empty')
+      cy.get('#c-table-filter-task-states')
         .parent()
         .parent()
         .find('input[type="hidden"]')
@@ -44,75 +39,50 @@ describe('Table view', () => {
     })
     it('Should filter by task name', () => {
       cy.visit('/#/table/one')
-      cy
-        .get('.c-table table > tbody > tr')
+      cy.get('.c-table table > tbody > tr')
         .should('have.length', 7)
         .should('be.visible')
-      cy
-        .get('td > div.d-flex > div')
-        .contains('sleepy')
-        .should('be.visible')
+      cy.get('td > div.d-flex > div').contains('sleepy').should('be.visible')
       // eep should filter sleepy
-      cy
-        .get('#c-table-filter-task-name')
-        .type('eep')
-      cy
-        .get('td > div.d-flex > div')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.c-table table > tbody > tr')
+      cy.get('#c-table-filter-task-name').type('eep')
+      cy.get('td > div.d-flex > div').contains('sleepy').should('be.visible')
+      cy.get('.c-table table > tbody > tr')
         .should('have.length', 1)
         .should('be.visible')
     })
     it('Should filter by task state', () => {
       cy.visit('/#/table/one')
-      cy
-        .get('.c-table table > tbody > tr')
+      cy.get('.c-table table > tbody > tr')
         .should('have.length', 7)
         .should('be.visible')
-      cy
-        .get('td > div.d-flex > div')
+      cy.get('td > div.d-flex > div')
         .contains(TaskState.FAILED.name)
         .should('be.visible')
-      cy
-        .get('#c-table-filter-task-states')
-        .click({ force: true })
-      cy
-        .get('.v-list-item')
+      cy.get('#c-table-filter-task-states').click({ force: true })
+      cy.get('.v-list-item')
         .contains(TaskState.RUNNING.name)
         .click({ force: true })
-      cy
-        .get('td > div.d-flex > div')
+      cy.get('td > div.d-flex > div')
         .contains('checkpoint')
         .should('be.visible')
-      cy
-        .get('.c-table table > tbody > tr')
+      cy.get('.c-table table > tbody > tr')
         .should('have.length', 1)
         .should('be.visible')
     })
     it('Should filter by task name and states', () => {
       cy.visit('/#/table/one')
-      cy
-        .get('.c-table table > tbody > tr')
+      cy.get('.c-table table > tbody > tr')
         .should('have.length', 7)
         .should('be.visible')
-      cy
-        .get('#c-table-filter-task-states')
-        .click({ force: true })
-      cy
-        .get('.v-list-item')
+      cy.get('#c-table-filter-task-states').click({ force: true })
+      cy.get('.v-list-item')
         .contains(TaskState.SUCCEEDED.name)
         .click({ force: true })
-      cy
-        .get('.c-table table > tbody > tr')
+      cy.get('.c-table table > tbody > tr')
         .should('have.length', 2)
         .should('be.visible')
-      cy
-        .get('#c-table-filter-task-name')
-        .type('eventually')
-      cy
-        .get('td > div.d-flex > div')
+      cy.get('#c-table-filter-task-name').type('eventually')
+      cy.get('td > div.d-flex > div')
         .contains('eventually')
         .should('be.visible')
     })

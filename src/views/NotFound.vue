@@ -17,15 +17,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-      fill-height
-      fluid>
+    fill-height
+    fluid
+  >
     <v-layout
-        align-center
-        justify-center>
+      align-center
+      justify-center
+    >
       <v-flex
-          xs12
-          sm8
-          md4>
+        xs12
+        sm8
+        md4
+      >
         <v-card>
           <v-card-title primary-title>
             <div>
@@ -36,8 +39,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             {{ $t('NotFound.message') }}
           </v-card-text>
           <v-card-actions>
-            <button @click="$router.go(-1)" class="v-btn success">{{ $t('NotFound.goBack') }}</button>
-            <router-link to="/" tag="button" class="white--text success v-btn">{{ $t('NotFound.toHomepage') }}</router-link>
+            <button
+              @click="$router.go(-1)"
+              class="v-btn success"
+            >
+              {{ $t('NotFound.goBack') }}
+            </button>
+            <router-link
+              to="/"
+              tag="button"
+              class="white--text success v-btn"
+              >{{ $t('NotFound.toHomepage') }}</router-link
+            >
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -50,10 +63,10 @@ import pageMixin from '@/mixins/index'
 
 export default {
   mixins: [pageMixin],
-  metaInfo () {
+  metaInfo() {
     return {
-      title: this.getPageTitle('App.notFound')
+      title: this.getPageTitle('App.notFound'),
     }
-  }
+  },
 }
 </script>

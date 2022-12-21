@@ -16,28 +16,27 @@
  */
 
 import { expect } from 'chai'
-import {
-  posToPath,
-  nonCryptoHash
-} from '@/utils/graph-utils'
+import { posToPath, nonCryptoHash } from '@/utils/graph-utils'
 
 describe('Graph functionality', () => {
   describe('posToPath', () => {
     it('Converts GraphViz pos strings to SVG path strings', () => {
       // e,211.5,156.5 61.5,388.5 61.5,269.19 87.195,162.7 201.3,156.76
-      expect(posToPath(
-        'e,211.5,156.5 61.5,388.5 61.5,269.19 87.195,162.7 201.3,156.76'
-      )).to.equal(
+      expect(
+        posToPath(
+          'e,211.5,156.5 61.5,388.5 61.5,269.19 87.195,162.7 201.3,156.76'
+        )
+      ).to.equal(
         // the second point in the pos is the first point in the path
         // (because GraphViz, that's why)
         'M61.5 -388.5 ' +
-        // the following points in the pos are for the bézier curve
-        'C 61.5 -269.19, 87.195 -162.7, 201.3 -156.76, ' +
-        // the first point in the pos is the last point in the path
-        // (because GraphViz, that's why)
-        // we use a straight line segment, it should be a curve, but, the
-        // difference isn't noticeable
-        'L 211.5 -156.5'
+          // the following points in the pos are for the bézier curve
+          'C 61.5 -269.19, 87.195 -162.7, 201.3 -156.76, ' +
+          // the first point in the pos is the last point in the path
+          // (because GraphViz, that's why)
+          // we use a straight line segment, it should be a curve, but, the
+          // difference isn't noticeable
+          'L 211.5 -156.5'
       )
     })
   })

@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export function getNodeChildren (node, cyclePointsOrderDesc) {
+export function getNodeChildren(node, cyclePointsOrderDesc) {
   // returns child nodes folling the family tree and following sort order
   if (node.type === 'workflow' && !cyclePointsOrderDesc) {
     // a user configuration has configured the sort order for cycle points to

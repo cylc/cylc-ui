@@ -15,9 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  sortedIndexBy
-} from '@/components/cylc/common/sort'
+import { sortedIndexBy } from '@/components/cylc/common/sort'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 
 /* Return an integer suitable for alphabetical sorting of workflow states.
@@ -26,7 +24,7 @@ import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
  * value for it as defined in WORKFLOW_STATE_ORDER.
  *
  */
-export function getWorkflowTreeSortValue (node) {
+export function getWorkflowTreeSortValue(node) {
   if (node.type === 'workflow') {
     return WorkflowStateOrder.get(node.node.status)
   }
@@ -60,7 +58,7 @@ export function getWorkflowTreeSortValue (node) {
  * 2) Type (i.e. sort "workflow-part" before "workflow")
  * 3) ID
  */
-function gscanWorkflowCompValue (node) {
+function gscanWorkflowCompValue(node) {
   const typeValue = node.type === 'workflow-part' ? 'a' : 'z'
   return `${getWorkflowTreeSortValue(node)}_${typeValue}_${node.id}`
 }
@@ -69,16 +67,12 @@ function gscanWorkflowCompValue (node) {
  *
  * Sorts according to getWorkflowTreeSortValue.
  */
-export function sortedWorkflowTree (cylcTree) {
+export function sortedWorkflowTree(cylcTree) {
   const tree = []
   for (const workflowTree of cylcTree.children[0].children) {
     // insert this workflow / workflow-part in sort order
     tree.splice(
-      sortedIndexBy(
-        tree,
-        workflowTree,
-        (n) => gscanWorkflowCompValue(n)
-      ),
+      sortedIndexBy(tree, workflowTree, (n) => gscanWorkflowCompValue(n)),
       0,
       workflowTree
     )

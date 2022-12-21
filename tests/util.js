@@ -24,8 +24,8 @@
  *   deferred.resolve()
  */
 export class Deferred {
-  constructor () {
-    this.promise = new Promise(resolve => {
+  constructor() {
+    this.promise = new Promise((resolve) => {
       this.resolve = resolve
     })
   }

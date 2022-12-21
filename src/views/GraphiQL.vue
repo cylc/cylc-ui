@@ -16,7 +16,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div id="graphiql" ref="graphiql">Loading...</div>
+  <div
+    id="graphiql"
+    ref="graphiql"
+  >
+    Loading...
+  </div>
 </template>
 
 <script>
@@ -29,28 +34,28 @@ import { fallbackGraphQLFetcher, graphQLFetcher } from '@/graphql/graphiql'
 export default {
   name: 'GraphiQL',
   mixins: [pageMixin],
-  metaInfo () {
+  metaInfo() {
     return {
-      title: 'GraphiQL'
+      title: 'GraphiQL',
     }
   },
-  data () {
+  data() {
     return {
       fetcher: null,
-      subscription: null
+      subscription: null,
     }
   },
-  mounted () {
+  mounted() {
     this.fetcher = this.createFetcher()
     ReactDOM.render(
       React.createElement(GraphiQL, {
         fetcher: this.fetcher,
-        defaultVariableEditorOpen: false
+        defaultVariableEditorOpen: false,
       }),
       this.$refs.graphiql
     )
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     // Important to remember to unsubscribe, otherwise a user may accidentally create several
     // subscriptions/observers, causing performance issues on both frontend and backend.
     if (this.subscription !== null) {
@@ -60,13 +65,13 @@ export default {
     next()
   },
   methods: {
-    createFetcher () {
+    createFetcher() {
       const subscriptionClient = this.$workflowService.subscriptionClient
       return subscriptionClient !== null
         ? graphQLFetcher(subscriptionClient, fallbackGraphQLFetcher, this)
         : fallbackGraphQLFetcher
-    }
-  }
+    },
+  },
 }
 </script>
 

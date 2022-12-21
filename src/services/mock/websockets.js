@@ -25,15 +25,15 @@ const graphql = require('./graphql')
  * @param {object} [data] - Response data, optional
  * @returns {{id, type, payload}}
  */
-function wsResponse (id, type, data) {
+function wsResponse(id, type, data) {
   const response = {
     id,
-    type
+    type,
   }
   // connection ack does not include a payload
   if (data) {
     response.payload = {
-      data
+      data,
     }
   }
   return response
@@ -44,7 +44,7 @@ function wsResponse (id, type, data) {
  * @param {string} msg - JSON encoded client message
  * @returns {string} JSON encoded server reply
  */
-function createWebSocketsMessage (msg) {
+function createWebSocketsMessage(msg) {
   const parsed = JSON.parse(msg)
   try {
     if (parsed) {
@@ -66,14 +66,12 @@ function createWebSocketsMessage (msg) {
     throw new Error(`Failed to parse msg: ${msg}`)
   } catch (e) {
     return JSON.stringify({
-      errors: [
-        e
-      ]
+      errors: [e],
     })
   }
 }
 
 module.exports = {
   createWebSocketsMessage,
-  wsResponse
+  wsResponse,
 }

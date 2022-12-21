@@ -63,7 +63,11 @@ const hasSubscriptionOperation = function (graphQlParams) {
  * @param {SubscribableComponent} component
  * @returns {function}
  */
-const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component) {
+const graphQLFetcher = function (
+  subscriptionsClient,
+  fallbackFetcher,
+  component
+) {
   component.subscription = null
   return function (graphQLParams) {
     if (subscriptionsClient && component.subscription !== null) {
@@ -72,17 +76,22 @@ const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component
     if (subscriptionsClient && hasSubscriptionOperation(graphQLParams)) {
       return {
         subscribe: function (observer) {
-          observer.next('Your subscription data will appear here after server publication!')
-          const subscription = subscriptionsClient.request({
-            query: graphQLParams.query,
-            variables: graphQLParams.variables
-          }, function (error, result) {
-            if (error) {
-              observer.error(error)
-            } else {
-              observer.next(result)
+          observer.next(
+            'Your subscription data will appear here after server publication!'
+          )
+          const subscription = subscriptionsClient.request(
+            {
+              query: graphQLParams.query,
+              variables: graphQLParams.variables,
+            },
+            function (error, result) {
+              if (error) {
+                observer.error(error)
+              } else {
+                observer.next(result)
+              }
             }
-          })
+          )
           component.subscription = subscription.subscribe((result, err) => {
             if (err) {
               observer.error(err)
@@ -91,7 +100,7 @@ const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component
             }
           })
           return component.subscription
-        }
+        },
       }
     } else {
       return fallbackFetcher(graphQLParams)
@@ -105,28 +114,22 @@ const graphQLFetcher = function (subscriptionsClient, fallbackFetcher, component
  * @param {*} graphQLParams
  * @returns {Promise<any | string>}
  */
-function fallbackGraphQLFetcher (graphQLParams) {
+function fallbackGraphQLFetcher(graphQLParams) {
   // re-using same method UI uses to create GraphQL URL's used by its client with createGraphQLUrls()
-  return fetch(
-    createGraphQLUrls().httpUrl,
-    {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        ...getCylcHeaders()
-      },
-      body: JSON.stringify(graphQLParams),
-      credentials: 'include'
-    }
-  ).then(function (response) {
+  return fetch(createGraphQLUrls().httpUrl, {
+    method: 'post',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...getCylcHeaders(),
+    },
+    body: JSON.stringify(graphQLParams),
+    credentials: 'include',
+  }).then(function (response) {
     return response.json().catch(function () {
       return response.text()
     })
   })
 }
 
-export {
-  graphQLFetcher,
-  fallbackGraphQLFetcher
-}
+export { graphQLFetcher, fallbackGraphQLFetcher }

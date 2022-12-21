@@ -29,9 +29,7 @@ component. Note: this is not used for the workflow view, see
     class="c-toolbar"
     v-if="responsive"
   >
-    <v-toolbar-title
-      class="tertiary--text"
-    >
+    <v-toolbar-title class="tertiary--text">
       <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
       <!-- burger button for mobile -->
       <v-btn
@@ -51,24 +49,19 @@ component. Note: this is not used for the workflow view, see
 <script>
 import { mapState } from 'vuex'
 import toolbar from '@/mixins/toolbar'
-import {
-  mdiViewList
-} from '@mdi/js'
+import { mdiViewList } from '@mdi/js'
 
 export default {
-  mixins: [
-    toolbar
-  ],
+  mixins: [toolbar],
 
   data: () => ({
     svgPaths: {
-      list: mdiViewList
-    }
+      list: mdiViewList,
+    },
   }),
 
   computed: {
-    ...mapState('app', ['title'])
-  }
-
+    ...mapState('app', ['title']),
+  },
 }
 </script>

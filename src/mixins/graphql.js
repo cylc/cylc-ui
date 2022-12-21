@@ -31,8 +31,8 @@ export default {
   props: {
     workflowName: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     /**
@@ -49,7 +49,7 @@ export default {
      *
      * @return {string} - the Workflow ID used in this view
      */
-    workflowId () {
+    workflowId() {
       return `~${this.user.owner}/${this.workflowName}`
     },
     /**
@@ -57,10 +57,10 @@ export default {
      *
      * @returns {{workflowId: string}}
      */
-    variables () {
+    variables() {
       return {
-        workflowId: this.workflowId
+        workflowId: this.workflowId,
       }
-    }
-  }
+    },
+  },
 }

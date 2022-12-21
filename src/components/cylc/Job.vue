@@ -28,17 +28,17 @@ export default {
   props: {
     status: {
       type: String,
-      required: true
+      required: true,
     },
     previousState: {
       type: String,
-      required: false
+      required: false,
     },
     svg: {
       type: Boolean,
       require: false,
-      default: false
-    }
+      default: false,
+    },
   },
   render: function (createElement, context) {
     // the job status icon
@@ -48,8 +48,12 @@ export default {
     const PREVIOUS_STATE_ITEMS_SIZE = '65'
     const DEFAULT_XY = '10'
     const PREVIOUS_STATE_ITEMS_XY = '25'
-    const width = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
-    const height = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
+    const width = !isEmpty(context.props.previousState)
+      ? PREVIOUS_STATE_ITEMS_SIZE
+      : DEFAULT_SIZE
+    const height = !isEmpty(context.props.previousState)
+      ? PREVIOUS_STATE_ITEMS_SIZE
+      : DEFAULT_SIZE
     const jobStatusIcon = createElement('rect', {
       attrs: {
         class: context.props.status,
@@ -59,8 +63,8 @@ export default {
         height,
         rx: '15',
         ry: '15',
-        'stroke-width': '10'
-      }
+        'stroke-width': '10',
+      },
     })
     // the job icon SVG
     //   * comments prefixed `let` are instructions for changing style
@@ -78,42 +82,36 @@ export default {
           rx: '15',
           ry: '15',
           opacity: '50%',
-          'stroke-width': '10'
-        }
+          'stroke-width': '10',
+        },
       })
       jobIconChildren.splice(0, 0, previousStateIconSvg)
     }
     if (context.props.svg) {
-      return createElement(
-        'g',
-        { class: 'c-job' },
-        [createElement(
-          'g',
-          { class: 'job' },
-          jobIconChildren
-        )]
-      )
+      return createElement('g', { class: 'c-job' }, [
+        createElement('g', { class: 'job' }, jobIconChildren),
+      ])
     }
-    const jobIconSvg = createElement('svg', {
-      attrs: {
-        class: 'job',
-        viewBox: '0 0 100 100'
-      }
-    }, jobIconChildren)
+    const jobIconSvg = createElement(
+      'svg',
+      {
+        attrs: {
+          class: 'job',
+          viewBox: '0 0 100 100',
+        },
+      },
+      jobIconChildren
+    )
     // NOTE: context.data MUST be passed to ensure directives are
     //       passed down to the functional components
     //       https://github.com/vuejs/vue-loader/issues/1433
     const attrs = Object.assign(context.data, {
       attrs: {
         class: 'c-job',
-        style: 'display:inline-block; vertical-align:middle'
-      }
+        style: 'display:inline-block; vertical-align:middle',
+      },
     })
-    return createElement(
-      'span',
-      attrs,
-      [jobIconSvg]
-    )
-  }
+    return createElement('span', attrs, [jobIconSvg])
+  },
 }
 </script>

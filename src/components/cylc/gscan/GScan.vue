@@ -15,13 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
-  <div
-    class="c-gscan h-100"
-  >
+  <div class="c-gscan h-100">
     <v-skeleton-loader
       :loading="isLoading"
       type="list-item-three-line"
-      class=" d-flex flex-column h-100"
+      class="d-flex flex-column h-100"
     >
       <!-- filters -->
       <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
@@ -56,12 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-btn>
           </template>
           <!-- filters tooltip -->
-          <v-card
-            max-height="250px"
-          >
-            <v-list
-              dense
-            >
+          <v-card max-height="250px">
+            <v-list dense>
               <div
                 v-for="filter in filters"
                 :key="filter.title"
@@ -122,11 +116,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :status="scope.node.node.status"
               v-cylc-object="scope.node"
             />
-            <v-list-item
-              :to="workflowLink(scope.node)"
-            >
+            <v-list-item :to="workflowLink(scope.node)">
               <v-list-item-title>
-                <v-layout align-center align-content-center d-flex flex-nowrap>
+                <v-layout
+                  align-center
+                  align-content-center
+                  d-flex
+                  flex-nowrap
+                >
                   <v-flex
                     v-if="scope.node.type === 'workflow-part'"
                     class="c-gscan-workflow-name"
@@ -146,42 +143,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-flex>
                   <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
                   <v-flex
-                    v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
+                    v-if="
+                      scope.node.type === 'workflow' &&
+                      scope.node.node.latestStateTasks
+                    "
                     class="text-right c-gscan-workflow-states"
                   >
                     <!-- task summary tooltips -->
                     <span
-                      v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.node.latestStateTasks))"
+                      v-for="[state, tasks] in getLatestStateTasks(
+                        Object.entries(scope.node.node.latestStateTasks)
+                      )"
                       :key="`${scope.node.id}-summary-${state}`"
                       :class="getTaskStateClasses(scope.node.node, state)"
                     >
-                    <v-tooltip color="black" top>
-                      <template v-slot:activator="{ on }">
-                        <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
-                        <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
-                        <v-btn
-                          v-on="on"
-                          class="ma-0 pa-0"
-                          min-width="0"
-                          min-height="0"
-                          style="font-size: 120%; width: auto"
-                          :ripple="false"
-                          dark
-                          icon
-                        >
-                          <job :status="state" />
-                        </v-btn>
-                      </template>
-                      <!-- tooltip text -->
-                      <span>
-                        <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
-                        <br/>
-                        <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
-                          {{ task }}<br v-if="index !== tasks.length -1" />
+                      <v-tooltip
+                        color="black"
+                        top
+                      >
+                        <template v-slot:activator="{ on }">
+                          <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
+                          <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                          <v-btn
+                            v-on="on"
+                            class="ma-0 pa-0"
+                            min-width="0"
+                            min-height="0"
+                            style="font-size: 120%; width: auto"
+                            :ripple="false"
+                            dark
+                            icon
+                          >
+                            <job :status="state" />
+                          </v-btn>
+                        </template>
+                        <!-- tooltip text -->
+                        <span>
+                          <span class="grey--text"
+                            >{{ countTasksInState(scope.node.node, state) }}
+                            {{ state }}. Recent {{ state }} tasks:</span
+                          >
+                          <br />
+                          <span
+                            v-for="(task, index) in tasks.slice(
+                              0,
+                              maximumTasksDisplayed
+                            )"
+                            :key="index"
+                          >
+                            {{ task }}<br v-if="index !== tasks.length - 1" />
+                          </span>
                         </span>
-                      </span>
-                    </v-tooltip>
-                  </span>
+                      </v-tooltip>
+                    </span>
                   </v-flex>
                 </v-layout>
               </v-list-item-title>
@@ -192,7 +206,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- when no workflows are returned in the GraphQL query -->
       <div v-else>
         <v-list-item>
-          <v-list-item-title class="grey--text">No workflows found</v-list-item-title>
+          <v-list-item-title class="grey--text"
+            >No workflows found</v-list-item-title
+          >
         </v-list-item>
       </div>
     </v-skeleton-loader>
@@ -219,22 +235,15 @@ export default {
   components: {
     Job,
     Tree,
-    WorkflowIcon
+    WorkflowIcon,
   },
-  mixins: [
-    subscriptionComponentMixin
-  ],
-  data () {
+  mixins: [subscriptionComponentMixin],
+  data() {
     return {
-      query: new SubscriptionQuery(
-        GSCAN_DELTAS_SUBSCRIPTION,
-        {},
-        'root',
-        []
-      ),
+      query: new SubscriptionQuery(GSCAN_DELTAS_SUBSCRIPTION, {}, 'root', []),
       maximumTasksDisplayed: 5,
       svgPaths: {
-        filter: mdiFilter
+        filter: mdiFilter,
       },
       /**
        * The filtered workflows. This is the result of applying the filters
@@ -280,27 +289,28 @@ export default {
       filters: [
         {
           title: 'workflow state',
-          items: WorkflowState.enumValues
-            .map(state => {
-              return {
-                text: state.name,
-                value: state,
-                model: true
-              }
-            })
-        },
-        {
-          title: 'task state',
-          items: TaskState.enumValues.map(state => {
+          items: WorkflowState.enumValues.map((state) => {
             return {
               text: state.name,
               value: state,
-              model: false
+              model: true,
             }
-          }).sort((left, right) => {
-            return left.text.localeCompare(right.text)
-          })
-        }
+          }),
+        },
+        {
+          title: 'task state',
+          items: TaskState.enumValues
+            .map((state) => {
+              return {
+                text: state.name,
+                value: state,
+                model: false,
+              }
+            })
+            .sort((left, right) => {
+              return left.text.localeCompare(right.text)
+            }),
+        },
         // {
         //   title: 'workflow host',
         //   items: [] // TODO: will it be in state totals?
@@ -309,12 +319,12 @@ export default {
         //   title: 'cylc version',
         //   items: [] // TODO: will it be in state totals?
         // }
-      ]
+      ],
     }
   },
   computed: {
     ...mapState('workflows', ['cylcTree']),
-    workflows () {
+    workflows() {
       if (!this.cylcTree?.children.length) {
         // no user in the data store (i.e. data loading)
         return []
@@ -324,21 +334,21 @@ export default {
     /**
      * @return {Array<String>}
      */
-    workflowStates () {
-      return this.filters[0]
-        .items
-        .filter(item => item.model)
-        .map(item => item.value.name)
+    workflowStates() {
+      return this.filters[0].items
+        .filter((item) => item.model)
+        .map((item) => item.value.name)
     },
     /**
      * @return {Array<String>}
      */
-    taskStates () {
-      return uniq(this.filters[1]
-        .items
-        .filter(item => item.model)
-        .map(item => item.value.name))
-    }
+    taskStates() {
+      return uniq(
+        this.filters[1].items
+          .filter((item) => item.model)
+          .map((item) => item.value.name)
+      )
+    },
   },
   watch: {
     /**
@@ -349,8 +359,13 @@ export default {
       deep: true,
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
-      }
+        this.filteredWorkflows = this.filterHierarchically(
+          this.workflows,
+          this.searchWorkflows,
+          this.workflowStates,
+          this.taskStates
+        )
+      },
     },
     /**
      * If the user changes the workflow name to search/filter,
@@ -359,14 +374,24 @@ export default {
     searchWorkflows: {
       immediate: false,
       handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflows, newVal, this.workflowStates, this.taskStates)
-      }
+        this.filteredWorkflows = this.filterHierarchically(
+          this.workflows,
+          newVal,
+          this.workflowStates,
+          this.taskStates
+        )
+      },
     },
     workflows: {
       immediate: true,
       handler: function () {
-        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
-      }
+        this.filteredWorkflows = this.filterHierarchically(
+          this.workflows,
+          this.searchWorkflows,
+          this.workflowStates,
+          this.taskStates
+        )
+      },
     },
     filteredWorkflows: {
       immediate: true,
@@ -393,8 +418,8 @@ export default {
         for (const id in cache) {
           cache[id].filtered = ids.includes(id)
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     filterHierarchically,
@@ -409,8 +434,8 @@ export default {
      * ]} items - filter items
      * @returns {boolean} - `true` iff all the items have been selected. `false` otherwise
      */
-    allItemsSelected (items) {
-      return items.every(item => item.model === true)
+    allItemsSelected(items) {
+      return items.every((item) => item.model === true)
     },
 
     /**
@@ -422,16 +447,16 @@ export default {
      *   }
      * ]} items - filter items
      */
-    toggleItemsValues (items) {
+    toggleItemsValues(items) {
       const newValue = !this.allItemsSelected(items)
-      items.forEach(item => {
+      items.forEach((item) => {
         item.model = newValue
       })
     },
 
-    workflowLink (node) {
+    workflowLink(node) {
       if (node.type === 'workflow') {
-        return `/workflows/${ node.tokens.workflow }`
+        return `/workflows/${node.tokens.workflow}`
       }
       return ''
     },
@@ -445,32 +470,32 @@ export default {
      * @param {string} state - a workflow state
      * @returns {number|*} - the number of tasks in the given state
      */
-    countTasksInState (workflow, state) {
+    countTasksInState(workflow, state) {
       if (Object.hasOwnProperty.call(workflow.stateTotals, state)) {
         return workflow.stateTotals[state]
       }
       return 0
     },
 
-    getTaskStateClasses (workflow, state) {
+    getTaskStateClasses(workflow, state) {
       const tasksInState = this.countTasksInState(workflow, state)
       return tasksInState === 0 ? ['empty-state'] : []
     },
 
     // TODO: temporary filter, remove after b0 - https://github.com/cylc/cylc-ui/pull/617#issuecomment-805343847
-    getLatestStateTasks (latestStateTasks) {
+    getLatestStateTasks(latestStateTasks) {
       // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
       const validValues = [
         TaskState.SUBMITTED.name,
         TaskState.SUBMIT_FAILED.name,
         TaskState.RUNNING.name,
         TaskState.SUCCEEDED.name,
-        TaskState.FAILED.name
+        TaskState.FAILED.name,
       ]
-      return latestStateTasks.filter(entry => {
+      return latestStateTasks.filter((entry) => {
         return validValues.includes(entry[0])
       })
-    }
-  }
+    },
+  },
 }
 </script>

@@ -16,7 +16,7 @@
  */
 
 export default class Alert {
-  constructor (text, icon, color) {
+  constructor(text, icon, color) {
     this.text = text
     this.icon = icon
     this.color = color

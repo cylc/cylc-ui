@@ -21,55 +21,47 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import Vuetify from 'vuetify'
 import storeOptions from '@/store/options'
-import {
-  WorkflowState,
-  WorkflowStateOrder
-} from '@/model/WorkflowState.model'
+import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import GScan from '@/components/cylc/gscan/GScan.vue'
 import {
   getWorkflowTreeSortValue,
-  sortedWorkflowTree
+  sortedWorkflowTree,
 } from '@/components/cylc/gscan/sort.js'
-import {
-  filterHierarchically
-} from '@/components/cylc/gscan/filters'
+import { filterHierarchically } from '@/components/cylc/gscan/filters'
 
-import {
-  TEST_TREE,
-  listTree
-} from './utils'
+import { TEST_TREE, listTree } from './utils'
 
 // Print full objects when tests fail
 chai.config.truncateThreshold = 0
 
-global.requestAnimationFrame = cb => cb()
+global.requestAnimationFrame = (cb) => cb()
 
 const localVue = createLocalVue()
 localVue.prototype.$workflowService = {
-  register () {},
-  unregister (obj) {
+  register() {},
+  unregister(obj) {
     // we will reset the subscriptions object so tests can confirm
     // this function has been called
     obj.subscriptions = {}
   },
-  subscribe (obj, name) {
+  subscribe(obj, name) {
     return true
   },
-  unsubscribe () {},
-  startDeltasSubscription () {
+  unsubscribe() {},
+  startDeltasSubscription() {
     return {
       unsubscribed: false,
-      unsubscribe () {
+      unsubscribe() {
         this.unsubscribed = true
-      }
+      },
     }
   },
   introspection: Promise.resolve({
     mutations: [],
-    types: []
-  })
+    types: [],
+  }),
 }
 localVue.use(CylcObjectPlugin)
 
@@ -87,26 +79,26 @@ describe('GScan component', () => {
    * @param options
    * @returns {Wrapper<GScan>}
    */
-  const mountFunction = options => {
+  const mountFunction = (options) => {
     const vuetify = new Vuetify()
     return mount(GScan, {
       localVue,
       vuetify,
       store,
       stubs: {
-        RouterLink: RouterLinkStub
+        RouterLink: RouterLinkStub,
       },
-      ...options
+      ...options,
     })
   }
 
   it('should display a skeleton loader if loading data', () => {
     const wrapper = mountFunction({
       computed: {
-        isLoading () {
+        isLoading() {
           return true
-        }
-      }
+        },
+      },
     })
     const skeletonLoader = wrapper.find('.v-skeleton-loader')
     const isBusy = skeletonLoader.element.getAttribute('aria-busy')
@@ -118,14 +110,16 @@ describe('GScan component', () => {
       // for each worflow state ...
       for (const workflowState of WorkflowState) {
         // ... except ERROR
-        if (workflowState === WorkflowState.ERROR) { continue }
+        if (workflowState === WorkflowState.ERROR) {
+          continue
+        }
 
         // it should associate a workflow with the correct sort order
         expect(
           getWorkflowTreeSortValue({
             type: 'workflow',
             node: { status: workflowState.name },
-            children: []
+            children: [],
           })
         ).to.equal(WorkflowStateOrder.get(workflowState.name))
 
@@ -138,25 +132,26 @@ describe('GScan component', () => {
               {
                 type: 'workflow',
                 node: { status: workflowState.name },
-                children: []
+                children: [],
               },
               {
                 // a workflow with no state shouldn't mess with the sort order
                 type: 'workflow',
                 node: { status: undefined },
-                children: []
-              }
-            ]
+                children: [],
+              },
+            ],
           })
         ).to.equal(WorkflowStateOrder.get(workflowState.name))
       }
     })
     it('should sort workflows', () => {
       // it should sort by status then name
-      expect(
-        listTree(sortedWorkflowTree(TEST_TREE))
-      ).to.deep.equal([
-        '~u/b', '~u/c', '~u/a/x1', '~u/a/x2'
+      expect(listTree(sortedWorkflowTree(TEST_TREE))).to.deep.equal([
+        '~u/b',
+        '~u/c',
+        '~u/a/x1',
+        '~u/a/x2',
       ])
     })
   })
@@ -278,7 +273,7 @@ describe('GScan component', () => {
     it('should create a link for a workflow node', () => {
       const link = GScan.methods.workflowLink({
         type: 'workflow',
-        tokens: { workflow: 'a/b/c' }
+        tokens: { workflow: 'a/b/c' },
       })
       expect(link).to.equal('/workflows/a/b/c')
     })
@@ -288,38 +283,38 @@ describe('GScan component', () => {
     it('should toggle items values to true', () => {
       const items = [
         {
-          model: false
+          model: false,
         },
         {
-          model: false
-        }
+          model: false,
+        },
       ]
       GScan.methods.toggleItemsValues(items)
-      expect(items.every(item => item.model))
+      expect(items.every((item) => item.model))
     })
     it('should toggle items values to false', () => {
       const items = [
         {
-          model: true
+          model: true,
         },
         {
-          model: true
-        }
+          model: true,
+        },
       ]
       GScan.methods.toggleItemsValues(items)
-      expect(!items.every(item => item.model))
+      expect(!items.every((item) => item.model))
     })
     it('should toggle items values to false (mixed values)', () => {
       const items = [
         {
-          model: true
+          model: true,
         },
         {
-          model: false
-        }
+          model: false,
+        },
       ]
       GScan.methods.toggleItemsValues(items)
-      expect(!items.every(item => item.model))
+      expect(!items.every((item) => item.model))
     })
   })
 })

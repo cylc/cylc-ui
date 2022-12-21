@@ -23,7 +23,7 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 
 // suppress "ReferenceError: requestAnimationFrame is not defined" errors
-global.requestAnimationFrame = cb => cb()
+global.requestAnimationFrame = (cb) => cb()
 
 const BASIC_MUTATION = {
   name: 'My Mutation',
@@ -34,17 +34,17 @@ const BASIC_MUTATION = {
       defaultValue: '"MyDefault"',
       type: {
         name: 'String',
-        kind: 'SCALAR'
-      }
+        kind: 'SCALAR',
+      },
     },
     {
       name: 'MyInteger',
       type: {
         name: 'Int',
-        kind: 'SCALAR'
-      }
-    }
-  ]
+        kind: 'SCALAR',
+      },
+    },
+  ],
 }
 
 const CUSTOM_OBJECT = {
@@ -55,17 +55,17 @@ const CUSTOM_OBJECT = {
       name: 'MyString',
       type: {
         name: 'String',
-        kind: 'SCALAR'
-      }
+        kind: 'SCALAR',
+      },
     },
     {
       name: 'MyInteger',
       type: {
         name: 'Int',
-        kind: 'SCALAR'
-      }
-    }
-  ]
+        kind: 'SCALAR',
+      },
+    },
+  ],
 }
 
 const NESTED_TYPES = [
@@ -80,11 +80,11 @@ const NESTED_TYPES = [
         kind: 'NON_NULL',
         ofType: {
           name: 'String',
-          kind: 'SCALAR'
-        }
-      }
+          kind: 'SCALAR',
+        },
+      },
     },
-    null
+    null,
   ],
   [
     {
@@ -96,11 +96,11 @@ const NESTED_TYPES = [
         kind: 'LIST',
         ofType: {
           name: 'String',
-          kind: 'SCALAR'
-        }
-      }
+          kind: 'SCALAR',
+        },
+      },
     },
-    []
+    [],
   ],
   [
     {
@@ -112,11 +112,11 @@ const NESTED_TYPES = [
         kind: 'LIST',
         ofType: {
           name: 'MyObject',
-          kind: 'OBJECT'
-        }
-      }
+          kind: 'OBJECT',
+        },
+      },
     },
-    [{ MyString: null, MyInteger: null }]
+    [{ MyString: null, MyInteger: null }],
   ],
   [
     {
@@ -134,13 +134,13 @@ const NESTED_TYPES = [
             kind: 'NON_NULL',
             ofType: {
               name: 'String',
-              kind: 'SCALAR'
-            }
-          }
-        }
-      }
+              kind: 'SCALAR',
+            },
+          },
+        },
+      },
     },
-    []
+    [],
   ],
   [
     {
@@ -158,14 +158,14 @@ const NESTED_TYPES = [
             kind: 'NON_NULL',
             ofType: {
               name: 'MyObject',
-              kind: 'OBJECT'
-            }
-          }
-        }
-      }
+              kind: 'OBJECT',
+            },
+          },
+        },
+      },
     },
-    [{ MyString: null, MyInteger: null }]
-  ]
+    [{ MyString: null, MyInteger: null }],
+  ],
 ]
 
 /**
@@ -173,7 +173,7 @@ const NESTED_TYPES = [
  *
  * NOTE: clones to avoid "TypeError: Cannot convert a Symbol value to a string"
  */
-function getModel (wrapper) {
+function getModel(wrapper) {
   return cloneDeep(wrapper.vm.$data.model)
 }
 
@@ -186,24 +186,24 @@ describe('FormGenerator Component', () => {
    * @param {*} options
    * @returns {Wrapper<FormGenerator>}
    */
-  const mountFunction = options => {
+  const mountFunction = (options) => {
     const vuetify = new Vuetify()
     return mount(FormGenerator, {
       localVue,
       vuetify,
-      ...options
+      ...options,
     })
   }
 
   it('should parse default values from the schema for simple types', () => {
     const wrapper = mountFunction({
       propsData: {
-        mutation: BASIC_MUTATION
-      }
+        mutation: BASIC_MUTATION,
+      },
     })
     expect(getModel(wrapper)).to.deep.equal({
       MyString: 'MyDefault',
-      MyInteger: null
+      MyInteger: null,
     })
   })
 
@@ -214,10 +214,10 @@ describe('FormGenerator Component', () => {
           mutation: {
             name: type.name + 'Mutation',
             description: 'Beef Wellington',
-            args: [type]
+            args: [type],
           },
-          types: [CUSTOM_OBJECT]
-        }
+          types: [CUSTOM_OBJECT],
+        },
       })
       const expected = { [type.name]: JSON.parse(type.defaultValue) }
       expect(getModel(wrapper)).to.deep.equal(expected)
@@ -233,10 +233,10 @@ describe('FormGenerator Component', () => {
           mutation: {
             name: type.name + 'Mutation',
             description: 'Beef Wellington',
-            args: [type]
+            args: [type],
           },
-          types: [CUSTOM_OBJECT]
-        }
+          types: [CUSTOM_OBJECT],
+        },
       })
       const expected = { [type.name]: defaultValue }
       expect(getModel(wrapper)).to.deep.equal(expected)
@@ -248,13 +248,13 @@ describe('FormGenerator Component', () => {
       propsData: {
         mutation: BASIC_MUTATION,
         initialData: {
-          MyString: 'Foo'
-        }
-      }
+          MyString: 'Foo',
+        },
+      },
     })
     expect(getModel(wrapper)).to.deep.equal({
       MyString: 'Foo',
-      MyInteger: null
+      MyInteger: null,
     })
   })
 
@@ -263,9 +263,9 @@ describe('FormGenerator Component', () => {
       propsData: {
         mutation: BASIC_MUTATION,
         initialData: {
-          MyString: 'Foo'
-        }
-      }
+          MyString: 'Foo',
+        },
+      },
     })
     const before = getModel(wrapper)
     wrapper.vm.reset()

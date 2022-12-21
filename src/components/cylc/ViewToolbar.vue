@@ -56,7 +56,7 @@ export default {
   props: {
     groups: {
       required: true,
-      type: Array
+      type: Array,
       /*
         groups: [
           {
@@ -91,10 +91,10 @@ export default {
           }
         ]
       */
-    }
+    },
   },
   computed: {
-    iGroups () {
+    iGroups() {
       // wrap the provided props into something we can mutate with derived
       // parameters
       const ret = []
@@ -107,7 +107,7 @@ export default {
       for (const group of this.groups) {
         iGroup = {
           ...group,
-          iControls: []
+          iControls: [],
         }
         for (const control of group.controls) {
           color = null
@@ -116,14 +116,14 @@ export default {
 
           // set callback and color
           switch (control.action) {
-          case 'toggle':
-            callback = (e) => this.toggle(control, e)
-            if (control.value) {
-              color = 'blue'
-            }
-            break
-          case 'callback':
-            callback = (e) => this.call(control, e)
+            case 'toggle':
+              callback = (e) => this.toggle(control, e)
+              if (control.value) {
+                color = 'blue'
+              }
+              break
+            case 'callback':
+              callback = (e) => this.call(control, e)
           }
 
           // set disabled
@@ -144,29 +144,29 @@ export default {
             ...control,
             color,
             callback,
-            disabled
+            disabled,
           }
           iGroup.iControls.push(iControl)
         }
         ret.push(iGroup)
       }
       return ret
-    }
+    },
   },
   methods: {
-    toggle (control, e) {
+    toggle(control, e) {
       // toggle a boolean value
       // NOTE: undefined is interpreted is false
       control.value = !control.value
       this.$emit('setOption', control.key, control.value)
       e.currentTarget.blur()
     },
-    call (control, e) {
+    call(control, e) {
       // call a control's callback
       control.callback()
       e.currentTarget.blur()
     },
-    getValues () {
+    getValues() {
       // an object with all defined values
       const vars = {}
       for (const group of this.groups) {
@@ -177,40 +177,40 @@ export default {
         }
       }
       return vars
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="scss">
-  .c-view-toolbar {
-    // give the toolbar a little respect space
-    padding: 0.5rem 0 0.5rem 0;
+.c-view-toolbar {
+  // give the toolbar a little respect space
+  padding: 0.5rem 0 0.5rem 0;
 
-    .group {
-      // put a bit of space between the groups
-      padding-right: 0.5rem;
+  .group {
+    // put a bit of space between the groups
+    padding-right: 0.5rem;
+    display: inline-block;
+
+    &:before {
+      // place a divider between groups
+      content: '|';
+      font-size: 2rem;
+      position: relative;
+      top: 0.5rem; // because the font is x2 nudge it down 1/2
+      color: rgb(200, 200, 200);
+    }
+    &:first-child:before {
+      // don't add a divider on the first group
+      content: '';
+    }
+
+    .control {
+      // put a bit of space between the controls
+      padding: 0 0 0 0.5rem;
+      // make them sit side-by-side
       display: inline-block;
-
-      &:before {
-        // place a divider between groups
-        content: '|';
-        font-size: 2rem;
-        position: relative;
-        top: 0.5rem; // because the font is x2 nudge it down 1/2
-        color: rgb(200, 200, 200);
-      }
-      &:first-child:before {
-        // don't add a divider on the first group
-        content: '';
-      }
-
-      .control {
-        // put a bit of space between the controls
-        padding: 0 0 0 0.5rem;
-        // make them sit side-by-side
-        display: inline-block;
-      }
     }
   }
+}
 </style>
