@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// we mount the tree to include the TreeItem component and other vuetify children components
+// we mount the tree to include the TreeItem component and other vuetify
+// children components
 import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import Vue from 'vue'
@@ -187,7 +188,7 @@ describe('Tree component', () => {
         })
         expect(wrapper.vm.activeFilters).to.equal(null)
       })
-      it('should indicate filters are enabled if filtering by task name', () => {
+      it('should indicate if task name filters are enabled', () => {
         const wrapper = mountFunction({
           propsData: {
             workflows: simpleWorkflowTree4Nodes[0].children,
@@ -203,7 +204,7 @@ describe('Tree component', () => {
         wrapper.vm.filterTasks()
         expect(wrapper.vm.activeFilters.name).to.equal('foo')
       })
-      it('should indicate filters are enabled if filtering by task states', () => {
+      it('should indicate if task state filters are enabled', () => {
         const states = [TaskState.EXPIRED.name, TaskState.SUBMIT_FAILED.name]
         const wrapper = mountFunction({
           propsData: {

@@ -28,7 +28,8 @@ export function filterByName(workflow, name) {
 
 /**
  * @private
- * @param stateTotals {Object} - object with the keys being states, and values the count
+ * @param stateTotals {Object} - object with the keys being states, and values
+ * - the count
  * @return {Array<String>}
  */
 function getWorkflowStates(stateTotals) {
@@ -37,11 +38,11 @@ function getWorkflowStates(stateTotals) {
     ? []
     : Object.entries(stateTotals)
       .filter((stateTotal) => {
-        // GraphQL will return all the task states possible in a workflow, but we
-        // only want the states that have an equivalent state for a job. So we filter
-        // out the states that do not exist for jobs, and that have active tasks in
-        // the workflow (no point keeping the empty states, as they are not to be
-        // displayed).
+        // GraphQL will return all the task states possible in a workflow, but
+        // we only want the states that have an equivalent state for a job. So
+        // we filter out the states that do not exist for jobs, and that have
+        // active tasks in the workflow (no point keeping the empty states, as
+        // they are not to be displayed).
         return jobStates.includes(stateTotal[0]) && stateTotal[1] > 0
       })
       .map((stateTotal) => stateTotal[0])
@@ -92,8 +93,8 @@ function filterWorkflow(workflow, name, workflowStates, taskStates) {
       return filtered
     }
   }
-  // Now filter using the provided list of states. We know that the name has been
-  // accepted at this point.
+  // Now filter using the provided list of states. We know that the name has
+  // been accepted at this point.
   filtered = filterByState(workflow, workflowStates, taskStates)
   return filtered
 }
@@ -103,7 +104,8 @@ function filterWorkflow(workflow, name, workflowStates, taskStates) {
  * @param {String} name
  * @param {Array<String>} workflowStates
  * @param {Array<String>} taskStates
- * @returns {Array<WorkflowGScanNode|WorkflowNamePartGScanNode>} - filtered workflows
+ * @returns {Array<WorkflowGScanNode|WorkflowNamePartGScanNode>} - filtered
+ * - workflows
  * @see https://stackoverflow.com/questions/45289854/how-to-effectively-filter-tree-view-retaining-its-existing-structure
  */
 export function filterHierarchically(

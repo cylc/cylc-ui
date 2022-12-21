@@ -18,7 +18,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { expect } from 'chai'
-// need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
+// need the polyfill as otherwise ApolloClient fails to be imported as it
+// checks for a global fetch object on import...
 import 'cross-fetch/polyfill'
 import * as graphql from '@/graphql'
 import storeOptions from '@/store/options'

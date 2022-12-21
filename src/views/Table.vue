@@ -97,14 +97,17 @@ export default {
     },
     query() {
       return new SubscriptionQuery(
-        // this is disabled for now as differences in the fragment names are causing the
-        // subscription to be reloaded when its merged. This will need to be re-enabled in
-        // future, if we need more information then the currently active WORKFLOW_TREE_DELTAS_SUBSCRIPTION provides
-        // WORKFLOW_TABLE_DELTAS_SUBSCRIPTION,
+        // this is disabled for now as differences in the fragment names are
+        // causing the subscription to be reloaded when its merged. This
+        // will need to be re-enabled in future, if we need more information
+        // then the currently active WORKFLOW_TREE_DELTAS_SUBSCRIPTION provides
+        // WORKFLOW_TABLE_DELTAS_SUBSCRIPTION
         WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
         this.variables,
-        // we really should consider giving these unique names, as technically they are just use as the subscription names
-        // By using a unique name, we can avoid callback merging errors like the one documented line 350 in the workflow.service.js file
+        // we really should consider giving these unique names, as technically
+        // they are just use as the subscription names. By using a unique name,
+        // we can avoid callback merging errors like the one documented line 350
+        // in the workflow.service.js file
         'workflow',
         [],
       )

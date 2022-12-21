@@ -28,18 +28,23 @@ function normalize(url) {
 }
 
 /**
- * Get the application base URL. If the URL will be used for WebSockets, a boolean parameter
- * can be passed so that the protocol can be corrected (when HTTPS, we want WSS, otherwise
- * we will have WS).
+ * Get the application base URL. If the URL will be used for WebSockets, a
+ * boolean parameter can be passed so that the protocol can be corrected (when
+ * HTTPS, we want WSS, otherwise we will have WS).
  *
- * The returned URL does not include the query search params (i.e. excludes ?redirectTo=/hub/login).
+ * The returned URL does not include the query search params (i.e. excludes
+ * ?redirectTo=/hub/login).
  *
- * The parameter `baseOnly` can be used to define whether the final URL will incl
+ * The parameter `baseOnly` can be used to define whether the final URL will
+ * incl
  *
  * @private
- * @param {boolean} websockets - whether the URL will be used for websockets or not
- * @param {boolean} baseOnly - whether to use only the base URL or not when creating the new URL
- * @returns {string} - the application base URL, containing protocol, hostname, port, and pathname
+ * @param {boolean} websockets - whether the URL will be used for websockets or
+ * - not
+ * @param {boolean} baseOnly - whether to use only the base URL or not when
+ * - creating the new URL
+ * @returns {string} - the application base URL, containing protocol, hostname,
+ * - port, and pathname
  */
 function getBaseUrl(websockets = false, baseOnly = false) {
   const protocol = websockets
@@ -62,8 +67,10 @@ function getBaseUrl(websockets = false, baseOnly = false) {
  * path.
  *
  * @param {string} path - path to be used when creating a new URL (e.g. /users)
- * @param {boolean} websockets - whether the URL will be used for websockets or not
- * @param {boolean} baseOnly - whether to use only the base URL or not when creating the new URL
+ * @param {boolean} websockets - whether the URL will be used for websockets or
+ * - not
+ * @param {boolean} baseOnly - whether to use only the base URL or not when
+ * - creating the new URL
  * @returns {string} - the new URL, preceded by the base URL (e.g. https://hub:8080/users/cylc/users)
  */
 function createUrl(path, websockets = false, baseOnly = false) {

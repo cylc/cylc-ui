@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// we mount the tree to include the TreeItem component and other vuetify children components
+// we mount the tree to include the TreeItem component and other vuetify
+// children components
 import { createLocalVue, mount } from '@vue/test-utils'
 import { Assertion, expect } from 'chai'
 import Vuetify from 'vuetify/lib'
@@ -91,7 +92,8 @@ describe('TreeItem component', () => {
   })
 
   describe('expanded', () => {
-    // using simpleJobNode as it has only one child so it is easier/quicker to test
+    // using simpleJobNode as it has only one child so it is easier/quicker to
+    // test
     it('should expand nodes when configured', () => {
       let wrapper = mountFunction({
         propsData: {
@@ -131,121 +133,16 @@ describe('TreeItem component', () => {
   })
 
   describe('children', () => {
-    it('should recursively include other TreeItem components for its children', () => {
+    it('should recursively include other TreeItem components', () => {
       const wrapper = mountFunction({
         propsData: {
           node: simpleWorkflowNode,
         },
       })
       const task = wrapper.findAllComponents({ name: 'TreeItem' })
-      // 5 TreeItem components, 1 for workflow, 1 for cyclepoint, 1 for task, 1 for job, 1 for job-details
+      // 5 TreeItem components, 1 for workflow, 1 for cyclepoint, 1 for task, 1
+      // for job, 1 for job-details
       expect(task.length).to.equal(5)
     })
-    // })
-    // describe('mixin', () => {
-    //   const sortTestsData = [
-    //     // invalid values
-    //     {
-    //       args: {
-    //         type: '',
-    //         children: []
-    //       },
-    //       expected: []
-    //     },
-    //     {
-    //       args: {
-    //         type: null,
-    //         children: null
-    //       },
-    //       expected: null
-    //     },
-    //     // workflow children (cycle points) are sorted by ID in descending order
-    //     {
-    //       args: {
-    //         type: 'workflow',
-    //         children: [
-    //           { id: 'workflow//1' },
-    //           { id: 'workflow//2' }
-    //         ]
-    //       },
-    //       expected: [
-    //         { id: 'workflow//2' },
-    //         { id: 'workflow//1' }
-    //       ]
-    //     },
-    //     // cycle point children (family proxies and task proxies) are sorted by type in ascending order, and then name in ascending order
-    //     {
-    //       args: {
-    //         type: 'cyclepoint',
-    //         children: [
-    //           { node: { name: 'foo' }, type: 'task-proxy' },
-    //           { node: { name: 'FAM1' }, type: 'family-proxy' },
-    //           { node: { name: 'bar' }, type: 'task-proxy' }
-    //         ]
-    //       },
-    //       expected: [
-    //         { node: { name: 'FAM1' }, type: 'family-proxy' },
-    //         { node: { name: 'bar' }, type: 'task-proxy' },
-    //         { node: { name: 'foo' }, type: 'task-proxy' }
-    //       ]
-    //     },
-    //     // family proxy children (family proxies and task proxies) are sorted by type in ascending order, and then name in ascending order
-    //     {
-    //       args: {
-    //         type: 'family-proxy',
-    //         children: [
-    //           { node: { name: 'foo' }, type: 'task-proxy' },
-    //           { node: { name: 'FAM1' }, type: 'family-proxy' },
-    //           { node: { name: 'bar' }, type: 'task-proxy' }
-    //         ]
-    //       },
-    //       expected: [
-    //         { node: { name: 'FAM1' }, type: 'family-proxy' },
-    //         { node: { name: 'bar' }, type: 'task-proxy' },
-    //         { node: { name: 'foo' }, type: 'task-proxy' }
-    //       ]
-    //     },
-    //     {
-    //       args: {
-    //         type: 'family-proxy',
-    //         children: [
-    //           { node: { name: 'f01' }, type: 'task-proxy' },
-    //           { node: { name: 'f1' }, type: 'task-proxy' },
-    //           { node: { name: 'f10' }, type: 'task-proxy' },
-    //           { node: { name: 'f0' }, type: 'task-proxy' },
-    //           { node: { name: 'f2' }, type: 'task-proxy' }
-    //         ]
-    //       },
-    //       expected: [
-    //         { node: { name: 'f0' }, type: 'task-proxy' },
-    //         { node: { name: 'f01' }, type: 'task-proxy' },
-    //         { node: { name: 'f1' }, type: 'task-proxy' },
-    //         { node: { name: 'f2' }, type: 'task-proxy' },
-    //         { node: { name: 'f10' }, type: 'task-proxy' }
-    //       ]
-    //     },
-    //     // task proxy children (jobs) are sorted by job submit number in descending order
-    //     {
-    //       args: {
-    //         type: 'task-proxy',
-    //         children: [
-    //           { node: { submitNum: '2' } },
-    //           { node: { submitNum: '1' } },
-    //           { node: { submitNum: '3' } }
-    //         ]
-    //       },
-    //       expected: [
-    //         { node: { submitNum: '3' } },
-    //         { node: { submitNum: '2' } },
-    //         { node: { submitNum: '1' } }
-    //       ]
-    //     }
-    //   ]
-    //   sortTestsData.forEach((test) => {
-    //     it('should order elements correctly', () => {
-    //       const sorted = treeitem.methods.sortedChildren(test.args.type, test.args.children)
-    //       expect(sorted).to.deep.equal(test.expected)
-    //     })
-    //   })
   })
 })

@@ -67,7 +67,8 @@ export function getCylcHeaders() {
  * @param {{
  *   reconnect: boolean,
  *   lazy: boolean
- * }} options - SubscriptionClient options (only two main options added here, see their doc for more)
+ * }} options - SubscriptionClient options (only two main options added here,
+ * - see their doc for more)
  * @param {*} wsImpl
  * @return {SubscriptionClient} a subscription client
  */
@@ -96,7 +97,8 @@ export function createSubscriptionClient(wsUrl, options = {}, wsImpl = null) {
   subscriptionClient.onDisconnected(() => {
     store.commit('SET_OFFLINE', true)
   })
-  // TODO: at the moment the error displays an Event object, but the browser also displays the problem, as well as the offline indicator
+  // TODO: at the moment the error displays an Event object, but the browser
+  // also displays the problem, as well as the offline indicator
   //       would be nice to find a better error message using the error object
   // subscriptionClient.onError((error) => {
   //   console.error(error)
@@ -110,14 +112,16 @@ export function createSubscriptionClient(wsUrl, options = {}, wsImpl = null) {
  *
  * If a `queryUri` is provided, it will be used for handling Query operations.
  *
- * If a `subscriptionUri` is provided, it will be used for handling Subscription operations.
+ * If a `subscriptionUri` is provided, it will be used for handling
+ * Subscription operations.
  *
- * If no `subscriptionUri` is provided, any Subscription operation will fail, as we will be
+ * If no `subscriptionUri` is provided, any Subscription operation will fail,
+ * as we will be
  * using an empty link (a simple instance of `ApolloLink`).
  *
- * The link object is actually a split function (from the `apollo-link` module). This function
- * works similarly to a ternary operator. Based on the operation, it will return a Query or
- * a Subscription link.
+ * The link object is actually a split function (from the `apollo-link`
+ * module). This function works similarly to a ternary operator. Based on the
+ * operation, it will return a Query or a Subscription link.
  *
  * @public
  * @param {string} httpUrl
@@ -132,7 +136,8 @@ export function createApolloClient(httpUrl, subscriptionClient) {
   const wsLink
     = subscriptionClient !== null
       ? new WebSocketLink(subscriptionClient)
-      : new ApolloLink() // return an empty link, useful for testing, offline mode, etc
+      : new ApolloLink()
+  // return an empty link, useful for testing, offline mode, etc
 
   const link = split(
     ({ query }) => {

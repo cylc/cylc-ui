@@ -16,17 +16,6 @@
  */
 
 // eslint-disable-next-line no-unused-vars
-import {
-  ArgumentNode,
-  DefinitionNode,
-  DocumentNode,
-  FieldNode,
-  FragmentDefinitionNode,
-  SelectionNode,
-  SelectionSetNode,
-  ValueNode,
-  VariableDefinitionNode,
-} from 'graphql'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isObject from 'lodash/isObject'
@@ -71,7 +60,8 @@ function mergeQueries(queryA, queryB) {
     (definition) => definition.kind === 'FragmentDefinition',
   )
   const fragments = mergeFragments(queryAFragments, queryBFragments)
-  // Finally return the merged definitions and fragments (loc in the AST nodes is not important).
+  // Finally return the merged definitions and fragments (loc in the AST nodes
+  // is not important).
   queryA.definitions = [definition, ...fragments]
   return queryA
 }
@@ -96,7 +86,8 @@ function mergeFragments(fragmentsA, fragmentsB) {
     const typeConditionName = fragment.typeCondition.name.value
     const existingFragment = fragmentsByTypeCondition[typeConditionName]
     if (!existingFragment) {
-      // If it is a new fragment, then no need to worry and just add it to the array.
+      // If it is a new fragment, then no need to worry and just add it to the
+      // array.
       fragments.push(fragment)
     } else {
       // Else we need to merge the fragments.
@@ -137,7 +128,8 @@ function mergeSelectionSets(selectionSetA, selectionSetB) {
   selectionSet.selections.forEach((selection) => {
     if (selection.kind === 'InlineFragment') {
       throw new Error(
-        'Found a selection of type "InlineFragment". Only "Field" and "FragmentSpread" are supported',
+        'Found a selection of type "InlineFragment".'
+        + ' Only "Field" and "FragmentSpread" are supported',
       )
     }
     const selectionName = selection.alias
@@ -148,19 +140,22 @@ function mergeSelectionSets(selectionSetA, selectionSetB) {
   selectionSetB.selections.forEach((field) => {
     if (field.kind === 'InlineFragment') {
       throw new Error(
-        'Found a selection of type "InlineFragment". Only "Field" and "FragmentSpread" are supported',
+        'Found a selection of type "InlineFragment".'
+        + ' Only "Field" and "FragmentSpread" are supported',
       )
     }
     const selectionName = field.alias ? field.alias.value : field.name.value
     const existingField = selectionsByName[selectionName]
     if (!existingField) {
-      // If it is a new field, then no need to worry and just add it to the array.
+      // If it is a new field, then no need to worry and just add it to the
+      // array.
       // TBD: is selections read-only?
       selectionSet.selections.push(field)
     } else {
       if (existingField.kind !== field.kind) {
         throw new Error(
-          `Cannot merge selections "${selectionName}" with type ${existingField.kind} and ${field.kind}`,
+          `Cannot merge selections "${selectionName}" with `
+          + `type ${existingField.kind} and ${field.kind}`,
         )
       }
       existingField.directives = mergeDirectives(
@@ -199,8 +194,9 @@ function mergeSelectionSets(selectionSetA, selectionSetB) {
  */
 function mergeFields(fieldA, fieldB) {
   const field = fieldA
-  // If the selectionSet is undefined, then it is a simple field like "id" or "name",
-  // and we can simply return it later as-is (i.e. we cannot merge "id" and "id").
+  // If the selectionSet is undefined, then it is a simple field like "id" or
+  // "name", and we can simply return it later as-is (i.e. we cannot merge "id"
+  // and "id").
   if (field.selectionSet !== undefined) {
     // NB: possible recursion here
     field.selectionSet = mergeSelectionSets(
@@ -234,7 +230,9 @@ function mergeArguments(argumentsA, argumentsB) {
     } else {
       if (existingArgument.value.kind !== argument.value.kind) {
         throw new Error(
-          `Cannot merge arguments "${existingArgument.name.value}" and "${argument.name.value}" with different types "${existingArgument.kind}" and "${argument.kind}"`,
+          `Cannot merge arguments "${existingArgument.name.value}" and`
+          + ` "${argument.name.value}" with different types`
+          + ` "${existingArgument.kind}" and "${argument.kind}"`,
         )
       }
       existingArgument.value = mergeValues(
@@ -282,7 +280,8 @@ function mergeValues(valueA, valueB) {
   case 'Variable':
     if (valueA.name.value !== valueB.name.value) {
       throw new Error(
-          `Cannot merge VariableNode's with different variables "${valueA.name.value}" and "${valueB.name.value}"`,
+          `Cannot merge VariableNode's with different variables`
+        + ` "${valueA.name.value}" and "${valueB.name.value}"`,
       )
     }
     break
@@ -317,7 +316,8 @@ function mergeValues(valueA, valueB) {
     //   }
     // }
     // The sort: {} is an object with properties keys and reverse...
-    // In order to compare the two objects, first we must omit the loc (source code location from AST...)
+    // In order to compare the two objects, first we must omit the loc (source
+    // code location from AST...)
     const objectA = removeAstLoc(valueA)
     const objectB = removeAstLoc(valueB)
     if (!isEqual(objectA, objectB)) {
@@ -371,7 +371,8 @@ function mergeDefinitions(definitionA, definitionB) {
       B: ${definitionBVariables}
     `)
   }
-  // N.B: we are not merging variables, since we know they are identical already (above).
+  // N.B: we are not merging variables, since we know they are identical
+  // already (above).
   definition.directives = mergeDirectives(
     definitionA.directives,
     definitionB.directives,

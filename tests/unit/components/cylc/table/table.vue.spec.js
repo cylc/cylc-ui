@@ -93,7 +93,8 @@ describe('Table component', () => {
     ).to.equal('20000103T0000Z')
     expect(
       wrapper.find(
-        `table > tbody > tr:nth-child(${wrapper.vm.filteredTasks.length}) > td:nth-child(3)`,
+        `table > tbody > tr:nth-child(${wrapper.vm.filteredTasks.length})`
+        + '> td:nth-child(3)',
       ).element.innerHTML,
     ).to.equal('20000101T0000Z')
   })

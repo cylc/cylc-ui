@@ -79,8 +79,9 @@ export default {
   },
 
   /**
-   * Here we define the ID's for the Lumino DOM elements, and add the Dock panel to the main
-   * Box panel. In the next tick of Vue, the DOM element and the Vue element/ref are attached.
+   * Here we define the ID's for the Lumino DOM elements, and add the Dock
+   * panel to the main * Box panel. In the next tick of Vue, the DOM element and
+   * the Vue element/ref are attached.
    */
   created() {
     this.dock.id = 'dock'

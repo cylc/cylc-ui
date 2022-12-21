@@ -43,27 +43,27 @@ export class TreeCallback extends DeltasCallback {
     this.lookup = null
   }
 
-  before(deltas, store, errors) {
+  before(deltas, store) {
     const lookup = store.state.workflows.lookup
     const workflow = store.state.workflows.workflow
     this.workflow = Object.assign({}, workflow)
     this.lookup = Object.assign({}, lookup)
   }
 
-  after(deltas, store, errors) {}
+  after() {}
 
-  tearDown(store, errors) {
+  tearDown() {
     this.workflow = null
     this.lookup = null
   }
 
-  onAdded(added, store, errors) {}
+  onAdded() {}
 
-  onUpdated(updated, store, errors) {}
+  onUpdated() {}
 
-  onPruned(pruned, store, errors) {}
+  onPruned() {}
 
-  commit(store, errors) {}
+  commit() {}
 }
 
 export class WorkflowCallback extends DeltasCallback {
@@ -73,25 +73,25 @@ export class WorkflowCallback extends DeltasCallback {
     this.lookup = null
   }
 
-  before(deltas, store, errors) {
+  before(deltas, store) {
     const lookup = store.state.workflows.lookup
     const workflow = store.state.workflows.workflow
     this.workflow = Object.assign({}, workflow)
     this.lookup = Object.assign({}, lookup)
   }
 
-  after(deltas, store, errors) {}
+  after() {}
 
-  tearDown(store, errors) {
+  tearDown() {
     this.workflow = null
     this.lookup = null
   }
 
-  onAdded(added, store, errors) {}
+  onAdded() {}
 
-  onUpdated(updated, store, errors) {}
+  onUpdated() {}
 
-  onPruned(pruned, store, errors) {}
+  onPruned() {}
 
-  commit(store, errors) {}
+  commit() {}
 }

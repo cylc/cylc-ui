@@ -70,7 +70,8 @@ const simpleWorkflowTree4Nodes = [
                         {
                           label: 'out1',
                           message:
-                            'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.',
+                            'Aliquam a lectus euismod, vehicula leo vel,'
+                            + ' ultricies odio.',
                         },
                       ],
                     },

@@ -21,7 +21,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { print } from 'graphql/language'
 import gql from 'graphql-tag'
-// need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
+// need the polyfill as otherwise ApolloClient fails to be imported as it
+// checks for a global fetch object on import...
 import 'cross-fetch/polyfill'
 import Subscription from '@/model/Subscription.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -80,9 +81,9 @@ describe('WorkflowService', () => {
     sandbox.stub(console, 'debug')
     apolloClient = sandbox.spy({
       query: () => {},
-      subscribe: (options) => {
+      subscribe: () => {
         return {
-          subscribe: (subscriptionOptions) => {},
+          subscribe: () => {},
         }
       },
     })
@@ -158,7 +159,7 @@ describe('WorkflowService', () => {
     })
   })
   describe('startSubscription', () => {
-    it('should stop the subscription if already started, before starting again', () => {
+    it('should stop the subscription before starting again', () => {
       const observable = { unsubscribe: () => {} }
       const spy = sandbox.spy(observable, 'unsubscribe')
       subscription.observable = observable
@@ -183,11 +184,12 @@ describe('WorkflowService', () => {
       subscriptionQuery.callbacks.push()
       subscription.reload = true
       service.startSubscription(subscription)
-      // after a subscription has been started, the reload flag must be set to false
+      // after a subscription has been started, the reload flag must be set to
+      // false
       expect(subscription.reload).to.equal(false)
     })
     describe('ViewState', () => {
-      it('should set the view state to COMPLETE when it successfully starts a subscription', () => {
+      it('should set the view state to COMPLETE when the sub starts', () => {
         expect(subscription.subscribers[view._uid].viewState).to.equal(
           ViewState.NO_STATE,
         )
@@ -196,7 +198,7 @@ describe('WorkflowService', () => {
           ViewState.COMPLETE,
         )
       })
-      it('should set the view state to ERROR if it fails to start the deltas subscription', () => {
+      it('should set the view state to ERROR if the sub fails', () => {
         expect(subscription.subscribers[view._uid].viewState).to.equal(
           ViewState.NO_STATE,
         )
@@ -207,7 +209,7 @@ describe('WorkflowService', () => {
           ViewState.ERROR,
         )
       })
-      it('should set the view state to COMPLETE when it successfully starts a subscription', () => {
+      it('should set the view state to COMPLETE when sub starts', () => {
         expect(subscription.subscribers[view._uid].viewState).to.equal(
           ViewState.NO_STATE,
         )
@@ -225,19 +227,18 @@ describe('WorkflowService', () => {
         startDeltasSubscriptionStub.callsFake(myStartDeltasSubscription)
         const spy = sandbox.spy(subscription, 'handleViewState')
         service.startSubscription(subscription)
-        // The error happens, but immediately, so the view state is set to COMPLETE. In
-        // real-life, there will be a few milliseconds delay between the JS creation of
-        // the object, and the first WebSockets message with an error, so we will use
-        // a spy here instead.
-        // expect(subscription.subscribers[view._uid].viewState).to.equal(ViewState.ERROR)
+        // The error happens, but immediately, so the view state is set to
+        // COMPLETE. In real-life, there will be a few milliseconds delay
+        // between the JS creation of the object, and the first WebSockets
+        // message with an error, so we will use a spy here instead.
         // Called first time to set as LOADING. Then as ERROR. Finally COMPLETE.
         expect(spy.calledThrice).to.equal(true)
       })
     })
   })
   describe('startDeltasSubscription', () => {
-    // the bulk of tests for startDeltasSubscription are e2e tests, here we only test
-    // a few simple scenarios
+    // the bulk of tests for startDeltasSubscription are e2e tests, here we
+    // only test a few simple scenarios
     it('should throw an error if no query provided', () => {
       expect(() => {
         service.startDeltasSubscription(null, null, null)
@@ -266,7 +267,8 @@ describe('WorkflowService', () => {
         query: query1,
       }
       service.subscribe(view1)
-      // at this point we have only 1 query, so the computed query must have the exact value we provided
+      // at this point we have only 1 query, so the computed query must have
+      // the exact value we provided
       const expectedQuery1 = print(query1.query)
       const initialQuery = print(service.subscriptions.root.query.query)
       expect(expectedQuery1).to.equal(initialQuery)
@@ -298,11 +300,13 @@ describe('WorkflowService', () => {
   })
   describe('recompute', () => {
     it('should not change query if no views were added', () => {
-      // at this point we have only 1 query, so the computed query must have the exact value we provided
+      // at this point we have only 1 query, so the computed query must have
+      // the exact value we provided
       const expectedQuery1 = print(subscriptionQuery.query)
       const initialQuery = print(service.subscriptions.root.query.query)
       expect(expectedQuery1).to.equal(initialQuery)
-      // calling recompute with the same query shouldn't change the original query
+      // calling recompute with the same query shouldn't change the original
+      // query
       service.recompute(service.subscriptions.root)
       const finalQuery = print(service.subscriptions.root.query.query)
       expect(expectedQuery1).to.equal(finalQuery)
@@ -351,7 +355,7 @@ describe('WorkflowService', () => {
         service.recompute(subscription)
       }).to.throw()
     })
-    it('should throw an error if the subscribers have different variables', () => {
+    it('should throw an error if the subscribers have different vars', () => {
       const anotherQuery = new SubscriptionQuery(
         gql`
           query {
@@ -392,7 +396,7 @@ describe('WorkflowService', () => {
       service.unsubscribe(view)
       expect(stub.calledOnce).to.equal(true)
     })
-    it('should NOT call unsubscribe if there are still subscribers left', () => {
+    it('should NOT unsubscribe if there are still subscribers left', () => {
       const anotherView = {
         _uid: 'test',
         query: subscriptionQuery,

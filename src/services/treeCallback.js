@@ -17,7 +17,7 @@
 import DeltasCallback from '@/services/callbacks'
 
 class CylcTreeCallback extends DeltasCallback {
-  init(store, errors) {
+  init(store) {
     if (!this.inited) {
       // only init once
       store.commit('workflows/CREATE')
@@ -25,27 +25,25 @@ class CylcTreeCallback extends DeltasCallback {
     }
   }
 
-  tearDown(store, errors) {
+  tearDown() {
     // never tear down, this callback lives for the live of the UI
   }
 
-  onAdded(added, store, errors) {
-    // console.log('ADDED', added)
+  onAdded(added, store) {
     store.commit('workflows/UPDATE_DELTAS', added)
   }
 
-  onUpdated(updated, store, errors) {
-    // console.log('UPDATED', updated)
+  onUpdated(updated, store) {
     store.commit('workflows/UPDATE_DELTAS', updated)
   }
 
-  onPruned(pruned, store, errors) {
+  onPruned(pruned, store) {
     store.commit('workflows/REMOVE_DELTAS', pruned)
   }
 
   // this callback does not need the before and commit methods
-  before(a, b, c) {}
-  commit(a, b, c) {}
+  before() {}
+  commit() {}
 }
 
 export default CylcTreeCallback

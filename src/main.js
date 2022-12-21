@@ -45,7 +45,8 @@ const app = new Vue({
     return h(App)
   },
 }).$mount('#app')
-// e2e tests use the offline mode, so here we expose the Vue.js app so Cypress can access it programmatically
+// e2e tests use the offline mode, so here we expose the Vue.js app so Cypress
+// can access it programmatically
 // e.g. window.app.$store and window.app.$workflowService.
 // Ref: https://www.cypress.io/blog/2017/11/28/testing-vue-web-application-with-vuex-data-store-and-rest-backend/
 if (process.env.NODE_ENV !== 'production') {

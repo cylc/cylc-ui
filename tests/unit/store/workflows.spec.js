@@ -352,8 +352,9 @@ describe('cylc tree', () => {
   it('indexes', () => {
     // most of the data we store fits into the the Cylc hierarchy
     //   ~user/workflow//cycle[/FAMILY...]/task/job
-    // but some things don't e.g. edges and namespaces (aka task/fam definitions)
-    // for these things we maintain addition indexes at the workflow level
+    // but some things don't e.g. edges and namespaces (aka task/fam
+    // definitions) for these things we maintain addition indexes at the
+    // workflow level
     store.commit('workflows/CREATE')
 
     // add a workflow

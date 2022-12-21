@@ -37,15 +37,16 @@ describe('GraphiQL', () => {
     cy.intercept('/graphql*').as('GraphQLQuery')
     cy.get('.CodeMirror').then((editors) => {
       editors[0].CodeMirror.setValue(query)
-      // This appears to force the CodeMirror command above to be executed, or at least
-      // waited for.
+      // This appears to force the CodeMirror command above to be executed, or
+      // at least waited for.
       expect(editors[0].CodeMirror.getValue()).to.equal(query)
       expect(editors[1].CodeMirror.getValue()).to.equal('')
       expect(editors[2].CodeMirror.getValue()).to.equal('')
     })
-    // TODO: CodeMirror seems to have a delay to actually set the value to the underlying
-    //       textarea. Which can cause the test below to fail as the query submitted is
-    //       the default commented-out text, instead of the given query above.
+    // TODO: CodeMirror seems to have a delay to actually set the value to the
+    // underlying textarea. Which can cause the test below to fail as the query
+    // submitted is the default commented-out text, instead of the given query
+    // above.
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     cy.get('.execute-button').click()

@@ -21,7 +21,8 @@ const graphql = require('./graphql')
  * Create a WebSockets response.
  *
  * @param {string} id - Subscription ID
- * @param {string} type - Message type (e.g. data, connection_init, etc, see GraphQL spec)
+ * @param {string} type - Message type (e.g. data, connection_init, etc, see
+ * - GraphQL spec)
  * @param {object} [data] - Response data, optional
  * @returns {{id, type, payload}}
  */
@@ -40,7 +41,8 @@ function wsResponse(id, type, data) {
 }
 
 /**
- * Create a WebSockets reply message, given the query message (received from client).
+ * Create a WebSockets reply message, given the query message (received from
+ * client).
  * @param {string} msg - JSON encoded client message
  * @returns {string} JSON encoded server reply
  */

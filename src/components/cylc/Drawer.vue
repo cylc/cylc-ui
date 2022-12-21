@@ -169,7 +169,9 @@ export default {
           this.navigation.width = el.style.width
           document.body.style.cursor = ''
           document.removeEventListener('mousemove', this.resize, false)
-          // this slightly hacky timeout is used to ensure a browser redraw forced the lumino tabs to be resized when the drag event has finished
+          // this slightly hacky timeout is used to ensure a browser redraw
+          // forced the lumino tabs to be resized when the drag event has
+          // finished
           setTimeout(() => {
             window.dispatchEvent(new Event('resize'))
           }, 600)

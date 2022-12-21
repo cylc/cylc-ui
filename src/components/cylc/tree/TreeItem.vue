@@ -36,8 +36,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :style="expandCollapseBtnStyle"
         >{{ icons.mdiChevronRight }}</v-icon
       >
-      <!-- the node value -->
-      <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
+      <!-- the node value
+
+        TODO: revisit these values that can be replaced by constants later (and
+        in other components too).
+      -->
       <slot
         name="cyclepoint"
         v-if="node.type === 'cycle'"
@@ -129,17 +132,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
           >
             <!--
-              We had a tricky bug in #530 due to the :key here. In summary, the list
-              that is backing this component changes. It contains zero or more entries,
-              up to N (5 at the time of writing).
-              Initially we used `:key=customOutput.id` here. But Vue tried to avoid
-              changing the DOM elements, which caused some elements to be out of order
-              in the final rendered UI (as Vue was trying to optimize and keep the
-              DOM elements in-place whenever possible).
-              That behaviour is not deterministic, so sometimes you would have the list
-              in order. The fix was to use a key that combines a string with the list
-              iteration `index` (the `:key` value must be unique, so we used output-chip
-              prefix).
+              We had a tricky bug in #530 due to the :key here. In summary, the
+              list that is backing this component changes. It contains zero or
+              more entries, up to N (5 at the time of writing).
+
+              Initially we used `:key=customOutput.id` here. But Vue tried to
+              avoid changing the DOM elements, which caused some elements to be
+              out of order in the final rendered UI (as Vue was trying to
+              optimize and keep the DOM elements in-place whenever possible).
+
+              That behaviour is not deterministic, so sometimes you would have
+              the list in order. The fix was to use a key that combines a
+              string with the list iteration `index` (the `:key` value must be
+              unique, so we used output-chip prefix).
+
               @see https://github.com/cylc/cylc-ui/pull/530#issuecomment-781076619
             -->
             <v-tooltip
@@ -317,7 +323,8 @@ import { latestJob, jobMessageOutputs } from '@/utils/tasks'
 import { getNodeChildren } from '@/components/cylc/tree/util'
 
 /**
- * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
+ * Offset used to move nodes to the right or left, to represent the nodes
+ * hierarchy.
  * @type {number} integer
  */
 const NODE_DEPTH_OFFSET = 1.5 // em
@@ -496,7 +503,7 @@ export default {
      * Handler for when any node of the tree was clicked, except jobs.
      * @param {event} e event
      */
-    nodeClicked(e) {
+    nodeClicked() {
       this.$emit('tree-item-clicked', this)
     },
     getNodeDataClass() {

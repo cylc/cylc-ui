@@ -35,11 +35,11 @@ const state = {
     children: [],
   },
   /**
-   * This holds the name of the current workflow. This is set by VueRouter
-   * and is used to decide what's the current workflow. It is used in conjunction
+   * This holds the name of the current workflow. This is set by VueRouter and
+   * is used to decide what's the current workflow. It is used in conjunction
    * with the workflows/workflows (above) when finding the current workflow and
-   * using it, for instance, to create the GraphQL variables of a workflow
-   * view (see mixins used in the Tree View).
+   * using it, for instance, to create the GraphQL variables of a workflow view
+   * (see mixins used in the Tree View).
    *
    * @type {String}
    */
@@ -55,9 +55,9 @@ const getters = {
    *
    * Note: This walks the tree from the root node down to the level specified
    * by nodeType every time a node in the tree to this point is added or
-   * removed. E.G. if you request 'workflow' nodes, then this node list
-   * will be recomputed every time a workflow is added or removed (delta batching
-   * may reduce the actual call count).
+   * removed. E.G. if you request 'workflow' nodes, then this node list will be
+   * recomputed every time a workflow is added or removed (delta batching may
+   * reduce the actual call count).
    */
   getNodes: (state) => (nodeType, ids) => {
     if (!NODE_TYPES.includes(nodeType)) {

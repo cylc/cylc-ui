@@ -91,9 +91,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       />
       <!-- hub
 
-        A larger dot at the centre of the outline used to represent the submitted
-        state. This is the "hub" at the centre of the progress animation for a
-        running task.
+        A larger dot at the centre of the outline used to represent the
+        submitted state. This is the "hub" at the centre of the progress
+        animation for a running task.
       -->
       <circle
         class="hub"

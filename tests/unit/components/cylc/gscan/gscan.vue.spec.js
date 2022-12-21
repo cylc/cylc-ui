@@ -46,7 +46,7 @@ localVue.prototype.$workflowService = {
     // this function has been called
     obj.subscriptions = {}
   },
-  subscribe(obj, name) {
+  subscribe() {
     return true
   },
   unsubscribe() {},

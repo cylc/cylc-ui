@@ -32,15 +32,18 @@ const state = {
   offline: false,
   /**
    * Number of references that have set the loading state.
-   * TODO: we can probably remove it and use a different approach for alerts (see bootstrap toast).
+   * TODO: we can probably remove it and use a different approach for alerts
+   * (see bootstrap toast).
    */
   refCount: 0,
 }
 
 // Actions
 const actions = {
+  // eslint-disable-next-line
   setAlert({ state, commit }, alert) {
-    // log to console when the alert is not null (null can mean to remove the alert)
+    // log to console when the alert is not null (null can mean to remove the
+    // alert)
     if (alert !== null) {
       // eslint-disable-next-line no-console
       console.log(alert)

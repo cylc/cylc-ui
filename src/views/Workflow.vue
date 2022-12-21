@@ -81,8 +81,8 @@ export default {
      */
     widgets: {},
     /**
-     * A list of Vue views or components. These components must provide a .widget
-     * property/data with the title and icon properties.
+     * A list of Vue views or components. These components must provide a
+     .widget * property/data with the title and icon properties.
      *
      * Each view in this list will be available from the Toolbar to be added as
      * a widget.
@@ -110,8 +110,9 @@ export default {
     // clear all widgets
     this.removeAllWidgets()
     next()
-    // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
-    // and in the next tick as otherwise we would get stale/old variables for the graphql query
+    // start over again with the new deltas query/variables/new widget as in
+    // beforeRouteEnter and in the next tick as otherwise we would get
+    // stale/old variables for the graphql query
     this.$nextTick(() => {
       // Create a Tree View for the current workflow by default
       this.addView(TreeView.name)
@@ -126,7 +127,8 @@ export default {
     /**
      * Add a new view widget.
      *
-     * @type {String} viewName - the name of the view to be added (Vue component name).
+     * @type {String} viewName - the name of the view to be added (Vue
+     * - component name).
      */
     addView(viewName) {
       const view = this.views.filter((v) => v.name === viewName).slice(0)[0]
@@ -135,10 +137,12 @@ export default {
       }
       Vue.set(this.widgets, createWidgetId(), view)
       this.$nextTick(() => {
-        // Views use navigation-guards to start the pending subscriptions. But we don't have
-        // this in this view. We must pretend we are doing the beforeRouteEnter here, and
-        // call the .startSubscriptions function, so that the WorkflowService will take care
-        // of loading the pending subscriptions (like the ones created by the new view).
+        // Views use navigation-guards to start the pending subscriptions.
+        // But we don't have this in this view. We must pretend we are doing
+        // the beforeRouteEnter here, and call the .startSubscriptions
+        // function, so that the WorkflowService will take care
+        // of loading the pending subscriptions (like the ones created
+        // by the new view).
         this.$workflowService.startSubscriptions()
       })
     },
@@ -164,13 +168,15 @@ export default {
      *
      * @param {{
      *   id: string
-     * }} event UI event containing the widget ID (string value, needs to be parsed)
+     * }} event UI event containing the widget ID (string value, needs to be
+     * - parsed)
      */
     onWidgetDeletedEvent(event) {
       Vue.delete(this.widgets, event.id)
-      // If we have no more widgets in the view, then we are not loading, not complete, not error,
-      // but back to beginning. When a widget is added, if it uses a query, then the mixins will
-      // take care to set the state to LOADING and then COMPLETE (and hopefully not ERROR).
+      // If we have no more widgets in the view, then we are not loading, not
+      // complete, not error, but back to beginning. When a widget is added, if
+      // it uses a query, then the mixins will // take care to set the state to
+      // LOADING and then COMPLETE (and hopefully not ERROR).
       if (Object.entries(this.widgets).length === 0) {
         this.viewState = ViewState.NO_STATE
       }

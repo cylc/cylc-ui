@@ -72,7 +72,8 @@ describe('index', () => {
     }
     beforeEach(resetState)
     afterEach(resetState)
-    it('should start online so that the component is not rendered for a few seconds', () => {
+    it('should start online', () => {
+      // so that the component is not rendered for a few seconds
       expect(store.state.offline).to.equal(false)
     })
     it('should update offline flag correctly', () => {

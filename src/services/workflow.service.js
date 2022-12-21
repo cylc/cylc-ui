@@ -72,14 +72,15 @@ class WorkflowService {
     this.apolloClient = createApolloClient(httpUrl, subscriptionClient)
 
     /**
-     * This is the mapping of Vue components/views subscriptions. Not necessarily
-     * GraphQL subscriptions. A Vue components/views subscription results, ultimately,
-     * in a GraphQL subscription. But you may have 10 Vue components/views subscriptions,
-     * all using the same query. In this case, we end up with a single, merged, GraphQL
-     * query, and a single Apollo Client GraphQL subscription.
+     * This is the mapping of Vue components/views subscriptions. Not
+     * necessarily GraphQL subscriptions. A Vue components/views subscription
+     * results, ultimately, in a GraphQL subscription. But you may have 10 Vue
+     * components/views subscriptions, all using the same query. In this case,
+     * we end up with a single, merged, GraphQL query, and a single Apollo
+     * Client GraphQL subscription.
      *
-     * The Apollo Client GraphQL subscription can be accessed via the Subscription
-     * attribute `.observable`, or via the `.subscriptionClient`.
+     * The Apollo Client GraphQL subscription can be accessed via the
+     * Subscription attribute `.observable`, or via the `.subscriptionClient`.
      *
      * @type {Object.<string, Subscription>}
      */
@@ -167,8 +168,10 @@ class WorkflowService {
   /**
    * Return a GraphQL query for a type, containing the given fields.
    *
-   * @param {string} queryName - Name of the GraphQL query available in the schema.
-   * @param {string[]} argNames - Names of args to supply in the query (note: the variables (i.e. values of the args) are supplied elsewhere).
+   * @param {string} queryName - Name of the GraphQL query available in the
+   * - schema.
+   * @param {string[]} argNames - Names of args to supply in the query (note:
+   * - the variables (i.e. values of the args) are supplied elsewhere).
    * @param {Field[]} fields - Fields to include in the query.
    * @return {Promise<Query>}
    */
@@ -194,7 +197,8 @@ class WorkflowService {
   getOrCreateSubscription(componentOrView) {
     const queryName = componentOrView.query.name
     let subscription = this.subscriptions[queryName]
-    // note, this will force a return of the FIRST query of the SAME name as any subsequent queries
+    // note, this will force a return of the FIRST query of the SAME name as
+    // any subsequent queries
     if (!subscription) {
       subscription = this.subscriptions[queryName] = new Subscription(
         componentOrView.query,
@@ -207,18 +211,22 @@ class WorkflowService {
    * @param {View} componentOrView
    */
   subscribe(componentOrView) {
-    // First we retrieve the existing, or create a new subscription (and add to the pool).
+    // First we retrieve the existing, or create a new subscription (and add to
+    // the pool).
     const subscription = this.getOrCreateSubscription(componentOrView)
     if (!subscription.subscribers[componentOrView._uid]) {
       // NOTE: make sure to remove it afterwards to avoid memory leaks!
       subscription.subscribers[componentOrView._uid] = componentOrView
-      // Then we recompute the query, checking if variables match, and action name is set.
+      // Then we recompute the query, checking if variables match, and action
+      // name is set.
       this.recompute(subscription)
-      // regardless of whether this results in a restart, we take this opertunity to preset the componentOrView store if needed
+      // regardless of whether this results in a restart, we take this
+      // opertunity to preset the componentOrView store if needed
       const errors = []
       // if the callbacks class has an init method defined, use it
       for (const callback of subscription.callbacks) {
-        // if any of the views currently using this subscription have an init hook, trigger it (which will check if its needed)
+        // if any of the views currently using this subscription have an init
+        // hook, trigger it (which will check if its needed)
         if (callback.init) {
           callback.init(store, errors)
           for (const error of errors) {
@@ -235,7 +243,8 @@ class WorkflowService {
         }
       }
     }
-    // Otherwise we are calling subscribe for a component or view already subscribed.
+    // Otherwise we are calling subscribe for a component or view already
+    // subscribed.
   }
 
   /**
@@ -271,7 +280,8 @@ class WorkflowService {
       if (this.debug) {
         // eslint-disable-next-line no-console
         console.debug(
-          `Subscription for query [${subscription.query.name}] already running. Stopping it...`,
+          `Subscription for query [${subscription.query.name}]`
+          + 'already running. Stopping it...',
         )
       }
       this.stopSubscription(subscription, true)
@@ -339,7 +349,8 @@ class WorkflowService {
    * Observable being created to monitor the subscription. Apollo Client is
    * used here to create the observer and the subscription.
    *
-   * @param {DocumentNode} query - an already parsed GraphQL query (i.e. not a `string`)
+   * @param {DocumentNode} query - an already parsed GraphQL query (i.e. not a
+   * - `string`)
    * @param {Object} variables
    * @param {SubscriptionOptions} subscriptionOptions - { next(), error() }
    * @returns {Subscription}
@@ -486,7 +497,9 @@ class WorkflowService {
           !subscription.callbacks.find((element) => {
             const elementObjectKeys = Object.keys(element)
             const callbackObjectKeys = Object.keys(callback)
-            // this fall through approach is a bit easier to read and should conserve some memory as object keys dont need to be recalculated each time
+            // this fall through approach is a bit easier to read and should
+            // conserve some memory as object keys dont need to be recalculated
+            // each time
             if (element.constructor.name === callback.constructor.name) {
               if (elementObjectKeys.length === callbackObjectKeys.length) {
                 if (

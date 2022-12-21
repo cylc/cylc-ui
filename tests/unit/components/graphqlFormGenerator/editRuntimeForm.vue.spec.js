@@ -101,16 +101,19 @@ describe('EditRuntimeForm Component', () => {
   }
 
   describe('reset()', () => {
-    it("queries the task's runtime section & processes the response", async () => {
-      const wrapper = mountFunction({
-        propsData,
-        created() {},
-      })
-      await wrapper.vm.reset()
-      expect(INITIAL_DATA).not.to.have.key('__typename')
-      expect(wrapper.vm.model).to.deep.equal(INITIAL_DATA)
-      expect(wrapper.vm.initialData).to.deep.equal(INITIAL_DATA)
-    })
+    it(
+      "queries the task's runtime section & processes the response",
+      async () => {
+        const wrapper = mountFunction({
+          propsData,
+          created() {},
+        })
+        await wrapper.vm.reset()
+        expect(INITIAL_DATA).not.to.have.key('__typename')
+        expect(wrapper.vm.model).to.deep.equal(INITIAL_DATA)
+        expect(wrapper.vm.initialData).to.deep.equal(INITIAL_DATA)
+      },
+    )
   })
 
   describe('getBroadcastData()', () => {

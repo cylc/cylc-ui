@@ -21,7 +21,8 @@ describe('Tree view', () => {
   it('Should display cycle points for the mocked workflow', () => {
     cy.visit('/#/workflows/one')
     cy.get('.node-data-cycle').should(($div) => {
-      // by default, in our expected viewport size for tests, both cycle points exist and are visible
+      // by default, in our expected viewport size for tests, both cycle points
+      // exist and are visible
       expect($div.get(0)).to.contain('20000102T0000Z')
     })
     cy.get('.node-data-cycle').should('be.visible')
@@ -40,7 +41,8 @@ describe('Tree view', () => {
     cy.get('.node-data-job:first').should('be.visible')
   })
   it('Should display leaf node triangle with margin', () => {
-    // this is testing that there is a margin, not necessarily that the leaf node's triangle is exactly under the node
+    // this is testing that there is a margin, not necessarily that the leaf
+    // node's triangle is exactly under the node
     cy.visit('/#/workflows/one')
     cy.get('.node-data-task:first').prev().click()
     // no jobs, and no leaves are visible initially
@@ -48,9 +50,11 @@ describe('Tree view', () => {
     // but clicking on a visible job should display its leaf node
     cy.get('.node-data-job:first').prev().click()
     cy.get('.leaf:first').should('be.visible')
-    // and, important, the leaf node has a triangle, as a helper to quickly point the user to its parent
-    // job in the tree - i.e. the leaf has a left margin... as the leaves are not root nodes, we
-    // **always** have a margin > 0, unless a bug broke it (which happened before due to a wrong variable name).
+    // and, important, the leaf node has a triangle, as a helper to quickly
+    // point the user to its parent job in the tree - i.e. the leaf has a left
+    // margin... as the leaves are not root nodes, we **always** have a margin
+    // > 0, unless a bug broke it (which happened before due to a wrong
+    // variable name).
     cy.get('.leaf:first > .arrow-up').should(($div) => {
       const marginLeft = $div.get(0).style.marginLeft
       if (
@@ -72,7 +76,8 @@ describe('Tree view', () => {
       cy.window()
         .its('app.$workflowService.subscriptions')
         .then((subscriptions) => {
-          // GScan 'root' subscription, and the 'workflow' subscription used by the Tree view
+          // GScan 'root' subscription, and the 'workflow' subscription used by
+          // the Tree view
           expect(Object.keys(subscriptions).length).to.equal(2)
           expect(subscriptions.root.observable.closed).to.equal(false)
           expect(subscriptions.workflow.observable.closed).to.equal(false)
@@ -96,10 +101,11 @@ describe('Tree view', () => {
     cy.window()
       .its('app.$workflowService.subscriptions')
       .then((subscriptions) => {
-        // It will have 2, GScan + Dashboard, while the /tree/one view has 1 Delta + 1 subscription
-        // (the delta is a different subscription).
+        // It will have 2, GScan + Dashboard, while the /tree/one view has 1
+        // Delta + 1 subscription (the delta is a different subscription).
         expect(Object.keys(subscriptions).length).to.equal(1)
-        // Gscan remains open in the dashboard view, the 'workflow' subscription is gone since it's not used
+        // Gscan remains open in the dashboard view, the 'workflow'
+        // subscription is gone since it's not used
         expect(subscriptions.root.observable.closed).to.equal(false)
       })
   })
@@ -189,7 +195,7 @@ describe('Tree view', () => {
       cy.get('.node-data-task:visible').should('have.length', 1)
     })
 
-    it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
+    it('should show a summary of tasks if too many are selected', () => {
       cy.visit('/#/tree/one')
       cy.get('#c-tree-filter-task-states').click({ force: true })
       // eslint-disable-next-line no-lone-blocks

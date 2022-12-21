@@ -24,7 +24,8 @@ import GEnum from '@/components/graphqlFormGenerator/components/Enum'
 import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'
 import GList from '@/components/graphqlFormGenerator/components/List'
 import GObject from '@/components/graphqlFormGenerator/components/Object'
-import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting'
+import GBroadcastSetting
+  from '@/components/graphqlFormGenerator/components/BroadcastSetting'
 import GMapItem from '@/components/graphqlFormGenerator/components/MapItem'
 
 /* Vuetify number input component.
@@ -74,6 +75,8 @@ const RULES = {
 }
 
 export const RUNTIME_SETTING = 'RuntimeSetting'
+
+const TIME_POINT_REGEX = /^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2})?)?)?)?)?$/
 
 export default {
   defaultProps: {
@@ -169,7 +172,7 @@ export default {
         (x) =>
           Boolean(
             !x
-              || x.match(/^\d{4}(-\d{2}(-\d{2}(T\d{2}(:\d{2}(:\d{2})?)?)?)?)?$/),
+              || x.match(TIME_POINT_REGEX),
           ) || 'Invalid',
       ],
     },
@@ -191,17 +194,17 @@ export default {
   kinds: {
     // registry of GraphQL "kinds" (e.g. LIST)
     // { kind: (ofType) => ({ is: ComponentClass, prop1: value, ... }) }
-    ENUM: (ofType) => ({
+    ENUM: () => ({
       is: GEnum,
     }),
-    NON_NULL: (ofType) => ({
+    NON_NULL: () => ({
       is: GNonNull,
     }),
     LIST: (ofType) => ({
       is: GList,
       addAtStart: ofType?.name === RUNTIME_SETTING,
     }),
-    OBJECT: (ofType) => ({
+    OBJECT: () => ({
       is: GObject, // happy naming coincidence
     }),
   },

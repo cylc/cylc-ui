@@ -72,6 +72,7 @@ export default {
     ...mapState(['offline']),
   },
 
+  // eslint-disable-next-line
   errorCaptured(error, vm, info) {
     if (process.env.NODE_ENV !== 'production') {
       store.dispatch('setAlert', new AlertModel(error, null, 'error'))

@@ -31,12 +31,13 @@ import { mdiHelpCircleOutline } from '@mdi/js'
 import { VIcon, VTooltip } from 'vuetify/lib/components'
 
 /**
- * Workaround Vuetify (v2) component issue where non-scoped slots would not appear in
- * this.$scopedSlots, preventing the slot from rendering.
+ * Workaround Vuetify (v2) component issue where non-scoped slots would not
+ * appear in this.$scopedSlots, preventing the slot from rendering.
  *
  * Taken from https://stackoverflow.com/a/67412844/3217306
  *
- * @param fn - Function meant for the value of slot in the data-object's "scopedSlots"
+ * @param fn - Function meant for the value of slot in the data-object's
+ * - "scopedSlots"
  */
 function vuetifyScopedSlotShim(fn) {
   fn.proxy = true

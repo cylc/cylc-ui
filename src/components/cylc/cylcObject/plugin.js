@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// reference to closure listeners (needed as we are using variables from another scope)
+// reference to closure listeners (needed as we are using variables from
+// another scope)
 const listeners = new WeakMap()
 
 function bind(el, binding, vnode) {
@@ -36,7 +37,7 @@ function unbind(el) {
   listeners.delete(el)
 }
 
-function update(el, binding, newVnode, oldVnode) {
+function update(el, binding, newVnode) {
   if (binding.value !== binding.oldValue) {
     unbind(el)
     bind(el, binding, newVnode)
@@ -52,7 +53,7 @@ export default {
    * @param {object} Vue - Vue application
    * @param {*} options - options passed to the plug-in (if any)
    */
-  install(Vue, options) {
+  install(Vue) {
     // add a global directive
     Vue.directive('cylc-object', {
       bind,

@@ -21,8 +21,9 @@ import gql from 'graphql-tag'
 // eslint-disable-next-line no-unused-vars
 import { DocumentNode } from 'graphql'
 
-// IMPORTANT: queries here may be used in the offline mode to create mock data. Before removing or renaming
-// queries here, please check under the services/mock folder for occurrences of the variable name.
+// IMPORTANT: queries here may be used in the offline mode to create mock data.
+// Before removing or renaming queries here, please check under the
+// services/mock folder for occurrences of the variable name.
 
 const WORKFLOW_DATA_FRAGMENT = `
 fragment WorkflowData on Workflow {

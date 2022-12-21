@@ -156,7 +156,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-btn>
                   <v-btn
                     icon
-                    class="v-data-table__expand-icon v-data-table__expand-icon--active"
+                    class="
+                      v-data-table__expand-icon
+                      v-data-table__expand-icon--active
+                    "
                     @click="expanded.splice(expanded.indexOf(item), 1)"
                     v-if="
                       (item.task.children || []).length > 0 &&
@@ -383,8 +386,9 @@ export default {
         this.activeFilters = null
       }
     },
-    clearInput(event) {
-      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
+    clearInput() {
+      // I don't really like this, but we need to somehow force the 'change
+      // detection' to run again once the clear has taken place
       this.tasksFilter.name = null
       this.$refs.filterNameInput.$el
         .querySelector('input')

@@ -17,7 +17,8 @@
 
 import { Deferred } from '../../util'
 
-// Tests for the WorkflowService subscriptions. Not necessarily GraphQL subscriptions!
+// Tests for the WorkflowService subscriptions. Not necessarily GraphQL
+// subscriptions!
 
 /**
  * Helper function to retrieve the subscriptions.
@@ -27,7 +28,8 @@ const getSubscriptions = () =>
   cy.window().its('app.$workflowService.subscriptions')
 
 describe('WorkflowService subscriptions', () => {
-  it('-> Dashboard, should contain 1 subscriptions ("root" = GScan + Dashboard)', () => {
+  it('-> Dashboard, should contain 1 subscriptions', () => {
+    // ("root" = GScan + Dashboard)
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getSubscriptions().then((subscriptions) => {
@@ -35,7 +37,8 @@ describe('WorkflowService subscriptions', () => {
     })
   })
 
-  it('-> Dashboard -> User Profile, should contain 1 subscription (GScan)', () => {
+  it('-> Dashboard -> User Profile, should contain 1 subscription', () => {
+    // (Gscan)
     cy.visit('/#/')
     cy.get('[href="#/user-profile"]').click({ force: true })
     cy.contains('h3', 'Your Profile')
@@ -45,23 +48,28 @@ describe('WorkflowService subscriptions', () => {
     })
   })
 
-  it('-> Dashboard -> Workflows, should contain 2 subscriptions (GScan + Tree)', () => {
+  it('-> Dashboard -> Workflows, should contain 2 subscriptions', () => {
+    // (GScan + Tree)
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click({ force: true })
-    // <div id='main'> is used by Lumino, and its initial tab contains the text tree
+    // <div id='main'> is used by Lumino, and its initial tab contains the text
+    // tree
     cy.get('div#main').find('.c-tree')
     getSubscriptions().then((subscriptions) => {
-      // GScan subscription "root" and the subscription "workflow" used by the Tree view
+      // GScan subscription "root" and the subscription "workflow" used by the
+      // Tree view
       expect(Object.keys(subscriptions).length).to.equal(2)
       expect(subscriptions.root.observable.closed).to.equal(false)
       expect(subscriptions.workflow.observable.closed).to.equal(false)
     })
   })
 
-  it('-> Dashboard -> Workflows -> Dashboard, should contain 2 subscriptions (GScan + Dashboard)', () => {
+  it('-> Dashboard -> Workflows -> Dashboard, should contain 2 subs', () => {
+    // (GScan + Dashboard)
     cy.visit('/#/')
     cy.get('[href="#/workflows/one"]').click()
-    // <div id='main'> is used by Lumino, and its initial tab contains the text tree
+    // <div id='main'> is used by Lumino, and its initial tab contains the text
+    // tree
     cy.get('div#main').find('.c-tree')
     cy.get('[href="#/"]').click({ force: true })
     cy.get('div.c-dashboard')
@@ -74,14 +82,16 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/tree/one')
     cy.get('.c-header').should('exist')
     getSubscriptions().then((subscriptions) => {
-      // GScan subscription "root" and the subscription "workflow" used by the Tree view
+      // GScan subscription "root" and the subscription "workflow" used by the
+      // Tree view
       expect(Object.keys(subscriptions).length).to.equal(2)
       expect(subscriptions.root.observable.closed).to.equal(false)
       expect(subscriptions.workflow.observable.closed).to.equal(false)
     })
   })
 
-  it('-> Tree - > Dashboard, should contain 1 subscription ("root" = GScan + Dashboard)', () => {
+  it('-> Tree - > Dashboard, should contain 1 subscription', () => {
+    // ("root" = GScan + Dashboard)
     cy.visit('/#/tree/one')
     cy.get('.v-list-item').contains('Dashboard').click({ force: true })
     cy.get('div.c-dashboard')
@@ -106,7 +116,8 @@ describe('WorkflowService mutations', () => {
     cy.visit('/#/workflows/one')
     // Before mutations have loaded
     cy
-      // Play/stop buttons in toolbar should wait for mutations before sending the mutation
+      // Play/stop buttons in toolbar should wait for mutations before sending
+    // the mutation
       .get('#workflow-stop-button')
       .click()
       // Mutations menu should show skeleton loader

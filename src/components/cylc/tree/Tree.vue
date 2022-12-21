@@ -335,8 +335,9 @@ export default {
         this.activeFilters = null
       }
     },
-    clearInput(event) {
-      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
+    clearInput() {
+      // I don't really like this, but we need to somehow force the 'change
+      // detection' to run again once the clear has taken place
       this.tasksFilter.name = null
       this.$refs.filterNameInput.$el
         .querySelector('input')
@@ -417,7 +418,8 @@ export default {
       }
     },
     onTreeItemDestroyed(treeItem) {
-      // make sure the item is removed from all caches, otherwise we will have a memory leak
+      // make sure the item is removed from all caches, otherwise we will have
+      // a memory leak
       Vue.delete(this.treeItemCache, treeItem.$props.node.id)
       this.expandedCache.delete(treeItem)
       this.activeCache.delete(treeItem)
@@ -425,7 +427,8 @@ export default {
     onTreeItemClicked(treeItem) {
       if (this.activable) {
         if (!this.multipleActive) {
-          // only one item can be active, so make sure everything else that was active is now !active
+          // only one item can be active, so make sure everything else that was
+          // active is now !active
           for (const cached of this.activeCache) {
             if (cached !== treeItem) {
               cached.active = false

@@ -26,7 +26,8 @@ describe('Mutations component', () => {
   })
 
   /**
-   * @param {string} nodeName - the tree node name, to search for and open the mutations form
+   * @param {string} nodeName - the tree node name, to search for and open the
+   * - mutations form
    */
   const openMutationsForm = (nodeName) => {
     cy.get('[data-cy=tree-view]')
@@ -138,7 +139,8 @@ describe('Mutations component', () => {
   })
 
   describe('Failed submission', () => {
-    // Note: in offline mode, mutations currently fail by default without patching graphql
+    // Note: in offline mode, mutations currently fail by default without
+    // patching graphql
     it('should stay open if failed', () => {
       openMutationsForm('GOOD')
       cy.get('[data-cy="submit"]')
@@ -170,8 +172,9 @@ describe('Mutations component', () => {
       .as('submit')
       .should('not.be.disabled')
       .should('not.have.class', 'error--text')
-      // Indirect test for "form invalid" tooltip by checking aria-expanded attribute
-      // (not ideal but it's way too troublesome to test visibility of .v-tooltip__content)
+      // Indirect test for "form invalid" tooltip by checking aria-expanded
+      // attribute (not ideal but it's way too troublesome to test visibility of
+      // .v-tooltip__content)
       .trigger('mouseenter')
       .should('have.attr', 'aria-expanded', 'false') // should not be visible
     // Now type invalid input

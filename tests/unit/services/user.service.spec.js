@@ -35,7 +35,7 @@ describe('UserService', () => {
     store.commit('SET_ALERT', null)
   })
   afterEach(() => sandbox.restore())
-  describe('getUserProfile returns the logged-in user profile information', () => {
+  describe('getUserProfile', () => {
     it('should return user profile object', () => {
       const userReturned = new Promise((resolve) =>
         resolve({

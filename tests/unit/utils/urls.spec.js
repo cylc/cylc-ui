@@ -73,12 +73,14 @@ describe('urls', () => {
       {
         path: '//graphql/endpoint//subscriptions',
         websockets: false,
+        // eslint-disable-next-line max-len
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/subscriptions`,
         location: DEFAULT_LOCATION,
       },
       {
         path: '//graphql/endpoint//subscriptions///',
         websockets: false,
+        // eslint-disable-next-line max-len
         expected: `${PROTOCOL}//${HOST}/${PATHNAME}graphql/endpoint/subscriptions/`,
         location: DEFAULT_LOCATION,
       },

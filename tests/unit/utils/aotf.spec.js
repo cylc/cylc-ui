@@ -18,7 +18,8 @@
 import { expect } from 'chai'
 import * as aotf from '@/utils/aotf'
 import dedent from 'dedent'
-// need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
+// need the polyfill as otherwise ApolloClient fails to be imported as it
+// checks for a global fetch object on import...
 import 'cross-fetch/polyfill'
 
 describe('aotf (Api On The Fly)', () => {

@@ -88,8 +88,10 @@ import { IntrospectionInputType } from 'graphql'
  * @property {string=} _icon
  * @property {string=} _shortDescription
  * @property {string=} _help
- * @property {string=} _appliesTo - type of cylc object this mutation applies to (if cannot determine from args)
- * @property {boolean=} _requiresInfo - whether this mutation needs more info than the cylc object it is operating on (if cannot determine from args)
+ * @property {string=} _appliesTo - type of cylc object this mutation applies
+ * - to (if cannot determine from args)
+ * @property {boolean=} _requiresInfo - whether this mutation needs more info
+ * - than the cylc object it is operating on (if cannot determine from args)
  */
 
 /**
@@ -280,7 +282,8 @@ export const dummyMutations = [
     description: dedent`
       Edit a task or family's \`[runtime]\` section.
 
-      This only applies for the cycle point of the chosen task/family instance.`,
+      This only applies for the cycle point of the
+      chosen task/family instance.`,
     args: [],
     _appliesTo: cylcObjects.Namespace,
     _requiresInfo: true,
@@ -364,9 +367,12 @@ export function findByName(objs, name) {
  * This allows you to do a query and return all fields without having to list
  * them all out.
  *
- * @param {IntrospectionInputType} type - GraphQL type that we are looking for fields in.
- * @param {?Field[]} fields - Subset of fields on the above type to extract. If nullish, extract all fields (if any).
- * @param {IntrospectionInputType[]} types - Full list of GraphQL types from introspection query.
+ * @param {IntrospectionInputType} type - GraphQL type that we are looking for
+ * - fields in.
+ * @param {?Field[]} fields - Subset of fields on the above type to extract. If
+ * - nullish, extract all fields (if any).
+ * @param {IntrospectionInputType[]} types - Full list of GraphQL types from
+ * - introspection query.
  * @return {?Field[]}
  */
 export function extractFields(type, fields, types) {
@@ -401,7 +407,8 @@ export function extractFields(type, fields, types) {
  *     The remainder of the mutation description.
  *
  * @param {Mutation} mutations - Mutations as returned by introspection query.
- * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
+ * @param {IntrospectionInputType[]} types - Types as returned by introspection
+ * - query.
  */
 export function processMutations(mutations, types) {
   for (const mutation of mutations) {
@@ -414,7 +421,8 @@ export function processMutations(mutations, types) {
 }
 
 /**
- * Get the first part of a mutation description (up to the first double newline).
+ * Get the first part of a mutation description (up to the first double
+ * newline).
  *
  * @export
  * @param {string=} text - Full mutation description.
@@ -454,7 +462,8 @@ export function getMutationExtendedDesc(text) {
  *     true if this field must be provided for the mutation to be called.
  *
  * @param {Mutation} mutation - One Mutation as returned by introspection query.
- * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
+ * @param {IntrospectionInputType[]} types - Types as returned by introspection
+ * - query.
  */
 export function processArguments(mutation, types) {
   let pointer = null
@@ -551,7 +560,8 @@ export function getIntrospectionQuery() {
 /**
  * Filter for mutations that relate to the given Cylc object.
  *
- * Returns an array of objects containing matching mutations and the following properties:
+ * Returns an array of objects containing matching mutations and the following
+ * properties:
  * - Does the mutation require additional info?
  * - Is the user authorised to perform the mutation?
  *
@@ -639,7 +649,8 @@ export function getBaseType(type) {
  *
  * @param {GQLType} type - A type field as returned by an introspection query.
  * (an object of the form {name: x, kind: y, ofType: z}).
- * @param {(IntrospectionInputType[])=} types - An array of all types present in the schema.
+ * @param {(IntrospectionInputType[])=} types - An array of all types present
+ * - in the schema.
  * (optional: used to resolve InputObjectType fields).
  *
  * @returns {Object|Object[]|null}
@@ -696,7 +707,8 @@ export function argumentSignature(arg) {
 
 /** Construct a mutation string from a mutation introspection.
  *
- * @param {Mutation} mutation - A mutation as returned by an introspection query.
+ * @param {Mutation} mutation - A mutation as returned by an introspection
+ * - query.
  *
  * @returns {string} A mutation string for a client to send to the server.
  */
@@ -840,11 +852,10 @@ async function _mutateError(mutationName, message, response) {
  * @param {Mutation} mutation
  * @param {Object} variables
  * @param {ApolloClient} apolloClient
- * @param {string=} cylcID
  *
  * @returns {Promise<MutationResponse>} {status, msg}
  */
-export async function mutate(mutation, variables, apolloClient, cylcID) {
+export async function mutate(mutation, variables, apolloClient) {
   const mutationStr = constructMutation(mutation)
   let response = null
   // eslint-disable-next-line no-console

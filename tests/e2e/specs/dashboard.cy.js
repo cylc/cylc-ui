@@ -43,5 +43,6 @@ describe('Dashboard', () => {
     cy.visit('/#/')
     cy.get('#cylc-hub-button').should('have.class', 'v-list-item--disabled')
   })
-  // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
+  // TODO: add test that verifies the dashboard content after we have reviewed
+  // how it should look like
 })

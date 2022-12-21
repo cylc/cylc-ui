@@ -16,7 +16,7 @@
  */
 
 describe('Default layout', () => {
-  it('Should display errors from children elements captured at the Default layout level', () => {
+  it('Should display errors from children at the Default layout level', () => {
     // visit any page first, so that we create the window.app reference
     cy.visit('/#/workflows/one')
     cy.get('.v-alert').should('not.exist')
@@ -27,7 +27,8 @@ describe('Default layout', () => {
         cy.stub(service, 'subscribe', () => {
           throw new Error('Error raised in Cypress stub!')
         })
-        // now visit dashboard, that calls service.subscribe, which will raise an uncaught error...
+        // now visit dashboard, that calls service.subscribe, which will raise
+        // an uncaught error...
         cy.get('.v-list-item').contains('Dashboard').click({ force: true })
         cy.get('.v-alert').should('be.visible')
       })

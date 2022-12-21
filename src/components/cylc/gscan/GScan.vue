@@ -141,7 +141,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       <span>{{ scope.node.id }}</span>
                     </v-tooltip>
                   </v-flex>
-                  <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
+                  <!--
+                    We check the latestStateTasks below as offline workflows
+                    won't have a latestStateTasks property
+                  -->
                   <v-flex
                     v-if="
                       scope.node.type === 'workflow' &&
@@ -162,8 +165,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         top
                       >
                         <template v-slot:activator="{ on }">
-                          <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
-                          <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                          <!--
+                            a v-tooltip does not work directly set on Cylc job
+                            component, so we use a dummy button to wrap it
+
+                            NB: most of the classes/directives in these button
+                            are applied so that the user does not notice it is
+                            a button
+                          -->
                           <v-btn
                             v-on="on"
                             class="ma-0 pa-0"
@@ -358,7 +367,7 @@ export default {
     filters: {
       deep: true,
       immediate: false,
-      handler: function (newVal) {
+      handler: function () {
         this.filteredWorkflows = this.filterHierarchically(
           this.workflows,
           this.searchWorkflows,
@@ -432,15 +441,17 @@ export default {
      *     model: boolean
      *   }
      * ]} items - filter items
-     * @returns {boolean} - `true` iff all the items have been selected. `false` otherwise
+     * @returns {boolean} - `true` iff all the items have been selected.
+     * - `false` otherwise
      */
     allItemsSelected(items) {
       return items.every((item) => item.model === true)
     },
 
     /**
-     * If every element in the list is `true`, then we will set every element in the
-     * list to `false`. Otherwise, we set all the elements in the list to `true`.
+     * If every element in the list is `true`, then we will set every element
+     * in the list to `false`. Otherwise, we set all the elements in the list
+     * to `true`.
      * @param {[
      *   {
      *     model: boolean
@@ -466,7 +477,8 @@ export default {
      * from `latestStateTasks`, and the number of tasks in each state is from
      * the `stateTotals`. (`latestStateTasks` includes old tasks).
      *
-     * @param {WorkflowGraphQLData} workflow - the workflow object retrieved from GraphQL
+     * @param {WorkflowGraphQLData} workflow
+     * - the workflow object retrieved from GraphQL
      * @param {string} state - a workflow state
      * @returns {number|*} - the number of tasks in the given state
      */

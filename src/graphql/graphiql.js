@@ -21,11 +21,12 @@ import { parse } from 'graphql'
 import { createGraphQLUrls, getCylcHeaders } from '@/graphql/index'
 
 // TODO: https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher/issues/16
-//       the functions hasSubscriptionOperation and graphQLFetcher are both from
-//       the graphiql-subscriptions-fetcher. Unfortunately that project is archived
-//       on GitHub, and is using the old API for subscription-transport-ws, which
-//       is a dependency of Cylc UI. As we cannot use an older version, instead we
-//       have the two functions here, patched as per issue to work with newer API.
+//       the functions hasSubscriptionOperation and graphQLFetcher are both
+//       from the graphiql-subscriptions-fetcher. Unfortunately that project is
+//       archived on GitHub, and is using the old API for
+//       subscription-transport-ws, which is a dependency of Cylc UI. As we
+//       cannot use an older version, instead we have the two functions here,
+//       patched as per issue to work with newer API.
 
 /**
  * Tell whether it is a query or subscription.
@@ -115,7 +116,8 @@ const graphQLFetcher = function (
  * @returns {Promise<any | string>}
  */
 function fallbackGraphQLFetcher(graphQLParams) {
-  // re-using same method UI uses to create GraphQL URL's used by its client with createGraphQLUrls()
+  // re-using same method UI uses to create GraphQL URL's used by its client
+  // with createGraphQLUrls()
   return fetch(createGraphQLUrls().httpUrl, {
     method: 'post',
     headers: {

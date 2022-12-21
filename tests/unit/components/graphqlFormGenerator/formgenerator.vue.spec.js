@@ -208,7 +208,8 @@ describe('FormGenerator Component', () => {
   })
 
   it('should parse default values from the schema for nested types', () => {
-    NESTED_TYPES.forEach(([type, defaultValue]) => {
+    NESTED_TYPES.forEach((item) => {
+      const type = item[0]
       const wrapper = mountFunction({
         propsData: {
           mutation: {
@@ -224,7 +225,7 @@ describe('FormGenerator Component', () => {
     })
   })
 
-  it('should provide appropriate null types where no default is provided', () => {
+  it('should provide appropriate null types if no default', () => {
     NESTED_TYPES.forEach(([type, defaultValue]) => {
       type = cloneDeep(type)
       delete type.defaultValue

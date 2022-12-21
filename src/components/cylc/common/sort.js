@@ -27,8 +27,8 @@
  */
 
 /**
- * The default comparator used to compare strings for cycle points, family proxies names,
- * task proxies names, and jobs.
+ * The default comparator used to compare strings for cycle points, family
+ * proxies names, task proxies names, and jobs.
  *
  * @param {string} left
  * @param {string} right
@@ -63,10 +63,14 @@ export const DEFAULT_COMPARATOR = (left, right) => {
  * name, but that respects natural order for numbers, i.e. [1, 2, 10].
  * Not [1, 10, 2].
  *
- * @param {Object[]} array - list of string values, or of objects with string values
- * @param {Object} value - a value to be inserted in the list, or an object wrapping the value (see iteratee)
- * @param {SortedIndexByIteratee=} iteratee - an optional function used to return the value of the element of the list}
- * @param {SortedIndexByComparator=} comparator - function used to compare the newValue with otherValues in the list
+ * @param {Object[]} array - list of string values, or of objects with string
+ * values
+ * @param {Object} value - a value to be inserted in the list, or an object
+ * - wrapping the value (see iteratee)
+ * @param {SortedIndexByIteratee=} iteratee - an optional function used to
+ * - return the value of the element of the list}
+ * @param {SortedIndexByComparator=} comparator - function used to compare
+ * - the newValue with otherValues in the list
  * @return {number} - sorted index
  */
 export function sortedIndexBy(array, value, iteratee, options = {}) {
@@ -76,7 +80,8 @@ export function sortedIndexBy(array, value, iteratee, options = {}) {
   }
   // If given a function, use it. Otherwise, simply use identity function.
   const iterateeFunction = iteratee || ((value) => value)
-  // If given a function, use it. Otherwise, simply use locale sort with numeric enabled
+  // If given a function, use it. Otherwise, simply use locale sort with
+  // numeric enabled
   const comparatorFunction
     = options.comparator
     || ((leftObject, leftValue, rightObject, rightValue) =>

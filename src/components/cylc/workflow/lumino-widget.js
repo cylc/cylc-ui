@@ -32,7 +32,8 @@ export default class LuminoWidget extends Widget {
    * Create a LuminoWidget object.
    * @param id {string} unique ID of the widget
    * @param name {string} text displayed in the widget tab
-   * @param closable {boolean} flag that controls whether the tab can be closed or not
+   * @param closable {boolean} flag that controls whether the tab can be closed
+   * - or not
    */
   constructor(id, name, closable = true) {
     super({ node: LuminoWidget.createNode(id) })
@@ -68,7 +69,8 @@ export default class LuminoWidget extends Widget {
   }
 
   onCloseRequest(msg) {
-    // Emit an event so that the Vue component knows that it needs to be removed too
+    // Emit an event so that the Vue component knows that it needs to be
+    // removed too
     const event = new CustomEvent('lumino:deleted', this._getEventDetails())
     document.getElementById(this.id).dispatchEvent(event)
     // call super method

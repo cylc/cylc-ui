@@ -30,9 +30,11 @@ Vue.use(Vuex)
 describe('Toolbar component', () => {
   let vuetify
   let $route
-  // for some obscene reason, using the actual "options.js" store, gets contaminated data from other tests during the course of the whole test running
-  // by mocking the entire store, we can decide exactly what data we want to be available within each test, without fear it will be overwritten or tainted with
-  // by other tests
+  // for some obscene reason, using the actual "options.js" store, gets
+  // contaminated data from other tests during the course of the whole test
+  // running by mocking the entire store, we can decide exactly what data we
+  // want to be available within each test, without fear it will be overwritten
+  // or tainted with by other tests
   const store = new Vuex.Store({
     modules: {
       app: {
@@ -95,19 +97,22 @@ describe('Toolbar component', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.$el).to.not.equal(null)
   })
-  it('should hide and display drawer according to screen viewport size', async () => {
-    const wrapper = mountFunction()
-    await wrapper.vm.$nextTick()
-    await wrapper.setData({
-      responsive: false,
-    })
-    expect(store.state.app.drawer).to.equal(null)
-    // empty wrapper before responsive is set to true
-    expect(wrapper.find('button.default').exists()).to.equal(false)
-    // let's make it responsive, so that the burger menu is visible
-    await wrapper.setData({
-      responsive: true,
-    })
-    expect(wrapper.find('button.default').exists()).to.equal(true)
-  })
+  it(
+    'should hide and display drawer according to screen viewport size',
+    async () => {
+      const wrapper = mountFunction()
+      await wrapper.vm.$nextTick()
+      await wrapper.setData({
+        responsive: false,
+      })
+      expect(store.state.app.drawer).to.equal(null)
+      // empty wrapper before responsive is set to true
+      expect(wrapper.find('button.default').exists()).to.equal(false)
+      // let's make it responsive, so that the burger menu is visible
+      await wrapper.setData({
+        responsive: true,
+      })
+      expect(wrapper.find('button.default').exists()).to.equal(true)
+    },
+  )
 })

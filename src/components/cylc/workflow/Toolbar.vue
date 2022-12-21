@@ -41,7 +41,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <span class="c-toolbar-title">{{ title }}</span>
     </v-toolbar-title>
 
-    <!-- control bar elements displayed only when there is a current workflow in the store -->
+    <!--
+      control bar elements displayed only when there is a current workflow in
+      the store
+    -->
     <template v-if="currentWorkflow">
       <div class="c-workflow-controls flex-shrink-0">
         <v-icon

@@ -47,7 +47,7 @@ export default {
    * @private
    * @param {boolean} offline
    */
-  _installWorkflowService(offline) {
+  _installWorkflowService() {
     const graphQLUrls = createGraphQLUrls()
     const client = createSubscriptionClient(graphQLUrls.wsUrl)
     Vue.prototype.$workflowService = new SubscriptionWorkflowService(

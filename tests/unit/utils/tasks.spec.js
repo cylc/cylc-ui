@@ -21,7 +21,8 @@ import { extractGroupState, latestJob } from '@/utils/tasks'
 
 describe('tasks', () => {
   describe('extractGroupState', () => {
-    it('should return the correct state for the node groups when not stopped', () => {
+    it('should return the correct state for the node groups', () => {
+      // when not stopped
       [
         [
           TaskState.FAILED.name, // expected
@@ -40,7 +41,8 @@ describe('tasks', () => {
         expect(groupState).to.equal(val[0])
       })
     })
-    it('should return the correct state for the node groups when stopped', () => {
+    it('should return the correct state for the node groups', () => {
+      // when not stopped
       [
         [
           TaskState.RUNNING.name, // expected

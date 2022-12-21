@@ -20,7 +20,7 @@ describe('Workflow view and component/widget', () => {
     cy.get('.v-alert').should('not.exist')
   })
 
-  it('Should display the Workflow component in the Workflow view, with a Tree widget', () => {
+  it('Should display the workflows/tree view by default', () => {
     cy.visit('/#/workflows/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
 

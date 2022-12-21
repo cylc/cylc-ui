@@ -44,7 +44,8 @@ describe('Job component', () => {
         },
       },
     })
-    // The shadow is added as an extra child element for the Job SVG (two rects).
+    // The shadow is added as an extra child element for the Job SVG (two
+    // rects).
     expect(wrapper.get('.job').element.childElementCount).to.equal(2)
   })
 })

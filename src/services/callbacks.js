@@ -20,6 +20,7 @@ class DeltasCallback {
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
+  // eslint-disable-next-line
   init(store, errors) {}
 
   /**
@@ -27,6 +28,7 @@ class DeltasCallback {
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
+  // eslint-disable-next-line
   before(deltas, store, errors) {}
 
   /**
@@ -34,12 +36,14 @@ class DeltasCallback {
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
+  // eslint-disable-next-line
   after(deltas, store, errors) {}
 
   /**
    * @param {Vuex} store - Vuex store
    * @param {Array<Object>} errors
    */
+  // eslint-disable-next-line
   tearDown(store, errors) {}
 
   /**
@@ -47,6 +51,7 @@ class DeltasCallback {
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
+  // eslint-disable-next-line
   onAdded(added, store, errors) {}
 
   /**
@@ -54,6 +59,7 @@ class DeltasCallback {
    * @param {Vuex} store
    * @param {Array<Object>} errors
    */
+  // eslint-disable-next-line
   onUpdated(updated, store, errors) {}
 
   /**
@@ -61,12 +67,14 @@ class DeltasCallback {
    * @param {Vuex} store - Vuex store
    * @param {Array<Object>} errors
    */
+  // eslint-disable-next-line
   onPruned(pruned, store, errors) {}
 
   /**
    * @param {Vuex} store - Vuex store
    * @param {Array<Object>} errors
    */
+  // eslint-disable-next-line
   commit(store, errors) {}
 }
 

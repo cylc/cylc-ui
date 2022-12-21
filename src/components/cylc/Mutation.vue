@@ -137,7 +137,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
-import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
+import { EditRuntimeForm }
+  from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
 import Markdown from '@/components/Markdown'
 import { getMutationShortDesc, getMutationExtendedDesc } from '@/utils/aotf'
 import { mdiClose } from '@mdi/js'

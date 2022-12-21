@@ -29,12 +29,14 @@ if (!global.localStorage) {
 }
 
 describe('Font Size', () => {
-  // Vuetify won't have initialized the value, as there is no DOM and nothing was loaded
+  // Vuetify won't have initialized the value, as there is no DOM and nothing
+  // was loaded
   const TESTING_INITIAL_VALUE = 16
   let stub = null
   beforeEach(() => {
-    // Create a dummy HTML html element, as that's not present in JSDOM by default.
-    // Also set the initial value (again, Vuetify won't have set this value yet).
+    // Create a dummy HTML html element, as that's not present in JSDOM by
+    // default. Also set the initial value (again, Vuetify won't have set this
+    // value yet).
     const htmlElement = document.createElement('html')
     htmlElement.style.fontSize = `${TESTING_INITIAL_VALUE}px`
     const htmlCollection = [htmlElement]

@@ -18,7 +18,8 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 
-// If modifying theme colors, check the colors from the theme bundle first, and use them if possible
+// If modifying theme colors, check the colors from the theme bundle first, and
+// use them if possible
 // import colors from 'vuetify/lib/util/colors'
 
 Vue.use(Vuetify)

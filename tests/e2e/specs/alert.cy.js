@@ -89,7 +89,7 @@ describe('Alert component', () => {
       store.commit('SET_ALERT', null)
     })
   })
-  it('Removes the alert from the central data store when it is dismissed by the user', () => {
+  it('Removes the alert from the store when dismissed by the user', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     const errorMessage = 'Error displayed'

@@ -32,7 +32,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :is="FormInput"
             ref="inputs"
           >
-            <!-- NOTE: we use :is here due to a nested component registration issue. -->
+            <!--
+              NOTE: we use :is here due to a nested component registration
+              issue.
+            -->
             <template v-slot:append-outer="slotProps">
               <v-icon
                 @click="remove(index)"
@@ -97,11 +100,13 @@ export default {
         index = this.value.length
         this.value.push(newInput)
       }
-      // this is not ideal, but I believe whats happening is the new (wrapper) component is created over the first tick from the new array item
-      // the component content is created over the next tick (including the input)
+      // this is not ideal, but I believe whats happening is the new (wrapper)
+      // component is created over the first tick from the new array item the
+      // component content is created over the next tick (including the input)
       Vue.nextTick(() => {
         Vue.nextTick(() => {
-          // get the latest input ref (which is a tooltip for some reason), get its parent, then the input itself and focus() it (if it exists)
+          // get the latest input ref (which is a tooltip for some reason), get
+          // its parent, then the input itself and focus() it (if it exists)
           this.$refs.inputs[index].$el?.parentNode
             ?.querySelector('input')
             ?.focus()

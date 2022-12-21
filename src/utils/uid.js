@@ -184,8 +184,10 @@ class Tokens {
    *
    * Obtain string ID from a tokens object
    *   tokens.id           // the full ID
-   *   tokens.workflow_id  // the workflow part of the ID (the bit before the //)
-   *   tokens.relative_id  // the task part of the ID (the bit after the //)
+   *   tokens.workflow_id  // the workflow part of the ID
+   *                       // (the bit before the //)
+   *   tokens.relative_id  // the task part of the ID
+   *                       // (the bit after the //)
    */
 
   static KEYS = ['user', 'workflow', 'cycle', 'task', 'job']

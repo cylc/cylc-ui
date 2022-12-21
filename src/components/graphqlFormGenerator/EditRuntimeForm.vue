@@ -119,7 +119,8 @@ export default {
         return this.value
       },
       set(value) {
-        // Update 'value' prop by notifying parent component's v-model for this component
+        // Update 'value' prop by notifying parent component's v-model for this
+        // component
         this.$emit('input', value)
       },
     },
@@ -184,7 +185,8 @@ export default {
     },
 
     /**
-     * Return the changed items in the form in a format suitable for cylc broadcast.
+     * Return the changed items in the form in a format suitable for Cylc
+     * broadcast.
      *
      * Converts the camel case field names to snake case.
      *

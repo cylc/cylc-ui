@@ -34,7 +34,8 @@ let wrapper
 const mountFunction = (options) => {
   const localVue = createLocalVue()
 
-  // note these are truly 'mocked' because I ran into issues with the state being tainted across multiple unit-tests
+  // note these are truly 'mocked' because I ran into issues with the state
+  // being tainted across multiple unit-tests
   const store = new Vuex.Store({
     modules: {
       app: {
@@ -100,11 +101,17 @@ describe('Drawer', () => {
       .element.dispatchEvent(createBubbledEvent('mousedown', { offsetX: 1 }))
 
     document.dispatchEvent(
-      createBubbledEvent('mousemove', { clientX: 100, clientY: 0, offsetX: 50 }),
+      createBubbledEvent(
+        'mousemove',
+        { clientX: 100, clientY: 0, offsetX: 50 },
+      ),
     )
 
     document.dispatchEvent(
-      createBubbledEvent('mouseup', { clientX: 100, clientY: 0, offsetX: 0 }),
+      createBubbledEvent(
+        'mouseup',
+        { clientX: 100, clientY: 0, offsetX: 0 },
+      ),
     )
 
     expect(spyFunction.called).to.equal(true)

@@ -19,14 +19,15 @@
 import { DocumentNode } from 'graphql'
 
 /**
- * A subscription query. It is part of a Subscription, and contains query and auxiliary data
- * such as query name, variables, and callbacks.
+ * A subscription query. It is part of a Subscription, and contains query and
+ * auxiliary data such as query name, variables, and callbacks.
  *
- * The name of the query is an important part of the data, as it is used as key in a dictionary
- * that holds the queries. It can be used to merge two queries when they have the same name.
+ * The name of the query is an important part of the data, as it is used as key
+ * in a dictionary that holds the queries. It can be used to merge two queries
+ * when they have the same name.
  *
- * Callbacks are Vuex **actions** (i.e. we call store.dispatch(), not store.commit()), and resolve
- * asynchronously.
+ * Callbacks are Vuex **actions** (i.e. we call store.dispatch(), not
+ * store.commit()), and resolve asynchronously.
  *
  * @see Subscription
  */

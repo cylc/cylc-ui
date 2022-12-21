@@ -21,8 +21,8 @@ import { Enumify } from 'enumify'
  * Represents the state of a view, like views with subscriptions, or other views
  * that load data.
  *
- * Besides the obvious loading and complete, it also includes the initial NO_STATE
- * state, and the COMPLETE state.
+ * Besides the obvious loading and complete, it also includes the initial
+ * NO_STATE state, and the COMPLETE state.
  *
  * @see https://dev.to/mpocock1/state-management-how-to-tell-a-bad-boolean-from-a-good-boolean-260n
  * @see https://lillo.dev/articles/slaying-a-ui-antipattern/1-fetch-data-with-elm-pattern/

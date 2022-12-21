@@ -64,7 +64,8 @@ describe('mergeQueries', () => {
         mergeQueries(selectionSetA, queryB)
       }).to.throw()
     })
-    it('should throw an error if the operations are different (subscription and query for example)', () => {
+    it('should throw an error if the operations are different', () => {
+      // (subscription and query for example)
       const queryA = gql`
         query {
           id
@@ -164,7 +165,8 @@ describe('mergeQueries', () => {
       `
       expect(() => mergeQueries(queryA, queryB)).to.throw()
     })
-    it('should throw an error if a directive is found (not supported/used right now', () => {
+    it('should throw an error if a directive is found', () => {
+      // (not supported/used right now)
       const queryA = gql`
         query {
           id
@@ -255,7 +257,8 @@ describe('mergeQueries', () => {
           `
           expect(() => mergeQueries(queryA, queryB)).to.throw()
         })
-        it('should throw an error if using different values for boolean, string, int, and float', () => {
+        it('should throw an error if using different values', () => {
+          // applies to boolean, string, int, and float
           const tests = [
             {
               a: true,

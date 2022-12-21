@@ -56,8 +56,9 @@ export default {
     )
   },
   beforeRouteLeave(to, from, next) {
-    // Important to remember to unsubscribe, otherwise a user may accidentally create several
-    // subscriptions/observers, causing performance issues on both frontend and backend.
+    // Important to remember to unsubscribe, otherwise a user may accidentally
+    // create several subscriptions/observers, causing performance issues on
+    // both frontend and backend.
     if (this.subscription !== null) {
       this.subscription.unsubscribe()
       this.subscription = null

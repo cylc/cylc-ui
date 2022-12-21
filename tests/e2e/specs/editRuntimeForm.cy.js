@@ -41,7 +41,8 @@ describe('Edit Runtime form', () => {
   })
 
   /**
-   * @param {string} nodeName - the tree node name, to search for and open the mutations form
+   * @param {string} nodeName - the tree node name, to search for and open the
+   * mutations form
    */
   const openMenu = (nodeName) => {
     cy.get('[data-cy=tree-view]')
