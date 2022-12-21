@@ -127,6 +127,9 @@ describe('Mutations component', () => {
       cy.get('[data-cy="submit"]')
         .click()
         .should('have.class', 'v-btn--loading')
+      // Wait half a sec in case dialog closes
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(500)
         .get('.c-mutation-dialog')
         .should('be.visible')
         // Now let mutation response through
