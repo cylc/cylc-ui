@@ -644,10 +644,7 @@ export default {
         `
       }
       // update edge paths
-      this.graphEdges.length = 0 // empty array
-      for (const edge of json.edges || []) {
-        this.graphEdges.push(posToPath(edge.pos))
-      }
+      this.graphEdges = json.edges?.map(edge => posToPath(edge.pos)) ?? []
 
       if (!this.panZoomWidget) {
         // mount the svgPanZoom widget on first load
