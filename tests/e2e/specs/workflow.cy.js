@@ -55,10 +55,28 @@ describe('Workflow view and component/widget', () => {
 
   it('Should be able to add two widgets of different types', () => {
     cy.visit('/#/workflows/one')
-    cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
+
+    // there should be one widget open by default (tree)
+    cy.get('.lm-TabBar-tabLabel')
+      // there should be a tab representing the widget
+      .should('have.length', 1)
+      // the tab should contain the name of the widget
+      .contains('tree')
+      // the tab should be active (that is to say on top)
+      .parent()
+      .should('have.class', 'lm-mod-current')
+
     cy.get('a.add-view').click()
     cy.get('#toolbar-add-Table-view').click()
-    cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
+    cy.get('.lm-TabBar-tabLabel')
+      // there should be two tabs (tree + table)
+      .should('have.length', 2)
+      // the new tab should be last
+      .last()
+      .contains('table')
+      // the new tab should be active (that is to say on top)
+      .parent()
+      .should('have.class', 'lm-mod-current')
   })
 
   it('Should remove widgets added successfully', () => {
