@@ -29,6 +29,9 @@ Tree view: Task messages are now shown along with outputs.
 [#1124](https://github.com/cylc/cylc-ui/pull/1075) - Table view: More options
 for number of tasks per page.
 
+[#1177](https://github.com/cylc/cylc-ui/pull/1177) -
+New tabs now open on top.
+
 ### Fixes
 
 [#1108](https://github.com/cylc/cylc-ui/pull/1108) -
