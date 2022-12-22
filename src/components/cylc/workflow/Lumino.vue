@@ -129,7 +129,6 @@ export default {
     addWidget (id, name, onTop = true) {
       this.widgets.push(id)
       const luminoWidget = new LuminoWidget(id, name, /* closable */ true)
-      // this.dock.addWidget(luminoWidget)
       this.dock.addWidget(luminoWidget, { mode: 'tab-after' })
       // give time for Lumino's widget DOM element to be created
       this.$nextTick(() => {
