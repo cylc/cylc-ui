@@ -16,7 +16,14 @@
  */
 
 .c-table {
+  th, td {
+    white-space: nowrap;
+  }
+
   .c-task, .c-job {
+    display: flex;
+    align-items: center;
+    height: 100%;
     font-size: 1.2em;
   }
 }

@@ -104,7 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- data -->
       <div
         v-if="!isLoading"
-        class="c-gscan-workflows flex-grow-1"
+        class="c-gscan-workflows flex-grow-1 pl-2"
       >
         <tree
           :filterable="false"
