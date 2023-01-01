@@ -11,7 +11,7 @@ the UI.
 
 ## Copyright and Terms of Use
 
-Copyright (C) 2018-<span actions:bind='current-year'>2022</span> NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) 2018-<span actions:bind='current-year'>2023</span> NIWA & British Crown (Met Office) & Contributors.
 
 Cylc is free software: you can redistribute it and/or modify it under the terms
 of the GNU General Public License as published by the Free Software Foundation,
