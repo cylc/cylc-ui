@@ -277,17 +277,15 @@ export default {
     },
 
     expandCollapse () {
-        this.expanded = !this.expanded
-        this.$nextTick(() => {
+      this.expanded = !this.expanded
+      this.$nextTick(() => {
         // If expanding menu causes it overflow off screen, move it into view
         // (This would happen automatically, but it's too slow -
         // see https://github.com/cylc/cylc-ui/issues/1163)
         if (this.y + this.$refs.menuContent.$el.clientHeight > document.body.clientHeight) {
-            this.y = document.body.clientHeight - this.$refs.menuContent.$el.clientHeight - 5
+          this.y = document.body.clientHeight - this.$refs.menuContent.$el.clientHeight - 5
         }
-    })
-},
-      this.expanded = !this.expanded
+      })
     },
 
     /* Call a mutation using only the tokens for args. */
