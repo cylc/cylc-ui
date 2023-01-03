@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-      <div v-for="log in logs" :key="log">{{log}}</div>
+    <div v-for="log in computedLogs" :key="log">{{log}}</div>
   </div>
 </template>
 
@@ -26,12 +26,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 export default {
   name: 'LogComponent',
   props: {
+    placeholder: {
+      type: String,
+      default: 'Loading logs',
+      required: false
+    },
     logs: {
       type: Array,
       required: true
     }
+  },
+  computed: {
+    computedLogs () {
+      if (this.logs.length > 0) {
+        return this.logs
+      } else {
+        return [this.placeholder]
+      }
+    }
   }
-
 }
 
 </script>

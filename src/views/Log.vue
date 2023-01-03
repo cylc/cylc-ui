@@ -79,6 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :logs="lines"
         ref="log0"
         key="log0"
+        placeholder="Loading logs..."
       ></log-component>
     </div>
   </div>
