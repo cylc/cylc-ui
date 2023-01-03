@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :close-on-content-click="false"
       :close-on-click="false"
       v-click-outside="{ handler: onClickOutside, include: clickOutsideInclude }"
-      max-height="50vh"
+      max-height="90vh"
       dark
     >
       <!-- NOTE: because the `attach` prop is not true, the actual DOM element
