@@ -277,14 +277,16 @@ export default {
     },
 
     expandCollapse () {
-      /**
-       * Before expanding we check whether this.y in in the bottom half of
-       * the viewport. If it is, we modify this.y to be in the top half
-      **/
-      const halfPageheight = document.body.clientHeight / 2
-      if (!this.expanded && this.y > halfPageheight) {
-        this.y = document.body.clientHeight - 20
-      }
+        this.expanded = !this.expanded
+        this.$nextTick(() => {
+        // If expanding menu causes it overflow off screen, move it into view
+        // (This would happen automatically, but it's too slow -
+        // see https://github.com/cylc/cylc-ui/issues/1163)
+        if (this.y + this.$refs.menuContent.$el.clientHeight > document.body.clientHeight) {
+            this.y = document.body.clientHeight - this.$refs.menuContent.$el.clientHeight - 5
+        }
+    })
+},
       this.expanded = !this.expanded
     },
 
