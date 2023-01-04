@@ -29,64 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="filterable"
         class="grow"
       >
-        <v-row
-          no-gutters
-        >
-          <v-col
-            cols="12"
-            md="6"
-            class="pr-md-2 mb-2 mb-md-0"
-          >
-            <v-text-field
-              id="c-tree-filter-task-name"
-              clearable
-              dense
-              flat
-              hide-details
-              outlined
-              placeholder="Filter by task name"
-              v-model="tasksFilter.name"
-              @keyup="filterTasks"
-              @click:clear="clearInput"
-              ref="filterNameInput"
-            ></v-text-field>
-          </v-col>
-          <v-col
-            cols="12"
-            md="6"
-            class="mb-2 mb-md-0"
-          >
-            <v-select
-              id="c-tree-filter-task-states"
-              :items="taskStates"
-              clearable
-              dense
-              flat
-              hide-details
-              multiple
-              outlined
-              placeholder="Filter by task state"
-              v-model="tasksFilter.states"
-              @change="filterTasks"
-            >
-              <template v-slot:item="slotProps">
-                <Task :task="{ state: slotProps.item.value }" />
-                <span class="ml-2">{{ slotProps.item.value }}</span>
-              </template>
-              <template v-slot:selection="slotProps">
-                <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
-                  <Task :task="{ state: slotProps.item.value }" />
-                </div>
-                <span
-                  v-if="slotProps.index === maximumTasks"
-                  class="grey--text caption"
-                >
-            (+{{ tasksFilter.states.length - maximumTasks }})
-          </span>
-              </template>
-            </v-select>
-          </v-col>
-        </v-row>
+        <TaskFilter v-model="tasksFilter"/>
       </v-col>
       <!-- Expand, collapse all -->
       <v-col
@@ -102,6 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 v-on="on"
                 @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
                 icon
+                data-cy="expand-all"
               >
                 <v-icon>{{ svgPaths.expandIcon }}</v-icon>
               </v-btn>
@@ -114,6 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 v-on="on"
                 @click="collapseAll()"
                 icon
+                data-cy="collapse-all"
               >
                 <v-icon>{{ svgPaths.collapseIcon }}</v-icon>
               </v-btn>
@@ -159,11 +104,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import Vue from 'vue'
-import cloneDeep from 'lodash/cloneDeep'
 import { mdiPlus, mdiMinus } from '@mdi/js'
-import TaskState from '@/model/TaskState.model'
 import TreeItem from '@/components/cylc/tree/TreeItem'
-import Task from '@/components/cylc/Task'
+import TaskFilter from '@/components/cylc/TaskFilter'
+import { matchNode } from '@/components/cylc/common/filter'
 import { getNodeChildren } from '@/components/cylc/tree/util'
 
 export default {
@@ -211,7 +155,7 @@ export default {
     }
   },
   components: {
-    Task,
+    TaskFilter,
     TreeItem
   },
   data () {
@@ -222,12 +166,7 @@ export default {
       expanded: true,
       expandedFilter: null,
       collapseFilter: null,
-      tasksFilter: {
-        name: '',
-        states: []
-      },
-      activeFilters: null,
-      maximumTasks: 4,
+      tasksFilter: {},
       svgPaths: {
         expandIcon: mdiPlus,
         collapseIcon: mdiMinus
@@ -263,27 +202,22 @@ export default {
         return this.workflows
       }
     },
-    taskStates: () => {
-      return TaskState.enumValues.map(taskState => {
-        return {
-          text: taskState.name.replace(/_/g, ' '),
-          value: taskState.name
-        }
-      }).sort((left, right) => {
-        return left.text.localeCompare(right.text)
-      })
+    filterByTaskName () {
+      return Boolean(this.tasksFilter.name?.trim())
     },
-    tasksFilterStates: function () {
-      return this.activeFilters.states.map(selectedTaskState => {
-        return selectedTaskState
-      })
+    filterByTaskState () {
+      return Boolean(this.tasksFilter.states?.length)
     }
   },
   watch: {
+    tasksFilter: {
+      deep: true,
+      handler: 'filterTasks'
+    },
     workflows: {
       deep: true,
-      handler: function () {
-        if (this.activeFilters !== null) {
+      handler () {
+        if (this.filterByTaskName || this.filterByTaskState) {
           this.$nextTick(() => {
             this.filterNodes(this.workflows)
           })
@@ -292,35 +226,12 @@ export default {
     }
   },
   methods: {
-    filterByTaskName () {
-      return this.activeFilters.name !== undefined &&
-          this.activeFilters.name !== null &&
-          this.activeFilters.name.trim() !== ''
-    },
-    filterByTaskState () {
-      return this.activeFilters.states !== undefined &&
-          this.activeFilters.states !== null &&
-          this.activeFilters.states.length > 0
-    },
     filterTasks () {
-      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
-          this.tasksFilter.name !== null &&
-          this.tasksFilter.name.trim() !== ''
-      const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
-          this.tasksFilter.states !== null &&
-          this.tasksFilter.states.length > 0
-      if (taskNameFilterSet || taskStatesFilterSet) {
-        this.activeFilters = cloneDeep(this.tasksFilter)
+      if (this.filterByTaskName || this.filterByTaskState) {
         this.filterNodes(this.workflows)
       } else {
         this.removeAllFilters()
-        this.activeFilters = null
       }
-    },
-    clearInput (event) {
-      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
-      this.tasksFilter.name = null
-      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
     },
     filterNodes (nodes) {
       for (const node of nodes) {
@@ -340,18 +251,11 @@ export default {
           filtered = this.filterNode(child) || filtered
         }
       } else if (node.type === 'task') {
-        if (this.filterByTaskName() && this.filterByTaskState()) {
-          filtered = node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(node.node.state)
-        } else if (this.filterByTaskName()) {
-          filtered = node.name.includes(this.activeFilters.name)
-        } else if (this.filterByTaskState()) {
-          filtered = this.tasksFilterStates.includes(node.node.state)
-        }
+        filtered = matchNode(node.node, this.tasksFilter.name, this.tasksFilter.states)
       }
-      if (!this.treeItemCache[node.id]) {
-        this.treeItemCache[node.id] = {}
+      if (this.treeItemCache[node.id]) {
+        this.treeItemCache[node.id].filtered = filtered
       }
-      this.treeItemCache[node.id].filtered = filtered
       return filtered
     },
     removeAllFilters () {

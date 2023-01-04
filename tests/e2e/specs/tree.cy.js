@@ -183,39 +183,31 @@ describe('Tree view', () => {
   })
 
   describe('filters', () => {
-    it('Should not filter by default', () => {
-      cy.visit('/#/tree/one')
-      cy
-        .get('.node-data-task')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.node-data-task')
-        .contains('waiting')
-        .should('be.visible')
-    })
+    const initialNumTasks = 7
     it('Should filter by task name', () => {
       cy.visit('/#/tree/one')
+      // Should not filter by default
       cy
-        .get('.node-data-task')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.node-data-task')
+        .get('.node-data-task:visible')
+        .should('have.length', initialNumTasks)
         .contains('waiting')
-        .should('be.visible')
       // eep should filter sleepy
       cy
-        .get('#c-tree-filter-task-name')
+        .get('[data-cy=filter-task-name]')
         .type('eep')
       cy
-        .get('.node-data-task')
+        .get('.node-data-task:visible')
+        .should('have.length.lessThan', initialNumTasks)
         .contains('sleepy')
-        .should('be.visible')
       cy
         .get('.node-data-task')
         .contains('waiting')
         .should('not.be.visible')
+      // It should stop filtering when input is cleared
+      cy.get('[data-cy=filter-task-name]')
+        .clear()
+        .get('.node-data-task:visible')
+        .should('have.length', initialNumTasks)
     })
     it('Should filter by task states', () => {
       cy.visit('/#/tree/one')
@@ -224,7 +216,7 @@ describe('Tree view', () => {
         .contains(TaskState.FAILED.name)
         .should('be.visible')
       cy
-        .get('#c-tree-filter-task-states')
+        .get('[data-cy=filter-task-states]')
         .click({ force: true })
       cy
         .get('.v-list-item')
@@ -242,42 +234,76 @@ describe('Tree view', () => {
       cy.visit('/#/tree/one')
       cy
         .get('.node-data-task')
-        .contains('sleepy')
+        .contains('failed')
         .should('be.visible')
-      // retry should filter retry
       cy
-        .get('#c-tree-filter-task-name')
-        .type('retry')
+        .get('[data-cy=filter-task-name]')
+        .type('i')
       cy
-        .get('#c-tree-filter-task-states')
+        .get('[data-cy=filter-task-states]')
         .click({ force: true })
-      // click on waiting, the retry is succeeded, but we don't want to see it
-      cy
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
         .click({ force: true })
       cy
         .get('.node-data-task:visible')
         .should('have.length', 1)
+        .contains('retrying')
     })
+  })
 
-    it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
+  describe('Expand/collapse all buttons', () => {
+    it('Collapses and expands as expected', () => {
       cy.visit('/#/tree/one')
-      cy
-        .get('#c-tree-filter-task-states')
-        .click({ force: true })
-      // eslint-disable-next-line no-lone-blocks
-      TaskState.enumValues.forEach(state => {
-        cy
-          .get('.v-list-item')
-          .contains(state.name)
-          .click({ force: true })
-      })
-      cy
-        .get('.v-select__slot')
-        .should($select => {
-          expect($select).to.contain('(+')
-        })
+      cy.get('.node-data-task')
+        .contains('sleepy')
+        .as('sleepyTask')
+        .should('be.visible')
+      cy.get('[data-cy=collapse-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('not.be.visible')
+        .get('[data-cy=expand-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('be.visible')
     })
+    it('Works when tasks are being filtered', () => {
+      cy.visit('/#/tree/one')
+      cy.get('.node-data-task')
+        .contains('sleepy')
+        .as('sleepyTask')
+        .should('be.visible')
+      cy.get('[data-cy=filter-task-name]')
+        .type('sleep')
+      cy.get('[data-cy=collapse-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('not.be.visible')
+        .get('[data-cy=expand-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('be.visible')
+    })
+  })
+
+  it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
+    cy.visit('/#/tree/one')
+    cy
+      .get('[data-cy=filter-task-states]')
+      .click({ force: true })
+    // eslint-disable-next-line no-lone-blocks
+    TaskState.enumValues.forEach(state => {
+      cy.get('.v-list-item')
+        .contains(state.name)
+        .click({ force: true })
+    })
+    // Click outside to close dropdown
+    cy.get('noscript')
+      .click({ force: true })
+    cy.get('.v-select__slot')
+      .should($select => {
+        expect($select).to.contain('(+')
+      })
   })
 })
