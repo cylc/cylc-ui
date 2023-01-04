@@ -23,7 +23,7 @@ describe('Workflow view and component/widget', () => {
   })
 
   it('Should display the Workflow component in the Workflow view, with a Tree widget', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
 
     // The skeleton loader should stop existing
@@ -40,13 +40,13 @@ describe('Workflow view and component/widget', () => {
   })
 
   it('Should remove the default widget and leave no more widgets', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy.get('.lm-TabBar-tabCloseIcon').click()
     cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
 
   it('Should be able to add two widgets of the same type', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     cy.get('a.add-view').click()
     cy.get('#toolbar-add-Tree-view').click()
@@ -54,7 +54,7 @@ describe('Workflow view and component/widget', () => {
   })
 
   it('Should be able to add two widgets of different types', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
 
     // there should be one widget open by default (tree)
     cy.get('.lm-TabBar-tabLabel')
@@ -80,7 +80,7 @@ describe('Workflow view and component/widget', () => {
   })
 
   it('Should remove widgets added successfully', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
     cy.get('a.add-view').click()
@@ -94,7 +94,7 @@ describe('Workflow view and component/widget', () => {
   })
 
   it('Should remove widgets when leaving the Workflow view', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
     cy.get('a.add-view').click()
@@ -107,7 +107,7 @@ describe('Workflow view and component/widget', () => {
   })
 
   it('Should remove widgets when updating the Workflow view', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
     cy.get('a.add-view').click()
@@ -115,7 +115,7 @@ describe('Workflow view and component/widget', () => {
     // ensure we have 2 widgets now
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
     // this is OK, as we render one for every route/workflow requested
-    cy.visit('/#/workflows/two')
+    cy.visit('/#/workspace/two')
     // ensure we have no widgets now
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
   })

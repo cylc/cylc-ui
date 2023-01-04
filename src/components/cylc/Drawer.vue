@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-list
         class="pa-0 ma-0 flex-grow-1 d-flex flex-column"
       >
-        <g-scan class="h-100" />
+        <Workflows class="h-100" />
       </v-list>
     </div>
     <template v-slot:append>
@@ -84,13 +84,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // eslint-disable-next-line no-unused-vars
 import Header from '@/components/cylc/Header'
 import { mapState } from 'vuex'
-import GScan from '@/components/cylc/gscan/GScan'
+import Workflows from '@/views/Workflows'
 import { mdiHome, mdiGraphql } from '@mdi/js'
 import { version } from '@/../package.json'
 
 export default {
   components: {
-    GScan,
+    Workflows,
     'c-header': Header
   },
   data: function () {

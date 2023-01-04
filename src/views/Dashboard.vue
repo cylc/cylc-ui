@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-layout wrap>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-item to="/workflows">
+          <v-list-item to="/workflow-table">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.table }}</v-icon>
             </v-list-item-avatar>

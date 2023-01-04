@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <v-menu
         offset-y
-        v-if="$route.name === 'workflow'"
+        v-if="$route.name === 'workspace'"
       >
         <template v-slot:activator="{ on }">
           <a
