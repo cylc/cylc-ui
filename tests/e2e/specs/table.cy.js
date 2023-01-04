@@ -116,5 +116,29 @@ describe('Table view', () => {
         .contains('eventually')
         .should('be.visible')
     })
+    it('displays and sorts dt-mean', () => {
+      cy.visit('/#/table/one')
+
+      cy
+        // sort dt-mean ascending
+        .get('[aria-label="dT-mean: Not sorted. Activate to sort ascending."] > :nth-child(1)')
+        .click()
+
+        // check 0 is at the top (1st row, 10th column)
+        .get('tbody > :nth-child(1) > :nth-child(10)')
+        .should(($ele) => {
+          expect($ele.text().trim()).equal('') // no value sorted first
+        })
+
+        // sort ft-mean descending
+        .get('.asc > .v-icon > .v-icon__svg > path')
+        .click()
+
+        // check 7 is at the top (1st row, 10th column)
+        .get('tbody > :nth-child(1) > :nth-child(10)')
+        .should(($ele) => {
+          expect($ele.text().trim()).equal('7')
+        })
+    })
   })
 })

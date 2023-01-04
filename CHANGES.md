@@ -34,6 +34,9 @@ New tabs now open on top.
 
 ### Fixes
 
+[#1164](https://github.com/cylc/cylc-ui/pull/1164) -
+Fix the mean run time column in the table view.
+
 [#1167](https://github.com/cylc/cylc-ui/pull/1168) - Prevent mutations menu
 jumping when expanded.
 
