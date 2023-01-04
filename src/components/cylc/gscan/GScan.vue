@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-text-field
           v-model="searchWorkflows"
           clearable
+          :clear-icon="$options.icons.mdiClose"
           flat
           dense
           hide-details
@@ -52,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               id="c-gscan-filter-tooltip-btn"
               @click="showFilterTooltip = !showFilterTooltip"
             >
-              <v-icon>{{ svgPaths.filter }}</v-icon>
+              <v-icon>{{ $options.icons.mdiFilter }}</v-icon>
             </v-btn>
           </template>
           <!-- filters tooltip -->
@@ -200,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiFilter } from '@mdi/js'
+import { mdiClose, mdiFilter } from '@mdi/js'
 import uniq from 'lodash/uniq'
 import TaskState from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
@@ -233,9 +234,6 @@ export default {
   data () {
     return {
       maximumTasksDisplayed: 5,
-      svgPaths: {
-        filter: mdiFilter
-      },
       /**
        * The filtered workflows. This is the result of applying the filters
        * on the workflows prop.
@@ -470,6 +468,12 @@ export default {
         return validValues.includes(entry[0])
       })
     }
+  },
+
+  // Misc options
+  icons: {
+    mdiClose,
+    mdiFilter
   }
 }
 </script>

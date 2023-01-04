@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-text-field
         data-cy="filter-task-name"
         clearable
+        :clear-icon="$options.icons.mdiClose"
         dense
         flat
         hide-details
@@ -34,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         placeholder="Filter by task name"
         v-model="localValue.name"
         ref="filterNameInput"
-      ></v-text-field>
+      />
     </v-col>
     <v-col
       cols="12"
@@ -45,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="filter-task-states"
         :items="allStates"
         clearable
+        :clear-icon="$options.icons.mdiClose"
         dense
         flat
         hide-details
@@ -76,6 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Task from '@/components/cylc/Task'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
+import { mdiClose } from '@mdi/js'
 
 export default {
   name: 'TaskFilter',
@@ -101,6 +104,10 @@ export default {
         this.$emit('input', value)
       }
     }
+  },
+  // Misc options
+  icons: {
+    mdiClose
   }
 }
 </script>
