@@ -25,16 +25,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="pr-md-2 mb-2 mb-md-0"
     >
       <v-text-field
-        data-cy="filter-task-name"
+        data-cy="filter-id"
         clearable
         :clear-icon="$options.icons.mdiClose"
         dense
         flat
         hide-details
         outlined
-        placeholder="Filter by task name"
-        v-model="localValue.name"
-        ref="filterNameInput"
+        placeholder="Filter by ID"
+        v-model="localValue.id"
+        ref="filterIDInput"
       />
     </v-col>
     <v-col
@@ -86,7 +86,7 @@ export default {
     Task
   },
   props: {
-    value: Object // { name, states }
+    value: Object // { id, states }
   },
   data () {
     return {
