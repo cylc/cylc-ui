@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :close-on-content-click="false"
       :close-on-click="false"
       v-click-outside="{ handler: onClickOutside, include: clickOutsideInclude }"
+      max-height="90vh"
       dark
     >
       <!-- NOTE: because the `attach` prop is not true, the actual DOM element
@@ -277,6 +278,14 @@ export default {
 
     expandCollapse () {
       this.expanded = !this.expanded
+      this.$nextTick(() => {
+        // If expanding menu causes it overflow off screen, move it into view
+        // (This would happen automatically, but it's too slow -
+        // see https://github.com/cylc/cylc-ui/issues/1163)
+        if (this.y + this.$refs.menuContent.$el.clientHeight > document.body.clientHeight) {
+          this.y = document.body.clientHeight - this.$refs.menuContent.$el.clientHeight - 5
+        }
+      })
     },
 
     /* Call a mutation using only the tokens for args. */
