@@ -16,16 +16,16 @@ ones in. -->
 ### Enhancements
 
 [#1158](https://github.com/cylc/cylc-ui/pull/1158) -
-Log view: A new view which displays workflow and job logs (similar
+Add log view: A new view which displays workflow and job logs (similar
 to log view available in Cylc 7 cylc review).
+
+[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
+Add graph view: A new view which displays tasks and dependencies as a graph
+(like the Cylc 7 graph view).
 
 [#1144](https://github.com/cylc/cylc-ui/pull/1144) - Add "Edit Runtime"
 command, a more convenient way to perform broadcasts by viewing and editing a
 task/family's runtime configuration.
-
-[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
-Graph view: A new view which displays tasks and dependencies as a graph (like
-the Cylc 7 graph view).
 
 [#1108](https://github.com/cylc/cylc-ui/pull/1108) -
 Tree view: Task messages are now shown along with outputs.
@@ -39,13 +39,16 @@ New tabs now open on top.
 [#1178](https://github.com/cylc/cylc-ui/pull/1178) - Improve appearance of
 Table view.
 
+[#1043](https://github.com/cylc/cylc-ui/pull/1043) - The GScan sidebar is
+now resizeable.
+
 ### Fixes
 
 [#1164](https://github.com/cylc/cylc-ui/pull/1164) -
 Fix the mean run time column in the table view.
 
-[#1167](https://github.com/cylc/cylc-ui/pull/1168) - Prevent mutations menu
-jumping when expanded.
+[#1167](https://github.com/cylc/cylc-ui/pull/1168) - Prevent command menu from
+jumping after a delay when clicking "see more".
 
 [#1108](https://github.com/cylc/cylc-ui/pull/1108) -
 Tree view: Task outputs are now correctly associated with the jobs that created
