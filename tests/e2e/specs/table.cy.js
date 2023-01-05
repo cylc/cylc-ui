@@ -132,12 +132,12 @@ describe('Table view', () => {
 
         // sort ft-mean descending
         .get('.asc > .v-icon > .v-icon__svg > path')
-        .click()
+        .click({ force: true })
 
         // check 7 is at the top (1st row, 10th column)
         .get('tbody > :nth-child(1) > :nth-child(10)')
         .should(($ele) => {
-          expect($ele.text().trim()).equal('7')
+          expect($ele.text().trim()).equal('00:00:07')
         })
     })
   })

@@ -15,6 +15,9 @@ ones in. -->
 
 ### Enhancements
 
+[#1184](https://github.com/cylc/cylc-ui/pull/1184) - Mean times for tasks
+in table changed to human readable ISO duration format.
+
 [#1144](https://github.com/cylc/cylc-ui/pull/1144) - Add "Edit Runtime"
 command, a more convenient way to perform broadcasts by viewing and editing a
 task/family's runtime configuration.

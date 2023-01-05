@@ -17,7 +17,7 @@
 
 import { expect } from 'chai'
 import TaskState from '@/model/TaskState.model'
-import { extractGroupState, latestJob } from '@/utils/tasks'
+import { dtMean, extractGroupState, latestJob } from '@/utils/tasks'
 
 describe('tasks', () => {
   describe('extractGroupState', () => {
@@ -87,6 +87,59 @@ describe('tasks', () => {
       ]
       tests.forEach(test => {
         expect(latestJob(test.taskProxy)).to.equal(test.expected)
+      })
+    })
+  })
+  describe('dtMean', () => {
+    it('should format seconds to nice isodatetime format', () => {
+      const tests = [
+        {
+          taskNode: { node: null },
+          expected: undefined
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 84
+              }
+            }
+          },
+          expected: '00:01:24'
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 42
+              }
+            }
+          },
+          expected: '00:00:42'
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 4242
+              }
+            }
+          },
+          expected: '01:10:42'
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 1426332
+              }
+            }
+          },
+          expected: '16d 12:12:12'
+        }
+      ]
+      tests.forEach(test => {
+        expect(dtMean(test.taskNode)).to.equal(test.expected)
       })
     })
   })

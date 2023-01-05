@@ -169,6 +169,7 @@ import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
 import { matchNode } from '@/components/cylc/common/filter'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
+import { dtMean } from '@/utils/tasks'
 
 export default {
   name: 'TableComponent',
@@ -257,15 +258,7 @@ export default {
     }
   },
   methods: {
-    dtMean (taskNode) {
-      const ret = taskNode.node?.task?.meanElapsedTime
-      if (ret) {
-        return ret.toFixed()
-      }
-      // the meanElapsedTime can be undefined (e.g. task has not run before)
-      // return "undefined" rather than a number for these cases
-      return undefined
-    }
+    dtMean
   }
 }
 </script>
