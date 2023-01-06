@@ -174,7 +174,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot
-        v-bind:node="node"
+        v-bind="{node, latestDescendantTasks, lastDescendent, descendentLabel, branchingLineage, expansionStatus}"
         name="node"
         v-else
       >
@@ -189,7 +189,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot></slot>
     </div>
     <span
-      v-show="isExpanded"
+      v-show="expansionStatus"
       v-if="!stopOn.includes(node.type)"
     >
       <!-- component recursion -->
@@ -205,6 +205,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :depth="depth + 1"
         :stopOn="stopOn"
         :hoverable="hoverable"
+        :auto-collapse="autoCollapse"
         :autoExpandTypes="autoExpandTypes"
         :cyclePointsOrderDesc="cyclePointsOrderDesc"
         v-on:tree-item-created="$listeners['tree-item-created']"
@@ -222,6 +223,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :depth="depth + 1"
         :stopOn="stopOn"
         :hoverable="hoverable"
+        :auto-collapse="autoCollapse"
         :autoExpandTypes="autoExpandTypes"
         :cyclePointsOrderDesc="cyclePointsOrderDesc"
         v-on:tree-item-created="$listeners['tree-item-created']"
@@ -253,6 +255,7 @@ import {
   jobMessageOutputs
 } from '@/utils/tasks'
 import { getNodeChildren } from '@/components/cylc/tree/util'
+import TaskState from '../../../model/TaskState.model'
 
 /**
  * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
@@ -288,6 +291,10 @@ export default {
       default: true
     },
     hoverable: Boolean,
+    autoCollapse: {
+      type: Boolean,
+      default: false
+    },
     autoExpandTypes: {
       type: Array,
       required: false,
@@ -328,10 +335,93 @@ export default {
       icons: {
         mdiChevronRight
       },
-      isExpanded: false
+      isExpanded: false,
+      expandedStateOverridden: false
     }
   },
+  // watch: {
+  //   expansionStatus () {
+  //     // only called when autoExpand changes
+  //     if (!this.expandedStateOverridden) {
+  //       this.emitExpandCollapseEvent(this.isExpanded)
+  //     }
+  //   }
+  // },
   computed: {
+    expansionStatus () {
+      return this.autoCollapse && !this.expandedStateOverridden ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type) : this.isExpanded
+      // return (!this.expandedStateOverridden && this.autoCollapse) ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type) : this.isExpanded
+      // return this.isExpanded
+    },
+    latestDescendantTasks () {
+      const validValues = [
+        TaskState.SUBMITTED.name,
+        TaskState.SUBMIT_FAILED.name,
+        TaskState.RUNNING.name,
+        TaskState.SUCCEEDED.name,
+        TaskState.FAILED.name
+      ]
+      const tasks = {}
+      const traverseChildren = (currentNode) => {
+        // if we aren't at the end of the node tree, continue
+        if (currentNode.children && currentNode.children.length > 0) {
+          traverseChildren(currentNode.children[0])
+        } else {
+          // if we are at the end of the tree, and the end of the tree is of type workflow, fetch the states from the latestStateTasks property
+          if (currentNode.type === 'workflow') {
+            Object.keys(currentNode.node.latestStateTasks)
+              // filter only valid states
+              .filter(stateTaskKey => validValues.includes(stateTaskKey))
+              // concat the new tasks in where they dont already exist
+              .forEach((key) => {
+                if (!tasks[key]) {
+                  tasks[key] = []
+                }
+                tasks[key] = [].concat(tasks[key], currentNode.node.latestStateTasks[key].filter(newTask => !tasks[key].includes(newTask)))
+              })
+          }
+        }
+      }
+      traverseChildren(this.node)
+      return tasks
+    },
+    lastDescendent () {
+      let lastDescendent = this.node
+      const traverseChildren = (currentNode) => {
+        if (currentNode.children && currentNode.children.length > 0) {
+          traverseChildren(currentNode.children[0])
+        } else {
+          lastDescendent = currentNode
+        }
+      }
+      traverseChildren(lastDescendent)
+      return lastDescendent
+    },
+    descendentLabel () {
+      const labelArr = []
+      const traverseChildren = (currentNode) => {
+        labelArr.push(currentNode.name || currentNode.id)
+        if (currentNode.children && currentNode.children.length > 0) {
+          traverseChildren(currentNode.children[0])
+        }
+      }
+      traverseChildren(this.node)
+      return labelArr.join('/')
+    },
+    branchingLineage () {
+      let moreThenTwoChildren = false
+      const traverseChildren = (currentNode) => {
+        if (moreThenTwoChildren === false && currentNode.children && currentNode.children.length > 0) {
+          if (currentNode.children.length === 1) {
+            traverseChildren(currentNode.children[0])
+          } else {
+            moreThenTwoChildren = true
+          }
+        }
+      }
+      traverseChildren(this.node)
+      return moreThenTwoChildren
+    },
     hasChildren () {
       if (this.stopOn.includes(this.node.type)) {
         // don't show children if the tree has been configured to stop at
@@ -366,7 +456,7 @@ export default {
         'node--hoverable': this.hoverable,
         'node--active': this.active,
         'c-workflow-stopped': this.node?.node?.status === WorkflowState.STOPPED.name,
-        expanded: this.isExpanded
+        expanded: this.autoCollapse ? this.expansionStatus : this.isExpanded
       }
     },
     expandCollapseBtnStyle () {
@@ -404,13 +494,16 @@ export default {
   },
   beforeMount () {
     // apply auto-expand rules when a treeitem is created
-    this.isExpanded = this.autoExpandTypes.includes(this.node.type)
+    this.isExpanded = !this.autoCollapse ? this.autoExpandTypes.includes(this.node.type) : this.isExpanded
     this.emitExpandCollapseEvent(this.isExpanded)
   },
   methods: {
     toggleExpandCollapse () {
       this.isExpanded = !this.isExpanded
       this.emitExpandCollapseEvent(this.isExpanded)
+      if (!this.expandedStateOverridden) {
+        this.expandedStateOverridden = true
+      }
     },
     /**
      * Emits an event `tree-item-expanded` if `expanded` is true, or emits

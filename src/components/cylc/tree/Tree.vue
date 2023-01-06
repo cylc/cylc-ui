@@ -85,6 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :node="child"
             :stopOn="stopOn"
             :hoverable="hoverable"
+            :auto-collapse="autoCollapse"
             :autoExpandTypes="autoExpandTypes"
             :cyclePointsOrderDesc="cyclePointsOrderDesc"
             v-on:tree-item-created="onTreeItemCreated"
@@ -122,6 +123,10 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    autoCollapse: {
+      type: Boolean,
+      default: false
     },
     hoverable: Boolean,
     activable: Boolean,

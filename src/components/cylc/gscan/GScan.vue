@@ -101,51 +101,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <tree
           :filterable="false"
           :expand-collapse-toggle="false"
+          :auto-collapse="true"
           :workflows="workflows"
           :stopOn="['workflow']"
           :autoExpandTypes="['workflow-part', 'workflow']"
           class="c-gscan-workflow ma-0 pa-0"
           ref="tree"
         >
-          <template v-slot:node="scope">
+          <template v-slot:node="{node, latestDescendantTasks, lastDescendent, descendentLabel, branchingLineage, expansionStatus}">
             <workflow-icon
               class="mr-2"
-              v-if="scope.node.type === 'workflow'"
-              :status="scope.node.node.status"
-              v-cylc-object="scope.node"
+              v-if="lastDescendent.type === 'workflow' && !branchingLineage"
+              :status="lastDescendent.node.status"
+              v-cylc-object="lastDescendent"
             />
             <v-list-item
-              :to="workflowLink(scope.node)"
+              :to="workflowLink(node)"
             >
               <v-list-item-title>
                 <v-row class="align-center align-content-center flex-nowrap">
                   <v-col
-                    v-if="scope.node.type === 'workflow-part'"
+                    v-if="node.type === 'workflow-part'"
                     class="c-gscan-workflow-name"
                   >
-                    <span>{{ scope.node.name || scope.node.id }}</span>
+                    <span>{{ !expansionStatus ? descendentLabel : (node.name || node.id) }}</span>
                   </v-col>
                   <v-col
-                    v-else-if="scope.node.type === 'workflow'"
+                    v-else-if="node.type === 'workflow'"
                     class="c-gscan-workflow-name"
                   >
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
-                        <span v-on="on">{{ scope.node.name }}</span>
+                        <span v-on="on">{{ node.name }}</span>
                       </template>
-                      <span>{{ scope.node.id }}</span>
+                      <span>{{ node.id }}</span>
                     </v-tooltip>
                   </v-col>
                   <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
                   <v-col
-                    v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
+                    v-if="!branchingLineage && (lastDescendent.type === 'workflow' && lastDescendent.node.latestStateTasks)"
                     class="text-right c-gscan-workflow-states flex-grow-0"
                   >
                     <!-- task summary tooltips -->
                     <span
-                      v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.node.latestStateTasks))"
-                      :key="`${scope.node.id}-summary-${state}`"
-                      :class="getTaskStateClasses(scope.node.node, state)"
+                      v-for="[state, tasks] in getLatestStateTasks(Object.entries(latestDescendantTasks))"
+                      :key="`${lastDescendent.node.id}-summary-${state}`"
+                      :class="getTaskStateClasses(lastDescendent.node, state)"
                     >
                     <v-tooltip color="black" top>
                       <template v-slot:activator="{ on }">
