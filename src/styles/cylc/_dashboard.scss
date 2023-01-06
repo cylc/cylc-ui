@@ -26,10 +26,6 @@
     width: auto;
     height: auto;
   }
-  .v-list__tile__action, .v-list__tile__avatar {
-    min-width: auto;
-    margin-left: -10px;
-  }
 
   /* otherwise avatar does not left align with component above,
      !important as the attributes are set in the tag element */
@@ -41,11 +37,6 @@
   /* otherwise responsive UI ends up with extra space between vertical menu items */
   .v-list {
     padding: 0 0;
-  }
-
-  /* to left align items in the dashboard */
-  .v-list__tile {
-    padding: 10px 0;
   }
 
   table {
