@@ -194,7 +194,9 @@ export default {
         DASHBOARD_DELTAS_SUBSCRIPTION,
         {},
         'root',
-        []
+        [],
+        /* isDelta */ true,
+        /* isGlobalCallback */ true
       ),
       workflowsHeader: [
         {

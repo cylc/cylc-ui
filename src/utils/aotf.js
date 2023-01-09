@@ -313,7 +313,8 @@ export const dummyMutations = [
  * @type {{string: string[]}}
  */
 const dummyMutationsPermissionsMap = Object.freeze({
-  broadcast: Object.freeze(['editRuntime'])
+  broadcast: Object.freeze(['editRuntime']),
+  read: Object.freeze(['log'])
 })
 
 /**

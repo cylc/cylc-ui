@@ -36,12 +36,16 @@ class SubscriptionQuery {
    * @param {Object.<String, String>} variables
    * @param {String} name
    * @param {Array<DeltasCallback>} callbacks
+   * @param {boolean} isDelta
+   * @param {boolean} isGlobalCallback
    */
-  constructor (query, variables, name, callbacks) {
+  constructor (query, variables, name, callbacks, isDelta, isGlobalCallback) {
     this.query = query
     this.variables = variables
     this.name = name
     this.callbacks = callbacks
+    this.isDelta = isDelta
+    this.isGlobalCallback = isGlobalCallback
   }
 }
 

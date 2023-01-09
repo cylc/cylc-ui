@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div class="h-100">
     <v-form>
       <v-container>
-        <v-row :justify="start">
+        <v-row justify="start">
           <v-col cols="12" md="4" >
             <v-text-field
             v-model="jobSearch"
@@ -49,7 +49,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               filled
               v-model="selectedLogFile"
               dense
-              outlined>
+              clearable
+              outlined
+              >
             </v-select>
           </v-col>
           <v-col  v-show="selectedLogFile === 'other'" cols="12" md="3">
@@ -64,16 +66,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-col>
           <v-col cols="12" md="1">
             <v-btn
-              :disabled="isDisabled(jobSearch, selectedLogFile)"
-              color="primary"
-              dense
-              outlined
-              @click="set_id(selectedLogFile, logFileEntered, jobSearch)">Search</v-btn>
+            :disabled="isDisabled(jobSearch, selectedLogFile)"
+            color="primary"
+            dense
+            outlined
+            @click="setId(selectedLogFile, logFileEntered, jobSearch)">Search</v-btn>
           </v-col>
         </v-row>
       </v-container>
     </v-form>
-
     <div class="c-log pa-2 h-100" data-cy="log-view">
       <log-component
         :logs="lines"
@@ -94,6 +95,7 @@ import subscriptionMixin from '@/mixins/subscriptionComponent'
 import LogComponent from '@/components/cylc/log/Log'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { LOGS_SUBSCRIPTION } from '@/graphql/queries'
+import { Tokens } from '@/utils/uid'
 
 class LogsCallback {
   constructor (lines) {
@@ -127,6 +129,13 @@ export default {
       title: this.getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+  props: {
+    initialOptions: {
+      type: Object,
+      required: false,
+      default: () => {}
+    }
+  },
   data () {
     return {
       logfiles: ['job.out',
@@ -143,18 +152,34 @@ export default {
       selectedLogFile: '',
       lines: [],
       jobSearch: '',
-      logFileEntered: ''
+      logFileEntered: '',
+      task: '',
+      file: ''
     }
   },
+  created () {
+    this.$data.task = (this.initialOptions.task)
+    this.$data.file = 'job.out'
+  },
   computed: {
+    logVariables () {
+      return {
+        workflowName: new Tokens(this.workflowId).workflow,
+        task: this.$data.task,
+        file: this.$data.file
+      }
+    },
     query () {
       return new SubscriptionQuery(
         LOGS_SUBSCRIPTION,
-        this.variables,
+        this.logVariables,
         `log-query-${this._uid}`,
+        // ,
         [
           new LogsCallback(this.lines)
-        ]
+        ],
+        /* isDelta */ false,
+        /* isGlobalCallback */ true
       )
     },
     workflowNamePrefix () {
@@ -162,11 +187,11 @@ export default {
     }
   },
   methods: {
-    set_id (selectedLogFile, logFileEntered, jobSearch) {
+    setId (selectedLogFile, logFileEntered, jobSearch) {
       this.$data.lines = []
       this.$workflowService.unsubscribe(this)
-      this.variables.task = jobSearch
-      this.variables.file = this.getFileName(selectedLogFile, logFileEntered)
+      this.logVariables.task = jobSearch
+      this.logVariables.file = this.getFileName(selectedLogFile, logFileEntered)
       this.$workflowService.subscribe(this)
       this.$workflowService.startSubscriptions()
     },

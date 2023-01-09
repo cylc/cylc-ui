@@ -84,6 +84,14 @@ export default {
     }
   },
 
+  props: {
+    initialOptions: {
+      type: Object,
+      required: false,
+      default: () => {}
+    }
+  },
+
   data: () => ({
     /**
      * The widgets added to the view.

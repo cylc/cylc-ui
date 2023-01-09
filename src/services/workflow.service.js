@@ -273,10 +273,10 @@ class WorkflowService {
       }
       this.stopSubscription(subscription, true)
     }
-    if (subscription.query.name.startsWith('log-query')) {
+    if (subscription.query.isDelta === false & subscription.query.isGlobalCallback === false) {
       try {
         // Then start subscription.
-        subscription.observable = this.startDeltasSubscription(
+        subscription.observable = this.startCylcSubscription(
           subscription.query.query,
           subscription.query.variables,
           {
@@ -306,7 +306,7 @@ class WorkflowService {
       const globalCallback = this.globalCallback
       try {
         // Then start subscription.
-        subscription.observable = this.startDeltasSubscription(
+        subscription.observable = this.startCylcSubscription(
           subscription.query.query,
           subscription.query.variables,
           {
@@ -372,7 +372,7 @@ class WorkflowService {
    * @param {SubscriptionOptions} subscriptionOptions - { next(), error() }
    * @returns {Subscription}
    */
-  startDeltasSubscription (query, variables, subscriptionOptions) {
+  startCylcSubscription (query, variables, subscriptionOptions) {
     if (!query) {
       throw new Error('You must provide a query for the subscription')
     }

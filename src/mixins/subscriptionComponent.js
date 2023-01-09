@@ -33,7 +33,7 @@ export default {
   mixins: [
     subscriptionMixin
   ],
-  created () {
+  beforeMount () {
     this.$workflowService.subscribe(this)
   },
   beforeDestroy () {

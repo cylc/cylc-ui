@@ -32,11 +32,6 @@ export default {
     workflowName: {
       type: String,
       required: true
-    },
-    initialOptions: {
-      // any parameters used to open this view
-      type: Object,
-      required: true
     }
   },
   computed: {
@@ -60,14 +55,11 @@ export default {
     /**
      * GraphQL query variables.
      *
-     * @returns {{workflowId: string, workflowName: string}}
+     * @returns {{workflowId: string}}
      */
     variables () {
       return {
-        workflowId: this.workflowId,
-        workflowName: this.workflowName,
-        task: '',
-        file: ''
+        workflowId: this.workflowId
       }
     }
   }

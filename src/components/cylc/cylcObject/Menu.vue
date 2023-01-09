@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-list-item-action>
               <v-btn
                 icon
-                :disabled="!authorised"
+                :disabled="isDisabled(authorised, mutation)"
                 x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
@@ -231,13 +231,26 @@ export default {
   },
 
   methods: {
+    isDisabled (authorised, mutation) {
+      if (!authorised || mutation.name === 'log') {
+        return true
+      } else {
+        return false
+      }
+    },
     openDialog (mutation) {
       if (mutation.name === 'log') {
+        this.showMenu = false
         this.$eventBus.emit(
           'add-view',
           {
-            viewName: 'Graph',
-            initialOptions: { a: 1, b: 2, c: 3 }
+
+            viewName: 'Log',
+            initialOptions: {
+              workflow: this.node.tokens.workflow,
+              task: this.node.tokens.relative_id,
+              file: ''
+            }
           }
         )
         return
