@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-row justify="start">
           <v-col cols="12" md="4" >
             <v-text-field
-            v-model="jobSearch"
+            v-model="task"
             clearable
             flat
             dense
@@ -44,17 +44,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             cols="12"
             md="4">
             <v-select
-              label="Select Job Log File"
-              :items="logfiles"
+              :label="getFileListLabel"
+              :items="getFileList"
               filled
-              v-model="selectedLogFile"
+              v-model="file"
               dense
               clearable
               outlined
               >
             </v-select>
           </v-col>
-          <v-col  v-show="selectedLogFile === 'other'" cols="12" md="3">
+          <v-col  v-show="file === 'other'" cols="12" md="3">
             <v-text-field
               v-model="logFileEntered"
               placeholder="Enter Job File Name Here"
@@ -66,11 +66,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-col>
           <v-col cols="12" md="1">
             <v-btn
-            :disabled="isDisabled(jobSearch, selectedLogFile)"
+            :disabled="isDisabled(task, file)"
             color="primary"
             dense
             outlined
-            @click="setId(selectedLogFile, logFileEntered, jobSearch)">Search</v-btn>
+            @click="setId(file, logFileEntered, task)">{{ buttonText() }}</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :logs="lines"
         ref="log0"
         key="log0"
-        placeholder="Loading logs..."
+        placeholder="Waiting for logs..."
       ></log-component>
     </div>
   </div>
@@ -138,28 +138,28 @@ export default {
   },
   data () {
     return {
-      logfiles: ['job.out',
+      jobLogFiles: ['job.out',
         'job.err',
         'job',
         'job-activity.log',
         'job.status',
         'job.xtrace',
         'other'],
+      workflowLogFiles: ['log'],
       widget: {
         title: 'logs',
         icon: mdiFileDocumentMultipleOutline
       },
       selectedLogFile: '',
       lines: [],
-      jobSearch: '',
       logFileEntered: '',
       task: '',
       file: ''
     }
   },
   created () {
-    this.$data.task = (this.initialOptions.task)
-    this.$data.file = 'job.out'
+    this.$data.task = (this.initialOptions.task || '')
+    this.$data.file = (this.initialOptions.file || '')
   },
   computed: {
     logVariables () {
@@ -168,6 +168,18 @@ export default {
         task: this.$data.task,
         file: this.$data.file
       }
+    },
+    getFileListLabel () {
+      if (this.$data.task && this.$data.task.length) {
+        return 'Select Job Log File'
+      }
+      return 'Select Workflow Log File'
+    },
+    getFileList () {
+      if (this.$data.task && this.$data.task.length) {
+        return this.$data.jobLogFiles
+      }
+      return this.$data.workflowLogFiles
     },
     query () {
       return new SubscriptionQuery(
@@ -179,7 +191,7 @@ export default {
           new LogsCallback(this.lines)
         ],
         /* isDelta */ false,
-        /* isGlobalCallback */ true
+        /* isGlobalCallback */ false
       )
     },
     workflowNamePrefix () {
@@ -195,15 +207,24 @@ export default {
       this.$workflowService.subscribe(this)
       this.$workflowService.startSubscriptions()
     },
+    buttonText () {
+      if (this.$data.lines.length) {
+        return 'Update'
+      }
+      return 'Search'
+    },
     getFileName (selectedLogFile, logFileEntered) {
+      if (selectedLogFile === 'log') {
+        return ''
+      }
       if (selectedLogFile === 'other' && logFileEntered) {
         return logFileEntered
       } else {
         return selectedLogFile
       }
     },
-    isDisabled (jobSearch, selectedLogFile) {
-      if (jobSearch && selectedLogFile) {
+    isDisabled (jobSearch, file) {
+      if ((jobSearch && file) || (file === 'log')) {
         return false
       } else {
         return true

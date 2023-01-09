@@ -28,7 +28,7 @@ export default {
   props: {
     placeholder: {
       type: String,
-      default: 'Loading logs',
+      default: 'Waiting for logs',
       required: false
     },
     logs: {

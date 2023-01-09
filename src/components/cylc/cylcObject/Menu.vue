@@ -249,7 +249,7 @@ export default {
             initialOptions: {
               workflow: this.node.tokens.workflow,
               task: this.node.tokens.relative_id,
-              file: ''
+              file: 'job.out'
             }
           }
         )
