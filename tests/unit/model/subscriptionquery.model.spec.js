@@ -33,7 +33,8 @@ describe('SubscriptionQuery model', () => {
       ]
       const isDelta = true
       const isGlobalCallback = true
-      const subscriptionQuery = new SubscriptionQuery(query, variables, name, callbacks, isDelta)
+      const subscriptionQuery = new SubscriptionQuery(
+        query, variables, name, callbacks, isDelta, isGlobalCallback)
       expect(subscriptionQuery.query).to.equal(query)
       expect(subscriptionQuery.variables).to.deep.equal(variables)
       expect(subscriptionQuery.name).to.equal(name)
