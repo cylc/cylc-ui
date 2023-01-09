@@ -16,23 +16,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div v-if="alert">
-    <v-alert
-      :value="true"
-      :type="alert.color"
-      :icon="alert.icon"
-      :class="getColor(alert.color)"
-      dismissible
-      tile
-      light
-      colored-border
-    >
-      <template v-slot:close="props">
-        <v-icon @click="closeAlert(props.toggle)">{{ svgPaths.close }}</v-icon>
-      </template>
-      {{ alert.text }}
-    </v-alert>
-  </div>
+  <v-snackbar
+    v-if="alert"
+    v-model="snackbar"
+    :color="getColor(alert.color)"
+    :top="true"
+    timeout="-1"
+    :icon="alert.icon"
+  >
+
+    <template v-slot:action="{ attrs }">
+      <v-btn
+        color="black"
+        text
+        v-bind="attrs"
+        @click="closeAlert"
+      >
+      <v-icon>{{ svgPaths.close }}</v-icon>
+      </v-btn>
+    </template>
+    {{ alert.text }}
+  </v-snackbar>
 </template>
 
 <script>
@@ -52,7 +56,8 @@ export default {
       ]),
       svgPaths: {
         close: mdiClose
-      }
+      },
+      snackbar: alert
     }
   },
 
@@ -71,9 +76,9 @@ export default {
      * @param {Function} toggleFunction - the original Vuetify toggle function
      * @see https://vuetifyjs.com/en/api/v-alert/
      */
-    closeAlert (toggleFunction) {
+    closeAlert () {
+      this.snackbar = false
       this.setAlert(null)
-      toggleFunction()
     }
   }
 }
