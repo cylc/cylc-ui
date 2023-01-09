@@ -19,7 +19,7 @@ import { createLocalVue, mount, RouterLinkStub } from '@vue/test-utils'
 import chai, { expect } from 'chai'
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Vuetify from 'vuetify'
+import { createVuetify } from 'vuetify'
 import storeOptions from '@/store/options'
 import {
   WorkflowState,
@@ -73,7 +73,6 @@ localVue.prototype.$workflowService = {
 }
 localVue.use(CylcObjectPlugin)
 
-Vue.use(Vuetify)
 Vue.use(Vuex)
 
 describe('GScan component', () => {
@@ -88,7 +87,8 @@ describe('GScan component', () => {
    * @returns {Wrapper<GScan>}
    */
   const mountFunction = options => {
-    const vuetify = new Vuetify()
+    const vuetify = createVuetify()
+    Vue.use(vuetify)
     return mount(GScan, {
       localVue,
       vuetify,

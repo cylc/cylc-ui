@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import '~vuetify/src/components/VTextField/_variables.scss';
+// @import '~vuetify/lib/components/VTextField/_variables.scss';
 
 .c-mutation-dialog {
   margin-left: 0;
@@ -31,17 +31,17 @@
     }
   }
 
-  .theme--light.v-icon.remove-btn.v-icon--disabled {
+  .v-theme--light.v-icon.remove-btn.v-icon--disabled {
     color: rgba(0, 0, 0, 0.12) !important;
   }
 
   .c-key-val {
-    .theme--light.v-input--is-disabled input {
+    .v-theme--light.v-input--is-disabled input {
       color: rgba(0, 0, 0, 0.6);
     }
 
     .col-auto {
-      height: $text-field-filled-full-width-outlined-single-line-slot-min-height;
+      // height: $text-field-filled-full-width-outlined-single-line-slot-min-height;
       display: flex;
       justify-content: center;
       align-items: center;

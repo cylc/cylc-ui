@@ -18,7 +18,7 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import { expect } from 'chai'
 import Toolbar from '@/components/cylc/Toolbar'
-import Vuetify from 'vuetify/lib'
+import { createVuetify } from 'vuetify'
 import WorkflowState from '@/model/WorkflowState.model'
 import Vuex from 'vuex'
 import Vue from 'vue'
@@ -72,7 +72,7 @@ describe('Toolbar component', () => {
     })
   }
   beforeEach(() => {
-    vuetify = new Vuetify({
+    vuetify = createVuetify({
       theme: { disable: true },
       icons: {
         iconfont: 'mdi'

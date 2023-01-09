@@ -20,13 +20,12 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Drawer from '../../../../src/components/cylc/Drawer'
 
 import Vue from 'vue'
-import Vuetify from 'vuetify'
+import Vuetify, { createVuetify } from 'vuetify'
 import Vuex from 'vuex'
 
 import sinon from 'sinon'
 
 Vue.use(Vuex)
-Vue.use(Vuetify)
 
 let vuetify
 let wrapper
@@ -75,7 +74,8 @@ const mountFunction = options => {
     }
   })
 
-  vuetify = new Vuetify()
+  vuetify = createVuetify()
+  Vue.use(vuetify)
 
   return mount(Drawer, {
     localVue,

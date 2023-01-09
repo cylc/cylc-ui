@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import i18n from '@/i18n'
+import { i18n } from '@/i18n'
 import { mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -108,7 +108,7 @@ export default {
       },
       {
         sortable: true,
-        text: i18n.t('Workflows.tableColumnName'),
+        text: i18n.global.t('Workflows.tableColumnName'),
         value: 'name'
       },
       {
@@ -118,17 +118,17 @@ export default {
       },
       {
         sortable: true,
-        text: i18n.t('Workflows.tableColumnOwner'),
+        text: i18n.global.t('Workflows.tableColumnOwner'),
         value: 'node.owner'
       },
       {
         sortable: true,
-        text: i18n.t('Workflows.tableColumnHost'),
+        text: i18n.global.t('Workflows.tableColumnHost'),
         value: 'node.host'
       },
       {
         sortable: false,
-        text: i18n.t('Workflows.tableColumnPort'),
+        text: i18n.global.t('Workflows.tableColumnPort'),
         value: 'node.port'
       }
     ],

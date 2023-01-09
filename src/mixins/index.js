@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import i18n from '@/i18n'
+import { i18n } from '@/i18n'
 
 /**
  * Here we can define the operations that are common to components/views.
@@ -34,7 +34,7 @@ export default {
      * @returns {string}
      */
     getPageTitle: function (key, params = {}) {
-      return `${i18n.t('App.name')} | ${i18n.t(key, params)}`
+      return `${i18n.global.t('App.name')} | ${i18n.global.t(key, params)}`
     }
   }
 }

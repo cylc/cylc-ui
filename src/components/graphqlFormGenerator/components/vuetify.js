@@ -17,8 +17,7 @@
 
 import Vue from 'vue'
 
-import { VTextField } from 'vuetify/lib/components/VTextField'
-import { VSwitch } from 'vuetify/lib/components/VSwitch'
+import { VSwitch, VTextField } from 'vuetify/components'
 
 import GEnum from '@/components/graphqlFormGenerator/components/Enum'
 import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'

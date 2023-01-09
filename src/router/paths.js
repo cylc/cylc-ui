@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import i18n from '@/i18n'
+import { i18n } from '@/i18n'
 
 /**
  * Define all of your application routes here
@@ -26,7 +26,7 @@ export default [
   {
     path: '/',
     view: 'Dashboard',
-    name: i18n.t('App.dashboard'),
+    name: i18n.global.t('App.dashboard'),
     meta: {
       layout: 'default'
     }
@@ -51,7 +51,7 @@ export default [
   },
   {
     path: '/user-profile',
-    name: i18n.t('App.userProfile'),
+    name: i18n.global.t('App.userProfile'),
     view: 'UserProfile',
     meta: {
       layout: 'default'
@@ -73,7 +73,7 @@ export default [
     }
   },
   {
-    path: '*',
+    path: '/:catchAll(.*)',
     view: 'NotFound',
     meta: {
       layout: 'empty'
@@ -83,7 +83,7 @@ export default [
   // the standalone views
   {
     path: '/workflows',
-    name: i18n.t('App.workflows'),
+    name: i18n.global.t('App.workflows'),
     view: 'Workflows',
     meta: {
       layout: 'default',

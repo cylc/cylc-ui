@@ -18,7 +18,7 @@
 // we mount the tree to include the TreeItem component and other vuetify children components
 import { createLocalVue, mount } from '@vue/test-utils'
 import { Assertion, expect } from 'chai'
-import Vuetify from 'vuetify/lib'
+import { createVuetify } from 'vuetify'
 // import vuetify here so that we do not have warnings in the console output
 // eslint-disable-next-line no-unused-vars
 import * as vuetify from '@/plugins/vuetify'
@@ -70,7 +70,7 @@ describe('TreeItem component', () => {
   const mountFunction = options => {
     return mount(TreeItem, {
       localVue,
-      vuetify: new Vuetify(),
+      vuetify: createVuetify(),
       propsData: {
         node: simpleWorkflowNode
       },

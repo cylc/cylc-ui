@@ -19,7 +19,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm'
 import { expect } from 'chai'
 import Vue from 'vue'
-import Vuetify from 'vuetify'
+import { createVuetify } from 'vuetify'
 import { IntrospectionQuery, taskProxy } from '@/services/mock/json'
 import { cloneDeep } from 'lodash'
 
@@ -78,8 +78,6 @@ localVue.prototype.$workflowService = {
   }
 }
 
-Vue.use(Vuetify)
-
 describe('EditRuntimeForm Component', () => {
   const propsData = {
     cylcObject: { id: '~u/w//1/t', isFamily: false },
@@ -92,7 +90,8 @@ describe('EditRuntimeForm Component', () => {
    * @returns {Wrapper<EditRuntimeForm>}
    */
   const mountFunction = options => {
-    const vuetify = new Vuetify()
+    const vuetify = createVuetify()
+    Vue.use(vuetify)
     return mount(EditRuntimeForm, {
       localVue,
       vuetify,

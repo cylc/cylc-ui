@@ -15,36 +15,64 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-import Vue from 'vue'
+import { configureCompat, createApp } from 'vue'
 
 // Plugins
-import './plugins'
 import vuetify from './plugins/vuetify'
+import ServicesPlugin from '@/services/plugin'
+import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import Default from '@/layouts/Default.vue'
+import Empty from '@/layouts/Empty.vue'
 
 // Application imports
 import App from './App'
-import i18n from '@/i18n/index'
+import { i18n } from '@/i18n/index'
 import router from '@/router/index'
-import store from '@/store/index'
+import { store } from '@/store/index'
 
 import mitt from 'mitt'
+// import Meta from 'vue-meta'
 
-Vue.prototype.$eventBus = mitt()
+// Vue.config.productionTip = false
 
-Vue.config.productionTip = false
+configureCompat({
+  MODE: 3
+  // COMPONENT_ASYNC: false,
+  // GLOBAL_PROTOTYPE: false,
+  // GLOBAL_MOUNT: false,
+  // COMPONENT_V_MODEL: false
+})
 
-/* eslint-disable no-new */
-const app = new Vue({
-  i18n,
-  router,
-  store,
-  vuetify,
-  render (h) {
-    return h(App)
-  }
-}).$mount('#app')
+const app = createApp(App, {
+  // i18n: useI18n(),
+  // router,
+  // store,
+  // vuetify,
+  // render (h) {
+  //   return h(App)
+  // }
+})
+
+app.use(store)
+app.use(router)
+app.use(vuetify)
+app.use(i18n)
+// app.use(Meta)
+app.use(ServicesPlugin, {
+  offline: process.env.VUE_APP_SERVICES === 'offline'
+})
+app.use(CylcObjectPlugin)
+
+app.config.globalProperties.$eventBus = mitt()
+
+app.component('default-layout', Default)
+app.component('empty-layout', Empty)
+
+// https://router.vuejs.org/guide/migration/#removal-of-router-app
+router.app = app
+
+router.isReady().then(() => app.mount('#app'))
+
 // e2e tests use the offline mode, so here we expose the Vue.js app so Cypress can access it programmatically
 // e.g. window.app.$store and window.app.$workflowService.
 // Ref: https://www.cypress.io/blog/2017/11/28/testing-vue-web-application-with-vuex-data-store-and-rest-backend/

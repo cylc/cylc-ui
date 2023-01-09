@@ -19,7 +19,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Mutation from '@/components/cylc/Mutation'
 import { expect } from 'chai'
 import Vue from 'vue'
-import Vuetify from 'vuetify'
+import Vuetify, { createVuetify } from 'vuetify'
 
 const cylcObject = { id: '~u/w//1/t', isFamily: false }
 
@@ -47,7 +47,6 @@ const BASIC_MUTATION = {
 }
 
 const localVue = createLocalVue()
-Vue.use(Vuetify)
 
 describe('Mutation Component', () => {
   /**
@@ -55,7 +54,8 @@ describe('Mutation Component', () => {
    * @returns {Wrapper<FormGenerator>}
    */
   const mountFunction = (options) => {
-    const vuetify = new Vuetify()
+    const vuetify = createVuetify()
+    Vue.use(vuetify)
     return mount(Mutation, {
       localVue,
       vuetify,

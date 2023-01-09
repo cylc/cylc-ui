@@ -26,7 +26,7 @@ import Markdown from '@/components/Markdown'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
-import { VIcon, VTooltip } from 'vuetify/lib/components'
+import { VIcon, VTooltip } from 'vuetify/components'
 
 /**
  * Workaround Vuetify (v2) component issue where non-scoped slots would not appear in

@@ -49,7 +49,7 @@ import {
 
 import AlertModel from '@/model/Alert.model'
 import TaskState from '@/model/TaskState.model'
-import store from '@/store/index'
+import { store } from '@/store/index'
 import { Tokens } from '@/utils/uid'
 
 // Typedef imports

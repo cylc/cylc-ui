@@ -18,14 +18,14 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus'
-import Vuetify from 'vuetify/lib'
+import { createVuetify } from 'vuetify'
 
 const localVue = createLocalVue()
 
 describe('ConnectionStatus component', () => {
   let vuetify
   beforeEach(() => {
-    vuetify = new Vuetify({
+    vuetify = createVuetify({
       theme: { disable: true },
       icons: {
         iconfont: 'mdi'

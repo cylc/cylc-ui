@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mdiHelpCircleOutline } from '@mdi/js'
 import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
-import { VTextarea } from 'vuetify/lib/components'
+import { VTextarea } from 'vuetify/components'
 import VuetifyConfig, { getComponentProps, RUNTIME_SETTING } from '@/components/graphqlFormGenerator/components/vuetify'
 import { findByName, mutate } from '@/utils/aotf'
 

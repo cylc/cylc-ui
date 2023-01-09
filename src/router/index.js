@@ -24,11 +24,9 @@
  */
 
 // Lib imports
-import Vue from 'vue'
-import Router from 'vue-router'
-import Meta from 'vue-meta'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from 'nprogress'
-import store from '@/store/index'
+import { store } from '@/store/index'
 
 import 'nprogress/css/nprogress.css'
 
@@ -47,11 +45,9 @@ function route (path) {
   })
 }
 
-Vue.use(Router)
-
 // Create a new router
-const router = new Router({
-  mode: 'hash',
+const router = createRouter({
+  history: createWebHashHistory(),
   routes: paths.map(path => route(path)),
   //  .concat([{ path: '*', redirect: '/dashboard' }]),
   scrollBehavior (to, from, savedPosition) {
@@ -64,8 +60,6 @@ const router = new Router({
     return { x: 0, y: 0 }
   }
 })
-
-Vue.use(Meta)
 
 router.beforeResolve((to, from, next) => {
   NProgress.start()
@@ -90,7 +84,7 @@ router.beforeResolve((to, from, next) => {
 
 router.beforeEach((to, from, next) => {
   if (!store.state.user.user) {
-    router.app.$userService.getUserProfile()
+    router.app.config.globalProperties.$userService.getUserProfile()
       .then((user) => {
         store.commit('user/SET_USER', user)
         next()

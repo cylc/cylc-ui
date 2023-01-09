@@ -15,16 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vuex from 'vuex'
-import Vue from 'vue'
+import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 
-/**
- * Vuex
- *
- * @library
- *
- * https://vuex.vuejs.org/en/
- */
-Vue.use(Vuex)
-export default new Vuex.Store(storeOptions)
+export const store = createStore(storeOptions)

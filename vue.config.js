@@ -71,6 +71,10 @@ module.exports = {
     config
       .resolve
       .alias
+      .set('vue', '@vue/compat')
+    config
+      .resolve
+      .alias
       .set('react', 'preact/compat')
     config
       .resolve

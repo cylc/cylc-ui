@@ -15,19 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import { VDataTable } from 'vuetify/labs/VDataTable'
 
 // If modifying theme colors, check the colors from the theme bundle first, and use them if possible
-// import colors from 'vuetify/lib/util/colors'
+// import colors from 'vuetify/util/colors'
 
-Vue.use(Vuetify)
-
-export default new Vuetify({
+export default createVuetify({
   theme: {
-    // dark: true
+    defaultTheme: 'light'
   },
   icons: {
-    iconfont: 'mdiSvg'
-  }
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi
+    }
+  },
+  // TODO: this should be taken care of by a loader or something:
+  components: {
+    ...components,
+    VDataTable
+  },
+  directives
 })

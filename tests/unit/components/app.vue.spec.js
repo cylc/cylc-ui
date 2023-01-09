@@ -19,10 +19,10 @@ import { expect } from 'chai'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Vuetify from 'vuetify/lib'
 import App from '@/App'
 import Empty from '@/layouts/Empty'
 import storeOptions from '@/store/options'
+import { createVuetify } from 'vuetify'
 
 const localVue = createLocalVue()
 
@@ -66,7 +66,7 @@ describe('App', () => {
         layout: 'empty'
       }
     }
-    vuetify = new Vuetify({
+    vuetify = createVuetify({
       theme: { disable: true },
       icons: {
         iconfont: 'mdi'

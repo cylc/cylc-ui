@@ -16,8 +16,8 @@
  */
 
 @import 'variables';
-@import '~vuetify/src/styles/styles';
-@import '~vuetify/src/components/VIcon/_variables.scss';
+@import 'vuetify/styles';
+@import '~vuetify/lib/components/VIcon/_variables.scss';
 
 .v-toolbar {
   min-height: inherit !important;

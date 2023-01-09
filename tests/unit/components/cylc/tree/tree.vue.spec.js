@@ -19,7 +19,7 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import { createVuetify } from 'vuetify'
 import Tree from '@/components/cylc/tree/Tree'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
@@ -45,7 +45,7 @@ localVue.use(CylcObjectPlugin)
 describe('Tree component', () => {
   let vuetify
   beforeEach(() => {
-    vuetify = new Vuetify({
+    vuetify = createVuetify({
       theme: { disable: true },
       icons: {
         iconfont: 'mdi'

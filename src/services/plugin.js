@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from 'vue'
 import { createSubscriptionClient, createGraphQLUrls } from '@/graphql'
 import SubscriptionWorkflowService from '@/services/workflow.service'
 import UserService from '@/services/user.service'
@@ -28,15 +27,13 @@ import UserService from '@/services/user.service'
  */
 export default {
   /**
-   * @param Vue {object} - Vue application
-   * @param options {{
-   *   offline: boolean
-   * }} - options passed to the plug-in (if any)
+   * @param {Object} app - Vue application
+   * @param {{ offline: boolean }} options - options passed to the plug-in
    */
-  install (Vue, options) {
+  install (app, options) {
     const offline = options.offline || false
-    this._installWorkflowService(offline)
-    this._installUserService()
+    this._installWorkflowService(app, offline)
+    this._installUserService(app)
   },
 
   /**
@@ -45,14 +42,17 @@ export default {
    * The service is available as `Vue.$workflowService`.
    *
    * @private
+   * @param {Object} app - Vue application
    * @param {boolean} offline
    */
-  _installWorkflowService (offline) {
+  _installWorkflowService (app, offline) {
     const graphQLUrls = createGraphQLUrls()
     const client = createSubscriptionClient(graphQLUrls.wsUrl)
-    Vue.prototype.$workflowService = new SubscriptionWorkflowService(
-      graphQLUrls.httpUrl,
-      client)
+    app.config.globalProperties
+      .$workflowService = new SubscriptionWorkflowService(
+        graphQLUrls.httpUrl,
+        client
+      )
   },
 
   /**
@@ -61,8 +61,9 @@ export default {
    * The service is available as `Vue.$userService`.
    *
    * @private
+   * @param {Object} app - Vue application
    */
-  _installUserService () {
-    Vue.prototype.$userService = new UserService()
+  _installUserService (app) {
+    app.config.globalProperties.$userService = new UserService()
   }
 }

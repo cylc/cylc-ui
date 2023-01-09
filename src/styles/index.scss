@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import '~vuetify/src/styles/styles.sass';
+@import 'vuetify/styles';
 
 @import "cylc/variables";
 
@@ -39,7 +39,7 @@ html {
   overflow-y: auto;
 }
 
-.theme--light.v-application {
+.v-theme--light.v-application {
   background-color: transparent;
   .content {
     height: 100vh;

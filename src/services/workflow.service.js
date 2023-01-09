@@ -32,7 +32,7 @@ import {
   query,
   tokenise
 } from '@/utils/aotf'
-import store from '@/store/index'
+import { store } from '@/store/index'
 import { createApolloClient } from '@/graphql/index'
 import { print } from 'graphql'
 import mergeQueries from '@/graphql/merge'

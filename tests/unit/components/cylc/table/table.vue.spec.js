@@ -18,13 +18,11 @@
 import Vue from 'vue'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
-import Vuetify from 'vuetify/lib'
+import { createVuetify } from 'vuetify'
 import { simpleTableTasks } from './table.data'
 import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import Table from '@/components/cylc/table/Table'
-
-Vue.use(Vuetify)
 
 const localVue = createLocalVue()
 localVue.prototype.$eventBus = {
@@ -46,12 +44,13 @@ localVue.use(CylcObjectPlugin)
 describe('Table component', () => {
   let vuetify
   beforeEach(() => {
-    vuetify = new Vuetify({
+    vuetify = createVuetify({
       theme: { disable: true },
       icons: {
         iconfont: 'mdi'
       }
     })
+    Vue.use(vuetify)
   })
   // mount function from Vuetify docs https://vuetifyjs.com/ru/getting-started/unit-testing/
   /**

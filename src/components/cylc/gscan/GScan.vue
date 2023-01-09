@@ -18,11 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div
     class="c-gscan h-100"
   >
-    <v-skeleton-loader
+    <!-- <v-skeleton-loader
       :loading="isLoading"
       type="list-item-three-line"
       class=" d-flex flex-column h-100"
-    >
+    > -->
       <!-- filters -->
       <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
         <v-text-field
@@ -195,7 +195,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-list-item-title class="grey--text">No workflows found</v-list-item-title>
         </v-list-item>
       </div>
-    </v-skeleton-loader>
+    <!-- </v-skeleton-loader> -->
   </div>
 </template>
 
@@ -356,18 +356,21 @@ export default {
      * then we apply the filters to the list of workflows.
      */
     searchWorkflows: {
+      deep: true,
       immediate: false,
       handler: function (newVal) {
         this.filteredWorkflows = this.filterHierarchically(this.workflows, newVal, this.workflowStates, this.taskStates)
       }
     },
     workflows: {
+      deep: true,
       immediate: true,
       handler: function () {
         this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
       }
     },
     filteredWorkflows: {
+      deep: true,
       immediate: true,
       handler: function () {
         // build a list of IDs to display

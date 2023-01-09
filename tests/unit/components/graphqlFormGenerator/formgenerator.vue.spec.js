@@ -20,7 +20,7 @@ import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
 import { expect } from 'chai'
 import { cloneDeep } from 'lodash'
 import Vue from 'vue'
-import Vuetify from 'vuetify'
+import { createVuetify } from 'vuetify'
 
 // suppress "ReferenceError: requestAnimationFrame is not defined" errors
 global.requestAnimationFrame = cb => cb()
@@ -179,15 +179,14 @@ function getModel (wrapper) {
 
 const localVue = createLocalVue()
 
-Vue.use(Vuetify)
-
 describe('FormGenerator Component', () => {
   /**
    * @param {*} options
    * @returns {Wrapper<FormGenerator>}
    */
   const mountFunction = options => {
-    const vuetify = new Vuetify()
+    const vuetify = createVuetify()
+    Vue.use(vuetify)
     return mount(FormGenerator, {
       localVue,
       vuetify,

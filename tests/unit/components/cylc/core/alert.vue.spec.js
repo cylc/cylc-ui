@@ -19,13 +19,11 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Vuetify from 'vuetify'
+import { createVuetify } from 'vuetify'
 import storeOptions from '@/store/options'
 import Alert from '@/components/core/Alert'
 
 const localVue = createLocalVue()
-
-Vue.use(Vuetify)
 
 describe('Alert', () => {
   const store = new Vuex.Store(storeOptions)
@@ -34,7 +32,8 @@ describe('Alert', () => {
    * @returns {Wrapper<Alert>}
    */
   const mountFunction = options => {
-    const vuetify = new Vuetify()
+    const vuetify = createVuetify()
+    Vue.use(vuetify)
     return mount(Alert, {
       localVue,
       vuetify,
