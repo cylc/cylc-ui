@@ -99,6 +99,14 @@ describe('tasks', () => {
         },
         {
           taskNode: {
+            task: {
+              meanElapsedTime: 0
+            }
+          },
+          expected: undefined
+        },
+        {
+          taskNode: {
             node: {
               task: {
                 meanElapsedTime: 84
