@@ -126,7 +126,7 @@ export function dtMean (taskNode) {
       ':' + Math.round(seconds).toString().padStart(2, '0')
     return ret
   }
-  // the meanElapsedTime can be undefined (e.g. task has not run before)
+  // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
   // return "undefined" rather than a number for these cases
   return undefined
 }
