@@ -120,11 +120,10 @@ export function dtMean (taskNode) {
       dayss = days.toString() + 'd '
     }
 
-    const ret = dayss +
+    return dayss +
       hours.toString().padStart(2, '0') +
       ':' + minutes.toString().padStart(2, '0') +
       ':' + Math.round(seconds).toString().padStart(2, '0')
-    return ret
   }
   // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
   // return "undefined" rather than a number for these cases
