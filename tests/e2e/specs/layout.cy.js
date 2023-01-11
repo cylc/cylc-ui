@@ -18,7 +18,7 @@
 describe('Default layout', () => {
   it('Should display errors from children elements captured at the Default layout level', () => {
     // visit any page first, so that we create the window.app reference
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
       .get('.v-alert')
       .should('not.exist')

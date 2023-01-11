@@ -123,7 +123,7 @@ import {
 // views. Data overlap is good because it reduces the amount of data we need
 // to request / store / process.
 const QUERY = gql`
-subscription WorkflowGraphSubscription ($workflowId: ID) {
+subscription Workflow ($workflowId: ID) {
   deltas(workflows: [$workflowId]) {
     ...Deltas
   }

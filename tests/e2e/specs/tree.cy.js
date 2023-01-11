@@ -19,7 +19,7 @@ import TaskState from '@/model/TaskState.model'
 
 describe('Tree view', () => {
   it('Should display cycle points for the mocked workflow', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
       .get('.node-data-cycle')
       .should(($div) => {
@@ -31,7 +31,7 @@ describe('Tree view', () => {
       .should('be.visible')
   })
   it('Should hide jobs by default', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
       .get('.node-data-cycle')
       .should('be.visible')
@@ -40,7 +40,7 @@ describe('Tree view', () => {
       .should('not.be.visible')
   })
   it('Should make jobs visible when clicking on tasks', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
       .get('.node-data-job:first')
       .should('not.be.visible')
@@ -56,7 +56,7 @@ describe('Tree view', () => {
   })
   it('Should display leaf node triangle with margin', () => {
     // this is testing that there is a margin, not necessarily that the leaf node's triangle is exactly under the node
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
       .get('.node-data-task:first')
       .prev()
@@ -105,37 +105,38 @@ describe('Tree view', () => {
           .get('.node-data')
           .should('have.length', 0)
         cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-          // GScan 'root' subscription, and the 'workflow' subscription used by the Tree view
-          expect(Object.keys(subscriptions).length).to.equal(2)
-          expect(subscriptions.root.observable.closed).to.equal(false)
+          // 'workflow' subscription used by the Tree view
+          expect(Object.keys(subscriptions).length).to.equal(1)
           expect(subscriptions.workflow.observable.closed).to.equal(false)
         })
       })
   })
   it('Should remove subscriptions correctly when leaving the view', () => {
     cy.visit('/#/tree/one')
-    cy
       .get('.node-data-cycle')
       .should('be.visible')
-    cy
       .get('.node-data-job:first')
       .should('not.be.visible')
-    cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-      // Gscan 'root', the 'workflow subscription used by the Tree view
-      expect(Object.keys(subscriptions).length).to.equal(2)
-      expect(subscriptions.root.observable.closed).to.equal(false)
-      expect(subscriptions.workflow.observable.closed).to.equal(false)
-    })
+      .window()
+      .its('app.$workflowService.subscriptions').then(subscriptions => {
+        // * the 'workflow' subscription is used by the Tree view
+        expect(Object.keys(subscriptions).length).to.equal(1)
+        expect(subscriptions.workflow.observable.closed).to.equal(false)
+      })
+
     cy
       .visit('/#/')
-    cy.get('.c-dashboard').should('be.visible')
-    cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-      // It will have 2, GScan + Dashboard, while the /tree/one view has 1 Delta + 1 subscription
-      // (the delta is a different subscription).
-      expect(Object.keys(subscriptions).length).to.equal(1)
-      // Gscan remains open in the dashboard view, the 'workflow' subscription is gone since it's not used
-      expect(subscriptions.root.observable.closed).to.equal(false)
-    })
+      .get('.c-dashboard')
+      .should('be.visible')
+      .window()
+      .its('app.$workflowService.subscriptions')
+      .then(subscriptions => {
+        // * the 'root' subscription used by the Dashboard & GScan
+        // * the 'workflow' subscription is gone since it's no longer used
+        expect(Object.keys(subscriptions).length).to.equal(1)
+        expect(subscriptions).to.not.equal(undefined)
+        expect(subscriptions.root.observable.closed).to.equal(false)
+      })
   })
   it('Should display message triggers', () => {
     cy.visit('/#/tree/one')
