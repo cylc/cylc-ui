@@ -41,9 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <!-- input label - the display title for this input -->
               {{ startCase(key) }}
             </v-list-item-title>
-            <!-- NOTE: the `is` field comes from `props` v-bind -->
-            <!-- eslint-disable-next-line vue/require-component-is -->
             <component
+              :is="getInputProps(key).is"
               v-bind="getInputProps(key)"
               v-model="model[key]"
               :types="types"
@@ -68,7 +67,7 @@ export default {
   name: 'EditRuntimeForm',
 
   props: {
-    value: {
+    modelValue: {
       // validity of form
       type: Boolean,
       required: true,
@@ -85,6 +84,8 @@ export default {
       required: true
     }
   },
+
+  emits: ['update:modelValue'],
 
   data () {
     return {
@@ -113,11 +114,11 @@ export default {
   computed: {
     isValid: {
       get () {
-        return this.value
+        return this.modelValue
       },
       set (value) {
         // Update 'value' prop by notifying parent component's v-model for this component
-        this.$emit('input', value)
+        this.$emit('update:modelValue', value)
       }
     }
   },

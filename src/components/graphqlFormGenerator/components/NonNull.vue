@@ -26,8 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <template v-slot:append-outer>
       <!-- pass the "append-outer" slot onto the child component -->
-      <slot name="append-outer">
-      </slot>
+      <slot name="append-outer"></slot>
     </template>
   </component>
 </template>

@@ -176,7 +176,7 @@ export default {
     this.$eventBus.on('show-mutations-menu', this.showMutationsMenu)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.$eventBus.off('show-mutations-menu', this.showMutationsMenu)
   },
 

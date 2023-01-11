@@ -48,10 +48,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :headers="headers"
             :items="filteredTasks"
             :single-expand="false"
-            :expanded.sync="expanded"
             multi-sort
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
+            v-model:expanded="expanded"
+            v-model:sort-by="sortBy"
+            v-model:sort-desc="sortDesc"
             item-key="task.id"
             show-expand
             dense

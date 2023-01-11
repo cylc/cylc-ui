@@ -103,13 +103,12 @@ export default {
   computed: {
     model: {
       get () {
-        return this.fromObject(this.value)
+        return this.fromObject(this.modelValue)
       },
-
       set (val) {
         const newVal = this.fromString(val)
         if (newVal) {
-          this.$emit('input', newVal)
+          this.$emit('update:modelValue', newVal)
         }
       }
     }

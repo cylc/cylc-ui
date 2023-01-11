@@ -27,8 +27,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{ $t('NotFound.message') }}
       </v-card-text>
       <v-card-actions>
-        <button @click="$router.go(-1)" class="v-btn success">{{ $t('NotFound.goBack') }}</button>
-        <router-link to="/" tag="button" class="white--text success v-btn">{{ $t('NotFound.toHomepage') }}</router-link>
+        <button
+          @click="$router.go(-1)"
+          class="v-btn success"
+        >
+          {{ $t('NotFound.goBack') }}
+        </button>
+        <router-link
+          to="/"
+          class="white--text success v-btn"
+        >
+          <button>{{ $t('NotFound.toHomepage') }}</button>
+        </router-link>
       </v-card-actions>
     </v-card>
   </div>

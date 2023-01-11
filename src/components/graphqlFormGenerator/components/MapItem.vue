@@ -24,21 +24,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     no-gutters
   >
     <v-col cols="4">
-      <v-tooltip v-bind="tooltipProps">
-        <template v-slot:activator="{ on }">
-          <div v-on="on">
-            <v-text-field
-              placeholder="key"
-              v-model="value.key"
-              :disabled="value.frozenKey"
-              dense
-              filled
-              class="c-input-key"
-            />
-          </div>
-        </template>
-        <span>Pre-existing settings cannot be renamed</span>
-      </v-tooltip>
+      <div>
+        <v-text-field
+          placeholder="key"
+          v-model="modelValue.key"
+          :disabled="modelValue.frozenKey"
+          dense
+          filled
+          class="c-input-key"
+        />
+        <v-tooltip
+          activator="parent"
+          v-bind="tooltipProps"
+        >
+          <span>Pre-existing settings cannot be renamed</span>
+        </v-tooltip>
+      </div>
     </v-col>
     <v-col cols="auto">
       <span>=</span>
@@ -46,24 +47,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-col>
       <v-text-field
         placeholder="value"
-        v-model="value.value"
+        v-model="modelValue.value"
         dense
         filled
         class="c-input-val"
       />
     </v-col>
     <v-col cols="auto">
-      <v-tooltip v-bind="tooltipProps">
-        <template v-slot:activator="{ on }">
-          <div v-on="on">
-            <slot
-              name="append-outer"
-              :disabled="value.frozenKey"
-            />
-          </div>
-        </template>
-        <span>Pre-existing settings cannot be removed</span>
-      </v-tooltip>
+      <div>
+        <slot
+          name="append-outer"
+          :disabled="modelValue.frozenKey"
+        />
+        <v-tooltip
+          activator="parent"
+          v-bind="tooltipProps"
+        >
+          <span>Pre-existing settings cannot be removed</span>
+        </v-tooltip>
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -82,7 +84,7 @@ export default {
     tooltipProps () {
       return {
         top: true,
-        disabled: !this.value.frozenKey,
+        disabled: !this.modelValue.frozenKey,
         openDelay: 400
       }
     }

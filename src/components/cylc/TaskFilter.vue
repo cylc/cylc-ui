@@ -83,7 +83,7 @@ export default {
     Task
   },
   props: {
-    value: Object // { name, states }
+    modelValue: Object // { name, states }
   },
   data () {
     return {
@@ -94,11 +94,11 @@ export default {
   computed: {
     localValue: {
       get () {
-        return this.value
+        return this.modelValue
       },
       set (value) {
-        // Update 'value' prop by notifying parent component's v-model for this component
-        this.$emit('input', value)
+        // Update 'modelValue' prop by notifying parent component's v-model for this component
+        this.$emit('update:modelValue', value)
       }
     }
   }

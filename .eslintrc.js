@@ -23,7 +23,7 @@ module.exports = {
   extends: [
     'standard',
     'eslint:recommended',
-    'plugin:vue/essential',
+    'plugin:vue/vue3-essential',
     'plugin:cypress/recommended'
   ],
   rules: {

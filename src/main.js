@@ -36,11 +36,9 @@ import mitt from 'mitt'
 // Vue.config.productionTip = false
 
 configureCompat({
-  MODE: 3
-  // COMPONENT_ASYNC: false,
-  // GLOBAL_PROTOTYPE: false,
-  // GLOBAL_MOUNT: false,
-  // COMPONENT_V_MODEL: false
+  MODE: 3,
+  INSTANCE_CHILDREN: true
+  // OPTIONS_DATA_MERGE: true ?
 })
 
 const app = createApp(App, {

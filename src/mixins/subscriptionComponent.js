@@ -22,7 +22,7 @@ import subscriptionMixin from '@/mixins/subscription'
  * of such component is the GScan component, which declares a query used to
  * list the workflows of the system in the UI sidebar.
  *
- * Uses Vue component lifecycle methods (e.g. created, beforeDestroy) to
+ * Uses Vue component lifecycle methods (e.g. created, beforeUnmount) to
  * coordinate when a subscription is created in the WorkflowService service.
  *
  * @see Subscription
@@ -36,7 +36,7 @@ export default {
   beforeMount () {
     this.$workflowService.subscribe(this)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$workflowService.unsubscribe(this)
   }
 }

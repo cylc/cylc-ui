@@ -20,9 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <toolbar
       :views="views"
       :workflow-name="workflowName"
-      v-on:add="this.addView"
+      @add="this.addView"
       :initialOptions="{}"
-    ></toolbar>
+    />
     <div class="workflow-panel fill-height">
       <lumino
         ref="lumino"
@@ -50,7 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Vue from 'vue'
 import { each, iter } from '@lumino/algorithm'
 import pageMixin from '@/mixins'
 import graphqlMixin from '@/mixins/graphql'
@@ -157,7 +156,7 @@ export default {
     this.$eventBus.on('add-view', this.addView)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.$eventBus.off('add-view', this.addView)
   },
 
@@ -174,11 +173,7 @@ export default {
       if (!view) {
         throw Error(`Unknown view "${viewName}"`)
       }
-      Vue.set(
-        this.widgets,
-        createWidgetId(),
-        { view, initialOptions }
-      )
+      this.widgets[createWidgetId()] = { view, initialOptions }
       this.$nextTick(() => {
         // Views use navigation-guards to start the pending subscriptions. But we don't have
         // this in this view. We must pretend we are doing the beforeRouteEnter here, and
@@ -212,7 +207,7 @@ export default {
      * }} event UI event containing the widget ID (string value, needs to be parsed)
      */
     onWidgetDeletedEvent (event) {
-      Vue.delete(this.widgets, event.id)
+      delete this.widgets[event.id]
       // If we have no more widgets in the view, then we are not loading, not complete, not error,
       // but back to beginning. When a widget is added, if it uses a query, then the mixins will
       // take care to set the state to LOADING and then COMPLETE (and hopefully not ERROR).

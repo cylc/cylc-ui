@@ -35,7 +35,7 @@ export default {
     document.querySelector('.v-navigation-drawer')?.addEventListener('resize', this.onResponsiveInverted)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     window.removeEventListener('resize', this.onResponsiveInverted)
     document.querySelector('.v-navigation-drawer')?.removeEventListener('resize', this.onResponsiveInverted)
   },

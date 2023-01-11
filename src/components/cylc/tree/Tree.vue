@@ -39,32 +39,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div
           class="d-flex flex-nowrap"
         >
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
-                icon
-                data-cy="expand-all"
-              >
-                <v-icon>{{ svgPaths.expandIcon }}</v-icon>
-              </v-btn>
-            </template>
-            <span>Expand all</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                @click="collapseAll()"
-                icon
-                data-cy="collapse-all"
-              >
-                <v-icon>{{ svgPaths.collapseIcon }}</v-icon>
-              </v-btn>
-            </template>
-            <span>Collapse all</span>
-          </v-tooltip>
+          <v-btn
+            @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
+            icon
+            data-cy="expand-all"
+          >
+            <v-icon>{{ svgPaths.expandIcon }}</v-icon>
+            <v-tooltip
+              activator="parent"
+              bottom
+            >
+              <span>Expand all</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            @click="collapseAll()"
+            icon
+            data-cy="collapse-all"
+          >
+            <v-icon>{{ svgPaths.collapseIcon }}</v-icon>
+            <v-tooltip
+              activator="parent"
+              bottom
+            >
+              <span>Collapse all</span>
+            </v-tooltip>
+          </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -93,7 +93,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-on:tree-item-collapsed="onTreeItemCollapsed"
             v-on:tree-item-clicked="onTreeItemClicked"
           >
-            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
+            <template
+              v-for="(_, slotName) of $slots"
+              v-slot:[slotName]="scope"
+            >
+              <slot :name="slotName" v-bind="scope" />
+            </template>
           </tree-item>
         </v-container>
       </v-col>
@@ -102,7 +107,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Vue from 'vue'
 import { mdiPlus, mdiMinus } from '@mdi/js'
 import TreeItem from '@/components/cylc/tree/TreeItem'
 import TaskFilter from '@/components/cylc/TaskFilter'
@@ -288,14 +292,14 @@ export default {
       this.expandedCache.delete(treeItem)
     },
     onTreeItemCreated (treeItem) {
-      Vue.set(this.treeItemCache, treeItem.$props.node.id, treeItem)
+      this.treeItemCache[treeItem.$props.node.id] = treeItem
       if (treeItem.isExpanded) {
         this.expandedCache.add(treeItem)
       }
     },
     onTreeItemDestroyed (treeItem) {
       // make sure the item is removed from all caches, otherwise we will have a memory leak
-      Vue.delete(this.treeItemCache, treeItem.$props.node.id)
+      delete this.treeItemCache[treeItem.$props.node.id]
       this.expandedCache.delete(treeItem)
       this.activeCache.delete(treeItem)
     },

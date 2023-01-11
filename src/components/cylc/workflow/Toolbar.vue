@@ -91,35 +91,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <v-spacer />
 
-      <v-menu
-        offset-y
-        v-if="$route.name === 'workspace'"
-      >
-        <template v-slot:activator="{ on }">
-          <a
-            class="add-view d-flex flex-row-reverse align-items-center"
-            v-on="on">
-            <v-icon class="icon" color="#5995EB">{{ svgPaths.add }}</v-icon>
-            <span class="label">
-              {{ $t('Toolbar.addView') }}
-            </span>
-          </a>
-        </template>
-        <v-list class="pa-0">
-          <v-list-item
-            :id="`toolbar-add-${ view.name }-view`"
-            v-for="view in views"
-            :key="view.name"
-            @click="$listeners['add']({ viewName: view.name })"
-            class="py-0 px-8 ma-0 c-add-view"
-          >
-            <v-list-item-icon>
-              <v-icon>{{ view.data().widget.icon }}</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ view.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <a class="add-view d-flex flex-row-reverse align-items-center">
+        <v-icon class="icon" color="#5995EB">{{ svgPaths.add }}</v-icon>
+        <span class="label">
+          {{ $t('Toolbar.addView') }}
+        </span>
+
+        <v-menu
+          activator="parent"
+          offset-y
+          v-if="$route.name === 'workspace'"
+        >
+          <v-list class="pa-0">
+            <v-list-item
+              :id="`toolbar-add-${ view.name }-view`"
+              v-for="view in views"
+              :key="view.name"
+              @click="$emit('add', { viewName: view.name })"
+              class="py-0 px-8 ma-0 c-add-view"
+            >
+              <v-list-item-icon>
+                <v-icon>{{ view.data().widget.icon }}</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>{{ view.name }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </a>
     </template>
 
     <!-- displayed only when extended===true -->
@@ -169,6 +167,7 @@ export default {
       required: true
     }
   },
+  emits: ['add'],
   data: () => ({
     extended: false,
     // FIXME: remove local state once we have this data in the workflow - https://github.com/cylc/cylc-ui/issues/221

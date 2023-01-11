@@ -91,7 +91,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Vue from 'vue'
 import gql from 'graphql-tag'
 import { mapGetters } from 'vuex'
 import pageMixin from '@/mixins/index'
@@ -301,7 +300,7 @@ export default {
     })
     this.mountSVGPanZoom()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     clearInterval(this.refreshTimer)
   },
   computed: {
@@ -374,7 +373,7 @@ export default {
       this.reset()
     },
     setOption (option, value) {
-      Vue.set(this, option, value)
+      this[option] = value
     },
     updateTimer () {
       // turn the timer on or off depending on the value of autoRefresh
@@ -561,10 +560,7 @@ export default {
       const nodeIds = nodes.map((n) => n.id)
       for (const id in this.nodeTransformations) {
         if (!nodeIds.includes(id)) { // this node has been removed
-          Vue.delete(
-            this.nodeTransformations,
-            id
-          )
+          delete this.nodeTransformations[id]
         }
       }
       // wipe old nodes

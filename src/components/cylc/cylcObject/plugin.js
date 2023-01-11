@@ -20,7 +20,7 @@ const listeners = new WeakMap()
 
 function bind (el, binding, vnode) {
   const listener = function (e) {
-    vnode.context.$eventBus.emit('show-mutations-menu', {
+    binding.instance.$eventBus.emit('show-mutations-menu', {
       node: binding.value,
       event: e
     })
@@ -36,7 +36,7 @@ function unbind (el) {
   listeners.delete(el)
 }
 
-function update (el, binding, newVnode, oldVnode) {
+function updated (el, binding, newVnode, oldVnode) {
   if (binding.value !== binding.oldValue) {
     unbind(el)
     bind(el, binding, newVnode)
@@ -49,15 +49,15 @@ function update (el, binding, newVnode, oldVnode) {
 export default {
   /**
    * Called when the Vue application is created, and this plug-in is loaded.
-   * @param {object} Vue - Vue application
-   * @param {*} options - options passed to the plug-in (if any)
+   * @param {Object} app - Vue application
+   * @param {Object}} options - options passed to the plug-in (if any)
    */
-  install (Vue, options) {
+  install (app, options) {
     // add a global directive
-    Vue.directive('cylc-object', {
-      bind,
-      unbind,
-      update
+    app.directive('cylc-object', {
+      beforeMount: bind,
+      unmounted: unbind,
+      updated
     })
   }
 }

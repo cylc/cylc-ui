@@ -97,24 +97,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-tooltip :disabled=multiUserMode bottom>
-            <template v-slot:activator="{ on }"> <div v-on="on" >
-                <v-list-item id="cylc-hub-button" :disabled=!multiUserMode :href=hubUrl>
-                  <v-list-item-avatar size="60" style="font-size: 2em;">
-                    <v-icon large>{{ svgPaths.hub }}</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-content>
-                    <v-list-item-title class="title font-weight-light">
-                      Cylc Hub
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      Visit the Hub to manage your running UI Servers
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-            </div></template>
-          <span>You are not running Cylc UI via Cylc Hub.</span>
-          </v-tooltip>
+          <div>
+            <v-list-item id="cylc-hub-button" :disabled=!multiUserMode :href=hubUrl>
+              <v-list-item-avatar size="60" style="font-size: 2em;">
+                <v-icon large>{{ svgPaths.hub }}</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title class="title font-weight-light">
+                  Cylc Hub
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  Visit the Hub to manage your running UI Servers
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-tooltip
+              activator="parent"
+              :disabled="multiUserMode"
+              bottom
+            >
+              <span>You are not running Cylc UI via Cylc Hub.</span>
+            </v-tooltip>
+          </div>
         </v-list>
       </v-col>
       <v-col md="6" lg="6">

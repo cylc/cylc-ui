@@ -114,10 +114,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :key="`output-chip-${index}`"
               bottom
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-chip
-                  v-bind="attrs"
-                  v-on="on"
+                  v-bind="props"
                   :color="customOutput.isMessage ? 'light-grey' : 'grey'"
                   :text-color="customOutput.isMessage ? 'black' : 'white'"
                   class="ml-2 message-output"
@@ -207,11 +206,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :hoverable="hoverable"
         :autoExpandTypes="autoExpandTypes"
         :cyclePointsOrderDesc="cyclePointsOrderDesc"
-        v-on:tree-item-created="$listeners['tree-item-created']"
-        v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
-        v-on:tree-item-expanded="$listeners['tree-item-expanded']"
-        v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
-        v-on:tree-item-clicked="$listeners['tree-item-clicked']"
+        v-on:tree-item-created="$attrs['tree-item-created']"
+        v-on:tree-item-destroyed="$attrs['tree-item-destroyed']"
+        v-on:tree-item-expanded="$attrs['tree-item-expanded']"
+        v-on:tree-item-collapsed="$attrs['tree-item-collapsed']"
+        v-on:tree-item-clicked="$attrs['tree-item-clicked']"
       />
       <TreeItem
         v-else
@@ -224,19 +223,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :hoverable="hoverable"
         :autoExpandTypes="autoExpandTypes"
         :cyclePointsOrderDesc="cyclePointsOrderDesc"
-        v-on:tree-item-created="$listeners['tree-item-created']"
-        v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
-        v-on:tree-item-expanded="$listeners['tree-item-expanded']"
-        v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
-        v-on:tree-item-clicked="$listeners['tree-item-clicked']"
+        v-on:tree-item-created="$attrs['tree-item-created']"
+        v-on:tree-item-destroyed="$attrs['tree-item-destroyed']"
+        v-on:tree-item-expanded="$attrs['tree-item-expanded']"
+        v-on:tree-item-collapsed="$attrs['tree-item-collapsed']"
+        v-on:tree-item-clicked="$attrs['tree-item-clicked']"
       >
         <!-- add scoped slots
 
           These allow components to register their own templats, e.g. GScan
           adds a template for rendering workflow nodes here.
         -->
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
-          <slot :name="slot" v-bind="scope"/>
+        <template
+          v-for="(_, slotName) of $slots"
+          v-slot:[slotName]="scope"
+        >
+          <slot :name="slotName" v-bind="scope" />
         </template>
       </TreeItem>
     </span>
@@ -399,7 +401,7 @@ export default {
   created () {
     this.$emit('tree-item-created', this)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$emit('tree-item-destroyed', this)
   },
   beforeMount () {

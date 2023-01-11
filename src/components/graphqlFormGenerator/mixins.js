@@ -34,10 +34,12 @@ export const formElement = {
       default: () => []
     },
     // the value (v-model is actually syntactic sugar for this)
-    value: {
+    modelValue: {
       required: true
     }
   },
+
+  emits: ['update:modelValue'],
 
   data: () => ({
     FormInput
@@ -53,11 +55,10 @@ export const formElement = {
      */
     model: {
       get () {
-        return this.value
+        return this.modelValue
       },
-
       set (val) {
-        this.$emit('input', val)
+        this.$emit('update:modelValue', val)
       }
     },
 

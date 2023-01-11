@@ -21,25 +21,14 @@ dynamically created inputs.
 -->
 
 <script>
+import { h } from 'vue'
 import { mask } from 'vue-the-mask'
 import Markdown from '@/components/Markdown'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
 import { VIcon, VTooltip } from 'vuetify/components'
-
-/**
- * Workaround Vuetify (v2) component issue where non-scoped slots would not appear in
- * this.$scopedSlots, preventing the slot from rendering.
- *
- * Taken from https://stackoverflow.com/a/67412844/3217306
- *
- * @param fn - Function meant for the value of slot in the data-object's "scopedSlots"
- */
-function vuetifyScopedSlotShim (fn) {
-  fn.proxy = true
-  return fn
-}
+import { upperFirst } from 'lodash'
 
 export default {
   name: 'g-form-input',
@@ -101,64 +90,47 @@ export default {
     }
   },
 
-  render (createElement) {
-    // https://v2.vuejs.org/v2/guide/render-function.html
-
-    const createHelpIcon = () => createElement(
-      VTooltip,
+  render () {
+    const createHelpIcon = () => h(
+      VIcon,
       {
-        props: {
-          bottom: true
-        },
-        scopedSlots: {
-          activator: ({ on }) => createElement(
-            VIcon,
-            {
-              on,
-              style: {
-                cursor: 'default'
-              }
-            },
-            [mdiHelpCircleOutline]
-          ),
-          default: () => createElement(
-            Markdown,
-            {
-              props: {
-                markdown: this.help
-              }
-            }
-          )
+        style: {
+          cursor: 'default'
         }
-      }
+      },
+      [
+        mdiHelpCircleOutline,
+        h(
+          VTooltip,
+          {
+            activator: 'parent',
+            bottom: true,
+            slots: {
+              default: () => h(Markdown, { markdown: this.help })
+            }
+          }
+        )
+      ]
     )
 
     // Some components implement custom v-model
     // (https://v2.vuejs.org/v2/guide/components-custom-events.html#Customizing-Component-v-model)
-    const vModel = this.props.is.options?.model || { prop: 'value', event: 'input' }
+    const vModel = this.props.is.options?.model || { prop: 'modelValue', event: 'update:modelValue' }
 
-    return createElement(
+    return h(
       this.props.is,
       {
-        props: {
-          ...this.props,
-          [vModel.prop]: this.model,
-          gqlType: this.gqlType,
-          types: this.types
+        ...this.props,
+        [vModel.prop]: this.model,
+        [`on${upperFirst(vModel.event)}`]: (value) => {
+          this.model = value
         },
-        on: {
-          [vModel.event]: (value) => {
-            this.model = value
-          }
-        },
-        scopedSlots: {
-          append: vuetifyScopedSlotShim(
-            createHelpIcon
-          ),
-          'append-outer': vuetifyScopedSlotShim(
-            // pass the "append-outer" slot onto the child component
-            (slotProps) => this.$scopedSlots['append-outer']?.(slotProps)
-          )
+        gqlType: this.gqlType,
+        types: this.types,
+        slots: {
+          append: createHelpIcon,
+          // pass the "append-outer" slot onto the child component
+          'append-outer': (slotProps) => this.$slots['append-outer']?.(slotProps)
         }
       }
     )

@@ -94,26 +94,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           Reset
         </v-btn>
-        <v-tooltip
-          top
-          color="error"
-          :disabled="isValid"
+        <v-btn
+          text
+          :color="isValid ? 'primary' : 'error'"
+          @click="submit"
+          :loading="submitting"
+          data-cy="submit"
         >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              text
-              :color="isValid ? 'primary' : 'error'"
-              @click="submit"
-              :loading="submitting"
-              v-bind="attrs"
-              v-on="on"
-              data-cy="submit"
-            >
-              Submit
-            </v-btn>
-          </template>
-          <span>Form contains invalid or missing values!</span>
-        </v-tooltip>
+          Submit
+          <v-tooltip
+            activator="parent"
+            top
+            color="error"
+            :disabled="isValid"
+          >
+            <span>Form contains invalid or missing values!</span>
+          </v-tooltip>
+        </v-btn>
       </v-card-actions>
       <v-snackbar
         v-model="showSnackbar"

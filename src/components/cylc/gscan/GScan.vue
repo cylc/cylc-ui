@@ -36,26 +36,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="flex-grow-1 flex-column"
           id="c-gscan-search-workflows"
         />
+        <!-- button to activate the filters tooltip -->
+        <v-btn
+          link
+          icon
+          class="flex-grow-0 flex-column"
+          id="c-gscan-filter-tooltip-btn"
+        >
+          <v-icon>{{ svgPaths.filter }}</v-icon>
+        </v-btn>
+        <!-- filters tooltip -->
         <v-menu
-          v-model="showFilterTooltip"
+          activator="#c-gscan-filter-tooltip-btn"
           :close-on-content-click="false"
           offset-x
         >
-          <!-- button to activate the filters tooltip -->
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-bind="attrs"
-              v-on="on"
-              link
-              icon
-              class="flex-grow-0 flex-column"
-              id="c-gscan-filter-tooltip-btn"
-              @click="showFilterTooltip = !showFilterTooltip"
-            >
-              <v-icon>{{ svgPaths.filter }}</v-icon>
-            </v-btn>
-          </template>
-          <!-- filters tooltip -->
           <v-card
             max-height="250px"
           >
@@ -137,17 +132,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     v-else-if="scope.node.type === 'workflow'"
                     class="c-gscan-workflow-name"
                   >
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <span v-on="on">{{ scope.node.name }}</span>
-                      </template>
-                      <span>{{ scope.node.id }}</span>
-                    </v-tooltip>
+                    <span>
+                      {{ scope.node.name }}
+                      <v-tooltip
+                        activator="parent"
+                        top
+                      >
+                        <span>{{ scope.node.id }}</span>
+                      </v-tooltip>
+                    </span>
                   </v-col>
                   <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
                   <v-col
                     v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
-                    class="text-right c-gscan-workflow-states flex-grow-0"
+                    class="d-flex text-right c-gscan-workflow-states flex-grow-0"
                   >
                     <!-- task summary tooltips -->
                     <span
@@ -155,33 +153,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       :key="`${scope.node.id}-summary-${state}`"
                       :class="getTaskStateClasses(scope.node.node, state)"
                     >
-                    <v-tooltip color="black" top>
-                      <template v-slot:activator="{ on }">
-                        <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
-                        <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
-                        <v-btn
-                          v-on="on"
-                          class="ma-0 pa-0"
-                          min-width="0"
-                          min-height="0"
-                          style="font-size: 120%; width: auto"
-                          :ripple="false"
-                          dark
-                          icon
+                      <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
+                      <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                      <div
+                        class="ma-0 pa-0"
+                        min-width="0"
+                        min-height="0"
+                        style="font-size: 120%; width: auto;"
+                      >
+                        <job :status="state" />
+                        <v-tooltip
+                          activator="parent"
+                          color="black"
+                          top
                         >
-                          <job :status="state" />
-                        </v-btn>
-                      </template>
-                      <!-- tooltip text -->
-                      <span>
-                        <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
-                        <br/>
-                        <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
-                          {{ task }}<br v-if="index !== tasks.length -1" />
-                        </span>
-                      </span>
-                    </v-tooltip>
-                  </span>
+                          <!-- tooltip text -->
+                          <span>
+                            <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                            <br/>
+                            <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
+                              {{ task }}<br v-if="index !== tasks.length -1" />
+                            </span>
+                          </span>
+                        </v-tooltip>
+                      </div>
+                    </span>
                   </v-col>
                 </v-row>
               </v-list-item-title>
@@ -247,12 +243,6 @@ export default {
        * @type {string}
        */
       searchWorkflows: '',
-      /**
-       * Variable to control whether the filters tooltip (a menu actually)
-       * is displayed or not (i.e. v-model=this).
-       * @type {boolean}
-       */
-      showFilterTooltip: false,
       /**
        * List of filters to be displayed by the template, so that the user
        * can filter the list of workflows.

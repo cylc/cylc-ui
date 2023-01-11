@@ -22,7 +22,7 @@ import subscriptionMixin from '@/mixins/subscription'
  * navigation guards to coordinate when a subscription is started.
  *
  * Subscriptions are stopped via the subscriptionComponent mixin, which binds
- * to lifecycle created and beforeDestroy methods of the View/Component.
+ * to lifecycle created and beforeUnmount methods of the View/Component.
  *
  * @see Subscription
  * @see SubscriptionQuery

@@ -6494,13 +6494,13 @@ __metadata:
     subscriptions-transport-ws: ^0.11.0
     svg-pan-zoom: ^3.6.1
     utf-8-validate: ^5.0.9
-    vue: ^3.1.0
+    vue: ^3.2.0
     vue-i18n: ^9.0.0
     vue-meta: ^2.4.0
     vue-router: ^4.0.0
     vue-the-mask: ^0.11.1
     vuetify: ^3.1.0
-    vuex: ^4.0.0
+    vuex: ^4.1.0
     wasm-loader: ^1.3.0
     webpack: ^5.0.0
   languageName: unknown
@@ -15230,7 +15230,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.1.0":
+"vue@npm:^3.2.0":
   version: 3.2.45
   resolution: "vue@npm:3.2.45"
   dependencies:
@@ -15262,7 +15262,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vuex@npm:^4.0.0":
+"vuex@npm:^4.1.0":
   version: 4.1.0
   resolution: "vuex@npm:4.1.0"
   dependencies:

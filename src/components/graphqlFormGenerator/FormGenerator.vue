@@ -17,8 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-form
-    :value="value"
-    @input="$emit('input', $event)"
+    :modelValue="modelValue"
+    @update:modelValue="$emit('update:modelValue', $event)"
   >
     <!-- the form inputs -->
     <v-list>
@@ -31,21 +31,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!-- input label - the display title for this input -->
             {{ input.label }}
             <!-- help button - tooltip for more information -->
-            <v-tooltip bottom
-              v-if="input.description"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  {{ icons.help }}
-                </v-icon>
-              </template>
-              <Markdown
-                :markdown="input.description"
-              />
-            </v-tooltip>
+            <v-icon>
+              {{ icons.help }}
+              <v-tooltip
+                activator="parent"
+                v-if="input.description"
+                bottom
+              >
+                <Markdown
+                  :markdown="input.description"
+                />
+              </v-tooltip>
+            </v-icon>
           </v-list-item-title>
           <FormInput
             v-model="model[input.label]"
@@ -76,7 +73,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       // validity of form
       type: Boolean,
       required: false,
@@ -94,6 +91,8 @@ export default {
       type: Object
     }
   },
+
+  emits: ['update:modelValue'],
 
   data: () => ({
     model: {},

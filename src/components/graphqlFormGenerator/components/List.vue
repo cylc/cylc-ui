@@ -19,13 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-list dense>
     <v-list-item-content>
       <v-list-item
-        v-for="(item, index) in value"
+        v-for="(item, index) in modelValue"
         :key="index"
       >
         <v-list-item-content>
           <!-- The input -->
           <component
-            v-model="value[index]"
+            v-model="modelValue[index]"
             :propOverrides="{dense: true}"
             :gqlType="gqlType.ofType"
             :types="types"
@@ -94,10 +94,10 @@ export default {
       const newInput = getNullValue(this.gqlType.ofType, this.types)
       let index = 0
       if (this.addAtStart) {
-        this.value.unshift(newInput)
+        this.modelValue.unshift(newInput)
       } else {
-        index = this.value.length
-        this.value.push(newInput)
+        index = this.modelValue.length
+        this.modelValue.push(newInput)
       }
       // this is not ideal, but I believe whats happening is the new (wrapper) component is created over the first tick from the new array item
       // the component content is created over the next tick (including the input)
@@ -111,7 +111,7 @@ export default {
 
     /** Remove the item at `index` from the list. */
     remove (index) {
-      this.value.splice(index, 1)
+      this.modelValue.splice(index, 1)
     }
   }
 }
