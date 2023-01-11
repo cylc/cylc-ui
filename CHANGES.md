@@ -32,6 +32,9 @@ for number of tasks per page.
 [#1177](https://github.com/cylc/cylc-ui/pull/1177) -
 New tabs now open on top.
 
+[#1178](https://github.com/cylc/cylc-ui/pull/1178) - Improve appearance of
+Table view.
+
 ### Fixes
 
 [#1164](https://github.com/cylc/cylc-ui/pull/1164) -
