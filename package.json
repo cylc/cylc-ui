@@ -88,7 +88,7 @@
     "nyc": "^15.1.0",
     "sass": "~1.57.0",
     "sass-loader": "^10.2.0",
-    "sinon": "^14.0.0",
+    "sinon": "^15.0.0",
     "standard": "^17.0.0",
     "subscriptions-transport-ws": "^0.11.0",
     "utf-8-validate": "^5.0.9",
