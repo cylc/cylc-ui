@@ -22,10 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :type="alert.color"
       :icon="alert.icon"
       :class="getColor(alert.color)"
-      dismissible
-      tile
-      light
-      colored-border
+      closable
+      rounded="0"
     >
       <template v-slot:close="props">
         <v-icon @click="closeAlert(props.toggle)">{{ svgPaths.close }}</v-icon>

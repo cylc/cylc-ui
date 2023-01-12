@@ -38,9 +38,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </svg>
     </div>
     <div class="c-environment-info">
-      <v-chip id="username" class="text--secondary" outlined>{{ user }}</v-chip>
+      <v-chip id="username" class="text--secondary" variant="outlined">{{ user }}</v-chip>
       <span class="at">@</span>
-      <v-chip id="host" class="text--secondary" outlined>{{ environment }}</v-chip>
+      <v-chip id="host" class="text--secondary" variant="outlined">{{ environment }}</v-chip>
     </div>
   </div>
 </template>

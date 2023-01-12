@@ -90,9 +90,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :status="node.node.state"
           />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
-          <span class="grey--text">{{ node.node.platform }}</span>
+          <span class="text-grey">{{ node.node.platform }}</span>
           <span
-            class="grey--text d-flex flex-nowrap flex-row align-center"
+            class="text-grey d-flex flex-nowrap flex-row align-center"
             v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
           >
             <!--
@@ -112,13 +112,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-tooltip
               v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
               :key="`output-chip-${index}`"
-              bottom
+              location="bottom"
             >
               <template v-slot:activator="{ props }">
                 <v-chip
                   v-bind="props"
-                  :color="customOutput.isMessage ? 'light-grey' : 'grey'"
-                  :text-color="customOutput.isMessage ? 'black' : 'white'"
+                  :class="customOutput.isMessage ? 'bg-light-grey text-black' : 'bg-grey text-white'"
                   class="ml-2 message-output"
                   small
                 >{{ customOutput.label }}</v-chip>
@@ -128,8 +127,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-chip
               v-if="jobMessageOutputs.length > 5"
               color="grey"
-              text-color="grey lighten-5"
-              class="ml-2"
+              class="ml-2 text-grey-lighten-5"
               small
               link
               @click="toggleExpandCollapse"
@@ -147,11 +145,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               class="leaf-entry"
             >
               <span class="px-4 leaf-entry-title">{{ item.title }}</span>
-              <span class="grey--text leaf-entry-value">{{ node.node[item.property] }}</span>
+              <span class="text-grey leaf-entry-value">{{ node.node[item.property] }}</span>
             </div>
             <v-divider class="ml-3 mr-5" />
             <div class="leaf-entry">
-              <span class="px-4 leaf-entry-title grey--text text--darken-1">outputs</span>
+              <span class="px-4 leaf-entry-title text-grey-darken-1">outputs</span>
             </div>
             <div
               v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
@@ -163,11 +161,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 class="leaf-entry output"
               >
                 <span class="px-4 leaf-entry-title">{{ customOutput.label }}</span>
-                <span class="grey--text leaf-entry-value">{{ customOutput.message }}</span>
+                <span class="text-grey leaf-entry-value">{{ customOutput.message }}</span>
               </div>
             </div>
             <div v-else class="leaf-entry">
-              <span class="px-4 leaf-entry-title grey--text text--darken-1">No custom messages</span>
+              <span class="px-4 leaf-entry-title text-grey-darken-1">No custom messages</span>
             </div>
           </div>
         </div>

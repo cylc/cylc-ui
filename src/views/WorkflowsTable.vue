@@ -27,10 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-alert
           :icon="svgPath.table"
           prominent
-          color="grey lighten-3"
+          color="grey-lighten-3"
         >
-          <h3 class="headline">{{ $t('Workflows.tableHeader') }}</h3>
+          <h3 class="text-h5">{{ $t('Workflows.tableHeader') }}</h3>
         </v-alert>
+        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="headers"
           :items="workflowsTable"

@@ -19,9 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-app-bar
-    app
     id="core-app-bar"
-    dense
+    density="compact"
     flat
     class="c-toolbar"
   >
@@ -54,34 +53,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {{ svgPaths.menu }}
         </v-icon>
 
-        <v-icon
+        <v-btn
           id="workflow-play-button"
           color="#5E5E5E"
+          :icon="svgPaths.run"
           :disabled="!enabled.playToggle"
           v-if="!isRunning"
           @click="onClickPlay"
-        >
-          {{ svgPaths.run }}
-        </v-icon>
+        />
 
-        <v-icon
+        <v-btn
           id="workflow-play-pause-button"
           color="#5E5E5E"
+          :icon="isPaused ? svgPaths.run : svgPaths.hold"
           :disabled="!enabled.pauseToggle"
           v-if="isRunning"
           @click="onClickReleaseHold"
-        >
-          {{ isPaused ? svgPaths.run : svgPaths.hold }}
-        </v-icon>
+        />
 
-        <v-icon
+        <v-btn
           id="workflow-stop-button"
           color="#5E5E5E"
+          :icon="svgPaths.stop"
           :disabled="!enabled.stopToggle"
           @click="onClickStop"
-        >
-          {{ svgPaths.stop }}
-        </v-icon>
+        />
       </div>
 
       <!-- workflow status message -->
@@ -99,7 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-menu
           activator="parent"
-          offset-y
+          location="bottom"
           v-if="$route.name === 'workspace'"
         >
           <v-list class="pa-0">
@@ -110,9 +106,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               @click="$emit('add', { viewName: view.name })"
               class="py-0 px-8 ma-0 c-add-view"
             >
-              <v-list-item-icon>
+              <template v-slot:prepend>
                 <v-icon>{{ view.data().widget.icon }}</v-icon>
-              </v-list-item-icon>
+              </template>
               <v-list-item-title>{{ view.name }}</v-list-item-title>
             </v-list-item>
           </v-list>

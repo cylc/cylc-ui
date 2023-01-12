@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-row
     class="c-key-val"
-    dense
+    density="compact"
     no-gutters
   >
     <v-col cols="4">
@@ -29,8 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           placeholder="key"
           v-model="modelValue.key"
           :disabled="modelValue.frozenKey"
-          dense
-          filled
+          density="compact"
+          variant="filled"
           class="c-input-key"
         />
         <v-tooltip
@@ -48,15 +48,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-text-field
         placeholder="value"
         v-model="modelValue.value"
-        dense
-        filled
+        density="compact"
+        variant="filled"
         class="c-input-val"
       />
     </v-col>
     <v-col cols="auto">
       <div>
         <slot
-          name="append-outer"
+          name="append"
           :disabled="modelValue.frozenKey"
         />
         <v-tooltip
@@ -83,7 +83,7 @@ export default {
   computed: {
     tooltipProps () {
       return {
-        top: true,
+        location: 'top',
         disabled: !this.modelValue.frozenKey,
         openDelay: 400
       }

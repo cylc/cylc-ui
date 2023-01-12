@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-on:lumino:deleted="onWidgetDeletedEvent"
         tab-title-prop="tab-title"
       >
+        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-skeleton-loader
           v-for="(item, id) of widgets"
           :key="id"

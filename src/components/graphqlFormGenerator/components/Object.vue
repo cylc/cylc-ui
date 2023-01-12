@@ -27,9 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        :types="types"
       />
     </template>
-    <template v-slot:append-outer>
-      <!-- resolve the "append-outer" slot here -->
-      <slot name="append-outer"></slot>
+    <template v-slot:append>
+      <!-- resolve the "append" slot here -->
+      <slot name="append"></slot>
     </template>
   </v-input>
 </template>

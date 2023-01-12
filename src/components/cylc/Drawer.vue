@@ -19,9 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-navigation-drawer
     v-model="drawer"
     ref="drawerRef"
-    app
     floating
-    hide-overlay
     mobile-breakpoint="991"
     :width="navigation.width"
     class="fill-height"
@@ -35,9 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-list-item
           to="/"
         >
-          <v-list-item-action>
+          <template v-slot:prepend>
             <v-icon>{{ svgPaths.home }}</v-icon>
-          </v-list-item-action>
+          </template>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
 
@@ -45,13 +43,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           to="/graphiql"
           class="v-list-item"
         >
-          <v-list-item-action>
+          <template v-slot:prepend>
             <v-icon>{{ svgPaths.graphql }}</v-icon>
-          </v-list-item-action>
+          </template>
           <v-list-item-title>GraphiQL</v-list-item-title>
         </v-list-item>
         <v-divider class="" />
-        <v-list-item-title class="py-3">Workflows</v-list-item-title>
+        <v-list-item>
+          <v-list-item-title>Workflows</v-list-item-title>
+        </v-list-item>
       </v-list>
 
       <v-list

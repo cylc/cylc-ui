@@ -31,9 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <div class="card-grid">
 
       <v-col>
-        <v-card outlined>
+        <v-card variant="outlined">
           <v-card-title primary-title>
-            <p class="display-1 text--primary">Tasks &amp; Jobs</p>
+            <p class="text-h4 text--primary">Tasks &amp; Jobs</p>
           </v-card-title>
           <v-card-text>
             <p>
@@ -89,85 +89,81 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-col>
 
       <v-col>
-        <v-card outlined>
+        <v-card variant="outlined">
           <v-card-title primary-title>
-            <p class="display-1 text--primary">Why Are We Waiting?</p>
+            <p class="text-h4 text--primary">Why Are We Waiting?</p>
           </v-card-title>
           <v-card-text>
             <p>
               Why has my task not started to run yet?
             </p>
            <v-list
-              three-line
+              lines="three"
             >
               <v-list-item>
-                <v-list-item-icon>
+                <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
                     :task="{state: 'waiting'}"
+                    class="mr-4"
                   />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    Waiting
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    The task is not ready to run yet - it is still waiting on
-                    upstream <b>dependencies</b> or <b>xtriggers</b>.
-                  </v-list-item-subtitle>
-                </v-list-item-content>
+                </template>
+                <v-list-item-title>
+                  Waiting
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task is not ready to run yet - it is still waiting on
+                  upstream <b>dependencies</b> or <b>xtriggers</b>.
+                </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
-                <v-list-item-icon>
+                <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
                     :task="{state: 'waiting', isHeld: true}"
+                    class="mr-4"
                   />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    Held
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    The task won't run unless <b>released</b> from hold.
-                    Tasks can be held before they are ready to run
-                    (or after, prior to retriggering).
-                  </v-list-item-subtitle>
-                </v-list-item-content>
+                </template>
+                <v-list-item-title>
+                  Held
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task won't run unless <b>released</b> from hold.
+                  Tasks can be held before they are ready to run
+                  (or after, prior to retriggering).
+                </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
-                <v-list-item-icon>
+                <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
                     :task="{state: 'waiting', isQueued: true}"
+                    class="mr-4"
                   />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    Queued
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    The task is ready to run but is held back by a queue,
-                    which restricts the number of active tasks.
-                  </v-list-item-subtitle>
-                </v-list-item-content>
+                </template>
+                <v-list-item-title>
+                  Queued
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task is ready to run but is held back by a queue,
+                  which restricts the number of active tasks.
+                </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
-                <v-list-item-icon>
+                <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
                     :task="{state: 'waiting', isRunahead: true}"
+                    class="mr-4"
                   />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    Runahead
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    The task is ready to run but is beyond the runahead limit,
-                    which restricts the number of active cycle points.
-                  </v-list-item-subtitle>
-                </v-list-item-content>
+                </template>
+                <v-list-item-title>
+                  Runahead
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task is ready to run but is beyond the runahead limit,
+                  which restricts the number of active cycle points.
+                </v-list-item-subtitle>
               </v-list-item>
             </v-list>
             <p>

@@ -28,39 +28,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-row justify="start">
           <v-col cols="12" md="4" >
             <v-text-field
-            v-model="task"
-            clearable
-            flat
-            dense
-            hint="Type cycle/task/job to view job log"
-            :prefix="workflowNamePrefix"
-            outlined
-            placeholder="cycle/task/job"
-            class="flex-grow-1 flex-column"
-            id="c-log-search-box"
-            ></v-text-field>
+              v-model="task"
+              clearable
+              density="compact"
+              hint="Type cycle/task/job to view job log"
+              :prefix="workflowNamePrefix"
+              variant="outlined"
+              placeholder="cycle/task/job"
+              class="flex-grow-1 flex-column"
+              id="c-log-search-box"
+            />
           </v-col>
           <v-col
             cols="12"
-            md="4">
+            md="4"
+          >
             <v-select
               :label="getFileListLabel"
               :items="getFileList"
-              filled
               v-model="file"
-              dense
+              density="compact"
               clearable
-              outlined
-              >
-            </v-select>
+              variant="outlined"
+            />
           </v-col>
-          <v-col  v-show="file === 'other'" cols="12" md="3">
+          <v-col v-show="file === 'other'" cols="12" md="3">
             <v-text-field
               v-model="logFileEntered"
               placeholder="Enter Job File Name Here"
-              dense
+              density="compact"
               clearable
-              outlined
+              variant="outlined"
               >
             </v-text-field>
           </v-col>
@@ -68,8 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-btn
             :disabled="isDisabled(task, file)"
             color="primary"
-            dense
-            outlined
+            variant="outlined"
             @click="setId(file, logFileEntered, task)">{{ buttonText() }}</v-btn>
           </v-col>
         </v-row>
@@ -80,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :logs="lines"
         ref="log0"
         placeholder="Waiting for logs..."
-      ></log-component>
+      />
     </div>
   </div>
 </template>

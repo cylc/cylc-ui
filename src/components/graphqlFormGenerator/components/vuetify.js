@@ -83,7 +83,7 @@ export default {
   defaultProps: {
     // default props for all form inputs
     filled: true,
-    dense: true
+    density: 'compact'
   },
 
   namedTypes: {

@@ -92,25 +92,21 @@ export default {
 
   render () {
     const createHelpIcon = () => h(
-      VIcon,
+      VTooltip,
+      { location: 'bottom' },
       {
-        style: {
-          cursor: 'default'
-        }
-      },
-      [
-        mdiHelpCircleOutline,
-        h(
-          VTooltip,
+        activator: ({ props }) => h(
+          VIcon,
           {
-            activator: 'parent',
-            bottom: true,
-            slots: {
-              default: () => h(Markdown, { markdown: this.help })
+            ...props,
+            style: {
+              cursor: 'default'
             }
-          }
-        )
-      ]
+          },
+          () => mdiHelpCircleOutline
+        ),
+        default: () => h(Markdown, { markdown: this.help })
+      }
     )
 
     // Some components implement custom v-model
@@ -126,12 +122,12 @@ export default {
           this.model = value
         },
         gqlType: this.gqlType,
-        types: this.types,
-        slots: {
-          append: createHelpIcon,
-          // pass the "append-outer" slot onto the child component
-          'append-outer': (slotProps) => this.$slots['append-outer']?.(slotProps)
-        }
+        types: this.types
+      },
+      {
+        'append-inner': createHelpIcon,
+        // pass the "append" slot onto the child component
+        append: (slotProps) => this.$slots.append?.(slotProps)
       }
     )
   }

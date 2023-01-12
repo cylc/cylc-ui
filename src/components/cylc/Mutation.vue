@@ -16,28 +16,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-    <v-card
-      class="mx-auto d-inline-block"
-      style="padding: 1em;"
-      outlined
-    >
+    <v-card class="d-inline-block pa-4">
       <!-- the mutation title -->
-      <h3
-        style="text-transform: capitalize;"
-      >
+      <h3 :style="{ 'text-transform': 'capitalize' }">
         {{ mutation._title }}
       </h3>
 
       <!-- the mutation description -->
       <v-expansion-panels
         accordion
-        flat
         v-bind="extendedDescription ? { hover: true } : { readonly: true }"
       >
         <v-expansion-panel
           class="mutation-desc"
+          elevation="0"
         >
-          <v-expansion-panel-header
+          <v-expansion-panel-title
             v-bind="extendedDescription ? {} : {
               expandIcon: null,
               style: {
@@ -46,16 +40,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             }"
           >
             <Markdown :markdown="shortDescription"/>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content
-            v-if="extendedDescription"
-          >
+          </v-expansion-panel-title>
+          <v-expansion-panel-text v-if="extendedDescription">
             <Markdown :markdown="extendedDescription"/>
-          </v-expansion-panel-content>
+          </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
 
-      <v-divider/>
+      <v-divider />
       <EditRuntimeForm
         v-if="mutation.name === 'editRuntime'"
         v-bind="{
@@ -81,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           color="grey"
           @click="cancel()"
-          text
+          variant="text"
           data-cy="cancel"
         >
           Cancel
@@ -89,13 +81,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           color="orange"
           @click="$refs.form.reset()"
-          text
+          variant="text"
           data-cy="reset"
         >
           Reset
         </v-btn>
         <v-btn
-          text
+          variant="text"
           :color="isValid ? 'primary' : 'error'"
           @click="submit"
           :loading="submitting"
@@ -104,8 +96,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           Submit
           <v-tooltip
             activator="parent"
-            top
-            color="error"
+            location="top"
+            content-class="bg-error"
             :disabled="isValid"
           >
             <span>Form contains invalid or missing values!</span>

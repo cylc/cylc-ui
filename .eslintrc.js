@@ -24,6 +24,7 @@ module.exports = {
     'standard',
     'eslint:recommended',
     'plugin:vue/vue3-essential',
+    'plugin:vuetify/base',
     'plugin:cypress/recommended'
   ],
   rules: {

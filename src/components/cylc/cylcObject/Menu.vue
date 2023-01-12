@@ -19,15 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <!-- dropdown menu -->
     <v-menu
-      offset-y
       content-class="c-mutation-menu"
       v-model="showMenu"
-      :position-x="x"
-      :position-y="y"
+      :offset="[x, y]"
       @show-mutations-menu="showMutationsMenu"
       :disabled="!interactive"
       :close-on-content-click="false"
-      :close-on-click="false"
+      persistent
       v-click-outside="{ handler: onClickOutside, include: clickOutsideInclude }"
       max-height="90vh"
       dark
@@ -47,11 +45,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {{ typeAndStatusText }}
         </v-card-subtitle>
         <v-divider v-if="primaryMutations.length || displayMutations.length"/>
-        <v-skeleton-loader
+        <!-- <v-skeleton-loader
           v-if="isLoadingMutations && primaryMutations.length"
           type="list-item-avatar-two-line@3"
           min-width="400"
-        />
+        /> -->
         <v-list
           v-if="displayMutations.length"
           class="c-mutation-menu-list"
@@ -64,9 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="c-mutation"
           >
             <v-list-item-avatar>
-              <v-icon :disabled="!authorised" large>
-                {{ mutation._icon }}
-              </v-icon>
+              <v-icon size="large">{{ mutation._icon }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>{{ mutation._title }}</v-list-item-title>
@@ -81,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-btn
                 icon
                 :disabled="isEditable(authorised, mutation)"
-                x-large
+                size="x-large"
                 class="float-right"
                 @click.stop="openDialog(mutation)"
                 data-cy="mutation-edit"
@@ -109,8 +105,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-menu>
     <v-dialog
       v-model="dialog"
-      max-width="700px"
-      content-class="c-mutation-dialog"
+      width="700px"
+      max-width="100%"
+      content-class="c-mutation-dialog mx-0"
       v-if="dialogMutation"
     >
       <Mutation

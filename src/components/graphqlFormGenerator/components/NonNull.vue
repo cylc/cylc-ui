@@ -24,9 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     label="(required)"
     :is="FormInput"
   >
-    <template v-slot:append-outer>
-      <!-- pass the "append-outer" slot onto the child component -->
-      <slot name="append-outer"></slot>
+    <template v-slot:append>
+      <!-- pass the "append" slot onto the child component -->
+      <slot name="append"></slot>
     </template>
   </component>
 </template>

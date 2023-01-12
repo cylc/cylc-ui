@@ -22,10 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-alert
           :icon="svgPaths.settings"
           prominent
-          color="grey lighten-3"
+          color="grey-lighten-3"
         >
-          <h3 class="headline">{{ $t('UserProfile.tableHeader') }}</h3>
-          <p class="body-1">{{ $t('UserProfile.tableSubHeader') }}</p>
+          <h3 class="text-h5">{{ $t('UserProfile.tableHeader') }}</h3>
+          <p class="text-body-1">{{ $t('UserProfile.tableSubHeader') }}</p>
         </v-alert>
         <v-form v-if="user !== null">
           <v-container py-0>
@@ -35,11 +35,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-col>
               <v-col cols="9">
                 <v-text-field
-                    :value="user.username"
+                    :model-value="user.username"
                     disabled
                     id="profile-username"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
                 />
               </v-col>
             </v-row>
@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     disabled
                     id="profile-admin"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
                 />
               </v-col>
             </v-row>
@@ -67,12 +67,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-select
                     :items="user.groups"
                     v-model="user.groups"
-                    attach
+                    :menu-props="{ attach: true }"
                     multiple
                     disabled
                     id="profile-groups"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
                 />
               </v-col>
             </v-row>
@@ -83,11 +83,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-col>
               <v-col cols="9">
                 <v-text-field
-                    :value="user.created"
+                    :model-value="user.created"
                     disabled
                     id="profile-created"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
                 />
               </v-col>
             </v-row>
@@ -99,18 +99,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-select
                     :items="user.permissions"
                     v-model="user.permissions"
-                    attach
+                    :menu-props="{ attach: true }"
                     multiple
                     disabled
                     id="profile-permissions"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
                 />
               </v-col>
             </v-row>
             <v-row no-gutters class="mt-4">
               <v-col cols="12">
-                <p class="title">Preferences</p>
+                <p class="text-h6">Preferences</p>
               </v-col>
             </v-row>
 
@@ -120,21 +120,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-col>
               <v-col cols="9">
                 <v-btn
-                  depressed
+                  variant="flat"
                   id="font-size-reset-button"
                   class="mr-2"
                   @click="resetFontSize()">
                   Reset
                 </v-btn>
                 <v-btn
-                  depressed
+                  variant="flat"
                   id="font-size-decrease-button"
                   class="mx-2"
                   @click="decreaseFontSize()">
                   <v-icon>{{ svgPaths.decrease }}</v-icon>
                 </v-btn>
                 <v-btn
-                  depressed
+                  variant="flat"
                   id="font-size-increase-button"
                   class="ml-2"
                   @click="increaseFontSize()">
@@ -147,7 +147,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-col cols="3">
                 <span>Colour Theme</span>
               </v-col>
-              <v-radio-group v-model="jobTheme" column>
+              <v-radio-group v-model="jobTheme">
                 <table class="c-job-state-table">
                   <tr>
                     <th>State</th>

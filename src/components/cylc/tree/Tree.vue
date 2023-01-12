@@ -42,12 +42,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-btn
             @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
             icon
+            variant="flat"
             data-cy="expand-all"
           >
             <v-icon>{{ svgPaths.expandIcon }}</v-icon>
             <v-tooltip
               activator="parent"
-              bottom
+              location="bottom"
             >
               <span>Expand all</span>
             </v-tooltip>
@@ -55,12 +56,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-btn
             @click="collapseAll()"
             icon
+            variant="flat"
             data-cy="collapse-all"
           >
             <v-icon>{{ svgPaths.collapseIcon }}</v-icon>
             <v-tooltip
               activator="parent"
-              bottom
+              location="bottom"
             >
               <span>Collapse all</span>
             </v-tooltip>

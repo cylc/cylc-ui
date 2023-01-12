@@ -28,20 +28,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-text-field
           v-model="searchWorkflows"
           clearable
-          flat
-          dense
+          density="compact"
           hide-details
-          outlined
+          variant="outlined"
           placeholder="Search"
           class="flex-grow-1 flex-column"
           id="c-gscan-search-workflows"
         />
         <!-- button to activate the filters tooltip -->
         <v-btn
-          link
           icon
           class="flex-grow-0 flex-column"
           id="c-gscan-filter-tooltip-btn"
+          variant="text"
         >
           <v-icon>{{ svgPaths.filter }}</v-icon>
         </v-btn>
@@ -49,47 +48,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-menu
           activator="#c-gscan-filter-tooltip-btn"
           :close-on-content-click="false"
-          offset-x
+          location="right"
         >
           <v-card
             max-height="250px"
           >
             <v-list
-              dense
+              density="compact"
             >
               <div
                 v-for="filter in filters"
                 :key="filter.title"
               >
-                <v-list-item dense>
-                  <v-list-item-content ma-0>
-                    <v-list-item-title>
-                      <v-checkbox
-                        :label="filter.title"
-                        :input-value="allItemsSelected(filter.items)"
-                        value
-                        dense
-                        hide-details
-                        hint="Toggle all"
-                        @click="toggleItemsValues(filter.items)"
-                      ></v-checkbox>
-                    </v-list-item-title>
-                  </v-list-item-content>
+                <v-list-item density="compact">
+                  <v-list-item-title>
+                    <v-checkbox
+                      :label="filter.title"
+                      :model-value="allItemsSelected(filter.items)"
+                      density="compact"
+                      hide-details
+                      @click="toggleItemsValues(filter.items)"
+                    ></v-checkbox>
+                  </v-list-item-title>
                 </v-list-item>
                 <v-divider />
                 <v-list-item
                   v-for="item in filter.items"
                   :key="`${filter.title}-${item.text}`"
-                  dense
+                  density="compact"
                 >
-                  <v-list-item-action>
-                    <v-checkbox
-                      :label="item.text"
-                      v-model="item.model"
-                      dense
-                      height="20"
-                    ></v-checkbox>
-                  </v-list-item-action>
+                  <v-checkbox
+                    :label="item.text"
+                    v-model="item.model"
+                    density="compact"
+                    hide-details
+                    height="20"
+                  />
                 </v-list-item>
               </div>
             </v-list>
@@ -136,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       {{ scope.node.name }}
                       <v-tooltip
                         activator="parent"
-                        top
+                        location="top"
                       >
                         <span>{{ scope.node.id }}</span>
                       </v-tooltip>
@@ -165,11 +159,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         <v-tooltip
                           activator="parent"
                           color="black"
-                          top
+                          location="top"
                         >
                           <!-- tooltip text -->
                           <span>
-                            <span class="grey--text">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                            <span class="text-grey">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                             <br/>
                             <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                               {{ task }}<br v-if="index !== tasks.length -1" />
@@ -188,7 +182,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- when no workflows are returned in the GraphQL query -->
       <div v-else>
         <v-list-item>
-          <v-list-item-title class="grey--text">No workflows found</v-list-item-title>
+          <v-list-item-title class="text-grey">No workflows found</v-list-item-title>
         </v-list-item>
       </div>
     <!-- </v-skeleton-loader> -->

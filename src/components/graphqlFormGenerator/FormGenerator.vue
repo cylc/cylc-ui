@@ -26,23 +26,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-for="input in inputs"
         v-bind:key="input.label"
       >
-        <v-list-item-content>
           <v-list-item-title>
             <!-- input label - the display title for this input -->
             {{ input.label }}
             <!-- help button - tooltip for more information -->
-            <v-icon>
-              {{ icons.help }}
-              <v-tooltip
-                activator="parent"
-                v-if="input.description"
-                bottom
-              >
-                <Markdown
-                  :markdown="input.description"
-                />
-              </v-tooltip>
-            </v-icon>
+            <v-tooltip
+              v-if="input.description"
+              location="bottom"
+            >
+              <template v-slot:activator="{ props }">
+                <v-icon v-bind="props">
+                  {{ icons.help }}
+                </v-icon>
+              </template>
+              <Markdown
+                :markdown="input.description"
+              />
+            </v-tooltip>
           </v-list-item-title>
           <FormInput
             v-model="model[input.label]"
@@ -50,7 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :types="types"
             :label="input.label"
           />
-        </v-list-item-content>
       </v-list-item>
     </v-list>
   </v-form>

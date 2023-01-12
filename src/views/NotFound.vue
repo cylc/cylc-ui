@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-card class="pa-4">
       <v-card-title primary-title>
         <div>
-          <h3 class="headline mb-0">{{ $t('NotFound.title') }}</h3>
+          <h3 class="text-h5 mb-0">{{ $t('NotFound.title') }}</h3>
         </div>
       </v-card-title>
       <v-card-text>
@@ -29,13 +29,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-card-actions>
         <button
           @click="$router.go(-1)"
-          class="v-btn success"
+          class="v-btn bg-success"
         >
           {{ $t('NotFound.goBack') }}
         </button>
         <router-link
           to="/"
-          class="white--text success v-btn"
+          class="text-white bg-success v-btn"
         >
           <button>{{ $t('NotFound.toHomepage') }}</button>
         </router-link>

@@ -22,9 +22,8 @@ component. Note: this is not used for the workflow view, see
 
 <template>
   <v-app-bar
-    app
     id="core-app-bar"
-    dense
+    density="compact"
     flat
     class="c-toolbar"
     v-if="responsive"

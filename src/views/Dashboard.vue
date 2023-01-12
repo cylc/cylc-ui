@@ -23,7 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <v-row wrap>
       <v-col md="6" lg="6">
-        <p class="display-1">Workflows</p>
+        <p class="text-h4">Workflows</p>
+        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="workflowsHeader"
           :items="workflowsTable"
@@ -33,22 +34,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           id="dashboard-workflows"
         >
           <template v-slot:item.count="{ item }">
-            <v-skeleton-loader
+            <!-- <v-skeleton-loader
               :loading="isLoading"
               :max-width="50"
               type="table-cell"
               tile
-            >
-              <span class="headline font-weight-light">{{ item.count }}</span>
-            </v-skeleton-loader>
+            > -->
+              <span class="text-h5 font-weight-light">{{ item.count }}</span>
+            <!-- </v-skeleton-loader> -->
           </template>
           <template v-slot:item.text="{ item }">
-            <span class="title font-weight-light">{{ item.text }}</span>
+            <span class="text-h6 font-weight-light">{{ item.text }}</span>
           </template>
         </v-data-table>
       </v-col>
       <v-col md="6" lg="6">
-        <p class="display-1">Events</p>
+        <p class="text-h4">Events</p>
+        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="eventsHeader"
           :items="events"
@@ -56,13 +58,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           hide-default-header
         >
           <template v-slot:item.id="{ item }">
-            <span class="title font-weight-light">{{ item.id }}</span>
+            <span class="text-h6 font-weight-light">{{ item.id }}</span>
           </template>
           <template v-slot:item.text="{ item }">
-            <span class="title font-weight-light">{{ item.text }}</span>
+            <span class="text-h6 font-weight-light">{{ item.text }}</span>
           </template>
           <template v-slot:no-data>
-            <td class="title">No events</td>
+            <td class="text-h6">No events</td>
           </template>
         </v-data-table>
       </v-col>
@@ -70,51 +72,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-divider />
     <v-row wrap>
       <v-col md="6" lg="6">
-        <v-list three-line>
+        <v-list lines="three">
           <v-list-item to="/workflow-table" data-cy="workflow-table-link">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.table }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Workflows Table
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                View name, host, port, etc. of your workflows
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-icon size="2em">{{ svgPaths.table }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Workflows Table
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              View name, host, port, etc. of your workflows
+            </v-list-item-subtitle>
           </v-list-item>
           <v-list-item to="/user-profile" data-cy="user-settings-link">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.settings }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Settings
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                View your Hub permissions, and alter user preferences
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-icon size="2em">{{ svgPaths.settings }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Settings
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              View your Hub permissions, and alter user preferences
+            </v-list-item-subtitle>
           </v-list-item>
           <div>
             <v-list-item id="cylc-hub-button" :disabled=!multiUserMode :href=hubUrl>
-              <v-list-item-avatar size="60" style="font-size: 2em;">
-                <v-icon large>{{ svgPaths.hub }}</v-icon>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title class="title font-weight-light">
-                  Cylc Hub
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  Visit the Hub to manage your running UI Servers
-                </v-list-item-subtitle>
-              </v-list-item-content>
+              <template v-slot:prepend>
+                <v-icon size="2em">{{ svgPaths.hub }}</v-icon>
+              </template>
+              <v-list-item-title class="text-h6 font-weight-light">
+                Cylc Hub
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                Visit the Hub to manage your running UI Servers
+              </v-list-item-subtitle>
             </v-list-item>
             <v-tooltip
               activator="parent"
               :disabled="multiUserMode"
-              bottom
+              location="bottom"
             >
               <span>You are not running Cylc UI via Cylc Hub.</span>
             </v-tooltip>
@@ -122,45 +118,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-list>
       </v-col>
       <v-col md="6" lg="6">
-        <v-list three-line>
+        <v-list lines="three">
           <v-list-item to="/guide" data-cy="quickstart-link">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.quickstart }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Cylc UI Quickstart
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                Learn how to use the Cylc UI
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-icon size="2em">{{ svgPaths.quickstart }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Cylc UI Quickstart
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Learn how to use the Cylc UI
+            </v-list-item-subtitle>
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/workflow-design-guide/index.html" target="_blank">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.workflow }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Workflow Design Guide
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                How to make complex Cylc workflows and Rose suites simpler and easier to maintain
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-icon size="2em">{{ svgPaths.workflow }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Workflow Design Guide
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              How to make complex Cylc workflows and Rose suites simpler and easier to maintain
+            </v-list-item-subtitle>
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/index.html" target="_blank">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.documentation }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Documentation
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                The complete Cylc documentation
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-icon size="2em">{{ svgPaths.documentation }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Documentation
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              The complete Cylc documentation
+            </v-list-item-subtitle>
           </v-list-item>
         </v-list>
       </v-col>

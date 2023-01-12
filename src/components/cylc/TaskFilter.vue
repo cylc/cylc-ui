@@ -27,10 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-text-field
         data-cy="filter-task-name"
         clearable
-        dense
-        flat
+        density="compact"
         hide-details
-        outlined
+        variant="outlined"
         placeholder="Filter by task name"
         v-model="localValue.name"
         ref="filterNameInput"
@@ -45,11 +44,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="filter-task-states"
         :items="allStates"
         clearable
-        dense
-        flat
+        density="compact"
         hide-details
         multiple
-        outlined
+        variant="outlined"
         placeholder="Filter by task state"
         v-model="localValue.states"
       >
@@ -63,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </div>
           <span
             v-if="slotProps.index === maxVisibleStates"
-            class="grey--text caption"
+            class="text-grey text-caption"
           >
             (+{{ localValue.states.length - maxVisibleStates }})
           </span>

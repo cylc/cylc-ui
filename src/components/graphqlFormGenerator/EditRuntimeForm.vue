@@ -19,12 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <v-card-subtitle class="text-subtitle-1 font-weight-medium">
+    <v-card-subtitle class="text-subtitle-1 font-weight-medium mt-4">
       {{ cylcObject.id }}
     </v-card-subtitle>
-    <v-skeleton-loader
+    <!-- TODO: replace v-progress-linear with v-skeleton-loader when
+    the latter is added to Vuetify 3 -->
+    <!-- <v-skeleton-loader
       v-if="loading"
       type="list-item-two-line@6"
+    /> -->
+    <v-progress-linear
+      v-if="loading"
+      indeterminate
+      class="mt-6"
     />
     <v-form
       v-else
@@ -36,20 +43,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-for="key in Object.keys(model)"
           :key="key"
         >
-          <v-list-item-content>
-            <v-list-item-title class="c-input-label">
-              <!-- input label - the display title for this input -->
-              {{ startCase(key) }}
-            </v-list-item-title>
-            <component
-              :is="getInputProps(key).is"
-              v-bind="getInputProps(key)"
-              v-model="model[key]"
-              :types="types"
-              filled
-              dense
-            />
-          </v-list-item-content>
+          <v-list-item-title class="c-input-label">
+            <!-- input label - the display title for this input -->
+            {{ startCase(key) }}
+          </v-list-item-title>
+          <component
+            :is="getInputProps(key).is"
+            v-bind="getInputProps(key)"
+            v-model="model[key]"
+            :types="types"
+            filled
+            density="compact"
+          />
         </v-list-item>
       </v-list>
     </v-form>

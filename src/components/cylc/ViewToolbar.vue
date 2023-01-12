@@ -29,21 +29,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-for="iControl in iGroup.iControls"
         :key="iControl.title"
       >
-        <v-icon
-          large
+        <v-btn
+          size="large"
           :class="iControl.title"
+          :icon="iControl.icon"
+          variant="flat"
           :disabled="iControl.disabled"
           :color="iControl.color"
           @click="iControl.callback"
         >
-          {{ iControl.icon }}
           <v-tooltip
             activator="parent"
-            bottom
+            location="bottom"
           >
             <span>{{ iControl.title }}</span>
           </v-tooltip>
-        </v-icon>
+        </v-btn>
       </div>
     </div>
   </div>
