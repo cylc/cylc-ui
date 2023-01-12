@@ -81,6 +81,8 @@ $visible-outputs: 5;
     }
 
     .c-task, .c-job {
+      display: flex;
+      align-items: center;
       font-size: 1.2em;
     }
   }

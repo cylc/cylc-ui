@@ -44,9 +44,7 @@ function getTree (store) {
       pointer = pointer[partName]
     }
 
-    for (const child of item.children || []) {
-      stack.push(child)
-    }
+    stack.push(...(item.children ?? []))
   }
   return ret
 }
