@@ -50,8 +50,7 @@ const state = {
    *
    * @type {String}
    */
-  workflowName: null,
-  logs: {}
+  workflowName: null
 }
 
 const getters = {
@@ -514,9 +513,6 @@ const mutations = {
   // the old callback methods
   SET_WORKFLOW_NAME (state, data) {
     state.workflowName = data
-  },
-  SET_LOG (state, data) {
-    state.logs = data
   },
   // the new cylc tree methods
   CREATE: createTree,

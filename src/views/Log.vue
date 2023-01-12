@@ -79,7 +79,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <log-component
         :logs="lines"
         ref="log0"
-        key="log0"
         placeholder="Waiting for logs..."
       ></log-component>
     </div>
@@ -106,7 +105,7 @@ class LogsCallback {
   }
 
   onAdded (added, store, errors) {
-    this.lines.push(...added)
+    this.lines.push(...added.lines)
   }
 
   commit (store, errors) {
@@ -145,7 +144,7 @@ export default {
         'job.status',
         'job.xtrace',
         'other'],
-      workflowLogFiles: ['log'],
+      workflowLogFiles: ['scheduler/log'],
       widget: {
         title: 'logs',
         icon: mdiFileDocumentMultipleOutline
@@ -214,7 +213,7 @@ export default {
       return 'Search'
     },
     getFileName (selectedLogFile, logFileEntered) {
-      if (selectedLogFile === 'log') {
+      if (selectedLogFile === 'scheduler/log') {
         return ''
       }
       if (selectedLogFile === 'other' && logFileEntered) {
@@ -224,7 +223,7 @@ export default {
       }
     },
     isDisabled (jobSearch, file) {
-      if ((jobSearch && file) || (file === 'log')) {
+      if ((jobSearch && file) || (file === 'scheduler/log')) {
         return false
       } else {
         return true

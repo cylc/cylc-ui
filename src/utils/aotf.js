@@ -169,7 +169,8 @@ export const primaryMutations = {
     'pause',
     'stop',
     'reload',
-    'clean'
+    'clean',
+    'log'
   ],
   [cylcObjects.CyclePoint]: [
     'hold',
@@ -181,9 +182,11 @@ export const primaryMutations = {
     'hold',
     'release',
     'trigger',
-    'kill'
+    'kill',
+    'log'
   ]
 }
+
 // handle families the same as tasks
 primaryMutations.family = primaryMutations[cylcObjects.Namespace]
 

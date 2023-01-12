@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-list-item-action>
               <v-btn
                 icon
-                :disabled="isDisabled(authorised, mutation)"
+                :disabled="isEditable(authorised, mutation)"
                 x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
@@ -231,7 +231,7 @@ export default {
   },
 
   methods: {
-    isDisabled (authorised, mutation) {
+    isEditable (authorised, mutation) {
       if (!authorised || mutation.name === 'log') {
         return true
       } else {
