@@ -15,6 +15,10 @@ ones in. -->
 
 ### Enhancements
 
+[#1158](https://github.com/cylc/cylc-ui/pull/1158) -
+Log view: A new view which displays workflow and job logs (similar
+to log view available in Cylc 7 cylc review).
+
 [#1144](https://github.com/cylc/cylc-ui/pull/1144) - Add "Edit Runtime"
 command, a more convenient way to perform broadcasts by viewing and editing a
 task/family's runtime configuration.

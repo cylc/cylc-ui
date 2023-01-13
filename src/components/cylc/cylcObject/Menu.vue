@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-list-item-action>
               <v-btn
                 icon
-                :disabled="!authorised"
+                :disabled="isEditable(authorised, mutation)"
                 x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
@@ -231,7 +231,31 @@ export default {
   },
 
   methods: {
+    isEditable (authorised, mutation) {
+      if (!authorised || mutation.name === 'log') {
+        return true
+      } else {
+        return false
+      }
+    },
     openDialog (mutation) {
+      if (mutation.name === 'log') {
+        this.showMenu = false
+        this.$eventBus.emit(
+          'add-view',
+          {
+
+            viewName: 'Log',
+            initialOptions: {
+              workflow: this.node.tokens.workflow,
+              task: this.node.tokens.relative_id,
+              file: 'job.out'
+            }
+          }
+        )
+        return
+      }
+
       this.dialog = true
       this.dialogMutation = mutation
       // Tell Vue to re-render the dialog component:

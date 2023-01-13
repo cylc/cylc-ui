@@ -34,6 +34,7 @@ import {
   mdiCursorPointer,
   mdiDelete,
   mdiEmail,
+  mdiFileDocumentOutline,
   mdiGraph,
   mdiMinusCircleOutline,
   mdiPause,
@@ -126,8 +127,10 @@ export const mutationIcons = {
   '': mdiCog, // default fallback
   broadcast: mdiBullhorn,
   clean: mdiDelete,
+  editRuntime: mdiPlaylistEdit,
   hold: mdiPauseCircleOutline, // to distinguish from pause
   kill: mdiCloseCircle,
+  log: mdiFileDocumentOutline,
   message: mdiEmail,
   pause: mdiPause,
   play: mdiPlay,
@@ -138,8 +141,7 @@ export const mutationIcons = {
   resume: mdiPlay,
   setOutputs: mdiGraph,
   stop: mdiStop,
-  trigger: mdiCursorPointer,
-  editRuntime: mdiPlaylistEdit
+  trigger: mdiCursorPointer
 }
 
 /**
@@ -169,7 +171,8 @@ export const primaryMutations = {
     'pause',
     'stop',
     'reload',
-    'clean'
+    'clean',
+    'log'
   ],
   [cylcObjects.CyclePoint]: [
     'hold',
@@ -181,9 +184,11 @@ export const primaryMutations = {
     'hold',
     'release',
     'trigger',
-    'kill'
+    'kill',
+    'log'
   ]
 }
+
 // handle families the same as tasks
 primaryMutations.family = primaryMutations[cylcObjects.Namespace]
 
@@ -297,6 +302,13 @@ export const dummyMutations = [
     args: [],
     _appliesTo: cylcObjects.Namespace,
     _requiresInfo: true
+  },
+  {
+    name: 'log',
+    description: 'View the logs.',
+    args: [],
+    _appliesTo: cylcObjects.Namespace,
+    _requiresInfo: true
   }
 ]
 
@@ -306,7 +318,8 @@ export const dummyMutations = [
  * @type {{string: string[]}}
  */
 const dummyMutationsPermissionsMap = Object.freeze({
-  broadcast: Object.freeze(['editRuntime'])
+  broadcast: Object.freeze(['editRuntime']),
+  read: Object.freeze(['log'])
 })
 
 /**

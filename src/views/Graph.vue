@@ -311,7 +311,9 @@ export default {
         QUERY,
         this.variables,
         'workflow',
-        []
+        [],
+        /* isDelta */ true,
+        /* isGlobalCallback */ true
       )
     },
     workflowIDs () {
@@ -324,7 +326,7 @@ export default {
   methods: {
     mountSVGPanZoom () {
       // Check the SVG is ready:
-      // * The SVG document must be rendered with someting in it before we can
+      // * The SVG document must be rendered with something in it before we can
       //   mount the svgPanZoom widget (because it needs to determine the
       //   documents dimensions).
       const children = this.$refs.graph.children

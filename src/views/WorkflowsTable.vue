@@ -121,7 +121,9 @@ export default {
       WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION,
       {},
       'root',
-      []
+      [],
+      true,
+      true
     ),
     headers: [
       {
