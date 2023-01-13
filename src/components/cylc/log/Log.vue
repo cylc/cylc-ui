@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <div v-for="log in computedLogs" :key="log">{{log}}</div>
+    <pre><span v-for="(log, index) in logs" :key="index">{{log}}</span></pre>
   </div>
 </template>
 
