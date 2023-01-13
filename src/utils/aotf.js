@@ -34,6 +34,7 @@ import {
   mdiCursorPointer,
   mdiDelete,
   mdiEmail,
+  mdiFileDocumentOutline,
   mdiGraph,
   mdiMinusCircleOutline,
   mdiPause,
@@ -126,8 +127,10 @@ export const mutationIcons = {
   '': mdiCog, // default fallback
   broadcast: mdiBullhorn,
   clean: mdiDelete,
+  editRuntime: mdiPlaylistEdit,
   hold: mdiPauseCircleOutline, // to distinguish from pause
   kill: mdiCloseCircle,
+  log: mdiFileDocumentOutline,
   message: mdiEmail,
   pause: mdiPause,
   play: mdiPlay,
@@ -138,8 +141,7 @@ export const mutationIcons = {
   resume: mdiPlay,
   setOutputs: mdiGraph,
   stop: mdiStop,
-  trigger: mdiCursorPointer,
-  editRuntime: mdiPlaylistEdit
+  trigger: mdiCursorPointer
 }
 
 /**
