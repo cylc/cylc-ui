@@ -174,7 +174,7 @@ export default {
   },
   methods: {
     viewWorkflow (workflow) {
-      this.$router.push({ path: `/workflows/${workflow.tokens.workflow}` })
+      this.$router.push({ path: `/workspace/${workflow.tokens.workflow}` })
     }
   }
 }
