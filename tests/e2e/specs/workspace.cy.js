@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-describe('Workflow view and component/widget', () => {
+describe('Workspace view and component/widget', () => {
   afterEach(() => {
     cy
       .get('.v-alert')
       .should('not.exist')
   })
 
-  it('Should display the Workflow component in the Workflow view, with a Tree widget', () => {
+  it('Should display the Lumino component in the Workspace view, with a Tree widget', () => {
     cy.visit('/#/workspace/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
 
@@ -93,7 +93,7 @@ describe('Workflow view and component/widget', () => {
     cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
 
-  it('Should remove widgets when leaving the Workflow view', () => {
+  it('Should remove widgets when leaving the Workspace view', () => {
     cy.visit('/#/workspace/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
@@ -106,7 +106,7 @@ describe('Workflow view and component/widget', () => {
     cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
 
-  it('Should remove widgets when updating the Workflow view', () => {
+  it('Should remove widgets when updating the Workspace view', () => {
     cy.visit('/#/workspace/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
