@@ -24,6 +24,7 @@ import { mapState } from 'vuex'
 import GScan from '@/components/cylc/gscan/GScan'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import pageMixin from '@/mixins/index'
+import subscriptionMixin from '@/mixins/subscription'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -34,8 +35,10 @@ export default {
   mixins: [
     pageMixin,
     subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
+  // https://github.com/vuejs/router/issues/454
+  ...subscriptionViewMixin,
 
   components: {
     GScan

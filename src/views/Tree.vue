@@ -38,6 +38,7 @@ import { mapState, mapGetters } from 'vuex'
 import { mdiFileTree } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
+import subscriptionMixin from '@/mixins/subscription'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -45,21 +46,27 @@ import TreeComponent from '@/components/cylc/tree/Tree'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
+  name: 'Tree',
+
   mixins: [
     pageMixin,
     graphqlMixin,
     subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
-  name: 'Tree',
+  // https://github.com/vuejs/router/issues/454
+  ...subscriptionViewMixin,
+
   components: {
     TreeComponent
   },
+
   metaInfo () {
     return {
       title: this.getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
   data () {
     return {
       widget: {
@@ -68,6 +75,7 @@ export default {
       }
     }
   },
+
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),

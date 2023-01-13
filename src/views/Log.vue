@@ -110,21 +110,26 @@ class LogsCallback {
 }
 
 export default {
+  name: 'Log',
+
   mixins: [
     pageMixin,
     graphqlMixin,
-    subscriptionMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
-  name: 'Log',
+  // https://github.com/vuejs/router/issues/454
+  ...subscriptionViewMixin,
+
   components: {
     LogComponent
   },
+
   metaInfo () {
     return {
       title: this.getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
   props: {
     initialOptions: {
       type: Object,
@@ -132,15 +137,18 @@ export default {
       default: () => {}
     }
   },
+
   data () {
     return {
-      jobLogFiles: ['job.out',
+      jobLogFiles: [
+        'job.out',
         'job.err',
         'job',
         'job-activity.log',
         'job.status',
         'job.xtrace',
-        'other'],
+        'other'
+      ],
       workflowLogFiles: ['scheduler/log'],
       widget: {
         title: 'logs',
@@ -153,10 +161,12 @@ export default {
       file: ''
     }
   },
+
   created () {
     this.$data.task = (this.initialOptions.task || '')
     this.$data.file = (this.initialOptions.file || '')
   },
+
   computed: {
     logVariables () {
       return {
@@ -194,6 +204,7 @@ export default {
       return `${this.workflowName}//`
     }
   },
+
   methods: {
     setId (selectedLogFile, logFileEntered, jobSearch) {
       this.$data.lines = []

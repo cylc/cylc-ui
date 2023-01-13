@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { toArray } from '@lumino/algorithm'
 import pageMixin from '@/mixins'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
+import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
 import { createWidgetId } from '@/components/cylc/workflow/index'
 import Lumino from '@/components/cylc/workflow/Lumino'
@@ -56,7 +56,7 @@ export default {
   mixins: [
     pageMixin,
     graphqlMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
 
   components: {
@@ -89,6 +89,7 @@ export default {
 
   beforeRouteEnter (to, from, next) {
     next(vm => {
+      vm.$workflowService.startSubscriptions()
       vm.$nextTick(() => {
         vm.addView({ viewName: TreeView.name })
       })

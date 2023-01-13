@@ -73,6 +73,7 @@ import { mapState, mapGetters } from 'vuex'
 import { i18n } from '@/i18n'
 import { mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
+import subscriptionMixin from '@/mixins/subscription'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
@@ -80,18 +81,25 @@ import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
 
 export default {
   name: 'WorkflowsTable',
+
   mixins: [
     pageMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
+  // https://github.com/vuejs/router/issues/454
+  ...subscriptionViewMixin,
+  // why not subscriptionComponentMixin also?
+
   metaInfo () {
     return {
       title: this.getPageTitle('App.workflows')
     }
   },
+
   components: {
     WorkflowIcon
   },
+
   data: () => ({
     query: new SubscriptionQuery(
       WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION,
@@ -137,6 +145,7 @@ export default {
       table: mdiTable
     }
   }),
+
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
@@ -147,6 +156,7 @@ export default {
       return Object.values(this.workflows)
     }
   },
+
   methods: {
     viewWorkflow (workflow) {
       this.$router.push({ path: `/workspace/${workflow.tokens.workflow}` })

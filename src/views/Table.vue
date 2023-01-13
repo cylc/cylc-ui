@@ -32,6 +32,7 @@ import { mapState, mapGetters } from 'vuex'
 import { mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
+import subscriptionMixin from '@/mixins/subscription'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table.vue'
@@ -40,27 +41,34 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '../graphql/queries'
 
 export default {
+  name: 'Table',
+
   mixins: [
     pageMixin,
     graphqlMixin,
     subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
-  name: 'Table',
+  // https://github.com/vuejs/router/issues/454
+  ...subscriptionViewMixin,
+
   components: {
     TableComponent
   },
+
   metaInfo () {
     return {
       title: this.getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
   data: () => ({
     widget: {
       title: 'table',
       icon: mdiTable
     }
   }),
+
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
@@ -95,6 +103,7 @@ export default {
       }
       return ret
     },
+
     query () {
       return new SubscriptionQuery(
         // this is disabled for now as differences in the fragment names are causing the

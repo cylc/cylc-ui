@@ -15,11 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import subscriptionMixin from '@/mixins/subscription'
-
 /**
  * A mixin used for a View (VueRouter bound component). It uses VueRouter
  * navigation guards to coordinate when a subscription is started.
+ *
+ * NOTE: cannot be used like a normal mixin - must use spread operator
+ * due to https://github.com/vuejs/router/issues/454.
  *
  * Subscriptions are stopped via the subscriptionComponent mixin, which binds
  * to lifecycle created and beforeUnmount methods of the View/Component.
@@ -29,9 +30,6 @@ import subscriptionMixin from '@/mixins/subscription'
  * @see WorkflowService
  */
 export default {
-  mixins: [
-    subscriptionMixin
-  ],
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$workflowService.startSubscriptions()

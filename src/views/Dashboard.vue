@@ -162,6 +162,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState, mapGetters } from 'vuex'
 import { mdiBook, mdiBookMultiple, mdiBookOpenVariant, mdiCog, mdiHubspot, mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
+import subscriptionMixin from '@/mixins/subscription'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
@@ -171,16 +172,21 @@ import { DASHBOARD_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
   name: 'Dashboard',
+
   mixins: [
     pageMixin,
     subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
+  // https://github.com/vuejs/router/issues/454
+  ...subscriptionViewMixin,
+
   metaInfo () {
     return {
       title: this.getPageTitle('App.dashboard')
     }
   },
+
   data () {
     return {
       query: new SubscriptionQuery(
@@ -227,6 +233,7 @@ export default {
       hubUrl: createUrl('/hub/home', false, true)
     }
   },
+
   computed: {
     ...mapState('user', ['user']),
     ...mapState('workflows', ['cylcTree']),

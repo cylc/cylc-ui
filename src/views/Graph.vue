@@ -95,6 +95,7 @@ import gql from 'graphql-tag'
 import { mapGetters } from 'vuex'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
+import subscriptionMixin from '@/mixins/subscription'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -199,22 +200,28 @@ fragment Deltas on Deltas {
 `
 
 export default {
+  name: 'Graph',
+
   mixins: [
     pageMixin,
     graphqlMixin,
     subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
-  name: 'Graph',
+  // https://github.com/vuejs/router/issues/454
+  ...subscriptionViewMixin,
+
   components: {
     GraphNode,
     ViewToolbar
   },
+
   metaInfo () {
     return {
       title: this.getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
   data () {
     return {
       widget: {
@@ -292,6 +299,7 @@ export default {
       ]
     }
   },
+
   mounted () {
     // allow render to happen before we go configuring svgPanZoom
     const self = this
@@ -300,9 +308,11 @@ export default {
     })
     this.mountSVGPanZoom()
   },
+
   beforeUnmount () {
     clearInterval(this.refreshTimer)
   },
+
   computed: {
     ...mapGetters('workflows', ['getNodes']),
     query () {
@@ -322,6 +332,7 @@ export default {
       return this.getNodes('workflow', this.workflowIDs)
     }
   },
+
   methods: {
     mountSVGPanZoom () {
       // Check the SVG is ready:
@@ -650,6 +661,7 @@ export default {
       }
     }
   },
+
   watch: {
     transpose () {
       // refresh the graph when the transpose option is changed
