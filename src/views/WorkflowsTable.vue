@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :headers="headers"
           :items="workflowsTable"
           :loading="isLoading"
+          data-cy="workflows-table"
         >
           <template slot="no-data" v-if="!isLoading">
             <v-alert
@@ -173,7 +174,7 @@ export default {
   },
   methods: {
     viewWorkflow (workflow) {
-      this.$router.push({ path: `/workflows/${workflow.tokens.workflow}` })
+      this.$router.push({ path: `/workspace/${workflow.tokens.workflow}` })
     }
   }
 }
