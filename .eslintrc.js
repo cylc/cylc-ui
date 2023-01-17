@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const level = process.env.NODE_ENV === 'production' ? 'error' : 'warn'
+
 module.exports = {
   root: true,
   env: {
@@ -28,10 +30,11 @@ module.exports = {
     'plugin:cypress/recommended'
   ],
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
-    'no-unreachable': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
-    'no-unused-vars': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+    'no-console': level,
+    'no-debugger': level,
+    'no-unreachable': level,
+    'no-unused-vars': level,
+    'comma-dangle': level,
     indent: [
       'error',
       2,
