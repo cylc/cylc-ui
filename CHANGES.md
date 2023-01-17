@@ -18,6 +18,9 @@ ones in. -->
 [#1184](https://github.com/cylc/cylc-ui/pull/1184) - Mean times for tasks
 in table changed to human readable ISO duration format.
 
+[#1182](https://github.com/cylc/cylc-ui/pull/1182) - Allow filtering by
+cycle point and family in tree & table views.
+
 ## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Released 2023-01-16</span>)__
 
 ### Enhancements
