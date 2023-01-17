@@ -17,7 +17,7 @@
 
 describe('Toolbar component', () => {
   it('Is displayed when we are looking at a workflow', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
       .get('#core-app-bar')
       .should('exist')

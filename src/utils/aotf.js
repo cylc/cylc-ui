@@ -34,6 +34,7 @@ import {
   mdiCursorPointer,
   mdiDelete,
   mdiEmail,
+  mdiFileDocumentOutline,
   mdiGraph,
   mdiMinusCircleOutline,
   mdiPause,
@@ -126,8 +127,10 @@ export const mutationIcons = {
   '': mdiCog, // default fallback
   broadcast: mdiBullhorn,
   clean: mdiDelete,
+  editRuntime: mdiPlaylistEdit,
   hold: mdiPauseCircleOutline, // to distinguish from pause
   kill: mdiCloseCircle,
+  log: mdiFileDocumentOutline,
   message: mdiEmail,
   pause: mdiPause,
   play: mdiPlay,
@@ -138,8 +141,7 @@ export const mutationIcons = {
   resume: mdiPlay,
   setOutputs: mdiGraph,
   stop: mdiStop,
-  trigger: mdiCursorPointer,
-  editRuntime: mdiPlaylistEdit
+  trigger: mdiCursorPointer
 }
 
 /**
@@ -163,26 +165,30 @@ export const cylcObjects = Object.freeze({
 /**
  * Most important mutations for each object type.
  */
-export const primaryMutations = {}
-primaryMutations[cylcObjects.Workflow] = [
-  'play',
-  'pause',
-  'stop',
-  'reload',
-  'clean'
-]
-primaryMutations[cylcObjects.CyclePoint] = [
-  'hold',
-  'release',
-  'trigger',
-  'kill'
-]
-primaryMutations[cylcObjects.Namespace] = [
-  'hold',
-  'release',
-  'trigger',
-  'kill'
-]
+export const primaryMutations = {
+  [cylcObjects.Workflow]: [
+    'play',
+    'pause',
+    'stop',
+    'reload',
+    'clean',
+    'log'
+  ],
+  [cylcObjects.CyclePoint]: [
+    'hold',
+    'release',
+    'trigger',
+    'kill'
+  ],
+  [cylcObjects.Namespace]: [
+    'hold',
+    'release',
+    'trigger',
+    'kill',
+    'log'
+  ]
+}
+
 // handle families the same as tasks
 primaryMutations.family = primaryMutations[cylcObjects.Namespace]
 
@@ -210,25 +216,26 @@ const identifierOrder = [
  *
  * object: [[typeName: String, impliesMultiple: Boolean]]
  */
-export const mutationMapping = {}
-mutationMapping[cylcObjects.User] = []
-mutationMapping[cylcObjects.Workflow] = [
-  ['WorkflowID', false]
-]
-mutationMapping[cylcObjects.CyclePoint] = [
-  ['CyclePoint', false],
-  ['CyclePointGlob', true]
-]
-mutationMapping[cylcObjects.Namespace] = [
-  ['NamespaceName', false],
-  ['NamespaceIDGlob', true]
-]
-// mutationMapping[cylcObjects.Task] = [
-//   ['TaskID', false]
-// ]
-mutationMapping[cylcObjects.Job] = [
-  ['JobID', false]
-]
+export const mutationMapping = {
+  [cylcObjects.User]: [],
+  [cylcObjects.Workflow]: [
+    ['WorkflowID', false]
+  ],
+  [cylcObjects.CyclePoint]: [
+    ['CyclePoint', false],
+    ['CyclePointGlob', true]
+  ],
+  [cylcObjects.Namespace]: [
+    ['NamespaceName', false],
+    ['NamespaceIDGlob', true]
+  ],
+  // [cylcObjects.Task]: [
+  //   ['TaskID', false]
+  // ],
+  [cylcObjects.Job]: [
+    ['JobID', false]
+  ]
+}
 
 /**
  * Mutation argument types which are derived from more than one token.
@@ -272,13 +279,13 @@ export const alternateFields = {
  *
  * Maps onto task status.
  */
-export const mutationStatus = {}
-mutationStatus[TaskState.WAITING] = TaskState.WAITING
-mutationStatus[TaskState.SUBMITTED] = TaskState.SUBMITTED
-mutationStatus[TaskState.SUCCEEDED] = TaskState.SUCCEEDED
-mutationStatus[TaskState.FAILED] = TaskState.FAILED
-mutationStatus[TaskState.SUBMIT_FAILED] = TaskState.SUBMIT_FAILED
-Object.freeze(mutationStatus)
+export const mutationStatus = Object.freeze({
+  [TaskState.WAITING]: TaskState.WAITING,
+  [TaskState.SUBMITTED]: TaskState.SUBMITTED,
+  [TaskState.SUCCEEDED]: TaskState.SUCCEEDED,
+  [TaskState.FAILED]: TaskState.FAILED,
+  [TaskState.SUBMIT_FAILED]: TaskState.SUBMIT_FAILED
+})
 
 /**
  * List of commands to add to the mutations from the schema.
@@ -295,6 +302,13 @@ export const dummyMutations = [
     args: [],
     _appliesTo: cylcObjects.Namespace,
     _requiresInfo: true
+  },
+  {
+    name: 'log',
+    description: 'View the logs.',
+    args: [],
+    _appliesTo: cylcObjects.Namespace,
+    _requiresInfo: true
   }
 ]
 
@@ -304,7 +318,8 @@ export const dummyMutations = [
  * @type {{string: string[]}}
  */
 const dummyMutationsPermissionsMap = Object.freeze({
-  broadcast: Object.freeze(['editRuntime'])
+  broadcast: Object.freeze(['editRuntime']),
+  read: Object.freeze(['log'])
 })
 
 /**

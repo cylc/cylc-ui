@@ -15,15 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.c-table {
-  th, td {
-    white-space: nowrap;
-  }
+describe('Workflows-Table view', () => {
+  beforeEach(() => {
+    cy.visit('/#/workflow-table')
+  })
 
-  .c-task, .c-job {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    font-size: 1.2em;
-  }
-}
+  it("Opens mutation menu when clicking on a workflow's icon", () => {
+    cy.get('[data-cy=workflows-table] .c-interactive:first')
+      .click()
+      .get('.c-mutation-menu-list:first')
+      .should('be.visible')
+  })
+
+  it('Opens workspace view when clicking on workflow', () => {
+    cy.get('[data-cy=workflows-table]')
+      .contains('td', 'one')
+      .click()
+      .get('[data-cy=workspace-view]')
+  })
+})

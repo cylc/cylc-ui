@@ -11,20 +11,28 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 
-## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Pending</span>)__
+## __cylc-ui-1.5.0 (<span actions:bind='release-date'>Released 2023-01-16</span>)__
 
 ### Enhancements
 
 [#1184](https://github.com/cylc/cylc-ui/pull/1184) - Mean times for tasks
 in table changed to human readable ISO duration format.
 
+## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Released 2023-01-16</span>)__
+
+### Enhancements
+
+[#1158](https://github.com/cylc/cylc-ui/pull/1158) -
+Add log view: A new view which displays workflow and job logs (similar
+to log view available in Cylc 7 cylc review).
+
+[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
+Add graph view: A new view which displays tasks and dependencies as a graph
+(like the Cylc 7 graph view).
+
 [#1144](https://github.com/cylc/cylc-ui/pull/1144) - Add "Edit Runtime"
 command, a more convenient way to perform broadcasts by viewing and editing a
 task/family's runtime configuration.
-
-[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
-Graph view: A new view which displays tasks and dependencies as a graph (like
-the Cylc 7 graph view).
 
 [#1108](https://github.com/cylc/cylc-ui/pull/1108) -
 Tree view: Task messages are now shown along with outputs.
@@ -35,13 +43,19 @@ for number of tasks per page.
 [#1177](https://github.com/cylc/cylc-ui/pull/1177) -
 New tabs now open on top.
 
+[#1178](https://github.com/cylc/cylc-ui/pull/1178) - Improve appearance of
+Table view.
+
+[#1043](https://github.com/cylc/cylc-ui/pull/1043) - The GScan sidebar is
+now resizeable.
+
 ### Fixes
 
 [#1164](https://github.com/cylc/cylc-ui/pull/1164) -
 Fix the mean run time column in the table view.
 
-[#1167](https://github.com/cylc/cylc-ui/pull/1168) - Prevent mutations menu
-jumping when expanded.
+[#1167](https://github.com/cylc/cylc-ui/pull/1168) - Prevent command menu from
+jumping after a delay when clicking "see more".
 
 [#1108](https://github.com/cylc/cylc-ui/pull/1108) -
 Tree view: Task outputs are now correctly associated with the jobs that created

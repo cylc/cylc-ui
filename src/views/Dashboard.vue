@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-layout wrap>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-item to="/workflows">
+          <v-list-item to="/workflow-table" data-cy="workflow-table-link">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.table }}</v-icon>
             </v-list-item-avatar>
@@ -85,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item to="/user-profile">
+          <v-list-item to="/user-profile" data-cy="user-settings-link">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.settings }}</v-icon>
             </v-list-item-avatar>
@@ -120,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-flex>
       <v-flex xs12 md6 lg6>
         <v-list three-line>
-          <v-list-item href="#/guide">
+          <v-list-item to="/guide" data-cy="quickstart-link">
             <v-list-item-avatar size="60" style="font-size: 2em;">
               <v-icon large>{{ svgPaths.quickstart }}</v-icon>
             </v-list-item-avatar>
@@ -194,7 +194,9 @@ export default {
         DASHBOARD_DELTAS_SUBSCRIPTION,
         {},
         'root',
-        []
+        [],
+        /* isDelta */ true,
+        /* isGlobalCallback */ true
       ),
       workflowsHeader: [
         {

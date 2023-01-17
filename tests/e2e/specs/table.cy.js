@@ -122,7 +122,7 @@ describe('Table view', () => {
       cy
         // sort dt-mean ascending
         .get('[aria-label="dT-mean: Not sorted. Activate to sort ascending."] > :nth-child(1)')
-        .click()
+        .click({ force: true })
 
         // check 0 is at the top (1st row, 10th column)
         .get('tbody > :nth-child(1) > :nth-child(10)')

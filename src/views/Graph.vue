@@ -123,7 +123,7 @@ import {
 // views. Data overlap is good because it reduces the amount of data we need
 // to request / store / process.
 const QUERY = gql`
-subscription WorkflowGraphSubscription ($workflowId: ID) {
+subscription Workflow ($workflowId: ID) {
   deltas(workflows: [$workflowId]) {
     ...Deltas
   }
@@ -311,7 +311,9 @@ export default {
         QUERY,
         this.variables,
         'workflow',
-        []
+        [],
+        /* isDelta */ true,
+        /* isGlobalCallback */ true
       )
     },
     workflowIDs () {
@@ -324,7 +326,7 @@ export default {
   methods: {
     mountSVGPanZoom () {
       // Check the SVG is ready:
-      // * The SVG document must be rendered with someting in it before we can
+      // * The SVG document must be rendered with something in it before we can
       //   mount the svgPanZoom widget (because it needs to determine the
       //   documents dimensions).
       const children = this.$refs.graph.children
@@ -644,10 +646,7 @@ export default {
         `
       }
       // update edge paths
-      this.graphEdges.length = 0 // empty array
-      for (const edge of json.edges || []) {
-        this.graphEdges.push(posToPath(edge.pos))
-      }
+      this.graphEdges = json.edges?.map(edge => posToPath(edge.pos)) ?? []
 
       if (!this.panZoomWidget) {
         // mount the svgPanZoom widget on first load

@@ -17,12 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-    fluid
-    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
+    class="ma-0 pa-0"
   >
     <!-- Toolbar -->
     <v-row
-        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
+      no-gutters
+      class="d-flex flex-wrap"
     >
       <!-- Filters -->
       <v-col
@@ -70,7 +70,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-row>
     <v-row
       no-gutters
-      class="flex-grow-1 position-relative"
       >
       <v-col
         cols="12"

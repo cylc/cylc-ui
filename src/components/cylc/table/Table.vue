@@ -35,14 +35,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-row
       no-gutters
       class="flex-grow-1 position-relative"
-      >
+    >
       <v-col
         cols="12"
         class="mh-100 position-relative"
       >
         <v-container
           fluid
-          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
+          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
         >
           <v-data-table
             :headers="headers"
@@ -130,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               >
                 <td>
                   <div class="d-flex align-content-center flex-nowrap">
-                    <div class="mr-1">
+                    <div class="d-flex mr-1">
                       <Job
                         v-cylc-object="job"
                         :key="`${job.id}-summary-${index}`"

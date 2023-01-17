@@ -26,5 +26,6 @@ module.exports = {
   taskProxy,
   familyProxy,
   userProfile,
-  App
+  App,
+  Workflow: App
 }

@@ -20,7 +20,7 @@ describe('CylcObject Menu component', () => {
   const expandedWorkflowMenuLength = 21
 
   it('should not be displayed initially on load', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy.get('.c-interactive:first') // wait for view to load
       .get('.c-mutation-menu:first')
       .should('not.exist')
@@ -66,7 +66,7 @@ describe('CylcObject Menu component', () => {
 
   it('updates when clicking on a different Cylc object', () => {
     let firstID
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
       .get('.node-data-cycle:first')
       .find('.c-interactive:first')
       .click()

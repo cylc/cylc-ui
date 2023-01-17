@@ -46,13 +46,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-card-subtitle>
           {{ typeAndStatusText }}
         </v-card-subtitle>
-        <v-divider v-if="primaryMutations.length || displayMutations.length" />
+        <v-divider v-if="primaryMutations.length || displayMutations.length"/>
         <v-skeleton-loader
           v-if="isLoadingMutations && primaryMutations.length"
           type="list-item-avatar-two-line@3"
           min-width="400"
-        >
-        </v-skeleton-loader>
+        />
         <v-list
           v-if="displayMutations.length"
           class="c-mutation-menu-list"
@@ -60,12 +59,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-list-item
             v-for="{ mutation, requiresInfo, authorised } in displayMutations"
             :key="mutation.name"
-            :disabled=!authorised
+            :disabled="!authorised"
             @click.stop="enact(mutation, requiresInfo)"
             class="c-mutation"
           >
             <v-list-item-avatar>
-              <v-icon :disabled=!authorised large>{{ mutation._icon }}</v-icon>
+              <v-icon :disabled="!authorised" large>
+                {{ mutation._icon }}
+              </v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>{{ mutation._title }}</v-list-item-title>
@@ -79,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-list-item-action>
               <v-btn
                 icon
-                :disabled=!authorised
+                :disabled="isEditable(authorised, mutation)"
                 x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
@@ -230,7 +231,31 @@ export default {
   },
 
   methods: {
+    isEditable (authorised, mutation) {
+      if (!authorised || mutation.name === 'log') {
+        return true
+      } else {
+        return false
+      }
+    },
     openDialog (mutation) {
+      if (mutation.name === 'log') {
+        this.showMenu = false
+        this.$eventBus.emit(
+          'add-view',
+          {
+
+            viewName: 'Log',
+            initialOptions: {
+              workflow: this.node.tokens.workflow,
+              task: this.node.tokens.relative_id,
+              file: 'job.out'
+            }
+          }
+        )
+        return
+      }
+
       this.dialog = true
       this.dialogMutation = mutation
       // Tell Vue to re-render the dialog component:

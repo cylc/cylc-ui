@@ -219,7 +219,7 @@ class WorkflowService {
       subscription.subscribers[componentOrView._uid] = componentOrView
       // Then we recompute the query, checking if variables match, and action name is set.
       this.recompute(subscription)
-      // regardless of whether this results in a restart, we take this opertunity to preset the componentOrView store if needed
+      // regardless of whether this results in a restart, we take this opportunity to preset the componentOrView store if needed
       const errors = []
       // if the callbacks class has an init method defined, use it
       for (const callback of subscription.callbacks) {
@@ -273,63 +273,92 @@ class WorkflowService {
       }
       this.stopSubscription(subscription, true)
     }
-
-    const globalCallback = this.globalCallback
-
-    try {
-      // Then start subscription.
-      subscription.observable = this.startDeltasSubscription(
-        subscription.query.query,
-        subscription.query.variables,
-        {
-          next: function next (response) {
-            const deltas = response.data.deltas || {}
-            const added = deltas.added || {}
-            const updated = deltas.updated || {}
-            const pruned = deltas.pruned || {}
-            const errors = []
-
-            // run the global callback first
-            globalCallback.onAdded(added, store, errors)
-            globalCallback.onUpdated(updated, store, errors)
-            globalCallback.onPruned(pruned, store, errors)
-
-            // then run the local callbacks if there are any
-            if (subscription.callbacks.length === 0) {
-              return
+    if (subscription.query.isDelta === false & subscription.query.isGlobalCallback === false) {
+      try {
+        // Then start subscription.
+        subscription.observable = this.startCylcSubscription(
+          subscription.query.query,
+          subscription.query.variables,
+          {
+            next: function next (response) {
+              if (subscription.callbacks.length === 0) {
+                return
+              }
+              const errors = []
+              for (const callback of subscription.callbacks) {
+                callback.onAdded(response.data.logs, store, errors)
+                callback.commit(store, errors)
+              }
+            },
+            error: function error (err) {
+              subscription.handleViewState(ViewState.ERROR, err)
             }
-            for (const callback of subscription.callbacks) {
-              callback.before(deltas, store, errors)
-              callback.onAdded(added, store, errors)
-              callback.onUpdated(updated, store, errors)
-              callback.commit(store, errors)
-            }
-            for (const callback of [...subscription.callbacks].reverse()) {
-              callback.onPruned(pruned, store, errors)
-              callback.after(deltas, store, errors)
-              callback.commit(store, errors)
-            }
-            for (const error of errors) {
-              store.commit(
-                'SET_ALERT',
-                new Alert(error[0], null, 'error'),
-                { root: true }
-              )
-              // eslint-disable-next-line no-console
-              console.warn(...error)
-            }
-          },
-          error: function error (err) {
-            subscription.handleViewState(ViewState.ERROR, err)
           }
-        }
-      )
-      this.subscriptions[subscription.query.name] = subscription
-      // All done!
-      subscription.handleViewState(ViewState.COMPLETE, null)
-      subscription.reload = false
-    } catch (e) {
-      subscription.handleViewState(ViewState.ERROR, e)
+        )
+        this.subscriptions[subscription.query.name] = subscription
+        // All done!
+        subscription.handleViewState(ViewState.COMPLETE, null)
+        subscription.reload = false
+      } catch (e) {
+        subscription.handleViewState(ViewState.ERROR, e)
+      }
+    } else {
+      const globalCallback = this.globalCallback
+      try {
+        // Then start subscription.
+        subscription.observable = this.startCylcSubscription(
+          subscription.query.query,
+          subscription.query.variables,
+          {
+            next: function next (response) {
+              const deltas = response.data.deltas || {}
+              const added = deltas.added || {}
+              const updated = deltas.updated || {}
+              const pruned = deltas.pruned || {}
+              const errors = []
+
+              // run the global callback first
+              globalCallback.onAdded(added, store, errors)
+              globalCallback.onUpdated(updated, store, errors)
+              globalCallback.onPruned(pruned, store, errors)
+
+              // then run the local callbacks if there are any
+              if (subscription.callbacks.length === 0) {
+                return
+              }
+              for (const callback of subscription.callbacks) {
+                callback.before(deltas, store, errors)
+                callback.onAdded(added, store, errors)
+                callback.onUpdated(updated, store, errors)
+                callback.commit(store, errors)
+              }
+              for (const callback of [...subscription.callbacks].reverse()) {
+                callback.onPruned(pruned, store, errors)
+                callback.after(deltas, store, errors)
+                callback.commit(store, errors)
+              }
+              for (const error of errors) {
+                store.commit(
+                  'SET_ALERT',
+                  new Alert(error[0], null, 'error'),
+                  { root: true }
+                )
+                // eslint-disable-next-line no-console
+                console.warn(...error)
+              }
+            },
+            error: function error (err) {
+              subscription.handleViewState(ViewState.ERROR, err)
+            }
+          }
+        )
+        this.subscriptions[subscription.query.name] = subscription
+        // All done!
+        subscription.handleViewState(ViewState.COMPLETE, null)
+        subscription.reload = false
+      } catch (e) {
+        subscription.handleViewState(ViewState.ERROR, e)
+      }
     }
   }
 
@@ -343,7 +372,7 @@ class WorkflowService {
    * @param {SubscriptionOptions} subscriptionOptions - { next(), error() }
    * @returns {Subscription}
    */
-  startDeltasSubscription (query, variables, subscriptionOptions) {
+  startCylcSubscription (query, variables, subscriptionOptions) {
     if (!query) {
       throw new Error('You must provide a query for the subscription')
     }
