@@ -61,7 +61,7 @@ const router = createRouter({
   }
 })
 
-router.beforeResolve((to, from, next) => {
+router.beforeResolve((to, from) => {
   NProgress.start()
   if (to.name) {
     let title
@@ -77,24 +77,20 @@ router.beforeResolve((to, from, next) => {
     }
     store.commit('app/setTitle', title)
     store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
-    store.dispatch('setAlert', null).then(() => {})
+    store.dispatch('setAlert', null)
   }
-  next()
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   if (!store.state.user.user) {
     router.app.config.globalProperties.$userService.getUserProfile()
       .then((user) => {
         store.commit('user/SET_USER', user)
-        next()
       })
-      .catch(error => {
+      .catch((error) => {
         const alert = new Alert(error, null, 'error')
-        return store.dispatch('setAlert', alert)
+        store.dispatch('setAlert', alert)
       })
-  } else {
-    next()
   }
 })
 

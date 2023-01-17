@@ -95,10 +95,8 @@ export default {
     })
   },
 
-  beforeRouteUpdate (to, from, next) {
-    // clear all widgets
+  beforeRouteUpdate (to, from) {
     this.removeAllWidgets()
-    next()
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
@@ -107,10 +105,8 @@ export default {
     })
   },
 
-  beforeRouteLeave (to, from, next) {
-    // clear all widgets
+  beforeRouteLeave (to, from) {
     this.removeAllWidgets()
-    next()
   },
 
   mounted () {

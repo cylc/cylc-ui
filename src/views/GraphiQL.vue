@@ -50,14 +50,13 @@ export default {
       this.$refs.graphiql
     )
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave (to, from) {
     // Important to remember to unsubscribe, otherwise a user may accidentally create several
     // subscriptions/observers, causing performance issues on both frontend and backend.
     if (this.subscription !== null) {
       this.subscription.unsubscribe()
       this.subscription = null
     }
-    next()
   },
   methods: {
     createFetcher () {
