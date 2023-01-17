@@ -22,7 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <!-- Toolbar -->
     <v-row
-      class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
+      no-gutters
+      class="d-flex flex-wrap flex-grow-0"
     >
       <!-- Filters -->
       <v-col

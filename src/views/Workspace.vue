@@ -17,41 +17,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div data-cy="workspace-view">
-    <toolbar
-      :views="views"
+    <Toolbar
+      :views="$options.allViews"
       :workflow-name="workflowName"
       @add="this.addView"
       :initialOptions="{}"
     />
     <div class="workflow-panel fill-height">
-      <lumino
+      <Lumino
         ref="lumino"
-        v-on:lumino:deleted="onWidgetDeletedEvent"
+        @lumino:deleted="onWidgetDeletedEvent"
+        :views="widgets"
         tab-title-prop="tab-title"
-      >
-        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
-        <v-skeleton-loader
-          v-for="(item, id) of widgets"
-          :key="id"
-          :id="id"
-          :loading="isLoading"
-          :tab-title="item.view.data().widget.title"
-          type="list-item-three-line"
-        >
-          <component
-            :is="item.view"
-            :workflow-name="workflowName"
-            :initialOptions="item.initialOptions"
-            class="h-100"
-          />
-        </v-skeleton-loader>
-      </lumino>
+        :workflow-name="workflowName"
+        :allViews="$options.allViews"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { each, iter } from '@lumino/algorithm'
+import { toArray } from '@lumino/algorithm'
 import pageMixin from '@/mixins'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -96,36 +82,10 @@ export default {
     /**
      * The widgets added to the view.
      *
-     * @type {Object.<String, String>}
+     * @type {{ [id: string]: { view: string, initialOptions: Object } }}
      */
-    widgets: {},
-    /**
-     * A list of Vue views or components. These components must provide a .widget
-     * property/data with the title and icon properties.
-     *
-     * Each view in this list will be available from the Toolbar to be added as
-     * a widget.
-     *
-     * @type {Object[]}
-     */
-    views: [
-      TreeView,
-      TableView,
-      GraphView,
-      LogView
-    ]
-
+    widgets: {}
   }),
-  created () {
-    // We need to load each view used by this view/component.
-    // See "local-registration" in Vue.js documentation.
-    this.views.forEach(view => {
-      this.$options.components[view.name] = view
-    })
-  },
-
-  computed: {
-  },
 
   beforeRouteEnter (to, from, next) {
     next(vm => {
@@ -165,16 +125,10 @@ export default {
     /**
      * Add a new view widget.
      *
-     * @type {String} viewName - the name of the view to be added (Vue component name).
+     * viewName - the name of the view to be added (Vue component name).
      */
     addView ({ viewName, initialOptions = {} }) {
-      const view = this.views
-        .filter(v => v.name === viewName)
-        .slice(0)[0]
-      if (!view) {
-        throw Error(`Unknown view "${viewName}"`)
-      }
-      this.widgets[createWidgetId()] = { view, initialOptions }
+      this.widgets[createWidgetId()] = { view: viewName, initialOptions }
       this.$nextTick(() => {
         // Views use navigation-guards to start the pending subscriptions. But we don't have
         // this in this view. We must pretend we are doing the beforeRouteEnter here, and
@@ -184,15 +138,11 @@ export default {
       })
     },
     /**
-     * Remove all the widgets present in the UI.
+     * Remove all the widgets present in the DockPanel.
      */
     removeAllWidgets () {
-      const dockWidgets = this.$refs.lumino.dock.widgets()
-      const widgets = []
-      each(iter(dockWidgets), widget => {
-        widgets.push(widget)
-      })
-      widgets.forEach(widget => widget.close())
+      toArray(this.$refs.lumino.dock.widgets())
+        .forEach(widget => widget.close())
     },
     /**
      * Called for each widget removed. Each widget contains a subscription
@@ -212,10 +162,29 @@ export default {
       // If we have no more widgets in the view, then we are not loading, not complete, not error,
       // but back to beginning. When a widget is added, if it uses a query, then the mixins will
       // take care to set the state to LOADING and then COMPLETE (and hopefully not ERROR).
-      if (Object.entries(this.widgets).length === 0) {
+      if (!Object.keys(this.widgets).length) {
         this.viewState = ViewState.NO_STATE
       }
     }
-  }
+  },
+
+  /**
+   * A list of Vue views or components. These components must provide a .widget
+   * property/data with the title and icon properties.
+   *
+   * Each view in this list will be available from the Toolbar to be added as
+   * a widget.
+   *
+   * Note for peformance reasons this should not be in data() - we don't want
+   * these to be made reactive as they are already Vue components.
+   *
+   * @type {Object[]}
+   */
+  allViews: [
+    TreeView,
+    TableView,
+    GraphView,
+    LogView
+  ]
 }
 </script>
