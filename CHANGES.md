@@ -11,6 +11,13 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 
+## __cylc-ui-1.5.0 (<span actions:bind='release-date'>Released 2023-01-16</span>)__
+
+### Enhancements
+
+[#1184](https://github.com/cylc/cylc-ui/pull/1184) - Mean times for tasks
+in table changed to human readable ISO duration format.
+
 ## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Released 2023-01-16</span>)__
 
 ### Enhancements
