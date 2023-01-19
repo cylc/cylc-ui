@@ -65,7 +65,7 @@ describe('UserService', () => {
       sandbox.stub(axios, 'get').rejects(e)
       return new UserService().getUserProfile()
         .catch((error) => {
-          const alert = new Alert(error.response.statusText, null, 'error')
+          const alert = new Alert(error.response.statusText, 'error')
           return store.dispatch('setAlert', alert)
         })
         .finally(() => {

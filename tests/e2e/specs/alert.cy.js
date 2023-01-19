@@ -28,7 +28,7 @@ describe('Alert component', () => {
     cy.get('.c-header').should('exist')
     const errorMessage = 'Error displayed'
     getStore().then(store => {
-      store.dispatch('setAlert', new Alert(errorMessage, null, 'error'))
+      store.dispatch('setAlert', new Alert(errorMessage, 'error'))
     })
     cy
       .get('.v-snack')
@@ -38,7 +38,7 @@ describe('Alert component', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getStore().then(store => {
-      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', null, 'success'))
+      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', 'success'))
       cy.get('.v-snack').then($alertElements => {
         const backgroundColor = window.getComputedStyle($alertElements[0])['background-color']
         expect(backgroundColor).to.not.equal(COLOR_BLACK)
@@ -51,7 +51,7 @@ describe('Alert component', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getStore().then(store => {
-      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', null, 'warning'))
+      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', 'warning'))
       cy.get('.v-snack').then($alertElements => {
         const backgroundColor = window.getComputedStyle($alertElements[0])['background-color']
         expect(backgroundColor).to.not.equal(COLOR_BLACK)
@@ -64,7 +64,7 @@ describe('Alert component', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getStore().then(store => {
-      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', null, 'error'))
+      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', 'error'))
       cy.get('.v-snack').then($alertElements => {
         const backgroundColor = window.getComputedStyle($alertElements[0])['background-color']
         expect(backgroundColor).to.not.equal(COLOR_BLACK)
@@ -78,7 +78,7 @@ describe('Alert component', () => {
     cy.get('.c-header').should('exist')
     const errorMessage = 'Error displayed'
     getStore().then(store => {
-      store.dispatch('setAlert', new Alert(errorMessage, null, 'error'))
+      store.dispatch('setAlert', new Alert(errorMessage, 'error'))
     })
     cy
       .get('.v-snack')

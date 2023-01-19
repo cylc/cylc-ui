@@ -96,7 +96,7 @@ router.beforeEach((to, from, next) => {
         next()
       })
       .catch(error => {
-        const alert = new Alert(error, null, 'error')
+        const alert = new Alert(error, 'error')
         return store.dispatch('setAlert', alert)
       })
   } else {

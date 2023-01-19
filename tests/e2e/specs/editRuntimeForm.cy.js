@@ -159,7 +159,7 @@ describe('Edit Runtime form', () => {
       .then(() => {
         expect(receivedMutations.length).to.eq(0)
       })
-      .get('[data-cy="response-snackbar"]')
+      .get('[data-cy="warning-snack"]')
       .find('div[role="status"]')
       .invoke('text')
       .should('include', 'No changes were made')
