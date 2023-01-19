@@ -22,67 +22,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 </style>
 <template>
-  <div class="h-100">
-    <v-form>
-      <v-container>
-        <v-row justify="start">
-          <v-col cols="12" md="4" >
-            <v-text-field
-            v-model="task"
-            clearable
-            flat
-            dense
-            hint="Type cycle/task/job to view job log"
-            :prefix="workflowNamePrefix"
-            outlined
-            placeholder="cycle/task/job"
-            class="flex-grow-1 flex-column"
-            id="c-log-search-box"
-            ></v-text-field>
-          </v-col>
-          <v-col
-            cols="12"
-            md="4">
-            <v-select
-              :label="getFileListLabel"
-              :items="getFileList"
-              filled
-              v-model="file"
-              dense
-              clearable
-              outlined
-              >
-            </v-select>
-          </v-col>
-          <v-col  v-show="file === 'other'" cols="12" md="3">
-            <v-text-field
-              v-model="logFileEntered"
-              placeholder="Enter Job File Name Here"
-              dense
-              clearable
-              outlined
-              >
-            </v-text-field>
-          </v-col>
-          <v-col cols="12" md="1">
-            <v-btn
-            :disabled="isDisabled(task, file)"
-            color="primary"
-            dense
-            outlined
-            @click="setId(file, logFileEntered, task)">{{ buttonText() }}</v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-form>
-    <div class="c-log pa-2 h-100" data-cy="log-view">
-      <log-component
-        :logs="lines"
-        ref="log0"
-        placeholder="Waiting for logs..."
-      ></log-component>
-    </div>
-  </div>
+  <v-container fluid mt-4>
+    <v-row>
+      <span class="title font-weight-light ma-2">
+        Viewing {{ this.fileType }} Log: {{ this.actualFile }} for {{ this.workflowName }}
+      </span>
+    </v-row>
+    <v-row justify="start">
+      <v-col cols="12">
+        <v-form fluid>
+          <v-row justify="start">
+            <v-col class="id">
+              <v-text-field v-model.lazy="task" clearable flat dense hint="Type cycle/task/job to view job log"
+                :prefix="workflowNamePrefix" @change="fileQuery()" outlined placeholder="cycle/task/job"
+                class="flex-grow-1 flex-column" id="c-log-search-box"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row justify="start" align="top">
+            <v-col cols="6">
+              <v-select :label="getFileListLabel" :items="getFileList" filled v-model="file" dense clearable outlined>
+              </v-select>
+            </v-col>
+            <v-col cols="2">
+              <v-btn :disabled="isDisabled(task, file)" color="primary" dense outlined @click="setId(file, task)">{{
+                buttonText() }}</v-btn>
+            </v-col>
+            <v-col cols="4">
+              <v-switch v-model="timestamps" color="primary" label="Timestamps"></v-switch>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-col>
+    </v-row>
+    <v-row>
+        <log-component :logs="lines" :timestamps="timestamps" ref="log0" placeholder="Fetching logs..."></log-component>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -92,7 +67,7 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import LogComponent from '@/components/cylc/log/Log'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import { LOGS_SUBSCRIPTION } from '@/graphql/queries'
+import { LOGS_SUBSCRIPTION, LOG_FILE_QUERY } from '@/graphql/queries'
 import { Tokens } from '@/utils/uid'
 
 class LogsCallback {
@@ -135,28 +110,27 @@ export default {
   },
   data () {
     return {
-      jobLogFiles: ['job.out',
-        'job.err',
-        'job',
-        'job-activity.log',
-        'job.status',
-        'job.xtrace',
-        'other'],
-      workflowLogFiles: ['scheduler/log'],
+      logFiles: [],
       widget: {
         title: 'logs',
         icon: mdiFileDocumentMultipleOutline
       },
       selectedLogFile: '',
       lines: [],
-      logFileEntered: '',
       task: '',
-      file: ''
+      file: '',
+      timestamps: true,
+      loading: true,
+      fileType: 'Workflow',
+      actualFile: 'Log'
     }
   },
   created () {
-    this.$data.task = (this.initialOptions.task || '')
-    this.$data.file = (this.initialOptions.file || '')
+    if (this.initialOptions) {
+      this.$data.task = this.initialOptions.task || ''
+      this.$data.file = this.initialOptions.file || ''
+    }
+    this.fileQuery()
   },
   computed: {
     logVariables () {
@@ -166,6 +140,13 @@ export default {
         file: this.$data.file
       }
     },
+    logFileVars () {
+      return {
+        workflowName: new Tokens(this.workflowId).workflow,
+        task: this.$data.task
+      }
+    },
+
     getFileListLabel () {
       if (this.$data.task && this.$data.task.length) {
         return 'Select Job Log File'
@@ -174,9 +155,9 @@ export default {
     },
     getFileList () {
       if (this.$data.task && this.$data.task.length) {
-        return this.$data.jobLogFiles
+        return this.$data.logFiles
       }
-      return this.$data.workflowLogFiles
+      return this.$data.logFiles
     },
     query () {
       return new SubscriptionQuery(
@@ -192,17 +173,39 @@ export default {
       )
     },
     workflowNamePrefix () {
+      if (this.workflowName.length > 20) {
+        const splitWorkflowName = this.workflowName.split('/')
+        const l = splitWorkflowName.length - 1
+        return `../${splitWorkflowName[l]}//`
+      }
       return `${this.workflowName}//`
     }
   },
   methods: {
-    setId (selectedLogFile, logFileEntered, jobSearch) {
+    async fileQuery () {
+      this.$data.logFiles = ['Updating available files...']
+      const result = await this.$workflowService.apolloClient.query({
+        query: LOG_FILE_QUERY,
+        variables: this.logFileVars
+      })
+      this.$data.logFiles = result.data.logFiles.files
+    },
+    setId (selectedLogFile, jobSearch) {
       this.$data.lines = []
       this.$workflowService.unsubscribe(this)
       this.logVariables.task = jobSearch
-      this.logVariables.file = this.getFileName(selectedLogFile, logFileEntered)
+      this.logVariables.file = this.getFileName(selectedLogFile)
       this.$workflowService.subscribe(this)
       this.$workflowService.startSubscriptions()
+      this.$data.actualFile = this.$data.file
+      this.$data.fileType = this.getFileType()
+    },
+    getFileType () {
+      if (this.logVariables.task.length) {
+        return 'Job'
+      } else {
+        return 'Workflow'
+      }
     },
     buttonText () {
       if (this.$data.lines.length) {
@@ -210,22 +213,15 @@ export default {
       }
       return 'Search'
     },
-    getFileName (selectedLogFile, logFileEntered) {
-      if (selectedLogFile === 'scheduler/log') {
+    getFileName (selectedLogFile) {
+      if (selectedLogFile === 'log') {
         return ''
-      }
-      if (selectedLogFile === 'other' && logFileEntered) {
-        return logFileEntered
       } else {
         return selectedLogFile
       }
     },
     isDisabled (jobSearch, file) {
-      if ((jobSearch && file) || (file === 'scheduler/log')) {
-        return false
-      } else {
-        return true
-      }
+      return false
     }
   }
 }

@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <pre><span v-for="(log, index) in logs" :key="index">{{log}}</span></pre>
+    <pre><code><span v-for="(log, index) in computedLogs" :key="index">{{log}}</span></code></pre>
   </div>
 </template>
 
@@ -31,20 +31,52 @@ export default {
       default: 'Waiting for logs',
       required: false
     },
+    timestamps: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
     logs: {
       type: Array,
       required: true
     }
   },
+  data () {
+    return {
+      match: ''
+    }
+  },
   computed: {
     computedLogs () {
       if (this.logs.length > 0) {
-        return this.logs
+        if (!this.timestamps) {
+          return this.updateLogs()
+        } else return this.logs
       } else {
         return [this.placeholder]
       }
+    }
+  },
+  methods: {
+    updateLogs () {
+      return this.logs.map((logLine) => {
+        return this.stripTimestamp(logLine)
+      })
+    },
+    stripTimestamp (logLine) {
+      const regex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
+      this.match = logLine.match(regex)
+      if (this.match) {
+        return this.match[1]
+      }
+      return logLine
     }
   }
 }
 
 </script>
+<style>
+  .theme--light.v-application code{
+    background-color: transparent;
+  }
+</style>
