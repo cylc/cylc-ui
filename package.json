@@ -26,7 +26,7 @@
     "@lumino/algorithm": "^1.9.1",
     "@lumino/default-theme": "^0.22.0",
     "@lumino/widgets": "^1.31.1",
-    "axios": "^0.27.0",
+    "axios": "^1.0.0",
     "core-js": "3",
     "dedent": "^0.7.0",
     "enumify": "^2.0.0",
@@ -104,5 +104,5 @@
   "resolutions": {
     "webpack-dev-server/selfsigned": "^2.0.1"
   },
-  "packageManager": "yarn@3.2.3"
+  "packageManager": "yarn@3.3.1"
 }
