@@ -10,8 +10,8 @@ creating a new release entry be sure to copy & paste the span tag with the
 `actions:bind` attribute, which is used by a regex to find the text to be
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
-
-## __cylc-ui-1.5.0 (<span actions:bind='release-date'>Released 2023-01-16</span>)__
+-------------------------------------------------------------------------------
+## __cylc-ui-1.5.0 (<span actions:bind='release-date'>Upcoming</span>)__
 
 ### Enhancements
 
@@ -21,6 +21,12 @@ in table changed to human readable ISO duration format.
 [#1182](https://github.com/cylc/cylc-ui/pull/1182) - Allow filtering by
 cycle point and family in tree & table views.
 
+### Fixes
+
+[#1182](https://github.com/cylc/cylc-ui/pull/1182) - Fixes bug in filtering
+by task name.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Released 2023-01-16</span>)__
 
 ### Enhancements
