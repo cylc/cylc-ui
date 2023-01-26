@@ -20,8 +20,8 @@ describe('Default layout', () => {
     // visit any page first, so that we create the window.app reference
     cy.visit('/#/workspace/one')
     cy
-      .get('.v-alert')
-      .should('not.exist')
+      .get('.v-snack__wrapper')
+      .should('not.visible')
     cy.window().its('app.$workflowService').then(service => {
       // mock service so that it returns an error
       cy.stub(service, 'subscribe', () => {
@@ -33,7 +33,7 @@ describe('Default layout', () => {
         .contains('Dashboard')
         .click({ force: true })
       cy
-        .get('.v-alert')
+        .get('.v-snack__wrapper')
         .should('be.visible')
     })
   })
