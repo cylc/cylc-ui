@@ -62,7 +62,7 @@ import { mdiHelpCircleOutline } from '@mdi/js'
 import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
 import { VTextarea } from 'vuetify/lib/components'
 import VuetifyConfig, { getComponentProps, RUNTIME_SETTING } from '@/components/graphqlFormGenerator/components/vuetify'
-import { findByName, mutate } from '@/utils/aotf'
+import { findByName, mutate, mutationStatus } from '@/utils/aotf'
 
 export default {
   name: 'EditRuntimeForm',
@@ -161,9 +161,7 @@ export default {
       if (!settings.length) {
         return {
           message: 'No changes were made',
-          status: {
-            name: 'warn'
-          }
+          status: mutationStatus.WARN
         }
       }
       const args = {

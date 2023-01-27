@@ -47,8 +47,7 @@ import {
   mdiStop
 } from '@mdi/js'
 
-import AlertModel from '@/model/Alert.model'
-import TaskState from '@/model/TaskState.model'
+import Alert from '@/model/Alert.model'
 import store from '@/store/index'
 import { Tokens } from '@/utils/uid'
 
@@ -108,7 +107,7 @@ import { IntrospectionInputType } from 'graphql'
 
 /**
  * @typedef {Object} MutationResponse
- * @property {TaskState} status
+ * @property {string} status
  * @property {string} message
  */
 
@@ -280,11 +279,9 @@ export const alternateFields = {
  * Maps onto task status.
  */
 export const mutationStatus = Object.freeze({
-  [TaskState.WAITING]: TaskState.WAITING,
-  [TaskState.SUBMITTED]: TaskState.SUBMITTED,
-  [TaskState.SUCCEEDED]: TaskState.SUCCEEDED,
-  [TaskState.FAILED]: TaskState.FAILED,
-  [TaskState.SUBMIT_FAILED]: TaskState.SUBMIT_FAILED
+  FAILED: 'FAILED',
+  SUCCEEDED: 'SUCCEEDED',
+  WARN: 'WARN'
 })
 
 /**
@@ -832,6 +829,17 @@ export function getMutationArgsFromTokens (mutation, tokens) {
 }
 
 /**
+ * @param {string} message
+ * @returns {MutationResponse}
+ */
+function _mutateSuccess (message) {
+  return {
+    status: mutationStatus.SUCCEEDED,
+    message
+  }
+}
+
+/**
  * Handle an error in a called mutation.
  *
  * @param {string} mutationName
@@ -848,15 +856,14 @@ async function _mutateError (mutationName, message, response) {
   }
 
   // open a user alert
-  await store.dispatch('setAlert', new AlertModel(
-    `command failed: ${mutationName} - ${message}`,
-    null,
-    'error')
+  await store.dispatch(
+    'setAlert',
+    new Alert(`Command failed: ${mutationName} - ${message}`, 'error')
   )
 
   // format a response
   return {
-    status: TaskState.SUBMIT_FAILED,
+    status: mutationStatus.FAILED,
     message
   }
 }
@@ -869,7 +876,7 @@ async function _mutateError (mutationName, message, response) {
  * @param {ApolloClient} apolloClient
  * @param {string=} cylcID
  *
- * @returns {Promise<MutationResponse>} {status, msg}
+ * @returns {(MutationResponse | Promise<MutationResponse>)} {status, msg}
  */
 export async function mutate (mutation, variables, apolloClient, cylcID) {
   const mutationStr = constructMutation(mutation)
@@ -898,24 +905,18 @@ export async function mutate (mutation, variables, apolloClient, cylcID) {
   }
 
   try {
-    const result = response.data[mutation.name].result
+    const { result } = response.data[mutation.name]
     if (Array.isArray(result) && result.length === 2) {
       // regular [commandSucceeded, message] format
       if (result[0] === true) {
         // success
-        return {
-          status: TaskState.SUBMITTED,
-          message: result[1]
-        }
+        return _mutateSuccess(result[1])
       }
       // failure (Cylc error, e.g. could not find workflow <x>)
       return _mutateError(mutation.name, result[1], response)
     }
     // command in a different format (e.g. info command)
-    return {
-      status: TaskState.SUBMITTED,
-      message: result
-    }
+    return _mutateSuccess(result)
   } catch (error) {
     return _mutateError(mutation.name, 'invalid response', response)
   }

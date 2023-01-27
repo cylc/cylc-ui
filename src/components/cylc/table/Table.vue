@@ -254,7 +254,7 @@ export default {
   },
   computed: {
     filteredTasks () {
-      return this.tasks.filter(({ task }) => matchNode(task.node, this.tasksFilter.name, this.tasksFilter.states))
+      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
     }
   },
   methods: {

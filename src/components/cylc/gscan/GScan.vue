@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-text-field
           v-model="searchWorkflows"
           clearable
+          :clear-icon="$options.icons.mdiClose"
           flat
           dense
           hide-details
