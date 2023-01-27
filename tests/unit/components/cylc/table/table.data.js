@@ -18,25 +18,29 @@ import TaskState from '@/model/TaskState.model'
 import JobState from '@/model/JobState.model'
 import { Tokens } from '@/utils/uid'
 
-const BASE_TOKENS = new Tokens('~cylc/workflow//1')
+const tk = {
+  taskA: new Tokens('~cylc/workflow//20000101T0000Z/taskA'),
+  taskB: new Tokens('~cylc/workflow//20000102T0000Z/taskB'),
+  taskC: new Tokens('~cylc/workflow//20000103T0000Z/taskC')
+}
 
 const simpleTableTasks = [
   {
     task: {
-      id: BASE_TOKENS.clone({ task: 'taskA' }).id,
+      id: tk.taskA.id,
       name: 'taskA',
-      tokens: { task: 'taskA', cycle: '20000101T0000Z' },
+      tokens: tk.taskA,
       node: {
-        id: BASE_TOKENS.clone({ task: 'taskA' }).id,
+        id: tk.taskA.id,
         state: TaskState.RUNNING.name,
         name: 'taskA',
         meanElapsedTime: 2000
       },
       children: [
         {
-          id: BASE_TOKENS.clone({ task: 'taskA', job: '01' }).id,
+          id: tk.taskA.clone({ job: '01' }).id,
           name: '01',
-          tokens: { task: 'taskA', cycle: '20000101T0000Z' },
+          tokens: tk.taskA.clone({ job: '01' }),
           node: {
             platform: 'localhost',
             jobRunnerName: 'background',
@@ -51,9 +55,9 @@ const simpleTableTasks = [
       ]
     },
     latestJob: {
-      id: BASE_TOKENS.clone({ task: 'taskA', job: '01' }).id,
+      id: tk.taskA.clone({ job: '01' }).id,
       name: '01',
-      tokens: { task: 'taskA', cycle: '20000101T0000Z' },
+      tokens: tk.taskA.clone({ job: '01' }),
       node: {
         platform: 'localhost',
         jobRunnerName: 'background',
@@ -69,11 +73,11 @@ const simpleTableTasks = [
   },
   {
     task: {
-      id: BASE_TOKENS.clone({ task: 'taskB' }).id,
+      id: tk.taskB.id,
       name: 'taskB',
-      tokens: { task: 'taskB', cycle: '20000102T0000Z' },
+      tokens: tk.taskB,
       node: {
-        id: BASE_TOKENS.clone({ task: 'taskB' }).id,
+        id: tk.taskB.id,
         state: TaskState.WAITING.name,
         name: 'taskB',
         cyclePoint: '20000102T0000Z'
@@ -85,11 +89,11 @@ const simpleTableTasks = [
   },
   {
     task: {
-      id: BASE_TOKENS.clone({ task: 'taskC' }).id,
+      id: tk.taskC.id,
       name: 'taskC',
-      tokens: { task: 'taskC', cycle: '20000103T0000Z' },
+      tokens: tk.taskC,
       node: {
-        id: BASE_TOKENS.clone({ task: 'taskC' }).id,
+        id: tk.taskC.id,
         state: TaskState.SUBMITTED.name,
         name: 'taskC',
         cyclePoint: '20000103T0000Z'

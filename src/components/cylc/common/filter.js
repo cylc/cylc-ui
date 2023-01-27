@@ -18,21 +18,21 @@
 /* Logic for filtering tasks. */
 
 /**
- * Return true if a node has matches the specified name/state filter.
+ * Return true if a node matches the specified id/state filter.
  *
  * @export
- * @param {{ name: string, state: string }} node
- * @param {?string} name
+ * @param {Object} node
+ * @param {?string} id
  * @param {?string[]} states
  * @return {boolean}
  */
-export function matchNode (node, name, states) {
+export function matchNode (node, id, states) {
   let ret = true
-  if (name?.trim()) {
-    ret &&= node.name.includes(name)
+  if (id?.trim()) {
+    ret &&= node.tokens.relative_id.includes(id)
   }
   if (states?.length) {
-    ret &&= states.includes(node.state)
+    ret &&= states.includes(node.node.state)
   }
   return ret
 }
