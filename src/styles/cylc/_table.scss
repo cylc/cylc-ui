@@ -26,4 +26,8 @@
     height: 100%;
     font-size: 1.2em;
   }
+
+  .expanded-row td {
+    background: none !important; // Allow <tr> background to come through
+  }
 }
