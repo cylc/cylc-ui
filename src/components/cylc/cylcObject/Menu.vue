@@ -18,91 +18,90 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <!-- dropdown menu -->
-    <v-menu
-      content-class="c-mutation-menu"
-      v-model="showMenu"
-      :offset="[x, y]"
-      @show-mutations-menu="showMutationsMenu"
-      :disabled="!interactive"
-      :close-on-content-click="false"
-      persistent
-      v-click-outside="{ handler: onClickOutside, include: clickOutsideInclude }"
-      max-height="90vh"
-      dark
-    >
-      <!-- NOTE: because the `attach` prop is not true, the actual DOM element
-      containing the stuff below is not the `.v-menu` div, but a completely
-      separate `.v-menu__content` div created by vuetify
-      (the `.v-menu` div is actually empty). -->
+    <v-scale-transition :origin="transitionOrigin">
       <v-card
         ref="menuContent"
         v-if="node"
+        v-show="showMenu"
+        @show-mutations-menu="showMutationsMenu"
+        :key="node.id"
+        v-click-outside="{ handler: onClickOutside }"
+        class="c-mutation-menu elevation-10 overflow-y-auto"
+        max-height="90vh"
+        width="100%"
+        max-width="600px"
+        theme="dark"
+        position="absolute"
+        :style="{
+          left: `${x}px`,
+          top: `${y}px`
+        }"
       >
-        <v-card-title class="text-h6">
+        <v-card-title class="pb-1 pt-3">
           {{ node.id }}
         </v-card-title>
-        <v-card-subtitle>
+        <v-card-subtitle class="pt-0 pb-2">
           {{ typeAndStatusText }}
         </v-card-subtitle>
-        <v-divider v-if="primaryMutations.length || displayMutations.length"/>
+        <v-divider v-if="primaryMutations.length || displayMutations.length" />
+        <!-- TODO: replace v-progress-linear with v-skeleton-loader when
+        the latter is added to Vuetify 3 -->
         <!-- <v-skeleton-loader
           v-if="isLoadingMutations && primaryMutations.length"
           type="list-item-avatar-two-line@3"
           min-width="400"
         /> -->
+        <v-progress-linear
+          v-if="isLoadingMutations && primaryMutations.length"
+          indeterminate
+          min-width="400px"
+        />
         <v-list
           v-if="displayMutations.length"
-          class="c-mutation-menu-list"
+          class="c-mutation-menu-list pt-0"
+          :lines="false"
         >
           <v-list-item
             v-for="{ mutation, requiresInfo, authorised } in displayMutations"
             :key="mutation.name"
             :disabled="!authorised"
             @click.stop="enact(mutation, requiresInfo)"
-            class="c-mutation"
+            class="c-mutation py-2 pr-2"
+            :title="mutation._title"
+            :subtitle="mutation._shortDescription"
           >
-            <v-list-item-avatar>
-              <v-icon size="large">{{ mutation._icon }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>{{ mutation._title }}</v-list-item-title>
-              <!--
-              don't use v-list-item-description here, vuetify will standardise
-              line heights and cuts off text that overspills this way we can
-              have the required number of lines of text.
-              -->
-              <span class="c-description">{{ mutation._shortDescription }}</span>
-            </v-list-item-content>
-            <v-list-item-action>
+            <template v-slot:prepend>
+              <v-icon
+                :icon="mutation._icon"
+                size="x-large"
+              />
+            </template>
+            <template v-slot:append>
               <v-btn
                 icon
+                variant="text"
                 :disabled="isEditable(authorised, mutation)"
-                size="x-large"
-                class="float-right"
+                size="large"
                 @click.stop="openDialog(mutation)"
                 data-cy="mutation-edit"
               >
                 <v-icon>{{ icons.pencil }}</v-icon>
               </v-btn>
-            </v-list-item-action>
+            </template>
           </v-list-item>
-          <v-list-item
-            v-if="canExpand"
-          >
-            <v-list-item-content
+          <v-list-item v-if="canExpand">
+            <v-btn
+              id="less-more-button"
               @click="expandCollapse"
-              @click.stop.prevent
+              block
+              variant="tonal"
             >
-              <v-btn id="less-more-button"
-                rounded
-              >
-                {{ expanded ? 'See Less' : 'See More' }}
-              </v-btn>
-            </v-list-item-content>
+              {{ expanded ? 'See Less' : 'See More' }}
+            </v-btn>
           </v-list-item>
         </v-list>
       </v-card>
-    </v-menu>
+    </v-scale-transition>
     <v-dialog
       v-model="dialog"
       width="700px"
@@ -124,6 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { nextTick } from 'vue'
 import {
   filterAssociations,
   getMutationArgsFromTokens,
@@ -163,6 +163,7 @@ export default {
       types: [],
       x: 0,
       y: 0,
+      transitionOrigin: 'top left',
       icons: {
         pencil: mdiPencil
       }
@@ -276,37 +277,36 @@ export default {
       this.showMenu = false
       this.expanded = false
       if (e.target?.classList.contains('c-interactive')) {
-        this.$nextTick(() => {
-          // Wait until next tick so that the menu briefly closes + reopens
-          // giving more indication to user that it has changed
-          this.showMenu = true
-        })
+        this.showMenu = true
       }
-    },
-
-    /**
-     * Return array of elements that count as "inside" for the
-     * close-on-click-outside functionality.
-     *
-     * @returns {Array<HTMLElement>}
-     */
-    clickOutsideInclude () {
-      // Need this to tell vuetify what the actual content DOM element is
-      // instead of the empty `this.$el` (see note at top).
-      const el = this.$refs.menuContent?.$el
-      // (Return empty array if element not yet loaded)
-      return el ? [el] : []
     },
 
     expandCollapse () {
       this.expanded = !this.expanded
-      this.$nextTick(() => {
-        // If expanding menu causes it overflow off screen, move it into view
-        // (This would happen automatically, but it's too slow -
-        // see https://github.com/cylc/cylc-ui/issues/1163)
-        if (this.y + this.$refs.menuContent.$el.clientHeight > document.body.clientHeight) {
-          this.y = document.body.clientHeight - this.$refs.menuContent.$el.clientHeight - 5
-        }
+      this.reposition()
+    },
+
+    /**
+     * Place the menu in a way that prevents it overflowing off screen and
+     * so it takes up the full width as needed on narrow viewports.
+     *
+     * @param {number} x - preferred x coordinate
+     * @param {number} y - preferred y coordinate
+     */
+    reposition (x = null, y = null) {
+      x ??= this.x
+      y ??= this.y
+      // Temporarily set coords to 0 because otherwise transition origin
+      // doesn't seem to work correctly (but the menu doesn't get time to
+      // render at this position)
+      this.x = this.y = 0
+      nextTick(() => {
+        this.x = x + this.$refs.menuContent.$el.clientWidth > document.body.clientWidth
+          ? document.body.clientWidth - this.$refs.menuContent.$el.clientWidth
+          : x
+        this.y = y + this.$refs.menuContent.$el.clientHeight > document.body.clientHeight
+          ? document.body.clientHeight - this.$refs.menuContent.$el.clientHeight - 5
+          : y
       })
     },
 
@@ -323,9 +323,10 @@ export default {
     },
 
     showMutationsMenu ({ node, event }) {
+      this.transitionOrigin = `${event.clientX}px ${event.clientY}px`
       this.node = node
-      this.x = event.clientX
-      this.y = event.clientY
+      this.showMenu = true
+      this.reposition(event.clientX, event.clientY)
       // await graphql query to get mutations
       this.$workflowService.introspection.then(({ mutations, types }) => {
         // if mutations are slow to load then there will be a delay before they are reactively
@@ -345,8 +346,8 @@ export default {
         ).sort(
           (a, b) => a.mutation.name.localeCompare(b.mutation.name)
         )
+        this.reposition(event.clientX, event.clientY)
       })
-      this.showMenu = true
     },
 
     initialData (mutation, tokens) {

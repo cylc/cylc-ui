@@ -16,26 +16,17 @@
  */
 
 .c-mutation-menu {
-  max-width: 600px;
+  z-index: 2000 !important;
 
-  .v-card__title {
+  .v-card-title {
     font-size: 1.1rem !important;
     line-height: 1.5rem;
-  }
-
-  .v-card__title + .v-card__subtitle {
-    margin-top: -0.8rem;
+    white-space: normal;
   }
 
   .c-mutation {
-    .c-title {
-      font-size: 1rem;
-    }
-
-    .c-description {
-      opacity: 0.7;
-      font-size: 0.9rem;
-      line-height: 1.35;
+    .v-list-item__prepend > .v-icon {
+      opacity: 1;
     }
   }
 }
