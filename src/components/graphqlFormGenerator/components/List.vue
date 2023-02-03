@@ -32,13 +32,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <!-- NOTE: we use :is here due to a nested component registration issue. -->
         <template v-slot:append="slotProps">
-          <v-icon
+          <v-btn
             @click="remove(index)"
             v-bind="slotProps"
-            class="remove-btn"
+            icon
+            size="small"
+            variant="plain"
+            class="remove-btn mt-n2"
           >
-            {{ svgPaths.close }}
-          </v-icon>
+            <v-icon size="x-large">
+              {{ svgPaths.close }}
+            </v-icon>
+          </v-btn>
         </template>
       </component>
     </v-list-item>

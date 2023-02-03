@@ -19,8 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-row
-    class="c-key-val"
-    density="compact"
+    class="c-key-val my-1"
     no-gutters
   >
     <v-col cols="4">
@@ -29,9 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           placeholder="key"
           v-model="modelValue.key"
           :disabled="modelValue.frozenKey"
-          density="compact"
-          variant="filled"
           class="c-input-key"
+          v-bind="$options.textFieldProps"
         />
         <v-tooltip
           activator="parent"
@@ -48,13 +46,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-text-field
         placeholder="value"
         v-model="modelValue.value"
-        density="compact"
-        variant="filled"
         class="c-input-val"
+        v-bind="$options.textFieldProps"
       />
     </v-col>
     <v-col cols="auto">
-      <div>
+      <div class="mt-2">
         <slot
           name="append"
           :disabled="modelValue.frozenKey"
@@ -88,6 +85,12 @@ export default {
         openDelay: 400
       }
     }
+  },
+
+  textFieldProps: {
+    density: 'compact',
+    variant: 'filled',
+    hideDetails: true
   }
 }
 </script>
