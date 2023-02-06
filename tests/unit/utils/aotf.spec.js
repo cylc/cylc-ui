@@ -63,7 +63,7 @@ describe('aotf (Api On The Fly)', () => {
     it('should add computed fields', () => {
       const input = {
         name: 'fooBar',
-        description: 'Short description.\n\nLong\ndescription.',
+        description: 'Short description.\n\nLong\ndescription.\nValid for: [\'stopped\'] workflows.',
         args: []
       }
       const output = {
@@ -71,7 +71,8 @@ describe('aotf (Api On The Fly)', () => {
         _title: 'Foo Bar',
         _icon: aotf.mutationIcons[''],
         _shortDescription: 'Short description.',
-        _help: 'Long\ndescription.'
+        _help: 'Long\ndescription.\nValid for: [\'stopped\'] workflows.',
+        _validStates: "['stopped']"
       }
       aotf.processMutations([input], null)
       expect(input).to.deep.equal(output)

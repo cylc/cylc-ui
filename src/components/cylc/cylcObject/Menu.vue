@@ -59,12 +59,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-list-item
             v-for="{ mutation, requiresInfo, authorised } in displayMutations"
             :key="mutation.name"
-            :disabled="!authorised"
+            :disabled="isDisabled(mutation, authorised)"
             @click.stop="enact(mutation, requiresInfo)"
             class="c-mutation"
           >
             <v-list-item-avatar>
-              <v-icon :disabled="!authorised" large>
+              <v-icon :disabled="isDisabled(mutation, authorised)" large>
                 {{ mutation._icon }}
               </v-icon>
             </v-list-item-avatar>
@@ -232,11 +232,17 @@ export default {
 
   methods: {
     isEditable (authorised, mutation) {
-      if (!authorised || mutation.name === 'log') {
+      if (mutation.name === 'log' || this.isDisabled(mutation, authorised)) {
         return true
       } else {
         return false
       }
+    },
+    isDisabled (mutation, authorised) {
+      if (((mutation._validStates.indexOf(this.node.node.status)) === -1) || !authorised) {
+        return true
+      }
+      return false
     },
     openDialog (mutation) {
       if (mutation.name === 'log') {
