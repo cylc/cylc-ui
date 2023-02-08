@@ -239,7 +239,7 @@ export default {
       }
     },
     isDisabled (mutation, authorised) {
-      if (((mutation._validStates.indexOf(this.node.node.status)) === -1) || !authorised) {
+      if (((!mutation._validStates.includes(this.node.node.status))) || !authorised) {
         return true
       }
       return false
