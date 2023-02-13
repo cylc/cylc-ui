@@ -62,11 +62,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiHelpCircleOutline } from '@mdi/js'
 import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
 import { VTextarea } from 'vuetify/components'
 import VuetifyConfig, { getComponentProps, RUNTIME_SETTING } from '@/components/graphqlFormGenerator/components/vuetify'
 import { findByName, mutate } from '@/utils/aotf'
+
+const NamedTypes = {
+  ...VuetifyConfig.namedTypes,
+  String: {
+    is: VTextarea,
+    rows: '1',
+    autoGrow: true,
+    style: 'font-family: monospace;'
+  }
+}
 
 export default {
   name: 'EditRuntimeForm',
@@ -96,19 +105,7 @@ export default {
     return {
       type: undefined,
       loading: true,
-      model: {},
-      namedTypes: {
-        ...VuetifyConfig.namedTypes,
-        String: {
-          is: VTextarea,
-          rows: '1',
-          autoGrow: true,
-          style: 'font-family: monospace;'
-        }
-      },
-      icons: {
-        help: mdiHelpCircleOutline
-      }
+      model: {}
     }
   },
 
@@ -235,7 +232,7 @@ export default {
       const gqlType = findByName(this.type.fields, fieldName).type
       return {
         gqlType,
-        ...getComponentProps(gqlType, this.namedTypes, VuetifyConfig.kinds)
+        ...getComponentProps(gqlType, NamedTypes, VuetifyConfig.kinds)
       }
     },
 

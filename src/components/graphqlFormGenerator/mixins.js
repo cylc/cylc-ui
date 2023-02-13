@@ -18,9 +18,7 @@
 import FormInput from '@/components/graphqlFormGenerator/FormInput'
 
 export const formElement = {
-  components: {
-    'form-input': FormInput
-  },
+  components: {}, // Filled on created()
 
   props: {
     // the GraphQL type this input represents
@@ -41,9 +39,14 @@ export const formElement = {
 
   emits: ['update:modelValue'],
 
-  data: () => ({
-    FormInput
-  }),
+  created () {
+    // Avoid problem of circular reference by deferring
+    // the population of $options.components
+    // https://forum.vuejs.org/t/failed-to-resolve-component-when-not-using-hot-swap/113894/2
+    // TODO: FormInput is not needed by all components that use this
+    // mixin; we should replace this mixin with a composable.
+    this.$options.components.FormInput = FormInput
+  },
 
   computed: {
     /* The model we pass to the form input.

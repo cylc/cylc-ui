@@ -18,11 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-input>
     <template>
-      <component
+      <FormInput
        v-for="input in inputs"
        v-bind:key="input.label"
        v-model="model[input.label]"
-       :is="FormInput"
        :gqlType="input.gqlType"
        :types="types"
       />

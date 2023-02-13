@@ -22,15 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :key="index"
     >
       <!-- The input -->
-      <component
+      <FormInput
         v-model="modelValue[index]"
         :propOverrides="{ density: 'compact' }"
         :gqlType="gqlType.ofType"
         :types="types"
-        :is="FormInput"
         ref="inputs"
       >
-        <!-- NOTE: we use :is here due to a nested component registration issue. -->
         <template v-slot:append="slotProps">
           <v-btn
             @click="remove(index)"
@@ -45,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-icon>
           </v-btn>
         </template>
-      </component>
+      </FormInput>
     </v-list-item>
     <v-list-item>
       <v-btn

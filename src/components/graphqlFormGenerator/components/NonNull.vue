@@ -16,19 +16,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <component
+  <FormInput
     v-model="model"
     :propOverrides="{rules: [nonNullRule]}"
     :gqlType="gqlType.ofType"
     :types="types"
     label="(required)"
-    :is="FormInput"
   >
     <template v-slot:append>
       <!-- pass the "append" slot onto the child component -->
       <slot name="append"></slot>
     </template>
-  </component>
+  </FormInput>
 </template>
 
 <script>
