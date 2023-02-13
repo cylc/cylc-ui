@@ -19,22 +19,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div class="c-analysis" style="width: 100%; height: 100%">
     <h3>Analysis View</h3>
     <ViewToolbar :groups="groups" />
-    <ul
-      v-for="task of tasks"
-      :key="task.name"
+    <v-row
+      no-gutters
+      class="flex-grow-1 position-relative"
     >
-      <li>
-        {{ task.name }}
-        <br />
-        <span style="padding-left: 1em">queue times: {{ task.queueTimes }}</span>
-        <br />
-        <span style="padding-left: 1em">run times: {{ task.runTimes }}</span>
-        <br />
-        <span style="padding-left: 1em">total times: {{ task.totalTimes }}</span>
-        <br />
-        <span style="padding-left: 1em">platform: {{ task.platform }}</span>
-      </li>
-    </ul>
+    <v-col
+      cols="12"
+      class="mh-100 position-relative"
+    >
+      <v-container
+        fluid
+        class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
+      >
+        <v-data-table
+          :headers="headers"
+          :items="taskStats"
+          :sort-by.sync="sortBy"
+          dense
+          :footer-props="{
+            itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
+            showFirstLastPage: true
+          }"
+          :options="{ itemsPerPage: 50 }"
+        />
+        </v-container>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -196,7 +206,38 @@ export default {
       // instance of the callback class
       callback: new AnalysisCallback(jobs),
       // object containing all of the jobs added by the callback
-      jobs
+      jobs,
+      sortBy: 'name',
+      headers: [
+        {
+          text: 'Task',
+          value: 'name'
+        },
+        {
+          text: 'Platform',
+          value: 'platform'
+        },
+        {
+          text: 'Count',
+          value: 'successfulJobs'
+        },
+        {
+          text: 'Failure rate (%)',
+          value: 'failureRate'
+        },
+        {
+          text: 'Mean T-queue (s)',
+          value: 'meanQueueTime'
+        },
+        {
+          text: 'Mean T-run (s)',
+          value: 'meanRunTime'
+        },
+        {
+          text: 'Mean T-total (s)',
+          value: 'meanTotalTime'
+        }
+      ],
     }
   },
 
@@ -250,6 +291,25 @@ export default {
         }
       }
       return tasks
+    },
+    taskStats () {
+      const taskStats = []
+      const mean = times => times.reduce((prev, curr) => prev + curr) / times.length
+      if (Object.keys(this.tasks).length > 0) {
+        for (const [taskName, task] of Object.entries(this.tasks)) {
+          const stats = {
+            name: taskName,
+            platform: task.platform,
+            successfulJobs: task.successfulJobs,
+            failureRate: 100 * task.failedJobs / task.successfulJobs,
+            meanQueueTime: mean(task.queueTimes),
+            meanRunTime: mean(task.runTimes),
+            meanTotalTime: mean(task.totalTimes)
+          }
+          taskStats.push(stats)
+        }
+      }
+      return taskStats
     }
   },
 
