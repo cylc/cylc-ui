@@ -6500,7 +6500,7 @@ __metadata:
     vue-meta: ^2.4.0
     vue-router: ^4.0.0
     vue-the-mask: ^0.11.1
-    vuetify: ^3.1.3
+    vuetify: ^3.1.4
     vuex: ^4.1.0
     wasm-loader: ^1.3.0
     webpack: ^5.0.0
@@ -15281,9 +15281,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vuetify@npm:^3.1.3":
-  version: 3.1.3
-  resolution: "vuetify@npm:3.1.3"
+"vuetify@npm:^3.1.4":
+  version: 3.1.4
+  resolution: "vuetify@npm:3.1.4"
   peerDependencies:
     vite-plugin-vuetify: ^1.0.0-alpha.12
     vue: ^3.2.0
@@ -15296,7 +15296,7 @@ __metadata:
       optional: true
     webpack-plugin-vuetify:
       optional: true
-  checksum: 036d7375207ffa77eef662349cdd0f28d3b2bd9324f8e68726d62695c83613a7c6607ca7794f2c8f09be03a3ba059db0c500285f22edcddd6c235ae26d29c569
+  checksum: 2ff93e0467204006b6466a5d43a9017810b2c69ff0bb597886d1a5445722e5339ab9d6247ee1202478ac4b92b4110428171e3aa5d737ecc50ec82053305f2421
   languageName: node
   linkType: hard
 
