@@ -20,15 +20,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <h3>Analysis View</h3>
     <ViewToolbar :groups="groups" />
     <ul
-      v-for="job of jobs"
-      :key="job.id"
+      v-for="task of tasks"
+      :key="task.name"
     >
       <li>
-        {{ job.id }}
+        {{ task.name }}
         <br />
-        <span style="padding-left: 1em">started: {{ job.startedTime }}</span>
+        <span style="padding-left: 1em">queue times: {{ task.queueTimes }}</span>
         <br />
-        <span style="padding-left: 1em">finished: {{ job.finishedTime }}</span>
+        <span style="padding-left: 1em">run times: {{ task.runTimes }}</span>
+        <br />
+        <span style="padding-left: 1em">total times: {{ task.totalTimes }}</span>
+        <br />
+        <span style="padding-left: 1em">platform: {{ task.platform }}</span>
       </li>
     </ul>
   </div>
@@ -51,7 +55,10 @@ import {
 // list of fields to request for jobs
 const jobFields = [
   'id',
+  'name',
   'state',
+  'platform',
+  'submittedTime',
   'startedTime',
   'finishedTime'
 ]
@@ -211,6 +218,38 @@ export default {
     // to be mult-workflow compatible in advance of this feature arriving
     workflowIDs () {
       return [this.workflowId]
+    },
+    tasks () {
+      const tasks = {}
+      for (const [key, job] of Object.entries(this.jobs)) {
+        if (job.state === '0' || job.state === 'succeeded') {
+          // Calculate timings in seconds
+          const submittedT = new Date(job.submittedTime)
+          const startedT = new Date(job.startedTime)
+          const finishedT = new Date(job.finishedTime)
+          const queueT = (startedT - submittedT) / 1000
+          const runT = (finishedT - startedT) / 1000
+          const totalT = (finishedT - submittedT) / 1000
+
+          if (job.name in tasks) {
+            tasks[job.name].queueTimes.push(queueT)
+            tasks[job.name].runTimes.push(runT)
+            tasks[job.name].totalTimes.push(totalT)
+            tasks[job.name].successfulJobs += 1
+          } else {
+            tasks[job.name] = {
+              name: job.name,
+              platform: job.platform,
+              queueTimes: [queueT],
+              runTimes: [runT],
+              totalTimes: [totalT],
+              successfulJobs: 1,
+              failedJobs: 0
+            }
+          }
+        }
+      }
+      return tasks
     }
   },
 
