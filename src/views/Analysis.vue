@@ -17,34 +17,62 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="c-analysis" style="width: 100%; height: 100%">
-    <h3>Analysis View</h3>
-    <ViewToolbar :groups="groups" />
-    <v-row
-      no-gutters
-      class="flex-grow-1 position-relative"
+    <v-container
+    fluid
+    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
     >
-    <v-col
-      cols="12"
-      class="mh-100 position-relative"
-    >
-      <v-container
-        fluid
-        class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
+      <!-- Toolbar -->
+      <v-row
+        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
       >
-        <v-data-table
-          :headers="headers"
-          :items="taskStats"
-          :sort-by.sync="sortBy"
-          dense
-          :footer-props="{
-            itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
-            showFirstLastPage: true
-          }"
-          :options="{ itemsPerPage: 50 }"
-        />
-        </v-container>
-      </v-col>
-    </v-row>
+        <!-- Filters -->
+        <v-row class="no-gutters">
+          <v-col
+            cols="12"
+            md="12"
+            class="pl-md-2 pr-md-2 mb-2 mb-md-0"
+          >
+            <v-select
+              id="c-analysis-filter-task-platforms"
+              :items="timingOptions"
+              dense
+              flat
+              hide-details
+              outlined
+              prefix="Displaying: "
+              v-model="timingOption"
+            > {{ timingOption }} </v-select>
+          </v-col>
+        </v-row>
+      </v-row>
+      <ViewToolbar :groups="groups" />
+      <v-row
+        no-gutters
+        class="flex-grow-1 position-relative"
+      >
+        <v-col
+          cols="12"
+          class="mh-100 position-relative"
+        >
+          <v-container
+            fluid
+            class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
+          >
+            <v-data-table
+              :headers="shownHeaders"
+              :items="taskStats"
+              :sort-by.sync="sortBy"
+              dense
+              :footer-props="{
+                itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
+                showFirstLastPage: true
+              }"
+              :options="{ itemsPerPage: 50 }"
+            ></v-data-table>
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -208,6 +236,12 @@ export default {
       // object containing all of the jobs added by the callback
       jobs,
       sortBy: 'name',
+      timingOptions: [
+        { text: 'Total times', value: 'totalTimes' },
+        { text: 'Run times', value: 'runTimes' },
+        { text: 'Queue times', value: 'queueTimes' }
+      ],
+      timingOption: 'totalTimes',
       headers: [
         {
           text: 'Task',
@@ -224,20 +258,26 @@ export default {
         {
           text: 'Failure rate (%)',
           value: 'failureRate'
-        },
+        }
+      ],
+      queueTimeHeaders: [
         {
           text: 'Mean T-queue (s)',
           value: 'meanQueueTime'
-        },
+        }
+      ],
+      runTimeHeaders: [
         {
           text: 'Mean T-run (s)',
           value: 'meanRunTime'
-        },
+        }
+      ],
+      totalTimeHeaders: [
         {
           text: 'Mean T-total (s)',
           value: 'meanTotalTime'
         }
-      ],
+      ]
     }
   },
 
@@ -310,6 +350,19 @@ export default {
         }
       }
       return taskStats
+    },
+    shownHeaders () {
+      let timingHeaders
+      if (this.timingOption === 'totalTimes') {
+        timingHeaders = this.totalTimeHeaders
+      } else if (this.timingOption === 'runTimes') {
+        timingHeaders = this.runTimeHeaders
+      } else if (this.timingOption === 'queueTimes') {
+        timingHeaders = this.queueTimeHeaders
+      } else {
+        return []
+      }
+      return this.headers.concat(timingHeaders)
     }
   },
 
