@@ -29,19 +29,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-row class="no-gutters">
           <v-col
             cols="12"
-            md="12"
-            class="pl-md-2 pr-md-2 mb-2 mb-md-0"
+            md="4"
+            class="pr-md-2 mb-2 mb-md-0"
+          >
+            <v-text-field
+              id="c-analysis-filter-task-name"
+              clearable
+              dense
+              flat
+              hide-details
+              outlined
+              placeholder="Filter by task name"
+              v-model.trim="tasksFilter.name"
+              @keyup="filterTasks"
+              @click:clear="clearInput"
+              ref="filterNameInput"
+            ></v-text-field>
+          </v-col>
+          <v-col
+            cols="12"
+            md="4"
+            class="mb-2 mb-md-0"
           >
             <v-select
-              id="c-analysis-filter-task-platforms"
+              id="c-analysis-filter-task-timings"
               :items="timingOptions"
               dense
               flat
               hide-details
               outlined
               prefix="Displaying: "
-              v-model="timingOption"
-            > {{ timingOption }} </v-select>
+              v-model="tasksFilter.timingOption"
+            ></v-select>
+          </v-col>
+          <v-col
+            cols="12"
+            md="4"
+            class="pl-md-2 mb-2 mb-md-0"
+          >
+            <v-select
+              id="c-analysis-filter-task-platforms"
+              :items="platformOptions"
+              dense
+              flat
+              hide-details
+              outlined
+              prefix="Platform: "
+              v-model="tasksFilter.platformOption"
+              @change="filterTasks"
+            ></v-select>
           </v-col>
         </v-row>
       </v-row>
@@ -60,7 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             <v-data-table
               :headers="shownHeaders"
-              :items="taskStats"
+              :items="filteredTasks"
               :sort-by.sync="sortBy"
               dense
               :footer-props="{
@@ -77,6 +113,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep'
 import pick from 'lodash/pick'
 import Vue from 'vue'
 import gql from 'graphql-tag'
@@ -241,7 +278,12 @@ export default {
         { text: 'Run times', value: 'runTimes' },
         { text: 'Queue times', value: 'queueTimes' }
       ],
-      timingOption: 'totalTimes',
+      tasksFilter: {
+        name: '',
+        timingOption: 'totalTimes',
+        platformOption: null
+      },
+      activeFilters: null,
       headers: [
         {
           text: 'Task',
@@ -351,18 +393,46 @@ export default {
       }
       return taskStats
     },
+    filteredTasks () {
+      const filterByName = this.filterByTaskName()
+      const filterByPlatform = this.filterByTaskPlatform()
+      return this.taskStats.filter(task => {
+        if (filterByName && filterByPlatform) {
+          return (
+            task.name.includes(this.activeFilters.name) &&
+            task.platform === this.activeFilters.platformOption
+          )
+        } else if (filterByName) {
+          return task.name.includes(this.activeFilters.name)
+        } else if (filterByPlatform) {
+          return task.platform === this.activeFilters.platformOption
+        }
+        return true
+      })
+    },
     shownHeaders () {
       let timingHeaders
-      if (this.timingOption === 'totalTimes') {
+      if (this.tasksFilter.timingOption === 'totalTimes') {
         timingHeaders = this.totalTimeHeaders
-      } else if (this.timingOption === 'runTimes') {
+      } else if (this.tasksFilter.timingOption === 'runTimes') {
         timingHeaders = this.runTimeHeaders
-      } else if (this.timingOption === 'queueTimes') {
+      } else if (this.tasksFilter.timingOption === 'queueTimes') {
         timingHeaders = this.queueTimeHeaders
       } else {
         return []
       }
       return this.headers.concat(timingHeaders)
+    },
+    platformOptions () {
+      const platformOptions = [{ text: 'All', value: null }]
+      const platforms = []
+      for (const [key, task] of Object.entries(this.tasks)) {
+        if (!platforms.includes(task.platform)) {
+          platforms.push(task.platform)
+          platformOptions.push({ text: task.platform })
+        }
+      }
+      return platformOptions
     }
   },
 
@@ -375,6 +445,36 @@ export default {
         { workflows: this.workflowIDs }
       )
       this.callback.onAdded(ret.data)
+    },
+    filterByTaskName () {
+      return this.activeFilters &&
+        this.activeFilters.name !== undefined &&
+        this.activeFilters.name !== null &&
+        this.activeFilters.name !== ''
+    },
+    filterByTaskPlatform () {
+      return this.activeFilters &&
+        this.activeFilters.platformOption !== undefined &&
+        this.activeFilters.platformOption !== null &&
+        this.activeFilters.platformOption.length !== ''
+    },
+    filterTasks () {
+      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
+        this.tasksFilter.name !== null &&
+        this.tasksFilter.name !== ''
+      const taskPlatformFilterSet = this.tasksFilter.platformOption !== undefined &&
+        this.tasksFilter.platformOption !== null &&
+        this.tasksFilter.platformOption !== ''
+      if (taskNameFilterSet || taskPlatformFilterSet) {
+        this.activeFilters = cloneDeep(this.tasksFilter)
+      } else {
+        this.activeFilters = null
+      }
+    },
+    clearInput (event) {
+      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
+      this.tasksFilter.name = null
+      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
     }
   }
 }
