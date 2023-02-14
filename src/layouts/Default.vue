@@ -87,7 +87,7 @@ export default {
 
   errorCaptured (error, vm, info) {
     if (process.env.NODE_ENV !== 'production') {
-      store.dispatch('setAlert', new AlertModel(error, null, 'error'))
+      store.dispatch('setAlert', new AlertModel(error, 'error'))
     }
   }
 }

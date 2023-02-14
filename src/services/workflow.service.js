@@ -227,7 +227,7 @@ class WorkflowService {
         if (callback.init) {
           callback.init(store, errors)
           for (const error of errors) {
-            store.commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+            store.commit('SET_ALERT', new Alert(error[0], 'error'), { root: true })
             // eslint-disable-next-line no-console
             console.warn(...error)
             subscription.handleViewState(ViewState.ERROR, error('Error presetting view state'))
@@ -340,7 +340,7 @@ class WorkflowService {
               for (const error of errors) {
                 store.commit(
                   'SET_ALERT',
-                  new Alert(error[0], null, 'error'),
+                  new Alert(error[0], 'error'),
                   { root: true }
                 )
                 // eslint-disable-next-line no-console

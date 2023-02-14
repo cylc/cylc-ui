@@ -84,7 +84,7 @@ describe('Subscription mixin', () => {
       localVue,
       store
     })
-    const alert = new Alert('text', null, 'red')
+    const alert = new Alert('text', 'red')
     component.vm.setAlert(alert)
     expect(store.state.alert).to.equal(alert)
   })

@@ -97,7 +97,7 @@ export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
   //       would be nice to find a better error message using the error object
   // subscriptionClient.onError((error) => {
   //   console.error(error)
-  //   store.commit('SET_ALERT', new Alert(error, null, 'error'))
+  //   store.commit('SET_ALERT', new Alert(error, 'error'))
   // })
   return subscriptionClient
 }

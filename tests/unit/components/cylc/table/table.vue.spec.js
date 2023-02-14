@@ -99,8 +99,8 @@ describe('Table component', () => {
     expect(wrapper.find('div')).to.not.equal(null)
   })
   describe('Filter', () => {
-    describe('Filter by name', () => {
-      it('should not filter by name or tasks by default', () => {
+    describe('Filter by ID', () => {
+      it('should not filter by ID or task state by default', () => {
         const wrapper = mountFunction({
           propsData: {
             tasks: simpleTableTasks
@@ -108,7 +108,7 @@ describe('Table component', () => {
         })
         expect(wrapper.vm.filteredTasks.length).to.equal(3)
       })
-      it('should filter by name', () => {
+      it('should filter by ID', () => {
         const wrapper = mountFunction({
           propsData: {
             tasks: simpleTableTasks
@@ -116,7 +116,7 @@ describe('Table component', () => {
           data () {
             return {
               tasksFilter: {
-                name: 'taskA'
+                id: 'taskA'
               }
             }
           }
@@ -131,7 +131,7 @@ describe('Table component', () => {
           data () {
             return {
               tasksFilter: {
-                name: '',
+                id: '',
                 states: [
                   TaskState.WAITING.name
                 ]
@@ -149,7 +149,7 @@ describe('Table component', () => {
           data () {
             return {
               tasksFilter: {
-                name: 'taskA',
+                id: 'taskA',
                 states: [
                   TaskState.WAITING.name
                 ]

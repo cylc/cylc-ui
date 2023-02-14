@@ -88,7 +88,7 @@ router.beforeEach((to, from) => {
         store.commit('user/SET_USER', user)
       })
       .catch((error) => {
-        const alert = new Alert(error, null, 'error')
+        const alert = new Alert(error, 'error')
         store.dispatch('setAlert', alert)
       })
   }

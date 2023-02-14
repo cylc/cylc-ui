@@ -33,7 +33,7 @@ describe('Table view', () => {
         .should('have.length', 7)
         .should('be.visible')
       cy
-        .get('[data-cy=filter-task-name]')
+        .get('[data-cy=filter-id]')
         .should('be.empty')
       cy
         .get('[data-cy=filter-task-states]')
@@ -42,7 +42,7 @@ describe('Table view', () => {
         .find('input[type="hidden"]')
         .should('have.value', '')
     })
-    it('Should filter by task name', () => {
+    it('Should filter by ID', () => {
       cy.visit('/#/table/one')
       cy
         .get('.c-table table > tbody > tr')
@@ -52,18 +52,17 @@ describe('Table view', () => {
         .get('td > div.d-flex > div')
         .contains('sleepy')
         .should('be.visible')
-      // eep should filter sleepy
-      cy
-        .get('[data-cy=filter-task-name]')
-        .type('eep')
-      cy
-        .get('td > div.d-flex > div')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.c-table table > tbody > tr')
-        .should('have.length', 1)
-        .should('be.visible')
+      for (const id of ['eep', '/sle']) {
+        cy.get('[data-cy=filter-id]')
+          .clear()
+          .type(id)
+        cy.get('td > div.d-flex > div')
+          .contains('sleepy')
+          .should('be.visible')
+        cy.get('.c-table table > tbody > tr')
+          .should('have.length', 1)
+          .should('be.visible')
+      }
     })
     it('Should filter by task state', () => {
       cy.visit('/#/table/one')
@@ -91,7 +90,7 @@ describe('Table view', () => {
         .should('have.length', 1)
         .should('be.visible')
     })
-    it('Should filter by task name and states', () => {
+    it('Should filter by ID and states', () => {
       cy.visit('/#/table/one')
       cy
         .get('.c-table table > tbody > tr')
@@ -109,7 +108,7 @@ describe('Table view', () => {
         .should('have.length', 2)
         .should('be.visible')
       cy
-        .get('[data-cy=filter-task-name]')
+        .get('[data-cy=filter-id]')
         .type('eventually')
       cy
         .get('td > div.d-flex > div')

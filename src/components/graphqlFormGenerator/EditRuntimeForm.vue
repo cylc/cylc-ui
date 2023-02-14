@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
 import { VTextarea } from 'vuetify/components'
 import VuetifyConfig, { getComponentProps, RUNTIME_SETTING } from '@/components/graphqlFormGenerator/components/vuetify'
-import { findByName, mutate } from '@/utils/aotf'
+import { findByName, mutate, mutationStatus } from '@/utils/aotf'
 
 const NamedTypes = {
   ...VuetifyConfig.namedTypes,
@@ -164,9 +164,7 @@ export default {
       if (!settings.length) {
         return {
           message: 'No changes were made',
-          status: {
-            name: 'warn'
-          }
+          status: mutationStatus.WARN
         }
       }
       const args = {

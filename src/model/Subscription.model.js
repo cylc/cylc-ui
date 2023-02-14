@@ -74,7 +74,7 @@ class Subscription {
     } else {
       Object.values(this.subscribers).forEach(function (subscriber) {
         subscriber.viewState = viewState
-        subscriber.setAlert(new Alert(context.message, null, 'error'))
+        subscriber.setAlert(new Alert(context.message, 'error'))
         if (_this.debug) {
           // eslint-disable-next-line no-console
           console.debug(`Subscription error: ${context.message}`, viewState, context)
