@@ -17,8 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-form
-    :modelValue="modelValue"
-    @update:modelValue="$emit('update:modelValue', $event)"
+    v-model="isValid"
+    ref="form"
+    @update:modelValue="(val) => { if (val == null) validate() }"
   >
     <!-- the form inputs -->
     <v-list>
@@ -104,6 +105,12 @@ export default {
     this.reset()
   },
 
+  mounted () {
+    // Work around lack of initial validation
+    // https://github.com/vuetifyjs/vuetify/issues/15568
+    this.$watch('$refs', this.validate, { immediate: true })
+  },
+
   computed: {
     /* Provide a list of all form inputs for this mutation. */
     inputs () {
@@ -116,6 +123,15 @@ export default {
         })
       }
       return ret
+    },
+    isValid: {
+      get () {
+        return this.modelValue
+      },
+      set (value) {
+        // Update 'value' prop by notifying parent component's v-model for this component
+        this.$emit('update:modelValue', value)
+      }
     }
   },
 
@@ -154,6 +170,10 @@ export default {
 
       // done
       this.model = model
+    },
+
+    validate () {
+      this.$refs.form?.validate()
     },
 
     async submit () {

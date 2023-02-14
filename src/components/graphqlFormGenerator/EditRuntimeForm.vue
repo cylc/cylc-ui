@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-form
       v-else
       v-model="isValid"
+      ref="form"
       class="c-edit-runtime-form"
     >
       <v-list>
@@ -111,6 +112,16 @@ export default {
 
   created () {
     this.reset()
+  },
+
+  mounted () {
+    // Work around lack of initial validation
+    // https://github.com/vuetifyjs/vuetify/issues/15568
+    this.$watch(
+      '$refs',
+      () => { this.$refs.form?.validate() },
+      { immediate: true }
+    )
   },
 
   computed: {
