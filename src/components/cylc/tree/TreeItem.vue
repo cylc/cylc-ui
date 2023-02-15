@@ -200,15 +200,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           node: node.node
         }"
         :depth="depth + 1"
-        :stopOn="stopOn"
-        :hoverable="hoverable"
-        :autoExpandTypes="autoExpandTypes"
-        :cyclePointsOrderDesc="cyclePointsOrderDesc"
-        v-on:tree-item-created="$attrs['tree-item-created']"
-        v-on:tree-item-destroyed="$attrs['tree-item-destroyed']"
-        v-on:tree-item-expanded="$attrs['tree-item-expanded']"
-        v-on:tree-item-collapsed="$attrs['tree-item-collapsed']"
-        v-on:tree-item-clicked="$attrs['tree-item-clicked']"
+        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc }"
+        v-on="passthroughHandlers"
       />
       <TreeItem
         v-else
@@ -217,15 +210,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :key="child.id"
         :node="child"
         :depth="depth + 1"
-        :stopOn="stopOn"
-        :hoverable="hoverable"
-        :autoExpandTypes="autoExpandTypes"
-        :cyclePointsOrderDesc="cyclePointsOrderDesc"
-        v-on:tree-item-created="$attrs['tree-item-created']"
-        v-on:tree-item-destroyed="$attrs['tree-item-destroyed']"
-        v-on:tree-item-expanded="$attrs['tree-item-expanded']"
-        v-on:tree-item-collapsed="$attrs['tree-item-collapsed']"
-        v-on:tree-item-clicked="$attrs['tree-item-clicked']"
+        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc }"
+        v-on="passthroughHandlers"
       >
         <!-- add scoped slots
 
@@ -260,12 +246,28 @@ import { getNodeChildren } from '@/components/cylc/tree/util'
  */
 const NODE_DEPTH_OFFSET = 1.5 // em
 
+/**
+ * Events that are passed through up the chain from child TreeItems.
+ *
+ * i.e. they are re-emitted by this TreeItem when they occur on a
+ * child TreeItem, all the way up to the parent Tree component.
+ */
+const passthroughEvents = [
+  'tree-item-created',
+  'tree-item-destroyed',
+  'tree-item-expanded',
+  'tree-item-collapsed',
+  'tree-item-clicked'
+]
+
 export default {
   name: 'TreeItem',
+
   components: {
     Task,
     Job
   },
+
   props: {
     node: {
       type: Object,
@@ -294,6 +296,11 @@ export default {
       default: () => []
     }
   },
+
+  emits: [
+    ...passthroughEvents
+  ],
+
   data () {
     return {
       active: false,
@@ -331,6 +338,7 @@ export default {
       isExpanded: false
     }
   },
+
   computed: {
     hasChildren () {
       if (this.stopOn.includes(this.node.type)) {
@@ -396,17 +404,26 @@ export default {
       return jobMessageOutputs(this.node)
     }
   },
+
   created () {
     this.$emit('tree-item-created', this)
+    this.passthroughHandlers = Object.fromEntries(
+      passthroughEvents.map((eventName) => (
+        [eventName, (treeItem) => this.$emit(eventName, treeItem)]
+      ))
+    )
   },
+
   beforeUnmount () {
     this.$emit('tree-item-destroyed', this)
   },
+
   beforeMount () {
     // apply auto-expand rules when a treeitem is created
     this.isExpanded = this.autoExpandTypes.includes(this.node.type)
     this.emitExpandCollapseEvent(this.isExpanded)
   },
+
   methods: {
     toggleExpandCollapse () {
       this.isExpanded = !this.isExpanded

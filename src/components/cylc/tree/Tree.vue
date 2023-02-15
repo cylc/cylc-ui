@@ -85,15 +85,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-for="child of rootChildren"
             :key="child.id"
             :node="child"
-            :stopOn="stopOn"
-            :hoverable="hoverable"
-            :autoExpandTypes="autoExpandTypes"
-            :cyclePointsOrderDesc="cyclePointsOrderDesc"
-            v-on:tree-item-created="onTreeItemCreated"
-            v-on:tree-item-destroyed="onTreeItemDestroyed"
-            v-on:tree-item-expanded="onTreeItemExpanded"
-            v-on:tree-item-collapsed="onTreeItemCollapsed"
-            v-on:tree-item-clicked="onTreeItemClicked"
+            v-bind="{
+              stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc
+            }"
+            @tree-item-created="onTreeItemCreated"
+            @tree-item-destroyed="onTreeItemDestroyed"
+            @tree-item-expanded="onTreeItemExpanded"
+            @tree-item-collapsed="onTreeItemCollapsed"
+            @tree-item-clicked="onTreeItemClicked"
           >
             <template
               v-for="(_, slotName) of $slots"
