@@ -18,10 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <FormInput
     v-model="model"
-    :propOverrides="{rules: [nonNullRule]}"
+    :propOverrides="{ rules: [$options.nonNullRule] }"
     :gqlType="gqlType.ofType"
     :types="types"
-    label="(required)"
   >
     <template v-slot:append>
       <!-- pass the "append" slot onto the child component -->
@@ -35,10 +34,10 @@ import { formElement } from '@/components/graphqlFormGenerator/mixins'
 
 export default {
   name: 'g-non-null',
+
   mixins: [formElement],
-  methods: {
-    nonNullRule: // disallow empty array/string or nullish
-      x => Boolean(x?.length ?? x != null) || 'Required'
-  }
+
+  /** Disallow empty array/string or nullish */
+  nonNullRule: (x) => Boolean(x?.length ?? x != null) || 'Required'
 }
 </script>

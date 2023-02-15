@@ -49,7 +49,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="model[input.label]"
             :gqlType="input.gqlType"
             :types="types"
-            :label="input.label"
           />
       </v-list-item>
     </v-list>

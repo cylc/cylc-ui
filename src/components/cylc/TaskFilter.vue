@@ -53,16 +53,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         placeholder="Filter by task state"
         v-model="localValue.states"
       >
-        <template v-slot:item="slotProps">
-          <Task :task="{ state: slotProps.item }" />
-          <span class="ml-2">{{ slotProps.item }}</span>
+        <template v-slot:item="{ item, props }">
+          <v-list-item v-bind="props" :title="undefined">
+            <Task :task="{ state: item.raw }" />
+            <span class="ml-2">{{ item.raw }}</span>
+          </v-list-item>
         </template>
-        <template v-slot:selection="slotProps">
-          <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maxVisibleStates">
-            <Task :task="{ state: slotProps.item }" />
+        <template v-slot:selection="{ item, index }">
+          <div class="mr-2" v-if="index >= 0 && index < maxVisibleStates">
+            <Task :task="{ state: item.raw }" />
           </div>
           <span
-            v-if="slotProps.index === maxVisibleStates"
+            v-if="index === maxVisibleStates"
             class="text-grey text-caption"
           >
             (+{{ localValue.states.length - maxVisibleStates }})
