@@ -137,13 +137,21 @@ const jobFields = [
   'startedTime',
   'finishedTime'
 ]
+const taskFields = [
+  'name',
+  'platform',
+  'count',
+  'meanTotalTime',
+  'meanRunTime',
+  'meanQueueTime'
+]
 
 // the one-off query which retrieves historical objects not
 // normally visible in the GUI
 const QUERY = gql`
 query ($workflows: [ID]) {
-  jobs(live: false, workflows: $workflows) {
-    ${jobFields.join('\n')}
+  tasks(live: false, workflows: $workflows) {
+    ${taskFields.join('\n')}
   }
 }
 `
@@ -186,29 +194,19 @@ fragment Deltas on Deltas {
 // the callback which gets automatically called when data comes in on
 // the subscription
 class AnalysisCallback {
-  constructor (jobs) {
-    this.jobs = jobs
+  constructor (tasks) {
+    this.tasks = tasks
   }
 
   add (data) {
-    // add jobs contained in data to this.jobs
-    for (const job of data.jobs) {
-      if (job.id in this.jobs) {
-        // merge new data into existing entry
-        const storedJob = this.jobs[job.id]
-        for (const field of jobFields) {
-          if (job[field]) {
-            Vue.set(storedJob, field, job[field])
-          }
-        }
-      } else {
-        // add new entry
-        Vue.set(
-          this.jobs,
-          job.id,
-          pick(job, jobFields)
-        )
-      }
+    // add tasks contained in data to this.tasks
+    for (const task of data.tasks) {
+      // add new entry
+      Vue.set(
+        this.tasks,
+        this.tasks.length,
+        pick(task, taskFields)
+      )
     }
   }
 
@@ -252,7 +250,7 @@ export default {
   },
 
   data () {
-    const jobs = {}
+    const tasks = []
     return {
       // defines how the view view appears in the "add view" dropdown
       widget: {
@@ -269,9 +267,9 @@ export default {
         }
       ],
       // instance of the callback class
-      callback: new AnalysisCallback(jobs),
-      // object containing all of the jobs added by the callback
-      jobs,
+      callback: new AnalysisCallback(tasks),
+      // object containing all of the tasks added by the callback
+      tasks,
       sortBy: 'name',
       timingOptions: [
         { text: 'Total times', value: 'totalTimes' },
@@ -295,12 +293,12 @@ export default {
         },
         {
           text: 'Count',
-          value: 'successfulJobs'
-        },
-        {
-          text: 'Failure rate (%)',
-          value: 'failureRate'
+          value: 'count'
         }
+        // {
+        //   text: 'Failure rate (%)',
+        //   value: 'failureRate'
+        // }
       ],
       queueTimeHeaders: [
         {
@@ -342,61 +340,10 @@ export default {
     workflowIDs () {
       return [this.workflowId]
     },
-    tasks () {
-      const tasks = {}
-      for (const [key, job] of Object.entries(this.jobs)) {
-        if (job.state === '0' || job.state === 'succeeded') {
-          // Calculate timings in seconds
-          const submittedT = new Date(job.submittedTime)
-          const startedT = new Date(job.startedTime)
-          const finishedT = new Date(job.finishedTime)
-          const queueT = (startedT - submittedT) / 1000
-          const runT = (finishedT - startedT) / 1000
-          const totalT = (finishedT - submittedT) / 1000
-
-          if (job.name in tasks) {
-            tasks[job.name].queueTimes.push(queueT)
-            tasks[job.name].runTimes.push(runT)
-            tasks[job.name].totalTimes.push(totalT)
-            tasks[job.name].successfulJobs += 1
-          } else {
-            tasks[job.name] = {
-              name: job.name,
-              platform: job.platform,
-              queueTimes: [queueT],
-              runTimes: [runT],
-              totalTimes: [totalT],
-              successfulJobs: 1,
-              failedJobs: 0
-            }
-          }
-        }
-      }
-      return tasks
-    },
-    taskStats () {
-      const taskStats = []
-      const mean = times => times.reduce((prev, curr) => prev + curr) / times.length
-      if (Object.keys(this.tasks).length > 0) {
-        for (const [taskName, task] of Object.entries(this.tasks)) {
-          const stats = {
-            name: taskName,
-            platform: task.platform,
-            successfulJobs: task.successfulJobs,
-            failureRate: 100 * task.failedJobs / task.successfulJobs,
-            meanQueueTime: mean(task.queueTimes),
-            meanRunTime: mean(task.runTimes),
-            meanTotalTime: mean(task.totalTimes)
-          }
-          taskStats.push(stats)
-        }
-      }
-      return taskStats
-    },
     filteredTasks () {
       const filterByName = this.filterByTaskName()
       const filterByPlatform = this.filterByTaskPlatform()
-      return this.taskStats.filter(task => {
+      return this.tasks.filter(task => {
         if (filterByName && filterByPlatform) {
           return (
             task.name.includes(this.activeFilters.name) &&
