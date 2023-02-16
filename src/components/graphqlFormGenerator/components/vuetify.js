@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from 'vue'
-
 import { VSwitch, VTextField } from 'vuetify/components'
 
 import GEnum from '@/components/graphqlFormGenerator/components/Enum'
@@ -26,37 +24,13 @@ import GObject from '@/components/graphqlFormGenerator/components/Object'
 import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting'
 import GMapItem from '@/components/graphqlFormGenerator/components/MapItem'
 
-/* Vuetify number input component.
- *
- * Note: Vuetify doesn't supply a dedicated number field, instead you
- *       specialise the text field using `type='number'`, this, however,
- *       does not cast values to `Number` for you so this extension parses
- *       values to `Number` so they can be used directly in the data model.
- */
-export const VNumberField = Vue.component(
-  'v-number-field',
-  {
-    extends: VTextField,
-    computed: {
-      internalValue: {
-        get () {
-          return this.lazyValue
-        },
-        set (val) {
-          // cast values on `set` operations, note this does not get
-          // called on creation
-          this.lazyValue = Number(val)
-          this.$emit('input', this.lazyValue)
-        }
-      }
-    },
-    props: {
-      type: {
-        default: 'number'
-      }
-    }
+const NumberFieldProps = {
+  is: VTextField,
+  type: 'number',
+  modelModifiers: {
+    number: true
   }
-)
+}
 
 const RE = {
   cyclePoint: '\\d+(T\\d+(Z|[+-]\\d+)?)?'
@@ -95,13 +69,13 @@ export default {
       is: VTextField
     },
     Int: {
-      is: VNumberField,
+      ...NumberFieldProps,
       rules: [
         RULES.integer
       ]
     },
     Float: {
-      is: VNumberField
+      ...NumberFieldProps
     },
     Boolean: {
       is: VSwitch,
