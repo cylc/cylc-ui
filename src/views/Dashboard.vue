@@ -23,49 +23,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <v-row wrap>
       <v-col md="6" lg="6">
-        <p class="text-h4">Workflows</p>
+        <p class="text-h4 mb-2">Workflows</p>
         <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="workflowsHeader"
           :items="workflowsTable"
           :loading="isLoading"
-          hide-default-footer
-          hide-default-header
           id="dashboard-workflows"
+          items-per-page="-1"
         >
-          <template v-slot:item.count="{ item }">
-            <!-- <v-skeleton-loader
-              :loading="isLoading"
-              :max-width="50"
-              type="table-cell"
-              tile
-            > -->
-              <span class="text-h5 font-weight-light">{{ item.count }}</span>
-            <!-- </v-skeleton-loader> -->
-          </template>
-          <template v-slot:item.text="{ item }">
-            <span class="text-h6 font-weight-light">{{ item.text }}</span>
-          </template>
+          <!-- Hide header & footer: -->
+          <template v-slot:headers></template>
+          <template v-slot:bottom></template>
         </v-data-table>
       </v-col>
       <v-col md="6" lg="6">
-        <p class="text-h4">Events</p>
+        <p class="text-h4 mb-2">Events</p>
         <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="eventsHeader"
           :items="events"
-          hide-default-footer
-          hide-default-header
         >
-          <template v-slot:item.id="{ item }">
-            <span class="text-h6 font-weight-light">{{ item.id }}</span>
-          </template>
-          <template v-slot:item.text="{ item }">
-            <span class="text-h6 font-weight-light">{{ item.text }}</span>
-          </template>
+          <!-- Hide header: -->
+          <template v-slot:headers></template>
           <template v-slot:no-data>
-            <td class="text-h6">No events</td>
+            <td class="text-h6 text-disabled">No events</td>
           </template>
+          <!-- Hide footer if no events: -->
+          <template v-if="!events.length" v-slot:bottom></template>
         </v-data-table>
       </v-col>
     </v-row>
@@ -198,28 +183,12 @@ export default {
         /* isGlobalCallback */ true
       ),
       workflowsHeader: [
-        {
-          text: 'Count',
-          sortable: false,
-          value: 'count'
-        },
-        {
-          text: 'Text',
-          sortable: false,
-          value: 'text'
-        }
+        { value: 'count' },
+        { value: 'text' }
       ],
       eventsHeader: [
-        {
-          text: 'ID',
-          sortable: false,
-          value: 'id'
-        },
-        {
-          text: 'Event',
-          sortable: false,
-          value: 'text'
-        }
+        { value: 'id' },
+        { value: 'text' }
       ],
       events: [],
       svgPaths: {

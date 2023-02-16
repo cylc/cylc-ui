@@ -38,27 +38,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           data-cy="workflows-table"
         >
           <template v-slot:item="{ item }">
-            <tr>
+            <tr
+              @click="viewWorkflow(item.raw)"
+              style="cursor: pointer"
+            >
               <td width="1em">
                 <WorkflowIcon
-                  :status="item.node.status"
-                  v-cylc-object="item"
+                  :status="item.raw.node.status"
+                  v-cylc-object="item.raw"
                 />
               </td>
-              <td style="cursor:pointer" @click="viewWorkflow(item)">
-                {{ item.tokens.workflow }}
+              <td>
+                {{ item.raw.tokens.workflow }}
               </td>
-              <td style="cursor:pointer" @click="viewWorkflow(item)">
-                {{ item.node.status }}
+              <td>
+                {{ item.raw.node.status }}
               </td>
-              <td style="cursor:pointer" @click="viewWorkflow(item)">
-                {{ item.node.owner }}
+              <td>
+                {{ item.raw.node.owner }}
               </td>
-              <td style="cursor:pointer" @click="viewWorkflow(item)">
-                {{ item.node.host }}
+              <td>
+                {{ item.raw.node.host }}
               </td>
-              <td style="cursor:pointer" @click="viewWorkflow(item)">
-                {{ item.node.port }}
+              <td>
+                {{ item.raw.node.port }}
               </td>
             </tr>
           </template>
@@ -112,33 +115,33 @@ export default {
     headers: [
       {
         sortable: false,
-        text: '',
-        value: 'icon'
+        title: '',
+        key: 'icon'
       },
       {
         sortable: true,
-        text: i18n.global.t('Workflows.tableColumnName'),
-        value: 'name'
+        title: i18n.global.t('Workflows.tableColumnName'),
+        key: 'tokens.workflow'
       },
       {
         sortable: true,
-        text: 'Status',
-        value: 'node.status'
+        title: 'Status',
+        key: 'node.status'
       },
       {
         sortable: true,
-        text: i18n.global.t('Workflows.tableColumnOwner'),
-        value: 'node.owner'
+        title: i18n.global.t('Workflows.tableColumnOwner'),
+        key: 'node.owner'
       },
       {
         sortable: true,
-        text: i18n.global.t('Workflows.tableColumnHost'),
-        value: 'node.host'
+        title: i18n.global.t('Workflows.tableColumnHost'),
+        key: 'node.host'
       },
       {
         sortable: false,
-        text: i18n.global.t('Workflows.tableColumnPort'),
-        value: 'node.port'
+        title: i18n.global.t('Workflows.tableColumnPort'),
+        key: 'node.port'
       }
     ],
     svgPath: {

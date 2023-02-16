@@ -20,6 +20,7 @@ const listeners = new WeakMap()
 
 function bind (el, binding, vnode) {
   const listener = function (e) {
+    e.stopPropagation() // prevents click event from bubbling up to parents
     binding.instance.$eventBus.emit('show-mutations-menu', {
       node: binding.value,
       event: e

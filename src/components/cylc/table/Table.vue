@@ -57,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
               showFirstLastPage: true
             }"
-            items-per-page="50"
+            v-model:items-per-page="itemsPerPage"
           >
             <template v-slot:item.task.name="{ item }">
               <div class="d-flex align-content-center flex-nowrap">
@@ -145,6 +145,7 @@ export default {
   },
   data () {
     return {
+      itemsPerPage: 50,
       icons: {
         mdiChevronDown,
         mdiArrowDown
