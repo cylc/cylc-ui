@@ -21,7 +21,7 @@ dynamically created inputs.
 -->
 
 <script>
-import { h } from 'vue'
+import { h, mergeProps } from 'vue'
 import { mask } from 'vue-the-mask'
 import Markdown from '@/components/Markdown'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
@@ -32,6 +32,10 @@ import { upperFirst } from 'lodash'
 
 export default {
   name: 'g-form-input',
+
+  // Prevent fallthrough attrs overriding the supplied props for the input
+  // https://github.com/vuejs/core/issues/6504
+  inheritAttrs: false,
 
   mixins: [formElement],
 
@@ -57,37 +61,25 @@ export default {
     }
   },
 
-  computed: {
-    /* The props to pass to the form input.
-     *
-     * Note, this includes the "is" prop which tells Vue which component class
-     * to use.
-     *
-     * TODO: move to rule based system to allow changing
-     *       of parent components based on child types?
-     */
-    props () {
-      // get the default props for this graphQL type
-      const componentProps = getComponentProps(this.gqlType, VuetifyConfig.namedTypes, VuetifyConfig.kinds)
+  beforeCreate () {
+    // Set the props to pass to the form input. Note, this includes the "is"
+    // prop which tells Vue which component class to use.
+    // TODO: move to rule based system to allow changing
+    //       of parent components based on child types?
 
-      // merge this in with default and override props
-      const propGroups = [
-        VuetifyConfig.defaultProps,
-        componentProps,
-        this.propOverrides || {}
-      ]
-      const ret = Object.assign({}, ...propGroups)
+    // get the default props for this graphQL type
+    const componentProps = getComponentProps(this.gqlType, VuetifyConfig.namedTypes, VuetifyConfig.kinds)
 
-      // rules is a list so needs special treatment
-      ret.rules = []
-      for (const prop of propGroups) {
-        if (prop.rules) {
-          ret.rules.push(...prop.rules)
-        }
-      }
+    // merge this in with default and override props
+    const propGroups = [
+      VuetifyConfig.defaultProps,
+      componentProps,
+      this.propOverrides || {}
+    ]
+    // rules is a list so needs special treatment
+    const rules = propGroups.flatMap(({ rules }) => rules ?? [])
 
-      return ret
-    }
+    this.inputProps = mergeProps(this.$attrs, ...propGroups, { rules })
   },
 
   render () {
@@ -111,12 +103,11 @@ export default {
 
     // Some components implement custom v-model
     // (https://v2.vuejs.org/v2/guide/components-custom-events.html#Customizing-Component-v-model)
-    const vModel = this.props.is.options?.model || { prop: 'modelValue', event: 'update:modelValue' }
-
+    const vModel = this.inputProps.is.options?.model || { prop: 'modelValue', event: 'update:modelValue' }
     return h(
-      this.props.is,
+      this.inputProps.is,
       {
-        ...this.props,
+        ...this.inputProps,
         [vModel.prop]: this.model,
         [`on${upperFirst(vModel.event)}`]: (value) => {
           this.model = value
