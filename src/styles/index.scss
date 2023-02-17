@@ -65,8 +65,8 @@ html {
     cursor: pointer;
   }
 
-  svg {
-    // Prevent click handler from thinking the svg is the target
+  > * {
+    // Prevent click handler from thinking any child elements are the target
     pointer-events: none;
   }
 }
@@ -87,24 +87,10 @@ html {
   top: 0;
 }
 
-.h-100 {
-  height: 100%;
-}
-
-.w-100 {
-  width: 100%;
-}
-
 .mh-100 {
   max-height: 100%;
 }
 
 .mw-100 {
   max-width: 100%;
-}
-
-// Fix lack of margin for v-card-actions button with tooltip
-// https://github.com/vuetifyjs/vuetify/issues/9756
-.v-application--is-ltr .v-card__actions > .v-btn + .v-tooltip + .v-btn {
-  margin-left: 8px;
 }

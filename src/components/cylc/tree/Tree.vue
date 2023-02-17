@@ -27,25 +27,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- Filters -->
       <v-col
         v-if="filterable"
-        class="grow"
       >
         <TaskFilter v-model="tasksFilter"/>
       </v-col>
       <!-- Expand, collapse all -->
       <v-col
         v-if="expandCollapseToggle"
-        class="shrink"
+        class="flex-grow-0"
       >
         <div
-          class="d-flex flex-nowrap"
+          class="d-flex flex-nowrap ml-2"
         >
           <v-btn
             @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
             icon
             variant="flat"
+            size="small"
             data-cy="expand-all"
           >
-            <v-icon>{{ svgPaths.expandIcon }}</v-icon>
+            <v-icon size="x-large">{{ svgPaths.expandIcon }}</v-icon>
             <v-tooltip
               activator="parent"
               location="bottom"
@@ -57,9 +57,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @click="collapseAll()"
             icon
             variant="flat"
+            size="small"
             data-cy="collapse-all"
           >
-            <v-icon>{{ svgPaths.collapseIcon }}</v-icon>
+            <v-icon size="x-large">{{ svgPaths.collapseIcon }}</v-icon>
             <v-tooltip
               activator="parent"
               location="bottom"

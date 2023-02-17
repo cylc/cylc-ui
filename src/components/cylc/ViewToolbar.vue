@@ -30,14 +30,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :key="iControl.title"
       >
         <v-btn
-          size="large"
           :class="iControl.title"
-          :icon="iControl.icon"
+          icon
           variant="flat"
           :disabled="iControl.disabled"
           :color="iControl.color"
           @click="iControl.callback"
         >
+          <v-icon size="x-large">{{ iControl.icon }}</v-icon>
           <v-tooltip
             activator="parent"
             location="bottom"

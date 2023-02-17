@@ -18,11 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Toolbar for the workflow view -->
 
 <template>
-  <v-app-bar
+  <v-toolbar
     id="core-app-bar"
     density="compact"
     flat
     class="c-toolbar"
+    color="grey-lighten-4"
   >
     <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
     <!-- burger button for mobile -->
@@ -37,21 +38,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-btn>
     <!-- title -->
     <v-toolbar-title
-      class="text-md-h6 text-subtitle-1"
+      class="c-toolbar-title text-md-h6 text-subtitle-1"
+      :class="responsive ? 'ml-0' : null"
     >
-      <span class="c-toolbar-title">{{ title }}</span>
+      {{ title }}
     </v-toolbar-title>
 
     <!-- control bar elements displayed only when there is a current workflow in the store -->
     <template v-if="currentWorkflow">
       <div class="c-workflow-controls flex-shrink-0">
-        <v-icon
+        <v-btn
           id="workflow-mutate-button"
           color="#5E5E5E"
           v-cylc-object="currentWorkflow"
-        >
-          {{ svgPaths.menu }}
-        </v-icon>
+          :icon="svgPaths.menu"
+        />
 
         <v-btn
           id="workflow-play-button"
@@ -85,9 +86,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{ statusMsg }}
       </span>
 
-      <v-spacer />
+      <v-spacer class="mx-n4" />
 
-      <a class="add-view d-flex flex-row-reverse align-items-center">
+      <v-btn class="add-view">
         <v-icon class="icon" color="#5995EB">{{ svgPaths.add }}</v-icon>
         <span class="label">
           {{ $t('Toolbar.addView') }}
@@ -113,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-list-item>
           </v-list>
         </v-menu>
-      </a>
+      </v-btn>
     </template>
 
     <!-- displayed only when extended===true -->
@@ -130,7 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <span>Other controls added in the future</span>
       </span>
     </template>
-  </v-app-bar>
+  </v-toolbar>
 </template>
 
 <script>
