@@ -6420,7 +6420,7 @@ __metadata:
     concurrently: ^7.0.0
     core-js: 3
     cross-fetch: ^3.1.5
-    cypress: ^10.10.0
+    cypress: ^12.0.0
     dedent: ^0.7.0
     enumify: ^2.0.0
     eslint: ^8.0.0
@@ -6470,9 +6470,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"cypress@npm:^10.10.0":
-  version: 10.10.0
-  resolution: "cypress@npm:10.10.0"
+"cypress@npm:^12.0.0":
+  version: 12.4.0
+  resolution: "cypress@npm:12.4.0"
   dependencies:
     "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
@@ -6518,7 +6518,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 668a32534a527dba79754abbf98af176b80c539a12ec00058932ba2a19c794c7888323e59e738c30f726ad740c5451c31d02548a0cb7c1b1c8ad01c55a984ca2
+  checksum: 34eeb48547e3bea3312e71147ddc87a08fe90cef92434194621a9bf7747026471b01e41f1ded3a406db4fbb2e70c03d7e5d0df011227f969882550fe64a7d5d1
   languageName: node
   linkType: hard
 
