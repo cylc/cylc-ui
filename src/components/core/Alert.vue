@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     timeout="-1"
     data-cy="alert-snack"
   >
-    <template v-slot:action="{ attrs }">
+    <template v-slot:actions>
       <v-btn
         icon
         v-bind="attrs"

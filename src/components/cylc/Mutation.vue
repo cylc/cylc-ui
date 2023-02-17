@@ -112,7 +112,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="warning-snack"
       >
         {{ warningMsg }}
-        <template v-slot:action="{ attrs }">
+        <template v-slot:actions>
           <v-btn
             @click="showWarning = false"
             icon
