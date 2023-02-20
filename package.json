@@ -3,6 +3,7 @@
   "version": "1.4.0",
   "private": true,
   "license": "GPL-3.0-only",
+
   "scripts": {
     "build": "vue-cli-service build",
     "build:report": "vue-cli-service build --report",
@@ -20,6 +21,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test": "yarn run test:unit || exit 1; yarn run coverage:e2e --headless"
   },
+
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@hpcc-js/wasm": "1.13",
@@ -48,6 +50,7 @@
     "vuetify": "^2.6.10",
     "vuex": "^3.6.2"
   },
+
   "devDependencies": {
     "@babel/core": "^7.14.8",
     "@babel/eslint-parser": "^7.16.5",
