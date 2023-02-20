@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <component
       v-for="(item, id) of views"
       :key="id"
-      :ref="(ref) => { viewRefs[id] = ref }"
+      :ref="(ref) => setViewRef(id, ref)"
       :is="item.view"
       :tab-title="getTabTitle(item.view)"
       :workflow-name="workflowName"
@@ -146,6 +146,14 @@ export default {
   },
 
   methods: {
+    /** Keep track of views' refs separate from $refs, allowing access by ID */
+    setViewRef (id, ref) {
+      if (ref) {
+        this.viewRefs[id] = ref
+      } else {
+        delete this.viewRefs[id]
+      }
+    },
     /**
      * Look for newly added views, creating a corresponding Lumino Widget
      * for each.
@@ -208,7 +216,6 @@ export default {
      */
     onWidgetDeleted (customEvent) {
       const { id } = customEvent.detail
-      delete this.viewRefs[id]
       const widgetEl = document.getElementById(id)
       widgetEl.removeEventListener('lumino:deleted', this.onWidgetDeleted)
       widgetEl.removeEventListener('lumino:activated', this.onWidgetActivated)
