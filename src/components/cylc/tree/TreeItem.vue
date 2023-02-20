@@ -364,7 +364,7 @@ export default {
       const tasks = {}
       const traverseChildren = (currentNode) => {
         // if we aren't at the end of the node tree, continue
-        if (currentNode.children && currentNode.children.length > 0) {
+        if (currentNode.children && currentNode.children.length > 0 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
           traverseChildren(currentNode.children[0])
         } else {
           // if we are at the end of the tree, and the end of the tree is of type workflow, fetch the states from the latestStateTasks property
@@ -388,7 +388,7 @@ export default {
     lastDescendent () {
       let lastDescendent = this.node
       const traverseChildren = (currentNode) => {
-        if (currentNode.children && currentNode.children.length > 0) {
+        if (currentNode.children && currentNode.children.length > 0 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
           traverseChildren(currentNode.children[0])
         } else {
           lastDescendent = currentNode
@@ -401,7 +401,7 @@ export default {
       const labelArr = []
       const traverseChildren = (currentNode) => {
         labelArr.push(currentNode.name || currentNode.id)
-        if (currentNode.children && currentNode.children.length > 0) {
+        if (currentNode.children && currentNode.children.length > 0 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
           traverseChildren(currentNode.children[0])
         }
       }
@@ -411,7 +411,7 @@ export default {
     branchingLineage () {
       let moreThenTwoChildren = false
       const traverseChildren = (currentNode) => {
-        if (moreThenTwoChildren === false && currentNode.children && currentNode.children.length > 0) {
+        if (moreThenTwoChildren === false && currentNode.children && currentNode.children.length > 0 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
           if (currentNode.children.length === 1) {
             traverseChildren(currentNode.children[0])
           } else {
@@ -455,7 +455,7 @@ export default {
       return {
         'node--hoverable': this.hoverable,
         'node--active': this.active,
-        'c-workflow-stopped': this.node?.node?.status === WorkflowState.STOPPED.name,
+        'c-workflow-stopped': this.lastDescendent?.node?.status === WorkflowState.STOPPED.name,
         expanded: this.autoCollapse ? this.expansionStatus : this.isExpanded
       }
     },
