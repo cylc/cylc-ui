@@ -23,6 +23,10 @@ cycle point and family in tree & table views.
 
 ### Fixes
 
+[#1230](https://github.com/cylc/cylc-ui/pull/1230) -
+Fixes an issue where tasks were missing from the GUI in workflows which
+use multi-level family inheritance.
+
 [#1182](https://github.com/cylc/cylc-ui/pull/1182) - Fixes bug in filtering
 by task name.
 
