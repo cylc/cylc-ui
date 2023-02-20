@@ -68,7 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <g
           class="edges"
           :transform="
-            (transpose) ? 'translate(15, 30)' : 'translate(45, 5)'
+            (options.transpose) ? 'translate(15, 30)' : 'translate(45, 5)'
           "
         >
           <g
@@ -98,6 +98,7 @@ import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import optionsMixin from '@/mixins/options'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
 import GraphNode from '@/components/cylc/GraphNode'
@@ -201,6 +202,7 @@ fragment Deltas on Deltas {
 
 export default {
   mixins: [
+    optionsMixin,
     pageMixin,
     graphqlMixin,
     subscriptionComponentMixin,
@@ -216,18 +218,34 @@ export default {
       title: this.getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+  props: {
+    initialOptions: {
+      type: Object,
+      required: false,
+      default: () => {}
+    }
+  },
+  defaults: {
+    // the spacing between nodes
+    spacing: 1.5,
+    // if true layout is left-right is false it is top-bottom
+    transpose: false,
+    // if true the graph layout will be updated on a timer
+    autoRefresh: false
+  },
+  created () {
+    for (const [key, value] of Object.entries({ ...this.$options.defaults, ...this.initialOptions })) {
+      Vue.set(this.$data.options, key, value)
+    }
+  },
   data () {
     return {
       widget: {
         title: 'graph',
         icon: mdiGraph
       },
-      // the graph orientation
-      orientation: 'TB',
       // the auto-refresh timer
       refreshTimer: null,
-      // the spacing between nodes
-      spacing: 1.5,
       // the nodes end edges we render to the graph
       graphNodes: [],
       graphEdges: [],
@@ -239,10 +257,6 @@ export default {
       graphID: null,
       // instance of system which provides pan/zoom/navigation support
       panZoomWidget: null,
-      // if true layout is left-right is false it is top-bottom
-      transpose: false,
-      // if true the graph layout will be updated on a timer
-      autoRefresh: true,
       // true if layout is in progress
       updating: false,
       groups: [
@@ -374,11 +388,11 @@ export default {
       this.reset()
     },
     setOption (option, value) {
-      Vue.set(this, option, value)
+      Vue.set(this.options, option, value)
     },
     updateTimer () {
       // turn the timer on or off depending on the value of autoRefresh
-      if (this.autoRefresh) {
+      if (this.options.autoRefresh) {
         this.refreshTimer = setInterval(this.refresh, 2000)
       } else {
         clearInterval(this.refreshTimer)
@@ -387,11 +401,11 @@ export default {
     },
     increaseSpacing () {
       // increase graph layout node spacing by 10%
-      this.spacing = this.spacing * 1.1
+      this.options.spacing = this.options.spacing * 1.1
     },
     decreaseSpacing () {
       // decrease graph layout node spacing by 10%
-      this.spacing = this.spacing * (10 / 11)
+      this.options.spacing = this.options.spacing * (10 / 11)
     },
     getGraphNodes () {
       // list graph nodes from the store (non reactive list)
@@ -433,8 +447,8 @@ export default {
     getDotCode (nodeDimensions, nodes, edges) {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
-      let spacing = this.spacing
-      if (this.transpose) {
+      let spacing = this.options.spacing
+      if (this.options.transpose) {
         // transposed graphs need more space because the edges can start
         // anywhere on the node
         spacing = spacing * 1.5
@@ -442,7 +456,7 @@ export default {
       // NOTE: graphviz defaults nodesep=0.25 ranksep=0.5
       // increase the normal sep values to better space our larger nodes
       ret.push(
-        `  rankdir=${(this.transpose) ? 'LR' : 'TB'}`,
+        `  rankdir=${(this.options.transpose) ? 'LR' : 'TB'}`,
         `  nodesep=${spacing}`,
         `  ranksep=${spacing * 2}`,
         '  node [shape="rect"]'
@@ -473,7 +487,7 @@ export default {
           ]
         `)
       }
-      if (this.transpose) {
+      if (this.options.transpose) {
         // left-right orientation
         // route edges from anywhere on the node of the source task to anywhere
         // on the task *node* of the destination task *icon*
@@ -655,17 +669,17 @@ export default {
     }
   },
   watch: {
-    transpose () {
+    'options.transpose' () {
       // refresh the graph when the transpose option is changed
       this.graphID = null
       this.refresh()
     },
-    spacing () {
+    'options.spacing' () {
       // refresh the graph when the spacing is changed
       this.graphID = null
       this.refresh()
     },
-    autoRefresh () {
+    'options.autoRefresh' () {
       // toggle the timer when autoRefresh is changed
       this.updateTimer()
     }

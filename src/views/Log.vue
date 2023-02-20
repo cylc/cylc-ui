@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-row justify="start">
           <v-col cols="12" md="4" >
             <v-text-field
-            v-model="task"
+            v-model="options.task"
             clearable
             flat
             dense
@@ -47,14 +47,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :label="getFileListLabel"
               :items="getFileList"
               filled
-              v-model="file"
+              v-model="options.file"
               dense
               clearable
               outlined
               >
             </v-select>
           </v-col>
-          <v-col  v-show="file === 'other'" cols="12" md="3">
+          <v-col v-show="options.file === 'other'" cols="12" md="3">
             <v-text-field
               v-model="logFileEntered"
               placeholder="Enter Job File Name Here"
@@ -66,11 +66,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-col>
           <v-col cols="12" md="1">
             <v-btn
-            :disabled="isDisabled(task, file)"
+            :disabled="isDisabled(options.task, options.file)"
             color="primary"
             dense
             outlined
-            @click="setId(file, logFileEntered, task)">{{ buttonText() }}</v-btn>
+            @click="setId(options.file, logFileEntered, options.task)">{{ buttonText() }}</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -87,6 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiFileDocumentMultipleOutline } from '@mdi/js'
+import optionsMixin from '@/mixins/options'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -105,7 +106,9 @@ class LogsCallback {
   }
 
   onAdded (added, store, errors) {
-    this.lines.push(...added.lines)
+    if (added) {
+      this.lines.push(...added.lines)
+    }
   }
 
   commit (store, errors) {
@@ -114,6 +117,7 @@ class LogsCallback {
 
 export default {
   mixins: [
+    optionsMixin,
     pageMixin,
     graphqlMixin,
     subscriptionMixin,
@@ -135,6 +139,10 @@ export default {
       default: () => {}
     }
   },
+  defaults: {
+    task: '',
+    file: ''
+  },
   data () {
     return {
       jobLogFiles: ['job.out',
@@ -151,34 +159,28 @@ export default {
       },
       selectedLogFile: '',
       lines: [],
-      logFileEntered: '',
-      task: '',
-      file: ''
+      logFileEntered: ''
     }
-  },
-  created () {
-    this.$data.task = (this.initialOptions.task || '')
-    this.$data.file = (this.initialOptions.file || '')
   },
   computed: {
     logVariables () {
       return {
         workflowName: new Tokens(this.workflowId).workflow,
-        task: this.$data.task,
-        file: this.$data.file
+        task: this.options.task,
+        file: this.options.file
       }
     },
     getFileListLabel () {
-      if (this.$data.task && this.$data.task.length) {
+      if (this.options.task && this.options.length) {
         return 'Select Job Log File'
       }
       return 'Select Workflow Log File'
     },
     getFileList () {
-      if (this.$data.task && this.$data.task.length) {
-        return this.$data.jobLogFiles
+      if (this.options.task && this.options.task.length) {
+        return this.jobLogFiles
       }
-      return this.$data.workflowLogFiles
+      return this.workflowLogFiles
     },
     query () {
       return new SubscriptionQuery(
@@ -199,7 +201,7 @@ export default {
   },
   methods: {
     setId (selectedLogFile, logFileEntered, jobSearch) {
-      this.$data.lines = []
+      this.lines = []
       this.$workflowService.unsubscribe(this)
       this.logVariables.task = jobSearch
       this.logVariables.file = this.getFileName(selectedLogFile, logFileEntered)
@@ -207,7 +209,7 @@ export default {
       this.$workflowService.startSubscriptions()
     },
     buttonText () {
-      if (this.$data.lines.length) {
+      if (this.lines.length) {
         return 'Update'
       }
       return 'Search'
