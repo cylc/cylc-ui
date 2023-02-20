@@ -76,6 +76,11 @@ describe('CylcObject Menu component', () => {
       .then(($el) => {
         firstID = $el.text().trim()
       })
+      // Expand menu & check for the presence of edit-runtime at family level:
+      .get('.v-btn--is-elevated')
+      .click()
+      .get('.c-mutation')
+      .contains('Edit Runtime')
       // Now click on other Cylc object
       .get('.node-data-task:first')
       .find('.c-interactive:first')

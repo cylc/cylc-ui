@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <v-card-subtitle class="text-subtitle-1 font-weight-medium mt-4">
-      {{ cylcObject.id }}
+      {{ this.id }}
     </v-card-subtitle>
     <!-- TODO: replace v-progress-linear with v-skeleton-loader when
     the latter is added to Vuetify 3.
@@ -104,7 +104,9 @@ export default {
     return {
       type: undefined,
       loading: true,
-      model: {}
+      model: {},
+      isRoot: false,
+      tokens: this.cylcObject.tokens,
     }
   },
 
@@ -137,17 +139,23 @@ export default {
   methods: {
     /** Set this form to its initial conditions. */
     async reset () {
+      this.isRoot = this.cylcObject.type === 'cycle'
       const queryName = (
-        this.cylcObject.type === 'family' ? 'familyProxy' : 'taskProxy'
+        this.cylcObject.type === 'family' || this.isRoot ? 'familyProxy' : 'taskProxy'
       )
+      if (this.isRoot) {
+        this.tokens.id = this.cylcObject.id + '/root'
+        this.tokens.task = 'root'
+      }
       const queryField = 'runtime'
       this.loading = true
       this.isValid = false
       const result = await this.$workflowService.query(
         queryName,
-        { id: this.cylcObject.id },
+        { id: this.tokens.id },
         [{ name: queryField }]
       )
+      console.log(result)
       const model = cloneDeep(result[queryName][queryField])
       this.type = findByName(this.types, model.__typename)
       // Do not want GQL internal '__typename' field to show up in the form
@@ -168,7 +176,7 @@ export default {
     },
 
     async submit () {
-      const tokens = this.cylcObject.tokens
+      const tokens = this.tokens
       const settings = this.getBroadcastData()
       if (!settings.length) {
         return {
