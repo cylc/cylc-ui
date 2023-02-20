@@ -44,9 +44,14 @@
       }
 
       .treeitem {
+        margin: 4px 0;
+
+        .treeitem {
+          margin: 0;
+        }
+
         .node {
           .v-list-item {
-            padding: 0 8px;
             @include hover;
           }
         }

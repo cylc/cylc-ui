@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <div class="d-flex flex-column h-100">
       <v-list
-        class="pa-0 ma-0 flex-grow-0 d-flex flex-column"
+        class="pa-0 flex-grow-0 d-flex flex-column"
       >
         <c-header :user="user.username" />
 
@@ -54,11 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-list-item>
       </v-list>
 
-      <v-list
-        class="pa-0 ma-0 flex-grow-1 d-flex flex-column"
-      >
-        <Workflows class="h-100" />
-      </v-list>
+      <Workflows />
     </div>
     <template v-slot:append>
       <div class="px-4 py-2 d-flex justify-center">

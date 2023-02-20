@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         aria-label="Expand/collapse"
         role="img"
         aria-hidden="false"
-        class="node-expand-collapse-button"
+        class="node-expand-collapse-button flex-shrink-0"
         v-if="shouldRenderExpandCollapseBtn"
         @click="toggleExpandCollapse"
         :style="expandCollapseBtnStyle"

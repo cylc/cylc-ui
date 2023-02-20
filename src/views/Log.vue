@@ -15,28 +15,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <style>
-.v-application--is-ltr .v-text-field__prefix {
-  text-align: right;
-  padding-right: 0px;
-  color: blue;
+.c-log-view .v-text-field__prefix {
+  opacity: 1 !important;
+}
+.c-log-view .v-text-field input {
+  padding-left: 0;
 }
 </style>
+
 <template>
-  <div class="h-100">
+  <div class="h-100 c-log-view">
     <v-form>
       <v-container>
         <v-row justify="start">
           <v-col cols="12" md="4" >
             <v-text-field
               v-model="task"
-              clearable
-              density="compact"
               hint="Type cycle/task/job to view job log"
               :prefix="workflowNamePrefix"
-              variant="outlined"
               placeholder="cycle/task/job"
               class="flex-grow-1 flex-column"
               id="c-log-search-box"
+              v-bind="$options.inputProps"
             />
           </v-col>
           <v-col
@@ -44,30 +44,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             md="4"
           >
             <v-select
-              :label="getFileListLabel"
-              :items="getFileList"
+              :label="fileListLabel"
+              :items="fileList"
               v-model="file"
-              density="compact"
-              clearable
-              variant="outlined"
+              v-bind="$options.inputProps"
             />
           </v-col>
           <v-col v-show="file === 'other'" cols="12" md="3">
             <v-text-field
               v-model="logFileEntered"
               placeholder="Enter Job File Name Here"
-              density="compact"
-              clearable
-              variant="outlined"
-              >
-            </v-text-field>
+              v-bind="$options.inputProps"
+            />
           </v-col>
-          <v-col cols="12" md="1">
+          <v-col>
             <v-btn
-            :disabled="isDisabled(task, file)"
-            color="primary"
-            variant="outlined"
-            @click="setId(file, logFileEntered, task)">{{ buttonText() }}</v-btn>
+              :disabled="isDisabled(task, file)"
+              color="primary"
+              variant="outlined"
+              @click="setId(file, logFileEntered, task)"
+            >
+              {{ buttonText }}
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -83,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiFileDocumentMultipleOutline } from '@mdi/js'
+import { mdiClose, mdiFileDocumentMultipleOutline } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -175,13 +173,13 @@ export default {
         file: this.$data.file
       }
     },
-    getFileListLabel () {
+    fileListLabel () {
       if (this.$data.task && this.$data.task.length) {
         return 'Select Job Log File'
       }
       return 'Select Workflow Log File'
     },
-    getFileList () {
+    fileList () {
       if (this.$data.task && this.$data.task.length) {
         return this.$data.jobLogFiles
       }
@@ -202,6 +200,9 @@ export default {
     },
     workflowNamePrefix () {
       return `${this.workflowName}//`
+    },
+    buttonText () {
+      return this.$data.lines.length ? 'Update' : 'Search'
     }
   },
 
@@ -213,12 +214,6 @@ export default {
       this.logVariables.file = this.getFileName(selectedLogFile, logFileEntered)
       this.$workflowService.subscribe(this)
       this.$workflowService.startSubscriptions()
-    },
-    buttonText () {
-      if (this.$data.lines.length) {
-        return 'Update'
-      }
-      return 'Search'
     },
     getFileName (selectedLogFile, logFileEntered) {
       if (selectedLogFile === 'scheduler/log') {
@@ -237,6 +232,13 @@ export default {
         return true
       }
     }
+  },
+
+  inputProps: {
+    clearable: true,
+    clearIcon: mdiClose,
+    density: 'compact',
+    variant: 'outlined'
   }
 }
 </script>
