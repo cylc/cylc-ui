@@ -25,17 +25,6 @@
 
   @include theme-dependent(background-color, $grey, 4);
 
-  .v-list__tile {
-    border-radius: 4px;
-    margin-top: 5px;
-  }
-
-  .v-image__image--contain {
-    top: 30px;
-    bottom: 30px;
-    height: 60%;
-  }
-
   .search-input {
     margin-bottom: 30px !important;
     padding-left: 15px;

@@ -21,8 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     grid-list
     class="c-dashboard mt-4"
   >
-    <v-layout wrap>
-      <v-flex xs12 md6 lg6>
+    <v-row wrap>
+      <v-col md="6" lg="6">
         <p class="display-1">Workflows</p>
         <v-data-table
           :headers="workflowsHeader"
@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           hide-default-header
           id="dashboard-workflows"
         >
-          <v-progress-linear slot="progress" color="grey" indeterminate></v-progress-linear>
           <template v-slot:item.count="{ item }">
             <v-skeleton-loader
               :loading="isLoading"
@@ -47,8 +46,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <span class="title font-weight-light">{{ item.text }}</span>
           </template>
         </v-data-table>
-      </v-flex>
-      <v-flex xs12 md6 lg6>
+      </v-col>
+      <v-col md="6" lg="6">
         <p class="display-1">Events</p>
         <v-data-table
           :headers="eventsHeader"
@@ -66,11 +65,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <td class="title">No events</td>
           </template>
         </v-data-table>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
     <v-divider />
-    <v-layout wrap>
-      <v-flex xs12 md6 lg6>
+    <v-row wrap>
+      <v-col md="6" lg="6">
         <v-list three-line>
           <v-list-item to="/workflow-table" data-cy="workflow-table-link">
             <v-list-item-avatar size="60" style="font-size: 2em;">
@@ -117,8 +116,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <span>You are not running Cylc UI via Cylc Hub.</span>
           </v-tooltip>
         </v-list>
-      </v-flex>
-      <v-flex xs12 md6 lg6>
+      </v-col>
+      <v-col md="6" lg="6">
         <v-list three-line>
           <v-list-item to="/guide" data-cy="quickstart-link">
             <v-list-item-avatar size="60" style="font-size: 2em;">
@@ -160,8 +159,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-list-item-content>
           </v-list-item>
         </v-list>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

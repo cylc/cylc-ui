@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="treeitem" v-show="filtered">
-    <v-flex
+    <div
       class="node d-flex align-center"
       :class="nodeClass"
       :style="nodeStyle"
@@ -187,7 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot></slot>
-    </v-flex>
+    </div>
     <span
       v-show="isExpanded"
       v-if="!stopOn.includes(node.type)"
