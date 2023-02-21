@@ -17,7 +17,7 @@
 
 import { expect } from 'chai'
 import { createLocalVue, mount } from '@vue/test-utils'
-import Drawer from '../../../../src/components/cylc/Drawer'
+import Drawer from '@/components/cylc/Drawer'
 
 import Vue from 'vue'
 import Vuetify from 'vuetify'
@@ -37,6 +37,7 @@ const mountFunction = options => {
     register () {},
     unregister () {},
     subscribe () {},
+    startSubscriptions () {},
     introspection: Promise.resolve({
       mutations: [
         { args: [] }

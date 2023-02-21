@@ -54,7 +54,7 @@ import Vue from 'vue'
 import { each, iter } from '@lumino/algorithm'
 import pageMixin from '@/mixins'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
+import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
 import { createWidgetId } from '@/components/cylc/workflow/index'
 import Lumino from '@/components/cylc/workflow/Lumino'
@@ -70,7 +70,7 @@ export default {
   mixins: [
     pageMixin,
     graphqlMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
 
   components: {
@@ -179,13 +179,6 @@ export default {
         createWidgetId(),
         { view, initialOptions }
       )
-      this.$nextTick(() => {
-        // Views use navigation-guards to start the pending subscriptions. But we don't have
-        // this in this view. We must pretend we are doing the beforeRouteEnter here, and
-        // call the .startSubscriptions function, so that the WorkflowService will take care
-        // of loading the pending subscriptions (like the ones created by the new view).
-        this.$workflowService.startSubscriptions()
-      })
     },
     /**
      * Remove all the widgets present in the UI.

@@ -72,7 +72,7 @@ import { mapState, mapGetters } from 'vuex'
 import i18n from '@/i18n'
 import { mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
+import subscriptionMixin from '@/mixins/subscription'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
@@ -81,7 +81,7 @@ export default {
   name: 'WorkflowsTable',
   mixins: [
     pageMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
   metaInfo () {
     return {

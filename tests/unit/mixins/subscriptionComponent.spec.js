@@ -16,46 +16,49 @@
  */
 
 import { expect } from 'chai'
+import sinon from 'sinon'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import WorkflowService from '@/services/workflow.service'
 
 const localVue = createLocalVue()
 
 describe('Subscription Component mixin', () => {
-  let workflowService
+  let workflowService, Component
   beforeEach(() => {
-    workflowService = {
-      subscribe (componentOrView) {
-        componentOrView.subscribed = true
-      },
-      unsubscribe (componentOrView) {
-        componentOrView.subscribed = false
-      }
-    }
+    workflowService = sinon.createStubInstance(WorkflowService)
     localVue.prototype.$workflowService = workflowService
-  })
-  it('should provide a hook for when the component is created', () => {
-    const Component = {
+
+    Component = {
       mixins: [subscriptionComponentMixin],
+      data: () => ({
+        query: { foo: 1 }
+      }),
       render () {
       }
     }
-    const component = shallowMount(Component, {
-      localVue
-    })
-    expect(component.vm.subscribed).to.equal(true)
   })
-  it('should provide a hook for when the component is destroyed', () => {
-    const Component = {
-      mixins: [subscriptionComponentMixin],
-      render () {
-      }
-    }
+
+  it('subscribes & unsubscribes when the component is mounted & destroyed', () => {
     const component = shallowMount(Component, {
       localVue
     })
-    expect(component.vm.subscribed).to.equal(true)
+    expect(workflowService.subscribe.calledOnceWith(component.vm)).to.equal(true)
+    expect(workflowService.startSubscriptions.calledOnce).to.equal(true)
+    expect(workflowService.unsubscribe.called).to.equal(false)
     component.vm.$destroy()
-    expect(component.vm.subscribed).to.equal(false)
+    expect(workflowService.unsubscribe.calledOnceWith(component.vm)).to.equal(true)
+  })
+
+  it('un- & re-subcribes when the query changes', () => {
+    const component = shallowMount(Component, {
+      localVue
+    })
+    component.vm.query = { foo: 2 }
+    component.vm.$nextTick(() => {
+      expect(workflowService.unsubscribe.calledOnceWith(component.vm)).to.equal(true)
+      expect(workflowService.subscribe.calledTwice).to.equal(true)
+      expect(workflowService.startSubscriptions.calledTwice).to.equal(true)
+    })
   })
 })

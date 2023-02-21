@@ -25,7 +25,6 @@ import GScan from '@/components/cylc/gscan/GScan'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import pageMixin from '@/mixins/index'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 
 export default {
@@ -33,8 +32,7 @@ export default {
 
   mixins: [
     pageMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionComponentMixin
   ],
 
   components: {
