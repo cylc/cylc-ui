@@ -124,7 +124,8 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import ViewToolbar from '@/components/cylc/ViewToolbar'
 import {
-  mdiChartLine
+  mdiChartLine,
+  mdiRefresh
 } from '@mdi/js'
 
 // list of fields to request for jobs
@@ -152,41 +153,6 @@ const QUERY = gql`
 query ($workflows: [ID]) {
   tasks(live: false, workflows: $workflows) {
     ${taskFields.join('\n')}
-  }
-}
-`
-
-// the subscription which keeps up to date with the live
-// state of the workflow
-const SUBSCRIPTION = gql`
-subscription WorkflowGraphSubscription ($workflowId: ID) {
-  deltas(workflows: [$workflowId]) {
-    ...Deltas
-  }
-}
-
-fragment JobData on Job {
-  ${jobFields.join('\n')}
-}
-
-fragment AddedDelta on Added {
-  jobs {
-    ...JobData
-  }
-}
-
-fragment UpdatedDelta on Updated {
-  jobs {
-    ...JobData
-  }
-}
-
-fragment Deltas on Deltas {
-  added {
-    ...AddedDelta
-  }
-  updated (stripNull: true) {
-    ...UpdatedDelta
   }
 }
 `
@@ -232,9 +198,7 @@ class AnalysisCallback {
 export default {
   mixins: [
     pageMixin,
-    graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
+    graphqlMixin
   ],
 
   name: 'Analysis',
@@ -247,6 +211,10 @@ export default {
     return {
       title: this.getPageTitle('App.workflow', { name: this.workflowName })
     }
+  },
+
+  beforeMount () {
+    this.historicalQuery()
   },
 
   data () {
@@ -263,6 +231,12 @@ export default {
         {
           title: 'Analysis',
           controls: [
+            {
+              title: 'Refresh data',
+              icon: mdiRefresh,
+              action: 'callback',
+              callback: this.historicalQuery
+            }
           ]
         }
       ],
@@ -322,18 +296,6 @@ export default {
   },
 
   computed: {
-    // registers the subscription (unhelpfully named query)
-    // (this is called automatically)
-    query () {
-      this.historicalQuery() // TODO order
-      return new SubscriptionQuery(
-        SUBSCRIPTION,
-        this.variables,
-        'workflow',
-        [this.callback]
-      )
-    },
-
     // a list of the workflow IDs this view is "viewing"
     // NOTE: we plan multi-workflow functionality so we are writing views
     // to be mult-workflow compatible in advance of this feature arriving
@@ -387,6 +349,8 @@ export default {
     // run the one-off query for historical job data and pass its results
     // through the callback
     async historicalQuery () {
+      this.tasks = []
+      this.callback = new AnalysisCallback(this.tasks)
       const ret = await this.$workflowService.query2(
         QUERY,
         { workflows: this.workflowIDs }
