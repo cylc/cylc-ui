@@ -41,8 +41,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               outlined
               placeholder="Filter by task name"
               v-model.trim="tasksFilter.name"
-              @keyup="filterTasks"
-              @click:clear="clearInput"
               ref="filterNameInput"
             ></v-text-field>
           </v-col>
@@ -76,7 +74,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               outlined
               prefix="Platform: "
               v-model="tasksFilter.platformOption"
-              @change="filterTasks"
             ></v-select>
           </v-col>
         </v-row>
@@ -113,31 +110,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep'
 import pick from 'lodash/pick'
 import Vue from 'vue'
 import gql from 'graphql-tag'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
-import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import ViewToolbar from '@/components/cylc/ViewToolbar'
 import {
   mdiChartLine,
   mdiRefresh
 } from '@mdi/js'
 
-// list of fields to request for jobs
-const jobFields = [
-  'id',
-  'name',
-  'state',
-  'platform',
-  'submittedTime',
-  'startedTime',
-  'finishedTime'
-]
+// list of fields to request for tasks
 const taskFields = [
   'name',
   'platform',
@@ -303,21 +287,7 @@ export default {
       return [this.workflowId]
     },
     filteredTasks () {
-      const filterByName = this.filterByTaskName()
-      const filterByPlatform = this.filterByTaskPlatform()
-      return this.tasks.filter(task => {
-        if (filterByName && filterByPlatform) {
-          return (
-            task.name.includes(this.activeFilters.name) &&
-            task.platform === this.activeFilters.platformOption
-          )
-        } else if (filterByName) {
-          return task.name.includes(this.activeFilters.name)
-        } else if (filterByPlatform) {
-          return task.platform === this.activeFilters.platformOption
-        }
-        return true
-      })
+      return this.tasks.filter(task => this.matchTask(task))
     },
     shownHeaders () {
       let timingHeaders
@@ -357,35 +327,15 @@ export default {
       )
       this.callback.onAdded(ret.data)
     },
-    filterByTaskName () {
-      return this.activeFilters &&
-        this.activeFilters.name !== undefined &&
-        this.activeFilters.name !== null &&
-        this.activeFilters.name !== ''
-    },
-    filterByTaskPlatform () {
-      return this.activeFilters &&
-        this.activeFilters.platformOption !== undefined &&
-        this.activeFilters.platformOption !== null &&
-        this.activeFilters.platformOption.length !== ''
-    },
-    filterTasks () {
-      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
-        this.tasksFilter.name !== null &&
-        this.tasksFilter.name !== ''
-      const taskPlatformFilterSet = this.tasksFilter.platformOption !== undefined &&
-        this.tasksFilter.platformOption !== null &&
-        this.tasksFilter.platformOption !== ''
-      if (taskNameFilterSet || taskPlatformFilterSet) {
-        this.activeFilters = cloneDeep(this.tasksFilter)
-      } else {
-        this.activeFilters = null
+    matchTask (task) {
+      let ret = true
+      if (this.tasksFilter.name?.trim()) {
+        ret &&= task.name.includes(this.tasksFilter.name)
       }
-    },
-    clearInput (event) {
-      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
-      this.tasksFilter.name = null
-      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
+      if (this.tasksFilter.platformOption?.trim()) {
+        ret &&= task.platform.includes(this.tasksFilter.platformOption)
+      }
+      return ret
     }
   }
 }
