@@ -46,8 +46,7 @@ export default [
     meta: {
       layout: 'default',
       toolbar: true
-    },
-    props: true
+    }
   },
   {
     path: '/user-profile',
@@ -99,8 +98,7 @@ export default [
       layout: 'default',
       toolbar: true,
       showSidebar: false
-    },
-    props: true
+    }
   },
   {
     path: '/table/:workflowName(.*)',
@@ -110,8 +108,7 @@ export default [
       layout: 'default',
       toolbar: true,
       showSidebar: false
-    },
-    props: true
+    }
   },
   {
     path: '/graph/:workflowName(.*)',
@@ -121,7 +118,6 @@ export default [
       layout: 'default',
       toolbar: true,
       showSidebar: false
-    },
-    props: true
+    }
   }
 ]

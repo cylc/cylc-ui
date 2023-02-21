@@ -51,7 +51,7 @@ import GraphView from '@/views/Graph'
 import LogView from '@/views/Log'
 
 export default {
-  name: 'Workflow',
+  name: 'Workspace',
 
   mixins: [
     pageMixin,
@@ -89,7 +89,6 @@ export default {
 
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      vm.$workflowService.startSubscriptions()
       vm.$nextTick(() => {
         vm.addView({ viewName: TreeView.name })
       })

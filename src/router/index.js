@@ -57,31 +57,12 @@ const router = createRouter({
     if (to.hash) {
       return { selector: to.hash }
     }
-    return { x: 0, y: 0 }
-  }
-})
-
-router.beforeResolve((to, from) => {
-  NProgress.start()
-  if (to.name) {
-    let title
-    let workflowName
-    if (to.meta.toolbar) {
-      // When a workflow is being displayed, we set the title to a
-      // different value.
-      title = to.params.workflowName
-      workflowName = to.params.workflowName
-    } else {
-      title = to.name
-      workflowName = null
-    }
-    store.commit('app/setTitle', title)
-    store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
-    store.dispatch('setAlert', null)
+    return { left: 0, top: 0 }
   }
 })
 
 router.beforeEach((to, from) => {
+  NProgress.start()
   if (!store.state.user.user) {
     router.app.config.globalProperties.$userService.getUserProfile()
       .then((user) => {
@@ -91,6 +72,19 @@ router.beforeEach((to, from) => {
         const alert = new Alert(error, 'error')
         store.dispatch('setAlert', alert)
       })
+  }
+  if (to.name) {
+    let title = to.name
+    let workflowName = null
+    if (to.meta.toolbar) {
+      // When a workflow is being displayed, we set the title to a
+      // different value.
+      title = to.params.workflowName
+      workflowName = to.params.workflowName
+    }
+    store.commit('app/setTitle', title)
+    store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
+    store.dispatch('setAlert', null)
   }
 })
 
