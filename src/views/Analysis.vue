@@ -127,8 +127,17 @@ const taskFields = [
   'platform',
   'count',
   'meanTotalTime',
+  'stdDevTotalTime',
+  'minTotalTime',
+  'maxTotalTime',
   'meanRunTime',
-  'meanQueueTime'
+  'stdDevRunTime',
+  'minRunTime',
+  'maxRunTime',
+  'meanQueueTime',
+  'stdDevQueueTime',
+  'minQueueTime',
+  'maxQueueTime'
 ]
 
 // the one-off query which retrieves historical objects not
@@ -262,18 +271,54 @@ export default {
         {
           text: 'Mean T-queue (s)',
           value: 'meanQueueTime'
+        },
+        {
+          text: 'Std Dev T-queue (s)',
+          value: 'stdDevQueueTime'
+        },
+        {
+          text: 'Min T-queue (s)',
+          value: 'minQueueTime'
+        },
+        {
+          text: 'Max T-queue (s)',
+          value: 'maxQueueTime'
         }
       ],
       runTimeHeaders: [
         {
           text: 'Mean T-run (s)',
           value: 'meanRunTime'
+        },
+        {
+          text: 'Std Dev T-run (s)',
+          value: 'stdDevRunTime'
+        },
+        {
+          text: 'Min T-run (s)',
+          value: 'minRunTime'
+        },
+        {
+          text: 'Max T-run (s)',
+          value: 'maxRunTime'
         }
       ],
       totalTimeHeaders: [
         {
           text: 'Mean T-total (s)',
           value: 'meanTotalTime'
+        },
+        {
+          text: 'Std Dev T-total (s)',
+          value: 'stdDevTotalTime'
+        },
+        {
+          text: 'Min T-total (s)',
+          value: 'minTotalTime'
+        },
+        {
+          text: 'Max T-total (s)',
+          value: 'maxTotalTime'
         }
       ]
     }
