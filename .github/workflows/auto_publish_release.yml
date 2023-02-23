@@ -26,6 +26,11 @@ jobs:
         with:
           ref: ${{ env.MERGE_SHA }}
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
       - name: Install
         run: yarn install
 

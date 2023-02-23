@@ -1,8 +1,9 @@
 {
   "name": "cylc-ui",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "license": "GPL-3.0-only",
+
   "scripts": {
     "build": "vue-cli-service build",
     "build:report": "vue-cli-service build --report",
@@ -20,6 +21,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test": "yarn run test:unit || exit 1; yarn run coverage:e2e --headless"
   },
+
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@hpcc-js/wasm": "1.13",
@@ -49,6 +51,7 @@
     "vuetify": "^3.1.4",
     "vuex": "^4.1.0"
   },
+
   "devDependencies": {
     "@babel/core": "^7.14.8",
     "@babel/eslint-parser": "^7.16.5",
@@ -71,7 +74,7 @@
     "circular-dependency-plugin": "^5.2.2",
     "concurrently": "^7.0.0",
     "cross-fetch": "^3.1.5",
-    "cypress": "^10.10.0",
+    "cypress": "^12.0.0",
     "eslint": "^8.0.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-import-resolver-node": "^0.3.6",
@@ -88,7 +91,7 @@
     "json-server": "^0.17.0",
     "nodemon": "^2.0.19",
     "nyc": "^15.1.0",
-    "sass": "~1.57.0",
+    "sass": "~1.58.0",
     "sass-loader": "^13.0.0",
     "sinon": "^15.0.0",
     "standard": "^17.0.0",
@@ -100,5 +103,5 @@
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
   },
-  "packageManager": "yarn@3.3.1"
+  "packageManager": "yarn@3.4.1"
 }

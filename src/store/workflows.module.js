@@ -357,7 +357,7 @@ function getFamilyTree (tokens, node) {
   }
 
   // add family levels below the cycle point
-  for (const ancestor of node.ancestors || []) {
+  for (const ancestor of node.ancestors.slice().reverse() || []) {
     ret.push([
       'family',
       ancestor.name,

@@ -24,9 +24,83 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 Cylc.  If not, see [GNU licenses](http://www.gnu.org/licenses/).
 
-## Developers
+## Development
 
-### Building
+### Install & Build
+
+```bash
+# Project setup
+yarn install
+
+# build & run in offline mode (uses mock data, auto-reloads the browser on change)
+yarn run serve
+
+# build for development (rebuilds on change)
+# launch using `cylc gui --ui-build-dir=<path>`
+# (where path is the path to the `dist/` folder created by build
+yarn run build:watch
+
+# build for production
+yarn run build
+
+# Produce build report
+yarn run build:report
+```
+
+### Tests
+
+There are three groups of tests:
+
+* Unit tests
+  * Simple unit tests for individual functions and classes.
+  * **Framework:** Mocha
+  * **Assertions:** Chai
+  * **Path:** `tests/unit`
+  * **Command:** `yarn run test:unit`
+  * (To watch add `--watch`)
+* Component tests
+  * In-browser tests which mount a single Vue component standalone.
+  * **Framework:** Cypress
+  * **Assertions:** Chai
+  * **Path:** `cypress/component`
+  * **Command:** `yarn run test:e2e` (navigate to component page)
+  * (For "headless" mode add `-- --headless --config video=false`)
+* End to end tests
+  * In-browser tests which load entire pages of the UI using mocked data.
+  * **Framework:** Cypress
+  * **Assertions:** Chai
+  * **Path:** `tests/e2e`
+  * **Command:** `yarn run test:e2e` (navigate to e2e page)
+  * (For "headless" mode add `-- --headless --config video=false`)
+
+For coverage:
+```
+yarn run coverage:unit
+```
+
+Useful test opts:
+- `--bail`: exit after first test failure
+- `--colors`: enables coloured output in VSCode integrated terminal
+
+### Mocked Data
+
+The "offline" mode (aka `yarn run serve`) which is also used for the end to end
+tests is powered by "mock" data.
+
+You can find the index of mocked data here: `src/services/mock/json/index.js`
+
+Mock data is automatically loaded when the subscription/query issued matches
+an entry in that file.
+
+### Code Style
+
+See `.eslintrc.js` for style, to test run:
+
+```
+yarn run lint
+```
+
+### Project Setup
 
 This project was created with the [vue-cli](https://cli.vuejs.org/).
 
@@ -110,76 +184,6 @@ module.exports = {
 `@vue/babel-preset-app` uses `@babel/preset-env` and the `browserslist` config
 (`.browserslistrc`) to determine the polyfills needed. See
 https://cli.vuejs.org/guide/browser-compatibility.html.
-
-#### Project setup
-
-```
-yarn install
-```
-
-#### Compiles and hot-reloads demo mode for development
-
-```
-yarn run serve
-```
-
-#### Compiles and minifies for production
-
-```
-yarn run build
-```
-
-#### Compiles and watch for changes for development
-
-```
-yarn run build:watch
-```
-
-#### Produce build report
-
-```
-yarn run build:report
-```
-
-#### Run unit tests
-
-```
-yarn run test:unit
-```
-
-Useful opts:
-- `--watch`: watch for changes (allows re-running tests much quicker)
-- `--bail`: exit after first test failure
-- `--colors`: enables coloured output in VSCode integrated terminal
-
-For coverage:
-```
-yarn run coverage:unit
-```
-
-#### Run functional tests
-
-```
-yarn run test:e2e
-```
-
-Or for headless mode
-
-```
-yarn run test:e2e -- --headless --config video=false
-```
-
-For coverage
-
-```
-yarn run coverage:e2e
-```
-
-#### Lints and fixes files
-
-```
-yarn run lint
-```
 
 ### Integration with the backend Cylc UI server
 
