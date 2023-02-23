@@ -61,17 +61,16 @@ const router = createRouter({
   }
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   NProgress.start()
   if (!store.state.user.user) {
-    router.app.config.globalProperties.$userService.getUserProfile()
-      .then((user) => {
-        store.commit('user/SET_USER', user)
-      })
-      .catch((error) => {
-        const alert = new Alert(error, 'error')
-        store.dispatch('setAlert', alert)
-      })
+    try {
+      const user = await router.app.config.globalProperties.$userService.getUserProfile()
+      store.commit('user/SET_USER', user)
+    } catch (error) {
+      const alert = new Alert(error, 'error')
+      store.dispatch('setAlert', alert)
+    }
   }
   if (to.name) {
     let title = to.name
