@@ -24,38 +24,20 @@ import { mapMutations } from 'vuex'
  */
 
 export default {
-  data: () => ({
-    responsive: false,
-    responsiveInput: false
-  }),
-
   mounted () {
-    this.onResponsiveInverted()
-    window.addEventListener('resize', this.onResponsiveInverted)
-    document.querySelector('.v-navigation-drawer')?.addEventListener('resize', this.onResponsiveInverted)
+    this.setDrawer(!this.showNavBtn)
   },
 
-  beforeUnmount () {
-    window.removeEventListener('resize', this.onResponsiveInverted)
-    document.querySelector('.v-navigation-drawer')?.removeEventListener('resize', this.onResponsiveInverted)
+  computed: {
+    showNavBtn () {
+      return this.$vuetify.display.mobile || !this.$store.state.app.drawer
+    }
   },
 
   methods: {
     ...mapMutations('app', ['setDrawer']),
     onClickBtn () {
       this.setDrawer(!this.$store.state.app.drawer)
-    },
-    onResponsiveInverted () {
-      if (document.querySelector('.v-navigation-drawer')?.clientWidth < 5) {
-        this.setDrawer(false)
-      }
-      if (window.innerWidth < 991 || document.querySelector('.v-navigation-drawer')?.clientWidth < 5) {
-        this.responsive = true
-        this.responsiveInput = false
-      } else {
-        this.responsive = false
-        this.responsiveInput = true
-      }
     }
   }
 }

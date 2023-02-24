@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
     <!-- burger button for mobile -->
     <v-btn
-      v-if="responsive"
+      v-if="showNavBtn"
       icon
       @click.stop="onClickBtn"
       class="default v-btn--simple"
@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- title -->
     <v-toolbar-title
       class="c-toolbar-title text-md-h6 text-subtitle-1"
-      :class="responsive ? 'ml-0' : null"
+      :class="showNavBtn ? 'ml-0' : null"
     >
       {{ title }}
     </v-toolbar-title>

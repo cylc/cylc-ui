@@ -18,10 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-navigation-drawer
     v-model="drawer"
+    id="sidebar"
     ref="drawerRef"
     floating
-    mobile-breakpoint="991"
-    :width="navigation.width"
+    :width="drawerWidth"
     class="fill-height"
   >
     <div class="d-flex flex-column h-100">
@@ -56,6 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <Workflows />
     </div>
+    <div class="resize-bar" ref="resizeBar"></div>
     <template v-slot:append>
       <div class="px-4 py-2 d-flex justify-center">
         <span class="text--secondary">
@@ -68,10 +69,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import Header from '@/components/cylc/Header'
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import Workflows from '@/views/Workflows'
 import { mdiHome, mdiGraphql } from '@mdi/js'
 import pkg from '@/../package.json'
+
+const initialWidth = 260
+const minWidth = 150
 
 export default {
   components: {
@@ -87,11 +91,12 @@ export default {
       },
       environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
       version: pkg.version,
-      navigation: {
-        width: 260,
-        borderSize: 3
-      }
+      drawerWidth: initialWidth
     }
+  },
+
+  mounted () {
+    this.setEvents()
   },
 
   computed: {
@@ -101,12 +106,59 @@ export default {
         return this.$store.state.app.drawer
       },
       set (val) {
-        if (val) {
-          const newWidth = typeof this.navigation.width === 'string' ? Number(this.navigation.width.replace('px', '')) : this.navigation.width
-          this.navigation.width = newWidth < 260 ? 260 : newWidth
-        }
-        this.$store.commit('app/setDrawer', val)
+        this.setDrawer(val)
       }
+    }
+  },
+
+  methods: {
+    ...mapMutations('app', ['setDrawer']),
+    getDrawerElement () {
+      // Cannot use $refs.drawerRef.$el due to https://github.com/vuetifyjs/vuetify/issues/16766
+      return document.getElementById('sidebar')
+    },
+    resize (e) {
+      // If less than min width, will collapse (to 4px because that's the
+      // resize-bar width)
+      this.drawerWidth = e.clientX > minWidth ? e.clientX : 4
+    },
+    setEvents () {
+      const el = this.getDrawerElement()
+      const drawerBorder = this.$refs.resizeBar
+      drawerBorder.addEventListener(
+        'mousedown',
+        (mdEvent) => {
+          // Prevent Vuetify-provided transitions to ensure responsiveness
+          el.style.transition = 'none'
+          document.body.classList.add('resizing-drawer')
+          document.addEventListener('mousemove', this.resize, { passive: true })
+          mdEvent.stopPropagation?.()
+          mdEvent.preventDefault?.()
+
+          document.addEventListener(
+            'mouseup',
+            (muEvent) => {
+              if (muEvent.clientX < minWidth) {
+                this.drawer = false
+                // Reset to width at time of mousedown
+                // (using a timeout as a hack to prevent drawer briefly
+                // reappearing (nextTick doesn't work))
+                setTimeout(() => {
+                  this.drawerWidth = mdEvent.clientX
+                }, 200)
+              }
+              el.style.transition = null
+              document.body.classList.remove('resizing-drawer')
+              document.removeEventListener('mousemove', this.resize)
+              this.$nextTick(() => {
+                // Hack to force the lumino tabs to be resized
+                window.dispatchEvent(new Event('resize'))
+              })
+            },
+            { once: true }
+          )
+        }
+      )
     }
   }
 }
