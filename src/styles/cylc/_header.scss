@@ -23,16 +23,14 @@
 
   @include theme-dependent(background-color, $grey, 3);
 
-  .layout {
-    .c-environment-info {
-      font-size: 1rem;
-      font-weight: map-get($font-weights, 'regular');
+  .c-environment-info {
+    font-size: 1rem;
+    font-weight: map-get($font-weights, 'regular');
 
-      .v-chip {
-        font-size: 1rem;
-        @include theme-dependent(background-color, $grey, 5, !important);
-        @include theme-dependent(border-color, $grey, 1, !important);
-      }
+    .v-chip {
+      font-size: 1rem;
+      @include theme-dependent(background-color, $grey, 5, !important);
+      @include theme-dependent(border-color, $grey, 1, !important);
     }
   }
 }

@@ -1,29 +1,37 @@
-# Cylc UI: How to Contribute
+# Cylc: How to Contribute
 
-## Report Bugs
+Thanks for you interest in the Cylc project!
 
-Report bugs by opening an issue [on
-Github](https://github.com/cylc/cylc-ui/issues). Give the version
-affected by the bug (you should test the latest release if possible) and a
-recipe to reproduce the problem.
+Contributions are welcome, please open an issue to discuss changes before
+raising a pull request.
 
-## Request Enhancements
+You can also get in touch via:
 
-Request enhancements by opening an issue at [Github
-](https://github.com/cylc/cylc-ui/issues). Describe your use case in
-detail.
+* The developers chat: [![chat](https://img.shields.io/matrix/cylc-general:matrix.org)](https://matrix.to/#/#cylc-general:matrix.org)
+* The forum: [![forum](https://img.shields.io/discourse/https/cylc.discourse.group/posts.svg)](https://cylc.discourse.group/)
+
+
+## New Contributors
+
+Please read the [CLA](#contributor-licence-agreement-and-certificate-of-origin).
+
+Please add your name to the
+[Code Contributors](#code-contributors) section of this file as part of your
+first Pull Request (for each Cylc repository you contribute to).
+
 
 ## Contribute Code
 
-All contributions to project are made via Pull Requests against the *master*
-branch of [cylc/cylc-ui](https://github.com/cylc/cylc-ui).
-Non-trivial developments must be discussed and agreed in advance in a
-[Issue](https://github.com/cylc/cylc-ui/issues) as the team may not
-be able to consider large changes that appear out of the blue. New
-contributors should add their details to the [Code Contributors
-](#code-contributors) section of this file as part of their first Pull
-Request, and reviewers are responsible for checking this before merging the
-new branch into *master*.
+**Enhancements** are made on the `master` branch.
+
+**Bugfixes** are made on the branch of the same name as the issue's milestone.
+E.G. if the issue is on the `8.0.x` milestone, branch off of `8.0.x` to
+develop your bugfix, then raise the pull request against the `8.0.x` branch.
+We will later merge the `8.0.x` branch into `master`.
+
+Feel free to ask questions on the issue or developers chat if unsure about
+anything.
+
 
 ## Code Contributors
 

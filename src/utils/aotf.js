@@ -806,6 +806,14 @@ export function getMutationArgsFromTokens (mutation, tokens) {
     const alternate = alternateFields[arg._cylcType]
     for (let token in tokens) {
       if (arg._cylcObject && [token, alternate].includes(arg._cylcObject)) {
+        if (arg.name === 'cutoff') {
+          // Work around for a field we don't want filled in, see:
+          // * https://github.com/cylc/cylc-ui/issues/1222
+          // * https://github.com/cylc/cylc-ui/issues/1225
+          // TODO: Once #1225 is done the field type can be safely changed in
+          // the schema without creating a compatibility issue with the UIS.
+          continue
+        }
         if (arg._cylcObject === alternate) {
           token = alternate
         }

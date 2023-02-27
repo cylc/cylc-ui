@@ -30,10 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <div class="card-grid">
 
-      <v-flex
-        md5
-        xs12
-      >
+      <v-col>
         <v-card outlined>
           <v-card-title primary-title>
             <p class="display-1 text--primary">Tasks &amp; Jobs</p>
@@ -89,12 +86,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
           </v-card-text>
         </v-card>
-      </v-flex>
+      </v-col>
 
-      <v-flex
-        md5
-        xs12
-      >
+      <v-col>
         <v-card outlined>
           <v-card-title primary-title>
             <p class="display-1 text--primary">Why Are We Waiting?</p>
@@ -187,7 +181,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
              </p>
           </v-card-text>
         </v-card>
-      </v-flex>
+      </v-col>
     </div>
 
   </v-container>

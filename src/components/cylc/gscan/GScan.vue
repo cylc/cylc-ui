@@ -118,14 +118,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :to="workflowLink(scope.node)"
             >
               <v-list-item-title>
-                <v-layout align-center align-content-center d-flex flex-nowrap>
-                  <v-flex
+                <v-row class="align-center align-content-center flex-nowrap">
+                  <v-col
                     v-if="scope.node.type === 'workflow-part'"
                     class="c-gscan-workflow-name"
                   >
                     <span>{{ scope.node.name || scope.node.id }}</span>
-                  </v-flex>
-                  <v-flex
+                  </v-col>
+                  <v-col
                     v-else-if="scope.node.type === 'workflow'"
                     class="c-gscan-workflow-name"
                   >
@@ -135,11 +135,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       </template>
                       <span>{{ scope.node.id }}</span>
                     </v-tooltip>
-                  </v-flex>
+                  </v-col>
                   <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
-                  <v-flex
+                  <v-col
                     v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
-                    class="text-right c-gscan-workflow-states"
+                    class="text-right c-gscan-workflow-states flex-grow-0"
                   >
                     <!-- task summary tooltips -->
                     <span
@@ -174,8 +174,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       </span>
                     </v-tooltip>
                   </span>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-list-item-title>
             </v-list-item>
           </template>

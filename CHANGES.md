@@ -11,7 +11,7 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 -------------------------------------------------------------------------------
-## __cylc-ui-1.5.0 (<span actions:bind='release-date'>Upcoming</span>)__
+## __cylc-ui-1.5.0 (<span actions:bind='release-date'>Released 2023-02-20</span>)__
 
 ### Enhancements
 
@@ -22,6 +22,10 @@ in table changed to human readable ISO duration format.
 cycle point and family in tree & table views.
 
 ### Fixes
+
+[#1230](https://github.com/cylc/cylc-ui/pull/1230) -
+Fixes an issue where tasks were missing from the GUI in workflows which
+use multi-level family inheritance.
 
 [#1182](https://github.com/cylc/cylc-ui/pull/1182) - Fixes bug in filtering
 by task name.
