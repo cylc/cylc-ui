@@ -87,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :key="child.id"
             :node="child"
             v-bind="{
-              stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc
+              stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent
             }"
             @tree-item-created="onTreeItemCreated"
             @tree-item-destroyed="onTreeItemDestroyed"
@@ -157,6 +157,11 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    /** Indent of each tree-item hierarchy in px */
+    indent: {
+      type: Number,
+      required: false
     }
   },
   components: {

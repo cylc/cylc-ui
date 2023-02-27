@@ -23,15 +23,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :style="nodeStyle"
     >
       <!-- the node's left icon; used for expand/collapse -->
-      <v-icon
+      <v-btn
         aria-label="Expand/collapse"
-        role="img"
         aria-hidden="false"
         class="node-expand-collapse-button flex-shrink-0"
-        v-if="shouldRenderExpandCollapseBtn"
         @click="toggleExpandCollapse"
+        v-if="shouldRenderExpandCollapseBtn"
         :style="expandCollapseBtnStyle"
-      >{{ icons.mdiChevronRight }}</v-icon>
+        icon
+        variant="text"
+        density="compact"
+      >
+        <v-icon>
+          {{ icons.mdiChevronRight }}
+        </v-icon>
+      </v-btn>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
       <slot name="cyclepoint" v-if="node.type === 'cycle'">
@@ -139,7 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot name="job-details" v-else-if="node.type === 'job-details'">
-        <div class="leaf job-details">
+        <div class="leaf job-details mb-2">
           <div class="arrow-up" :style="leafTriangleStyle"></div>
           <div class="leaf-data font-weight-light py-4 pl-2">
             <div
@@ -203,7 +209,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           node: node.node
         }"
         :depth="depth + 1"
-        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc }"
+        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
         v-on="passthroughHandlers"
       />
       <TreeItem
@@ -213,7 +219,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :key="child.id"
         :node="child"
         :depth="depth + 1"
-        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc }"
+        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
         v-on="passthroughHandlers"
       >
         <!-- add scoped slots
@@ -242,12 +248,6 @@ import {
   jobMessageOutputs
 } from '@/utils/tasks'
 import { getNodeChildren } from '@/components/cylc/tree/util'
-
-/**
- * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
- * @type {number} integer
- */
-const NODE_DEPTH_OFFSET = 1.5 // em
 
 /**
  * Events that are passed through up the chain from child TreeItems.
@@ -297,6 +297,12 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    /** Indent in px; default is expand/collapse btn width */
+    indent: {
+      type: Number,
+      required: false,
+      default: 28
     }
   },
 
@@ -360,16 +366,13 @@ export default {
       // returns child nodes folling the family tree and following sort order
       return getNodeChildren(this.node, this.cyclePointsOrderDesc)
     },
-    /** Get the node indentation in units of em. */
+    /** Get the node indentation in units of px. */
     nodeIndentation () {
-      return this.depth * NODE_DEPTH_OFFSET
-      // Note: this should actually depend on the expand/collapse icon size, but
-      // fortuitously, the vuetify default icon size is 24px which is 1.5em for
-      // a font-size of 16px
+      return this.depth * this.indent
     },
     nodeStyle () {
       return {
-        'padding-left': `${this.node.type === 'job-details' ? 0 : this.nodeIndentation}em`
+        'padding-left': `${this.node.type === 'job-details' ? 0 : this.nodeIndentation}px`
       }
     },
     nodeClass () {
@@ -381,11 +384,10 @@ export default {
       }
     },
     expandCollapseBtnStyle () {
-      const styles = {}
-      if (!this.hasChildren) {
-        styles.visibility = 'hidden'
+      return {
+        // set visibility 'hidden' to ensure element takes up space
+        visibility: this.hasChildren ? null : 'hidden'
       }
-      return styles
     },
     /**
      * Whether the expand collapse button for this TreeItem should be rendered.
@@ -400,7 +402,7 @@ export default {
     /** Make the job details triangle point to the job icon */
     leafTriangleStyle () {
       return {
-        'margin-left': `${this.nodeIndentation}em`
+        'margin-left': `${this.nodeIndentation}px`
       }
     },
     jobMessageOutputs () {

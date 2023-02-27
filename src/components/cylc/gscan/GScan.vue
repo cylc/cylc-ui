@@ -111,6 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :autoExpandTypes="['workflow-part', 'workflow']"
           class="c-gscan-workflow ma-0 pa-0"
           ref="tree"
+          :indent="18"
         >
           <template v-slot:node="scope">
             <workflow-icon
