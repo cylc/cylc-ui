@@ -172,10 +172,12 @@ export default {
 
   mounted () {
     this.$eventBus.on('show-mutations-menu', this.showMutationsMenu)
+    document.addEventListener('keydown', this.onKeydown)
   },
 
   beforeUnmount () {
     this.$eventBus.off('show-mutations-menu', this.showMutationsMenu)
+    document.removeEventListener('keydown', this.onKeydown)
   },
 
   computed: {
@@ -260,6 +262,11 @@ export default {
       this.dialogKey = !this.dialogKey
     },
 
+    closeMenu () {
+      this.showMenu = false
+      this.expanded = false
+    },
+
     closeDialog () {
       this.dialog = false
       this.dialogMutation = null
@@ -274,10 +281,15 @@ export default {
      * @param {Event} e - the click event
      */
     onClickOutside (e) {
-      this.showMenu = false
-      this.expanded = false
+      this.closeMenu()
       if (e.target?.classList.contains('c-interactive')) {
         this.showMenu = true
+      }
+    },
+
+    onKeydown (e) {
+      if (e.key === 'Escape') {
+        this.closeMenu()
       }
     },
 
