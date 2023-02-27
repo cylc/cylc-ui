@@ -38,58 +38,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="flex-grow-1 flex-column"
           id="c-gscan-search-workflows"
         />
-        <!-- button to activate the filters tooltip -->
-        <v-btn
-          icon
-          class="flex-grow-0 flex-column ml-2"
-          id="c-gscan-filter-tooltip-btn"
-          variant="text"
-          size="small"
+        <!-- button to activate the filters menu -->
+        <v-badge
+          :content="numFilters"
+          v-model="numFilters"
         >
-          <v-icon size="x-large">{{ $options.icons.mdiFilter }}</v-icon>
-        </v-btn>
+          <v-btn
+            icon
+            class="flex-grow-0 flex-column ml-2"
+            id="c-gscan-filter-tooltip-btn"
+            variant="text"
+            size="small"
+          >
+            <v-icon size="x-large">{{ $options.icons.mdiFilter }}</v-icon>
+          </v-btn>
+        </v-badge>
         <!-- filters tooltip -->
         <v-menu
           activator="#c-gscan-filter-tooltip-btn"
           :close-on-content-click="false"
           location="right"
         >
-          <v-card
-            max-height="250px"
-          >
-            <v-list
-              density="compact"
-            >
-              <div
-                v-for="filter in filters"
-                :key="filter.title"
+          <v-card width="500px">
+            <v-list>
+              <v-list-item
+                v-for="(items, title) in filters"
+                :key="title"
               >
-                <v-list-item density="compact">
-                  <v-list-item-title>
-                    <v-checkbox
-                      :label="filter.title"
-                      :model-value="allItemsSelected(filter.items)"
-                      density="compact"
-                      hide-details
-                      @click="toggleItemsValues(filter.items)"
-                    ></v-checkbox>
-                  </v-list-item-title>
-                </v-list-item>
-                <v-divider />
-                <v-list-item
-                  v-for="item in filter.items"
-                  :key="`${filter.title}-${item.text}`"
-                  density="compact"
-                >
-                  <v-checkbox
-                    :label="item.text"
-                    v-model="item.model"
-                    density="compact"
-                    hide-details
-                    height="20"
-                  />
-                </v-list-item>
-              </div>
+                <v-select
+                  v-model="filters[title]"
+                  :items="$options.allStates[title]"
+                  :label="`Filter by ${title}`"
+                  variant="outlined"
+                  chips
+                  closable-chips
+                  clearable
+                  multiple
+                  hide-details
+                  :clear-icon="$options.icons.mdiClose"
+                  class="my-2"
+                  :data-cy="`filter ${title}`"
+                />
+              </v-list-item>
             </v-list>
           </v-card>
         </v-menu>
@@ -199,8 +189,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiClose, mdiFilter } from '@mdi/js'
-import uniq from 'lodash/uniq'
-import TaskState from '@/model/TaskState.model'
+import TaskState, { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
@@ -243,62 +232,15 @@ export default {
        */
       searchWorkflows: '',
       /**
-       * List of filters to be displayed by the template, so that the user
-       * can filter the list of workflows.
-       *
-       * Each entry contains a title and a list of items. Each item contains
-       * the text attribute, which is used as display value in the template.
-       * The value attribute, which may be used if necessary, as it contains
-       * the original value (e.g. an Enum, while title would be some formatted
-       * string). Finally, the model is bound via v-model, and keeps the
-       * value selected in the UI (i.e. if the user checks the "running"
-       * checkbox, the model here will be true, if the user unchecks it,
-       * then it will be false).
-       *
-       * @type {[
-       *   {
-       *     title: string,
-       *     items: [{
-       *       text: string,
-       *       value: object,
-       *       model: boolean
-       *     }]
-       *   }
-       * ]}
+       * List of filters selected by the user.
+       * @type {{string: string[]}}
        */
-      filters: [
-        {
-          title: 'workflow state',
-          items: WorkflowState.enumValues
-            .map(state => {
-              return {
-                text: state.name,
-                value: state,
-                model: true
-              }
-            })
-        },
-        {
-          title: 'task state',
-          items: TaskState.enumValues.map(state => {
-            return {
-              text: state.name,
-              value: state,
-              model: false
-            }
-          }).sort((left, right) => {
-            return left.text.localeCompare(right.text)
-          })
-        }
-        // {
-        //   title: 'workflow host',
-        //   items: [] // TODO: will it be in state totals?
-        // },
-        // {
-        //   title: 'cylc version',
-        //   items: [] // TODO: will it be in state totals?
-        // }
-      ]
+      filters: {
+        'workflow state': [],
+        'task state': []
+        // 'workflow host': [], // TODO: will it be in state totals?
+        // 'cylc version': [] // TODO: will it be in state totals?
+      }
     }
   },
   computed: {
@@ -309,23 +251,8 @@ export default {
       }
       return sortedWorkflowTree(this.workflowTree)
     },
-    /**
-     * @return {Array<String>}
-     */
-    workflowStates () {
-      return this.filters[0]
-        .items
-        .filter(item => item.model)
-        .map(item => item.value.name)
-    },
-    /**
-     * @return {Array<String>}
-     */
-    taskStates () {
-      return uniq(this.filters[1]
-        .items
-        .filter(item => item.model)
-        .map(item => item.value.name))
+    numFilters () {
+      return Object.values(this.filters).flat().length
     }
   },
   watch: {
@@ -336,9 +263,7 @@ export default {
     filters: {
       deep: true,
       immediate: false,
-      handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
-      }
+      handler: 'filterWorkflows'
     },
     /**
      * If the user changes the workflow name to search/filter,
@@ -347,16 +272,12 @@ export default {
     searchWorkflows: {
       deep: true,
       immediate: false,
-      handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflows, newVal, this.workflowStates, this.taskStates)
-      }
+      handler: 'filterWorkflows'
     },
     workflows: {
       deep: true,
       immediate: true,
-      handler: function () {
-        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
-      }
+      handler: 'filterWorkflows'
     },
     filteredWorkflows: {
       deep: true,
@@ -388,7 +309,14 @@ export default {
     }
   },
   methods: {
-    filterHierarchically,
+    filterWorkflows () {
+      this.filteredWorkflows = filterHierarchically(
+        this.workflows,
+        this.searchWorkflows,
+        this.filters['workflow state'],
+        this.filters['task state']
+      )
+    },
 
     /**
      * Return `true` iff all the items have been selected. `false` otherwise.
@@ -468,6 +396,14 @@ export default {
   icons: {
     mdiClose,
     mdiFilter
+  },
+  /**
+   * Lists of all the possible workflow and task states
+   * @type {{string: string[]}}
+   */
+  allStates: {
+    'workflow state': WorkflowState.enumValues.map(x => x.name),
+    'task state': TaskStateUserOrder.map(x => x.name)
   }
 }
 </script>

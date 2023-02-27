@@ -28,42 +28,40 @@ export function filterByName (workflow, name) {
 
 /**
  * @private
- * @param stateTotals {Object} - object with the keys being states, and values the count
- * @return {Array<String>}
+ * @param {Object=} stateTotals - object with the keys being states, and values the count
+ * @return {string[]}
  */
 function getWorkflowStates (stateTotals) {
   const jobStates = JobState.enumValues.map(jobState => jobState.name)
+  // GraphQL will return all the task states possible in a workflow, but we
+  // only want the states that have an equivalent state for a job. So we filter
+  // out the states that do not exist for jobs, and that have active tasks in
+  // the workflow (no point keeping the empty states, as they are not to be
+  // displayed).
   return !stateTotals
     ? []
-    : Object
-      .entries(stateTotals)
-      .filter(stateTotal => {
-        // GraphQL will return all the task states possible in a workflow, but we
-        // only want the states that have an equivalent state for a job. So we filter
-        // out the states that do not exist for jobs, and that have active tasks in
-        // the workflow (no point keeping the empty states, as they are not to be
-        // displayed).
-        return jobStates.includes(stateTotal[0]) && stateTotal[1] > 0
-      })
-      .map(stateTotal => stateTotal[0])
+    : Object.keys(stateTotals)
+      .filter((state) => jobStates.includes(state) && stateTotals[state] > 0)
 }
 
 /**
  * @param {WorkflowGScanNode|WorkflowNamePartGScanNode} workflow
- * @param {Array<String>} workflowStates
- * @param {Array<String>} taskStates
+ * @param {string[]} workflowStates
+ * @param {string[]} taskStates
  * @returns {boolean}
  */
 export function filterByState (workflow, workflowStates, taskStates) {
   // workflow states
-  if (!workflowStates.includes(workflow.node.status)) {
+  if (
+    workflowStates.length && !workflowStates.includes(workflow.node.status)
+  ) {
     return false
   }
   // task states
-  if (taskStates.length > 0) {
-    const intersection = getWorkflowStates(workflow.node.stateTotals)
-      .filter(item => taskStates.includes(item))
-    return intersection.length !== 0
+  if (taskStates.length) {
+    return getWorkflowStates(workflow.node.stateTotals).some(
+      (item) => taskStates.includes(item)
+    )
   }
   return true
 }
@@ -78,24 +76,19 @@ export function filterByState (workflow, workflowStates, taskStates) {
  *
  * @param {WorkflowGScanNode|WorkflowNamePartGScanNode} workflow
  * @param {string} name
- * @param {Array<String>} workflowStates
- * @param {Array<String>} taskStates
+ * @param {string[]} workflowStates
+ * @param {string[]} taskStates
  * @return {boolean} - true if the workflow is accepted, false otherwise
  */
 function filterWorkflow (workflow, name, workflowStates, taskStates) {
-  let filtered = false
   // Filter by name.
-  if (name && name !== '') {
-    filtered = filterByName(workflow, name)
+  if (name && !filterByName(workflow, name)) {
     // Stop if we know that the name was not accepted.
-    if (!filtered) {
-      return filtered
-    }
+    return false
   }
   // Now filter using the provided list of states. We know that the name has been
   // accepted at this point.
-  filtered = filterByState(workflow, workflowStates, taskStates)
-  return filtered
+  return filterByState(workflow, workflowStates, taskStates)
 }
 
 /**
