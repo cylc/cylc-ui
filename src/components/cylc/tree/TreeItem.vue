@@ -119,19 +119,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   v-bind="props"
                   :class="customOutput.isMessage ? 'bg-light-grey text-black' : 'bg-grey text-white'"
                   class="ml-2 message-output"
-                  small
-                >{{ customOutput.label }}</v-chip>
+                  size="small"
+                >
+                  {{ customOutput.label }}
+                </v-chip>
               </template>
               <span>{{ customOutput.message }}</span>
             </v-tooltip>
             <v-chip
               v-if="jobMessageOutputs.length > 5"
-              color="grey"
-              class="ml-2 text-grey-lighten-5"
-              small
+              class="ml-2 bg-grey text-white"
+              size="small"
               link
               @click="toggleExpandCollapse"
-            >+{{ jobMessageOutputs.length - 5 }}</v-chip>
+            >
+              +{{ jobMessageOutputs.length - 5 }}
+            </v-chip>
           </span>
         </div>
       </slot>

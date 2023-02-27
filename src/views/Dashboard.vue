@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-container
     fluid
     grid-list
-    class="c-dashboard mt-4"
+    class="c-dashboard mt-4 py-0 px-6"
   >
     <v-row wrap>
       <v-col md="6" lg="6">
@@ -57,10 +57,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-divider />
     <v-row wrap>
       <v-col md="6" lg="6">
-        <v-list lines="three">
+        <v-list lines="three" class="pa-0">
           <v-list-item to="/workflow-table" data-cy="workflow-table-link">
             <template v-slot:prepend>
-              <v-icon size="2em">{{ svgPaths.table }}</v-icon>
+              <v-icon size="1.6em">{{ svgPaths.table }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Workflows Table
@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item to="/user-profile" data-cy="user-settings-link">
             <template v-slot:prepend>
-              <v-icon size="2em">{{ svgPaths.settings }}</v-icon>
+              <v-icon size="1.6em">{{ svgPaths.settings }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Settings
@@ -83,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div>
             <v-list-item id="cylc-hub-button" :disabled=!multiUserMode :href=hubUrl>
               <template v-slot:prepend>
-                <v-icon size="2em">{{ svgPaths.hub }}</v-icon>
+                <v-icon size="1.6em">{{ svgPaths.hub }}</v-icon>
               </template>
               <v-list-item-title class="text-h6 font-weight-light">
                 Cylc Hub
@@ -103,10 +103,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-list>
       </v-col>
       <v-col md="6" lg="6">
-        <v-list lines="three">
+        <v-list lines="three" class="pa-0">
           <v-list-item to="/guide" data-cy="quickstart-link">
             <template v-slot:prepend>
-              <v-icon size="2em">{{ svgPaths.quickstart }}</v-icon>
+              <v-icon size="1.6em">{{ svgPaths.quickstart }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Cylc UI Quickstart
@@ -117,7 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/workflow-design-guide/index.html" target="_blank">
             <template v-slot:prepend>
-              <v-icon size="2em">{{ svgPaths.workflow }}</v-icon>
+              <v-icon size="1.6em">{{ svgPaths.workflow }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Workflow Design Guide
@@ -128,7 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/index.html" target="_blank">
             <template v-slot:prepend>
-              <v-icon size="2em">{{ svgPaths.documentation }}</v-icon>
+              <v-icon size="1.6em">{{ svgPaths.documentation }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Documentation

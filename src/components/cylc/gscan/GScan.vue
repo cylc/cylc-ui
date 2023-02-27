@@ -41,11 +41,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- button to activate the filters tooltip -->
         <v-btn
           icon
-          class="flex-grow-0 flex-column"
+          class="flex-grow-0 flex-column ml-2"
           id="c-gscan-filter-tooltip-btn"
           variant="text"
+          size="small"
         >
-          <v-icon>{{ $options.icons.mdiFilter }}</v-icon>
+          <v-icon size="x-large">{{ $options.icons.mdiFilter }}</v-icon>
         </v-btn>
         <!-- filters tooltip -->
         <v-menu
