@@ -3,7 +3,6 @@
   "version": "1.5.0",
   "private": true,
   "license": "GPL-3.0-only",
-
   "scripts": {
     "build": "vue-cli-service build",
     "build:report": "vue-cli-service build --report",
@@ -21,7 +20,6 @@
     "test:unit": "vue-cli-service test:unit",
     "test": "yarn run test:unit || exit 1; yarn run coverage:e2e --headless"
   },
-
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@hpcc-js/wasm": "1.13",
@@ -48,10 +46,9 @@
     "vue-meta": "^2.4.0",
     "vue-router": "^4.0.0",
     "vue-the-mask": "^0.11.1",
-    "vuetify": "^3.1.4",
+    "vuetify": "^3.1.7",
     "vuex": "^4.1.0"
   },
-
   "devDependencies": {
     "@babel/core": "^7.14.8",
     "@babel/eslint-parser": "^7.16.5",
