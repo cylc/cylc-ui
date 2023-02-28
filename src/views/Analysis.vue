@@ -129,14 +129,23 @@ const taskFields = [
   'meanTotalTime',
   'stdDevTotalTime',
   'minTotalTime',
+  'firstQuartileTotal',
+  'secondQuartileTotal',
+  'thirdQuartileTotal',
   'maxTotalTime',
   'meanRunTime',
   'stdDevRunTime',
   'minRunTime',
+  'firstQuartileRun',
+  'secondQuartileRun',
+  'thirdQuartileRun',
   'maxRunTime',
   'meanQueueTime',
   'stdDevQueueTime',
   'minQueueTime',
+  'firstQuartileQueue',
+  'secondQuartileQueue',
+  'thirdQuartileQueue',
   'maxQueueTime'
 ]
 
@@ -281,6 +290,18 @@ export default {
           value: 'minQueueTime'
         },
         {
+          text: 'Q1 T-queue (s)',
+          value: 'firstQuartileQueue'
+        },
+        {
+          text: 'Median T-queue (s)',
+          value: 'secondQuartileQueue'
+        },
+        {
+          text: 'Q3 T-queue (s)',
+          value: 'thirdQuartileQueue'
+        },
+        {
           text: 'Max T-queue (s)',
           value: 'maxQueueTime'
         }
@@ -299,6 +320,18 @@ export default {
           value: 'minRunTime'
         },
         {
+          text: 'Q1 T-run (s)',
+          value: 'firstQuartileRun'
+        },
+        {
+          text: 'Median T-run (s)',
+          value: 'secondQuartileRun'
+        },
+        {
+          text: 'Q3 T-run (s)',
+          value: 'thirdQuartileRun'
+        },
+        {
           text: 'Max T-run (s)',
           value: 'maxRunTime'
         }
@@ -315,6 +348,18 @@ export default {
         {
           text: 'Min T-total (s)',
           value: 'minTotalTime'
+        },
+        {
+          text: 'Q1 T-total (s)',
+          value: 'firstQuartileTotal'
+        },
+        {
+          text: 'Median T-total (s)',
+          value: 'secondQuartileTotal'
+        },
+        {
+          text: 'Q3 T-total (s)',
+          value: 'thirdQuartileTotal'
         },
         {
           text: 'Max T-total (s)',
