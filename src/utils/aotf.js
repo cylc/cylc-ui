@@ -50,6 +50,7 @@ import {
 import Alert from '@/model/Alert.model'
 import store from '@/store/index'
 import { Tokens } from '@/utils/uid'
+import { WorkflowState } from '@/model/WorkflowState.model'
 
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
@@ -444,7 +445,12 @@ export function processMutations (mutations, types) {
  * @return {Array<String>}
  */
 export function getStates (text) {
-  const defaultStates = ['running', 'paused', 'stopping', 'stopped']
+  const defaultStates = [
+    WorkflowState.RUNNING.name,
+    WorkflowState.PAUSED.name,
+    WorkflowState.STOPPING.name,
+    WorkflowState.STOPPED.name
+  ]
   if (!text) {
     return defaultStates
   }
@@ -452,7 +458,7 @@ export function getStates (text) {
   // default to all workflow states
   const validStates = text.match(re)
   if (validStates) {
-    return validStates[1]
+    return validStates[1].replace(/\s/g, '').split(',')
   }
   return defaultStates
 }

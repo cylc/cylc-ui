@@ -136,7 +136,7 @@ import Mutation from '@/components/cylc/Mutation'
 import {
   mdiPencil
 } from '@mdi/js'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'CylcObjectMenu',
@@ -160,6 +160,7 @@ export default {
       dialogKey: false,
       expanded: false,
       node: null,
+      workflowStatus: null,
       mutations: [],
       isLoadingMutations: true,
       showMenu: false,
@@ -181,6 +182,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters('workflows', ['getNodes']),
     primaryMutations () {
       return this.$workflowService.primaryMutations[this.node.type] || []
     },
@@ -239,7 +241,15 @@ export default {
       }
     },
     isDisabled (mutation, authorised) {
-      if (((!mutation._validStates.includes(this.node.node.status))) || !authorised) {
+      if (this.node.type !== 'workflow') {
+        this.workflowStatus = this.getNodes(
+          'workflow', [this.node.tokens.workflow_id])[0].node.status
+      } else {
+        this.workflowStatus = this.node.node.status
+      }
+      if (
+        (!mutation._validStates.includes(this.workflowStatus)) ||
+          !authorised) {
         return true
       }
       return false
