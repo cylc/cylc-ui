@@ -57,6 +57,7 @@ below.
  - Carol Barno
  - Giuliano Serrao
  - Aaron Cole
+ - Jamie Allen
 <!-- end-shortlog -->
 
 (All contributors are identifiable with email addresses in the git version
