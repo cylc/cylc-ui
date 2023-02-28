@@ -231,12 +231,7 @@ export default {
     // if true layout is left-right is false it is top-bottom
     transpose: false,
     // if true the graph layout will be updated on a timer
-    autoRefresh: false
-  },
-  created () {
-    for (const [key, value] of Object.entries({ ...this.$options.defaults, ...this.initialOptions })) {
-      Vue.set(this.$data.options, key, value)
-    }
+    autoRefresh: true
   },
   data () {
     return {
@@ -259,55 +254,59 @@ export default {
       panZoomWidget: null,
       // true if layout is in progress
       updating: false,
-      groups: [
-        {
-          title: 'Graph',
-          controls: [
-            {
-              title: 'Refresh',
-              icon: mdiRefresh,
-              action: 'callback',
-              callback: this.refresh,
-              disableIf: ['autoRefresh']
-            },
-            {
-              title: 'Auto Refresh',
-              icon: mdiTimer,
-              action: 'toggle',
-              value: true,
-              key: 'autoRefresh'
-            },
-            {
-              title: 'Transpose',
-              icon: mdiFileRotateRight,
-              action: 'toggle',
-              value: false,
-              key: 'transpose'
-            },
-            {
-              title: 'Centre',
-              icon: mdiImageFilterCenterFocus,
-              action: 'callback',
-              callback: this.reset
-            },
-            {
-              title: 'Increase Spacing',
-              icon: mdiArrowExpand,
-              action: 'callback',
-              callback: this.increaseSpacing
-            },
-            {
-              title: 'Decrease Spacing',
-              icon: mdiArrowCollapse,
-              action: 'callback',
-              callback: this.decreaseSpacing
-            }
-          ]
-        }
-      ]
+      // control groups, set in the mounted method
+      groups: []
     }
   },
+
   mounted () {
+    this.groups = [
+      {
+        title: 'Graph',
+        controls: [
+          {
+            title: 'Refresh',
+            icon: mdiRefresh,
+            action: 'callback',
+            callback: this.refresh,
+            disableIf: ['autoRefresh']
+          },
+          {
+            title: 'Auto Refresh',
+            icon: mdiTimer,
+            action: 'toggle',
+            value: this.options.autoRefresh,
+            key: 'autoRefresh'
+          },
+          {
+            title: 'Transpose',
+            icon: mdiFileRotateRight,
+            action: 'toggle',
+            value: this.options.transpose,
+            key: 'transpose'
+          },
+          {
+            title: 'Centre',
+            icon: mdiImageFilterCenterFocus,
+            action: 'callback',
+            callback: this.reset
+          },
+          {
+            title: 'Increase Spacing',
+            icon: mdiArrowExpand,
+            action: 'callback',
+            callback: this.increaseSpacing
+          },
+          {
+            title: 'Decrease Spacing',
+            icon: mdiArrowCollapse,
+            action: 'callback',
+            callback: this.decreaseSpacing
+          }
+        ]
+      }
+    ]
+
     // allow render to happen before we go configuring svgPanZoom
     const self = this
     this.$nextTick(function () {
@@ -542,6 +541,13 @@ export default {
       this.panZoomWidget.zoom(relativeZoom * width / desiredWidth)
     },
     async refresh () {
+      if (this.isLoading) {
+        // wait for the "initial burst" of data from the subscription
+        // before attempt to render the graph
+        setTimeout(this.refresh, 500)
+        return
+      }
+
       // refresh the graph layout if required
       if (this.updating) {
         // prevent parallel layout
