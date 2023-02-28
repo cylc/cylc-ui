@@ -27,10 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-text-field
         data-cy="filter-id"
         clearable
-        :clear-icon="$options.icons.mdiClose"
-        density="compact"
         hide-details
-        variant="outlined"
         placeholder="Filter by ID"
         v-model="localValue.id"
         ref="filterIDInput"
@@ -45,11 +42,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="filter-task-states"
         :items="allStates"
         clearable
-        :clear-icon="$options.icons.mdiClose"
-        density="compact"
         hide-details
         multiple
-        variant="outlined"
         placeholder="Filter by task state"
         v-model="localValue.states"
       >
@@ -78,7 +72,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Task from '@/components/cylc/Task'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
-import { mdiClose } from '@mdi/js'
 
 export default {
   name: 'TaskFilter',
@@ -104,10 +97,6 @@ export default {
         this.$emit('update:modelValue', value)
       }
     }
-  },
-  // Misc options
-  icons: {
-    mdiClose
   }
 }
 </script>

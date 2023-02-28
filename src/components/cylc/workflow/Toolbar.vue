@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-btn>
     <!-- title -->
     <v-toolbar-title
-      class="c-toolbar-title text-md-h6 text-subtitle-1"
+      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary"
       :class="showNavBtn ? 'ml-0' : null"
     >
       {{ title }}
@@ -49,35 +49,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="c-workflow-controls flex-shrink-0">
         <v-btn
           id="workflow-mutate-button"
-          color="#5E5E5E"
           v-cylc-object="currentWorkflow"
           :icon="svgPaths.menu"
+          size="small"
         />
 
         <v-btn
           id="workflow-play-button"
-          color="#5E5E5E"
           :icon="svgPaths.run"
           :disabled="!enabled.playToggle"
           v-if="!isRunning"
           @click="onClickPlay"
+          size="small"
         />
 
         <v-btn
           id="workflow-play-pause-button"
-          color="#5E5E5E"
           :icon="isPaused ? svgPaths.run : svgPaths.hold"
           :disabled="!enabled.pauseToggle"
           v-if="isRunning"
           @click="onClickReleaseHold"
+          size="small"
         />
 
         <v-btn
           id="workflow-stop-button"
-          color="#5E5E5E"
           :icon="svgPaths.stop"
           :disabled="!enabled.stopToggle"
           @click="onClickStop"
+          size="small"
         />
       </div>
 
@@ -86,10 +86,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{ statusMsg }}
       </span>
 
-      <v-spacer class="mx-n4" />
+      <v-spacer class="mx-0" />
 
-      <v-btn class="add-view">
-        <v-icon class="icon" color="#5995EB">{{ svgPaths.add }}</v-icon>
+      <v-btn class="add-view" color="primary">
+        <v-icon class="icon">{{ svgPaths.add }}</v-icon>
         <span class="label">
           {{ $t('Toolbar.addView') }}
         </span>

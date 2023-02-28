@@ -81,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiClose, mdiFileDocumentMultipleOutline } from '@mdi/js'
+import { mdiFileDocumentMultipleOutline } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -235,10 +235,7 @@ export default {
   },
 
   inputProps: {
-    clearable: true,
-    clearIcon: mdiClose,
-    density: 'compact',
-    variant: 'outlined'
+    clearable: true
   }
 }
 </script>

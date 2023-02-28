@@ -56,7 +56,7 @@ export const RUNTIME_SETTING = 'RuntimeSetting'
 export default {
   defaultProps: {
     // default props for all form inputs
-    filled: true,
+    variant: 'filled',
     density: 'compact'
   },
 
@@ -79,7 +79,7 @@ export default {
     },
     Boolean: {
       is: VSwitch,
-      color: 'blue darken-3'
+      color: 'primary'
     },
 
     // * Cylc types *

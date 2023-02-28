@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-model="modelValue.key"
           :disabled="modelValue.frozenKey"
           class="c-input-key"
-          v-bind="$options.textFieldProps"
+          v-bind="{ ...$options.textFieldProps, ...$attrs }"
         />
         <v-tooltip
           activator="parent"
@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         placeholder="value"
         v-model="modelValue.value"
         class="c-input-val"
-        v-bind="$options.textFieldProps"
+        v-bind="{ ...$options.textFieldProps, ...$attrs }"
       />
     </v-col>
     <v-col cols="auto">
@@ -77,6 +77,8 @@ export default {
     formElement
   ],
 
+  inheritAttrs: false,
+
   computed: {
     tooltipProps () {
       return {
@@ -88,8 +90,6 @@ export default {
   },
 
   textFieldProps: {
-    density: 'compact',
-    variant: 'filled',
     hideDetails: true
   }
 }

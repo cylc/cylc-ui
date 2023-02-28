@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <div class="card-grid">
 
       <v-col>
-        <v-card variant="outlined">
+        <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
             <p class="text-h4 text--primary">Tasks &amp; Jobs</p>
           </v-card-title>
@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       state: state.name,
                       task: {meanElapsedTime: 30}
                     }"
-                    :startTime="Date.now()"
+                    :startTime="String(Date.now())"
                   />
                 </td>
                 <td>
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-col>
 
       <v-col>
-        <v-card variant="outlined">
+        <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
             <p class="text-h4 text--primary">Why Are We Waiting?</p>
           </v-card-title>
@@ -216,6 +216,10 @@ export default {
       margin: 0.5em;
     }
 
+  }
+
+  .v-card-text p + p {
+    margin-top: 8px;
   }
 
   #task-job-state-table {

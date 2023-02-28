@@ -30,10 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-text-field
           v-model="searchWorkflows"
           clearable
-          :clear-icon="$options.icons.mdiClose"
-          density="compact"
           hide-details
-          variant="outlined"
           placeholder="Search"
           class="flex-grow-1 flex-column"
           id="c-gscan-search-workflows"
@@ -41,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- button to activate the filters menu -->
         <v-badge
           :content="numFilters"
-          v-model="numFilters"
+          :model-value="Boolean(numFilters)"
         >
           <v-btn
             icon
@@ -69,13 +66,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   v-model="filters[title]"
                   :items="$options.allStates[title]"
                   :label="`Filter by ${title}`"
-                  variant="outlined"
+                  density="default"
                   chips
                   closable-chips
                   clearable
                   multiple
                   hide-details
-                  :clear-icon="$options.icons.mdiClose"
                   class="my-2"
                   :data-cy="`filter ${title}`"
                 />
@@ -188,7 +184,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiClose, mdiFilter } from '@mdi/js'
+import { mdiFilter } from '@mdi/js'
 import TaskState, { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job'
@@ -394,7 +390,6 @@ export default {
 
   // Misc options
   icons: {
-    mdiClose,
     mdiFilter
   },
   /**

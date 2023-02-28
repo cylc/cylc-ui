@@ -15,19 +15,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { VDataTable } from 'vuetify/labs/VDataTable'
+import colors from 'vuetify/lib/util/colors'
+import { mdiClose } from '@mdi/js'
 
-// If modifying theme colors, check the colors from the theme bundle first, and use them if possible
-// import colors from 'vuetify/util/colors'
+const inputDefaults = Object.fromEntries([
+  components.VAutocomplete,
+  components.VCombobox,
+  components.VSelect,
+  components.VTextarea,
+  components.VTextField
+].map(({ name }) => [
+  name,
+  {
+    density: 'compact',
+    variant: 'outlined',
+    clearIcon: mdiClose
+  }
+]))
 
 export default createVuetify({
   theme: {
-    defaultTheme: 'light'
+    defaultTheme: 'light',
+    themes: {
+      light: {
+        dark: false,
+        colors: {
+          primary: colors.lightBlue.accent4,
+          'primary-darken-1': colors.lightBlue.darken4,
+          secondary: colors.teal.accent4,
+          'secondary-darken-1': colors.teal.darken3
+        }
+      }
+    }
   },
   display: {
     mobileBreakpoint: 991
@@ -44,5 +68,8 @@ export default createVuetify({
     ...components,
     VDataTable
   },
-  directives
+  directives,
+  defaults: {
+    ...inputDefaults
+  }
 })

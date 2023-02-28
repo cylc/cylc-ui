@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- The input -->
       <FormInput
         v-model="modelValue[index]"
-        :propOverrides="{ density: 'compact' }"
         :gqlType="gqlType.ofType"
         :types="types"
         ref="inputs"
@@ -77,6 +76,8 @@ export default {
       default: false
     }
   },
+
+  inheritAttrs: false,
 
   data () {
     return {

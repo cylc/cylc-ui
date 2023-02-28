@@ -53,8 +53,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-bind="getInputProps(key)"
             v-model="model[key]"
             :types="types"
-            filled
-            density="compact"
           />
         </v-list-item>
       </v-list>
@@ -240,6 +238,7 @@ export default {
     getInputProps (fieldName) {
       const gqlType = findByName(this.type.fields, fieldName).type
       return {
+        ...VuetifyConfig.defaultProps,
         gqlType,
         ...getComponentProps(gqlType, NamedTypes, VuetifyConfig.kinds)
       }

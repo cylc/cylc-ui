@@ -20,14 +20,12 @@
 
 
 .c-toolbar {
-  .v-toolbar__content {
-    column-gap: 0.5rem;
+  $icon-size: 24px;
+
+  .v-toolbar__content > *:not(:last-child) {
+    margin-right: 0.5rem;
   }
 
-  .c-toolbar-title, .add-view {
-    color: $font-default-color;
-    font-weight: map-get($font-weights, medium);
-  }
   .c-toolbar-title {
     flex: 0 1 auto;
   }
@@ -43,9 +41,11 @@
     letter-spacing: normal !important;
   }
 
-  .add-view {
-    $icon-size: 24px;
+  .v-icon {
+    font-size: $icon-size;
+  }
 
+  .add-view {
     // make this shrink before anything else in the toolbar:
     flex-shrink: 100000;
 
@@ -58,10 +58,6 @@
       row-gap: 30px;
       justify-content: flex-end;
       column-gap: 0.5rem;
-
-      .v-icon {
-        font-size: $icon-size;
-      }
 
       .label {
         // this only gets clipped after getting hidden (forced to overflow on new line)
