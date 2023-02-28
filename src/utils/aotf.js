@@ -168,6 +168,7 @@ export const cylcObjects = Object.freeze({
 export const primaryMutations = {
   [cylcObjects.Workflow]: [
     'play',
+    'resume',
     'pause',
     'stop',
     'reload',
