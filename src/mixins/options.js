@@ -20,10 +20,7 @@ import Vue from 'vue'
 /**
  * A mixin which provides a pattern for setting and storing options.
  *
- * Options stored here should be suitable for use as default values and may
- * be saved as part of a tab layout. So keep derived settings, view state or
- * workflow specific values in the components data rather than putting them
- * into these options.
+ Options stored here will be preserved when the tab layout is restored.
  */
 export default {
   // options can be passed in using the initialOptions prop
