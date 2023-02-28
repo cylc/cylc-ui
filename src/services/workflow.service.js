@@ -289,6 +289,7 @@ class WorkflowService {
                 callback.onAdded(response.data.logs, store, errors)
                 callback.commit(store, errors)
               }
+              subscription.handleViewState(ViewState.COMPLETE, null)
             },
             error: function error (err) {
               subscription.handleViewState(ViewState.ERROR, err)
@@ -297,7 +298,6 @@ class WorkflowService {
         )
         this.subscriptions[subscription.query.name] = subscription
         // All done!
-        subscription.handleViewState(ViewState.COMPLETE, null)
         subscription.reload = false
       } catch (e) {
         subscription.handleViewState(ViewState.ERROR, e)
@@ -324,6 +324,7 @@ class WorkflowService {
 
               // then run the local callbacks if there are any
               if (subscription.callbacks.length === 0) {
+                subscription.handleViewState(ViewState.COMPLETE, null)
                 return
               }
               for (const callback of subscription.callbacks) {
@@ -346,6 +347,7 @@ class WorkflowService {
                 // eslint-disable-next-line no-console
                 console.warn(...error)
               }
+              subscription.handleViewState(ViewState.COMPLETE, null)
             },
             error: function error (err) {
               subscription.handleViewState(ViewState.ERROR, err)
@@ -354,7 +356,6 @@ class WorkflowService {
         )
         this.subscriptions[subscription.query.name] = subscription
         // All done!
-        subscription.handleViewState(ViewState.COMPLETE, null)
         subscription.reload = false
       } catch (e) {
         subscription.handleViewState(ViewState.ERROR, e)

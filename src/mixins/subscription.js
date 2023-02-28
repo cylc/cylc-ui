@@ -35,6 +35,14 @@ export default {
   },
   computed: {
     isLoading () {
+      // Are we waiting for data from the server?
+      // * This will be true until the first delta has been recieved and
+      //  processed from the subscription by the workflowService.
+      // * This can revert back to true at a later date if the subscription is
+      //   changed e.g. if a new view is added causing the underlying merged
+      //   subscription to change which results in unsubscribe / resubscribe.
+      // * Views should generally wait for `isLoading === false` before
+      //   attempting to perform any computation on the data.
       return this.viewState === ViewState.LOADING
     }
   },
