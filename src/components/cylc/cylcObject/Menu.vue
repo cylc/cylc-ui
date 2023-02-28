@@ -196,11 +196,15 @@ export default {
       }
       const shortList = this.primaryMutations
       if (!this.expanded && shortList.length) {
-        return this.mutations.filter(
-          x => shortList.includes(x.mutation.name)
-        ).sort(
-          (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
-        )
+        return this.mutations
+          // filter for shortlisted mutations
+          .filter(x => shortList.includes(x.mutation.name))
+          // filter out mutations which aren't relevant to the workflow state
+          .filter(x => !this.isDisabled(x.mutation, true))
+          // sort by definition order
+          .sort(
+            (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
+          )
       }
       return this.mutations
     },
