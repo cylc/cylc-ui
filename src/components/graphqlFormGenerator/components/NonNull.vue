@@ -32,12 +32,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 
+/** Disallow empty array/string or nullish */
+export const nonNullRule = (x) => Boolean(x?.length ?? x != null) || 'Required'
+
 export default {
   name: 'g-non-null',
 
   mixins: [formElement],
 
-  /** Disallow empty array/string or nullish */
-  nonNullRule: (x) => Boolean(x?.length ?? x != null) || 'Required'
+  nonNullRule
 }
 </script>

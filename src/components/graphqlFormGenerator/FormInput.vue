@@ -30,6 +30,29 @@ import { mdiHelpCircleOutline } from '@mdi/js'
 import { VIcon, VTooltip } from 'vuetify/components'
 import { upperFirst } from 'lodash'
 
+/**
+ * Render help icon with tooltip containing help text.
+ *
+ * @param {string} helpText - (supports markdown)
+ */
+export const renderHelpIcon = (helpText) => h(
+  VTooltip,
+  { location: 'bottom' },
+  {
+    activator: ({ props }) => h(
+      VIcon,
+      {
+        ...props,
+        style: {
+          cursor: 'default'
+        }
+      },
+      () => mdiHelpCircleOutline
+    ),
+    default: () => h(Markdown, { markdown: helpText })
+  }
+)
+
 export default {
   name: 'g-form-input',
 
@@ -83,24 +106,6 @@ export default {
   },
 
   render () {
-    const createHelpIcon = () => h(
-      VTooltip,
-      { location: 'bottom' },
-      {
-        activator: ({ props }) => h(
-          VIcon,
-          {
-            ...props,
-            style: {
-              cursor: 'default'
-            }
-          },
-          () => mdiHelpCircleOutline
-        ),
-        default: () => h(Markdown, { markdown: this.help })
-      }
-    )
-
     // Some components implement custom v-model
     // (https://v2.vuejs.org/v2/guide/components-custom-events.html#Customizing-Component-v-model)
     const vModel = this.inputProps.is.options?.model || { prop: 'modelValue', event: 'update:modelValue' }
@@ -116,7 +121,7 @@ export default {
         types: this.types
       },
       {
-        'append-inner': createHelpIcon,
+        'append-inner': () => renderHelpIcon(this.help),
         // pass the "append" slot onto the child component
         append: (slotProps) => this.$slots.append?.(slotProps)
       }

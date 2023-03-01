@@ -18,7 +18,7 @@
 import { VSwitch, VTextField } from 'vuetify/components'
 
 import GEnum from '@/components/graphqlFormGenerator/components/Enum'
-import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'
+import GNonNull, { nonNullRule } from '@/components/graphqlFormGenerator/components/NonNull'
 import GList from '@/components/graphqlFormGenerator/components/List'
 import GObject from '@/components/graphqlFormGenerator/components/Object'
 import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting'
@@ -36,19 +36,20 @@ const RE = {
   cyclePoint: '\\d+(T\\d+(Z|[+-]\\d+)?)?'
 }
 
-const RULES = {
+export const RULES = {
+  required: nonNullRule,
   integer:
-    x => (!x || Number.isInteger(x)) || 'Must be integer',
+    (x) => (!x || Number.isInteger(x)) || 'Must be integer',
   noSpaces:
-    x => (!x || !x.includes(' ')) || 'Cannot contain spaces',
+    (x) => (!x || !x.includes(' ')) || 'Cannot contain spaces',
+  /** Permit [a][b]c, a, [a]; Prohibit a[b], [b]a, a], ]a */
   cylcConfigItem:
-    // PERMIT [a][b]c, a, [a] PROHIBIT a[b], [b]a, a], ]a
-    x => Boolean(!x || x.match(/^((\[[^=\]]+\])+)?([^[=\]-]+)?$/)) || 'Invalid',
+    (x) => Boolean(!x || x.match(/^((\[[^=\]]+\])+)?([^[=\]-]+)?$/)) || 'Invalid',
+  /** Permit 1/a; Prohibit a, 1 */
   taskID:
-    // PERMIT 1/a PROHIBIT a, 1
-    x => Boolean(!x || x.match(/^(.){1,}\/(.){1,}$/)) || 'Invalid',
+    (x) => Boolean(!x || x.match(/^(.){1,}\/(.){1,}$/)) || 'Invalid',
   flow:
-    x => Boolean(!x || x.match(/(^\d+$|^(all|new|none)$)/)) || 'Invalid'
+    (x) => Boolean(!x || x.match(/(^\d+$|^(all|new|none)$)/)) || 'Invalid'
 }
 
 export const RUNTIME_SETTING = 'RuntimeSetting'
