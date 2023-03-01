@@ -150,10 +150,6 @@ export default {
               el.style.transition = null
               document.body.classList.remove('resizing-drawer')
               document.removeEventListener('mousemove', this.resize)
-              this.$nextTick(() => {
-                // Hack to force the lumino tabs to be resized
-                window.dispatchEvent(new Event('resize'))
-              })
             },
             { once: true }
           )

@@ -117,13 +117,19 @@ export default {
     // the lumino objects are proxied by Vue
 
     this.box.addWidget(this.dock)
-    window.onresize = () => { this.box.update() }
     BoxPanel.setStretch(this.dock, 1)
+
+    const resizeObserver = new ResizeObserver(() => {
+      this.box.update()
+    })
+
     this.$nextTick(() => {
       // Attach box panel to DOM:
       Widget.attach(this.box, this.$refs.main)
       // Add widget(s):
       this.syncWidgets(this.views, {})
+      // Watch for resize of the main element to trigger relayout:
+      resizeObserver.observe(this.$refs.main)
     })
   },
 
