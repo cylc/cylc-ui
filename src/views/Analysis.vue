@@ -17,20 +17,95 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="c-analysis" style="width: 100%; height: 100%">
-    <h3>Analysis View</h3>
-    <ViewToolbar :groups="groups" />
-    <ul
-      v-for="job of jobs"
-      :key="job.id"
+    <v-container
+    fluid
+    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
     >
-      <li>
-        {{ job.id }}
-        <br />
-        <span style="padding-left: 1em">started: {{ job.startedTime }}</span>
-        <br />
-        <span style="padding-left: 1em">finished: {{ job.finishedTime }}</span>
-      </li>
-    </ul>
+      <!-- Toolbar -->
+      <v-row
+        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
+      >
+        <!-- Filters -->
+        <v-row class="no-gutters">
+          <v-col
+            cols="12"
+            md="4"
+            class="pr-md-2 mb-2 mb-md-0"
+          >
+            <v-text-field
+              id="c-analysis-filter-task-name"
+              clearable
+              dense
+              flat
+              hide-details
+              outlined
+              placeholder="Filter by task name"
+              v-model.trim="tasksFilter.name"
+              ref="filterNameInput"
+            ></v-text-field>
+          </v-col>
+          <v-col
+            cols="12"
+            md="4"
+            class="mb-2 mb-md-0"
+          >
+            <v-select
+              id="c-analysis-filter-task-timings"
+              :items="timingOptions"
+              dense
+              flat
+              hide-details
+              outlined
+              prefix="Displaying: "
+              v-model="tasksFilter.timingOption"
+            ></v-select>
+          </v-col>
+          <v-col
+            cols="12"
+            md="4"
+            class="pl-md-2 mb-2 mb-md-0"
+          >
+            <v-select
+              id="c-analysis-filter-task-platforms"
+              :items="platformOptions"
+              dense
+              flat
+              hide-details
+              outlined
+              prefix="Platform: "
+              v-model="tasksFilter.platformOption"
+            ></v-select>
+          </v-col>
+        </v-row>
+      </v-row>
+      <ViewToolbar :groups="groups" />
+      <v-row
+        no-gutters
+        class="flex-grow-1 position-relative"
+      >
+        <v-col
+          cols="12"
+          class="mh-100 position-relative"
+        >
+          <v-container
+            fluid
+            class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
+          >
+            <v-data-table
+              :headers="shownHeaders"
+              :items="filteredTasks"
+              :sort-by.sync="sortBy"
+              dense
+              :footer-props="{
+                itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
+                showFirstLastPage: true
+              }"
+              :options="{ itemsPerPage: 50 }"
+            ></v-data-table>
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -40,63 +115,46 @@ import Vue from 'vue'
 import gql from 'graphql-tag'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
-import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import ViewToolbar from '@/components/cylc/ViewToolbar'
 import {
-  mdiChartLine
+  mdiChartLine,
+  mdiRefresh
 } from '@mdi/js'
 
-// list of fields to request for jobs
-const jobFields = [
-  'id',
-  'state',
-  'startedTime',
-  'finishedTime'
+// list of fields to request for tasks
+const taskFields = [
+  'name',
+  'platform',
+  'count',
+  'meanTotalTime',
+  'stdDevTotalTime',
+  'minTotalTime',
+  'firstQuartileTotal',
+  'secondQuartileTotal',
+  'thirdQuartileTotal',
+  'maxTotalTime',
+  'meanRunTime',
+  'stdDevRunTime',
+  'minRunTime',
+  'firstQuartileRun',
+  'secondQuartileRun',
+  'thirdQuartileRun',
+  'maxRunTime',
+  'meanQueueTime',
+  'stdDevQueueTime',
+  'minQueueTime',
+  'firstQuartileQueue',
+  'secondQuartileQueue',
+  'thirdQuartileQueue',
+  'maxQueueTime'
 ]
 
 // the one-off query which retrieves historical objects not
 // normally visible in the GUI
 const QUERY = gql`
 query ($workflows: [ID]) {
-  jobs(live: false, workflows: $workflows) {
-    ${jobFields.join('\n')}
-  }
-}
-`
-
-// the subscription which keeps up to date with the live
-// state of the workflow
-const SUBSCRIPTION = gql`
-subscription WorkflowGraphSubscription ($workflowId: ID) {
-  deltas(workflows: [$workflowId]) {
-    ...Deltas
-  }
-}
-
-fragment JobData on Job {
-  ${jobFields.join('\n')}
-}
-
-fragment AddedDelta on Added {
-  jobs {
-    ...JobData
-  }
-}
-
-fragment UpdatedDelta on Updated {
-  jobs {
-    ...JobData
-  }
-}
-
-fragment Deltas on Deltas {
-  added {
-    ...AddedDelta
-  }
-  updated (stripNull: true) {
-    ...UpdatedDelta
+  tasks(live: false, workflows: $workflows) {
+    ${taskFields.join('\n')}
   }
 }
 `
@@ -104,29 +162,19 @@ fragment Deltas on Deltas {
 // the callback which gets automatically called when data comes in on
 // the subscription
 class AnalysisCallback {
-  constructor (jobs) {
-    this.jobs = jobs
+  constructor (tasks) {
+    this.tasks = tasks
   }
 
   add (data) {
-    // add jobs contained in data to this.jobs
-    for (const job of data.jobs) {
-      if (job.id in this.jobs) {
-        // merge new data into existing entry
-        const storedJob = this.jobs[job.id]
-        for (const field of jobFields) {
-          if (job[field]) {
-            Vue.set(storedJob, field, job[field])
-          }
-        }
-      } else {
-        // add new entry
-        Vue.set(
-          this.jobs,
-          job.id,
-          pick(job, jobFields)
-        )
-      }
+    // add tasks contained in data to this.tasks
+    for (const task of data.tasks) {
+      // add new entry
+      Vue.set(
+        this.tasks,
+        this.tasks.length,
+        pick(task, taskFields)
+      )
     }
   }
 
@@ -152,9 +200,7 @@ class AnalysisCallback {
 export default {
   mixins: [
     pageMixin,
-    graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
+    graphqlMixin
   ],
 
   name: 'Analysis',
@@ -169,8 +215,12 @@ export default {
     }
   },
 
+  beforeMount () {
+    this.historicalQuery()
+  },
+
   data () {
-    const jobs = {}
+    const tasks = []
     return {
       // defines how the view view appears in the "add view" dropdown
       widget: {
@@ -183,34 +233,175 @@ export default {
         {
           title: 'Analysis',
           controls: [
+            {
+              title: 'Refresh data',
+              icon: mdiRefresh,
+              action: 'callback',
+              callback: this.historicalQuery
+            }
           ]
         }
       ],
       // instance of the callback class
-      callback: new AnalysisCallback(jobs),
-      // object containing all of the jobs added by the callback
-      jobs
+      callback: new AnalysisCallback(tasks),
+      // object containing all of the tasks added by the callback
+      tasks,
+      sortBy: 'name',
+      timingOptions: [
+        { text: 'Total times', value: 'totalTimes' },
+        { text: 'Run times', value: 'runTimes' },
+        { text: 'Queue times', value: 'queueTimes' }
+      ],
+      tasksFilter: {
+        name: '',
+        timingOption: 'totalTimes',
+        platformOption: null
+      },
+      activeFilters: null,
+      headers: [
+        {
+          text: 'Task',
+          value: 'name'
+        },
+        {
+          text: 'Platform',
+          value: 'platform'
+        },
+        {
+          text: 'Count',
+          value: 'count'
+        }
+        // {
+        //   text: 'Failure rate (%)',
+        //   value: 'failureRate'
+        // }
+      ],
+      queueTimeHeaders: [
+        {
+          text: 'Mean T-queue (s)',
+          value: 'meanQueueTime'
+        },
+        {
+          text: 'Std Dev T-queue (s)',
+          value: 'stdDevQueueTime'
+        },
+        {
+          text: 'Min T-queue (s)',
+          value: 'minQueueTime'
+        },
+        {
+          text: 'Q1 T-queue (s)',
+          value: 'firstQuartileQueue'
+        },
+        {
+          text: 'Median T-queue (s)',
+          value: 'secondQuartileQueue'
+        },
+        {
+          text: 'Q3 T-queue (s)',
+          value: 'thirdQuartileQueue'
+        },
+        {
+          text: 'Max T-queue (s)',
+          value: 'maxQueueTime'
+        }
+      ],
+      runTimeHeaders: [
+        {
+          text: 'Mean T-run (s)',
+          value: 'meanRunTime'
+        },
+        {
+          text: 'Std Dev T-run (s)',
+          value: 'stdDevRunTime'
+        },
+        {
+          text: 'Min T-run (s)',
+          value: 'minRunTime'
+        },
+        {
+          text: 'Q1 T-run (s)',
+          value: 'firstQuartileRun'
+        },
+        {
+          text: 'Median T-run (s)',
+          value: 'secondQuartileRun'
+        },
+        {
+          text: 'Q3 T-run (s)',
+          value: 'thirdQuartileRun'
+        },
+        {
+          text: 'Max T-run (s)',
+          value: 'maxRunTime'
+        }
+      ],
+      totalTimeHeaders: [
+        {
+          text: 'Mean T-total (s)',
+          value: 'meanTotalTime'
+        },
+        {
+          text: 'Std Dev T-total (s)',
+          value: 'stdDevTotalTime'
+        },
+        {
+          text: 'Min T-total (s)',
+          value: 'minTotalTime'
+        },
+        {
+          text: 'Q1 T-total (s)',
+          value: 'firstQuartileTotal'
+        },
+        {
+          text: 'Median T-total (s)',
+          value: 'secondQuartileTotal'
+        },
+        {
+          text: 'Q3 T-total (s)',
+          value: 'thirdQuartileTotal'
+        },
+        {
+          text: 'Max T-total (s)',
+          value: 'maxTotalTime'
+        }
+      ]
     }
   },
 
   computed: {
-    // registers the subscription (unhelpfully named query)
-    // (this is called automatically)
-    query () {
-      this.historicalQuery() // TODO order
-      return new SubscriptionQuery(
-        SUBSCRIPTION,
-        this.variables,
-        'workflow',
-        [this.callback]
-      )
-    },
-
     // a list of the workflow IDs this view is "viewing"
     // NOTE: we plan multi-workflow functionality so we are writing views
     // to be mult-workflow compatible in advance of this feature arriving
     workflowIDs () {
       return [this.workflowId]
+    },
+    filteredTasks () {
+      return this.tasks.filter(task => this.matchTask(task))
+    },
+    shownHeaders () {
+      let timingHeaders
+      if (this.tasksFilter.timingOption === 'totalTimes') {
+        timingHeaders = this.totalTimeHeaders
+      } else if (this.tasksFilter.timingOption === 'runTimes') {
+        timingHeaders = this.runTimeHeaders
+      } else if (this.tasksFilter.timingOption === 'queueTimes') {
+        timingHeaders = this.queueTimeHeaders
+      } else {
+        return []
+      }
+      return this.headers.concat(timingHeaders)
+    },
+    platformOptions () {
+      const platformOptions = [{ text: 'All', value: null }]
+      const platforms = []
+      for (const [key, task] of Object.entries(this.tasks)) {
+        if (!platforms.includes(task.platform)) {
+          platforms.push(task.platform)
+          platformOptions.push({ text: task.platform })
+        }
+      }
+      return platformOptions
     }
   },
 
@@ -218,11 +409,23 @@ export default {
     // run the one-off query for historical job data and pass its results
     // through the callback
     async historicalQuery () {
+      this.tasks = []
+      this.callback = new AnalysisCallback(this.tasks)
       const ret = await this.$workflowService.query2(
         QUERY,
         { workflows: this.workflowIDs }
       )
       this.callback.onAdded(ret.data)
+    },
+    matchTask (task) {
+      let ret = true
+      if (this.tasksFilter.name?.trim()) {
+        ret &&= task.name.includes(this.tasksFilter.name)
+      }
+      if (this.tasksFilter.platformOption?.trim()) {
+        ret &&= task.platform.includes(this.tasksFilter.platformOption)
+      }
+      return ret
     }
   }
 }
