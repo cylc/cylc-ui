@@ -137,6 +137,7 @@ import {
   mdiPencil
 } from '@mdi/js'
 import { mapGetters, mapState } from 'vuex'
+import WorkflowState from '@/model/WorkflowState.model'
 
 export default {
   name: 'CylcObjectMenu',
@@ -246,8 +247,11 @@ export default {
     },
     isDisabled (mutation, authorised) {
       if (this.node.type !== 'workflow') {
-        this.workflowStatus = this.getNodes(
-          'workflow', [this.node.tokens.workflow_id])[0].node.status
+        const nodeReturned = this.getNodes(
+          'workflow', [this.node.tokens.workflow_id])
+        if (nodeReturned.length) {
+          this.workflowStatus = nodeReturned[0].node.status
+        } else { this.workflowStatus = WorkflowState.RUNNING.name }
       } else {
         this.workflowStatus = this.node.node.status
       }
