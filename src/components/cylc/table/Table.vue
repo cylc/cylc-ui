@@ -53,10 +53,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :sort-by="sortBy"
             show-expand
             density="compact"
-            :footer-props="{
-              itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
-              showFirstLastPage: true
-            }"
             v-model:items-per-page="itemsPerPage"
           >
             <template v-slot:item.task.name="{ item }">
@@ -80,6 +76,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </template>
             <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
               <td>{{ dtMean(item.value.task) }}</td>
+            </template>
+            <template v-slot:item.data-table-expand="{ item, toggleExpand, isExpanded }">
+              <v-btn
+                @click="toggleExpand(item)"
+                icon
+                variant="text"
+                size="small"
+                :style="{
+                  visibility: (item.value.task.children || []).length ? null : 'hidden',
+                  transform: isExpanded(item) ? 'rotate(180deg)' : null
+                }"
+              >
+                <v-icon
+                  :icon="$options.icons.mdiChevronDown"
+                  size="large"
+                />
+              </v-btn>
             </template>
             <template v-slot:expanded-row="{ item }">
               <tr
@@ -109,6 +122,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td></td>
               </tr>
             </template>
+            <template v-slot:bottom>
+              <v-data-table-footer :itemsPerPageOptions="$options.itemsPerPageOptions" />
+            </template>
           </v-data-table>
         </v-container>
       </v-col>
@@ -119,7 +135,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
-import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
+import { mdiChevronDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
 import { matchNode } from '@/components/cylc/common/filter'
@@ -128,6 +144,7 @@ import { dtMean } from '@/utils/tasks'
 
 export default {
   name: 'TableComponent',
+
   props: {
     tasks: {
       type: Array,
@@ -138,18 +155,16 @@ export default {
       default: true
     }
   },
+
   components: {
     Task,
     Job,
     TaskFilter
   },
+
   data () {
     return {
       itemsPerPage: 50,
-      icons: {
-        mdiChevronDown,
-        mdiArrowDown
-      },
       sortBy: [
         {
           key: 'task.tokens.cycle',
@@ -222,13 +237,28 @@ export default {
       tasksFilter: {}
     }
   },
+
   computed: {
     filteredTasks () {
       return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
     }
   },
+
   methods: {
     dtMean
-  }
+  },
+
+  icons: {
+    mdiChevronDown
+  },
+
+  itemsPerPageOptions: [
+    { value: 10, title: '10' },
+    { value: 20, title: '20' },
+    { value: 50, title: '50' },
+    { value: 100, title: '100' },
+    { value: 200, title: '200' },
+    { value: -1, title: 'All' }
+  ]
 }
 </script>

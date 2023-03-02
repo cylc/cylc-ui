@@ -19,7 +19,7 @@ import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { VDataTable } from 'vuetify/labs/VDataTable'
+import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
 import colors from 'vuetify/lib/util/colors'
 import { mdiClose } from '@mdi/js'
 
@@ -66,7 +66,8 @@ export default createVuetify({
   // TODO: this should be taken care of by a loader or something:
   components: {
     ...components,
-    VDataTable
+    VDataTable,
+    VDataTableFooter
   },
   directives,
   defaults: {
