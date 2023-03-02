@@ -27,6 +27,7 @@ const MUTATIONS = [
       in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
       Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
       officia deserunt mollit anim id est laborum.
+      Valid for: running workflows.
     `,
     args: [
       {
@@ -43,6 +44,7 @@ const MUTATIONS = [
     _title: 'Unauthorised Mutation',
     description: `
       A mutation user will not be authorised for.
+      Valid for: running workflows.
     `,
     args: [
       {
