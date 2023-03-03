@@ -56,7 +56,7 @@ jobs:
 
       - name: Publish GitHub release
         id: create-release
-        uses: actions/create-release@v1
+        uses: cylc/release-actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -67,7 +67,7 @@ jobs:
           # prerelease: ${{ env.PRERELEASE }}
           draft: false
           body: |
-            See [${{ env.CHANGELOG_FILE }}](https://github.com/${{ github.repository }}/blob/master/${{ env.CHANGELOG_FILE }}) for detail.
+            See [${{ env.CHANGELOG_FILE }}](https://github.com/${{ github.repository }}/blob/master/${{ env.CHANGELOG_FILE }}) for details.
 
             sha256sum: ${{ env.SHA256SUM }}
           # TODO: Get topmost changelog section somehow and use that as the body?

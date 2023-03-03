@@ -59,12 +59,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-list-item
             v-for="{ mutation, requiresInfo, authorised } in displayMutations"
             :key="mutation.name"
-            :disabled="!authorised"
+            :disabled="isDisabled(mutation, authorised)"
             @click.stop="enact(mutation, requiresInfo)"
             class="c-mutation"
           >
             <v-list-item-avatar>
-              <v-icon :disabled="!authorised" large>
+              <v-icon :disabled="isDisabled(mutation, authorised)" large>
                 {{ mutation._icon }}
               </v-icon>
             </v-list-item-avatar>
@@ -136,7 +136,8 @@ import Mutation from '@/components/cylc/Mutation'
 import {
   mdiPencil
 } from '@mdi/js'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
+import WorkflowState from '@/model/WorkflowState.model'
 
 export default {
   name: 'CylcObjectMenu',
@@ -160,6 +161,7 @@ export default {
       dialogKey: false,
       expanded: false,
       node: null,
+      workflowStatus: null,
       mutations: [],
       isLoadingMutations: true,
       showMenu: false,
@@ -181,6 +183,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters('workflows', ['getNodes']),
     primaryMutations () {
       return this.$workflowService.primaryMutations[this.node.type] || []
     },
@@ -194,11 +197,15 @@ export default {
       }
       const shortList = this.primaryMutations
       if (!this.expanded && shortList.length) {
-        return this.mutations.filter(
-          x => shortList.includes(x.mutation.name)
-        ).sort(
-          (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
-        )
+        return this.mutations
+          // filter for shortlisted mutations
+          .filter(x => shortList.includes(x.mutation.name))
+          // filter out mutations which aren't relevant to the workflow state
+          .filter(x => !this.isDisabled(x.mutation, true))
+          // sort by definition order
+          .sort(
+            (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
+          )
       }
       return this.mutations
     },
@@ -232,11 +239,28 @@ export default {
 
   methods: {
     isEditable (authorised, mutation) {
-      if (!authorised || mutation.name === 'log') {
+      if (mutation.name === 'log' || this.isDisabled(mutation, authorised)) {
         return true
       } else {
         return false
       }
+    },
+    isDisabled (mutation, authorised) {
+      if (this.node.type !== 'workflow') {
+        const nodeReturned = this.getNodes(
+          'workflow', [this.node.tokens.workflow_id])
+        if (nodeReturned.length) {
+          this.workflowStatus = nodeReturned[0].node.status
+        } else { this.workflowStatus = WorkflowState.RUNNING.name }
+      } else {
+        this.workflowStatus = this.node.node.status
+      }
+      if (
+        (!mutation._validStates.includes(this.workflowStatus)) ||
+          !authorised) {
+        return true
+      }
+      return false
     },
     openDialog (mutation) {
       if (mutation.name === 'log') {

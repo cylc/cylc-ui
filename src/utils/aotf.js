@@ -50,6 +50,7 @@ import {
 import Alert from '@/model/Alert.model'
 import store from '@/store/index'
 import { Tokens } from '@/utils/uid'
+import { WorkflowState } from '@/model/WorkflowState.model'
 
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
@@ -167,6 +168,7 @@ export const cylcObjects = Object.freeze({
 export const primaryMutations = {
   [cylcObjects.Workflow]: [
     'play',
+    'resume',
     'pause',
     'stop',
     'reload',
@@ -432,8 +434,34 @@ export function processMutations (mutations, types) {
     mutation._icon = mutationIcons[mutation.name] || mutationIcons['']
     mutation._shortDescription = getMutationShortDesc(mutation.description)
     mutation._help = getMutationExtendedDesc(mutation.description)
+    mutation._validStates = getStates(mutation.description)
     processArguments(mutation, types)
   }
+}
+/**
+ * Get the workflow states that the mutation is valid for.
+ *
+ * @export
+ * @param {string=} text - Full mutation description.
+ * @return {Array<String>}
+ */
+export function getStates (text) {
+  const defaultStates = [
+    WorkflowState.RUNNING.name,
+    WorkflowState.PAUSED.name,
+    WorkflowState.STOPPING.name,
+    WorkflowState.STOPPED.name
+  ]
+  if (!text) {
+    return defaultStates
+  }
+  const re = /Valid\sfor:\s(.*)\sworkflows./
+  // default to all workflow states
+  const validStates = text.match(re)
+  if (validStates) {
+    return validStates[1].replace(/\s/g, '').split(',')
+  }
+  return defaultStates
 }
 
 /**

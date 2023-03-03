@@ -16,7 +16,7 @@
  */
 
 describe('CylcObject Menu component', () => {
-  const collapsedWorkflowMenuLength = 6 // (5 mutations + "show more" btn)
+  const collapsedWorkflowMenuLength = 7 // (6 mutations + "show more" btn)
   const expandedWorkflowMenuLength = 21
 
   beforeEach(() => {
