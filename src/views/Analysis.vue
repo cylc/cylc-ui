@@ -152,7 +152,7 @@ const taskFields = [
 // the one-off query which retrieves historical objects not
 // normally visible in the GUI
 const QUERY = gql`
-query ($workflows: [ID]) {
+query analysisQuery ($workflows: [ID]) {
   tasks(live: false, workflows: $workflows) {
     ${taskFields.join('\n')}
   }
