@@ -51,12 +51,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import Vue from 'vue'
+import { uniqueId } from 'lodash'
 import { each, iter } from '@lumino/algorithm'
 import pageMixin from '@/mixins'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
-import { createWidgetId } from '@/components/cylc/workflow/index'
 import Lumino from '@/components/cylc/workflow/Lumino'
 import Toolbar from '@/components/cylc/workflow/Toolbar'
 import TableView from '@/views/Table'
@@ -176,7 +176,7 @@ export default {
       }
       Vue.set(
         this.widgets,
-        createWidgetId(),
+        uniqueId(),
         { view, initialOptions }
       )
     },
