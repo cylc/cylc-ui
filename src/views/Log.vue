@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiFileDocumentMultipleOutline } from '@mdi/js'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionMixin from '@/mixins/subscriptionComponent'
@@ -111,7 +111,6 @@ export default {
   name: 'Log',
 
   mixins: [
-    pageMixin,
     graphqlMixin,
     subscriptionMixin
   ],
@@ -122,9 +121,9 @@ export default {
     LogComponent
   },
 
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
 

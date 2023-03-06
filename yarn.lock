@@ -3434,6 +3434,49 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@unhead/dom@npm:1.1.17":
+  version: 1.1.17
+  resolution: "@unhead/dom@npm:1.1.17"
+  dependencies:
+    "@unhead/schema": 1.1.17
+    "@unhead/shared": 1.1.17
+  checksum: a73cfbd575bd1c52d34a642d9769fae3c6e87c0fa7add3c7a817abeb6aedb5b25a62f7ca1eb078dc1f1daf3f68d5b10fef4190c6a4f1e396a86c0af1729d344b
+  languageName: node
+  linkType: hard
+
+"@unhead/schema@npm:1.1.17":
+  version: 1.1.17
+  resolution: "@unhead/schema@npm:1.1.17"
+  dependencies:
+    hookable: ^5.4.2
+    zhead: ^2.0.4
+  checksum: c095ee216a1e624a474a95fb20f0034c358f0c92f185075daa93a269acb481c3230ebb9a00d9a59e8fedf93c5ee06d04b3748006983a02b530d72e00ee45535a
+  languageName: node
+  linkType: hard
+
+"@unhead/shared@npm:1.1.17":
+  version: 1.1.17
+  resolution: "@unhead/shared@npm:1.1.17"
+  dependencies:
+    "@unhead/schema": 1.1.17
+  checksum: 2707910be76fbb5e331b1feda7e0c88834376626bd2752954ca1e6ad6ca3213fdccf3f0a505085ff212b6c3999600e5d878a307be33a0e56f0761936d82d5b51
+  languageName: node
+  linkType: hard
+
+"@unhead/vue@npm:^1.1.17":
+  version: 1.1.17
+  resolution: "@unhead/vue@npm:1.1.17"
+  dependencies:
+    "@unhead/schema": 1.1.17
+    "@unhead/shared": 1.1.17
+    hookable: ^5.4.2
+    unhead: 1.1.17
+  peerDependencies:
+    vue: ">=2.7 || >=3"
+  checksum: d962a8e17f92107941c8601a1800eddb4457d41496e096404b25123dfb19108c1ec40654267b011da10368c2b30c128fcf926a550c3809b6f8b400787ec3e1dc
+  languageName: node
+  linkType: hard
+
 "@vue/babel-helper-vue-jsx-merge-props@npm:^1.4.0":
   version: 1.4.0
   resolution: "@vue/babel-helper-vue-jsx-merge-props@npm:1.4.0"
@@ -6444,6 +6487,7 @@ __metadata:
     "@lumino/default-theme": ^0.22.0
     "@lumino/widgets": ^1.31.1
     "@mdi/js": ^7.0.0
+    "@unhead/vue": ^1.1.17
     "@vue/babel-preset-app": ^5.0.0
     "@vue/cli-plugin-babel": ^5.0.0
     "@vue/cli-plugin-e2e-cypress": ^5.0.5
@@ -6497,7 +6541,6 @@ __metadata:
     utf-8-validate: ^6.0.0
     vue: ^3.2.46
     vue-i18n: ^9.0.0
-    vue-meta: ^2.4.0
     vue-router: ^4.0.0
     vue-the-mask: ^0.11.1
     vuetify: ^3.1.7
@@ -6722,13 +6765,6 @@ __metadata:
   version: 1.5.2
   resolution: "deepmerge@npm:1.5.2"
   checksum: 5ecfe328e0105f2c554b90af555cbba052ab4468f1893e3b26800cb8869d3c1a1c590a5bbe1fdf481a8cc89b1bc47b5ac73a7153d5a0e4b702ea6eca081038a8
-  languageName: node
-  linkType: hard
-
-"deepmerge@npm:^4.2.2":
-  version: 4.2.2
-  resolution: "deepmerge@npm:4.2.2"
-  checksum: a8c43a1ed8d6d1ed2b5bf569fa4c8eb9f0924034baf75d5d406e47e157a451075c4db353efea7b6bcc56ec48116a8ce72fccf867b6e078e7c561904b5897530b
   languageName: node
   linkType: hard
 
@@ -8928,6 +8964,13 @@ __metadata:
   dependencies:
     react-is: ^16.7.0
   checksum: b1538270429b13901ee586aa44f4cc3ecd8831c061d06cb8322e50ea17b3f5ce4d0e2e66394761e6c8e152cd8c34fb3b4b690116c6ce2bd45b18c746516cb9e8
+  languageName: node
+  linkType: hard
+
+"hookable@npm:^5.4.2":
+  version: 5.4.2
+  resolution: "hookable@npm:5.4.2"
+  checksum: a70bbdf8b92e9eb20e0d346281fd3f338abff194491aa9068cebdcde8faa853c9360b109844215656e2bd299e13ca00743e310025ee4b073795024f54e9eb726
   languageName: node
   linkType: hard
 
@@ -14926,6 +14969,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unhead@npm:1.1.17":
+  version: 1.1.17
+  resolution: "unhead@npm:1.1.17"
+  dependencies:
+    "@unhead/dom": 1.1.17
+    "@unhead/schema": 1.1.17
+    "@unhead/shared": 1.1.17
+    hookable: ^5.4.2
+  checksum: 25ece16fda4b3b781955d9329b3d27c30e717be952077fbe1b26067bf4ecf500ead4e1b86e967220e1e881709d4783287156889d5caeb97f23c832af3c219afd
+  languageName: node
+  linkType: hard
+
 "unicode-canonical-property-names-ecmascript@npm:^2.0.0":
   version: 2.0.0
   resolution: "unicode-canonical-property-names-ecmascript@npm:2.0.0"
@@ -15229,15 +15284,6 @@ __metadata:
     vue:
       optional: true
   checksum: 42cc8c8ff032dcac774f6f098723d4bc8000579ff4ecf9e0e72a4193e60234e6582ad4b6c43d0a9c76f59e510cf6d676070de67f2cd26588210cb51219845c27
-  languageName: node
-  linkType: hard
-
-"vue-meta@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "vue-meta@npm:2.4.0"
-  dependencies:
-    deepmerge: ^4.2.2
-  checksum: a6686e7351e941eb1041ffc2129418e7e2ce6b39993ef7cbd16585c2eb8c232cc9dc35873cefa54781420e03f71c88da6b6cf04c427dc91b314182eca655dedf
   languageName: node
   linkType: hard
 
@@ -16163,5 +16209,12 @@ __metadata:
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: b7289084bc1fc74a559b7259faa23d3214b14b538a8843d2b001a35e27147833f4107590b1b44bf5bc7f6dfe6f488660d3a3725f268e09b3925b3476153b7821
+  languageName: node
+  linkType: hard
+
+"zhead@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "zhead@npm:2.0.4"
+  checksum: a5b506a6945e93a2a3356d7944a61f9b9b2bf303ee26b10075790a262039cae9b4af7a2ffb8fb02c43a3d9bbfd93598001da8c4d448f0044797a14ae114016ab
   languageName: node
   linkType: hard

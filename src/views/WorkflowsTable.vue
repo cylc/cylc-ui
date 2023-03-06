@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState, mapGetters } from 'vuex'
 import { i18n } from '@/i18n'
 import { mdiTable } from '@mdi/js'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import subscriptionMixin from '@/mixins/subscription'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -86,16 +86,15 @@ export default {
   name: 'WorkflowsTable',
 
   mixins: [
-    pageMixin,
     subscriptionMixin
   ],
   // https://github.com/vuejs/router/issues/454
   ...subscriptionViewMixin,
   // why not subscriptionComponentMixin also?
 
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.workflows')
+      title: getPageTitle('App.workflows')
     }
   },
 

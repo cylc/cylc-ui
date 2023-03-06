@@ -18,23 +18,12 @@
 import { i18n } from '@/i18n'
 
 /**
- * Here we can define the operations that are common to components/views.
- * @type {{methods: {setPageTitle(*=, *=): string}}}
+ * i18n-enabled operation, to get the title respecting the locale used
+ * in the application settings.
+ * @param {string} key - i18n key
+ * @param {Object} params - optional object key=value used in the i18n message
+ * @returns {string}
  */
-export default {
-  /**
-   * Automatically created methods for components.
-   */
-  methods: {
-    /**
-     * i18n-enabled operation, to get the title respecting the locale used
-     * in the application settings.
-     * @param key {string} i18n key
-     * @param params {object} optional object key=value used in the i18n message
-     * @returns {string}
-     */
-    getPageTitle: function (key, params = {}) {
-      return `${i18n.global.t('App.name')} | ${i18n.global.t(key, params)}`
-    }
-  }
+export const getPageTitle = (key, params = {}) => {
+  return `${i18n.global.t('App.name')} | ${i18n.global.t(key, params)}`
 }

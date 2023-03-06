@@ -210,7 +210,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import pageMixin from '@/mixins'
+import { getPageTitle } from '@/utils/index'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
 import Job from '@/components/cylc/Job'
@@ -222,7 +222,6 @@ import subscriptionViewMixin from '@/mixins/subscriptionView'
 export default {
   name: 'UserProfile',
   mixins: [
-    pageMixin,
     subscriptionViewMixin
   ],
   components: {
@@ -248,9 +247,9 @@ export default {
   computed: {
     ...mapState('user', ['user'])
   },
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.userProfile')
+      title: getPageTitle('App.userProfile')
     }
   },
   mounted () {

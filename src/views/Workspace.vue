@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { toArray } from '@lumino/algorithm'
-import pageMixin from '@/mixins'
+import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
@@ -54,7 +54,6 @@ export default {
   name: 'Workspace',
 
   mixins: [
-    pageMixin,
     graphqlMixin,
     subscriptionMixin
   ],
@@ -64,9 +63,9 @@ export default {
     Toolbar
   },
 
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
 

@@ -146,7 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { mdiBook, mdiBookMultiple, mdiBookOpenVariant, mdiCog, mdiHubspot, mdiTable } from '@mdi/js'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import subscriptionMixin from '@/mixins/subscription'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -159,16 +159,15 @@ export default {
   name: 'Dashboard',
 
   mixins: [
-    pageMixin,
     subscriptionComponentMixin,
     subscriptionMixin
   ],
   // https://github.com/vuejs/router/issues/454
   ...subscriptionViewMixin,
 
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.dashboard')
+      title: getPageTitle('App.dashboard')
     }
   },
 

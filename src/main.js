@@ -29,9 +29,8 @@ import App from './App'
 import { i18n } from '@/i18n/index'
 import router from '@/router/index'
 import { store } from '@/store/index'
-
 import mitt from 'mitt'
-// import Meta from 'vue-meta'
+import { createHead, VueHeadMixin } from '@unhead/vue'
 
 // Vue.config.productionTip = false
 
@@ -41,21 +40,16 @@ configureCompat({
   // OPTIONS_DATA_MERGE: true ?
 })
 
-const app = createApp(App, {
-  // i18n: useI18n(),
-  // router,
-  // store,
-  // vuetify,
-  // render (h) {
-  //   return h(App)
-  // }
-})
+const app = createApp(App)
 
+app.mixin(VueHeadMixin)
+
+const head = createHead()
 app.use(store)
 app.use(router)
 app.use(vuetify)
 app.use(i18n)
-// app.use(Meta)
+app.use(head)
 app.use(ServicesPlugin, {
   offline: process.env.VUE_APP_SERVICES === 'offline'
 })

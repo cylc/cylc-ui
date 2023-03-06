@@ -16,16 +16,10 @@
  */
 
 import { expect } from 'chai'
-import pageMixin from '@/mixins/index'
-import { shallowMount } from '@vue/test-utils'
+import { getPageTitle } from '@/utils/index'
 
-describe('Index mixin', () => {
-  it('should display the application title correctly', () => {
-    const component = shallowMount({
-      mixins: [pageMixin],
-      render () {}
-    })
-    const title = component.vm.getPageTitle('App.dashboard')
-    expect(title).to.equal('Cylc UI | Dashboard')
+describe('getPageTitle()', () => {
+  it('displays the application title correctly', () => {
+    expect(getPageTitle('App.dashboard')).to.equal('Cylc UI | Dashboard')
   })
 })

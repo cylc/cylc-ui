@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import pageMixin from '@/mixins'
 import ReactDOM from 'react-dom'
 import React from 'react'
 import GraphiQL from 'graphiql'
@@ -28,8 +27,7 @@ import { fallbackGraphQLFetcher, graphQLFetcher } from '@/graphql/graphiql'
 
 export default {
   name: 'GraphiQL',
-  mixins: [pageMixin],
-  metaInfo () {
+  head () {
     return {
       title: 'GraphiQL'
     }

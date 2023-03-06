@@ -45,13 +45,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 
 export default {
-  mixins: [pageMixin],
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.notFound')
+      title: getPageTitle('App.notFound')
     }
   }
 }

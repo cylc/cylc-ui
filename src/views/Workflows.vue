@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState } from 'vuex'
 import GScan from '@/components/cylc/gscan/GScan'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import subscriptionMixin from '@/mixins/subscription'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
@@ -33,7 +33,6 @@ export default {
   name: 'Workflows',
 
   mixins: [
-    pageMixin,
     subscriptionComponentMixin,
     subscriptionMixin
   ],
@@ -44,9 +43,9 @@ export default {
     GScan
   },
 
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflows')
     }
   },
 

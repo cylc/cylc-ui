@@ -188,10 +188,16 @@ import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
+import { getPageTitle } from '@/utils'
 
 export default {
   name: 'Guide',
   mixins: [subscriptionViewMixin],
+  head () {
+    return {
+      title: getPageTitle('App.guide')
+    }
+  },
   components: {
     task: Task,
     job: Job
