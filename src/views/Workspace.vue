@@ -88,6 +88,7 @@ export default {
 
   beforeRouteEnter (to, from, next) {
     next(vm => {
+      vm.$workflowService.startSubscriptions()
       vm.$nextTick(() => {
         vm.addView({ viewName: TreeView.name })
       })

@@ -72,6 +72,9 @@ router.beforeEach(async (to, from) => {
       store.dispatch('setAlert', alert)
     }
   }
+})
+
+router.beforeResolve((to, from) => {
   if (to.name) {
     let title = to.name
     let workflowName = null
