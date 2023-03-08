@@ -51,7 +51,7 @@
         "firstQuartileQueue": 10,
         "secondQuartileQueue": 10,
         "thirdQuartileQueue": 10,
-        "maxQueueTime":10
+        "maxQueueTime": 10
       },
       {
         "name": "waiting",
