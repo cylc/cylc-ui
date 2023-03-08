@@ -80,112 +80,52 @@ export default {
         //   text: 'Failure rate (%)',
         //   value: 'failureRate'
         // }
-      ],
-      queueTimeHeaders: [
-        {
-          text: 'Mean T-queue (s)',
-          value: 'meanQueueTime'
-        },
-        {
-          text: 'Std Dev T-queue (s)',
-          value: 'stdDevQueueTime'
-        },
-        {
-          text: 'Min T-queue (s)',
-          value: 'minQueueTime'
-        },
-        {
-          text: 'Q1 T-queue (s)',
-          value: 'firstQuartileQueue'
-        },
-        {
-          text: 'Median T-queue (s)',
-          value: 'secondQuartileQueue'
-        },
-        {
-          text: 'Q3 T-queue (s)',
-          value: 'thirdQuartileQueue'
-        },
-        {
-          text: 'Max T-queue (s)',
-          value: 'maxQueueTime'
-        }
-      ],
-      runTimeHeaders: [
-        {
-          text: 'Mean T-run (s)',
-          value: 'meanRunTime'
-        },
-        {
-          text: 'Std Dev T-run (s)',
-          value: 'stdDevRunTime'
-        },
-        {
-          text: 'Min T-run (s)',
-          value: 'minRunTime'
-        },
-        {
-          text: 'Q1 T-run (s)',
-          value: 'firstQuartileRun'
-        },
-        {
-          text: 'Median T-run (s)',
-          value: 'secondQuartileRun'
-        },
-        {
-          text: 'Q3 T-run (s)',
-          value: 'thirdQuartileRun'
-        },
-        {
-          text: 'Max T-run (s)',
-          value: 'maxRunTime'
-        }
-      ],
-      totalTimeHeaders: [
-        {
-          text: 'Mean T-total (s)',
-          value: 'meanTotalTime'
-        },
-        {
-          text: 'Std Dev T-total (s)',
-          value: 'stdDevTotalTime'
-        },
-        {
-          text: 'Min T-total (s)',
-          value: 'minTotalTime'
-        },
-        {
-          text: 'Q1 T-total (s)',
-          value: 'firstQuartileTotal'
-        },
-        {
-          text: 'Median T-total (s)',
-          value: 'secondQuartileTotal'
-        },
-        {
-          text: 'Q3 T-total (s)',
-          value: 'thirdQuartileTotal'
-        },
-        {
-          text: 'Max T-total (s)',
-          value: 'maxTotalTime'
-        }
       ]
     }
   },
 
   computed: {
     shownHeaders () {
-      let timingHeaders
+      let times
       if (this.timingOption === 'totalTimes') {
-        timingHeaders = this.totalTimeHeaders
+        times = 'Total'
       } else if (this.timingOption === 'runTimes') {
-        timingHeaders = this.runTimeHeaders
+        times = 'Run'
       } else if (this.timingOption === 'queueTimes') {
-        timingHeaders = this.queueTimeHeaders
+        times = 'Queue'
       } else {
-        return []
+        return this.headers
       }
+      const timingHeaders = [
+        {
+          text: `Mean T-${times} (s)`,
+          value: `mean${times}Time`
+        },
+        {
+          text: `Std Dev T-${times} (s)`,
+          value: `stdDev${times}Time`
+        },
+        {
+          text: `Min T-${times} (s)`,
+          value: `min${times}Time`
+        },
+        {
+          text: `Q1 T-${times} (s)`,
+          value: `firstQuartile${times}`
+        },
+        {
+          text: `Median T-${times} (s)`,
+          value: `secondQuartile${times}`
+        },
+        {
+          text: `Q3 T-${times} (s)`,
+          value: `thirdQuartile${times}`
+        },
+        {
+          text: `Max T-${times} (s)`,
+          value: `max${times}Time`
+        }
+      ]
       return this.headers.concat(timingHeaders)
     }
   }
