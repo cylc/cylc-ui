@@ -95,19 +95,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :headers="shownHeaders"
               :items="filteredTasks"
               :sort-by.sync="sortBy"
+              :page.sync="page"
+              :sortDesc.sync="sortDesc"
+              :itemsPerPage.sync="itemsPerPage"
               dense
               :footer-props="{
-                itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
+                itemsPerPageOptions: [5, 10, 20, 50, 100, 200, -1],
                 showFirstLastPage: true
               }"
               :options="{ itemsPerPage: 50 }"
             ></v-data-table>
+            <BoxPlot :configOptions="configOptions" :workflowName="workflowName" :tasks="filteredTasks" :timingOption="tasksFilter.timingOption"></BoxPlot>
           </v-container>
         </v-col>
       </v-row>
     </v-container>
-    <apexchart type='boxPlot' :options="this.chartOptions" :series="this.boxPlot"></apexchart>
-  </div>
+      </div>
 </template>
 
 <script>
@@ -117,14 +120,11 @@ import gql from 'graphql-tag'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
 import ViewToolbar from '@/components/cylc/ViewToolbar'
-import VueApexCharts from 'vue-apexcharts'
+import BoxPlot from '@/components/cylc/analysis/BoxPlot'
 import {
   mdiChartLine,
   mdiRefresh
 } from '@mdi/js'
-
-Vue.use(VueApexCharts)
-Vue.component('apexchart', VueApexCharts)
 
 // list of fields to request for tasks
 const taskFields = [
@@ -212,7 +212,7 @@ export default {
 
   components: {
     ViewToolbar,
-    apexchart: VueApexCharts
+    BoxPlot
   },
 
   metaInfo () {
@@ -253,6 +253,9 @@ export default {
       // object containing all of the tasks added by the callback
       tasks,
       sortBy: 'name',
+      page: 1,
+      sortDesc: false,
+      itemsPerPage: 50,
       timingOptions: [
         { text: 'Total times', value: 'totalTimes' },
         { text: 'Run times', value: 'runTimes' },
@@ -382,6 +385,14 @@ export default {
     workflowIDs () {
       return [this.workflowId]
     },
+    configOptions () {
+      return {
+        sortBy: this.sortBy,
+        page: this.page,
+        sortDesc: this.sortDesc,
+        itemsPerPage: this.itemsPerPage
+      }
+    },
     filteredTasks () {
       return this.tasks.filter(task => this.matchTask(task))
     },
@@ -408,79 +419,8 @@ export default {
         }
       }
       return platformOptions
-    },
-    boxPlot () {
-      const boxPlot = [{
-        data: []
-      }]
-      if (this.tasksFilter.timingOption === 'totalTimes') {
-        for (let i = 0; i < this.tasks.length; i++) {
-          boxPlot[0].data.push(
-            {
-              x: this.tasks[i].name,
-              y: [this.tasks[i].minTotalTime,
-                this.tasks[i].firstQuartileTotal,
-                this.tasks[i].secondQuartileTotal,
-                this.tasks[i].thirdQuartileTotal,
-                this.tasks[i].maxTotalTime]
-            }
-          )
-        }
-      } else if (this.tasksFilter.timingOption === 'runTimes') {
-        for (let i = 0; i < this.tasks.length; i++) {
-          boxPlot[0].data.push(
-            {
-              x: this.tasks[i].name,
-              y: [this.tasks[i].minRunTime,
-                this.tasks[i].firstQuartileRun,
-                this.tasks[i].secondQuartileRun,
-                this.tasks[i].thirdQuartileRun,
-                this.tasks[i].maxRunTime]
-            }
-          )
-        }
-      } else if (this.tasksFilter.timingOption === 'queueTimes') {
-        for (let i = 0; i < this.tasks.length; i++) {
-          boxPlot[0].data.push(
-            {
-              x: this.tasks[i].name,
-              y: [this.tasks[i].minQueueTime,
-                this.tasks[i].firstQuartileQueue,
-                this.tasks[i].secondQuartileQueue,
-                this.tasks[i].thirdQuartileQueue,
-                this.tasks[i].maxQueueTime]
-            }
-          )
-        }
-      }
-
-      return boxPlot
-    },
-    chartOptions () {
-      const chartOptions = {
-        chart: {
-          id: this.workflowName + ' Box and Whisker Plot'
-        },
-        title: {
-          text: this.workflowName + ' Box and Whisker Plot',
-          align: 'left'
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true
-          },
-          boxPlot: {
-            colors: {
-              upper: '#C4E90C',
-              lower: '#000000'
-            }
-          }
-        }
-      }
-      return chartOptions
     }
   },
-
   methods: {
     // run the one-off query for historical job data and pass its results
     // through the callback
