@@ -121,7 +121,7 @@ export default {
         types: this.types
       },
       {
-        'append-inner': () => renderHelpIcon(this.help),
+        'append-inner': this.help ? () => renderHelpIcon(this.help) : null,
         // pass the "append" slot onto the child component
         append: (slotProps) => this.$slots.append?.(slotProps)
       }
