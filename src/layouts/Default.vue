@@ -89,6 +89,8 @@ export default {
     if (process.env.NODE_ENV !== 'production') {
       store.dispatch('setAlert', new AlertModel(error, 'error'))
     }
+    // Stop error propagating further:
+    return false
   }
 }
 </script>
