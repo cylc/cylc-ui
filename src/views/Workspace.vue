@@ -113,7 +113,7 @@ export default {
       TreeView,
       TableView,
       GraphView,
-      LogView
+      LogView,
       AnalysisView
     ]
 
