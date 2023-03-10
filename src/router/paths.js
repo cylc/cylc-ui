@@ -133,5 +133,5 @@ export default [
       toolbar: true
     },
     props: true
-  },
+  }
 ]
