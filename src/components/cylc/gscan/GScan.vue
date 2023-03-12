@@ -139,7 +139,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-col>
                   <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
                   <v-col
-                    v-if="!branchingLineage && (lastDescendent.type === 'workflow' && lastDescendent.node.latestStateTasks) && !expansionStatus"
+                    v-if="(!branchingLineage && (lastDescendent.type === 'workflow' && lastDescendent.node.latestStateTasks) && !expansionStatus) || (!expansionStatus && branchingLineage)"
                     class="text-right c-gscan-workflow-states"
                   >
                     <!-- task summary tooltips -->

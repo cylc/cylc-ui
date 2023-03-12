@@ -401,7 +401,7 @@ export default {
       const labelArr = []
       const traverseChildren = (currentNode) => {
         labelArr.push(currentNode.name || currentNode.id)
-        if (currentNode.children && currentNode.children.length > 0 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
+        if (currentNode.children && currentNode.children.length === 1 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
           traverseChildren(currentNode.children[0])
         }
       }
