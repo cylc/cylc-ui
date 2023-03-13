@@ -32,8 +32,6 @@ import { mapState, mapGetters } from 'vuex'
 import { mdiTable } from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionMixin from '@/mixins/subscription'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -45,11 +43,8 @@ export default {
 
   mixins: [
     graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionMixin
+    subscriptionComponentMixin
   ],
-  // https://github.com/vuejs/router/issues/454
-  ...subscriptionViewMixin,
 
   components: {
     TableComponent

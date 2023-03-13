@@ -95,8 +95,6 @@ import gql from 'graphql-tag'
 import { mapGetters } from 'vuex'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionMixin from '@/mixins/subscription'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
@@ -204,11 +202,8 @@ export default {
 
   mixins: [
     graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionMixin
+    subscriptionComponentMixin
   ],
-  // https://github.com/vuejs/router/issues/454
-  ...subscriptionViewMixin,
 
   components: {
     GraphNode,

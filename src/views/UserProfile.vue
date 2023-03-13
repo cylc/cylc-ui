@@ -215,15 +215,11 @@ import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize }
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
 import Job from '@/components/cylc/Job'
 import JobState from '@/model/JobState.model'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 
 // TODO: update where user preferences are stored after #335
 
 export default {
   name: 'UserProfile',
-  mixins: [
-    subscriptionViewMixin
-  ],
   components: {
     Job
   },

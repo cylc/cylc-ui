@@ -77,7 +77,6 @@ import { i18n } from '@/i18n'
 import { mdiTable } from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
 import subscriptionMixin from '@/mixins/subscription'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
@@ -88,9 +87,6 @@ export default {
   mixins: [
     subscriptionMixin
   ],
-  // https://github.com/vuejs/router/issues/454
-  ...subscriptionViewMixin,
-  // why not subscriptionComponentMixin also?
 
   head () {
     return {
