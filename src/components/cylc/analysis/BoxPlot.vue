@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container>
-    <apexchart type='boxPlot' :options="this.chartOptions" :series="this.boxPlot"></apexchart>
+    <apexchart type='boxPlot' width='90%' height='250%' :options="this.chartOptions" :series="this.boxPlot"></apexchart>
   </v-container>
 </template>
 
@@ -116,11 +116,23 @@ export default {
     chartOptions () {
       const chartOptions = {
         chart: {
-          id: this.workflowName + ' Box and Whisker Plot'
+          id: this.workflowName,
+          animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 300,
+            animateGradually: {
+              enabled: true,
+              delay: 150
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350
+            }
+          }
         },
         title: {
-          text: this.workflowName + ' Box and Whisker Plot',
-          align: 'left'
+          text: this.workflowName
         },
         plotOptions: {
           bar: {
@@ -139,87 +151,184 @@ export default {
   },
   methods: {
     compare (a, b) {
-      if (this.sortBy === 'name') {
+      let returnValue = 0
+      if (this.configOptions.sortBy === 'name') {
         if (a.name < b.name) {
-          return -1
+          returnValue = -1
         }
         if (a.name > b.name) {
-          return 1
+          returnValue = 1
         }
-        return 0
-      } else if (this.sortBy === 'platform') {
+      } else if (this.configOptions.sortBy === 'platform') {
         if (a.platform < b.platform) {
-          return -1
+          returnValue = -1
         }
         if (a.platform > b.platform) {
-          return 1
+          returnValue = 1
         }
-        return 0
-      } else if (this.sortBy === 'count') {
+      } else if (this.configOptions.sortBy === 'count') {
         if (a.count < b.count) {
-          return -1
+          returnValue = -1
         }
         if (a.count > b.count) {
-          return 1
+          returnValue = 1
         }
-        return 0
-      } else if (this.sortBy === 'meanTotalTime') {
+      } else if (this.configOptions.sortBy === 'meanTotalTime') {
         if (a.meanTotalTime < b.meanTotalTime) {
-          return -1
+          returnValue = -1
         }
         if (a.meanTotalTime > b.meanTotalTime) {
-          return 1
+          returnValue = 1
         }
-        return 0
-      } else if (this.sortBy === 'stdDevTotalTime') {
+      } else if (this.configOptions.sortBy === 'stdDevTotalTime') {
         if (a.stdDevTotalTime < b.stdDevTotalTime) {
-          return -1
+          returnValue = -1
         }
         if (a.stdDevTotalTime > b.stdDevTotalTime) {
-          return 1
+          returnValue = 1
         }
-        return 0
-      } else if (this.sortBy === 'minTotalTime') {
+      } else if (this.configOptions.sortBy === 'minTotalTime') {
         if (a.minTotalTime < b.minTotalTime) {
-          return -1
+          returnValue = -1
         }
         if (a.minTotalTime > b.minTotalTime) {
-          return 1
+          returnValue = 1
         }
-        return 0
-      } else if (this.sortBy === 'firstQuartileTotal') {
+      } else if (this.configOptions.sortBy === 'firstQuartileTotal') {
         if (a.firstQuartileTotal < b.firstQuartileTotal) {
-          return -1
+          returnValue = -1
         }
         if (a.firstQuartileTotal > b.firstQuartileTotal) {
-          return 1
+          returnValue = 1
         }
-        return 0
-      } else if (this.sortBy === 'secondQuartileTotal') {
+      } else if (this.configOptions.sortBy === 'secondQuartileTotal') {
         if (a.secondQuartileTotal < b.secondQuartileTotal) {
-          return -1
+          returnValue = -1
         }
         if (a.secondQuartileTotal > b.secondQuartileTotal) {
-          return 1
+          returnValue = 1
         }
-        return 0
-      } else if (this.sortBy === 'thirdQuartileTotal') {
+      } else if (this.configOptions.sortBy === 'thirdQuartileTotal') {
         if (a.thirdQuartileTotal < b.thirdQuartileTotal) {
-          return -1
+          returnValue = -1
         }
         if (a.thirdQuartileTotal > b.thirdQuartileTotal) {
-          return 1
+          returnValue = 1
         }
-        return 0
-      } else if (this.sortBy === 'maxTotalTime') {
+      } else if (this.configOptions.sortBy === 'maxTotalTime') {
         if (a.maxTotalTime < b.maxTotalTime) {
-          return -1
+          returnValue = -1
         }
         if (a.maxTotalTime > b.maxTotalTime) {
-          return 1
+          returnValue = 1
         }
-        return 0
+      } else if (this.configOptions.sortBy === 'meanRunTime') {
+        if (a.meanRunTime < b.meanRunTime) {
+          returnValue = -1
+        }
+        if (a.meanRunTime > b.meanRunTime) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'stdDevRunTime') {
+        if (a.stdDevRunTime < b.stdDevRunTime) {
+          returnValue = -1
+        }
+        if (a.stdDevRunTime > b.stdDevRunTime) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'minRunTime') {
+        if (a.minRunTime < b.minRunTime) {
+          returnValue = -1
+        }
+        if (a.minRunTime > b.minRunTime) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'firstQuartileRun') {
+        if (a.firstQuartileRun < b.firstQuartileRun) {
+          returnValue = -1
+        }
+        if (a.firstQuartileRun > b.firstQuartileRun) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'secondQuartileRun') {
+        if (a.secondQuartileRun < b.secondQuartileRun) {
+          returnValue = -1
+        }
+        if (a.secondQuartileRun > b.secondQuartileRun) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'thirdQuartileRun') {
+        if (a.thirdQuartileRun < b.thirdQuartileRun) {
+          returnValue = -1
+        }
+        if (a.thirdQuartileRun > b.thirdQuartileRun) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'maxRunTime') {
+        if (a.maxRunTime < b.maxRunTime) {
+          returnValue = -1
+        }
+        if (a.maxRunTime > b.maxRunTime) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'meanQueueTime') {
+        if (a.meanQueueTime < b.meanQueueTime) {
+          returnValue = -1
+        }
+        if (a.meanQueueTime > b.meanQueueTime) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'stdDevQueueTime') {
+        if (a.stdDevQueueTime < b.stdDevQueueTime) {
+          returnValue = -1
+        }
+        if (a.stdDevQueueTime > b.stdDevQueueTime) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'minQueueTime') {
+        if (a.minQueueTime < b.minQueueTime) {
+          returnValue = -1
+        }
+        if (a.minQueueTime > b.minQueueTime) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'firstQuartileQueue') {
+        if (a.firstQuartileQueue < b.firstQuartileQueue) {
+          returnValue = -1
+        }
+        if (a.firstQuartileQueue > b.firstQuartileQueue) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'secondQuartileQueue') {
+        if (a.secondQuartileQueue < b.secondQuartileQueue) {
+          returnValue = -1
+        }
+        if (a.secondQuartileQueue > b.secondQuartileQueue) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'thirdQuartileQueue') {
+        if (a.thirdQuartileQueue < b.thirdQuartileQueue) {
+          returnValue = -1
+        }
+        if (a.thirdQuartileQueue > b.thirdQuartileQueue) {
+          returnValue = 1
+        }
+      } else if (this.configOptions.sortBy === 'maxQueueTime') {
+        if (a.maxQueueTime < b.maxQueueTime) {
+          returnValue = -1
+        }
+        if (a.maxQueueTime > b.maxQueueTime) {
+          returnValue = 1
+        }
       }
+      if (this.configOptions.sortDesc === true) {
+        if (returnValue === 1) {
+          returnValue = -1
+        } else if (returnValue === -1) {
+          returnValue = 1
+        }
+      }
+      return returnValue
     }
   }
 }

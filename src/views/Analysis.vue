@@ -104,7 +104,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 showFirstLastPage: true
               }"
               :options="{ itemsPerPage: 50 }"
-            ></v-data-table>
+            >
+            <template v-slot:top="{ pagination, options, updateOptions }">
+              <v-data-footer
+                :pagination="pagination"
+                :options="options"
+                @update:options="updateOptions"
+                items-per-page-text="$vuetify.dataTable.itemsPerPageText"/>
+            </template>
+          </v-data-table>
             <BoxPlot :configOptions="configOptions" :workflowName="workflowName" :tasks="filteredTasks" :timingOption="tasksFilter.timingOption"></BoxPlot>
           </v-container>
         </v-col>
