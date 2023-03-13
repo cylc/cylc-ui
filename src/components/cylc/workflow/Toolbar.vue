@@ -88,7 +88,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <v-spacer class="mx-0" />
 
-      <v-btn class="add-view" color="primary">
+      <v-btn
+        class="add-view"
+        color="primary"
+        data-cy="add-view-btn"
+      >
         <v-icon class="icon">{{ svgPaths.add }}</v-icon>
         <span class="label">
           {{ $t('Toolbar.addView') }}

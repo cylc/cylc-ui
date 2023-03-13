@@ -26,6 +26,7 @@ describe('Edit Runtime form', () => {
     cy.intercept('/graphql', (req) => {
       const { body } = req
       if (body.query.startsWith('mutation')) {
+        req.alias = 'mutation' // equivalent to `.as('mutation')`
         receivedMutations.push(body)
         req.reply({
           data: {
@@ -61,8 +62,7 @@ describe('Edit Runtime form', () => {
   const getMenuItem = () => {
     return cy
       .get('.c-mutation-menu-list:first')
-      .find('.c-mutation .v-list-item__title')
-      .contains('Edit Runtime')
+      .contains('.c-mutation', 'Edit Runtime')
   }
 
   /**
@@ -114,6 +114,7 @@ describe('Edit Runtime form', () => {
       })
       .get('[data-cy="submit"]')
       .click()
+      .wait(['@mutation'])
       .then(() => {
         expect(receivedMutations.length).to.eq(1)
         expect(receivedMutations[0].operationName).to.eq('broadcast')
@@ -140,7 +141,7 @@ describe('Edit Runtime form', () => {
       .click()
     getInputListItem('Env Script')
       // Re-type the same thing into an input
-      .find('textarea')
+      .find('textarea:first')
       .as('input')
       .invoke('val')
       .then(val => {

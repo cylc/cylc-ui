@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/** FIXME: This is an empty object in Webpack 5 */
 import styles from '@/styles/index.scss'
 
 // Module for font size functions and constants.

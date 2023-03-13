@@ -18,7 +18,6 @@
 const MUTATIONS = [
   {
     name: 'workflowMutation',
-    _title: 'Workflow Mutation',
     description: `
       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
       Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
@@ -41,7 +40,6 @@ const MUTATIONS = [
   },
   {
     name: 'unauthorisedMutation',
-    _title: 'Unauthorised Mutation',
     description: `
       A mutation user will not be authorised for.
       Valid for: running workflows.
@@ -58,7 +56,6 @@ const MUTATIONS = [
   },
   {
     name: 'cycleMutation',
-    _title: 'Cycle Mutation',
     description: 'cycle',
     args: [
       {
@@ -79,7 +76,6 @@ const MUTATIONS = [
   },
   {
     name: 'namespaceMutation',
-    _title: 'Namespace Mutation',
     description: 'namespace',
     args: [
       {
@@ -100,7 +96,6 @@ const MUTATIONS = [
   },
   {
     name: 'jobMutation',
-    _title: 'Job Mutation',
     description: 'job',
     args: [
       {

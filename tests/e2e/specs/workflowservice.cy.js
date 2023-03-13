@@ -48,7 +48,7 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('[href="#/workspace/one"]').click({ force: true })
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
-    cy.get('div#main').find('.c-tree')
+    cy.get('.v-main').find('.c-tree')
     getSubscriptions().then(subscriptions => {
       // GScan subscription "root" and the subscription "workflow" used by the Tree view
       expect(Object.keys(subscriptions).length).to.equal(2)
@@ -61,7 +61,7 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('[href="#/workspace/one"]').click()
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
-    cy.get('div#main').find('.c-tree')
+    cy.get('.v-main').find('.c-tree')
     cy.get('[href="#/"]').click({ force: true })
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
@@ -104,7 +104,7 @@ describe('WorkflowService mutations', () => {
       .get('#workflow-mutate-button.c-interactive')
       .click()
       .get('.c-mutation-menu')
-      .find('.v-skeleton-loader:first')
+      .find('[data-cy=skeleton]').as('skeleton')
       .should('be.visible')
       .get('.c-mutation-menu-list')
       .should('not.exist')
@@ -114,10 +114,10 @@ describe('WorkflowService mutations', () => {
         deferred.resolve()
       })
     // After mutations have loaded
-    cy
+    // eslint-disable-next-line
+    cy.wait(200)
       // Skeleton loader should be gone, list of mutations now shown
-      .get('.c-mutation-menu')
-      .find('.v-skeleton-loader')
+      .get('@skeleton')
       .should('not.exist')
       .get('.c-mutation-menu-list')
       .should('be.visible')

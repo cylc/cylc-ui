@@ -28,16 +28,17 @@ function mockApolloClient () {
   const mutations = []
   cy.window().its('app.$workflowService').then(service => {
     // mock the apollo client's mutate method to catch low-level calls
-    service.apolloClient.mutate = (args) => {
+    service.apolloClient.mutate = async (args) => {
       // log this for later
       mutations.push(args)
       // return something roughly the same shape as what graphql would
-      const ret = {}
-      ret.data = {}
-      ret.data[`${args.mutation.definitions[0].name.value}`] = {
-        result: []
+      return {
+        data: {
+          [args.mutation.definitions[0].name.value]: {
+            result: []
+          }
+        }
       }
-      return ret
     }
   })
   return mutations
@@ -47,7 +48,7 @@ function mockWorkflowService () {
   const mutations = []
   cy.window().its('app.$workflowService').then(service => {
     // mock the workflow service's mutate method to catch high-level calls
-    service.mutate = (args) => {
+    service.mutate = async (args) => {
       // log this for later
       mutations.push(args)
       // return something roughly the same shape as what the workflow
@@ -143,9 +144,9 @@ describe('Api On The Fly', () => {
             cy
               .get('.v-list-item')
               .should('have.length', 1)
-              .get('.v-list-item__title:first')
+              .get('.v-list-item-title:first')
               .should('have.text', test.mutationTitle)
-              .get('.c-description:first')
+              .get('.v-list-item-subtitle:first')
               .should('have.text', test.mutationText)
           })
         // click outside of the menu

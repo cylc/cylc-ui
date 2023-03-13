@@ -50,11 +50,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-if="isLoadingMutations && primaryMutations.length"
           type="list-item-avatar-two-line@3"
           min-width="400"
+          data-cy="skeleton"
         /> -->
         <v-progress-linear
           v-if="isLoadingMutations && primaryMutations.length"
           indeterminate
           min-width="400px"
+          data-cy="skeleton"
         />
         <v-list
           v-if="displayMutations.length"

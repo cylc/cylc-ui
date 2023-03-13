@@ -46,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             id="c-gscan-filter-tooltip-btn"
             variant="text"
             size="small"
+            data-cy="gscan-filter-btn"
           >
             <v-icon size="x-large">{{ $options.icons.mdiFilter }}</v-icon>
           </v-btn>

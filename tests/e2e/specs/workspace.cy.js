@@ -29,17 +29,8 @@ describe('Workspace view and component/widget', () => {
   it('Should display the Lumino component in the Workspace view, with a Tree widget', () => {
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
 
-    // The skeleton loader should stop existing
     cy.get('.lm-Widget')
-      .find('.v-skeleton-loader')
-      .then((loader) => {
-        const firstChild = loader.children('div').first()
-        // The skeleton may, or may not, still be displaying in the UI...
-        if (firstChild.attr('class') && firstChild.attr('class').includes('skeleton')) {
-          cy.wrap(firstChild)
-            .should('not.exist')
-        }
-      })
+      .should('be.visible')
   })
 
   it('Should remove the default widget and leave no more widgets', () => {
@@ -49,7 +40,7 @@ describe('Workspace view and component/widget', () => {
 
   it('Should be able to add two widgets of the same type', () => {
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
-    cy.get('a.add-view').click()
+    cy.get('[data-cy=add-view-btn]').click()
     cy.get('#toolbar-add-Tree-view').click()
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
   })
@@ -60,19 +51,19 @@ describe('Workspace view and component/widget', () => {
       // there should be a tab representing the widget
       .should('have.length', 1)
       // the tab should contain the name of the widget
-      .contains('tree')
+      .contains('Tree')
       // the tab should be active (that is to say on top)
       .parent()
       .should('have.class', 'lm-mod-current')
 
-    cy.get('a.add-view').click()
+    cy.get('[data-cy=add-view-btn]').click()
     cy.get('#toolbar-add-Table-view').click()
     cy.get('.lm-TabBar-tabLabel')
       // there should be two tabs (tree + table)
       .should('have.length', 2)
       // the new tab should be last
       .last()
-      .contains('table')
+      .contains('Table')
       // the new tab should be active (that is to say on top)
       .parent()
       .should('have.class', 'lm-mod-current')
@@ -81,7 +72,7 @@ describe('Workspace view and component/widget', () => {
   it('Should remove widgets added successfully', () => {
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
-    cy.get('a.add-view').click()
+    cy.get('[data-cy=add-view-btn]').click()
     cy.get('#toolbar-add-Tree-view').click()
     // ensure we have 2 widgets now
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
@@ -96,7 +87,7 @@ describe('Workspace view and component/widget', () => {
   it('Should remove widgets when leaving the Workspace view', () => {
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
-    cy.get('a.add-view').click()
+    cy.get('[data-cy=add-view-btn]').click()
     cy.get('#toolbar-add-Tree-view').click()
     // ensure we have 2 widgets now
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
@@ -108,7 +99,7 @@ describe('Workspace view and component/widget', () => {
   it('Should remove widgets when updating the Workspace view', () => {
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
-    cy.get('a.add-view').click()
+    cy.get('[data-cy=add-view-btn]').click()
     cy.get('#toolbar-add-Tree-view').click()
     // ensure we have 2 widgets now
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)

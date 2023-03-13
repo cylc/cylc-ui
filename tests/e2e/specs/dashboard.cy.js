@@ -24,9 +24,8 @@ describe('Dashboard', () => {
 
   it('Displays the Dashboard link as active on the left sidebar menu', () => {
     cy
-      .get('div.v-list-item__title')
-      .contains('Dashboard')
-      .parent()
+      .get('nav')
+      .contains('a.v-list-item', 'Dashboard')
       .should('have.class', 'v-list-item--active')
   })
 

@@ -72,7 +72,7 @@ describe('CylcObject Menu component', () => {
       .click()
       .get('.c-mutation-menu')
       .should('be.visible')
-      .find('.v-card__title')
+      .find('.v-card-title')
       .then(($el) => {
         firstID = $el.text().trim()
       })
@@ -82,7 +82,7 @@ describe('CylcObject Menu component', () => {
       .click({ force: true }) // force in case underneath menu
       .get('.c-mutation-menu')
       .should('be.visible')
-      .find('.v-card__title')
+      .find('.v-card-title')
       .should(($el) => {
         expect($el.text().trim()).not.to.equal(firstID)
       })
@@ -92,7 +92,7 @@ describe('CylcObject Menu component', () => {
     cy.get('#workflow-mutate-button.c-interactive')
       .click()
     // Should not close when clicking on non-interactive thing inside menu
-    cy.get('.v-card__title')
+    cy.get('.v-card-title')
       .click()
       .get('.c-mutation-menu')
       .should('be.visible')

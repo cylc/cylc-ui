@@ -74,8 +74,8 @@ import Workflows from '@/views/Workflows'
 import { mdiHome, mdiGraphql } from '@mdi/js'
 import pkg from '@/../package.json'
 
-const initialWidth = 260
-const minWidth = 150
+export const initialWidth = 260
+export const minWidth = 150
 
 export default {
   components: {

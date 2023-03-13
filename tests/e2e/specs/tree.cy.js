@@ -192,7 +192,7 @@ describe('Tree view', () => {
         .should('have.length', initialNumTasks)
         .contains('waiting')
       for (const id of ['eed', '/suc', 'GOOD', 'SUC']) {
-        cy.get('[data-cy=filter-id]')
+        cy.get('[data-cy=filter-id] input')
           .clear()
           .type(id)
         cy.get('.node-data-task:visible')
@@ -203,12 +203,12 @@ describe('Tree view', () => {
           .should('not.be.visible')
       }
       // It should stop filtering when input is cleared
-      cy.get('[data-cy=filter-id]')
+      cy.get('[data-cy=filter-id] input')
         .clear()
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
       // It should filter by cycle point
-      cy.get('[data-cy=filter-id]')
+      cy.get('[data-cy=filter-id] input')
         .type('2000') // (matches all tasks)
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
@@ -221,7 +221,7 @@ describe('Tree view', () => {
         .should('be.visible')
       cy
         .get('[data-cy=filter-task-states]')
-        .click({ force: true })
+        .click()
       cy
         .get('.v-list-item')
         .contains(TaskState.RUNNING.name)
@@ -245,7 +245,7 @@ describe('Tree view', () => {
         .type('i')
       cy
         .get('[data-cy=filter-task-states]')
-        .click({ force: true })
+        .click()
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
         .click({ force: true })
@@ -293,9 +293,8 @@ describe('Tree view', () => {
 
   it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
     cy.visit('/#/tree/one')
-    cy
-      .get('[data-cy=filter-task-states]')
-      .click({ force: true })
+    cy.get('[data-cy=filter-task-states]')
+      .click()
     // eslint-disable-next-line no-lone-blocks
     TaskState.enumValues.forEach(state => {
       cy.get('.v-list-item')
@@ -305,9 +304,7 @@ describe('Tree view', () => {
     // Click outside to close dropdown
     cy.get('noscript')
       .click({ force: true })
-    cy.get('.v-select__slot')
-      .should($select => {
-        expect($select).to.contain('(+')
-      })
+    cy.get('[data-cy=filter-task-states]')
+      .contains('.v-select__selection', '(+')
   })
 })

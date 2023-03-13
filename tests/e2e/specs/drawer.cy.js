@@ -15,16 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { initialWidth, minWidth } from '@/components/cylc/Drawer'
+
+/**
+ * Helper to resize the drawer in the test
+ *
+ * @param {number} width - width to resize to
+ */
+const resize = (width) => cy
+  .get('#sidebar .resize-bar')
+  .trigger('mousedown', { which: 1 })
+  .trigger('mousemove', { clientX: width, clientY: 500 })
+  .trigger('mouseup', { force: true })
+
 describe('Drawer component', () => {
   it('Is displayed when mode is desktop', () => {
     cy.visit('/#/')
     cy
-      .get('.v-navigation-drawer')
+      .get('#sidebar')
       .should('be.visible')
   })
   it('it should have a width of 260', () => {
     cy.visit('/#/')
-    cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.eq', 260)
+    cy.get('#sidebar').invoke('innerWidth').should('be.eq', 260)
   })
   it('Is NOT displayed when mode is mobile', () => {
     // when the window dimension is below a mobile-threshold, the app sets state.app.drawer as false
@@ -32,7 +45,7 @@ describe('Drawer component', () => {
     cy.viewport(320, 480)
     cy.visit('/#/')
     cy
-      .get('.v-navigation-drawer')
+      .get('#sidebar')
       .should('not.be.visible')
     // besides the above, now the user should see a link to display the drawer
     cy
@@ -41,13 +54,24 @@ describe('Drawer component', () => {
   })
   it('should drag to trigger resize', () => {
     cy.visit('/#/')
-    cy.get('.v-navigation-drawer').invoke('innerWidth').should('be.eq', 260)
-    cy.get('.v-navigation-drawer__border')
-      .trigger('mousedown', { which: 1 })
-      .trigger('mousemove', { clientX: 0, clientY: 500 })
-      .trigger('mouseup', { force: true })
-    cy.get('.v-navigation-drawer')
-      .invoke('innerWidth').should('be.eq', 0)
-    cy.get('#toggle-drawer').should('exist')
+    cy.get('#sidebar')
+      .invoke('innerWidth')
+      .should('be.eq', initialWidth)
+    resize(200)
+    cy.get('#sidebar')
+      .invoke('innerWidth')
+      .should('be.closeTo', 200, 5)
+    // Resizing to less than min width should hide it
+    resize(minWidth - 5)
+    cy.get('#sidebar')
+      .should('not.be.visible')
+    // Click hamburger btn to bring it back
+    cy.get('#toggle-drawer')
+      .should('be.visible')
+      .click()
+      .get('#sidebar')
+      .should('be.visible')
+      .invoke('innerWidth')
+      .should('be.closeTo', 200, 5)
   })
 })

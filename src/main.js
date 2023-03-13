@@ -69,5 +69,5 @@ router.isReady().then(() => app.mount('#app'))
 // e.g. window.app.$store and window.app.$workflowService.
 // Ref: https://www.cypress.io/blog/2017/11/28/testing-vue-web-application-with-vuex-data-store-and-rest-backend/
 if (process.env.NODE_ENV !== 'production') {
-  window.app = app
+  window.app = app.config.globalProperties
 }

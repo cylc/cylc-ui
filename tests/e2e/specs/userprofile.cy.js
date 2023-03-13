@@ -24,19 +24,18 @@ import {
 // import * as CylcTree from '@/components/cylc/tree/index'
 
 describe('User Profile', () => {
-  it('Visits the user profile', () => {
+  beforeEach(() => {
+    resetFontSize()
     cy.visit('/#/user-profile')
-    cy
-      .get('h3.headline')
-      .should('be.visible')
-      .should('contain', 'Your Profile')
+  })
+
+  it('Visits the user profile', () => {
     cy.get('input#profile-username')
       .should('be.visible')
       .should('be.disabled')
   })
+
   it('Increases the font size', () => {
-    resetFontSize()
-    cy.visit('/#/user-profile')
     expect(parseFloat(INITIAL_FONT_SIZE)).to.be.equal(getCurrentFontSize())
     const clicks = 3
     // NOTE: had to use Promises in order to locate right element with Cypress
@@ -52,9 +51,8 @@ describe('User Profile', () => {
         .click()
     })
   })
+
   it('Decreases the font size', () => {
-    resetFontSize()
-    cy.visit('/#/user-profile')
     expect(parseFloat(INITIAL_FONT_SIZE)).to.be.equal(getCurrentFontSize())
     const clicks = 3
     cy.get('button#font-size-decrease-button').then(($button) => {
@@ -69,9 +67,8 @@ describe('User Profile', () => {
         .click()
     })
   })
+
   it('Resets the font size', () => {
-    resetFontSize()
-    cy.visit('/#/user-profile')
     expect(parseFloat(INITIAL_FONT_SIZE)).to.be.equal(getCurrentFontSize())
     const clicks = 3
     cy.get('button#font-size-decrease-button').then(($button) => {
@@ -86,8 +83,8 @@ describe('User Profile', () => {
       })
     })
   })
+
   it('Sets the job theme', () => {
-    cy.visit('/#/user-profile')
     cy.get('#input-job-theme-default')
       .click({ force: true })
     // set the job theme to normal
