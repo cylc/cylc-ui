@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import 'graphiql/graphiql.min.css'
 import ReactDOM from 'react-dom'
 import React from 'react'
 import GraphiQL from 'graphiql'
@@ -68,8 +69,6 @@ export default {
 </script>
 
 <style scoped>
-@import '~graphiql/graphiql.min.css';
-
 body {
   height: 100%;
   margin: 0;

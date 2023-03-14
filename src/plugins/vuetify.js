@@ -17,18 +17,19 @@
 
 import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+import {
+  VAutocomplete, VCombobox, VSelect, VTextarea, VTextField
+} from 'vuetify/components'
 import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
 import colors from 'vuetify/lib/util/colors'
 import { mdiClose } from '@mdi/js'
 
 const inputDefaults = Object.fromEntries([
-  components.VAutocomplete,
-  components.VCombobox,
-  components.VSelect,
-  components.VTextarea,
-  components.VTextField
+  VAutocomplete,
+  VCombobox,
+  VSelect,
+  VTextarea,
+  VTextField
 ].map(({ name }) => [
   name,
   {
@@ -63,13 +64,10 @@ export default createVuetify({
       mdi
     }
   },
-  // TODO: this should be taken care of by a loader or something:
   components: {
-    ...components,
     VDataTable,
     VDataTableFooter
   },
-  directives,
   defaults: {
     ...inputDefaults
   }

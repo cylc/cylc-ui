@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <template v-slot:append>
       <div class="px-4 py-2 d-flex justify-center">
         <span class="text--secondary">
-          <strong v-if="environment !== 'PRODUCTION'">{{ environment }}</strong> {{ $t('App.name') }} {{ version }}
+          <strong v-if="mode !== 'production'"> {{ mode.toUpperCase() }}</strong> {{ $t('App.name') }} {{ version }}
         </span>
       </div>
     </template>
@@ -68,9 +68,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Header from '@/components/cylc/Header'
+import Header from '@/components/cylc/Header.vue'
 import { mapMutations, mapState } from 'vuex'
-import Workflows from '@/views/Workflows'
+import Workflows from '@/views/Workflows.vue'
 import { mdiHome, mdiGraphql } from '@mdi/js'
 import pkg from '@/../package.json'
 
@@ -89,7 +89,7 @@ export default {
         home: mdiHome,
         graphql: mdiGraphql
       },
-      environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
+      mode: import.meta.env.MODE,
       version: pkg.version,
       drawerWidth: initialWidth
     }

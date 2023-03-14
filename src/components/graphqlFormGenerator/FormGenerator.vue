@@ -59,8 +59,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import cloneDeep from 'lodash/cloneDeep'
 import { mdiHelpCircleOutline } from '@mdi/js'
 
-import Markdown from '@/components/Markdown'
-import FormInput from '@/components/graphqlFormGenerator/FormInput'
+import Markdown from '@/components/Markdown.vue'
+import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
 import { getNullValue, mutate } from '@/utils/aotf'
 
 export default {

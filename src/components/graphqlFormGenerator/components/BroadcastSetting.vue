@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { h } from 'vue'
 import { VTextField } from 'vuetify/components'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
-import { renderHelpIcon } from '@/components/graphqlFormGenerator/FormInput'
-import { nonNullRule } from '@/components/graphqlFormGenerator/components/NonNull'
+import { renderHelpIcon } from '@/components/graphqlFormGenerator/FormInput.vue'
+import { nonNullRule } from '@/components/graphqlFormGenerator/components/NonNull.vue'
 
 export default {
   name: 'g-broadcast-setting',

@@ -131,7 +131,7 @@ import {
   getMutationArgsFromTokens,
   mutate
 } from '@/utils/aotf'
-import Mutation from '@/components/cylc/Mutation'
+import Mutation from '@/components/cylc/Mutation.vue'
 import {
   mdiPencil
 } from '@mdi/js'

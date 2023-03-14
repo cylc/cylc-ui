@@ -213,7 +213,7 @@ import { mapMutations, mapState } from 'vuex'
 import { getPageTitle } from '@/utils/index'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
-import Job from '@/components/cylc/Job'
+import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 

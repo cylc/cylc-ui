@@ -100,14 +100,14 @@ import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
-import GraphNode from '@/components/cylc/GraphNode'
-import ViewToolbar from '@/components/cylc/ViewToolbar'
+import GraphNode from '@/components/cylc/GraphNode.vue'
+import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import {
   posToPath,
   nonCryptoHash
 } from '@/utils/graph-utils'
-import { graphviz } from '@hpcc-js/wasm'
-import * as svgPanZoom from 'svg-pan-zoom'
+import { Graphviz } from '@hpcc-js/wasm/graphviz'
+import svgPanZoom from 'svg-pan-zoom'
 import {
   mdiGraph,
   mdiTimer,
@@ -628,14 +628,15 @@ export default {
         await this.$nextTick()
       }
     },
+    /** re-layout the graph after any new nodes have been rendered */
     async layout (nodes, edges, nodeDimensions) {
-      // re-layout the graph after any new nodes have been rendered
+      const graphviz = await Graphviz.load()
 
       // generate the GraphViz dot code
       const dotCode = this.getDotCode(nodeDimensions, nodes, edges)
 
       // run the layout algorithm
-      const jsonString = await graphviz.layout(dotCode, 'json')
+      const jsonString = graphviz.layout(dotCode, 'json')
       const json = JSON.parse(jsonString)
 
       // update graph node positions

@@ -17,12 +17,12 @@
 
 import { VSwitch, VTextField } from 'vuetify/components'
 
-import GEnum from '@/components/graphqlFormGenerator/components/Enum'
-import GNonNull, { nonNullRule } from '@/components/graphqlFormGenerator/components/NonNull'
-import GList from '@/components/graphqlFormGenerator/components/List'
-import GObject from '@/components/graphqlFormGenerator/components/Object'
-import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting'
-import GMapItem from '@/components/graphqlFormGenerator/components/MapItem'
+import GEnum from '@/components/graphqlFormGenerator/components/Enum.vue'
+import GNonNull, { nonNullRule } from '@/components/graphqlFormGenerator/components/NonNull.vue'
+import GList from '@/components/graphqlFormGenerator/components/List.vue'
+import GObject from '@/components/graphqlFormGenerator/components/Object.vue'
+import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting.vue'
+import GMapItem from '@/components/graphqlFormGenerator/components/MapItem.vue'
 
 const NumberFieldProps = {
   is: VTextField,

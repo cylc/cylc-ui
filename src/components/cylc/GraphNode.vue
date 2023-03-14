@@ -103,8 +103,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import SVGTask from '@/components/cylc/SVGTask'
-import Job from '@/components/cylc/Job'
+import SVGTask from '@/components/cylc/SVGTask.vue'
+import Job from '@/components/cylc/Job.vue'
 
 export default {
   name: 'GraphNode',

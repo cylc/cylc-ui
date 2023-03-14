@@ -133,8 +133,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
+import Task from '@/components/cylc/Task.vue'
+import Job from '@/components/cylc/Job.vue'
 import { mdiChevronDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'

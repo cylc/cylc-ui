@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState } from 'vuex'
-import GScan from '@/components/cylc/gscan/GScan'
+import GScan from '@/components/cylc/gscan/GScan.vue'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import { getPageTitle } from '@/utils/index'
 import subscriptionMixin from '@/mixins/subscription'

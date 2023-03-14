@@ -184,8 +184,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
+import Task from '@/components/cylc/Task.vue'
+import Job from '@/components/cylc/Job.vue'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import { getPageTitle } from '@/utils'
@@ -211,8 +211,6 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '~@/styles/index.scss';
-
   .card-grid {
     display: flex;
     flex-wrap: wrap;

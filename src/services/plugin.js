@@ -22,7 +22,7 @@ import UserService from '@/services/user.service'
 /**
  * A plugin that loads the application services.
  *
- * It uses the `VUE_APP_SERVICES` environment variable to decide whether to use
+ * It uses `import.meta.env.MODE` to decide whether to use
  * mocked services, when its value is "offline", or to use normal services.
  */
 export default {

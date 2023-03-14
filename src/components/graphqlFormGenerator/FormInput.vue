@@ -23,7 +23,7 @@ dynamically created inputs.
 <script>
 import { h, mergeProps } from 'vue'
 import { mask } from 'vue-the-mask'
-import Markdown from '@/components/Markdown'
+import Markdown from '@/components/Markdown.vue'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'

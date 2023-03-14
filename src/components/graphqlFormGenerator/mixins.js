@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import FormInput from '@/components/graphqlFormGenerator/FormInput'
+import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
 
 export const formElement = {
   components: {}, // Filled on created()

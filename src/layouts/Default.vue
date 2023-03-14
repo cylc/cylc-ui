@@ -37,11 +37,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState } from 'vuex'
 import { store } from '@/store/index'
 import AlertModel from '@/model/Alert.model'
-import Alert from '@/components/core/Alert'
-import Drawer from '@/components/cylc/Drawer'
-import Toolbar from '@/components/cylc/Toolbar'
-import ConnectionStatus from '@/components/cylc/ConnectionStatus'
-import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
+import Alert from '@/components/core/Alert.vue'
+import Drawer from '@/components/cylc/Drawer.vue'
+import Toolbar from '@/components/cylc/Toolbar.vue'
+import ConnectionStatus from '@/components/cylc/ConnectionStatus.vue'
+import CylcObjectMenu from '@/components/cylc/cylcObject/Menu.vue'
 
 export default {
   name: 'Default',
@@ -86,7 +86,7 @@ export default {
   },
 
   errorCaptured (error, vm, info) {
-    if (process.env.NODE_ENV !== 'production') {
+    if (import.meta.env.MODE !== 'production') {
       store.dispatch('setAlert', new AlertModel(error, 'error'))
     }
     // Stop error propagating further:

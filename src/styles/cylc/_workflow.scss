@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import '~@lumino/default-theme/style/index.css';
-@import 'vuetify/styles';
+@use '../settings.scss';
+@import '@lumino/default-theme/style/index.css';
 
 .workflow-panel {
   .main {
@@ -47,7 +47,7 @@
         }
 
         .lm-TabBar-tabLabel {
-          font-family: $body-font-family;
+          font-family: settings.$body-font-family;
           font-size: 1rem;
         }
 

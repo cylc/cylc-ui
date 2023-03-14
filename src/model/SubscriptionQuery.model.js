@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// eslint-disable-next-line no-unused-vars
-import { DocumentNode } from 'graphql'
+// // eslint-disable-next-line no-unused-vars
+// import { DocumentNode } from 'graphql'
 
 /**
  * A subscription query. It is part of a Subscription, and contains query and auxiliary data

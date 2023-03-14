@@ -42,7 +42,7 @@ import subscriptionMixin from '@/mixins/subscription'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import TreeComponent from '@/components/cylc/tree/Tree'
+import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {

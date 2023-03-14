@@ -18,8 +18,8 @@
 // Code related to GraphQL queries, fragments, variables, etc.
 
 import gql from 'graphql-tag'
-// eslint-disable-next-line no-unused-vars
-import { DocumentNode } from 'graphql'
+// // eslint-disable-next-line no-unused-vars
+// import { DocumentNode } from 'graphql'
 
 // IMPORTANT: queries here may be used in the offline mode to create mock data. Before removing or renaming
 // queries here, please check under the services/mock folder for occurrences of the variable name.

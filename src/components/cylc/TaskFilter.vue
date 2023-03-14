@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Task from '@/components/cylc/Task'
+import Task from '@/components/cylc/Task.vue'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 
 export default {

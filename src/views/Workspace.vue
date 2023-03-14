@@ -43,12 +43,12 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
 import { createWidgetId } from '@/components/cylc/workflow/index'
-import Lumino from '@/components/cylc/workflow/Lumino'
-import Toolbar from '@/components/cylc/workflow/Toolbar'
-import TableView from '@/views/Table'
-import TreeView from '@/views/Tree'
-import GraphView from '@/views/Graph'
-import LogView from '@/views/Log'
+import Lumino from '@/components/cylc/workflow/Lumino.vue'
+import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
+import TableView from '@/views/Table.vue'
+import TreeView from '@/views/Tree.vue'
+import GraphView from '@/views/Graph.vue'
+import LogView from '@/views/Log.vue'
 
 export default {
   name: 'Workspace',

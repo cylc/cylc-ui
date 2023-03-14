@@ -25,7 +25,7 @@ import Default from '@/layouts/Default.vue'
 import Empty from '@/layouts/Empty.vue'
 
 // Application imports
-import App from './App'
+import App from './App.vue'
 import { i18n } from '@/i18n/index'
 import router from '@/router/index'
 import { store } from '@/store/index'
@@ -51,7 +51,7 @@ app.use(vuetify)
 app.use(i18n)
 app.use(head)
 app.use(ServicesPlugin, {
-  offline: process.env.VUE_APP_SERVICES === 'offline'
+  offline: import.meta.env.MODE === 'offline'
 })
 app.use(CylcObjectPlugin)
 
@@ -68,6 +68,6 @@ router.isReady().then(() => app.mount('#app'))
 // e2e tests use the offline mode, so here we expose the Vue.js app so Cypress can access it programmatically
 // e.g. window.app.$store and window.app.$workflowService.
 // Ref: https://www.cypress.io/blog/2017/11/28/testing-vue-web-application-with-vuex-data-store-and-rest-backend/
-if (process.env.NODE_ENV !== 'production') {
+if (import.meta.env.MODE !== 'production') {
   window.app = app.config.globalProperties
 }

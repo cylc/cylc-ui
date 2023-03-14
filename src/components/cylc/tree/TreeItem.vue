@@ -240,8 +240,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiChevronRight } from '@mdi/js'
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
+import Task from '@/components/cylc/Task.vue'
+import Job from '@/components/cylc/Job.vue'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import {
   latestJob,

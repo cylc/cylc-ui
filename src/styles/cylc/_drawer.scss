@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import 'vuetify/styles';
+@use '../settings.scss';
 @import '../util.scss';
 
 body.resizing-drawer {
@@ -27,7 +27,7 @@ body.resizing-drawer {
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
 
-  @include theme-dependent(background-color, $grey, 4);
+  @include theme-dependent(background-color, settings.$grey, 4);
 
   .resize-bar {
     display: block;
@@ -40,7 +40,7 @@ body.resizing-drawer {
     transition: background-color 0.2s;
 
     &:hover, body.resizing-drawer & {
-      background: map-get($blue, "base");
+      background: map-get(settings.$blue, "base");
       transition-delay: 0.5s;
     }
   }

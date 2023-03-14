@@ -80,7 +80,7 @@ import subscriptionMixin from '@/mixins/subscription'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
-import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
+import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 
 export default {
   name: 'WorkflowsTable',

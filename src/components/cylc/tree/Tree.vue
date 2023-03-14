@@ -110,8 +110,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiPlus, mdiMinus } from '@mdi/js'
-import TreeItem from '@/components/cylc/tree/TreeItem'
-import TaskFilter from '@/components/cylc/TaskFilter'
+import TreeItem from '@/components/cylc/tree/TreeItem.vue'
+import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import { matchNode } from '@/components/cylc/common/filter'
 import { getNodeChildren } from '@/components/cylc/tree/util'
 

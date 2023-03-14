@@ -15,26 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// http://kazupon.github.io/vue-i18n/en/messages.html
+/**
+ * Compile & export the i18n messages object from the JSON files in this
+ * directory.
+ *
+ * @see https://kazupon.github.io/vue-i18n/guide/messages.html
+ */
 
-const requireLang = require.context(
-  '@/lang',
-  true,
-  /\.json$/
-)
+const modules = import.meta.glob('./**/*.json', { eager: true })
 
 const messages = {}
 
-for (const file of requireLang.keys()) {
-  if (file === './index.js') continue
-
+for (const file in modules) {
   const path = file.replace(/(\.\/|\.json$)/g, '').split('/')
 
   path.reduce((o, s, i) => {
     if (o[s]) return o[s]
 
     o[s] = i + 1 === path.length
-      ? requireLang(file)
+      ? Object.assign({}, modules[file])
       : {}
 
     return o[s]

@@ -188,9 +188,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiFilter } from '@mdi/js'
 import TaskState, { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import Job from '@/components/cylc/Job'
-import Tree from '@/components/cylc/tree/Tree'
-import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
+import Job from '@/components/cylc/Job.vue'
+import Tree from '@/components/cylc/tree/Tree.vue'
+import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 
