@@ -339,14 +339,6 @@ export default {
       expandedStateOverridden: false
     }
   },
-  // watch: {
-  //   expansionStatus () {
-  //     // only called when autoExpand changes
-  //     if (!this.expandedStateOverridden) {
-  //       this.emitExpandCollapseEvent(this.isExpanded)
-  //     }
-  //   }
-  // },
   computed: {
     expansionStatus () {
       return this.autoCollapse && !this.expandedStateOverridden ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type) : this.isExpanded
@@ -364,8 +356,13 @@ export default {
       const tasks = {}
       const traverseChildren = (currentNode) => {
         // if we aren't at the end of the node tree, continue
-        if (currentNode.children && currentNode.children.length > 0 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
-          traverseChildren(currentNode.children[0])
+        if (currentNode.type === 'workflow-part' && currentNode.children) {
+          // we want to compute the latest tasks for every child at every level
+          for (let i = 0; i < currentNode.children.length; i++) {
+            // if (['workflow', 'workflow-part'].includes(currentNode.children[i].type)) {
+            traverseChildren(currentNode.children[i])
+            // }
+          }
         } else {
           // if we are at the end of the tree, and the end of the tree is of type workflow, fetch the states from the latestStateTasks property
           if (currentNode.type === 'workflow') {
@@ -455,7 +452,7 @@ export default {
       return {
         'node--hoverable': this.hoverable,
         'node--active': this.active,
-        'c-workflow-stopped': this.lastDescendent?.node?.status === WorkflowState.STOPPED.name,
+        'c-workflow-stopped': !this.branchingLineage && this.lastDescendent?.node?.status === WorkflowState.STOPPED.name,
         expanded: this.autoCollapse ? this.expansionStatus : this.isExpanded
       }
     },

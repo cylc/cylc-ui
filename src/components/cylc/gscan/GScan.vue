@@ -145,8 +145,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <!-- task summary tooltips -->
                     <span
                       v-for="[state, tasks] in getLatestStateTasks(Object.entries(latestDescendantTasks))"
-                      :key="`${lastDescendent.node.id}-summary-${state}`"
-                      :class="getTaskStateClasses(lastDescendent.node, state)"
+                      :key="`${node.id}-summary-${state}`"
+                      :class="getTaskStateClasses(latestDescendantTasks, state)"
                     >
                     <v-tooltip color="black" top>
                       <template v-slot:activator="{ on }">
@@ -167,7 +167,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       </template>
                       <!-- tooltip text -->
                       <span>
-                        <span class="grey--text">{{ countTasksInState(lastDescendent.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                        <span class="grey--text">{{ countTasksInState(latestDescendantTasks, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                         <br/>
                         <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                           {{ task }}<br v-if="index !== tasks.length -1" />
@@ -371,15 +371,15 @@ export default {
      * @param {string} state - a workflow state
      * @returns {number|*} - the number of tasks in the given state
      */
-    countTasksInState (workflow, state) {
-      if (Object.hasOwnProperty.call(workflow.stateTotals, state)) {
-        return workflow.stateTotals[state]
+    countTasksInState (latestStateTasks, state) {
+      if (Object.hasOwnProperty.call(latestStateTasks, state)) {
+        return latestStateTasks[state].length
       }
       return 0
     },
 
-    getTaskStateClasses (workflow, state) {
-      const tasksInState = this.countTasksInState(workflow, state)
+    getTaskStateClasses (latestStateTasks, state) {
+      const tasksInState = this.countTasksInState(latestStateTasks, state)
       return tasksInState === 0 ? ['empty-state'] : []
     },
 
