@@ -253,7 +253,7 @@ export default {
     platformOptions () {
       const platformOptions = [{ text: 'All', value: null }]
       const platforms = []
-      for (const [key, task] of Object.entries(this.tasks)) {
+      for (const task of Object.values(this.tasks)) {
         if (!platforms.includes(task.platform)) {
           platforms.push(task.platform)
           platformOptions.push({ text: task.platform })
