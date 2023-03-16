@@ -131,7 +131,7 @@ describe('TreeItem component', () => {
     })
   })
   describe('computed properties', () => {
-    let wrapper = mountFunction({
+    const wrapper = mountFunction({
       propsData: {
         node: stateTotalsTestWorkflowNodes,
         initialExpanded: false,
@@ -158,15 +158,15 @@ describe('TreeItem component', () => {
       expect(wrapper.vm.expansionStatus).to.equal(true)
     })
   })
-    describe('computed properties as workflow', () => {
-    let wrapper = mountFunction({
-        propsData: {
-          node: stateTotalsTestWorkflowNodes.children[0].children[0],
-          initialExpanded: false,
-          autoCollapse: true,
-          autoExpandTypes: ['workflow-part', 'workflow']
-        }
-      })
+  describe('computed properties as workflow', () => {
+    const wrapper = mountFunction({
+      propsData: {
+        node: stateTotalsTestWorkflowNodes.children[0].children[0],
+        initialExpanded: false,
+        autoCollapse: true,
+        autoExpandTypes: ['workflow-part', 'workflow']
+      }
+    })
     it('should get the correct label as a child', () => {
       expect(wrapper.vm.descendentLabel).to.equal('first/run1')
     })
