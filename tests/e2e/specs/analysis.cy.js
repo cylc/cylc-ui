@@ -102,7 +102,7 @@ describe('Analysis view', () => {
         .should('be.visible')
       cy
         .get('td')
-        .contains('30')
+        .contains('00:00:30')
         .should('be.visible')
       // Show run times
       cy
@@ -114,7 +114,7 @@ describe('Analysis view', () => {
         .click({ force: true })
       cy
         .get('td')
-        .contains('21')
+        .contains('00:00:21')
         .should('be.visible')
       cy
         .get('.c-analysis table > tbody > tr')
@@ -130,7 +130,7 @@ describe('Analysis view', () => {
         .click({ force: true })
       cy
         .get('td')
-        .contains('12')
+        .contains('00:00:12')
         .should('be.visible')
       cy
         .get('.c-analysis table > tbody > tr')
@@ -173,7 +173,7 @@ describe('Analysis view', () => {
         .click({ force: true })
       cy
         .get('td')
-        .contains('21')
+        .contains('00:00:21')
         .should('be.visible')
       cy
         .get('.c-analysis table > tbody > tr')
@@ -201,7 +201,7 @@ describe('Analysis view', () => {
         .click({ force: true })
       cy
         .get('td')
-        .contains('12')
+        .contains('00:00:12')
         .should('be.visible')
       cy
         .get('.c-analysis table > tbody > tr')

@@ -38,13 +38,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             showFirstLastPage: true
           }"
           :options="{ itemsPerPage: 50 }"
-        ></v-data-table>
+        >
+          <template
+            v-for="header in shownHeaders.filter(header => header.hasOwnProperty('formatter'))"
+            v-slot:[`item.${header.value}`]="{ value }"
+          >
+            {{ header.formatter(value, header.allowZeros) }}
+          </template>
+        </v-data-table>
       </v-container>
     </v-col>
   </v-row>
 </template>
 
 <script>
+import { formatDuration } from '@/utils/tasks'
+
 export default {
   name: 'AnalysisTableComponent',
 
@@ -60,7 +69,6 @@ export default {
   },
 
   data () {
-    const tasks = []
     return {
       sortBy: 'name',
       headers: [
@@ -98,32 +106,46 @@ export default {
       }
       const timingHeaders = [
         {
-          text: `Mean T-${times} (s)`,
-          value: `mean${times}Time`
+          text: `Mean T-${times}`,
+          value: `mean${times}Time`,
+          formatter: formatDuration,
+          allowZeros: false
         },
         {
-          text: `Std Dev T-${times} (s)`,
-          value: `stdDev${times}Time`
+          text: `Std Dev T-${times}`,
+          value: `stdDev${times}Time`,
+          formatter: formatDuration,
+          allowZeros: true
         },
         {
-          text: `Min T-${times} (s)`,
-          value: `min${times}Time`
+          text: `Min T-${times}`,
+          value: `min${times}Time`,
+          formatter: formatDuration,
+          allowZeros: false
         },
         {
-          text: `Q1 T-${times} (s)`,
-          value: `firstQuartile${times}`
+          text: `Q1 T-${times}`,
+          value: `firstQuartile${times}`,
+          formatter: formatDuration,
+          allowZeros: false
         },
         {
-          text: `Median T-${times} (s)`,
-          value: `secondQuartile${times}`
+          text: `Median T-${times}`,
+          value: `secondQuartile${times}`,
+          formatter: formatDuration,
+          allowZeros: false
         },
         {
-          text: `Q3 T-${times} (s)`,
-          value: `thirdQuartile${times}`
+          text: `Q3 T-${times}`,
+          value: `thirdQuartile${times}`,
+          formatter: formatDuration,
+          allowZeros: false
         },
         {
-          text: `Max T-${times} (s)`,
-          value: `max${times}Time`
+          text: `Max T-${times}`,
+          value: `max${times}Time`,
+          formatter: formatDuration,
+          allowZeros: false
         }
       ]
       return this.headers.concat(timingHeaders)

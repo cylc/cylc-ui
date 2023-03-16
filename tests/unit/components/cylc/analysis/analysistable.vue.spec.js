@@ -115,9 +115,9 @@ describe('AnalysisTable component', () => {
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for total times
-      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('30')
-      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('32')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('34')
+      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:30 ')
+      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:32 ')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:34 ')
     })
     it('should correctly display run times', () => {
       const wrapper = mountFunction({
@@ -130,9 +130,9 @@ describe('AnalysisTable component', () => {
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for run times
-      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('20')
-      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('21')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('22')
+      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:20 ')
+      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:21 ')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:22 ')
     })
     it('should correctly display queue times', () => {
       const wrapper = mountFunction({
@@ -145,9 +145,9 @@ describe('AnalysisTable component', () => {
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for queue times
-      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('10')
-      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('11')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('12')
+      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:10 ')
+      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:11 ')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:12 ')
     })
   })
 })
