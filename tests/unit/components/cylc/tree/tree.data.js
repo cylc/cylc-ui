@@ -84,7 +84,7 @@ const stateTotalsTestWorkflowNodes = {
                 status: 'running',
                 statusMsg: 'running',
                 owner: 'cylc',
-                host: 'aarons-mbp-2.niwa.local',
+                host: 'localhost',
                 port: 43055,
                 stateTotals: {
                   waiting: 7,
@@ -162,7 +162,7 @@ const stateTotalsTestWorkflowNodes = {
                 status: 'running',
                 statusMsg: 'running',
                 owner: 'cylc',
-                host: 'aarons-mbp-2.niwa.local',
+                host: 'localhost',
                 port: 43038,
                 stateTotals: {
                   waiting: 7,
