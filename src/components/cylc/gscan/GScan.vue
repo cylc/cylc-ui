@@ -111,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-slot:node="{node, latestDescendantTasks, lastDescendent, descendentLabel, branchingLineage, expansionStatus}">
             <workflow-icon
               class="mr-2"
-              v-if="lastDescendent.type === 'workflow' && !branchingLineage"
+              v-if="!branchingLineage && lastDescendent.type === 'workflow'"
               :status="lastDescendent.node.status"
               v-cylc-object="lastDescendent"
             />
@@ -139,7 +139,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </v-col>
                   <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
                   <v-col
-                    v-if="(!branchingLineage && (lastDescendent.type === 'workflow' && lastDescendent.node.latestStateTasks) && !expansionStatus) || (!expansionStatus && branchingLineage)"
+                    v-if="!expansionStatus || node.type === 'workflow'"
                     class="text-right c-gscan-workflow-states"
                   >
                     <!-- task summary tooltips -->

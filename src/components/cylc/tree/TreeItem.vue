@@ -342,8 +342,6 @@ export default {
   computed: {
     expansionStatus () {
       return this.autoCollapse && !this.expandedStateOverridden ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type) : this.isExpanded
-      // return (!this.expandedStateOverridden && this.autoCollapse) ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type) : this.isExpanded
-      // return this.isExpanded
     },
     latestDescendantTasks () {
       const validValues = [
@@ -355,18 +353,15 @@ export default {
       ]
       const tasks = {}
       const traverseChildren = (currentNode) => {
-        // if we aren't at the end of the node tree, continue
+        // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
         if (currentNode.type === 'workflow-part' && currentNode.children) {
-          // we want to compute the latest tasks for every child at every level
-          for (let i = 0; i < currentNode.children.length; i++) {
-            // if (['workflow', 'workflow-part'].includes(currentNode.children[i].type)) {
-            traverseChildren(currentNode.children[i])
-            // }
-          }
+          // at every branch, recurse all child nodes
+          currentNode.children.forEach(child => traverseChildren(child))
         } else {
-          // if we are at the end of the tree, and the end of the tree is of type workflow, fetch the states from the latestStateTasks property
+          // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
           if (currentNode.type === 'workflow') {
-            Object.keys(currentNode.node.latestStateTasks)
+            // in some test data we dont include the latestStateTasks, so include a fallback
+            Object.keys(currentNode.node.latestStateTasks || {})
               // filter only valid states
               .filter(stateTaskKey => validValues.includes(stateTaskKey))
               // concat the new tasks in where they dont already exist
@@ -382,10 +377,12 @@ export default {
       traverseChildren(this.node)
       return tasks
     },
+    // this has be used in conjunction with branchingLineage since it will always return the first child otherwise
     lastDescendent () {
       let lastDescendent = this.node
       const traverseChildren = (currentNode) => {
-        if (currentNode.children && currentNode.children.length > 0 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
+        // continue recursing until we run out of workflow parts
+        if (currentNode.children && currentNode.children.length > 0 && currentNode.type === 'workflow-part') {
           traverseChildren(currentNode.children[0])
         } else {
           lastDescendent = currentNode
@@ -398,7 +395,7 @@ export default {
       const labelArr = []
       const traverseChildren = (currentNode) => {
         labelArr.push(currentNode.name || currentNode.id)
-        if (currentNode.children && currentNode.children.length === 1 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
+        if (currentNode.children && currentNode.children.length === 1 && currentNode.type === 'workflow-part') {
           traverseChildren(currentNode.children[0])
         }
       }
@@ -408,7 +405,7 @@ export default {
     branchingLineage () {
       let moreThenTwoChildren = false
       const traverseChildren = (currentNode) => {
-        if (moreThenTwoChildren === false && currentNode.children && currentNode.children.length > 0 && ['workflow', 'workflow-part'].includes(currentNode.children[0].type)) {
+        if (currentNode.children && currentNode.children.length > 0 && currentNode.type === 'workflow-part') {
           if (currentNode.children.length === 1) {
             traverseChildren(currentNode.children[0])
           } else {
