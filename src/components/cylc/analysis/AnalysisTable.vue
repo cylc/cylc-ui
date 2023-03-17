@@ -84,10 +84,6 @@ export default {
           text: 'Count',
           value: 'count'
         }
-        // {
-        //   text: 'Failure rate (%)',
-        //   value: 'failureRate'
-        // }
       ]
     }
   },
