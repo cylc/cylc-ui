@@ -93,6 +93,7 @@ export default {
   },
 
   data: () => ({
+    defaultView: TreeView.name,
     /**
      * The widgets added to the view.
      *
@@ -130,7 +131,7 @@ export default {
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$nextTick(() => {
-        vm.addView({ viewName: TreeView.name })
+        vm.addView({ viewName: vm.defaultView })
       })
     })
   },
@@ -143,7 +144,7 @@ export default {
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
       // Create a Tree View for the current workflow by default
-      this.addView({ viewName: TreeView.name })
+      this.addView({ viewName: this.defaultView })
     })
   },
 
@@ -155,6 +156,7 @@ export default {
 
   mounted () {
     this.$eventBus.on('add-view', this.addView)
+    this.defaultView = typeof localStorage.tableDefaultView !== 'undefined' ? (JSON.parse(localStorage.tableDefaultView) ? TableView.name : TreeView.name) : this.defaultView
   },
 
   beforeDestroy () {

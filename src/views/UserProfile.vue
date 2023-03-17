@@ -200,6 +200,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               >
               </v-checkbox>
             </v-row>
+
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
+                <span>Table default view</span>
+              </v-col>
+              <v-checkbox
+                v-model="tableDefaultView"
+                id="table-default-view"
+              >
+              </v-checkbox>
+            </v-row>
           </v-container>
         </v-form>
         <v-progress-linear v-else :indeterminate="true" />
@@ -230,6 +241,7 @@ export default {
   },
   data () {
     return {
+      tableDefaultView: false,
       cyclePointsOrderDesc: true, // default
       svgPaths: {
         settings: mdiCog,
@@ -257,6 +269,7 @@ export default {
     if (localStorage.cyclePointsOrderDesc) {
       this.cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
     }
+    this.tableDefaultView = typeof localStorage.tableDefaultView !== 'undefined' ? JSON.parse(localStorage.tableDefaultView) : this.tableDefaultView
   },
   methods: {
     resetFontSize,
@@ -272,6 +285,10 @@ export default {
     cyclePointsOrderDesc (newOrder) {
       localStorage.setItem('cyclePointsOrderDesc', newOrder)
       this.cyclePointsOrderDesc = newOrder
+    },
+    tableDefaultView (newPreference) {
+      localStorage.setItem('tableDefaultView', newPreference)
+      this.tableDefaultView = newPreference
     }
   }
 }
