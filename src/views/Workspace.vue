@@ -103,6 +103,7 @@ export default {
   },
 
   data: () => ({
+    defaultView: 'Tree',
     /**
      * The widgets added to the view.
      *
@@ -115,7 +116,7 @@ export default {
     next(vm => {
       vm.$workflowService.startSubscriptions()
       vm.$nextTick(() => {
-        vm.addView({ viewName: 'Tree' })
+        vm.addView({ viewName: vm.defaultView })
       })
     })
   },
@@ -126,7 +127,7 @@ export default {
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
       // Create a Tree View for the current workflow by default
-      this.addView({ viewName: 'Tree' })
+      this.addView({ viewName: this.defaultView })
     })
   },
 
@@ -136,6 +137,9 @@ export default {
 
   mounted () {
     this.$eventBus.on('add-view', this.addView)
+    this.defaultView = localStorage.tableDefaultView != null
+      ? (JSON.parse(localStorage.tableDefaultView) ? 'Table' : 'Tree')
+      : this.defaultView
   },
 
   beforeUnmount () {
