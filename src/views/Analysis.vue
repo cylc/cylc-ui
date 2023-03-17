@@ -96,6 +96,10 @@ import graphqlMixin from '@/mixins/graphql'
 import ViewToolbar from '@/components/cylc/ViewToolbar'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable'
 import {
+  matchTask,
+  platformOptions
+} from '@/components/cylc/analysis/filter'
+import {
   mdiChartLine,
   mdiRefresh
 } from '@mdi/js'
@@ -248,18 +252,10 @@ export default {
       return [this.workflowId]
     },
     filteredTasks () {
-      return this.tasks.filter(task => this.matchTask(task))
+      return this.tasks.filter(task => matchTask(task, this.tasksFilter))
     },
     platformOptions () {
-      const platformOptions = [{ text: 'All', value: null }]
-      const platforms = []
-      for (const task of Object.values(this.tasks)) {
-        if (!platforms.includes(task.platform)) {
-          platforms.push(task.platform)
-          platformOptions.push({ text: task.platform })
-        }
-      }
-      return platformOptions
+      return platformOptions(this.tasks)
     }
   },
 
@@ -274,16 +270,6 @@ export default {
         { workflows: this.workflowIDs }
       )
       this.callback.onAdded(ret.data)
-    },
-    matchTask (task) {
-      let ret = true
-      if (this.tasksFilter.name?.trim()) {
-        ret &&= task.name.includes(this.tasksFilter.name)
-      }
-      if (this.tasksFilter.platformOption?.trim()) {
-        ret &&= task.platform.includes(this.tasksFilter.platformOption)
-      }
-      return ret
     }
   }
 }
