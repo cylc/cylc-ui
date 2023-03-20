@@ -20,7 +20,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Drawer from '../../../../src/components/cylc/Drawer'
 
 import Vue from 'vue'
-import Vuetify, { createVuetify } from 'vuetify'
+import { createVuetify } from 'vuetify'
 import Vuex from 'vuex'
 
 import sinon from 'sinon'

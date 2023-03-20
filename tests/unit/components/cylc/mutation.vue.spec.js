@@ -19,7 +19,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Mutation from '@/components/cylc/Mutation'
 import { expect } from 'chai'
 import Vue from 'vue'
-import Vuetify, { createVuetify } from 'vuetify'
+import { createVuetify } from 'vuetify'
 
 const cylcObject = { id: '~u/w//1/t', isFamily: false }
 

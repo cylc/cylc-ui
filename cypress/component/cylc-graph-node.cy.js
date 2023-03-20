@@ -103,7 +103,7 @@ describe('graph node component', () => {
     cy.get('.c-graph-node:last .job-overflow').should('not.exist')
 
     cy.get('.c-graph-node').last().parent().screenshot(
-      `graph-node-multiple-jobs`,
+      'graph-node-multiple-jobs',
       { overwrite: true, disableTimersAndAnimations: false }
     )
   })
@@ -131,7 +131,7 @@ describe('graph node component', () => {
       .contains('+2')
 
     cy.get('.c-graph-node').last().parent().screenshot(
-      `graph-node-overflow-jobs`,
+      'graph-node-overflow-jobs',
       { overwrite: true, disableTimersAndAnimations: false }
     )
   })
@@ -196,15 +196,15 @@ describe('graph node component', () => {
         { overwrite: true, disableTimersAndAnimations: false }
       )
       // check the progress animation
-      .get('.c8-task:last .status > .progress')
+      cy.get('.c8-task:last .status > .progress')
         // the animation duration should be equal to the expected job duration
         .should('have.css', 'animation-duration', `${MEAN_ELAPSED_TIME}s`)
         // the offset should be set to the "percent" of the expected job duration
         .should('have.css', 'animation-delay')
-        .and('match', /([\d\.]+)s/) // NOTE the delay should be negative
+        .and('match', /([\d.]+)s/) // NOTE the delay should be negative
         .then((number) => {
           // convert the duration string into a number that we can test
-          cy.wrap(Number(number.match(/([\d\.]+)s/)[1]))
+          cy.wrap(Number(number.match(/([\d.]+)s/)[1]))
             // ensure this number is ±5 from the expected value
             // (give it a little bit of margin to allow for timing error)
             .should('closeTo', MEAN_ELAPSED_TIME * (percent / 100), 5)

@@ -99,10 +99,10 @@ describe('Task component', () => {
         .should('have.css', 'animation-duration', `${MEAN_ELAPSED_TIME}s`)
         // the offset should be set to the "percent" of the expected job duration
         .should('have.css', 'animation-delay')
-        .and('match', /([\d\.]+)s/) // NOTE the delay should be negative
+        .and('match', /([\d.]+)s/) // NOTE the delay should be negative
         .then((number) => {
           // convert the duration string into a number that we can test
-          cy.wrap(Number(number.match(/([\d\.]+)s/)[1]))
+          cy.wrap(Number(number.match(/([\d.]+)s/)[1]))
             // ensure this number is ±5 from the expected value
             // (give it a little bit of margin to allow for timing error)
             .should('closeTo', MEAN_ELAPSED_TIME * (percent / 100), 5)

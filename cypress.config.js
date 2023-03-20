@@ -43,6 +43,7 @@ module.exports = defineConfig({
   },
 
   env: {
+    // eslint-disable-next-line no-unneeded-ternary
     coverage: process.env.VITE_COVERAGE ? true : false
   },
 

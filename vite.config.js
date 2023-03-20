@@ -18,6 +18,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
+import eslint from 'vite-plugin-eslint'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 const path = require('path')
 
@@ -36,6 +37,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vuetify(),
+    eslint(),
     IstanbulPlugin({
       requireEnv: true // Only instrument code when VITE_COVERAGE=true
     })
