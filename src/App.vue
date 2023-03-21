@@ -45,9 +45,9 @@ export default {
     ...mapMutations('app', ['setJobTheme'])
   },
   mounted () {
-    // set application font-size in HTML top-level element
+    // set stored application font-size
     if (localStorage.fontSize) {
-      document.getElementsByTagName('html')[0].style.fontSize = localStorage.fontSize
+      document.body.style.fontSize = localStorage.fontSize
     }
     // set Job icons theme found in LocalStorage in Vuex
     this.setJobTheme(localStorage.jobTheme || 'default')

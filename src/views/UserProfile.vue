@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     id="profile-username"
                     aria-disabled="true"
                     class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
@@ -55,6 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     id="profile-admin"
                     aria-disabled="true"
                     class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
@@ -73,6 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     id="profile-groups"
                     aria-disabled="true"
                     class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
@@ -88,6 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     id="profile-created"
                     aria-disabled="true"
                     class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
@@ -105,6 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     id="profile-permissions"
                     aria-disabled="true"
                     class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
@@ -120,21 +125,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-col>
               <v-col cols="9">
                 <v-btn
-                  variant="flat"
+                  variant="outlined"
                   id="font-size-reset-button"
                   class="mr-2"
                   @click="resetFontSize()">
                   Reset
                 </v-btn>
                 <v-btn
-                  variant="flat"
+                  variant="outlined"
                   id="font-size-decrease-button"
                   class="mx-2"
                   @click="decreaseFontSize()">
                   <v-icon>{{ svgPaths.decrease }}</v-icon>
                 </v-btn>
                 <v-btn
-                  variant="flat"
+                  variant="outlined"
                   id="font-size-increase-button"
                   class="ml-2"
                   @click="increaseFontSize()">
@@ -147,7 +152,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-col cols="3">
                 <span>Colour Theme</span>
               </v-col>
-              <v-radio-group v-model="jobTheme">
+              <v-radio-group
+                v-model="jobTheme"
+                hide-details
+              >
                 <table class="c-job-state-table">
                   <tr>
                     <th>State</th>
@@ -197,6 +205,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-checkbox
                 v-model="cyclePointsOrderDesc"
                 id="input-cyclepoints-order"
+                hide-details
               >
               </v-checkbox>
             </v-row>

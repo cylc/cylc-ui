@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use "settings.scss";
-
 // Vuetify stylesheet (this could be imported in src/plugins/vuetify.js instead
 // but the problem with that is it comes before the Vuetify component styles,
 // whereas it needs to be after in order for cascading styles to be in the
@@ -60,10 +58,6 @@ html {
 }
 .v-skeleton-loader {
   height: 100%;
-}
-
-:export {
-  fontRootSize: settings.$font-size-root;
 }
 
 .c-interactive {

@@ -16,6 +16,9 @@
  */
 
 .c-user-profile {
+  .v-container .v-row {
+    margin-bottom: 15px;
+  }
   table.c-job-state-table {
     td, th {
       padding: 0.2em;
@@ -25,8 +28,6 @@
     .v-radio {
       /* allow the element to center */
       display: inline-block;
-      /* jobs are 1em wide, offset the element by half this */
-      padding-left: 0.5em;
     }
   }
 }

@@ -17,13 +17,12 @@
 
 import {
   getCurrentFontSize,
-  expectedFontSize,
   resetFontSize,
-  INITIAL_FONT_SIZE
+  INCREMENT
 } from '@/utils/font-size'
-// import * as CylcTree from '@/components/cylc/tree/index'
 
 describe('User Profile', () => {
+  const defaultFontSize = 16 // px
   beforeEach(() => {
     resetFontSize()
     cy.visit('/#/user-profile')
@@ -36,51 +35,42 @@ describe('User Profile', () => {
   })
 
   it('Increases the font size', () => {
-    expect(parseFloat(INITIAL_FONT_SIZE)).to.be.equal(getCurrentFontSize())
+    expect(getCurrentFontSize()).to.equal(defaultFontSize)
     const clicks = 3
-    // NOTE: had to use Promises in order to locate right element with Cypress
     cy.get('button#font-size-increase-button').then(($button) => {
       for (let i = 0; i < clicks; i++) {
         $button.trigger('click')
       }
-      const currentFontSize = getCurrentFontSize()
-      const expectedNewSize = expectedFontSize(true, clicks)
-      expect(Math.round(expectedNewSize)).to.be.equal(Math.round(currentFontSize))
-      cy
-        .get('button#font-size-reset-button')
-        .click()
+      const expectedFontSize = defaultFontSize + INCREMENT * clicks
+      expect(getCurrentFontSize()).to.equal(expectedFontSize)
     })
   })
 
   it('Decreases the font size', () => {
-    expect(parseFloat(INITIAL_FONT_SIZE)).to.be.equal(getCurrentFontSize())
+    expect(getCurrentFontSize()).to.equal(defaultFontSize)
     const clicks = 3
     cy.get('button#font-size-decrease-button').then(($button) => {
       for (let i = 0; i < clicks; i++) {
         $button.trigger('click')
       }
-      const currentFontSize = getCurrentFontSize()
-      const expectedNewSize = expectedFontSize(false, clicks)
-      expect(Math.round(expectedNewSize)).to.be.equal(Math.round(currentFontSize))
-      cy
-        .get('button#font-size-reset-button')
-        .click()
+      const expectedFontSize = defaultFontSize - INCREMENT * clicks
+      expect(getCurrentFontSize()).to.equal(expectedFontSize)
     })
   })
 
   it('Resets the font size', () => {
-    expect(parseFloat(INITIAL_FONT_SIZE)).to.be.equal(getCurrentFontSize())
+    expect(getCurrentFontSize()).to.equal(defaultFontSize)
     const clicks = 3
     cy.get('button#font-size-decrease-button').then(($button) => {
       for (let i = 0; i < clicks; i++) {
         $button.trigger('click')
       }
-      cy.get('button#font-size-reset-button').then(($resetButton) => {
-        $resetButton.trigger('click')
-        const currentFontSize = getCurrentFontSize()
-        const expectedNewSize = parseFloat(INITIAL_FONT_SIZE)
-        expect(Math.round(expectedNewSize)).to.be.equal(Math.round(currentFontSize))
-      })
+      expect(getCurrentFontSize()).not.to.equal(defaultFontSize)
+      cy.get('button#font-size-reset-button')
+        .click()
+        .then(() => {
+          expect(getCurrentFontSize()).to.equal(defaultFontSize)
+        })
     })
   })
 
