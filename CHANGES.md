@@ -18,6 +18,9 @@ ones in. -->
 [#1187](https://github.com/cylc/cylc-ui/pull/1187) - Improved the workflow
 filtering menu in the sidebar.
 
+[#1254](https://github.com/cylc/cylc-ui/pull/1254) - Add analysis view:
+A new view that displays task timing statistics
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-1.5.0 (<span actions:bind='release-date'>Released 2023-02-20</span>)__
 
