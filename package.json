@@ -26,7 +26,6 @@
     "@lumino/default-theme": "^0.22.0",
     "@lumino/widgets": "^1.31.1",
     "@unhead/vue": "^1.1.17",
-    "@vue/compat": "^3.1.0",
     "axios": "^1.0.0",
     "core-js": "3",
     "dedent": "^0.7.0",
@@ -45,7 +44,7 @@
     "vue-i18n": "^9.0.0",
     "vue-router": "^4.0.0",
     "vue-the-mask": "^0.11.1",
-    "vuetify": "^3.1.7",
+    "vuetify": "^3.1.11",
     "vuex": "^4.1.0"
   },
   "devDependencies": {

@@ -22,12 +22,11 @@ import eslint from 'vite-plugin-eslint'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 const path = require('path')
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: '',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      vue: '@vue/compat',
       react: 'preact/compat',
       'react-dom': 'preact/compat',
       // node_modules:
@@ -57,8 +56,12 @@ export default defineConfig({
   },
   build: {
     sourcemap: mode !== 'production'
+  },
+  define: {
+    // Allow vue devtools to work when runing vite build:
+    __VUE_PROD_DEVTOOLS__: mode !== 'production'
   }
-})
+}))
 
 // module.exports = {
 //   transpileDependencies: [

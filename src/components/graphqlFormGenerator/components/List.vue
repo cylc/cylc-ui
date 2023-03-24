@@ -61,7 +61,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import { getNullValue } from '@/utils/aotf'
 import { mdiPlusCircle, mdiCloseCircle } from '@mdi/js'
-import Vue from 'vue'
 
 export default {
   name: 'g-list',
@@ -101,8 +100,8 @@ export default {
       }
       // this is not ideal, but I believe whats happening is the new (wrapper) component is created over the first tick from the new array item
       // the component content is created over the next tick (including the input)
-      Vue.nextTick(() => {
-        Vue.nextTick(() => {
+      this.$nextTick(() => {
+        this.$nextTick(() => {
           // get the latest input ref (which is a tooltip for some reason), get its parent, then the input itself and focus() it (if it exists)
           this.$refs.inputs[index].$el?.parentNode?.querySelector('input')?.focus()
         })

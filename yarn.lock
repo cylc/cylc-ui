@@ -3323,19 +3323,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compat@npm:^3.1.0":
-  version: 3.2.45
-  resolution: "@vue/compat@npm:3.2.45"
-  dependencies:
-    "@babel/parser": ^7.16.4
-    estree-walker: ^2.0.2
-    source-map: ^0.6.1
-  peerDependencies:
-    vue: 3.2.45
-  checksum: 9fd33c1575797150469dd0196f22e7c0316b096048e5ccca92b583d491619d19cdcc0d287833b066e4c8e9fdd9f348b524339f699b065b60b9bf3a85413bfcd6
-  languageName: node
-  linkType: hard
-
 "@vue/compiler-core@npm:3.2.47":
   version: 3.2.47
   resolution: "@vue/compiler-core@npm:3.2.47"
@@ -4883,7 +4870,6 @@ __metadata:
     "@unhead/vue": ^1.1.17
     "@vitejs/plugin-vue": ^4.0.0
     "@vue/babel-preset-app": ^5.0.8
-    "@vue/compat": ^3.1.0
     "@vue/test-utils": ^2.0.0
     axios: ^1.0.0
     babel-plugin-istanbul: ^6.1.1
@@ -4935,7 +4921,7 @@ __metadata:
     vue-i18n: ^9.0.0
     vue-router: ^4.0.0
     vue-the-mask: ^0.11.1
-    vuetify: ^3.1.7
+    vuetify: ^3.1.11
     vuex: ^4.1.0
   languageName: unknown
   linkType: soft
@@ -11047,9 +11033,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vuetify@npm:^3.1.7":
-  version: 3.1.7
-  resolution: "vuetify@npm:3.1.7"
+"vuetify@npm:^3.1.11":
+  version: 3.1.11
+  resolution: "vuetify@npm:3.1.11"
   peerDependencies:
     vite-plugin-vuetify: ^1.0.0-alpha.12
     vue: ^3.2.0
@@ -11062,7 +11048,7 @@ __metadata:
       optional: true
     webpack-plugin-vuetify:
       optional: true
-  checksum: 1e53cf8d5f4f3c713716f5e9e7c796ec88d26c8a346c5edff330851d12d92f85efb0182c85a9365d11ed1dde1a9d0b0b7c24a7f7e79f44003ad759d41c8505e7
+  checksum: d9e3dd90b065e6321717ff5dbd450da470741d0e5595b15877b57aa57727ebdfb1b80d30e8bc54e59b46af79f5feede94bbf6aea907c5b1088bace49f10b61d2
   languageName: node
   linkType: hard
 

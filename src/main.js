@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { configureCompat, createApp } from 'vue'
+import { createApp } from 'vue'
 
 // Plugins
 import vuetify from './plugins/vuetify'
@@ -31,14 +31,6 @@ import router from '@/router/index'
 import { store } from '@/store/index'
 import mitt from 'mitt'
 import { createHead, VueHeadMixin } from '@unhead/vue'
-
-// Vue.config.productionTip = false
-
-configureCompat({
-  MODE: 3,
-  INSTANCE_CHILDREN: true
-  // OPTIONS_DATA_MERGE: true ?
-})
 
 const app = createApp(App)
 
