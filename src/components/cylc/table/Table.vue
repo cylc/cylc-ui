@@ -168,9 +168,7 @@ export default {
       sortBy: [
         {
           key: 'task.tokens.cycle',
-          order: localStorage.cyclePointsOrderDesc
-            ? JSON.parse(localStorage.cyclePointsOrderDesc)
-            : true
+          order: JSON.parse(localStorage.cyclePointsOrderDesc ?? true) ? 'desc' : 'asc'
         }
       ],
       headers: [
