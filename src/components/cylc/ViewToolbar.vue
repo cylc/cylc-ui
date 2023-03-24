@@ -53,6 +53,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 export default {
   name: 'ViewToolbar',
+
+  emits: [
+    'setOption'
+  ],
+
   props: {
     groups: {
       required: true,
@@ -93,6 +98,7 @@ export default {
       */
     }
   },
+
   computed: {
     iGroups () {
       // wrap the provided props into something we can mutate with derived
@@ -153,6 +159,7 @@ export default {
       return ret
     }
   },
+
   methods: {
     toggle (control, e) {
       // toggle a boolean value

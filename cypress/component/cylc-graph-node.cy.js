@@ -15,8 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { defineComponent, h } from 'vue'
 import { TaskStateUserOrder, JobStates } from '@/model/TaskState.model'
-import GraphNode from '@/components/cylc/GraphNode'
+import GraphNode from '@/components/cylc/GraphNode.vue'
 import { Tokens } from '@/utils/uid'
 import {
   MEAN_ELAPSED_TIME,
@@ -61,26 +62,17 @@ function makeTaskNode (id, state, jobStates) {
   return [task, jobs]
 }
 
-const GraphNodeSVG = {
-  template: `
-    <svg id="app" class="job_theme--default" width="100%" height="100%">
-      <GraphNode :task="task" :jobs="jobs" :maxJobs="maxJobs" />
-    </svg>
-  `,
-  props: {
-    task: {
-      required: true
-    },
-    jobs: {
-      required: true
-    },
-    maxJobs: {
-      default: 6,
-      required: false
-    }
-  },
-  components: { GraphNode }
-}
+const GraphNodeSVG = defineComponent({
+  render () {
+    return h(
+      'svg',
+      { id: 'app', class: 'job_theme--default', width: '100%', height: '100%' },
+      [
+        h(GraphNode, this.$attrs)
+      ]
+    )
+  }
+})
 
 describe('graph node component', () => {
   it('Renders with multiple jobs', () => {
@@ -92,7 +84,7 @@ describe('graph node component', () => {
     cy.mount(
       GraphNodeSVG,
       {
-        propsData: { task, jobs }
+        props: { task, jobs }
       }
     )
     // there should be 4 jobs
@@ -117,7 +109,7 @@ describe('graph node component', () => {
     cy.mount(
       GraphNodeSVG,
       {
-        propsData: { task, jobs, maxJobs: 4 }
+        props: { task, jobs, maxJobs: 4 }
       }
     )
     // there should be <maxJobs> jobs
@@ -154,7 +146,7 @@ describe('graph node component', () => {
         jobStates
       )
       console.log(jobs)
-      cy.mount(GraphNodeSVG, { propsData: { task, jobs } })
+      cy.mount(GraphNodeSVG, { props: { task, jobs } })
       cy.get('.c-graph-node').last().parent().screenshot(
         `graph-node-${state.name}`,
         { overwrite: true, disableTimersAndAnimations: false }
@@ -172,7 +164,7 @@ describe('graph node component', () => {
         []
       )
       task.node[modifier] = true
-      cy.mount(GraphNodeSVG, { propsData: { task, jobs } })
+      cy.mount(GraphNodeSVG, { props: { task, jobs } })
       cy.get('.c-graph-node').last().parent().screenshot(
         `graph-node-${modifier}`,
         { overwrite: true, disableTimersAndAnimations: false }
@@ -190,7 +182,7 @@ describe('graph node component', () => {
         ['running']
       )
       jobs[0].node.startedTime = getStartTime(percent)
-      cy.mount(GraphNodeSVG, { propsData: { task, jobs } })
+      cy.mount(GraphNodeSVG, { props: { task, jobs } })
       cy.get('.c-graph-node').last().parent().screenshot(
         `graph-node-running-${percent}`,
         { overwrite: true, disableTimersAndAnimations: false }

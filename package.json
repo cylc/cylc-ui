@@ -15,7 +15,8 @@
     "serve": "node ./scripts/concurrently.js serve:jupyterhub serve:vue",
     "serve:vue": "vite --mode offline",
     "serve:jupyterhub": "nodemon src/services/mock/json-server.js",
-    "test:e2e": "yarn run serve cy:open",
+    "test:component": "cypress open --component",
+    "test:e2e": "yarn run serve e2e:open",
     "test:unit": "vitest",
     "test": "yarn run test:unit || exit 1; yarn run serve cy:run"
   },
