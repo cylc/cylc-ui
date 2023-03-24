@@ -7,7 +7,7 @@
     "build": "vite build",
     "build:watch": "yarn run build --watch --mode development",
     "checkpoint": "./src/services/mock/generate",
-    "coverage:unit": "nyc vue-cli-service test:unit",
+    "coverage:unit": "vitest run --coverage",
     "coverage:e2e": "VITE_COVERAGE=true yarn run test:e2e",
     "dev": "yarn run serve",
     "docs": "jsdoc -c jsdoc.conf.json",
@@ -16,7 +16,7 @@
     "serve:vue": "vite --mode offline",
     "serve:jupyterhub": "nodemon src/services/mock/json-server.js",
     "test:e2e": "yarn run serve cy:open",
-    "test:unit": "vue-cli-service test:unit",
+    "test:unit": "vitest",
     "test": "yarn run test:unit || exit 1; yarn run serve cy:run"
   },
   "dependencies": {
@@ -54,11 +54,11 @@
     "@cypress/code-coverage": "^3.9.12",
     "@mdi/js": "^7.0.0",
     "@vitejs/plugin-vue": "^4.0.0",
+    "@vitest/coverage-istanbul": "^0.29.7",
     "@vue/babel-preset-app": "^5.0.8",
     "@vue/test-utils": "^2.0.0",
     "babel-plugin-istanbul": "^6.1.1",
     "bufferutil": "^4.0.6",
-    "chai": "^4.3.6",
     "concurrently": "^7.0.0",
     "cross-fetch": "^3.1.5",
     "cypress": "^12.0.0",
@@ -76,6 +76,7 @@
     "express-ws": "^5.0.2",
     "graphql-language-service-utils": "^2.5.3",
     "istanbul-lib-coverage": "^3.0.0",
+    "jsdom": "^21.1.1",
     "json-server": "^0.17.0",
     "nodemon": "^2.0.19",
     "nyc": "^15.1.0",
@@ -87,7 +88,8 @@
     "vite": "^4.1.4",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-istanbul": "^4.0.1",
-    "vite-plugin-vuetify": "^1.0.2"
+    "vite-plugin-vuetify": "^1.0.2",
+    "vitest": "^0.29.7"
   },
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"

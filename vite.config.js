@@ -60,6 +60,20 @@ export default defineConfig(({ mode }) => ({
   define: {
     // Allow vue devtools to work when runing vite build:
     __VUE_PROD_DEVTOOLS__: mode !== 'production'
+  },
+  test: {
+    include: ['./tests/unit/**/*.spec.{js,ts}'],
+    environment: 'jsdom',
+    reporter: 'verbose',
+    globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
+    setupFiles: ['./tests/unit/setup.js'],
+    deps: {
+      // inline vuetify to prevent 'TypeError: Unknown file extension ".css"
+      inline: ['vuetify']
+    },
+    coverage: {
+      provider: 'istanbul'
+    }
   }
 }))
 

@@ -16,20 +16,18 @@
  */
 
 // we mount the tree to include the TreeItem component and other vuetify children components
-import { createLocalVue, mount } from '@vue/test-utils'
-import { expect } from 'chai'
-import Vue from 'vue'
+import { nextTick } from 'vue'
+import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
-import Tree from '@/components/cylc/tree/Tree'
+import Tree from '@/components/cylc/tree/Tree.vue'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import cloneDeep from 'lodash/cloneDeep'
 
-const localVue = createLocalVue()
-localVue.prototype.$eventBus = {
+const $eventBus = {
   emit () {}
 }
-localVue.prototype.$workflowService = {
+const $workflowService = {
   register () {},
   unregister () {},
   subscribe () {},
@@ -40,42 +38,27 @@ localVue.prototype.$workflowService = {
     types: []
   })
 }
-localVue.use(CylcObjectPlugin)
+const vuetify = createVuetify()
 
 describe('Tree component', () => {
-  let vuetify
-  beforeEach(() => {
-    vuetify = createVuetify({
-      theme: { disable: true },
-      icons: {
-        iconfont: 'mdi'
-      }
-    })
-  })
-  // mount function from Vuetify docs https://vuetifyjs.com/ru/getting-started/unit-testing/
   /**
    * @param options
    * @returns {Wrapper<Tree>}
    */
-  const mountFunction = options => {
-    // the mocks.$vuetify is for https://github.com/vuetifyjs/vuetify/issues/9923
-    return mount(Tree, {
-      localVue,
+  const mountFunction = (options) => mount(Tree, {
+    global: {
+      plugins: [vuetify, CylcObjectPlugin],
       mocks: {
-        $vuetify: {
-          lang: {
-            t: (val) => val
-          }
-        }
-      },
-      vuetify,
-      ...options
-    })
-  }
-  global.requestAnimationFrame = cb => cb()
+        $eventBus,
+        $workflowService
+      }
+    },
+    ...options
+  })
+
   it('should display the tree with valid data', () => {
     const wrapper = mountFunction({
-      propsData: {
+      props: {
         workflows: simpleWorkflowTree4Nodes[0].children
       }
     })
@@ -85,35 +68,33 @@ describe('Tree component', () => {
   describe('Activable', () => {
     it('should not activate by default', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: simpleWorkflowTree4Nodes[0].children,
           filterable: false
         }
       })
       const treeItems = wrapper.findAllComponents({ name: 'TreeItem' })
-      const workflowTreeItem = treeItems.wrappers[0]
+      const workflowTreeItem = treeItems[0]
       // the workflow tree item node must not be active
       const workflowTreeItemNode = workflowTreeItem.find('div.node')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
-      const workflowTreeItemNodeActivableSpan = workflowTreeItemNode.find('.node-data > span')
-      workflowTreeItemNodeActivableSpan.trigger('click')
+      workflowTreeItemNode.find('.node-data').trigger('click')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
     })
     it('should activate correctly', async () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: simpleWorkflowTree4Nodes[0].children,
           activable: true
         }
       })
       const treeItems = wrapper.findAllComponents({ name: 'TreeItem' })
-      const workflowTreeItem = treeItems.wrappers[0]
+      const workflowTreeItem = treeItems[0]
       // the workflow tree item node must not be active
       const workflowTreeItemNode = workflowTreeItem.find('div.node')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
-      const workflowTreeItemNodeActivableSpan = workflowTreeItemNode.find('.node-data > span')
-      workflowTreeItemNodeActivableSpan.trigger('click')
-      await Vue.nextTick()
+      workflowTreeItemNode.find('.node-data').trigger('click')
+      await nextTick()
       expect(workflowTreeItemNode.classes('node--active')).to.equal(true)
     })
   })
@@ -121,7 +102,7 @@ describe('Tree component', () => {
     describe('Default', () => {
       it('should not filter by name or state by default', () => {
         const wrapper = mountFunction({
-          propsData: {
+          props: {
             workflows: simpleWorkflowTree4Nodes[0].children
           }
         })
@@ -148,7 +129,7 @@ describe('Tree component', () => {
     }
     it('should all be initialized to empty caches', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -158,7 +139,7 @@ describe('Tree component', () => {
     })
     it('should add to the tree item cache', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -170,7 +151,7 @@ describe('Tree component', () => {
     })
     it('should remove from the tree item cache', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -182,7 +163,7 @@ describe('Tree component', () => {
     })
     it('should add to the expanded cache', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -194,7 +175,7 @@ describe('Tree component', () => {
     })
     it('should remove from the expanded cache', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -294,7 +275,7 @@ describe('Tree component', () => {
       ]
       tests.forEach(test => {
         const wrapper = mountFunction({
-          propsData: {
+          props: {
             workflows: [],
             expandCollapseToggle: true
           },
@@ -360,7 +341,7 @@ describe('Tree component', () => {
       ]
       tests.forEach(test => {
         const wrapper = mountFunction({
-          propsData: {
+          props: {
             workflows: [],
             expandCollapseToggle: true
           },

@@ -15,30 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createLocalVue, mount } from '@vue/test-utils'
-import { expect } from 'chai'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { mount } from '@vue/test-utils'
+import { createStore } from 'vuex'
 import { createVuetify } from 'vuetify'
 import storeOptions from '@/store/options'
-import Alert from '@/components/core/Alert'
-
-const localVue = createLocalVue()
+import Alert from '@/components/core/Alert.vue'
 
 describe('Alert', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   /**
    * @param options
    * @returns {Wrapper<Alert>}
    */
-  const mountFunction = options => {
+  const mountFunction = () => {
     const vuetify = createVuetify()
-    Vue.use(vuetify)
     return mount(Alert, {
-      localVue,
-      vuetify,
-      store,
-      ...options
+      global: {
+        plugins: [vuetify, store]
+      }
     })
   }
   it('should have the colors data', () => {

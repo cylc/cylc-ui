@@ -15,18 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from 'vue'
-import Vuex from 'vuex'
-import { expect } from 'chai'
+import { createStore } from 'vuex'
 // need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
 import 'cross-fetch/polyfill'
 import * as graphql from '@/graphql'
 import storeOptions from '@/store/options'
 
-Vue.use(Vuex)
-
 describe('utils', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   describe('graphql', () => {
     describe('ApolloClient', () => {
       it('should create an apollo client', () => {

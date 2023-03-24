@@ -15,15 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createLocalVue, mount } from '@vue/test-utils'
-import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator'
-import { expect } from 'chai'
+import { mount } from '@vue/test-utils'
+import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import { cloneDeep } from 'lodash'
-import Vue from 'vue'
 import { createVuetify } from 'vuetify'
-
-// suppress "ReferenceError: requestAnimationFrame is not defined" errors
-global.requestAnimationFrame = cb => cb()
 
 const BASIC_MUTATION = {
   name: 'My Mutation',
@@ -177,26 +172,22 @@ function getModel (wrapper) {
   return cloneDeep(wrapper.vm.$data.model)
 }
 
-const localVue = createLocalVue()
-
 describe('FormGenerator Component', () => {
+  const vuetify = createVuetify()
   /**
    * @param {*} options
    * @returns {Wrapper<FormGenerator>}
    */
-  const mountFunction = options => {
-    const vuetify = createVuetify()
-    Vue.use(vuetify)
-    return mount(FormGenerator, {
-      localVue,
-      vuetify,
-      ...options
-    })
-  }
+  const mountFunction = (options) => mount(FormGenerator, {
+    global: {
+      plugins: [vuetify]
+    },
+    ...options
+  })
 
   it('should parse default values from the schema for simple types', () => {
     const wrapper = mountFunction({
-      propsData: {
+      props: {
         mutation: BASIC_MUTATION
       }
     })
@@ -209,7 +200,7 @@ describe('FormGenerator Component', () => {
   it('should parse default values from the schema for nested types', () => {
     NESTED_TYPES.forEach(([type, defaultValue]) => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           mutation: {
             name: type.name + 'Mutation',
             description: 'Beef Wellington',
@@ -228,7 +219,7 @@ describe('FormGenerator Component', () => {
       type = cloneDeep(type)
       delete type.defaultValue
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           mutation: {
             name: type.name + 'Mutation',
             description: 'Beef Wellington',
@@ -244,7 +235,7 @@ describe('FormGenerator Component', () => {
 
   it('should handle initial data', () => {
     const wrapper = mountFunction({
-      propsData: {
+      props: {
         mutation: BASIC_MUTATION,
         initialData: {
           MyString: 'Foo'
@@ -259,7 +250,7 @@ describe('FormGenerator Component', () => {
 
   it('should reset to initial conditions', () => {
     const wrapper = mountFunction({
-      propsData: {
+      props: {
         mutation: BASIC_MUTATION,
         initialData: {
           MyString: 'Foo'

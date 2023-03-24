@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import sinon from 'sinon'
 import gql from 'graphql-tag'
 import Subscription from '@/model/Subscription.model'

@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils'
-import { expect } from 'chai'
-import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
+import { shallowMount } from '@vue/test-utils'
+import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import WorkflowState from '@/model/WorkflowState.model'
+import { createVuetify } from 'vuetify'
 
-const localVue = createLocalVue()
+const vuetify = createVuetify()
 
 describe('WorkflowIcon', () => {
   /**
@@ -29,7 +29,9 @@ describe('WorkflowIcon', () => {
    */
   const mountFunction = options => {
     return shallowMount(WorkflowIcon, {
-      localVue,
+      global: {
+        plugins: [vuetify]
+      },
       ...options
     })
   }
@@ -46,7 +48,7 @@ describe('WorkflowIcon', () => {
     ]
     tests.forEach(test => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           status: test.status
         }
       })

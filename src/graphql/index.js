@@ -21,7 +21,7 @@ import {
   HttpLink,
   InMemoryCache,
   split
-} from '@apollo/client'
+} from '@apollo/client/core'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { setContext } from '@apollo/client/link/context'

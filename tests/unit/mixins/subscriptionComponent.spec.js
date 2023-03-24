@@ -15,16 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 
-const localVue = createLocalVue()
-
 describe('Subscription Component mixin', () => {
-  let workflowService
+  let $workflowService
   beforeEach(() => {
-    workflowService = {
+    $workflowService = {
       subscribe (componentOrView) {
         componentOrView.subscribed = true
       },
@@ -32,30 +29,31 @@ describe('Subscription Component mixin', () => {
         componentOrView.subscribed = false
       }
     }
-    localVue.prototype.$workflowService = workflowService
   })
   it('should provide a hook for when the component is created', () => {
     const Component = {
       mixins: [subscriptionComponentMixin],
-      render () {
-      }
+      render () { }
     }
-    const component = shallowMount(Component, {
-      localVue
+    const component = mount(Component, {
+      global: {
+        mocks: { $workflowService }
+      }
     })
     expect(component.vm.subscribed).to.equal(true)
   })
   it('should provide a hook for when the component is destroyed', () => {
     const Component = {
       mixins: [subscriptionComponentMixin],
-      render () {
-      }
+      render () { }
     }
-    const component = shallowMount(Component, {
-      localVue
+    const component = mount(Component, {
+      global: {
+        mocks: { $workflowService }
+      }
     })
     expect(component.vm.subscribed).to.equal(true)
-    component.vm.$destroy()
+    component.unmount()
     expect(component.vm.subscribed).to.equal(false)
   })
 })

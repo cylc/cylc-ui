@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import mergeQueries, { removeAstLoc } from '@/graphql/merge'
 import { print } from 'graphql'
 import gql from 'graphql-tag'
@@ -266,7 +265,7 @@ describe('mergeQueries', () => {
       const queryA = gql`query A {
         ...Jobs
       }
-      
+
       fragment Jobs on Job {
         id
         name
@@ -276,12 +275,12 @@ describe('mergeQueries', () => {
         ...Jobs
         ...Tasks
       }
-      
+
       fragment Jobs on Job {
         name
         status
       }
-      
+
       fragment Tasks on Task {
         id
         name
@@ -294,13 +293,13 @@ describe('mergeQueries', () => {
         ...Jobs
         ...Tasks
       }
-      
+
       fragment Jobs on Job {
         id
         name
         status
       }
-      
+
       fragment Tasks on Task {
         id
         name

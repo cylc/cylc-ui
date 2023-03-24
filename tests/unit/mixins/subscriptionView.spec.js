@@ -15,30 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import { createLocalVue } from '@vue/test-utils'
 import sinon from 'sinon'
 import subscriptionViewMixin from '@/mixins/subscriptionView'
 
-const localVue = createLocalVue()
-
 describe('Subscription View mixin', () => {
-  let workflowService
+  let $workflowService
   beforeEach(() => {
-    workflowService = {
+    $workflowService = {
       startSubscriptions: () => {}
     }
-    sinon.spy(workflowService)
-    localVue.prototype.$workflowService = workflowService
+    sinon.spy($workflowService)
   })
   it('should provide a navigation guard for when the view is visited', () => {
     const component = Object.assign(subscriptionViewMixin)
     const vm = {
-      $workflowService: workflowService
+      $workflowService
     }
     component.beforeRouteEnter(null, null, (callback) => {
       callback(vm)
     })
-    expect(workflowService.startSubscriptions.calledOnce).to.equal(true)
+    expect($workflowService.startSubscriptions.calledOnce).to.equal(true)
   })
 })

@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import { createWidgetId } from '@/components/cylc/workflow'
 
 describe('Workflow component', () => {

@@ -15,22 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import { createLocalVue, shallowMount } from '@vue/test-utils'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { shallowMount } from '@vue/test-utils'
+import { createStore } from 'vuex'
 import User from '@/model/User.model'
 import storeOptions from '@/store/options'
 import graphqlMixin from '@/mixins/graphql'
 
-Vue.use(Vuex)
-
-const localVue = createLocalVue()
-
 describe('GraphQL mixin', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   it('should create the GraphQL Query variables', () => {
-    const user = new User('cylc', [], new Date(), true, 'localhost')
+    const user = new User('cylc', [], new Date(), true, 'localhost', 'owner')
     store.commit('user/SET_USER', user)
     const workflowName = 'test'
     const Component = {
@@ -38,9 +32,10 @@ describe('GraphQL mixin', () => {
       render () {}
     }
     const component = shallowMount(Component, {
-      localVue,
-      store,
-      propsData: {
+      global: {
+        plugins: [store]
+      },
+      props: {
         workflowName
       }
     })

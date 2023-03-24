@@ -25,5 +25,14 @@ module.exports = {
   rules: {
     'no-console': 'off',
     'no-only-tests/no-only-tests': process.env.NODE_ENV === 'production' ? 'error' : 'warn'
-  }
+  },
+  overrides: [
+    {
+      files: ['*.spec.js'],
+      rules: {
+        // Don't complain about certain chai assertions:
+        'no-unused-expressions': 'off'
+      }
+    }
+  ]
 }

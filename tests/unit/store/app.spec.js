@@ -15,18 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
-
-Vue.use(Vuex)
 
 /**
  * Tests for the store/app module.
  */
 describe('app', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   /**
    * Tests for store.app.drawer.
    */
@@ -35,7 +31,6 @@ describe('app', () => {
       store.state.app.drawer = null
     }
     beforeEach(resetState)
-    afterEach(resetState)
     it('should start with no drawer', () => {
       expect(store.state.app.drawer).to.equal(null)
     })
@@ -53,7 +48,6 @@ describe('app', () => {
       store.state.app.title = null
     }
     beforeEach(resetState)
-    afterEach(resetState)
     it('should start with no title', () => {
       expect(store.state.app.title).to.equal(null)
     })

@@ -83,7 +83,6 @@ export default {
     modelValue: {
       // validity of form
       type: Boolean,
-      required: true,
       default: () => false
     },
     cylcObject: {
