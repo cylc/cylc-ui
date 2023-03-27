@@ -17,7 +17,7 @@
     "test:component": "cypress open --component",
     "test:e2e": "yarn run serve e2e:open",
     "test:unit": "vitest",
-    "test": "yarn run test:unit || exit 1; yarn run serve cy:run"
+    "test": "vitest run && yarn run serve cy:run"
   },
   "dependencies": {
     "@apollo/client": "^3.5.8",

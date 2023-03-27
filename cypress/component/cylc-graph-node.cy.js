@@ -145,7 +145,7 @@ describe('graph node component', () => {
         state.name,
         jobStates
       )
-      console.log(jobs)
+      // console.log(jobs)
       cy.mount(GraphNodeSVG, { props: { task, jobs } })
       cy.get('.c-graph-node').last().parent().screenshot(
         `graph-node-${state.name}`,

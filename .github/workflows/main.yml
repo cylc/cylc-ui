@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  FORCE_COLOR: 2
+
 jobs:
   unit-test-and-build:
     runs-on: ubuntu-latest
@@ -23,20 +26,18 @@ jobs:
         run: yarn install
 
       - name: Lint
-        env:
-          NODE_ENV: production
         run: |
-          yarn run lint .
+          yarn run lint
 
       - name: Test
         run: |
-          yarn run coverage:unit --colors
+          yarn run coverage:unit
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage/lcov.info
+          file: ./coverage/clover.xml
           name: '${{ github.job }}'
           flags: unittests
           fail_ci_if_error: false
@@ -48,6 +49,7 @@ jobs:
   cypress-run:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         browser: [firefox, chrome]
@@ -56,6 +58,8 @@ jobs:
 #         include:
 #           - os: macos-latest
 #             browser: edge
+    env:
+      VITE_COVERAGE: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -65,20 +69,20 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Test
+      - name: Test (E2E)
+        if: matrix.type == 'e2e'
         uses: cypress-io/github-action@v5
         with:
           start: yarn run serve
           wait-on: http://localhost:5173/
-          config-file: cypress.config.js
-          component: ${{ matrix.type == 'component' }}
-          spec: |
-            tests/e2e/**/*
-            cypress/component/*
-            cypress/component/**/*
           browser: ${{ matrix.browser }}
-        env:
-          CYPRESS_baseUrl: http://localhost:5173/
+
+      - name: Test (component)
+        if: matrix.type == 'component'
+        uses: cypress-io/github-action@v5
+        with:
+          component: true
+          browser: ${{ matrix.browser }}
 
       - uses: actions/upload-artifact@v3
         if: failure()
