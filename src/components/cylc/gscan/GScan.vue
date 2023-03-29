@@ -230,7 +230,7 @@ export default {
       searchWorkflows: '',
       /**
        * List of filters selected by the user.
-       * @type {{string: string[]}}
+       * @type {{ [name: string]: string[] }}
        */
       filters: {
         'workflow state': [],
@@ -395,7 +395,7 @@ export default {
   },
   /**
    * Lists of all the possible workflow and task states
-   * @type {{string: string[]}}
+   * @type {{ [name: string]: string[] }}
    */
   allStates: {
     'workflow state': WorkflowState.enumValues.map(x => x.name),

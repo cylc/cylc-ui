@@ -51,7 +51,7 @@ class Subscription {
      */
     this.observable = null
     /**
-     * @type {Object.<String, View>}
+     * @type {{ [componentOrViewUID: string]: View }}
      */
     this.subscribers = {}
     /**

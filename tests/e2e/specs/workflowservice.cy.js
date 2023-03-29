@@ -30,7 +30,7 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getSubscriptions().then(subscriptions => {
-      expect(Object.keys(subscriptions).length).to.equal(1)
+      expect(Object.keys(subscriptions)).to.deep.equal(['root'])
     })
   })
 
@@ -39,8 +39,7 @@ describe('WorkflowService subscriptions', () => {
     cy.get('[href="#/user-profile"]').click({ force: true })
     cy.contains('h3', 'Your Profile')
     getSubscriptions().then(subscriptions => {
-      // Only GScan subscription "root"
-      expect(Object.keys(subscriptions).length).to.equal(1)
+      expect(Object.keys(subscriptions)).to.deep.equal(['root'])
     })
   })
 
@@ -51,7 +50,7 @@ describe('WorkflowService subscriptions', () => {
     cy.get('.v-main').find('.c-tree')
     getSubscriptions().then(subscriptions => {
       // GScan subscription "root" and the subscription "workflow" used by the Tree view
-      expect(Object.keys(subscriptions).length).to.equal(2)
+      expect(Object.keys(subscriptions).sort()).to.deep.equal(['root', 'workflow'])
       expect(subscriptions.root.observable.closed).to.equal(false)
       expect(subscriptions.workflow.observable.closed).to.equal(false)
     })
@@ -65,7 +64,7 @@ describe('WorkflowService subscriptions', () => {
     cy.get('[href="#/"]').click({ force: true })
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
-      expect(Object.keys(subscriptions).length).to.equal(1)
+      expect(Object.keys(subscriptions)).to.deep.equal(['root'])
     })
   })
 
@@ -73,7 +72,7 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/tree/one')
       .get('.c-tree') // wait for component to load
     getSubscriptions().then(subscriptions => {
-      expect(Object.keys(subscriptions).length).to.equal(1)
+      expect(Object.keys(subscriptions)).to.deep.equal(['workflow'])
       // the 'workflow' subscription should be started
       expect(subscriptions.workflow.observable.closed).to.equal(false)
       // the 'global' subscription should not be running
