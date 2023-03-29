@@ -23,11 +23,18 @@ const graphql = require('./graphql')
 const websockets = require('./websockets')
 
 const jsonServer = require('json-server')
+const logger = require('morgan')
 
 const server = jsonServer.create()
 require('express-ws')(server)
 const router = jsonServer.router(data)
-const middlewares = jsonServer.defaults()
+const middlewares = [
+  ...jsonServer.defaults({ logger: false }),
+  // Customize logger to hide successful XHR requests:
+  logger('dev', {
+    skip: (req, res) => res.statusCode < 400
+  })
+]
 
 server.use(middlewares)
 
