@@ -59,7 +59,12 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         ws: true
       }
-    }
+    },
+    watch: {
+      ignored: [
+        path.resolve(__dirname, './coverage')
+      ]
+    },
   },
   build: {
     sourcemap: mode !== 'production'
