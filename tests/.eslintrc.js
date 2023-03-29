@@ -24,7 +24,7 @@ module.exports = {
   ],
   rules: {
     'no-console': 'off',
-    'no-only-tests/no-only-tests': process.env.NODE_ENV === 'production' ? 'error' : 'warn'
+    'no-only-tests/no-only-tests': 'error',
   },
   overrides: [
     {

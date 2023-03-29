@@ -36,7 +36,14 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     vue(),
     vuetify(),
-    eslint(),
+    eslint({
+      /* Note: $NODE_ENV is still `production` even when running
+      `vite build --mode development`. We only want eslint to fail the
+      `--mode production` build. And we don't want cypress spec file
+      transformation to fail either (`mode` seems to be production in this
+      case but we set $NODE_ENV to development in cypress.config.js) */
+      failOnError: mode === process.env.NODE_ENV && mode === 'production'
+    }),
     IstanbulPlugin({
       requireEnv: true // Only instrument code when VITE_COVERAGE=true
     })

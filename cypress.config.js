@@ -19,10 +19,18 @@ module.exports = defineConfig({
     setupNodeEvents (on, config) {
       // For test coverage
       require('@cypress/code-coverage/task')(on, config)
+
+      /* By default, Cypress uses webpack to transform spec files before
+      running them. But it makes more sense to use vite instead, using the
+      same config as the project.
+      Note: Set NODE_ENV to prevent vite eslint plugin linting errors failing
+      the transform (e.g. no-only-tests rule) */
+      process.env.NODE_ENV = 'development'
       on(
         'file:preprocessor',
         vitePreprocessor(path.resolve(__dirname, './vite.config.js'))
       )
+
       return Object.assign({}, config, {
         fixturesFolder: 'tests/e2e/fixtures',
         specPattern: 'tests/e2e/specs',
