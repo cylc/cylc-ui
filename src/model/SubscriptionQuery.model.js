@@ -15,8 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// // eslint-disable-next-line no-unused-vars
-// import { DocumentNode } from 'graphql'
+/** @typedef {import('graphql').DocumentNode} DocumentNode */
 
 /**
  * A subscription query. It is part of a Subscription, and contains query and auxiliary data

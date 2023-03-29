@@ -229,11 +229,8 @@ describe('Tree component', () => {
         isExpanded: true
       }
     }
-    // eslint-disable-next-line no-unused-vars
     const filterWorkflows = (item) => item.type === 'workflow'
-    // eslint-disable-next-line no-unused-vars
     const filterCyclepoints = (item) => item.type === 'cyclepoint'
-    // eslint-disable-next-line no-unused-vars
     const filterTaskProxies = (item) => item.type === 'task-proxy'
     it('should expand items', () => {
       // we clone the test data structures as the function mutates the objects

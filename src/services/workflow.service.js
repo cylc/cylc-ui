@@ -39,12 +39,12 @@ import mergeQueries from '@/graphql/merge'
 import Alert from '@/model/Alert.model'
 import CylcTreeCallback from '@/services/treeCallback'
 
-// // Typedef imports
-// /* eslint-disable no-unused-vars, no-duplicate-imports */
-// import { Mutation, MutationResponse, Query } from '@/utils/aotf'
-// import { DocumentNode, IntrospectionInputType } from 'graphql'
-// import { SubscriptionClient } from 'subscriptions-transport-ws'
-// /* eslint-enable no-unused-vars, no-duplicate-imports */
+/** @typedef {import('graphql').DocumentNode} DocumentNode */
+/** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType */
+/** @typedef {import('subscriptions-transport-ws').SubscriptionClient} SubscriptionClient */
+/** @typedef {import('@/utils/aotf').Mutation} Mutation */
+/** @typedef {import('@/utils/aotf').MutationResponse} MutationResponse */
+/** @typedef {import('@/utils/aotf').Query} Query */
 
 /**
  * @typedef {Object} IntrospectionObj

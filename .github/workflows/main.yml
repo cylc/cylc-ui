@@ -32,12 +32,6 @@ jobs:
         run: |
           yarn run coverage:unit --colors
 
-      - name: Docs
-        uses: andstor/jsdoc-action@v1
-        with:
-          config_file: jsdoc.conf.json
-        # TODO: upload to GH pages?
-
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:

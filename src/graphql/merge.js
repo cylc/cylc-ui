@@ -15,12 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// // eslint-disable-next-line no-unused-vars
-// import { ArgumentNode, DefinitionNode, DocumentNode, FieldNode, FragmentDefinitionNode, SelectionNode, SelectionSetNode, ValueNode, VariableDefinitionNode } from 'graphql'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isObject from 'lodash/isObject'
 import transform from 'lodash/transform'
+
+/** @typedef {import('graphql').DocumentNode} DocumentNode */
+/** @typedef {import('graphql').FragmentDefinitionNode} FragmentDefinitionNode */
+/** @typedef {import('graphql').FieldNode} FieldNode */
+/** @typedef {import('graphql').ArgumentNode} ArgumentNode */
+/** @typedef {import('graphql').DefinitionNode} DefinitionNode */
+/** @typedef {import('graphql').SelectionNode} SelectionNode */
+/** @typedef {import('graphql').SelectionSetNode} SelectionSetNode */
+/** @typedef {import('graphql').ValueNode} ValueNode */
 
 /**
  * Merge two GraphQL queries (DocumentNode's), returning a single query.
@@ -69,9 +76,9 @@ function mergeQueries (queryA, queryB) {
 /**
  * Merge two arrays of fragments, returning a single array of fragments.
  *
- * @param {Array<FragmentDefinitionNode>} fragmentsA
- * @param {Array<FragmentDefinitionNode>} fragmentsB
- * @return {Array<FragmentDefinitionNode>}
+ * @param {FragmentDefinitionNode[]} fragmentsA
+ * @param {FragmentDefinitionNode[]} fragmentsB
+ * @return {FragmentDefinitionNode[]}
  */
 function mergeFragments (fragmentsA, fragmentsB) {
   const fragments = fragmentsA
@@ -176,9 +183,9 @@ function mergeFields (fieldA, fieldB) {
 /**
  * Merge two arrays of arguments, returning a single array of arguments.
  *
- * @param {Array<ArgumentNode>} argumentsA
- * @param {Array<ArgumentNode>} argumentsB
- * @return {Array<ArgumentNode>|undefined}
+ * @param {ArgumentNode[]} argumentsA
+ * @param {ArgumentNode[]} argumentsB
+ * @return {ArgumentNode[]|undefined}
  */
 function mergeArguments (argumentsA, argumentsB) {
   if (!argumentsA && !argumentsB) {

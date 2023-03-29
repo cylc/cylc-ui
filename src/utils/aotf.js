@@ -52,11 +52,8 @@ import { store } from '@/store/index'
 import { Tokens } from '@/utils/uid'
 import { WorkflowState } from '@/model/WorkflowState.model'
 
-// // Typedef imports
-// /* eslint-disable no-unused-vars, no-duplicate-imports */
-// import { ApolloClient } from '@apollo/client'
-// import { IntrospectionInputType } from 'graphql'
-// /* eslint-enable no-unused-vars, no-duplicate-imports */
+/** @typedef {import('@apollo/client').ApolloClient} ApolloClient */
+/** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType  */
 
 /**
  * @typedef {Object} GQLType
@@ -314,7 +311,7 @@ export const dummyMutations = [
 /**
  * Map real mutations to dummy mutations with the same permission level.
  *
- * @type {{string: string[]}}
+ * @type {{ [permission: string]: string[] }}
  */
 const dummyMutationsPermissionsMap = Object.freeze({
   broadcast: Object.freeze(['editRuntime']),
