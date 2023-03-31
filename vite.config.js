@@ -48,6 +48,15 @@ export default defineConfig(({ mode }) => ({
       requireEnv: true // Only instrument code when VITE_COVERAGE=true
     })
   ],
+  optimizeDeps: {
+    entries: ['./src/**/*.{vue,js,jsx,ts,tsx}'],
+    /* Vuetify components are dynamically imported by vite-plugin-vuetify,
+    so Vite only knows which components are being used upon navigation, causing
+    it to optimize them on the fly instead of pre-bundling. This can cause a
+    page reload which breaks some Cypress tests, so we exclude Vuetify from
+    optimization in that case. */
+    exclude: ['vuetify'],
+  },
   server: {
     proxy: {
       '^/(userprofile|graphql)': {
