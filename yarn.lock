@@ -1906,14 +1906,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hpcc-js/wasm@npm:1.13":
-  version: 1.13.0
-  resolution: "@hpcc-js/wasm@npm:1.13.0"
+"@hpcc-js/wasm@npm:2.9":
+  version: 2.9.0
+  resolution: "@hpcc-js/wasm@npm:2.9.0"
   dependencies:
-    yargs: ^17.3.1
+    yargs: 17.7.1
   bin:
-    dot-wasm: bin/cli.js
-  checksum: ea2c07803389577f6c736375cb045eb0153475207fe6ef250ca1927d48991e8eb404ccd093d3f19fa94799a0f92181d9ae9b0e67c616592ffb911aab638cf221
+    dot-wasm: bin/dot-wasm.js
+  checksum: d2975a484de5fc629b44d54f7cda9ed796ab956f859915d57f379eaff1624910e30a9d23735db39acb5409f6bfdbbe14e7673e58a3909e843ba52a759ead8ee8
   languageName: node
   linkType: hard
 
@@ -5511,6 +5511,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cliui@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "cliui@npm:8.0.1"
+  dependencies:
+    string-width: ^4.2.0
+    strip-ansi: ^6.0.1
+    wrap-ansi: ^7.0.0
+  checksum: 79648b3b0045f2e285b76fb2e24e207c6db44323581e421c3acbd0e86454cba1b37aea976ab50195a49e7384b871e6dfb2247ad7dec53c02454ac6497394cb56
+  languageName: node
+  linkType: hard
+
 "clone-response@npm:^1.0.2":
   version: 1.0.2
   resolution: "clone-response@npm:1.0.2"
@@ -6400,7 +6411,7 @@ __metadata:
     "@cypress/code-coverage": ^3.9.12
     "@cypress/vue": ^5.0.0
     "@cypress/webpack-preprocessor": ^5.11.0
-    "@hpcc-js/wasm": 1.13
+    "@hpcc-js/wasm": 2.9
     "@lumino/algorithm": ^1.9.1
     "@lumino/default-theme": ^0.22.0
     "@lumino/widgets": ^1.31.1
@@ -18112,6 +18123,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"yargs-parser@npm:^21.1.1":
+  version: 21.1.1
+  resolution: "yargs-parser@npm:21.1.1"
+  checksum: ed2d96a616a9e3e1cc7d204c62ecc61f7aaab633dcbfab2c6df50f7f87b393993fe6640d017759fe112d0cb1e0119f2b4150a87305cc873fd90831c6a58ccf1c
+  languageName: node
+  linkType: hard
+
 "yargs-unparser@npm:2.0.0":
   version: 2.0.0
   resolution: "yargs-unparser@npm:2.0.0"
@@ -18155,6 +18173,21 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^20.2.2
   checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
+  languageName: node
+  linkType: hard
+
+"yargs@npm:17.7.1":
+  version: 17.7.1
+  resolution: "yargs@npm:17.7.1"
+  dependencies:
+    cliui: ^8.0.1
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.1.1
+  checksum: 3d8a43c336a4942bc68080768664aca85c7bd406f018bad362fd255c41c8f4e650277f42fd65d543fce99e084124ddafee7bbfc1a5c6a8fda4cec78609dcf8d4
   languageName: node
   linkType: hard
 
