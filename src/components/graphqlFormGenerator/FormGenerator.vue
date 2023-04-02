@@ -17,55 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-form
-    class="c-mutation-form"
     :value="value"
     @input="$emit('input', $event)"
   >
-    <!-- the mutation title -->
-    <h3
-     style="text-transform: capitalize;"
-    >
-      {{ mutation.name }}
-    </h3>
-
-    <!-- the mutation description -->
-    <v-expansion-panels
-     accordion
-     flat
-     v-bind="extendedDescription ? { hover: true } : { readonly: true }"
-    >
-      <v-expansion-panel
-        class="mutation-desc"
-      >
-        <v-expansion-panel-header
-          v-bind="extendedDescription ? {} : {
-            expandIcon: null,
-            style: {
-              cursor: 'default'
-            }
-          }"
-        >
-          <Markdown
-           :markdown="shortDescription"
-          />
-        </v-expansion-panel-header>
-        <v-expansion-panel-content
-          v-if="extendedDescription"
-        >
-          <Markdown
-           :markdown="extendedDescription"
-          />
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-
-    <v-divider></v-divider>
-
     <!-- the form inputs -->
     <v-list>
       <v-list-item
-       v-for="input in inputs"
-       v-bind:key="input.label"
+        v-for="input in inputs"
+        v-bind:key="input.label"
       >
         <v-list-item-content>
           <v-list-item-title>
@@ -88,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               />
             </v-tooltip>
           </v-list-item-title>
-          <form-input
+          <FormInput
             v-model="model[input.label]"
             :gqlType="input.gqlType"
             :types="types"
@@ -106,25 +65,21 @@ import { mdiHelpCircleOutline } from '@mdi/js'
 
 import Markdown from '@/components/Markdown'
 import FormInput from '@/components/graphqlFormGenerator/FormInput'
-import {
-  getNullValue,
-  getMutationShortDesc,
-  getMutationExtendedDesc
-} from '@/utils/aotf'
+import { getNullValue, mutate } from '@/utils/aotf'
 
 export default {
   name: 'form-generator',
 
   components: {
     Markdown,
-    'form-input': FormInput
+    FormInput
   },
 
   props: {
     value: {
       // validity of form
       type: Boolean,
-      required: true,
+      required: false,
       default: () => false
     },
     mutation: {
@@ -137,10 +92,6 @@ export default {
     },
     initialData: {
       type: Object
-    },
-    callbackSubmit: {
-      // called when the user submits the form
-      type: Function
     }
   },
 
@@ -167,23 +118,6 @@ export default {
         })
       }
       return ret
-    },
-
-    /* Return the first line of the description. */
-    shortDescription () {
-      return getMutationShortDesc(this.mutation.description)
-    },
-    /* Return the subsequent lines of the description */
-    extendedDescription () {
-      return getMutationExtendedDesc(this.mutation.description)
-    }
-  },
-
-  watch: {
-    mutation: function () {
-      // reset the form if the mutation changes
-      // (i.e. this component is being re-used)
-      this.reset()
     }
   },
 
@@ -224,10 +158,12 @@ export default {
       this.model = model
     },
 
-    submit () {
-      if (this.callbackSubmit) {
-        this.callbackSubmit(this.model)
-      }
+    async submit () {
+      return await mutate(
+        this.mutation,
+        this.model,
+        this.$workflowService.apolloClient
+      )
     }
   }
 }

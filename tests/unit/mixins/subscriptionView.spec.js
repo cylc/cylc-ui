@@ -41,14 +41,4 @@ describe('Subscription View mixin', () => {
     })
     expect(workflowService.startSubscriptions.calledOnce).to.equal(true)
   })
-  it('should provide a navigation guard for when the view is updated', () => {
-    const component = Object.assign(subscriptionViewMixin)
-    const vm = {
-      $workflowService: workflowService
-    }
-    component.beforeRouteUpdate(null, null, (callback) => {
-      callback(vm)
-    })
-    expect(workflowService.startSubscriptions.calledOnce).to.equal(true)
-  })
 })

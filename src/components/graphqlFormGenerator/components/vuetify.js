@@ -25,6 +25,7 @@ import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'
 import GList from '@/components/graphqlFormGenerator/components/List'
 import GObject from '@/components/graphqlFormGenerator/components/Object'
 import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting'
+import GMapItem from '@/components/graphqlFormGenerator/components/MapItem'
 
 /* Vuetify number input component.
  *
@@ -33,7 +34,7 @@ import GBroadcastSetting from '@/components/graphqlFormGenerator/components/Broa
  *       does not cast values to `Number` for you so this extension parses
  *       values to `Number` so they can be used directly in the data model.
  */
-const VNumberField = Vue.component(
+export const VNumberField = Vue.component(
   'v-number-field',
   {
     extends: VTextField,
@@ -48,6 +49,11 @@ const VNumberField = Vue.component(
           this.lazyValue = Number(val)
           this.$emit('input', this.lazyValue)
         }
+      }
+    },
+    props: {
+      type: {
+        default: 'number'
       }
     }
   }
@@ -72,11 +78,12 @@ const RULES = {
     x => Boolean(!x || x.match(/(^\d+$|^(all|new|none)$)/)) || 'Invalid'
 }
 
+export const RUNTIME_SETTING = 'RuntimeSetting'
+
 export default {
   defaultProps: {
     // default props for all form inputs
     filled: true,
-    rounded: true,
     dense: true
   },
 
@@ -90,14 +97,12 @@ export default {
     },
     Int: {
       is: VNumberField,
-      type: 'number',
       rules: [
         RULES.integer
       ]
     },
     Float: {
-      is: VNumberField,
-      type: 'number'
+      is: VNumberField
     },
     Boolean: {
       is: VSwitch,
@@ -193,23 +198,38 @@ export default {
       rules: [
         RULES.flow
       ]
+    },
+    [RUNTIME_SETTING]: {
+      is: GMapItem
     }
   },
 
   kinds: {
     // registry of GraphQL "kinds" (e.g. LIST)
-    // {namedType: {is: ComponentClass, prop1: value, ...}}
-    ENUM: {
+    // { kind: (ofType) => ({ is: ComponentClass, prop1: value, ... }) }
+    ENUM: (ofType) => ({
       is: GEnum
-    },
-    NON_NULL: {
+    }),
+    NON_NULL: (ofType) => ({
       is: GNonNull
-    },
-    LIST: {
-      is: GList
-    },
-    INPUT_OBJECT: {
+    }),
+    LIST: (ofType) => ({
+      is: GList,
+      addAtStart: ofType?.name === RUNTIME_SETTING
+    }),
+    OBJECT: (ofType) => ({
       is: GObject // happy naming coincidence
-    }
+    })
   }
+}
+
+export function getComponentProps (gqlType, namedTypes, kinds) {
+  const { name, kind, ofType } = gqlType
+  const ret = namedTypes[name] ?? kinds[kind]?.(ofType)
+  if (ret) {
+    return ret
+  }
+  // eslint-disable-next-line no-console
+  console.warn(`Falling back to string for type: ${name}, kind: ${kind}`)
+  return namedTypes.String
 }

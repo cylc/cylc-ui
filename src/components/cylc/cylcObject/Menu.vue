@@ -29,26 +29,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :close-on-content-click="false"
       :close-on-click="false"
       v-click-outside="{ handler: onClickOutside, include: clickOutsideInclude }"
+      max-height="90vh"
       dark
     >
       <!-- NOTE: because the `attach` prop is not true, the actual DOM element
       containing the stuff below is not the `.v-menu` div, but a completely
       separate `.v-menu__content` div created by vuetify
       (the `.v-menu` div is actually empty). -->
-      <v-card ref="menuContent">
+      <v-card
+        ref="menuContent"
+        v-if="node"
+      >
         <v-card-title class="text-h6">
-          {{ id }}
+          {{ node.id }}
         </v-card-title>
         <v-card-subtitle>
           {{ typeAndStatusText }}
         </v-card-subtitle>
-        <v-divider v-if="primaryMutations.length || displayMutations.length"></v-divider>
+        <v-divider v-if="primaryMutations.length || displayMutations.length"/>
         <v-skeleton-loader
           v-if="isLoadingMutations && primaryMutations.length"
           type="list-item-avatar-two-line@3"
           min-width="400"
-        >
-        </v-skeleton-loader>
+        />
         <v-list
           v-if="displayMutations.length"
           class="c-mutation-menu-list"
@@ -56,12 +59,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-list-item
             v-for="{ mutation, requiresInfo, authorised } in displayMutations"
             :key="mutation.name"
-            :disabled=!authorised
+            :disabled="isDisabled(mutation, authorised)"
             @click.stop="enact(mutation, requiresInfo)"
             class="c-mutation"
           >
             <v-list-item-avatar>
-              <v-icon :disabled=!authorised large>{{ mutation._icon }}</v-icon>
+              <v-icon :disabled="isDisabled(mutation, authorised)" large>
+                {{ mutation._icon }}
+              </v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>{{ mutation._title }}</v-list-item-title>
@@ -75,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-list-item-action>
               <v-btn
                 icon
-                :disabled=!authorised
+                :disabled="isEditable(authorised, mutation)"
                 x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
@@ -104,14 +109,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-menu>
     <v-dialog
       v-model="dialog"
-      max-width="500"
+      max-width="700px"
+      content-class="c-mutation-dialog"
       v-if="dialogMutation"
     >
       <Mutation
         :mutation="dialogMutation"
-        :initialData="initialData(dialogMutation, tokens)"
+        :cylcObject="node"
+        :initialData="initialData(dialogMutation, node.tokens)"
         :cancel="closeDialog"
         :types="types"
+        :key="dialogKey /* Enables re-render of component each time dialog opened */"
         ref="mutationComponent"
       />
     </v-dialog>
@@ -122,15 +130,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import {
   filterAssociations,
   getMutationArgsFromTokens,
-  getType,
-  mutate,
-  tokenise
+  mutate
 } from '@/utils/aotf'
 import Mutation from '@/components/cylc/Mutation'
 import {
   mdiPencil
 } from '@mdi/js'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
+import WorkflowState from '@/model/WorkflowState.model'
 
 export default {
   name: 'CylcObjectMenu',
@@ -151,15 +158,14 @@ export default {
     return {
       dialog: false,
       dialogMutation: null,
+      dialogKey: false,
       expanded: false,
-      id: '',
-      node: {},
+      node: null,
+      workflowStatus: null,
       mutations: [],
       isLoadingMutations: true,
       showMenu: false,
-      tokens: [],
       types: [],
-      type: '',
       x: 0,
       y: 0,
       icons: {
@@ -177,8 +183,9 @@ export default {
   },
 
   computed: {
+    ...mapGetters('workflows', ['getNodes']),
     primaryMutations () {
-      return this.$workflowService.primaryMutations[this.type] || []
+      return this.$workflowService.primaryMutations[this.node.type] || []
     },
     canExpand () {
       return this.primaryMutations.length && this.mutations.length > this.primaryMutations.length
@@ -190,11 +197,15 @@ export default {
       }
       const shortList = this.primaryMutations
       if (!this.expanded && shortList.length) {
-        return this.mutations.filter(
-          x => shortList.includes(x.mutation.name)
-        ).sort(
-          (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
-        )
+        return this.mutations
+          // filter for shortlisted mutations
+          .filter(x => shortList.includes(x.mutation.name))
+          // filter out mutations which aren't relevant to the workflow state
+          .filter(x => !this.isDisabled(x.mutation, true))
+          // sort by definition order
+          .sort(
+            (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
+          )
       }
       return this.mutations
     },
@@ -203,25 +214,21 @@ export default {
         // can happen briefly when switching workflows
         return
       }
-      let ret = this.type
-      if (ret === 'task' && !('isHeld' in this.node)) {
-        // TODO: better way of checking if a 'task' is actually a family?
-        ret = 'family'
-      }
-      if (this.type !== 'cycle') {
+      let ret = this.node.type
+      if (this.node.type !== 'cycle') {
         // NOTE: cycle point nodes don't have associated node data at present
         ret += ' - '
-        if (this.type === 'workflow') {
-          ret += this.node.statusMsg || 'state unknown'
+        if (this.node.type === 'workflow') {
+          ret += this.node.node.statusMsg || 'state unknown'
         } else {
-          ret += this.node.state || 'state unknown'
-          if (this.node.isHeld) {
+          ret += this.node.node.state || 'state unknown'
+          if (this.node.node.isHeld) {
             ret += ' (held)'
           }
-          if (this.node.isQueued) {
+          if (this.node.node.isQueued) {
             ret += ' (queued)'
           }
-          if (this.node.isRunahead) {
+          if (this.node.node.isRunahead) {
             ret += ' (runahead)'
           }
         }
@@ -231,13 +238,56 @@ export default {
   },
 
   methods: {
+    isEditable (authorised, mutation) {
+      if (mutation.name === 'log' || this.isDisabled(mutation, authorised)) {
+        return true
+      } else {
+        return false
+      }
+    },
+    isDisabled (mutation, authorised) {
+      if (this.node.type !== 'workflow') {
+        const nodeReturned = this.getNodes(
+          'workflow', [this.node.tokens.workflow_id])
+        if (nodeReturned.length) {
+          this.workflowStatus = nodeReturned[0].node.status
+        } else { this.workflowStatus = WorkflowState.RUNNING.name }
+      } else {
+        this.workflowStatus = this.node.node.status
+      }
+      if (
+        (!mutation._validStates.includes(this.workflowStatus)) ||
+          !authorised) {
+        return true
+      }
+      return false
+    },
     openDialog (mutation) {
-      this.dialog = mutation
+      if (mutation.name === 'log') {
+        this.showMenu = false
+        this.$eventBus.emit(
+          'add-view',
+          {
+
+            viewName: 'Log',
+            initialOptions: {
+              workflow: this.node.tokens.workflow,
+              task: this.node.tokens.relative_id,
+              file: 'job.out'
+            }
+          }
+        )
+        return
+      }
+
+      this.dialog = true
       this.dialogMutation = mutation
+      // Tell Vue to re-render the dialog component:
+      this.dialogKey = !this.dialogKey
     },
 
     closeDialog () {
-      this.dialog = null
+      this.dialog = false
       this.dialogMutation = null
     },
 
@@ -277,48 +327,53 @@ export default {
 
     expandCollapse () {
       this.expanded = !this.expanded
+      this.$nextTick(() => {
+        // If expanding menu causes it overflow off screen, move it into view
+        // (This would happen automatically, but it's too slow -
+        // see https://github.com/cylc/cylc-ui/issues/1163)
+        if (this.y + this.$refs.menuContent.$el.clientHeight > document.body.clientHeight) {
+          this.y = document.body.clientHeight - this.$refs.menuContent.$el.clientHeight - 5
+        }
+      })
     },
 
     /* Call a mutation using only the tokens for args. */
     callMutationFromContext (mutation) {
       // eslint-disable-next-line no-console
-      console.debug(`mutation: ${mutation._title} ${this.id}`)
+      console.debug(`mutation: ${mutation._title} ${this.node.id}`)
       mutate(
         mutation,
-        getMutationArgsFromTokens(mutation, this.tokens),
+        getMutationArgsFromTokens(mutation, this.node.tokens),
         this.$workflowService.apolloClient
       )
       this.showMenu = false
     },
 
-    showMutationsMenu ({ id, node, event }) {
-      this.id = id
-      this.tokens = tokenise(id)
-      this.type = getType(this.tokens)
+    showMutationsMenu ({ node, event }) {
       this.node = node
       this.x = event.clientX
       this.y = event.clientY
       // await graphql query to get mutations
-      this.$workflowService.mutationsAndTypes.then(({ mutations, types }) => {
+      this.$workflowService.introspection.then(({ mutations, types }) => {
         // if mutations are slow to load then there will be a delay before they are reactively
         // displayed in the menu (this is what the skeleton-loader is for)
         this.isLoadingMutations = false
         this.types = types
+        let type = this.node.type
+        if (type === 'family') {
+          // show the same mutation list for families as for tasks
+          type = 'task'
+        }
         this.mutations = filterAssociations(
-          this.type,
-          this.tokens,
+          type,
+          this.node.tokens,
           mutations,
           this.user.permissions
         ).sort(
           (a, b) => a.mutation.name.localeCompare(b.mutation.name)
         )
       })
-      this.$nextTick(() => {
-        this.showMenu = true
-        // reset the mutation component if present
-        // (this is because we re-use the same component)
-        this.$refs?.mutationComponent?.reset()
-      })
+      this.showMenu = true
     },
 
     initialData (mutation, tokens) {

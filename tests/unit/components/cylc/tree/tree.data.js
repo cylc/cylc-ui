@@ -26,7 +26,10 @@ const simpleWorkflowTree4Nodes = [
     type: 'workflow',
     node: {
       __typename: 'Workflow',
-      state: 'running'
+      state: 'running',
+      node: {
+        status: 'running'
+      }
     },
     children: [
       {

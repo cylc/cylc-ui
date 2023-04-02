@@ -29,75 +29,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="filterable"
         class=""
       >
-        <v-row class="no-gutters">
-          <v-col
-            cols="12"
-            md="6"
-            class="pr-md-2 mb-2 mb-md-0"
-          >
-            <v-text-field
-              id="c-table-filter-task-name"
-              clearable
-              dense
-              flat
-              hide-details
-              outlined
-              placeholder="Filter by task name"
-              v-model.trim="tasksFilter.name"
-              @keyup="filterTasks"
-              @click:clear="clearInput"
-              ref="filterNameInput"
-            ></v-text-field>
-          </v-col>
-          <v-col
-            cols="12"
-            md="6"
-            class="mb-2 mb-md-0"
-          >
-            <v-select
-              id="c-table-filter-task-states"
-              :items="taskStates"
-              clearable
-              dense
-              flat
-              hide-details
-              multiple
-              outlined
-              placeholder="Filter by task state"
-              v-model="tasksFilter.states"
-              @change="filterTasks"
-            >
-              <template v-slot:item="slotProps">
-                <Task :task="{ state: slotProps.item.value }" />
-                <span class="ml-2">{{ slotProps.item.value }}</span>
-              </template>
-              <template v-slot:selection="slotProps">
-                <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
-                  <Task :task="{ state: slotProps.item.value }" />
-                </div>
-                <span
-                  v-if="slotProps.index === maximumTasks"
-                  class="grey--text caption"
-                >
-                  (+{{ tasksFilter.states.length - maximumTasks }})
-                </span>
-              </template>
-            </v-select>
-          </v-col>
-        </v-row>
+        <TaskFilter v-model="tasksFilter"/>
       </v-col>
     </v-row>
     <v-row
       no-gutters
       class="flex-grow-1 position-relative"
-      >
+    >
       <v-col
         cols="12"
         class="mh-100 position-relative"
       >
         <v-container
           fluid
-          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
+          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
         >
           <v-data-table
             :headers="headers"
@@ -124,14 +69,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <div class="d-flex align-content-center flex-nowrap">
                     <div class="mr-1">
                       <Task
-                        v-cylc-object="item.task.node"
+                        v-cylc-object="item.task"
                         :task="item.task.node"
                         :startTime="((item.latestJob || {}).node || {}).startedTime"
                       />
                     </div>
                     <div class="mr-1">
                       <Job
-                        v-cylc-object="item.task.node"
+                        v-cylc-object="item.task"
                         :status="item.task.node.state"
                         :previous-state="((item.previousJob || {}).node || {}).state"
                       />
@@ -170,7 +115,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td>{{ ((item.latestJob || {}).node || {}).submittedTime }}</td>
                 <td>{{ ((item.latestJob || {}).node || {}).startedTime }}</td>
                 <td>{{ ((item.latestJob || {}).node || {}).finishedTime }}</td>
-                <td>{{ item.task.node.meanElapsedTime }}</td>
+                <td>{{ dtMean(item.task) }}</td>
               </tr>
             </template>
             <template v-slot:expanded-item="{ item }">
@@ -185,9 +130,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               >
                 <td>
                   <div class="d-flex align-content-center flex-nowrap">
-                    <div class="mr-1">
+                    <div class="d-flex mr-1">
                       <Job
-                        v-cylc-object="job.node"
+                        v-cylc-object="job"
                         :key="`${job.id}-summary-${index}`"
                         :status="job.node.state"
                         style="margin-left: 1.3em;"
@@ -217,13 +162,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import TaskState from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task'
 import Job from '@/components/cylc/Job'
-import cloneDeep from 'lodash/cloneDeep'
 import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
+import { matchNode } from '@/components/cylc/common/filter'
+import TaskFilter from '@/components/cylc/TaskFilter.vue'
+import { dtMean } from '@/utils/tasks'
 
 export default {
   name: 'TableComponent',
@@ -239,7 +185,8 @@ export default {
   },
   components: {
     Task,
-    Job
+    Job,
+    TaskFilter
   },
   data () {
     return {
@@ -298,81 +245,20 @@ export default {
         },
         {
           text: 'dT-mean',
-          value: 'task.meanElapsedTime',
+          value: 'task.node.task.meanElapsedTime',
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
       ],
-      tasksFilter: {
-        name: '',
-        states: []
-      },
-      activeFilters: null,
-      maximumTasks: 4
+      tasksFilter: {}
     }
   },
   computed: {
-    taskStates () {
-      return TaskState.enumValues.map(taskState => {
-        return {
-          text: taskState.name.replace(/_/g, ' '),
-          value: taskState.name
-        }
-      }).sort((left, right) => {
-        return left.text.localeCompare(right.text)
-      })
-    },
-    tasksFilterStates () {
-      return this.activeFilters.states
-    },
     filteredTasks () {
-      const filterByName = this.filterByTaskName()
-      const filterByState = this.filterByTaskState()
-      return this.tasks.filter(task => {
-        if (filterByName && filterByState) {
-          return (
-            task.task.name.includes(this.activeFilters.name) &&
-            this.tasksFilterStates.includes(task.task.node.state)
-          )
-        } else if (filterByName) {
-          return task.task.name.includes(this.activeFilters.name)
-        } else if (filterByState) {
-          return this.tasksFilterStates.includes(task.task.node.state)
-        }
-        return true
-      })
+      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
     }
   },
   methods: {
-    filterByTaskName () {
-      return this.activeFilters &&
-        this.activeFilters.name !== undefined &&
-        this.activeFilters.name !== null &&
-        this.activeFilters.name !== ''
-    },
-    filterByTaskState () {
-      return this.activeFilters &&
-        this.activeFilters.states !== undefined &&
-        this.activeFilters.states !== null &&
-        this.activeFilters.states.length > 0
-    },
-    filterTasks () {
-      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
-        this.tasksFilter.name !== null &&
-        this.tasksFilter.name !== ''
-      const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
-        this.tasksFilter.states !== null &&
-        this.tasksFilter.states.length > 0
-      if (taskNameFilterSet || taskStatesFilterSet) {
-        this.activeFilters = cloneDeep(this.tasksFilter)
-      } else {
-        this.activeFilters = null
-      }
-    },
-    clearInput (event) {
-      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
-      this.tasksFilter.name = null
-      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
-    }
+    dtMean
   }
 }
 </script>

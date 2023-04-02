@@ -51,7 +51,7 @@ module.exports = {
   configureWebpack: {
     plugins: [
       new CircularDependencyPlugin({
-        exclude: /node_modules|public|tests|docs|dist|src\/components\/graphqlFormGenerator/,
+        exclude: /node_modules|public|tests|docs|dist|src[/\\]components[/\\]graphqlFormGenerator/,
         include: /src/,
         failOnError: true,
         allowAsyncCycles: false,

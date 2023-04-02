@@ -16,13 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-list
-   dense
-   one-line
-  >
+  <v-list dense>
     <v-list-item-content>
       <v-list-item
-        dense
         v-for="(item, index) in value"
         :key="index"
       >
@@ -34,31 +30,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :gqlType="gqlType.ofType"
             :types="types"
             :is="FormInput"
-             ref="inputs"
+            ref="inputs"
           >
-            <template v-slot:append-outer>
+            <!-- NOTE: we use :is here due to a nested component registration issue. -->
+            <template v-slot:append-outer="slotProps">
               <v-icon
-               @click="remove(index)"
+                @click="remove(index)"
+                v-bind="slotProps"
+                class="remove-btn"
               >
                 {{ svgPaths.close }}
               </v-icon>
             </template>
           </component>
-          <!--
-            NOTE: we use :is here due to a nested component
-            registration issue.
-          -->
         </v-list-item-content>
       </v-list-item>
-      <v-list-item
-       dense
-      >
+      <v-list-item>
         <v-btn
          @click="add()"
          text
+         data-cy="add"
         >
           <v-icon>{{ svgPaths.open }}</v-icon>
-          Add Item
+          <span>Add Item</span>
         </v-btn>
       </v-list-item>
     </v-list-item-content>
@@ -78,6 +72,13 @@ export default {
     formElement
   ],
 
+  props: {
+    addAtStart: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   data () {
     return {
       svgPaths: {
@@ -88,23 +89,27 @@ export default {
   },
 
   methods: {
-    /* Add an item to the list. */
+    /** Add an item to the list. */
     add () {
       const newInput = getNullValue(this.gqlType.ofType, this.types)
-      this.value.push(
-        newInput
-      )
+      let index = 0
+      if (this.addAtStart) {
+        this.value.unshift(newInput)
+      } else {
+        index = this.value.length
+        this.value.push(newInput)
+      }
       // this is not ideal, but I believe whats happening is the new (wrapper) component is created over the first tick from the new array item
       // the component content is created over the next tick (including the input)
       Vue.nextTick(() => {
         Vue.nextTick(() => {
           // get the latest input ref (which is a tooltip for some reason), get its parent, then the input itself and focus() it (if it exists)
-          this.$refs.inputs[this.$refs.inputs.length - 1].$el?.parentNode?.querySelector('input')?.focus()
+          this.$refs.inputs[index].$el?.parentNode?.querySelector('input')?.focus()
         })
       })
     },
 
-    /* Remove the item at `index` from the list. */
+    /** Remove the item at `index` from the list. */
     remove (index) {
       this.value.splice(index, 1)
     }

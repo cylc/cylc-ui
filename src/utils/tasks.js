@@ -105,3 +105,27 @@ export {
   latestJob,
   jobMessageOutputs
 }
+
+export function dtMean (taskNode) {
+  // Convert to an easily read duration format:
+  const dur = taskNode.node?.task?.meanElapsedTime
+  if (dur) {
+    const seconds = dur % 60
+    const minutes = ((dur - seconds) / 60) % 60
+    const hours = ((dur - minutes * 60 - seconds) / 3600) % 24
+    const days = (dur - hours * 3600 - minutes * 60 - seconds) / 86400
+
+    let dayss = ''
+    if (days > 0) {
+      dayss = days.toString() + 'd '
+    }
+
+    return dayss +
+      hours.toString().padStart(2, '0') +
+      ':' + minutes.toString().padStart(2, '0') +
+      ':' + Math.round(seconds).toString().padStart(2, '0')
+  }
+  // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
+  // return "undefined" rather than a number for these cases
+  return undefined
+}

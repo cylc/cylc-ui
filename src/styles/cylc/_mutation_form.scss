@@ -15,12 +15,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- .c-mutation-form .mutation-desc {
-  .v-expansion-panel-header {
-    font-size: 1em;
-    line-height: inherit;
-    p {
-      margin-bottom: 0;
+@import '~vuetify/src/components/VTextField/_variables.scss';
+
+.c-mutation-dialog {
+  margin-left: 0;
+  margin-right: 0;
+
+  .mutation-desc {
+    .v-expansion-panel-header {
+      font-size: 1em;
+      line-height: inherit;
+      p {
+        margin-bottom: 0;
+      }
     }
   }
- }
+
+  .theme--light.v-icon.remove-btn.v-icon--disabled {
+    color: rgba(0, 0, 0, 0.12) !important;
+  }
+
+  .c-key-val {
+    .theme--light.v-input--is-disabled input {
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .col-auto {
+      height: $text-field-filled-full-width-outlined-single-line-slot-min-height;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      $margin: 8px;
+      margin-left: $margin;
+      margin-right: $margin;
+
+      &:first-child {
+        margin-left: 0;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}

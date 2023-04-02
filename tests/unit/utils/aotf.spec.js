@@ -59,11 +59,17 @@ describe('aotf (Api On The Fly)', () => {
     })
   })
 
+  describe('getStates', () => {
+    it('gets valid states', () => {
+      expect(aotf.getStates('Valid for: running, stopped workflows.')).to.deep.equal(['running', 'stopped'])
+    })
+  })
+
   describe('processMutations', () => {
     it('should add computed fields', () => {
       const input = {
         name: 'fooBar',
-        description: 'Short description.\n\nLong\ndescription.',
+        description: 'Short description.\n\nLong\ndescription.\nValid for: stopped, paused workflows.',
         args: []
       }
       const output = {
@@ -71,7 +77,8 @@ describe('aotf (Api On The Fly)', () => {
         _title: 'Foo Bar',
         _icon: aotf.mutationIcons[''],
         _shortDescription: 'Short description.',
-        _help: 'Long\ndescription.'
+        _help: 'Long\ndescription.\nValid for: stopped, paused workflows.',
+        _validStates: ['stopped', 'paused']
       }
       aotf.processMutations([input], null)
       expect(input).to.deep.equal(output)
@@ -449,34 +456,27 @@ describe('aotf (Api On The Fly)', () => {
           [],
           []
         ],
-        [ // INPUT_OBJECT { A } => {A: null}
+        [ // OBJECT { A } => { foo: null, bar: null }
           {
-            type: null,
-            kind: 'INPUT_OBJECT',
+            kind: 'OBJECT',
             name: 'A'
           },
           [
             {
               name: 'A',
-              kind: 'INPUT_OBJECT',
-              inputFields: [
-                {
-                  name: 'A',
-                  type: 'String'
-                }
+              kind: 'OBJECT',
+              fields: [
+                { name: 'foo', type: 'String' },
+                { name: 'bar', type: 'String' }
               ]
             }
           ],
-          { A: null }
+          { foo: null, bar: null }
         ]
-      ].forEach((item) => {
-        const type = item[0]
-        const types = item[1]
+      ].forEach(([type, types, expected]) => {
         expect(
           aotf.getNullValue(type, types)
-        ).to.deep.equal(
-          item[2]
-        )
+        ).to.deep.equal(expected)
       })
     })
   })
@@ -634,6 +634,109 @@ describe('aotf (Api On The Fly)', () => {
         arg1: ['~a/b'],
         arg2: 42
       })
+    })
+  })
+
+  describe('extractFields', () => {
+    // Example, simplified GraphQL introspection responses:
+    let types
+    let personType
+    beforeEach(() => {
+      types = [
+        {
+          name: 'Person',
+          fields: [
+            { name: 'age', type: { name: 'Integer' } },
+            { name: 'height', type: { name: 'Integer' } },
+            { name: 'width', type: { name: 'Integer' } },
+            { name: 'criminalAllegations', type: { name: 'CriminalAllegations' } }
+          ]
+        },
+        { name: 'Integer' },
+        {
+          name: 'CriminalAllegations',
+          fields: [
+            { name: 'date', type: { name: 'Date' } },
+            { name: 'location', type: { name: 'Location' } }
+          ]
+        },
+        { name: 'Date' },
+        {
+          name: 'Location',
+          fields: [
+            { name: 'coordinates', type: { name: 'Coordinates' } }
+          ]
+        },
+        { name: 'Coordinates' }
+      ]
+      personType = types.find(({ name }) => name === 'Person')
+    })
+
+    it('extracts all fields when not specified', () => {
+      expect(
+        aotf.extractFields(personType, null, types)
+      ).to.deep.equal([
+        { name: 'age', fields: null },
+        { name: 'height', fields: null },
+        { name: 'width', fields: null },
+        {
+          name: 'criminalAllegations',
+          fields: [
+            { name: 'date', fields: null },
+            {
+              name: 'location',
+              fields: [
+                { name: 'coordinates', fields: null }
+              ]
+            }
+          ]
+        }
+      ])
+    })
+
+    it('extracts only specified fields', () => {
+      expect(
+        aotf.extractFields(
+          personType,
+          [
+            {
+              name: 'criminalAllegations',
+              fields: [
+                { name: 'location' }
+              ]
+            }
+          ],
+          types
+        )
+      ).to.deep.equal([
+        {
+          name: 'criminalAllegations',
+          fields: [
+            {
+              name: 'location',
+              fields: [
+                { name: 'coordinates', fields: null }
+              ]
+            }
+          ]
+        }
+      ])
+    })
+
+    it('can extract multiple fields', () => {
+      expect(
+        aotf.extractFields(
+          personType,
+          [
+            { name: 'width' },
+            { name: 'height' }
+          ],
+          types
+        )
+      ).to.deep.equal([
+        { name: 'width', fields: null },
+        { name: 'height', fields: null }
+      ])
     })
   })
 })

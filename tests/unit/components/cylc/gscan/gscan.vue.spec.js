@@ -58,7 +58,7 @@ localVue.prototype.$workflowService = {
     return true
   },
   unsubscribe () {},
-  startDeltasSubscription () {
+  startCylcSubscription () {
     return {
       unsubscribed: false,
       unsubscribe () {
@@ -66,7 +66,7 @@ localVue.prototype.$workflowService = {
       }
     }
   },
-  mutationsAndTypes: Promise.resolve({
+  introspection: Promise.resolve({
     mutations: [],
     types: []
   })
@@ -280,7 +280,7 @@ describe('GScan component', () => {
         type: 'workflow',
         tokens: { workflow: 'a/b/c' }
       })
-      expect(link).to.equal('/workflows/a/b/c')
+      expect(link).to.equal('/workspace/a/b/c')
     })
   })
 

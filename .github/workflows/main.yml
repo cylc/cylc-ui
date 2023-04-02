@@ -55,22 +55,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        include:
-          - os: ubuntu-20.04
-            browser: firefox
-            type: 'e2e'
-          - os: ubuntu-20.04
-            browser: firefox
-            type: 'component'
-          - os: ubuntu-latest
-            browser: chrome
-            type: 'e2e'
-          - os: ubuntu-latest
-            browser: chrome
-            type: 'component'
+        os: [ubuntu-latest]
+        browser: [firefox, chrome]
+        type: [e2e, component]
 # TODO: re-enable once macos build is stable #590
-#          - os: macos-latest
-#            browser: edge
+#         include:
+#           - os: macos-latest
+#             browser: edge
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -81,7 +72,7 @@ jobs:
           node-version: '16'
 
       - name: Test
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v5
         with:
           start: yarn run serve --hide=CLIENT  # turn off build output because it's absurdly long
           wait-on: http://localhost:8080/
@@ -95,7 +86,7 @@ jobs:
         env:
           CYPRESS_baseUrl: http://localhost:8080/
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: cypress-screenshots

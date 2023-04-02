@@ -15,17 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEqual } from 'lodash'
 import gql from 'graphql-tag'
-import isEqual from 'lodash/isEqual'
 import ViewState from '@/model/ViewState.model'
 import Subscription from '@/model/Subscription.model'
 import {
+  dummyMutations,
+  extractFields,
+  findByName,
+  getBaseType,
   getIntrospectionQuery,
   getMutationArgsFromTokens,
   mutate,
   primaryMutations,
   processMutations,
+  query,
   tokenise
 } from '@/utils/aotf'
 import store from '@/store/index'
@@ -37,15 +41,16 @@ import CylcTreeCallback from '@/services/treeCallback'
 
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
-import { MutationResponse } from '@/utils/aotf'
-import { DocumentNode } from 'graphql'
+import { Mutation, MutationResponse, Query } from '@/utils/aotf'
+import { DocumentNode, IntrospectionInputType } from 'graphql'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 /* eslint-enable no-unused-vars, no-duplicate-imports */
 
 /**
- * @typedef {Object} MutationsAndTypes
- * @property {Array<Object>} mutations
- * @property {Array<Object>} types
+ * @typedef {Object} IntrospectionObj
+ * @property {Mutation[]} mutations
+ * @property {Mutation[]} queries
+ * @property {IntrospectionInputType[]} types
  */
 
 /**
@@ -58,7 +63,7 @@ class WorkflowService {
   /**
    * @constructor
    * @param {string} httpUrl
-   * @param {SubscriptionClient|null} subscriptionClient
+   * @param {?SubscriptionClient} subscriptionClient
    */
   constructor (httpUrl, subscriptionClient) {
     this.debug = process.env.NODE_ENV !== 'production'
@@ -76,14 +81,14 @@ class WorkflowService {
      * The Apollo Client GraphQL subscription can be accessed via the Subscription
      * attribute `.observable`, or via the `.subscriptionClient`.
      *
-     * @type {Object.<String, Subscription>}
+     * @type {Object.<string, Subscription>}
      */
     this.subscriptions = {}
 
     // mutations defaults
     this.primaryMutations = primaryMutations
 
-    this.mutationsAndTypes = this.loadMutations()
+    this.introspection = this.loadTypes()
 
     // create & start the global callback
     this.globalCallback = new CylcTreeCallback()
@@ -100,8 +105,8 @@ class WorkflowService {
    *
    * Requires an absolute identifier (i.e. must include the workflow name).
    *
-   * @param {String} mutationName
-   * @param {String} id
+   * @param {string} mutationName
+   * @param {string} id
    * @returns {Promise<MutationResponse>}
    */
   async mutate (mutationName, id) {
@@ -117,11 +122,30 @@ class WorkflowService {
   }
 
   /**
-   * Load mutations for internal use from GraphQL introspection.
+   * Send a query.
    *
-   * @returns {Promise<MutationsAndTypes>}
+   * @param {string} queryName
+   * @param {Object} args
+   * @param {Field[]} fields
+   * @param {Object} variables
+   * @return {Promise<Object>}
+   * @memberof WorkflowService
    */
-  async loadMutations () {
+  async query (queryName, args, fields) {
+    const queryObj = await this.getQuery(queryName, Object.keys(args), fields)
+    return await query(
+      queryObj,
+      args,
+      this.apolloClient
+    )
+  }
+
+  /**
+   * Load mutations, queries and types from GraphQL introspection.
+   *
+   * @returns {Promise<IntrospectionObj>}
+   */
+  async loadTypes () {
     // TODO: this assumes all workflows use the same schema which is and
     //       isn't necessarily true, not quite sure, come back to this later.
     const response = await this.apolloClient.query({
@@ -129,20 +153,43 @@ class WorkflowService {
       fetchPolicy: 'no-cache'
     })
     const mutations = response.data.__schema.mutationType.fields
-    const types = response.data.__schema.types
+    const queries = response.data.__schema.queryType.fields
+    const { types } = response.data.__schema
+    mutations.push(...dummyMutations)
     processMutations(mutations, types)
-    return { mutations, types }
+    return { mutations, queries, types }
   }
 
   /**
    * Return a mutation by name.
    *
-   * @param {String} mutationName
-   * @returns {Promise<Object>}
+   * @param {string} mutationName
+   * @returns {Promise<Mutation=>}
    */
   async getMutation (mutationName) {
-    const { mutations } = await this.mutationsAndTypes
-    return mutations.find(mutation => mutation.name === mutationName)
+    const { mutations } = await this.introspection
+    return findByName(mutations, mutationName)
+  }
+
+  /**
+   * Return a GraphQL query for a type, containing the given fields.
+   *
+   * @param {string} queryName - Name of the GraphQL query available in the schema.
+   * @param {string[]} argNames - Names of args to supply in the query (note: the variables (i.e. values of the args) are supplied elsewhere).
+   * @param {Field[]} fields - Fields to include in the query.
+   * @return {Promise<Query>}
+   */
+  async getQuery (queryName, argNames, fields) {
+    const { queries, types } = await this.introspection
+    const queryObj = findByName(queries, queryName)
+    const typeName = getBaseType(queryObj.type).name
+    const type = findByName(types, typeName)
+
+    return {
+      name: queryName,
+      args: queryObj.args.filter(({ name }) => argNames.includes(name)),
+      fields: extractFields(type, fields, types)
+    }
   }
 
   // --- GraphQL query subscriptions
@@ -172,7 +219,7 @@ class WorkflowService {
       subscription.subscribers[componentOrView._uid] = componentOrView
       // Then we recompute the query, checking if variables match, and action name is set.
       this.recompute(subscription)
-      // regardless of whether this results in a restart, we take this opertunity to preset the componentOrView store if needed
+      // regardless of whether this results in a restart, we take this opportunity to preset the componentOrView store if needed
       const errors = []
       // if the callbacks class has an init method defined, use it
       for (const callback of subscription.callbacks) {
@@ -180,7 +227,7 @@ class WorkflowService {
         if (callback.init) {
           callback.init(store, errors)
           for (const error of errors) {
-            store.commit('SET_ALERT', new Alert(error[0], null, 'error'), { root: true })
+            store.commit('SET_ALERT', new Alert(error[0], 'error'), { root: true })
             // eslint-disable-next-line no-console
             console.warn(...error)
             subscription.handleViewState(ViewState.ERROR, error('Error presetting view state'))
@@ -226,63 +273,92 @@ class WorkflowService {
       }
       this.stopSubscription(subscription, true)
     }
-
-    const globalCallback = this.globalCallback
-
-    try {
-      // Then start subscription.
-      subscription.observable = this.startDeltasSubscription(
-        subscription.query.query,
-        subscription.query.variables,
-        {
-          next: function next (response) {
-            const deltas = response.data.deltas || {}
-            const added = deltas.added || {}
-            const updated = deltas.updated || {}
-            const pruned = deltas.pruned || {}
-            const errors = []
-
-            // run the global callback first
-            globalCallback.onAdded(added, store, errors)
-            globalCallback.onUpdated(updated, store, errors)
-            globalCallback.onPruned(pruned, store, errors)
-
-            // then run the local callbacks if there are any
-            if (subscription.callbacks.length === 0) {
-              return
+    if (subscription.query.isDelta === false & subscription.query.isGlobalCallback === false) {
+      try {
+        // Then start subscription.
+        subscription.observable = this.startCylcSubscription(
+          subscription.query.query,
+          subscription.query.variables,
+          {
+            next: function next (response) {
+              if (subscription.callbacks.length === 0) {
+                return
+              }
+              const errors = []
+              for (const callback of subscription.callbacks) {
+                callback.onAdded(response.data.logs, store, errors)
+                callback.commit(store, errors)
+              }
+            },
+            error: function error (err) {
+              subscription.handleViewState(ViewState.ERROR, err)
             }
-            for (const callback of subscription.callbacks) {
-              callback.before(deltas, store, errors)
-              callback.onAdded(added, store, errors)
-              callback.onUpdated(updated, store, errors)
-              callback.commit(store, errors)
-            }
-            for (const callback of [...subscription.callbacks].reverse()) {
-              callback.onPruned(pruned, store, errors)
-              callback.after(deltas, store, errors)
-              callback.commit(store, errors)
-            }
-            for (const error of errors) {
-              store.commit(
-                'SET_ALERT',
-                new Alert(error[0], null, 'error'),
-                { root: true }
-              )
-              // eslint-disable-next-line no-console
-              console.warn(...error)
-            }
-          },
-          error: function error (err) {
-            subscription.handleViewState(ViewState.ERROR, err)
           }
-        }
-      )
-      this.subscriptions[subscription.query.name] = subscription
-      // All done!
-      subscription.handleViewState(ViewState.COMPLETE, null)
-      subscription.reload = false
-    } catch (e) {
-      subscription.handleViewState(ViewState.ERROR, e)
+        )
+        this.subscriptions[subscription.query.name] = subscription
+        // All done!
+        subscription.handleViewState(ViewState.COMPLETE, null)
+        subscription.reload = false
+      } catch (e) {
+        subscription.handleViewState(ViewState.ERROR, e)
+      }
+    } else {
+      const globalCallback = this.globalCallback
+      try {
+        // Then start subscription.
+        subscription.observable = this.startCylcSubscription(
+          subscription.query.query,
+          subscription.query.variables,
+          {
+            next: function next (response) {
+              const deltas = response.data.deltas || {}
+              const added = deltas.added || {}
+              const updated = deltas.updated || {}
+              const pruned = deltas.pruned || {}
+              const errors = []
+
+              // run the global callback first
+              globalCallback.onAdded(added, store, errors)
+              globalCallback.onUpdated(updated, store, errors)
+              globalCallback.onPruned(pruned, store, errors)
+
+              // then run the local callbacks if there are any
+              if (subscription.callbacks.length === 0) {
+                return
+              }
+              for (const callback of subscription.callbacks) {
+                callback.before(deltas, store, errors)
+                callback.onAdded(added, store, errors)
+                callback.onUpdated(updated, store, errors)
+                callback.commit(store, errors)
+              }
+              for (const callback of [...subscription.callbacks].reverse()) {
+                callback.onPruned(pruned, store, errors)
+                callback.after(deltas, store, errors)
+                callback.commit(store, errors)
+              }
+              for (const error of errors) {
+                store.commit(
+                  'SET_ALERT',
+                  new Alert(error[0], 'error'),
+                  { root: true }
+                )
+                // eslint-disable-next-line no-console
+                console.warn(...error)
+              }
+            },
+            error: function error (err) {
+              subscription.handleViewState(ViewState.ERROR, err)
+            }
+          }
+        )
+        this.subscriptions[subscription.query.name] = subscription
+        // All done!
+        subscription.handleViewState(ViewState.COMPLETE, null)
+        subscription.reload = false
+      } catch (e) {
+        subscription.handleViewState(ViewState.ERROR, e)
+      }
     }
   }
 
@@ -296,7 +372,7 @@ class WorkflowService {
    * @param {SubscriptionOptions} subscriptionOptions - { next(), error() }
    * @returns {Subscription}
    */
-  startDeltasSubscription (query, variables, subscriptionOptions) {
+  startCylcSubscription (query, variables, subscriptionOptions) {
     if (!query) {
       throw new Error('You must provide a query for the subscription')
     }

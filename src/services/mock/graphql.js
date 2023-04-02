@@ -22,10 +22,7 @@ const data = require('./json/index')
  * can be generated programmatically, or with GraphiQL, or another GraphQL
  * command line.
  */
-const DATA_MAPPING = {
-  IntrospectionQuery: data.IntrospectionQuery,
-  App: data.App
-}
+const DATA_MAPPING = data
 
 /**
  * Given a GraphQL query, this function tries to fetch the operation

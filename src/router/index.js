@@ -69,10 +69,6 @@ Vue.use(Meta)
 
 router.beforeResolve((to, from, next) => {
   NProgress.start()
-  if ('token' in to.query) {
-    // Remove ?token from the query, we only need it on load.
-    router.replace({ query: {} })
-  }
   if (to.name) {
     let title
     let workflowName
@@ -100,7 +96,7 @@ router.beforeEach((to, from, next) => {
         next()
       })
       .catch(error => {
-        const alert = new Alert(error, null, 'error')
+        const alert = new Alert(error, 'error')
         return store.dispatch('setAlert', alert)
       })
   } else {

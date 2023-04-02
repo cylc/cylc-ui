@@ -27,10 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        :types="types"
       />
     </template>
-    <template v-slot:append>
-    <!-- resolve the "append-outer" slot here -->
-    <slot name="append-outer"></slot>
-  </template>
+    <template v-slot:append-outer>
+      <!-- resolve the "append-outer" slot here -->
+      <slot name="append-outer"></slot>
+    </template>
   </v-input>
 </template>
 
@@ -44,14 +44,10 @@ export default {
 
   computed: {
     inputs () {
-      const ret = []
-      for (const field of this.type.inputFields) {
-        ret.push({
-          gqlType: field.type,
-          label: field.name
-        })
-      }
-      return ret
+      return this.type.fields.map(field => ({
+        gqlType: field.type,
+        label: field.name
+      }))
     }
   }
 }

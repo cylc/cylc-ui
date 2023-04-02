@@ -30,10 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <div class="card-grid">
 
-      <v-flex
-        md5
-        xs12
-      >
+      <v-col>
         <v-card outlined>
           <v-card-title primary-title>
             <p class="display-1 text--primary">Tasks &amp; Jobs</p>
@@ -89,12 +86,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
           </v-card-text>
         </v-card>
-      </v-flex>
+      </v-col>
 
-      <v-flex
-        md5
-        xs12
-      >
+      <v-col>
         <v-card outlined>
           <v-card-title primary-title>
             <p class="display-1 text--primary">Why Are We Waiting?</p>
@@ -117,10 +111,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <v-list-item-title>
                     Waiting
                   </v-list-item-title>
-                  <v-list-item-sub-title>
+                  <v-list-item-subtitle>
                     The task is not ready to run yet - it is still waiting on
                     upstream <b>dependencies</b> or <b>xtriggers</b>.
-                  </v-list-item-sub-title>
+                  </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>
@@ -134,11 +128,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <v-list-item-title>
                     Held
                   </v-list-item-title>
-                  <v-list-item-sub-title>
+                  <v-list-item-subtitle>
                     The task won't run unless <b>released</b> from hold.
                     Tasks can be held before they are ready to run
                     (or after, prior to retriggering).
-                  </v-list-item-sub-title>
+                  </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>
@@ -152,10 +146,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <v-list-item-title>
                     Queued
                   </v-list-item-title>
-                  <v-list-item-sub-title>
+                  <v-list-item-subtitle>
                     The task is ready to run but is held back by a queue,
                     which restricts the number of active tasks.
-                  </v-list-item-sub-title>
+                  </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>
@@ -169,10 +163,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <v-list-item-title>
                     Runahead
                   </v-list-item-title>
-                  <v-list-item-sub-title>
+                  <v-list-item-subtitle>
                     The task is ready to run but is beyond the runahead limit,
                     which restricts the number of active cycle points.
-                  </v-list-item-sub-title>
+                  </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -187,7 +181,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
              </p>
           </v-card-text>
         </v-card>
-      </v-flex>
+      </v-col>
     </div>
 
   </v-container>

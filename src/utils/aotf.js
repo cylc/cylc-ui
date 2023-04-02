@@ -34,47 +34,86 @@ import {
   mdiCursorPointer,
   mdiDelete,
   mdiEmail,
+  mdiFileDocumentOutline,
   mdiGraph,
   mdiMinusCircleOutline,
   mdiPause,
   mdiPauseCircleOutline,
   mdiPlay,
   mdiPlayCircleOutline,
+  mdiPlaylistEdit,
   mdiRefreshCircle,
   mdiReload,
   mdiStop
 } from '@mdi/js'
 
-import AlertModel from '@/model/Alert.model'
-import TaskState from '@/model/TaskState.model'
+import Alert from '@/model/Alert.model'
 import store from '@/store/index'
 import { Tokens } from '@/utils/uid'
+import { WorkflowState } from '@/model/WorkflowState.model'
 
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
 import { ApolloClient } from '@apollo/client'
+import { IntrospectionInputType } from 'graphql'
 /* eslint-enable no-unused-vars, no-duplicate-imports */
 
 /**
- * @typedef {Object} MutationArgs
- * @property {string} _cylcObject
- * @property {boolean} _required
+ * @typedef {Object} GQLType
+ * @property {string} name
+ * @property {string} kind
+ * @property {?GQLType} ofType
  */
 
 /**
- * @typedef {object} Mutation
+ * @typedef {Object} MutationArg
  * @property {string} name
- * @property {MutationArgs[]} args
+ * @property {string} description
+ * @property {GQLType} type
+ * @property {?string} defaultValue
+ * @property {string=} _title
+ * @property {string=} _cylcObject
+ * @property {string=} _cylcType
+ * @property {boolean=} _required
+ * @property {boolean=} _multiple
+ * @property {*=} _default
+ */
+
+/**
+ * @typedef {Object} Mutation
+ * @property {string} name
+ * @property {string} description
+ * @property {MutationArg[]} args
+ * @property {GQLType} type
+ * @property {string=} _title
+ * @property {string=} _icon
+ * @property {string=} _shortDescription
+ * @property {string=} _help
+ * @property {string=} _appliesTo - type of cylc object this mutation applies to (if cannot determine from args)
+ * @property {boolean=} _requiresInfo - whether this mutation needs more info than the cylc object it is operating on (if cannot determine from args)
+ */
+
+/**
+ * @typedef {Object} Query
+ * @property {string} name
+ * @property {MutationArg[]} args
+ * @property {Array} fields
+ */
+
+/**
+ * @typedef {Object} Field
+ * @property {string} name - lowercase field name
+ * @property {(Field[])=} fields - list of sub-fields
  */
 
 /**
  * @typedef {Object} MutationResponse
- * @property {TaskState} status
+ * @property {string} status
  * @property {string} message
  */
 
 /**
- * @typedef {object} FilteredMutation
+ * @typedef {Object} FilteredMutation
  * @property {Mutation} mutation
  * @property {boolean} requiresInfo
  * @property {boolean} authorised
@@ -88,8 +127,10 @@ export const mutationIcons = {
   '': mdiCog, // default fallback
   broadcast: mdiBullhorn,
   clean: mdiDelete,
+  editRuntime: mdiPlaylistEdit,
   hold: mdiPauseCircleOutline, // to distinguish from pause
   kill: mdiCloseCircle,
+  log: mdiFileDocumentOutline,
   message: mdiEmail,
   pause: mdiPause,
   play: mdiPlay,
@@ -124,26 +165,33 @@ export const cylcObjects = Object.freeze({
 /**
  * Most important mutations for each object type.
  */
-export const primaryMutations = {}
-primaryMutations[cylcObjects.Workflow] = [
-  'play',
-  'pause',
-  'stop',
-  'reload',
-  'clean'
-]
-primaryMutations[cylcObjects.CyclePoint] = [
-  'hold',
-  'release',
-  'trigger',
-  'kill'
-]
-primaryMutations[cylcObjects.Namespace] = [
-  'hold',
-  'release',
-  'trigger',
-  'kill'
-]
+export const primaryMutations = {
+  [cylcObjects.Workflow]: [
+    'play',
+    'resume',
+    'pause',
+    'stop',
+    'reload',
+    'clean',
+    'log'
+  ],
+  [cylcObjects.CyclePoint]: [
+    'hold',
+    'release',
+    'trigger',
+    'kill'
+  ],
+  [cylcObjects.Namespace]: [
+    'hold',
+    'release',
+    'trigger',
+    'kill',
+    'log'
+  ]
+}
+
+// handle families the same as tasks
+primaryMutations.family = primaryMutations[cylcObjects.Namespace]
 
 /**
  * Cylc "objects" in hierarchy order.
@@ -160,31 +208,35 @@ const identifierOrder = [
 ]
 
 /**
- * Mapping of mutation argument types to Cylc "objects".
+ * Mapping of mutation argument types to Cylc "objects" (workflow, cycle,
+ * task etc.).
  *
- * This is used to work out what objects a mutation operates on.
+ * This is used to work out what objects a mutation operates on and
+ * auto-populate the input element in the mutation form based on the object
+ * that was clicked on.
  *
  * object: [[typeName: String, impliesMultiple: Boolean]]
  */
-export const mutationMapping = {}
-mutationMapping[cylcObjects.User] = []
-mutationMapping[cylcObjects.Workflow] = [
-  ['WorkflowID', false]
-]
-mutationMapping[cylcObjects.CyclePoint] = [
-  ['CyclePoint', false],
-  ['CyclePointGlob', true]
-]
-mutationMapping[cylcObjects.Namespace] = [
-  ['NamespaceName', false],
-  ['NamespaceIDGlob', true]
-]
-mutationMapping[cylcObjects.Task] = [
-  ['TaskID', false]
-]
-mutationMapping[cylcObjects.Job] = [
-  ['JobID', false]
-]
+export const mutationMapping = {
+  [cylcObjects.User]: [],
+  [cylcObjects.Workflow]: [
+    ['WorkflowID', false]
+  ],
+  [cylcObjects.CyclePoint]: [
+    ['CyclePoint', false],
+    ['CyclePointGlob', true]
+  ],
+  [cylcObjects.Namespace]: [
+    ['NamespaceName', false],
+    ['NamespaceIDGlob', true]
+  ],
+  // [cylcObjects.Task]: [
+  //   ['TaskID', false]
+  // ],
+  [cylcObjects.Job]: [
+    ['JobID', false]
+  ]
+}
 
 /**
  * Mutation argument types which are derived from more than one token.
@@ -198,44 +250,76 @@ export const compoundFields = {
     // (will fallback to the UIs user)
     return tokens[cylcObjects.Workflow]
   },
-  NamespaceIDGlob: (tokens) => {
+  NamespaceIDGlob: (tokens) => (
     // expand unspecified fields to '*'
-    return (
-      (tokens[cylcObjects.CyclePoint] || '*') +
-      '/' +
-      (tokens[cylcObjects.Namespace] || '*')
-    )
-  },
-  TaskID: (tokens) => {
+    (tokens[cylcObjects.CyclePoint] || '*') +
+    '/' +
+    (tokens[cylcObjects.Namespace] || '*')
+  ),
+  TaskID: (tokens) => (
     // expand unspecified fields to '*'
-    return (
-      (tokens[cylcObjects.CyclePoint] || '*') +
-      '/' +
-      (tokens[cylcObjects.Task] || '*')
-    )
-  }
+    (tokens[cylcObjects.CyclePoint] || '*') +
+    '/' +
+    tokens[cylcObjects.Namespace]
+  )
 }
 
 /**
  * Namespaces which can be used to satisfy a field representing a different
- * object
+ * object.
+ *
+ * This is used to work out what objects a mutation operates on.
  */
-export const alternateFields = {}
-// cycle points can be used as namespace identifiers
-alternateFields.NamespaceIDGlob = cylcObjects.CyclePoint
+export const alternateFields = {
+  // cycle points can be used as namespace identifiers
+  NamespaceIDGlob: cylcObjects.CyclePoint
+}
 
 /**
  * Used to communicate the status of requested mutations.
  *
  * Maps onto task status.
  */
-export const mutationStatus = {}
-mutationStatus[TaskState.WAITING] = TaskState.WAITING
-mutationStatus[TaskState.SUBMITTED] = TaskState.SUBMITTED
-mutationStatus[TaskState.SUCCEEDED] = TaskState.SUCCEEDED
-mutationStatus[TaskState.FAILED] = TaskState.FAILED
-mutationStatus[TaskState.SUBMIT_FAILED] = TaskState.SUBMIT_FAILED
-Object.freeze(mutationStatus)
+export const mutationStatus = Object.freeze({
+  FAILED: 'FAILED',
+  SUCCEEDED: 'SUCCEEDED',
+  WARN: 'WARN'
+})
+
+/**
+ * List of commands to add to the mutations from the schema.
+ *
+ * @type {Mutation[]}
+ */
+export const dummyMutations = [
+  {
+    name: 'editRuntime',
+    description: dedent`
+      Edit a task or family's \`[runtime]\` section.
+
+      This only applies for the cycle point of the chosen task/family instance.`,
+    args: [],
+    _appliesTo: cylcObjects.Namespace,
+    _requiresInfo: true
+  },
+  {
+    name: 'log',
+    description: 'View the logs.',
+    args: [],
+    _appliesTo: cylcObjects.Namespace,
+    _requiresInfo: true
+  }
+]
+
+/**
+ * Map real mutations to dummy mutations with the same permission level.
+ *
+ * @type {{string: string[]}}
+ */
+const dummyMutationsPermissionsMap = Object.freeze({
+  broadcast: Object.freeze(['editRuntime']),
+  read: Object.freeze(['log'])
+})
 
 /**
  * Translate a global ID into a token dictionary.
@@ -286,6 +370,49 @@ export function camelToWords (camel) {
 }
 
 /**
+ * Find the GraphQL object with the given name.
+ *
+ * @export
+ * @template {Object} T
+ * @param {T[]} objs - List of GraphQL objects, which have a property 'name'
+ * @param {string} name - Name to match
+ * @return {T=}
+ */
+export function findByName (objs, name) {
+  return objs.find(type => type.name === name)
+}
+
+/**
+ * Use the introspection type to extract all fields for a query/mutation if
+ * no fields are given.
+ *
+ * This allows you to do a query and return all fields without having to list
+ * them all out.
+ *
+ * @param {IntrospectionInputType} type - GraphQL type that we are looking for fields in.
+ * @param {?Field[]} fields - Subset of fields on the above type to extract. If nullish, extract all fields (if any).
+ * @param {IntrospectionInputType[]} types - Full list of GraphQL types from introspection query.
+ * @return {?Field[]}
+ */
+export function extractFields (type, fields, types) {
+  fields ??= type.fields // extract all fields if none given
+  if (!fields) {
+    return null
+  }
+  return fields.map(field => {
+    const gqlField = findByName(type.fields, field.name)
+    if (!gqlField) {
+      throw new Error(`No such field "${field.name}" on type "${type.name}"`)
+    }
+    const fieldType = findByName(types, getBaseType(gqlField.type).name)
+    return {
+      name: field.name,
+      fields: extractFields(fieldType, field.fields, types)
+    }
+  })
+}
+
+/**
  * Process mutations from an introspection query.
  *
  * This adds some computed fields prefixed with an underscore for later use:
@@ -298,8 +425,8 @@ export function camelToWords (camel) {
  *   _help
  *     The remainder of the mutation description.
  *
- * @param {object} mutations - Mutations as returned by introspection query.
- * @param {object} types - Types as returned by introspection query.
+ * @param {Mutation} mutations - Mutations as returned by introspection query.
+ * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
  */
 export function processMutations (mutations, types) {
   for (const mutation of mutations) {
@@ -307,15 +434,41 @@ export function processMutations (mutations, types) {
     mutation._icon = mutationIcons[mutation.name] || mutationIcons['']
     mutation._shortDescription = getMutationShortDesc(mutation.description)
     mutation._help = getMutationExtendedDesc(mutation.description)
+    mutation._validStates = getStates(mutation.description)
     processArguments(mutation, types)
   }
+}
+/**
+ * Get the workflow states that the mutation is valid for.
+ *
+ * @export
+ * @param {string=} text - Full mutation description.
+ * @return {Array<String>}
+ */
+export function getStates (text) {
+  const defaultStates = [
+    WorkflowState.RUNNING.name,
+    WorkflowState.PAUSED.name,
+    WorkflowState.STOPPING.name,
+    WorkflowState.STOPPED.name
+  ]
+  if (!text) {
+    return defaultStates
+  }
+  const re = /Valid\sfor:\s(.*)\sworkflows./
+  // default to all workflow states
+  const validStates = text.match(re)
+  if (validStates) {
+    return validStates[1].replace(/\s/g, '').split(',')
+  }
+  return defaultStates
 }
 
 /**
  * Get the first part of a mutation description (up to the first double newline).
  *
  * @export
- * @param {string|undefined} text - Full mutation description.
+ * @param {string=} text - Full mutation description.
  * @return {string}
  */
 export function getMutationShortDesc (text) {
@@ -326,22 +479,21 @@ export function getMutationShortDesc (text) {
  * Get the rest of a mutation description (after the first double newline).
  *
  * @export
- * @param {string|undefined} text - Full mutation description.
- * @return {string|undefined}
+ * @param {string=} text - Full mutation description.
+ * @return {string=}
  */
 export function getMutationExtendedDesc (text) {
   return text?.split('\n\n').slice(1).join('\n\n')
 }
 
-/* Add special fields to mutations args from a GraphQL introspection query. */
 /**
- * Process mutation arguments from an introspection query.
+ * Process mutation arguments from a GraphQL introspection query.
  *
  * This adds some computed fields prefixed with an underscore for later use:
  *   _title:
  *     Human-readable name for the mutation.
  *   _cylcObject:
- *     The Cylc Object this field relates to if any (e.g. Task).
+ *     The Cylc Object this field relates to if any (e.g. Cycle, Task etc.).
  *   _cylcType:
  *     The underlying GraphQL type that provides this relationship
  *     (e.g. taskID).
@@ -353,7 +505,7 @@ export function getMutationExtendedDesc (text) {
  *     true if this field must be provided for the mutation to be called.
  *
  * @param {Mutation} mutation - One Mutation as returned by introspection query.
- * @param {object} types - Types as returned by introspection query.
+ * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
  */
 export function processArguments (mutation, types) {
   let pointer = null
@@ -367,7 +519,7 @@ export function processArguments (mutation, types) {
     required = false
     cylcObject = null
     cylcType = null
-    if (pointer && pointer.kind === 'NON_NULL') {
+    if (pointer?.kind === 'NON_NULL') {
       required = true
     }
     while (pointer) {
@@ -375,13 +527,11 @@ export function processArguments (mutation, types) {
       if (pointer.kind === 'LIST') {
         multiple = true
       } else if (pointer.kind !== 'NON_NULL' && pointer.name) {
+        cylcType = pointer.name
         for (const objectName in mutationMapping) {
-          for (
-            const [type, impliesMultiple] of mutationMapping[objectName]
-          ) {
+          for (const [type, impliesMultiple] of mutationMapping[objectName]) {
             if (pointer.name === type) {
               cylcObject = objectName
-              cylcType = pointer.name
               if (impliesMultiple) {
                 multiple = true
               }
@@ -419,9 +569,12 @@ export function getIntrospectionQuery () {
   // a little easier by restricting the scope of the default
   // introspection query
   const fullIntrospection = gql(getGraphQLIntrospectionQuery())
-  const mutationQuery = gql(`
+  const query = gql(`
     query {
       __schema {
+        queryType {
+          ...FullType
+        }
         mutationType {
           ...FullType
         }
@@ -431,14 +584,14 @@ export function getIntrospectionQuery () {
       }
     }
   `)
-  // TODO: this returns all types, we only need certain ones
+  // TODO: this returns all queries & types, we only need certain ones
 
   // NOTE: we are converting to string form then re-parsing
   // back to a query, as something funny happens when you
   // try to modify the gql objects by hand.
   return gql(
     // the query we actually want to run
-    print(mutationQuery.definitions[0]) +
+    print(query.definitions[0]) +
     // the fragments which power it
     print(fullIntrospection.definitions[1]) +
     print(fullIntrospection.definitions[2]) +
@@ -461,21 +614,20 @@ export function getIntrospectionQuery () {
  */
 export function filterAssociations (cylcObject, tokens, mutations, permissions) {
   const ret = []
+  for (const [permission, equivalents] of Object.entries(dummyMutationsPermissionsMap)) {
+    if (permissions.includes(permission)) {
+      permissions.push(...equivalents)
+    }
+  }
   permissions = permissions.map(x => x.toLowerCase())
   for (const mutation of mutations) {
-    let requiresInfo = false
-    let authorised = false
-    let applies = false
-    let alternate = null
+    const authorised = permissions.includes(mutation.name.toLowerCase())
+    let requiresInfo = mutation._requiresInfo ?? false
+    let applies = mutation._appliesTo === cylcObject
     for (const arg of mutation.args) {
       if (arg._cylcObject) {
-        // alternate cylc object which can satisfy this field, or null
-        alternate = alternateFields[arg._cylcType]
         if (arg._cylcObject === cylcObject) {
           // this is the object type we are filtering for
-          applies = true
-        } else if (alternate === cylcObject) {
-          // this isn't the object type we are filtering for, but it'll do
           applies = true
         }
         if (arg._required && !tokens[arg._cylcObject]) {
@@ -486,12 +638,14 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
         // this is a required argument
         requiresInfo = true
       }
+      // is there an alternate cylc object which can satisfy this field?
+      if (alternateFields[arg._cylcType] === cylcObject) {
+        // this might not be the object type we're filtering for, but it'll do
+        applies = true
+      }
     }
     if (!applies) {
       continue
-    }
-    if (permissions.includes(mutation.name.toLowerCase())) {
-      authorised = true
     }
     ret.push(
       { mutation, requiresInfo, authorised }
@@ -507,10 +661,10 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
  *  2. List
  *  3. String
  *
- * @param {Object} type - A type as returned by an introspection query.
+ * @param {GQLType} type - A type as returned by an introspection query.
  * (i.e. an object of the form {name: x, kind: y, ofType: z}
  *
- * @yields {Object} Type objects of the same form as the type argument.
+ * @yields {GQLType} Type objects of the same form as the type argument.
  */
 export function * iterateType (type) {
   while (type) {
@@ -519,45 +673,45 @@ export function * iterateType (type) {
   }
 }
 
+/**
+ * Walk a GraphQL type and return the final base type.
+ *
+ * E.G. NonNull<List<String>> would return String.
+ *
+ * @export
+ * @param {GQLType} type
+ * @return {GQLType}
+ */
+export function getBaseType (type) {
+  return [...iterateType(type)].pop()
+}
+
 /** Return an appropriate null value for the specified type.
  *
- * @param {Object} type - A type field as returned by an introspection query.
+ * @param {GQLType} type - A type field as returned by an introspection query.
  * (an object of the form {name: x, kind: y, ofType: z}).
- * @param {Array} types - An array of all types present in the schema.
+ * @param {(IntrospectionInputType[])=} types - An array of all types present in the schema.
  * (optional: used to resolve InputObjectType fields).
  *
- * @returns {Object|Array|undefined}
+ * @returns {Object|Object[]|null}
  */
 export function getNullValue (type, types = []) {
   let ret = null
-  let ofType = null
   for (const subType of iterateType(type)) {
     if (subType.kind === 'LIST') {
-      ofType = getNullValue(subType.ofType)
-      if (ofType) {
-        // this list contains an object
-        ret = [
-          getNullValue(subType.ofType)
-        ]
-      } else {
-        ret = []
-      }
+      const ofType = getNullValue(subType.ofType, types)
+      ret = ofType ? [ofType] : []
       break
     }
-    if (subType.kind === 'INPUT_OBJECT') {
+    if (subType.kind === 'OBJECT') {
       ret = {}
-      for (const type of types) {
-        // TODO: this type iteration is already done in the mixin
-        //       should we use the mixin or a subset there-of here?
-        if (
-          type.name === subType.name &&
-          type.kind === subType.kind
-        ) {
-          for (const field of type.inputFields) {
-            ret[field.name] = getNullValue(field.type)
-          }
-          break
-        }
+      // TODO: this type iteration is already done in the mixin
+      //       should we use the mixin or a subset there-of here?
+      const type = types.find(({ name, kind }) => (
+        name === subType.name && kind === subType.kind
+      ))
+      for (const field of type.fields) {
+        ret[field.name] = getNullValue(field.type, types)
       }
       break
     }
@@ -569,7 +723,7 @@ export function getNullValue (type, types = []) {
  *
  * E.G: NonNull<List<String>>  =>  [String]!
  *
- * @param {Object} arg - An argument from a introspection query.
+ * @param {MutationArg} arg - An argument from a introspection query.
  *
  * @returns {string} A type string for use in a client query / mutation.
  */
@@ -599,7 +753,7 @@ export function argumentSignature (arg) {
 
 /** Construct a mutation string from a mutation introspection.
  *
- * @param {Object} mutation - A mutation as returned by an introspection query.
+ * @param {Mutation} mutation - A mutation as returned by an introspection query.
  *
  * @returns {string} A mutation string for a client to send to the server.
  */
@@ -619,6 +773,48 @@ export function constructMutation (mutation) {
     }
   `.trim()
 }
+/**
+ * Construct a query string from a query object.
+ *
+ * @export
+ * @param {Query} query
+ * @return {string}
+ */
+export function constructQueryStr (query) {
+  const argNames = []
+  const argTypes = []
+  for (const arg of query.args) {
+    argTypes.push(`$${arg.name}: ${argumentSignature(arg)}`)
+    argNames.push(`${arg.name}: $${arg.name}`)
+  }
+
+  /**
+   * @param {Field[]} fields
+   * @param {number} indentLevel
+   * @return {string}
+   */
+  const constructFieldsStr = (fields, indentLevel) => {
+    return fields.map(
+      field => {
+        let ret = '  '.repeat(indentLevel) + field.name
+        if (field.fields) {
+          ret += ' {\n'
+          ret += constructFieldsStr(field.fields, indentLevel + 1)
+          ret += '\n' + '  '.repeat(indentLevel) + '}'
+        }
+        return ret
+      }
+    ).join('\n')
+  }
+
+  return [
+    `query ${query.name}(${argTypes.join(', ')}) {`,
+    `  ${query.name}(${argNames.join(', ')}) {`,
+    constructFieldsStr(query.fields, 2),
+    '  }',
+    '}'
+  ].join('\n').trim()
+}
 
 /**
  * Return any arguments for the mutation which can be determined from tokens.
@@ -626,19 +822,26 @@ export function constructMutation (mutation) {
  * Return default arguments for the provided mutation filling in what
  * information we can from the context tokens.
  *
- * @param {Object} mutation
+ * @param {Mutation} mutation
  * @param {Object} tokens
  *
  * @returns {Object}
  * */
 export function getMutationArgsFromTokens (mutation, tokens) {
   const argspec = {}
-  let value = null
-  let alternate = null
+  let value
   for (const arg of mutation.args) {
-    alternate = alternateFields[arg._cylcType]
+    const alternate = alternateFields[arg._cylcType]
     for (let token in tokens) {
-      if (arg._cylcObject && [token, alternate].indexOf(arg._cylcObject) >= 0) {
+      if (arg._cylcObject && [token, alternate].includes(arg._cylcObject)) {
+        if (arg.name === 'cutoff') {
+          // Work around for a field we don't want filled in, see:
+          // * https://github.com/cylc/cylc-ui/issues/1222
+          // * https://github.com/cylc/cylc-ui/issues/1225
+          // TODO: Once #1225 is done the field type can be safely changed in
+          // the schema without creating a compatibility issue with the UIS.
+          continue
+        }
         if (arg._cylcObject === alternate) {
           token = alternate
         }
@@ -662,6 +865,17 @@ export function getMutationArgsFromTokens (mutation, tokens) {
 }
 
 /**
+ * @param {string} message
+ * @returns {MutationResponse}
+ */
+function _mutateSuccess (message) {
+  return {
+    status: mutationStatus.SUCCEEDED,
+    message
+  }
+}
+
+/**
  * Handle an error in a called mutation.
  *
  * @param {string} mutationName
@@ -678,15 +892,14 @@ async function _mutateError (mutationName, message, response) {
   }
 
   // open a user alert
-  await store.dispatch('setAlert', new AlertModel(
-    `command failed: ${mutationName} - ${message}`,
-    null,
-    'error')
+  await store.dispatch(
+    'setAlert',
+    new Alert(`Command failed: ${mutationName} - ${message}`, 'error')
   )
 
   // format a response
   return {
-    status: TaskState.SUBMIT_FAILED,
+    status: mutationStatus.FAILED,
     message
   }
 }
@@ -694,26 +907,28 @@ async function _mutateError (mutationName, message, response) {
 /**
  * Call a mutation.
  *
- * @param {Object} mutation
- * @param {Object} args
+ * @param {Mutation} mutation
+ * @param {Object} variables
  * @param {ApolloClient} apolloClient
+ * @param {string=} cylcID
  *
- * @returns {Promise<MutationResponse>} {status, msg}
+ * @returns {(MutationResponse | Promise<MutationResponse>)} {status, msg}
  */
-export async function mutate (mutation, args, apolloClient) {
+export async function mutate (mutation, variables, apolloClient, cylcID) {
+  const mutationStr = constructMutation(mutation)
   let response = null
   // eslint-disable-next-line no-console
   console.debug([
     `mutation(${mutation.name})`,
-    constructMutation(mutation),
-    args
+    mutationStr,
+    variables
   ])
 
   try {
     // call the mutation
     response = await apolloClient.mutate({
-      mutation: gql(constructMutation(mutation)),
-      variables: args
+      mutation: gql(mutationStr),
+      variables
     })
   } catch (err) {
     // mutation failed (client-server error e.g. variable format, syntax error)
@@ -726,25 +941,44 @@ export async function mutate (mutation, args, apolloClient) {
   }
 
   try {
-    const result = response.data[mutation.name].result
+    const { result } = response.data[mutation.name]
     if (Array.isArray(result) && result.length === 2) {
       // regular [commandSucceeded, message] format
       if (result[0] === true) {
         // success
-        return {
-          status: TaskState.SUBMITTED,
-          message: result[1]
-        }
+        return _mutateSuccess(result[1])
       }
       // failure (Cylc error, e.g. could not find workflow <x>)
       return _mutateError(mutation.name, result[1], response)
     }
     // command in a different format (e.g. info command)
-    return {
-      status: TaskState.SUBMITTED,
-      message: result
-    }
+    return _mutateSuccess(result)
   } catch (error) {
     return _mutateError(mutation.name, 'invalid response', response)
   }
+}
+
+/**
+ * Send a GraphQL query.
+ *
+ * @export
+ * @param {Query} query - Query to send
+ * @param {Object} variables - Query variables
+ * @param {ApolloClient} apolloClient
+ * @return {Promise<Object>}
+ */
+export async function query (query, variables, apolloClient) {
+  const queryStr = constructQueryStr(query)
+  // eslint-disable-next-line no-console
+  console.debug([
+    `query(${query.name})`,
+    queryStr,
+    variables
+  ])
+
+  const response = await apolloClient.query({
+    query: gql(queryStr),
+    variables
+  })
+  return response.data
 }

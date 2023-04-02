@@ -197,7 +197,7 @@ function addChild (parentNode, childNode) {
 function removeChild (state, node, parentNode = null) {
   // console.log(`$t -- ${node.id}`)
   let key = 'children'
-  if (node.type === '$namesapce') {
+  if (node.type === '$namespace') {
     key = '$namespaces'
   } else if (node.type === '$edge') {
     key = '$edges'
@@ -358,7 +358,7 @@ function getFamilyTree (tokens, node) {
   }
 
   // add family levels below the cycle point
-  for (const ancestor of node.ancestors || []) {
+  for (const ancestor of node.ancestors.slice().reverse() || []) {
     ret.push([
       'family',
       ancestor.name,

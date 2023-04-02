@@ -15,29 +15,63 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { upperFirst } from 'lodash'
+import { processMutations } from '@/utils/aotf'
+import { cloneDeep, upperFirst } from 'lodash'
 import {
   MUTATIONS
 } from '../support/graphql'
+import { Deferred } from '../../util'
 
 describe('Mutations component', () => {
   beforeEach(() => {
-    // Patch graphql responses
+    cy.visit('/#/tree/one')
+  })
+
+  /**
+   * @param {string} nodeName - the tree node name, to search for and open the mutations form
+   */
+  const openMutationsForm = (nodeName) => {
+    cy.get('[data-cy=tree-view]').as('treeView')
+      .find('.treeitem')
+      .find('.c-task')
+      .should('be.visible')
+    cy.get('@treeView')
+      .find('span')
+      .contains(nodeName)
+      .parent()
+      .find('.c-task')
+      .click()
     cy
-      .intercept('/graphql', (req) => {
-        const query = req.body.query
-        if (query.includes('__schema')) { // query that loads mutations
-          req.reply({
-            data: {
-              __schema: {
-                mutationType: {
-                  fields: MUTATIONS
-                },
-                types: []
-              }
-            }
-          })
-        } else { // mutation
+      .get('.c-mutation-menu-list:first')
+      .find('[data-cy=mutation-edit]:first')
+      .should('exist')
+      .should('be.visible')
+      .click()
+  }
+
+  /** Patch the list of available mutations */
+  const mockMutations = () => {
+    cy.window().its('app.$workflowService').then(service => {
+      const mutations = cloneDeep(MUTATIONS)
+      processMutations(mutations, [])
+      service.introspection = Promise.resolve({
+        mutations,
+        types: [],
+        queries: []
+      })
+      service.primaryMutations = {
+        workflow: ['workflowMutation']
+      }
+    })
+  }
+
+  describe('Successful submission', () => {
+    beforeEach(() => {
+      mockMutations()
+      // Patch graphql responses
+      cy.intercept('/graphql', (req) => {
+        const { query } = req.body
+        if (query.startsWith('mutation')) {
           console.log(req)
           req.reply({
             data: {
@@ -49,87 +83,93 @@ describe('Mutations component', () => {
           })
         }
       })
-      .as('HoldMutationQuery')
-  })
-
-  /**
-   * @param {string} nodeName - the tree node name, to search for and open the mutations form
-   */
-  const openMutationsForm = (nodeName) => {
-    cy.window().its('app.$workflowService').then(service => {
-      // mock the apollo client's mutate method to catch low-level calls
-      service.primaryMutations = {
-        workflow: ['workflowMutation']
-      }
     })
-    cy.get('[data-cy=tree-view]').as('treeView')
-      .find('.treeitem')
-      .find('.c-task')
-      .should('be.visible')
-    // cy.wait(['@HoldMutationQuery'])
-    cy.get('@treeView')
-      .find('span')
-      .contains(nodeName)
-      .parent()
-      .find('.c-task')
-      .click()
-    cy
-      .get('.c-mutation-menu-list:first')
-      .find('[data-cy=mutation-edit]')
-      .should('exist')
-      .should('be.visible')
-      .click()
-  }
 
-  const submitMutationForms = () => {
-    cy.visit('/#/workflows/one')
-    openMutationsForm('BAD')
-    // fill mocked mutation form with any data
-    cy
-      .get('.v-dialog')
-      .within(() => {
-        // type anything in the text inputs
-        cy
-          .get('input[type="text"]')
-          .each(($el) => {
-            cy.wrap($el).clear()
-            cy.wrap($el).type('ABC')
-          })
+    it('should submit a mutation form', () => {
+      openMutationsForm('BAD')
+      // fill mocked mutation form with any data
+      cy.get('.v-dialog')
+        .within(() => {
+          // type anything in the text inputs
+          cy.get('input[type="text"]')
+            .each(($el) => {
+              cy.wrap($el).clear()
+              cy.wrap($el).type('ABC')
+            })
+        })
         // click on the submit button
-        cy
-          .get('span')
-          .contains('Submit')
-          .parent()
-          .click()
-      })
-  }
+        .get('[data-cy="submit"]')
+        .click()
+        // form should close on successfull submission
+        .get('.c-mutation-dialog')
+        .should('not.exist')
 
-  it('should submit a mutation form', () => {
-    submitMutationForms()
+      // It should not remember data after submission
+      openMutationsForm('BAD')
+      cy.get('.v-dialog')
+        .within(() => {
+          cy.get('input[type="text"]')
+            .each(($el) => {
+              cy.wrap($el).should('not.contain.value', 'ABC')
+            })
+        })
+    })
+
+    it('should stay open while submitting', () => {
+      const deferred = new Deferred()
+      cy.intercept('/graphql', req => {
+        if (req.body.query.startsWith('mutation')) {
+          // Cypress will await promise before continuing with the request
+          return deferred.promise
+        }
+      })
+      openMutationsForm('BAD')
+      cy.get('[data-cy="submit"]')
+        .click()
+        .should('have.class', 'v-btn--loading')
+      // Wait half a sec in case dialog closes
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(500)
+        .get('.c-mutation-dialog')
+        .should('be.visible')
+        // Now let mutation response through
+        .then(() => {
+          cy.log('Resolve mutation')
+          deferred.resolve()
+        })
+        // Now the form should close
+        .get('.c-mutation-dialog')
+        .should('not.exist')
+    })
   })
 
-  it('should not remember data after submitting a mutation form', () => {
-    submitMutationForms()
-    // close submit form (not clicking on cancel, as it appears to clear the form, but outside the dialog)
-    cy
-      .get('.v-overlay')
-      .click({ force: true })
-    // click on the GOOD family proxy now
-    openMutationsForm('GOOD')
-    cy
-      .get('.v-dialog')
-      .within(() => {
-        // type anything in the text inputs
-        cy
-          .get('input[type="text"]')
-          .each(($el) => {
-            cy.wrap($el).should('not.contain.value', 'ABC')
-          })
-      })
+  describe('Failed submission', () => {
+    // Note: in offline mode, mutations currently fail by default without patching graphql
+    it('should stay open if failed', () => {
+      openMutationsForm('GOOD')
+      cy.get('[data-cy="submit"]')
+        .click()
+        // Error snackbar should appear
+        .get('[data-cy="alert-snack"] > .v-snack__wrapper')
+        .as('snackbar')
+        .should('be.visible')
+        .find('[data-cy="snack-close"]')
+        .click()
+        .get('@snackbar')
+        .should('not.exist')
+        // Form should stay open
+        .get('.c-mutation-dialog')
+        .should('be.visible')
+        // Clicking cancel should close form
+        .get('[data-cy="cancel"]')
+        .click()
+        .get('.c-mutation-dialog')
+        .should('not.exist')
+    })
   })
 
   it('should validate the form', () => {
-    cy.visit('/#/workflows/one')
+    mockMutations()
     openMutationsForm('checkpoint')
     // Form should be valid initially
     cy.get('[data-cy=submit]').as('submit')
@@ -140,7 +180,7 @@ describe('Mutations component', () => {
       .trigger('mouseenter')
       .should('have.attr', 'aria-expanded', 'false') // should not be visible
     // Now type invalid input
-    cy.get('.c-mutation-form')
+    cy.get('.c-mutation-dialog')
       .find('.v-list-item__title')
       .contains('workflow')
       .parent()
