@@ -1906,14 +1906,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hpcc-js/wasm@npm:1.13":
-  version: 1.13.0
-  resolution: "@hpcc-js/wasm@npm:1.13.0"
+"@hpcc-js/wasm@npm:1.20":
+  version: 1.20.1
+  resolution: "@hpcc-js/wasm@npm:1.20.1"
   dependencies:
-    yargs: ^17.3.1
+    yargs: 17.6.0
   bin:
-    dot-wasm: bin/cli.js
-  checksum: ea2c07803389577f6c736375cb045eb0153475207fe6ef250ca1927d48991e8eb404ccd093d3f19fa94799a0f92181d9ae9b0e67c616592ffb911aab638cf221
+    dot-wasm: bin/dot-wasm.mjs
+  checksum: 465f6c8d59f1930c3a4d4df006ab271a2ae38210ceb4f418df371ca154d84ade1c84a4ac07f102e77748ba1abd4c7e9fa597178aa48e1951afd91d47c1460e7f
   languageName: node
   linkType: hard
 
@@ -5511,6 +5511,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cliui@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "cliui@npm:8.0.1"
+  dependencies:
+    string-width: ^4.2.0
+    strip-ansi: ^6.0.1
+    wrap-ansi: ^7.0.0
+  checksum: 79648b3b0045f2e285b76fb2e24e207c6db44323581e421c3acbd0e86454cba1b37aea976ab50195a49e7384b871e6dfb2247ad7dec53c02454ac6497394cb56
+  languageName: node
+  linkType: hard
+
 "clone-response@npm:^1.0.2":
   version: 1.0.2
   resolution: "clone-response@npm:1.0.2"
@@ -6400,7 +6411,7 @@ __metadata:
     "@cypress/code-coverage": ^3.9.12
     "@cypress/vue": ^5.0.0
     "@cypress/webpack-preprocessor": ^5.11.0
-    "@hpcc-js/wasm": 1.13
+    "@hpcc-js/wasm": 1.20
     "@lumino/algorithm": ^1.9.1
     "@lumino/default-theme": ^0.22.0
     "@lumino/widgets": ^1.31.1
@@ -18155,6 +18166,21 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^20.2.2
   checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
+  languageName: node
+  linkType: hard
+
+"yargs@npm:17.6.0":
+  version: 17.6.0
+  resolution: "yargs@npm:17.6.0"
+  dependencies:
+    cliui: ^8.0.1
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.0.0
+  checksum: 604bdb4a6395a870540d2f3fea083c8e28441f12da8fd05b172b1e68480f00ed73d76be4a05fac19de9bf55ec7729b41e81cf555cccaed700aa192e4fff64872
   languageName: node
   linkType: hard
 
