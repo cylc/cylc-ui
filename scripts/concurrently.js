@@ -15,6 +15,11 @@ const allCommands = {
     name: 'VITE',
     prefixColor: 'blue'
   },
+  preview: {
+    command: `yarn run -B vite preview ${VITE_OPTIONS ?? ''}`,
+    name: 'VITE',
+    prefixColor: 'blue'
+  },
   'e2e:open': {
     command: 'yarn run -B cypress open --e2e',
     name: 'TESTS',

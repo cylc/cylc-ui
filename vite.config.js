@@ -45,7 +45,8 @@ export default defineConfig(({ mode }) => ({
       failOnError: mode === process.env.NODE_ENV && mode === 'production'
     }),
     IstanbulPlugin({
-      requireEnv: true // Only instrument code when VITE_COVERAGE=true
+      requireEnv: true, // Only instrument code when VITE_COVERAGE=true
+      forceBuildInstrument: true,
     })
   ],
   optimizeDeps: {

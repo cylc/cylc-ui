@@ -72,9 +72,13 @@ jobs:
       - name: Test (E2E)
         if: matrix.type == 'e2e'
         uses: cypress-io/github-action@v5
+        env:
+          BASE_URL: http://localhost:4173/
         with:
-          start: yarn run serve
-          wait-on: http://localhost:5173/
+          build: yarn run build --mode development
+          start: yarn run preview
+          config: baseUrl=${{ env.BASE_URL }}
+          wait-on: ${{ env.BASE_URL }}
           browser: ${{ matrix.browser }}
 
       - name: Test (component)

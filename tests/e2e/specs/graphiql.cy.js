@@ -24,18 +24,10 @@ const query = `query App {
 `
 
 describe('GraphiQL', () => {
-  it('should load the GraphiQL application', () => {
-    cy.visit('/#/graphiql')
-    cy
-      .get('.title')
-      .should('be.visible')
-  })
   it('should execute a GraphQL query and get a valid response', () => {
     cy.visit('/#/graphiql')
-    // NB: at least three CodeMirror editors in the UI
-    //     1. Query
-    //     2. Variables
-    //     3. Results
+      .get('.title')
+      .should('be.visible')
     cy.intercept('/graphql*').as('GraphQLQuery')
     cy.get('.CodeMirror')
       .should('have.length', 4)
@@ -56,7 +48,6 @@ describe('GraphiQL', () => {
     cy.get('.execute-button')
       .click()
     cy.wait('@GraphQLQuery')
-    // https://stackoverflow.com/a/48916050
     cy.get('.resultWrap')
       .find('.spinner')
       .should('not.exist')
