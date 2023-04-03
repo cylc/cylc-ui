@@ -115,12 +115,12 @@ describe('Table view', () => {
         .contains('eventually')
         .should('be.visible')
     })
-    it('displays and sorts dt-mean', () => {
+    it('displays and sorts mean run time', () => {
       cy.visit('/#/table/one')
 
       cy
         // sort dt-mean ascending
-        .get('[aria-label="dT-mean: Not sorted. Activate to sort ascending."] > :nth-child(1)')
+        .get('[aria-label="<Run-Time>: Not sorted. Activate to sort ascending."] > :nth-child(1)')
         .click({ force: true })
 
         // check 0 is at the top (1st row, 10th column)
@@ -129,7 +129,7 @@ describe('Table view', () => {
           expect($ele.text().trim()).equal('') // no value sorted first
         })
 
-        // sort ft-mean descending
+        // sort dt-mean descending
         .get('.asc > .v-icon > .v-icon__svg > path')
         .click({ force: true })
 
