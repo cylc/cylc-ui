@@ -4633,7 +4633,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.5.2":
+"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3":
   version: 3.5.3
   resolution: "chokidar@npm:3.5.3"
   dependencies:
@@ -5177,11 +5177,11 @@ __metadata:
     axios: ^1.0.0
     babel-plugin-istanbul: ^6.1.1
     bufferutil: ^4.0.6
+    chokidar: ^3.5.3
     concurrently: ^7.0.0
     core-js: 3
     cross-fetch: ^3.1.5
     cypress: ^12.8.1
-    cypress-vite: ^1.3.1
     dedent: ^0.7.0
     enumify: ^2.0.0
     eslint: ^8.0.0
@@ -5229,17 +5229,6 @@ __metadata:
     vuex: ^4.1.0
   languageName: unknown
   linkType: soft
-
-"cypress-vite@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "cypress-vite@npm:1.3.1"
-  dependencies:
-    debug: ^4.3.4
-  peerDependencies:
-    vite: ^2.9.0 || ^3.0.0 || ^4.0.0
-  checksum: fd2b10cab6c9790f6153921f7ba57ef676a1bfb6bc70dca898e5e11cf26c6c2805ced83c3f0abb9ddb2e4dd061263413443eb405b8c9f51ed133c77b8e9de7c1
-  languageName: node
-  linkType: hard
 
 "cypress@npm:^12.8.1":
   version: 12.8.1

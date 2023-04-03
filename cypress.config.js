@@ -1,5 +1,5 @@
 const { defineConfig } = require('cypress')
-const vitePreprocessor = require('cypress-vite')
+const vitePreprocessor = require('./tests/e2e/support/vite-preprocessor')
 const path = require('path')
 
 module.exports = defineConfig({
