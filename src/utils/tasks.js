@@ -100,8 +100,16 @@ function jobMessageOutputs (jobNode) {
   return ret
 }
 
+/**
+ * Convert duration to an easily read format
+ * Durations of 0 seconds return undefined unless allowZeros is true
+ *
+ * @param {number=} dur Duration in seconds
+ * @param {boolean} [allowZeros=false] Whether durations of 0 are formatted as
+ * 00:00:00, rather than undefined
+ * @return {string=} Formatted duration
+ */
 function formatDuration (dur, allowZeros = false) {
-  // Convert to an easily read duration format:
   if (dur || (dur === 0 && allowZeros === true)) {
     const seconds = dur % 60
     const minutes = ((dur - seconds) / 60) % 60

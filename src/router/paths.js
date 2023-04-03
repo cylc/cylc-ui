@@ -130,7 +130,8 @@ export default [
     name: 'analysis',
     meta: {
       layout: 'default',
-      toolbar: true
+      toolbar: true,
+      showSidebar: false
     },
     props: true
   }
