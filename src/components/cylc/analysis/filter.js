@@ -46,7 +46,7 @@ export function matchTask (task, tasksFilter) {
 export function platformOptions (tasks) {
   const platformOptions = [{ text: 'All', value: null }]
   const platforms = []
-  for (const task of Object.values(tasks)) {
+  for (const task of tasks) {
     if (!platforms.includes(task.platform)) {
       platforms.push(task.platform)
       platformOptions.push({ text: task.platform, value: task.platform })

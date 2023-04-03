@@ -19,7 +19,7 @@ import Vue from 'vue'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { expect } from 'chai'
 import Vuetify from 'vuetify/lib'
-import { analysisTasks } from './analysis.data'
+import { analysisQuery } from '@/services/mock/json'
 // import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable'
@@ -42,6 +42,7 @@ localVue.prototype.$workflowService = {
   })
 }
 localVue.use(CylcObjectPlugin)
+const analysisTasks = analysisQuery.data.tasks
 
 describe('AnalysisTable component', () => {
   let vuetify
@@ -83,9 +84,11 @@ describe('AnalysisTable component', () => {
     })
 
     // check the the raw task data doesn't have the names in order
-    expect(wrapper.vm.tasks[0].name).to.equal('succeeded')
-    expect(wrapper.vm.tasks[1].name).to.equal('eventually_succeeded')
-    expect(wrapper.vm.tasks[2].name).to.equal('waiting')
+    expect(wrapper.vm.tasks.map((task) => task.name)).to.deep.equal([
+      'succeeded',
+      'eventually_succeeded',
+      'waiting'
+    ])
 
     // check that the html have the names in alphabetical order
     await wrapper.vm.$nextTick()

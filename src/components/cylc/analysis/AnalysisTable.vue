@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <v-container
         fluid
-        class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
+        class="pa-0"
       >
         <v-data-table
           :headers="shownHeaders"
@@ -39,6 +39,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           }"
           :options="{ itemsPerPage: 50 }"
         >
+          <!-- Use custom format for values in columns that have a specified formatter: -->
+          <!-- Used to make durations human readable -->
+          <!-- Durations of 0 will be undefined unless allowZeros is true -->
           <template
             v-for="header in shownHeaders.filter(header => header.hasOwnProperty('formatter'))"
             v-slot:[`item.${header.value}`]="{ value }"
