@@ -22,82 +22,86 @@ import eslint from 'vite-plugin-eslint'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 const path = require('path')
 
-export default defineConfig(({ mode }) => ({
-  base: '',
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      react: 'preact/compat',
-      'react-dom': 'preact/compat',
-      // node_modules:
-      '~@lumino': '@lumino'
-    }
-  },
-  plugins: [
+export default defineConfig(({ mode }) => {
+  const plugins = [
     vue(),
     vuetify(),
     eslint({
-      /* Note: $NODE_ENV is still `production` even when running
-      `vite build --mode development`. We only want eslint to fail the
-      `--mode production` build. And we don't want cypress spec file
-      transformation to fail either (`mode` seems to be production in this
-      case but we set $NODE_ENV to development in cypress.config.js) */
-      failOnError: mode === process.env.NODE_ENV && mode === 'production'
+      failOnError: mode === 'production'
     }),
-    IstanbulPlugin({
-      requireEnv: true, // Only instrument code when VITE_COVERAGE=true
-      forceBuildInstrument: true,
-    })
-  ],
-  optimizeDeps: {
-    entries: ['./src/**/*.{vue,js,jsx,ts,tsx}'],
-    /* Vuetify components are dynamically imported by vite-plugin-vuetify,
-    so Vite only knows which components are being used upon navigation, causing
-    it to optimize them on the fly instead of pre-bundling. This can cause a
-    page reload which breaks some Cypress tests, so we exclude Vuetify from
-    optimization in that case. */
-    exclude: ['vuetify'],
-  },
-  server: {
-    proxy: {
-      '^/(userprofile|graphql)': {
-        target: 'http://localhost:3000/',
-        changeOrigin: true
-      },
-      '^/subscriptions': {
-        target: 'http://localhost:3000/',
-        changeOrigin: true,
-        ws: true
+  ]
+
+  if (process.env.COVERAGE) {
+    plugins.push(
+      IstanbulPlugin({
+        forceBuildInstrument: true
+      })
+    )
+  }
+
+  return {
+    base: '',
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+        react: 'preact/compat',
+        'react-dom': 'preact/compat',
+        // Fix imports inside node_modules code:
+        '~@lumino': '@lumino'
       }
     },
-    watch: {
-      ignored: [
-        path.resolve(__dirname, './coverage')
-      ]
+    plugins,
+    optimizeDeps: {
+      entries: ['./src/**/*.{vue,js,jsx,ts,tsx}'],
+      /* Vuetify components are dynamically imported by vite-plugin-vuetify,
+      so Vite only knows which components are being used upon navigation, causing
+      it to optimize them on the fly instead of pre-bundling. This can cause a
+      page reload which breaks some Cypress tests, so we exclude Vuetify from
+      optimization in that case. */
+      exclude: ['vuetify'],
     },
-  },
-  build: {
-    sourcemap: mode !== 'production'
-  },
-  define: {
-    // Allow vue devtools to work when runing vite build:
-    __VUE_PROD_DEVTOOLS__: mode !== 'production'
-  },
-  test: {
-    include: ['./tests/unit/**/*.spec.{js,ts}'],
-    environment: 'jsdom',
-    reporter: 'verbose',
-    globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
-    setupFiles: ['./tests/unit/setup.js'],
-    deps: {
-      // inline vuetify to prevent 'TypeError: Unknown file extension ".css"
-      inline: ['vuetify']
+    server: {
+      proxy: {
+        '^/(userprofile|graphql)': {
+          target: 'http://localhost:3000/',
+          changeOrigin: true
+        },
+        '^/subscriptions': {
+          target: 'http://localhost:3000/',
+          changeOrigin: true,
+          ws: true
+        }
+      },
+      watch: {
+        ignored: [
+          path.resolve(__dirname, './coverage')
+        ]
+      },
     },
-    coverage: {
-      provider: 'istanbul'
+    build: {
+      sourcemap: mode !== 'production',
+    },
+    define: {
+      // Allow vue devtools to work when runing vite build:
+      __VUE_PROD_DEVTOOLS__: mode !== 'production'
+    },
+    // Unit test specific config:
+    test: {
+      include: ['./tests/unit/**/*.spec.{js,ts}'],
+      environment: 'jsdom',
+      reporter: 'verbose',
+      globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
+      setupFiles: ['./tests/unit/setup.js'],
+      deps: {
+        // inline vuetify to prevent 'TypeError: Unknown file extension ".css"
+        inline: ['vuetify']
+      },
+      coverage: {
+        provider: 'istanbul'
+      }
     }
   }
-}))
+})
 
 // module.exports = {
 //   transpileDependencies: [
@@ -106,7 +110,6 @@ export default defineConfig(({ mode }) => ({
 //     'vuetify'
 //   ],
 //   runtimeCompiler: true,
-//   productionSourceMap: process.env.NODE_ENV !== 'production',
 //   pluginOptions: {
 //     apollo: {
 //       lintGQL: false

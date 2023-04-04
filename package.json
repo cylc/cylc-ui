@@ -8,7 +8,7 @@
     "build:watch": "yarn run build --watch --mode development",
     "checkpoint": "./src/services/mock/generate",
     "coverage:unit": "vitest run --coverage",
-    "coverage:e2e": "VITE_COVERAGE=true yarn run test:e2e",
+    "coverage:e2e": "COVERAGE=true yarn run test:e2e",
     "dev": "yarn run serve",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.vue --ignore-path .gitignore",
     "preview": "node ./scripts/concurrently.js serve:jupyterhub preview",

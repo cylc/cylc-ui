@@ -71,6 +71,7 @@ function vitePreprocessor (userConfigPath) {
     }
 
     const defaultConfig = vite.defineConfig({
+      mode: 'development',
       logLevel: 'warn',
       define: {
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),

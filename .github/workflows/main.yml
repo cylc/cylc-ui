@@ -59,7 +59,7 @@ jobs:
 #           - os: macos-latest
 #             browser: edge
     env:
-      VITE_COVERAGE: true
+      COVERAGE: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
