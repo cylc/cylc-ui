@@ -122,14 +122,14 @@ export default {
 
           // set callback and color
           switch (control.action) {
-          case 'toggle':
-            callback = (e) => this.toggle(control, e)
-            if (control.value) {
-              color = 'blue'
-            }
-            break
-          case 'callback':
-            callback = (e) => this.call(control, e)
+            case 'toggle':
+              callback = (e) => this.toggle(control, e)
+              if (control.value) {
+                color = 'blue'
+              }
+              break
+            case 'callback':
+              callback = (e) => this.call(control, e)
           }
 
           // set disabled

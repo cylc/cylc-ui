@@ -39,6 +39,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '../graphql/queries'
 
 export default {
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Table',
 
   mixins: [

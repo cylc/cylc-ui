@@ -1,4 +1,3 @@
-/// <reference types="Cypress" />
 /**
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *

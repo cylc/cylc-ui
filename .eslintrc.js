@@ -17,15 +17,17 @@
 
 module.exports = {
   root: true,
-  env: {
-    node: true
+  parserOptions: {
+    /* Allow new ECMAScript syntax but not globals. This is because vite/esbuild
+    transforms syntax to es2015 (at the earliest) but does not pollyfill APIs. */
+    ecmaVersion: 'latest',
   },
   extends: [
     'standard',
     'eslint:recommended',
     'plugin:vue/vue3-essential',
     'plugin:vuetify/base',
-    'plugin:cypress/recommended'
+    'plugin:cypress/recommended',
   ],
   rules: {
     'comma-dangle': [
@@ -38,22 +40,10 @@ module.exports = {
         functions: 'never',
       },
     ],
-    indent: [
-      'error',
-      2,
-      {
-        ignoredNodes: [
-          'TemplateLiteral'
-        ]
-      }
-    ],
     'template-curly-spacing': [
       'off'
     ],
     'vue/multi-word-component-names': [
-      'off'
-    ],
-    'vue/no-reserved-component-names': [
       'off'
     ],
     'vue/valid-v-slot': [
@@ -62,10 +52,11 @@ module.exports = {
         allowModifiers: true
       }
     ],
-    'import/no-duplicates': 'off',
-    'no-duplicate-imports': 'error'
+    'promise/param-names': [
+      'error'
+    ],
+    'promise/no-return-wrap': [
+      'error'
+    ],
   },
-  parserOptions: {
-    parser: '@babel/eslint-parser'
-  }
 }

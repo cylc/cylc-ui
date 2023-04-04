@@ -243,48 +243,48 @@ export function removeAstLoc (node) {
  */
 function mergeValues (valueA, valueB) {
   switch (valueA.kind) {
-  case 'Variable':
-    if (valueA.name.value !== valueB.name.value) {
-      throw new Error(`Cannot merge VariableNode's with different variables "${valueA.name.value}" and "${valueB.name.value}"`)
-    }
-    break
-  case 'BooleanValue':
-  case 'StringValue':
-  case 'IntValue':
-  case 'FloatValue':
-    if (valueA.value !== valueB.value) {
-      throw new Error(`Cannot merge ${valueA.kind}'s with different values`)
-    }
-    break
-  case 'NullValue':
-    break
-  case 'ListValue':
-    for (const value of valueB.values) {
-      if (!valueA.values.find(element => element.kind === value.kind && element.value === value.value)) {
-        valueA.values.push(value)
+    case 'Variable':
+      if (valueA.name.value !== valueB.name.value) {
+        throw new Error(`Cannot merge VariableNode's with different variables "${valueA.name.value}" and "${valueB.name.value}"`)
       }
+      break
+    case 'BooleanValue':
+    case 'StringValue':
+    case 'IntValue':
+    case 'FloatValue':
+      if (valueA.value !== valueB.value) {
+        throw new Error(`Cannot merge ${valueA.kind}'s with different values`)
+      }
+      break
+    case 'NullValue':
+      break
+    case 'ListValue':
+      for (const value of valueB.values) {
+        if (!valueA.values.find(element => element.kind === value.kind && element.value === value.value)) {
+          valueA.values.push(value)
+        }
+      }
+      break
+    case 'ObjectValue': {
+      // this is literally an object in the GraphQL query, e.g.:
+      // taskProxy {
+      //   outputs (satisfied: true, sort: { keys: ["time"], reverse: true}) {
+      //     label
+      //     message
+      //   }
+      // }
+      // The sort: {} is an object with properties keys and reverse...
+      // In order to compare the two objects, first we must omit the loc (source code location from AST...)
+      const objectA = removeAstLoc(valueA)
+      const objectB = removeAstLoc(valueB)
+      if (!isEqual(objectA, objectB)) {
+        throw new Error('Cannot merge two object values if they have different properties')
+      }
+      break
     }
-    break
-  case 'ObjectValue': {
-    // this is literally an object in the GraphQL query, e.g.:
-    // taskProxy {
-    //   outputs (satisfied: true, sort: { keys: ["time"], reverse: true}) {
-    //     label
-    //     message
-    //   }
-    // }
-    // The sort: {} is an object with properties keys and reverse...
-    // In order to compare the two objects, first we must omit the loc (source code location from AST...)
-    const objectA = removeAstLoc(valueA)
-    const objectB = removeAstLoc(valueB)
-    if (!isEqual(objectA, objectB)) {
-      throw new Error('Cannot merge two object values if they have different properties')
-    }
-    break
-  }
-  case 'EnumValue':
-  default:
-    throw new Error(`Unsupported value nodes to merge of kind ${valueA.kind}`)
+    case 'EnumValue':
+    default:
+      throw new Error(`Unsupported value nodes to merge of kind ${valueA.kind}`)
   }
   return valueA
 }
