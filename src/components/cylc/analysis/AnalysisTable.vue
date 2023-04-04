@@ -124,19 +124,19 @@ export default {
         },
         {
           text: `Q1 T-${times}`,
-          value: `firstQuartile${times}`,
+          value: `${times.toLowerCase()}Quartiles[0]`,
           formatter: formatDuration,
           allowZeros: false
         },
         {
           text: `Median T-${times}`,
-          value: `secondQuartile${times}`,
+          value: `${times.toLowerCase()}Quartiles[1]`,
           formatter: formatDuration,
           allowZeros: false
         },
         {
           text: `Q3 T-${times}`,
-          value: `thirdQuartile${times}`,
+          value: `${times.toLowerCase()}Quartiles[2]`,
           formatter: formatDuration,
           allowZeros: false
         },
