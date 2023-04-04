@@ -237,7 +237,9 @@ export default {
   },
 
   computed: {
-    /** List of the workflow IDs this view is "viewing" */
+    // a list of the workflow IDs this view is "viewing"
+    // NOTE: we plan multi-workflow functionality so we are writing views
+    // to be mult-workflow compatible in advance of this feature arriving
     workflowIDs () {
       return [this.workflowId]
     },
@@ -250,6 +252,8 @@ export default {
   },
 
   methods: {
+    // run the one-off query for historical job data and pass its results
+    // through the callback
     async historicalQuery () {
       this.tasks = []
       this.callback = new AnalysisCallback(this.tasks)
