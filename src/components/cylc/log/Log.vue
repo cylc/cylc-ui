@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <pre><code><span v-for="(log, index) in computedLogs" :key="index">{{log}}</span></code></pre>
+    <pre><span v-for="(log, index) in computedLogs" :key="index">{{log}}</span></pre>
   </div>
 </template>
 
@@ -28,7 +28,6 @@ export default {
   props: {
     placeholder: {
       type: String,
-      default: 'Waiting for logs',
       required: false
     },
     timestamps: {
@@ -52,8 +51,10 @@ export default {
         if (!this.timestamps) {
           return this.updateLogs()
         } else return this.logs
-      } else {
+      } else if (this.placeholder) {
         return [this.placeholder]
+      } else {
+        return []
       }
     }
   },

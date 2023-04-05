@@ -269,9 +269,7 @@ export default {
           {
             viewName: 'Log',
             initialOptions: {
-              workflow: this.node.tokens.workflow,
-              task: this.node.tokens.relative_id,
-              file: 'job.out'
+              tokens: this.node.tokens
             }
           }
         )
