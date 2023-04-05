@@ -34,9 +34,28 @@ export default {
     subscriptionMixin
   ],
   beforeMount () {
-    this.$workflowService.subscribe(this)
+    if (this.query) {
+      this.$workflowService.subscribe(this)
+    }
   },
   beforeDestroy () {
-    this.$workflowService.unsubscribe(this)
+    this._updateQuery(null, this.query)
+  },
+  methods: {
+    _updateQuery (newVal, oldVal) {
+      // if the query changes, unsubscribe & re-subscribe
+      if (oldVal) {
+        this.$workflowService.unsubscribe({ query: oldVal })
+      }
+      if (newVal) {
+        this.$workflowService.subscribe({ query: newVal })
+        this.$workflowService.startSubscriptions()
+      }
+    }
+  },
+  watch: {
+    query: function (newVal, oldVal) {
+      this._updateQuery(newVal, oldVal)
+    }
   }
 }

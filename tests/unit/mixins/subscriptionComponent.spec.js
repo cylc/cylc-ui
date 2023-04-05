@@ -21,7 +21,7 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 
 const localVue = createLocalVue()
 
-describe('Subscription Component mixin', () => {
+describe.only('Subscription Component mixin', () => {
   let workflowService
   beforeEach(() => {
     workflowService = {
@@ -37,6 +37,7 @@ describe('Subscription Component mixin', () => {
   it('should provide a hook for when the component is created', () => {
     const Component = {
       mixins: [subscriptionComponentMixin],
+      data () { return { query: true } },
       render () {
       }
     }
@@ -48,6 +49,7 @@ describe('Subscription Component mixin', () => {
   it('should provide a hook for when the component is destroyed', () => {
     const Component = {
       mixins: [subscriptionComponentMixin],
+      data () { return { query: true } },
       render () {
       }
     }
