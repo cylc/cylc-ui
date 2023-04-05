@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => {
     }),
   ]
 
-  if (process.env.COVERAGE) {
+  if (mode !== 'production' && process.env.COVERAGE) {
     plugins.push(
       IstanbulPlugin({
         forceBuildInstrument: true
@@ -89,7 +89,6 @@ export default defineConfig(({ mode }) => {
     test: {
       include: ['./tests/unit/**/*.spec.{js,ts}'],
       environment: 'jsdom',
-      reporter: 'verbose',
       globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
       setupFiles: ['./tests/unit/setup.js'],
       deps: {
@@ -115,22 +114,4 @@ export default defineConfig(({ mode }) => {
 //       lintGQL: false
 //     }
 //   },
-//   chainWebpack: config => {
-//     if (process.env.NODE_ENV !== 'production') {
-//       // devtool for test and other modes
-//       // https://webpack.js.org/configuration/devtool/
-//       if (process.env.NODE_ENV === 'test') {
-//         // NOTE: if you need to debug the project with WebStorm (or another IDE) and it fails, try
-//         //       change this value for config.devtool('eval-source-map')
-//         config.devtool('eval')
-//       } else {
-//         config.devtool('eval-source-map')
-//       }
-
-//       // resolve modules in devtool
-//       config.output
-//         .devtoolModuleFilenameTemplate('[absolute-resource-path]')
-//         .devtoolFallbackModuleFilenameTemplate('[absolute-resource-path]?[hash]')
-//     }
-//   }
 // }
