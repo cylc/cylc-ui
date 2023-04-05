@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container>
-    <apexchart type='boxPlot' width='90%' height='250%' :options="this.chartOptions" :series="this.boxPlot"></apexchart>
+    <apexchart type='boxPlot' :options="this.chartOptions" :series="this.boxPlot"></apexchart>
   </v-container>
 </template>
 
@@ -72,6 +72,7 @@ export default {
 
       if (this.timingOption === 'totalTimes') {
         for (let i = startingNumber; i < endingNumber; i++) {
+          if (!sortedTasks[i]) { continue }
           boxPlot[0].data.push(
             {
               x: sortedTasks[i].name,

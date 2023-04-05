@@ -78,7 +78,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-col>
         </v-row>
       </v-row>
-      <ViewToolbar :groups="groups" />
+      <ViewToolbar
+        :groups="groups"
+        @setOption="setOption"/>
       <v-row
         no-gutters
         class="flex-grow-1 position-relative"
@@ -91,34 +93,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             fluid
             class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
           >
-            <v-data-table
-              :headers="shownHeaders"
-              :items="filteredTasks"
-              :sort-by.sync="sortBy"
-              :page.sync="page"
-              :sortDesc.sync="sortDesc"
-              :itemsPerPage.sync="itemsPerPage"
-              dense
-              :footer-props="{
-                itemsPerPageOptions: [5, 10, 20, 50, 100, 200, -1],
-                showFirstLastPage: true
-              }"
-              :options="{ itemsPerPage: 50 }"
+          <v-data-table
+            v-if="table"
+            :headers="shownHeaders"
+            :items="filteredTasks"
+            :sort-by.sync="sortBy"
+            :page.sync="page"
+            :sortDesc.sync="sortDesc"
+            :itemsPerPage.sync="itemsPerPage"
+            dense
+            :footer-props="{
+              itemsPerPageOptions: [5, 10, 20, 50, 100, 200, -1],
+              showFirstLastPage: true
+            }"
+            :options="{ itemsPerPage: 20 }"
             >
-            <template v-slot:top="{ pagination, options, updateOptions }">
-              <v-data-footer
-                :pagination="pagination"
-                :options="options"
-                @update:options="updateOptions"
-                items-per-page-text="$vuetify.dataTable.itemsPerPageText"/>
-            </template>
           </v-data-table>
-            <BoxPlot :configOptions="configOptions" :workflowName="workflowName" :tasks="filteredTasks" :timingOption="tasksFilter.timingOption"></BoxPlot>
+          <BoxPlot
+            v-else
+            :configOptions="configOptions"
+            :workflowName="workflowName"
+            :tasks="filteredTasks"
+            :timingOption="tasksFilter.timingOption">
+          </BoxPlot>
           </v-container>
+          <v-pagination
+            v-if="!table"
+            v-model="page"
+            :length="Math.ceil(filteredTasks.length/itemsPerPage)"
+            :total-visible="7"/>
         </v-col>
       </v-row>
     </v-container>
-      </div>
+  </div>
 </template>
 
 <script>
@@ -131,7 +138,8 @@ import ViewToolbar from '@/components/cylc/ViewToolbar'
 import BoxPlot from '@/components/cylc/analysis/BoxPlot'
 import {
   mdiChartLine,
-  mdiRefresh
+  mdiRefresh,
+  mdiTable
 } from '@mdi/js'
 
 // list of fields to request for tasks
@@ -241,6 +249,7 @@ export default {
         title: 'analysis',
         icon: mdiChartLine
       },
+      table: true,
       // defines controls which get added to the toolbar
       // (see Graph.vue for example usage)
       groups: [
@@ -252,6 +261,13 @@ export default {
               icon: mdiRefresh,
               action: 'callback',
               callback: this.historicalQuery
+            },
+            {
+              title: 'Toggle',
+              icon: mdiTable,
+              action: 'toggle',
+              key: 'table',
+              value: true
             }
           ]
         }
@@ -263,7 +279,7 @@ export default {
       sortBy: 'name',
       page: 1,
       sortDesc: false,
-      itemsPerPage: 50,
+      itemsPerPage: 20,
       timingOptions: [
         { text: 'Total times', value: 'totalTimes' },
         { text: 'Run times', value: 'runTimes' },
@@ -440,6 +456,9 @@ export default {
         { workflows: this.workflowIDs }
       )
       this.callback.onAdded(ret.data)
+    },
+    setOption (option, value) {
+      Vue.set(this, option, value)
     },
     matchTask (task) {
       let ret = true
