@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <ConnectionStatus :is-offline="offline" />
     <toolbar v-if="!workflowViews.includes($route.name)" />
-    <drawer />
+    <drawer v-if="showSidebar" />
     <CylcObjectMenu/>
 
     <v-main>
@@ -54,6 +54,14 @@ export default {
     Toolbar
   },
 
+  props: {
+    showSidebar: {
+      type: Boolean,
+      required: false,
+      default: true
+    }
+  },
+
   data () {
     return {
       /**
@@ -65,9 +73,10 @@ export default {
        * are passed down from the parent Workflow View).
        */
       workflowViews: [
-        'workflow',
+        'workspace',
         'tree',
-        'table'
+        'table',
+        'graph'
       ]
     }
   },
@@ -78,7 +87,7 @@ export default {
 
   errorCaptured (error, vm, info) {
     if (process.env.NODE_ENV !== 'production') {
-      store.dispatch('setAlert', new AlertModel(error, null, 'error'))
+      store.dispatch('setAlert', new AlertModel(error, 'error'))
     }
   }
 }

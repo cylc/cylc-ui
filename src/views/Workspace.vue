@@ -16,11 +16,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div>
+  <div data-cy="workspace-view">
     <toolbar
       :views="views"
       :workflow-name="workflowName"
       v-on:add="this.addView"
+      :initialOptions="{}"
     ></toolbar>
     <div class="workflow-panel fill-height">
       <lumino
@@ -29,16 +30,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         tab-title-prop="tab-title"
       >
         <v-skeleton-loader
-          v-for="(view, id) of widgets"
+          v-for="(item, id) of widgets"
           :key="id"
           :id="id"
           :loading="isLoading"
-          :tab-title="view.data().widget.title"
+          :tab-title="item.view.data().widget.title"
           type="list-item-three-line"
         >
           <component
-            :is="view"
+            :is="item.view"
             :workflow-name="workflowName"
+            :initialOptions="item.initialOptions"
             class="h-100"
           />
         </v-skeleton-loader>
@@ -60,24 +62,37 @@ import Toolbar from '@/components/cylc/workflow/Toolbar'
 import TableView from '@/views/Table'
 import TreeView from '@/views/Tree'
 import GraphView from '@/views/Graph'
+import LogView from '@/views/Log'
 import AnalysisView from '@/views/Analysis'
 
 export default {
   name: 'Workflow',
+
   mixins: [
     pageMixin,
     graphqlMixin,
     subscriptionViewMixin
   ],
+
   components: {
     Lumino,
     Toolbar
   },
+
   metaInfo () {
     return {
       title: this.getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
+  props: {
+    initialOptions: {
+      type: Object,
+      required: false,
+      default: () => {}
+    }
+  },
+
   data: () => ({
     /**
      * The widgets added to the view.
@@ -98,8 +113,10 @@ export default {
       TreeView,
       TableView,
       GraphView,
+      LogView,
       AnalysisView
     ]
+
   }),
   created () {
     // We need to load each view used by this view/component.
@@ -108,15 +125,18 @@ export default {
       this.$options.components[view.name] = view
     })
   },
+
   computed: {
   },
+
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.$nextTick(() => {
-        vm.addView(TreeView.name)
+        vm.addView({ viewName: TreeView.name })
       })
     })
   },
+
   beforeRouteUpdate (to, from, next) {
     // clear all widgets
     this.removeAllWidgets()
@@ -125,28 +145,42 @@ export default {
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
       // Create a Tree View for the current workflow by default
-      this.addView(TreeView.name)
+      this.addView({ viewName: TreeView.name })
     })
   },
+
   beforeRouteLeave (to, from, next) {
     // clear all widgets
     this.removeAllWidgets()
     next()
   },
+
+  mounted () {
+    this.$eventBus.on('add-view', this.addView)
+  },
+
+  beforeDestroy () {
+    this.$eventBus.off('add-view', this.addView)
+  },
+
   methods: {
     /**
      * Add a new view widget.
      *
      * @type {String} viewName - the name of the view to be added (Vue component name).
      */
-    addView (viewName) {
+    addView ({ viewName, initialOptions = {} }) {
       const view = this.views
         .filter(v => v.name === viewName)
         .slice(0)[0]
       if (!view) {
         throw Error(`Unknown view "${viewName}"`)
       }
-      Vue.set(this.widgets, createWidgetId(), view)
+      Vue.set(
+        this.widgets,
+        createWidgetId(),
+        { view, initialOptions }
+      )
       this.$nextTick(() => {
         // Views use navigation-guards to start the pending subscriptions. But we don't have
         // this in this view. We must pretend we are doing the beforeRouteEnter here, and

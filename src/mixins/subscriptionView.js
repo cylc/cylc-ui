@@ -36,10 +36,5 @@ export default {
     next(vm => {
       vm.$workflowService.startSubscriptions()
     })
-  },
-  beforeRouteUpdate (to, from, next) {
-    next(vm => {
-      vm.$workflowService.startSubscriptions()
-    })
   }
 }

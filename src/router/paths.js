@@ -32,17 +32,17 @@ export default [
     }
   },
   {
-    path: '/workflows',
-    name: i18n.t('App.workflows'),
+    path: '/workflow-table',
+    name: 'Workflow Table',
     view: 'WorkflowsTable',
     meta: {
       layout: 'default'
     }
   },
   {
-    path: '/workflows/:workflowName(.*)',
-    view: 'Workflow',
-    name: 'workflow',
+    path: '/workspace/:workflowName(.*)',
+    view: 'Workspace',
+    name: 'workspace',
     meta: {
       layout: 'default',
       toolbar: true
@@ -58,12 +58,47 @@ export default [
     }
   },
   {
+    path: '/guide',
+    name: 'Guide',
+    view: 'Guide',
+    meta: {
+      layout: 'default'
+    }
+  },
+  {
+    path: '/graphiql',
+    view: 'GraphiQL',
+    meta: {
+      layout: 'empty'
+    }
+  },
+  {
+    path: '*',
+    view: 'NotFound',
+    meta: {
+      layout: 'empty'
+    }
+  },
+
+  // the standalone views
+  {
+    path: '/workflows',
+    name: i18n.t('App.workflows'),
+    view: 'Workflows',
+    meta: {
+      layout: 'default',
+      toolbar: false,
+      showSidebar: false
+    }
+  },
+  {
     path: '/tree/:workflowName(.*)',
     view: 'Tree',
     name: 'tree',
     meta: {
       layout: 'default',
-      toolbar: true
+      toolbar: true,
+      showSidebar: false
     },
     props: true
   },
@@ -73,7 +108,8 @@ export default [
     name: 'table',
     meta: {
       layout: 'default',
-      toolbar: true
+      toolbar: true,
+      showSidebar: false
     },
     props: true
   },
@@ -83,7 +119,8 @@ export default [
     name: 'graph',
     meta: {
       layout: 'default',
-      toolbar: true
+      toolbar: true,
+      showSidebar: false
     },
     props: true
   },
@@ -116,7 +153,10 @@ export default [
     path: '*',
     view: 'NotFound',
     meta: {
-      layout: 'empty'
-    }
+      layout: 'default',
+      toolbar: true,
+      showSidebar: false
+    },
+    props: true
   }
 ]

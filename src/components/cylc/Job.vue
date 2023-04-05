@@ -49,7 +49,7 @@ export default {
     const DEFAULT_XY = '10'
     const PREVIOUS_STATE_ITEMS_XY = '25'
     const width = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
-    const height = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
+    const height = width
     const jobStatusIcon = createElement('rect', {
       attrs: {
         class: context.props.status,
@@ -105,8 +105,7 @@ export default {
     //       https://github.com/vuejs/vue-loader/issues/1433
     const attrs = Object.assign(context.data, {
       attrs: {
-        class: 'c-job',
-        style: 'display:inline-block; vertical-align:middle'
+        class: 'c-job'
       }
     })
     return createElement(

@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :close-on-content-click="false"
       :close-on-click="false"
       v-click-outside="{ handler: onClickOutside, include: clickOutsideInclude }"
+      max-height="90vh"
       dark
     >
       <!-- NOTE: because the `attach` prop is not true, the actual DOM element
@@ -45,13 +46,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-card-subtitle>
           {{ typeAndStatusText }}
         </v-card-subtitle>
-        <v-divider v-if="primaryMutations.length || displayMutations.length" />
+        <v-divider v-if="primaryMutations.length || displayMutations.length"/>
         <v-skeleton-loader
           v-if="isLoadingMutations && primaryMutations.length"
           type="list-item-avatar-two-line@3"
           min-width="400"
-        >
-        </v-skeleton-loader>
+        />
         <v-list
           v-if="displayMutations.length"
           class="c-mutation-menu-list"
@@ -59,12 +59,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-list-item
             v-for="{ mutation, requiresInfo, authorised } in displayMutations"
             :key="mutation.name"
-            :disabled=!authorised
+            :disabled="isDisabled(mutation, authorised)"
             @click.stop="enact(mutation, requiresInfo)"
             class="c-mutation"
           >
             <v-list-item-avatar>
-              <v-icon :disabled=!authorised large>{{ mutation._icon }}</v-icon>
+              <v-icon :disabled="isDisabled(mutation, authorised)" large>
+                {{ mutation._icon }}
+              </v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>{{ mutation._title }}</v-list-item-title>
@@ -78,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-list-item-action>
               <v-btn
                 icon
-                :disabled=!authorised
+                :disabled="isEditable(authorised, mutation)"
                 x-large
                 class="float-right"
                 @click.stop="openDialog(mutation)"
@@ -134,7 +136,8 @@ import Mutation from '@/components/cylc/Mutation'
 import {
   mdiPencil
 } from '@mdi/js'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
+import WorkflowState from '@/model/WorkflowState.model'
 
 export default {
   name: 'CylcObjectMenu',
@@ -158,6 +161,7 @@ export default {
       dialogKey: false,
       expanded: false,
       node: null,
+      workflowStatus: null,
       mutations: [],
       isLoadingMutations: true,
       showMenu: false,
@@ -179,6 +183,7 @@ export default {
   },
 
   computed: {
+    ...mapGetters('workflows', ['getNodes']),
     primaryMutations () {
       return this.$workflowService.primaryMutations[this.node.type] || []
     },
@@ -192,11 +197,15 @@ export default {
       }
       const shortList = this.primaryMutations
       if (!this.expanded && shortList.length) {
-        return this.mutations.filter(
-          x => shortList.includes(x.mutation.name)
-        ).sort(
-          (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
-        )
+        return this.mutations
+          // filter for shortlisted mutations
+          .filter(x => shortList.includes(x.mutation.name))
+          // filter out mutations which aren't relevant to the workflow state
+          .filter(x => !this.isDisabled(x.mutation, true))
+          // sort by definition order
+          .sort(
+            (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
+          )
       }
       return this.mutations
     },
@@ -229,7 +238,48 @@ export default {
   },
 
   methods: {
+    isEditable (authorised, mutation) {
+      if (mutation.name === 'log' || this.isDisabled(mutation, authorised)) {
+        return true
+      } else {
+        return false
+      }
+    },
+    isDisabled (mutation, authorised) {
+      if (this.node.type !== 'workflow') {
+        const nodeReturned = this.getNodes(
+          'workflow', [this.node.tokens.workflow_id])
+        if (nodeReturned.length) {
+          this.workflowStatus = nodeReturned[0].node.status
+        } else { this.workflowStatus = WorkflowState.RUNNING.name }
+      } else {
+        this.workflowStatus = this.node.node.status
+      }
+      if (
+        (!mutation._validStates.includes(this.workflowStatus)) ||
+          !authorised) {
+        return true
+      }
+      return false
+    },
     openDialog (mutation) {
+      if (mutation.name === 'log') {
+        this.showMenu = false
+        this.$eventBus.emit(
+          'add-view',
+          {
+
+            viewName: 'Log',
+            initialOptions: {
+              workflow: this.node.tokens.workflow,
+              task: this.node.tokens.relative_id,
+              file: 'job.out'
+            }
+          }
+        )
+        return
+      }
+
       this.dialog = true
       this.dialogMutation = mutation
       // Tell Vue to re-render the dialog component:
@@ -277,6 +327,14 @@ export default {
 
     expandCollapse () {
       this.expanded = !this.expanded
+      this.$nextTick(() => {
+        // If expanding menu causes it overflow off screen, move it into view
+        // (This would happen automatically, but it's too slow -
+        // see https://github.com/cylc/cylc-ui/issues/1163)
+        if (this.y + this.$refs.menuContent.$el.clientHeight > document.body.clientHeight) {
+          this.y = document.body.clientHeight - this.$refs.menuContent.$el.clientHeight - 5
+        }
+      })
     },
 
     /* Call a mutation using only the tokens for args. */

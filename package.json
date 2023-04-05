@@ -1,8 +1,9 @@
 {
   "name": "cylc-ui",
-  "version": "1.3.0",
+  "version": "1.5.0",
   "private": true,
   "license": "GPL-3.0-only",
+
   "scripts": {
     "build": "vue-cli-service build",
     "build:report": "vue-cli-service build --report",
@@ -20,6 +21,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test": "yarn run test:unit || exit 1; yarn run coverage:e2e --headless"
   },
+
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@hpcc-js/wasm": "1.13",
@@ -27,7 +29,7 @@
     "@lumino/default-theme": "^0.22.0",
     "@lumino/widgets": "^1.31.1",
     "apexcharts": "^3.37.1",
-    "axios": "^0.27.0",
+    "axios": "^1.0.0",
     "core-js": "3",
     "dedent": "^0.7.0",
     "enumify": "^2.0.0",
@@ -51,12 +53,13 @@
     "vuetify": "^2.6.10",
     "vuex": "^3.6.2"
   },
+
   "devDependencies": {
     "@babel/core": "^7.14.8",
     "@babel/eslint-parser": "^7.16.5",
     "@babel/preset-env": "^7.14.8",
     "@cypress/code-coverage": "^3.9.12",
-    "@cypress/vue": "^4.0.0",
+    "@cypress/vue": "^5.0.0",
     "@cypress/webpack-preprocessor": "^5.11.0",
     "@mdi/js": "^7.0.0",
     "@vue/babel-preset-app": "^4.5.13",
@@ -66,14 +69,13 @@
     "@vue/cli-plugin-unit-mocha": "^5.0.1",
     "@vue/cli-service": "^4.5.18",
     "@vue/test-utils": "^1.2.2",
-    "babel-loader": "^8.2.3",
     "babel-plugin-istanbul": "^6.1.1",
     "bufferutil": "^4.0.6",
     "chai": "^4.3.6",
     "circular-dependency-plugin": "^5.2.2",
     "concurrently": "^7.0.0",
     "cross-fetch": "^3.1.5",
-    "cypress": "^10.10.0",
+    "cypress": "^12.0.0",
     "eslint": "^8.0.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-import-resolver-node": "^0.3.6",
@@ -89,12 +91,12 @@
     "json-server": "^0.17.0",
     "nodemon": "^2.0.19",
     "nyc": "^15.1.0",
-    "sass": "~1.55.0",
+    "sass": "~1.58.0",
     "sass-loader": "^10.2.0",
-    "sinon": "^14.0.0",
+    "sinon": "^15.0.0",
     "standard": "^17.0.0",
     "subscriptions-transport-ws": "^0.11.0",
-    "utf-8-validate": "^5.0.9",
+    "utf-8-validate": "^6.0.0",
     "vue-cli-plugin-vuetify": "^2.4.2",
     "vue-cli-plugin-vuetify-essentials": "^0.8.3",
     "vue-template-compiler": "^2.6.14",
@@ -108,5 +110,5 @@
   "resolutions": {
     "webpack-dev-server/selfsigned": "^2.0.1"
   },
-  "packageManager": "yarn@3.2.3"
+  "packageManager": "yarn@3.4.1"
 }

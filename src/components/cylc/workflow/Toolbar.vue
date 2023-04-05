@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <v-menu
         offset-y
-        v-if="$route.name === 'workflow'"
+        v-if="$route.name === 'workspace'"
       >
         <template v-slot:activator="{ on }">
           <a
@@ -110,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :id="`toolbar-add-${ view.name }-view`"
             v-for="view in views"
             :key="view.name"
-            @click="$listeners['add'](view.name)"
+            @click="$listeners['add']({ viewName: view.name })"
             class="py-0 px-8 ma-0 c-add-view"
           >
             <v-list-item-icon>

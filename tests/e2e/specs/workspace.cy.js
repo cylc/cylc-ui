@@ -15,15 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-describe('Workflow view and component/widget', () => {
+describe('Workspace view and component/widget', () => {
+  beforeEach(() => {
+    cy.visit('/#/workspace/one')
+  })
+
   afterEach(() => {
     cy
       .get('.v-alert')
       .should('not.exist')
   })
 
-  it('Should display the Workflow component in the Workflow view, with a Tree widget', () => {
-    cy.visit('/#/workflows/one')
+  it('Should display the Lumino component in the Workspace view, with a Tree widget', () => {
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
 
     // The skeleton loader should stop existing
@@ -40,13 +43,11 @@ describe('Workflow view and component/widget', () => {
   })
 
   it('Should remove the default widget and leave no more widgets', () => {
-    cy.visit('/#/workflows/one')
     cy.get('.lm-TabBar-tabCloseIcon').click()
     cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
 
   it('Should be able to add two widgets of the same type', () => {
-    cy.visit('/#/workflows/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     cy.get('a.add-view').click()
     cy.get('#toolbar-add-Tree-view').click()
@@ -54,15 +55,30 @@ describe('Workflow view and component/widget', () => {
   })
 
   it('Should be able to add two widgets of different types', () => {
-    cy.visit('/#/workflows/one')
-    cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
+    // there should be one widget open by default (tree)
+    cy.get('.lm-TabBar-tabLabel')
+      // there should be a tab representing the widget
+      .should('have.length', 1)
+      // the tab should contain the name of the widget
+      .contains('tree')
+      // the tab should be active (that is to say on top)
+      .parent()
+      .should('have.class', 'lm-mod-current')
+
     cy.get('a.add-view').click()
     cy.get('#toolbar-add-Table-view').click()
-    cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
+    cy.get('.lm-TabBar-tabLabel')
+      // there should be two tabs (tree + table)
+      .should('have.length', 2)
+      // the new tab should be last
+      .last()
+      .contains('table')
+      // the new tab should be active (that is to say on top)
+      .parent()
+      .should('have.class', 'lm-mod-current')
   })
 
   it('Should remove widgets added successfully', () => {
-    cy.visit('/#/workflows/one')
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
     cy.get('a.add-view').click()
@@ -70,13 +86,14 @@ describe('Workflow view and component/widget', () => {
     // ensure we have 2 widgets now
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
     // close all widgets
-    cy.get('.lm-TabBar-tabCloseIcon').click({ multiple: true })
+    cy.get('.lm-TabBar-tabCloseIcon').each(($el) => {
+      cy.wrap($el).click()
+    })
     // ensure we have no widgets now
     cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
 
-  it('Should remove widgets when leaving the Workflow view', () => {
-    cy.visit('/#/workflows/one')
+  it('Should remove widgets when leaving the Workspace view', () => {
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
     cy.get('a.add-view').click()
@@ -88,8 +105,7 @@ describe('Workflow view and component/widget', () => {
     cy.get('.lm-TabBar-tabLabel').should('not.exist')
   })
 
-  it('Should remove widgets when updating the Workflow view', () => {
-    cy.visit('/#/workflows/one')
+  it('Should remove widgets when updating the Workspace view', () => {
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
     // add a tree view
     cy.get('a.add-view').click()
@@ -97,7 +113,7 @@ describe('Workflow view and component/widget', () => {
     // ensure we have 2 widgets now
     cy.get('.lm-TabBar-tabLabel').should('have.length', 2)
     // this is OK, as we render one for every route/workflow requested
-    cy.visit('/#/workflows/two')
+    cy.visit('/#/workspace/two')
     // ensure we have no widgets now
     cy.get('.lm-TabBar-tabLabel').should('have.length', 1)
   })

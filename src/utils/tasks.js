@@ -100,8 +100,47 @@ function jobMessageOutputs (jobNode) {
   return ret
 }
 
+/**
+ * Convert duration to an easily read format
+ * Durations of 0 seconds return undefined unless allowZeros is true
+ *
+ * @param {number=} dur Duration in seconds
+ * @param {boolean} [allowZeros=false] Whether durations of 0 are formatted as
+ * 00:00:00, rather than undefined
+ * @return {string=} Formatted duration
+ */
+function formatDuration (dur, allowZeros = false) {
+  if (dur || (dur === 0 && allowZeros === true)) {
+    const seconds = dur % 60
+    const minutes = ((dur - seconds) / 60) % 60
+    const hours = ((dur - minutes * 60 - seconds) / 3600) % 24
+    const days = (dur - hours * 3600 - minutes * 60 - seconds) / 86400
+
+    let dayss = ''
+    if (days > 0) {
+      dayss = days.toString() + 'd '
+    }
+
+    return dayss +
+      hours.toString().padStart(2, '0') +
+      ':' + minutes.toString().padStart(2, '0') +
+      ':' + Math.round(seconds).toString().padStart(2, '0')
+  }
+  // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
+  // return "undefined" rather than a number for these cases
+  return undefined
+}
+
+function dtMean (taskNode) {
+  // Convert to an easily read duration format:
+  const dur = taskNode.node?.task?.meanElapsedTime
+  return formatDuration(dur)
+}
+
 export {
   extractGroupState,
   latestJob,
-  jobMessageOutputs
+  jobMessageOutputs,
+  formatDuration,
+  dtMean
 }

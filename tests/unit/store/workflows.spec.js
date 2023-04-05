@@ -44,9 +44,7 @@ function getTree (store) {
       pointer = pointer[partName]
     }
 
-    for (const child of item.children || []) {
-      stack.push(child)
-    }
+    stack.push(...(item.children ?? []))
   }
   return ret
 }
@@ -495,8 +493,8 @@ describe('cylc tree', () => {
         id: '~u/w//1/PENGUIN',
         name: 'PENGUIN',
         ancestors: [
-          { name: 'root' },
-          { name: 'ANIMAL' }
+          { name: 'ANIMAL' },
+          { name: 'root' }
         ],
         __typename: 'FamilyProxy'
       }
@@ -663,6 +661,7 @@ describe('cylc tree', () => {
       'workflows/UPDATE',
       {
         id: '~u/w//1/root',
+        ancestors: [],
         __typename: 'FamilyProxy'
       }
     )

@@ -33,6 +33,17 @@ let wrapper
 
 const mountFunction = options => {
   const localVue = createLocalVue()
+  localVue.prototype.$workflowService = {
+    register () {},
+    unregister () {},
+    subscribe () {},
+    introspection: Promise.resolve({
+      mutations: [
+        { args: [] }
+      ],
+      types: []
+    })
+  }
 
   // note these are truly 'mocked' because I ran into issues with the state being tainted across multiple unit-tests
   const store = new Vuex.Store({

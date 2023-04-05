@@ -31,22 +31,37 @@ export const TEST_TREE = {
     {
       id: '~u',
       type: 'user',
+      tokens: {
+        user: 'u'
+      },
       children: [
         {
           id: '~u/a',
           name: 'a',
           type: 'workflow-part',
+          tokens: {
+            user: 'u',
+            workflow: 'a'
+          },
           children: [
             {
               id: '~u/a/x1',
               name: 'x1',
               type: 'workflow',
+              tokens: {
+                user: 'u',
+                workflow: 'a/x1'
+              },
               node: { status: WorkflowState.STOPPED.name }
             },
             {
               id: '~u/a/x2',
               name: 'x2',
               type: 'workflow',
+              tokens: {
+                user: 'u',
+                workflow: 'a/x2'
+              },
               node: { status: WorkflowState.STOPPED.name }
             }
           ]
@@ -55,6 +70,10 @@ export const TEST_TREE = {
           id: '~u/b',
           name: 'b',
           type: 'workflow',
+          tokens: {
+            user: 'u',
+            workflow: 'b'
+          },
           node: {
             status: WorkflowState.STOPPING.name,
             stateTotals: RUNNING_STATE_TOTALS
@@ -64,6 +83,10 @@ export const TEST_TREE = {
           id: '~u/c',
           name: 'c',
           type: 'workflow',
+          tokens: {
+            user: 'u',
+            workflow: 'c'
+          },
           node: {
             status: WorkflowState.RUNNING.name,
             stateTotals: SUBMITTED_STATE_TOTALS

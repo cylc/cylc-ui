@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-app :class="jobThemeClass">
-    <component :is="layout">
+    <component :is="layout" :showSidebar="showSidebar">
       <router-view/>
     </component>
   </v-app>
@@ -33,6 +33,9 @@ export default {
     ...mapState('app', ['jobTheme']),
     layout () {
       return (this.$route.meta.layout || DEFAULT_LAYOUT) + '-layout'
+    },
+    showSidebar () {
+      return this.$route.meta.showSidebar ?? true
     },
     jobThemeClass () {
       return `job_theme--${this.jobTheme}`

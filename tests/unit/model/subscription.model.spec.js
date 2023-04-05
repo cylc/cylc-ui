@@ -29,10 +29,18 @@ describe('SubscriptionQuery model', () => {
   }
   const name = 'root'
   const callbacks = []
+  const isDelta = true
+  const isGlobalCallback = true
   let subscriptionQuery
   beforeEach(() => {
     sinon.stub(console, 'debug')
-    subscriptionQuery = new SubscriptionQuery(query, variables, name, callbacks)
+    subscriptionQuery = new SubscriptionQuery(
+      query,
+      variables,
+      name,
+      callbacks,
+      isDelta,
+      isGlobalCallback)
   })
   afterEach(() => {
     sinon.restore()

@@ -126,16 +126,19 @@ export default {
      * Create a widget.
      *
      */
-    addWidget (id, name) {
+    addWidget (id, name, onTop = true) {
       this.widgets.push(id)
       const luminoWidget = new LuminoWidget(id, name, /* closable */ true)
-      this.dock.addWidget(luminoWidget)
+      this.dock.addWidget(luminoWidget, { mode: 'tab-after' })
       // give time for Lumino's widget DOM element to be created
       this.$nextTick(() => {
         document.getElementById(id)
           .addEventListener('lumino:activated', this.onWidgetActivated)
         document.getElementById(id)
           .addEventListener('lumino:deleted', this.onWidgetDeleted)
+        if (onTop) {
+          luminoWidget.parent.selectWidget(luminoWidget)
+        }
       })
     },
 

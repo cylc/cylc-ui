@@ -141,8 +141,13 @@ import {
   mdiRefresh,
   mdiTable
 } from '@mdi/js'
+import AnalysisTable from '@/components/cylc/analysis/AnalysisTable'
+import {
+  matchTask,
+  platformOptions
+} from '@/components/cylc/analysis/filter'
 
-// list of fields to request for tasks
+/** List of fields to request for task for each task */
 const taskFields = [
   'name',
   'platform',
@@ -150,38 +155,30 @@ const taskFields = [
   'meanTotalTime',
   'stdDevTotalTime',
   'minTotalTime',
-  'firstQuartileTotal',
-  'secondQuartileTotal',
-  'thirdQuartileTotal',
+  'totalQuartiles',
   'maxTotalTime',
   'meanRunTime',
   'stdDevRunTime',
   'minRunTime',
-  'firstQuartileRun',
-  'secondQuartileRun',
-  'thirdQuartileRun',
+  'runQuartiles',
   'maxRunTime',
   'meanQueueTime',
   'stdDevQueueTime',
   'minQueueTime',
-  'firstQuartileQueue',
-  'secondQuartileQueue',
-  'thirdQuartileQueue',
+  'queueQuartiles',
   'maxQueueTime'
 ]
 
-// the one-off query which retrieves historical objects not
-// normally visible in the GUI
+/** The one-off query which retrieves historical task timing statistics */
 const QUERY = gql`
-query ($workflows: [ID]) {
+query analysisQuery ($workflows: [ID]) {
   tasks(live: false, workflows: $workflows) {
     ${taskFields.join('\n')}
   }
 }
 `
 
-// the callback which gets automatically called when data comes in on
-// the subscription
+/** The callback which gets called when data comes in from the query */
 class AnalysisCallback {
   constructor (tasks) {
     this.tasks = tasks
@@ -228,7 +225,8 @@ export default {
 
   components: {
     ViewToolbar,
-    BoxPlot
+    BoxPlot,
+    AnalysisTable
   },
 
   metaInfo () {
@@ -249,9 +247,7 @@ export default {
         title: 'analysis',
         icon: mdiChartLine
       },
-      table: true,
-      // defines controls which get added to the toolbar
-      // (see Graph.vue for example usage)
+      /** Defines controls which get added to the toolbar */
       groups: [
         {
           title: 'Analysis',

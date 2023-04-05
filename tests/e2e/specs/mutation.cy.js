@@ -127,6 +127,9 @@ describe('Mutations component', () => {
       cy.get('[data-cy="submit"]')
         .click()
         .should('have.class', 'v-btn--loading')
+      // Wait half a sec in case dialog closes
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(500)
         .get('.c-mutation-dialog')
         .should('be.visible')
         // Now let mutation response through
@@ -147,13 +150,13 @@ describe('Mutations component', () => {
       cy.get('[data-cy="submit"]')
         .click()
         // Error snackbar should appear
-        .get('[data-cy="response-snackbar"] > .v-snack__wrapper')
+        .get('[data-cy="alert-snack"] > .v-snack__wrapper')
         .as('snackbar')
         .should('be.visible')
-        .find('[data-cy="snackbar-close"]')
+        .find('[data-cy="snack-close"]')
         .click()
         .get('@snackbar')
-        .should('not.be.visible')
+        .should('not.exist')
         // Form should stay open
         .get('.c-mutation-dialog')
         .should('be.visible')

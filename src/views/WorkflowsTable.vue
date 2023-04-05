@@ -21,47 +21,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     fluid
     grid-list-xl
   >
-    <v-layout
-      justify-center
-      wrap
-    >
-      <v-flex
-        md12
-      >
-          <v-alert
-            :icon="svgPath.table"
-            prominent
-            color="grey lighten-3"
-          >
-            <h3 class="headline">{{ $t('Workflows.tableHeader') }}</h3>
-          </v-alert>
+    <v-row class="align-self-start">
+      <v-col>
+        <!-- TODO: this is not really an alert, it's a heading -->
+        <v-alert
+          :icon="svgPath.table"
+          prominent
+          color="grey lighten-3"
+        >
+          <h3 class="headline">{{ $t('Workflows.tableHeader') }}</h3>
+        </v-alert>
         <v-data-table
           :headers="headers"
           :items="workflowsTable"
-          :loading="isLoading"
+          data-cy="workflows-table"
         >
-          <template slot="no-data" v-if="!isLoading">
-            <v-alert
-              :value="true"
-              color="error"
-              icon="warning">
-              <p class="body-1">No workflows found for the current user</p>
-            </v-alert>
-          </template>
-          <template
-            slot="headerCell"
-            slot-scope="{ header }"
-          >
-            <span
-              class="subheading font-weight-light text-success text--darken-3"
-              v-text="header.text"
-            />
-          </template>
-          <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
-          <template
-            slot="item"
-            slot-scope="{ item }"
-          >
+          <template v-slot:item="{ item }">
             <tr>
               <td width="1em">
                 <WorkflowIcon
@@ -87,8 +62,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </tr>
           </template>
         </v-data-table>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -121,7 +96,9 @@ export default {
       WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION,
       {},
       'root',
-      []
+      [],
+      true,
+      true
     ),
     headers: [
       {
@@ -171,7 +148,7 @@ export default {
   },
   methods: {
     viewWorkflow (workflow) {
-      this.$router.push({ path: `/workflows/${workflow.tokens.workflow}` })
+      this.$router.push({ path: `/workspace/${workflow.tokens.workflow}` })
     }
   }
 }

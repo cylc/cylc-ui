@@ -100,8 +100,8 @@
             {"id": "~user/one//20000102T0000Z/succeeded"}
           ],
           "ancestors": [
-            {"name": "root"},
-            {"name": "GOOD"}
+            {"name": "GOOD"},
+            {"name": "root"}
           ]
         }
       ],
