@@ -58,7 +58,7 @@ localVue.prototype.$workflowService = {
     return true
   },
   unsubscribe () {},
-  startDeltasSubscription () {
+  startCylcSubscription () {
     return {
       unsubscribed: false,
       unsubscribe () {

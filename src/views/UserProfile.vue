@@ -17,8 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container class="c-user-profile">
-    <v-layout wrap>
-      <v-flex xs12 md12>
+    <v-row class="wrap">
+      <v-col cols="12">
         <v-alert
           :icon="svgPaths.settings"
           prominent
@@ -29,11 +29,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-alert>
         <v-form v-if="user !== null">
           <v-container py-0>
-            <v-layout row align-center wrap>
-              <v-flex xs3>
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
                 <span>{{ $t('UserProfile.username') }}</span>
-              </v-flex>
-              <v-flex xs9>
+              </v-col>
+              <v-col cols="9">
                 <v-text-field
                     :value="user.username"
                     disabled
@@ -41,14 +41,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     aria-disabled="true"
                     class="body-1"
                 />
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout row align-center wrap>
-              <v-flex xs3>
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
                 <span>{{ $t('UserProfile.administrator') }}</span>
-              </v-flex>
-              <v-flex xs9>
+              </v-col>
+              <v-col cols="9">
                 <v-checkbox
                     v-model="user.admin"
                     disabled
@@ -56,14 +56,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     aria-disabled="true"
                     class="body-1"
                 />
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout row align-center wrap>
-              <v-flex xs3>
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
                 <span>{{ $t('UserProfile.groups') }}</span>
-              </v-flex>
-              <v-flex xs9>
+              </v-col>
+              <v-col cols="9">
                 <v-select
                     :items="user.groups"
                     v-model="user.groups"
@@ -74,14 +74,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     aria-disabled="true"
                     class="body-1"
                 />
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout row align-center wrap>
-              <v-flex xs3>
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
                 <span>{{ $t('UserProfile.created') }}</span>
-              </v-flex>
-              <v-flex xs9>
+              </v-col>
+              <v-col cols="9">
                 <v-text-field
                     :value="user.created"
                     disabled
@@ -89,13 +89,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     aria-disabled="true"
                     class="body-1"
                 />
-              </v-flex>
-            </v-layout>
-            <v-layout row align-center wrap>
-              <v-flex xs3>
+              </v-col>
+            </v-row>
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
                 <span>{{ $t('UserProfile.permissions') }}</span>
-              </v-flex>
-              <v-flex xs9>
+              </v-col>
+              <v-col cols="9">
                 <v-select
                     :items="user.permissions"
                     v-model="user.permissions"
@@ -106,19 +106,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     aria-disabled="true"
                     class="body-1"
                 />
-              </v-flex>
-            </v-layout>
-            <v-row mt-4>
-              <v-flex xs12>
+              </v-col>
+            </v-row>
+            <v-row no-gutters class="mt-4">
+              <v-col cols="12">
                 <p class="title">Preferences</p>
-              </v-flex>
+              </v-col>
             </v-row>
 
-            <v-layout row align-center wrap>
-              <v-flex xs3>
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
                 <span>Font size</span>
-              </v-flex>
-              <v-flex xs9>
+              </v-col>
+              <v-col cols="9">
                 <v-btn
                   depressed
                   id="font-size-reset-button"
@@ -140,13 +140,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   @click="increaseFontSize()">
                   <v-icon>{{ svgPaths.increase }}</v-icon>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout row align-center wrap>
-              <v-flex xs3>
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
                 <span>Colour Theme</span>
-              </v-flex>
+              </v-col>
               <v-radio-group v-model="jobTheme" column>
                 <table class="c-job-state-table">
                   <tr>
@@ -186,25 +186,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </tr>
                 </table>
               </v-radio-group>
-              <v-flex xs9>
-              </v-flex>
-            </v-layout>
+              <v-col cols="9">
+              </v-col>
+            </v-row>
 
-            <v-layout row align-center wrap>
-              <v-flex xs3>
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
                 <span>Latest cycle point at top</span>
-              </v-flex>
+              </v-col>
               <v-checkbox
                 v-model="cyclePointsOrderDesc"
                 id="input-cyclepoints-order"
               >
               </v-checkbox>
-            </v-layout>
+            </v-row>
           </v-container>
         </v-form>
         <v-progress-linear v-else :indeterminate="true" />
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

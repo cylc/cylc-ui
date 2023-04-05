@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-text-field
           v-model="searchWorkflows"
           clearable
+          :clear-icon="$options.icons.mdiClose"
           flat
           dense
           hide-details
@@ -37,64 +38,55 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           id="c-gscan-search-workflows"
         />
         <v-menu
-          v-model="showFilterTooltip"
+          v-model="showFilterMenu"
           :close-on-content-click="false"
           offset-x
         >
-          <!-- button to activate the filters tooltip -->
+          <!-- button to activate the filters menu -->
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-bind="attrs"
-              v-on="on"
-              link
-              icon
-              class="flex-grow-0 flex-column"
-              id="c-gscan-filter-tooltip-btn"
-              @click="showFilterTooltip = !showFilterTooltip"
+            <v-badge
+              :content="numFilters"
+              :value="numFilters"
+              overlap
             >
-              <v-icon>{{ svgPaths.filter }}</v-icon>
-            </v-btn>
-          </template>
-          <!-- filters tooltip -->
-          <v-card
-            max-height="250px"
-          >
-            <v-list
-              dense
-            >
-              <div
-                v-for="filter in filters"
-                :key="filter.title"
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                link
+                icon
+                id="c-gscan-filter-menu-btn"
+                @click="showFilterMenu = !showFilterMenu"
               >
-                <v-list-item dense>
+                <v-icon>{{ $options.icons.mdiFilter }}</v-icon>
+              </v-btn>
+            </v-badge>
+          </template>
+          <!-- filters menu -->
+          <v-card width="500px">
+            <v-list dense>
+              <div
+                v-for="(items, title) in filters"
+                :key="title"
+              >
+                <v-list-item>
                   <v-list-item-content ma-0>
-                    <v-list-item-title>
-                      <v-checkbox
-                        :label="filter.title"
-                        :input-value="allItemsSelected(filter.items)"
-                        value
-                        dense
-                        hide-details
-                        hint="Toggle all"
-                        @click="toggleItemsValues(filter.items)"
-                      ></v-checkbox>
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider />
-                <v-list-item
-                  v-for="item in filter.items"
-                  :key="`${filter.title}-${item.text}`"
-                  dense
-                >
-                  <v-list-item-action>
-                    <v-checkbox
-                      :label="item.text"
-                      v-model="item.model"
+                    <span class="mb-2">Filter by {{ title }}</span>
+                    <v-autocomplete
+                      v-model="filters[title]"
+                      :items="$options.allStates[title]"
+                      outlined
+                      chips
+                      deletable-chips
+                      small-chips
+                      clearable
+                      multiple
                       dense
-                      height="20"
-                    ></v-checkbox>
-                  </v-list-item-action>
+                      hide-details
+                      :menu-props="{ closeOnClick: true }"
+                      :clear-icon="$options.icons.mdiClose"
+                      :data-cy="`filter ${title}`"
+                    />
+                  </v-list-item-content>
                 </v-list-item>
               </div>
             </v-list>
@@ -104,7 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- data -->
       <div
         v-if="!isLoading"
-        class="c-gscan-workflows flex-grow-1"
+        class="c-gscan-workflows flex-grow-1 pl-2"
       >
         <tree
           :filterable="false"
@@ -126,14 +118,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :to="workflowLink(scope.node)"
             >
               <v-list-item-title>
-                <v-layout align-center align-content-center d-flex flex-nowrap>
-                  <v-flex
+                <v-row class="align-center align-content-center flex-nowrap">
+                  <v-col
                     v-if="scope.node.type === 'workflow-part'"
                     class="c-gscan-workflow-name"
                   >
                     <span>{{ scope.node.name || scope.node.id }}</span>
-                  </v-flex>
-                  <v-flex
+                  </v-col>
+                  <v-col
                     v-else-if="scope.node.type === 'workflow'"
                     class="c-gscan-workflow-name"
                   >
@@ -143,11 +135,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       </template>
                       <span>{{ scope.node.id }}</span>
                     </v-tooltip>
-                  </v-flex>
+                  </v-col>
                   <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
-                  <v-flex
+                  <v-col
                     v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
-                    class="text-right c-gscan-workflow-states"
+                    class="text-right c-gscan-workflow-states flex-grow-0"
                   >
                     <!-- task summary tooltips -->
                     <span
@@ -182,8 +174,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       </span>
                     </v-tooltip>
                   </span>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-list-item-title>
             </v-list-item>
           </template>
@@ -200,9 +192,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiFilter } from '@mdi/js'
-import uniq from 'lodash/uniq'
-import TaskState from '@/model/TaskState.model'
+import { mdiClose, mdiFilter } from '@mdi/js'
+import TaskState, { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job'
 import Tree from '@/components/cylc/tree/Tree'
@@ -233,9 +224,6 @@ export default {
   data () {
     return {
       maximumTasksDisplayed: 5,
-      svgPaths: {
-        filter: mdiFilter
-      },
       /**
        * The filtered workflows. This is the result of applying the filters
        * on the workflows prop.
@@ -248,68 +236,20 @@ export default {
        */
       searchWorkflows: '',
       /**
-       * Variable to control whether the filters tooltip (a menu actually)
-       * is displayed or not (i.e. v-model=this).
+       * Whether the filters menu is displayed (i.e. v-model=this).
        * @type {boolean}
        */
-      showFilterTooltip: false,
+      showFilterMenu: false,
       /**
-       * List of filters to be displayed by the template, so that the user
-       * can filter the list of workflows.
-       *
-       * Each entry contains a title and a list of items. Each item contains
-       * the text attribute, which is used as display value in the template.
-       * The value attribute, which may be used if necessary, as it contains
-       * the original value (e.g. an Enum, while title would be some formatted
-       * string). Finally, the model is bound via v-model, and keeps the
-       * value selected in the UI (i.e. if the user checks the "running"
-       * checkbox, the model here will be true, if the user unchecks it,
-       * then it will be false).
-       *
-       * @type {[
-       *   {
-       *     title: string,
-       *     items: [{
-       *       text: string,
-       *       value: object,
-       *       model: boolean
-       *     }]
-       *   }
-       * ]}
+       * List of filters selected by the user.
+       * @type {{string: string[]}}
        */
-      filters: [
-        {
-          title: 'workflow state',
-          items: WorkflowState.enumValues
-            .map(state => {
-              return {
-                text: state.name,
-                value: state,
-                model: true
-              }
-            })
-        },
-        {
-          title: 'task state',
-          items: TaskState.enumValues.map(state => {
-            return {
-              text: state.name,
-              value: state,
-              model: false
-            }
-          }).sort((left, right) => {
-            return left.text.localeCompare(right.text)
-          })
-        }
-        // {
-        //   title: 'workflow host',
-        //   items: [] // TODO: will it be in state totals?
-        // },
-        // {
-        //   title: 'cylc version',
-        //   items: [] // TODO: will it be in state totals?
-        // }
-      ]
+      filters: {
+        'workflow state': [],
+        'task state': []
+        // 'workflow host': [], // TODO: will it be in state totals?
+        // 'cylc version': [] // TODO: will it be in state totals?
+      }
     }
   },
   computed: {
@@ -320,23 +260,8 @@ export default {
       }
       return sortedWorkflowTree(this.workflowTree)
     },
-    /**
-     * @return {Array<String>}
-     */
-    workflowStates () {
-      return this.filters[0]
-        .items
-        .filter(item => item.model)
-        .map(item => item.value.name)
-    },
-    /**
-     * @return {Array<String>}
-     */
-    taskStates () {
-      return uniq(this.filters[1]
-        .items
-        .filter(item => item.model)
-        .map(item => item.value.name))
+    numFilters () {
+      return Object.values(this.filters).flat().length
     }
   },
   watch: {
@@ -347,9 +272,7 @@ export default {
     filters: {
       deep: true,
       immediate: false,
-      handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
-      }
+      handler: 'filterWorkflows'
     },
     /**
      * If the user changes the workflow name to search/filter,
@@ -357,15 +280,11 @@ export default {
      */
     searchWorkflows: {
       immediate: false,
-      handler: function (newVal) {
-        this.filteredWorkflows = this.filterHierarchically(this.workflows, newVal, this.workflowStates, this.taskStates)
-      }
+      handler: 'filterWorkflows'
     },
     workflows: {
       immediate: true,
-      handler: function () {
-        this.filteredWorkflows = this.filterHierarchically(this.workflows, this.searchWorkflows, this.workflowStates, this.taskStates)
-      }
+      handler: 'filterWorkflows'
     },
     filteredWorkflows: {
       immediate: true,
@@ -396,7 +315,14 @@ export default {
     }
   },
   methods: {
-    filterHierarchically,
+    filterWorkflows () {
+      this.filteredWorkflows = filterHierarchically(
+        this.workflows,
+        this.searchWorkflows,
+        this.filters['workflow state'],
+        this.filters['task state']
+      )
+    },
 
     /**
      * Return `true` iff all the items have been selected. `false` otherwise.
@@ -470,6 +396,20 @@ export default {
         return validValues.includes(entry[0])
       })
     }
+  },
+
+  // Misc options
+  icons: {
+    mdiClose,
+    mdiFilter
+  },
+  /**
+   * Lists of all the possible workflow and task states
+   * @type {{string: string[]}}
+   */
+  allStates: {
+    'workflow state': WorkflowState.enumValues.map(x => x.name),
+    'task state': TaskStateUserOrder.map(x => x.name)
   }
 }
 </script>

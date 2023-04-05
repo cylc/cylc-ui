@@ -185,28 +185,31 @@ describe('Tree view', () => {
 
   describe('filters', () => {
     const initialNumTasks = 7
-    it('Should filter by task name', () => {
+    it('Should filter by ID', () => {
       cy.visit('/#/tree/one')
       // Should not filter by default
-      cy
-        .get('.node-data-task:visible')
+      cy.get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
         .contains('waiting')
-      // eep should filter sleepy
-      cy
-        .get('[data-cy=filter-task-name]')
-        .type('eep')
-      cy
-        .get('.node-data-task:visible')
-        .should('have.length.lessThan', initialNumTasks)
-        .contains('sleepy')
-      cy
-        .get('.node-data-task')
-        .contains('waiting')
-        .should('not.be.visible')
+      for (const id of ['eed', '/suc', 'GOOD', 'SUC']) {
+        cy.get('[data-cy=filter-id]')
+          .clear()
+          .type(id)
+        cy.get('.node-data-task:visible')
+          .should('have.length.lessThan', initialNumTasks)
+          .contains('succeeded')
+        cy.get('.node-data-task')
+          .contains('waiting')
+          .should('not.be.visible')
+      }
       // It should stop filtering when input is cleared
-      cy.get('[data-cy=filter-task-name]')
+      cy.get('[data-cy=filter-id]')
         .clear()
+        .get('.node-data-task:visible')
+        .should('have.length', initialNumTasks)
+      // It should filter by cycle point
+      cy.get('[data-cy=filter-id]')
+        .type('2000') // (matches all tasks)
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
     })
@@ -231,14 +234,14 @@ describe('Tree view', () => {
         .get('.node-data-task:visible')
         .should('have.length', 1)
     })
-    it('Should filter by task name and states', () => {
+    it('Should filter by ID and states', () => {
       cy.visit('/#/tree/one')
       cy
         .get('.node-data-task')
         .contains('failed')
         .should('be.visible')
       cy
-        .get('[data-cy=filter-task-name]')
+        .get('[data-cy=filter-id]')
         .type('i')
       cy
         .get('[data-cy=filter-task-states]')
@@ -275,7 +278,7 @@ describe('Tree view', () => {
         .contains('sleepy')
         .as('sleepyTask')
         .should('be.visible')
-      cy.get('[data-cy=filter-task-name]')
+      cy.get('[data-cy=filter-id]')
         .type('sleep')
       cy.get('[data-cy=collapse-all]')
         .click()

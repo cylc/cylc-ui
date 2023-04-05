@@ -17,12 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-    fluid
-    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
+    class="ma-0 pa-0"
   >
     <!-- Toolbar -->
     <v-row
-        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
+      no-gutters
+      class="d-flex flex-wrap"
     >
       <!-- Filters -->
       <v-col
@@ -70,7 +70,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-row>
     <v-row
       no-gutters
-      class="flex-grow-1 position-relative"
       >
       <v-col
         cols="12"
@@ -203,7 +202,7 @@ export default {
       }
     },
     filterByTaskName () {
-      return Boolean(this.tasksFilter.name?.trim())
+      return Boolean(this.tasksFilter.id?.trim())
     },
     filterByTaskState () {
       return Boolean(this.tasksFilter.states?.length)
@@ -238,20 +237,31 @@ export default {
         this.filterNode(node)
       }
     },
-    filterNode (node) {
-      let filtered = false
+    /**
+     * Update tree cache entry for this node (and its children if applicable)
+     * with whether the node matches the filters.
+     *
+     * @param {Object} node
+     * @param {boolean} parentFiltered - whether the parent of this node
+     * matches the filter.
+     * @return {boolean} - whether this node matches the filter.
+     */
+    filterNode (node, parentFiltered = false) {
+      const isMatch = (
+        matchNode(node, this.tasksFilter.id, this.tasksFilter.states) ||
+        parentFiltered
+      )
+      let filtered = isMatch
       if (node.type === 'cycle') {
         // follow the family tree from cycle point nodes
         for (const child of node.familyTree[0]?.children || []) {
-          filtered = this.filterNode(child) || filtered
+          filtered = this.filterNode(child, isMatch) || filtered
         }
       } else if (['workflow', 'family'].includes(node.type)) {
         // follow children for workflow or family nodes
         for (const child of node.children) {
-          filtered = this.filterNode(child) || filtered
+          filtered = this.filterNode(child, isMatch) || filtered
         }
-      } else if (node.type === 'task') {
-        filtered = matchNode(node.node, this.tasksFilter.name, this.tasksFilter.states)
       }
       if (this.treeItemCache[node.id]) {
         this.treeItemCache[node.id].filtered = filtered

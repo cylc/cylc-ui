@@ -34,6 +34,7 @@ import {
   mdiCursorPointer,
   mdiDelete,
   mdiEmail,
+  mdiFileDocumentOutline,
   mdiGraph,
   mdiMinusCircleOutline,
   mdiPause,
@@ -46,10 +47,10 @@ import {
   mdiStop
 } from '@mdi/js'
 
-import AlertModel from '@/model/Alert.model'
-import TaskState from '@/model/TaskState.model'
+import Alert from '@/model/Alert.model'
 import store from '@/store/index'
 import { Tokens } from '@/utils/uid'
+import { WorkflowState } from '@/model/WorkflowState.model'
 
 // Typedef imports
 /* eslint-disable no-unused-vars, no-duplicate-imports */
@@ -107,7 +108,7 @@ import { IntrospectionInputType } from 'graphql'
 
 /**
  * @typedef {Object} MutationResponse
- * @property {TaskState} status
+ * @property {string} status
  * @property {string} message
  */
 
@@ -126,8 +127,10 @@ export const mutationIcons = {
   '': mdiCog, // default fallback
   broadcast: mdiBullhorn,
   clean: mdiDelete,
+  editRuntime: mdiPlaylistEdit,
   hold: mdiPauseCircleOutline, // to distinguish from pause
   kill: mdiCloseCircle,
+  log: mdiFileDocumentOutline,
   message: mdiEmail,
   pause: mdiPause,
   play: mdiPlay,
@@ -138,8 +141,7 @@ export const mutationIcons = {
   resume: mdiPlay,
   setOutputs: mdiGraph,
   stop: mdiStop,
-  trigger: mdiCursorPointer,
-  editRuntime: mdiPlaylistEdit
+  trigger: mdiCursorPointer
 }
 
 /**
@@ -163,26 +165,31 @@ export const cylcObjects = Object.freeze({
 /**
  * Most important mutations for each object type.
  */
-export const primaryMutations = {}
-primaryMutations[cylcObjects.Workflow] = [
-  'play',
-  'pause',
-  'stop',
-  'reload',
-  'clean'
-]
-primaryMutations[cylcObjects.CyclePoint] = [
-  'hold',
-  'release',
-  'trigger',
-  'kill'
-]
-primaryMutations[cylcObjects.Namespace] = [
-  'hold',
-  'release',
-  'trigger',
-  'kill'
-]
+export const primaryMutations = {
+  [cylcObjects.Workflow]: [
+    'play',
+    'resume',
+    'pause',
+    'stop',
+    'reload',
+    'clean',
+    'log'
+  ],
+  [cylcObjects.CyclePoint]: [
+    'hold',
+    'release',
+    'trigger',
+    'kill'
+  ],
+  [cylcObjects.Namespace]: [
+    'hold',
+    'release',
+    'trigger',
+    'kill',
+    'log'
+  ]
+}
+
 // handle families the same as tasks
 primaryMutations.family = primaryMutations[cylcObjects.Namespace]
 
@@ -210,25 +217,26 @@ const identifierOrder = [
  *
  * object: [[typeName: String, impliesMultiple: Boolean]]
  */
-export const mutationMapping = {}
-mutationMapping[cylcObjects.User] = []
-mutationMapping[cylcObjects.Workflow] = [
-  ['WorkflowID', false]
-]
-mutationMapping[cylcObjects.CyclePoint] = [
-  ['CyclePoint', false],
-  ['CyclePointGlob', true]
-]
-mutationMapping[cylcObjects.Namespace] = [
-  ['NamespaceName', false],
-  ['NamespaceIDGlob', true]
-]
-// mutationMapping[cylcObjects.Task] = [
-//   ['TaskID', false]
-// ]
-mutationMapping[cylcObjects.Job] = [
-  ['JobID', false]
-]
+export const mutationMapping = {
+  [cylcObjects.User]: [],
+  [cylcObjects.Workflow]: [
+    ['WorkflowID', false]
+  ],
+  [cylcObjects.CyclePoint]: [
+    ['CyclePoint', false],
+    ['CyclePointGlob', true]
+  ],
+  [cylcObjects.Namespace]: [
+    ['NamespaceName', false],
+    ['NamespaceIDGlob', true]
+  ],
+  // [cylcObjects.Task]: [
+  //   ['TaskID', false]
+  // ],
+  [cylcObjects.Job]: [
+    ['JobID', false]
+  ]
+}
 
 /**
  * Mutation argument types which are derived from more than one token.
@@ -272,13 +280,11 @@ export const alternateFields = {
  *
  * Maps onto task status.
  */
-export const mutationStatus = {}
-mutationStatus[TaskState.WAITING] = TaskState.WAITING
-mutationStatus[TaskState.SUBMITTED] = TaskState.SUBMITTED
-mutationStatus[TaskState.SUCCEEDED] = TaskState.SUCCEEDED
-mutationStatus[TaskState.FAILED] = TaskState.FAILED
-mutationStatus[TaskState.SUBMIT_FAILED] = TaskState.SUBMIT_FAILED
-Object.freeze(mutationStatus)
+export const mutationStatus = Object.freeze({
+  FAILED: 'FAILED',
+  SUCCEEDED: 'SUCCEEDED',
+  WARN: 'WARN'
+})
 
 /**
  * List of commands to add to the mutations from the schema.
@@ -295,6 +301,13 @@ export const dummyMutations = [
     args: [],
     _appliesTo: cylcObjects.Namespace,
     _requiresInfo: true
+  },
+  {
+    name: 'log',
+    description: 'View the logs.',
+    args: [],
+    _appliesTo: cylcObjects.Namespace,
+    _requiresInfo: true
   }
 ]
 
@@ -304,7 +317,8 @@ export const dummyMutations = [
  * @type {{string: string[]}}
  */
 const dummyMutationsPermissionsMap = Object.freeze({
-  broadcast: Object.freeze(['editRuntime'])
+  broadcast: Object.freeze(['editRuntime']),
+  read: Object.freeze(['log'])
 })
 
 /**
@@ -420,8 +434,34 @@ export function processMutations (mutations, types) {
     mutation._icon = mutationIcons[mutation.name] || mutationIcons['']
     mutation._shortDescription = getMutationShortDesc(mutation.description)
     mutation._help = getMutationExtendedDesc(mutation.description)
+    mutation._validStates = getStates(mutation.description)
     processArguments(mutation, types)
   }
+}
+/**
+ * Get the workflow states that the mutation is valid for.
+ *
+ * @export
+ * @param {string=} text - Full mutation description.
+ * @return {Array<String>}
+ */
+export function getStates (text) {
+  const defaultStates = [
+    WorkflowState.RUNNING.name,
+    WorkflowState.PAUSED.name,
+    WorkflowState.STOPPING.name,
+    WorkflowState.STOPPED.name
+  ]
+  if (!text) {
+    return defaultStates
+  }
+  const re = /Valid\sfor:\s(.*)\sworkflows./
+  // default to all workflow states
+  const validStates = text.match(re)
+  if (validStates) {
+    return validStates[1].replace(/\s/g, '').split(',')
+  }
+  return defaultStates
 }
 
 /**
@@ -794,6 +834,14 @@ export function getMutationArgsFromTokens (mutation, tokens) {
     const alternate = alternateFields[arg._cylcType]
     for (let token in tokens) {
       if (arg._cylcObject && [token, alternate].includes(arg._cylcObject)) {
+        if (arg.name === 'cutoff') {
+          // Work around for a field we don't want filled in, see:
+          // * https://github.com/cylc/cylc-ui/issues/1222
+          // * https://github.com/cylc/cylc-ui/issues/1225
+          // TODO: Once #1225 is done the field type can be safely changed in
+          // the schema without creating a compatibility issue with the UIS.
+          continue
+        }
         if (arg._cylcObject === alternate) {
           token = alternate
         }
@@ -817,6 +865,17 @@ export function getMutationArgsFromTokens (mutation, tokens) {
 }
 
 /**
+ * @param {string} message
+ * @returns {MutationResponse}
+ */
+function _mutateSuccess (message) {
+  return {
+    status: mutationStatus.SUCCEEDED,
+    message
+  }
+}
+
+/**
  * Handle an error in a called mutation.
  *
  * @param {string} mutationName
@@ -833,15 +892,14 @@ async function _mutateError (mutationName, message, response) {
   }
 
   // open a user alert
-  await store.dispatch('setAlert', new AlertModel(
-    `command failed: ${mutationName} - ${message}`,
-    null,
-    'error')
+  await store.dispatch(
+    'setAlert',
+    new Alert(`Command failed: ${mutationName} - ${message}`, 'error')
   )
 
   // format a response
   return {
-    status: TaskState.SUBMIT_FAILED,
+    status: mutationStatus.FAILED,
     message
   }
 }
@@ -854,7 +912,7 @@ async function _mutateError (mutationName, message, response) {
  * @param {ApolloClient} apolloClient
  * @param {string=} cylcID
  *
- * @returns {Promise<MutationResponse>} {status, msg}
+ * @returns {(MutationResponse | Promise<MutationResponse>)} {status, msg}
  */
 export async function mutate (mutation, variables, apolloClient, cylcID) {
   const mutationStr = constructMutation(mutation)
@@ -883,24 +941,18 @@ export async function mutate (mutation, variables, apolloClient, cylcID) {
   }
 
   try {
-    const result = response.data[mutation.name].result
+    const { result } = response.data[mutation.name]
     if (Array.isArray(result) && result.length === 2) {
       // regular [commandSucceeded, message] format
       if (result[0] === true) {
         // success
-        return {
-          status: TaskState.SUBMITTED,
-          message: result[1]
-        }
+        return _mutateSuccess(result[1])
       }
       // failure (Cylc error, e.g. could not find workflow <x>)
       return _mutateError(mutation.name, result[1], response)
     }
     // command in a different format (e.g. info command)
-    return {
-      status: TaskState.SUBMITTED,
-      message: result
-    }
+    return _mutateSuccess(result)
   } catch (error) {
     return _mutateError(mutation.name, 'invalid response', response)
   }

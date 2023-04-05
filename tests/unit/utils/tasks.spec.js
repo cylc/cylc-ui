@@ -17,7 +17,7 @@
 
 import { expect } from 'chai'
 import TaskState from '@/model/TaskState.model'
-import { extractGroupState, latestJob } from '@/utils/tasks'
+import { dtMean, extractGroupState, latestJob, formatDuration } from '@/utils/tasks'
 
 describe('tasks', () => {
   describe('extractGroupState', () => {
@@ -88,6 +88,89 @@ describe('tasks', () => {
       tests.forEach(test => {
         expect(latestJob(test.taskProxy)).to.equal(test.expected)
       })
+    })
+  })
+  describe('dtMean', () => {
+    it('should format seconds to nice isodatetime format', () => {
+      const tests = [
+        {
+          taskNode: { node: null },
+          expected: undefined
+        },
+        {
+          taskNode: {
+            task: {
+              meanElapsedTime: 0
+            }
+          },
+          expected: undefined
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 84
+              }
+            }
+          },
+          expected: '00:01:24'
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 42
+              }
+            }
+          },
+          expected: '00:00:42'
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 4242
+              }
+            }
+          },
+          expected: '01:10:42'
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 1426332
+              }
+            }
+          },
+          expected: '16d 12:12:12'
+        }
+      ]
+      tests.forEach(test => {
+        expect(dtMean(test.taskNode)).to.equal(test.expected)
+      })
+    })
+  })
+  describe('formatDuration', () => {
+    it('should format seconds to nice isodatetime format', () => {
+      expect(formatDuration(null)).to.equal(undefined)
+      expect(formatDuration(undefined)).to.equal(undefined)
+      expect(formatDuration(42)).to.equal('00:00:42')
+      expect(formatDuration(84)).to.equal('00:01:24')
+      expect(formatDuration(4242)).to.equal('01:10:42')
+      expect(formatDuration(1426332)).to.equal('16d 12:12:12')
+    })
+    it('should return undefined for 0 seconds by default', () => {
+      expect(formatDuration(0)).to.equal(undefined)
+    })
+    it('should change format of 0 seconds based on value of allowZeros', () => {
+      expect(formatDuration(0, false)).to.equal(undefined)
+      expect(formatDuration(0, true)).to.equal('00:00:00')
+    })
+    it('should not change format of non-zero values based on allowZeros', () => {
+      expect(formatDuration(42)).to.equal('00:00:42')
+      expect(formatDuration(42, false)).to.equal('00:00:42')
+      expect(formatDuration(42, true)).to.equal('00:00:42')
     })
   })
 })

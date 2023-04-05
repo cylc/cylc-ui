@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-list
         class="pa-0 ma-0 flex-grow-0 d-flex flex-column"
       >
-        <c-header class="pb-5" :user="user.username" />
+        <c-header :user="user.username" />
         <v-list-item
           v-if="responsive"
         >
