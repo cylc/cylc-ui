@@ -1,5 +1,5 @@
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cylc/cylc-ui)](https://github.com/cylc/cylc-ui/releases)
-[![Build Status](https://github.com/cylc/cylc-ui/workflows/CI/badge.svg)](https://github.com/cylc/cylc-ui/actions)
+[![Build Status](https://github.com/cylc/cylc-ui/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/cylc/cylc-ui/actions/workflows/main.yml?query=branch%3Amaster)
 [![codecov](https://codecov.io/gh/cylc/cylc-ui/branch/master/graph/badge.svg)](https://codecov.io/gh/cylc/cylc-ui)
 
 # Cylc UI
@@ -32,8 +32,11 @@ Cylc.  If not, see [GNU licenses](http://www.gnu.org/licenses/).
 # Project setup
 yarn install
 
-# build & run in offline mode (uses mock data, auto-reloads the browser on change)
+# start dev server in offline mode (uses mock data, auto-updates the browser page on change)
 yarn run serve
+
+# pass options to vite (e.g. to use a different port or expose host)
+VITE_OPTIONS='--host myhost' yarn run serve
 
 # build for development (rebuilds on change)
 # launch using `cylc gui --ui-build-dir=<path>`
@@ -43,8 +46,8 @@ yarn run build:watch
 # build for production
 yarn run build
 
-# Produce build report
-yarn run build:report
+# start dev server in offline mode, using the build instead of source files
+yarn run preview
 ```
 
 ### Tests
@@ -53,34 +56,31 @@ There are three groups of tests:
 
 * Unit tests
   * Simple unit tests for individual functions and classes.
-  * **Framework:** Mocha
-  * **Assertions:** Chai
+  * **Framework:** [Vitest](https://vitest.dev/)
+  * **Assertions:** [Chai](https://www.chaijs.com/)/[Jest](https://jestjs.io/docs/expect)
   * **Path:** `tests/unit`
-  * **Command:** `yarn run test:unit`
-  * (To watch add `--watch`)
+  * **Command:** `yarn run test:unit` (watches by default, only re-runs changed file)
+  * (To prevent watching, use `yarn vitest run`)
 * Component tests
   * In-browser tests which mount a single Vue component standalone.
-  * **Framework:** Cypress
+  * **Framework:** [Cypress](https://docs.cypress.io/guides/overview/why-cypress)
   * **Assertions:** Chai
   * **Path:** `cypress/component`
-  * **Command:** `yarn run test:e2e` (navigate to component page)
-  * (For "headless" mode add `-- --headless --config video=false`)
+  * **Command:** `yarn run test:component`
+  * (For "headless" mode use `yarn cypress run --component --config video=false`)
 * End to end tests
   * In-browser tests which load entire pages of the UI using mocked data.
   * **Framework:** Cypress
   * **Assertions:** Chai
   * **Path:** `tests/e2e`
-  * **Command:** `yarn run test:e2e` (navigate to e2e page)
-  * (For "headless" mode add `-- --headless --config video=false`)
+  * **Command:** `yarn run test:e2e`
+  * (For "headless" mode use `yarn run serve cy:run`)
 
 For coverage:
-```
+```bash
 yarn run coverage:unit
+yarn run coverage:e2e
 ```
-
-Useful test opts:
-- `--bail`: exit after first test failure
-- `--colors`: enables coloured output in VSCode integrated terminal
 
 ### Mocked Data
 
@@ -96,107 +96,73 @@ an entry in that file.
 
 See `.eslintrc.js` for style, to test run:
 
-```
+```bash
 yarn run lint
+```
+
+Or to lint a particular file/directory:
+
+```bash
+yarn eslint path/to/file
 ```
 
 ### Project Setup
 
-This project was created with the [vue-cli](https://cli.vuejs.org/).
+We are using [Vue](https://vuejs.org/).
+The project was originally created with [vue-cli](https://cli.vuejs.org/), but
+has switched to [Vite](https://vitejs.dev/) with the upgrade from Vue 2 to 3.
 
-Vue CLI wraps Webpack, Babel, and other utilities. If you need to
-customize Webpack, then you will have to modify the `vue.config.js`
-file.
+The configuration for how the app is served and built is defined in
+[`vite.config.js`](vite.config.js).
 
-Its syntax is different than what you may find in Webpack documentation
-or other websites.
+We are currently using the [Vuetify component library](https://vuetifyjs.com/en/).
+Its configuration is defined in [`src/plugins/vuetify.js`](src/plugins/vuetify.js).
 
-```js
-# webpack
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        loader: 'some-loader',
-        options: {
-          someOption: true
-        }
-      }
-    ]
-  }
-}
+We use [concurrently](https://github.com/open-cli-tools/concurrently) for
+concurrently running the mock data json-server and the Vite dev server, and
+also Cypress. This is configured in [`scripts/concurrently.js`](scripts/concurrently.js).
 
-# vue.config.js
-module.exports = {
-  chainWebpack: config => {
-    config.module.rule('js')
-      .test(/\.js$/)
-      .use('some-loader')
-      .loader('some-loader')
-      .options({
-        someOption: true
-      })
-  }
-}
-```
+### Browser compatibility
 
-If you need to customize Babel, take a look at the `babel.config.js`
-file. But if you want to transpile dependencies you must update the
-`transpileDependencies` array in `vue.config.js`.
+There are two aspects of browser compatibility:
+- ECMAScript syntax (e.g. does the browser support the optional chaining
+operator (`?.`)?)
+- API calls (e.g. does the browser support `Array.prototype.at()`?)
 
-```js
-# babel.config.js
-module.exports = (api) => {
-  api.cache(true)
-  const presets = [
-    '@vue/app'
-  ]
-  const plugins = [
-    ['@babel/plugin-proposal-class-properties', { loose: true }]
-  ]
-  return { presets, plugins }
-}
-```
+The former is [handled by Vite](https://vitejs.dev/guide/build.html#browser-compatibility).
+It uses [esbuild](https://esbuild.github.io/api/#target) to transform instances
+of newer syntax when building.
 
-The example above enables class properties (e.g. static properties used in
-enumify's Enums) for the code. But dependencies are not transpiled. So you
-will have to remember to update `vue.config.js`.
+However, new APIs are not handled and must be polyfilled if deemed necessary.
 
-```js
-# vue.config.js
-module.exports = {
-  publicPath: '',
-  outputDir: 'dist',
-  indexPath: 'index.html',
-  transpileDependencies: [
-    // now the project should build fine, and the code in the dependency
-    // below can use class properties without any errors. Other dependencies
-    // are not transpiled, so if any of those dependencies use class
-    // properties in the exported code, then our build may fail, unless
-    // we include each library here.
-    'some-dependency-using-class-properties'
-  ],
-  // ...
-}
-```
+We define a notional specification for browser compatibility in
+[`.browserslistrc`](.browserslistrc). See https://github.com/browserslist/browserslist.
+- We are not currently using it for the Vite/esbuild configuration because the
+default is good enough (but we could do in future using a plugin such as
+[esbuild-plugin-browserslist](https://www.npmjs.com/package/esbuild-plugin-browserslist)).
+- For polyfilling newer APIs, we could use
+[Babel + core-js](https://babeljs.io/docs/babel-preset-env#usebuiltins) which
+uses the browserslist specification. Or perhaps the simplest solution is to
+use [polyfill.io](https://polyfill.io/v3/) which merely requires adding a
+`<script>` tag to [`index.html`](index.html) which will fetch the listed
+polyfills only if needed by the user's browser. We could even leave it up to
+sites to patch their Cylc UI builds with the polyfills they require.
 
-`@vue/babel-preset-app` uses `@babel/preset-env` and the `browserslist` config
-(`.browserslistrc`) to determine the polyfills needed. See
-https://cli.vuejs.org/guide/browser-compatibility.html.
+Remember it is not just our source code that must meet our back-compat
+specification, but our bundled dependencies (e.g.
+[Vuetify](https://vuetifyjs.com/en/getting-started/browser-support/)) too!
+Vite/esbuild handles syntax for bundled dependencies.
+
+However the bottom line is that as of 2023, browser support is much less of an
+issue than it was even a couple of years ago, due to the proliferation of
+evergreen browsers. The only real concern is bleeding-edge API calls creeping
+into our source code or runtime dependencies.
 
 ### Integration with the backend Cylc UI server
 
-In the previous section _"Compiles and watch for changes for development"_,
-there is part of the solution for the integration with the backend Cylc UI Server.
-
-Running the comment to build and watch the solution, will produce a `index.html`
-in the `./dist/` folder. When running the Cylc Hub, you must remember to point
+Running `yarn run build[:watch]` outputs the build into the `./dist/` folder.
+When running the Cylc Hub, you must remember to point
 the static files directory to the location of your `./dist` folder.
-
-If you have a folder used a _workspace_, you could check out both projects in
-that directory. Then, in your working copy of the Cylc Hub, it should be
-enough to point the static files directory to `../cylc-ui/dist/`.
 
 This way with both Cylc Hub and Cylc UI running, you can work on either -
 or both - projects. Changes done in your Tornado application should reflect immediately
@@ -225,20 +191,8 @@ the application through an accessibility tool such as [WAVE](https://wave.webaim
 There is also a [browser](https://wave.webaim.org/extension/) extension which makes
 testing the development version much easier.
 
-### JavaScript, ES6, TypeScript
+### TypeScript
 
-For the moment, the code in this repository is created using ES6, then Babel/WebPack take
-care to produce the final JavaScript code executed on browsers.
-
-TypeScript is most likely the future for us, especially as Vue.js announced their 3.x release
-includes porting their whole code base to TypeScript. However, we are still pending as of the
-time of writing a decision on the libraries used for displaying the workflow graphs.
-
-This is an important decision, and as such may take a little longer to be over. Choosing
-a library that does not export types, would require us to find time to type the library
-and maintain that type code alongside any library updates.
-
-So for the time being, we are continuing with ES6, and once we have chosen the project
-dependencies, we can assess the amount of work to adopt TypeScript given our code base,
-ability of other developers to adapt to TypeScript, and the ease of use of the libraries
-in our code base.
+TypeScript is most likely the future for us. It can be adopted gradually.
+At the moment we only have JSDoc comments which can provide type information
+in your IDE.
