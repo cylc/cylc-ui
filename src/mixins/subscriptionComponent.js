@@ -35,8 +35,17 @@ export default {
   ],
   beforeMount () {
     this.$workflowService.subscribe(this)
+    this.$workflowService.startSubscriptions()
   },
   beforeUnmount () {
     this.$workflowService.unsubscribe(this)
+  },
+  watch: {
+    query () {
+      // if the query changes, unsubscribe & re-subscribe
+      this.$workflowService.unsubscribe(this)
+      this.$workflowService.subscribe(this)
+      this.$workflowService.startSubscriptions()
+    }
   }
 }

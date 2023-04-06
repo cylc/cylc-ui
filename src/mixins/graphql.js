@@ -25,12 +25,16 @@ import User from '@/model/User.model'
  * query variables.
  *
  * To be used in Views that are bound to VueRouter routes that contain the
- * :workflowName prop.
+ * :workflowName param.
  */
 export default {
+  props: {
+    workflowName: {
+      type: String,
+      required: true
+    }
+  },
   computed: {
-    /** workflowName gets set by router upon navigation */
-    ...mapState('workflows', ['workflowName']),
     /**
      * We use the user from the store to compute the workflow ID. The view
      * has only the workflow name from the Vue route. We then combine it

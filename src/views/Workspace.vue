@@ -37,12 +37,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { uniqueId } from 'lodash'
 import { toArray } from '@lumino/algorithm'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
-import { createWidgetId } from '@/components/cylc/workflow/index'
 import Lumino from '@/components/cylc/workflow/Lumino.vue'
 import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
 import TableView from '@/views/Table.vue'
@@ -88,6 +88,7 @@ export default {
 
   beforeRouteEnter (to, from, next) {
     next(vm => {
+      vm.$workflowService.startSubscriptions()
       vm.$nextTick(() => {
         vm.addView({ viewName: TreeView.name })
       })
@@ -123,14 +124,7 @@ export default {
      * viewName - the name of the view to be added (Vue component name).
      */
     addView ({ viewName, initialOptions = {} }) {
-      this.widgets[createWidgetId()] = { view: viewName, initialOptions }
-      this.$nextTick(() => {
-        // Views use navigation-guards to start the pending subscriptions. But we don't have
-        // this in this view. We must pretend we are doing the beforeRouteEnter here, and
-        // call the .startSubscriptions function, so that the WorkflowService will take care
-        // of loading the pending subscriptions (like the ones created by the new view).
-        this.$workflowService.startSubscriptions()
-      })
+      this.widgets[uniqueId()] = { view: viewName, initialOptions }
     },
     /**
      * Remove all the widgets present in the DockPanel.

@@ -15,45 +15,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import sinon from 'sinon'
 import { mount } from '@vue/test-utils'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import WorkflowService from '@/services/workflow.service'
 
 describe('Subscription Component mixin', () => {
-  let $workflowService
+  let $workflowService, component
   beforeEach(() => {
-    $workflowService = {
-      subscribe (componentOrView) {
-        componentOrView.subscribed = true
-      },
-      unsubscribe (componentOrView) {
-        componentOrView.subscribed = false
-      }
-    }
-  })
-  it('should provide a hook for when the component is created', () => {
+    $workflowService = sinon.createStubInstance(WorkflowService)
+
     const Component = {
       mixins: [subscriptionComponentMixin],
+      data: () => ({
+        query: { foo: 1 }
+      }),
       render () { }
     }
-    const component = mount(Component, {
+    component = mount(Component, {
       global: {
         mocks: { $workflowService }
       }
     })
-    expect(component.vm.subscribed).to.equal(true)
   })
-  it('should provide a hook for when the component is destroyed', () => {
-    const Component = {
-      mixins: [subscriptionComponentMixin],
-      render () { }
-    }
-    const component = mount(Component, {
-      global: {
-        mocks: { $workflowService }
-      }
-    })
-    expect(component.vm.subscribed).to.equal(true)
+
+  it('subscribes & unsubscribes when the component is mounted & destroyed', () => {
+    expect($workflowService.subscribe.calledOnceWith(component.vm)).to.equal(true)
+    expect($workflowService.startSubscriptions.calledOnce).to.equal(true)
+    expect($workflowService.unsubscribe.called).to.equal(false)
     component.unmount()
-    expect(component.vm.subscribed).to.equal(false)
+    expect($workflowService.unsubscribe.calledOnceWith(component.vm)).to.equal(true)
+  })
+
+  it('un- & re-subcribes when the query changes', () => {
+    component.vm.query = { foo: 2 }
+    component.vm.$nextTick(() => {
+      expect($workflowService.unsubscribe.calledOnceWith(component.vm)).to.equal(true)
+      expect($workflowService.subscribe.calledTwice).to.equal(true)
+      expect($workflowService.startSubscriptions.calledTwice).to.equal(true)
+    })
   })
 })

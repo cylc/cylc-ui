@@ -24,20 +24,15 @@ import { mapState } from 'vuex'
 import GScan from '@/components/cylc/gscan/GScan.vue'
 import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import { getPageTitle } from '@/utils/index'
-import subscriptionMixin from '@/mixins/subscription'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 
 export default {
   name: 'Workflows',
 
   mixins: [
-    subscriptionComponentMixin,
-    subscriptionMixin
+    subscriptionComponentMixin
   ],
-  // https://github.com/vuejs/router/issues/454
-  ...subscriptionViewMixin,
 
   components: {
     GScan

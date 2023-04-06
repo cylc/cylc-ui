@@ -38,8 +38,6 @@ import { mapState, mapGetters } from 'vuex'
 import { mdiFileTree } from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionMixin from '@/mixins/subscription'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
@@ -50,11 +48,8 @@ export default {
 
   mixins: [
     graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionMixin
+    subscriptionComponentMixin
   ],
-  // https://github.com/vuejs/router/issues/454
-  ...subscriptionViewMixin,
 
   components: {
     TreeComponent
