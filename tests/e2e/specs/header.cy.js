@@ -29,6 +29,6 @@ describe('Header Component', () => {
       .get('#host.v-chip')
       .should('exist')
       .should('be.visible')
-      .contains('localhost:8080')
+      .contains(/localhost:\d{4,5}/)
   })
 })

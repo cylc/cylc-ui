@@ -18,6 +18,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
+import IstanbulPlugin from 'vite-plugin-istanbul'
 const path = require('path')
 
 export default defineConfig({
@@ -34,7 +35,10 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    vuetify()
+    vuetify(),
+    IstanbulPlugin({
+      requireEnv: true // Only instrument code when VITE_COVERAGE=true
+    })
   ],
   server: {
     proxy: {
@@ -48,6 +52,9 @@ export default defineConfig({
         ws: true
       }
     }
+  },
+  build: {
+    sourcemap: mode !== 'production'
   }
 })
 
@@ -74,17 +81,6 @@ export default defineConfig({
 //         config.devtool('eval')
 //       } else {
 //         config.devtool('eval-source-map')
-//       }
-
-//       // coverage
-//       if (process.env.coverage === 'true') {
-//         config.module.rule('istanbul')
-//           .test(/\.js$/)
-//           .include.add(path.resolve('src')).end()
-//           .use('istanbul-instrumenter-loader')
-//           .loader('istanbul-instrumenter-loader')
-//           .options({ esModules: true })
-//           .after('cache-loader')
 //       }
 
 //       // resolve modules in devtool

@@ -161,8 +161,6 @@ describe('Api On The Fly', () => {
     })
 
     it('fires the mutation when clicked', () => {
-      cy.visit('/#/workspace/one')
-
       // mock the mutation method
       const mutations = mockApolloClient()
 
@@ -200,8 +198,6 @@ describe('Api On The Fly', () => {
 
   describe('Mutation Editor', () => {
     it('is opened when the edit button is clicked in the mutation menu', () => {
-      cy.visit('/#/workspace/one')
-
       // mock the mutation method
       const mutations = mockApolloClient()
 
@@ -254,8 +250,6 @@ describe('Api On The Fly', () => {
 
   describe('Hold/Release button', () => {
     it('should hold/release the workflow', () => {
-      cy.visit('/#/workspace/one')
-
       // mock the mutation method
       const mutations = mockWorkflowService()
       expect(mutations.length).to.equal(0)
@@ -274,8 +268,6 @@ describe('Api On The Fly', () => {
 
   describe('Stop button', () => {
     it('should stop the workflow', () => {
-      cy.visit('/#/workspace/one')
-
       // mock the mutation method
       const mutations = mockWorkflowService()
       expect(mutations.length).to.equal(0)
@@ -296,8 +288,6 @@ describe('Api On The Fly', () => {
 
   describe('Mutation Button', () => {
     it('should list all workflow mutations', () => {
-      cy.visit('/#/workspace/one')
-
       // mock the mutation method
       mockWorkflowService()
 

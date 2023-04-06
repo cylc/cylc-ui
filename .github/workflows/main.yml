@@ -74,8 +74,8 @@ jobs:
       - name: Test
         uses: cypress-io/github-action@v5
         with:
-          start: yarn run serve --hide=CLIENT  # turn off build output because it's absurdly long
-          wait-on: http://localhost:8080/
+          start: yarn run serve
+          wait-on: http://localhost:5173/
           config-file: cypress.config.js
           component: ${{ matrix.type == 'component' }}
           spec: |
@@ -84,7 +84,7 @@ jobs:
             cypress/component/**/*
           browser: ${{ matrix.browser }}
         env:
-          CYPRESS_baseUrl: http://localhost:8080/
+          CYPRESS_baseUrl: http://localhost:5173/
 
       - uses: actions/upload-artifact@v3
         if: failure()

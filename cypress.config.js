@@ -1,4 +1,6 @@
 const { defineConfig } = require('cypress')
+const vitePreprocessor = require('cypress-vite')
+const path = require('path')
 
 module.exports = defineConfig({
   video: false,
@@ -13,10 +15,21 @@ module.exports = defineConfig({
   videosFolder: 'tests/e2e/videos',
 
   e2e: {
-    // We've imported your old cypress plugins here.
-    // You may want to clean this up later by importing these.
+    baseUrl: 'http://localhost:5173',
     setupNodeEvents (on, config) {
-      return require('./tests/e2e/plugins/index.js')(on, config)
+      // For test coverage
+      require('@cypress/code-coverage/task')(on, config)
+      on(
+        'file:preprocessor',
+        vitePreprocessor(path.resolve(__dirname, './vite.config.js'))
+      )
+      return Object.assign({}, config, {
+        fixturesFolder: 'tests/e2e/fixtures',
+        specPattern: 'tests/e2e/specs',
+        screenshotsFolder: 'tests/e2e/screenshots',
+        videosFolder: 'tests/e2e/videos',
+        supportFile: 'tests/e2e/support/index.js'
+      })
     },
     specPattern: 'tests/e2e/specs/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'tests/e2e/support/index.js'
@@ -24,8 +37,14 @@ module.exports = defineConfig({
 
   component: {
     devServer: {
-      framework: 'vue-cli',
-      bundler: 'webpack'
+      framework: 'vue',
+      bundler: 'vite'
     }
-  }
+  },
+
+  env: {
+    coverage: process.env.VITE_COVERAGE ? true : false
+  },
+
+  morgan: false, // Disable XHR logging as it's very noisy
 })

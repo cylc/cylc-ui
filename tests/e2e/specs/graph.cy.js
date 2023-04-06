@@ -29,7 +29,7 @@ function checkGraphLayoutPerformed ($el, depth = 0) {
   // do this in a for loop as otherwise the waits aren't chained correctly.
   if (depth > 10) {
     expect('graph loaded').to.equal(true)
-  } else if (typeof $el[0].__vue__.graphID !== 'number') {
+  } else if (typeof $el[0].__vnode.ctx.data.graphID !== 'number') {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy
       .wait(1000)
