@@ -11,6 +11,14 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 -------------------------------------------------------------------------------
+## __cylc-ui-2.0.0 (<span actions:bind='release-date'>Upcoming</span>)__
+
+### Enhancements
+
+[#1269](https://github.com/cylc/cylc-ui/pull/1269) -
+Upgraded Vue and Vuetify frameworks to v3.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-1.6.0 (<span actions:bind='release-date'>Upcoming</span>)__
 
 ### Enhancements
