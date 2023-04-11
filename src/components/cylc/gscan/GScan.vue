@@ -19,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="c-gscan"
   >
     <!-- TODO: replace v-progress-linear with v-skeleton-loader when
-    the latter is added to Vuetify 3 -->
+    the latter is added to Vuetify 3.
+    https://github.com/cylc/cylc-ui/issues/1272 -->
     <!-- <v-skeleton-loader
       :loading="isLoading"
       type="list-item-three-line"
@@ -277,7 +278,6 @@ export default {
       handler: 'filterWorkflows'
     },
     filteredWorkflows: {
-      deep: true,
       immediate: true,
       handler: function () {
         // build a list of IDs to display

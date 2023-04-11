@@ -23,7 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {{ cylcObject.id }}
     </v-card-subtitle>
     <!-- TODO: replace v-progress-linear with v-skeleton-loader when
-    the latter is added to Vuetify 3 -->
+    the latter is added to Vuetify 3.
+    https://github.com/cylc/cylc-ui/issues/1272 -->
     <!-- <v-skeleton-loader
       v-if="loading"
       type="list-item-two-line@6"

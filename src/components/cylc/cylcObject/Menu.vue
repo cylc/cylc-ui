@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-card-subtitle>
         <v-divider v-if="primaryMutations.length || displayMutations.length" />
         <!-- TODO: replace v-progress-linear with v-skeleton-loader when
-        the latter is added to Vuetify 3 -->
+        the latter is added to Vuetify 3.
+        https://github.com/cylc/cylc-ui/issues/1272 -->
         <!-- <v-skeleton-loader
           v-if="isLoadingMutations && primaryMutations.length"
           type="list-item-avatar-two-line@3"
