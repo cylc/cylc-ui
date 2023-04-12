@@ -16,114 +16,83 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="c-analysis" style="width: 100%; height: 100%">
+  <div class="c-analysis">
     <v-container
     fluid
     class="c-table ma-0 pa-2 h-100 flex-column d-flex"
     >
-      <!-- Toolbar -->
+      <!-- Filters -->
       <v-row
         class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
       >
-        <!-- Filters -->
-        <v-row class="no-gutters">
-          <v-col
-            cols="12"
-            md="4"
-            class="pr-md-2 mb-2 mb-md-0"
-          >
-            <v-text-field
-              id="c-analysis-filter-task-name"
-              clearable
-              dense
-              flat
-              hide-details
-              outlined
-              placeholder="Filter by task name"
-              v-model.trim="tasksFilter.name"
-              ref="filterNameInput"
-            ></v-text-field>
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-            class="mb-2 mb-md-0"
-          >
-            <v-select
-              id="c-analysis-filter-task-timings"
-              :items="timingOptions"
-              dense
-              flat
-              hide-details
-              outlined
-              prefix="Displaying: "
-              v-model="tasksFilter.timingOption"
-            ></v-select>
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-            class="pl-md-2 mb-2 mb-md-0"
-          >
-            <v-select
-              id="c-analysis-filter-task-platforms"
-              :items="platformOptions"
-              dense
-              flat
-              hide-details
-              outlined
-              prefix="Platform: "
-              v-model="tasksFilter.platformOption"
-            ></v-select>
-          </v-col>
-        </v-row>
-      </v-row>
-      <ViewToolbar
-        :groups="groups"
-        @setOption="setOption"/>
-      <v-row
-        no-gutters
-        class="flex-grow-1 position-relative"
-      >
         <v-col
           cols="12"
-          class="mh-100 position-relative"
+          md="4"
+          class="pr-md-2 mb-2 mb-md-0"
         >
-          <v-container
-            fluid
-            class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
-          >
-          <v-data-table
-            v-if="table"
-            :headers="shownHeaders"
-            :items="filteredTasks"
-            :sort-by.sync="sortBy"
-            :page.sync="page"
-            :sortDesc.sync="sortDesc"
-            :itemsPerPage.sync="itemsPerPage"
+          <v-text-field
+            id="c-analysis-filter-task-name"
+            clearable
             dense
-            :footer-props="{
-              itemsPerPageOptions: [5, 10, 20, 50, 100, 200, -1],
-              showFirstLastPage: true
-            }"
-            :options="{ itemsPerPage: 20 }"
-            >
-          </v-data-table>
-          <BoxPlot
-            v-else
-            :configOptions="configOptions"
-            :workflowName="workflowName"
-            :tasks="filteredTasks"
-            :timingOption="tasksFilter.timingOption">
-          </BoxPlot>
-          </v-container>
-          <v-pagination
-            v-if="!table"
-            v-model="page"
-            :length="Math.ceil(filteredTasks.length/itemsPerPage)"
-            :total-visible="7"/>
+            flat
+            hide-details
+            outlined
+            placeholder="Filter by task name"
+            v-model.trim="tasksFilter.name"
+            ref="filterNameInput"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+          class="mb-2 mb-md-0"
+        >
+          <v-select
+            id="c-analysis-filter-task-timings"
+            :items="timingOptions"
+            dense
+            flat
+            hide-details
+            outlined
+            prefix="Displaying: "
+            v-model="tasksFilter.timingOption"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+          class="pl-md-2 mb-2 mb-md-0"
+        >
+          <v-select
+            id="c-analysis-filter-task-platforms"
+            :items="platformOptions"
+            dense
+            flat
+            hide-details
+            outlined
+            prefix="Platform: "
+            v-model="tasksFilter.platformOption"
+          />
         </v-col>
       </v-row>
+      <ViewToolbar :groups="groups" @setOption="setOption"/>
+      <AnalysisTable
+        v-if="table"
+        :tasks="filteredTasks"
+        :timingOption="tasksFilter.timingOption"
+        />
+      <BoxPlot
+        v-else
+        :configOptions="configOptions"
+        :workflowName="workflowName"
+        :tasks="filteredTasks"
+        :timingOption="tasksFilter.timingOption">
+      </BoxPlot>
+      <v-pagination
+        v-if="!table"
+        v-model="page"
+        :length="Math.ceil(filteredTasks.length/itemsPerPage)"
+        :total-visible="7"/>
     </v-container>
   </div>
 </template>
@@ -225,8 +194,8 @@ export default {
 
   components: {
     ViewToolbar,
-    BoxPlot,
-    AnalysisTable
+    AnalysisTable,
+    BoxPlot
   },
 
   metaInfo () {
@@ -247,6 +216,7 @@ export default {
         title: 'analysis',
         icon: mdiChartLine
       },
+      table: true,
       /** Defines controls which get added to the toolbar */
       groups: [
         {
@@ -285,116 +255,7 @@ export default {
         name: '',
         timingOption: 'totalTimes',
         platformOption: null
-      },
-      activeFilters: null,
-      headers: [
-        {
-          text: 'Task',
-          value: 'name'
-        },
-        {
-          text: 'Platform',
-          value: 'platform'
-        },
-        {
-          text: 'Count',
-          value: 'count'
-        }
-        // {
-        //   text: 'Failure rate (%)',
-        //   value: 'failureRate'
-        // }
-      ],
-      queueTimeHeaders: [
-        {
-          text: 'Mean T-queue (s)',
-          value: 'meanQueueTime'
-        },
-        {
-          text: 'Std Dev T-queue (s)',
-          value: 'stdDevQueueTime'
-        },
-        {
-          text: 'Min T-queue (s)',
-          value: 'minQueueTime'
-        },
-        {
-          text: 'Q1 T-queue (s)',
-          value: 'firstQuartileQueue'
-        },
-        {
-          text: 'Median T-queue (s)',
-          value: 'secondQuartileQueue'
-        },
-        {
-          text: 'Q3 T-queue (s)',
-          value: 'thirdQuartileQueue'
-        },
-        {
-          text: 'Max T-queue (s)',
-          value: 'maxQueueTime'
-        }
-      ],
-      runTimeHeaders: [
-        {
-          text: 'Mean T-run (s)',
-          value: 'meanRunTime'
-        },
-        {
-          text: 'Std Dev T-run (s)',
-          value: 'stdDevRunTime'
-        },
-        {
-          text: 'Min T-run (s)',
-          value: 'minRunTime'
-        },
-        {
-          text: 'Q1 T-run (s)',
-          value: 'firstQuartileRun'
-        },
-        {
-          text: 'Median T-run (s)',
-          value: 'secondQuartileRun'
-        },
-        {
-          text: 'Q3 T-run (s)',
-          value: 'thirdQuartileRun'
-        },
-        {
-          text: 'Max T-run (s)',
-          value: 'maxRunTime'
-        }
-      ],
-      totalTimeHeaders: [
-        {
-          text: 'Mean T-total (s)',
-          value: 'meanTotalTime'
-        },
-        {
-          text: 'Std Dev T-total (s)',
-          value: 'stdDevTotalTime'
-        },
-        {
-          text: 'Min T-total (s)',
-          value: 'minTotalTime'
-        },
-        {
-          text: 'Q1 T-total (s)',
-          value: 'firstQuartileTotal'
-        },
-        {
-          text: 'Median T-total (s)',
-          value: 'secondQuartileTotal'
-        },
-        {
-          text: 'Q3 T-total (s)',
-          value: 'thirdQuartileTotal'
-        },
-        {
-          text: 'Max T-total (s)',
-          value: 'maxTotalTime'
-        }
-      ]
+      }
     }
   },
 
@@ -414,31 +275,10 @@ export default {
       }
     },
     filteredTasks () {
-      return this.tasks.filter(task => this.matchTask(task))
-    },
-    shownHeaders () {
-      let timingHeaders
-      if (this.tasksFilter.timingOption === 'totalTimes') {
-        timingHeaders = this.totalTimeHeaders
-      } else if (this.tasksFilter.timingOption === 'runTimes') {
-        timingHeaders = this.runTimeHeaders
-      } else if (this.tasksFilter.timingOption === 'queueTimes') {
-        timingHeaders = this.queueTimeHeaders
-      } else {
-        return []
-      }
-      return this.headers.concat(timingHeaders)
+      return this.tasks.filter(task => matchTask(task, this.tasksFilter))
     },
     platformOptions () {
-      const platformOptions = [{ text: 'All', value: null }]
-      const platforms = []
-      for (const [key, task] of Object.entries(this.tasks)) {
-        if (!platforms.includes(task.platform)) {
-          platforms.push(task.platform)
-          platformOptions.push({ text: task.platform })
-        }
-      }
-      return platformOptions
+      return platformOptions(this.tasks)
     }
   },
   methods: {
@@ -455,16 +295,6 @@ export default {
     },
     setOption (option, value) {
       Vue.set(this, option, value)
-    },
-    matchTask (task) {
-      let ret = true
-      if (this.tasksFilter.name?.trim()) {
-        ret &&= task.name.includes(this.tasksFilter.name)
-      }
-      if (this.tasksFilter.platformOption?.trim()) {
-        ret &&= task.platform.includes(this.tasksFilter.platformOption)
-      }
-      return ret
     }
   }
 }

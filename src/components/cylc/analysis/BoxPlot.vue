@@ -77,9 +77,9 @@ export default {
             {
               x: sortedTasks[i].name,
               y: [sortedTasks[i].minTotalTime,
-                sortedTasks[i].firstQuartileTotal,
-                sortedTasks[i].secondQuartileTotal,
-                sortedTasks[i].thirdQuartileTotal,
+                sortedTasks[i].totalQuartiles[0],
+                sortedTasks[i].totalQuartiles[1],
+                sortedTasks[i].totalQuartiles[2],
                 sortedTasks[i].maxTotalTime]
             }
           )
@@ -90,9 +90,9 @@ export default {
             {
               x: sortedTasks[i].name,
               y: [sortedTasks[i].minRunTime,
-                sortedTasks[i].firstQuartileRun,
-                sortedTasks[i].secondQuartileRun,
-                sortedTasks[i].thirdQuartileRun,
+                sortedTasks[i].runQuartiles[0],
+                sortedTasks[i].runQuartiles[1],
+                sortedTasks[i].runQuartiles[2],
                 sortedTasks[i].maxRunTime]
             }
           )
@@ -103,9 +103,9 @@ export default {
             {
               x: sortedTasks[i].name,
               y: [sortedTasks[i].minQueueTime,
-                sortedTasks[i].firstQuartileQueue,
-                sortedTasks[i].secondQuartileQueue,
-                sortedTasks[i].thirdQuartileQueue,
+                sortedTasks[i].queueQuartiles[0],
+                sortedTasks[i].queueQuartiles[1],
+                sortedTasks[i].queueQuartiles[2],
                 sortedTasks[i].maxQueueTime]
             }
           )
