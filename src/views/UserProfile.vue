@@ -163,11 +163,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       v-for="theme in jobThemes"
                       :key="theme"
                     >
-                      {{theme}}
+                      {{ theme.replace('_', ' ') }}
                     </th>
                   </tr>
-                  <tr
-                  >
+                  <tr>
                     <td></td>
                     <td
                       v-for="theme in jobThemes"

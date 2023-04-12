@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           to="/"
         >
           <template v-slot:prepend>
-            <v-icon>{{ svgPaths.home }}</v-icon>
+            <v-icon style="opacity: 1;">{{ svgPaths.home }}</v-icon>
           </template>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="v-list-item"
         >
           <template v-slot:prepend>
-            <v-icon>{{ svgPaths.graphql }}</v-icon>
+            <v-icon style="opacity: 1;">{{ svgPaths.graphql }}</v-icon>
           </template>
           <v-list-item-title>GraphiQL</v-list-item-title>
         </v-list-item>
