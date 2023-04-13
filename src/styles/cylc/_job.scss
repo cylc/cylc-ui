@@ -150,14 +150,14 @@ $cjob: ".c-job .job rect";
 
 // if overridden elsewhere the new value should take priority
 // (this allows us to override the theme in the user-profile
-#app .job_theme--default {
+.job_theme--default {
     @include job_theme_default
 }
 
-#app .job_theme--greyscale {
+.job_theme--greyscale {
     @include job_theme_greyscale
 }
 
-#app .job_theme--colour_blind {
+.job_theme--colour_blind {
     @include job_theme_colour_blind
 }
