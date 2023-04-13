@@ -17,9 +17,11 @@
 
 import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
-import {
-  VAutocomplete, VCombobox, VSelect, VTextarea, VTextField
-} from 'vuetify/components'
+import { VAutocomplete } from 'vuetify/components/VAutocomplete'
+import { VCombobox } from 'vuetify/components/VCombobox'
+import { VSelect } from 'vuetify/components/VSelect'
+import { VTextarea } from 'vuetify/components/VTextarea'
+import { VTextField } from 'vuetify/components/VTextField'
 import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
 import colors from 'vuetify/lib/util/colors'
 import { mdiClose } from '@mdi/js'

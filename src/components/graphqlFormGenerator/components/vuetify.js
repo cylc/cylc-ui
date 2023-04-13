@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { VSwitch, VTextField } from 'vuetify/components'
+import { VSwitch } from 'vuetify/components/VSwitch'
+import { VTextField } from 'vuetify/components/VTextField'
 
 import GEnum from '@/components/graphqlFormGenerator/components/Enum.vue'
 import GNonNull, { nonNullRule } from '@/components/graphqlFormGenerator/components/NonNull.vue'

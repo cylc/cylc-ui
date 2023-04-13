@@ -27,7 +27,8 @@ import Markdown from '@/components/Markdown.vue'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
-import { VIcon, VTooltip } from 'vuetify/components'
+import { VIcon } from 'vuetify/components/VIcon'
+import { VTooltip } from 'vuetify/components/VTooltip'
 import { upperFirst } from 'lodash'
 
 /**
