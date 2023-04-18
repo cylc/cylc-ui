@@ -21,31 +21,25 @@ import UserService from '@/services/user.service'
 
 /**
  * A plugin that loads the application services.
- *
- * It uses `import.meta.env.MODE` to decide whether to use
- * mocked services, when its value is "offline", or to use normal services.
  */
 export default {
   /**
    * @param {Object} app - Vue application
-   * @param {{ offline: boolean }} options - options passed to the plug-in
    */
-  install (app, options) {
-    const offline = options.offline || false
-    this._installWorkflowService(app, offline)
+  install (app) {
+    this._installWorkflowService(app)
     this._installUserService(app)
   },
 
   /**
    * Creates a workflow service for the application.
    *
-   * The service is available as `Vue.$workflowService`.
+   * The service is available as `vm.$workflowService`.
    *
    * @private
    * @param {Object} app - Vue application
-   * @param {boolean} offline
    */
-  _installWorkflowService (app, offline) {
+  _installWorkflowService (app) {
     const graphQLUrls = createGraphQLUrls()
     const client = createSubscriptionClient(graphQLUrls.wsUrl)
     app.config.globalProperties

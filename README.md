@@ -60,21 +60,21 @@ There are three groups of tests:
   * **Assertions:** [Chai](https://www.chaijs.com/)/[Jest](https://jestjs.io/docs/expect)
   * **Path:** `tests/unit`
   * **Command:** `yarn run test:unit` (watches by default, only re-runs changed file)
-  * (To prevent watching, use `yarn vitest run`)
+    * (To prevent watching, use `yarn vitest run`)
 * Component tests
   * In-browser tests which mount a single Vue component standalone.
   * **Framework:** [Cypress](https://docs.cypress.io/guides/overview/why-cypress)
   * **Assertions:** Chai
   * **Path:** `cypress/component`
   * **Command:** `yarn run test:component`
-  * (For "headless" mode use `yarn cypress run --component --config video=false`)
+    * (For "headless" mode use `yarn cypress run --component --config video=false`)
 * End to end tests
   * In-browser tests which load entire pages of the UI using mocked data.
   * **Framework:** Cypress
   * **Assertions:** Chai
   * **Path:** `tests/e2e`
   * **Command:** `yarn run test:e2e`
-  * (For "headless" mode use `yarn run serve cy:run`)
+    * (For "headless" mode use `yarn run serve cy:run`)
 
 For coverage:
 ```bash

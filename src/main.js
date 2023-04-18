@@ -42,9 +42,7 @@ app.use(router)
 app.use(vuetify)
 app.use(i18n)
 app.use(head)
-app.use(ServicesPlugin, {
-  offline: import.meta.env.MODE === 'offline'
-})
+app.use(ServicesPlugin)
 app.use(CylcObjectPlugin)
 
 app.config.globalProperties.$eventBus = mitt()
