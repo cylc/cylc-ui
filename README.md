@@ -38,13 +38,18 @@ yarn run serve
 # pass options to vite (e.g. to use a different port or expose host)
 VITE_OPTIONS='--host myhost' yarn run serve
 
-# build for development (rebuilds on change)
-# launch using `cylc gui --ui-build-dir=<path>`
-# (where path is the path to the `dist/` folder created by build
-yarn run build:watch
-
 # build for production
 yarn run build
+
+# build for development (rebuilds on change)
+yarn run build:watch
+# and launch using
+cylc gui --ui-build-dir=<cylc-ui-path>/dist/
+
+# Note the incremental rebuild is quite slow so an alternative to build:watch is
+cylc gui --no-browser --port=3000 --ServerApp.allow_origin='http://localhost:5173'
+# and launch using
+yarn run serve:vue --mode development
 
 # start dev server in offline mode, using the build instead of source files
 yarn run preview
@@ -85,9 +90,10 @@ yarn run coverage:e2e
 ### Mocked Data
 
 The "offline" mode (aka `yarn run serve`) which is also used for the end to end
-tests is powered by "mock" data.
+tests is powered by a "mock" data server.
 
-You can find the index of mocked data here: `src/services/mock/json/index.js`
+You can find the index of mocked data here:
+[`src/services/mock/json/index.js`](src/services/mock/json/index.js)
 
 Mock data is automatically loaded when the subscription/query issued matches
 an entry in that file.

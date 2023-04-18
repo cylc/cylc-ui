@@ -75,7 +75,7 @@ jobs:
         env:
           BASE_URL: http://localhost:4173/
         with:
-          build: yarn run build --mode development
+          build: yarn run build --mode offline
           start: yarn run preview
           config: baseUrl=${{ env.BASE_URL }}
           wait-on: ${{ env.BASE_URL }}

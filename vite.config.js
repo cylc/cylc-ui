@@ -39,6 +39,12 @@ export default defineConfig(({ mode }) => {
     )
   }
 
+  /**
+   * When running the Vite dev server to serve the app, set the proxy for the
+   * mock JSON server data in offline mode else the Cylc UIServer data.
+   */
+  const devProxyTarget = `http://localhost:3000${mode === 'offline' ? '/' : '/cylc/'}`
+
   return {
     base: '',
     resolve: {
@@ -63,11 +69,11 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '^/(userprofile|graphql)': {
-          target: 'http://localhost:3000/',
+          target: devProxyTarget,
           changeOrigin: true
         },
         '^/subscriptions': {
-          target: 'http://localhost:3000/',
+          target: devProxyTarget,
           changeOrigin: true,
           ws: true
         }

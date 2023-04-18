@@ -16,7 +16,7 @@ const allCommands = {
     prefixColor: 'blue'
   },
   preview: {
-    command: `yarn run -B vite preview ${VITE_OPTIONS ?? ''}`,
+    command: `yarn run -B vite preview --mode offline ${VITE_OPTIONS ?? ''}`,
     name: 'VITE',
     prefixColor: 'blue'
   },
