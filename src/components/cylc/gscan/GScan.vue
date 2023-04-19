@@ -161,7 +161,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                           dark
                           icon
                         >
-                          <job :status="state" />
+                          <task :status="state"
+                            :startTime="Date.now()"
+                            :estimatedDuration="30"
+                          />
                         </v-btn>
                       </template>
                       <!-- tooltip text -->
@@ -195,7 +198,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiClose, mdiFilter } from '@mdi/js'
 import TaskState, { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import Job from '@/components/cylc/Job'
+import Task from '@/components/cylc/Task'
 import Tree from '@/components/cylc/tree/Tree'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
@@ -205,7 +208,7 @@ export default {
   name: 'GScan',
 
   components: {
-    Job,
+    Task,
     Tree,
     WorkflowIcon
   },
