@@ -32,7 +32,6 @@ import { mapState, mapGetters } from 'vuex'
 import { mdiTable } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -43,8 +42,7 @@ export default {
   mixins: [
     pageMixin,
     graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionComponentMixin
   ],
   name: 'Table',
   components: {

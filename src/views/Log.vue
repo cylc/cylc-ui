@@ -89,8 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiFileDocumentMultipleOutline } from '@mdi/js'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
-import subscriptionMixin from '@/mixins/subscriptionComponent'
+import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import LogComponent from '@/components/cylc/log/Log'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { LOGS_SUBSCRIPTION } from '@/graphql/queries'
@@ -116,8 +115,7 @@ export default {
   mixins: [
     pageMixin,
     graphqlMixin,
-    subscriptionMixin,
-    subscriptionViewMixin
+    subscriptionComponentMixin
   ],
   name: 'Log',
   components: {

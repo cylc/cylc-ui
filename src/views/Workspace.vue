@@ -51,12 +51,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import Vue from 'vue'
+import { uniqueId } from 'lodash'
 import { each, iter } from '@lumino/algorithm'
 import pageMixin from '@/mixins'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
+import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
-import { createWidgetId } from '@/components/cylc/workflow/index'
 import Lumino from '@/components/cylc/workflow/Lumino'
 import Toolbar from '@/components/cylc/workflow/Toolbar'
 import TableView from '@/views/Table'
@@ -70,7 +70,7 @@ export default {
   mixins: [
     pageMixin,
     graphqlMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
 
   components: {
@@ -176,16 +176,9 @@ export default {
       }
       Vue.set(
         this.widgets,
-        createWidgetId(),
+        uniqueId(),
         { view, initialOptions }
       )
-      this.$nextTick(() => {
-        // Views use navigation-guards to start the pending subscriptions. But we don't have
-        // this in this view. We must pretend we are doing the beforeRouteEnter here, and
-        // call the .startSubscriptions function, so that the WorkflowService will take care
-        // of loading the pending subscriptions (like the ones created by the new view).
-        this.$workflowService.startSubscriptions()
-      })
     },
     /**
      * Remove all the widgets present in the UI.
