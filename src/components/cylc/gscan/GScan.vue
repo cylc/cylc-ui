@@ -144,8 +144,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     :key="`${scope.node.id}-summary-${state}`"
                     :class="getTaskStateClasses(scope.node.node, state)"
                   >
-                    <!-- a v-tooltip does not work directly set on Cylc job component, so we use a dummy button to wrap it -->
-                    <!-- NB: most of the classes/directives in these button are applied so that the user does not notice it is a button -->
+                    <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
                     <div
                       class="ma-0 pa-0"
                       min-width="0"

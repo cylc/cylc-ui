@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-navigation-drawer
     v-model="drawer"
-    id="sidebar"
+    id="c-sidebar"
     ref="drawerRef"
     floating
     :width="drawerWidth"
@@ -115,7 +115,7 @@ export default {
     ...mapMutations('app', ['setDrawer']),
     getDrawerElement () {
       // Cannot use $refs.drawerRef.$el due to https://github.com/vuetifyjs/vuetify/issues/16766
-      return document.getElementById('sidebar')
+      return document.getElementById('c-sidebar')
     },
     resize (e) {
       // If less than min width, will collapse (to 4px because that's the
