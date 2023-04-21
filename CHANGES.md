@@ -15,6 +15,11 @@ ones in. -->
 
 ### Enhancements
 
+[#1275](https://github.com/cylc/cylc-ui/pull/1275) -
+Various improvements to the log view including the ability to view prior
+job submissions, workflow log files and the connection status of the
+log file subscription.
+
 [#1187](https://github.com/cylc/cylc-ui/pull/1187) - Improved the workflow
 filtering menu in the sidebar.
 

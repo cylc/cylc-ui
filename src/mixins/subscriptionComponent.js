@@ -34,18 +34,29 @@ export default {
     subscriptionMixin
   ],
   beforeMount () {
-    this.$workflowService.subscribe(this)
-    this.$workflowService.startSubscriptions()
-  },
-  beforeDestroy () {
-    this.$workflowService.unsubscribe(this)
-  },
-  watch: {
-    query () {
-      // if the query changes, unsubscribe & re-subscribe
-      this.$workflowService.unsubscribe(this)
+    if (this.query) {
       this.$workflowService.subscribe(this)
       this.$workflowService.startSubscriptions()
+    }
+  },
+  beforeDestroy () {
+    this._updateQuery(null, this.query)
+  },
+  methods: {
+    _updateQuery (newVal, oldVal) {
+      if (oldVal) {
+        this.$workflowService.unsubscribe(this)
+      }
+      if (newVal) {
+        this.$workflowService.subscribe(this)
+        this.$workflowService.startSubscriptions()
+      }
+    }
+  },
+  watch: {
+    query (newVal, oldVal) {
+      // if the query changes, unsubscribe & re-subscribe
+      this._updateQuery(newVal, oldVal)
     }
   }
 }

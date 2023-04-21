@@ -123,5 +123,16 @@ export default [
       showSidebar: false
     },
     props: true
+  },
+  {
+    path: '/log/:workflowName(.*)',
+    view: 'Log',
+    name: 'log',
+    meta: {
+      layout: 'default',
+      toolbar: true,
+      showSidebar: false
+    },
+    props: true
   }
 ]

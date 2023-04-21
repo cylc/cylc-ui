@@ -264,19 +264,16 @@ export default {
     },
     openDialog (mutation) {
       if (mutation.name === 'log') {
-        this.showMenu = false
         this.$eventBus.emit(
           'add-view',
           {
-
             viewName: 'Log',
             initialOptions: {
-              workflow: this.node.tokens.workflow,
-              task: this.node.tokens.relative_id,
-              file: 'job.out'
+              tokens: this.node.tokens
             }
           }
         )
+        this.showMenu = false
         return
       }
 

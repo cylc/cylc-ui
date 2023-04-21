@@ -127,7 +127,6 @@ class WorkflowService {
    * @param {string} queryName
    * @param {Object} args
    * @param {Field[]} fields
-   * @param {Object} variables
    * @return {Promise<Object>}
    * @memberof WorkflowService
    */
