@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const state = {
+const state = () => ({
   drawer: null,
   title: null,
-  jobTheme: null
-}
+  jobTheme: null,
+})
 
 const mutations = {
   setDrawer (state, drawer) {
