@@ -85,7 +85,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import pick from 'lodash/pick'
+import {
+  pick,
+  debounce
+} from 'lodash'
 import Vue from 'vue'
 import gql from 'graphql-tag'
 import pageMixin from '@/mixins/index'
@@ -248,15 +251,18 @@ export default {
   methods: {
     // run the one-off query for historical job data and pass its results
     // through the callback
-    async historicalQuery () {
-      this.tasks = []
-      this.callback = new AnalysisCallback(this.tasks)
-      const ret = await this.$workflowService.query2(
-        QUERY,
-        { workflows: this.workflowIDs }
-      )
-      this.callback.onAdded(ret.data)
-    }
+    historicalQuery: debounce(
+      async function () {
+        this.tasks = []
+        this.callback = new AnalysisCallback(this.tasks)
+        const ret = await this.$workflowService.query2(
+          QUERY,
+          { workflows: this.workflowIDs }
+        )
+        this.callback.onAdded(ret.data)
+      },
+      200 // only re-run this once every 0.2 seconds
+    )
   }
 }
 </script>
