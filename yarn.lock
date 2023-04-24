@@ -2781,10 +2781,10 @@ __metadata:
     "@vue/test-utils": ^2.0.0
     axios: ^1.0.0
     bufferutil: ^4.0.6
-    chokidar: ^3.5.3
     concurrently: ^7.0.0
     cross-fetch: ^3.1.5
     cypress: ^12.8.1
+    cypress-vite: ^1.4.0
     dedent: ^0.7.0
     enumify: ^2.0.0
     eslint: ^8.0.0
@@ -2830,6 +2830,18 @@ __metadata:
     vuex: ^4.1.0
   languageName: unknown
   linkType: soft
+
+"cypress-vite@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "cypress-vite@npm:1.4.0"
+  dependencies:
+    chokidar: ^3.5.3
+    debug: ^4.3.4
+  peerDependencies:
+    vite: ^2.9.0 || ^3.0.0 || ^4.0.0
+  checksum: 4a5b673c1c2e7b7f78861ee93e7282092d5e0e2dfe9d1d8313e9e09f63c60198b5ac846cb8baf3bc85b0b0b88ba440d216e1f495bf3ad256f3700c46ed77e1c1
+  languageName: node
+  linkType: hard
 
 "cypress@npm:^12.8.1":
   version: 12.8.1

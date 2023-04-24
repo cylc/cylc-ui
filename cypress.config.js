@@ -1,5 +1,5 @@
 const { defineConfig } = require('cypress')
-const vitePreprocessor = require('./tests/e2e/support/vite-preprocessor')
+const vitePreprocessor = require('cypress-vite')
 const path = require('path')
 
 module.exports = defineConfig({
@@ -28,7 +28,10 @@ module.exports = defineConfig({
       process.env.NODE_ENV = 'development'
       on(
         'file:preprocessor',
-        vitePreprocessor(path.resolve(__dirname, './vite.config.js'))
+        vitePreprocessor({
+          configFile: path.resolve(__dirname, './vite.config.js'),
+          mode: 'development',
+        })
       )
 
       return Object.assign({}, config, {
