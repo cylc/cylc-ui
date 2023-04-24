@@ -95,10 +95,10 @@ describe('graph node component', () => {
         propsData: { task, jobs }
       }
     )
-    // there should be 4 jobs
+    // there should be 4 jobs (8 svg nodes)
     cy.get('.c-graph-node:last .jobs')
       .children()
-      .should('have.length', 4)
+      .should('have.length', 8)
     // there shouldn't be a job overflow indicator
     cy.get('.c-graph-node:last .job-overflow').should('not.exist')
 
@@ -120,10 +120,10 @@ describe('graph node component', () => {
         propsData: { task, jobs, maxJobs: 4 }
       }
     )
-    // there should be <maxJobs> jobs
+    // there should be <maxJobs> jobs (<maxJobs * 2 svg nodes)
     cy.get('.c-graph-node:last .jobs')
       .children()
-      .should('have.length', 4)
+      .should('have.length', 8)
     // there should be a job overflow indicator with the number of overflow jobs
     cy.get('.c-graph-node:last .job-overflow')
       .should('exist')

@@ -202,9 +202,22 @@ ${WORKFLOW_DATA_FRAGMENT}
  * @type {DocumentNode}
 */
 const LOGS_SUBSCRIPTION = gql`
-subscription LogData ($workflowName: ID, $task: String, $file: String) {
+subscription LogData ($workflowName: ID, $task: String!, $file: String!) {
   logs (workflow: $workflowName, task:$task, file: $file) {
     lines
+  }
+}
+`
+
+/**
+ * Query used to retrieve available log files for the Log view.
+ *
+ * @type {DocumentNode}
+*/
+const LOG_FILE_QUERY = gql`
+query LogFiles($workflowName: ID, $task: String!) {
+  logFiles(workflow: $workflowName, task: $task) {
+    files
   }
 }
 `
@@ -391,6 +404,7 @@ ${JOB_DATA_FRAGMENT}
 `
 
 export {
+  LOG_FILE_QUERY,
   GSCAN_DELTAS_SUBSCRIPTION,
   DASHBOARD_DELTAS_SUBSCRIPTION,
   LOGS_SUBSCRIPTION,

@@ -194,6 +194,10 @@ class Tokens {
     let task
     let job
 
+    if (id === null) {
+      throw new Error(`Invalid ID ${id}`)
+    }
+
     // try to match relative ID (the leading // is implicit)
     if (relative) {
       match = `//${id}`.match(RELATIVE_ID)

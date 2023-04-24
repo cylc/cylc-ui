@@ -127,7 +127,6 @@ class WorkflowService {
    * @param {string} queryName
    * @param {Object} args
    * @param {Field[]} fields
-   * @param {Object} variables
    * @return {Promise<Object>}
    * @memberof WorkflowService
    */
@@ -138,6 +137,15 @@ class WorkflowService {
       args,
       this.apolloClient
     )
+  }
+
+  async query2 (query, variables) { // TODO: refactor or come up with better name
+    const response = await this.apolloClient.query({
+      query,
+      variables,
+      fetchPolicy: 'no-cache'
+    })
+    return response
   }
 
   /**

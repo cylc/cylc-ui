@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       width="100%"
       height="100%"
       ref="graph"
-      class="graph"
+      class="graph job_theme--default"
     >
       <defs>
         <marker
@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </marker>
       </defs>
       <g
-        class="svg-pan-zoom_viewport"
+        class="svg-pan-zoom_viewport job_theme--default"
       >
         <!-- the nodes -->
         <g
@@ -58,6 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <GraphNode
             :task="node"
             :jobs="node.children"
+            :jobTheme="jobTheme"
           />
         </g>
         <!-- the edges
@@ -93,10 +94,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import Vue from 'vue'
 import gql from 'graphql-tag'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
@@ -203,8 +203,7 @@ export default {
   mixins: [
     pageMixin,
     graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionComponentMixin
   ],
   name: 'Graph',
   components: {
@@ -305,6 +304,7 @@ export default {
     clearInterval(this.refreshTimer)
   },
   computed: {
+    ...mapState('app', ['jobTheme']),
     ...mapGetters('workflows', ['getNodes']),
     query () {
       return new SubscriptionQuery(
