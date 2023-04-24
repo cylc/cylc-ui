@@ -115,15 +115,23 @@ export default {
       GraphView,
       LogView,
       AnalysisView
-    ]
-
+    ],
+    // environment e.g. 'PRODUCTION'
+    environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase()
   }),
+
   created () {
     // We need to load each view used by this view/component.
     // See "local-registration" in Vue.js documentation.
     this.views.forEach(view => {
       this.$options.components[view.name] = view
     })
+    if (this.environment !== 'PRODUCTION') {
+      // dynamically load development views that we don't want in production
+      import('@/views/SimpleTree').then((SimpleTreeView) => {
+        this.views.push(SimpleTreeView.default)
+      })
+    }
   },
 
   computed: {
