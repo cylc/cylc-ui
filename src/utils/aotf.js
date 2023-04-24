@@ -611,12 +611,14 @@ export function getIntrospectionQuery () {
  */
 export function filterAssociations (cylcObject, tokens, mutations, permissions) {
   const ret = []
-  for (const [permission, equivalents] of Object.entries(dummyMutationsPermissionsMap)) {
-    if (permissions.includes(permission)) {
-      permissions.push(...equivalents)
-    }
-  }
-  permissions = permissions.map(x => x.toLowerCase())
+  permissions = [
+    ...permissions.map(x => x.toLowerCase()),
+    ...Object.entries(dummyMutationsPermissionsMap).flatMap(
+      ([permission, equivalents]) => permissions.includes(permission)
+        ? equivalents.map(x => x.toLowerCase())
+        : []
+    ),
+  ]
   for (const mutation of mutations) {
     const authorised = permissions.includes(mutation.name.toLowerCase())
     let requiresInfo = mutation._requiresInfo ?? false
