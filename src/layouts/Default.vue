@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <v-main>
       <alert />
-      <div id="core-view">
+      <div id="core-view" class="h-screen overflow-auto">
         <v-fade-transition mode="out-in">
           <slot/>
         </v-fade-transition>
