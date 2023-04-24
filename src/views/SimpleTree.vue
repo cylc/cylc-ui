@@ -108,7 +108,6 @@ import gql from 'graphql-tag'
 import { mapState, mapGetters } from 'vuex'
 import pageMixin from '@/mixins/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { mdiTree } from '@mdi/js'
@@ -181,8 +180,7 @@ export default {
   mixins: [
     pageMixin,
     graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionComponentMixin
   ],
 
   // This defines the component name, must be HTML safe.
