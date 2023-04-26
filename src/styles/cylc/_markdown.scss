@@ -15,8 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.v-tooltip .v-overlay__content {
-  max-width: 600px !important;
-  // Increase default opacity of bg:
-  background: rgba(var(--v-theme-surface-variant), 0.9);
+.markdown {
+  p, ul, ol {
+    &:not(:last-child) {
+      margin-bottom: 0.8em;
+    }
+  }
+  ul, ol {
+    padding-left: 24px;
+  }
+  .v-theme--light & code {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  .v-theme--dark & code {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }
