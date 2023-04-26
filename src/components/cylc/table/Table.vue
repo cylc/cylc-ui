@@ -244,7 +244,7 @@ export default {
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          text: '<Run-Time>',
+          text: 'Run Time',
           value: 'task.node.task.meanElapsedTime',
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
