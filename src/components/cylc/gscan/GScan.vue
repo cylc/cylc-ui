@@ -154,12 +154,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       <job :status="state" />
                       <v-tooltip
                         activator="parent"
-                        color="black"
                         location="top"
                       >
                         <!-- tooltip text -->
                         <span>
-                          <span class="text-grey">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                          <span class="text-grey-lighten-1">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                           <br/>
                           <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                             {{ task }}<br v-if="index !== tasks.length -1" />

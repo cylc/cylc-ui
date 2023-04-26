@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-for="input in inputs"
         v-bind:key="input.label"
       >
-          <v-list-item-title>
+          <v-list-item-title class="d-flex align-center mb-2">
             <!-- input label - the display title for this input -->
             {{ input.label }}
             <!-- help button - tooltip for more information -->
@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               location="bottom"
             >
               <template v-slot:activator="{ props }">
-                <v-icon v-bind="props">
+                <v-icon v-bind="props" class="mx-2">
                   {{ icons.help }}
                 </v-icon>
               </template>

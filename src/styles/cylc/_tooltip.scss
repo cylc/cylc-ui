@@ -15,8 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.v-tooltip__content {
-  max-width: 600px;
+.v-tooltip .v-overlay__content {
+  max-width: 600px !important;
+  // Increase default opacity of bg:
+  background: rgba(var(--v-theme-surface-variant), 0.9);
 
   p:last-child {
     // If we have markdown paragraphs in the tooltip
