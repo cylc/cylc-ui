@@ -84,6 +84,9 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       sourcemap: mode !== 'production',
+      // Use default browser compatibility for ECMAScript syntax as it's
+      // good enough:
+      target: 'modules',
     },
     define: {
       // Allow vue devtools to work when runing vite build:

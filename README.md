@@ -141,7 +141,7 @@ of newer syntax when building.
 
 However, new APIs are not handled and must be polyfilled if deemed necessary.
 
-We define a notional specification for browser compatibility in
+We define a specification for browser compatibility in
 [`.browserslistrc`](.browserslistrc). See https://github.com/browserslist/browserslist.
 - We are not currently using it for the Vite/esbuild configuration because the
 default is good enough (but we could do in future using a plugin such as
@@ -162,7 +162,9 @@ Vite/esbuild handles syntax for bundled dependencies.
 However the bottom line is that as of 2023, browser support is much less of an
 issue than it was even a couple of years ago, due to the proliferation of
 evergreen browsers. The only real concern is bleeding-edge API calls creeping
-into our source code or runtime dependencies.
+into our source code or runtime dependencies. To catch this, we are using
+[eslint-plugin-compat](https://github.com/amilajack/eslint-plugin-compat)
+in CI to scan the build for any such API calls.
 
 ### Integration with the backend Cylc UI server
 
