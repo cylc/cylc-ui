@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container>
+  <v-container fluid>
     <h1 class="ma-0">Cylc UI Quick Start</h1>
     <!--
       TODO: make sections linkable

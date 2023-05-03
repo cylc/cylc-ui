@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="h-100 c-log-view">
     <v-form>
-      <v-container>
+      <v-container fluid>
         <v-row justify="start">
           <v-col cols="12" md="4" >
             <v-text-field

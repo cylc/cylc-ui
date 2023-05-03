@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container class="c-user-profile">
+  <v-container fluid class="c-user-profile">
     <v-row class="wrap">
       <v-col cols="12">
         <v-alert
