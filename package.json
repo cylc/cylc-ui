@@ -88,7 +88,7 @@
     "json-server": "^0.17.0",
     "nodemon": "^2.0.19",
     "nyc": "^15.1.0",
-    "sass": "~1.60.0",
+    "sass": "~1.62.0",
     "sass-loader": "^10.2.0",
     "sinon": "^15.0.0",
     "standard": "^17.0.0",
@@ -107,5 +107,5 @@
   "resolutions": {
     "webpack-dev-server/selfsigned": "^2.0.1"
   },
-  "packageManager": "yarn@3.5.0"
+  "packageManager": "yarn@3.5.1"
 }
