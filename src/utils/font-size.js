@@ -17,19 +17,18 @@
 
 // Module for font size functions and constants.
 
-/** Default <html> font size in px */
-const DEFAULT_FONT_SIZE = window.getComputedStyle(document.documentElement).fontSize
-export const INCREMENT = 2 // px
+/** Font size increment in px */
+export const INCREMENT = 2
 
 /**
- * Sets the font-size to a value. The default value is the <html> element's
- * computed font size.
+ * Sets the font-size to a value.
  *
- * @param {string} size in px
+ * @param {?string} size - Value with units given (doesn't matter which unit).
+ * If null then reset to default.
  */
-export function resetFontSize (size = DEFAULT_FONT_SIZE) {
+export function resetFontSize (size = null) {
   localStorage.fontSize = size
-  document.body.style.fontSize = size
+  document.documentElement.style.fontSize = size
 }
 
 export function decreaseFontSize () {
@@ -43,9 +42,9 @@ export function increaseFontSize () {
 /**
  * Get HTML element (computed) font size.
  *
- * @returns {number} current font size
+ * @returns {number} current font size in px
  */
 export function getCurrentFontSize () {
-  const fontSize = localStorage.fontSize ?? window.getComputedStyle(document.body).fontSize
+  const fontSize = window.getComputedStyle(document.documentElement).fontSize // px
   return parseFloat(fontSize)
 }
