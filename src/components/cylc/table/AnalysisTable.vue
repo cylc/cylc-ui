@@ -216,163 +216,163 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-container>
   </template>
 
-  <script>
-  import TaskState from '@/model/TaskState.model'
-  import Task from '@/components/cylc/Task'
-  import Job from '@/components/cylc/Job'
-  import cloneDeep from 'lodash/cloneDeep'
-  import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
-  import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
-  import { datetimeComparator } from '@/components/cylc/table/sort'
+<script>
+import TaskState from '@/model/TaskState.model'
+import Task from '@/components/cylc/Task'
+import Job from '@/components/cylc/Job'
+import cloneDeep from 'lodash/cloneDeep'
+import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
+import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
+import { datetimeComparator } from '@/components/cylc/table/sort'
 
-  export default {
-    name: 'TableComponent',
-    props: {
-      tasks: {
-        type: Array,
-        required: true
+export default {
+  name: 'TableComponent',
+  props: {
+    tasks: {
+      type: Array,
+      required: true
+    },
+    filterable: {
+      type: Boolean,
+      default: true
+    }
+  },
+  components: {
+    Task,
+    Job
+  },
+  data () {
+    return {
+      icons: {
+        mdiChevronDown,
+        mdiArrowDown
       },
-      filterable: {
-        type: Boolean,
-        default: true
-      }
-    },
-    components: {
-      Task,
-      Job
-    },
-    data () {
-      return {
-        icons: {
-          mdiChevronDown,
-          mdiArrowDown
+      sortBy: ['task.tokens.cycle'],
+      sortDesc: [localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : true],
+      expanded: [],
+      headers: [
+        {
+          text: 'Task',
+          value: 'task.name',
+          sort: DEFAULT_COMPARATOR
         },
-        sortBy: ['task.tokens.cycle'],
-        sortDesc: [localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : true],
-        expanded: [],
-        headers: [
-          {
-            text: 'Task',
-            value: 'task.name',
-            sort: DEFAULT_COMPARATOR
-          },
-          {
-            text: 'Jobs',
-            value: 'data-table-expand',
-            sortable: false
-          },
-          {
-            text: 'Cycle Point',
-            value: 'task.tokens.cycle',
-            sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
-          },
-          {
-            text: 'Platform',
-            value: 'latestJob.node.platform',
-            sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
-          },
-          {
-            text: 'Job System',
-            value: 'latestJob.node.jobRunnerName',
-            sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
-          },
-          {
-            text: 'Job ID',
-            value: 'latestJob.node.jobId',
-            sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
-          },
-          {
-            text: 'T-submit',
-            value: 'latestJob.node.submittedTime',
-            sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
-          },
-          {
-            text: 'T-start',
-            value: 'latestJob.node.startedTime',
-            sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
-          },
-          {
-            text: 'T-finish',
-            value: 'latestJob.node.finishedTime',
-            sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
-          },
-          {
-            text: 'dT-mean',
-            value: 'task.meanElapsedTime',
-            sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
-          }
-        ],
-        tasksFilter: {
-          name: '',
-          states: []
+        {
+          text: 'Jobs',
+          value: 'data-table-expand',
+          sortable: false
         },
-        activeFilters: null,
-        maximumTasks: 4
-      }
-    },
-    computed: {
-      taskStates () {
-        return TaskState.enumValues.map(taskState => {
-          return {
-            text: taskState.name.replace(/_/g, ' '),
-            value: taskState.name
-          }
-        }).sort((left, right) => {
-          return left.text.localeCompare(right.text)
-        })
-      },
-      tasksFilterStates () {
-        return this.activeFilters.states
-      },
-      filteredTasks () {
-        const filterByName = this.filterByTaskName()
-        const filterByState = this.filterByTaskState()
-        return this.tasks.filter(task => {
-          if (filterByName && filterByState) {
-            return (
-              task.task.name.includes(this.activeFilters.name) &&
-              this.tasksFilterStates.includes(task.task.node.state)
-            )
-          } else if (filterByName) {
-            return task.task.name.includes(this.activeFilters.name)
-          } else if (filterByState) {
-            return this.tasksFilterStates.includes(task.task.node.state)
-          }
-          return true
-        })
-      }
-    },
-    methods: {
-      filterByTaskName () {
-        return this.activeFilters &&
-          this.activeFilters.name !== undefined &&
-          this.activeFilters.name !== null &&
-          this.activeFilters.name !== ''
-      },
-      filterByTaskState () {
-        return this.activeFilters &&
-          this.activeFilters.states !== undefined &&
-          this.activeFilters.states !== null &&
-          this.activeFilters.states.length > 0
-      },
-      filterTasks () {
-        const taskNameFilterSet = this.tasksFilter.name !== undefined &&
-          this.tasksFilter.name !== null &&
-          this.tasksFilter.name !== ''
-        const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
-          this.tasksFilter.states !== null &&
-          this.tasksFilter.states.length > 0
-        if (taskNameFilterSet || taskStatesFilterSet) {
-          this.activeFilters = cloneDeep(this.tasksFilter)
-        } else {
-          this.activeFilters = null
+        {
+          text: 'Cycle Point',
+          value: 'task.tokens.cycle',
+          sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
+        },
+        {
+          text: 'Platform',
+          value: 'latestJob.node.platform',
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+        },
+        {
+          text: 'Job System',
+          value: 'latestJob.node.jobRunnerName',
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+        },
+        {
+          text: 'Job ID',
+          value: 'latestJob.node.jobId',
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+        },
+        {
+          text: 'T-submit',
+          value: 'latestJob.node.submittedTime',
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+        },
+        {
+          text: 'T-start',
+          value: 'latestJob.node.startedTime',
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+        },
+        {
+          text: 'T-finish',
+          value: 'latestJob.node.finishedTime',
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+        },
+        {
+          text: 'dT-mean',
+          value: 'task.meanElapsedTime',
+          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
+      ],
+      tasksFilter: {
+        name: '',
+        states: []
       },
-      clearInput (event) {
-        // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
-        this.tasksFilter.name = null
-        this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
+      activeFilters: null,
+      maximumTasks: 4
+    }
+  },
+  computed: {
+    taskStates () {
+      return TaskState.enumValues.map(taskState => {
+        return {
+          text: taskState.name.replace(/_/g, ' '),
+          value: taskState.name
+        }
+      }).sort((left, right) => {
+        return left.text.localeCompare(right.text)
+      })
+    },
+    tasksFilterStates () {
+      return this.activeFilters.states
+    },
+    filteredTasks () {
+      const filterByName = this.filterByTaskName()
+      const filterByState = this.filterByTaskState()
+      return this.tasks.filter(task => {
+        if (filterByName && filterByState) {
+          return (
+            task.task.name.includes(this.activeFilters.name) &&
+            this.tasksFilterStates.includes(task.task.node.state)
+          )
+        } else if (filterByName) {
+          return task.task.name.includes(this.activeFilters.name)
+        } else if (filterByState) {
+          return this.tasksFilterStates.includes(task.task.node.state)
+        }
+        return true
+      })
+    }
+  },
+  methods: {
+    filterByTaskName () {
+      return this.activeFilters &&
+        this.activeFilters.name !== undefined &&
+        this.activeFilters.name !== null &&
+        this.activeFilters.name !== ''
+    },
+    filterByTaskState () {
+      return this.activeFilters &&
+        this.activeFilters.states !== undefined &&
+        this.activeFilters.states !== null &&
+        this.activeFilters.states.length > 0
+    },
+    filterTasks () {
+      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
+        this.tasksFilter.name !== null &&
+        this.tasksFilter.name !== ''
+      const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
+        this.tasksFilter.states !== null &&
+        this.tasksFilter.states.length > 0
+      if (taskNameFilterSet || taskStatesFilterSet) {
+        this.activeFilters = cloneDeep(this.tasksFilter)
+      } else {
+        this.activeFilters = null
       }
+    },
+    clearInput (event) {
+      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
+      this.tasksFilter.name = null
+      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
     }
   }
-  </script>
+}
+</script>
