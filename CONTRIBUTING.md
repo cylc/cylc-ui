@@ -58,6 +58,7 @@ below.
  - Giuliano Serrao
  - Aaron Cole
  - Jamie Allen
+ - Christopher Bennett
 <!-- end-shortlog -->
 
 (All contributors are identifiable with email addresses in the git version
