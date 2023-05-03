@@ -141,8 +141,8 @@ export default {
           },
           boxPlot: {
             colors: {
-              upper: '#C4E90C',
-              lower: '#000000'
+              upper: '#6DD5C2',
+              lower: '#6AA4F1'
             }
           }
         }

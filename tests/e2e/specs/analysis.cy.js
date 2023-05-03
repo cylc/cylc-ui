@@ -23,6 +23,16 @@ describe('Analysis view', () => {
       .should('have.length', 3)
       .should('be.visible')
   })
+  it('Should display boxplot', () => {
+    cy.visit('/#/analysis/one')
+    cy
+      .get('.table > .v-icon')
+      .click({ force: true })
+    cy
+      .get('.c-table > .container')
+      .should('be.visible')
+  })
+
   describe('Filters', () => {
     it('Should display total times and not filter by default', () => {
       cy.visit('/#/analysis/one')
