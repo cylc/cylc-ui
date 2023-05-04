@@ -23,38 +23,39 @@ component. Note: this is not used for the workflow view, see
 <template>
   <v-toolbar
     id="core-app-bar"
-    density="compact"
+    absolute
+    :height="toolbarHeight"
     flat
     class="c-toolbar"
-    v-if="showNavBtn"
   >
-    <v-toolbar-title
-      class="tertiary--text"
+    <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
+    <!-- burger button for mobile -->
+    <v-btn
+      icon
+      @click.stop="toggleDrawer"
+      id="toggle-drawer"
     >
-      <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
-      <!-- burger button for mobile -->
-      <v-btn
-        icon
-        @click.stop="onClickBtn"
-        class="default v-btn--simple"
-        id="toggle-drawer"
-      >
-        <v-icon>{{ svgPaths.list }}</v-icon>
-      </v-btn>
-      <!-- title -->
-      <span class="c-toolbar-title">{{ title }}</span>
+      <v-icon>{{ svgPaths.list }}</v-icon>
+    </v-btn>
+    <v-toolbar-title>
+      {{ title }}
     </v-toolbar-title>
   </v-toolbar>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import toolbar from '@/mixins/toolbar'
+import { useToolbar, toolbarHeight } from '@/utils/toolbar'
 import {
   mdiViewList
 } from '@mdi/js'
 
 export default {
+  setup () {
+    const { toggleDrawer } = useToolbar()
+    return { toggleDrawer, toolbarHeight }
+  },
+
   mixins: [
     toolbar
   ],

@@ -15,12 +15,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!-- Toolbar for the workflow view -->
+<!-- Toolbar for the workspace view -->
 
 <template>
   <v-toolbar
     id="core-app-bar"
-    density="compact"
+    :height="toolbarHeight"
     flat
     class="c-toolbar"
     color="grey-lighten-4"
@@ -30,8 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-btn
       v-if="showNavBtn"
       icon
-      @click.stop="onClickBtn"
-      class="default v-btn--simple"
+      @click.stop="toggleDrawer"
       id="toggle-drawer"
     >
       <v-icon>{{ svgPaths.list }}</v-icon>
@@ -148,10 +147,9 @@ import {
   mdiViewList
 } from '@mdi/js'
 import { startCase } from 'lodash'
-import toolbar from '@/mixins/toolbar'
+import { useToolbar, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import graphql from '@/mixins/graphql'
-
 import {
   mutationStatus
 } from '@/utils/aotf'
@@ -159,8 +157,12 @@ import {
 export default {
   name: 'Toolbar',
 
+  setup () {
+    const { showNavBtn, toggleDrawer } = useToolbar()
+    return { showNavBtn, toggleDrawer, toolbarHeight }
+  },
+
   mixins: [
-    toolbar,
     graphql
   ],
 
