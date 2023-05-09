@@ -15,31 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const state = () => ({
-  drawer: null,
-  title: null,
-  jobTheme: null,
-  reducedAnimation: null,
-})
-
-const mutations = {
-  setDrawer (state, drawer) {
-    state.drawer = drawer
-  },
-  setTitle (state, title) {
-    state.title = title
-  },
-  setJobTheme (state, jobTheme) {
-    localStorage.jobTheme = jobTheme
-    state.jobTheme = jobTheme
-  },
-  setReducedAnimation (state, reducedAnimation) {
-    state.reducedAnimation = reducedAnimation
-  },
-}
-
-export const app = {
-  namespaced: true,
-  state,
-  mutations
+export default {
+  methods: {
+    /**
+     * Enable/disable reduced animations mode in the app.
+     *
+     * @param {boolean} value
+     */
+    setReducedAnimation (value) {
+      localStorage.reducedAnimation = value
+      this.$store.commit('app/setReducedAnimation', value)
+      for (const property of ['transition', 'ripple']) {
+        this.$vuetify.defaults.global[property] = value ? false : null
+      }
+    }
+  }
 }

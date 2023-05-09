@@ -89,6 +89,44 @@ describe('User Profile', () => {
           })
       })
   })
+
+  it('Sets reduced animations mode', () => {
+    let animationSpy
+    const testMenu = (shouldAnimate) => {
+      cy.get('.c-mutation-menu:first')
+        .as('mutationMenu')
+        .should('not.be.visible')
+        .then(([$el]) => {
+          animationSpy = cy.spy($el, 'animate')
+        })
+        .get('.c-interactive:first')
+        .click()
+        .get('@mutationMenu')
+        .should('be.visible')
+        .then(() => {
+          if (shouldAnimate) {
+            expect(animationSpy).to.be.called
+          } else {
+            expect(animationSpy).not.to.be.called
+          }
+        })
+        // Close menu:
+        .get('noscript').click({ force: true })
+    }
+
+    cy.get('[data-cy=reduced-animation] input')
+      .should('not.be.checked')
+    // Force initial render of menu:
+    cy.get('.c-interactive:first').click()
+      .get('noscript').click({ force: true })
+    // Test default animation:
+    testMenu(true)
+    // Turn on reduced animations mode:
+    cy.get('[data-cy=reduced-animation] input')
+      .click()
+      .should('be.checked')
+    testMenu(false)
+  })
   // TODO
   // it('Sets the cycle points order', () => {
   //   cy.visit('/#/user-profile')

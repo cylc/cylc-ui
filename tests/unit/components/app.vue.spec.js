@@ -17,44 +17,35 @@
 
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
+import { createVuetify } from 'vuetify'
 import App from '@/App.vue'
 import Empty from '@/layouts/Empty.vue'
 import storeOptions from '@/store/options'
-import { createVuetify } from 'vuetify'
+import { vuetifyOptions } from '@/plugins/vuetify'
 
 describe('App', () => {
-  const store = createStore(storeOptions)
-  let vuetify
-  let $route
-
   const mountFunction = () => {
     return mount(App, {
       global: {
         plugins: [
-          vuetify,
-          store
+          createVuetify(vuetifyOptions),
+          createStore(storeOptions),
         ],
         components: {
           'empty-layout': Empty
         },
         stubs: ['router-link', 'router-view'],
         mocks: {
-          $route
+          $route: {
+            name: 'app',
+            meta: {
+              layout: 'empty'
+            }
+          }
         }
       }
     })
   }
-
-  beforeEach(() => {
-    $route = {
-      name: 'app',
-      meta: {
-        layout: 'empty'
-      }
-    }
-    vuetify = createVuetify()
-    global.localStorage = window.localStorage
-  })
 
   it('should create the App with the correct theme', () => {
     const wrapper = mountFunction()
@@ -66,5 +57,17 @@ describe('App', () => {
     const wrapper = mountFunction()
     // default is empty, unless the route specifies another layout
     expect(wrapper.vm.layout).to.equal('empty-layout')
+  })
+
+  describe.each([
+    { value: true, expected: { value: true, vuetify: false } },
+    { value: false, expected: { value: false, vuetify: null } },
+  ])('reduced animation mode: $value', ({ value, expected }) => {
+    it('loads the reduced animation setting from localStorage', () => {
+      localStorage.setItem('reducedAnimation', value)
+      const wrapper = mountFunction()
+      expect(wrapper.vm.$store.state.app.reducedAnimation).to.equal(expected.value)
+      expect(wrapper.vm.$vuetify.defaults.global.transition).to.equal(expected.vuetify)
+    })
   })
 })
