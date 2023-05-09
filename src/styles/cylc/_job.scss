@@ -134,7 +134,7 @@ $cjob: ".c-job .job rect";
 }
 
 @each $theme in "default", "greyscale", "colour_blind" {
-    #app .job_theme--#{$theme} {
+    .job_theme--#{$theme} {
         &, // job theme as configured by the top-level application
         &.job_theme_override {
             // if overridden elsewhere the new value should take priority
