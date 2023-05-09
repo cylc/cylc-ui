@@ -32,12 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           :class="iControl.title"
           icon
-          variant="flat"
+          variant="text"
           :disabled="iControl.disabled"
           :color="iControl.color"
           @click="iControl.callback"
         >
-          <v-icon size="x-large">{{ iControl.icon }}</v-icon>
+          <v-icon size="large">{{ iControl.icon }}</v-icon>
           <v-tooltip
             activator="parent"
             location="bottom"
@@ -130,6 +130,7 @@ export default {
               break
             case 'callback':
               callback = (e) => this.call(control, e)
+              break
           }
 
           // set disabled
@@ -192,31 +193,23 @@ export default {
 <style lang="scss">
   .c-view-toolbar {
     // give the toolbar a little respect space
-    padding: 0.5rem 0 0.5rem 0;
+    padding: 0.5rem;
+    display: flex;
 
     .group {
-      // put a bit of space between the groups
-      padding-right: 0.5rem;
-      display: inline-block;
+      display: flex;
+      align-items: center;
 
-      &:before {
+      $spacing: 0.5rem;
+
+      &:not(:first-child):before {
         // place a divider between groups
-        content: '|';
-        font-size: 2rem;
-        position: relative;
-        top: 0.5rem; // because the font is x2 nudge it down 1/2
-        color: rgb(200, 200, 200);
-      }
-      &:first-child:before {
-        // don't add a divider on the first group
         content: '';
-      }
-
-      .control {
-        // put a bit of space between the controls
-        padding: 0 0 0 0.5rem;
-        // make them sit side-by-side
-        display: inline-block;
+        height: 70%;
+        width: 2px;
+        background: rgb(0, 0, 0, 0.22);
+        // put a bit of space between the groups
+        margin: 0 $spacing;
       }
     }
   }

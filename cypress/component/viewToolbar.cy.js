@@ -76,7 +76,7 @@ describe('View Toolbar Component', () => {
     cy
       // the toggle should be blue because it's active (default true)
       .get('.control.toggle .v-btn')
-      .should('have.class', 'bg-blue')
+      .should('have.class', 'text-blue')
       // clicking the toggle should emit a "setOption" event with the
       // controls key (toggle) and new value (false)
       .click({ force: true })
@@ -87,7 +87,7 @@ describe('View Toolbar Component', () => {
       })
       // it should not be grey because it's inactive (false)
       .get('.control.toggle .v-btn')
-      .not('.bg-blue')
+      .not('.text-blue')
       // click it again and it should become active again
       .click({ force: true })
       .get('@wrapper').then(({ wrapper }) => {
@@ -96,7 +96,7 @@ describe('View Toolbar Component', () => {
         ).to.deep.equal(['toggle', true])
       })
       .get('.control.toggle .v-btn')
-      .should('have.class', 'bg-blue')
+      .should('have.class', 'text-blue')
 
     // test action=callback
     expect(callbacks).to.have.length(0)

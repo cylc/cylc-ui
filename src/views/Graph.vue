@@ -678,12 +678,14 @@ export default {
 
 <style lang="scss">
   .c-graph {
+    overflow: hidden;
+
     .c-view-toolbar {
       // turn the view toolbar into a floating component
       position: fixed;
       background-color: rgba(240,240,240,0.9);
       border-radius: 0.75em;
-      margin: 0.25em;
+      margin: 0.5em;
       padding: 0.4em;
     }
   }
