@@ -17,13 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <div class="c-table h-100">
-      <table-component
-        :tasks="tasks"
-        ref="table0"
-        key="table0"
-      ></table-component>
-    </div>
+    <TableComponent
+      :tasks="tasks"
+      ref="table0"
+      key="table0"
+    />
   </div>
 </template>
 
