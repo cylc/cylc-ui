@@ -294,11 +294,12 @@ export default {
     }
   },
 
-  mounted () {
+  async mounted () {
+    // compile & instantiate graphviz wasm
+    this.graphviz = await Graphviz.load()
     // allow render to happen before we go configuring svgPanZoom
-    const self = this
-    this.$nextTick(function () {
-      self.updateTimer()
+    this.$nextTick(() => {
+      this.updateTimer()
     })
     this.mountSVGPanZoom()
   },
@@ -586,7 +587,7 @@ export default {
 
       // layout the graph
       try {
-        await this.layout(nodes, edges, nodeDimensions)
+        this.layout(nodes, edges, nodeDimensions)
       } catch (e) {
         // something went wrong, allow the layout to retry later
         this.graphID = null
@@ -624,14 +625,12 @@ export default {
       }
     },
     /** re-layout the graph after any new nodes have been rendered */
-    async layout (nodes, edges, nodeDimensions) {
-      const graphviz = await Graphviz.load()
-
+    layout (nodes, edges, nodeDimensions) {
       // generate the GraphViz dot code
       const dotCode = this.getDotCode(nodeDimensions, nodes, edges)
 
       // run the layout algorithm
-      const jsonString = graphviz.layout(dotCode, 'json')
+      const jsonString = this.graphviz.layout(dotCode, 'json')
       const json = JSON.parse(jsonString)
 
       // update graph node positions
