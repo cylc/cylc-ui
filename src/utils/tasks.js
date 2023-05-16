@@ -20,7 +20,7 @@ import { TASK_OUTPUT_NAMES } from '@/model/TaskOutput.model'
 
 /**
  * States used when the parent is stopped.
- * @type {Array<TaskState>}
+ * @type {TaskState[]}
  */
 const isStoppedOrderedStates = [
   TaskState.SUBMIT_FAILED,
@@ -35,9 +35,9 @@ const isStoppedOrderedStates = [
 
 /**
  * Gives a single state, based on a list of states of children nodes.
- * @param childStates {Array<TaskState>} children nodes
- * @param isStopped {boolean} whether the parent node is stopped or not
- * @returns {string} a valid Task State name, or null if not found
+ * @param {TaskState[]} childStates children nodes
+ * @param {boolean} isStopped whether the parent node is stopped or not
+ * @returns {string} a valid Task State name, or empty string if not found
  * @link @see https://github.com/cylc/cylc-flow/blob/d66ae5c3ce8c749c8178d1cd53cb8c81d1560346/lib/cylc/task_state_prop.py
  */
 function extractGroupState (childStates, isStopped = false) {
@@ -51,10 +51,7 @@ function extractGroupState (childStates, isStopped = false) {
 }
 
 function latestJob (taskProxy) {
-  if (taskProxy && taskProxy.children && taskProxy.children.length > 0) {
-    return taskProxy.children[0].node
-  }
-  return null
+  return taskProxy?.children?.[0]?.node
 }
 
 /** Returns an array of task messages and custom outputs for a job node.
