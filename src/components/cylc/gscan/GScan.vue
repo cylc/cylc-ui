@@ -108,10 +108,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="c-gscan-workflow ma-0 pa-0"
           ref="tree"
         >
-          <template v-slot:node="{node, latestDescendantTasks, lastDescendent, descendentLabel, branchingLineage, expansionStatus}">
+          <template v-slot:node="{node, descendantTaskTotals, latestDescendantTasks, lastDescendent, descendentLabel, branchingLineage, expansionStatus}">
             <workflow-icon
               class="mr-2"
-              v-if="!branchingLineage && lastDescendent.type === 'workflow'"
+              v-if="!branchingLineage && !expansionStatus && lastDescendent.type === 'workflow'"
               :status="lastDescendent.node.status"
               v-cylc-object="lastDescendent"
             />
@@ -142,11 +142,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     v-if="!expansionStatus || node.type === 'workflow'"
                     class="text-right c-gscan-workflow-states"
                   >
-                    <!-- task summary tooltips -->
+<!--                     task summary tooltips-->
                     <span
                       v-for="[state, tasks] in getLatestStateTasks(Object.entries(latestDescendantTasks))"
                       :key="`${node.id}-summary-${state}`"
-                      :class="getTaskStateClasses(latestDescendantTasks, state)"
+                      :class="getTaskStateClasses(descendantTaskTotals, state)"
                     >
                     <v-tooltip color="black" top>
                       <template v-slot:activator="{ on }">
@@ -167,7 +167,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       </template>
                       <!-- tooltip text -->
                       <span>
-                        <span class="grey--text">{{ countTasksInState(latestDescendantTasks, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                        <span class="grey--text">{{ countTasksInState(descendantTaskTotals, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                         <br/>
                         <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
                           {{ task }}<br v-if="index !== tasks.length -1" />
@@ -361,19 +361,21 @@ export default {
       }
       return ''
     },
-
+    // we need to do this here because the computed property in treeitem loses reactivity if you create a new object based on computed properties
+    extractLatestTaskStates(statesArray) {
+      return Object.assign({}, ...statesArray)
+    },
     /**
      * Get number of tasks we have in a given state. The states are retrieved
-     * from `latestStateTasks`, and the number of tasks in each state is from
-     * the `stateTotals`. (`latestStateTasks` includes old tasks).
+     * the `stateTotals`
      *
-     * @param {WorkflowGraphQLData} workflow - the workflow object retrieved from GraphQL
+     * @param taskTotals
      * @param {string} state - a workflow state
      * @returns {number|*} - the number of tasks in the given state
      */
-    countTasksInState (latestStateTasks, state) {
-      if (Object.hasOwnProperty.call(latestStateTasks, state)) {
-        return latestStateTasks[state].length
+    countTasksInState (taskTotals, state) {
+      if (Object.hasOwnProperty.call(taskTotals, state)) {
+        return taskTotals[state]
       }
       return 0
     },
