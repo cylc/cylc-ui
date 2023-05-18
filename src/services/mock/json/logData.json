@@ -1,0 +1,13 @@
+{
+    "logs": {
+        "connected": true,
+        "path": "my-host:/path/to/the/log/file/note/these/paths/get/really/log/NN/job.out",
+        "lines": [
+            "one\n",
+            "two\n",
+            "three\n",
+            "four\n",
+            "five\n"
+        ]
+    }
+}
