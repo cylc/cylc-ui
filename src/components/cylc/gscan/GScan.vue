@@ -362,7 +362,7 @@ export default {
       return ''
     },
     // we need to do this here because the computed property in treeitem loses reactivity if you create a new object based on computed properties
-    extractLatestTaskStates(statesArray) {
+    extractLatestTaskStates (statesArray) {
       return Object.assign({}, ...statesArray)
     },
     /**

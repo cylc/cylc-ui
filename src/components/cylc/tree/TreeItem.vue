@@ -343,8 +343,8 @@ export default {
     expansionStatus () {
       return this.autoCollapse && !this.expandedStateOverridden ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type) : this.isExpanded
     },
-    descendantTaskTotals() {
-      const tasks = {};
+    descendantTaskTotals () {
+      const tasks = {}
       const validValues = [
         TaskState.SUBMITTED.name,
         TaskState.SUBMIT_FAILED.name,
@@ -359,7 +359,6 @@ export default {
           // at every branch, recurse all child nodes
           currentNode.children.forEach(child => traverseChildren(child))
         } else {
-          // console.log(JSON.parse(JSON.stringify(currentNode)))
           // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
           if (currentNode.type === 'workflow') {
             // in some test data we dont include the latestStateTasks, so include a fallback
@@ -372,7 +371,7 @@ export default {
                   tasks[key] = []
                 }
                 // cast as numbers so they dont get concatenated as strings
-                tasks[key] = Math.abs(tasks[key]) + Math.abs(currentNode.node.stateTotals[key]);
+                tasks[key] = Math.abs(tasks[key]) + Math.abs(currentNode.node.stateTotals[key])
               })
           }
         }
@@ -380,8 +379,8 @@ export default {
       traverseChildren(this.node)
       return tasks
     },
-    latestDescendantTasks() {
-      const tasks = {};
+    latestDescendantTasks () {
+      const tasks = {}
       const validValues = [
         TaskState.SUBMITTED.name,
         TaskState.SUBMIT_FAILED.name,
@@ -396,7 +395,6 @@ export default {
           // at every branch, recurse all child nodes
           currentNode.children.forEach(child => traverseChildren(child))
         } else {
-          // console.log(JSON.parse(JSON.stringify(currentNode)))
           // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
           if (currentNode.type === 'workflow') {
             // in some test data we dont include the latestStateTasks, so include a fallback
@@ -408,9 +406,8 @@ export default {
                 if (!tasks[key]) {
                   tasks[key] = []
                 }
-                console.log('should show up twice', currentNode.node.latestStateTasks[key]);
                 // sort the tasks in decending order
-                tasks[key] = [].concat(tasks[key], currentNode.node.latestStateTasks[key]).sort((item1, item2) => (new Date(item2.split('/')[0]).getTime() - (new Date(item1.split('/')[0]).getTime())));
+                tasks[key] = [].concat(tasks[key], currentNode.node.latestStateTasks[key]).sort((item1, item2) => (new Date(item2.split('/')[0]).getTime() - (new Date(item1.split('/')[0]).getTime())))
               })
           }
         }
