@@ -408,8 +408,9 @@ export default {
                 if (!tasks[key]) {
                   tasks[key] = []
                 }
+                console.log('should show up twice', currentNode.node.latestStateTasks[key]);
                 // sort the tasks in decending order
-                tasks[key] = [].concat(tasks[key], currentNode.node.latestStateTasks[key].filter(newTask => tasks[key].includes(newTask))).sort((item1, item2) => (new Date(item2.split('/')[0]).getTime() - (new Date(item1.split('/')[0]).getTime())));
+                tasks[key] = [].concat(tasks[key], currentNode.node.latestStateTasks[key]).sort((item1, item2) => (new Date(item2.split('/')[0]).getTime() - (new Date(item1.split('/')[0]).getTime())));
               })
           }
         }

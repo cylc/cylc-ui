@@ -91,7 +91,7 @@ const stateTotalsTestWorkflowNodes = {
                   expired: 0,
                   preparing: 0,
                   'submit-failed': 0,
-                  submitted: 0,
+                  submitted: 3,
                   running: 6,
                   failed: 0,
                   succeeded: 0
@@ -169,7 +169,7 @@ const stateTotalsTestWorkflowNodes = {
                   expired: 0,
                   preparing: 0,
                   'submit-failed': 0,
-                  submitted: 0,
+                  submitted: 2,
                   running: 6,
                   failed: 0,
                   succeeded: 0

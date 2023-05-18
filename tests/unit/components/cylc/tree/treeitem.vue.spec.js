@@ -143,6 +143,10 @@ describe('TreeItem component', () => {
       expect(wrapper.vm.latestDescendantTasks.submitted.length).to.equal(10)
       expect(wrapper.vm.latestDescendantTasks.running.length).to.equal(10)
     })
+    it('should combine all descendant task totals', () => {
+      expect(wrapper.vm.descendantTaskTotals.submitted).to.equal(5)
+      expect(wrapper.vm.descendantTaskTotals.running).to.equal(12)
+    })
     // note while this test tests a valid scenario, the last child properly should always be used in association with the branching lineage check
     it('should get the (first) last child', () => {
       expect(wrapper.vm.lastDescendent.id).to.equal('~cylc/double/mid/first/run1')
