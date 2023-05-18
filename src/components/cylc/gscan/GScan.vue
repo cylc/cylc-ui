@@ -361,13 +361,10 @@ export default {
       }
       return ''
     },
-    // we need to do this here because the computed property in treeitem loses reactivity if you create a new object based on computed properties
-    extractLatestTaskStates (statesArray) {
-      return Object.assign({}, ...statesArray)
-    },
     /**
      * Get number of tasks we have in a given state. The states are retrieved
-     * the `stateTotals`
+     * from `latestStateTasks`, and the number of tasks in each state is from
+     * the `stateTotals`. (`latestStateTasks` includes old tasks).
      *
      * @param taskTotals
      * @param {string} state - a workflow state
