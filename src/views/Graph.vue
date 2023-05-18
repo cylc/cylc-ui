@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="c-graph" style="width: 100%; height: 100%">
+  <div class="c-graph w-100 h-100">
     <!-- the controls -->
     <ViewToolbar
       :groups="groups"
@@ -91,23 +91,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Vue from 'vue'
 import gql from 'graphql-tag'
 import { mapGetters } from 'vuex'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
-import GraphNode from '@/components/cylc/GraphNode'
-import ViewToolbar from '@/components/cylc/ViewToolbar'
+import GraphNode from '@/components/cylc/GraphNode.vue'
+import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import {
   posToPath,
   nonCryptoHash
 } from '@/utils/graph-utils'
-import { graphviz } from '@hpcc-js/wasm'
-import * as svgPanZoom from 'svg-pan-zoom'
+import { Graphviz } from '@hpcc-js/wasm/graphviz'
+import svgPanZoom from 'svg-pan-zoom'
 import {
   mdiGraph,
   mdiTimer,
@@ -200,22 +198,24 @@ fragment Deltas on Deltas {
 `
 
 export default {
-  mixins: [
-    pageMixin,
-    graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
-  ],
   name: 'Graph',
+
+  mixins: [
+    graphqlMixin,
+    subscriptionComponentMixin
+  ],
+
   components: {
     GraphNode,
     ViewToolbar
   },
-  metaInfo () {
+
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
   data () {
     return {
       widget: {
@@ -293,17 +293,21 @@ export default {
       ]
     }
   },
-  mounted () {
+
+  async mounted () {
+    // compile & instantiate graphviz wasm
+    this.graphviz = await Graphviz.load()
     // allow render to happen before we go configuring svgPanZoom
-    const self = this
-    this.$nextTick(function () {
-      self.updateTimer()
+    this.$nextTick(() => {
+      this.updateTimer()
     })
     this.mountSVGPanZoom()
   },
-  beforeDestroy () {
+
+  beforeUnmount () {
     clearInterval(this.refreshTimer)
   },
+
   computed: {
     ...mapGetters('workflows', ['getNodes']),
     query () {
@@ -323,6 +327,7 @@ export default {
       return this.getNodes('workflow', this.workflowIDs)
     }
   },
+
   methods: {
     mountSVGPanZoom () {
       // Check the SVG is ready:
@@ -374,7 +379,7 @@ export default {
       this.reset()
     },
     setOption (option, value) {
-      Vue.set(this, option, value)
+      this[option] = value
     },
     updateTimer () {
       // turn the timer on or off depending on the value of autoRefresh
@@ -561,10 +566,7 @@ export default {
       const nodeIds = nodes.map((n) => n.id)
       for (const id in this.nodeTransformations) {
         if (!nodeIds.includes(id)) { // this node has been removed
-          Vue.delete(
-            this.nodeTransformations,
-            id
-          )
+          delete this.nodeTransformations[id]
         }
       }
       // wipe old nodes
@@ -585,7 +587,7 @@ export default {
 
       // layout the graph
       try {
-        await this.layout(nodes, edges, nodeDimensions)
+        this.layout(nodes, edges, nodeDimensions)
       } catch (e) {
         // something went wrong, allow the layout to retry later
         this.graphID = null
@@ -622,14 +624,13 @@ export default {
         await this.$nextTick()
       }
     },
-    async layout (nodes, edges, nodeDimensions) {
-      // re-layout the graph after any new nodes have been rendered
-
+    /** re-layout the graph after any new nodes have been rendered */
+    layout (nodes, edges, nodeDimensions) {
       // generate the GraphViz dot code
       const dotCode = this.getDotCode(nodeDimensions, nodes, edges)
 
       // run the layout algorithm
-      const jsonString = await graphviz.layout(dotCode, 'json')
+      const jsonString = this.graphviz.layout(dotCode, 'json')
       const json = JSON.parse(jsonString)
 
       // update graph node positions
@@ -654,6 +655,7 @@ export default {
       }
     }
   },
+
   watch: {
     transpose () {
       // refresh the graph when the transpose option is changed
@@ -675,12 +677,14 @@ export default {
 
 <style lang="scss">
   .c-graph {
+    overflow: hidden;
+
     .c-view-toolbar {
       // turn the view toolbar into a floating component
       position: fixed;
       background-color: rgba(240,240,240,0.9);
       border-radius: 0.75em;
-      margin: 0.25em;
+      margin: 0.5em;
       padding: 0.4em;
     }
   }

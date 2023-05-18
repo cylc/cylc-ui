@@ -15,11 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createLocalVue, mount } from '@vue/test-utils'
-import Mutation from '@/components/cylc/Mutation'
-import { expect } from 'chai'
-import Vue from 'vue'
-import Vuetify from 'vuetify'
+import { mount } from '@vue/test-utils'
+import Mutation from '@/components/cylc/Mutation.vue'
+import { createVuetify } from 'vuetify'
 
 const cylcObject = { id: '~u/w//1/t', isFamily: false }
 
@@ -46,26 +44,24 @@ const BASIC_MUTATION = {
   _title: 'My Mutation'
 }
 
-const localVue = createLocalVue()
-Vue.use(Vuetify)
-
 describe('Mutation Component', () => {
   /**
    * @param {*} options
    * @returns {Wrapper<FormGenerator>}
    */
   const mountFunction = (options) => {
-    const vuetify = new Vuetify()
+    const vuetify = createVuetify()
     return mount(Mutation, {
-      localVue,
-      vuetify,
+      global: {
+        plugins: [vuetify]
+      },
       ...options
     })
   }
 
   it('should display mutation name and description', () => {
     const wrapper = mountFunction({
-      propsData: {
+      props: {
         cylcObject,
         mutation: BASIC_MUTATION,
         cancel: () => {}
@@ -78,7 +74,7 @@ describe('Mutation Component', () => {
 
   describe('Mutation descriptions', () => {
     const mountWithDescription = (desc) => mountFunction({
-      propsData: {
+      props: {
         cylcObject,
         mutation: {
           name: 'Darmok',

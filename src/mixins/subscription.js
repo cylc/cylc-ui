@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import ViewState from '@/model/ViewState.model'
+import { toRaw } from 'vue'
 import { mapActions } from 'vuex'
 
 /**
@@ -35,7 +36,9 @@ export default {
   },
   computed: {
     isLoading () {
-      return this.viewState === ViewState.LOADING
+      // Note: this.viewState is Proxy object so comparison
+      // doesn't work without toRaw()
+      return toRaw(this.viewState) === ViewState.LOADING
     }
   },
   methods: {

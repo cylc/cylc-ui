@@ -34,130 +34,112 @@ $cjob: ".c-job .job rect";
     }
 }
 
-@mixin job_theme_default() {
-    $teal: rgb(109,213,194);
-    $blue: rgb(106,164,241);
-    $green: rgb(81,175,81);
-    $red: rgb(207,72,72);
-    $pink: rgb(190,106,192);
+@mixin job_theme($theme) {
+    @if $theme == "default" {
+        $teal: rgb(109,213,194);
+        $blue: rgb(106,164,241);
+        $green: rgb(81,175,81);
+        $red: rgb(207,72,72);
+        $pink: rgb(190,106,192);
 
-    #{$cjob} {
-        &.submitted {
-            fill: $teal;
-            stroke: $teal;
+        #{$cjob} {
+            &.submitted {
+                fill: $teal;
+                stroke: $teal;
+            }
+
+            &.running {
+                fill: $blue;
+                stroke: $blue;
+            }
+
+            &.succeeded {
+                fill: $green;
+                stroke: $green;
+            }
+
+            &.failed {
+                fill: $red;
+                stroke: $red;
+            }
+
+            &.submit-failed {
+                fill: $pink;
+                stroke: $pink;
+            }
         }
+    } @else if $theme == "greyscale" {
+        $light: rgb(208,208,208);
+        $medium: rgb(133,133,133);
+        $dark: rgb(0,0,0);
 
-        &.running {
-            fill: $blue;
-            stroke: $blue;
+        #{$cjob} {
+            &.submitted {
+                fill: transparent;
+                stroke: $light;
+            }
+
+            &.running {
+                fill: $light;
+                stroke: $light;
+            }
+
+            &.succeeded {
+                fill: $medium;
+                stroke: $medium;
+            }
+
+            &.failed {
+                fill: $dark;
+                stroke: $dark;
+            }
+
+            &.submit-failed {
+                fill: transparent;
+                stroke: $dark;
+            }
         }
+    } @else if $theme == "colour_blind" {
+        $grey: rgb(152,152,152);
+        $success: rgb(108,218,255);
+        $error: rgb(146,0,0);
 
-        &.succeeded {
-            fill: $green;
-            stroke: $green;
-        }
+        #{$cjob} {
+            &.submitted {
+                fill: transparent;
+                stroke: $grey;
+            }
 
-        &.failed {
-            fill: $red;
-            stroke: $red;
-        }
+            &.running {
+                fill: $grey;
+                stroke: $grey;
+            }
 
-        &.submit-failed {
-            fill: $pink;
-            stroke: $pink;
-        }
-    }
-}
+            &.succeeded {
+                fill: $success;
+                stroke: $success;
+            }
 
-@mixin job_theme_greyscale() {
-    $light: rgb(208,208,208);
-    $medium: rgb(133,133,133);
-    $dark: rgb(0,0,0);
+            &.failed {
+                fill: $error;
+                stroke: $error;
+            }
 
-    #{$cjob} {
-        &.submitted {
-            fill: transparent;
-            stroke: $light;
-        }
-
-        &.running {
-            fill: $light;
-            stroke: $light;
-        }
-
-        &.succeeded {
-            fill: $medium;
-            stroke: $medium;
-        }
-
-        &.failed {
-            fill: $dark;
-            stroke: $dark;
-        }
-
-        &.submit-failed {
-            fill: transparent;
-            stroke: $dark;
-        }
-    }
-}
-
-@mixin job_theme_colour-blind() {
-    $grey: rgb(152,152,152);
-    $success: rgb(108,218,255);
-    $error: rgb(146,0,0);
-
-    #{$cjob} {
-        &.submitted {
-            fill: transparent;
-            stroke: $grey;
-        }
-
-        &.running {
-            fill: $grey;
-            stroke: $grey;
-        }
-
-        &.succeeded {
-            fill: $success;
-            stroke: $success;
-        }
-
-        &.failed {
-            fill: $error;
-            stroke: $error;
-        }
-
-        &.submit-failed {
-            fill: transparent;
-            stroke: $error;
+            &.submit-failed {
+                fill: transparent;
+                stroke: $error;
+            }
         }
     }
 }
 
-// job theme as configured by the top-level application
-#app.job_theme--default {
-    @include job_theme_default
-}
-
-#app.job_theme--greyscale {
-    @include job_theme_greyscale
-}
-
-#app.job_theme--colour_blind {
-    @include job_theme_colour_blind
-}
-
-// if overridden elsewhere the new value should take priority
-// (this allows us to override the theme in the user-profile
-#app .job_theme--default {
-    @include job_theme_default
-}
-
-#app .job_theme--greyscale {
-    @include job_theme_greyscale
-}
-
-#app .job_theme--colour_blind {
-    @include job_theme_colour_blind
+@each $theme in "default", "greyscale", "colour_blind" {
+    .job_theme--#{$theme} {
+        &, // job theme as configured by the top-level application
+        &.job_theme_override {
+            // if overridden elsewhere the new value should take priority
+            // (this allows us to override the theme in the user profile)
+            @include job_theme($theme);
+        }
+    }
 }

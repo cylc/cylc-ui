@@ -150,10 +150,10 @@ describe('Mutations component', () => {
       cy.get('[data-cy="submit"]')
         .click()
         // Error snackbar should appear
-        .get('[data-cy="alert-snack"] > .v-snack__wrapper')
+        .get('[data-cy="alert-snack"] .v-snackbar__content')
         .as('snackbar')
         .should('be.visible')
-        .find('[data-cy="snack-close"]')
+        .get('[data-cy="snack-close"]')
         .click()
         .get('@snackbar')
         .should('not.exist')
@@ -174,25 +174,29 @@ describe('Mutations component', () => {
     // Form should be valid initially
     cy.get('[data-cy=submit]').as('submit')
       .should('not.be.disabled')
-      .should('not.have.class', 'error--text')
-      // Indirect test for "form invalid" tooltip by checking aria-expanded attribute
-      // (not ideal but it's way too troublesome to test visibility of .v-tooltip__content)
+      .should('not.have.class', 'text-error')
       .trigger('mouseenter')
-      .should('have.attr', 'aria-expanded', 'false') // should not be visible
+      .invoke('attr', 'aria-describedby').then((tooltipID) => {
+        cy.get(`#${tooltipID} .v-overlay__content`).as('errTooltip')
+          // NOTE: .should('not.be.visible') doesn't work - get Cypress error
+          // "not visible because it has CSS property: position: fixed and it's being covered by another element"
+          .should('have.css', 'display', 'none')
+      })
     // Now type invalid input
     cy.get('.c-mutation-dialog')
-      .find('.v-list-item__title')
+      .find('.v-list-item-title')
       .contains('workflow')
       .parent()
       .find('.v-input.v-text-field:first').as('textField')
       .find('input[type="text"]')
       .type(' ') // (spaces should not be allowed)
       .get('@textField')
-      .should('have.class', 'error--text')
+      .should('have.class', 'v-input--error')
       .get('@submit')
-      .should('have.class', 'error--text')
+      .should('have.class', 'text-error')
       .trigger('mouseenter')
-      .should('have.attr', 'aria-expanded', 'true') // tooltip should be visible
       .should('not.be.disabled') // user can still submit if they really want to
+      .get('@errTooltip')
+      .should('not.have.css', 'display', 'none')
   })
 })

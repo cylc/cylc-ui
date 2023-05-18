@@ -17,8 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-form
-    :value="value"
-    @input="$emit('input', $event)"
+    v-model="isValid"
+    ref="form"
+    @update:modelValue="(val) => { if (val == null) validate() }"
   >
     <!-- the form inputs -->
     <v-list>
@@ -26,19 +27,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-for="input in inputs"
         v-bind:key="input.label"
       >
-        <v-list-item-content>
-          <v-list-item-title>
+          <v-list-item-title class="d-flex align-center mb-2">
             <!-- input label - the display title for this input -->
             {{ input.label }}
             <!-- help button - tooltip for more information -->
-            <v-tooltip bottom
+            <v-tooltip
               v-if="input.description"
+              location="bottom"
             >
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
+              <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" class="mx-2">
                   {{ icons.help }}
                 </v-icon>
               </template>
@@ -51,9 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="model[input.label]"
             :gqlType="input.gqlType"
             :types="types"
-            :label="input.label"
           />
-        </v-list-item-content>
       </v-list-item>
     </v-list>
   </v-form>
@@ -63,8 +59,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import cloneDeep from 'lodash/cloneDeep'
 import { mdiHelpCircleOutline } from '@mdi/js'
 
-import Markdown from '@/components/Markdown'
-import FormInput from '@/components/graphqlFormGenerator/FormInput'
+import Markdown from '@/components/Markdown.vue'
+import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
 import { getNullValue, mutate } from '@/utils/aotf'
 
 export default {
@@ -76,7 +72,7 @@ export default {
   },
 
   props: {
-    value: {
+    modelValue: {
       // validity of form
       type: Boolean,
       required: false,
@@ -95,6 +91,8 @@ export default {
     }
   },
 
+  emits: ['update:modelValue'],
+
   data: () => ({
     model: {},
     icons: {
@@ -104,6 +102,12 @@ export default {
 
   created () {
     this.reset()
+  },
+
+  mounted () {
+    // Work around lack of initial validation
+    // https://github.com/vuetifyjs/vuetify/issues/15568
+    this.$watch('$refs', this.validate, { immediate: true })
   },
 
   computed: {
@@ -118,6 +122,15 @@ export default {
         })
       }
       return ret
+    },
+    isValid: {
+      get () {
+        return this.modelValue
+      },
+      set (value) {
+        // Update 'value' prop by notifying parent component's v-model for this component
+        this.$emit('update:modelValue', value)
+      }
     }
   },
 
@@ -156,6 +169,10 @@ export default {
 
       // done
       this.model = model
+    },
+
+    validate () {
+      this.$refs.form?.validate()
     },
 
     async submit () {

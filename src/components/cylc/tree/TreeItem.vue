@@ -23,15 +23,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :style="nodeStyle"
     >
       <!-- the node's left icon; used for expand/collapse -->
-      <v-icon
+      <v-btn
         aria-label="Expand/collapse"
-        role="img"
         aria-hidden="false"
-        class="node-expand-collapse-button"
-        v-if="shouldRenderExpandCollapseBtn"
+        class="node-expand-collapse-button flex-shrink-0"
         @click="toggleExpandCollapse"
+        v-if="shouldRenderExpandCollapseBtn"
         :style="expandCollapseBtnStyle"
-      >{{ icons.mdiChevronRight }}</v-icon>
+        icon
+        variant="text"
+        density="compact"
+      >
+        <v-icon>
+          {{ icons.mdiChevronRight }}
+        </v-icon>
+      </v-btn>
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
       <slot name="cyclepoint" v-if="node.type === 'cycle'">
@@ -90,9 +96,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :status="node.node.state"
           />
           <span class="mx-1">#{{ node.node.submitNum }}</span>
-          <span class="grey--text">{{ node.node.platform }}</span>
+          <span class="text-grey">{{ node.node.platform }}</span>
           <span
-            class="grey--text d-flex flex-nowrap flex-row align-center"
+            class="text-grey d-flex flex-nowrap flex-row align-center"
             v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
           >
             <!--
@@ -112,34 +118,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-tooltip
               v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
               :key="`output-chip-${index}`"
-              bottom
+              location="bottom"
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template v-slot:activator="{ props }">
                 <v-chip
-                  v-bind="attrs"
-                  v-on="on"
-                  :color="customOutput.isMessage ? 'light-grey' : 'grey'"
-                  :text-color="customOutput.isMessage ? 'black' : 'white'"
+                  v-bind="props"
+                  :class="customOutput.isMessage ? 'bg-light-grey text-black' : 'bg-grey text-white'"
                   class="ml-2 message-output"
-                  small
-                >{{ customOutput.label }}</v-chip>
+                  size="small"
+                >
+                  {{ customOutput.label }}
+                </v-chip>
               </template>
               <span>{{ customOutput.message }}</span>
             </v-tooltip>
             <v-chip
               v-if="jobMessageOutputs.length > 5"
-              color="grey"
-              text-color="grey lighten-5"
-              class="ml-2"
-              small
+              class="ml-2 bg-grey text-white"
+              size="small"
               link
               @click="toggleExpandCollapse"
-            >+{{ jobMessageOutputs.length - 5 }}</v-chip>
+            >
+              +{{ jobMessageOutputs.length - 5 }}
+            </v-chip>
           </span>
         </div>
       </slot>
       <slot name="job-details" v-else-if="node.type === 'job-details'">
-        <div class="leaf job-details">
+        <div class="leaf job-details mb-2">
           <div class="arrow-up" :style="leafTriangleStyle"></div>
           <div class="leaf-data font-weight-light py-4 pl-2">
             <div
@@ -148,11 +154,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               class="leaf-entry"
             >
               <span class="px-4 leaf-entry-title">{{ item.title }}</span>
-              <span class="grey--text leaf-entry-value">{{ node.node[item.property] }}</span>
+              <span class="text-grey leaf-entry-value">{{ node.node[item.property] }}</span>
             </div>
             <v-divider class="ml-3 mr-5" />
             <div class="leaf-entry">
-              <span class="px-4 leaf-entry-title grey--text text--darken-1">outputs</span>
+              <span class="px-4 leaf-entry-title text-grey-darken-1">outputs</span>
             </div>
             <div
               v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
@@ -164,11 +170,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 class="leaf-entry output"
               >
                 <span class="px-4 leaf-entry-title">{{ customOutput.label }}</span>
-                <span class="grey--text leaf-entry-value">{{ customOutput.message }}</span>
+                <span class="text-grey leaf-entry-value">{{ customOutput.message }}</span>
               </div>
             </div>
             <div v-else class="leaf-entry">
-              <span class="px-4 leaf-entry-title grey--text text--darken-1">No custom messages</span>
+              <span class="px-4 leaf-entry-title text-grey-darken-1">No custom messages</span>
             </div>
           </div>
         </div>
@@ -203,15 +209,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           node: node.node
         }"
         :depth="depth + 1"
-        :stopOn="stopOn"
-        :hoverable="hoverable"
-        :autoExpandTypes="autoExpandTypes"
-        :cyclePointsOrderDesc="cyclePointsOrderDesc"
-        v-on:tree-item-created="$listeners['tree-item-created']"
-        v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
-        v-on:tree-item-expanded="$listeners['tree-item-expanded']"
-        v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
-        v-on:tree-item-clicked="$listeners['tree-item-clicked']"
+        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
+        v-on="passthroughHandlers"
       />
       <TreeItem
         v-else
@@ -220,23 +219,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :key="child.id"
         :node="child"
         :depth="depth + 1"
-        :stopOn="stopOn"
-        :hoverable="hoverable"
-        :autoExpandTypes="autoExpandTypes"
-        :cyclePointsOrderDesc="cyclePointsOrderDesc"
-        v-on:tree-item-created="$listeners['tree-item-created']"
-        v-on:tree-item-destroyed="$listeners['tree-item-destroyed']"
-        v-on:tree-item-expanded="$listeners['tree-item-expanded']"
-        v-on:tree-item-collapsed="$listeners['tree-item-collapsed']"
-        v-on:tree-item-clicked="$listeners['tree-item-clicked']"
+        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
+        v-on="passthroughHandlers"
       >
         <!-- add scoped slots
 
           These allow components to register their own templats, e.g. GScan
           adds a template for rendering workflow nodes here.
         -->
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
-          <slot :name="slot" v-bind="scope"/>
+        <template
+          v-for="(_, slotName) of $slots"
+          v-slot:[slotName]="scope"
+        >
+          <slot :name="slotName" v-bind="scope" />
         </template>
       </TreeItem>
     </span>
@@ -245,8 +240,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiChevronRight } from '@mdi/js'
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
+import Task from '@/components/cylc/Task.vue'
+import Job from '@/components/cylc/Job.vue'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import {
   latestJob,
@@ -255,17 +250,27 @@ import {
 import { getNodeChildren } from '@/components/cylc/tree/util'
 
 /**
- * Offset used to move nodes to the right or left, to represent the nodes hierarchy.
- * @type {number} integer
+ * Events that are passed through up the chain from child TreeItems.
+ *
+ * i.e. they are re-emitted by this TreeItem when they occur on a
+ * child TreeItem, all the way up to the parent Tree component.
  */
-const NODE_DEPTH_OFFSET = 1.5 // em
+const passthroughEvents = [
+  'tree-item-created',
+  'tree-item-destroyed',
+  'tree-item-expanded',
+  'tree-item-collapsed',
+  'tree-item-clicked'
+]
 
 export default {
   name: 'TreeItem',
+
   components: {
     Task,
     Job
   },
+
   props: {
     node: {
       type: Object,
@@ -292,8 +297,19 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    /** Indent in px; default is expand/collapse btn width */
+    indent: {
+      type: Number,
+      required: false,
+      default: 28
     }
   },
+
+  emits: [
+    ...passthroughEvents
+  ],
+
   data () {
     return {
       active: false,
@@ -331,6 +347,7 @@ export default {
       isExpanded: false
     }
   },
+
   computed: {
     hasChildren () {
       if (this.stopOn.includes(this.node.type)) {
@@ -349,16 +366,13 @@ export default {
       // returns child nodes folling the family tree and following sort order
       return getNodeChildren(this.node, this.cyclePointsOrderDesc)
     },
-    /** Get the node indentation in units of em. */
+    /** Get the node indentation in units of px. */
     nodeIndentation () {
-      return this.depth * NODE_DEPTH_OFFSET
-      // Note: this should actually depend on the expand/collapse icon size, but
-      // fortuitously, the vuetify default icon size is 24px which is 1.5em for
-      // a font-size of 16px
+      return this.depth * this.indent
     },
     nodeStyle () {
       return {
-        'padding-left': `${this.node.type === 'job-details' ? 0 : this.nodeIndentation}em`
+        'padding-left': `${this.node.type === 'job-details' ? 0 : this.nodeIndentation}px`
       }
     },
     nodeClass () {
@@ -370,11 +384,10 @@ export default {
       }
     },
     expandCollapseBtnStyle () {
-      const styles = {}
-      if (!this.hasChildren) {
-        styles.visibility = 'hidden'
+      return {
+        // set visibility 'hidden' to ensure element takes up space
+        visibility: this.hasChildren ? null : 'hidden'
       }
-      return styles
     },
     /**
      * Whether the expand collapse button for this TreeItem should be rendered.
@@ -389,24 +402,33 @@ export default {
     /** Make the job details triangle point to the job icon */
     leafTriangleStyle () {
       return {
-        'margin-left': `${this.nodeIndentation}em`
+        'margin-left': `${this.nodeIndentation}px`
       }
     },
     jobMessageOutputs () {
       return jobMessageOutputs(this.node)
     }
   },
+
   created () {
     this.$emit('tree-item-created', this)
+    this.passthroughHandlers = Object.fromEntries(
+      passthroughEvents.map((eventName) => (
+        [eventName, (treeItem) => this.$emit(eventName, treeItem)]
+      ))
+    )
   },
-  beforeDestroy () {
+
+  beforeUnmount () {
     this.$emit('tree-item-destroyed', this)
   },
+
   beforeMount () {
     // apply auto-expand rules when a treeitem is created
     this.isExpanded = this.autoExpandTypes.includes(this.node.type)
     this.emitExpandCollapseEvent(this.isExpanded)
   },
+
   methods: {
     toggleExpandCollapse () {
       this.isExpanded = !this.isExpanded

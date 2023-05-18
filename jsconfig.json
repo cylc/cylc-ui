@@ -1,0 +1,19 @@
+{
+    "include": [
+        "src/**/*.js",
+        "src/**/*.vue",
+        "tests/**/*"
+    ],
+    "exclude": [
+        "src/services/mock/json/*"
+    ],
+    "compilerOptions": {
+        // "checkJs": true,
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    },
+    "watchOptions": {
+        "excludeFiles": ["**/node_modules"]
+    }
+}

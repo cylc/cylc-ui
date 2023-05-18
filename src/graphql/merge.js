@@ -15,12 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// eslint-disable-next-line no-unused-vars
-import { ArgumentNode, DefinitionNode, DocumentNode, FieldNode, FragmentDefinitionNode, SelectionNode, SelectionSetNode, ValueNode, VariableDefinitionNode } from 'graphql'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isObject from 'lodash/isObject'
 import transform from 'lodash/transform'
+
+/** @typedef {import('graphql').DocumentNode} DocumentNode */
+/** @typedef {import('graphql').FragmentDefinitionNode} FragmentDefinitionNode */
+/** @typedef {import('graphql').FieldNode} FieldNode */
+/** @typedef {import('graphql').ArgumentNode} ArgumentNode */
+/** @typedef {import('graphql').DefinitionNode} DefinitionNode */
+/** @typedef {import('graphql').SelectionNode} SelectionNode */
+/** @typedef {import('graphql').SelectionSetNode} SelectionSetNode */
+/** @typedef {import('graphql').ValueNode} ValueNode */
 
 /**
  * Merge two GraphQL queries (DocumentNode's), returning a single query.
@@ -69,9 +76,9 @@ function mergeQueries (queryA, queryB) {
 /**
  * Merge two arrays of fragments, returning a single array of fragments.
  *
- * @param {Array<FragmentDefinitionNode>} fragmentsA
- * @param {Array<FragmentDefinitionNode>} fragmentsB
- * @return {Array<FragmentDefinitionNode>}
+ * @param {FragmentDefinitionNode[]} fragmentsA
+ * @param {FragmentDefinitionNode[]} fragmentsB
+ * @return {FragmentDefinitionNode[]}
  */
 function mergeFragments (fragmentsA, fragmentsB) {
   const fragments = fragmentsA
@@ -176,9 +183,9 @@ function mergeFields (fieldA, fieldB) {
 /**
  * Merge two arrays of arguments, returning a single array of arguments.
  *
- * @param {Array<ArgumentNode>} argumentsA
- * @param {Array<ArgumentNode>} argumentsB
- * @return {Array<ArgumentNode>|undefined}
+ * @param {ArgumentNode[]} argumentsA
+ * @param {ArgumentNode[]} argumentsB
+ * @return {ArgumentNode[]|undefined}
  */
 function mergeArguments (argumentsA, argumentsB) {
   if (!argumentsA && !argumentsB) {
@@ -236,48 +243,48 @@ export function removeAstLoc (node) {
  */
 function mergeValues (valueA, valueB) {
   switch (valueA.kind) {
-  case 'Variable':
-    if (valueA.name.value !== valueB.name.value) {
-      throw new Error(`Cannot merge VariableNode's with different variables "${valueA.name.value}" and "${valueB.name.value}"`)
-    }
-    break
-  case 'BooleanValue':
-  case 'StringValue':
-  case 'IntValue':
-  case 'FloatValue':
-    if (valueA.value !== valueB.value) {
-      throw new Error(`Cannot merge ${valueA.kind}'s with different values`)
-    }
-    break
-  case 'NullValue':
-    break
-  case 'ListValue':
-    for (const value of valueB.values) {
-      if (!valueA.values.find(element => element.kind === value.kind && element.value === value.value)) {
-        valueA.values.push(value)
+    case 'Variable':
+      if (valueA.name.value !== valueB.name.value) {
+        throw new Error(`Cannot merge VariableNode's with different variables "${valueA.name.value}" and "${valueB.name.value}"`)
       }
+      break
+    case 'BooleanValue':
+    case 'StringValue':
+    case 'IntValue':
+    case 'FloatValue':
+      if (valueA.value !== valueB.value) {
+        throw new Error(`Cannot merge ${valueA.kind}'s with different values`)
+      }
+      break
+    case 'NullValue':
+      break
+    case 'ListValue':
+      for (const value of valueB.values) {
+        if (!valueA.values.find(element => element.kind === value.kind && element.value === value.value)) {
+          valueA.values.push(value)
+        }
+      }
+      break
+    case 'ObjectValue': {
+      // this is literally an object in the GraphQL query, e.g.:
+      // taskProxy {
+      //   outputs (satisfied: true, sort: { keys: ["time"], reverse: true}) {
+      //     label
+      //     message
+      //   }
+      // }
+      // The sort: {} is an object with properties keys and reverse...
+      // In order to compare the two objects, first we must omit the loc (source code location from AST...)
+      const objectA = removeAstLoc(valueA)
+      const objectB = removeAstLoc(valueB)
+      if (!isEqual(objectA, objectB)) {
+        throw new Error('Cannot merge two object values if they have different properties')
+      }
+      break
     }
-    break
-  case 'ObjectValue': {
-    // this is literally an object in the GraphQL query, e.g.:
-    // taskProxy {
-    //   outputs (satisfied: true, sort: { keys: ["time"], reverse: true}) {
-    //     label
-    //     message
-    //   }
-    // }
-    // The sort: {} is an object with properties keys and reverse...
-    // In order to compare the two objects, first we must omit the loc (source code location from AST...)
-    const objectA = removeAstLoc(valueA)
-    const objectB = removeAstLoc(valueB)
-    if (!isEqual(objectA, objectB)) {
-      throw new Error('Cannot merge two object values if they have different properties')
-    }
-    break
-  }
-  case 'EnumValue':
-  default:
-    throw new Error(`Unsupported value nodes to merge of kind ${valueA.kind}`)
+    case 'EnumValue':
+    default:
+      throw new Error(`Unsupported value nodes to merge of kind ${valueA.kind}`)
   }
   return valueA
 }

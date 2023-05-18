@@ -20,25 +20,18 @@ import {
   mdiGestureTap,
   mdiToggleSwitch
 } from '@mdi/js'
-import ViewToolbar from '@/components/cylc/ViewToolbar'
+import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 
 describe('View Toolbar Component', () => {
   const mountToolbar = (groups) => {
-    // configure a listener for toggle events
-    const setOption = cy.spy().as('setOptionSpy')
-
-    // mount 'em
     cy.vmount(
       ViewToolbar,
       {
-        propsData: { groups },
-        listeners: { setOption }
+        props: { groups }
       }
-    )
+    ).as('wrapper')
     // add the classes Vuetify requires
     cy.addVuetifyStyles(cy)
-
-    return setOption
   }
 
   it('loads, toggles and runs callbacks ', () => {
@@ -82,27 +75,33 @@ describe('View Toolbar Component', () => {
     // test action=toggle
     cy
       // the toggle should be blue because it's active (default true)
-      .get('.control.toggle .v-icon')
-      .should('have.class', 'blue--text')
+      .get('.control.toggle .v-btn')
+      .should('have.class', 'text-blue')
       // clicking the toggle should emit a "setOption" event with the
       // controls key (toggle) and new value (false)
       .click({ force: true })
-      .get('@setOptionSpy')
-      .should('have.been.calledWith', 'toggle', false)
+      .get('@wrapper').then(({ wrapper }) => {
+        expect(
+          wrapper.emitted().setOption.at(-1)
+        ).to.deep.equal(['toggle', false])
+      })
       // it should not be grey because it's inactive (false)
-      .get('.control.toggle .v-icon')
-      .not('.blue--text')
+      .get('.control.toggle .v-btn')
+      .not('.text-blue')
       // click it again and it should become active again
       .click({ force: true })
-      .get('@setOptionSpy')
-      .should('have.been.calledWith', 'toggle', true)
-      .get('.control.toggle .v-icon')
-      .should('have.class', 'blue--text')
+      .get('@wrapper').then(({ wrapper }) => {
+        expect(
+          wrapper.emitted().setOption.at(-1)
+        ).to.deep.equal(['toggle', true])
+      })
+      .get('.control.toggle .v-btn')
+      .should('have.class', 'text-blue')
 
     // test action=callback
     expect(callbacks).to.have.length(0)
     cy
-      .get('.control.callback .v-icon')
+      .get('.control.callback .v-btn')
       // clicking the icon should fire the callback
       .click({ force: true })
       .then(() => {
@@ -148,34 +147,34 @@ describe('View Toolbar Component', () => {
 
     cy
       // foo should start enabled (bar=true, baz=false)
-      .get('.control.foo .v-icon')
-      .not('.v-icon--disabled')
+      .get('.control.foo .v-btn')
+      .not('.v-btn--disabled')
 
       // toggle bar
-      .get('.control.bar .v-icon')
+      .get('.control.bar .v-btn')
       .click({ force: true })
 
       // foo should be disabled (bar=false, baz=false)
-      .get('.control.foo .v-icon')
-      .should('have.class', 'v-icon--disabled')
+      .get('.control.foo .v-btn')
+      .should('have.class', 'v-btn--disabled')
 
       // toggle bar & baz
-      .get('.control.bar .v-icon')
+      .get('.control.bar .v-btn')
       .click({ force: true })
-      .get('.control.baz .v-icon')
+      .get('.control.baz .v-btn')
       .click({ force: true })
 
       // foo should be disabled (bar=true, baz=true)
-      .get('.control.foo .v-icon')
-      .should('have.class', 'v-icon--disabled')
+      .get('.control.foo .v-btn')
+      .should('have.class', 'v-btn--disabled')
 
       // toggle baz
-      .get('.control.baz .v-icon')
+      .get('.control.baz .v-btn')
       .click({ force: true })
 
       // foo should be enabled (bar=true, baz=false)
-      .get('.control.foo .v-icon')
-      .not('.v-icon--disabled')
+      .get('.control.foo .v-btn')
+      .not('.v-btn--disabled')
   })
 
   it('groups', () => {

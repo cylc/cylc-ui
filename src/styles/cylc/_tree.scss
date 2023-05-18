@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import '~vuetify/src/styles/styles';
+@use '../settings.scss';
 
 $active-color: #BDD5F7;
 /**
@@ -40,7 +40,7 @@ $visible-outputs: 5;
 
 @mixin states() {
   &:hover {
-    background-color: map-get($grey, 'lighten-3');
+    background-color: map-get(settings.$grey, 'lighten-3');
   }
 }
 
@@ -91,7 +91,7 @@ $visible-outputs: 5;
   }
 
   $arrow-size: 15px;
-  $leaf-background-color: map-get($grey, 'lighten-3');
+  $leaf-background-color: map-get(settings.$grey, 'lighten-3');
 
   .leaf {
     padding: 0;

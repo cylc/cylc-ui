@@ -24,11 +24,9 @@
  */
 
 // Lib imports
-import Vue from 'vue'
-import Router from 'vue-router'
-import Meta from 'vue-meta'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from 'nprogress'
-import store from '@/store/index'
+import { store } from '@/store/index'
 
 import 'nprogress/css/nprogress.css'
 
@@ -47,11 +45,9 @@ function route (path) {
   })
 }
 
-Vue.use(Router)
-
 // Create a new router
-const router = new Router({
-  mode: 'hash',
+const router = createRouter({
+  history: createWebHashHistory(),
   routes: paths.map(path => route(path)),
   //  .concat([{ path: '*', redirect: '/dashboard' }]),
   scrollBehavior (to, from, savedPosition) {
@@ -61,46 +57,36 @@ const router = new Router({
     if (to.hash) {
       return { selector: to.hash }
     }
-    return { x: 0, y: 0 }
+    return { left: 0, top: 0 }
   }
 })
 
-Vue.use(Meta)
-
-router.beforeResolve((to, from, next) => {
+router.beforeEach(async (to, from) => {
   NProgress.start()
+  if (!store.state.user.user) {
+    try {
+      const user = await router.app.config.globalProperties.$userService.getUserProfile()
+      store.commit('user/SET_USER', user)
+    } catch (error) {
+      const alert = new Alert(error, 'error')
+      store.dispatch('setAlert', alert)
+    }
+  }
+})
+
+router.beforeResolve((to, from) => {
   if (to.name) {
-    let title
-    let workflowName
+    let title = to.name
+    let workflowName = null
     if (to.meta.toolbar) {
       // When a workflow is being displayed, we set the title to a
       // different value.
       title = to.params.workflowName
       workflowName = to.params.workflowName
-    } else {
-      title = to.name
-      workflowName = null
     }
     store.commit('app/setTitle', title)
     store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
-    store.dispatch('setAlert', null).then(() => {})
-  }
-  next()
-})
-
-router.beforeEach((to, from, next) => {
-  if (!store.state.user.user) {
-    router.app.$userService.getUserProfile()
-      .then((user) => {
-        store.commit('user/SET_USER', user)
-        next()
-      })
-      .catch(error => {
-        const alert = new Alert(error, 'error')
-        return store.dispatch('setAlert', alert)
-      })
-  } else {
-    next()
+    store.dispatch('setAlert', null)
   }
 })
 

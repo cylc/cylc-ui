@@ -19,16 +19,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div>
-    <v-card-subtitle class="text-subtitle-1 font-weight-medium">
+    <v-card-subtitle class="text-subtitle-1 font-weight-medium mt-4">
       {{ cylcObject.id }}
     </v-card-subtitle>
-    <v-skeleton-loader
+    <!-- TODO: replace v-progress-linear with v-skeleton-loader when
+    the latter is added to Vuetify 3.
+    https://github.com/cylc/cylc-ui/issues/1272 -->
+    <!-- <v-skeleton-loader
       v-if="loading"
       type="list-item-two-line@6"
+    /> -->
+    <v-progress-linear
+      v-if="loading"
+      indeterminate
+      class="mt-6"
     />
     <v-form
       v-else
       v-model="isValid"
+      ref="form"
       class="c-edit-runtime-form"
     >
       <v-list>
@@ -36,21 +45,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-for="key in Object.keys(model)"
           :key="key"
         >
-          <v-list-item-content>
-            <v-list-item-title class="c-input-label">
-              <!-- input label - the display title for this input -->
-              {{ startCase(key) }}
-            </v-list-item-title>
-            <!-- NOTE: the `is` field comes from `props` v-bind -->
-            <!-- eslint-disable-next-line vue/require-component-is -->
-            <component
-              v-bind="getInputProps(key)"
-              v-model="model[key]"
-              :types="types"
-              filled
-              dense
-            />
-          </v-list-item-content>
+          <v-list-item-title class="c-input-label">
+            <!-- input label - the display title for this input -->
+            {{ startCase(key) }}
+          </v-list-item-title>
+          <component
+            :is="getInputProps(key).is"
+            v-bind="getInputProps(key)"
+            v-model="model[key]"
+            :types="types"
+          />
         </v-list-item>
       </v-list>
     </v-form>
@@ -58,20 +62,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiHelpCircleOutline } from '@mdi/js'
 import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
-import { VTextarea } from 'vuetify/lib/components'
+import { VTextarea } from 'vuetify/components/VTextarea'
 import VuetifyConfig, { getComponentProps, RUNTIME_SETTING } from '@/components/graphqlFormGenerator/components/vuetify'
 import { findByName, mutate, mutationStatus } from '@/utils/aotf'
+
+const NamedTypes = {
+  ...VuetifyConfig.namedTypes,
+  String: {
+    is: VTextarea,
+    rows: '1',
+    autoGrow: true,
+    style: 'font-family: monospace;'
+  }
+}
 
 export default {
   name: 'EditRuntimeForm',
 
   props: {
-    value: {
+    modelValue: {
       // validity of form
       type: Boolean,
-      required: true,
       default: () => false
     },
     cylcObject: {
@@ -86,23 +98,13 @@ export default {
     }
   },
 
+  emits: ['update:modelValue'],
+
   data () {
     return {
       type: undefined,
       loading: true,
-      model: {},
-      namedTypes: {
-        ...VuetifyConfig.namedTypes,
-        String: {
-          is: VTextarea,
-          rows: '1',
-          autoGrow: true,
-          style: 'font-family: monospace;'
-        }
-      },
-      icons: {
-        help: mdiHelpCircleOutline
-      }
+      model: {}
     }
   },
 
@@ -110,14 +112,24 @@ export default {
     this.reset()
   },
 
+  mounted () {
+    // Work around lack of initial validation
+    // https://github.com/vuetifyjs/vuetify/issues/15568
+    this.$watch(
+      '$refs',
+      () => { this.$refs.form?.validate() },
+      { immediate: true }
+    )
+  },
+
   computed: {
     isValid: {
       get () {
-        return this.value
+        return this.modelValue
       },
       set (value) {
         // Update 'value' prop by notifying parent component's v-model for this component
-        this.$emit('input', value)
+        this.$emit('update:modelValue', value)
       }
     }
   },
@@ -226,8 +238,9 @@ export default {
     getInputProps (fieldName) {
       const gqlType = findByName(this.type.fields, fieldName).type
       return {
+        ...VuetifyConfig.defaultProps,
         gqlType,
-        ...getComponentProps(gqlType, this.namedTypes, VuetifyConfig.kinds)
+        ...getComponentProps(gqlType, NamedTypes, VuetifyConfig.kinds)
       }
     },
 

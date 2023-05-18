@@ -1,4 +1,3 @@
-/// <reference types="Cypress" />
 /**
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
@@ -22,13 +21,13 @@ describe('Header Component', () => {
       .get('.c-environment-info')
       .should('exist')
       .should('be.visible')
-      .get('#username > .v-chip__content')
+      .get('#username.v-chip')
       .should('exist')
       .should('be.visible')
       .contains('user')
-      .get('#host > .v-chip__content')
+      .get('#host.v-chip')
       .should('exist')
       .should('be.visible')
-      .contains('localhost:8080')
+      .contains(/localhost:\d{4,5}/)
   })
 })

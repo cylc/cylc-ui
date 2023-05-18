@@ -21,28 +21,45 @@ dynamically created inputs.
 -->
 
 <script>
+import { h, mergeProps } from 'vue'
 import { mask } from 'vue-the-mask'
-import Markdown from '@/components/Markdown'
+import Markdown from '@/components/Markdown.vue'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
-import { VIcon, VTooltip } from 'vuetify/lib/components'
+import { VIcon } from 'vuetify/components/VIcon'
+import { VTooltip } from 'vuetify/components/VTooltip'
+import { upperFirst } from 'lodash'
 
 /**
- * Workaround Vuetify (v2) component issue where non-scoped slots would not appear in
- * this.$scopedSlots, preventing the slot from rendering.
+ * Render help icon with tooltip containing help text.
  *
- * Taken from https://stackoverflow.com/a/67412844/3217306
- *
- * @param fn - Function meant for the value of slot in the data-object's "scopedSlots"
+ * @param {string} helpText - (supports markdown)
  */
-function vuetifyScopedSlotShim (fn) {
-  fn.proxy = true
-  return fn
-}
+export const renderHelpIcon = (helpText) => h(
+  VTooltip,
+  { location: 'bottom' },
+  {
+    activator: ({ props }) => h(
+      VIcon,
+      {
+        ...props,
+        style: {
+          cursor: 'default'
+        }
+      },
+      () => mdiHelpCircleOutline
+    ),
+    default: () => h(Markdown, { markdown: helpText })
+  }
+)
 
 export default {
   name: 'g-form-input',
+
+  // Prevent fallthrough attrs overriding the supplied props for the input
+  // https://github.com/vuejs/core/issues/6504
+  inheritAttrs: false,
 
   mixins: [formElement],
 
@@ -68,98 +85,46 @@ export default {
     }
   },
 
-  computed: {
-    /* The props to pass to the form input.
-     *
-     * Note, this includes the "is" prop which tells Vue which component class
-     * to use.
-     *
-     * TODO: move to rule based system to allow changing
-     *       of parent components based on child types?
-     */
-    props () {
-      // get the default props for this graphQL type
-      const componentProps = getComponentProps(this.gqlType, VuetifyConfig.namedTypes, VuetifyConfig.kinds)
+  beforeCreate () {
+    // Set the props to pass to the form input. Note, this includes the "is"
+    // prop which tells Vue which component class to use.
+    // TODO: move to rule based system to allow changing
+    //       of parent components based on child types?
 
-      // merge this in with default and override props
-      const propGroups = [
-        VuetifyConfig.defaultProps,
-        componentProps,
-        this.propOverrides || {}
-      ]
-      const ret = Object.assign({}, ...propGroups)
+    // get the default props for this graphQL type
+    const componentProps = getComponentProps(this.gqlType, VuetifyConfig.namedTypes, VuetifyConfig.kinds)
 
-      // rules is a list so needs special treatment
-      ret.rules = []
-      for (const prop of propGroups) {
-        if (prop.rules) {
-          ret.rules.push(...prop.rules)
-        }
-      }
+    // merge this in with default and override props
+    const propGroups = [
+      VuetifyConfig.defaultProps,
+      componentProps,
+      this.propOverrides || {}
+    ]
+    // rules is a list so needs special treatment
+    const rules = propGroups.flatMap(({ rules }) => rules ?? [])
 
-      return ret
-    }
+    this.inputProps = mergeProps(this.$attrs, ...propGroups, { rules })
   },
 
-  render (createElement) {
-    // https://v2.vuejs.org/v2/guide/render-function.html
-
-    const createHelpIcon = () => createElement(
-      VTooltip,
-      {
-        props: {
-          bottom: true
-        },
-        scopedSlots: {
-          activator: ({ on }) => createElement(
-            VIcon,
-            {
-              on,
-              style: {
-                cursor: 'default'
-              }
-            },
-            [mdiHelpCircleOutline]
-          ),
-          default: () => createElement(
-            Markdown,
-            {
-              props: {
-                markdown: this.help
-              }
-            }
-          )
-        }
-      }
-    )
-
+  render () {
     // Some components implement custom v-model
     // (https://v2.vuejs.org/v2/guide/components-custom-events.html#Customizing-Component-v-model)
-    const vModel = this.props.is.options?.model || { prop: 'value', event: 'input' }
-
-    return createElement(
-      this.props.is,
+    const vModel = this.inputProps.is.options?.model || { prop: 'modelValue', event: 'update:modelValue' }
+    return h(
+      this.inputProps.is,
       {
-        props: {
-          ...this.props,
-          [vModel.prop]: this.model,
-          gqlType: this.gqlType,
-          types: this.types
+        ...this.inputProps,
+        [vModel.prop]: this.model,
+        [`on${upperFirst(vModel.event)}`]: (value) => {
+          this.model = value
         },
-        on: {
-          [vModel.event]: (value) => {
-            this.model = value
-          }
-        },
-        scopedSlots: {
-          append: vuetifyScopedSlotShim(
-            createHelpIcon
-          ),
-          'append-outer': vuetifyScopedSlotShim(
-            // pass the "append-outer" slot onto the child component
-            (slotProps) => this.$scopedSlots['append-outer']?.(slotProps)
-          )
-        }
+        gqlType: this.gqlType,
+        types: this.types
+      },
+      {
+        'append-inner': this.help ? () => renderHelpIcon(this.help) : null,
+        // pass the "append" slot onto the child component
+        append: (slotProps) => this.$slots.append?.(slotProps)
       }
     )
   }

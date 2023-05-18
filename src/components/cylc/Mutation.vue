@@ -16,28 +16,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-    <v-card
-      class="mx-auto d-inline-block"
-      style="padding: 1em;"
-      outlined
-    >
+    <v-card class="d-inline-block pa-4">
       <!-- the mutation title -->
-      <h3
-        style="text-transform: capitalize;"
-      >
+      <h3 :style="{ 'text-transform': 'capitalize' }">
         {{ mutation._title }}
       </h3>
 
       <!-- the mutation description -->
       <v-expansion-panels
         accordion
-        flat
         v-bind="extendedDescription ? { hover: true } : { readonly: true }"
       >
         <v-expansion-panel
           class="mutation-desc"
+          elevation="0"
         >
-          <v-expansion-panel-header
+          <v-expansion-panel-title
             v-bind="extendedDescription ? {} : {
               expandIcon: null,
               style: {
@@ -46,16 +40,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             }"
           >
             <Markdown :markdown="shortDescription"/>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content
-            v-if="extendedDescription"
-          >
+          </v-expansion-panel-title>
+          <v-expansion-panel-text v-if="extendedDescription">
             <Markdown :markdown="extendedDescription"/>
-          </v-expansion-panel-content>
+          </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
 
-      <v-divider/>
+      <v-divider />
       <EditRuntimeForm
         v-if="mutation.name === 'editRuntime'"
         v-bind="{
@@ -81,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           color="grey"
           @click="cancel()"
-          text
+          variant="text"
           data-cy="cancel"
         >
           Cancel
@@ -89,41 +81,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           color="orange"
           @click="$refs.form.reset()"
-          text
+          variant="text"
           data-cy="reset"
         >
           Reset
         </v-btn>
-        <v-tooltip
-          top
-          color="error"
-          :disabled="isValid"
+        <v-btn
+          variant="text"
+          :color="isValid ? 'primary' : 'error'"
+          @click="submit"
+          :loading="submitting"
+          data-cy="submit"
         >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              text
-              :color="isValid ? 'primary' : 'error'"
-              @click="submit"
-              :loading="submitting"
-              v-bind="attrs"
-              v-on="on"
-              data-cy="submit"
-            >
-              Submit
-            </v-btn>
-          </template>
-          <span>Form contains invalid or missing values!</span>
-        </v-tooltip>
+          Submit
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="bg-error"
+            :disabled="isValid"
+          >
+            <span>Form contains invalid or missing values!</span>
+          </v-tooltip>
+        </v-btn>
       </v-card-actions>
       <v-snackbar
         v-model="showWarning"
         timeout="4e3"
-        color="amber accent-2"
+        color="amber-accent-2"
         light
         data-cy="warning-snack"
       >
         {{ warningMsg }}
-        <template v-slot:action="{ attrs }">
+        <template v-slot:actions>
           <v-btn
             @click="showWarning = false"
             icon
@@ -142,7 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
 import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
-import Markdown from '@/components/Markdown'
+import Markdown from '@/components/Markdown.vue'
 import {
   getMutationShortDesc,
   getMutationExtendedDesc,

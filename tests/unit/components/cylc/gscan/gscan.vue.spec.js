@@ -15,18 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createLocalVue, mount, RouterLinkStub } from '@vue/test-utils'
-import chai, { expect } from 'chai'
-import Vue from 'vue'
-import Vuex from 'vuex'
-import Vuetify from 'vuetify'
+import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import {
   WorkflowState,
   WorkflowStateOrder
 } from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
-import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import GScan from '@/components/cylc/gscan/GScan.vue'
 import {
   getWorkflowTreeSortValue,
@@ -41,77 +36,12 @@ import {
   listTree
 } from './utils'
 
-// Print full objects when tests fail
-chai.config.truncateThreshold = 0
-
-global.requestAnimationFrame = cb => cb()
-
-const localVue = createLocalVue()
-localVue.prototype.$workflowService = {
-  register () {},
-  unregister (obj) {
-    // we will reset the subscriptions object so tests can confirm
-    // this function has been called
-    obj.subscriptions = {}
-  },
-  subscribe (obj, name) {
-    return true
-  },
-  unsubscribe () {},
-  startCylcSubscription () {
-    return {
-      unsubscribed: false,
-      unsubscribe () {
-        this.unsubscribed = true
-      }
-    }
-  },
-  introspection: Promise.resolve({
-    mutations: [],
-    types: []
-  })
-}
-localVue.use(CylcObjectPlugin)
-
-Vue.use(Vuetify)
-Vue.use(Vuex)
-
 describe('GScan component', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   const resetState = () => {
     store.commit('workflows/SET_WORKFLOW_NAME', null)
   }
   beforeEach(resetState)
-  afterEach(resetState)
-  /**
-   * @param options
-   * @returns {Wrapper<GScan>}
-   */
-  const mountFunction = options => {
-    const vuetify = new Vuetify()
-    return mount(GScan, {
-      localVue,
-      vuetify,
-      store,
-      stubs: {
-        RouterLink: RouterLinkStub
-      },
-      ...options
-    })
-  }
-
-  it('should display a skeleton loader if loading data', () => {
-    const wrapper = mountFunction({
-      computed: {
-        isLoading () {
-          return true
-        }
-      }
-    })
-    const skeletonLoader = wrapper.find('.v-skeleton-loader')
-    const isBusy = skeletonLoader.element.getAttribute('aria-busy')
-    expect(isBusy).to.equal('true')
-  })
 
   describe('Sorting', () => {
     it('should set workflow sort order by status', () => {

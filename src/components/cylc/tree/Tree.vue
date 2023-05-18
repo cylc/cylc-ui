@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
+    fluid
     class="ma-0 pa-0"
   >
     <!-- Toolbar -->
@@ -27,44 +28,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- Filters -->
       <v-col
         v-if="filterable"
-        class="grow"
       >
         <TaskFilter v-model="tasksFilter"/>
       </v-col>
       <!-- Expand, collapse all -->
       <v-col
         v-if="expandCollapseToggle"
-        class="shrink"
+        class="flex-grow-0"
       >
         <div
-          class="d-flex flex-nowrap"
+          class="d-flex flex-nowrap ml-2"
         >
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
-                icon
-                data-cy="expand-all"
-              >
-                <v-icon>{{ svgPaths.expandIcon }}</v-icon>
-              </v-btn>
-            </template>
-            <span>Expand all</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                @click="collapseAll()"
-                icon
-                data-cy="collapse-all"
-              >
-                <v-icon>{{ svgPaths.collapseIcon }}</v-icon>
-              </v-btn>
-            </template>
-            <span>Collapse all</span>
-          </v-tooltip>
+          <v-btn
+            @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
+            icon
+            variant="flat"
+            size="small"
+            data-cy="expand-all"
+          >
+            <v-icon size="x-large">{{ svgPaths.expandIcon }}</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="bottom"
+            >
+              <span>Expand all</span>
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            @click="collapseAll()"
+            icon
+            variant="flat"
+            size="small"
+            data-cy="collapse-all"
+          >
+            <v-icon size="x-large">{{ svgPaths.collapseIcon }}</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="bottom"
+            >
+              <span>Collapse all</span>
+            </v-tooltip>
+          </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -83,17 +87,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-for="child of rootChildren"
             :key="child.id"
             :node="child"
-            :stopOn="stopOn"
-            :hoverable="hoverable"
-            :autoExpandTypes="autoExpandTypes"
-            :cyclePointsOrderDesc="cyclePointsOrderDesc"
-            v-on:tree-item-created="onTreeItemCreated"
-            v-on:tree-item-destroyed="onTreeItemDestroyed"
-            v-on:tree-item-expanded="onTreeItemExpanded"
-            v-on:tree-item-collapsed="onTreeItemCollapsed"
-            v-on:tree-item-clicked="onTreeItemClicked"
+            v-bind="{
+              stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent
+            }"
+            @tree-item-created="onTreeItemCreated"
+            @tree-item-destroyed="onTreeItemDestroyed"
+            @tree-item-expanded="onTreeItemExpanded"
+            @tree-item-collapsed="onTreeItemCollapsed"
+            @tree-item-clicked="onTreeItemClicked"
           >
-            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
+            <template
+              v-for="(_, slotName) of $slots"
+              v-slot:[slotName]="scope"
+            >
+              <slot :name="slotName" v-bind="scope" />
+            </template>
           </tree-item>
         </v-container>
       </v-col>
@@ -102,10 +110,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Vue from 'vue'
 import { mdiPlus, mdiMinus } from '@mdi/js'
-import TreeItem from '@/components/cylc/tree/TreeItem'
-import TaskFilter from '@/components/cylc/TaskFilter'
+import TreeItem from '@/components/cylc/tree/TreeItem.vue'
+import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import { matchNode } from '@/components/cylc/common/filter'
 import { getNodeChildren } from '@/components/cylc/tree/util'
 
@@ -151,6 +158,11 @@ export default {
       type: Array,
       required: false,
       default: () => []
+    },
+    /** Indent of each tree-item hierarchy in px */
+    indent: {
+      type: Number,
+      required: false
     }
   },
   components: {
@@ -299,14 +311,14 @@ export default {
       this.expandedCache.delete(treeItem)
     },
     onTreeItemCreated (treeItem) {
-      Vue.set(this.treeItemCache, treeItem.$props.node.id, treeItem)
+      this.treeItemCache[treeItem.$props.node.id] = treeItem
       if (treeItem.isExpanded) {
         this.expandedCache.add(treeItem)
       }
     },
     onTreeItemDestroyed (treeItem) {
       // make sure the item is removed from all caches, otherwise we will have a memory leak
-      Vue.delete(this.treeItemCache, treeItem.$props.node.id)
+      delete this.treeItemCache[treeItem.$props.node.id]
       this.expandedCache.delete(treeItem)
       this.activeCache.delete(treeItem)
     },

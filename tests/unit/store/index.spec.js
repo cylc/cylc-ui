@@ -15,20 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import sinon from 'sinon'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import Alert from '@/model/Alert.model'
-
-Vue.use(Vuex)
 
 /**
  * Tests for the store/index module.
  */
 describe('index', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   // using sinon to capture console.log
   beforeEach(() => {
     sinon.stub(console, 'log')

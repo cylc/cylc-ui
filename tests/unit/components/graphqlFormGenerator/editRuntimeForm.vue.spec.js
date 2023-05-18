@@ -15,16 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createLocalVue, mount } from '@vue/test-utils'
-import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm'
-import { expect } from 'chai'
-import Vue from 'vue'
-import Vuetify from 'vuetify'
+import { shallowMount } from '@vue/test-utils'
+import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
 import { IntrospectionQuery, taskProxy } from '@/services/mock/json'
 import { cloneDeep } from 'lodash'
-
-// suppress "ReferenceError: requestAnimationFrame is not defined" errors
-// global.requestAnimationFrame = cb => cb()
+import { createVuetify } from 'vuetify'
 
 /** NOTE: update this if updating src/services/mock/json/taskProxy.json */
 const INITIAL_DATA = {
@@ -70,18 +65,16 @@ const INITIAL_DATA = {
   outputs: []
 }
 
-const localVue = createLocalVue()
-
-localVue.prototype.$workflowService = {
+const $workflowService = {
   query () {
     return Promise.resolve(taskProxy.data)
   }
 }
 
-Vue.use(Vuetify)
+const vuetify = createVuetify()
 
 describe('EditRuntimeForm Component', () => {
-  const propsData = {
+  const props = {
     cylcObject: { id: '~u/w//1/t', isFamily: false },
     value: false,
     types: cloneDeep(IntrospectionQuery.data.__schema.types)
@@ -91,19 +84,18 @@ describe('EditRuntimeForm Component', () => {
    * @param {*} options
    * @returns {Wrapper<EditRuntimeForm>}
    */
-  const mountFunction = options => {
-    const vuetify = new Vuetify()
-    return mount(EditRuntimeForm, {
-      localVue,
-      vuetify,
-      ...options
-    })
-  }
+  const mountFunction = (options) => shallowMount(EditRuntimeForm, {
+    global: {
+      plugins: [vuetify],
+      mocks: { $workflowService }
+    },
+    ...options
+  })
 
   describe('reset()', () => {
     it("queries the task's runtime section & processes the response", async () => {
       const wrapper = mountFunction({
-        propsData,
+        props,
         created () {}
       })
       await wrapper.vm.reset()
@@ -148,7 +140,7 @@ describe('EditRuntimeForm Component', () => {
         { outputs: { planet: 'Trantor' } }
       ]
       const wrapper = mountFunction({
-        propsData,
+        props,
         data: () => ({
           initialData: INITIAL_DATA,
           model
@@ -171,7 +163,7 @@ describe('EditRuntimeForm Component', () => {
       }
       const expected = []
       const wrapper = mountFunction({
-        propsData,
+        props,
         data: () => ({
           initialData: INITIAL_DATA,
           model

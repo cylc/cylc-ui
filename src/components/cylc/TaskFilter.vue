@@ -27,11 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-text-field
         data-cy="filter-id"
         clearable
-        :clear-icon="$options.icons.mdiClose"
-        dense
-        flat
         hide-details
-        outlined
         placeholder="Filter by ID"
         v-model="localValue.id"
         ref="filterIDInput"
@@ -46,26 +42,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="filter-task-states"
         :items="allStates"
         clearable
-        :clear-icon="$options.icons.mdiClose"
-        dense
-        flat
         hide-details
         multiple
-        outlined
         placeholder="Filter by task state"
         v-model="localValue.states"
       >
-        <template v-slot:item="slotProps">
-          <Task :task="{ state: slotProps.item }" />
-          <span class="ml-2">{{ slotProps.item }}</span>
+        <template v-slot:item="{ item, props }">
+          <v-list-item v-bind="props" :title="undefined">
+            <Task :task="{ state: item.raw }" />
+            <span class="ml-2">{{ item.raw }}</span>
+          </v-list-item>
         </template>
-        <template v-slot:selection="slotProps">
-          <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maxVisibleStates">
-            <Task :task="{ state: slotProps.item }" />
+        <template v-slot:selection="{ item, index }">
+          <div class="mr-2" v-if="index >= 0 && index < maxVisibleStates">
+            <Task :task="{ state: item.raw }" />
           </div>
           <span
-            v-if="slotProps.index === maxVisibleStates"
-            class="grey--text caption"
+            v-if="index === maxVisibleStates"
+            class="text-grey text-caption"
           >
             (+{{ localValue.states.length - maxVisibleStates }})
           </span>
@@ -76,9 +70,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Task from '@/components/cylc/Task'
+import Task from '@/components/cylc/Task.vue'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
-import { mdiClose } from '@mdi/js'
 
 export default {
   name: 'TaskFilter',
@@ -86,7 +79,7 @@ export default {
     Task
   },
   props: {
-    value: Object // { id, states }
+    modelValue: Object // { id, states }
   },
   data () {
     return {
@@ -97,17 +90,13 @@ export default {
   computed: {
     localValue: {
       get () {
-        return this.value
+        return this.modelValue
       },
       set (value) {
-        // Update 'value' prop by notifying parent component's v-model for this component
-        this.$emit('input', value)
+        // Update 'modelValue' prop by notifying parent component's v-model for this component
+        this.$emit('update:modelValue', value)
       }
     }
-  },
-  // Misc options
-  icons: {
-    mdiClose
   }
 }
 </script>

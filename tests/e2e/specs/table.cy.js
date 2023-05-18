@@ -17,43 +17,31 @@
 
 import TaskState from '@/model/TaskState.model'
 
+const initialNumRows = 7
+
 describe('Table view', () => {
-  it('Should display the mocked workflow', () => {
+  beforeEach(() => {
     cy.visit('/#/table/one')
-    cy
-      .get('.c-table table > tbody > tr')
-      .should('have.length', 7)
+  })
+
+  it('Should display the mocked workflow', () => {
+    cy.get('.c-table table > tbody > tr')
+      .should('have.length', initialNumRows)
       .should('be.visible')
   })
   describe('Filters', () => {
-    it('Should not filter by default', () => {
-      cy.visit('/#/table/one')
-      cy
-        .get('.c-table table > tbody > tr')
-        .should('have.length', 7)
-        .should('be.visible')
-      cy
-        .get('[data-cy=filter-id]')
-        .should('be.empty')
-      cy
-        .get('[data-cy=filter-task-states]')
-        .parent()
-        .parent()
-        .find('input[type="hidden"]')
-        .should('have.value', '')
-    })
     it('Should filter by ID', () => {
-      cy.visit('/#/table/one')
-      cy
-        .get('.c-table table > tbody > tr')
-        .should('have.length', 7)
-        .should('be.visible')
-      cy
-        .get('td > div.d-flex > div')
+      cy.get('.c-table table > tbody > tr')
+        .should('have.length', initialNumRows)
+      cy.get('[data-cy=filter-id] input')
+        .should('be.empty')
+      cy.get('[data-cy=filter-task-states] input')
+        .should('have.value', '')
+      cy.get('td > div.d-flex > div')
         .contains('sleepy')
         .should('be.visible')
       for (const id of ['eep', '/sle']) {
-        cy.get('[data-cy=filter-id]')
+        cy.get('[data-cy=filter-id] input')
           .clear()
           .type(id)
         cy.get('td > div.d-flex > div')
@@ -65,18 +53,16 @@ describe('Table view', () => {
       }
     })
     it('Should filter by task state', () => {
-      cy.visit('/#/table/one')
       cy
         .get('.c-table table > tbody > tr')
-        .should('have.length', 7)
-        .should('be.visible')
+        .should('have.length', initialNumRows)
       cy
         .get('td > div.d-flex > div')
         .contains(TaskState.FAILED.name)
         .should('be.visible')
       cy
         .get('[data-cy=filter-task-states]')
-        .click({ force: true })
+        .click()
       cy
         .get('.v-list-item')
         .contains(TaskState.RUNNING.name)
@@ -91,14 +77,12 @@ describe('Table view', () => {
         .should('be.visible')
     })
     it('Should filter by ID and states', () => {
-      cy.visit('/#/table/one')
       cy
         .get('.c-table table > tbody > tr')
-        .should('have.length', 7)
-        .should('be.visible')
+        .should('have.length', initialNumRows)
       cy
         .get('[data-cy=filter-task-states]')
-        .click({ force: true })
+        .click()
       cy
         .get('.v-list-item')
         .contains(TaskState.SUCCEEDED.name)
@@ -108,7 +92,7 @@ describe('Table view', () => {
         .should('have.length', 2)
         .should('be.visible')
       cy
-        .get('[data-cy=filter-id]')
+        .get('[data-cy=filter-id] input')
         .type('eventually')
       cy
         .get('td > div.d-flex > div')
@@ -116,12 +100,11 @@ describe('Table view', () => {
         .should('be.visible')
     })
     it('displays and sorts dt-mean', () => {
-      cy.visit('/#/table/one')
-
       cy
         // sort dt-mean ascending
-        .get('[aria-label="dT-mean: Not sorted. Activate to sort ascending."] > :nth-child(1)')
-        .click({ force: true })
+        .get('.c-table')
+        .contains('th', 'dT-mean').as('dTHeader')
+        .click()
 
         // check 0 is at the top (1st row, 10th column)
         .get('tbody > :nth-child(1) > :nth-child(10)')
@@ -130,8 +113,8 @@ describe('Table view', () => {
         })
 
         // sort ft-mean descending
-        .get('.asc > .v-icon > .v-icon__svg > path')
-        .click({ force: true })
+        .get('@dTHeader')
+        .click()
 
         // check 7 is at the top (1st row, 10th column)
         .get('tbody > :nth-child(1) > :nth-child(10)')

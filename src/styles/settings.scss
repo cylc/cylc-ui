@@ -15,26 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import i18n from '@/i18n'
+ // https://vuetifyjs.com/en/features/sass-variables/
 
-/**
- * Here we can define the operations that are common to components/views.
- * @type {{methods: {setPageTitle(*=, *=): string}}}
- */
-export default {
-  /**
-   * Automatically created methods for components.
-   */
-  methods: {
-    /**
-     * i18n-enabled operation, to get the title respecting the locale used
-     * in the application settings.
-     * @param key {string} i18n key
-     * @param params {object} optional object key=value used in the i18n message
-     * @returns {string}
-     */
-    getPageTitle: function (key, params = {}) {
-      return `${i18n.t('App.name')} | ${i18n.t(key, params)}`
-    }
-  }
-}
+@forward 'vuetify/settings' with (
+  // I don't know why these are false
+  $color-pack: false,
+  $utilities: false,
+);

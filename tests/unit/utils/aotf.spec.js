@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import * as aotf from '@/utils/aotf'
 import dedent from 'dedent'
 // need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...

@@ -16,20 +16,14 @@
  */
 
 import { mount } from '@vue/test-utils'
-import { expect } from 'chai'
-// import vuetify here so that we do not have warnings in the console output
-// eslint-disable-next-line no-unused-vars
-import * as vuetify from '@/plugins/vuetify'
-import Job from '@/components/cylc/Job'
+import Job from '@/components/cylc/Job.vue'
 
 describe('Job component', () => {
   it('should initialize props', () => {
     const wrapper = mount(Job, {
-      context: {
-        props: {
-          status: '',
-          multiple: false
-        }
+      props: {
+        status: '',
+        multiple: false
       }
     })
     expect(wrapper.element.className).to.equal('c-job')
@@ -37,11 +31,9 @@ describe('Job component', () => {
   })
   it('should add a new class for multiple jobs', () => {
     const wrapper = mount(Job, {
-      context: {
-        props: {
-          status: 'failed',
-          'previous-state': 'submit-failed'
-        }
+      props: {
+        status: 'failed',
+        'previous-state': 'submit-failed'
       }
     })
     // The shadow is added as an extra child element for the Job SVG (two rects).

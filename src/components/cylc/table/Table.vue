@@ -22,7 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <!-- Toolbar -->
     <v-row
-      class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
+      no-gutters
+      class="d-flex flex-wrap flex-grow-0"
     >
       <!-- Filters -->
       <v-col
@@ -44,91 +45,62 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           fluid
           class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
         >
+          <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
           <v-data-table
             :headers="headers"
             :items="filteredTasks"
-            :single-expand="false"
-            :expanded.sync="expanded"
             multi-sort
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-            item-key="task.id"
+            :sort-by="sortBy"
             show-expand
-            dense
-            :footer-props="{
-              itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
-              showFirstLastPage: true
-            }"
-            :options="{ itemsPerPage: 50 }"
+            density="compact"
+            v-model:items-per-page="itemsPerPage"
           >
-            <template
-              v-slot:item="{ item }"
-            >
-              <tr>
-                <td>
-                  <div class="d-flex align-content-center flex-nowrap">
-                    <div class="mr-1">
-                      <Task
-                        v-cylc-object="item.task"
-                        :task="item.task.node"
-                        :startTime="((item.latestJob || {}).node || {}).startedTime"
-                      />
-                    </div>
-                    <div class="mr-1">
-                      <Job
-                        v-cylc-object="item.task"
-                        :status="item.task.node.state"
-                        :previous-state="((item.previousJob || {}).node || {}).state"
-                      />
-                    </div>
-                    <div>{{ item.task.name }}</div>
-                  </div>
-                </td>
-                <td>
-                  <v-btn
-                    icon
-                    class="v-data-table__expand-icon"
-                    @click="expanded.push(item)"
-                    v-if="
-                      (item.task.children|| []).length > 0 &&
-                      !expanded.includes(item)
-                    "
-                  >
-                    <v-icon>{{ icons.mdiChevronDown }}</v-icon>
-                  </v-btn>
-                  <v-btn
-                    icon
-                    class="v-data-table__expand-icon v-data-table__expand-icon--active"
-                    @click="expanded.splice(expanded.indexOf(item), 1)"
-                    v-if="
-                      (item.task.children || []).length > 0 &&
-                      expanded.includes(item)
-                    "
-                  >
-                    <v-icon>{{ icons.mdiChevronDown }}</v-icon>
-                  </v-btn>
-                </td>
-                <td>{{ item.task.tokens.cycle }}</td>
-                <td>{{ ((item.latestJob || {}).node || {}).platform }}</td>
-                <td>{{ ((item.latestJob || {}).node || {}).jobRunnerName }}</td>
-                <td>{{ ((item.latestJob || {}).node || {}).jobId }}</td>
-                <td>{{ ((item.latestJob || {}).node || {}).submittedTime }}</td>
-                <td>{{ ((item.latestJob || {}).node || {}).startedTime }}</td>
-                <td>{{ ((item.latestJob || {}).node || {}).finishedTime }}</td>
-                <td>{{ dtMean(item.task) }}</td>
-              </tr>
+            <template v-slot:item.task.name="{ item }">
+              <div class="d-flex align-content-center flex-nowrap">
+                <div class="mr-1">
+                  <Task
+                    v-cylc-object="item.value.task"
+                    :task="item.value.task.node"
+                    :startTime="((item.value.latestJob || {}).node || {}).startedTime"
+                  />
+                </div>
+                <div class="mr-1">
+                  <Job
+                    v-cylc-object="item.value.task"
+                    :status="item.value.task.node.state"
+                    :previous-state="((item.value.previousJob || {}).node || {}).state"
+                  />
+                </div>
+                <div>{{ item.value.task.name }}</div>
+              </div>
             </template>
-            <template v-slot:expanded-item="{ item }">
-<!--                v-slot:expanded-item="{ headers, item }">-->
-<!--              <td :colspan="headers.length">-->
-<!--                More info about {{ item.node.id }}-->
-<!--              </td>-->
+            <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
+              <td>{{ dtMean(item.value.task) }}</td>
+            </template>
+            <template v-slot:item.data-table-expand="{ item, toggleExpand, isExpanded }">
+              <v-btn
+                @click="toggleExpand(item)"
+                icon
+                variant="text"
+                size="small"
+                :style="{
+                  visibility: (item.value.task.children || []).length ? null : 'hidden',
+                  transform: isExpanded(item) ? 'rotate(180deg)' : null
+                }"
+              >
+                <v-icon
+                  :icon="$options.icons.mdiChevronDown"
+                  size="large"
+                />
+              </v-btn>
+            </template>
+            <template v-slot:expanded-row="{ item }">
               <tr
                 v-bind:key="job.id"
-                v-for="(job, index) in item.task.children"
-                class="grey lighten-5"
+                v-for="(job, index) in item.value.task.children"
+                class="expanded-row bg-grey-lighten-5"
               >
-                <td>
+                <td :colspan="3">
                   <div class="d-flex align-content-center flex-nowrap">
                     <div class="d-flex mr-1">
                       <Job
@@ -141,18 +113,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </div>
                   </div>
                 </td>
-                <td></td>
-                <td>
-                  <!--{{ item.tokens.cycle }}-->
-                </td>
-                <td>{{job.node.platform }}</td>
-                <td>{{job.node.jobRunnerName }}</td>
-                <td>{{job.node.jobId }}</td>
-                <td>{{job.node.submittedTime }}</td>
-                <td>{{job.node.startedTime }}</td>
-                <td>{{job.node.finishedTime }}</td>
+                <td>{{ job.node.platform }}</td>
+                <td>{{ job.node.jobRunnerName }}</td>
+                <td>{{ job.node.jobId }}</td>
+                <td>{{ job.node.submittedTime }}</td>
+                <td>{{ job.node.startedTime }}</td>
+                <td>{{ job.node.finishedTime }}</td>
                 <td></td>
               </tr>
+            </template>
+            <template v-slot:bottom>
+              <v-data-table-footer :itemsPerPageOptions="$options.itemsPerPageOptions" />
             </template>
           </v-data-table>
         </v-container>
@@ -162,9 +133,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
-import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
+import Task from '@/components/cylc/Task.vue'
+import Job from '@/components/cylc/Job.vue'
+import { mdiChevronDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
 import { matchNode } from '@/components/cylc/common/filter'
@@ -173,6 +144,7 @@ import { dtMean } from '@/utils/tasks'
 
 export default {
   name: 'TableComponent',
+
   props: {
     tasks: {
       type: Array,
@@ -183,82 +155,108 @@ export default {
       default: true
     }
   },
+
   components: {
     Task,
     Job,
     TaskFilter
   },
+
   data () {
     return {
-      icons: {
-        mdiChevronDown,
-        mdiArrowDown
-      },
-      sortBy: ['task.tokens.cycle'],
-      sortDesc: [localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : true],
-      expanded: [],
+      itemsPerPage: 50,
+      sortBy: [
+        {
+          key: 'task.tokens.cycle',
+          order: JSON.parse(localStorage.cyclePointsOrderDesc ?? true) ? 'desc' : 'asc'
+        }
+      ],
       headers: [
         {
-          text: 'Task',
-          value: 'task.name',
+          title: 'Task',
+          key: 'task.name',
+          sortable: true,
           sort: DEFAULT_COMPARATOR
         },
         {
-          text: 'Jobs',
-          value: 'data-table-expand',
+          title: 'Jobs',
+          key: 'data-table-expand',
           sortable: false
         },
         {
-          text: 'Cycle Point',
-          value: 'task.tokens.cycle',
+          title: 'Cycle Point',
+          key: 'task.tokens.cycle',
+          sortable: true,
           sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
         },
         {
-          text: 'Platform',
-          value: 'latestJob.node.platform',
+          title: 'Platform',
+          key: 'latestJob.node.platform',
+          sortable: true,
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          text: 'Job System',
-          value: 'latestJob.node.jobRunnerName',
+          title: 'Job System',
+          key: 'latestJob.node.jobRunnerName',
+          sortable: true,
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          text: 'Job ID',
-          value: 'latestJob.node.jobId',
+          title: 'Job ID',
+          key: 'latestJob.node.jobId',
+          sortable: true,
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          text: 'T-submit',
-          value: 'latestJob.node.submittedTime',
+          title: 'T-submit',
+          key: 'latestJob.node.submittedTime',
+          sortable: true,
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          text: 'T-start',
-          value: 'latestJob.node.startedTime',
+          title: 'T-start',
+          key: 'latestJob.node.startedTime',
+          sortable: true,
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          text: 'T-finish',
-          value: 'latestJob.node.finishedTime',
+          title: 'T-finish',
+          key: 'latestJob.node.finishedTime',
+          sortable: true,
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          text: 'dT-mean',
-          value: 'task.node.task.meanElapsedTime',
+          title: 'dT-mean',
+          key: 'task.node.task.meanElapsedTime',
+          sortable: true,
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
       ],
       tasksFilter: {}
     }
   },
+
   computed: {
     filteredTasks () {
       return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
     }
   },
+
   methods: {
     dtMean
-  }
+  },
+
+  icons: {
+    mdiChevronDown
+  },
+
+  itemsPerPageOptions: [
+    { value: 10, title: '10' },
+    { value: 20, title: '20' },
+    { value: 50, title: '50' },
+    { value: 100, title: '100' },
+    { value: 200, title: '200' },
+    { value: -1, title: 'All' }
+  ]
 }
 </script>

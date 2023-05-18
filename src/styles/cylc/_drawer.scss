@@ -15,19 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import '~vuetify/src/styles/styles';
+@use '../settings.scss';
 @import '../util.scss';
 
-/* this is not in our styles/material-dashboard, so we need to force-override */
-.v-navigation-drawer {
+body.resizing-drawer {
+  cursor: ew-resize !important;
+}
+
+#c-sidebar {
+  /* this is not in our styles/material-dashboard, so we need to force-override */
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
 
-  @include theme-dependent(background-color, $grey, 4);
+  @include theme-dependent(background-color, settings.$grey, 4);
 
-  .search-input {
-    margin-bottom: 30px !important;
-    padding-left: 15px;
-    padding-right: 15px;
+  .resize-bar {
+    display: block;
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: ew-resize;
+    transition: background-color 0.2s;
+
+    &:hover, body.resizing-drawer & {
+      background: map-get(settings.$blue, "base");
+      transition-delay: 0.5s;
+    }
+  }
+
+  .v-navigation-drawer__append {
+    overflow: hidden;
   }
 }

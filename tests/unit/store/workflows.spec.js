@@ -15,13 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import { merge } from '@/store/workflows.module'
-
-Vue.use(Vuex)
 
 function getTree (store) {
   const cylcTree = store.state.workflows.cylcTree
@@ -70,7 +66,7 @@ describe('merge', () => {
 })
 
 describe('cylc tree', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   if (!global.localStorage) {
     global.localStorage = {}
   }

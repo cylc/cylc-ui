@@ -16,38 +16,41 @@
  */
 
 import { TaskStateUserOrder, JobStates } from '@/model/TaskState.model'
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
+import Task from '@/components/cylc/Task.vue'
+import Job from '@/components/cylc/Job.vue'
 import {
   MEAN_ELAPSED_TIME,
   getStartTime
 } from './utils/task'
+import { defineComponent, h } from 'vue'
 
 // wrap the Job component to allow us to bump up the font-size for a
 // higher resolution screenshot
-const JobComponent = {
-  // NOTE: we set the font-size to boost the screenshot resolution
-  template: `
-    <span style="font-size: 200px" id="app" class="job_theme--default">
-      <job :status="status" />
-    </span>
-  `,
-  props: ['status'],
-  components: { Job }
-}
+const JobComponent = defineComponent({
+  render () {
+    return h(
+      'span',
+      { style: 'font-size: 200px;', id: 'app', class: 'job_theme--default' },
+      [
+        h(Job, this.$attrs)
+      ]
+    )
+  }
+})
 
 // wrap the Task component to allow us to bump up the font-size for a
 // higher resolution screenshot
-const TaskComponent = {
-  // NOTE: we set the font-size to boost the screenshot resolution
-  template: `
-    <div style="font-size: 200px; margin: 100px;">
-      <Task :task="task" :startTime="startTime" :modifierSize="modifierSize" />
-    </div>
-  `,
-  props: ['task', 'startTime', 'modifierSize'],
-  components: { Task }
-}
+const TaskComponent = defineComponent({
+  render () {
+    return h(
+      'span',
+      { style: 'font-size: 200px; margin: 100px;' },
+      [
+        h(Task, this.$attrs)
+      ]
+    )
+  }
+})
 
 function makeTask (
   state = 'waiting',
@@ -70,7 +73,7 @@ describe('Task component', () => {
   it('Renders for each task state', () => {
     for (const state of TaskStateUserOrder) {
       const task = makeTask(state.name)
-      cy.mount(TaskComponent, { propsData: { task } })
+      cy.mount(TaskComponent, { props: { task } })
       cy.get('.c8-task').last().parent().screenshot(
         `task-${state.name}`,
         { overwrite: true, disableTimersAndAnimations: false }
@@ -83,7 +86,7 @@ describe('Task component', () => {
       cy.mount(
         TaskComponent,
         {
-          propsData: {
+          props: {
             task,
             startTime: getStartTime(percent)
           }
@@ -99,10 +102,10 @@ describe('Task component', () => {
         .should('have.css', 'animation-duration', `${MEAN_ELAPSED_TIME}s`)
         // the offset should be set to the "percent" of the expected job duration
         .should('have.css', 'animation-delay')
-        .and('match', /([\d\.]+)s/) // NOTE the delay should be negative
+        .and('match', /([\d.]+)s/) // NOTE the delay should be negative
         .then((number) => {
           // convert the duration string into a number that we can test
-          cy.wrap(Number(number.match(/([\d\.]+)s/)[1]))
+          cy.wrap(Number(number.match(/([\d.]+)s/)[1]))
             // ensure this number is ±5 from the expected value
             // (give it a little bit of margin to allow for timing error)
             .should('closeTo', MEAN_ELAPSED_TIME * (percent / 100), 5)
@@ -114,7 +117,7 @@ describe('Task component', () => {
     for (const modifier of ['isHeld', 'isQueued', 'isRunahead']) {
       task = makeTask()
       task[modifier] = true
-      cy.mount(TaskComponent, { propsData: { task } })
+      cy.mount(TaskComponent, { props: { task } })
       cy.get('.c8-task').last().screenshot(
         `task-${modifier}`,
         {
@@ -129,7 +132,7 @@ describe('Task component', () => {
     const task = makeTask()
     task.isHeld = true
     for (const modifierSize of [0.2, 0.4, 0.6, 0.8]) {
-      cy.mount(TaskComponent, { propsData: { task, modifierSize } })
+      cy.mount(TaskComponent, { props: { task, modifierSize } })
       cy.get('.c8-task').last().screenshot(
         `task-modifier-size-${modifierSize}`,
         {
@@ -145,7 +148,7 @@ describe('Task component', () => {
 describe('Job component', () => {
   it('renders for each job state', () => {
     for (const state of JobStates) {
-      cy.mount(JobComponent, { propsData: { status: state.name } })
+      cy.mount(JobComponent, { props: { status: state.name } })
       cy.get('.c-job svg').last().screenshot(
         `job-${state.name}`,
         { overwrite: true }

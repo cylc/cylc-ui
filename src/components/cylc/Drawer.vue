@@ -18,35 +18,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-navigation-drawer
     v-model="drawer"
+    id="c-sidebar"
     ref="drawerRef"
-    app
     floating
-    hide-overlay
-    mobile-breakpoint="991"
-    :width="navigation.width"
-    persistent
+    :width="drawerWidth"
     class="fill-height"
   >
     <div class="d-flex flex-column h-100">
       <v-list
-        class="pa-0 ma-0 flex-grow-0 d-flex flex-column"
+        class="pa-0 flex-grow-0 d-flex flex-column"
       >
         <c-header :user="user.username" />
-        <v-list-item
-          v-if="responsive"
-        >
-          <v-text-field
-            class="search-input"
-            label="Search..."
-          />
-        </v-list-item>
 
         <v-list-item
           to="/"
         >
-          <v-list-item-action>
-            <v-icon>{{ svgPaths.home }}</v-icon>
-          </v-list-item-action>
+          <template v-slot:prepend>
+            <v-icon style="opacity: 1;">{{ svgPaths.home }}</v-icon>
+          </template>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
 
@@ -54,25 +43,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           to="/graphiql"
           class="v-list-item"
         >
-          <v-list-item-action>
-            <v-icon>{{ svgPaths.graphql }}</v-icon>
-          </v-list-item-action>
+          <template v-slot:prepend>
+            <v-icon style="opacity: 1;">{{ svgPaths.graphql }}</v-icon>
+          </template>
           <v-list-item-title>GraphiQL</v-list-item-title>
         </v-list-item>
         <v-divider class="" />
-        <v-subheader class="py-3">Workflows</v-subheader>
+        <v-list-item>
+          <v-list-item-title>Workflows</v-list-item-title>
+        </v-list-item>
       </v-list>
 
-      <v-list
-        class="pa-0 ma-0 flex-grow-1 d-flex flex-column"
-      >
-        <Workflows class="h-100" />
-      </v-list>
+      <Workflows />
     </div>
+    <div class="resize-bar" ref="resizeBar"></div>
     <template v-slot:append>
       <div class="px-4 py-2 d-flex justify-center">
         <span class="text--secondary">
-          <strong v-if="environment !== 'PRODUCTION'">{{ environment }}</strong> {{ $t('App.name') }} {{ version }}
+          <strong v-if="mode !== 'production'"> {{ mode.toUpperCase() }}</strong> {{ $t('App.name') }} {{ version }}
         </span>
       </div>
     </template>
@@ -80,34 +68,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-// because we use `tag=v-list` and not `v-list`
-// eslint-disable-next-line no-unused-vars
-import Header from '@/components/cylc/Header'
-import { mapState } from 'vuex'
-import Workflows from '@/views/Workflows'
+import Header from '@/components/cylc/Header.vue'
+import { mapMutations, mapState } from 'vuex'
+import Workflows from '@/views/Workflows.vue'
 import { mdiHome, mdiGraphql } from '@mdi/js'
-import { version } from '@/../package.json'
+import pkg from '@/../package.json'
+
+export const initialWidth = 260
+export const minWidth = 150
 
 export default {
   components: {
     Workflows,
     'c-header': Header
   },
+
   data: function () {
     return {
-      responsive: false,
       svgPaths: {
         home: mdiHome,
         graphql: mdiGraphql
       },
-      environment: process.env.VUE_APP_SERVICES === 'offline' ? 'OFFLINE' : process.env.NODE_ENV.toUpperCase(),
-      version,
-      navigation: {
-        width: 260,
-        borderSize: 3
-      }
+      mode: import.meta.env.MODE,
+      version: pkg.version,
+      drawerWidth: initialWidth
     }
   },
+
+  mounted () {
+    this.setEvents()
+  },
+
   computed: {
     ...mapState('user', ['user']),
     drawer: {
@@ -115,67 +106,56 @@ export default {
         return this.$store.state.app.drawer
       },
       set (val) {
-        if (val) {
-          const newWidth = typeof this.navigation.width === 'string' ? Number(this.navigation.width.replace('px', '')) : this.navigation.width
-          this.navigation.width = newWidth < 260 ? 260 : newWidth
-        }
-        this.$store.commit('app/setDrawer', val)
+        this.setDrawer(val)
       }
     }
   },
+
   methods: {
+    ...mapMutations('app', ['setDrawer']),
     getDrawerElement () {
-      return this.$refs.drawerRef.$el
-    },
-    setBorderWidth () {
-      const i = this.getDrawerElement().querySelector(
-        '.v-navigation-drawer__border'
-      )
-      i.style.width = this.navigation.borderSize + 'px'
-      i.style.cursor = 'ew-resize'
+      // Cannot use $refs.drawerRef.$el due to https://github.com/vuetifyjs/vuetify/issues/16766
+      return document.getElementById('c-sidebar')
     },
     resize (e) {
-      document.body.style.cursor = 'ew-resize'
-      const el = this.getDrawerElement()
-      const direction = el.classList.contains('v-navigation-drawer--right')
-        ? 'right'
-        : 'left'
-      const f = direction === 'right' ? document.body.scrollWidth - e.clientX : e.clientX
-      el.style.width = f + 'px'
+      // If less than min width, will collapse (to 4px because that's the
+      // resize-bar width)
+      this.drawerWidth = e.clientX > minWidth ? e.clientX : 4
     },
     setEvents () {
       const el = this.getDrawerElement()
-      const drawerBorder = el.querySelector('.v-navigation-drawer__border')
+      const drawerBorder = this.$refs.resizeBar
       drawerBorder.addEventListener(
         'mousedown',
-        (e) => {
-          el.style.transition = 'initial'
-          document.addEventListener('mousemove', this.resize, false)
-          if (e.stopPropagation) e.stopPropagation()
-          if (e.preventDefault) e.preventDefault()
-          return false
-        },
-        false
-      )
-      document.addEventListener(
-        'mouseup',
-        () => {
-          el.style.transition = ''
-          this.navigation.width = el.style.width
-          document.body.style.cursor = ''
-          document.removeEventListener('mousemove', this.resize, false)
-          // this slightly hacky timeout is used to ensure a browser redraw forced the lumino tabs to be resized when the drag event has finished
-          setTimeout(() => {
-            window.dispatchEvent(new Event('resize'))
-          }, 600)
-        },
-        false
+        (mdEvent) => {
+          // Prevent Vuetify-provided transitions to ensure responsiveness
+          el.style.transition = 'none'
+          document.body.classList.add('resizing-drawer')
+          document.addEventListener('mousemove', this.resize, { passive: true })
+          mdEvent.stopPropagation?.()
+          mdEvent.preventDefault?.()
+
+          document.addEventListener(
+            'mouseup',
+            (muEvent) => {
+              if (muEvent.clientX < minWidth) {
+                this.drawer = false
+                // Reset to width at time of mousedown
+                // (using a timeout as a hack to prevent drawer briefly
+                // reappearing (nextTick doesn't work))
+                setTimeout(() => {
+                  this.drawerWidth = mdEvent.clientX
+                }, 200)
+              }
+              el.style.transition = null
+              document.body.classList.remove('resizing-drawer')
+              document.removeEventListener('mousemove', this.resize)
+            },
+            { once: true }
+          )
+        }
       )
     }
-  },
-  mounted () {
-    this.setBorderWidth()
-    this.setEvents()
   }
 }
 </script>

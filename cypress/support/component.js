@@ -22,10 +22,9 @@ import '@/styles/index.scss'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-import Vue from 'vue'
-import Vuetify from 'vuetify'
+import vuetify from '@/plugins/vuetify'
 
-import { mount } from 'cypress/vue2'
+import { mount } from 'cypress/vue'
 
 // vanilla mount function
 // e.g. cy.mount(MyComponent)
@@ -34,13 +33,13 @@ Cypress.Commands.add('mount', mount)
 // mount function with Vuetify installed
 // e.g. cy.mount(MyVuetifyComponent)
 // see also addVuetifyStyles
-Vue.use(Vuetify)
 Cypress.Commands.add('vmount', (component, options = {}) => {
-  const vuetify = new Vuetify()
   return mount(
     component,
     {
-      vuetify,
+      global: {
+        plugins: [vuetify]
+      },
       ...options
     }
   )
@@ -64,4 +63,3 @@ Cypress.Commands.add('addVuetifyStyles', (cy) => {
       }
     })
 })
-

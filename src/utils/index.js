@@ -15,13 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import { createWidgetId } from '@/components/cylc/workflow'
+import { i18n } from '@/i18n'
 
-describe('Workflow component', () => {
-  describe('index', () => {
-    it('should create a new ID for a widget', () => {
-      expect(createWidgetId()).to.not.equal(null)
-    })
-  })
-})
+/**
+ * i18n-enabled operation, to get the title respecting the locale used
+ * in the application settings.
+ * @param {string} key - i18n key
+ * @param {Object} params - optional object key=value used in the i18n message
+ * @returns {string}
+ */
+export const getPageTitle = (key, params = {}) => {
+  return `${i18n.global.t('App.name')} | ${i18n.global.t(key, params)}`
+}

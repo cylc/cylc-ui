@@ -32,19 +32,19 @@ import {
   query,
   tokenise
 } from '@/utils/aotf'
-import store from '@/store/index'
+import { store } from '@/store/index'
 import { createApolloClient } from '@/graphql/index'
 import { print } from 'graphql'
 import mergeQueries from '@/graphql/merge'
 import Alert from '@/model/Alert.model'
 import CylcTreeCallback from '@/services/treeCallback'
 
-// Typedef imports
-/* eslint-disable no-unused-vars, no-duplicate-imports */
-import { Mutation, MutationResponse, Query } from '@/utils/aotf'
-import { DocumentNode, IntrospectionInputType } from 'graphql'
-import { SubscriptionClient } from 'subscriptions-transport-ws'
-/* eslint-enable no-unused-vars, no-duplicate-imports */
+/** @typedef {import('graphql').DocumentNode} DocumentNode */
+/** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType */
+/** @typedef {import('subscriptions-transport-ws').SubscriptionClient} SubscriptionClient */
+/** @typedef {import('@/utils/aotf').Mutation} Mutation */
+/** @typedef {import('@/utils/aotf').MutationResponse} MutationResponse */
+/** @typedef {import('@/utils/aotf').Query} Query */
 
 /**
  * @typedef {Object} IntrospectionObj
@@ -66,7 +66,7 @@ class WorkflowService {
    * @param {?SubscriptionClient} subscriptionClient
    */
   constructor (httpUrl, subscriptionClient) {
-    this.debug = process.env.NODE_ENV !== 'production'
+    this.debug = import.meta.env.MODE !== 'production'
 
     this.subscriptionClient = subscriptionClient
     this.apolloClient = createApolloClient(httpUrl, subscriptionClient)

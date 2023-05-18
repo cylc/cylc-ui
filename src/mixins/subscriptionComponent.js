@@ -16,13 +16,14 @@
  */
 
 import subscriptionMixin from '@/mixins/subscription'
+import { uniqueId } from 'lodash'
 
 /**
  * A mixin for components that declare GraphQL Query subscriptions. An example
  * of such component is the GScan component, which declares a query used to
  * list the workflows of the system in the UI sidebar.
  *
- * Uses Vue component lifecycle methods (e.g. created, beforeDestroy) to
+ * Uses Vue component lifecycle methods (e.g. created, beforeUnmount) to
  * coordinate when a subscription is created in the WorkflowService service.
  *
  * @see Subscription
@@ -33,10 +34,24 @@ export default {
   mixins: [
     subscriptionMixin
   ],
+  beforeCreate () {
+    // Uniquely identify this component/view so we can keep track of which
+    // ones are sharing subscriptions.
+    this._uid = `${uniqueId()}_${this.$options.name}`
+  },
   beforeMount () {
     this.$workflowService.subscribe(this)
+    this.$workflowService.startSubscriptions()
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.$workflowService.unsubscribe(this)
+  },
+  watch: {
+    query () {
+      // if the query changes, unsubscribe & re-subscribe
+      this.$workflowService.unsubscribe(this)
+      this.$workflowService.subscribe(this)
+      this.$workflowService.startSubscriptions()
+    }
   }
 }

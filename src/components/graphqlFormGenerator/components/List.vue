@@ -16,46 +16,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-list dense>
-    <v-list-item-content>
-      <v-list-item
-        v-for="(item, index) in value"
-        :key="index"
+  <v-list density="compact">
+    <v-list-item
+      v-for="(item, index) in modelValue"
+      :key="index"
+    >
+      <!-- The input -->
+      <FormInput
+        v-model="modelValue[index]"
+        :gqlType="gqlType.ofType"
+        :types="types"
+        ref="inputs"
       >
-        <v-list-item-content>
-          <!-- The input -->
-          <component
-            v-model="value[index]"
-            :propOverrides="{dense: true}"
-            :gqlType="gqlType.ofType"
-            :types="types"
-            :is="FormInput"
-            ref="inputs"
+        <template v-slot:append="slotProps">
+          <v-btn
+            @click="remove(index)"
+            v-bind="slotProps"
+            icon
+            size="small"
+            variant="plain"
+            class="remove-btn mt-n2"
           >
-            <!-- NOTE: we use :is here due to a nested component registration issue. -->
-            <template v-slot:append-outer="slotProps">
-              <v-icon
-                @click="remove(index)"
-                v-bind="slotProps"
-                class="remove-btn"
-              >
-                {{ svgPaths.close }}
-              </v-icon>
-            </template>
-          </component>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item>
-        <v-btn
-         @click="add()"
-         text
-         data-cy="add"
-        >
-          <v-icon>{{ svgPaths.open }}</v-icon>
-          <span>Add Item</span>
-        </v-btn>
-      </v-list-item>
-    </v-list-item-content>
+            <v-icon size="x-large">
+              {{ svgPaths.close }}
+            </v-icon>
+          </v-btn>
+        </template>
+      </FormInput>
+    </v-list-item>
+    <v-list-item>
+      <v-btn
+        @click="add()"
+        variant="text"
+        data-cy="add"
+      >
+        <v-icon>{{ svgPaths.open }}</v-icon>
+        <span>Add Item</span>
+      </v-btn>
+    </v-list-item>
   </v-list>
 </template>
 
@@ -63,7 +61,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import { getNullValue } from '@/utils/aotf'
 import { mdiPlusCircle, mdiCloseCircle } from '@mdi/js'
-import Vue from 'vue'
 
 export default {
   name: 'g-list',
@@ -78,6 +75,8 @@ export default {
       default: false
     }
   },
+
+  inheritAttrs: false,
 
   data () {
     return {
@@ -94,15 +93,15 @@ export default {
       const newInput = getNullValue(this.gqlType.ofType, this.types)
       let index = 0
       if (this.addAtStart) {
-        this.value.unshift(newInput)
+        this.modelValue.unshift(newInput)
       } else {
-        index = this.value.length
-        this.value.push(newInput)
+        index = this.modelValue.length
+        this.modelValue.push(newInput)
       }
       // this is not ideal, but I believe whats happening is the new (wrapper) component is created over the first tick from the new array item
       // the component content is created over the next tick (including the input)
-      Vue.nextTick(() => {
-        Vue.nextTick(() => {
+      this.$nextTick(() => {
+        this.$nextTick(() => {
           // get the latest input ref (which is a tooltip for some reason), get its parent, then the input itself and focus() it (if it exists)
           this.$refs.inputs[index].$el?.parentNode?.querySelector('input')?.focus()
         })
@@ -111,7 +110,7 @@ export default {
 
     /** Remove the item at `index` from the list. */
     remove (index) {
-      this.value.splice(index, 1)
+      this.modelValue.splice(index, 1)
     }
   }
 }

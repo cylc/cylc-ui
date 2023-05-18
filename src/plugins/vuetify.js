@@ -15,19 +15,62 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import { createVuetify } from 'vuetify'
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import { VAutocomplete } from 'vuetify/components/VAutocomplete'
+import { VCombobox } from 'vuetify/components/VCombobox'
+import { VSelect } from 'vuetify/components/VSelect'
+import { VTextarea } from 'vuetify/components/VTextarea'
+import { VTextField } from 'vuetify/components/VTextField'
+import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
+import colors from 'vuetify/lib/util/colors'
+import { mdiClose } from '@mdi/js'
 
-// If modifying theme colors, check the colors from the theme bundle first, and use them if possible
-// import colors from 'vuetify/lib/util/colors'
+const inputDefaults = Object.fromEntries([
+  VAutocomplete,
+  VCombobox,
+  VSelect,
+  VTextarea,
+  VTextField
+].map(({ name }) => [
+  name,
+  {
+    density: 'compact',
+    variant: 'outlined',
+    clearIcon: mdiClose
+  }
+]))
 
-Vue.use(Vuetify)
-
-export default new Vuetify({
+export default createVuetify({
   theme: {
-    // dark: true
+    defaultTheme: 'light',
+    themes: {
+      light: {
+        dark: false,
+        colors: {
+          primary: colors.lightBlue.accent4,
+          'primary-darken-1': colors.lightBlue.darken4,
+          secondary: colors.teal.accent4,
+          'secondary-darken-1': colors.teal.darken3
+        }
+      }
+    }
+  },
+  display: {
+    mobileBreakpoint: 991
   },
   icons: {
-    iconfont: 'mdiSvg'
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi
+    }
+  },
+  components: {
+    VDataTable,
+    VDataTableFooter
+  },
+  defaults: {
+    ...inputDefaults
   }
 })

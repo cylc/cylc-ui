@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-model="model"
     v-bind="$attrs"
     :items="type.enumValues"
-    item-text="name"
+    item-title="name"
     :hint="itemDesc"
     placeholder="Select an option"
   />
@@ -35,12 +35,9 @@ export default {
   mixins: [formElement],
   computed: {
     itemDesc () {
-      for (const item of this.type.enumValues) {
-        if (item.name === this.value) {
-          return item.description
-        }
-      }
-      return ''
+      return this.type.enumValues.find(
+        ({ name }) => name === this.modelValue
+      )?.description ?? ''
     }
   }
 }

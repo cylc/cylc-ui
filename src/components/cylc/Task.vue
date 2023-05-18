@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import SVGTask from '@/components/cylc/SVGTask'
+import SVGTask from '@/components/cylc/SVGTask.vue'
 
 export default {
   name: 'Task',

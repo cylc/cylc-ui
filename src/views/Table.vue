@@ -17,22 +17,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <div class="c-table h-100">
-      <table-component
-        :tasks="tasks"
-        ref="table0"
-        key="table0"
-      ></table-component>
-    </div>
+    <TableComponent
+      :tasks="tasks"
+      ref="table0"
+      key="table0"
+    />
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { mdiTable } from '@mdi/js'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -40,27 +37,31 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '../graphql/queries'
 
 export default {
-  mixins: [
-    pageMixin,
-    graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
-  ],
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Table',
+
+  mixins: [
+    graphqlMixin,
+    subscriptionComponentMixin
+  ],
+
   components: {
     TableComponent
   },
-  metaInfo () {
+
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
   data: () => ({
     widget: {
       title: 'table',
       icon: mdiTable
     }
   }),
+
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
@@ -95,6 +96,7 @@ export default {
       }
       return ret
     },
+
     query () {
       return new SubscriptionQuery(
         // this is disabled for now as differences in the fragment names are causing the

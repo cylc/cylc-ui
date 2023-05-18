@@ -15,19 +15,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<template>
-  <v-text-field
-    v-model="model"
-    :hint="type.description"
-  />
-</template>
-
 <script>
+import { h } from 'vue'
+import { VTextField } from 'vuetify/components/VTextField'
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
+import { renderHelpIcon } from '@/components/graphqlFormGenerator/FormInput.vue'
+import { nonNullRule } from '@/components/graphqlFormGenerator/components/NonNull.vue'
 
 export default {
-  name: 'g-enum',
+  name: 'g-broadcast-setting',
+
   mixins: [formElement],
+
+  inheritAttrs: false,
+
+  data: () => ({
+    localValue: null
+  }),
 
   methods: {
     /** Split a given string from the left.
@@ -97,22 +101,34 @@ export default {
         }
       }
       return ret
+    },
+
+    isValid (val) {
+      const nonNullOutcome = nonNullRule(val)
+      return nonNullOutcome === true
+        ? (this.modelValue != null) || 'Invalid'
+        : nonNullOutcome
     }
   },
 
-  computed: {
-    model: {
-      get () {
-        return this.fromObject(this.value)
+  render () {
+    return h(
+      VTextField,
+      {
+        ...this.$attrs,
+        modelValue: this.localValue,
+        'onUpdate:modelValue': (val) => {
+          this.localValue = val
+          this.$emit('update:modelValue', this.fromString(val))
+        },
+        rules: [this.isValid]
       },
-
-      set (val) {
-        const newVal = this.fromString(val)
-        if (newVal) {
-          this.$emit('input', newVal)
-        }
+      {
+        'append-inner': () => renderHelpIcon(this.help),
+        // pass the "append" slot onto the VTextField component
+        append: (slotProps) => this.$slots.append?.(slotProps)
       }
-    }
+    )
   }
 }
 </script>

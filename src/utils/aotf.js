@@ -48,15 +48,12 @@ import {
 } from '@mdi/js'
 
 import Alert from '@/model/Alert.model'
-import store from '@/store/index'
+import { store } from '@/store/index'
 import { Tokens } from '@/utils/uid'
 import { WorkflowState } from '@/model/WorkflowState.model'
 
-// Typedef imports
-/* eslint-disable no-unused-vars, no-duplicate-imports */
-import { ApolloClient } from '@apollo/client'
-import { IntrospectionInputType } from 'graphql'
-/* eslint-enable no-unused-vars, no-duplicate-imports */
+/** @typedef {import('@apollo/client').ApolloClient} ApolloClient */
+/** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType  */
 
 /**
  * @typedef {Object} GQLType
@@ -314,7 +311,7 @@ export const dummyMutations = [
 /**
  * Map real mutations to dummy mutations with the same permission level.
  *
- * @type {{string: string[]}}
+ * @type {{ [permission: string]: string[] }}
  */
 const dummyMutationsPermissionsMap = Object.freeze({
   broadcast: Object.freeze(['editRuntime']),
@@ -614,12 +611,14 @@ export function getIntrospectionQuery () {
  */
 export function filterAssociations (cylcObject, tokens, mutations, permissions) {
   const ret = []
-  for (const [permission, equivalents] of Object.entries(dummyMutationsPermissionsMap)) {
-    if (permissions.includes(permission)) {
-      permissions.push(...equivalents)
-    }
-  }
-  permissions = permissions.map(x => x.toLowerCase())
+  permissions = [
+    ...permissions.map(x => x.toLowerCase()),
+    ...Object.entries(dummyMutationsPermissionsMap).flatMap(
+      ([permission, equivalents]) => permissions.includes(permission)
+        ? equivalents.map(x => x.toLowerCase())
+        : []
+    ),
+  ]
   for (const mutation of mutations) {
     const authorised = permissions.includes(mutation.name.toLowerCase())
     let requiresInfo = mutation._requiresInfo ?? false

@@ -15,62 +15,57 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <style>
-.v-application--is-ltr .v-text-field__prefix {
-  text-align: right;
-  padding-right: 0px;
-  color: blue;
+.c-log-view .v-text-field__prefix {
+  opacity: 1 !important;
+}
+.c-log-view .v-text-field input {
+  padding-left: 0;
 }
 </style>
+
 <template>
-  <div class="h-100">
+  <div class="h-100 c-log-view">
     <v-form>
-      <v-container>
+      <v-container fluid>
         <v-row justify="start">
           <v-col cols="12" md="4" >
             <v-text-field
-            v-model="task"
-            clearable
-            flat
-            dense
-            hint="Type cycle/task/job to view job log"
-            :prefix="workflowNamePrefix"
-            outlined
-            placeholder="cycle/task/job"
-            class="flex-grow-1 flex-column"
-            id="c-log-search-box"
-            ></v-text-field>
+              v-model="task"
+              hint="Type cycle/task/job to view job log"
+              :prefix="workflowNamePrefix"
+              placeholder="cycle/task/job"
+              class="flex-grow-1 flex-column"
+              id="c-log-search-box"
+              v-bind="$options.inputProps"
+            />
           </v-col>
           <v-col
             cols="12"
-            md="4">
+            md="4"
+          >
             <v-select
-              :label="getFileListLabel"
-              :items="getFileList"
-              filled
+              :label="fileListLabel"
+              :items="fileList"
               v-model="file"
-              dense
-              clearable
-              outlined
-              >
-            </v-select>
+              v-bind="$options.inputProps"
+            />
           </v-col>
-          <v-col  v-show="file === 'other'" cols="12" md="3">
+          <v-col v-show="file === 'other'" cols="12" md="3">
             <v-text-field
               v-model="logFileEntered"
               placeholder="Enter Job File Name Here"
-              dense
-              clearable
-              outlined
-              >
-            </v-text-field>
+              v-bind="$options.inputProps"
+            />
           </v-col>
-          <v-col cols="12" md="1">
+          <v-col>
             <v-btn
-            :disabled="isDisabled(task, file)"
-            color="primary"
-            dense
-            outlined
-            @click="setId(file, logFileEntered, task)">{{ buttonText() }}</v-btn>
+              :disabled="isDisabled(task, file)"
+              color="primary"
+              variant="outlined"
+              @click="setId(file, logFileEntered, task)"
+            >
+              {{ buttonText }}
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -80,18 +75,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :logs="lines"
         ref="log0"
         placeholder="Waiting for logs..."
-      ></log-component>
+      />
     </div>
   </div>
 </template>
 
 <script>
 import { mdiFileDocumentMultipleOutline } from '@mdi/js'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
-import subscriptionMixin from '@/mixins/subscriptionComponent'
-import LogComponent from '@/components/cylc/log/Log'
+import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import LogComponent from '@/components/cylc/log/Log.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { LOGS_SUBSCRIPTION } from '@/graphql/queries'
 import { Tokens } from '@/utils/uid'
@@ -113,21 +107,23 @@ class LogsCallback {
 }
 
 export default {
-  mixins: [
-    pageMixin,
-    graphqlMixin,
-    subscriptionMixin,
-    subscriptionViewMixin
-  ],
   name: 'Log',
+
+  mixins: [
+    graphqlMixin,
+    subscriptionComponentMixin
+  ],
+
   components: {
     LogComponent
   },
-  metaInfo () {
+
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
   props: {
     initialOptions: {
       type: Object,
@@ -135,15 +131,18 @@ export default {
       default: () => {}
     }
   },
+
   data () {
     return {
-      jobLogFiles: ['job.out',
+      jobLogFiles: [
+        'job.out',
         'job.err',
         'job',
         'job-activity.log',
         'job.status',
         'job.xtrace',
-        'other'],
+        'other'
+      ],
       workflowLogFiles: ['scheduler/log'],
       widget: {
         title: 'logs',
@@ -156,10 +155,12 @@ export default {
       file: ''
     }
   },
+
   created () {
     this.$data.task = (this.initialOptions.task || '')
     this.$data.file = (this.initialOptions.file || '')
   },
+
   computed: {
     logVariables () {
       return {
@@ -168,13 +169,13 @@ export default {
         file: this.$data.file
       }
     },
-    getFileListLabel () {
+    fileListLabel () {
       if (this.$data.task && this.$data.task.length) {
         return 'Select Job Log File'
       }
       return 'Select Workflow Log File'
     },
-    getFileList () {
+    fileList () {
       if (this.$data.task && this.$data.task.length) {
         return this.$data.jobLogFiles
       }
@@ -195,8 +196,12 @@ export default {
     },
     workflowNamePrefix () {
       return `${this.workflowName}//`
+    },
+    buttonText () {
+      return this.$data.lines.length ? 'Update' : 'Search'
     }
   },
+
   methods: {
     setId (selectedLogFile, logFileEntered, jobSearch) {
       this.$data.lines = []
@@ -205,12 +210,6 @@ export default {
       this.logVariables.file = this.getFileName(selectedLogFile, logFileEntered)
       this.$workflowService.subscribe(this)
       this.$workflowService.startSubscriptions()
-    },
-    buttonText () {
-      if (this.$data.lines.length) {
-        return 'Update'
-      }
-      return 'Search'
     },
     getFileName (selectedLogFile, logFileEntered) {
       if (selectedLogFile === 'scheduler/log') {
@@ -229,6 +228,10 @@ export default {
         return true
       }
     }
+  },
+
+  inputProps: {
+    clearable: true
   }
 }
 </script>

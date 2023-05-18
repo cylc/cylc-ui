@@ -17,19 +17,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-snackbar
-    :value="isOffline"
+    :model-value="isOffline"
     :timeout=-1
     class="justify-center"
     color="red"
-    top
+    location="top"
   >
     <v-icon
-      large
+      size="large"
       class="mr-2"
-      color="red lighten-5"
+      color="red-lighten-5"
     >{{ svgPath }}</v-icon>
     <span
-      class="red--text text--lighten-5 font-weight-medium"
+      class="text-red-lighten-5 font-weight-medium"
     >Connection to server lost. You are offline.</span>
   </v-snackbar>
 </template>

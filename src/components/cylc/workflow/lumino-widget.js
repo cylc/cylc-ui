@@ -30,9 +30,10 @@ import { Widget } from '@lumino/widgets'
 export default class LuminoWidget extends Widget {
   /**
    * Create a LuminoWidget object.
-   * @param id {string} unique ID of the widget
-   * @param name {string} text displayed in the widget tab
-   * @param closable {boolean} flag that controls whether the tab can be closed or not
+   * @param {string} id - unique ID of the widget
+   * @param {string} name - text displayed in the widget tab
+   * @param {boolean} closable - flag that controls whether the tab can be
+   * closed or not
    */
   constructor (id, name, closable = true) {
     super({ node: LuminoWidget.createNode(id) })
@@ -50,12 +51,11 @@ export default class LuminoWidget extends Widget {
   /**
    * Return a dummy div to be used as parent for the Vue component element.
    * @param {string} id - widget id
-   * @return HTMLElement
+   * @return {HTMLElement}
    */
   static createNode (id) {
     const div = document.createElement('div')
     div.setAttribute('id', id)
-    div.setAttribute('class', 'fill-height')
     return div
   }
 

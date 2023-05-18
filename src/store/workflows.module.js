@@ -16,7 +16,6 @@
  */
 import pick from 'lodash/pick'
 import isArray from 'lodash/isArray'
-import Vue from 'vue'
 import { Tokens } from '@/utils/uid'
 import { sortedIndexBy } from '@/components/cylc/common/sort'
 
@@ -32,7 +31,7 @@ const NODE_TYPES = [
 /* Merge an update into a reactive blob of data */
 export function merge (data, update) {
   for (const [key, value] of Object.entries(update || {})) {
-    Vue.set(data, key, value)
+    data[key] = value
   }
 }
 
@@ -104,7 +103,7 @@ function createTree (state) {
     $index: {},
     id: '$root'
   }
-  Vue.set(tree, 'children', [])
+  tree.children = []
   state.cylcTree = tree
   // console.log('@@')
 }
@@ -123,14 +122,14 @@ function addIndex (state, id, treeNode) {
   if (state.cylcTree.$index[id] === undefined) {
     // this is a new node => create it
     // console.log(`$i ++ ${id}`)
-    Vue.set(state.cylcTree.$index, id, treeNode)
+    state.cylcTree.$index[id] = treeNode
   }
 }
 
 /* Remove a node from the global $index (flat lookup). */
 function removeIndex (state, id) {
   // console.log(`$i -- ${id}`)
-  Vue.delete(state.cylcTree.$index, id)
+  delete state.cylcTree.$index[id]
 }
 
 /* Retrieve a node from the global $index (flat lookup). */
@@ -169,8 +168,8 @@ function addChild (parentNode, childNode) {
 
   if (childNode.type === 'workflow') {
     // create additional indexes for workflow nodes
-    Vue.set(childNode, '$edges', [])
-    Vue.set(childNode, '$namespaces', [])
+    childNode.$edges = []
+    childNode.$namespaces = []
   }
 
   // insert the child preserving sort order
@@ -433,9 +432,9 @@ function createTreeNode (state, id, tokens, node) {
         tokens: partTokens,
         type: partType
       }
-      Vue.set(intermediateItem, 'children', [])
+      intermediateItem.children = []
       if (partType === 'cycle') {
-        Vue.set(intermediateItem, 'familyTree', [])
+        intermediateItem.familyTree = []
       }
       // add child to the tree
       addChild(pointer, intermediateItem)
@@ -460,9 +459,9 @@ function createTreeNode (state, id, tokens, node) {
     parent: pointer.id,
     node
   }
-  Vue.set(treeNode, 'children', [])
+  treeNode.children = []
   if (type === 'cycle') {
-    Vue.set(treeNode, 'familyTree', [])
+    treeNode.familyTree = []
   }
   return [pointer, treeNode]
 }
@@ -506,7 +505,7 @@ function remove (state, prunedID) {
   }
 
   // remove the node from the store
-  Vue.delete(state.cylcTree.$index, id)
+  delete state.cylcTree.$index[id]
 }
 
 const mutations = {

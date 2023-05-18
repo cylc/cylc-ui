@@ -15,82 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import { shallowMount } from '@vue/test-utils'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { mount } from '@vue/test-utils'
+import { createStore } from 'vuex'
+import { createVuetify } from 'vuetify'
 import mixin from '@/mixins/toolbar'
 import storeOptions from '@/store/options'
 
-Vue.use(Vuex)
-
 describe('Toolbar mixin', () => {
-  const store = new Vuex.Store(storeOptions)
-  it('should create the default data correctly', () => {
-    const oldWindow = global.window
-    global.window = {
-      innerWidth: 10000,
-      addEventListener: () => {}
-    }
-    const component = shallowMount({
-      mixins: [mixin],
-      render () {}
-    })
-    expect(component.vm.$data.responsive).to.equal(false)
-    expect(component.vm.$data.responsiveInput).to.equal(true)
-    global.window = oldWindow
-  })
-  it('should swap the values on responsive', () => {
-    const oldWindow = global.window
-    global.window = {
-      innerWidth: 1,
-      addEventListener: () => {}
-    }
-    const component = shallowMount({
-      mixins: [mixin],
-      render () {}
-    })
-    expect(component.vm.$data.responsive).to.equal(true)
-    expect(component.vm.$data.responsiveInput).to.equal(false)
-    global.window = oldWindow
-  })
-  it('should swap the values on responsive', () => {
-    const oldWindow = global.window
-    global.window = {
-      innerWidth: 1,
-      addEventListener: () => {}
-    }
-    const component = shallowMount({
-      mixins: [mixin],
-      render () {}
-    })
-    expect(component.vm.$data.responsive).to.equal(true)
-    expect(component.vm.$data.responsiveInput).to.equal(false)
-    global.window = oldWindow
-  })
-  it('should remove event listeners when destroyed', () => {
-    let called = false
-    const oldWindow = global.window
-    global.window = {
-      addEventListener: () => {},
-      removeEventListener: () => {
-        called = true
-      }
-    }
-    const component = shallowMount({
-      mixins: [mixin],
-      render () {}
-    })
-    component.vm.$destroy()
-    expect(called).to.equal(true)
-    global.window = oldWindow
-  })
+  const store = createStore(storeOptions)
+  const vuetify = createVuetify()
   it('should toggle the drawer when clicked', () => {
     store.state.app.drawer = false
-    const component = shallowMount({
+    const component = mount({
       mixins: [mixin],
-      render () {},
-      store
+      render () {}
+    }, {
+      global: {
+        plugins: [store, vuetify]
+      }
     })
     component.vm.onClickBtn()
     expect(store.state.app.drawer).to.equal(true)

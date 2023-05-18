@@ -15,24 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
+import { vi } from 'vitest'
+import sinon from 'sinon'
 import { shallowMount } from '@vue/test-utils'
-import Lumino from '@/components/cylc/workflow/Lumino'
+import Lumino from '@/components/cylc/workflow/Lumino.vue'
 
 describe('Workflow component', () => {
-  // TODO: Lumino is warning about "Host is not attached"
   it('should display the workflow with valid data', async () => {
-    const wrapper = shallowMount(Lumino)
-    // the Component template will be rendered but the element won't be attached to the
-    // document.body, so we add an empty div here to avoid errors such as 'Host is not attached.'
-    const div = document.createElement('div')
-    document.body.appendChild(div)
-    wrapper.vm.$refs.main = div
-    try {
-      await wrapper.vm.$nextTick()
-    } catch (e) {
-      // ignore: expected error, as it will fail to attach the widget to document.body
-    }
-    expect(wrapper.find('div')).to.not.equal(null)
+    vi.mock('@lumino/widgets')
+    sinon.stub(Lumino.methods, 'syncWidgets')
+    const wrapper = shallowMount(Lumino, {
+      props: {
+        workflowName: 'nox',
+        allViews: []
+      }
+    })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('div')).to.exist
   })
 })

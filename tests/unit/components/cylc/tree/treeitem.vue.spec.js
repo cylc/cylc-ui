@@ -16,13 +16,10 @@
  */
 
 // we mount the tree to include the TreeItem component and other vuetify children components
-import { createLocalVue, mount } from '@vue/test-utils'
-import { Assertion, expect } from 'chai'
-import Vuetify from 'vuetify/lib'
-// import vuetify here so that we do not have warnings in the console output
-// eslint-disable-next-line no-unused-vars
-import * as vuetify from '@/plugins/vuetify'
-import TreeItem from '@/components/cylc/tree/TreeItem'
+import { mount } from '@vue/test-utils'
+import { Assertion } from 'chai'
+import { createVuetify } from 'vuetify'
+import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import {
   simpleWorkflowNode,
   simpleCyclepointNode,
@@ -53,37 +50,28 @@ Assertion.addMethod('expanded', function () {
   )
 })
 
-const localVue = createLocalVue()
-// load cylc-object directive
-localVue.prototype.$workflowService = {
+const $workflowService = {
   introspection: Promise.resolve({
     mutations: [],
     types: []
   })
 }
-localVue.prototype.$eventBus = {
+const $eventBus = {
   emit: () => {}
 }
-localVue.use(CylcObjectPlugin)
 
 describe('TreeItem component', () => {
-  const mountFunction = options => {
-    return mount(TreeItem, {
-      localVue,
-      vuetify: new Vuetify(),
-      propsData: {
-        node: simpleWorkflowNode
-      },
-      listeners: {
-        'tree-item-created': () => {},
-        'tree-item-destroyed': () => {},
-        'tree-item-expanded': () => {},
-        'tree-item-collapsed': () => {},
-        'tree-item-clicked': () => {}
-      },
-      ...options
-    })
-  }
+  const mountFunction = (options) => mount(TreeItem, {
+    global: {
+      plugins: [createVuetify(), CylcObjectPlugin],
+      mock: { $workflowService, $eventBus }
+    },
+    props: {
+      node: simpleWorkflowNode
+    },
+    ...options
+  })
+
   it('should display the treeitem with valid data', () => {
     const wrapper = mountFunction()
     expect(wrapper.props().node.node.__typename).to.equal('Workflow')
@@ -94,7 +82,7 @@ describe('TreeItem component', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
     it('should expand nodes when configured', () => {
       let wrapper = mountFunction({
-        propsData: {
+        props: {
           node: simpleCyclepointNode,
           autoExpandTypes: ['cycle']
         }
@@ -102,7 +90,7 @@ describe('TreeItem component', () => {
       expect(wrapper).to.be.expanded()
 
       wrapper = mountFunction({
-        propsData: {
+        props: {
           node: simpleTaskNode,
           autoExpandTypes: ['cycle']
         }
@@ -113,7 +101,7 @@ describe('TreeItem component', () => {
 
   describe('expand/collapse button click', () => {
     const wrapper = mountFunction({
-      propsData: {
+      props: {
         node: simpleTaskNode,
         initialExpanded: false
       }
@@ -133,13 +121,19 @@ describe('TreeItem component', () => {
   describe('children', () => {
     it('should recursively include other TreeItem components for its children', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           node: simpleWorkflowNode
         }
       })
-      const task = wrapper.findAllComponents({ name: 'TreeItem' })
-      // 5 TreeItem components, 1 for workflow, 1 for cyclepoint, 1 for task, 1 for job, 1 for job-details
-      expect(task.length).to.equal(5)
+      expect(
+        wrapper.findAllComponents({ name: 'TreeItem' })
+          .map((w) => w.props().node.node.__typename)
+      ).to.deep.equal([
+        'CyclePoint',
+        'TaskProxy',
+        'Job',
+        'Job' // job details
+      ])
     })
   // })
   // describe('mixin', () => {

@@ -19,144 +19,123 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-container
     fluid
     grid-list
-    class="c-dashboard mt-4"
+    class="c-dashboard mt-4 py-0 px-6"
   >
     <v-row wrap>
       <v-col md="6" lg="6">
-        <p class="display-1">Workflows</p>
+        <p class="text-h4 mb-2">Workflows</p>
+        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="workflowsHeader"
           :items="workflowsTable"
           :loading="isLoading"
-          hide-default-footer
-          hide-default-header
           id="dashboard-workflows"
+          items-per-page="-1"
         >
-          <template v-slot:item.count="{ item }">
-            <v-skeleton-loader
-              :loading="isLoading"
-              :max-width="50"
-              type="table-cell"
-              tile
-            >
-              <span class="headline font-weight-light">{{ item.count }}</span>
-            </v-skeleton-loader>
-          </template>
-          <template v-slot:item.text="{ item }">
-            <span class="title font-weight-light">{{ item.text }}</span>
-          </template>
+          <!-- Hide header & footer: -->
+          <template v-slot:headers></template>
+          <template v-slot:bottom></template>
         </v-data-table>
       </v-col>
       <v-col md="6" lg="6">
-        <p class="display-1">Events</p>
+        <p class="text-h4 mb-2">Events</p>
+        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="eventsHeader"
           :items="events"
-          hide-default-footer
-          hide-default-header
         >
-          <template v-slot:item.id="{ item }">
-            <span class="title font-weight-light">{{ item.id }}</span>
-          </template>
-          <template v-slot:item.text="{ item }">
-            <span class="title font-weight-light">{{ item.text }}</span>
-          </template>
+          <!-- Hide header: -->
+          <template v-slot:headers></template>
           <template v-slot:no-data>
-            <td class="title">No events</td>
+            <td class="text-h6 text-disabled">No events</td>
           </template>
+          <!-- Hide footer if no events: -->
+          <template v-if="!events.length" v-slot:bottom></template>
         </v-data-table>
       </v-col>
     </v-row>
     <v-divider />
     <v-row wrap>
       <v-col md="6" lg="6">
-        <v-list three-line>
+        <v-list lines="three" class="pa-0">
           <v-list-item to="/workflow-table" data-cy="workflow-table-link">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.table }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Workflows Table
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                View name, host, port, etc. of your workflows
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-icon size="1.6em">{{ svgPaths.table }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Workflows Table
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              View name, host, port, etc. of your workflows
+            </v-list-item-subtitle>
           </v-list-item>
           <v-list-item to="/user-profile" data-cy="user-settings-link">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.settings }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Settings
+            <template v-slot:prepend>
+              <v-icon size="1.6em">{{ svgPaths.settings }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Settings
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              View your Hub permissions, and alter user preferences
+            </v-list-item-subtitle>
+          </v-list-item>
+          <div>
+            <v-list-item id="cylc-hub-button" :disabled=!multiUserMode :href=hubUrl>
+              <template v-slot:prepend>
+                <v-icon size="1.6em">{{ svgPaths.hub }}</v-icon>
+              </template>
+              <v-list-item-title class="text-h6 font-weight-light">
+                Cylc Hub
               </v-list-item-title>
               <v-list-item-subtitle>
-                View your Hub permissions, and alter user preferences
+                Visit the Hub to manage your running UI Servers
               </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-tooltip :disabled=multiUserMode bottom>
-            <template v-slot:activator="{ on }"> <div v-on="on" >
-                <v-list-item id="cylc-hub-button" :disabled=!multiUserMode :href=hubUrl>
-                  <v-list-item-avatar size="60" style="font-size: 2em;">
-                    <v-icon large>{{ svgPaths.hub }}</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-content>
-                    <v-list-item-title class="title font-weight-light">
-                      Cylc Hub
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      Visit the Hub to manage your running UI Servers
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-            </div></template>
-          <span>You are not running Cylc UI via Cylc Hub.</span>
-          </v-tooltip>
+            </v-list-item>
+            <v-tooltip
+              activator="parent"
+              :disabled="multiUserMode"
+              location="bottom"
+            >
+              <span>You are not running Cylc UI via Cylc Hub.</span>
+            </v-tooltip>
+          </div>
         </v-list>
       </v-col>
       <v-col md="6" lg="6">
-        <v-list three-line>
+        <v-list lines="three" class="pa-0">
           <v-list-item to="/guide" data-cy="quickstart-link">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.quickstart }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Cylc UI Quickstart
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                Learn how to use the Cylc UI
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-icon size="1.6em">{{ svgPaths.quickstart }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Cylc UI Quickstart
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Learn how to use the Cylc UI
+            </v-list-item-subtitle>
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/workflow-design-guide/index.html" target="_blank">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.workflow }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Workflow Design Guide
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                How to make complex Cylc workflows and Rose suites simpler and easier to maintain
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-icon size="1.6em">{{ svgPaths.workflow }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Workflow Design Guide
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              How to make complex Cylc workflows and Rose suites simpler and easier to maintain
+            </v-list-item-subtitle>
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/index.html" target="_blank">
-            <v-list-item-avatar size="60" style="font-size: 2em;">
-              <v-icon large>{{ svgPaths.documentation }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="title font-weight-light">
-                Documentation
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                The complete Cylc documentation
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <template v-slot:prepend>
+              <v-icon size="1.6em">{{ svgPaths.documentation }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+              Documentation
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              The complete Cylc documentation
+            </v-list-item-subtitle>
           </v-list-item>
         </v-list>
       </v-col>
@@ -167,8 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { mdiBook, mdiBookMultiple, mdiBookOpenVariant, mdiCog, mdiHubspot, mdiTable } from '@mdi/js'
-import pageMixin from '@/mixins/index'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
+import { getPageTitle } from '@/utils/index'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
@@ -177,16 +155,17 @@ import { DASHBOARD_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
   name: 'Dashboard',
+
   mixins: [
-    pageMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
+    subscriptionComponentMixin
   ],
-  metaInfo () {
+
+  head () {
     return {
-      title: this.getPageTitle('App.dashboard')
+      title: getPageTitle('App.dashboard')
     }
   },
+
   data () {
     return {
       query: new SubscriptionQuery(
@@ -198,28 +177,12 @@ export default {
         /* isGlobalCallback */ true
       ),
       workflowsHeader: [
-        {
-          text: 'Count',
-          sortable: false,
-          value: 'count'
-        },
-        {
-          text: 'Text',
-          sortable: false,
-          value: 'text'
-        }
+        { value: 'count' },
+        { value: 'text' }
       ],
       eventsHeader: [
-        {
-          text: 'ID',
-          sortable: false,
-          value: 'id'
-        },
-        {
-          text: 'Event',
-          sortable: false,
-          value: 'text'
-        }
+        { value: 'id' },
+        { value: 'text' }
       ],
       events: [],
       svgPaths: {
@@ -233,6 +196,7 @@ export default {
       hubUrl: createUrl('/hub/home', false, true)
     }
   },
+
   computed: {
     ...mapState('user', ['user']),
     ...mapState('workflows', ['cylcTree']),

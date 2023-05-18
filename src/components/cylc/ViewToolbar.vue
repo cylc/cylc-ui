@@ -29,22 +29,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-for="iControl in iGroup.iControls"
         :key="iControl.title"
       >
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-icon
-              large
-              :class="iControl.title"
-              :disabled="iControl.disabled"
-              :color="iControl.color"
-              @click="iControl.callback"
-              v-on="on"
-              v-bind="attrs"
-            >
-              {{ iControl.icon }}
-            </v-icon>
-          </template>
-          <span>{{ iControl.title }}</span>
-        </v-tooltip>
+        <v-btn
+          :class="iControl.title"
+          icon
+          variant="text"
+          :disabled="iControl.disabled"
+          :color="iControl.color"
+          @click="iControl.callback"
+        >
+          <v-icon size="large">{{ iControl.icon }}</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >
+            <span>{{ iControl.title }}</span>
+          </v-tooltip>
+        </v-btn>
       </div>
     </div>
   </div>
@@ -53,6 +53,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 export default {
   name: 'ViewToolbar',
+
+  emits: [
+    'setOption'
+  ],
+
   props: {
     groups: {
       required: true,
@@ -93,6 +98,7 @@ export default {
       */
     }
   },
+
   computed: {
     iGroups () {
       // wrap the provided props into something we can mutate with derived
@@ -116,14 +122,15 @@ export default {
 
           // set callback and color
           switch (control.action) {
-          case 'toggle':
-            callback = (e) => this.toggle(control, e)
-            if (control.value) {
-              color = 'blue'
-            }
-            break
-          case 'callback':
-            callback = (e) => this.call(control, e)
+            case 'toggle':
+              callback = (e) => this.toggle(control, e)
+              if (control.value) {
+                color = 'blue'
+              }
+              break
+            case 'callback':
+              callback = (e) => this.call(control, e)
+              break
           }
 
           // set disabled
@@ -153,6 +160,7 @@ export default {
       return ret
     }
   },
+
   methods: {
     toggle (control, e) {
       // toggle a boolean value
@@ -185,31 +193,23 @@ export default {
 <style lang="scss">
   .c-view-toolbar {
     // give the toolbar a little respect space
-    padding: 0.5rem 0 0.5rem 0;
+    padding: 0.5rem;
+    display: flex;
 
     .group {
-      // put a bit of space between the groups
-      padding-right: 0.5rem;
-      display: inline-block;
+      display: flex;
+      align-items: center;
 
-      &:before {
+      $spacing: 0.5rem;
+
+      &:not(:first-child):before {
         // place a divider between groups
-        content: '|';
-        font-size: 2rem;
-        position: relative;
-        top: 0.5rem; // because the font is x2 nudge it down 1/2
-        color: rgb(200, 200, 200);
-      }
-      &:first-child:before {
-        // don't add a divider on the first group
         content: '';
-      }
-
-      .control {
-        // put a bit of space between the controls
-        padding: 0 0 0 0.5rem;
-        // make them sit side-by-side
-        display: inline-block;
+        height: 70%;
+        width: 2px;
+        background: rgb(0, 0, 0, 0.22);
+        // put a bit of space between the groups
+        margin: 0 $spacing;
       }
     }
   }

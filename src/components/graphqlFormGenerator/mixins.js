@@ -15,12 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import FormInput from '@/components/graphqlFormGenerator/FormInput'
+import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
 
 export const formElement = {
-  components: {
-    'form-input': FormInput
-  },
+  components: {}, // Filled on created()
 
   props: {
     // the GraphQL type this input represents
@@ -34,14 +32,21 @@ export const formElement = {
       default: () => []
     },
     // the value (v-model is actually syntactic sugar for this)
-    value: {
+    modelValue: {
       required: true
     }
   },
 
-  data: () => ({
-    FormInput
-  }),
+  emits: ['update:modelValue'],
+
+  created () {
+    // Avoid problem of circular reference by deferring
+    // the population of $options.components
+    // https://forum.vuejs.org/t/failed-to-resolve-component-when-not-using-hot-swap/113894/2
+    // TODO: FormInput is not needed by all components that use this
+    // mixin; we should replace this mixin with a composable.
+    this.$options.components.FormInput = FormInput
+  },
 
   computed: {
     /* The model we pass to the form input.
@@ -53,11 +58,10 @@ export const formElement = {
      */
     model: {
       get () {
-        return this.value
+        return this.modelValue
       },
-
       set (val) {
-        this.$emit('input', val)
+        this.$emit('update:modelValue', val)
       }
     },
 

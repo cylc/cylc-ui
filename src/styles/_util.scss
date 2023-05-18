@@ -21,7 +21,7 @@
   // If light theme, lighten the specified color by the specified intensity;
   // if dark, darken.
   @each $theme in 'light', 'dark' {
-    .theme--#{$theme} & {
+    .v-theme--#{$theme} & {
       #{$prop}: map-get($color, '#{$theme}en-#{$intensity}') $important;
     }
   }

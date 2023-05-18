@@ -30,7 +30,7 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getSubscriptions().then(subscriptions => {
-      expect(Object.keys(subscriptions).length).to.equal(1)
+      expect(Object.keys(subscriptions)).to.deep.equal(['root'])
     })
   })
 
@@ -39,8 +39,7 @@ describe('WorkflowService subscriptions', () => {
     cy.get('[href="#/user-profile"]').click({ force: true })
     cy.contains('h3', 'Your Profile')
     getSubscriptions().then(subscriptions => {
-      // Only GScan subscription "root"
-      expect(Object.keys(subscriptions).length).to.equal(1)
+      expect(Object.keys(subscriptions)).to.deep.equal(['root'])
     })
   })
 
@@ -48,10 +47,10 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('[href="#/workspace/one"]').click({ force: true })
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
-    cy.get('div#main').find('.c-tree')
+    cy.get('.v-main').find('.c-tree')
     getSubscriptions().then(subscriptions => {
       // GScan subscription "root" and the subscription "workflow" used by the Tree view
-      expect(Object.keys(subscriptions).length).to.equal(2)
+      expect(Object.keys(subscriptions).sort()).to.deep.equal(['root', 'workflow'])
       expect(subscriptions.root.observable.closed).to.equal(false)
       expect(subscriptions.workflow.observable.closed).to.equal(false)
     })
@@ -61,11 +60,11 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/')
     cy.get('[href="#/workspace/one"]').click()
     // <div id='main'> is used by Lumino, and its initial tab contains the text tree
-    cy.get('div#main').find('.c-tree')
+    cy.get('.v-main').find('.c-tree')
     cy.get('[href="#/"]').click({ force: true })
     cy.get('div.c-dashboard')
     getSubscriptions().then(subscriptions => {
-      expect(Object.keys(subscriptions).length).to.equal(1)
+      expect(Object.keys(subscriptions)).to.deep.equal(['root'])
     })
   })
 
@@ -73,7 +72,7 @@ describe('WorkflowService subscriptions', () => {
     cy.visit('/#/tree/one')
       .get('.c-tree') // wait for component to load
     getSubscriptions().then(subscriptions => {
-      expect(Object.keys(subscriptions).length).to.equal(1)
+      expect(Object.keys(subscriptions)).to.deep.equal(['workflow'])
       // the 'workflow' subscription should be started
       expect(subscriptions.workflow.observable.closed).to.equal(false)
       // the 'global' subscription should not be running
@@ -104,7 +103,7 @@ describe('WorkflowService mutations', () => {
       .get('#workflow-mutate-button.c-interactive')
       .click()
       .get('.c-mutation-menu')
-      .find('.v-skeleton-loader:first')
+      .find('[data-cy=skeleton]').as('skeleton')
       .should('be.visible')
       .get('.c-mutation-menu-list')
       .should('not.exist')
@@ -114,10 +113,10 @@ describe('WorkflowService mutations', () => {
         deferred.resolve()
       })
     // After mutations have loaded
-    cy
+    // eslint-disable-next-line
+    cy.wait(200)
       // Skeleton loader should be gone, list of mutations now shown
-      .get('.c-mutation-menu')
-      .find('.v-skeleton-loader')
+      .get('@skeleton')
       .should('not.exist')
       .get('.c-mutation-menu-list')
       .should('be.visible')

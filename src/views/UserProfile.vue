@@ -16,16 +16,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container class="c-user-profile">
+  <v-container fluid class="c-user-profile">
     <v-row class="wrap">
       <v-col cols="12">
         <v-alert
           :icon="svgPaths.settings"
           prominent
-          color="grey lighten-3"
+          color="grey-lighten-3"
         >
-          <h3 class="headline">{{ $t('UserProfile.tableHeader') }}</h3>
-          <p class="body-1">{{ $t('UserProfile.tableSubHeader') }}</p>
+          <h3 class="text-h5">{{ $t('UserProfile.tableHeader') }}</h3>
+          <p class="text-body-1">{{ $t('UserProfile.tableSubHeader') }}</p>
         </v-alert>
         <v-form v-if="user !== null">
           <v-container py-0>
@@ -35,11 +35,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-col>
               <v-col cols="9">
                 <v-text-field
-                    :value="user.username"
+                    :model-value="user.username"
                     disabled
                     id="profile-username"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
@@ -54,7 +55,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     disabled
                     id="profile-admin"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
@@ -67,12 +69,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-select
                     :items="user.groups"
                     v-model="user.groups"
-                    attach
+                    :menu-props="{ attach: true }"
                     multiple
                     disabled
                     id="profile-groups"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
@@ -83,11 +86,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-col>
               <v-col cols="9">
                 <v-text-field
-                    :value="user.created"
+                    :model-value="user.created"
                     disabled
                     id="profile-created"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
@@ -99,18 +103,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-select
                     :items="user.permissions"
                     v-model="user.permissions"
-                    attach
+                    :menu-props="{ attach: true }"
                     multiple
                     disabled
                     id="profile-permissions"
                     aria-disabled="true"
-                    class="body-1"
+                    class="text-body-1"
+                    hide-details
                 />
               </v-col>
             </v-row>
             <v-row no-gutters class="mt-4">
               <v-col cols="12">
-                <p class="title">Preferences</p>
+                <p class="text-h6">Preferences</p>
               </v-col>
             </v-row>
 
@@ -120,21 +125,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-col>
               <v-col cols="9">
                 <v-btn
-                  depressed
+                  variant="outlined"
                   id="font-size-reset-button"
                   class="mr-2"
                   @click="resetFontSize()">
                   Reset
                 </v-btn>
                 <v-btn
-                  depressed
+                  variant="outlined"
                   id="font-size-decrease-button"
                   class="mx-2"
                   @click="decreaseFontSize()">
                   <v-icon>{{ svgPaths.decrease }}</v-icon>
                 </v-btn>
                 <v-btn
-                  depressed
+                  variant="outlined"
                   id="font-size-increase-button"
                   class="ml-2"
                   @click="increaseFontSize()">
@@ -147,7 +152,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-col cols="3">
                 <span>Colour Theme</span>
               </v-col>
-              <v-radio-group v-model="jobTheme" column>
+              <v-radio-group
+                v-model="jobTheme"
+                hide-details
+              >
                 <table class="c-job-state-table">
                   <tr>
                     <th>State</th>
@@ -155,11 +163,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       v-for="theme in jobThemes"
                       :key="theme"
                     >
-                      {{theme}}
+                      {{ theme.replace('_', ' ') }}
                     </th>
                   </tr>
-                  <tr
-                  >
+                  <tr>
                     <td></td>
                     <td
                       v-for="theme in jobThemes"
@@ -197,6 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-checkbox
                 v-model="cyclePointsOrderDesc"
                 id="input-cyclepoints-order"
+                hide-details
               >
               </v-checkbox>
             </v-row>
@@ -210,21 +218,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import pageMixin from '@/mixins'
+import { getPageTitle } from '@/utils/index'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
-import Job from '@/components/cylc/Job'
+import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 
 // TODO: update where user preferences are stored after #335
 
 export default {
   name: 'UserProfile',
-  mixins: [
-    pageMixin,
-    subscriptionViewMixin
-  ],
   components: {
     Job
   },
@@ -248,9 +251,9 @@ export default {
   computed: {
     ...mapState('user', ['user'])
   },
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.userProfile')
+      title: getPageTitle('App.userProfile')
     }
   },
   mounted () {
