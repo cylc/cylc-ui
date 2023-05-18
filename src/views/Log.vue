@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-    class="c-log py-0"
+    class="c-log py-1"
     fluid
   >
     <!-- the controls -->
@@ -36,7 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="job-workflow-toggle"
           v-model="jobLog"
           divided
+          mandatory
           variant="outlined"
+          color="primary"
         >
           <v-btn>Workflow</v-btn>
           <v-btn>Job</v-btn>
@@ -52,16 +54,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-row dense>
       <v-col cols="8">
         <v-text-field
-          class="flex-grow-1 flex-column job-id-input"
           v-if="jobLog"
+          class="flex-grow-1 flex-column job-id-input"
           v-model="relativeID"
           placeholder="cycle/task/job"
           hide-details
           clearable
         />
         <v-text-field
-          class="workflow-id-input"
           v-else
+          class="workflow-id-input"
           v-model="workflowId"
           disabled
           hide-details
@@ -82,14 +84,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <!-- the status line -->
     <v-row dense>
-      <v-col v-if="results.path" style="white-space: pre; overflow-x: scroll">
+      <v-col
+        v-if="results.path"
+        class="d-flex align-center overflow-x-auto"
+        style="white-space: pre"
+      >
         <v-chip
           class="connected-icon"
           v-if="results.connected"
           color="green"
           variant="outlined"
+          :prepend-icon="$options.icons.mdiPowerPlug"
+          class="flex-shrink-0"
         >
-          <v-icon>{{ $options.icons.mdiPowerPlug }}</v-icon>
           Connected
         </v-chip>
         <v-chip
@@ -98,8 +105,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           color="red"
           @click="updateQuery"
           variant="outlined"
+          :prepend-icon="$options.icons.mdiPowerPlugOff"
+          class="flex-shrink-0"
         >
-          <v-icon>{{ $options.icons.mdiPowerPlugOff }}</v-icon>
           Reconnect
         </v-chip>
         <span
