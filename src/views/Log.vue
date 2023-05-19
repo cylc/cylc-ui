@@ -313,14 +313,12 @@ export default {
 
   created () {
     // set the ID/file if specified in initialOptions
-    if (this.initialOptions && this.initialOptions.tokens) {
-      if (this.initialOptions.tokens.task) {
-        this.$data.relativeID = this.initialOptions.tokens.relative_id
-        this.$data.jobLog = 1
-      }
+    if (this.initialOptions?.tokens?.task) {
+      this.relativeID = this.initialOptions.tokens.relative_id
+      this.jobLog = 1
     }
-    if (this.initialOptions && this.initialOptions.file) {
-      this.$data.file = this.initialOptions.file
+    if (this.initialOptions?.file) {
+      this.file = this.initialOptions.file
     }
   },
 
