@@ -294,9 +294,10 @@ export default {
     }
   },
 
-  async mounted () {
+  mounted () {
     // compile & instantiate graphviz wasm
-    this.graphviz = await Graphviz.load()
+    /** @type {Promise<Graphviz>} */
+    this.graphviz = Graphviz.load()
     // allow render to happen before we go configuring svgPanZoom
     this.$nextTick(() => {
       this.updateTimer()
@@ -420,9 +421,15 @@ export default {
       }
       return ret
     },
+    /**
+     * Get the dimensions of currently rendered graph nodes
+     * (we feed these dimensions into the GraphViz dot code to improve layout).
+     *
+     * @param {Object[]} nodes
+     * @returns {{ [id: string]: SVGRect }} mapping of node IDs to their
+     * bounding boxes.
+     */
     getNodeDimensions (nodes) {
-      // get the dimensions of currently rendered graph nodes
-      // (we feed these dimensions into the GraphViz dot code to improve layout)
       const ret = {}
       let bbox
       for (const node of nodes) {
@@ -587,13 +594,13 @@ export default {
 
       // layout the graph
       try {
-        this.layout(nodes, edges, nodeDimensions)
+        await this.layout(nodes, edges, nodeDimensions)
       } catch (e) {
         // something went wrong, allow the layout to retry later
         this.graphID = null
         this.updating = false
         // eslint-disable-next-line no-console
-        console.warn(e)
+        console.error(e)
         return
       }
 
@@ -624,13 +631,19 @@ export default {
         await this.$nextTick()
       }
     },
-    /** re-layout the graph after any new nodes have been rendered */
-    layout (nodes, edges, nodeDimensions) {
+    /**
+     * Re-layout the graph after any new nodes have been rendered.
+     *
+     * @param {Object[]} nodes
+     * @param {Object[]} edges
+     * @param {{ [id: string]: SVGRect }} nodeDimensions
+     */
+    async layout (nodes, edges, nodeDimensions) {
       // generate the GraphViz dot code
       const dotCode = this.getDotCode(nodeDimensions, nodes, edges)
 
       // run the layout algorithm
-      const jsonString = this.graphviz.layout(dotCode, 'json')
+      const jsonString = (await this.graphviz).layout(dotCode, 'json')
       const json = JSON.parse(jsonString)
 
       // update graph node positions
