@@ -130,13 +130,13 @@ describe('WorkflowService', () => {
   })
   describe('getOrCreateSubscription', () => {
     it('should return existing subscriptions', () => {
-      const existingSubscription = service.getOrCreateSubscription(view)
+      const existingSubscription = service.getOrCreateSubscription(view.query)
       expect(existingSubscription).to.deep.equal(subscription)
     })
     it('should create new subscriptions and add to local cache', () => {
       delete service.subscriptions[view.query.name]
       expect(Object.keys(service.subscriptions).length).to.equal(0)
-      const newSubscription = service.getOrCreateSubscription(view)
+      const newSubscription = service.getOrCreateSubscription(view.query)
       expect(Object.keys(service.subscriptions).length).to.equal(1)
       expect(service.subscriptions[view.query.name]).to.deep.equal(newSubscription)
     })
@@ -343,16 +343,12 @@ describe('WorkflowService', () => {
   describe('unsubscribe', () => {
     it('should warn about queries that do not exist', () => {
       const stub = sandbox.stub(console, 'warn')
-      service.unsubscribe({
-        query: {
-          name: 'missing'
-        }
-      })
+      service.unsubscribe({ name: 'missing' }, 'irrelevant_uid')
       expect(stub.calledOnce).to.equal(true)
     })
     it('should call unsubscribe if last subscriber is unsubscribed', () => {
       const stub = sandbox.stub(service, 'stopSubscription')
-      service.unsubscribe(view)
+      service.unsubscribe(view.query, view._uid)
       expect(stub.calledOnce).to.equal(true)
     })
     it('should NOT call unsubscribe if there are still subscribers left', () => {
@@ -362,7 +358,7 @@ describe('WorkflowService', () => {
       }
       service.subscribe(anotherView)
       const stub = sandbox.stub(service, 'stopSubscription')
-      service.unsubscribe(view)
+      service.unsubscribe(view.query, view._uid)
       expect(stub.calledOnce).to.equal(false)
     })
   })

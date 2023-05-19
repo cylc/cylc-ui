@@ -49,11 +49,11 @@ export default {
     this._updateQuery(null, this.query)
   },
   methods: {
-    _updateQuery (newVal, oldVal) {
-      if (oldVal) {
-        this.$workflowService.unsubscribe(this)
+    _updateQuery (newQuery, oldQuery) {
+      if (oldQuery) {
+        this.$workflowService.unsubscribe(oldQuery, this._uid)
       }
-      if (newVal) {
+      if (newQuery) {
         this.$workflowService.subscribe(this)
         this.$workflowService.startSubscriptions()
       }
