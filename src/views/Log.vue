@@ -33,15 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-row dense>
       <v-col>
         <v-btn-toggle
-          class="job-workflow-toggle"
           v-model="jobLog"
           divided
           mandatory
           variant="outlined"
           color="primary"
         >
-          <v-btn>Workflow</v-btn>
-          <v-btn>Job</v-btn>
+          <v-btn data-cy="workflow-toggle">Workflow</v-btn>
+          <v-btn data-cy="job-toggle">Job</v-btn>
         </v-btn-toggle>
         <ViewToolbar
           :groups="groups"
@@ -55,7 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col cols="8">
         <v-text-field
           v-if="jobLog"
-          class="flex-grow-1 flex-column job-id-input"
+          data-cy="job-id-input"
+          class="flex-grow-1 flex-column"
           v-model="relativeID"
           placeholder="cycle/task/job"
           hide-details
@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
         <v-text-field
           v-else
-          class="workflow-id-input"
+          data-cy="workflow-id-input"
           v-model="workflowId"
           disabled
           hide-details
@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-col>
       <v-col cols="4">
         <v-select
-          class="file-input"
+          data-cy="file-input"
           :label="fileLabel"
           :disabled="fileDisabled"
           :items="logFiles"
@@ -90,38 +90,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         style="white-space: pre"
       >
         <v-chip
-          class="connected-icon"
-          v-if="results.connected"
-          color="green"
+          data-cy="connected-icon"
           variant="outlined"
-          :prepend-icon="$options.icons.mdiPowerPlug"
           class="flex-shrink-0"
+          v-bind="results.connected ? {
+            color: 'green',
+            prependIcon: $options.icons.mdiPowerPlug,
+          } : {
+            color: 'red',
+            prependIcon: $options.icons.mdiPowerPlugOff,
+            onClick: updateQuery
+          }"
         >
-          Connected
-        </v-chip>
-        <v-chip
-          class="disconnected-icon"
-          v-else
-          color="red"
-          @click="updateQuery"
-          variant="outlined"
-          :prepend-icon="$options.icons.mdiPowerPlugOff"
-          class="flex-shrink-0"
-        >
-          Reconnect
+          {{ results.connected ? 'Connected' : 'Reconnect' }}
         </v-chip>
         <span
-          class="log-path"
+          data-cy="log-path"
           style="padding-left: 0.5em; color: rgb(150,150,150);"
-        >{{ results.path }}</span>
+        >
+          {{ results.path }}
+        </span>
       </v-col>
     </v-row>
 
     <!-- the log file viewer -->
     <v-row>
       <v-col>
-        <!-- TODO: replace v-progress-linear with v-skeleton-loader when
-        the latter is added to Vuetify 3.
+        <!-- TODO: replace v-progress-linear with v-skeleton-loader
         https://github.com/cylc/cylc-ui/issues/1272 -->
         <!-- <v-skeleton-loader
           v-if="id && file && !results.path"
@@ -133,8 +128,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           indeterminate
         />
         <log-component
-          class="log-viewer"
           v-else
+          data-cy="log-viewer"
           :logs="results.lines"
           :timestamps="timestamps"
         />
