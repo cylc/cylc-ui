@@ -19,6 +19,7 @@ import sinon from 'sinon'
 import { mount } from '@vue/test-utils'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import WorkflowService from '@/services/workflow.service'
+import { cloneDeep } from 'lodash'
 
 describe('Subscription Component mixin', () => {
   let $workflowService, component
@@ -40,17 +41,20 @@ describe('Subscription Component mixin', () => {
   })
 
   it('subscribes & unsubscribes when the component is mounted & destroyed', () => {
-    expect($workflowService.subscribe.calledOnceWith(component.vm)).to.equal(true)
+    const { vm } = component
+    expect($workflowService.subscribe.calledOnceWith(vm)).to.equal(true)
     expect($workflowService.startSubscriptions.calledOnce).to.equal(true)
     expect($workflowService.unsubscribe.called).to.equal(false)
     component.unmount()
-    expect($workflowService.unsubscribe.calledOnceWith(component.vm)).to.equal(true)
+    expect($workflowService.unsubscribe.calledOnceWith(vm.query, vm._uid)).to.equal(true)
   })
 
   it('un- & re-subcribes when the query changes', () => {
-    component.vm.query = { foo: 2 }
-    component.vm.$nextTick(() => {
-      expect($workflowService.unsubscribe.calledOnceWith(component.vm)).to.equal(true)
+    const { vm } = component
+    const oldQuery = cloneDeep(vm.query)
+    vm.query = { foo: 2 }
+    vm.$nextTick(() => {
+      expect($workflowService.unsubscribe.calledOnceWith(oldQuery, vm._uid)).to.equal(true)
       expect($workflowService.subscribe.calledTwice).to.equal(true)
       expect($workflowService.startSubscriptions.calledTwice).to.equal(true)
     })

@@ -77,9 +77,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           scale(${ (index === 0) ? mostRecentJobScale : '1' })
         `"
       >
-        <job
-          :svg="true"
-          :status="job.node.state"
+        <symbol
+          :id="`${nodeID}-${index}`"
+          viewBox="0 0 100 100"
+          :class="`job_theme--${jobTheme}`"
+        >
+          <!--
+            Use a "symbol" for job nodes in order to make them clickable.
+            The job theme must be set on the "symbol" for styling to work.
+          -->
+          <job
+            :svg="true"
+            :status="job.node.state"
+          />
+        </symbol>
+        <use
+          :href="`#${nodeID}-${index}`"
+          width="100" height="100"
+          v-cylc-object="job"
         />
       </g>
       <!-- overflow indicator if there are surplus jobs -->
@@ -130,6 +145,9 @@ export default {
       // the size of the most recent job icon relative to any previos jobs
       default: 1.2,
       required: false
+    },
+    jobTheme: {
+      required: true
     }
   },
   computed: {

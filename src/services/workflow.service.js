@@ -127,7 +127,6 @@ class WorkflowService {
    * @param {string} queryName
    * @param {Object} args
    * @param {Field[]} fields
-   * @param {Object} variables
    * @return {Promise<Object>}
    * @memberof WorkflowService
    */
@@ -195,17 +194,12 @@ class WorkflowService {
   // --- GraphQL query subscriptions
 
   /**
-   * @param {View} componentOrView
+   * @param {SubscriptionQuery} query
    * @returns {Subscription}
    */
-  getOrCreateSubscription (componentOrView) {
-    const queryName = componentOrView.query.name
-    let subscription = this.subscriptions[queryName]
+  getOrCreateSubscription (query) {
     // note, this will force a return of the FIRST query of the SAME name as any subsequent queries
-    if (!subscription) {
-      subscription = this.subscriptions[queryName] = new Subscription(componentOrView.query)
-    }
-    return subscription
+    return (this.subscriptions[query.name] ??= new Subscription(query))
   }
 
   /**
@@ -213,7 +207,7 @@ class WorkflowService {
    */
   subscribe (componentOrView) {
     // First we retrieve the existing, or create a new subscription (and add to the pool).
-    const subscription = this.getOrCreateSubscription(componentOrView)
+    const subscription = this.getOrCreateSubscription(componentOrView.query)
     if (!subscription.subscribers[componentOrView._uid]) {
       // NOTE: make sure to remove it afterwards to avoid memory leaks!
       subscription.subscribers[componentOrView._uid] = componentOrView
@@ -399,15 +393,21 @@ class WorkflowService {
     })
   }
 
-  unsubscribe (componentOrView) {
-    const subscription = this.subscriptions[componentOrView.query.name]
+  /**
+   * Remove subscriber and stop subscription.
+   *
+   * @param {SubscriptionQuery} query - The component/view's subscription query.
+   * @param {string} uid - The unique ID for the component/view.
+   */
+  unsubscribe (query, uid) {
+    const subscription = this.subscriptions[query.name]
     if (!subscription) {
       // eslint-disable-next-line no-console
-      console.warn(`Could not unsubscribe [${componentOrView.query.name}]: Not Found`)
+      console.warn(`Could not unsubscribe [${query.name}]: Not Found`)
       return
     }
     // Remove viewOrComponent subscriber
-    delete subscription.subscribers[componentOrView._uid]
+    delete subscription.subscribers[uid]
     // If no more subscribers, then stop the subscription.
     if (Object.keys(subscription.subscribers).length === 0) {
       this.stopSubscription(subscription)
