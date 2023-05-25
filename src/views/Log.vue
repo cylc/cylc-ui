@@ -94,10 +94,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           variant="outlined"
           class="flex-shrink-0"
           v-bind="results.connected ? {
-            color: 'green',
+            color: 'success',
             prependIcon: $options.icons.mdiPowerPlug,
           } : {
-            color: 'red',
+            color: 'error',
             prependIcon: $options.icons.mdiPowerPlugOff,
             onClick: updateQuery
           }"
@@ -124,15 +124,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           type="list-item-three-line"
         /> -->
         <v-progress-linear
-          v-if="id && file && !results.path"
+          v-if="id && file && results.connected == null"
           indeterminate
         />
-        <log-component
-          v-else
-          data-cy="log-viewer"
-          :logs="results.lines"
-          :timestamps="timestamps"
-        />
+        <template v-else>
+          <v-alert
+            v-if="results.error"
+            type="error"
+            variant="tonal"
+            density="comfortable"
+            class="mb-4"
+            :icon="$options.icons.mdiFileAlertOutline"
+            :text="results.error"
+          />
+          <log-component
+            data-cy="log-viewer"
+            :logs="results.lines"
+            :timestamps="timestamps"
+          />
+        </template>
       </v-col>
     </v-row>
   </v-container>
@@ -141,10 +151,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import {
   mdiClockOutline,
+  mdiFileAlertOutline,
   mdiFileDocumentMultipleOutline,
   mdiFolderRefresh,
   mdiPowerPlugOff,
-  mdiPowerPlug
+  mdiPowerPlug,
 } from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
@@ -167,6 +178,7 @@ subscription LogData ($id: ID!, $file: String!) {
     lines
     connected
     path
+    error
   }
 }
 `
@@ -199,8 +211,24 @@ const LOG_FILE_DEFAULTS = [
   /scheduler\/*/
 ]
 
-// Callback for assembling the log file from the subscription
+class Results {
+  constructor () {
+    /** @type {string[]} */
+    this.lines = []
+    /** @type {?string} */
+    this.path = null
+    /** @type {?boolean} */
+    this.connected = null
+    /** @type {?string} */
+    this.error = null
+  }
+}
+
+/** Callback for assembling the log file from the subscription */
 class LogsCallback {
+  /**
+   * @param {Results} results
+   */
   constructor (results) {
     this.results = results
   }
@@ -263,12 +291,7 @@ export default {
       // list of log files for the selected workflow/task/job
       logFiles: [],
       // the log file as a list of lines
-      results: {
-        lines: [],
-        path: null,
-        connected: false,
-        error: null
-      },
+      results: new Results(),
       // the task/job ID input
       relativeID: null,
       // the selected log file name
@@ -351,12 +374,7 @@ export default {
       this[option] = value
     },
     reset () {
-      this.results = {
-        lines: [],
-        path: null,
-        connected: false,
-        error: null
-      }
+      this.results = new Results()
     },
     updateQuery () {
       // update the subscription query
@@ -462,6 +480,7 @@ export default {
 
   // Misc options
   icons: {
+    mdiFileAlertOutline,
     mdiPowerPlug,
     mdiPowerPlugOff,
   }
