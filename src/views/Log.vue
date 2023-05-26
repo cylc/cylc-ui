@@ -78,6 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-model="file"
           hide-details
           clearable
+          :menu-props="{ 'data-cy': 'file-input-menu' }"
         />
       </v-col>
     </v-row>

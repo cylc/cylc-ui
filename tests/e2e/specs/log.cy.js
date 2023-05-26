@@ -15,12 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {
+  badFile,
+  jobLogFiles,
+  workflowLogFiles,
+} from '@/services/mock/json/logFiles.cjs'
+import {
+  jobLogLines,
+  workflowLogLines,
+} from '@/services/mock/json/logData.cjs'
+
+/**
+ * @param {string[]} items
+ */
+function expectFileListContains (items) {
+  cy.get('.c-log [data-cy=file-input]')
+    .click()
+    .get('[data-cy=file-input-menu] [role=listbox]')
+    .should('have.text', items.join(''))
+    .children()
+    .should('have.length', items.length)
+}
+
 describe('Log View', () => {
   beforeEach(() => {
     cy.visit('/#/log/one')
   })
 
-  it('fills in inputs', () => {
+  it('displays the workflow log', () => {
+    const defaultFile = workflowLogFiles[0]
+
     // the workflow ID should be filled in
     cy.get('.c-log [data-cy=workflow-id-input]')
       .should('be.visible')
@@ -28,45 +52,51 @@ describe('Log View', () => {
       .should('have.value', '~user/one')
       .should('have.attr', 'disabled')
 
-    // the job.out file should have been selected
+    // the default file should have been selected
     cy.get('.c-log [data-cy=file-input]')
       .should('be.visible')
       .find('input')
-      .should('have.value', 'job.out')
+      .should('have.value', defaultFile)
       .should('not.have.attr', 'disabled')
 
-    // the job log files list should have been populated by the query
-    cy.get('.c-log [data-cy=file-input]')
-      .click()
-      .get('.v-select__content .v-list-item')
-      .contains('job.out')
-      .parents('[role=listbox]')
-      .children()
-      .should('have.length', 3)
-  })
-
-  it('loads the log file', () => {
     // the log file should have been loaded into the viewer
     cy.get('[data-cy=log-viewer]')
-      .contains('one\ntwo\nthree\nfour\nfive')
+      .contains(workflowLogLines.join(''))
 
     // the file path should be displayed
     cy.get('[data-cy=log-path]')
       .should('be.visible')
       .contains('my-host:')
-      .contains('job.out')
+      .contains(defaultFile)
 
     // the connected icon should be visible
     cy.get('[data-cy=connected-icon]')
       .should('be.visible')
+
+    // the workflow log files list should have been populated by the query
+    expectFileListContains(workflowLogFiles)
+
+    // toggle timestamps
+    cy.get('.c-view-toolbar button.Timestamps')
+      .click()
+      .get('[data-cy=log-viewer] pre > *:first')
+      .invoke('text')
+      .then((text) => {
+        expect(workflowLogLines[0].endsWith(text)).to.equal(true)
+        expect(text.length).to.be.lessThan(workflowLogLines[0].length)
+      })
   })
 
   it('switches from workflow -> job log', () => {
+    const defaultFile = 'job.out'
+
     cy.get('[data-cy=job-toggle]')
       .click()
       // the old log file lines should have been wiped
       .get('[data-cy=log-viewer] > pre')
       .should('be.empty')
+      .get('[data-cy=file-input] input')
+      .should('be.disabled')
 
     // fill in a cycle point (incomplete)
     cy.get('[data-cy=job-id-input]')
@@ -74,12 +104,33 @@ describe('Log View', () => {
       .type('1/')
       .get('[data-cy=log-viewer] > pre')
       .should('be.empty')
-      // fill in a task (valid)
-      .get('[data-cy=job-id-input]')
+      .get('[data-cy=file-input] input')
+      .should('be.disabled')
+
+    // fill in a task (valid)
+    cy.get('[data-cy=job-id-input]')
       .find('input')
       .type('a')
       // the new log file should have been loaded
-      .get('[data-cy=log-viewer] > pre')
-      .contains('one\ntwo\nthree\nfour\nfive')
+      .get('[data-cy=log-viewer]')
+      .contains(jobLogLines.join(''))
+      // the file path should be displayed
+      .get('[data-cy=log-path]')
+      .should('be.visible')
+      .contains('my-host:')
+      .contains(defaultFile)
+    // the job log files list should have been populated
+    expectFileListContains(jobLogFiles)
+  })
+
+  it('shows banner when error occurs', () => {
+    cy.get('[data-cy=file-input]')
+      .click()
+      .get('[data-cy=file-input-menu] [role=listbox]')
+      .contains(badFile)
+      .click()
+
+    cy.get('.c-log .v-alert')
+      .should('be.visible')
   })
 })

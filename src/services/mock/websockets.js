@@ -53,10 +53,10 @@ function createWebSocketsMessage (msg) {
       } else if (parsed.type === 'stop') {
         return JSON.stringify(wsResponse(parsed.id, 'complete', null))
       } else if (parsed.type === 'start') {
-        const operationName = parsed.payload.operationName
-          ? parsed.payload.operationName
-          : graphql.getOperationName(parsed.payload.query)
-        const responseData = graphql.getGraphQLQueryResponse(operationName)
+        const operationName = (
+          parsed.payload.operationName || graphql.getOperationName(parsed.payload.query)
+        )
+        const responseData = graphql.getGraphQLQueryResponse(operationName, parsed.payload.variables)
         return JSON.stringify(wsResponse(parsed.id, 'data', responseData))
       }
       // noinspection ExceptionCaughtLocallyJS

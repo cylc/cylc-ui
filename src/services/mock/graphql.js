@@ -15,14 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const data = require('./json/index')
-
 /**
  * Mapping between a query and the returned data. The returned data
  * can be generated programmatically, or with GraphiQL, or another GraphQL
  * command line.
  */
-const DATA_MAPPING = data
+const data = require('./json/index.js')
 
 /**
  * Given a GraphQL query, this function tries to fetch the operation
@@ -51,11 +49,15 @@ function getOperationName (query) {
  * Get the response for a given GraphQL query operation name.
  *
  * @param {string} operationName - GraphQL query operation name (e.g. GScanQuery, WorkflowTableQuery, etc)
+ * @param {?Record<string, *>} variables - GraphQL query variables
  * @returns {*} GraphQL response
  */
-function getGraphQLQueryResponse (operationName) {
-  // Return the data if we have that in the DATA_MAPPING dict
-  return DATA_MAPPING[operationName] || {}
+function getGraphQLQueryResponse (operationName, variables) {
+  const res = data[operationName] || {}
+  if (typeof res === 'function') {
+    return res(variables)
+  }
+  return res
 }
 
 /**
@@ -70,7 +72,7 @@ function handleGraphQLRequest (request) {
   const operationName = isSchemaQuery
     ? 'IntrospectionQuery'
     : getOperationName(request.body.query)
-  return getGraphQLQueryResponse(operationName)
+  return getGraphQLQueryResponse(operationName, request.body.variables)
 }
 
 module.exports = {
