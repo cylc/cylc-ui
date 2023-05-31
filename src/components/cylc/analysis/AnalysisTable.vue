@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-row
     no-gutters
-    class="flex-grow-1 position-relative"
+    class="c-table flex-grow-1 position-relative"
   >
     <v-col
       cols="12"
@@ -28,25 +28,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         fluid
         class="pa-0"
       >
+        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="shownHeaders"
           :items="tasks"
-          :sort-by.sync="sortBy"
-          dense
-          :footer-props="{
-            itemsPerPageOptions: [10, 20, 50, 100, 200, -1],
-            showFirstLastPage: true
-          }"
-          :options="{ itemsPerPage: 50 }"
+          :sort-by="sortBy"
+          density="compact"
+          v-model:items-per-page="itemsPerPage"
         >
           <!-- Use custom format for values in columns that have a specified formatter: -->
           <!-- Used to make durations human readable -->
           <!-- Durations of 0 will be undefined unless allowZeros is true -->
           <template
-            v-for="header in shownHeaders.filter(header => header.hasOwnProperty('formatter'))"
-            v-slot:[`item.${header.value}`]="{ value }"
+            v-for="header in shownHeaders"
+            v-slot:[`item.${header.key}`]="{ item }"
           >
-            {{ header.formatter(value, header.allowZeros) }}
+            {{ formatCell(item, header) }}
+          </template>
+          <template v-slot:bottom>
+            <v-data-table-footer :itemsPerPageOptions="$options.itemsPerPageOptions" />
           </template>
         </v-data-table>
       </v-container>
@@ -73,19 +73,22 @@ export default {
 
   data () {
     return {
-      sortBy: 'name',
+      itemsPerPage: 50,
+      sortBy: [
+        { key: 'name', order: 'asc' }
+      ],
       headers: [
         {
-          text: 'Task',
-          value: 'name'
+          title: 'Task',
+          key: 'name'
         },
         {
-          text: 'Platform',
-          value: 'platform'
+          title: 'Platform',
+          key: 'platform'
         },
         {
-          text: 'Count',
-          value: 'count'
+          title: 'Count',
+          key: 'count'
         }
       ]
     }
@@ -105,50 +108,75 @@ export default {
       }
       const timingHeaders = [
         {
-          text: `Mean T-${times}`,
-          value: `mean${times}Time`,
+          title: `Mean T-${times}`,
+          key: `mean${times}Time`,
           formatter: formatDuration,
           allowZeros: false
         },
         {
-          text: `Std Dev T-${times}`,
-          value: `stdDev${times}Time`,
+          title: `Std Dev T-${times}`,
+          key: `stdDev${times}Time`,
           formatter: formatDuration,
           allowZeros: true
         },
         {
-          text: `Min T-${times}`,
-          value: `min${times}Time`,
+          title: `Min T-${times}`,
+          key: `min${times}Time`,
           formatter: formatDuration,
           allowZeros: false
         },
         {
-          text: `Q1 T-${times}`,
-          value: `${times.toLowerCase()}Quartiles[0]`,
+          title: `Q1 T-${times}`,
+          key: `${times.toLowerCase()}Quartiles.0`,
           formatter: formatDuration,
           allowZeros: false
         },
         {
-          text: `Median T-${times}`,
-          value: `${times.toLowerCase()}Quartiles[1]`,
+          title: `Median T-${times}`,
+          key: `${times.toLowerCase()}Quartiles.1`,
           formatter: formatDuration,
           allowZeros: false
         },
         {
-          text: `Q3 T-${times}`,
-          value: `${times.toLowerCase()}Quartiles[2]`,
+          title: `Q3 T-${times}`,
+          key: `${times.toLowerCase()}Quartiles.2`,
           formatter: formatDuration,
           allowZeros: false
         },
         {
-          text: `Max T-${times}`,
-          value: `max${times}Time`,
+          title: `Max T-${times}`,
+          key: `max${times}Time`,
           formatter: formatDuration,
           allowZeros: false
         }
       ]
       return this.headers.concat(timingHeaders)
     }
-  }
+  },
+
+  methods: {
+    formatCell (item, header) {
+      const arrayMatch = header.key.match(/^(.+)\.(\d+)$/)
+      const key = arrayMatch?.[1] ?? header.key
+      let value = item.value[key]
+      if (arrayMatch) {
+        const index = arrayMatch[2]
+        value = value[index]
+      }
+      if (header.formatter) {
+        return header.formatter(value, header.allowZeros)
+      }
+      return value
+    }
+  },
+
+  itemsPerPageOptions: [
+    { value: 10, title: '10' },
+    { value: 20, title: '20' },
+    { value: 50, title: '50' },
+    { value: 100, title: '100' },
+    { value: 200, title: '200' },
+    { value: -1, title: 'All' }
+  ],
 }
 </script>

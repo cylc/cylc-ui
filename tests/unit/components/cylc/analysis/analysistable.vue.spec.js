@@ -15,69 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from 'vue'
-import { createLocalVue, mount } from '@vue/test-utils'
-import { expect } from 'chai'
-import Vuetify from 'vuetify/lib'
+import { mount } from '@vue/test-utils'
+import sinon from 'sinon'
+import { createVuetify } from 'vuetify'
+import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
 import { analysisQuery } from '@/services/mock/json'
-// import TaskState from '@/model/TaskState.model'
-import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
-import AnalysisTable from '@/components/cylc/analysis/AnalysisTable'
+import WorkflowService from '@/services/workflow.service'
+import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 
-Vue.use(Vuetify)
-
-const localVue = createLocalVue()
-localVue.prototype.$eventBus = {
-  emit () {}
-}
-localVue.prototype.$workflowService = {
-  register () {},
-  unregister () {},
-  subscribe () {},
-  introspection: Promise.resolve({
-    mutations: [
-      { args: [] }
-    ],
-    types: []
-  })
-}
-localVue.use(CylcObjectPlugin)
+const vuetify = createVuetify({
+  components: { VDataTable, VDataTableFooter }
+})
 const analysisTasks = analysisQuery.data.tasks
+const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('AnalysisTable component', () => {
-  let vuetify
-  beforeEach(() => {
-    vuetify = new Vuetify({
-      theme: { disable: true },
-      icons: {
-        iconfont: 'mdi'
-      }
-    })
-  })
-  // mount function from Vuetify docs https://vuetifyjs.com/ru/getting-started/unit-testing/
   /**
    * @param options
    * @returns {Wrapper<Tree>}
    */
   const mountFunction = options => {
-    // the mocks.$vuetify is for https://github.com/vuetifyjs/vuetify/issues/9923
     return mount(AnalysisTable, {
-      localVue,
-      mocks: {
-        $vuetify: {
-          lang: {
-            t: (val) => val
-          }
-        }
+      global: {
+        plugins: [vuetify],
+        mocks: { $workflowService },
       },
-      vuetify,
       ...options
     })
   }
-  global.requestAnimationFrame = cb => cb()
+
   it('should sort task name column by default', async () => {
     const wrapper = mountFunction({
-      propsData: {
+      props: {
         tasks: analysisTasks,
         timingOption: 'totalTimes'
       }
@@ -96,9 +65,10 @@ describe('AnalysisTable component', () => {
     expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(1)').element.innerHTML).to.equal('succeeded')
     expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(1)').element.innerHTML).to.equal('waiting')
   })
+
   it('should display the table with valid data', () => {
     const wrapper = mountFunction({
-      propsData: {
+      props: {
         tasks: analysisTasks,
         timingOption: 'totalTimes'
       }
@@ -106,10 +76,11 @@ describe('AnalysisTable component', () => {
     expect(wrapper.props().tasks[0].name).to.equal('succeeded')
     expect(wrapper.find('div')).to.not.equal(null)
   })
+
   describe('Visible columns', () => {
     it('should correctly display total times', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           tasks: analysisTasks,
           timingOption: 'totalTimes'
         }
@@ -118,13 +89,14 @@ describe('AnalysisTable component', () => {
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for total times
-      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:30 ')
-      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:32 ')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:34 ')
+      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('00:00:30')
+      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('00:00:32')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:34')
     })
+
     it('should correctly display run times', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           tasks: analysisTasks,
           timingOption: 'runTimes'
         }
@@ -133,13 +105,14 @@ describe('AnalysisTable component', () => {
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for run times
-      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:20 ')
-      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:21 ')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:22 ')
+      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('00:00:20')
+      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('00:00:21')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:22')
     })
+
     it('should correctly display queue times', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           tasks: analysisTasks,
           timingOption: 'queueTimes'
         }
@@ -148,9 +121,9 @@ describe('AnalysisTable component', () => {
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for queue times
-      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:10 ')
-      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:11 ')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal(' 00:00:12 ')
+      expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('00:00:10')
+      expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('00:00:11')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:12')
     })
   })
 })

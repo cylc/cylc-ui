@@ -18,13 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="c-analysis">
     <v-container
-    fluid
-    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
+      fluid
+      class="pa-2"
     >
       <!-- Filters -->
-      <v-row
-        class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
-      >
+      <v-row no-gutters>
         <v-col
           cols="12"
           md="4"
@@ -33,10 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-text-field
             id="c-analysis-filter-task-name"
             clearable
-            dense
-            flat
             hide-details
-            outlined
             placeholder="Filter by task name"
             v-model.trim="tasksFilter.name"
             ref="filterNameInput"
@@ -50,11 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-select
             id="c-analysis-filter-task-timings"
             :items="timingOptions"
-            dense
-            flat
             hide-details
-            outlined
-            prefix="Displaying: "
+            prefix="Displaying:"
             v-model="tasksFilter.timingOption"
           />
         </v-col>
@@ -66,11 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-select
             id="c-analysis-filter-task-platforms"
             :items="platformOptions"
-            dense
-            flat
             hide-details
-            outlined
-            prefix="Platform: "
+            prefix="Platform:"
             v-model="tasksFilter.platformOption"
           />
         </v-col>
@@ -79,7 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <AnalysisTable
         :tasks="filteredTasks"
         :timingOption="tasksFilter.timingOption"
-        />
+      />
     </v-container>
   </div>
 </template>
@@ -89,12 +78,11 @@ import {
   pick,
   debounce
 } from 'lodash'
-import Vue from 'vue'
 import gql from 'graphql-tag'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import ViewToolbar from '@/components/cylc/ViewToolbar'
-import AnalysisTable from '@/components/cylc/analysis/AnalysisTable'
+import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
+import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 import {
   matchTask,
   platformOptions
@@ -137,20 +125,20 @@ query analysisQuery ($workflows: [ID]) {
 
 /** The callback which gets called when data comes in from the query */
 class AnalysisCallback {
+  /**
+   * @param {Object[]} tasks
+   */
   constructor (tasks) {
     this.tasks = tasks
   }
 
+  /**
+   * Add tasks contained in data to this.tasks
+   */
   add (data) {
-    // add tasks contained in data to this.tasks
-    for (const task of data.tasks) {
-      // add new entry
-      Vue.set(
-        this.tasks,
-        this.tasks.length,
-        pick(task, taskFields)
-      )
-    }
+    this.tasks.push(
+      ...data.tasks.map((task) => pick(task, taskFields))
+    )
   }
 
   // called when new objects are added
@@ -173,21 +161,20 @@ class AnalysisCallback {
 }
 
 export default {
+  name: 'Analysis',
+
   mixins: [
-    pageMixin,
     graphqlMixin
   ],
-
-  name: 'Analysis',
 
   components: {
     ViewToolbar,
     AnalysisTable
   },
 
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
 
@@ -219,16 +206,15 @@ export default {
       callback: new AnalysisCallback(tasks),
       /** Object containing all of the tasks added by the callback */
       tasks,
-      sortBy: 'name',
       timingOptions: [
-        { text: 'Total times', value: 'totalTimes' },
-        { text: 'Run times', value: 'runTimes' },
-        { text: 'Queue times', value: 'queueTimes' }
+        { value: 'totalTimes', title: 'Total times' },
+        { value: 'runTimes', title: 'Run times' },
+        { value: 'queueTimes', title: 'Queue times' },
       ],
       tasksFilter: {
         name: '',
         timingOption: 'totalTimes',
-        platformOption: null
+        platformOption: -1,
       }
     }
   },

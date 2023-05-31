@@ -16,16 +16,19 @@
  */
 
 describe('Analysis view', () => {
-  it('Should display the mocked workflow', () => {
+  beforeEach(() => {
     cy.visit('/#/analysis/one')
+  })
+
+  it('Should display the mocked workflow', () => {
     cy
       .get('.c-analysis table  > tbody > tr')
       .should('have.length', 3)
       .should('be.visible')
   })
+
   describe('Filters', () => {
     it('Should display total times and not filter by default', () => {
-      cy.visit('/#/analysis/one')
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 3)
@@ -34,20 +37,14 @@ describe('Analysis view', () => {
         .get('#c-analysis-filter-task-name')
         .should('be.empty')
       cy
-        .get('#c-analysis-filter-task-platforms')
-        .parent()
-        .parent()
-        .find('input[type="hidden"]')
-        .should('have.value', '')
+        .get('input#c-analysis-filter-task-platforms')
+        .should('have.value', '-1')
       cy
-        .get('#c-analysis-filter-task-timings')
-        .parent()
-        .parent()
-        .find('input[type="hidden"]')
+        .get('input#c-analysis-filter-task-timings')
         .should('have.value', 'totalTimes')
     })
+
     it('Should filter by task name', () => {
-      cy.visit('/#/analysis/one')
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 3)
@@ -68,8 +65,8 @@ describe('Analysis view', () => {
         .should('have.length', 1)
         .should('be.visible')
     })
+
     it('Should filter by task platform', () => {
-      cy.visit('/#/analysis/one')
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 3)
@@ -94,8 +91,8 @@ describe('Analysis view', () => {
         .should('have.length', 1)
         .should('be.visible')
     })
+
     it('Should display the correct timings', () => {
-      cy.visit('/#/analysis/one')
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 3)
@@ -137,8 +134,8 @@ describe('Analysis view', () => {
         .should('have.length', 3)
         .should('be.visible')
     })
+
     it('Should filter by task name, platform and timings', () => {
-      cy.visit('/#/analysis/one')
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 3)
