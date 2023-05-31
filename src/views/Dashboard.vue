@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-row wrap>
       <v-col md="6" lg="6">
         <p class="text-h4 mb-2">Workflows</p>
-        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="workflowsHeader"
           :items="workflowsTable"
@@ -39,7 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-col>
       <v-col md="6" lg="6">
         <p class="text-h4 mb-2">Events</p>
-        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="eventsHeader"
           :items="events"
