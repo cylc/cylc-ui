@@ -31,6 +31,9 @@ $line-height: 1.8em;
  */
 $visible-outputs: 5;
 
+/* Task/job icon size. */
+$icon-size: 1.2em;
+
 @mixin active-state() {
   background-color: $active-color;
   &:hover {
@@ -70,7 +73,6 @@ $visible-outputs: 5;
     }
 
     .node-data {
-      margin-left: 6px;
       display: flex;
       flex-wrap: nowrap;
       .node-summary {
@@ -83,14 +85,14 @@ $visible-outputs: 5;
     .c-task, .c-job {
       display: flex;
       align-items: center;
-      font-size: 1.2em;
+      font-size: $icon-size;
     }
   }
   .type {
     margin-right: 10px;
   }
 
-  $arrow-size: 15px;
+  $arrow-size: calc($icon-size / 2);
   $leaf-background-color: map-get(settings.$grey, 'lighten-3');
 
   .leaf {
