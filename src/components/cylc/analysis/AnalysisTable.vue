@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         fluid
         class="pa-0"
       >
-        <!-- eslint-disable-next-line vuetify/no-deprecated-components -->
         <v-data-table
           :headers="shownHeaders"
           :items="tasks"
