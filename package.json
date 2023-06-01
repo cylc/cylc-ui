@@ -24,7 +24,7 @@
     "@apollo/client": "^3.5.8",
     "@hpcc-js/wasm": "^2.8.0",
     "@lumino/algorithm": "^1.9.1",
-    "@lumino/default-theme": "^0.22.0",
+    "@lumino/default-theme": "^2.0.0",
     "@lumino/widgets": "^1.31.1",
     "@unhead/vue": "^1.1.17",
     "axios": "^1.0.0",
