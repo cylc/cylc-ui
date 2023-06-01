@@ -15,7 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { badFile } = require('./logFiles.cjs')
+const { deletedFile } = require('./logFiles.cjs')
+
+const logDirPath = '/path/to/the/log/file/note/these/paths/get/really/log'
 
 const jobLogLines = [
   'one\n',
@@ -42,17 +44,16 @@ const workflowLogLines = [
  */
 const LogData = ({ id, file }) => {
   const isJob = id.includes('//')
+  const path = `${logDirPath}/${file}`
   return {
-    logs: file === badFile
-      ? {
-          connected: false,
-          error: `file not found: ${file}`,
-        }
-      : {
-          connected: true,
-          path: `my-host:/path/to/the/log/file/note/these/paths/get/really/log/${file}`,
-          lines: isJob ? jobLogLines : workflowLogLines,
-        }
+    logs: {
+      connected: file !== deletedFile,
+      error: file === deletedFile
+        ? `tail: ${path}: No such file or directory\ntail: no files remaining`
+        : undefined,
+      path: `my-host:${path}`,
+      lines: isJob ? jobLogLines : workflowLogLines,
+    }
   }
 }
 

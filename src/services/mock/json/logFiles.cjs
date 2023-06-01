@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const badFile = 'deleted.log'
+const deletedFile = 'deleted.log'
 
 const jobLogFiles = [
   'job.out',
@@ -25,7 +25,7 @@ const jobLogFiles = [
 
 const workflowLogFiles = [
   'scheduler/01-start-01.log',
-  badFile,
+  deletedFile,
 ]
 
 /**
@@ -45,7 +45,7 @@ const LogFiles = ({ id }) => ({
 
 module.exports = {
   LogFiles,
-  badFile,
+  deletedFile,
   jobLogFiles,
   workflowLogFiles,
 }

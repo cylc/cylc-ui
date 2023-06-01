@@ -16,7 +16,7 @@
  */
 
 import {
-  badFile,
+  deletedFile,
   jobLogFiles,
   workflowLogFiles,
 } from '@/services/mock/json/logFiles.cjs'
@@ -127,7 +127,7 @@ describe('Log View', () => {
     cy.get('[data-cy=file-input]')
       .click()
       .get('[data-cy=file-input-menu] [role=listbox]')
-      .contains(badFile)
+      .contains(deletedFile)
       .click()
 
     cy.get('.c-log .v-alert')

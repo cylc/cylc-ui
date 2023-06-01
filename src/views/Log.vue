@@ -87,8 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-row dense>
       <v-col
         v-if="results.path"
-        class="d-flex align-center overflow-x-auto"
-        style="white-space: pre"
+        class="d-flex align-center overflow-x-auto text-pre"
       >
         <v-chip
           data-cy="connected-icon"
@@ -136,8 +135,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             density="comfortable"
             class="mb-4"
             :icon="$options.icons.mdiFileAlertOutline"
-            :text="results.error"
-          />
+          >
+            <span class="text-pre-wrap text-break">
+              {{ results.error }}
+            </span>
+          </v-alert>
           <log-component
             data-cy="log-viewer"
             :logs="results.lines"
