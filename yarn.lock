@@ -783,6 +783,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lumino/algorithm@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@lumino/algorithm@npm:2.0.0"
+  checksum: 663edf536e94397b449c6a2643a735e602fbb396dec86b56ad1193a768dce27c6e7da5ad0384aa90086ea44cbb64dde3f9d565e9fd81858f1eb0c6b4253f3b94
+  languageName: node
+  linkType: hard
+
 "@lumino/collections@npm:^1.9.1":
   version: 1.9.1
   resolution: "@lumino/collections@npm:1.9.1"
@@ -2751,7 +2758,7 @@ __metadata:
     "@apollo/client": ^3.5.8
     "@cypress/code-coverage": ^3.9.12
     "@hpcc-js/wasm": ^2.8.0
-    "@lumino/algorithm": ^1.9.1
+    "@lumino/algorithm": ^2.0.0
     "@lumino/default-theme": ^0.22.0
     "@lumino/widgets": ^1.31.1
     "@mdi/js": ^7.0.0
