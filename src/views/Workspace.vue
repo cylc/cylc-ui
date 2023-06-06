@@ -38,7 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { uniqueId } from 'lodash'
-import { toArray } from '@lumino/algorithm'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
@@ -130,7 +129,7 @@ export default {
      * Remove all the widgets present in the DockPanel.
      */
     removeAllWidgets () {
-      toArray(this.$refs.lumino.dock.widgets())
+      Array.from(this.$refs.lumino.dock.widgets())
         .forEach(widget => widget.close())
     },
     /**
