@@ -139,6 +139,15 @@ class WorkflowService {
     )
   }
 
+  async query2 (query, variables) { // TODO: refactor or come up with better name
+    const response = await this.apolloClient.query({
+      query,
+      variables,
+      fetchPolicy: 'no-cache'
+    })
+    return response
+  }
+
   /**
    * Load mutations, queries and types from GraphQL introspection.
    *

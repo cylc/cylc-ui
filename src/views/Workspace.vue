@@ -49,6 +49,7 @@ import TableView from '@/views/Table.vue'
 import TreeView from '@/views/Tree.vue'
 import GraphView from '@/views/Graph.vue'
 import LogView from '@/views/Log.vue'
+import AnalysisView from '@/views/Analysis.vue'
 
 export default {
   name: 'Workspace',
@@ -173,7 +174,8 @@ export default {
     TreeView,
     TableView,
     GraphView,
-    LogView
+    LogView,
+    AnalysisView,
   ]
 }
 </script>
