@@ -86,6 +86,14 @@ export default {
      */
     widgets: {}
   }),
+  created () {
+    if (import.meta.env.MODE !== 'production') {
+      // dynamically load development views that we don't want in production
+      import('@/views/SimpleTree.vue').then((SimpleTreeView) => {
+        this.$options.allViews.push(SimpleTreeView.default)
+      })
+    }
+  },
 
   beforeRouteEnter (to, from, next) {
     next(vm => {
