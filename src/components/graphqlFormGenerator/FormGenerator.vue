@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <template v-slot:activator="{ props }">
                 <v-icon v-bind="props" class="mx-2">
-                  {{ icons.help }}
+                  {{ $options.icons.mdiHelpCircleOutline }}
                 </v-icon>
               </template>
               <Markdown
@@ -95,9 +95,6 @@ export default {
 
   data: () => ({
     model: {},
-    icons: {
-      help: mdiHelpCircleOutline
-    }
   }),
 
   created () {
@@ -182,6 +179,10 @@ export default {
         this.$workflowService.apolloClient
       )
     }
-  }
+  },
+
+  icons: {
+    mdiHelpCircleOutline,
+  },
 }
 </script>

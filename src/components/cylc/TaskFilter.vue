@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <v-select
         data-cy="filter-task-states"
-        :items="allStates"
+        :items="$options.allStates"
         clearable
         hide-details
         multiple
@@ -54,17 +54,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
         </template>
         <template v-slot:selection="{ item, index }">
-          <div class="mr-2" v-if="index >= 0 && index < maxVisibleStates">
+          <div class="mr-2" v-if="index >= 0 && index < $options.maxVisibleStates">
             <Task
               :task="{ state: item.raw }"
               style="font-size: 1.2rem; height: 100%"
             />
           </div>
           <span
-            v-if="index === maxVisibleStates"
+            v-if="index === $options.maxVisibleStates"
             class="text-grey text-caption"
           >
-            (+{{ localValue.states.length - maxVisibleStates }})
+            (+{{ localValue.states.length - $options.maxVisibleStates }})
           </span>
         </template>
       </v-select>
@@ -78,18 +78,15 @@ import { TaskStateUserOrder } from '@/model/TaskState.model'
 
 export default {
   name: 'TaskFilter',
+
   components: {
     Task
   },
+
   props: {
     modelValue: Object // { id, states }
   },
-  data () {
-    return {
-      maxVisibleStates: 4,
-      allStates: TaskStateUserOrder.map(ts => ts.name)
-    }
-  },
+
   computed: {
     localValue: {
       get () {
@@ -100,6 +97,9 @@ export default {
         this.$emit('update:modelValue', value)
       }
     }
-  }
+  },
+
+  maxVisibleStates: 4,
+  allStates: TaskStateUserOrder.map(ts => ts.name),
 }
 </script>

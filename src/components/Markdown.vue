@@ -26,6 +26,8 @@
 <script>
 import MarkdownIt from 'markdown-it'
 
+const md = new MarkdownIt()
+
 export default {
   name: 'Markdown',
 
@@ -36,13 +38,9 @@ export default {
     }
   },
 
-  data: () => ({
-    md: new MarkdownIt()
-  }),
-
   computed: {
     html () {
-      return this.md.render(this.markdown)
+      return md.render(this.markdown)
     }
   }
 }

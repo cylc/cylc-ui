@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-row class="wrap">
       <v-col cols="12">
         <v-alert
-          :icon="svgPaths.settings"
+          :icon="$options.icons.settings"
           prominent
           color="grey-lighten-3"
         >
@@ -132,14 +132,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     id="font-size-decrease-button"
                     class="mx-2"
                     @click="decreaseFontSize()">
-                    <v-icon>{{ svgPaths.decrease }}</v-icon>
+                    <v-icon>{{ $options.icons.decrease }}</v-icon>
                   </v-btn>
                   <v-btn
                     variant="outlined"
                     id="font-size-increase-button"
                     class="ml-2"
                     @click="increaseFontSize()">
-                    <v-icon>{{ svgPaths.increase }}</v-icon>
+                    <v-icon>{{ $options.icons.increase }}</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
@@ -155,7 +155,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <tr>
                       <th>State</th>
                       <th
-                        v-for="theme in jobThemes"
+                        v-for="theme in $options.jobThemes"
                         :key="theme"
                       >
                         {{ theme.replace('_', ' ') }}
@@ -164,7 +164,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <tr>
                       <td></td>
                       <td
-                        v-for="theme in jobThemes"
+                        v-for="theme in $options.jobThemes"
                         :key="theme"
                       >
                         <v-radio
@@ -174,12 +174,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       </td>
                     </tr>
                     <tr
-                      v-for="state in jobStates"
+                      v-for="state in $options.jobStates"
                       :key="state"
                     >
                       <td>{{state}}</td>
                       <td
-                        v-for="theme in jobThemes"
+                        v-for="theme in $options.jobThemes"
                         :key="theme"
                         :class="[`job_theme--${theme}`, 'job_theme_override']"
                       >
@@ -267,17 +267,6 @@ export default {
     return {
       defaultView: defaultView(),
       cyclePointsOrderDesc: true, // default
-      svgPaths: {
-        settings: mdiCog,
-        increase: mdiFormatFontSizeIncrease,
-        decrease: mdiFormatFontSizeDecrease
-      },
-      jobStates: JobState.enumValues.map(state => state.name),
-      jobThemes: [
-        'default',
-        'greyscale',
-        'colour_blind'
-      ],
       jobTheme: localStorage.jobTheme || 'default'
     }
   },
@@ -336,6 +325,20 @@ export default {
     global: {
       hideDetails: true,
     },
+  },
+
+  jobStates: JobState.enumValues.map(state => state.name),
+
+  jobThemes: [
+    'default',
+    'greyscale',
+    'colour_blind'
+  ],
+
+  icons: {
+    settings: mdiCog,
+    increase: mdiFormatFontSizeIncrease,
+    decrease: mdiFormatFontSizeDecrease,
   },
 }
 </script>

@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col md="6" lg="6">
         <p class="text-h4 mb-2">Workflows</p>
         <v-data-table
-          :headers="workflowsHeader"
+          :headers="$options.workflowsHeader"
           :items="workflowsTable"
           :loading="isLoading"
           id="dashboard-workflows"
@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col md="6" lg="6">
         <p class="text-h4 mb-2">Events</p>
         <v-data-table
-          :headers="eventsHeader"
+          :headers="$options.eventsHeader"
           :items="events"
         >
           <!-- Hide header: -->
@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-list lines="three" class="pa-0">
           <v-list-item to="/workflow-table" data-cy="workflow-table-link">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ svgPaths.table }}</v-icon>
+              <v-icon size="1.6em">{{ $options.icons.table }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Workflows Table
@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item to="/user-profile" data-cy="user-settings-link">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ svgPaths.settings }}</v-icon>
+              <v-icon size="1.6em">{{ $options.icons.settings }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Settings
@@ -79,9 +79,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-list-item-subtitle>
           </v-list-item>
           <div>
-            <v-list-item id="cylc-hub-button" :disabled=!multiUserMode :href=hubUrl>
+            <v-list-item id="cylc-hub-button" :disabled=!multiUserMode :href="$options.hubUrl">
               <template v-slot:prepend>
-                <v-icon size="1.6em">{{ svgPaths.hub }}</v-icon>
+                <v-icon size="1.6em">{{ $options.icons.hub }}</v-icon>
               </template>
               <v-list-item-title class="text-h6 font-weight-light">
                 Cylc Hub
@@ -104,7 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-list lines="three" class="pa-0">
           <v-list-item to="/guide" data-cy="quickstart-link">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ svgPaths.quickstart }}</v-icon>
+              <v-icon size="1.6em">{{ $options.icons.quickstart }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Cylc UI Quickstart
@@ -115,7 +115,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/workflow-design-guide/index.html" target="_blank">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ svgPaths.workflow }}</v-icon>
+              <v-icon size="1.6em">{{ $options.icons.workflow }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Workflow Design Guide
@@ -126,7 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/index.html" target="_blank">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ svgPaths.documentation }}</v-icon>
+              <v-icon size="1.6em">{{ $options.icons.documentation }}</v-icon>
             </template>
             <v-list-item-title class="text-h6 font-weight-light">
               Documentation
@@ -174,24 +174,7 @@ export default {
         /* isDelta */ true,
         /* isGlobalCallback */ true
       ),
-      workflowsHeader: [
-        { value: 'count' },
-        { value: 'text' }
-      ],
-      eventsHeader: [
-        { value: 'id' },
-        { value: 'text' }
-      ],
       events: [],
-      svgPaths: {
-        table: mdiTable,
-        settings: mdiCog,
-        hub: mdiHubspot,
-        quickstart: mdiBook,
-        workflow: mdiBookOpenVariant,
-        documentation: mdiBookMultiple
-      },
-      hubUrl: createUrl('/hub/home', false, true)
     }
   },
 
@@ -221,6 +204,27 @@ export default {
     multiUserMode () {
       return this.user.mode !== 'single user'
     }
-  }
+  },
+
+  workflowsHeader: [
+    { value: 'count' },
+    { value: 'text' }
+  ],
+
+  eventsHeader: [
+    { value: 'id' },
+    { value: 'text' }
+  ],
+
+  hubUrl: createUrl('/hub/home', false, true),
+
+  icons: {
+    table: mdiTable,
+    settings: mdiCog,
+    hub: mdiHubspot,
+    quickstart: mdiBook,
+    workflow: mdiBookOpenVariant,
+    documentation: mdiBookMultiple,
+  },
 }
 </script>

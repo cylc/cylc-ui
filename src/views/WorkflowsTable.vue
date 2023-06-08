@@ -25,14 +25,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col>
         <!-- TODO: this is not really an alert, it's a heading -->
         <v-alert
-          :icon="svgPath.table"
+          :icon="$options.icons.mdiTable"
           prominent
           color="grey-lighten-3"
         >
           <h3 class="text-h5">{{ $t('Workflows.tableHeader') }}</h3>
         </v-alert>
         <v-data-table
-          :headers="headers"
+          :headers="$options.headers"
           :items="workflowsTable"
           data-cy="workflows-table"
         >
@@ -106,41 +106,6 @@ export default {
       true,
       true
     ),
-    headers: [
-      {
-        sortable: false,
-        title: '',
-        key: 'icon'
-      },
-      {
-        sortable: true,
-        title: i18n.global.t('Workflows.tableColumnName'),
-        key: 'tokens.workflow'
-      },
-      {
-        sortable: true,
-        title: 'Status',
-        key: 'node.status'
-      },
-      {
-        sortable: true,
-        title: i18n.global.t('Workflows.tableColumnOwner'),
-        key: 'node.owner'
-      },
-      {
-        sortable: true,
-        title: i18n.global.t('Workflows.tableColumnHost'),
-        key: 'node.host'
-      },
-      {
-        sortable: false,
-        title: i18n.global.t('Workflows.tableColumnPort'),
-        key: 'node.port'
-      }
-    ],
-    svgPath: {
-      table: mdiTable
-    }
   }),
 
   computed: {
@@ -158,6 +123,43 @@ export default {
     viewWorkflow (workflow) {
       this.$router.push({ path: `/workspace/${workflow.tokens.workflow}` })
     }
-  }
+  },
+
+  headers: [
+    {
+      sortable: false,
+      title: '',
+      key: 'icon'
+    },
+    {
+      sortable: true,
+      title: i18n.global.t('Workflows.tableColumnName'),
+      key: 'tokens.workflow'
+    },
+    {
+      sortable: true,
+      title: 'Status',
+      key: 'node.status'
+    },
+    {
+      sortable: true,
+      title: i18n.global.t('Workflows.tableColumnOwner'),
+      key: 'node.owner'
+    },
+    {
+      sortable: true,
+      title: i18n.global.t('Workflows.tableColumnHost'),
+      key: 'node.host'
+    },
+    {
+      sortable: false,
+      title: i18n.global.t('Workflows.tableColumnPort'),
+      key: 'node.port'
+    },
+  ],
+
+  icons: {
+    mdiTable,
+  },
 }
 </script>

@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
         >
           <v-data-table
-            :headers="headers"
+            :headers="$options.headers"
             :items="filteredTasks"
             multi-sort
             :sort-by="sortBy"
@@ -170,67 +170,6 @@ export default {
           order: JSON.parse(localStorage.cyclePointsOrderDesc ?? true) ? 'desc' : 'asc'
         }
       ],
-      headers: [
-        {
-          title: 'Task',
-          key: 'task.name',
-          sortable: true,
-          sort: DEFAULT_COMPARATOR
-        },
-        {
-          title: 'Jobs',
-          key: 'data-table-expand',
-          sortable: false
-        },
-        {
-          title: 'Cycle Point',
-          key: 'task.tokens.cycle',
-          sortable: true,
-          sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
-        },
-        {
-          title: 'Platform',
-          key: 'latestJob.node.platform',
-          sortable: true,
-          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
-        },
-        {
-          title: 'Job Runner',
-          key: 'latestJob.node.jobRunnerName',
-          sortable: true,
-          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
-        },
-        {
-          title: 'Job ID',
-          key: 'latestJob.node.jobId',
-          sortable: true,
-          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
-        },
-        {
-          title: 'Submit',
-          key: 'latestJob.node.submittedTime',
-          sortable: true,
-          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
-        },
-        {
-          title: 'Start',
-          key: 'latestJob.node.startedTime',
-          sortable: true,
-          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
-        },
-        {
-          title: 'Finish',
-          key: 'latestJob.node.finishedTime',
-          sortable: true,
-          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
-        },
-        {
-          title: 'Run Time',
-          key: 'task.node.task.meanElapsedTime',
-          sortable: true,
-          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
-        }
-      ],
       tasksFilter: {}
     }
   },
@@ -244,6 +183,68 @@ export default {
   methods: {
     dtMean
   },
+
+  headers: [
+    {
+      title: 'Task',
+      key: 'task.name',
+      sortable: true,
+      sort: DEFAULT_COMPARATOR
+    },
+    {
+      title: 'Jobs',
+      key: 'data-table-expand',
+      sortable: false
+    },
+    {
+      title: 'Cycle Point',
+      key: 'task.tokens.cycle',
+      sortable: true,
+      sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
+    },
+    {
+      title: 'Platform',
+      key: 'latestJob.node.platform',
+      sortable: true,
+      sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+    },
+    {
+      title: 'Job Runner',
+      key: 'latestJob.node.jobRunnerName',
+      sortable: true,
+      sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+    },
+    {
+      title: 'Job ID',
+      key: 'latestJob.node.jobId',
+      sortable: true,
+      sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+    },
+    {
+      title: 'Submit',
+      key: 'latestJob.node.submittedTime',
+      sortable: true,
+      sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+    },
+    {
+      title: 'Start',
+      key: 'latestJob.node.startedTime',
+      sortable: true,
+      sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+    },
+    {
+      title: 'Finish',
+      key: 'latestJob.node.finishedTime',
+      sortable: true,
+      sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+    },
+    {
+      title: 'Run Time',
+      key: 'task.node.task.meanElapsedTime',
+      sortable: true,
+      sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
+    },
+  ],
 
   icons: {
     mdiChevronDown
