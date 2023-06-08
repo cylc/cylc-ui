@@ -106,11 +106,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import gql from 'graphql-tag'
 import { mapState, mapGetters } from 'vuex'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import { mdiTree } from '@mdi/js'
 
 // Any fields that our view will use (e.g. TaskProxy.status) must be requested
 // in the query.
@@ -176,30 +175,18 @@ fragment JobData on Job {
 `
 
 export default {
+  name: 'SimpleTree',
+
   // These mixins enable various functionalities.
   mixins: [
-    pageMixin,
     graphqlMixin,
     subscriptionComponentMixin
   ],
 
-  // This defines the component name, must be HTML safe.
-  name: 'SimpleTree',
-
   // This sets the page title.
-  metaInfo () {
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
-    }
-  },
-
-  // The view must provide a title and icon for display purposes.
-  data () {
-    return {
-      widget: {
-        title: 'simple tree',
-        icon: mdiTree
-      }
+      title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
 
@@ -238,7 +225,10 @@ export default {
 
 <style lang="scss">
   .c-simple-tree {
-    .state:before {
+    ul, ol {
+      padding-left: 24px;
+    }
+    .state::before {
       content: ' ';
     }
     .state {
