@@ -153,7 +153,7 @@ fragment UpdatedDelta on Updated {
 }
 
 # We must list all of the types we request data for here to enable automatic
-# hosekeeping.
+# housekeeping.
 fragment PrunedDelta on Pruned {
   workflow
   taskProxies
