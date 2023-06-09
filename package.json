@@ -51,7 +51,7 @@
     "@cypress/code-coverage": "^3.9.12",
     "@mdi/js": "^7.0.0",
     "@vitejs/plugin-vue": "^4.0.0",
-    "@vitest/coverage-istanbul": "^0.31.0",
+    "@vitest/coverage-istanbul": "^0.32.0",
     "@vue/test-utils": "^2.0.0",
     "bufferutil": "^4.0.6",
     "concurrently": "^8.0.0",
@@ -84,7 +84,7 @@
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-istanbul": "^4.0.1",
     "vite-plugin-vuetify": "^1.0.2",
-    "vitest": "^0.31.0"
+    "vitest": "^0.32.0"
   },
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
