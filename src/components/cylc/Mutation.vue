@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <!-- the mutation description -->
       <v-expansion-panels
-        accordion
+        variant="accordian"
         v-bind="extendedDescription ? { hover: true } : { readonly: true }"
       >
         <v-expansion-panel

@@ -15,16 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  getCurrentFontSize,
-  resetFontSize,
-  INCREMENT
-} from '@/utils/font-size'
+import { INCREMENT } from '@/utils/font-size'
+
+/** @param {number} expected font size in px */
+function expectFontSize (expected) {
+  cy.get('html')
+    .should('have.css', 'font-size', `${expected}px`)
+}
 
 describe('User Profile', () => {
   const defaultFontSize = 16 // px
   beforeEach(() => {
-    resetFontSize()
+    // resetFontSize()
     cy.visit('/#/user-profile')
   })
 
@@ -35,43 +37,38 @@ describe('User Profile', () => {
   })
 
   it('Increases the font size', () => {
-    expect(getCurrentFontSize()).to.equal(defaultFontSize)
+    expectFontSize(defaultFontSize)
     const clicks = 3
-    cy.get('button#font-size-increase-button').then(($button) => {
-      for (let i = 0; i < clicks; i++) {
-        $button.trigger('click')
-      }
-      const expectedFontSize = defaultFontSize + INCREMENT * clicks
-      expect(getCurrentFontSize()).to.equal(expectedFontSize)
-    })
+    let expectedFontSize = defaultFontSize
+    for (let i = 0; i < clicks; i++) {
+      expectedFontSize += INCREMENT
+      cy.get('button#font-size-increase-button')
+        .click()
+      expectFontSize(expectedFontSize)
+    }
   })
 
   it('Decreases the font size', () => {
-    expect(getCurrentFontSize()).to.equal(defaultFontSize)
+    expectFontSize(defaultFontSize)
     const clicks = 3
-    cy.get('button#font-size-decrease-button').then(($button) => {
-      for (let i = 0; i < clicks; i++) {
-        $button.trigger('click')
-      }
-      const expectedFontSize = defaultFontSize - INCREMENT * clicks
-      expect(getCurrentFontSize()).to.equal(expectedFontSize)
-    })
+    let expectedFontSize = defaultFontSize
+    for (let i = 0; i < clicks; i++) {
+      expectedFontSize -= INCREMENT
+      cy.get('button#font-size-decrease-button')
+        .click()
+      expectFontSize(expectedFontSize)
+    }
   })
 
   it('Resets the font size', () => {
-    expect(getCurrentFontSize()).to.equal(defaultFontSize)
-    const clicks = 3
-    cy.get('button#font-size-decrease-button').then(($button) => {
-      for (let i = 0; i < clicks; i++) {
-        $button.trigger('click')
-      }
-      expect(getCurrentFontSize()).not.to.equal(defaultFontSize)
-      cy.get('button#font-size-reset-button')
+    expectFontSize(defaultFontSize)
+    for (let i = 0; i < 3; i++) {
+      cy.get('button#font-size-decrease-button')
         .click()
-        .then(() => {
-          expect(getCurrentFontSize()).to.equal(defaultFontSize)
-        })
-    })
+    }
+    cy.get('button#font-size-reset-button')
+      .click()
+    expectFontSize(defaultFontSize)
   })
 
   it('Sets the job theme', () => {

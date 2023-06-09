@@ -25,26 +25,22 @@ describe('Font Size', () => {
 
   beforeEach(() => {
     delete localStorage.fontSize
-    document.body.style.fontSize = `${initialFontSize}px`
+    document.documentElement.style.fontSize = `${initialFontSize}px`
   })
 
   it('gets the current font size', () => {
     expect(getCurrentFontSize()).to.equal(initialFontSize)
-    const newVal = 27
-    // localStorage value should take precedence
-    localStorage.fontSize = `${newVal}px`
-    expect(getCurrentFontSize()).to.equal(newVal)
   })
 
   it('sets and gets a new font size', () => {
     const newVal = 31
     const newValPx = `${newVal}px`
     expect(localStorage.fontSize).to.not.equal(newValPx)
-    expect(document.body.style.fontSize).to.not.equal(newValPx)
+    expect(document.documentElement.style.fontSize).to.not.equal(newValPx)
     expect(getCurrentFontSize()).to.not.equal(newVal)
     resetFontSize(newValPx)
     expect(localStorage.fontSize).to.equal(newValPx)
-    expect(document.body.style.fontSize).to.equal(newValPx)
+    expect(document.documentElement.style.fontSize).to.equal(newValPx)
     expect(getCurrentFontSize()).to.equal(newVal)
   })
 

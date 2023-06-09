@@ -22,6 +22,7 @@ const familyProxy = require('./familyProxy.json')
 const App = require('./App')
 const { LogData } = require('./logData.cjs')
 const { LogFiles } = require('./logFiles.cjs')
+const analysisQuery = require('./analysisQuery.json')
 
 module.exports = {
   IntrospectionQuery,
@@ -31,5 +32,6 @@ module.exports = {
   LogData,
   LogFiles,
   App,
-  Workflow: App
+  Workflow: App,
+  analysisQuery
 }

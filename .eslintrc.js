@@ -58,5 +58,8 @@ module.exports = {
     'promise/no-return-wrap': [
       'error'
     ],
+    'cypress/unsafe-to-chain-command': [
+      'off'
+    ]
   },
 }

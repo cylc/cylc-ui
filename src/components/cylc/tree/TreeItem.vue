@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- the node value -->
       <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
       <slot name="cyclepoint" v-if="node.type === 'cycle'">
-        <div :class="getNodeDataClass()" @click="nodeClicked">
+        <div :class="nodeDataClass" @click="nodeClicked">
           <!-- NOTE: cycle point nodes don't have any data associated with them
             at present so we must use the root family node for the task icon.
             We don't use this for the v-cylc-object as that would set the node
@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot name="family-proxy" v-else-if="node.type === 'family'">
-        <div :class="getNodeDataClass()" @click="nodeClicked">
+        <div :class="nodeDataClass" @click="nodeClicked">
           <Task
             v-cylc-object="node"
             :key="node.id"
@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot name="task-proxy" v-else-if="node.type === 'task'">
-        <div :class="getNodeDataClass()" @click="nodeClicked">
+        <div :class="nodeDataClass" @click="nodeClicked">
           <!-- Task summary -->
           <Task
             v-cylc-object="node"
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot name="job" v-else-if="node.type === 'job'">
-        <div :class="getNodeDataClass()" @click="nodeClicked">
+        <div :class="nodeDataClass" @click="nodeClicked">
           <Job
             v-cylc-object="node"
             :key="node.id"
@@ -184,7 +184,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         name="node"
         v-else
       >
-        <div :class="getNodeDataClass()">
+        <div :class="nodeDataClass">
           <span
             v-if="node && node.node"
             @click="nodeClicked"
@@ -262,6 +262,9 @@ const passthroughEvents = [
   'tree-item-collapsed',
   'tree-item-clicked'
 ]
+
+/** Margin between expand/collapse btn & node content */
+const nodeContentPad = 6 // px
 
 export default {
   name: 'TreeItem',
@@ -383,10 +386,14 @@ export default {
         expanded: this.isExpanded
       }
     },
+    nodeDataClass () {
+      return ['node-data', `node-data-${this.node.type}`]
+    },
     expandCollapseBtnStyle () {
       return {
         // set visibility 'hidden' to ensure element takes up space
-        visibility: this.hasChildren ? null : 'hidden'
+        visibility: this.hasChildren ? null : 'hidden',
+        marginRight: `${nodeContentPad}px`,
       }
     },
     /**
@@ -402,7 +409,7 @@ export default {
     /** Make the job details triangle point to the job icon */
     leafTriangleStyle () {
       return {
-        'margin-left': `${this.nodeIndentation}px`
+        'margin-left': `${this.nodeIndentation + nodeContentPad}px`
       }
     },
     jobMessageOutputs () {
@@ -452,12 +459,6 @@ export default {
      */
     nodeClicked (e) {
       this.$emit('tree-item-clicked', this)
-    },
-    getNodeDataClass () {
-      const classes = {}
-      classes['node-data'] = true
-      classes[`node-data-${this.node.type}`] = true
-      return classes
     },
     latestJob
   }

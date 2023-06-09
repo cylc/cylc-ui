@@ -1,0 +1,66 @@
+{
+  "data": {
+    "tasks": [
+      {
+        "name": "succeeded",
+        "platform": "platform_1",
+        "count": 42,
+        "meanTotalTime": 32,
+        "stdDevTotalTime": 0,
+        "minTotalTime": 32,
+        "totalQuartiles": [32, 32, 32],
+        "maxTotalTime": 32,
+        "meanRunTime": 21,
+        "stdDevRunTime": 0,
+        "minRunTime": 21,
+        "runQuartiles": [21, 21, 21],
+        "maxRunTime": 21,
+        "meanQueueTime": 11,
+        "stdDevQueueTime": 0,
+        "minQueueTime": 11,
+        "queueQuartiles": [11, 11, 11],
+        "maxQueueTime": 11
+      },
+      {
+        "name": "eventually_succeeded",
+        "platform": "platform_2",
+        "count": 42,
+        "meanTotalTime": 30,
+        "stdDevTotalTime": 0,
+        "minTotalTime": 30,
+        "totalQuartiles": [30, 30, 30],
+        "maxTotalTime": 30,
+        "meanRunTime": 20,
+        "stdDevRunTime": 0,
+        "minRunTime": 20,
+        "runQuartiles": [20, 20, 20],
+        "maxRunTime": 20,
+        "meanQueueTime": 10,
+        "stdDevQueueTime": 0,
+        "minQueueTime": 10,
+        "queueQuartiles": [10, 10, 10],
+        "maxQueueTime": 10
+      },
+      {
+        "name": "waiting",
+        "platform": "platform_1",
+        "count": 41,
+        "meanTotalTime": 34,
+        "stdDevTotalTime": 0,
+        "minTotalTime": 34,
+        "totalQuartiles": [34, 34, 34],
+        "maxTotalTime": 34,
+        "meanRunTime": 22,
+        "stdDevRunTime": 0,
+        "minRunTime": 22,
+        "runQuartiles": [22, 22, 22],
+        "maxRunTime": 22,
+        "meanQueueTime": 12,
+        "stdDevQueueTime": 0,
+        "minQueueTime": 12,
+        "queueQuartiles": [12, 12, 12],
+        "maxQueueTime": 12
+      }
+    ]
+  }
+}
