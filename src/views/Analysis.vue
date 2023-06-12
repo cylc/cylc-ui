@@ -88,7 +88,6 @@ import {
   platformOptions
 } from '@/components/cylc/analysis/filter'
 import {
-  mdiChartLine,
   mdiRefresh
 } from '@mdi/js'
 
@@ -185,10 +184,6 @@ export default {
   data () {
     const tasks = []
     return {
-      widget: {
-        title: 'analysis',
-        icon: mdiChartLine
-      },
       /** Defines controls which get added to the toolbar */
       groups: [
         {

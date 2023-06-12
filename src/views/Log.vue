@@ -155,7 +155,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import {
   mdiClockOutline,
   mdiFileAlertOutline,
-  mdiFileDocumentMultipleOutline,
   mdiFolderRefresh,
   mdiPowerPlugOff,
   mdiPowerPlug,
@@ -284,11 +283,6 @@ export default {
 
   data () {
     return {
-      // metadata for the workspace view
-      widget: {
-        title: 'logs',
-        icon: mdiFileDocumentMultipleOutline
-      },
       // the log subscription query
       query: null,
       // list of log files for the selected workflow/task/job
