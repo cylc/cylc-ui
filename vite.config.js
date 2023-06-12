@@ -52,8 +52,6 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
         react: 'preact/compat',
         'react-dom': 'preact/compat',
-        // Fix imports inside node_modules code:
-        '~@lumino': '@lumino'
       }
     },
     plugins,
