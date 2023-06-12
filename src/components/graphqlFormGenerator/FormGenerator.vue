@@ -17,69 +17,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-form
-    class="c-mutation-form"
-    :value="value"
-    @input="$emit('input', $event)"
+    v-model="isValid"
+    ref="form"
+    @update:modelValue="(val) => { if (val == null) validate() }"
   >
-    <!-- the mutation title -->
-    <h3
-     style="text-transform: capitalize;"
-    >
-      {{ mutation.name }}
-    </h3>
-
-    <!-- the mutation description -->
-    <v-expansion-panels
-     accordion
-     flat
-     v-bind="extendedDescription ? { hover: true } : { readonly: true }"
-    >
-      <v-expansion-panel
-        class="mutation-desc"
-      >
-        <v-expansion-panel-header
-          v-bind="extendedDescription ? {} : {
-            expandIcon: null,
-            style: {
-              cursor: 'default'
-            }
-          }"
-        >
-          <Markdown
-           :markdown="shortDescription"
-          />
-        </v-expansion-panel-header>
-        <v-expansion-panel-content
-          v-if="extendedDescription"
-        >
-          <Markdown
-           :markdown="extendedDescription"
-          />
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-
-    <v-divider></v-divider>
-
     <!-- the form inputs -->
     <v-list>
       <v-list-item
-       v-for="input in inputs"
-       v-bind:key="input.label"
+        v-for="input in inputs"
+        v-bind:key="input.label"
       >
-        <v-list-item-content>
-          <v-list-item-title>
+          <v-list-item-title class="d-flex align-center mb-2">
             <!-- input label - the display title for this input -->
             {{ input.label }}
             <!-- help button - tooltip for more information -->
-            <v-tooltip bottom
+            <v-tooltip
               v-if="input.description"
+              location="bottom"
             >
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
+              <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" class="mx-2">
                   {{ icons.help }}
                 </v-icon>
               </template>
@@ -88,13 +45,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               />
             </v-tooltip>
           </v-list-item-title>
-          <form-input
+          <FormInput
             v-model="model[input.label]"
             :gqlType="input.gqlType"
             :types="types"
-            :label="input.label"
           />
-        </v-list-item-content>
       </v-list-item>
     </v-list>
   </v-form>
@@ -104,27 +59,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import cloneDeep from 'lodash/cloneDeep'
 import { mdiHelpCircleOutline } from '@mdi/js'
 
-import Markdown from '@/components/Markdown'
-import FormInput from '@/components/graphqlFormGenerator/FormInput'
-import {
-  getNullValue,
-  getMutationShortDesc,
-  getMutationExtendedDesc
-} from '@/utils/aotf'
+import Markdown from '@/components/Markdown.vue'
+import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
+import { getNullValue, mutate } from '@/utils/aotf'
 
 export default {
   name: 'form-generator',
 
   components: {
     Markdown,
-    'form-input': FormInput
+    FormInput
   },
 
   props: {
-    value: {
+    modelValue: {
       // validity of form
       type: Boolean,
-      required: true,
+      required: false,
       default: () => false
     },
     mutation: {
@@ -137,12 +88,10 @@ export default {
     },
     initialData: {
       type: Object
-    },
-    callbackSubmit: {
-      // called when the user submits the form
-      type: Function
     }
   },
+
+  emits: ['update:modelValue'],
 
   data: () => ({
     model: {},
@@ -153,6 +102,12 @@ export default {
 
   created () {
     this.reset()
+  },
+
+  mounted () {
+    // Work around lack of initial validation
+    // https://github.com/vuetifyjs/vuetify/issues/15568
+    this.$watch('$refs', this.validate, { immediate: true })
   },
 
   computed: {
@@ -168,22 +123,14 @@ export default {
       }
       return ret
     },
-
-    /* Return the first line of the description. */
-    shortDescription () {
-      return getMutationShortDesc(this.mutation.description)
-    },
-    /* Return the subsequent lines of the description */
-    extendedDescription () {
-      return getMutationExtendedDesc(this.mutation.description)
-    }
-  },
-
-  watch: {
-    mutation: function () {
-      // reset the form if the mutation changes
-      // (i.e. this component is being re-used)
-      this.reset()
+    isValid: {
+      get () {
+        return this.modelValue
+      },
+      set (value) {
+        // Update 'value' prop by notifying parent component's v-model for this component
+        this.$emit('update:modelValue', value)
+      }
     }
   },
 
@@ -224,10 +171,16 @@ export default {
       this.model = model
     },
 
-    submit () {
-      if (this.callbackSubmit) {
-        this.callbackSubmit(this.model)
-      }
+    validate () {
+      this.$refs.form?.validate()
+    },
+
+    async submit () {
+      return await mutate(
+        this.mutation,
+        this.model,
+        this.$workflowService.apolloClient
+      )
     }
   }
 }

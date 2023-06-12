@@ -15,29 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@use '../settings.scss';
 @import 'variables';
-@import '~vuetify/src/styles/styles';
-@import '~vuetify/src/components/VIcon/_variables.scss';
 
-.v-toolbar {
-  min-height: inherit !important;
-
-  .v-toolbar__content {
-    min-height: inherit !important;
-    column-gap: 0.5rem;
-  }
-}
 
 .c-toolbar {
+  $icon-size: 24px;
 
-  .v-toolbar__title {
-    // clear default padding (too much space on the left)
-    padding: 0!important;
+  .v-toolbar__content > *:not(:last-child) {
+    margin-right: 0.5rem;
   }
 
-  .c-toolbar-title, .add-view {
-    color: $font-default-color;
-    font-weight: map-get($font-weights, medium);
+  .c-toolbar-title {
+    flex: 0 1 auto;
   }
 
   .status-msg {
@@ -51,22 +41,29 @@
     letter-spacing: normal !important;
   }
 
+  .v-icon {
+    font-size: $icon-size;
+  }
+
   .add-view {
-    column-gap: 0.5rem;
-    // force overflow onto a new line where we can hide it:
-    max-height: $icon-size;
-    min-width: $icon-size;
-    flex-wrap: wrap;
-    overflow: hidden;
-    row-gap: 30px;
     // make this shrink before anything else in the toolbar:
     flex-shrink: 100000;
 
-    .label {
-      font-size: 1rem;
-      // this only gets clipped after getting hidden (forced to overflow on new line)
-      white-space: nowrap;
-      text-overflow: clip;
+    .v-btn__content {
+      // force overflow onto a new line where we can hide it:
+      max-height: $icon-size;
+      min-width: $icon-size;
+      flex-wrap: wrap;
+      overflow: hidden;
+      row-gap: 30px;
+      justify-content: flex-end;
+      column-gap: 0.5rem;
+
+      .label {
+        // this only gets clipped after getting hidden (forced to overflow on new line)
+        white-space: nowrap;
+        text-overflow: clip;
+      }
     }
   }
 }

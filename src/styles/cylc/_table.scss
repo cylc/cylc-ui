@@ -16,7 +16,22 @@
  */
 
 .c-table {
+  .v-data-table {
+    font-size: 0.9em;
+  }
+
+  th, td {
+    white-space: nowrap;
+  }
+
   .c-task, .c-job {
+    display: flex;
+    align-items: center;
+    height: 100%;
     font-size: 1.2em;
+  }
+
+  .expanded-row td {
+    background: none !important; // Allow <tr> background to come through
   }
 }

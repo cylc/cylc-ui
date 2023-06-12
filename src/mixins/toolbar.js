@@ -24,33 +24,20 @@ import { mapMutations } from 'vuex'
  */
 
 export default {
-  data: () => ({
-    responsive: false,
-    responsiveInput: false
-  }),
-
   mounted () {
-    this.onResponsiveInverted()
-    window.addEventListener('resize', this.onResponsiveInverted)
+    this.setDrawer(!this.showNavBtn)
   },
 
-  beforeDestroy () {
-    window.removeEventListener('resize', this.onResponsiveInverted)
+  computed: {
+    showNavBtn () {
+      return this.$vuetify.display.mobile || !this.$store.state.app.drawer
+    }
   },
 
   methods: {
     ...mapMutations('app', ['setDrawer']),
     onClickBtn () {
       this.setDrawer(!this.$store.state.app.drawer)
-    },
-    onResponsiveInverted () {
-      if (window.innerWidth < 991) {
-        this.responsive = true
-        this.responsiveInput = false
-      } else {
-        this.responsive = false
-        this.responsiveInput = true
-      }
     }
   }
 }

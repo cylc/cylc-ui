@@ -16,52 +16,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-list
-   dense
-   one-line
-  >
-    <v-list-item-content>
-      <v-list-item
-        dense
-        v-for="(item, index) in value"
-        :key="index"
+  <v-list density="compact">
+    <v-list-item
+      v-for="(item, index) in modelValue"
+      :key="index"
+    >
+      <!-- The input -->
+      <FormInput
+        v-model="modelValue[index]"
+        :gqlType="gqlType.ofType"
+        :types="types"
+        ref="inputs"
       >
-        <v-list-item-content>
-          <!-- The input -->
-          <component
-            v-model="value[index]"
-            :propOverrides="{dense: true}"
-            :gqlType="gqlType.ofType"
-            :types="types"
-            :is="FormInput"
-             ref="inputs"
+        <template v-slot:append="slotProps">
+          <v-btn
+            @click="remove(index)"
+            v-bind="slotProps"
+            icon
+            size="small"
+            variant="plain"
+            class="remove-btn mt-n2"
           >
-            <template v-slot:append-outer>
-              <v-icon
-               @click="remove(index)"
-              >
-                {{ svgPaths.close }}
-              </v-icon>
-            </template>
-          </component>
-          <!--
-            NOTE: we use :is here due to a nested component
-            registration issue.
-          -->
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item
-       dense
+            <v-icon size="x-large">
+              {{ svgPaths.close }}
+            </v-icon>
+          </v-btn>
+        </template>
+      </FormInput>
+    </v-list-item>
+    <v-list-item>
+      <v-btn
+        @click="add()"
+        variant="text"
+        data-cy="add"
       >
-        <v-btn
-         @click="add()"
-         text
-        >
-          <v-icon>{{ svgPaths.open }}</v-icon>
-          Add Item
-        </v-btn>
-      </v-list-item>
-    </v-list-item-content>
+        <v-icon>{{ svgPaths.open }}</v-icon>
+        <span>Add Item</span>
+      </v-btn>
+    </v-list-item>
   </v-list>
 </template>
 
@@ -69,7 +61,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 import { getNullValue } from '@/utils/aotf'
 import { mdiPlusCircle, mdiCloseCircle } from '@mdi/js'
-import Vue from 'vue'
 
 export default {
   name: 'g-list',
@@ -77,6 +68,15 @@ export default {
   mixins: [
     formElement
   ],
+
+  props: {
+    addAtStart: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  inheritAttrs: false,
 
   data () {
     return {
@@ -88,25 +88,29 @@ export default {
   },
 
   methods: {
-    /* Add an item to the list. */
+    /** Add an item to the list. */
     add () {
       const newInput = getNullValue(this.gqlType.ofType, this.types)
-      this.value.push(
-        newInput
-      )
+      let index = 0
+      if (this.addAtStart) {
+        this.modelValue.unshift(newInput)
+      } else {
+        index = this.modelValue.length
+        this.modelValue.push(newInput)
+      }
       // this is not ideal, but I believe whats happening is the new (wrapper) component is created over the first tick from the new array item
       // the component content is created over the next tick (including the input)
-      Vue.nextTick(() => {
-        Vue.nextTick(() => {
+      this.$nextTick(() => {
+        this.$nextTick(() => {
           // get the latest input ref (which is a tooltip for some reason), get its parent, then the input itself and focus() it (if it exists)
-          this.$refs.inputs[this.$refs.inputs.length - 1].$el?.parentNode?.querySelector('input')?.focus()
+          this.$refs.inputs[index].$el?.parentNode?.querySelector('input')?.focus()
         })
       })
     },
 
-    /* Remove the item at `index` from the list. */
+    /** Remove the item at `index` from the list. */
     remove (index) {
-      this.value.splice(index, 1)
+      this.modelValue.splice(index, 1)
     }
   }
 }

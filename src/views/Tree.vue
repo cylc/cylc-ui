@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :activable="false"
         :multiple-active="false"
         :min-depth="1"
+        :autoExpandTypes="['workflow', 'cycle', 'family']"
+        :autoStripTypes="['workflow']"
         ref="tree0"
         key="tree0"
       ></tree-component>
@@ -32,34 +34,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { mdiFileTree } from '@mdi/js'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import WorkflowCallback from '@/components/cylc/common/callbacks'
-import TreeComponent from '@/components/cylc/tree/Tree'
-import TreeCallback from '@/components/cylc/tree/callbacks'
+import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 
 export default {
-  mixins: [
-    pageMixin,
-    graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
-  ],
   name: 'Tree',
+
+  mixins: [
+    graphqlMixin,
+    subscriptionComponentMixin
+  ],
+
   components: {
     TreeComponent
   },
-  metaInfo () {
+
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
   data () {
     return {
       widget: {
@@ -68,24 +69,24 @@ export default {
       }
     }
   },
+
   computed: {
-    ...mapState('workflows', ['workflow']),
+    ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getNodes']),
+    workflowIDs () {
+      return [this.workflowId]
+    },
     workflows () {
-      return this.workflow &&
-        this.workflow.tree &&
-        this.workflow.tree.children
-        ? this.workflow.tree.children
-        : []
+      return this.getNodes('workflow', this.workflowIDs)
     },
     query () {
       return new SubscriptionQuery(
         WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
         this.variables,
         'workflow',
-        [
-          new WorkflowCallback(),
-          new TreeCallback()
-        ]
+        [],
+        /* isDelta */ true,
+        /* isGlobalCallback */ true
       )
     }
   }

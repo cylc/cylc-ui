@@ -25,15 +25,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     style="display:inline-block; vertical-align:middle"
   >
     <v-tooltip
-      bottom
+      location="bottom"
       :disabled="!message"
     >
       <template
-        v-slot:activator="{ on }"
+        v-slot:activator="{ props }"
       >
         <svg
           viewBox="0 0 100 100"
-          v-on="on"
+          v-bind="props"
           @click="deactivate"
         >
           <path

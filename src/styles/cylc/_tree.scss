@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import '~vuetify/src/styles/styles';
+@use '../settings.scss';
 
 $active-color: #BDD5F7;
 /**
@@ -31,6 +31,9 @@ $line-height: 1.8em;
  */
 $visible-outputs: 5;
 
+/* Task/job icon size. */
+$icon-size: 1.2em;
+
 @mixin active-state() {
   background-color: $active-color;
   &:hover {
@@ -40,7 +43,7 @@ $visible-outputs: 5;
 
 @mixin states() {
   &:hover {
-    background-color: map-get($grey, 'lighten-3');
+    background-color: map-get(settings.$grey, 'lighten-3');
   }
 }
 
@@ -70,7 +73,6 @@ $visible-outputs: 5;
     }
 
     .node-data {
-      margin-left: 6px;
       display: flex;
       flex-wrap: nowrap;
       .node-summary {
@@ -81,15 +83,17 @@ $visible-outputs: 5;
     }
 
     .c-task, .c-job {
-      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      font-size: $icon-size;
     }
   }
   .type {
     margin-right: 10px;
   }
 
-  $arrow-size: 15px;
-  $leaf-background-color: map-get($grey, 'lighten-3');
+  $arrow-size: calc($icon-size / 2);
+  $leaf-background-color: map-get(settings.$grey, 'lighten-3');
 
   .leaf {
     padding: 0;

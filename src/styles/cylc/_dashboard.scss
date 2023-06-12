@@ -16,36 +16,9 @@
  */
 
 .c-dashboard {
-  padding: 0 24px;
-  /* Items in the bottom menu are left-aligned with the top Workflows&Events
-   entries, so we are required to override some styles from Vuetify components
-   in here.*/
-
-  /* to left align items in the dashboard */
-  .v-avatar .v-icon {
-    width: auto;
-    height: auto;
-  }
-  .v-list__tile__action, .v-list__tile__avatar {
-    min-width: auto;
-    margin-left: -10px;
-  }
-
-  /* otherwise avatar does not left align with component above,
-     !important as the attributes are set in the tag element */
-  .v-avatar {
-    height: auto !important;
-    width: auto !important;
-  }
-
-  /* otherwise responsive UI ends up with extra space between vertical menu items */
-  .v-list {
-    padding: 0 0;
-  }
-
-  /* to left align items in the dashboard */
-  .v-list__tile {
-    padding: 10px 0;
+  /* to align icons in the links section */
+  .v-list-item__prepend {
+    align-self: center;
   }
 
   table {

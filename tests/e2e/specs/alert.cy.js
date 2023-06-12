@@ -28,18 +28,18 @@ describe('Alert component', () => {
     cy.get('.c-header').should('exist')
     const errorMessage = 'Error displayed'
     getStore().then(store => {
-      store.dispatch('setAlert', new Alert(errorMessage, null, 'error'))
+      store.dispatch('setAlert', new Alert(errorMessage, 'error'))
     })
     cy
-      .get('.v-alert')
+      .get('[data-cy="alert-snack"]')
       .should('contain', errorMessage)
   })
   it('Uses the right color for success', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getStore().then(store => {
-      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', null, 'success'))
-      cy.get('.v-alert').then($alertElements => {
+      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', 'success'))
+      cy.get('[data-cy="alert-snack"]').then($alertElements => {
         const backgroundColor = window.getComputedStyle($alertElements[0])['background-color']
         expect(backgroundColor).to.not.equal(COLOR_BLACK)
         expect(backgroundColor).to.not.equal(COLOR_WHITE)
@@ -51,8 +51,8 @@ describe('Alert component', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getStore().then(store => {
-      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', null, 'warning'))
-      cy.get('.v-alert').then($alertElements => {
+      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', 'warning'))
+      cy.get('[data-cy="alert-snack"]').then($alertElements => {
         const backgroundColor = window.getComputedStyle($alertElements[0])['background-color']
         expect(backgroundColor).to.not.equal(COLOR_BLACK)
         expect(backgroundColor).to.not.equal(COLOR_WHITE)
@@ -64,8 +64,8 @@ describe('Alert component', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getStore().then(store => {
-      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', null, 'error'))
-      cy.get('.v-alert').then($alertElements => {
+      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', 'error'))
+      cy.get('[data-cy="alert-snack"]').then($alertElements => {
         const backgroundColor = window.getComputedStyle($alertElements[0])['background-color']
         expect(backgroundColor).to.not.equal(COLOR_BLACK)
         expect(backgroundColor).to.not.equal(COLOR_WHITE)
@@ -78,17 +78,17 @@ describe('Alert component', () => {
     cy.get('.c-header').should('exist')
     const errorMessage = 'Error displayed'
     getStore().then(store => {
-      store.dispatch('setAlert', new Alert(errorMessage, null, 'error'))
+      store.dispatch('setAlert', new Alert(errorMessage, 'error'))
     })
     cy
-      .get('.v-alert')
+      .get('[data-cy="alert-snack"]')
       .should('contain', errorMessage)
     cy
-      .get('.v-alert')
+      .get('[data-cy="alert-snack"]')
       .get('button')
       .click({ force: true, multiple: true })
     cy
-      .get('.v-alert')
+      .get('[data-cy="alert-snack"]--active')
       .should('not.exist')
     getStore().then(store => {
       expect(store.state.alert).to.equal(null)

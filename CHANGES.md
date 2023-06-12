@@ -10,10 +10,99 @@ creating a new release entry be sure to copy & paste the span tag with the
 `actions:bind` attribute, which is used by a regex to find the text to be
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
+-------------------------------------------------------------------------------
+## __cylc-ui-2.0.0 (<span actions:bind='release-date'>Upcoming</span>)__
 
-## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Pending</span>)__
+### Enhancements
+
+[#1269](https://github.com/cylc/cylc-ui/pull/1269) -
+Upgraded Vue and Vuetify frameworks to v3.
+
+-------------------------------------------------------------------------------
+## __cylc-ui-1.6.0 (<span actions:bind='release-date'>Upcoming</span>)__
+
+### Enhancements
+
+[#1275](https://github.com/cylc/cylc-ui/pull/1275) -
+Various improvements to the log view including the ability to view prior
+job submissions, workflow log files and the connection status of the
+log file subscription.
+
+[#1187](https://github.com/cylc/cylc-ui/pull/1187) - Improved the workflow
+filtering menu in the sidebar.
+
+[#1254](https://github.com/cylc/cylc-ui/pull/1254) - Add analysis view:
+A new view that displays task timing statistics
 
 ### Fixes
+
+[#1249](https://github.com/cylc/cylc-ui/pull/1249) - Fix tasks not loading
+when navigating between workflows in the standalone `#/tree/` and `#/table/`
+views.
+
+-------------------------------------------------------------------------------
+## __cylc-ui-1.5.0 (<span actions:bind='release-date'>Released 2023-02-20</span>)__
+
+### Enhancements
+
+[#1184](https://github.com/cylc/cylc-ui/pull/1184) - Mean times for tasks
+in table changed to human readable ISO duration format.
+
+[#1182](https://github.com/cylc/cylc-ui/pull/1182) - Allow filtering by
+cycle point and family in tree & table views.
+
+### Fixes
+
+[#1230](https://github.com/cylc/cylc-ui/pull/1230) -
+Fixes an issue where tasks were missing from the GUI in workflows which
+use multi-level family inheritance.
+
+[#1182](https://github.com/cylc/cylc-ui/pull/1182) - Fixes bug in filtering
+by task name.
+
+-------------------------------------------------------------------------------
+## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Released 2023-01-16</span>)__
+
+### Enhancements
+
+[#1158](https://github.com/cylc/cylc-ui/pull/1158) -
+Add log view: A new view which displays workflow and job logs (similar
+to log view available in Cylc 7 cylc review).
+
+[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
+Add graph view: A new view which displays tasks and dependencies as a graph
+(like the Cylc 7 graph view).
+
+[#1144](https://github.com/cylc/cylc-ui/pull/1144) - Add "Edit Runtime"
+command, a more convenient way to perform broadcasts by viewing and editing a
+task/family's runtime configuration.
+
+[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
+Tree view: Task messages are now shown along with outputs.
+
+[#1124](https://github.com/cylc/cylc-ui/pull/1075) - Table view: More options
+for number of tasks per page.
+
+[#1177](https://github.com/cylc/cylc-ui/pull/1177) -
+New tabs now open on top.
+
+[#1178](https://github.com/cylc/cylc-ui/pull/1178) - Improve appearance of
+Table view.
+
+[#1043](https://github.com/cylc/cylc-ui/pull/1043) - The GScan sidebar is
+now resizeable.
+
+### Fixes
+
+[#1164](https://github.com/cylc/cylc-ui/pull/1164) -
+Fix the mean run time column in the table view.
+
+[#1167](https://github.com/cylc/cylc-ui/pull/1168) - Prevent command menu from
+jumping after a delay when clicking "see more".
+
+[#1108](https://github.com/cylc/cylc-ui/pull/1108) -
+Tree view: Task outputs are now correctly associated with the jobs that created
+them.
 
 [#1075](https://github.com/cylc/cylc-ui/pull/1075) - Reverse default sort order
 of the table view so it matches the tree view.

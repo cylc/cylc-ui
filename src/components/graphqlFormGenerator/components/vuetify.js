@@ -15,69 +15,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from 'vue'
+import { VSwitch } from 'vuetify/components/VSwitch'
+import { VTextField } from 'vuetify/components/VTextField'
 
-import { VTextField } from 'vuetify/lib/components/VTextField'
-import { VSwitch } from 'vuetify/lib/components/VSwitch'
+import GEnum from '@/components/graphqlFormGenerator/components/Enum.vue'
+import GNonNull, { nonNullRule } from '@/components/graphqlFormGenerator/components/NonNull.vue'
+import GList from '@/components/graphqlFormGenerator/components/List.vue'
+import GObject from '@/components/graphqlFormGenerator/components/Object.vue'
+import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting.vue'
+import GMapItem from '@/components/graphqlFormGenerator/components/MapItem.vue'
 
-import GEnum from '@/components/graphqlFormGenerator/components/Enum'
-import GNonNull from '@/components/graphqlFormGenerator/components/NonNull'
-import GList from '@/components/graphqlFormGenerator/components/List'
-import GObject from '@/components/graphqlFormGenerator/components/Object'
-import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting'
-
-/* Vuetify number input component.
- *
- * Note: Vuetify doesn't supply a dedicated number field, instead you
- *       specialise the text field using `type='number'`, this, however,
- *       does not cast values to `Number` for you so this extension parses
- *       values to `Number` so they can be used directly in the data model.
- */
-const VNumberField = Vue.component(
-  'v-number-field',
-  {
-    extends: VTextField,
-    computed: {
-      internalValue: {
-        get () {
-          return this.lazyValue
-        },
-        set (val) {
-          // cast values on `set` operations, note this does not get
-          // called on creation
-          this.lazyValue = Number(val)
-          this.$emit('input', this.lazyValue)
-        }
-      }
-    }
+const NumberFieldProps = {
+  is: VTextField,
+  type: 'number',
+  modelModifiers: {
+    number: true
   }
-)
+}
 
 const RE = {
   cyclePoint: '\\d+(T\\d+(Z|[+-]\\d+)?)?'
 }
 
-const RULES = {
+export const RULES = {
+  required: nonNullRule,
   integer:
-    x => (!x || Number.isInteger(x)) || 'Must be integer',
+    (x) => (!x || Number.isInteger(x)) || 'Must be integer',
   noSpaces:
-    x => (!x || !x.includes(' ')) || 'Cannot contain spaces',
+    (x) => (!x || !x.includes(' ')) || 'Cannot contain spaces',
+  /** Permit [a][b]c, a, [a]; Prohibit a[b], [b]a, a], ]a */
   cylcConfigItem:
-    // PERMIT [a][b]c, a, [a] PROHIBIT a[b], [b]a, a], ]a
-    x => Boolean(!x || x.match(/^((\[[^=\]]+\])+)?([^[=\]-]+)?$/)) || 'Invalid',
+    (x) => Boolean(!x || x.match(/^((\[[^=\]]+\])+)?([^[=\]-]+)?$/)) || 'Invalid',
+  /** Permit 1/a; Prohibit a, 1 */
   taskID:
-    // PERMIT 1/a PROHIBIT a, 1
-    x => Boolean(!x || x.match(/^(.){1,}\/(.){1,}$/)) || 'Invalid',
+    (x) => Boolean(!x || x.match(/^(.){1,}\/(.){1,}$/)) || 'Invalid',
   flow:
-    x => Boolean(!x || x.match(/(^\d+$|^(all|new|none)$)/)) || 'Invalid'
+    (x) => Boolean(!x || x.match(/(^\d+$|^(all|new|none)$)/)) || 'Invalid'
 }
+
+export const RUNTIME_SETTING = 'RuntimeSetting'
 
 export default {
   defaultProps: {
     // default props for all form inputs
-    filled: true,
-    rounded: true,
-    dense: true
+    variant: 'filled',
+    density: 'compact'
   },
 
   namedTypes: {
@@ -89,19 +71,17 @@ export default {
       is: VTextField
     },
     Int: {
-      is: VNumberField,
-      type: 'number',
+      ...NumberFieldProps,
       rules: [
         RULES.integer
       ]
     },
     Float: {
-      is: VNumberField,
-      type: 'number'
+      ...NumberFieldProps
     },
     Boolean: {
       is: VSwitch,
-      color: 'blue darken-3'
+      color: 'primary'
     },
 
     // * Cylc types *
@@ -193,23 +173,38 @@ export default {
       rules: [
         RULES.flow
       ]
+    },
+    [RUNTIME_SETTING]: {
+      is: GMapItem
     }
   },
 
   kinds: {
     // registry of GraphQL "kinds" (e.g. LIST)
-    // {namedType: {is: ComponentClass, prop1: value, ...}}
-    ENUM: {
+    // { kind: (ofType) => ({ is: ComponentClass, prop1: value, ... }) }
+    ENUM: (ofType) => ({
       is: GEnum
-    },
-    NON_NULL: {
+    }),
+    NON_NULL: (ofType) => ({
       is: GNonNull
-    },
-    LIST: {
-      is: GList
-    },
-    INPUT_OBJECT: {
+    }),
+    LIST: (ofType) => ({
+      is: GList,
+      addAtStart: ofType?.name === RUNTIME_SETTING
+    }),
+    OBJECT: (ofType) => ({
       is: GObject // happy naming coincidence
-    }
+    })
   }
+}
+
+export function getComponentProps (gqlType, namedTypes, kinds) {
+  const { name, kind, ofType } = gqlType
+  const ret = namedTypes[name] ?? kinds[kind]?.(ofType)
+  if (ret) {
+    return ret
+  }
+  // eslint-disable-next-line no-console
+  console.warn(`Falling back to string for type: ${name}, kind: ${kind}`)
+  return namedTypes.String
 }

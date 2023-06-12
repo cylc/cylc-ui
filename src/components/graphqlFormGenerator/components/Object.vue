@@ -18,19 +18,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-input>
     <template>
-      <component
+      <FormInput
        v-for="input in inputs"
        v-bind:key="input.label"
        v-model="model[input.label]"
-       :is="FormInput"
        :gqlType="input.gqlType"
        :types="types"
       />
     </template>
     <template v-slot:append>
-    <!-- resolve the "append-outer" slot here -->
-    <slot name="append-outer"></slot>
-  </template>
+      <!-- resolve the "append" slot here -->
+      <slot name="append"></slot>
+    </template>
   </v-input>
 </template>
 
@@ -44,14 +43,10 @@ export default {
 
   computed: {
     inputs () {
-      const ret = []
-      for (const field of this.type.inputFields) {
-        ret.push({
-          gqlType: field.type,
-          label: field.name
-        })
-      }
-      return ret
+      return this.type.fields.map(field => ({
+        gqlType: field.type,
+        label: field.name
+      }))
     }
   }
 }

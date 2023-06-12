@@ -22,171 +22,107 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <!-- Toolbar -->
     <v-row
-      class="d-flex flex-wrap table-option-bar no-gutters flex-grow-0"
+      no-gutters
+      class="d-flex flex-wrap flex-grow-0"
     >
       <!-- Filters -->
       <v-col
         v-if="filterable"
         class=""
       >
-        <v-row class="no-gutters">
-          <v-col
-            cols="12"
-            md="6"
-            class="pr-md-2 mb-2 mb-md-0"
-          >
-            <v-text-field
-              id="c-table-filter-task-name"
-              clearable
-              dense
-              flat
-              hide-details
-              outlined
-              placeholder="Filter by task name"
-              v-model.trim="tasksFilter.name"
-              @keyup="filterTasks"
-              @click:clear="clearInput"
-              ref="filterNameInput"
-            ></v-text-field>
-          </v-col>
-          <v-col
-            cols="12"
-            md="6"
-            class="mb-2 mb-md-0"
-          >
-            <v-select
-              id="c-table-filter-task-states"
-              :items="taskStates"
-              clearable
-              dense
-              flat
-              hide-details
-              multiple
-              outlined
-              placeholder="Filter by task state"
-              v-model="tasksFilter.states"
-              @change="filterTasks"
-            >
-              <template v-slot:item="slotProps">
-                <Task :status="slotProps.item.value"/>
-                <span class="ml-2">{{ slotProps.item.value }}</span>
-              </template>
-              <template v-slot:selection="slotProps">
-                <div class="mr-2" v-if="slotProps.index >= 0 && slotProps.index < maximumTasks">
-                  <Task :status="slotProps.item.value"/>
-                </div>
-                <span
-                  v-if="slotProps.index === maximumTasks"
-                  class="grey--text caption"
-                >
-                  (+{{ tasksFilter.states.length - maximumTasks }})
-                </span>
-              </template>
-            </v-select>
-          </v-col>
-        </v-row>
+        <TaskFilter v-model="tasksFilter"/>
       </v-col>
     </v-row>
     <v-row
       no-gutters
       class="flex-grow-1 position-relative"
-      >
+    >
       <v-col
         cols="12"
         class="mh-100 position-relative"
       >
         <v-container
           fluid
-          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute"
+          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
         >
           <v-data-table
             :headers="headers"
             :items="filteredTasks"
-            :single-expand="false"
-            :expanded.sync="expanded"
             multi-sort
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-            item-key="id"
+            :sort-by="sortBy"
             show-expand
+            density="compact"
+            v-model:items-per-page="itemsPerPage"
           >
-            <template
-              v-slot:item="{ item }"
-            >
-              <tr>
-                <td>
-                  <div class="d-flex align-content-center flex-nowrap">
-                    <div class="mr-1">
-                      <Task
-                        v-cylc-object="item.node"
-                        :status="item.node.state"
-                        :isHeld="item.node.isHeld"
-                        :isQueued="item.node.isQueued"
-                        :isRunahead="item.node.isRunahead"
-                        :startTime="taskStartTime(item.node, item.latestJob)"
-                        :estimatedDuration="taskEstimatedDuration(item.node)"
-                      />
-                    </div>
-                    <div class="mr-1">
-                      <Job
-                        v-if="item.jobs.length"
-                        v-cylc-object="item.jobs[0]"
-                        :status="item.jobs[0].state"
-                        :previous-state="item.jobs.length > 1 ? item.jobs[1].state : ''"
-                      />
-                    </div>
-                    <div>{{ item.node.name }}</div>
-                  </div>
-                </td>
-                <td>
-                  <v-btn icon class="v-data-table__expand-icon" @click="expanded.push(item)" v-if="item.jobs.length > 0 && !expanded.includes(item)">
-                    <v-icon>{{ icons.mdiChevronDown }}</v-icon>
-                  </v-btn>
-                  <v-btn icon class="v-data-table__expand-icon v-data-table__expand-icon--active" @click="expanded.splice(expanded.indexOf(item), 1)" v-if="item.jobs.length > 0 && expanded.includes(item)">
-                    <v-icon>{{ icons.mdiChevronDown }}</v-icon>
-                  </v-btn>
-                </td>
-                <td>{{ item.node.cyclePoint }}</td>
-                <td>{{ item.latestJob.platform }}</td>
-                <td>{{ item.latestJob.jobRunnerName }}</td>
-                <td>{{ item.latestJob.jobId }}</td>
-                <td>{{ item.latestJob.submittedTime }}</td>
-                <td>{{ item.latestJob.startedTime }}</td>
-                <td>{{ item.latestJob.finishedTime }}</td>
-                <td>{{ item.meanElapsedTime }}</td>
-              </tr>
+            <template v-slot:item.task.name="{ item }">
+              <div class="d-flex align-content-center flex-nowrap">
+                <div class="mr-1">
+                  <Task
+                    v-cylc-object="item.value.task"
+                    :task="item.value.task.node"
+                    :startTime="((item.value.latestJob || {}).node || {}).startedTime"
+                  />
+                </div>
+                <div class="mr-1">
+                  <Job
+                    v-cylc-object="item.value.task"
+                    :status="item.value.task.node.state"
+                    :previous-state="((item.value.previousJob || {}).node || {}).state"
+                  />
+                </div>
+                <div>{{ item.value.task.name }}</div>
+              </div>
             </template>
-            <template v-slot:expanded-item="{ item }">
-<!--                v-slot:expanded-item="{ headers, item }">-->
-<!--              <td :colspan="headers.length">-->
-<!--                More info about {{ item.node.id }}-->
-<!--              </td>-->
-              <tr v-bind:key="job.id" v-for="(job, index) in item.jobs" class="grey lighten-5">
-                <td>
+            <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
+              <td>{{ dtMean(item.value.task) }}</td>
+            </template>
+            <template v-slot:item.data-table-expand="{ item, toggleExpand, isExpanded }">
+              <v-btn
+                @click="toggleExpand(item)"
+                icon
+                variant="text"
+                size="small"
+                :style="{
+                  visibility: (item.value.task.children || []).length ? null : 'hidden',
+                  transform: isExpanded(item) ? 'rotate(180deg)' : null
+                }"
+              >
+                <v-icon
+                  :icon="$options.icons.mdiChevronDown"
+                  size="large"
+                />
+              </v-btn>
+            </template>
+            <template v-slot:expanded-row="{ item }">
+              <tr
+                v-bind:key="job.id"
+                v-for="(job, index) in item.value.task.children"
+                class="expanded-row bg-grey-lighten-5"
+              >
+                <td :colspan="3">
                   <div class="d-flex align-content-center flex-nowrap">
-                    <div class="mr-1">
+                    <div class="d-flex mr-1">
                       <Job
                         v-cylc-object="job"
                         :key="`${job.id}-summary-${index}`"
-                        :status="job.state"
+                        :status="job.node.state"
                         style="margin-left: 1.3em;"
                       />
-                      <span class="mx-1">#{{ job.submitNum }}</span>
+                      <span class="mx-1">#{{ job.node.submitNum }}</span>
                     </div>
                   </div>
                 </td>
-                <td></td>
-                <td>
-                  <!--{{ item.node.cyclePoint }}-->
-                </td>
-                <td>{{ job.platform }}</td>
-                <td>{{ job.jobRunnerName }}</td>
-                <td>{{ job.jobId }}</td>
-                <td>{{ job.submittedTime }}</td>
-                <td>{{ job.startedTime }}</td>
-                <td>{{ job.finishedTime }}</td>
+                <td>{{ job.node.platform }}</td>
+                <td>{{ job.node.jobRunnerName }}</td>
+                <td>{{ job.node.jobId }}</td>
+                <td>{{ job.node.submittedTime }}</td>
+                <td>{{ job.node.startedTime }}</td>
+                <td>{{ job.node.finishedTime }}</td>
                 <td></td>
               </tr>
+            </template>
+            <template v-slot:bottom>
+              <v-data-table-footer :itemsPerPageOptions="$options.itemsPerPageOptions" />
             </template>
           </v-data-table>
         </v-container>
@@ -196,17 +132,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import TaskState from '@/model/TaskState.model'
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
-import cloneDeep from 'lodash/cloneDeep'
-import { taskStartTime, taskEstimatedDuration } from '@/utils/tasks'
-import { mdiChevronDown, mdiArrowDown } from '@mdi/js'
+import Task from '@/components/cylc/Task.vue'
+import Job from '@/components/cylc/Job.vue'
+import { mdiChevronDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
+import { matchNode } from '@/components/cylc/common/filter'
+import TaskFilter from '@/components/cylc/TaskFilter.vue'
+import { dtMean } from '@/utils/tasks'
 
 export default {
   name: 'TableComponent',
+
   props: {
     tasks: {
       type: Array,
@@ -217,141 +154,108 @@ export default {
       default: true
     }
   },
+
   components: {
     Task,
-    Job
+    Job,
+    TaskFilter
   },
+
   data () {
     return {
-      icons: {
-        mdiChevronDown,
-        mdiArrowDown
-      },
-      sortBy: ['node.cyclePoint'],
-      sortDesc: [localStorage.cyclePointsOrderDesc ? JSON.parse(localStorage.cyclePointsOrderDesc) : true],
-      expanded: [],
+      itemsPerPage: 50,
+      sortBy: [
+        {
+          key: 'task.tokens.cycle',
+          order: JSON.parse(localStorage.cyclePointsOrderDesc ?? true) ? 'desc' : 'asc'
+        }
+      ],
       headers: [
         {
-          text: 'Task',
-          value: 'node.name',
+          title: 'Task',
+          key: 'task.name',
+          sortable: true,
           sort: DEFAULT_COMPARATOR
         },
         {
-          text: 'Jobs',
-          value: 'data-table-expand',
+          title: 'Jobs',
+          key: 'data-table-expand',
           sortable: false
         },
         {
-          text: 'Cycle Point',
-          value: 'node.cyclePoint',
+          title: 'Cycle Point',
+          key: 'task.tokens.cycle',
+          sortable: true,
           sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
         },
         {
-          text: 'Host',
-          value: 'latestJob.platform',
+          title: 'Platform',
+          key: 'latestJob.node.platform',
+          sortable: true,
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          text: 'Job System',
-          value: 'latestJob.jobRunnerName',
+          title: 'Job System',
+          key: 'latestJob.node.jobRunnerName',
+          sortable: true,
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          text: 'Job ID',
-          value: 'latestJob.jobId',
-          sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
+          title: 'Job ID',
+          key: 'latestJob.node.jobId',
+          sortable: true,
+          sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          text: 'T-submit',
-          value: 'latestJob.submittedTime',
-          sort: datetimeComparator
+          title: 'T-submit',
+          key: 'latestJob.node.submittedTime',
+          sortable: true,
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          text: 'T-start',
-          value: 'latestJob.startedTime',
-          sort: datetimeComparator
+          title: 'T-start',
+          key: 'latestJob.node.startedTime',
+          sortable: true,
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          text: 'T-finish',
-          value: 'latestJob.finishedTime',
-          sort: datetimeComparator
+          title: 'T-finish',
+          key: 'latestJob.node.finishedTime',
+          sortable: true,
+          sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          text: 'dT-mean',
-          value: 'meanElapsedTime',
+          title: 'dT-mean',
+          key: 'task.node.task.meanElapsedTime',
+          sortable: true,
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
         }
       ],
-      tasksFilter: {
-        name: '',
-        states: []
-      },
-      activeFilters: null,
-      maximumTasks: 4
+      tasksFilter: {}
     }
   },
+
   computed: {
-    taskStates () {
-      return TaskState.enumValues.map(taskState => {
-        return {
-          text: taskState.name.replace(/_/g, ' '),
-          value: taskState.name
-        }
-      }).sort((left, right) => {
-        return left.text.localeCompare(right.text)
-      })
-    },
-    tasksFilterStates () {
-      return this.activeFilters.states
-    },
     filteredTasks () {
-      const filterByName = this.filterByTaskName()
-      const filterByState = this.filterByTaskState()
-      return this.tasks.filter(task => {
-        if (filterByName && filterByState) {
-          return task.node.name.includes(this.activeFilters.name) && this.tasksFilterStates.includes(task.node.state)
-        } else if (filterByName) {
-          return task.node.name.includes(this.activeFilters.name)
-        } else if (filterByState) {
-          return this.tasksFilterStates.includes(task.node.state)
-        }
-        return true
-      })
+      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
     }
   },
+
   methods: {
-    filterByTaskName () {
-      return this.activeFilters &&
-        this.activeFilters.name !== undefined &&
-        this.activeFilters.name !== null &&
-        this.activeFilters.name !== ''
-    },
-    filterByTaskState () {
-      return this.activeFilters &&
-        this.activeFilters.states !== undefined &&
-        this.activeFilters.states !== null &&
-        this.activeFilters.states.length > 0
-    },
-    filterTasks () {
-      const taskNameFilterSet = this.tasksFilter.name !== undefined &&
-        this.tasksFilter.name !== null &&
-        this.tasksFilter.name !== ''
-      const taskStatesFilterSet = this.tasksFilter.states !== undefined &&
-        this.tasksFilter.states !== null &&
-        this.tasksFilter.states.length > 0
-      if (taskNameFilterSet || taskStatesFilterSet) {
-        this.activeFilters = cloneDeep(this.tasksFilter)
-      } else {
-        this.activeFilters = null
-      }
-    },
-    clearInput (event) {
-      // I don't really like this, but we need to somehow force the 'change detection' to run again once the clear has taken place
-      this.tasksFilter.name = null
-      this.$refs.filterNameInput.$el.querySelector('input').dispatchEvent(new Event('keyup'))
-    },
-    taskStartTime,
-    taskEstimatedDuration
-  }
+    dtMean
+  },
+
+  icons: {
+    mdiChevronDown
+  },
+
+  itemsPerPageOptions: [
+    { value: 10, title: '10' },
+    { value: 20, title: '20' },
+    { value: 50, title: '50' },
+    { value: 100, title: '100' },
+    { value: 200, title: '200' },
+    { value: -1, title: 'All' }
+  ]
 }
 </script>

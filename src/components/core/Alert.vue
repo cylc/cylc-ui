@@ -16,45 +16,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div v-if="alert">
-    <v-alert
-      :value="true"
-      :type="alert.color"
-      :icon="alert.icon"
-      :class="getColor(alert.color)"
-      dismissible
-      tile
-      light
-      colored-border
-    >
-      <template v-slot:close="props">
-        <v-icon @click="closeAlert(props.toggle)">{{ svgPaths.close }}</v-icon>
-      </template>
-      {{ alert.text }}
-    </v-alert>
-  </div>
+  <v-snackbar
+    v-if="alert"
+    v-model="alert"
+    :color="getColor(alert.color)"
+    location="top"
+    timeout="-1"
+    data-cy="alert-snack"
+  >
+    <template v-slot:actions>
+      <v-btn
+        icon
+        v-bind="attrs"
+        @click="closeAlert"
+        data-cy="snack-close"
+      >
+        <v-icon>{{ $options.icons.mdiClose }}</v-icon>
+      </v-btn>
+    </template>
+    {{ alert.text }}
+  </v-snackbar>
 </template>
 
 <script>
 import { mdiClose } from '@mdi/js'
 import { mapActions, mapState } from 'vuex'
 
+// TODO: remove later when https://github.com/vuetifyjs/vuetify/issues/11021 is fixed
+const colors = new Map([
+  ['error', 'red'],
+  ['success', 'green'],
+  ['warning', 'amber']
+])
+
 export default {
   name: 'Alert',
-
-  data () {
-    return {
-      // TODO: remove later when https://github.com/vuetifyjs/vuetify/issues/11021 is fixed
-      colors: new Map([
-        ['error', 'red'],
-        ['success', 'green'],
-        ['warning', 'amber']
-      ]),
-      svgPaths: {
-        close: mdiClose
-      }
-    }
-  },
 
   computed: {
     ...mapState(['alert'])
@@ -63,18 +59,18 @@ export default {
   methods: {
     ...mapActions(['setAlert']),
     getColor (type) {
-      return this.colors.get(type) || ''
+      return colors.get(type) || ''
     },
     /**
      * Dismisses the alert from the UI, also removing it from the Vuex store.
-     *
-     * @param {Function} toggleFunction - the original Vuetify toggle function
-     * @see https://vuetifyjs.com/en/api/v-alert/
      */
-    closeAlert (toggleFunction) {
+    closeAlert () {
       this.setAlert(null)
-      toggleFunction()
     }
+  },
+
+  icons: {
+    mdiClose
   }
 }
 </script>

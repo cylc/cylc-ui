@@ -21,13 +21,12 @@ component. Note: this is not used for the workflow view, see
 ./workflow/Toolbar.vue instead. -->
 
 <template>
-  <v-app-bar
-    app
+  <v-toolbar
     id="core-app-bar"
-    dense
+    density="compact"
     flat
     class="c-toolbar"
-    v-if="responsive"
+    v-if="showNavBtn"
   >
     <v-toolbar-title
       class="tertiary--text"
@@ -45,7 +44,7 @@ component. Note: this is not used for the workflow view, see
       <!-- title -->
       <span class="c-toolbar-title">{{ title }}</span>
     </v-toolbar-title>
-  </v-app-bar>
+  </v-toolbar>
 </template>
 
 <script>

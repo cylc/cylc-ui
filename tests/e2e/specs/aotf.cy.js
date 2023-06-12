@@ -16,29 +16,29 @@
  */
 
 import {
-  mutationStatus
+  mutationStatus,
+  processMutations
 } from '@/utils/aotf'
 import {
   MUTATIONS
 } from '../support/graphql'
+import { cloneDeep } from 'lodash'
 
 function mockApolloClient () {
   const mutations = []
   cy.window().its('app.$workflowService').then(service => {
     // mock the apollo client's mutate method to catch low-level calls
-    service.primaryMutations = {
-      workflow: ['workflowMutation']
-    }
-    service.apolloClient.mutate = (args) => {
+    service.apolloClient.mutate = async (args) => {
       // log this for later
       mutations.push(args)
       // return something roughly the same shape as what graphql would
-      const ret = {}
-      ret.data = {}
-      ret.data[`${args.mutation.definitions[0].name.value}`] = {
-        result: []
+      return {
+        data: {
+          [args.mutation.definitions[0].name.value]: {
+            result: []
+          }
+        }
       }
-      return ret
     }
   })
   return mutations
@@ -48,10 +48,7 @@ function mockWorkflowService () {
   const mutations = []
   cy.window().its('app.$workflowService').then(service => {
     // mock the workflow service's mutate method to catch high-level calls
-    service.primaryMutations = {
-      workflow: ['workflowMutation']
-    }
-    service.mutate = (args) => {
+    service.mutate = async (args) => {
       // log this for later
       mutations.push(args)
       // return something roughly the same shape as what the workflow
@@ -64,23 +61,28 @@ function mockWorkflowService () {
 
 describe('Api On The Fly', () => {
   beforeEach(() => {
-    cy
-      .intercept('/graphql', {
-        data: {
-          __schema: {
-            mutationType: {
-              fields: MUTATIONS
-            },
-            types: []
-          }
-        }
+    cy.intercept('/graphql', req => {
+      if (req.body.query.includes('__schema')) {
+        req.alias = 'IntrospectQuery' // equivalent to `.as('IntrospectQuery')`
+      }
+    })
+    cy.visit('/#/workspace/one')
+    cy.window().its('app.$workflowService').then(service => {
+      const mutations = cloneDeep(MUTATIONS)
+      processMutations(mutations, [])
+      // mock the apollo client's mutate method to catch low-level calls
+      service.introspection = Promise.resolve({
+        mutations,
+        types: [],
+        queries: []
       })
-      .as('IntrospectQuery')
+      service.primaryMutations = {
+        workflow: ['workflowMutation']
+      }
+    })
   })
   describe('cylc-object', () => {
     it('correctly associates objects with mutations', () => {
-      cy.visit('/#/workflows/one')
-
       mockApolloClient()
 
       cy.wait(['@IntrospectQuery'])
@@ -95,25 +97,25 @@ describe('Api On The Fly', () => {
       const tests = [
         // cycle point
         {
-          selector: '.node-data-cyclepoint > .c-task:first',
+          selector: '.node-data-cycle > .c-task:first',
           mutationTitle: 'Cycle Mutation',
           mutationText: 'cycle'
         },
         // family
         {
-          selector: '.node-data-family-proxy > .c-task:first',
+          selector: '.node-data-family > .c-task:first',
           mutationTitle: 'Namespace Mutation',
           mutationText: 'namespace'
         },
         // task
         {
-          selector: '.node-data-task-proxy > .c-task:first',
+          selector: '.node-data-task > .c-task:first',
           mutationTitle: 'Namespace Mutation',
           mutationText: 'namespace'
         },
         // job (in task summary)
         {
-          selector: '.node-data-task-proxy > .node-summary > .c-job:first',
+          selector: '.node-data-task > .node-summary > .c-job:first',
           mutationTitle: 'Job Mutation',
           mutationText: 'job'
         },
@@ -142,9 +144,9 @@ describe('Api On The Fly', () => {
             cy
               .get('.v-list-item')
               .should('have.length', 1)
-              .get('.v-list-item__title:first')
+              .get('.v-list-item-title:first')
               .should('have.text', test.mutationTitle)
-              .get('.c-description:first')
+              .get('.v-list-item-subtitle:first')
               .should('have.text', test.mutationText)
           })
         // click outside of the menu
@@ -159,8 +161,6 @@ describe('Api On The Fly', () => {
     })
 
     it('fires the mutation when clicked', () => {
-      cy.visit('/#/workflows/one')
-
       // mock the mutation method
       const mutations = mockApolloClient()
 
@@ -168,7 +168,7 @@ describe('Api On The Fly', () => {
 
       // open the mutation menu
       cy
-        .get('.node-data-cyclepoint > .c-task:first')
+        .get('.node-data-cycle > .c-task:first')
         .should('exist')
         .should('be.visible')
         .click()
@@ -198,8 +198,6 @@ describe('Api On The Fly', () => {
 
   describe('Mutation Editor', () => {
     it('is opened when the edit button is clicked in the mutation menu', () => {
-      cy.visit('/#/workflows/one')
-
       // mock the mutation method
       const mutations = mockApolloClient()
 
@@ -212,7 +210,7 @@ describe('Api On The Fly', () => {
 
       // open the mutation menu
       cy
-        .get('.node-data-cyclepoint > .c-task:first')
+        .get('.node-data-cycle > .c-task:first')
         .should('exist')
         .should('be.visible')
         .click()
@@ -252,8 +250,6 @@ describe('Api On The Fly', () => {
 
   describe('Hold/Release button', () => {
     it('should hold/release the workflow', () => {
-      cy.visit('/#/workflows/one')
-
       // mock the mutation method
       const mutations = mockWorkflowService()
       expect(mutations.length).to.equal(0)
@@ -272,8 +268,6 @@ describe('Api On The Fly', () => {
 
   describe('Stop button', () => {
     it('should stop the workflow', () => {
-      cy.visit('/#/workflows/one')
-
       // mock the mutation method
       const mutations = mockWorkflowService()
       expect(mutations.length).to.equal(0)
@@ -294,8 +288,6 @@ describe('Api On The Fly', () => {
 
   describe('Mutation Button', () => {
     it('should list all workflow mutations', () => {
-      cy.visit('/#/workflows/one')
-
       // mock the mutation method
       mockWorkflowService()
 

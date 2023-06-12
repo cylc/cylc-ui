@@ -1,0 +1,216 @@
+<!--
+Copyright (C) NIWA & British Crown (Met Office) & Contributors.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<template>
+  <div class="c-view-toolbar">
+    <!-- control group -->
+    <div
+      class="group"
+      v-for="iGroup in iGroups"
+      :key="iGroup.title"
+    >
+      <!-- control -->
+      <div
+        :class="['control', iControl.key]"
+        v-for="iControl in iGroup.iControls"
+        :key="iControl.title"
+      >
+        <v-btn
+          :class="iControl.title"
+          icon
+          variant="text"
+          :disabled="iControl.disabled"
+          :color="iControl.color"
+          @click="iControl.callback"
+        >
+          <v-icon size="large">{{ iControl.icon }}</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >
+            <span>{{ iControl.title }}</span>
+          </v-tooltip>
+        </v-btn>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'ViewToolbar',
+
+  emits: [
+    'setOption'
+  ],
+
+  props: {
+    groups: {
+      required: true,
+      type: Array
+      /*
+        groups: [
+          {
+            // display name
+            title: String,
+            // list of controls in this group
+            controls: [
+              {
+                // display name
+                title: String,
+                // unique key:
+                // * Provided with "setOption" events.
+                // * Used by enableIf/disableIf
+                // * Added to the control's class list for testing.
+                key: String
+                // action to perform when clicked:
+                // * toggle - toggle true/false
+                // * callback - call the provided callback
+                action: String
+                // for use with action='callback'
+                callback: Fuction
+                // list of keys
+                // only enable this control if all of the listed controls have
+                // truthy values
+                enableif
+                // list of keys
+                // disable this control if any of the listed controls have
+                // truthy values
+                disableIf
+              }
+            ]
+          }
+        ]
+      */
+    }
+  },
+
+  computed: {
+    iGroups () {
+      // wrap the provided props into something we can mutate with derived
+      // parameters
+      const ret = []
+      let iGroup
+      let iControl
+      let color // control color
+      let callback // callback to fire when control is activated
+      let disabled // true if control should not be enabled
+      const values = this.getValues()
+      for (const group of this.groups) {
+        iGroup = {
+          ...group,
+          iControls: []
+        }
+        for (const control of group.controls) {
+          color = null
+          callback = null
+          disabled = false
+
+          // set callback and color
+          switch (control.action) {
+            case 'toggle':
+              callback = (e) => this.toggle(control, e)
+              if (control.value) {
+                color = 'blue'
+              }
+              break
+            case 'callback':
+              callback = (e) => this.call(control, e)
+              break
+          }
+
+          // set disabled
+          for (const enableIf of control.enableIf || []) {
+            if (!values[enableIf]) {
+              disabled = true
+              break
+            }
+          }
+          for (const disableIf of control.disableIf || []) {
+            if (values[disableIf]) {
+              disabled = true
+              break
+            }
+          }
+
+          iControl = {
+            ...control,
+            color,
+            callback,
+            disabled
+          }
+          iGroup.iControls.push(iControl)
+        }
+        ret.push(iGroup)
+      }
+      return ret
+    }
+  },
+
+  methods: {
+    toggle (control, e) {
+      // toggle a boolean value
+      // NOTE: undefined is interpreted is false
+      control.value = !control.value
+      this.$emit('setOption', control.key, control.value)
+      e.currentTarget.blur()
+    },
+    call (control, e) {
+      // call a control's callback
+      control.callback()
+      e.currentTarget.blur()
+    },
+    getValues () {
+      // an object with all defined values
+      const vars = {}
+      for (const group of this.groups) {
+        for (const control of group.controls) {
+          if (control.key) {
+            vars[control.key] = control.value
+          }
+        }
+      }
+      return vars
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+  .c-view-toolbar {
+    // give the toolbar a little respect space
+    padding: 0.5rem;
+    display: flex;
+
+    .group {
+      display: flex;
+      align-items: center;
+
+      $spacing: 0.5rem;
+
+      &:not(:first-child):before {
+        // place a divider between groups
+        content: '';
+        height: 70%;
+        width: 2px;
+        background: rgb(0, 0, 0, 0.22);
+        // put a bit of space between the groups
+        margin: 0 $spacing;
+      }
+    }
+  }
+</style>

@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container>
+  <v-container fluid>
     <h1 class="ma-0">Cylc UI Quick Start</h1>
     <!--
       TODO: make sections linkable
@@ -30,13 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <div class="card-grid">
 
-      <v-flex
-        md5
-        xs12
-      >
-        <v-card outlined>
+      <v-col>
+        <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
-            <p class="display-1 text--primary">Tasks &amp; Jobs</p>
+            <p class="text-h4 text--primary">Tasks &amp; Jobs</p>
           </v-card-title>
           <v-card-text>
             <p>
@@ -64,9 +61,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <td style="font-size: 2em;">
                   <!-- set times to make the progress change -->
                   <task
-                    :status="state.name"
-                    :startTime="Date.now()"
-                    :estimatedDuration="30"
+                    :task="{
+                      state: state.name,
+                      task: {meanElapsedTime: 30}
+                    }"
+                    :startTime="String(Date.now())"
                   />
                 </td>
                 <td>
@@ -87,94 +86,84 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
           </v-card-text>
         </v-card>
-      </v-flex>
+      </v-col>
 
-      <v-flex
-        md5
-        xs12
-      >
-        <v-card outlined>
+      <v-col>
+        <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
-            <p class="display-1 text--primary">Why Are We Waiting?</p>
+            <p class="text-h4 text--primary">Why Are We Waiting?</p>
           </v-card-title>
           <v-card-text>
             <p>
               Why has my task not started to run yet?
             </p>
            <v-list
-              three-line
+              lines="three"
             >
               <v-list-item>
-                <v-list-item-icon>
+                <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    status="waiting"
+                    :task="{state: 'waiting'}"
+                    class="mr-4"
                   />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    Waiting
-                  </v-list-item-title>
-                  <v-list-item-sub-title>
-                    The task is not ready to run yet - it is still waiting on
-                    upstream <b>dependencies</b> or <b>xtriggers</b>.
-                  </v-list-item-sub-title>
-                </v-list-item-content>
+                </template>
+                <v-list-item-title>
+                  Waiting
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task is not ready to run yet - it is still waiting on
+                  upstream <b>dependencies</b> or <b>xtriggers</b>.
+                </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
-                <v-list-item-icon>
+                <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    status="waiting"
-                    :isHeld="true"
+                    :task="{state: 'waiting', isHeld: true}"
+                    class="mr-4"
                   />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    Held
-                  </v-list-item-title>
-                  <v-list-item-sub-title>
-                    The task won't run unless <b>released</b> from hold.
-                    Tasks can be held before they are ready to run
-                    (or after, prior to retriggering).
-                  </v-list-item-sub-title>
-                </v-list-item-content>
+                </template>
+                <v-list-item-title>
+                  Held
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task won't run unless <b>released</b> from hold.
+                  Tasks can be held before they are ready to run
+                  (or after, prior to retriggering).
+                </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
-                  <v-list-item-icon>
-                    <task
-                      style="font-size: 2em;"
-                      status="waiting"
-                      :isQueued="true"
-                    />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      Queued
-                    </v-list-item-title>
-                    <v-list-item-sub-title>
-                      The task is ready to run but is held back by a queue,
-                      which restricts the number of active tasks.
-                    </v-list-item-sub-title>
-                  </v-list-item-content>
+                <template v-slot:prepend>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'waiting', isQueued: true}"
+                    class="mr-4"
+                  />
+                </template>
+                <v-list-item-title>
+                  Queued
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task is ready to run but is held back by a queue,
+                  which restricts the number of active tasks.
+                </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
-                  <v-list-item-icon>
-                    <task
-                      style="font-size: 2em;"
-                      status="waiting"
-                      :isRunahead="true"
-                    />
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      Runahead
-                    </v-list-item-title>
-                    <v-list-item-sub-title>
-                      The task is ready to run but is beyond the runahead limit,
-                      which restricts the number of active cycle points.
-                    </v-list-item-sub-title>
-                  </v-list-item-content>
+                <template v-slot:prepend>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'waiting', isRunahead: true}"
+                    class="mr-4"
+                  />
+                </template>
+                <v-list-item-title>
+                  Runahead
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task is ready to run but is beyond the runahead limit,
+                  which restricts the number of active cycle points.
+                </v-list-item-subtitle>
               </v-list-item>
             </v-list>
             <p>
@@ -188,21 +177,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
              </p>
           </v-card-text>
         </v-card>
-      </v-flex>
+      </v-col>
     </div>
 
   </v-container>
 </template>
 
 <script>
-import Task from '@/components/cylc/Task'
-import Job from '@/components/cylc/Job'
+import Task from '@/components/cylc/Task.vue'
+import Job from '@/components/cylc/Job.vue'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
+import { getPageTitle } from '@/utils'
 
 export default {
   name: 'Guide',
-  mixins: [subscriptionViewMixin],
+  head () {
+    return {
+      title: getPageTitle('App.guide')
+    }
+  },
   components: {
     task: Task,
     job: Job
@@ -216,8 +209,6 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '~@/styles/index.scss';
-
   .card-grid {
     display: flex;
     flex-wrap: wrap;
@@ -227,6 +218,10 @@ export default {
       margin: 0.5em;
     }
 
+  }
+
+  .v-card-text p + p {
+    margin-top: 8px;
   }
 
   #task-job-state-table {

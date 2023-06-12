@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import pageMixin from '@/mixins'
+import 'graphiql/graphiql.min.css'
 import ReactDOM from 'react-dom'
 import React from 'react'
 import GraphiQL from 'graphiql'
@@ -28,8 +28,7 @@ import { fallbackGraphQLFetcher, graphQLFetcher } from '@/graphql/graphiql'
 
 export default {
   name: 'GraphiQL',
-  mixins: [pageMixin],
-  metaInfo () {
+  head () {
     return {
       title: 'GraphiQL'
     }
@@ -50,14 +49,13 @@ export default {
       this.$refs.graphiql
     )
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave (to, from) {
     // Important to remember to unsubscribe, otherwise a user may accidentally create several
     // subscriptions/observers, causing performance issues on both frontend and backend.
     if (this.subscription !== null) {
       this.subscription.unsubscribe()
       this.subscription = null
     }
-    next()
   },
   methods: {
     createFetcher () {
@@ -71,8 +69,6 @@ export default {
 </script>
 
 <style scoped>
-@import '~graphiql/graphiql.min.css';
-
 body {
   height: 100%;
   margin: 0;

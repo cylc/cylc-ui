@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { toRaw } from 'vue'
 import ViewState from '@/model/ViewState.model'
 import Alert from '@/model/Alert.model'
 
@@ -50,7 +51,7 @@ class Subscription {
      */
     this.observable = null
     /**
-     * @type {Object.<String, View>}
+     * @type {{ [componentOrViewUID: string]: View }}
      */
     this.subscribers = {}
     /**
@@ -66,18 +67,17 @@ class Subscription {
    * @param {*} context
    */
   handleViewState (viewState, context) {
-    const _this = this
-    if (viewState !== ViewState.ERROR) {
-      Object.values(this.subscribers).forEach(subscriber => {
+    if (toRaw(viewState) !== ViewState.ERROR) {
+      Object.values(this.subscribers).forEach((subscriber) => {
         subscriber.viewState = viewState
       })
     } else {
-      Object.values(this.subscribers).forEach(function (subscriber) {
+      Object.values(this.subscribers).forEach((subscriber) => {
         subscriber.viewState = viewState
-        subscriber.setAlert(new Alert(context.message, null, 'error'))
-        if (_this.debug) {
+        subscriber.setAlert(new Alert(context.message, 'error'))
+        if (this.debug) {
           // eslint-disable-next-line no-console
-          console.debug(`Subscription error: ${context.message}`, viewState, context)
+          console.debug(`Subscription error: ${context.message}`, toRaw(viewState), context)
         }
       })
     }

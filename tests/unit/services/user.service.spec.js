@@ -15,19 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import sinon from 'sinon'
 import axios from 'axios'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import UserService from '@/services/user.service'
 import storeOptions from '@/store/options'
 import Alert from '@/model/Alert.model'
 
-Vue.use(Vuex)
-
 describe('UserService', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   let sandbox
   beforeEach(() => {
     sandbox = sinon.createSandbox()
@@ -65,7 +61,7 @@ describe('UserService', () => {
       sandbox.stub(axios, 'get').rejects(e)
       return new UserService().getUserProfile()
         .catch((error) => {
-          const alert = new Alert(error.response.statusText, null, 'error')
+          const alert = new Alert(error.response.statusText, 'error')
           return store.dispatch('setAlert', alert)
         })
         .finally(() => {

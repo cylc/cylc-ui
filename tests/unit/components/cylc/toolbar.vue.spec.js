@@ -15,50 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { mount, createLocalVue } from '@vue/test-utils'
-import { expect } from 'chai'
-import Toolbar from '@/components/cylc/Toolbar'
-import storeOptions from '@/store/options'
-import Vuetify from 'vuetify/lib'
+import { mount } from '@vue/test-utils'
+import { createVuetify } from 'vuetify'
+import { createStore } from 'vuex'
+import Toolbar from '@/components/cylc/Toolbar.vue'
 import WorkflowState from '@/model/WorkflowState.model'
-import Vuex from 'vuex'
-import Vue from 'vue'
-
-const localVue = createLocalVue()
-
-Vue.use(Vuex)
+import storeOptions from '@/store/options'
 
 describe('Toolbar component', () => {
-  let vuetify
-  let $route
-  const store = new Vuex.Store(storeOptions)
-  const mountFunction = options => {
-    return mount(Toolbar, {
-      localVue,
-      vuetify,
-      store,
-      mocks: {
-        $route,
-        $vuetify: {
-          application: {
-            register: () => {}
-          }
-        },
-        $t: () => {} // vue-i18n,
-      },
-      ...options
-    })
+  const vuetify = createVuetify()
+  const $route = {
+    name: 'testRoute'
   }
+  let store
+  let mountFunction
+
   beforeEach(() => {
-    vuetify = new Vuetify({
-      theme: { disable: true },
-      icons: {
-        iconfont: 'mdi'
+    store = createStore(storeOptions)
+    mountFunction = () => mount(Toolbar, {
+      global: {
+        plugins: [vuetify, store],
+        mocks: { $route }
       }
     })
-    $route = {
-      name: 'testRoute'
-    }
+
     store.state.workflows.workflows = [
       {
         id: 'user/id',
@@ -68,25 +48,28 @@ describe('Toolbar component', () => {
     ]
     store.state.workflows.workflowName = 'test'
   })
+
   it('should mount the component', async () => {
     const wrapper = mountFunction()
     await wrapper.vm.$nextTick()
-    expect(wrapper.vm.$el).to.not.equal(null)
+    expect(wrapper.vm.$el).to.exist
   })
-  it('should hide and display drawer according to screen viewport size', async () => {
+
+  it('hides/shows nav button according to viewport size & whether drawer is collapsed', async () => {
+    // TODO: actually just show nav btn at all times?
     const wrapper = mountFunction()
-    await wrapper.setData({
-      responsive: false
-    })
-    expect(store.state.app.drawer).to.equal(null)
-    // empty wrapper before responsive is set to true
-    expect(wrapper.find('button.default').exists()).to.equal(false)
-    // let's make it responsive, so that the burger menu is visible
-    await wrapper.setData({
-      responsive: true
-    })
+    // Btn should show when drawer is collapsed
+    wrapper.vm.$vuetify.display.mobile = false
+    store.state.app.drawer = false
+    await wrapper.vm.$nextTick()
     expect(wrapper.find('button.default').exists()).to.equal(true)
-    wrapper.find('button.default').trigger('click')
-    expect(store.state.app.drawer).to.equal(true)
+    // Btn should not show when drawer is visible on large viewport
+    store.state.app.drawer = true
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('button.default').exists()).to.equal(false)
+    // Btn should show when drawer is visible on small viewport
+    wrapper.vm.$vuetify.display.mobile = true
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('button.default').exists()).to.equal(true)
   })
 })

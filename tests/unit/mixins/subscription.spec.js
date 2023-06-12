@@ -15,22 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import sinon from 'sinon'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { toRaw } from 'vue'
+import { createStore } from 'vuex'
 import Alert from '@/model/Alert.model'
 import ViewState from '@/model/ViewState.model'
 import storeOptions from '@/store/options'
 import subscriptionMixin from '@/mixins/subscription'
 
-Vue.use(Vuex)
-
-const localVue = createLocalVue()
-
 describe('Subscription mixin', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   beforeEach(() => {
     sinon.stub(console, 'log')
   })
@@ -59,12 +54,12 @@ describe('Subscription mixin', () => {
     for (const test of tests) {
       const Component = {
         mixins: [subscriptionMixin],
-        render () {
-        }
+        render () { }
       }
-      const component = shallowMount(Component, {
-        localVue,
-        store,
+      const component = mount(Component, {
+        global: {
+          plugins: [store]
+        },
         data () {
           return {
             viewState: test.viewState
@@ -75,17 +70,18 @@ describe('Subscription mixin', () => {
     }
   })
   it('should set the application alert', () => {
-    expect(store.state.alert).to.equal(null)
+    store.state.alert = null
     const Component = {
       mixins: [subscriptionMixin],
       render () {}
     }
-    const component = shallowMount(Component, {
-      localVue,
-      store
+    const component = mount(Component, {
+      global: {
+        plugins: [store]
+      }
     })
-    const alert = new Alert('text', null, 'red')
+    const alert = new Alert('text', 'red')
     component.vm.setAlert(alert)
-    expect(store.state.alert).to.equal(alert)
+    expect(toRaw(store.state.alert)).to.equal(alert)
   })
 })

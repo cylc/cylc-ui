@@ -15,13 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import sinon from 'sinon'
 import gql from 'graphql-tag'
 import Subscription from '@/model/Subscription.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import ViewState from '@/model/ViewState.model'
-import WorkflowCallback from '@/components/cylc/common/callbacks'
 
 describe('SubscriptionQuery model', () => {
   const query = gql`query { workflow { id } }`
@@ -29,13 +27,19 @@ describe('SubscriptionQuery model', () => {
     workflowId: '~cylc/cylc'
   }
   const name = 'root'
-  const callbacks = [
-    new WorkflowCallback()
-  ]
+  const callbacks = []
+  const isDelta = true
+  const isGlobalCallback = true
   let subscriptionQuery
   beforeEach(() => {
     sinon.stub(console, 'debug')
-    subscriptionQuery = new SubscriptionQuery(query, variables, name, callbacks)
+    subscriptionQuery = new SubscriptionQuery(
+      query,
+      variables,
+      name,
+      callbacks,
+      isDelta,
+      isGlobalCallback)
   })
   afterEach(() => {
     sinon.restore()

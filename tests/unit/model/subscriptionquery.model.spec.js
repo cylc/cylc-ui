@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import gql from 'graphql-tag'
 import DeltasCallback from '@/services/callbacks'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -31,11 +30,16 @@ describe('SubscriptionQuery model', () => {
       const callbacks = [
         new DeltasCallback()
       ]
-      const subscriptionQuery = new SubscriptionQuery(query, variables, name, callbacks)
+      const isDelta = true
+      const isGlobalCallback = true
+      const subscriptionQuery = new SubscriptionQuery(
+        query, variables, name, callbacks, isDelta, isGlobalCallback)
       expect(subscriptionQuery.query).to.equal(query)
       expect(subscriptionQuery.variables).to.deep.equal(variables)
       expect(subscriptionQuery.name).to.equal(name)
       expect(subscriptionQuery.callbacks).to.deep.equal(callbacks)
+      expect(subscriptionQuery.isDelta).to.deep.equal(isDelta)
+      expect(subscriptionQuery.isGlobalCallback).to.deep.equal(isGlobalCallback)
     })
   })
 })

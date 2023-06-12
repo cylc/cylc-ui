@@ -15,65 +15,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import sinon from 'sinon'
-import * as fontSize from '@/utils/font-size'
-
-if (!global.localStorage) {
-  global.localStorage = {
-    getItem () { return '{}' },
-    setItem () {}
-  }
-}
+import {
+  decreaseFontSize, getCurrentFontSize, increaseFontSize, INCREMENT, resetFontSize
+} from '@/utils/font-size'
 
 describe('Font Size', () => {
-  // Vuetify won't have initialized the value, as there is no DOM and nothing was loaded
-  const TESTING_INITIAL_VALUE = 16
-  let stub = null
+  // Won't have initialized the value, as there is no DOM and nothing was loaded
+  const initialFontSize = 16
+
   beforeEach(() => {
-    // Create a dummy HTML html element, as that's not present in JSDOM by default.
-    // Also set the initial value (again, Vuetify won't have set this value yet).
-    const htmlElement = document.createElement('html')
-    htmlElement.style.fontSize = `${TESTING_INITIAL_VALUE}px`
-    const htmlCollection = [htmlElement]
-    stub = sinon.stub(document, 'getElementsByTagName').returns(htmlCollection)
-    // Reset the localStorage value
-    delete global.localStorage.fontSize
+    delete localStorage.fontSize
+    document.documentElement.style.fontSize = `${initialFontSize}px`
   })
-  afterEach(() => {
-    if (stub !== null) {
-      // Undo mocking
-      stub.restore()
-    }
+
+  it('gets the current font size', () => {
+    expect(getCurrentFontSize()).to.equal(initialFontSize)
   })
-  it('Should calculate expected font size correctly', () => {
-    expect(TESTING_INITIAL_VALUE).to.be.equal(fontSize.expectedFontSize(true, 0, TESTING_INITIAL_VALUE))
-    expect(TESTING_INITIAL_VALUE).to.be.equal(fontSize.expectedFontSize(false, 0, TESTING_INITIAL_VALUE))
-    expect(TESTING_INITIAL_VALUE * 1.2).to.be.equal(fontSize.expectedFontSize(true, 1, TESTING_INITIAL_VALUE))
-    expect(TESTING_INITIAL_VALUE * 1.2 * 1.2).to.be.equal(fontSize.expectedFontSize(true, 2, TESTING_INITIAL_VALUE))
-    expect(TESTING_INITIAL_VALUE * 0.8).to.be.equal(fontSize.expectedFontSize(false, 1, TESTING_INITIAL_VALUE))
-    expect(TESTING_INITIAL_VALUE * 0.8 * 0.8).to.be.equal(fontSize.expectedFontSize(false, 2, TESTING_INITIAL_VALUE))
+
+  it('sets and gets a new font size', () => {
+    const newVal = 31
+    const newValPx = `${newVal}px`
+    expect(localStorage.fontSize).to.not.equal(newValPx)
+    expect(document.documentElement.style.fontSize).to.not.equal(newValPx)
+    expect(getCurrentFontSize()).to.not.equal(newVal)
+    resetFontSize(newValPx)
+    expect(localStorage.fontSize).to.equal(newValPx)
+    expect(document.documentElement.style.fontSize).to.equal(newValPx)
+    expect(getCurrentFontSize()).to.equal(newVal)
   })
-  it('Should return the correct current font size', () => {
-    expect(TESTING_INITIAL_VALUE).to.be.equal(fontSize.getCurrentFontSize())
+
+  it('increases the font size', () => {
+    increaseFontSize()
+    expect(getCurrentFontSize()).to.equal(initialFontSize + INCREMENT)
   })
-  it('Should increase the font size correctly', () => {
-    expect(TESTING_INITIAL_VALUE).to.be.equal(fontSize.getCurrentFontSize())
-    fontSize.increaseFontSize()
-    fontSize.increaseFontSize()
-    expect(TESTING_INITIAL_VALUE * 1.2 * 1.2).to.be.equal(fontSize.expectedFontSize(true, 2, TESTING_INITIAL_VALUE))
-  })
-  it('Should decrease the font size correctly', () => {
-    expect(TESTING_INITIAL_VALUE).to.be.equal(fontSize.getCurrentFontSize())
-    fontSize.decreaseFontSize()
-    fontSize.decreaseFontSize()
-    expect(TESTING_INITIAL_VALUE * 0.8 * 0.8).to.be.equal(fontSize.expectedFontSize(false, 2, TESTING_INITIAL_VALUE))
-  })
-  it('Should reset the font size correctly', () => {
-    expect(TESTING_INITIAL_VALUE).to.be.equal(fontSize.getCurrentFontSize())
-    fontSize.decreaseFontSize()
-    fontSize.decreaseFontSize()
-    fontSize.resetFontSize(`${TESTING_INITIAL_VALUE}px`)
-    expect(TESTING_INITIAL_VALUE).to.be.equal(fontSize.getCurrentFontSize())
+
+  it('decreases the font size', () => {
+    decreaseFontSize()
+    expect(getCurrentFontSize()).to.equal(initialFontSize - INCREMENT)
   })
 })

@@ -17,15 +17,12 @@ import { mapState } from 'vuex'
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// eslint-disable-next-line no-unused-vars
-import User from '@/model/User.model'
-
 /**
  * A mixin that contains data used for a GraphQL subscription, such as the
  * query variables.
  *
  * To be used in Views that are bound to VueRouter routes that contain the
- * :workflowName prop.
+ * :workflowName param.
  */
 export default {
   props: {
@@ -40,7 +37,7 @@ export default {
      * has only the workflow name from the Vue route. We then combine it
      * with the user name to create the workflow ID.
      *
-     * @return {User}
+     * @return {import('@/model/User.model').User}
      */
     ...mapState('user', ['user']),
     /**

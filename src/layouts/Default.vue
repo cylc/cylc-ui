@@ -19,12 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div>
     <ConnectionStatus :is-offline="offline" />
     <toolbar v-if="!workflowViews.includes($route.name)" />
-    <drawer />
+    <drawer v-if="showSidebar" />
     <CylcObjectMenu/>
 
     <v-main>
       <alert />
-      <div id="core-view">
+      <div id="core-view" class="h-screen overflow-auto">
         <v-fade-transition mode="out-in">
           <slot/>
         </v-fade-transition>
@@ -35,13 +35,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState } from 'vuex'
-import store from '@/store/index'
+import { store } from '@/store/index'
 import AlertModel from '@/model/Alert.model'
-import Alert from '@/components/core/Alert'
-import Drawer from '@/components/cylc/Drawer'
-import Toolbar from '@/components/cylc/Toolbar'
-import ConnectionStatus from '@/components/cylc/ConnectionStatus'
-import CylcObjectMenu from '@/components/cylc/cylcObject/Menu'
+import Alert from '@/components/core/Alert.vue'
+import Drawer from '@/components/cylc/Drawer.vue'
+import Toolbar from '@/components/cylc/Toolbar.vue'
+import ConnectionStatus from '@/components/cylc/ConnectionStatus.vue'
+import CylcObjectMenu from '@/components/cylc/cylcObject/Menu.vue'
 
 export default {
   name: 'Default',
@@ -52,6 +52,14 @@ export default {
     Alert,
     Drawer,
     Toolbar
+  },
+
+  props: {
+    showSidebar: {
+      type: Boolean,
+      required: false,
+      default: true
+    }
   },
 
   data () {
@@ -65,9 +73,10 @@ export default {
        * are passed down from the parent Workflow View).
        */
       workflowViews: [
-        'workflow',
+        'workspace',
         'tree',
-        'table'
+        'table',
+        'graph'
       ]
     }
   },
@@ -77,9 +86,11 @@ export default {
   },
 
   errorCaptured (error, vm, info) {
-    if (process.env.NODE_ENV !== 'production') {
-      store.dispatch('setAlert', new AlertModel(error, null, 'error'))
+    if (import.meta.env.MODE !== 'production') {
+      store.dispatch('setAlert', new AlertModel(error, 'error'))
     }
+    // Stop error propagating further:
+    return false
   }
 }
 </script>

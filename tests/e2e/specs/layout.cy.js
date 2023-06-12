@@ -17,24 +17,22 @@
 
 describe('Default layout', () => {
   it('Should display errors from children elements captured at the Default layout level', () => {
+    const errMsg = 'Error raised in Cypress stub!'
     // visit any page first, so that we create the window.app reference
-    cy.visit('/#/workflows/one')
-    cy
-      .get('.v-alert')
+    cy.visit('/#/guide')
+    cy.get('[data-cy=alert-snack]')
       .should('not.exist')
     cy.window().its('app.$workflowService').then(service => {
       // mock service so that it returns an error
-      cy.stub(service, 'subscribe', () => {
+      cy.stub(service, 'subscribe').callsFake(() => {
         throw new Error('Error raised in Cypress stub!')
       })
       // now visit dashboard, that calls service.subscribe, which will raise an uncaught error...
-      cy
-        .get('.v-list-item')
-        .contains('Dashboard')
+      cy.get('nav')
+        .contains('.v-list-item', 'Dashboard')
         .click({ force: true })
-      cy
-        .get('.v-alert')
-        .should('be.visible')
+      cy.get('[data-cy=alert-snack]')
+        .contains(errMsg)
     })
   })
 })

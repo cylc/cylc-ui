@@ -15,13 +15,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
-  <div>
-    <div class="workflow-panel">
-      <div ref="main" class="main pa-2 fill-height"></div>
-      <div v-show="false">
-        <slot></slot>
-      </div>
-    </div>
+  <div ref="main" class="main pa-2 fill-height">
+    <!-- Lumino box panel gets inserted here -->
+  </div>
+  <div v-show="false">
+    <!-- Hidden div acts as staging area for views before they are
+    moved into a lumino widget -->
+    <component
+      v-for="(item, id) of views"
+      :key="id"
+      :ref="(ref) => setViewRef(id, ref)"
+      :is="item.view"
+      :tab-title="getTabTitle(item.view)"
+      :workflow-name="workflowName"
+      :initialOptions="item.initialOptions"
+      class="h-100"
+    />
   </div>
 </template>
 
@@ -33,24 +42,38 @@ import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
  * A component to wrap the Lumino application.
  *
  * It will create a BoxPanel (left to right, no gutters) with a dock
- * panel. Each component created in the default slot will be added
- * to an invisible area.
- *
- * Upon creation, the component will take care to transfer the $el
- * of each children component to the Lumino widget div, creating the
+ * panel. Each component/view is rendered in a hidden div, then we transfer
+ * the element into the Lumino widget div, creating the
  * impression that the component was created inside the tab/widget.
  *
  * Lumino uses DOM, and Vue the VDOM. So this is an approach that
- * works, but there could be alternative approaches too. Feel free
- * to adapt it to your use case as necessary.
+ * works, but there could be alternative approaches too.
  */
 export default {
-  /**
-   * Show a useful name in logs/debug/vue-extension
-   */
   name: 'Lumino',
 
+  components: {}, // Filled on created()
+
   props: {
+    /**
+     * Parent-provided mapping of widget ID to the name of
+     * view component class + options.
+     *
+     * @type {{ [id: string]: { view: string, initialOptions: Object } }}
+     */
+    views: {
+      type: Object,
+      default: () => {}
+    },
+    workflowName: {
+      type: String,
+      required: true
+    },
+    /** All possible view component classes that can be rendered */
+    allViews: {
+      type: Array,
+      required: true
+    },
     /**
      * Prop to customize the tab title. Defaults to name.
      * If a component does not have the $component.$tabTitleProp
@@ -62,16 +85,16 @@ export default {
     }
   },
 
-  /**
-   * Data for the Lumino component
-   */
+  emits: [
+    'lumino:activated',
+    'lumino:deleted'
+  ],
+
   data () {
     return {
-      // create a box panel, which holds the dock panel, and controls its layout
-      main: new BoxPanel({ direction: 'left-to-right', spacing: 0 }),
-      // create dock panel, which holds the widgets
-      dock: new DockPanel(),
-      widgets: []
+      /** Keep track of views' refs separate from $refs in order to access
+       * by ID */
+      viewRefs: {}
     }
   },
 
@@ -80,103 +103,133 @@ export default {
    * Box panel. In the next tick of Vue, the DOM element and the Vue element/ref are attached.
    */
   created () {
-    this.dock.id = 'dock'
-    this.main.id = 'main'
-    this.main.addWidget(this.dock)
-    window.onresize = () => { this.main.update() }
+    // We need to load each view used by this view/component.
+    // See "local-registration" in Vue.js documentation.
+    this.allViews.forEach(view => {
+      this.$options.components[view.name] = view
+    })
+
+    // create a box panel, which holds the dock panel, and controls its layout
+    this.box = new BoxPanel({ direction: 'left-to-right', spacing: 0 })
+    // create dock panel, which holds the widgets
+    this.dock = new DockPanel()
+    // Note: box & dock must not be in data() as the functionality breaks if
+    // the lumino objects are proxied by Vue
+
+    this.box.addWidget(this.dock)
     BoxPanel.setStretch(this.dock, 1)
-    const vm = this
+
+    const resizeObserver = new ResizeObserver(() => {
+      this.box.update()
+    })
+
     this.$nextTick(() => {
-      Widget.attach(vm.main, vm.$refs.main)
-      this.syncWidgets()
+      // Attach box panel to DOM:
+      Widget.attach(this.box, this.$refs.main)
+      // Add widget(s):
+      this.syncWidgets(this.views, {})
+      // Watch for resize of the main element to trigger relayout:
+      resizeObserver.observe(this.$refs.main)
     })
   },
 
-  /**
-   * Every time a new child element is added to the slot, this method will
-   * be called. It will iterate the children elements looking for new ones
-   * to add.
-   *
-   * The removal is handled via event listeners from Lumino.
-   */
-  updated () {
-    this.syncWidgets()
+  computed: {
+    /**
+     * We want to watch this.views; however, the (newVal, oldVal) args
+     * do not differ when a deeply watched object's properties change.
+     * So here is a workaround.
+     */
+    _views () {
+      return Object.assign({}, this.views)
+    }
+  },
+
+  watch: {
+    _views: {
+      deep: true,
+      handler: 'syncWidgets'
+    }
   },
 
   methods: {
+    /** Keep track of views' refs separate from $refs, allowing access by ID */
+    setViewRef (id, ref) {
+      if (ref) {
+        this.viewRefs[id] = ref
+      } else {
+        delete this.viewRefs[id]
+      }
+    },
     /**
-     * Iterates through the component children, looking for newly created
-     * components, and then creates a related Lumino Widget for this component.
+     * Look for newly added views, creating a corresponding Lumino Widget
+     * for each.
      */
-    syncWidgets () {
-      const tabTitleProp = this.$props.tabTitleProp
-      this.$children
-        .filter(child => !this.widgets.includes(child.$attrs.id))
-        .forEach(newChild => {
-          const id = `${newChild.$attrs.id}`
-          const name = newChild.$attrs[tabTitleProp] ? newChild.$attrs[tabTitleProp] : newChild.$options.name
+    syncWidgets (newVal, oldVal) {
+      const { tabTitleProp } = this.$props
+      for (const [id, item] of Object.entries(newVal)) {
+        if (!(id in oldVal)) {
+          const view = this.$options.components[item.view]
+          const name = view[tabTitleProp] ?? view.name
           this.addWidget(id, name)
-          this.$nextTick(() => {
-            document.getElementById(id).appendChild(newChild.$el)
-          })
-        })
+        }
+      }
     },
 
     /**
-     * Create a widget.
-     *
+     * Create a widget, add it to the dock, and move the corresponding view
+     * from the hidden div into it.
      */
-    addWidget (id, name) {
-      this.widgets.push(id)
+    addWidget (id, name, onTop = true) {
       const luminoWidget = new LuminoWidget(id, name, /* closable */ true)
-      this.dock.addWidget(luminoWidget)
+      this.dock.addWidget(luminoWidget, { mode: 'tab-after' })
       // give time for Lumino's widget DOM element to be created
       this.$nextTick(() => {
-        document.getElementById(id)
-          .addEventListener('lumino:activated', this.onWidgetActivated)
-        document.getElementById(id)
-          .addEventListener('lumino:deleted', this.onWidgetDeleted)
+        const widgetEl = document.getElementById(id)
+        widgetEl.appendChild(this.viewRefs[id].$el)
+        widgetEl.addEventListener('lumino:activated', this.onWidgetActivated)
+        widgetEl.addEventListener('lumino:deleted', this.onWidgetDeleted)
+        if (onTop) {
+          this.dock.selectWidget(luminoWidget)
+        }
       })
     },
 
     /**
      * React to a deleted event.
      *
-     * @param customEvent {
+     * @param {{
      *   detail: {
      *     id: string,
      *     name: string,
      *     closable: boolean
      *   }
-     * }}
+     * }} customEvent
      */
     onWidgetActivated (customEvent) {
-      // TODO: remove it if the linter is fixed later #510
-      // eslint-disable-next-line vue/custom-event-name-casing
       this.$emit('lumino:activated', customEvent.detail)
     },
 
     /**
      * React to a deleted event.
      *
-     * @param customEvent {
+     * @param {{
      *   detail: {
      *     id: string,
      *     name: string,
      *     closable: boolean
      *   }
-     * }}
+     * }} customEvent
      */
     onWidgetDeleted (customEvent) {
-      const id = customEvent.detail.id
-      this.widgets.splice(this.widgets.indexOf(id), 1)
-      document.getElementById(id)
-        .removeEventListener('lumino:deleted', this.onWidgetDeleted)
-      document.getElementById(id)
-        .removeEventListener('lumino:activated', this.onWidgetActivated)
-      // TODO: remove it if the linter is fixed later #510
-      // eslint-disable-next-line vue/custom-event-name-casing
+      const { id } = customEvent.detail
+      const widgetEl = document.getElementById(id)
+      widgetEl.removeEventListener('lumino:deleted', this.onWidgetDeleted)
+      widgetEl.removeEventListener('lumino:activated', this.onWidgetActivated)
       this.$emit('lumino:deleted', customEvent.detail)
+    },
+
+    getTabTitle (viewName) {
+      return this.$options.components[viewName].data().widget.title
     }
   }
 }

@@ -21,125 +21,142 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     fluid
     grid-list-xl
   >
-    <v-layout
-      justify-center
-      wrap
-    >
-      <v-flex
-        md12
-      >
-          <v-alert
-            :icon="svgPath.table"
-            prominent
-            color="grey lighten-3"
-          >
-            <h3 class="headline">{{ $t('Workflows.tableHeader') }}</h3>
-          </v-alert>
+    <v-row class="align-self-start">
+      <v-col>
+        <!-- TODO: this is not really an alert, it's a heading -->
+        <v-alert
+          :icon="svgPath.table"
+          prominent
+          color="grey-lighten-3"
+        >
+          <h3 class="text-h5">{{ $t('Workflows.tableHeader') }}</h3>
+        </v-alert>
         <v-data-table
           :headers="headers"
           :items="workflowsTable"
-          :loading="isLoading"
+          data-cy="workflows-table"
         >
-          <template slot="no-data" v-if="!isLoading">
-            <v-alert
-              :value="true"
-              color="error"
-              icon="warning">
-              <p class="body-1">No workflows found for the current user</p>
-            </v-alert>
-          </template>
-          <template
-            slot="headerCell"
-            slot-scope="{ header }"
-          >
-            <span
-              class="subheading font-weight-light text-success text--darken-3"
-              v-text="header.text"
-            />
-          </template>
-          <v-progress-linear slot="progress" color="green" indeterminate></v-progress-linear>
-          <template
-            slot="item"
-            slot-scope="{ item }"
-          >
-            <tr style="cursor:pointer" @click="viewWorkflow(item)">
-              <td>{{ item.name }}</td>
-              <td>{{ item.owner }}</td>
-              <td>{{ item.host }}</td>
-              <td>{{ item.port }}</td>
+          <template v-slot:item="{ item }">
+            <tr
+              @click="viewWorkflow(item.raw)"
+              style="cursor: pointer"
+            >
+              <td width="1em">
+                <WorkflowIcon
+                  :status="item.raw.node.status"
+                  v-cylc-object="item.raw"
+                />
+              </td>
+              <td>
+                {{ item.raw.tokens.workflow }}
+              </td>
+              <td>
+                {{ item.raw.node.status }}
+              </td>
+              <td>
+                {{ item.raw.node.owner }}
+              </td>
+              <td>
+                {{ item.raw.node.host }}
+              </td>
+              <td>
+                {{ item.raw.node.port }}
+              </td>
             </tr>
           </template>
         </v-data-table>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import i18n from '@/i18n'
+import { mapState, mapGetters } from 'vuex'
+import { i18n } from '@/i18n'
 import { mdiTable } from '@mdi/js'
-import pageMixin from '@/mixins/index'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
+import { getPageTitle } from '@/utils/index'
+import subscriptionMixin from '@/mixins/subscription'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import GScanCallback from '@/components/cylc/gscan/callbacks'
 import { WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 
 export default {
   name: 'WorkflowsTable',
+
   mixins: [
-    pageMixin,
-    subscriptionViewMixin
+    subscriptionMixin
   ],
-  metaInfo () {
+
+  head () {
     return {
-      title: this.getPageTitle('App.workflows')
+      title: getPageTitle('App.workflows')
     }
   },
+
+  components: {
+    WorkflowIcon
+  },
+
   data: () => ({
     query: new SubscriptionQuery(
       WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION,
       {},
       'root',
-      [
-        new GScanCallback()
-      ]
+      [],
+      true,
+      true
     ),
     headers: [
       {
-        sortable: true,
-        text: i18n.t('Workflows.tableColumnName'),
-        value: 'name'
+        sortable: false,
+        title: '',
+        key: 'icon'
       },
       {
         sortable: true,
-        text: i18n.t('Workflows.tableColumnOwner'),
-        value: 'owner'
+        title: i18n.global.t('Workflows.tableColumnName'),
+        key: 'tokens.workflow'
       },
       {
         sortable: true,
-        text: i18n.t('Workflows.tableColumnHost'),
-        value: 'host'
+        title: 'Status',
+        key: 'node.status'
+      },
+      {
+        sortable: true,
+        title: i18n.global.t('Workflows.tableColumnOwner'),
+        key: 'node.owner'
+      },
+      {
+        sortable: true,
+        title: i18n.global.t('Workflows.tableColumnHost'),
+        key: 'node.host'
       },
       {
         sortable: false,
-        text: i18n.t('Workflows.tableColumnPort'),
-        value: 'port'
+        title: i18n.global.t('Workflows.tableColumnPort'),
+        key: 'node.port'
       }
     ],
     svgPath: {
       table: mdiTable
     }
   }),
+
   computed: {
-    ...mapState('workflows', ['workflows']),
+    ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getNodes']),
+    workflows () {
+      return this.getNodes('workflow')
+    },
     workflowsTable () {
       return Object.values(this.workflows)
     }
   },
+
   methods: {
     viewWorkflow (workflow) {
-      this.$router.push({ path: `/workflows/${workflow.name}` })
+      this.$router.push({ path: `/workspace/${workflow.tokens.workflow}` })
     }
   }
 }

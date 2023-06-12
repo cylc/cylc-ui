@@ -19,34 +19,34 @@ import TaskState from '@/model/TaskState.model'
 
 describe('Tree view', () => {
   it('Should display cycle points for the mocked workflow', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
-      .get('.node-data-cyclepoint')
+      .get('.node-data-cycle')
       .should(($div) => {
         // by default, in our expected viewport size for tests, both cycle points exist and are visible
         expect($div.get(0)).to.contain('20000102T0000Z')
       })
     cy
-      .get('.node-data-cyclepoint')
+      .get('.node-data-cycle')
       .should('be.visible')
   })
   it('Should hide jobs by default', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
-      .get('.node-data-cyclepoint')
+      .get('.node-data-cycle')
       .should('be.visible')
     cy
       .get('.node-data-job')
       .should('not.be.visible')
   })
   it('Should make jobs visible when clicking on tasks', () => {
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
       .get('.node-data-job:first')
       .should('not.be.visible')
     // expand the first task proxy we have
     cy
-      .get('.node-data-task-proxy:first')
+      .get('.node-data-task:first')
       .prev()
       .click()
     // now, consequentially, the first job that we have should also be visible
@@ -56,9 +56,9 @@ describe('Tree view', () => {
   })
   it('Should display leaf node triangle with margin', () => {
     // this is testing that there is a margin, not necessarily that the leaf node's triangle is exactly under the node
-    cy.visit('/#/workflows/one')
+    cy.visit('/#/workspace/one')
     cy
-      .get('.node-data-task-proxy:first')
+      .get('.node-data-task:first')
       .prev()
       .click()
     // no jobs, and no leaves are visible initially
@@ -93,8 +93,8 @@ describe('Tree view', () => {
   it('Should update view correctly', () => {
     cy.visit('/#/tree/one')
     cy
-      .get('.node-data-cyclepoint')
-      .should('be.visible')
+      .get('.node-data-cycle')
+      .should('have.length', 1)
     cy
       .get('.node-data-job:first')
       .should('not.be.visible')
@@ -102,189 +102,209 @@ describe('Tree view', () => {
       .visit('/#/tree/anynamewillstillopenone')
       .then(() => {
         cy
-          .get('.node-data-job:first')
-          .should('not.be.visible')
-        cy
-          .get('.node-data-cyclepoint')
-          .should('be.visible')
+          .get('.node-data')
+          .should('have.length', 0)
         cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-          // GScan 'root' subscription, and the 'workflow' subscription used by the Tree view
-          expect(Object.keys(subscriptions).length).to.equal(2)
-          expect(subscriptions.root.observable.closed).to.equal(false)
+          // 'workflow' subscription used by the Tree view
+          expect(Object.keys(subscriptions).length).to.equal(1)
           expect(subscriptions.workflow.observable.closed).to.equal(false)
         })
       })
   })
   it('Should remove subscriptions correctly when leaving the view', () => {
     cy.visit('/#/tree/one')
-    cy
-      .get('.node-data-cyclepoint')
+      .get('.node-data-cycle')
       .should('be.visible')
-    cy
       .get('.node-data-job:first')
       .should('not.be.visible')
-    cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-      // Gscan 'root', the 'workflow subscription used by the Tree view
-      expect(Object.keys(subscriptions).length).to.equal(2)
-      expect(subscriptions.root.observable.closed).to.equal(false)
-      expect(subscriptions.workflow.observable.closed).to.equal(false)
-    })
+      .window()
+      .its('app.$workflowService.subscriptions').then(subscriptions => {
+        // * the 'workflow' subscription is used by the Tree view
+        expect(Object.keys(subscriptions).length).to.equal(1)
+        expect(subscriptions.workflow.observable.closed).to.equal(false)
+      })
+
     cy
       .visit('/#/')
-    cy.get('.c-dashboard').should('be.visible')
-    cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-      // It will have 2, GScan + Dashboard, while the /tree/one view has 1 Delta + 1 subscription
-      // (the delta is a different subscription).
-      expect(Object.keys(subscriptions).length).to.equal(1)
-      // Gscan remains open in the dashboard view, the 'workflow' subscription is gone since it's not used
-      expect(subscriptions.root.observable.closed).to.equal(false)
-    })
+      .get('.c-dashboard')
+      .should('be.visible')
+      .window()
+      .its('app.$workflowService.subscriptions')
+      .then(subscriptions => {
+        // * the 'root' subscription used by the Dashboard & GScan
+        // * the 'workflow' subscription is gone since it's no longer used
+        expect(Object.keys(subscriptions).length).to.equal(1)
+        expect(subscriptions).to.not.equal(undefined)
+        expect(subscriptions.root.observable.closed).to.equal(false)
+      })
   })
   it('Should display message triggers', () => {
-    // TODO: The message triggers are programmatically added in the mocked workflow service.
-    //       If/when the one checkpoint workflow is updated and includes data with custom
-    //       message triggers, we need to update this test accordingly.
     cy.visit('/#/tree/one')
-    // The "failed" task contains custom messages, so let's expand it first
-    const failedTaskProxy = cy
+
+    // find the task proxy
+    cy
       .get('.mx-1')
-      .contains('failed')
+      .contains('eventually_succeeded')
       .parent()
-    const failedTaskProxyTreeNode = failedTaskProxy
       .parent()
-    failedTaskProxyTreeNode
+
+      // expand the job nodes
       .find('.node-expand-collapse-button')
       .click({ force: true })
-    // Here the job "#1" of the task-proxy "failed" should be visible,
-    // let's confirm it's showing the "N+" chip...
-    const failedJob = cy
-      .get('.mx-1')
-      .contains('#1')
       .parent()
-    // eslint-disable-next-line no-lone-blocks
-    {
-      failedJob
-        .should('be.visible')
-      // Let's confirm it shows the "N+" chip (i.e. this task has more N messages)
-      const lastChild = failedJob.children().last()
-      lastChild
-        .children()
-        .last()
-        .should('have.text', '+3')
-    }
-    // Finally, let's verify that expanding the job, will show the custom messages
-    // in the job details...
-    // eslint-disable-next-line no-lone-blocks
-    {
-      // expand the job
-      failedJob
-        .parent()
-        .children()
-        .last()
-        .click({ force: true })
-      cy
-        .get('.leaf-entry-title')
-        .contains('msg-label-8')
-        .should('be.visible')
-    }
+      .parent()
+
+      // the jobs should be visible
+      .find('.node-data-job')
+      .should('be.visible')
+
+      // the first job should have 5 outputs (the maximum number we display)
+      .first()
+      .find('.message-output')
+      .should('have.length', 5)
+
+      // the remainder should be referenced in an overflow counter +2
+      .parent()
+      .contains('+2')
+      .parent()
+      .parent()
+      .parent()
+      .parent()
+
+      // expand the job details node
+      .find('.node-expand-collapse-button')
+      .click({ force: true })
+
+      // all 7 outputs/messages should be listed in the job-details
+      .parent()
+      .parent()
+      .find('.job-details')
+      .find('.output')
+      .should('have.length', 7)
   })
 
   describe('filters', () => {
-    it('Should not filter by default', () => {
+    const initialNumTasks = 7
+    it('Should filter by ID', () => {
       cy.visit('/#/tree/one')
-      cy
-        .get('.node-data-task-proxy')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.node-data-task-proxy')
+      // Should not filter by default
+      cy.get('.node-data-task:visible')
+        .should('have.length', initialNumTasks)
         .contains('waiting')
-        .should('be.visible')
-    })
-    it('Should filter by task name', () => {
-      cy.visit('/#/tree/one')
-      cy
-        .get('.node-data-task-proxy')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.node-data-task-proxy')
-        .contains('waiting')
-        .should('be.visible')
-      // eep should filter sleepy
-      cy
-        .get('#c-tree-filter-task-name')
-        .type('eep')
-      cy
-        .get('.node-data-task-proxy')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.node-data-task-proxy')
-        .contains('waiting')
-        .should('not.be.visible')
+      for (const id of ['eed', '/suc', 'GOOD', 'SUC']) {
+        cy.get('[data-cy=filter-id] input')
+          .clear()
+          .type(id)
+        cy.get('.node-data-task:visible')
+          .should('have.length.lessThan', initialNumTasks)
+          .contains('succeeded')
+        cy.get('.node-data-task')
+          .contains('waiting')
+          .should('not.be.visible')
+      }
+      // It should stop filtering when input is cleared
+      cy.get('[data-cy=filter-id] input')
+        .clear()
+        .get('.node-data-task:visible')
+        .should('have.length', initialNumTasks)
+      // It should filter by cycle point
+      cy.get('[data-cy=filter-id] input')
+        .type('2000') // (matches all tasks)
+        .get('.node-data-task:visible')
+        .should('have.length', initialNumTasks)
     })
     it('Should filter by task states', () => {
       cy.visit('/#/tree/one')
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains(TaskState.FAILED.name)
         .should('be.visible')
       cy
-        .get('#c-tree-filter-task-states')
-        .click({ force: true })
+        .get('[data-cy=filter-task-states]')
+        .click()
       cy
         .get('.v-list-item')
         .contains(TaskState.RUNNING.name)
         .click({ force: true })
       cy
-        .get('.node-data-task-proxy')
+        .get('.node-data-task')
         .contains(TaskState.FAILED.name)
         .should('be.not.visible')
       cy
-        .get('.node-data-task-proxy:visible')
+        .get('.node-data-task:visible')
         .should('have.length', 1)
     })
-    it('Should filter by task name and states', () => {
+    it('Should filter by ID and states', () => {
       cy.visit('/#/tree/one')
       cy
-        .get('.node-data-task-proxy')
-        .contains('sleepy')
+        .get('.node-data-task')
+        .contains('failed')
         .should('be.visible')
-      // retry should filter retry
       cy
-        .get('#c-tree-filter-task-name')
-        .type('retry')
+        .get('[data-cy=filter-id]')
+        .type('i')
       cy
-        .get('#c-tree-filter-task-states')
-        .click({ force: true })
-      // click on waiting, the retry is succeeded, but we don't want to see it
-      cy
+        .get('[data-cy=filter-task-states]')
+        .click()
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
         .click({ force: true })
       cy
-        .get('.node-data-task-proxy:visible')
+        .get('.node-data-task:visible')
         .should('have.length', 1)
+        .contains('retrying')
     })
+  })
 
-    it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
+  describe('Expand/collapse all buttons', () => {
+    it('Collapses and expands as expected', () => {
       cy.visit('/#/tree/one')
-      cy
-        .get('#c-tree-filter-task-states')
-        .click({ force: true })
-      // eslint-disable-next-line no-lone-blocks
-      TaskState.enumValues.forEach(state => {
-        cy
-          .get('.v-list-item')
-          .contains(state.name)
-          .click({ force: true })
-      })
-      cy
-        .get('.v-select__slot')
-        .should($select => {
-          expect($select).to.contain('(+')
-        })
+      cy.get('.node-data-task')
+        .contains('sleepy')
+        .as('sleepyTask')
+        .should('be.visible')
+      cy.get('[data-cy=collapse-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('not.be.visible')
+        .get('[data-cy=expand-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('be.visible')
     })
+    it('Works when tasks are being filtered', () => {
+      cy.visit('/#/tree/one')
+      cy.get('.node-data-task')
+        .contains('sleepy')
+        .as('sleepyTask')
+        .should('be.visible')
+      cy.get('[data-cy=filter-id]')
+        .type('sleep')
+      cy.get('[data-cy=collapse-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('not.be.visible')
+        .get('[data-cy=expand-all]')
+        .click()
+        .get('@sleepyTask')
+        .should('be.visible')
+    })
+  })
+
+  it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
+    cy.visit('/#/tree/one')
+    cy.get('[data-cy=filter-task-states]')
+      .click()
+    // eslint-disable-next-line no-lone-blocks
+    TaskState.enumValues.forEach(state => {
+      cy.get('.v-list-item')
+        .contains(state.name)
+        .click({ force: true })
+    })
+    // Click outside to close dropdown
+    cy.get('noscript')
+      .click({ force: true })
+    cy.get('[data-cy=filter-task-states]')
+      .contains('.v-select__selection', '(+')
   })
 })

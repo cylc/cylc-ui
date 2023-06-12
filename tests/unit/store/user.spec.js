@@ -15,18 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
-
-Vue.use(Vuex)
 
 /**
  * Tests for the store/user module.
  */
 describe('user', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   /**
    * Tests for store.user.
    */
@@ -35,7 +31,6 @@ describe('user', () => {
       store.state.user.user = null
     }
     beforeEach(resetState)
-    afterEach(resetState)
     it('should start with no user', () => {
       expect(store.state.user.user).to.equal(null)
     })

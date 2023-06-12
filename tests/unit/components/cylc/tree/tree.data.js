@@ -22,48 +22,63 @@
 const simpleWorkflowTree4Nodes = [
   {
     id: '~user/workflow1',
+    name: 'workflow1',
     type: 'workflow',
     node: {
       __typename: 'Workflow',
-      name: 'workflow1',
-      state: 'running'
+      state: 'running',
+      node: {
+        status: 'running'
+      }
     },
     children: [
       {
-        id: '20100101T0000Z',
-        type: 'cyclepoint',
+        id: '~user/workflow1//20100101T0000Z',
+        name: '20100101T0000Z',
+        type: 'cycle',
         node: {
           __typename: 'CyclePoint',
-          name: '20100101T0000Z',
           state: 'failed'
         },
-        children: [
+        children: [],
+        familyTree: [
           {
-            id: '~user/workflow1//20100101T0000Z/foo',
-            type: 'task-proxy',
+            id: '~user/workflow1//20100101T0000Z/root',
+            name: 'root',
+            type: 'family',
             node: {
-              __typename: 'TaskProxy',
-              name: 'foo',
               state: 'failed'
             },
-            expanded: false,
             children: [
               {
-                id: '~user/workflow1//20100101T0000Z/foo/01',
-                type: 'job',
+                id: '~user/workflow1//20100101T0000Z/foo',
+                name: 'foo',
+                type: 'task',
                 node: {
-                  __typename: 'Job',
-                  name: '1',
-                  startedTime: '2019-08-19T22:44:42Z',
-                  state: 'failed',
-                  submitNum: 1,
-                  customOutputs: [
-                    {
-                      label: 'out1',
-                      message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
-                    }
-                  ]
-                }
+                  __typename: 'TaskProxy',
+                  state: 'failed'
+                },
+                expanded: false,
+                children: [
+                  {
+                    id: '~user/workflow1//20100101T0000Z/foo/01',
+                    name: '01',
+                    type: 'job',
+                    node: {
+                      __typename: 'Job',
+                      startedTime: '2019-08-19T22:44:42Z',
+                      state: 'failed',
+                      submitNum: 1,
+                      customOutputs: [
+                        {
+                          label: 'out1',
+                          message: 'Aliquam a lectus euismod, vehicula leo vel, ultricies odio.'
+                        }
+                      ]
+                    },
+                    children: []
+                  }
+                ]
               }
             ]
           }
@@ -77,7 +92,6 @@ const sampleWorkflow1 = {
   workflow: {
     id: '~cylc/one',
     __typename: 'Workflow',
-    name: 'one',
     status: 'running',
     owner: 'cylc',
     host: 'ranma',
@@ -469,7 +483,8 @@ const sampleWorkflow1 = {
   ],
   jobs: [
     {
-      id: '~cylc/one//20000101T0000Z/eventually_succeeded/4',
+      id: '~cylc/one//20000101T0000Z/eventually_succeeded/04',
+      name: '04',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/eventually_succeeded',
         __typename: 'TaskProxy'
@@ -508,7 +523,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000101T0000Z/eventually_succeeded/3',
+      id: '~cylc/one//20000101T0000Z/eventually_succeeded/03',
+      name: '03',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/eventually_succeeded',
         __typename: 'TaskProxy'
@@ -543,7 +559,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000101T0000Z/eventually_succeeded/2',
+      id: '~cylc/one//20000101T0000Z/eventually_succeeded/02',
+      name: '02',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/eventually_succeeded',
         __typename: 'TaskProxy'
@@ -578,7 +595,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000101T0000Z/eventually_succeeded/1',
+      id: '~cylc/one//20000101T0000Z/eventually_succeeded/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/eventually_succeeded',
         __typename: 'TaskProxy'
@@ -613,7 +631,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000101T0000Z/sleepy/1',
+      id: '~cylc/one//20000101T0000Z/sleepy/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/sleepy',
         __typename: 'TaskProxy'
@@ -649,6 +668,7 @@ const sampleWorkflow1 = {
     },
     {
       id: '~cylc/one//20000101T0000Z/succeeded/1',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/succeeded',
         __typename: 'TaskProxy'
@@ -683,7 +703,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000101T0000Z/retrying/1',
+      id: '~cylc/one//20000101T0000Z/retrying/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/retrying',
         __typename: 'TaskProxy'
@@ -718,7 +739,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000101T0000Z/checkpoint/1',
+      id: '~cylc/one//20000101T0000Z/checkpoint/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/checkpoint',
         __typename: 'TaskProxy'
@@ -753,7 +775,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000101T0000Z/failed/1',
+      id: '~cylc/one//20000101T0000Z/failed/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/failed',
         __typename: 'TaskProxy'
@@ -788,7 +811,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000101T0000Z/waiting/1',
+      id: '~cylc/one//20000101T0000Z/waiting/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000101T0000Z/waiting',
         __typename: 'TaskProxy'
@@ -823,7 +847,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000102T0000Z/succeeded/1',
+      id: '~cylc/one//20000102T0000Z/succeeded/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000102T0000Z/succeeded',
         __typename: 'TaskProxy'
@@ -858,7 +883,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000102T0000Z/failed/1',
+      id: '~cylc/one//20000102T0000Z/failed/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000102T0000Z/failed',
         __typename: 'TaskProxy'
@@ -893,7 +919,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000102T0000Z/checkpoint/1',
+      id: '~cylc/one//20000102T0000Z/checkpoint/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000102T0000Z/checkpoint',
         __typename: 'TaskProxy'
@@ -928,7 +955,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000102T0000Z/checkpoint2/1',
+      id: '~cylc/one//20000102T0000Z/checkpoint2/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000102T0000Z/checkpoint2',
         __typename: 'TaskProxy'
@@ -959,7 +987,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000102T0000Z/eventually_succeeded/4',
+      id: '~cylc/one//20000102T0000Z/eventually_succeeded/04',
+      name: '04',
       firstParent: {
         id: '~cylc/one//20000102T0000Z/eventually_succeeded',
         __typename: 'TaskProxy'
@@ -994,7 +1023,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000102T0000Z/eventually_succeeded/3',
+      id: '~cylc/one//20000102T0000Z/eventually_succeeded/03',
+      name: '03',
       firstParent: {
         id: '~cylc/one//20000102T0000Z/eventually_succeeded',
         __typename: 'TaskProxy'
@@ -1029,7 +1059,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000102T0000Z/eventually_succeeded/2',
+      id: '~cylc/one//20000102T0000Z/eventually_succeeded/02',
+      name: '02',
       firstParent: {
         id: '~cylc/one//20000102T0000Z/eventually_succeeded',
         __typename: 'TaskProxy'
@@ -1064,7 +1095,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000102T0000Z/eventually_succeeded/1',
+      id: '~cylc/one//20000102T0000Z/eventually_succeeded/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000102T0000Z/eventually_succeeded',
         __typename: 'TaskProxy'
@@ -1099,7 +1131,8 @@ const sampleWorkflow1 = {
       }
     },
     {
-      id: '~cylc/one//20000102T0000Z/retrying/1',
+      id: '~cylc/one//20000102T0000Z/retrying/01',
+      name: '01',
       firstParent: {
         id: '~cylc/one//20000102T0000Z/retrying',
         __typename: 'TaskProxy'
@@ -1138,7 +1171,7 @@ const sampleWorkflow1 = {
 
 const simpleWorkflowNode = simpleWorkflowTree4Nodes[0]
 const simpleCyclepointNode = simpleWorkflowTree4Nodes[0].children[0]
-const simpleTaskNode = simpleCyclepointNode.children[0]
+const simpleTaskNode = simpleCyclepointNode.familyTree[0].children[0]
 const simpleJobNode = simpleTaskNode.children[0]
 
 export {

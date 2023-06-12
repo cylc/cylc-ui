@@ -16,31 +16,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <component
+  <FormInput
     v-model="model"
-    :propOverrides="{rules: [nonNullRule]}"
+    :propOverrides="{ rules: [$options.nonNullRule] }"
     :gqlType="gqlType.ofType"
     :types="types"
-    label="(required)"
-    :is="FormInput"
   >
-    <template v-slot:append-outer>
-      <!-- pass the "append-outer" slot onto the child component -->
-      <slot name="append-outer">
-      </slot>
+    <template v-slot:append>
+      <!-- pass the "append" slot onto the child component -->
+      <slot name="append"></slot>
     </template>
-  </component>
+  </FormInput>
 </template>
 
 <script>
 import { formElement } from '@/components/graphqlFormGenerator/mixins'
 
+/** Disallow empty array/string or nullish */
+export const nonNullRule = (x) => Boolean(x?.length ?? x != null) || 'Required'
+
 export default {
   name: 'g-non-null',
+
   mixins: [formElement],
-  methods: {
-    nonNullRule: // disallow empty array/string or nullish
-      x => Boolean(x?.length ?? x != null) || 'Required'
-  }
+
+  nonNullRule
 }
 </script>

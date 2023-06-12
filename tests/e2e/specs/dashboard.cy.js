@@ -18,23 +18,25 @@
 import { WorkflowStateOrder } from '@/model/WorkflowState.model'
 
 describe('Dashboard', () => {
-  it('Displays the Dashboard link as active on the left sidebar menu', () => {
+  beforeEach(() => {
     cy.visit('/#/')
+  })
+
+  it('Displays the Dashboard link as active on the left sidebar menu', () => {
     cy
-      .get('div.v-list-item__title')
-      .contains('Dashboard')
-      .parent()
+      .get('nav')
+      .contains('a.v-list-item', 'Dashboard')
       .should('have.class', 'v-list-item--active')
   })
-  it('Should display the icons', () => {
-    cy.visit('/#/')
+
+  it('Displays the icons', () => {
     cy
       .get('.c-dashboard .v-icon:first')
       .find('svg')
       .should('be.visible')
   })
-  it('Should display the states in order', () => {
-    cy.visit('/#/')
+
+  it('Displays the states in order', () => {
     cy
       .get('#dashboard-workflows table tbody tr')
       .first()
@@ -44,11 +46,22 @@ describe('Dashboard', () => {
       })
       .should('equal', [...WorkflowStateOrder.entries()][0][0])
   })
-  it('Should have disabled cylc hub button in single user mode', () => {
-    cy.visit('/#/')
+
+  it('Disables cylc hub button in single user mode', () => {
     cy
       .get('#cylc-hub-button')
       .should('have.class', 'v-list-item--disabled')
   })
+
+  for (const ref of ['workflow-table-link', 'user-settings-link', 'quickstart-link']) {
+    it(`Visits ${ref}`, () => {
+      cy.get(`[data-cy=${ref}`)
+        .click()
+      cy.contains('Page not found', { matchCase: false })
+        .should('not.exist')
+        // Ideally we should check for HTTP 404 but our 404 page returns 200!
+        // https://github.com/cylc/cylc-ui/issues/334
+    })
+  }
   // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
 })

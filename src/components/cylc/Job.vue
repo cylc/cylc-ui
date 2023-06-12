@@ -20,84 +20,92 @@
         which can sit in text.
 -->
 <script>
-import isEmpty from 'lodash/isEmpty'
+import { h } from 'vue'
+import { isEmpty } from 'lodash'
 
-export default {
-  name: 'Job',
-  functional: true,
-  props: {
-    status: {
-      type: String,
-      required: true
-    },
-    previousState: {
-      type: String,
-      required: false
+const Job = (props, context) => {
+  // the job status icon
+  //   * let width = 100 - x - stroke-width
+  //   * let height = 100 - y - stroke-width
+  const DEFAULT_SIZE = '80'
+  const PREVIOUS_STATE_ITEMS_SIZE = '65'
+  const DEFAULT_XY = '10'
+  const PREVIOUS_STATE_ITEMS_XY = '25'
+  const width = !isEmpty(props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
+  const jobStatusIcon = h(
+    'rect',
+    {
+      class: props.status,
+      x: DEFAULT_XY,
+      y: DEFAULT_XY,
+      width,
+      height: width,
+      rx: '15',
+      ry: '15',
+      'stroke-width': '10'
     }
-  },
-  render: function (createElement, context) {
-    // the job status icon
-    //   * let width = 100 - x - stroke-width
-    //   * let height = 100 - y - stroke-width
-    const DEFAULT_SIZE = '80'
-    const PREVIOUS_STATE_ITEMS_SIZE = '65'
-    const DEFAULT_XY = '10'
-    const PREVIOUS_STATE_ITEMS_XY = '25'
-    const width = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
-    const height = !isEmpty(context.props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
-    const jobStatusIcon = createElement('rect', {
-      attrs: {
-        class: context.props.status,
-        x: DEFAULT_XY,
-        y: DEFAULT_XY,
+  )
+  // the job icon SVG
+  //   * comments prefixed `let` are instructions for changing style
+  //   * contain in a 100x100 viewBox so pixels and percent are equal
+  //   * bind the job status here, respond to styling in the CSS
+  const jobIconChildren = [jobStatusIcon]
+  if (props.previousState) {
+    const previousStateIconSvg = h(
+      'rect',
+      {
+        class: `${props.previousState}`,
+        x: PREVIOUS_STATE_ITEMS_XY,
+        y: PREVIOUS_STATE_ITEMS_XY,
         width,
-        height,
+        height: width,
         rx: '15',
         ry: '15',
+        opacity: '50%',
         'stroke-width': '10'
       }
-    })
-    // the job icon SVG
-    //   * comments prefixed `let` are instructions for changing style
-    //   * contain in a 100x100 viewBox so pixels and percent are equal
-    //   * bind the job status here, respond to styling in the CSS
-    const jobIconChildren = [jobStatusIcon]
-    if (context.props.previousState) {
-      const previousStateIconSvg = createElement('rect', {
-        attrs: {
-          class: `${context.props.previousState}`,
-          x: PREVIOUS_STATE_ITEMS_XY,
-          y: PREVIOUS_STATE_ITEMS_XY,
-          width,
-          height,
-          rx: '15',
-          ry: '15',
-          opacity: '50%',
-          'stroke-width': '10'
-        }
-      })
-      jobIconChildren.splice(0, 0, previousStateIconSvg)
-    }
-    const jobIconSvg = createElement('svg', {
-      attrs: {
-        class: 'job',
-        viewBox: '0 0 100 100'
-      }
-    }, jobIconChildren)
-    // NOTE: context.data MUST be passed to ensure directives are
-    //       passed down to the functional components
-    //       https://github.com/vuejs/vue-loader/issues/1433
-    const attrs = Object.assign(context.data, {
-      attrs: {
-        class: 'c-job',
-        style: 'display:inline-block; vertical-align:middle'
-      }
-    })
-    return createElement(
-      'span',
-      attrs,
-      [jobIconSvg]
+    )
+    jobIconChildren.splice(0, 0, previousStateIconSvg)
+  }
+  if (props.svg) {
+    return h(
+      'g',
+      { class: 'c-job' },
+      [
+        h('g', { class: 'job' }, jobIconChildren)
+      ]
     )
   }
+  const jobIconSvg = h(
+    'svg',
+    {
+      class: 'job',
+      viewBox: '0 0 100 100'
+    },
+    jobIconChildren
+  )
+  return h(
+    'span',
+    { class: 'c-job' },
+    [jobIconSvg]
+  )
 }
+
+Job.props = {
+  status: {
+    type: String,
+    required: true
+  },
+  previousState: {
+    type: String,
+    required: false
+  },
+  svg: {
+    type: Boolean,
+    require: false,
+    default: false
+  }
+}
+
+export default Job
 </script>

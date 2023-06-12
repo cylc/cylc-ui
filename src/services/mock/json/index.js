@@ -15,18 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const DashboardSubscriptionQuery = require('./DashboardSubscriptionQuery.json')
 const IntrospectionQuery = require('./IntrospectionQuery.json')
-const GscanSubscriptionQuery = require('./GscanSubscriptionQuery.json')
-const OnWorkflowTreeDeltasData = require('./OnWorkflowTreeDeltasData.json')
-const OnWorkflowTableDeltasData = require('./OnWorkflowTableDeltasData.json')
 const userProfile = require('./userprofile.json')
+const taskProxy = require('./taskProxy.json')
+const familyProxy = require('./familyProxy.json')
+const App = require('./App')
+const LogData = require('./logData.json')
+const LogFiles = require('./logFiles.json')
+const analysisQuery = require('./analysisQuery.json')
 
 module.exports = {
-  DashboardSubscriptionQuery,
   IntrospectionQuery,
-  GscanSubscriptionQuery,
-  OnWorkflowTreeDeltasData,
-  OnWorkflowTableDeltasData,
-  userProfile
+  taskProxy,
+  familyProxy,
+  userProfile,
+  LogData,
+  LogFiles,
+  App,
+  Workflow: App,
+  analysisQuery
 }

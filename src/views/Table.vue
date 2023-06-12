@@ -17,57 +17,86 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <div class="c-table h-100">
-      <table-component
-        :tasks="tasks"
-        ref="table0"
-        key="table0"
-      ></table-component>
-    </div>
+    <TableComponent
+      :tasks="tasks"
+      ref="table0"
+      key="table0"
+    />
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { mdiTable } from '@mdi/js'
-import pageMixin from '@/mixins/index'
+import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import subscriptionViewMixin from '@/mixins/subscriptionView'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import WorkflowCallback from '@/components/cylc/common/callbacks'
-import TableCallback from '@/components/cylc/table/callbacks'
 // import { WORKFLOW_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '../graphql/queries'
 
 export default {
-  mixins: [
-    pageMixin,
-    graphqlMixin,
-    subscriptionComponentMixin,
-    subscriptionViewMixin
-  ],
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Table',
+
+  mixins: [
+    graphqlMixin,
+    subscriptionComponentMixin
+  ],
+
   components: {
     TableComponent
   },
-  metaInfo () {
+
+  head () {
     return {
-      title: this.getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
   data: () => ({
     widget: {
       title: 'table',
       icon: mdiTable
     }
   }),
+
   computed: {
-    ...mapState('table', ['table']),
-    tasks () {
-      return Object.values(this.table)
+    ...mapState('workflows', ['cylcTree']),
+    ...mapGetters('workflows', ['getNodes']),
+    workflowIDs () {
+      return [this.workflowId]
     },
+    workflows () {
+      return this.getNodes('workflow', this.workflowIDs)
+    },
+    tasks () {
+      const ret = []
+      let latestJob
+      let previousJob
+      for (const workflow of this.workflows) {
+        for (const cycle of workflow.children) {
+          for (const task of cycle.children) {
+            latestJob = null
+            previousJob = null
+            if (task.children.length) {
+              latestJob = task.children.slice(-1)[0]
+              if (task.children.length > 1) {
+                previousJob = task.children.slice(-2)[0]
+              }
+            }
+            ret.push({
+              task,
+              latestJob,
+              previousJob
+            })
+          }
+        }
+      }
+      return ret
+    },
+
     query () {
       return new SubscriptionQuery(
         // this is disabled for now as differences in the fragment names are causing the
@@ -79,10 +108,9 @@ export default {
         // we really should consider giving these unique names, as technically they are just use as the subscription names
         // By using a unique name, we can avoid callback merging errors like the one documented line 350 in the workflow.service.js file
         'workflow',
-        [
-          new WorkflowCallback(),
-          new TableCallback()
-        ]
+        [],
+        /* isDelta */ true,
+        /* isGlobalCallback */ true
       )
     }
   }

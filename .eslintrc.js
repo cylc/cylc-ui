@@ -17,25 +17,28 @@
 
 module.exports = {
   root: true,
-  env: {
-    node: true
+  parserOptions: {
+    /* Allow new ECMAScript syntax but not globals. This is because vite/esbuild
+    transforms syntax to es2015 (at the earliest) but does not pollyfill APIs. */
+    ecmaVersion: 'latest',
   },
   extends: [
     'standard',
     'eslint:recommended',
-    'plugin:vue/essential'
+    'plugin:vue/vue3-essential',
+    'plugin:vuetify/base',
+    'plugin:cypress/recommended',
   ],
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    indent: [
+    'comma-dangle': [
       'error',
-      2,
       {
-        ignoredNodes: [
-          'TemplateLiteral'
-        ]
-      }
+        arrays: 'only-multiline',
+        objects: 'only-multiline',
+        imports: 'only-multiline',
+        exports: 'only-multiline',
+        functions: 'never',
+      },
     ],
     'template-curly-spacing': [
       'off'
@@ -43,13 +46,20 @@ module.exports = {
     'vue/multi-word-component-names': [
       'off'
     ],
-    'vue/no-reserved-component-names': [
-      'off'
+    'vue/valid-v-slot': [
+      'error',
+      {
+        allowModifiers: true
+      }
     ],
-    'import/no-duplicates': 'off',
-    'no-duplicate-imports': 'error'
+    'promise/param-names': [
+      'error'
+    ],
+    'promise/no-return-wrap': [
+      'error'
+    ],
+    'cypress/unsafe-to-chain-command': [
+      'off'
+    ]
   },
-  parserOptions: {
-    parser: '@babel/eslint-parser'
-  }
 }

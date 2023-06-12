@@ -15,9 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import TaskState from '@/model/TaskState.model'
-import { extractGroupState, taskStartTime, taskEstimatedDuration, latestJob } from '@/utils/tasks'
+import { dtMean, extractGroupState, latestJob, formatDuration } from '@/utils/tasks'
 
 describe('tasks', () => {
   describe('extractGroupState', () => {
@@ -57,74 +56,6 @@ describe('tasks', () => {
       expect(extractGroupState([])).to.equal('')
     })
   })
-  describe('taskStartTime', () => {
-    it('should return the correct value for taskStatTime', () => {
-      const tests = [
-        {
-          taskProxy: null,
-          job: null,
-          expected: null
-        },
-        {
-          taskProxy: {},
-          job: null,
-          expected: null
-        },
-        {
-          taskProxy: {
-            state: TaskState.WAITING.name
-          },
-          job: {},
-          expected: null
-        },
-        {
-          taskProxy: {
-            state: TaskState.RUNNING.name
-          },
-          job: {
-            startedTime: 1
-          },
-          expected: 1
-        }
-      ]
-      tests.forEach(test => {
-        const result = taskStartTime(test.taskProxy, test.job)
-        expect(result).to.equal(test.expected)
-      })
-    })
-  })
-  describe('taskEstimatedDuration', () => {
-    it('should return the correct value for taskEstimatedDuration', () => {
-      const tests = [
-        {
-          taskProxy: null,
-          expected: null
-        },
-        {
-          taskProxy: {},
-          expected: null
-        },
-        {
-          taskProxy: {
-            task: {}
-          },
-          expected: null
-        },
-        {
-          taskProxy: {
-            task: {
-              meanElapsedTime: 1
-            }
-          },
-          expected: 1
-        }
-      ]
-      tests.forEach(test => {
-        const result = taskEstimatedDuration(test.taskProxy)
-        expect(result).to.equal(test.expected)
-      })
-    })
-  })
   describe('latestJob', () => {
     it('should return the correct value for latestJob', () => {
       const tests = [
@@ -156,6 +87,89 @@ describe('tasks', () => {
       tests.forEach(test => {
         expect(latestJob(test.taskProxy)).to.equal(test.expected)
       })
+    })
+  })
+  describe('dtMean', () => {
+    it('should format seconds to nice isodatetime format', () => {
+      const tests = [
+        {
+          taskNode: { node: null },
+          expected: undefined
+        },
+        {
+          taskNode: {
+            task: {
+              meanElapsedTime: 0
+            }
+          },
+          expected: undefined
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 84
+              }
+            }
+          },
+          expected: '00:01:24'
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 42
+              }
+            }
+          },
+          expected: '00:00:42'
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 4242
+              }
+            }
+          },
+          expected: '01:10:42'
+        },
+        {
+          taskNode: {
+            node: {
+              task: {
+                meanElapsedTime: 1426332
+              }
+            }
+          },
+          expected: '16d 12:12:12'
+        }
+      ]
+      tests.forEach(test => {
+        expect(dtMean(test.taskNode)).to.equal(test.expected)
+      })
+    })
+  })
+  describe('formatDuration', () => {
+    it('should format seconds to nice isodatetime format', () => {
+      expect(formatDuration(null)).to.equal(undefined)
+      expect(formatDuration(undefined)).to.equal(undefined)
+      expect(formatDuration(42)).to.equal('00:00:42')
+      expect(formatDuration(84)).to.equal('00:01:24')
+      expect(formatDuration(4242)).to.equal('01:10:42')
+      expect(formatDuration(1426332)).to.equal('16d 12:12:12')
+    })
+    it('should return undefined for 0 seconds by default', () => {
+      expect(formatDuration(0)).to.equal(undefined)
+    })
+    it('should change format of 0 seconds based on value of allowZeros', () => {
+      expect(formatDuration(0, false)).to.equal(undefined)
+      expect(formatDuration(0, true)).to.equal('00:00:00')
+    })
+    it('should not change format of non-zero values based on allowZeros', () => {
+      expect(formatDuration(42)).to.equal('00:00:42')
+      expect(formatDuration(42, false)).to.equal('00:00:42')
+      expect(formatDuration(42, true)).to.equal('00:00:42')
     })
   })
 })

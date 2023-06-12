@@ -16,18 +16,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-    <v-card
-      class="mx-auto d-inline-block"
-      style="padding: 1em;"
-      outlined
-    >
+    <v-card class="d-inline-block pa-4">
+      <!-- the mutation title -->
+      <h3 :style="{ 'text-transform': 'capitalize' }">
+        {{ mutation._title }}
+      </h3>
+
+      <!-- the mutation description -->
+      <v-expansion-panels
+        variant="accordian"
+        v-bind="extendedDescription ? { hover: true } : { readonly: true }"
+      >
+        <v-expansion-panel
+          class="mutation-desc"
+          elevation="0"
+        >
+          <v-expansion-panel-title
+            v-bind="extendedDescription ? {} : {
+              expandIcon: null,
+              style: {
+                cursor: 'default'
+              }
+            }"
+          >
+            <Markdown :markdown="shortDescription"/>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text v-if="extendedDescription">
+            <Markdown :markdown="extendedDescription"/>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+
+      <v-divider />
+      <EditRuntimeForm
+        v-if="mutation.name === 'editRuntime'"
+        v-bind="{
+          cylcObject,
+          types
+        }"
+        ref="form"
+        v-model="isValid"
+      />
       <FormGenerator
-       :mutation='mutation'
-       :types='types'
-       :callbackSubmit='call'
-       :initialData='initialData'
-       ref="formGenerator"
-       v-model="isValid"
+        v-else
+        v-bind="{
+          mutation,
+          types,
+          initialData
+        }"
+        ref="form"
+        v-model="isValid"
       />
       <br />
       <v-card-actions>
@@ -35,83 +73,89 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           color="grey"
           @click="cancel()"
-          text
+          variant="text"
           data-cy="cancel"
         >
           Cancel
         </v-btn>
         <v-btn
           color="orange"
-          @click="$refs.formGenerator.reset()"
-          text
+          @click="$refs.form.reset()"
+          variant="text"
           data-cy="reset"
         >
           Reset
         </v-btn>
-        <v-tooltip
-          top
-          color="error"
-          :disabled="isValid"
+        <v-btn
+          variant="text"
+          :color="isValid ? 'primary' : 'error'"
+          @click="submit"
+          :loading="submitting"
+          data-cy="submit"
         >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              text
-              :color="isValid ? 'primary' : 'error'"
-              @click="$refs.formGenerator.submit()"
-              v-bind="attrs"
-              v-on="on"
-              data-cy="submit"
-            >
-              Submit
-            </v-btn>
-          </template>
-          <span>Form contains invalid or missing values!</span>
-        </v-tooltip>
+          Submit
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="bg-error"
+            :disabled="isValid"
+          >
+            <span>Form contains invalid or missing values!</span>
+          </v-tooltip>
+        </v-btn>
       </v-card-actions>
-      <p
-       style="font-size:1.5em;"
-       v-if="status !== 'waiting'"
+      <v-snackbar
+        v-model="showWarning"
+        timeout="4e3"
+        color="amber-accent-2"
+        light
+        data-cy="warning-snack"
       >
-        <Task :status="status"/>
-        {{ status }}
-      </p>
-      <pre v-if="status === 'failed'">{{ response }}</pre>
+        {{ warningMsg }}
+        <template v-slot:actions>
+          <v-btn
+            @click="showWarning = false"
+            icon
+            v-bind="attrs"
+            data-cy="snack-close"
+          >
+            <v-icon>
+              {{ $options.icons.close }}
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-card>
 </template>
 
 <script>
 import FormGenerator from '@/components/graphqlFormGenerator/FormGenerator.vue'
-import Task from '@/components/cylc/Task.vue'
-import { mutate } from '@/utils/aotf'
-
-// enumeration for the mutation status, maps onto Cylc Task status
-const status = {
-  waiting: 'waiting',
-  submitted: 'submitted',
-  succeeded: 'succeeded',
-  failed: 'failed',
-  submitFailed: 'submit-failed'
-}
-Object.freeze(status)
-
-// initial state defined here so we can easily reset the component data
-const initialState = {
-  response: '',
-  status: status.waiting
-}
-Object.freeze(initialState)
+import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
+import Markdown from '@/components/Markdown.vue'
+import {
+  getMutationShortDesc,
+  getMutationExtendedDesc,
+  mutationStatus
+} from '@/utils/aotf'
+import { mdiClose } from '@mdi/js'
 
 export default {
   name: 'mutation',
 
   components: {
+    EditRuntimeForm,
     FormGenerator,
-    Task
+    Markdown
   },
 
   props: {
     mutation: {
       // graphql mutation object as returned by introspection query
+      type: Object,
+      required: true
+    },
+    cylcObject: {
+      // data store node
       type: Object,
       required: true
     },
@@ -132,37 +176,50 @@ export default {
   },
 
   data: () => ({
-    ...initialState,
-    isValid: false
+    isValid: false,
+    submitting: false,
+    warningMsg: null
   }),
 
-  methods: {
-    /* Execute the GraphQL mutation */
-    async call (args) {
-      this.status = status.submitted
-      mutate(
-        this.mutation,
-        args,
-        this.$workflowService.apolloClient
-      ).then(response => {
-        this.status = response.status.name.replace('_', '-')
-      })
+  computed: {
+    /* Return the first line of the description. */
+    shortDescription () {
+      return getMutationShortDesc(this.mutation.description)
     },
-
-    /* Reset this component to it's initial state. */
-    reset () {
-      this.$refs.formGenerator.reset()
-      Object.assign(this.$data, initialState)
+    /* Return the subsequent lines of the description */
+    extendedDescription () {
+      return getMutationExtendedDesc(this.mutation.description)
+    },
+    showWarning: {
+      get () {
+        return Boolean(this.warningMsg)
+      },
+      set (val) {
+        if (!val) this.warningMsg = null
+      }
     }
   },
 
-  watch: {
-    mutation: function () {
-      // reset the form if the mutation changes
-      // (i.e. this component is being re-used)
-      this.reset()
+  methods: {
+    /* Execute the GraphQL mutation */
+    submit () {
+      this.submitting = true
+      this.$refs.form.submit().then(response => {
+        this.submitting = false
+        if (response.status === mutationStatus.SUCCEEDED) {
+          // Close the form on success
+          this.cancel()
+        } else if (response.status === mutationStatus.WARN) {
+          this.warningMsg = response.message
+        }
+        // else if error, an alert is generated by AOTF
+      })
     }
-  }
+  },
 
+  // Misc options
+  icons: {
+    close: mdiClose
+  }
 }
 </script>

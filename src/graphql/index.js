@@ -21,12 +21,12 @@ import {
   HttpLink,
   InMemoryCache,
   split
-} from '@apollo/client'
+} from '@apollo/client/core'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { setContext } from '@apollo/client/link/context'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
-import store from '@/store/index'
+import { store } from '@/store/index'
 import { createUrl } from '@/utils/urls'
 
 /**
@@ -97,7 +97,7 @@ export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
   //       would be nice to find a better error message using the error object
   // subscriptionClient.onError((error) => {
   //   console.error(error)
-  //   store.commit('SET_ALERT', new Alert(error, null, 'error'))
+  //   store.commit('SET_ALERT', new Alert(error, 'error'))
   // })
   return subscriptionClient
 }
@@ -162,6 +162,6 @@ export function createApolloClient (httpUrl, subscriptionClient) {
         errorPolicy: 'all'
       }
     },
-    connectToDevTools: process.env.NODE_ENV !== 'production'
+    connectToDevTools: import.meta.env.MODE !== 'production'
   })
 }

@@ -15,50 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
-import { createLocalVue, mount } from '@vue/test-utils'
-import Vue from 'vue'
-import Vuex from 'vuex'
-import Vuetify from 'vuetify/lib'
-import App from '@/App'
-import Empty from '@/layouts/Empty'
+import { mount } from '@vue/test-utils'
+import { createStore } from 'vuex'
+import App from '@/App.vue'
+import Empty from '@/layouts/Empty.vue'
 import storeOptions from '@/store/options'
-
-const localVue = createLocalVue()
-
-Vue.use(Vuex)
+import { createVuetify } from 'vuetify'
 
 describe('App', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   let vuetify
   let $route
-  const mountFunction = options => {
+
+  const mountFunction = () => {
     return mount(App, {
-      localVue,
-      vuetify,
-      store,
-      components: {
-        'empty-layout': Empty
-      },
-      stubs: ['router-link', 'router-view'],
-      mocks: {
-        $route,
-        $vuetify: {
-          application: {
-            register: () => {}
-          },
-          theme: {
-            dark: false,
-            isDark: function () {
-              return this.dark
-            }
-          }
+      global: {
+        plugins: [
+          vuetify,
+          store
+        ],
+        components: {
+          'empty-layout': Empty
         },
-        $t: () => {} // vue-i18n
-      },
-      ...options
+        stubs: ['router-link', 'router-view'],
+        mocks: {
+          $route
+        }
+      }
     })
   }
+
   beforeEach(() => {
     $route = {
       name: 'app',
@@ -66,19 +52,16 @@ describe('App', () => {
         layout: 'empty'
       }
     }
-    vuetify = new Vuetify({
-      theme: { disable: true },
-      icons: {
-        iconfont: 'mdi'
-      }
-    })
+    vuetify = createVuetify()
     global.localStorage = window.localStorage
   })
+
   it('should create the App with the correct theme', () => {
     const wrapper = mountFunction()
     expect(wrapper.vm.jobTheme).to.equal('default')
     expect(wrapper.vm.jobThemeClass).to.equal('job_theme--default')
   })
+
   it('should create the App with the correct layout', () => {
     const wrapper = mountFunction()
     // default is empty, unless the route specifies another layout

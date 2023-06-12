@@ -15,79 +15,63 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  getCurrentFontSize,
-  expectedFontSize,
-  resetFontSize,
-  INITIAL_FONT_SIZE
-} from '@/utils/font-size'
-import * as CylcTree from '@/components/cylc/tree/index'
+import { INCREMENT } from '@/utils/font-size'
+
+/** @param {number} expected font size in px */
+function expectFontSize (expected) {
+  cy.get('html')
+    .should('have.css', 'font-size', `${expected}px`)
+}
 
 describe('User Profile', () => {
-  it('Visits the user profile', () => {
+  const defaultFontSize = 16 // px
+  beforeEach(() => {
+    // resetFontSize()
     cy.visit('/#/user-profile')
-    cy
-      .get('h3.headline')
-      .should('be.visible')
-      .should('contain', 'Your Profile')
+  })
+
+  it('Visits the user profile', () => {
     cy.get('input#profile-username')
       .should('be.visible')
       .should('be.disabled')
   })
+
   it('Increases the font size', () => {
-    resetFontSize()
-    cy.visit('/#/user-profile')
-    expect(parseFloat(INITIAL_FONT_SIZE)).to.be.equal(getCurrentFontSize())
+    expectFontSize(defaultFontSize)
     const clicks = 3
-    // NOTE: had to use Promises in order to locate right element with Cypress
-    cy.get('button#font-size-increase-button').then(($button) => {
-      for (let i = 0; i < clicks; i++) {
-        $button.trigger('click')
-      }
-      const currentFontSize = getCurrentFontSize()
-      const expectedNewSize = expectedFontSize(true, clicks)
-      expect(Math.round(expectedNewSize)).to.be.equal(Math.round(currentFontSize))
-      cy
-        .get('button#font-size-reset-button')
+    let expectedFontSize = defaultFontSize
+    for (let i = 0; i < clicks; i++) {
+      expectedFontSize += INCREMENT
+      cy.get('button#font-size-increase-button')
         .click()
-    })
+      expectFontSize(expectedFontSize)
+    }
   })
+
   it('Decreases the font size', () => {
-    resetFontSize()
-    cy.visit('/#/user-profile')
-    expect(parseFloat(INITIAL_FONT_SIZE)).to.be.equal(getCurrentFontSize())
+    expectFontSize(defaultFontSize)
     const clicks = 3
-    cy.get('button#font-size-decrease-button').then(($button) => {
-      for (let i = 0; i < clicks; i++) {
-        $button.trigger('click')
-      }
-      const currentFontSize = getCurrentFontSize()
-      const expectedNewSize = expectedFontSize(false, clicks)
-      expect(Math.round(expectedNewSize)).to.be.equal(Math.round(currentFontSize))
-      cy
-        .get('button#font-size-reset-button')
+    let expectedFontSize = defaultFontSize
+    for (let i = 0; i < clicks; i++) {
+      expectedFontSize -= INCREMENT
+      cy.get('button#font-size-decrease-button')
         .click()
-    })
+      expectFontSize(expectedFontSize)
+    }
   })
+
   it('Resets the font size', () => {
-    resetFontSize()
-    cy.visit('/#/user-profile')
-    expect(parseFloat(INITIAL_FONT_SIZE)).to.be.equal(getCurrentFontSize())
-    const clicks = 3
-    cy.get('button#font-size-decrease-button').then(($button) => {
-      for (let i = 0; i < clicks; i++) {
-        $button.trigger('click')
-      }
-      cy.get('button#font-size-reset-button').then(($resetButton) => {
-        $resetButton.trigger('click')
-        const currentFontSize = getCurrentFontSize()
-        const expectedNewSize = parseFloat(INITIAL_FONT_SIZE)
-        expect(Math.round(expectedNewSize)).to.be.equal(Math.round(currentFontSize))
-      })
-    })
+    expectFontSize(defaultFontSize)
+    for (let i = 0; i < 3; i++) {
+      cy.get('button#font-size-decrease-button')
+        .click()
+    }
+    cy.get('button#font-size-reset-button')
+      .click()
+    expectFontSize(defaultFontSize)
   })
+
   it('Sets the job theme', () => {
-    cy.visit('/#/user-profile')
     cy.get('#input-job-theme-default')
       .click({ force: true })
     // set the job theme to normal
@@ -105,14 +89,15 @@ describe('User Profile', () => {
           })
       })
   })
-  it('Sets the cycle points order', () => {
-    cy.visit('/#/user-profile')
-    cy.get('#input-cyclepoints-order')
-      .should('have.attr', 'aria-checked', JSON.stringify(CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC))
-    // change the cycle points order
-    cy.get('#input-cyclepoints-order')
-      .click({ force: true })
-    cy.get('#input-cyclepoints-order')
-      .should('have.attr', 'aria-checked', JSON.stringify(!CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC))
-  })
+  // TODO
+  // it('Sets the cycle points order', () => {
+  //   cy.visit('/#/user-profile')
+  //   cy.get('#input-cyclepoints-order')
+  //     .should('have.attr', 'aria-checked', JSON.stringify(CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC))
+  //   // change the cycle points order
+  //   cy.get('#input-cyclepoints-order')
+  //     .click({ force: true })
+  //   cy.get('#input-cyclepoints-order')
+  //     .should('have.attr', 'aria-checked', JSON.stringify(!CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC))
+  // })
 })

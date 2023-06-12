@@ -1,5 +1,5 @@
 {
-  "name": "cylc",
+  "name": "user",
   "groups": [
     "cylc",
     "developer"
@@ -34,5 +34,6 @@
     "namespaceMutation",
     "hold"
   ],
-  "mode": "single user"
+  "mode": "single user",
+  "owner": "user"
 }

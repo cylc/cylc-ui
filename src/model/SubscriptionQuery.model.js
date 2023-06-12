@@ -15,8 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// eslint-disable-next-line no-unused-vars
-import { DocumentNode } from 'graphql'
+/** @typedef {import('graphql').DocumentNode} DocumentNode */
 
 /**
  * A subscription query. It is part of a Subscription, and contains query and auxiliary data
@@ -36,12 +35,16 @@ class SubscriptionQuery {
    * @param {Object.<String, String>} variables
    * @param {String} name
    * @param {Array<DeltasCallback>} callbacks
+   * @param {boolean} isDelta
+   * @param {boolean} isGlobalCallback
    */
-  constructor (query, variables, name, callbacks) {
+  constructor (query, variables, name, callbacks, isDelta, isGlobalCallback) {
     this.query = query
     this.variables = variables
     this.name = name
     this.callbacks = callbacks
+    this.isDelta = isDelta
+    this.isGlobalCallback = isGlobalCallback
   }
 }
 

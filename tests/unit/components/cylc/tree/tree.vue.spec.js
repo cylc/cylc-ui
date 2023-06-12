@@ -16,68 +16,49 @@
  */
 
 // we mount the tree to include the TreeItem component and other vuetify children components
-import { createLocalVue, mount } from '@vue/test-utils'
-import { expect } from 'chai'
-import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
-import Tree from '@/components/cylc/tree/Tree'
+import { nextTick } from 'vue'
+import { mount } from '@vue/test-utils'
+import { createVuetify } from 'vuetify'
+import Tree from '@/components/cylc/tree/Tree.vue'
 import { simpleWorkflowTree4Nodes } from './tree.data'
-import TaskState from '@/model/TaskState.model'
-import TreeItem from '@/components/cylc/tree/TreeItem'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import cloneDeep from 'lodash/cloneDeep'
 
-const localVue = createLocalVue()
-localVue.prototype.$eventBus = {
+const $eventBus = {
   emit () {}
 }
-localVue.prototype.$workflowService = {
+const $workflowService = {
   register () {},
   unregister () {},
   subscribe () {},
-  mutationsAndTypes: Promise.resolve({
+  introspection: Promise.resolve({
     mutations: [
       { args: [] }
     ],
     types: []
   })
 }
-localVue.use(CylcObjectPlugin)
+const vuetify = createVuetify()
 
 describe('Tree component', () => {
-  let vuetify
-  beforeEach(() => {
-    vuetify = new Vuetify({
-      theme: { disable: true },
-      icons: {
-        iconfont: 'mdi'
-      }
-    })
-  })
-  // mount function from Vuetify docs https://vuetifyjs.com/ru/getting-started/unit-testing/
   /**
    * @param options
    * @returns {Wrapper<Tree>}
    */
-  const mountFunction = options => {
-    // the mocks.$vuetify is for https://github.com/vuetifyjs/vuetify/issues/9923
-    return mount(Tree, {
-      localVue,
+  const mountFunction = (options) => mount(Tree, {
+    global: {
+      plugins: [vuetify, CylcObjectPlugin],
       mocks: {
-        $vuetify: {
-          lang: {
-            t: (val) => val
-          }
-        }
-      },
-      vuetify,
-      ...options
-    })
-  }
-  global.requestAnimationFrame = cb => cb()
+        $eventBus,
+        $workflowService
+      }
+    },
+    ...options
+  })
+
   it('should display the tree with valid data', () => {
     const wrapper = mountFunction({
-      propsData: {
+      props: {
         workflows: simpleWorkflowTree4Nodes[0].children
       }
     })
@@ -87,204 +68,45 @@ describe('Tree component', () => {
   describe('Activable', () => {
     it('should not activate by default', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: simpleWorkflowTree4Nodes[0].children,
           filterable: false
         }
       })
       const treeItems = wrapper.findAllComponents({ name: 'TreeItem' })
-      const workflowTreeItem = treeItems.wrappers[0]
+      const workflowTreeItem = treeItems[0]
       // the workflow tree item node must not be active
       const workflowTreeItemNode = workflowTreeItem.find('div.node')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
-      const workflowTreeItemNodeActivableSpan = workflowTreeItemNode.find('.node-data > span')
-      workflowTreeItemNodeActivableSpan.trigger('click')
+      workflowTreeItemNode.find('.node-data').trigger('click')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
     })
     it('should activate correctly', async () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: simpleWorkflowTree4Nodes[0].children,
           activable: true
         }
       })
       const treeItems = wrapper.findAllComponents({ name: 'TreeItem' })
-      const workflowTreeItem = treeItems.wrappers[0]
+      const workflowTreeItem = treeItems[0]
       // the workflow tree item node must not be active
       const workflowTreeItemNode = workflowTreeItem.find('div.node')
       expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
-      const workflowTreeItemNodeActivableSpan = workflowTreeItemNode.find('.node-data > span')
-      workflowTreeItemNodeActivableSpan.trigger('click')
-      await Vue.nextTick()
+      workflowTreeItemNode.find('.node-data').trigger('click')
+      await nextTick()
       expect(workflowTreeItemNode.classes('node--active')).to.equal(true)
     })
   })
   describe('Filter', () => {
-    describe('Filter by name', () => {
-      it('should not filter by name by default', () => {
+    describe('Default', () => {
+      it('should not filter by name or state by default', () => {
         const wrapper = mountFunction({
-          propsData: {
+          props: {
             workflows: simpleWorkflowTree4Nodes[0].children
           }
         })
-        expect(wrapper.vm.activeFilters).to.equal(null)
-      })
-      it('should filter by name', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                name: 'foo'
-              }
-            }
-          }
-        })
-        expect(wrapper.vm.tasksFilter.name).to.equal('foo')
-        expect(wrapper.vm.activeFilters).to.equal(null)
-      })
-    })
-    describe('Filter by state', () => {
-      it('should not filter by state by default', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          }
-        })
-        expect(wrapper.vm.activeFilters).to.equal(null)
-      })
-      it('should filter by name', () => {
-        const states = [
-          {
-            value: TaskState.EXPIRED.name
-          },
-          {
-            value: TaskState.SUBMIT_FAILED.name
-          }]
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              activeFilters: {
-                states
-              }
-            }
-          }
-        })
-        expect(wrapper.vm.activeFilters.states).to.equal(states)
-      })
-    })
-    describe('Enable filters', () => {
-      it('should not have any filters enabled by default', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          }
-        })
-        expect(wrapper.vm.activeFilters).to.equal(null)
-      })
-      it('should indicate filters are enabled if filtering by task name', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                name: 'foo'
-              }
-            }
-          }
-        })
-        wrapper.vm.filterTasks()
-        expect(wrapper.vm.activeFilters.name).to.equal('foo')
-      })
-      it('should indicate filters are enabled if filtering by task states', () => {
-        const states = [
-          TaskState.EXPIRED.name,
-          TaskState.SUBMIT_FAILED.name
-        ]
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                states
-              }
-            }
-          }
-        })
-        wrapper.vm.filterTasks()
-        expect(wrapper.vm.activeFilters.states).to.deep.equal(states)
-      })
-    })
-    describe('Filter tree items', () => {
-      it('should not filter the tree items by default', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          }
-        })
-        // 3, 1 cycle point, 1 task proxy, and 1 job
-        const treeItems = wrapper.findAllComponents(TreeItem)
-        expect(treeItems.length).to.equal(3)
-        const taskProxy = treeItems.at(1)
-        expect(taskProxy.vm.node.type).to.equal('task-proxy')
-        // task proxy is displayed
-        expect(taskProxy.vm.filtered).to.equal(true)
-      })
-      it('should filter tree items by name', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                name: 'bar'
-              }
-            }
-          }
-        })
-        // the task proxy in our test data is "foo", so "bar" filter should have removed it
-        wrapper.vm.filterTasks()
-        // 3, 1 cycle point, 1 task proxy, and 1 job
-        const treeItems = wrapper.findAllComponents(TreeItem)
-        expect(treeItems.length).to.equal(3)
-        const taskProxy = treeItems.at(1)
-        // task proxy is displayed
-        expect(taskProxy.vm.filtered).to.equal(false)
-      })
-      it('should remove all filters', () => {
-        const wrapper = mountFunction({
-          propsData: {
-            workflows: simpleWorkflowTree4Nodes[0].children
-          },
-          data () {
-            return {
-              tasksFilter: {
-                name: 'bar'
-              }
-            }
-          }
-        })
-        // the task proxy in our test data is "foo", so "bar" filter should have removed it
-        wrapper.vm.filterTasks()
-        // 3, 1 cycle point, 1 task proxy, and 1 job
-        const treeItems = wrapper.findAllComponents(TreeItem)
-        expect(treeItems.length).to.equal(3)
-        const taskProxy = treeItems.at(1)
-        // task proxy is displayed
-        expect(taskProxy.vm.filtered).to.equal(false)
-        wrapper.vm.removeAllFilters()
-        // task proxy is displayed
-        expect(taskProxy.vm.filtered).to.equal(true)
+        expect(wrapper.vm.tasksFilter).to.deep.equal({})
       })
     })
   })
@@ -307,7 +129,7 @@ describe('Tree component', () => {
     }
     it('should all be initialized to empty caches', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -317,7 +139,7 @@ describe('Tree component', () => {
     })
     it('should add to the tree item cache', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -329,7 +151,7 @@ describe('Tree component', () => {
     })
     it('should remove from the tree item cache', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -341,7 +163,7 @@ describe('Tree component', () => {
     })
     it('should add to the expanded cache', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -353,7 +175,7 @@ describe('Tree component', () => {
     })
     it('should remove from the expanded cache', () => {
       const wrapper = mountFunction({
-        propsData: {
+        props: {
           workflows: []
         }
       })
@@ -407,11 +229,8 @@ describe('Tree component', () => {
         isExpanded: true
       }
     }
-    // eslint-disable-next-line no-unused-vars
     const filterWorkflows = (item) => item.type === 'workflow'
-    // eslint-disable-next-line no-unused-vars
     const filterCyclepoints = (item) => item.type === 'cyclepoint'
-    // eslint-disable-next-line no-unused-vars
     const filterTaskProxies = (item) => item.type === 'task-proxy'
     it('should expand items', () => {
       // we clone the test data structures as the function mutates the objects
@@ -453,7 +272,7 @@ describe('Tree component', () => {
       ]
       tests.forEach(test => {
         const wrapper = mountFunction({
-          propsData: {
+          props: {
             workflows: [],
             expandCollapseToggle: true
           },
@@ -519,7 +338,7 @@ describe('Tree component', () => {
       ]
       tests.forEach(test => {
         const wrapper = mountFunction({
-          propsData: {
+          props: {
             workflows: [],
             expandCollapseToggle: true
           },

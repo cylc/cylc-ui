@@ -15,10 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import sinon from 'sinon'
-import Vue from 'vue'
-import Vuex from 'vuex'
 import { print } from 'graphql/language'
 import gql from 'graphql-tag'
 // need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
@@ -28,12 +25,9 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import WorkflowService from '@/services/workflow.service'
 import * as graphqlModule from '@/graphql/index'
 import ViewState from '@/model/ViewState.model'
-import WorkflowCallback from '@/components/cylc/common/callbacks'
-import TreeCallback from '@/components/cylc/tree/callbacks'
+import { TreeCallback, WorkflowCallback } from './testCallback'
 
 const sandbox = sinon.createSandbox()
-
-Vue.use(Vuex)
 
 if (!global.localStorage) {
   global.localStorage = {
@@ -88,7 +82,7 @@ describe('WorkflowService', () => {
     subscriptionClient = null
     sandbox.stub(graphqlModule, 'createApolloClient').returns(apolloClient)
     // TODO: really load some mutations
-    sandbox.stub(WorkflowService.prototype, 'loadMutations').returns(
+    sandbox.stub(WorkflowService.prototype, 'loadTypes').returns(
       Promise.resolve({
         mutations: [],
         types: []
@@ -108,7 +102,9 @@ describe('WorkflowService', () => {
         workflowId: '~cylc/test'
       },
       'root',
-      [])
+      [],
+      true,
+      true)
     // Subscription
     subscription = new Subscription(subscriptionQuery, true)
     service.subscriptions[subscriptionQuery.name] = subscription
@@ -134,13 +130,13 @@ describe('WorkflowService', () => {
   })
   describe('getOrCreateSubscription', () => {
     it('should return existing subscriptions', () => {
-      const existingSubscription = service.getOrCreateSubscription(view)
+      const existingSubscription = service.getOrCreateSubscription(view.query)
       expect(existingSubscription).to.deep.equal(subscription)
     })
     it('should create new subscriptions and add to local cache', () => {
       delete service.subscriptions[view.query.name]
       expect(Object.keys(service.subscriptions).length).to.equal(0)
-      const newSubscription = service.getOrCreateSubscription(view)
+      const newSubscription = service.getOrCreateSubscription(view.query)
       expect(Object.keys(service.subscriptions).length).to.equal(1)
       expect(service.subscriptions[view.query.name]).to.deep.equal(newSubscription)
     })
@@ -162,13 +158,13 @@ describe('WorkflowService', () => {
     })
     it('should call the subscription callback', () => {
       const workflowName = 'test'
-      const myStartDeltasSubscription = (query, variables, subscriptionOptions) => {
+      const mystartCylcSubscription = (query, variables, subscriptionOptions) => {
         subscriptionOptions.next({ data: workflowName })
       }
-      const startDeltasSubscriptionStub = sandbox.stub(
+      const startCylcSubscriptionStub = sandbox.stub(
         service,
-        'startDeltasSubscription')
-      startDeltasSubscriptionStub.callsFake(myStartDeltasSubscription)
+        'startCylcSubscription')
+      startCylcSubscriptionStub.callsFake(mystartCylcSubscription)
       // we need to add a callback to be called...
       subscriptionQuery.callbacks.push()
       subscription.reload = true
@@ -184,20 +180,20 @@ describe('WorkflowService', () => {
       })
       it('should set the view state to ERROR if it fails to start the deltas subscription', () => {
         expect(subscription.subscribers[view._uid].viewState).to.equal(ViewState.NO_STATE)
-        const stub = sandbox.stub(service, 'startDeltasSubscription')
+        const stub = sandbox.stub(service, 'startCylcSubscription')
         stub.throws()
         service.startSubscription(subscription)
         expect(subscription.subscribers[view._uid].viewState).to.equal(ViewState.ERROR)
       })
       it('should set the view state to COMPLETE when it successfully starts a subscription', () => {
         expect(subscription.subscribers[view._uid].viewState).to.equal(ViewState.NO_STATE)
-        const myStartDeltasSubscription = (query, variables, subscriptionOptions) => {
+        const mystartCylcSubscription = (query, variables, subscriptionOptions) => {
           subscriptionOptions.error('test')
         }
-        const startDeltasSubscriptionStub = sandbox.stub(
+        const startCylcSubscriptionStub = sandbox.stub(
           service,
-          'startDeltasSubscription')
-        startDeltasSubscriptionStub.callsFake(myStartDeltasSubscription)
+          'startCylcSubscription')
+        startCylcSubscriptionStub.callsFake(mystartCylcSubscription)
         const spy = sandbox.spy(subscription, 'handleViewState')
         service.startSubscription(subscription)
         // The error happens, but immediately, so the view state is set to COMPLETE. In
@@ -210,11 +206,11 @@ describe('WorkflowService', () => {
       })
     })
   })
-  describe('startDeltasSubscription', () => {
-    // the bulk of tests for startDeltasSubscription are e2e tests, here we only test
+  describe('startCylcSubscription', () => {
+    // the bulk of tests for startCylcSubscription are e2e tests, here we only test
     // a few simple scenarios
     it('should throw an error if no query provided', () => {
-      expect(() => { service.startDeltasSubscription(null, null, null) }).to.throw()
+      expect(() => { service.startCylcSubscription(null, null, null) }).to.throw()
     })
   })
   describe('merge', () => {
@@ -228,7 +224,9 @@ describe('WorkflowService', () => {
         }`,
         subscriptionQuery.variables,
         'root',
-        [])
+        [],
+        true,
+        true)
       /**
        * @type {View}
        */
@@ -251,7 +249,9 @@ describe('WorkflowService', () => {
       }`,
         subscriptionQuery.variables,
         'root',
-        [])
+        [],
+        true,
+        true)
       /**
        * @type {View}
        */
@@ -286,7 +286,9 @@ describe('WorkflowService', () => {
         query,
         subscriptionQuery.variables,
         subscriptionQuery.name,
-        newCallbacks
+        newCallbacks,
+        true,
+        true
       )
       const anotherView = {
         _uid: 'anotherView',
@@ -304,7 +306,9 @@ describe('WorkflowService', () => {
         query,
         subscriptionQuery.variables,
         subscriptionQuery.name,
-        newCallbacks
+        newCallbacks,
+        true,
+        true
       )
       const anotherView = {
         _uid: 'anotherView',
@@ -325,7 +329,8 @@ describe('WorkflowService', () => {
           invalidVariable: true
         },
         'test',
-        [])
+        [],
+        true)
       subscription.subscribers[anotherQuery.name] = {
         _uid: 'view',
         query: anotherQuery,
@@ -338,16 +343,12 @@ describe('WorkflowService', () => {
   describe('unsubscribe', () => {
     it('should warn about queries that do not exist', () => {
       const stub = sandbox.stub(console, 'warn')
-      service.unsubscribe({
-        query: {
-          name: 'missing'
-        }
-      })
+      service.unsubscribe({ name: 'missing' }, 'irrelevant_uid')
       expect(stub.calledOnce).to.equal(true)
     })
     it('should call unsubscribe if last subscriber is unsubscribed', () => {
       const stub = sandbox.stub(service, 'stopSubscription')
-      service.unsubscribe(view)
+      service.unsubscribe(view.query, view._uid)
       expect(stub.calledOnce).to.equal(true)
     })
     it('should NOT call unsubscribe if there are still subscribers left', () => {
@@ -357,7 +358,7 @@ describe('WorkflowService', () => {
       }
       service.subscribe(anotherView)
       const stub = sandbox.stub(service, 'stopSubscription')
-      service.unsubscribe(view)
+      service.unsubscribe(view.query, view._uid)
       expect(stub.calledOnce).to.equal(false)
     })
   })

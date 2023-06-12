@@ -42,4 +42,13 @@ class TaskOutput extends Enumify {
   }
 }
 
+export const TASK_OUTPUT_NAMES = [
+  TaskOutput.SUBMITTED.name,
+  TaskOutput.STARTED.name,
+  TaskOutput.SUCCEEDED.name,
+  TaskOutput.SUBMIT_FAILED.name,
+  TaskOutput.FAILED.name,
+  TaskOutput.EXPIRED.name
+]
+
 export default TaskOutput

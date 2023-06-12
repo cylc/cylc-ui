@@ -15,20 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import sinon from 'sinon'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import Alert from '@/model/Alert.model'
-
-Vue.use(Vuex)
 
 /**
  * Tests for the store/index module.
  */
 describe('index', () => {
-  const store = new Vuex.Store(storeOptions)
+  const store = createStore(storeOptions)
   // using sinon to capture console.log
   beforeEach(() => {
     sinon.stub(console, 'log')
@@ -50,13 +46,13 @@ describe('index', () => {
     })
     it('should set alert', () => {
       const text = 'my-alert'
-      store.dispatch('setAlert', new Alert(text, '', ''))
+      store.dispatch('setAlert', new Alert(text, ''))
       expect(store.state.alert.text).to.equal(text)
       // repeating an alert with same text does not change anything
-      store.dispatch('setAlert', new Alert(text, '', ''))
+      store.dispatch('setAlert', new Alert(text, ''))
       expect(store.state.alert.text).to.equal(text)
       // but if the text is different, it will use the new value
-      store.dispatch('setAlert', new Alert('my-alert-2', '', ''))
+      store.dispatch('setAlert', new Alert('my-alert-2', ''))
       expect(store.state.alert.text).to.equal('my-alert-2')
       // and we can reset the state
       store.dispatch('setAlert', null)

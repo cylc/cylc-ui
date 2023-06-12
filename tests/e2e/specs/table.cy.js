@@ -17,67 +17,52 @@
 
 import TaskState from '@/model/TaskState.model'
 
+const initialNumRows = 7
+
 describe('Table view', () => {
-  it('Should display the mocked workflow', () => {
+  beforeEach(() => {
     cy.visit('/#/table/one')
-    cy
-      .get('.c-table table > tbody > tr')
-      .should('have.length', 7)
+  })
+
+  it('Should display the mocked workflow', () => {
+    cy.get('.c-table table > tbody > tr')
+      .should('have.length', initialNumRows)
       .should('be.visible')
   })
   describe('Filters', () => {
-    it('Should not filter by default', () => {
-      cy.visit('/#/table/one')
-      cy
-        .get('.c-table table > tbody > tr')
-        .should('have.length', 7)
-        .should('be.visible')
-      cy
-        .get('#c-table-filter-task-name')
+    it('Should filter by ID', () => {
+      cy.get('.c-table table > tbody > tr')
+        .should('have.length', initialNumRows)
+      cy.get('[data-cy=filter-id] input')
         .should('be.empty')
-      cy
-        .get('#c-table-filter-task-states')
-        .parent()
-        .parent()
-        .find('input[type="hidden"]')
+      cy.get('[data-cy=filter-task-states] input')
         .should('have.value', '')
-    })
-    it('Should filter by task name', () => {
-      cy.visit('/#/table/one')
-      cy
-        .get('.c-table table > tbody > tr')
-        .should('have.length', 7)
-        .should('be.visible')
-      cy
-        .get('td > div.d-flex > div')
+      cy.get('td > div.d-flex > div')
         .contains('sleepy')
         .should('be.visible')
-      // eep should filter sleepy
-      cy
-        .get('#c-table-filter-task-name')
-        .type('eep')
-      cy
-        .get('td > div.d-flex > div')
-        .contains('sleepy')
-        .should('be.visible')
-      cy
-        .get('.c-table table > tbody > tr')
-        .should('have.length', 1)
-        .should('be.visible')
+      for (const id of ['eep', '/sle']) {
+        cy.get('[data-cy=filter-id] input')
+          .clear()
+          .type(id)
+        cy.get('td > div.d-flex > div')
+          .contains('sleepy')
+          .should('be.visible')
+        cy.get('.c-table table > tbody > tr')
+          .should('have.length', 1)
+          .should('be.visible')
+      }
     })
     it('Should filter by task state', () => {
-      cy.visit('/#/table/one')
       cy
         .get('.c-table table > tbody > tr')
-        .should('have.length', 7)
-        .should('be.visible')
+        .should('have.length', initialNumRows)
       cy
         .get('td > div.d-flex > div')
         .contains(TaskState.FAILED.name)
         .should('be.visible')
       cy
-        .get('#c-table-filter-task-states')
-        .click({ force: true })
+        .get('[data-cy=filter-task-states]')
+        .click()
       cy
         .get('.v-list-item')
         .contains(TaskState.RUNNING.name)
@@ -91,30 +76,51 @@ describe('Table view', () => {
         .should('have.length', 1)
         .should('be.visible')
     })
-    it('Should filter by task name and states', () => {
-      cy.visit('/#/table/one')
+    it('Should filter by ID and states', () => {
       cy
         .get('.c-table table > tbody > tr')
-        .should('have.length', 7)
-        .should('be.visible')
+        .should('have.length', initialNumRows)
       cy
-        .get('#c-table-filter-task-states')
-        .click({ force: true })
+        .get('[data-cy=filter-task-states]')
+        .click()
       cy
         .get('.v-list-item')
-        .contains(TaskState.SUBMITTED.name)
+        .contains(TaskState.SUCCEEDED.name)
         .click({ force: true })
       cy
         .get('.c-table table > tbody > tr')
-        .should('have.length', 3)
+        .should('have.length', 2)
         .should('be.visible')
       cy
-        .get('#c-table-filter-task-name')
-        .type(TaskState.FAILED.name)
+        .get('[data-cy=filter-id] input')
+        .type('eventually')
       cy
         .get('td > div.d-flex > div')
-        .contains(TaskState.FAILED.name)
+        .contains('eventually')
         .should('be.visible')
+    })
+    it('displays and sorts dt-mean', () => {
+      cy
+        // sort dt-mean ascending
+        .get('.c-table')
+        .contains('th', 'dT-mean').as('dTHeader')
+        .click()
+
+        // check 0 is at the top (1st row, 10th column)
+        .get('tbody > :nth-child(1) > :nth-child(10)')
+        .should(($ele) => {
+          expect($ele.text().trim()).equal('') // no value sorted first
+        })
+
+        // sort ft-mean descending
+        .get('@dTHeader')
+        .click()
+
+        // check 7 is at the top (1st row, 10th column)
+        .get('tbody > :nth-child(1) > :nth-child(10)')
+        .should(($ele) => {
+          expect($ele.text().trim()).equal('00:00:07')
+        })
     })
   })
 })

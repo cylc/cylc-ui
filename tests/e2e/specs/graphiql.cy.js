@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// query used for the graphiql test
-const query = `query GscanSubscriptionQuery {
+/** query used for the graphiql test */
+const query = `query App {
   workflows {
     id
   }
@@ -24,36 +24,30 @@ const query = `query GscanSubscriptionQuery {
 `
 
 describe('GraphiQL', () => {
-  it('should load the GraphiQL application', () => {
-    cy.visit('/#/graphiql')
-    cy
-      .get('.title')
-      .should('be.visible')
-  })
   it('should execute a GraphQL query and get a valid response', () => {
     cy.visit('/#/graphiql')
-    // NB: at least three CodeMirror editors in the UI
-    //     1. Query
-    //     2. Variables
-    //     3. Results
+      .get('.title')
+      .should('be.visible')
     cy.intercept('/graphql*').as('GraphQLQuery')
     cy.get('.CodeMirror')
+      .should('have.length', 4)
       .then((editors) => {
         editors[0].CodeMirror.setValue(query)
         // This appears to force the CodeMirror command above to be executed, or at least
         // waited for.
-        expect(editors[0].CodeMirror.getValue()).to.equal(query)
-        expect(editors[1].CodeMirror.getValue()).to.equal('')
-        expect(editors[2].CodeMirror.getValue()).to.equal('')
+        expect(editors[0].CodeMirror.getValue()).to.equal(query) // query editor
+        expect(editors[1].CodeMirror.getValue()).to.equal('') // query variables
+        expect(editors[2].CodeMirror.getValue()).to.equal('') // request headers
+        expect(editors[3].CodeMirror.getValue()).to.equal('') // results box
       })
     // TODO: CodeMirror seems to have a delay to actually set the value to the underlying
     //       textarea. Which can cause the test below to fail as the query submitted is
     //       the default commented-out text, instead of the given query above.
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
     cy.get('.execute-button')
       .click()
     cy.wait('@GraphQLQuery')
-    // https://stackoverflow.com/a/48916050
     cy.get('.resultWrap')
       .find('.spinner')
       .should('not.exist')

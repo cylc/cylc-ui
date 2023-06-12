@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { expect } from 'chai'
 import sinon from 'sinon'
 import Alert from '@/model/Alert.model'
 
@@ -29,11 +28,9 @@ describe('Alert model', () => {
   describe('constructor', () => {
     it('should be created', () => {
       const text = 'my error'
-      const icon = 'error-icon'
       const color = 'success'
-      const alert = new Alert(text, icon, color)
+      const alert = new Alert(text, color)
       expect(alert.text).to.equal(text)
-      expect(alert.icon).to.equal(icon)
       expect(alert.color).to.equal(color)
     })
   })

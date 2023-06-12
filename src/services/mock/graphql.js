@@ -22,25 +22,7 @@ const data = require('./json/index')
  * can be generated programmatically, or with GraphiQL, or another GraphQL
  * command line.
  */
-const DATA_MAPPING = {
-  IntrospectionQuery: data.IntrospectionQuery,
-  OnWorkflowTreeDeltasData: {
-    deltas: {
-      added: data.OnWorkflowTreeDeltasData
-    }
-  },
-  DashboardSubscriptionQuery: data.DashboardSubscriptionQuery,
-  GscanSubscriptionQuery: {
-    deltas: {
-      added: data.GscanSubscriptionQuery
-    }
-  },
-  OnWorkflowTableDeltasData: {
-    deltas: {
-      added: data.OnWorkflowTableDeltasData
-    }
-  }
-}
+const DATA_MAPPING = data
 
 /**
  * Given a GraphQL query, this function tries to fetch the operation

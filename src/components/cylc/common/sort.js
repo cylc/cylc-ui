@@ -19,9 +19,9 @@
  * Declare function used in sortedIndexBy as a comparator.
  *
  * @callback SortedIndexByComparator
- * @param {object} leftObject - left parameter object
+ * @param {Object} leftObject - left parameter object
  * @param {string} leftValue - left parameter value
- * @param {object} rightObject - right parameter object
+ * @param {Object} rightObject - right parameter object
  * @param {string} rightValue - right parameter value
  * @returns {boolean} - true if leftValue is higher than rightValue
  */
@@ -30,8 +30,8 @@
  * The default comparator used to compare strings for cycle points, family proxies names,
  * task proxies names, and jobs.
  *
- * @param left {string}
- * @param right {string}
+ * @param {string} left
+ * @param {string} right
  * @returns {number}
  * @constructor
  */
@@ -68,20 +68,21 @@ export const DEFAULT_COMPARATOR = (left, right) => {
  * name, but that respects natural order for numbers, i.e. [1, 2, 10].
  * Not [1, 10, 2].
  *
- * @param array {Array<object>} - list of string values, or of objects with string values
- * @param value {object} - a value to be inserted in the list, or an object wrapping the value (see iteratee)
- * @param iteratee {SortedIndexByIteratee=} - an optional function used to return the value of the element of the list}
- * @param comparator {SortedIndexByComparator=} - function used to compare the newValue with otherValues in the list
+ * @param {Object[]} array - list of string values, or of objects with string values
+ * @param {Object} value - a value to be inserted in the list, or an object wrapping the value (see iteratee)
+ * @param {SortedIndexByIteratee=} iteratee - an optional function used to return the value of the element of the list}
+ * @param {SortedIndexByComparator=} comparator - function used to compare the newValue with otherValues in the list
  * @return {number} - sorted index
  */
-export function sortedIndexBy (array, value, iteratee, comparator) {
+export function sortedIndexBy (array, value, iteratee, options = {}) {
+  // comparator, reverse = false) {
   if (array.length === 0) {
     return 0
   }
   // If given a function, use it. Otherwise, simply use identity function.
   const iterateeFunction = iteratee || ((value) => value)
   // If given a function, use it. Otherwise, simply use locale sort with numeric enabled
-  const comparatorFunction = comparator || ((leftObject, leftValue, rightObject, rightValue) => DEFAULT_COMPARATOR(leftValue, rightValue))
+  const comparatorFunction = options.comparator || ((leftObject, leftValue, rightObject, rightValue) => DEFAULT_COMPARATOR(leftValue, rightValue))
   let low = 0
   let high = array.length
 
@@ -90,7 +91,10 @@ export function sortedIndexBy (array, value, iteratee, comparator) {
   while (low < high) {
     const mid = Math.floor((low + high) / 2)
     const midValue = iterateeFunction(array[mid])
-    const higher = comparatorFunction(value, newValue, array[mid], midValue)
+    let higher = comparatorFunction(value, newValue, array[mid], midValue)
+    if (options.reverse) {
+      higher = higher * -1
+    }
     if (higher > 0) {
       low = mid + 1
     } else {

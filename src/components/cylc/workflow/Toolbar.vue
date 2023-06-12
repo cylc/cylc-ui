@@ -18,17 +18,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Toolbar for the workflow view -->
 
 <template>
-  <v-app-bar
-    app
+  <v-toolbar
     id="core-app-bar"
-    dense
+    density="compact"
     flat
     class="c-toolbar"
+    color="grey-lighten-4"
   >
     <!-- TODO: duplicated in workflow/Toolbar.vue and cylc/Toolbar.vue -->
     <!-- burger button for mobile -->
     <v-btn
-      v-if="responsive"
+      v-if="showNavBtn"
       icon
       @click.stop="onClickBtn"
       class="default v-btn--simple"
@@ -38,50 +38,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-btn>
     <!-- title -->
     <v-toolbar-title
-      class="text-md-h6 text-subtitle-1"
+      class="c-toolbar-title text-md-h6 text-subtitle-1 font-weight-medium text-primary"
+      :class="showNavBtn ? 'ml-0' : null"
     >
-      <span class="c-toolbar-title">{{ title }}</span>
+      {{ title }}
     </v-toolbar-title>
 
     <!-- control bar elements displayed only when there is a current workflow in the store -->
     <template v-if="currentWorkflow">
       <div class="c-workflow-controls flex-shrink-0">
-        <v-icon
+        <v-btn
           id="workflow-mutate-button"
-          color="#5E5E5E"
           v-cylc-object="currentWorkflow"
-        >
-          {{ svgPaths.menu }}
-        </v-icon>
+          :icon="svgPaths.menu"
+          size="small"
+        />
 
-        <v-icon
+        <v-btn
           id="workflow-play-button"
-          color="#5E5E5E"
+          :icon="svgPaths.run"
           :disabled="!enabled.playToggle"
           v-if="!isRunning"
           @click="onClickPlay"
-        >
-          {{ svgPaths.run }}
-        </v-icon>
+          size="small"
+        />
 
-        <v-icon
+        <v-btn
           id="workflow-play-pause-button"
-          color="#5E5E5E"
+          :icon="isPaused ? svgPaths.run : svgPaths.hold"
           :disabled="!enabled.pauseToggle"
           v-if="isRunning"
           @click="onClickReleaseHold"
-        >
-          {{ isPaused ? svgPaths.run : svgPaths.hold }}
-        </v-icon>
+          size="small"
+        />
 
-        <v-icon
+        <v-btn
           id="workflow-stop-button"
-          color="#5E5E5E"
+          :icon="svgPaths.stop"
           :disabled="!enabled.stopToggle"
           @click="onClickStop"
-        >
-          {{ svgPaths.stop }}
-        </v-icon>
+          size="small"
+        />
       </div>
 
       <!-- workflow status message -->
@@ -89,37 +86,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{ statusMsg }}
       </span>
 
-      <v-spacer />
+      <v-spacer class="mx-0" />
 
-      <v-menu
-        offset-y
-        v-if="$route.name === 'workflow'"
+      <v-btn
+        class="add-view"
+        color="primary"
+        data-cy="add-view-btn"
       >
-        <template v-slot:activator="{ on }">
-          <a
-            class="add-view d-flex flex-row-reverse align-items-center"
-            v-on="on">
-            <v-icon class="icon" color="#5995EB">{{ svgPaths.add }}</v-icon>
-            <span class="label">
-              {{ $t('Toolbar.addView') }}
-            </span>
-          </a>
-        </template>
-        <v-list class="pa-0">
-          <v-list-item
-            :id="`toolbar-add-${ view.name }-view`"
-            v-for="view in views"
-            :key="view.name"
-            @click="$listeners['add'](view.name)"
-            class="py-0 px-8 ma-0 c-add-view"
-          >
-            <v-list-item-icon>
-              <v-icon>{{ view.data().widget.icon }}</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ view.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+        <v-icon class="icon">{{ svgPaths.add }}</v-icon>
+        <span class="label">
+          {{ $t('Toolbar.addView') }}
+        </span>
+
+        <v-menu
+          activator="parent"
+          location="bottom"
+          v-if="$route.name === 'workspace'"
+        >
+          <v-list class="pa-0">
+            <v-list-item
+              :id="`toolbar-add-${ view.name }-view`"
+              v-for="view in views"
+              :key="view.name"
+              @click="$emit('add', { viewName: view.name })"
+              class="py-0 px-8 ma-0 c-add-view"
+            >
+              <template v-slot:prepend>
+                <v-icon>{{ view.data().widget.icon }}</v-icon>
+              </template>
+              <v-list-item-title>{{ view.name }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-btn>
     </template>
 
     <!-- displayed only when extended===true -->
@@ -136,11 +135,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <span>Other controls added in the future</span>
       </span>
     </template>
-  </v-app-bar>
+  </v-toolbar>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 import {
   mdiMicrosoftXboxControllerMenu,
   mdiPause,
@@ -151,6 +150,7 @@ import {
 } from '@mdi/js'
 import toolbar from '@/mixins/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
+import graphql from '@/mixins/graphql'
 
 import {
   mutationStatus
@@ -159,7 +159,8 @@ import {
 export default {
   name: 'Toolbar',
   mixins: [
-    toolbar
+    toolbar,
+    graphql
   ],
   props: {
     views: {
@@ -167,6 +168,7 @@ export default {
       required: true
     }
   },
+  emits: ['add'],
   data: () => ({
     extended: false,
     // FIXME: remove local state once we have this data in the workflow - https://github.com/cylc/cylc-ui/issues/221
@@ -187,31 +189,35 @@ export default {
   }),
   computed: {
     ...mapState('app', ['title']),
-    ...mapGetters('workflows', ['currentWorkflow']),
+    ...mapState('user', ['user']),
+    ...mapState('workflows', ['cylcTree']),
+    currentWorkflow () {
+      return this.cylcTree.$index[this.workflowId]
+    },
     isRunning () {
       return (
         this.currentWorkflow &&
         (
-          this.currentWorkflow.status === WorkflowState.RUNNING.name ||
-          this.currentWorkflow.status === WorkflowState.PAUSED.name ||
-          this.currentWorkflow.status === WorkflowState.STOPPING.name
+          this.currentWorkflow.node.status === WorkflowState.RUNNING.name ||
+          this.currentWorkflow.node.status === WorkflowState.PAUSED.name ||
+          this.currentWorkflow.node.status === WorkflowState.STOPPING.name
         )
       )
     },
     isPaused () {
       return (
         this.currentWorkflow &&
-        this.currentWorkflow.status === WorkflowState.PAUSED.name
+        this.currentWorkflow.node.status === WorkflowState.PAUSED.name
       )
     },
     isStopped () {
       return (
         !this.currentWorkflow ||
-        this.currentWorkflow.status === WorkflowState.STOPPED.name
+        this.currentWorkflow.node.status === WorkflowState.STOPPED.name
       )
     },
     statusMsg () {
-      return this.currentWorkflow.statusMsg || ''
+      return this.currentWorkflow.node.statusMsg || ''
     },
     enabled () {
       // object holding the states of controls that are supposed to be enabled
@@ -223,17 +229,17 @@ export default {
           this.isStopped &&
           (
             this.expecting.play === null ||
-            this.expecting.play === this.currentWorkflow.isRunning
+            this.expecting.play === this.isRunning
           )
         ),
         pauseToggle: (
           // the play/pause button
           !this.isStopped &&
           !this.expecting.stop &&
-          this.currentWorkflow.status !== WorkflowState.STOPPING.name &&
+          this.currentWorkflow.node.status !== WorkflowState.STOPPING.name &&
           (
             this.expecting.paused === null ||
-            this.expecting.paused === this.currentWorkflow.isPaused
+            this.expecting.paused === this.isPaused
           )
         ),
         stopToggle: (
@@ -241,7 +247,7 @@ export default {
           !this.isStopped &&
           (
             this.expecting.stop === null ||
-            this.expecting.stop === this.currentWorkflow.isStopped
+            this.expecting.stop === this.isStopped
           )
         )
       }
