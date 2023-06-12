@@ -23,7 +23,7 @@
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@hpcc-js/wasm": "^2.8.0",
-    "@lumino/default-theme": "^0.22.0",
+    "@lumino/default-theme": "^2.0.0",
     "@lumino/widgets": "^2.0.0",
     "@unhead/vue": "^1.1.17",
     "axios": "^1.0.0",
@@ -50,7 +50,7 @@
     "@cypress/code-coverage": "^3.9.12",
     "@mdi/js": "^7.0.0",
     "@vitejs/plugin-vue": "^4.0.0",
-    "@vitest/coverage-istanbul": "^0.31.0",
+    "@vitest/coverage-istanbul": "^0.32.0",
     "@vue/test-utils": "^2.0.0",
     "bufferutil": "^4.0.6",
     "concurrently": "^8.0.0",
@@ -74,7 +74,7 @@
     "json-server": "^0.17.0",
     "nodemon": "^2.0.19",
     "nyc": "^15.1.0",
-    "sass": "~1.62.0",
+    "sass": "~1.63.0",
     "sinon": "^15.0.0",
     "standard": "^17.0.0",
     "subscriptions-transport-ws": "^0.11.0",
@@ -83,7 +83,7 @@
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-istanbul": "^4.0.1",
     "vite-plugin-vuetify": "^1.0.2",
-    "vitest": "^0.31.0"
+    "vitest": "^0.32.0"
   },
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"

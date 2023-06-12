@@ -89,6 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-spacer class="mx-0" />
 
       <v-btn
+        v-if="$route.name === 'workspace'"
         class="add-view"
         color="primary"
         data-cy="add-view-btn"
@@ -101,20 +102,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-menu
           activator="parent"
           location="bottom"
-          v-if="$route.name === 'workspace'"
-        >
-          <v-list class="pa-0">
+          >
+          <v-list>
             <v-list-item
-              :id="`toolbar-add-${ view.name }-view`"
               v-for="view in views"
+              :id="`toolbar-add-${ view.name }-view`"
               :key="view.name"
               @click="$emit('add', { viewName: view.name })"
-              class="py-0 px-8 ma-0 c-add-view"
             >
               <template v-slot:prepend>
-                <v-icon>{{ view.data().widget.icon }}</v-icon>
+                <v-icon>{{ view.icon }}</v-icon>
               </template>
-              <v-list-item-title>{{ view.name }}</v-list-item-title>
+              <v-list-item-title>{{ startCase(view.name) }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -148,6 +147,7 @@ import {
   mdiStop,
   mdiViewList
 } from '@mdi/js'
+import { startCase } from 'lodash'
 import toolbar from '@/mixins/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import graphql from '@/mixins/graphql'
@@ -158,20 +158,24 @@ import {
 
 export default {
   name: 'Toolbar',
+
   mixins: [
     toolbar,
     graphql
   ],
+
   props: {
     views: {
       type: Array,
       required: true
     }
+
   },
+
   emits: ['add'],
+
   data: () => ({
     extended: false,
-    // FIXME: remove local state once we have this data in the workflow - https://github.com/cylc/cylc-ui/issues/221
     svgPaths: {
       add: mdiPlusBoxMultiple,
       hold: mdiPause,
@@ -187,6 +191,7 @@ export default {
       stop: null
     }
   }),
+
   computed: {
     ...mapState('app', ['title']),
     ...mapState('user', ['user']),
@@ -253,6 +258,7 @@ export default {
       }
     }
   },
+
   watch: {
     isRunning () {
       this.expecting.play = null
@@ -264,6 +270,7 @@ export default {
       this.expecting.stop = null
     }
   },
+
   methods: {
     onClickPlay () {
       this.$workflowService.mutate(
@@ -285,7 +292,7 @@ export default {
         }
       })
     },
-    async onClickStop () {
+    onClickStop () {
       this.$workflowService.mutate(
         'stop',
         this.currentWorkflow.id
@@ -297,7 +304,8 @@ export default {
     },
     toggleExtended () {
       this.extended = !this.extended
-    }
+    },
+    startCase,
   }
 }
 </script>

@@ -37,7 +37,7 @@ module.exports = {
         objects: 'only-multiline',
         imports: 'only-multiline',
         exports: 'only-multiline',
-        functions: 'never',
+        functions: 'only-multiline',
       },
     ],
     'template-curly-spacing': [
