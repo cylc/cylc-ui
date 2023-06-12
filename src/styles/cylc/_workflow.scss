@@ -39,31 +39,32 @@
       flex: 1 1 auto;
       .lm-TabBar-content {
         padding-left: 0;
-
-        .lm-TabBar-tab {
-          display: flex;
-          align-items: center;
-          border-bottom: 1px solid #C0C0C0;
-        }
-
-        .lm-TabBar-tabLabel {
-          font-family: settings.$body-font-family;
-          font-size: 1rem;
-        }
-
-        .lm-TabBar-tabCloseIcon {
-          color: inherit;
-          cursor: pointer;
-        }
-
-        .lm-TabBar-tabCloseIcon:before {
-          content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z' /%3E%3C/svg%3E");
-          display: block;
-          width: 1rem;
-          height: 1rem;
-        }
       }
     }
   }
+}
 
+.lm-TabBar-tab {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #C0C0C0;
+}
+.lm-TabBar-tabLabel {
+  font-family: settings.$body-font-family;
+  font-size: 1rem;
+}
+.lm-TabBar-tabCloseIcon {
+  color: inherit;
+  cursor: pointer;
+}
+.lm-TabBar-tabCloseIcon:before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z' /%3E%3C/svg%3E") !important;
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+// Workaround https://github.com/jupyterlab/lumino/issues/593:
+.lm-mod-drag-image {
+  top: -10px;
+  left: -60px;
 }
