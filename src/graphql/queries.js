@@ -101,9 +101,6 @@ fragment JobData on Job {
       label
       message
     }
-    task {
-      meanElapsedTime
-    }
   }
 }
 `

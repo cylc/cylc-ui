@@ -147,34 +147,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot name="job-details" v-else-if="node.type === 'job-details'">
         <div class="leaf job-details mb-2">
           <div class="arrow-up" :style="leafTriangleStyle"></div>
-          <div class="leaf-data font-weight-light py-4 pl-2">
+          <div class="leaf-data font-weight-light py-4">
             <div
               v-for="item in leafProperties"
-              :key="item.property"
-              class="leaf-entry"
+              :key="item.title"
+              class="leaf-entry px-5"
             >
-              <span class="px-4 leaf-entry-title" v-html="item.title"></span>
-              <span class="text-grey leaf-entry-value">{{ node.node[item.property] }}</span>
+              <span class="leaf-entry-title">{{ item.title }}</span>
+              <span class="text-grey leaf-entry-value">{{ item.property }}</span>
             </div>
-            <v-divider class="ml-3 mr-5" />
-            <div class="leaf-entry">
-              <span class="px-4 leaf-entry-title text-grey-darken-1">outputs</span>
+            <v-divider class="mx-5" />
+            <div class="leaf-entry px-5">
+              <span class="leaf-entry-title text-grey-darken-1">Outputs</span>
             </div>
             <div
-              v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
+              v-if="jobMessageOutputs?.length"
               class="leaf-outputs-entry"
             >
               <div
                 v-for="customOutput of jobMessageOutputs"
                 :key="customOutput.label"
-                class="leaf-entry output"
+                class="leaf-entry output px-5"
               >
-                <span class="px-4 leaf-entry-title">{{ customOutput.label }}</span>
+                <span class="leaf-entry-title">{{ customOutput.label }}</span>
                 <span class="text-grey leaf-entry-value">{{ customOutput.message }}</span>
               </div>
             </div>
-            <div v-else class="leaf-entry">
-              <span class="px-4 leaf-entry-title text-grey-darken-1">No custom messages</span>
+            <div v-else class="leaf-entry px-5">
+              <span class="leaf-entry-title text-grey-darken-1">No custom messages</span>
             </div>
           </div>
         </div>
@@ -200,25 +200,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <!-- component recursion -->
       <TreeItem
-        v-if="node.type === 'job'"
-        ref="treeitem"
-        :key="`${node.id}-job-details`"
-        :node="{
-          id: `${node.id}-job-details`,
-          type: 'job-details',
-          node: node.node
-        }"
-        :depth="depth + 1"
-        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
-        v-on="passthroughHandlers"
-      />
-      <TreeItem
-        v-else
         v-for="child in nodeChildren"
         ref="treeitem"
         :key="child.id"
         :node="child"
         :depth="depth + 1"
+        :mean-elapsed-time="meanElapsedTime ?? node.node.task?.meanElapsedTime"
         v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
         v-on="passthroughHandlers"
       >
@@ -244,6 +231,7 @@ import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import {
+  formatDuration,
   latestJob,
   jobMessageOutputs
 } from '@/utils/tasks'
@@ -306,6 +294,11 @@ export default {
       type: Number,
       required: false,
       default: 28
+    },
+    /** Pass mean run time from task down to (grand)child job details */
+    meanElapsedTime: {
+      type: Number,
+      required: false,
     }
   },
 
@@ -339,8 +332,15 @@ export default {
         Boolean(this.node.children?.length)
       )
     },
+    /** returns child nodes following the family tree and following sort order */
     nodeChildren () {
-      // returns child nodes folling the family tree and following sort order
+      if (this.node.type === 'job') {
+        return [{
+          id: `${this.node.id}-job-details`,
+          type: 'job-details',
+          node: this.node.node,
+        }]
+      }
       return getNodeChildren(this.node, this.cyclePointsOrderDesc)
     },
     /** Get the node indentation in units of px. */
@@ -388,7 +388,42 @@ export default {
     },
     jobMessageOutputs () {
       return jobMessageOutputs(this.node)
-    }
+    },
+    leafProperties () {
+      if (this.node.type !== 'job-details') {
+        return null
+      }
+      return [
+        {
+          title: 'Platform',
+          property: this.node.node.platform
+        },
+        {
+          title: 'Job ID',
+          property: this.node.node.jobId
+        },
+        {
+          title: 'Job runner',
+          property: this.node.node.jobRunnerName
+        },
+        {
+          title: 'Submitted',
+          property: this.node.node.submittedTime
+        },
+        {
+          title: 'Started',
+          property: this.node.node.startedTime
+        },
+        {
+          title: 'Finished',
+          property: this.node.node.finishedTime
+        },
+        {
+          title: 'Mean run time',
+          property: formatDuration(this.meanElapsedTime)
+        },
+      ]
+    },
   },
 
   created () {

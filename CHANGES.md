@@ -18,6 +18,9 @@ ones in. -->
 [#1269](https://github.com/cylc/cylc-ui/pull/1269) -
 Upgraded Vue and Vuetify frameworks to v3.
 
+[#1114](https://github.com/cylc/cylc-ui/pull/1114) -
+Tree view: show mean run time in job details.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-1.6.0 (<span actions:bind='release-date'>Upcoming</span>)__
 
@@ -114,9 +117,6 @@ view cycle point column.
 ## __cylc-ui-1.3.0 (<span actions:bind='release-date'>Released 2022-07-27</span>)__
 
 ### Enhancements
-
-[#1114](https://github.com/cylc/cylc-ui/pull/1114) - Show mean delta-T (task
-run time) in tree view job leaf.
 
 [#1073](https://github.com/cylc/cylc-ui/pull/1073) - Improve validation of the
 command edit form.
