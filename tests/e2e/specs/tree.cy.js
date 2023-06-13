@@ -16,6 +16,10 @@
  */
 
 import TaskState from '@/model/TaskState.model'
+import {
+  defaultNodeIndent,
+  nodeContentPad,
+} from '@/components/cylc/tree/TreeItem.vue'
 
 describe('Tree view', () => {
   it('Should display cycle points for the mocked workflow', () => {
@@ -54,41 +58,41 @@ describe('Tree view', () => {
       .get('.node-data-job:first')
       .should('be.visible')
   })
-  it('Should display leaf node triangle with margin', () => {
+  it('Should display job details', () => {
     // this is testing that there is a margin, not necessarily that the leaf node's triangle is exactly under the node
     cy.visit('/#/workspace/one')
-    cy
-      .get('.node-data-task:first')
-      .prev()
+    cy.get('.node-data-task')
+      .contains('eventually_succeeded')
+      .parents('.node')
+      .find('.node-expand-collapse-button')
       .click()
     // no jobs, and no leaves are visible initially
-    cy
-      .get('.leaf:first')
+    cy.get('.leaf:first')
       .should('not.be.visible')
     // but clicking on a visible job should display its leaf node
-    cy
-      .get('.node-data-job:first')
+    cy.get('.node-data-job:visible:first')
       .prev()
       .click()
-    cy
-      .get('.leaf:first')
-      .should('be.visible')
-    // and, important, the leaf node has a triangle, as a helper to quickly point the user to its parent
-    // job in the tree - i.e. the leaf has a left margin... as the leaves are not root nodes, we
-    // **always** have a margin > 0, unless a bug broke it (which happened before due to a wrong variable name).
-    cy
-      .get('.leaf:first > .arrow-up')
-      .should(($div) => {
-        const marginLeft = $div.get(0).style.marginLeft
-        if (
-          marginLeft === undefined ||
-          marginLeft === '' ||
-          marginLeft === '0' ||
-          marginLeft === '0px'
-        ) {
-          throw new Error(`Invalid leaf node margin-left: "${marginLeft}"`)
-        }
-      })
+    cy.get('.leaf:visible:first')
+    const patterns = [
+      /Platform\s*\w+/,
+      /Job ID\s*\d+/,
+      /Job runner\s*\w+/,
+      /Submitted\s*\d{4}-\d{2}-\d{2}T.+/,
+      /Started\s*\d{4}-\d{2}-\d{2}T.+/,
+      /Finished\s*\d{4}-\d{2}-\d{2}T.+/,
+      /Mean run time\s*\d{2}:\d{2}:\d{2}/,
+      /Platform\s*\w+/,
+      /foo\s*foo message/
+    ]
+    for (const pattern of patterns) {
+      cy.get('.leaf:visible:first .leaf-entry')
+        .contains(pattern)
+    }
+    // The leaf node has a triangle pointing to the job icon - check the margin
+    // is applied (node is 5 levels deep):
+    cy.get('.leaf:visible:first > .arrow-up')
+      .should('have.css', 'margin-left', `${5 * defaultNodeIndent + nodeContentPad}px`)
   })
   it('Should update view correctly', () => {
     cy.visit('/#/tree/one')

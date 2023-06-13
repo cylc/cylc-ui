@@ -251,8 +251,10 @@ const passthroughEvents = [
   'tree-item-clicked'
 ]
 
+export const defaultNodeIndent = 28 // px
+
 /** Margin between expand/collapse btn & node content */
-const nodeContentPad = 6 // px
+export const nodeContentPad = 6 // px
 
 export default {
   name: 'TreeItem',
@@ -293,7 +295,7 @@ export default {
     indent: {
       type: Number,
       required: false,
-      default: 28
+      default: defaultNodeIndent
     },
     /** Pass mean run time from task down to (grand)child job details */
     meanElapsedTime: {
