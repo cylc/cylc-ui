@@ -365,7 +365,7 @@ export default {
           preventMouseEventsDefault: true,
           zoomScaleSensitivity: 0.2,
           minZoom: 0.01, // how zoomed out we can go
-          maxZoom: 10, // how zoomed in we can go
+          maxZoom: 50, // how zoomed in we can go
           fit: false,
           contain: false,
           center: true,
