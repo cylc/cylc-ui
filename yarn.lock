@@ -776,26 +776,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/algorithm@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "@lumino/algorithm@npm:1.9.1"
-  checksum: aa1724ba35fd34645493b87431677488d06c0188bd1664e507e43e63ae732e8d2bf6a4392b3986662327b300b92aa4262d721476508a3df6f52dc2a881fd5a6c
-  languageName: node
-  linkType: hard
-
 "@lumino/algorithm@npm:^2.0.0":
   version: 2.0.0
   resolution: "@lumino/algorithm@npm:2.0.0"
   checksum: 663edf536e94397b449c6a2643a735e602fbb396dec86b56ad1193a768dce27c6e7da5ad0384aa90086ea44cbb64dde3f9d565e9fd81858f1eb0c6b4253f3b94
-  languageName: node
-  linkType: hard
-
-"@lumino/collections@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "@lumino/collections@npm:1.9.1"
-  dependencies:
-    "@lumino/algorithm": ^1.9.1
-  checksum: be84f258b2a475294750a0c67e987eb5bee3496f9e64d60f69d3c46583bf7cce76cea5a5d58d964f1bbd2c7a4f4d6a91d3d0ff121a5f3a9e2f1ecffb1992e53d
   languageName: node
   linkType: hard
 
@@ -805,21 +789,6 @@ __metadata:
   dependencies:
     "@lumino/algorithm": ^2.0.0
   checksum: 4a7fc3571e92a1368a1ef01300ad7b6e0d4ff13cb78b89533d5962eea66d4a7550e15d8b80fa3ab1816b1a89382f35015f9dddf72ab04654c17e5b516b845d8f
-  languageName: node
-  linkType: hard
-
-"@lumino/commands@npm:^1.20.0":
-  version: 1.20.0
-  resolution: "@lumino/commands@npm:1.20.0"
-  dependencies:
-    "@lumino/algorithm": ^1.9.1
-    "@lumino/coreutils": ^1.12.0
-    "@lumino/disposable": ^1.10.1
-    "@lumino/domutils": ^1.8.1
-    "@lumino/keyboard": ^1.8.1
-    "@lumino/signaling": ^1.10.1
-    "@lumino/virtualdom": ^1.14.1
-  checksum: 89ad835cfa68f3a20163de76d29317c6e8763ac97062e9bc86182eb4394fba94a266ae2e71ae6bf0ef4352e09731b57d6bbcd7853f1a094690a0e1f89cca3339
   languageName: node
   linkType: hard
 
@@ -835,15 +804,6 @@ __metadata:
     "@lumino/signaling": ^2.1.1
     "@lumino/virtualdom": ^2.0.0
   checksum: a076244e9c4f7a3c6dab02642fdd38dbbaab6e5754acaeeb84a5195dc5c2fc19343ba754c3a0f89c9b60f16c61cb793301cdb6e8d69bdc30e18ed7e32f40d524
-  languageName: node
-  linkType: hard
-
-"@lumino/coreutils@npm:^1.12.0":
-  version: 1.12.0
-  resolution: "@lumino/coreutils@npm:1.12.0"
-  peerDependencies:
-    crypto: 1.0.1
-  checksum: 04dffec155aeebbb009b6a00d8561c7b31684f6de1883008b385a36569444bd26e186cad09fc9b1256de05f51d4a3e1ea6d783163a126cc821492c52aca3debd
   languageName: node
   linkType: hard
 
@@ -864,16 +824,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/disposable@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "@lumino/disposable@npm:1.10.1"
-  dependencies:
-    "@lumino/algorithm": ^1.9.1
-    "@lumino/signaling": ^1.10.1
-  checksum: 4bd785502ef912281d750bec5cedd728b7be1adc7ac52a2a5b2426862a42c9ef76eec8a02a5a2490c9d09270636ff955d390d4527560fbe9aed5f30db57664a5
-  languageName: node
-  linkType: hard
-
 "@lumino/disposable@npm:^2.1.1":
   version: 2.1.1
   resolution: "@lumino/disposable@npm:2.1.1"
@@ -883,27 +833,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/domutils@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "@lumino/domutils@npm:1.8.1"
-  checksum: 9ec0d9d5fe10896b108ad9788b0f82df1157f26d7a9271ff4aff04617ffbbbe7589058ef96bdda369505c57537385e281b301bf4db5b5e5f4be2d42fb3c377c4
-  languageName: node
-  linkType: hard
-
 "@lumino/domutils@npm:^2.0.0":
   version: 2.0.0
   resolution: "@lumino/domutils@npm:2.0.0"
   checksum: 4a146bfc1006d5fd00ccecc61d9803965d269c15c48c892fd87216336ce967f0db91f31203c5616c83d260224cddf25af4abb6704a6770757d19e44068f690bf
-  languageName: node
-  linkType: hard
-
-"@lumino/dragdrop@npm:^1.14.0":
-  version: 1.14.0
-  resolution: "@lumino/dragdrop@npm:1.14.0"
-  dependencies:
-    "@lumino/coreutils": ^1.12.0
-    "@lumino/disposable": ^1.10.1
-  checksum: 6eb3e00fbeeaee8280083e1676f98d268bd1e47900c202e2b6cf3531211d818718a68efaa066bda5195f1908380257bdab96399506f23d0c161f8d870701c21f
   languageName: node
   linkType: hard
 
@@ -917,27 +850,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/keyboard@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "@lumino/keyboard@npm:1.8.1"
-  checksum: 2e67a5ebe58d21f08ea33db70942402f8c52dc95a0f9a9f09a20d942d64b6fa6ba00e63122f997037bc4c1eb75881a7fcf894acaa814bcc7f87ae8c2d2fc7b20
-  languageName: node
-  linkType: hard
-
 "@lumino/keyboard@npm:^2.0.0":
   version: 2.0.0
   resolution: "@lumino/keyboard@npm:2.0.0"
   checksum: 3852ba51f437b1c1d7e552a0f844592a05e04dd5012070dc6e4384c58965d1ebf536c6875c1b7bae03cde3c715ddc36cd290992fcefc1a8c39094194f4689fdd
-  languageName: node
-  linkType: hard
-
-"@lumino/messaging@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "@lumino/messaging@npm:1.10.1"
-  dependencies:
-    "@lumino/algorithm": ^1.9.1
-    "@lumino/collections": ^1.9.1
-  checksum: ba7bce3cb99763dff851db082f6a7dc3aca648cdf8a1e76d3e0aff293f50aaac05395d0e7bf9d544a34e744b4c19c1f8b0d5a8bce0d101e844595279829018d3
   languageName: node
   linkType: hard
 
@@ -951,26 +867,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/properties@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "@lumino/properties@npm:1.8.1"
-  checksum: ce7c40edab3a03f1e95063a5f7b270347c47afed7c1a086475e8b5346744a94c53e60e9ba9332d0e6b8379ecab98e755289e0221c2d8163fff23379950b0fac1
-  languageName: node
-  linkType: hard
-
 "@lumino/properties@npm:^2.0.0":
   version: 2.0.0
   resolution: "@lumino/properties@npm:2.0.0"
   checksum: 81187a11a779eed4e20ff0035e77dee99bd271b0cf649096c4e8809dd6bdd06955b1a974bc1a115e536f8d2840b30183bb78a362b2c6991824477df6d17e6c59
-  languageName: node
-  linkType: hard
-
-"@lumino/signaling@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "@lumino/signaling@npm:1.10.1"
-  dependencies:
-    "@lumino/algorithm": ^1.9.1
-  checksum: 75b1c5273223de60318c3790d2dafc412fb293e417ecca853d10dabf945c34adc58d37c6f1f61fdd9545bd60efe9ed39cec6537f50f2754feed3e688303c89c3
   languageName: node
   linkType: hard
 
@@ -984,15 +884,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/virtualdom@npm:^1.14.1":
-  version: 1.14.1
-  resolution: "@lumino/virtualdom@npm:1.14.1"
-  dependencies:
-    "@lumino/algorithm": ^1.9.1
-  checksum: f99cc64c35ec305ca30eb675b172af00d2c25ea07ef12f8c0388aa3a36ba497a15f7afa3bf24da883e9eca6af193c284b54a359d9c2222081edc26067d5a6ce6
-  languageName: node
-  linkType: hard
-
 "@lumino/virtualdom@npm:^2.0.0":
   version: 2.0.0
   resolution: "@lumino/virtualdom@npm:2.0.0"
@@ -1002,26 +893,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/widgets@npm:^1.31.1":
-  version: 1.32.1
-  resolution: "@lumino/widgets@npm:1.32.1"
-  dependencies:
-    "@lumino/algorithm": ^1.9.1
-    "@lumino/commands": ^1.20.0
-    "@lumino/coreutils": ^1.12.0
-    "@lumino/disposable": ^1.10.1
-    "@lumino/domutils": ^1.8.1
-    "@lumino/dragdrop": ^1.14.0
-    "@lumino/keyboard": ^1.8.1
-    "@lumino/messaging": ^1.10.1
-    "@lumino/properties": ^1.8.1
-    "@lumino/signaling": ^1.10.1
-    "@lumino/virtualdom": ^1.14.1
-  checksum: 5a33f3c288856f966807d5dc23e6cd3b6221feb83fd2338f2596b13412fcd79257578b8680f0c9a720eb1c5976eed91d3e1432750a0eb783df5410798d497ea1
-  languageName: node
-  linkType: hard
-
-"@lumino/widgets@npm:^2.1.1":
+"@lumino/widgets@npm:^2.0.0, @lumino/widgets@npm:^2.1.1":
   version: 2.1.1
   resolution: "@lumino/widgets@npm:2.1.1"
   dependencies:
@@ -2877,9 +2749,8 @@ __metadata:
     "@apollo/client": ^3.5.8
     "@cypress/code-coverage": ^3.9.12
     "@hpcc-js/wasm": ^2.8.0
-    "@lumino/algorithm": ^1.9.1
     "@lumino/default-theme": ^2.0.0
-    "@lumino/widgets": ^1.31.1
+    "@lumino/widgets": ^2.0.0
     "@mdi/js": ^7.0.0
     "@unhead/vue": ^1.1.17
     "@vitejs/plugin-vue": ^4.0.0
@@ -7446,7 +7317,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.1.10":
+"postcss@npm:^8.1.10, postcss@npm:^8.4.21":
   version: 8.4.21
   resolution: "postcss@npm:8.4.21"
   dependencies:
@@ -8031,6 +7902,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup@npm:^3.18.0":
+  version: 3.20.2
+  resolution: "rollup@npm:3.20.2"
+  dependencies:
+    fsevents: ~2.3.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    rollup: dist/bin/rollup
+  checksum: 34b0932839b7c2a5d1742fb21ce95a47e0b49a0849f4abee2dccf25833187aa7babb898ca90d4fc761cffa4102b9ed0ac6ad7f6f6b96c8b8e2d67305abc5da65
+  languageName: node
+  linkType: hard
+
 "rollup@npm:^3.21.0":
   version: 3.23.0
   resolution: "rollup@npm:3.23.0"
@@ -8112,15 +7997,15 @@ __metadata:
   linkType: hard
 
 "sass@npm:~1.63.0":
-  version: 1.63.2
-  resolution: "sass@npm:1.63.2"
+  version: 1.63.3
+  resolution: "sass@npm:1.63.3"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
     immutable: ^4.0.0
     source-map-js: ">=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: 7ffc2b789aeae4637f09195f7d24e149fc590e2c69cb209c64fdf0ed0d7f09da28097c48fda7f36d257aeb7dd8e16a9ff77b50cf78830afe6f996e6dcd957280
+  checksum: 41d1d7e875be738a8b5ef92bc722b20fd88f9fc8db61caa17dec37e0a53739cf28dc3b79481b1998c410c82c30247f473c2559e64cec7c4d851e5cea0434ec4e
   languageName: node
   linkType: hard
 
@@ -9358,9 +9243,47 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^3.0.0 || ^4.0.0, vite@npm:^4.3.8":
-  version: 4.3.9
-  resolution: "vite@npm:4.3.9"
+"vite@npm:^3.0.0 || ^4.0.0":
+  version: 4.2.1
+  resolution: "vite@npm:4.2.1"
+  dependencies:
+    esbuild: ^0.17.5
+    fsevents: ~2.3.2
+    postcss: ^8.4.21
+    resolve: ^1.22.1
+    rollup: ^3.18.0
+  peerDependencies:
+    "@types/node": ">= 14"
+    less: "*"
+    sass: "*"
+    stylus: "*"
+    sugarss: "*"
+    terser: ^5.4.0
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    less:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+    sugarss:
+      optional: true
+    terser:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 70eb162ffc299017a3c310e3adc95e9661def6b17aafd1f8e5e02e516766060435590dbe3df1e4e95acc3583c728a76e91f07c546221d1e701f1b2b021293f45
+  languageName: node
+  linkType: hard
+
+"vite@npm:^4.3.8":
+  version: 4.3.8
+  resolution: "vite@npm:4.3.8"
   dependencies:
     esbuild: ^0.17.5
     fsevents: ~2.3.2
@@ -9391,7 +9314,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 8c45a516278d1e0425fac00c0877336790f71484a851a318346a70e0d2aef9f3b9651deb2f9f002c791ceb920eda7d6a3cda753bdefd657321c99f448b02dd25
+  checksum: 454a7c0c1bd1fd5611c9df28c62e3adbe75f48e87fc787179c5af60c4ab9a87aa0eda44be446d898851a135766d36f65f8e7d56317556aa807d30e561de369c4
   languageName: node
   linkType: hard
 

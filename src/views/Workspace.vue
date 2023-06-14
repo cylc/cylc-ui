@@ -38,7 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { defineAsyncComponent } from 'vue'
 import { uniqueId } from 'lodash'
-import { toArray } from '@lumino/algorithm'
 import {
   mdiChartLine,
   mdiFileDocumentMultipleOutline,
@@ -156,7 +155,7 @@ export default {
      * Remove all the widgets present in the DockPanel.
      */
     removeAllWidgets () {
-      toArray(this.$refs.lumino.dock.widgets())
+      Array.from(this.$refs.lumino.dock.widgets())
         .forEach(widget => widget.close())
     },
     /**
