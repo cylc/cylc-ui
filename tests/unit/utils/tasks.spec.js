@@ -56,37 +56,33 @@ describe('tasks', () => {
       expect(extractGroupState([])).to.equal('')
     })
   })
-  describe('latestJob', () => {
-    it('should return the correct value for latestJob', () => {
-      const tests = [
-        {
-          taskProxy: null,
-          expected: null
-        },
-        {
-          taskProxy: {},
-          expected: null
-        },
-        {
-          taskProxy: {
-            children: []
-          },
-          expected: null
-        },
-        {
-          taskProxy: {
-            children: [
-              {
-                node: 1
-              }
-            ]
-          },
-          expected: 1
-        }
-      ]
-      tests.forEach(test => {
-        expect(latestJob(test.taskProxy)).to.equal(test.expected)
-      })
+  describe.each([
+    {
+      taskProxy: null,
+      expected: undefined
+    },
+    {
+      taskProxy: {},
+      expected: undefined
+    },
+    {
+      taskProxy: {
+        children: []
+      },
+      expected: undefined
+    },
+    {
+      taskProxy: {
+        children: [
+          { node: 'foo' },
+          { node: 'bar' },
+        ]
+      },
+      expected: 'foo'
+    }
+  ])('latestJob($taskProxy)', ({ taskProxy, expected }) => {
+    it(`returns ${expected}`, () => {
+      expect(latestJob(taskProxy)).to.equal(expected)
     })
   })
   describe('dtMean', () => {

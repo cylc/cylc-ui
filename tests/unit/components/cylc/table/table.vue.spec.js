@@ -17,26 +17,18 @@
 
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
+import sinon from 'sinon'
 import { simpleTableTasks } from './table.data'
 import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import Table from '@/components/cylc/table/Table.vue'
 import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
+import WorkflowService from '@/services/workflow.service'
 
 const $eventBus = {
   emit () {}
 }
-const $workflowService = {
-  register () {},
-  unregister () {},
-  subscribe () {},
-  introspection: Promise.resolve({
-    mutations: [
-      { args: [] }
-    ],
-    types: []
-  })
-}
+const $workflowService = sinon.createStubInstance(WorkflowService)
 
 const vuetify = createVuetify({
   components: { VDataTable, VDataTableFooter }

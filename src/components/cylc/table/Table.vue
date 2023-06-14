@@ -60,14 +60,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <Task
                     v-cylc-object="item.value.task"
                     :task="item.value.task.node"
-                    :startTime="((item.value.latestJob || {}).node || {}).startedTime"
+                    :startTime="item.value.latestJob?.node?.startedTime"
                   />
                 </div>
                 <div class="mr-1">
                   <Job
                     v-cylc-object="item.value.task"
                     :status="item.value.task.node.state"
-                    :previous-state="((item.value.previousJob || {}).node || {}).state"
+                    :previous-state="item.value.previousJob?.node?.state"
                   />
                 </div>
                 <div>{{ item.value.task.name }}</div>
