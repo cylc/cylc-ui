@@ -19,7 +19,7 @@ ones in. -->
 Upgraded Vue and Vuetify frameworks to v3.
 
 -------------------------------------------------------------------------------
-## __cylc-ui-1.6.0 (<span actions:bind='release-date'>Upcoming</span>)__
+## __cylc-ui-1.6.0 (<span actions:bind='release-date'>Released 2023-04-27</span>)__
 
 ### Enhancements
 
