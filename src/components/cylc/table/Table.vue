@@ -195,7 +195,7 @@ export default {
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          title: 'Job System',
+          title: 'Job Runner',
           key: 'latestJob.node.jobRunnerName',
           sortable: true,
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
@@ -207,25 +207,25 @@ export default {
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          title: 'T-submit',
+          title: 'Submit',
           key: 'latestJob.node.submittedTime',
           sortable: true,
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          title: 'T-start',
+          title: 'Start',
           key: 'latestJob.node.startedTime',
           sortable: true,
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          title: 'T-finish',
+          title: 'Finish',
           key: 'latestJob.node.finishedTime',
           sortable: true,
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          title: 'dT-mean',
+          title: 'Run Time',
           key: 'task.node.task.meanElapsedTime',
           sortable: true,
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
