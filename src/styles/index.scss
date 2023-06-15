@@ -51,7 +51,7 @@ html {
   }
 }
 
-// The skeleton loader needs to maintain the height 100% otherwise its children
+// The skeleton loader needs to maintain height: 100% otherwise its children
 // nodes with height: 100% or auto won't be displayed at all.
 .v-skeleton-loader {
   height: 100%;

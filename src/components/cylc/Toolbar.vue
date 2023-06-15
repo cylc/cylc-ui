@@ -56,10 +56,6 @@ export default {
     return { toggleDrawer, toolbarHeight }
   },
 
-  mixins: [
-    toolbar
-  ],
-
   data: () => ({
     svgPaths: {
       list: mdiViewList
