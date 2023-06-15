@@ -18,6 +18,29 @@
 /* Logic for filtering tasks. */
 
 /**
+ * Return true if the node ID matches the given ID, or if no ID is given.
+ *
+ * @param {Object} node
+ * @param {?string} id
+ * @return {boolean}
+ */
+export function matchID (node, id) {
+  return !id?.trim() || node.tokens.relative_id.includes(id)
+}
+
+/**
+ * Return true if the given list of states includes the node state, or if
+ * if the list is empty.
+ *
+ * @param {Object} node
+ * @param {?string[]} states
+ * @returns {boolean}
+ */
+export function matchState (node, states) {
+  return !states?.length || states.includes(node.node.state)
+}
+
+/**
  * Return true if a node matches the specified id/state filter.
  *
  * @export
@@ -27,12 +50,5 @@
  * @return {boolean}
  */
 export function matchNode (node, id, states) {
-  let ret = true
-  if (id?.trim()) {
-    ret &&= node.tokens.relative_id.includes(id)
-  }
-  if (states?.length) {
-    ret &&= states.includes(node.node.state)
-  }
-  return ret
+  return matchID(node, id) && matchState(node, states)
 }
