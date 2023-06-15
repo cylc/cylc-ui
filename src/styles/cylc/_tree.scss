@@ -47,6 +47,14 @@ $icon-size: 1.2em;
   }
 }
 
+.c-tree {
+  .c-task, .c-job {
+    display: flex;
+    align-items: center;
+    font-size: $icon-size;
+  }
+}
+
 .treeitem {
   display:inline-block;
   vertical-align:middle;
@@ -80,12 +88,6 @@ $icon-size: 1.2em;
         flex-wrap: nowrap;
         flex-direction: row;
       }
-    }
-
-    .c-task, .c-job {
-      display: flex;
-      align-items: center;
-      font-size: $icon-size;
     }
   }
   .type {
