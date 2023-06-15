@@ -21,7 +21,10 @@ Upgraded Vue and Vuetify frameworks to v3.
 ### Fixes
 
 [#1312](https://github.com/cylc/cylc-ui/pull/1312) -
-Fix incorrect latest job info in table view.
+Fixed incorrect latest job info in table view.
+
+[#1336](https://github.com/cylc/cylc-ui/pull/1336) -
+Fixed task state filtering bug in tree view.
 
 -------------------------------------------------------------------------------
 ## __cylc-ui-1.6.0 (<span actions:bind='release-date'>Released 2023-04-27</span>)__
