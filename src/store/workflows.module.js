@@ -35,7 +35,7 @@ export function merge (data, update) {
   }
 }
 
-const state = {
+const state = () => ({
   cylcTree: {
     $index: {},
     children: []
@@ -50,7 +50,7 @@ const state = {
    * @type {String}
    */
   workflowName: null
-}
+})
 
 const getters = {
   /* Return matching nodes from the store.

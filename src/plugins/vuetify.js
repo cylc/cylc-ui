@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 import { VCombobox } from 'vuetify/components/VCombobox'
@@ -41,7 +40,10 @@ const inputDefaults = Object.fromEntries([
   }
 ]))
 
-export default createVuetify({
+/**
+ * @type {import('vuetify').VuetifyOptions}
+ */
+export const vuetifyOptions = {
   theme: {
     defaultTheme: 'light',
     themes: {
@@ -71,6 +73,11 @@ export default createVuetify({
     VDataTableFooter
   },
   defaults: {
+    global: {
+      // Gets set from user profile reduced animation setting:
+      transition: null,
+      ripple: null,
+    },
     ...inputDefaults
-  }
-})
+  },
+}
