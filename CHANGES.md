@@ -18,6 +18,9 @@ ones in. -->
 [#1269](https://github.com/cylc/cylc-ui/pull/1269) -
 Upgraded Vue and Vuetify frameworks to v3.
 
+[#1330](https://github.com/cylc/cylc-ui/pull/1330) -
+Added setting to turn off most animations.
+
 ### Fixes
 
 [#1312](https://github.com/cylc/cylc-ui/pull/1312) -

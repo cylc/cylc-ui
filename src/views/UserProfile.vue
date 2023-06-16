@@ -205,8 +205,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 v-model="cyclePointsOrderDesc"
                 id="input-cyclepoints-order"
                 hide-details
-              >
-              </v-checkbox>
+              />
+            </v-row>
+
+            <v-row no-gutters class="align-center wrap">
+              <v-col cols="3">
+                <span>Reduced animations</span>
+              </v-col>
+              <v-checkbox
+                v-model="reducedAnimation"
+                data-cy="reduced-animation"
+                hide-details
+              />
             </v-row>
           </v-container>
         </v-form>
@@ -223,14 +233,21 @@ import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize }
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
 import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
+import appSettings from '@/mixins/appSettings'
 
 // TODO: update where user preferences are stored after #335
 
 export default {
   name: 'UserProfile',
+
   components: {
     Job
   },
+
+  mixins: [
+    appSettings,
+  ],
+
   data () {
     return {
       cyclePointsOrderDesc: true, // default
@@ -248,19 +265,31 @@ export default {
       jobTheme: localStorage.jobTheme || 'default'
     }
   },
+
   computed: {
-    ...mapState('user', ['user'])
+    ...mapState('user', ['user']),
+    reducedAnimation: {
+      get () {
+        return this.$store.state.app.reducedAnimation
+      },
+      set (value) {
+        this.setReducedAnimation(value)
+      }
+    }
   },
+
   head () {
     return {
       title: getPageTitle('App.userProfile')
     }
   },
+
   mounted () {
     if (localStorage.cyclePointsOrderDesc) {
       this.cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
     }
   },
+
   methods: {
     resetFontSize,
     decreaseFontSize,
@@ -268,6 +297,7 @@ export default {
     getCurrentFontSize,
     ...mapMutations('app', ['setJobTheme'])
   },
+
   watch: {
     jobTheme: function (theme) {
       this.setJobTheme(theme)

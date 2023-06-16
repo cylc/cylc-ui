@@ -28,7 +28,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.spec.js'],
+      files: ['*.spec.js', '*.cy.js'],
       rules: {
         // Don't complain about certain chai assertions:
         'no-unused-expressions': 'off'
