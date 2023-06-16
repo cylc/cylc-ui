@@ -28,13 +28,6 @@ const NODE_TYPES = [
   'job'
 ]
 
-/* Merge an update into a reactive blob of data */
-export function merge (data, update) {
-  for (const [key, value] of Object.entries(update || {})) {
-    data[key] = value
-  }
-}
-
 const state = () => ({
   cylcTree: {
     $index: {},
@@ -202,11 +195,10 @@ function removeChild (state, node, parentNode = null) {
   }
   if (!parentNode) {
     parentNode = getIndex(state, node.parent)
-  }
-  if (!parentNode) {
-    // parent node no longer in the store
-    // (this should not happen)
-    return
+    if (!parentNode) {
+      // parent node no longer in the store (this should not happen)
+      return
+    }
   }
   parentNode[key].splice(
     parentNode[key].indexOf(node), 1
@@ -233,10 +225,14 @@ function removeTree (state, node, removeParent = true) {
     // walk the tree under the provided node to list nodes and indices for
     // deletion
     pointer = stack.pop()
-    stack.push(...(pointer.children || []))
-    stack.push(...(pointer.familyTree || []))
-    removeIndicies.push(...(pointer.$namespaces || []))
-    removeIndicies.push(...(pointer.$edges || []))
+    stack.push(
+      ...(pointer.children || []),
+      ...(pointer.familyTree || []),
+    )
+    removeIndicies.push(
+      ...(pointer.$namespaces || []),
+      ...(pointer.$edges || []),
+    )
     removeNodes.push(pointer)
   }
   for (pointer of [...removeIndicies, ...removeNodes.reverse()]) {
@@ -261,7 +257,7 @@ function cleanParents (state, node) {
     if (pointer.type !== 'workflow') {
       // don't prune workflow nodes
       // (this requires an explicit instruction to do so)
-      if (pointer.children.length === 0) {
+      if (!pointer.children.length) {
         // node has no children -> prune it
         removeIndex(state, node.id)
         removeChild(state, pointer)
@@ -294,7 +290,7 @@ function applyInheritance (state, node) {
 
     // remove old tasks
     for (const child of node.children.filter(child => child.type === 'task')) {
-      if (childTasks.filter(x => x.id === child.id).length === 0) {
+      if (!childTasks.some(x => x.id === child.id)) {
         removeChild(state, child, node)
       }
     }
@@ -315,7 +311,7 @@ function update (state, updatedData) {
   let treeItem = getIndex(state, id)
   if (treeItem) {
     // node already exists -> update it
-    merge(treeItem.node, updatedData)
+    Object.assign(treeItem.node, updatedData)
     applyInheritance(state, treeItem)
     return
   }
@@ -356,7 +352,7 @@ function getFamilyTree (tokens, node) {
   }
 
   // add family levels below the cycle point
-  for (const ancestor of node.ancestors.slice().reverse() || []) {
+  for (const ancestor of node.ancestors.slice().reverse()) {
     ret.push([
       'family',
       ancestor.name,
@@ -380,8 +376,8 @@ function getFamilyTree (tokens, node) {
  */
 function createTreeNode (state, id, tokens, node) {
   let tree = tokens.tree()
-  let type = null
-  let name = null
+  let type
+  let name
   if (tokens.namespace) {
     type = '$namespace'
     name = tokens.namespace
@@ -397,25 +393,22 @@ function createTreeNode (state, id, tokens, node) {
     tokens = tree.pop()[2]
     id = tokens.id
   } else {
-    const last = tree.pop()
-    type = last[0]
-    name = last[1]
+    [type, name] = tree.pop()
   }
 
   let pointer = state.cylcTree
-  let intermediateItem = null
-  let children = null
-  let childAttribute = null
+  let intermediateItem
+  let childAttribute
   for (const [partType, partName, partTokens] of tree) {
     if (pointer.type === 'cycle' && type === 'family') {
       childAttribute = 'familyTree'
     } else {
       childAttribute = 'children'
     }
-    children = pointer[childAttribute].filter(
-      item => { return item.name === partName }
+    const child = pointer[childAttribute].find(
+      ({ name }) => name === partName
     )
-    if (!children.length) {
+    if (!child) {
       // create intermediate node...
       // ...add a tree item
       intermediateItem = {
@@ -429,11 +422,9 @@ function createTreeNode (state, id, tokens, node) {
         },
         parent: pointer.id,
         tokens: partTokens,
-        type: partType
-      }
-      intermediateItem.children = []
-      if (partType === 'cycle') {
-        intermediateItem.familyTree = []
+        type: partType,
+        children: [],
+        familyTree: partType === 'cycle' ? [] : undefined,
       }
       // add child to the tree
       addChild(pointer, intermediateItem)
@@ -441,7 +432,7 @@ function createTreeNode (state, id, tokens, node) {
       addIndex(state, partTokens.id, intermediateItem)
       pointer = intermediateItem
     } else {
-      pointer = children[0]
+      pointer = child
     }
   }
 
@@ -456,11 +447,10 @@ function createTreeNode (state, id, tokens, node) {
     name,
     type,
     parent: pointer.id,
-    node
-  }
-  treeNode.children = []
-  if (type === 'cycle') {
-    treeNode.familyTree = []
+    node,
+    children: [],
+    familyTree: type === 'cycle' ? [] : undefined,
+
   }
   return [pointer, treeNode]
 }

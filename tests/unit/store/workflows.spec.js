@@ -17,7 +17,6 @@
 
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
-import { merge } from '@/store/workflows.module'
 
 function getTree (store) {
   const cylcTree = store.state.workflows.cylcTree
@@ -44,26 +43,6 @@ function getTree (store) {
   }
   return ret
 }
-
-describe('merge', () => {
-  it('should update the node', () => {
-    const data = { a: 1, b: 2 }
-    merge(data, { b: 3, c: 4 })
-    expect(data).to.deep.equal({ a: 1, b: 3, c: 4 })
-  })
-
-  it('should update Arrays', () => {
-    const data = { a: [1, 2] }
-    merge(data, { a: [2, 3] })
-    expect(data).to.deep.equal({ a: [2, 3] })
-  })
-
-  it('should update nested Objects', () => {
-    const data = { a: [{ x: 1 }, { x: 2 }] }
-    merge(data, { a: [{ x: 3 }] })
-    expect(data).to.deep.equal({ a: [{ x: 3 }] })
-  })
-})
 
 describe('cylc tree', () => {
   const store = createStore(storeOptions)
