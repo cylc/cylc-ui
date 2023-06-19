@@ -15,23 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const IntrospectionQuery = require('./IntrospectionQuery.json')
-const userProfile = require('./userprofile.json')
-const taskProxy = require('./taskProxy.json')
-const familyProxy = require('./familyProxy.json')
-const App = require('./App')
-const { LogData } = require('./logData.cjs')
-const { LogFiles } = require('./logFiles.cjs')
-const analysisQuery = require('./analysisQuery.json')
+const deletedFile = 'deleted.log'
+
+const jobLogFiles = [
+  'job.out',
+  'job.err',
+  'job',
+]
+
+const workflowLogFiles = [
+  'scheduler/01-start-01.log',
+  deletedFile,
+]
+
+/**
+ * Return a mock GQL response for list of log files.
+ *
+ * @param {{ id: string }} variables
+ */
+const LogFiles = ({ id }) => ({
+  data: {
+    logFiles: {
+      files: id == null
+        ? []
+        : id.includes('//') ? jobLogFiles : workflowLogFiles
+    }
+  }
+})
 
 module.exports = {
-  IntrospectionQuery,
-  taskProxy,
-  familyProxy,
-  userProfile,
-  LogData,
   LogFiles,
-  App,
-  Workflow: App,
-  analysisQuery
+  deletedFile,
+  jobLogFiles,
+  workflowLogFiles,
 }
