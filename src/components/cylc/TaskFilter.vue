@@ -55,7 +55,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </template>
         <template v-slot:selection="{ item, index }">
           <div class="mr-2" v-if="index >= 0 && index < maxVisibleStates">
-            <Task :task="{ state: item.raw }" />
+            <Task
+              :task="{ state: item.raw }"
+              style="font-size: 1.2rem; height: 100%"
+            />
           </div>
           <span
             v-if="index === maxVisibleStates"

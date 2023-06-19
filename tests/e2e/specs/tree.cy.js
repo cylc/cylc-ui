@@ -215,23 +215,25 @@ describe('Tree view', () => {
     })
     it('Should filter by task states', () => {
       cy.visit('/#/tree/one')
-      cy
-        .get('.node-data-task')
-        .contains(TaskState.FAILED.name)
-        .should('be.visible')
-      cy
-        .get('[data-cy=filter-task-states]')
+      for (const name of [/^succeeded$/, /^failed$/, /^retrying$/]) {
+        cy.get('.node-data-task')
+          .contains(name)
+          .should('be.visible')
+      }
+      cy.get('[data-cy=filter-task-states]')
         .click()
-      cy
         .get('.v-list-item')
-        .contains(TaskState.RUNNING.name)
-        .click({ force: true })
-      cy
-        .get('.node-data-task')
-        .contains(TaskState.FAILED.name)
-        .should('be.not.visible')
-      cy
-        .get('.node-data-task:visible')
+        .contains(new RegExp(`^${TaskState.FAILED.name}$`))
+        .click()
+      for (const name of [/^succeeded$/, /^retrying$/]) {
+        cy.get('.node-data-task')
+          .contains(name)
+          .should('not.be.visible')
+      }
+      cy.get('.node-data-task')
+        .contains(/^failed$/)
+        .should('be.visible')
+      cy.get('.node-data-task:visible')
         .should('have.length', 1)
     })
     it('Should filter by ID and states', () => {
