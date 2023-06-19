@@ -19,6 +19,7 @@
 import { mount } from '@vue/test-utils'
 import { Assertion } from 'chai'
 import { createVuetify } from 'vuetify'
+import sinon from 'sinon'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import {
   simpleWorkflowNode,
@@ -26,6 +27,7 @@ import {
   simpleTaskNode
 } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import WorkflowService from '@/services/workflow.service'
 
 /**
  * Helper function for expecting TreeItem to be expanded.
@@ -50,12 +52,7 @@ Assertion.addMethod('expanded', function () {
   )
 })
 
-const $workflowService = {
-  introspection: Promise.resolve({
-    mutations: [],
-    types: []
-  })
-}
+const $workflowService = sinon.createStubInstance(WorkflowService)
 const $eventBus = {
   emit: () => {}
 }

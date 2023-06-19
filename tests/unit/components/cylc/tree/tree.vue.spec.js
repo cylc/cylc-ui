@@ -19,25 +19,17 @@
 import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
+import sinon from 'sinon'
 import Tree from '@/components/cylc/tree/Tree.vue'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import cloneDeep from 'lodash/cloneDeep'
+import WorkflowService from '@/services/workflow.service'
 
 const $eventBus = {
   emit () {}
 }
-const $workflowService = {
-  register () {},
-  unregister () {},
-  subscribe () {},
-  introspection: Promise.resolve({
-    mutations: [
-      { args: [] }
-    ],
-    types: []
-  })
-}
+const $workflowService = sinon.createStubInstance(WorkflowService)
 const vuetify = createVuetify()
 
 describe('Tree component', () => {

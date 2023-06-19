@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { mdiTable } from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -55,13 +54,6 @@ export default {
     }
   },
 
-  data: () => ({
-    widget: {
-      title: 'table',
-      icon: mdiTable
-    }
-  }),
-
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
@@ -73,23 +65,13 @@ export default {
     },
     tasks () {
       const ret = []
-      let latestJob
-      let previousJob
       for (const workflow of this.workflows) {
         for (const cycle of workflow.children) {
           for (const task of cycle.children) {
-            latestJob = null
-            previousJob = null
-            if (task.children.length) {
-              latestJob = task.children.slice(-1)[0]
-              if (task.children.length > 1) {
-                previousJob = task.children.slice(-2)[0]
-              }
-            }
             ret.push({
               task,
-              latestJob,
-              previousJob
+              latestJob: task.children[0],
+              previousJob: task.children[1],
             })
           }
         }

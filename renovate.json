@@ -1,14 +1,16 @@
 {
   "extends": [
-    "config:base"
+    "config:js-app"
   ],
   "labels": ["dependencies", "javascript"],
   "packageRules": [
     {
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "rangeStrategy": "replace"
+      "matchPackagePatterns": ["^@lumino/"],
+      "groupName": "lumino packages"
+    },
+    {
+      "matchPackagePatterns": ["^eslint"],
+      "groupName": "eslint packages"
     }
   ],
   "vulnerabilityAlerts": {

@@ -18,23 +18,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div ref="main" class="main pa-2 fill-height">
     <!-- Lumino box panel gets inserted here -->
   </div>
-  <div v-show="false">
-    <!-- Hidden div acts as staging area for views before they are
-    moved into a lumino widget -->
-    <component
-      v-for="(item, id) of views"
-      :key="id"
-      :ref="(ref) => setViewRef(id, ref)"
-      :is="item.view"
-      :tab-title="getTabTitle(item.view)"
-      :workflow-name="workflowName"
-      :initialOptions="item.initialOptions"
-      class="h-100"
-    />
-  </div>
+  <template
+    v-for="(item, id) in views"
+    :key="id"
+  >
+    <Teleport :to="`#${id}`">
+      <component
+        :is="item.view"
+        :workflow-name="workflowName"
+        :initialOptions="item.initialOptions"
+        class="h-100"
+      />
+    </Teleport>
+  </template>
 </template>
 
 <script>
+import { startCase } from 'lodash'
 import LuminoWidget from '@/components/cylc/workflow/lumino-widget'
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
 
@@ -74,15 +74,6 @@ export default {
       type: Array,
       required: true
     },
-    /**
-     * Prop to customize the tab title. Defaults to name.
-     * If a component does not have the $component.$tabTitleProp
-     * set, then we still revert to the old default $component.name.
-     */
-    tabTitleProp: {
-      type: String,
-      default: 'name'
-    }
   },
 
   emits: [
@@ -90,11 +81,10 @@ export default {
     'lumino:deleted'
   ],
 
-  data () {
-    return {
-      /** Keep track of views' refs separate from $refs in order to access
-       * by ID */
-      viewRefs: {}
+  beforeCreate () {
+    // Populate components
+    for (const { name, component } of this.allViews) {
+      this.$options.components[name] = component
     }
   },
 
@@ -103,12 +93,6 @@ export default {
    * Box panel. In the next tick of Vue, the DOM element and the Vue element/ref are attached.
    */
   created () {
-    // We need to load each view used by this view/component.
-    // See "local-registration" in Vue.js documentation.
-    this.allViews.forEach(view => {
-      this.$options.components[view.name] = view
-    })
-
     // create a box panel, which holds the dock panel, and controls its layout
     this.box = new BoxPanel({ direction: 'left-to-right', spacing: 0 })
     // create dock panel, which holds the widgets
@@ -152,40 +136,27 @@ export default {
   },
 
   methods: {
-    /** Keep track of views' refs separate from $refs, allowing access by ID */
-    setViewRef (id, ref) {
-      if (ref) {
-        this.viewRefs[id] = ref
-      } else {
-        delete this.viewRefs[id]
-      }
-    },
     /**
      * Look for newly added views, creating a corresponding Lumino Widget
      * for each.
      */
     syncWidgets (newVal, oldVal) {
-      const { tabTitleProp } = this.$props
       for (const [id, item] of Object.entries(newVal)) {
         if (!(id in oldVal)) {
-          const view = this.$options.components[item.view]
-          const name = view[tabTitleProp] ?? view.name
-          this.addWidget(id, name)
+          this.addWidget(id, item.view)
         }
       }
     },
 
     /**
-     * Create a widget, add it to the dock, and move the corresponding view
-     * from the hidden div into it.
+     * Create a widget and add it to the dock.
      */
     addWidget (id, name, onTop = true) {
-      const luminoWidget = new LuminoWidget(id, name, /* closable */ true)
+      const luminoWidget = new LuminoWidget(id, startCase(name), /* closable */ true)
       this.dock.addWidget(luminoWidget, { mode: 'tab-after' })
       // give time for Lumino's widget DOM element to be created
       this.$nextTick(() => {
         const widgetEl = document.getElementById(id)
-        widgetEl.appendChild(this.viewRefs[id].$el)
         widgetEl.addEventListener('lumino:activated', this.onWidgetActivated)
         widgetEl.addEventListener('lumino:deleted', this.onWidgetDeleted)
         if (onTop) {
@@ -227,10 +198,6 @@ export default {
       widgetEl.removeEventListener('lumino:activated', this.onWidgetActivated)
       this.$emit('lumino:deleted', customEvent.detail)
     },
-
-    getTabTitle (viewName) {
-      return this.$options.components[viewName].data().widget.title
-    }
   }
 }
 </script>

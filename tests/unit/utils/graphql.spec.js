@@ -15,14 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createStore } from 'vuex'
 // need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
 import 'cross-fetch/polyfill'
 import * as graphql from '@/graphql'
+import { store } from '@/store/index'
 import storeOptions from '@/store/options'
 
 describe('utils', () => {
-  const store = createStore(storeOptions)
   describe('graphql', () => {
     describe('ApolloClient', () => {
       it('should create an apollo client', () => {
@@ -34,8 +33,8 @@ describe('utils', () => {
 
     describe('SubscriptionClient', () => {
       beforeEach(() => {
-        store.commit('SET_OFFLINE', false)
-        store.state.offline = false
+        store.replaceState(storeOptions.state())
+        expect(store.state.offline).to.be.false
       })
       it('should create a subscription client', () => {
         const subscriptionClient = graphql.createSubscriptionClient(

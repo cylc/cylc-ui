@@ -18,11 +18,19 @@ ones in. -->
 [#1269](https://github.com/cylc/cylc-ui/pull/1269) -
 Upgraded Vue and Vuetify frameworks to v3.
 
+[#1330](https://github.com/cylc/cylc-ui/pull/1330) -
+Added setting to turn off most animations.
+
 [#1114](https://github.com/cylc/cylc-ui/pull/1114) -
 Tree view: show mean run time in job details.
 
+### Fixes
+
+[#1312](https://github.com/cylc/cylc-ui/pull/1312) -
+Fixed incorrect latest job info in table view.
+
 -------------------------------------------------------------------------------
-## __cylc-ui-1.6.0 (<span actions:bind='release-date'>Upcoming</span>)__
+## __cylc-ui-1.6.0 (<span actions:bind='release-date'>Released 2023-04-27</span>)__
 
 ### Enhancements
 

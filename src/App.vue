@@ -25,10 +25,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapMutations, mapState } from 'vuex'
+import appSettings from '@/mixins/appSettings'
 
 const DEFAULT_LAYOUT = 'empty'
 
 export default {
+  mixins: [
+    appSettings,
+  ],
+
   computed: {
     ...mapState('app', ['jobTheme']),
     layout () {
@@ -41,9 +46,11 @@ export default {
       return `job_theme--${this.jobTheme}`
     }
   },
+
   methods: {
     ...mapMutations('app', ['setJobTheme'])
   },
+
   mounted () {
     // set stored application font-size
     if (localStorage.fontSize) {
@@ -51,6 +58,10 @@ export default {
     }
     // set Job icons theme found in LocalStorage in Vuex
     this.setJobTheme(localStorage.jobTheme || 'default')
+    // set reduced animation mode on/off
+    if (localStorage.reducedAnimation) {
+      this.setReducedAnimation(JSON.parse(localStorage.reducedAnimation))
+    }
   }
 }
 </script>
