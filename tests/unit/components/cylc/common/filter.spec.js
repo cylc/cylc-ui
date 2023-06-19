@@ -50,45 +50,47 @@ const taskNode = {
   children: [/* snip */],
 }
 
-describe.each([
-  { node: taskNode, id: '', expected: true },
-  { node: taskNode, id: '  ', expected: true },
-  { node: taskNode, id: '2000', expected: true },
-  { node: taskNode, id: 'succeeded', expected: true },
-  { node: taskNode, id: '20000102T0000Z/suc', expected: true },
-  { node: taskNode, id: '2001', expected: false },
-  { node: taskNode, id: 'darmok', expected: false },
-  // Only matches relative ID:
-  { node: taskNode, id: 'user/one', expected: false },
-  // Case sensitive:
-  { node: taskNode, id: 'SUC', expected: false },
-])('matchID(<$node.id>, $id)', ({ node, id, expected }) => {
-  it(`returns ${expected}`, () => {
-    expect(matchID(node, id)).toBe(expected)
+describe('task filtering', () => {
+  describe('matchID', () => {
+    it.each([
+      { node: taskNode, id: '', expected: true },
+      { node: taskNode, id: '  ', expected: true },
+      { node: taskNode, id: '2000', expected: true },
+      { node: taskNode, id: 'succeeded', expected: true },
+      { node: taskNode, id: '20000102T0000Z/suc', expected: true },
+      { node: taskNode, id: '2001', expected: false },
+      { node: taskNode, id: 'darmok', expected: false },
+      // Only matches relative ID:
+      { node: taskNode, id: 'user/one', expected: false },
+      // Case sensitive:
+      { node: taskNode, id: 'SUC', expected: false },
+    ])('matchID(<$node.id>, $id)', ({ node, id, expected }) => {
+      expect(matchID(node, id)).toBe(expected)
+    })
   })
-})
 
-describe.each([
-  { node: taskNode, states: null, expected: true },
-  { node: taskNode, states: [], expected: true },
-  { node: taskNode, states: ['succeeded'], expected: true },
-  { node: taskNode, states: ['succeeded', 'failed'], expected: true },
-  { node: taskNode, states: ['failed'], expected: false },
-])('matchState(<$node.node.state>, $states)', ({ node, states, expected }) => {
-  it(`returns ${expected}`, () => {
-    expect(matchState(node, states)).toBe(expected)
+  describe('matchState', () => {
+    it.each([
+      { node: taskNode, states: null, expected: true },
+      { node: taskNode, states: [], expected: true },
+      { node: taskNode, states: ['succeeded'], expected: true },
+      { node: taskNode, states: ['succeeded', 'failed'], expected: true },
+      { node: taskNode, states: ['failed'], expected: false },
+    ])('matchState(<$node.node.state>, $states)', ({ node, states, expected }) => {
+      expect(matchState(node, states)).toBe(expected)
+    })
   })
-})
 
-describe.each([
-  { node: taskNode, id: '', states: [], expected: true },
-  { node: taskNode, id: '2000', states: [], expected: true },
-  { node: taskNode, id: '', states: ['succeeded', 'failed'], expected: true },
-  { node: taskNode, id: '2000', states: ['succeeded', 'failed'], expected: true },
-  { node: taskNode, id: 'darmok', states: ['succeeded', 'failed'], expected: false },
-  { node: taskNode, id: '2000', states: ['failed'], expected: false },
-])('matchNode(<$node.id>, $id, $states)', ({ node, id, states, expected }) => {
-  it(`returns ${expected}`, () => {
-    expect(matchNode(node, id, states)).toBe(expected)
+  describe('matchNode', () => {
+    it.each([
+      { node: taskNode, id: '', states: [], expected: true },
+      { node: taskNode, id: '2000', states: [], expected: true },
+      { node: taskNode, id: '', states: ['succeeded', 'failed'], expected: true },
+      { node: taskNode, id: '2000', states: ['succeeded', 'failed'], expected: true },
+      { node: taskNode, id: 'darmok', states: ['succeeded', 'failed'], expected: false },
+      { node: taskNode, id: '2000', states: ['failed'], expected: false },
+    ])('matchNode(<$node.id>, $id, $states)', ({ node, id, states, expected }) => {
+      expect(matchNode(node, id, states)).toBe(expected)
+    })
   })
 })
