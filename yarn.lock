@@ -289,9 +289,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/code-coverage@npm:3.10.0":
-  version: 3.10.0
-  resolution: "@cypress/code-coverage@npm:3.10.0"
+"@cypress/code-coverage@npm:3.10.7":
+  version: 3.10.7
+  resolution: "@cypress/code-coverage@npm:3.10.7"
   dependencies:
     "@cypress/webpack-preprocessor": ^5.11.0
     chalk: 4.1.2
@@ -300,11 +300,11 @@ __metadata:
     execa: 4.1.0
     globby: 11.0.4
     istanbul-lib-coverage: 3.0.0
-    js-yaml: 3.14.1
+    js-yaml: 4.1.0
     nyc: 15.1.0
   peerDependencies:
     cypress: "*"
-  checksum: e82d0ea1bb4d8eaf802fd0d916f5c72b5590ff0b96f31b2606881628d11d84c49e8299639cb54a2aa9b3ff12f3903d8558a428b250988a9b7e07a1fc42747675
+  checksum: a40bcbccdb9c89fd86ef5361c454d2c1545a39128b640d6df8f65a44dade20d83bf22506bf12579fef2a28496916f1be16f979564223a08f894f0e364f0b4c08
   languageName: node
   linkType: hard
 
@@ -2747,7 +2747,7 @@ __metadata:
   resolution: "cylc-ui@workspace:."
   dependencies:
     "@apollo/client": 3.6.9
-    "@cypress/code-coverage": 3.10.0
+    "@cypress/code-coverage": 3.10.7
     "@hpcc-js/wasm": 2.8.0
     "@lumino/default-theme": 2.1.1
     "@lumino/widgets": 2.1.1
@@ -5670,7 +5670,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:3.14.1, js-yaml@npm:^3.13.1":
+"js-yaml@npm:4.1.0, js-yaml@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "js-yaml@npm:4.1.0"
+  dependencies:
+    argparse: ^2.0.1
+  bin:
+    js-yaml: bin/js-yaml.js
+  checksum: c7830dfd456c3ef2c6e355cc5a92e6700ceafa1d14bba54497b34a99f0376cecbb3e9ac14d3e5849b426d5a5140709a66237a8c991c675431271c4ce5504151a
+  languageName: node
+  linkType: hard
+
+"js-yaml@npm:^3.13.1":
   version: 3.14.1
   resolution: "js-yaml@npm:3.14.1"
   dependencies:
@@ -5679,17 +5690,6 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: bef146085f472d44dee30ec34e5cf36bf89164f5d585435a3d3da89e52622dff0b188a580e4ad091c3341889e14cb88cac6e4deb16dc5b1e9623bb0601fc255c
-  languageName: node
-  linkType: hard
-
-"js-yaml@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "js-yaml@npm:4.1.0"
-  dependencies:
-    argparse: ^2.0.1
-  bin:
-    js-yaml: bin/js-yaml.js
-  checksum: c7830dfd456c3ef2c6e355cc5a92e6700ceafa1d14bba54497b34a99f0376cecbb3e9ac14d3e5849b426d5a5140709a66237a8c991c675431271c4ce5504151a
   languageName: node
   linkType: hard
 
