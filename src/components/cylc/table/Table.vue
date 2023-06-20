@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="mr-1">
                   <Job
                     v-cylc-object="item.value.task"
-                    :status="item.value.task.node.state"
+                    :status="item.value.latestJob?.node?.state"
                     :previous-state="item.value.previousJob?.node?.state"
                   />
                 </div>
