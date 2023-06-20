@@ -21,7 +21,7 @@
     "test": "vitest run && yarn run serve cy:run"
   },
   "dependencies": {
-    "@apollo/client": "^3.5.8",
+    "@apollo/client": "3.6.9",
     "@hpcc-js/wasm": "2.8.0",
     "@lumino/default-theme": "2.1.1",
     "@lumino/widgets": "2.1.1",
@@ -31,7 +31,7 @@
     "enumify": "2.0.0",
     "graphiql": "1.8.10",
     "graphql": "16.6.0",
-    "graphql-tag": "~2.12.6",
+    "graphql-tag": "2.12.6",
     "lodash": "4.17.21",
     "markdown-it": "13.0.1",
     "mitt": "3.0.0",
