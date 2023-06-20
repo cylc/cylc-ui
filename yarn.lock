@@ -814,7 +814,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/default-theme@npm:^2.0.0":
+"@lumino/default-theme@npm:2.1.1":
   version: 2.1.1
   resolution: "@lumino/default-theme@npm:2.1.1"
   dependencies:
@@ -893,7 +893,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/widgets@npm:^2.0.0, @lumino/widgets@npm:^2.1.1":
+"@lumino/widgets@npm:2.1.1, @lumino/widgets@npm:^2.1.1":
   version: 2.1.1
   resolution: "@lumino/widgets@npm:2.1.1"
   dependencies:
@@ -2749,8 +2749,8 @@ __metadata:
     "@apollo/client": ^3.5.8
     "@cypress/code-coverage": 3.10.0
     "@hpcc-js/wasm": 2.8.0
-    "@lumino/default-theme": ^2.0.0
-    "@lumino/widgets": ^2.0.0
+    "@lumino/default-theme": 2.1.1
+    "@lumino/widgets": 2.1.1
     "@mdi/js": 7.0.96
     "@unhead/vue": 1.1.17
     "@vitejs/plugin-vue": 4.0.0
