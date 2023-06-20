@@ -270,28 +270,20 @@ function cleanParents (state, node) {
   }
 }
 
-/* Build / housekeep the familyTree based on the family information containined
+/**
+ * Build the familyTree based on the family information containined
  * in this node.
  */
 function applyInheritance (state, node) {
-  if (node.type === 'family') {
-    const childTasks = node.node.childTasks || []
-
+  if (node.type === 'family' && node.node.childTasks) {
     // add new tasks
-    for (const child of childTasks) {
+    for (const child of node.node.childTasks) {
       if (!hasChild(node, child.id)) {
         // child has been added to childTasks
         const childNode = getIndex(state, child.id)
         if (childNode) {
           addChild(node, childNode)
         }
-      }
-    }
-
-    // remove old tasks
-    for (const child of node.children.filter(child => child.type === 'task')) {
-      if (!childTasks.some(x => x.id === child.id)) {
-        removeChild(state, child, node)
       }
     }
   }
@@ -488,6 +480,11 @@ function remove (state, prunedID) {
     // remove family proxy node
     removeChild(state, treeNode, firstParent)
   } else {
+    if (treeNode.type === 'task') {
+      // remove task from its primary family
+      const familyNode = getIndex(state, treeNode.node.firstParent.id)
+      removeChild(state, treeNode, familyNode)
+    }
     // remove ~user[/path/to...]/workflow//cycle/task/job node
     removeTree(state, treeNode)
     cleanParents(state, parentNode)

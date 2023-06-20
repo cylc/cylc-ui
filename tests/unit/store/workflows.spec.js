@@ -46,14 +46,11 @@ function getTree (store) {
 
 describe('cylc tree', () => {
   const store = createStore(storeOptions)
-  if (!global.localStorage) {
-    global.localStorage = {}
-  }
   const resetState = () => {
     store.state.workflows.cylcTree = undefined
   }
   beforeEach(resetState)
-  afterEach(resetState)
+
   function getNode (id) {
     return store.state.workflows.cylcTree.$index[id]
   }
@@ -170,9 +167,19 @@ describe('cylc tree', () => {
 
     // add some nodes to the tree
     function addNodes () {
-      store.commit('workflows/UPDATE', { id: '~a/b//c/d/e' })
-      store.commit('workflows/UPDATE', { id: '~a/b//c/d/f' })
-      store.commit('workflows/UPDATE', { id: '~a/b//g' })
+      store.commit('workflows/UPDATE', {
+        id: '~a/b//c/d',
+        firstParent: { id: '~a/b//c/root' },
+      })
+      store.commit('workflows/UPDATE', {
+        id: '~a/b//c/d/e',
+      })
+      store.commit('workflows/UPDATE', {
+        id: '~a/b//c/d/f',
+      })
+      store.commit('workflows/UPDATE', {
+        id: '~a/b//g',
+      })
       expect(getTree(store)).to.deep.equal({
         a: {
           b: {
@@ -520,10 +527,22 @@ describe('cylc tree', () => {
     expect(penguin.node.foo).to.equal(3)
 
     // test adding tasks
-    store.commit('workflows/UPDATE', { id: '~u/w//1/adelie' })
-    store.commit('workflows/UPDATE', { id: '~u/w//1/gentoo' })
-    store.commit('workflows/UPDATE', { id: '~u/w//1/jeffes' })
-    store.commit('workflows/UPDATE', { id: '~u/w//1/great-auk' })
+    store.commit('workflows/UPDATE', {
+      id: '~u/w//1/adelie',
+      firstParent: { id: '~u/w//1/PENGUIN' },
+    })
+    store.commit('workflows/UPDATE', {
+      id: '~u/w//1/gentoo',
+      firstParent: { id: '~u/w//1/PENGUIN' },
+    })
+    store.commit('workflows/UPDATE', {
+      id: '~u/w//1/jeffes',
+      firstParent: { id: '~u/w//1/PENGUIN' },
+    })
+    store.commit('workflows/UPDATE', {
+      id: '~u/w//1/great-auk',
+      firstParent: { id: '~u/w//1/ANIMAL' },
+    })
     store.commit(
       'workflows/UPDATE',
       {
@@ -561,17 +580,6 @@ describe('cylc tree', () => {
     ])
 
     // test removing task (1/adelie)
-    store.commit(
-      'workflows/UPDATE',
-      {
-        id: '~u/w//1/PENGUIN',
-        childTasks: [
-          // the childTasks should change triggering an update
-          { id: '~u/w//1/gentoo' },
-          { id: '~u/w//1/jeffes' }
-        ]
-      }
-    )
     store.commit('workflows/REMOVE', '~u/w//1/adelie')
 
     // 1/adelie should have been removed from both the regular and family trees
