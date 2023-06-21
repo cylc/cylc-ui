@@ -2081,13 +2081,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bufferutil@npm:4.0.6":
-  version: 4.0.6
-  resolution: "bufferutil@npm:4.0.6"
+"bufferutil@npm:4.0.7":
+  version: 4.0.7
+  resolution: "bufferutil@npm:4.0.7"
   dependencies:
     node-gyp: latest
     node-gyp-build: ^4.3.0
-  checksum: dd107560947445280af7820c3d0534127b911577d85d537e1d7e0aa30fd634853cef8a994d6e8aed3d81388ab1a20257de776164afe6a6af8e78f5f17968ebd6
+  checksum: f75aa87e3d1b99b87a95f60a855e63f70af07b57fb8443e75a2ddfef2e47788d130fdd46e3a78fd7e0c10176082b26dfbed970c5b8632e1cc299cafa0e93ce45
   languageName: node
   linkType: hard
 
@@ -2757,7 +2757,7 @@ __metadata:
     "@vitest/coverage-istanbul": 0.32.0
     "@vue/test-utils": 2.2.7
     axios: 1.3.3
-    bufferutil: 4.0.6
+    bufferutil: 4.0.7
     concurrently: 8.0.1
     cross-fetch: 3.1.5
     cypress: 12.13.0
