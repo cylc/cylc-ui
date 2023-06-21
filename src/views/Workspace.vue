@@ -61,7 +61,7 @@ const LogView = defineAsyncComponent(() => import('@/views/Log.vue'))
 const AnalysisView = defineAsyncComponent(() => import('@/views/Analysis.vue'))
 const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue'))
 
-const allViews = [
+export const allViews = [
   { name: 'Tree', component: TreeView, icon: mdiFileTree },
   { name: 'Table', component: TableView, icon: mdiTable },
   { name: 'Graph', component: GraphView, icon: mdiGraph },
@@ -74,6 +74,8 @@ if (import.meta.env.MODE !== 'production') {
     { name: 'SimpleTree', component: SimpleTreeView, icon: mdiTree },
   )
 }
+
+export const defaultView = () => localStorage.defaultView || 'Tree'
 
 export default {
   name: 'Workspace',
@@ -103,7 +105,6 @@ export default {
   },
 
   data: () => ({
-    defaultView: 'Tree',
     /**
      * The widgets added to the view.
      *
@@ -116,7 +117,7 @@ export default {
     next(vm => {
       vm.$workflowService.startSubscriptions()
       vm.$nextTick(() => {
-        vm.addView({ viewName: vm.defaultView })
+        vm.addView({ viewName: defaultView() })
       })
     })
   },
@@ -126,8 +127,7 @@ export default {
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
-      // Create a Tree View for the current workflow by default
-      this.addView({ viewName: this.defaultView })
+      this.addView({ viewName: defaultView() })
     })
   },
 
@@ -137,9 +137,6 @@ export default {
 
   mounted () {
     this.$eventBus.on('add-view', this.addView)
-    this.defaultView = localStorage.tableDefaultView != null
-      ? (JSON.parse(localStorage.tableDefaultView) ? 'Table' : 'Tree')
-      : this.defaultView
   },
 
   beforeUnmount () {
