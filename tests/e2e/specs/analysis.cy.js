@@ -27,6 +27,13 @@ describe('Analysis view', () => {
       .should('be.visible')
   })
 
+  it('Should display boxplot', () => {
+    cy.get('.control.table > .v-icon')
+      .click()
+    cy.get('.vue-apexcharts')
+      .should('be.visible')
+  })
+
   describe('Filters', () => {
     it('Should display total times and not filter by default', () => {
       cy
