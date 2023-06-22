@@ -64,11 +64,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           />
         </v-col>
       </v-row>
-      <ViewToolbar :groups="groups" />
+      <ViewToolbar
+        :groups="groups"
+        @setOption="setOption"
+      />
       <AnalysisTable
+        v-if="table"
         :tasks="filteredTasks"
         :timingOption="tasksFilter.timingOption"
       />
+      <template v-else>
+        <BoxPlot
+          :configOptions="configOptions"
+          :workflowName="workflowName"
+          :tasks="filteredTasks"
+          :timingOption="tasksFilter.timingOption"
+        />
+        <v-pagination
+          v-model="page"
+          :length="Math.ceil(filteredTasks.length / configOptions.itemsPerPage)"
+          :total-visible="7"
+        />
+      </template>
     </v-container>
   </div>
 </template>
@@ -83,12 +100,14 @@ import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
+import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
 import {
   matchTask,
   platformOptions
 } from '@/components/cylc/analysis/filter'
 import {
-  mdiRefresh
+  mdiRefresh,
+  mdiTable,
 } from '@mdi/js'
 
 /** List of fields to request for task for each task */
@@ -167,8 +186,9 @@ export default {
   ],
 
   components: {
+    AnalysisTable,
+    BoxPlot,
     ViewToolbar,
-    AnalysisTable
   },
 
   head () {
@@ -194,7 +214,14 @@ export default {
               icon: mdiRefresh,
               action: 'callback',
               callback: this.historicalQuery
-            }
+            },
+            {
+              title: 'Toggle',
+              icon: mdiTable,
+              action: 'toggle',
+              key: 'table',
+              value: true,
+            },
           ]
         }
       ],
@@ -210,7 +237,9 @@ export default {
         name: '',
         timingOption: 'totalTimes',
         platformOption: -1,
-      }
+      },
+      table: true,
+      page: 1,
     }
   },
 
@@ -226,12 +255,25 @@ export default {
     },
     platformOptions () {
       return platformOptions(this.tasks)
-    }
+    },
+    configOptions () {
+      return {
+        sortBy: 'name',
+        page: this.page,
+        sortDesc: false,
+        itemsPerPage: 20,
+      }
+    },
   },
 
   methods: {
-    // run the one-off query for historical job data and pass its results
-    // through the callback
+    setOption (option, value) {
+      this[option] = value
+    },
+    /**
+     * Run the one-off query for historical job data and pass its results
+     * through the callback
+     */
     historicalQuery: debounce(
       async function () {
         this.tasks = []
