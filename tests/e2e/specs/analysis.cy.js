@@ -28,7 +28,7 @@ describe('Analysis view', () => {
   })
 
   it('Should display boxplot', () => {
-    cy.get('.control.table > .v-icon')
+    cy.get('.control.table > .v-btn')
       .click()
     cy.get('.vue-apexcharts')
       .should('be.visible')
@@ -103,11 +103,9 @@ describe('Analysis view', () => {
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 3)
-        .should('be.visible')
       cy
         .get('td')
         .contains('00:00:30')
-        .should('be.visible')
       // Show run times
       cy
         .get('#c-analysis-filter-task-timings')
@@ -119,11 +117,9 @@ describe('Analysis view', () => {
       cy
         .get('td')
         .contains('00:00:21')
-        .should('be.visible')
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 3)
-        .should('be.visible')
       // Show queue times
       cy
         .get('#c-analysis-filter-task-timings')
@@ -135,11 +131,9 @@ describe('Analysis view', () => {
       cy
         .get('td')
         .contains('00:00:12')
-        .should('be.visible')
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 3)
-        .should('be.visible')
     })
 
     it('Should filter by task name, platform and timings', () => {

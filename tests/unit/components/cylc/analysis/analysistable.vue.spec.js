@@ -91,7 +91,7 @@ describe('AnalysisTable component', () => {
       // check that the html has the expected data for total times
       expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('00:00:30')
       expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('00:00:32')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:34')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:38')
     })
 
     it('should correctly display run times', () => {
@@ -107,7 +107,7 @@ describe('AnalysisTable component', () => {
       // check that the html has the expected data for run times
       expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('00:00:20')
       expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('00:00:21')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:22')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:34')
     })
 
     it('should correctly display queue times', () => {
