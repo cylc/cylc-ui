@@ -216,7 +216,7 @@ export default {
               callback: this.historicalQuery
             },
             {
-              title: 'Toggle',
+              title: 'Toggle table/box & whiskers',
               icon: mdiTable,
               action: 'toggle',
               key: 'table',
