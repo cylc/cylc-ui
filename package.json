@@ -71,7 +71,7 @@
     "istanbul-lib-coverage": "3.2.0",
     "jsdom": "22.0.0",
     "json-server": "0.17.3",
-    "nodemon": "2.0.19",
+    "nodemon": "2.0.22",
     "nyc": "15.1.0",
     "sass": "1.63.6",
     "sinon": "15.0.1",
