@@ -57,6 +57,15 @@ export default {
     },
   },
 
+  errorCaptured (err, instance, info) {
+    if (err.name === 'TypeError' && instance.type === 'boxPlot' && info === 'watcher callback') {
+      // Suppress bogus error https://github.com/apexcharts/vue3-apexcharts/issues/79
+      // (note: err.message can vary between browsers)
+      console.warn(err)
+      return false
+    }
+  },
+
   computed: {
     series () {
       const sortedTasks = [...this.tasks].sort(this.compare)
