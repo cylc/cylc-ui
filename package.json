@@ -77,7 +77,7 @@
     "sinon": "15.0.1",
     "standard": "17.0.0",
     "subscriptions-transport-ws": "0.11.0",
-    "utf-8-validate": "6.0.2",
+    "utf-8-validate": "6.0.3",
     "vite": "4.3.9",
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "4.0.1",
