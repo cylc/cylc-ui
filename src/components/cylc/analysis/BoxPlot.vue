@@ -61,6 +61,10 @@ export default {
       type: Number,
       default: 20,
     },
+    animate: {
+      type: Boolean,
+      default: true,
+    }
   },
 
   data () {
@@ -109,7 +113,7 @@ export default {
       return {
         chart: {
           animations: {
-            enabled: true,
+            enabled: this.$store.state.app.reducedAnimation ? false : this.animate,
             easing: 'easeinout',
             speed: 300,
             animateGradually: {
