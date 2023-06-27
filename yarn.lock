@@ -810,9 +810,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/commands@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@lumino/commands@npm:2.1.1"
+"@lumino/commands@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@lumino/commands@npm:2.1.2"
   dependencies:
     "@lumino/algorithm": ^2.0.0
     "@lumino/coreutils": ^2.1.1
@@ -821,7 +821,7 @@ __metadata:
     "@lumino/keyboard": ^2.0.0
     "@lumino/signaling": ^2.1.1
     "@lumino/virtualdom": ^2.0.0
-  checksum: a076244e9c4f7a3c6dab02642fdd38dbbaab6e5754acaeeb84a5195dc5c2fc19343ba754c3a0f89c9b60f16c61cb793301cdb6e8d69bdc30e18ed7e32f40d524
+  checksum: c0b5ce8c5e1a86a98a90f54bb07b74742748110cf3362b86ff8328c1b5475c4dc05f1c4c9f50bf79e51c4e2ddc5cd69d6194f3d39dd5b58f357b0f30758bf35b
   languageName: node
   linkType: hard
 
@@ -832,13 +832,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/default-theme@npm:2.1.1":
-  version: 2.1.1
-  resolution: "@lumino/default-theme@npm:2.1.1"
+"@lumino/default-theme@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@lumino/default-theme@npm:2.1.2"
   dependencies:
-    "@lumino/dragdrop": ^2.1.1
-    "@lumino/widgets": ^2.1.1
-  checksum: 267ee7ae2bfd4ece611845f08a8679b8fb49be98d4449b2ffdf9382bf9b4b2448d96184f13e7f580d157f2716d0e569bea72d2f961defb8e037b6306751a31e5
+    "@lumino/dragdrop": ^2.1.2
+    "@lumino/widgets": ^2.2.0
+  checksum: 5f8a82def6938e9457aef000f465720995ade60245c3fb6d8d1995de72223a676aac7a35a16d9fa8ce59b7970f96fcb60ef18428d92028189a5eecdbd30f5029
   languageName: node
   linkType: hard
 
@@ -858,13 +858,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/dragdrop@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@lumino/dragdrop@npm:2.1.1"
+"@lumino/dragdrop@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@lumino/dragdrop@npm:2.1.2"
   dependencies:
     "@lumino/coreutils": ^2.1.1
     "@lumino/disposable": ^2.1.1
-  checksum: 68c896afc44476b11a501e5b30ec55db06c2648a45f078713a111b2bf3b2e9171a7c5478ff6bdeb771a7c1e397fe3bba7bc5eadb4fe3e1294851d677f811b5b8
+  checksum: 7ac64ec11423ec89fea937aa6c9ca818933ee98e775e500018a0a948f32171932033a1e302a48395cbe9bfeaa635acde2393fd935db14d7b1d569ca6a1daaa77
   languageName: node
   linkType: hard
 
@@ -911,22 +911,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/widgets@npm:2.1.1, @lumino/widgets@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@lumino/widgets@npm:2.1.1"
+"@lumino/widgets@npm:2.2.0, @lumino/widgets@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@lumino/widgets@npm:2.2.0"
   dependencies:
     "@lumino/algorithm": ^2.0.0
-    "@lumino/commands": ^2.1.1
+    "@lumino/commands": ^2.1.2
     "@lumino/coreutils": ^2.1.1
     "@lumino/disposable": ^2.1.1
     "@lumino/domutils": ^2.0.0
-    "@lumino/dragdrop": ^2.1.1
+    "@lumino/dragdrop": ^2.1.2
     "@lumino/keyboard": ^2.0.0
     "@lumino/messaging": ^2.0.0
     "@lumino/properties": ^2.0.0
     "@lumino/signaling": ^2.1.1
     "@lumino/virtualdom": ^2.0.0
-  checksum: e2ad4a97d6ec43e5e1863c2a521b6b8cb7a708a470c1e78b0f34ff4ad8b9fca191597586c3033233a29ff0fa14b62aeef5ea2fe66af3058d39e711c6af129cf4
+  checksum: 963c0e54102b786a9cbf3467041c9f6f5c275af751afc311ebeba30d56516767c463c425e321bb389eaa66726dfc4420119a9a58573dcbf3110aba9515c80606
   languageName: node
   linkType: hard
 
@@ -2558,8 +2558,8 @@ __metadata:
     "@apollo/client": 3.6.9
     "@cypress/code-coverage": 3.10.7
     "@hpcc-js/wasm": 2.8.0
-    "@lumino/default-theme": 2.1.1
-    "@lumino/widgets": 2.1.1
+    "@lumino/default-theme": 2.1.2
+    "@lumino/widgets": 2.2.0
     "@mdi/js": 7.0.96
     "@unhead/vue": 1.1.17
     "@vitejs/plugin-vue": 4.0.0
