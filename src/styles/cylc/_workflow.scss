@@ -63,8 +63,3 @@
   width: 1rem;
   height: 1rem;
 }
-// Workaround https://github.com/jupyterlab/lumino/issues/593:
-.lm-mod-drag-image {
-  top: -10px;
-  left: -60px;
-}
