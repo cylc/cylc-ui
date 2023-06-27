@@ -73,19 +73,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :tasks="filteredTasks"
         :timingOption="tasksFilter.timingOption"
       />
-      <template v-else>
-        <BoxPlot
-          :configOptions="configOptions"
-          :workflowName="workflowName"
-          :tasks="filteredTasks"
-          :timingOption="tasksFilter.timingOption"
-        />
-        <v-pagination
-          v-model="page"
-          :length="Math.ceil(filteredTasks.length / configOptions.itemsPerPage)"
-          :total-visible="7"
-        />
-      </template>
+      <BoxPlot
+        v-else
+        :configOptions="configOptions"
+        :tasks="filteredTasks"
+        :timingOption="tasksFilter.timingOption"
+      />
     </v-container>
   </div>
 </template>
@@ -239,7 +232,6 @@ export default {
         platformOption: -1,
       },
       table: true,
-      page: 1,
     }
   },
 
@@ -259,9 +251,7 @@ export default {
     configOptions () {
       return {
         sortBy: 'name',
-        page: this.page,
         sortDesc: false,
-        itemsPerPage: 20,
       }
     },
   },

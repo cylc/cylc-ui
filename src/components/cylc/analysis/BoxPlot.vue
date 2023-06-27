@@ -24,6 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     width="95%"
     class="d-flex justify-center"
   />
+  <v-pagination
+    v-model="page"
+    :length="numPages"
+    :total-visible="7"
+    density="comfortable"
+  />
 </template>
 
 <script>
@@ -47,14 +53,20 @@ export default {
       type: String,
       required: true,
     },
-    workflowName: {
-      type: String,
-      required: true,
-    },
     configOptions: {
       type: Object,
       required: true,
     },
+    itemsPerPage: {
+      type: Number,
+      default: 20,
+    },
+  },
+
+  data () {
+    return {
+      page: 1,
+    }
   },
 
   errorCaptured (err, instance, info) {
@@ -69,11 +81,8 @@ export default {
   computed: {
     series () {
       const sortedTasks = [...this.tasks].sort(this.compare)
-      const startIndex = this.configOptions.itemsPerPage * (this.configOptions.page - 1)
-      const endIndex = Math.min(
-        sortedTasks.length,
-        startIndex + this.configOptions.itemsPerPage
-      )
+      const startIndex = Math.max(0, this.itemsPerPage * (this.page - 1))
+      const endIndex = Math.min(sortedTasks.length, startIndex + this.itemsPerPage)
 
       const data = []
       const field = this.timingOption.replace(/Times/, '')
@@ -90,6 +99,10 @@ export default {
         })
       }
       return [{ data }]
+    },
+
+    numPages () {
+      return Math.ceil(this.tasks.length / this.itemsPerPage) || 1
     },
 
     chartOptions () {
@@ -133,6 +146,13 @@ export default {
         },
       }
     },
+  },
+
+  watch: {
+    numPages () {
+      // Clamp page number
+      this.page = Math.min(this.numPages, this.page)
+    }
   },
 
   methods: {

@@ -6,8 +6,6 @@ describe('BoxPlot', () => {
     cy.vmount(BoxPlot, {
       props: {
         configOptions: {
-          itemsPerPage: 20,
-          page: 1,
           sortBy: 'name',
           sortDesc: false
         },
