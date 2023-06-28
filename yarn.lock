@@ -1135,46 +1135,46 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unhead/dom@npm:1.1.17":
-  version: 1.1.17
-  resolution: "@unhead/dom@npm:1.1.17"
+"@unhead/dom@npm:1.1.28":
+  version: 1.1.28
+  resolution: "@unhead/dom@npm:1.1.28"
   dependencies:
-    "@unhead/schema": 1.1.17
-    "@unhead/shared": 1.1.17
-  checksum: a73cfbd575bd1c52d34a642d9769fae3c6e87c0fa7add3c7a817abeb6aedb5b25a62f7ca1eb078dc1f1daf3f68d5b10fef4190c6a4f1e396a86c0af1729d344b
+    "@unhead/schema": 1.1.28
+    "@unhead/shared": 1.1.28
+  checksum: b1b7ffca19544ab56636057d78c4b1a628946da766f17878121d72c64d9b686ba7f242b4227b17b8b5988d854b048ddbc5e07b5b506f633a135e408da8fe19cf
   languageName: node
   linkType: hard
 
-"@unhead/schema@npm:1.1.17":
-  version: 1.1.17
-  resolution: "@unhead/schema@npm:1.1.17"
+"@unhead/schema@npm:1.1.28":
+  version: 1.1.28
+  resolution: "@unhead/schema@npm:1.1.28"
   dependencies:
-    hookable: ^5.4.2
-    zhead: ^2.0.4
-  checksum: c095ee216a1e624a474a95fb20f0034c358f0c92f185075daa93a269acb481c3230ebb9a00d9a59e8fedf93c5ee06d04b3748006983a02b530d72e00ee45535a
+    hookable: ^5.5.3
+    zhead: ^2.0.7
+  checksum: 6e358ed143d0ab11451f87bf92601a937fe5f332afd90e5fa7649d6406a3f643895bdf04e6c2469d3b3d38c221d7a20862688b9dd8c7eb1a41faaeb346af11ed
   languageName: node
   linkType: hard
 
-"@unhead/shared@npm:1.1.17":
-  version: 1.1.17
-  resolution: "@unhead/shared@npm:1.1.17"
+"@unhead/shared@npm:1.1.28":
+  version: 1.1.28
+  resolution: "@unhead/shared@npm:1.1.28"
   dependencies:
-    "@unhead/schema": 1.1.17
-  checksum: 2707910be76fbb5e331b1feda7e0c88834376626bd2752954ca1e6ad6ca3213fdccf3f0a505085ff212b6c3999600e5d878a307be33a0e56f0761936d82d5b51
+    "@unhead/schema": 1.1.28
+  checksum: 4cae8fafa1638a0962793dfc59e20e4321be6d1b4089e82e8dd19a1e682f45ec950fa373d1f9d215df3988ef10bada96dd796c0fae55b3c0541d41a2b04c9870
   languageName: node
   linkType: hard
 
-"@unhead/vue@npm:1.1.17":
-  version: 1.1.17
-  resolution: "@unhead/vue@npm:1.1.17"
+"@unhead/vue@npm:1.1.28":
+  version: 1.1.28
+  resolution: "@unhead/vue@npm:1.1.28"
   dependencies:
-    "@unhead/schema": 1.1.17
-    "@unhead/shared": 1.1.17
-    hookable: ^5.4.2
-    unhead: 1.1.17
+    "@unhead/schema": 1.1.28
+    "@unhead/shared": 1.1.28
+    hookable: ^5.5.3
+    unhead: 1.1.28
   peerDependencies:
     vue: ">=2.7 || >=3"
-  checksum: d962a8e17f92107941c8601a1800eddb4457d41496e096404b25123dfb19108c1ec40654267b011da10368c2b30c128fcf926a550c3809b6f8b400787ec3e1dc
+  checksum: 2330c67f61f08f304652746cfd678c67334329a72217b64563a141e5234c84454dc925f832193f02c68215f24400f059c8828f07e38e1c5a4e5e72de9e549263
   languageName: node
   linkType: hard
 
@@ -2588,7 +2588,7 @@ __metadata:
     "@lumino/default-theme": 2.1.2
     "@lumino/widgets": 2.2.0
     "@mdi/js": 7.0.96
-    "@unhead/vue": 1.1.17
+    "@unhead/vue": 1.1.28
     "@vitejs/plugin-vue": 4.0.0
     "@vitest/coverage-istanbul": 0.32.2
     "@vue/test-utils": 2.4.0
@@ -4800,10 +4800,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hookable@npm:^5.4.2":
-  version: 5.4.2
-  resolution: "hookable@npm:5.4.2"
-  checksum: a70bbdf8b92e9eb20e0d346281fd3f338abff194491aa9068cebdcde8faa853c9360b109844215656e2bd299e13ca00743e310025ee4b073795024f54e9eb726
+"hookable@npm:^5.5.3":
+  version: 5.5.3
+  resolution: "hookable@npm:5.5.3"
+  checksum: df659977888398649b6ef8c4470719e7e8384a1d939a6587e332e86fd55b3881806e2f8aaebaabdb4f218f74b83b98f2110e143df225e16d62a39dc271e7e288
   languageName: node
   linkType: hard
 
@@ -8747,15 +8747,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unhead@npm:1.1.17":
-  version: 1.1.17
-  resolution: "unhead@npm:1.1.17"
+"unhead@npm:1.1.28":
+  version: 1.1.28
+  resolution: "unhead@npm:1.1.28"
   dependencies:
-    "@unhead/dom": 1.1.17
-    "@unhead/schema": 1.1.17
-    "@unhead/shared": 1.1.17
-    hookable: ^5.4.2
-  checksum: 25ece16fda4b3b781955d9329b3d27c30e717be952077fbe1b26067bf4ecf500ead4e1b86e967220e1e881709d4783287156889d5caeb97f23c832af3c219afd
+    "@unhead/dom": 1.1.28
+    "@unhead/schema": 1.1.28
+    "@unhead/shared": 1.1.28
+    hookable: ^5.5.3
+  checksum: 5cbdeb3c938949cfb239d18caa27ef6e747fd4bcd41b26f7f95f3e951de1ac2eb841e7fc69e3e5f1be7ac08e7f06001a8568ec1fbcd81ddddb7eb90d01cd15c3
   languageName: node
   linkType: hard
 
@@ -9576,9 +9576,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zhead@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "zhead@npm:2.0.4"
-  checksum: a5b506a6945e93a2a3356d7944a61f9b9b2bf303ee26b10075790a262039cae9b4af7a2ffb8fb02c43a3d9bbfd93598001da8c4d448f0044797a14ae114016ab
+"zhead@npm:^2.0.7":
+  version: 2.0.7
+  resolution: "zhead@npm:2.0.7"
+  checksum: dc7932ad2a55135325f3d2a096c096b6145e1e123f17125ebaa9a53ddc176a99c68b59ce50b04f4f5edaaf737e1992d664412f56cc47e3a70bd17269d398a4b2
   languageName: node
   linkType: hard
