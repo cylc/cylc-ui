@@ -18,6 +18,9 @@ ones in. -->
 [#1269](https://github.com/cylc/cylc-ui/pull/1269) -
 Upgraded Vue and Vuetify frameworks to v3.
 
+[#1345](https://github.com/cylc/cylc-ui/pull/1345) -
+Added setting to choose the default view for workflows (tree, table etc.).
+
 [#1330](https://github.com/cylc/cylc-ui/pull/1330) -
 Added setting to turn off most animations.
 

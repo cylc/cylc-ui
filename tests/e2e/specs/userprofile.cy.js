@@ -127,6 +127,23 @@ describe('User Profile', () => {
       .should('be.checked')
     testMenu(false)
   })
+
+  it('Sets the default view', () => {
+    cy.get('[data-cy=select-default-view]')
+      // Default should be tree view by default
+      .contains('Tree')
+      // Change default
+      .click()
+      .get('[data-cy=select-default-view-menu] [role=listbox]')
+      .contains('Table')
+      .click()
+    cy.visit('/#/workspace/one')
+      .get('[data-cy=workspace-view] .c-table')
+      .should('be.visible')
+      .get('[data-cy=workspace-view] .c-tree')
+      .should('not.exist')
+  })
+
   // TODO
   // it('Sets the cycle points order', () => {
   //   cy.visit('/#/user-profile')
