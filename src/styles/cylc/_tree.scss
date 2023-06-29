@@ -138,7 +138,7 @@ $icon-size: 1.2em;
         // right space to show the N items in the scroll (without the buffer the last
         // item is partially hidden).
         max-height: calc(#{$line-height} * #{$visible-outputs} + 1.0em);
-        overflow-y: scroll;
+        overflow-y: auto;
       }
     }
   }

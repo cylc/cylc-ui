@@ -21,6 +21,9 @@ Upgraded Vue and Vuetify frameworks to v3.
 [#1330](https://github.com/cylc/cylc-ui/pull/1330) -
 Added setting to turn off most animations.
 
+[#1114](https://github.com/cylc/cylc-ui/pull/1114) -
+Tree view: show mean run time in job details.
+
 ### Fixes
 
 [#1312](https://github.com/cylc/cylc-ui/pull/1312) -
