@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!-- help button - tooltip for more information -->
             <v-tooltip
               v-if="input.description"
-              location="bottom"
+              :activator="null"
             >
               <template v-slot:activator="{ props }">
                 <v-icon v-bind="props" class="mx-2">

@@ -31,10 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="c-input-key"
           v-bind="{ ...$options.textFieldProps, ...$attrs }"
         />
-        <v-tooltip
-          activator="parent"
-          v-bind="tooltipProps"
-        >
+        <v-tooltip v-bind="tooltipProps">
           <span>Pre-existing settings cannot be renamed</span>
         </v-tooltip>
       </div>
@@ -56,10 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           name="append"
           :disabled="modelValue.frozenKey"
         />
-        <v-tooltip
-          activator="parent"
-          v-bind="tooltipProps"
-        >
+        <v-tooltip v-bind="tooltipProps">
           <span>Pre-existing settings cannot be removed</span>
         </v-tooltip>
       </div>

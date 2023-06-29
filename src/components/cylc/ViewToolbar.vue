@@ -38,12 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           @click="iControl.callback"
         >
           <v-icon size="large">{{ iControl.icon }}</v-icon>
-          <v-tooltip
-            activator="parent"
-            location="bottom"
-          >
-            <span>{{ iControl.title }}</span>
-          </v-tooltip>
+          <v-tooltip>{{ iControl.title }}</v-tooltip>
         </v-btn>
       </div>
     </div>

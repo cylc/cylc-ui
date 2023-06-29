@@ -90,12 +90,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 Visit the Hub to manage your running UI Servers
               </v-list-item-subtitle>
             </v-list-item>
-            <v-tooltip
-              activator="parent"
-              :disabled="multiUserMode"
-              location="bottom"
-            >
-              <span>You are not running Cylc UI via Cylc Hub.</span>
+            <v-tooltip :disabled="multiUserMode">
+              You are not running Cylc UI via Cylc Hub.
             </v-tooltip>
           </div>
         </v-list>

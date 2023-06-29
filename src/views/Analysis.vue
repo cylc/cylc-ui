@@ -31,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-text-field
             id="c-analysis-filter-task-name"
             clearable
-            hide-details
             placeholder="Filter by task name"
             v-model.trim="tasksFilter.name"
             ref="filterNameInput"
@@ -45,7 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-select
             id="c-analysis-filter-task-timings"
             :items="timingOptions"
-            hide-details
             prefix="Displaying:"
             v-model="tasksFilter.timingOption"
           />
@@ -58,7 +56,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-select
             id="c-analysis-filter-task-platforms"
             :items="platformOptions"
-            hide-details
             prefix="Platform:"
             v-model="tasksFilter.platformOption"
           />
