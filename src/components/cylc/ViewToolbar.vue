@@ -81,7 +81,7 @@ export default {
                 // list of keys
                 // only enable this control if all of the listed controls have
                 // truthy values
-                enableif
+                enableIf
                 // list of keys
                 // disable this control if any of the listed controls have
                 // truthy values
@@ -159,7 +159,7 @@ export default {
   methods: {
     toggle (control, e) {
       // toggle a boolean value
-      // NOTE: undefined is interpreted is false
+      // NOTE: undefined is falsy
       control.value = !control.value
       this.$emit('setOption', control.key, control.value)
       e.currentTarget.blur()

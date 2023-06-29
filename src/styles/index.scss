@@ -91,3 +91,14 @@ html {
 .mw-100 {
   max-width: 100%;
 }
+
+// CSS "gap" equivalent for Vuetify spacing classes (like ma-2, pl-4 etc):
+// https://github.com/vuetifyjs/vuetify/issues/15282
+@for $i from 0 through 8 {
+  .row-gap-#{$i}, .gap-#{$i} {
+    row-gap: $i * 4px;
+  }
+  .col-gap-#{$i}, .gap-#{$i} {
+    column-gap: $i * 4px;
+  }
+}

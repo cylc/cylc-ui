@@ -48,7 +48,7 @@ describe('AnalysisTable component', () => {
     const wrapper = mountFunction({
       props: {
         tasks: analysisTasks,
-        timingOption: 'totalTimes'
+        timingOption: 'total'
       }
     })
 
@@ -70,7 +70,7 @@ describe('AnalysisTable component', () => {
     const wrapper = mountFunction({
       props: {
         tasks: analysisTasks,
-        timingOption: 'totalTimes'
+        timingOption: 'total'
       }
     })
     expect(wrapper.props().tasks[0].name).to.equal('succeeded')
@@ -82,10 +82,10 @@ describe('AnalysisTable component', () => {
       const wrapper = mountFunction({
         props: {
           tasks: analysisTasks,
-          timingOption: 'totalTimes'
+          timingOption: 'total'
         }
       })
-      expect(wrapper.vm.timingOption).to.equal('totalTimes')
+      expect(wrapper.vm.timingOption).to.equal('total')
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for total times
@@ -98,10 +98,10 @@ describe('AnalysisTable component', () => {
       const wrapper = mountFunction({
         props: {
           tasks: analysisTasks,
-          timingOption: 'runTimes'
+          timingOption: 'run'
         }
       })
-      expect(wrapper.vm.timingOption).to.equal('runTimes')
+      expect(wrapper.vm.timingOption).to.equal('run')
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for run times
@@ -114,10 +114,10 @@ describe('AnalysisTable component', () => {
       const wrapper = mountFunction({
         props: {
           tasks: analysisTasks,
-          timingOption: 'queueTimes'
+          timingOption: 'queue'
         }
       })
-      expect(wrapper.vm.timingOption).to.equal('queueTimes')
+      expect(wrapper.vm.timingOption).to.equal('queue')
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for queue times

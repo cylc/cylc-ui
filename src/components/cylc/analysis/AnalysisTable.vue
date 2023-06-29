@@ -54,6 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { upperFirst } from 'lodash'
 import { formatDuration } from '@/utils/tasks'
 
 export default {
@@ -95,16 +96,7 @@ export default {
 
   computed: {
     shownHeaders () {
-      let times
-      if (this.timingOption === 'totalTimes') {
-        times = 'Total'
-      } else if (this.timingOption === 'runTimes') {
-        times = 'Run'
-      } else if (this.timingOption === 'queueTimes') {
-        times = 'Queue'
-      } else {
-        return this.headers
-      }
+      const times = upperFirst(this.timingOption)
       const timingHeaders = [
         {
           title: `Mean T-${times}`,

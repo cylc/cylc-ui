@@ -16,6 +16,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
+  <Teleport
+    v-if="sortInputTeleportTarget"
+    :to="sortInputTeleportTarget"
+  >
+    <div class="d-flex flex-grow-1 col-gap-1">
+      <v-select
+        :items="sortChoices"
+        v-model="sortBy"
+        label="Sort by"
+        style="max-width: 250px;"
+      />
+      <v-btn
+        @click="sortDesc = !sortDesc"
+        icon
+        variant="text"
+        size="small"
+      >
+        <v-icon :icon="sortDesc ? $options.icons.sortDesc : $options.icons.sortAsc" />
+        <v-tooltip>Sort ascending/descending</v-tooltip>
+      </v-btn>
+    </div>
+  </Teleport>
   <VueApexCharts
     type="boxPlot"
     :options="chartOptions"
@@ -34,7 +56,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import VueApexCharts from 'vue3-apexcharts'
-import { mdiDownload } from '@mdi/js'
+import {
+  mdiDownload,
+  mdiSortReverseVariant,
+  mdiSortVariant,
+} from '@mdi/js'
 import { upperFirst } from 'lodash'
 
 export default {
@@ -53,10 +79,6 @@ export default {
       type: String,
       required: true,
     },
-    configOptions: {
-      type: Object,
-      required: true,
-    },
     itemsPerPage: {
       type: Number,
       default: 20,
@@ -64,12 +86,19 @@ export default {
     animate: {
       type: Boolean,
       default: true,
-    }
+    },
+    /** Where to teleport the sorting input (or don't render if null) */
+    sortInputTeleportTarget: {
+      type: String,
+      default: null,
+    },
   },
 
   data () {
     return {
       page: 1,
+      sortBy: 'name',
+      sortDesc: false,
     }
   },
 
@@ -89,16 +118,15 @@ export default {
       const endIndex = Math.min(sortedTasks.length, startIndex + this.itemsPerPage)
 
       const data = []
-      const field = this.timingOption.replace(/Times/, '')
       for (let i = startIndex; i < endIndex; i++) {
         data.push({
           x: sortedTasks[i].name,
           y: [
-            sortedTasks[i][`min${upperFirst(field)}Time`],
-            sortedTasks[i][`${field}Quartiles`][0],
-            sortedTasks[i][`${field}Quartiles`][1],
-            sortedTasks[i][`${field}Quartiles`][2],
-            sortedTasks[i][`max${upperFirst(field)}Time`],
+            sortedTasks[i][`min${upperFirst(this.timingOption)}Time`],
+            sortedTasks[i][`${this.timingOption}Quartiles`][0],
+            sortedTasks[i][`${this.timingOption}Quartiles`][1],
+            sortedTasks[i][`${this.timingOption}Quartiles`][2],
+            sortedTasks[i][`max${upperFirst(this.timingOption)}Time`],
           ],
         })
       }
@@ -107,6 +135,18 @@ export default {
 
     numPages () {
       return Math.ceil(this.tasks.length / this.itemsPerPage) || 1
+    },
+
+    sortChoices () {
+      return [
+        { title: 'Task name', value: 'name' },
+        { title: 'Platform', value: 'platform' },
+        { title: 'Count', value: 'count' },
+        { title: `Mean T-${this.timingOption}`, value: `mean${upperFirst(this.timingOption)}Time` },
+        { title: `Median T-${this.timingOption}`, value: `median${upperFirst(this.timingOption)}Time` },
+        { title: `Min T-${this.timingOption}`, value: `min${upperFirst(this.timingOption)}Time` },
+        { title: `Max T-${this.timingOption}`, value: `max${upperFirst(this.timingOption)}Time` },
+      ]
     },
 
     chartOptions () {
@@ -160,14 +200,20 @@ export default {
   },
 
   methods: {
+    /**
+     * @param {string|number} a
+     * @param {string|number} b
+     * @returns {number}
+     */
     compare (a, b) {
-      let ret = 0
-      const { sortBy, sortDesc } = this.configOptions
-      if (sortBy) {
-        ret = a[sortBy] < b[sortBy] ? -1 : 1
-      }
-      return sortDesc ? -ret : ret
+      const ret = a[this.sortBy] < b[this.sortBy] ? -1 : 1
+      return this.sortDesc ? -ret : ret
     },
+  },
+
+  icons: {
+    sortAsc: mdiSortReverseVariant,
+    sortDesc: mdiSortVariant,
   },
 }
 </script>

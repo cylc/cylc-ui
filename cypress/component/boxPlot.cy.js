@@ -72,11 +72,7 @@ const mountOpts = {
     ],
   },
   props: {
-    configOptions: {
-      sortBy: 'name',
-      sortDesc: false,
-    },
-    timingOption: 'totalTimes',
+    timingOption: 'total',
     animate: false,
   }
 }

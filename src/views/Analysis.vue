@@ -61,20 +61,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           />
         </v-col>
       </v-row>
-      <ViewToolbar
-        :groups="groups"
-        @setOption="setOption"
-      />
+      <div
+        id="analysis-toolbar"
+        class="d-flex align-center flex-wrap my-2 col-gap-2 row-gap-4"
+      >
+        <!-- Toolbar -->
+        <v-defaults-provider
+          :defaults="{
+            VBtn: { icon: true, variant: 'text' },
+          }"
+        >
+          <v-btn-toggle
+            v-model="table"
+            mandatory
+            variant="outlined"
+            color="primary"
+          >
+            <v-btn
+              :value="true"
+              data-cy="table-toggle"
+            >
+              <v-icon :icon="$options.icons.mdiTable" />
+              <v-tooltip>Table view</v-tooltip>
+            </v-btn>
+            <v-btn
+              :value="false"
+              data-cy="box-plot-toggle"
+            >
+              <v-icon :icon="$options.icons.mdiChartTimeline" />
+              <v-tooltip>Box & whiskers view</v-tooltip>
+            </v-btn>
+          </v-btn-toggle>
+          <v-btn @click="historicalQuery">
+            <v-icon :icon="$options.icons.mdiRefresh" />
+            <v-tooltip>Refresh</v-tooltip>
+          </v-btn>
+          <!-- Box plot sort input teleports here -->
+        </v-defaults-provider>
+      </div>
       <AnalysisTable
         v-if="table"
         :tasks="filteredTasks"
-        :timingOption="tasksFilter.timingOption"
+        :timing-option="timingOption"
       />
       <BoxPlot
         v-else
-        :configOptions="configOptions"
         :tasks="filteredTasks"
-        :timingOption="tasksFilter.timingOption"
+        :timing-option="timingOption"
+        sort-input-teleport-target="#analysis-toolbar"
       />
     </v-container>
   </div>
@@ -82,13 +116,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import {
+  debounce,
   pick,
-  debounce
 } from 'lodash'
 import gql from 'graphql-tag'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
-import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
 import {
@@ -96,6 +129,7 @@ import {
   platformOptions
 } from '@/components/cylc/analysis/filter'
 import {
+  mdiChartTimeline,
   mdiRefresh,
   mdiTable,
 } from '@mdi/js'
@@ -178,7 +212,6 @@ export default {
   components: {
     AnalysisTable,
     BoxPlot,
-    ViewToolbar,
   },
 
   head () {
@@ -194,27 +227,6 @@ export default {
   data () {
     const tasks = []
     return {
-      /** Defines controls which get added to the toolbar */
-      groups: [
-        {
-          title: 'Analysis',
-          controls: [
-            {
-              title: 'Refresh data',
-              icon: mdiRefresh,
-              action: 'callback',
-              callback: this.historicalQuery
-            },
-            {
-              title: 'Toggle table/box & whiskers',
-              icon: mdiTable,
-              action: 'toggle',
-              key: 'table',
-              value: true,
-            },
-          ]
-        }
-      ],
       callback: new AnalysisCallback(tasks),
       /** Object containing all of the tasks added by the callback */
       tasks,
@@ -239,24 +251,21 @@ export default {
     workflowIDs () {
       return [this.workflowId]
     },
+
     filteredTasks () {
       return this.tasks.filter(task => matchTask(task, this.tasksFilter))
     },
+
     platformOptions () {
       return platformOptions(this.tasks)
     },
-    configOptions () {
-      return {
-        sortBy: 'name',
-        sortDesc: false,
-      }
+
+    timingOption () {
+      return this.tasksFilter.timingOption.replace(/Times/, '')
     },
   },
 
   methods: {
-    setOption (option, value) {
-      this[option] = value
-    },
     /**
      * Run the one-off query for historical job data and pass its results
      * through the callback
@@ -273,6 +282,12 @@ export default {
       },
       200 // only re-run this once every 0.2 seconds
     )
+  },
+
+  icons: {
+    mdiChartTimeline,
+    mdiRefresh,
+    mdiTable,
   }
 }
 </script>
