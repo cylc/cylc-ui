@@ -20,10 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <Toolbar
       :views="$options.allViews"
       :workflow-name="workflowName"
-      @add="this.addView"
-      :initialOptions="{}"
+      @add="addView"
     />
-    <div class="workflow-panel">
+    <div
+      class="workflow-panel"
+      :style="$options.panelStyle"
+    >
       <Lumino
         ref="lumino"
         @lumino:deleted="onWidgetDeletedEvent"
@@ -52,6 +54,7 @@ import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
 import Lumino from '@/components/cylc/workflow/Lumino.vue'
 import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
+import { toolbarHeight } from '@/utils/toolbar'
 
 // Use dynamic async components for lazy loading:
 const TreeView = defineAsyncComponent(() => import('@/views/Tree.vue'))
@@ -195,5 +198,9 @@ export default {
    * @type {Object[]}
    */
   allViews,
+
+  panelStyle: {
+    height: `calc(100vh - ${toolbarHeight}px)`,
+  },
 }
 </script>
