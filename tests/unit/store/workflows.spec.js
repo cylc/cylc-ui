@@ -161,12 +161,82 @@ describe('cylc tree', () => {
     ])
   })
 
-  it('removes', () => {
-    // it should remove nodes and housekeep the tree via the REMOVE interface
-    store.commit('workflows/CREATE')
+  /** it should remove nodes and housekeep the tree via the REMOVE interface */
+  describe('remove()', () => {
+    beforeEach(() => {
+      store.commit('workflows/CREATE')
+    })
 
-    // add some nodes to the tree
-    function addNodes () {
+    it.each([
+      {
+        type: 'user',
+        id: '~a',
+        expectedTree: {},
+        expectedIndex: [],
+      },
+      {
+        type: 'workflow',
+        id: '~a/b',
+        expectedTree: {},
+        expectedIndex: [],
+      },
+      {
+        type: 'cycle',
+        id: '~a/b//c',
+        expectedTree: {
+          a: {
+            b: {
+              g: {}
+            }
+          }
+        },
+        expectedIndex: [
+          '~a',
+          '~a/b',
+          '~a/b//g'
+        ],
+      },
+      {
+        type: 'task',
+        id: '~a/b//c/d',
+        expectedTree: {
+          a: {
+            b: {
+              g: {}
+            }
+          }
+        },
+        expectedIndex: [
+          '~a',
+          '~a/b',
+          '~a/b//g'
+        ],
+      },
+      {
+        type: 'job',
+        id: '~a/b//c/d/e',
+        expectedTree: {
+          a: {
+            b: {
+              c: {
+                d: {
+                  f: {}
+                }
+              },
+              g: {}
+            }
+          }
+        },
+        expectedIndex: [
+          '~a',
+          '~a/b',
+          '~a/b//c',
+          '~a/b//c/d',
+          '~a/b//c/d/f',
+          '~a/b//g'
+        ],
+      },
+    ])('removes a $type from the tree', ({ id, expectedTree, expectedIndex }) => {
       store.commit('workflows/UPDATE', {
         id: '~a/b//c/d',
         firstParent: { id: '~a/b//c/root' },
@@ -202,75 +272,11 @@ describe('cylc tree', () => {
         '~a/b//c/d/f',
         '~a/b//g'
       ])
-    }
 
-    // remove a user from the tree
-    addNodes()
-    store.commit('workflows/REMOVE', '~a')
-    expect(getTree(store)).to.deep.equal({})
-    expect(getIndex()).to.deep.equal([])
-
-    // remove a workflow from the tree
-    addNodes()
-    store.commit('workflows/REMOVE', '~a/b')
-    expect(getTree(store)).to.deep.equal({})
-    expect(getIndex()).to.deep.equal([])
-
-    // remove a cycle from the tree
-    addNodes()
-    store.commit('workflows/REMOVE', '~a/b//c')
-    expect(getTree(store)).to.deep.equal({
-      a: {
-        b: {
-          g: {}
-        }
-      }
+      store.commit('workflows/REMOVE', id)
+      expect(getTree(store)).to.deep.equal(expectedTree)
+      expect(getIndex()).to.deep.equal(expectedIndex)
     })
-    expect(getIndex()).to.deep.equal([
-      '~a',
-      '~a/b',
-      '~a/b//g'
-    ])
-
-    // remove a task from the tree
-    addNodes()
-    store.commit('workflows/REMOVE', '~a/b//c/d')
-    expect(getTree(store)).to.deep.equal({
-      a: {
-        b: {
-          g: {}
-        }
-      }
-    })
-    expect(getIndex()).to.deep.equal([
-      '~a',
-      '~a/b',
-      '~a/b//g'
-    ])
-
-    // remove a job from the tree
-    addNodes()
-    store.commit('workflows/REMOVE', '~a/b//c/d/e')
-    expect(getTree(store)).to.deep.equal({
-      a: {
-        b: {
-          c: {
-            d: {
-              f: {}
-            }
-          },
-          g: {}
-        }
-      }
-    })
-    expect(getIndex()).to.deep.equal([
-      '~a',
-      '~a/b',
-      '~a/b//c',
-      '~a/b//c/d',
-      '~a/b//c/d/f',
-      '~a/b//g'
-    ])
   })
 
   it('updates', () => {
