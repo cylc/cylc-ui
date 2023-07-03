@@ -3,7 +3,13 @@
     "config:js-app"
   ],
   "labels": ["dependencies", "javascript"],
+  "platformAutomerge": true,
   "packageRules": [
+    {
+      "matchPackageNames": ["yarn"],
+      "automerge": true,
+      "automergeStrategy": "squash"
+    },
     {
       "groupName": "dev server packages",
       "matchPackageNames": [
