@@ -5,12 +5,45 @@
   "labels": ["dependencies", "javascript"],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^@lumino/"],
-      "groupName": "lumino packages"
+      "groupName": "dev server packages",
+      "matchPackageNames": [
+        "concurrently",
+        "express",
+        "express-ws",
+        "graphql-ws",
+        "json-server",
+        "nodemon"
+      ],
+      "automerge": true,
+      "automergeStrategy": "squash"
     },
     {
+      "groupName": "lumino packages",
+      "matchPackagePatterns": ["^@lumino/"]
+    },
+    {
+      "groupName": "eslint packages",
+      "matchPackageNames": ["standard"],
       "matchPackagePatterns": ["^eslint"],
-      "groupName": "eslint packages"
+      "automerge": true,
+      "automergeStrategy": "squash"
+    },
+    {
+      "groupName": "tests packages",
+      "matchPackageNames": [
+        "cross-fetch",
+        "jsdom",
+        "nyc",
+        "sinon"
+      ],
+      "matchPackagePatterns": [
+        "^@?cypress",
+        "^@?vitest",
+        "coverage",
+        "istanbul"
+      ],
+      "automerge": true,
+      "automergeStrategy": "squash"
     }
   ],
   "vulnerabilityAlerts": {
