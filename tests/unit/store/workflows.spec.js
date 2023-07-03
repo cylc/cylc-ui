@@ -277,6 +277,33 @@ describe('cylc tree', () => {
       expect(getTree(store)).to.deep.equal(expectedTree)
       expect(getIndex()).to.deep.equal(expectedIndex)
     })
+
+    it('removes a task from its first parent family', () => {
+      store.commit('workflows/UPDATE', {
+        id: '~u/w//1/a',
+        firstParent: { id: '~u/w//1/A' },
+        __typename: 'TaskProxy',
+      })
+      store.commit('workflows/UPDATE', {
+        id: '~u/w//1/A',
+        ancestors: [{ name: 'root' }],
+        childTasks: [{ id: '~u/w//1/a' }],
+        __typename: 'FamilyProxy',
+      })
+      expect(getTree(store).u.w).to.deep.equal({
+        1: {
+          a: {},
+        },
+      })
+      const A = () => store.state.workflows.cylcTree.$index['~u/w//1/A']
+      expect(A().children).toMatchObject([
+        { id: '~u/w//1/a' },
+      ])
+
+      store.commit('workflows/REMOVE', '~u/w//1/a')
+
+      expect(A().children).toStrictEqual([])
+    })
   })
 
   it('updates', () => {
