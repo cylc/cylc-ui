@@ -180,7 +180,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot
-        v-bind:node="node"
+        v-bind="{node, descendantTaskTotals, latestDescendantTasks, lastDescendent, descendentLabel, branchingLineage, expansionStatus}"
         name="node"
         v-else
       >
@@ -195,7 +195,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot></slot>
     </div>
     <span
-      v-show="isExpanded"
+      v-show="expansionStatus"
       v-if="!stopOn.includes(node.type)"
     >
       <!-- component recursion -->
@@ -205,6 +205,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :key="child.id"
         :node="child"
         :depth="depth + 1"
+        :auto-collapse="autoCollapse"
         :mean-elapsed-time="meanElapsedTime ?? node.node.task?.meanElapsedTime"
         v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
         v-on="passthroughHandlers"
@@ -236,6 +237,7 @@ import {
   jobMessageOutputs
 } from '@/utils/tasks'
 import { getNodeChildren } from '@/components/cylc/tree/util'
+import TaskState from '../../../model/TaskState.model'
 
 /**
  * Events that are passed through up the chain from child TreeItems.
@@ -285,6 +287,10 @@ export default {
       required: false,
       default: true
     },
+    autoCollapse: {
+      type: Boolean,
+      default: false
+    },
     hoverable: Boolean,
     autoExpandTypes: {
       type: Array,
@@ -316,11 +322,124 @@ export default {
       icons: {
         mdiChevronRight
       },
-      isExpanded: false
+      isExpanded: false,
+      expandedStateOverridden: false
     }
   },
 
   computed: {
+    expansionStatus () {
+      return this.autoCollapse && !this.expandedStateOverridden ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type) : this.isExpanded
+    },
+    descendantTaskTotals () {
+      const tasks = {}
+      const validValues = [
+        TaskState.SUBMITTED.name,
+        TaskState.SUBMIT_FAILED.name,
+        TaskState.RUNNING.name,
+        TaskState.SUCCEEDED.name,
+        TaskState.FAILED.name
+      ]
+      const traverseChildren = (currentNode) => {
+        // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
+        if (currentNode.type === 'workflow-part' && currentNode.children) {
+          // at every branch, recurse all child nodes
+          currentNode.children.forEach(child => traverseChildren(child))
+        } else {
+          // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
+          if (currentNode.type === 'workflow') {
+            // in some test data we dont include the latestStateTasks, so include a fallback
+            Object.keys(currentNode.node.stateTotals || {})
+            // filter only valid states
+              .filter(stateTaskKey => validValues.includes(stateTaskKey))
+            // concat the new tasks in where they dont already exist
+              .forEach((key) => {
+                if (!tasks[key]) {
+                  tasks[key] = []
+                }
+                // cast as numbers so they dont get concatenated as strings
+                tasks[key] = Math.abs(tasks[key]) + Math.abs(currentNode.node.stateTotals[key])
+              })
+          }
+        }
+      }
+      traverseChildren(this.node)
+      return tasks
+    },
+    latestDescendantTasks () {
+      const tasks = {}
+      const validValues = [
+        TaskState.SUBMITTED.name,
+        TaskState.SUBMIT_FAILED.name,
+        TaskState.RUNNING.name,
+        TaskState.SUCCEEDED.name,
+        TaskState.FAILED.name
+      ]
+      const traverseChildren = (currentNode) => {
+        // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
+        if (currentNode.type === 'workflow-part' && currentNode.children) {
+          // at every branch, recurse all child nodes
+          currentNode.children.forEach(child => traverseChildren(child))
+        } else {
+          // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
+          if (currentNode.type === 'workflow') {
+            // in some test data we dont include the latestStateTasks, so include a fallback
+            Object.keys(currentNode.node.latestStateTasks || {})
+            // filter only valid states
+              .filter(stateTaskKey => validValues.includes(stateTaskKey))
+            // concat the new tasks in where they dont already exist
+              .forEach((key) => {
+                if (!tasks[key]) {
+                  tasks[key] = []
+                }
+                // sort the tasks in decending order
+                tasks[key] = [].concat(tasks[key], currentNode.node.latestStateTasks[key]).sort((item1, item2) => (new Date(item2.split('/')[0]).getTime() - (new Date(item1.split('/')[0]).getTime())))
+              })
+          }
+        }
+      }
+      traverseChildren(this.node)
+      return tasks
+    },
+    // this has be used in conjunction with branchingLineage since it will always return the first child otherwise
+    lastDescendent () {
+      let lastDescendent = this.node
+      const traverseChildren = (currentNode) => {
+        // continue recursing until we run out of workflow parts
+        if (currentNode.children && currentNode.children.length > 0 && currentNode.type === 'workflow-part') {
+          traverseChildren(currentNode.children[0])
+        } else {
+          lastDescendent = currentNode
+        }
+      }
+      traverseChildren(lastDescendent)
+      return lastDescendent
+    },
+    descendentLabel () {
+      const labelArr = []
+      const traverseChildren = (currentNode) => {
+        labelArr.push(currentNode.name || currentNode.id)
+        if (currentNode.children && currentNode.children.length === 1 && currentNode.type === 'workflow-part') {
+          traverseChildren(currentNode.children[0])
+        }
+      }
+      traverseChildren(this.node)
+      return labelArr.join('/')
+    },
+    branchingLineage () {
+      let moreThenTwoChildren = false
+      const traverseChildren = (currentNode) => {
+        if (currentNode.children && currentNode.children.length > 0 && currentNode.type === 'workflow-part') {
+          if (currentNode.children.length === 1) {
+            traverseChildren(currentNode.children[0])
+          } else {
+            moreThenTwoChildren = true
+          }
+        }
+      }
+      traverseChildren(this.node)
+      return moreThenTwoChildren
+    },
     hasChildren () {
       if (this.stopOn.includes(this.node.type)) {
         // don't show children if the tree has been configured to stop at
@@ -358,8 +477,8 @@ export default {
       return {
         'node--hoverable': this.hoverable,
         'node--active': this.active,
-        'c-workflow-stopped': this.node?.node?.status === WorkflowState.STOPPED.name,
-        expanded: this.isExpanded
+        'c-workflow-stopped': !this.branchingLineage && this.lastDescendent?.node?.status === WorkflowState.STOPPED.name,
+        expanded: this.autoCollapse ? this.expansionStatus : this.isExpanded
       }
     },
     nodeDataClass () {
@@ -443,7 +562,7 @@ export default {
 
   beforeMount () {
     // apply auto-expand rules when a treeitem is created
-    this.isExpanded = this.autoExpandTypes.includes(this.node.type)
+    this.isExpanded = !this.autoCollapse ? this.autoExpandTypes.includes(this.node.type) : this.isExpanded
     this.emitExpandCollapseEvent(this.isExpanded)
   },
 
@@ -451,6 +570,9 @@ export default {
     toggleExpandCollapse () {
       this.isExpanded = !this.isExpanded
       this.emitExpandCollapseEvent(this.isExpanded)
+      if (!this.expandedStateOverridden) {
+        this.expandedStateOverridden = true
+      }
     },
     /**
      * Emits an event `tree-item-expanded` if `expanded` is true, or emits

@@ -22,6 +22,7 @@ import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import {
+  stateTotalsTestWorkflowNodes,
   simpleWorkflowNode,
   simpleCyclepointNode,
   simpleTaskNode
@@ -131,6 +132,57 @@ describe('TreeItem component', () => {
         'Job',
         'Job' // job details
       ])
+    })
+    describe('computed properties', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: stateTotalsTestWorkflowNodes,
+          initialExpanded: false,
+          autoCollapse: true,
+          autoExpandTypes: ['workflow-part', 'workflow']
+        }
+      })
+      it('should combine all descendant tasks', () => {
+        expect(wrapper.vm.latestDescendantTasks.submitted.length).to.equal(10)
+        expect(wrapper.vm.latestDescendantTasks.running.length).to.equal(10)
+      })
+      it('should combine all descendant task totals', () => {
+        expect(wrapper.vm.descendantTaskTotals.submitted).to.equal(5)
+        expect(wrapper.vm.descendantTaskTotals.running).to.equal(12)
+      })
+      // note while this test tests a valid scenario, the last child properly should always be used in association with the branching lineage check
+      it('should get the (first) last child', () => {
+        expect(wrapper.vm.lastDescendent.id).to.equal('~cylc/double/mid/first/run1')
+      })
+      // note this only generates a label until the first branch it encounters when recursing
+      it('should get the correct label as a parent', () => {
+        expect(wrapper.vm.descendentLabel).to.equal('double/mid')
+      })
+      it('should return true if the children branch at any point', () => {
+        expect(wrapper.vm.branchingLineage).to.equal(true)
+      })
+      it('should be initially expanded', () => {
+        expect(wrapper.vm.expansionStatus).to.equal(true)
+      })
+    })
+    describe('computed properties as workflow', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: stateTotalsTestWorkflowNodes.children[0].children[0],
+          initialExpanded: false,
+          autoCollapse: true,
+          autoExpandTypes: ['workflow-part', 'workflow']
+        }
+      })
+      it('should get the correct label as a child', () => {
+        expect(wrapper.vm.descendentLabel).to.equal('first/run1')
+      })
+      it('should return false if the children do not branch', () => {
+        expect(wrapper.vm.branchingLineage).to.equal(false)
+      })
+      it('should be initially collapsed as its non-branching', () => {
+        expect(wrapper.vm.expansionStatus).to.equal(false)
+      })
     })
   // })
   // describe('mixin', () => {
