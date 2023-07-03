@@ -49,12 +49,12 @@
     "vuex": "4.1.0"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "3.10.7",
+    "@cypress/code-coverage": "3.10.8",
     "@vitejs/plugin-vue": "4.2.3",
-    "@vitest/coverage-istanbul": "0.32.2",
+    "@vitest/coverage-istanbul": "0.32.4",
     "@vue/test-utils": "2.4.0",
     "concurrently": "8.2.0",
-    "cross-fetch": "3.1.6",
+    "cross-fetch": "3.1.8",
     "cypress": "12.16.0",
     "cypress-vite": "1.4.0",
     "eslint": "8.44.0",
@@ -81,7 +81,7 @@
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "4.1.0",
     "vite-plugin-vuetify": "1.0.2",
-    "vitest": "0.32.2"
+    "vitest": "0.32.4"
   },
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
