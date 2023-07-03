@@ -30,7 +30,7 @@
     "axios": "1.4.0",
     "dedent": "0.7.0",
     "enumify": "2.0.0",
-    "graphiql": "1.8.10",
+    "graphiql": "1.11.5",
     "graphql": "16.6.0",
     "graphql-tag": "2.12.6",
     "lodash": "4.17.21",
