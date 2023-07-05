@@ -183,7 +183,8 @@ export const primaryMutations = {
     'release',
     'trigger',
     'kill',
-    'log'
+    'log',
+    'set-outputs'
   ]
 }
 
