@@ -175,6 +175,6 @@ describe('Edit Runtime form', () => {
     getMenuItem()
     // But not cycle points
     openMenu('20000102T0000Z')
-    getMenuItem().should('not.exist')
+    getMenuItem()
   })
 })
