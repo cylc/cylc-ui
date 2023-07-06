@@ -77,7 +77,7 @@ describe('CylcObject Menu component', () => {
         firstID = $el.text().trim()
       })
       // Expand menu & check for the presence of edit-runtime at family level:
-      .get('.v-btn--is-elevated')
+      .get('span:contains("See More")')
       .click()
       .get('.c-mutation')
       .contains('Edit Runtime')
