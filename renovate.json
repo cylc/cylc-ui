@@ -1,14 +1,55 @@
 {
   "extends": [
-    "config:base"
+    "config:js-app"
   ],
   "labels": ["dependencies", "javascript"],
+  "platformAutomerge": true,
   "packageRules": [
     {
-      "matchPackagePatterns": [
-        "*"
+      "matchPackageNames": ["yarn"],
+      "automerge": true,
+      "automergeStrategy": "squash"
+    },
+    {
+      "groupName": "dev server packages",
+      "matchPackageNames": [
+        "concurrently",
+        "express",
+        "express-ws",
+        "graphql-ws",
+        "json-server",
+        "nodemon"
       ],
-      "rangeStrategy": "replace"
+      "automerge": true,
+      "automergeStrategy": "squash"
+    },
+    {
+      "groupName": "lumino packages",
+      "matchPackagePatterns": ["^@lumino/"]
+    },
+    {
+      "groupName": "eslint packages",
+      "matchPackageNames": ["standard"],
+      "matchPackagePatterns": ["^eslint"],
+      "automerge": true,
+      "automergeStrategy": "squash"
+    },
+    {
+      "groupName": "tests packages",
+      "matchPackageNames": [
+        "cross-fetch",
+        "jsdom",
+        "nyc",
+        "sinon"
+      ],
+      "matchPackagePatterns": [
+        "^@?cypress",
+        "^@?vitest",
+        "coverage",
+        "istanbul"
+      ],
+      "automerge": true,
+      "automergeStrategy": "squash"
     }
   ],
   "vulnerabilityAlerts": {

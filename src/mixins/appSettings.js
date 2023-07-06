@@ -15,22 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { vi } from 'vitest'
-import sinon from 'sinon'
-import { shallowMount } from '@vue/test-utils'
-import Lumino from '@/components/cylc/workflow/Lumino.vue'
-
-describe('Workflow component', () => {
-  it('should display the workflow with valid data', async () => {
-    vi.mock('@lumino/widgets')
-    sinon.stub(Lumino.methods, 'syncWidgets')
-    const wrapper = shallowMount(Lumino, {
-      props: {
-        workflowName: 'nox',
-        allViews: []
+export default {
+  methods: {
+    /**
+     * Enable/disable reduced animations mode in the app.
+     *
+     * @param {boolean} value
+     */
+    setReducedAnimation (value) {
+      localStorage.reducedAnimation = value
+      this.$store.commit('app/setReducedAnimation', value)
+      for (const property of ['transition', 'ripple']) {
+        this.$vuetify.defaults.global[property] = value ? false : null
       }
-    })
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('div')).to.exist
-  })
-})
+    }
+  }
+}

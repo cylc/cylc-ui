@@ -28,79 +28,76 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <p class="text-body-1">{{ $t('UserProfile.tableSubHeader') }}</p>
         </v-alert>
         <v-form v-if="user !== null">
-          <v-container py-0>
-            <v-row no-gutters class="align-center wrap">
-              <v-col cols="3">
-                <span>{{ $t('UserProfile.username') }}</span>
-              </v-col>
-              <v-col cols="9">
-                <v-text-field
-                    :model-value="user.username"
-                    disabled
-                    id="profile-username"
-                    aria-disabled="true"
-                    class="text-body-1"
-                    hide-details
-                />
-              </v-col>
-            </v-row>
+          <v-defaults-provider :defaults="$options.vuetifyDefaults">
+            <v-container py-0>
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>{{ $t('UserProfile.username') }}</span>
+                </v-col>
+                <v-col cols="9">
+                  <v-text-field
+                      :model-value="user.username"
+                      disabled
+                      id="profile-username"
+                      aria-disabled="true"
+                      class="text-body-1"
+                  />
+                </v-col>
+              </v-row>
 
-            <v-row no-gutters class="align-center wrap">
-              <v-col cols="3">
-                <span>{{ $t('UserProfile.administrator') }}</span>
-              </v-col>
-              <v-col cols="9">
-                <v-checkbox
-                    v-model="user.admin"
-                    disabled
-                    id="profile-admin"
-                    aria-disabled="true"
-                    class="text-body-1"
-                    hide-details
-                />
-              </v-col>
-            </v-row>
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>{{ $t('UserProfile.administrator') }}</span>
+                </v-col>
+                <v-col cols="9">
+                  <v-checkbox
+                      v-model="user.admin"
+                      disabled
+                      id="profile-admin"
+                      aria-disabled="true"
+                      class="text-body-1"
+                  />
+                </v-col>
+              </v-row>
 
-            <v-row no-gutters class="align-center wrap">
-              <v-col cols="3">
-                <span>{{ $t('UserProfile.groups') }}</span>
-              </v-col>
-              <v-col cols="9">
-                <v-select
-                    :items="user.groups"
-                    v-model="user.groups"
-                    :menu-props="{ attach: true }"
-                    multiple
-                    disabled
-                    id="profile-groups"
-                    aria-disabled="true"
-                    class="text-body-1"
-                    hide-details
-                />
-              </v-col>
-            </v-row>
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>{{ $t('UserProfile.groups') }}</span>
+                </v-col>
+                <v-col cols="9">
+                  <v-select
+                      :items="user.groups"
+                      v-model="user.groups"
+                      :menu-props="{ attach: true }"
+                      multiple
+                      disabled
+                      id="profile-groups"
+                      aria-disabled="true"
+                      class="text-body-1"
+                  />
+                </v-col>
+              </v-row>
 
-            <v-row no-gutters class="align-center wrap">
-              <v-col cols="3">
-                <span>{{ $t('UserProfile.created') }}</span>
-              </v-col>
-              <v-col cols="9">
-                <v-text-field
-                    :model-value="user.created"
-                    disabled
-                    id="profile-created"
-                    aria-disabled="true"
-                    class="text-body-1"
-                    hide-details
-                />
-              </v-col>
-            </v-row>
-            <v-row no-gutters class="align-center wrap">
-              <v-col cols="3">
-                <span>{{ $t('UserProfile.permissions') }}</span>
-              </v-col>
-              <v-col cols="9">
-                <v-select
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>{{ $t('UserProfile.created') }}</span>
+                </v-col>
+                <v-col cols="9">
+                  <v-text-field
+                      :model-value="user.created"
+                      disabled
+                      id="profile-created"
+                      aria-disabled="true"
+                      class="text-body-1"
+                  />
+                </v-col>
+              </v-row>
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>{{ $t('UserProfile.permissions') }}</span>
+                </v-col>
+                <v-col cols="9">
+                  <v-select
                     :items="user.permissions"
                     v-model="user.permissions"
                     :menu-props="{ attach: true }"
@@ -109,106 +106,133 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     id="profile-permissions"
                     aria-disabled="true"
                     class="text-body-1"
-                    hide-details
+                  />
+                </v-col>
+              </v-row>
+              <v-row no-gutters class="mt-4">
+                <v-col cols="12">
+                  <p class="text-h6">Preferences</p>
+                </v-col>
+              </v-row>
+
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>Font size</span>
+                </v-col>
+                <v-col cols="9">
+                  <v-btn
+                    variant="outlined"
+                    id="font-size-reset-button"
+                    class="mr-2"
+                    @click="resetFontSize()">
+                    Reset
+                  </v-btn>
+                  <v-btn
+                    variant="outlined"
+                    id="font-size-decrease-button"
+                    class="mx-2"
+                    @click="decreaseFontSize()">
+                    <v-icon>{{ svgPaths.decrease }}</v-icon>
+                  </v-btn>
+                  <v-btn
+                    variant="outlined"
+                    id="font-size-increase-button"
+                    class="ml-2"
+                    @click="increaseFontSize()">
+                    <v-icon>{{ svgPaths.increase }}</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>Colour Theme</span>
+                </v-col>
+                <v-radio-group
+                  v-model="jobTheme"
+                >
+                  <table class="c-job-state-table">
+                    <tr>
+                      <th>State</th>
+                      <th
+                        v-for="theme in jobThemes"
+                        :key="theme"
+                      >
+                        {{ theme.replace('_', ' ') }}
+                      </th>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td
+                        v-for="theme in jobThemes"
+                        :key="theme"
+                      >
+                        <v-radio
+                          :value="theme"
+                          :id="`input-job-theme-${theme}`"
+                        />
+                      </td>
+                    </tr>
+                    <tr
+                      v-for="state in jobStates"
+                      :key="state"
+                    >
+                      <td>{{state}}</td>
+                      <td
+                        v-for="theme in jobThemes"
+                        :key="theme"
+                        :class="[`job_theme--${theme}`, 'job_theme_override']"
+                      >
+                        <job :status="state" />
+                      </td>
+                    </tr>
+                  </table>
+                </v-radio-group>
+                <v-col cols="9">
+                </v-col>
+              </v-row>
+
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>Latest cycle point at top</span>
+                </v-col>
+                <v-checkbox
+                  v-model="cyclePointsOrderDesc"
+                  id="input-cyclepoints-order"
                 />
-              </v-col>
-            </v-row>
-            <v-row no-gutters class="mt-4">
-              <v-col cols="12">
-                <p class="text-h6">Preferences</p>
-              </v-col>
-            </v-row>
+              </v-row>
 
-            <v-row no-gutters class="align-center wrap">
-              <v-col cols="3">
-                <span>Font size</span>
-              </v-col>
-              <v-col cols="9">
-                <v-btn
-                  variant="outlined"
-                  id="font-size-reset-button"
-                  class="mr-2"
-                  @click="resetFontSize()">
-                  Reset
-                </v-btn>
-                <v-btn
-                  variant="outlined"
-                  id="font-size-decrease-button"
-                  class="mx-2"
-                  @click="decreaseFontSize()">
-                  <v-icon>{{ svgPaths.decrease }}</v-icon>
-                </v-btn>
-                <v-btn
-                  variant="outlined"
-                  id="font-size-increase-button"
-                  class="ml-2"
-                  @click="increaseFontSize()">
-                  <v-icon>{{ svgPaths.increase }}</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>Reduced animations</span>
+                </v-col>
+                <v-checkbox
+                  v-model="reducedAnimation"
+                  data-cy="reduced-animation"
+                />
+              </v-row>
 
-            <v-row no-gutters class="align-center wrap">
-              <v-col cols="3">
-                <span>Colour Theme</span>
-              </v-col>
-              <v-radio-group
-                v-model="jobTheme"
-                hide-details
-              >
-                <table class="c-job-state-table">
-                  <tr>
-                    <th>State</th>
-                    <th
-                      v-for="theme in jobThemes"
-                      :key="theme"
-                    >
-                      {{ theme.replace('_', ' ') }}
-                    </th>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td
-                      v-for="theme in jobThemes"
-                      :key="theme"
-                    >
-                      <v-radio
-                        :value="theme"
-                        :id="`input-job-theme-${theme}`"
-                      />
-                    </td>
-                  </tr>
-                  <tr
-                    v-for="state in jobStates"
-                    :key="state"
-                  >
-                    <td>{{state}}</td>
-                    <td
-                      v-for="theme in jobThemes"
-                      :key="theme"
-                      :class="[`job_theme--${theme}`, 'job_theme_override']"
-                    >
-                      <job :status="state" />
-                    </td>
-                  </tr>
-                </table>
-              </v-radio-group>
-              <v-col cols="9">
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters class="align-center wrap">
-              <v-col cols="3">
-                <span>Latest cycle point at top</span>
-              </v-col>
-              <v-checkbox
-                v-model="cyclePointsOrderDesc"
-                id="input-cyclepoints-order"
-                hide-details
-              >
-              </v-checkbox>
-            </v-row>
-          </v-container>
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>Default view</span>
+                </v-col>
+                <v-select
+                  v-model="defaultView"
+                  :items="Object.keys($options.allViews)"
+                  :prepend-inner-icon="$options.allViews[defaultView]"
+                  data-cy="select-default-view"
+                  :menu-props="{ 'data-cy': 'select-default-view-menu' }"
+                >
+                  <template v-slot:item="{ item, props }">
+                    <v-list-item
+                      v-bind="props"
+                      :prepend-icon="$options.allViews[item.value]"
+                    />
+                  </template>
+                </v-select>
+              </v-row>
+            </v-container>
+          </v-defaults-provider>
         </v-form>
         <v-progress-linear v-else :indeterminate="true" />
       </v-col>
@@ -221,18 +245,27 @@ import { mapMutations, mapState } from 'vuex'
 import { getPageTitle } from '@/utils/index'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
+import { allViews, defaultView } from '@/views/Workspace.vue'
 import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
+import appSettings from '@/mixins/appSettings'
 
 // TODO: update where user preferences are stored after #335
 
 export default {
   name: 'UserProfile',
+
   components: {
     Job
   },
+
+  mixins: [
+    appSettings,
+  ],
+
   data () {
     return {
+      defaultView: defaultView(),
       cyclePointsOrderDesc: true, // default
       svgPaths: {
         settings: mdiCog,
@@ -248,19 +281,31 @@ export default {
       jobTheme: localStorage.jobTheme || 'default'
     }
   },
+
   computed: {
-    ...mapState('user', ['user'])
+    ...mapState('user', ['user']),
+    reducedAnimation: {
+      get () {
+        return this.$store.state.app.reducedAnimation
+      },
+      set (value) {
+        this.setReducedAnimation(value)
+      }
+    }
   },
+
   head () {
     return {
       title: getPageTitle('App.userProfile')
     }
   },
+
   mounted () {
     if (localStorage.cyclePointsOrderDesc) {
       this.cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
     }
   },
+
   methods: {
     resetFontSize,
     decreaseFontSize,
@@ -268,6 +313,7 @@ export default {
     getCurrentFontSize,
     ...mapMutations('app', ['setJobTheme'])
   },
+
   watch: {
     jobTheme: function (theme) {
       this.setJobTheme(theme)
@@ -275,7 +321,21 @@ export default {
     cyclePointsOrderDesc (newOrder) {
       localStorage.setItem('cyclePointsOrderDesc', newOrder)
       this.cyclePointsOrderDesc = newOrder
+    },
+    defaultView (newPreference) {
+      localStorage.setItem('defaultView', newPreference)
+      this.defaultView = newPreference
     }
-  }
+  },
+
+  allViews: Object.fromEntries(
+    allViews.map(({ name, icon }) => [name, icon])
+  ),
+
+  vuetifyDefaults: {
+    global: {
+      hideDetails: true,
+    },
+  },
 }
 </script>

@@ -20,8 +20,8 @@ const userProfile = require('./userprofile.json')
 const taskProxy = require('./taskProxy.json')
 const familyProxy = require('./familyProxy.json')
 const App = require('./App')
-const LogData = require('./logData.json')
-const LogFiles = require('./logFiles.json')
+const { LogData } = require('./logData.cjs')
+const { LogFiles } = require('./logFiles.cjs')
 const analysisQuery = require('./analysisQuery.json')
 
 module.exports = {

@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <!-- dropdown menu -->
-    <v-scale-transition :origin="transitionOrigin">
+    <component :is="menuTransition" :target="target">
       <v-card
         ref="menuContent"
         v-if="node"
@@ -28,13 +28,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-click-outside="{ handler: onClickOutside }"
         class="c-mutation-menu elevation-10 overflow-y-auto"
         max-height="90vh"
-        width="100%"
-        max-width="600px"
+        width="max-content"
+        max-width="min(600px, 100%)"
         theme="dark"
         position="absolute"
         :style="{
           left: `${x}px`,
-          top: `${y}px`
+          top: `${y}px`,
+          // Set transition origin relative to clicked target:
+          '--v-overlay-anchor-origin': 'bottom right',
         }"
       >
         <v-card-title class="pb-1 pt-3">
@@ -104,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
         </v-list>
       </v-card>
-    </v-scale-transition>
+    </component>
     <v-dialog
       v-model="dialog"
       width="700px"
@@ -138,6 +140,7 @@ import {
 } from '@mdi/js'
 import { mapGetters, mapState } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
+import { VDialogTransition } from 'vuetify/components/transitions'
 
 export default {
   name: 'CylcObjectMenu',
@@ -168,7 +171,7 @@ export default {
       types: [],
       x: 0,
       y: 0,
-      transitionOrigin: 'top left',
+      target: null,
       icons: {
         pencil: mdiPencil
       }
@@ -237,7 +240,10 @@ export default {
         }
       }
       return ret
-    }
+    },
+    menuTransition () {
+      return this.$store.state.app.reducedAnimation ? 'slot' : VDialogTransition
+    },
   },
 
   methods: {
@@ -332,10 +338,6 @@ export default {
     reposition (x = null, y = null) {
       x ??= this.x
       y ??= this.y
-      // Temporarily set coords to 0 because otherwise transition origin
-      // doesn't seem to work correctly (but the menu doesn't get time to
-      // render at this position)
-      this.x = this.y = 0
       nextTick(() => {
         this.x = x + this.$refs.menuContent.$el.clientWidth > document.body.clientWidth
           ? document.body.clientWidth - this.$refs.menuContent.$el.clientWidth
@@ -359,7 +361,7 @@ export default {
     },
 
     showMutationsMenu ({ node, event }) {
-      this.transitionOrigin = `${event.clientX}px ${event.clientY}px`
+      this.target = event.target
       this.node = node
       this.showMenu = true
       this.reposition(event.clientX, event.clientY)

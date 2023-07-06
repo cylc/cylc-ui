@@ -51,12 +51,8 @@ html {
   }
 }
 
-// The following two entries are used to set the height of the content view (core-view), under the
-// toolbar, to the maximum. And the skeleton needs to maintain the height 100% otherwise its children
+// The skeleton loader needs to maintain height: 100% otherwise its children
 // nodes with height: 100% or auto won't be displayed at all.
-#core-view {
-  height: calc(100vh - 48px);
-}
 .v-skeleton-loader {
   height: 100%;
 }

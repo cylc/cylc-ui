@@ -18,13 +18,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <ConnectionStatus :is-offline="offline" />
-    <toolbar v-if="!workflowViews.includes($route.name)" />
-    <drawer v-if="showSidebar" />
+    <Toolbar v-if="showToolbar" />
+    <Drawer v-if="showSidebar" />
     <CylcObjectMenu/>
 
     <v-main>
       <alert />
-      <div id="core-view" class="h-screen overflow-auto">
+      <div
+        id="core-view"
+        class="overflow-auto"
+        :style="coreViewStyle"
+      >
         <v-fade-transition mode="out-in">
           <slot/>
         </v-fade-transition>
@@ -34,17 +38,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { mapState } from 'vuex'
 import { store } from '@/store/index'
 import AlertModel from '@/model/Alert.model'
 import Alert from '@/components/core/Alert.vue'
 import Drawer from '@/components/cylc/Drawer.vue'
 import Toolbar from '@/components/cylc/Toolbar.vue'
+import { useNavBtn, toolbarHeight } from '@/utils/toolbar'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus.vue'
 import CylcObjectMenu from '@/components/cylc/cylcObject/Menu.vue'
 
 export default {
   name: 'Default',
+
+  setup () {
+    const route = useRoute()
+    /**
+     * Views that display workflows. For these views, we do not
+     * want to display the default Toolbar—the Workflow view
+     * has its own Toolbar that communicates with the Workflow
+     * component (e.g. the Workflow Toolbar owns a button that
+     * triggers the action to add a new Tree or Table View, so the events
+     * are passed down from the parent Workflow View).
+     */
+    const workflowViews = [
+      'workspace',
+      'tree',
+      'table',
+      'graph',
+    ]
+    const { showNavBtn } = useNavBtn()
+
+    /** Whether to show app toolbar (not the workspace view toolbar). */
+    const showToolbar = computed(
+      () => showNavBtn.value && !workflowViews.includes(route.name)
+    )
+    const coreViewStyle = computed(() => ({
+      marginTop: showToolbar.value ? `${toolbarHeight}px` : 0,
+      height: showToolbar.value ? `calc(100vh - ${toolbarHeight}px)` : '100vh',
+    }))
+
+    return {
+      showToolbar,
+      coreViewStyle,
+    }
+  },
 
   components: {
     ConnectionStatus,
@@ -59,25 +99,6 @@ export default {
       type: Boolean,
       required: false,
       default: true
-    }
-  },
-
-  data () {
-    return {
-      /**
-       * Views that display workflows. For these views, we do not
-       * want to display the default Toolbar—the Workflow view
-       * has its own Toolbar that communicates with the Workflow
-       * component (e.g. the Workflow Toolbar owns a button that
-       * triggers the action to add a new Tree or Table View, so the events
-       * are passed down from the parent Workflow View).
-       */
-      workflowViews: [
-        'workspace',
-        'tree',
-        'table',
-        'graph'
-      ]
     }
   },
 

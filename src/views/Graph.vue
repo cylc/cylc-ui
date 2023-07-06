@@ -108,7 +108,6 @@ import {
 import { Graphviz } from '@hpcc-js/wasm/graphviz'
 import svgPanZoom from 'svg-pan-zoom'
 import {
-  mdiGraph,
   mdiTimer,
   mdiImageFilterCenterFocus,
   mdiArrowCollapse,
@@ -219,10 +218,6 @@ export default {
 
   data () {
     return {
-      widget: {
-        title: 'graph',
-        icon: mdiGraph
-      },
       // the graph orientation
       orientation: 'TB',
       // the auto-refresh timer
@@ -370,7 +365,7 @@ export default {
           preventMouseEventsDefault: true,
           zoomScaleSensitivity: 0.2,
           minZoom: 0.01, // how zoomed out we can go
-          maxZoom: 10, // how zoomed in we can go
+          maxZoom: 50, // how zoomed in we can go
           fit: false,
           contain: false,
           center: true,

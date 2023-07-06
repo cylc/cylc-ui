@@ -20,15 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <Toolbar
       :views="$options.allViews"
       :workflow-name="workflowName"
-      @add="this.addView"
-      :initialOptions="{}"
+      @add="addView"
     />
-    <div class="workflow-panel">
+    <div
+      class="workflow-panel"
+      :style="$options.panelStyle"
+    >
       <Lumino
         ref="lumino"
         @lumino:deleted="onWidgetDeletedEvent"
         :views="widgets"
-        tab-title-prop="tab-title"
         :workflow-name="workflowName"
         :allViews="$options.allViews"
       />
@@ -37,19 +38,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
 import { uniqueId } from 'lodash'
-import { toArray } from '@lumino/algorithm'
+import {
+  mdiChartLine,
+  mdiFileDocumentMultipleOutline,
+  mdiFileTree,
+  mdiGraph,
+  mdiTable,
+  mdiTree,
+} from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
 import Lumino from '@/components/cylc/workflow/Lumino.vue'
 import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
-import TableView from '@/views/Table.vue'
-import TreeView from '@/views/Tree.vue'
-import GraphView from '@/views/Graph.vue'
-import LogView from '@/views/Log.vue'
-import AnalysisView from '@/views/Analysis.vue'
+import { toolbarHeight } from '@/utils/toolbar'
+
+// Use dynamic async components for lazy loading:
+const TreeView = defineAsyncComponent(() => import('@/views/Tree.vue'))
+const TableView = defineAsyncComponent(() => import('@/views/Table.vue'))
+const GraphView = defineAsyncComponent(() => import('@/views/Graph.vue'))
+const LogView = defineAsyncComponent(() => import('@/views/Log.vue'))
+const AnalysisView = defineAsyncComponent(() => import('@/views/Analysis.vue'))
+const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue'))
+
+export const allViews = [
+  { name: 'Tree', component: TreeView, icon: mdiFileTree },
+  { name: 'Table', component: TableView, icon: mdiTable },
+  { name: 'Graph', component: GraphView, icon: mdiGraph },
+  { name: 'Log', component: LogView, icon: mdiFileDocumentMultipleOutline },
+  { name: 'Analysis', component: AnalysisView, icon: mdiChartLine },
+]
+// Development views that we don't want in production:
+if (import.meta.env.MODE !== 'production') {
+  allViews.push(
+    { name: 'SimpleTree', component: SimpleTreeView, icon: mdiTree },
+  )
+}
+
+export const defaultView = () => localStorage.defaultView || 'Tree'
 
 export default {
   name: 'Workspace',
@@ -91,7 +120,7 @@ export default {
     next(vm => {
       vm.$workflowService.startSubscriptions()
       vm.$nextTick(() => {
-        vm.addView({ viewName: TreeView.name })
+        vm.addView({ viewName: defaultView() })
       })
     })
   },
@@ -101,8 +130,7 @@ export default {
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
-      // Create a Tree View for the current workflow by default
-      this.addView({ viewName: TreeView.name })
+      this.addView({ viewName: defaultView() })
     })
   },
 
@@ -125,13 +153,13 @@ export default {
      * viewName - the name of the view to be added (Vue component name).
      */
     addView ({ viewName, initialOptions = {} }) {
-      this.widgets[uniqueId()] = { view: viewName, initialOptions }
+      this.widgets[uniqueId('widget_')] = { view: viewName, initialOptions }
     },
     /**
      * Remove all the widgets present in the DockPanel.
      */
     removeAllWidgets () {
-      toArray(this.$refs.lumino.dock.widgets())
+      Array.from(this.$refs.lumino.dock.widgets())
         .forEach(widget => widget.close())
     },
     /**
@@ -170,12 +198,10 @@ export default {
    *
    * @type {Object[]}
    */
-  allViews: [
-    TreeView,
-    TableView,
-    GraphView,
-    LogView,
-    AnalysisView,
-  ]
+  allViews,
+
+  panelStyle: {
+    height: `calc(100vh - ${toolbarHeight}px)`,
+  },
 }
 </script>

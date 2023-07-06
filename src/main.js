@@ -18,17 +18,18 @@
 import { createApp } from 'vue'
 
 // Plugins
-import vuetify from './plugins/vuetify'
+import { vuetifyOptions } from '@/plugins/vuetify'
 import ServicesPlugin from '@/services/plugin'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import Default from '@/layouts/Default.vue'
 import Empty from '@/layouts/Empty.vue'
 
 // Application imports
-import App from './App.vue'
+import App from '@/App.vue'
 import { i18n } from '@/i18n/index'
 import router from '@/router/index'
 import { store } from '@/store/index'
+import { createVuetify } from 'vuetify'
 import mitt from 'mitt'
 import { createHead, VueHeadMixin } from '@unhead/vue'
 
@@ -36,12 +37,11 @@ const app = createApp(App)
 
 app.mixin(VueHeadMixin)
 
-const head = createHead()
 app.use(store)
 app.use(router)
-app.use(vuetify)
+app.use(createVuetify(vuetifyOptions))
 app.use(i18n)
-app.use(head)
+app.use(createHead())
 app.use(ServicesPlugin)
 app.use(CylcObjectPlugin)
 

@@ -23,7 +23,9 @@ import WorkflowState from '@/model/WorkflowState.model'
 import storeOptions from '@/store/options'
 
 describe('Toolbar component', () => {
-  const vuetify = createVuetify()
+  const vuetify = createVuetify({
+    display: {}
+  })
   const $route = {
     name: 'testRoute'
   }
@@ -53,23 +55,5 @@ describe('Toolbar component', () => {
     const wrapper = mountFunction()
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.$el).to.exist
-  })
-
-  it('hides/shows nav button according to viewport size & whether drawer is collapsed', async () => {
-    // TODO: actually just show nav btn at all times?
-    const wrapper = mountFunction()
-    // Btn should show when drawer is collapsed
-    wrapper.vm.$vuetify.display.mobile = false
-    store.state.app.drawer = false
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('button.default').exists()).to.equal(true)
-    // Btn should not show when drawer is visible on large viewport
-    store.state.app.drawer = true
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('button.default').exists()).to.equal(false)
-    // Btn should show when drawer is visible on small viewport
-    wrapper.vm.$vuetify.display.mobile = true
-    await wrapper.vm.$nextTick()
-    expect(wrapper.find('button.default').exists()).to.equal(true)
   })
 })

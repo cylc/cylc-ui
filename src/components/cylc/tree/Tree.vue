@@ -113,7 +113,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiPlus, mdiMinus } from '@mdi/js'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
-import { matchNode } from '@/components/cylc/common/filter'
+import { matchID, matchState } from '@/components/cylc/common/filter'
 import { getNodeChildren } from '@/components/cylc/tree/util'
 
 export default {
@@ -254,30 +254,35 @@ export default {
      * with whether the node matches the filters.
      *
      * @param {Object} node
-     * @param {boolean} parentFiltered - whether the parent of this node
-     * matches the filter.
+     * @param {boolean} parentsIDMatch - whether any parents of this node
+     * match the ID filter.
      * @return {boolean} - whether this node matches the filter.
      */
-    filterNode (node, parentFiltered = false) {
-      const isMatch = (
-        matchNode(node, this.tasksFilter.id, this.tasksFilter.states) ||
-        parentFiltered
-      )
-      let filtered = isMatch
+    filterNode (node, parentsIDMatch = false) {
+      const stateMatch = matchState(node, this.tasksFilter.states)
+      // This node should be included if any parent matches the ID filter
+      const idMatch = parentsIDMatch || matchID(node, this.tasksFilter.id)
+      let filtered = stateMatch && idMatch
+
+      let children
       if (node.type === 'cycle') {
         // follow the family tree from cycle point nodes
-        for (const child of node.familyTree[0]?.children || []) {
-          filtered = this.filterNode(child, isMatch) || filtered
-        }
+        children = node.familyTree[0]?.children
       } else if (['workflow', 'family'].includes(node.type)) {
         // follow children for workflow or family nodes
-        for (const child of node.children) {
-          filtered = this.filterNode(child, isMatch) || filtered
+        children = node.children
+      }
+      if (children) {
+        for (const child of children) {
+          filtered = this.filterNode(child, idMatch) || filtered
+          // Note: do not break early as we must run the filter over all children
         }
       }
+
       if (this.treeItemCache[node.id]) {
         this.treeItemCache[node.id].filtered = filtered
       }
+
       return filtered
     },
     removeAllFilters () {

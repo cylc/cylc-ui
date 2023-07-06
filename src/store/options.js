@@ -21,7 +21,7 @@ import { workflows } from './workflows.module'
 import { user } from './user.module'
 
 // State
-const state = {
+const state = () => ({
   /**
    * Application alert.
    */
@@ -35,7 +35,7 @@ const state = {
    * TODO: we can probably remove it and use a different approach for alerts (see bootstrap toast).
    */
   refCount: 0
-}
+})
 
 // Actions
 const actions = {

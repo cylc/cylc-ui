@@ -18,7 +18,7 @@
 // TODO: make it configurable
 const PORT = 3000
 
-const data = require('./json/index')
+const userProfile = require('./json/userprofile.json')
 const graphql = require('./graphql')
 const websockets = require('./websockets')
 
@@ -27,7 +27,9 @@ const logger = require('morgan')
 
 const server = jsonServer.create()
 require('express-ws')(server)
-const router = jsonServer.router(data)
+const router = jsonServer.router({
+  userProfile,
+})
 const middlewares = [
   ...jsonServer.defaults({ logger: false }),
   // Customize logger to hide successful XHR requests:

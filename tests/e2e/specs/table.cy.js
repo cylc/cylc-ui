@@ -99,11 +99,11 @@ describe('Table view', () => {
         .contains('eventually')
         .should('be.visible')
     })
-    it('displays and sorts dt-mean', () => {
+    it('displays and sorts mean run time', () => {
       cy
         // sort dt-mean ascending
         .get('.c-table')
-        .contains('th', 'dT-mean').as('dTHeader')
+        .contains('th', 'Run Time').as('dTHeader')
         .click()
 
         // check 0 is at the top (1st row, 10th column)
@@ -112,14 +112,14 @@ describe('Table view', () => {
           expect($ele.text().trim()).equal('') // no value sorted first
         })
 
-        // sort ft-mean descending
+        // sort dt-mean descending
         .get('@dTHeader')
         .click()
 
         // check 7 is at the top (1st row, 10th column)
         .get('tbody > :nth-child(1) > :nth-child(10)')
         .should(($ele) => {
-          expect($ele.text().trim()).equal('00:00:07')
+          expect($ele.text().trim()).equal('00:00:12')
         })
     })
   })

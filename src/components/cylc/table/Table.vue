@@ -60,14 +60,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <Task
                     v-cylc-object="item.value.task"
                     :task="item.value.task.node"
-                    :startTime="((item.value.latestJob || {}).node || {}).startedTime"
+                    :startTime="item.value.latestJob?.node?.startedTime"
                   />
                 </div>
                 <div class="mr-1">
                   <Job
                     v-cylc-object="item.value.task"
                     :status="item.value.task.node.state"
-                    :previous-state="((item.value.previousJob || {}).node || {}).state"
+                    :previous-state="item.value.previousJob?.node?.state"
                   />
                 </div>
                 <div>{{ item.value.task.name }}</div>
@@ -195,7 +195,7 @@ export default {
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          title: 'Job System',
+          title: 'Job Runner',
           key: 'latestJob.node.jobRunnerName',
           sortable: true,
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
@@ -207,25 +207,25 @@ export default {
           sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
         },
         {
-          title: 'T-submit',
+          title: 'Submit',
           key: 'latestJob.node.submittedTime',
           sortable: true,
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          title: 'T-start',
+          title: 'Start',
           key: 'latestJob.node.startedTime',
           sortable: true,
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          title: 'T-finish',
+          title: 'Finish',
           key: 'latestJob.node.finishedTime',
           sortable: true,
           sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
         },
         {
-          title: 'dT-mean',
+          title: 'Run Time',
           key: 'task.node.task.meanElapsedTime',
           sortable: true,
           sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)

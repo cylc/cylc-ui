@@ -35,7 +35,7 @@ export function merge (data, update) {
   }
 }
 
-const state = {
+const state = () => ({
   cylcTree: {
     $index: {},
     children: []
@@ -50,7 +50,7 @@ const state = {
    * @type {String}
    */
   workflowName: null
-}
+})
 
 const getters = {
   /* Return matching nodes from the store.
@@ -80,7 +80,7 @@ const getters = {
     while (stack.length) {
       item = stack.pop()
       if (parentNodeTypes.includes(item.type)) {
-        // this is above "nodeTyoe" in the tree, look through its child nodes
+        // this is above "nodeType" in the tree, look through its child nodes
         stack.push(...item.children)
       } else if (
         item.type === nodeType &&
@@ -99,12 +99,11 @@ function createTree (state) {
   if (state.cylcTree) {
     return
   }
-  const tree = {
+  state.cylcTree = {
     $index: {},
-    id: '$root'
+    id: '$root',
+    children: [],
   }
-  tree.children = []
-  state.cylcTree = tree
   // console.log('@@')
 }
 

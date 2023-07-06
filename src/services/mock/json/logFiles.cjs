@@ -15,29 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { mapMutations } from 'vuex'
+const deletedFile = 'deleted.log'
+
+const jobLogFiles = [
+  'job.out',
+  'job.err',
+  'job',
+]
+
+const workflowLogFiles = [
+  'scheduler/01-start-01.log',
+  deletedFile,
+]
 
 /**
- * Mixin whose main responsibility is to add responsive toggle
- * to a Toolbar component. Shared between (at least) the Cylc
- * UI default Toolbar, and the Workflow view Toolbar.
+ * Return a mock GQL response for list of log files.
+ *
+ * @param {{ id: string }} variables
  */
-
-export default {
-  mounted () {
-    this.setDrawer(!this.showNavBtn)
-  },
-
-  computed: {
-    showNavBtn () {
-      return this.$vuetify.display.mobile || !this.$store.state.app.drawer
-    }
-  },
-
-  methods: {
-    ...mapMutations('app', ['setDrawer']),
-    onClickBtn () {
-      this.setDrawer(!this.$store.state.app.drawer)
+const LogFiles = ({ id }) => ({
+  data: {
+    logFiles: {
+      files: id == null
+        ? []
+        : id.includes('//') ? jobLogFiles : workflowLogFiles
     }
   }
+})
+
+module.exports = {
+  LogFiles,
+  deletedFile,
+  jobLogFiles,
+  workflowLogFiles,
 }

@@ -15,27 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { mount } from '@vue/test-utils'
-import { createStore } from 'vuex'
-import { createVuetify } from 'vuetify'
-import mixin from '@/mixins/toolbar'
-import storeOptions from '@/store/options'
-
-describe('Toolbar mixin', () => {
-  const store = createStore(storeOptions)
-  const vuetify = createVuetify()
-  it('should toggle the drawer when clicked', () => {
-    store.state.app.drawer = false
-    const component = mount({
-      mixins: [mixin],
-      render () {}
-    }, {
-      global: {
-        plugins: [store, vuetify]
-      }
-    })
-    component.vm.onClickBtn()
-    expect(store.state.app.drawer).to.equal(true)
-    store.state.app.drawer = null
-  })
-})
+/**
+ * Eslint config for dist directory.
+ *
+ * Note: we can't keep it in there because it would get wiped by build.
+ */
+module.exports = {
+  plugins: ['compat'],
+  extends: ['plugin:compat/recommended'],
+  env: {
+    browser: true,
+  },
+  parserOptions: {
+    sourceType: 'module',
+    // Don't need to worry about ECMA syntax as that's handled by Vite/ESBuild
+    ecmaVersion: 'latest',
+  },
+  noInlineConfig: true,
+  reportUnusedDisableDirectives: false, // doesn't seem to work
+}

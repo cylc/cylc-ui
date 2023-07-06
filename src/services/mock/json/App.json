@@ -121,7 +121,6 @@
             "state": "running"
           },
           "task": {
-            "meanElapsedTime": 7.0,
             "name": "checkpoint"
           }
         },
@@ -140,7 +139,7 @@
             "state": "submitted"
           },
           "task": {
-            "meanElapsedTime": 1.0,
+            "meanElapsedTime": 11.5,
             "name": "eventually_succeeded"
           }
         },
@@ -159,7 +158,6 @@
             "state": "submitted"
           },
           "task": {
-            "meanElapsedTime": 0.0,
             "name": "failed"
           }
         },
@@ -178,7 +176,6 @@
             "state": "submitted"
           },
           "task": {
-            "meanElapsedTime": 0.0,
             "name": "retrying"
           }
         },
@@ -197,7 +194,6 @@
             "state": "running"
           },
           "task": {
-            "meanElapsedTime": 0.0,
             "name": "sleepy"
           }
         },
@@ -216,7 +212,7 @@
             "state": "submitted"
           },
           "task": {
-            "meanElapsedTime": 0.0,
+            "meanElapsedTime": 4.0,
             "name": "succeeded"
           }
         },
@@ -235,7 +231,6 @@
             "state": "running"
           },
           "task": {
-            "meanElapsedTime": 0.0,
             "name": "waiting"
           }
         }
@@ -265,7 +260,7 @@
           "platform": "localhost",
           "startedTime": "2020-11-08T22:57:29Z",
           "submittedTime": "2020-11-08T22:57:28Z",
-          "finishedTime": "2020-11-08T22:57:29Z",
+          "finishedTime": "2020-11-08T22:57:41Z",
           "state": "succeeded",
           "submitNum": 4,
           "messages": ["started", "foo", "bar", "baz", "pub", "qux", "x", "y"],
@@ -403,7 +398,7 @@
           "platform": "localhost",
           "startedTime": "2020-11-08T22:57:15Z",
           "submittedTime": "2020-11-08T22:57:15Z",
-          "finishedTime": "2020-11-08T22:57:16Z",
+          "finishedTime": "2020-11-08T22:57:19Z",
           "state": "succeeded",
           "submitNum": 1
         }
