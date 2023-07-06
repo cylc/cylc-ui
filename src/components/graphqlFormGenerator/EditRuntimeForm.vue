@@ -155,7 +155,6 @@ export default {
         { id: this.tokens.id },
         [{ name: queryField }]
       )
-      console.log(result)
       const model = cloneDeep(result[queryName][queryField])
       this.type = findByName(this.types, model.__typename)
       // Do not want GQL internal '__typename' field to show up in the form
