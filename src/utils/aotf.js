@@ -303,16 +303,9 @@ export const dummyMutations = [
     name: 'log',
     description: 'View the logs.',
     args: [],
-    _appliesTo: [cylcObjects.Namespace],
+    _appliesTo: [cylcObjects.Namespace, cylcObjects.Job],
     _requiresInfo: true
   },
-  {
-    name: 'log',
-    description: 'View the logs.',
-    args: [],
-    _appliesTo: [cylcObjects.Job],
-    _requiresInfo: true
-  }
 ]
 
 /**
