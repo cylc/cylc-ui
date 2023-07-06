@@ -77,7 +77,7 @@ describe('CylcObject Menu component', () => {
         firstID = $el.text().trim()
       })
       // Expand menu & check for the presence of edit-runtime at family level:
-      .get('span:contains("See More")')
+      .get('#less-more-button')
       .click()
       .get('.c-mutation')
       .contains('Edit Runtime')
