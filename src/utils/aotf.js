@@ -184,7 +184,7 @@ export const primaryMutations = {
     'trigger',
     'kill',
     'log',
-    'set-outputs'
+    'setOutputs'
   ]
 }
 
