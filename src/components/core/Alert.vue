@@ -18,11 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-snackbar
     v-if="alert"
-    v-model="alert"
-    :color="getColor(alert.color)"
+    :model-value="Boolean(alert)"
+    :color="alert.color"
     location="top"
     timeout="-1"
     data-cy="alert-snack"
+    content-class="text-pre-wrap"
   >
     <template v-slot:actions>
       <v-btn
@@ -42,13 +43,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiClose } from '@mdi/js'
 import { mapActions, mapState } from 'vuex'
 
-// TODO: remove later when https://github.com/vuetifyjs/vuetify/issues/11021 is fixed
-const colors = new Map([
-  ['error', 'red'],
-  ['success', 'green'],
-  ['warning', 'amber']
-])
-
 export default {
   name: 'Alert',
 
@@ -58,9 +52,6 @@ export default {
 
   methods: {
     ...mapActions(['setAlert']),
-    getColor (type) {
-      return colors.get(type) || ''
-    },
     /**
      * Dismisses the alert from the UI, also removing it from the Vuex store.
      */
