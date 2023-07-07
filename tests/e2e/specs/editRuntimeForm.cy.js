@@ -169,12 +169,20 @@ describe('Edit Runtime form', () => {
       .should('be.visible')
   })
 
-  it('shows Edit Runtime as an option for namespaces only', () => {
+  it('shows Edit Runtime as an option for cycles & namespaces only', () => {
     // E.g. families
     openMenu('GOOD')
     getMenuItem()
-    // But not cycle points
+    // and cycle points (as root)
     openMenu('20000102T0000Z')
-    getMenuItem()
+    getMenuItem().click()
+      .get('.c-mutation-dialog .v-card-subtitle')
+      .contains('/root')
+    // but not jobs
+    cy.get('[data-cy=tree-view] .c-job.c-interactive:first')
+      .click({ force: true })
+      .get('#less-more-button')
+      .should('not.exist') // if this does deliberately exist in future, change to .click()
+    getMenuItem().should('not.exist')
   })
 })

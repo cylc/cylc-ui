@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <v-card-subtitle class="text-subtitle-1 font-weight-medium mt-4">
-      {{ this.id }}
+      {{ this.tokens.id }}
     </v-card-subtitle>
     <!-- TODO: replace v-progress-linear with v-skeleton-loader when
     the latter is added to Vuetify 3.
@@ -105,8 +105,6 @@ export default {
       type: undefined,
       loading: true,
       model: {},
-      isRoot: false,
-      tokens: this.cylcObject.tokens,
     }
   },
 
@@ -125,6 +123,11 @@ export default {
   },
 
   computed: {
+    tokens () {
+      return this.cylcObject.type === 'cycle'
+        ? this.cylcObject.tokens.clone({ task: 'root' })
+        : this.cylcObject.tokens
+    },
     isValid: {
       get () {
         return this.modelValue
@@ -139,14 +142,9 @@ export default {
   methods: {
     /** Set this form to its initial conditions. */
     async reset () {
-      this.isRoot = this.cylcObject.type === 'cycle'
       const queryName = (
-        this.cylcObject.type === 'family' || this.isRoot ? 'familyProxy' : 'taskProxy'
+        ['cycle', 'family'].includes(this.cylcObject.type) ? 'familyProxy' : 'taskProxy'
       )
-      if (this.isRoot) {
-        this.tokens.id = this.cylcObject.id + '/root'
-        this.tokens.task = 'root'
-      }
       const queryField = 'runtime'
       this.loading = true
       this.isValid = false
@@ -175,7 +173,6 @@ export default {
     },
 
     async submit () {
-      const tokens = this.tokens
       const settings = this.getBroadcastData()
       if (!settings.length) {
         return {
@@ -185,11 +182,11 @@ export default {
       }
       const args = {
         cutoff: null,
-        cyclePoints: [tokens.cycle],
+        cyclePoints: [this.tokens.cycle],
         mode: 'Set',
-        namespaces: [tokens.task],
+        namespaces: [this.tokens.task],
         settings,
-        workflows: [tokens.workflow_id]
+        workflows: [this.tokens.workflow_id]
       }
       const mutation = await this.$workflowService.getMutation('broadcast')
       return await mutate(
