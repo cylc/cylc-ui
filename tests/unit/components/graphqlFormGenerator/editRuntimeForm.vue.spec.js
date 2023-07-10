@@ -75,7 +75,11 @@ const vuetify = createVuetify()
 
 describe('EditRuntimeForm Component', () => {
   const props = {
-    cylcObject: { id: '~u/w//1/t', isFamily: false },
+    cylcObject: {
+      id: '~u/w//1/t',
+      isFamily: false,
+      tokens: { id: '~u/w//1/t' }
+    },
     value: false,
     types: cloneDeep(IntrospectionQuery.data.__schema.types)
   }
@@ -96,7 +100,7 @@ describe('EditRuntimeForm Component', () => {
     it("queries the task's runtime section & processes the response", async () => {
       const wrapper = mountFunction({
         props,
-        created () {}
+        created () {},
       })
       await wrapper.vm.reset()
       expect(INITIAL_DATA).not.to.have.key('__typename')
