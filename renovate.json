@@ -21,7 +21,8 @@
         "nodemon"
       ],
       "automerge": true,
-      "automergeStrategy": "squash"
+      "automergeStrategy": "squash",
+      "schedule": ["on the 5th and 20th day of the month"]
     },
     {
       "groupName": "lumino packages",
@@ -32,7 +33,8 @@
       "matchPackageNames": ["standard"],
       "matchPackagePatterns": ["^eslint"],
       "automerge": true,
-      "automergeStrategy": "squash"
+      "automergeStrategy": "squash",
+      "schedule": ["on the first day of the month"]
     },
     {
       "groupName": "tests packages",
@@ -49,7 +51,8 @@
         "istanbul"
       ],
       "automerge": true,
-      "automergeStrategy": "squash"
+      "automergeStrategy": "squash",
+      "schedule": ["at 18:00 on sunday"]
     }
   ],
   "vulnerabilityAlerts": {
