@@ -2677,7 +2677,7 @@ __metadata:
     json-server: 0.17.3
     lodash: 4.17.21
     markdown-it: 13.0.1
-    mitt: 3.0.0
+    mitt: 3.0.1
     nodemon: 2.0.22
     nprogress: 1.0.0-1
     nyc: 15.1.0
@@ -6197,10 +6197,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mitt@npm:3.0.0":
-  version: 3.0.0
-  resolution: "mitt@npm:3.0.0"
-  checksum: f7be5049d27d18b1dbe9408452d66376fa60ae4a79fe9319869d1b90ae8cbaedadc7e9dab30b32d781411256d468be5538996bb7368941c09009ef6bbfa6bfc7
+"mitt@npm:3.0.1":
+  version: 3.0.1
+  resolution: "mitt@npm:3.0.1"
+  checksum: b55a489ac9c2949ab166b7f060601d3b6d893a852515ae9eca4e11df01c013876df777ea109317622b5c1c60e8aae252558e33c8c94e14124db38f64a39614b1
   languageName: node
   linkType: hard
 
