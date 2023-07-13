@@ -405,6 +405,11 @@ export default {
     async updateLogFileList (reset = true) {
       // if reset===true then the this.file will be reset
       // otherwise it will be left alone
+      if (!this.id) {
+        this.fileInputLabel = 'Enter an ID first'
+        this.fileInputDisabled = true
+        return
+      }
 
       // update the list of log files
       this.fileInputLoading = true
