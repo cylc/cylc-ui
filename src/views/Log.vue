@@ -72,14 +72,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col cols="4">
         <v-select
           data-cy="file-input"
-          :label="fileLabel"
-          :disabled="fileDisabled"
+          :label="fileInputLabel"
+          :disabled="fileInputDisabled"
+          :loading="fileInputLoading"
           :items="logFiles"
           v-model="file"
+          @update:menu="(opened) => { if (opened && !fileInputLoading) updateLogFileList(false) }"
           hide-details
           clearable
           :menu-props="{ 'data-cy': 'file-input-menu' }"
-        />
+        >
+          <template v-slot:prepend-item v-if="fileInputLoading">
+            <v-progress-linear indeterminate class="mt-n1" />
+          </template>
+        </v-select>
       </v-col>
     </v-row>
 
@@ -293,10 +299,12 @@ export default {
       relativeID: null,
       // the selected log file name
       file: null,
-      // the label for the file input
-      fileLabel: 'Select File',
-      // turns the file input off (e.g. when the file list is being loaded)
-      fileDisabled: false,
+      /** the label for the file input */
+      fileInputLabel: 'Select File',
+      /** turns the file input off */
+      fileInputDisabled: false,
+      /** loading list of files */
+      fileInputLoading: false,
       // toggle between viewing workflow logs (0) and job logs (1)
       jobLog: 0, // default to displaying workflow logs
       // toggle timestamps in log files
@@ -399,8 +407,10 @@ export default {
       // otherwise it will be left alone
 
       // update the list of log files
-      this.fileLabel = 'Updating available files...'
-      this.fileDisabled = true
+      this.fileInputLoading = true
+      if (!this.file) {
+        this.fileInputLabel = 'Updating available files...'
+      }
       let result
       try {
         // get the list of available log files
@@ -410,8 +420,9 @@ export default {
         })
       } catch {
         // the query failed
-        this.fileLabel = `No log files for ${this.id}`
-        this.fileDisabled = true
+        this.fileInputLabel = `No log files for ${this.id}`
+        this.fileInputDisabled = true
+        this.fileInputLoading = false
         return
       }
       let logFiles
@@ -436,19 +447,19 @@ export default {
                 break
               }
             }
-            if (this.file) { break }
           }
         }
       }
 
       // update the file input
+      this.fileInputLoading = false
       if (logFiles.length) {
-        this.fileLabel = 'Select File'
-        this.fileDisabled = false
+        this.fileInputLabel = 'Select File'
+        this.fileInputDisabled = false
         this.logFiles = logFiles
       } else {
-        this.fileLabel = `No log files for ${this.id}`
-        this.fileDisabled = true
+        this.fileInputLabel = `No log files for ${this.id}`
+        this.fileInputDisabled = true
         this.logFiles = []
       }
     }
