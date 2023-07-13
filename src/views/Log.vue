@@ -418,49 +418,40 @@ export default {
           query: LOG_FILE_QUERY,
           variables: { id: this.id }
         })
-      } catch {
+      } catch (err) {
         // the query failed
+        console.warn(err)
         this.fileInputLabel = `No log files for ${this.id}`
         this.fileInputDisabled = true
         this.fileInputLoading = false
         return
       }
-      let logFiles
-      if (result.data.logFiles) {
-        logFiles = result.data.logFiles.files
-      } else {
-        logFiles = []
-      }
+      const logFiles = result.data.logFiles?.files ?? []
 
       // reset the file if it is not present in the new selection
       if (reset) {
-        if (this.file && !(this.file in logFiles)) {
+        if (this.file && !logFiles.includes(this.file)) {
           this.file = null
         }
 
         // set the default log file if appropriate
-        if (!this.file && logFiles) {
+        if (!this.file && logFiles.length) {
           for (const filePattern of LOG_FILE_DEFAULTS) {
-            for (const fileName of logFiles) {
-              if (filePattern.exec(fileName)) {
-                this.file = fileName
-                break
-              }
-            }
+            this.file = logFiles.find((fileName) => filePattern.exec(fileName))
+            if (this.file) break
           }
         }
       }
 
       // update the file input
       this.fileInputLoading = false
+      this.logFiles = logFiles
       if (logFiles.length) {
         this.fileInputLabel = 'Select File'
         this.fileInputDisabled = false
-        this.logFiles = logFiles
       } else {
         this.fileInputLabel = `No log files for ${this.id}`
         this.fileInputDisabled = true
-        this.logFiles = []
       }
     }
   },
