@@ -40,7 +40,8 @@ if (location.search) {
   no longer needed. */
   const params = new URLSearchParams(location.search)
   params.delete('token')
-  const querystring = params.size ? `?${params.toString()}` : ''
+  let querystring = params.toString()
+  querystring &&= `?${querystring}`
   // Move remaining querystring to after hash so vue-router has access to it
   location.replace(location.pathname + location.hash + querystring)
   // ^ redirects the page -> then the 'else' branch will run
