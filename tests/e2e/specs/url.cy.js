@@ -23,7 +23,10 @@ describe('URL handling', () => {
       .should('not.contain', '?')
       .should('not.contain', 'token')
       .should('not.contain', 'l0r3m1p5um')
-    // Other query params not stripped; moved to after hash so vue-router can access
+  })
+
+  it('preserves other params in the querystring', () => {
+    // Other query params moved to after hash so vue-router can access
     cy.visit('/?a=1&token=42&b=2#/')
       .get('#app')
     cy.url()
