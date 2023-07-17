@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="remove-btn mt-n2"
           >
             <v-icon size="x-large">
-              {{ svgPaths.close }}
+              {{ $options.icons.mdiCloseCircle }}
             </v-icon>
           </v-btn>
         </template>
@@ -49,9 +49,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         @click="add()"
         variant="text"
         data-cy="add"
+        :prepend-icon="$options.icons.mdiPlusCircle"
       >
-        <v-icon>{{ svgPaths.open }}</v-icon>
-        <span>Add Item</span>
+        Add Item
       </v-btn>
     </v-list-item>
   </v-list>
@@ -78,15 +78,6 @@ export default {
 
   inheritAttrs: false,
 
-  data () {
-    return {
-      svgPaths: {
-        open: mdiPlusCircle,
-        close: mdiCloseCircle
-      }
-    }
-  },
-
   methods: {
     /** Add an item to the list. */
     add () {
@@ -112,6 +103,11 @@ export default {
     remove (index) {
       this.modelValue.splice(index, 1)
     }
-  }
+  },
+
+  icons: {
+    mdiPlusCircle,
+    mdiCloseCircle,
+  },
 }
 </script>

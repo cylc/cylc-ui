@@ -90,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 @click.stop="openDialog(mutation)"
                 data-cy="mutation-edit"
               >
-                <v-icon>{{ icons.pencil }}</v-icon>
+                <v-icon>{{ $options.icons.mdiPencil }}</v-icon>
               </v-btn>
             </template>
           </v-list-item>
@@ -172,9 +172,6 @@ export default {
       x: 0,
       y: 0,
       target: null,
-      icons: {
-        pencil: mdiPencil
-      }
     }
   },
 
@@ -190,13 +187,17 @@ export default {
 
   computed: {
     ...mapGetters('workflows', ['getNodes']),
+
     primaryMutations () {
       return this.$workflowService.primaryMutations[this.node.type] || []
     },
+
     canExpand () {
       return this.primaryMutations.length && this.mutations.length > this.primaryMutations.length
     },
+
     ...mapState('user', ['user']),
+
     displayMutations () {
       if (!this.mutations.length || this.user.permissions.length < 2) {
         return []
@@ -215,6 +216,7 @@ export default {
       }
       return this.mutations
     },
+
     typeAndStatusText () {
       if (!this.node) {
         // can happen briefly when switching workflows
@@ -241,6 +243,7 @@ export default {
       }
       return ret
     },
+
     menuTransition () {
       return this.$store.state.app.reducedAnimation ? 'slot' : VDialogTransition
     },
@@ -399,6 +402,10 @@ export default {
         this.callMutationFromContext(mutation)
       }
     }
-  }
+  },
+
+  icons: {
+    mdiPencil,
+  },
 }
 </script>

@@ -35,7 +35,7 @@ component. Note: this is not used for the workflow view, see
       @click.stop="toggleDrawer"
       id="toggle-drawer"
     >
-      <v-icon>{{ svgPaths.list }}</v-icon>
+      <v-icon>{{ $options.icons.mdiViewList }}</v-icon>
     </v-btn>
     <v-toolbar-title>
       {{ title }}
@@ -56,15 +56,12 @@ export default {
     return { toggleDrawer, toolbarHeight }
   },
 
-  data: () => ({
-    svgPaths: {
-      list: mdiViewList
-    }
-  }),
-
   computed: {
     ...mapState('app', ['title'])
-  }
+  },
 
+  icons: {
+    mdiViewList,
+  },
 }
 </script>

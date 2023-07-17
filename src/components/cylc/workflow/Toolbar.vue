@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       @click.stop="toggleDrawer"
       id="toggle-drawer"
     >
-      <v-icon>{{ svgPaths.list }}</v-icon>
+      <v-icon>{{ $options.icons.list }}</v-icon>
     </v-btn>
     <!-- title -->
     <v-toolbar-title
@@ -49,13 +49,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           id="workflow-mutate-button"
           v-cylc-object="currentWorkflow"
-          :icon="svgPaths.menu"
+          :icon="$options.icons.menu"
           size="small"
         />
 
         <v-btn
           id="workflow-play-button"
-          :icon="svgPaths.run"
+          :icon="$options.icons.run"
           :disabled="!enabled.playToggle"
           v-if="!isRunning"
           @click="onClickPlay"
@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-btn
           id="workflow-play-pause-button"
-          :icon="isPaused ? svgPaths.run : svgPaths.hold"
+          :icon="isPaused ? $options.icons.run : $options.icons.hold"
           :disabled="!enabled.pauseToggle"
           v-if="isRunning"
           @click="onClickReleaseHold"
@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-btn
           id="workflow-stop-button"
-          :icon="svgPaths.stop"
+          :icon="$options.icons.stop"
           :disabled="!enabled.stopToggle"
           @click="onClickStop"
           size="small"
@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         color="primary"
         data-cy="add-view-btn"
       >
-        <v-icon class="icon">{{ svgPaths.add }}</v-icon>
+        <v-icon class="icon">{{ $options.icons.add }}</v-icon>
         <span class="label">
           {{ $t('Toolbar.addView') }}
         </span>
@@ -117,21 +117,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list>
         </v-menu>
       </v-btn>
-    </template>
-
-    <!-- displayed only when extended===true -->
-    <template v-slot:extension v-if="extended">
-      <span style="margin-left: 260px;">
-        <a @click="onClickPause">
-          <v-icon color="#5E5E5E">{{ svgPaths.hold }}</v-icon>
-        </a>
-
-        <a @click="onClickStop">
-          <v-icon color="#5E5E5E">{{ svgPaths.stop }}</v-icon>
-        </a>
-
-        <span>Other controls added in the future</span>
-      </span>
     </template>
   </v-toolbar>
 </template>
@@ -176,15 +161,6 @@ export default {
   emits: ['add'],
 
   data: () => ({
-    extended: false,
-    svgPaths: {
-      add: mdiPlusBoxMultiple,
-      hold: mdiPause,
-      list: mdiViewList,
-      menu: mdiMicrosoftXboxControllerMenu,
-      run: mdiPlay,
-      stop: mdiStop
-    },
     expecting: {
       // store state from mutations in order to compute the "enabled" attrs
       play: null,
@@ -303,10 +279,16 @@ export default {
         }
       })
     },
-    toggleExtended () {
-      this.extended = !this.extended
-    },
     startCase,
-  }
+  },
+
+  icons: {
+    add: mdiPlusBoxMultiple,
+    hold: mdiPause,
+    list: mdiViewList,
+    menu: mdiMicrosoftXboxControllerMenu,
+    run: mdiPlay,
+    stop: mdiStop,
+  },
 }
 </script>

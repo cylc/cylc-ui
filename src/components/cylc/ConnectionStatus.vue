@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       size="large"
       class="mr-2"
       color="red-lighten-5"
-    >{{ svgPath }}</v-icon>
+    >{{ $options.icons.mdiLanDisconnect }}</v-icon>
     <span
       class="text-red-lighten-5 font-weight-medium"
     >Connection to server lost. You are offline.</span>
@@ -50,10 +50,8 @@ export default {
     }
   },
 
-  data () {
-    return {
-      svgPath: mdiLanDisconnect
-    }
-  }
+  icons: {
+    mdiLanDisconnect,
+  },
 }
 </script>
