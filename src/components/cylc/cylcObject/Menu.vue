@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:prepend>
               <v-icon
                 :icon="mutation._icon"
-                size="x-large"
+                size="large"
               />
             </template>
             <template v-slot:append>
@@ -86,9 +86,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 icon
                 variant="text"
                 :disabled="isEditable(authorised, mutation)"
-                size="large"
                 @click.stop="openDialog(mutation)"
                 data-cy="mutation-edit"
+                class="ml-2"
               >
                 <v-icon>{{ $options.icons.mdiPencil }}</v-icon>
               </v-btn>
@@ -205,10 +205,7 @@ export default {
       const shortList = this.primaryMutations
       if (!this.expanded && shortList.length) {
         return this.mutations
-          // filter for shortlisted mutations
-          .filter(x => shortList.includes(x.mutation.name))
-          // filter out mutations which aren't relevant to the workflow state
-          .filter(x => !this.isDisabled(x.mutation, true))
+          .filter(x => shortList.includes(x.mutation.name) && !this.isDisabled(x.mutation, true))
           // sort by definition order
           .sort(
             (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
