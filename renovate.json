@@ -20,7 +20,7 @@
         "^@vitejs/"
       ],
       "automerge": true,
-      "schedule": ["at 18:00 on saturday"]
+      "schedule": ["on saturday"]
     },
     {
       "groupName": "dev server packages",
@@ -61,7 +61,7 @@
         "istanbul"
       ],
       "automerge": true,
-      "schedule": ["at 18:00 on sunday"]
+      "schedule": ["on sunday"]
     }
   ],
   "vulnerabilityAlerts": {
