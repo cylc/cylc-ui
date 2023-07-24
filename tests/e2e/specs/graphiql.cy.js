@@ -26,7 +26,7 @@ const query = `query App {
 describe('GraphiQL', () => {
   it('should execute a GraphQL query and get a valid response', () => {
     cy.visit('/#/graphiql')
-      .get('.title')
+      .get('#graphiql')
       .should('be.visible')
     cy.intercept('/graphql*').as('GraphQLQuery')
     cy.get('.CodeMirror')
@@ -45,11 +45,11 @@ describe('GraphiQL', () => {
     //       the default commented-out text, instead of the given query above.
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500)
-    cy.get('.execute-button')
+    cy.get('.graphiql-execute-button')
       .click()
     cy.wait('@GraphQLQuery')
-    cy.get('.resultWrap')
-      .find('.spinner')
+    cy.get('.result-window')
+      .find('.graphiql-spinner')
       .should('not.exist')
     cy.get('.CodeMirror')
       .then((editors) => {
