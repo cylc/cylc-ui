@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
           <v-list-item-title class="d-flex align-center mb-2">
             <!-- input label - the display title for this input -->
-            {{ input.label }}
+            {{ upperFirst(lowerCase(input.label)) }}
             <!-- help button - tooltip for more information -->
             <v-tooltip
               v-if="input.description"
@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep'
+import { cloneDeep, lowerCase, upperFirst } from 'lodash'
 import { mdiHelpCircleOutline } from '@mdi/js'
 
 import Markdown from '@/components/Markdown.vue'
@@ -178,7 +178,10 @@ export default {
         this.model,
         this.$workflowService.apolloClient
       )
-    }
+    },
+
+    lowerCase,
+    upperFirst,
   },
 
   icons: {

@@ -154,7 +154,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               class="leaf-entry px-5"
             >
               <span class="leaf-entry-title">{{ item.title }}</span>
-              <span class="text-grey leaf-entry-value">{{ item.property }}</span>
+              <span class="text-grey-darken-1 leaf-entry-value">{{ item.property }}</span>
             </div>
             <v-divider class="mx-5" />
             <div class="leaf-entry px-5">
@@ -170,7 +170,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 class="leaf-entry output px-5"
               >
                 <span class="leaf-entry-title">{{ customOutput.label }}</span>
-                <span class="text-grey leaf-entry-value">{{ customOutput.message }}</span>
+                <span class="text-grey-darken-1 leaf-entry-value">{{ customOutput.message }}</span>
               </div>
             </div>
             <div v-else class="leaf-entry px-5">
