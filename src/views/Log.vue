@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-btn data-cy="job-toggle">Job</v-btn>
         </v-btn-toggle>
         <ViewToolbar
-          :groups="groups"
+          :groups="controlGroups"
           @setOption="setOption"
         />
       </v-col>
@@ -298,32 +298,31 @@ export default {
       jobLog: 0, // default to displaying workflow logs
       // toggle timestamps in log files
       timestamps: true,
-
-      // option groups
-      groups: [
-        {
-          title: 'Log',
-          controls: [
-            {
-              title: 'Timestamps',
-              icon: mdiClockOutline,
-              action: 'toggle',
-              value: true,
-              key: 'timestamps'
-            },
-            {
-              title: 'Refresh File List',
-              icon: mdiFolderRefresh,
-              action: 'callback',
-              callback: () => { this.updateLogFileList(false) }
-            }
-          ]
-        }
-      ]
     }
   },
 
   created () {
+    this.controlGroups = [
+      {
+        title: 'Log',
+        controls: [
+          {
+            title: 'Timestamps',
+            icon: mdiClockOutline,
+            action: 'toggle',
+            value: true,
+            key: 'timestamps'
+          },
+          {
+            title: 'Refresh File List',
+            icon: mdiFolderRefresh,
+            action: 'callback',
+            callback: () => { this.updateLogFileList(false) }
+          }
+        ]
+      }
+    ]
+
     // set the ID/file if specified in initialOptions
     if (this.initialOptions?.tokens?.task) {
       this.relativeID = this.initialOptions.tokens.relative_id

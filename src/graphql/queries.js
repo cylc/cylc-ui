@@ -81,6 +81,9 @@ fragment TaskProxyData on TaskProxy {
   task {
     meanElapsedTime
   }
+  firstParent {
+    id
+  }
 }
 `
 

@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:prepend>
               <v-icon
                 :icon="mutation._icon"
-                size="x-large"
+                size="large"
               />
             </template>
             <template v-slot:append>
@@ -86,11 +86,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 icon
                 variant="text"
                 :disabled="isEditable(authorised, mutation)"
-                size="large"
                 @click.stop="openDialog(mutation)"
                 data-cy="mutation-edit"
+                class="ml-2"
               >
-                <v-icon>{{ icons.pencil }}</v-icon>
+                <v-icon>{{ $options.icons.mdiPencil }}</v-icon>
               </v-btn>
             </template>
           </v-list-item>
@@ -172,9 +172,6 @@ export default {
       x: 0,
       y: 0,
       target: null,
-      icons: {
-        pencil: mdiPencil
-      }
     }
   },
 
@@ -190,13 +187,17 @@ export default {
 
   computed: {
     ...mapGetters('workflows', ['getNodes']),
+
     primaryMutations () {
       return this.$workflowService.primaryMutations[this.node.type] || []
     },
+
     canExpand () {
       return this.primaryMutations.length && this.mutations.length > this.primaryMutations.length
     },
+
     ...mapState('user', ['user']),
+
     displayMutations () {
       if (!this.mutations.length || this.user.permissions.length < 2) {
         return []
@@ -204,10 +205,7 @@ export default {
       const shortList = this.primaryMutations
       if (!this.expanded && shortList.length) {
         return this.mutations
-          // filter for shortlisted mutations
-          .filter(x => shortList.includes(x.mutation.name))
-          // filter out mutations which aren't relevant to the workflow state
-          .filter(x => !this.isDisabled(x.mutation, true))
+          .filter(x => shortList.includes(x.mutation.name) && !this.isDisabled(x.mutation, true))
           // sort by definition order
           .sort(
             (x, y) => shortList.indexOf(x.mutation.name) - shortList.indexOf(y.mutation.name)
@@ -215,6 +213,7 @@ export default {
       }
       return this.mutations
     },
+
     typeAndStatusText () {
       if (!this.node) {
         // can happen briefly when switching workflows
@@ -241,6 +240,7 @@ export default {
       }
       return ret
     },
+
     menuTransition () {
       return this.$store.state.app.reducedAnimation ? 'slot' : VDialogTransition
     },
@@ -399,6 +399,10 @@ export default {
         this.callMutationFromContext(mutation)
       }
     }
-  }
+  },
+
+  icons: {
+    mdiPencil,
+  },
 }
 </script>

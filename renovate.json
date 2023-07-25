@@ -4,11 +4,23 @@
   ],
   "labels": ["dependencies", "javascript"],
   "platformAutomerge": true,
+  "automergeStrategy": "squash",
   "packageRules": [
     {
       "matchPackageNames": ["yarn"],
+      "automerge": true
+    },
+    {
+      "groupName": "vite packages",
+      "matchPackageNames": [
+        "vite",
+        "vite-plugin-vuetify"
+      ],
+      "matchPackagePatterns": [
+        "^@vitejs/"
+      ],
       "automerge": true,
-      "automergeStrategy": "squash"
+      "schedule": ["on saturday"]
     },
     {
       "groupName": "dev server packages",
@@ -21,7 +33,7 @@
         "nodemon"
       ],
       "automerge": true,
-      "automergeStrategy": "squash"
+      "schedule": ["on the 5th and 20th day of the month"]
     },
     {
       "groupName": "lumino packages",
@@ -32,11 +44,12 @@
       "matchPackageNames": ["standard"],
       "matchPackagePatterns": ["^eslint"],
       "automerge": true,
-      "automergeStrategy": "squash"
+      "schedule": ["on the first day of the month"]
     },
     {
       "groupName": "tests packages",
       "matchPackageNames": [
+        "@vue/test-utils",
         "cross-fetch",
         "jsdom",
         "nyc",
@@ -49,7 +62,7 @@
         "istanbul"
       ],
       "automerge": true,
-      "automergeStrategy": "squash"
+      "schedule": ["on sunday"]
     }
   ],
   "vulnerabilityAlerts": {

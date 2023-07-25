@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <v-select
             id="c-analysis-filter-task-timings"
-            :items="timingOptions"
+            :items="$options.timingOptions"
             prefix="Displaying:"
             v-model="tasksFilter.timingOption"
           />
@@ -230,11 +230,6 @@ export default {
       callback: new AnalysisCallback(tasks),
       /** Object containing all of the tasks added by the callback */
       tasks,
-      timingOptions: [
-        { value: 'totalTimes', title: 'Total times' },
-        { value: 'runTimes', title: 'Run times' },
-        { value: 'queueTimes', title: 'Queue times' },
-      ],
       tasksFilter: {
         name: '',
         timingOption: 'totalTimes',
@@ -288,6 +283,12 @@ export default {
     mdiChartTimeline,
     mdiRefresh,
     mdiTable,
-  }
+  },
+
+  timingOptions: [
+    { value: 'totalTimes', title: 'Total times' },
+    { value: 'runTimes', title: 'Run times' },
+    { value: 'queueTimes', title: 'Queue times' },
+  ],
 }
 </script>

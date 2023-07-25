@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           to="/"
         >
           <template v-slot:prepend>
-            <v-icon style="opacity: 1;">{{ svgPaths.home }}</v-icon>
+            <v-icon style="opacity: 1;">{{ $options.icons.mdiHome }}</v-icon>
           </template>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="v-list-item"
         >
           <template v-slot:prepend>
-            <v-icon style="opacity: 1;">{{ svgPaths.graphql }}</v-icon>
+            <v-icon style="opacity: 1;">{{ $options.icons.mdiGraphql }}</v-icon>
           </template>
           <v-list-item-title>GraphiQL</v-list-item-title>
         </v-list-item>
@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <template v-slot:append>
       <div class="px-4 py-2 d-flex justify-center">
         <span class="text--secondary">
-          <strong v-if="mode !== 'production'"> {{ mode.toUpperCase() }}</strong> {{ $t('App.name') }} {{ version }}
+          <strong v-if="$options.mode !== 'production'">{{ $options.mode.toUpperCase() }}</strong> {{ $t('App.name') }} {{ $options.version }}
         </span>
       </div>
     </template>
@@ -85,12 +85,6 @@ export default {
 
   data: function () {
     return {
-      svgPaths: {
-        home: mdiHome,
-        graphql: mdiGraphql
-      },
-      mode: import.meta.env.MODE,
-      version: pkg.version,
       drawerWidth: initialWidth
     }
   },
@@ -156,6 +150,13 @@ export default {
         }
       )
     }
-  }
+  },
+
+  icons: {
+    mdiHome,
+    mdiGraphql,
+  },
+  mode: import.meta.env.MODE,
+  version: pkg.version,
 }
 </script>
