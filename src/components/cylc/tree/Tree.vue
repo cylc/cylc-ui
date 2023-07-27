@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             size="small"
             data-cy="expand-all"
           >
-            <v-icon size="x-large">{{ svgPaths.expandIcon }}</v-icon>
+            <v-icon size="x-large">{{ $options.icons.mdiPlus }}</v-icon>
             <v-tooltip
               activator="parent"
               location="bottom"
@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             size="small"
             data-cy="collapse-all"
           >
-            <v-icon size="x-large">{{ svgPaths.collapseIcon }}</v-icon>
+            <v-icon size="x-large">{{ $options.icons.mdiMinus }}</v-icon>
             <v-tooltip
               activator="parent"
               location="bottom"
@@ -118,6 +118,7 @@ import { getNodeChildren } from '@/components/cylc/tree/util'
 
 export default {
   name: 'Tree',
+
   props: {
     workflows: {
       type: Array,
@@ -169,10 +170,12 @@ export default {
       required: false
     }
   },
+
   components: {
     TaskFilter,
     TreeItem
   },
+
   data () {
     return {
       treeItemCache: {},
@@ -182,13 +185,10 @@ export default {
       expandedFilter: null,
       collapseFilter: null,
       tasksFilter: {},
-      svgPaths: {
-        expandIcon: mdiPlus,
-        collapseIcon: mdiMinus
-      },
       cyclePointsOrderDesc: true
     }
   },
+
   mounted () {
     // set cyclePointsOrderDesc
     // NOTE: this isn't reactive, however, changing the value requires
@@ -201,6 +201,7 @@ export default {
     }
     this.cyclePointsOrderDesc = cyclePointsOrderDesc
   },
+
   computed: {
     rootChildren () {
       // array of nodes at the top of the tree
@@ -224,6 +225,7 @@ export default {
       return Boolean(this.tasksFilter.states?.length)
     }
   },
+
   watch: {
     tasksFilter: {
       deep: true,
@@ -240,6 +242,7 @@ export default {
       }
     }
   },
+
   methods: {
     filterTasks () {
       if (this.filterByTaskName || this.filterByTaskState) {
@@ -350,6 +353,11 @@ export default {
         }
       }
     }
-  }
+  },
+
+  icons: {
+    mdiPlus,
+    mdiMinus,
+  },
 }
 </script>

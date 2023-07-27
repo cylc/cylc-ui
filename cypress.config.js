@@ -50,7 +50,12 @@ module.exports = defineConfig({
     devServer: {
       framework: 'vue',
       bundler: 'vite'
-    }
+    },
+    setupNodeEvents (on, config) {
+      // For test coverage
+      require('@cypress/code-coverage/task')(on, config)
+      return config
+    },
   },
 
   env: {

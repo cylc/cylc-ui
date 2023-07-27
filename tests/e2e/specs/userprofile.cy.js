@@ -21,12 +21,14 @@ import { INCREMENT } from '@/utils/font-size'
 function expectFontSize (expected) {
   cy.get('html')
     .should('have.css', 'font-size', `${expected}px`)
+    .get('.c-user-profile .v-form')
+    .contains('Font size')
+    .should('have.css', 'font-size', `${expected}px`)
 }
 
 describe('User Profile', () => {
   const defaultFontSize = 16 // px
   beforeEach(() => {
-    // resetFontSize()
     cy.visit('/#/user-profile')
   })
 
@@ -36,39 +38,31 @@ describe('User Profile', () => {
       .should('be.disabled')
   })
 
-  it('Increases the font size', () => {
-    expectFontSize(defaultFontSize)
-    const clicks = 3
+  it('Increases, resets & decrease the font size', () => {
+    // Increases
     let expectedFontSize = defaultFontSize
-    for (let i = 0; i < clicks; i++) {
+    expectFontSize(expectedFontSize)
+    for (let i = 0; i < 3; i++) {
       expectedFontSize += INCREMENT
       cy.get('button#font-size-increase-button')
         .click()
       expectFontSize(expectedFontSize)
     }
-  })
-
-  it('Decreases the font size', () => {
-    expectFontSize(defaultFontSize)
-    const clicks = 3
-    let expectedFontSize = defaultFontSize
-    for (let i = 0; i < clicks; i++) {
+    // Remembers font size after refresh
+    cy.reload(true)
+    expectFontSize(expectedFontSize)
+    // Resets font size
+    cy.get('button#font-size-reset-button')
+      .click()
+    expectedFontSize = defaultFontSize
+    expectFontSize(expectedFontSize)
+    // Decreases font size
+    for (let i = 0; i < 3; i++) {
       expectedFontSize -= INCREMENT
       cy.get('button#font-size-decrease-button')
         .click()
       expectFontSize(expectedFontSize)
     }
-  })
-
-  it('Resets the font size', () => {
-    expectFontSize(defaultFontSize)
-    for (let i = 0; i < 3; i++) {
-      cy.get('button#font-size-decrease-button')
-        .click()
-    }
-    cy.get('button#font-size-reset-button')
-      .click()
-    expectFontSize(defaultFontSize)
   })
 
   it('Sets the job theme', () => {

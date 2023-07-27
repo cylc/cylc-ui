@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <v-select
             id="c-analysis-filter-task-timings"
-            :items="timingOptions"
+            :items="$options.timingOptions"
             hide-details
             prefix="Displaying:"
             v-model="tasksFilter.timingOption"
@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           />
         </v-col>
       </v-row>
-      <ViewToolbar :groups="groups" />
+      <ViewToolbar :groups="controlGroups" />
       <AnalysisTable
         :tasks="filteredTasks"
         :timingOption="tasksFilter.timingOption"
@@ -179,33 +179,29 @@ export default {
 
   beforeMount () {
     this.historicalQuery()
+
+    /** Defines controls which get added to the toolbar */
+    this.controlGroups = [
+      {
+        title: 'Analysis',
+        controls: [
+          {
+            title: 'Refresh data',
+            icon: mdiRefresh,
+            action: 'callback',
+            callback: this.historicalQuery
+          }
+        ]
+      }
+    ]
   },
 
   data () {
     const tasks = []
     return {
-      /** Defines controls which get added to the toolbar */
-      groups: [
-        {
-          title: 'Analysis',
-          controls: [
-            {
-              title: 'Refresh data',
-              icon: mdiRefresh,
-              action: 'callback',
-              callback: this.historicalQuery
-            }
-          ]
-        }
-      ],
       callback: new AnalysisCallback(tasks),
       /** Object containing all of the tasks added by the callback */
       tasks,
-      timingOptions: [
-        { value: 'totalTimes', title: 'Total times' },
-        { value: 'runTimes', title: 'Run times' },
-        { value: 'queueTimes', title: 'Queue times' },
-      ],
       tasksFilter: {
         name: '',
         timingOption: 'totalTimes',
@@ -244,6 +240,12 @@ export default {
       },
       200 // only re-run this once every 0.2 seconds
     )
-  }
+  },
+
+  timingOptions: [
+    { value: 'totalTimes', title: 'Total times' },
+    { value: 'runTimes', title: 'Run times' },
+    { value: 'queueTimes', title: 'Queue times' },
+  ],
 }
 </script>

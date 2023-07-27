@@ -45,6 +45,8 @@ jobs:
       - name: Build
         run: yarn run build
 
+      - name: Check browser compatibility
+        run: yarn run lint:compat
 
   cypress-run:
     runs-on: ${{ matrix.os }}

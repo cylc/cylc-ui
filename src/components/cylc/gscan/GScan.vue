@@ -161,7 +161,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         <span>
                           <span class="text-grey-lighten-1">{{ countTasksInState(descendantTaskTotals, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                           <br/>
-                          <span v-for="(task, index) in tasks.slice(0, maximumTasksDisplayed)" :key="index">
+                          <span v-for="(task, index) in tasks.slice(0, $options.maxTasksDisplayed)" :key="index">
                             {{ task }}<br v-if="index !== tasks.length -1" />
                           </span>
                         </span>
@@ -216,7 +216,6 @@ export default {
 
   data () {
     return {
-      maximumTasksDisplayed: 5,
       /**
        * The filtered workflows. This is the result of applying the filters
        * on the workflows prop.
@@ -399,6 +398,7 @@ export default {
   allStates: {
     'workflow state': WorkflowState.enumValues.map(x => x.name),
     'task state': TaskStateUserOrder.map(x => x.name)
-  }
+  },
+  maxTasksDisplayed: 5,
 }
 </script>

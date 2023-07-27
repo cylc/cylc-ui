@@ -183,7 +183,8 @@ export const primaryMutations = {
     'release',
     'trigger',
     'kill',
-    'log'
+    'log',
+    'setOutputs'
   ]
 }
 
@@ -296,23 +297,16 @@ export const dummyMutations = [
 
       This only applies for the cycle point of the chosen task/family instance.`,
     args: [],
-    _appliesTo: cylcObjects.Namespace,
+    _appliesTo: [cylcObjects.Namespace, cylcObjects.CyclePoint],
     _requiresInfo: true
   },
   {
     name: 'log',
     description: 'View the logs.',
     args: [],
-    _appliesTo: cylcObjects.Namespace,
+    _appliesTo: [cylcObjects.Namespace, cylcObjects.Job],
     _requiresInfo: true
   },
-  {
-    name: 'log',
-    description: 'View the logs.',
-    args: [],
-    _appliesTo: cylcObjects.Job,
-    _requiresInfo: true
-  }
 ]
 
 /**
@@ -629,7 +623,7 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
   for (const mutation of mutations) {
     const authorised = permissions.includes(mutation.name.toLowerCase())
     let requiresInfo = mutation._requiresInfo ?? false
-    let applies = mutation._appliesTo === cylcObject
+    let applies = mutation._appliesTo?.includes(cylcObject)
     for (const arg of mutation.args) {
       if (arg._cylcObject) {
         if (arg._cylcObject === cylcObject) {

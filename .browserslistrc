@@ -1,2 +1,5 @@
 cover 90% and not dead
 Firefox ESR
+not op_mini all
+not iOS < 15
+not Safari < 15

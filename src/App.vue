@@ -54,7 +54,7 @@ export default {
   mounted () {
     // set stored application font-size
     if (localStorage.fontSize) {
-      document.body.style.fontSize = localStorage.fontSize
+      document.documentElement.style.fontSize = localStorage.fontSize
     }
     // set Job icons theme found in LocalStorage in Vuex
     this.setJobTheme(localStorage.jobTheme || 'default')

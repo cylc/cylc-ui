@@ -10,13 +10,17 @@ creating a new release entry be sure to copy & paste the span tag with the
 `actions:bind` attribute, which is used by a regex to find the text to be
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
+
 -------------------------------------------------------------------------------
-## __cylc-ui-2.0.0 (<span actions:bind='release-date'>Upcoming</span>)__
+## __cylc-ui-2.0.0 (<span actions:bind='release-date'>Released 2023-07-21</span>)__
 
 ### Enhancements
 
 [#1269](https://github.com/cylc/cylc-ui/pull/1269) -
 Upgraded Vue and Vuetify frameworks to v3.
+
+[1240](https://github.com/cylc/cylc-ui/pull/1240) - Allow edit-runtime
+for ``[root]`` family by clicking on Cycle icon.
 
 [#1345](https://github.com/cylc/cylc-ui/pull/1345) -
 Added setting to choose the default view for workflows (tree, table etc.).
@@ -28,6 +32,10 @@ Added setting to turn off most animations.
 Tree view: show mean run time in job details.
 
 ### Fixes
+
+[#1340](https://github.com/cylc/cylc-ui/pull/1340) -
+Fixed bug in tree view where tasks belonging to families would disappear
+and reappear eroneously.
 
 [#1312](https://github.com/cylc/cylc-ui/pull/1312) -
 Fixed incorrect latest job info in table view.

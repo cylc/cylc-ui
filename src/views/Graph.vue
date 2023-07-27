@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div class="c-graph w-100 h-100">
     <!-- the controls -->
     <ViewToolbar
-      :groups="groups"
+      :groups="controlGroups"
       @setOption="setOption"
     />
 
@@ -241,53 +241,56 @@ export default {
       autoRefresh: true,
       // true if layout is in progress
       updating: false,
-      groups: [
-        {
-          title: 'Graph',
-          controls: [
-            {
-              title: 'Refresh',
-              icon: mdiRefresh,
-              action: 'callback',
-              callback: this.refresh,
-              disableIf: ['autoRefresh']
-            },
-            {
-              title: 'Auto Refresh',
-              icon: mdiTimer,
-              action: 'toggle',
-              value: true,
-              key: 'autoRefresh'
-            },
-            {
-              title: 'Transpose',
-              icon: mdiFileRotateRight,
-              action: 'toggle',
-              value: false,
-              key: 'transpose'
-            },
-            {
-              title: 'Centre',
-              icon: mdiImageFilterCenterFocus,
-              action: 'callback',
-              callback: this.reset
-            },
-            {
-              title: 'Increase Spacing',
-              icon: mdiArrowExpand,
-              action: 'callback',
-              callback: this.increaseSpacing
-            },
-            {
-              title: 'Decrease Spacing',
-              icon: mdiArrowCollapse,
-              action: 'callback',
-              callback: this.decreaseSpacing
-            }
-          ]
-        }
-      ]
     }
+  },
+
+  created () {
+    this.controlGroups = [
+      {
+        title: 'Graph',
+        controls: [
+          {
+            title: 'Refresh',
+            icon: mdiRefresh,
+            action: 'callback',
+            callback: this.refresh,
+            disableIf: ['autoRefresh']
+          },
+          {
+            title: 'Auto Refresh',
+            icon: mdiTimer,
+            action: 'toggle',
+            value: true,
+            key: 'autoRefresh'
+          },
+          {
+            title: 'Transpose',
+            icon: mdiFileRotateRight,
+            action: 'toggle',
+            value: false,
+            key: 'transpose'
+          },
+          {
+            title: 'Centre',
+            icon: mdiImageFilterCenterFocus,
+            action: 'callback',
+            callback: this.reset
+          },
+          {
+            title: 'Increase Spacing',
+            icon: mdiArrowExpand,
+            action: 'callback',
+            callback: this.increaseSpacing
+          },
+          {
+            title: 'Decrease Spacing',
+            icon: mdiArrowCollapse,
+            action: 'callback',
+            callback: this.decreaseSpacing
+          }
+        ]
+      }
+    ]
   },
 
   mounted () {

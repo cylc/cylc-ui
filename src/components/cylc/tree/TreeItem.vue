@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         density="compact"
       >
         <v-icon>
-          {{ icons.mdiChevronRight }}
+          {{ $options.icons.mdiChevronRight }}
         </v-icon>
       </v-btn>
       <!-- the node value -->
@@ -594,6 +594,10 @@ export default {
       this.$emit('tree-item-clicked', this)
     },
     latestJob
-  }
+  },
+
+  icons: {
+    mdiChevronRight,
+  },
 }
 </script>
