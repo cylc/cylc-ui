@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :key="child.id"
             :node="child"
             v-bind="{
-              stopOn, hoverable, autoCollapse, autoExpandTypes, cyclePointsOrderDesc, indent
+              stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent
             }"
             @tree-item-created="onTreeItemCreated"
             @tree-item-destroyed="onTreeItemDestroyed"
@@ -120,10 +120,6 @@ export default {
       type: Array,
       required: false,
       default: () => []
-    },
-    autoCollapse: {
-      type: Boolean,
-      default: false
     },
     hoverable: Boolean,
     activable: Boolean,
@@ -288,7 +284,7 @@ export default {
       }
     },
     expandAll (filter = null) {
-      const collection = filter ? [...Object.values(this.treeItemCache)].filter(filter) : Object.values(this.treeItemCache)
+      const collection = filter ? Object.values(this.treeItemCache).filter(filter) : Object.values(this.treeItemCache)
       for (const treeItem of collection) {
         treeItem.isExpanded = true
         this.expandedCache.add(treeItem)

@@ -181,7 +181,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </slot>
       <slot
         v-else
-        v-bind="{node, descendantTaskTotals, latestDescendantTasks, lastSingleDescendant, collapsedLabel, branchingLineage, expansionStatus}"
+        v-bind="{node, descendantTaskTotals, latestDescendantTasks, lastSingleDescendant, collapsedLabel, autoCollapse, isExpanded}"
         name="node"
       >
         <div :class="nodeDataClass">
@@ -195,7 +195,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <slot></slot>
     </div>
     <span
-      v-show="expansionStatus"
+      v-show="isExpanded"
       v-if="!stopOn.includes(node.type)"
     >
       <!-- component recursion -->
@@ -206,7 +206,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :node="child"
         :depth="depth + 1"
         :mean-elapsed-time="meanElapsedTime ?? node.node.task?.meanElapsedTime"
-        v-bind="{ stopOn, hoverable, autoCollapse, autoExpandTypes, cyclePointsOrderDesc, indent }"
+        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
         v-on="passthroughHandlers"
       >
         <!-- add scoped slots
@@ -289,10 +289,6 @@ export default {
       default: true
     },
     hoverable: Boolean,
-    autoCollapse: {
-      type: Boolean,
-      default: false
-    },
     autoExpandTypes: {
       type: Array,
       required: false,
@@ -320,16 +316,22 @@ export default {
       active: false,
       selected: false,
       filtered: true,
-      isExpanded: false,
-      expandedStateOverridden: false,
+      manuallyExpanded: null,
     }
   },
 
   computed: {
-    expansionStatus () {
-      return this.autoCollapse && !this.expandedStateOverridden
-        ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type)
-        : this.isExpanded
+    isExpanded: {
+      get () {
+        return this.manuallyExpanded ?? (!this.autoCollapse && this.autoExpandTypes.includes(this.node.type))
+      },
+      set (value) {
+        this.manuallyExpanded = value
+      }
+    },
+    /** Auto collapse if there is only 1 leaf workflow node. */
+    autoCollapse () {
+      return this.lastSingleDescendant.type === 'workflow'
     },
     /** Get task state totals for all descendents of this node. */
     descendantTaskTotals () {
@@ -397,17 +399,6 @@ export default {
         this.node.parent.length + 1 // (parent ID doesn't include slash so add 1)
       )
     },
-    /** Do any of this node's descendants have more than 1 children? */
-    branchingLineage () {
-      let currentNode = this.node
-      while (currentNode.children?.length && currentNode.type === 'workflow-part') {
-        if (currentNode.children.length > 1) {
-          return true
-        }
-        currentNode = currentNode.children[0]
-      }
-      return false
-    },
     hasChildren () {
       if (this.stopOn.includes(this.node.type)) {
         // don't show children if the tree has been configured to stop at
@@ -445,8 +436,8 @@ export default {
       return {
         'node--hoverable': this.hoverable,
         'node--active': this.active,
-        'c-workflow-stopped': !this.branchingLineage && this.lastSingleDescendant?.node?.status === WorkflowState.STOPPED.name,
-        expanded: this.autoCollapse ? this.expansionStatus : this.isExpanded
+        'c-workflow-stopped': this.lastSingleDescendant?.node?.status === WorkflowState.STOPPED.name,
+        expanded: this.isExpanded
       }
     },
     nodeDataClass () {
@@ -529,8 +520,6 @@ export default {
   },
 
   beforeMount () {
-    // apply auto-expand rules when a treeitem is created
-    this.isExpanded = !this.autoCollapse ? this.autoExpandTypes.includes(this.node.type) : this.isExpanded
     this.emitExpandCollapseEvent(this.isExpanded)
   },
 
@@ -538,9 +527,6 @@ export default {
     toggleExpandCollapse () {
       this.isExpanded = !this.isExpanded
       this.emitExpandCollapseEvent(this.isExpanded)
-      if (!this.expandedStateOverridden) {
-        this.expandedStateOverridden = true
-      }
     },
     /**
      * Emits an event `tree-item-expanded` if `expanded` is true, or emits

@@ -112,9 +112,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           ref="tree"
           :indent="18"
         >
-          <template v-slot:node="{node, descendantTaskTotals, latestDescendantTasks, lastSingleDescendant, collapsedLabel, branchingLineage, expansionStatus}">
+          <template v-slot:node="{node, descendantTaskTotals, latestDescendantTasks, lastSingleDescendant, collapsedLabel, autoCollapse, isExpanded}">
             <workflow-icon
-              v-if="!branchingLineage && !expansionStatus && lastSingleDescendant.type === 'workflow'"
+              v-if="autoCollapse && !isExpanded"
               :status="lastSingleDescendant.node.status"
               v-cylc-object="lastSingleDescendant"
               class="mr-2 flex-shrink-0"
@@ -128,7 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   v-if="node.type === 'workflow-part'"
                   class="c-gscan-workflow-name"
                 >
-                  <span>{{ expansionStatus ? (node.name || node.id) : collapsedLabel }}</span>
+                  <span>{{ isExpanded ? (node.name || node.id) : collapsedLabel }}</span>
                 </v-col>
                 <v-col
                   v-else-if="node.type === 'workflow'"
@@ -141,7 +141,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
                 <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
                 <v-col
-                  v-if="!expansionStatus || node.type === 'workflow'"
+                  v-if="!isExpanded || node.type === 'workflow'"
                   class="d-flex text-right c-gscan-workflow-states flex-grow-0"
                 >
                   <!-- task summary tooltips -->

@@ -29,7 +29,7 @@
   }
   .c-gscan-workflows {
     .c-gscan-workflow {
-      .c-workflow-stopped {
+      .c-workflow-stopped > :not(.node-expand-collapse-button) {
         opacity: 0.5;
       }
       .c-gscan-workflow-name {

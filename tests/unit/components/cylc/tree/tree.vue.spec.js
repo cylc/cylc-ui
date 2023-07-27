@@ -224,143 +224,137 @@ describe('Tree component', () => {
     const filterWorkflows = (item) => item.type === 'workflow'
     const filterCyclepoints = (item) => item.type === 'cyclepoint'
     const filterTaskProxies = (item) => item.type === 'task-proxy'
-    it('should expand items', () => {
+
+    it.each([
+      // everything is expanded
+      {
+        filter: null,
+        items: mixed,
+        expectedExpandedItems: 2
+      },
+      {
+        filter: null,
+        items: allExpanded,
+        expectedExpandedItems: 2
+      },
+      {
+        filter: null,
+        items: allCollapsed,
+        expectedExpandedItems: 2
+      },
+      // will expand the collapsed workflow (found with the filter)
+      {
+        filter: filterWorkflows,
+        items: allCollapsed,
+        expectedExpandedItems: 1
+      },
+      // workflow will stay collapsed
+      {
+        filter: filterCyclepoints,
+        items: allCollapsed,
+        expectedExpandedItems: 1
+      },
+      // filter won't find any task-proxies, so everything is still collapsed
+      {
+        filter: filterTaskProxies,
+        items: allCollapsed,
+        expectedExpandedItems: 0
+      },
+    ])('should expand items %#', ({ filter, items, expectedExpandedItems }) => {
       // we clone the test data structures as the function mutates the objects
-      const tests = [
-        // everything is expanded
-        {
-          filterFunction: null,
-          items: cloneDeep(mixed),
-          expectedExpandedItems: 2
+      const wrapper = mountFunction({
+        props: {
+          workflows: [],
+          expandCollapseToggle: true
         },
-        {
-          filterFunction: null,
-          items: cloneDeep(allExpanded),
-          expectedExpandedItems: 2
-        },
-        {
-          filterFunction: null,
-          items: cloneDeep(allCollapsed),
-          expectedExpandedItems: 2
-        },
-        // will expand the collapsed workflow (found with the filter)
-        {
-          filterFunction: filterWorkflows,
-          items: cloneDeep(allCollapsed),
-          expectedExpandedItems: 1
-        },
-        // workflow will stay collapsed
-        {
-          filterFunction: filterCyclepoints,
-          items: cloneDeep(allCollapsed),
-          expectedExpandedItems: 1
-        },
-        // filter won't find any task-proxies, so everything is still collapsed
-        {
-          filterFunction: filterTaskProxies,
-          items: cloneDeep(allCollapsed),
-          expectedExpandedItems: 0
-        }
-      ]
-      tests.forEach(test => {
-        const wrapper = mountFunction({
-          props: {
-            workflows: [],
-            expandCollapseToggle: true
-          },
-          data () {
-            return {
-              treeItemCache: test.items
-            }
+        data () {
+          return {
+            treeItemCache: cloneDeep(items),
           }
-        })
-        const filter = test.filterFunction
-        const treeItemCache = wrapper.vm.treeItemCache
-
-        wrapper.vm.expandAll(filter)
-        expect(wrapper.vm.expanded).to.equal(true)
-
-        const collection = filter ? [...Object.values(treeItemCache)].filter(filter) : Object.values(treeItemCache)
-        for (const item of collection) {
-          expect(item.isExpanded).to.equal(true)
         }
-        expect([...Object.values(treeItemCache)].filter(
-          item => item.isExpanded).length,
-          `Failed case: ${JSON.stringify(test.items)}`)
-          .to.equal(test.expectedExpandedItems)
       })
+      const { treeItemCache } = wrapper.vm
+
+      wrapper.vm.expandAll(filter)
+      expect(wrapper.vm.expanded).to.equal(true)
+
+      const collection = filter ? Object.values(treeItemCache).filter(filter) : Object.values(treeItemCache)
+      for (const item of collection) {
+        expect(item.isExpanded).to.equal(true)
+      }
+      expect(
+        Object.values(treeItemCache).filter(item => item.isExpanded).length,
+        `Failed case: ${JSON.stringify(items)}`
+      ).to.equal(expectedExpandedItems)
     })
-    it('should collapse items', () => {
+
+    it.each([
+      // everything is collapsed
+      {
+        filter: null,
+        items: cloneDeep(mixed),
+        expectedCollapsedItems: 2
+      },
+      {
+        filter: null,
+        items: cloneDeep(allExpanded),
+        expectedCollapsedItems: 2
+      },
+      {
+        filter: null,
+        items: cloneDeep(allCollapsed),
+        expectedCollapsedItems: 2
+      },
+      // will collapse the expanded workflow (found with the filter)
+      {
+        filter: filterWorkflows,
+        items: cloneDeep(allExpanded),
+        expectedCollapsedItems: 1
+      },
+      // workflow will stay expanded
+      {
+        filter: filterCyclepoints,
+        items: cloneDeep(allExpanded),
+        expectedCollapsedItems: 1
+      },
+      // filter won't find any task-proxies, so everything is still expanded
+      {
+        filter: filterTaskProxies,
+        items: cloneDeep(allExpanded),
+        expectedCollapsedItems: 0
+      }
+    ])('should collapse items %#', ({ filter, items, expectedCollapsedItems }) => {
       // we clone the test data structures as the function mutates the objects
-      const tests = [
-        // everything is collapsed
-        {
-          filterFunction: null,
-          items: cloneDeep(mixed),
-          expectedCollapsedItems: 2
+      const wrapper = mountFunction({
+        props: {
+          workflows: [],
+          expandCollapseToggle: true
         },
-        {
-          filterFunction: null,
-          items: cloneDeep(allExpanded),
-          expectedCollapsedItems: 2
-        },
-        {
-          filterFunction: null,
-          items: cloneDeep(allCollapsed),
-          expectedCollapsedItems: 2
-        },
-        // will collapse the expanded workflow (found with the filter)
-        {
-          filterFunction: filterWorkflows,
-          items: cloneDeep(allExpanded),
-          expectedCollapsedItems: 1
-        },
-        // workflow will stay expanded
-        {
-          filterFunction: filterCyclepoints,
-          items: cloneDeep(allExpanded),
-          expectedCollapsedItems: 1
-        },
-        // filter won't find any task-proxies, so everything is still expanded
-        {
-          filterFunction: filterTaskProxies,
-          items: cloneDeep(allExpanded),
-          expectedCollapsedItems: 0
-        }
-      ]
-      tests.forEach(test => {
-        const wrapper = mountFunction({
-          props: {
-            workflows: [],
-            expandCollapseToggle: true
-          },
-          data () {
-            return {
-              treeItemCache: test.items
-            }
+        data () {
+          return {
+            treeItemCache: items,
           }
-        })
-        // the collapseAll rely on expandedCache being filled correctly
-        Object.values(test.items).forEach(item => {
-          if (item.isExpanded) {
-            wrapper.vm.expandedCache.add(item)
-          }
-        })
-        const filter = test.filterFunction
-        const treeItemCache = wrapper.vm.treeItemCache
-
-        wrapper.vm.collapseAll(filter)
-        expect(wrapper.vm.expanded).to.equal(test.filterFunction !== null)
-
-        const collection = filter ? [...Object.values(treeItemCache)].filter(filter) : Object.values(treeItemCache)
-        for (const item of collection) {
-          expect(item.isExpanded).to.equal(false)
         }
-        expect([...Object.values(treeItemCache)].filter(
-          item => !item.isExpanded).length,
-          `Failed case: ${JSON.stringify(test.items)}`)
-          .to.equal(test.expectedCollapsedItems)
       })
+      // the collapseAll rely on expandedCache being filled correctly
+      Object.values(items).forEach(item => {
+        if (item.isExpanded) {
+          wrapper.vm.expandedCache.add(item)
+        }
+      })
+      const treeItemCache = wrapper.vm.treeItemCache
+
+      wrapper.vm.collapseAll(filter)
+      expect(wrapper.vm.expanded).to.equal(filter !== null)
+
+      const collection = filter ? Object.values(treeItemCache).filter(filter) : Object.values(treeItemCache)
+      for (const item of collection) {
+        expect(item.isExpanded).to.equal(false)
+      }
+      expect(
+        Object.values(treeItemCache).filter(item => !item.isExpanded).length,
+        `Failed case: ${JSON.stringify(items)}`
+      ).to.equal(expectedCollapsedItems)
     })
   })
 })

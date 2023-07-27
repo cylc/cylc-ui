@@ -139,11 +139,11 @@ describe('TreeItem component', () => {
     it('should get the correct label as a parent', () => {
       expect(wrapper.vm.collapsedLabel).to.equal('double/mid')
     })
-    it('should return true if the children branch at any point', () => {
-      expect(wrapper.vm.branchingLineage).to.equal(true)
+    it('should not auto collapse if the children branch', () => {
+      expect(wrapper.vm.autoCollapse).to.equal(false)
     })
     it('should be initially expanded', () => {
-      expect(wrapper.vm.expansionStatus).to.equal(true)
+      expect(wrapper.vm.isExpanded).to.equal(true)
     })
   })
   describe('computed properties as workflow', () => {
@@ -158,11 +158,11 @@ describe('TreeItem component', () => {
     it('should get the correct label as a child', () => {
       expect(wrapper.vm.collapsedLabel).to.equal('first/run1')
     })
-    it('should return false if the children do not branch', () => {
-      expect(wrapper.vm.branchingLineage).to.equal(false)
+    it('should auto collapse if the children do not branch', () => {
+      expect(wrapper.vm.autoCollapse).to.equal(true)
     })
     it('should be initially collapsed as its non-branching', () => {
-      expect(wrapper.vm.expansionStatus).to.equal(false)
+      expect(wrapper.vm.isExpanded).to.equal(false)
     })
   })
   describe('children', () => {
