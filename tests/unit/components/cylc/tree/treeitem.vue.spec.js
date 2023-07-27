@@ -132,13 +132,12 @@ describe('TreeItem component', () => {
       expect(wrapper.vm.descendantTaskTotals.submitted).to.equal(5)
       expect(wrapper.vm.descendantTaskTotals.running).to.equal(12)
     })
-    // note while this test tests a valid scenario, the last child properly should always be used in association with the branching lineage check
-    it('should get the (first) last child', () => {
-      expect(wrapper.vm.lastDescendent.id).to.equal('~cylc/double/mid/first/run1')
+    it('should get the lowest only-child', () => {
+      expect(wrapper.vm.lastSingleDescendant.id).to.equal('~cylc/double/mid')
     })
     // note this only generates a label until the first branch it encounters when recursing
     it('should get the correct label as a parent', () => {
-      expect(wrapper.vm.descendentLabel).to.equal('double/mid')
+      expect(wrapper.vm.collapsedLabel).to.equal('double/mid')
     })
     it('should return true if the children branch at any point', () => {
       expect(wrapper.vm.branchingLineage).to.equal(true)
@@ -157,7 +156,7 @@ describe('TreeItem component', () => {
       }
     })
     it('should get the correct label as a child', () => {
-      expect(wrapper.vm.descendentLabel).to.equal('first/run1')
+      expect(wrapper.vm.collapsedLabel).to.equal('first/run1')
     })
     it('should return false if the children do not branch', () => {
       expect(wrapper.vm.branchingLineage).to.equal(false)

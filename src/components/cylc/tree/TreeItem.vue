@@ -180,13 +180,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
       <slot
-        v-bind="{node, descendantTaskTotals, latestDescendantTasks, lastDescendent, descendentLabel, branchingLineage, expansionStatus}"
-        name="node"
         v-else
+        v-bind="{node, descendantTaskTotals, latestDescendantTasks, lastSingleDescendant, collapsedLabel, branchingLineage, expansionStatus}"
+        name="node"
       >
         <div :class="nodeDataClass">
           <span
-            v-if="node && node.node"
+            v-if="node?.node"
             @click="nodeClicked"
             :key="node.id"
             class="mx-1">{{ node.name }}</span>
@@ -236,7 +236,9 @@ import {
   jobMessageOutputs
 } from '@/utils/tasks'
 import { getNodeChildren } from '@/components/cylc/tree/util'
-import TaskState from '../../../model/TaskState.model'
+import { JobStates } from '@/model/TaskState.model'
+
+const JobStateNames = JobStates.map(({ name }) => name)
 
 /**
  * Events that are passed through up the chain from child TreeItems.
@@ -325,38 +327,28 @@ export default {
 
   computed: {
     expansionStatus () {
-      return this.autoCollapse && !this.expandedStateOverridden ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type) : this.isExpanded
+      return this.autoCollapse && !this.expandedStateOverridden
+        ? this.branchingLineage && this.autoExpandTypes.includes(this.node.type)
+        : this.isExpanded
     },
+    /** Get task state totals for all descendents of this node. */
     descendantTaskTotals () {
       const tasks = {}
-      const validValues = [
-        TaskState.SUBMITTED.name,
-        TaskState.SUBMIT_FAILED.name,
-        TaskState.RUNNING.name,
-        TaskState.SUCCEEDED.name,
-        TaskState.FAILED.name
-      ]
 
       const traverseChildren = (currentNode) => {
         // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
         if (currentNode.type === 'workflow-part' && currentNode.children) {
           // at every branch, recurse all child nodes
-          currentNode.children.forEach(child => traverseChildren(child))
-        } else {
+          for (const child of currentNode.children) {
+            traverseChildren(child)
+          }
+        } else if (currentNode.type === 'workflow' && currentNode.node.stateTotals) {
           // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
-          if (currentNode.type === 'workflow') {
-            // in some test data we dont include the latestStateTasks, so include a fallback
-            Object.keys(currentNode.node.stateTotals || {})
-              // filter only valid states
-              .filter(stateTaskKey => validValues.includes(stateTaskKey))
-              // concat the new tasks in where they dont already exist
-              .forEach((key) => {
-                if (!tasks[key]) {
-                  tasks[key] = []
-                }
-                // cast as numbers so they dont get concatenated as strings
-                tasks[key] = Math.abs(tasks[key]) + Math.abs(currentNode.node.stateTotals[key])
-              })
+          for (const [state, totals] of Object.entries(currentNode.node.stateTotals)) {
+            if (JobStateNames.includes(state)) { // filter only valid states
+              // (cast as numbers so they dont get concatenated as strings)
+              tasks[state] = (tasks[state] ?? 0) + parseInt(totals)
+            }
           }
         }
       }
@@ -365,78 +357,56 @@ export default {
     },
     latestDescendantTasks () {
       const tasks = {}
-      const validValues = [
-        TaskState.SUBMITTED.name,
-        TaskState.SUBMIT_FAILED.name,
-        TaskState.RUNNING.name,
-        TaskState.SUCCEEDED.name,
-        TaskState.FAILED.name
-      ]
 
       const traverseChildren = (currentNode) => {
         // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
         if (currentNode.type === 'workflow-part' && currentNode.children) {
           // at every branch, recurse all child nodes
-          currentNode.children.forEach(child => traverseChildren(child))
-        } else {
+          for (const child of currentNode.children) {
+            traverseChildren(child)
+          }
+        } else if (currentNode.type === 'workflow' && currentNode.node.latestStateTasks) {
           // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
-          if (currentNode.type === 'workflow') {
-            // in some test data we dont include the latestStateTasks, so include a fallback
-            Object.keys(currentNode.node.latestStateTasks || {})
-              // filter only valid states
-              .filter(stateTaskKey => validValues.includes(stateTaskKey))
-              // concat the new tasks in where they dont already exist
-              .forEach((key) => {
-                if (!tasks[key]) {
-                  tasks[key] = []
-                }
-                // sort the tasks in decending order
-                tasks[key] = [].concat(tasks[key], currentNode.node.latestStateTasks[key]).sort((item1, item2) => (new Date(item2.split('/')[0]).getTime() - (new Date(item1.split('/')[0]).getTime())))
-              })
+          // in some test data we dont include the latestStateTasks, so include a fallback
+          for (const [state, taskNames] of Object.entries(currentNode.node.latestStateTasks)) {
+            if (JobStateNames.includes(state)) {
+              // concat the new tasks in where they don't already exist
+              tasks[state] = [
+                ...(tasks[state] ?? []),
+                ...taskNames,
+              ].sort().reverse() // cycle point descending order
+            }
           }
         }
       }
       traverseChildren(this.node)
       return tasks
     },
-    // this has be used in conjunction with branchingLineage since it will always return the first child otherwise
-    lastDescendent () {
-      let lastDescendent = this.node
-      const traverseChildren = (currentNode) => {
-        // continue recursing until we run out of workflow parts
-        if (currentNode.children && currentNode.children.length > 0 && currentNode.type === 'workflow-part') {
-          traverseChildren(currentNode.children[0])
-        } else {
-          lastDescendent = currentNode
-        }
+    /** Last descendant node that is the only child of its parent. */
+    lastSingleDescendant () {
+      let currentNode = this.node
+      while (currentNode.children?.length === 1 && currentNode.type === 'workflow-part') {
+        currentNode = currentNode.children[0]
       }
-      traverseChildren(lastDescendent)
-      return lastDescendent
+      return currentNode
     },
-    descendentLabel () {
-      const labelArr = []
-      const traverseChildren = (currentNode) => {
-        labelArr.push(currentNode.name || currentNode.id)
-        if (currentNode.children && currentNode.children.length === 1 && currentNode.type === 'workflow-part') {
-          traverseChildren(currentNode.children[0])
-        }
-      }
-      traverseChildren(this.node)
-      return labelArr.join('/')
+    /** ID of collapsed node down to last descendant that is an only child. */
+    collapsedLabel () {
+      if (!this.node.parent) return undefined
+      return this.lastSingleDescendant.id.substring(
+        this.node.parent.length + 1 // (parent ID doesn't include slash so add 1)
+      )
     },
+    /** Do any of this node's descendants have more than 1 children? */
     branchingLineage () {
-      let moreThenTwoChildren = false
-      const traverseChildren = (currentNode) => {
-        if (currentNode.children && currentNode.children.length > 0 && currentNode.type === 'workflow-part') {
-          if (currentNode.children.length === 1) {
-            traverseChildren(currentNode.children[0])
-          } else {
-            moreThenTwoChildren = true
-          }
+      let currentNode = this.node
+      while (currentNode.children?.length && currentNode.type === 'workflow-part') {
+        if (currentNode.children.length > 1) {
+          return true
         }
+        currentNode = currentNode.children[0]
       }
-      traverseChildren(this.node)
-      return moreThenTwoChildren
+      return false
     },
     hasChildren () {
       if (this.stopOn.includes(this.node.type)) {
@@ -475,7 +445,7 @@ export default {
       return {
         'node--hoverable': this.hoverable,
         'node--active': this.active,
-        'c-workflow-stopped': !this.branchingLineage && this.lastDescendent?.node?.status === WorkflowState.STOPPED.name,
+        'c-workflow-stopped': !this.branchingLineage && this.lastSingleDescendant?.node?.status === WorkflowState.STOPPED.name,
         expanded: this.autoCollapse ? this.expansionStatus : this.isExpanded
       }
     },

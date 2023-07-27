@@ -112,11 +112,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           ref="tree"
           :indent="18"
         >
-          <template v-slot:node="{node, descendantTaskTotals, latestDescendantTasks, lastDescendent, descendentLabel, branchingLineage, expansionStatus}">
+          <template v-slot:node="{node, descendantTaskTotals, latestDescendantTasks, lastSingleDescendant, collapsedLabel, branchingLineage, expansionStatus}">
             <workflow-icon
-              v-if="!branchingLineage && !expansionStatus && lastDescendent.type === 'workflow'"
-              :status="lastDescendent.node.status"
-              v-cylc-object="lastDescendent"
+              v-if="!branchingLineage && !expansionStatus && lastSingleDescendant.type === 'workflow'"
+              :status="lastSingleDescendant.node.status"
+              v-cylc-object="lastSingleDescendant"
               class="mr-2 flex-shrink-0"
             />
             <v-list-item
@@ -128,7 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   v-if="node.type === 'workflow-part'"
                   class="c-gscan-workflow-name"
                 >
-                  <span>{{ expansionStatus ? (node.name || node.id) : descendentLabel }}</span>
+                  <span>{{ expansionStatus ? (node.name || node.id) : collapsedLabel }}</span>
                 </v-col>
                 <v-col
                   v-else-if="node.type === 'workflow'"
@@ -146,8 +146,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 >
                   <!-- task summary tooltips -->
                   <span
-                    v-for="[state, tasks] in getLatestStateTasks(Object.entries(latestDescendantTasks))"
-                    :key="`${node.id}-summary-${state}`"
+                    v-for="[state, tasks] in Object.entries(latestDescendantTasks)"
+                    :key="`${node.id}-${state}`"
                     :class="getTaskStateClasses(descendantTaskTotals, state)"
                   >
                     <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
@@ -188,7 +188,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiFilter, mdiFolderRefresh } from '@mdi/js'
-import TaskState, { TaskStateUserOrder } from '@/model/TaskState.model'
+import { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job.vue'
 import Tree from '@/components/cylc/tree/Tree.vue'
@@ -377,21 +377,6 @@ export default {
       const tasksInState = this.countTasksInState(latestStateTasks, state)
       return tasksInState === 0 ? ['empty-state'] : []
     },
-
-    // TODO: temporary filter, remove after b0 - https://github.com/cylc/cylc-ui/pull/617#issuecomment-805343847
-    getLatestStateTasks (latestStateTasks) {
-      // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
-      const validValues = [
-        TaskState.SUBMITTED.name,
-        TaskState.SUBMIT_FAILED.name,
-        TaskState.RUNNING.name,
-        TaskState.SUCCEEDED.name,
-        TaskState.FAILED.name
-      ]
-      return latestStateTasks.filter(entry => {
-        return validValues.includes(entry[0])
-      })
-    }
   },
 
   // Misc options
