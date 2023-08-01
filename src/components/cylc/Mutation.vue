@@ -108,7 +108,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-model="showWarning"
         timeout="4e3"
         color="amber-accent-2"
-        light
         data-cy="warning-snack"
       >
         {{ warningMsg }}
