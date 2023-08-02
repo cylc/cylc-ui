@@ -104,6 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <tree
           :filterable="false"
           :expand-collapse-toggle="false"
+          :auto-collapse="true"
           :workflows="workflows"
           :stopOn="['workflow']"
           :autoExpandTypes="['workflow-part', 'workflow']"
@@ -111,43 +112,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           ref="tree"
           :indent="18"
         >
-          <template v-slot:node="scope">
+          <template v-slot:node="{node, descendantTaskTotals, latestDescendantTasks, lastDescendent, descendentLabel, branchingLineage, expansionStatus}">
             <workflow-icon
+              v-if="!branchingLineage && !expansionStatus && lastDescendent.type === 'workflow'"
+              :status="lastDescendent.node.status"
+              v-cylc-object="lastDescendent"
               class="mr-2 flex-shrink-0"
-              v-if="scope.node.type === 'workflow'"
-              :status="scope.node.node.status"
-              v-cylc-object="scope.node"
             />
             <v-list-item
-              :to="workflowLink(scope.node)"
+              :to="workflowLink(node)"
               class="flex-grow-1 px-2"
             >
               <v-row class="align-center align-content-center flex-nowrap">
                 <v-col
-                  v-if="scope.node.type === 'workflow-part'"
+                  v-if="node.type === 'workflow-part'"
                   class="c-gscan-workflow-name"
                 >
-                  <span>{{ scope.node.name || scope.node.id }}</span>
+                  <span>{{ expansionStatus ? (node.name || node.id) : descendentLabel }}</span>
                 </v-col>
                 <v-col
-                  v-else-if="scope.node.type === 'workflow'"
+                  v-else-if="node.type === 'workflow'"
                   class="c-gscan-workflow-name"
                 >
                   <span>
-                    {{ scope.node.name }}
-                    <v-tooltip location="top">{{ scope.node.id }}</v-tooltip>
+                    {{ node.name }}
+                    <v-tooltip location="top">{{ node.id }}</v-tooltip>
                   </span>
                 </v-col>
                 <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
                 <v-col
-                  v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
+                  v-if="!expansionStatus || node.type === 'workflow'"
                   class="d-flex text-right c-gscan-workflow-states flex-grow-0"
                 >
                   <!-- task summary tooltips -->
                   <span
-                    v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.node.latestStateTasks))"
-                    :key="`${scope.node.id}-summary-${state}`"
-                    :class="getTaskStateClasses(scope.node.node, state)"
+                    v-for="[state, tasks] in getLatestStateTasks(Object.entries(latestDescendantTasks))"
+                    :key="`${node.id}-summary-${state}`"
+                    :class="getTaskStateClasses(descendantTaskTotals, state)"
                   >
                     <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
                     <div
@@ -160,7 +161,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       <v-tooltip location="top">
                         <!-- tooltip text -->
                         <span>
-                          <span class="text-grey-lighten-1">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
+                          <span class="text-grey-lighten-1">{{ countTasksInState(descendantTaskTotals, state) }} {{ state }}. Recent {{ state }} tasks:</span>
                           <br/>
                           <span v-for="(task, index) in tasks.slice(0, $options.maxTasksDisplayed)" :key="index">
                             {{ task }}<br v-if="index !== tasks.length -1" />
@@ -356,25 +357,24 @@ export default {
       }
       return ''
     },
-
     /**
      * Get number of tasks we have in a given state. The states are retrieved
      * from `latestStateTasks`, and the number of tasks in each state is from
      * the `stateTotals`. (`latestStateTasks` includes old tasks).
      *
-     * @param {WorkflowGraphQLData} workflow - the workflow object retrieved from GraphQL
+     * @param taskTotals
      * @param {string} state - a workflow state
      * @returns {number|*} - the number of tasks in the given state
      */
-    countTasksInState (workflow, state) {
-      if (Object.hasOwnProperty.call(workflow.stateTotals, state)) {
-        return workflow.stateTotals[state]
+    countTasksInState (taskTotals, state) {
+      if (Object.hasOwnProperty.call(taskTotals, state)) {
+        return taskTotals[state]
       }
       return 0
     },
 
-    getTaskStateClasses (workflow, state) {
-      const tasksInState = this.countTasksInState(workflow, state)
+    getTaskStateClasses (latestStateTasks, state) {
+      const tasksInState = this.countTasksInState(latestStateTasks, state)
       return tasksInState === 0 ? ['empty-state'] : []
     },
 
