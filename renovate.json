@@ -40,6 +40,19 @@
       "matchPackagePatterns": ["^@lumino/"]
     },
     {
+      "matchPackageNames": ["sass"],
+      "schedule": ["on the 25th day of the month"]
+    },
+    {
+      "matchPackageNames": ["@unhead/vue"],
+      "schedule": ["on the 3rd day of the month"]
+    },
+    {
+      "groupName": "preact packages",
+      "matchPackagePatterns": ["^preact"],
+      "schedule": ["on the 12th day of the month"]
+    },
+    {
       "groupName": "eslint packages",
       "matchPackageNames": ["standard"],
       "matchPackagePatterns": ["^eslint"],
