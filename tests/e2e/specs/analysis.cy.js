@@ -209,13 +209,13 @@ describe('Analysis view', () => {
     beforeEach(() => {
       cy.get('.c-analysis [data-cy=box-plot-toggle]')
         .click()
+        .get('.vue-apexcharts')
+        .should('be.visible')
     })
 
     it('switches view', () => {
-      cy.get('.vue-apexcharts')
-        .should('be.visible')
-        // Check for y-axis labels - should be one for each task
-        .find('.apexcharts-yaxis-label')
+      // Check for y-axis labels - should be one for each task
+      cy.get('.apexcharts-yaxis-label')
         .should('have.length', numTasks)
       cy.get('.c-analysis .c-table')
         .should('not.exist')
@@ -226,6 +226,16 @@ describe('Analysis view', () => {
         .should('be.visible')
         .get('.vue-apexcharts')
         .should('not.exist')
+    })
+
+    it('refreshes without getting bogus apexcharts error', () => {
+      // https://github.com/apexcharts/vue3-apexcharts/issues/79
+      cy.get('[data-cy=analysis-refresh-btn]')
+        .click()
+        .get('[data-cy=alert-snack')
+        .should('not.exist')
+        .get('.apexcharts-yaxis-label')
+        .should('have.length', numTasks)
     })
   })
 })

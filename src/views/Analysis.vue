@@ -92,7 +92,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-tooltip>Box & whiskers view</v-tooltip>
             </v-btn>
           </v-btn-toggle>
-          <v-btn @click="historicalQuery">
+          <v-btn
+            @click="historicalQuery"
+            data-cy="analysis-refresh-btn"
+          >
             <v-icon :icon="$options.icons.mdiRefresh" />
             <v-tooltip>Refresh</v-tooltip>
           </v-btn>

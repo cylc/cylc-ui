@@ -103,9 +103,10 @@ export default {
   },
 
   errorCaptured (err, instance, info) {
-    if (err.name === 'TypeError' && instance.type === 'boxPlot' && info === 'watcher callback') {
+    if (err.name === 'TypeError' && instance.type === 'boxPlot') {
       // Suppress bogus error https://github.com/apexcharts/vue3-apexcharts/issues/79
-      // (note: err.message can vary between browsers)
+      // Note: err.message can vary between browsers. Unfortunately we cannot
+      // be more specific than this in capturing the right error
       console.warn(err)
       return false
     }
