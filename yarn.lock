@@ -812,11 +812,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphiql/react@npm:^0.18.0":
-  version: 0.18.0
-  resolution: "@graphiql/react@npm:0.18.0"
+"@graphiql/react@npm:^0.19.3":
+  version: 0.19.3
+  resolution: "@graphiql/react@npm:0.19.3"
   dependencies:
-    "@graphiql/toolkit": ^0.8.4
+    "@graphiql/toolkit": ^0.9.1
     "@headlessui/react": ^1.7.15
     "@radix-ui/react-dialog": ^1.0.4
     "@radix-ui/react-dropdown-menu": ^2.0.5
@@ -835,13 +835,13 @@ __metadata:
     graphql: ^15.5.0 || ^16.0.0
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: a12e8ac3cecdcceaa3a333218ad5f6a1a0ddfb267dcaabb7bd60ed417d517344ceef20083b3fba471d0bb3199c8e93e2cfb99b70451084563ae6ce19d3258d92
+  checksum: 856dfe6d1e7101fbbd04caf44219ef326b78c4c5954abf22310fccf44f9d34ce6dc572306da4302f0a2b4813927a23ebc15d40ceb31e1d697ca86b05208dab7e
   languageName: node
   linkType: hard
 
-"@graphiql/toolkit@npm:^0.8.4":
-  version: 0.8.4
-  resolution: "@graphiql/toolkit@npm:0.8.4"
+"@graphiql/toolkit@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "@graphiql/toolkit@npm:0.9.1"
   dependencies:
     "@n1ru4l/push-pull-async-iterable-iterator": ^3.1.0
     meros: ^1.1.4
@@ -851,7 +851,7 @@ __metadata:
   peerDependenciesMeta:
     graphql-ws:
       optional: true
-  checksum: 3587521ef64d867930375d746e28ab8373f3f034c6878a99d67e262074d28bf1102b9207db3cb34ae7b80cee8aa4b139fe865dae22a3bcc58f5909294d4a20b3
+  checksum: 5328426051b7f9a9ffbd569c950d1a103ce0e2ee7b5d7a57f3d899488ad43d1a5101e8aeced7416e106c7687d67bb7981aa7e87dea5b0f17b77569aa738bf3b5
   languageName: node
   linkType: hard
 
@@ -3626,7 +3626,7 @@ __metadata:
     eslint-plugin-vuetify: 2.0.5
     express: 4.18.2
     express-ws: 5.0.2
-    graphiql: 3.0.0
+    graphiql: 3.0.5
     graphql: 16.7.1
     graphql-tag: 2.12.6
     graphql-ws: 5.14.0
@@ -5778,19 +5778,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphiql@npm:3.0.0":
-  version: 3.0.0
-  resolution: "graphiql@npm:3.0.0"
+"graphiql@npm:3.0.5":
+  version: 3.0.5
+  resolution: "graphiql@npm:3.0.5"
   dependencies:
-    "@graphiql/react": ^0.18.0
-    "@graphiql/toolkit": ^0.8.4
+    "@graphiql/react": ^0.19.3
+    "@graphiql/toolkit": ^0.9.1
     graphql-language-service: ^5.1.7
     markdown-it: ^12.2.0
   peerDependencies:
     graphql: ^15.5.0 || ^16.0.0
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: b60e8aa53c043f7e223245a7c06063db6819edd8ac8e8f61521ff513daede28bdbfe509de4322d05a50d08dc6f8661a7852f8ff8e8d5d27669faad9f450ffc62
+  checksum: e47b3e022a59bb1da69a413e2ea908503e701a634438ccc38610ef79deea14035fddb9b783aec0190b79be08b9284b466f2839102234a42e08612f10e4bcf70e
   languageName: node
   linkType: hard
 
