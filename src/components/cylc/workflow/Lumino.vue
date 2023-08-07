@@ -110,8 +110,6 @@ export default {
     this.$nextTick(() => {
       // Attach box panel to DOM:
       Widget.attach(this.box, this.$refs.main)
-      // Add widget(s):
-      this.syncWidgets(this.views, {})
       // Watch for resize of the main element to trigger relayout:
       resizeObserver.observe(this.$refs.main)
     })
