@@ -8787,25 +8787,6 @@
               "__typename": "__Field"
             },
             {
-              "name": "extraLogs",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
               "name": "messages",
               "description": null,
               "args": [],
