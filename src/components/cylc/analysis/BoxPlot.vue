@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         icon
         variant="text"
         size="small"
+        data-cy="box-plot-sort"
       >
         <v-icon :icon="sortDesc ? $options.icons.sortDesc : $options.icons.sortAsc" />
         <v-tooltip>Sort ascending/descending</v-tooltip>

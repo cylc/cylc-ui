@@ -15,8 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { analysisQuery } from '@/services/mock/json/index.cjs'
+import { clone } from 'lodash'
+
+const sortedTasks = analysisQuery.data.tasks.map(({ name }) => name).sort()
+
 describe('Analysis view', () => {
-  const numTasks = 3
+  const numTasks = sortedTasks.length
 
   beforeEach(() => {
     cy.visit('/#/analysis/one')
@@ -236,6 +241,24 @@ describe('Analysis view', () => {
         .should('not.exist')
         .get('.apexcharts-yaxis-label')
         .should('have.length', numTasks)
+    })
+
+    it('sorts the chart entries', () => {
+      cy.get('.apexcharts-yaxis-label title').as('taskLabels')
+        .should('have.length', numTasks)
+        .then((els) => {
+          expect(
+            Array.from(els, (i) => i.textContent)
+          ).to.deep.equal(sortedTasks)
+        })
+      cy.get('[data-cy=box-plot-sort]')
+        .click()
+        .get('@taskLabels')
+        .then((els) => {
+          expect(
+            Array.from(els, (i) => i.textContent)
+          ).to.deep.equal(clone(sortedTasks).reverse())
+        })
     })
   })
 })
