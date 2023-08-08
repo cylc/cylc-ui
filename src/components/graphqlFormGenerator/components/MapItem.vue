@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-model="modelValue.key"
           :disabled="modelValue.frozenKey"
           class="c-input-key"
-          v-bind="{ ...$options.textFieldProps, ...$attrs }"
+          v-bind="{ ...$attrs, ...$options.textFieldProps }"
         />
         <v-tooltip v-bind="tooltipProps">
           <span>Pre-existing settings cannot be renamed</span>
@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         placeholder="value"
         v-model="modelValue.value"
         class="c-input-val"
-        v-bind="{ ...$options.textFieldProps, ...$attrs }"
+        v-bind="{ ...$attrs, ...$options.textFieldProps }"
       />
     </v-col>
     <v-col cols="auto">
