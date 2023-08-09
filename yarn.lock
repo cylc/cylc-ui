@@ -3612,7 +3612,7 @@ __metadata:
     cross-fetch: 4.0.0
     cypress: 12.17.3
     cypress-vite: 1.4.2
-    dedent: 1.2.0
+    dedent: 1.5.1
     enumify: 2.0.0
     eslint: 8.46.0
     eslint-config-standard: 17.1.0
@@ -3820,15 +3820,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dedent@npm:1.2.0":
-  version: 1.2.0
-  resolution: "dedent@npm:1.2.0"
+"dedent@npm:1.5.1":
+  version: 1.5.1
+  resolution: "dedent@npm:1.5.1"
   peerDependencies:
     babel-plugin-macros: ^3.1.0
   peerDependenciesMeta:
     babel-plugin-macros:
       optional: true
-  checksum: 239f12ddd443a1a59b210af10c9b30985bb0c177403a53353d3c450d13acec2e532ef03bc3ba31aee1ea6cfa54c865edcd5fa249a2f34ad447e68bdb6717e67b
+  checksum: c3c300a14edf1bdf5a873f9e4b22e839d62490bc5c8d6169c1f15858a1a76733d06a9a56930e963d677a2ceeca4b6b0894cc5ea2f501aa382ca5b92af3413c2a
   languageName: node
   linkType: hard
 
