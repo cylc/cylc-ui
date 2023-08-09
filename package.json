@@ -30,7 +30,7 @@
     "@mdi/js": "7.2.96",
     "@unhead/vue": "1.2.2",
     "axios": "1.4.0",
-    "dedent": "1.2.0",
+    "dedent": "1.5.1",
     "enumify": "2.0.0",
     "graphiql": "3.0.5",
     "graphql": "16.7.1",
