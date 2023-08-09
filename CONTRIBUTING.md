@@ -58,6 +58,7 @@ below.
  - Giuliano Serrao
  - Aaron Cole
  - Jamie Allen
+ - Mark Dawson
 <!-- end-shortlog -->
 
 (All contributors are identifiable with email addresses in the git version
