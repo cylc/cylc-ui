@@ -16,14 +16,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-    <v-card class="d-inline-block pa-4">
+    <v-card>
       <!-- the mutation title -->
-      <v-card-title>
-        <h3 :style="{ 'text-transform': 'capitalize' }">
+      <v-card-title class="py-3">
           {{ mutation._title }}
-        </h3>
       </v-card-title>
-      <v-card-text class="card-text">
+      <v-card-text class="card-text py-0 px-4">
         <!-- the mutation description -->
         <v-expansion-panels
           variant="accordian"
@@ -69,8 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-model="isValid"
         />
       </v-card-text>
-      <br />
-      <v-card-actions>
+      <v-card-actions class="pa-3">
         <v-spacer></v-spacer>
         <v-btn
           color="grey"
