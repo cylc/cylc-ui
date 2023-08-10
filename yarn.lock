@@ -876,14 +876,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hpcc-js/wasm@npm:2.8.0":
-  version: 2.8.0
-  resolution: "@hpcc-js/wasm@npm:2.8.0"
+"@hpcc-js/wasm@npm:2.13.1":
+  version: 2.13.1
+  resolution: "@hpcc-js/wasm@npm:2.13.1"
   dependencies:
-    yargs: 17.6.2
+    yargs: 17.7.2
   bin:
     dot-wasm: bin/dot-wasm.js
-  checksum: 3a64b68623f72f94523ee533caeb960be17d9577dd65aba0077a21c5f121ce1a6ee2840130af7a0c461d3e51104d4ceea20701ddf16ef1a9579ee2bf6717c394
+  checksum: bdc290a118d4a191d9136b1be6c10bc1d4d1d8325e85c4e9786f6a644845d237ac43a8a452ab74b880a8ec16e645dea629734205e051eb91620dd932a9f59ae2
   languageName: node
   linkType: hard
 
@@ -3599,7 +3599,7 @@ __metadata:
   dependencies:
     "@apollo/client": 3.7.17
     "@cypress/code-coverage": 3.11.0
-    "@hpcc-js/wasm": 2.8.0
+    "@hpcc-js/wasm": 2.13.1
     "@lumino/default-theme": 2.1.3
     "@lumino/widgets": 2.3.0
     "@mdi/js": 7.2.96
@@ -10774,9 +10774,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:17.6.2":
-  version: 17.6.2
-  resolution: "yargs@npm:17.6.2"
+"yargs@npm:17.7.2, yargs@npm:^17.7.2":
+  version: 17.7.2
+  resolution: "yargs@npm:17.7.2"
   dependencies:
     cliui: ^8.0.1
     escalade: ^3.1.1
@@ -10785,7 +10785,7 @@ __metadata:
     string-width: ^4.2.3
     y18n: ^5.0.5
     yargs-parser: ^21.1.1
-  checksum: 47da1b0d854fa16d45a3ded57b716b013b2179022352a5f7467409da5a04a1eef5b3b3d97a2dfc13e8bbe5f2ffc0afe3bc6a4a72f8254e60f5a4bd7947138643
+  checksum: 73b572e863aa4a8cbef323dd911d79d193b772defd5a51aab0aca2d446655216f5002c42c5306033968193bdbf892a7a4c110b0d77954a7fdf563e653967b56a
   languageName: node
   linkType: hard
 
@@ -10820,21 +10820,6 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^21.0.0
   checksum: 00d58a2c052937fa044834313f07910fd0a115dec5ee35919e857eeee3736b21a4eafa8264535800ba8bac312991ce785ecb8a51f4d2cc8c4676d865af1cfbde
-  languageName: node
-  linkType: hard
-
-"yargs@npm:^17.7.2":
-  version: 17.7.2
-  resolution: "yargs@npm:17.7.2"
-  dependencies:
-    cliui: ^8.0.1
-    escalade: ^3.1.1
-    get-caller-file: ^2.0.5
-    require-directory: ^2.1.1
-    string-width: ^4.2.3
-    y18n: ^5.0.5
-    yargs-parser: ^21.1.1
-  checksum: 73b572e863aa4a8cbef323dd911d79d193b772defd5a51aab0aca2d446655216f5002c42c5306033968193bdbf892a7a4c110b0d77954a7fdf563e653967b56a
   languageName: node
   linkType: hard
 
