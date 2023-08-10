@@ -224,6 +224,6 @@ export default {
 
 <style>
 .card-text{
-  height:50vh; overflow-y:scroll
+  overflow-y:scroll
 }
 </style>
