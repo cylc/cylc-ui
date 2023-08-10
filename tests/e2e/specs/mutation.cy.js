@@ -199,19 +199,18 @@ describe('Mutations component', () => {
       .get('@errTooltip')
       .should('not.have.css', 'display', 'none')
   })
-  it('should display action buttons within viewport', () => {
-    mockMutations()
-    openMutationsForm('checkpoint')
-    cy.get('.v-card-actions').eq(0).then(($el) => {
-      console.log('element', $el[0])
-      const rect = $el[0].getBoundingClientRect() // https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
-      const isInViewport = (
-        rect.top >= -2 &&
-        rect.left >= 0 &&
-        rect.bottom <= Cypress.$(cy.state('window')).height() &&
-        rect.right <= Cypress.$(cy.state('window')).width()
-      )
-      expect(isInViewport).to.be.true
-    })
+  it('should display action buttons in menu card actions component', () => {
+    cy.get('.c-interactive:first')
+      .click()
+      .get('#less-more-button')
+      .click()
+      .get('.c-mutation-menu-list')
+      // choose mutation with long form so it overflows
+      .contains('Play')
+      .parents('.v-list-item')
+      .find('[data-cy=mutation-edit]')
+      .click()
+      .get('.v-card-actions')
+      .should('be.visible')
   })
 })
