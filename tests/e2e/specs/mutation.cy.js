@@ -199,7 +199,7 @@ describe('Mutations component', () => {
       .get('@errTooltip')
       .should('not.have.css', 'display', 'none')
   })
-  it.only('should display action buttons within viewport', () => {
+  it('should display action buttons within viewport', () => {
     mockMutations()
     openMutationsForm('checkpoint')
     cy.get('.v-card-actions').eq(0).then(($el) => {
