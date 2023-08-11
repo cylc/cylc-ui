@@ -199,7 +199,7 @@ describe('Mutations component', () => {
       .get('@errTooltip')
       .should('not.have.css', 'display', 'none')
   })
-  it('should display action buttons in menu card actions component', () => {
+  it('has actions buttons pinned to bottom of form', () => {
     cy.get('.c-interactive:first')
       .click()
       .get('#less-more-button')
