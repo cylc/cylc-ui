@@ -115,23 +115,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               prefix).
               @see https://github.com/cylc/cylc-ui/pull/530#issuecomment-781076619
             -->
-            <v-tooltip
+            <MessageChip
               v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
               :key="`output-chip-${index}`"
-              location="bottom"
-            >
-              <template v-slot:activator="{ props }">
-                <v-chip
-                  v-bind="props"
-                  :class="customOutput.isMessage ? 'bg-light-grey text-black' : 'bg-grey text-white'"
-                  class="ml-2 message-output"
-                  size="small"
-                >
-                  {{ customOutput.label }}
-                </v-chip>
-              </template>
-              <span>{{ customOutput.message }}</span>
-            </v-tooltip>
+              :level="customOutput.label"
+              :message="customOutput.message"
+              :isMessage="customOutput.isMessage"
+              location="bottom">
+            </MessageChip>
             <v-chip
               v-if="jobMessageOutputs.length > 5"
               class="ml-2 bg-grey text-white"
@@ -229,6 +220,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiChevronRight } from '@mdi/js'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
+import MessageChip from '@/components/cylc/MessageChip.vue'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import {
   formatDuration,
@@ -261,7 +253,8 @@ export default {
 
   components: {
     Task,
-    Job
+    Job,
+    MessageChip
   },
 
   props: {
