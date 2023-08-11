@@ -222,8 +222,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .card-text{
-  overflow-y:scroll
+  overflow-y:auto
 }
 </style>
