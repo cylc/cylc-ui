@@ -46,13 +46,20 @@ yarn run build:watch
 # and launch using
 cylc gui --ui-build-dir=<cylc-ui-path>/dist/
 
-# Note the incremental rebuild is quite slow so an alternative to build:watch is
-cylc gui --no-browser --port=3000 --ServerApp.allow_origin='http://localhost:5173'
-# and launch using
-yarn run serve:vue --mode development
-
 # start dev server in offline mode, using the build instead of source files
 yarn run preview
+```
+
+Note the incremental rebuild is quite slow so an alternative to `yarn run build:watch` is
+to run the Vite development server while using the Cylc UI Server live data:
+
+```bash
+# First launch the gui to authenticate with the URL token
+cylc gui --port=3000 --ServerApp.allow_origin='http://localhost:5173'
+# Close that tab once it's loaded
+# Now launch using
+yarn run serve:vue --mode development
+# (you must access via http://localhost:5173)
 ```
 
 ### Tests
@@ -178,6 +185,9 @@ or upon process restart. While the changes done in your Vue.js application
 will be automatically handled by your `build:watch` command.
 
 ### Internationalization
+
+> **Note**
+> Internationalization is only partly implemented at the moment.
 
 This project utilizes [vue-i18n](https://kazupon.github.io/vue-i18n/) for
 internationalization. While this project is not part of Vue.js, it is maintained
