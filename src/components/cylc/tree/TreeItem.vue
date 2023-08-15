@@ -129,6 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               size="small"
               link
               @click="toggleExpandCollapse"
+              data-cy="chip-overflow"
             >
               +{{ jobMessageOutputs.length - 5 }}
             </v-chip>

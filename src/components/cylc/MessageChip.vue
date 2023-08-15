@@ -16,42 +16,25 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'MessageChip',
-  props: {
-    level: {
-      type: String,
-      required: true
-    },
-    message: {
-      type: String,
-      required: true
-    },
-    isMessage: {
-      type: String,
-      required: true
-    }
-  },
-  computed: {
-    getStyle () {
-      if (this.level === 'this is a debug message') {
-        return { bg: 'blue', text: 'white', weight: 'normal' }
-      }
-      if (this.level === 'this is a info message') {
-        return { bg: 'grey', text: 'white', weight: 'normal' }
-      }
-      if (this.level === 'this is a warning message') {
-        return { bg: 'yellow', text: 'black', weight: 'normal' }
-      }
-      if (this.level === 'this is an error message') {
-        return { bg: 'red', text: 'white', weight: 'normal' }
-      }
-      if (this.level === 'this is a critical message') {
-        return { bg: 'red lighten-2', text: 'black', weight: 'bold' }
-      } else { return { bg: 'grey', text: 'black', weight: 'normal' } }
-    }
-  }
-}
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  level: String,
+  message: String,
+  isMessage: Boolean
+})
+
+const styles = new Map([
+  ['this is a debug message', { bg: 'blue', text: 'white', weight: 'normal' }],
+  ['this is a info message', { bg: 'grey', text: 'white', weight: 'normal' }],
+  ['this is a warning message', { bg: 'yellow', text: 'black', weight: 'normal' }],
+  ['this is an error message', { bg: 'red', text: 'white', weight: 'normal' }],
+  ['this is a critical message', { bg: 'red lighten-2', text: 'black', weight: 'bold' }],
+])
+
+const getStyle = computed(() => {
+  return styles.get(props.level) || { bg: 'grey  lighten-2', text: 'white', weight: 'normal' }
+})
 
 </script>
