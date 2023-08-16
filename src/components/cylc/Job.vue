@@ -94,7 +94,7 @@ const Job = (props, context) => {
 Job.props = {
   status: {
     type: String,
-    required: true
+    required: false,
   },
   previousState: {
     type: String,
@@ -102,7 +102,7 @@ Job.props = {
   },
   svg: {
     type: Boolean,
-    require: false,
+    required: false,
     default: false
   }
 }
