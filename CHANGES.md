@@ -18,6 +18,9 @@ ones in. -->
 [#1428](https://github.com/cylc/cylc-ui/pull/1428) -
 Pinned buttons to the bottom of the command edit form.
 
+[#1437](https://github.com/cylc/cylc-ui/pull/1437) -
+Route guard for unauthenticated user.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.0.0 (<span actions:bind='release-date'>Released 2023-07-21</span>)__
 
