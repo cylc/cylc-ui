@@ -36,7 +36,7 @@ describe('URL handling', () => {
       })
   })
 
-  it('reroutes to noAuth page if user isnt authenticated', () => {
+  it('reroutes to noAuth page if user isnt authorised', () => {
     cy.intercept('/userprofile', {
       body: {
         name: 'user',
