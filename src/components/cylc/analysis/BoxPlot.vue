@@ -63,6 +63,7 @@ import {
   mdiSortVariant,
 } from '@mdi/js'
 import { upperFirst } from 'lodash'
+import { formatDuration } from '@/utils/tasks'
 
 export default {
   name: 'BoxPlot',
@@ -144,10 +145,10 @@ export default {
         { title: 'Task name', value: 'name' },
         { title: 'Platform', value: 'platform' },
         { title: 'Count', value: 'count' },
-        { title: `Mean T-${this.timingOption}`, value: `mean${upperFirst(this.timingOption)}Time` },
-        { title: `Median T-${this.timingOption}`, value: `median${upperFirst(this.timingOption)}Time` },
-        { title: `Min T-${this.timingOption}`, value: `min${upperFirst(this.timingOption)}Time` },
-        { title: `Max T-${this.timingOption}`, value: `max${upperFirst(this.timingOption)}Time` },
+        { title: `Mean ${this.timingOption} time`, value: `mean${upperFirst(this.timingOption)}Time` },
+        { title: `Median ${this.timingOption} time`, value: `median${upperFirst(this.timingOption)}Time` },
+        { title: `Min ${this.timingOption} time`, value: `min${upperFirst(this.timingOption)}Time` },
+        { title: `Max ${this.timingOption} time`, value: `max${upperFirst(this.timingOption)}Time` },
       ]
     },
 
@@ -174,6 +175,24 @@ export default {
             },
           },
         },
+        tooltip: {
+          custom ({ seriesIndex, dataPointIndex, w }) {
+            const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true)
+            const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true)
+            const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true)
+            const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true)
+            const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true)
+            return `
+              <div class="pa-2">
+                <div>Maximum: ${max}</div>
+                <div>Q3: ${q3} </div>
+                <div>Median: ${med}</div>
+                <div>Q1: ${q1}</div>
+                <div>Minimum: ${min}</div>
+              </div>
+            `
+          },
+        },
         plotOptions: {
           bar: {
             horizontal: true,
@@ -187,7 +206,12 @@ export default {
         },
         xaxis: {
           title: {
-            text: 'Time (s)',
+            text: `${upperFirst(this.timingOption)} time`,
+          },
+          labels: {
+            formatter (value) {
+              return formatDuration(value, true)
+            }
           },
         },
       }
