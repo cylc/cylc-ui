@@ -22,10 +22,10 @@ import {
   InMemoryCache,
   split
 } from '@apollo/client/core'
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { getMainDefinition } from '@apollo/client/utilities'
-import { WebSocketLink } from '@apollo/client/link/ws'
 import { setContext } from '@apollo/client/link/context'
-import { SubscriptionClient } from 'subscriptions-transport-ws'
+import { createClient } from 'graphql-ws'
 import { store } from '@/store/index'
 import { createUrl } from '@/utils/urls'
 
@@ -72,27 +72,32 @@ export function getCylcHeaders () {
  * @return {SubscriptionClient} a subscription client
  */
 export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
-  const opts = Object.assign({
-    reconnect: true,
-    lazy: false
-  }, options)
-  const subscriptionClient = new SubscriptionClient(wsUrl, opts, wsImpl)
-  // these are the available hooks in the subscription client lifecycle
-  subscriptionClient.onConnecting(() => {
-    store.commit('SET_OFFLINE', true)
+  const subscriptionClient = createClient({
+    url: wsUrl,
+    shouldRetry: () => true,
+    retryAttempts: 999999999999999,
+    retryWait: async function waitForServerHealthyBeforeRetry () {
+      // this is called when the connection fails
+      // wait 2 seconds, then retry
+      await new Promise((resolve) => setTimeout(resolve, 500))
+    },
+    on: {
+      connecting: () => {
+        store.commit('SET_OFFLINE', true)
+      },
+      connected: (socket, payload) => {
+        store.commit('SET_OFFLINE', false)
+      },
+      closed: (event) => {
+        store.commit('SET_OFFLINE', true)
+      },
+      error: (error) => {
+        console.error(error)
+        store.commit('SET_OFFLINE', true)
+      },
+    }
   })
-  subscriptionClient.onConnected(() => {
-    store.commit('SET_OFFLINE', false)
-  })
-  subscriptionClient.onReconnecting(() => {
-    store.commit('SET_OFFLINE', true)
-  })
-  subscriptionClient.onReconnected(() => {
-    store.commit('SET_OFFLINE', false)
-  })
-  subscriptionClient.onDisconnected(() => {
-    store.commit('SET_OFFLINE', true)
-  })
+
   // TODO: at the moment the error displays an Event object, but the browser also displays the problem, as well as the offline indicator
   //       would be nice to find a better error message using the error object
   // subscriptionClient.onError((error) => {
@@ -127,7 +132,7 @@ export function createApolloClient (httpUrl, subscriptionClient) {
   })
 
   const wsLink = subscriptionClient !== null
-    ? new WebSocketLink(subscriptionClient)
+    ? new GraphQLWsLink(subscriptionClient)
     : new ApolloLink() // return an empty link, useful for testing, offline mode, etc
 
   const link = split(
