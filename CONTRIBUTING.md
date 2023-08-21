@@ -59,6 +59,7 @@ below.
  - Aaron Cole
  - Jamie Allen
  - Christopher Bennett
+ - Mark Dawson
 <!-- end-shortlog -->
 
 (All contributors are identifiable with email addresses in the git version

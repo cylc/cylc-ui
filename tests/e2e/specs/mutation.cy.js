@@ -199,4 +199,18 @@ describe('Mutations component', () => {
       .get('@errTooltip')
       .should('not.have.css', 'display', 'none')
   })
+  it('has actions buttons pinned to bottom of form', () => {
+    cy.get('.c-interactive:first')
+      .click()
+      .get('#less-more-button')
+      .click()
+      .get('.c-mutation-menu-list')
+      // choose mutation with long form so it overflows
+      .contains('Play')
+      .parents('.v-list-item')
+      .find('[data-cy=mutation-edit]')
+      .click()
+      .get('.v-card-actions')
+      .should('be.visible')
+  })
 })

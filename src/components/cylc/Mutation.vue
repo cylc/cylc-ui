@@ -16,59 +16,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-    <v-card class="d-inline-block pa-4">
+    <v-card>
       <!-- the mutation title -->
-      <h3 :style="{ 'text-transform': 'capitalize' }">
-        {{ mutation._title }}
-      </h3>
-
-      <!-- the mutation description -->
-      <v-expansion-panels
-        variant="accordian"
-        v-bind="extendedDescription ? { hover: true } : { readonly: true }"
-      >
-        <v-expansion-panel
-          class="mutation-desc"
-          elevation="0"
+      <v-card-title class="py-3">
+          {{ mutation._title }}
+      </v-card-title>
+      <v-card-text class="card-text py-0 px-4">
+        <!-- the mutation description -->
+        <v-expansion-panels
+          variant="accordian"
+          v-bind="extendedDescription ? { hover: true } : { readonly: true }"
         >
-          <v-expansion-panel-title
-            v-bind="extendedDescription ? {} : {
-              expandIcon: null,
-              style: {
-                cursor: 'default'
-              }
-            }"
+          <v-expansion-panel
+            class="mutation-desc"
+            elevation="0"
           >
-            <Markdown :markdown="shortDescription"/>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text v-if="extendedDescription">
-            <Markdown :markdown="extendedDescription"/>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
-
-      <v-divider />
-      <EditRuntimeForm
-        v-if="mutation.name === 'editRuntime'"
-        v-bind="{
-          cylcObject,
-          types
-        }"
-        ref="form"
-        v-model="isValid"
-      />
-      <FormGenerator
-        v-else
-        v-bind="{
-          mutation,
-          types,
-          initialData
-        }"
-        ref="form"
-        v-model="isValid"
-      />
-      <br />
-      <v-card-actions>
+            <v-expansion-panel-title
+              v-bind="extendedDescription ? {} : {
+                expandIcon: null,
+                style: {
+                  cursor: 'default'
+                }
+              }"
+            >
+              <Markdown :markdown="shortDescription"/>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text v-if="extendedDescription">
+              <Markdown :markdown="extendedDescription"/>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
+        <v-divider />
+        <EditRuntimeForm
+          v-if="mutation.name === 'editRuntime'"
+          v-bind="{
+            cylcObject,
+            types
+          }"
+          ref="form"
+          v-model="isValid"
+        />
+        <FormGenerator
+          v-else
+          v-bind="{
+            mutation,
+            types,
+            initialData
+          }"
+          ref="form"
+          v-model="isValid"
+        />
+      </v-card-text>
+      <v-card-actions class="pa-3">
         <v-spacer></v-spacer>
         <v-btn
           color="grey"
@@ -107,7 +106,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-model="showWarning"
         timeout="4e3"
         color="amber-accent-2"
-        light
         data-cy="warning-snack"
       >
         {{ warningMsg }}
@@ -222,3 +220,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.card-text{
+  overflow-y:auto
+}
+</style>

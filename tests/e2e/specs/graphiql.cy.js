@@ -48,7 +48,7 @@ describe('GraphiQL', () => {
     cy.get('.graphiql-execute-button')
       .click()
     cy.wait('@GraphQLQuery')
-    cy.get('.result-window')
+    cy.get('.graphiql-response')
       .find('.graphiql-spinner')
       .should('not.exist')
     cy.get('.CodeMirror')
