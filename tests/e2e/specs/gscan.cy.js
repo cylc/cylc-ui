@@ -20,13 +20,18 @@ describe('GScan component', () => {
     cy.visit('/#/')
   })
 
-  it('should show all workflows by default', () => {
-    cy.get('.treeitem:visible')
-      .should('have.length', 1)
-  })
-
   describe('Filtering', () => {
+    beforeEach(() => {
+      // should show all workflows by default
+      cy.get('.treeitem:visible')
+        .should('have.length', 6)
+    })
+
     it('should filter by workflow name', () => {
+      cy.get('#c-gscan-search-workflows')
+        .type('level')
+        .get('.treeitem:visible')
+        .should('have.length', 1)
       cy.get('#c-gscan-search-workflows')
         .type('abc')
         .get('.treeitem:visible')
@@ -34,14 +39,12 @@ describe('GScan component', () => {
     })
 
     it('should filter by workflow state', () => {
-      cy.get('.treeitem:visible')
-        .should('have.length', 1)
       cy.get('[data-cy=gscan-filter-btn]')
         .click()
         .get('[data-cy="filter workflow state"]')
         .click()
       cy.get('.v-select__content')
-        .contains('.v-list-item', 'stopped')
+        .contains('.v-list-item', 'paused')
         .click({ force: true })
         .get('.treeitem:visible')
         .should('have.length', 0)
@@ -50,11 +53,14 @@ describe('GScan component', () => {
         .click({ force: true })
         .get('.treeitem:visible')
         .should('have.length', 1)
+      cy.get('.v-select__content')
+        .contains('.v-list-item', 'stopped')
+        .click({ force: true })
+        .get('.treeitem:visible')
+        .should('have.length', 6)
     })
 
     it('should filter by task state', () => {
-      cy.get('.treeitem:visible')
-        .should('have.length', 1)
       cy.get('[data-cy=gscan-filter-btn]')
         .click()
         .get('[data-cy="filter task state"]')
@@ -67,8 +73,6 @@ describe('GScan component', () => {
     })
 
     it('should filter by workflow name, state, and tasks states', () => {
-      cy.get('.treeitem:visible')
-        .should('have.length', 1)
       cy.get('#c-gscan-search-workflows')
         .type('on')
       cy.get('[data-cy=gscan-filter-btn]')

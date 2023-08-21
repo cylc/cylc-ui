@@ -16,7 +16,7 @@
  */
 
 /** query used for the graphiql test */
-const query = `query App {
+const query = `query Workflow {
   workflows {
     id
   }
