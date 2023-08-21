@@ -31,6 +31,7 @@ const workflowLogLines = [
   '2023-05-25T10:48:01+01:00 INFO - Workflow: one\n',
   '2023-05-25T10:48:01+01:00 INFO - LOADING workflow parameters\n',
   '2023-05-25T10:48:01+01:00 INFO - + cycle point time zone = Z\n',
+  '2023-08-17T14:10:51+01:00 INFO - What about emojis? ✨ 🍰 ✨\n',
   '2038-01-19T04:14:07+01:00 CRITICAL - It\'s the Epochalypse!\n',
 ]
 
@@ -49,7 +50,7 @@ const LogData = ({ id, file }) => {
     logs: {
       connected: file !== deletedFile,
       error: file === deletedFile
-        ? `tail: ${path}: No such file or directory\ntail: no files remaining`
+        ? `${path}: No such file or directory`
         : undefined,
       path: `my-host:${path}`,
       lines: isJob ? jobLogLines : workflowLogLines,
