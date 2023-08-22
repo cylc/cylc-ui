@@ -58,7 +58,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="flex-grow-1 flex-column"
           v-model="relativeID"
           placeholder="cycle/task/job"
-          hide-details
           clearable
         />
         <v-text-field
@@ -66,7 +65,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           data-cy="workflow-id-input"
           v-model="workflowId"
           disabled
-          hide-details
         />
       </v-col>
       <v-col cols="4">
@@ -76,7 +74,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :disabled="fileDisabled"
           :items="logFiles"
           v-model="file"
-          hide-details
           clearable
           :menu-props="{ 'data-cy': 'file-input-menu' }"
         />

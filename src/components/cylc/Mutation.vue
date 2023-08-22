@@ -94,7 +94,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           Submit
           <v-tooltip
-            activator="parent"
             location="top"
             content-class="bg-error"
             :disabled="isValid"

@@ -36,7 +36,8 @@ const inputDefaults = Object.fromEntries([
   {
     density: 'compact',
     variant: 'outlined',
-    clearIcon: mdiClose
+    clearIcon: mdiClose,
+    hideDetails: true,
   }
 ]))
 
@@ -77,6 +78,10 @@ export const vuetifyOptions = {
       // Gets set from user profile reduced animation setting:
       transition: null,
       ripple: null,
+    },
+    VTooltip: {
+      activator: 'parent',
+      location: 'bottom',
     },
     ...inputDefaults
   },

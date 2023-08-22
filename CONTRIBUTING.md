@@ -58,6 +58,7 @@ below.
  - Giuliano Serrao
  - Aaron Cole
  - Jamie Allen
+ - Christopher Bennett
  - Mark Dawson
 <!-- end-shortlog -->
 

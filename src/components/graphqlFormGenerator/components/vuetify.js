@@ -59,7 +59,8 @@ export default {
   defaultProps: {
     // default props for all form inputs
     variant: 'filled',
-    density: 'compact'
+    density: 'compact',
+    hideDetails: false,
   },
 
   namedTypes: {

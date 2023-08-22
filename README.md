@@ -100,7 +100,7 @@ The "offline" mode (aka `yarn run serve`) which is also used for the end to end
 tests is powered by a "mock" data server.
 
 You can find the index of mocked data here:
-[`src/services/mock/json/index.js`](src/services/mock/json/index.js)
+[`src/services/mock/json/index.cjs`](src/services/mock/json/index.cjs)
 
 Mock data is automatically loaded when the subscription/query issued matches
 an entry in that file.

@@ -17,7 +17,7 @@
 
 import { shallowMount } from '@vue/test-utils'
 import EditRuntimeForm from '@/components/graphqlFormGenerator/EditRuntimeForm.vue'
-import { IntrospectionQuery, taskProxy } from '@/services/mock/json'
+import { IntrospectionQuery, taskProxy } from '@/services/mock/json/index.cjs'
 import { cloneDeep } from 'lodash'
 import { createVuetify } from 'vuetify'
 
