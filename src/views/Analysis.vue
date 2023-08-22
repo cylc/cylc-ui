@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               data-cy="box-plot-toggle"
             >
               <v-icon :icon="$options.icons.mdiChartTimeline" />
-              <v-tooltip>Box & whiskers view</v-tooltip>
+              <v-tooltip>Box &amp; whiskers view</v-tooltip>
             </v-btn>
           </v-btn-toggle>
           <v-btn
