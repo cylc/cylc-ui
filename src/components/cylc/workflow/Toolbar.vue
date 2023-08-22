@@ -117,6 +117,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list>
         </v-menu>
       </v-btn>
+      <router-link
+          to="/user-profile"
+        >
+      <v-tooltip>
+        <template v-slot:activator="{ props }">
+          <v-avatar v-bind="props"
+          class="ma-8 pa-2"
+          color="blue">
+            {{userInitials}}
+          </v-avatar>
+        </template>
+        <div class="text-h5">{{this.user.username}}</div>
+        <div class="d-flex justify-space-between" ><span>Admin</span> <span>{{this.user.admin}}</span></div>
+      </v-tooltip>
+    </router-link>
     </template>
   </v-toolbar>
 </template>
@@ -233,6 +248,9 @@ export default {
           )
         )
       }
+    },
+    userInitials () {
+      return Array.from(this.user.username)[0].toUpperCase()
     }
   },
 

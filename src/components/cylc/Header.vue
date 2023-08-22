@@ -37,27 +37,80 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </g>
       </svg>
     </div>
-    <div class="c-environment-info">
-      <v-chip id="username" class="text--secondary" variant="outlined">{{ user }}</v-chip>
-      <span class="at">@</span>
-      <v-chip id="host" class="text--secondary" variant="outlined">{{ environment }}</v-chip>
+    <div class="c-environment-info w-75 d-flex-col justify-center">
+      <v-combobox
+        :disabled = "store.state.user.user.mode !=='multi user'"
+        bg-color="white"
+        label="server owner"
+        placeholder="server owner"
+        :default="owner"
+        :items="owners"
+        variant="outlined"
+        v-model="owner"
+        @keyup.enter="addOwner(owner)"
+      ></v-combobox>
+      <v-combobox
+        :disabled = "store.state.user.user.mode !=='multi user'"
+        bg-color="white"
+        label="deployment"
+        placeholder="deployment"
+        :default="deployment"
+        :items="deployments"
+        variant="outlined"
+        v-model="deployment"
+        @keyup.enter="addDeployment(deployment)"
+      ></v-combobox>
+      <v-btn
+        @click="route()"
+        class="mx-12"
+        width="100"
+        color="green"
+        :hidden="isNewRoute == false"
+      >
+        Go
+      </v-btn>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  // eslint-disable-next-line vue/no-reserved-component-names
-  name: 'Header',
-  props: {
-    user: {
-      type: String,
-      default: 'guest'
-    },
-    environment: {
-      type: String,
-      default: window.location.host
-    }
-  }
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+// owner logic
+const ownerOnLoad = store.state.user.user.owner
+const owner = ref(ownerOnLoad)
+const owners = ref([ownerOnLoad])
+const addOwner = (owner) => {
+  owners.value.indexOf(owner) === -1 ? owners.value.push(owner) : console.log('This owner already exists')
 }
+
+// deployment logic
+const deploymentOnLoad = window.location.host
+const deployment = ref(deploymentOnLoad)
+const deployments = ref([deploymentOnLoad])
+const addDeployment = (deployment) => {
+  deployments.value.indexOf(deployment) === -1 ? deployments.value.push(deployment) : console.log('This deployment already exists')
+}
+
+// route logic
+const url = computed(() => '//' + deployment.value + '/user/' + owner.value + 'cylc/#')
+
+const isNewRoute = computed(() => {
+  return !(deployment.value === window.location.host & owner.value === window.location.href.split('/')[4])
+})
+
+const route = () => {
+  window.location.href = url.value
+}
+
 </script>
+
+<style>
+/* work around bug with v-combobox overflow https://github.com/vuetifyjs/vuetify/issues/17596 */
+  .v-combobox__selection {
+    overflow-x: hidden;
+  }
+</style>
