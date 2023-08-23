@@ -37,8 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </g>
       </svg>
     </div>
-    <div class="c-environment-info w-75 d-flex-col justify-center">
+    <div id="cylc-select-options" class="c-environment-info w-75 d-flex-col justify-center">
       <v-combobox
+        id="cylc-owner-combobox"
         :disabled = "store.state.user.user.mode !=='multi user'"
         bg-color="white"
         label="server owner"
@@ -50,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         @keyup.enter="addOwner(owner)"
       ></v-combobox>
       <v-combobox
+        id="cylc-deployment-combobox"
         :disabled = "store.state.user.user.mode !=='multi user'"
         bg-color="white"
         label="deployment"
