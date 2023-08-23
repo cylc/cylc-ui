@@ -174,12 +174,11 @@ describe('TreeItem component', () => {
       })
       expect(
         wrapper.findAllComponents({ name: 'TreeItem' })
-          .map((w) => w.props().node.node.__typename)
+          .map((vm) => vm.props().node.node.__typename)
       ).to.deep.equal([
         'CyclePoint',
         'TaskProxy',
         'Job',
-        'Job' // job details
       ])
     })
   // })

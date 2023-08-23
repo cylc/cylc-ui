@@ -16,7 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="treeitem" v-show="filtered">
+  <div
+    v-show="filtered"
+    class="treeitem"
+  >
     <div
       class="node d-flex align-center"
       :class="nodeClass"
@@ -51,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-if="node.familyTree"
             :key="node.id"
             :task="node.familyTree[0].node"
-          />
+        />
           <span class="mx-1">{{ node.name }}</span>
         </div>
       </slot>
@@ -144,43 +147,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </span>
         </div>
       </slot>
-      <slot name="job-details" v-else-if="node.type === 'job-details'">
-        <div class="leaf job-details mb-2">
-          <div class="arrow-up" :style="leafTriangleStyle"></div>
-          <div class="leaf-data font-weight-light py-4">
-            <div
-              v-for="item in leafProperties"
-              :key="item.title"
-              class="leaf-entry px-5"
-            >
-              <span class="leaf-entry-title">{{ item.title }}</span>
-              <span class="text-grey-darken-1 leaf-entry-value">{{ item.property }}</span>
-            </div>
-            <v-divider class="mx-5" />
-            <div class="leaf-entry px-5">
-              <span class="leaf-entry-title text-grey-darken-1">Outputs</span>
-            </div>
-            <div
-              v-if="jobMessageOutputs?.length"
-              class="leaf-outputs-entry"
-            >
-              <div
-                v-for="customOutput of jobMessageOutputs"
-                :key="customOutput.label"
-                class="leaf-entry output px-5"
-              >
-                <span class="leaf-entry-title">{{ customOutput.label }}</span>
-                <span class="text-grey-darken-1 leaf-entry-value">{{ customOutput.message }}</span>
-              </div>
-            </div>
-            <div v-else class="leaf-entry px-5">
-              <span class="leaf-entry-title text-grey-darken-1">No custom messages</span>
-            </div>
-          </div>
-        </div>
-      </slot>
       <slot
-        v-else
+        v-else-if="node.type !== 'job-details'"
         v-bind="{node, descendantTaskTotals, latestDescendantTasks, lastSingleDescendant, collapsedLabel, autoCollapse, isExpanded}"
         name="node"
       >
@@ -194,12 +162,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </slot>
       <slot></slot>
     </div>
-    <span
-      v-show="isExpanded"
+    <div
       v-if="!stopOn.includes(node.type)"
+      v-show="isExpanded"
     >
+      <JobDetails
+        v-if="node.type === 'job'"
+        v-bind="{ node, meanElapsedTime }"
+        :indent="(depth + 1) * indent"
+      />
       <!-- component recursion -->
       <TreeItem
+        v-else
         v-for="child in nodeChildren"
         ref="treeitem"
         :key="child.id"
@@ -221,7 +195,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <slot :name="slotName" v-bind="scope" />
         </template>
       </TreeItem>
-    </span>
+    </div>
   </div>
 </template>
 
@@ -229,9 +203,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiChevronRight } from '@mdi/js'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
+import JobDetails from '@/components/cylc/tree/JobDetails.vue'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import {
-  formatDuration,
   latestJob,
   jobMessageOutputs
 } from '@/utils/tasks'
@@ -264,7 +238,8 @@ export default {
 
   components: {
     Task,
-    Job
+    Job,
+    JobDetails,
   },
 
   props: {
@@ -414,14 +389,9 @@ export default {
     },
     /** returns child nodes following the family tree and following sort order */
     nodeChildren () {
-      if (this.node.type === 'job') {
-        return [{
-          id: `${this.node.id}-job-details`,
-          type: 'job-details',
-          node: this.node.node,
-        }]
-      }
-      return getNodeChildren(this.node, this.cyclePointsOrderDesc)
+      return this.node.type === 'job'
+        ? null
+        : getNodeChildren(this.node, this.cyclePointsOrderDesc)
     },
     /** Get the node indentation in units of px. */
     nodeIndentation () {
@@ -460,49 +430,9 @@ export default {
       return this.hasChildren || !['workflow', 'job-details'].includes(this.node.type)
       // Do not render for GSscan leafs or job details
     },
-    /** Make the job details triangle point to the job icon */
-    leafTriangleStyle () {
-      return {
-        'margin-left': `${this.nodeIndentation + nodeContentPad}px`
-      }
-    },
+
     jobMessageOutputs () {
       return jobMessageOutputs(this.node)
-    },
-    leafProperties () {
-      if (this.node.type !== 'job-details') {
-        return null
-      }
-      return [
-        {
-          title: 'Platform',
-          property: this.node.node.platform
-        },
-        {
-          title: 'Job ID',
-          property: this.node.node.jobId
-        },
-        {
-          title: 'Job runner',
-          property: this.node.node.jobRunnerName
-        },
-        {
-          title: 'Submitted',
-          property: this.node.node.submittedTime
-        },
-        {
-          title: 'Started',
-          property: this.node.node.startedTime
-        },
-        {
-          title: 'Finished',
-          property: this.node.node.finishedTime
-        },
-        {
-          title: 'Mean run time',
-          property: formatDuration(this.meanElapsedTime)
-        },
-      ]
     },
   },
 
