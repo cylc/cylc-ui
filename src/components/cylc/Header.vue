@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="mx-12 my-2"
         width="100"
         color="green"
-        :hidden="isNewRoute == false"
+        :hidden="isNewRoute == false || store.state.user.user.mode == 'single user'"
       >
         Go
       </v-btn>
