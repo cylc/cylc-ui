@@ -18,6 +18,9 @@ ones in. -->
 [#1355](https://github.com/cylc/cylc-ui/pull/1355) -
 Analysis view: added a box & whiskers plot layout.
 
+[#1444](https://github.com/cylc/cylc-ui/pull/1444) -
+Select user and deployment functionalities for multi-user mode and added user avatar.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.1.0 (<span actions:bind='release-date'>Upcoming</span>)__
 
