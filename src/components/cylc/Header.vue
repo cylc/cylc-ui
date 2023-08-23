@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
     <div id="cylc-select-options" class="c-environment-info w-75 d-flex-col justify-center">
       <v-combobox
+        class="my-3"
         id="cylc-owner-combobox"
         :disabled = "store.state.user.user.mode !=='multi user'"
         bg-color="white"
@@ -51,6 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         @keyup.enter="addOwner(owner)"
       ></v-combobox>
       <v-combobox
+        class="my-3"
         id="cylc-deployment-combobox"
         :disabled = "store.state.user.user.mode !=='multi user'"
         bg-color="white"
@@ -64,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       ></v-combobox>
       <v-btn
         @click="route()"
-        class="mx-12"
+        class="mx-12 my-2"
         width="100"
         color="green"
         :hidden="isNewRoute == false"

@@ -129,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-avatar>
         </template>
         <div class="text-h5">{{this.user.username}}</div>
-        <div class="d-flex justify-space-between" ><span>Admin</span> <span>{{this.user.admin}}</span></div>
+        <div class="d-flex justify-space-between" ><span class="mr-4">Admin</span> <span>{{this.user.admin}}</span></div>
       </v-tooltip>
     </router-link>
     </template>
