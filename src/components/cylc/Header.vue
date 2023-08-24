@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         @keyup.enter="addDeployment(deployment)"
       ></v-combobox>
       <v-btn
-        @click="route()"
+        @click="window.location.href = url.value"
         class="mx-12 my-2"
         width="100"
         color="green"
@@ -88,7 +88,7 @@ const ownerOnLoad = store.state.user.user.owner
 const owner = ref(ownerOnLoad)
 const owners = ref([ownerOnLoad])
 const addOwner = (owner) => {
-  owners.value.indexOf(owner) === -1 ? owners.value.push(owner) : console.log('This owner already exists')
+  if (owners.value.indexOf(owner) === -1) { owners.value.push(owner) }
 }
 
 // deployment logic
@@ -96,7 +96,7 @@ const deploymentOnLoad = window.location.host
 const deployment = ref(deploymentOnLoad)
 const deployments = ref([deploymentOnLoad])
 const addDeployment = (deployment) => {
-  deployments.value.indexOf(deployment) === -1 ? deployments.value.push(deployment) : console.log('This deployment already exists')
+  if (deployments.value.indexOf(deployment) === -1) { deployments.value.push(deployment) }
 }
 
 // route logic
@@ -105,10 +105,6 @@ const url = computed(() => '//' + deployment.value + '/user/' + owner.value + 'c
 const isNewRoute = computed(() => {
   return !(deployment.value === window.location.host & owner.value === window.location.href.split('/')[4])
 })
-
-const route = () => {
-  window.location.href = url.value
-}
 
 </script>
 
