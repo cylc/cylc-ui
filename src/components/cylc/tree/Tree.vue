@@ -47,12 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             data-cy="expand-all"
           >
             <v-icon size="x-large">{{ $options.icons.mdiPlus }}</v-icon>
-            <v-tooltip
-              activator="parent"
-              location="bottom"
-            >
-              <span>Expand all</span>
-            </v-tooltip>
+            <v-tooltip>Expand all</v-tooltip>
           </v-btn>
           <v-btn
             @click="collapseAll()"
@@ -62,12 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             data-cy="collapse-all"
           >
             <v-icon size="x-large">{{ $options.icons.mdiMinus }}</v-icon>
-            <v-tooltip
-              activator="parent"
-              location="bottom"
-            >
-              <span>Collapse all</span>
-            </v-tooltip>
+            <v-tooltip>Collapse all</v-tooltip>
           </v-btn>
         </div>
       </v-col>

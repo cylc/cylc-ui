@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-text-field
         data-cy="filter-id"
         clearable
-        hide-details
         placeholder="Filter by ID"
         v-model="localValue.id"
         ref="filterIDInput"
@@ -42,7 +41,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="filter-task-states"
         :items="$options.allStates"
         clearable
-        hide-details
         multiple
         placeholder="Filter by task state"
         v-model="localValue.states"

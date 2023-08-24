@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tooltip>
+    <v-tooltip :activator="null">
       <template v-slot:activator="{ props }">
         <v-chip
           v-bind="props"

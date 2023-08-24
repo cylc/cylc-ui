@@ -19,7 +19,7 @@ import { mount } from '@vue/test-utils'
 import sinon from 'sinon'
 import { createVuetify } from 'vuetify'
 import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
-import { analysisQuery } from '@/services/mock/json'
+import { analysisQuery } from '@/services/mock/json/index.cjs'
 import WorkflowService from '@/services/workflow.service'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 
@@ -48,7 +48,7 @@ describe('AnalysisTable component', () => {
     const wrapper = mountFunction({
       props: {
         tasks: analysisTasks,
-        timingOption: 'totalTimes'
+        timingOption: 'total'
       }
     })
 
@@ -70,7 +70,7 @@ describe('AnalysisTable component', () => {
     const wrapper = mountFunction({
       props: {
         tasks: analysisTasks,
-        timingOption: 'totalTimes'
+        timingOption: 'total'
       }
     })
     expect(wrapper.props().tasks[0].name).to.equal('succeeded')
@@ -82,42 +82,42 @@ describe('AnalysisTable component', () => {
       const wrapper = mountFunction({
         props: {
           tasks: analysisTasks,
-          timingOption: 'totalTimes'
+          timingOption: 'total'
         }
       })
-      expect(wrapper.vm.timingOption).to.equal('totalTimes')
+      expect(wrapper.vm.timingOption).to.equal('total')
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for total times
       expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('00:00:30')
       expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('00:00:32')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:34')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:38')
     })
 
     it('should correctly display run times', () => {
       const wrapper = mountFunction({
         props: {
           tasks: analysisTasks,
-          timingOption: 'runTimes'
+          timingOption: 'run'
         }
       })
-      expect(wrapper.vm.timingOption).to.equal('runTimes')
+      expect(wrapper.vm.timingOption).to.equal('run')
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for run times
       expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(4)').element.innerHTML).to.equal('00:00:20')
       expect(wrapper.find('table > tbody > tr:nth-child(2) > td:nth-child(4)').element.innerHTML).to.equal('00:00:21')
-      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:22')
+      expect(wrapper.find('table > tbody > tr:nth-child(3) > td:nth-child(4)').element.innerHTML).to.equal('00:00:34')
     })
 
     it('should correctly display queue times', () => {
       const wrapper = mountFunction({
         props: {
           tasks: analysisTasks,
-          timingOption: 'queueTimes'
+          timingOption: 'queue'
         }
       })
-      expect(wrapper.vm.timingOption).to.equal('queueTimes')
+      expect(wrapper.vm.timingOption).to.equal('queue')
       expect(wrapper.vm.tasks.length).to.equal(3)
 
       // check that the html has the expected data for queue times

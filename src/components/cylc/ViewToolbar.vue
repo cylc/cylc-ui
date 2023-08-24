@@ -38,12 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           @click="iControl.callback"
         >
           <v-icon size="large">{{ iControl.icon }}</v-icon>
-          <v-tooltip
-            activator="parent"
-            location="bottom"
-          >
-            <span>{{ iControl.title }}</span>
-          </v-tooltip>
+          <v-tooltip>{{ iControl.title }}</v-tooltip>
         </v-btn>
       </div>
     </div>
@@ -86,7 +81,7 @@ export default {
                 // list of keys
                 // only enable this control if all of the listed controls have
                 // truthy values
-                enableif
+                enableIf
                 // list of keys
                 // disable this control if any of the listed controls have
                 // truthy values
@@ -164,7 +159,7 @@ export default {
   methods: {
     toggle (control, e) {
       // toggle a boolean value
-      // NOTE: undefined is interpreted is false
+      // NOTE: undefined is falsy
       control.value = !control.value
       this.$emit('setOption', control.key, control.value)
       e.currentTarget.blur()

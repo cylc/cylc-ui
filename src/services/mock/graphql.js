@@ -20,7 +20,7 @@
  * can be generated programmatically, or with GraphiQL, or another GraphQL
  * command line.
  */
-const data = require('./json/index.js')
+const data = require('./json/index.cjs')
 
 /**
  * Given a GraphQL query, this function tries to fetch the operation

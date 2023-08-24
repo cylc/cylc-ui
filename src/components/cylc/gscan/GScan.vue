@@ -31,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-text-field
           v-model="searchWorkflows"
           clearable
-          hide-details
           placeholder="Search"
           class="flex-grow-1 flex-column"
           id="c-gscan-search-workflows"
@@ -73,7 +72,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   closable-chips
                   clearable
                   multiple
-                  hide-details
                   class="my-2"
                   :data-cy="`filter ${title}`"
                 />
@@ -125,12 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 >
                   <span>
                     {{ scope.node.name }}
-                    <v-tooltip
-                      activator="parent"
-                      location="top"
-                    >
-                      <span>{{ scope.node.id }}</span>
-                    </v-tooltip>
+                    <v-tooltip location="top">{{ scope.node.id }}</v-tooltip>
                   </span>
                 </v-col>
                 <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
@@ -152,10 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       style="font-size: 120%; width: auto;"
                     >
                       <job :status="state" />
-                      <v-tooltip
-                        activator="parent"
-                        location="top"
-                      >
+                      <v-tooltip location="top">
                         <!-- tooltip text -->
                         <span>
                           <span class="text-grey-lighten-1">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
