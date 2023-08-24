@@ -101,80 +101,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="!isLoading"
         class="c-gscan-workflows flex-grow-1 pl-2"
       >
-        <tree
+        <Tree
           :filterable="false"
           :expand-collapse-toggle="false"
           :auto-collapse="true"
           :workflows="workflows"
-          :stopOn="['workflow']"
-          :autoExpandTypes="['workflow-part', 'workflow']"
+          tree-item-component="GScanTreeItem"
           class="c-gscan-workflow ma-0 pa-0"
           ref="tree"
-          :indent="18"
-        >
-          <template v-slot:node="{node, descendantTaskTotals, latestDescendantTasks, lastSingleDescendant, collapsedLabel, autoCollapse, isExpanded}">
-            <workflow-icon
-              v-if="autoCollapse && !isExpanded"
-              :status="lastSingleDescendant.node.status"
-              v-cylc-object="lastSingleDescendant"
-              class="mr-2 flex-shrink-0"
-            />
-            <v-list-item
-              :to="workflowLink(node)"
-              class="flex-grow-1 px-2"
-            >
-              <v-row class="align-center align-content-center flex-nowrap">
-                <v-col
-                  v-if="node.type === 'workflow-part'"
-                  class="c-gscan-workflow-name"
-                >
-                  <span>{{ isExpanded ? (node.name || node.id) : collapsedLabel }}</span>
-                </v-col>
-                <v-col
-                  v-else-if="node.type === 'workflow'"
-                  class="c-gscan-workflow-name"
-                >
-                  <span>
-                    {{ node.name }}
-                    <v-tooltip location="top">{{ node.id }}</v-tooltip>
-                  </span>
-                </v-col>
-                <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
-                <v-col
-                  v-if="!isExpanded || node.type === 'workflow'"
-                  class="d-flex text-right c-gscan-workflow-states flex-grow-0"
-                >
-                  <!-- task summary tooltips -->
-                  <span
-                    v-for="[state, tasks] in Object.entries(latestDescendantTasks)"
-                    :key="`${node.id}-${state}`"
-                    :class="getTaskStateClasses(descendantTaskTotals, state)"
-                  >
-                    <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
-                    <div
-                      class="ma-0 pa-0"
-                      min-width="0"
-                      min-height="0"
-                      style="font-size: 120%; width: auto;"
-                    >
-                      <job :status="state" />
-                      <v-tooltip location="top">
-                        <!-- tooltip text -->
-                        <span>
-                          <span class="text-grey-lighten-1">{{ countTasksInState(descendantTaskTotals, state) }} {{ state }}. Recent {{ state }} tasks:</span>
-                          <br/>
-                          <span v-for="(task, index) in tasks.slice(0, $options.maxTasksDisplayed)" :key="index">
-                            {{ task }}<br v-if="index !== tasks.length -1" />
-                          </span>
-                        </span>
-                      </v-tooltip>
-                    </div>
-                  </span>
-                </v-col>
-              </v-row>
-            </v-list-item>
-          </template>
-        </tree>
+        />
       </div>
       <!-- when no workflows are returned in the GraphQL query -->
       <div v-else>
@@ -190,9 +125,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mdiFilter, mdiFolderRefresh } from '@mdi/js'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import Job from '@/components/cylc/Job.vue'
 import Tree from '@/components/cylc/tree/Tree.vue'
-import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 import { mutate } from '@/utils/aotf'
@@ -201,9 +134,7 @@ export default {
   name: 'GScan',
 
   components: {
-    Job,
     Tree,
-    WorkflowIcon
   },
 
   props: {
@@ -349,33 +280,6 @@ export default {
       items.forEach(item => {
         item.model = newValue
       })
-    },
-
-    workflowLink (node) {
-      if (node.type === 'workflow') {
-        return `/workspace/${ node.tokens.workflow }`
-      }
-      return ''
-    },
-    /**
-     * Get number of tasks we have in a given state. The states are retrieved
-     * from `latestStateTasks`, and the number of tasks in each state is from
-     * the `stateTotals`. (`latestStateTasks` includes old tasks).
-     *
-     * @param taskTotals
-     * @param {string} state - a workflow state
-     * @returns {number|*} - the number of tasks in the given state
-     */
-    countTasksInState (taskTotals, state) {
-      if (Object.hasOwnProperty.call(taskTotals, state)) {
-        return taskTotals[state]
-      }
-      return 0
-    },
-
-    getTaskStateClasses (latestStateTasks, state) {
-      const tasksInState = this.countTasksInState(latestStateTasks, state)
-      return tasksInState === 0 ? ['empty-state'] : []
     },
   },
 

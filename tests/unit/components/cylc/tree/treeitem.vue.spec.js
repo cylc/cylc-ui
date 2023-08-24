@@ -21,6 +21,7 @@ import { Assertion } from 'chai'
 import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
+import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import {
   stateTotalsTestWorkflowNodes,
   simpleWorkflowNode,
@@ -101,7 +102,6 @@ describe('TreeItem component', () => {
     const wrapper = mountFunction({
       props: {
         node: simpleTaskNode,
-        initialExpanded: false
       }
     })
     expect(wrapper).to.not.be.expanded()
@@ -115,48 +115,14 @@ describe('TreeItem component', () => {
       expect(wrapper).to.not.be.expanded()
     })
   })
-  describe('computed properties', () => {
-    const wrapper = mountFunction({
-      props: {
-        node: stateTotalsTestWorkflowNodes,
-        initialExpanded: false,
-        autoCollapse: true,
-        autoExpandTypes: ['workflow-part', 'workflow']
-      }
-    })
-    it('should combine all descendant tasks', () => {
-      expect(wrapper.vm.latestDescendantTasks.submitted.length).to.equal(10)
-      expect(wrapper.vm.latestDescendantTasks.running.length).to.equal(10)
-    })
-    it('should combine all descendant task totals', () => {
-      expect(wrapper.vm.descendantTaskTotals.submitted).to.equal(5)
-      expect(wrapper.vm.descendantTaskTotals.running).to.equal(12)
-    })
-    it('should get the lowest only-child', () => {
-      expect(wrapper.vm.lastSingleDescendant.id).to.equal('~cylc/double/mid')
-    })
-    // note this only generates a label until the first branch it encounters when recursing
-    it('should get the correct label as a parent', () => {
-      expect(wrapper.vm.collapsedLabel).to.equal('double/mid')
-    })
-    it('should not auto collapse if the children branch', () => {
-      expect(wrapper.vm.autoCollapse).to.equal(false)
-    })
-    it('should be initially expanded', () => {
-      expect(wrapper.vm.isExpanded).to.equal(true)
-    })
-  })
+
   describe('computed properties as workflow', () => {
     const wrapper = mountFunction({
       props: {
         node: stateTotalsTestWorkflowNodes.children[0].children[0],
-        initialExpanded: false,
         autoCollapse: true,
         autoExpandTypes: ['workflow-part', 'workflow']
       }
-    })
-    it('should get the correct label as a child', () => {
-      expect(wrapper.vm.collapsedLabel).to.equal('first/run1')
     })
     it('should auto collapse if the children do not branch', () => {
       expect(wrapper.vm.autoCollapse).to.equal(true)
@@ -287,5 +253,70 @@ describe('TreeItem component', () => {
   //       expect(sorted).to.deep.equal(test.expected)
   //     })
   //   })
+  })
+})
+
+describe('GScanTreeItem', () => {
+  const mountFunction = (options) => mount(GScanTreeItem, {
+    global: {
+      plugins: [createVuetify(), CylcObjectPlugin],
+      mock: { $workflowService, $eventBus }
+    },
+    ...options
+  })
+
+  describe('computed properties', () => {
+    const wrapper = mountFunction({
+      props: {
+        node: stateTotalsTestWorkflowNodes,
+      }
+    })
+    it('should combine all descendant tasks', () => {
+      expect(wrapper.vm.latestDescendantTasks.submitted.length).to.equal(10)
+      expect(wrapper.vm.latestDescendantTasks.running.length).to.equal(10)
+    })
+    it('should combine all descendant task totals', () => {
+      expect(wrapper.vm.descendantTaskTotals.submitted).to.equal(5)
+      expect(wrapper.vm.descendantTaskTotals.running).to.equal(12)
+    })
+    it('should get the lowest only-child', () => {
+      expect(wrapper.vm.lastSingleDescendant.id).to.equal('~cylc/double/mid')
+    })
+    // note this only generates a label until the first branch it encounters when recursing
+    it('should get the correct label as a parent', () => {
+      expect(wrapper.vm.collapsedLabel).to.equal('double/mid')
+    })
+    it('should not auto collapse if the children branch', () => {
+      expect(wrapper.vm.autoCollapse).to.equal(false)
+    })
+    it('should be initially expanded', () => {
+      expect(wrapper.vm.$refs.treeItem.isExpanded).to.equal(true)
+    })
+  })
+
+  describe('Workflow link', () => {
+    it('should create an empty link for non-workflow nodes', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: {
+            type: 'barbenheimer',
+          },
+        },
+        shallow: true,
+      })
+      expect(wrapper.vm.workflowLink).to.equal('')
+    })
+    it('should create a link for a workflow node', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: {
+            type: 'workflow',
+            tokens: { workflow: 'a/b/c' }
+          },
+        },
+        shallow: true,
+      })
+      expect(wrapper.vm.workflowLink).to.equal('/workspace/a/b/c')
+    })
   })
 })

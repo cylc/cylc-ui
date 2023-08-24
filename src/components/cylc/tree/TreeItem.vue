@@ -27,11 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <!-- the node's left icon; used for expand/collapse -->
       <v-btn
+        v-if="renderExpandCollapseBtn"
         aria-label="Expand/collapse"
         aria-hidden="false"
         class="node-expand-collapse-button flex-shrink-0"
         @click="toggleExpandCollapse"
-        v-if="shouldRenderExpandCollapseBtn"
         :style="expandCollapseBtnStyle"
         icon
         variant="text"
@@ -41,160 +41,138 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {{ $options.icons.mdiChevronRight }}
         </v-icon>
       </v-btn>
-      <!-- the node value -->
-      <!-- TODO: revisit these values that can be replaced by constants later (and in other components too). -->
-      <slot name="cyclepoint" v-if="node.type === 'cycle'">
-        <div :class="nodeDataClass" @click="nodeClicked">
-          <!-- NOTE: cycle point nodes don't have any data associated with them
-            at present so we must use the root family node for the task icon.
-            We don't use this for the v-cylc-object as that would set the node
-            type to family. -->
-          <Task
-            v-cylc-object="node"
-            v-if="node.familyTree"
-            :key="node.id"
-            :task="node.familyTree[0].node"
-        />
-          <span class="mx-1">{{ node.name }}</span>
-        </div>
-      </slot>
-      <slot name="family-proxy" v-else-if="node.type === 'family'">
-        <div :class="nodeDataClass" @click="nodeClicked">
-          <Task
-            v-cylc-object="node"
-            :key="node.id"
-            :task="node.node"
-          />
-          <span class="mx-1">{{ node.name }}</span>
-        </div>
-      </slot>
-      <slot name="task-proxy" v-else-if="node.type === 'task'">
-        <div :class="nodeDataClass" @click="nodeClicked">
-          <!-- Task summary -->
-          <Task
-            v-cylc-object="node"
-            :key="node.id"
-            :task="node.node"
-            :startTime="(latestJob(node) || {}).startedTime"
-          />
-          <div v-if="!isExpanded" class="node-summary">
-            <!-- most recent job summary -->
-            <Job
-              v-for="(job, index) in node.children.slice(0, 1)"
-              v-cylc-object="job"
-              :key="`${job.id}-summary-${index}`"
-              :status="job.node.state"
-              :previous-state="node.children.length > 1 ? node.children[1].node.state : ''"
-              style="margin-left: 0.25em;"
-            />
-          </div>
-          <span class="mx-1">{{ node.name }}</span>
-        </div>
-      </slot>
-      <slot name="job" v-else-if="node.type === 'job'">
-        <div :class="nodeDataClass" @click="nodeClicked">
-          <Job
-            v-cylc-object="node"
-            :key="node.id"
-            :status="node.node.state"
-          />
-          <span class="mx-1">#{{ node.node.submitNum }}</span>
-          <span class="text-grey">{{ node.node.platform }}</span>
-          <span
-            class="text-grey d-flex flex-nowrap flex-row align-center"
-            v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
-          >
-            <!--
-              We had a tricky bug in #530 due to the :key here. In summary, the list
-              that is backing this component changes. It contains zero or more entries,
-              up to N (5 at the time of writing).
-              Initially we used `:key=customOutput.id` here. But Vue tried to avoid
-              changing the DOM elements, which caused some elements to be out of order
-              in the final rendered UI (as Vue was trying to optimize and keep the
-              DOM elements in-place whenever possible).
-              That behaviour is not deterministic, so sometimes you would have the list
-              in order. The fix was to use a key that combines a string with the list
-              iteration `index` (the `:key` value must be unique, so we used output-chip
-              prefix).
-              @see https://github.com/cylc/cylc-ui/pull/530#issuecomment-781076619
-            -->
-            <v-tooltip
-              v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
-              :key="`output-chip-${index}`"
-              :activator="null"
-            >
-              <template v-slot:activator="{ props }">
-                <v-chip
-                  v-bind="props"
-                  :class="customOutput.isMessage ? 'bg-light-grey text-black' : 'bg-grey text-white'"
-                  class="ml-2 message-output"
-                  size="small"
-                >
-                  {{ customOutput.label }}
-                </v-chip>
-              </template>
-              <span>{{ customOutput.message }}</span>
-            </v-tooltip>
-            <v-chip
-              v-if="jobMessageOutputs.length > 5"
-              class="ml-2 bg-grey text-white"
-              size="small"
-              link
-              @click="toggleExpandCollapse"
-            >
-              +{{ jobMessageOutputs.length - 5 }}
-            </v-chip>
-          </span>
-        </div>
-      </slot>
-      <slot
-        v-else-if="node.type !== 'job-details'"
-        v-bind="{node, descendantTaskTotals, latestDescendantTasks, lastSingleDescendant, collapsedLabel, autoCollapse, isExpanded}"
-        name="node"
-      >
-        <div :class="nodeDataClass">
-          <span
-            v-if="node?.node"
-            @click="nodeClicked"
-            :key="node.id"
-            class="mx-1">{{ node.name }}</span>
-        </div>
-      </slot>
-      <slot></slot>
-    </div>
-    <div
-      v-if="!stopOn.includes(node.type)"
-      v-show="isExpanded"
-    >
-      <JobDetails
-        v-if="node.type === 'job'"
-        v-bind="{ node, meanElapsedTime }"
-        :indent="(depth + 1) * indent"
-      />
-      <!-- component recursion -->
-      <TreeItem
-        v-else
-        v-for="child in nodeChildren"
-        ref="treeitem"
-        :key="child.id"
-        :node="child"
-        :depth="depth + 1"
-        :mean-elapsed-time="meanElapsedTime ?? node.node.task?.meanElapsedTime"
-        v-bind="{ stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
-        v-on="passthroughHandlers"
-      >
-        <!-- add scoped slots
-
-          These allow components to register their own templats, e.g. GScan
-          adds a template for rendering workflow nodes here.
-        -->
-        <template
-          v-for="(_, slotName) of $slots"
-          v-slot:[slotName]="scope"
+      <slot v-bind="{ isExpanded }">
+        <!-- the node value -->
+        <!-- TODO: revisit these node.type values that can be replaced by constants later (and in other components too). -->
+        <div
+          :class="nodeDataClass"
+          :style="nodeDataStyle"
+          @click="nodeClicked"
         >
-          <slot :name="slotName" v-bind="scope" />
+          <template v-if="node.type === 'cycle'">
+            <!-- NOTE: cycle point nodes don't have any data associated with them
+              at present so we must use the root family node for the task icon.
+              We don't use this for the v-cylc-object as that would set the node
+              type to family. -->
+            <Task
+              v-cylc-object="node"
+              v-if="node.familyTree"
+              :key="node.id"
+              :task="node.familyTree[0].node"
+          />
+            <span class="mx-1">{{ node.name }}</span>
+          </template>
+          <template v-else-if="node.type === 'family'">
+            <Task
+              v-cylc-object="node"
+              :key="node.id"
+              :task="node.node"
+            />
+            <span class="mx-1">{{ node.name }}</span>
+          </template>
+          <template v-else-if="node.type === 'task'">
+            <!-- Task summary -->
+            <Task
+              v-cylc-object="node"
+              :key="node.id"
+              :task="node.node"
+              :startTime="latestJob(node)?.startedTime"
+            />
+            <div
+              v-if="!isExpanded"
+              class="node-summary"
+            >
+              <!-- most recent job summary -->
+              <Job
+                v-for="(job, index) in node.children.slice(0, 1)"
+                v-cylc-object="job"
+                :key="`${job.id}-summary-${index}`"
+                :status="job.node.state"
+                :previous-state="node.children.length > 1 ? node.children[1].node.state : ''"
+                style="margin-left: 0.25em;"
+              />
+            </div>
+            <span class="mx-1">{{ node.name }}</span>
+          </template>
+          <template v-else-if="node.type === 'job'">
+            <Job
+              v-cylc-object="node"
+              :key="node.id"
+              :status="node.node.state"
+            />
+            <span class="mx-1">#{{ node.node.submitNum }}</span>
+            <span class="text-grey">{{ node.node.platform }}</span>
+            <span
+              class="text-grey d-flex flex-nowrap flex-row align-center"
+              v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
+            >
+              <!--
+                We had a tricky bug in #530 due to the :key here. In summary, the list
+                that is backing this component changes. It contains zero or more entries,
+                up to N (5 at the time of writing).
+                Initially we used `:key=customOutput.id` here. But Vue tried to avoid
+                changing the DOM elements, which caused some elements to be out of order
+                in the final rendered UI (as Vue was trying to optimize and keep the
+                DOM elements in-place whenever possible).
+                That behaviour is not deterministic, so sometimes you would have the list
+                in order. The fix was to use a key that combines a string with the list
+                iteration `index` (the `:key` value must be unique, so we used output-chip
+                prefix).
+                @see https://github.com/cylc/cylc-ui/pull/530#issuecomment-781076619
+              -->
+              <v-tooltip
+                v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
+                :key="`output-chip-${index}`"
+                :activator="null"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-chip
+                    v-bind="props"
+                    :class="customOutput.isMessage ? 'bg-light-grey text-black' : 'bg-grey text-white'"
+                    class="ml-2 message-output"
+                    size="small"
+                  >
+                    {{ customOutput.label }}
+                  </v-chip>
+                </template>
+                <span>{{ customOutput.message }}</span>
+              </v-tooltip>
+              <v-chip
+                v-if="jobMessageOutputs.length > 5"
+                class="ml-2 bg-grey text-white"
+                size="small"
+                link
+                @click="toggleExpandCollapse"
+              >
+                +{{ jobMessageOutputs.length - 5 }}
+              </v-chip>
+            </span>
+          </template>
+        </div>
+      </slot>
+    </div>
+    <div v-show="isExpanded">
+      <slot name="child">
+        <!-- Need v-if to prevent render of fallback content when slot is provided but is empty -->
+        <template v-if="!$slots.child">
+          <JobDetails
+            v-if="node.type === 'job'"
+            v-bind="{ node, meanElapsedTime }"
+            :indent="(depth + 1) * indent"
+          />
+          <!-- component recursion -->
+          <TreeItem
+            v-else
+            v-for="child in nodeChildren"
+            :key="child.id"
+            :node="child"
+            :depth="depth + 1"
+            :mean-elapsed-time="meanElapsedTime ?? node.node.task?.meanElapsedTime"
+            v-bind="{ hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
+            v-on="passthroughHandlers"
+          />
         </template>
-      </TreeItem>
+      </slot>
     </div>
   </div>
 </template>
@@ -204,15 +182,11 @@ import { mdiChevronRight } from '@mdi/js'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import JobDetails from '@/components/cylc/tree/JobDetails.vue'
-import { WorkflowState } from '@/model/WorkflowState.model'
 import {
   latestJob,
   jobMessageOutputs
 } from '@/utils/tasks'
 import { getNodeChildren } from '@/components/cylc/tree/util'
-import { JobStates } from '@/model/TaskState.model'
-
-const JobStateNames = JobStates.map(({ name }) => name)
 
 /**
  * Events that are passed through up the chain from child TreeItems.
@@ -251,12 +225,13 @@ export default {
       type: Number,
       default: 0
     },
-    stopOn: {
-      // Array of node types to stop recursion on
-      // i.e. don't show child nodes below the provided types
-      type: Array,
-      required: false,
-      default: () => []
+    autoCollapse: {
+      type: Boolean,
+      default: false,
+    },
+    renderExpandCollapseBtn: {
+      type: Boolean,
+      default: true,
     },
     cyclePointsOrderDesc: {
       type: Boolean,
@@ -267,7 +242,7 @@ export default {
     autoExpandTypes: {
       type: Array,
       required: false,
-      default: () => []
+      default: () => ['workflow', 'cycle', 'family']
     },
     /** Indent in px; default is expand/collapse btn width */
     indent: {
@@ -279,7 +254,7 @@ export default {
     meanElapsedTime: {
       type: Number,
       required: false,
-    }
+    },
   },
 
   emits: [
@@ -304,82 +279,8 @@ export default {
         this.manuallyExpanded = value
       }
     },
-    /** Auto collapse if there is only 1 leaf workflow node. */
-    autoCollapse () {
-      return this.lastSingleDescendant.type === 'workflow'
-    },
-    /** Get task state totals for all descendents of this node. */
-    descendantTaskTotals () {
-      const tasks = {}
 
-      const traverseChildren = (currentNode) => {
-        // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
-        if (currentNode.type === 'workflow-part' && currentNode.children) {
-          // at every branch, recurse all child nodes
-          for (const child of currentNode.children) {
-            traverseChildren(child)
-          }
-        } else if (currentNode.type === 'workflow' && currentNode.node.stateTotals) {
-          // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
-          for (const [state, totals] of Object.entries(currentNode.node.stateTotals)) {
-            if (JobStateNames.includes(state)) { // filter only valid states
-              // (cast as numbers so they dont get concatenated as strings)
-              tasks[state] = (tasks[state] ?? 0) + parseInt(totals)
-            }
-          }
-        }
-      }
-      traverseChildren(this.node)
-      return tasks
-    },
-    latestDescendantTasks () {
-      const tasks = {}
-
-      const traverseChildren = (currentNode) => {
-        // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
-        if (currentNode.type === 'workflow-part' && currentNode.children) {
-          // at every branch, recurse all child nodes
-          for (const child of currentNode.children) {
-            traverseChildren(child)
-          }
-        } else if (currentNode.type === 'workflow' && currentNode.node.latestStateTasks) {
-          // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
-          // in some test data we dont include the latestStateTasks, so include a fallback
-          for (const [state, taskNames] of Object.entries(currentNode.node.latestStateTasks)) {
-            if (JobStateNames.includes(state)) {
-              // concat the new tasks in where they don't already exist
-              tasks[state] = [
-                ...(tasks[state] ?? []),
-                ...taskNames,
-              ].sort().reverse() // cycle point descending order
-            }
-          }
-        }
-      }
-      traverseChildren(this.node)
-      return tasks
-    },
-    /** Last descendant node that is the only child of its parent. */
-    lastSingleDescendant () {
-      let currentNode = this.node
-      while (currentNode.children?.length === 1 && currentNode.type === 'workflow-part') {
-        currentNode = currentNode.children[0]
-      }
-      return currentNode
-    },
-    /** ID of collapsed node down to last descendant that is an only child. */
-    collapsedLabel () {
-      if (!this.node.parent) return undefined
-      return this.lastSingleDescendant.id.substring(
-        this.node.parent.length + 1 // (parent ID doesn't include slash so add 1)
-      )
-    },
     hasChildren () {
-      if (this.stopOn.includes(this.node.type)) {
-        // don't show children if the tree has been configured to stop at
-        // this level
-        return false
-      }
       return (
         // "job" nodes have auto-generated "job-detail" nodes
         this.node.type === 'job' ||
@@ -399,38 +300,30 @@ export default {
     },
     nodeStyle () {
       return {
-        'padding-left': `${this.node.type === 'job-details' ? 0 : this.nodeIndentation}px`
+        'padding-left': `${this.nodeIndentation}px`
       }
     },
     nodeClass () {
       return {
         'node--hoverable': this.hoverable,
         'node--active': this.active,
-        'c-workflow-stopped': this.lastSingleDescendant?.node?.status === WorkflowState.STOPPED.name,
         expanded: this.isExpanded
       }
     },
     nodeDataClass () {
       return ['node-data', `node-data-${this.node.type}`]
     },
+    nodeDataStyle () {
+      return {
+        marginLeft: `${nodeContentPad}px`,
+      }
+    },
     expandCollapseBtnStyle () {
       return {
         // set visibility 'hidden' to ensure element takes up space
         visibility: this.hasChildren ? null : 'hidden',
-        marginRight: `${nodeContentPad}px`,
       }
     },
-    /**
-     * Whether the expand collapse button for this TreeItem should be rendered.
-     *
-     * Note for workflow leafs it will still be rendered but be hidden. This is
-     * to maintain the correct indentation.
-     */
-    shouldRenderExpandCollapseBtn () {
-      return this.hasChildren || !['workflow', 'job-details'].includes(this.node.type)
-      // Do not render for GSscan leafs or job details
-    },
-
     jobMessageOutputs () {
       return jobMessageOutputs(this.node)
     },
