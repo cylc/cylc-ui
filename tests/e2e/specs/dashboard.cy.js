@@ -64,58 +64,5 @@ describe('Dashboard', () => {
     })
   }
 
-  it('Displays server owner user input and is disabled in single-user mode', () => {
-    cy.visit('/#/')
-    cy
-      .get('#cylc-owner-combobox')
-      .should('be.disabled')
-  })
-
   // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
-})
-
-describe('Dashboard multiuser', () => {
-  beforeEach(() => {
-    cy.intercept('/userprofile', {
-      body: {
-        name: 'userTest',
-        groups: [
-          'cylc',
-          'developer'
-        ],
-        created: '2021-03-23T23:26:23.606Z',
-        admin: true,
-        server: '/user/cylc/',
-        permissions: [
-        ],
-        mode: 'multi user',
-        owner: 'userTest'
-      }
-    }).as('test-data-server-owner-input')
-    cy.visit('/#/')
-  })
-
-  it('Displays server owner user input and is not disabled in multi-user mode', () => {
-    cy.wait('@test-data-server-owner-input')
-      .get('#cylc-owner-combobox')
-      .should('not.be.disabled')
-      .type('123{enter}')
-      .get('.v-combobox__content').contains('userTest')
-      .get('.v-combobox__content').contains('userTest123')
-  })
-
-  it('Displays deployment input and is not disabled in multi-user mode', () => {
-    cy.wait('@test-data-server-owner-input')
-      .get('#cylc-deployment-combobox')
-      .should('not.be.disabled')
-      .type('abc{enter}')
-      .get('.v-combobox__content').contains('localhost:5173')
-      .get('.v-combobox__content').contains('localhost:5173abc')
-  })
-
-  it('Displays go button', () => {
-    cy.wait('@test-data-server-owner-input')
-      .get('.v-btn')
-      .should('be.visible')
-  })
 })

@@ -15,19 +15,55 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 describe('Header Component', () => {
-  it('test username@host', () => {
+  it('Displays server owner user input and is disabled in single-user mode', () => {
+    cy.visit('/#/')
     cy
-      .visit('/#/')
-      .get('.c-environment-info')
-      .should('exist')
+      .get('#cylc-owner-combobox')
+      .should('be.disabled')
+  })
+})
+
+describe('Header Component multiuser', () => {
+  beforeEach(() => {
+    cy.intercept('/userprofile', {
+      body: {
+        name: 'userTest',
+        groups: [
+          'cylc',
+          'developer'
+        ],
+        created: '2021-03-23T23:26:23.606Z',
+        admin: true,
+        server: '/user/cylc/',
+        permissions: [
+        ],
+        mode: 'multi user',
+        owner: 'userTest'
+      }
+    }).as('test-data-server-owner-input')
+    cy.visit('/#/')
+  })
+
+  it('Displays server owner user input and is not disabled in multi-user mode', () => {
+    cy.wait('@test-data-server-owner-input')
+      .get('#cylc-owner-combobox')
+      .should('not.be.disabled')
+      .type('123{enter}')
+      .get('.v-combobox__content').contains('userTest')
+      .get('.v-combobox__content').contains('userTest123')
+  })
+
+  it('Displays deployment input and is not disabled in multi-user mode', () => {
+    cy.wait('@test-data-server-owner-input')
+      .get('#cylc-deployment-combobox')
+      .should('not.be.disabled')
+      .type('abc{enter}')
+      .get('.v-combobox__content').contains(/localhost:\d{4,5}/)
+      .get('.v-combobox__content').contains(/localhost:\d{4,5}abc/)
+  })
+  it('Displays go button', () => {
+    cy.wait('@test-data-server-owner-input')
+      .get('.v-btn')
       .should('be.visible')
-      .get('#username.v-chip')
-      .should('exist')
-      .should('be.visible')
-      .contains('user')
-      .get('#host.v-chip')
-      .should('exist')
-      .should('be.visible')
-      .contains(/localhost:\d{4,5}/)
   })
 })
