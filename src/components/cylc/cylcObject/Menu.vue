@@ -199,7 +199,7 @@ export default {
     ...mapState('user', ['user']),
 
     displayMutations () {
-      if (!this.mutations.length || this.user.permissions.length < 2) {
+      if (!this.mutations.length) {
         return []
       }
       const shortList = this.primaryMutations
