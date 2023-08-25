@@ -152,8 +152,6 @@ export default [
     name: 'noAuth',
     meta: {
       layout: 'noAuth',
-      toolbar: false,
-      showSidebar: true
     },
   }
 ]
