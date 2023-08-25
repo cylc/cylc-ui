@@ -35,4 +35,21 @@ describe('URL handling', () => {
         expect(url.endsWith('?a=1&b=2')).to.be.true
       })
   })
+
+  it('reroutes to noAuth page if user isnt authorised', () => {
+    cy.intercept('/userprofile', {
+      body: {
+        name: 'user',
+        groups: ['cylc', 'developer'],
+        created: '2021-03-23T23:26:23.606Z',
+        admin: true,
+        server: '/user/cylc/',
+        permissions: [],
+        mode: 'single user',
+        owner: 'user'
+      }
+    })
+    cy.visit('/#').get('#app')
+    cy.url().should('contain', 'noAuth')
+  })
 })

@@ -145,5 +145,13 @@ export default [
       showSidebar: false
     },
     props: true
+  },
+  {
+    path: '/noAuth',
+    view: 'NoAuth',
+    name: 'noAuth',
+    meta: {
+      layout: 'noAuth',
+    },
   }
 ]
