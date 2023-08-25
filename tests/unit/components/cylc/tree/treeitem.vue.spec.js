@@ -131,22 +131,27 @@ describe('TreeItem component', () => {
       expect(wrapper.vm.isExpanded).to.equal(false)
     })
   })
+
   describe('children', () => {
-    it('should recursively include other TreeItem components for its children', () => {
+    it.each([
+      { manuallyExpanded: null, expected: ['CyclePoint', 'TaskProxy'] },
+      { manuallyExpanded: true, expected: ['CyclePoint', 'TaskProxy', 'Job'] },
+      { manuallyExpanded: false, expected: [] },
+    ])('recursively mounts child TreeItems if expanded ($manuallyExpanded)', ({ manuallyExpanded, expected }) => {
       const wrapper = mountFunction({
         props: {
-          node: simpleWorkflowNode
-        }
+          node: simpleWorkflowNode,
+        },
+        data: () => ({
+          manuallyExpanded,
+        }),
       })
       expect(
         wrapper.findAllComponents({ name: 'TreeItem' })
           .map((vm) => vm.props().node.node.__typename)
-      ).to.deep.equal([
-        'CyclePoint',
-        'TaskProxy',
-        'Job',
-      ])
+      ).to.deep.equal(expected)
     })
+
   // })
   // describe('mixin', () => {
   //   const sortTestsData = [

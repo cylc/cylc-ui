@@ -24,7 +24,7 @@ describe('GScan component', () => {
     beforeEach(() => {
       // should show all workflows by default
       cy.get('.treeitem:visible')
-        .should('have.length', 6)
+        .should('have.length', 5)
     })
 
     it('should filter by workflow name', () => {
@@ -57,7 +57,7 @@ describe('GScan component', () => {
         .contains('.v-list-item', 'stopped')
         .click({ force: true })
         .get('.treeitem:visible')
-        .should('have.length', 6)
+        .should('have.length', 5)
     })
 
     it('should filter by task state', () => {

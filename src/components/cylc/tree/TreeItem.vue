@@ -151,7 +151,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       </slot>
     </div>
-    <div v-show="isExpanded">
+
+    <!-- Delay rendering of child tree items until first expanded,
+    after that hide when collapsed but maintain state of children. -->
+    <div
+      v-if="renderChildren"
+      v-show="isExpanded"
+    >
       <slot name="child">
         <!-- Need v-if to prevent render of fallback content when slot is provided but is empty -->
         <template v-if="!$slots.child">
@@ -278,6 +284,11 @@ export default {
       set (value) {
         this.manuallyExpanded = value
       }
+    },
+
+    renderChildren () {
+      // Toggles to true when this.isExpanded first becomes true and doesn't get recomputed afterwards
+      return this.renderChildren || this.isExpanded
     },
 
     hasChildren () {
