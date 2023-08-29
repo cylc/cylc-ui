@@ -117,21 +117,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list>
         </v-menu>
       </v-btn>
-      <router-link
-          to="/user-profile"
-        >
-      <v-tooltip>
-        <template v-slot:activator="{ props }">
-          <v-avatar v-bind="props"
-          class="ma-8 pa-2"
-          color="blue">
-            {{userInitials}}
-          </v-avatar>
-        </template>
-        <div class="text-h5">{{this.user.username}}</div>
-        <div class="d-flex justify-space-between" ><span class="mr-4">Admin</span> <span>{{this.user.admin}}</span></div>
-      </v-tooltip>
-    </router-link>
+      <v-btn icon size="small">
+        <v-avatar color="primary" size="small">
+          {{ userInitials }}
+        </v-avatar>
+        <v-menu activator="parent">
+          <v-card :title="user.username">
+            <v-card-subtitle v-if="user.admin">
+              Admin
+            </v-card-subtitle>
+            <v-card-text>
+              <v-btn
+                to="/user-profile"
+                variant="tonal"
+                :prepend-icon="$options.icons.mdiCog"
+              >
+                Settings
+              </v-btn>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+      </v-btn>
     </template>
   </v-toolbar>
 </template>
@@ -139,6 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState } from 'vuex'
 import {
+  mdiCog,
   mdiMicrosoftXboxControllerMenu,
   mdiPause,
   mdiPlay,
@@ -250,7 +257,7 @@ export default {
       }
     },
     userInitials () {
-      return Array.from(this.user.username)[0].toUpperCase()
+      return this.user.username[0].toUpperCase()
     }
   },
 
@@ -307,6 +314,7 @@ export default {
     menu: mdiMicrosoftXboxControllerMenu,
     run: mdiPlay,
     stop: mdiStop,
+    mdiCog,
   },
 }
 </script>
