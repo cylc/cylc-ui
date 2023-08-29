@@ -37,42 +37,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </g>
       </svg>
     </div>
-    <div id="cylc-select-options" class="c-environment-info w-75 d-flex-col justify-center">
-      <v-combobox
-        class="my-3"
-        id="cylc-owner-combobox"
-        :disabled = "store.state.user.user.mode !=='multi user'"
-        bg-color="white"
-        label="server owner"
-        placeholder="server owner"
-        :default="owner"
-        :items="owners"
-        variant="outlined"
-        v-model="owner"
-        @keyup.enter="addOwner(owner)"
-      ></v-combobox>
-      <v-combobox
-        class="my-3"
-        id="cylc-deployment-combobox"
-        :disabled = "store.state.user.user.mode !=='multi user'"
-        bg-color="white"
-        label="deployment"
-        placeholder="deployment"
-        :default="deployment"
-        :items="deployments"
-        variant="outlined"
-        v-model="deployment"
-        @keyup.enter="addDeployment(deployment)"
-      ></v-combobox>
-      <v-btn
-        @click="window.location.href = url.value"
-        class="mx-12 my-2"
-        width="100"
-        color="green"
-        :hidden="isNewRoute == false || store.state.user.user.mode == 'single user'"
-      >
-        Go
-      </v-btn>
+    <div
+      id="cylc-select-options"
+      class="c-environment-info w-100 d-flex flex-column align-center px-4 row-gap-3"
+    >
+      <v-defaults-provider :defaults="{
+        VCombobox: {
+          bgColor: 'white',
+          rules: [(val) => Boolean(val) || 'Required'],
+        }
+      }">
+        <v-combobox
+          class="w-100"
+          id="cylc-owner-combobox"
+          :disabled="store.state.user.user.mode !== 'multi user'"
+          label="server owner"
+          :default="owner"
+          :items="Array.from(owners)"
+          v-model="owner"
+          @keyup.enter="owners.add(owner)"
+        />
+        <v-combobox
+          class="w-100"
+          id="cylc-deployment-combobox"
+          :disabled="store.state.user.user.mode !== 'multi user'"
+          label="deployment"
+          :default="deployment"
+          :items="Array.from(deployments)"
+          v-model="deployment"
+          @keyup.enter="deployments.add(deployment)"
+        />
+        <v-btn
+          v-if="store.state.user.user.mode !== 'single user' && isNewRoute"
+          data-cy="multiuser-go-btn"
+          :href="url"
+          variant="flat"
+          class="px-8"
+          color="green"
+        >
+          Go
+        </v-btn>
+      </v-defaults-provider>
     </div>
   </div>
 </template>
@@ -86,24 +91,18 @@ const store = useStore()
 // owner logic
 const ownerOnLoad = store.state.user.user.owner
 const owner = ref(ownerOnLoad)
-const owners = ref([ownerOnLoad])
-const addOwner = (owner) => {
-  if (owners.value.indexOf(owner) === -1) { owners.value.push(owner) }
-}
+const owners = ref(new Set([ownerOnLoad]))
 
 // deployment logic
 const deploymentOnLoad = window.location.host
 const deployment = ref(deploymentOnLoad)
-const deployments = ref([deploymentOnLoad])
-const addDeployment = (deployment) => {
-  if (deployments.value.indexOf(deployment) === -1) { deployments.value.push(deployment) }
-}
+const deployments = ref(new Set([deploymentOnLoad]))
 
 // route logic
-const url = computed(() => '//' + deployment.value + '/user/' + owner.value + 'cylc/#')
+const url = computed(() => `//${deployment.value}/user/${owner.value}/cylc/#`)
 
 const isNewRoute = computed(() => {
-  return !(deployment.value === window.location.host & owner.value === window.location.href.split('/')[4])
+  return deployment.value !== deploymentOnLoad || owner.value !== ownerOnLoad
 })
 
 </script>
