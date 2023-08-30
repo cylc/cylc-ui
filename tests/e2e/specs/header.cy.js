@@ -15,11 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 describe('Header Component', () => {
-  it('Displays server owner user input and is disabled in single-user mode', () => {
+  it('Displays read-only server info in single-user mode', () => {
     cy.visit('/#/')
-    cy
       .get('#cylc-owner-combobox')
       .should('be.disabled')
+      .get('#cylc-deployment-combobox')
+      .should('be.disabled')
+      .get('[data-cy=multiuser-go-btn]')
+      .should('not.exist')
   })
 })
 
@@ -44,26 +47,31 @@ describe('Header Component multiuser', () => {
     cy.visit('/#/')
   })
 
-  it('Displays server owner user input and is not disabled in multi-user mode', () => {
-    cy.wait('@test-data-server-owner-input')
-      .get('#cylc-owner-combobox')
-      .should('not.be.disabled')
-      .type('123{enter}')
-      .get('.v-combobox__content').contains('userTest')
-      .get('.v-combobox__content').contains('userTest123')
-  })
+  it('Displays editable server info in multi-user mode', () => {
+    cy.location('host').then((host) => {
+      cy.wait('@test-data-server-owner-input')
+        .get('#cylc-owner-combobox')
+        .should('not.be.disabled')
+        .get('[data-cy=multiuser-go-btn]')
+        .should('not.exist')
 
-  it('Displays deployment input and is not disabled in multi-user mode', () => {
-    cy.wait('@test-data-server-owner-input')
-      .get('#cylc-deployment-combobox')
-      .should('not.be.disabled')
-      .type('abc{enter}')
-      .get('.v-combobox__content').contains(/localhost:\d{4,5}/)
-      .get('.v-combobox__content').contains(/localhost:\d{4,5}abc/)
-  })
-  it('Displays go button', () => {
-    cy.wait('@test-data-server-owner-input')
-      .get('.v-btn')
-      .should('be.visible')
+      cy.get('#cylc-owner-combobox')
+        .type('123{enter}')
+        .get('.v-combobox__content').contains('userTest')
+        .get('.v-combobox__content').contains('userTest123')
+
+      cy.get('body').type('{esc}') // Closes combobox
+        .get('[data-cy=multiuser-go-btn]')
+        .should('be.visible')
+        .should('have.attr', 'href', `//${host}/user/userTest123/cylc/#`)
+
+      cy.get('#cylc-deployment-combobox')
+        .should('not.be.disabled')
+        .type('abc{enter}')
+        .get('.v-combobox__content').contains(host)
+        .get('.v-combobox__content').contains(`${host}abc`)
+        .get('[data-cy=multiuser-go-btn]')
+        .should('have.attr', 'href', `//${host}abc/user/userTest123/cylc/#`)
+    })
   })
 })
