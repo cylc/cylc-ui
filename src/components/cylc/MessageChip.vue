@@ -25,16 +25,16 @@ const props = defineProps({
   isMessage: Boolean
 })
 
-const styles = new Map([
-  ['this is a debug message', { bg: 'blue', text: 'white', weight: 'normal' }],
-  ['this is a info message', { bg: 'grey', text: 'white', weight: 'normal' }],
-  ['this is a warning message', { bg: 'yellow', text: 'black', weight: 'normal' }],
-  ['this is an error message', { bg: 'red', text: 'white', weight: 'normal' }],
-  ['this is a critical message', { bg: 'red lighten-2', text: 'black', weight: 'bold' }],
+const classMap = new Map([
+  ['this is a debug message', ''],
+  ['this is a info message', 'bg-grey'],
+  ['this is a warning message', 'bg-warning'],
+  ['this is an error message', 'bg-error'],
+  ['this is a critical message', 'bg-black font-weight-bold'],
 ])
 
-const getStyle = computed(() => {
-  return styles.get(props.level) || { bg: 'grey  lighten-2', text: 'white', weight: 'normal' }
-})
+const chipClass = computed(() => (
+  classMap.get(props.level) ?? (props.isMessage ? 'bg-grey-lighten-5' : 'bg-grey')
+))
 
 </script>
