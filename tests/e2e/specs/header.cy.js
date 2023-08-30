@@ -39,6 +39,7 @@ describe('Header Component multiuser', () => {
         admin: true,
         server: '/user/cylc/',
         permissions: [
+          'read',
         ],
         mode: 'multi user',
         owner: 'userTest'
