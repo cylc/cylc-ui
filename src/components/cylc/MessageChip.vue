@@ -4,7 +4,7 @@
       <template v-slot:activator="{ props }">
         <v-chip
           v-bind="props"
-          :class="`bg-${getStyle.bg} text-${getStyle.text} font-weight-${getStyle.weight}`"
+          :class="chipClass"
           class="ml-2 message-output"
           size="small"
         >
