@@ -263,7 +263,7 @@
           "finishedTime": "2020-11-08T22:57:41Z",
           "state": "succeeded",
           "submitNum": 4,
-          "messages": ["started", "foo", "bar", "baz", "pub", "qux", "x", "y"],
+          "messages": ["started", "foo message", "bar message", "x", "baz message", "pub message", "qux message", "y"],
           "taskProxy": {
             "outputs": [
               {"label": "foo", "message": "foo message"},
@@ -287,7 +287,7 @@
           "finishedTime": "2020-11-08T22:57:25Z",
           "state": "failed",
           "submitNum": 3,
-          "messages": ["started", "foo", "failed/ERR"],
+          "messages": ["started", "foo message", "failed/ERR"],
           "taskProxy": {
             "outputs": [
               {"label": "foo", "message": "foo message"}
