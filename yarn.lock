@@ -3661,7 +3661,7 @@ __metadata:
     vue-i18n: 9.2.2
     vue-router: 4.2.4
     vue-the-mask: 0.11.1
-    vue3-apexcharts: 1.4.1
+    vue3-apexcharts: 1.4.4
     vuetify: 3.1.7
     vuex: 4.1.0
   languageName: unknown
@@ -10565,13 +10565,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue3-apexcharts@npm:1.4.1":
-  version: 1.4.1
-  resolution: "vue3-apexcharts@npm:1.4.1"
+"vue3-apexcharts@npm:1.4.4":
+  version: 1.4.4
+  resolution: "vue3-apexcharts@npm:1.4.4"
   peerDependencies:
     apexcharts: "> 3.0.0"
     vue: "> 3.0.0"
-  checksum: 01f2da799d3ae615284ce775127b6278ebcc3060203dd3d0eb14dd6e35b5c7f4cbf6d1828343c5fc54e76442bd440abb08fbc11dca8041f52ff944d0f0649844
+  checksum: ac7948a3bd8555fa87334069f66c532601c80550278c1de0d638e2798149f40bf36709be80511fb23c7429ddd21608fe1706b438a91f2fbc8ea033db7c58e780
   languageName: node
   linkType: hard
 
