@@ -59,7 +59,7 @@
     "@vue/test-utils": "2.4.1",
     "concurrently": "8.2.0",
     "cross-fetch": "4.0.0",
-    "cypress": "12.17.4",
+    "cypress": "13.1.0",
     "cypress-vite": "1.4.2",
     "eslint": "8.48.0",
     "eslint-config-standard": "17.1.0",
