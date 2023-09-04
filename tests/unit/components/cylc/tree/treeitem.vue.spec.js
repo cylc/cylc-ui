@@ -30,6 +30,7 @@ import {
 } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import WorkflowService from '@/services/workflow.service'
+import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
 
 /**
  * Helper function for expecting TreeItem to be expanded.
@@ -113,22 +114,6 @@ describe('TreeItem component', () => {
     it('should collapse if currently expanded', async () => {
       await expandCollapseBtn.trigger('click')
       expect(wrapper).to.not.be.expanded()
-    })
-  })
-
-  describe('computed properties as workflow', () => {
-    const wrapper = mountFunction({
-      props: {
-        node: stateTotalsTestWorkflowNodes.children[0].children[0],
-        autoCollapse: true,
-        autoExpandTypes: ['workflow-part', 'workflow']
-      }
-    })
-    it('should auto collapse if the children do not branch', () => {
-      expect(wrapper.vm.autoCollapse).to.equal(true)
-    })
-    it('should be initially collapsed as its non-branching', () => {
-      expect(wrapper.vm.isExpanded).to.equal(false)
     })
   })
 
@@ -273,28 +258,21 @@ describe('GScanTreeItem', () => {
   describe('computed properties', () => {
     const wrapper = mountFunction({
       props: {
-        node: stateTotalsTestWorkflowNodes,
+        node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
       }
     })
-    it('should combine all descendant tasks', () => {
+    it('combines all descendant tasks', () => {
       expect(wrapper.vm.latestDescendantTasks.submitted.length).to.equal(10)
       expect(wrapper.vm.latestDescendantTasks.running.length).to.equal(10)
     })
-    it('should combine all descendant task totals', () => {
+    it('combines all descendant task totals', () => {
       expect(wrapper.vm.descendantTaskTotals.submitted).to.equal(5)
       expect(wrapper.vm.descendantTaskTotals.running).to.equal(12)
     })
-    it('should get the lowest only-child', () => {
-      expect(wrapper.vm.lastSingleDescendant.id).to.equal('~cylc/double/mid')
-    })
-    // note this only generates a label until the first branch it encounters when recursing
-    it('should get the correct label as a parent', () => {
-      expect(wrapper.vm.collapsedLabel).to.equal('double/mid')
-    })
-    it('should not auto collapse if the children branch', () => {
-      expect(wrapper.vm.autoCollapse).to.equal(false)
-    })
-    it('should be initially expanded', () => {
+    it('collapses to the lowest only-child', () => {
+      expect(wrapper.vm.node.id).to.equal('~cylc/double/mid')
+      expect(wrapper.vm.node.name).to.equal('double/mid')
+      // This should be expanded initially as it contains multiple workflows
       expect(wrapper.vm.$refs.treeItem.isExpanded).to.equal(true)
     })
   })

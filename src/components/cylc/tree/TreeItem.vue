@@ -231,10 +231,6 @@ export default {
       type: Number,
       default: 0
     },
-    autoCollapse: {
-      type: Boolean,
-      default: false,
-    },
     renderExpandCollapseBtn: {
       type: Boolean,
       default: true,
@@ -279,7 +275,7 @@ export default {
   computed: {
     isExpanded: {
       get () {
-        return this.manuallyExpanded ?? (!this.autoCollapse && this.autoExpandTypes.includes(this.node.type))
+        return this.manuallyExpanded ?? this.autoExpandTypes.includes(this.node.type)
       },
       set (value) {
         this.manuallyExpanded = value

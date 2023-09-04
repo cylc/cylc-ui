@@ -20,11 +20,11 @@ import {
 } from '@/components/cylc/common/sort'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 
-/* Return an integer suitable for alphabetical sorting of workflow states.
+/**
+ * Return an integer suitable for alphabetical sorting of workflow states.
  *
  * This looks at all workflows contained in this tree and returns a status
  * value for it as defined in WORKFLOW_STATE_ORDER.
- *
  */
 export function getWorkflowTreeSortValue (node) {
   if (node.type === 'workflow') {
@@ -35,7 +35,7 @@ export function getWorkflowTreeSortValue (node) {
   let item
   const stack = [...node.children]
   while (
-    ret !== WorkflowStateOrder.get(WorkflowState.RUNNING.name) &&
+    ret > WorkflowStateOrder.get(WorkflowState.RUNNING.name) &&
     stack.length
   ) {
     // NOTE: if one workflow is running (top sort order) then we don't
@@ -53,35 +53,52 @@ export function getWorkflowTreeSortValue (node) {
   return ret
 }
 
-/* Return a string suitable for alphabetical sorting of workflows
+/**
+ * Return a string suitable for alphabetical sorting of workflows
  *
  * Sorts workflows by:
  * 1) State
- * 2) Type (i.e. sort "workflow-part" before "workflow")
- * 3) ID
+ * 2) ID
  */
 function gscanWorkflowCompValue (node) {
-  const typeValue = node.type === 'workflow-part' ? 'a' : 'z'
-  return `${getWorkflowTreeSortValue(node)}_${typeValue}_${node.id}`
+  return `${getWorkflowTreeSortValue(node)}_${node.id}`
 }
 
-/* Returns a sorted list of top-level workflows / workflow-parts.
+/**
+ * Returns a sorted list of top-level workflows / workflow-parts.
  *
  * Sorts according to getWorkflowTreeSortValue.
  */
 export function sortedWorkflowTree (cylcTree) {
   const tree = []
-  for (const workflowTree of cylcTree.children[0].children) {
+  for (let node of cylcTree.children[0].children) {
+    node = flattenWorkflowParts(node)
     // insert this workflow / workflow-part in sort order
     tree.splice(
-      sortedIndexBy(
-        tree,
-        workflowTree,
-        (n) => gscanWorkflowCompValue(n)
-      ),
+      sortedIndexBy(tree, node, gscanWorkflowCompValue),
       0,
-      workflowTree
+      node
     )
   }
   return tree
+}
+
+/**
+ * Flatten workflow-parts nodes that only have 1 child.
+ *
+ * E.g. foo, containing only run1, becomes foo/run1
+ *
+ * @param {Object} node
+ * @returns {Object} flattened node, or the original node if it has multiple children.
+ */
+export function flattenWorkflowParts (node) {
+  if (node.type === 'workflow-part' && node.children.length === 1) {
+    const child = node.children[0]
+    return flattenWorkflowParts({
+      ...child,
+      name: child.id.substring(node.parent.length + 1), // (parent ID doesn't include slash so add 1)
+      parent: node.parent,
+    })
+  }
+  return node
 }

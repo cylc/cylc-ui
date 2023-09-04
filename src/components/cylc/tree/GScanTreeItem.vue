@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <TreeItem
-    v-bind="{ node, depth, hoverable, autoCollapse }"
+    v-bind="{ node, depth, hoverable }"
     :auto-expand-types="$options.nodeTypes"
     :render-expand-collapse-btn="node.type !== 'workflow'"
     :indent="18"
@@ -25,9 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <template v-slot="{ isExpanded }">
       <WorkflowIcon
-        v-if="autoCollapse && !isExpanded"
-        :status="lastSingleDescendant.node.status"
-        v-cylc-object="lastSingleDescendant"
+        v-if="node.type === 'workflow'"
+        :status="node.node.status"
+        v-cylc-object="node"
         :class="nodeClass"
         class="flex-shrink-0"
         style="margin: 0 2px;"
@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-if="node.type === 'workflow-part'"
             class="c-gscan-workflow-name"
           >
-            <span>{{ isExpanded ? (node.name || node.id) : collapsedLabel }}</span>
+            <span>{{ node.name || node.id }}</span>
           </v-col>
           <v-col
             v-else-if="node.type === 'workflow'"
@@ -134,11 +134,6 @@ export default {
   },
 
   computed: {
-    /** Auto collapse if there is only 1 leaf workflow node. */
-    autoCollapse () {
-      return this.lastSingleDescendant.type === 'workflow'
-    },
-
     workflowLink () {
       return this.node.type === 'workflow'
         ? `/workspace/${ this.node.tokens.workflow }`
@@ -198,23 +193,6 @@ export default {
       return tasks
     },
 
-    /** Last descendant node that is the only child of its parent. */
-    lastSingleDescendant () {
-      let currentNode = this.node
-      while (currentNode.children?.length === 1 && currentNode.type === 'workflow-part') {
-        currentNode = currentNode.children[0]
-      }
-      return currentNode
-    },
-
-    /** ID of collapsed node down to last descendant that is an only child. */
-    collapsedLabel () {
-      if (!this.node.parent) return undefined
-      return this.lastSingleDescendant.id.substring(
-        this.node.parent.length + 1 // (parent ID doesn't include slash so add 1)
-      )
-    },
-
     nodeChildren () {
       return this.node.type === 'workflow'
         ? []
@@ -223,7 +201,7 @@ export default {
 
     nodeClass () {
       return {
-        'c-workflow-stopped': this.lastSingleDescendant?.node?.status === WorkflowState.STOPPED.name,
+        'c-workflow-stopped': this.node.node?.status === WorkflowState.STOPPED.name,
       }
     }
   },
