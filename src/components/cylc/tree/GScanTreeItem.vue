@@ -37,24 +37,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :class="nodeClass"
         class="flex-grow-1 flex-shrink-1 px-2 ml-1"
       >
-        <v-row class="align-center align-content-center flex-nowrap">
-          <v-col
-            v-if="node.type === 'workflow-part'"
-            class="c-gscan-workflow-name"
-          >
-            <span>{{ node.name || node.id }}</span>
-          </v-col>
-          <v-col
-            v-else-if="node.type === 'workflow'"
-            class="c-gscan-workflow-name"
-          >
+        <div class="d-flex align-center align-content-center flex-nowrap">
+          <div class="c-gscan-workflow-name flex-grow-1">
             <span>
-              {{ node.name }}
-              <v-tooltip location="top">{{ node.id }}</v-tooltip>
+              {{ node.name || node.id }}
+              <v-tooltip
+                location="top"
+                style="overflow-wrap: anywhere;"
+              >
+                {{ node.id }}
+              </v-tooltip>
             </span>
-          </v-col>
+          </div>
           <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
-          <v-col
+          <div
             v-if="!isExpanded || node.type === 'workflow'"
             class="d-flex text-right c-gscan-workflow-states flex-grow-0"
           >
@@ -70,10 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               style="font-size: 120%; width: auto;"
             >
               <Job :status="state" />
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
+              <v-tooltip location="top">
                 <!-- tooltip text -->
                 <div class="text-grey-lighten-1">
                   {{ countTasksInState(descendantTaskTotals, state) }} {{ state }}. Recent {{ state }} tasks:
@@ -83,8 +76,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </div>
               </v-tooltip>
             </div>
-          </v-col>
-        </v-row>
+          </div>
+        </div>
       </v-list-item>
     </template>
 
