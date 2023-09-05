@@ -83,7 +83,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             @tree-item-destroyed="onTreeItemDestroyed"
             @tree-item-expanded="onTreeItemExpanded"
             @tree-item-collapsed="onTreeItemCollapsed"
-            @tree-item-clicked="onTreeItemClicked"
           >
           </component>
         </v-container>
@@ -150,7 +149,6 @@ export default {
   data () {
     return {
       treeItemCache: {},
-      activeCache: new Set(),
       expandedCache: new Set(),
       expanded: true,
       expandedFilter: null,
@@ -303,27 +301,7 @@ export default {
       // make sure the item is removed from all caches, otherwise we will have a memory leak
       delete this.treeItemCache[treeItem.$props.node.id]
       this.expandedCache.delete(treeItem)
-      this.activeCache.delete(treeItem)
     },
-    onTreeItemClicked (treeItem) {
-      if (this.activable) {
-        if (!this.multipleActive) {
-          // only one item can be active, so make sure everything else that was active is now !active
-          for (const cached of this.activeCache) {
-            if (cached !== treeItem) {
-              cached.active = false
-            }
-          }
-          // empty cache
-          this.activeCache.clear()
-        }
-
-        treeItem.active = !treeItem.active
-        if (treeItem.active) {
-          this.activeCache.add(treeItem)
-        }
-      }
-    }
   },
 
   icons: {

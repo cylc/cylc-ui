@@ -47,7 +47,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div
           :class="nodeDataClass"
           :style="nodeDataStyle"
-          @click="nodeClicked"
         >
           <template v-if="node.type === 'cycle'">
             <!-- NOTE: cycle point nodes don't have any data associated with them
@@ -205,7 +204,6 @@ const passthroughEvents = [
   'tree-item-destroyed',
   'tree-item-expanded',
   'tree-item-collapsed',
-  'tree-item-clicked'
 ]
 
 export const defaultNodeIndent = 28 // px
@@ -369,13 +367,6 @@ export default {
       } else {
         this.$emit('tree-item-collapsed', this)
       }
-    },
-    /**
-     * Handler for when any node of the tree was clicked, except jobs.
-     * @param {event} e event
-     */
-    nodeClicked (e) {
-      this.$emit('tree-item-clicked', this)
     },
     latestJob
   },

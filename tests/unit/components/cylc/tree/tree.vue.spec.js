@@ -16,7 +16,6 @@
  */
 
 // we mount the tree to include the TreeItem component and other vuetify children components
-import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
@@ -57,39 +56,6 @@ describe('Tree component', () => {
     expect(wrapper.props().workflows[0].node.__typename).to.equal('CyclePoint')
     expect(wrapper.find('div')).to.not.equal(null)
   })
-  describe('Activable', () => {
-    it('should not activate by default', () => {
-      const wrapper = mountFunction({
-        props: {
-          workflows: simpleWorkflowTree4Nodes[0].children,
-          filterable: false
-        }
-      })
-      const treeItems = wrapper.findAllComponents({ name: 'TreeItem' })
-      const workflowTreeItem = treeItems[0]
-      // the workflow tree item node must not be active
-      const workflowTreeItemNode = workflowTreeItem.find('div.node')
-      expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
-      workflowTreeItemNode.find('.node-data').trigger('click')
-      expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
-    })
-    it('should activate correctly', async () => {
-      const wrapper = mountFunction({
-        props: {
-          workflows: simpleWorkflowTree4Nodes[0].children,
-          activable: true
-        }
-      })
-      const treeItems = wrapper.findAllComponents({ name: 'TreeItem' })
-      const workflowTreeItem = treeItems[0]
-      // the workflow tree item node must not be active
-      const workflowTreeItemNode = workflowTreeItem.find('div.node')
-      expect(workflowTreeItemNode.classes('node--active')).to.equal(false)
-      workflowTreeItemNode.find('.node-data').trigger('click')
-      await nextTick()
-      expect(workflowTreeItemNode.classes('node--active')).to.equal(true)
-    })
-  })
   describe('Filter', () => {
     describe('Default', () => {
       it('should not filter by name or state by default', () => {
@@ -126,7 +92,6 @@ describe('Tree component', () => {
         }
       })
       expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(0)
-      expect(wrapper.vm.activeCache.size).to.equal(0)
       expect(wrapper.vm.expandedCache.size).to.equal(0)
     })
     it('should add to the tree item cache', () => {
@@ -138,7 +103,6 @@ describe('Tree component', () => {
       const treeItem = createTreeItem('1', false)
       wrapper.vm.onTreeItemCreated(treeItem)
       expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
-      expect(wrapper.vm.activeCache.size).to.equal(0)
       expect(wrapper.vm.expandedCache.size).to.equal(0)
     })
     it('should remove from the tree item cache', () => {
@@ -162,7 +126,6 @@ describe('Tree component', () => {
       const treeItem = createTreeItem('1', true)
       wrapper.vm.onTreeItemCreated(treeItem)
       expect(Object.keys(wrapper.vm.treeItemCache).length).to.equal(1)
-      expect(wrapper.vm.activeCache.size).to.equal(0)
       expect(wrapper.vm.expandedCache.size).to.equal(1)
     })
     it('should remove from the expanded cache', () => {
