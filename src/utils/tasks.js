@@ -71,7 +71,8 @@ function jobMessageOutputs (jobNode) {
   const ret = []
   let messageOutput
 
-  for (const message of jobNode.node.messages || []) {
+  for (const messageString of jobNode.node.messages || []) {
+    const [level, message] = messageString.split(':')
     if (TASK_OUTPUT_NAMES.includes(message)) {
       continue
     }
@@ -88,6 +89,7 @@ function jobMessageOutputs (jobNode) {
     } else {
       // add a message to the list and make it look like an output
       ret.push({
+        level,
         label: message,
         message: `Task Message: ${message}`,
         isMessage: true

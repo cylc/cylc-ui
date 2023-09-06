@@ -42,11 +42,11 @@ const props = defineProps({
 })
 
 const classMap = new Map([
-  ['this is a debug message', ''],
-  ['this is a info message', 'bg-grey'],
-  ['this is a warning message', 'bg-warning'],
-  ['this is an error message', 'bg-error'],
-  ['this is a critical message', 'bg-black font-weight-bold'],
+  ['DEBUG', ''],
+  ['INFO', 'bg-grey'],
+  ['WARNING', 'bg-warning'],
+  ['ERROR', 'bg-error'],
+  ['CRITICAL', 'bg-black font-weight-bold'],
 ])
 
 const chipClass = computed(() => (

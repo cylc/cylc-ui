@@ -118,7 +118,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <MessageChip
               v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
               :key="`output-chip-${index}`"
-              :level="customOutput.label"
+              :level="customOutput.level"
               :message="customOutput.message"
               :isMessage="customOutput.isMessage"
               location="bottom">
