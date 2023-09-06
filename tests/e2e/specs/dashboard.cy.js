@@ -63,5 +63,6 @@ describe('Dashboard', () => {
         // https://github.com/cylc/cylc-ui/issues/334
     })
   }
+
   // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
 })

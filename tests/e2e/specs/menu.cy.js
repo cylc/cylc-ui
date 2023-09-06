@@ -16,8 +16,8 @@
  */
 
 describe('CylcObject Menu component', () => {
-  const collapsedWorkflowMenuLength = 7 // (6 mutations + "show more" btn)
-  const expandedWorkflowMenuLength = 21
+  const collapsedWorkflowMenuLength = 8 // (7 mutations + "show more" btn)
+  const expandedWorkflowMenuLength = 22
 
   beforeEach(() => {
     cy.visit('/#/workspace/one')

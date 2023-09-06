@@ -18,12 +18,18 @@ ones in. -->
 [#1355](https://github.com/cylc/cylc-ui/pull/1355) -
 Analysis view: added a box & whiskers plot layout.
 
+[#1444](https://github.com/cylc/cylc-ui/pull/1444) -
+Select user and deployment functionalities for multi-user mode and added user avatar.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.1.0 (<span actions:bind='release-date'>Upcoming</span>)__
 
 ### Enhancements
 [#1428](https://github.com/cylc/cylc-ui/pull/1428) -
 Pinned buttons to the bottom of the command edit form.
+
+[#1437](https://github.com/cylc/cylc-ui/pull/1437) -
+Add landing page for unauthorised users.
 
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.0.0 (<span actions:bind='release-date'>Released 2023-07-21</span>)__

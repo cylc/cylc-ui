@@ -73,7 +73,7 @@ jobs:
 
       - name: Test (E2E)
         if: matrix.type == 'e2e'
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         env:
           BASE_URL: http://localhost:4173/
         with:
@@ -85,7 +85,7 @@ jobs:
 
       - name: Test (component)
         if: matrix.type == 'component'
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           component: true
           browser: ${{ matrix.browser }}

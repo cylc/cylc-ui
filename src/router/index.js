@@ -72,6 +72,9 @@ router.beforeEach(async (to, from) => {
       store.dispatch('setAlert', alert)
     }
   }
+  if (!store.state.user.user.permissions.includes('read') && to.name !== 'noAuth') {
+    return { name: 'noAuth' }
+  }
 })
 
 router.beforeResolve((to, from) => {

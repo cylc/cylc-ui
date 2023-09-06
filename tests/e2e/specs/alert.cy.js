@@ -84,9 +84,8 @@ describe('Alert component', () => {
       .get('[data-cy="alert-snack"]')
       .should('contain', errorMessage)
     cy
-      .get('[data-cy="alert-snack"]')
-      .get('button')
-      .click({ force: true, multiple: true })
+      .get('[data-cy="alert-snack"] button')
+      .click()
     cy
       .get('[data-cy="alert-snack"]--active')
       .should('not.exist')

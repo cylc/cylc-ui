@@ -28,4 +28,11 @@ describe('Toolbar component', () => {
       .get('#core-app-bar')
       .should('not.exist')
   })
+  it('Contains an avatar displaying user initial', () => {
+    cy.visit('/#/workspace/one')
+    cy
+      .get('#core-app-bar')
+      .get('.v-avatar')
+      .should('have.text', 'U')
+  })
 })

@@ -37,27 +37,79 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </g>
       </svg>
     </div>
-    <div class="c-environment-info">
-      <v-chip id="username" class="text--secondary" variant="outlined">{{ user }}</v-chip>
-      <span class="at">@</span>
-      <v-chip id="host" class="text--secondary" variant="outlined">{{ environment }}</v-chip>
+    <div
+      id="cylc-select-options"
+      class="c-environment-info w-100 d-flex flex-column align-center px-4 row-gap-3"
+    >
+      <v-defaults-provider :defaults="{
+        VCombobox: {
+          bgColor: 'white',
+          rules: [(val) => Boolean(val) || 'Required'],
+        }
+      }">
+        <v-combobox
+          class="w-100"
+          id="cylc-owner-combobox"
+          :disabled="store.state.user.user.mode !== 'multi user'"
+          label="server owner"
+          :default="owner"
+          :items="Array.from(owners)"
+          v-model="owner"
+          @keyup.enter="owners.add(owner)"
+        />
+        <v-combobox
+          class="w-100"
+          id="cylc-deployment-combobox"
+          :disabled="store.state.user.user.mode !== 'multi user'"
+          label="deployment"
+          :default="deployment"
+          :items="Array.from(deployments)"
+          v-model="deployment"
+          @keyup.enter="deployments.add(deployment)"
+        />
+        <v-btn
+          v-if="store.state.user.user.mode !== 'single user' && isNewRoute"
+          data-cy="multiuser-go-btn"
+          :href="url"
+          variant="flat"
+          class="px-8"
+          color="green"
+        >
+          Go
+        </v-btn>
+      </v-defaults-provider>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  // eslint-disable-next-line vue/no-reserved-component-names
-  name: 'Header',
-  props: {
-    user: {
-      type: String,
-      default: 'guest'
-    },
-    environment: {
-      type: String,
-      default: window.location.host
-    }
-  }
-}
+<script setup>
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+// owner logic
+const ownerOnLoad = store.state.user.user.owner
+const owner = ref(ownerOnLoad)
+const owners = ref(new Set([ownerOnLoad]))
+
+// deployment logic
+const deploymentOnLoad = window.location.host
+const deployment = ref(deploymentOnLoad)
+const deployments = ref(new Set([deploymentOnLoad]))
+
+// route logic
+const url = computed(() => `//${deployment.value}/user/${owner.value}/cylc/#`)
+
+const isNewRoute = computed(() => {
+  return deployment.value !== deploymentOnLoad || owner.value !== ownerOnLoad
+})
+
 </script>
+
+<style>
+/* work around bug with v-combobox overflow https://github.com/vuetifyjs/vuetify/issues/17596 */
+  .v-combobox__selection {
+    overflow-x: hidden;
+  }
+</style>

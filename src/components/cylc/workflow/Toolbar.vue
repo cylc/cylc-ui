@@ -117,6 +117,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list>
         </v-menu>
       </v-btn>
+      <v-btn icon size="small">
+        <v-avatar color="primary" size="small">
+          {{ userInitials }}
+        </v-avatar>
+        <v-menu activator="parent">
+          <v-card :title="user.username">
+            <v-card-subtitle v-if="user.admin">
+              Admin
+            </v-card-subtitle>
+            <v-card-text>
+              <v-btn
+                to="/user-profile"
+                variant="tonal"
+                :prepend-icon="$options.icons.mdiCog"
+              >
+                Settings
+              </v-btn>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+      </v-btn>
     </template>
   </v-toolbar>
 </template>
@@ -124,6 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState } from 'vuex'
 import {
+  mdiCog,
   mdiMicrosoftXboxControllerMenu,
   mdiPause,
   mdiPlay,
@@ -233,6 +255,9 @@ export default {
           )
         )
       }
+    },
+    userInitials () {
+      return this.user.username[0].toUpperCase()
     }
   },
 
@@ -289,6 +314,7 @@ export default {
     menu: mdiMicrosoftXboxControllerMenu,
     run: mdiPlay,
     stop: mdiStop,
+    mdiCog,
   },
 }
 </script>
