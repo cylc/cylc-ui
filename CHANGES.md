@@ -25,10 +25,6 @@ Analysis view: added a box & whiskers plot layout.
 [#1428](https://github.com/cylc/cylc-ui/pull/1428) -
 Pinned buttons to the bottom of the command edit form.
 
-[#1436](https://github.com/cylc/cylc-ui/pull/1436) -
-Added colours to message chips based on message level
-
-
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.0.0 (<span actions:bind='release-date'>Released 2023-07-21</span>)__
 
