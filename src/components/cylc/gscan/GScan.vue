@@ -28,6 +28,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     > -->
       <!-- filters -->
       <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
+        <v-tooltip text="Scan filesystem (refresh workflows)">
+          <template v-slot:activator="{ props }">
+            <v-button v-bind="{ props}" @click="scanFilesystem()" class="pt-1 pr-2">
+              <v-icon size="x-large">{{ $options.icons.mdiFileFind }}</v-icon>
+            </v-button>
+          </template>
+        </v-tooltip>
         <v-text-field
           v-model="searchWorkflows"
           clearable
@@ -174,7 +181,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiFilter } from '@mdi/js'
+import { mdiFilter, mdiFileFind } from '@mdi/js'
 import TaskState, { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job.vue'
@@ -182,6 +189,7 @@ import Tree from '@/components/cylc/tree/Tree.vue'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
+import { mutate } from '@/utils/aotf'
 
 export default {
   name: 'GScan',
@@ -293,6 +301,11 @@ export default {
     }
   },
   methods: {
+
+    scanFilesystem () {
+      mutate({ name: 'scan', args: [] }, {}, this.$workflowService.apolloClient)
+    },
+
     filterWorkflows () {
       this.filteredWorkflows = filterHierarchically(
         this.workflows,
@@ -378,7 +391,8 @@ export default {
 
   // Misc options
   icons: {
-    mdiFilter
+    mdiFilter,
+    mdiFileFind
   },
   /**
    * Lists of all the possible workflow and task states
