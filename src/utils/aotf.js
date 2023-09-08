@@ -35,7 +35,7 @@ import {
   mdiDelete,
   mdiEmail,
   mdiFileDocumentOutline,
-  mdiFileFind,
+  mdiFolderRefresh,
   mdiGraph,
   mdiMinusCircleOutline,
   mdiPause,
@@ -137,7 +137,7 @@ export const mutationIcons = {
   reload: mdiReload,
   remove: mdiMinusCircleOutline,
   resume: mdiPlay,
-  scan: mdiFileFind,
+  scan: mdiFolderRefresh,
   setOutputs: mdiGraph,
   stop: mdiStop,
   trigger: mdiCursorPointer

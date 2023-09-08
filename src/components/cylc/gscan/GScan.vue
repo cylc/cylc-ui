@@ -27,25 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class=" d-flex flex-column h-100"
     > -->
       <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
-        <!-- scan -->
-        <div>
-          <!-- button to scan the filesystem -->
-          <v-tooltip text="Scan filesystem (refresh workflows)" >
-            <template v-slot:activator="{ props }"  >
-              <v-btn
-              icon
-              class="flex-grow-0 flex-column ml-2 pt-1 mr-2"
-              id="c-gscan-scan-tooltip-btn"
-              variant="text"
-              size="medium"
-              data-cy="gscan-scan-btn"
-              v-bind="{ props}"
-              @click="scanFilesystem()">
-                <v-icon size="x-large">{{ $options.icons.mdiFileFind }}</v-icon>
-              </v-btn>
-            </template>
-          </v-tooltip>
-        </div>
         <!-- filters -->
         <v-text-field
           v-model="searchWorkflows"
@@ -98,6 +79,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-list>
           </v-card>
         </v-menu>
+        <!-- scan -->
+        <div>
+          <!-- button to scan the filesystem -->
+          <v-tooltip text="Scan filesystem (refresh workflows)" >
+            <template v-slot:activator="{ props }"  >
+              <v-btn
+              icon
+              class="flex-grow-0 flex-column pt-1"
+              id="c-gscan-scan-tooltip-btn"
+              variant="text"
+              size="medium"
+              data-cy="gscan-scan-btn"
+              v-bind="{ props}"
+              @click="scanFilesystem()">
+                <v-icon size="x-large">{{ $options.icons.mdiFolderRefresh }}</v-icon>
+              </v-btn>
+            </template>
+          </v-tooltip>
+        </div>
       </div>
       <!-- data -->
       <v-progress-linear
@@ -193,7 +193,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiFilter, mdiFileFind } from '@mdi/js'
+import { mdiFilter, mdiFolderRefresh } from '@mdi/js'
 import TaskState, { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import Job from '@/components/cylc/Job.vue'
@@ -404,7 +404,7 @@ export default {
   // Misc options
   icons: {
     mdiFilter,
-    mdiFileFind
+    mdiFolderRefresh
   },
   /**
    * Lists of all the possible workflow and task states
