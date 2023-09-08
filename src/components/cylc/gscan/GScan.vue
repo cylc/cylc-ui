@@ -26,15 +26,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       type="list-item-three-line"
       class=" d-flex flex-column h-100"
     > -->
-      <!-- filters -->
       <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
-        <v-tooltip text="Scan filesystem (refresh workflows)">
-          <template v-slot:activator="{ props }">
-            <v-button v-bind="{ props}" @click="scanFilesystem()" class="pt-1 pr-2">
-              <v-icon size="x-large">{{ $options.icons.mdiFileFind }}</v-icon>
-            </v-button>
-          </template>
-        </v-tooltip>
+        <!-- scan -->
+        <div>
+          <!-- button to scan the filesystem -->
+          <v-tooltip text="Scan filesystem (refresh workflows)" >
+            <template v-slot:activator="{ props }"  >
+              <v-btn
+              icon
+              class="flex-grow-0 flex-column ml-2 pt-1 mr-2"
+              id="c-gscan-filter-tooltip-btn"
+              variant="text"
+              size="medium"
+              data-cy="gscan-filter-btn"
+              v-bind="{ props}"
+              @click="scanFilesystem()">
+                <v-icon size="x-large">{{ $options.icons.mdiFileFind }}</v-icon>
+              </v-btn>
+            </template>
+          </v-tooltip>
+        </div>
+        <!-- filters -->
         <v-text-field
           v-model="searchWorkflows"
           clearable
