@@ -241,6 +241,9 @@ describe('Analysis view', () => {
         .should('not.exist')
         .get('.apexcharts-yaxis-label')
         .should('have.length', numTasks)
+      // Need wait to prevent flaky ApolloError in Firefox when moving on to next test
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(1e3)
     })
 
     it('sorts the chart entries', () => {

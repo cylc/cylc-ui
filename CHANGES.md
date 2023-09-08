@@ -11,23 +11,29 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 -------------------------------------------------------------------------------
-## __cylc-ui-2.1.0 (<span actions:bind='release-date'>Upcoming</span>)__
+## __cylc-ui-2.2.0 (<span actions:bind='release-date'>Upcoming</span>)__
+
+### Fixes
+
+[#1434](https://github.com/cylc/cylc-ui/pull/1434) -
+Small accessibility/appearance improvements.
+
+-------------------------------------------------------------------------------
+## __cylc-ui-2.1.0 (<span actions:bind='release-date'>Released 2023-09-07</span>)__
 
 ### Enhancements
 
 [#1355](https://github.com/cylc/cylc-ui/pull/1355) -
 Analysis view: added a box & whiskers plot layout.
 
+[#1444](https://github.com/cylc/cylc-ui/pull/1444) -
+Select user and deployment functionalities for multi-user mode and added user avatar.
+
 [#1428](https://github.com/cylc/cylc-ui/pull/1428) -
 Pinned buttons to the bottom of the command edit form.
 
 [#1437](https://github.com/cylc/cylc-ui/pull/1437) -
 Add landing page for unauthorised users.
-
-### Fixes
-
-[#1434](https://github.com/cylc/cylc-ui/pull/1434) -
-Small accessibility/appearance improvements.
 
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.0.0 (<span actions:bind='release-date'>Released 2023-07-21</span>)__
