@@ -35,10 +35,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-btn
               icon
               class="flex-grow-0 flex-column ml-2 pt-1 mr-2"
-              id="c-gscan-filter-tooltip-btn"
+              id="c-gscan-scan-tooltip-btn"
               variant="text"
               size="medium"
-              data-cy="gscan-filter-btn"
+              data-cy="gscan-scan-btn"
               v-bind="{ props}"
               @click="scanFilesystem()">
                 <v-icon size="x-large">{{ $options.icons.mdiFileFind }}</v-icon>
