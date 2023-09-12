@@ -65,9 +65,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </div>
                 <div class="mr-2">
                   <Job
-                    v-cylc-object="item.value.task"
+                    v-cylc-object="item.value.latestJob"
                     :status="item.value.latestJob?.node?.state"
                     :previous-state="item.value.previousJob?.node?.state"
+                    :style="{ visibility: item.value.latestJob ? 'visible': 'hidden' }"
                   />
                 </div>
                 <div>{{ item.value.task.name }}</div>
