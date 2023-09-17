@@ -80,7 +80,7 @@
     "nodemon": "3.0.1",
     "nyc": "15.1.0",
     "sass": "1.66.1",
-    "sinon": "15.2.0",
+    "sinon": "16.0.0",
     "standard": "17.1.0",
     "vite": "4.4.9",
     "vite-plugin-eslint": "1.8.1",
