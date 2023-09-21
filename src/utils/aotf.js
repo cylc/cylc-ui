@@ -35,7 +35,6 @@ import {
   mdiDelete,
   mdiEmail,
   mdiFileDocumentOutline,
-  mdiFolderRefresh,
   mdiGraph,
   mdiMinusCircleOutline,
   mdiPause,
@@ -137,7 +136,6 @@ export const mutationIcons = {
   reload: mdiReload,
   remove: mdiMinusCircleOutline,
   resume: mdiPlay,
-  scan: mdiFolderRefresh,
   setOutputs: mdiGraph,
   stop: mdiStop,
   trigger: mdiCursorPointer
@@ -763,12 +761,12 @@ export function constructMutation (mutation) {
   // the scan mutation has no arguments
   if (!mutation.args.length) {
     return dedent`
-    mutation ${mutation.name} {
-      ${mutation.name} {
-        result
+      mutation ${mutation.name} {
+        ${mutation.name} {
+          result
+        }
       }
-    }
-  `.trim()
+    `.trim()
   }
 
   const argNames = []
