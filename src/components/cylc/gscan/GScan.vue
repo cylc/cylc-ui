@@ -80,24 +80,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-card>
         </v-menu>
         <!-- scan -->
-        <div>
-          <!-- button to scan the filesystem -->
-          <v-tooltip text="Scan filesystem (refresh workflows)" >
-            <template v-slot:activator="{ props }"  >
-              <v-btn
-              icon
-              class="flex-grow-0 flex-column pt-1"
-              id="c-gscan-scan-tooltip-btn"
-              variant="text"
-              size="medium"
-              data-cy="gscan-scan-btn"
-              v-bind="{ props}"
-              @click="scanFilesystem()">
-                <v-icon size="x-large">{{ $options.icons.mdiFolderRefresh }}</v-icon>
-              </v-btn>
-            </template>
-          </v-tooltip>
-        </div>
+        <v-btn
+          icon
+          id="c-gscan-scan-tooltip-btn"
+          variant="text"
+          size="small"
+          data-cy="gscan-scan-btn"
+          @click="scanFilesystem()"
+        >
+          <v-icon size="x-large">{{ $options.icons.mdiFolderRefresh }}</v-icon>
+          <v-tooltip text="Refresh workflows list" />
+        </v-btn>
       </div>
       <!-- data -->
       <v-progress-linear
