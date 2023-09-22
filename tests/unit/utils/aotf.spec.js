@@ -603,6 +603,19 @@ describe('aotf (Api On The Fly)', () => {
         }
       `.trim())
     })
+    it('handles mutation objects with no arguments', () => {
+      const mutation = {
+        name: 'MyMutation',
+        args: []
+      }
+      expect(aotf.constructMutation(mutation)).to.equal(dedent`
+        mutation MyMutation {
+          MyMutation {
+            result
+          }
+        }
+      `.trim())
+    })
   })
 
   describe('getMutationArgsFromTokens', () => {
