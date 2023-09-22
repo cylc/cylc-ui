@@ -94,7 +94,7 @@ const Job = (props, context) => {
 Job.props = {
   status: {
     type: String,
-    required: false,
+    required: true,
   },
   previousState: {
     type: String,
