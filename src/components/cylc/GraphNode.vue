@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <!-- the cycle point -->
       <text
-        x="180" y="105"
+        x="180" y="115"
         font-size="30"
       >
         {{ task.tokens.cycle }}
@@ -174,7 +174,7 @@ export default {
       if (this.jobs.length) {
         return ''
       }
-      return 'translate(0, 15)'
+      return 'translate(0, 14)'
     },
     previousJobOffset () {
       // the most recent job is larger so all subsequent jobs need to be bumped
