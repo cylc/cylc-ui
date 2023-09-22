@@ -69,30 +69,20 @@ function latestJob (taskProxy) {
  */
 function jobMessageOutputs (jobNode) {
   const ret = []
-  let messageOutput
 
   for (const message of jobNode.node.messages || []) {
     if (TASK_OUTPUT_NAMES.includes(message)) {
       continue
     }
-    messageOutput = null
-    for (const output of jobNode.node.taskProxy?.outputs || []) {
-      if (message === output.label) {
-        messageOutput = output
-        break
-      }
-    }
-    if (messageOutput) {
-      // add an output to the list
-      ret.push(messageOutput)
-    } else {
-      // add a message to the list and make it look like an output
-      ret.push({
-        label: message,
-        message: `Task Message: ${message}`,
-        isMessage: true
-      })
-    }
+    const messageOutput = jobNode.node.taskProxy?.outputs?.find(
+      (output) => message === output.message
+    )
+    ret.push({
+      level: undefined, // TODO: https://github.com/cylc/cylc-ui/pull/1436
+      label: messageOutput?.label ?? message,
+      message: messageOutput?.message ?? `Task message: ${message}`,
+      isMessage: !messageOutput,
+    })
   }
   return ret
 }

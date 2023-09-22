@@ -16,7 +16,7 @@
  */
 
 import TaskState from '@/model/TaskState.model'
-import { dtMean, extractGroupState, latestJob, formatDuration } from '@/utils/tasks'
+import { dtMean, extractGroupState, latestJob, formatDuration, jobMessageOutputs } from '@/utils/tasks'
 
 describe('tasks', () => {
   describe('extractGroupState', () => {
@@ -36,6 +36,7 @@ describe('tasks', () => {
         expect(groupState).to.equal(val[0])
       })
     })
+
     it('should return the correct state for the node groups when stopped', () => {
       [
         [
@@ -52,10 +53,12 @@ describe('tasks', () => {
         expect(groupState).to.equal(val[0])
       })
     })
+
     it('should return empty when no states provided', () => {
       expect(extractGroupState([])).to.equal('')
     })
   })
+
   describe.each([
     {
       taskProxy: null,
@@ -85,6 +88,7 @@ describe('tasks', () => {
       expect(latestJob(taskProxy)).to.equal(expected)
     })
   })
+
   describe('dtMean', () => {
     it('should format seconds to nice isodatetime format', () => {
       const tests = [
@@ -146,6 +150,7 @@ describe('tasks', () => {
       })
     })
   })
+
   describe('formatDuration', () => {
     it('should format seconds to nice isodatetime format', () => {
       expect(formatDuration(null)).to.equal(undefined)
@@ -166,6 +171,40 @@ describe('tasks', () => {
       expect(formatDuration(42)).to.equal('00:00:42')
       expect(formatDuration(42, false)).to.equal('00:00:42')
       expect(formatDuration(42, true)).to.equal('00:00:42')
+    })
+  })
+
+  describe('jobMessageOutputs()', () => {
+    it('returns expected value for outputs vs ordinary messages', () => {
+      const jobNode = {
+        node: {
+          messages: [
+            'chilbolton',
+            'larkhill',
+          ],
+          taskProxy: {
+            outputs: [{
+              label: 'my-output',
+              message: 'chilbolton',
+            }]
+          }
+        }
+      }
+
+      expect(jobMessageOutputs(jobNode)).toEqual([
+        {
+          level: undefined,
+          label: 'my-output',
+          message: 'chilbolton',
+          isMessage: false,
+        },
+        {
+          level: undefined,
+          label: 'larkhill',
+          message: 'Task message: larkhill',
+          isMessage: true,
+        },
+      ])
     })
   })
 })
