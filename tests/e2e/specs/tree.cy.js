@@ -163,17 +163,16 @@ describe('Tree view', () => {
       .should('be.visible')
 
       // the first job should have 5 outputs (the maximum number we display)
-      .first()
+      .first().as('firstJobNode')
       .find('.message-output')
       .should('have.length', 5)
 
       // the remainder should be referenced in an overflow counter +2
-      .parent()
+      .get('@firstJobNode')
+      .find('[data-cy=chip-overflow]')
       .contains('+2')
-      .parent()
-      .parent()
-      .parent()
-      .parent()
+      .parents('.treeitem')
+      .first()
 
       // expand the job details node
       .find('.node-expand-collapse-button')
