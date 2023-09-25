@@ -156,10 +156,18 @@ class WorkflowService {
   async loadTypes () {
     // TODO: this assumes all workflows use the same schema which is and
     //       isn't necessarily true, not quite sure, come back to this later.
-    const response = await this.apolloClient.query({
-      query: getIntrospectionQuery(),
-      fetchPolicy: 'no-cache'
-    })
+    let response = null
+    try {
+      response = await this.apolloClient.query({
+        query: getIntrospectionQuery(),
+        fetchPolicy: 'no-cache'
+      })
+    } catch (err) {
+      console.error(err)
+      console.log('retrying')
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      return this.loadTypes()
+    }
     const mutations = response.data.__schema.mutationType.fields
     const queries = response.data.__schema.queryType.fields
     const { types } = response.data.__schema
