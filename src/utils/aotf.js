@@ -758,6 +758,17 @@ export function argumentSignature (arg) {
  * @returns {string} A mutation string for a client to send to the server.
  */
 export function constructMutation (mutation) {
+  // the scan mutation has no arguments
+  if (!mutation.args.length) {
+    return dedent`
+      mutation ${mutation.name} {
+        ${mutation.name} {
+          result
+        }
+      }
+    `.trim()
+  }
+
   const argNames = []
   const argTypes = []
   for (const arg of mutation.args) {

@@ -10,6 +10,15 @@ creating a new release entry be sure to copy & paste the span tag with the
 `actions:bind` attribute, which is used by a regex to find the text to be
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
+
+-------------------------------------------------------------------------------
+## __cylc-ui-2.2.0 (<span actions:bind='release-date'>Upcoming</span>)__
+
+### Enhancements
+
+[#1472](https://github.com/cylc/cylc-ui/pull/1472) -
+Added GScan refresh button
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.1.0 (<span actions:bind='release-date'>Released 2023-09-07</span>)__
 
