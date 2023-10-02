@@ -72,28 +72,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           }"
         >
           <v-btn-toggle
-            v-model="table"
+            v-model="chartType"
             mandatory
             variant="outlined"
             color="primary"
           >
             <v-btn
-              :value="true"
+              :value="'table'"
               data-cy="table-toggle"
             >
               <v-icon :icon="$options.icons.mdiTable" />
               <v-tooltip>Table view</v-tooltip>
             </v-btn>
             <v-btn
-              :value="false"
+              :value="'box'"
               data-cy="box-plot-toggle"
             >
               <v-icon :icon="$options.icons.mdiChartTimeline" />
               <v-tooltip>Box &amp; whiskers view</v-tooltip>
             </v-btn>
+            <v-btn
+              :value="'timeSeries'"
+              data-cy="time-series-toggle"
+            >
+              <v-icon :icon="$options.icons.mdiChartTimelineVariant" />
+              <v-tooltip>Time series view</v-tooltip>
+            </v-btn>
           </v-btn-toggle>
           <v-btn
-            @click="historicalQuery"
+            @click="tasksQuery"
             data-cy="analysis-refresh-btn"
           >
             <v-icon :icon="$options.icons.mdiRefresh" />
@@ -103,13 +110,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-defaults-provider>
       </div>
       <AnalysisTable
-        v-if="table"
+        v-if="chartType === 'table'"
         :tasks="filteredTasks"
         :timing-option="timingOption"
       />
       <BoxPlot
-        v-else
+        v-else-if="chartType === 'box'"
         :tasks="filteredTasks"
+        :timing-option="timingOption"
+        sort-input-teleport-target="#analysis-toolbar"
+      />
+      <TimeSeries
+        v-else-if="chartType === 'timeSeries'"
+        :workflowIDs="workflowIDs"
+        :tasks="uniqueTasks"
         :timing-option="timingOption"
         sort-input-teleport-target="#analysis-toolbar"
       />
@@ -127,12 +141,14 @@ import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
+import TimeSeries from '@/components/cylc/analysis/TimeSeries.vue'
 import {
   matchTask,
   platformOptions
 } from '@/components/cylc/analysis/filter'
 import {
   mdiChartTimeline,
+  mdiChartTimelineVariant,
   mdiRefresh,
   mdiTable,
 } from '@mdi/js'
@@ -160,8 +176,8 @@ const taskFields = [
 ]
 
 /** The one-off query which retrieves historical task timing statistics */
-const QUERY = gql`
-query analysisQuery ($workflows: [ID]) {
+const TASK_QUERY = gql`
+query analysisTaskQuery ($workflows: [ID]) {
   tasks(live: false, workflows: $workflows) {
     ${taskFields.join('\n')}
   }
@@ -169,7 +185,7 @@ query analysisQuery ($workflows: [ID]) {
 `
 
 /** The callback which gets called when data comes in from the query */
-class AnalysisCallback {
+class AnalysisTaskCallback {
   /**
    * @param {Object[]} tasks
    */
@@ -215,6 +231,7 @@ export default {
   components: {
     AnalysisTable,
     BoxPlot,
+    TimeSeries
   },
 
   head () {
@@ -224,13 +241,13 @@ export default {
   },
 
   beforeMount () {
-    this.historicalQuery()
+    this.tasksQuery()
   },
 
   data () {
     const tasks = []
     return {
-      callback: new AnalysisCallback(tasks),
+      callback: new AnalysisTaskCallback(tasks),
       /** Object containing all of the tasks added by the callback */
       tasks,
       tasksFilter: {
@@ -238,7 +255,7 @@ export default {
         timingOption: 'totalTimes',
         platformOption: -1,
       },
-      table: true,
+      chartType: 'table',
     }
   },
 
@@ -261,19 +278,23 @@ export default {
     timingOption () {
       return this.tasksFilter.timingOption.replace(/Times/, '')
     },
+
+    uniqueTasks () {
+      return this.tasks.map(task => task.name)
+    }
   },
 
   methods: {
     /**
-     * Run the one-off query for historical job data and pass its results
+     * Run the one-off query for historical task data and pass its results
      * through the callback
      */
-    historicalQuery: debounce(
+    tasksQuery: debounce(
       async function () {
         this.tasks = []
-        this.callback = new AnalysisCallback(this.tasks)
+        this.callback = new AnalysisTaskCallback(this.tasks)
         const ret = await this.$workflowService.query2(
-          QUERY,
+          TASK_QUERY,
           { workflows: this.workflowIDs }
         )
         this.callback.onAdded(ret.data)
@@ -284,6 +305,7 @@ export default {
 
   icons: {
     mdiChartTimeline,
+    mdiChartTimelineVariant,
     mdiRefresh,
     mdiTable,
   },
