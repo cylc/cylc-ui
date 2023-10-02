@@ -76,6 +76,14 @@
       ],
       "automerge": true,
       "schedule": ["on sunday"]
+    },
+    {
+      "groupName": "analysis view packages",
+      "matchPackageNames": [
+          "apexcharts",
+          "vue3-apexcharts"
+      ],
+      "addLabel": "analysis view"
     }
   ],
   "vulnerabilityAlerts": {
