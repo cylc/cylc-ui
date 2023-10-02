@@ -164,7 +164,7 @@ class WorkflowService {
       })
     } catch (err) {
       console.error(err)
-      console.log('retrying')
+      console.log('retrying introspection query')
       await new Promise(resolve => setTimeout(resolve, 2000))
       return this.loadTypes()
     }
