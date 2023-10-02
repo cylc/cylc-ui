@@ -83,7 +83,7 @@
           "apexcharts",
           "vue3-apexcharts"
       ],
-      "addLabel": "analysis view"
+      "addLabels": ["analysis view"]
     }
   ],
   "vulnerabilityAlerts": {
