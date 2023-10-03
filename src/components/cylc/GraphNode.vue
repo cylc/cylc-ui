@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- the job(s) -->
     <g
       transform="
-        translate(180, 115)
+        translate(180, 125)
         scale(0.3, 0.3)
       "
     >
