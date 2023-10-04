@@ -47,26 +47,70 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           rules: [(val) => Boolean(val) || 'Required'],
         }
       }">
+        <!-- Owner combobox -->
         <v-combobox
           class="w-100"
           id="cylc-owner-combobox"
           :disabled="store.state.user.user.mode !== 'multi user'"
           label="server owner"
           :default="owner"
-          :items="Array.from(owners)"
+          :items="owners"
           v-model="owner"
-          @keyup.enter="owners.add(owner)"
-        />
+          @keyup.enter="addOwner(owner)"
+        >
+          <template v-slot:selection="data">
+            <!-- HTML that describe how select should render selected items -->
+            {{ data.item.title }}
+          </template>
+          <template v-slot:item="{ item, props }">
+            <!-- HTML that describe how select should render items when the select is open -->
+            <div class="d-flex">
+              <v-list-item
+                class="flex-grow-1"
+                :title="item.title"
+                @click="props.onClick"
+                >
+              </v-list-item>
+              <button v-if="item.title != ownerOnLoad" @click="removeOwner(item.title)" class="mx-2">
+                <v-icon class="my-auto" color="pink-accent-4">
+                  {{ mdiCloseCircle }}
+                </v-icon>
+              </button>
+            </div>
+          </template>
+        </v-combobox>
+        <!-- Deployment combobox -->
         <v-combobox
           class="w-100"
           id="cylc-deployment-combobox"
           :disabled="store.state.user.user.mode !== 'multi user'"
           label="deployment"
           :default="deployment"
-          :items="Array.from(deployments)"
+          :items="deployments"
           v-model="deployment"
-          @keyup.enter="deployments.add(deployment)"
-        />
+          @keyup.enter="addDeployment(deployment)"
+        >
+          <template v-slot:selection="data">
+            <!-- HTML that describe how select should render selected items -->
+            {{ data.item.title }}
+          </template>
+          <template v-slot:item="{ item, props }">
+            <!-- HTML that describe how select should render items when the select is open -->
+            <div class="d-flex">
+              <v-list-item
+                class="flex-grow-1"
+                :title="item.title"
+                @click="props.onClick"
+                >
+              </v-list-item>
+              <button v-if="item.title != deploymentOnLoad" @click="removeDeployment(item.title)" class="mx-2">
+                <v-icon class="my-auto" color="pink-accent-4">
+                  {{ mdiCloseCircle }}
+                </v-icon>
+              </button>
+            </div>
+          </template>
+        </v-combobox>
         <v-btn
           v-if="store.state.user.user.mode !== 'single user' && isNewRoute"
           data-cy="multiuser-go-btn"
@@ -83,8 +127,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import {
+  mdiCloseCircle
+} from '@mdi/js'
 
 const store = useStore()
 
@@ -98,7 +145,41 @@ const deploymentOnLoad = window.location.host
 const deployment = ref(deploymentOnLoad)
 const deployments = ref(new Set([deploymentOnLoad]))
 
-// route logic
+onMounted(() => {
+  // Set load state for owners
+  if (!localStorage.owners) {
+    localStorage.setItem('owners', Array.from(owners.value))
+  } else {
+    owners.value = new Set(localStorage.owners.split(','))
+  }
+  // Set load state for deployments
+  if (!localStorage.deployments) {
+    localStorage.setItem('deployments', Array.from(deployments.value))
+  } else {
+    deployments.value = new Set(localStorage.deployments.split(','))
+  }
+})
+
+function addDeployment (deployment) {
+  deployments.value.add(deployment)
+  localStorage.setItem('deployments', Array.from(deployments.value))
+}
+
+function removeDeployment (deployment) {
+  deployments.value.delete(deployment)
+  localStorage.setItem('deployments', Array.from(deployments.value))
+}
+
+function addOwner (owner) {
+  owners.value.add(owner)
+  localStorage.setItem('owners', Array.from(owners.value))
+}
+
+function removeOwner (owner) {
+  owners.value.delete(owner)
+  localStorage.setItem('owners', Array.from(owners.value))
+}
+
 const url = computed(() => `//${deployment.value}/user/${owner.value}/cylc/#`)
 
 const isNewRoute = computed(() => {
