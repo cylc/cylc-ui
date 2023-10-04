@@ -65,7 +65,7 @@ export default {
       })
     },
     stripTimestamp (logLine) {
-      const regex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
+      const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
       this.match = logLine.match(regex)
       if (this.match) {
         return this.match[1]
