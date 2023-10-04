@@ -2216,6 +2216,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@yr/monotone-cubic-spline@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@yr/monotone-cubic-spline@npm:1.0.3"
+  checksum: ebc75e4d84d5b97d1d715452088ffe3cf6b3d71943433118116a2e90f17aed654b6f726868e913a49aef28645bb8afcc28580349de1ac77ad0c7dab3d991843e
+  languageName: node
+  linkType: hard
+
 "abab@npm:^2.0.6":
   version: 2.0.6
   resolution: "abab@npm:2.0.6"
@@ -2377,17 +2384,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apexcharts@npm:3.41.0":
-  version: 3.41.0
-  resolution: "apexcharts@npm:3.41.0"
+"apexcharts@npm:3.43.0":
+  version: 3.43.0
+  resolution: "apexcharts@npm:3.43.0"
   dependencies:
+    "@yr/monotone-cubic-spline": ^1.0.3
     svg.draggable.js: ^2.2.2
     svg.easing.js: ^2.0.0
     svg.filter.js: ^2.0.2
     svg.pathmorphing.js: ^0.1.3
     svg.resize.js: ^1.4.3
     svg.select.js: ^3.0.1
-  checksum: b578d2473ffeffa66026dfc9c0c7f39a40663d3b1cfdd9732cf9b6624e3e9348474a3cbdfaf5ada0924cb296f52a59a1ffc4dc3930899cdb5df690b4970a3762
+  checksum: cbe84fe4943117722008740888915568b068bad812d585b0bdc5c8746dee833e53e5114d855a27a9ba8f72d205d802c11866550b90c73f9b0d2df9753f83a8c6
   languageName: node
   linkType: hard
 
@@ -3400,7 +3408,7 @@ __metadata:
     "@vitejs/plugin-vue": 4.3.4
     "@vitest/coverage-istanbul": 0.34.4
     "@vue/test-utils": 2.4.1
-    apexcharts: 3.41.0
+    apexcharts: 3.43.0
     axios: 1.5.0
     concurrently: 8.2.1
     cross-fetch: 4.0.0
@@ -3449,7 +3457,7 @@ __metadata:
     vue-i18n: 9.4.1
     vue-router: 4.2.4
     vue-the-mask: 0.11.1
-    vue3-apexcharts: 1.4.1
+    vue3-apexcharts: 1.4.4
     vuetify: 3.1.7
     vuex: 4.1.0
   languageName: unknown
@@ -9890,13 +9898,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue3-apexcharts@npm:1.4.1":
-  version: 1.4.1
-  resolution: "vue3-apexcharts@npm:1.4.1"
+"vue3-apexcharts@npm:1.4.4":
+  version: 1.4.4
+  resolution: "vue3-apexcharts@npm:1.4.4"
   peerDependencies:
     apexcharts: "> 3.0.0"
     vue: "> 3.0.0"
-  checksum: 01f2da799d3ae615284ce775127b6278ebcc3060203dd3d0eb14dd6e35b5c7f4cbf6d1828343c5fc54e76442bd440abb08fbc11dca8041f52ff944d0f0649844
+  checksum: ac7948a3bd8555fa87334069f66c532601c80550278c1de0d638e2798149f40bf36709be80511fb23c7429ddd21608fe1706b438a91f2fbc8ea033db7c58e780
   languageName: node
   linkType: hard
 
