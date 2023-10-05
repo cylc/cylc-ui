@@ -56,17 +56,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             <template v-slot:item.task.name="{ item }">
               <div class="d-flex align-content-center flex-nowrap">
-                <div class="mr-1">
+                <div style="width: 2em;">
                   <Task
                     v-cylc-object="item.value.task"
                     :task="item.value.task.node"
                     :startTime="item.value.latestJob?.node?.startedTime"
                   />
                 </div>
-                <div class="mr-1">
+                <div style="width: 2em;">
                   <Job
-                    v-cylc-object="item.value.task"
-                    :status="item.value.latestJob?.node?.state"
+                    v-if="item.value.latestJob"
+                    v-cylc-object="item.value.latestJob"
+                    :status="item.value.latestJob.node.state"
                     :previous-state="item.value.previousJob?.node?.state"
                   />
                 </div>
@@ -101,14 +102,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               >
                 <td :colspan="3">
                   <div class="d-flex align-content-center flex-nowrap">
-                    <div class="d-flex mr-1">
+                    <div class="d-flex" style="margin-left: 2em;">
                       <Job
                         v-cylc-object="job"
                         :key="`${job.id}-summary-${index}`"
                         :status="job.node.state"
-                        style="margin-left: 1.3em;"
                       />
-                      <span class="mx-1">#{{ job.node.submitNum }}</span>
+                      <span class="ml-2">#{{ job.node.submitNum }}</span>
                     </div>
                   </div>
                 </td>

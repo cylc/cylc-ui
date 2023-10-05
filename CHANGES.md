@@ -20,6 +20,14 @@ ones in. -->
 Added GScan refresh button
 
 -------------------------------------------------------------------------------
+## __cylc-ui-2.2.0 (<span actions:bind='release-date'>Upcoming</span>)__
+
+### Fixes
+
+[#1434](https://github.com/cylc/cylc-ui/pull/1434) -
+Small accessibility/appearance improvements.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-2.1.0 (<span actions:bind='release-date'>Released 2023-09-07</span>)__
 
 ### Enhancements

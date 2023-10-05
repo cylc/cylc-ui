@@ -185,7 +185,7 @@ describe('Mutations component', () => {
     // Now type invalid input
     cy.get('.c-mutation-dialog')
       .find('.v-list-item-title')
-      .contains('workflow')
+      .contains('Workflow')
       .parent()
       .find('.v-input.v-text-field:first').as('textField')
       .find('input[type="text"]')

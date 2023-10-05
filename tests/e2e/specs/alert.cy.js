@@ -19,9 +19,6 @@ import Alert from '@/model/Alert.model'
 
 const getStore = () => cy.window().its('app.$store')
 
-const COLOR_BLACK = 'rgb(0, 0, 0)'
-const COLOR_WHITE = 'rgb(255, 255, 255)'
-
 describe('Alert component', () => {
   it('Is displayed when an alert is present in the central data store', () => {
     cy.visit('/#/')
@@ -34,43 +31,24 @@ describe('Alert component', () => {
       .get('[data-cy="alert-snack"]')
       .should('contain', errorMessage)
   })
-  it('Uses the right color for success', () => {
+  it('Uses the right colors for different alert severities', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
     getStore().then(store => {
-      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', 'success'))
-      cy.get('[data-cy="alert-snack"]').then($alertElements => {
-        const backgroundColor = window.getComputedStyle($alertElements[0])['background-color']
-        expect(backgroundColor).to.not.equal(COLOR_BLACK)
-        expect(backgroundColor).to.not.equal(COLOR_WHITE)
-      })
-      store.commit('SET_ALERT', null)
-    })
-  })
-  it('Uses the right color for warning', () => {
-    cy.visit('/#/')
-    cy.get('.c-header').should('exist')
-    getStore().then(store => {
-      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', 'warning'))
-      cy.get('[data-cy="alert-snack"]').then($alertElements => {
-        const backgroundColor = window.getComputedStyle($alertElements[0])['background-color']
-        expect(backgroundColor).to.not.equal(COLOR_BLACK)
-        expect(backgroundColor).to.not.equal(COLOR_WHITE)
-      })
-      store.commit('SET_ALERT', null)
-    })
-  })
-  it('Uses the right color for error', () => {
-    cy.visit('/#/')
-    cy.get('.c-header').should('exist')
-    getStore().then(store => {
-      cy.wrap(store).invoke('commit', 'SET_ALERT', new Alert('An alert', 'error'))
-      cy.get('[data-cy="alert-snack"]').then($alertElements => {
-        const backgroundColor = window.getComputedStyle($alertElements[0])['background-color']
-        expect(backgroundColor).to.not.equal(COLOR_BLACK)
-        expect(backgroundColor).to.not.equal(COLOR_WHITE)
-      })
-      store.commit('SET_ALERT', null)
+      cy.get('[data-cy=alert-snack]')
+        .should('not.exist')
+        .then(() => store.commit('SET_ALERT', new Alert('Success alert', 'success')))
+        .get('[data-cy=alert-snack]')
+        .find('.bg-success')
+        .should('be.visible')
+        .then(() => store.commit('SET_ALERT', new Alert('Warning alert', 'warning')))
+        .get('[data-cy=alert-snack]')
+        .find('.bg-warning')
+        .should('be.visible')
+        .then(() => store.commit('SET_ALERT', new Alert('Error alert', 'error')))
+        .get('[data-cy=alert-snack]')
+        .find('.bg-error')
+        .should('be.visible')
     })
   })
   it('Removes the alert from the central data store when it is dismissed by the user', () => {
