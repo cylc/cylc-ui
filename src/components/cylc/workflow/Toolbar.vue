@@ -188,7 +188,8 @@ export default {
       play: null,
       paused: null,
       stop: null
-    }
+    },
+    userProfile: {}
   }),
 
   computed: {
@@ -257,8 +258,26 @@ export default {
       }
     },
     userInitials () {
-      return this.user.username[0].toUpperCase()
+      return this.userProfile.initials ? this.userProfile.initials : this.user.username[0].toUpperCase()
     }
+  },
+  created () {
+    console.log('running on created')
+    // GET userProfile using fetch with error handling
+    fetch('http://localhost:5173/userprofile')
+      .then(async response => {
+        const data = await response.json()
+
+        if (!response.ok) {
+          const error = (data && data.message) || response.statusText
+          throw new Error(error)
+        }
+        this.userProfile = data
+      })
+      .catch(error => {
+        this.errorMessage = error
+        console.error('Error fetching user profile:', error)
+      })
   },
 
   watch: {
