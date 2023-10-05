@@ -298,31 +298,30 @@ export default {
       jobLog: 0, // default to displaying workflow logs
       // toggle timestamps in log files
       timestamps: true,
+      controlGroups: [
+        {
+          title: 'Log',
+          controls: [
+            {
+              title: 'Timestamps',
+              icon: mdiClockOutline,
+              action: 'toggle',
+              value: true,
+              key: 'timestamps'
+            },
+            {
+              title: 'Refresh File List',
+              icon: mdiFolderRefresh,
+              action: 'callback',
+              callback: () => { this.updateLogFileList(false) }
+            }
+          ]
+        }
+      ],
     }
   },
 
   created () {
-    this.controlGroups = [
-      {
-        title: 'Log',
-        controls: [
-          {
-            title: 'Timestamps',
-            icon: mdiClockOutline,
-            action: 'toggle',
-            value: true,
-            key: 'timestamps'
-          },
-          {
-            title: 'Refresh File List',
-            icon: mdiFolderRefresh,
-            action: 'callback',
-            callback: () => { this.updateLogFileList(false) }
-          }
-        ]
-      }
-    ]
-
     // set the ID/file if specified in initialOptions
     if (this.initialOptions?.tokens?.task) {
       this.relativeID = this.initialOptions.tokens.relative_id
