@@ -22,10 +22,60 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState } from 'vuex'
 import GScan from '@/components/cylc/gscan/GScan.vue'
-import { GSCAN_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import { getPageTitle } from '@/utils/index'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import gql from 'graphql-tag'
+
+const QUERY = gql`
+subscription App {
+  deltas {
+    ...Deltas
+  }
+}
+
+fragment Deltas on Deltas {
+  id
+  added {
+    ...AddedDelta
+  }
+  updated (stripNull: true) {
+    ...UpdatedDelta
+  }
+  pruned {
+    workflow
+  }
+}
+
+fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment WorkflowData on Workflow {
+  id
+  status
+  statusMsg
+  owner
+  host
+  port
+  stateTotals
+  latestStateTasks(states: [
+    "failed",
+    "preparing",
+    "submit-failed",
+    "submitted",
+    "running"
+  ])
+}
+`
 
 export default {
   name: 'Workflows',
@@ -47,7 +97,7 @@ export default {
   data () {
     return {
       query: new SubscriptionQuery(
-        GSCAN_DELTAS_SUBSCRIPTION,
+        QUERY,
         {},
         'root',
         []

@@ -145,7 +145,57 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import { DASHBOARD_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+import gql from 'graphql-tag'
+
+const QUERY = gql`
+subscription App {
+  deltas {
+    ...Deltas
+  }
+}
+
+fragment Deltas on Deltas {
+  id
+  added {
+    ...AddedDelta
+  }
+  updated (stripNull: true) {
+    ...UpdatedDelta
+  }
+  pruned {
+    workflow
+  }
+}
+
+fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment WorkflowData on Workflow {
+  id
+  status
+  statusMsg
+  owner
+  host
+  port
+  stateTotals
+  latestStateTasks(states: [
+    "failed",
+    "preparing",
+    "submit-failed",
+    "submitted",
+    "running"
+  ])
+}
+`
 
 export default {
   name: 'Dashboard',
@@ -163,7 +213,7 @@ export default {
   data () {
     return {
       query: new SubscriptionQuery(
-        DASHBOARD_DELTAS_SUBSCRIPTION,
+        QUERY,
         {},
         'root',
         [],
