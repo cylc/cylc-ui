@@ -150,20 +150,16 @@ import gql from 'graphql-tag'
 const QUERY = gql`
 subscription App {
   deltas {
-    ...Deltas
-  }
-}
-
-fragment Deltas on Deltas {
-  id
-  added {
-    ...AddedDelta
-  }
-  updated (stripNull: true) {
-    ...UpdatedDelta
-  }
-  pruned {
-    workflow
+    id
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      workflow
+    }
   }
 }
 
@@ -182,18 +178,6 @@ fragment UpdatedDelta on Updated {
 fragment WorkflowData on Workflow {
   id
   status
-  statusMsg
-  owner
-  host
-  port
-  stateTotals
-  latestStateTasks(states: [
-    "failed",
-    "preparing",
-    "submit-failed",
-    "submitted",
-    "running"
-  ])
 }
 `
 
@@ -226,7 +210,6 @@ export default {
 
   computed: {
     ...mapState('user', ['user']),
-    ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
     workflows () {
       return this.getNodes('workflow')

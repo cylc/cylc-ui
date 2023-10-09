@@ -123,7 +123,15 @@ import {
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
   deltas(workflows: [$workflowId]) {
-    ...Deltas
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      ...PrunedDelta
+    }
   }
 }
 
@@ -182,18 +190,6 @@ fragment PrunedDelta on Pruned {
   edges
   taskProxies
   jobs
-}
-
-fragment Deltas on Deltas {
-  added {
-    ...AddedDelta
-  }
-  updated (stripNull: true) {
-    ...UpdatedDelta
-  }
-  pruned {
-    ...PrunedDelta
-  }
 }
 `
 

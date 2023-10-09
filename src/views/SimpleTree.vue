@@ -118,19 +118,15 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 const QUERY = gql`
 subscription SimpleTreeSubscription ($workflowId: ID) {
   deltas(workflows: [$workflowId]) {
-    ...Deltas
-  }
-}
-
-fragment Deltas on Deltas {
-  added {
-    ...AddedDelta
-  }
-  updated (stripNull: true) {
-    ...UpdatedDelta
-  }
-  pruned {
-    ...PrunedDelta
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      ...PrunedDelta
+    }
   }
 }
 

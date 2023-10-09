@@ -30,20 +30,16 @@ import gql from 'graphql-tag'
 const QUERY = gql`
 subscription App {
   deltas {
-    ...Deltas
-  }
-}
-
-fragment Deltas on Deltas {
-  id
-  added {
-    ...AddedDelta
-  }
-  updated (stripNull: true) {
-    ...UpdatedDelta
-  }
-  pruned {
-    workflow
+    id
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      workflow
+    }
   }
 }
 

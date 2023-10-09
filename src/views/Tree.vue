@@ -45,20 +45,16 @@ import gql from 'graphql-tag'
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
   deltas (workflows: [$workflowId]) {
-   ...Deltas
-  }
-}
-
-fragment Deltas on Deltas {
-  id
-  added {
-    ...AddedDelta
-  }
-  updated (stripNull: true) {
-    ...UpdatedDelta
-  }
-  pruned {
-    ...PrunedDelta
+    id
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      ...PrunedDelta
+    }
   }
 }
 
@@ -81,18 +77,25 @@ fragment AddedDelta on Added {
 }
 
 fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
+  cyclePoints: familyProxies (ids: ["*/root"]) {
+    ...CyclePointData
+  }
+  familyProxies {
+    ...FamilyProxyData
+  }
   taskProxies {
     ...TaskProxyData
   }
   jobs {
     ...JobData
   }
-  familyProxies {
-    ...FamilyProxyData
-  }
 }
 
 fragment PrunedDelta on Pruned {
+  workflow
   familyProxies
   taskProxies
   jobs
@@ -100,19 +103,6 @@ fragment PrunedDelta on Pruned {
 
 fragment WorkflowData on Workflow {
   id
-  status
-  statusMsg
-  owner
-  host
-  port
-  stateTotals
-  latestStateTasks(states: [
-    "failed",
-    "preparing",
-    "submit-failed",
-    "submitted",
-    "running"
-  ])
 }
 
 fragment CyclePointData on FamilyProxy {
