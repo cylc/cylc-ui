@@ -156,7 +156,7 @@ class WorkflowService {
   async loadTypes () {
     // TODO: this assumes all workflows use the same schema which is and
     //       isn't necessarily true, not quite sure, come back to this later.
-    let response = null
+    let response
     try {
       response = await this.apolloClient.query({
         query: getIntrospectionQuery(),
