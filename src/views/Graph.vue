@@ -135,6 +135,11 @@ subscription Workflow ($workflowId: ID) {
   }
 }
 
+fragment WorkflowData on Workflow {
+  id
+  reloaded
+}
+
 fragment EdgeData on Edge {
   id
   source
@@ -162,6 +167,9 @@ fragment JobData on Job {
 }
 
 fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
   edges {
     ...EdgeData
   }
@@ -174,6 +182,9 @@ fragment AddedDelta on Added {
 }
 
 fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
   edges {
     ...EdgeData
   }

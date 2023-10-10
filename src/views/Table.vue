@@ -89,6 +89,7 @@ fragment PrunedDelta on Pruned {
 
 fragment WorkflowData on Workflow {
   id
+  reloaded
 }
 
 fragment CyclePointData on FamilyProxy {

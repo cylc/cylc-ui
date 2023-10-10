@@ -56,6 +56,8 @@ fragment UpdatedDelta on Updated {
 }
 
 fragment WorkflowData on Workflow {
+  # NOTE: do not request the "reloaded" event here
+  # (it would cause a race condition with the workflow subscription)
   id
   status
   statusMsg
