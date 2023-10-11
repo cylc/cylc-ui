@@ -119,7 +119,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-btn>
       <v-btn icon size="small">
         <v-avatar color="primary" size="small">
-          {{ userInitials }}
+          <v-icon v-if="!this.userProfile.initials" :icon="$options.icons.mdiAccountEdit"></v-icon>
+          <div v-else>{{ this.userProfile.initials }}</div>
         </v-avatar>
         <v-menu activator="parent">
           <v-card :title="user.username">
@@ -151,7 +152,8 @@ import {
   mdiPlay,
   mdiPlusBoxMultiple,
   mdiStop,
-  mdiViewList
+  mdiViewList,
+  mdiAccountEdit
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { useToolbar, toolbarHeight } from '@/utils/toolbar'
@@ -256,9 +258,6 @@ export default {
           )
         )
       }
-    },
-    userInitials () {
-      return this.userProfile.initials ? this.userProfile.initials : this.user.username[0].toUpperCase()
     }
   },
   created () {
@@ -334,6 +333,7 @@ export default {
     run: mdiPlay,
     stop: mdiStop,
     mdiCog,
+    mdiAccountEdit
   },
 }
 </script>
