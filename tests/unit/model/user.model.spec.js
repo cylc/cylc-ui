@@ -28,6 +28,7 @@ describe('User model', () => {
       const owner = 'john.goe'
       const permissions = ['play', 'ping', 'read']
       const user = new User(name, groups, created, admin, server, owner, permissions)
+      const initials = 'jf'
       expect(user.username).to.equal(name)
       expect(user.groups.length === 2).to.equal(admin)
       expect(user.admin).to.equal(true)
@@ -35,6 +36,7 @@ describe('User model', () => {
       expect(user.server).to.equal(server)
       expect(user.owner).to.equal(owner)
       expect(user.permissions).to.equal(permissions)
+      expect(user.initials).to.equal(initials)
     })
   })
 })
