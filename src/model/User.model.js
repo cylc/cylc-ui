@@ -25,9 +25,10 @@
  * @property {string} owner - UIS owner
  * @property {string[]} permissions - list of permissions
  * @property {string} mode - single or multi user mode
+ * @property {string} initials - user initials
  */
 export default class User {
-  constructor (username, groups, created, admin, server, owner, permissions, mode) {
+  constructor (username, groups, created, admin, server, owner, permissions, mode, initials) {
     // the authenticated user
     // (full info only available when authenticated via the hub)
     this.username = username
@@ -41,5 +42,6 @@ export default class User {
     this.owner = owner
     this.permissions = permissions
     this.mode = mode
+    this.initials = initials
   }
 }

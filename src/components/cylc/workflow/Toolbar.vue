@@ -119,8 +119,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-btn>
       <v-btn icon size="small">
         <v-avatar color="primary" size="small">
-          <v-icon v-if="!this.userProfile.initials" :icon="$options.icons.mdiAccountEdit"></v-icon>
-          <div v-else>{{ this.userProfile.initials }}</div>
+          <v-icon v-if="!user.initials" :icon="$options.icons.mdiAccountEdit"></v-icon>
+          <div v-else>{{ user.initials }}</div>
         </v-avatar>
         <v-menu activator="parent">
           <v-card :title="user.username">
@@ -190,8 +190,7 @@ export default {
       play: null,
       paused: null,
       stop: null
-    },
-    userProfile: {}
+    }
   }),
 
   computed: {
@@ -259,24 +258,6 @@ export default {
         )
       }
     }
-  },
-  created () {
-    console.log('running on created')
-    // GET userProfile using fetch with error handling
-    fetch('http://localhost:5173/userprofile')
-      .then(async response => {
-        const data = await response.json()
-
-        if (!response.ok) {
-          const error = (data && data.message) || response.statusText
-          throw new Error(error)
-        }
-        this.userProfile = data
-      })
-      .catch(error => {
-        this.errorMessage = error
-        console.error('Error fetching user profile:', error)
-      })
   },
 
   watch: {
