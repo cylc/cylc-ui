@@ -123,23 +123,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import {
   mdiClose
 } from '@mdi/js'
 
+import useLocalStorage from '@/composables/useLocalStorage.js'
+
 const store = useStore()
+const {
+  itemOnLoad: ownerOnLoad,
+  item: owner,
+  items: owners,
+  addToLocalStorage: addOwner,
+  removeFromLocalStorage: removeOwner
+} = useLocalStorage('owners', store.state.user.user.owner)
 
-// owner logic
-const ownerOnLoad = store.state.user.user.owner
-const owner = ref(ownerOnLoad)
-const owners = ref(new Set([ownerOnLoad]))
-
-// deployment logic
-const deploymentOnLoad = window.location.host
-const deployment = ref(deploymentOnLoad)
-const deployments = ref(new Set([deploymentOnLoad]))
+const {
+  itemOnLoad: deploymentOnLoad,
+  item: deployment,
+  items: deployments,
+  addToLocalStorage: addDeployment,
+  removeFromLocalStorage: removeDeployment
+} = useLocalStorage('deployments', window.location.host)
 
 onMounted(() => {
   // Set load state for owners
@@ -155,26 +162,6 @@ onMounted(() => {
     deployments.value = new Set(JSON.parse(localStorage.deployments))
   }
 })
-
-function addDeployment (deployment) {
-  deployments.value.add(deployment)
-  localStorage.setItem('deployments', JSON.stringify(Array.from(deployments.value)))
-}
-
-function removeDeployment (deployment) {
-  deployments.value.delete(deployment)
-  localStorage.setItem('deployments', JSON.stringify(Array.from(deployments.value)))
-}
-
-function addOwner (owner) {
-  owners.value.add(owner)
-  localStorage.setItem('owners', JSON.stringify(Array.from(owners.value)))
-}
-
-function removeOwner (owner) {
-  owners.value.delete(owner)
-  localStorage.setItem('owners', JSON.stringify(Array.from(owners.value)))
-}
 
 const url = computed(() => `//${deployment.value}/user/${owner.value}/cylc/#`)
 
