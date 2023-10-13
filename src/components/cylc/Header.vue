@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :disabled="store.state.user.user.mode !== 'multi user'"
           label="server owner"
           :default="owner"
-          :items="owners"
+          :items="Array.from(owners)"
           v-model="owner"
           @keyup.enter="addOwner(owner)"
         >
@@ -84,7 +84,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :disabled="store.state.user.user.mode !== 'multi user'"
           label="deployment"
           :default="deployment"
-          :items="deployments"
+          :items="Array.from(deployments)"
           v-model="deployment"
           @keyup.enter="addDeployment(deployment)"
         >
