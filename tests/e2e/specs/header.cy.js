@@ -61,6 +61,11 @@ describe('Header Component multiuser', () => {
         .get('.v-combobox__content').contains('userTest')
         .get('.v-combobox__content').contains('userTest123')
 
+      // Test to see if values are in local storage
+      cy.getAllLocalStorage().then((result) => {
+        expect(JSON.parse(result['http://localhost:5173'].owners)).to.deep.equal(['userTest', 'userTest123'])
+      })
+
       cy.get('body').type('{esc}') // Closes combobox
         .get('[data-cy=multiuser-go-btn]')
         .should('be.visible')
