@@ -58,24 +58,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-model="owner"
           @keyup.enter="addOwner(owner)"
         >
-          <template v-slot:selection="data">
-            <!-- HTML that describe how select should render selected items -->
-            {{ data.item.title }}
-          </template>
           <template v-slot:item="{ item, props }">
             <!-- HTML that describe how select should render items when the select is open -->
             <div class="d-flex">
               <v-list-item
                 class="flex-grow-1"
                 :title="item.title"
-                @click="props.onClick"
+                v-bind="props"
                 >
+                <template v-slot:append v-if="item.title !== ownerOnLoad">
+                    <v-icon
+                      @click.stop="removeOwner(item.title)"
+                      color="pink-accent-4"
+                      :icon="mdiClose"
+                    />
+                </template>
               </v-list-item>
-              <button v-if="item.title != ownerOnLoad" @click="removeOwner(item.title)" class="mx-2">
-                <v-icon class="my-auto" color="pink-accent-4">
-                  {{ mdiCloseCircle }}
-                </v-icon>
-              </button>
             </div>
           </template>
         </v-combobox>
@@ -90,24 +88,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-model="deployment"
           @keyup.enter="addDeployment(deployment)"
         >
-          <template v-slot:selection="data">
-            <!-- HTML that describe how select should render selected items -->
-            {{ data.item.title }}
-          </template>
           <template v-slot:item="{ item, props }">
             <!-- HTML that describe how select should render items when the select is open -->
             <div class="d-flex">
               <v-list-item
                 class="flex-grow-1"
                 :title="item.title"
-                @click="props.onClick"
+                v-bind="props"
                 >
+                <template v-slot:append v-if="item.title !== deploymentOnLoad">
+                    <v-icon
+                      @click.stop="removeDeployment(item.title)"
+                      color="pink-accent-4"
+                      :icon="mdiClose"
+                    />
+                </template>
               </v-list-item>
-              <button v-if="item.title != deploymentOnLoad" @click="removeDeployment(item.title)" class="mx-2">
-                <v-icon class="my-auto" color="pink-accent-4">
-                  {{ mdiCloseCircle }}
-                </v-icon>
-              </button>
             </div>
           </template>
         </v-combobox>
@@ -130,7 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import {
-  mdiCloseCircle
+  mdiClose
 } from '@mdi/js'
 
 const store = useStore()
@@ -148,36 +144,36 @@ const deployments = ref(new Set([deploymentOnLoad]))
 onMounted(() => {
   // Set load state for owners
   if (!localStorage.owners) {
-    localStorage.setItem('owners', Array.from(owners.value))
+    localStorage.setItem('owners', JSON.stringify(Array.from(owners.value)))
   } else {
-    owners.value = new Set(localStorage.owners.split(','))
+    owners.value = new Set(JSON.parse(localStorage.owners))
   }
   // Set load state for deployments
   if (!localStorage.deployments) {
-    localStorage.setItem('deployments', Array.from(deployments.value))
+    localStorage.setItem('deployments', JSON.stringify(Array.from(deployments.value)))
   } else {
-    deployments.value = new Set(localStorage.deployments.split(','))
+    deployments.value = new Set(JSON.parse(localStorage.deployments))
   }
 })
 
 function addDeployment (deployment) {
   deployments.value.add(deployment)
-  localStorage.setItem('deployments', Array.from(deployments.value))
+  localStorage.setItem('deployments', JSON.stringify(Array.from(deployments.value)))
 }
 
 function removeDeployment (deployment) {
   deployments.value.delete(deployment)
-  localStorage.setItem('deployments', Array.from(deployments.value))
+  localStorage.setItem('deployments', JSON.stringify(Array.from(deployments.value)))
 }
 
 function addOwner (owner) {
   owners.value.add(owner)
-  localStorage.setItem('owners', Array.from(owners.value))
+  localStorage.setItem('owners', JSON.stringify(Array.from(owners.value)))
 }
 
 function removeOwner (owner) {
   owners.value.delete(owner)
-  localStorage.setItem('owners', Array.from(owners.value))
+  localStorage.setItem('owners', JSON.stringify(Array.from(owners.value)))
 }
 
 const url = computed(() => `//${deployment.value}/user/${owner.value}/cylc/#`)
