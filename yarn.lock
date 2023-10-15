@@ -2108,13 +2108,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:4.3.4":
-  version: 4.3.4
-  resolution: "@vitejs/plugin-vue@npm:4.3.4"
+"@vitejs/plugin-vue@npm:4.4.0":
+  version: 4.4.0
+  resolution: "@vitejs/plugin-vue@npm:4.4.0"
   peerDependencies:
     vite: ^4.0.0
     vue: ^3.2.25
-  checksum: 95bf6c85c0a7812a96a07faf3c28155624c74584448a8fe46ac93e08ebc13520fdc9eb96e2fa95bccacf23028277a9cd3210e00120dadaab25b116456ee2cc43
+  checksum: 37b6987951f2e6fac0d2b7bad58aa4392142c1f325b7d189865426dbf97ee6c545aa489f952fa16d2f422adce5b6c9977785f398868c5d2f5333e43e361a0e0b
   languageName: node
   linkType: hard
 
@@ -3553,7 +3553,7 @@ __metadata:
     "@lumino/widgets": 2.3.0
     "@mdi/js": 7.3.67
     "@unhead/vue": 1.5.0
-    "@vitejs/plugin-vue": 4.3.4
+    "@vitejs/plugin-vue": 4.4.0
     "@vitest/coverage-istanbul": 0.34.6
     "@vue/test-utils": 2.4.1
     apexcharts: 3.41.0
@@ -3596,7 +3596,7 @@ __metadata:
     standard: 17.1.0
     subscriptions-transport-ws: 0.11.0
     svg-pan-zoom: 3.6.1
-    vite: 4.4.9
+    vite: 4.4.11
     vite-plugin-eslint: 1.8.1
     vite-plugin-istanbul: 5.0.0
     vite-plugin-vuetify: 1.0.2
@@ -9935,9 +9935,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:4.4.9":
-  version: 4.4.9
-  resolution: "vite@npm:4.4.9"
+"vite@npm:4.4.11":
+  version: 4.4.11
+  resolution: "vite@npm:4.4.11"
   dependencies:
     esbuild: ^0.18.10
     fsevents: ~2.3.2
@@ -9971,7 +9971,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: c511024ceae39c68c7dbf2ac4381ee655cd7bb62cf43867a14798bc835d3320b8fa7867a336143c30825c191c1fb4e9aa3348fce831ab617e96203080d3d2908
+  checksum: c22145c8385343a629cd546054b9da6eee60327540102bdfd1ad897fd2e78e0763ce6a18a9d84fdefde9da8fd2427d3bec9eb2697b47cf4068c7b4b52f7e3e6a
   languageName: node
   linkType: hard
 

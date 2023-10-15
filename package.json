@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "3.12.3",
-    "@vitejs/plugin-vue": "4.3.4",
+    "@vitejs/plugin-vue": "4.4.0",
     "@vitest/coverage-istanbul": "0.34.6",
     "@vue/test-utils": "2.4.1",
     "concurrently": "8.2.1",
@@ -82,7 +82,7 @@
     "sass": "1.69.0",
     "sinon": "16.1.0",
     "standard": "17.1.0",
-    "vite": "4.4.9",
+    "vite": "4.4.11",
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "5.0.0",
     "vite-plugin-vuetify": "1.0.2",
