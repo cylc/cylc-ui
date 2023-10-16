@@ -60,21 +60,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <template v-slot:item="{ item, props }">
             <!-- HTML that describe how select should render items when the select is open -->
-            <div class="d-flex">
-              <v-list-item
-                class="flex-grow-1"
-                :title="item.title"
-                v-bind="props"
-                >
-                <template v-slot:append v-if="item.title !== ownerOnLoad">
-                    <v-icon
-                      @click.stop="removeOwner(item.title)"
-                      color="pink-accent-4"
-                      :icon="mdiClose"
-                    />
-                </template>
-              </v-list-item>
-            </div>
+            <v-list-item
+              :title="item.title"
+              v-bind="props"
+              >
+              <template v-slot:append v-if="item.title !== ownerOnLoad">
+                  <v-icon
+                    @click.stop="removeOwner(item.title)"
+                    color="pink-accent-4"
+                    :icon="mdiClose"
+                  />
+              </template>
+            </v-list-item>
           </template>
         </v-combobox>
         <!-- Deployment combobox -->
@@ -90,21 +87,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <template v-slot:item="{ item, props }">
             <!-- HTML that describe how select should render items when the select is open -->
-            <div class="d-flex">
-              <v-list-item
-                class="flex-grow-1"
-                :title="item.title"
-                v-bind="props"
-                >
-                <template v-slot:append v-if="item.title !== deploymentOnLoad">
-                    <v-icon
-                      @click.stop="removeDeployment(item.title)"
-                      color="pink-accent-4"
-                      :icon="mdiClose"
-                    />
-                </template>
-              </v-list-item>
-            </div>
+            <v-list-item
+              :title="item.title"
+              v-bind="props"
+              >
+              <template v-slot:append v-if="item.title !== deploymentOnLoad">
+                  <v-icon
+                    @click.stop="removeDeployment(item.title)"
+                    color="pink-accent-4"
+                    :icon="mdiClose"
+                  />
+              </template>
+            </v-list-item>
           </template>
         </v-combobox>
         <v-btn

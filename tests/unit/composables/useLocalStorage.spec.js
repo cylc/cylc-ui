@@ -14,6 +14,11 @@ describe('useLocalStorage composable', () => {
     expect(Array.from(items.value)).toStrictEqual(['test initial item', 'test item'])
   })
 
+  it('should not add more than one of the same value to the local store', () => {
+    addToLocalStorage('test item')
+    expect(Array.from(items.value)).toStrictEqual(['test initial item', 'test item'])
+  })
+
   it('should remove a value to the local store', () => {
     removeFromLocalStorage('test item')
     expect(Array.from(items.value)).toStrictEqual(['test initial item'])
