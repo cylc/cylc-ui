@@ -20,7 +20,7 @@ import axios from 'axios'
 import { createStore } from 'vuex'
 import UserService from '@/services/user.service'
 import storeOptions from '@/store/options'
-import Alert from '@/model/Alert.model'
+import { Alert } from '@/model/Alert.model'
 
 describe('UserService', () => {
   const store = createStore(storeOptions)

@@ -16,7 +16,7 @@
  */
 
 import sinon from 'sinon'
-import Alert from '@/model/Alert.model'
+import { Alert } from '@/model/Alert.model'
 
 describe('Alert model', () => {
   beforeEach(() => {

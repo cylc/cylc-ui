@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Alert from '@/model/Alert.model'
+import { Alert } from '@/model/Alert.model'
 
 const getStore = () => cy.window().its('app.$store')
 
