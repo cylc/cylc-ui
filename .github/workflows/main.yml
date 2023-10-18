@@ -51,9 +51,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        browser: [firefox, chrome]
         type: [e2e, component]
+        browser: [firefox, chrome]
+        os: [ubuntu-latest]
 # TODO: re-enable once macos build is stable #590
 #         include:
 #           - os: macos-latest
