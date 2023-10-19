@@ -118,23 +118,22 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 const QUERY = gql`
 subscription SimpleTreeSubscription ($workflowId: ID) {
   deltas(workflows: [$workflowId]) {
-    ...Deltas
-  }
-}
-
-fragment Deltas on Deltas {
-  added {
-    ...AddedDelta
-  }
-  updated (stripNull: true) {
-    ...UpdatedDelta
-  }
-  pruned {
-    ...PrunedDelta
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      ...PrunedDelta
+    }
   }
 }
 
 fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
   taskProxies {
     ...TaskProxyData
   }
@@ -144,6 +143,9 @@ fragment AddedDelta on Added {
 }
 
 fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
   taskProxies {
     ...TaskProxyData
   }
@@ -158,6 +160,14 @@ fragment PrunedDelta on Pruned {
   workflow
   taskProxies
   jobs
+}
+
+# We must always request the reloaded field whenever we are requesting things
+# within the workflow like tasks, cycles, etc as this is used to rebuild the
+# store when a workflow is reloaded or restarted.
+fragment WorkflowData on Workflow {
+  id
+  reloaded
 }
 
 # We must always request the "id" for ALL types.
