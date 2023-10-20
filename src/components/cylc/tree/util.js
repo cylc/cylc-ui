@@ -22,11 +22,12 @@ export function getNodeChildren (node, cyclePointsOrderDesc) {
     return [...node.children].reverse()
   } else if (node.type === 'cycle') {
     // display tasks in the inheritance tree
-    const rootFamily = node.familyTree[0]
-    if (!rootFamily) {
+    if (node.familyTree?.length) {
+      const rootFamily = node.familyTree[0]
+      return rootFamily.children
+    } else {
       return []
     }
-    return rootFamily.children
   }
   return node.children
 }

@@ -21,6 +21,9 @@ Added GScan refresh button
 
 ### Fixes
 
+[#1513](https://github.com/cylc/cylc-ui/pull/1513) -
+Fix a couple of issues which could cause errors in the GUI.
+
 [#1502](https://github.com/cylc/cylc-ui/pull/1502) -
 Fixed bug where toggle buttons in view toolbars would not change state.
 
