@@ -3512,9 +3512,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:8.2.1":
-  version: 8.2.1
-  resolution: "concurrently@npm:8.2.1"
+"concurrently@npm:8.2.2":
+  version: 8.2.2
+  resolution: "concurrently@npm:8.2.2"
   dependencies:
     chalk: ^4.1.2
     date-fns: ^2.30.0
@@ -3528,7 +3528,7 @@ __metadata:
   bin:
     conc: dist/bin/concurrently.js
     concurrently: dist/bin/concurrently.js
-  checksum: 216cb16d5b301cbd9c657b19430836d1686fe8fa9b9ef35ef7ac601e1a5cf6535166a3e57de446696dbd5e7e3f45d78fc70f33c5fd4bb565342cd5e752c5b069
+  checksum: 8ac774df06869773438f1bf91025180c52d5b53139bc86cf47659136c0d97461d0579c515d848d1e945d4e3e0cafe646b2ea18af8d74259b46abddcfe39b2c6c
   languageName: node
   linkType: hard
 
@@ -3680,7 +3680,7 @@ __metadata:
     "@vue/test-utils": 2.4.1
     apexcharts: 3.41.0
     axios: 1.5.1
-    concurrently: 8.2.1
+    concurrently: 8.2.2
     cross-fetch: 4.0.0
     cypress: 13.3.1
     cypress-vite: 1.4.2
@@ -3701,10 +3701,10 @@ __metadata:
     graphiql: 3.0.6
     graphql: 16.8.1
     graphql-tag: 2.12.6
-    graphql-ws: 5.14.0
+    graphql-ws: 5.14.1
     istanbul-lib-coverage: 3.2.0
     jsdom: 22.1.0
-    json-server: 0.17.3
+    json-server: 0.17.4
     lodash: 4.17.21
     markdown-it: 13.0.2
     mitt: 3.0.1
@@ -5696,12 +5696,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-ws@npm:5.14.0":
-  version: 5.14.0
-  resolution: "graphql-ws@npm:5.14.0"
+"graphql-ws@npm:5.14.1":
+  version: 5.14.1
+  resolution: "graphql-ws@npm:5.14.1"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 7b622944823fa12a77ea490656121a77e1a1daf08114a6a0b027922113f4481d95f4fe380a5de369a51657ef777d35757dc31f63e41071c21f3e97ca47e4205a
+  checksum: bf6aa9446496f11e74d5fea17672050fb02f0303c6a7bf1e2692b7ea88059a18837f437e2ec8ba3cf7bb5bc2a18dddeebe9a8c6e6036914c3776297c48c1a398
   languageName: node
   linkType: hard
 
@@ -6682,9 +6682,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-server@npm:0.17.3":
-  version: 0.17.3
-  resolution: "json-server@npm:0.17.3"
+"json-server@npm:0.17.4":
+  version: 0.17.4
+  resolution: "json-server@npm:0.17.4"
   dependencies:
     body-parser: ^1.19.0
     chalk: ^4.1.2
@@ -6704,11 +6704,10 @@ __metadata:
     please-upgrade-node: ^3.2.0
     pluralize: ^8.0.0
     server-destroy: ^1.0.1
-    standard: ^17.0.0
     yargs: ^17.0.1
   bin:
     json-server: lib/cli/bin.js
-  checksum: 615c657400eb8b0c56f8d937945820e128064b33d1281b07eb1c1b622f7930f0adfd824c06df96ef72c708799b32b9b5ffbe60823cbee17a12d1d8a85a2d31f9
+  checksum: 9462010ac0d106c0ed8cc9b5446dad7c3977c9649b6854383a0d81f2259049614cb879808a9bb6cbb3f15f48fee7263eafd26d9a7cd2d2eba61dd9d7bd89dbf4
   languageName: node
   linkType: hard
 
@@ -9137,7 +9136,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"standard@npm:17.1.0, standard@npm:^17.0.0":
+"standard@npm:17.1.0":
   version: 17.1.0
   resolution: "standard@npm:17.1.0"
   dependencies:
