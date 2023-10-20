@@ -39,7 +39,129 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
-import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
+import gql from 'graphql-tag'
+
+const QUERY = gql`
+subscription Workflow ($workflowId: ID) {
+  deltas (workflows: [$workflowId]) {
+    id
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      ...PrunedDelta
+    }
+  }
+}
+
+fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
+  cyclePoints: familyProxies (ids: ["*/root"]) {
+    ...CyclePointData
+  }
+  familyProxies {
+    ...FamilyProxyData
+  }
+  taskProxies {
+    ...TaskProxyData
+  }
+  jobs {
+    ...JobData
+  }
+}
+
+fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
+  cyclePoints: familyProxies (ids: ["*/root"]) {
+    ...CyclePointData
+  }
+  familyProxies {
+    ...FamilyProxyData
+  }
+  taskProxies {
+    ...TaskProxyData
+  }
+  jobs {
+    ...JobData
+  }
+}
+
+fragment PrunedDelta on Pruned {
+  workflow
+  familyProxies
+  taskProxies
+  jobs
+}
+
+fragment WorkflowData on Workflow {
+  id
+  reloaded
+}
+
+fragment CyclePointData on FamilyProxy {
+  __typename
+  id
+  state
+  ancestors {
+    name
+  }
+  childTasks {
+    id
+  }
+}
+
+fragment FamilyProxyData on FamilyProxy {
+  __typename
+  id
+  state
+  ancestors {
+    name
+  }
+  childTasks {
+    id
+  }
+}
+
+fragment TaskProxyData on TaskProxy {
+  id
+  state
+  isHeld
+  isQueued
+  isRunahead
+  task {
+    meanElapsedTime
+  }
+  firstParent {
+    id
+  }
+}
+
+fragment JobData on Job {
+  id
+  jobRunnerName
+  jobId
+  platform
+  startedTime
+  submittedTime
+  finishedTime
+  state
+  submitNum
+  messages
+  taskProxy {
+    outputs (satisfied: true) {
+      label
+      message
+    }
+  }
+}
+`
 
 export default {
   name: 'Tree',
@@ -70,7 +192,7 @@ export default {
     },
     query () {
       return new SubscriptionQuery(
-        WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
+        QUERY,
         this.variables,
         'workflow',
         [],

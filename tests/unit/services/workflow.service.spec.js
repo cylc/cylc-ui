@@ -15,6 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { createStore } from 'vuex'
+import storeOptions from '@/store/options'
+import CylcTreeCallback from '@/services/treeCallback'
 import sinon from 'sinon'
 import { print } from 'graphql/language'
 import gql from 'graphql-tag'
@@ -371,5 +374,59 @@ describe('WorkflowService', () => {
       service.stopSubscription(subscription)
       expect(service.subscriptions[subscription.query.name]).to.equal(undefined)
     })
+  })
+})
+
+describe('Global Callback', () => {
+  it('should wipe workflow children on reloaded deltas', () => {
+    // the callback should wipe workflow children when a "reloaded" delta is
+    // received - see https://github.com/cylc/cylc-ui/pull/1479
+
+    // initiate the store
+    const errors = {}
+    const store = createStore(storeOptions)
+    const callback = new CylcTreeCallback(store, errors)
+    const cylcTree = store.state.workflows.cylcTree
+
+    // send an added delta which adds a workflow with one task
+    const delta1 = {
+      id: 123,
+      added: {
+        id: 123,
+        workflow: { id: '~user/foo' },
+        taskProxies: { id: '~user/foo//1/a' }
+      }
+    }
+    callback.before(delta1, store, errors)
+    callback.onAdded(delta1.added, store, errors)
+
+    // the user/workflow//cycle/task should now be in the store
+    expect(Object.keys(cylcTree.$index)).to.deep.equal([
+      '~user',
+      '~user/foo',
+      '~user/foo//1',
+      '~user/foo//1/a',
+    ])
+
+    // send a reloaded delta which adds a new task
+    const delta2 = {
+      id: 234,
+      added: {
+        id: 234,
+        workflow: { id: '~user/foo', reloaded: true },
+        taskProxies: { id: '~user/foo//2/b' }
+      }
+    }
+    callback.before(delta2, store, errors)
+    callback.onUpdated(delta2.added, store, errors)
+
+    // the cycle "1" and task "1/a" should be gone from the store
+    // without the need for an explicit "pruned" delta
+    expect(Object.keys(cylcTree.$index)).to.deep.equal([
+      '~user',
+      '~user/foo',
+      '~user/foo//2',
+      '~user/foo//2/b',
+    ])
   })
 })

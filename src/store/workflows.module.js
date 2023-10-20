@@ -480,7 +480,7 @@ function remove (state, prunedID) {
     // remove family proxy node
     removeChild(state, treeNode, firstParent)
   } else {
-    if (treeNode.type === 'task') {
+    if (treeNode.type === 'task' && treeNode.node.firstParent) {
       // remove task from its primary family
       const familyNode = getIndex(state, treeNode.node.firstParent.id)
       removeChild(state, treeNode, familyNode)

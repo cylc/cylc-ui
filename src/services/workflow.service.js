@@ -329,6 +329,7 @@ class WorkflowService {
               const errors = []
 
               // run the global callback first
+              globalCallback.before(deltas, store, errors)
               globalCallback.onAdded(added, store, errors)
               globalCallback.onUpdated(updated, store, errors)
               globalCallback.onPruned(pruned, store, errors)

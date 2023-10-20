@@ -25,17 +25,31 @@ class CylcTreeCallback extends DeltasCallback {
     }
   }
 
-  tearDown (store, errors) {
-    // never tear down, this callback lives for the live of the UI
+  before (deltas, store, errors) {
+    // Wipe all child nodes from a workflow in the data store if a reloaded
+    // delta is received. Reloaded deltas are sent whenever a workflow is
+    // restarted or reloaded (note, restarting a workflow implicitly reloads
+    // it).
+    //
+    // When a workflow reloads it is hard to generate the relevant pruned
+    // and updated deltas to remove any objects which have been wiped out by
+    // the configuration change, so the easiest solution is to wipe the
+    // entire tree under the workflow and rebuild from scratch. If we don't
+    // do this, we can end up with nodes in the store which aren't meant to be
+    // there and won't get pruned.
+    if (deltas.updated?.workflow?.reloaded) {
+      store.commit('workflows/REMOVE_CHILDREN', (deltas.updated.workflow.id))
+    }
+    if (deltas.added?.workflow?.reloaded) {
+      store.commit('workflows/REMOVE_CHILDREN', (deltas.added.workflow.id))
+    }
   }
 
   onAdded (added, store, errors) {
-    // console.log('ADDED', added)
     store.commit('workflows/UPDATE_DELTAS', added)
   }
 
   onUpdated (updated, store, errors) {
-    // console.log('UPDATED', updated)
     store.commit('workflows/UPDATE_DELTAS', updated)
   }
 
@@ -43,9 +57,9 @@ class CylcTreeCallback extends DeltasCallback {
     store.commit('workflows/REMOVE_DELTAS', pruned)
   }
 
-  // this callback does not need the before and commit methods
-  before (a, b, c) {}
+  // this callback does not need the tearDown and commit methods
   commit (a, b, c) {}
+  tearDown (s, e) {}
 }
 
 export default CylcTreeCallback

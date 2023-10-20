@@ -32,8 +32,104 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-// import { WORKFLOW_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
-import { WORKFLOW_TREE_DELTAS_SUBSCRIPTION } from '../graphql/queries'
+import gql from 'graphql-tag'
+
+const QUERY = gql`
+subscription Workflow ($workflowId: ID) {
+  deltas (workflows: [$workflowId]) {
+    id
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      ...PrunedDelta
+    }
+  }
+}
+
+fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
+  cyclePoints: familyProxies (ids: ["*/root"]) {
+    ...CyclePointData
+  }
+  taskProxies {
+    ...TaskProxyData
+  }
+  jobs {
+    ...JobData
+  }
+}
+
+fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
+  cyclePoints: familyProxies (ids: ["*/root"]) {
+    ...CyclePointData
+  }
+  taskProxies {
+    ...TaskProxyData
+  }
+  jobs {
+    ...JobData
+  }
+}
+
+fragment PrunedDelta on Pruned {
+  workflow
+  familyProxies
+  taskProxies
+  jobs
+}
+
+fragment WorkflowData on Workflow {
+  id
+  reloaded
+}
+
+fragment CyclePointData on FamilyProxy {
+  __typename
+  id
+  state
+  ancestors {
+    name
+  }
+  childTasks {
+    id
+  }
+}
+
+fragment TaskProxyData on TaskProxy {
+  id
+  state
+  isHeld
+  isQueued
+  isRunahead
+  task {
+    meanElapsedTime
+  }
+  firstParent {
+    id
+  }
+}
+
+fragment JobData on Job {
+  id
+  jobRunnerName
+  jobId
+  platform
+  startedTime
+  submittedTime
+  finishedTime
+  state
+  submitNum
+}
+`
 
 export default {
   // eslint-disable-next-line vue/no-reserved-component-names
@@ -81,11 +177,7 @@ export default {
 
     query () {
       return new SubscriptionQuery(
-        // this is disabled for now as differences in the fragment names are causing the
-        // subscription to be reloaded when its merged. This will need to be re-enabled in
-        // future, if we need more information then the currently active WORKFLOW_TREE_DELTAS_SUBSCRIPTION provides
-        // WORKFLOW_TABLE_DELTAS_SUBSCRIPTION,
-        WORKFLOW_TREE_DELTAS_SUBSCRIPTION,
+        QUERY,
         this.variables,
         // we really should consider giving these unique names, as technically they are just use as the subscription names
         // By using a unique name, we can avoid callback merging errors like the one documented line 350 in the workflow.service.js file

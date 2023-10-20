@@ -77,8 +77,37 @@ import { mdiTable } from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
 import subscriptionMixin from '@/mixins/subscription'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import { WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION } from '@/graphql/queries'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
+import gql from 'graphql-tag'
+
+const QUERY = gql`
+subscription Workflow {
+  deltas {
+    id
+    added {
+      workflow {
+        ...WorkflowData
+      }
+    }
+    updated (stripNull: true) {
+      workflow {
+        ...WorkflowData
+      }
+    }
+    pruned {
+      workflow
+    }
+  }
+}
+
+fragment WorkflowData on Workflow {
+  id
+  status
+  owner
+  host
+  port
+}
+`
 
 export default {
   name: 'WorkflowsTable',
@@ -99,7 +128,7 @@ export default {
 
   data: () => ({
     query: new SubscriptionQuery(
-      WORKFLOWS_TABLE_DELTAS_SUBSCRIPTION,
+      QUERY,
       {},
       'root',
       [],
