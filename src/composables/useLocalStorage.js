@@ -1,6 +1,27 @@
 import { ref } from 'vue'
 
 /**
+ * @name addToLocalStorage
+ * @function
+ * @param {String} item Item to add to local storage
+*/
+
+/**
+ * @name removeFromLocalStorage
+ * @function
+ * @param {String} item Item to remove from local storage
+*/
+
+/**
+ * @typedef {Object} LocalStorage
+ * @property {string} itemOnLoad - The default item on load
+ * @property {ref} item - The selected item
+ * @property {ref} items - The array of items in local storage
+ * @property {addToLocalStorage} addToLocalStorage - Adds a value to local storage
+ * @property {removeFromLocalStorage} removeFromLocalStorage - Removes a value from local storage
+ */
+
+/**
  * Function for initialising, adding to and removing from local storage.
  * Values are stored in arrays with and can be accessed
  * via a key which specified by the 'key' parameter.
@@ -11,7 +32,7 @@ import { ref } from 'vue'
  *
  * @param {string} key
  * @param {*} initialValue
- * @returns {function}
+ * @return {LocalStorage}
  */
 export default function useLocalStorage (key, initialValue) {
   const itemOnLoad = initialValue
