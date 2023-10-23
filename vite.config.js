@@ -20,7 +20,11 @@ import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
 import eslint from 'vite-plugin-eslint'
 import IstanbulPlugin from 'vite-plugin-istanbul'
+import dns from 'dns'
 const path = require('path')
+
+// Workaround https://github.com/cypress-io/cypress/issues/25397
+dns.setDefaultResultOrder('ipv4first')
 
 export default defineConfig(({ mode }) => {
   const plugins = [
