@@ -1,22 +1,22 @@
 import { ref } from 'vue'
 
 /**
- * @name addToLocalStorage
- * @function
- * @param {String} item Item to add to local storage
+ * @callback addToLocalStorage
+ * @param {*} item Item to add to local storage
+ * @return {void}
 */
 
 /**
- * @name removeFromLocalStorage
- * @function
- * @param {String} item Item to remove from local storage
+ * @callback removeFromLocalStorage
+ * @param {*} item Item to remove from local storage
+ * @return {void}
 */
 
 /**
  * @typedef {Object} LocalStorage
- * @property {string} itemOnLoad - The default item on load
- * @property {ref} item - The selected item
- * @property {ref} items - The array of items in local storage
+ * @property {*} itemOnLoad - The default item on load
+ * @property {import('vue').Ref} item - The selected item
+ * @property {import('vue').Ref<Set>} items - The array of items in local storage
  * @property {addToLocalStorage} addToLocalStorage - Adds a value to local storage
  * @property {removeFromLocalStorage} removeFromLocalStorage - Removes a value from local storage
  */
