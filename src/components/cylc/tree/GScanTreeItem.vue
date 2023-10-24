@@ -23,63 +23,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :indent="18"
     ref="treeItem"
   >
-    <template v-slot="{ isExpanded }">
-      <WorkflowIcon
-        v-if="node.type === 'workflow'"
-        :status="node.node.status"
-        v-cylc-object="node"
-        :class="nodeClass"
-        class="flex-shrink-0"
-        style="margin: 0 2px;"
-      />
-      <v-list-item
-        :to="workflowLink"
-        :class="nodeClass"
-        class="flex-grow-1 flex-shrink-1 px-2 ml-1"
-      >
-        <div class="d-flex align-center align-content-center flex-nowrap">
-          <div class="c-gscan-workflow-name flex-grow-1">
-            <span>
-              {{ node.name || node.id }}
-              <v-tooltip
-                location="top"
-                style="overflow-wrap: anywhere;"
-              >
-                {{ node.id }}
-              </v-tooltip>
-            </span>
-          </div>
-          <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
-          <div
-            v-if="!isExpanded || node.type === 'workflow'"
-            class="d-flex text-right c-gscan-workflow-states flex-grow-0"
-          >
-            <!-- task summary tooltips -->
-            <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
-            <div
-              v-for="[state, tasks] in Object.entries(descendantTaskInfo.latestTasks)"
-              :key="`${node.id}-${state}`"
-              :class="getTaskStateClass(descendantTaskInfo.stateTotals, state)"
-              class="ma-0 pa-0"
-              min-width="0"
-              min-height="0"
-              style="font-size: 120%; width: auto;"
+    <WorkflowIcon
+      v-if="node.type === 'workflow'"
+      :status="node.node.status"
+      v-cylc-object="node"
+      :class="nodeClass"
+      class="flex-shrink-0"
+      style="margin: 0 2px;"
+    />
+    <v-list-item
+      :to="workflowLink"
+      :class="nodeClass"
+      class="flex-grow-1 flex-shrink-1 px-2 ml-1"
+    >
+      <div class="d-flex align-center align-content-center flex-nowrap">
+        <div class="c-gscan-workflow-name flex-grow-1">
+          <span>
+            {{ node.name || node.id }}
+            <v-tooltip
+              location="top"
+              style="overflow-wrap: anywhere;"
             >
-              <Job :status="state" />
-              <v-tooltip location="top">
-                <!-- tooltip text -->
-                <div class="text-grey-lighten-1">
-                  {{ descendantTaskInfo.stateTotals[state] ?? 0 }} {{ state }}. Recent {{ state }} tasks:
-                </div>
-                <div v-for="(task, index) in tasks.slice(0, $options.maxTasksDisplayed)" :key="index">
-                  {{ task }}<br v-if="index !== tasks.length - 1" />
-                </div>
-              </v-tooltip>
-            </div>
+              {{ node.id }}
+            </v-tooltip>
+          </span>
+        </div>
+        <div class="d-flex text-right c-gscan-workflow-states flex-grow-0">
+          <!-- task summary tooltips -->
+          <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
+          <div
+            v-for="[state, tasks] in Object.entries(descendantTaskInfo.latestTasks)"
+            :key="`${node.id}-${state}`"
+            :class="getTaskStateClass(descendantTaskInfo.stateTotals, state)"
+            class="ma-0 pa-0"
+            min-width="0"
+            min-height="0"
+            style="font-size: 120%; width: auto;"
+          >
+            <Job :status="state" />
+            <v-tooltip location="top">
+              <!-- tooltip text -->
+              <div class="text-grey-lighten-1">
+                {{ descendantTaskInfo.stateTotals[state] ?? 0 }} {{ state }}. Recent {{ state }} tasks:
+              </div>
+              <div v-for="(task, index) in tasks.slice(0, $options.maxTasksDisplayed)" :key="index">
+                {{ task }}<br v-if="index !== tasks.length - 1" />
+              </div>
+            </v-tooltip>
           </div>
         </div>
-      </v-list-item>
-    </template>
+      </div>
+    </v-list-item>
 
     <template v-slot:child>
       <!-- Component recursion -->
