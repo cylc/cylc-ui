@@ -24,13 +24,13 @@ describe('CylcObject Menu component', () => {
   })
 
   it('should not be displayed initially on load', () => {
-    cy.get('.c-interactive:first') // wait for view to load
+    cy.get('[data-c-interactive]:first') // wait for view to load
       .get('.c-mutation-menu:first')
       .should('not.exist')
   })
 
   it('is displayed when a Cylc object is clicked on', () => {
-    cy.get('#workflow-mutate-button.c-interactive')
+    cy.get('#workflow-mutate-button')
       .click()
       // the menu should now be open
       .get('.c-mutation-menu-list:first')
@@ -42,7 +42,7 @@ describe('CylcObject Menu component', () => {
   })
 
   it('expands and collapses', () => {
-    cy.get('#workflow-mutate-button.c-interactive')
+    cy.get('#workflow-mutate-button')
       .click()
       .get('#less-more-button')
       .click()
@@ -68,7 +68,7 @@ describe('CylcObject Menu component', () => {
   it('updates when clicking on a different Cylc object', () => {
     let firstID
     cy.get('.node-data-cycle:first')
-      .find('.c-interactive:first')
+      .find('[data-c-interactive]:first')
       .click()
       .get('.c-mutation-menu')
       .should('be.visible')
@@ -78,7 +78,7 @@ describe('CylcObject Menu component', () => {
       })
       // Now click on other Cylc object
       .get('.node-data-task:first')
-      .find('.c-interactive:first')
+      .find('[data-c-interactive]:first')
       .click({ force: true }) // force in case underneath menu
       .get('.c-mutation-menu')
       .should('be.visible')
@@ -89,7 +89,7 @@ describe('CylcObject Menu component', () => {
   })
 
   it('only closes when appropriate if clicking inside menu', () => {
-    cy.get('#workflow-mutate-button.c-interactive')
+    cy.get('#workflow-mutate-button')
       .click()
     // Should not close when clicking on non-interactive thing inside menu
     cy.get('.v-card-title')

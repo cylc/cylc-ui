@@ -312,7 +312,7 @@ export default {
      */
     onClickOutside (e) {
       this.closeMenu()
-      if (e.target?.classList.contains('c-interactive')) {
+      if (e.target?.getAttribute('data-c-interactive')) {
         this.showMenu = true
       }
     },

@@ -179,7 +179,7 @@ describe('Edit Runtime form', () => {
       .get('.c-mutation-dialog .v-card-subtitle')
       .contains('/root')
     // but not jobs
-    cy.get('[data-cy=tree-view] .c-job.c-interactive:first')
+    cy.get('[data-cy=tree-view] [data-c-interactive].c-job:first')
       .click({ force: true })
       .get('#less-more-button')
       .should('not.exist') // if this does deliberately exist in future, change to .click()

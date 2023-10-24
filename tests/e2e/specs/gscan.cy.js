@@ -153,7 +153,7 @@ describe('GScan component', () => {
 
   it('shows mutations menu when clicking on workflow icon', () => {
     cy.get('.c-gscan-workflows')
-      .find('.treeitem .c-interactive:first') //
+      .find('.treeitem [data-c-interactive]:first') //
       .click()
       .get('.c-mutation-menu')
       .should('be.visible')

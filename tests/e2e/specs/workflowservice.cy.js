@@ -100,7 +100,7 @@ describe('WorkflowService mutations', () => {
       .get('#workflow-stop-button')
       .click()
       // Mutations menu should show skeleton loader
-      .get('#workflow-mutate-button.c-interactive')
+      .get('#workflow-mutate-button')
       .click()
       .get('.c-mutation-menu')
       .find('[data-cy=skeleton]').as('skeleton')
