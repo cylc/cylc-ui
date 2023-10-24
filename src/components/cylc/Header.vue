@@ -102,12 +102,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </template>
         </v-combobox>
         <v-btn
-          v-if="store.state.user.user.mode !== 'single user' && isNewRoute"
+          v-if="store.state.user.user.mode !== 'single user' && isNewRoute && owner && deployment"
           data-cy="multiuser-go-btn"
           :href="url"
           variant="flat"
           class="px-8"
           color="green"
+          @click="addOwner(owner); addDeployment(deployment);"
         >
           Go
         </v-btn>

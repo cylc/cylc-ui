@@ -40,12 +40,16 @@ export default function useLocalStorage (key, initialValue) {
   const items = ref(new Set([itemOnLoad]))
 
   function addToLocalStorage (item) {
-    items.value.add(item)
-    localStorage.setItem(key, JSON.stringify(Array.from(items.value)))
+    if (item) {
+      items.value.add(item)
+      localStorage.setItem(key, JSON.stringify(Array.from(items.value)))
+    }
   }
   function removeFromLocalStorage (item) {
-    items.value.delete(item)
-    localStorage.setItem(key, JSON.stringify(Array.from(items.value)))
+    if (item) {
+      items.value.delete(item)
+      localStorage.setItem(key, JSON.stringify(Array.from(items.value)))
+    }
   }
 
   return {
