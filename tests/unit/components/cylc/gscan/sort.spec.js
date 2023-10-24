@@ -94,18 +94,35 @@ describe('flattenWorkflowParts()', () => {
           type: 'workflow-part',
           name: 'dark/place',
           parent: '~awake/dark',
-          children: [{ type: 'workflow' }]
+          children: [run1]
         },
         {
           id: '~awake/dark/presence',
           type: 'workflow-part',
           name: 'dark/presence',
           parent: '~awake/dark',
-          children: [{ type: 'workflow' }]
+          children: [
+            { type: 'workflow', id: 'barry' },
+            { type: 'workflow', id: 'stucky' },
+          ]
         }
       ]
     }
-    expect(flattenWorkflowParts(node)).toStrictEqual(node)
+    const result = flattenWorkflowParts(node)
+    expect(result).toStrictEqual({
+      id: '~awake/dark',
+      type: 'workflow-part',
+      name: 'dark',
+      parent: '~awake',
+      children: [
+        {
+          ...run1,
+          name: 'place/run1',
+          parent: '~awake/dark',
+        },
+        node.children[1]
+      ]
+    })
   })
 
   it("Doesn't flatten workflows", () => {

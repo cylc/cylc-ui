@@ -92,13 +92,20 @@ export function sortedWorkflowTree (cylcTree) {
  * @returns {Object} flattened node, or the original node if it has multiple children.
  */
 export function flattenWorkflowParts (node) {
-  if (node.type === 'workflow-part' && node.children.length === 1) {
+  if (node.type !== 'workflow-part') {
+    return node
+  }
+  if (node.children.length === 1) {
     const child = node.children[0]
     return flattenWorkflowParts({
       ...child,
       name: child.id.substring(node.parent.length + 1), // (parent ID doesn't include slash so add 1)
       parent: node.parent,
     })
+  } else if (node.children.length > 1) {
+    return {
+      ...node,
+      children: node.children.map((n) => flattenWorkflowParts(n))
+    }
   }
-  return node
 }
