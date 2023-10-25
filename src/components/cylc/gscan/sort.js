@@ -73,12 +73,14 @@ export function sortedWorkflowTree (cylcTree) {
   const tree = []
   for (let node of cylcTree.children[0].children) {
     node = flattenWorkflowParts(node)
-    // insert this workflow / workflow-part in sort order
-    tree.splice(
-      sortedIndexBy(tree, node, gscanWorkflowCompValue),
-      0,
-      node
-    )
+    if (node) {
+      // insert this workflow / workflow-part in sort order
+      tree.splice(
+        sortedIndexBy(tree, node, gscanWorkflowCompValue),
+        0,
+        node
+      )
+    }
   }
   return tree
 }
@@ -89,7 +91,8 @@ export function sortedWorkflowTree (cylcTree) {
  * E.g. foo, containing only run1, becomes foo/run1
  *
  * @param {Object} node
- * @returns {Object} flattened node, or the original node if it has multiple children.
+ * @returns {Object=} flattened node, or the original node if it has multiple children.
+ *   Warning: can be undefined if a workflow-part has no children (this can happen sometimes but should be transitory).
  */
 export function flattenWorkflowParts (node) {
   if (node.type !== 'workflow-part') {
