@@ -41,10 +41,9 @@ const middlewares = [
 server.use(middlewares)
 
 // Initialize websockets
-server.ws('/subscriptions', function (ws) {
-  ws.on('message', function (msg) {
-    const responseData = websockets.createWebSocketsMessage(msg)
-    ws.send(responseData)
+server.ws('/subscriptions', (ws) => {
+  ws.on('message', (msg) => {
+    websockets.sendWSResponse(ws, msg)
   })
 })
 

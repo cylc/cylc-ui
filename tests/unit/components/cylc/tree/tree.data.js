@@ -19,6 +19,199 @@
  * Test data for Tree component tests.
  */
 
+const stateTotalsTestWorkflowNodes = {
+  id: '~cylc/double',
+  name: 'double',
+  node: {
+    id: '~cylc/double'
+  },
+  parent: '~cylc',
+  tokens: {
+    user: 'cylc',
+    workflow: 'double',
+    id: '~cylc/double',
+    workflow_id: '~cylc/double',
+    relative_id: ''
+  },
+  type: 'workflow-part',
+  children: [
+    {
+      id: '~cylc/double/mid',
+      name: 'mid',
+      node: {
+        id: '~cylc/double/mid'
+      },
+      parent: '~cylc/double',
+      tokens: {
+        user: 'cylc',
+        workflow: 'double/mid',
+        id: '~cylc/double/mid',
+        workflow_id: '~cylc/double/mid',
+        relative_id: ''
+      },
+      type: 'workflow-part',
+      children: [
+        {
+          id: '~cylc/double/mid/first',
+          name: 'first',
+          node: {
+            id: '~cylc/double/mid/first'
+          },
+          parent: '~cylc/double/mid',
+          tokens: {
+            user: 'cylc',
+            workflow: 'double/mid/first',
+            id: '~cylc/double/mid/first',
+            workflow_id: '~cylc/double/mid/first',
+            relative_id: ''
+          },
+          type: 'workflow-part',
+          children: [
+            {
+              id: '~cylc/double/mid/first/run1',
+              tokens: {
+                user: 'cylc',
+                workflow: 'double/mid/first/run1',
+                id: '~cylc/double/mid/first/run1',
+                workflow_id: '~cylc/double/mid/first/run1',
+                relative_id: ''
+              },
+              name: 'run1',
+              type: 'workflow',
+              parent: '~cylc/double/mid/first',
+              node: {
+                id: '~cylc/double/mid/first/run1',
+                status: 'running',
+                statusMsg: 'running',
+                owner: 'cylc',
+                host: 'localhost',
+                port: 43055,
+                stateTotals: {
+                  waiting: 7,
+                  expired: 0,
+                  preparing: 0,
+                  'submit-failed': 0,
+                  submitted: 3,
+                  running: 6,
+                  failed: 0,
+                  succeeded: 0
+                },
+                latestStateTasks: {
+                  failed: [],
+                  preparing: [
+                    '2022-03-19/get-data',
+                    '2022-03-15/prep',
+                    '2022-03-15/get-data',
+                    '2022-03-16/get-data',
+                    '2022-03-17/get-data'
+                  ],
+                  'submit-failed': [],
+                  submitted: [
+                    '2022-03-19/get-data',
+                    '2022-03-18/get-data',
+                    '2022-03-17/get-data',
+                    '2022-03-16/get-data',
+                    '2022-03-15/prep'
+                  ],
+                  running: [
+                    '2022-03-17/get-data',
+                    '2022-03-19/get-data',
+                    '2022-03-18/get-data',
+                    '2022-03-16/get-data',
+                    '2022-03-15/get-data'
+                  ]
+                },
+                __typename: 'Workflow'
+              },
+              children: [],
+              $edges: [],
+              $namespaces: []
+            }
+          ]
+        },
+        {
+          id: '~cylc/double/mid/second',
+          name: 'second',
+          node: {
+            id: '~cylc/double/mid/second'
+          },
+          parent: '~cylc/double/mid',
+          tokens: {
+            user: 'cylc',
+            workflow: 'double/mid/second',
+            id: '~cylc/double/mid/second',
+            workflow_id: '~cylc/double/mid/second',
+            relative_id: ''
+          },
+          type: 'workflow-part',
+          children: [
+            {
+              id: '~cylc/double/mid/second/run1',
+              tokens: {
+                user: 'cylc',
+                workflow: 'double/mid/second/run1',
+                id: '~cylc/double/mid/second/run1',
+                workflow_id: '~cylc/double/mid/second/run1',
+                relative_id: ''
+              },
+              name: 'run1',
+              type: 'workflow',
+              parent: '~cylc/double/mid/second',
+              node: {
+                id: '~cylc/double/mid/second/run1',
+                status: 'running',
+                statusMsg: 'running',
+                owner: 'cylc',
+                host: 'localhost',
+                port: 43038,
+                stateTotals: {
+                  waiting: 7,
+                  expired: 0,
+                  preparing: 0,
+                  'submit-failed': 0,
+                  submitted: 2,
+                  running: 6,
+                  failed: 0,
+                  succeeded: 0
+                },
+                latestStateTasks: {
+                  failed: [],
+                  preparing: [
+                    '2022-01-19/get-data',
+                    '2022-01-15/prep',
+                    '2022-01-15/get-data',
+                    '2022-01-16/get-data',
+                    '2022-01-17/get-data'
+                  ],
+                  'submit-failed': [],
+                  submitted: [
+                    '2022-01-19/get-data',
+                    '2022-01-18/get-data',
+                    '2022-01-17/get-data',
+                    '2022-01-16/get-data',
+                    '2022-01-15/prep'
+                  ],
+                  running: [
+                    '2022-01-19/get-data',
+                    '2022-01-18/get-data',
+                    '2022-01-17/get-data',
+                    '2022-01-15/prep',
+                    '2022-01-16/get-data'
+                  ]
+                },
+                __typename: 'Workflow'
+              },
+              children: [],
+              $edges: [],
+              $namespaces: []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
 const simpleWorkflowTree4Nodes = [
   {
     id: '~user/workflow1',
@@ -1118,6 +1311,7 @@ const simpleTaskNode = simpleCyclepointNode.familyTree[0].children[0]
 const simpleJobNode = simpleTaskNode.children[0]
 
 export {
+  stateTotalsTestWorkflowNodes,
   simpleWorkflowTree4Nodes,
   simpleWorkflowNode,
   simpleCyclepointNode,

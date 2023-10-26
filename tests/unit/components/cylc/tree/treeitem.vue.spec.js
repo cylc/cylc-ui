@@ -21,13 +21,16 @@ import { Assertion } from 'chai'
 import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
+import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import {
+  stateTotalsTestWorkflowNodes,
   simpleWorkflowNode,
   simpleCyclepointNode,
   simpleTaskNode
 } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import WorkflowService from '@/services/workflow.service'
+import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
 
 /**
  * Helper function for expecting TreeItem to be expanded.
@@ -100,7 +103,6 @@ describe('TreeItem component', () => {
     const wrapper = mountFunction({
       props: {
         node: simpleTaskNode,
-        initialExpanded: false
       }
     })
     expect(wrapper).to.not.be.expanded()
@@ -116,22 +118,25 @@ describe('TreeItem component', () => {
   })
 
   describe('children', () => {
-    it('should recursively include other TreeItem components for its children', () => {
+    it.each([
+      { manuallyExpanded: null, expected: ['CyclePoint', 'TaskProxy'] },
+      { manuallyExpanded: true, expected: ['CyclePoint', 'TaskProxy', 'Job'] },
+      { manuallyExpanded: false, expected: [] },
+    ])('recursively mounts child TreeItems if expanded ($manuallyExpanded)', ({ manuallyExpanded, expected }) => {
       const wrapper = mountFunction({
         props: {
-          node: simpleWorkflowNode
-        }
+          node: simpleWorkflowNode,
+        },
+        data: () => ({
+          manuallyExpanded,
+        }),
       })
       expect(
         wrapper.findAllComponents({ name: 'TreeItem' })
-          .map((w) => w.props().node.node.__typename)
-      ).to.deep.equal([
-        'CyclePoint',
-        'TaskProxy',
-        'Job',
-        'Job' // job details
-      ])
+          .map((vm) => vm.props().node.node.__typename)
+      ).to.deep.equal(expected)
     })
+
   // })
   // describe('mixin', () => {
   //   const sortTestsData = [
@@ -238,5 +243,63 @@ describe('TreeItem component', () => {
   //       expect(sorted).to.deep.equal(test.expected)
   //     })
   //   })
+  })
+})
+
+describe('GScanTreeItem', () => {
+  const mountFunction = (options) => mount(GScanTreeItem, {
+    global: {
+      plugins: [createVuetify(), CylcObjectPlugin],
+      mock: { $workflowService, $eventBus }
+    },
+    ...options
+  })
+
+  describe('computed properties', () => {
+    const wrapper = mountFunction({
+      props: {
+        node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
+      }
+    })
+    it('combines all descendant tasks', () => {
+      expect(wrapper.vm.descendantTaskInfo.latestTasks.submitted.length).to.equal(10)
+      expect(wrapper.vm.descendantTaskInfo.latestTasks.running.length).to.equal(10)
+    })
+    it('combines all descendant task totals', () => {
+      expect(wrapper.vm.descendantTaskInfo.stateTotals.submitted).to.equal(5)
+      expect(wrapper.vm.descendantTaskInfo.stateTotals.running).to.equal(12)
+    })
+    it('collapses to the lowest only-child', () => {
+      expect(wrapper.vm.node.id).to.equal('~cylc/double/mid')
+      expect(wrapper.vm.node.name).to.equal('double/mid')
+      // This should be expanded initially as it contains multiple workflows
+      expect(wrapper.vm.$refs.treeItem.isExpanded).to.equal(true)
+    })
+  })
+
+  describe('Workflow link', () => {
+    it('should create an empty link for non-workflow nodes', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: {
+            type: 'barbenheimer',
+          },
+        },
+        shallow: true,
+      })
+      expect(wrapper.vm.workflowLink).to.equal('')
+    })
+    it('should create a link for a workflow node', () => {
+      const wrapper = mountFunction({
+        props: {
+          node: {
+            type: 'workflow',
+            tokens: { workflow: 'a/b/c' }
+          },
+        },
+        shallow: true,
+      })
+      expect(wrapper.vm.workflowLink).to.equal('/workspace/a/b/c')
+    })
   })
 })

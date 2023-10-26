@@ -93,7 +93,7 @@ describe('User Profile', () => {
         .then(([$el]) => {
           animationSpy = cy.spy($el, 'animate')
         })
-        .get('.c-interactive:first')
+        .get('[data-c-interactive]:first')
         .click()
         .get('@mutationMenu')
         .should('be.visible')
@@ -111,7 +111,7 @@ describe('User Profile', () => {
     cy.get('[data-cy=reduced-animation] input')
       .should('not.be.checked')
     // Force initial render of menu:
-    cy.get('.c-interactive:first').click()
+    cy.get('[data-c-interactive]:first').click()
       .get('noscript').click({ force: true })
     // Test default animation:
     testMenu(true)

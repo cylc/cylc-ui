@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { isArray } = require('lodash')
 const graphql = require('./graphql')
 
 /**
@@ -22,10 +23,10 @@ const graphql = require('./graphql')
  *
  * @param {string} id - Subscription ID
  * @param {string} type - Message type (e.g. data, connection_init, etc, see GraphQL spec)
- * @param {object} [data] - Response data, optional
- * @returns {{id, type, payload}}
+ * @param {Object} [data] - Response data, optional
+ * @returns {string}
  */
-function wsResponse (id, type, data) {
+function wsResponse (id, type, data = null) {
   const response = {
     id,
     type
@@ -36,44 +37,37 @@ function wsResponse (id, type, data) {
       data
     }
   }
-  return response
+  return JSON.stringify(response)
 }
 
 /**
- * Create a WebSockets reply message, given the query message (received from client).
+ * Send a WebSockets reply message(s), given the query message (received from client).
+ *
+ * @param {WebSocket} ws
  * @param {string} msg - JSON encoded client message
- * @returns {string} JSON encoded server reply
  */
-function createWebSocketsMessage (msg) {
+function sendWSResponse (ws, msg) {
   const parsed = JSON.parse(msg)
-  try {
-    if (parsed) {
-      if (parsed.type === 'connection_init') {
-        return JSON.stringify(wsResponse(parsed.id, 'connection_ack', null))
-      } else if (parsed.type === 'stop') {
-        return JSON.stringify(wsResponse(parsed.id, 'complete', null))
-      } else if (parsed.type === 'start') {
-        const operationName = (
-          parsed.payload.operationName || graphql.getOperationName(parsed.payload.query)
-        )
-        const responseData = graphql.getGraphQLQueryResponse(operationName, parsed.payload.variables)
-        return JSON.stringify(wsResponse(parsed.id, 'data', responseData))
+  if (parsed) {
+    if (parsed.type === 'connection_init') {
+      return ws.send(wsResponse(parsed.id, 'connection_ack'))
+    } else if (parsed.type === 'stop') {
+      return ws.send(wsResponse(parsed.id, 'complete'))
+    } else if (parsed.type === 'start') {
+      const operationName = (
+        parsed.payload.operationName || graphql.getOperationName(parsed.payload.query)
+      )
+      const responseData = graphql.getGraphQLQueryResponse(operationName, parsed.payload.variables)
+      for (const item of isArray(responseData) ? responseData : [responseData]) {
+        ws.send(wsResponse(parsed.id, 'data', item))
       }
-      // noinspection ExceptionCaughtLocallyJS
-      throw new Error(`Unknown message type ${parsed.type}`)
+      return
     }
-    // noinspection ExceptionCaughtLocallyJS
-    throw new Error(`Failed to parse msg: ${msg}`)
-  } catch (e) {
-    return JSON.stringify({
-      errors: [
-        e
-      ]
-    })
+    throw new Error(`Unknown message type ${parsed.type}`)
   }
+  throw new Error(`Failed to parse msg: ${msg}`)
 }
 
 module.exports = {
-  createWebSocketsMessage,
-  wsResponse
+  sendWSResponse,
 }
