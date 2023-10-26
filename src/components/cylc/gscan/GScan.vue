@@ -59,22 +59,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <v-card width="500px">
             <v-list>
-              <v-list-item
-                v-for="(items, title) in filters"
-                :key="title"
-              >
-                <v-select
-                  v-model="filters[title]"
-                  :items="$options.allStates[title]"
-                  :label="`Filter by ${title}`"
-                  density="default"
-                  chips
-                  closable-chips
-                  clearable
-                  multiple
-                  class="my-2"
-                  :data-cy="`filter ${title}`"
-                />
+              <v-list-item>
+                <TaskFilterSelect :modelValue="modelValueWorkflow" :type="'workflow state'" :items="$options.allStates['workflow state']" />
+              </v-list-item>
+              <v-list-item>
+                <TaskFilterSelect :modelValue="modelValueState" :type="'task state'" :items="$options.allStates['task state']" />
               </v-list-item>
             </v-list>
           </v-card>
@@ -195,6 +184,7 @@ import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 import { mutate } from '@/utils/aotf'
+import TaskFilterSelect from '@/components/cylc/TaskFilterSelect.vue'
 
 export default {
   name: 'GScan',
@@ -202,7 +192,8 @@ export default {
   components: {
     Job,
     Tree,
-    WorkflowIcon
+    WorkflowIcon,
+    TaskFilterSelect
   },
 
   props: {
@@ -238,7 +229,9 @@ export default {
         'task state': []
         // 'workflow host': [], // TODO: will it be in state totals?
         // 'cylc version': [] // TODO: will it be in state totals?
-      }
+      },
+      modelValueWorkflow: { states: [] },
+      modelValueState: { states: [] }
     }
   },
   computed: {
@@ -251,7 +244,25 @@ export default {
     },
     numFilters () {
       return Object.values(this.filters).flat().length
-    }
+    },
+    localValueWorkflow: {
+      get () {
+        return this.modelValueWorkflow
+      },
+      set (value) {
+        // Update 'modelValueWorkflow' prop by notifying parent component's v-model for this component
+        this.$emit('update:modelValueWorkflow', value)
+      }
+    },
+    localValueState: {
+      get () {
+        return this.modelValueState
+      },
+      set (value) {
+        // Update 'modelValueState' prop by notifying parent component's v-model for this component
+        this.$emit('update:modelValueState', value)
+      }
+    },
   },
   watch: {
     /**
@@ -303,7 +314,17 @@ export default {
           cache[id].filtered = ids.includes(id)
         }
       }
-    }
+    },
+    localValueWorkflow: {
+      deep: true,
+      immediate: false,
+      handler: function () { this.filters['workflow state'] = this.localValueWorkflow.states }
+    },
+    localValueState: {
+      deep: true,
+      immediate: false,
+      handler: function () { this.filters['task state'] = this.localValueState.states }
+    },
   },
   methods: {
 
@@ -407,6 +428,5 @@ export default {
     'workflow state': WorkflowState.enumValues.map(x => x.name),
     'task state': TaskStateUserOrder.map(x => x.name)
   },
-  maxTasksDisplayed: 5,
 }
 </script>
