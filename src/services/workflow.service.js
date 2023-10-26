@@ -36,7 +36,7 @@ import { store } from '@/store/index'
 import { createApolloClient } from '@/graphql/index'
 import { print } from 'graphql'
 import mergeQueries from '@/graphql/merge'
-import Alert from '@/model/Alert.model'
+import { Alert } from '@/model/Alert.model'
 import CylcTreeCallback from '@/services/treeCallback'
 
 /** @typedef {import('graphql').DocumentNode} DocumentNode */

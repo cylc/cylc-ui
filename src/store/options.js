@@ -39,11 +39,17 @@ const state = () => ({
 
 // Actions
 const actions = {
-  setAlert ({ state, commit }, alert) {
+  /**
+   *
+   * @param {*} param0
+   * @param {?import('@/model/Alert.model').Alert} alert
+   */
+  setAlert ({ commit }, alert) {
     // log to console when the alert is not null (null can mean to remove the alert)
-    if (alert !== null) {
-      // eslint-disable-next-line no-console
-      console.log(alert)
+    if (alert?.color === 'error') {
+      console.error(alert.text)
+    } else if (alert) {
+      console.log(alert.text)
     }
     commit('SET_ALERT', alert)
   }

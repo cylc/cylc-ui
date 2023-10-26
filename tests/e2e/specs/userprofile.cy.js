@@ -106,6 +106,8 @@ describe('User Profile', () => {
         })
         // Close menu:
         .get('noscript').click({ force: true })
+        .get('@mutationMenu')
+        .should('not.be.visible')
     }
 
     cy.get('[data-cy=reduced-animation] input')
