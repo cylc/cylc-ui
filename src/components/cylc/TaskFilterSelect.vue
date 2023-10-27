@@ -5,68 +5,53 @@
   clearable
   multiple
   :placeholder="'Filter by '+type"
-  v-model="localValue.states"
+  v-model="localValue.value.states"
 >
-  <template v-slot:item="{ item, props }">
-    <v-list-item v-bind="props" :title="undefined">
+<template v-slot:item="{ item, props }">
+  <v-list-item v-bind="props" :title="undefined">
+    <Workflowicon v-if="type==='workflow state'" :status=item.raw />
+    <Task v-if="type==='task state'" :task="{ state: item.raw }" />
+    <span class="ml-2">{{ item.raw }}</span>
+  </v-list-item>
+</template>
+<template v-slot:selection="{ item, index }">
+  <v-chip closable @click:close="removeItem(item.raw)" v-if="index >= 0 && index < maxVisibleStates">
+    <template v-slot:prepend>
       <Workflowicon v-if="type==='workflow state'" :status=item.raw />
       <Task v-if="type==='task state'" :task="{ state: item.raw }" />
-      <span class="ml-2">{{ item.raw }}</span>
-    </v-list-item>
-  </template>
-  <template v-slot:selection="{ item, index }">
-    <div class="mr-2" v-if="index >= 0 && index < $options.maxVisibleStates">
-      <Workflowicon
-        v-if="type==='workflow state'"
-        :status=item.raw
-        style="font-size: 1.2rem; height: 100%"
-      />
-      <Task
-        v-if="type==='task state'"
-        :task="{ state: item.raw }"
-        style="font-size: 1.2rem; height: 100%"
-      />
-    </div>
-    <span
-      v-if="index === $options.maxVisibleStates"
+    </template>
+    {{item.title}}
+
+  </v-chip>
+  <span
+      v-if="index === maxVisibleStates"
       class="text-grey text-caption"
     >
-      (+{{ localValue.states.length - $options.maxVisibleStates }})
-    </span>
-  </template>
+      (+{{ localValue.value.states.length - maxVisibleStates }})
+  </span>
+</template>
 </v-select>
 </template>
 
-<script>
+<script setup>
+import { computed, ref } from 'vue'
 import Task from '@/components/cylc/Task.vue'
 import Workflowicon from '@/components/cylc/gscan/WorkflowIcon.vue'
 
-export default {
-  name: 'TaskFilter',
+const props = defineProps({
+  modelValue: Object, // { id, states }
+  items: Array,
+  type: Text
+})
 
-  components: {
-    Task,
-    Workflowicon
-  },
+defineEmits(['update:modelValue'])
 
-  props: {
-    modelValue: Object, // { id, states }
-    items: Array,
-    type: Text
-  },
+const localValue = ref()
+localValue.value = computed(() => props.modelValue)
 
-  computed: {
-    localValue: {
-      get () {
-        return this.modelValue
-      },
-      set (value) {
-        // Update 'modelValue' prop by notifying parent component's v-model for this component
-        this.$emit('update:modelValue', value)
-      }
-    },
-  },
+const maxVisibleStates = 4
 
-  maxVisibleStates: 4,
+function removeItem (key) {
+  localValue.value.value.states = localValue.value.value.states.filter(item => item !== key)
 }
 </script>

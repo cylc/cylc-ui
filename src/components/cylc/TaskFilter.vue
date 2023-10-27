@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       md="6"
       class="mb-2 mb-md-0"
     >
-    <TaskFilterSelect :modelValue="modelValue" :type="'task state'" :items="$options.allStates"></TaskFilterSelect>
+    <TaskFilterSelect :modelValue="localValue" :type="'task state'" :items="$options.allStates"></TaskFilterSelect>
     </v-col>
   </v-row>
 </template>
