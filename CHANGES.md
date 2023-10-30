@@ -17,7 +17,10 @@ ones in. -->
 ### Enhancements
 
 [#1472](https://github.com/cylc/cylc-ui/pull/1472) -
-Added GScan refresh button
+Added refresh button to the sidebar.
+
+[#1416](https://github.com/cylc/cylc-ui/pull/1416) -
+Single-child directories in the sidebar are now flattened to reduce visual clutter.
 
 ### Fixes
 
@@ -26,11 +29,6 @@ Fix a couple of issues which could cause errors in the GUI.
 
 [#1502](https://github.com/cylc/cylc-ui/pull/1502) -
 Fixed bug where toggle buttons in view toolbars would not change state.
-
--------------------------------------------------------------------------------
-## __cylc-ui-2.2.0 (<span actions:bind='release-date'>Upcoming</span>)__
-
-### Fixes
 
 [#1434](https://github.com/cylc/cylc-ui/pull/1434) -
 Small accessibility/appearance improvements.
@@ -60,8 +58,8 @@ Add landing page for unauthorised users.
 [#1269](https://github.com/cylc/cylc-ui/pull/1269) -
 Upgraded Vue and Vuetify frameworks to v3.
 
-[1240](https://github.com/cylc/cylc-ui/pull/1240) - Allow edit-runtime
-for ``[root]`` family by clicking on Cycle icon.
+[#1240](https://github.com/cylc/cylc-ui/pull/1240) - Allow edit-runtime
+for `[root]` family by clicking on Cycle icon.
 
 [#1345](https://github.com/cylc/cylc-ui/pull/1345) -
 Added setting to choose the default view for workflows (tree, table etc.).

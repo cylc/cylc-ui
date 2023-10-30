@@ -18,7 +18,7 @@
 import sinon from 'sinon'
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
-import Alert from '@/model/Alert.model'
+import { Alert } from '@/model/Alert.model'
 
 /**
  * Tests for the store/index module.

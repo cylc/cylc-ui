@@ -73,26 +73,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           fluid
           class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
         >
-          <tree-item
+          <component
+            :is="treeItemComponent"
             v-for="child of rootChildren"
             :key="child.id"
             :node="child"
-            v-bind="{
-              stopOn, hoverable, autoExpandTypes, cyclePointsOrderDesc, indent
-            }"
+            v-bind="{ hoverable, cyclePointsOrderDesc, indent }"
             @tree-item-created="onTreeItemCreated"
             @tree-item-destroyed="onTreeItemDestroyed"
             @tree-item-expanded="onTreeItemExpanded"
             @tree-item-collapsed="onTreeItemCollapsed"
-            @tree-item-clicked="onTreeItemClicked"
           >
-            <template
-              v-for="(_, slotName) of $slots"
-              v-slot:[slotName]="scope"
-            >
-              <slot :name="slotName" v-bind="scope" />
-            </template>
-          </tree-item>
+          </component>
         </v-container>
       </v-col>
     </v-row>
@@ -101,6 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiPlus, mdiMinus } from '@mdi/js'
+import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import { matchID, matchState } from '@/components/cylc/common/filter'
@@ -114,12 +107,9 @@ export default {
       type: Array,
       required: true
     },
-    stopOn: {
-      // Array of node types to stop recursion on
-      // i.e. don't show child nodes below the provided types
-      type: Array,
-      required: false,
-      default: () => []
+    treeItemComponent: {
+      type: String,
+      default: TreeItem.name,
     },
     hoverable: Boolean,
     activable: Boolean,
@@ -131,13 +121,6 @@ export default {
     expandCollapseToggle: {
       type: Boolean,
       default: true
-    },
-    autoExpandTypes: {
-      // Array of Cylc "types" (e.g. workflow, cycle, etc) to be auto-expanded
-      // on initial load
-      type: Array,
-      required: false,
-      default: () => []
     },
     autoStripTypes: {
       // If there is only one child of the root node and its type is listed in
@@ -158,14 +141,14 @@ export default {
   },
 
   components: {
+    GScanTreeItem,
     TaskFilter,
-    TreeItem
+    TreeItem,
   },
 
   data () {
     return {
       treeItemCache: {},
-      activeCache: new Set(),
       expandedCache: new Set(),
       expanded: true,
       expandedFilter: null,
@@ -284,7 +267,7 @@ export default {
       }
     },
     expandAll (filter = null) {
-      const collection = filter ? [...Object.values(this.treeItemCache)].filter(filter) : Object.values(this.treeItemCache)
+      const collection = filter ? Object.values(this.treeItemCache).filter(filter) : Object.values(this.treeItemCache)
       for (const treeItem of collection) {
         treeItem.isExpanded = true
         this.expandedCache.add(treeItem)
@@ -318,27 +301,7 @@ export default {
       // make sure the item is removed from all caches, otherwise we will have a memory leak
       delete this.treeItemCache[treeItem.$props.node.id]
       this.expandedCache.delete(treeItem)
-      this.activeCache.delete(treeItem)
     },
-    onTreeItemClicked (treeItem) {
-      if (this.activable) {
-        if (!this.multipleActive) {
-          // only one item can be active, so make sure everything else that was active is now !active
-          for (const cached of this.activeCache) {
-            if (cached !== treeItem) {
-              cached.active = false
-            }
-          }
-          // empty cache
-          this.activeCache.clear()
-        }
-
-        treeItem.active = !treeItem.active
-        if (treeItem.active) {
-          this.activeCache.add(treeItem)
-        }
-      }
-    }
   },
 
   icons: {

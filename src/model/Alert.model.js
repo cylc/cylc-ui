@@ -15,7 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export default class Alert {
+/** Alert model */
+export class Alert {
+  /**
+   * @param {Error|string} text
+   * @param {string} color
+   */
   constructor (text, color) {
     this.text = text
     this.color = color

@@ -27,7 +27,7 @@ function bind (el, binding, vnode) {
     })
   }
   el.addEventListener('click', listener)
-  el.classList.add('c-interactive')
+  el.dataset.cInteractive = true
   listeners.set(el, listener)
 }
 

@@ -3,11 +3,11 @@
     "added": {
       "workflow": {
         "id": "~user/one",
-        "name": "one",
         "owner": "user",
         "host": "localhost",
         "port": 43079,
         "status": "running",
+        "statusMsg": "running",
         "stateTotals": {
           "waiting": 3,
           "expired": 0,

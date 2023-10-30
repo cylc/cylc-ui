@@ -32,7 +32,7 @@ import 'nprogress/css/nprogress.css'
 
 // Routes
 import paths from './paths'
-import Alert from '@/model/Alert.model'
+import { Alert } from '@/model/Alert.model'
 
 function route (path) {
   const copy = Object.assign({}, path)

@@ -47,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           rules: [(val) => Boolean(val) || 'Required'],
         }
       }">
+        <!-- Owner combobox -->
         <v-combobox
           class="w-100"
           id="cylc-owner-combobox"
@@ -55,8 +56,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :default="owner"
           :items="Array.from(owners)"
           v-model="owner"
-          @keyup.enter="owners.add(owner)"
-        />
+          @keyup.enter="addOwner(owner)"
+        >
+          <template v-slot:item="{ item, props }">
+            <!-- HTML that describe how select should render items when the select is open -->
+            <v-list-item
+              :title="item.title"
+              v-bind="props"
+              >
+              <template v-slot:append v-if="item.title !== ownerOnLoad">
+                  <v-icon
+                    @click.stop="removeOwner(item.title)"
+                    color="pink-accent-4"
+                    :icon="mdiClose"
+                  />
+              </template>
+            </v-list-item>
+          </template>
+        </v-combobox>
+        <!-- Deployment combobox -->
         <v-combobox
           class="w-100"
           id="cylc-deployment-combobox"
@@ -65,15 +83,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :default="deployment"
           :items="Array.from(deployments)"
           v-model="deployment"
-          @keyup.enter="deployments.add(deployment)"
-        />
+          @keyup.enter="addDeployment(deployment)"
+        >
+          <template v-slot:item="{ item, props }">
+            <!-- HTML that describe how select should render items when the select is open -->
+            <v-list-item
+              :title="item.title"
+              v-bind="props"
+              >
+              <template v-slot:append v-if="item.title !== deploymentOnLoad">
+                  <v-icon
+                    @click.stop="removeDeployment(item.title)"
+                    color="pink-accent-4"
+                    :icon="mdiClose"
+                  />
+              </template>
+            </v-list-item>
+          </template>
+        </v-combobox>
         <v-btn
-          v-if="store.state.user.user.mode !== 'single user' && isNewRoute"
+          v-if="store.state.user.user.mode !== 'single user' && isNewRoute && owner && deployment"
           data-cy="multiuser-go-btn"
           :href="url"
           variant="flat"
           class="px-8"
           color="green"
+          @click="addOwner(owner); addDeployment(deployment);"
         >
           Go
         </v-btn>
@@ -83,22 +118,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import {
+  mdiClose
+} from '@mdi/js'
+
+import useLocalStorage from '@/composables/useLocalStorage.js'
 
 const store = useStore()
+const {
+  itemOnLoad: ownerOnLoad,
+  item: owner,
+  items: owners,
+  addToLocalStorage: addOwner,
+  removeFromLocalStorage: removeOwner
+} = useLocalStorage('owners', store.state.user.user.owner)
 
-// owner logic
-const ownerOnLoad = store.state.user.user.owner
-const owner = ref(ownerOnLoad)
-const owners = ref(new Set([ownerOnLoad]))
+const {
+  itemOnLoad: deploymentOnLoad,
+  item: deployment,
+  items: deployments,
+  addToLocalStorage: addDeployment,
+  removeFromLocalStorage: removeDeployment
+} = useLocalStorage('deployments', window.location.host)
 
-// deployment logic
-const deploymentOnLoad = window.location.host
-const deployment = ref(deploymentOnLoad)
-const deployments = ref(new Set([deploymentOnLoad]))
+onMounted(() => {
+  // Set load state for owners
+  if (!localStorage.owners) {
+    localStorage.setItem('owners', JSON.stringify(Array.from(owners.value)))
+  } else {
+    owners.value = new Set(JSON.parse(localStorage.owners))
+  }
+  // Set load state for deployments
+  if (!localStorage.deployments) {
+    localStorage.setItem('deployments', JSON.stringify(Array.from(deployments.value)))
+  } else {
+    deployments.value = new Set(JSON.parse(localStorage.deployments))
+  }
+})
 
-// route logic
 const url = computed(() => `//${deployment.value}/user/${owner.value}/cylc/#`)
 
 const isNewRoute = computed(() => {
