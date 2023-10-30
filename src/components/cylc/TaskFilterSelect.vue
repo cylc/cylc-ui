@@ -59,9 +59,9 @@ import Task from '@/components/cylc/Task.vue'
 import Workflowicon from '@/components/cylc/gscan/WorkflowIcon.vue'
 
 const props = defineProps({
-  modelValue: { type: Object, default: () => ({}) }, // { id, states }
-  items: { type: Array, default: () => ([]) },
-  type: { type: String, default: '' },
+  modelValue: { type: Object, required: true }, // { id, states }
+  items: { type: Array, required: true },
+  type: { type: String, required: true },
 })
 
 defineEmits(['update:modelValue'])

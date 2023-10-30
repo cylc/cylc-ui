@@ -60,7 +60,7 @@ export default {
   props: {
     modelValue: {
       type: Object,
-      default: () => ({})
+      required: true
     } // { id, states }
   },
 
