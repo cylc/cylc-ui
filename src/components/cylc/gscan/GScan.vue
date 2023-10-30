@@ -61,18 +61,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <v-card width="500px">
           <v-list>
-            <v-list-item>
+            <v-list-item
+              v-for="(items, title) in filters"
+              :key="title"
+            >
               <TaskFilterSelect
-                :model-value="modelValueWorkflow"
-                :type="'workflow state'"
-                :items="$options.allStates['workflow state']"
-              />
-            </v-list-item>
-            <v-list-item>
-              <TaskFilterSelect
-                :model-value="modelValueState"
-                :type="'task state'"
-                :items="$options.allStates['task state']"
+                v-model="filters[title]"
+                :type="title"
+                :items="$options.allStates[title]"
+                class="my-2"
               />
             </v-list-item>
           </v-list>
@@ -176,8 +173,6 @@ export default {
         // 'workflow host': [], // TODO: will it be in state totals?
         // 'cylc version': [] // TODO: will it be in state totals?
       },
-      modelValueWorkflow: { states: [] },
-      modelValueState: { states: [] }
     }
   },
   computed: {
@@ -190,24 +185,6 @@ export default {
     },
     numFilters () {
       return Object.values(this.filters).flat().length
-    },
-    localValueWorkflow: {
-      get () {
-        return this.modelValueWorkflow
-      },
-      set (value) {
-        // Update 'modelValueWorkflow' prop by notifying parent component's v-model for this component
-        this.$emit('update:modelValueWorkflow', value)
-      }
-    },
-    localValueState: {
-      get () {
-        return this.modelValueState
-      },
-      set (value) {
-        // Update 'modelValueState' prop by notifying parent component's v-model for this component
-        this.$emit('update:modelValueState', value)
-      }
     },
   },
   watch: {
@@ -260,16 +237,6 @@ export default {
           cache[id].filtered = ids.includes(id)
         }
       }
-    },
-    localValueWorkflow: {
-      deep: true,
-      immediate: false,
-      handler: function () { this.filters['workflow state'] = this.localValueWorkflow.states }
-    },
-    localValueState: {
-      deep: true,
-      immediate: false,
-      handler: function () { this.filters['task state'] = this.localValueState.states }
     },
   },
   methods: {

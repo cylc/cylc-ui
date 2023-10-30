@@ -38,8 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="mb-2 mb-md-0"
     >
       <TaskFilterSelect
-        :model-value="localValue"
-        :type="'task state'"
+        v-model="localValue.states"
+        type="task state"
         :items="$options.allStates"
       />
     </v-col>
