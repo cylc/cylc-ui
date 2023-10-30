@@ -6,7 +6,7 @@
   clearable
   multiple
   :placeholder="`Filter by ${type}`"
-  v-model="localValue.value.states"
+  v-model="localValue.states"
 >
 <template v-slot:item="{ item, props }">
   <v-list-item v-bind="props" :title="undefined">
@@ -28,14 +28,14 @@
       v-if="index === maxVisibleStates"
       class="text-grey text-caption"
     >
-      (+{{ localValue.value.states.length - maxVisibleStates }})
+      (+{{ localValue.states.length - maxVisibleStates }})
   </span>
 </template>
 </v-select>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import Task from '@/components/cylc/Task.vue'
 import Workflowicon from '@/components/cylc/gscan/WorkflowIcon.vue'
 
@@ -47,12 +47,11 @@ const props = defineProps({
 
 defineEmits(['update:modelValue'])
 
-const localValue = ref()
-localValue.value = computed(() => props.modelValue)
+const localValue = computed(() => props.modelValue)
 
 const maxVisibleStates = 4
 
 function removeItem (key) {
-  localValue.value.value.states = localValue.value.value.states.filter(item => item !== key)
+  localValue.value.states = localValue.value.states.filter(item => item !== key)
 }
 </script>
