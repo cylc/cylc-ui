@@ -227,7 +227,7 @@ export default {
         // NOTE: cycle point nodes don't have associated node data at present
         ret += ' - '
         if (this.node.type === 'workflow') {
-          ret += this.node.node.statusMsg || 'state unknown'
+          ret += this.node.node.statusMsg || this.node.node.status || 'state unknown'
         } else {
           ret += this.node.node.state || 'state unknown'
           if (this.node.node.isHeld) {
