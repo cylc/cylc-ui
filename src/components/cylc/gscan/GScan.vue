@@ -26,86 +26,100 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       type="list-item-three-line"
       class=" d-flex flex-column h-100"
     > -->
-      <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
-        <!-- filters -->
-        <v-text-field
-          v-model="searchWorkflows"
-          clearable
-          placeholder="Search"
-          class="flex-grow-1 flex-column"
-          id="c-gscan-search-workflows"
-        />
-        <!-- button to activate the filters menu -->
-        <v-badge
-          :content="numFilters"
-          :model-value="Boolean(numFilters)"
-        >
-          <v-btn
-            icon
-            class="flex-grow-0 flex-column ml-2"
-            id="c-gscan-filter-tooltip-btn"
-            variant="text"
-            size="small"
-            data-cy="gscan-filter-btn"
-          >
-            <v-icon size="x-large">{{ $options.icons.mdiFilter }}</v-icon>
-          </v-btn>
-        </v-badge>
-        <!-- filters tooltip -->
-        <v-menu
-          activator="#c-gscan-filter-tooltip-btn"
-          :close-on-content-click="false"
-          location="right"
-        >
-          <v-card width="500px">
-            <v-list>
-              <v-list-item>
-                <TaskFilterSelect :modelValue="modelValueWorkflow" :type="'workflow state'" :items="$options.allStates['workflow state']" />
-              </v-list-item>
-              <v-list-item>
-                <TaskFilterSelect :modelValue="modelValueState" :type="'task state'" :items="$options.allStates['task state']" />
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-menu>
-        <!-- scan -->
+    <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
+      <!-- filters -->
+      <v-text-field
+        v-model="searchWorkflows"
+        clearable
+        placeholder="Search"
+        class="flex-grow-1 flex-column"
+        id="c-gscan-search-workflows"
+      />
+      <!-- button to activate the filters menu -->
+      <v-badge
+        :content="numFilters"
+        :model-value="Boolean(numFilters)"
+      >
         <v-btn
           icon
-          id="c-gscan-scan-tooltip-btn"
+          class="flex-grow-0 flex-column ml-2"
+          id="c-gscan-filter-tooltip-btn"
           variant="text"
           size="small"
-          data-cy="gscan-scan-btn"
-          @click="scanFilesystem()"
+          data-cy="gscan-filter-btn"
         >
-          <v-icon size="x-large">{{ $options.icons.mdiFolderRefresh }}</v-icon>
-          <v-tooltip text="Refresh workflows list" />
+          <v-icon size="x-large">
+            {{ $options.icons.mdiFilter }}
+          </v-icon>
         </v-btn>
-      </div>
-      <!-- data -->
-      <v-progress-linear
-        v-if="isLoading"
-        indeterminate
-      />
-      <div
-        v-if="!isLoading"
-        class="c-gscan-workflows flex-grow-1 pl-2"
+      </v-badge>
+      <!-- filters tooltip -->
+      <v-menu
+        activator="#c-gscan-filter-tooltip-btn"
+        :close-on-content-click="false"
+        location="right"
       >
-        <Tree
-          :filterable="false"
-          :expand-collapse-toggle="false"
-          :auto-collapse="true"
-          :workflows="workflows"
-          tree-item-component="GScanTreeItem"
-          class="c-gscan-workflow ma-0 pa-0"
-          ref="tree"
-        />
-      </div>
-      <!-- when no workflows are returned in the GraphQL query -->
-      <div v-else>
-        <v-list-item>
-          <v-list-item-title class="text-grey">No workflows found</v-list-item-title>
-        </v-list-item>
-      </div>
+        <v-card width="500px">
+          <v-list>
+            <v-list-item>
+              <TaskFilterSelect
+                :model-value="modelValueWorkflow"
+                :type="'workflow state'"
+                :items="$options.allStates['workflow state']"
+              />
+            </v-list-item>
+            <v-list-item>
+              <TaskFilterSelect
+                :model-value="modelValueState"
+                :type="'task state'"
+                :items="$options.allStates['task state']"
+              />
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-menu>
+      <!-- scan -->
+      <v-btn
+        icon
+        id="c-gscan-scan-tooltip-btn"
+        variant="text"
+        size="small"
+        data-cy="gscan-scan-btn"
+        @click="scanFilesystem()"
+      >
+        <v-icon size="x-large">
+          {{ $options.icons.mdiFolderRefresh }}
+        </v-icon>
+        <v-tooltip text="Refresh workflows list" />
+      </v-btn>
+    </div>
+    <!-- data -->
+    <v-progress-linear
+      v-if="isLoading"
+      indeterminate
+    />
+    <div
+      v-if="!isLoading"
+      class="c-gscan-workflows flex-grow-1 pl-2"
+    >
+      <Tree
+        :filterable="false"
+        :expand-collapse-toggle="false"
+        :auto-collapse="true"
+        :workflows="workflows"
+        tree-item-component="GScanTreeItem"
+        class="c-gscan-workflow ma-0 pa-0"
+        ref="tree"
+      />
+    </div>
+    <!-- when no workflows are returned in the GraphQL query -->
+    <div v-else>
+      <v-list-item>
+        <v-list-item-title class="text-grey">
+          No workflows found
+        </v-list-item-title>
+      </v-list-item>
+    </div>
     <!-- </v-skeleton-loader> -->
   </div>
 </template>

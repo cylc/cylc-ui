@@ -1,37 +1,56 @@
 <template>
-<v-select
-  :label="`Filter by ${type}`"
-  :data-cy="`filter ${type}`"
-  :items="items"
-  clearable
-  multiple
-  :placeholder="`Filter by ${type}`"
-  v-model="localValue.states"
->
-<template v-slot:item="{ item, props }">
-  <v-list-item v-bind="props" :title="undefined">
-    <Workflowicon v-if="type==='workflow state'" :status=item.raw />
-    <Task v-if="type==='task state'" :task="{ state: item.raw }" />
-    <span class="ml-2">{{ item.raw }}</span>
-  </v-list-item>
-</template>
-<template v-slot:selection="{ item, index }">
-  <v-chip closable @click:close="removeItem(item.raw)" v-if="index >= 0 && index < maxVisibleStates">
-    <template v-slot:prepend>
-      <Workflowicon v-if="type==='workflow state'" :status=item.raw />
-      <Task v-if="type==='task state'" :task="{ state: item.raw }" />
+  <v-select
+    :label="`Filter by ${type}`"
+    :data-cy="`filter ${type}`"
+    :items="items"
+    clearable
+    multiple
+    :placeholder="`Filter by ${type}`"
+    class="mt-2"
+    v-model="localValue.states"
+  >
+    <template #item="{ item, props }">
+      <v-list-item
+        v-bind="props"
+        :title="undefined"
+      >
+        <Workflowicon
+          v-if="type==='workflow state'"
+          :status="item.raw"
+        />
+        <Task
+          v-if="type==='task state'"
+          :task="{ state: item.raw }"
+        />
+        <span class="ml-2">{{ item.raw }}</span>
+      </v-list-item>
     </template>
-    {{item.title}}
-
-  </v-chip>
-  <span
-      v-if="index === maxVisibleStates"
-      class="text-grey text-caption"
-    >
-      (+{{ localValue.states.length - maxVisibleStates }})
-  </span>
-</template>
-</v-select>
+    <template #selection="{ item, index }">
+      <v-chip
+        closable
+        @click:close="removeItem(item.raw)"
+        v-if="index >= 0 && index < maxVisibleStates"
+      >
+        <template #prepend>
+          <Workflowicon
+            v-if="type==='workflow state'"
+            :status="item.raw"
+          />
+          <Task
+            v-if="type==='task state'"
+            :task="{ state: item.raw }"
+          />
+        </template>
+        {{ item.title }}
+      </v-chip>
+      <span
+        v-if="index === maxVisibleStates"
+        class="text-grey text-caption"
+      >
+        (+{{ localValue.states.length - maxVisibleStates }})
+      </span>
+    </template>
+  </v-select>
 </template>
 
 <script setup>
@@ -40,9 +59,9 @@ import Task from '@/components/cylc/Task.vue'
 import Workflowicon from '@/components/cylc/gscan/WorkflowIcon.vue'
 
 const props = defineProps({
-  modelValue: Object, // { id, states }
-  items: Array,
-  type: Text
+  modelValue: { type: Object, default: () => ({}) }, // { id, states }
+  items: { type: Array, default: () => ([]) },
+  type: { type: String, default: '' },
 })
 
 defineEmits(['update:modelValue'])

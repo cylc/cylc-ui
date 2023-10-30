@@ -37,7 +37,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       md="6"
       class="mb-2 mb-md-0"
     >
-    <TaskFilterSelect :modelValue="localValue" :type="'task state'" :items="$options.allStates"></TaskFilterSelect>
+      <TaskFilterSelect
+        :model-value="localValue"
+        :type="'task state'"
+        :items="$options.allStates"
+      />
     </v-col>
   </v-row>
 </template>
@@ -54,7 +58,10 @@ export default {
   },
 
   props: {
-    modelValue: Object // { id, states }
+    modelValue: {
+      type: Object,
+      default: () => ({})
+    } // { id, states }
   },
 
   computed: {
