@@ -34,6 +34,8 @@ import 'nprogress/css/nprogress.css'
 import paths from './paths'
 import { Alert } from '@/model/Alert.model'
 
+NProgress.configure({ showSpinner: false })
+
 function route (path) {
   const copy = Object.assign({}, path)
   const view = copy.view
