@@ -34,7 +34,8 @@ class UserService {
         data.server,
         data.owner,
         data.permissions,
-        data.mode
+        data.mode,
+        data.initials
       )
     })
   }
