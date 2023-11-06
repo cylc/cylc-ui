@@ -28,7 +28,8 @@ export default {
       useReducedAnimation().value = value
       for (const property of ['transition', 'ripple']) {
         // TODO: can use useDefaults() composable when we upgrade to Vuetify 3.2+
-        // and convert this mixin into a composable
+        // and convert this mixin into a composable -
+        // https://github.com/cylc/cylc-ui/issues/1551
         this.$vuetify.defaults.global[property] = value ? false : null
       }
     }
