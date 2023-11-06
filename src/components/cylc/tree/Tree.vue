@@ -98,6 +98,7 @@ import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import { matchID, matchState } from '@/components/cylc/common/filter'
 import { getNodeChildren } from '@/components/cylc/tree/util'
+import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 
 export default {
   name: 'Tree',
@@ -154,21 +155,8 @@ export default {
       expandedFilter: null,
       collapseFilter: null,
       tasksFilter: {},
-      cyclePointsOrderDesc: true
+      cyclePointsOrderDesc: useCyclePointsOrderDesc()
     }
-  },
-
-  mounted () {
-    // set cyclePointsOrderDesc
-    // NOTE: this isn't reactive, however, changing the value requires
-    // navigating away from this view so it doesn't have to be
-    // TODO: make this a view-specific configuration
-    // https://github.com/cylc/cylc-ui/issues/1146
-    let cyclePointsOrderDesc = true
-    if (localStorage.cyclePointsOrderDesc) {
-      cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
-    }
-    this.cyclePointsOrderDesc = cyclePointsOrderDesc
   },
 
   computed: {

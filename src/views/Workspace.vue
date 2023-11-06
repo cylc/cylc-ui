@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { defineAsyncComponent } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
 import { uniqueId } from 'lodash'
 import {
   mdiChartLine,
@@ -78,7 +79,7 @@ if (import.meta.env.MODE !== 'production') {
   )
 }
 
-export const defaultView = () => localStorage.defaultView || 'Tree'
+export const defaultView = () => useLocalStorage('defaultView', 'Tree')
 
 export default {
   name: 'Workspace',
@@ -120,7 +121,7 @@ export default {
     next(vm => {
       vm.$workflowService.startSubscriptions()
       vm.$nextTick(() => {
-        vm.addView({ viewName: defaultView() })
+        vm.addView({ viewName: defaultView().value })
       })
     })
   },
@@ -130,7 +131,7 @@ export default {
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
-      this.addView({ viewName: defaultView() })
+      this.addView({ viewName: defaultView().value })
     })
   },
 

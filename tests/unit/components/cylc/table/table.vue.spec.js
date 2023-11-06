@@ -137,4 +137,20 @@ describe('Table component', () => {
       })
     })
   })
+  describe('Sort', () => {
+    it.each([
+      { cyclePointsOrderDesc: true, expected: 'desc' },
+      { cyclePointsOrderDesc: false, expected: 'asc' },
+    ])('sorts cycle point $expected from localStorage by default', ({ cyclePointsOrderDesc, expected }) => {
+      localStorage.setItem('cyclePointsOrderDesc', cyclePointsOrderDesc)
+      const wrapper = mountFunction({
+        props: {
+          tasks: simpleTableTasks
+        }
+      })
+      expect(wrapper.vm.sortBy).toMatchObject([
+        { order: expected }
+      ])
+    })
+  })
 })

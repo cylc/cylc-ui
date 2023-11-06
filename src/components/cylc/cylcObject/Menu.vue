@@ -134,6 +134,7 @@ import {
   getMutationArgsFromTokens,
   mutate
 } from '@/utils/aotf'
+import { useReducedAnimation } from '@/composables/localStorage'
 import Mutation from '@/components/cylc/Mutation.vue'
 import {
   mdiPencil
@@ -242,7 +243,7 @@ export default {
     },
 
     menuTransition () {
-      return this.$store.state.app.reducedAnimation ? 'slot' : VDialogTransition
+      return useReducedAnimation().value ? 'slot' : VDialogTransition
     },
   },
 
