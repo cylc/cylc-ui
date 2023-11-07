@@ -148,31 +148,30 @@ export default {
     }
   },
 
-  data () {
-    return {
-      /**
-       * The filtered workflows. This is the result of applying the filters
-       * on the workflows prop.
-       * @type {Array<WorkflowGraphQLData>}
-       */
-      filteredWorkflows: [],
-      /**
-       * Value to search and filter workflows.
-       * @type {string}
-       */
-      searchWorkflows: '',
-      /**
-       * List of filters selected by the user.
-       * @type {{ [name: string]: string[] }}
-       */
-      filters: {
-        'workflow state': [],
-        'task state': []
-        // 'workflow host': [], // TODO: will it be in state totals?
-        // 'cylc version': [] // TODO: will it be in state totals?
-      }
+  data: () => ({
+    /**
+     * The filtered workflows. This is the result of applying the filters
+     * on the workflows prop.
+     * @type {WorkflowGraphQLData[]}
+     */
+    filteredWorkflows: [],
+    /**
+     * Value to search and filter workflows.
+     * @type {string}
+     */
+    searchWorkflows: '',
+    /**
+     * List of filters selected by the user.
+     * @type {{ [name: string]: string[] }}
+     */
+    filters: {
+      'workflow state': [],
+      'task state': []
+      // 'workflow host': [], // TODO: will it be in state totals?
+      // 'cylc version': [] // TODO: will it be in state totals?
     }
-  },
+  }),
+
   computed: {
     workflows () {
       if (!this.workflowTree?.children.length) {
@@ -185,6 +184,7 @@ export default {
       return Object.values(this.filters).flat().length
     }
   },
+
   watch: {
     /**
      * If the user changes the list of filters, then we apply
@@ -211,7 +211,7 @@ export default {
     },
     filteredWorkflows: {
       immediate: true,
-      handler: function () {
+      handler () {
         // build a list of IDs to display
         // TODO: refactor the this.filterHierarchically code to make this nicer
         const ids = []
@@ -220,9 +220,11 @@ export default {
         while (stack.length) {
           // item = stack.splice(-1)[0]
           item = stack.pop()
-          if (['workflow', 'workflow-part'].includes(item.type)) {
+          if (item.type === 'workflow-part') {
             ids.push(item.id)
             stack.push(...item.children)
+          } else if (item.type === 'workflow') {
+            ids.push(item.id)
           }
         }
         // set the filtered attr on the treeItemCache of the tree nodes
@@ -237,8 +239,8 @@ export default {
       }
     }
   },
-  methods: {
 
+  methods: {
     scanFilesystem () {
       mutate({ name: 'scan', args: [] }, {}, this.$workflowService.apolloClient)
     },
@@ -250,36 +252,6 @@ export default {
         this.filters['workflow state'],
         this.filters['task state']
       )
-    },
-
-    /**
-     * Return `true` iff all the items have been selected. `false` otherwise.
-     *
-     * @param {[
-     *   {
-     *     model: boolean
-     *   }
-     * ]} items - filter items
-     * @returns {boolean} - `true` iff all the items have been selected. `false` otherwise
-     */
-    allItemsSelected (items) {
-      return items.every(item => item.model === true)
-    },
-
-    /**
-     * If every element in the list is `true`, then we will set every element in the
-     * list to `false`. Otherwise, we set all the elements in the list to `true`.
-     * @param {[
-     *   {
-     *     model: boolean
-     *   }
-     * ]} items - filter items
-     */
-    toggleItemsValues (items) {
-      const newValue = !this.allItemsSelected(items)
-      items.forEach(item => {
-        item.model = newValue
-      })
     },
   },
 

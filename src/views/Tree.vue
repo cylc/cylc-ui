@@ -21,13 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <tree-component
         :workflows="workflows"
         :hoverable="false"
-        :activable="false"
-        :multiple-active="false"
-        :min-depth="1"
         :autoStripTypes="['workflow']"
-        ref="tree0"
-        key="tree0"
-      ></tree-component>
+      />
     </div>
   </div>
 </template>

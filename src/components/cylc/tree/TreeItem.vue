@@ -263,8 +263,6 @@ export default {
 
   data () {
     return {
-      active: false,
-      selected: false,
       filtered: true,
       manuallyExpanded: null,
     }
@@ -311,7 +309,6 @@ export default {
     nodeClass () {
       return {
         'node--hoverable': this.hoverable,
-        'node--active': this.active,
         expanded: this.isExpanded
       }
     },

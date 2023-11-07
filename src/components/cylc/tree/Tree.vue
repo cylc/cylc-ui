@@ -112,8 +112,6 @@ export default {
       default: TreeItem.name,
     },
     hoverable: Boolean,
-    activable: Boolean,
-    multipleActive: Boolean,
     filterable: {
       type: Boolean,
       default: true

@@ -22,7 +22,6 @@ import {
   WorkflowStateOrder
 } from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
-import GScan from '@/components/cylc/gscan/GScan.vue'
 import {
   getWorkflowTreeSortValue,
   sortedWorkflowTree
@@ -44,7 +43,7 @@ describe('GScan component', () => {
   beforeEach(resetState)
 
   describe('Sorting', () => {
-    it('should set workflow sort order by status', () => {
+    it('sets workflow sort order by status', () => {
       // for each worflow state ...
       for (const workflowState of WorkflowState) {
         // ... except ERROR
@@ -81,7 +80,8 @@ describe('GScan component', () => {
         ).to.equal(WorkflowStateOrder.get(workflowState.name))
       }
     })
-    it('should sort workflows', () => {
+
+    it('sorts workflows', () => {
       // it should sort by status then name
       expect(
         listTree(sortedWorkflowTree(TEST_TREE))
@@ -107,7 +107,8 @@ describe('GScan component', () => {
         )
       ).to.deep.equal(['~u/b', '~u/c', '~u/a/x1', '~u/a/x2'])
     })
-    it('should filter by workflow state', () => {
+
+    it('filters by workflow state', () => {
       expect(
         listTree(
           filterHierarchically(
@@ -145,7 +146,8 @@ describe('GScan component', () => {
         )
       ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
     })
-    it('should filter by workflow name', () => {
+
+    it('filters by workflow name', () => {
       expect(
         listTree(
           filterHierarchically(
@@ -172,7 +174,8 @@ describe('GScan component', () => {
         )
       ).to.deep.equal([])
     })
-    it('should filter by workflow state totals', () => {
+
+    it('filters by workflow state totals', () => {
       expect(
         listTree(
           filterHierarchically(
@@ -197,45 +200,6 @@ describe('GScan component', () => {
           )
         )
       ).to.deep.equal(['~u/c'])
-    })
-  })
-
-  describe('Toggle items values', () => {
-    it('should toggle items values to true', () => {
-      const items = [
-        {
-          model: false
-        },
-        {
-          model: false
-        }
-      ]
-      GScan.methods.toggleItemsValues(items)
-      expect(items.every(item => item.model))
-    })
-    it('should toggle items values to false', () => {
-      const items = [
-        {
-          model: true
-        },
-        {
-          model: true
-        }
-      ]
-      GScan.methods.toggleItemsValues(items)
-      expect(!items.every(item => item.model))
-    })
-    it('should toggle items values to false (mixed values)', () => {
-      const items = [
-        {
-          model: true
-        },
-        {
-          model: false
-        }
-      ]
-      GScan.methods.toggleItemsValues(items)
-      expect(!items.every(item => item.model))
     })
   })
 })
