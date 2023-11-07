@@ -189,5 +189,6 @@ export default {
   },
 
   nodeTypes: ['workflow-part', 'workflow'],
+  maxTasksDisplayed: 5,
 }
 </script>

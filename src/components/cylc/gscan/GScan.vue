@@ -296,6 +296,5 @@ export default {
     'workflow state': WorkflowState.enumValues.map(x => x.name),
     'task state': TaskStateUserOrder.map(x => x.name)
   },
-  maxTasksDisplayed: 5,
 }
 </script>
