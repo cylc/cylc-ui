@@ -16,10 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div
-    v-show="filtered"
-    class="treeitem"
-  >
+  <div class="treeitem">
     <div
       class="node d-flex align-center"
       :class="nodeClass"
@@ -170,11 +167,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-else
             v-for="child in nodeChildren"
             :key="child.id"
+            v-show="child.filtered"
             :node="child"
             :depth="depth + 1"
             :mean-elapsed-time="meanElapsedTime ?? node.node.task?.meanElapsedTime"
-            v-bind="{ hoverable, autoExpandTypes, cyclePointsOrderDesc, indent }"
-            v-on="passthroughHandlers"
+            v-bind="{ hoverable, autoExpandTypes, cyclePointsOrderDesc, expandAll, indent }"
           />
         </template>
       </slot>
@@ -192,19 +189,6 @@ import {
   jobMessageOutputs
 } from '@/utils/tasks'
 import { getNodeChildren } from '@/components/cylc/tree/util'
-
-/**
- * Events that are passed through up the chain from child TreeItems.
- *
- * i.e. they are re-emitted by this TreeItem when they occur on a
- * child TreeItem, all the way up to the parent Tree component.
- */
-const passthroughEvents = [
-  'tree-item-created',
-  'tree-item-destroyed',
-  'tree-item-expanded',
-  'tree-item-collapsed',
-]
 
 export const defaultNodeIndent = 28 // px
 
@@ -239,10 +223,16 @@ export default {
       default: true
     },
     hoverable: Boolean,
+    /** Render expanded initially if node is one of these types. */
     autoExpandTypes: {
       type: Array,
       required: false,
       default: () => ['workflow', 'cycle', 'family']
+    },
+    /** When this changes, will expand if node is one of these types, otherwise collapse. */
+    expandAll: {
+      type: Array,
+      required: false,
     },
     /** Indent in px; default is expand/collapse btn width */
     indent: {
@@ -257,13 +247,8 @@ export default {
     },
   },
 
-  emits: [
-    ...passthroughEvents
-  ],
-
   data () {
     return {
-      filtered: true,
       manuallyExpanded: null,
     }
   },
@@ -331,39 +316,19 @@ export default {
     },
   },
 
-  created () {
-    this.$emit('tree-item-created', this)
-    this.passthroughHandlers = Object.fromEntries(
-      passthroughEvents.map((eventName) => (
-        [eventName, (treeItem) => this.$emit(eventName, treeItem)]
-      ))
-    )
-  },
-
-  beforeUnmount () {
-    this.$emit('tree-item-destroyed', this)
-  },
-
-  beforeMount () {
-    this.emitExpandCollapseEvent(this.isExpanded)
+  watch: {
+    expandAll (nodeTypes) {
+      if (nodeTypes?.includes(this.node.type)) {
+        this.isExpanded = true
+      } else if (nodeTypes?.length === 0) {
+        this.isExpanded = false // manually collapsed
+      }
+    }
   },
 
   methods: {
     toggleExpandCollapse () {
       this.isExpanded = !this.isExpanded
-      this.emitExpandCollapseEvent(this.isExpanded)
-    },
-    /**
-     * Emits an event `tree-item-expanded` if `expanded` is true, or emits
-     * `tree-item-collapsed` if `expanded` is false.
-     * @param {boolean} expanded whether the node is expanded or not
-     */
-    emitExpandCollapseEvent (expanded) {
-      if (expanded) {
-        this.$emit('tree-item-expanded', this)
-      } else {
-        this.$emit('tree-item-collapsed', this)
-      }
     },
     latestJob
   },

@@ -80,6 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <GScanTreeItem
         v-for="child in nodeChildren"
         :key="child.id"
+        v-show="child.filtered"
         :node="child"
         :depth="depth + 1"
         v-bind="{ hoverable }"

@@ -15,8 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
+import { createVuetify } from 'vuetify'
 import storeOptions from '@/store/options'
+import GScan from '@/components/cylc/gscan/GScan.vue'
+import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import {
   WorkflowState,
   WorkflowStateOrder
@@ -26,14 +30,13 @@ import {
   getWorkflowTreeSortValue,
   sortedWorkflowTree
 } from '@/components/cylc/gscan/sort.js'
-import {
-  filterHierarchically
-} from '@/components/cylc/gscan/filters'
 
 import {
   TEST_TREE,
   listTree
 } from './utils'
+
+const vuetify = createVuetify()
 
 describe('GScan component', () => {
   const store = createStore(storeOptions)
@@ -92,113 +95,64 @@ describe('GScan component', () => {
   })
 
   describe('Filters', () => {
+    const mountFunction = (options) => mount(GScan, {
+      global: {
+        plugins: [vuetify, CylcObjectPlugin],
+      },
+      props: {
+        workflowTree: TEST_TREE,
+        isLoading: false,
+      },
+      ...options
+    })
+
     it("shouldn't filter out workflows incorrectly", () => {
+      const wrapper = mountFunction()
+      // filter for all workflow states
+      wrapper.vm.filters['workflow state'] = WorkflowStateOrder.keys()
       expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            // don't filter by name
-            null,
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            []
-          )
-        )
+        listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/b', '~u/c', '~u/a/x1', '~u/a/x2'])
     })
 
     it('filters by workflow state', () => {
+      const wrapper = mountFunction()
+      wrapper.vm.filters['workflow state'] = [WorkflowState.RUNNING.name]
       expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            // don't filter by name
-            null,
-            [WorkflowState.RUNNING.name],
-            // filter for all task states
-            []
-          )
-        )
+        listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/c'])
+      wrapper.vm.filters['workflow state'] = [WorkflowState.STOPPING.name]
       expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            // don't filter by name
-            null,
-            [WorkflowState.STOPPING.name],
-            // filter for all task states
-            []
-          )
-        )
+        listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/b'])
+      wrapper.vm.filters['workflow state'] = [WorkflowState.STOPPED.name]
       expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            // don't filter by name
-            null,
-            [WorkflowState.STOPPED.name],
-            // filter for all task states
-            []
-          )
-        )
+        listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
     })
 
     it('filters by workflow name', () => {
+      const wrapper = mountFunction()
+      wrapper.vm.searchWorkflows = 'x'
       expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            'x',
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            []
-          )
-        )
+        listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
-      // check it isn't matching the user name
+      wrapper.vm.searchWorkflows = 'u'
       expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            'u',
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            []
-          )
-        )
+        listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal([])
     })
 
     it('filters by workflow state totals', () => {
+      const wrapper = mountFunction()
+      wrapper.vm.filters['workflow state'] = WorkflowStateOrder.keys()
+      wrapper.vm.filters['task state'] = [TaskState.RUNNING.name]
       expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            null,
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            [TaskState.RUNNING.name]
-          )
-        )
+        listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/b'])
+      wrapper.vm.filters['task state'] = [TaskState.SUBMITTED.name]
       expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            null,
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            [TaskState.SUBMITTED.name]
-          )
-        )
+        listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/c'])
     })
   })

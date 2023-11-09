@@ -62,7 +62,7 @@ describe('Tree view', () => {
   })
   it('Displays job details when expanded', () => {
     // this is testing that there is a margin, not necessarily that the leaf node's triangle is exactly under the node
-    cy.visit('/#/workspace/one')
+    cy.visit('/#/tree/one')
     cy.get('.node-data-task')
       .contains('eventually_succeeded')
       .parents('.node')
@@ -272,6 +272,34 @@ describe('Tree view', () => {
         .get('@sleepyTask')
         .should('be.visible')
     })
+
+    it('Does not expand jobs but can collapse them', () => {
+      cy.visit('/#/tree/one')
+        .get('[data-cy=expand-all]')
+        .click()
+        .get('.node-data-job:first')
+        .should('not.exist')
+      cy.get('.node-data-task')
+        .contains('failed')
+        .parents('.node')
+        .find('.node-expand-collapse-button')
+        .click()
+        .get('.node-data-job:first')
+        .should('be.visible')
+      cy.get('[data-cy=expand-all]')
+        .click()
+        // The job should remain expanded
+        .get('.node-data-job:first')
+        .should('be.visible')
+      cy.get('[data-cy=collapse-all]')
+        .click()
+        .get('[data-cy=expand-all]')
+        .click()
+        // The job should be collapsed now
+        .get('.node-data-job:first')
+        .should('not.be.visible')
+    })
+
     it('Works when tasks are being filtered', () => {
       cy.visit('/#/tree/one')
       cy.get('.node-data-task')

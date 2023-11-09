@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <!-- Filters -->
       <v-col
-        v-if="filterable"
+        v-if="!nodeFilterFunc"
       >
         <TaskFilter v-model="tasksFilter"/>
       </v-col>
@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="d-flex flex-nowrap ml-2"
         >
           <v-btn
-            @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
+            @click="expandAll = ['workflow', 'cycle', 'family']"
             icon
             variant="flat"
             size="small"
@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-tooltip>Expand all</v-tooltip>
           </v-btn>
           <v-btn
-            @click="collapseAll()"
+            @click="expandAll = []"
             icon
             variant="flat"
             size="small"
@@ -77,14 +77,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :is="treeItemComponent"
             v-for="child of rootChildren"
             :key="child.id"
+            v-show="child.filtered"
             :node="child"
-            v-bind="{ hoverable, cyclePointsOrderDesc, indent }"
-            @tree-item-created="onTreeItemCreated"
-            @tree-item-destroyed="onTreeItemDestroyed"
-            @tree-item-expanded="onTreeItemExpanded"
-            @tree-item-collapsed="onTreeItemCollapsed"
-          >
-          </component>
+            v-bind="{ hoverable, cyclePointsOrderDesc, expandAll, indent }"
+          />
         </v-container>
       </v-col>
     </v-row>
@@ -112,9 +108,16 @@ export default {
       default: TreeItem.name,
     },
     hoverable: Boolean,
-    filterable: {
-      type: Boolean,
-      default: true
+    /**
+     * Custom function used to recursively filter nodes, to replace the default
+     * implementation.
+     *
+     * It should accept a node as its first argument. If not specified, will
+     * show the default ID filter and task state filter controls.
+     */
+    nodeFilterFunc: {
+      type: Function,
+      required: false,
     },
     expandCollapseToggle: {
       type: Boolean,
@@ -146,11 +149,7 @@ export default {
 
   data () {
     return {
-      treeItemCache: {},
-      expandedCache: new Set(),
-      expanded: true,
-      expandedFilter: null,
-      collapseFilter: null,
+      expandAll: null,
       tasksFilter: {},
       cyclePointsOrderDesc: true
     }
@@ -170,62 +169,33 @@ export default {
   },
 
   computed: {
+    /** Array of nodes at the top of the tree */
     rootChildren () {
-      // array of nodes at the top of the tree
+      let nodes
       if (
         this.workflows.length === 1 &&
         this.autoStripTypes.includes(this.workflows[0].type)
       ) {
         // if there is only one workflow we return its children
         // (i.e. cycle points)
-        return getNodeChildren(this.workflows[0], this.cyclePointsOrderDesc)
+        nodes = getNodeChildren(this.workflows[0], this.cyclePointsOrderDesc)
       } else {
         // if there are multiple children we need to include the workflow
         // nodes to allow us to differentiate between them
-        return this.workflows
+        nodes = this.workflows
       }
-    },
-    filterByTaskName () {
-      return Boolean(this.tasksFilter.id?.trim())
-    },
-    filterByTaskState () {
-      return Boolean(this.tasksFilter.states?.length)
-    }
-  },
-
-  watch: {
-    tasksFilter: {
-      deep: true,
-      handler: 'filterTasks'
-    },
-    workflows: {
-      deep: true,
-      handler () {
-        if (this.filterByTaskName || this.filterByTaskState) {
-          this.$nextTick(() => {
-            this.filterNodes(this.workflows)
-          })
-        }
+      const filterFunc = this.nodeFilterFunc ?? this.filterNode
+      for (const node of nodes) {
+        filterFunc(node)
       }
-    }
+      return nodes
+    },
   },
 
   methods: {
-    filterTasks () {
-      if (this.filterByTaskName || this.filterByTaskState) {
-        this.filterNodes(this.workflows)
-      } else {
-        this.removeAllFilters()
-      }
-    },
-    filterNodes (nodes) {
-      for (const node of nodes) {
-        this.filterNode(node)
-      }
-    },
     /**
-     * Update tree cache entry for this node (and its children if applicable)
-     * with whether the node matches the filters.
+     * Recursively set the `.filtered` property on this node and its children if applicable.
+     * `filtered` = true means the node DOES match the filters.
      *
      * @param {Object} node
      * @param {boolean} parentsIDMatch - whether any parents of this node
@@ -233,18 +203,20 @@ export default {
      * @return {boolean} - whether this node matches the filter.
      */
     filterNode (node, parentsIDMatch = false) {
+      if (node.type === 'job') {
+        // jobs are always included and don't contribute to the filtering
+        node.filtered = true
+        return false
+      }
       const stateMatch = matchState(node, this.tasksFilter.states)
       // This node should be included if any parent matches the ID filter
       const idMatch = parentsIDMatch || matchID(node, this.tasksFilter.id)
       let filtered = stateMatch && idMatch
 
-      let children
+      let { children } = node
       if (node.type === 'cycle') {
         // follow the family tree from cycle point nodes
         children = node.familyTree[0]?.children
-      } else if (['workflow', 'family'].includes(node.type)) {
-        // follow children for workflow or family nodes
-        children = node.children
       }
       if (children) {
         for (const child of children) {
@@ -253,52 +225,8 @@ export default {
         }
       }
 
-      if (this.treeItemCache[node.id]) {
-        this.treeItemCache[node.id].filtered = filtered
-      }
-
+      node.filtered = filtered
       return filtered
-    },
-    removeAllFilters () {
-      for (const treeitem of Object.values(this.treeItemCache)) {
-        treeitem.filtered = true
-      }
-    },
-    expandAll (filter = null) {
-      const collection = filter ? Object.values(this.treeItemCache).filter(filter) : Object.values(this.treeItemCache)
-      for (const treeItem of collection) {
-        treeItem.isExpanded = true
-        this.expandedCache.add(treeItem)
-      }
-      this.expanded = true
-    },
-    collapseAll (filter = null) {
-      const collection = filter ? [...this.expandedCache].filter(filter) : this.expandedCache
-      for (const treeItem of collection) {
-        treeItem.isExpanded = false
-        this.expandedCache.delete(treeItem)
-      }
-      if (!filter) {
-        this.expanded = false
-      }
-    },
-    onTreeItemExpanded (treeItem) {
-      this.expandedCache.add(treeItem)
-      this.expanded = true
-    },
-    onTreeItemCollapsed (treeItem) {
-      this.expandedCache.delete(treeItem)
-    },
-    onTreeItemCreated (treeItem) {
-      this.treeItemCache[treeItem.$props.node.id] = treeItem
-      if (treeItem.isExpanded) {
-        this.expandedCache.add(treeItem)
-      }
-    },
-    onTreeItemDestroyed (treeItem) {
-      // make sure the item is removed from all caches, otherwise we will have a memory leak
-      delete this.treeItemCache[treeItem.$props.node.id]
-      this.expandedCache.delete(treeItem)
     },
   },
 

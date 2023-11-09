@@ -75,7 +75,6 @@ describe('TreeItem component', () => {
   it('should display the treeitem with valid data', () => {
     const wrapper = mountFunction()
     expect(wrapper.props().node.node.__typename).to.equal('Workflow')
-    expect(wrapper.vm.$data.filtered).to.equal(true)
   })
 
   describe('expanded', () => {

@@ -19,11 +19,11 @@ import JobState from '@/model/JobState.model'
 
 /**
  * @param {WorkflowGScanNode|WorkflowNamePartGScanNode} workflow
- * @param {string} name - name filter
+ * @param {?string} name - name filter
  * @returns {boolean}
  */
 export function filterByName (workflow, name) {
-  return workflow.tokens.workflow.toLowerCase().includes(name.toLowerCase())
+  return !name || workflow.tokens.workflow.toLowerCase().includes(name.toLowerCase())
 }
 
 /**
@@ -64,55 +64,4 @@ export function filterByState (workflow, workflowStates, taskStates) {
     )
   }
   return true
-}
-
-/**
- * Filter a workflow using a given name (could be a part of
- * a name) and a given list of filters.
- *
- * The list of filters may contain workflow states ("running", "stopped",
- * "paused"), and/or task states ("running", "waiting", "submit-failed",
- * etc).
- *
- * @param {WorkflowGScanNode|WorkflowNamePartGScanNode} workflow
- * @param {string} name
- * @param {string[]} workflowStates
- * @param {string[]} taskStates
- * @return {boolean} - true if the workflow is accepted, false otherwise
- */
-function filterWorkflow (workflow, name, workflowStates, taskStates) {
-  // Filter by name.
-  if (name && !filterByName(workflow, name)) {
-    // Stop if we know that the name was not accepted.
-    return false
-  }
-  // Now filter using the provided list of states. We know that the name has been
-  // accepted at this point.
-  return filterByState(workflow, workflowStates, taskStates)
-}
-
-/**
- * @param {Array<WorkflowGScanNode|WorkflowNamePartGScanNode>} workflows
- * @param {String} name
- * @param {Array<String>} workflowStates
- * @param {Array<String>} taskStates
- * @returns {Array<WorkflowGScanNode|WorkflowNamePartGScanNode>} - filtered workflows
- * @see https://stackoverflow.com/questions/45289854/how-to-effectively-filter-tree-view-retaining-its-existing-structure
- */
-export function filterHierarchically (workflows, name, workflowStates, taskStates) {
-  const filterChildren = (result, workflowNode) => {
-    if (workflowNode.type === 'workflow') {
-      if (filterWorkflow(workflowNode, name, workflowStates, taskStates)) {
-        result.push(workflowNode)
-        return result
-      }
-    } else if (workflowNode.type === 'workflow-part' && workflowNode.children.length) {
-      const children = workflowNode.children.reduce(filterChildren, [])
-      if (children.length) {
-        result.push({ ...workflowNode, children })
-      }
-    }
-    return result
-  }
-  return workflows.reduce(filterChildren, [])
 }

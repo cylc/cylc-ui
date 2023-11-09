@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { Tokens } from '@/utils/uid'
+
 /*
  * Test data for Tree component tests.
  */
@@ -216,6 +218,7 @@ const simpleWorkflowTree4Nodes = [
   {
     id: '~user/workflow1',
     name: 'workflow1',
+    tokens: new Tokens('~user/workflow1'),
     type: 'workflow',
     node: {
       __typename: 'Workflow',
@@ -228,6 +231,7 @@ const simpleWorkflowTree4Nodes = [
       {
         id: '~user/workflow1//20100101T0000Z',
         name: '20100101T0000Z',
+        tokens: new Tokens('~user/workflow1//20100101T0000Z'),
         type: 'cycle',
         node: {
           __typename: 'CyclePoint',
@@ -238,6 +242,7 @@ const simpleWorkflowTree4Nodes = [
           {
             id: '~user/workflow1//20100101T0000Z/root',
             name: 'root',
+            tokens: new Tokens('~user/workflow1//20100101T0000Z/root'),
             type: 'family',
             node: {
               state: 'failed'
@@ -246,16 +251,17 @@ const simpleWorkflowTree4Nodes = [
               {
                 id: '~user/workflow1//20100101T0000Z/foo',
                 name: 'foo',
+                tokens: new Tokens('~user/workflow1//20100101T0000Z/foo'),
                 type: 'task',
                 node: {
                   __typename: 'TaskProxy',
                   state: 'failed'
                 },
-                expanded: false,
                 children: [
                   {
                     id: '~user/workflow1//20100101T0000Z/foo/01',
                     name: '01',
+                    tokens: new Tokens('~user/workflow1//20100101T0000Z/foo/01'),
                     type: 'job',
                     node: {
                       __typename: 'Job',

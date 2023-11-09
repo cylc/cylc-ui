@@ -17,6 +17,7 @@
 
 import { WorkflowState } from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
+import { Tokens } from '@/utils/uid'
 
 const RUNNING_STATE_TOTALS = {}
 RUNNING_STATE_TOTALS[TaskState.RUNNING.name] = 1
@@ -39,30 +40,27 @@ export const TEST_TREE = {
           id: '~u/a',
           name: 'a',
           type: 'workflow-part',
-          tokens: {
-            user: 'u',
-            workflow: 'a'
-          },
+          tokens: new Tokens('~u/a'),
           children: [
             {
               id: '~u/a/x1',
               name: 'x1',
               type: 'workflow',
-              tokens: {
-                user: 'u',
-                workflow: 'a/x1'
-              },
-              node: { status: WorkflowState.STOPPED.name }
+              tokens: new Tokens('~u/a/x1'),
+              node: {
+                status: WorkflowState.STOPPED.name,
+                latestStateTasks: [],
+              }
             },
             {
               id: '~u/a/x2',
               name: 'x2',
               type: 'workflow',
-              tokens: {
-                user: 'u',
-                workflow: 'a/x2'
-              },
-              node: { status: WorkflowState.STOPPED.name }
+              tokens: new Tokens('~u/a/x2'),
+              node: {
+                status: WorkflowState.STOPPED.name,
+                latestStateTasks: [],
+              }
             }
           ]
         },
@@ -70,26 +68,22 @@ export const TEST_TREE = {
           id: '~u/b',
           name: 'b',
           type: 'workflow',
-          tokens: {
-            user: 'u',
-            workflow: 'b'
-          },
+          tokens: new Tokens('~u/b'),
           node: {
             status: WorkflowState.STOPPING.name,
-            stateTotals: RUNNING_STATE_TOTALS
+            stateTotals: RUNNING_STATE_TOTALS,
+            latestStateTasks: [],
           }
         },
         {
           id: '~u/c',
           name: 'c',
           type: 'workflow',
-          tokens: {
-            user: 'u',
-            workflow: 'c'
-          },
+          tokens: new Tokens('~u/c'),
           node: {
             status: WorkflowState.RUNNING.name,
-            stateTotals: SUBMITTED_STATE_TOTALS
+            stateTotals: SUBMITTED_STATE_TOTALS,
+            latestStateTasks: [],
           }
         }
       ]
@@ -97,18 +91,25 @@ export const TEST_TREE = {
   ]
 }
 
-export function listTree (gscanTree) {
-  // return a flat list of workflow ids for all workflow nodes in the
-  // tree, preserving sort order
+/**
+ * Return a flat list of workflow ids for all workflow nodes in the
+ * tree, preserving sort order
+ *
+ * @param {Object} tree
+ * @param {boolean} filter - whether to remove items that have been filtered out
+ */
+export function listTree (tree, filter = false) {
   const ret = []
-  const stack = [...gscanTree]
+  const stack = [...tree]
   let item
   while (stack.length) {
     item = stack.splice(0, 1)[0]
-    if (['workflow-part', 'user'].includes(item.type)) {
-      stack.push(...item.children)
-    } else if (item.type === 'workflow') {
-      ret.push(item.id)
+    if (!filter || item.filtered) {
+      if (['workflow-part', 'user'].includes(item.type)) {
+        stack.push(...item.children)
+      } else if (item.type === 'workflow') {
+        ret.push(item.id)
+      }
     }
   }
   return ret
