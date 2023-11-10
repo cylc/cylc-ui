@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <!-- Filters -->
       <v-col
-        v-if="!nodeFilterFunc"
+        v-if="nodeFilterFunc == null"
       >
         <TaskFilter v-model="tasksFilter"/>
       </v-col>
@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :is="treeItemComponent"
             v-for="child of rootChildren"
             :key="child.id"
-            v-show="child.filtered"
+            v-show="!child.filteredOut"
             :node="child"
             v-bind="{ hoverable, cyclePointsOrderDesc, expandAll, indent }"
           />
@@ -88,6 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
 import { mdiPlus, mdiMinus } from '@mdi/js'
 import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
@@ -110,14 +111,15 @@ export default {
     hoverable: Boolean,
     /**
      * Custom function used to recursively filter nodes, to replace the default
-     * implementation.
+     * implementation. It should accept a node as its first argument.
      *
-     * It should accept a node as its first argument. If not specified, will
-     * show the default ID filter and task state filter controls.
+     * If false, the filtering will be skipped.
+     * If not specified, will show the default ID filter and task state
+     * filter controls and use those for filtering.
      */
     nodeFilterFunc: {
-      type: Function,
-      required: false,
+      type: [Function, Boolean],
+      default: null,
     },
     expandCollapseToggle: {
       type: Boolean,
@@ -184,7 +186,16 @@ export default {
         // nodes to allow us to differentiate between them
         nodes = this.workflows
       }
+      const defaultFiltersActive = this.tasksFilter.id?.trim() || this.tasksFilter.states?.length
+      if (
+        this.nodeFilterFunc === false ||
+        (this.nodeFilterFunc == null && !defaultFiltersActive)
+      ) {
+        // Skip filtering process if no filters are active
+        return nodes
+      }
       const filterFunc = this.nodeFilterFunc ?? this.filterNode
+      nodes = cloneDeep(nodes)
       for (const node of nodes) {
         filterFunc(node)
       }
@@ -194,8 +205,7 @@ export default {
 
   methods: {
     /**
-     * Recursively set the `.filtered` property on this node and its children if applicable.
-     * `filtered` = true means the node DOES match the filters.
+     * Recursively set the `.filteredOut` property on this node and its children if applicable.
      *
      * @param {Object} node
      * @param {boolean} parentsIDMatch - whether any parents of this node
@@ -205,13 +215,12 @@ export default {
     filterNode (node, parentsIDMatch = false) {
       if (node.type === 'job') {
         // jobs are always included and don't contribute to the filtering
-        node.filtered = true
         return false
       }
       const stateMatch = matchState(node, this.tasksFilter.states)
       // This node should be included if any parent matches the ID filter
       const idMatch = parentsIDMatch || matchID(node, this.tasksFilter.id)
-      let filtered = stateMatch && idMatch
+      let isMatch = stateMatch && idMatch
 
       let { children } = node
       if (node.type === 'cycle') {
@@ -220,13 +229,13 @@ export default {
       }
       if (children) {
         for (const child of children) {
-          filtered = this.filterNode(child, idMatch) || filtered
+          isMatch = this.filterNode(child, idMatch) || isMatch
           // Note: do not break early as we must run the filter over all children
         }
       }
 
-      node.filtered = filtered
-      return filtered
+      node.filteredOut = !isMatch
+      return isMatch
     },
   },
 

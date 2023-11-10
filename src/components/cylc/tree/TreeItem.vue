@@ -167,7 +167,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-else
             v-for="child in nodeChildren"
             :key="child.id"
-            v-show="child.filtered"
+            v-show="!child.filteredOut"
             :node="child"
             :depth="depth + 1"
             :mean-elapsed-time="meanElapsedTime ?? node.node.task?.meanElapsedTime"

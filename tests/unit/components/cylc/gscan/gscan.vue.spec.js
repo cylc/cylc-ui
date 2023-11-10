@@ -35,6 +35,7 @@ import {
   TEST_TREE,
   listTree
 } from './utils'
+import { nextTick } from 'vue'
 
 const vuetify = createVuetify()
 
@@ -106,51 +107,66 @@ describe('GScan component', () => {
       ...options
     })
 
-    it("shouldn't filter out workflows incorrectly", () => {
+    it("shouldn't filter out workflows incorrectly", async () => {
       const wrapper = mountFunction()
       // filter for all workflow states
       wrapper.vm.filters['workflow state'] = WorkflowStateOrder.keys()
+      await nextTick()
       expect(
         listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/b', '~u/c', '~u/a/x1', '~u/a/x2'])
     })
 
-    it('filters by workflow state', () => {
+    it('filters by workflow state', async () => {
       const wrapper = mountFunction()
+
       wrapper.vm.filters['workflow state'] = [WorkflowState.RUNNING.name]
+      await nextTick()
       expect(
         listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/c'])
+
       wrapper.vm.filters['workflow state'] = [WorkflowState.STOPPING.name]
+      await nextTick()
       expect(
         listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/b'])
+
       wrapper.vm.filters['workflow state'] = [WorkflowState.STOPPED.name]
+      await nextTick()
       expect(
         listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
     })
 
-    it('filters by workflow name', () => {
+    it('filters by workflow name', async () => {
       const wrapper = mountFunction()
+
       wrapper.vm.searchWorkflows = 'x'
+      await nextTick()
       expect(
         listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
+
       wrapper.vm.searchWorkflows = 'u'
+      await nextTick()
       expect(
         listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal([])
     })
 
-    it('filters by workflow state totals', () => {
+    it('filters by workflow state totals', async () => {
       const wrapper = mountFunction()
+
       wrapper.vm.filters['workflow state'] = WorkflowStateOrder.keys()
       wrapper.vm.filters['task state'] = [TaskState.RUNNING.name]
+      await nextTick()
       expect(
         listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/b'])
+
       wrapper.vm.filters['task state'] = [TaskState.SUBMITTED.name]
+      await nextTick()
       expect(
         listTree(wrapper.vm.$refs.tree.rootChildren, true)
       ).to.deep.equal(['~u/c'])

@@ -17,12 +17,15 @@
 
 // we mount the tree to include the TreeItem component and other vuetify children components
 import { mount } from '@vue/test-utils'
+import { vi } from 'vitest'
 import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
+import { cloneDeep } from 'lodash'
 import Tree from '@/components/cylc/tree/Tree.vue'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import WorkflowService from '@/services/workflow.service'
+import { nextTick } from 'vue'
 
 const $eventBus = {
   emit () {}
@@ -44,15 +47,10 @@ describe('Tree component', () => {
       }
     },
     props: {
-      workflows: simpleWorkflowTree4Nodes[0].children,
+      workflows: cloneDeep(simpleWorkflowTree4Nodes),
+      autoStripTypes: ['workflow'],
     },
     ...options
-  })
-
-  it('should display the tree with valid data', () => {
-    const wrapper = mountFunction()
-    expect(wrapper.props().workflows[0].node.__typename).to.equal('CyclePoint')
-    expect(wrapper.find('div')).to.not.equal(null)
   })
 
   describe('Filter', () => {
@@ -62,27 +60,39 @@ describe('Tree component', () => {
     })
 
     it.each([
-      { tasksFilter: {}, filtered: true },
-      { tasksFilter: { id: '' }, filtered: true },
-      { tasksFilter: { id: 'foo' }, filtered: true },
-      { tasksFilter: { states: ['failed'] }, filtered: true },
-      { tasksFilter: { id: 'foo', states: ['failed'] }, filtered: true },
+      {},
+      { id: ' ', states: [] },
+    ])('does not run filtering when filters are falsy: %o', async (tasksFilter) => {
+      const spy = vi.spyOn(Tree.methods, 'filterNode')
+      const wrapper = mountFunction()
+      wrapper.vm.tasksFilter = tasksFilter
+      await nextTick()
+      expect(wrapper.vm.rootChildren).toEqual(
+        simpleWorkflowTree4Nodes[0].children
+      )
+      expect(spy).not.toHaveBeenCalled()
+    })
 
-      { tasksFilter: { id: 'asdf' }, filtered: false },
-      { tasksFilter: { states: ['running'] }, filtered: false },
-      { tasksFilter: { id: 'foo', states: ['running'] }, filtered: false },
-      { tasksFilter: { id: 'asdf', states: ['failed'] }, filtered: false },
-    ])('filters by $tasksFilter', ({ tasksFilter, filtered }) => {
+    it.each([
+      { tasksFilter: { id: 'foo' }, filteredOut: false },
+      { tasksFilter: { states: ['failed'] }, filteredOut: false },
+      { tasksFilter: { id: 'foo', states: ['failed'] }, filteredOut: false },
+
+      { tasksFilter: { id: 'asdf' }, filteredOut: true },
+      { tasksFilter: { states: ['running'] }, filteredOut: true },
+      { tasksFilter: { id: 'foo', states: ['running'] }, filteredOut: true },
+      { tasksFilter: { id: 'asdf', states: ['failed'] }, filteredOut: true },
+    ])('filters by $tasksFilter', ({ tasksFilter, filteredOut }) => {
       const wrapper = mountFunction()
       wrapper.vm.tasksFilter = tasksFilter
       expect(wrapper.vm.rootChildren).toMatchObject([{
         id: '~user/workflow1//20100101T0000Z',
-        filtered,
+        filteredOut,
         familyTree: [{
           id: '~user/workflow1//20100101T0000Z/root',
           children: [{
             id: '~user/workflow1//20100101T0000Z/foo',
-            filtered,
+            filteredOut,
           }],
         }],
       }])

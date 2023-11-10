@@ -104,7 +104,7 @@ export function listTree (tree, filter = false) {
   let item
   while (stack.length) {
     item = stack.splice(0, 1)[0]
-    if (!filter || item.filtered) {
+    if (!filter || !item.filteredOut) {
       if (['workflow-part', 'user'].includes(item.type)) {
         stack.push(...item.children)
       } else if (item.type === 'workflow') {

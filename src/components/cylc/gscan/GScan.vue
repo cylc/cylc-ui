@@ -103,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <Tree
           :workflows="workflows"
-          :node-filter-func="this.filterNode"
+          :node-filter-func="filterFunc"
           :expand-collapse-toggle="false"
           :auto-collapse="true"
           tree-item-component="GScanTreeItem"
@@ -176,6 +176,12 @@ export default {
     },
     numFilters () {
       return Object.values(this.filters).flat().length
+    },
+    /** Return filterNode method or false if no filters are active. */
+    filterFunc () {
+      return (this.searchWorkflows?.trim() || this.numFilters)
+        ? this.filterNode
+        : false
     }
   },
 
@@ -185,8 +191,7 @@ export default {
     },
 
     /**
-     * Recursively set the `.filtered` property on this node and its children if applicable.
-     * `filtered` = true means the node DOES match the filters.
+     * Recursively set the `.filteredOut` property on this node and its children if applicable.
      *
      * @param {Object} node
      * @param {boolean} parentsNameMatch - whether any parents of this node
@@ -195,22 +200,22 @@ export default {
      */
     filterNode (node, parentsNameMatch = false) {
       const nameMatch = parentsNameMatch || filterByName(node, this.searchWorkflows)
-      let filtered
+      let isMatch
       if (node.type === 'workflow') {
-        filtered = nameMatch && filterByState(
+        isMatch = nameMatch && filterByState(
           node,
           this.filters['workflow state'],
           this.filters['task state']
         )
       } else if (node.type === 'workflow-part' && node.children.length) {
         for (const child of node.children) {
-          filtered = this.filterNode(child, nameMatch) || filtered
+          isMatch = this.filterNode(child, nameMatch) || isMatch
           // Note: do not break early as we must run the filter over all children
         }
       }
 
-      node.filtered = filtered
-      return filtered
+      node.filteredOut = !isMatch
+      return isMatch
     },
   },
 

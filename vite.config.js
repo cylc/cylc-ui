@@ -98,6 +98,7 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
       setupFiles: ['./tests/unit/setup.js'],
+      restoreMocks: true,
       deps: {
         // inline vuetify to prevent 'TypeError: Unknown file extension ".css"
         inline: ['vuetify']
