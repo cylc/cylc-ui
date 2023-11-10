@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import JobState from '@/model/JobState.model'
-
 /**
  * @param {WorkflowGScanNode|WorkflowNamePartGScanNode} workflow
  * @param {?string} name - name filter
@@ -32,16 +30,9 @@ export function filterByName (workflow, name) {
  * @return {string[]}
  */
 function getWorkflowStates (stateTotals) {
-  const jobStates = JobState.enumValues.map(jobState => jobState.name)
-  // GraphQL will return all the task states possible in a workflow, but we
-  // only want the states that have an equivalent state for a job. So we filter
-  // out the states that do not exist for jobs, and that have active tasks in
-  // the workflow (no point keeping the empty states, as they are not to be
-  // displayed).
   return !stateTotals
     ? []
-    : Object.keys(stateTotals)
-      .filter((state) => jobStates.includes(state) && stateTotals[state] > 0)
+    : Object.keys(stateTotals).filter((state) => stateTotals[state] > 0)
 }
 
 /**

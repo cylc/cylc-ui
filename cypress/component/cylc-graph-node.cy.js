@@ -16,7 +16,8 @@
  */
 
 import { defineComponent, h } from 'vue'
-import { TaskStateUserOrder, JobStates } from '@/model/TaskState.model'
+import { JobStateNames } from '@/model/JobState.model'
+import { TaskStateNames } from '@/model/TaskState.model'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import { Tokens } from '@/utils/uid'
 import {
@@ -132,23 +133,23 @@ describe('graph node component', () => {
     let task
     let jobs
     let jobStates
-    for (const state of TaskStateUserOrder) {
+    for (const state of TaskStateNames) {
       jobStates = []
-      for (const jobState of JobStates) {
-        if (state.name === jobState.name) {
-          jobStates = [state.name]
+      for (const jobState of JobStateNames) {
+        if (state === jobState) {
+          jobStates = [state]
           break
         }
       }
       [task, jobs] = makeTaskNode(
-        `~a/b//20000101T0000Z/${state.name}`,
-        state.name,
+        `~a/b//20000101T0000Z/${state}`,
+        state,
         jobStates
       )
       // console.log(jobs)
       cy.mount(GraphNodeSVG, { props: { task, jobs } })
       cy.get('.c-graph-node').last().parent().screenshot(
-        `graph-node-${state.name}`,
+        `graph-node-${state}`,
         { overwrite: true, disableTimersAndAnimations: false }
       )
     }

@@ -55,12 +55,6 @@ export const TaskStateUserOrder = [
   TaskState.EXPIRED
 ]
 
-export const JobStates = [
-  TaskState.SUBMITTED,
-  TaskState.RUNNING,
-  TaskState.SUCCEEDED,
-  TaskState.FAILED,
-  TaskState.SUBMIT_FAILED
-]
+export const TaskStateNames = TaskStateUserOrder.map(({ name }) => name)
 
 export default TaskState

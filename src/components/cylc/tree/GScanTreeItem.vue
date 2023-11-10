@@ -93,10 +93,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Job from '@/components/cylc/Job.vue'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
-import { JobStates } from '@/model/TaskState.model'
+import { JobStateNames } from '@/model/JobState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-
-const JobStateNames = JobStates.map(({ name }) => name)
 
 /**
  * Get aggregated task state totals and latest task states for all descendents of a node.

@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import Task from '@/components/cylc/Task.vue'
-import { TaskStateUserOrder } from '@/model/TaskState.model'
+import { TaskStateNames } from '@/model/TaskState.model'
 
 export default {
   name: 'TaskFilter',
@@ -98,6 +98,6 @@ export default {
   },
 
   maxVisibleStates: 4,
-  allStates: TaskStateUserOrder.map(ts => ts.name),
+  allStates: TaskStateNames,
 }
 </script>

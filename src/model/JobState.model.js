@@ -40,4 +40,6 @@ class JobState extends Enumify {
   }
 }
 
+export const JobStateNames = JobState.enumValues.map(({ name }) => name)
+
 export default JobState

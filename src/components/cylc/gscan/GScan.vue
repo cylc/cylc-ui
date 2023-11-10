@@ -123,7 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiFilter, mdiFolderRefresh } from '@mdi/js'
-import { TaskStateUserOrder } from '@/model/TaskState.model'
+import { TaskStateNames } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import Tree from '@/components/cylc/tree/Tree.vue'
 import { filterByName, filterByState } from '@/components/cylc/gscan/filters'
@@ -230,7 +230,7 @@ export default {
    */
   allStates: {
     'workflow state': WorkflowState.enumValues.map(x => x.name),
-    'task state': TaskStateUserOrder.map(x => x.name)
+    'task state': TaskStateNames,
   },
 }
 </script>
