@@ -38,5 +38,6 @@ module.exports = {
   Workflow ({ workflowId }) {
     return workflows.find(({ deltas }) => deltas.id === workflowId) || {}
   },
+  Test: workflowOne,
   analysisQuery
 }
