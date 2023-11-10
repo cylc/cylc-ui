@@ -1,11 +1,8 @@
 <template>
   <v-select
-    :label="`Filter by ${type}`"
-    :data-cy="`filter ${type}`"
     :items="items"
     clearable
     multiple
-    :placeholder="`Filter by ${type}`"
     v-model="localValue"
   >
     <template #item="{ item, props }">

@@ -70,6 +70,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 :type="title"
                 :items="$options.allStates[title]"
                 class="my-2"
+                density="default"
+                :label="`Filter by ${title}`"
+                :data-cy="`filter ${title}`"
+                :placeholder="`Filter by ${title}`"
               />
             </v-list-item>
           </v-list>

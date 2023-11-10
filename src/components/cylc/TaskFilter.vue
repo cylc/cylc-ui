@@ -41,6 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-model="localValue.states"
         type="task state"
         :items="$options.allStates"
+        data-cy="filter task state"
+        placeholder="Filter by task state"
       />
     </v-col>
   </v-row>
