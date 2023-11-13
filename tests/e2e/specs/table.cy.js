@@ -35,7 +35,7 @@ describe('Table view', () => {
         .should('have.length', initialNumRows)
       cy.get('[data-cy=filter-id] input')
         .should('be.empty')
-      cy.get('[data-cy=filter-task-states] input')
+      cy.get('[data-cy="filter task state"] input')
         .should('have.value', '')
       cy.get('td > div.d-flex > div')
         .contains('sleepy')
@@ -61,7 +61,7 @@ describe('Table view', () => {
         .contains(TaskState.FAILED.name)
         .should('be.visible')
       cy
-        .get('[data-cy=filter-task-states]')
+        .get('[data-cy="filter task state"]')
         .click()
       cy
         .get('.v-list-item')
@@ -81,7 +81,7 @@ describe('Table view', () => {
         .get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
       cy
-        .get('[data-cy=filter-task-states]')
+        .get('[data-cy="filter task state"]')
         .click()
       cy
         .get('.v-list-item')
