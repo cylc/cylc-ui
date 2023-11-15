@@ -15,22 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const state = () => ({
-  drawer: null,
-  title: null,
-})
+/* Centralised settings set in localStorage, with their defaults.
 
-const mutations = {
-  setDrawer (state, drawer) {
-    state.drawer = drawer
-  },
-  setTitle (state, title) {
-    state.title = title
-  },
-}
+NOTE: by providing a default to useLocalStorage(), it automatically
+deserializes to the correct type instead of just string.
 
-export const app = {
-  namespaced: true,
-  state,
-  mutations
-}
+These must be composables because otherwise useLocalStorage() gets executed at
+import time and so can't pick up changes to localStorage in unit tests. */
+
+import { useLocalStorage } from '@vueuse/core'
+
+export const useCyclePointsOrderDesc = () => useLocalStorage('cyclePointsOrderDesc', true)
+
+export const useJobTheme = () => useLocalStorage('jobTheme', 'default')
+
+export const useReducedAnimation = () => useLocalStorage('reducedAnimation', false)

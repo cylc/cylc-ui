@@ -34,7 +34,7 @@ describe('App', () => {
         components: {
           'empty-layout': Empty
         },
-        stubs: ['router-link', 'router-view'],
+        stubs: ['router-view'],
         mocks: {
           $route: {
             name: 'app',
@@ -49,7 +49,6 @@ describe('App', () => {
 
   it('should create the App with the correct theme', () => {
     const wrapper = mountFunction()
-    expect(wrapper.vm.jobTheme).to.equal('default')
     expect(wrapper.vm.jobThemeClass).to.equal('job_theme--default')
   })
 
@@ -59,15 +58,12 @@ describe('App', () => {
     expect(wrapper.vm.layout).to.equal('empty-layout')
   })
 
-  describe.each([
-    { value: true, expected: { value: true, vuetify: false } },
-    { value: false, expected: { value: false, vuetify: null } },
-  ])('reduced animation mode: $value', ({ value, expected }) => {
-    it('loads the reduced animation setting from localStorage', () => {
-      localStorage.setItem('reducedAnimation', value)
-      const wrapper = mountFunction()
-      expect(wrapper.vm.$store.state.app.reducedAnimation).to.equal(expected.value)
-      expect(wrapper.vm.$vuetify.defaults.global.transition).to.equal(expected.vuetify)
-    })
+  it.each([
+    { value: true, expected: { vuetify: false } },
+    { value: false, expected: { vuetify: null } },
+  ])('applies reduced animation = $value from localStorage', ({ value, expected }) => {
+    localStorage.setItem('reducedAnimation', value)
+    const wrapper = mountFunction()
+    expect(wrapper.vm.$vuetify.defaults.global.transition).to.equal(expected.vuetify)
   })
 })
