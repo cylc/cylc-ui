@@ -2185,10 +2185,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/web-bluetooth@npm:^0.0.20":
-  version: 0.0.20
-  resolution: "@types/web-bluetooth@npm:0.0.20"
-  checksum: 3a49bd9396506af8f1b047db087aeeea9fe4301b7fad4fe06ae0f6e00d331138caae878fd09e6410658b70b4aaf10e4b191c41c1a5ff72211fe58da290c7d003
+"@types/web-bluetooth@npm:^0.0.18":
+  version: 0.0.18
+  resolution: "@types/web-bluetooth@npm:0.0.18"
+  checksum: 323f5dfc2a6849746c3fb6bf914c0cf2e6bfc1cfddd53ca82842bad41a91598d3c865ecbfef0eafa2633c6cd914b1782f18a449bd1cc49e4fac48cc278084520
   languageName: node
   linkType: hard
 
@@ -2486,31 +2486,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:^10.5.0":
-  version: 10.6.1
-  resolution: "@vueuse/core@npm:10.6.1"
+"@vueuse/core@npm:10.5.0":
+  version: 10.5.0
+  resolution: "@vueuse/core@npm:10.5.0"
   dependencies:
-    "@types/web-bluetooth": "npm:^0.0.20"
-    "@vueuse/metadata": "npm:10.6.1"
-    "@vueuse/shared": "npm:10.6.1"
+    "@types/web-bluetooth": "npm:^0.0.18"
+    "@vueuse/metadata": "npm:10.5.0"
+    "@vueuse/shared": "npm:10.5.0"
     vue-demi: "npm:>=0.14.6"
-  checksum: 39983a91082e97e818d811f951ef60b1f2fc9fa7f0840397f2a0c57e24e8e669ab49576f7b429ffe33c9902406352b0ce383dadeb3b87285e911a564adc39b15
+  checksum: 608e7517029b09fb6f932f5cb4018690ca7e62309a811ed8f26f8e8c7658f66ec44a14fed84653f0443f2b8384409c1bf71bfa43f3e99af76f1d4530b764df3b
   languageName: node
   linkType: hard
 
-"@vueuse/metadata@npm:10.6.1":
-  version: 10.6.1
-  resolution: "@vueuse/metadata@npm:10.6.1"
-  checksum: 68e5dcf1156f765510f78eda99a1849705d4219a07221bde6f3a31e742fd0c6142510f5879fc105eaaafa0039b57b41b6aafdd82d579e034fada1175a672c99f
+"@vueuse/metadata@npm:10.5.0":
+  version: 10.5.0
+  resolution: "@vueuse/metadata@npm:10.5.0"
+  checksum: 927665105737d5ac011bb2b7e9292b94a60fb4aea63936e159f8ed3cd23129ffc7415cd97d7dd1ffe7cfc7b5996ff30942e3e0145d6d35871968d72faaad7a0a
   languageName: node
   linkType: hard
 
-"@vueuse/shared@npm:10.6.1":
-  version: 10.6.1
-  resolution: "@vueuse/shared@npm:10.6.1"
+"@vueuse/shared@npm:10.5.0":
+  version: 10.5.0
+  resolution: "@vueuse/shared@npm:10.5.0"
   dependencies:
     vue-demi: "npm:>=0.14.6"
-  checksum: d97ac00a60213e3d5f3b55e838168394971766abad69dbf02dc838e21181b3bc0ab4edcace927312c2ef165d8cb2bcfa6976388f93fe5fba2516cb1631b506b6
+  checksum: 6e5309b9b60e159a369154b83fa219f233d0751b8a78d1ccbec9686b00f84624748123ca875e25d545d23121d8b58196ccdcc08d16a21b5467024854f10f1eee
   languageName: node
   linkType: hard
 
@@ -3734,7 +3734,7 @@ __metadata:
     "@vitejs/plugin-vue": "npm:4.5.0"
     "@vitest/coverage-istanbul": "npm:0.34.6"
     "@vue/test-utils": "npm:2.4.2"
-    "@vueuse/core": "npm:^10.5.0"
+    "@vueuse/core": "npm:10.5.0"
     apexcharts: "npm:3.41.0"
     axios: "npm:1.6.2"
     concurrently: "npm:8.2.2"
