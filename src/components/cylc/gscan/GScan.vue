@@ -26,96 +26,100 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       type="list-item-three-line"
       class=" d-flex flex-column h-100"
     > -->
-      <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
-        <!-- filters -->
-        <v-text-field
-          v-model="searchWorkflows"
-          clearable
-          placeholder="Search"
-          class="flex-grow-1 flex-column"
-          id="c-gscan-search-workflows"
-        />
-        <!-- button to activate the filters menu -->
-        <v-badge
-          :content="numFilters"
-          :model-value="Boolean(numFilters)"
-        >
-          <v-btn
-            icon
-            class="flex-grow-0 flex-column ml-2"
-            id="c-gscan-filter-tooltip-btn"
-            variant="text"
-            size="small"
-            data-cy="gscan-filter-btn"
-          >
-            <v-icon size="x-large">{{ $options.icons.mdiFilter }}</v-icon>
-          </v-btn>
-        </v-badge>
-        <!-- filters tooltip -->
-        <v-menu
-          activator="#c-gscan-filter-tooltip-btn"
-          :close-on-content-click="false"
-          location="right"
-        >
-          <v-card width="500px">
-            <v-list>
-              <v-list-item
-                v-for="(items, title) in filters"
-                :key="title"
-              >
-                <v-select
-                  v-model="filters[title]"
-                  :items="$options.allStates[title]"
-                  :label="`Filter by ${title}`"
-                  density="default"
-                  chips
-                  closable-chips
-                  clearable
-                  multiple
-                  class="my-2"
-                  :data-cy="`filter ${title}`"
-                />
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-menu>
-        <!-- scan -->
+    <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
+      <!-- filters -->
+      <v-text-field
+        v-model="searchWorkflows"
+        clearable
+        placeholder="Search"
+        class="flex-grow-1 flex-column"
+        id="c-gscan-search-workflows"
+      />
+      <!-- button to activate the filters menu -->
+      <v-badge
+        :content="numFilters"
+        :model-value="Boolean(numFilters)"
+      >
         <v-btn
           icon
-          id="c-gscan-scan-tooltip-btn"
+          class="flex-grow-0 flex-column ml-2"
+          id="c-gscan-filter-tooltip-btn"
           variant="text"
           size="small"
-          data-cy="gscan-scan-btn"
-          @click="scanFilesystem()"
+          data-cy="gscan-filter-btn"
         >
-          <v-icon size="x-large">{{ $options.icons.mdiFolderRefresh }}</v-icon>
-          <v-tooltip text="Refresh workflows list" />
+          <v-icon size="x-large">
+            {{ $options.icons.mdiFilter }}
+          </v-icon>
         </v-btn>
-      </div>
-      <!-- data -->
-      <v-progress-linear
-        v-if="isLoading"
-        indeterminate
-      />
-      <div
-        v-if="!isLoading"
-        class="c-gscan-workflows flex-grow-1 pl-2"
+      </v-badge>
+      <!-- filters tooltip -->
+      <v-menu
+        activator="#c-gscan-filter-tooltip-btn"
+        :close-on-content-click="false"
+        location="right"
       >
-        <Tree
-          :workflows="workflows"
-          :node-filter-func="filterNode"
-          tree-item-component="GScanTreeItem"
-          class="c-gscan-workflow"
-          ref="tree"
-          v-bind="{ filterState }"
-        />
-      </div>
-      <!-- when no workflows are returned in the GraphQL query -->
-      <div v-else>
-        <v-list-item>
-          <v-list-item-title class="text-grey">No workflows found</v-list-item-title>
-        </v-list-item>
-      </div>
+        <v-card width="500px">
+          <v-list>
+            <v-list-item
+              v-for="(items, title) in filters"
+              :key="title"
+            >
+              <TaskFilterSelect
+                v-model="filters[title]"
+                :type="title"
+                :items="$options.allStates[title]"
+                class="my-2"
+                density="default"
+                :label="`Filter by ${title}`"
+                :data-cy="`filter ${title}`"
+                :placeholder="`Filter by ${title}`"
+              />
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-menu>
+      <!-- scan -->
+      <v-btn
+        icon
+        id="c-gscan-scan-tooltip-btn"
+        variant="text"
+        size="small"
+        data-cy="gscan-scan-btn"
+        @click="scanFilesystem()"
+      >
+        <v-icon size="x-large">
+          {{ $options.icons.mdiFolderRefresh }}
+        </v-icon>
+        <v-tooltip text="Refresh workflows list" />
+      </v-btn>
+    </div>
+    <!-- data -->
+    <v-progress-linear
+      v-if="isLoading"
+      indeterminate
+    />
+    <div
+      v-if="!isLoading"
+      class="c-gscan-workflows flex-grow-1 pl-2"
+    >
+      <Tree
+        :workflows="workflows"
+        :node-filter-func="filterNode"
+        tree-item-component="GScanTreeItem"
+        class="c-gscan-workflow"
+        ref="tree"
+        v-bind="{ filterState }"
+      />
+    </div>
+    <!-- when no workflows are returned in the GraphQL query -->
+    <div v-else>
+      <v-list-item>
+        <v-list-item-title class="text-grey">
+          No workflows found
+        </v-list-item-title>
+      </v-list-item>
+    </div>
     <!-- </v-skeleton-loader> -->
   </div>
 </template>
@@ -128,12 +132,14 @@ import Tree from '@/components/cylc/tree/Tree.vue'
 import { filterByName, filterByState } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 import { mutate } from '@/utils/aotf'
+import TaskFilterSelect from '@/components/cylc/TaskFilterSelect.vue'
 
 export default {
   name: 'GScan',
 
   components: {
     Tree,
+    TaskFilterSelect
   },
 
   props: {
@@ -162,7 +168,7 @@ export default {
       'task state': []
       // 'workflow host': [], // TODO: will it be in state totals?
       // 'cylc version': [] // TODO: will it be in state totals?
-    }
+    },
   }),
 
   computed: {

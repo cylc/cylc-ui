@@ -24,7 +24,7 @@ const tk = {
   taskC: new Tokens('~cylc/workflow//20000103T0000Z/taskC')
 }
 
-const simpleTableTasks = [
+export const simpleTableTasks = [
   {
     task: {
       id: tk.taskA.id,
@@ -33,8 +33,9 @@ const simpleTableTasks = [
       node: {
         id: tk.taskA.id,
         state: TaskState.RUNNING.name,
-        name: 'taskA',
-        meanElapsedTime: 2000
+        task: {
+          meanElapsedTime: 2,
+        },
       },
       children: [
         {
@@ -80,7 +81,6 @@ const simpleTableTasks = [
         id: tk.taskB.id,
         state: TaskState.WAITING.name,
         name: 'taskB',
-        cyclePoint: '20000102T0000Z'
       },
       children: []
     },
@@ -96,7 +96,6 @@ const simpleTableTasks = [
         id: tk.taskC.id,
         state: TaskState.SUBMITTED.name,
         name: 'taskC',
-        cyclePoint: '20000103T0000Z'
       },
       children: []
     },
@@ -104,7 +103,3 @@ const simpleTableTasks = [
     previousJob: null
   }
 ]
-
-export {
-  simpleTableTasks
-}

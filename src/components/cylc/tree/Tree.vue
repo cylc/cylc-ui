@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import { getNodeChildren } from '@/components/cylc/tree/util'
+import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 
 export default {
   name: 'Tree',
@@ -94,7 +95,7 @@ export default {
 
   data () {
     return {
-      cyclePointsOrderDesc: true,
+      cyclePointsOrderDesc: useCyclePointsOrderDesc(),
       /**
        * Map of nodes' filtered status.
        *
@@ -109,17 +110,6 @@ export default {
   },
 
   mounted () {
-    // set cyclePointsOrderDesc
-    // NOTE: this isn't reactive, however, changing the value requires
-    // navigating away from this view so it doesn't have to be
-    // TODO: make this a view-specific configuration
-    // https://github.com/cylc/cylc-ui/issues/1146
-    let cyclePointsOrderDesc = true
-    if (localStorage.cyclePointsOrderDesc) {
-      cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
-    }
-    this.cyclePointsOrderDesc = cyclePointsOrderDesc
-
     // Reactively run filtering
     if (this.nodeFilterFunc) {
       this.$watch(

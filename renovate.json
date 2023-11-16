@@ -48,6 +48,11 @@
       "schedule": ["on the 3rd day of the month"]
     },
     {
+      "matchPackageNames": ["@vueuse/core"],
+      "automerge": true,
+      "schedule": ["on the 9th day of the month"]
+    },
+    {
       "groupName": "preact packages",
       "matchPackagePatterns": ["^preact"],
       "schedule": ["on the 12th day of the month"]

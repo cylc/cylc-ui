@@ -37,52 +37,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       md="6"
       class="mb-2 mb-md-0"
     >
-      <v-select
-        data-cy="filter-task-states"
-        :items="$options.allStates"
-        clearable
-        multiple
-        placeholder="Filter by task state"
+      <TaskFilterSelect
         v-model="localValue.states"
-      >
-        <template v-slot:item="{ item, props }">
-          <v-list-item v-bind="props" :title="undefined">
-            <Task :task="{ state: item.raw }" />
-            <span class="ml-2">{{ item.raw }}</span>
-          </v-list-item>
-        </template>
-        <template v-slot:selection="{ item, index }">
-          <div class="mr-2" v-if="index >= 0 && index < $options.maxVisibleStates">
-            <Task
-              :task="{ state: item.raw }"
-              style="font-size: 1.2rem; height: 100%"
-            />
-          </div>
-          <span
-            v-if="index === $options.maxVisibleStates"
-            class="text-grey text-caption"
-          >
-            (+{{ localValue.states.length - $options.maxVisibleStates }})
-          </span>
-        </template>
-      </v-select>
+        type="task state"
+        :items="$options.allStates"
+        data-cy="filter task state"
+        placeholder="Filter by task state"
+      />
     </v-col>
   </v-row>
 </template>
 
 <script>
-import Task from '@/components/cylc/Task.vue'
 import { TaskStateNames } from '@/model/TaskState.model'
+import TaskFilterSelect from '@/components/cylc/TaskFilterSelect.vue'
 
 export default {
   name: 'TaskFilter',
 
   components: {
-    Task
+    TaskFilterSelect
   },
 
   props: {
-    modelValue: Object // { id, states }
+    modelValue: {
+      type: Object,
+      required: true
+    } // { id, states }
   },
 
   computed: {
@@ -96,8 +77,6 @@ export default {
       }
     }
   },
-
-  maxVisibleStates: 4,
   allStates: TaskStateNames,
 }
 </script>

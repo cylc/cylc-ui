@@ -218,7 +218,7 @@ describe('Tree view', () => {
           .contains(name)
           .should('be.visible')
       }
-      cy.get('[data-cy=filter-task-states]')
+      cy.get('[data-cy="filter task state"]')
         .click()
         .get('.v-list-item')
         .contains(new RegExp(`^${TaskState.FAILED.name}$`))
@@ -244,7 +244,7 @@ describe('Tree view', () => {
         .get('[data-cy=filter-id]')
         .type('i')
       cy
-        .get('[data-cy=filter-task-states]')
+        .get('[data-cy="filter task state"]')
         .click()
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
@@ -321,7 +321,7 @@ describe('Tree view', () => {
 
   it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
     cy.visit('/#/tree/one')
-    cy.get('[data-cy=filter-task-states]')
+    cy.get('[data-cy="filter task state"]')
       .click()
     // eslint-disable-next-line no-lone-blocks
     TaskState.enumValues.forEach(state => {
@@ -332,7 +332,7 @@ describe('Tree view', () => {
     // Click outside to close dropdown
     cy.get('noscript')
       .click({ force: true })
-    cy.get('[data-cy=filter-task-states]')
+    cy.get('[data-cy="filter task state"]')
       .contains('.v-select__selection', '(+')
   })
 })

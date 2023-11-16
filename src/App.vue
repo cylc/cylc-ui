@@ -24,8 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
 import appSettings from '@/mixins/appSettings'
+import { useJobTheme, useReducedAnimation } from '@/composables/localStorage'
 
 const DEFAULT_LAYOUT = 'empty'
 
@@ -35,33 +35,24 @@ export default {
   ],
 
   computed: {
-    ...mapState('app', ['jobTheme']),
     layout () {
-      return (this.$route.meta.layout || DEFAULT_LAYOUT) + '-layout'
+      return `${this.$route.meta.layout || DEFAULT_LAYOUT}-layout`
     },
     showSidebar () {
       return this.$route.meta.showSidebar ?? true
     },
     jobThemeClass () {
-      return `job_theme--${this.jobTheme}`
-    }
-  },
-
-  methods: {
-    ...mapMutations('app', ['setJobTheme'])
+      return `job_theme--${useJobTheme().value}`
+    },
   },
 
   mounted () {
-    // set stored application font-size
+    // apply stored application font-size
     if (localStorage.fontSize) {
       document.documentElement.style.fontSize = localStorage.fontSize
     }
-    // set Job icons theme found in LocalStorage in Vuex
-    this.setJobTheme(localStorage.jobTheme || 'default')
-    // set reduced animation mode on/off
-    if (localStorage.reducedAnimation) {
-      this.setReducedAnimation(JSON.parse(localStorage.reducedAnimation))
-    }
+    // apply stored reduced animation mode on/off
+    this.setReducedAnimation(useReducedAnimation().value)
   }
 }
 </script>

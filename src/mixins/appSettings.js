@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { useReducedAnimation } from '@/composables/localStorage'
+
 export default {
   methods: {
     /**
@@ -23,9 +25,11 @@ export default {
      * @param {boolean} value
      */
     setReducedAnimation (value) {
-      localStorage.reducedAnimation = value
-      this.$store.commit('app/setReducedAnimation', value)
+      useReducedAnimation().value = value
       for (const property of ['transition', 'ripple']) {
+        // TODO: can use useDefaults() composable when we upgrade to Vuetify 3.2+
+        // and convert this mixin into a composable -
+        // https://github.com/cylc/cylc-ui/issues/1551
         this.$vuetify.defaults.global[property] = value ? false : null
       }
     }

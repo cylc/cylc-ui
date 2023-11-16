@@ -49,6 +49,7 @@ describe('Table component', () => {
     },
     ...options
   })
+
   it('should sort cycle point column descending by default', async () => {
     const wrapper = mountFunction({
       props: {
@@ -65,6 +66,7 @@ describe('Table component', () => {
     expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element.innerHTML).to.equal('20000103T0000Z')
     expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.filteredTasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal('20000101T0000Z')
   })
+
   it('should display the table with valid data', () => {
     const wrapper = mountFunction({
       props: {
@@ -74,6 +76,7 @@ describe('Table component', () => {
     expect(wrapper.props().tasks[0].task.name).to.equal('taskA')
     expect(wrapper.find('div')).to.not.equal(null)
   })
+
   describe('Filter', () => {
     describe('Filter by ID', () => {
       it('should not filter by ID or task state by default', () => {
@@ -84,6 +87,7 @@ describe('Table component', () => {
         })
         expect(wrapper.vm.filteredTasks.length).to.equal(3)
       })
+
       it('should filter by ID', () => {
         const wrapper = mountFunction({
           props: {
@@ -99,6 +103,7 @@ describe('Table component', () => {
         })
         expect(wrapper.vm.filteredTasks.length).to.equal(1)
       })
+
       it('should filter by task state', () => {
         const wrapper = mountFunction({
           props: {
@@ -117,6 +122,7 @@ describe('Table component', () => {
         })
         expect(wrapper.vm.filteredTasks.length).to.equal(1)
       })
+
       it('should filter by task name and state', () => {
         const wrapper = mountFunction({
           props: {
@@ -135,6 +141,23 @@ describe('Table component', () => {
         })
         expect(wrapper.vm.filteredTasks.length).to.equal(0)
       })
+    })
+  })
+
+  describe('Sort', () => {
+    it.each([
+      { cyclePointsOrderDesc: true, expected: 'desc' },
+      { cyclePointsOrderDesc: false, expected: 'asc' },
+    ])('sorts cycle point $expected from localStorage by default', ({ cyclePointsOrderDesc, expected }) => {
+      localStorage.setItem('cyclePointsOrderDesc', cyclePointsOrderDesc)
+      const wrapper = mountFunction({
+        props: {
+          tasks: simpleTableTasks
+        }
+      })
+      expect(wrapper.vm.sortBy).toMatchObject([
+        { order: expected }
+      ])
     })
   })
 })
