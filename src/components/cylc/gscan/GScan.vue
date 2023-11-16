@@ -103,12 +103,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <Tree
           :workflows="workflows"
-          :node-filter-func="filterFunc"
-          :expand-collapse-toggle="false"
-          :auto-collapse="true"
+          :node-filter-func="filterNode"
           tree-item-component="GScanTreeItem"
-          class="c-gscan-workflow ma-0 pa-0"
+          class="c-gscan-workflow"
           ref="tree"
+          v-bind="{ filterState }"
         />
       </div>
       <!-- when no workflows are returned in the GraphQL query -->
@@ -174,15 +173,16 @@ export default {
       }
       return sortedWorkflowTree(this.workflowTree)
     },
+
     numFilters () {
       return Object.values(this.filters).flat().length
     },
-    /** Return filterNode method or false if no filters are active. */
-    filterFunc () {
+
+    filterState () {
       return (this.searchWorkflows?.trim() || this.numFilters)
-        ? this.filterNode
-        : false
-    }
+        ? [this.searchWorkflows, this.filters]
+        : null
+    },
   },
 
   methods: {
@@ -191,16 +191,17 @@ export default {
     },
 
     /**
-     * Recursively set the `.filteredOut` property on this node and its children if applicable.
+     * Recursively filter this node and its children.
      *
      * @param {Object} node
+     * @param {WeakMap<Object, boolean>} filteredOutNodesCache - cache of nodes' filtered status
      * @param {boolean} parentsNameMatch - whether any parents of this node
      * match the name filter.
      * @return {boolean} - whether this node matches the filter.
      */
-    filterNode (node, parentsNameMatch = false) {
+    filterNode (node, filteredOutNodesCache, parentsNameMatch = false) {
       const nameMatch = parentsNameMatch || filterByName(node, this.searchWorkflows)
-      let isMatch
+      let isMatch = false
       if (node.type === 'workflow') {
         isMatch = nameMatch && filterByState(
           node,
@@ -209,12 +210,12 @@ export default {
         )
       } else if (node.type === 'workflow-part' && node.children.length) {
         for (const child of node.children) {
-          isMatch = this.filterNode(child, nameMatch) || isMatch
+          isMatch = this.filterNode(child, filteredOutNodesCache, nameMatch) || isMatch
           // Note: do not break early as we must run the filter over all children
         }
       }
 
-      node.filteredOut = !isMatch
+      filteredOutNodesCache.set(node, !isMatch)
       return isMatch
     },
   },

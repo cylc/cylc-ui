@@ -16,7 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="treeitem">
+  <div
+    v-show="!filteredOutNodesCache.get(node)"
+    class="treeitem"
+  >
     <div
       class="node d-flex align-center"
       :class="nodeClass"
@@ -167,11 +170,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-else
             v-for="child in nodeChildren"
             :key="child.id"
-            v-show="!child.filteredOut"
             :node="child"
             :depth="depth + 1"
             :mean-elapsed-time="meanElapsedTime ?? node.node.task?.meanElapsedTime"
-            v-bind="{ hoverable, autoExpandTypes, cyclePointsOrderDesc, expandAll, indent }"
+            v-bind="{ hoverable, autoExpandTypes, cyclePointsOrderDesc, expandAll, filteredOutNodesCache, indent }"
           />
         </template>
       </slot>
@@ -233,6 +235,10 @@ export default {
     expandAll: {
       type: Array,
       required: false,
+    },
+    filteredOutNodesCache: {
+      type: WeakMap,
+      required: true,
     },
     /** Indent in px; default is expand/collapse btn width */
     indent: {

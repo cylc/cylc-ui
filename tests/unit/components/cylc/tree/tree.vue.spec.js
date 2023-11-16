@@ -19,83 +19,61 @@
 import { mount } from '@vue/test-utils'
 import { vi } from 'vitest'
 import { createVuetify } from 'vuetify'
-import sinon from 'sinon'
 import { cloneDeep } from 'lodash'
 import Tree from '@/components/cylc/tree/Tree.vue'
 import { simpleWorkflowTree4Nodes } from './tree.data'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
-import WorkflowService from '@/services/workflow.service'
-import { nextTick } from 'vue'
 
-const $eventBus = {
-  emit () {}
-}
-const $workflowService = sinon.createStubInstance(WorkflowService)
 const vuetify = createVuetify()
 
 describe('Tree component', () => {
-  /**
-   * @param options
-   * @returns {Wrapper<Tree>}
-   */
-  const mountFunction = (options) => mount(Tree, {
+  const mountFunction = (props) => mount(Tree, {
     global: {
       plugins: [vuetify, CylcObjectPlugin],
-      mocks: {
-        $eventBus,
-        $workflowService
-      }
     },
     props: {
       workflows: cloneDeep(simpleWorkflowTree4Nodes),
       autoStripTypes: ['workflow'],
-    },
-    ...options
+      filterState: null,
+      ...props,
+    }
+  })
+
+  it.each([
+    { autoStripTypes: [], expected: simpleWorkflowTree4Nodes },
+    { autoStripTypes: ['workflow'], expected: simpleWorkflowTree4Nodes[0].children },
+  ])('auto strips $autoStripTypes', ({ autoStripTypes, expected }) => {
+    const wrapper = mountFunction({
+      autoStripTypes,
+    })
+    expect(wrapper.vm.rootChildren).toEqual(expected)
   })
 
   describe('Filter', () => {
-    it('does not filter by name or state by default', () => {
-      const wrapper = mountFunction()
-      expect(wrapper.vm.tasksFilter).to.deep.equal({})
-    })
-
-    it.each([
-      {},
-      { id: ' ', states: [] },
-    ])('does not run filtering when filters are falsy: %o', async (tasksFilter) => {
-      const spy = vi.spyOn(Tree.methods, 'filterNode')
-      const wrapper = mountFunction()
-      wrapper.vm.tasksFilter = tasksFilter
-      await nextTick()
-      expect(wrapper.vm.rootChildren).toEqual(
-        simpleWorkflowTree4Nodes[0].children
-      )
-      expect(spy).not.toHaveBeenCalled()
-    })
-
-    it.each([
-      { tasksFilter: { id: 'foo' }, filteredOut: false },
-      { tasksFilter: { states: ['failed'] }, filteredOut: false },
-      { tasksFilter: { id: 'foo', states: ['failed'] }, filteredOut: false },
-
-      { tasksFilter: { id: 'asdf' }, filteredOut: true },
-      { tasksFilter: { states: ['running'] }, filteredOut: true },
-      { tasksFilter: { id: 'foo', states: ['running'] }, filteredOut: true },
-      { tasksFilter: { id: 'asdf', states: ['failed'] }, filteredOut: true },
-    ])('filters by $tasksFilter', ({ tasksFilter, filteredOut }) => {
-      const wrapper = mountFunction()
-      wrapper.vm.tasksFilter = tasksFilter
-      expect(wrapper.vm.rootChildren).toMatchObject([{
-        id: '~user/workflow1//20100101T0000Z',
-        filteredOut,
-        familyTree: [{
-          id: '~user/workflow1//20100101T0000Z/root',
-          children: [{
-            id: '~user/workflow1//20100101T0000Z/foo',
-            filteredOut,
-          }],
-        }],
-      }])
+    it('only runs filtering when applicable', async () => {
+      const nodeFilter = vi.fn()
+      const wrapper = mountFunction({
+        nodeFilterFunc: nodeFilter,
+        filterState: {},
+      })
+      // Does not run filtering when filterState changes & is falsy
+      await wrapper.setProps({ filterState: null })
+      expect(nodeFilter).not.toHaveBeenCalled()
+      // Runs filtering when filterState changes & is truthy
+      await wrapper.setProps({ filterState: {} })
+      expect(nodeFilter.mock.calls).toEqual([
+        [simpleWorkflowTree4Nodes[0].children[0], wrapper.vm.filteredOutNodesCache],
+      ])
+      nodeFilter.mockClear()
+      // Runs filtering when tree changes
+      const newWorkflows = cloneDeep(simpleWorkflowTree4Nodes)
+      newWorkflows[0].children[0].node.state = 'frobnicated'
+      await wrapper.setProps({
+        workflows: newWorkflows,
+      })
+      expect(nodeFilter.mock.calls).toEqual([
+        [newWorkflows[0].children[0], wrapper.vm.filteredOutNodesCache],
+      ])
     })
   })
 })

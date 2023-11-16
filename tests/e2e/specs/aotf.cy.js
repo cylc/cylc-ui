@@ -21,7 +21,7 @@ import {
 } from '@/utils/aotf'
 import {
   MUTATIONS
-} from '../support/graphql'
+} from '$tests/e2e/support/graphql'
 import { cloneDeep } from 'lodash'
 
 function mockApolloClient () {

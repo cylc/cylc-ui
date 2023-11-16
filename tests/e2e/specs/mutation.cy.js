@@ -19,8 +19,8 @@ import { processMutations } from '@/utils/aotf'
 import { cloneDeep, upperFirst } from 'lodash'
 import {
   MUTATIONS
-} from '../support/graphql'
-import { Deferred } from '../../util'
+} from '$tests/e2e/support/graphql'
+import { Deferred } from '$tests/util'
 
 describe('Mutations component', () => {
   beforeEach(() => {

@@ -35,9 +35,18 @@ import {
   TEST_TREE,
   listTree
 } from './utils'
-import { nextTick } from 'vue'
+import { getIDMap } from '$tests/util'
 
 const vuetify = createVuetify()
+
+/**
+ * Helper function to run filtering.
+ */
+function filterNodes (wrapper, filteredOutNodesCache) {
+  for (const node of wrapper.vm.workflows) {
+    wrapper.vm.filterNode(node, filteredOutNodesCache)
+  }
+}
 
 describe('GScan component', () => {
   const store = createStore(storeOptions)
@@ -107,69 +116,147 @@ describe('GScan component', () => {
       ...options
     })
 
+    it('has null filterState when filters are empty', async () => {
+      const wrapper = mountFunction()
+      expect(wrapper.vm.searchWorkflows).toEqual('')
+      expect(wrapper.vm.filters).toEqual({
+        'workflow state': [],
+        'task state': [],
+      })
+      await wrapper.setData({
+        searchWorkflows: '  ',
+        filters: {
+          'workflow state': [],
+          'task state': [],
+        }
+      })
+      expect(wrapper.vm.filterState).toBeNull()
+    })
+
     it("shouldn't filter out workflows incorrectly", async () => {
       const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
       // filter for all workflow states
-      wrapper.vm.filters['workflow state'] = WorkflowStateOrder.keys()
-      await nextTick()
-      expect(
-        listTree(wrapper.vm.$refs.tree.rootChildren, true)
-      ).to.deep.equal(['~u/b', '~u/c', '~u/a/x1', '~u/a/x2'])
+      await wrapper.setData({
+        filters: { 'workflow state': WorkflowStateOrder.keys() },
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': false,
+        '~u/a/x1': false,
+        '~u/a/x2': false,
+        '~u/b': false,
+        '~u/c': false,
+      })
     })
 
     it('filters by workflow state', async () => {
       const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
 
-      wrapper.vm.filters['workflow state'] = [WorkflowState.RUNNING.name]
-      await nextTick()
-      expect(
-        listTree(wrapper.vm.$refs.tree.rootChildren, true)
-      ).to.deep.equal(['~u/c'])
+      await wrapper.setData({
+        filters: { 'workflow state': [WorkflowState.RUNNING.name] },
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': true,
+        '~u/a/x1': true,
+        '~u/a/x2': true,
+        '~u/b': true,
+        '~u/c': false,
+      })
 
-      wrapper.vm.filters['workflow state'] = [WorkflowState.STOPPING.name]
-      await nextTick()
-      expect(
-        listTree(wrapper.vm.$refs.tree.rootChildren, true)
-      ).to.deep.equal(['~u/b'])
-
-      wrapper.vm.filters['workflow state'] = [WorkflowState.STOPPED.name]
-      await nextTick()
-      expect(
-        listTree(wrapper.vm.$refs.tree.rootChildren, true)
-      ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
+      await wrapper.setData({
+        filters: {
+          'workflow state': [
+            WorkflowState.STOPPING.name,
+            WorkflowState.STOPPED.name,
+          ]
+        },
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': false,
+        '~u/a/x1': false,
+        '~u/a/x2': false,
+        '~u/b': false,
+        '~u/c': true,
+      })
     })
 
     it('filters by workflow name', async () => {
       const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
 
-      wrapper.vm.searchWorkflows = 'x'
-      await nextTick()
-      expect(
-        listTree(wrapper.vm.$refs.tree.rootChildren, true)
-      ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
+      await wrapper.setData({ searchWorkflows: 'x' })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': false,
+        '~u/a/x1': false,
+        '~u/a/x2': false,
+        '~u/b': true,
+        '~u/c': true,
+      })
 
-      wrapper.vm.searchWorkflows = 'u'
-      await nextTick()
-      expect(
-        listTree(wrapper.vm.$refs.tree.rootChildren, true)
-      ).to.deep.equal([])
+      await wrapper.setData({ searchWorkflows: 'u' })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': true,
+        '~u/a/x1': true,
+        '~u/a/x2': true,
+        '~u/b': true,
+        '~u/c': true,
+      })
     })
 
-    it('filters by workflow state totals', async () => {
+    it('filters by task state', async () => {
       const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
 
-      wrapper.vm.filters['workflow state'] = WorkflowStateOrder.keys()
-      wrapper.vm.filters['task state'] = [TaskState.RUNNING.name]
-      await nextTick()
-      expect(
-        listTree(wrapper.vm.$refs.tree.rootChildren, true)
-      ).to.deep.equal(['~u/b'])
+      await wrapper.setData({
+        filters: { 'task state': [TaskState.RUNNING.name] }
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': true,
+        '~u/a/x1': true,
+        '~u/a/x2': true,
+        '~u/b': false,
+        '~u/c': true,
+      })
 
-      wrapper.vm.filters['task state'] = [TaskState.SUBMITTED.name]
-      await nextTick()
-      expect(
-        listTree(wrapper.vm.$refs.tree.rootChildren, true)
-      ).to.deep.equal(['~u/c'])
+      await wrapper.setData({
+        filters: { 'task state': [TaskState.SUBMITTED.name] }
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': true,
+        '~u/a/x1': true,
+        '~u/a/x2': true,
+        '~u/b': true,
+        '~u/c': false,
+      })
+    })
+
+    it('filters by workflow name & workflow state & task state', async () => {
+      const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
+
+      await wrapper.setData({
+        searchWorkflows: 'a',
+        filters: {
+          'workflow state': [WorkflowState.STOPPED.name],
+          'task state': [TaskState.SUBMIT_FAILED.name],
+        },
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': false,
+        '~u/a/x1': false,
+        '~u/a/x2': true,
+        '~u/b': true,
+        '~u/c': true,
+      })
     })
   })
 })

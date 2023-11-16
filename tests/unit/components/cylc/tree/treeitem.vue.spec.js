@@ -66,35 +66,35 @@ describe('TreeItem component', () => {
       plugins: [createVuetify(), CylcObjectPlugin],
       mock: { $workflowService, $eventBus }
     },
-    props: {
-      node: simpleWorkflowNode
-    },
     ...options
   })
 
   it('should display the treeitem with valid data', () => {
-    const wrapper = mountFunction()
+    const wrapper = mountFunction({
+      props: {
+        node: simpleWorkflowNode,
+        filteredOutNodesCache: new WeakMap(),
+      },
+    })
     expect(wrapper.props().node.node.__typename).to.equal('Workflow')
   })
 
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
-    it('should expand nodes when configured', () => {
-      let wrapper = mountFunction({
+    it.each([
+      [simpleCyclepointNode, true],
+      [simpleTaskNode, false],
+    ])('should expand nodes when configured %#', (node, expected) => {
+      const wrapper = mountFunction({
         props: {
-          node: simpleCyclepointNode,
+          node,
+          filteredOutNodesCache: new WeakMap(),
           autoExpandTypes: ['cycle']
         }
       })
-      expect(wrapper).to.be.expanded()
-
-      wrapper = mountFunction({
-        props: {
-          node: simpleTaskNode,
-          autoExpandTypes: ['cycle']
-        }
-      })
-      expect(wrapper).to.not.be.expanded()
+      expected
+        ? expect(wrapper).to.be.expanded()
+        : expect(wrapper).to.not.be.expanded()
     })
   })
 
@@ -102,6 +102,7 @@ describe('TreeItem component', () => {
     const wrapper = mountFunction({
       props: {
         node: simpleTaskNode,
+        filteredOutNodesCache: new WeakMap(),
       }
     })
     expect(wrapper).to.not.be.expanded()
@@ -125,6 +126,7 @@ describe('TreeItem component', () => {
       const wrapper = mountFunction({
         props: {
           node: simpleWorkflowNode,
+          filteredOutNodesCache: new WeakMap(),
         },
         data: () => ({
           manuallyExpanded,
@@ -151,6 +153,7 @@ describe('GScanTreeItem', () => {
     const wrapper = mountFunction({
       props: {
         node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
+        filteredOutNodesCache: new WeakMap(),
       }
     })
     it('combines all descendant tasks', () => {
@@ -176,6 +179,7 @@ describe('GScanTreeItem', () => {
           node: {
             type: 'barbenheimer',
           },
+          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })
@@ -188,6 +192,7 @@ describe('GScanTreeItem', () => {
             type: 'workflow',
             tokens: { workflow: 'a/b/c' }
           },
+          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })

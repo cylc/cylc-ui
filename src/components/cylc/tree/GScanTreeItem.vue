@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <TreeItem
-    v-bind="{ node, depth, hoverable }"
+    v-bind="{ node, depth, filteredOutNodesCache, hoverable }"
     :auto-expand-types="$options.nodeTypes"
     :render-expand-collapse-btn="node.type !== 'workflow'"
     :indent="18"
@@ -80,10 +80,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <GScanTreeItem
         v-for="child in nodeChildren"
         :key="child.id"
-        v-show="!child.filteredOut"
         :node="child"
         :depth="depth + 1"
-        v-bind="{ hoverable }"
+        v-bind="{ filteredOutNodesCache, hoverable }"
       />
     </template>
   </TreeItem>
@@ -148,6 +147,10 @@ export default {
     depth: {
       type: Number,
       default: 0
+    },
+    filteredOutNodesCache: {
+      type: WeakMap,
+      required: true,
     },
     hoverable: {
       type: Boolean,

@@ -24,9 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :width="drawerWidth"
     class="fill-height"
   >
-    <div class="d-flex flex-column h-100">
+    <div class="d-flex flex-column">
       <v-list
-        class="pa-0 flex-grow-0 d-flex flex-column"
+        class="pa-0 d-flex flex-column"
       >
         <c-header :user="user.username" />
 

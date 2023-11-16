@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Deferred } from '../../util'
+import { Deferred } from '$tests/util'
 
 // Tests for the WorkflowService subscriptions. Not necessarily GraphQL subscriptions!
 
