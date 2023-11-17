@@ -25,11 +25,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         multiple
         chips
         closable-chips
+        clearable
+        placeholder="Search"
         :items="tasks"
         v-model="displayedTasks"
         label="Select tasks"
-        style="max-width: 250px;"
-      />
+        ref="selectTasks"
+      >
+        <template v-slot:prepend-item>
+            <v-list-item
+              ripple
+              @click="selectAllFilteredTasks"
+            >
+            Select all matching tasks
+              <!-- <v-list-item-action>
+                <v-icon :color="selectedFruits.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
+              </v-list-item-action> -->
+              <!-- <v-list-item-content>
+                <v-list-item-title>Select all matching tasks</v-list-item-title>
+              </v-list-item-content> -->
+            </v-list-item>
+            <v-divider class="mt-2"></v-divider>
+          </template>
+        </v-autocomplete>
       <v-checkbox
         v-model="showOrigin"
         label="Show origin"
@@ -57,6 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="d-flex justify-center"
     />
   </div>
+  <p>{{ displayedTasks }}</p>
 </template>
 
 <script>
@@ -150,6 +169,10 @@ export default {
       type: String,
       required: true,
     },
+    platformOption: {
+      type: String,
+      required: true,
+    },
     animate: {
       type: Boolean,
       default: true,
@@ -172,6 +195,7 @@ export default {
       showOrigin: false,
       xRange: [undefined, undefined],
       selectionRange: [undefined, undefined],
+      autocompleteFilteredTasks: [],
     }
   },
 
@@ -214,16 +238,22 @@ export default {
 
       for (const job of this.jobs) {
         if (this.displayedTasks.includes(job.name)) {
-          if (this.timingOption === 'total') {
-            time = job.totalTime
-          } else if (this.timingOption === 'run') {
-            time = job.runTime
-          } else if (this.timingOption === 'queue') {
-            time = job.queueTime
+          if (this.platformOption === -1 || job.platform === this.platformOption) {
+            if (this.timingOption === 'total') {
+              time = job.totalTime
+            } else if (this.timingOption === 'run') {
+              time = job.runTime
+            } else if (this.timingOption === 'queue') {
+              time = job.queueTime
+            }
+            // check job is latest before setting
+            // What happens if I make x, y, z etc an array? (cf dataPointIndex in y tooltip)
+            seriesData[job.name].data[job.cyclePoint].x = job.cyclePoint
+            seriesData[job.name].data[job.cyclePoint].y = time
+            seriesData[job.name].data[job.cyclePoint].z = job.platform
+            seriesData[job.name].data[job.cyclePoint].platform = job.platform
+            seriesData[job.name].data[job.cyclePoint].time = job.runTime
           }
-          seriesData[job.name].data[job.cyclePoint].x = job.cyclePoint
-          seriesData[job.name].data[job.cyclePoint].y = time
-          seriesData[job.name].data[job.cyclePoint].z = job.platform
         }
       }
       seriesData = Object.values(seriesData)
@@ -280,6 +310,8 @@ export default {
                 return null
               }
               const y = formatDuration(value, true)
+              console.log(w.globals)
+              // Can I get this information from this.series instead?
               const platform = w.globals.seriesZ[seriesIndex][dataPointIndex]
               return `${y} (${platform})`
             }
@@ -359,6 +391,12 @@ export default {
   },
 
   methods: {
+    selectAllFilteredTasks: function () {
+      this.autocompleteFilteredTasks = this.$refs.selectTasks.filteredItems.filter(
+        (thing) => !this.displayedTasks.includes(thing.value)).map(
+        (thing) => (thing.value))
+      this.displayedTasks = this.displayedTasks.concat(this.autocompleteFilteredTasks)
+    },
     jobsQuery: debounce(
       async function (queryTasks) {
         this.jobs = []

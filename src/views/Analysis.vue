@@ -124,6 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-else-if="chartType === 'timeSeries'"
         :workflowIDs="workflowIDs"
         :tasks="uniqueTasks"
+        :platform-option="tasksFilter.platformOption"
         :timing-option="timingOption"
         sort-input-teleport-target="#analysis-toolbar"
       />
