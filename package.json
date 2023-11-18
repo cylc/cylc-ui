@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "3.12.8",
-    "@vitejs/plugin-vue": "4.4.0",
+    "@vitejs/plugin-vue": "4.5.0",
     "@vitest/coverage-istanbul": "0.34.6",
     "@vue/test-utils": "2.4.1",
     "concurrently": "8.2.2",
