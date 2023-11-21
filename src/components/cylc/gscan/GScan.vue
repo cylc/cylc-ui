@@ -166,8 +166,8 @@ export default {
     filters: {
       'workflow state': [],
       'task state': []
-      // 'workflow host': [], // TODO: will it be in state totals?
-      // 'cylc version': [] // TODO: will it be in state totals?
+      // 'workflow host': [], // https://github.com/cylc/cylc-ui/issues/581
+      // 'cylc version': [] // https://github.com/cylc/cylc-ui/issues/581
     },
   }),
 
@@ -236,7 +236,9 @@ export default {
    * @type {{ [name: string]: string[] }}
    */
   allStates: {
-    'workflow state': WorkflowState.enumValues.map(x => x.name),
+    'workflow state': WorkflowState
+      .enumValues.map(x => x.name)
+      .filter(x => x !== 'error'),
     'task state': TaskStateNames,
   },
 }
