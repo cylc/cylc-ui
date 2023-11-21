@@ -241,10 +241,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapState } from 'vuex'
+import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
+import { useCyclePointsOrderDesc, useJobTheme, useReducedAnimation } from '@/composables/localStorage'
 import { getPageTitle } from '@/utils/index'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
-import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
 import { allViews, defaultView } from '@/views/Workspace.vue'
 import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
@@ -266,8 +267,8 @@ export default {
   data () {
     return {
       defaultView: defaultView(),
-      cyclePointsOrderDesc: true, // default
-      jobTheme: localStorage.jobTheme || 'default'
+      cyclePointsOrderDesc: useCyclePointsOrderDesc(),
+      jobTheme: useJobTheme(),
     }
   },
 
@@ -275,7 +276,7 @@ export default {
     ...mapState('user', ['user']),
     reducedAnimation: {
       get () {
-        return this.$store.state.app.reducedAnimation
+        return useReducedAnimation().value
       },
       set (value) {
         this.setReducedAnimation(value)
@@ -289,32 +290,11 @@ export default {
     }
   },
 
-  mounted () {
-    if (localStorage.cyclePointsOrderDesc) {
-      this.cyclePointsOrderDesc = JSON.parse(localStorage.cyclePointsOrderDesc)
-    }
-  },
-
   methods: {
     resetFontSize,
     decreaseFontSize,
     increaseFontSize,
     getCurrentFontSize,
-    ...mapMutations('app', ['setJobTheme'])
-  },
-
-  watch: {
-    jobTheme: function (theme) {
-      this.setJobTheme(theme)
-    },
-    cyclePointsOrderDesc (newOrder) {
-      localStorage.setItem('cyclePointsOrderDesc', newOrder)
-      this.cyclePointsOrderDesc = newOrder
-    },
-    defaultView (newPreference) {
-      localStorage.setItem('defaultView', newPreference)
-      this.defaultView = newPreference
-    }
   },
 
   allViews: Object.fromEntries(

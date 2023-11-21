@@ -17,7 +17,7 @@
 
 import { toRaw } from 'vue'
 import ViewState from '@/model/ViewState.model'
-import Alert from '@/model/Alert.model'
+import { Alert } from '@/model/Alert.model'
 
 /**
  * @typedef {Vue} View

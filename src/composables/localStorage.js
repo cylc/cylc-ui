@@ -15,23 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import sinon from 'sinon'
-import { Alert } from '@/model/Alert.model'
+/* Centralised settings set in localStorage, with their defaults.
 
-describe('Alert model', () => {
-  beforeEach(() => {
-    sinon.stub(console, 'log')
-  })
-  afterEach(() => {
-    sinon.restore()
-  })
-  describe('constructor', () => {
-    it('should be created', () => {
-      const text = 'my error'
-      const color = 'success'
-      const alert = new Alert(text, color)
-      expect(alert.text).to.equal(text)
-      expect(alert.color).to.equal(color)
-    })
-  })
-})
+NOTE: by providing a default to useLocalStorage(), it automatically
+deserializes to the correct type instead of just string.
+
+These must be composables because otherwise useLocalStorage() gets executed at
+import time and so can't pick up changes to localStorage in unit tests. */
+
+import { useLocalStorage } from '@vueuse/core'
+
+export const useCyclePointsOrderDesc = () => useLocalStorage('cyclePointsOrderDesc', true)
+
+export const useJobTheme = () => useLocalStorage('jobTheme', 'default')
+
+export const useReducedAnimation = () => useLocalStorage('reducedAnimation', false)

@@ -93,7 +93,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         color="primary"
         data-cy="add-view-btn"
       >
-        <v-icon class="icon">{{ $options.icons.add }}</v-icon>
+        <v-icon class="icon">
+          {{ $options.icons.add }}
+        </v-icon>
         <span class="label">
           {{ $t('Toolbar.addView') }}
         </span>
@@ -101,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-menu
           activator="parent"
           location="bottom"
-          >
+        >
           <v-list>
             <v-list-item
               v-for="view in views"
@@ -109,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               :key="view.name"
               @click="$emit('add', { viewName: view.name })"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-icon>{{ view.icon }}</v-icon>
               </template>
               <v-list-item-title>{{ startCase(view.name) }}</v-list-item-title>
@@ -117,9 +119,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list>
         </v-menu>
       </v-btn>
-      <v-btn icon size="small">
-        <v-avatar color="primary" size="small">
-          {{ userInitials }}
+      <v-btn
+        icon
+        size="small"
+      >
+        <v-avatar
+          color="primary"
+          size="small"
+        >
+          <div v-if="user.initials">
+            {{ user.initials }}
+          </div>
+          <v-icon
+            v-else
+            :icon="$options.icons.mdiAccount"
+          />
         </v-avatar>
         <v-menu activator="parent">
           <v-card :title="user.username">
@@ -151,7 +165,8 @@ import {
   mdiPlay,
   mdiPlusBoxMultiple,
   mdiStop,
-  mdiViewList
+  mdiViewList,
+  mdiAccount
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { useToolbar, toolbarHeight } from '@/utils/toolbar'
@@ -255,9 +270,6 @@ export default {
           )
         )
       }
-    },
-    userInitials () {
-      return this.user.username[0].toUpperCase()
     }
   },
 
@@ -315,6 +327,7 @@ export default {
     run: mdiPlay,
     stop: mdiStop,
     mdiCog,
+    mdiAccount
   },
 }
 </script>

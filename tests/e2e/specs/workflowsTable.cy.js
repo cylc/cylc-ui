@@ -21,7 +21,7 @@ describe('Workflows-Table view', () => {
   })
 
   it("Opens mutation menu when clicking on a workflow's icon", () => {
-    cy.get('[data-cy=workflows-table] .c-interactive:first')
+    cy.get('[data-cy=workflows-table] [data-c-interactive]:first')
       .click()
       .get('.c-mutation-menu-list:first')
       .should('be.visible')

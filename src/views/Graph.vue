@@ -93,8 +93,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import gql from 'graphql-tag'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import { getPageTitle } from '@/utils/index'
+import { useJobTheme } from '@/composables/localStorage'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -225,6 +226,7 @@ export default {
 
   data () {
     return {
+      jobTheme: useJobTheme(),
       // the graph orientation
       orientation: 'TB',
       // the auto-refresh timer
@@ -313,7 +315,6 @@ export default {
   },
 
   computed: {
-    ...mapState('app', ['jobTheme']),
     ...mapGetters('workflows', ['getNodes']),
     query () {
       return new SubscriptionQuery(

@@ -200,20 +200,6 @@ describe('GScan component', () => {
     })
   })
 
-  describe('Workflow link', () => {
-    it('should create an empty link for non-workflow nodes', () => {
-      const link = GScan.methods.workflowLink({})
-      expect(link).to.equal('')
-    })
-    it('should create a link for a workflow node', () => {
-      const link = GScan.methods.workflowLink({
-        type: 'workflow',
-        tokens: { workflow: 'a/b/c' }
-      })
-      expect(link).to.equal('/workspace/a/b/c')
-    })
-  })
-
   describe('Toggle items values', () => {
     it('should toggle items values to true', () => {
       const items = [

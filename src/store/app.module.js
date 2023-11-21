@@ -18,8 +18,6 @@
 const state = () => ({
   drawer: null,
   title: null,
-  jobTheme: null,
-  reducedAnimation: null,
 })
 
 const mutations = {
@@ -28,13 +26,6 @@ const mutations = {
   },
   setTitle (state, title) {
     state.title = title
-  },
-  setJobTheme (state, jobTheme) {
-    localStorage.jobTheme = jobTheme
-    state.jobTheme = jobTheme
-  },
-  setReducedAnimation (state, reducedAnimation) {
-    state.reducedAnimation = reducedAnimation
   },
 }
 

@@ -47,7 +47,7 @@ import {
   mdiStop
 } from '@mdi/js'
 
-import Alert from '@/model/Alert.model'
+import { Alert } from '@/model/Alert.model'
 import { store } from '@/store/index'
 import { Tokens } from '@/utils/uid'
 import { WorkflowState } from '@/model/WorkflowState.model'

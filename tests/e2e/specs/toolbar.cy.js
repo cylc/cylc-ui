@@ -28,9 +28,36 @@ describe('Toolbar component', () => {
       .get('#core-app-bar')
       .should('not.exist')
   })
-  it('Contains an avatar displaying user initial', () => {
+  it('Contains an avatar displaying user icon', () => {
     cy.visit('/#/workspace/one')
     cy
+      .get('#core-app-bar')
+      .get('.v-avatar')
+      .get('.v-icon')
+      .should('exist')
+  })
+})
+
+describe('Toolbar Component authenticated user', () => {
+  beforeEach(() => {
+    cy.intercept('/userprofile', {
+      body: {
+        username: 'user',
+        name: 'user',
+        initials: 'U',
+        owner: 'user',
+        permissions: [
+          'read',
+          'write'
+        ],
+        mode: 'single user'
+      }
+    }).as('test-data-server-owner-input')
+    cy.visit('/#/workspace/one')
+  })
+
+  it('Contains an avatar displaying user initials', () => {
+    cy.wait('@test-data-server-owner-input')
       .get('#core-app-bar')
       .get('.v-avatar')
       .should('have.text', 'U')

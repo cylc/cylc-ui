@@ -200,7 +200,7 @@ describe('Mutations component', () => {
       .should('not.have.css', 'display', 'none')
   })
   it('has actions buttons pinned to bottom of form', () => {
-    cy.get('.c-interactive:first')
+    cy.get('[data-c-interactive]:first')
       .click()
       .get('#less-more-button')
       .click()

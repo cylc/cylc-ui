@@ -140,6 +140,7 @@ import { datetimeComparator } from '@/components/cylc/table/sort'
 import { matchNode } from '@/components/cylc/common/filter'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import { dtMean } from '@/utils/tasks'
+import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 
 export default {
   name: 'TableComponent',
@@ -167,8 +168,8 @@ export default {
       sortBy: [
         {
           key: 'task.tokens.cycle',
-          order: JSON.parse(localStorage.cyclePointsOrderDesc ?? true) ? 'desc' : 'asc'
-        }
+          order: useCyclePointsOrderDesc().value ? 'desc' : 'asc'
+        },
       ],
       tasksFilter: {}
     }

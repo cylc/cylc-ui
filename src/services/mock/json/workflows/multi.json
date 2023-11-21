@@ -1,0 +1,86 @@
+[
+  {
+    "deltas": {
+      "id": "~user/multi/level/run1",
+      "added": {
+        "workflow": {
+          "id": "~user/multi/level/run1",
+          "status": "stopped",
+          "statusMsg": "not yet run",
+          "owner": "user",
+          "host": "",
+          "port": 0,
+          "stateTotals": {
+            "waiting": 0,
+            "expired": 0,
+            "preparing": 0,
+            "submit-failed": 0,
+            "submitted": 0,
+            "running": 0,
+            "failed": 0,
+            "succeeded": 0
+          },
+          "latestStateTasks": {},
+          "__typename": "Workflow"
+        },
+        "__typename": "Added"
+      }
+    }
+  },
+  {
+    "deltas": {
+      "id": "~user/other/multi/run1",
+      "added": {
+        "workflow": {
+          "id": "~user/other/multi/run1",
+          "status": "stopped",
+          "statusMsg": "not yet run",
+          "owner": "user",
+          "host": "",
+          "port": 0,
+          "stateTotals": {
+            "waiting": 0,
+            "expired": 0,
+            "preparing": 0,
+            "submit-failed": 0,
+            "submitted": 0,
+            "running": 0,
+            "failed": 0,
+            "succeeded": 0
+          },
+          "latestStateTasks": {},
+          "__typename": "Workflow"
+        },
+        "__typename": "Added"
+      }
+    }
+  },
+  {
+    "deltas": {
+      "id": "~user/other/multi/run2",
+      "added": {
+        "workflow": {
+          "id": "~user/other/multi/run2",
+          "status": "stopped",
+          "statusMsg": "not yet run",
+          "owner": "user",
+          "host": "",
+          "port": 0,
+          "stateTotals": {
+            "waiting": 0,
+            "expired": 0,
+            "preparing": 0,
+            "submit-failed": 0,
+            "submitted": 0,
+            "running": 0,
+            "failed": 0,
+            "succeeded": 0
+          },
+          "latestStateTasks": {},
+          "__typename": "Workflow"
+        },
+        "__typename": "Added"
+      }
+    }
+  }
+]

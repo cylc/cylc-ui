@@ -64,6 +64,7 @@ import {
 } from '@mdi/js'
 import { upperFirst } from 'lodash'
 import { formatDuration } from '@/utils/tasks'
+import { useReducedAnimation } from '@/composables/localStorage'
 
 export default {
   name: 'BoxPlot',
@@ -156,7 +157,7 @@ export default {
       return {
         chart: {
           animations: {
-            enabled: this.$store.state.app.reducedAnimation ? false : this.animate,
+            enabled: useReducedAnimation().value ? false : this.animate,
             easing: 'easeinout',
             speed: 300,
             animateGradually: {

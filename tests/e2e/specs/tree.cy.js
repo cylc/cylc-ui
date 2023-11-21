@@ -34,31 +34,33 @@ describe('Tree view', () => {
       .get('.node-data-cycle')
       .should('be.visible')
   })
-  it('Should hide jobs by default', () => {
-    cy.visit('/#/workspace/one')
-    cy
-      .get('.node-data-cycle')
-      .should('be.visible')
-    cy
-      .get('.node-data-job')
-      .should('not.be.visible')
-  })
-  it('Should make jobs visible when clicking on tasks', () => {
-    cy.visit('/#/workspace/one')
-    cy
-      .get('.node-data-job:first')
-      .should('not.be.visible')
-    // expand the first task proxy we have
-    cy
+  it('Renders jobs when expanding tasks', () => {
+    cy.visit('/#/tree/one')
       .get('.node-data-task:first')
-      .prev()
+    // Jobs should not be rendered to begin with
+    cy.get('.node-data-job:first')
+      .should('not.exist')
+    // Expand the first task
+    cy.get('.node-data-task:first')
+      .parents('.node')
+      .find('.node-expand-collapse-button')
       .click()
-    // now, consequentially, the first job that we have should also be visible
-    cy
+    // Now the first job should be visible
+    cy.get('.node-data-job:first')
+      .should('be.visible')
+    // Expansion should be remembered if parents are collapsed & re-expanded
+    cy.get('.node-data-cycle:first')
+      .parents('.node')
+      .find('.node-expand-collapse-button').as('cycleBtn')
+      .click()
+      .get('.node-data-job:first')
+      .should('not.be.visible')
+      .get('@cycleBtn')
+      .click()
       .get('.node-data-job:first')
       .should('be.visible')
   })
-  it('Should display job details', () => {
+  it('Displays job details when expanded', () => {
     // this is testing that there is a margin, not necessarily that the leaf node's triangle is exactly under the node
     cy.visit('/#/workspace/one')
     cy.get('.node-data-task')
@@ -68,7 +70,7 @@ describe('Tree view', () => {
       .click()
     // no jobs, and no leaves are visible initially
     cy.get('.leaf:first')
-      .should('not.be.visible')
+      .should('not.exist')
     // but clicking on a visible job should display its leaf node
     cy.get('.node-data-job:visible:first')
       .prev()
@@ -94,33 +96,25 @@ describe('Tree view', () => {
     cy.get('.leaf:visible:first > .arrow-up')
       .should('have.css', 'margin-left', `${5 * defaultNodeIndent + nodeContentPad}px`)
   })
-  it('Should update view correctly', () => {
+  it('Updates view correctly', () => {
     cy.visit('/#/tree/one')
-    cy
       .get('.node-data-cycle')
       .should('have.length', 1)
-    cy
-      .get('.node-data-job:first')
-      .should('not.be.visible')
-    cy
-      .visit('/#/tree/anynamewillstillopenone')
-      .then(() => {
-        cy
-          .get('.node-data')
-          .should('have.length', 0)
-        cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
-          // 'workflow' subscription used by the Tree view
-          expect(Object.keys(subscriptions).length).to.equal(1)
-          expect(subscriptions.workflow.observable.closed).to.equal(false)
-        })
-      })
+    cy.visit('/#/tree/anynamewillstillopenone')
+      .get('.node-data')
+      .should('have.length', 0)
+    cy.window().its('app.$workflowService.subscriptions').then(subscriptions => {
+      // 'workflow' subscription used by the Tree view
+      expect(Object.keys(subscriptions).length).to.equal(1)
+      expect(subscriptions.workflow.observable.closed).to.equal(false)
+    })
   })
-  it('Should remove subscriptions correctly when leaving the view', () => {
+  it('Removes subscriptions correctly when leaving the view', () => {
     cy.visit('/#/tree/one')
       .get('.node-data-cycle')
       .should('be.visible')
       .get('.node-data-job:first')
-      .should('not.be.visible')
+      .should('not.exist')
       .window()
       .its('app.$workflowService.subscriptions').then(subscriptions => {
         // * the 'workflow' subscription is used by the Tree view
@@ -224,7 +218,7 @@ describe('Tree view', () => {
           .contains(name)
           .should('be.visible')
       }
-      cy.get('[data-cy=filter-task-states]')
+      cy.get('[data-cy="filter task state"]')
         .click()
         .get('.v-list-item')
         .contains(new RegExp(`^${TaskState.FAILED.name}$`))
@@ -250,7 +244,7 @@ describe('Tree view', () => {
         .get('[data-cy=filter-id]')
         .type('i')
       cy
-        .get('[data-cy=filter-task-states]')
+        .get('[data-cy="filter task state"]')
         .click()
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
@@ -299,7 +293,7 @@ describe('Tree view', () => {
 
   it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
     cy.visit('/#/tree/one')
-    cy.get('[data-cy=filter-task-states]')
+    cy.get('[data-cy="filter task state"]')
       .click()
     // eslint-disable-next-line no-lone-blocks
     TaskState.enumValues.forEach(state => {
@@ -310,7 +304,7 @@ describe('Tree view', () => {
     // Click outside to close dropdown
     cy.get('noscript')
       .click({ force: true })
-    cy.get('[data-cy=filter-task-states]')
+    cy.get('[data-cy="filter task state"]')
       .contains('.v-select__selection', '(+')
   })
 })

@@ -26,183 +26,121 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       type="list-item-three-line"
       class=" d-flex flex-column h-100"
     > -->
-      <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
-        <!-- filters -->
-        <v-text-field
-          v-model="searchWorkflows"
-          clearable
-          placeholder="Search"
-          class="flex-grow-1 flex-column"
-          id="c-gscan-search-workflows"
-        />
-        <!-- button to activate the filters menu -->
-        <v-badge
-          :content="numFilters"
-          :model-value="Boolean(numFilters)"
-        >
-          <v-btn
-            icon
-            class="flex-grow-0 flex-column ml-2"
-            id="c-gscan-filter-tooltip-btn"
-            variant="text"
-            size="small"
-            data-cy="gscan-filter-btn"
-          >
-            <v-icon size="x-large">{{ $options.icons.mdiFilter }}</v-icon>
-          </v-btn>
-        </v-badge>
-        <!-- filters tooltip -->
-        <v-menu
-          activator="#c-gscan-filter-tooltip-btn"
-          :close-on-content-click="false"
-          location="right"
-        >
-          <v-card width="500px">
-            <v-list>
-              <v-list-item
-                v-for="(items, title) in filters"
-                :key="title"
-              >
-                <v-select
-                  v-model="filters[title]"
-                  :items="$options.allStates[title]"
-                  :label="`Filter by ${title}`"
-                  density="default"
-                  chips
-                  closable-chips
-                  clearable
-                  multiple
-                  class="my-2"
-                  :data-cy="`filter ${title}`"
-                />
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-menu>
-        <!-- scan -->
+    <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
+      <!-- filters -->
+      <v-text-field
+        v-model="searchWorkflows"
+        clearable
+        placeholder="Search"
+        class="flex-grow-1 flex-column"
+        id="c-gscan-search-workflows"
+      />
+      <!-- button to activate the filters menu -->
+      <v-badge
+        :content="numFilters"
+        :model-value="Boolean(numFilters)"
+      >
         <v-btn
           icon
-          id="c-gscan-scan-tooltip-btn"
+          class="flex-grow-0 flex-column ml-2"
+          id="c-gscan-filter-tooltip-btn"
           variant="text"
           size="small"
-          data-cy="gscan-scan-btn"
-          @click="scanFilesystem()"
+          data-cy="gscan-filter-btn"
         >
-          <v-icon size="x-large">{{ $options.icons.mdiFolderRefresh }}</v-icon>
-          <v-tooltip text="Refresh workflows list" />
+          <v-icon size="x-large">
+            {{ $options.icons.mdiFilter }}
+          </v-icon>
         </v-btn>
-      </div>
-      <!-- data -->
-      <v-progress-linear
-        v-if="isLoading"
-        indeterminate
-      />
-      <div
-        v-if="!isLoading"
-        class="c-gscan-workflows flex-grow-1 pl-2"
+      </v-badge>
+      <!-- filters tooltip -->
+      <v-menu
+        activator="#c-gscan-filter-tooltip-btn"
+        :close-on-content-click="false"
+        location="right"
       >
-        <tree
-          :filterable="false"
-          :expand-collapse-toggle="false"
-          :workflows="workflows"
-          :stopOn="['workflow']"
-          :autoExpandTypes="['workflow-part', 'workflow']"
-          class="c-gscan-workflow ma-0 pa-0"
-          ref="tree"
-          :indent="18"
-        >
-          <template v-slot:node="scope">
-            <workflow-icon
-              class="mr-2 flex-shrink-0"
-              v-if="scope.node.type === 'workflow'"
-              :status="scope.node.node.status"
-              v-cylc-object="scope.node"
-            />
+        <v-card width="500px">
+          <v-list>
             <v-list-item
-              :to="workflowLink(scope.node)"
-              class="flex-grow-1 px-2"
+              v-for="(items, title) in filters"
+              :key="title"
             >
-              <v-row class="align-center align-content-center flex-nowrap">
-                <v-col
-                  v-if="scope.node.type === 'workflow-part'"
-                  class="c-gscan-workflow-name"
-                >
-                  <span>{{ scope.node.name || scope.node.id }}</span>
-                </v-col>
-                <v-col
-                  v-else-if="scope.node.type === 'workflow'"
-                  class="c-gscan-workflow-name"
-                >
-                  <span>
-                    {{ scope.node.name }}
-                    <v-tooltip location="top">{{ scope.node.id }}</v-tooltip>
-                  </span>
-                </v-col>
-                <!-- We check the latestStateTasks below as offline workflows won't have a latestStateTasks property -->
-                <v-col
-                  v-if="scope.node.type === 'workflow' && scope.node.node.latestStateTasks"
-                  class="d-flex text-right c-gscan-workflow-states flex-grow-0"
-                >
-                  <!-- task summary tooltips -->
-                  <span
-                    v-for="[state, tasks] in getLatestStateTasks(Object.entries(scope.node.node.latestStateTasks))"
-                    :key="`${scope.node.id}-summary-${state}`"
-                    :class="getTaskStateClasses(scope.node.node, state)"
-                  >
-                    <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
-                    <div
-                      class="ma-0 pa-0"
-                      min-width="0"
-                      min-height="0"
-                      style="font-size: 120%; width: auto;"
-                    >
-                      <job :status="state" />
-                      <v-tooltip location="top">
-                        <!-- tooltip text -->
-                        <span>
-                          <span class="text-grey-lighten-1">{{ countTasksInState(scope.node.node, state) }} {{ state }}. Recent {{ state }} tasks:</span>
-                          <br/>
-                          <span v-for="(task, index) in tasks.slice(0, $options.maxTasksDisplayed)" :key="index">
-                            {{ task }}<br v-if="index !== tasks.length -1" />
-                          </span>
-                        </span>
-                      </v-tooltip>
-                    </div>
-                  </span>
-                </v-col>
-              </v-row>
+              <TaskFilterSelect
+                v-model="filters[title]"
+                :type="title"
+                :items="$options.allStates[title]"
+                class="my-2"
+                density="default"
+                :label="`Filter by ${title}`"
+                :data-cy="`filter ${title}`"
+                :placeholder="`Filter by ${title}`"
+              />
             </v-list-item>
-          </template>
-        </tree>
-      </div>
-      <!-- when no workflows are returned in the GraphQL query -->
-      <div v-else>
-        <v-list-item>
-          <v-list-item-title class="text-grey">No workflows found</v-list-item-title>
-        </v-list-item>
-      </div>
+          </v-list>
+        </v-card>
+      </v-menu>
+      <!-- scan -->
+      <v-btn
+        icon
+        id="c-gscan-scan-tooltip-btn"
+        variant="text"
+        size="small"
+        data-cy="gscan-scan-btn"
+        @click="scanFilesystem()"
+      >
+        <v-icon size="x-large">
+          {{ $options.icons.mdiFolderRefresh }}
+        </v-icon>
+        <v-tooltip text="Refresh workflows list" />
+      </v-btn>
+    </div>
+    <!-- data -->
+    <v-progress-linear
+      v-if="isLoading"
+      indeterminate
+    />
+    <div
+      v-if="!isLoading"
+      class="c-gscan-workflows flex-grow-1 pl-2"
+    >
+      <Tree
+        :filterable="false"
+        :expand-collapse-toggle="false"
+        :auto-collapse="true"
+        :workflows="workflows"
+        tree-item-component="GScanTreeItem"
+        class="c-gscan-workflow ma-0 pa-0"
+        ref="tree"
+      />
+    </div>
+    <!-- when no workflows are returned in the GraphQL query -->
+    <div v-else>
+      <v-list-item>
+        <v-list-item-title class="text-grey">
+          No workflows found
+        </v-list-item-title>
+      </v-list-item>
+    </div>
     <!-- </v-skeleton-loader> -->
   </div>
 </template>
 
 <script>
 import { mdiFilter, mdiFolderRefresh } from '@mdi/js'
-import TaskState, { TaskStateUserOrder } from '@/model/TaskState.model'
+import { TaskStateUserOrder } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import Job from '@/components/cylc/Job.vue'
 import Tree from '@/components/cylc/tree/Tree.vue'
-import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import { filterHierarchically } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 import { mutate } from '@/utils/aotf'
+import TaskFilterSelect from '@/components/cylc/TaskFilterSelect.vue'
 
 export default {
   name: 'GScan',
 
   components: {
-    Job,
     Tree,
-    WorkflowIcon
+    TaskFilterSelect
   },
 
   props: {
@@ -238,7 +176,7 @@ export default {
         'task state': []
         // 'workflow host': [], // TODO: will it be in state totals?
         // 'cylc version': [] // TODO: will it be in state totals?
-      }
+      },
     }
   },
   computed: {
@@ -251,7 +189,7 @@ export default {
     },
     numFilters () {
       return Object.values(this.filters).flat().length
-    }
+    },
   },
   watch: {
     /**
@@ -303,7 +241,7 @@ export default {
           cache[id].filtered = ids.includes(id)
         }
       }
-    }
+    },
   },
   methods: {
 
@@ -349,49 +287,6 @@ export default {
         item.model = newValue
       })
     },
-
-    workflowLink (node) {
-      if (node.type === 'workflow') {
-        return `/workspace/${ node.tokens.workflow }`
-      }
-      return ''
-    },
-
-    /**
-     * Get number of tasks we have in a given state. The states are retrieved
-     * from `latestStateTasks`, and the number of tasks in each state is from
-     * the `stateTotals`. (`latestStateTasks` includes old tasks).
-     *
-     * @param {WorkflowGraphQLData} workflow - the workflow object retrieved from GraphQL
-     * @param {string} state - a workflow state
-     * @returns {number|*} - the number of tasks in the given state
-     */
-    countTasksInState (workflow, state) {
-      if (Object.hasOwnProperty.call(workflow.stateTotals, state)) {
-        return workflow.stateTotals[state]
-      }
-      return 0
-    },
-
-    getTaskStateClasses (workflow, state) {
-      const tasksInState = this.countTasksInState(workflow, state)
-      return tasksInState === 0 ? ['empty-state'] : []
-    },
-
-    // TODO: temporary filter, remove after b0 - https://github.com/cylc/cylc-ui/pull/617#issuecomment-805343847
-    getLatestStateTasks (latestStateTasks) {
-      // Values found in: https://github.com/cylc/cylc-flow/blob/9c542f9f3082d3c3d9839cf4330c41cfb2738ba1/cylc/flow/data_store_mgr.py#L143-L149
-      const validValues = [
-        TaskState.SUBMITTED.name,
-        TaskState.SUBMIT_FAILED.name,
-        TaskState.RUNNING.name,
-        TaskState.SUCCEEDED.name,
-        TaskState.FAILED.name
-      ]
-      return latestStateTasks.filter(entry => {
-        return validValues.includes(entry[0])
-      })
-    }
   },
 
   // Misc options
@@ -407,6 +302,5 @@ export default {
     'workflow state': WorkflowState.enumValues.map(x => x.name),
     'task state': TaskStateUserOrder.map(x => x.name)
   },
-  maxTasksDisplayed: 5,
 }
 </script>

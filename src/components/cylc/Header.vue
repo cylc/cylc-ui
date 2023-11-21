@@ -47,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           rules: [(val) => Boolean(val) || 'Required'],
         }
       }">
+        <!-- Owner combobox -->
         <v-combobox
           class="w-100"
           id="cylc-owner-combobox"
@@ -56,7 +57,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :items="Array.from(owners)"
           v-model="owner"
           @keyup.enter="owners.add(owner)"
-        />
+        >
+          <template v-slot:item="{ item, props }">
+            <!-- HTML that describe how select should render items when the select is open -->
+            <v-list-item
+              :title="item.title"
+              v-bind="props"
+            >
+              <template v-slot:append v-if="item.title !== ownerOnLoad">
+                <v-icon
+                  @click.stop="owners.delete(item.title)"
+                  color="pink-accent-4"
+                  :icon="mdiClose"
+                />
+              </template>
+            </v-list-item>
+          </template>
+        </v-combobox>
+        <!-- Deployment combobox -->
         <v-combobox
           class="w-100"
           id="cylc-deployment-combobox"
@@ -66,14 +84,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :items="Array.from(deployments)"
           v-model="deployment"
           @keyup.enter="deployments.add(deployment)"
-        />
+        >
+          <template v-slot:item="{ item, props }">
+            <!-- HTML that describe how select should render items when the select is open -->
+            <v-list-item
+              :title="item.title"
+              v-bind="props"
+            >
+              <template v-slot:append v-if="item.title !== deploymentOnLoad">
+                <v-icon
+                  @click.stop="deployments.delete(item.title)"
+                  color="pink-accent-4"
+                  :icon="mdiClose"
+                />
+              </template>
+            </v-list-item>
+          </template>
+        </v-combobox>
         <v-btn
-          v-if="store.state.user.user.mode !== 'single user' && isNewRoute"
+          v-if="showGoButton"
           data-cy="multiuser-go-btn"
           :href="url"
           variant="flat"
           class="px-8"
           color="green"
+          @click="owners.add(owner); deployments.add(deployment);"
         >
           Go
         </v-btn>
@@ -83,27 +118,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useLocalStorage } from '@vueuse/core'
+import {
+  mdiClose
+} from '@mdi/js'
 
 const store = useStore()
 
-// owner logic
 const ownerOnLoad = store.state.user.user.owner
 const owner = ref(ownerOnLoad)
-const owners = ref(new Set([ownerOnLoad]))
+const owners = useLocalStorage('owners', new Set([ownerOnLoad]))
 
-// deployment logic
 const deploymentOnLoad = window.location.host
 const deployment = ref(deploymentOnLoad)
-const deployments = ref(new Set([deploymentOnLoad]))
+const deployments = useLocalStorage('deployments', new Set([deploymentOnLoad]))
 
-// route logic
 const url = computed(() => `//${deployment.value}/user/${owner.value}/cylc/#`)
 
 const isNewRoute = computed(() => {
   return deployment.value !== deploymentOnLoad || owner.value !== ownerOnLoad
 })
+
+const showGoButton = computed(() => (
+  store.state.user.user.mode !== 'single user' &&
+  owner.value &&
+  deployment.value &&
+  isNewRoute.value
+))
 
 </script>
 
