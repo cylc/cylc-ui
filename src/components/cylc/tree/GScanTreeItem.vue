@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <TreeItem
-    v-bind="{ node, depth, hoverable }"
+    v-bind="{ node, depth, filteredOutNodesCache, hoverable }"
     :auto-expand-types="$options.nodeTypes"
     :render-expand-collapse-btn="node.type !== 'workflow'"
     :indent="18"
@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :key="child.id"
         :node="child"
         :depth="depth + 1"
-        v-bind="{ hoverable }"
+        v-bind="{ filteredOutNodesCache, hoverable }"
       />
     </template>
   </TreeItem>
@@ -92,10 +92,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Job from '@/components/cylc/Job.vue'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
-import { JobStates } from '@/model/TaskState.model'
+import { JobStateNames } from '@/model/JobState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-
-const JobStateNames = JobStates.map(({ name }) => name)
 
 /**
  * Get aggregated task state totals and latest task states for all descendents of a node.
@@ -150,6 +148,10 @@ export default {
       type: Number,
       default: 0
     },
+    filteredOutNodesCache: {
+      type: WeakMap,
+      required: true,
+    },
     hoverable: {
       type: Boolean,
     },
@@ -189,5 +191,6 @@ export default {
   },
 
   nodeTypes: ['workflow-part', 'workflow'],
+  maxTasksDisplayed: 5,
 }
 </script>

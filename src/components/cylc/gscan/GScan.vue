@@ -104,13 +104,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="c-gscan-workflows flex-grow-1 pl-2"
     >
       <Tree
-        :filterable="false"
-        :expand-collapse-toggle="false"
-        :auto-collapse="true"
         :workflows="workflows"
+        :node-filter-func="filterNode"
         tree-item-component="GScanTreeItem"
-        class="c-gscan-workflow ma-0 pa-0"
+        class="c-gscan-workflow"
         ref="tree"
+        v-bind="{ filterState }"
       />
     </div>
     <!-- when no workflows are returned in the GraphQL query -->
@@ -127,10 +126,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mdiFilter, mdiFolderRefresh } from '@mdi/js'
-import { TaskStateUserOrder } from '@/model/TaskState.model'
+import { TaskStateNames } from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import Tree from '@/components/cylc/tree/Tree.vue'
-import { filterHierarchically } from '@/components/cylc/gscan/filters'
+import { filterByName, filterByState } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 import { mutate } from '@/utils/aotf'
 import TaskFilterSelect from '@/components/cylc/TaskFilterSelect.vue'
@@ -154,31 +153,24 @@ export default {
     }
   },
 
-  data () {
-    return {
-      /**
-       * The filtered workflows. This is the result of applying the filters
-       * on the workflows prop.
-       * @type {Array<WorkflowGraphQLData>}
-       */
-      filteredWorkflows: [],
-      /**
-       * Value to search and filter workflows.
-       * @type {string}
-       */
-      searchWorkflows: '',
-      /**
-       * List of filters selected by the user.
-       * @type {{ [name: string]: string[] }}
-       */
-      filters: {
-        'workflow state': [],
-        'task state': []
-        // 'workflow host': [], // TODO: will it be in state totals?
-        // 'cylc version': [] // TODO: will it be in state totals?
-      },
-    }
-  },
+  data: () => ({
+    /**
+     * Value to search and filter workflows.
+     * @type {string}
+     */
+    searchWorkflows: '',
+    /**
+     * List of filters selected by the user.
+     * @type {{ [name: string]: string[] }}
+     */
+    filters: {
+      'workflow state': [],
+      'task state': []
+      // 'workflow host': [], // TODO: will it be in state totals?
+      // 'cylc version': [] // TODO: will it be in state totals?
+    },
+  }),
+
   computed: {
     workflows () {
       if (!this.workflowTree?.children.length) {
@@ -187,105 +179,50 @@ export default {
       }
       return sortedWorkflowTree(this.workflowTree)
     },
+
     numFilters () {
       return Object.values(this.filters).flat().length
     },
-  },
-  watch: {
-    /**
-     * If the user changes the list of filters, then we apply
-     * the filters to the list of workflows.
-     */
-    filters: {
-      deep: true,
-      immediate: false,
-      handler: 'filterWorkflows'
-    },
-    /**
-     * If the user changes the workflow name to search/filter,
-     * then we apply the filters to the list of workflows.
-     */
-    searchWorkflows: {
-      deep: true,
-      immediate: false,
-      handler: 'filterWorkflows'
-    },
-    workflows: {
-      deep: true,
-      immediate: true,
-      handler: 'filterWorkflows'
-    },
-    filteredWorkflows: {
-      immediate: true,
-      handler: function () {
-        // build a list of IDs to display
-        // TODO: refactor the this.filterHierarchically code to make this nicer
-        const ids = []
-        const stack = [...this.filteredWorkflows]
-        let item
-        while (stack.length) {
-          // item = stack.splice(-1)[0]
-          item = stack.pop()
-          if (['workflow', 'workflow-part'].includes(item.type)) {
-            ids.push(item.id)
-            stack.push(...item.children)
-          }
-        }
-        // set the filtered attr on the treeItemCache of the tree nodes
-        if (!this.$refs.tree) {
-          // tree component has not been created yet
-          return
-        }
-        const cache = this.$refs.tree.treeItemCache
-        for (const id in cache) {
-          cache[id].filtered = ids.includes(id)
-        }
-      }
-    },
-  },
-  methods: {
 
+    filterState () {
+      return (this.searchWorkflows?.trim() || this.numFilters)
+        ? [this.searchWorkflows, this.filters]
+        : null
+    },
+  },
+
+  methods: {
     scanFilesystem () {
       mutate({ name: 'scan', args: [] }, {}, this.$workflowService.apolloClient)
     },
 
-    filterWorkflows () {
-      this.filteredWorkflows = filterHierarchically(
-        this.workflows,
-        this.searchWorkflows,
-        this.filters['workflow state'],
-        this.filters['task state']
-      )
-    },
-
     /**
-     * Return `true` iff all the items have been selected. `false` otherwise.
+     * Recursively filter this node and its children.
      *
-     * @param {[
-     *   {
-     *     model: boolean
-     *   }
-     * ]} items - filter items
-     * @returns {boolean} - `true` iff all the items have been selected. `false` otherwise
+     * @param {Object} node
+     * @param {WeakMap<Object, boolean>} filteredOutNodesCache - cache of nodes' filtered status
+     * @param {boolean} parentsNameMatch - whether any parents of this node
+     * match the name filter.
+     * @return {boolean} - whether this node matches the filter.
      */
-    allItemsSelected (items) {
-      return items.every(item => item.model === true)
-    },
+    filterNode (node, filteredOutNodesCache, parentsNameMatch = false) {
+      const nameMatch = parentsNameMatch || filterByName(node, this.searchWorkflows)
+      let isMatch = false
+      if (node.type === 'workflow') {
+        isMatch = nameMatch && filterByState(
+          node,
+          this.filters['workflow state'],
+          this.filters['task state']
+        )
+      } else if (node.type === 'workflow-part' && node.children.length) {
+        for (const child of node.children) {
+          isMatch = this.filterNode(child, filteredOutNodesCache, nameMatch) || isMatch
+          // Note: do not break early as we must run the filter over all children
+        }
+      }
 
-    /**
-     * If every element in the list is `true`, then we will set every element in the
-     * list to `false`. Otherwise, we set all the elements in the list to `true`.
-     * @param {[
-     *   {
-     *     model: boolean
-     *   }
-     * ]} items - filter items
-     */
-    toggleItemsValues (items) {
-      const newValue = !this.allItemsSelected(items)
-      items.forEach(item => {
-        item.model = newValue
-      })
+      filteredOutNodesCache.set(node, !isMatch)
+      return isMatch
     },
   },
 
@@ -300,7 +237,7 @@ export default {
    */
   allStates: {
     'workflow state': WorkflowState.enumValues.map(x => x.name),
-    'task state': TaskStateUserOrder.map(x => x.name)
+    'task state': TaskStateNames,
   },
 }
 </script>

@@ -133,6 +133,9 @@ describe('User Profile', () => {
       .get('[data-cy=select-default-view-menu] [role=listbox]')
       .contains('Table')
       .click()
+      // Wait for menu to close before navigation to avoid FF ResizeObserver error
+      .get('[data-cy=select-default-view-menu]')
+      .should('not.exist')
     cy.visit('/#/workspace/one')
       .get('[data-cy=workspace-view] .c-table')
       .should('be.visible')

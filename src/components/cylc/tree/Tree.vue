@@ -18,85 +18,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-container
     fluid
-    class="ma-0 pa-0"
+    class="pa-0"
   >
-    <!-- Toolbar -->
-    <v-row
-      no-gutters
-      class="d-flex flex-wrap"
-    >
-      <!-- Filters -->
-      <v-col
-        v-if="filterable"
-      >
-        <TaskFilter v-model="tasksFilter"/>
-      </v-col>
-      <!-- Expand, collapse all -->
-      <v-col
-        v-if="expandCollapseToggle"
-        class="flex-grow-0"
-      >
-        <div
-          class="d-flex flex-nowrap ml-2"
-        >
-          <v-btn
-            @click="expandAll((treeitem) => !['task', 'job', 'job-details'].includes(treeitem.node.type))"
-            icon
-            variant="flat"
-            size="small"
-            data-cy="expand-all"
-          >
-            <v-icon size="x-large">{{ $options.icons.mdiPlus }}</v-icon>
-            <v-tooltip>Expand all</v-tooltip>
-          </v-btn>
-          <v-btn
-            @click="collapseAll()"
-            icon
-            variant="flat"
-            size="small"
-            data-cy="collapse-all"
-          >
-            <v-icon size="x-large">{{ $options.icons.mdiMinus }}</v-icon>
-            <v-tooltip>Collapse all</v-tooltip>
-          </v-btn>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row
-      no-gutters
-      >
-      <v-col
-        cols="12"
-        class="mh-100 position-relative"
-      >
-        <v-container
-          fluid
-          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
-        >
-          <component
-            :is="treeItemComponent"
-            v-for="child of rootChildren"
-            :key="child.id"
-            :node="child"
-            v-bind="{ hoverable, cyclePointsOrderDesc, indent }"
-            @tree-item-created="onTreeItemCreated"
-            @tree-item-destroyed="onTreeItemDestroyed"
-            @tree-item-expanded="onTreeItemExpanded"
-            @tree-item-collapsed="onTreeItemCollapsed"
-          >
-          </component>
-        </v-container>
-      </v-col>
-    </v-row>
+    <component
+      :is="treeItemComponent"
+      v-for="child of rootChildren"
+      :key="child.id"
+      :node="child"
+      v-bind="{ hoverable, cyclePointsOrderDesc, expandAll, filteredOutNodesCache, indent }"
+    />
   </v-container>
 </template>
 
 <script>
-import { mdiPlus, mdiMinus } from '@mdi/js'
 import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
-import TaskFilter from '@/components/cylc/TaskFilter.vue'
-import { matchID, matchState } from '@/components/cylc/common/filter'
 import { getNodeChildren } from '@/components/cylc/tree/util'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 
@@ -113,15 +49,26 @@ export default {
       default: TreeItem.name,
     },
     hoverable: Boolean,
-    activable: Boolean,
-    multipleActive: Boolean,
-    filterable: {
-      type: Boolean,
-      default: true
+    /**
+     * Function used to recursively filter nodes.
+     *
+     * @param {Object} node
+     * @param {WeakMap<Object, boolean>} filteredOutNodesCache - see the data
+     * property below.
+     */
+    nodeFilterFunc: {
+      type: Function,
+      default: null,
     },
-    expandCollapseToggle: {
-      type: Boolean,
-      default: true
+    /** An object representing filter state, used for watching filter changes. */
+    filterState: {
+      type: [Object, null],
+      required: true,
+    },
+    /** List of node types to manually expand. */
+    expandAll: {
+      type: Array,
+      default: null
     },
     autoStripTypes: {
       // If there is only one child of the root node and its type is listed in
@@ -143,25 +90,52 @@ export default {
 
   components: {
     GScanTreeItem,
-    TaskFilter,
     TreeItem,
   },
 
   data () {
     return {
-      treeItemCache: {},
-      expandedCache: new Set(),
-      expanded: true,
-      expandedFilter: null,
-      collapseFilter: null,
-      tasksFilter: {},
-      cyclePointsOrderDesc: useCyclePointsOrderDesc()
+      cyclePointsOrderDesc: useCyclePointsOrderDesc(),
+      /**
+       * Map of nodes' filtered status.
+       *
+       * `true` means the node has been filtered out and should not be shown.
+       * By using a WeakMap we do not have to worry about housekeeping nodes
+       * that no longer exist.
+       *
+       * @type {WeakMap<Object, boolean>}
+       */
+      filteredOutNodesCache: new WeakMap(),
+    }
+  },
+
+  mounted () {
+    // Reactively run filtering
+    if (this.nodeFilterFunc) {
+      this.$watch(
+        () => [this.filterState, this.rootChildren],
+        ([active, nodes], [wasActive, oldNodes]) => {
+          if (active) {
+            // Need to wipe cache due to mem leak bug in Vue < 3.4
+            // https://github.com/vuejs/core/issues/9419
+            // TODO: can remove this line after upgrade to Vue 3.4:
+            this.filteredOutNodesCache = new WeakMap()
+            for (const node of this.rootChildren) {
+              this.nodeFilterFunc(node, this.filteredOutNodesCache)
+            }
+          } else if (wasActive) {
+            // Filters are no longer active - wipe the cache
+            this.filteredOutNodesCache = new WeakMap()
+          }
+        },
+        { deep: true }
+      )
     }
   },
 
   computed: {
+    /** Array of nodes at the top of the tree */
     rootChildren () {
-      // array of nodes at the top of the tree
       if (
         this.workflows.length === 1 &&
         this.autoStripTypes.includes(this.workflows[0].type)
@@ -169,132 +143,11 @@ export default {
         // if there is only one workflow we return its children
         // (i.e. cycle points)
         return getNodeChildren(this.workflows[0], this.cyclePointsOrderDesc)
-      } else {
-        // if there are multiple children we need to include the workflow
-        // nodes to allow us to differentiate between them
-        return this.workflows
       }
+      // if there are multiple children we need to include the workflow
+      // nodes to allow us to differentiate between them
+      return this.workflows
     },
-    filterByTaskName () {
-      return Boolean(this.tasksFilter.id?.trim())
-    },
-    filterByTaskState () {
-      return Boolean(this.tasksFilter.states?.length)
-    }
-  },
-
-  watch: {
-    tasksFilter: {
-      deep: true,
-      handler: 'filterTasks'
-    },
-    workflows: {
-      deep: true,
-      handler () {
-        if (this.filterByTaskName || this.filterByTaskState) {
-          this.$nextTick(() => {
-            this.filterNodes(this.workflows)
-          })
-        }
-      }
-    }
-  },
-
-  methods: {
-    filterTasks () {
-      if (this.filterByTaskName || this.filterByTaskState) {
-        this.filterNodes(this.workflows)
-      } else {
-        this.removeAllFilters()
-      }
-    },
-    filterNodes (nodes) {
-      for (const node of nodes) {
-        this.filterNode(node)
-      }
-    },
-    /**
-     * Update tree cache entry for this node (and its children if applicable)
-     * with whether the node matches the filters.
-     *
-     * @param {Object} node
-     * @param {boolean} parentsIDMatch - whether any parents of this node
-     * match the ID filter.
-     * @return {boolean} - whether this node matches the filter.
-     */
-    filterNode (node, parentsIDMatch = false) {
-      const stateMatch = matchState(node, this.tasksFilter.states)
-      // This node should be included if any parent matches the ID filter
-      const idMatch = parentsIDMatch || matchID(node, this.tasksFilter.id)
-      let filtered = stateMatch && idMatch
-
-      let children
-      if (node.type === 'cycle') {
-        // follow the family tree from cycle point nodes
-        children = node.familyTree[0]?.children
-      } else if (['workflow', 'family'].includes(node.type)) {
-        // follow children for workflow or family nodes
-        children = node.children
-      }
-      if (children) {
-        for (const child of children) {
-          filtered = this.filterNode(child, idMatch) || filtered
-          // Note: do not break early as we must run the filter over all children
-        }
-      }
-
-      if (this.treeItemCache[node.id]) {
-        this.treeItemCache[node.id].filtered = filtered
-      }
-
-      return filtered
-    },
-    removeAllFilters () {
-      for (const treeitem of Object.values(this.treeItemCache)) {
-        treeitem.filtered = true
-      }
-    },
-    expandAll (filter = null) {
-      const collection = filter ? Object.values(this.treeItemCache).filter(filter) : Object.values(this.treeItemCache)
-      for (const treeItem of collection) {
-        treeItem.isExpanded = true
-        this.expandedCache.add(treeItem)
-      }
-      this.expanded = true
-    },
-    collapseAll (filter = null) {
-      const collection = filter ? [...this.expandedCache].filter(filter) : this.expandedCache
-      for (const treeItem of collection) {
-        treeItem.isExpanded = false
-        this.expandedCache.delete(treeItem)
-      }
-      if (!filter) {
-        this.expanded = false
-      }
-    },
-    onTreeItemExpanded (treeItem) {
-      this.expandedCache.add(treeItem)
-      this.expanded = true
-    },
-    onTreeItemCollapsed (treeItem) {
-      this.expandedCache.delete(treeItem)
-    },
-    onTreeItemCreated (treeItem) {
-      this.treeItemCache[treeItem.$props.node.id] = treeItem
-      if (treeItem.isExpanded) {
-        this.expandedCache.add(treeItem)
-      }
-    },
-    onTreeItemDestroyed (treeItem) {
-      // make sure the item is removed from all caches, otherwise we will have a memory leak
-      delete this.treeItemCache[treeItem.$props.node.id]
-      this.expandedCache.delete(treeItem)
-    },
-  },
-
-  icons: {
-    mdiPlus,
-    mdiMinus,
   },
 }
 </script>

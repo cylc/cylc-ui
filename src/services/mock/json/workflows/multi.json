@@ -61,13 +61,13 @@
       "added": {
         "workflow": {
           "id": "~user/other/multi/run2",
-          "status": "stopped",
-          "statusMsg": "not yet run",
+          "status": "paused",
+          "statusMsg": "paused",
           "owner": "user",
-          "host": "",
-          "port": 0,
+          "host": "ncc1701.starfleet.gov",
+          "port": 43078,
           "stateTotals": {
-            "waiting": 0,
+            "waiting": 2,
             "expired": 0,
             "preparing": 0,
             "submit-failed": 0,
@@ -76,9 +76,103 @@
             "failed": 0,
             "succeeded": 0
           },
-          "latestStateTasks": {},
+          "latestStateTasks": {
+            "failed": [],
+            "preparing": [],
+            "submit-failed": [],
+            "submitted": [],
+            "running": []
+          },
           "__typename": "Workflow"
         },
+        "cyclePoints": [
+          {
+            "__typename": "FamilyProxy",
+            "id": "~user/other/multi/run2//1/root",
+            "state": "waiting",
+            "ancestors": [],
+            "childTasks": [
+              {
+                "id": "~user/other/multi/run2//1/foo",
+                "__typename": "TaskProxy"
+              }
+            ]
+          },
+          {
+            "__typename": "FamilyProxy",
+            "id": "~user/other/multi/run2//2/root",
+            "state": "waiting",
+            "ancestors": [],
+            "childTasks": [
+              {
+                "id": "~user/other/multi/run2//2/foo",
+                "__typename": "TaskProxy"
+              }
+            ]
+          }
+        ],
+        "familyProxies": [
+          {
+            "__typename": "FamilyProxy",
+            "id": "~user/other/multi/run2//1/root",
+            "state": "waiting",
+            "ancestors": [],
+            "childTasks": [
+              {
+                "id": "~user/other/multi/run2//1/foo",
+                "__typename": "TaskProxy"
+              }
+            ]
+          },
+          {
+            "__typename": "FamilyProxy",
+            "id": "~user/other/multi/run2//2/root",
+            "state": "waiting",
+            "ancestors": [],
+            "childTasks": [
+              {
+                "id": "~user/other/multi/run2//2/foo",
+                "__typename": "TaskProxy"
+              }
+            ]
+          }
+        ],
+        "taskProxies": [
+          {
+            "id": "~user/other/multi/run2//1/foo",
+            "state": "waiting",
+            "isHeld": false,
+            "isQueued": true,
+            "isRunahead": false,
+            "task": {
+              "meanElapsedTime": 0,
+              "__typename": "Task"
+            },
+            "firstParent": {
+              "id": "~user/other/multi/run2//1/root",
+              "__typename": "FamilyProxy"
+            },
+            "__typename": "TaskProxy"
+          },
+          {
+            "id": "~user/other/multi/run2//2/foo",
+            "state": "waiting",
+            "isHeld": false,
+            "isQueued": false,
+            "isRunahead": false,
+            "task": {
+              "meanElapsedTime": 0,
+              "__typename": "Task"
+            },
+            "firstParent": {
+              "id": "~user/other/multi/run2//2/root",
+              "__typename": "FamilyProxy"
+            },
+            "__typename": "TaskProxy"
+          }
+        ],
+        "jobs": [],
+        "edges": [],
         "__typename": "Added"
       }
     }

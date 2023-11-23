@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { TaskStateUserOrder, JobStates } from '@/model/TaskState.model'
+import { JobStateNames } from '@/model/JobState.model'
+import { TaskStateUserOrder } from '@/model/TaskState.model'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import {
@@ -147,10 +148,10 @@ describe('Task component', () => {
 
 describe('Job component', () => {
   it('renders for each job state', () => {
-    for (const state of JobStates) {
-      cy.mount(JobComponent, { props: { status: state.name } })
+    for (const status of JobStateNames) {
+      cy.mount(JobComponent, { props: { status } })
       cy.get('.c-job svg').last().screenshot(
-        `job-${state.name}`,
+        `job-${status}`,
         { overwrite: true }
       )
     }

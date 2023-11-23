@@ -66,36 +66,35 @@ describe('TreeItem component', () => {
       plugins: [createVuetify(), CylcObjectPlugin],
       mock: { $workflowService, $eventBus }
     },
-    props: {
-      node: simpleWorkflowNode
-    },
     ...options
   })
 
   it('should display the treeitem with valid data', () => {
-    const wrapper = mountFunction()
+    const wrapper = mountFunction({
+      props: {
+        node: simpleWorkflowNode,
+        filteredOutNodesCache: new WeakMap(),
+      },
+    })
     expect(wrapper.props().node.node.__typename).to.equal('Workflow')
-    expect(wrapper.vm.$data.filtered).to.equal(true)
   })
 
   describe('expanded', () => {
     // using simpleJobNode as it has only one child so it is easier/quicker to test
-    it('should expand nodes when configured', () => {
-      let wrapper = mountFunction({
+    it.each([
+      [simpleCyclepointNode, true],
+      [simpleTaskNode, false],
+    ])('should expand nodes when configured %#', (node, expected) => {
+      const wrapper = mountFunction({
         props: {
-          node: simpleCyclepointNode,
+          node,
+          filteredOutNodesCache: new WeakMap(),
           autoExpandTypes: ['cycle']
         }
       })
-      expect(wrapper).to.be.expanded()
-
-      wrapper = mountFunction({
-        props: {
-          node: simpleTaskNode,
-          autoExpandTypes: ['cycle']
-        }
-      })
-      expect(wrapper).to.not.be.expanded()
+      expected
+        ? expect(wrapper).to.be.expanded()
+        : expect(wrapper).to.not.be.expanded()
     })
   })
 
@@ -103,6 +102,7 @@ describe('TreeItem component', () => {
     const wrapper = mountFunction({
       props: {
         node: simpleTaskNode,
+        filteredOutNodesCache: new WeakMap(),
       }
     })
     expect(wrapper).to.not.be.expanded()
@@ -126,6 +126,7 @@ describe('TreeItem component', () => {
       const wrapper = mountFunction({
         props: {
           node: simpleWorkflowNode,
+          filteredOutNodesCache: new WeakMap(),
         },
         data: () => ({
           manuallyExpanded,
@@ -136,113 +137,6 @@ describe('TreeItem component', () => {
           .map((vm) => vm.props().node.node.__typename)
       ).to.deep.equal(expected)
     })
-
-  // })
-  // describe('mixin', () => {
-  //   const sortTestsData = [
-  //     // invalid values
-  //     {
-  //       args: {
-  //         type: '',
-  //         children: []
-  //       },
-  //       expected: []
-  //     },
-  //     {
-  //       args: {
-  //         type: null,
-  //         children: null
-  //       },
-  //       expected: null
-  //     },
-  //     // workflow children (cycle points) are sorted by ID in descending order
-  //     {
-  //       args: {
-  //         type: 'workflow',
-  //         children: [
-  //           { id: 'workflow//1' },
-  //           { id: 'workflow//2' }
-  //         ]
-  //       },
-  //       expected: [
-  //         { id: 'workflow//2' },
-  //         { id: 'workflow//1' }
-  //       ]
-  //     },
-  //     // cycle point children (family proxies and task proxies) are sorted by type in ascending order, and then name in ascending order
-  //     {
-  //       args: {
-  //         type: 'cyclepoint',
-  //         children: [
-  //           { node: { name: 'foo' }, type: 'task-proxy' },
-  //           { node: { name: 'FAM1' }, type: 'family-proxy' },
-  //           { node: { name: 'bar' }, type: 'task-proxy' }
-  //         ]
-  //       },
-  //       expected: [
-  //         { node: { name: 'FAM1' }, type: 'family-proxy' },
-  //         { node: { name: 'bar' }, type: 'task-proxy' },
-  //         { node: { name: 'foo' }, type: 'task-proxy' }
-  //       ]
-  //     },
-  //     // family proxy children (family proxies and task proxies) are sorted by type in ascending order, and then name in ascending order
-  //     {
-  //       args: {
-  //         type: 'family-proxy',
-  //         children: [
-  //           { node: { name: 'foo' }, type: 'task-proxy' },
-  //           { node: { name: 'FAM1' }, type: 'family-proxy' },
-  //           { node: { name: 'bar' }, type: 'task-proxy' }
-  //         ]
-  //       },
-  //       expected: [
-  //         { node: { name: 'FAM1' }, type: 'family-proxy' },
-  //         { node: { name: 'bar' }, type: 'task-proxy' },
-  //         { node: { name: 'foo' }, type: 'task-proxy' }
-  //       ]
-  //     },
-  //     {
-  //       args: {
-  //         type: 'family-proxy',
-  //         children: [
-  //           { node: { name: 'f01' }, type: 'task-proxy' },
-  //           { node: { name: 'f1' }, type: 'task-proxy' },
-  //           { node: { name: 'f10' }, type: 'task-proxy' },
-  //           { node: { name: 'f0' }, type: 'task-proxy' },
-  //           { node: { name: 'f2' }, type: 'task-proxy' }
-  //         ]
-  //       },
-  //       expected: [
-  //         { node: { name: 'f0' }, type: 'task-proxy' },
-  //         { node: { name: 'f01' }, type: 'task-proxy' },
-  //         { node: { name: 'f1' }, type: 'task-proxy' },
-  //         { node: { name: 'f2' }, type: 'task-proxy' },
-  //         { node: { name: 'f10' }, type: 'task-proxy' }
-  //       ]
-  //     },
-  //     // task proxy children (jobs) are sorted by job submit number in descending order
-  //     {
-  //       args: {
-  //         type: 'task-proxy',
-  //         children: [
-  //           { node: { submitNum: '2' } },
-  //           { node: { submitNum: '1' } },
-  //           { node: { submitNum: '3' } }
-  //         ]
-  //       },
-  //       expected: [
-  //         { node: { submitNum: '3' } },
-  //         { node: { submitNum: '2' } },
-  //         { node: { submitNum: '1' } }
-  //       ]
-  //     }
-  //   ]
-  //   sortTestsData.forEach((test) => {
-  //     it('should order elements correctly', () => {
-  //       const sorted = treeitem.methods.sortedChildren(test.args.type, test.args.children)
-  //       expect(sorted).to.deep.equal(test.expected)
-  //     })
-  //   })
   })
 })
 
@@ -259,6 +153,7 @@ describe('GScanTreeItem', () => {
     const wrapper = mountFunction({
       props: {
         node: flattenWorkflowParts(stateTotalsTestWorkflowNodes),
+        filteredOutNodesCache: new WeakMap(),
       }
     })
     it('combines all descendant tasks', () => {
@@ -284,6 +179,7 @@ describe('GScanTreeItem', () => {
           node: {
             type: 'barbenheimer',
           },
+          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })
@@ -296,6 +192,7 @@ describe('GScanTreeItem', () => {
             type: 'workflow',
             tokens: { workflow: 'a/b/c' }
           },
+          filteredOutNodesCache: new WeakMap(),
         },
         shallow: true,
       })

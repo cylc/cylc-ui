@@ -15,26 +15,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
+import { createVuetify } from 'vuetify'
 import storeOptions from '@/store/options'
+import GScan from '@/components/cylc/gscan/GScan.vue'
+import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import {
   WorkflowState,
   WorkflowStateOrder
 } from '@/model/WorkflowState.model'
 import TaskState from '@/model/TaskState.model'
-import GScan from '@/components/cylc/gscan/GScan.vue'
 import {
   getWorkflowTreeSortValue,
   sortedWorkflowTree
 } from '@/components/cylc/gscan/sort.js'
-import {
-  filterHierarchically
-} from '@/components/cylc/gscan/filters'
 
 import {
   TEST_TREE,
   listTree
 } from './utils'
+import { getIDMap } from '$tests/util'
+
+const vuetify = createVuetify()
+
+/**
+ * Helper function to run filtering.
+ */
+function filterNodes (wrapper, filteredOutNodesCache) {
+  for (const node of wrapper.vm.workflows) {
+    wrapper.vm.filterNode(node, filteredOutNodesCache)
+  }
+}
 
 describe('GScan component', () => {
   const store = createStore(storeOptions)
@@ -44,7 +56,7 @@ describe('GScan component', () => {
   beforeEach(resetState)
 
   describe('Sorting', () => {
-    it('should set workflow sort order by status', () => {
+    it('sets workflow sort order by status', () => {
       // for each worflow state ...
       for (const workflowState of WorkflowState) {
         // ... except ERROR
@@ -81,7 +93,8 @@ describe('GScan component', () => {
         ).to.equal(WorkflowStateOrder.get(workflowState.name))
       }
     })
-    it('should sort workflows', () => {
+
+    it('sorts workflows', () => {
       // it should sort by status then name
       expect(
         listTree(sortedWorkflowTree(TEST_TREE))
@@ -92,150 +105,158 @@ describe('GScan component', () => {
   })
 
   describe('Filters', () => {
-    it("shouldn't filter out workflows incorrectly", () => {
-      expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            // don't filter by name
-            null,
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            []
-          )
-        )
-      ).to.deep.equal(['~u/b', '~u/c', '~u/a/x1', '~u/a/x2'])
+    const mountFunction = (options) => mount(GScan, {
+      global: {
+        plugins: [vuetify, CylcObjectPlugin],
+      },
+      props: {
+        workflowTree: TEST_TREE,
+        isLoading: false,
+      },
+      ...options
     })
-    it('should filter by workflow state', () => {
-      expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            // don't filter by name
-            null,
-            [WorkflowState.RUNNING.name],
-            // filter for all task states
-            []
-          )
-        )
-      ).to.deep.equal(['~u/c'])
-      expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            // don't filter by name
-            null,
-            [WorkflowState.STOPPING.name],
-            // filter for all task states
-            []
-          )
-        )
-      ).to.deep.equal(['~u/b'])
-      expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            // don't filter by name
-            null,
-            [WorkflowState.STOPPED.name],
-            // filter for all task states
-            []
-          )
-        )
-      ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
-    })
-    it('should filter by workflow name', () => {
-      expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            'x',
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            []
-          )
-        )
-      ).to.deep.equal(['~u/a/x1', '~u/a/x2'])
-      // check it isn't matching the user name
-      expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            'u',
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            []
-          )
-        )
-      ).to.deep.equal([])
-    })
-    it('should filter by workflow state totals', () => {
-      expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            null,
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            [TaskState.RUNNING.name]
-          )
-        )
-      ).to.deep.equal(['~u/b'])
-      expect(
-        listTree(
-          filterHierarchically(
-            sortedWorkflowTree(TEST_TREE),
-            null,
-            // filter for all workflow states
-            [...WorkflowStateOrder.keys()],
-            // filter for all task states
-            [TaskState.SUBMITTED.name]
-          )
-        )
-      ).to.deep.equal(['~u/c'])
-    })
-  })
 
-  describe('Toggle items values', () => {
-    it('should toggle items values to true', () => {
-      const items = [
-        {
-          model: false
-        },
-        {
-          model: false
+    it('has null filterState when filters are empty', async () => {
+      const wrapper = mountFunction()
+      expect(wrapper.vm.searchWorkflows).toEqual('')
+      expect(wrapper.vm.filters).toEqual({
+        'workflow state': [],
+        'task state': [],
+      })
+      await wrapper.setData({
+        searchWorkflows: '  ',
+        filters: {
+          'workflow state': [],
+          'task state': [],
         }
-      ]
-      GScan.methods.toggleItemsValues(items)
-      expect(items.every(item => item.model))
+      })
+      expect(wrapper.vm.filterState).toBeNull()
     })
-    it('should toggle items values to false', () => {
-      const items = [
-        {
-          model: true
-        },
-        {
-          model: true
-        }
-      ]
-      GScan.methods.toggleItemsValues(items)
-      expect(!items.every(item => item.model))
+
+    it("shouldn't filter out workflows incorrectly", async () => {
+      const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
+      // filter for all workflow states
+      await wrapper.setData({
+        filters: { 'workflow state': WorkflowStateOrder.keys() },
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': false,
+        '~u/a/x1': false,
+        '~u/a/x2': false,
+        '~u/b': false,
+        '~u/c': false,
+      })
     })
-    it('should toggle items values to false (mixed values)', () => {
-      const items = [
-        {
-          model: true
+
+    it('filters by workflow state', async () => {
+      const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
+
+      await wrapper.setData({
+        filters: { 'workflow state': [WorkflowState.RUNNING.name] },
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': true,
+        '~u/a/x1': true,
+        '~u/a/x2': true,
+        '~u/b': true,
+        '~u/c': false,
+      })
+
+      await wrapper.setData({
+        filters: {
+          'workflow state': [
+            WorkflowState.STOPPING.name,
+            WorkflowState.STOPPED.name,
+          ]
         },
-        {
-          model: false
-        }
-      ]
-      GScan.methods.toggleItemsValues(items)
-      expect(!items.every(item => item.model))
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': false,
+        '~u/a/x1': false,
+        '~u/a/x2': false,
+        '~u/b': false,
+        '~u/c': true,
+      })
+    })
+
+    it('filters by workflow name', async () => {
+      const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
+
+      await wrapper.setData({ searchWorkflows: 'x' })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': false,
+        '~u/a/x1': false,
+        '~u/a/x2': false,
+        '~u/b': true,
+        '~u/c': true,
+      })
+
+      await wrapper.setData({ searchWorkflows: 'u' })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': true,
+        '~u/a/x1': true,
+        '~u/a/x2': true,
+        '~u/b': true,
+        '~u/c': true,
+      })
+    })
+
+    it('filters by task state', async () => {
+      const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
+
+      await wrapper.setData({
+        filters: { 'task state': [TaskState.RUNNING.name] }
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': true,
+        '~u/a/x1': true,
+        '~u/a/x2': true,
+        '~u/b': false,
+        '~u/c': true,
+      })
+
+      await wrapper.setData({
+        filters: { 'task state': [TaskState.SUBMITTED.name] }
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': true,
+        '~u/a/x1': true,
+        '~u/a/x2': true,
+        '~u/b': true,
+        '~u/c': false,
+      })
+    })
+
+    it('filters by workflow name & workflow state & task state', async () => {
+      const wrapper = mountFunction()
+      const filteredOutNodesCache = new Map()
+
+      await wrapper.setData({
+        searchWorkflows: 'a',
+        filters: {
+          'workflow state': [WorkflowState.STOPPED.name],
+          'task state': [TaskState.SUBMIT_FAILED.name],
+        },
+      })
+      filterNodes(wrapper, filteredOutNodesCache)
+      expect(getIDMap(filteredOutNodesCache)).toEqual({
+        '~u/a': false,
+        '~u/a/x1': false,
+        '~u/a/x2': true,
+        '~u/b': true,
+        '~u/c': true,
+      })
     })
   })
 })

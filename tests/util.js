@@ -30,3 +30,17 @@ export class Deferred {
     })
   }
 }
+
+/**
+ * Convert filteredOutNodesCache to a simpler object for easier comparison.
+ *
+ * Used by Tree view & GScan tests.
+ *
+ * @param {Map} filteredOutNodesCache
+ * @returns {Object}
+ */
+export function getIDMap (filteredOutNodesCache) {
+  return Object.fromEntries(
+    Array.from(filteredOutNodesCache.entries(), ([node, val]) => [node.id, val])
+  )
+}

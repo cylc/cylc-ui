@@ -253,7 +253,7 @@ function removeTree (state, node, removeParent = true) {
  * */
 function cleanParents (state, node) {
   let pointer = node
-  while (pointer.parent) {
+  while (pointer?.parent) {
     if (pointer.type !== 'workflow') {
       // don't prune workflow nodes
       // (this requires an explicit instruction to do so)
