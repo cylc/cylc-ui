@@ -2541,19 +2541,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/test-utils@npm:2.4.2":
-  version: 2.4.2
-  resolution: "@vue/test-utils@npm:2.4.2"
+"@vue/test-utils@npm:2.4.1":
+  version: 2.4.1
+  resolution: "@vue/test-utils@npm:2.4.1"
   dependencies:
-    js-beautify: "npm:^1.14.9"
-    vue-component-type-helpers: "npm:^1.8.21"
+    js-beautify: "npm:1.14.9"
+    vue-component-type-helpers: "npm:1.8.4"
   peerDependencies:
     "@vue/server-renderer": ^3.0.1
     vue: ^3.0.1
   peerDependenciesMeta:
     "@vue/server-renderer":
       optional: true
-  checksum: c96bb2ee9ad15fae41b1614b3cf3a34a4a8abaef3689e54325332994600388b40579eae75f0488e62fb05c5979f54ccd91db6f3cba955231662322862605b8b7
+  checksum: b3e88b84468c610a62dcea51d5ae089ea299192dd1fc787d69e78c76316b8425cbf1f035a05ab9043cad043c800823df7d76652224bfa713db8d0cf9ec8abb9c
   languageName: node
   linkType: hard
 
@@ -2636,13 +2636,6 @@ __metadata:
   version: 1.1.1
   resolution: "abbrev@npm:1.1.1"
   checksum: 3f762677702acb24f65e813070e306c61fafe25d4b2583f9dfc935131f774863f3addd5741572ed576bd69cabe473c5af18e1e108b829cb7b6b4747884f726e6
-  languageName: node
-  linkType: hard
-
-"abbrev@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "abbrev@npm:2.0.0"
-  checksum: f742a5a107473946f426c691c08daba61a1d15942616f300b5d32fd735be88fef5cba24201757b6c407fd564555fb48c751cfa33519b2605c8a7aadd22baf372
   languageName: node
   linkType: hard
 
@@ -3817,7 +3810,7 @@ __metadata:
     "@unhead/vue": "npm:1.8.3"
     "@vitejs/plugin-vue": "npm:4.5.0"
     "@vitest/coverage-istanbul": "npm:0.34.6"
-    "@vue/test-utils": "npm:2.4.2"
+    "@vue/test-utils": "npm:2.4.1"
     "@vueuse/core": "npm:10.5.0"
     apexcharts: "npm:3.41.0"
     axios: "npm:1.6.2"
@@ -5760,21 +5753,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^10.3.3":
-  version: 10.3.10
-  resolution: "glob@npm:10.3.10"
-  dependencies:
-    foreground-child: "npm:^3.1.0"
-    jackspeak: "npm:^2.3.5"
-    minimatch: "npm:^9.0.1"
-    minipass: "npm:^5.0.0 || ^6.0.2 || ^7.0.0"
-    path-scurry: "npm:^1.10.1"
-  bin:
-    glob: dist/esm/bin.mjs
-  checksum: 13d8a1feb7eac7945f8c8480e11cd4a44b24d26503d99a8d8ac8d5aefbf3e9802a2b6087318a829fad04cb4e829f25c5f4f1110c68966c498720dd261c7e344d
-  languageName: node
-  linkType: hard
-
 "glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6":
   version: 7.2.3
   resolution: "glob@npm:7.2.3"
@@ -5786,6 +5764,19 @@ __metadata:
     once: "npm:^1.3.0"
     path-is-absolute: "npm:^1.0.0"
   checksum: 65676153e2b0c9095100fe7f25a778bf45608eeb32c6048cf307f579649bcc30353277b3b898a3792602c65764e5baa4f643714dfbdfd64ea271d210c7a425fe
+  languageName: node
+  linkType: hard
+
+"glob@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "glob@npm:8.1.0"
+  dependencies:
+    fs.realpath: "npm:^1.0.0"
+    inflight: "npm:^1.0.4"
+    inherits: "npm:2"
+    minimatch: "npm:^5.0.1"
+    once: "npm:^1.3.0"
+  checksum: cb0b5cab17a59c57299376abe5646c7070f8acb89df5595b492dba3bfb43d301a46c01e5695f01154e6553168207cb60d4eaf07d3be4bc3eb9b0457c5c561d0f
   languageName: node
   linkType: hard
 
@@ -6770,19 +6761,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jackspeak@npm:^2.3.5":
-  version: 2.3.6
-  resolution: "jackspeak@npm:2.3.6"
-  dependencies:
-    "@isaacs/cliui": "npm:^8.0.2"
-    "@pkgjs/parseargs": "npm:^0.11.0"
-  dependenciesMeta:
-    "@pkgjs/parseargs":
-      optional: true
-  checksum: f01d8f972d894cd7638bc338e9ef5ddb86f7b208ce177a36d718eac96ec86638a6efa17d0221b10073e64b45edc2ce15340db9380b1f5d5c5d000cbc517dc111
-  languageName: node
-  linkType: hard
-
 "jju@npm:^1.1.0":
   version: 1.4.0
   resolution: "jju@npm:1.4.0"
@@ -6790,19 +6768,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-beautify@npm:^1.14.9":
-  version: 1.14.11
-  resolution: "js-beautify@npm:1.14.11"
+"js-beautify@npm:1.14.9":
+  version: 1.14.9
+  resolution: "js-beautify@npm:1.14.9"
   dependencies:
     config-chain: "npm:^1.1.13"
     editorconfig: "npm:^1.0.3"
-    glob: "npm:^10.3.3"
-    nopt: "npm:^7.2.0"
+    glob: "npm:^8.1.0"
+    nopt: "npm:^6.0.0"
   bin:
     css-beautify: js/bin/css-beautify.js
     html-beautify: js/bin/html-beautify.js
     js-beautify: js/bin/js-beautify.js
-  checksum: 23267f8e68a4cf190274906fbec98c4fa44025e1b7e1fa701480867c9ab6b2b90a1bb2b358cd487c34d735a1039c16bcb51f82d390bcc6384172cc540aa11c9b
+  checksum: be7b968a15fef3b3f906b3f043538aebbe5ce0db60b3b44b9532c93d05790078011b8cf66c9b00b28fdd49ba3b15b098babb22fb4ae75fcf2b7814a6ad4ce12f
   languageName: node
   linkType: hard
 
@@ -7485,6 +7463,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimatch@npm:^5.0.1":
+  version: 5.1.6
+  resolution: "minimatch@npm:5.1.6"
+  dependencies:
+    brace-expansion: "npm:^2.0.1"
+  checksum: 3defdfd230914f22a8da203747c42ee3c405c39d4d37ffda284dac5e45b7e1f6c49aa8be606509002898e73091ff2a3bbfc59c2c6c71d4660609f63aa92f98e3
+  languageName: node
+  linkType: hard
+
 "minimatch@npm:^9.0.1":
   version: 9.0.3
   resolution: "minimatch@npm:9.0.3"
@@ -7762,17 +7749,6 @@ __metadata:
   bin:
     nopt: bin/nopt.js
   checksum: 837b52c330df16fcaad816b1f54fec6b2854ab1aa771d935c1603fbcf9b023bb073f1466b1b67f48ea4dce127ae675b85b9d9355700e9b109de39db490919786
-  languageName: node
-  linkType: hard
-
-"nopt@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "nopt@npm:7.2.0"
-  dependencies:
-    abbrev: "npm:^2.0.0"
-  bin:
-    nopt: bin/nopt.js
-  checksum: 9bd7198df6f16eb29ff16892c77bcf7f0cc41f9fb5c26280ac0def2cf8cf319f3b821b3af83eba0e74c85807cc430a16efe0db58fe6ae1f41e69519f585b6aff
   languageName: node
   linkType: hard
 
@@ -10538,10 +10514,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-component-type-helpers@npm:^1.8.21":
-  version: 1.8.22
-  resolution: "vue-component-type-helpers@npm:1.8.22"
-  checksum: 31b34ecdc4de3c69fb73802530380db1676497bda4e0ecb37ab098ebfbcad05bebd15b713520033866c0c1ddb6c56ff79d727b0a6777947dfcc434aaca3b11e2
+"vue-component-type-helpers@npm:1.8.4":
+  version: 1.8.4
+  resolution: "vue-component-type-helpers@npm:1.8.4"
+  checksum: b18ffe06e4834e6df2ff08ec1ddff19eb730b6b68a40727f937eb80fcb20bf523c1f8f0884ac17e5d72f4612f34da9dbd4aba9659a34f89e70c73e7e5f818de9
   languageName: node
   linkType: hard
 
