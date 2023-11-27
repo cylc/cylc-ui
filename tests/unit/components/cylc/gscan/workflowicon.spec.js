@@ -19,40 +19,29 @@ import { shallowMount } from '@vue/test-utils'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import WorkflowState from '@/model/WorkflowState.model'
 import { createVuetify } from 'vuetify'
+import { mdiHelpCircle } from '@mdi/js'
 
 const vuetify = createVuetify()
 
 describe('WorkflowIcon', () => {
-  /**
-   * @param {Object} options - component options
-   * @returns {Wrapper<WorkflowIcon>} - component test wrapper
-   */
-  const mountFunction = options => {
-    return shallowMount(WorkflowIcon, {
+  it.each([
+    {
+      status: '',
+      expected: mdiHelpCircle
+    },
+    {
+      status: WorkflowState.STOPPED.name,
+      expected: WorkflowState.STOPPED.icon
+    },
+  ])('uses the right icon for state: $status', ({ status, expected }) => {
+    const wrapper = shallowMount(WorkflowIcon, {
       global: {
         plugins: [vuetify]
       },
-      ...options
-    })
-  }
-  it('should create a workflow-icon component with the right icon', () => {
-    const tests = [
-      {
-        status: '',
-        expected: WorkflowState.ERROR.icon
-      },
-      {
-        status: WorkflowState.STOPPED.name,
-        expected: WorkflowState.STOPPED.icon
+      props: {
+        status,
       }
-    ]
-    tests.forEach(test => {
-      const wrapper = mountFunction({
-        props: {
-          status: test.status
-        }
-      })
-      expect(wrapper.vm.getIcon()).to.equal(test.expected)
     })
+    expect(wrapper.vm.getIcon()).to.equal(expected)
   })
 })

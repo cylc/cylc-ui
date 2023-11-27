@@ -18,7 +18,6 @@
 import { Enumify } from 'enumify'
 
 import {
-  mdiHelpCircle,
   mdiPauseCircle,
   mdiPlayCircle,
   mdiSkipNextCircle,
@@ -33,7 +32,6 @@ export class WorkflowState extends Enumify {
   static PAUSED = new WorkflowState('paused', mdiPauseCircle)
   static STOPPING = new WorkflowState('stopping', mdiSkipNextCircle)
   static STOPPED = new WorkflowState('stopped', mdiStopCircle)
-  static ERROR = new WorkflowState('error', mdiHelpCircle)
   static _ = this.closeEnum()
 
   /**

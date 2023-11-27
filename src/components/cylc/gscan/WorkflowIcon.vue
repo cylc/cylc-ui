@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import WorkflowState from '@/model/WorkflowState.model'
+import { mdiHelpCircle } from '@mdi/js'
 
 /**
  * GScan workflow icon.
@@ -40,17 +41,12 @@ export default {
   methods: {
     /**
      * Return the workflow icon, based on the status prop. If the state is
-     * not valid, we return a pre-defined error icon.
-     * @returns {String} - status, one of the WorkflowState enum values
+     * not valid, we return an unknown state icon.
+     * @returns {string} icon
      */
     getIcon () {
-      // TBD: enumValueOf returned the wrong value?
-      const state = [...WorkflowState.enumValues]
-        .find(state => state.name === this.status)
-      if (!state || state.length === 0) {
-        return WorkflowState.ERROR.icon
-      }
-      return state.icon
+      const state = WorkflowState.enumValues.find(({ name }) => name === this.status)
+      return state?.icon || mdiHelpCircle
     }
   }
 }
