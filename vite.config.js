@@ -112,9 +112,11 @@ export default defineConfig(({ mode }) => {
       globals: true, // auto-import `describe`, `it`, `beforeEach` etc.
       setupFiles: ['./tests/unit/setup.js'],
       restoreMocks: true,
-      deps: {
-        // inline vuetify to prevent 'TypeError: Unknown file extension ".css"
-        inline: ['vuetify']
+      server: {
+        deps: {
+          // inline vuetify to prevent 'TypeError: Unknown file extension ".css"
+          inline: ['vuetify'],
+        },
       },
       coverage: {
         provider: 'istanbul',
