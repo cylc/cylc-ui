@@ -59,9 +59,6 @@ describe('GScan component', () => {
     it('sets workflow sort order by status', () => {
       // for each worflow state ...
       for (const workflowState of WorkflowState) {
-        // ... except ERROR
-        if (workflowState === WorkflowState.ERROR) { continue }
-
         // it should associate a workflow with the correct sort order
         expect(
           getWorkflowTreeSortValue({
