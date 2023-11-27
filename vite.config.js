@@ -86,6 +86,14 @@ export default defineConfig(({ mode }) => {
           path.resolve(__dirname, './coverage')
         ]
       },
+      warmup: {
+        clientFiles: [
+          './src/main.js',
+          './src/App.vue',
+          './src/views/Dashboard.vue',
+          './src/views/Workspace.vue',
+        ]
+      }
     },
     build: {
       sourcemap: mode !== 'production',
