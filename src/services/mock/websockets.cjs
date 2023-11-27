@@ -16,7 +16,7 @@
  */
 
 const { isArray } = require('lodash')
-const graphql = require('./graphql')
+const graphql = require('./graphql.cjs')
 
 /**
  * Create a WebSockets response.

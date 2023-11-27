@@ -21,7 +21,7 @@ import vuetify from 'vite-plugin-vuetify'
 import eslint from 'vite-plugin-eslint'
 import IstanbulPlugin from 'vite-plugin-istanbul'
 import dns from 'dns'
-const path = require('path')
+import path from 'path'
 
 // Workaround https://github.com/cypress-io/cypress/issues/25397
 dns.setDefaultResultOrder('ipv4first')
@@ -128,17 +128,3 @@ export default defineConfig(({ mode }) => {
     }
   }
 })
-
-// module.exports = {
-//   transpileDependencies: [
-//     'graphql-language-service-interface',
-//     'graphql-language-service-parser',
-//     'vuetify'
-//   ],
-//   runtimeCompiler: true,
-//   pluginOptions: {
-//     apollo: {
-//       lintGQL: false
-//     }
-//   },
-// }
