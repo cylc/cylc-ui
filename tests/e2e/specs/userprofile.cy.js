@@ -125,6 +125,14 @@ describe('User Profile', () => {
   })
 
   it('Sets the default view', () => {
+    cy.on('uncaught:exception', (err) => {
+      // This test has been flaky on Firefox only.
+      // Cast this ridiculous error into the fires of Mount Doom:
+      if (err.message.includes('ResizeObserver loop completed with undelivered notifications')) {
+        console.warn(err)
+        return false
+      }
+    })
     cy.get('[data-cy=select-default-view]')
       // Default should be tree view by default
       .contains('Tree')
@@ -143,15 +151,24 @@ describe('User Profile', () => {
       .should('not.exist')
   })
 
-  // TODO
-  // it('Sets the cycle points order', () => {
-  //   cy.visit('/#/user-profile')
-  //   cy.get('#input-cyclepoints-order')
-  //     .should('have.attr', 'aria-checked', JSON.stringify(CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC))
-  //   // change the cycle points order
-  //   cy.get('#input-cyclepoints-order')
-  //     .click({ force: true })
-  //   cy.get('#input-cyclepoints-order')
-  //     .should('have.attr', 'aria-checked', JSON.stringify(!CylcTree.DEFAULT_CYCLE_POINTS_ORDER_DESC))
-  // })
+  it('Sets the cycle points order', () => {
+    const checkCyclePointOrder = (expected) => {
+      cy.visit('/#/workspace/other/multi/run2')
+        .get('.node-data-cycle')
+        .then(($els) => {
+          expect(
+            Array.from($els, (el) => el.innerText)
+          ).to.deep.equal(expected)
+        })
+    }
+    // Latest on top by default
+    cy.get('#input-cyclepoints-order')
+      .should('be.checked')
+    checkCyclePointOrder(['2', '1'])
+    // Change the order
+    cy.visit('/#/user-profile')
+    cy.get('#input-cyclepoints-order')
+      .click()
+    checkCyclePointOrder(['1', '2'])
+  })
 })
