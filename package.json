@@ -76,7 +76,7 @@
     "express-ws": "5.0.2",
     "graphql-ws": "5.14.2",
     "istanbul-lib-coverage": "3.2.2",
-    "jsdom": "22.1.0",
+    "jsdom": "23.0.1",
     "json-server": "0.17.4",
     "nodemon": "3.0.1",
     "nyc": "15.1.0",
