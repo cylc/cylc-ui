@@ -69,9 +69,8 @@ router.beforeEach(async (to, from) => {
     try {
       const user = await router.app.config.globalProperties.$userService.getUserProfile()
       store.commit('user/SET_USER', user)
-    } catch (error) {
-      const alert = new Alert(error, 'error')
-      store.dispatch('setAlert', alert)
+    } catch (err) {
+      store.dispatch('setAlert', new Alert(err, 'error'))
     }
   }
   if (!store.state.user.user.permissions.includes('read') && to.name !== 'noAuth') {

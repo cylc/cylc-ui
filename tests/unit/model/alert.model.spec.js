@@ -15,23 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import sinon from 'sinon'
 import { Alert } from '@/model/Alert.model'
 
 describe('Alert model', () => {
-  beforeEach(() => {
-    sinon.stub(console, 'log')
-  })
-  afterEach(() => {
-    sinon.restore()
-  })
   describe('constructor', () => {
     it('should be created', () => {
-      const text = 'my error'
+      const err = 'my error'
       const color = 'success'
-      const alert = new Alert(text, color)
-      expect(alert.text).to.equal(text)
+      let alert = new Alert(err, color)
+      expect(alert.err).to.equal(err)
       expect(alert.color).to.equal(color)
+      expect(alert.text).to.equal(err)
+      const msg = 'a custom messsage'
+      alert = new Alert(err, color, msg)
+      expect(alert.text).to.equal(msg)
     })
   })
 })
