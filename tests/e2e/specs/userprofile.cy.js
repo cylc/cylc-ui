@@ -30,6 +30,7 @@ describe('User Profile', () => {
   const defaultFontSize = 16 // px
   beforeEach(() => {
     cy.visit('/#/user-profile')
+    cy.title().should('eq', 'Cylc UI | User Profile')
   })
 
   it('Visits the user profile', () => {
