@@ -20,6 +20,7 @@ import { WorkflowStateOrder } from '@/model/WorkflowState.model'
 describe('Dashboard', () => {
   beforeEach(() => {
     cy.visit('/#/')
+    cy.title().should('eq', 'Cylc UI | Dashboard')
   })
 
   it('Displays the Dashboard link as active on the left sidebar menu', () => {

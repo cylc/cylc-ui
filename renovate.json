@@ -11,6 +11,10 @@
       "automerge": true
     },
     {
+      "matchPackageNames": ["vue"],
+      "automerge": true
+    },
+    {
       "groupName": "vite packages",
       "matchPackageNames": [
         "vite",
@@ -45,12 +49,18 @@
     },
     {
       "matchPackageNames": ["@unhead/vue"],
+      "automerge": true,
       "schedule": ["on the 3rd day of the month"]
     },
     {
       "matchPackageNames": ["@vueuse/core"],
       "automerge": true,
       "schedule": ["on the 9th day of the month"]
+    },
+    {
+      "matchPackageNames": ["vue-i18n"],
+      "automerge": true,
+      "schedule": ["on the 15th day of the month"]
     },
     {
       "groupName": "preact packages",

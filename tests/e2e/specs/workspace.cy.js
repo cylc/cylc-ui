@@ -18,6 +18,7 @@
 describe('Workspace view and component/widget', () => {
   beforeEach(() => {
     cy.visit('/#/workspace/one')
+    cy.title().should('eq', 'Cylc UI | Workflow one')
   })
 
   afterEach(() => {
