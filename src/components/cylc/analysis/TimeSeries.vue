@@ -37,20 +37,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               ripple
               @click="selectAllFilteredTasks"
             >
+            <!-- todo: deactivate when no search string -->
+            <!-- todo: add a remove all matching tasks when all selected -->
             Select all matching tasks
-              <!-- <v-list-item-action>
-                <v-icon :color="selectedFruits.length > 0 ? 'indigo darken-4' : ''">{{ icon }}</v-icon>
-              </v-list-item-action> -->
-              <!-- <v-list-item-content>
-                <v-list-item-title>Select all matching tasks</v-list-item-title>
-              </v-list-item-content> -->
             </v-list-item>
             <v-divider class="mt-2"></v-divider>
           </template>
         </v-autocomplete>
       <v-checkbox
+        class="ma-0 pa-0"
         v-model="showOrigin"
         label="Show origin"
+        density="compact"
+        hide-details="true"
+        style="min-width: 120px;"
       />
     </div>
   </Teleport>
