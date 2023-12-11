@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :height="450"
       width="95%"
       class="d-flex justify-center"
-    />
+          />
   </div>
   <div id="miniTimeSeries">
     <VueApexCharts
@@ -76,13 +76,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     />
   </div>
   <p>{{ displayedTasks }}</p>
-</template>
+  </template>
 
 <script>
 import VueApexCharts from 'vue3-apexcharts'
 import {
   debounce,
   pick,
+  union,
   uniq,
   upperFirst
 } from 'lodash'
@@ -246,7 +247,7 @@ export default {
             } else if (this.timingOption === 'queue') {
               time = job.queueTime
             }
-            // check job is latest before setting
+            // todo: check job is latest before setting
             // What happens if I make x, y, z etc an array? (cf dataPointIndex in y tooltip)
             seriesData[job.name].data[job.cyclePoint].x = job.cyclePoint
             seriesData[job.name].data[job.cyclePoint].y = time
@@ -310,7 +311,7 @@ export default {
                 return null
               }
               const y = formatDuration(value, true)
-              console.log(w.globals)
+              // console.log(w.globals)
               // Can I get this information from this.series instead?
               const platform = w.globals.seriesZ[seriesIndex][dataPointIndex]
               return `${y} (${platform})`
@@ -326,7 +327,8 @@ export default {
           max: this.xRange[1]
         },
         yaxis: {
-          tickAmount: 8,
+          forceNiceScale: true,
+          min: this.showOrigin ? 0 : undefined,
           title: {
             text: upperFirst(this.timingOption) + ' time',
           },
@@ -335,7 +337,6 @@ export default {
               return formatDuration(value, true)
             }
           },
-          min: this.showOrigin ? 0 : undefined
         },
       }
     },
@@ -392,10 +393,9 @@ export default {
 
   methods: {
     selectAllFilteredTasks: function () {
-      this.autocompleteFilteredTasks = this.$refs.selectTasks.filteredItems.filter(
-        (thing) => !this.displayedTasks.includes(thing.value)).map(
-        (thing) => (thing.value))
-      this.displayedTasks = this.displayedTasks.concat(this.autocompleteFilteredTasks)
+      const filteredTasks = this.$refs.selectTasks.filteredItems.map(
+        (filteredTask) => (filteredTask.value))
+      this.displayedTasks = union(this.displayedTasks, filteredTasks)
     },
     jobsQuery: debounce(
       async function (queryTasks) {
