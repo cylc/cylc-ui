@@ -23,14 +23,18 @@ describe('Alert component', () => {
   it('Is displayed when an alert is present in the central data store', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
-    const errorMessage = 'Error displayed'
-    getStore().then(store => {
-      store.dispatch('setAlert', new Alert(errorMessage, 'error'))
-    })
-    cy
-      .get('[data-cy="alert-snack"]')
-      .should('contain', errorMessage)
+    const err = 'Error displayed'
+    getStore().then((store) => store.dispatch('setAlert', new Alert(err, 'error')))
+    cy.get('[data-cy=alert-snack] .v-snackbar__content')
+      .should('be.visible')
+      .should('contain', err)
+
+    const msg = 'Custom message'
+    getStore().then((store) => store.dispatch('setAlert', new Alert('Error 2', 'error', msg)))
+    cy.get('[data-cy=alert-snack] .v-snackbar__content')
+      .should('contain', msg)
   })
+
   it('Uses the right colors for different alert severities', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
@@ -51,6 +55,7 @@ describe('Alert component', () => {
         .should('be.visible')
     })
   })
+
   it('Removes the alert from the central data store when it is dismissed by the user', () => {
     cy.visit('/#/')
     cy.get('.c-header').should('exist')
@@ -65,7 +70,7 @@ describe('Alert component', () => {
       .get('[data-cy="alert-snack"] button')
       .click()
     cy
-      .get('[data-cy="alert-snack"]--active')
+      .get('[data-cy="alert-snack"]')
       .should('not.exist')
     getStore().then(store => {
       expect(store.state.alert).to.equal(null)

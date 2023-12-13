@@ -47,9 +47,9 @@ const actions = {
   setAlert ({ commit }, alert) {
     // log to console when the alert is not null (null can mean to remove the alert)
     if (alert?.color === 'error') {
-      console.error(alert.text)
+      console.error(alert.err)
     } else if (alert) {
-      console.log(alert.text)
+      console.log(alert.err)
     }
     commit('SET_ALERT', alert)
   }

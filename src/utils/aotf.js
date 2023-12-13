@@ -890,12 +890,12 @@ function _mutateSuccess (message) {
  * Handle an error in a called mutation.
  *
  * @param {string} mutationName
- * @param {string} message - error message to display
+ * @param {Error|string} err - error message to display
  * @param {*} response - raw GraphQL response or null
  *
  * @returns {Promise<MutationResponse>} {status, msg}
  */
-async function _mutateError (mutationName, message, response) {
+async function _mutateError (mutationName, err, response) {
   // log the response
   if (response) {
     // eslint-disable-next-line no-console
@@ -905,13 +905,13 @@ async function _mutateError (mutationName, message, response) {
   // open a user alert
   await store.dispatch(
     'setAlert',
-    new Alert(`Command failed: ${mutationName} - ${message}`, 'error')
+    new Alert(err, 'error', `Command failed: ${mutationName} - ${err}`)
   )
 
   // format a response
   return {
     status: mutationStatus.FAILED,
-    message
+    message: err,
   }
 }
 
