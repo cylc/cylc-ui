@@ -2573,16 +2573,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vuetify/loader-shared@npm:^1.7.1":
-  version: 1.7.1
-  resolution: "@vuetify/loader-shared@npm:1.7.1"
+"@vuetify/loader-shared@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@vuetify/loader-shared@npm:2.0.1"
   dependencies:
-    find-cache-dir: "npm:^3.3.2"
     upath: "npm:^2.0.1"
   peerDependencies:
     vue: ^3.0.0
-    vuetify: ^3.0.0-beta.4
-  checksum: 79ed376f345a96ac7f684739f9ca2790d08cf22c497fdb2ff128d6fd29c211b5e5a4120cbfccae751181bdcbdc80b20269131e7b84a08f817c6f4c4ffc0a7cf4
+    vuetify: ^3.0.0
+  checksum: d96cc9e31cdd403319291631824d8d2137ae82a535b9dbfb125b245b2d5cf5856927b73cc086cc31dfa7581c01981c149c49abc7ea3d03ff6601895e5d065ba0
   languageName: node
   linkType: hard
 
@@ -3898,7 +3897,7 @@ __metadata:
     vite: "npm:5.0.10"
     vite-plugin-eslint: "npm:1.8.1"
     vite-plugin-istanbul: "npm:5.0.0"
-    vite-plugin-vuetify: "npm:1.0.2"
+    vite-plugin-vuetify: "npm:2.0.1"
     vitest: "npm:0.34.6"
     vue: "npm:3.3.11"
     vue-i18n: "npm:9.8.0"
@@ -5365,7 +5364,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-cache-dir@npm:^3.2.0, find-cache-dir@npm:^3.3.2":
+"find-cache-dir@npm:^3.2.0":
   version: 3.3.2
   resolution: "find-cache-dir@npm:3.3.2"
   dependencies:
@@ -10426,17 +10425,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-vuetify@npm:1.0.2":
-  version: 1.0.2
-  resolution: "vite-plugin-vuetify@npm:1.0.2"
+"vite-plugin-vuetify@npm:2.0.1":
+  version: 2.0.1
+  resolution: "vite-plugin-vuetify@npm:2.0.1"
   dependencies:
-    "@vuetify/loader-shared": "npm:^1.7.1"
+    "@vuetify/loader-shared": "npm:^2.0.1"
     debug: "npm:^4.3.3"
     upath: "npm:^2.0.1"
   peerDependencies:
-    vite: ^2.7.0 || ^3.0.0 || ^4.0.0
-    vuetify: ^3.0.0-beta.4
-  checksum: e05bd22a8e2a6ad6658cfaee956ef733bcb9d716ea7c71ef36e199e090a8d33f73c846c591291f1462c8201e589581f66c9aa0ff310b5e54873a66a0bd036b01
+    vite: ">=5"
+    vue: ^3.0.0
+    vuetify: ^3.0.0
+  checksum: 71bf11a266b7ba078f483b5819193b1ee8cc4b6dd92e5600dcceec0779cafb23a4108bcd69c5b9749a29ac3f43365a69da1a29b53a24cb508e8d816948058d76
   languageName: node
   linkType: hard
 

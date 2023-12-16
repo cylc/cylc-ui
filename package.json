@@ -86,7 +86,7 @@
     "vite": "5.0.10",
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "5.0.0",
-    "vite-plugin-vuetify": "1.0.2",
+    "vite-plugin-vuetify": "2.0.1",
     "vitest": "0.34.6"
   },
   "bugs": {
