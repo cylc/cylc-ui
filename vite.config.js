@@ -109,7 +109,13 @@ export default defineConfig(({ mode }) => {
         inline: ['vuetify']
       },
       coverage: {
-        provider: 'istanbul'
+        provider: 'istanbul',
+        include: [
+          'src/**'
+        ],
+        exclude: [
+          'src/services/mock/**'
+        ],
       }
     }
   }
