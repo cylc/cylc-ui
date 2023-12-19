@@ -38,6 +38,21 @@ import {
   mdiDownload,
 } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
+import { Tokens } from '@/utils/uid'
+
+const timingOptions = new Map([
+  ['total', { start: 'submittedTime', end: 'finishedTime' }],
+  ['run', { start: 'startedTime', end: 'finishedTime' }],
+  ['queue', { start: 'submittedTime', end: 'startedTime' }],
+])
+
+const colours = [
+  '#008FFB',
+  '#00E396',
+  '#775DD0',
+  '#FEB019',
+  '#FF4560',
+]
 
 export default {
   name: 'GanttChart',
@@ -98,43 +113,40 @@ export default {
   },
 
   computed: {
+    displayedJobs () {
+      const taskNameList = Object.keys(this.jobs)
+      const firstIndex = Math.max(0, this.tasksPerPage * (this.page - 1))
+      const numTasks = Math.min(taskNameList.length, firstIndex + this.tasksPerPage)
+
+      return Object.values(this.jobs).slice(firstIndex, numTasks).flatMap(
+        (jobs) => jobs
+      )
+    },
     series () {
-      const data = []
+      let data = []
       if (this.jobs.length !== 0) {
-        const taskNameList = Object.keys(this.jobs)
-        const startTask = Math.max(0, this.tasksPerPage * (this.page - 1))
-        const endTask = Math.min(taskNameList.length, startTask + this.tasksPerPage)
-
-        const colours = [
-          '#008FFB',
-          '#00E396',
-          '#775DD0',
-          '#FEB019',
-          '#FF4560',
-        ]
-        const taskColours = {}
-
-        for (let i = 0; i < taskNameList.length; i++) {
-          taskColours[taskNameList[i]] = colours[i % colours.length]
-        }
-        const timingOptions = {
-          total: { start: 'submittedTime', end: 'finishedTime' },
-          run: { start: 'startedTime', end: 'finishedTime' },
-          queue: { start: 'submittedTime', end: 'startedTime' },
-        }
-        const { start, end } = timingOptions[this.timingOption]
-        for (let i = startTask; i < endTask; i++) {
-          for (let j = 0; j < this.jobs[taskNameList[i]].length; j++) {
-            data.push({
-              x: taskNameList[i],
+        const { start, end } = timingOptions.get(this.timingOption)
+        /** Mapping of cycle points to colours */
+        const jobColours = new Map()
+        let colourIndex = 0
+        data = this.displayedJobs.map(
+          (job) => {
+            const { cycle } = new Tokens(job.id)
+            let fillColor = jobColours.get(cycle)
+            if (!fillColor) {
+              fillColor = colours[colourIndex++ % colours.length]
+              jobColours.set(cycle, fillColor)
+            }
+            return {
+              x: job.name,
               y: [
-                new Date(this.jobs[taskNameList[i]][j][start]).getTime(),
-                new Date(this.jobs[taskNameList[i]][j][end]).getTime()
+                new Date(job[start]).getTime(),
+                new Date(job[end]).getTime()
               ],
-              fillColor: taskColours[taskNameList[i]],
-            })
+              fillColor,
+            }
           }
-        }
+        )
       }
       return [{ data }]
     },
@@ -147,6 +159,8 @@ export default {
     },
 
     chartOptions () {
+      const { displayedJobs } = this
+      const { start, end } = timingOptions.get(this.timingOption)
       return {
         chart: {
           animations: {
@@ -170,16 +184,19 @@ export default {
           },
         },
         tooltip: {
-          custom: function ({ seriesIndex, dataPointIndex, w }) {
-            const startTime = new Date(w.config.series[seriesIndex].data[dataPointIndex].y[0])
-            const finishTime = new Date(w.config.series[seriesIndex].data[dataPointIndex].y[1])
+          custom ({ dataPointIndex }) {
+            const job = displayedJobs[dataPointIndex]
+            const { relativeID } = new Tokens(job.id)
             return (
               '<div class="apexcharts-tooltip-candlestick">' +
+              '<div>Job: <span class="value">' +
+              relativeID +
+              '</span></div>' +
               '<div>Start: <span class="value">' +
-              startTime +
+              job[start] +
               '</span></div>' +
               '<div>Finish: <span class="value">' +
-              finishTime +
+              job[end] +
               '</span></div>' +
               '</div>'
             )
