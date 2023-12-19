@@ -24,6 +24,7 @@ import {
   mdiGraph,
   mdiTable,
   mdiTree,
+  mdiChartGantt,
 } from '@mdi/js'
 
 // Use dynamic async components for lazy loading:
@@ -32,6 +33,7 @@ const TableView = defineAsyncComponent(() => import('@/views/Table.vue'))
 const GraphView = defineAsyncComponent(() => import('@/views/Graph.vue'))
 const LogView = defineAsyncComponent(() => import('@/views/Log.vue'))
 const AnalysisView = defineAsyncComponent(() => import('@/views/Analysis.vue'))
+const GanttView = defineAsyncComponent(() => import('@/views/Gantt.vue'))
 const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue'))
 
 /**
@@ -60,6 +62,7 @@ export const allViews = [
   { name: 'Graph', component: GraphView, icon: mdiGraph },
   { name: 'Log', component: LogView, icon: mdiFileDocumentMultipleOutline },
   { name: 'Analysis', component: AnalysisView, icon: mdiChartLine },
+  { name: 'Gantt', component: GanttView, icon: mdiChartGantt },
 ]
 // Development views that we don't want in production:
 if (import.meta.env.MODE !== 'production') {
