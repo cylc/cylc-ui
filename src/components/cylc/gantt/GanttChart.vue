@@ -53,19 +53,6 @@ export default {
       type: Boolean,
       default: true,
     },
-    /** Where to teleport the sorting input (or don't render if null) */
-    sortInputTeleportTarget: {
-      type: String,
-      default: null,
-    },
-  },
-
-  data () {
-    return {
-      page: 1,
-      sortBy: 'name',
-      sortDesc: false,
-    }
   },
 
   computed: {
