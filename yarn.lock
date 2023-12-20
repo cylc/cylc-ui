@@ -3488,7 +3488,7 @@ __metadata:
     graphiql: "npm:3.0.10"
     graphql: "npm:16.8.1"
     graphql-tag: "npm:2.12.6"
-    graphql-ws: "npm:5.14.2"
+    graphql-ws: "npm:5.14.3"
     istanbul-lib-coverage: "npm:3.2.2"
     jsdom: "npm:23.0.1"
     json-server: "npm:0.17.4"
@@ -5413,12 +5413,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-ws@npm:5.14.2":
-  version: 5.14.2
-  resolution: "graphql-ws@npm:5.14.2"
+"graphql-ws@npm:5.14.3":
+  version: 5.14.3
+  resolution: "graphql-ws@npm:5.14.3"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 5a25051fc35e47d09bd2d512ab8f9943b79efff0f0b5a3d421d6512ec8ca502f4e7cbb20a3629bd9290cbab0f0d2529ecd3c59111d977d7b8560f455f2f773a0
+  checksum: 0715feb7b6bf760e2460c31848983bd3bd5958c95d8120c2acc7416f24137585dab2eb731d6bb6f8de992afbc2ad0cf258a00c6a08aa21479fb3e9bd1d3e120a
   languageName: node
   linkType: hard
 
