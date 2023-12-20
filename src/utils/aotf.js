@@ -35,7 +35,7 @@ import {
   mdiDelete,
   mdiEmail,
   mdiFileDocumentOutline,
-  mdiGraph,
+  mdiVectorPolylineEdit,
   mdiMinusCircleOutline,
   mdiPause,
   mdiPauseCircleOutline,
@@ -136,7 +136,7 @@ export const mutationIcons = {
   reload: mdiReload,
   remove: mdiMinusCircleOutline,
   resume: mdiPlay,
-  setOutputs: mdiGraph,
+  set: mdiVectorPolylineEdit,
   stop: mdiStop,
   trigger: mdiCursorPointer
 }
@@ -184,7 +184,7 @@ export const primaryMutations = {
     'trigger',
     'kill',
     'log',
-    'setOutputs'
+    'set'
   ]
 }
 
