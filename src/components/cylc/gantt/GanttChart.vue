@@ -92,43 +92,22 @@ export default {
           jobColours[jobNameList[i]] = colours[i % colours.length]
         }
 
-        const startIndex = 0
-        const endIndex = this.jobs.length
-
-        if (this.timingOption === 'total') {
-          for (let i = startIndex; i < endIndex; i++) {
-            data.push({
-              x: this.jobs[i].name,
-              y: [
-                new Date(this.jobs[i].submittedTime).getTime(),
-                new Date(this.jobs[i].finishedTime).getTime(),
-              ],
-              fillColor: jobColours[this.jobs[i].name],
-            })
-          }
-        } else if (this.timingOption === 'run') {
-          for (let i = startIndex; i < endIndex; i++) {
-            data.push({
-              x: this.jobs[i].name,
-              y: [
-                new Date(this.jobs[i].startedTime).getTime(),
-                new Date(this.jobs[i].finishedTime).getTime(),
-              ],
-              fillColor: jobColours[this.jobs[i].name],
-            })
-          }
-        } else if (this.timingOption === 'queue') {
-          for (let i = startIndex; i < endIndex; i++) {
-            data.push({
-              x: this.jobs[i].name,
-              y: [
-                new Date(this.jobs[i].submittedTime).getTime(),
-                new Date(this.jobs[i].startedTime).getTime(),
-              ],
-              fillColor: jobColours[this.jobs[i].name],
-            })
-          }
+        const timingOptions = {
+          total: { start: 'submittedTime', end: 'finishedTime' },
+          run: { start: 'startedTime', end: 'finishedTime' },
+          queue: { start: 'submittedTime', end: 'startedTime' },
         }
+        const { start, end } = timingOptions[this.timingOption]
+        data.push(...this.jobs.map((job) => {
+          return {
+            x: job.name,
+            y: [
+              new Date(job[start]).getTime(),
+              new Date(job[end]).getTime(),
+            ],
+            fillColor: jobColours[job.name],
+          }
+        }))
       }
       return [{ data }]
     },
