@@ -84,12 +84,9 @@ export default {
           '#FF4560',
         ]
         const jobColours = {}
-        let jobNameList = new Set([])
-
-        for (let i = 0; i < this.jobs.length; i++) {
-          jobNameList.add(this.jobs[i].name)
-        }
-        jobNameList = Array.from(jobNameList)
+        const jobNameList = Array.from(
+          new Set(this.jobs.map((job) => job.name))
+        )
 
         for (let i = 0; i < jobNameList.length; i++) {
           jobColours[jobNameList[i]] = colours[i % colours.length]
