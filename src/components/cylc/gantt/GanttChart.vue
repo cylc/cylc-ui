@@ -49,10 +49,6 @@ export default {
       type: String,
       required: true,
     },
-    itemsPerPage: {
-      type: Number,
-      default: 20,
-    },
     animate: {
       type: Boolean,
       default: true,
