@@ -45,7 +45,7 @@
     "preact-compat": "3.19.0",
     "subscriptions-transport-ws": "0.11.0",
     "svg-pan-zoom": "3.6.1",
-    "vue": "3.4.0",
+    "vue": "3.4.1",
     "vue-i18n": "9.8.0",
     "vue-router": "4.2.5",
     "vue-the-mask": "0.11.1",
