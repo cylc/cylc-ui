@@ -2003,13 +2003,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:4.5.2":
-  version: 4.5.2
-  resolution: "@vitejs/plugin-vue@npm:4.5.2"
+"@vitejs/plugin-vue@npm:4.6.1":
+  version: 4.6.1
+  resolution: "@vitejs/plugin-vue@npm:4.6.1"
   peerDependencies:
     vite: ^4.0.0 || ^5.0.0
     vue: ^3.2.25
-  checksum: dd024b9ee2eda3174e197bda2b42df30b594d1a7f50d20b4b0de01c5a130bd99b84452e8a8d597ade50f89106025346a56f7abbf63c560e82fe97223589d2514
+  checksum: a50f3dd56eeb51f7d69f83b8027afc34bdd761a6aacf98372851a6fefba4969843c80fc42c8699dd670aeaea2b1c711c71a67b29a3ac8cf1b3a5c1c9a8042fe9
   languageName: node
   linkType: hard
 
@@ -3448,7 +3448,7 @@ __metadata:
     "@lumino/widgets": "npm:2.3.1"
     "@mdi/js": "npm:7.3.67"
     "@unhead/vue": "npm:1.8.8"
-    "@vitejs/plugin-vue": "npm:4.5.2"
+    "@vitejs/plugin-vue": "npm:4.6.1"
     "@vitest/coverage-istanbul": "npm:1.0.4"
     "@vue/test-utils": "npm:2.4.1"
     "@vueuse/core": "npm:10.7.0"
