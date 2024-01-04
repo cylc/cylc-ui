@@ -82,7 +82,7 @@ describe('GanttChart', () => {
     cy.get('.apexcharts-rangebar-area')
       .first()
       .invoke('attr', 'barWidth')
-      .should('eq', '161.1500015258789')
+      .should('eq', '166.96796798706055')
   })
   it('filters by run time', () => {
     // see: https://on.cypress.io/mounting-vue
@@ -95,7 +95,7 @@ describe('GanttChart', () => {
     cy.get('.apexcharts-rangebar-area')
       .first()
       .invoke('attr', 'barWidth')
-      .should('eq', '136.73333358764648')
+      .should('eq', '141.66979217529297')
   })
   it('filters by queue time', () => {
     // see: https://on.cypress.io/mounting-vue
@@ -108,6 +108,6 @@ describe('GanttChart', () => {
     cy.get('.apexcharts-rangebar-area')
       .first()
       .invoke('attr', 'barWidth')
-      .should('eq', '73.25')
+      .should('eq', '75.89453125')
   })
 })

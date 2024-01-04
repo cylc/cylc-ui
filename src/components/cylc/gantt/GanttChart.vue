@@ -29,8 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import VueApexCharts from 'vue3-apexcharts'
 import {
   mdiDownload,
-  mdiSortReverseVariant,
-  mdiSortVariant,
 } from '@mdi/js'
 
 export default {
