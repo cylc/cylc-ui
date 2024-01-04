@@ -71,7 +71,46 @@ describe('GanttChart', () => {
       .should('exist')
       .should('be.visible')
   })
-  it('filters by total time', () => {
+  it('filters by total time (firefox)', { browser: 'firefox' }, () => {
+    // see: https://on.cypress.io/mounting-vue
+    cy.mount(GanttChart, merge(mountOpts, {
+      props: {
+        jobs: [job1, job2],
+        timingOption: 'total'
+      },
+    }))
+    cy.get('.apexcharts-rangebar-area')
+      .first()
+      .invoke('attr', 'barWidth')
+      .should('eq', '161.1500015258789')
+  })
+  it('filters by run time (firefox)', { browser: 'firefox' }, () => {
+    // see: https://on.cypress.io/mounting-vue
+    cy.mount(GanttChart, merge(mountOpts, {
+      props: {
+        jobs: [job1, job2],
+        timingOption: 'run'
+      },
+    }))
+    cy.get('.apexcharts-rangebar-area')
+      .first()
+      .invoke('attr', 'barWidth')
+      .should('eq', '136.73333358764648')
+  })
+  it('filters by queue time (firefox)', { browser: 'firefox' }, () => {
+    // see: https://on.cypress.io/mounting-vue
+    cy.mount(GanttChart, merge(mountOpts, {
+      props: {
+        jobs: [job1, job2],
+        timingOption: 'queue'
+      },
+    }))
+    cy.get('.apexcharts-rangebar-area')
+      .first()
+      .invoke('attr', 'barWidth')
+      .should('eq', '73.25')
+  })
+  it('filters by total time (electron)', { browser: 'electron' }, () => {
     // see: https://on.cypress.io/mounting-vue
     cy.mount(GanttChart, merge(mountOpts, {
       props: {
@@ -84,7 +123,7 @@ describe('GanttChart', () => {
       .invoke('attr', 'barWidth')
       .should('eq', '166.96796798706055')
   })
-  it('filters by run time', () => {
+  it('filters by run time (electron)', { browser: 'electron' }, () => {
     // see: https://on.cypress.io/mounting-vue
     cy.mount(GanttChart, merge(mountOpts, {
       props: {
@@ -97,7 +136,7 @@ describe('GanttChart', () => {
       .invoke('attr', 'barWidth')
       .should('eq', '141.66979217529297')
   })
-  it('filters by queue time', () => {
+  it('filters by queue time (electron)', { browser: 'electron' }, () => {
     // see: https://on.cypress.io/mounting-vue
     cy.mount(GanttChart, merge(mountOpts, {
       props: {
