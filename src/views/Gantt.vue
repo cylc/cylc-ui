@@ -26,9 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="pr-md-2 mb-2 mb-md-0"
         >
           <v-text-field
-            id="c-gantt-filter-job-name"
+            id="c-gantt-filter-task-name"
             clearable
-            placeholder="Filter by job name"
+            placeholder="Filter by task name"
             v-model.trim="jobsFilter.name"
             ref="filterNameInput"
           />
