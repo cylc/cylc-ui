@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div
     v-show="!filteredOutNodesCache.get(node)"
-    class="treeitem"
+    class="c-treeitem"
   >
     <div
       class="node d-flex align-center"
@@ -26,21 +26,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :style="nodeStyle"
     >
       <!-- the node's left icon; used for expand/collapse -->
-      <v-btn
+      <svg
         v-if="renderExpandCollapseBtn"
         aria-label="Expand/collapse"
-        aria-hidden="false"
         class="node-expand-collapse-button flex-shrink-0"
         @click="toggleExpandCollapse"
         :style="expandCollapseBtnStyle"
-        icon
-        variant="text"
-        density="compact"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        role="img"
       >
-        <v-icon>
-          {{ $options.icons.mdiChevronRight }}
-        </v-icon>
-      </v-btn>
+        <path :d="$options.icons.mdiChevronRight" />
+      </svg>
       <slot v-bind="{ isExpanded }">
         <!-- the node value -->
         <!-- TODO: revisit these node.type values that can be replaced by constants later (and in other components too). -->
@@ -314,7 +311,7 @@ export default {
     expandCollapseBtnStyle () {
       return {
         // set visibility 'hidden' to ensure element takes up space
-        visibility: this.hasChildren ? null : 'hidden',
+        visibility: this.hasChildren ? null : 'hidden'
       }
     },
     jobMessageOutputs () {

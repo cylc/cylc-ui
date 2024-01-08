@@ -55,13 +55,19 @@ $icon-size: 1.2em;
   }
 }
 
-.treeitem {
+.c-treeitem {
   display:inline-block;
   vertical-align:middle;
   width: 100%;
   .node {
     line-height: $line-height;
     display: block;
+
+    .node-expand-collapse-button {
+      width: 1.3em;
+      height: 1.3em;
+      cursor: pointer;
+    }
 
     .node-expand-collapse-button::after {
       // This is the icon's highlight circle that appears when focused
