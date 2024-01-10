@@ -31,7 +31,7 @@
     "@unhead/vue": "1.8.9",
     "@vueuse/core": "10.7.0",
     "apexcharts": "3.41.0",
-    "axios": "1.6.2",
+    "axios": "1.6.5",
     "dedent": "1.5.1",
     "enumify": "2.0.0",
     "graphiql": "3.0.10",
