@@ -134,17 +134,6 @@ function getIndex (state, id) {
   return state.cylcTree.$index[id]
 }
 
-/* Return true if a node has at least one child.
- *
- * Defaults to looking in node.children, set childAttr to use a different
- * tree (e.g. familyTree).
- */
-function hasChild (node, id, attr = 'id', childAttr = 'children') {
-  return node[childAttr].some(
-    item => item[attr] === id
-  )
-}
-
 /* Add a child node under a parent Node */
 function addChild (parentNode, childNode) {
   // determine which list to add this node to
@@ -276,10 +265,11 @@ function cleanParents (state, node) {
  */
 function applyInheritance (state, node) {
   if (node.type === 'family' && node.node.childTasks) {
-    // add new tasks
+    // build a mapping of {childID: childNode} for faster lookup
+    const childIDs = node.children.reduce((map, obj) => { map[obj.id] = obj; return map }, {})
     for (const child of node.node.childTasks) {
-      if (!hasChild(node, child.id)) {
-        // child has been added to childTasks
+      if (!(child.id in childIDs)) {
+        // add any new tasks to the family
         const childNode = getIndex(state, child.id)
         if (childNode) {
           addChild(node, childNode)
