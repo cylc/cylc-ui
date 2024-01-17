@@ -310,12 +310,7 @@ function update (state, updatedData) {
 
   // create a new tree item
   let treeParent
-  const ret = createTreeNode(state, id, tokens, updatedData)
-  if (!ret) {
-    // node already exists, nothing more to do here
-    return
-  }
-  [treeParent, treeItem] = ret
+  [treeParent, treeItem] = createTreeNode(state, id, tokens, updatedData)
 
   // add the new item to the tree
   addChild(treeParent, treeItem)
@@ -426,11 +421,6 @@ function createTreeNode (state, id, tokens, node) {
     } else {
       pointer = child
     }
-  }
-
-  if (pointer.children.some(child => child.id === id)) {
-    // node already in the tree
-    return
   }
 
   const treeNode = {
