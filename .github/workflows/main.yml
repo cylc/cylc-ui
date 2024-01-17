@@ -97,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: 'cypress-screenshots_${{ matrix.type }}_${{ matrix.browser }}_${{ matrix.os }}'
           path: tests/e2e/screenshots
 
       - name: Upload coverage artifact
