@@ -113,9 +113,6 @@ fragment AddedDelta on Added {
   workflow {
     ...WorkflowData
   }
-  cyclePoints: familyProxies (ids: ["*/root"]) {
-    ...CyclePointData
-  }
   familyProxies {
     ...FamilyProxyData
   }
@@ -130,9 +127,6 @@ fragment AddedDelta on Added {
 fragment UpdatedDelta on Updated {
   workflow {
     ...WorkflowData
-  }
-  cyclePoints: familyProxies (ids: ["*/root"]) {
-    ...CyclePointData
   }
   familyProxies {
     ...FamilyProxyData
@@ -155,18 +149,6 @@ fragment PrunedDelta on Pruned {
 fragment WorkflowData on Workflow {
   id
   reloaded
-}
-
-fragment CyclePointData on FamilyProxy {
-  __typename
-  id
-  state
-  ancestors {
-    name
-  }
-  childTasks {
-    id
-  }
 }
 
 fragment FamilyProxyData on FamilyProxy {
