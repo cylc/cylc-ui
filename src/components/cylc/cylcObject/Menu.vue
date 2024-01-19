@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-show="showMenu"
         @show-mutations-menu="showMutationsMenu"
         :key="node.id"
-        v-click-outside="{ handler: onClickOutside }"
+        v-click-outside="{ handler: onClickOutside, closeConditional: () => !dialog }"
         class="c-mutation-menu elevation-10 overflow-y-auto"
         max-height="90vh"
         width="max-content"
@@ -108,17 +108,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-card>
     </component>
     <v-dialog
+      v-if="dialogMutation"
       v-model="dialog"
       width="700px"
       max-width="100%"
       content-class="c-mutation-dialog mx-0"
-      v-if="dialogMutation"
+      persistent
+      no-click-animation
     >
       <Mutation
         :mutation="dialogMutation"
         :cylcObject="node"
         :initialData="initialData(dialogMutation, node.tokens)"
-        :cancel="closeDialog"
+        @close="closeDialog"
+        @success="closeMenu"
         :types="types"
         :key="dialogKey /* Enables re-render of component each time dialog opened */"
         ref="mutationComponent"
@@ -319,7 +322,7 @@ export default {
     },
 
     onKeydown (e) {
-      if (e.key === 'Escape') {
+      if (!this.dialog && e.key === 'Escape') {
         this.closeMenu()
       }
     },

@@ -199,6 +199,7 @@ describe('Mutations component', () => {
       .get('@errTooltip')
       .should('not.have.css', 'display', 'none')
   })
+
   it('has actions buttons pinned to bottom of form', () => {
     cy.get('[data-c-interactive]:first')
       .click()
@@ -212,5 +213,14 @@ describe('Mutations component', () => {
       .click()
       .get('.v-card-actions')
       .should('be.visible')
+  })
+
+  it('closes when escape key pressed', () => {
+    openMutationsForm('checkpoint')
+    cy.get('.c-mutation-dialog')
+      .should('be.visible')
+      .type('{esc}')
+      .get('.c-mutation-dialog')
+      .should('not.exist')
   })
 })
