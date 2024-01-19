@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :loading="isLoading"
           id="dashboard-workflows"
           items-per-page="-1"
+          style="font-size: 1rem;"
         >
           <!-- Hide header & footer: -->
           <template v-slot:headers></template>

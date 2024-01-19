@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :headers="$options.headers"
           :items="workflowsTable"
           data-cy="workflows-table"
+          style="font-size: 1rem;"
         >
           <template v-slot:item="{ item }">
             <tr

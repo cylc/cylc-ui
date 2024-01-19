@@ -82,7 +82,8 @@ export default {
     },
     Boolean: {
       is: VSwitch,
-      color: 'primary'
+      color: 'primary',
+      class: 'mx-3'
     },
 
     // * Cylc types *

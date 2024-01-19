@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-card-text class="card-text py-0 px-4">
         <!-- the mutation description -->
         <v-expansion-panels
-          variant="accordian"
           v-bind="extendedDescription ? { hover: true } : { readonly: true }"
         >
           <v-expansion-panel
@@ -113,7 +112,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-btn
             @click="showWarning = false"
             icon
-            v-bind="attrs"
             data-cy="snack-close"
           >
             <v-icon>
