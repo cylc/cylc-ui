@@ -22,7 +22,6 @@ import { simpleTableTasks } from './table.data'
 import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import Table from '@/components/cylc/table/Table.vue'
-import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
 import WorkflowService from '@/services/workflow.service'
 
 const $eventBus = {
@@ -30,9 +29,7 @@ const $eventBus = {
 }
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
-const vuetify = createVuetify({
-  components: { VDataTable, VDataTableFooter }
-})
+const vuetify = createVuetify()
 
 describe('Table component', () => {
   /**

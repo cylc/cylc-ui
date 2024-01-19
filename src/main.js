@@ -33,6 +33,8 @@ import { createVuetify } from 'vuetify'
 import mitt from 'mitt'
 import { createHead, VueHeadMixin } from '@unhead/vue'
 
+import '@/styles/index.scss'
+
 if (location.search) {
   /* Remove token from the querystring - we only need it on first load.
   After the browser has sent the token as part of the URL in the first GET, the

@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- // https://vuetifyjs.com/en/features/sass-variables/
+// https://vuetifyjs.com/en/features/sass-variables/
 
-@forward 'vuetify/settings' with (
-  // I don't know why these are false
-  $color-pack: false,
-  $utilities: false,
-);
+@forward 'vuetify/settings';
+
+/* If we need to override any of the Vuetify variables, we can do so e.g.
+  @forward 'vuetify/settings' with (
+    $color-pack: false,
+  );
+*/
