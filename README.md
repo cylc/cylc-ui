@@ -186,7 +186,7 @@ will be automatically handled by your `build:watch` command.
 
 ### Internationalization
 
-> **Note**
+> [!NOTE]
 > Internationalization is only partly implemented at the moment.
 
 This project utilizes [vue-i18n](https://kazupon.github.io/vue-i18n/) for
