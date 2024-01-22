@@ -177,27 +177,27 @@ describe('Mutations component', () => {
       .should('not.have.class', 'text-error')
       .trigger('mouseenter')
       .invoke('attr', 'aria-describedby').then((tooltipID) => {
-        cy.get(`#${tooltipID} .v-overlay__content`).as('errTooltip')
-          // NOTE: .should('not.be.visible') doesn't work - get Cypress error
+        cy.get(`#${tooltipID}`)
+          .should('not.exist')
+        // Now type invalid input
+        cy.get('.c-mutation-dialog')
+          .find('.v-list-item-title')
+          .contains('Workflow')
+          .parent()
+          .find('.v-input.v-text-field:first').as('textField')
+          .find('input[type="text"]')
+          .type(' ') // (spaces should not be allowed)
+          .get('@textField')
+          .should('have.class', 'v-input--error')
+          .get('@submit')
+          .should('have.class', 'text-error')
+          .trigger('mouseenter')
+          .should('not.be.disabled') // user can still submit if they really want to
+          .get(`#${tooltipID} .v-overlay__content`)
+          // NOTE: .should('be.visible') doesn't work - get Cypress error
           // "not visible because it has CSS property: position: fixed and it's being covered by another element"
-          .should('have.css', 'display', 'none')
+          .should('not.have.css', 'display', 'none')
       })
-    // Now type invalid input
-    cy.get('.c-mutation-dialog')
-      .find('.v-list-item-title')
-      .contains('Workflow')
-      .parent()
-      .find('.v-input.v-text-field:first').as('textField')
-      .find('input[type="text"]')
-      .type(' ') // (spaces should not be allowed)
-      .get('@textField')
-      .should('have.class', 'v-input--error')
-      .get('@submit')
-      .should('have.class', 'text-error')
-      .trigger('mouseenter')
-      .should('not.be.disabled') // user can still submit if they really want to
-      .get('@errTooltip')
-      .should('not.have.css', 'display', 'none')
   })
 
   it('has actions buttons pinned to bottom of form', () => {

@@ -33,7 +33,7 @@ function expectFileListContains (items) {
     .click()
     .get('[data-cy=file-input-menu] [role=listbox]')
     .should('have.text', items.join(''))
-    .children()
+    .children('[role=option]')
     .should('have.length', items.length)
 }
 
