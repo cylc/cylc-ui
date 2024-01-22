@@ -69,11 +69,6 @@ export const vuetifyOptions = {
     }
   },
   defaults: {
-    global: {
-      // Gets set from user profile reduced animation setting:
-      transition: null,
-      ripple: null,
-    },
     VTooltip: {
       activator: 'parent',
       location: 'bottom',

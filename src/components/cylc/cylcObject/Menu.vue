@@ -131,7 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { nextTick } from 'vue'
+import { computed, nextTick } from 'vue'
 import {
   filterAssociations,
   getMutationArgsFromTokens,
@@ -158,6 +158,15 @@ export default {
       type: Boolean,
       required: false,
       default: true
+    }
+  },
+
+  setup () {
+    const reducedAnimation = useReducedAnimation()
+    return {
+      menuTransition: computed(
+        () => reducedAnimation.value ? 'slot' : VDialogTransition
+      ),
     }
   },
 
@@ -243,10 +252,6 @@ export default {
         }
       }
       return ret
-    },
-
-    menuTransition () {
-      return useReducedAnimation().value ? 'slot' : VDialogTransition
     },
   },
 

@@ -249,7 +249,6 @@ import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize }
 import { allViews, defaultView } from '@/views/Workspace.vue'
 import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
-import appSettings from '@/mixins/appSettings'
 
 // TODO: update where user preferences are stored after #335
 
@@ -260,28 +259,17 @@ export default {
     Job
   },
 
-  mixins: [
-    appSettings,
-  ],
-
-  data () {
+  setup () {
     return {
       defaultView: defaultView(),
       cyclePointsOrderDesc: useCyclePointsOrderDesc(),
       jobTheme: useJobTheme(),
+      reducedAnimation: useReducedAnimation(),
     }
   },
 
   computed: {
     ...mapState('user', ['user']),
-    reducedAnimation: {
-      get () {
-        return useReducedAnimation().value
-      },
-      set (value) {
-        this.setReducedAnimation(value)
-      }
-    }
   },
 
   head () {
