@@ -3495,7 +3495,7 @@ __metadata:
     vue-router: "npm:4.2.5"
     vue-the-mask: "npm:0.11.1"
     vue3-apexcharts: "npm:1.4.1"
-    vuetify: "npm:3.4.11"
+    vuetify: "npm:3.5.1"
     vuex: "npm:4.1.0"
   languageName: unknown
   linkType: soft
@@ -10084,9 +10084,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vuetify@npm:3.4.11":
-  version: 3.4.11
-  resolution: "vuetify@npm:3.4.11"
+"vuetify@npm:3.5.1":
+  version: 3.5.1
+  resolution: "vuetify@npm:3.5.1"
   peerDependencies:
     typescript: ">=4.7"
     vite-plugin-vuetify: ">=1.0.0-alpha.12"
@@ -10102,7 +10102,7 @@ __metadata:
       optional: true
     webpack-plugin-vuetify:
       optional: true
-  checksum: 33f292d48e5dda10008fb3d8feb4392d8a54f34f7b9ce5e868afcd401f89e4a09e5732f28488c6612ce62ea41425f9f7ac571bbe71fe61808f3acf3790ea5255
+  checksum: c6a1176043ad1417991174dbca4246ba2be9750ed8b6aba0541bd56cf35fa1646c3b6d15a65c61b5e71a9e1857af7a71f54743a6d843e00d8eccfda3617fd4bb
   languageName: node
   linkType: hard
 
