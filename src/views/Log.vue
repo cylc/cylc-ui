@@ -113,16 +113,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- the log file viewer -->
     <v-row>
       <v-col>
-        <!-- TODO: replace v-progress-linear with v-skeleton-loader
-        https://github.com/cylc/cylc-ui/issues/1272 -->
-        <!-- <v-skeleton-loader
-          v-if="id && file && !results.path"
-          width="50%"
-          type="list-item-three-line"
-        /> -->
-        <v-progress-linear
+        <v-skeleton-loader
           v-if="id && file && results.connected == null"
-          indeterminate
+          type="text@5"
+          class="mx-n4"
         />
         <template v-else>
           <v-alert

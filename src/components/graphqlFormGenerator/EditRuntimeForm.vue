@@ -22,16 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-card-subtitle class="text-subtitle-1 font-weight-medium mt-4">
       {{ this.tokens.id }}
     </v-card-subtitle>
-    <!-- TODO: replace v-progress-linear with v-skeleton-loader when
-    the latter is added to Vuetify 3.
-    https://github.com/cylc/cylc-ui/issues/1272 -->
-    <!-- <v-skeleton-loader
+    <v-skeleton-loader
       v-if="loading"
       type="list-item-two-line@6"
-    /> -->
-    <v-progress-linear
-      v-if="loading"
-      indeterminate
       class="mt-6"
     />
     <v-form
