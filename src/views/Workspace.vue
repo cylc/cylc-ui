@@ -79,7 +79,15 @@ if (import.meta.env.MODE !== 'production') {
   )
 }
 
-export const defaultView = () => useLocalStorage('defaultView', 'Tree')
+export const useDefaultView = () => {
+  const initialValue = 'Tree'
+  const defaultView = useLocalStorage('defaultView', initialValue)
+  // Check if the view is implemented (in case we remove/rename a view in future)
+  if (!allViews.some(({ name }) => name === defaultView.value)) {
+    defaultView.value = initialValue
+  }
+  return defaultView
+}
 
 export default {
   name: 'Workspace',
@@ -121,7 +129,7 @@ export default {
     next(vm => {
       vm.$workflowService.startSubscriptions()
       vm.$nextTick(() => {
-        vm.addView({ viewName: defaultView().value })
+        vm.addView({ viewName: useDefaultView().value })
       })
     })
   },
@@ -131,7 +139,7 @@ export default {
     // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
     // and in the next tick as otherwise we would get stale/old variables for the graphql query
     this.$nextTick(() => {
-      this.addView({ viewName: defaultView().value })
+      this.addView({ viewName: useDefaultView().value })
     })
   },
 
