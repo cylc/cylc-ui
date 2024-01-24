@@ -138,10 +138,14 @@ export default {
           },
         },
         xaxis: {
+          labels: {
+            formatter: function (value, timestamp, opts) {
+              return new Date(value).toTimeString().slice(0, 9)
+            }
+          },
           title: {
             text: 'Time',
           },
-          type: 'datetime',
         },
       }
     },
