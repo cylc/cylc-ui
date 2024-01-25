@@ -31,19 +31,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-model="displayedTasks"
         label="Select tasks"
         ref="selectTasks"
+        @update:search="updateSelectionOptions"
       >
-        <template v-slot:prepend-item>
-            <v-list-item
-              ripple
-              @click="selectAllFilteredTasks"
-            >
-            <!-- todo: deactivate when no search string -->
-            <!-- todo: add a remove all matching tasks when all selected -->
-            Select all matching tasks
-            </v-list-item>
-            <v-divider class="mt-2"></v-divider>
-          </template>
-        </v-autocomplete>
+        <template
+          v-slot:prepend-item
+          v-if="this.showSelectAll"
+        >
+          <v-list-item
+            ripple
+            @click="selectSearchResults"
+          >
+            Select all search results
+          </v-list-item>
+          <v-list-item
+            ripple
+            @click="deselectSearchResults"
+          >
+            Remove all search results
+          </v-list-item>
+          <v-divider class="mt-2"></v-divider>
+        </template>
+      </v-autocomplete>
       <v-checkbox
         class="ma-0 pa-0"
         v-model="showOrigin"
@@ -76,12 +84,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     />
   </div>
   <p>{{ displayedTasks }}</p>
-  </template>
+</template>
 
 <script>
 import VueApexCharts from 'vue3-apexcharts'
 import {
   debounce,
+  difference,
   pick,
   union,
   uniq,
@@ -197,6 +206,7 @@ export default {
       xRange: [undefined, undefined],
       selectionRange: [undefined, undefined],
       autocompleteFilteredTasks: [],
+      showSelectAll: false,
     }
   },
 
@@ -392,10 +402,19 @@ export default {
   },
 
   methods: {
-    selectAllFilteredTasks: function () {
+    selectSearchResults: function () {
+      // Do we need a limit to number of tasks that can be added?
       const filteredTasks = this.$refs.selectTasks.filteredItems.map(
         (filteredTask) => (filteredTask.value))
       this.displayedTasks = union(this.displayedTasks, filteredTasks)
+    },
+    deselectSearchResults: function () {
+      const filteredTasks = this.$refs.selectTasks.filteredItems.map(
+        (filteredTask) => (filteredTask.value))
+      this.displayedTasks = difference(this.displayedTasks, filteredTasks)
+    },
+    updateSelectionOptions: function () {
+      this.showSelectAll = Boolean(this.$refs.selectTasks.search)
     },
     jobsQuery: debounce(
       async function (queryTasks) {
