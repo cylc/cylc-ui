@@ -84,7 +84,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     />
   </div>
   <p>{{ displayedTasks }}</p>
-</template>
+  </template>
 
 <script>
 import VueApexCharts from 'vue3-apexcharts'
@@ -204,7 +204,6 @@ export default {
       displayedTasks: [],
       showOrigin: false,
       xRange: [undefined, undefined],
-      selectionRange: [undefined, undefined],
       autocompleteFilteredTasks: [],
       showSelectAll: false,
     }
@@ -357,8 +356,8 @@ export default {
           selection: {
             enabled: true,
             xaxis: {
-              min: this.selectionRange[0],
-              max: this.selectionRange[1],
+              min: 1,
+              max: this.cyclePoints.length,
             }
           },
           toolbar: {
