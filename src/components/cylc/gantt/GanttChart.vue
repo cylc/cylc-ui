@@ -30,6 +30,7 @@ import VueApexCharts from 'vue3-apexcharts'
 import {
   mdiDownload,
 } from '@mdi/js'
+import { useReducedAnimation } from '@/composables/localStorage'
 
 export default {
   name: 'GanttChart',
@@ -46,6 +47,7 @@ export default {
     timingOption: {
       type: String,
       required: true,
+      default: 'total',
     },
     animate: {
       type: Boolean,
@@ -97,7 +99,7 @@ export default {
       return {
         chart: {
           animations: {
-            enabled: this.$store.state.app.reducedAnimation ? false : this.animate,
+            enabled: useReducedAnimation().value ? false : this.animate,
             easing: 'easeinout',
             speed: 300,
             animateGradually: {

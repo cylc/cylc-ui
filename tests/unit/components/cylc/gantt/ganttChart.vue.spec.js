@@ -15,11 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createStore } from 'vuex'
+import { mount } from '@vue/test-utils'
+import sinon from 'sinon'
 import { createVuetify } from 'vuetify'
-import { merge } from 'lodash'
-import storeOptions from '@/store/options'
-import { vuetifyOptions } from '@/plugins/vuetify'
+import WorkflowService from '@/services/workflow.service'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
 
 const job1 = {
@@ -39,36 +38,47 @@ const job2 = {
   platform: 'localhost'
 }
 
-const mountOpts = {
-  global: {
-    plugins: [
-      createStore(storeOptions),
-      createVuetify(vuetifyOptions),
-    ],
-  },
-  props: {
-    timingOption: 'total',
-    animate: false
+const vuetify = createVuetify()
+const $workflowService = sinon.createStubInstance(WorkflowService)
+
+describe('GanttChart component', () => {
+  /**
+   * @param options
+   * @returns {Wrapper<Tree>}
+   */
+  const mountFunction = options => {
+    return mount(GanttChart, {
+      global: {
+        plugins: [vuetify],
+        mocks: { $workflowService },
+      },
+      ...options
+    })
   }
-}
-describe('GanttChart', () => {
-  it('renders', () => {
-    // see: https://on.cypress.io/mounting-vue
-    cy.mount(GanttChart, merge(mountOpts, {
+
+  it('Should deliver apexcharts the correct values', async () => {
+    const expectedSubmittedTime = 1677150609000
+    const expectedStartedTime = 1677150613000
+    const expectedFinishedTime = 1677150620000
+    const wrapper = mountFunction({
       props: {
         jobs: [job1, job2],
-      },
-    }))
-    cy.get('.vue-apexcharts')
-      .should('be.visible')
-      .contains('test_job')
-      .get('.vue-apexcharts')
-      .contains('yet_another_test_job')
-    cy.get('.apexcharts-rangebar-area')
-      .first()
-      .click({ force: true })
-    cy.get('.apexcharts-tooltip-candlestick')
-      .should('exist')
-      .should('be.visible')
+      }
+    })
+
+    expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
+      expectedSubmittedTime,
+      expectedFinishedTime
+    ])
+    await wrapper.setProps({ timingOption: 'queue' })
+    expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
+      expectedSubmittedTime,
+      expectedStartedTime
+    ])
+    await wrapper.setProps({ timingOption: 'run' })
+    expect(wrapper.vm.series[0].data[0].y).to.deep.equal([
+      expectedStartedTime,
+      expectedFinishedTime
+    ])
   })
 })
