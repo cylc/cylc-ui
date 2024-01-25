@@ -37,7 +37,7 @@ export default {
   beforeCreate () {
     // Uniquely identify this component/view so we can keep track of which
     // ones are sharing subscriptions.
-    this._uid = `${uniqueId()}_${this.$options.name}`
+    this._uid = uniqueId(this.$options.name)
   },
   beforeMount () {
     if (this.query) {

@@ -277,7 +277,7 @@ export default {
         this.$eventBus.emit(
           'add-view',
           {
-            viewName: 'Log',
+            name: 'Log',
             initialOptions: {
               tokens: this.node.tokens
             }
