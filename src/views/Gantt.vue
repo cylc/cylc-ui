@@ -57,6 +57,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="jobsFilter.platformOption"
           />
         </v-col>
+      <v-select
+        id="c-gantt-tasks-per-page"
+        :items="$options.taskChoices"
+        prefix="Tasks Per Page"
+        v-model="tasksPerPage"
+      />
       </v-row>
       <div
         id="gantt-toolbar"
@@ -71,6 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <GanttChart
         :jobs="filteredJobs"
         :timing-option="timingOption"
+        :tasks-per-page="tasksPerPage"
       />
     </v-container>
   </div>
@@ -78,8 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import {
-  debounce,
-  pick,
+  debounce
 } from 'lodash'
 import gql from 'graphql-tag'
 import { getPageTitle } from '@/utils/index'
@@ -119,9 +125,15 @@ class GanttCallback {
    */
 
   add (data) {
-    this.jobs.push(
-      ...data.jobs.map((job) => pick(job, jobFields))
+    const taskNameList = Array.from(
+      new Set(data.jobs.map((job) => job.name))
     )
+
+    const sortedData = Object.fromEntries(taskNameList.map(key => [key, []]))
+    for (let i = 0; i < data.jobs.length; i++) {
+      sortedData[data.jobs[i].name].push(data.jobs[i])
+    }
+    this.jobs.push(sortedData)
   }
   // called when new objects are added
   // NOTE: we manually call this to add items which come through on the query
@@ -161,7 +173,7 @@ export default {
   data () {
     const jobs = []
     return {
-      currentPage: 1,
+      tasksPerPage: 5,
       callback: new GanttCallback(jobs),
       /** Object containing all of the jobs added by the callback */
       jobs,
@@ -212,5 +224,8 @@ export default {
       200 // only re-run this once every 0.2 seconds
     ),
   },
+  taskChoices: [
+    2, 5, 10, 25, 50
+  ],
 }
 </script>

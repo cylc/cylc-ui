@@ -21,7 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :options="chartOptions"
     :series="series"
     width="95%"
+    height="150%"
     class="d-flex justify-center"
+  />
+  <v-pagination
+    v-model="page"
+    :length="numPages"
+    :total-visible="7"
+    density="comfortable"
   />
 </template>
 
@@ -49,16 +56,51 @@ export default {
       required: true,
       default: 'total',
     },
+    tasksPerPage: {
+      type: Number,
+      default: 20,
+    },
     animate: {
       type: Boolean,
       default: true,
     },
   },
 
+  data () {
+    return {
+      page: 1,
+      sortBy: 'name',
+      sortDesc: false,
+    }
+  },
+  watch: {
+    numPages () {
+      // Clamp page number
+      this.page = Math.min(this.numPages, this.page)
+    }
+  },
+
+  methods: {
+    /**
+     * @param {string|number} a
+     * @param {string|number} b
+     * @returns {number}
+     */
+    compare (a, b) {
+      const ret = a[this.sortBy] < b[this.sortBy] ? -1 : 1
+      return this.sortDesc ? -ret : ret
+    },
+  },
+
   computed: {
     series () {
       const data = []
+      const jobs = this.jobs[0]
       if (this.jobs.length !== 0) {
+        const taskNameList = Object.keys(jobs)
+        const startTask = Math.max(0, this.tasksPerPage * (this.page - 1))
+        const endTask = Math.min(taskNameList.length, startTask + this.tasksPerPage)
+
         const colours = [
           '#008FFB',
           '#00E396',
@@ -66,33 +108,44 @@ export default {
           '#FEB019',
           '#FF4560',
         ]
-        const jobColours = {}
-        const jobNameList = Array.from(
-          new Set(this.jobs.map((job) => job.name))
-        )
+        const taskColours = {}
 
-        for (let i = 0; i < jobNameList.length; i++) {
-          jobColours[jobNameList[i]] = colours[i % colours.length]
+        for (let i = 0; i < taskNameList.length; i++) {
+          taskColours[taskNameList[i]] = colours[i % colours.length]
         }
-
         const timingOptions = {
           total: { start: 'submittedTime', end: 'finishedTime' },
           run: { start: 'startedTime', end: 'finishedTime' },
           queue: { start: 'submittedTime', end: 'startedTime' },
         }
         const { start, end } = timingOptions[this.timingOption]
-        data.push(...this.jobs.map((job) => {
-          return {
-            x: job.name,
-            y: [
-              new Date(job[start]).getTime(),
-              new Date(job[end]).getTime(),
-            ],
-            fillColor: jobColours[job.name],
+        for (let i = startTask; i < endTask; i++) {
+          for (let j = 0; j < jobs[taskNameList[i]].length; j++) {
+            data.push({
+              x: taskNameList[i],
+              y: [
+                new Date(jobs[taskNameList[i]][j][start]).getTime(),
+                new Date(jobs[taskNameList[i]][j][end]).getTime()
+              ],
+              fillColor: taskColours[taskNameList[i]],
+            })
           }
-        }))
+        }
       }
       return [{ data }]
+    },
+    watch: {
+      numPages () {
+        // Clamp page number
+        this.page = Math.min(this.numPages, this.page)
+      }
+    },
+    numPages () {
+      if (this.jobs.length !== 0) {
+        return Math.ceil(Object.keys(this.jobs[0]).length / this.tasksPerPage)
+      } else {
+        return 1
+      }
     },
 
     chartOptions () {
