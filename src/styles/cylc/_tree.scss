@@ -31,8 +31,12 @@ $line-height: 1.8em;
  */
 $visible-outputs: 5;
 
-/* Task/job icon size. */
-$icon-size: 1.2em;
+// Task/job/expand/collapse icon width
+$icon-width: 1.5rem;
+
+:root {
+  --tree-indent: #{$icon-width};
+}
 
 @mixin active-state() {
   background-color: $active-color;
@@ -51,7 +55,9 @@ $icon-size: 1.2em;
   .c-task, .c-job {
     display: flex;
     align-items: center;
-    font-size: $icon-size;
+    justify-content: center;
+    font-size: 1.2em;
+    width: $icon-width;
   }
 }
 
@@ -64,10 +70,10 @@ $icon-size: 1.2em;
     display: block;
 
     .node-expand-collapse-button {
-      width: 1.5em;
-      height: 1.5em;
-      margin: 0 2px;
+      width: $icon-width;
+      height: $icon-width;
       cursor: pointer;
+      user-select: none;
     }
 
     .node-expand-collapse-button::after {
@@ -97,11 +103,8 @@ $icon-size: 1.2em;
       }
     }
   }
-  .type {
-    margin-right: 10px;
-  }
 
-  $arrow-size: calc($icon-size / 2);
+  $arrow-size: calc($icon-width / 2);
   $leaf-background-color: map-get(settings.$grey, 'lighten-3');
 
   .leaf {
@@ -144,7 +147,7 @@ $icon-size: 1.2em;
         // 5 outputs, plus a buffer of 1.0em that appears to give the scroll just the
         // right space to show the N items in the scroll (without the buffer the last
         // item is partially hidden).
-        max-height: calc(#{$line-height} * #{$visible-outputs} + 1.0em);
+        max-height: calc($line-height * $visible-outputs + 1.0em);
         overflow-y: auto;
       }
     }
