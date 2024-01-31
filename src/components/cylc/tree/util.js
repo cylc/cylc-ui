@@ -33,5 +33,5 @@ export function getNodeChildren (node, cyclePointsOrderDesc) {
 }
 
 export function getIndent (depth) {
-  return `calc(${depth} * var(--tree-indent))`
+  return `calc(${depth} * var(--c-tree-indent))`
 }

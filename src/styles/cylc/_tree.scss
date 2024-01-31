@@ -35,7 +35,7 @@ $visible-outputs: 5;
 $icon-width: 1.5rem;
 
 :root {
-  --tree-indent: #{$icon-width};
+  --c-tree-indent: #{$icon-width};
 }
 
 @mixin active-state() {
