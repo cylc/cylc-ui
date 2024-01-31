@@ -23,7 +23,7 @@ const workflowOne = require('./workflows/one')
 const workflowsMulti = require('./workflows/multi')
 const { LogData } = require('./logData.cjs')
 const { LogFiles } = require('./logFiles.cjs')
-const analysisQuery = require('./analysisQuery.json')
+const analysisTaskQuery = require('./analysisQuery.json')
 
 const workflows = [workflowOne, ...workflowsMulti]
 
@@ -39,5 +39,5 @@ module.exports = {
     return workflows.find(({ deltas }) => deltas.id === workflowId) || {}
   },
   Test: workflowOne,
-  analysisQuery
+  analysisTaskQuery
 }

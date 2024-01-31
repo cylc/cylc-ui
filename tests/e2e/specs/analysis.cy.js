@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { analysisQuery } from '@/services/mock/json/index.cjs'
+import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
 import { clone } from 'lodash'
 
-const sortedTasks = analysisQuery.data.tasks.map(({ name }) => name).sort()
+const sortedTasks = analysisTaskQuery.data.tasks.map(({ name }) => name).sort()
 
 describe('Analysis view', () => {
   const numTasks = sortedTasks.length
