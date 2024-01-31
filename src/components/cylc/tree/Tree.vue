@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-for="child of rootChildren"
       :key="child.id"
       :node="child"
-      v-bind="{ hoverable, cyclePointsOrderDesc, expandAll, filteredOutNodesCache, indent }"
+      v-bind="{ hoverable, cyclePointsOrderDesc, expandAll, filteredOutNodesCache }"
     />
   </v-container>
 </template>
@@ -81,11 +81,6 @@ export default {
       required: false,
       default: () => []
     },
-    /** Indent of each tree-item hierarchy in px */
-    indent: {
-      type: Number,
-      required: false
-    }
   },
 
   components: {

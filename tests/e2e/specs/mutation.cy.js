@@ -32,7 +32,7 @@ describe('Mutations component', () => {
    */
   const openMutationsForm = (nodeName) => {
     cy.get('[data-cy=tree-view]').as('treeView')
-      .find('.treeitem')
+      .find('.c-treeitem')
       .find('.c-task')
       .should('be.visible')
     cy.get('@treeView')

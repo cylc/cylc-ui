@@ -31,25 +31,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-else
       v-model="isValid"
       ref="form"
-      class="c-edit-runtime-form"
+      class="c-edit-runtime-form ma-4"
     >
-      <v-list>
-        <v-list-item
-          v-for="key in Object.keys(model)"
-          :key="key"
-        >
-          <v-list-item-title class="c-input-label">
-            <!-- input label - the display title for this input -->
-            {{ startCase(key) }}
-          </v-list-item-title>
-          <component
-            :is="getInputProps(key).is"
-            v-bind="getInputProps(key)"
-            v-model="model[key]"
-            :types="types"
-          />
-        </v-list-item>
-      </v-list>
+      <div
+        v-for="key in Object.keys(model)"
+        :key="key"
+      >
+        <v-list-item-title class="c-input-label">
+          <!-- input label - the display title for this input -->
+          {{ startCase(key) }}
+        </v-list-item-title>
+        <component
+          :is="getInputProps(key).is"
+          v-bind="getInputProps(key)"
+          v-model="model[key]"
+          :types="types"
+        />
+      </div>
     </v-form>
   </div>
 </template>

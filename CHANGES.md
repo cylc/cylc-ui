@@ -11,9 +11,21 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 -------------------------------------------------------------------------------
+## __cylc-ui-2.4.0 (<span actions:bind='release-date'>Upcoming</span>)__
+
+### Fixes
+
+[#1643](https://github.com/cylc/cylc-ui/pull/1643) -
+Fix bug where the up/down/home/end keys would not work inside the Edit Runtime
+form inputs.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-2.3.0 (<span actions:bind='release-date'>Released 2023-11-28</span>)__
 
 ### Fixes
+
+[#1623](https://github.com/cylc/cylc-ui/pull/1623) -
+Improve the efficiency of the tree view.
 
 [#1549](https://github.com/cylc/cylc-ui/pull/1549) -
 Fix workflow filtering bug in the sidebar.

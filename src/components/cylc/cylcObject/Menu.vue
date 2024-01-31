@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               block
               variant="tonal"
             >
-              {{ expanded ? 'See Less' : 'See More' }}
+              {{ expanded ? 'See Less' : 'See All' }}
             </v-btn>
           </v-list-item>
         </v-list>

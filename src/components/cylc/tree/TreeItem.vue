@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div
     v-show="!filteredOutNodesCache.get(node)"
-    class="treeitem"
+    class="c-treeitem"
   >
     <div
       class="node d-flex align-center"
@@ -26,28 +26,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :style="nodeStyle"
     >
       <!-- the node's left icon; used for expand/collapse -->
-      <v-btn
+      <svg
         v-if="renderExpandCollapseBtn"
         aria-label="Expand/collapse"
-        aria-hidden="false"
         class="node-expand-collapse-button flex-shrink-0"
         @click="toggleExpandCollapse"
         :style="expandCollapseBtnStyle"
-        icon
-        variant="text"
-        density="compact"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        role="img"
       >
-        <v-icon>
-          {{ $options.icons.mdiChevronRight }}
-        </v-icon>
-      </v-btn>
+        <path :d="$options.icons.mdiChevronRight" />
+      </svg>
       <slot v-bind="{ isExpanded }">
         <!-- the node value -->
         <!-- TODO: revisit these node.type values that can be replaced by constants later (and in other components too). -->
-        <div
-          :class="nodeDataClass"
-          :style="nodeDataStyle"
-        >
+        <div :class="nodeDataClass">
           <template v-if="node.type === 'cycle'">
             <!-- NOTE: cycle point nodes don't have any data associated with them
               at present so we must use the root family node for the task icon.
@@ -88,7 +82,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 :key="`${job.id}-summary-${index}`"
                 :status="job.node.state"
                 :previous-state="node.children.length > 1 ? node.children[1].node.state : ''"
-                style="margin-left: 0.25em;"
               />
             </div>
             <span class="mx-1">{{ node.name }}</span>
@@ -163,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <JobDetails
             v-if="node.type === 'job'"
             v-bind="{ node, meanElapsedTime }"
-            :indent="(depth + 1) * indent"
+            :depth="depth + 1"
           />
           <!-- component recursion -->
           <TreeItem
@@ -173,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :node="child"
             :depth="depth + 1"
             :mean-elapsed-time="meanElapsedTime ?? node.node.task?.meanElapsedTime"
-            v-bind="{ hoverable, autoExpandTypes, cyclePointsOrderDesc, expandAll, filteredOutNodesCache, indent }"
+            v-bind="{ hoverable, autoExpandTypes, cyclePointsOrderDesc, expandAll, filteredOutNodesCache }"
           />
         </template>
       </slot>
@@ -190,12 +183,7 @@ import {
   latestJob,
   jobMessageOutputs
 } from '@/utils/tasks'
-import { getNodeChildren } from '@/components/cylc/tree/util'
-
-export const defaultNodeIndent = 28 // px
-
-/** Margin between expand/collapse btn & node content */
-export const nodeContentPad = 6 // px
+import { getIndent, getNodeChildren } from '@/components/cylc/tree/util'
 
 export default {
   name: 'TreeItem',
@@ -240,12 +228,6 @@ export default {
       type: WeakMap,
       required: true,
     },
-    /** Indent in px; default is expand/collapse btn width */
-    indent: {
-      type: Number,
-      required: false,
-      default: defaultNodeIndent
-    },
     /** Pass mean run time from task down to (grand)child job details */
     meanElapsedTime: {
       type: Number,
@@ -288,13 +270,9 @@ export default {
         ? null
         : getNodeChildren(this.node, this.cyclePointsOrderDesc)
     },
-    /** Get the node indentation in units of px. */
-    nodeIndentation () {
-      return this.depth * this.indent
-    },
     nodeStyle () {
       return {
-        'padding-left': `${this.nodeIndentation}px`
+        'padding-left': getIndent(this.depth)
       }
     },
     nodeClass () {
@@ -306,15 +284,10 @@ export default {
     nodeDataClass () {
       return ['node-data', `node-data-${this.node.type}`]
     },
-    nodeDataStyle () {
-      return {
-        marginLeft: `${nodeContentPad}px`,
-      }
-    },
     expandCollapseBtnStyle () {
       return {
         // set visibility 'hidden' to ensure element takes up space
-        visibility: this.hasChildren ? null : 'hidden',
+        visibility: this.hasChildren ? null : 'hidden'
       }
     },
     jobMessageOutputs () {
