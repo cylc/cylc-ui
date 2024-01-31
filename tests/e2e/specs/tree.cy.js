@@ -16,10 +16,6 @@
  */
 
 import TaskState from '@/model/TaskState.model'
-import {
-  defaultNodeIndent,
-  nodeContentPad,
-} from '@/components/cylc/tree/TreeItem.vue'
 
 describe('Tree view', () => {
   it('Should display cycle points for the mocked workflow', () => {
@@ -94,7 +90,7 @@ describe('Tree view', () => {
     // The leaf node has a triangle pointing to the job icon - check the margin
     // is applied (node is 5 levels deep):
     cy.get('.leaf:visible:first > .arrow-up')
-      .should('have.css', 'margin-left', `${5 * defaultNodeIndent + nodeContentPad}px`)
+      .should('have.css', 'margin-left', `${5 * 24}px`)
   })
   it('Updates view correctly', () => {
     cy.visit('/#/tree/one')

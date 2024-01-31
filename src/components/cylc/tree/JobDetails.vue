@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { nodeContentPad } from '@/components/cylc/tree/TreeItem.vue'
+import { getIndent } from '@/components/cylc/tree/util'
 import {
   formatDuration,
   jobMessageOutputs
@@ -72,8 +72,8 @@ export default {
       type: Object,
       required: true,
     },
-    /** Indent in px */
-    indent: {
+    /** Indent level */
+    depth: {
       type: Number,
       required: true,
     },
@@ -86,7 +86,7 @@ export default {
     /** Make the job details triangle point to the job icon */
     leafTriangleStyle () {
       return {
-        'margin-left': `${this.indent + nodeContentPad}px`
+        'margin-left': getIndent(this.depth),
       }
     },
 
