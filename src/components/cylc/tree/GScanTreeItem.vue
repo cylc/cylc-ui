@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-bind="{ node, depth, filteredOutNodesCache, hoverable }"
     :auto-expand-types="$options.nodeTypes"
     :render-expand-collapse-btn="node.type !== 'workflow'"
-    :indent="18"
     ref="treeItem"
   >
     <WorkflowIcon
@@ -29,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-cylc-object="node"
       :class="nodeClass"
       class="flex-shrink-0"
-      style="margin: 0 2px;"
     />
     <v-list-item
       :to="workflowLink"

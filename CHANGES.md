@@ -24,6 +24,9 @@ form inputs.
 
 ### Fixes
 
+[#1623](https://github.com/cylc/cylc-ui/pull/1623) -
+Improve the efficiency of the tree view.
+
 [#1549](https://github.com/cylc/cylc-ui/pull/1549) -
 Fix workflow filtering bug in the sidebar.
 

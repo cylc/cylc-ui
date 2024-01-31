@@ -23,18 +23,18 @@ describe('GScan component', () => {
   describe('Filtering', () => {
     beforeEach(() => {
       // should show all workflows by default
-      cy.get('.treeitem:visible')
+      cy.get('.c-treeitem:visible')
         .should('have.length', 5)
     })
 
     it('filters by workflow name', () => {
       cy.get('#c-gscan-search-workflows')
         .type('level')
-        .get('.treeitem:visible')
+        .get('.c-treeitem:visible')
         .should('have.length', 1)
       cy.get('#c-gscan-search-workflows')
         .type('abc')
-        .get('.treeitem:visible')
+        .get('.c-treeitem:visible')
         .should('have.length', 0)
     })
 
@@ -46,22 +46,22 @@ describe('GScan component', () => {
       cy.get('.v-select__content')
         .contains('.v-list-item', 'stopping')
         .click({ force: true })
-        .get('.treeitem:visible')
+        .get('.c-treeitem:visible')
         .should('have.length', 0)
       cy.get('.v-select__content')
         .contains('.v-list-item', 'paused')
         .click({ force: true })
-        .get('.treeitem [data-c-interactive]:visible')
+        .get('.c-treeitem [data-c-interactive]:visible')
         .should('have.length', 1)
       cy.get('.v-select__content')
         .contains('.v-list-item', 'running')
         .click({ force: true })
-        .get('.treeitem [data-c-interactive]:visible')
+        .get('.c-treeitem [data-c-interactive]:visible')
         .should('have.length', 2)
       cy.get('.v-select__content')
         .contains('.v-list-item', 'stopped')
         .click({ force: true })
-        .get('.treeitem [data-c-interactive]:visible')
+        .get('.c-treeitem [data-c-interactive]:visible')
         .should('have.length', 4)
     })
 
@@ -73,7 +73,7 @@ describe('GScan component', () => {
       cy.get('.v-select__content')
         .contains('.v-list-item', 'submit-failed')
         .click({ force: true })
-        .get('.treeitem:visible')
+        .get('.c-treeitem:visible')
         .should('have.length', 0)
     })
 
@@ -93,7 +93,7 @@ describe('GScan component', () => {
         .get('.v-select__content')
         .contains('.v-list-item', 'succeed')
         .click({ force: true })
-      cy.get('.treeitem:visible')
+      cy.get('.c-treeitem:visible')
         .should('have.length', 1)
     })
 
@@ -158,7 +158,7 @@ describe('GScan component', () => {
 
   it('shows mutations menu when clicking on workflow icon', () => {
     cy.get('.c-gscan-workflows')
-      .find('.treeitem [data-c-interactive]:first') //
+      .find('.c-treeitem [data-c-interactive]:first') //
       .click()
       .get('.c-mutation-menu')
       .should('be.visible')

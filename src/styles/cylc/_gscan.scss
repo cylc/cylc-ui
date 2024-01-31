@@ -24,9 +24,7 @@
 }
 
 .c-gscan {
-  .v-skeleton-loader > div:first-child {
-    background: inherit;
-  }
+  --tree-indent: 1rem;
   .c-gscan-workflows {
     .c-gscan-workflow {
       .c-workflow-stopped {
@@ -43,10 +41,10 @@
         }
       }
 
-      .treeitem {
-        margin: 4px 0;
+      .c-treeitem {
+        margin: 0.25em 0;
 
-        .treeitem {
+        .c-treeitem {
           margin: 0;
         }
 
