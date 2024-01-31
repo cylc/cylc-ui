@@ -51,7 +51,7 @@ describe('App', () => {
 
   it('should create the App with the correct theme', () => {
     const wrapper = mountFunction()
-    expect(wrapper.vm.jobThemeClass).to.equal('job_theme--default')
+    expect(wrapper.get('.v-application').classes()).toContain('job_theme--default')
   })
 
   it('should create the App with the correct layout', () => {

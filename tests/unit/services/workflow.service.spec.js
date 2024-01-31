@@ -32,13 +32,6 @@ import { TreeCallback, WorkflowCallback } from './testCallback'
 
 const sandbox = sinon.createSandbox()
 
-if (!global.localStorage) {
-  global.localStorage = {
-    getItem () { return '{}' },
-    setItem () {}
-  }
-}
-
 describe('WorkflowService', () => {
   /**
    * @type {String}

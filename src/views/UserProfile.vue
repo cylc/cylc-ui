@@ -246,7 +246,7 @@ import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@m
 import { useCyclePointsOrderDesc, useJobTheme, useReducedAnimation } from '@/composables/localStorage'
 import { getPageTitle } from '@/utils/index'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
-import { allViews, useDefaultView } from '@/views/Workspace.vue'
+import { allViews, useDefaultView } from '@/views/views.js'
 import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
 

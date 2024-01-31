@@ -42,11 +42,14 @@ export default {
   _installWorkflowService (app) {
     const graphQLUrls = createGraphQLUrls()
     const client = createSubscriptionClient(graphQLUrls.wsUrl)
-    app.config.globalProperties
-      .$workflowService = new SubscriptionWorkflowService(
-        graphQLUrls.httpUrl,
-        client
-      )
+    const workflowService = new SubscriptionWorkflowService(
+      graphQLUrls.httpUrl,
+      client
+    )
+    // Composition API:
+    app.provide('workflowService', workflowService)
+    // Options API (legacy):
+    app.config.globalProperties.$workflowService = workflowService
   },
 
   /**
