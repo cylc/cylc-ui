@@ -149,7 +149,7 @@ export default {
     formatCell (item, header) {
       const arrayMatch = header.key.match(/^(.+)\.(\d+)$/)
       const key = arrayMatch?.[1] ?? header.key
-      let value = item.value[key]
+      let value = item[key]
       if (arrayMatch) {
         const index = arrayMatch[2]
         value = value[index]

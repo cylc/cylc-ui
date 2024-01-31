@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import { createVuetify } from 'vuetify'
@@ -22,6 +23,15 @@ import App from '@/App.vue'
 import Empty from '@/layouts/Empty.vue'
 import storeOptions from '@/store/options'
 import { vuetifyOptions } from '@/plugins/vuetify'
+
+vi.mock('vue-router', () => ({
+  useRoute: () => ({
+    name: 'app',
+    meta: {
+      layout: 'empty'
+    }
+  })
+}))
 
 describe('App', () => {
   const mountFunction = () => {
@@ -35,14 +45,6 @@ describe('App', () => {
           'empty-layout': Empty
         },
         stubs: ['router-view'],
-        mocks: {
-          $route: {
-            name: 'app',
-            meta: {
-              layout: 'empty'
-            }
-          }
-        }
       }
     })
   }
@@ -64,6 +66,11 @@ describe('App', () => {
   ])('applies reduced animation = $value from localStorage', ({ value, expected }) => {
     localStorage.setItem('reducedAnimation', value)
     const wrapper = mountFunction()
-    expect(wrapper.vm.$vuetify.defaults.global.transition).to.equal(expected.vuetify)
+    expect(wrapper.vm.vuetifyDefaults).toMatchObject({
+      global: {
+        transition: expected.vuetify,
+        ripple: expected.vuetify,
+      }
+    })
   })
 })

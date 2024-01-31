@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <template v-slot:actions>
       <v-btn
         icon
-        v-bind="attrs"
         @click="closeAlert"
         data-cy="snack-close"
       >

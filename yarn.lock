@@ -3487,7 +3487,7 @@ __metadata:
     vue-router: "npm:4.2.5"
     vue-the-mask: "npm:0.11.1"
     vue3-apexcharts: "npm:1.4.1"
-    vuetify: "npm:3.1.7"
+    vuetify: "npm:3.5.1"
     vuex: "npm:4.1.0"
   languageName: unknown
   linkType: soft
@@ -10044,22 +10044,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vuetify@npm:3.1.7":
-  version: 3.1.7
-  resolution: "vuetify@npm:3.1.7"
+"vuetify@npm:3.5.1":
+  version: 3.5.1
+  resolution: "vuetify@npm:3.5.1"
   peerDependencies:
-    vite-plugin-vuetify: ^1.0.0-alpha.12
-    vue: ^3.2.0
+    typescript: ">=4.7"
+    vite-plugin-vuetify: ">=1.0.0-alpha.12"
+    vue: ^3.3.0
     vue-i18n: ^9.0.0
-    webpack-plugin-vuetify: ^2.0.0-alpha.11
+    webpack-plugin-vuetify: ">=2.0.0-alpha.11"
   peerDependenciesMeta:
+    typescript:
+      optional: true
     vite-plugin-vuetify:
       optional: true
     vue-i18n:
       optional: true
     webpack-plugin-vuetify:
       optional: true
-  checksum: 10c0/86af721487e9ae1643fc3fde6ca37b8976cd5d1163c4e1cf6b688666dedb8f68e4a8244a608b9641bc297c3bb5759bf2f0e1b4f2d248ea3af15512a7d62f7fe1
+  checksum: 10c0/c6a1176043ad1417991174dbca4246ba2be9750ed8b6aba0541bd56cf35fa1646c3b6d15a65c61b5e71a9e1857af7a71f54743a6d843e00d8eccfda3617fd4bb
   languageName: node
   linkType: hard
 

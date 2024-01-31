@@ -18,14 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div
     class="c-gscan"
   >
-    <!-- TODO: replace v-progress-linear with v-skeleton-loader when
-    the latter is added to Vuetify 3.
-    https://github.com/cylc/cylc-ui/issues/1272 -->
-    <!-- <v-skeleton-loader
-      :loading="isLoading"
-      type="list-item-three-line"
-      class=" d-flex flex-column h-100"
-    > -->
     <div class="d-flex flex-row mx-4 mb-2 flex-grow-0">
       <!-- filters -->
       <v-text-field
@@ -100,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       indeterminate
     />
     <div
-      v-if="!isLoading"
+      v-else
       class="c-gscan-workflows flex-grow-1 pl-2"
     >
       <Tree
@@ -113,14 +105,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       />
     </div>
     <!-- when no workflows are returned in the GraphQL query -->
-    <div v-else>
+    <div v-if="!workflows.length">
       <v-list-item>
         <v-list-item-title class="text-grey">
           No workflows found
         </v-list-item-title>
       </v-list-item>
     </div>
-    <!-- </v-skeleton-loader> -->
   </div>
 </template>
 

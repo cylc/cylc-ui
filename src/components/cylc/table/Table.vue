@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-data-table
             :headers="$options.headers"
             :items="filteredTasks"
+            item-value="task.id"
             multi-sort
             :sort-by="sortBy"
             show-expand
@@ -58,34 +59,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <div class="d-flex align-content-center flex-nowrap">
                 <div style="width: 2em;">
                   <Task
-                    v-cylc-object="item.value.task"
-                    :task="item.value.task.node"
-                    :startTime="item.value.latestJob?.node?.startedTime"
+                    v-cylc-object="item.task"
+                    :task="item.task.node"
+                    :startTime="item.latestJob?.node?.startedTime"
                   />
                 </div>
                 <div style="width: 2em;">
                   <Job
-                    v-if="item.value.latestJob"
-                    v-cylc-object="item.value.latestJob"
-                    :status="item.value.latestJob.node.state"
-                    :previous-state="item.value.previousJob?.node?.state"
+                    v-if="item.latestJob"
+                    v-cylc-object="item.latestJob"
+                    :status="item.latestJob.node.state"
+                    :previous-state="item.previousJob?.node?.state"
                   />
                 </div>
-                <div>{{ item.value.task.name }}</div>
+                <div>{{ item.task.name }}</div>
               </div>
             </template>
             <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
-              <td>{{ dtMean(item.value.task) }}</td>
+              <td>{{ dtMean(item.task) }}</td>
             </template>
-            <template v-slot:item.data-table-expand="{ item, toggleExpand, isExpanded }">
+            <template v-slot:item.data-table-expand="{ item, internalItem, toggleExpand, isExpanded }">
               <v-btn
-                @click="toggleExpand(item)"
+                @click="toggleExpand(internalItem)"
                 icon
                 variant="text"
                 size="small"
                 :style="{
-                  visibility: (item.value.task.children || []).length ? null : 'hidden',
-                  transform: isExpanded(item) ? 'rotate(180deg)' : null
+                  visibility: (item.task.children || []).length ? null : 'hidden',
+                  transform: isExpanded(internalItem) ? 'rotate(180deg)' : null
                 }"
               >
                 <v-icon
@@ -97,7 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <template v-slot:expanded-row="{ item }">
               <tr
                 v-bind:key="job.id"
-                v-for="(job, index) in item.value.task.children"
+                v-for="(job, index) in item.task.children"
                 class="expanded-row bg-grey-lighten-5"
               >
                 <td :colspan="3">

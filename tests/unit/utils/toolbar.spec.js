@@ -17,9 +17,21 @@
 
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
-import { createVuetify, useDisplay } from 'vuetify'
+import { createVuetify } from 'vuetify'
 import { useNavBtn, useToolbar } from '@/utils/toolbar'
 import storeOptions from '@/store/options'
+
+/**
+ * Create a vuetify instance in mobile mode or not.
+ * Mobile mode is when viewport is narrower than the mobile breakpoint.
+ *
+ * @param {boolean} mobile
+ */
+const vuetify = (mobile) => createVuetify({
+  display: {
+    mobileBreakpoint: mobile ? 10e3 : 0,
+  }
+})
 
 describe('Toolbar utils', () => {
   let store
@@ -38,8 +50,6 @@ describe('Toolbar utils', () => {
       const wrapper = mount(
         {
           setup () {
-            const { mobile: displayMobile } = useDisplay()
-            displayMobile.value = mobile
             const { showNavBtn } = useNavBtn()
             return { showNavBtn }
           },
@@ -47,7 +57,7 @@ describe('Toolbar utils', () => {
         },
         {
           global: {
-            plugins: [store, createVuetify()]
+            plugins: [store, vuetify(mobile)]
           },
         }
       )
@@ -73,13 +83,8 @@ describe('Toolbar utils', () => {
     )
 
     it('sets drawer on mount', () => {
-      const vuetify = createVuetify({
-        display: {
-          mobileBreakpoint: 10e3, // bigger than test viewport -> mobile = true
-        }
-      })
       store.commit('app/setDrawer', true)
-      const wrapper = mountFunction(vuetify)
+      const wrapper = mountFunction(vuetify(true))
       expect(wrapper.vm.$vuetify.display.mobile).to.be.true
       expect(store.state.app.drawer).to.be.false
     })

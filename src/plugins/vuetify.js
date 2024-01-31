@@ -21,7 +21,6 @@ import { VCombobox } from 'vuetify/components/VCombobox'
 import { VSelect } from 'vuetify/components/VSelect'
 import { VTextarea } from 'vuetify/components/VTextarea'
 import { VTextField } from 'vuetify/components/VTextField'
-import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
 import colors from 'vuetify/lib/util/colors'
 import { mdiClose } from '@mdi/js'
 
@@ -69,16 +68,7 @@ export const vuetifyOptions = {
       mdi
     }
   },
-  components: {
-    VDataTable,
-    VDataTableFooter
-  },
   defaults: {
-    global: {
-      // Gets set from user profile reduced animation setting:
-      transition: null,
-      ripple: null,
-    },
     VTooltip: {
       activator: 'parent',
       location: 'bottom',

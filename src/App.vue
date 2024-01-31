@@ -16,47 +16,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-app :class="jobThemeClass">
-    <component :is="layout" :showSidebar="showSidebar">
-      <router-view/>
-    </component>
-  </v-app>
+  <v-defaults-provider :defaults="vuetifyDefaults">
+    <v-app :class="jobThemeClass">
+      <component :is="layout" :showSidebar="showSidebar">
+        <router-view/>
+      </component>
+    </v-app>
+  </v-defaults-provider>
 </template>
 
-<script>
-import appSettings from '@/mixins/appSettings'
+<script setup>
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useJobTheme, useReducedAnimation } from '@/composables/localStorage'
 
 const DEFAULT_LAYOUT = 'empty'
+const route = useRoute()
 
-export default {
-  mixins: [
-    appSettings,
-  ],
+const layout = computed(() => `${route.meta.layout || DEFAULT_LAYOUT}-layout`)
 
-  computed: {
-    layout () {
-      return `${this.$route.meta.layout || DEFAULT_LAYOUT}-layout`
-    },
-    showSidebar () {
-      return this.$route.meta.showSidebar ?? true
-    },
-    jobThemeClass () {
-      return `job_theme--${useJobTheme().value}`
-    },
-  },
+const showSidebar = computed(() => route.meta.showSidebar ?? true)
 
-  mounted () {
-    // apply stored application font-size
-    if (localStorage.fontSize) {
-      document.documentElement.style.fontSize = localStorage.fontSize
-    }
-    // apply stored reduced animation mode on/off
-    this.setReducedAnimation(useReducedAnimation().value)
+const jobThemeClass = computed(() => `job_theme--${useJobTheme().value}`)
+
+const reducedAnimation = useReducedAnimation()
+
+const vuetifyDefaults = computed(() => ({
+  global: {
+    transition: reducedAnimation.value ? false : null,
+    ripple: reducedAnimation.value ? false : null,
   }
-}
-</script>
+}))
 
-<style lang="scss">
-  @import '@/styles/index.scss';
-</style>
+onMounted(() => {
+  // apply stored application font-size
+  if (localStorage.fontSize) {
+    document.documentElement.style.fontSize = localStorage.fontSize
+  }
+})
+</script>

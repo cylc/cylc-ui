@@ -10,11 +10,11 @@
         <template #prepend>
           <div class="mr-4">
             <Workflowicon
-              v-if="type==='workflow state'"
+              v-if="type === 'workflow state'"
               :status="item.raw"
             />
             <Task
-              v-if="type==='task state'"
+              v-if="type === 'task state'"
               :task="{ state: item.raw }"
             />
           </div>
@@ -30,14 +30,16 @@
         :close-icon="mdiClose"
       >
         <template #prepend>
-          <Workflowicon
-            v-if="type==='workflow state'"
-            :status="item.raw"
-          />
-          <Task
-            v-if="type==='task state'"
-            :task="{ state: item.raw }"
-          />
+          <div class="mr-1 ml-n1">
+            <Workflowicon
+              v-if="type === 'workflow state'"
+              :status="item.raw"
+            />
+            <Task
+              v-if="type === 'task state'"
+              :task="{ state: item.raw }"
+            />
+          </div>
         </template>
         {{ item.title }}
       </v-chip>

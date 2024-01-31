@@ -18,14 +18,11 @@
 import { mount } from '@vue/test-utils'
 import sinon from 'sinon'
 import { createVuetify } from 'vuetify'
-import { VDataTable, VDataTableFooter } from 'vuetify/labs/VDataTable'
 import { analysisQuery } from '@/services/mock/json/index.cjs'
 import WorkflowService from '@/services/workflow.service'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 
-const vuetify = createVuetify({
-  components: { VDataTable, VDataTableFooter }
-})
+const vuetify = createVuetify()
 const analysisTasks = analysisQuery.data.tasks
 const $workflowService = sinon.createStubInstance(WorkflowService)
 

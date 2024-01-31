@@ -35,32 +35,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :headers="$options.headers"
           :items="workflowsTable"
           data-cy="workflows-table"
+          style="font-size: 1rem;"
         >
           <template v-slot:item="{ item }">
             <tr
-              @click="viewWorkflow(item.raw)"
+              @click="viewWorkflow(item)"
               style="cursor: pointer"
             >
               <td width="1em">
                 <WorkflowIcon
-                  :status="item.raw.node.status"
-                  v-cylc-object="item.raw"
+                  :status="item.node.status"
+                  v-cylc-object="item"
                 />
               </td>
               <td>
-                {{ item.raw.tokens.workflow }}
+                {{ item.tokens.workflow }}
               </td>
               <td>
-                {{ item.raw.node.status }}
+                {{ item.node.status }}
               </td>
               <td>
-                {{ item.raw.node.owner }}
+                {{ item.node.owner }}
               </td>
               <td>
-                {{ item.raw.node.host }}
+                {{ item.node.host }}
               </td>
               <td>
-                {{ item.raw.node.port }}
+                {{ item.node.port }}
               </td>
             </tr>
           </template>
