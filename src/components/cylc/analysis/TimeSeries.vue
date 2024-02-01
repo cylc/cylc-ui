@@ -227,12 +227,7 @@ export default {
       cycles = uniq(cycles.map(
         job => job.cyclePoint)
       )
-
-      // Sort the cycles in numerical order
-      cycles = cycles.sort(
-        (a, b) => a.replace(/\w/g, '') - b.replace(/\w/g, '')
-      )
-      return cycles
+      return cycles.sort()
     },
     series () {
       let seriesData = {}
