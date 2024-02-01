@@ -21,22 +21,24 @@ import { createVuetify } from 'vuetify'
 import WorkflowService from '@/services/workflow.service'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
 
-const job1 = {
-  name: 'test_job',
-  id: '~cbennett/analysis_view_test/run1//1/a/01',
-  submittedTime: '2023-02-23T11:10:09Z',
-  startedTime: '2023-02-23T11:10:13Z',
-  finishedTime: '2023-02-23T11:10:20Z',
-  platform: 'localhost'
-}
-const job2 = {
-  name: 'yet_another_test_job',
-  id: '~cbennett/analysis_view_test/run1//1/b/01',
-  submittedTime: '2023-02-23T11:10:21Z',
-  startedTime: '2023-02-23T11:10:24Z',
-  finishedTime: '2023-02-23T11:10:26Z',
-  platform: 'localhost'
-}
+const jobs = [{
+  test_job: [{
+    name: 'test_job',
+    id: '~cbennett/analysis_view_test/run1//1/a/01',
+    submittedTime: '2023-02-23T11:10:09Z',
+    startedTime: '2023-02-23T11:10:13Z',
+    finishedTime: '2023-02-23T11:10:20Z',
+    platform: 'localhost'
+  }],
+  yet_another_test_job: [{
+    name: 'yet_another_test_job',
+    id: '~cbennett/analysis_view_test/run1//1/b/01',
+    submittedTime: '2023-02-23T11:10:21Z',
+    startedTime: '2023-02-23T11:10:24Z',
+    finishedTime: '2023-02-23T11:10:26Z',
+    platform: 'localhost'
+  }]
+}]
 
 const vuetify = createVuetify()
 const $workflowService = sinon.createStubInstance(WorkflowService)
@@ -62,7 +64,7 @@ describe('GanttChart component', () => {
     const expectedFinishedTime = 1677150620000
     const wrapper = mountFunction({
       props: {
-        jobs: [job1, job2],
+        jobs: jobs,
       }
     })
 
