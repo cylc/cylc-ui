@@ -1,66 +1,153 @@
-{
-  "data": {
-    "tasks": [
-      {
-        "name": "succeeded",
-        "platform": "platform_1",
-        "count": 42,
-        "meanTotalTime": 32,
-        "stdDevTotalTime": 3,
-        "minTotalTime": 29,
-        "totalQuartiles": [30, 31, 33],
-        "maxTotalTime": 34,
-        "meanRunTime": 21,
-        "stdDevRunTime": 2,
-        "minRunTime": 19,
-        "runQuartiles": [20, 21, 22],
-        "maxRunTime": 24,
-        "meanQueueTime": 11,
-        "stdDevQueueTime": 3,
-        "minQueueTime": 9,
-        "queueQuartiles": [10, 11, 13],
-        "maxQueueTime": 14
-      },
-      {
-        "name": "eventually_succeeded",
-        "platform": "platform_2",
-        "count": 42,
-        "meanTotalTime": 30,
-        "stdDevTotalTime": 2,
-        "minTotalTime": 28,
-        "totalQuartiles": [29, 30, 31],
-        "maxTotalTime": 33,
-        "meanRunTime": 20,
-        "stdDevRunTime": 3,
-        "minRunTime": 18,
-        "runQuartiles": [18, 20, 21],
-        "maxRunTime": 23,
-        "meanQueueTime": 10,
-        "stdDevQueueTime": 2,
-        "minQueueTime": 8,
-        "queueQuartiles": [9, 10, 11],
-        "maxQueueTime": 11
-      },
-      {
-        "name": "waiting",
-        "platform": "platform_1",
-        "count": 41,
-        "meanTotalTime": 38,
-        "stdDevTotalTime": 3,
-        "minTotalTime": 32,
-        "totalQuartiles": [34, 36, 37],
-        "maxTotalTime": 40,
-        "meanRunTime": 34,
-        "stdDevRunTime": 3,
-        "minRunTime": 31,
-        "runQuartiles": [32, 34, 35],
-        "maxRunTime": 37,
-        "meanQueueTime": 12,
-        "stdDevQueueTime": 3,
-        "minQueueTime": 10,
-        "queueQuartiles": [10, 12, 13],
-        "maxQueueTime": 14
-      }
-    ]
+{ "taskQuery": {
+    "data": {
+      "tasks": [
+        {
+          "name": "succeeded",
+          "platform": "platform_1",
+          "count": 42,
+          "meanTotalTime": 32,
+          "stdDevTotalTime": 3,
+          "minTotalTime": 29,
+          "totalQuartiles": [30, 31, 33],
+          "maxTotalTime": 34,
+          "meanRunTime": 21,
+          "stdDevRunTime": 2,
+          "minRunTime": 19,
+          "runQuartiles": [20, 21, 22],
+          "maxRunTime": 24,
+          "meanQueueTime": 11,
+          "stdDevQueueTime": 3,
+          "minQueueTime": 9,
+          "queueQuartiles": [10, 11, 13],
+          "maxQueueTime": 14
+        },
+        {
+          "name": "eventually_succeeded",
+          "platform": "platform_2",
+          "count": 42,
+          "meanTotalTime": 30,
+          "stdDevTotalTime": 2,
+          "minTotalTime": 28,
+          "totalQuartiles": [29, 30, 31],
+          "maxTotalTime": 33,
+          "meanRunTime": 20,
+          "stdDevRunTime": 3,
+          "minRunTime": 18,
+          "runQuartiles": [18, 20, 21],
+          "maxRunTime": 23,
+          "meanQueueTime": 10,
+          "stdDevQueueTime": 2,
+          "minQueueTime": 8,
+          "queueQuartiles": [9, 10, 11],
+          "maxQueueTime": 11
+        },
+        {
+          "name": "waiting",
+          "platform": "platform_1",
+          "count": 41,
+          "meanTotalTime": 38,
+          "stdDevTotalTime": 3,
+          "minTotalTime": 32,
+          "totalQuartiles": [34, 36, 37],
+          "maxTotalTime": 40,
+          "meanRunTime": 34,
+          "stdDevRunTime": 3,
+          "minRunTime": 31,
+          "runQuartiles": [32, 34, 35],
+          "maxRunTime": 37,
+          "meanQueueTime": 12,
+          "stdDevQueueTime": 3,
+          "minQueueTime": 10,
+          "queueQuartiles": [10, 12, 13],
+          "maxQueueTime": 14
+        }
+      ]
+    }
+  },
+  "jobQuery": {
+    "data": {
+      "jobs": [
+        {
+          "name": "succeeded",
+          "platform": "platform_1",
+          "cyclePoint": "20240101T0000Z",
+          "totalTime": 60,
+          "queueTime": 2,
+          "runTime": 58,
+          "startedTime": "2023-02-23T11:39:10Z"
+        },
+        {
+          "name": "succeeded",
+          "platform": "platform_1",
+          "cyclePoint": "20240101T1200Z",
+          "totalTime": 61,
+          "queueTime": 2,
+          "runTime": 19,
+          "startedTime": "2023-02-23T11:39:10Z"
+        },
+        {
+          "name": "succeeded",
+          "platform": "platform_1",
+          "cyclePoint": "20240102T0000Z",
+          "totalTime": 62,
+          "queueTime": 2,
+          "runTime": 20,
+          "startedTime": "2023-02-23T11:39:10Z"
+        },
+        {
+          "name": "eventually_succeeded",
+          "platform": "platform_1",
+          "cyclePoint": "20240101T1200Z",
+          "totalTime": 41,
+          "queueTime": 2,
+          "runTime": 39,
+          "startedTime": "2023-02-23T11:39:10Z"
+        },
+        {
+          "name": "eventually_succeeded",
+          "platform": "platform_1",
+          "cyclePoint": "20240101T0000Z",
+          "totalTime": 40,
+          "queueTime": 2,
+          "runTime": 38,
+          "startedTime": "2023-02-23T11:39:10Z"
+        },
+        {
+          "name": "eventually_succeeded",
+          "platform": "platform_2",
+          "cyclePoint": "20240102T0000Z",
+          "totalTime": 42,
+          "queueTime": 2,
+          "runTime": 40,
+          "startedTime": "2023-02-23T11:39:10Z"
+        },
+        {
+          "name": "waiting",
+          "platform": "platform_2",
+          "cyclePoint": "20240101T0000Z",
+          "totalTime": 50,
+          "queueTime": 2,
+          "runTime": 28,
+          "startedTime": "2023-02-23T11:39:10Z"
+        },
+        {
+          "name": "waiting",
+          "platform": "platform_2",
+          "cyclePoint": "20240102T0000Z",
+          "totalTime": 52,
+          "queueTime": 2,
+          "runTime": 30,
+          "startedTime": "2023-02-23T11:39:11Z"},
+        {
+          "name": "waiting",
+          "platform": "platform_2",
+          "cyclePoint": "20240102T0000Z",
+          "totalTime": 3,
+          "queueTime": 2,
+          "runTime": 1,
+          "startedTime": "2023-02-23T11:39:10Z"
+        }
+      ]
+    }
   }
 }

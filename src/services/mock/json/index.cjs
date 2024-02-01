@@ -23,9 +23,11 @@ const workflowOne = require('./workflows/one')
 const workflowsMulti = require('./workflows/multi')
 const { LogData } = require('./logData.cjs')
 const { LogFiles } = require('./logFiles.cjs')
-const analysisTaskQuery = require('./analysisQuery.json')
+const analysisQuery = require('./analysisQuery.json')
 
 const workflows = [workflowOne, ...workflowsMulti]
+const analysisTaskQuery = analysisQuery.taskQuery
+const analysisJobQuery = analysisQuery.jobQuery
 
 module.exports = {
   IntrospectionQuery,
@@ -39,5 +41,6 @@ module.exports = {
     return workflows.find(({ deltas }) => deltas.id === workflowId) || {}
   },
   Test: workflowOne,
-  analysisTaskQuery
+  analysisTaskQuery,
+  analysisJobQuery
 }
