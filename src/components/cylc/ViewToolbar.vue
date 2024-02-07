@@ -25,12 +25,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <!-- control -->
       <div
-        :class="['control', iControl.key]"
         v-for="iControl in iGroup.iControls"
         :key="iControl.title"
+        class="control"
+        :data-cy="`control-${iControl.key}`"
       >
         <v-btn
-          :class="iControl.title"
           icon
           variant="text"
           :disabled="iControl.disabled"

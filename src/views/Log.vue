@@ -136,6 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             data-cy="log-viewer"
             :logs="results.lines"
             :timestamps="timestamps"
+            :word-wrap="wordWrap"
           />
         </template>
       </v-col>
@@ -152,6 +153,7 @@ import {
   mdiFolderRefresh,
   mdiPowerPlugOff,
   mdiPowerPlug,
+  mdiWrap,
 } from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
@@ -318,6 +320,12 @@ export default {
      */
     const file = useInitialOptions('file', { props, emit })
 
+    /** Toggle timestamps in log files */
+    const timestamps = useInitialOptions('timestamps', { props, emit }, true)
+
+    /** Wrap lines? */
+    const wordWrap = useInitialOptions('wordWrap', { props, emit }, false)
+
     /** Set the value of relativeID at most every 0.5 seconds, used for text input */
     const debouncedUpdateRelativeID = debounce((value) => {
       relativeID.value = value
@@ -340,8 +348,8 @@ export default {
       // toggle between viewing workflow logs (0) and job logs (1).
       // default to displaying workflow logs unless initial task/job ID is provided.
       jobLog: ref(relativeID.value == null ? 0 : 1),
-      // toggle timestamps in log files
-      timestamps: ref(true),
+      timestamps,
+      wordWrap,
       debouncedUpdateRelativeID,
     }
   },
@@ -356,11 +364,18 @@ export default {
               title: 'Timestamps',
               icon: mdiClockOutline,
               action: 'toggle',
-              value: true,
+              value: this.timestamps,
               key: 'timestamps'
             },
             {
-              title: 'Refresh File List',
+              title: 'Word wrap',
+              icon: mdiWrap,
+              action: 'toggle',
+              value: this.wordWrap,
+              key: 'wordWrap',
+            },
+            {
+              title: 'Refresh file list',
               icon: mdiFolderRefresh,
               action: 'callback',
               callback: () => { this.updateLogFileList(false) }

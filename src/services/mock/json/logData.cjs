@@ -31,6 +31,8 @@ const workflowLogLines = [
   '2023-05-25T10:48:01+01:00 INFO - Workflow: one\n',
   '2023-05-25T10:48:01+01:00 INFO - LOADING workflow parameters\n',
   '2023-05-25T10:48:01+01:00 INFO - + cycle point time zone = Z\n',
+  '2023-08-17T14:10:51+01:00 INFO - The quick brown 🦊 jumps over the lazy 🐶\n',
+  '2024-02-07T13:38:25+01:00 INFO - Ce programme est distribué dans l\'espoir qu\'il sera utile, mais SANS TOUTE GARANTIE ; sans même la garantie implicite de QUALITÉ MARCHANDE ou d\'ADAPTATION À UN USAGE PARTICULIER. Consultez la GNU General Public License pour plus de détails.\n',
   '2038-01-19T04:14:07+01:00 CRITICAL - It\'s the Epochalypse!\n',
 ]
 
@@ -49,7 +51,7 @@ const LogData = ({ id, file }) => {
     logs: {
       connected: file !== deletedFile,
       error: file === deletedFile
-        ? `tail: ${path}: No such file or directory\ntail: no files remaining`
+        ? 'No such file or directory'
         : undefined,
       path: `my-host:${path}`,
       lines: isJob ? jobLogLines : workflowLogLines,
