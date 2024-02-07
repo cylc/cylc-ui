@@ -224,9 +224,14 @@ export default {
     }
   },
 
-  data () {
+  setup () {
     return {
       jobTheme: useJobTheme(),
+    }
+  },
+
+  data () {
+    return {
       // the graph orientation
       orientation: 'TB',
       // the auto-refresh timer

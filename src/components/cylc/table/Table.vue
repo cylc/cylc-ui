@@ -133,6 +133,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { ref } from 'vue'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import { mdiChevronDown } from '@mdi/js'
@@ -163,16 +164,17 @@ export default {
     TaskFilter
   },
 
-  data () {
+  setup () {
+    const cyclePointsOrderDesc = useCyclePointsOrderDesc()
     return {
-      itemsPerPage: 50,
-      sortBy: [
+      itemsPerPage: ref(50),
+      sortBy: ref([
         {
           key: 'task.tokens.cycle',
-          order: useCyclePointsOrderDesc().value ? 'desc' : 'asc'
+          order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
         },
-      ],
-      tasksFilter: {}
+      ]),
+      tasksFilter: ref({})
     }
   },
 

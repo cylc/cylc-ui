@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { ref } from 'vue'
 import GScanTreeItem from '@/components/cylc/tree/GScanTreeItem.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import { getNodeChildren } from '@/components/cylc/tree/util'
@@ -88,7 +89,7 @@ export default {
     TreeItem,
   },
 
-  data () {
+  setup () {
     return {
       cyclePointsOrderDesc: useCyclePointsOrderDesc(),
       /**
@@ -100,7 +101,7 @@ export default {
        *
        * @type {WeakMap<Object, boolean>}
        */
-      filteredOutNodesCache: new WeakMap(),
+      filteredOutNodesCache: ref(new WeakMap()),
     }
   },
 
@@ -111,10 +112,6 @@ export default {
         () => [this.filterState, this.rootChildren],
         ([active, nodes], [wasActive, oldNodes]) => {
           if (active) {
-            // Need to wipe cache due to mem leak bug in Vue < 3.4
-            // https://github.com/vuejs/core/issues/9419
-            // TODO: can remove this line after upgrade to Vue 3.4:
-            this.filteredOutNodesCache = new WeakMap()
             for (const node of this.rootChildren) {
               this.nodeFilterFunc(node, this.filteredOutNodesCache)
             }
