@@ -15,6 +15,14 @@ ones in. -->
 
 ### Fixes
 
+[#1623](https://github.com/cylc/cylc-ui/pull/1623),
+[#1619](https://github.com/cylc/cylc-ui/pull/1619) -
+Improve the efficiency of the tree view.
+
+[#1636](https://github.com/cylc/cylc-ui/pull/1636),
+[#1631](https://github.com/cylc/cylc-ui/pull/1631) -
+Various other efficiency improvements.
+
 [#1643](https://github.com/cylc/cylc-ui/pull/1643) -
 Fix bug where the up/down/home/end keys would not work inside the Edit Runtime
 form inputs.
@@ -23,9 +31,6 @@ form inputs.
 ## __cylc-ui-2.3.0 (<span actions:bind='release-date'>Released 2023-11-28</span>)__
 
 ### Fixes
-
-[#1623](https://github.com/cylc/cylc-ui/pull/1623) -
-Improve the efficiency of the tree view.
 
 [#1549](https://github.com/cylc/cylc-ui/pull/1549) -
 Fix workflow filtering bug in the sidebar.
