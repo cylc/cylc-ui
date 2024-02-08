@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="d-flex flex-nowrap ml-2"
           >
             <v-btn
-              @click="expandAll = ['workflow', 'cycle', 'family']"
+              @click="options.tree.expandAll.value = [ 'workflow', 'cycle', 'family' ] "
               icon
               variant="flat"
               size="small"
@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-tooltip>Expand all</v-tooltip>
             </v-btn>
             <v-btn
-              @click="expandAll = []"
+            @click="options.tree.expandAll.value = [] "
               icon
               variant="flat"
               size="small"
@@ -92,6 +92,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import { matchID, matchState } from '@/components/cylc/common/filter'
+import useViewState from '@/composables/useViewState'
 
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
@@ -216,13 +217,12 @@ export default {
     }
   },
 
-  data: () => ({
-    expandAll: null,
-    tasksFilter: {
-      id: null,
-      states: null,
-    },
-  }),
+  setup () {
+    const { options } = useViewState()
+    return {
+      options,
+    }
+  },
 
   computed: {
     ...mapState('workflows', ['cylcTree']),
@@ -251,6 +251,14 @@ export default {
       return (this.tasksFilter.id?.trim() || this.tasksFilter.states?.length)
         ? this.tasksFilter
         : null
+    },
+
+    expandAll () {
+      return this.options.tree.expandAll.value
+    },
+
+    tasksFilter () {
+      return this.options.tree.tasksFilter.value
     }
   },
 
