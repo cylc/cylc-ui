@@ -143,6 +143,7 @@ import { matchNode } from '@/components/cylc/common/filter'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import { dtMean } from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
+import useViewState from '@/composables/useViewState'
 
 export default {
   name: 'TableComponent',
@@ -166,6 +167,7 @@ export default {
 
   setup () {
     const cyclePointsOrderDesc = useCyclePointsOrderDesc()
+    const { options } = useViewState()
     return {
       itemsPerPage: ref(50),
       sortBy: ref([
@@ -174,13 +176,16 @@ export default {
           order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
         },
       ]),
-      tasksFilter: ref({})
+      options
     }
   },
 
   computed: {
     filteredTasks () {
       return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
+    },
+    tasksFilter () {
+      return this.options.table.tasksFilter.value
     }
   },
 

@@ -7,7 +7,9 @@ const options = ref({
     tasksFilter: { type: Object, value: { id: null, states: null } },
     expandAll: { type: Array, value: [] },
   },
-  table: {},
+  table: {
+    tasksFilter: { type: Object, value: { id: null, states: null } },
+  },
   graph: {},
   log: {},
   analysis: {}
