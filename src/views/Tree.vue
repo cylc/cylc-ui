@@ -17,6 +17,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
+    {{this.workflowId}}
+    <div>-----------optionsArray-----------</div>
+    <pre>
+      {{ this.optionsArray }}
+    </pre>
+    <div>-----------getOptions(this.workflowId)-----------</div>
+    {{this.getOptions(this.workflowId)}}
+    <div>-----------options-----------</div>
+    {{ this.options }}
+    <!-- {{optionsArray}} -->
     <v-container
       fluid
       class="c-tree pa-2"
@@ -218,9 +228,24 @@ export default {
   },
 
   setup () {
-    const { options } = useViewState()
+    const { optionsArray, getOptions, newOptions } = useViewState()
     return {
-      options,
+      optionsArray,
+      getOptions,
+      newOptions
+    }
+  },
+
+  data: () => ({
+    options: {}
+  }),
+
+  mounted () {
+    if (this.getOptions(this.workflowId)) {
+      this.options = this.getOptions(this.workflowId).options
+    } else {
+      this.newOptions(this.workflowId)
+      this.options = this.getOptions(this.workflowId).options
     }
   },
 
