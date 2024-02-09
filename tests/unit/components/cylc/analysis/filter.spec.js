@@ -15,7 +15,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { matchTask, platformOptions } from '@/components/cylc/analysis/filter'
+import {
+  matchTask,
+  matchTasks,
+  platformOptions
+} from '@/components/cylc/analysis/filter'
+
+describe('matchTasks', () => {
+  const tasksIn = {
+    task_1: {
+      task_name: 'task_1',
+      task_platform: 'test_platform',
+      some_other_key: 'some_other_test_key'
+    },
+    task_2: {
+      task_name: 'task_2',
+      task_platform: 'test_platform_2',
+      some_other_key: 'some_other_test_key'
+    },
+    task_3: {
+      task_name: 'task_3',
+      task_platform: 'test_platform_3',
+      some_other_key: 'some_other_test_key'
+    }
+  }
+  const tasksOut = {
+    task_1: {
+      task_name: 'task_1',
+      task_platform: 'test_platform',
+      some_other_key: 'some_other_test_key'
+    },
+    task_2: {
+      task_name: 'task_2',
+      task_platform: 'test_platform_2',
+      some_other_key: 'some_other_test_key'
+    },
+  }
+
+  it('should filter out the tasks that do not match', () => {
+    const filter = {
+      name: ['task_1', 'task_2']
+    }
+    expect(matchTasks(tasksIn, filter)).to.deep.equal(tasksOut)
+  })
+})
 
 describe('matchTask', () => {
   const task = {
