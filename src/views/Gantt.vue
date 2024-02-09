@@ -25,13 +25,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md="4"
           class="pr-md-2 mb-2 mb-md-0"
         >
-          <v-text-field
-            id="c-gantt-filter-task-name"
+          <v-autocomplete
+            multiple
+            chips
+            closable-chips
             clearable
-            placeholder="Filter by task name"
-            v-model.trim="jobsFilter.name"
-            ref="filterNameInput"
-          />
+            placeholder="Search"
+            :items="callback.uniqueTasks"
+            v-model="jobsFilter.name"
+            label="Select tasks"
+            ref="selectTasks"
+            @update:search="updateSelectionOptions"
+          >
+            <template
+              v-slot:prepend-item
+              v-if="this.showSelectAll"
+            >
+              <v-list-item
+                ripple
+                @click="selectSearchResults"
+              >
+                Select all search results
+              </v-list-item>
+              <v-list-item
+                ripple
+                @click="deselectSearchResults"
+              >
+                Remove all search results
+              </v-list-item>
+            <v-divider class="mt-2"></v-divider>
+            </template>
+          </v-autocomplete>
         </v-col>
         <v-col
           cols="12"
@@ -57,12 +81,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="jobsFilter.platformOption"
           />
         </v-col>
-      <v-select
-        id="c-gantt-tasks-per-page"
-        :items="$options.taskChoices"
-        prefix="Tasks Per Page"
-        v-model="tasksPerPage"
-      />
+      </v-row>
+      <v-row no-gutters>
+        <v-col
+          cols="12"
+          md="4"
+          class="pr-md-2 mb-2 mb-md-0"
+        >
+          <v-select
+            id="c-gantt-tasks-per-page"
+            :items="$options.taskChoices"
+            prefix="Tasks Per Page"
+            v-model="tasksPerPage"/>
+        </v-col>
       </v-row>
       <div
         id="gantt-toolbar"
@@ -92,7 +123,7 @@ import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
 import {
-  matchTask,
+  matchTasks,
   platformOptions
 } from '@/components/cylc/analysis/filter'
 /** List of fields to request for each job */
@@ -128,7 +159,9 @@ class GanttCallback {
     const taskNameList = Array.from(
       new Set(data.jobs.map((job) => job.name))
     )
-
+    this.uniqueTasks = Array.from(
+      new Set(data.jobs.map((job) => job.name))
+    )
     const sortedData = Object.fromEntries(taskNameList.map(key => [key, []]))
     for (let i = 0; i < data.jobs.length; i++) {
       sortedData[data.jobs[i].name].push(data.jobs[i])
@@ -183,7 +216,7 @@ export default {
         { value: 'queueTimes', title: 'Queue times' },
       ],
       jobsFilter: {
-        name: '',
+        name: [],
         timingOption: 'totalTimes',
         platformOption: -1,
       },
@@ -197,7 +230,10 @@ export default {
       return [this.workflowId]
     },
     filteredJobs () {
-      return this.jobs.filter(job => matchTask(job, this.jobsFilter))
+      if (this.jobsFilter.name.length === 0) {
+        return this.jobs
+      }
+      return [matchTasks(this.jobs[0], this.jobsFilter)]
     },
     platformOptions () {
       return platformOptions(this.jobs)
