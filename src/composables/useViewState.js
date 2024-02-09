@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
-// options ref needs to be defined outside of export function to ensure
-// state persists between components
+// optionsArray ref needs to be defined outside of export function to ensure
+// state persists between workflows
 
 const optionsArray = ref([])
 

@@ -18,10 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="h-100">
     {{this.workflowId}}
-    <div>-----------optionsArray-----------</div>
-    <pre>
-      {{ this.optionsArray }}
-    </pre>
+    <div>-----------optionsArrayfrom Component-----------</div>
+    {{ this.optionsArray }}
     <div>-----------getOptions(this.workflowId)-----------</div>
     {{this.getOptions(this.workflowId)}}
     <div>-----------options-----------</div>
@@ -237,15 +235,34 @@ export default {
   },
 
   data: () => ({
-    options: {}
+    options: {},
   }),
 
+  // load or create new options object if changing components
   mounted () {
     if (this.getOptions(this.workflowId)) {
       this.options = this.getOptions(this.workflowId).options
     } else {
       this.newOptions(this.workflowId)
       this.options = this.getOptions(this.workflowId).options
+    }
+  },
+
+  watch: {
+    // load or create new options object if changing workflows
+    workflowId (newVal, oldVal) {
+      if (this.getOptions(newVal)) {
+        this.options = this.getOptions(newVal).options
+      } else {
+        this.newOptions(newVal)
+        this.options = this.getOptions(newVal).options
+      }
+    },
+    // save options to localStorage
+    options (newVal, oldVal) {
+      console.log('-----------------')
+      console.log(this.optionsArray)
+      console.log('-----------------')
     }
   },
 
