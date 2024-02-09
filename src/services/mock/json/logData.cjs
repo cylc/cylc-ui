@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const { simulatedDelay } = require('./util.cjs')
 const { deletedFile } = require('./logFiles.cjs')
 
 const logDirPath = '/path/to/the/log/file/note/these/paths/get/really/log'
@@ -44,9 +45,10 @@ const workflowLogLines = [
  *   file: string,
  * }} variables
  */
-const LogData = ({ id, file }) => {
+const LogData = async ({ id, file }) => {
   const isJob = id.includes('//')
   const path = `${logDirPath}/${file}`
+  await simulatedDelay(1e3)
   return {
     logs: {
       connected: file !== deletedFile,

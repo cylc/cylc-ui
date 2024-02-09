@@ -46,7 +46,7 @@ function wsResponse (id, type, data = null) {
  * @param {WebSocket} ws
  * @param {string} msg - JSON encoded client message
  */
-function sendWSResponse (ws, msg) {
+async function sendWSResponse (ws, msg) {
   const parsed = JSON.parse(msg)
   if (parsed) {
     if (parsed.type === 'connection_init') {
@@ -57,7 +57,7 @@ function sendWSResponse (ws, msg) {
       const operationName = (
         parsed.payload.operationName || graphql.getOperationName(parsed.payload.query)
       )
-      const responseData = graphql.getGraphQLQueryResponse(operationName, parsed.payload.variables)
+      const responseData = await graphql.getGraphQLQueryResponse(operationName, parsed.payload.variables)
       for (const item of isArray(responseData) ? responseData : [responseData]) {
         ws.send(wsResponse(parsed.id, 'data', item))
       }

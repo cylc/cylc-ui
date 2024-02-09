@@ -15,42 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { simulatedDelay } = require('./util.cjs')
-
-const deletedFile = 'deleted.log'
-
-const jobLogFiles = [
-  'job.out',
-  'job.err',
-  'job',
-]
-
-const workflowLogFiles = [
-  'scheduler/01-start-01.log',
-  deletedFile,
-]
+const process = require('process')
 
 /**
- * Return a mock GQL response for list of log files.
+ * Simulate a loading delay.
  *
- * @param {{ id: string }} variables
+ * NOTE: skips the delay if the CI env var is set so as not to slow down tests.
+ *
+ * @param {number} delay - in ms
+ * @returns {Promise}
  */
-const LogFiles = async ({ id }) => {
-  await simulatedDelay(500)
-  return {
-    data: {
-      logFiles: {
-        files: id == null
-          ? []
-          : id.includes('//') ? jobLogFiles : workflowLogFiles
-      }
-    }
-  }
+function simulatedDelay (delay) {
+  return process.env.CI
+    ? Promise.resolve()
+    : new Promise((resolve) => setTimeout(resolve, delay))
 }
 
 module.exports = {
-  LogFiles,
-  deletedFile,
-  jobLogFiles,
-  workflowLogFiles,
+  simulatedDelay,
 }
