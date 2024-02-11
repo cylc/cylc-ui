@@ -54,7 +54,7 @@
     "vuex": "4.1.0"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "3.12.19",
+    "@cypress/code-coverage": "3.12.21",
     "@vitejs/plugin-vue": "5.0.4",
     "@vitest/coverage-istanbul": "1.2.2",
     "@vue/test-utils": "2.4.4",
