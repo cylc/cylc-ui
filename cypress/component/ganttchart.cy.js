@@ -53,12 +53,12 @@ const mountOpts = {
     animate: false
   }
 }
-describe('GanttChart', () => {
+describe('GanttChart correctly', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-vue
     cy.mount(GanttChart, merge(mountOpts, {
       props: {
-        jobs: jobs,
+        jobs
       },
     }))
     cy.get('.vue-apexcharts')
@@ -72,5 +72,23 @@ describe('GanttChart', () => {
     cy.get('.apexcharts-tooltip-candlestick')
       .should('exist')
       .should('be.visible')
+    cy.get('[data-test="v-pagination-item"]')
+      .should('have.length', 1)
+  })
+  it('paginates correctly', () => {
+    // see: https://on.cypress.io/mounting-vue
+    cy.mount(GanttChart, merge(mountOpts, {
+      props: {
+        tasksPerPage: 1,
+        jobs
+      },
+    }))
+    cy.get('[data-test="v-pagination-item"]')
+      .should('have.length', 2)
+    cy.get('.vue-apexcharts')
+      .should('be.visible')
+      .contains('test_job')
+    cy.contains('yet_another_test_job')
+      .should('not.exist')
   })
 })
