@@ -268,7 +268,7 @@ export default {
     initialOptions: {
       type: Object,
       required: false,
-      default: () => {}
+      default: () => ({})
     }
   },
 
@@ -342,7 +342,7 @@ export default {
       if (this.jobLog) {
         try {
           const taskTokens = new Tokens(this.relativeID, true)
-          if (!taskTokens || !taskTokens.task) {
+          if (!taskTokens?.task) {
             return null
           }
           return this.workflowTokens.clone({ cycle: taskTokens.cycle, task: taskTokens.task, job: taskTokens.job }).id
@@ -376,7 +376,6 @@ export default {
         LOGS_SUBSCRIPTION,
         { id: this.id, file: this.file },
         `log-query-${this._uid}`,
-        // ,
         [
           new LogsCallback(this.results)
         ],
@@ -398,27 +397,23 @@ export default {
           query: LOG_FILE_QUERY,
           variables: { id: this.id }
         })
-      } catch {
+      } catch (err) {
         // the query failed
-        this.fileLabel = `No log files for ${this.id}`
+        console.warn(err)
+        this.fileLabel = this.id ? `No log files for ${this.id}` : 'Enter a task/job ID'
         this.fileDisabled = true
         return
       }
-      let logFiles
-      if (result.data.logFiles) {
-        logFiles = result.data.logFiles.files
-      } else {
-        logFiles = []
-      }
+      const logFiles = result.data.logFiles?.files ?? []
 
       // reset the file if it is not present in the new selection
       if (reset) {
-        if (this.file && !(this.file in logFiles)) {
+        if (this.file && !logFiles.includes(this.file)) {
           this.file = null
         }
 
         // set the default log file if appropriate
-        if (!this.file && logFiles) {
+        if (!this.file && logFiles.length) {
           for (const filePattern of LOG_FILE_DEFAULTS) {
             for (const fileName of logFiles) {
               if (filePattern.exec(fileName)) {
