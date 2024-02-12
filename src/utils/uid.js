@@ -180,8 +180,8 @@ class Tokens {
    *
    * Obtain string ID from a tokens object
    *   tokens.id           // the full ID
-   *   tokens.workflow_id  // the workflow part of the ID (the bit before the //)
-   *   tokens.relative_id  // the task part of the ID (the bit after the //)
+   *   tokens.workflowID  // the workflow part of the ID (the bit before the //)
+   *   tokens.relativeID  // the task part of the ID (the bit after the //)
    */
 
   static KEYS = ['user', 'workflow', 'cycle', 'task', 'job']
@@ -237,8 +237,8 @@ class Tokens {
     this.namespace = undefined
     this.edge = undefined
     this.id = undefined
-    this.workflow_id = undefined
-    this.relative_id = undefined
+    this.workflowID = undefined
+    this.relativeID = undefined
 
     // update derived properties
     this.compute()
@@ -262,8 +262,8 @@ class Tokens {
       this.job = undefined
     }
 
-    this.workflow_id = detokenise(this, true, false)
-    this.relative_id = detokenise(this, false, true)
+    this.workflowID = detokenise(this, true, false)
+    this.relativeID = detokenise(this, false, true)
   }
 
   set (fields) {

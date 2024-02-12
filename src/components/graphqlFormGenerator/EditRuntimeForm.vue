@@ -177,7 +177,7 @@ export default {
         mode: 'Set',
         namespaces: [this.tokens.task],
         settings,
-        workflows: [this.tokens.workflow_id]
+        workflows: [this.tokens.workflowID]
       }
       const mutation = await this.$workflowService.getMutation('broadcast')
       return await mutate(

@@ -30,8 +30,8 @@ describe('Universal ID (UID)', () => {
         task: 'task',
         job: '01',
         id: '~user/workflow//cycle/task/01',
-        workflow_id: '~user/workflow',
-        relative_id: 'cycle/task/01',
+        workflowID: '~user/workflow',
+        relativeID: 'cycle/task/01',
         namespace: undefined,
         edge: undefined
       })
@@ -46,8 +46,8 @@ describe('Universal ID (UID)', () => {
         task: undefined,
         job: undefined,
         id: '~user',
-        workflow_id: '~user',
-        relative_id: '',
+        workflowID: '~user',
+        relativeID: '',
         namespace: undefined,
         edge: undefined
       })
@@ -62,8 +62,8 @@ describe('Universal ID (UID)', () => {
         task: undefined,
         job: undefined,
         id: 'cycle',
-        workflow_id: '',
-        relative_id: 'cycle',
+        workflowID: '',
+        relativeID: 'cycle',
         namespace: undefined,
         edge: undefined
       })
@@ -80,8 +80,8 @@ describe('Universal ID (UID)', () => {
         task: undefined,
         job: undefined,
         id: '$namespace|foo',
-        workflow_id: '',
-        relative_id: '',
+        workflowID: '',
+        relativeID: '',
         namespace: 'foo',
         edge: undefined
       })
@@ -96,8 +96,8 @@ describe('Universal ID (UID)', () => {
         task: undefined,
         job: undefined,
         id: '$edge|1/a|1/b',
-        workflow_id: '',
-        relative_id: '',
+        workflowID: '',
+        relativeID: '',
         namespace: undefined,
         edge: [new Tokens('1/a', true), new Tokens('1/b', true)]
       })
@@ -127,8 +127,8 @@ describe('Universal ID (UID)', () => {
         task: undefined,
         job: undefined,
         id: 'w//c',
-        workflow_id: 'w',
-        relative_id: 'c',
+        workflowID: 'w',
+        relativeID: 'c',
         namespace: undefined,
         edge: undefined
       })
@@ -143,8 +143,8 @@ describe('Universal ID (UID)', () => {
         task: 't',
         job: undefined,
         id: 'x//c/t',
-        workflow_id: 'x',
-        relative_id: 'c/t',
+        workflowID: 'x',
+        relativeID: 'c/t',
         namespace: undefined,
         edge: undefined
       })
@@ -166,8 +166,8 @@ describe('Universal ID (UID)', () => {
         task: 't',
         job: undefined,
         id: 'w//d/t',
-        workflow_id: 'w',
-        relative_id: 'd/t',
+        workflowID: 'w',
+        relativeID: 'd/t',
         namespace: undefined,
         edge: undefined
       })

@@ -258,7 +258,7 @@ export default {
     isDisabled (mutation, authorised) {
       if (this.node.type !== 'workflow') {
         const nodeReturned = this.getNodes(
-          'workflow', [this.node.tokens.workflow_id])
+          'workflow', [this.node.tokens.workflowID])
         if (nodeReturned.length) {
           this.workflowStatus = nodeReturned[0].node.status
         } else { this.workflowStatus = WorkflowState.RUNNING.name }
@@ -279,7 +279,7 @@ export default {
           {
             name: 'Log',
             initialOptions: {
-              tokens: this.node.tokens
+              relativeID: this.node.tokens.relativeID
             }
           }
         )

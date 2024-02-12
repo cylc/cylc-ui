@@ -318,8 +318,7 @@ export default {
   created () {
     // set the ID/file if specified in initialOptions
     if (this.initialOptions?.tokens?.task) {
-      this.relativeID = this.initialOptions.tokens.relative_id
-      this.jobLog = 1
+      this.relativeID = this.initialOptions.tokens.relativeID
     }
     if (this.initialOptions?.file) {
       this.file = this.initialOptions.file
