@@ -193,16 +193,39 @@ query LogFiles($id: ID!) {
 }
 `
 
-// The preferred file to start with as a list of patterns
-// The first pattern with a matching file name will be choosen
+/**
+ * The preferred file to start with as a list of patterns.
+ * The first pattern with a matching file name will be chosen.
+ */
 const LOG_FILE_DEFAULTS = [
   // job stdout
-  /job\.out/,
+  /^job\.out$/,
   // job script (e.g. on job submission failure)
-  /job/,
+  /^job$/,
   // scheduler log (lexographical sorting ensures the latest log)
-  /scheduler\/*/
+  /^scheduler\/*/
 ]
+
+/**
+ * Return the default log file from the given log filenames, if there is a
+ * matching filename. Relies on the filenames having been sorted in descending
+ * order.
+ *
+ * @param {string[]} logFiles - list of available log filenames
+ * @returns {?string}
+ */
+export const getDefaultFile = (logFiles) => {
+  if (logFiles.length) {
+    for (const filePattern of LOG_FILE_DEFAULTS) {
+      for (const fileName of logFiles) {
+        if (filePattern.exec(fileName)) {
+          return fileName
+        }
+      }
+    }
+  }
+  return null // rather than undefined
+}
 
 class Results {
   constructor () {
@@ -410,18 +433,9 @@ export default {
         if (this.file && !logFiles.includes(this.file)) {
           this.file = null
         }
-
+        if (!this.file) {
         // set the default log file if appropriate
-        if (!this.file && logFiles.length) {
-          for (const filePattern of LOG_FILE_DEFAULTS) {
-            for (const fileName of logFiles) {
-              if (filePattern.exec(fileName)) {
-                this.file = fileName
-                break
-              }
-            }
-            if (this.file) { break }
-          }
+          this.file = getDefaultFile(logFiles)
         }
       }
 
