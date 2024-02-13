@@ -73,12 +73,6 @@ export default {
       sortDesc: false,
     }
   },
-  watch: {
-    numPages () {
-      // Clamp page number
-      this.page = Math.min(this.numPages, this.page)
-    }
-  },
 
   methods: {
     /**
