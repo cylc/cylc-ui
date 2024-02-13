@@ -79,46 +79,12 @@ const expectedJobs = [{
 describe('GanttCallback', () => {
   it('adds data', () => {
     const ganttCallback = new GanttCallback([])
-    ganttCallback.add(data)
+    ganttCallback.onAdded(data)
+    expect(ganttCallback.jobs).toEqual(expectedJobs)
+  })
+  it('updates data', () => {
+    const ganttCallback = new GanttCallback([])
+    ganttCallback.onUpdated(data)
     expect(ganttCallback.jobs).toEqual(expectedJobs)
   })
 })
-
-//  describe('Gantt view', () => {
-//  let store, $workflowService
-//  beforeEach(() => {
-//    store = createStore(storeOptions)
-//    const user = new User('cylc', [], new Date(), true, 'localhost', 'owner')
-//    store.commit('user/SET_USER', user)
-//    $workflowService = sinon.createStubInstance(WorkflowService)
-//  })
-//
-//  it('computes tasks', async () => {
-//    const wrapper = mount(Table, {
-//      shallow: true,
-//      global: {
-//        plugins: [store],
-//        mocks: { $workflowService }
-//      },
-//      props: {
-//        workflowName: 'one',
-//      },
-//      data: () => ({
-//        // Override computed property
-//        workflows
-//      })
-//    })
-//
-//    expect(wrapper.vm.tasks).toMatchObject([
-//      {
-//        task: { id: '~user/one//1/eventually_succeeded' },
-//        latestJob: { id: '~user/one//1/eventually_succeeded/3' },
-//        previousJob: { id: '~user/one//1/eventually_succeeded/2' }
-//      },
-//      {
-//        task: { id: '~user/one//1/failed' },
-//        latestJob: { id: '~user/one//1/failed/1' },
-//      }
-//    ])
-//  })
-//  })

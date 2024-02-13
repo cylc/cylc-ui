@@ -156,8 +156,6 @@ export class GanttCallback {
    */
 
   add (data) {
-    console.log('data')
-    console.log(data)
     const taskNameList = Array.from(
       new Set(data.jobs.map((job) => job.name))
     )
