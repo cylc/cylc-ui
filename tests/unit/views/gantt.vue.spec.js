@@ -16,6 +16,9 @@
  */
 
 import { GanttCallback } from '@/views/Gantt.vue'
+import {
+  matchTasks
+} from '@/components/cylc/analysis/filter'
 
 const data = {
   jobs: [{
@@ -75,6 +78,17 @@ const expectedJobs = [{
     submittedTime: '2023-02-23T11:38:07Z'
   }],
 }]
+const filteredJobs = {
+  a: [{
+    name: 'a',
+    id: '~cbennett/analysis_view_test/run2//1/a/01',
+    submittedTime: '2023-02-23T11:36:58Z',
+    startedTime: '2023-02-23T11:37:00Z',
+    finishedTime: '2023-02-23T11:37:05Z',
+    platform: 'localhost',
+    __typename: 'UISJob'
+  }]
+}
 
 describe('GanttCallback', () => {
   it('adds data', () => {
@@ -86,5 +100,15 @@ describe('GanttCallback', () => {
     const ganttCallback = new GanttCallback([])
     ganttCallback.onUpdated(data)
     expect(ganttCallback.jobs).toEqual(expectedJobs)
+  })
+  it('matches tasks', () => {
+    const ganttCallback = new GanttCallback([])
+    ganttCallback.onAdded(data)
+    this.jobsFilter = {
+      name: ['a'],
+      timingOption: 'totalTimes',
+      platformOption: -1,
+    }
+    expect(matchTasks(ganttCallback.jobs[0], this.jobsFilter)).toEqual(filteredJobs)
   })
 })
