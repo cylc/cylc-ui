@@ -144,7 +144,7 @@ query ganttQuery ($workflows: [ID]) {
 }
 `
 /** The callback which gets called when data comes in from the query */
-class GanttCallback {
+export class GanttCallback {
   /**
    * @param {Object[]} jobs
    */
@@ -156,6 +156,8 @@ class GanttCallback {
    */
 
   add (data) {
+    console.log('data')
+    console.log(data)
     const taskNameList = Array.from(
       new Set(data.jobs.map((job) => job.name))
     )
