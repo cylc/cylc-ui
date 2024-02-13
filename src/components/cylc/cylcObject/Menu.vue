@@ -279,7 +279,7 @@ export default {
           {
             name: 'Log',
             initialOptions: {
-              relativeID: this.node.tokens.relativeID
+              relativeID: this.node.tokens.relativeID || null
             }
           }
         )

@@ -134,3 +134,52 @@ describe('Log View', () => {
       .should('be.visible')
   })
 })
+
+describe('Log command in menu', () => {
+  it('opens a log view tab', () => {
+    cy.visit('/#/workspace/one')
+      .get('.lm-DockPanel-widget')
+      .should('have.length', 1)
+      .get('.c-tree .c-job:first')
+      .click()
+      .get('.c-mutation').contains('Log')
+      .click()
+      .get('.lm-DockPanel-widget')
+      .should('have.length', 2)
+      .get('[data-cy=log-viewer]')
+      .contains(jobLogLines.join(''))
+  })
+})
+
+describe('Log view in workspace', () => {
+  it('remembers job ID and file when switching between workflows', () => {
+    const jobFile = 'job.out'
+    const jobID = '4/avocet'
+    cy.visit('/#/workspace/one')
+      .get('#workflow-mutate-button')
+      .click()
+      .get('.c-mutation').contains('Log')
+      .click()
+      .get('[data-cy=job-toggle]')
+      .click()
+      .get('.c-log [data-cy=job-id-input] input').as('jobIDInput')
+      .type(jobID)
+      .get('[data-cy=log-viewer]')
+      .should('be.visible')
+      .get('.c-log [data-cy=file-input] input').as('fileInput')
+      .invoke('val')
+      .should('eq', jobFile)
+    // Navigate away
+    cy.visit('/#/workspace/two')
+      .get('.c-log')
+      .should('not.exist')
+    // Navigate back
+    cy.visit('/#/workspace/one')
+      .get('@jobIDInput')
+      .invoke('val')
+      .should('eq', jobID)
+      .get('@fileInput')
+      .invoke('val')
+      .should('eq', jobFile)
+  })
+})

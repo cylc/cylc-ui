@@ -24,7 +24,6 @@ import sinon from 'sinon'
 import Log, { getDefaultFile } from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
-import { Tokens } from '@/utils/uid'
 
 describe('getDefaultFile()', () => {
   it.each([
@@ -89,7 +88,6 @@ describe('Log view', () => {
     props: {
       workflowName,
       initialOptions: {
-        tokens: new Tokens(workflowID),
         file: initialFile,
       },
     },
@@ -103,6 +101,15 @@ describe('Log view', () => {
       new User('cylc', [], new Date(), true, 'localhost', owner)
     )
     $workflowService = sinon.createStubInstance(WorkflowService)
+    $workflowService.apolloClient = {
+      query: () => ({
+        data: {
+          logFiles: {
+            files: ['a.log', 'b.log']
+          }
+        }
+      }),
+    }
   })
 
   it('issues the subscription', async () => {
@@ -119,17 +126,17 @@ describe('Log view', () => {
     // old file & log lines should be wiped
     expect(wrapper.vm.file).toBe(null)
     expect(wrapper.vm.results.lines).toEqual([])
+    expect(wrapper.vm.id).toBe(null)
     // should have unsubscribed
     expect(wrapper.vm.$workflowService.unsubscribe.calledOnce).toBe(true)
   })
 
   it('does not issue subscription for incomplete task ID', async () => {
-    const wrapper = mountFunction({
-      data: () => ({
-        jobLog: 1,
-        relativeID: '2000', // cycle point only is invalid
-      })
-    })
+    const wrapper = mountFunction()
+    wrapper.vm.jobLog = 1
+    await nextTick()
+    wrapper.vm.relativeID = '2000' // cycle point only is invalid
+    await nextTick()
     expect(wrapper.vm.id).toBe(null)
     expect(wrapper.vm.query).toBe(null)
     // type in complete task ID
@@ -143,5 +150,27 @@ describe('Log view', () => {
       id: expectedID,
       file: 'job.out',
     })
+  })
+
+  it('goes back to previous job when toggling job->workflow->job', async () => {
+    const relativeID = '2000/angua'
+    const expectedJobID = `${workflowID}//${relativeID}`
+    const wrapper = mountFunction({
+      props: {
+        workflowName,
+        initialOptions: {
+          file: 'job.out',
+          relativeID,
+        },
+      },
+    })
+    expect(wrapper.vm.jobLog).toEqual(1)
+    expect(wrapper.vm.id).toEqual(expectedJobID)
+    wrapper.vm.jobLog = 0
+    await nextTick()
+    expect(wrapper.vm.id).toEqual(workflowID)
+    wrapper.vm.jobLog = 1
+    await nextTick()
+    expect(wrapper.vm.id).toEqual(expectedJobID)
   })
 })
