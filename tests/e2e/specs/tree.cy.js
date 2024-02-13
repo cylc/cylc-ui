@@ -250,6 +250,30 @@ describe('Tree view', () => {
         .should('have.length', 1)
         .contains('retrying')
     })
+    it('remembers job ID and file when switching between workflows', () => {
+      cy.visit('/#/workspace/one')
+      cy
+        .get('.node-data-task')
+        .contains('failed')
+        .should('be.visible')
+      cy
+        .get('[data-cy=filter-id]')
+        .type('i')
+      cy
+        .get('[data-cy="filter task state"]')
+        .click()
+        .get('.v-list-item')
+        .contains(TaskState.WAITING.name)
+        .click({ force: true })
+      // Navigate away
+      cy.visit('/#/')
+      cy.title().should('eq', 'Cylc UI | Dashboard')
+      // Navigate back
+      cy.visit('/#/workspace/one')
+        .get('.node-data-task:visible')
+        .should('have.length', 1)
+        .contains('retrying')
+    })
   })
 
   describe('Expand/collapse all buttons', () => {

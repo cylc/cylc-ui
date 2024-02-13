@@ -88,10 +88,15 @@ import gql from 'graphql-tag'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import {
+  initialOptions,
+  useInitialOptions
+} from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import { matchID, matchState } from '@/components/cylc/common/filter'
+import { ref } from 'vue'
 
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
@@ -216,12 +221,22 @@ export default {
     }
   },
 
+  props: { initialOptions },
+
+  setup (props, { emit }) {
+    /**
+     * The job id input and selected task filter state.
+     * @type {import('vue').Ref<Object>}
+     */
+    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, ref({ id: null, states: null }))
+
+    return {
+      tasksFilter
+    }
+  },
+
   data: () => ({
     expandAll: null,
-    tasksFilter: {
-      id: null,
-      states: null,
-    },
   }),
 
   computed: {
