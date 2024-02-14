@@ -235,8 +235,6 @@ export const getDefaultFile = (logFiles) => {
   return null // rather than undefined
 }
 
-const getFileLabel = (id) => id ? `No log files for ${id}` : 'Enter a task/job ID'
-
 class Results {
   constructor () {
     /** @type {string[]} */
@@ -448,6 +446,10 @@ export default {
       // if reset===true then the this.file will be reset
       // otherwise it will be left alone
 
+      if (!this.id) {
+        this.handleNoLogFiles()
+        return
+      }
       // update the list of log files
       this.fileLabel = 'Updating available files...'
       this.fileDisabled = true
@@ -461,8 +463,7 @@ export default {
       } catch (err) {
         // the query failed
         console.warn(err)
-        this.fileLabel = getFileLabel(this.id)
-        this.fileDisabled = true
+        this.handleNoLogFiles()
         return
       }
       const logFiles = result.data.logFiles?.files ?? []
@@ -484,11 +485,14 @@ export default {
         this.fileDisabled = false
         this.logFiles = logFiles
       } else {
-        this.fileLabel = getFileLabel(this.id)
-        this.fileDisabled = true
-        this.logFiles = []
+        this.handleNoLogFiles()
       }
-    }
+    },
+    handleNoLogFiles () {
+      this.fileLabel = this.id ? `No log files for ${this.id}` : 'Enter a task/job ID'
+      this.fileDisabled = true
+      this.logFiles = []
+    },
   },
 
   watch: {
