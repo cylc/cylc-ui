@@ -128,12 +128,6 @@ export default {
       }
       return [{ data }]
     },
-    watch: {
-      numPages () {
-        // Clamp page number
-        this.page = Math.min(this.numPages, this.page)
-      }
-    },
     numPages () {
       if (this.jobs.length !== 0) {
         return Math.ceil(Object.keys(this.jobs[0]).length / this.tasksPerPage)
