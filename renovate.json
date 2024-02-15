@@ -44,6 +44,11 @@
       "matchPackagePatterns": ["^@lumino/"]
     },
     {
+      "groupName": "apollo packages",
+      "matchPackagePatterns": ["^@apollo/"],
+      "schedule": ["on the 10th day of the month"]
+    },
+    {
       "matchPackageNames": ["sass"],
       "schedule": ["on the 25th day of the month"]
     },
