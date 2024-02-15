@@ -30,14 +30,16 @@ const mutations = {
   setTitle (state, title) {
     state.title = title
   },
-  saveLayout (state, { workflowName, layout, views }) {
+  saveLayout ({ workspaceLayouts }, { workflowName, layout, views }) {
+    // Delete and re-add to keep this FIFO
+    workspaceLayouts.delete(workflowName)
     /* NOTE: use markRaw to prevent proxying of the Lumino layout in particular.
     It is not necessary for this saved state to be reactive, and moreover
     proxying the layout breaks some parts of the 3rd party Lumino backend. */
-    state.workspaceLayouts.set(workflowName, markRaw({ layout, views }))
-    if (state.workspaceLayouts.size > 10) {
-      const firstKey = state.workspaceLayouts.keys().next().value
-      state.workspaceLayouts.delete(firstKey)
+    workspaceLayouts.set(workflowName, markRaw({ layout, views }))
+    if (workspaceLayouts.size > 100) {
+      const firstKey = workspaceLayouts.keys().next().value
+      workspaceLayouts.delete(firstKey)
     }
   }
 }
