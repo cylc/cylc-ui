@@ -119,13 +119,13 @@ onMounted(() => {
   Widget.attach(boxPanel, mainDiv.value)
   // Watch for resize of the main element to trigger relayout:
   resizeObserver.observe(mainDiv.value)
-  $eventBus.on('add-view', addWidget)
+  $eventBus.on('add-view', addView)
   getLayout(props.workflowName)
 })
 
 onBeforeUnmount(() => {
   resizeObserver.disconnect()
-  $eventBus.off('add-view', addWidget)
+  $eventBus.off('add-view', addView)
   saveLayout()
   // Register with Lumino that the dock panel is no longer used,
   // otherwise uncaught errors can occur when restoring layout
@@ -138,7 +138,7 @@ onBeforeUnmount(() => {
  * @param {AddViewEvent} view
  * @param {boolean} onTop
  */
-const addWidget = (view, onTop = true) => {
+const addView = (view, onTop = true) => {
   const id = uniqueId('widget')
   const luminoWidget = new LuminoWidget(id, startCase(view.name), /* closable */ true)
   dockPanel.addWidget(luminoWidget, { mode: 'tab-after' })
@@ -155,7 +155,7 @@ const addWidget = (view, onTop = true) => {
 /**
  * Remove all the widgets present in the DockPanel.
  */
-const removeAllWidgets = () => {
+const closeAllViews = () => {
   for (const widget of Array.from(dockPanel.widgets())) {
     widget.close()
   }
@@ -168,7 +168,7 @@ const removeAllWidgets = () => {
  * @param {string} workflowName
  */
 const getLayout = (workflowName) => {
-  restoreLayout(workflowName) || addWidget({ name: defaultView.value })
+  restoreLayout(workflowName) || addView({ name: defaultView.value })
 }
 
 /**
@@ -212,7 +212,7 @@ const restoreLayout = (workflowName) => {
  */
 const changeLayout = (workflowName) => {
   saveLayout()
-  removeAllWidgets()
+  closeAllViews()
   // Wait if necessary for the workflowName prop to be updated to the new value:
   when(
     () => props.workflowName === workflowName,
