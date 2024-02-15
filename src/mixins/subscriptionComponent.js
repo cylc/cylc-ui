@@ -42,6 +42,10 @@ export default {
   beforeMount () {
     if (this.query) {
       this.$workflowService.subscribe(this)
+    }
+  },
+  mounted () {
+    if (this.query) {
       this.$workflowService.startSubscriptions()
     }
   },
