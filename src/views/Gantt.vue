@@ -25,37 +25,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md="4"
           class="pr-md-2 mb-2 mb-md-0"
         >
-          <v-autocomplete
-            multiple
-            chips
-            closable-chips
-            clearable
-            placeholder="Search"
-            :items="callback.uniqueTasks"
-            v-model="jobsFilter.name"
-            label="Select tasks"
-            ref="selectTasks"
-            @update:search="updateSelectionOptions"
-          >
-            <template
-              v-slot:prepend-item
-              v-if="this.showSelectAll"
+          <v-skeleton-loader type="list-item-avatar">
+            <v-autocomplete
+              multiple
+              chips
+              closable-chips
+              clearable
+              placeholder="Search"
+              :items="callback.uniqueTasks"
+              v-model="jobsFilter.name"
+              label="Select tasks"
+              ref="selectTasks"
+              @update:search="updateSelectionOptions"
             >
-              <v-list-item
-                ripple
-                @click="selectSearchResults"
+              <template
+                v-slot:prepend-item
+                v-if="this.showSelectAll"
               >
-                Select all search results
-              </v-list-item>
-              <v-list-item
-                ripple
-                @click="deselectSearchResults"
-              >
-                Remove all search results
-              </v-list-item>
-            <v-divider class="mt-2"></v-divider>
-            </template>
-          </v-autocomplete>
+                <v-list-item
+                  ripple
+                  @click="selectSearchResults"
+                >
+                  Select all search results
+                </v-list-item>
+                <v-list-item
+                  ripple
+                  @click="deselectSearchResults"
+                >
+                  Remove all search results
+                </v-list-item>
+                <v-divider class="mt-2"></v-divider>
+              </template>
+            </v-autocomplete>
+          </v-skeleton-loader>
         </v-col>
         <v-col
           cols="12"
@@ -98,12 +100,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div
         id="gantt-toolbar"
         class="d-flex align-center flex-wrap my-2 col-gap-2 row-gap-4">
-
-        <!-- Toolbar -->
-        <v-defaults-provider>
-
-          <!-- Box plot sort input teleports here -->
-        </v-defaults-provider>
       </div>
       <GanttChart
         :jobs="filteredJobs"
@@ -122,6 +118,7 @@ import gql from 'graphql-tag'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
+import DeltasCallback from '@/services/callbacks'
 import {
   matchTasks,
   platformOptions
@@ -144,11 +141,12 @@ query ganttQuery ($workflows: [ID]) {
 }
 `
 /** The callback which gets called when data comes in from the query */
-export class GanttCallback {
+export class GanttCallback extends DeltasCallback {
   /**
    * @param {Object[]} jobs
    */
   constructor (jobs) {
+    super(jobs)
     this.jobs = jobs
   }
   /**
@@ -179,13 +177,6 @@ export class GanttCallback {
   onUpdated (updated, store, errors) {
     this.add(updated)
   }
-
-  // other hooks we don't need but must declare (for now)
-  before () {}
-  after () {}
-  onPruned () {}
-  commit () {}
-  tearDown () {}
 }
 export default {
   name: 'Gantt',
