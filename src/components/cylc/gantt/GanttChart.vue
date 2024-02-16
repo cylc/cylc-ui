@@ -71,6 +71,11 @@ export default {
     },
   },
 
+  setup () {
+    const reducedAnimation = useReducedAnimation()
+    return { reducedAnimation }
+  },
+
   data () {
     return {
       page: 1,
@@ -145,7 +150,7 @@ export default {
       return {
         chart: {
           animations: {
-            enabled: useReducedAnimation().value ? false : this.animate,
+            enabled: this.animate && !this.reducedAnimation,
             easing: 'easeinout',
             speed: 300,
             animateGradually: {
