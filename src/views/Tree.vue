@@ -17,14 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    {{this.workflowId}}
-    <div>-----------optionsArrayfrom Component-----------</div>
-    {{ this.optionsArray }}
-    <div>-----------getOptions(this.workflowId)-----------</div>
-    {{this.getOptions(this.workflowId)}}
-    <div>-----------options-----------</div>
-    {{ this.options }}
-    <!-- {{optionsArray}} -->
     <v-container
       fluid
       class="c-tree pa-2"
@@ -249,21 +241,13 @@ export default {
       this.options = this.getOptions(this.workflowId).options
     }
     // load optionsArray from local sotrage if it exists
-    if (localStorage.getItem('viewState')) {
-
-      // console.log('-----MOUNTED and found viewState-----')
-      // console.log(localStorage.getItem('viewState'))
-      // console.log(JSON.parse(localStorage.getItem('viewState')))
-      // this.optionsArray = JSON.parse(localStorage.getItem('viewState'))
-
-      // this.optionsArray = JSON.parse(localStorage.getItem('viewState'))
-      // if (this.getOptions(this.workflowId)) {
-      //   this.options = this.getOptions(this.workflowId).options
-      // } else {
-      //   this.newOptions(this.workflowId)
-      //   this.options = this.getOptions(this.workflowId).options
-      // }
-    } else { console.log('no viewState in local storage') }
+    if (localStorage.getItem('viewState') !== 'false') {
+      this.optionsArray = JSON.parse(localStorage.getItem('viewState'))
+      this.options = this.getOptions(this.workflowId).options
+    } else {
+      // need a completely new optionsArray
+      this.optionsArray = useViewState().optionsArray
+    }
   },
 
   watch: {
@@ -276,7 +260,7 @@ export default {
         this.options = this.getOptions(newVal).options
       }
     },
-    // save options to localStorage
+    // save options to local storage whenever options ref changes
     options: {
       handler: function (newVal, oldVal) {
         this.viewStateLocalStore = JSON.stringify(this.optionsArray)
