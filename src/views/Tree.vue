@@ -101,6 +101,7 @@ import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import { matchID, matchState } from '@/components/cylc/common/filter'
 import useViewState from '@/composables/useViewState'
+import { useViewStateLocalStore } from '@/composables/localStorage'
 
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
@@ -230,7 +231,8 @@ export default {
     return {
       optionsArray,
       getOptions,
-      newOptions
+      newOptions,
+      viewStateLocalStore: useViewStateLocalStore()
     }
   },
 
@@ -238,14 +240,30 @@ export default {
     options: {},
   }),
 
-  // load or create new options object if changing components
   mounted () {
+    // load or create new options object if changing components
     if (this.getOptions(this.workflowId)) {
       this.options = this.getOptions(this.workflowId).options
     } else {
       this.newOptions(this.workflowId)
       this.options = this.getOptions(this.workflowId).options
     }
+    // load optionsArray from local sotrage if it exists
+    if (localStorage.getItem('viewState')) {
+
+      // console.log('-----MOUNTED and found viewState-----')
+      // console.log(localStorage.getItem('viewState'))
+      // console.log(JSON.parse(localStorage.getItem('viewState')))
+      // this.optionsArray = JSON.parse(localStorage.getItem('viewState'))
+
+      // this.optionsArray = JSON.parse(localStorage.getItem('viewState'))
+      // if (this.getOptions(this.workflowId)) {
+      //   this.options = this.getOptions(this.workflowId).options
+      // } else {
+      //   this.newOptions(this.workflowId)
+      //   this.options = this.getOptions(this.workflowId).options
+      // }
+    } else { console.log('no viewState in local storage') }
   },
 
   watch: {
@@ -259,10 +277,11 @@ export default {
       }
     },
     // save options to localStorage
-    options (newVal, oldVal) {
-      console.log('-----------------')
-      console.log(this.optionsArray)
-      console.log('-----------------')
+    options: {
+      handler: function (newVal, oldVal) {
+        this.viewStateLocalStore = JSON.stringify(this.optionsArray)
+      },
+      deep: true
     }
   },
 
