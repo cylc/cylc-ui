@@ -206,7 +206,7 @@ export default {
   data () {
     const jobs = []
     return {
-      tasksPerPage: 5,
+      tasksPerPage: 10,
       callback: new GanttCallback(jobs),
       /** Object containing all of the jobs added by the callback */
       jobs,
@@ -261,7 +261,7 @@ export default {
     ),
   },
   taskChoices: [
-    2, 5, 10, 25, 50
+    10, 25, 50, 100
   ],
 }
 </script>

@@ -20,8 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     type="rangeBar"
     :options="chartOptions"
     :series="series"
-    width="95%"
-    height="150%"
+    width="100%"
+    height="auto"
     class="d-flex justify-center"
   />
   <v-pagination
@@ -42,6 +42,11 @@ import { useReducedAnimation } from '@/composables/localStorage'
 export default {
   name: 'GanttChart',
 
+  watch: {
+    tasksPerPage: function () {
+      this.page = 1
+    },
+  },
   components: {
     VueApexCharts,
   },
@@ -58,7 +63,7 @@ export default {
     },
     tasksPerPage: {
       type: Number,
-      default: 20,
+      default: 10,
     },
     animate: {
       type: Boolean,
@@ -188,6 +193,12 @@ export default {
           },
           title: {
             text: 'Time',
+          },
+        },
+        yaxis: {
+          labels: {
+            maxWidth: 280,
+            offsetX: -10,
           },
         },
       }
