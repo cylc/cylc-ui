@@ -14,7 +14,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="c-gantt">
+    <v-skeleton-loader
+      v-if="!jobs.length"
+      type="table"
+      class="align-content-start"
+    />
     <v-container
+      v-else
       fluid
       class="pa-2"
     >
@@ -25,39 +31,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md="4"
           class="pr-md-2 mb-2 mb-md-0"
         >
-          <v-skeleton-loader type="list-item-avatar">
-            <v-autocomplete
-              multiple
-              chips
-              closable-chips
-              clearable
-              placeholder="Search"
-              :items="callback.uniqueTasks"
-              v-model="jobsFilter.name"
-              label="Select tasks"
-              ref="selectTasks"
-              @update:search="updateSelectionOptions"
+          <v-autocomplete
+            multiple
+            chips
+            closable-chips
+            clearable
+            placeholder="Search"
+            :items="callback.uniqueTasks"
+            v-model="jobsFilter.name"
+            label="Select tasks"
+            ref="selectTasks"
+            @update:search="updateSelectionOptions"
+          >
+            <template
+              v-slot:prepend-item
+              v-if="this.showSelectAll"
             >
-              <template
-                v-slot:prepend-item
-                v-if="this.showSelectAll"
+              <v-list-item
+                ripple
+                @click="selectSearchResults"
               >
-                <v-list-item
-                  ripple
-                  @click="selectSearchResults"
-                >
-                  Select all search results
-                </v-list-item>
-                <v-list-item
-                  ripple
-                  @click="deselectSearchResults"
-                >
-                  Remove all search results
-                </v-list-item>
-                <v-divider class="mt-2"></v-divider>
-              </template>
-            </v-autocomplete>
-          </v-skeleton-loader>
+                Select all search results
+              </v-list-item>
+              <v-list-item
+                ripple
+                @click="deselectSearchResults"
+              >
+                Remove all search results
+              </v-list-item>
+              <v-divider class="mt-2"></v-divider>
+            </template>
+          </v-autocomplete>
         </v-col>
         <v-col
           cols="12"
