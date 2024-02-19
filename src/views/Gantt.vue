@@ -41,26 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="jobsFilter.name"
             label="Select tasks"
             ref="selectTasks"
-            @update:search="updateSelectionOptions"
           >
-            <template
-              v-slot:prepend-item
-              v-if="this.showSelectAll"
-            >
-              <v-list-item
-                ripple
-                @click="selectSearchResults"
-              >
-                Select all search results
-              </v-list-item>
-              <v-list-item
-                ripple
-                @click="deselectSearchResults"
-              >
-                Remove all search results
-              </v-list-item>
-              <v-divider class="mt-2"></v-divider>
-            </template>
           </v-autocomplete>
         </v-col>
         <v-col
