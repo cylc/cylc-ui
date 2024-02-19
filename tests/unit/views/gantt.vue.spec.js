@@ -104,11 +104,11 @@ describe('GanttCallback', () => {
   it('matches tasks', () => {
     const ganttCallback = new GanttCallback([])
     ganttCallback.onAdded(data)
-    this.jobsFilter = {
+    const jobsFilter = {
       name: ['a'],
       timingOption: 'totalTimes',
       platformOption: -1,
     }
-    expect(matchTasks(ganttCallback.jobs[0], this.jobsFilter)).toEqual(filteredJobs)
+    expect(matchTasks(ganttCallback.jobs[0], jobsFilter)).toEqual(filteredJobs)
   })
 })
