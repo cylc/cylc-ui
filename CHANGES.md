@@ -27,6 +27,9 @@ Various other efficiency improvements.
 Fix bug where the up/down/home/end keys would not work inside the Edit Runtime
 form inputs.
 
+[#1466](https://github.com/cylc/cylc-ui/pull/1466) -
+Gantt view added.
+
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.3.0 (<span actions:bind='release-date'>Released 2023-11-28</span>)__
 
