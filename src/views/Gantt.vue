@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-col
           cols="12"
           md="4"
-          class="pr-md-2 mb-2 mb-md-0"
+          class="pr-md-2 mb-2"
         >
           <v-autocomplete
             multiple
@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-col
           cols="12"
           md="4"
-          class="mb-2 mb-md-0"
+          class="mb-2"
         >
           <v-select
             id="c-gantt-filter-job-timings"
@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-col
           cols="12"
           md="4"
-          class="pl-md-2 mb-2 mb-md-0"
+          class="pl-md-2 mb-2"
         >
           <v-select
             id="c-gantt-filter-job-platforms"
@@ -68,12 +68,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="jobsFilter.platformOption"
           />
         </v-col>
-      </v-row>
-      <v-row no-gutters>
         <v-col
           cols="12"
           md="4"
-          class="pr-md-2 mb-2 mb-md-0"
+          class="pr-md-2 mb-2"
         >
           <v-select
             id="c-gantt-tasks-per-page"
@@ -82,10 +80,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-model="tasksPerPage"/>
         </v-col>
       </v-row>
-      <div
-        id="gantt-toolbar"
-        class="d-flex align-center flex-wrap my-2 col-gap-2 row-gap-4">
-      </div>
       <GanttChart
         :jobs="filteredJobs"
         :timing-option="timingOption"

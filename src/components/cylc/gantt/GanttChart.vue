@@ -213,7 +213,7 @@ export default {
 </script>
 
 <style>
-.apexcharts-text {
+:deep(.apexcharts-text) {
   font-size: 0.9rem;
 }
 </style>
