@@ -40,6 +40,10 @@
       "schedule": ["on the 5th and 20th day of the month"]
     },
     {
+      "matchPackageNames": ["vuetify"],
+      "schedule": ["on the 7th day of the month"]
+    },
+    {
       "groupName": "lumino packages",
       "matchPackagePatterns": ["^@lumino/"]
     },
