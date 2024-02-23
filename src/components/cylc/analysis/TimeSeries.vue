@@ -101,6 +101,7 @@ import { formatDuration } from '@/utils/tasks'
 import {
   mdiDownload,
 } from '@mdi/js'
+import { useReducedAnimation } from '@/composables/localStorage'
 
 /** List of fields to request for task for each task */
 const jobFields = [
@@ -195,6 +196,11 @@ export default {
     },
   },
 
+  setup () {
+    const reducedAnimation = useReducedAnimation()
+    return { reducedAnimation }
+  },
+
   data () {
     const jobs = []
     return {
@@ -271,7 +277,7 @@ export default {
       return {
         chart: {
           animations: {
-            enabled: this.$store.state.app.reducedAnimation ? false : this.animate,
+            enabled: this.animate && !this.reducedAnimation,
             easing: 'easeinout',
             speed: 300,
             animateGradually: {
@@ -347,6 +353,19 @@ export default {
     miniChartOptions () {
       return {
         chart: {
+          animations: {
+            enabled: this.animate && !this.reducedAnimation,
+            easing: 'easeinout',
+            speed: 300,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
+          },
           selection: {
             enabled: true,
             xaxis: {
