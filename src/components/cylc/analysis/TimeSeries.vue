@@ -110,7 +110,8 @@ const jobFields = [
   'cyclePoint',
   'totalTime',
   'queueTime',
-  'runTime'
+  'runTime',
+  'startedTime'
 ]
 
 /** The one-off query which retrieves historical job timing statistics */
@@ -244,20 +245,18 @@ export default {
       for (const job of this.jobs) {
         if (this.displayedTasks.includes(job.name)) {
           if (this.platformOption === -1 || job.platform === this.platformOption) {
-            if (this.timingOption === 'total') {
-              time = job.totalTime
-            } else if (this.timingOption === 'run') {
-              time = job.runTime
-            } else if (this.timingOption === 'queue') {
-              time = job.queueTime
+            const currentStartedTime = seriesData[job.name].data[job.cyclePoint].startedTime
+            // Only add data if this job was run more recently than any existing data
+            if (currentStartedTime === undefined || job.startedTime.localeCompare(currentStartedTime) === 1) {
+              time = job[`${this.timingOption}Time`]
+              // What happens if I make x, y, z etc an array? (cf dataPointIndex in y tooltip)
+              seriesData[job.name].data[job.cyclePoint].x = job.cyclePoint
+              seriesData[job.name].data[job.cyclePoint].y = time
+              seriesData[job.name].data[job.cyclePoint].z = job.platform
+              seriesData[job.name].data[job.cyclePoint].platform = job.platform
+              seriesData[job.name].data[job.cyclePoint].time = job.runTime
+              seriesData[job.name].data[job.cyclePoint].startedTime = job.startedTime
             }
-            // todo: check job is latest before setting
-            // What happens if I make x, y, z etc an array? (cf dataPointIndex in y tooltip)
-            seriesData[job.name].data[job.cyclePoint].x = job.cyclePoint
-            seriesData[job.name].data[job.cyclePoint].y = time
-            seriesData[job.name].data[job.cyclePoint].z = job.platform
-            seriesData[job.name].data[job.cyclePoint].platform = job.platform
-            seriesData[job.name].data[job.cyclePoint].time = job.runTime
           }
         }
       }
