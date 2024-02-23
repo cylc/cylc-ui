@@ -83,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="d-flex justify-center"
     />
   </div>
-  <p>{{ displayedTasks }}</p>
+  <!-- <p>{{ displayedTasks }}</p> -->
   </template>
 
 <script>
@@ -207,11 +207,9 @@ export default {
       jobCallback: new AnalysisJobCallback(jobs),
       /** Object containing all of the jobs added by the callback */
       jobs,
-      taskName: '',
       displayedTasks: [],
       showOrigin: false,
       xRange: [undefined, undefined],
-      autocompleteFilteredTasks: [],
       showSelectAll: false,
     }
   },
