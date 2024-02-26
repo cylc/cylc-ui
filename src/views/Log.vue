@@ -146,7 +146,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { ref } from 'vue'
-import { usePrevious } from '@vueuse/core'
+import { usePrevious, whenever } from '@vueuse/core'
+import { useStore } from 'vuex'
 import {
   mdiClockOutline,
   mdiFileAlertOutline,
@@ -168,6 +169,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { Tokens } from '@/utils/uid'
 import gql from 'graphql-tag'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
+import DeltasCallback from '@/services/callbacks'
 import debounce from 'lodash/debounce'
 
 /**
@@ -185,10 +187,6 @@ subscription LogData ($id: ID!, $file: String!) {
   }
 }
 `
-
-//    error
-//    path
-//    connected
 
 /**
  * Query used to retrieve available log files for the Log view.
@@ -251,31 +249,33 @@ class Results {
 }
 
 /** Callback for assembling the log file from the subscription */
-class LogsCallback {
+class LogsCallback extends DeltasCallback {
   /**
    * @param {Results} results
    */
   constructor (results) {
+    super()
     this.results = results
   }
 
   onAdded (added, store, errors) {
+    if (this.results.connected === false) {
+      // We have reconnected; clear the current lines otherwise they will be duplicated
+      this.results.lines = []
+    }
     if (added.lines) {
       this.results.lines.push(...added.lines)
     }
-    if (added.connected !== null) {
+    if (added.connected != null) {
       this.results.connected = added.connected
     }
-    if (added.error !== null) {
+    if (added.error != null) {
       this.results.error = added.error
     }
-    if (added.path !== null) {
+    if (added.path != null) {
       this.results.path = added.path
     }
   }
-
-  tearDown (store, errors) {}
-  commit (store, errors) {}
 }
 
 export default {
@@ -306,6 +306,8 @@ export default {
   },
 
   setup (props, { emit }) {
+    const store = useStore()
+
     /**
      * The task/job ID input.
      * @type {import('vue').Ref<string>}
@@ -326,6 +328,18 @@ export default {
     /** Wrap lines? */
     const wordWrap = useInitialOptions('wordWrap', { props, emit }, false)
 
+    /** The log subscription results */
+    const results = ref(new Results())
+
+    function reset () {
+      results.value = new Results()
+    }
+
+    whenever(
+      () => store.state.offline,
+      () => { results.value.connected = false }
+    )
+
     /** Set the value of relativeID at most every 0.5 seconds, used for text input */
     const debouncedUpdateRelativeID = debounce((value) => {
       relativeID.value = value
@@ -336,8 +350,7 @@ export default {
       query: ref(null),
       // list of log files for the selected workflow/task/job
       logFiles: ref([]),
-      // the log file as a list of lines
-      results: ref(new Results()),
+      results,
       relativeID,
       previousRelativeID,
       file,
@@ -350,6 +363,7 @@ export default {
       jobLog: ref(relativeID.value == null ? 0 : 1),
       timestamps,
       wordWrap,
+      reset,
       debouncedUpdateRelativeID,
     }
   },
@@ -432,9 +446,6 @@ export default {
     setOption (option, value) {
       // used by the ViewToolbar to update settings
       this[option] = value
-    },
-    reset () {
-      this.results = new Results()
     },
     updateQuery () {
       // update the subscription query
