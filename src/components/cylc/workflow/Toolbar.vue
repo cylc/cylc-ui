@@ -106,15 +106,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <v-list>
             <v-list-item
-              v-for="view in views"
-              :id="`toolbar-add-${ view.name }-view`"
-              :key="view.name"
-              @click="$emit('add', { viewName: view.name })"
+              v-for="[name, view] in views"
+              :id="`toolbar-add-${name}-view`"
+              :key="name"
+              @click="$eventBus.emit('add-view', { name })"
             >
               <template #prepend>
                 <v-icon>{{ view.icon }}</v-icon>
               </template>
-              <v-list-item-title>{{ startCase(view.name) }}</v-list-item-title>
+              <v-list-item-title>{{ startCase(name) }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -189,13 +189,16 @@ export default {
   ],
 
   props: {
+    /**
+     * All possible view component classes that can be rendered
+     *
+     * @type {Map<string, import('@/views/views.js').CylcView>}
+     */
     views: {
-      type: Array,
+      type: Map,
       required: true
     }
   },
-
-  emits: ['add'],
 
   data: () => ({
     expecting: {

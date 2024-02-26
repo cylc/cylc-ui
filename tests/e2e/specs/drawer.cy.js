@@ -24,7 +24,7 @@ import { initialWidth, minWidth } from '@/components/cylc/Drawer.vue'
  */
 const resize = (width) => cy
   .get('#c-sidebar .resize-bar')
-  .trigger('mousedown', { which: 1 })
+  .trigger('mousedown')
   .trigger('mousemove', { clientX: width, clientY: 500 })
   .trigger('mouseup', { force: true })
 

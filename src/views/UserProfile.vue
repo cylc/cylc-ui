@@ -218,15 +218,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
                 <v-select
                   v-model="defaultView"
-                  :items="Object.keys($options.allViews)"
-                  :prepend-inner-icon="$options.allViews[defaultView]"
+                  :items="Array.from($options.allViews.keys())"
+                  :prepend-inner-icon="$options.allViews.get(defaultView).icon"
                   data-cy="select-default-view"
                   :menu-props="{ 'data-cy': 'select-default-view-menu' }"
                 >
                   <template v-slot:item="{ item, props }">
                     <v-list-item
                       v-bind="props"
-                      :prepend-icon="$options.allViews[item.value]"
+                      :prepend-icon="$options.allViews.get(item.value).icon"
                     />
                   </template>
                 </v-select>
@@ -285,9 +285,7 @@ export default {
     getCurrentFontSize,
   },
 
-  allViews: Object.fromEntries(
-    allViews.map(({ name, icon }) => [name, icon])
-  ),
+  allViews,
 
   vuetifyDefaults: {
     global: {

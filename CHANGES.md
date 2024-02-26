@@ -13,6 +13,11 @@ ones in. -->
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.4.0 (<span actions:bind='release-date'>Upcoming</span>)__
 
+### Enhancements
+
+[#1664](https://github.com/cylc/cylc-ui/pull/1664) -
+Workspace tab layout is now remembered & restored when navigating between workflows.
+
 ### Fixes
 
 [#1623](https://github.com/cylc/cylc-ui/pull/1623),

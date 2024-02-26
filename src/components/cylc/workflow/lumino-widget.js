@@ -43,9 +43,6 @@ export default class LuminoWidget extends Widget {
     // classes and flags
     this.setFlag(Widget.Flag.DisallowLayout)
     this.addClass('content')
-    // tab title
-    this.title.label = name
-    this.title.closable = closable
   }
 
   /**
@@ -57,6 +54,18 @@ export default class LuminoWidget extends Widget {
     const div = document.createElement('div')
     div.setAttribute('id', id)
     return div
+  }
+
+  onBeforeAttach (msg) {
+    // Set tab title as this is not handled automatically for some reason.
+    // NOTE: We do this in the onBeforeAttach hook rather than in the constructor
+    // because the constructor does not get called when we restore layout to the
+    // dock panel.
+    // Setting these properties are handled by setters in the @lumino/widgets code
+    // which cause the tab panel to be updated.
+    this.title.label = this.name
+    this.title.closable = this.closable
+    super.onBeforeAttach(msg)
   }
 
   onActivateRequest (msg) {
