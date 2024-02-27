@@ -26,98 +26,114 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-    class="c-log py-1"
+    class="c-log h-100 pa-0 d-flex flex-column"
     fluid
   >
-    <!-- the controls -->
-    <v-row dense>
-      <v-col>
-        <v-btn-toggle
-          v-model="jobLog"
-          divided
-          mandatory
-          variant="outlined"
-          color="primary"
-        >
-          <v-btn data-cy="workflow-toggle">Workflow</v-btn>
-          <v-btn data-cy="job-toggle">Job</v-btn>
-        </v-btn-toggle>
-        <ViewToolbar
-          :groups="controlGroups"
-          @setOption="setOption"
-        />
-      </v-col>
-    </v-row>
-
-    <!-- the inputs -->
-    <v-row dense>
-      <v-col cols="8">
-        <v-text-field
-          v-if="jobLog"
-          data-cy="job-id-input"
-          class="flex-grow-1 flex-column"
-          :model-value="relativeID"
-          @update:modelValue="debouncedUpdateRelativeID"
-          placeholder="cycle/task/job"
-          clearable
-        />
-        <v-text-field
-          v-else
-          data-cy="workflow-id-input"
-          v-model="workflowId"
-          disabled
-        />
-      </v-col>
-      <v-col cols="4">
-        <v-select
-          data-cy="file-input"
-          :label="fileLabel"
-          :disabled="fileDisabled"
-          :items="logFiles"
-          v-model="file"
-          clearable
-          :menu-props="{ 'data-cy': 'file-input-menu' }"
-        />
-      </v-col>
-    </v-row>
-
-    <!-- the status line -->
-    <v-row dense>
-      <v-col
-        v-if="results.path"
-        class="d-flex align-center overflow-x-auto text-pre"
+    <v-container fluid>
+      <!-- the controls -->
+      <v-row
+        dense
+        class="flex-0-0"
       >
-        <v-chip
-          data-cy="connected-icon"
-          variant="outlined"
-          class="flex-shrink-0"
-          v-bind="results.connected ? {
-            color: 'success',
-            prependIcon: $options.icons.mdiPowerPlug,
-          } : {
-            color: 'error',
-            prependIcon: $options.icons.mdiPowerPlugOff,
-            onClick: updateQuery
-          }"
+        <v-col class="pt-0">
+          <v-btn-toggle
+            v-model="jobLog"
+            divided
+            mandatory
+            variant="outlined"
+            color="primary"
+            density="comfortable"
+          >
+            <v-btn data-cy="workflow-toggle">Workflow</v-btn>
+            <v-btn data-cy="job-toggle">Job</v-btn>
+          </v-btn-toggle>
+          <ViewToolbar
+            :groups="controlGroups"
+            @setOption="setOption"
+            size="40"
+          />
+        </v-col>
+      </v-row>
+
+      <!-- the inputs -->
+      <v-row
+        dense
+        class="flex-0-0"
+      >
+        <v-col cols="8">
+          <v-text-field
+            v-if="jobLog"
+            data-cy="job-id-input"
+            class="flex-grow-1 flex-column"
+            :model-value="relativeID"
+            @update:modelValue="debouncedUpdateRelativeID"
+            placeholder="cycle/task/job"
+            clearable
+          />
+          <v-text-field
+            v-else
+            data-cy="workflow-id-input"
+            v-model="workflowId"
+            disabled
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-select
+            data-cy="file-input"
+            :label="fileLabel"
+            :disabled="fileDisabled"
+            :items="logFiles"
+            v-model="file"
+            clearable
+            :menu-props="{ 'data-cy': 'file-input-menu' }"
+          />
+        </v-col>
+      </v-row>
+
+      <!-- the status line -->
+      <v-row
+        dense
+        class="flex-0-0"
+      >
+        <v-col
+          v-if="results.path"
+          class="d-flex align-center overflow-x-auto text-pre"
         >
-          {{ results.connected ? 'Connected' : 'Reconnect' }}
-        </v-chip>
-        <span
-          data-cy="log-path"
-          style="padding-left: 0.5em; color: rgb(150,150,150);"
-        >
-          {{ results.path }}
-        </span>
-      </v-col>
-    </v-row>
+          <v-chip
+            data-cy="connected-icon"
+            variant="outlined"
+            class="flex-shrink-0"
+            v-bind="results.connected ? {
+              color: 'success',
+              prependIcon: $options.icons.mdiPowerPlug,
+            } : {
+              color: 'error',
+              prependIcon: $options.icons.mdiPowerPlugOff,
+              onClick: updateQuery
+            }"
+          >
+            {{ results.connected ? 'Connected' : 'Reconnect' }}
+          </v-chip>
+          <span
+            data-cy="log-path"
+            style="padding-left: 0.5em; color: rgb(150,150,150);"
+          >
+            {{ results.path }}
+          </span>
+        </v-col>
+      </v-row>
+    </v-container>
 
     <!-- the log file viewer -->
-    <v-row>
+    <v-row
+      no-gutters
+      class="overflow-auto px-4 pb-2"
+    >
       <v-col>
         <v-skeleton-loader
           v-if="id && file && results.connected == null"
           type="text@5"
-          class="mx-n4"
+          class="mx-n4 align-content-start"
         />
         <template v-else>
           <v-alert
