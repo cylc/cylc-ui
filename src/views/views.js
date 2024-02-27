@@ -61,6 +61,7 @@ export const allViews = new Map([
   ['Graph', { component: GraphView, icon: mdiGraph }],
   ['Log', { component: LogView, icon: mdiFileDocumentMultipleOutline }],
   ['Analysis', { component: AnalysisView, icon: mdiChartLine }],
+  ['Gantt', { component: GanttView, icon: mdiChartGantt }]
 ])
 // Development views that we don't want in production:
 if (import.meta.env.MODE !== 'production') {
