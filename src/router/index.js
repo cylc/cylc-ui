@@ -76,9 +76,7 @@ router.beforeEach(async (to, from) => {
   if (!store.state.user.user.permissions.includes('read') && to.name !== 'noAuth') {
     return { name: 'noAuth' }
   }
-})
 
-router.beforeResolve((to, from) => {
   if (to.name) {
     let title = to.name
     let workflowName = null

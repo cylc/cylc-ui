@@ -32,7 +32,6 @@
         "concurrently",
         "express",
         "express-ws",
-        "graphql-ws",
         "json-server",
         "nodemon"
       ],

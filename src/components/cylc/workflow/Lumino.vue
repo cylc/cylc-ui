@@ -15,187 +15,243 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
-  <div ref="main" class="main pa-2 fill-height">
+  <div ref="mainDiv" class="main pa-2 fill-height">
     <!-- Lumino box panel gets inserted here -->
   </div>
   <template
-    v-for="(item, id) in views"
+    v-for="[id, { name, initialOptions }] in views"
     :key="id"
   >
     <Teleport :to="`#${id}`">
       <component
-        :is="item.view"
+        :is="props.allViews.get(name).component"
         :workflow-name="workflowName"
-        :initialOptions="item.initialOptions"
+        :initial-options="initialOptions"
         class="h-100"
       />
     </Teleport>
   </template>
 </template>
 
-<script>
-import { startCase } from 'lodash'
+<script setup>
+import {
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+} from 'vue'
+import { useStore } from 'vuex'
+import { startCase, uniqueId } from 'lodash'
 import LuminoWidget from '@/components/cylc/workflow/lumino-widget'
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
+import { when } from '@/utils'
+import { useDefaultView } from '@/views/views'
 
-/**
+/*
  * A component to wrap the Lumino application.
  *
  * It will create a BoxPanel (left to right, no gutters) with a dock
- * panel. Each component/view is rendered in a hidden div, then we transfer
- * the element into the Lumino widget div, creating the
- * impression that the component was created inside the tab/widget.
+ * panel. Each component/view is teleported into the Lumino widget div.
  *
  * Lumino uses DOM, and Vue the VDOM. So this is an approach that
  * works, but there could be alternative approaches too.
  */
-export default {
-  name: 'Lumino',
 
-  components: {}, // Filled on created()
+/**
+ * Mitt event for adding a view to the workspace.
+ * @typedef {Object} AddViewEvent
+ * @property {string} name - the view to add
+ * @property {Object=} initialOptions - prop passed to the view component
+ */
 
-  props: {
-    /**
-     * Parent-provided mapping of widget ID to the name of
-     * view component class + options.
-     *
-     * @type {{ [id: string]: { view: string, initialOptions: Object } }}
-     */
-    views: {
-      type: Object,
-      default: () => {}
-    },
-    workflowName: {
-      type: String,
-      required: true
-    },
-    /** All possible view component classes that can be rendered */
-    allViews: {
-      type: Array,
-      required: true
-    },
+const $eventBus = inject('eventBus')
+const $store = useStore()
+
+const props = defineProps({
+  workflowName: {
+    type: String,
+    required: true
   },
-
-  emits: [
-    'lumino:activated',
-    'lumino:deleted'
-  ],
-
-  beforeCreate () {
-    // Populate components
-    for (const { name, component } of this.allViews) {
-      this.$options.components[name] = component
-    }
-  },
-
   /**
-   * Here we define the ID's for the Lumino DOM elements, and add the Dock panel to the main
-   * Box panel. In the next tick of Vue, the DOM element and the Vue element/ref are attached.
+   * All possible view component classes that can be rendered
+   *
+   * @type {Map<string, import('@/views/views.js').CylcView>}
    */
-  created () {
-    // create a box panel, which holds the dock panel, and controls its layout
-    this.box = new BoxPanel({ direction: 'left-to-right', spacing: 0 })
-    // create dock panel, which holds the widgets
-    this.dock = new DockPanel()
-    // Note: box & dock must not be in data() as the functionality breaks if
-    // the lumino objects are proxied by Vue
-
-    this.box.addWidget(this.dock)
-    BoxPanel.setStretch(this.dock, 1)
-
-    const resizeObserver = new ResizeObserver(() => {
-      this.box.update()
-    })
-
-    this.$nextTick(() => {
-      // Attach box panel to DOM:
-      Widget.attach(this.box, this.$refs.main)
-      // Watch for resize of the main element to trigger relayout:
-      resizeObserver.observe(this.$refs.main)
-    })
+  allViews: {
+    type: Map,
+    required: true
   },
+})
 
-  computed: {
-    /**
-     * We want to watch this.views; however, the (newVal, oldVal) args
-     * do not differ when a deeply watched object's properties change.
-     * So here is a workaround.
-     */
-    _views () {
-      return Object.assign({}, this.views)
+const emit = defineEmits([
+  'emptied'
+])
+
+/**
+ * Template ref
+ * @type {import('vue').Ref<HTMLElement>}
+ */
+const mainDiv = ref(null)
+
+/**
+ * Mapping of widget ID to the name of view component and its initialOptions prop.
+ *
+ * @type {import('vue').Ref<Map<string, AddViewEvent>>}
+ */
+const views = ref(new Map())
+
+const defaultView = useDefaultView()
+
+// create a box panel, which holds the dock panel, and controls its layout
+const boxPanel = new BoxPanel({ direction: 'left-to-right', spacing: 0 })
+// create dock panel, which holds the widgets
+const dockPanel = new DockPanel()
+boxPanel.addWidget(dockPanel)
+BoxPanel.setStretch(dockPanel, 1)
+
+const resizeObserver = new ResizeObserver(() => {
+  boxPanel.update()
+})
+
+onMounted(() => {
+  // Attach box panel to DOM:
+  Widget.attach(boxPanel, mainDiv.value)
+  // Watch for resize of the main element to trigger relayout:
+  resizeObserver.observe(mainDiv.value)
+  $eventBus.on('add-view', addView)
+  getLayout(props.workflowName)
+})
+
+onBeforeUnmount(() => {
+  resizeObserver.disconnect()
+  $eventBus.off('add-view', addView)
+  saveLayout()
+  // Register with Lumino that the dock panel is no longer used,
+  // otherwise uncaught errors can occur when restoring layout
+  dockPanel.dispose()
+})
+
+/**
+ * Create a widget and add it to the dock.
+ *
+ * @param {AddViewEvent} view
+ * @param {boolean} onTop
+ */
+const addView = (view, onTop = true) => {
+  const id = uniqueId('widget')
+  const luminoWidget = new LuminoWidget(id, startCase(view.name), /* closable */ true)
+  dockPanel.addWidget(luminoWidget, { mode: 'tab-after' })
+  // give time for Lumino's widget DOM element to be created
+  nextTick(() => {
+    views.value.set(id, view)
+    addWidgetEventListeners(id)
+    if (onTop) {
+      dockPanel.selectWidget(luminoWidget)
     }
-  },
+  })
+}
 
-  watch: {
-    _views: {
-      deep: true,
-      handler: 'syncWidgets'
-    }
-  },
-
-  methods: {
-    /**
-     * Look for newly added views, creating a corresponding Lumino Widget
-     * for each.
-     */
-    syncWidgets (newVal, oldVal) {
-      for (const [id, item] of Object.entries(newVal)) {
-        if (!(id in oldVal)) {
-          this.addWidget(id, item.view)
-        }
-      }
-    },
-
-    /**
-     * Create a widget and add it to the dock.
-     */
-    addWidget (id, name, onTop = true) {
-      const luminoWidget = new LuminoWidget(id, startCase(name), /* closable */ true)
-      this.dock.addWidget(luminoWidget, { mode: 'tab-after' })
-      // give time for Lumino's widget DOM element to be created
-      this.$nextTick(() => {
-        const widgetEl = document.getElementById(id)
-        widgetEl.addEventListener('lumino:activated', this.onWidgetActivated)
-        widgetEl.addEventListener('lumino:deleted', this.onWidgetDeleted)
-        if (onTop) {
-          this.dock.selectWidget(luminoWidget)
-        }
-      })
-    },
-
-    /**
-     * React to a deleted event.
-     *
-     * @param {{
-     *   detail: {
-     *     id: string,
-     *     name: string,
-     *     closable: boolean
-     *   }
-     * }} customEvent
-     */
-    onWidgetActivated (customEvent) {
-      this.$emit('lumino:activated', customEvent.detail)
-    },
-
-    /**
-     * React to a deleted event.
-     *
-     * @param {{
-     *   detail: {
-     *     id: string,
-     *     name: string,
-     *     closable: boolean
-     *   }
-     * }} customEvent
-     */
-    onWidgetDeleted (customEvent) {
-      const { id } = customEvent.detail
-      const widgetEl = document.getElementById(id)
-      widgetEl.removeEventListener('lumino:deleted', this.onWidgetDeleted)
-      widgetEl.removeEventListener('lumino:activated', this.onWidgetActivated)
-      this.$emit('lumino:deleted', customEvent.detail)
-    },
+/**
+ * Remove all the widgets present in the DockPanel.
+ */
+const closeAllViews = () => {
+  for (const widget of Array.from(dockPanel.widgets())) {
+    widget.close()
   }
 }
+
+/**
+ * Get the saved layout (if there is one) for the given workflow,
+ * else add the default view.
+ *
+ * @param {string} workflowName
+ */
+const getLayout = (workflowName) => {
+  restoreLayout(workflowName) || addView({ name: defaultView.value })
+}
+
+/**
+ * Save the current layout/views to the store.
+ */
+const saveLayout = () => {
+  $store.commit('app/saveLayout', {
+    workflowName: props.workflowName,
+    layout: dockPanel.saveLayout(),
+    views: new Map(views.value),
+  })
+}
+
+/**
+ * Restore the layout for this workflow from the store, if it was saved.
+ *
+ * @param {string} workflowName
+ * @returns {boolean} true if the layout was restored, false otherwise
+ */
+const restoreLayout = (workflowName) => {
+  const stored = $store.state.app.workspaceLayouts.get(workflowName)
+  if (stored) {
+    dockPanel.restoreLayout(stored.layout)
+    // Wait for next tick so that Lumino has created the widget divs that the
+    // views will be teleported into
+    nextTick(() => {
+      views.value = stored.views
+      for (const id of views.value.keys()) {
+        addWidgetEventListeners(id)
+      }
+    })
+    return true
+  }
+  return false
+}
+
+/**
+ * Save & close the current layout and open the one for the given workflow.
+ *
+ * @param {string} workflowName
+ */
+const changeLayout = (workflowName) => {
+  saveLayout()
+  closeAllViews()
+  // Wait if necessary for the workflowName prop to be updated to the new value:
+  when(
+    () => props.workflowName === workflowName,
+    () => getLayout(workflowName),
+  )
+}
+
+/**
+ * @param {string} id - widget ID
+ */
+const addWidgetEventListeners = (id) => {
+  const widgetEl = document.getElementById(id)
+  widgetEl.addEventListener('lumino:deleted', onWidgetDeleted)
+  // widgetEl.addEventListener('lumino:activated', this.onWidgetActivated)
+}
+
+/**
+ * React to a deleted event.
+ *
+ * @param {{
+ *   detail: {
+ *     id: string,
+ *     name: string,
+ *     closable: boolean
+ *   }
+ * }} customEvent
+ */
+const onWidgetDeleted = (customEvent) => {
+  const { id } = customEvent.detail
+  views.value.delete(id)
+  const widgetEl = document.getElementById(id)
+  widgetEl.removeEventListener('lumino:deleted', onWidgetDeleted)
+  // widgetEl.removeEventListener('lumino:activated', this.onWidgetActivated)
+  if (!views.value.size) {
+    emit('emptied')
+  }
+}
+
+defineExpose({
+  changeLayout,
+})
 </script>

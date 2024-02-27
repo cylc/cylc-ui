@@ -38,7 +38,6 @@ const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue
 
 /**
  * @typedef {Object} CylcView
- * @property {string} name - the name of the view (Vue component name)
  * @property {import('vue').DefineComponent} component - the dynamic async Vue component
  * @property {string} icon - the icon for this view
  */
@@ -46,35 +45,32 @@ const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue
 export const TREE = 'Tree'
 
 /**
- * A list of Vue views or components.
+ * A map of Vue views or components.
  *
- * Each view in this list will be available from the Toolbar to be added as
+ * Each view in this map will be available from the Toolbar to be added as
  * a widget to the workspace view.
  *
  * Note for peformance reasons this should not be made reactive as they are
  * already Vue components.
  *
- * @type {CylcView[]}
+ * @type {Map<string, CylcView>}
  */
-export const allViews = [
-  { name: TREE, component: TreeView, icon: mdiFileTree },
-  { name: 'Table', component: TableView, icon: mdiTable },
-  { name: 'Graph', component: GraphView, icon: mdiGraph },
-  { name: 'Log', component: LogView, icon: mdiFileDocumentMultipleOutline },
-  { name: 'Analysis', component: AnalysisView, icon: mdiChartLine },
-  { name: 'Gantt', component: GanttView, icon: mdiChartGantt },
-]
+export const allViews = new Map([
+  [TREE, { component: TreeView, icon: mdiFileTree }],
+  ['Table', { component: TableView, icon: mdiTable }],
+  ['Graph', { component: GraphView, icon: mdiGraph }],
+  ['Log', { component: LogView, icon: mdiFileDocumentMultipleOutline }],
+  ['Analysis', { component: AnalysisView, icon: mdiChartLine }],
+])
 // Development views that we don't want in production:
 if (import.meta.env.MODE !== 'production') {
-  allViews.push(
-    { name: 'SimpleTree', component: SimpleTreeView, icon: mdiTree },
-  )
+  allViews.set('SimpleTree', { component: SimpleTreeView, icon: mdiTree })
 }
 
 export const useDefaultView = () => {
   const defaultView = useLocalStorage('defaultView', TREE)
   // Check if the view is implemented (in case we remove/rename a view in future)
-  if (!allViews.some(({ name }) => name === defaultView.value)) {
+  if (!allViews.has(defaultView.value)) {
     defaultView.value = TREE
   }
   return defaultView
