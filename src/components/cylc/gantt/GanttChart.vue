@@ -99,9 +99,8 @@ export default {
   computed: {
     series () {
       const data = []
-      const jobs = this.jobs[0]
       if (this.jobs.length !== 0) {
-        const taskNameList = Object.keys(jobs)
+        const taskNameList = Object.keys(this.jobs)
         const startTask = Math.max(0, this.tasksPerPage * (this.page - 1))
         const endTask = Math.min(taskNameList.length, startTask + this.tasksPerPage)
 
@@ -124,12 +123,12 @@ export default {
         }
         const { start, end } = timingOptions[this.timingOption]
         for (let i = startTask; i < endTask; i++) {
-          for (let j = 0; j < jobs[taskNameList[i]].length; j++) {
+          for (let j = 0; j < this.jobs[taskNameList[i]].length; j++) {
             data.push({
               x: taskNameList[i],
               y: [
-                new Date(jobs[taskNameList[i]][j][start]).getTime(),
-                new Date(jobs[taskNameList[i]][j][end]).getTime()
+                new Date(this.jobs[taskNameList[i]][j][start]).getTime(),
+                new Date(this.jobs[taskNameList[i]][j][end]).getTime()
               ],
               fillColor: taskColours[taskNameList[i]],
             })
@@ -140,7 +139,7 @@ export default {
     },
     numPages () {
       if (this.jobs.length !== 0) {
-        return Math.ceil(Object.keys(this.jobs[0]).length / this.tasksPerPage)
+        return Math.ceil(Object.keys(this.jobs).length / this.tasksPerPage)
       } else {
         return 1
       }

@@ -15,7 +15,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="c-gantt">
     <v-skeleton-loader
-      v-if="!jobs.length"
+      v-if="!Object.keys(jobs).length"
       type="table"
       class="align-content-start"
     />
@@ -101,7 +101,7 @@ import DeltasCallback from '@/services/callbacks'
 import {
   matchTasks,
   platformOptions
-} from '@/components/cylc/analysis/filter'
+} from '@/components/cylc/gantt/filter'
 /** List of fields to request for each job */
 const jobFields = [
   'name',
@@ -143,7 +143,7 @@ export class GanttCallback extends DeltasCallback {
     for (let i = 0; i < data.jobs.length; i++) {
       sortedData[data.jobs[i].name].push(data.jobs[i])
     }
-    this.jobs.push(sortedData)
+    Object.assign(this.jobs, sortedData)
   }
   // called when new objects are added
   // NOTE: we manually call this to add items which come through on the query
@@ -174,7 +174,7 @@ export default {
     this.jobsQuery()
   },
   data () {
-    const jobs = []
+    const jobs = {}
     return {
       tasksPerPage: 10,
       callback: new GanttCallback(jobs),
@@ -200,10 +200,7 @@ export default {
       return [this.workflowId]
     },
     filteredJobs () {
-      if (this.jobsFilter.name.length === 0) {
-        return this.jobs
-      }
-      return [matchTasks(this.jobs[0], this.jobsFilter)]
+      return matchTasks(this.jobs, this.jobsFilter)
     },
     platformOptions () {
       return platformOptions(this.jobs)
@@ -219,8 +216,6 @@ export default {
      */
     jobsQuery: debounce(
       async function () {
-        this.jobs = []
-        this.callback = new GanttCallback(this.jobs)
         const ret = await this.$workflowService.query2(
           QUERY,
           { workflows: this.workflowIDs }

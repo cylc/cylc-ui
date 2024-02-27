@@ -37,27 +37,6 @@ export function matchTask (task, tasksFilter) {
 }
 
 /**
- * Function to determine if a task should be displayed given a certain filter
- * Checks the name includes a search string and if the platform is equal to
- * that chosen
- *
- * @export
- * @param {object} tasks - Object containing tasks to evaluate
- * @param {object} tasksFilter - The filter to apply to the tasks
- * @return {boolean} An Object with the tasks that made it through the filter
- */
-export function matchTasks (tasks, tasksFilter) {
-  const filteredTasks = {}
-  const taskNameList = Object.keys(tasks)
-  taskNameList.forEach((taskName) => {
-    if (tasksFilter.name.includes(taskName)) {
-      filteredTasks[taskName] = tasks[taskName]
-    }
-  })
-  return filteredTasks
-}
-
-/**
  * Function to find the unique platforms in an array of tasks
  *
  * @export
