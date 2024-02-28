@@ -481,6 +481,12 @@ export default {
         this.handleNoLogFiles()
         return
       }
+
+      if (!this.id) {
+        // id has been cleared while we were waiting for the query to return
+        return
+      }
+
       const logFiles = result.data.logFiles?.files ?? []
 
       // reset the file if it is not present in the new selection
