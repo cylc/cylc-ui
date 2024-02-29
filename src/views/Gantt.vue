@@ -15,7 +15,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="c-gantt">
     <v-skeleton-loader
-      v-if="!Object.keys(jobs).length"
+      v-if="!Object.keys(callback.jobs).length"
       type="table"
       class="align-content-start"
     />
@@ -121,12 +121,9 @@ query ganttQuery ($workflows: [ID]) {
 `
 /** The callback which gets called when data comes in from the query */
 export class GanttCallback extends DeltasCallback {
-  /**
-   * @param {Object[]} jobs
-   */
-  constructor (jobs) {
-    super(jobs)
-    this.jobs = jobs
+  constructor () {
+    super()
+    this.jobs = {}
   }
   /**
    * Add jobs contained in data to this.jobs
@@ -174,12 +171,9 @@ export default {
     this.jobsQuery()
   },
   data () {
-    const jobs = {}
     return {
       tasksPerPage: 10,
-      callback: new GanttCallback(jobs),
-      /** Object containing all of the jobs added by the callback */
-      jobs,
+      callback: new GanttCallback(),
       timingOptions: [
         { value: 'totalTimes', title: 'Total times' },
         { value: 'runTimes', title: 'Run times' },
@@ -200,10 +194,10 @@ export default {
       return [this.workflowId]
     },
     filteredJobs () {
-      return matchTasks(this.jobs, this.jobsFilter)
+      return matchTasks(this.callback.jobs, this.jobsFilter)
     },
     platformOptions () {
-      return platformOptions(this.jobs)
+      return platformOptions(this.callback.jobs)
     },
     timingOption () {
       return this.jobsFilter.timingOption.replace(/Times/, '')

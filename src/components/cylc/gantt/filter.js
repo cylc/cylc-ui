@@ -26,27 +26,14 @@
  * @return {boolean} An Object with the tasks that made it through the filter
  */
 export function matchTasks (tasks, tasksFilter) {
-  // Create copy of tasks object
-  const filteredTasks = JSON.parse(JSON.stringify(tasks))
-
-  // Filter out by task name;
-  if (tasksFilter.name.length !== 0) {
-    Object.keys(filteredTasks).forEach((taskName) => {
-      if (!tasksFilter.name.includes(taskName)) {
-        delete filteredTasks[taskName]
-      }
-    })
-  }
-
-  // Filter out by platform
-  if (tasksFilter.platformOption !== -1) {
-    Object.keys(filteredTasks).forEach((taskName) => {
-      if (tasksFilter.platformOption === filteredTasks[taskName][0].platform) {
-        delete filteredTasks[taskName]
-      }
-    })
-  }
-  return filteredTasks
+  const { name, platformOption } = tasksFilter
+  return Object.fromEntries(Object.entries(tasks).filter(
+    ([taskName, value]) => (
+      name.includes(taskName) && (
+        platformOption === -1 || platformOption === value[0].platform
+      )
+    )
+  ))
 }
 
 /**

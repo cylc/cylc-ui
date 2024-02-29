@@ -93,22 +93,17 @@ const filteredJobs = {
 
 describe('GanttCallback', () => {
   it('adds data', () => {
-    const ganttCallback = new GanttCallback([])
+    const ganttCallback = new GanttCallback()
     ganttCallback.onAdded(input)
-    console.log(typeof ganttCallback.jobs)
-    console.log(ganttCallback.jobs)
-    console.log(expectedJobs)
-    expect(ganttCallback.jobs).to.deep.equal(expectedJobs)
-    expect(ganttCallback.jobs.b).toEqual(expectedJobs.b)
+    expect(ganttCallback.jobs).toEqual(expectedJobs)
   })
   it('updates data', () => {
-    const ganttCallback = new GanttCallback([])
+    const ganttCallback = new GanttCallback()
     ganttCallback.onUpdated(input)
-    expect(ganttCallback.jobs.a).toEqual(expectedJobs.a)
-    expect(ganttCallback.jobs.b).toEqual(expectedJobs.b)
+    expect(ganttCallback.jobs).toEqual(expectedJobs)
   })
   it('matches tasks', () => {
-    const ganttCallback = new GanttCallback([])
+    const ganttCallback = new GanttCallback()
     ganttCallback.onAdded(input)
     const jobsFilter = {
       name: ['a'],
