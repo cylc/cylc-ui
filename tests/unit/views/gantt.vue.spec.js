@@ -18,9 +18,9 @@
 import { GanttCallback } from '@/views/Gantt.vue'
 import {
   matchTasks
-} from '@/components/cylc/analysis/filter'
+} from '@/components/cylc/gantt/filter'
 
-const data = {
+const input = {
   jobs: [{
     name: 'a',
     id: '~cbennett/analysis_view_test/run2//1/a/01',
@@ -49,7 +49,7 @@ const data = {
     __typename: 'UISJob'
   }]
 }
-const expectedJobs = [{
+const expectedJobs = {
   a: [{
     __typename: 'UISJob',
     finishedTime: '2023-02-23T11:37:05Z',
@@ -76,8 +76,9 @@ const expectedJobs = [{
     platform: 'vld684',
     startedTime: '2023-02-23T11:38:12Z',
     submittedTime: '2023-02-23T11:38:07Z'
-  }],
-}]
+  }]
+}
+
 const filteredJobs = {
   a: [{
     name: 'a',
@@ -93,22 +94,27 @@ const filteredJobs = {
 describe('GanttCallback', () => {
   it('adds data', () => {
     const ganttCallback = new GanttCallback([])
-    ganttCallback.onAdded(data)
-    expect(ganttCallback.jobs).toEqual(expectedJobs)
+    ganttCallback.onAdded(input)
+    console.log(typeof ganttCallback.jobs)
+    console.log(ganttCallback.jobs)
+    console.log(expectedJobs)
+    expect(ganttCallback.jobs).to.deep.equal(expectedJobs)
+    expect(ganttCallback.jobs.b).toEqual(expectedJobs.b)
   })
   it('updates data', () => {
     const ganttCallback = new GanttCallback([])
-    ganttCallback.onUpdated(data)
-    expect(ganttCallback.jobs).toEqual(expectedJobs)
+    ganttCallback.onUpdated(input)
+    expect(ganttCallback.jobs.a).toEqual(expectedJobs.a)
+    expect(ganttCallback.jobs.b).toEqual(expectedJobs.b)
   })
   it('matches tasks', () => {
     const ganttCallback = new GanttCallback([])
-    ganttCallback.onAdded(data)
+    ganttCallback.onAdded(input)
     const jobsFilter = {
       name: ['a'],
       timingOption: 'totalTimes',
       platformOption: -1,
     }
-    expect(matchTasks(ganttCallback.jobs[0], jobsFilter)).toEqual(filteredJobs)
+    expect(matchTasks(ganttCallback.jobs, jobsFilter)).toEqual(filteredJobs)
   })
 })
