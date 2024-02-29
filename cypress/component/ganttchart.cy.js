@@ -22,7 +22,7 @@ import storeOptions from '@/store/options'
 import { vuetifyOptions } from '@/plugins/vuetify'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
 
-const jobs = [{
+const jobs = {
   test_job: [{
     name: 'test_job',
     id: '~cbennett/analysis_view_test/run1//1/a/01',
@@ -39,7 +39,7 @@ const jobs = [{
     finishedTime: '2023-02-23T11:10:26Z',
     platform: 'localhost'
   }]
-}]
+}
 
 const mountOpts = {
   global: {
