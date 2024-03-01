@@ -21,9 +21,9 @@
  * that chosen
  *
  * @export
- * @param {object} tasks - Object containing tasks to evaluate
- * @param {object} tasksFilter - The filter to apply to the tasks
- * @return {boolean} An Object with the tasks that made it through the filter
+ * @param {Record<string,Object[]>} tasks - Object containing tasks to evaluate
+ * @param {{ name: string, platformOption: string|-1 }} tasksFilter - The filter to apply to the tasks
+ * @return {Record<string,Object[]>} An Object with the tasks that made it through the filter
  */
 export function matchTasks (tasks, tasksFilter) {
   const { name, platformOption } = tasksFilter
