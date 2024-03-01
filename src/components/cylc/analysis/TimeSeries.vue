@@ -241,7 +241,7 @@ export default {
       for (const task of this.displayedTasks) {
         const data = {}
         for (const cycle of this.cyclePoints) {
-          data[cycle] = { x: cycle, y: null, z: null }
+          data[cycle] = { x: cycle, y: null }
         }
         seriesData[task] = { name: task, data: data }
       }
@@ -253,12 +253,9 @@ export default {
             // Only add data if this job was run more recently than any existing data
             if (currentStartedTime === undefined || job.startedTime.localeCompare(currentStartedTime) === 1) {
               time = job[`${this.timingOption}Time`]
-              // What happens if I make x, y, z etc an array? (cf dataPointIndex in y tooltip)
               seriesData[job.name].data[job.cyclePoint].x = job.cyclePoint
               seriesData[job.name].data[job.cyclePoint].y = time
-              seriesData[job.name].data[job.cyclePoint].z = job.platform
               seriesData[job.name].data[job.cyclePoint].platform = job.platform
-              seriesData[job.name].data[job.cyclePoint].time = job.runTime
               seriesData[job.name].data[job.cyclePoint].startedTime = job.startedTime
             }
           }
@@ -308,19 +305,13 @@ export default {
           size: 4
         },
         tooltip: {
-          z: {
-            // title: 'Platform: '
-            formatter: () => null,
-          },
           y: {
-            formatter: function (value, { series, seriesIndex, dataPointIndex, w }) {
+            formatter: (value, { series, seriesIndex, dataPointIndex, w }) => {
               if (!value) {
                 return null
               }
               const y = formatDuration(value, true)
-              // console.log(w.globals)
-              // Can I get this information from this.series instead?
-              const platform = w.globals.seriesZ[seriesIndex][dataPointIndex]
+              const platform = this.series[seriesIndex].data[dataPointIndex].platform
               return `${y} (${platform})`
             }
           }
