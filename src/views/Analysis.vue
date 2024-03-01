@@ -100,11 +100,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-btn>
           </v-btn-toggle>
           <v-btn
+            v-if="chartType === 'table' || chartType === 'box'"
             @click="tasksQuery"
             data-cy="analysis-refresh-btn"
           >
             <v-icon :icon="$options.icons.mdiRefresh" />
-            <v-tooltip>Refresh</v-tooltip>
+            <v-tooltip>Refresh data</v-tooltip>
           </v-btn>
           <!-- Box plot sort input teleports here -->
         </v-defaults-provider>

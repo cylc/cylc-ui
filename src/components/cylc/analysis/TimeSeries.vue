@@ -52,6 +52,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-divider class="mt-2"></v-divider>
         </template>
       </v-autocomplete>
+      <v-btn
+        @click="jobsQuery(displayedTasks)"
+        data-cy="analysis-jobs-refresh-btn"
+        icon
+        variant="text"
+      >
+        <v-icon :icon="$options.icons.mdiRefresh" />
+        <v-tooltip>Refresh data</v-tooltip>
+      </v-btn>
       <v-checkbox
         class="ma-0 pa-0"
         v-model="showOrigin"
@@ -100,6 +109,7 @@ import gql from 'graphql-tag'
 import { formatDuration } from '@/utils/tasks'
 import {
   mdiDownload,
+  mdiRefresh,
 } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
 
@@ -419,20 +429,27 @@ export default {
     },
     jobsQuery: debounce(
       async function (queryTasks) {
-        this.jobs = []
-        this.jobCallback = new AnalysisJobCallback(this.jobs)
-        const retJob = await this.$workflowService.query2(
-          JOB_QUERY,
-          { workflows: this.workflowIDs, tasks: queryTasks }
-        )
-        this.jobCallback.onAdded(retJob.data)
+        // Ensure query isn't run over all tasks
+        if (queryTasks.length > 0) {
+          this.jobs = []
+          this.jobCallback = new AnalysisJobCallback(this.jobs)
+          const retJob = await this.$workflowService.query2(
+            JOB_QUERY,
+            { workflows: this.workflowIDs, tasks: queryTasks }
+          )
+          this.jobCallback.onAdded(retJob.data)
+        }
       },
       200 // only re-run this once every 0.2 seconds
     ),
     zoomMainChart: function (context, { xaxis }) {
       this.xRange = [Math.ceil(xaxis.min), Math.floor(xaxis.max)]
     }
-  }
+  },
+
+  icons: {
+    mdiRefresh,
+  },
 }
 </script>
 
