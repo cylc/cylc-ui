@@ -296,16 +296,19 @@ export default {
           },
           fontFamily: 'inherit',
           toolbar: {
-            autoSelected: 'none',
+            autoSelected: 'zoom',
             tools: {
               download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
               selection: false,
-              zoom: false,
+              zoom: true,
               zoomin: false,
               zoomout: false,
               pan: false,
-              reset: false
+              reset: true
             }
+          },
+          zoom: {
+            type: 'y'
           }
         },
         stroke: {
