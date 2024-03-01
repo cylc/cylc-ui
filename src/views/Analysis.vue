@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             placeholder="Filter by task name"
             v-model.trim="tasksFilter.name"
             ref="filterNameInput"
+            :disabled="chartType === 'timeSeries'"
           />
         </v-col>
         <v-col
