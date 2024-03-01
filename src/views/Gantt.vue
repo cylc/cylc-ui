@@ -130,13 +130,10 @@ export class GanttCallback extends DeltasCallback {
    */
 
   add (data) {
-    const taskNameList = Array.from(
-      new Set(data.jobs.map((job) => job.name))
-    )
     this.uniqueTasks = Array.from(
       new Set(data.jobs.map((job) => job.name))
     )
-    const sortedData = Object.fromEntries(taskNameList.map(key => [key, []]))
+    const sortedData = Object.fromEntries(this.uniqueTasks.map(key => [key, []]))
     for (let i = 0; i < data.jobs.length; i++) {
       sortedData[data.jobs[i].name].push(data.jobs[i])
     }
