@@ -158,7 +158,7 @@ describe('User Profile', () => {
         .get('.node-data-cycle')
         .then(($els) => {
           expect(
-            Array.from($els, (el) => el.innerText)
+            Array.from($els, (el) => el.innerText.trim())
           ).to.deep.equal(expected)
         })
     }

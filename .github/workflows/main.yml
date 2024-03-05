@@ -16,6 +16,7 @@ env:
 jobs:
   unit-test-and-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,16 +53,18 @@ jobs:
 
   cypress-run:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        type: [e2e, component]
-        browser: [firefox, chrome]
         os: [ubuntu-latest]
-# TODO: re-enable once macos build is stable #590
-#         include:
-#           - os: macos-latest
-#             browser: edge
+        browser: [firefox, chrome]
+        include:
+          - os: macos-latest
+            browser: webkit
+          - os: windows-latest
+            browser: edge
+
     env:
       COVERAGE: true
     steps:
@@ -74,36 +77,41 @@ jobs:
           node-version: 'lts/*'
           cache: yarn
 
-      - name: Test (E2E)
-        if: matrix.type == 'e2e'
+      - name: Install WebKit support
+        if: matrix.browser == 'webkit'
+        run: yarn add playwright-webkit --dev --mode=update-lockfile
+
+      - name: Component test
+        # Component tests on webkit hang for some reason
+        if: matrix.browser != 'webkit'
+        uses: cypress-io/github-action@v6
+        with:
+          component: true
+          browser: ${{ matrix.browser }}
+
+      - name: E2E test
         uses: cypress-io/github-action@v6
         env:
           BASE_URL: http://localhost:4173/
         with:
+          install: ${{ matrix.browser == 'webkit' }} # Only install if not done in previous step
           build: yarn run build --mode offline
           start: yarn run preview
           config: baseUrl=${{ env.BASE_URL }}
           wait-on: ${{ env.BASE_URL }}
           browser: ${{ matrix.browser }}
 
-      - name: Test (component)
-        if: matrix.type == 'component'
-        uses: cypress-io/github-action@v6
-        with:
-          component: true
-          browser: ${{ matrix.browser }}
-
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: 'cypress-screenshots_${{ matrix.type }}_${{ matrix.browser }}_${{ matrix.os }}'
+          name: 'cypress-screenshots_${{ matrix.browser }}_${{ matrix.os }}'
           path: tests/e2e/screenshots
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 'coverage_${{ matrix.type }}_${{ matrix.browser }}_${{ matrix.os }}'
+          name: 'coverage_cypress_${{ matrix.browser }}_${{ matrix.os }}'
           path: coverage/lcov.info
           retention-days: 4
 
