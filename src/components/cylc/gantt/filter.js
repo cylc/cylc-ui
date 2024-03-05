@@ -21,16 +21,18 @@
  * that chosen
  *
  * @export
- * @param {Record<string,Object[]>} tasks - Object containing tasks to evaluate
- * @param {{ name: string, platformOption: string|-1 }} tasksFilter - The filter to apply to the tasks
+ * @param {Record<string,Object[]>} tasks - Mapping of task names to their jobs.
+ * @param {{ name: string[], platformOption: string|-1 }} tasksFilter - The filter to apply to the tasks
  * @return {Record<string,Object[]>} An Object with the tasks that made it through the filter
  */
 export function matchTasks (tasks, tasksFilter) {
   const { name, platformOption } = tasksFilter
   return Object.fromEntries(Object.entries(tasks).filter(
     ([taskName, value]) => (
-      name.includes(taskName) && (
-        platformOption === -1 || platformOption === value[0].platform
+      (
+        !name.length || name.includes(taskName)
+      ) && (
+        platformOption === -1 || value.some(({ platform }) => platform === platformOption)
       )
     )
   ))

@@ -21,70 +21,71 @@ import {
 } from '@/components/cylc/gantt/filter'
 
 describe('matchTasks', () => {
-  const tasksIn = {
-    task_1: [{
-      task_name: 'task_1',
-      platform: 'test_platform',
-      some_other_key: 'some_other_test_key'
-    }],
-    task_2: [{
-      task_name: 'task_2',
-      platform: 'test_platform_2',
-      some_other_key: 'some_other_test_key'
-    }],
-    task_3: [{
-      task_name: 'task_3',
+  const task1 = [{
+    name: 'task1',
+    platform: 'test_platform',
+    id: 'task1/01',
+  }]
+  const task2 = [{
+    name: 'task2',
+    platform: 'test_platform_2',
+    id: 'task2/01',
+  }]
+  const task3 = [
+    {
+      name: 'task3',
       platform: 'test_platform_3',
-      some_other_key: 'some_other_test_key'
-    }],
-    task_4: [{
-      task_name: 'task_4',
-      platform: 'test_platform_1',
-      some_other_key: 'some_other_test_key'
-    }]
-  }
-  const tasksOut = {
-    task_1: [{
-      task_name: 'task_1',
-      platform: 'test_platform',
-      some_other_key: 'some_other_test_key'
-    }],
-    task_2: [{
-      task_name: 'task_2',
-      platform: 'test_platform_2',
-      some_other_key: 'some_other_test_key'
-    }],
-  }
-  const platformsOut = {
-    task_1: [{
-      task_name: 'task_1',
-      platform: 'test_platform',
-      some_other_key: 'some_other_test_key'
-    }],
+      id: 'task3/01',
+    },
+    {
+      name: 'task3',
+      platform: 'test_platform', // 2nd job submitted on different platform
+      id: 'task3/02',
+    }
+  ]
+  const task4 = [{
+    name: 'task4',
+    platform: 'test_platform_4',
+    id: 'task4/01',
+  }]
+
+  const tasksIn = {
+    task1,
+    task2,
+    task3,
+    task4,
   }
 
   it('should filter out the tasks that do not match', () => {
     const filter = {
-      name: ['task_1', 'task_2'],
+      name: ['task1', 'task2'],
       platformOption: -1,
     }
-    expect(matchTasks(tasksIn, filter)).to.deep.equal(tasksOut)
+    expect(matchTasks(tasksIn, filter)).to.deep.equal({
+      task1,
+      task2,
+    })
   })
 
   it('should filter out the platforms that do not match', () => {
     const filter = {
-      name: ['task_1', 'task_2', 'task_3'],
+      name: [],
       platformOption: 'test_platform',
     }
-    expect(matchTasks(tasksIn, filter)).to.deep.equal(platformsOut)
+    expect(matchTasks(tasksIn, filter)).to.deep.equal({
+      task1,
+      task3,
+    })
   })
 
   it('should filter out the platforms and tasks that do not match', () => {
     const filter = {
-      name: ['task_1', 'task_3', 'task_4'],
-      platformOption: 'test_platform',
+      name: ['task1', 'task2', 'task3'],
+      platformOption: 'test_platform_2',
     }
-    expect(matchTasks(tasksIn, filter)).to.deep.equal(platformsOut)
+    expect(matchTasks(tasksIn, filter)).to.deep.equal({
+      task2,
+    })
   })
 })
 
