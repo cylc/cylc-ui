@@ -20,9 +20,6 @@ import '@cypress/code-coverage/support'
 // Import CSS
 import '@/styles/index.scss'
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
-
 import { createVuetify } from 'vuetify'
 import { mount } from 'cypress/vue'
 import { vuetifyOptions } from '@/plugins/vuetify'
