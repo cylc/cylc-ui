@@ -52,8 +52,9 @@ export default {
   },
 
   props: {
+    /** @type {Record<string, Object[]>} */
     jobs: {
-      type: Array,
+      type: Object,
       required: true,
     },
     timingOption: {
