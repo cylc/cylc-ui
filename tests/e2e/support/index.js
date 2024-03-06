@@ -38,3 +38,7 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// Ignore ResizeObserver errors in Analysis View for now
+// https://github.com/cypress-io/cypress/issues/22113#issuecomment-1146948262
+Cypress.on('uncaught:exception', (err) => !err.message.includes('ResizeObserver loop limit exceeded'))
