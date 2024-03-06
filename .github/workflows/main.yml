@@ -3,7 +3,15 @@ name: CI
 on:
   push:
     branches: [master]
+    paths-ignore:
+      - 'renovate.json'
+      - '.github/dependabot.yml'
+      - '**.md'
   pull_request:
+    paths-ignore:
+      - 'renovate.json'
+      - '.github/dependabot.yml'
+      - '**.md'
   workflow_dispatch:
 
 concurrency:
