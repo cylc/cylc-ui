@@ -48,4 +48,20 @@ describe('useInitialOptions', () => {
       }
     )
   })
+
+  it('uses the default value when the property is not in initialOptions', () => {
+    const ctx = {
+      props: {
+        initialOptions: { ship: 'In Amber Clad' }
+      },
+      emit () {},
+    }
+
+    const name = useInitialOptions('name', ctx, 'Miranda Keyes')
+    expect(name.value).toBe('Miranda Keyes')
+    const ship = useInitialOptions('ship', ctx, 'Forward Unto Dawn')
+    expect(ship.value).toBe('In Amber Clad')
+    const rank = useInitialOptions('rank', ctx)
+    expect(rank.value).toBe(undefined)
+  })
 })

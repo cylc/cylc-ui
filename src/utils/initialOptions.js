@@ -45,11 +45,12 @@ export const updateInitialOptionsEvent = 'update:initialOptions'
  * @param {{
  *   props: { initialOptions: Record<string,T> },
  *   emit: emitter,
- * }} param1
+ * }} param1 - component context
+ * @param {T=} defaultValue
  * @returns {import('vue').Ref<T>}
  */
-export const useInitialOptions = (name, { props, emit }) => {
-  const _ref = ref(props.initialOptions[name])
+export function useInitialOptions (name, { props, emit }, defaultValue) {
+  const _ref = ref(props.initialOptions[name] ?? defaultValue)
   watch(
     _ref,
     (val, old) => emit(
