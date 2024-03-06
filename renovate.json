@@ -109,6 +109,11 @@
       "addLabels": ["analysis view"]
     }
   ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["on the last day of the month"]
+  },
   "vulnerabilityAlerts": {
     "addLabels": ["security"]
   }
