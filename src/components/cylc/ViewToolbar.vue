@@ -16,10 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div
-    class="c-view-toolbar"
-    :style="{ fontSize }"
-  >
+  <div class="c-view-toolbar">
     <!-- control group -->
     <div
       class="group"
@@ -34,12 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :data-cy="`control-${iControl.key}`"
       >
         <v-btn
-          icon
-          variant="text"
+          v-bind="btnProps"
           :disabled="iControl.disabled"
           :color="iControl.color"
           @click="iControl.callback"
-          :size="size"
         >
           <v-icon>{{ iControl.icon }}</v-icon>
           <v-tooltip>{{ iControl.title }}</v-tooltip>
@@ -50,6 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { btnProps } from '@/utils/viewToolbar'
+
 export default {
   name: 'ViewToolbar',
 
@@ -163,20 +160,8 @@ export default {
       }
       return ret
     },
-    /**
-     * Scale icon size to button size.
-     * https://github.com/vuetifyjs/vuetify/issues/16288
-     *
-     * @returns {string=} font size
-     */
-    fontSize () {
-      const size = parseInt(this.size)
-      if (Number.isNaN(size)) {
-        // do nothing for named sizes ('small', 'large', etc.)
-        return undefined
-      }
-      // Round to even px then convert to rem
-      return `${2 * Math.round(0.2 * size) / 16}rem`
+    btnProps () {
+      return btnProps(this.size)
     }
   },
 

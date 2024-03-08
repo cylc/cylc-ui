@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <ViewToolbar
             :groups="controlGroups"
             @setOption="setOption"
-            size="40"
+            :size="toolbarBtnSize"
           />
         </v-col>
       </v-row>
@@ -77,7 +77,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             disabled
           />
         </v-col>
-        <v-col cols="4">
+        <v-col
+          cols="4"
+          class="d-flex col-gap-2"
+        >
           <v-select
             data-cy="file-input"
             :label="fileLabel"
@@ -87,6 +90,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             clearable
             :menu-props="{ 'data-cy': 'file-input-menu' }"
           />
+          <v-btn
+            @click="() => this.updateLogFileList(false)"
+            v-bind="toolbarBtnProps"
+            data-cy="refresh-files"
+          >
+            <v-icon :icon="$options.icons.mdiFolderRefresh"/>
+            <v-tooltip>Refresh file list</v-tooltip>
+          </v-btn>
         </v-col>
       </v-row>
 
@@ -173,6 +184,7 @@ import {
   mdiWrap,
 } from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
+import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
@@ -361,6 +373,9 @@ export default {
       relativeID.value = value
     }, 500)
 
+    /** View toolbar button size */
+    const toolbarBtnSize = '40'
+
     return {
       // the log subscription query
       query: ref(null),
@@ -381,6 +396,8 @@ export default {
       wordWrap,
       reset,
       debouncedUpdateRelativeID,
+      toolbarBtnSize,
+      toolbarBtnProps: btnProps(toolbarBtnSize),
     }
   },
 
@@ -404,12 +421,6 @@ export default {
               value: this.wordWrap,
               key: 'wordWrap',
             },
-            {
-              title: 'Refresh file list',
-              icon: mdiFolderRefresh,
-              action: 'callback',
-              callback: () => { this.updateLogFileList(false) }
-            }
           ]
         }
       ],
@@ -555,6 +566,7 @@ export default {
   // Misc options
   icons: {
     mdiFileAlertOutline,
+    mdiFolderRefresh,
     mdiPowerPlug,
     mdiPowerPlugOff,
   }
