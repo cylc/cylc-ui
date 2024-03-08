@@ -56,6 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { computed } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import {
   mdiDownload,
@@ -95,6 +96,75 @@ export default {
       type: String,
       default: null,
     },
+  },
+
+  setup (props) {
+    const reducedAnimation = useReducedAnimation()
+
+    const chartOptions = computed(() => ({
+      chart: {
+        animations: {
+          enabled: reducedAnimation.value ? false : props.animate,
+          easing: 'easeinout',
+          speed: 300,
+          animateGradually: {
+            enabled: true,
+            delay: 150,
+          },
+          dynamicAnimation: {
+            enabled: true,
+            speed: 350,
+          },
+        },
+        fontFamily: 'inherit',
+        toolbar: {
+          tools: {
+            download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
+          },
+        },
+      },
+      tooltip: {
+        custom ({ seriesIndex, dataPointIndex, w }) {
+          const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true)
+          const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true)
+          const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true)
+          const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true)
+          const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true)
+          return `
+            <div class="pa-2">
+              <div>Maximum: ${max}</div>
+              <div>Q3: ${q3} </div>
+              <div>Median: ${med}</div>
+              <div>Q1: ${q1}</div>
+              <div>Minimum: ${min}</div>
+            </div>
+          `
+        },
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+        },
+        boxPlot: {
+          colors: {
+            upper: '#6DD5C2',
+            lower: '#6AA4F1',
+          },
+        },
+      },
+      xaxis: {
+        title: {
+          text: `${upperFirst(props.timingOption)} time`,
+        },
+        labels: {
+          formatter: (value) => formatDuration(value, true)
+        },
+      },
+    }))
+
+    return {
+      chartOptions,
+    }
   },
 
   data () {
@@ -151,71 +221,6 @@ export default {
         { title: `Min ${this.timingOption} time`, value: `min${upperFirst(this.timingOption)}Time` },
         { title: `Max ${this.timingOption} time`, value: `max${upperFirst(this.timingOption)}Time` },
       ]
-    },
-
-    chartOptions () {
-      return {
-        chart: {
-          animations: {
-            enabled: useReducedAnimation().value ? false : this.animate,
-            easing: 'easeinout',
-            speed: 300,
-            animateGradually: {
-              enabled: true,
-              delay: 150,
-            },
-            dynamicAnimation: {
-              enabled: true,
-              speed: 350,
-            },
-          },
-          fontFamily: 'inherit',
-          toolbar: {
-            tools: {
-              download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
-            },
-          },
-        },
-        tooltip: {
-          custom ({ seriesIndex, dataPointIndex, w }) {
-            const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true)
-            const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true)
-            const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true)
-            const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true)
-            const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true)
-            return `
-              <div class="pa-2">
-                <div>Maximum: ${max}</div>
-                <div>Q3: ${q3} </div>
-                <div>Median: ${med}</div>
-                <div>Q1: ${q1}</div>
-                <div>Minimum: ${min}</div>
-              </div>
-            `
-          },
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-          },
-          boxPlot: {
-            colors: {
-              upper: '#6DD5C2',
-              lower: '#6AA4F1',
-            },
-          },
-        },
-        xaxis: {
-          title: {
-            text: `${upperFirst(this.timingOption)} time`,
-          },
-          labels: {
-            formatter (value) {
-              return formatDuration(value, true)
-            }
-          },
-        },
-      }
     },
   },
 

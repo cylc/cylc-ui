@@ -29,6 +29,8 @@ import { SubscriptionClient } from 'subscriptions-transport-ws'
 import { store } from '@/store/index'
 import { createUrl } from '@/utils/urls'
 
+/** @typedef {import('subscriptions-transport-ws').ClientOptions} ClientOptions */
+
 /**
  * Create the HTTP and WebSocket URLs for an ApolloClient.
  *
@@ -64,18 +66,20 @@ export function getCylcHeaders () {
  *
  * @private
  * @param {string} wsUrl - WebSocket subscription URL
- * @param {{
- *   reconnect: boolean,
- *   lazy: boolean
- * }} options - SubscriptionClient options (only two main options added here, see their doc for more)
- * @param {*} wsImpl
+ * @param {ClientOptions} options - SubscriptionClient options
+ * @param {*} wsImpl - WebSocket implementation (native by default)
  * @return {SubscriptionClient} a subscription client
  */
 export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
-  const opts = Object.assign({
+  /** @type {ClientOptions} */
+  const opts = {
     reconnect: true,
-    lazy: false
-  }, options)
+    lazy: false,
+    // Raise initial connection timeout from 1->3 secs to try to mitigate slow connection problem
+    // https://github.com/cylc/cylc-ui/issues/1200
+    minTimeout: 3e3,
+    ...options,
+  }
   const subscriptionClient = new SubscriptionClient(wsUrl, opts, wsImpl)
   // these are the available hooks in the subscription client lifecycle
   subscriptionClient.onConnecting(() => {

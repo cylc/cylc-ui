@@ -32,13 +32,6 @@ import { TreeCallback, WorkflowCallback } from './testCallback'
 
 const sandbox = sinon.createSandbox()
 
-if (!global.localStorage) {
-  global.localStorage = {
-    getItem () { return '{}' },
-    setItem () {}
-  }
-}
-
 describe('WorkflowService', () => {
   /**
    * @type {String}
@@ -76,11 +69,7 @@ describe('WorkflowService', () => {
     sandbox.stub(console, 'debug')
     apolloClient = sandbox.spy({
       query: () => {},
-      subscribe: (options) => {
-        return {
-          subscribe: (subscriptionOptions) => {}
-        }
-      }
+      subscribe: (options) => {}
     })
     subscriptionClient = null
     sandbox.stub(graphqlModule, 'createApolloClient').returns(apolloClient)
@@ -107,7 +96,8 @@ describe('WorkflowService', () => {
       'root',
       [],
       true,
-      true)
+      true
+    )
     // Subscription
     subscription = new Subscription(subscriptionQuery, true)
     service.subscriptions[subscriptionQuery.name] = subscription

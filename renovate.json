@@ -32,7 +32,6 @@
         "concurrently",
         "express",
         "express-ws",
-        "graphql-ws",
         "json-server",
         "nodemon"
       ],
@@ -40,8 +39,17 @@
       "schedule": ["on the 5th and 20th day of the month"]
     },
     {
+      "matchPackageNames": ["vuetify"],
+      "schedule": ["on the 7th day of the month"]
+    },
+    {
       "groupName": "lumino packages",
       "matchPackagePatterns": ["^@lumino/"]
+    },
+    {
+      "groupName": "apollo packages",
+      "matchPackagePatterns": ["^@apollo/"],
+      "schedule": ["on the 10th day of the month"]
     },
     {
       "matchPackageNames": ["sass"],

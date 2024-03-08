@@ -218,15 +218,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
                 <v-select
                   v-model="defaultView"
-                  :items="Object.keys($options.allViews)"
-                  :prepend-inner-icon="$options.allViews[defaultView]"
+                  :items="Array.from($options.allViews.keys())"
+                  :prepend-inner-icon="$options.allViews.get(defaultView).icon"
                   data-cy="select-default-view"
                   :menu-props="{ 'data-cy': 'select-default-view-menu' }"
                 >
                   <template v-slot:item="{ item, props }">
                     <v-list-item
                       v-bind="props"
-                      :prepend-icon="$options.allViews[item.value]"
+                      :prepend-icon="$options.allViews.get(item.value).icon"
                     />
                   </template>
                 </v-select>
@@ -246,7 +246,7 @@ import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@m
 import { useCyclePointsOrderDesc, useJobTheme, useReducedAnimation } from '@/composables/localStorage'
 import { getPageTitle } from '@/utils/index'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
-import { allViews, defaultView } from '@/views/Workspace.vue'
+import { allViews, useDefaultView } from '@/views/views.js'
 import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
 
@@ -261,7 +261,7 @@ export default {
 
   setup () {
     return {
-      defaultView: defaultView(),
+      defaultView: useDefaultView(),
       cyclePointsOrderDesc: useCyclePointsOrderDesc(),
       jobTheme: useJobTheme(),
       reducedAnimation: useReducedAnimation(),
@@ -285,9 +285,7 @@ export default {
     getCurrentFontSize,
   },
 
-  allViews: Object.fromEntries(
-    allViews.map(({ name, icon }) => [name, icon])
-  ),
+  allViews,
 
   vuetifyDefaults: {
     global: {

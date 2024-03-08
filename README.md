@@ -107,7 +107,7 @@ an entry in that file.
 
 ### Code Style
 
-See `.eslintrc.js` for style, to test run:
+See [`.eslintrc.cjs`](.eslintrc.cjs) for style. To test, run:
 
 ```bash
 yarn run lint
@@ -133,7 +133,7 @@ Its configuration is defined in [`src/plugins/vuetify.js`](src/plugins/vuetify.j
 
 We use [concurrently](https://github.com/open-cli-tools/concurrently) for
 concurrently running the mock data json-server and the Vite dev server, and
-also Cypress. This is configured in [`scripts/concurrently.js`](scripts/concurrently.js).
+also Cypress. This is configured in [`scripts/concurrently.cjs`](scripts/concurrently.cjs).
 
 ### Browser compatibility
 

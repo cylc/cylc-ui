@@ -177,8 +177,9 @@ describe('Mutations component', () => {
       .should('not.have.class', 'text-error')
       .trigger('mouseenter')
       .invoke('attr', 'aria-describedby').then((tooltipID) => {
-        cy.get(`#${tooltipID}`)
-          .should('not.exist')
+        cy.get(`#${tooltipID} .v-overlay__content`)
+          // NOTE: .should('not.be.visible') isn't accurate here - see below
+          .should('have.css', 'display', 'none')
         // Now type invalid input
         cy.get('.c-mutation-dialog')
           .find('.v-list-item-title')

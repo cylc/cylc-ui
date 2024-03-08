@@ -15,23 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// ***********************************************************
-// This example support/index.js is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
+import { TREE, useDefaultView } from '@/views/views.js'
 
-// For test coverage
-import '@cypress/code-coverage/support'
+describe('useDefaultView composable', () => {
+  it(`returns the ${TREE} view if not set in localStorage`, () => {
+    delete localStorage.defaultView
+    expect(useDefaultView().value).to.equal(TREE)
+  })
 
-// Import commands.js using ES2015 syntax:
-import './commands'
+  it('returns the view that has been set in localStorage', () => {
+    localStorage.defaultView = 'Table'
+    expect(useDefaultView().value).to.equal('Table')
+    localStorage.defaultView = 'Graph'
+    expect(useDefaultView().value).to.equal('Graph')
+  })
+
+  it(`returns the ${TREE} view if the view set in localStorage is not available`, () => {
+    localStorage.defaultView = 'NotAView'
+    expect(useDefaultView().value).to.equal(TREE)
+  })
+})

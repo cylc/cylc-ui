@@ -51,6 +51,8 @@ if (location.search) {
   // Normal app start
   const app = createApp(App)
 
+  const emitter = mitt()
+
   app.mixin(VueHeadMixin)
 
   app.use(store)
@@ -61,7 +63,10 @@ if (location.search) {
   app.use(ServicesPlugin)
   app.use(CylcObjectPlugin)
 
-  app.config.globalProperties.$eventBus = mitt()
+  // Composition API:
+  app.provide('eventBus', emitter)
+  // Options API (legacy):
+  app.config.globalProperties.$eventBus = emitter
 
   app.component('default-layout', Default)
   app.component('empty-layout', Empty)

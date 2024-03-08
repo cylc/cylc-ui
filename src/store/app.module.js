@@ -15,9 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { markRaw } from 'vue'
+
 const state = () => ({
   drawer: null,
   title: null,
+  workspaceLayouts: new Map(),
 })
 
 const mutations = {
@@ -27,6 +30,18 @@ const mutations = {
   setTitle (state, title) {
     state.title = title
   },
+  saveLayout ({ workspaceLayouts }, { workflowName, layout, views }) {
+    // Delete and re-add to keep this FIFO
+    workspaceLayouts.delete(workflowName)
+    /* NOTE: use markRaw to prevent proxying of the Lumino layout in particular.
+    It is not necessary for this saved state to be reactive, and moreover
+    proxying the layout breaks some parts of the 3rd party Lumino backend. */
+    workspaceLayouts.set(workflowName, markRaw({ layout, views }))
+    if (workspaceLayouts.size > 100) {
+      const firstKey = workspaceLayouts.keys().next().value
+      workspaceLayouts.delete(firstKey)
+    }
+  }
 }
 
 export const app = {

@@ -90,14 +90,10 @@ describe('Table component', () => {
           props: {
             tasks: simpleTableTasks
           },
-          data () {
-            return {
-              tasksFilter: {
-                id: 'taskA'
-              }
-            }
-          }
         })
+        wrapper.vm.tasksFilter = {
+          id: 'taskA'
+        }
         expect(wrapper.vm.filteredTasks.length).to.equal(1)
       })
 
@@ -106,17 +102,14 @@ describe('Table component', () => {
           props: {
             tasks: simpleTableTasks
           },
-          data () {
-            return {
-              tasksFilter: {
-                id: '',
-                states: [
-                  TaskState.WAITING.name
-                ]
-              }
-            }
-          }
         })
+        wrapper.vm.tasksFilter = {
+          id: '',
+          states: [
+            TaskState.WAITING.name
+          ]
+        }
+        // await nextTick()
         expect(wrapper.vm.filteredTasks.length).to.equal(1)
       })
 
@@ -125,17 +118,13 @@ describe('Table component', () => {
           props: {
             tasks: simpleTableTasks
           },
-          data () {
-            return {
-              tasksFilter: {
-                id: 'taskA',
-                states: [
-                  TaskState.WAITING.name
-                ]
-              }
-            }
-          }
         })
+        wrapper.vm.tasksFilter = {
+          id: 'taskA',
+          states: [
+            TaskState.WAITING.name
+          ]
+        }
         expect(wrapper.vm.filteredTasks.length).to.equal(0)
       })
     })

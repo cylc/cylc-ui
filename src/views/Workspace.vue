@@ -18,9 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div data-cy="workspace-view">
     <Toolbar
-      :views="$options.allViews"
+      :views="allViews"
       :workflow-name="workflowName"
-      @add="addView"
     />
     <div
       class="workflow-panel"
@@ -28,27 +27,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <Lumino
         ref="lumino"
-        @lumino:deleted="onWidgetDeletedEvent"
-        :views="widgets"
+        @emptied="onEmptied"
         :workflow-name="workflowName"
-        :allViews="$options.allViews"
+        :allViews="allViews"
       />
     </div>
   </div>
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
-import { useLocalStorage } from '@vueuse/core'
-import { uniqueId } from 'lodash'
-import {
-  mdiChartLine,
-  mdiFileDocumentMultipleOutline,
-  mdiFileTree,
-  mdiGraph,
-  mdiTable,
-  mdiTree,
-} from '@mdi/js'
+import { ref } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
+import { allViews } from '@/views/views.js'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
@@ -56,30 +46,6 @@ import ViewState from '@/model/ViewState.model'
 import Lumino from '@/components/cylc/workflow/Lumino.vue'
 import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
 import { toolbarHeight } from '@/utils/toolbar'
-
-// Use dynamic async components for lazy loading:
-const TreeView = defineAsyncComponent(() => import('@/views/Tree.vue'))
-const TableView = defineAsyncComponent(() => import('@/views/Table.vue'))
-const GraphView = defineAsyncComponent(() => import('@/views/Graph.vue'))
-const LogView = defineAsyncComponent(() => import('@/views/Log.vue'))
-const AnalysisView = defineAsyncComponent(() => import('@/views/Analysis.vue'))
-const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue'))
-
-export const allViews = [
-  { name: 'Tree', component: TreeView, icon: mdiFileTree },
-  { name: 'Table', component: TableView, icon: mdiTable },
-  { name: 'Graph', component: GraphView, icon: mdiGraph },
-  { name: 'Log', component: LogView, icon: mdiFileDocumentMultipleOutline },
-  { name: 'Analysis', component: AnalysisView, icon: mdiChartLine },
-]
-// Development views that we don't want in production:
-if (import.meta.env.MODE !== 'production') {
-  allViews.push(
-    { name: 'SimpleTree', component: SimpleTreeView, icon: mdiTree },
-  )
-}
-
-export const defaultView = () => useLocalStorage('defaultView', 'Tree')
 
 export default {
   name: 'Workspace',
@@ -100,106 +66,28 @@ export default {
     }
   },
 
-  props: {
-    initialOptions: {
-      type: Object,
-      required: false,
-      default: () => {}
+  setup () {
+    /** Template ref */
+    const lumino = ref(null)
+
+    onBeforeRouteUpdate((to, from) => {
+      lumino.value.changeLayout(to.params.workflowName)
+    })
+
+    return {
+      allViews,
+      lumino,
     }
-  },
-
-  data: () => ({
-    /**
-     * The widgets added to the view.
-     *
-     * @type {{ [id: string]: { view: string, initialOptions: Object } }}
-     */
-    widgets: {}
-  }),
-
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.$workflowService.startSubscriptions()
-      vm.$nextTick(() => {
-        vm.addView({ viewName: defaultView().value })
-      })
-    })
-  },
-
-  beforeRouteUpdate (to, from) {
-    this.removeAllWidgets()
-    // start over again with the new deltas query/variables/new widget as in beforeRouteEnter
-    // and in the next tick as otherwise we would get stale/old variables for the graphql query
-    this.$nextTick(() => {
-      this.addView({ viewName: defaultView().value })
-    })
-  },
-
-  beforeRouteLeave (to, from) {
-    this.removeAllWidgets()
-  },
-
-  mounted () {
-    this.$eventBus.on('add-view', this.addView)
-  },
-
-  beforeUnmount () {
-    this.$eventBus.off('add-view', this.addView)
   },
 
   methods: {
-    /**
-     * Add a new view widget.
-     *
-     * viewName - the name of the view to be added (Vue component name).
-     */
-    addView ({ viewName, initialOptions = {} }) {
-      this.widgets[uniqueId('widget_')] = { view: viewName, initialOptions }
-    },
-    /**
-     * Remove all the widgets present in the DockPanel.
-     */
-    removeAllWidgets () {
-      Array.from(this.$refs.lumino.dock.widgets())
-        .forEach(widget => widget.close())
-    },
-    /**
-     * Called for each widget removed. Each widget contains a subscription
-     * attached. This method will check if it needs to cancel the
-     * subscription (e.g. we removed the last widget using a deltas
-     * subscription).
-     *
-     * Calling it might change the value of the `isLoading` data
-     * attribute.
-     *
-     * @param {{
-     *   id: string
-     * }} event UI event containing the widget ID (string value, needs to be parsed)
-     */
-    onWidgetDeletedEvent (event) {
-      delete this.widgets[event.id]
+    onEmptied () {
       // If we have no more widgets in the view, then we are not loading, not complete, not error,
       // but back to beginning. When a widget is added, if it uses a query, then the mixins will
       // take care to set the state to LOADING and then COMPLETE (and hopefully not ERROR).
-      if (!Object.keys(this.widgets).length) {
-        this.viewState = ViewState.NO_STATE
-      }
+      this.viewState = ViewState.NO_STATE
     }
   },
-
-  /**
-   * A list of Vue views or components. These components must provide a .widget
-   * property/data with the title and icon properties.
-   *
-   * Each view in this list will be available from the Toolbar to be added as
-   * a widget.
-   *
-   * Note for peformance reasons this should not be in data() - we don't want
-   * these to be made reactive as they are already Vue components.
-   *
-   * @type {Object[]}
-   */
-  allViews,
 
   panelStyle: {
     height: `calc(100vh - ${toolbarHeight}px)`,

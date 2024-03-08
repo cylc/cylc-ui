@@ -19,8 +19,8 @@
 const PORT = 3000
 
 const userProfile = require('./json/userprofile.json')
-const graphql = require('./graphql')
-const websockets = require('./websockets')
+const graphql = require('./graphql.cjs')
+const websockets = require('./websockets.cjs')
 
 const jsonServer = require('json-server')
 const logger = require('morgan')

@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { watch } from 'vue'
 import { i18n } from '@/i18n'
 
 /**
@@ -26,4 +27,26 @@ import { i18n } from '@/i18n'
  */
 export const getPageTitle = (key, params = {}) => {
   return `${i18n.global.t('App.name')} | ${i18n.global.t(key, params)}`
+}
+
+/**
+ * Watch source until it is truthy, then call the callback (and stop watching).
+ *
+ * Immediate by default.
+ *
+ * @param {import('vue').WatchSource} source
+ * @param {import('vue').WatchCallback} callback
+ * @param {import('vue').WatchOptions?} options
+ */
+export const when = (source, callback, options = {}) => {
+  const unwatch = watch(
+    source,
+    (ready) => {
+      if (ready) {
+        callback()
+        unwatch()
+      }
+    },
+    { immediate: true, ...options }
+  )
 }
