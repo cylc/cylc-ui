@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { matchTask, platformOptions } from '@/components/cylc/analysis/filter'
+import {
+  matchTask,
+  platformOptions
+} from '@/components/cylc/analysis/filter'
 
 describe('matchTask', () => {
   const task = {
