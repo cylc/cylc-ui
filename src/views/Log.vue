@@ -56,7 +56,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-if="jobLog"
           data-cy="job-id-input"
           class="flex-grow-1 flex-column"
-          v-model="relativeID"
+          :model-value="relativeID"
+          @update:modelValue="debouncedUpdateRelativeID"
           placeholder="cycle/task/job"
           clearable
         />
@@ -143,6 +144,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { ref } from 'vue'
+import { usePrevious } from '@vueuse/core'
 import {
   mdiClockOutline,
   mdiFileAlertOutline,
@@ -153,6 +156,11 @@ import {
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import {
+  initialOptions,
+  updateInitialOptionsEvent,
+  useInitialOptions
+} from '@/utils/initialOptions'
 import LogComponent from '@/components/cylc/log/Log.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { Tokens } from '@/utils/uid'
@@ -193,16 +201,39 @@ query LogFiles($id: ID!) {
 }
 `
 
-// The preferred file to start with as a list of patterns
-// The first pattern with a matching file name will be choosen
+/**
+ * The preferred file to start with as a list of patterns.
+ * The first pattern with a matching file name will be chosen.
+ */
 const LOG_FILE_DEFAULTS = [
   // job stdout
-  /job\.out/,
+  /^job\.out$/,
   // job script (e.g. on job submission failure)
-  /job/,
+  /^job$/,
   // scheduler log (lexographical sorting ensures the latest log)
-  /scheduler\/*/
+  /^scheduler\/*/
 ]
+
+/**
+ * Return the default log file from the given log filenames, if there is a
+ * matching filename. Relies on the filenames having been sorted in descending
+ * order.
+ *
+ * @param {string[]} logFiles - list of available log filenames
+ * @returns {?string}
+ */
+export const getDefaultFile = (logFiles) => {
+  if (logFiles.length) {
+    for (const filePattern of LOG_FILE_DEFAULTS) {
+      for (const fileName of logFiles) {
+        if (filePattern.exec(fileName)) {
+          return fileName
+        }
+      }
+    }
+  }
+  return null // rather than undefined
+}
 
 class Results {
   constructor () {
@@ -264,34 +295,59 @@ export default {
     }
   },
 
+  emits: [
+    updateInitialOptionsEvent,
+  ],
+
   props: {
-    initialOptions: {
-      type: Object,
-      required: false,
-      default: () => {}
+    initialOptions,
+  },
+
+  setup (props, { emit }) {
+    /**
+     * The task/job ID input.
+     * @type {import('vue').Ref<string>}
+     */
+    const relativeID = useInitialOptions('relativeID', { props, emit })
+
+    const previousRelativeID = usePrevious(relativeID)
+
+    /**
+     * The selected log file name.
+     * @type {import('vue').Ref<string>}
+     */
+    const file = useInitialOptions('file', { props, emit })
+
+    /** Set the value of relativeID at most every 0.5 seconds, used for text input */
+    const debouncedUpdateRelativeID = debounce((value) => {
+      relativeID.value = value
+    }, 500)
+
+    return {
+      // the log subscription query
+      query: ref(null),
+      // list of log files for the selected workflow/task/job
+      logFiles: ref([]),
+      // the log file as a list of lines
+      results: ref(new Results()),
+      relativeID,
+      previousRelativeID,
+      file,
+      // the label for the file input
+      fileLabel: ref('Select File'),
+      // turns the file input off (e.g. when the file list is being loaded)
+      fileDisabled: ref(false),
+      // toggle between viewing workflow logs (0) and job logs (1).
+      // default to displaying workflow logs unless initial task/job ID is provided.
+      jobLog: ref(relativeID.value == null ? 0 : 1),
+      // toggle timestamps in log files
+      timestamps: ref(true),
+      debouncedUpdateRelativeID,
     }
   },
 
   data () {
     return {
-      // the log subscription query
-      query: null,
-      // list of log files for the selected workflow/task/job
-      logFiles: [],
-      // the log file as a list of lines
-      results: new Results(),
-      // the task/job ID input
-      relativeID: null,
-      // the selected log file name
-      file: null,
-      // the label for the file input
-      fileLabel: 'Select File',
-      // turns the file input off (e.g. when the file list is being loaded)
-      fileDisabled: false,
-      // toggle between viewing workflow logs (0) and job logs (1)
-      jobLog: 0, // default to displaying workflow logs
-      // toggle timestamps in log files
-      timestamps: true,
       controlGroups: [
         {
           title: 'Log',
@@ -315,20 +371,23 @@ export default {
     }
   },
 
-  created () {
-    // set the ID/file if specified in initialOptions
-    if (this.initialOptions?.tokens?.task) {
-      this.relativeID = this.initialOptions.tokens.relative_id
-      this.jobLog = 1
-    }
-    if (this.initialOptions?.file) {
-      this.file = this.initialOptions.file
-    }
-  },
-
-  async mounted () {
-    // load the log file list and subscribe on startup
-    await this.updateLogFileList()
+  mounted () {
+    // Watch id & file together:
+    this.$watch(
+      () => ({
+        id: this.id ?? undefined, // (treat null as undefined)
+        file: this.file ?? undefined
+      }),
+      async ({ id }, old) => {
+        // update the query when the id or file change
+        this.updateQuery()
+        // refresh the file list when the id changes
+        if (id !== old?.id) {
+          await this.updateLogFileList()
+        }
+      },
+      { immediate: true }
+    )
   },
 
   computed: {
@@ -342,7 +401,7 @@ export default {
       if (this.jobLog) {
         try {
           const taskTokens = new Tokens(this.relativeID, true)
-          if (!taskTokens || !taskTokens.task) {
+          if (!taskTokens?.task) {
             return null
           }
           return this.workflowTokens.clone({ cycle: taskTokens.cycle, task: taskTokens.task, job: taskTokens.job }).id
@@ -376,7 +435,6 @@ export default {
         LOGS_SUBSCRIPTION,
         { id: this.id, file: this.file },
         `log-query-${this._uid}`,
-        // ,
         [
           new LogsCallback(this.results)
         ],
@@ -388,6 +446,10 @@ export default {
       // if reset===true then the this.file will be reset
       // otherwise it will be left alone
 
+      if (!this.id) {
+        this.handleNoLogFiles()
+        return
+      }
       // update the list of log files
       this.fileLabel = 'Updating available files...'
       this.fileDisabled = true
@@ -398,36 +460,22 @@ export default {
           query: LOG_FILE_QUERY,
           variables: { id: this.id }
         })
-      } catch {
+      } catch (err) {
         // the query failed
-        this.fileLabel = `No log files for ${this.id}`
-        this.fileDisabled = true
+        console.warn(err)
+        this.handleNoLogFiles()
         return
       }
-      let logFiles
-      if (result.data.logFiles) {
-        logFiles = result.data.logFiles.files
-      } else {
-        logFiles = []
-      }
+      const logFiles = result.data.logFiles?.files ?? []
 
       // reset the file if it is not present in the new selection
       if (reset) {
-        if (this.file && !(this.file in logFiles)) {
+        if (this.file && !logFiles.includes(this.file)) {
           this.file = null
         }
-
+        if (!this.file) {
         // set the default log file if appropriate
-        if (!this.file && logFiles) {
-          for (const filePattern of LOG_FILE_DEFAULTS) {
-            for (const fileName of logFiles) {
-              if (filePattern.exec(fileName)) {
-                this.file = fileName
-                break
-              }
-            }
-            if (this.file) { break }
-          }
+          this.file = getDefaultFile(logFiles)
         }
       }
 
@@ -437,31 +485,23 @@ export default {
         this.fileDisabled = false
         this.logFiles = logFiles
       } else {
-        this.fileLabel = `No log files for ${this.id}`
-        this.fileDisabled = true
-        this.logFiles = []
+        this.handleNoLogFiles()
       }
-    }
+    },
+    handleNoLogFiles () {
+      this.fileLabel = this.id ? `No log files for ${this.id}` : 'Enter a task/job ID'
+      this.fileDisabled = true
+      this.logFiles = []
+    },
   },
 
   watch: {
-    id: debounce(
-      // refresh the file list and update the query when the id changes
-      async function () {
-        await this.updateLogFileList()
-        this.updateQuery()
-      },
-      // only re-run this once every 0.5 seconds
-      500
-    ),
-    jobLog () {
+    jobLog (val, old) {
       // reset the filename when the log mode changes
       this.file = null
+      // go back to last chosen job if we are switching back to job logs
+      this.relativeID = val ? this.previousRelativeID : null
     },
-    file () {
-      // update the query when the file changes
-      this.updateQuery()
-    }
   },
 
   // Misc options

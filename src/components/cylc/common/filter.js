@@ -25,7 +25,7 @@
  * @return {boolean}
  */
 export function matchID (node, id) {
-  return !id?.trim() || node.tokens.relative_id.includes(id)
+  return !id?.trim() || node.tokens.relativeID.includes(id)
 }
 
 /**

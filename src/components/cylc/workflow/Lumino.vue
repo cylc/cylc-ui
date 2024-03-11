@@ -19,14 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- Lumino box panel gets inserted here -->
   </div>
   <template
-    v-for="[id, { name, initialOptions }] in views"
+    v-for="[id, { name }] in views"
     :key="id"
   >
     <Teleport :to="`#${id}`">
       <component
         :is="props.allViews.get(name).component"
         :workflow-name="workflowName"
-        :initial-options="initialOptions"
+        v-model:initial-options="views.get(id).initialOptions"
         class="h-100"
       />
     </Teleport>
@@ -62,7 +62,7 @@ import { useDefaultView } from '@/views/views'
  * Mitt event for adding a view to the workspace.
  * @typedef {Object} AddViewEvent
  * @property {string} name - the view to add
- * @property {Object=} initialOptions - prop passed to the view component
+ * @property {Record<string,*>} initialOptions - prop passed to the view component
  */
 
 const $eventBus = inject('eventBus')
@@ -135,16 +135,16 @@ onBeforeUnmount(() => {
 /**
  * Create a widget and add it to the dock.
  *
- * @param {AddViewEvent} view
+ * @param {AddViewEvent} event
  * @param {boolean} onTop
  */
-const addView = (view, onTop = true) => {
+const addView = ({ name, initialOptions = {} }, onTop = true) => {
   const id = uniqueId('widget')
-  const luminoWidget = new LuminoWidget(id, startCase(view.name), /* closable */ true)
+  const luminoWidget = new LuminoWidget(id, startCase(name), /* closable */ true)
   dockPanel.addWidget(luminoWidget, { mode: 'tab-after' })
   // give time for Lumino's widget DOM element to be created
   nextTick(() => {
-    views.value.set(id, view)
+    views.value.set(id, { name, initialOptions })
     addWidgetEventListeners(id)
     if (onTop) {
       dockPanel.selectWidget(luminoWidget)

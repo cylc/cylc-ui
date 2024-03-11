@@ -32,8 +32,8 @@ const stateTotalsTestWorkflowNodes = {
     user: 'cylc',
     workflow: 'double',
     id: '~cylc/double',
-    workflow_id: '~cylc/double',
-    relative_id: ''
+    workflowID: '~cylc/double',
+    relativeID: ''
   },
   type: 'workflow-part',
   children: [
@@ -48,8 +48,8 @@ const stateTotalsTestWorkflowNodes = {
         user: 'cylc',
         workflow: 'double/mid',
         id: '~cylc/double/mid',
-        workflow_id: '~cylc/double/mid',
-        relative_id: ''
+        workflowID: '~cylc/double/mid',
+        relativeID: ''
       },
       type: 'workflow-part',
       children: [
@@ -64,8 +64,8 @@ const stateTotalsTestWorkflowNodes = {
             user: 'cylc',
             workflow: 'double/mid/first',
             id: '~cylc/double/mid/first',
-            workflow_id: '~cylc/double/mid/first',
-            relative_id: ''
+            workflowID: '~cylc/double/mid/first',
+            relativeID: ''
           },
           type: 'workflow-part',
           children: [
@@ -75,8 +75,8 @@ const stateTotalsTestWorkflowNodes = {
                 user: 'cylc',
                 workflow: 'double/mid/first/run1',
                 id: '~cylc/double/mid/first/run1',
-                workflow_id: '~cylc/double/mid/first/run1',
-                relative_id: ''
+                workflowID: '~cylc/double/mid/first/run1',
+                relativeID: ''
               },
               name: 'run1',
               type: 'workflow',
@@ -142,8 +142,8 @@ const stateTotalsTestWorkflowNodes = {
             user: 'cylc',
             workflow: 'double/mid/second',
             id: '~cylc/double/mid/second',
-            workflow_id: '~cylc/double/mid/second',
-            relative_id: ''
+            workflowID: '~cylc/double/mid/second',
+            relativeID: ''
           },
           type: 'workflow-part',
           children: [
@@ -153,8 +153,8 @@ const stateTotalsTestWorkflowNodes = {
                 user: 'cylc',
                 workflow: 'double/mid/second/run1',
                 id: '~cylc/double/mid/second/run1',
-                workflow_id: '~cylc/double/mid/second/run1',
-                relative_id: ''
+                workflowID: '~cylc/double/mid/second/run1',
+                relativeID: ''
               },
               name: 'run1',
               type: 'workflow',
