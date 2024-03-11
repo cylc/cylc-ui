@@ -42,6 +42,8 @@ module.exports = {
     return workflows.find(({ deltas }) => deltas.id === workflowId) || {}
   },
   Test: workflowOne,
+  analysisTaskQuery,
+  analysisJobQuery,
   analysisQuery,
   ganttQuery
 }
