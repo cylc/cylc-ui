@@ -267,7 +267,7 @@ describe('Tree view', () => {
         .click({ force: true })
       // Navigate away
       cy.visit('/#/')
-      cy.title().should('eq', 'Cylc UI | Dashboard')
+      cy.get('.c-dashboard')
       // Navigate back
       cy.visit('/#/workspace/one')
         .get('.node-data-task:visible')
