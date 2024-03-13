@@ -190,7 +190,7 @@ export default {
       required: true,
     },
     platformOption: {
-      type: String,
+      type: [String, Number],
       required: true,
     },
     animate: {
