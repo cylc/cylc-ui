@@ -188,7 +188,7 @@ query analysisTaskQuery ($workflows: [ID]) {
 `
 
 /** The callback which gets called when data comes in from the query */
-class AnalysisTaskCallback {
+class AnalysisTaskCallback extends DeltasCallback {
   /**
    * @param {Object[]} tasks
    */
