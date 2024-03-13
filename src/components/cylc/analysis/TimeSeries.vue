@@ -38,7 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-if="this.showSelectAll"
         >
           <v-list-item
-            ripple
             @click="selectSearchResults"
           >
             Select all search results
