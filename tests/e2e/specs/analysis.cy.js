@@ -280,12 +280,13 @@ describe('Analysis view', () => {
         .get('.vue-apexcharts')
         .should('be.visible')
       // There should be three tasks in the drop down list when loaded
+      // Plus 2 entries for Select and Deselect all
       cy
         .get('.d-flex > .v-autocomplete')
         .click()
         .get('.v-list-item')
         .its('length')
-        .should('eq', 3, { timeout: 10000 })
+        .should('eq', 5, { timeout: 10000 })
     })
 
     it('Should switch view', () => {
@@ -347,7 +348,7 @@ describe('Analysis view', () => {
     })
 
     it('Should search for and add/remove tasks', () => {
-      // Before searching, the options to add/remove all tasks shouldn't exist
+      // Before searching, the options to add/remove all tasks should exist
       cy
         .get('.d-flex > .v-autocomplete')
         .click()
@@ -355,10 +356,10 @@ describe('Analysis view', () => {
         .contains('succeeded')
         .get('.v-list-item')
         .contains('Select all')
-        .should('not.exist')
+        .should('exist')
         .get('.v-list-item')
         .contains('Remove all')
-        .should('not.exist')
+        .should('exist')
       // Select all tasks that contain succeeded
       cy
         .get('.d-flex > .v-autocomplete')
