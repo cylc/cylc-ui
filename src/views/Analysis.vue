@@ -142,6 +142,7 @@ import {
 import gql from 'graphql-tag'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
+import DeltasCallback from '@/services/callbacks'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
 import TimeSeries from '@/components/cylc/analysis/TimeSeries.vue'
@@ -193,6 +194,7 @@ class AnalysisTaskCallback extends DeltasCallback {
    * @param {Object[]} tasks
    */
   constructor (tasks) {
+    this.super()
     this.tasks = tasks
   }
 

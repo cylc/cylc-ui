@@ -251,7 +251,10 @@ export default {
         for (const cycle of this.cyclePoints) {
           data[cycle] = { x: cycle, y: null }
         }
-        seriesData[task] = { name: task, data: data }
+        seriesData[task] = {
+          name: task,
+          data
+        }
       }
 
       for (const job of this.jobs) {
