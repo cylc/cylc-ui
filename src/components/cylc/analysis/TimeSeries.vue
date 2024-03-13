@@ -43,7 +43,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             Select all search results
           </v-list-item>
           <v-list-item
-            ripple
             @click="deselectSearchResults"
           >
             Remove all search results
