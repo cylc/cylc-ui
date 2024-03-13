@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         chips
         closable-chips
         clearable
+        showSelectAll
         placeholder="Search"
         :items="tasks"
         v-model="displayedTasks"
@@ -35,7 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <template
           v-slot:prepend-item
-          v-if="this.showSelectAll"
         >
           <v-list-item
             @click="selectSearchResults"
