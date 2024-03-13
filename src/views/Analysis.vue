@@ -194,7 +194,7 @@ class AnalysisTaskCallback extends DeltasCallback {
    * @param {Object[]} tasks
    */
   constructor (tasks) {
-    this.super()
+    super()
     this.tasks = tasks
   }
 
