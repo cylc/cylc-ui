@@ -103,16 +103,6 @@ export default {
     this.reset()
   },
 
-  mounted () {
-    // Work around lack of initial validation
-    // https://github.com/vuetifyjs/vuetify/issues/15568
-    this.$watch(
-      '$refs',
-      () => { this.$refs.form?.validate() },
-      { immediate: true }
-    )
-  },
-
   computed: {
     tokens () {
       return this.cylcObject.type === 'cycle'
