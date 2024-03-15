@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="filterable"
         class=""
       >
-        <TaskFilter v-model="tasksFilter"/>
+        <TaskFilter v-model="tasksFilterLocal"/>
       </v-col>
     </v-row>
     <v-row
@@ -148,6 +148,10 @@ export default {
   name: 'TableComponent',
 
   props: {
+    tasksFilter: {
+      type: Object,
+      required: true
+    },
     tasks: {
       type: Array,
       required: true
@@ -174,13 +178,18 @@ export default {
           order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
         },
       ]),
-      tasksFilter: ref({})
+    }
+  },
+
+  data () {
+    return {
+      tasksFilterLocal: this.tasksFilter,
     }
   },
 
   computed: {
     filteredTasks () {
-      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
+      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilterLocal.id, this.tasksFilterLocal.states))
     }
   },
 

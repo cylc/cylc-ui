@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div class="h-100">
     <TableComponent
+      :tasksFilter="tasksFilter"
       :tasks="tasks"
       ref="table0"
       key="table0"
@@ -26,10 +27,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { ref } from 'vue'
 import { mapState, mapGetters } from 'vuex'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import {
+  initialOptions,
+  updateInitialOptionsEvent,
+  useInitialOptions
+} from '@/utils/initialOptions'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
@@ -129,6 +136,33 @@ export default {
   head () {
     return {
       title: getPageTitle('App.workflow', { name: this.workflowName })
+    }
+  },
+
+  emits: [
+    updateInitialOptionsEvent,
+  ],
+
+  props: {
+    initialOptions,
+  },
+
+  setup (props, { emit }) {
+    /**
+     * The task/job ID input. (TASKS)
+     * @type {import('vue').Ref<object>}
+     */
+    // const tasks = useInitialOptions('tasks', { props, emit }, ref([]))
+    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, ref({}))
+    /**
+     * The task/job ID input. (FILTERABLE)
+     * @type {import('vue').Ref<boolean>}
+     */
+    const filterable = useInitialOptions('filterable', { props, emit }, ref(false))
+
+    return {
+      tasksFilter,
+      filterable
     }
   },
 
