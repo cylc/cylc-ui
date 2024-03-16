@@ -2309,15 +2309,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vuetify/loader-shared@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@vuetify/loader-shared@npm:2.0.2"
+"@vuetify/loader-shared@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@vuetify/loader-shared@npm:2.0.3"
   dependencies:
     upath: "npm:^2.0.1"
   peerDependencies:
     vue: ^3.0.0
     vuetify: ^3.0.0
-  checksum: 10c0/d0edb419c2d1fb040761101394d5bc94727e4f28d45dde6003b21ed1c0db41aa407f0ed6860b0ad1fc5c442bb011909e5abe3a48ded540d4c3cb501868059239
+  checksum: 10c0/88cfe831821e8c4ac11edb725ee7321436f0b152ac8c2aad70ca71d343a39176e79f67314397cfb622118520998712660f4ed036128b0123244ed2cafb2c9b46
   languageName: node
   linkType: hard
 
@@ -3608,10 +3608,10 @@ __metadata:
     standard: "npm:17.1.0"
     subscriptions-transport-ws: "npm:0.11.0"
     svg-pan-zoom: "npm:3.6.1"
-    vite: "npm:5.1.5"
+    vite: "npm:5.1.6"
     vite-plugin-eslint: "npm:1.8.1"
     vite-plugin-istanbul: "npm:6.0.0"
-    vite-plugin-vuetify: "npm:2.0.2"
+    vite-plugin-vuetify: "npm:2.0.3"
     vitest: "npm:1.3.1"
     vue: "npm:3.4.11"
     vue-i18n: "npm:9.10.2"
@@ -10071,24 +10071,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-vuetify@npm:2.0.2":
-  version: 2.0.2
-  resolution: "vite-plugin-vuetify@npm:2.0.2"
+"vite-plugin-vuetify@npm:2.0.3":
+  version: 2.0.3
+  resolution: "vite-plugin-vuetify@npm:2.0.3"
   dependencies:
-    "@vuetify/loader-shared": "npm:^2.0.2"
+    "@vuetify/loader-shared": "npm:^2.0.3"
     debug: "npm:^4.3.3"
     upath: "npm:^2.0.1"
   peerDependencies:
     vite: ">=5"
     vue: ^3.0.0
     vuetify: ^3.0.0
-  checksum: 10c0/24a072f5a826b5d84377861f762cc2316e1e6abfb87b7304f4182db873ed3900f69c3beb6f9d933cc4a69a193ce5656de61a398f71144ec37ac4875e14821350
+  checksum: 10c0/5af9d45e92f88526afddd2fc3dd629ef005dc1d816522e109bd91f2fcb652b5e0fc9a31979b6f4110bdd20c570ba5178ba6146d28515edb49221e19011e583f6
   languageName: node
   linkType: hard
 
-"vite@npm:5.1.5":
-  version: 5.1.5
-  resolution: "vite@npm:5.1.5"
+"vite@npm:5.1.6":
+  version: 5.1.6
+  resolution: "vite@npm:5.1.6"
   dependencies:
     esbuild: "npm:^0.19.3"
     fsevents: "npm:~2.3.3"
@@ -10122,7 +10122,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/29be99ba0bec5e3ad50290510ba764b6c1016979a1ba70cf2071be9f1338f27e582a120836222e1fad6efb01c886a8fb57cb33471fadd0fceaa922bfc92bbbf7
+  checksum: 10c0/b935527544741d9313143a77f811d97b8b094757e42f9c02b7aca6294a4912674dbad5379e4759629b6ba895c93b5020cc7594f74b37846715336837fdce850a
   languageName: node
   linkType: hard
 
