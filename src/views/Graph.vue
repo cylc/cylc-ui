@@ -98,6 +98,10 @@ import { getPageTitle } from '@/utils/index'
 import { useJobTheme } from '@/composables/localStorage'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import {
+  initialOptions,
+  useInitialOptions
+} from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
 import GraphNode from '@/components/cylc/GraphNode.vue'
@@ -224,9 +228,34 @@ export default {
     }
   },
 
-  setup () {
+  props: { initialOptions },
+
+  setup (props, { emit }) {
+    /**
+     * The transpose toggle state.
+     * If true layout is left-right, else top-bottom
+     * @type {import('vue').Ref<boolean>}
+     */
+    const transpose = useInitialOptions('transpose', { props, emit }, false)
+
+    /**
+     * The auto-refresh toggle state.
+     * If true the graph layout will be updated on a timer
+     * @type {import('vue').Ref<boolean>}
+     */
+    const autoRefresh = useInitialOptions('autoRefresh', { props, emit }, true)
+
+    /**
+     * The node spacing state.
+     * @type {import('vue').Ref<number>}
+     */
+    const spacing = useInitialOptions('spacing', { props, emit }, 1.5)
+
     return {
       jobTheme: useJobTheme(),
+      transpose,
+      autoRefresh,
+      spacing
     }
   },
 
@@ -236,8 +265,6 @@ export default {
       orientation: 'TB',
       // the auto-refresh timer
       refreshTimer: null,
-      // the spacing between nodes
-      spacing: 1.5,
       // the nodes end edges we render to the graph
       graphNodes: [],
       graphEdges: [],
@@ -249,58 +276,8 @@ export default {
       graphID: null,
       // instance of system which provides pan/zoom/navigation support
       panZoomWidget: null,
-      // if true layout is left-right is false it is top-bottom
-      transpose: false,
-      // if true the graph layout will be updated on a timer
-      autoRefresh: true,
       // true if layout is in progress
       updating: false,
-      controlGroups: [
-        {
-          title: 'Graph',
-          controls: [
-            {
-              title: 'Refresh',
-              icon: mdiRefresh,
-              action: 'callback',
-              callback: this.refresh,
-              disableIf: ['autoRefresh']
-            },
-            {
-              title: 'Auto Refresh',
-              icon: mdiTimer,
-              action: 'toggle',
-              value: true,
-              key: 'autoRefresh'
-            },
-            {
-              title: 'Transpose',
-              icon: mdiFileRotateRight,
-              action: 'toggle',
-              value: false,
-              key: 'transpose'
-            },
-            {
-              title: 'Centre',
-              icon: mdiImageFilterCenterFocus,
-              action: 'callback',
-              callback: this.reset
-            },
-            {
-              title: 'Increase Spacing',
-              icon: mdiArrowExpand,
-              action: 'callback',
-              callback: this.increaseSpacing
-            },
-            {
-              title: 'Decrease Spacing',
-              icon: mdiArrowCollapse,
-              action: 'callback',
-              callback: this.decreaseSpacing
-            }
-          ]
-        }
-      ],
     }
   },
 
@@ -310,6 +287,7 @@ export default {
     this.graphviz = Graphviz.load()
     // allow render to happen before we go configuring svgPanZoom
     this.$nextTick(() => {
+      this.refresh()
       this.updateTimer()
     })
     this.mountSVGPanZoom()
@@ -336,6 +314,54 @@ export default {
     },
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)
+    },
+    controlGroups () {
+      return [
+        {
+          title: 'Graph',
+          controls: [
+            {
+              title: 'Refresh',
+              icon: mdiRefresh,
+              action: 'callback',
+              callback: this.refresh,
+              disableIf: ['autoRefresh']
+            },
+            {
+              title: 'Auto Refresh',
+              icon: mdiTimer,
+              action: 'toggle',
+              value: this.autoRefresh,
+              key: 'autoRefresh'
+            },
+            {
+              title: 'Transpose',
+              icon: mdiFileRotateRight,
+              action: 'toggle',
+              value: this.transpose,
+              key: 'transpose'
+            },
+            {
+              title: 'Centre',
+              icon: mdiImageFilterCenterFocus,
+              action: 'callback',
+              callback: this.reset
+            },
+            {
+              title: 'Increase Spacing',
+              icon: mdiArrowExpand,
+              action: 'callback',
+              callback: this.increaseSpacing
+            },
+            {
+              title: 'Decrease Spacing',
+              icon: mdiArrowCollapse,
+              action: 'callback',
+              callback: this.decreaseSpacing
+            }
+          ]
+        }
+      ]
     }
   },
 
@@ -517,7 +543,7 @@ export default {
       // generate a hash for this list of nodes and edges
       return nonCryptoHash(
         nodes.map(n => n.id).reduce((x, y) => { return x + y }) +
-        edges.map(n => n.id).reduce((x, y) => { return x + y }, 1)
+        (edges || []).map(n => n.id).reduce((x, y) => { return x + y }, 1)
       )
     },
     reset () {
@@ -558,10 +584,13 @@ export default {
       this.updating = true
 
       // extract the graph (non reactive lists of nodes & edges)
-      const nodes = this.getGraphNodes()
+      const nodes = await this.waitFor(() => {
+        const nodes = this.getGraphNodes()
+        return nodes.length ? nodes : false
+      })
       const edges = this.getGraphEdges()
 
-      if (!nodes.length) {
+      if (!nodes || !nodes.length) {
         // we can't graph this, reset and wait for something to draw
         this.graphID = null
         this.updating = false
@@ -592,11 +621,9 @@ export default {
       // obtain the node dimensions to use in the layout
       // NOTE: need to wait for the nodes to all be rendered before we can
       // measure them
-      let nodeDimensions
-      await this.waitFor(() => {
+      const nodeDimensions = await this.waitFor(() => {
         try {
-          nodeDimensions = this.getNodeDimensions(nodes)
-          return true // all nodes rendered
+          return this.getNodeDimensions(nodes) // all nodes rendered
         } catch {
           return false // one or more nodes awaiting render
         }
@@ -634,9 +661,8 @@ export default {
       // Will return when the callback returns something truthy.
       // OR after the configured number of retries
       for (let retry = 0; retry < retries; retry++) {
-        if (callback()) {
-          break
-        }
+        const ret = callback()
+        if (ret) return ret
         await new Promise(requestAnimationFrame)
         await this.$nextTick()
       }

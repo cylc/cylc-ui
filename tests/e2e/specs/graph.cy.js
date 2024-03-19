@@ -37,6 +37,31 @@ function checkGraphLayoutPerformed ($el, depth = 0) {
   }
 }
 
+function addView (view) {
+  cy.get('[data-cy=add-view-btn]').click()
+  cy.get(`#toolbar-add-${view}-view`).click()
+    // wait for menu to close
+    .should('not.be.exist')
+}
+
+function checkRememberToolbarSettings (selector, stateBefore, stateAfter) {
+  cy
+    .get(selector)
+    .find('.v-btn')
+    .should(stateBefore, 'text-blue')
+    .click()
+  // Navigate away
+  cy.visit('/#/')
+  cy.get('.c-dashboard')
+  // Navigate back
+  cy.visit('/#/workspace/one')
+  waitForGraphLayout()
+  cy
+    .get(selector)
+    .find('.v-btn')
+    .should(stateAfter, 'text-blue')
+}
+
 describe('Graph View', () => {
   it('should load', () => {
     cy.visit('/#/graph/one')
@@ -68,5 +93,41 @@ describe('Graph View', () => {
       .children()
       .should('have.length', 10)
       .should('be.visible')
+  })
+
+  it('loads graph when switching between workflows', () => {
+    cy.visit('/#/workspace/one')
+    addView('Graph')
+    waitForGraphLayout()
+    cy.visit('/#/workspace/other/multi/run2')
+    addView('Graph')
+    waitForGraphLayout()
+    cy
+    // there should be 2 graph nodes (all on-screen)
+      .get('.c-graph:first')
+      .find('.graph-node-container')
+      .should('be.visible')
+      .should('have.length', 2)
+    cy.visit('/#/workspace/one')
+    cy
+    // there should be 7 graph nodes (all on-screen)
+      .get('.c-graph:first')
+      .find('.graph-node-container')
+      .should('be.visible')
+      .should('have.length', 7)
+  })
+
+  it('remembers autorefresh setting when switching between workflows', () => {
+    cy.visit('/#/workspace/one')
+    addView('Graph')
+    waitForGraphLayout()
+    checkRememberToolbarSettings('[data-cy=control-autoRefresh]', 'have.class', 'not.have.class')
+  })
+
+  it('remembers transpose setting when switching between workflows', () => {
+    cy.visit('/#/workspace/one')
+    addView('Graph')
+    waitForGraphLayout()
+    checkRememberToolbarSettings('[data-cy=control-transpose]', 'not.have.class', 'have.class')
   })
 })
