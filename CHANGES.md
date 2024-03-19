@@ -15,6 +15,10 @@ ones in. -->
 
 ### Enhancements
 
+[#1705](https://github.com/cylc/cylc-ui/pull/1705) -
+[#1688](https://github.com/cylc/cylc-ui/pull/1688) -
+Certain view options are now remembered & restored when navigating between workflows.
+
 [#1664](https://github.com/cylc/cylc-ui/pull/1664) -
 Workspace tab layout is now remembered & restored when navigating between workflows.
 

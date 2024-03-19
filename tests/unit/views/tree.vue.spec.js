@@ -13,6 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import { createVuetify } from 'vuetify'
@@ -123,7 +124,8 @@ describe('Tree view', () => {
       { tasksFilter: { id: 'asdf', states: ['failed'] }, filteredOut: true },
     ])('filters by $tasksFilter', async ({ tasksFilter, filteredOut }) => {
       const wrapper = mountFunction()
-      await wrapper.setData({ tasksFilter })
+      wrapper.vm.tasksFilter = tasksFilter
+      await nextTick()
       expect(wrapper.vm.filterState).toMatchObject(tasksFilter)
       const filteredOutNodesCache = new Map()
       expect(wrapper.vm.filterNode(workflowNode, filteredOutNodesCache)).toEqual(!filteredOut)
