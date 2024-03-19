@@ -21,8 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import 'graphiql/graphiql.min.css'
-import ReactDOM from 'react-dom'
-import React from 'react'
+import { render, createElement } from 'preact/compat'
 import GraphiQL from 'graphiql'
 import { fallbackGraphQLFetcher, graphQLFetcher } from '@/graphql/graphiql'
 
@@ -41,8 +40,8 @@ export default {
   },
   mounted () {
     this.fetcher = this.createFetcher()
-    ReactDOM.render(
-      React.createElement(GraphiQL, {
+    render(
+      createElement(GraphiQL, {
         fetcher: this.fetcher,
         defaultVariableEditorOpen: false
       }),
