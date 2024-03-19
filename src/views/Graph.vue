@@ -92,12 +92,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { ref } from 'vue'
 import gql from 'graphql-tag'
 import { mapGetters } from 'vuex'
 import { getPageTitle } from '@/utils/index'
 import { useJobTheme } from '@/composables/localStorage'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import {
+  initialOptions,
+  useInitialOptions
+} from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
 import GraphNode from '@/components/cylc/GraphNode.vue'
@@ -224,9 +229,34 @@ export default {
     }
   },
 
-  setup () {
+  props: { initialOptions },
+
+  setup (props, { emit }) {
+    /**
+     * The transpose toggle state.
+     * If true layout is left-right is false it is top-bottom
+     * @type {import('vue').Ref<Bool>}
+     */
+    const transpose = useInitialOptions('transpose', { props, emit }, ref(false))
+
+    /**
+     * The auto-refresh toggle state.
+     * If true the graph layout will be updated on a timer
+     * @type {import('vue').Ref<Bool>}
+     */
+    const autoRefresh = useInitialOptions('autoRefresh', { props, emit }, ref(true))
+
+    /**
+     * The node spacing state.
+     * @type {import('vue').Ref<Integer>}
+     */
+    const spacing = useInitialOptions('spacing', { props, emit }, ref(1.5))
+
     return {
       jobTheme: useJobTheme(),
+      transpose,
+      autoRefresh,
+      spacing
     }
   },
 
@@ -236,8 +266,6 @@ export default {
       orientation: 'TB',
       // the auto-refresh timer
       refreshTimer: null,
-      // the spacing between nodes
-      spacing: 1.5,
       // the nodes end edges we render to the graph
       graphNodes: [],
       graphEdges: [],
@@ -249,58 +277,8 @@ export default {
       graphID: null,
       // instance of system which provides pan/zoom/navigation support
       panZoomWidget: null,
-      // if true layout is left-right is false it is top-bottom
-      transpose: false,
-      // if true the graph layout will be updated on a timer
-      autoRefresh: true,
       // true if layout is in progress
       updating: false,
-      controlGroups: [
-        {
-          title: 'Graph',
-          controls: [
-            {
-              title: 'Refresh',
-              icon: mdiRefresh,
-              action: 'callback',
-              callback: this.refresh,
-              disableIf: ['autoRefresh']
-            },
-            {
-              title: 'Auto Refresh',
-              icon: mdiTimer,
-              action: 'toggle',
-              value: true,
-              key: 'autoRefresh'
-            },
-            {
-              title: 'Transpose',
-              icon: mdiFileRotateRight,
-              action: 'toggle',
-              value: false,
-              key: 'transpose'
-            },
-            {
-              title: 'Centre',
-              icon: mdiImageFilterCenterFocus,
-              action: 'callback',
-              callback: this.reset
-            },
-            {
-              title: 'Increase Spacing',
-              icon: mdiArrowExpand,
-              action: 'callback',
-              callback: this.increaseSpacing
-            },
-            {
-              title: 'Decrease Spacing',
-              icon: mdiArrowCollapse,
-              action: 'callback',
-              callback: this.decreaseSpacing
-            }
-          ]
-        }
-      ],
     }
   },
 
@@ -336,6 +314,54 @@ export default {
     },
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)
+    },
+    controlGroups () {
+      return [
+        {
+          title: 'Graph',
+          controls: [
+            {
+              title: 'Refresh',
+              icon: mdiRefresh,
+              action: 'callback',
+              callback: this.refresh,
+              disableIf: ['autoRefresh']
+            },
+            {
+              title: 'Auto Refresh',
+              icon: mdiTimer,
+              action: 'toggle',
+              value: this.autoRefresh,
+              key: 'autoRefresh'
+            },
+            {
+              title: 'Transpose',
+              icon: mdiFileRotateRight,
+              action: 'toggle',
+              value: this.transpose,
+              key: 'transpose'
+            },
+            {
+              title: 'Centre',
+              icon: mdiImageFilterCenterFocus,
+              action: 'callback',
+              callback: this.reset
+            },
+            {
+              title: 'Increase Spacing',
+              icon: mdiArrowExpand,
+              action: 'callback',
+              callback: this.increaseSpacing
+            },
+            {
+              title: 'Decrease Spacing',
+              icon: mdiArrowCollapse,
+              action: 'callback',
+              callback: this.decreaseSpacing
+            }
+          ]
+        }
+      ]
     }
   },
 
