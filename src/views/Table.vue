@@ -149,13 +149,12 @@ export default {
 
   setup (props, { emit }) {
     /**
-     * The task/job ID input. (TASKS)
+     * The job id input and selected task filter state.
      * @type {import('vue').Ref<object>}
      */
-    // const tasks = useInitialOptions('tasks', { props, emit }, ref([]))
     const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, ref({}))
     /**
-     * The task/job ID input. (FILTERABLE)
+     * The state for toggling whether the filters are rendered
      * @type {import('vue').Ref<boolean>}
      */
     const filterable = useInitialOptions('filterable', { props, emit }, ref(false))
