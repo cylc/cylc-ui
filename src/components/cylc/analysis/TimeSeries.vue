@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         chips
         closable-chips
         clearable
-        showSelectAll
         placeholder="Search"
         :items="tasks"
         v-model="displayedTasks"
@@ -218,7 +217,6 @@ export default {
       displayedTasks: [],
       showOrigin: false,
       xRange: [undefined, undefined],
-      showSelectAll: false,
     }
   },
 
@@ -427,9 +425,6 @@ export default {
       const filteredTasks = this.$refs.selectTasks.filteredItems.map(
         (filteredTask) => (filteredTask.value))
       this.displayedTasks = difference(this.displayedTasks, filteredTasks)
-    },
-    updateSelectionOptions: function () {
-      this.showSelectAll = Boolean(this.$refs.selectTasks.search)
     },
     jobsQuery: debounce(
       async function (queryTasks) {
