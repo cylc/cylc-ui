@@ -105,14 +105,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       width="700px"
       max-width="100%"
       content-class="c-mutation-dialog mx-0"
-      persistent
-      no-click-animation
     >
       <Mutation
         :mutation="dialogMutation"
         :cylcObject="node"
         :initialData="initialData(dialogMutation, node.tokens)"
-        @close="closeDialog"
+        @close="() => dialog = false"
         @success="closeMenu"
         :types="types"
         :key="dialogKey /* Enables re-render of component each time dialog opened */"
@@ -296,11 +294,6 @@ export default {
     closeMenu () {
       this.showMenu = false
       this.expanded = false
-    },
-
-    closeDialog () {
-      this.dialog = false
-      this.dialogMutation = null
     },
 
     /**
