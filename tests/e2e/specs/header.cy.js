@@ -58,6 +58,7 @@ describe('Header Component multiuser', () => {
 
       cy.get('#cylc-owner-combobox')
         .type('123{enter}')
+        .click()
         .get('.v-combobox__content').contains('userTest')
         .get('.v-combobox__content').contains('userTest123')
 
@@ -74,6 +75,7 @@ describe('Header Component multiuser', () => {
       cy.get('#cylc-deployment-combobox')
         .should('not.be.disabled')
         .type('abc{enter}')
+        .click()
         .get('.v-combobox__content').contains(host)
         .get('.v-combobox__content').contains(`${host}abc`)
         .get('[data-cy=multiuser-go-btn]')
