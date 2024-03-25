@@ -32,20 +32,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         label="Select tasks"
         ref="selectTasks"
       >
-        <template
-          v-slot:prepend-item
-        >
-          <v-list-item
-            @click="selectSearchResults"
-          >
-            Select all search results
-          </v-list-item>
-          <v-list-item
-            @click="deselectSearchResults"
-          >
-            Remove all search results
-          </v-list-item>
-          <v-divider class="mt-2"></v-divider>
+        <template v-slot:prepend-item>
+          <v-card-actions class="mt-n2">
+            <v-btn @click="selectSearchResults">
+              Select all
+            </v-btn>
+            <v-btn @click="deselectSearchResults">
+              Deselect all
+            </v-btn>
+          </v-card-actions>
+          <v-divider/>
         </template>
       </v-autocomplete>
       <v-btn
