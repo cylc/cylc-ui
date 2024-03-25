@@ -154,13 +154,6 @@ class AnalysisJobCallback {
   onUpdated (updated, store, errors) {
     this.add(updated)
   }
-
-  // other hooks we don't need but must declare (for now)
-  before () {}
-  after () {}
-  onPruned () {}
-  commit () {}
-  tearDown () {}
 }
 
 export default {
