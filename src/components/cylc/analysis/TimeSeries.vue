@@ -132,6 +132,7 @@ class AnalysisJobCallback {
    * @param {Object[]} jobs
    */
   constructor (jobs) {
+    super()
     this.jobs = jobs
   }
 
