@@ -286,7 +286,7 @@ describe('Analysis view', () => {
         .click()
         .get('.v-list-item')
         .its('length')
-        .should('eq', 5, { timeout: 10000 })
+        .should('eq', 3, { timeout: 10000 })
     })
 
     it('Should switch view', () => {
@@ -354,17 +354,17 @@ describe('Analysis view', () => {
         .click()
         .get('.v-list-item')
         .contains('succeeded')
-        .get('.v-list-item')
+        .get('.v-card-actions')
         .contains('Select all')
         .should('exist')
-        .get('.v-list-item')
-        .contains('Remove all')
+        .get('.v-card-actions')
+        .contains('Deselect all')
         .should('exist')
       // Select all tasks that contain succeeded
       cy
         .get('.d-flex > .v-autocomplete')
         .type('succeeded')
-        .get('.v-list-item')
+        .get('.v-card-actions')
         .contains('Select all')
         .click()
       // Check the correct tasks have been added
@@ -385,8 +385,8 @@ describe('Analysis view', () => {
         .find('input')
         .clear()
         .type('eventually')
-        .get('.v-list-item')
-        .contains('Remove all')
+        .get('.v-card-actions')
+        .contains('Deselect all')
         .click()
       // Check only succeeded task is selected
       cy

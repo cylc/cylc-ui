@@ -103,6 +103,7 @@ import {
   mdiRefresh,
 } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
+import DeltasCallback from '@/services/callbacks'
 
 /** List of fields to request for task for each task */
 const jobFields = [
@@ -126,11 +127,12 @@ query analysisJobQuery ($workflows: [ID], $tasks: [ID]) {
 `
 
 /** The callback which gets called when data comes in from the job query */
-class AnalysisJobCallback {
+class AnalysisJobCallback extends DeltasCallback {
   /**
    * @param {Object[]} jobs
    */
   constructor (jobs) {
+    super()
     this.jobs = jobs
   }
 
