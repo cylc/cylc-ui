@@ -131,7 +131,6 @@ class AnalysisJobCallback {
    * @param {Object[]} jobs
    */
   constructor (jobs) {
-    super()
     this.jobs = jobs
   }
 
@@ -439,9 +438,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.apexcharts-text {
-  font-size: 0.9rem;
-}
-</style>
