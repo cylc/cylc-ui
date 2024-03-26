@@ -19,7 +19,6 @@ import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import { simpleTableTasks } from './table.data'
-import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import Table from '@/components/cylc/table/Table.vue'
 import WorkflowService from '@/services/workflow.service'
@@ -50,13 +49,12 @@ describe('Table component', () => {
   it('should sort cycle point column descending by default', async () => {
     const wrapper = mountFunction({
       props: {
-        tasks: simpleTableTasks,
-        tasksFilter: {}
+        filteredTasks: simpleTableTasks
       }
     })
     // check the the raw task data has the cycle points from lowest to highest
-    expect(wrapper.vm.tasks[wrapper.vm.filteredTasks.length - 1].task.tokens.cycle).to.equal('20000103T0000Z')
-    expect(wrapper.vm.tasks[0].task.tokens.cycle).to.equal('20000101T0000Z')
+    expect(wrapper.vm.filteredTasks[wrapper.vm.filteredTasks.length - 1].task.tokens.cycle).to.equal('20000103T0000Z')
+    expect(wrapper.vm.filteredTasks[0].task.tokens.cycle).to.equal('20000101T0000Z')
 
     // check that the html have the cycle points from high to low
     await wrapper.vm.$nextTick()
@@ -67,71 +65,11 @@ describe('Table component', () => {
   it('should display the table with valid data', () => {
     const wrapper = mountFunction({
       props: {
-        tasks: simpleTableTasks,
-        tasksFilter: {}
+        filteredTasks: simpleTableTasks
       }
     })
-    expect(wrapper.props().tasks[0].task.name).to.equal('taskA')
+    expect(wrapper.props().filteredTasks[0].task.name).to.equal('taskA')
     expect(wrapper.find('div')).to.not.equal(null)
-  })
-
-  describe('Filter', () => {
-    describe('Filter by ID', () => {
-      it('should not filter by ID or task state by default', () => {
-        const wrapper = mountFunction({
-          props: {
-            tasks: simpleTableTasks,
-            tasksFilter: {}
-          }
-        })
-        expect(wrapper.vm.filteredTasks.length).to.equal(3)
-      })
-
-      it('should filter by ID', () => {
-        const wrapper = mountFunction({
-          props: {
-            tasks: simpleTableTasks,
-            tasksFilter: {}
-          }
-        })
-        wrapper.vm.tasksFilterLocal = {
-          id: 'taskA'
-        }
-        expect(wrapper.vm.filteredTasks.length).to.equal(1)
-      })
-
-      it('should filter by task state', () => {
-        const wrapper = mountFunction({
-          props: {
-            tasks: simpleTableTasks,
-            tasksFilter: {}
-          }
-        })
-        wrapper.vm.tasksFilterLocal = {
-          id: '',
-          states: [
-            TaskState.WAITING.name
-          ]
-        }
-        expect(wrapper.vm.filteredTasks.length).to.equal(1)
-      })
-
-      it('should filter by task name and state', () => {
-        const wrapper = mountFunction({
-          props: {
-            tasks: simpleTableTasks,
-            tasksFilter: {}
-          }
-        })
-        wrapper.vm.tasksFilterLocal = {
-          id: 'taskA',
-          states: [
-            TaskState.WAITING.name
-          ]
-        }
-        expect(wrapper.vm.filteredTasks.length).to.equal(0)
-      })
-    })
   })
 
   describe('Sort', () => {
@@ -142,8 +80,7 @@ describe('Table component', () => {
       localStorage.setItem('cyclePointsOrderDesc', cyclePointsOrderDesc)
       const wrapper = mountFunction({
         props: {
-          tasks: simpleTableTasks,
-          tasksFilter: {}
+          filteredTasks: simpleTableTasks
         }
       })
       expect(wrapper.vm.sortBy).toMatchObject([

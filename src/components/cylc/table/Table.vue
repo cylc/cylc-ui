@@ -16,23 +16,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container
-    fluid
-    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
-  >
-    <!-- Toolbar -->
-    <v-row
-      no-gutters
-      class="d-flex flex-wrap flex-grow-0"
-    >
-      <!-- Filters -->
-      <v-col
-        v-if="filterable"
-        class=""
-      >
-        <TaskFilter v-model="tasksFilterLocal"/>
-      </v-col>
-    </v-row>
     <v-row
       no-gutters
       class="flex-grow-1 position-relative"
@@ -129,7 +112,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-container>
       </v-col>
     </v-row>
-  </v-container>
 </template>
 
 <script>
@@ -139,8 +121,6 @@ import Job from '@/components/cylc/Job.vue'
 import { mdiChevronDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
-import { matchNode } from '@/components/cylc/common/filter'
-import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import { dtMean } from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 
@@ -148,24 +128,15 @@ export default {
   name: 'TableComponent',
 
   props: {
-    tasksFilter: {
-      type: Object,
-      required: true
-    },
-    tasks: {
+    filteredTasks: {
       type: Array,
       required: true
-    },
-    filterable: {
-      type: Boolean,
-      default: true
     }
   },
 
   components: {
     Task,
     Job,
-    TaskFilter
   },
 
   setup () {
@@ -178,18 +149,6 @@ export default {
           order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
         },
       ]),
-    }
-  },
-
-  data () {
-    return {
-      tasksFilterLocal: this.tasksFilter,
-    }
-  },
-
-  computed: {
-    filteredTasks () {
-      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilterLocal.id, this.tasksFilterLocal.states))
     }
   },
 

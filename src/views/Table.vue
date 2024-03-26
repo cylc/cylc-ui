@@ -17,12 +17,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <TableComponent
-      :tasksFilter="tasksFilter"
-      :tasks="tasks"
-      ref="table0"
-      key="table0"
-    />
+    <v-container
+      fluid
+      class="c-table ma-0 pa-2 h-100 flex-column d-flex"
+    >
+      <!-- Toolbar -->
+      <v-row
+        no-gutters
+        class="d-flex flex-wrap flex-grow-0"
+      >
+        <!-- Filters -->
+        <v-col
+          v-if="filterable"
+          class=""
+        >
+          <TaskFilter v-model="tasksFilter"/>
+        </v-col>
+      </v-row>
+      <TableComponent
+        :filteredTasks="filteredTasks"
+        ref="table0"
+        key="table0"
+      />
+    </v-container>
   </div>
 </template>
 
@@ -34,10 +51,11 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
-  updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
+import { matchNode } from '@/components/cylc/common/filter'
 import TableComponent from '@/components/cylc/table/Table.vue'
+import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 
@@ -130,7 +148,8 @@ export default {
   ],
 
   components: {
-    TableComponent
+    TableComponent,
+    TaskFilter
   },
 
   head () {
@@ -138,10 +157,6 @@ export default {
       title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
-
-  emits: [
-    updateInitialOptionsEvent,
-  ],
 
   props: {
     initialOptions,
@@ -157,7 +172,7 @@ export default {
      * The state for toggling whether the filters are rendered
      * @type {import('vue').Ref<boolean>}
      */
-    const filterable = useInitialOptions('filterable', { props, emit }, ref(false))
+    const filterable = useInitialOptions('filterable', { props, emit }, ref(true))
 
     return {
       tasksFilter,
@@ -201,6 +216,10 @@ export default {
         /* isDelta */ true,
         /* isGlobalCallback */ true
       )
+    },
+
+    filteredTasks () {
+      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
     }
   }
 }
