@@ -147,17 +147,6 @@ export default [
     props: true
   },
   {
-    path: '/gantt/:workflowName(.*)',
-    view: 'Gantt',
-    name: 'gantt',
-    meta: {
-      layout: 'default',
-      toolbar: true,
-      showSidebar: false
-    },
-    props: true
-  },
-  {
     path: '/noAuth',
     view: 'NoAuth',
     name: 'noAuth',
