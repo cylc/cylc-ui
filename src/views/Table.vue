@@ -27,24 +27,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="d-flex flex-wrap flex-grow-0"
       >
         <!-- Filters -->
-        <v-col
-          v-if="filterable"
-          class=""
-        >
+        <v-col>
           <TaskFilter v-model="tasksFilter"/>
         </v-col>
       </v-row>
-      <TableComponent
-        :filteredTasks="filteredTasks"
-        ref="table0"
-        key="table0"
-      />
+      <v-row
+        no-gutters
+        class="flex-grow-1 position-relative"
+      >
+        <v-col
+          cols="12"
+          class="mh-100 position-relative"
+        >
+          <v-container
+            fluid
+            class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
+          >
+            <TableComponent
+              :tasks="filteredTasks"
+            />
+          </v-container>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
 import { mapState, mapGetters } from 'vuex'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
@@ -167,16 +176,10 @@ export default {
      * The job id input and selected task filter state.
      * @type {import('vue').Ref<object>}
      */
-    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, ref({}))
-    /**
-     * The state for toggling whether the filters are rendered
-     * @type {import('vue').Ref<boolean>}
-     */
-    const filterable = useInitialOptions('filterable', { props, emit }, ref(true))
+    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, {})
 
     return {
       tasksFilter,
-      filterable
     }
   },
 
