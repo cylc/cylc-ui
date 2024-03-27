@@ -37,6 +37,31 @@ function checkGraphLayoutPerformed ($el, depth = 0) {
   }
 }
 
+function addView (view) {
+  cy.get('[data-cy=add-view-btn]').click()
+  cy.get(`#toolbar-add-${view}-view`).click()
+    // wait for menu to close
+    .should('not.be.exist')
+}
+
+function checkRemeberToolbarSettings (selector, stateBefore, stateAfter) {
+  cy
+    .get(selector)
+    .find('.v-btn')
+    .should(stateBefore, 'text-blue')
+    .click()
+  // Navigate away
+  cy.visit('/#/')
+  cy.get('.c-dashboard')
+  // Navigate back
+  cy.visit('/#/workspace/one')
+  waitForGraphLayout()
+  cy
+    .get(selector)
+    .find('.v-btn')
+    .should(stateAfter, 'text-blue')
+}
+
 describe('Graph View', () => {
   it('should load', () => {
     cy.visit('/#/graph/one')
@@ -68,5 +93,19 @@ describe('Graph View', () => {
       .children()
       .should('have.length', 10)
       .should('be.visible')
+  })
+
+  it('remembers autorefresh setting when switching between workflows', () => {
+    cy.visit('/#/workspace/one')
+    addView('Graph')
+    waitForGraphLayout()
+    checkRemeberToolbarSettings('.autoRefresh', 'have.class', 'not.have.class')
+  })
+
+  it('remembers transpose setting when switching between workflows', () => {
+    cy.visit('/#/workspace/one')
+    addView('Graph')
+    waitForGraphLayout()
+    checkRemeberToolbarSettings('.transpose', 'not.have.class', 'have.class')
   })
 })

@@ -283,6 +283,11 @@ export default {
   },
 
   mounted () {
+    if (!this.autoRefresh) {
+      // load the graph if the autorefresh is off
+      this.refreshTimer = setInterval(this.refresh, 1000)
+      this.refreshTimer = null
+    }
     // compile & instantiate graphviz wasm
     /** @type {Promise<Graphviz>} */
     this.graphviz = Graphviz.load()
