@@ -11,6 +11,14 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 -------------------------------------------------------------------------------
+## __cylc-ui-2.5.0 (<span actions:bind='release-date'>Upcoming</span>)__
+
+### Enhancements
+
+[#1466](https://github.com/cylc/cylc-ui/pull/1466) -
+Added gantt view: a new view showing job durations over time.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-2.4.0 (<span actions:bind='release-date'>Upcoming</span>)__
 
 ### Enhancements
@@ -35,9 +43,6 @@ Various other efficiency improvements.
 [#1643](https://github.com/cylc/cylc-ui/pull/1643) -
 Fix bug where the up/down/home/end keys would not work inside the Edit Runtime
 form inputs.
-
-[#1466](https://github.com/cylc/cylc-ui/pull/1466) -
-Gantt view added.
 
 -------------------------------------------------------------------------------
 ## __cylc-ui-2.3.0 (<span actions:bind='release-date'>Released 2023-11-28</span>)__
