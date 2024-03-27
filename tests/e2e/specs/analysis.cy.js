@@ -15,10 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { analysisQuery } from '@/services/mock/json/index.cjs'
+import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
 import { clone } from 'lodash'
 
-const sortedTasks = analysisQuery.data.tasks.map(({ name }) => name).sort()
+const sortedTasks = analysisTaskQuery.data.tasks.map(({ name }) => name).sort()
+
+const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
+Cypress.on('uncaught:exception', (err) => {
+  /* returning false here prevents Cypress from failing the test */
+  if (resizeObserverLoopErrRe.test(err.message)) {
+    return false
+  }
+})
 
 describe('Analysis view', () => {
   const numTasks = sortedTasks.length
@@ -262,6 +270,154 @@ describe('Analysis view', () => {
             Array.from(els, (i) => i.textContent)
           ).to.deep.equal(clone(sortedTasks).reverse())
         })
+    })
+  })
+
+  describe('Time series visualisation', () => {
+    beforeEach(() => {
+      cy.get('.c-analysis [data-cy=time-series-toggle]')
+        .click()
+        .get('.vue-apexcharts')
+        .should('be.visible')
+      // There should be three tasks in the drop down list when loaded
+      // Plus 2 entries for Select and Deselect all
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .click()
+        .get('.v-list-item')
+        .its('length')
+        .should('eq', 3, { timeout: 10000 })
+    })
+
+    it('Should switch view', () => {
+      // Check for axis labels - should be no data plotted and only
+      // y-axis labels visible
+      cy
+        .get('.vue-apexcharts')
+        .should('be.visible')
+        .get('.apexcharts-yaxis-label')
+        .should('be.visible')
+        .get('.apexcharts-xaxis-label')
+        .should('not.exist')
+        .get('.c-analysis .c-table')
+        .should('not.exist')
+      // Switch back to table
+      cy
+        .get('.c-analysis [data-cy=table-toggle]')
+        .click()
+        .get('.c-analysis .c-table')
+        .should('be.visible')
+        .get('.vue-apexcharts')
+        .should('not.exist')
+    })
+
+    it('Should select tasks from the autocomplete drop down list', () => {
+      // Add waiting task and check only two cycles visible on both graphs
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .click()
+        .get('.v-list-item')
+        .contains('waiting')
+        .click()
+      cy
+        .get('.apexcharts-xaxis-label')
+        .should('have.length', 4)
+        // Add eventually_succeeded task and check three cycles visible
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .click()
+        .get('.v-list-item')
+        .contains('eventually')
+        .click()
+      cy
+        .get('.apexcharts-xaxis-label')
+        .should('have.length', 6)
+      // Remove selected tasks and check no cycle points are visible
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .click()
+        .get('.v-list-item')
+        .contains('waiting')
+        .click()
+        .get('.v-list-item')
+        .contains('eventually')
+        .click()
+      cy
+        .get('.apexcharts-xaxis-label')
+        .should('not.exist')
+    })
+
+    it('Should search for and add/remove tasks', () => {
+      // Before searching, the options to add/remove all tasks should exist
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .click()
+        .get('.v-list-item')
+        .contains('succeeded')
+        .get('.v-card-actions')
+        .contains('Select all')
+        .should('exist')
+        .get('.v-card-actions')
+        .contains('Deselect all')
+        .should('exist')
+      // Select all tasks that contain succeeded
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .type('succeeded')
+        .get('.v-card-actions')
+        .contains('Select all')
+        .click()
+      // Check the correct tasks have been added
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .find('.v-chip')
+        .its('length')
+        .should('eq', 2)
+        .get('.d-flex > .v-autocomplete')
+        .find('.v-chip')
+        .contains(/^succeeded$/)
+        .get('.d-flex > .v-autocomplete')
+        .find('.v-chip')
+        .contains('eventually_succeeded')
+      // Remove all tasks that contain eventually
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .find('input')
+        .clear()
+        .type('eventually')
+        .get('.v-card-actions')
+        .contains('Deselect all')
+        .click()
+      // Check only succeeded task is selected
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .find('.v-chip')
+        .contains(/^succeeded$/)
+        .get('.d-flex > .v-autocomplete')
+        .find('.v-chip')
+        .contains('eventually_succeeded')
+        .should('not.exist')
+    })
+
+    it('Should show origin, when selected', () => {
+      // Add waiting task and check y-axis doesn't start at origin
+      cy
+        .get('.d-flex > .v-autocomplete')
+        .click()
+        .get('.v-list-item')
+        .contains('waiting')
+        .click()
+      cy
+        .get('.apexcharts-yaxis-label')
+        .contains('00:00:00')
+        .should('not.exist')
+      // Click on Show origin checkbox and check y-axis now starts at origin
+      cy
+        .get('.v-selection-control > .v-label')
+        .click()
+      cy
+        .get('.apexcharts-yaxis-label')
+        .contains('00:00:00')
     })
   })
 })
