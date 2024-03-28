@@ -49,26 +49,26 @@ describe('Table component', () => {
   it('should sort cycle point column descending by default', async () => {
     const wrapper = mountFunction({
       props: {
-        filteredTasks: simpleTableTasks
+        tasks: simpleTableTasks
       }
     })
     // check the the raw task data has the cycle points from lowest to highest
-    expect(wrapper.vm.filteredTasks[wrapper.vm.filteredTasks.length - 1].task.tokens.cycle).to.equal('20000103T0000Z')
-    expect(wrapper.vm.filteredTasks[0].task.tokens.cycle).to.equal('20000101T0000Z')
+    expect(wrapper.vm.tasks[wrapper.vm.tasks.length - 1].task.tokens.cycle).to.equal('20000103T0000Z')
+    expect(wrapper.vm.tasks[0].task.tokens.cycle).to.equal('20000101T0000Z')
 
     // check that the html have the cycle points from high to low
     await wrapper.vm.$nextTick()
     expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element.innerHTML).to.equal('20000103T0000Z')
-    expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.filteredTasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal('20000101T0000Z')
+    expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.tasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal('20000101T0000Z')
   })
 
   it('should display the table with valid data', () => {
     const wrapper = mountFunction({
       props: {
-        filteredTasks: simpleTableTasks
+        tasks: simpleTableTasks
       }
     })
-    expect(wrapper.props().filteredTasks[0].task.name).to.equal('taskA')
+    expect(wrapper.props().tasks[0].task.name).to.equal('taskA')
     expect(wrapper.find('div')).to.not.equal(null)
   })
 
@@ -80,7 +80,7 @@ describe('Table component', () => {
       localStorage.setItem('cyclePointsOrderDesc', cyclePointsOrderDesc)
       const wrapper = mountFunction({
         props: {
-          filteredTasks: simpleTableTasks
+          tasks: simpleTableTasks
         }
       })
       expect(wrapper.vm.sortBy).toMatchObject([
