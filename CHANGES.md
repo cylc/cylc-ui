@@ -15,6 +15,8 @@ ones in. -->
 
 ### Enhancements
 
+
+[#1711](https://github.com/cylc/cylc-ui/pull/1711) -
 [#1705](https://github.com/cylc/cylc-ui/pull/1705) -
 [#1688](https://github.com/cylc/cylc-ui/pull/1688) -
 Certain view options are now remembered & restored when navigating between workflows.

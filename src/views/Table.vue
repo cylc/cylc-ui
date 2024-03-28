@@ -17,11 +17,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="h-100">
-    <TableComponent
-      :tasks="tasks"
-      ref="table0"
-      key="table0"
-    />
+    <v-container
+      fluid
+      class="c-table ma-0 pa-2 h-100 flex-column d-flex"
+    >
+      <!-- Toolbar -->
+      <v-row
+        no-gutters
+        class="d-flex flex-wrap flex-grow-0"
+      >
+        <!-- Filters -->
+        <v-col>
+          <TaskFilter v-model="tasksFilter"/>
+        </v-col>
+      </v-row>
+      <v-row
+        no-gutters
+        class="flex-grow-1 position-relative"
+      >
+        <v-col
+          cols="12"
+          class="mh-100 position-relative"
+        >
+          <v-container
+            fluid
+            class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
+          >
+            <TableComponent
+              :tasks="filteredTasks"
+            />
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -30,7 +58,13 @@ import { mapState, mapGetters } from 'vuex'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import {
+  initialOptions,
+  useInitialOptions
+} from '@/utils/initialOptions'
+import { matchNode } from '@/components/cylc/common/filter'
 import TableComponent from '@/components/cylc/table/Table.vue'
+import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 
@@ -123,12 +157,29 @@ export default {
   ],
 
   components: {
-    TableComponent
+    TableComponent,
+    TaskFilter
   },
 
   head () {
     return {
       title: getPageTitle('App.workflow', { name: this.workflowName })
+    }
+  },
+
+  props: {
+    initialOptions,
+  },
+
+  setup (props, { emit }) {
+    /**
+     * The job id input and selected task filter state.
+     * @type {import('vue').Ref<object>}
+     */
+    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, {})
+
+    return {
+      tasksFilter,
     }
   },
 
@@ -168,6 +219,10 @@ export default {
         /* isDelta */ true,
         /* isGlobalCallback */ true
       )
+    },
+
+    filteredTasks () {
+      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
     }
   }
 }
