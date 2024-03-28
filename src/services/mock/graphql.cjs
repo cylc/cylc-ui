@@ -50,7 +50,7 @@ function getOperationName (query) {
  *
  * @param {string} operationName - GraphQL query operation name (e.g. GScanQuery, WorkflowTableQuery, etc)
  * @param {?Record<string, *>} variables - GraphQL query variables
- * @returns {*} GraphQL response
+ * @returns {*|Promise<*>} GraphQL response
  */
 function getGraphQLQueryResponse (operationName, variables) {
   const res = data[operationName] || {}
@@ -65,7 +65,7 @@ function getGraphQLQueryResponse (operationName, variables) {
  * and returning the valid response (if any).
  *
  * @param {*} request - Express HTTP GraphQL request
- * @returns {*} GraphQL response
+ * @returns {*|Promise<*>} GraphQL response
  */
 function handleGraphQLRequest (request) {
   const isSchemaQuery = request.body.query.includes('__schema')

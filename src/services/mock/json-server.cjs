@@ -54,7 +54,7 @@ server.ws('/subscriptions', (ws) => {
  * @param req - express HTTP request
  * @param res - express HTTP response
  */
-router.render = (req, res) => {
+router.render = async (req, res) => {
   // This is the original response.
   let responseData = res.locals.data || {}
   // Here we want to customize the response for GraphQL requests.
@@ -63,7 +63,7 @@ router.render = (req, res) => {
     if (req.method === 'GET') {
       responseData = { errors: [{ message: 'Must provide query string.' }] }
     } else {
-      responseData = graphql.handleGraphQLRequest(req)
+      responseData = await graphql.handleGraphQLRequest(req)
     }
   }
   // NB: json-server returns 404 for requests that are not in db.json, but

@@ -1,6 +1,5 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,42 +14,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { simulatedDelay } = require('./util.cjs')
-
-const deletedFile = 'deleted.log'
-
-const jobLogFiles = [
-  'job.out',
-  'job.err',
-  'job',
-]
-
-const workflowLogFiles = [
-  'scheduler/01-start-01.log',
-  deletedFile,
-]
-
 /**
- * Return a mock GQL response for list of log files.
+ * Scale icon size to button size.
+ * https://github.com/vuetifyjs/vuetify/issues/16288
  *
- * @param {{ id: string }} variables
+ * @param {string} btnSize - button size
+ * @returns {string=} font size
  */
-const LogFiles = async ({ id }) => {
-  await simulatedDelay(500)
-  return {
-    data: {
-      logFiles: {
-        files: id == null
-          ? []
-          : id.includes('//') ? jobLogFiles : workflowLogFiles
-      }
-    }
+export function btnIconFontSize (btnSize) {
+  const size = parseInt(btnSize)
+  if (Number.isNaN(size)) {
+    // do nothing for named sizes ('small', 'large', etc.)
+    return undefined
   }
+  // Round to even px then convert to rem
+  return `${2 * Math.round(0.2 * size) / 16}rem`
 }
 
-module.exports = {
-  LogFiles,
-  deletedFile,
-  jobLogFiles,
-  workflowLogFiles,
-}
+export const btnProps = (size) => ({
+  icon: true,
+  variant: 'text',
+  size,
+  style: {
+    fontSize: btnIconFontSize(size)
+  },
+})
