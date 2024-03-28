@@ -37,6 +37,16 @@ function expectFileListContains (items) {
     .should('have.length', items.length)
 }
 
+/**
+ * Get the max width of the given elements.
+ *
+ * @param {JQuery<HTMLElement>} $els
+ * @returns {number}
+ */
+function getMaxLineWidth ($els) {
+  return Math.max(...Array.from($els, (el) => el.offsetWidth))
+}
+
 describe('Log View', () => {
   beforeEach(() => {
     cy.visit('/#/log/one')
@@ -75,15 +85,29 @@ describe('Log View', () => {
 
     // the workflow log files list should have been populated by the query
     expectFileListContains(workflowLogFiles)
+  })
 
-    // toggle timestamps
-    cy.get('.c-view-toolbar button.Timestamps')
+  it('toggles timestamps', () => {
+    cy.get('.c-view-toolbar [data-cy=control-timestamps]')
       .click()
-      .get('[data-cy=log-viewer] pre > *:first')
+      .get('[data-cy=log-viewer] span:first')
       .invoke('text')
       .then((text) => {
         expect(workflowLogLines[0].endsWith(text)).to.equal(true)
         expect(text.length).to.be.lessThan(workflowLogLines[0].length)
+      })
+  })
+
+  it('toggles word wrap', () => {
+    cy.get('[data-cy=log-viewer] span')
+      .then(($els) => {
+        const nonWrappedMaxWidth = getMaxLineWidth($els)
+        cy.get('.c-view-toolbar [data-cy=control-wordWrap]')
+          .click()
+        cy.get('[data-cy=log-viewer] span')
+          .then(($els) => {
+            expect(getMaxLineWidth($els)).to.be.lessThan(nonWrappedMaxWidth)
+          })
       })
   })
 
@@ -93,7 +117,7 @@ describe('Log View', () => {
     cy.get('[data-cy=job-toggle]')
       .click()
       // the old log file lines should have been wiped
-      .get('[data-cy=log-viewer] > pre')
+      .get('[data-cy=log-viewer]')
       .should('be.empty')
       .get('[data-cy=file-input] input')
       .should('be.disabled')
@@ -102,7 +126,7 @@ describe('Log View', () => {
     cy.get('[data-cy=job-id-input]')
       .find('input')
       .type('1/')
-      .get('[data-cy=log-viewer] > pre')
+      .get('[data-cy=log-viewer]')
       .should('be.empty')
       .get('[data-cy=file-input] input')
       .should('be.disabled')

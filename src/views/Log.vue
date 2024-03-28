@@ -26,98 +26,125 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-container
-    class="c-log py-1"
+    class="c-log h-100 pa-0 d-flex flex-column"
     fluid
   >
-    <!-- the controls -->
-    <v-row dense>
-      <v-col>
-        <v-btn-toggle
-          v-model="jobLog"
-          divided
-          mandatory
-          variant="outlined"
-          color="primary"
-        >
-          <v-btn data-cy="workflow-toggle">Workflow</v-btn>
-          <v-btn data-cy="job-toggle">Job</v-btn>
-        </v-btn-toggle>
-        <ViewToolbar
-          :groups="controlGroups"
-          @setOption="setOption"
-        />
-      </v-col>
-    </v-row>
-
-    <!-- the inputs -->
-    <v-row dense>
-      <v-col cols="8">
-        <v-text-field
-          v-if="jobLog"
-          data-cy="job-id-input"
-          class="flex-grow-1 flex-column"
-          :model-value="relativeID"
-          @update:modelValue="debouncedUpdateRelativeID"
-          placeholder="cycle/task/job"
-          clearable
-        />
-        <v-text-field
-          v-else
-          data-cy="workflow-id-input"
-          v-model="workflowId"
-          disabled
-        />
-      </v-col>
-      <v-col cols="4">
-        <v-select
-          data-cy="file-input"
-          :label="fileLabel"
-          :disabled="fileDisabled"
-          :items="logFiles"
-          v-model="file"
-          clearable
-          :menu-props="{ 'data-cy': 'file-input-menu' }"
-        />
-      </v-col>
-    </v-row>
-
-    <!-- the status line -->
-    <v-row dense>
-      <v-col
-        v-if="results.path"
-        class="d-flex align-center overflow-x-auto text-pre"
+    <v-container fluid>
+      <!-- the controls -->
+      <v-row
+        dense
+        class="flex-0-0"
       >
-        <v-chip
-          data-cy="connected-icon"
-          variant="outlined"
-          class="flex-shrink-0"
-          v-bind="results.connected ? {
-            color: 'success',
-            prependIcon: $options.icons.mdiPowerPlug,
-          } : {
-            color: 'error',
-            prependIcon: $options.icons.mdiPowerPlugOff,
-            onClick: updateQuery
-          }"
+        <v-col class="pt-0">
+          <v-btn-toggle
+            v-model="jobLog"
+            divided
+            mandatory
+            variant="outlined"
+            color="primary"
+            density="comfortable"
+          >
+            <v-btn data-cy="workflow-toggle">Workflow</v-btn>
+            <v-btn data-cy="job-toggle">Job</v-btn>
+          </v-btn-toggle>
+          <ViewToolbar
+            :groups="controlGroups"
+            @setOption="setOption"
+            :size="toolbarBtnSize"
+          />
+        </v-col>
+      </v-row>
+
+      <!-- the inputs -->
+      <v-row
+        dense
+        class="flex-0-0"
+      >
+        <v-col cols="8">
+          <v-text-field
+            v-if="jobLog"
+            data-cy="job-id-input"
+            class="flex-grow-1 flex-column"
+            :model-value="relativeID"
+            @update:modelValue="debouncedUpdateRelativeID"
+            placeholder="cycle/task/job"
+            clearable
+          />
+          <v-text-field
+            v-else
+            data-cy="workflow-id-input"
+            v-model="workflowId"
+            disabled
+          />
+        </v-col>
+        <v-col
+          cols="4"
+          class="d-flex col-gap-2"
         >
-          {{ results.connected ? 'Connected' : 'Reconnect' }}
-        </v-chip>
-        <span
-          data-cy="log-path"
-          style="padding-left: 0.5em; color: rgb(150,150,150);"
+          <v-select
+            data-cy="file-input"
+            :label="fileLabel"
+            :disabled="fileDisabled"
+            :items="logFiles"
+            v-model="file"
+            clearable
+            :menu-props="{ 'data-cy': 'file-input-menu' }"
+          />
+          <v-btn
+            @click="() => this.updateLogFileList(false)"
+            v-bind="toolbarBtnProps"
+            data-cy="refresh-files"
+          >
+            <v-icon :icon="$options.icons.mdiFolderRefresh"/>
+            <v-tooltip>Refresh file list</v-tooltip>
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <!-- the status line -->
+      <v-row
+        dense
+        class="flex-0-0"
+      >
+        <v-col
+          v-if="results.path"
+          class="d-flex align-center overflow-x-auto text-pre"
         >
-          {{ results.path }}
-        </span>
-      </v-col>
-    </v-row>
+          <v-chip
+            data-cy="connected-icon"
+            variant="outlined"
+            class="flex-shrink-0"
+            v-bind="results.connected ? {
+              color: 'success',
+              prependIcon: $options.icons.mdiPowerPlug,
+            } : {
+              color: 'error',
+              prependIcon: $options.icons.mdiPowerPlugOff,
+              onClick: updateQuery
+            }"
+          >
+            {{ results.connected ? 'Connected' : 'Reconnect' }}
+          </v-chip>
+          <span
+            data-cy="log-path"
+            style="padding-left: 0.5em; color: rgb(150,150,150);"
+          >
+            {{ results.path }}
+          </span>
+        </v-col>
+      </v-row>
+    </v-container>
 
     <!-- the log file viewer -->
-    <v-row>
+    <v-row
+      no-gutters
+      class="overflow-auto px-4 pb-2"
+    >
       <v-col>
         <v-skeleton-loader
           v-if="id && file && results.connected == null"
           type="text@5"
-          class="mx-n4"
+          class="mx-n4 align-content-start"
         />
         <template v-else>
           <v-alert
@@ -136,6 +163,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             data-cy="log-viewer"
             :logs="results.lines"
             :timestamps="timestamps"
+            :word-wrap="wordWrap"
           />
         </template>
       </v-col>
@@ -145,15 +173,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { ref } from 'vue'
-import { usePrevious } from '@vueuse/core'
+import { usePrevious, whenever } from '@vueuse/core'
+import { useStore } from 'vuex'
 import {
   mdiClockOutline,
   mdiFileAlertOutline,
   mdiFolderRefresh,
   mdiPowerPlugOff,
   mdiPowerPlug,
+  mdiWrap,
 } from '@mdi/js'
 import { getPageTitle } from '@/utils/index'
+import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
@@ -166,6 +197,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import { Tokens } from '@/utils/uid'
 import gql from 'graphql-tag'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
+import DeltasCallback from '@/services/callbacks'
 import debounce from 'lodash/debounce'
 
 /**
@@ -183,10 +215,6 @@ subscription LogData ($id: ID!, $file: String!) {
   }
 }
 `
-
-//    error
-//    path
-//    connected
 
 /**
  * Query used to retrieve available log files for the Log view.
@@ -249,31 +277,33 @@ class Results {
 }
 
 /** Callback for assembling the log file from the subscription */
-class LogsCallback {
+class LogsCallback extends DeltasCallback {
   /**
    * @param {Results} results
    */
   constructor (results) {
+    super()
     this.results = results
   }
 
   onAdded (added, store, errors) {
+    if (this.results.connected === false) {
+      // We have reconnected; clear the current lines otherwise they will be duplicated
+      this.results.lines = []
+    }
     if (added.lines) {
       this.results.lines.push(...added.lines)
     }
-    if (added.connected !== null) {
+    if (added.connected != null) {
       this.results.connected = added.connected
     }
-    if (added.error !== null) {
+    if (added.error != null) {
       this.results.error = added.error
     }
-    if (added.path !== null) {
+    if (added.path != null) {
       this.results.path = added.path
     }
   }
-
-  tearDown (store, errors) {}
-  commit (store, errors) {}
 }
 
 export default {
@@ -304,6 +334,8 @@ export default {
   },
 
   setup (props, { emit }) {
+    const store = useStore()
+
     /**
      * The task/job ID input.
      * @type {import('vue').Ref<string>}
@@ -318,18 +350,38 @@ export default {
      */
     const file = useInitialOptions('file', { props, emit })
 
+    /** Toggle timestamps in log files */
+    const timestamps = useInitialOptions('timestamps', { props, emit }, true)
+
+    /** Wrap lines? */
+    const wordWrap = useInitialOptions('wordWrap', { props, emit }, false)
+
+    /** The log subscription results */
+    const results = ref(new Results())
+
+    function reset () {
+      results.value = new Results()
+    }
+
+    whenever(
+      () => store.state.offline,
+      () => { results.value.connected = false }
+    )
+
     /** Set the value of relativeID at most every 0.5 seconds, used for text input */
     const debouncedUpdateRelativeID = debounce((value) => {
       relativeID.value = value
     }, 500)
+
+    /** View toolbar button size */
+    const toolbarBtnSize = '40'
 
     return {
       // the log subscription query
       query: ref(null),
       // list of log files for the selected workflow/task/job
       logFiles: ref([]),
-      // the log file as a list of lines
-      results: ref(new Results()),
+      results,
       relativeID,
       previousRelativeID,
       file,
@@ -340,9 +392,12 @@ export default {
       // toggle between viewing workflow logs (0) and job logs (1).
       // default to displaying workflow logs unless initial task/job ID is provided.
       jobLog: ref(relativeID.value == null ? 0 : 1),
-      // toggle timestamps in log files
-      timestamps: ref(true),
+      timestamps,
+      wordWrap,
+      reset,
       debouncedUpdateRelativeID,
+      toolbarBtnSize,
+      toolbarBtnProps: btnProps(toolbarBtnSize),
     }
   },
 
@@ -356,15 +411,16 @@ export default {
               title: 'Timestamps',
               icon: mdiClockOutline,
               action: 'toggle',
-              value: true,
+              value: this.timestamps,
               key: 'timestamps'
             },
             {
-              title: 'Refresh File List',
-              icon: mdiFolderRefresh,
-              action: 'callback',
-              callback: () => { this.updateLogFileList(false) }
-            }
+              title: 'Word wrap',
+              icon: mdiWrap,
+              action: 'toggle',
+              value: this.wordWrap,
+              key: 'wordWrap',
+            },
           ]
         }
       ],
@@ -418,9 +474,6 @@ export default {
       // used by the ViewToolbar to update settings
       this[option] = value
     },
-    reset () {
-      this.results = new Results()
-    },
     updateQuery () {
       // update the subscription query
       // wipe the log lines from any previous subscription
@@ -466,6 +519,12 @@ export default {
         this.handleNoLogFiles()
         return
       }
+
+      if (!this.id) {
+        // id has been cleared while we were waiting for the query to return
+        return
+      }
+
       const logFiles = result.data.logFiles?.files ?? []
 
       // reset the file if it is not present in the new selection
@@ -507,6 +566,7 @@ export default {
   // Misc options
   icons: {
     mdiFileAlertOutline,
+    mdiFolderRefresh,
     mdiPowerPlug,
     mdiPowerPlugOff,
   }

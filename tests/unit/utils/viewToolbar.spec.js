@@ -15,42 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const { simulatedDelay } = require('./util.cjs')
+import { btnIconFontSize } from '@/utils/viewToolbar'
 
-const deletedFile = 'deleted.log'
-
-const jobLogFiles = [
-  'job.out',
-  'job.err',
-  'job',
-]
-
-const workflowLogFiles = [
-  'scheduler/01-start-01.log',
-  deletedFile,
-]
-
-/**
- * Return a mock GQL response for list of log files.
- *
- * @param {{ id: string }} variables
- */
-const LogFiles = async ({ id }) => {
-  await simulatedDelay(500)
-  return {
-    data: {
-      logFiles: {
-        files: id == null
-          ? []
-          : id.includes('//') ? jobLogFiles : workflowLogFiles
-      }
-    }
-  }
-}
-
-module.exports = {
-  LogFiles,
-  deletedFile,
-  jobLogFiles,
-  workflowLogFiles,
-}
+describe('btnIconFontSize', () => {
+  it.each([
+    { size: '28', expected: '0.75rem' },
+    { size: '40', expected: '1rem' },
+    { size: '48', expected: '1.25rem' },
+    { size: 'large', expected: undefined },
+  ])('btnIconFontSize($size) -> $expected', ({ size, expected }) => {
+    expect(btnIconFontSize(size)).toBe(expected)
+  })
+})

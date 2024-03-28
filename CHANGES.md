@@ -22,6 +22,9 @@ Certain view options are now remembered & restored when navigating between workf
 [#1664](https://github.com/cylc/cylc-ui/pull/1664) -
 Workspace tab layout is now remembered & restored when navigating between workflows.
 
+[#1708](https://github.com/cylc/cylc-ui/pull/1708) -
+Usability improvements for the log view.
+
 ### Fixes
 
 [#1623](https://github.com/cylc/cylc-ui/pull/1623),

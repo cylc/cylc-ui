@@ -75,7 +75,7 @@ describe('View Toolbar Component', () => {
     // test action=toggle
     cy
       // the toggle should be blue because it's active (default true)
-      .get('.control.toggle .v-btn')
+      .get('[data-cy=control-toggle] .v-btn')
       .should('have.class', 'text-blue')
       // clicking the toggle should emit a "setOption" event with the
       // controls key (toggle) and new value (false)
@@ -86,7 +86,7 @@ describe('View Toolbar Component', () => {
         ).to.deep.equal(['toggle', false])
       })
       // it should not be grey because it's inactive (false)
-      .get('.control.toggle .v-btn')
+      .get('[data-cy=control-toggle] .v-btn')
       .not('.text-blue')
       // click it again and it should become active again
       .click({ force: true })
@@ -95,13 +95,13 @@ describe('View Toolbar Component', () => {
           wrapper.emitted().setOption.at(-1)
         ).to.deep.equal(['toggle', true])
       })
-      .get('.control.toggle .v-btn')
+      .get('[data-cy=control-toggle] .v-btn')
       .should('have.class', 'text-blue')
 
     // test action=callback
     expect(callbacks).to.have.length(0)
     cy
-      .get('.control.callback .v-btn')
+      .get('[data-cy=control-callback] .v-btn')
       // clicking the icon should fire the callback
       .click({ force: true })
       .then(() => {
@@ -147,33 +147,33 @@ describe('View Toolbar Component', () => {
 
     cy
       // foo should start enabled (bar=true, baz=false)
-      .get('.control.foo .v-btn')
+      .get('[data-cy=control-foo] .v-btn')
       .not('.v-btn--disabled')
 
       // toggle bar
-      .get('.control.bar .v-btn')
+      .get('[data-cy=control-bar] .v-btn')
       .click({ force: true })
 
       // foo should be disabled (bar=false, baz=false)
-      .get('.control.foo .v-btn')
+      .get('[data-cy=control-foo] .v-btn')
       .should('have.class', 'v-btn--disabled')
 
       // toggle bar & baz
-      .get('.control.bar .v-btn')
+      .get('[data-cy=control-bar] .v-btn')
       .click({ force: true })
-      .get('.control.baz .v-btn')
+      .get('[data-cy=control-baz] .v-btn')
       .click({ force: true })
 
       // foo should be disabled (bar=true, baz=true)
-      .get('.control.foo .v-btn')
+      .get('[data-cy=control-foo] .v-btn')
       .should('have.class', 'v-btn--disabled')
 
       // toggle baz
-      .get('.control.baz .v-btn')
+      .get('[data-cy=control-baz] .v-btn')
       .click({ force: true })
 
       // foo should be enabled (bar=true, baz=false)
-      .get('.control.foo .v-btn')
+      .get('[data-cy=control-foo] .v-btn')
       .not('.v-btn--disabled')
   })
 
