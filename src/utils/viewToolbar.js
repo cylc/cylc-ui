@@ -1,6 +1,5 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,15 +14,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-describe('Gantt view', () => {
-  beforeEach(() => {
-    cy.visit('/#/gantt/one')
-  })
-  describe('Gantt view', () => {
-    it('Should display the mocked workflow', () => {
-      cy
-        .get('.vue-apexcharts')
-        .should('be.visible')
-    })
-  })
+/**
+ * Scale icon size to button size.
+ * https://github.com/vuetifyjs/vuetify/issues/16288
+ *
+ * @param {string} btnSize - button size
+ * @returns {string=} font size
+ */
+export function btnIconFontSize (btnSize) {
+  const size = parseInt(btnSize)
+  if (Number.isNaN(size)) {
+    // do nothing for named sizes ('small', 'large', etc.)
+    return undefined
+  }
+  // Round to even px then convert to rem
+  return `${2 * Math.round(0.2 * size) / 16}rem`
+}
+
+export const btnProps = (size) => ({
+  icon: true,
+  variant: 'text',
+  size,
+  style: {
+    fontSize: btnIconFontSize(size)
+  },
 })

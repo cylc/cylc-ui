@@ -16,15 +16,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div>
-    <pre><span v-for="(log, index) in computedLogs" :key="index">{{log}}</span></pre>
-  </div>
+  <pre><span
+    v-for="(log, index) in computedLogs"
+    :key="index"
+    :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
+  >{{ log }}</span></pre>
 </template>
 
 <script>
 
 export default {
   name: 'LogComponent',
+
   props: {
     placeholder: {
       type: String,
@@ -38,13 +41,20 @@ export default {
     logs: {
       type: Array,
       required: true
-    }
+    },
+    wordWrap: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
   },
+
   data () {
     return {
       match: ''
     }
   },
+
   computed: {
     computedLogs () {
       if (this.logs.length > 0) {
@@ -56,14 +66,16 @@ export default {
       } else {
         return []
       }
-    }
+    },
   },
+
   methods: {
     updateLogs () {
       return this.logs.map((logLine) => {
         return this.stripTimestamp(logLine)
       })
     },
+
     stripTimestamp (logLine) {
       const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
       this.match = logLine.match(regex)

@@ -25,19 +25,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <!-- control -->
       <div
-        :class="['control', iControl.key]"
         v-for="iControl in iGroup.iControls"
         :key="iControl.title"
+        class="control"
+        :data-cy="`control-${iControl.key}`"
       >
         <v-btn
-          :class="iControl.title"
-          icon
-          variant="text"
+          v-bind="btnProps"
           :disabled="iControl.disabled"
           :color="iControl.color"
           @click="iControl.callback"
         >
-          <v-icon size="large">{{ iControl.icon }}</v-icon>
+          <v-icon>{{ iControl.icon }}</v-icon>
           <v-tooltip>{{ iControl.title }}</v-tooltip>
         </v-btn>
       </div>
@@ -46,6 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { btnProps } from '@/utils/viewToolbar'
+
 export default {
   name: 'ViewToolbar',
 
@@ -91,6 +92,11 @@ export default {
           }
         ]
       */
+    },
+    /** Button size in px or vuetify named size */
+    size: {
+      type: String,
+      default: 'default',
     }
   },
 
@@ -153,6 +159,9 @@ export default {
         ret.push(iGroup)
       }
       return ret
+    },
+    btnProps () {
+      return btnProps(this.size)
     }
   },
 
@@ -180,15 +189,13 @@ export default {
         }
       }
       return vars
-    }
+    },
   }
 }
 </script>
 
 <style lang="scss">
   .c-view-toolbar {
-    // give the toolbar a little respect space
-    padding: 0.5rem;
     display: flex;
 
     .group {
