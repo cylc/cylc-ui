@@ -16,120 +16,87 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container
-    fluid
-    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
+  <v-data-table
+    :headers="$options.headers"
+    :items="tasks"
+    item-value="task.id"
+    multi-sort
+    :sort-by="sortBy"
+    show-expand
+    density="compact"
+    v-model:items-per-page="itemsPerPage"
   >
-    <!-- Toolbar -->
-    <v-row
-      no-gutters
-      class="d-flex flex-wrap flex-grow-0"
-    >
-      <!-- Filters -->
-      <v-col
-        v-if="filterable"
-        class=""
+    <template v-slot:item.task.name="{ item }">
+      <div class="d-flex align-content-center flex-nowrap">
+        <div style="width: 2em;">
+          <Task
+            v-cylc-object="item.task"
+            :task="item.task.node"
+            :startTime="item.latestJob?.node?.startedTime"
+          />
+        </div>
+        <div style="width: 2em;">
+          <Job
+            v-if="item.latestJob"
+            v-cylc-object="item.latestJob"
+            :status="item.latestJob.node.state"
+            :previous-state="item.previousJob?.node?.state"
+          />
+        </div>
+        <div>{{ item.task.name }}</div>
+      </div>
+    </template>
+    <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
+      <td>{{ dtMean(item.task) }}</td>
+    </template>
+    <template v-slot:item.data-table-expand="{ item, internalItem, toggleExpand, isExpanded }">
+      <v-btn
+        @click="toggleExpand(internalItem)"
+        icon
+        variant="text"
+        size="small"
+        :style="{
+          visibility: (item.task.children || []).length ? null : 'hidden',
+          transform: isExpanded(internalItem) ? 'rotate(180deg)' : null
+        }"
       >
-        <TaskFilter v-model="tasksFilter"/>
-      </v-col>
-    </v-row>
-    <v-row
-      no-gutters
-      class="flex-grow-1 position-relative"
-    >
-      <v-col
-        cols="12"
-        class="mh-100 position-relative"
+        <v-icon
+          :icon="$options.icons.mdiChevronDown"
+          size="large"
+        />
+      </v-btn>
+    </template>
+    <template v-slot:expanded-row="{ item }">
+      <tr
+        v-bind:key="job.id"
+        v-for="(job, index) in item.task.children"
+        class="expanded-row bg-grey-lighten-5"
       >
-        <v-container
-          fluid
-          class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
-        >
-          <v-data-table
-            :headers="$options.headers"
-            :items="filteredTasks"
-            item-value="task.id"
-            multi-sort
-            :sort-by="sortBy"
-            show-expand
-            density="compact"
-            v-model:items-per-page="itemsPerPage"
-          >
-            <template v-slot:item.task.name="{ item }">
-              <div class="d-flex align-content-center flex-nowrap">
-                <div style="width: 2em;">
-                  <Task
-                    v-cylc-object="item.task"
-                    :task="item.task.node"
-                    :startTime="item.latestJob?.node?.startedTime"
-                  />
-                </div>
-                <div style="width: 2em;">
-                  <Job
-                    v-if="item.latestJob"
-                    v-cylc-object="item.latestJob"
-                    :status="item.latestJob.node.state"
-                    :previous-state="item.previousJob?.node?.state"
-                  />
-                </div>
-                <div>{{ item.task.name }}</div>
-              </div>
-            </template>
-            <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
-              <td>{{ dtMean(item.task) }}</td>
-            </template>
-            <template v-slot:item.data-table-expand="{ item, internalItem, toggleExpand, isExpanded }">
-              <v-btn
-                @click="toggleExpand(internalItem)"
-                icon
-                variant="text"
-                size="small"
-                :style="{
-                  visibility: (item.task.children || []).length ? null : 'hidden',
-                  transform: isExpanded(internalItem) ? 'rotate(180deg)' : null
-                }"
-              >
-                <v-icon
-                  :icon="$options.icons.mdiChevronDown"
-                  size="large"
-                />
-              </v-btn>
-            </template>
-            <template v-slot:expanded-row="{ item }">
-              <tr
-                v-bind:key="job.id"
-                v-for="(job, index) in item.task.children"
-                class="expanded-row bg-grey-lighten-5"
-              >
-                <td :colspan="3">
-                  <div class="d-flex align-content-center flex-nowrap">
-                    <div class="d-flex" style="margin-left: 2em;">
-                      <Job
-                        v-cylc-object="job"
-                        :key="`${job.id}-summary-${index}`"
-                        :status="job.node.state"
-                      />
-                      <span class="ml-2">#{{ job.node.submitNum }}</span>
-                    </div>
-                  </div>
-                </td>
-                <td>{{ job.node.platform }}</td>
-                <td>{{ job.node.jobRunnerName }}</td>
-                <td>{{ job.node.jobId }}</td>
-                <td>{{ job.node.submittedTime }}</td>
-                <td>{{ job.node.startedTime }}</td>
-                <td>{{ job.node.finishedTime }}</td>
-                <td></td>
-              </tr>
-            </template>
-            <template v-slot:bottom>
-              <v-data-table-footer :itemsPerPageOptions="$options.itemsPerPageOptions" />
-            </template>
-          </v-data-table>
-        </v-container>
-      </v-col>
-    </v-row>
-  </v-container>
+        <td :colspan="3">
+          <div class="d-flex align-content-center flex-nowrap">
+            <div class="d-flex" style="margin-left: 2em;">
+              <Job
+                v-cylc-object="job"
+                :key="`${job.id}-summary-${index}`"
+                :status="job.node.state"
+              />
+              <span class="ml-2">#{{ job.node.submitNum }}</span>
+            </div>
+          </div>
+        </td>
+        <td>{{ job.node.platform }}</td>
+        <td>{{ job.node.jobRunnerName }}</td>
+        <td>{{ job.node.jobId }}</td>
+        <td>{{ job.node.submittedTime }}</td>
+        <td>{{ job.node.startedTime }}</td>
+        <td>{{ job.node.finishedTime }}</td>
+        <td></td>
+      </tr>
+    </template>
+    <template v-slot:bottom>
+      <v-data-table-footer :itemsPerPageOptions="$options.itemsPerPageOptions" />
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -139,8 +106,6 @@ import Job from '@/components/cylc/Job.vue'
 import { mdiChevronDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
-import { matchNode } from '@/components/cylc/common/filter'
-import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import { dtMean } from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 
@@ -151,17 +116,12 @@ export default {
     tasks: {
       type: Array,
       required: true
-    },
-    filterable: {
-      type: Boolean,
-      default: true
     }
   },
 
   components: {
     Task,
     Job,
-    TaskFilter
   },
 
   setup () {
@@ -174,13 +134,6 @@ export default {
           order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
         },
       ]),
-      tasksFilter: ref({})
-    }
-  },
-
-  computed: {
-    filteredTasks () {
-      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
     }
   },
 

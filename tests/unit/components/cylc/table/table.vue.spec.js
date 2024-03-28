@@ -19,7 +19,6 @@ import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import { simpleTableTasks } from './table.data'
-import TaskState from '@/model/TaskState.model'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import Table from '@/components/cylc/table/Table.vue'
 import WorkflowService from '@/services/workflow.service'
@@ -53,15 +52,14 @@ describe('Table component', () => {
         tasks: simpleTableTasks
       }
     })
-
     // check the the raw task data has the cycle points from lowest to highest
-    expect(wrapper.vm.tasks[wrapper.vm.filteredTasks.length - 1].task.tokens.cycle).to.equal('20000103T0000Z')
+    expect(wrapper.vm.tasks[wrapper.vm.tasks.length - 1].task.tokens.cycle).to.equal('20000103T0000Z')
     expect(wrapper.vm.tasks[0].task.tokens.cycle).to.equal('20000101T0000Z')
 
     // check that the html have the cycle points from high to low
     await wrapper.vm.$nextTick()
     expect(wrapper.find('table > tbody > tr:nth-child(1) > td:nth-child(3)').element.innerHTML).to.equal('20000103T0000Z')
-    expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.filteredTasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal('20000101T0000Z')
+    expect(wrapper.find(`table > tbody > tr:nth-child(${wrapper.vm.tasks.length}) > td:nth-child(3)`).element.innerHTML).to.equal('20000101T0000Z')
   })
 
   it('should display the table with valid data', () => {
@@ -72,62 +70,6 @@ describe('Table component', () => {
     })
     expect(wrapper.props().tasks[0].task.name).to.equal('taskA')
     expect(wrapper.find('div')).to.not.equal(null)
-  })
-
-  describe('Filter', () => {
-    describe('Filter by ID', () => {
-      it('should not filter by ID or task state by default', () => {
-        const wrapper = mountFunction({
-          props: {
-            tasks: simpleTableTasks
-          }
-        })
-        expect(wrapper.vm.filteredTasks.length).to.equal(3)
-      })
-
-      it('should filter by ID', () => {
-        const wrapper = mountFunction({
-          props: {
-            tasks: simpleTableTasks
-          },
-        })
-        wrapper.vm.tasksFilter = {
-          id: 'taskA'
-        }
-        expect(wrapper.vm.filteredTasks.length).to.equal(1)
-      })
-
-      it('should filter by task state', () => {
-        const wrapper = mountFunction({
-          props: {
-            tasks: simpleTableTasks
-          },
-        })
-        wrapper.vm.tasksFilter = {
-          id: '',
-          states: [
-            TaskState.WAITING.name
-          ]
-        }
-        // await nextTick()
-        expect(wrapper.vm.filteredTasks.length).to.equal(1)
-      })
-
-      it('should filter by task name and state', () => {
-        const wrapper = mountFunction({
-          props: {
-            tasks: simpleTableTasks
-          },
-        })
-        wrapper.vm.tasksFilter = {
-          id: 'taskA',
-          states: [
-            TaskState.WAITING.name
-          ]
-        }
-        expect(wrapper.vm.filteredTasks.length).to.equal(0)
-      })
-    })
   })
 
   describe('Sort', () => {

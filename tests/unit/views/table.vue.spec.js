@@ -22,6 +22,9 @@ import storeOptions from '@/store/options'
 import Table from '@/views/Table.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
+import { nextTick } from 'vue'
+import { simpleTableTasks } from '@/../tests/unit/components/cylc/table/table.data'
+import TaskState from '@/model/TaskState.model'
 
 chai.config.truncateThreshold = 0
 
@@ -83,11 +86,9 @@ describe('Table view', () => {
       props: {
         workflowName: 'one',
       },
-      data: () => ({
-        // Override computed property
-        workflows
-      })
     })
+
+    await wrapper.setData({ workflows })
 
     expect(wrapper.vm.tasks).toMatchObject([
       {
@@ -100,5 +101,55 @@ describe('Table view', () => {
         latestJob: { id: '~user/one//1/failed/1' },
       }
     ])
+  })
+
+  describe('Filter', () => {
+    let wrapper
+    beforeEach(async () => {
+      wrapper = mount(Table, {
+        shallow: true,
+        global: {
+          plugins: [store],
+          mocks: { $workflowService }
+        },
+        props: {
+          workflowName: 'one',
+        },
+      })
+      await wrapper.setData({ tasks: simpleTableTasks })
+    })
+
+    it('should not filter by ID or task state by default', () => {
+      expect(wrapper.vm.filteredTasks.length).to.equal(3)
+    })
+
+    it('should filter by ID', async () => {
+      wrapper.vm.tasksFilter = {
+        id: 'taskA'
+      }
+      await nextTick()
+      expect(wrapper.vm.filteredTasks.length).to.equal(1)
+    })
+
+    it('should filter by task state', async () => {
+      wrapper.vm.tasksFilter = {
+        states: [
+          TaskState.WAITING.name
+        ]
+      }
+      await nextTick()
+      expect(wrapper.vm.filteredTasks.length).to.equal(1)
+    })
+
+    it('should filter by task name and state', async () => {
+      wrapper.vm.tasksFilter = {
+        id: 'taskA',
+        states: [
+          TaskState.WAITING.name
+        ]
+      }
+      await nextTick()
+      expect(wrapper.vm.filteredTasks.length).to.equal(0)
+    })
   })
 })
