@@ -124,3 +124,54 @@ describe('Table view', () => {
     })
   })
 })
+
+function addView (view) {
+  cy.get('[data-cy=add-view-btn]').click()
+  cy.get(`#toolbar-add-${view}-view`).click()
+    // wait for menu to close
+    .should('not.be.exist')
+}
+
+describe('Filters save state', () => {
+  it('remembers job ID and file when switching between workflows', () => {
+    cy.visit('/#/workspace/one')
+    addView('Table')
+    cy.get('.c-treeitem:visible')
+    cy
+      .get('.c-table table > tbody > tr')
+      .should('have.length', initialNumRows)
+    cy
+      .get('[data-cy="filter task state"]:last')
+      .click()
+    cy
+      .get('.v-list-item')
+      .contains(TaskState.SUCCEEDED.name)
+      .click({ force: true })
+    cy
+      .get('.c-table table > tbody > tr')
+      .should('have.length', 2)
+      .should('be.visible')
+    cy
+      .get('[data-cy=filter-id] input:last')
+      .type('eventually')
+    cy
+      .get('td > div.d-flex > div')
+      .contains('eventually')
+      .should('be.visible')
+    // Navigate away
+    cy.visit('/#/')
+    cy.get('.c-dashboard')
+    // Navigate back
+    cy.visit('/#/workspace/one')
+    cy.get('.c-gscan-workflow-name:first')
+      .click()
+    cy
+      .get('.c-table table > tbody > tr')
+      .should('have.length', 1)
+      .should('be.visible')
+    cy
+      .get('td > div.d-flex > div')
+      .contains('eventually')
+      .should('be.visible')
+  })
+})

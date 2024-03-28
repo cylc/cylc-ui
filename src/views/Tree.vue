@@ -96,7 +96,6 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import { matchID, matchState } from '@/components/cylc/common/filter'
-import { ref } from 'vue'
 
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
@@ -228,7 +227,7 @@ export default {
      * The job id input and selected task filter state.
      * @type {import('vue').Ref<Object>}
      */
-    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, ref({ id: null, states: null }))
+    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { id: null, states: null })
 
     return {
       tasksFilter
