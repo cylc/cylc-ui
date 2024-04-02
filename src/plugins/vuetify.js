@@ -21,7 +21,7 @@ import { VCombobox } from 'vuetify/components/VCombobox'
 import { VSelect } from 'vuetify/components/VSelect'
 import { VTextarea } from 'vuetify/components/VTextarea'
 import { VTextField } from 'vuetify/components/VTextField'
-import colors from 'vuetify/lib/util/colors'
+import colors from 'vuetify/util/colors'
 import { mdiClose } from '@mdi/js'
 
 const inputDefaults = Object.fromEntries([

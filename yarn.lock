@@ -3848,8 +3848,8 @@ __metadata:
     eslint-plugin-n: "npm:16.6.2"
     eslint-plugin-no-only-tests: "npm:3.1.0"
     eslint-plugin-promise: "npm:6.1.1"
-    eslint-plugin-vue: "npm:9.22.0"
-    eslint-plugin-vuetify: "npm:2.1.1"
+    eslint-plugin-vue: "npm:9.24.0"
+    eslint-plugin-vuetify: "npm:2.2.0"
     express: "npm:4.19.2"
     express-ws: "npm:5.0.2"
     graphiql: "npm:3.1.1"
@@ -4843,11 +4843,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:9.22.0":
-  version: 9.22.0
-  resolution: "eslint-plugin-vue@npm:9.22.0"
+"eslint-plugin-vue@npm:9.24.0":
+  version: 9.24.0
+  resolution: "eslint-plugin-vue@npm:9.24.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
+    globals: "npm:^13.24.0"
     natural-compare: "npm:^1.4.0"
     nth-check: "npm:^2.1.1"
     postcss-selector-parser: "npm:^6.0.15"
@@ -4856,7 +4857,7 @@ __metadata:
     xml-name-validator: "npm:^4.0.0"
   peerDependencies:
     eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
-  checksum: 10c0/d83fc9aba9f0f7eef0a0dfd05464d2b4a568b424f4b3ed93aae4274c653e9287bbd88c9d3fdb8a9d72a180e6dfcc53519fd76706b8c72dc6ec17ab8d09d69da1
+  checksum: 10c0/4b8a5ec008bd35fe26953c9a916fc285375cdc5fa3025f0c427a16c1032bf38b21c8dfed2d616fa7242efc84bbc133d4872f3fbe5ab0f25e9529370179746f7c
   languageName: node
   linkType: hard
 
@@ -4877,16 +4878,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vuetify@npm:2.1.1":
-  version: 2.1.1
-  resolution: "eslint-plugin-vuetify@npm:2.1.1"
+"eslint-plugin-vuetify@npm:2.2.0":
+  version: 2.2.0
+  resolution: "eslint-plugin-vuetify@npm:2.2.0"
   dependencies:
     eslint-plugin-vue: "npm:^9.6.0"
     requireindex: "npm:^1.2.0"
   peerDependencies:
     eslint: ^8.0.0
     vuetify: ^3.0.0
-  checksum: 10c0/22f0f8266fadf70c9b6cd505ecf64a40e2956ea9790b6fc5b8ae14a33256caec4e4a91c24c70957b40b984b436599bb512debf033181927bf44fda48172f35d5
+  checksum: 10c0/001770dd982e9bdef00ead5e2e645317215aa2b4086feb9ee946fb80b103fbf4ea42843dd210f330ee5d66b7a429cba6ef096fa973a4a9ef1dc338fb75523e35
   languageName: node
   linkType: hard
 
