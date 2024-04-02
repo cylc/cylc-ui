@@ -4,6 +4,9 @@
   "private": true,
   "license": "GPL-3.0-only",
   "type": "module",
+  "bugs": {
+    "url": "https://github.com/cylc/cylc-ui/issues"
+  },
   "scripts": {
     "build": "vite build",
     "build:watch": "yarn run build --watch --mode development",
@@ -95,9 +98,6 @@
     "react-dom": {
       "optional": true
     }
-  },
-  "bugs": {
-    "url": "https://github.com/cylc/cylc-ui/issues"
   },
   "packageManager": "yarn@4.1.1"
 }
