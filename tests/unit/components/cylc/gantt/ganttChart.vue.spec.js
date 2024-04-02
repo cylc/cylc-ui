@@ -64,7 +64,7 @@ describe('GanttChart component', () => {
     const expectedFinishedTime = 1677150620000
     const wrapper = mountFunction({
       props: {
-        jobs: jobs,
+        jobs,
       }
     })
 
