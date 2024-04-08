@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             icon
             size="small"
             variant="plain"
-            class="remove-btn mt-n2"
+            class="remove-btn"
           >
             <v-icon size="x-large">
               {{ $options.icons.mdiCloseCircle }}

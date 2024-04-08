@@ -48,15 +48,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       />
     </v-col>
     <v-col cols="auto">
-      <div class="mt-2">
-        <slot
-          name="append"
-          :disabled="modelValue.frozenKey"
-        />
-        <v-tooltip v-bind="tooltipProps">
-          <span>Pre-existing settings cannot be removed</span>
-        </v-tooltip>
-      </div>
+      <slot
+        name="append"
+        :disabled="modelValue.frozenKey"
+      />
+      <v-tooltip v-bind="tooltipProps">
+        <span>Pre-existing settings cannot be removed</span>
+      </v-tooltip>
     </v-col>
   </v-row>
 </template>
