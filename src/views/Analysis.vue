@@ -125,6 +125,10 @@ import {
 import gql from 'graphql-tag'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
+import {
+  initialOptions,
+  useInitialOptions
+} from '@/utils/initialOptions'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
 import {
@@ -227,18 +231,33 @@ export default {
     this.historicalQuery()
   },
 
+  props: { initialOptions },
+
+  setup (props, { emit }) {
+    /**
+     * The task name, timing option and platform filter state.
+     * @type {import('vue').Ref<object>}
+     */
+    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { name: '', timingOption: 'totalTimes', platformOption: -1 })
+
+    /**
+     * If true the anaysis will be shown in table format
+     * @type {import('vue').Ref<boolean>}
+     */
+    const table = useInitialOptions('tasksFilter', { props, emit }, true)
+
+    return {
+      tasksFilter,
+      table
+    }
+  },
+
   data () {
     const tasks = []
     return {
       callback: new AnalysisCallback(tasks),
       /** Object containing all of the tasks added by the callback */
       tasks,
-      tasksFilter: {
-        name: '',
-        timingOption: 'totalTimes',
-        platformOption: -1,
-      },
-      table: true,
     }
   },
 
