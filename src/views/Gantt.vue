@@ -96,12 +96,17 @@ import {
 import gql from 'graphql-tag'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
+import {
+  initialOptions,
+  useInitialOptions
+} from '@/utils/initialOptions'
 import GanttChart from '@/components/cylc/gantt/GanttChart.vue'
 import DeltasCallback from '@/services/callbacks'
 import {
   matchTasks,
   platformOptions
 } from '@/components/cylc/gantt/filter'
+
 /** List of fields to request for each job */
 const jobFields = [
   'name',
@@ -111,6 +116,7 @@ const jobFields = [
   'finishedTime',
   'platform'
 ]
+
 /** The query which retrieves historical Job timing statistics */
 const QUERY = gql`
 query ganttQuery ($workflows: [ID]) {
@@ -119,6 +125,7 @@ query ganttQuery ($workflows: [ID]) {
   }
 }
 `
+
 /** The callback which gets called when data comes in from the query */
 export class GanttCallback extends DeltasCallback {
   constructor () {
@@ -153,36 +160,63 @@ export class GanttCallback extends DeltasCallback {
 }
 export default {
   name: 'Gantt',
+
   mixins: [
     graphqlMixin
   ],
+
   components: {
     GanttChart,
   },
+
   head () {
     return {
       title: getPageTitle('App.workflow', { name: this.workflowName })
     }
   },
+
+  props: {
+    initialOptions,
+  },
+
+  setup (props, { emit }) {
+    /**
+     * The tasks per page filter state.
+     * @type {import('vue').Ref<number>}
+     */
+    const tasksPerPage = useInitialOptions('tasksPerPage', { props, emit }, 10)
+
+    /**
+     * The task name, timing option and platform filter state.
+     * @type {import('vue').Ref<object>}
+     */
+    const jobsFilter = useInitialOptions('jobsFilter', { props, emit }, {
+      name: [],
+      timingOption: 'totalTimes',
+      platformOption: -1,
+    })
+
+    return {
+      tasksPerPage,
+      jobsFilter,
+    }
+  },
+
   beforeMount () {
     this.jobsQuery()
   },
+
   data () {
     return {
-      tasksPerPage: 10,
       callback: new GanttCallback(),
       timingOptions: [
         { value: 'totalTimes', title: 'Total times' },
         { value: 'runTimes', title: 'Run times' },
         { value: 'queueTimes', title: 'Queue times' },
       ],
-      jobsFilter: {
-        name: [],
-        timingOption: 'totalTimes',
-        platformOption: -1,
-      },
     }
   },
+
   computed: {
     // a list of the workflow IDs this view is "viewing"
     // NOTE: we plan multi-workflow functionality so we are writing views
@@ -200,6 +234,7 @@ export default {
       return this.jobsFilter.timingOption.replace(/Times/, '')
     },
   },
+
   methods: {
     /**
      * Run the one-off query for historical job data and pass its results
@@ -216,6 +251,7 @@ export default {
       200 // only re-run this once every 0.2 seconds
     ),
   },
+
   taskChoices: [
     10, 25, 50, 100
   ],
