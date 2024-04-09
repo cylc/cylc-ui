@@ -103,12 +103,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-defaults-provider>
       </div>
       <AnalysisTable
-        v-if="table"
+        v-if="table && filteredTasks.length"
         :tasks="filteredTasks"
         :timing-option="timingOption"
       />
       <BoxPlot
-        v-else
+        v-if="!table && filteredTasks.length"
         :tasks="filteredTasks"
         :timing-option="timingOption"
         sort-input-teleport-target="#analysis-toolbar"
@@ -244,7 +244,7 @@ export default {
      * If true the anaysis will be shown in table format
      * @type {import('vue').Ref<boolean>}
      */
-    const table = useInitialOptions('tasksFilter', { props, emit }, true)
+    const table = useInitialOptions('table', { props, emit }, true)
 
     return {
       tasksFilter,
