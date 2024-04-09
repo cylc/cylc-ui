@@ -276,7 +276,7 @@ function addView (view) {
 describe('Filters and Options save state', () => {
   const numTasks = sortedTasks.length
   describe('Options save state', () => {
-    it.only('remembers table and box & whiskers toggle option when switching between workflows', () => {
+    it('remembers table and box & whiskers toggle option when switching between workflows', () => {
       cy.visit('/#/workspace/one')
       addView('Analysis')
       cy.get('.c-analysis [data-cy=box-plot-toggle]')
