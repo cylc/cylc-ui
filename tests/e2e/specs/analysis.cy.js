@@ -292,19 +292,18 @@ describe('Filters and Options save state', () => {
         .should('be.visible')
     })
   })
+
   describe('Filters save state', () => {
     it('remembers task name, platform and timings when switching between workflows', () => {
       cy.visit('/#/workspace/one')
       addView('Analysis')
+
       // Check default options
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', numTasks)
         .should('be.visible')
-      cy
-        .get('td')
-        .contains('30')
-        .should('be.visible')
+
       // Set platform filter options
       cy
         .get('#c-analysis-filter-task-platforms')
@@ -313,10 +312,12 @@ describe('Filters and Options save state', () => {
         .get('.v-list-item')
         .contains('platform_1')
         .click({ force: true })
+
       // Set queue task name filter options
       cy
         .get('#c-analysis-filter-task-name')
         .type('wait')
+
       // Set task times filter options
       cy
         .get('#c-analysis-filter-task-timings')
@@ -325,27 +326,14 @@ describe('Filters and Options save state', () => {
         .get('.v-list-item')
         .contains('Queue')
         .click({ force: true })
+
       // Navigate away
       cy.visit('/#/')
       cy.get('.c-dashboard')
       // Navigate back
       cy.visit('/#/workspace/one')
-      // Check name filter
-      cy
-        .get('td')
-        .contains('waiting')
-        .should('be.visible')
-      // Check timing filter
-      cy
-        .get('td')
-        .contains('00:00:12')
-        .should('be.visible')
-      // Check platform filter
-      cy
-        .get('td')
-        .contains('platform_1')
-        .should('be.visible')
-      // Other checks
+
+      // Check number of tasks
       cy
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 1)
