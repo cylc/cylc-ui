@@ -62,6 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-col>
       </v-row>
       <div
+        ref="toolbar"
         id="analysis-toolbar"
         class="d-flex align-center flex-wrap my-2 col-gap-2 row-gap-4"
       >
@@ -103,21 +104,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-defaults-provider>
       </div>
       <AnalysisTable
-        v-if="table && filteredTasks.length"
+        v-if="table"
         :tasks="filteredTasks"
         :timing-option="timingOption"
       />
       <BoxPlot
-        v-if="!table && filteredTasks.length"
+        v-else
         :tasks="filteredTasks"
         :timing-option="timingOption"
-        sort-input-teleport-target="#analysis-toolbar"
+        :sort-input-teleport-target="toolbar?.id"
       />
     </v-container>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue'
 import {
   debounce,
   pick,
@@ -246,9 +248,13 @@ export default {
      */
     const table = useInitialOptions('table', { props, emit }, true)
 
+    /** @type {import('vue').Ref<HTMLElement>} template ref */
+    const toolbar = ref(null)
+
     return {
       tasksFilter,
-      table
+      table,
+      toolbar,
     }
   },
 

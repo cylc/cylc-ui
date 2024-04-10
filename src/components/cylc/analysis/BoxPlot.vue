@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <Teleport
     v-if="sortInputTeleportTarget"
-    :to="sortInputTeleportTarget"
+    :to="`#${sortInputTeleportTarget}`"
   >
     <div class="d-flex flex-grow-1 col-gap-1">
       <v-select
@@ -91,7 +91,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    /** Where to teleport the sorting input (or don't render if null) */
+    /** ID of element to teleport the sorting input (or don't render if null) */
     sortInputTeleportTarget: {
       type: String,
       default: null,
