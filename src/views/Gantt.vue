@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           class="pr-md-2 mb-2"
         >
           <v-autocomplete
+            id="c-gantt-filter-job-name"
             multiple
             chips
             closable-chips
