@@ -296,7 +296,7 @@ describe('Filters and Options save state', () => {
   describe('State saving', () => {
     beforeEach(() => {
       cy.visit('/#/workspace/one')
-      addView('Table')
+      addView('Analysis')
     })
 
     it('remembers task name, platform and timings when switching between workflows', () => {
