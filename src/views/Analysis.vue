@@ -247,7 +247,7 @@ export default {
     const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { name: '', timingOption: 'totalTimes', platformOption: -1 })
 
     /**
-     * If true the anaysis will be shown in table format
+     * If true the analysis will be shown in table format
      * @type {import('vue').Ref<boolean>}
      */
     const table = useInitialOptions('table', { props, emit }, true)
