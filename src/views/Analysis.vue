@@ -107,6 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="table"
         :tasks="filteredTasks"
         :timing-option="timingOption"
+        v-model:initial-options="dataTableOptions"
       />
       <BoxPlot
         v-else
@@ -129,6 +130,7 @@ import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import {
   initialOptions,
+  updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
@@ -233,6 +235,8 @@ export default {
     this.historicalQuery()
   },
 
+  emits: [updateInitialOptionsEvent],
+
   props: { initialOptions },
 
   setup (props, { emit }) {
@@ -251,10 +255,17 @@ export default {
     /** @type {import('vue').Ref<HTMLElement>} template ref */
     const toolbar = ref(null)
 
+    /**
+     * The Vuetify data table options (sortBy, page etc).
+     * @type {import('vue').Ref<object>}
+     */
+    const dataTableOptions = useInitialOptions('dataTableOptions', { props, emit })
+
     return {
       tasksFilter,
       table,
       toolbar,
+      dataTableOptions
     }
   },
 

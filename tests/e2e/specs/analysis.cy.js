@@ -293,7 +293,12 @@ describe('Filters and Options save state', () => {
     })
   })
 
-  describe('Filters save state', () => {
+  describe('State saving', () => {
+    beforeEach(() => {
+      cy.visit('/#/workspace/one')
+      addView('Table')
+    })
+
     it('remembers task name, platform and timings when switching between workflows', () => {
       cy.visit('/#/workspace/one')
       addView('Analysis')
@@ -338,6 +343,38 @@ describe('Filters and Options save state', () => {
         .get('.c-analysis table > tbody > tr')
         .should('have.length', 1)
         .should('be.visible')
+    })
+
+    it('remembers sorting & page options when switching between workflows', () => {
+      const sortedClass = 'v-data-table__th--sorted'
+      cy.get('.c-table th')
+        .contains('Platform')
+        .closest('th').as('platformCol')
+        .should('not.have.class', sortedClass)
+        .click()
+        .should('have.class', sortedClass)
+      cy.get('.c-table .v-data-table-footer__items-per-page .v-select')
+        .as('itemsPerPage')
+        .find('input')
+        .should('not.have.value', -1)
+        .get('@itemsPerPage')
+        .click()
+        .get('[role="listbox"] .v-list-item')
+        .contains('All')
+        .click()
+        // Wait for menu to close
+        .should('not.exist')
+        .get('@itemsPerPage').find('input')
+        .should('have.value', -1)
+      // Navigate away
+      cy.visit('/#/')
+        .get('.c-dashboard')
+      // Navigate back
+      cy.visit('/#/workspace/one')
+      cy.get('@platformCol')
+        .should('have.class', sortedClass)
+      cy.get('@itemsPerPage').find('input')
+        .should('have.value', -1)
     })
   })
 })
