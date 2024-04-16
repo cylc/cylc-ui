@@ -11,6 +11,14 @@ creating a new release entry be sure to copy & paste the span tag with the
 updated. Only the first match gets replaced, so it's fine to leave the old
 ones in. -->
 -------------------------------------------------------------------------------
+## __cylc-ui-2.5.0 (<span actions:bind='release-date'>Upcoming</span>)__
+
+### Enhancements
+
+[#1751](https://github.com/cylc/cylc-ui/pull/1751) -
+More view options are now remembered & restored when navigating between workflows.
+
+-------------------------------------------------------------------------------
 ## __cylc-ui-2.4.0 (<span actions:bind='release-date'>Released 2024-04-02</span>)__
 
 ### Enhancements
