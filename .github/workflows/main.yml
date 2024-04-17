@@ -27,6 +27,11 @@ jobs:
           node-version: 'lts/*'
           cache: yarn
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
       - name: Install
         run: yarn install
 
@@ -50,6 +55,11 @@ jobs:
 
       - name: Check browser compatibility
         run: yarn run lint:compat
+
+      - name: Towncrier - draft changelog
+        run: |
+          python3 -m pip install -q towncrier
+          towncrier build --draft --version $(node -p "require('./package.json').version")
 
   cypress-run:
     runs-on: ${{ matrix.os }}
