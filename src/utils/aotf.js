@@ -305,7 +305,7 @@ export const dummyMutations = [
     description: 'View the logs.',
     args: [],
     _appliesTo: [cylcObjects.Workflow, cylcObjects.Namespace, cylcObjects.Job],
-    _requiresInfo: true
+    _requiresInfo: false
   },
 ]
 
