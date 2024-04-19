@@ -5,21 +5,14 @@ all changes see the [closed
 milestones](https://github.com/cylc/cylc-ui/milestones?state=closed) for each
 release.
 
-<!-- The topmost release date is automatically updated by GitHub Actions. When
-creating a new release entry be sure to copy & paste the span tag with the
-`actions:bind` attribute, which is used by a regex to find the text to be
-updated. Only the first match gets replaced, so it's fine to leave the old
-ones in. -->
--------------------------------------------------------------------------------
-## __cylc-ui-2.5.0 (<span actions:bind='release-date'>Upcoming</span>)__
+<!--
+NOTE: Do not add entries here, use towncrier (installed via pip) fragments instead:
+$ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
+-->
 
-### Enhancements
+<!-- towncrier release notes start -->
 
-[#1751](https://github.com/cylc/cylc-ui/pull/1751) -
-More view options are now remembered & restored when navigating between workflows.
-
--------------------------------------------------------------------------------
-## __cylc-ui-2.4.0 (<span actions:bind='release-date'>Released 2024-04-02</span>)__
+## cylc-ui-2.4.0 (Released 2024-04-02)
 
 ### Enhancements
 
@@ -48,16 +41,16 @@ Various other efficiency improvements.
 Fix bug where the up/down/home/end keys would not work inside the Edit Runtime
 form inputs.
 
--------------------------------------------------------------------------------
-## __cylc-ui-2.3.0 (<span actions:bind='release-date'>Released 2023-11-28</span>)__
+
+## cylc-ui-2.3.0 (Released 2023-11-28)
 
 ### Fixes
 
 [#1549](https://github.com/cylc/cylc-ui/pull/1549) -
 Fix workflow filtering bug in the sidebar.
 
--------------------------------------------------------------------------------
-## __cylc-ui-2.2.0 (<span actions:bind='release-date'>Released 2023-11-02</span>)__
+
+## cylc-ui-2.2.0 (Released 2023-11-02)
 
 ### Enhancements
 
@@ -78,8 +71,8 @@ Fixed bug where toggle buttons in view toolbars would not change state.
 [#1434](https://github.com/cylc/cylc-ui/pull/1434) -
 Small accessibility/appearance improvements.
 
--------------------------------------------------------------------------------
-## __cylc-ui-2.1.0 (<span actions:bind='release-date'>Released 2023-09-07</span>)__
+
+## cylc-ui-2.1.0 (Released 2023-09-07)
 
 ### Enhancements
 
@@ -95,8 +88,8 @@ Pinned buttons to the bottom of the command edit form.
 [#1437](https://github.com/cylc/cylc-ui/pull/1437) -
 Add landing page for unauthorised users.
 
--------------------------------------------------------------------------------
-## __cylc-ui-2.0.0 (<span actions:bind='release-date'>Released 2023-07-21</span>)__
+
+## cylc-ui-2.0.0 (Released 2023-07-21)
 
 ### Enhancements
 
@@ -127,8 +120,8 @@ Fixed incorrect latest job info in table view.
 [#1336](https://github.com/cylc/cylc-ui/pull/1336) -
 Fixed task state filtering bug in tree view.
 
--------------------------------------------------------------------------------
-## __cylc-ui-1.6.0 (<span actions:bind='release-date'>Released 2023-04-27</span>)__
+
+## cylc-ui-1.6.0 (Released 2023-04-27)
 
 ### Enhancements
 
@@ -149,8 +142,8 @@ A new view that displays task timing statistics
 when navigating between workflows in the standalone `#/tree/` and `#/table/`
 views.
 
--------------------------------------------------------------------------------
-## __cylc-ui-1.5.0 (<span actions:bind='release-date'>Released 2023-02-20</span>)__
+
+## cylc-ui-1.5.0 (Released 2023-02-20)
 
 ### Enhancements
 
@@ -169,8 +162,8 @@ use multi-level family inheritance.
 [#1182](https://github.com/cylc/cylc-ui/pull/1182) - Fixes bug in filtering
 by task name.
 
--------------------------------------------------------------------------------
-## __cylc-ui-1.4.0 (<span actions:bind='release-date'>Released 2023-01-16</span>)__
+
+## cylc-ui-1.4.0 (Released 2023-01-16)
 
 ### Enhancements
 
@@ -219,24 +212,24 @@ of the table view so it matches the tree view.
 [#1107](https://github.com/cylc/cylc-ui/pull/1107) - Use natural sort for table
 view cycle point column.
 
--------------------------------------------------------------------------------
-## __cylc-ui-1.3.0 (<span actions:bind='release-date'>Released 2022-07-27</span>)__
+
+## cylc-ui-1.3.0 (Released 2022-07-27)
 
 ### Enhancements
 
 [#1073](https://github.com/cylc/cylc-ui/pull/1073) - Improve validation of the
 command edit form.
 
--------------------------------------------------------------------------------
-## __cylc-ui-1.2.1 (<span actions:bind='release-date'>Released 2022-05-30</span>)__
+
+## cylc-ui-1.2.1 (Released 2022-05-30)
 
 ### Fixes
 
 [#1011](https://github.com/cylc/cylc-ui/pull/1011) - Fix bug where the
 workflow commands menu would show the wrong workflow.
 
--------------------------------------------------------------------------------
-## __cylc-ui-1.2.0 (<span actions:bind='release-date'>Released 2022-05-19</span>)__
+
+## cylc-ui-1.2.0 (Released 2022-05-19)
 
 ### Enhancements
 
@@ -250,16 +243,16 @@ workflow commands menu would show the wrong workflow.
 [#979](https://github.com/cylc/cylc-ui/pull/979) - Fix bug where the commands
 menu could sometimes break.
 
--------------------------------------------------------------------------------
-## __cylc-ui-1.1.0 (<span actions:bind='release-date'>Released 2022-03-23</span>)__
+
+## cylc-ui-1.1.0 (Released 2022-03-23)
 
 ### Enhancements
 
 [#928](https://github.com/cylc/cylc-ui/pull/928) - Enable accessing the workflow
 commands menu from GScan (sidebar).
 
--------------------------------------------------------------------------------
-## __cylc-ui-1.0.0 (<span actions:bind='release-date'>Released 2022-02-17</span>)__
+
+## cylc-ui-1.0.0 (Released 2022-02-17)
 
 ### Enhancements
 
@@ -285,8 +278,8 @@ or jobs now shows the relevant ID and status.
 [#927](https://github.com/cylc/cylc-ui/pull/927) - Fix bug where the commands
 menu would disappear when clicking on another task/cycle point/etc.
 
--------------------------------------------------------------------------------
-## __cylc-ui-0.6 (<span actions:bind='release-date'>Released 2021-11-10</span>)__
+
+## cylc-ui-0.6 (Released 2021-11-10)
 
 ### Enhancements
 
@@ -315,8 +308,8 @@ commands in the commands menu.
 - Fix issues with the workflow status and play/pause/stop buttons not
 updating correctly & enable starting a workflow from stopped.
 
--------------------------------------------------------------------------------
-## __cylc-ui-0.5 (<span actions:bind='release-date'>Released 2021-07-28</span>)__
+
+## cylc-ui-0.5 (Released 2021-07-28)
 
 ### Enhancements
 
@@ -385,8 +378,8 @@ fetches more data than what it needs when GScan + a view/component are used.
 [#671](https://github.com/cylc/cylc-ui/pull/671) - UI shows loading state
 forever if no workflows exist.
 
--------------------------------------------------------------------------------
-## __cylc-ui-0.4 (Released 2021-04-16)__
+
+## cylc-ui-0.4 (Released 2021-04-16)
 
 ### Enhancements
 
@@ -397,8 +390,8 @@ Display the new "platform" for jobs rather than the legacy "host" value.
 Create a urls module to simplify how we concatenate strings to create
 URLs.
 
--------------------------------------------------------------------------------
-## __cylc-ui-0.3 (Released 2021-03-25)__
+
+## cylc-ui-0.3 (Released 2021-03-25)
 
 Release 0.3 of Cylc UI.
 
@@ -500,8 +493,8 @@ None.
 
 None.
 
--------------------------------------------------------------------------------
-## __cylc-ui-0.2 (2020-07-14)__
+
+## cylc-ui-0.2 (2020-07-14)
 
 Release 0.2 of Cylc UI.
 
@@ -593,7 +586,7 @@ of a user guide.
 
 None.
 
--------------------------------------------------------------------------------
-## __cylc-ui-0.1 (2019-09-18)__
+
+## cylc-ui-0.1 (2019-09-18)
 
 Initial release of Cylc UI.
