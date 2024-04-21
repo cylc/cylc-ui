@@ -383,9 +383,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/code-coverage@npm:3.12.34":
-  version: 3.12.34
-  resolution: "@cypress/code-coverage@npm:3.12.34"
+"@cypress/code-coverage@npm:3.12.35":
+  version: 3.12.35
+  resolution: "@cypress/code-coverage@npm:3.12.35"
   dependencies:
     "@cypress/webpack-preprocessor": "npm:^6.0.0"
     chalk: "npm:4.1.2"
@@ -402,7 +402,7 @@ __metadata:
     babel-loader: ^8.3 || ^9
     cypress: "*"
     webpack: ^4 || ^5
-  checksum: 10c0/276a66f95086f201e19a697fcaf259c5e0bedd7adda61b2c4329e29a6a0a94749e42ee8a2de2dd1f38fdd031ffb99ac740d0c93684ab5210fddfc564b884b96a
+  checksum: 10c0/feaab90159b2609b9565cf299901a80a718bce2d316657450bfc393fde8f4e9b264d27fecd23fc0f97e6248af33e4d177d234ff043fe8e8e16edeb8a25a486a0
   languageName: node
   linkType: hard
 
@@ -3822,7 +3822,7 @@ __metadata:
   resolution: "cylc-ui@workspace:."
   dependencies:
     "@apollo/client": "npm:3.9.11"
-    "@cypress/code-coverage": "npm:3.12.34"
+    "@cypress/code-coverage": "npm:3.12.35"
     "@hpcc-js/wasm": "npm:2.16.0"
     "@lumino/default-theme": "npm:2.1.5"
     "@lumino/widgets": "npm:2.3.2"
@@ -3836,7 +3836,7 @@ __metadata:
     axios: "npm:1.6.8"
     concurrently: "npm:8.2.2"
     cross-fetch: "npm:4.0.0"
-    cypress: "npm:13.7.3"
+    cypress: "npm:13.8.0"
     cypress-vite: "npm:1.5.0"
     dedent: "npm:1.5.3"
     enumify: "npm:2.0.0"
@@ -3902,9 +3902,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:13.7.3":
-  version: 13.7.3
-  resolution: "cypress@npm:13.7.3"
+"cypress@npm:13.8.0":
+  version: 13.8.0
+  resolution: "cypress@npm:13.8.0"
   dependencies:
     "@cypress/request": "npm:^3.0.0"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -3950,7 +3950,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/51643d6bcf647abb50e5f3a88fbffe5c41bb680394e8900162aded05547f473018070146df923ec8a7908356e3ff9e9c26629b51523f4361046e0c447f757d63
+  checksum: 10c0/9aefeec1949cb20a22c02f3095f88574196f6a77e182e86578144e1ae1d990f6ffcd32a2f87dd53c827eeb0fc2a90fbaa8a155c717fe22d0a397428157ec7b4d
   languageName: node
   linkType: hard
 
