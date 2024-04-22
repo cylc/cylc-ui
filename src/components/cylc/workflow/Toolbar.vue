@@ -86,6 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       <!-- n-window selector -->
       <v-chip
+        :disabled="isStopped"
         link
         size="small"
       >
@@ -356,9 +357,6 @@ export default {
         )
       }
     },
-    userInitials () {
-      return this.user.username[0].toUpperCase()
-    },
     nEdgeDistance () {
       // the graph window distance reported by the scheduler
       return this.currentWorkflow?.node?.nEdgeDistance
@@ -381,7 +379,7 @@ export default {
     },
     nEdgeDistance (newVal) {
       // the scheduler has reported that the window size has changed
-      if (newVal !== undefined) {
+      if (newVal != undefined) {
         this.nWindow = newVal
       }
     }
