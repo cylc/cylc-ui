@@ -379,7 +379,7 @@ export default {
     },
     nEdgeDistance (newVal) {
       // the scheduler has reported that the window size has changed
-      if (newVal != undefined) {
+      if (newVal !== undefined) {
         this.nWindow = newVal
       }
     }
