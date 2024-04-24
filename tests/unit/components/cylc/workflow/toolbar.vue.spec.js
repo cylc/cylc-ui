@@ -21,6 +21,9 @@ import { mount } from '@vue/test-utils'
 import storeOptions from '@/store/options'
 import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
 import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import sinon from 'sinon'
+import WorkflowService from '@/services/workflow.service'
+const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('Workspace toolbar component', () => {
   let store
@@ -35,6 +38,7 @@ describe('Workspace toolbar component', () => {
     const wrapper = mount(Toolbar, {
       global: {
         plugins: [store, createVuetify(), CylcObjectPlugin],
+        mocks: { $workflowService },
       },
       props: {
         views: [],
