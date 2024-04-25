@@ -221,12 +221,9 @@ export default {
   computed: {
     cyclePoints () {
       // Only plot cycles that have visible data points
-      let cycles = this.jobs.filter(
-        job => this.displayedTasks.includes(job.name)
-      )
-      cycles = uniq(cycles.map(
-        job => job.cyclePoint)
-      )
+      const cycles = uniq(this.jobs.flatMap(
+        job => this.displayedTasks.includes(job.name) ? job.cyclePoint : []
+      ))
       return cycles.sort()
     },
     series () {
