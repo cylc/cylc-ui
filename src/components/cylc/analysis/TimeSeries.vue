@@ -248,10 +248,12 @@ export default {
             // Only add data if this job was run more recently than any existing data
             if (currentStartedTime === undefined || job.startedTime.localeCompare(currentStartedTime) === 1) {
               time = job[`${this.timingOption}Time`]
-              seriesData[job.name].data[job.cyclePoint].x = job.cyclePoint
-              seriesData[job.name].data[job.cyclePoint].y = time
-              seriesData[job.name].data[job.cyclePoint].platform = job.platform
-              seriesData[job.name].data[job.cyclePoint].startedTime = job.startedTime
+               Object.assign(seriesData[job.name].data[job.cyclePoint], {
+                x: job.cyclePoint,
+                y: time,
+                platform: job.platform,
+                startedTime: job.startedTime
+              })
             }
           }
         }
