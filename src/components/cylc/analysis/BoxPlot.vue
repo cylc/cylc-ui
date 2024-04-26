@@ -66,6 +66,11 @@ import {
 import { upperFirst } from 'lodash'
 import { formatDuration } from '@/utils/tasks'
 import { useReducedAnimation } from '@/composables/localStorage'
+import {
+  initialOptions,
+  updateInitialOptionsEvent,
+  useInitialOptions
+} from '@/utils/initialOptions'
 
 export default {
   name: 'BoxPlot',
@@ -73,6 +78,8 @@ export default {
   components: {
     VueApexCharts,
   },
+
+  emits: [updateInitialOptionsEvent],
 
   props: {
     tasks: {
@@ -83,6 +90,7 @@ export default {
       type: String,
       required: true,
     },
+    initialOptions,
     itemsPerPage: {
       type: Number,
       default: 20,
@@ -98,7 +106,25 @@ export default {
     },
   },
 
-  setup (props) {
+  setup (props, { emit }) {
+    /**
+     * The 'sort by' state.
+     * @type {import('vue').Ref<string>}
+     */
+    const sortBy = useInitialOptions('sortBy', { props, emit }, 'name')
+
+    /**
+     * The page number state.
+     * @type {import('vue').Ref<number>}
+     */
+    const page = useInitialOptions('page', { props, emit }, 1)
+
+    /**
+     * The sort descending/sscending state.
+     * @type {import('vue').Ref<boolean>}
+     */
+    const sortDesc = useInitialOptions('sortDesc', { props, emit }, false)
+
     const reducedAnimation = useReducedAnimation()
 
     const chartOptions = computed(() => ({
@@ -163,15 +189,10 @@ export default {
     }))
 
     return {
+      sortBy,
+      page,
+      sortDesc,
       chartOptions,
-    }
-  },
-
-  data () {
-    return {
-      page: 1,
-      sortBy: 'name',
-      sortDesc: false,
     }
   },
 

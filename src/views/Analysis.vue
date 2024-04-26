@@ -114,6 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :tasks="filteredTasks"
         :timing-option="timingOption"
         :sort-input-teleport-target="toolbar?.id"
+        v-model:initial-options="boxPlotOptions"
       />
     </v-container>
   </div>
@@ -261,11 +262,18 @@ export default {
      */
     const dataTableOptions = useInitialOptions('dataTableOptions', { props, emit })
 
+    /**
+     * The Vuetify box and whisker plot options (sortBy, page etc).
+     * @type {import('vue').Ref<object>}
+     */
+    const boxPlotOptions = useInitialOptions('boxPlotOptions', { props, emit })
+
     return {
       tasksFilter,
       table,
       toolbar,
-      dataTableOptions
+      dataTableOptions,
+      boxPlotOptions
     }
   },
 
