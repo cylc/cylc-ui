@@ -300,8 +300,6 @@ describe('Filters and Options save state', () => {
     })
 
     it('remembers task name, platform and timings when switching between workflows', () => {
-      cy.visit('/#/workspace/one')
-
       // Check default options
       cy
         .get('.c-analysis table > tbody > tr')
