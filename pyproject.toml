@@ -1,0 +1,17 @@
+[tool.towncrier]
+directory = "changes.d"
+filename = "CHANGES.md"
+template = "changes.d/template.jinja"
+underlines = ["", "", ""]
+title_format = "## cylc-ui-{version} (Released {project_date})"
+issue_format = "[#{issue}](https://github.com/cylc/cylc-ui/pull/{issue})"
+
+# These changelog sections will be shown in the defined order:
+[[tool.towncrier.type]]
+directory = "feat" # NB this is just the filename not directory e.g. 123.break.md
+name = "🚀 Enhancements"
+showcontent = true
+[[tool.towncrier.type]]
+directory = "fix"
+name = "🔧 Fixes"
+showcontent = true

@@ -22,15 +22,15 @@ first Pull Request (for each Cylc repository you contribute to).
 
 ## Contribute Code
 
-**Enhancements** are made on the `master` branch.
-
-**Bugfixes** are made on the branch of the same name as the issue's milestone.
-E.G. if the issue is on the `8.0.x` milestone, branch off of `8.0.x` to
-develop your bugfix, then raise the pull request against the `8.0.x` branch.
-We will later merge the `8.0.x` branch into `master`.
-
-Feel free to ask questions on the issue or developers chat if unsure about
+Contributions are generally made against the `master` branch.
+Feel free to ask questions on the issue or [developers chat](https://matrix.to/#/#cylc-web-gui:matrix.org) if unsure about
 anything.
+
+We use [towncrier](https://towncrier.readthedocs.io/en/stable/index.html) for
+generating the changelog. Changelog entries are added by running
+```
+towncrier create <PR-number>.<break|feat|fix>.md --content "Short description"
+```
 
 
 ## Code Contributors

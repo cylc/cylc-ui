@@ -21,9 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :items="tasks"
     item-value="task.id"
     multi-sort
-    :sort-by="sortBy"
+    v-model:sort-by="sortBy"
     show-expand
     density="compact"
+    v-model:page="page"
     v-model:items-per-page="itemsPerPage"
   >
     <template v-slot:item.task.name="{ item }">
@@ -100,7 +101,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { ref } from 'vue'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import { mdiChevronDown } from '@mdi/js'
@@ -108,15 +108,23 @@ import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 import { datetimeComparator } from '@/components/cylc/table/sort'
 import { dtMean } from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
+import {
+  initialOptions,
+  updateInitialOptionsEvent,
+  useInitialOptions
+} from '@/utils/initialOptions'
 
 export default {
   name: 'TableComponent',
+
+  emits: [updateInitialOptionsEvent],
 
   props: {
     tasks: {
       type: Array,
       required: true
-    }
+    },
+    initialOptions,
   },
 
   components: {
@@ -124,21 +132,30 @@ export default {
     Job,
   },
 
-  setup () {
+  setup (props, { emit }) {
     const cyclePointsOrderDesc = useCyclePointsOrderDesc()
-    return {
-      itemsPerPage: ref(50),
-      sortBy: ref([
+
+    const sortBy = useInitialOptions(
+      'sortBy',
+      { props, emit },
+      [
         {
           key: 'task.tokens.cycle',
           order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
         },
-      ]),
-    }
-  },
+      ]
+    )
 
-  methods: {
-    dtMean
+    const page = useInitialOptions('page', { props, emit }, 1)
+
+    const itemsPerPage = useInitialOptions('itemsPerPage', { props, emit }, 50)
+
+    return {
+      dtMean,
+      itemsPerPage,
+      page,
+      sortBy,
+    }
   },
 
   headers: [

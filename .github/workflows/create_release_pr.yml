@@ -29,6 +29,11 @@ jobs:
       - name: Check CONTRIBUTING.md
         uses: cylc/release-actions/check-shortlog@v1
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
       - name: Create & checkout PR branch
         uses: cylc/release-actions/stage-1/checkout-pr-branch@v1
 
@@ -36,11 +41,10 @@ jobs:
         run: |
           npm version $VERSION
 
-      - name: Update "released on" date in changelog
-        continue-on-error: true
-        uses: cylc/release-actions/stage-1/update-changelog-release-date@v1
-        with:
-          changelog-file: 'CHANGES.md'
+      - name: Generate changelog
+        run: |
+          python3 -m pip install -q towncrier
+          towncrier build --yes --version $VERSION
 
       - name: Create pull request
         uses: cylc/release-actions/stage-1/create-release-pr@v1

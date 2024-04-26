@@ -51,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-cylc-object="currentWorkflow"
           :icon="$options.icons.menu"
           size="small"
+          density="comfortable"
         />
 
         <v-btn
@@ -60,6 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-if="!isRunning"
           @click="onClickPlay"
           size="small"
+          density="comfortable"
         />
 
         <v-btn
@@ -69,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-if="isRunning"
           @click="onClickReleaseHold"
           size="small"
+          density="comfortable"
         />
 
         <v-btn
@@ -77,8 +80,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :disabled="!enabled.stopToggle"
           @click="onClickStop"
           size="small"
+          density="comfortable"
         />
       </div>
+
+      <!-- n-window selector -->
+      <v-chip
+        :disabled="isStopped"
+        link
+        size="small"
+      >
+        N={{ nWindow }}
+        <v-menu activator="parent" :close-on-content-click="false">
+          <v-card title="Graph Window Depth">
+            <v-card-subtitle>
+              This changes the number of tasks which are displayed.
+
+              Higher values may impact performance.
+            </v-card-subtitle>
+            <v-card-text>
+              <v-select
+                density="compact"
+                v-model="nWindow"
+                :items="[0,1,2,3]"
+              />
+            </v-card-text>
+          </v-card>
+        </v-menu>
+      </v-chip>
 
       <!-- workflow status message -->
       <span class="status-msg text-md-body-1 text-body-2">
@@ -175,6 +204,48 @@ import graphql from '@/mixins/graphql'
 import {
   mutationStatus
 } from '@/utils/aotf'
+import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
+import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import gql from 'graphql-tag'
+
+const QUERY = gql(`
+subscription Workflow ($workflowId: ID) {
+  deltas(workflows: [$workflowId]) {
+    added {
+      ...AddedDelta
+    }
+    updated (stripNull: true) {
+      ...UpdatedDelta
+    }
+    pruned {
+      ...PrunedDelta
+    }
+  }
+}
+
+fragment WorkflowData on Workflow {
+  id
+  status
+  statusMsg
+  nEdgeDistance
+}
+
+fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
+}
+
+fragment PrunedDelta on Pruned {
+  workflow
+}
+`)
 
 export default {
   name: 'Toolbar',
@@ -185,7 +256,8 @@ export default {
   },
 
   mixins: [
-    graphql
+    graphql,
+    subscriptionComponentMixin
   ],
 
   props: {
@@ -206,13 +278,24 @@ export default {
       play: null,
       paused: null,
       stop: null
-    }
+    },
+    nWindow: 1
   }),
 
   computed: {
     ...mapState('app', ['title']),
     ...mapState('user', ['user']),
     ...mapState('workflows', ['cylcTree']),
+    query () {
+      return new SubscriptionQuery(
+        QUERY,
+        this.variables,
+        'workflow',
+        [],
+        /* isDelta */ true,
+        /* isGlobalCallback */ true
+      )
+    },
     currentWorkflow () {
       return this.cylcTree.$index[this.workflowId]
     },
@@ -273,6 +356,10 @@ export default {
           )
         )
       }
+    },
+    nEdgeDistance () {
+      // the graph window distance reported by the scheduler
+      return this.currentWorkflow?.node?.nEdgeDistance
     }
   },
 
@@ -285,6 +372,16 @@ export default {
     },
     isStopped () {
       this.expecting.stop = null
+    },
+    nWindow (newVal) {
+      // the user has requested to change the window size
+      this.setGraphWindow(newVal)
+    },
+    nEdgeDistance (newVal) {
+      // the scheduler has reported that the window size has changed
+      if (newVal !== undefined) {
+        this.nWindow = newVal
+      }
     }
   },
 
@@ -318,6 +415,13 @@ export default {
           this.expecting.stop = WorkflowState.STOPPING
         }
       })
+    },
+    setGraphWindow (nWindow) {
+      this.$workflowService.mutate(
+        'setGraphWindowExtent',
+        this.currentWorkflow.id,
+        { nEdgeDistance: nWindow }
+      )
     },
     startCase,
   },

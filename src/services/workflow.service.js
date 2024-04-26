@@ -109,14 +109,17 @@ class WorkflowService {
    * @param {string} id
    * @returns {Promise<MutationResponse>}
    */
-  async mutate (mutationName, id) {
+  async mutate (mutationName, id, args = {}) {
     const mutation = await this.getMutation(mutationName)
     return await mutate(
       mutation,
-      getMutationArgsFromTokens(
-        mutation,
-        tokenise(id)
-      ),
+      {
+        ...getMutationArgsFromTokens(
+          mutation,
+          tokenise(id),
+        ),
+        ...args
+      },
       this.apolloClient
     )
   }

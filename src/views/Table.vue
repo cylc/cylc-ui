@@ -45,6 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             <TableComponent
               :tasks="filteredTasks"
+              v-model:initial-options="dataTableOptions"
             />
           </v-container>
         </v-col>
@@ -60,6 +61,7 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
+  updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
 import { matchNode } from '@/components/cylc/common/filter'
@@ -167,6 +169,8 @@ export default {
     }
   },
 
+  emits: [updateInitialOptionsEvent],
+
   props: {
     initialOptions,
   },
@@ -178,7 +182,14 @@ export default {
      */
     const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, {})
 
+    /**
+     * The Vuetify data table options (sortBy, page etc).
+     * @type {import('vue').Ref<object>}
+     */
+    const dataTableOptions = useInitialOptions('dataTableOptions', { props, emit })
+
     return {
+      dataTableOptions,
       tasksFilter,
     }
   },
