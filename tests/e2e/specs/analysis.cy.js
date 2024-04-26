@@ -342,7 +342,7 @@ describe('Filters and Options save state', () => {
         .should('be.visible')
     })
 
-    it('remembers sorting & page options when switching between workflows', () => {
+    it('remembers table sorting & page options when switching between workflows', () => {
       const sortedClass = 'v-data-table__th--sorted'
       cy.get('.c-table th')
         .contains('Platform')
@@ -372,6 +372,25 @@ describe('Filters and Options save state', () => {
         .should('have.class', sortedClass)
       cy.get('@itemsPerPage').find('input')
         .should('have.value', -1)
+    })
+
+    it('remembers box and whisker sorting options when switching between workflows', () => {
+      cy.get('.c-analysis [data-cy=box-plot-toggle]')
+        .click()
+      cy.get('#analysis-toolbar > .d-flex > .v-input > .v-input__control > .v-field > .v-field__field > .v-field__input')
+        .click()
+      cy
+        .get('.v-list-item')
+        .contains('Count')
+        .click({ force: true })
+      // Navigate away
+      cy.visit('/#/')
+        .get('.c-dashboard')
+      // Navigate back
+      cy.visit('/#/workspace/one')
+      cy.get('#analysis-toolbar > .d-flex > .v-input > .v-input__control > .v-field > .v-field__field > .v-field__input')
+        .contains('Count')
+        .should('be.visible')
     })
   })
 })
