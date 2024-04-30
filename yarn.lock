@@ -3858,7 +3858,7 @@ __metadata:
     istanbul-lib-coverage: "npm:3.2.2"
     jsdom: "npm:24.0.0"
     json-server: "npm:0.17.4"
-    lodash: "npm:4.17.21"
+    lodash-es: "npm:4.17.21"
     markdown-it: "npm:14.1.0"
     mitt: "npm:3.0.1"
     nodemon: "npm:3.1.0"
@@ -7157,6 +7157,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash-es@npm:4.17.21":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: 10c0/fb407355f7e6cd523a9383e76e6b455321f0f153a6c9625e21a8827d10c54c2a2341bd2ae8d034358b60e07325e1330c14c224ff582d04612a46a4f0479ff2f2
+  languageName: node
+  linkType: hard
+
 "lodash-id@npm:^0.14.1":
   version: 0.14.1
   resolution: "lodash-id@npm:0.14.1"
@@ -7199,7 +7206,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4, lodash@npm:4.17.21, lodash@npm:^4.17.20, lodash@npm:^4.17.21":
+"lodash@npm:4, lodash@npm:^4.17.20, lodash@npm:^4.17.21":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 10c0/d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
