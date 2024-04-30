@@ -278,6 +278,9 @@ export default {
       panZoomWidget: null,
       // true if layout is in progress
       updating: false,
+      // supports loading graph when component is mounted and autoRefresh is off.
+      // true if page is loading for the first time and nodeDimensions are yet to be calculated
+      initialLoad: true,
     }
   },
 
@@ -420,7 +423,9 @@ export default {
     },
     updateTimer () {
       // turn the timer on or off depending on the value of autoRefresh
-      if (this.autoRefresh) {
+      // if initialLoad is true we want to set a refresh interval
+      // regardles of autoRefresh state.
+      if (this.autoRefresh || this.initialLoad) {
         this.refreshTimer = setInterval(this.refresh, 2000)
       } else {
         clearInterval(this.refreshTimer)
@@ -629,6 +634,16 @@ export default {
         }
       })
 
+      // if autoRefresh is off on page load no graph will be rendered.
+      // we let the page refresh on initial load
+      // once nodeDimensions have rendered for the first time
+      // we prevent further refreshing by setting initialLoad to false
+      if (nodeDimensions) {
+        if (this.initialLoad === true) { this.initialLoad = false }
+      } else {
+        return
+      }
+
       // layout the graph
       try {
         await this.layout(nodes, edges, nodeDimensions)
@@ -719,6 +734,14 @@ export default {
     autoRefresh () {
       // toggle the timer when autoRefresh is changed
       this.updateTimer()
+    },
+    initialLoad () {
+      // when initialLoad changes from true to false
+      // do a final refresh
+      if (!this.autoRefresh) {
+        this.updateTimer()
+        this.refresh()
+      }
     }
   }
 }
