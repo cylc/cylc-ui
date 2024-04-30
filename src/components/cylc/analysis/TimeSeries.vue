@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         closable-chips
         clearable
         placeholder="Search"
-        :items="tasks"
+        :items="taskNames"
         v-model="displayedTasks"
         label="Select tasks"
         ref="selectTasks"
@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </template>
       </v-autocomplete>
       <v-btn
-        @click="jobsQuery(displayedTasks)"
+        @click="refreshData()"
         data-cy="analysis-jobs-refresh-btn"
         icon
         variant="text"
@@ -126,6 +126,15 @@ query analysisJobQuery ($workflows: [ID], $tasks: [ID]) {
 }
 `
 
+/** The one-off query which retrieves historical tasks names */
+const TASK_NAMES_QUERY = gql`
+query analysisTaskNamesQuery ($workflows: [ID]) {
+  tasks(live: false, workflows: $workflows) {
+    name
+  }
+}
+`
+
 /** The callback which gets called when data comes in from the job query */
 class AnalysisJobCallback extends DeltasCallback {
   /**
@@ -169,10 +178,6 @@ export default {
       type: Array,
       required: true,
     },
-    tasks: {
-      type: Array,
-      required: true,
-    },
     timingOption: {
       type: String,
       required: true,
@@ -197,12 +202,17 @@ export default {
     return { reducedAnimation }
   },
 
+  beforeMount () {
+    this.taskNamesQuery()
+  },
+
   data () {
     const jobs = []
     return {
       jobCallback: new AnalysisJobCallback(jobs),
       /** Object containing all of the jobs added by the callback */
       jobs,
+      taskNames: [],
       displayedTasks: [],
       showOrigin: false,
       xRange: [undefined, undefined],
@@ -429,8 +439,22 @@ export default {
       },
       200 // only re-run this once every 0.2 seconds
     ),
+    taskNamesQuery: debounce(
+      async function () {
+        const retJob = await this.$workflowService.query2(
+          TASK_NAMES_QUERY,
+          { workflows: this.workflowIDs }
+        )
+        this.taskNames = retJob.data.tasks.map(task => task.name)
+      },
+      200 // only re-run this once every 0.2 seconds
+    ),
     zoomMainChart: function (context, { xaxis }) {
       this.xRange = [Math.ceil(xaxis.min), Math.floor(xaxis.max)]
+    },
+    refreshData: function () {
+      this.taskNamesQuery()
+      this.jobsQuery(this.displayedTasks)
     }
   },
 

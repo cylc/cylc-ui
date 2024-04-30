@@ -125,7 +125,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <TimeSeries
         v-else-if="chartType === 'timeSeries'"
         :workflowIDs="workflowIDs"
-        :tasks="uniqueTasks"
         :platform-option="tasksFilter.platformOption"
         :timing-option="timingOption"
         sort-input-teleport-target="#analysis-toolbar"
@@ -282,10 +281,6 @@ export default {
 
     timingOption () {
       return this.tasksFilter.timingOption.replace(/Times/, '')
-    },
-
-    uniqueTasks () {
-      return this.tasks.map(task => task.name)
     }
   },
 
