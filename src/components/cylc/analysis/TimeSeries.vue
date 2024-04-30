@@ -128,7 +128,7 @@ query analysisJobQuery ($workflows: [ID], $tasks: [ID]) {
 
 /** The one-off query which retrieves historical tasks names */
 const TASK_NAMES_QUERY = gql`
-query analysisTaskNamesQuery ($workflows: [ID]) {
+query analysisTaskQuery ($workflows: [ID]) {
   tasks(live: false, workflows: $workflows) {
     name
   }
