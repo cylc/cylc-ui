@@ -639,7 +639,7 @@ export default {
       // once nodeDimensions have rendered for the first time
       // we prevent further refreshing by setting initialLoad to false
       if (nodeDimensions) {
-        if (this.initialLoad === true) { this.initialLoad = false }
+        if (this.initialLoad) { this.initialLoad = false }
       } else {
         return
       }
@@ -740,7 +740,6 @@ export default {
       // do a final refresh
       if (!this.autoRefresh) {
         this.updateTimer()
-        this.refresh()
       }
     }
   }
