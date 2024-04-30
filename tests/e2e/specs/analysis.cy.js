@@ -337,8 +337,9 @@ describe('Filters and Options save state', () => {
 
       // Check number of tasks
       cy
-        .get('.c-analysis table > tbody > tr')
+        .get('.v-data-table__tr')
         .should('have.length', 1)
+        .contains('waiting')
         .should('be.visible')
     })
 
@@ -377,7 +378,7 @@ describe('Filters and Options save state', () => {
     it('remembers box and whisker sorting options when switching between workflows', () => {
       cy.get('.c-analysis [data-cy=box-plot-toggle]')
         .click()
-      cy.get('#analysis-toolbar > .d-flex > .v-input > .v-input__control > .v-field > .v-field__field > .v-field__input')
+      cy.get('[data-cy="box-plot-sort-select"]')
         .click()
       cy
         .get('.v-list-item')

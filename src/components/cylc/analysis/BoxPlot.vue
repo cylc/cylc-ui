@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <div class="d-flex flex-grow-1 col-gap-1">
       <v-select
+        data-cy="box-plot-sort-select"
         :items="sortChoices"
         v-model="sortBy"
         label="Sort by"
