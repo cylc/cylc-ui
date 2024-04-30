@@ -7,7 +7,7 @@
   "automergeStrategy": "squash",
   "packageRules": [
     {
-      "matchPackageNames": ["yarn"],
+      "matchDepNames": ["yarn"],
       "automerge": true
     },
     {
