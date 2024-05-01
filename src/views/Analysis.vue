@@ -130,7 +130,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :workflowIDs="workflowIDs"
         :platform-option="tasksFilter.platformOption"
         :timing-option="timingOption"
-        sort-input-teleport-target="#analysis-toolbar"
+        :sort-input-teleport-target="toolbar?.id"
+        v-model:initial-options="timeseriesPlotOptions"
       />
     </v-container>
   </div>
@@ -269,10 +270,10 @@ export default {
     const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { name: '', timingOption: 'totalTimes', platformOption: -1 })
 
     /**
-     * If true the analysis will be shown in table format
-     * @type {import('vue').Ref<boolean>}
+     * Determines the Analysis type ('table' | 'box' | 'timeSeries')
+     * @type {import('vue').Ref<string>}
      */
-    const table = useInitialOptions('table', { props, emit }, true)
+    const chartType = useInitialOptions('chartType', { props, emit }, 'table')
 
     /** @type {import('vue').Ref<HTMLElement>} template ref */
     const toolbar = ref(null)
@@ -289,12 +290,19 @@ export default {
      */
     const boxPlotOptions = useInitialOptions('boxPlotOptions', { props, emit })
 
+    /**
+     * The Vuetify box and whisker plot options (displayedTasks, showOrigin).
+     * @type {import('vue').Ref<object>}
+     */
+    const timeseriesPlotOptions = useInitialOptions('timeseriesPlotOptions', { props, emit })
+
     return {
       tasksFilter,
-      table,
+      chartType,
       toolbar,
       dataTableOptions,
-      boxPlotOptions
+      boxPlotOptions,
+      timeseriesPlotOptions
     }
   },
 
@@ -304,7 +312,6 @@ export default {
       callback: new AnalysisTaskCallback(tasks),
       /** Object containing all of the tasks added by the callback */
       tasks,
-      chartType: 'table',
     }
   },
 
