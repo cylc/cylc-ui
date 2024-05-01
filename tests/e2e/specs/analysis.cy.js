@@ -389,7 +389,7 @@ describe('Filters and Options save state', () => {
         .get('.c-dashboard')
       // Navigate back
       cy.visit('/#/workspace/one')
-      cy.get('#analysis-toolbar > .d-flex > .v-input > .v-input__control > .v-field > .v-field__field > .v-field__input')
+      cy.get('[data-cy=box-plot-sort-select]')
         .contains('Count')
         .should('be.visible')
     })
