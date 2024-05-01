@@ -27,6 +27,8 @@ const analysisQuery = require('./analysisQuery.json')
 const ganttQuery = require('./ganttQuery.json')
 
 const workflows = [workflowOne, ...workflowsMulti]
+const analysisTaskQuery = analysisQuery.taskQuery
+const analysisJobQuery = analysisQuery.jobQuery
 
 module.exports = {
   IntrospectionQuery,
@@ -40,6 +42,8 @@ module.exports = {
     return workflows.find(({ deltas }) => deltas.id === workflowId) || {}
   },
   Test: workflowOne,
+  analysisTaskQuery,
+  analysisJobQuery,
   analysisQuery,
   ganttQuery
 }
