@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <g
           class="edges"
           :transform="
-            (transpose) ? 'translate(15, 30)' : 'translate(45, 5)'
+            (transpose) ? 'translate(-25, -8)' : 'translate(0, -25)'
           "
         >
           <g
@@ -404,7 +404,7 @@ export default {
           zoomEnabled: true,
           dblClickZoomEnabled: true,
           mouseWheelZoomEnabled: true,
-          preventMouseEventsDefault: true,
+          preventMouseEventsDefault: false,
           zoomScaleSensitivity: 0.2,
           minZoom: 0.01, // how zoomed out we can go
           maxZoom: 50, // how zoomed in we can go

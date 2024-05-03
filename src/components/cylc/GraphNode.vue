@@ -18,43 +18,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <g class="c-graph-node">
     <!-- the task icon -->
-    <symbol :id="nodeID" viewBox="-40 -40 140 140">
-      <!--
-        Use a "symbol" for the task node in order to apply a viewBox to it.
-        This both contains it and makes it clickable.
-
-        NOTE: Due to the viewBox we use here the coordinate system ends up
-        offset by -20px. This doesn't impact most things, however, rotations
-        can be sensitive to this change causing the rotated elements to end up
-        in the wrong places. To counteract this we provide the coordinate offset
-        to the task component.
-      -->
-      <SVGTask
-        :task="task.node"
-        :modifierSize="0.5"
-        :startTime="startTime"
-        :coordinateOffset="-20"
-      />
-    </symbol>
-    <use
-      :href="`#${nodeID}`"
-      x="0" y="0"
-      width="150" height="150"
+    <SVGTask
+      :task="task.node"
+      :modifierSize="0.5"
+      :startTime="startTime"
+      viewBox="-40 -40 140 140"
       v-cylc-object="task"
+      x="0" y="0"
     />
 
+    <!-- the label -->
     <g :transform="labelTransform">
-      <!-- the task name -->
       <text
-        x="180" y="70"
+        x="130" y="25"
         font-size="45"
       >
         {{ task.name }}
       </text>
 
-      <!-- the cycle point -->
       <text
-        x="180" y="115"
+        x="130" y="65"
         font-size="30"
       >
         {{ task.tokens.cycle }}
@@ -64,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- the job(s) -->
     <g
       transform="
-        translate(180, 125)
+        translate(130, 75)
         scale(0.3, 0.3)
       "
     >
@@ -77,23 +60,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           scale(${ (index === 0) ? mostRecentJobScale : '1' })
         `"
       >
-        <symbol
-          :id="`${nodeID}-${index}`"
+        <job
+          :svg="true"
+          :status="job.node.state"
           viewBox="0 0 100 100"
-          :class="`job_theme--${jobTheme}`"
-        >
-          <!--
-            Use a "symbol" for job nodes in order to make them clickable.
-            The job theme must be set on the "symbol" for styling to work.
-          -->
-          <job
-            :svg="true"
-            :status="job.node.state"
-          />
-        </symbol>
-        <use
-          :href="`#${nodeID}-${index}`"
-          width="100" height="100"
           v-cylc-object="job"
         />
       </g>
@@ -174,7 +144,7 @@ export default {
       if (this.jobs.length) {
         return ''
       }
-      return 'translate(0, 14)'
+      return 'translate(0, 20)'
     },
     previousJobOffset () {
       // the most recent job is larger so all subsequent jobs need to be bumped
