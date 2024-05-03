@@ -27,7 +27,7 @@ import { WebSocketLink } from '@apollo/client/link/ws'
 import { setContext } from '@apollo/client/link/context'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 import { store } from '@/store/index'
-import { createUrl } from '@/utils/urls'
+import { createUrl, getCylcHeaders } from '@/utils/urls'
 
 /** @typedef {import('subscriptions-transport-ws').ClientOptions} ClientOptions */
 
@@ -44,21 +44,6 @@ export function createGraphQLUrls () {
     httpUrl,
     wsUrl
   }
-}
-
-/**
- * Get request headers for use with UI Server requests.
- *
- * - Adds X-XSRFToken header for hubless token based auth.
- */
-export function getCylcHeaders () {
-  const xsrfToken = document.cookie.match('\\b_xsrf=([^;]*)\\b')
-  const cylcHeaders = {}
-  if (Array.isArray(xsrfToken) && xsrfToken.length > 0) {
-    // pick the last match
-    cylcHeaders['X-XSRFToken'] = xsrfToken.splice(-1)
-  }
-  return cylcHeaders
 }
 
 /**

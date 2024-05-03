@@ -18,7 +18,8 @@
 // Code related to GraphiQL
 
 import { parse } from 'graphql'
-import { createGraphQLUrls, getCylcHeaders } from '@/graphql/index'
+import { createGraphQLUrls } from '@/graphql/index'
+import { getCylcHeaders } from '@/utils/urls'
 
 // TODO: https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher/issues/16
 //       the functions hasSubscriptionOperation and graphQLFetcher are both from

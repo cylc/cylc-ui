@@ -72,6 +72,22 @@ function createUrl (path, websockets = false, baseOnly = false) {
   return normalize(url)
 }
 
+/**
+ * Get request headers for use with UI Server requests.
+ *
+ * - Adds X-XSRFToken header cookie-based auth.
+ */
+function getCylcHeaders () {
+  const xsrfToken = document.cookie.match('\\b_xsrf=([^;]*)\\b')
+  const cylcHeaders = {}
+  if (Array.isArray(xsrfToken) && xsrfToken.length > 0) {
+    // pick the last match
+    cylcHeaders['X-XSRFToken'] = xsrfToken.splice(-1)
+  }
+  return cylcHeaders
+}
+
 export {
-  createUrl
+  createUrl,
+  getCylcHeaders,
 }

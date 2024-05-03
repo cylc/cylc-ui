@@ -17,7 +17,7 @@
 
 import axios from 'axios'
 import User from '@/model/User.model'
-import { createUrl } from '@/utils/urls'
+import { createUrl, getCylcHeaders } from '@/utils/urls'
 
 class UserService {
   /**
@@ -25,7 +25,10 @@ class UserService {
    * @returns {Promise<*>} - a promise that dispatches Vuex action
    */
   getUserProfile () {
-    return axios.get(createUrl('userprofile')).then(({ data }) => {
+    return axios.get(
+      createUrl('userprofile'),
+      { headers: getCylcHeaders() },
+    ).then(({ data }) => {
       return new User(
         data.name,
         data.groups,
