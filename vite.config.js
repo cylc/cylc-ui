@@ -55,6 +55,7 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, './src'),
         $tests: path.resolve(__dirname, './tests'),
+        lodash: 'lodash-es',
         react: 'preact/compat',
         'react-dom': 'preact/compat',
       }
