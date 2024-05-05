@@ -3872,7 +3872,7 @@ __metadata:
     svg-pan-zoom: "npm:3.6.1"
     vite: "npm:5.2.11"
     vite-plugin-eslint: "npm:1.8.1"
-    vite-plugin-istanbul: "npm:6.0.1"
+    vite-plugin-istanbul: "npm:6.0.2"
     vite-plugin-vuetify: "npm:2.0.3"
     vitest: "npm:1.6.0"
     vue: "npm:3.4.11"
@@ -10387,9 +10387,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-istanbul@npm:6.0.1":
-  version: 6.0.1
-  resolution: "vite-plugin-istanbul@npm:6.0.1"
+"vite-plugin-istanbul@npm:6.0.2":
+  version: 6.0.2
+  resolution: "vite-plugin-istanbul@npm:6.0.2"
   dependencies:
     "@istanbuljs/load-nyc-config": "npm:^1.1.0"
     espree: "npm:^10.0.1"
@@ -10399,7 +10399,7 @@ __metadata:
     test-exclude: "npm:^6.0.0"
   peerDependencies:
     vite: ">=4 <=6"
-  checksum: 10c0/74541ae49fce6a66bd03aae426a59fc5fba00ad321c783deca6f088fe863eb06f61ddddea2b0c5a333960b0c68460eca5c3f9358448aac4c15779471d61b4cd8
+  checksum: 10c0/120d84cd44af99ec7cce298768d8504ad4481439322d3ec724d7e8313e87fc5b214cbeaf827ba94fa145bb2367067b6f1d65c7387e30cced43658df9f7fc5fe8
   languageName: node
   linkType: hard
 
