@@ -89,12 +89,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :disabled="isStopped"
         link
         size="small"
+        data-cy="n-win-selector"
       >
         N={{ nWindow }}
         <v-menu
           activator="parent"
           :close-on-content-click="false"
           max-width="400"
+          data-cy="n-win-popup"
         >
           <v-card title="Graph Window Depth">
             <v-card-text>
