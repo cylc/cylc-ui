@@ -91,19 +91,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         size="small"
       >
         N={{ nWindow }}
-        <v-menu activator="parent" :close-on-content-click="false">
+        <v-menu
+          activator="parent"
+          :close-on-content-click="false"
+          max-width="400"
+        >
           <v-card title="Graph Window Depth">
-            <v-card-subtitle>
+            <v-card-text>
               This changes the number of tasks which are displayed.
 
               Higher values may impact performance.
-            </v-card-subtitle>
+            </v-card-text>
             <v-card-text>
               <v-select
-                density="compact"
                 v-model="nWindow"
                 :items="[0,1,2,3]"
-              />
+              >
+                <template #append-inner>
+                  <v-progress-circular
+                    v-if="changingNWindow"
+                    indeterminate
+                    size="20"
+                    width="2"
+                  />
+                </template>
+              </v-select>
             </v-card-text>
           </v-card>
         </v-menu>
@@ -198,6 +210,7 @@ import {
   mdiAccount
 } from '@mdi/js'
 import { startCase } from 'lodash'
+import { until } from '@/utils'
 import { useToolbar, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import graphql from '@/mixins/graphql'
@@ -279,7 +292,7 @@ export default {
       paused: null,
       stop: null
     },
-    nWindow: 1
+    changingNWindow: false,
   }),
 
   computed: {
@@ -357,9 +370,20 @@ export default {
         )
       }
     },
-    nEdgeDistance () {
-      // the graph window distance reported by the scheduler
-      return this.currentWorkflow?.node?.nEdgeDistance
+    nWindow: {
+      get () {
+        // the graph window distance reported by the scheduler
+        return this.currentWorkflow?.node?.nEdgeDistance ?? 1
+      },
+      async set (val) {
+        if (val == null || this.isStopped) return
+
+        this.changingNWindow = true
+        if (await this.setGraphWindow(val)) {
+          await until(() => this.currentWorkflow?.node?.nEdgeDistance === val)
+        }
+        this.changingNWindow = false
+      },
     }
   },
 
@@ -373,16 +397,6 @@ export default {
     isStopped () {
       this.expecting.stop = null
     },
-    nWindow (newVal) {
-      // the user has requested to change the window size
-      this.setGraphWindow(newVal)
-    },
-    nEdgeDistance (newVal) {
-      // the scheduler has reported that the window size has changed
-      if (newVal !== undefined) {
-        this.nWindow = newVal
-      }
-    }
   },
 
   methods: {
@@ -416,12 +430,13 @@ export default {
         }
       })
     },
-    setGraphWindow (nWindow) {
-      this.$workflowService.mutate(
+    async setGraphWindow (nWindow) {
+      const { status } = await this.$workflowService.mutate(
         'setGraphWindowExtent',
         this.currentWorkflow.id,
         { nEdgeDistance: nWindow }
       )
+      return status === mutationStatus.SUCCEEDED
     },
     startCase,
   },

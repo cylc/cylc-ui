@@ -16,7 +16,7 @@
  */
 
 import { nextTick, ref } from 'vue'
-import { getPageTitle, when } from '@/utils/index'
+import { getPageTitle, when, until } from '@/utils/index'
 
 describe('getPageTitle()', () => {
   it('displays the application title correctly', () => {
@@ -24,11 +24,19 @@ describe('getPageTitle()', () => {
   })
 })
 
-describe('when()', () => {
-  it('watches source until true and then stops watching', async () => {
+describe.each([
+  { func: when, description: 'watches source until true and then stops watching' },
+  { func: until, description: 'returns a promise that resolves when source becomes true' },
+])('$func', ({ func, description }) => {
+  it(description, async () => {
     const source = ref(false)
     let counter = 0
-    when(source, () => counter++)
+    switch (func) {
+      case when:
+        when(source, () => counter++); break
+      case until:
+        until(source).then(() => counter++); break
+    }
     expect(counter).toEqual(0)
     source.value = true
     await nextTick()
