@@ -74,7 +74,7 @@ describe('aotf (Api On The Fly)', () => {
       const output = {
         ...input,
         _title: 'Foo Bar',
-        _icon: aotf.mutationIcons[''],
+        _icon: aotf.getMutationIcon(),
         _shortDescription: 'Short description.',
         _help: 'Long\ndescription.\nValid for: stopped, paused workflows.',
         _validStates: ['stopped', 'paused']
