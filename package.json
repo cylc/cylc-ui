@@ -17,7 +17,7 @@
     "preview": "node ./scripts/concurrently.cjs serve:jupyterhub preview",
     "serve": "node ./scripts/concurrently.cjs serve:jupyterhub serve:vue",
     "serve:vue": "vite --mode offline",
-    "serve:jupyterhub": "nodemon -e js,mjs,cjs,json src/services/mock/json-server.cjs",
+    "serve:jupyterhub": "nodemon src/services/mock/json-server.cjs --watch src/services/mock/",
     "test:component": "cypress open --component",
     "test:e2e": "yarn run serve e2e:open",
     "test:unit": "vitest",

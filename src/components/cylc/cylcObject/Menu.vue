@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-btn
                 icon
                 variant="text"
-                :disabled="isEditable(authorised, mutation)"
+                :disabled="!isEditable(mutation, authorised)"
                 @click.stop="openDialog(mutation)"
                 data-cy="mutation-edit"
                 class="ml-2"
@@ -167,7 +167,6 @@ export default {
       dialogKey: false,
       expanded: false,
       node: null,
-      workflowStatus: null,
       mutations: [],
       isLoadingMutations: true,
       showMenu: false,
@@ -246,45 +245,23 @@ export default {
   },
 
   methods: {
-    isEditable (authorised, mutation) {
-      if (mutation.name === 'log' || this.isDisabled(mutation, authorised)) {
-        return true
-      } else {
-        return false
-      }
+    isEditable (mutation, authorised) {
+      return mutation.name !== 'log' && !this.isDisabled(mutation, authorised)
     },
     isDisabled (mutation, authorised) {
-      if (this.node.type !== 'workflow') {
-        const nodeReturned = this.getNodes(
-          'workflow', [this.node.tokens.workflowID])
-        if (nodeReturned.length) {
-          this.workflowStatus = nodeReturned[0].node.status
-        } else { this.workflowStatus = WorkflowState.RUNNING.name }
-      } else {
-        this.workflowStatus = this.node.node.status
-      }
-      if (
-        (!mutation._validStates.includes(this.workflowStatus)) ||
-          !authorised) {
+      if (!authorised) {
         return true
       }
-      return false
+      let status = this.node.node?.status
+      if (this.node.type !== 'workflow') {
+        const nodeReturned = this.getNodes('workflow', [this.node.tokens.workflowID])
+        status = nodeReturned.length
+          ? nodeReturned[0].node.status
+          : WorkflowState.RUNNING.name
+      }
+      return !mutation._validStates.includes(status)
     },
     openDialog (mutation) {
-      if (mutation.name === 'log') {
-        this.$eventBus.emit(
-          'add-view',
-          {
-            name: 'Log',
-            initialOptions: {
-              relativeID: this.node.tokens.relativeID || null
-            }
-          }
-        )
-        this.showMenu = false
-        return
-      }
-
       this.dialog = true
       this.dialogMutation = mutation
       // Tell Vue to re-render the dialog component:
@@ -344,14 +321,36 @@ export default {
 
     /* Call a mutation using only the tokens for args. */
     callMutationFromContext (mutation) {
+      this.showMenu = false
       // eslint-disable-next-line no-console
       console.debug(`mutation: ${mutation._title} ${this.node.id}`)
-      mutate(
-        mutation,
-        getMutationArgsFromTokens(mutation, this.node.tokens),
-        this.$workflowService.apolloClient
-      )
-      this.showMenu = false
+
+      if (mutation.name === 'log') {
+        // Navigate to the corresponding workflow then open the log view
+        // (no nav occurs if already on the correct workflow page)
+        this.$router.push({
+          name: 'workspace',
+          params: {
+            workflowName: this.node.tokens.workflow
+          }
+        }).then(() => {
+          this.$eventBus.emit(
+            'add-view',
+            {
+              name: 'Log',
+              initialOptions: {
+                relativeID: this.node.tokens.relativeID || null
+              }
+            }
+          )
+        })
+      } else {
+        mutate(
+          mutation,
+          getMutationArgsFromTokens(mutation, this.node.tokens),
+          this.$workflowService.apolloClient
+        )
+      }
     },
 
     showMutationsMenu ({ node, event }) {
