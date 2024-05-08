@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { datetimeComparator } from '@/components/cylc/table/sort'
+import {
+  datetimeComparator,
+  numberComparator,
+} from '@/components/cylc/table/sort'
 
 describe('datetimeComparator()', () => {
   it('should rank datetime strings appropriately', () => {
@@ -27,5 +30,19 @@ describe('datetimeComparator()', () => {
     expect(datetimeComparator('', '2022-09-26T12:30:00Z')).to.be.greaterThan(0)
     expect(datetimeComparator(undefined, '2022-09-26T12:30:00Z')).to.be.greaterThan(0)
     expect(datetimeComparator(undefined, '')).to.equal(0)
+  })
+})
+
+describe('numberComparator()', () => {
+  it.each([
+    [1, 2, -1],
+    [2, 1, 1],
+    [1, 1, 0],
+    [undefined, 1, Infinity],
+    [1, undefined, -Infinity],
+    [undefined, undefined, 0],
+    [undefined, null, 0],
+  ])('(%o, %o) -> %o', (a, b, expected) => {
+    expect(numberComparator(a, b)).toEqual(expected)
   })
 })

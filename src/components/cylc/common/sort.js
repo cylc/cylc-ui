@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,23 +28,29 @@
 
 /**
  * The default comparator used to compare strings for cycle points, family proxies names,
- * task proxies names, and jobs.
+ * task proxies names, and jobs. Note: nullish or empty strings are treated as infinity.
  *
- * @param {string} left
- * @param {string} right
+ * @param {string?} left
+ * @param {string?} right
  * @returns {number}
  * @constructor
  */
 export const DEFAULT_COMPARATOR = (left, right) => {
-  return left.toLowerCase()
-    .localeCompare(
-      right.toLowerCase(),
-      undefined,
-      {
-        numeric: true,
-        sensitivity: 'base'
-      }
-    )
+  if (!left && !right) {
+    return 0
+  } else if (!left) {
+    return 1
+  } else if (!right) {
+    return -1
+  }
+  return left.toLowerCase().localeCompare(
+    right.toLowerCase(),
+    undefined,
+    {
+      numeric: true,
+      sensitivity: 'base',
+    }
+  )
 }
 
 /**

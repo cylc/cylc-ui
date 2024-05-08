@@ -100,27 +100,30 @@ describe('Table view', () => {
         .should('be.visible')
     })
     it('displays and sorts mean run time', () => {
-      cy
-        // sort dt-mean ascending
-        .get('.c-table')
+      // sort dt-mean ascending
+      cy.get('.c-table')
         .contains('th', 'Run Time').as('dTHeader')
         .click()
-
-        // check 0 is at the top (1st row, 10th column)
+        // (1st row, 10th column)
         .get('tbody > :nth-child(1) > :nth-child(10)')
+        .contains('00:00:04')
+        .get('tbody > :nth-child(2) > :nth-child(10)')
+        .contains('00:00:12')
+        .get('tbody > :nth-child(3) > :nth-child(10)')
         .should(($ele) => {
-          expect($ele.text().trim()).equal('') // no value sorted first
+          expect($ele.text().trim()).equal('') // no value sorted after numbers
         })
-
         // sort dt-mean descending
-        .get('@dTHeader')
+      cy.get('@dTHeader')
         .click()
-
-        // check 7 is at the top (1st row, 10th column)
         .get('tbody > :nth-child(1) > :nth-child(10)')
         .should(($ele) => {
-          expect($ele.text().trim()).equal('00:00:12')
+          expect($ele.text().trim()).equal('')
         })
+        .get('tbody > :nth-child(6) > :nth-child(10)')
+        .contains('00:00:12')
+        .get('tbody > :nth-child(7) > :nth-child(10)')
+        .contains('00:00:04')
     })
   })
 })

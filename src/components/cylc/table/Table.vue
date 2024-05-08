@@ -105,7 +105,10 @@ import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import { mdiChevronDown } from '@mdi/js'
 import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
-import { datetimeComparator } from '@/components/cylc/table/sort'
+import {
+  datetimeComparator,
+  numberComparator,
+} from '@/components/cylc/table/sort'
 import { dtMean } from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 import {
@@ -180,43 +183,43 @@ export default {
       title: 'Platform',
       key: 'latestJob.node.platform',
       sortable: true,
-      sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+      sort: DEFAULT_COMPARATOR,
     },
     {
       title: 'Job Runner',
       key: 'latestJob.node.jobRunnerName',
       sortable: true,
-      sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+      sort: DEFAULT_COMPARATOR,
     },
     {
       title: 'Job ID',
       key: 'latestJob.node.jobId',
       sortable: true,
-      sort: (a, b) => DEFAULT_COMPARATOR(a ?? '', b ?? '')
+      sort: DEFAULT_COMPARATOR,
     },
     {
       title: 'Submit',
       key: 'latestJob.node.submittedTime',
       sortable: true,
-      sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+      sort: datetimeComparator,
     },
     {
       title: 'Start',
       key: 'latestJob.node.startedTime',
       sortable: true,
-      sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+      sort: datetimeComparator,
     },
     {
       title: 'Finish',
       key: 'latestJob.node.finishedTime',
       sortable: true,
-      sort: (a, b) => datetimeComparator(a ?? '', b ?? '')
+      sort: datetimeComparator,
     },
     {
       title: 'Run Time',
       key: 'task.node.task.meanElapsedTime',
       sortable: true,
-      sort: (a, b) => parseInt(a ?? 0) - parseInt(b ?? 0)
+      sort: numberComparator,
     },
   ],
 
