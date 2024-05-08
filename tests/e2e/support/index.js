@@ -35,3 +35,11 @@ import '@cypress/code-coverage/support'
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+
+Cypress.on('uncaught:exception', (err) => {
+  if (err.message.includes('ResizeObserver loop completed with undelivered notifications')) {
+    // Vuetify or something sometimes causes this error, but it is symptomless.
+    // See also https://stackoverflow.com/a/50387233/3217306
+    return false
+  }
+})

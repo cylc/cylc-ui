@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,19 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// reference to closure listeners (needed as we are using variables from another scope)
+import { uniqueId } from 'lodash-es'
+
+/** Reference to closure listeners (needed as we are using variables from another scope) */
 const listeners = new WeakMap()
 
 function bind (el, binding, vnode) {
+  // Set data-c-interactive = <unique identifier> for every element that opens the menu.
+  // This allows the menu component to tell apart every activating element.
+  el.dataset.cInteractive = uniqueId()
   const listener = function (e) {
     e.stopPropagation() // prevents click event from bubbling up to parents
     binding.instance.$eventBus.emit('show-mutations-menu', {
       node: binding.value,
-      event: e
+      target: el,
     })
   }
   el.addEventListener('click', listener)
-  el.dataset.cInteractive = true
   listeners.set(el, listener)
 }
 

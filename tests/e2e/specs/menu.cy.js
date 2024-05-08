@@ -23,13 +23,12 @@ describe('CylcObject Menu component', () => {
     cy.visit('/#/workspace/one')
   })
 
-  it('should not be displayed initially on load', () => {
-    cy.get('[data-c-interactive]:first') // wait for view to load
-      .get('.c-mutation-menu:first')
-      .should('not.exist')
-  })
-
   it('is displayed when a Cylc object is clicked on', () => {
+    // should not be displayed initially on load
+    cy.get('[data-c-interactive]:first') // wait for stuff to load
+      .get('.c-mutation-menu')
+      .should('not.exist')
+
     cy.get('#workflow-mutate-button')
       .click()
       // the menu should now be open
@@ -39,6 +38,10 @@ describe('CylcObject Menu component', () => {
       .should('have.length', collapsedWorkflowMenuLength)
       .get('.c-mutation-menu')
       .should('be.visible')
+      // should close on Esc key
+    cy.get('body').type('{esc}')
+      .get('.c-mutation-menu')
+      .should('not.exist')
   })
 
   it('expands and collapses', () => {
@@ -88,6 +91,20 @@ describe('CylcObject Menu component', () => {
       })
   })
 
+  it('works when clicking on different Cylc objects representing the same node', () => {
+    cy.get('.c-gscan .node').contains('one')
+      .parents('.node').find('[data-c-interactive]')
+      .click()
+      .get('.c-mutation-menu')
+      .should('be.visible')
+      .contains('~user/one')
+    cy.get('#workflow-mutate-button')
+      .click({ force: true })
+      .get('.c-mutation-menu')
+      .should('be.visible')
+      .contains('~user/one')
+  })
+
   it('only closes when appropriate if clicking inside menu', () => {
     cy.get('#workflow-mutate-button')
       .click()
@@ -101,6 +118,6 @@ describe('CylcObject Menu component', () => {
       .find('.c-mutation:not([aria-disabled]):first')
       .click()
       .get('.c-mutation-menu')
-      .should('not.be.visible')
+      .should('not.exist')
   })
 })
