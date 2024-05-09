@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           scale(${ (index === 0) ? mostRecentJobScale : '1' })
         `"
       >
-        <job
+        <Job
           :svg="true"
           :status="job.node.state"
           viewBox="0 0 100 100"
