@@ -63,6 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-col>
       </v-row>
       <div
+        ref="toolbar"
         id="analysis-toolbar"
         class="d-flex align-center flex-wrap my-2 col-gap-2 row-gap-4"
       >
@@ -115,25 +116,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="chartType === 'table'"
         :tasks="filteredTasks"
         :timing-option="timingOption"
+        v-model:initial-options="dataTableOptions"
       />
       <BoxPlot
         v-else-if="chartType === 'box'"
         :tasks="filteredTasks"
         :timing-option="timingOption"
-        sort-input-teleport-target="#analysis-toolbar"
+        :sort-input-teleport-target="toolbar?.id"
+        v-model:initial-options="boxPlotOptions"
       />
       <TimeSeries
         v-else-if="chartType === 'timeSeries'"
         :workflowIDs="workflowIDs"
         :platform-option="tasksFilter.platformOption"
         :timing-option="timingOption"
-        sort-input-teleport-target="#analysis-toolbar"
+        :sort-input-teleport-target="toolbar?.id"
+        v-model:initial-options="timeseriesPlotOptions"
       />
     </v-container>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue'
 import {
   debounce,
   pick,
@@ -141,6 +146,11 @@ import {
 import gql from 'graphql-tag'
 import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
+import {
+  initialOptions,
+  updateInitialOptionsEvent,
+  useInitialOptions
+} from '@/utils/initialOptions'
 import DeltasCallback from '@/services/callbacks'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
 import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
@@ -248,18 +258,60 @@ export default {
     this.tasksQuery()
   },
 
+  emits: [updateInitialOptionsEvent],
+
+  props: { initialOptions },
+
+  setup (props, { emit }) {
+    /**
+     * The task name, timing option and platform filter state.
+     * @type {import('vue').Ref<object>}
+     */
+    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { name: '', timingOption: 'totalTimes', platformOption: -1 })
+
+    /**
+     * Determines the Analysis type ('table' | 'box' | 'timeSeries')
+     * @type {import('vue').Ref<string>}
+     */
+    const chartType = useInitialOptions('chartType', { props, emit }, 'table')
+
+    /** @type {import('vue').Ref<HTMLElement>} template ref */
+    const toolbar = ref(null)
+
+    /**
+     * The Vuetify data table options (sortBy, page etc).
+     * @type {import('vue').Ref<object>}
+     */
+    const dataTableOptions = useInitialOptions('dataTableOptions', { props, emit })
+
+    /**
+     * The Vuetify box and whisker plot options (sortBy, page etc).
+     * @type {import('vue').Ref<object>}
+     */
+    const boxPlotOptions = useInitialOptions('boxPlotOptions', { props, emit })
+
+    /**
+     * The Vuetify box and whisker plot options (displayedTasks, showOrigin).
+     * @type {import('vue').Ref<object>}
+     */
+    const timeseriesPlotOptions = useInitialOptions('timeseriesPlotOptions', { props, emit })
+
+    return {
+      tasksFilter,
+      chartType,
+      toolbar,
+      dataTableOptions,
+      boxPlotOptions,
+      timeseriesPlotOptions
+    }
+  },
+
   data () {
     const tasks = []
     return {
       callback: new AnalysisTaskCallback(tasks),
       /** Object containing all of the tasks added by the callback */
       tasks,
-      tasksFilter: {
-        name: '',
-        timingOption: 'totalTimes',
-        platformOption: -1,
-      },
-      chartType: 'table',
     }
   },
 
