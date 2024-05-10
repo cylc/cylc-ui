@@ -31,8 +31,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-data-table
           :headers="shownHeaders"
           :items="tasks"
-          :sort-by="sortBy"
+          v-model:sort-by="sortBy"
           density="compact"
+          v-model:page="page"
           v-model:items-per-page="itemsPerPage"
         >
           <!-- Use custom format for values in columns that have a specified formatter: -->
@@ -56,9 +57,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { upperFirst } from 'lodash'
 import { formatDuration } from '@/utils/tasks'
+import {
+  initialOptions,
+  updateInitialOptionsEvent,
+  useInitialOptions
+} from '@/utils/initialOptions'
 
 export default {
   name: 'AnalysisTableComponent',
+
+  emits: [updateInitialOptionsEvent],
 
   props: {
     tasks: {
@@ -68,15 +76,38 @@ export default {
     timingOption: {
       type: String,
       required: true
+    },
+    initialOptions,
+  },
+
+  setup (props, { emit }) {
+    /**
+     * The number of tasks displayed per page.
+     * @type {import('vue').Ref<number>}
+     */
+    const itemsPerPage = useInitialOptions('tasksFilter', { props, emit }, 50)
+
+    /**
+     * The 'sort by' state.
+     * @type {import('vue').Ref<array>}
+     */
+    const sortBy = useInitialOptions('sortBy', { props, emit }, [{ key: 'name', order: 'asc' }])
+
+    /**
+     * The page number state.
+     * @type {import('vue').Ref<number>}
+     */
+    const page = useInitialOptions('page', { props, emit }, 1)
+
+    return {
+      itemsPerPage,
+      sortBy,
+      page
     }
   },
 
   data () {
     return {
-      itemsPerPage: 50,
-      sortBy: [
-        { key: 'name', order: 'asc' }
-      ],
       headers: [
         {
           title: 'Task',

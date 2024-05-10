@@ -68,16 +68,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         the "stroke-dashoffset" to find the new values for 0% and 100%.
         Then copy these values to the corresponding CSS animation keyframes.
       -->
-      <circle
-        class="progress"
-        cx="50"
-        cy="50"
-        r="16"
-        stroke-width="50"
-        stroke-dasharray="157"
-        :transform="progressTransform()"
-        :style="getRunningStyle()"
-      />
+      <g transform="rotate(-90, 50, 50)">
+        <circle
+          class="progress"
+          cx="50"
+          cy="50"
+          r="16"
+          stroke-width="50"
+          stroke-dasharray="157"
+          :style="getRunningStyle()"
+        />
+      </g>
       <!-- dot
 
         A small dot at the centre of the outline used to represent the preparing
@@ -274,12 +275,6 @@ export default {
       type: Number,
       default: 0.7
     },
-    coordinateOffset: {
-      // You may need to provide this if encorporating this icon into a viewBox
-      // otherwise the progress indicator may end up in the wrong place.
-      type: Number,
-      default: 0
-    }
   },
   methods: {
     getRunningStyle () {
@@ -334,9 +329,6 @@ export default {
         translate(${translation}, ${translation})
       `
     },
-    progressTransform () {
-      return `rotate(-90, ${this.coordinateOffset}, ${this.coordinateOffset})`
-    }
   }
 }
 </script>

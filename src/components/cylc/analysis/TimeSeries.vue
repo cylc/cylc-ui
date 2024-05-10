@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <Teleport
     v-if="sortInputTeleportTarget"
-    :to="sortInputTeleportTarget"
+    :to="`#${sortInputTeleportTarget}`"
   >
     <div class="d-flex flex-grow-1 col-gap-1">
       <v-autocomplete
@@ -104,6 +104,11 @@ import {
 } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
 import DeltasCallback from '@/services/callbacks'
+import {
+  initialOptions,
+  updateInitialOptionsEvent,
+  useInitialOptions
+} from '@/utils/initialOptions'
 
 /** List of fields to request for task for each task */
 const jobFields = [
@@ -173,6 +178,8 @@ export default {
     VueApexCharts,
   },
 
+  emits: [updateInitialOptionsEvent],
+
   props: {
     workflowIDs: {
       type: Array,
@@ -182,6 +189,7 @@ export default {
       type: String,
       required: true,
     },
+    initialOptions,
     platformOption: {
       type: [String, Number],
       required: true,
@@ -197,13 +205,34 @@ export default {
     },
   },
 
-  setup () {
+  setup (props, { emit }) {
     const reducedAnimation = useReducedAnimation()
-    return { reducedAnimation }
+
+    /**
+     * The state for storing displayed tasks
+     * @type {import('vue').Ref<array>}
+     */
+    const displayedTasks = useInitialOptions('displayedTasks', { props, emit }, [])
+
+    /**
+     * The show origin option toggle state
+     * @type {import('vue').Ref<boolean>}
+     */
+    const showOrigin = useInitialOptions('showOrigin', { props, emit }, false)
+
+    return {
+      reducedAnimation,
+      displayedTasks,
+      showOrigin
+    }
   },
 
   beforeMount () {
     this.taskNamesQuery()
+  },
+
+  mounted () {
+    this.refreshData()
   },
 
   data () {
@@ -213,8 +242,6 @@ export default {
       /** Object containing all of the jobs added by the callback */
       jobs,
       taskNames: [],
-      displayedTasks: [],
-      showOrigin: false,
       xRange: [undefined, undefined],
     }
   },

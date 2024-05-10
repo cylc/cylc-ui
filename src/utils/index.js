@@ -38,15 +38,30 @@ export const getPageTitle = (key, params = {}) => {
  * @param {import('vue').WatchCallback} callback
  * @param {import('vue').WatchOptions?} options
  */
-export const when = (source, callback, options = {}) => {
+export function when (source, callback, options = {}) {
   const unwatch = watch(
     source,
     (ready) => {
       if (ready) {
-        callback()
         unwatch()
+        callback()
       }
     },
     { immediate: true, ...options }
   )
+}
+
+/**
+ * Return a promise that resolves when the source becomes truthy.
+ *
+ * Awaitable version of when().
+ *
+ * @param {import('vue').WatchSource} source
+ * @param {import('vue').WatchOptions?} options
+ * @returns {Promise<void>}
+ */
+export function until (source, options = {}) {
+  return new Promise((resolve) => {
+    when(source, resolve, options)
+  })
 }

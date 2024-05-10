@@ -118,7 +118,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mdiFilter, mdiFolderRefresh } from '@mdi/js'
 import { TaskStateNames } from '@/model/TaskState.model'
-import { WorkflowState } from '@/model/WorkflowState.model'
+import { WorkflowStateNames } from '@/model/WorkflowState.model'
 import Tree from '@/components/cylc/tree/Tree.vue'
 import { filterByName, filterByState } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
@@ -227,7 +227,7 @@ export default {
    * @type {{ [name: string]: string[] }}
    */
   allStates: {
-    'workflow state': WorkflowState.enumValues.map(x => x.name),
+    'workflow state': WorkflowStateNames,
     'task state': TaskStateNames,
   },
 }

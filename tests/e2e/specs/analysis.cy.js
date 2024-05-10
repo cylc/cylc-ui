@@ -421,3 +421,133 @@ describe('Analysis view', () => {
     })
   })
 })
+
+function addView (view) {
+  cy.get('[data-cy=add-view-btn]').click()
+  cy.get(`#toolbar-add-${view}-view`).click()
+    // wait for menu to close
+    .should('not.be.exist')
+}
+
+describe('Filters and Options save state', () => {
+  const numTasks = sortedTasks.length
+  describe('Options save state', () => {
+    it('remembers table and box & whiskers toggle option when switching between workflows', () => {
+      cy.visit('/#/workspace/one')
+      addView('Analysis')
+      cy.get('.c-analysis [data-cy=box-plot-toggle]')
+        .click()
+        .get('.vue-apexcharts')
+        .should('be.visible')
+      // Navigate away
+      cy.visit('/#/')
+      cy.get('.c-dashboard')
+      // Navigate back
+      cy.visit('/#/workspace/one')
+      cy.get('.vue-apexcharts')
+        .should('be.visible')
+    })
+  })
+
+  describe('State saving', () => {
+    beforeEach(() => {
+      cy.visit('/#/workspace/one')
+      addView('Analysis')
+    })
+
+    it('remembers task name, platform and timings when switching between workflows', () => {
+      // Check default options
+      cy
+        .get('.c-analysis table > tbody > tr')
+        .should('have.length', numTasks)
+        .should('be.visible')
+
+      // Set platform filter options
+      cy
+        .get('#c-analysis-filter-task-platforms')
+        .click({ force: true })
+      cy
+        .get('.v-list-item')
+        .contains('platform_1')
+        .click({ force: true })
+
+      // Set queue task name filter options
+      cy
+        .get('#c-analysis-filter-task-name')
+        .type('wait')
+
+      // Set task times filter options
+      cy
+        .get('#c-analysis-filter-task-timings')
+        .click({ force: true })
+      cy
+        .get('.v-list-item')
+        .contains('Queue')
+        .click({ force: true })
+
+      // Navigate away
+      cy.visit('/#/')
+      cy.get('.c-dashboard')
+      // Navigate back
+      cy.visit('/#/workspace/one')
+
+      // Check number of tasks
+      cy
+        .get('.v-data-table__tr')
+        .should('have.length', 1)
+        .contains('waiting')
+        .should('be.visible')
+    })
+
+    it('remembers table sorting & page options when switching between workflows', () => {
+      const sortedClass = 'v-data-table__th--sorted'
+      cy.get('.c-table th')
+        .contains('Platform')
+        .closest('th').as('platformCol')
+        .should('not.have.class', sortedClass)
+        .click()
+        .should('have.class', sortedClass)
+      cy.get('.c-table .v-data-table-footer__items-per-page .v-select')
+        .as('itemsPerPage')
+        .find('input')
+        .should('not.have.value', -1)
+        .get('@itemsPerPage')
+        .click()
+        .get('[role="listbox"] .v-list-item')
+        .contains('All')
+        .click()
+        // Wait for menu to close
+        .should('not.exist')
+        .get('@itemsPerPage').find('input')
+        .should('have.value', -1)
+      // Navigate away
+      cy.visit('/#/')
+        .get('.c-dashboard')
+      // Navigate back
+      cy.visit('/#/workspace/one')
+      cy.get('@platformCol')
+        .should('have.class', sortedClass)
+      cy.get('@itemsPerPage').find('input')
+        .should('have.value', -1)
+    })
+
+    it('remembers box and whisker sorting options when switching between workflows', () => {
+      cy.get('.c-analysis [data-cy=box-plot-toggle]')
+        .click()
+      cy.get('[data-cy="box-plot-sort-select"]')
+        .click()
+      cy
+        .get('.v-list-item')
+        .contains('Count')
+        .click({ force: true })
+      // Navigate away
+      cy.visit('/#/')
+        .get('.c-dashboard')
+      // Navigate back
+      cy.visit('/#/workspace/one')
+      cy.get('[data-cy=box-plot-sort-select]')
+        .contains('Count')
+        .should('be.visible')
+    })
+  })
+})

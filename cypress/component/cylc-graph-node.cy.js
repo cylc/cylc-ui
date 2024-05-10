@@ -67,7 +67,14 @@ const GraphNodeSVG = defineComponent({
   render () {
     return h(
       'svg',
-      { id: 'app', class: 'job_theme--default', width: '100%', height: '100%' },
+      {
+        id: 'app',
+        class: 'job_theme--default',
+        width: '100%',
+        height: '100%',
+        // the "-40" bit is to account for the task modifiers
+        viewBox: '-40,-40,450,150'
+      },
       [
         h(GraphNode, this.$attrs)
       ]
@@ -88,10 +95,10 @@ describe('graph node component', () => {
         props: { task, jobs }
       }
     )
-    // there should be 4 jobs (8 svg nodes)
+    // there should be 4 jobs
     cy.get('.c-graph-node:last .jobs')
       .children()
-      .should('have.length', 8)
+      .should('have.length', 4)
     // there shouldn't be a job overflow indicator
     cy.get('.c-graph-node:last .job-overflow').should('not.exist')
 
@@ -113,10 +120,10 @@ describe('graph node component', () => {
         props: { task, jobs, maxJobs: 4 }
       }
     )
-    // there should be <maxJobs> jobs (<maxJobs * 2 svg nodes)
+    // there should be <maxJobs> jobs
     cy.get('.c-graph-node:last .jobs')
       .children()
-      .should('have.length', 8)
+      .should('have.length', 4)
     // there should be a job overflow indicator with the number of overflow jobs
     cy.get('.c-graph-node:last .job-overflow')
       .should('exist')
@@ -189,7 +196,7 @@ describe('graph node component', () => {
         { overwrite: true, disableTimersAndAnimations: false }
       )
       // check the progress animation
-      cy.get('.c8-task:last .status > .progress')
+      cy.get('.c8-task:last .status .progress')
         // the animation duration should be equal to the expected job duration
         .should('have.css', 'animation-duration', `${MEAN_ELAPSED_TIME}s`)
         // the offset should be set to the "percent" of the expected job duration

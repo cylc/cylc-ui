@@ -59,4 +59,7 @@ export const WorkflowStateOrder = new Map([
   [undefined, 9]
 ])
 
+/** @type {string[]} */
+export const WorkflowStateNames = WorkflowState.enumValues.map(({ name }) => name)
+
 export default WorkflowState
