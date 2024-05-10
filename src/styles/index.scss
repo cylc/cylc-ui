@@ -58,11 +58,6 @@ html {
   &:hover {
     cursor: pointer;
   }
-
-  > * {
-    // Prevent click handler from thinking any child elements are the target
-    pointer-events: none;
-  }
 }
 
 .position-relative {

@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <g
           class="edges"
           :transform="
-            (transpose) ? 'translate(15, 30)' : 'translate(45, 5)'
+            (transpose) ? 'translate(-25, -8)' : 'translate(0, -25)'
           "
         >
           <g

@@ -98,7 +98,7 @@ describe('Task component', () => {
         { overwrite: true, disableTimersAndAnimations: false }
       )
         // check the progress animation
-        .get('.c8-task:last .status > .progress')
+        .get('.c8-task:last .status .progress')
         // the animation duration should be equal to the expected job duration
         .should('have.css', 'animation-duration', `${MEAN_ELAPSED_TIME}s`)
         // the offset should be set to the "percent" of the expected job duration

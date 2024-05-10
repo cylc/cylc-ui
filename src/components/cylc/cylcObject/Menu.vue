@@ -283,8 +283,17 @@ export default {
      */
     onClickOutside (e) {
       this.closeMenu()
-      if (e.target?.getAttribute('data-c-interactive')) {
-        this.showMenu = true
+
+      // check if the thing being clicked on is a child of the thing that the
+      // menu is open for
+      let target = e.target
+      while (target) {
+        if (target?.getAttribute('data-c-interactive')) {
+          // keep the menu open
+          this.showMenu = true
+          break
+        }
+        target = target.parentElement
       }
     },
 
