@@ -603,8 +603,6 @@ export default {
         }
       }
       ret.push('}')
-      console.log("ret.join('\n')")
-      console.log(ret.join('\n'))
       return ret.join('\n')
     },
     hashGraph (nodes, edges) {
@@ -776,8 +774,6 @@ export default {
             label: obj.label
           }
         } else {
-          console.log("obj.name")
-          console.log(obj.name)
           // else the object is a node
           const [x, y] = obj.pos.split(',')
           const bbox = nodeDimensions[obj.name]
