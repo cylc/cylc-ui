@@ -50,7 +50,7 @@ import {
 import { Alert } from '@/model/Alert.model'
 import { store } from '@/store/index'
 import { Tokens } from '@/utils/uid'
-import { WorkflowState } from '@/model/WorkflowState.model'
+import { WorkflowState, WorkflowStateNames } from '@/model/WorkflowState.model'
 
 /** @typedef {import('@apollo/client').ApolloClient} ApolloClient */
 /** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType  */
@@ -88,6 +88,7 @@ import { WorkflowState } from '@/model/WorkflowState.model'
  * @property {string=} _help
  * @property {string=} _appliesTo - type of cylc object this mutation applies to (if cannot determine from args)
  * @property {boolean=} _requiresInfo - whether this mutation needs more info than the cylc object it is operating on (if cannot determine from args)
+ * @property {string[]=} _validStates - list of workflow states this mutation is valid for
  */
 
 /**
@@ -118,27 +119,30 @@ import { WorkflowState } from '@/model/WorkflowState.model'
 
 /**
  * Associates icons with mutations by name.
- * {mutation.name: svgIcon}
+ * @param {string} name - mutation name
+ * @returns {string} - icon svg path
  */
-export const mutationIcons = {
-  '': mdiCog, // default fallback
-  broadcast: mdiBullhorn,
-  clean: mdiDelete,
-  editRuntime: mdiPlaylistEdit,
-  hold: mdiPauseCircleOutline, // to distinguish from pause
-  kill: mdiCloseCircle,
-  log: mdiFileDocumentOutline,
-  message: mdiEmail,
-  pause: mdiPause,
-  play: mdiPlay,
-  poll: mdiRefreshCircle,
-  release: mdiPlayCircleOutline, // to distinguish from play
-  reload: mdiReload,
-  remove: mdiMinusCircleOutline,
-  resume: mdiPlay,
-  set: mdiVectorPolylineEdit,
-  stop: mdiStop,
-  trigger: mdiCursorPointer
+export function getMutationIcon (name) {
+  switch (name) {
+    case 'broadcast': return mdiBullhorn
+    case 'clean': return mdiDelete
+    case 'editRuntime': return mdiPlaylistEdit
+    case 'hold': return mdiPauseCircleOutline // to distinguish from pause
+    case 'kill': return mdiCloseCircle
+    case 'log': return mdiFileDocumentOutline
+    case 'message': return mdiEmail
+    case 'pause': return mdiPause
+    case 'play': return mdiPlay
+    case 'poll': return mdiRefreshCircle
+    case 'release': return mdiPlayCircleOutline // to distinguish from play
+    case 'reload': return mdiReload
+    case 'remove': return mdiMinusCircleOutline
+    case 'resume': return mdiPlay
+    case 'set': return mdiVectorPolylineEdit
+    case 'stop': return mdiStop
+    case 'trigger': return mdiCursorPointer
+    default: return mdiCog
+  }
 }
 
 /**
@@ -298,14 +302,16 @@ export const dummyMutations = [
       This only applies for the cycle point of the chosen task/family instance.`,
     args: [],
     _appliesTo: [cylcObjects.Namespace, cylcObjects.CyclePoint],
-    _requiresInfo: true
+    _requiresInfo: true,
+    _validStates: [WorkflowState.RUNNING.name, WorkflowState.PAUSED.name],
   },
   {
     name: 'log',
     description: 'View the logs.',
     args: [],
     _appliesTo: [cylcObjects.Workflow, cylcObjects.Namespace, cylcObjects.Job],
-    _requiresInfo: false
+    _requiresInfo: false,
+    _validStates: WorkflowStateNames,
   },
 ]
 
@@ -429,10 +435,10 @@ export function extractFields (type, fields, types) {
 export function processMutations (mutations, types) {
   for (const mutation of mutations) {
     mutation._title = camelToWords(mutation.name)
-    mutation._icon = mutationIcons[mutation.name] || mutationIcons['']
+    mutation._icon = getMutationIcon(mutation.name)
     mutation._shortDescription = getMutationShortDesc(mutation.description)
     mutation._help = getMutationExtendedDesc(mutation.description)
-    mutation._validStates = getStates(mutation.description)
+    mutation._validStates ??= getStates(mutation.description)
     processArguments(mutation, types)
   }
 }
@@ -441,25 +447,18 @@ export function processMutations (mutations, types) {
  *
  * @export
  * @param {string=} text - Full mutation description.
- * @return {Array<String>}
+ * @return {string[]}
  */
 export function getStates (text) {
-  const defaultStates = [
-    WorkflowState.RUNNING.name,
-    WorkflowState.PAUSED.name,
-    WorkflowState.STOPPING.name,
-    WorkflowState.STOPPED.name
-  ]
   if (!text) {
-    return defaultStates
+    return WorkflowStateNames
   }
-  const re = /Valid\sfor:\s(.*)\sworkflows./
   // default to all workflow states
-  const validStates = text.match(re)
+  const validStates = text.match(/Valid\sfor:\s(.*)\sworkflows./)
   if (validStates) {
     return validStates[1].replace(/\s/g, '').split(',')
   }
-  return defaultStates
+  return WorkflowStateNames
 }
 
 /**
