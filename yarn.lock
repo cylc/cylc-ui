@@ -883,9 +883,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphiql/react@npm:^0.21.0":
-  version: 0.21.0
-  resolution: "@graphiql/react@npm:0.21.0"
+"@graphiql/react@npm:^0.22.1":
+  version: 0.22.1
+  resolution: "@graphiql/react@npm:0.22.1"
   dependencies:
     "@graphiql/toolkit": "npm:^0.9.1"
     "@headlessui/react": "npm:^1.7.15"
@@ -906,7 +906,7 @@ __metadata:
     graphql: ^15.5.0 || ^16.0.0
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 10c0/8f77d9b1546c91712884d95442508e07e77f40bbf011612a7271aed8235ba5eafc12cbe2206f1026d3a69b454fe2dde5324915b6c3db0daaac8f7fca7df48d0e
+  checksum: 10c0/455c42d1fcb3e0f6f4f6eb2507251578d227dfafae02559e1bae311c2a50afe50c0cb0e8e61616f54a14c60e6c0a6e9648542ac0d2646fa135975a21a61b6c74
   languageName: node
   linkType: hard
 
@@ -3852,7 +3852,7 @@ __metadata:
     eslint-plugin-vuetify: "npm:2.4.0"
     express: "npm:4.19.2"
     express-ws: "npm:5.0.2"
-    graphiql: "npm:3.2.0"
+    graphiql: "npm:3.2.2"
     graphql: "npm:16.8.1"
     graphql-tag: "npm:2.12.6"
     istanbul-lib-coverage: "npm:3.2.2"
@@ -5906,11 +5906,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphiql@npm:3.2.0":
-  version: 3.2.0
-  resolution: "graphiql@npm:3.2.0"
+"graphiql@npm:3.2.2":
+  version: 3.2.2
+  resolution: "graphiql@npm:3.2.2"
   dependencies:
-    "@graphiql/react": "npm:^0.21.0"
+    "@graphiql/react": "npm:^0.22.1"
     "@graphiql/toolkit": "npm:^0.9.1"
     graphql-language-service: "npm:^5.2.0"
     markdown-it: "npm:^14.1.0"
@@ -5918,7 +5918,7 @@ __metadata:
     graphql: ^15.5.0 || ^16.0.0
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 10c0/0212a3f55201ea3a097ecfe3ee86f01fefc1b5f26f394c1ac46c25b1fe750cc45b2ddd5cce9631444bc8871021188614431a3bbd4f78a89acca4fca67142115b
+  checksum: 10c0/ddf03c47d7e367bebc283fe4f5ded48f84ba260f34f4e97be11921ffbc4e95b9777e81e17b960465054dc475d3ba2c8187c2b0f8ca43c4b9ccd6b8c96b0eecfb
   languageName: node
   linkType: hard
 
