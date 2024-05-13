@@ -59,7 +59,7 @@ export default {
    */
   install (app, options) {
     // add a global directive
-    app.directive('cylc-object', {
+    app.directive('command-menu', {
       beforeMount: bind,
       unmounted: unbind,
       updated

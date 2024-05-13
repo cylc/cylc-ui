@@ -22,7 +22,7 @@ import storeOptions from '@/store/options'
 import Tree from '@/views/Tree.vue'
 import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
-import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import { Tokens } from '@/utils/uid'
 import { getIDMap } from '$tests/util'
 
@@ -86,7 +86,7 @@ describe('Tree view', () => {
     store.commit('user/SET_USER', user)
     mountFunction = (options) => mount(Tree, {
       global: {
-        plugins: [vuetify, CylcObjectPlugin, store],
+        plugins: [vuetify, CommandMenuPlugin, store],
         mocks: {
           $workflowService
         }

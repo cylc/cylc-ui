@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="c-workflow-controls flex-shrink-0">
         <v-btn
           id="workflow-mutate-button"
-          v-cylc-object="currentWorkflow"
+          v-command-menu="currentWorkflow"
           :icon="$options.icons.menu"
           size="small"
           density="comfortable"

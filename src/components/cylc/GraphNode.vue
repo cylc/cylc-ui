@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :modifierSize="0.5"
       :startTime="startTime"
       viewBox="-40 -40 140 140"
-      v-cylc-object="task"
+      v-command-menu="task"
       x="0" y="0"
     />
 
@@ -64,7 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :svg="true"
           :status="job.node.state"
           viewBox="0 0 100 100"
-          v-cylc-object="job"
+          v-command-menu="job"
         />
       </g>
       <!-- overflow indicator if there are surplus jobs -->

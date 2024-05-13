@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-describe('CylcObject Menu component', () => {
+describe('Command Menu component', () => {
   const collapsedWorkflowMenuLength = 8 // (7 mutations + "show more" btn)
   const expandedWorkflowMenuLength = 22
 

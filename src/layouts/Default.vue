@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <ConnectionStatus :is-offline="offline" />
     <Toolbar v-if="showToolbar" />
     <Drawer v-if="showSidebar" />
-    <CylcObjectMenu/>
+    <CommandMenu/>
 
     <v-main>
       <alert />
@@ -48,7 +48,7 @@ import Drawer from '@/components/cylc/Drawer.vue'
 import Toolbar from '@/components/cylc/Toolbar.vue'
 import { useNavBtn, toolbarHeight } from '@/utils/toolbar'
 import ConnectionStatus from '@/components/cylc/ConnectionStatus.vue'
-import CylcObjectMenu from '@/components/cylc/cylcObject/Menu.vue'
+import CommandMenu from '@/components/cylc/commandMenu/Menu.vue'
 
 export default {
   name: 'Default',
@@ -88,7 +88,7 @@ export default {
 
   components: {
     ConnectionStatus,
-    CylcObjectMenu,
+    CommandMenu,
     Alert,
     Drawer,
     Toolbar

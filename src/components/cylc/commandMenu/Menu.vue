@@ -125,7 +125,7 @@ import { mapGetters, mapState } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
 
 export default {
-  name: 'CylcObjectMenu',
+  name: 'CommandMenu',
 
   components: {
     Mutation
