@@ -17,9 +17,10 @@
       :y="labelYPosition"
       font-family="Roboto"
       alignment-baseline="middle" text-anchor="middle"
-      font-size="70px"
+      font-size="60px"
       fill="black"
-      stroke-width=1.5
+      stroke-width=5
+      paint-order="stroke"
       stroke="white"
     >
       {{ subgraph.label }}
