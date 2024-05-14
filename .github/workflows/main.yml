@@ -57,9 +57,7 @@ jobs:
         run: yarn run lint:compat
 
       - name: Towncrier - draft changelog
-        run: |
-          python3 -m pip install -q towncrier
-          towncrier build --draft --version $(node -p "require('./package.json').version")
+        uses: cylc/release-actions/towncrier-draft@v1
 
   cypress-run:
     runs-on: ${{ matrix.os }}
