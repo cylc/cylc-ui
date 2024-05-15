@@ -163,7 +163,6 @@ fragment EdgeData on Edge {
 fragment TaskProxyData on TaskProxy {
   id
   state
-  cyclePoint
   isHeld
   isRunahead
   isQueued
@@ -518,7 +517,7 @@ export default {
     getCycles (nodes) {
       if (!this.groupCycle) return
       return nodes.reduce((x, y) => {
-        (x[y.node.cyclePoint] ||= []).push(y)
+        (x[y.tokens.cycle] ||= []).push(y)
         return x
       }, {})
     },
