@@ -86,13 +86,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             />
           </g>
         </g>
-        <g v-if="groupCycle" class="graph-subgraph-container">
-          <g v-for="(subgraph, key) in subgraphs"
-            :key="key">
-            <GraphSubgraph
-              v-if="subgraph.label!='margin'"
-              :subgraph="subgraph" />
-          </g>
+        <g v-if="groupCycle">
+          <GraphSubgraph
+            v-for="(subgraph, key) in subgraphs"
+            :key="key"
+            :subgraph="subgraph"
+          />
         </g>
       </g>
     </svg>
@@ -514,7 +513,7 @@ export default {
      * Get the nodes binned by cycle point
      *
      * @param {Object[]} nodes
-     * @returns {{ [dateTime: string]: Object[] nodes }} mapping of node to their cycle point.
+     * @returns {{ [dateTime: string]: Object[] }=} mapping of cycle points to nodes
      */
     getCycles (nodes) {
       if (!this.groupCycle) return
@@ -764,14 +763,17 @@ export default {
       // update graph node positions
       for (const obj of json.objects) {
         if (obj.bb) {
-        // if the object is a subgraph
-          const [left, bottom, right, top] = obj.bb.split(',')
-          this.subgraphs[obj.name] = {
-            x: left,
-            y: -top,
-            width: right - left,
-            height: top - bottom,
-            label: obj.label
+          // if the object is a subgraph
+          if (obj.label !== 'margin') {
+            // ignore the margins in the dot-code which do not need DOM elements
+            const [left, bottom, right, top] = obj.bb.split(',')
+            this.subgraphs[obj.name] = {
+              x: left,
+              y: -top,
+              width: right - left,
+              height: top - bottom,
+              label: obj.label
+            }
           }
         } else {
           // else the object is a node

@@ -141,9 +141,11 @@
           {
             "id": "~user/other/multi/run2//1/foo",
             "state": "waiting",
+            "cyclePoint": "1",
             "isHeld": false,
             "isQueued": true,
             "isRunahead": false,
+            "name": "foo",
             "task": {
               "meanElapsedTime": 0,
               "__typename": "Task"
@@ -157,9 +159,11 @@
           {
             "id": "~user/other/multi/run2//2/foo",
             "state": "waiting",
+            "cyclePoint": "2",
             "isHeld": false,
             "isQueued": false,
             "isRunahead": false,
+            "name": "foo",
             "task": {
               "meanElapsedTime": 0,
               "__typename": "Task"

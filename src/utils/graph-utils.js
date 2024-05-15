@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,25 +15,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Convert graphviz edge bezier curve in dot format to SVG path .
+ *
+ * @param {string} pos - `pos` attribute of a graph edge in dot format.
+ * @returns {string} The SVG path.
+ */
 export function posToPath (pos) {
+  // pos starts with `e,` followed by a list of coordinates
+  const parts = pos.substring(2).split(' ')
   // the last point comes first, followed by the others in order I.E:
   // -1, 0, 1, 2, ... -3, -2
-  const parts = pos.substring(2).split(' ').map(x => x.split(','))
-  const [last] = parts.splice(0, 1)
-  let path = null
-  for (const part of parts) {
-    if (!path) {
-      path = `M${part[0]} -${part[1]} C`
-    } else {
-      path = path + ` ${part[0]} -${part[1]},`
-    }
-  }
-  path = path + ` L ${last[0]} -${last[1]}`
-  return path
+  const [last, first] = parts.splice(0, 2)
+  const path = parts.reduce(
+    (acc, part) => `${acc} ${getCoord(part)},`,
+    `M${getCoord(first)} C`
+  )
+  return `${path} L ${getCoord(last)}`
 }
 
-/* TODO: everything! */
-// eslint-disable-next-line no-extend-native
+/**
+ * Convert dotcode `pos` coordinate to SVG path coordinate.
+ *
+ * @param {string} posCoord - A coordinate in dot format.
+ * @returns {string}
+ */
+export function getCoord (posCoord) {
+  const [x, y] = posCoord.split(',').map(parseFloat)
+  return `${x} ${-y}`
+}
+
+/**
+ * Calculate a non-cryptographic hash value for a given string.
+ *
+ * @param {string} string
+ * @returns {number}
+ */
 export function nonCryptoHash (string) {
   let hash = 0
   let i
