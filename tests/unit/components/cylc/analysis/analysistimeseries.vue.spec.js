@@ -24,20 +24,16 @@ import TimeSeries from '@/components/cylc/analysis/TimeSeries.vue'
 
 const vuetify = createVuetify()
 const analysisJobs = analysisJobQuery.data.jobs
-const analysisTasks = ['eventually_succeeded', 'succeeded', 'waiting']
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('TimeSeries component', () => {
-  /**
-   * @param options
-   * @returns {Wrapper<Tree>}
-   */
-  const mountFunction = options => {
+  const mountFunction = (options) => {
     return mount(TimeSeries, {
       global: {
         plugins: [vuetify],
         mocks: { $workflowService },
       },
+      shallow: true,
       ...options
     })
   }
@@ -46,7 +42,6 @@ describe('TimeSeries component', () => {
     const wrapper = mountFunction({
       props: {
         workflowIDs: ['one'],
-        tasks: analysisTasks,
         platformOption: -1,
         timingOption: 'total',
       }
@@ -62,7 +57,6 @@ describe('TimeSeries component', () => {
     const wrapper = mountFunction({
       props: {
         workflowIDs: ['one'],
-        tasks: analysisTasks,
         platformOption: -1,
         timingOption: 'total',
       }
@@ -88,7 +82,6 @@ describe('TimeSeries component', () => {
     const wrapper = mountFunction({
       props: {
         workflowIDs: ['one'],
-        tasks: analysisTasks,
         platformOption: -1,
         timingOption: 'total',
       }
@@ -99,8 +92,10 @@ describe('TimeSeries component', () => {
 
     // Check the the raw job data doesn't have the cycle points in order
     expect(wrapper.vm.jobs.filter(
-      job => wrapper.vm.displayedTasks.includes(job.name)).map(
-      job => job.cyclePoint)).to.deep.equal([
+      job => wrapper.vm.displayedTasks.includes(job.name)
+    ).map(
+      job => job.cyclePoint
+    )).to.deep.equal([
       '20240101T1200Z',
       '20240101T0000Z',
       '20240102T0000Z'
@@ -121,7 +116,6 @@ describe('TimeSeries component', () => {
     const wrapper = mountFunction({
       props: {
         workflowIDs: ['one'],
-        tasks: analysisTasks,
         platformOption: -1,
         timingOption: 'total',
       }
@@ -149,7 +143,6 @@ describe('TimeSeries component', () => {
     const wrapper = mountFunction({
       props: {
         workflowIDs: ['one'],
-        tasks: analysisTasks,
         platformOption: -1,
         timingOption: 'total',
       }
@@ -166,7 +159,6 @@ describe('TimeSeries component', () => {
     const wrapper = mountFunction({
       props: {
         workflowIDs: ['one'],
-        tasks: analysisTasks,
         platformOption: -1,
         timingOption: 'total',
       }
@@ -184,7 +176,6 @@ describe('TimeSeries component', () => {
     const wrapper = mountFunction({
       props: {
         workflowIDs: ['one'],
-        tasks: analysisTasks,
         platformOption: -1,
         timingOption: 'total',
       }
@@ -193,7 +184,6 @@ describe('TimeSeries component', () => {
     wrapper.vm.jobs = analysisJobs
     wrapper.vm.displayedTasks = ['succeeded']
 
-    //
     expect(wrapper.vm.series[0].data[0].y).to.equal(60)
 
     await wrapper.setProps({ timingOption: 'run' })

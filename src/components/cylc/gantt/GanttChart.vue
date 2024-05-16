@@ -59,7 +59,6 @@ export default {
     },
     timingOption: {
       type: String,
-      required: true,
       default: 'total',
     },
     tasksPerPage: {

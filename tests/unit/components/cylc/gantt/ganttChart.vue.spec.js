@@ -44,16 +44,13 @@ const vuetify = createVuetify()
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('GanttChart component', () => {
-  /**
-   * @param options
-   * @returns {Wrapper<Tree>}
-   */
-  const mountFunction = options => {
+  const mountFunction = (options) => {
     return mount(GanttChart, {
       global: {
         plugins: [vuetify],
         mocks: { $workflowService },
       },
+      shallow: true,
       ...options
     })
   }
