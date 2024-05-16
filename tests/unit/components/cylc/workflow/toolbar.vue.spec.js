@@ -41,7 +41,7 @@ describe('Workspace toolbar component', () => {
         mocks: { $workflowService },
       },
       props: {
-        views: [],
+        views: new Map(),
         workflowName: 'strewth',
       },
     })
