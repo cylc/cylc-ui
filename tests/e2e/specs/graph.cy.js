@@ -117,6 +117,18 @@ describe('Graph View', () => {
       .should('have.length', 7)
   })
 
+  it('should group by cycle point', () => {
+    cy.visit('/#/graph/one')
+    waitForGraphLayout()
+    cy
+      .get('[data-cy="control-groupCycle"] > .v-btn')
+      .click()
+    cy
+      .get('.c-graph:first')
+      .find('.c-graph-subgraph > rect')
+      .should('be.visible')
+  })
+
   it('remembers autorefresh setting when switching between workflows', () => {
     cy.visit('/#/workspace/one')
     addView('Graph')
@@ -129,5 +141,12 @@ describe('Graph View', () => {
     addView('Graph')
     waitForGraphLayout()
     checkRememberToolbarSettings('[data-cy=control-transpose]', 'not.have.class', 'have.class')
+  })
+
+  it('remembers cycle point grouping setting when switching between workflows', () => {
+    cy.visit('/#/workspace/one')
+    addView('Graph')
+    waitForGraphLayout()
+    checkRememberToolbarSettings('[data-cy="control-groupCycle"]', 'not.have.class', 'have.class')
   })
 })

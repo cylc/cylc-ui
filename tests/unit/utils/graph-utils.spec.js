@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,11 +39,21 @@ describe('Graph functionality', () => {
         'L 211.5 -156.5'
       )
     })
+    it('Handles negative coordinates', () => {
+      expect(posToPath(
+        'e,1,1 -2,-2 3,-3 -1,-0'
+      )).to.equal(
+        'M-2 2 C 3 3, -1 0, L 1 -1'
+      )
+    })
   })
 
   describe('nonCryptoHash', () => {
-    it('Converts a string to a stable hash', () => {
-      expect(nonCryptoHash('foo')).to.equal(101574)
+    it.each([
+      ['foo', 101574],
+      ['', 0],
+    ])('Converts a string to a stable hash: %o -> %i', (str, expected) => {
+      expect(nonCryptoHash(str)).to.equal(expected)
     })
   })
 })

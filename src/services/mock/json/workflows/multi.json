@@ -144,6 +144,7 @@
             "isHeld": false,
             "isQueued": true,
             "isRunahead": false,
+            "name": "foo",
             "task": {
               "meanElapsedTime": 0,
               "__typename": "Task"
@@ -160,6 +161,7 @@
             "isHeld": false,
             "isQueued": false,
             "isRunahead": false,
+            "name": "foo",
             "task": {
               "meanElapsedTime": 0,
               "__typename": "Task"
