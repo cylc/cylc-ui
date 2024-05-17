@@ -127,32 +127,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           ry="7.5"
         />
       </g>
-      <!-- expired
-
-      -->
-      <g
-        class="expired"
-      >
-        <rect
-          x="50"
-          y="46"
-          width="42"
-          height="8"
-          rx="5"
-          ry="5"
-          transform="rotate(-90, 50, 50)"
-        />
-        <rect
-          x="50"
-          y="46"
-          width="30"
-          height="8"
-          rx="5"
-          ry="5"
-          transform="rotate(45, 50, 50)"
-        />
-      </g>
     </g>
+
     <!-- modifier
 
       Represents any task state modifiers e.g. isHeld, isRunahead, isQueued.
@@ -343,6 +319,8 @@ export default {
         // NOTE: ensure the outline is filled so that it can be clicked
         fill: $background;
         stroke: $foreground;
+        stroke-dasharray: 0;  // a solid line
+        stroke-linecap: round;  // rounded edges
       }
       .progress {
         fill: transparent;
@@ -361,10 +339,6 @@ export default {
         stroke: none;
       }
       .cross rect {
-        fill: none;
-        stroke: none;
-      }
-      .expired rect {
         fill: none;
         stroke: none;
       }
@@ -425,16 +399,9 @@ export default {
       }
     }
 
-    &.expired .status {
-      .outline {
-        fill: $foreground;
-      }
-      .dot {
-        fill: $background;
-      }
-      .expired rect {
-        fill: $background;
-      }
+    &.expired .status .outline {
+      fill: $background;
+      stroke-dasharray: 8 20;  // a dashed line
     }
 
     &.held .modifier {
