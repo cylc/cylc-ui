@@ -35,7 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script setup>
 import {
-  inject,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -47,6 +46,7 @@ import LuminoWidget from '@/components/cylc/workflow/lumino-widget'
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
 import { when } from '@/utils'
 import { useDefaultView } from '@/views/views'
+import { eventBus } from '@/services/eventBus'
 
 /*
  * A component to wrap the Lumino application.
@@ -65,7 +65,6 @@ import { useDefaultView } from '@/views/views'
  * @property {Record<string,*>} initialOptions - prop passed to the view component
  */
 
-const $eventBus = inject('eventBus')
 const $store = useStore()
 
 const props = defineProps({
@@ -119,13 +118,15 @@ onMounted(() => {
   Widget.attach(boxPanel, mainDiv.value)
   // Watch for resize of the main element to trigger relayout:
   resizeObserver.observe(mainDiv.value)
-  $eventBus.on('add-view', addView)
+  eventBus.on('add-view', addView)
+  eventBus.on('lumino:deleted', onWidgetDeleted)
   getLayout(props.workflowName)
 })
 
 onBeforeUnmount(() => {
   resizeObserver.disconnect()
-  $eventBus.off('add-view', addView)
+  eventBus.off('add-view', addView)
+  eventBus.off('lumino:deleted', onWidgetDeleted)
   saveLayout()
   // Register with Lumino that the dock panel is no longer used,
   // otherwise uncaught errors can occur when restoring layout
@@ -145,7 +146,6 @@ const addView = ({ name, initialOptions = {} }, onTop = true) => {
   // give time for Lumino's widget DOM element to be created
   nextTick(() => {
     views.value.set(id, { name, initialOptions })
-    addWidgetEventListeners(id)
     if (onTop) {
       dockPanel.selectWidget(luminoWidget)
     }
@@ -196,9 +196,6 @@ const restoreLayout = (workflowName) => {
     // views will be teleported into
     nextTick(() => {
       views.value = stored.views
-      for (const id of views.value.keys()) {
-        addWidgetEventListeners(id)
-      }
     })
     return true
   }
@@ -221,31 +218,12 @@ const changeLayout = (workflowName) => {
 }
 
 /**
- * @param {string} id - widget ID
- */
-const addWidgetEventListeners = (id) => {
-  const widgetEl = document.getElementById(id)
-  widgetEl.addEventListener('lumino:deleted', onWidgetDeleted)
-  // widgetEl.addEventListener('lumino:activated', this.onWidgetActivated)
-}
-
-/**
  * React to a deleted event.
  *
- * @param {{
- *   detail: {
- *     id: string,
- *     name: string,
- *     closable: boolean
- *   }
- * }} customEvent
+ * @param {string} id - widget ID
  */
-const onWidgetDeleted = (customEvent) => {
-  const { id } = customEvent.detail
+const onWidgetDeleted = (id) => {
   views.value.delete(id)
-  const widgetEl = document.getElementById(id)
-  widgetEl.removeEventListener('lumino:deleted', onWidgetDeleted)
-  // widgetEl.removeEventListener('lumino:activated', this.onWidgetActivated)
   if (!views.value.size) {
     emit('emptied')
   }

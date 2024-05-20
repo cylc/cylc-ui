@@ -135,6 +135,7 @@ import {
 import { mapGetters, mapState } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
 import { VDialogTransition } from 'vuetify/components/transitions'
+import { eventBus } from '@/services/eventBus'
 
 export default {
   name: 'CylcObjectMenu',
@@ -178,12 +179,12 @@ export default {
   },
 
   mounted () {
-    this.$eventBus.on('show-mutations-menu', this.showMutationsMenu)
+    eventBus.on('show-mutations-menu', this.showMutationsMenu)
     document.addEventListener('keydown', this.onKeydown)
   },
 
   beforeUnmount () {
-    this.$eventBus.off('show-mutations-menu', this.showMutationsMenu)
+    eventBus.off('show-mutations-menu', this.showMutationsMenu)
     document.removeEventListener('keydown', this.onKeydown)
   },
 
@@ -343,7 +344,7 @@ export default {
             workflowName: this.node.tokens.workflow
           }
         }).then(() => {
-          this.$eventBus.emit(
+          eventBus.emit(
             'add-view',
             {
               name: 'Log',

@@ -56,15 +56,12 @@ Assertion.addMethod('expanded', function () {
 })
 
 const $workflowService = sinon.createStubInstance(WorkflowService)
-const $eventBus = {
-  emit: () => {}
-}
 
 describe('TreeItem component', () => {
   const mountFunction = (options) => mount(TreeItem, {
     global: {
       plugins: [createVuetify(), CylcObjectPlugin],
-      mock: { $workflowService, $eventBus }
+      mock: { $workflowService }
     },
     ...options
   })
@@ -144,7 +141,7 @@ describe('GScanTreeItem', () => {
   const mountFunction = (options) => mount(GScanTreeItem, {
     global: {
       plugins: [createVuetify(), CylcObjectPlugin],
-      mock: { $workflowService, $eventBus }
+      mock: { $workflowService }
     },
     ...options
   })

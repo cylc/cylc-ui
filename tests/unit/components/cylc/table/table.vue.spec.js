@@ -23,9 +23,6 @@ import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
 import Table from '@/components/cylc/table/Table.vue'
 import WorkflowService from '@/services/workflow.service'
 
-const $eventBus = {
-  emit () {}
-}
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
 const vuetify = createVuetify()
@@ -39,7 +36,6 @@ describe('Table component', () => {
     global: {
       plugins: [vuetify, CylcObjectPlugin],
       mocks: {
-        $eventBus,
         $workflowService
       }
     },
