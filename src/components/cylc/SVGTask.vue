@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           r="16"
           stroke-width="50"
           stroke-dasharray="157"
-          :style="getRunningStyle()"
+          :style="runningStyle"
         />
       </g>
       <!-- dot
@@ -247,6 +247,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
+import { computed, inject, ref } from 'vue'
 import TaskState from '@/model/TaskState.model'
 
 const props = defineProps({
@@ -268,18 +269,22 @@ const props = defineProps({
   },
 })
 
-function getRunningStyle () {
+/**
+ * @type {import('vue').Ref<number>}
+ * @see @/components/cylc/workspace/Widget.vue
+ */
+const animResetTime = inject('animResetTime', () => ref(0), true)
+
+const runningStyle = computed(() => {
   if (
     props.task.state === TaskState.RUNNING.name &&
     props.startTime &&
     props.task.task?.meanElapsedTime
   ) {
-    // job start time in ms (UTC)
-    const startTime = Date.parse(props.startTime)
-    // current time in ms (UTC)
-    const now = Date.now()
+    // current time in ms (UTC); updates whenever widget is unhidden
+    const now = Math.max(Date.now(), animResetTime.value)
     // job elapsed time in ms
-    const elapsedTime = now - startTime
+    const elapsedTime = now - Date.parse(props.startTime)
     return {
       animationDuration: `${props.task.task.meanElapsedTime}s`,
       animationDelay: `-${elapsedTime}ms`,
@@ -287,7 +292,7 @@ function getRunningStyle () {
     }
   }
   return {}
-}
+})
 
 /**
  * Returns the translation required to position the ".modifier" nicely in

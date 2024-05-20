@@ -81,4 +81,10 @@ export default class LuminoWidget extends Widget {
     eventBus.emit('lumino:deleted', this.id)
     super.onCloseRequest(msg)
   }
+
+  onAfterShow (msg) {
+    // Emit an event so that the Vue component knows that this widget is visible again
+    eventBus.emit(`lumino:show:${this.id}`)
+    super.onAfterShow(msg)
+  }
 }

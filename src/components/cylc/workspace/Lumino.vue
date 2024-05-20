@@ -18,19 +18,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div ref="mainDiv" class="main pa-2 fill-height">
     <!-- Lumino box panel gets inserted here -->
   </div>
-  <template
+  <WidgetComponent
     v-for="[id, { name }] in views"
     :key="id"
+    :id="id"
   >
-    <Teleport :to="`#${id}`">
-      <component
-        :is="props.allViews.get(name).component"
-        :workflow-name="workflowName"
-        v-model:initial-options="views.get(id).initialOptions"
-        class="h-100"
-      />
-    </Teleport>
-  </template>
+    <component
+      :is="props.allViews.get(name).component"
+      :workflow-name="workflowName"
+      v-model:initial-options="views.get(id).initialOptions"
+      class="h-100"
+    />
+  </WidgetComponent>
 </template>
 
 <script setup>
@@ -42,7 +41,8 @@ import {
 } from 'vue'
 import { useStore } from 'vuex'
 import { startCase, uniqueId } from 'lodash'
-import LuminoWidget from '@/components/cylc/workflow/lumino-widget'
+import WidgetComponent from '@/components/cylc/workspace/Widget.vue'
+import LuminoWidget from '@/components/cylc/workspace/lumino-widget'
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
 import { when } from '@/utils'
 import { useDefaultView } from '@/views/views'
