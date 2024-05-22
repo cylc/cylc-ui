@@ -187,15 +187,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
-import { getPageTitle } from '@/utils'
 
 export default {
   name: 'Guide',
-  head () {
-    return {
-      title: getPageTitle('App.guide')
-    }
-  },
   components: {
     task: Task,
     job: Job

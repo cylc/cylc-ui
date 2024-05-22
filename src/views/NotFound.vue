@@ -43,15 +43,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-card>
   </div>
 </template>
-
-<script>
-import { getPageTitle } from '@/utils/index'
-
-export default {
-  head () {
-    return {
-      title: getPageTitle('App.notFound')
-    }
-  }
-}
-</script>

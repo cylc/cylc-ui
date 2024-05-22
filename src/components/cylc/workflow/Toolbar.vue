@@ -131,7 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-spacer class="mx-0" />
 
       <v-btn
-        v-if="$route.name === 'workspace'"
+        v-if="$route.name === 'Workspace'"
         class="add-view"
         color="primary"
         data-cy="add-view-btn"

@@ -253,7 +253,7 @@ export default {
         // Navigate to the corresponding workflow then open the log view
         // (no nav occurs if already on the correct workflow page)
         this.$router.push({
-          name: 'workspace',
+          name: 'Workspace',
           params: {
             workflowName: this.node.tokens.workflow
           }

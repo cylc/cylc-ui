@@ -25,12 +25,13 @@
 
 import { createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from 'nprogress'
-
-import 'nprogress/css/nprogress.css'
+import { i18n } from '@/i18n'
 
 import paths from '@/router/paths'
 import { store } from '@/store/index'
 import { Alert } from '@/model/Alert.model'
+
+const defaultPageTitle = i18n.global.t('App.name')
 
 NProgress.configure({ showSpinner: false })
 
@@ -40,6 +41,17 @@ function getRoute (path) {
     name: path.name || path.view,
     component: () => import(`@/views/${path.view}.vue`)
   }
+}
+
+/**
+ * Return the page title for a particular route.
+ * @param {import('vue-router').RouteLocation} route
+ */
+export function getPageTitle ({ meta, params }) {
+  const extra = meta.getTitle?.(params) || meta.title
+  return extra
+    ? `${defaultPageTitle} | ${extra}`
+    : defaultPageTitle
 }
 
 // Create a new router
@@ -65,27 +77,29 @@ router.beforeEach(async (to, from) => {
     store.commit('user/SET_USER', user)
   }
   if (!store.state.user.user.permissions?.includes('read')) {
-    if (to.name !== 'noAuth') { // Avoid infinite redirect?
-      return { name: 'noAuth' }
+    if (to.name !== 'NoAuth') { // Avoid infinite redirect?
+      return { name: 'NoAuth' }
     }
-  } else if (to.name === 'noAuth') {
+  } else if (to.name === 'NoAuth') {
     // If authorized, redirect no-auth page to home page
     return { path: '/' }
   }
 
-  if (to.name) {
-    let title = to.name
-    let workflowName = null
-    if (to.meta.toolbar) {
-      // When a workflow is being displayed, we set the title to a
-      // different value.
-      title = to.params.workflowName
-      workflowName = to.params.workflowName
-    }
-    store.commit('app/setTitle', title)
-    store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
-    store.dispatch('setAlert', null)
+  // Set page title:
+  document.title = getPageTitle(to)
+
+  // Set toolbar title:
+  let title = to.name
+  let workflowName = null
+  if (to.meta.toolbar) {
+    // When a workflow is being displayed, we set the title to a
+    // different value.
+    title = to.params.workflowName
+    workflowName = to.params.workflowName
   }
+  store.commit('app/setTitle', title)
+  store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
+  store.dispatch('setAlert', null)
 })
 
 router.afterEach(() => {

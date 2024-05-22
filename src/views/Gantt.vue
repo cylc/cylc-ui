@@ -95,7 +95,6 @@ import {
   debounce
 } from 'lodash'
 import gql from 'graphql-tag'
-import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import {
   initialOptions,
@@ -168,12 +167,6 @@ export default {
 
   components: {
     GanttChart,
-  },
-
-  head () {
-    return {
-      title: getPageTitle('App.workflow', { name: this.workflowName })
-    }
   },
 
   props: {

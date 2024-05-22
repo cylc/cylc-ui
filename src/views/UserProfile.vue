@@ -244,7 +244,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState } from 'vuex'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
 import { useCyclePointsOrderDesc, useJobTheme, useReducedAnimation } from '@/composables/localStorage'
-import { getPageTitle } from '@/utils/index'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { allViews, useDefaultView } from '@/views/views.js'
 import Job from '@/components/cylc/Job.vue'
@@ -270,12 +269,6 @@ export default {
 
   computed: {
     ...mapState('user', ['user']),
-  },
-
-  head () {
-    return {
-      title: getPageTitle('App.userProfile')
-    }
   },
 
   methods: {

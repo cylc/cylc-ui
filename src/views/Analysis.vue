@@ -144,7 +144,6 @@ import {
   pick,
 } from 'lodash'
 import gql from 'graphql-tag'
-import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import {
   initialOptions,
@@ -246,12 +245,6 @@ export default {
     AnalysisTable,
     BoxPlot,
     TimeSeries
-  },
-
-  head () {
-    return {
-      title: getPageTitle('App.workflow', { name: this.workflowName })
-    }
   },
 
   beforeMount () {

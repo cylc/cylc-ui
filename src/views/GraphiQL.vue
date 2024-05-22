@@ -27,11 +27,6 @@ import { fallbackGraphQLFetcher, graphQLFetcher } from '@/graphql/graphiql'
 
 export default {
   name: 'GraphiQL',
-  head () {
-    return {
-      title: 'GraphiQL'
-    }
-  },
   data () {
     return {
       fetcher: null,

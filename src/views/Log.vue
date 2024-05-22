@@ -183,7 +183,6 @@ import {
   mdiPowerPlug,
   mdiWrap,
 } from '@mdi/js'
-import { getPageTitle } from '@/utils/index'
 import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -318,13 +317,6 @@ export default {
     LogComponent,
     ViewToolbar
   },
-
-  head () {
-    return {
-      title: getPageTitle('App.workflow', { name: this.workflowName })
-    }
-  },
-
   emits: [
     updateInitialOptionsEvent,
   ],

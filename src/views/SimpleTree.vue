@@ -106,7 +106,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import gql from 'graphql-tag'
 import { mapState, mapGetters } from 'vuex'
-import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -192,13 +191,6 @@ export default {
     graphqlMixin,
     subscriptionComponentMixin
   ],
-
-  // This sets the page title.
-  head () {
-    return {
-      title: getPageTitle('App.workflow', { name: this.workflowName })
-    }
-  },
 
   computed: {
     // This gives us direct access to the data store if we need it:

@@ -2316,49 +2316,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unhead/dom@npm:1.9.9":
-  version: 1.9.9
-  resolution: "@unhead/dom@npm:1.9.9"
-  dependencies:
-    "@unhead/schema": "npm:1.9.9"
-    "@unhead/shared": "npm:1.9.9"
-  checksum: 10c0/492e2c300e87ce9b0b952a62a26b62c88f00bd90ba1a334dc51fd9f74e5aacd1edc128a578788120ec5f193a517a76736d1a80395aa5ac951d0fb7d93dfa2793
-  languageName: node
-  linkType: hard
-
-"@unhead/schema@npm:1.9.9":
-  version: 1.9.9
-  resolution: "@unhead/schema@npm:1.9.9"
-  dependencies:
-    hookable: "npm:^5.5.3"
-    zhead: "npm:^2.2.4"
-  checksum: 10c0/5cff3830f3a593013422c64c47548c7d7e9a8310b7aedf9957b7afd3c9fb3f709e0af7e6815564ad0bc79ea880df03ba4e30b20ed66f615bc40612952ef43c35
-  languageName: node
-  linkType: hard
-
-"@unhead/shared@npm:1.9.9":
-  version: 1.9.9
-  resolution: "@unhead/shared@npm:1.9.9"
-  dependencies:
-    "@unhead/schema": "npm:1.9.9"
-  checksum: 10c0/6723a54f6724915dd86e41649eb899d557366b806feed4976ff1f9264871f1343a7ad43fca3eb0ae4d6fe678084b3e377a34b164c46a76d1f129d4eb12feaff4
-  languageName: node
-  linkType: hard
-
-"@unhead/vue@npm:1.9.9":
-  version: 1.9.9
-  resolution: "@unhead/vue@npm:1.9.9"
-  dependencies:
-    "@unhead/schema": "npm:1.9.9"
-    "@unhead/shared": "npm:1.9.9"
-    hookable: "npm:^5.5.3"
-    unhead: "npm:1.9.9"
-  peerDependencies:
-    vue: ">=2.7 || >=3"
-  checksum: 10c0/dbd0975eb6b96cbb59e4e8d02d2f58cec538c3399c6f2dc6fddf7f62b43f85e52b9d8f6eea433e9b1013df8ffd9eb6fa68fdbe90e128cfe89e90a5986363b3eb
-  languageName: node
-  linkType: hard
-
 "@vitejs/plugin-vue@npm:5.0.4":
   version: 5.0.4
   resolution: "@vitejs/plugin-vue@npm:5.0.4"
@@ -3827,7 +3784,6 @@ __metadata:
     "@lumino/default-theme": "npm:2.1.5"
     "@lumino/widgets": "npm:2.3.2"
     "@mdi/js": "npm:7.4.47"
-    "@unhead/vue": "npm:1.9.9"
     "@vitejs/plugin-vue": "npm:5.0.4"
     "@vitest/coverage-istanbul": "npm:1.6.0"
     "@vue/test-utils": "npm:2.4.6"
@@ -6039,13 +5995,6 @@ __metadata:
   dependencies:
     react-is: "npm:^16.7.0"
   checksum: 10c0/fe0889169e845d738b59b64badf5e55fa3cf20454f9203d1eb088df322d49d4318df774828e789898dcb280e8a5521bb59b3203385662ca5e9218a6ca5820e74
-  languageName: node
-  linkType: hard
-
-"hookable@npm:^5.5.3":
-  version: 5.5.3
-  resolution: "hookable@npm:5.5.3"
-  checksum: 10c0/275f4cc84d27f8d48c5a5cd5685b6c0fea9291be9deea5bff0cfa72856ed566abde1dcd8cb1da0f9a70b4da3d7ec0d60dc3554c4edbba647058cc38816eced3d
   languageName: node
   linkType: hard
 
@@ -10181,18 +10130,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unhead@npm:1.9.9":
-  version: 1.9.9
-  resolution: "unhead@npm:1.9.9"
-  dependencies:
-    "@unhead/dom": "npm:1.9.9"
-    "@unhead/schema": "npm:1.9.9"
-    "@unhead/shared": "npm:1.9.9"
-    hookable: "npm:^5.5.3"
-  checksum: 10c0/6e87cca3a147dd3fa6844c929827f9091b518ad07646aa658d3118e991a260d5321c91097a6ff6f639a470baa5c5df1371140204bcca4035b884cbb112d56023
-  languageName: node
-  linkType: hard
-
 "unique-filename@npm:^3.0.0":
   version: 3.0.0
   resolution: "unique-filename@npm:3.0.0"
@@ -11071,12 +11008,5 @@ __metadata:
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: 10c0/71cc2f2bbb537300c3f569e25693d37b3bc91f225cefce251a71c30bc6bb3e7f8e9420ca0eb57f2ac9e492b085b8dfa075fd1e8195c40b83c951dd59c6e4fbf8
-  languageName: node
-  linkType: hard
-
-"zhead@npm:^2.2.4":
-  version: 2.2.4
-  resolution: "zhead@npm:2.2.4"
-  checksum: 10c0/3d166fb661f1b7fdf8a0ef2222d9e574ab241e72141f2f1fda62a9250ca73aabf2eaf0d66046a3984cd24d1dd9bac231338c6271684d6b8caa6b66af7c45f275
   languageName: node
   linkType: hard
