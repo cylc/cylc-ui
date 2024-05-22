@@ -3,8 +3,8 @@
     "__schema": {
       "queryType": {
         "kind": "OBJECT",
-        "name": "Queries",
-        "description": "Multi-Workflow root level queries.",
+        "name": "UISQueries",
+        "description": null,
         "fields": [
           {
             "name": "workflows",
@@ -121,152 +121,6 @@
             "description": "Jobs.",
             "args": [
               {
-                "name": "workflows",
-                "description": null,
-                "type": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "__typename": "__Type"
-                },
-                "defaultValue": "[]",
-                "__typename": "__InputValue"
-              },
-              {
-                "name": "exworkflows",
-                "description": null,
-                "type": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "__typename": "__Type"
-                },
-                "defaultValue": "[]",
-                "__typename": "__InputValue"
-              },
-              {
-                "name": "ids",
-                "description": null,
-                "type": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "__typename": "__Type"
-                },
-                "defaultValue": "[]",
-                "__typename": "__InputValue"
-              },
-              {
-                "name": "exids",
-                "description": null,
-                "type": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "__typename": "__Type"
-                },
-                "defaultValue": "[]",
-                "__typename": "__InputValue"
-              },
-              {
-                "name": "states",
-                "description": null,
-                "type": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "__typename": "__Type"
-                },
-                "defaultValue": "[]",
-                "__typename": "__InputValue"
-              },
-              {
-                "name": "exstates",
-                "description": null,
-                "type": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "__typename": "__Type"
-                },
-                "defaultValue": "[]",
-                "__typename": "__InputValue"
-              },
-              {
-                "name": "sort",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "SortArgs",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "defaultValue": null,
-                "__typename": "__InputValue"
-              },
-              {
-                "name": "stripNull",
-                "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "defaultValue": null,
-                "__typename": "__InputValue"
-              }
-            ],
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Job",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "__typename": "__Type"
-            },
-            "isDeprecated": false,
-            "deprecationReason": null,
-            "__typename": "__Field"
-          },
-          {
-            "name": "task",
-            "description": "Task definition, static fields",
-            "args": [
-              {
                 "name": "stripNull",
                 "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
                 "type": {
@@ -279,37 +133,17 @@
                 "__typename": "__InputValue"
               },
               {
-                "name": "id",
+                "name": "live",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "true",
                 "__typename": "__InputValue"
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Task",
-              "ofType": null,
-              "__typename": "__Type"
-            },
-            "isDeprecated": false,
-            "deprecationReason": null,
-            "__typename": "__Field"
-          },
-          {
-            "name": "tasks",
-            "description": "Task definition, static fields",
-            "args": [
+              },
               {
                 "name": "workflows",
                 "description": null,
@@ -415,11 +249,208 @@
                 "__typename": "__InputValue"
               },
               {
+                "name": "tasks",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[]",
+                "__typename": "__InputValue"
+              }
+            ],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "UISJob",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "__typename": "__Type"
+            },
+            "isDeprecated": false,
+            "deprecationReason": null,
+            "__typename": "__Field"
+          },
+          {
+            "name": "task",
+            "description": "Task definitions.\n\nThese are the task \"definitions\" as they appear in the\nconfiguration as opposed to task \"instances\" which you will find\nin the `TaskProxies` field.",
+            "args": [
+              {
                 "name": "stripNull",
                 "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
                 "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Task",
+              "ofType": null,
+              "__typename": "__Type"
+            },
+            "isDeprecated": false,
+            "deprecationReason": null,
+            "__typename": "__Field"
+          },
+          {
+            "name": "tasks",
+            "description": "Task definitions.\n\nThese are the task \"definitions\" as they appear in the\nconfiguration as opposed to task \"instances\" which you will find\nin the `TaskProxies` field.",
+            "args": [
+              {
+                "name": "stripNull",
+                "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "live",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "true",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "workflows",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[]",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "exworkflows",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[]",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "ids",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[]",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "exids",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[]",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "mindepth",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "-1",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "maxdepth",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "-1",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "sort",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "SortArgs",
                   "ofType": null,
                   "__typename": "__Type"
                 },
@@ -432,7 +463,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Task",
+                "name": "UISTask",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -642,6 +673,18 @@
               },
               {
                 "name": "maxdepth",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "-1",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "graphDepth",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
@@ -1083,6 +1126,18 @@
                 "__typename": "__InputValue"
               },
               {
+                "name": "graphDepth",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "-1",
+                "__typename": "__InputValue"
+              },
+              {
                 "name": "sort",
                 "description": null,
                 "type": {
@@ -1412,6 +1467,38 @@
             "isDeprecated": false,
             "deprecationReason": null,
             "__typename": "__Field"
+          },
+          {
+            "name": "logFiles",
+            "description": "List available job logs",
+            "args": [
+              {
+                "name": "id",
+                "description": "workflow//[cycle/task]",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "LogFiles",
+              "ofType": null,
+              "__typename": "__Type"
+            },
+            "isDeprecated": false,
+            "deprecationReason": null,
+            "__typename": "__Field"
           }
         ],
         "inputFields": null,
@@ -1427,7 +1514,7 @@
         "fields": [
           {
             "name": "broadcast",
-            "description": "Override `[runtime]` configurations in a running workflow.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can set/override any `[runtime]` configuration for all\ncycles or for a specific cycle. If a task is affected by\nspecific-cycle and all-cycle broadcasts at the same time, the\nspecific takes precedence.\n\nBroadcasts can also target all tasks, specific tasks or families of\ntasks. If a task is affected by broadcasts to multiple ancestor\nnamespaces (tasks it inherits from), the result is determined by\nnormal `[runtime]` inheritance.\n\nBroadcasts are applied at the time of job submission.\n\nBroadcasts persist, even across restarts. Broadcasts made to\nspecific cycle points will expire when the cycle point is older\nthan the oldest active cycle point in the workflow.\n\nActive broadcasts can be revoked using the \"clear\" mode.\nAny broadcasts matching the specified cycle points and\nnamespaces will be revoked.\n\nNote: a \"clear\" broadcast for a specific cycle or namespace does\n*not* clear all-cycle or all-namespace broadcasts.\n Valid for: paused, running workflows.",
+            "description": "Override `[runtime]` configurations in a running workflow.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can set/override any `[runtime]` configuration for all\ncycles or for a specific cycle. If a task is affected by\nspecific-cycle and all-cycle broadcasts at the same time, the\nspecific takes precedence.\n\nBroadcasts can also target all tasks, specific tasks or families of\ntasks. If a task is affected by broadcasts to multiple ancestor\nnamespaces (tasks it inherits from), the result is determined by\nnormal `[runtime]` inheritance.\n\nBroadcasts are applied at the time of job submission.\n\nBroadcasts persist, even across restarts. Broadcasts made to\nspecific cycle points will expire when the cycle point is older\nthan the oldest active cycle point in the workflow.\n\nActive broadcasts can be revoked using the \"clear\" mode.\nAny broadcasts matching the specified cycle points and\nnamespaces will be revoked.\n\nNote: a \"clear\" broadcast for a specific cycle or namespace does\n*not* clear all-cycle or all-namespace broadcasts.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "cutoff",
@@ -1544,7 +1631,7 @@
           },
           {
             "name": "extTrigger",
-            "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".",
+            "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "id",
@@ -1615,7 +1702,7 @@
           },
           {
             "name": "message",
-            "description": "Record task messages.\n\nSend messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nJobs use this to record and report status such\nas success and failure. Applications run by jobs can use\nthis command to report messages and to report registered task\noutputs.",
+            "description": "Record task messages.\n\nSend messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nJobs use this to record and report status such\nas success and failure. Applications run by jobs can use\nthis command to report messages and to report registered task\noutputs.\n\nValid for: paused, running, stopping workflows.",
             "args": [
               {
                 "name": "eventTime",
@@ -1703,7 +1790,7 @@
           },
           {
             "name": "pause",
-            "description": "Pause a workflow.\n\nThis suspends submission of tasks.",
+            "description": "Pause a workflow.\nThis suspends submission of tasks.\n\nValid for: running workflows.",
             "args": [
               {
                 "name": "workflows",
@@ -1740,7 +1827,7 @@
           },
           {
             "name": "reload",
-            "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
+            "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "workflows",
@@ -1777,7 +1864,7 @@
           },
           {
             "name": "resume",
-            "description": "Resume a paused workflow.\n\nSee also the opposite command `pause`.",
+            "description": "Resume a paused workflow.\nSee also the opposite command `pause`.\n\nValid for: paused workflows.",
             "args": [
               {
                 "name": "workflows",
@@ -1814,7 +1901,7 @@
           },
           {
             "name": "setVerbosity",
-            "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged;\nfor example, if you choose `WARNING`, only warnings and critical\nmessages will be logged.",
+            "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged.\nFor example, if you choose `WARNING`, only warning, error and\ncritical level messages will be logged.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "level",
@@ -1868,7 +1955,7 @@
           },
           {
             "name": "setGraphWindowExtent",
-            "description": "Set the maximum graph distance (n) from an active node\nof the data-store graph window.",
+            "description": "Set the maximum graph distance (n) from an active node\nof the data-store graph window.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "nEdgeDistance",
@@ -1922,7 +2009,7 @@
           },
           {
             "name": "stop",
-            "description": "Tell a workflow to shut down or stop a specified\nflow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.\n\nTasks that become ready after the shutdown is ordered will be\nsubmitted immediately if the workflow is restarted.\nRemaining task event handlers, job poll and kill commands, will\nbe executed prior to shutdown, unless\nthe stop mode is `Now`.",
+            "description": "Tell a workflow to shut down or stop a specified\nflow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.\n\nTasks that become ready after the shutdown is ordered will be\nsubmitted immediately if the workflow is restarted.\nRemaining task event handlers, job poll and kill commands, will\nbe executed prior to shutdown, unless\nthe stop mode is `Now`.\n\nValid for: paused, running, stopping workflows.",
             "args": [
               {
                 "name": "clockTime",
@@ -2019,7 +2106,7 @@
           },
           {
             "name": "setHoldPoint",
-            "description": "Set workflow hold after cycle point. All tasks after this point\nwill be held.",
+            "description": "Set workflow hold after cycle point. All tasks after this point\nwill be held.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "point",
@@ -2073,7 +2160,7 @@
           },
           {
             "name": "releaseHoldPoint",
-            "description": "Release all tasks and unset the workflow hold point, if set.\n\nHeld tasks do not submit their jobs even if ready to run.",
+            "description": "Release all tasks and unset the workflow hold point, if set.\n\nHeld tasks do not submit their jobs even if ready to run.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "workflows",
@@ -2110,7 +2197,7 @@
           },
           {
             "name": "hold",
-            "description": "Hold tasks within a workflow.\n\nHeld tasks do not submit their jobs even if ready to run.",
+            "description": "Hold tasks within a workflow.\n\nHeld tasks do not submit their jobs even if ready to run.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "tasks",
@@ -2169,7 +2256,7 @@
           },
           {
             "name": "kill",
-            "description": "Kill running or submitted jobs.",
+            "description": "Kill running or submitted jobs.\n\nValid for: paused, running, stopping workflows.",
             "args": [
               {
                 "name": "tasks",
@@ -2228,7 +2315,7 @@
           },
           {
             "name": "poll",
-            "description": "Poll (query) jobs to verify and update their statuses.\n\nThis checks the job status file and queries the\njob runner on the job platform.\n\nPollable tasks are those in the n=0 window with\nan associated job ID, including incomplete finished\ntasks.",
+            "description": "Poll (query) jobs to verify and update their statuses.\n\nThis checks the job status file and queries the\njob runner on the job platform.\n\nPollable tasks are those in the n=0 window with\nan associated job ID, including incomplete finished\ntasks.\n\nValid for: paused, running, stopping workflows.",
             "args": [
               {
                 "name": "tasks",
@@ -2287,7 +2374,7 @@
           },
           {
             "name": "release",
-            "description": "Release held tasks within a workflow.\n\nSee also the opposite command `hold`.",
+            "description": "Release held tasks within a workflow.\n\nSee also the opposite command `hold`.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "tasks",
@@ -2346,7 +2433,7 @@
           },
           {
             "name": "remove",
-            "description": "Remove one or more task instances from a running workflow.",
+            "description": "Remove one or more task instances from a running workflow.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "tasks",
@@ -2404,15 +2491,37 @@
             "__typename": "__Field"
           },
           {
-            "name": "setOutputs",
-            "description": "Artificially mark task outputs as completed.\n\nThis allows you to manually intervene with Cylc's scheduling\nalgorithm by artificially satisfying outputs of tasks.\n\nBy default this makes tasks appear as if they succeeded.",
+            "name": "set",
+            "description": "Set task prerequisites or outputs.\n\nBy default, set all required outputs for target task(s).\n\nSetting prerequisites contributes to the task's readiness to run.\n\nSetting outputs contributes to the task's completion, sets the\ncorresponding prerequisites of child tasks, and sets any implied\noutputs:\n - ``started`` implies ``submitted``.\n - ``succeeded`` and ``failed`` imply ``started``.\n - custom outputs and ``expired`` do not imply any other outputs.\n\nValid for: paused, running, stopping workflows.",
             "args": [
               {
-                "name": "flowNum",
-                "description": null,
+                "name": "flow",
+                "description": "The flow(s) to trigger these tasks in.\n\nThis should be a list of flow numbers OR a single-item list\ncontaining one of the following three strings:\n\n* all - Triggered tasks belong to all active flows\n  (default).\n* new - Triggered tasks are assigned to a new flow.\n* none - Triggered tasks do not belong to any flow.",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Flow",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[\"all\"]",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "flowDescr",
+                "description": "If starting a new flow, this field can be used to provide the\nnew flow with a description for later reference.",
                 "type": {
                   "kind": "SCALAR",
-                  "name": "Int",
+                  "name": "String",
                   "ofType": null,
                   "__typename": "__Type"
                 },
@@ -2420,20 +2529,49 @@
                 "__typename": "__InputValue"
               },
               {
+                "name": "flowWait",
+                "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduler to\n\"continue on\" from this task until the flow has caught up\nwith it.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
                 "name": "outputs",
-                "description": "List of task outputs to satisfy.",
+                "description": "List of task outputs to set complete.",
                 "type": {
                   "kind": "LIST",
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "String",
+                    "name": "OutputLabel",
                     "ofType": null,
                     "__typename": "__Type"
                   },
                   "__typename": "__Type"
                 },
-                "defaultValue": "[\"succeeded\"]",
+                "defaultValue": null,
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "prerequisites",
+                "description": "List of task prerequisites to set satisfied.",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "PrerequisiteString",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": null,
                 "__typename": "__InputValue"
               },
               {
@@ -2483,7 +2621,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "SetOutputs",
+              "name": "SetPrereqsAndOutputs",
               "ofType": null,
               "__typename": "__Type"
             },
@@ -2493,7 +2631,7 @@
           },
           {
             "name": "trigger",
-            "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).",
+            "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "flow",
@@ -2531,7 +2669,7 @@
               },
               {
                 "name": "flowWait",
-                "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduled to\n\"continue on\" from this task until the flow has caught up\nwith it.",
+                "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduler to\n\"continue on\" from this task until the flow has caught up\nwith it.",
                 "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
@@ -2598,7 +2736,7 @@
           },
           {
             "name": "play",
-            "description": "Start, resume or restart a workflow run.",
+            "description": "Start, resume or restart a workflow run.\n\nValid for: stopped workflows.",
             "args": [
               {
                 "name": "abortIfAnyTaskFails",
@@ -2791,6 +2929,18 @@
                 "__typename": "__InputValue"
               },
               {
+                "name": "upgrade",
+                "description": "Allow the workflow to be restarted with a newer\nversion of Cylc.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
                 "name": "workflows",
                 "description": null,
                 "type": {
@@ -2825,7 +2975,7 @@
           },
           {
             "name": "clean",
-            "description": "Clean a workflow from the run directory.",
+            "description": "Clean a workflow from the run directory.\n\nValid for: stopped workflows.",
             "args": [
               {
                 "name": "localOnly",
@@ -2895,6 +3045,20 @@
             "isDeprecated": false,
             "deprecationReason": null,
             "__typename": "__Field"
+          },
+          {
+            "name": "scan",
+            "description": "Scan the filesystem for file changes.\n\nValid for: stopped workflows.",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Scan",
+              "ofType": null,
+              "__typename": "__Type"
+            },
+            "isDeprecated": false,
+            "deprecationReason": null,
+            "__typename": "__Field"
           }
         ],
         "inputFields": null,
@@ -2903,11 +3067,15 @@
         "possibleTypes": null,
         "__typename": "__Type"
       },
+      "subscriptionType": {
+        "name": "UISSubscriptions",
+        "__typename": "__Type"
+      },
       "types": [
         {
           "kind": "OBJECT",
-          "name": "Queries",
-          "description": "Multi-Workflow root level queries.",
+          "name": "UISQueries",
+          "description": null,
           "fields": [
             {
               "name": "workflows",
@@ -3024,152 +3192,6 @@
               "description": "Jobs.",
               "args": [
                 {
-                  "name": "workflows",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exworkflows",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "ids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exids",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "states",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "exstates",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "sort",
-                  "description": null,
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SortArgs",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "stripNull",
-                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": null,
-                  "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Job",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "task",
-              "description": "Task definition, static fields",
-              "args": [
-                {
                   "name": "stripNull",
                   "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
                   "type": {
@@ -3182,37 +3204,17 @@
                   "__typename": "__InputValue"
                 },
                 {
-                  "name": "id",
+                  "name": "live",
                   "description": null,
                   "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null,
-                      "__typename": "__Type"
-                    },
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "true",
                   "__typename": "__InputValue"
-                }
-              ],
-              "type": {
-                "kind": "OBJECT",
-                "name": "Task",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "tasks",
-              "description": "Task definition, static fields",
-              "args": [
+                },
                 {
                   "name": "workflows",
                   "description": null,
@@ -3318,11 +3320,208 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "tasks",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "UISJob",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "task",
+              "description": "Task definitions.\n\nThese are the task \"definitions\" as they appear in the\nconfiguration as opposed to task \"instances\" which you will find\nin the `TaskProxies` field.",
+              "args": [
+                {
                   "name": "stripNull",
                   "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
                   "type": {
                     "kind": "SCALAR",
                     "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "id",
+                  "description": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Task",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "tasks",
+              "description": "Task definitions.\n\nThese are the task \"definitions\" as they appear in the\nconfiguration as opposed to task \"instances\" which you will find\nin the `TaskProxies` field.",
+              "args": [
+                {
+                  "name": "stripNull",
+                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "live",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "true",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "workflows",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exworkflows",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
                     "ofType": null,
                     "__typename": "__Type"
                   },
@@ -3335,7 +3534,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Task",
+                  "name": "UISTask",
                   "ofType": null,
                   "__typename": "__Type"
                 },
@@ -3545,6 +3744,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -3986,6 +4197,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -4315,6 +4538,38 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
+            },
+            {
+              "name": "logFiles",
+              "description": "List available job logs",
+              "args": [
+                {
+                  "name": "id",
+                  "description": "workflow//[cycle/task]",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "LogFiles",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -4344,7 +4599,7 @@
             },
             {
               "name": "name",
-              "description": null,
+              "description": "The workflow ID with the ~user/ prefix removed.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -4358,7 +4613,7 @@
             },
             {
               "name": "status",
-              "description": null,
+              "description": "The workflow status e.g. `running`.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -4372,7 +4627,7 @@
             },
             {
               "name": "statusMsg",
-              "description": null,
+              "description": "A description of the workflow status.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -4386,7 +4641,7 @@
             },
             {
               "name": "host",
-              "description": null,
+              "description": "The host where the scheduler process is running.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -4400,7 +4655,7 @@
             },
             {
               "name": "port",
-              "description": null,
+              "description": "The port for sending ZMQ requests to the scheduler.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -4414,7 +4669,7 @@
             },
             {
               "name": "pubPort",
-              "description": null,
+              "description": "The port for subscribing to ZMQ updates from the scheduler.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -4428,7 +4683,7 @@
             },
             {
               "name": "owner",
-              "description": null,
+              "description": "The user account that the workflow is running under.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -4694,7 +4949,7 @@
             },
             {
               "name": "taskProxies",
-              "description": "Task cycle instances.",
+              "description": "Task instances.",
               "args": [
                 {
                   "name": "ids",
@@ -4814,6 +5069,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -4890,7 +5157,7 @@
             },
             {
               "name": "familyProxies",
-              "description": "Family cycle instances.",
+              "description": "Family instances.",
               "args": [
                 {
                   "name": "ids",
@@ -5010,6 +5277,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -5222,7 +5501,7 @@
             },
             {
               "name": "edges",
-              "description": "Graph edges",
+              "description": "Graph edges.",
               "args": [
                 {
                   "name": "ids",
@@ -5293,30 +5572,6 @@
                   "__typename": "__InputValue"
                 },
                 {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -5377,7 +5632,7 @@
             },
             {
               "name": "nodesEdges",
-              "description": null,
+              "description": "Graph nodes and edges.",
               "args": [
                 {
                   "name": "ids",
@@ -5580,7 +5835,7 @@
             },
             {
               "name": "apiVersion",
-              "description": null,
+              "description": "The Cylc scheduler communication protocol version number.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5594,7 +5849,7 @@
             },
             {
               "name": "cylcVersion",
-              "description": null,
+              "description": "The Cylc version this workflow is running under.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5608,7 +5863,7 @@
             },
             {
               "name": "lastUpdated",
-              "description": null,
+              "description": "The time of the most recent state change in the workflow.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5622,7 +5877,7 @@
             },
             {
               "name": "meta",
-              "description": null,
+              "description": "The workflow's `[meta]` section.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -5636,7 +5891,7 @@
             },
             {
               "name": "newestActiveCyclePoint",
-              "description": null,
+              "description": "The newest cycle point which has active tasks.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5650,7 +5905,7 @@
             },
             {
               "name": "oldestActiveCyclePoint",
-              "description": null,
+              "description": "The oldest cycle point which has active tasks.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5664,7 +5919,7 @@
             },
             {
               "name": "reloaded",
-              "description": null,
+              "description": "When subscribing to workflow updates, this field is `True` if the\nupdate relates to a workflow reload.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5678,7 +5933,7 @@
             },
             {
               "name": "runMode",
-              "description": null,
+              "description": "The scheduler's run-mode e.g. `live`.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5692,7 +5947,7 @@
             },
             {
               "name": "isHeldTotal",
-              "description": null,
+              "description": "The number of \"held\" tasks.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5706,7 +5961,7 @@
             },
             {
               "name": "isQueuedTotal",
-              "description": null,
+              "description": "The number of queued tasks.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5720,7 +5975,7 @@
             },
             {
               "name": "isRunaheadTotal",
-              "description": null,
+              "description": "The number of tasks which are held back by the runahead limit.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5734,7 +5989,7 @@
             },
             {
               "name": "stateTotals",
-              "description": null,
+              "description": "The number of tasks in each state as a JSON object.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5748,7 +6003,7 @@
             },
             {
               "name": "latestStateTasks",
-              "description": null,
+              "description": "The latest tasks to have entered each task state.",
               "args": [
                 {
                   "name": "states",
@@ -5780,7 +6035,7 @@
             },
             {
               "name": "workflowLogDir",
-              "description": null,
+              "description": "The path to the workflow's run directory.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5794,7 +6049,7 @@
             },
             {
               "name": "timeZoneInfo",
-              "description": null,
+              "description": "The scheduler time zone.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -5822,7 +6077,7 @@
             },
             {
               "name": "nsDefOrder",
-              "description": null,
+              "description": "Namespace definition order.\n\nThe order in which tasks were defined in the workflow\nconfiguration.",
               "args": [],
               "type": {
                 "kind": "LIST",
@@ -5841,7 +6096,7 @@
             },
             {
               "name": "jobLogNames",
-              "description": null,
+              "description": "Deprecated, do not use this.",
               "args": [],
               "type": {
                 "kind": "LIST",
@@ -5860,7 +6115,7 @@
             },
             {
               "name": "states",
-              "description": null,
+              "description": "The task states present in the workflow.\n\nSimilar to stateTotals.",
               "args": [],
               "type": {
                 "kind": "LIST",
@@ -5879,7 +6134,7 @@
             },
             {
               "name": "broadcasts",
-              "description": null,
+              "description": "Any active workflow broadcasts.",
               "args": [
                 {
                   "name": "ids",
@@ -5916,6 +6171,20 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "nEdgeDistance",
+              "description": "The maximum graph distance (n) from an active node\nof the data-store graph window.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -5966,7 +6235,7 @@
         {
           "kind": "OBJECT",
           "name": "Task",
-          "description": "Task definition, static fields",
+          "description": "Task definitions.\n\nThese are the task \"definitions\" as they appear in the\nconfiguration as opposed to task \"instances\" which you will find\nin the `TaskProxies` field.",
           "fields": [
             {
               "name": "id",
@@ -5984,7 +6253,7 @@
             },
             {
               "name": "name",
-              "description": null,
+              "description": "The task name.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -5998,7 +6267,7 @@
             },
             {
               "name": "meta",
-              "description": null,
+              "description": "The task's `[meta]` section.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -6012,7 +6281,7 @@
             },
             {
               "name": "runtime",
-              "description": null,
+              "description": "The task's `[runtime`] section.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -6026,7 +6295,7 @@
             },
             {
               "name": "meanElapsedTime",
-              "description": null,
+              "description": "The task's average runtime.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -6040,7 +6309,7 @@
             },
             {
               "name": "depth",
-              "description": null,
+              "description": "The family inheritance depth.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -6174,6 +6443,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -6564,6 +6845,20 @@
               "__typename": "__Field"
             },
             {
+              "name": "completion",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
               "name": "initScript",
               "description": null,
               "args": [],
@@ -6798,7 +7093,7 @@
         {
           "kind": "OBJECT",
           "name": "RuntimeSetting",
-          "description": "Key = val setting, e.g. for [runtime][X][environment]",
+          "description": "Key = value setting for a `[runtime][<namespace>]` configuration.",
           "fields": [
             {
               "name": "key",
@@ -6867,7 +7162,7 @@
             },
             {
               "name": "task",
-              "description": "Task definition",
+              "description": "The task definition relating to this task instance.",
               "args": [
                 {
                   "name": "stripNull",
@@ -6918,7 +7213,7 @@
             },
             {
               "name": "runtime",
-              "description": null,
+              "description": "This task's `[runtime]` section.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -6932,7 +7227,21 @@
             },
             {
               "name": "state",
-              "description": null,
+              "description": "The task state e.g. `running`.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "name",
+              "description": "The task's name.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -6946,7 +7255,7 @@
             },
             {
               "name": "cyclePoint",
-              "description": null,
+              "description": "The task's cycle point.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -6959,8 +7268,27 @@
               "__typename": "__Field"
             },
             {
+              "name": "namespace",
+              "description": "The inheritance order for this task.",
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
               "name": "isHeld",
-              "description": null,
+              "description": "True if this task is \"held\".",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -6974,7 +7302,7 @@
             },
             {
               "name": "isQueued",
-              "description": null,
+              "description": "True if this task is \"queued\".\n\nThis relates to Cylc's internal task queues, not a job runner\nqueue.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -6988,7 +7316,7 @@
             },
             {
               "name": "isRunahead",
-              "description": null,
+              "description": "True if this task is held back by the \"runahead limit\".",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -7002,7 +7330,7 @@
             },
             {
               "name": "flowNums",
-              "description": null,
+              "description": "The flows this task instance belongs to.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -7016,7 +7344,7 @@
             },
             {
               "name": "flowWait",
-              "description": null,
+              "description": "True if this task will wait for an approaching flow before spawning\noutputs downstream.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -7030,7 +7358,21 @@
             },
             {
               "name": "depth",
-              "description": null,
+              "description": "The family inheritance depth",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "graphDepth",
+              "description": "The n-window graph edge depth from closet active task(s).",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -7044,7 +7386,7 @@
             },
             {
               "name": "jobSubmits",
-              "description": null,
+              "description": "The number of job submissions for this task instance.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -7058,7 +7400,7 @@
             },
             {
               "name": "outputs",
-              "description": "Task outputs.",
+              "description": "Outputs this task instance has generated.",
               "args": [
                 {
                   "name": "sort",
@@ -7123,20 +7465,6 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "clockTrigger",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "OBJECT",
-                "name": "ClockTrigger",
-                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -7304,41 +7632,8 @@
               "__typename": "__Field"
             },
             {
-              "name": "name",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "namespace",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
               "name": "prerequisites",
-              "description": null,
+              "description": "The prerequisites of this task.",
               "args": [],
               "type": {
                 "kind": "LIST",
@@ -7493,7 +7788,7 @@
             },
             {
               "name": "parents",
-              "description": "Task parents.",
+              "description": "Task parents (i.e. families).",
               "args": [
                 {
                   "name": "ids",
@@ -7613,6 +7908,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -7689,7 +7996,7 @@
             },
             {
               "name": "firstParent",
-              "description": "Task first parent.",
+              "description": "The task's first parent (i.e. its containing family).",
               "args": [
                 {
                   "name": "ids",
@@ -7809,6 +8116,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -7880,7 +8199,7 @@
             },
             {
               "name": "ancestors",
-              "description": "First parent ancestors.",
+              "description": "First parent ancestors (i.e. inheritance hierarchy).",
               "args": [
                 {
                   "name": "ids",
@@ -8000,6 +8319,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -8197,60 +8528,6 @@
             }
           ],
           "interfaces": null,
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
-          "kind": "OBJECT",
-          "name": "ClockTrigger",
-          "description": "Task clock-trigger",
-          "fields": [
-            {
-              "name": "time",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "timeString",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "satisfied",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
           "enumValues": null,
           "possibleTypes": null,
           "__typename": "__Type"
@@ -8569,7 +8846,7 @@
             },
             {
               "name": "submitNum",
-              "description": null,
+              "description": "The submission number for this job, starts at 1.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8583,7 +8860,7 @@
             },
             {
               "name": "state",
-              "description": null,
+              "description": "The job state e.g. `running` or `succeeded`.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8597,7 +8874,7 @@
             },
             {
               "name": "name",
-              "description": null,
+              "description": "The name of the task which submitted this job.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8611,7 +8888,7 @@
             },
             {
               "name": "cyclePoint",
-              "description": null,
+              "description": "The cycle of the task which submitted this job.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8625,7 +8902,7 @@
             },
             {
               "name": "taskProxy",
-              "description": "Associated Task Proxy",
+              "description": "The TaskProxy of the task which submitted this job",
               "args": [
                 {
                   "name": "stripNull",
@@ -8676,7 +8953,7 @@
             },
             {
               "name": "submittedTime",
-              "description": null,
+              "description": "The time this job was submitted to the job runner.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8690,7 +8967,7 @@
             },
             {
               "name": "startedTime",
-              "description": null,
+              "description": "The time this job started running (if it has yet).",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8704,7 +8981,7 @@
             },
             {
               "name": "finishedTime",
-              "description": null,
+              "description": "The time this job finished running (if it has yet).",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8718,7 +8995,7 @@
             },
             {
               "name": "jobId",
-              "description": null,
+              "description": "The ID of this job in the job runner it was submitted to.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8732,7 +9009,7 @@
             },
             {
               "name": "jobRunnerName",
-              "description": null,
+              "description": "The job runner this job was submitted to.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8746,7 +9023,7 @@
             },
             {
               "name": "executionTimeLimit",
-              "description": null,
+              "description": "The time limit for this job if configured.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8760,7 +9037,7 @@
             },
             {
               "name": "platform",
-              "description": null,
+              "description": "The Cylc platform this job was submitted to.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8774,7 +9051,7 @@
             },
             {
               "name": "jobLogDir",
-              "description": null,
+              "description": "The path to the job's log directory.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8788,7 +9065,7 @@
             },
             {
               "name": "messages",
-              "description": null,
+              "description": "The list of task messages generated by this job.",
               "args": [],
               "type": {
                 "kind": "LIST",
@@ -8807,7 +9084,7 @@
             },
             {
               "name": "runtime",
-              "description": null,
+              "description": "The `[runtime]` configuration of the task which submitted this job.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -9084,6 +9361,20 @@
               "__typename": "__Field"
             },
             {
+              "name": "graphDepth",
+              "description": "The n-window graph edge smallest child task/family depth\nfrom closet active task(s).",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
               "name": "childTasks",
               "description": "Descendant task proxies.",
               "args": [
@@ -9205,6 +9496,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -9412,6 +9715,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -9608,6 +9923,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -9788,6 +10115,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -10066,6 +10405,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -10654,30 +11005,6 @@
                   "__typename": "__InputValue"
                 },
                 {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -11215,12 +11542,1116 @@
         },
         {
           "kind": "OBJECT",
+          "name": "UISJob",
+          "description": null,
+          "fields": [
+            {
+              "name": "id",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "submitNum",
+              "description": "The submission number for this job, starts at 1.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "state",
+              "description": "The job state e.g. `running` or `succeeded`.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "name",
+              "description": "The name of the task which submitted this job.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "cyclePoint",
+              "description": "The cycle of the task which submitted this job.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "taskProxy",
+              "description": "The TaskProxy of the task which submitted this job",
+              "args": [
+                {
+                  "name": "stripNull",
+                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaskProxy",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "submittedTime",
+              "description": "The time this job was submitted to the job runner.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "startedTime",
+              "description": "The time this job started running (if it has yet).",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "finishedTime",
+              "description": "The time this job finished running (if it has yet).",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "jobId",
+              "description": "The ID of this job in the job runner it was submitted to.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "jobRunnerName",
+              "description": "The job runner this job was submitted to.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "executionTimeLimit",
+              "description": "The time limit for this job if configured.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "platform",
+              "description": "The Cylc platform this job was submitted to.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "jobLogDir",
+              "description": "The path to the job's log directory.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "messages",
+              "description": "The list of task messages generated by this job.",
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "runtime",
+              "description": "The `[runtime]` configuration of the task which submitted this job.",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Runtime",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "totalTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "queueTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "runTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "UISTask",
+          "description": null,
+          "fields": [
+            {
+              "name": "id",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "name",
+              "description": "The task name.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "meta",
+              "description": "The task's `[meta]` section.",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "NodeMeta",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "runtime",
+              "description": "The task's `[runtime`] section.",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Runtime",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "meanElapsedTime",
+              "description": "The task's average runtime.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "depth",
+              "description": "The family inheritance depth.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "proxies",
+              "description": "Associated cycle point proxies",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "states",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exstates",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isHeld",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isQueued",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "isRunahead",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "TaskProxy",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "parents",
+              "description": "Family definition parent.",
+              "args": [
+                {
+                  "name": "ids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exids",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "mindepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SortArgs",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "stripNull",
+                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Family",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "namespace",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "firstParent",
+              "description": "Task first parent.",
+              "args": [
+                {
+                  "name": "stripNull",
+                  "description": "A flag that when enabled strips out those fields not set in the protobuf object. And when this flag is disabled the default values of Protobuf fields are provided (boolean=false, list=[], string=\"\".",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaStore",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "deltaType",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "\"added\"",
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Family",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "platform",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "minTotalTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "meanTotalTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "maxTotalTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "stdDevTotalTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "queueQuartiles",
+              "description": "List containing the first, second,\nthird and forth quartile queue times.",
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "minQueueTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "meanQueueTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "maxQueueTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "stdDevQueueTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "runQuartiles",
+              "description": "List containing the first, second,\nthird and forth quartile run times.",
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "minRunTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "meanRunTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "maxRunTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "stdDevRunTime",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "totalQuartiles",
+              "description": "List containing the first, second,\nthird and forth quartile total times.",
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "count",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "LogFiles",
+          "description": null,
+          "fields": [
+            {
+              "name": "files",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
           "name": "UISMutations",
           "description": null,
           "fields": [
             {
               "name": "broadcast",
-              "description": "Override `[runtime]` configurations in a running workflow.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can set/override any `[runtime]` configuration for all\ncycles or for a specific cycle. If a task is affected by\nspecific-cycle and all-cycle broadcasts at the same time, the\nspecific takes precedence.\n\nBroadcasts can also target all tasks, specific tasks or families of\ntasks. If a task is affected by broadcasts to multiple ancestor\nnamespaces (tasks it inherits from), the result is determined by\nnormal `[runtime]` inheritance.\n\nBroadcasts are applied at the time of job submission.\n\nBroadcasts persist, even across restarts. Broadcasts made to\nspecific cycle points will expire when the cycle point is older\nthan the oldest active cycle point in the workflow.\n\nActive broadcasts can be revoked using the \"clear\" mode.\nAny broadcasts matching the specified cycle points and\nnamespaces will be revoked.\n\nNote: a \"clear\" broadcast for a specific cycle or namespace does\n*not* clear all-cycle or all-namespace broadcasts.",
+              "description": "Override `[runtime]` configurations in a running workflow.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can set/override any `[runtime]` configuration for all\ncycles or for a specific cycle. If a task is affected by\nspecific-cycle and all-cycle broadcasts at the same time, the\nspecific takes precedence.\n\nBroadcasts can also target all tasks, specific tasks or families of\ntasks. If a task is affected by broadcasts to multiple ancestor\nnamespaces (tasks it inherits from), the result is determined by\nnormal `[runtime]` inheritance.\n\nBroadcasts are applied at the time of job submission.\n\nBroadcasts persist, even across restarts. Broadcasts made to\nspecific cycle points will expire when the cycle point is older\nthan the oldest active cycle point in the workflow.\n\nActive broadcasts can be revoked using the \"clear\" mode.\nAny broadcasts matching the specified cycle points and\nnamespaces will be revoked.\n\nNote: a \"clear\" broadcast for a specific cycle or namespace does\n*not* clear all-cycle or all-namespace broadcasts.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "cutoff",
@@ -11337,7 +12768,7 @@
             },
             {
               "name": "extTrigger",
-              "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".",
+              "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "id",
@@ -11408,7 +12839,7 @@
             },
             {
               "name": "message",
-              "description": "Record task messages.\n\nSend messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nJobs use this to record and report status such\nas success and failure. Applications run by jobs can use\nthis command to report messages and to report registered task\noutputs.",
+              "description": "Record task messages.\n\nSend messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nJobs use this to record and report status such\nas success and failure. Applications run by jobs can use\nthis command to report messages and to report registered task\noutputs.\n\nValid for: paused, running, stopping workflows.",
               "args": [
                 {
                   "name": "eventTime",
@@ -11496,7 +12927,7 @@
             },
             {
               "name": "pause",
-              "description": "Pause a workflow.\n\nThis suspends submission of tasks.",
+              "description": "Pause a workflow.\nThis suspends submission of tasks.\n\nValid for: running workflows.",
               "args": [
                 {
                   "name": "workflows",
@@ -11533,7 +12964,7 @@
             },
             {
               "name": "reload",
-              "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
+              "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "workflows",
@@ -11570,7 +13001,7 @@
             },
             {
               "name": "resume",
-              "description": "Resume a paused workflow.\n\nSee also the opposite command `pause`.",
+              "description": "Resume a paused workflow.\nSee also the opposite command `pause`.\n\nValid for: paused workflows.",
               "args": [
                 {
                   "name": "workflows",
@@ -11607,7 +13038,7 @@
             },
             {
               "name": "setVerbosity",
-              "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged;\nfor example, if you choose `WARNING`, only warnings and critical\nmessages will be logged.",
+              "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged.\nFor example, if you choose `WARNING`, only warning, error and\ncritical level messages will be logged.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "level",
@@ -11661,7 +13092,7 @@
             },
             {
               "name": "setGraphWindowExtent",
-              "description": "Set the maximum graph distance (n) from an active node\nof the data-store graph window.",
+              "description": "Set the maximum graph distance (n) from an active node\nof the data-store graph window.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "nEdgeDistance",
@@ -11715,7 +13146,7 @@
             },
             {
               "name": "stop",
-              "description": "Tell a workflow to shut down or stop a specified\nflow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.\n\nTasks that become ready after the shutdown is ordered will be\nsubmitted immediately if the workflow is restarted.\nRemaining task event handlers, job poll and kill commands, will\nbe executed prior to shutdown, unless\nthe stop mode is `Now`.",
+              "description": "Tell a workflow to shut down or stop a specified\nflow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.\n\nTasks that become ready after the shutdown is ordered will be\nsubmitted immediately if the workflow is restarted.\nRemaining task event handlers, job poll and kill commands, will\nbe executed prior to shutdown, unless\nthe stop mode is `Now`.\n\nValid for: paused, running, stopping workflows.",
               "args": [
                 {
                   "name": "clockTime",
@@ -11812,7 +13243,7 @@
             },
             {
               "name": "setHoldPoint",
-              "description": "Set workflow hold after cycle point. All tasks after this point\nwill be held.",
+              "description": "Set workflow hold after cycle point. All tasks after this point\nwill be held.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "point",
@@ -11866,7 +13297,7 @@
             },
             {
               "name": "releaseHoldPoint",
-              "description": "Release all tasks and unset the workflow hold point, if set.\n\nHeld tasks do not submit their jobs even if ready to run.",
+              "description": "Release all tasks and unset the workflow hold point, if set.\n\nHeld tasks do not submit their jobs even if ready to run.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "workflows",
@@ -11903,7 +13334,7 @@
             },
             {
               "name": "hold",
-              "description": "Hold tasks within a workflow.\n\nHeld tasks do not submit their jobs even if ready to run.",
+              "description": "Hold tasks within a workflow.\n\nHeld tasks do not submit their jobs even if ready to run.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "tasks",
@@ -11962,7 +13393,7 @@
             },
             {
               "name": "kill",
-              "description": "Kill running or submitted jobs.",
+              "description": "Kill running or submitted jobs.\n\nValid for: paused, running, stopping workflows.",
               "args": [
                 {
                   "name": "tasks",
@@ -12021,7 +13452,7 @@
             },
             {
               "name": "poll",
-              "description": "Poll (query) jobs to verify and update their statuses.\n\nThis checks the job status file and queries the\njob runner on the job platform.\n\nPollable tasks are those in the n=0 window with\nan associated job ID, including incomplete finished\ntasks.",
+              "description": "Poll (query) jobs to verify and update their statuses.\n\nThis checks the job status file and queries the\njob runner on the job platform.\n\nPollable tasks are those in the n=0 window with\nan associated job ID, including incomplete finished\ntasks.\n\nValid for: paused, running, stopping workflows.",
               "args": [
                 {
                   "name": "tasks",
@@ -12080,7 +13511,7 @@
             },
             {
               "name": "release",
-              "description": "Release held tasks within a workflow.\n\nSee also the opposite command `hold`.",
+              "description": "Release held tasks within a workflow.\n\nSee also the opposite command `hold`.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "tasks",
@@ -12139,7 +13570,7 @@
             },
             {
               "name": "remove",
-              "description": "Remove one or more task instances from a running workflow.",
+              "description": "Remove one or more task instances from a running workflow.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "tasks",
@@ -12197,15 +13628,37 @@
               "__typename": "__Field"
             },
             {
-              "name": "setOutputs",
-              "description": "Artificially mark task outputs as completed.\n\nThis allows you to manually intervene with Cylc's scheduling\nalgorithm by artificially satisfying outputs of tasks.\n\nBy default this makes tasks appear as if they succeeded.",
+              "name": "set",
+              "description": "Set task prerequisites or outputs.\n\nBy default, set all required outputs for target task(s).\n\nSetting prerequisites contributes to the task's readiness to run.\n\nSetting outputs contributes to the task's completion, sets the\ncorresponding prerequisites of child tasks, and sets any implied\noutputs:\n - ``started`` implies ``submitted``.\n - ``succeeded`` and ``failed`` imply ``started``.\n - custom outputs and ``expired`` do not imply any other outputs.\n\nValid for: paused, running, stopping workflows.",
               "args": [
                 {
-                  "name": "flowNum",
-                  "description": null,
+                  "name": "flow",
+                  "description": "The flow(s) to trigger these tasks in.\n\nThis should be a list of flow numbers OR a single-item list\ncontaining one of the following three strings:\n\n* all - Triggered tasks belong to all active flows\n  (default).\n* new - Triggered tasks are assigned to a new flow.\n* none - Triggered tasks do not belong to any flow.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "Flow",
+                        "ofType": null,
+                        "__typename": "__Type"
+                      },
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[\"all\"]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "flowDescr",
+                  "description": "If starting a new flow, this field can be used to provide the\nnew flow with a description for later reference.",
                   "type": {
                     "kind": "SCALAR",
-                    "name": "Int",
+                    "name": "String",
                     "ofType": null,
                     "__typename": "__Type"
                   },
@@ -12213,20 +13666,49 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "flowWait",
+                  "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduler to\n\"continue on\" from this task until the flow has caught up\nwith it.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "outputs",
-                  "description": "List of task outputs to satisfy.",
+                  "description": "List of task outputs to set complete.",
                   "type": {
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "String",
+                      "name": "OutputLabel",
                       "ofType": null,
                       "__typename": "__Type"
                     },
                     "__typename": "__Type"
                   },
-                  "defaultValue": "[\"succeeded\"]",
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "prerequisites",
+                  "description": "List of task prerequisites to set satisfied.",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "PrerequisiteString",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
                   "__typename": "__InputValue"
                 },
                 {
@@ -12276,7 +13758,7 @@
               ],
               "type": {
                 "kind": "OBJECT",
-                "name": "SetOutputs",
+                "name": "SetPrereqsAndOutputs",
                 "ofType": null,
                 "__typename": "__Type"
               },
@@ -12286,7 +13768,7 @@
             },
             {
               "name": "trigger",
-              "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).",
+              "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "flow",
@@ -12324,7 +13806,7 @@
                 },
                 {
                   "name": "flowWait",
-                  "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduled to\n\"continue on\" from this task until the flow has caught up\nwith it.",
+                  "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduler to\n\"continue on\" from this task until the flow has caught up\nwith it.",
                   "type": {
                     "kind": "SCALAR",
                     "name": "Boolean",
@@ -12391,7 +13873,7 @@
             },
             {
               "name": "play",
-              "description": "Start, resume or restart a workflow run.",
+              "description": "Start, resume or restart a workflow run.\n\nValid for: stopped workflows.",
               "args": [
                 {
                   "name": "abortIfAnyTaskFails",
@@ -12584,6 +14066,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "upgrade",
+                  "description": "Allow the workflow to be restarted with a newer\nversion of Cylc.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "workflows",
                   "description": null,
                   "type": {
@@ -12618,7 +14112,7 @@
             },
             {
               "name": "clean",
-              "description": "Clean a workflow from the run directory.",
+              "description": "Clean a workflow from the run directory.\n\nValid for: stopped workflows.",
               "args": [
                 {
                   "name": "localOnly",
@@ -12688,6 +14182,20 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
+            },
+            {
+              "name": "scan",
+              "description": "Scan the filesystem for file changes.\n\nValid for: stopped workflows.",
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Scan",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -12699,7 +14207,7 @@
         {
           "kind": "OBJECT",
           "name": "Broadcast",
-          "description": "Override `[runtime]` configurations in a running workflow.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can set/override any `[runtime]` configuration for all\ncycles or for a specific cycle. If a task is affected by\nspecific-cycle and all-cycle broadcasts at the same time, the\nspecific takes precedence.\n\nBroadcasts can also target all tasks, specific tasks or families of\ntasks. If a task is affected by broadcasts to multiple ancestor\nnamespaces (tasks it inherits from), the result is determined by\nnormal `[runtime]` inheritance.\n\nBroadcasts are applied at the time of job submission.\n\nBroadcasts persist, even across restarts. Broadcasts made to\nspecific cycle points will expire when the cycle point is older\nthan the oldest active cycle point in the workflow.\n\nActive broadcasts can be revoked using the \"clear\" mode.\nAny broadcasts matching the specified cycle points and\nnamespaces will be revoked.\n\nNote: a \"clear\" broadcast for a specific cycle or namespace does\n*not* clear all-cycle or all-namespace broadcasts.",
+          "description": "Override `[runtime]` configurations in a running workflow.\n\nUses for broadcast include making temporary changes to task\nbehaviour, and task-to-downstream-task communication via\nenvironment variables.\n\nA broadcast can set/override any `[runtime]` configuration for all\ncycles or for a specific cycle. If a task is affected by\nspecific-cycle and all-cycle broadcasts at the same time, the\nspecific takes precedence.\n\nBroadcasts can also target all tasks, specific tasks or families of\ntasks. If a task is affected by broadcasts to multiple ancestor\nnamespaces (tasks it inherits from), the result is determined by\nnormal `[runtime]` inheritance.\n\nBroadcasts are applied at the time of job submission.\n\nBroadcasts persist, even across restarts. Broadcasts made to\nspecific cycle points will expire when the cycle point is older\nthan the oldest active cycle point in the workflow.\n\nActive broadcasts can be revoked using the \"clear\" mode.\nAny broadcasts matching the specified cycle points and\nnamespaces will be revoked.\n\nNote: a \"clear\" broadcast for a specific cycle or namespace does\n*not* clear all-cycle or all-namespace broadcasts.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -12813,7 +14321,7 @@
         {
           "kind": "OBJECT",
           "name": "ExtTrigger",
-          "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".",
+          "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -12839,7 +14347,7 @@
         {
           "kind": "OBJECT",
           "name": "Message",
-          "description": "Record task messages.\n\nSend messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nJobs use this to record and report status such\nas success and failure. Applications run by jobs can use\nthis command to report messages and to report registered task\noutputs.",
+          "description": "Record task messages.\n\nSend messages to:\n- The job stdout/stderr.\n- The job status file, if there is one.\n- The scheduler, if communication is possible.\n\nJobs use this to record and report status such\nas success and failure. Applications run by jobs can use\nthis command to report messages and to report registered task\noutputs.\n\nValid for: paused, running, stopping workflows.",
           "fields": [
             {
               "name": "result",
@@ -12865,7 +14373,7 @@
         {
           "kind": "OBJECT",
           "name": "Pause",
-          "description": "Pause a workflow.\n\nThis suspends submission of tasks.",
+          "description": "Pause a workflow.\nThis suspends submission of tasks.\n\nValid for: running workflows.",
           "fields": [
             {
               "name": "result",
@@ -12891,7 +14399,7 @@
         {
           "kind": "OBJECT",
           "name": "Reload",
-          "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.",
+          "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -12917,7 +14425,7 @@
         {
           "kind": "OBJECT",
           "name": "Resume",
-          "description": "Resume a paused workflow.\n\nSee also the opposite command `pause`.",
+          "description": "Resume a paused workflow.\nSee also the opposite command `pause`.\n\nValid for: paused workflows.",
           "fields": [
             {
               "name": "result",
@@ -12943,7 +14451,7 @@
         {
           "kind": "OBJECT",
           "name": "SetVerbosity",
-          "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged;\nfor example, if you choose `WARNING`, only warnings and critical\nmessages will be logged.",
+          "description": "Change the logging severity level of a running workflow.\n\nOnly messages at or above the chosen severity level will be logged.\nFor example, if you choose `WARNING`, only warning, error and\ncritical level messages will be logged.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -12975,57 +14483,43 @@
           "interfaces": null,
           "enumValues": [
             {
-              "name": "CRITICAL",
-              "description": "Python logging level: CRITICAL = 50.",
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__EnumValue"
-            },
-            {
-              "name": "FATAL",
-              "description": "Python logging level: CRITICAL = 50.",
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__EnumValue"
-            },
-            {
-              "name": "ERROR",
-              "description": "Python logging level: ERROR = 40.",
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__EnumValue"
-            },
-            {
-              "name": "WARN",
-              "description": "Python logging level: WARN = 30.",
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__EnumValue"
-            },
-            {
-              "name": "WARNING",
-              "description": "Python logging level: WARN = 30.",
+              "name": "DEBUG",
+              "description": "Logging level: DEBUG = 10.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
             },
             {
               "name": "INFO",
-              "description": "Python logging level: INFO = 20.",
+              "description": "Logging level: INFO = 20.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
             },
             {
-              "name": "DEBUG",
-              "description": "Python logging level: DEBUG = 10.",
+              "name": "NORMAL",
+              "description": "Logging level: INFO = 20.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
             },
             {
-              "name": "NOTSET",
-              "description": "Python logging level: NOTSET = 0.",
+              "name": "WARNING",
+              "description": "Logging level: WARNING = 30.",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            },
+            {
+              "name": "ERROR",
+              "description": "Logging level: ERROR = 40.",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            },
+            {
+              "name": "CRITICAL",
+              "description": "Logging level: CRITICAL = 50.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
@@ -13037,7 +14531,7 @@
         {
           "kind": "OBJECT",
           "name": "SetGraphWindowExtent",
-          "description": "Set the maximum graph distance (n) from an active node\nof the data-store graph window.",
+          "description": "Set the maximum graph distance (n) from an active node\nof the data-store graph window.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -13063,7 +14557,7 @@
         {
           "kind": "OBJECT",
           "name": "Stop",
-          "description": "Tell a workflow to shut down or stop a specified\nflow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.\n\nTasks that become ready after the shutdown is ordered will be\nsubmitted immediately if the workflow is restarted.\nRemaining task event handlers, job poll and kill commands, will\nbe executed prior to shutdown, unless\nthe stop mode is `Now`.",
+          "description": "Tell a workflow to shut down or stop a specified\nflow from spawning any further.\n\nBy default stopping workflows wait for submitted and running tasks\nto complete before shutting down. You can change this behaviour\nwith the \"mode\" option.\n\nTasks that become ready after the shutdown is ordered will be\nsubmitted immediately if the workflow is restarted.\nRemaining task event handlers, job poll and kill commands, will\nbe executed prior to shutdown, unless\nthe stop mode is `Now`.\n\nValid for: paused, running, stopping workflows.",
           "fields": [
             {
               "name": "result",
@@ -13151,7 +14645,7 @@
         {
           "kind": "OBJECT",
           "name": "SetHoldPoint",
-          "description": "Set workflow hold after cycle point. All tasks after this point\nwill be held.",
+          "description": "Set workflow hold after cycle point. All tasks after this point\nwill be held.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -13177,7 +14671,7 @@
         {
           "kind": "OBJECT",
           "name": "ReleaseHoldPoint",
-          "description": "Release all tasks and unset the workflow hold point, if set.\n\nHeld tasks do not submit their jobs even if ready to run.",
+          "description": "Release all tasks and unset the workflow hold point, if set.\n\nHeld tasks do not submit their jobs even if ready to run.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -13203,7 +14697,7 @@
         {
           "kind": "OBJECT",
           "name": "Hold",
-          "description": "Hold tasks within a workflow.\n\nHeld tasks do not submit their jobs even if ready to run.",
+          "description": "Hold tasks within a workflow.\n\nHeld tasks do not submit their jobs even if ready to run.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -13240,7 +14734,7 @@
         {
           "kind": "OBJECT",
           "name": "Kill",
-          "description": "Kill running or submitted jobs.",
+          "description": "Kill running or submitted jobs.\n\nValid for: paused, running, stopping workflows.",
           "fields": [
             {
               "name": "result",
@@ -13266,7 +14760,7 @@
         {
           "kind": "OBJECT",
           "name": "Poll",
-          "description": "Poll (query) jobs to verify and update their statuses.\n\nThis checks the job status file and queries the\njob runner on the job platform.\n\nPollable tasks are those in the n=0 window with\nan associated job ID, including incomplete finished\ntasks.",
+          "description": "Poll (query) jobs to verify and update their statuses.\n\nThis checks the job status file and queries the\njob runner on the job platform.\n\nPollable tasks are those in the n=0 window with\nan associated job ID, including incomplete finished\ntasks.\n\nValid for: paused, running, stopping workflows.",
           "fields": [
             {
               "name": "result",
@@ -13292,7 +14786,7 @@
         {
           "kind": "OBJECT",
           "name": "Release",
-          "description": "Release held tasks within a workflow.\n\nSee also the opposite command `hold`.",
+          "description": "Release held tasks within a workflow.\n\nSee also the opposite command `hold`.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -13318,7 +14812,7 @@
         {
           "kind": "OBJECT",
           "name": "Remove",
-          "description": "Remove one or more task instances from a running workflow.",
+          "description": "Remove one or more task instances from a running workflow.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -13343,34 +14837,8 @@
         },
         {
           "kind": "OBJECT",
-          "name": "SetOutputs",
-          "description": "Artificially mark task outputs as completed.\n\nThis allows you to manually intervene with Cylc's scheduling\nalgorithm by artificially satisfying outputs of tasks.\n\nBy default this makes tasks appear as if they succeeded.",
-          "fields": [
-            {
-              "name": "result",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
-          "kind": "OBJECT",
-          "name": "Trigger",
-          "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).",
+          "name": "SetPrereqsAndOutputs",
+          "description": "Set task prerequisites or outputs.\n\nBy default, set all required outputs for target task(s).\n\nSetting prerequisites contributes to the task's readiness to run.\n\nSetting outputs contributes to the task's completion, sets the\ncorresponding prerequisites of child tasks, and sets any implied\noutputs:\n - ``started`` implies ``submitted``.\n - ``succeeded`` and ``failed`` imply ``started``.\n - custom outputs and ``expired`` do not imply any other outputs.\n\nValid for: paused, running, stopping workflows.",
           "fields": [
             {
               "name": "result",
@@ -13405,9 +14873,57 @@
           "__typename": "__Type"
         },
         {
+          "kind": "SCALAR",
+          "name": "OutputLabel",
+          "description": "Task output, e.g. \"succeeded\".",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "SCALAR",
+          "name": "PrerequisiteString",
+          "description": "A task prerequisite, e.g. \"2040/foo:succeeded\".",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Trigger",
+          "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).\n\nValid for: paused, running workflows.",
+          "fields": [
+            {
+              "name": "result",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
           "kind": "OBJECT",
           "name": "Play",
-          "description": "Start, resume or restart a workflow run.",
+          "description": "Start, resume or restart a workflow run.\n\nValid for: stopped workflows.",
           "fields": [
             {
               "name": "result",
@@ -13484,7 +15000,7 @@
         {
           "kind": "OBJECT",
           "name": "Clean",
-          "description": "Clean a workflow from the run directory.",
+          "description": "Clean a workflow from the run directory.\n\nValid for: stopped workflows.",
           "fields": [
             {
               "name": "result",
@@ -13509,8 +15025,34 @@
         },
         {
           "kind": "OBJECT",
-          "name": "Subscriptions",
-          "description": "Multi-Workflow root level subscriptions.",
+          "name": "Scan",
+          "description": "Scan the filesystem for file changes.\n\nValid for: stopped workflows.",
+          "fields": [
+            {
+              "name": "result",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "UISSubscriptions",
+          "description": null,
           "fields": [
             {
               "name": "deltas",
@@ -13982,7 +15524,7 @@
             },
             {
               "name": "task",
-              "description": "Task definition, static fields",
+              "description": "Task definitions.\n\nThese are the task \"definitions\" as they appear in the\nconfiguration as opposed to task \"instances\" which you will find\nin the `TaskProxies` field.",
               "args": [
                 {
                   "name": "id",
@@ -14074,7 +15616,7 @@
             },
             {
               "name": "tasks",
-              "description": "Task definition, static fields",
+              "description": "Task definitions.\n\nThese are the task \"definitions\" as they appear in the\nconfiguration as opposed to task \"instances\" which you will find\nin the `TaskProxies` field.",
               "args": [
                 {
                   "name": "workflows",
@@ -14504,6 +16046,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -15137,6 +16691,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -15610,6 +17176,50 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
+            },
+            {
+              "name": "logs",
+              "description": "Workflow & job logs",
+              "args": [
+                {
+                  "name": "id",
+                  "description": "workflow//[cycle/task[/job]]",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "file",
+                  "description": "File name of job log to fetch, e.g. job.out",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": null,
+                  "__typename": "__InputValue"
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Logs",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -15992,6 +17602,18 @@
                 },
                 {
                   "name": "maxdepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "graphDepth",
                   "description": null,
                   "type": {
                     "kind": "SCALAR",
@@ -16461,6 +18083,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -16594,30 +18228,6 @@
                     "__typename": "__Type"
                   },
                   "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
                   "__typename": "__InputValue"
                 },
                 {
@@ -17013,6 +18623,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -17471,6 +19093,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -17604,30 +19238,6 @@
                     "__typename": "__Type"
                   },
                   "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
                   "__typename": "__InputValue"
                 },
                 {
@@ -18029,6 +19639,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -18487,6 +20109,18 @@
                   "__typename": "__InputValue"
                 },
                 {
+                  "name": "graphDepth",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "-1",
+                  "__typename": "__InputValue"
+                },
+                {
                   "name": "sort",
                   "description": null,
                   "type": {
@@ -18620,30 +20254,6 @@
                     "__typename": "__Type"
                   },
                   "defaultValue": "[]",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "mindepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "maxdepth",
-                  "description": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "-1",
                   "__typename": "__InputValue"
                 },
                 {
@@ -18902,6 +20512,79 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "Logs",
+          "description": null,
+          "fields": [
+            {
+              "name": "lines",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "connected",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "path",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "error",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
                 "__typename": "__Type"
               },
               "isDeprecated": false,
@@ -19900,9 +21583,66 @@
           "__typename": "__Type"
         }
       ],
-      "__typename": "__Schema"
+      "directives": [
+        {
+          "name": "include",
+          "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
+          "locations": [
+            "FIELD",
+            "FRAGMENT_SPREAD",
+            "INLINE_FRAGMENT"
+          ],
+          "args": [
+            {
+              "name": "if",
+              "description": "Included when true.",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "defaultValue": null,
+              "__typename": "__InputValue"
+            }
+          ],
+          "__typename": "__Directive"
+        },
+        {
+          "name": "skip",
+          "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
+          "locations": [
+            "FIELD",
+            "FRAGMENT_SPREAD",
+            "INLINE_FRAGMENT"
+          ],
+          "args": [
+            {
+              "name": "if",
+              "description": "Skipped when true.",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "defaultValue": null,
+              "__typename": "__InputValue"
+            }
+          ],
+          "__typename": "__Directive"
+        }
+      ]
     }
-  },
-  "loading": false,
-  "networkStatus": 7
+  }
 }

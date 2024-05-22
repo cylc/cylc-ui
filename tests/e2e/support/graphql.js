@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const MUTATIONS = [
+import userprofile from '@/services/mock/json/userprofile.json'
+
+export function patchUserprofile () {
+  cy.intercept('/userprofile', {
+    body: {
+      ...userprofile,
+      permissions: [
+        ...userprofile.permissions,
+        'workflowMutation',
+        'cycleMutation',
+        'jobMutation',
+        'namespaceMutation',
+      ],
+    }
+  })
+}
+
+export const MUTATIONS = [
   {
     name: 'workflowMutation',
     description: `
@@ -115,7 +132,3 @@ const MUTATIONS = [
     ]
   }
 ]
-
-export {
-  MUTATIONS
-}

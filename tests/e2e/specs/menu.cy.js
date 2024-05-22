@@ -16,7 +16,7 @@
  */
 
 describe('Command Menu component', () => {
-  const collapsedWorkflowMenuLength = 8 // (7 mutations + "show more" btn)
+  const collapsedWorkflowMenuLength = 5 // (mutations + "show more" btn)
   const expandedWorkflowMenuLength = 22
 
   beforeEach(() => {
