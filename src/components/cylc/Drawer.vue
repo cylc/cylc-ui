@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-list
         class="pa-0 d-flex flex-column"
       >
-        <c-header :user="user.username" />
+        <c-header />
 
         <v-list-item
           to="/"
@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import Header from '@/components/cylc/Header.vue'
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations } from 'vuex'
 import Workflows from '@/views/Workflows.vue'
 import { mdiHome, mdiGraphql } from '@mdi/js'
 import pkg from '@/../package.json'
@@ -94,7 +94,6 @@ export default {
   },
 
   computed: {
-    ...mapState('user', ['user']),
     drawer: {
       get () {
         return this.$store.state.app.drawer
