@@ -20,7 +20,7 @@ import { createStore } from 'vuex'
 import { createVuetify } from 'vuetify'
 import storeOptions from '@/store/options'
 import GScan from '@/components/cylc/gscan/GScan.vue'
-import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import {
   WorkflowState,
   WorkflowStateOrder
@@ -104,7 +104,7 @@ describe('GScan component', () => {
   describe('Filters', () => {
     const mountFunction = (options) => mount(GScan, {
       global: {
-        plugins: [vuetify, CylcObjectPlugin],
+        plugins: [vuetify, CommandMenuPlugin],
       },
       props: {
         workflowTree: TEST_TREE,

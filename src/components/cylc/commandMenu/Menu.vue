@@ -18,27 +18,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div>
     <!-- dropdown menu -->
-    <component :is="menuTransition" :target="target">
-      <v-card
-        ref="menuContent"
-        v-if="node"
-        v-show="showMenu"
-        @show-mutations-menu="showMutationsMenu"
-        :key="node.id"
-        v-click-outside="{ handler: onClickOutside, closeConditional: () => !dialog }"
-        class="c-mutation-menu elevation-10 overflow-y-auto"
-        max-height="90vh"
-        width="max-content"
-        max-width="min(600px, 100%)"
-        theme="dark"
-        position="absolute"
-        :style="{
-          left: `${x}px`,
-          top: `${y}px`,
-          // Set transition origin relative to clicked target:
-          '--v-overlay-anchor-origin': 'bottom right',
-        }"
-      >
+    <v-menu
+      v-if="node"
+      :key="target.dataset.cInteractive"
+      v-model="showMenu"
+      :target="target"
+      :close-on-content-click="false"
+      content-class="c-mutation-menu"
+      max-width="600px"
+      theme="dark"
+    >
+      <v-card>
         <v-card-title class="pb-1 pt-3">
           {{ node.id }}
         </v-card-title>
@@ -89,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-list-item v-if="canExpand">
             <v-btn
               id="less-more-button"
-              @click="expandCollapse"
+              @click="() => expanded = !expanded"
               block
               variant="tonal"
             >
@@ -98,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
         </v-list>
       </v-card>
-    </component>
+    </v-menu>
     <v-dialog
       v-if="dialogMutation"
       v-model="dialog"
@@ -111,7 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :cylcObject="node"
         :initialData="initialData(dialogMutation, node.tokens)"
         @close="() => dialog = false"
-        @success="closeMenu"
+        @success="() => showMenu = false"
         :types="types"
         :key="dialogKey /* Enables re-render of component each time dialog opened */"
         ref="mutationComponent"
@@ -121,23 +111,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { computed, nextTick } from 'vue'
+import { nextTick } from 'vue'
 import {
   filterAssociations,
   getMutationArgsFromTokens,
   mutate
 } from '@/utils/aotf'
-import { useReducedAnimation } from '@/composables/localStorage'
 import Mutation from '@/components/cylc/Mutation.vue'
 import {
   mdiPencil
 } from '@mdi/js'
 import { mapGetters, mapState } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
-import { VDialogTransition } from 'vuetify/components/transitions'
 
 export default {
-  name: 'CylcObjectMenu',
+  name: 'CommandMenu',
 
   components: {
     Mutation
@@ -148,15 +136,6 @@ export default {
       type: Boolean,
       required: false,
       default: true
-    }
-  },
-
-  setup () {
-    const reducedAnimation = useReducedAnimation()
-    return {
-      menuTransition: computed(
-        () => reducedAnimation.value ? 'slot' : VDialogTransition
-      ),
     }
   },
 
@@ -171,20 +150,16 @@ export default {
       isLoadingMutations: true,
       showMenu: false,
       types: [],
-      x: 0,
-      y: 0,
       target: null,
     }
   },
 
   mounted () {
     this.$eventBus.on('show-mutations-menu', this.showMutationsMenu)
-    document.addEventListener('keydown', this.onKeydown)
   },
 
   beforeUnmount () {
     this.$eventBus.off('show-mutations-menu', this.showMutationsMenu)
-    document.removeEventListener('keydown', this.onKeydown)
   },
 
   computed: {
@@ -268,66 +243,6 @@ export default {
       this.dialogKey = !this.dialogKey
     },
 
-    closeMenu () {
-      this.showMenu = false
-      this.expanded = false
-    },
-
-    /**
-     * Handler for clicking outside menu (close it).
-     *
-     * We override vuetify default handling because we don't want to
-     * close when clicking on another cylc object.
-     *
-     * @param {Event} e - the click event
-     */
-    onClickOutside (e) {
-      this.closeMenu()
-
-      // check if the thing being clicked on is a child of the thing that the
-      // menu is open for
-      let target = e.target
-      while (target) {
-        if (target?.getAttribute('data-c-interactive')) {
-          // keep the menu open
-          this.showMenu = true
-          break
-        }
-        target = target.parentElement
-      }
-    },
-
-    onKeydown (e) {
-      if (!this.dialog && e.key === 'Escape') {
-        this.closeMenu()
-      }
-    },
-
-    expandCollapse () {
-      this.expanded = !this.expanded
-      this.reposition()
-    },
-
-    /**
-     * Place the menu in a way that prevents it overflowing off screen and
-     * so it takes up the full width as needed on narrow viewports.
-     *
-     * @param {number} x - preferred x coordinate
-     * @param {number} y - preferred y coordinate
-     */
-    reposition (x = null, y = null) {
-      x ??= this.x
-      y ??= this.y
-      nextTick(() => {
-        this.x = x + this.$refs.menuContent.$el.clientWidth > document.body.clientWidth
-          ? document.body.clientWidth - this.$refs.menuContent.$el.clientWidth
-          : x
-        this.y = y + this.$refs.menuContent.$el.clientHeight > document.body.clientHeight
-          ? document.body.clientHeight - this.$refs.menuContent.$el.clientHeight - 5
-          : y
-      })
-    },
-
     /* Call a mutation using only the tokens for args. */
     callMutationFromContext (mutation) {
       this.showMenu = false
@@ -362,32 +277,32 @@ export default {
       }
     },
 
-    showMutationsMenu ({ node, event }) {
-      this.target = event.target
+    async showMutationsMenu ({ node, target }) {
+      this.target = target
       this.node = node
+      this.expanded = false
+      // show the menu after it's rendered to ensure animation works properly
+      await nextTick()
       this.showMenu = true
-      this.reposition(event.clientX, event.clientY)
-      // await graphql query to get mutations
-      this.$workflowService.introspection.then(({ mutations, types }) => {
-        // if mutations are slow to load then there will be a delay before they are reactively
-        // displayed in the menu (this is what the skeleton-loader is for)
-        this.isLoadingMutations = false
-        this.types = types
-        let type = this.node.type
-        if (type === 'family') {
-          // show the same mutation list for families as for tasks
-          type = 'task'
-        }
-        this.mutations = filterAssociations(
-          type,
-          this.node.tokens,
-          mutations,
-          this.user.permissions
-        ).sort(
-          (a, b) => a.mutation.name.localeCompare(b.mutation.name)
-        )
-        this.reposition(event.clientX, event.clientY)
-      })
+      // ensure graphql query to get mutations has completed
+      const { mutations, types } = await this.$workflowService.introspection
+      // if mutations are slow to load then there will be a delay before they are reactively
+      // displayed in the menu (this is what the skeleton-loader is for)
+      this.isLoadingMutations = false
+      this.types = types
+      let type = this.node.type
+      if (type === 'family') {
+        // show the same mutation list for families as for tasks
+        type = 'task'
+      }
+      this.mutations = filterAssociations(
+        type,
+        this.node.tokens,
+        mutations,
+        this.user.permissions
+      ).sort(
+        (a, b) => a.mutation.name.localeCompare(b.mutation.name)
+      )
     },
 
     initialData (mutation, tokens) {

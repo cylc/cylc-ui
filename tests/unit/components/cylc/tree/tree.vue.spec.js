@@ -22,14 +22,14 @@ import { createVuetify } from 'vuetify'
 import { cloneDeep } from 'lodash'
 import Tree from '@/components/cylc/tree/Tree.vue'
 import { simpleWorkflowTree4Nodes } from './tree.data'
-import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 
 const vuetify = createVuetify()
 
 describe('Tree component', () => {
   const mountFunction = (props) => mount(Tree, {
     global: {
-      plugins: [vuetify, CylcObjectPlugin],
+      plugins: [vuetify, CommandMenuPlugin],
     },
     props: {
       workflows: cloneDeep(simpleWorkflowTree4Nodes),

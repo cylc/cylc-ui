@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <div class="d-flex align-content-center flex-nowrap">
         <div style="width: 2em;">
           <Task
-            v-cylc-object="item.task"
+            v-command-menu="item.task"
             :task="item.task.node"
             :startTime="item.latestJob?.node?.startedTime"
           />
@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div style="width: 2em;">
           <Job
             v-if="item.latestJob"
-            v-cylc-object="item.latestJob"
+            v-command-menu="item.latestJob"
             :status="item.latestJob.node.state"
             :previous-state="item.previousJob?.node?.state"
           />
@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div class="d-flex align-content-center flex-nowrap">
             <div class="d-flex" style="margin-left: 2em;">
               <Job
-                v-cylc-object="job"
+                v-command-menu="job"
                 :key="`${job.id}-summary-${index}`"
                 :status="job.node.state"
               />

@@ -45,10 +45,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-if="node.type === 'cycle'">
             <!-- NOTE: cycle point nodes don't have any data associated with them
               at present so we must use the root family node for the task icon.
-              We don't use this for the v-cylc-object as that would set the node
+              We don't use this for the v-command-menu as that would set the node
               type to family. -->
             <Task
-              v-cylc-object="node"
+              v-command-menu="node"
               v-if="node.familyTree?.length"
               :key="node.id"
               :task="node.familyTree[0].node"
@@ -57,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </template>
           <template v-else-if="node.type === 'family'">
             <Task
-              v-cylc-object="node"
+              v-command-menu="node"
               :key="node.id"
               :task="node.node"
             />
@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <template v-else-if="node.type === 'task'">
             <!-- Task summary -->
             <Task
-              v-cylc-object="node"
+              v-command-menu="node"
               :key="node.id"
               :task="node.node"
               :startTime="latestJob(node)?.startedTime"
@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <!-- most recent job summary -->
               <Job
                 v-for="(job, index) in node.children.slice(0, 1)"
-                v-cylc-object="job"
+                v-command-menu="job"
                 :key="`${job.id}-summary-${index}`"
                 :status="job.node.state"
                 :previous-state="node.children.length > 1 ? node.children[1].node.state : ''"
@@ -88,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </template>
           <template v-else-if="node.type === 'job'">
             <Job
-              v-cylc-object="node"
+              v-command-menu="node"
               :key="node.id"
               :status="node.node.state"
             />

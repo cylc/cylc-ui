@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <td width="1em">
                 <WorkflowIcon
                   :status="item.node.status"
-                  v-cylc-object="item"
+                  v-command-menu="item"
                 />
               </td>
               <td>
