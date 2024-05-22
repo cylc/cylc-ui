@@ -29,9 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="overflow-auto"
         :style="coreViewStyle"
       >
-        <v-fade-transition mode="out-in">
-          <slot/>
-        </v-fade-transition>
+        <slot/>
       </div>
     </v-main>
   </div>
