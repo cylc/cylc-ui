@@ -33,16 +33,6 @@ const state = () => ({
     $index: {},
     children: []
   },
-  /**
-   * This holds the name of the current workflow. This is set by VueRouter
-   * and is used to decide what's the current workflow. It is used in conjunction
-   * with the workflows/workflows (above) when finding the current workflow and
-   * using it, for instance, to create the GraphQL variables of a workflow
-   * view (see mixins used in the Tree View).
-   *
-   * @type {String}
-   */
-  workflowName: null
 })
 
 const getters = {
@@ -475,10 +465,6 @@ function remove (state, prunedID) {
 }
 
 const mutations = {
-  // the old callback methods
-  SET_WORKFLOW_NAME (state, data) {
-    state.workflowName = data
-  },
   // the new cylc tree methods
   CREATE: createTree,
   UPDATE: update,

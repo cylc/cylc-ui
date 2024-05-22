@@ -90,15 +90,12 @@ router.beforeEach(async (to, from) => {
 
   // Set toolbar title:
   let title = to.name
-  let workflowName = null
   if (to.meta.toolbar) {
     // When a workflow is being displayed, we set the title to a
     // different value.
     title = to.params.workflowName
-    workflowName = to.params.workflowName
   }
   store.commit('app/setTitle', title)
-  store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
   store.dispatch('setAlert', null)
 })
 
