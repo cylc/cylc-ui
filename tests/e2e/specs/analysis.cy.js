@@ -20,14 +20,6 @@ import { clone } from 'lodash'
 
 const sortedTasks = analysisTaskQuery.data.tasks.map(({ name }) => name).sort()
 
-const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
-Cypress.on('uncaught:exception', (err) => {
-  /* returning false here prevents Cypress from failing the test */
-  if (resizeObserverLoopErrRe.test(err.message)) {
-    return false
-  }
-})
-
 describe('Analysis view', () => {
   const numTasks = sortedTasks.length
 

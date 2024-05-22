@@ -28,7 +28,7 @@ import {
   simpleCyclepointNode,
   simpleTaskNode
 } from './tree.data'
-import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import WorkflowService from '@/services/workflow.service'
 import { flattenWorkflowParts } from '@/components/cylc/gscan/sort'
 
@@ -60,7 +60,7 @@ const $workflowService = sinon.createStubInstance(WorkflowService)
 describe('TreeItem component', () => {
   const mountFunction = (options) => mount(TreeItem, {
     global: {
-      plugins: [createVuetify(), CylcObjectPlugin],
+      plugins: [createVuetify(), CommandMenuPlugin],
       mock: { $workflowService }
     },
     ...options
@@ -140,7 +140,7 @@ describe('TreeItem component', () => {
 describe('GScanTreeItem', () => {
   const mountFunction = (options) => mount(GScanTreeItem, {
     global: {
-      plugins: [createVuetify(), CylcObjectPlugin],
+      plugins: [createVuetify(), CommandMenuPlugin],
       mock: { $workflowService }
     },
     ...options

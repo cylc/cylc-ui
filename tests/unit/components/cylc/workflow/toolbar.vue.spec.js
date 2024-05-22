@@ -20,7 +20,7 @@ import { createStore } from 'vuex'
 import { mount } from '@vue/test-utils'
 import storeOptions from '@/store/options'
 import Toolbar from '@/components/cylc/workspace/Toolbar.vue'
-import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import sinon from 'sinon'
 import WorkflowService from '@/services/workflow.service'
 const $workflowService = sinon.createStubInstance(WorkflowService)
@@ -37,7 +37,7 @@ describe('Workspace toolbar component', () => {
     // TODO: actually just show nav btn at all times?
     const wrapper = mount(Toolbar, {
       global: {
-        plugins: [store, createVuetify(), CylcObjectPlugin],
+        plugins: [store, createVuetify(), CommandMenuPlugin],
         mocks: { $workflowService },
       },
       props: {

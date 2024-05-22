@@ -20,7 +20,7 @@ import { createApp } from 'vue'
 // Plugins
 import { vuetifyOptions } from '@/plugins/vuetify'
 import ServicesPlugin from '@/services/plugin'
-import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import Default from '@/layouts/Default.vue'
 import Empty from '@/layouts/Empty.vue'
 
@@ -58,7 +58,7 @@ if (location.search) {
   app.use(i18n)
   app.use(createHead())
   app.use(ServicesPlugin)
-  app.use(CylcObjectPlugin)
+  app.use(CommandMenuPlugin)
 
   app.component('default-layout', Default)
   app.component('empty-layout', Empty)

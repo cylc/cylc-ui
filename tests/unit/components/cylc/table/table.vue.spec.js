@@ -19,7 +19,7 @@ import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
 import { simpleTableTasks } from './table.data'
-import CylcObjectPlugin from '@/components/cylc/cylcObject/plugin'
+import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import Table from '@/components/cylc/table/Table.vue'
 import WorkflowService from '@/services/workflow.service'
 
@@ -34,7 +34,7 @@ describe('Table component', () => {
    */
   const mountFunction = (options) => mount(Table, {
     global: {
-      plugins: [vuetify, CylcObjectPlugin],
+      plugins: [vuetify, CommandMenuPlugin],
       mocks: {
         $workflowService
       }

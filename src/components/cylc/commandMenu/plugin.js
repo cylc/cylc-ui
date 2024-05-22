@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,21 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { uniqueId } from 'lodash-es'
 import { eventBus } from '@/services/eventBus'
 
-// reference to closure listeners (needed as we are using variables from another scope)
+/** Reference to closure listeners (needed as we are using variables from another scope) */
 const listeners = new WeakMap()
 
 function bind (el, binding, vnode) {
+  // Set data-c-interactive = <unique identifier> for every element that opens the menu.
+  // This allows the menu component to tell apart every activating element.
+  el.dataset.cInteractive = uniqueId()
   const listener = function (e) {
     e.stopPropagation() // prevents click event from bubbling up to parents
     eventBus.emit('show-mutations-menu', {
       node: binding.value,
-      event: e
+      target: el,
     })
   }
   el.addEventListener('click', listener)
-  el.dataset.cInteractive = true
   listeners.set(el, listener)
 }
 
@@ -57,7 +60,7 @@ export default {
    */
   install (app, options) {
     // add a global directive
-    app.directive('cylc-object', {
+    app.directive('command-menu', {
       beforeMount: bind,
       unmounted: unbind,
       updated

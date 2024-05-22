@@ -86,18 +86,19 @@ describe('User Profile', () => {
   })
 
   it('Sets reduced animations mode', () => {
-    let animationSpy
     const testMenu = (shouldAnimate) => {
-      cy.get('.c-mutation-menu:first')
-        .as('mutationMenu')
-        .should('not.be.visible')
+      let animationSpy
+      cy.get('[data-c-interactive]:first')
+        .click()
+        .get('.c-mutation-menu').as('mutationMenu')
+        .should('be.visible')
         .then(([$el]) => {
           animationSpy = cy.spy($el, 'animate')
         })
-        .get('[data-c-interactive]:first')
-        .click()
+        // Close menu:
+        .get('noscript').click({ force: true })
         .get('@mutationMenu')
-        .should('be.visible')
+        .should('not.exist')
         .then(() => {
           if (shouldAnimate) {
             expect(animationSpy).to.be.called
@@ -105,35 +106,20 @@ describe('User Profile', () => {
             expect(animationSpy).not.to.be.called
           }
         })
-        // Close menu:
-        .get('noscript').click({ force: true })
-        .get('@mutationMenu')
-        .should('not.be.visible')
     }
 
-    cy.get('[data-cy=reduced-animation] input')
+    cy.get('[data-cy=reduced-animation] input').as('checkbox')
       .should('not.be.checked')
-    // Force initial render of menu:
-    cy.get('[data-c-interactive]:first').click()
-      .get('noscript').click({ force: true })
     // Test default animation:
     testMenu(true)
     // Turn on reduced animations mode:
-    cy.get('[data-cy=reduced-animation] input')
+    cy.get('@checkbox')
       .click()
       .should('be.checked')
     testMenu(false)
   })
 
   it('Sets the default view', () => {
-    cy.on('uncaught:exception', (err) => {
-      // This test has been flaky on Firefox only.
-      // Cast this ridiculous error into the fires of Mount Doom:
-      if (err.message.includes('ResizeObserver loop completed with undelivered notifications')) {
-        console.warn(err)
-        return false
-      }
-    })
     cy.get('[data-cy=select-default-view]')
       // Default should be tree view by default
       .contains('Tree')
