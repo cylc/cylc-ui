@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-data-table
-    :headers="$options.headers"
+    :headers="headers"
     :items="tasks"
     item-value="task.id"
     multi-sort
@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         }"
       >
         <v-icon
-          :icon="$options.icons.mdiChevronDown"
+          :icon="icons.mdiChevronDown"
           size="large"
         />
       </v-btn>
@@ -95,12 +95,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </tr>
     </template>
     <template v-slot:bottom>
-      <v-data-table-footer :itemsPerPageOptions="$options.itemsPerPageOptions" />
+      <v-data-table-footer :itemsPerPageOptions="itemsPerPageOptions" />
     </template>
   </v-data-table>
 </template>
 
 <script>
+import { ref, watch } from 'vue'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import { mdiChevronDown } from '@mdi/js'
@@ -153,87 +154,104 @@ export default {
 
     const itemsPerPage = useInitialOptions('itemsPerPage', { props, emit }, 50)
 
+    const headers = ref([
+      {
+        title: 'Task',
+        key: 'task.name',
+        sortable: true,
+        sortFunc: DEFAULT_COMPARATOR
+      },
+      {
+        title: 'Jobs',
+        key: 'data-table-expand',
+        sortable: false
+      },
+      {
+        title: 'Cycle Point',
+        key: 'task.tokens.cycle',
+        sortable: true,
+        sortFunc: DEFAULT_COMPARATOR,
+      },
+      {
+        title: 'Platform',
+        key: 'latestJob.node.platform',
+        sortable: true,
+        sortFunc: DEFAULT_COMPARATOR,
+      },
+      {
+        title: 'Job Runner',
+        key: 'latestJob.node.jobRunnerName',
+        sortable: true,
+        sortFunc: DEFAULT_COMPARATOR,
+      },
+      {
+        title: 'Job ID',
+        key: 'latestJob.node.jobId',
+        sortable: true,
+        sortFunc: DEFAULT_COMPARATOR,
+      },
+      {
+        title: 'Submit',
+        key: 'latestJob.node.submittedTime',
+        sortable: true,
+        sortFunc: datetimeComparator,
+      },
+      {
+        title: 'Start',
+        key: 'latestJob.node.startedTime',
+        sortable: true,
+        sortFunc: datetimeComparator,
+      },
+      {
+        title: 'Finish',
+        key: 'latestJob.node.finishedTime',
+        sortable: true,
+        sortFunc: datetimeComparator,
+      },
+      {
+        title: 'Run Time',
+        key: 'task.node.task.meanElapsedTime',
+        sortable: true,
+        sortFunc: numberComparator,
+      },
+    ])
+
+    // Ensure that whenever a sort order changes, empty/nullish values are
+    // always sorted last regardless.
+    watch(
+      sortBy,
+      (val) => {
+        for (const { key, order } of val) {
+          const header = headers.value.find((x) => x.key === key)
+          header.sort = (a, b) => {
+            if (!a && !b) return 0
+            if (!a) return order === 'asc' ? 1 : -1
+            if (!b) return order === 'asc' ? -1 : 1
+            return header.sortFunc(a, b)
+          }
+        }
+      },
+      { deep: true, immediate: true }
+    )
+
     return {
       dtMean,
       itemsPerPage,
       page,
       sortBy,
+      headers,
+      icons: {
+        mdiChevronDown
+      },
+      itemsPerPageOptions: [
+        { value: 10, title: '10' },
+        { value: 20, title: '20' },
+        { value: 50, title: '50' },
+        { value: 100, title: '100' },
+        { value: 200, title: '200' },
+        { value: -1, title: 'All' },
+      ],
     }
   },
-
-  headers: [
-    {
-      title: 'Task',
-      key: 'task.name',
-      sortable: true,
-      sort: DEFAULT_COMPARATOR
-    },
-    {
-      title: 'Jobs',
-      key: 'data-table-expand',
-      sortable: false
-    },
-    {
-      title: 'Cycle Point',
-      key: 'task.tokens.cycle',
-      sortable: true,
-      sort: (a, b) => DEFAULT_COMPARATOR(String(a ?? ''), String(b ?? ''))
-    },
-    {
-      title: 'Platform',
-      key: 'latestJob.node.platform',
-      sortable: true,
-      sort: DEFAULT_COMPARATOR,
-    },
-    {
-      title: 'Job Runner',
-      key: 'latestJob.node.jobRunnerName',
-      sortable: true,
-      sort: DEFAULT_COMPARATOR,
-    },
-    {
-      title: 'Job ID',
-      key: 'latestJob.node.jobId',
-      sortable: true,
-      sort: DEFAULT_COMPARATOR,
-    },
-    {
-      title: 'Submit',
-      key: 'latestJob.node.submittedTime',
-      sortable: true,
-      sort: datetimeComparator,
-    },
-    {
-      title: 'Start',
-      key: 'latestJob.node.startedTime',
-      sortable: true,
-      sort: datetimeComparator,
-    },
-    {
-      title: 'Finish',
-      key: 'latestJob.node.finishedTime',
-      sortable: true,
-      sort: datetimeComparator,
-    },
-    {
-      title: 'Run Time',
-      key: 'task.node.task.meanElapsedTime',
-      sortable: true,
-      sort: numberComparator,
-    },
-  ],
-
-  icons: {
-    mdiChevronDown
-  },
-
-  itemsPerPageOptions: [
-    { value: 10, title: '10' },
-    { value: 20, title: '20' },
-    { value: 50, title: '50' },
-    { value: 100, title: '100' },
-    { value: 200, title: '200' },
-    { value: -1, title: 'All' }
-  ]
 }
 </script>

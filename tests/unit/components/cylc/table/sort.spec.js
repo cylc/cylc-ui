@@ -26,11 +26,6 @@ describe('datetimeComparator()', () => {
     expect(datetimeComparator('2022-09-26T12:30:01Z', '2022-09-26T12:30:00Z')).to.be.greaterThan(0)
     expect(datetimeComparator('2022-09-26T12:30:00Z', '2022-09-26T12:30:00Z')).to.equal(0)
   })
-  it('should rank nullish as higher than proper datetimes', () => {
-    expect(datetimeComparator('', '2022-09-26T12:30:00Z')).to.be.greaterThan(0)
-    expect(datetimeComparator(undefined, '2022-09-26T12:30:00Z')).to.be.greaterThan(0)
-    expect(datetimeComparator(undefined, '')).to.equal(0)
-  })
 })
 
 describe('numberComparator()', () => {
@@ -38,10 +33,6 @@ describe('numberComparator()', () => {
     [1, 2, -1],
     [2, 1, 1],
     [1, 1, 0],
-    [undefined, 1, Infinity],
-    [1, undefined, -Infinity],
-    [undefined, undefined, 0],
-    [undefined, null, 0],
   ])('(%o, %o) -> %o', (a, b, expected) => {
     expect(numberComparator(a, b)).toEqual(expected)
   })

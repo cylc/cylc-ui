@@ -117,13 +117,13 @@ describe('Table view', () => {
       cy.get('@dTHeader')
         .click()
         .get('tbody > :nth-child(1) > :nth-child(10)')
-        .should(($ele) => {
-          expect($ele.text().trim()).equal('')
-        })
-        .get('tbody > :nth-child(6) > :nth-child(10)')
         .contains('00:00:12')
-        .get('tbody > :nth-child(7) > :nth-child(10)')
+        .get('tbody > :nth-child(2) > :nth-child(10)')
         .contains('00:00:04')
+        .get('tbody > :nth-child(3) > :nth-child(10)')
+        .should(($ele) => {
+          expect($ele.text().trim()).equal('') // no value still sorted after numbers
+        })
     })
   })
 })

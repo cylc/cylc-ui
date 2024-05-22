@@ -27,10 +27,6 @@ describe('DEFAULT_COMPARATOR', () => {
     ['1', '2', -1],
     ['01', '1', 0],
     ['20000101T0000Z', '20000101T0001Z', -1],
-    [undefined, 'a', 1],
-    ['a', undefined, -1],
-    [undefined, undefined, 0],
-    [undefined, null, 0],
   ])('(%o, %o) -> %o', (a, b, expected) => {
     expect(DEFAULT_COMPARATOR(a, b)).toEqual(expected)
   })

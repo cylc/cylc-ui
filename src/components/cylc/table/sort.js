@@ -16,30 +16,23 @@
  */
 
 /**
- * Comparator function for sorting datetime strings. Note: nullish or empty
- * strings are treated as infinity.
+ * Comparator function for sorting datetime strings.
  *
- * @param {*} a - The first element for comparison.
- * @param {*} b - The second element for comparison.
+ * @param {string} a - The first element for comparison.
+ * @param {string} b - The second element for comparison.
  * @return {number} A number > 0 if a > b, or < 0 if a < b, or 0 if a === b
  */
 export function datetimeComparator (a, b) {
-  a = (a ?? '') === '' ? Infinity : new Date(a).getTime()
-  b = (b ?? '') === '' ? Infinity : new Date(b).getTime()
-  // Avoid return NaN for a === b === Infinity
-  return a === b ? 0 : a - b
+  return new Date(a) - new Date(b)
 }
 
 /**
- * Comparator function for sorting numbers. Note: nullish values are treated as infinity.
+ * Comparator function for sorting numbers.
  *
- * @param {number?} a
- * @param {number?} b
+ * @param {number} a
+ * @param {number} b
  * @returns {number}
  */
 export function numberComparator (a, b) {
-  a ??= Infinity
-  b ??= Infinity
-  // Avoid return NaN for a === b === Infinity
-  return a === b ? 0 : a - b
+  return a - b
 }
