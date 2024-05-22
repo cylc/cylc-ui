@@ -23,35 +23,29 @@
  * https://router.vuejs.org/en/
  */
 
-// Lib imports
 import { createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from 'nprogress'
-import { store } from '@/store/index'
 
 import 'nprogress/css/nprogress.css'
 
-// Routes
-import paths from './paths'
+import paths from '@/router/paths'
+import { store } from '@/store/index'
 import { Alert } from '@/model/Alert.model'
 
 NProgress.configure({ showSpinner: false })
 
-function route (path) {
-  const copy = Object.assign({}, path)
-  const view = copy.view
-  return Object.assign(copy, {
-    name: path.name || view,
-    component: (resolve) => import(
-      `@/views/${view}.vue`
-    ).then(resolve)
-  })
+function getRoute (path) {
+  return {
+    ...path,
+    name: path.name || path.view,
+    component: () => import(`@/views/${path.view}.vue`)
+  }
 }
 
 // Create a new router
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: paths.map(path => route(path)),
-  //  .concat([{ path: '*', redirect: '/dashboard' }]),
+  routes: paths.map(getRoute),
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
@@ -66,15 +60,17 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   NProgress.start()
   if (!store.state.user.user) {
-    try {
-      const user = await router.app.config.globalProperties.$userService.getUserProfile()
-      store.commit('user/SET_USER', user)
-    } catch (err) {
-      store.dispatch('setAlert', new Alert(err, 'error'))
-    }
+    const user = await router.app.config.globalProperties.$userService.getUserProfile()
+    // TODO: catch error getting user profile and redirect to static error page
+    store.commit('user/SET_USER', user)
   }
-  if (!store.state.user.user.permissions.includes('read') && to.name !== 'noAuth') {
-    return { name: 'noAuth' }
+  if (!store.state.user.user.permissions?.includes('read')) {
+    if (to.name !== 'noAuth') { // Avoid infinite redirect?
+      return { name: 'noAuth' }
+    }
+  } else if (to.name === 'noAuth') {
+    // If authorized, redirect no-auth page to home page
+    return { path: '/' }
   }
 
   if (to.name) {
@@ -93,6 +89,11 @@ router.beforeEach(async (to, from) => {
 })
 
 router.afterEach(() => {
+  NProgress.done()
+})
+
+router.onError((err, to, from) => {
+  store.dispatch('setAlert', new Alert(err, 'error'))
   NProgress.done()
 })
 
