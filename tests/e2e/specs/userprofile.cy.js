@@ -87,24 +87,25 @@ describe('User Profile', () => {
 
   it('Sets reduced animations mode', () => {
     const testMenu = (shouldAnimate) => {
-      let animationSpy
       cy.get('[data-c-interactive]:first')
         .click()
         .get('.c-mutation-menu').as('mutationMenu')
         .should('be.visible')
         .then(([$el]) => {
-          animationSpy = cy.spy($el, 'animate')
-        })
-        // Close menu:
-        .get('noscript').click({ force: true })
-        .get('@mutationMenu')
-        .should('not.exist')
-        .then(() => {
-          if (shouldAnimate) {
-            expect(animationSpy).to.be.called
-          } else {
-            expect(animationSpy).not.to.be.called
-          }
+          const animationSpy = cy.spy($el, 'animate')
+          // Close menu (wait because animation might interfere with click outside on Firefox):
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(400)
+          cy.get('noscript').click({ force: true })
+            .get('@mutationMenu')
+            .should('not.exist')
+            .then(() => {
+              if (shouldAnimate) {
+                expect(animationSpy).to.be.called
+              } else {
+                expect(animationSpy).not.to.be.called
+              }
+            })
         })
     }
 
