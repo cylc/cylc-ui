@@ -30,14 +30,7 @@ describe('Header Component multiuser', () => {
   beforeEach(() => {
     cy.intercept('/userprofile', {
       body: {
-        name: 'userTest',
-        groups: [
-          'cylc',
-          'developer'
-        ],
-        created: '2021-03-23T23:26:23.606Z',
-        admin: true,
-        server: '/user/cylc/',
+        username: 'userTest',
         permissions: [
           'read',
         ],

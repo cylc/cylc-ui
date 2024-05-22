@@ -51,8 +51,8 @@ server.ws('/subscriptions', (ws) => {
  * Render a response. This can be used to customize outputs,
  * map response parameters to other values.
  * @see https://www.rahulpnath.com/blog/setting-up-a-fake-rest-api-using-json-server/
- * @param req - express HTTP request
- * @param res - express HTTP response
+ * @param {import('express').Request} req - express HTTP request
+ * @param {import('express').Response} res - express HTTP response
  */
 router.render = async (req, res) => {
   // This is the original response.
@@ -65,11 +65,12 @@ router.render = async (req, res) => {
     } else {
       responseData = await graphql.handleGraphQLRequest(req)
     }
+    // NB: json-server returns 404 for requests that are not in the router
+    // but we have dynamic requests for the /graphql endpoint (i.e. no single
+    // data response) hence the status(200) below.
+    res.status(200)
   }
-  // NB: json-server returns 404 for requests that are not in db.json, but
-  //     we have dynamic requests for the /graphql endpoint (i.e. no single
-  //     data response) hence the status(200) below.
-  res.status(200).jsonp(responseData)
+  res.jsonp(responseData)
 }
 
 server.use(router)

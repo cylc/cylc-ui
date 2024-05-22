@@ -39,11 +39,7 @@ describe('URL handling', () => {
   it('reroutes to noAuth page if user isnt authorised', () => {
     cy.intercept('/userprofile', {
       body: {
-        name: 'user',
-        groups: ['cylc', 'developer'],
-        created: '2021-03-23T23:26:23.606Z',
-        admin: true,
-        server: '/user/cylc/',
+        username: 'user',
         permissions: [],
         mode: 'single user',
         owner: 'user'

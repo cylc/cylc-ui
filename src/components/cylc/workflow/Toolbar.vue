@@ -180,9 +180,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-avatar>
         <v-menu activator="parent">
           <v-card :title="user.username">
-            <v-card-subtitle v-if="user.admin">
-              Admin
-            </v-card-subtitle>
             <v-card-text>
               <v-btn
                 to="/user-profile"

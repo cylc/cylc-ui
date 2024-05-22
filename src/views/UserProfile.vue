@@ -24,12 +24,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           prominent
           color="grey-lighten-3"
         >
-          <h3 class="text-h5">{{ $t('UserProfile.tableHeader') }}</h3>
-          <p class="text-body-1">{{ $t('UserProfile.tableSubHeader') }}</p>
+          <h3 class="text-h5">{{ $t('UserProfile.title') }}</h3>
         </v-alert>
-        <v-form v-if="user !== null">
+        <v-form>
           <v-defaults-provider :defaults="$options.vuetifyDefaults">
             <v-container py-0>
+              <v-row no-gutters>
+                <h3>{{ $t('UserProfile.yourProfile') }}</h3>
+              </v-row>
+
               <v-row no-gutters class="align-center wrap">
                 <v-col cols="3">
                   <span>{{ $t('UserProfile.username') }}</span>
@@ -47,53 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
               <v-row no-gutters class="align-center wrap">
                 <v-col cols="3">
-                  <span>{{ $t('UserProfile.administrator') }}</span>
-                </v-col>
-                <v-col cols="9">
-                  <v-checkbox
-                      v-model="user.admin"
-                      disabled
-                      id="profile-admin"
-                      aria-disabled="true"
-                      class="text-body-1"
-                  />
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters class="align-center wrap">
-                <v-col cols="3">
-                  <span>{{ $t('UserProfile.groups') }}</span>
-                </v-col>
-                <v-col cols="9">
-                  <v-select
-                      :items="user.groups"
-                      v-model="user.groups"
-                      :menu-props="{ attach: true }"
-                      multiple
-                      disabled
-                      id="profile-groups"
-                      aria-disabled="true"
-                      class="text-body-1"
-                  />
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters class="align-center wrap">
-                <v-col cols="3">
-                  <span>{{ $t('UserProfile.created') }}</span>
-                </v-col>
-                <v-col cols="9">
-                  <v-text-field
-                      :model-value="user.created"
-                      disabled
-                      id="profile-created"
-                      aria-disabled="true"
-                      class="text-body-1"
-                  />
-                </v-col>
-              </v-row>
-              <v-row no-gutters class="align-center wrap">
-                <v-col cols="3">
                   <span>{{ $t('UserProfile.permissions') }}</span>
                 </v-col>
                 <v-col cols="9">
@@ -103,16 +59,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     :menu-props="{ attach: true }"
                     multiple
                     disabled
+                    chips
                     id="profile-permissions"
-                    aria-disabled="true"
-                    class="text-body-1"
-                  />
+                  >
+                    <template #chip="{ data }">
+                      <v-chip
+                        v-bind="data"
+                        label
+                        size="default"
+                      />
+                    </template>
+                  </v-select>
                 </v-col>
               </v-row>
+
               <v-row no-gutters class="mt-4">
-                <v-col cols="12">
-                  <p class="text-h6">Preferences</p>
-                </v-col>
+                <h3>Preferences</h3>
               </v-row>
 
               <v-row no-gutters class="align-center wrap">
@@ -158,7 +120,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         v-for="theme in $options.jobThemes"
                         :key="theme"
                       >
-                        {{ theme.replace('_', ' ') }}
+                        {{ upperFirst(theme.replace('_', ' ')) }}
                       </th>
                     </tr>
                     <tr>
@@ -234,7 +196,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-container>
           </v-defaults-provider>
         </v-form>
-        <v-progress-linear v-else :indeterminate="true" />
       </v-col>
     </v-row>
   </v-container>
@@ -249,6 +210,7 @@ import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize }
 import { allViews, useDefaultView } from '@/views/views.js'
 import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
+import { upperFirst } from 'lodash-es'
 
 // TODO: update where user preferences are stored after #335
 
@@ -265,6 +227,7 @@ export default {
       cyclePointsOrderDesc: useCyclePointsOrderDesc(),
       jobTheme: useJobTheme(),
       reducedAnimation: useReducedAnimation(),
+      upperFirst,
     }
   },
 
