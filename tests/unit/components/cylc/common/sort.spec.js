@@ -15,24 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Comparator function for sorting datetime strings.
- *
- * @param {string} a - The first element for comparison.
- * @param {string} b - The second element for comparison.
- * @return {number} A number > 0 if a > b, or < 0 if a < b, or 0 if a === b
- */
-export function datetimeComparator (a, b) {
-  return new Date(a) - new Date(b)
-}
+import { DEFAULT_COMPARATOR } from '@/components/cylc/common/sort'
 
-/**
- * Comparator function for sorting numbers.
- *
- * @param {number} a
- * @param {number} b
- * @returns {number}
- */
-export function numberComparator (a, b) {
-  return a - b
-}
+describe('DEFAULT_COMPARATOR', () => {
+  it.each([
+    ['a', 'b', -1],
+    ['b', 'a', 1],
+    ['a', 'a', 0],
+    ['A', 'a', 0],
+    ['A', 'b', -1],
+    ['1', '2', -1],
+    ['01', '1', 0],
+    ['20000101T0000Z', '20000101T0001Z', -1],
+  ])('(%o, %o) -> %o', (a, b, expected) => {
+    expect(DEFAULT_COMPARATOR(a, b)).toEqual(expected)
+  })
+})

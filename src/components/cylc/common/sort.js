@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,15 +36,14 @@
  * @constructor
  */
 export const DEFAULT_COMPARATOR = (left, right) => {
-  return left.toLowerCase()
-    .localeCompare(
-      right.toLowerCase(),
-      undefined,
-      {
-        numeric: true,
-        sensitivity: 'base'
-      }
-    )
+  return left.toLowerCase().localeCompare(
+    right.toLowerCase(),
+    undefined,
+    {
+      numeric: true,
+      sensitivity: 'base',
+    }
+  )
 }
 
 /**
