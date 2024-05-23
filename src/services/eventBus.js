@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,17 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// mean elapsed time for the task in seconds
-export const MEAN_ELAPSED_TIME = 10000
+import mitt from 'mitt'
 
-export function getStartTime (percent) {
-  return new Date(
-    // the current time in ms
-    Date.now() -
-    // minus the elapsed time in ms
-    (
-      (MEAN_ELAPSED_TIME * 1000) *
-      (percent / 100)
-    )
-  ).toISOString()
-}
+/**
+ * Global event bus for the app.
+ *
+ * @see https://github.com/developit/mitt
+ */
+export const eventBus = mitt()

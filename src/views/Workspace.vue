@@ -43,8 +43,8 @@ import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
-import Lumino from '@/components/cylc/workflow/Lumino.vue'
-import Toolbar from '@/components/cylc/workflow/Toolbar.vue'
+import Lumino from '@/components/cylc/workspace/Lumino.vue'
+import Toolbar from '@/components/cylc/workspace/Toolbar.vue'
 import { toolbarHeight } from '@/utils/toolbar'
 
 export default {
