@@ -16,6 +16,7 @@
  */
 
 import { uniqueId } from 'lodash-es'
+import { eventBus } from '@/services/eventBus'
 
 /** Reference to closure listeners (needed as we are using variables from another scope) */
 const listeners = new WeakMap()
@@ -26,7 +27,7 @@ function bind (el, binding, vnode) {
   el.dataset.cInteractive = uniqueId()
   const listener = function (e) {
     e.stopPropagation() // prevents click event from bubbling up to parents
-    binding.instance.$eventBus.emit('show-mutations-menu', {
+    eventBus.emit('show-mutations-menu', {
       node: binding.value,
       target: el,
     })

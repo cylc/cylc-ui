@@ -25,14 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <g
     class="c8-task"
     :class="{
-      waiting: task.state === 'waiting',
-      preparing: task.state === 'preparing',
-      submitted: task.state === 'submitted',
-      running: task.state === 'running',
-      succeeded: task.state === 'succeeded',
-      failed: task.state === 'failed',
-      'submit-failed': task.state === 'submit-failed',
-      expired: task.state === 'expired',
+      [task.state]: true,
       held: task.isHeld,
       queued: task.isQueued && !task.isHeld,
       runahead: task.isRunahead && !(task.isHeld || task.isQueued),
@@ -48,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         The circle outline of the task icon.
 
         NOTE: If changing the radius or stroke of the circle then the values
-        in getModiferTransform must be updated.
+        in getModifierTransform must be updated.
       -->
       <circle
         class="outline"
@@ -76,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           r="16"
           stroke-width="50"
           stroke-dasharray="157"
-          :style="getRunningStyle()"
+          :style="runningStyle"
         />
       </g>
       <!-- dot
@@ -163,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     -->
     <g
       class="modifier"
-      :transform="getModiferTransform()"
+      :transform="modifierTransform"
     >
       <!-- modifier
 
@@ -171,7 +164,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         states.
 
         NOTE: If changing the radius or stroke of the circle then the values
-        in getModiferTransform must be updated to match.
+        in getModifierTransform must be updated to match.
       -->
       <circle
         class="outline"
@@ -253,84 +246,86 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </g>
 </template>
 
-<script>
+<script setup>
+import { computed, inject, ref } from 'vue'
 import TaskState from '@/model/TaskState.model'
 
-export default {
-  name: 'SVGTask',
-  props: {
-    task: {
-      required: true
-    },
-    startTime: {
-      // The start time as an ISO8601 date-time string in expanded format
-      // e.g. 2022-10-26T13:43:45Z
-      // TODO: aim to remove this in due course
-      // (we should be able to obtain this directly from the task)
-      type: String,
-      required: false
-    },
-    modifierSize: {
-      // Scale the size of the task state modifier
-      type: Number,
-      default: 0.7
-    },
+const props = defineProps({
+  task: {
+    required: true
   },
-  methods: {
-    getRunningStyle () {
-      if (
-        this.task.state === TaskState.RUNNING.name &&
-        this.startTime &&
-        this.task.task?.meanElapsedTime
-      ) {
-        // job start time in ms
-        const startTime = Date.parse(this.startTime)
-        // current time in ms
-        const now = Date.now()
-        // job elapsed time in s
-        const elapsedTime = ((now - startTime) / 1000)
-        const ret = `
-          animation-name: c8-task-progress-animation;
-          animation-timing-function: steps(50);
-          animation-iteration-count: 1;
-          animation-duration: ${this.task.task.meanElapsedTime}s;
-          animation-delay: -${elapsedTime}s;
-          animation-fill-mode: forwards;
-        `
-        return ret.replace('\n', ' ')
-      }
-      return ''
-    },
-    getModiferTransform () {
-      // Returns the translation required to position the ".modifier" nicely in
-      // relation to the ".status".
+  startTime: {
+    // The start time as an ISO8601 date-time string in expanded format
+    // e.g. 2022-10-26T13:43:45Z
+    // TODO: aim to remove this in due course
+    // (we should be able to obtain this directly from the task)
+    type: String,
+    required: false
+  },
+  modifierSize: {
+    // Scale the size of the task state modifier
+    type: Number,
+    default: 0.7
+  },
+})
 
-      // Both ".status" and ".modifier" are centered at (50, 50), we need to
-      // move ".modifier" up and to the left so that the two don't touch and
-      // have a sensible gap between them
+/**
+ * @type {import('vue').Ref<number>}
+ * @see @/components/cylc/workspace/Widget.vue
+ */
+const animResetTime = inject('animResetTime', () => ref(0), true)
 
-      // translation = -(
-      //   # (1) the x/y translation to the edge of ".modifier"
-      //   (
-      //     (.modifier.outline.width + .modifier.outline.stroke)
-      //     * modifierSize * sin(45)
-      //   )
-      //   # (2) the x/y translation to the edge of ".status"
-      //   (.status.outline.width + .status.outline.stroke) * sin(45)
-      // )
-      const translation = -(
-        // (1) the x/y translation to the edge of ".modifier"
-        (35.35 * this.modifierSize) +
-        // (2) the x/y translation to the edge of ".status"
-        42.42
-      )
-      return `
-        scale(${this.modifierSize}, ${this.modifierSize})
-        translate(${translation}, ${translation})
-      `
-    },
+const runningStyle = computed(() => {
+  if (
+    props.task.state === TaskState.RUNNING.name &&
+    props.startTime &&
+    props.task.task?.meanElapsedTime
+  ) {
+    // current time in ms (UTC); updates whenever widget is unhidden
+    const now = Math.max(Date.now(), animResetTime.value)
+    // job elapsed time in ms
+    const elapsedTime = now - Date.parse(props.startTime)
+    return {
+      animationDuration: `${props.task.task.meanElapsedTime}s`,
+      animationDelay: `-${elapsedTime}ms`,
+      animationFillMode: 'forwards',
+    }
   }
+  return {}
+})
+
+/**
+ * Returns the translation required to position the ".modifier" nicely in
+ * relation to the ".status".
+ *
+ * Both ".status" and ".modifier" are centered at (50, 50), we need to
+ * move ".modifier" up and to the left so that the two don't touch and
+ * have a sensible gap between them.
+ */
+function _getModifierTransform () {
+  // translation = -(
+  //   # (1) the x/y translation to the edge of ".modifier"
+  //   (
+  //     (.modifier.outline.width + .modifier.outline.stroke)
+  //     * modifierSize * sin(45)
+  //   )
+  //   # (2) the x/y translation to the edge of ".status"
+  //   (.status.outline.width + .status.outline.stroke) * sin(45)
+  // )
+  const translation = -(
+    // (1) the x/y translation to the edge of ".modifier"
+    (35.35 * props.modifierSize) +
+    // (2) the x/y translation to the edge of ".status"
+    42.42
+  )
+  return `
+    scale(${props.modifierSize}, ${props.modifierSize})
+    translate(${translation}, ${translation})
+  `
 }
+
+// Doesn't need to be reactive:
+const modifierTransform = _getModifierTransform()
 </script>
 
 <style lang="scss">
@@ -459,6 +454,12 @@ export default {
       .runahead circle {
         fill: $foreground;
       }
+    }
+
+    &.running .progress {
+      animation-name: c8-task-progress-animation;
+      animation-timing-function: steps(50);
+      animation-iteration-count: 1;
     }
   }
 

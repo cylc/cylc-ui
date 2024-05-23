@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ import { i18n } from '@/i18n/index'
 import router from '@/router/index'
 import { store } from '@/store/index'
 import { createVuetify } from 'vuetify'
-import mitt from 'mitt'
 
 import 'nprogress/css/nprogress.css'
 import '@/styles/index.scss'
@@ -57,12 +56,6 @@ if (location.search) {
   app.use(i18n)
   app.use(ServicesPlugin)
   app.use(CommandMenuPlugin)
-
-  const emitter = mitt()
-  // Composition API:
-  app.provide('eventBus', emitter)
-  // Options API (legacy):
-  app.config.globalProperties.$eventBus = emitter
 
   app.component('default-layout', Default)
   app.component('empty-layout', Empty)
