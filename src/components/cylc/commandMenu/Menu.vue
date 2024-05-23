@@ -123,6 +123,7 @@ import {
 } from '@mdi/js'
 import { mapGetters, mapState } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
+import { eventBus } from '@/services/eventBus'
 
 export default {
   name: 'CommandMenu',
@@ -155,11 +156,11 @@ export default {
   },
 
   mounted () {
-    this.$eventBus.on('show-mutations-menu', this.showMutationsMenu)
+    eventBus.on('show-mutations-menu', this.showMutationsMenu)
   },
 
   beforeUnmount () {
-    this.$eventBus.off('show-mutations-menu', this.showMutationsMenu)
+    eventBus.off('show-mutations-menu', this.showMutationsMenu)
   },
 
   computed: {
@@ -258,7 +259,7 @@ export default {
             workflowName: this.node.tokens.workflow
           }
         }).then(() => {
-          this.$eventBus.emit(
+          eventBus.emit(
             'add-view',
             {
               name: 'Log',

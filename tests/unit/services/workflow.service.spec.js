@@ -18,6 +18,7 @@
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import CylcTreeCallback from '@/services/treeCallback'
+import { vi } from 'vitest'
 import sinon from 'sinon'
 import { print } from 'graphql/language'
 import gql from 'graphql-tag'
@@ -26,7 +27,6 @@ import 'cross-fetch/polyfill'
 import Subscription from '@/model/Subscription.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import WorkflowService from '@/services/workflow.service'
-import * as graphqlModule from '@/graphql/index'
 import ViewState from '@/model/ViewState.model'
 import { TreeCallback, WorkflowCallback } from './testCallback'
 
@@ -37,10 +37,6 @@ describe('WorkflowService', () => {
    * @type {String}
    */
   const url = '/graphql'
-  /**
-   * @type {ApolloClient}
-   */
-  let apolloClient
   /**
    * @type {SubscriptionClient|null}
    */
@@ -67,12 +63,15 @@ describe('WorkflowService', () => {
   let subscription
   beforeEach(() => {
     sandbox.stub(console, 'debug')
-    apolloClient = sandbox.spy({
-      query: () => {},
-      subscribe: (options) => {}
-    })
+    vi.mock('@/graphql/index', () => ({
+      createApolloClient: () => ({
+        query: vi.fn(),
+        subscribe: () => ({
+          subscribe: vi.fn()
+        }),
+      })
+    }))
     subscriptionClient = null
-    sandbox.stub(graphqlModule, 'createApolloClient').returns(apolloClient)
     // TODO: really load some mutations
     sandbox.stub(WorkflowService.prototype, 'loadTypes').returns(
       Promise.resolve({

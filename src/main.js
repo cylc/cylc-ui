@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ import { i18n } from '@/i18n/index'
 import router from '@/router/index'
 import { store } from '@/store/index'
 import { createVuetify } from 'vuetify'
-import mitt from 'mitt'
 import { createHead, VueHeadMixin } from '@unhead/vue'
 
 import '@/styles/index.scss'
@@ -51,8 +50,6 @@ if (location.search) {
   // Normal app start
   const app = createApp(App)
 
-  const emitter = mitt()
-
   app.mixin(VueHeadMixin)
 
   app.use(store)
@@ -62,11 +59,6 @@ if (location.search) {
   app.use(createHead())
   app.use(ServicesPlugin)
   app.use(CommandMenuPlugin)
-
-  // Composition API:
-  app.provide('eventBus', emitter)
-  // Options API (legacy):
-  app.config.globalProperties.$eventBus = emitter
 
   app.component('default-layout', Default)
   app.component('empty-layout', Empty)

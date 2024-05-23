@@ -16,6 +16,7 @@
  */
 
 import { Widget } from '@lumino/widgets'
+import { eventBus } from '@/services/eventBus'
 
 /**
  * This is a valid Lumino widget, that contains only a dummy div
@@ -68,42 +69,22 @@ export default class LuminoWidget extends Widget {
     super.onBeforeAttach(msg)
   }
 
-  onActivateRequest (msg) {
-    // Emit an event so that the Vue component knows that it was activated
-    const event = new CustomEvent('lumino:activated', this._getEventDetails())
-    document.getElementById(this.id).dispatchEvent(event)
-    // call super method
-    super.onActivateRequest(msg)
-  }
+  // // TODO: currently unused, but leaving it here for future reference
+  // onActivateRequest (msg) {
+  //   // Emit an event so that the Vue component knows that it was activated
+  //   eventBus.emit('lumino:activated', this._getEventDetails())
+  //   super.onActivateRequest(msg)
+  // }
 
   onCloseRequest (msg) {
     // Emit an event so that the Vue component knows that it needs to be removed too
-    const event = new CustomEvent('lumino:deleted', this._getEventDetails())
-    document.getElementById(this.id).dispatchEvent(event)
-    // call super method
+    eventBus.emit('lumino:deleted', this.id)
     super.onCloseRequest(msg)
   }
 
-  /**
-   * Event details returned for a `CustomEvent`.
-   *
-   * @link https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Creating_and_triggering_events
-   * @returns {{
-   *   detail: {
-   *     id: string,
-   *     name: string,
-   *     closable: boolean
-   *   }
-   * }}
-   * @private
-   */
-  _getEventDetails () {
-    return {
-      detail: {
-        id: this.id,
-        name: this.name,
-        closable: this.closable
-      }
-    }
+  onAfterShow (msg) {
+    // Emit an event so that the Vue component knows that this widget is visible again
+    eventBus.emit(`lumino:show:${this.id}`)
+    super.onAfterShow(msg)
   }
 }

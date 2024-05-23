@@ -152,7 +152,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-for="[name, view] in views"
               :id="`toolbar-add-${name}-view`"
               :key="name"
-              @click="$eventBus.emit('add-view', { name })"
+              @click="eventBus.emit('add-view', { name })"
             >
               <template #prepend>
                 <v-icon>{{ view.icon }}</v-icon>
@@ -219,6 +219,7 @@ import {
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
+import { eventBus } from '@/services/eventBus'
 
 const QUERY = gql(`
 subscription Workflow ($workflowId: ID) {
@@ -264,7 +265,12 @@ export default {
 
   setup () {
     const { showNavBtn, toggleDrawer } = useToolbar()
-    return { showNavBtn, toggleDrawer, toolbarHeight }
+    return {
+      eventBus,
+      showNavBtn,
+      toggleDrawer,
+      toolbarHeight
+    }
   },
 
   mixins: [
