@@ -86,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             />
           </g>
         </g>
-        <g v-if="groupCycle">
+        <g v-if="groupCycle || groupFamily">
           <GraphSubgraph
             v-for="(subgraph, key) in subgraphs"
             :key="key"
@@ -100,7 +100,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import gql from 'graphql-tag'
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
+import { getPageTitle } from '@/utils/index'
 import { useJobTheme } from '@/composables/localStorage'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -126,8 +127,10 @@ import {
   mdiArrowExpand,
   mdiRefresh,
   mdiFileRotateRight,
-  mdiVectorSelection
+  mdiVectorSelection,
+  mdiAlphaFCircle
 } from '@mdi/js'
+import { getNodeChildren } from '@/components/cylc/tree/util'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
 // the tree view uses which allows the requests to overlap with this and other
@@ -185,6 +188,9 @@ fragment AddedDelta on Added {
   edges {
     ...EdgeData
   }
+  familyProxies {
+    ...FamilyProxyData
+  }
   taskProxies {
     ...TaskProxyData
   }
@@ -200,6 +206,9 @@ fragment UpdatedDelta on Updated {
   edges {
     ...EdgeData
   }
+  familyProxies {
+    ...FamilyProxyData
+  }
   taskProxies {
     ...TaskProxyData
   }
@@ -211,8 +220,59 @@ fragment UpdatedDelta on Updated {
 fragment PrunedDelta on Pruned {
   workflow
   edges
+  familyProxies
   taskProxies
   jobs
+}
+
+fragment WorkflowData on Workflow {
+  id
+  reloaded
+}
+
+fragment FamilyProxyData on FamilyProxy {
+  __typename
+  id
+  state
+  ancestors {
+    name
+  }
+  childTasks {
+    id
+  }
+}
+
+fragment TaskProxyData on TaskProxy {
+  id
+  state
+  isHeld
+  isQueued
+  isRunahead
+  task {
+    meanElapsedTime
+  }
+  firstParent {
+    id
+  }
+}
+
+fragment JobData on Job {
+  id
+  jobRunnerName
+  jobId
+  platform
+  startedTime
+  submittedTime
+  finishedTime
+  state
+  submitNum
+  messages
+  taskProxy {
+    outputs (satisfied: true) {
+      label
+      message
+    }
+  }
 }
 `
 
@@ -260,12 +320,20 @@ export default {
      */
     const groupCycle = useInitialOptions('groupCycle', { props, emit }, false)
 
+    /**
+     * The group by family toggle state.
+     * If true the graph nodes will be grouped by family
+     * @type {import('vue').Ref<boolean>}
+     */
+    const groupFamily = useInitialOptions('groupFamily', { props, emit }, false)
+
     return {
       jobTheme: useJobTheme(),
       transpose,
       autoRefresh,
       spacing,
-      groupCycle
+      groupCycle,
+      groupFamily
     }
   },
 
@@ -312,6 +380,7 @@ export default {
   },
 
   computed: {
+    ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
     query () {
       return new SubscriptionQuery(
@@ -379,6 +448,13 @@ export default {
               action: 'toggle',
               value: this.groupCycle,
               key: 'groupCycle'
+            },
+            {
+              title: 'Group by family',
+              icon: mdiAlphaFCircle,
+              action: 'toggle',
+              value: this.groupFamily,
+              key: 'groupFamily'
             }
           ]
         }
@@ -514,7 +590,20 @@ export default {
         return x
       }, {})
     },
-    getDotCode (nodeDimensions, nodes, edges, cycles) {
+    /**
+     * Get the nodes binned by family
+     *
+     * @param {Object[]} nodes
+     * @returns {{ [dateTime: string]: Object[] }=} mapping of family to nodes
+     */
+    getFamilies (nodes) {
+      if (!this.groupFamily) return
+      return nodes.reduce((x, y) => {
+        (x[y.node.firstParent.id.split('/')[y.node.firstParent.id.split('/').length - 1]] ||= []).push(y)
+        return x
+      }, {})
+    },
+    getDotCode (nodeDimensions, nodes, edges, cycles, families) {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
       let spacing = this.spacing
@@ -563,6 +652,26 @@ export default {
         Object.keys(cycles).forEach((key, i) => {
           // Loop over the nodes that are included in the subraph
           const nodeFormattedArray = cycles[key].map(a => `"${a.id}"`)
+          ret.push(`
+          subgraph cluster_margin_${i}
+          {
+            margin=100.0
+            label="margin"
+            subgraph cluster_${i} {${nodeFormattedArray};\n
+              label = "${key}";\n
+              fontsize = "70px"
+              style=dashed
+              margin=60.0
+            }
+          }`)
+        })
+      }
+
+      if (this.groupFamily) {
+        // Loop over the subgraphs
+        Object.keys(families).forEach((key, i) => {
+          // Loop over the nodes that are included in the subraph
+          const nodeFormattedArray = families[key].map(a => `"${a.id}"`)
           ret.push(`
           subgraph cluster_margin_${i}
           {
@@ -655,6 +764,7 @@ export default {
       }
 
       const cycles = this.getCycles(nodes)
+      const families = this.getFamilies(nodes)
 
       // compute the graph ID
       const graphID = this.hashGraph(nodes, edges)
@@ -700,7 +810,7 @@ export default {
 
       // layout the graph
       try {
-        await this.layout(nodes, edges, nodeDimensions, cycles)
+        await this.layout(nodes, edges, nodeDimensions, cycles, families)
       } catch (e) {
         // something went wrong, allow the layout to retry later
         this.graphID = null
@@ -743,9 +853,9 @@ export default {
      * @param {Object[]} edges
      * @param {{ [id: string]: SVGRect }} nodeDimensions
      */
-    async layout (nodes, edges, nodeDimensions, cycles) {
+    async layout (nodes, edges, nodeDimensions, cycles, families) {
       // generate the GraphViz dot code
-      const dotCode = this.getDotCode(nodeDimensions, nodes, edges, cycles)
+      const dotCode = this.getDotCode(nodeDimensions, nodes, edges, cycles, families)
 
       // run the layout algorithm
       const jsonString = (await this.graphviz).layout(dotCode, 'json')
@@ -813,10 +923,17 @@ export default {
         this.updateTimer()
       }
     },
-    groupCycle () {
+    groupCycle (newValue, oldValue) {
       // refresh the graph when group by cycle point option is changed
       this.graphID = null
       this.refresh()
+      if (newValue === true) { this.groupFamily = false }
+    },
+    groupFamily (newValue, oldValue) {
+      // refresh the graph when group by family option is changed
+      this.graphID = null
+      this.refresh()
+      if (newValue === true) { this.groupCycle = false }
     }
   }
 }
