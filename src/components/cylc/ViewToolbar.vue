@@ -30,7 +30,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="control"
         :data-cy="`control-${iControl.key}`"
       >
-        <v-btn
+        <v-menu v-if="iControl.action==='select'"
+        :close-on-content-click="false">
+          <template v-slot:activator="{ props }" >
+            <v-btn
+            v-bind="{...$attrs, ...props, ...btnProps}"
+            :disabled="iControl.disabled"
+            :color="iControl.color">
+              <v-icon>{{ iControl.icon }}</v-icon>
+              <v-tooltip>{{ iControl.title }}</v-tooltip>
+            </v-btn>
+          </template >
+          <v-list>
+            <v-list-item
+              v-for="(item, index) in iControl.items"
+              :key="index"
+              :value="index"
+            >
+              <template v-slot:prepend="{ isActive }">
+                <v-list-item-action>
+                  <v-checkbox v-model="selectedItems" v-on:update:modelValue="iControl.callback" :value="item"/>
+                </v-list-item-action>
+              </template>
+              <v-list-item-title>{{ item }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <v-btn v-else
           v-bind="btnProps"
           :disabled="iControl.disabled"
           :color="iControl.color"
@@ -100,6 +126,12 @@ export default {
     }
   },
 
+  data () {
+    return {
+      selectedItems: []
+    }
+  },
+
   computed: {
     iGroups () {
       // wrap the provided props into something we can mutate with derived
@@ -131,6 +163,12 @@ export default {
               break
             case 'callback':
               callback = (e) => this.call(control, e)
+              break
+            case 'select':
+              callback = (e) => this.select(control, e)
+              if (control.value.length) {
+                color = 'blue'
+              }
               break
           }
 
@@ -177,6 +215,12 @@ export default {
       // call a control's callback
       control.callback()
       e.currentTarget.blur()
+    },
+    select (control, e) {
+      // call a control's callback
+      control.value = this.selectedItems
+      this.$emit('setOption', control.key, control.value)
+      // e.currentTarget.blur()
     },
     getValues () {
       // an object with all defined values
