@@ -56,11 +56,6 @@
       "schedule": ["on the 25th day of the month"]
     },
     {
-      "matchPackageNames": ["@unhead/vue"],
-      "automerge": true,
-      "schedule": ["on the 3rd day of the month"]
-    },
-    {
       "matchPackageNames": ["@vueuse/core"],
       "automerge": true,
       "schedule": ["on the 9th day of the month"]

@@ -75,7 +75,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState, mapGetters } from 'vuex'
 import { i18n } from '@/i18n'
 import { mdiTable } from '@mdi/js'
-import { getPageTitle } from '@/utils/index'
 import subscriptionMixin from '@/mixins/subscription'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
@@ -116,12 +115,6 @@ export default {
   mixins: [
     subscriptionMixin
   ],
-
-  head () {
-    return {
-      title: getPageTitle('App.workflows')
-    }
-  },
 
   components: {
     WorkflowIcon

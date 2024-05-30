@@ -39,7 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { ref } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
 import { allViews } from '@/views/views.js'
-import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
@@ -58,12 +57,6 @@ export default {
   components: {
     Lumino,
     Toolbar
-  },
-
-  head () {
-    return {
-      title: getPageTitle('App.workflow', { name: this.workflowName })
-    }
   },
 
   setup () {

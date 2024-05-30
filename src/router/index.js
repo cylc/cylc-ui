@@ -23,35 +23,41 @@
  * https://router.vuejs.org/en/
  */
 
-// Lib imports
 import { createRouter, createWebHashHistory } from 'vue-router'
 import NProgress from 'nprogress'
+import { i18n } from '@/i18n'
+
+import paths from '@/router/paths'
 import { store } from '@/store/index'
-
-import 'nprogress/css/nprogress.css'
-
-// Routes
-import paths from './paths'
 import { Alert } from '@/model/Alert.model'
+
+const defaultPageTitle = i18n.global.t('App.name')
 
 NProgress.configure({ showSpinner: false })
 
-function route (path) {
-  const copy = Object.assign({}, path)
-  const view = copy.view
-  return Object.assign(copy, {
-    name: path.name || view,
-    component: (resolve) => import(
-      `@/views/${view}.vue`
-    ).then(resolve)
-  })
+function getRoute (path) {
+  return {
+    ...path,
+    name: path.name || path.view,
+    component: () => import(`@/views/${path.view}.vue`)
+  }
+}
+
+/**
+ * Return the page title for a particular route.
+ * @param {import('vue-router').RouteLocation} route
+ */
+export function getPageTitle ({ meta, params }) {
+  const extra = meta.getTitle?.(params) || meta.title
+  return extra
+    ? `${defaultPageTitle} | ${extra}`
+    : defaultPageTitle
 }
 
 // Create a new router
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: paths.map(path => route(path)),
-  //  .concat([{ path: '*', redirect: '/dashboard' }]),
+  routes: paths.map(getRoute),
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition
@@ -66,33 +72,39 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   NProgress.start()
   if (!store.state.user.user) {
-    try {
-      const user = await router.app.config.globalProperties.$userService.getUserProfile()
-      store.commit('user/SET_USER', user)
-    } catch (err) {
-      store.dispatch('setAlert', new Alert(err, 'error'))
-    }
+    const user = await router.app.config.globalProperties.$userService.getUserProfile()
+    // TODO: catch error getting user profile and redirect to static error page
+    store.commit('user/SET_USER', user)
   }
-  if (!store.state.user.user.permissions.includes('read') && to.name !== 'noAuth') {
-    return { name: 'noAuth' }
+  if (!store.state.user.user.permissions?.includes('read')) {
+    if (to.name !== 'NoAuth') { // Avoid infinite redirect?
+      return { name: 'NoAuth' }
+    }
+  } else if (to.name === 'NoAuth') {
+    // If authorized, redirect no-auth page to home page
+    return { path: '/' }
   }
 
-  if (to.name) {
-    let title = to.name
-    let workflowName = null
-    if (to.meta.toolbar) {
-      // When a workflow is being displayed, we set the title to a
-      // different value.
-      title = to.params.workflowName
-      workflowName = to.params.workflowName
-    }
-    store.commit('app/setTitle', title)
-    store.commit('workflows/SET_WORKFLOW_NAME', workflowName)
-    store.dispatch('setAlert', null)
+  // Set page title:
+  document.title = getPageTitle(to)
+
+  // Set toolbar title:
+  let title = to.name
+  if (to.meta.toolbar) {
+    // When a workflow is being displayed, we set the title to a
+    // different value.
+    title = to.params.workflowName
   }
+  store.commit('app/setTitle', title)
+  store.dispatch('setAlert', null)
 })
 
 router.afterEach(() => {
+  NProgress.done()
+})
+
+router.onError((err, to, from) => {
+  store.dispatch('setAlert', new Alert(err, 'error'))
   NProgress.done()
 })
 

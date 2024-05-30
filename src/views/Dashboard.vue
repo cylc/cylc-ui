@@ -141,7 +141,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { mdiBook, mdiBookMultiple, mdiBookOpenVariant, mdiCog, mdiHubspot, mdiTable } from '@mdi/js'
-import { getPageTitle } from '@/utils/index'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
@@ -190,12 +189,6 @@ export default {
   mixins: [
     subscriptionComponentMixin
   ],
-
-  head () {
-    return {
-      title: getPageTitle('App.dashboard')
-    }
-  },
 
   data () {
     return {

@@ -29,9 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="overflow-auto"
         :style="coreViewStyle"
       >
-        <v-fade-transition mode="out-in">
-          <slot/>
-        </v-fade-transition>
+        <slot/>
       </div>
     </v-main>
   </div>
@@ -42,6 +40,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { mapState } from 'vuex'
 import { store } from '@/store/index'
+import { allViews } from '@/views/views'
 import { Alert as AlertModel } from '@/model/Alert.model'
 import Alert from '@/components/core/Alert.vue'
 import Drawer from '@/components/cylc/Drawer.vue'
@@ -57,17 +56,15 @@ export default {
     const route = useRoute()
     /**
      * Views that display workflows. For these views, we do not
-     * want to display the default Toolbar—the Workflow view
+     * want to display the default Toolbar—the Workspace view
      * has its own Toolbar that communicates with the Workflow
      * component (e.g. the Workflow Toolbar owns a button that
      * triggers the action to add a new Tree or Table View, so the events
      * are passed down from the parent Workflow View).
      */
     const workflowViews = [
-      'workspace',
-      'tree',
-      'table',
-      'graph',
+      ...allViews.keys(),
+      'Workspace',
     ]
     const { showNavBtn } = useNavBtn()
 

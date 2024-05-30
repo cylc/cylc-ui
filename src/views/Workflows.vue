@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState } from 'vuex'
 import GScan from '@/components/cylc/gscan/GScan.vue'
-import { getPageTitle } from '@/utils/index'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
@@ -84,12 +83,6 @@ export default {
 
   components: {
     GScan
-  },
-
-  head () {
-    return {
-      title: getPageTitle('App.workflows')
-    }
   },
 
   data () {

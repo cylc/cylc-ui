@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,18 +16,6 @@
  */
 
 import { watch } from 'vue'
-import { i18n } from '@/i18n'
-
-/**
- * i18n-enabled operation, to get the title respecting the locale used
- * in the application settings.
- * @param {string} key - i18n key
- * @param {Object} params - optional object key=value used in the i18n message
- * @returns {string}
- */
-export const getPageTitle = (key, params = {}) => {
-  return `${i18n.global.t('App.name')} | ${i18n.global.t(key, params)}`
-}
 
 /**
  * Watch source until it is truthy, then call the callback (and stop watching).

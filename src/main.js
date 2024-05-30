@@ -30,8 +30,8 @@ import { i18n } from '@/i18n/index'
 import router from '@/router/index'
 import { store } from '@/store/index'
 import { createVuetify } from 'vuetify'
-import { createHead, VueHeadMixin } from '@unhead/vue'
 
+import 'nprogress/css/nprogress.css'
 import '@/styles/index.scss'
 
 if (location.search) {
@@ -50,13 +50,10 @@ if (location.search) {
   // Normal app start
   const app = createApp(App)
 
-  app.mixin(VueHeadMixin)
-
   app.use(store)
   app.use(router)
   app.use(createVuetify(vuetifyOptions))
   app.use(i18n)
-  app.use(createHead())
   app.use(ServicesPlugin)
   app.use(CommandMenuPlugin)
 

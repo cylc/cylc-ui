@@ -1,6 +1,4 @@
-import { mapState } from 'vuex'
-
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,15 +15,18 @@ import { mapState } from 'vuex'
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { mapState } from 'vuex'
+
 /**
  * A mixin that contains data used for a GraphQL subscription, such as the
  * query variables.
  *
- * To be used in Views that are bound to VueRouter routes that contain the
+ * To be used in Views that are bound to Vue-Router routes that contain the
  * :workflowName param.
  */
 export default {
   props: {
+    /** This is set by vue-router */
     workflowName: {
       type: String,
       required: true

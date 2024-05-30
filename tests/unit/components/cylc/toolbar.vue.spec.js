@@ -48,7 +48,6 @@ describe('Toolbar component', () => {
         status: WorkflowState.RUNNING.name
       }
     ]
-    store.state.workflows.workflowName = 'test'
   })
 
   it('should mount the component', async () => {

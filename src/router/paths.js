@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,33 +17,38 @@
 
 import { i18n } from '@/i18n'
 
+const workflowTitle = ({ workflowName: name }) => i18n.global.t('App.workflow', { name })
+
 /**
  * Define all of your application routes here
  * for more information on routes, see the
  * official documentation https://router.vuejs.org/en/
+ *
+ * @type {import('vue-router').RouteRecordRaw[]} - except the `name` and
+ * `component` fields which are automatically added in @/src/router/index.js
  */
 export default [
   {
     path: '/',
     view: 'Dashboard',
-    name: i18n.global.t('App.dashboard'),
     meta: {
+      title: i18n.global.t('App.dashboard'),
       layout: 'default'
     }
   },
   {
     path: '/workflow-table',
-    name: 'Workflow Table',
     view: 'WorkflowsTable',
     meta: {
+      title: 'Workflow Table',
       layout: 'default'
     }
   },
   {
     path: '/workspace/:workflowName(.*)',
     view: 'Workspace',
-    name: 'workspace',
     meta: {
+      getTitle: workflowTitle,
       layout: 'default',
       toolbar: true
     },
@@ -51,17 +56,17 @@ export default [
   },
   {
     path: '/user-profile',
-    name: i18n.global.t('App.userProfile'),
     view: 'UserProfile',
     meta: {
+      title: i18n.global.t('App.userProfile'),
       layout: 'default'
     }
   },
   {
     path: '/guide',
-    name: 'Guide',
     view: 'Guide',
     meta: {
+      title: i18n.global.t('App.guide'),
       layout: 'default'
     }
   },
@@ -69,6 +74,7 @@ export default [
     path: '/graphiql',
     view: 'GraphiQL',
     meta: {
+      title: 'GraphiQL',
       layout: 'empty'
     }
   },
@@ -76,6 +82,7 @@ export default [
     path: '/:catchAll(.*)',
     view: 'NotFound',
     meta: {
+      title: i18n.global.t('App.notFound'),
       layout: 'empty'
     }
   },
@@ -83,9 +90,9 @@ export default [
   // the standalone views
   {
     path: '/workflows',
-    name: i18n.global.t('App.workflows'),
     view: 'Workflows',
     meta: {
+      title: i18n.global.t('App.workflows'),
       layout: 'default',
       toolbar: false,
       showSidebar: false
@@ -94,8 +101,8 @@ export default [
   {
     path: '/tree/:workflowName(.*)',
     view: 'Tree',
-    name: 'tree',
     meta: {
+      getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
       showSidebar: false
@@ -105,8 +112,8 @@ export default [
   {
     path: '/table/:workflowName(.*)',
     view: 'Table',
-    name: 'table',
     meta: {
+      getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
       showSidebar: false
@@ -116,8 +123,8 @@ export default [
   {
     path: '/graph/:workflowName(.*)',
     view: 'Graph',
-    name: 'graph',
     meta: {
+      getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
       showSidebar: false
@@ -127,8 +134,8 @@ export default [
   {
     path: '/log/:workflowName(.*)',
     view: 'Log',
-    name: 'log',
     meta: {
+      getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
       showSidebar: false
@@ -138,8 +145,8 @@ export default [
   {
     path: '/analysis/:workflowName(.*)',
     view: 'Analysis',
-    name: 'analysis',
     meta: {
+      getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
       showSidebar: false
@@ -149,8 +156,8 @@ export default [
   {
     path: '/gantt/:workflowName(.*)',
     view: 'Gantt',
-    name: 'gantt',
     meta: {
+      getTitle: workflowTitle,
       layout: 'default',
       toolbar: true,
       showSidebar: false
@@ -160,9 +167,9 @@ export default [
   {
     path: '/noAuth',
     view: 'NoAuth',
-    name: 'noAuth',
     meta: {
+      title: 'Unauthorized',
       layout: 'noAuth',
     },
-  }
+  },
 ]

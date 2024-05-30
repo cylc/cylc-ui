@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,13 +16,7 @@
  */
 
 import { nextTick, ref } from 'vue'
-import { getPageTitle, when, until } from '@/utils/index'
-
-describe('getPageTitle()', () => {
-  it('displays the application title correctly', () => {
-    expect(getPageTitle('App.dashboard')).to.equal('Cylc UI | Dashboard')
-  })
-})
+import { when, until } from '@/utils/index'
 
 describe.each([
   { func: when, description: 'watches source until true and then stops watching' },

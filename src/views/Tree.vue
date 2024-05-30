@@ -85,7 +85,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState, mapGetters } from 'vuex'
 import { mdiPlus, mdiMinus } from '@mdi/js'
 import gql from 'graphql-tag'
-import { getPageTitle } from '@/utils/index'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
@@ -212,12 +211,6 @@ export default {
   components: {
     TaskFilter,
     TreeComponent
-  },
-
-  head () {
-    return {
-      title: getPageTitle('App.workflow', { name: this.workflowName })
-    }
   },
 
   props: { initialOptions },
