@@ -128,9 +128,8 @@ import {
   mdiRefresh,
   mdiFileRotateRight,
   mdiVectorSelection,
-  mdiAlphaFCircle
+  mdiVectorCombine
 } from '@mdi/js'
-import { getNodeChildren } from '@/components/cylc/tree/util'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
 // the tree view uses which allows the requests to overlap with this and other
@@ -360,6 +359,7 @@ export default {
       // supports loading graph when component is mounted and autoRefresh is off.
       // true if page is loading for the first time and nodeDimensions are yet to be calculated
       initialLoad: true,
+      familyArrayStore: [],
     }
   },
 
@@ -451,10 +451,11 @@ export default {
             },
             {
               title: 'Group by family',
-              icon: mdiAlphaFCircle,
-              action: 'toggle',
+              icon: mdiVectorCombine,
+              action: 'select',
               value: this.groupFamily,
-              key: 'groupFamily'
+              key: 'groupFamily',
+              items: this.familyArrayStore,
             }
           ]
         }
@@ -597,6 +598,13 @@ export default {
      * @returns {{ [dateTime: string]: Object[] }=} mapping of family to nodes
      */
     getFamilies (nodes) {
+      if (nodes) {
+        this.familyArrayStore = Object.keys(nodes.reduce((x, y) => {
+          (x[y.node.firstParent.id.split('/')[y.node.firstParent.id.split('/').length - 1]] ||= []).push(y)
+          return x
+        }, {}))
+      }
+
       if (!this.groupFamily) return
       return nodes.reduce((x, y) => {
         (x[y.node.firstParent.id.split('/')[y.node.firstParent.id.split('/').length - 1]] ||= []).push(y)
@@ -670,20 +678,22 @@ export default {
       if (this.groupFamily) {
         // Loop over the subgraphs
         Object.keys(families).forEach((key, i) => {
-          // Loop over the nodes that are included in the subraph
-          const nodeFormattedArray = families[key].map(a => `"${a.id}"`)
-          ret.push(`
-          subgraph cluster_margin_${i}
-          {
-            margin=100.0
-            label="margin"
-            subgraph cluster_${i} {${nodeFormattedArray};\n
-              label = "${key}";\n
-              fontsize = "70px"
-              style=dashed
-              margin=60.0
-            }
-          }`)
+          if (this.groupFamily.includes(key)) {
+            // Loop over the nodes that are included in the subraph
+            const nodeFormattedArray = families[key].map(a => `"${a.id}"`)
+            ret.push(`
+            subgraph cluster_margin_${i}
+            {
+              margin=100.0
+              label="margin"
+              subgraph cluster_${i} {${nodeFormattedArray};\n
+                label = "${key}";\n
+                fontsize = "70px"
+                style=dashed
+                margin=60.0
+              }
+            }`)
+          }
         })
       }
 
