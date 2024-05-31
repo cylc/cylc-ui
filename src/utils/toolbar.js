@@ -15,12 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { computed, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 import { useDisplay } from 'vuetify'
-import { useStore } from 'vuex'
 
 /** Height in px */
 export const toolbarHeight = 48
+
+/** Global state of navigation drawer visibility */
+const drawer = ref(false)
+
+function toggleDrawer () {
+  drawer.value = !drawer.value
+}
+
+/** Composable that provides the global state of the navigation drawer visibility. */
+export function useDrawer () {
+  return {
+    drawer,
+    toggleDrawer,
+  }
+}
 
 /**
  * Composable that returns a computed property for whether we should show
@@ -28,33 +42,7 @@ export const toolbarHeight = 48
  */
 export function useNavBtn () {
   const { mobile } = useDisplay()
-  const store = useStore()
   return {
-    showNavBtn: computed(() => mobile.value || !store.state.app.drawer),
-  }
-}
-
-/**
- * Composable that replaces the old toolbar mixin.
- *
- * Main responsibility is to add responsive toggle
- * to a Toolbar component. Shared between (at least) the Cylc
- * UI default Toolbar, and the Workflow view Toolbar.
- */
-export function useToolbar () {
-  const store = useStore()
-  const { showNavBtn } = useNavBtn()
-
-  onMounted(() => {
-    store.commit('app/setDrawer', !showNavBtn.value)
-  })
-
-  const toggleDrawer = () => {
-    store.commit('app/setDrawer', !store.state.app.drawer)
-  }
-
-  return {
-    showNavBtn,
-    toggleDrawer,
+    showNavBtn: computed(() => mobile.value || !drawer.value),
   }
 }

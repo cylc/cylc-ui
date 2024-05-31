@@ -28,19 +28,6 @@ describe('app', () => {
     store = createStore(storeOptions)
   })
   /**
-   * Tests for store.app.drawer.
-   */
-  describe('drawer', () => {
-    it('should start with no drawer', () => {
-      expect(store.state.app.drawer).to.equal(null)
-    })
-    it('should set drawer', () => {
-      const drawer = true
-      store.commit('app/setDrawer', drawer)
-      expect(store.state.app.drawer).to.equal(drawer)
-    })
-  })
-  /**
    * Tests for store.app.title.
    */
   describe('title', () => {

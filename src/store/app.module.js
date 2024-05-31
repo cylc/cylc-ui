@@ -18,15 +18,11 @@
 import { markRaw } from 'vue'
 
 const state = () => ({
-  drawer: null,
   title: null,
   workspaceLayouts: new Map(),
 })
 
 const mutations = {
-  setDrawer (state, drawer) {
-    state.drawer = drawer
-  },
   setTitle (state, title) {
     state.title = title
   },
