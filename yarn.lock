@@ -883,9 +883,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphiql/react@npm:^0.20.3":
-  version: 0.20.3
-  resolution: "@graphiql/react@npm:0.20.3"
+"@graphiql/react@npm:^0.22.2":
+  version: 0.22.2
+  resolution: "@graphiql/react@npm:0.22.2"
   dependencies:
     "@graphiql/toolkit": "npm:^0.9.1"
     "@headlessui/react": "npm:^1.7.15"
@@ -896,17 +896,17 @@ __metadata:
     "@types/codemirror": "npm:^5.60.8"
     clsx: "npm:^1.2.1"
     codemirror: "npm:^5.65.3"
-    codemirror-graphql: "npm:^2.0.10"
+    codemirror-graphql: "npm:^2.0.12"
     copy-to-clipboard: "npm:^3.2.0"
     framer-motion: "npm:^6.5.1"
-    graphql-language-service: "npm:^5.2.0"
-    markdown-it: "npm:^12.2.0"
+    graphql-language-service: "npm:^5.2.1"
+    markdown-it: "npm:^14.1.0"
     set-value: "npm:^4.1.0"
   peerDependencies:
     graphql: ^15.5.0 || ^16.0.0
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 10c0/705b65bff8317f0628e4ba85dcb0e7945b0592c401fc467763e8211efff2f0776be7ba94eeee36d9da1fa6b1f942e89f4c472e9fc4e5ef148c1262aed1fd8db2
+  checksum: 10c0/2484383cb57e71eb17985fe2cf56e014052531f02ccab97d30bae6746f772f7dbde68a92aa0bc42aa5f9ff24672234deefd9cbc6df147c5d672a7fbff1d3f1db
   languageName: node
   linkType: hard
 
@@ -3530,17 +3530,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codemirror-graphql@npm:^2.0.10":
-  version: 2.0.10
-  resolution: "codemirror-graphql@npm:2.0.10"
+"codemirror-graphql@npm:^2.0.12":
+  version: 2.0.12
+  resolution: "codemirror-graphql@npm:2.0.12"
   dependencies:
     "@types/codemirror": "npm:^0.0.90"
-    graphql-language-service: "npm:5.2.0"
+    graphql-language-service: "npm:5.2.1"
   peerDependencies:
     "@codemirror/language": 6.0.0
     codemirror: ^5.65.3
     graphql: ^15.5.0 || ^16.0.0
-  checksum: 10c0/77fc5a83f5d29ef14e896e397b280a9716c0206cfe4d9904266a1d658ba715231d99b1704039e4eb108878851f8c7fd158fec38a626735301c5f7ee51aa9eb15
+  checksum: 10c0/e0ca37a78d9adf2c79cc8049c8c27ab1391e93c8bcdfcf6a51bc32b552f2ee78da48e33926c31e40800f52b10c8cc307848f2283393b6ebfc75c1fd7ba153fd1
   languageName: node
   linkType: hard
 
@@ -3852,7 +3852,7 @@ __metadata:
     eslint-plugin-vuetify: "npm:2.1.1"
     express: "npm:4.19.1"
     express-ws: "npm:5.0.2"
-    graphiql: "npm:3.1.1"
+    graphiql: "npm:3.2.3"
     graphql: "npm:16.8.1"
     graphql-tag: "npm:2.12.6"
     istanbul-lib-coverage: "npm:3.2.2"
@@ -3865,7 +3865,7 @@ __metadata:
     nprogress: "npm:1.0.0-1"
     nyc: "npm:15.1.0"
     preact: "npm:10.19.6"
-    sass: "npm:1.71.1"
+    sass: "npm:1.77.4"
     sinon: "npm:17.0.1"
     standard: "npm:17.1.0"
     subscriptions-transport-ws: "npm:0.11.0"
@@ -4269,13 +4269,6 @@ __metadata:
   version: 4.5.0
   resolution: "entities@npm:4.5.0"
   checksum: 10c0/5b039739f7621f5d1ad996715e53d964035f75ad3b9a4d38c6b3804bb226e282ffeae2443624d8fdd9c47d8e926ae9ac009c54671243f0c3294c26af7cc85250
-  languageName: node
-  linkType: hard
-
-"entities@npm:~2.1.0":
-  version: 2.1.0
-  resolution: "entities@npm:2.1.0"
-  checksum: 10c0/dd96ed95f7e017b7fbbcdd39bd6dc3dea6638f747c00610b53f23ea461ac409af87670f313805d85854bfce04f96e17d83575f75b3b2920365d78678ccd2a405
   languageName: node
   linkType: hard
 
@@ -5912,25 +5905,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphiql@npm:3.1.1":
-  version: 3.1.1
-  resolution: "graphiql@npm:3.1.1"
+"graphiql@npm:3.2.3":
+  version: 3.2.3
+  resolution: "graphiql@npm:3.2.3"
   dependencies:
-    "@graphiql/react": "npm:^0.20.3"
+    "@graphiql/react": "npm:^0.22.2"
     "@graphiql/toolkit": "npm:^0.9.1"
-    graphql-language-service: "npm:^5.2.0"
-    markdown-it: "npm:^12.2.0"
+    graphql-language-service: "npm:^5.2.1"
+    markdown-it: "npm:^14.1.0"
   peerDependencies:
     graphql: ^15.5.0 || ^16.0.0
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 10c0/d9d8e8fab7290d17c32f5aeb48194c1476c04aed0213b3895fe966e14699620f45f3afd90aa689fc2f8fa97b26ae79ebf24008bcff262d7eb14035e57a7c730e
+  checksum: 10c0/3acaaf7260399047456fbf61d4dec82962b3ce283dcec7165724c56bbbb9d6cffeb4111e899b1adcc2a1d6ad34e40080fe7e686a8052a582a2599ed4f93f6912
   languageName: node
   linkType: hard
 
-"graphql-language-service@npm:5.2.0, graphql-language-service@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "graphql-language-service@npm:5.2.0"
+"graphql-language-service@npm:5.2.1, graphql-language-service@npm:^5.2.1":
+  version: 5.2.1
+  resolution: "graphql-language-service@npm:5.2.1"
   dependencies:
     nullthrows: "npm:^1.0.0"
     vscode-languageserver-types: "npm:^3.17.1"
@@ -5938,7 +5931,7 @@ __metadata:
     graphql: ^15.5.0 || ^16.0.0
   bin:
     graphql: dist/temp-bin.js
-  checksum: 10c0/2a865d6a7a7fa44bdce12768f7f3b2840a295f9cd684f30bb54db1f3def5f44ea8719c9605b6334fa76798d664f58ed025f17d78199f6c5bc431a67af50190fc
+  checksum: 10c0/f69e16b11dabe132751c0d5aa702f262de2ea27af4d92e04ac6149d11efe132cde6ced15144db8d043b8479abf1db7ba4bc04f8370b175b8ed92bdef943ee785
   languageName: node
   linkType: hard
 
@@ -7082,15 +7075,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"linkify-it@npm:^3.0.1":
-  version: 3.0.3
-  resolution: "linkify-it@npm:3.0.3"
-  dependencies:
-    uc.micro: "npm:^1.0.1"
-  checksum: 10c0/468cb4954f85cdfc16e169db89a42d65287e3f121a9448b29c3c00d64c6f5a8f4367bea3978ba9109a0e3a10b19d50632b983639f91b9be9f20d1f63a5ff5bc1
-  languageName: node
-  linkType: hard
-
 "linkify-it@npm:^5.0.0":
   version: 5.0.0
   resolution: "linkify-it@npm:5.0.0"
@@ -7358,7 +7342,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"markdown-it@npm:14.1.0":
+"markdown-it@npm:14.1.0, markdown-it@npm:^14.1.0":
   version: 14.1.0
   resolution: "markdown-it@npm:14.1.0"
   dependencies:
@@ -7371,28 +7355,6 @@ __metadata:
   bin:
     markdown-it: bin/markdown-it.mjs
   checksum: 10c0/9a6bb444181d2db7016a4173ae56a95a62c84d4cbfb6916a399b11d3e6581bf1cc2e4e1d07a2f022ae72c25f56db90fbe1e529fca16fbf9541659dc53480d4b4
-  languageName: node
-  linkType: hard
-
-"markdown-it@npm:^12.2.0":
-  version: 12.3.2
-  resolution: "markdown-it@npm:12.3.2"
-  dependencies:
-    argparse: "npm:^2.0.1"
-    entities: "npm:~2.1.0"
-    linkify-it: "npm:^3.0.1"
-    mdurl: "npm:^1.0.1"
-    uc.micro: "npm:^1.0.5"
-  bin:
-    markdown-it: bin/markdown-it.js
-  checksum: 10c0/7f97b924e6f90e2c5ccdfb486a19bd7885b938f568a86b527bf6f916a16b01a298e6739f86a99e77acb5e7c020f6c8b34bd726364179b3f820e48b2971a6450c
-  languageName: node
-  linkType: hard
-
-"mdurl@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "mdurl@npm:1.0.1"
-  checksum: 10c0/ea8534341eb002aaa532a722daef6074cd8ca66202e10a2b4cda46722c1ebdb1da92197ac300bc953d3ef1bf41cd6561ef2cc69d82d5d0237dae00d4a61a4eee
   languageName: node
   linkType: hard
 
@@ -9143,16 +9105,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:1.71.1":
-  version: 1.71.1
-  resolution: "sass@npm:1.71.1"
+"sass@npm:1.77.4":
+  version: 1.77.4
+  resolution: "sass@npm:1.77.4"
   dependencies:
     chokidar: "npm:>=3.0.0 <4.0.0"
     immutable: "npm:^4.0.0"
     source-map-js: "npm:>=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: 10c0/59d79a6e106747746792b0c71908ae0aecdaf9b794d5724ee64e5249412f0d8ebe7ee2bf12946618848f14f949c4f6b530d82da3e62ab31c71198c6f73002130
+  checksum: 10c0/b9cb4882bded282aabe38d011adfce375e1f282184fcf93dc3da5d5be834c6aa53c474c15634c351ef7bd85146cfd1cc81343654cc3bcf000d78e856da4225ef
   languageName: node
   linkType: hard
 
@@ -10161,13 +10123,6 @@ __metadata:
   dependencies:
     is-typedarray: "npm:^1.0.0"
   checksum: 10c0/4ac5b7a93d604edabf3ac58d3a2f7e07487e9f6e98195a080e81dbffdc4127817f470f219d794a843b87052cedef102b53ac9b539855380b8c2172054b7d5027
-  languageName: node
-  linkType: hard
-
-"uc.micro@npm:^1.0.1, uc.micro@npm:^1.0.5":
-  version: 1.0.6
-  resolution: "uc.micro@npm:1.0.6"
-  checksum: 10c0/9bde2afc6f2e24b899db6caea47dae778b88862ca76688d844ef6e6121dec0679c152893a74a6cfbd2e6fde34654e6bd8424fee8e0166cdfa6c9ae5d42b8a17b
   languageName: node
   linkType: hard
 
