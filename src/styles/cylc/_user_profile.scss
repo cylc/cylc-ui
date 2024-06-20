@@ -16,6 +16,10 @@
  */
 
 .c-user-profile {
+  .v-field--disabled {
+    // Increase opactity to make it easier to read disabled fields
+    opacity: 0.6;
+  }
   .v-container .v-row {
     margin-bottom: 1em;
   }

@@ -20,7 +20,8 @@ import {
   processMutations
 } from '@/utils/aotf'
 import {
-  MUTATIONS
+  MUTATIONS,
+  patchUserprofile,
 } from '$tests/e2e/support/graphql'
 import { cloneDeep } from 'lodash'
 
@@ -61,6 +62,7 @@ function mockWorkflowService () {
 
 describe('Api On The Fly', () => {
   beforeEach(() => {
+    patchUserprofile()
     cy.intercept('/graphql', req => {
       if (req.body.query.includes('__schema')) {
         req.alias = 'IntrospectQuery' // equivalent to `.as('IntrospectQuery')`
@@ -248,20 +250,17 @@ describe('Api On The Fly', () => {
     })
   })
 
-  describe('Hold/Release button', () => {
-    it('should hold/release the workflow', () => {
+  describe('Play/pause button', () => {
+    it('should play/pause the workflow', () => {
       // mock the mutation method
       const mutations = mockWorkflowService()
       expect(mutations.length).to.equal(0)
 
-      // click the hold-release button
-      cy
-        .get('#workflow-play-pause-button')
+      cy.get('#workflow-play-pause-button')
         .should('be.visible')
         .click()
         .then(() => {
-          expect(mutations.length).to.equal(1)
-          expect(mutations[0]).to.equal('pause')
+          expect(mutations).to.deep.equal(['pause'])
         })
     })
   })
@@ -274,14 +273,11 @@ describe('Api On The Fly', () => {
 
       cy.wait(['@IntrospectQuery'])
 
-      // click the hold-release button
-      cy
-        .get('#workflow-stop-button')
+      cy.get('#workflow-stop-button')
         .should('be.visible')
         .click()
         .then(() => {
-          expect(mutations.length).to.equal(1)
-          expect(mutations[0]).to.equal('stop')
+          expect(mutations).to.deep.equal(['stop'])
         })
     })
   })

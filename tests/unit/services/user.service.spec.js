@@ -32,25 +32,23 @@ describe('UserService', () => {
   })
   afterEach(() => sandbox.restore())
   describe('getUserProfile returns the logged-in user profile information', () => {
-    it('should return user profile object', () => {
-      const userReturned = new Promise((resolve) => resolve(
-        {
-          data: {
-            name: 'cylc-user-01',
-            groups: ['root', 'wheel'],
-            created: '2019-01-01',
-            admin: true
-          }
-        })
-      )
-      sandbox.stub(axios, 'get').returns(userReturned)
-      return new UserService().getUserProfile()
-        .then(function (user) {
-          expect(user.username).to.equal('cylc-user-01')
-          expect(user.groups.length).to.equal(2)
-          expect(user.created).to.equal('2019-01-01')
-          expect(user.admin).to.equal(true)
-        })
+    it('returns user profile object', async () => {
+      const expected = {
+        username: 'cylc-user-01',
+        mode: 'single user',
+        permissions: ['read'],
+        owner: 'cylc-user-02',
+      }
+      const response = Promise.resolve({
+        data: {
+          ...expected,
+          name: expected.username,
+          other_stuff: null,
+        }
+      })
+      sandbox.stub(axios, 'get').returns(response)
+      const user = await new UserService().getUserProfile()
+      expect(user).toMatchObject(expected)
     })
     it('should add an alert on error', () => {
       expect(store.state.alert).to.equal(null)

@@ -71,7 +71,7 @@ describe('Table view', () => {
   let store, $workflowService
   beforeEach(() => {
     store = createStore(storeOptions)
-    const user = new User('cylc', [], new Date(), true, 'localhost', 'owner')
+    const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
     store.commit('user/SET_USER', user)
     $workflowService = sinon.createStubInstance(WorkflowService)
   })

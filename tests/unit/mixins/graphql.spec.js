@@ -24,7 +24,7 @@ import graphqlMixin from '@/mixins/graphql'
 describe('GraphQL mixin', () => {
   const store = createStore(storeOptions)
   it('should create the GraphQL Query variables', () => {
-    const user = new User('cylc', [], new Date(), true, 'localhost', 'owner')
+    const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
     store.commit('user/SET_USER', user)
     const workflowName = 'test'
     const Component = {

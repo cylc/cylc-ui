@@ -16,7 +16,6 @@
  */
 
 const IntrospectionQuery = require('./IntrospectionQuery.json')
-const userProfile = require('./userprofile.json')
 const taskProxy = require('./taskProxy.json')
 const familyProxy = require('./familyProxy.json')
 const workflowOne = require('./workflows/one')
@@ -34,7 +33,6 @@ module.exports = {
   IntrospectionQuery,
   taskProxy,
   familyProxy,
-  userProfile,
   LogData,
   LogFiles,
   App: workflows,

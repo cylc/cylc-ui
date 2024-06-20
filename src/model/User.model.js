@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,33 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @typedef {object} User
- * @property {string} username - user name
- * @property {string[]} groups - user groups
- * @property {string} created - date when the user was created
- * @property {boolean} admin - whether the user is an administrator or not
- * @property {string} server - server URL
- * @property {string} owner - UIS owner
- * @property {string[]} permissions - list of permissions
- * @property {string} mode - single or multi user mode
- * @property {string} initials - user initials
- */
 export default class User {
-  constructor (username, groups, created, admin, server, owner, permissions, mode, initials) {
-    // the authenticated user
-    // (full info only available when authenticated via the hub)
+  constructor ({ username, owner, permissions, mode, initials, color }) {
+    /**
+     * @type {string}
+     */
     this.username = username
-    this.groups = groups
-    this.created = created
-    this.admin = admin
-    this.server = server || '?' // server can be unset
-    // the UIS owner
-    // (i.e. the user who's workflows we are looking at)
-    // (this might not be the authenticated user for multi-user setups)
+    /**
+     * the UIS owner (i.e. the user who's workflows we are looking at)
+     * (this might not be the authenticated user for multi-user setups)
+     * @type {string}
+     */
     this.owner = owner
+    /**
+     * list of permissions
+     * @type {string[]}
+     */
     this.permissions = permissions
+    /**
+     * single or multi user mode
+     * @type {string}
+     */
     this.mode = mode
+    /**
+     * user initials
+     * @type {string}
+     */
     this.initials = initials
+    /**
+     * user avatar color if set
+     * @type {string | null}
+     */
+    this.color = color
   }
 }

@@ -82,7 +82,7 @@ describe('Tree view', () => {
   let mountFunction
   beforeEach(() => {
     const store = createStore(storeOptions)
-    const user = new User('cylc', [], new Date(), true, 'localhost', 'owner')
+    const user = new User({ username: 'cylc', permissions: [], owner: 'owner' })
     store.commit('user/SET_USER', user)
     mountFunction = (options) => mount(Tree, {
       global: {
