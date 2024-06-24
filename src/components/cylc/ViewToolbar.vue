@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <template v-slot:prepend="{ isActive }">
                 <v-list-item-action>
-                  <v-checkbox v-model="selectedItems" v-on:update:modelValue="iControl.callback" :value="item"/>
+                  <v-checkbox v-model="selectedItems[iControl.key]" v-on:update:modelValue="iControl.callback" :value="item"/>
                 </v-list-item-action>
               </template>
               <v-list-item-title>{{ item }}</v-list-item-title>
@@ -128,7 +128,10 @@ export default {
 
   data () {
     return {
-      selectedItems: []
+      selectedItems: {
+        groupFamily: [],
+        collapseFamily: []
+      }
     }
   },
 
@@ -218,7 +221,7 @@ export default {
     },
     select (control, e) {
       // call a control's callback
-      control.value = this.selectedItems
+      control.value = this.selectedItems[control.key]
       this.$emit('setOption', control.key, control.value)
       // e.currentTarget.blur()
     },
