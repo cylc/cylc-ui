@@ -3820,7 +3820,7 @@ __metadata:
     nodemon: "npm:3.1.4"
     nprogress: "npm:1.0.0-1"
     nyc: "npm:17.0.0"
-    preact: "npm:10.21.0"
+    preact: "npm:10.22.0"
     sass: "npm:1.77.4"
     sinon: "npm:18.0.0"
     standard: "npm:17.1.0"
@@ -8431,10 +8431,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"preact@npm:10.21.0":
-  version: 10.21.0
-  resolution: "preact@npm:10.21.0"
-  checksum: 10c0/1f3cfcb5ca83b780b53593bcb917ae2e8d10a37405c32fb6774be1b5f1f3167d2156bd22c058627388330acc54da35fe8d4bbe7d38ae567a10e5d8fd943a1a06
+"preact@npm:10.22.0":
+  version: 10.22.0
+  resolution: "preact@npm:10.22.0"
+  checksum: 10c0/dc5466c5968c56997e917580c00983cec2f6486a89ea9ba29f1bb88dcfd2f9ff67c8d561a69a1b3acdab17f2bb36b311fef0c348b62e89c332d00c674f7871f0
   languageName: node
   linkType: hard
 
