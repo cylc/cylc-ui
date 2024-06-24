@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import gql from 'graphql-tag'
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { getPageTitle } from '@/utils/index'
 import { useJobTheme } from '@/composables/localStorage'
 import graphqlMixin from '@/mixins/graphql'
@@ -128,7 +128,8 @@ import {
   mdiRefresh,
   mdiFileRotateRight,
   mdiVectorSelection,
-  mdiVectorCombine
+  mdiVectorCombine,
+  mdiAlphaCCircle
 } from '@mdi/js'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
@@ -168,65 +169,15 @@ fragment TaskProxyData on TaskProxy {
   isRunahead
   isQueued
   name
+  firstParent {
+    id
+    name
+    cyclePoint
+    state
+  }
   task {
     meanElapsedTime
   }
-}
-
-fragment JobData on Job {
-  id
-  state
-  name
-  startedTime
-}
-
-fragment AddedDelta on Added {
-  workflow {
-    ...WorkflowData
-  }
-  edges {
-    ...EdgeData
-  }
-  familyProxies {
-    ...FamilyProxyData
-  }
-  taskProxies {
-    ...TaskProxyData
-  }
-  jobs {
-    ...JobData
-  }
-}
-
-fragment UpdatedDelta on Updated {
-  workflow {
-    ...WorkflowData
-  }
-  edges {
-    ...EdgeData
-  }
-  familyProxies {
-    ...FamilyProxyData
-  }
-  taskProxies {
-    ...TaskProxyData
-  }
-  jobs {
-    ...JobData
-  }
-}
-
-fragment PrunedDelta on Pruned {
-  workflow
-  edges
-  familyProxies
-  taskProxies
-  jobs
-}
-
-fragment WorkflowData on Workflow {
-  id
-  reloaded
 }
 
 fragment FamilyProxyData on FamilyProxy {
@@ -239,39 +190,87 @@ fragment FamilyProxyData on FamilyProxy {
   childTasks {
     id
   }
-}
-
-fragment TaskProxyData on TaskProxy {
-  id
-  state
   isHeld
-  isQueued
   isRunahead
-  task {
-    meanElapsedTime
-  }
+  isQueued
+  name
+  id
+  cyclePoint
   firstParent {
     id
+    name
+    cyclePoint
+    state
   }
 }
 
 fragment JobData on Job {
   id
-  jobRunnerName
-  jobId
-  platform
-  startedTime
-  submittedTime
-  finishedTime
   state
-  submitNum
-  messages
-  taskProxy {
-    outputs (satisfied: true) {
-      label
-      message
-    }
+  name
+  startedTime
+}
+
+fragment FamilyData on Family {
+  id
+  name
+  parents {
+    name
   }
+  childTasks {
+    name
+  }
+}
+
+fragment AddedDelta on Added {
+  workflow {
+    ...WorkflowData
+  }
+  edges {
+    ...EdgeData
+  }
+  taskProxies {
+    ...TaskProxyData
+  }
+  familyProxies {
+    ...FamilyProxyData
+  }
+  jobs {
+    ...JobData
+  }
+  families {
+    ...FamilyData
+  }
+}
+
+fragment UpdatedDelta on Updated {
+  workflow {
+    ...WorkflowData
+  }
+  edges {
+    ...EdgeData
+  }
+  taskProxies {
+    ...TaskProxyData
+  }
+  familyProxies {
+    ...FamilyProxyData
+  }
+  jobs {
+    ...JobData
+  }
+  families {
+    ...FamilyData
+  }
+}
+
+fragment PrunedDelta on Pruned {
+  workflow
+  edges
+  taskProxies
+  familyProxies
+  jobs
+  families
 }
 `
 
@@ -324,7 +323,14 @@ export default {
      * If true the graph nodes will be grouped by family
      * @type {import('vue').Ref<boolean>}
      */
-    const groupFamily = useInitialOptions('groupFamily', { props, emit }, false)
+    const groupFamily = useInitialOptions('groupFamily', { props, emit }, [])
+
+    /**
+     * The group by family toggle state.
+     * If true the graph nodes will be grouped by family
+     * @type {import('vue').Ref<boolean>}
+     */
+    const collapseFamily = useInitialOptions('collapseFamily', { props, emit }, [])
 
     return {
       jobTheme: useJobTheme(),
@@ -332,7 +338,8 @@ export default {
       autoRefresh,
       spacing,
       groupCycle,
-      groupFamily
+      groupFamily,
+      collapseFamily,
     }
   },
 
@@ -359,7 +366,9 @@ export default {
       // supports loading graph when component is mounted and autoRefresh is off.
       // true if page is loading for the first time and nodeDimensions are yet to be calculated
       initialLoad: true,
-      familyArrayStore: [],
+      groupFamilyArrayStore: [],
+      collapseFamilyArrayStore: [],
+      edgeTemplate: {},
     }
   },
 
@@ -397,6 +406,9 @@ export default {
     },
     workflows () {
       return this.getNodes('workflow', this.workflowIDs)
+    },
+    namespaces () {
+      return this.workflows[0].$namespaces
     },
     controlGroups () {
       return [
@@ -455,7 +467,15 @@ export default {
               action: 'select',
               value: this.groupFamily,
               key: 'groupFamily',
-              items: this.familyArrayStore,
+              items: this.groupFamilyArrayStore,
+            },
+            {
+              title: 'Collapse by family',
+              icon: mdiAlphaCCircle,
+              action: 'select',
+              value: this.collapseFamily,
+              key: 'collapseFamily',
+              items: this.collapseFamilyArrayStore,
             }
           ]
         }
@@ -464,6 +484,151 @@ export default {
   },
 
   methods: {
+    createNode (nodeName, cyclePoint, nodes) {
+      // adds a new node object to 'nodes' array
+      const nodePath = '~mdawson/runtime-tutorial-families/run1'
+      const nodeId = `${nodePath}//${cyclePoint}/${nodeName}`
+      const nodeParent = `${nodePath}//${cyclePoint}`
+      const newNode = {
+        children: [],
+        familyTree: undefined,
+        id: nodeId,
+        name: nodeName,
+        node: {
+          firstParent: {
+            cyclePoint,
+            id: `${nodeParent}/root/${nodeName}`,
+            name: 'root',
+            state: 'waiting'
+          },
+          id: false,
+          isHeld: false,
+          isQueued: false,
+          isRunahead: false,
+          name: nodeName,
+          state: 'waiting',
+          task: {
+            meanElapsedTime: 0
+          }
+        },
+        parent: nodeParent,
+        tokens: {
+          cycle: cyclePoint,
+          edge: undefined,
+          id: nodeId,
+          job: undefined,
+          namespce: undefined,
+          relativeID: `${cyclePoint}/${nodeName}`,
+          task: nodeName,
+          user: undefined,
+          workflow: undefined,
+          workflowID: nodePath
+        },
+        type: 'family'
+      }
+      nodes.push(newNode)
+      return nodes
+    },
+    removeNode (nodeName, cyclePoint, nodes) {
+      // removes a node object from the 'nodes' array
+      const nodePath = '~mdawson/runtime-tutorial-families/run1'
+      const nodeId = `${nodePath}//${cyclePoint}/${nodeName}`
+      const nodesFiltered = nodes.filter((node) => {
+        return node.id !== nodeId
+      })
+      return nodesFiltered
+    },
+    checkForNode (nodeName, cyclePoint, nodes) {
+      // checks the 'edges' array to see if edge is present
+      const nodePath = '~mdawson/runtime-tutorial-families/run1'
+      const nodeId = `${nodePath}//${cyclePoint}/${nodeName}`
+      const nodeSearch = nodes.find((node) => { return node.id === nodeId })
+      if (nodeSearch === -1) {
+        return null
+      } else {
+        return nodeSearch
+      }
+    },
+    createEdge (sourceName, targetName, cyclePoint) {
+      // adds a new edge object to 'edges' array
+      const edgePath = '~mdawson/runtime-tutorial-families/run1'
+      const edgeId = `${edgePath}//$edge|${cyclePoint}/${sourceName}|${cyclePoint}/${targetName}`
+      const sourceObject = {
+        cycle: cyclePoint,
+        edge: undefined,
+        id: `${cyclePoint}/${sourceName}`,
+        job: undefined,
+        namespace: undefined,
+        relativeID: `${cyclePoint}/${sourceName}`,
+        task: sourceName,
+        user: undefined,
+        workflow: undefined,
+        workflowID: ''
+      }
+      const targetObject = {
+        cycle: cyclePoint,
+        edge: undefined,
+        id: `${cyclePoint}/${targetName}`,
+        job: undefined,
+        namespace: undefined,
+        relativeID: `${cyclePoint}/${targetName}`,
+        task: targetName,
+        user: undefined,
+        workflow: undefined,
+        workflowID: ''
+      }
+      const newEdge = {
+        children: [],
+        familyTree: undefined,
+        id: edgeId,
+        name: edgeId,
+        node: {
+          id: edgeId,
+          source: `${edgePath}//${cyclePoint}/${sourceName}`,
+          target: `${edgePath}//${cyclePoint}/${targetName}`,
+        },
+        tokens: {
+          cycle: undefined,
+          edge: [sourceObject, targetObject],
+          id: edgeId,
+          job: undefined,
+          namespce: undefined,
+          relativeID: '',
+          task: undefined,
+          user: undefined,
+          workflow: undefined,
+          workflowID: edgePath
+        },
+        type: 'family'
+      }
+      return newEdge
+    },
+    removeEdge (edgeName, cyclePoint, edges) {
+      // removes a edge object from the 'edges' array
+      const edgeSearchTerm = `${cyclePoint}/${edgeName}`
+      const edgesFiltered = edges.filter((edge) => {
+        if (edge.id.search(edgeSearchTerm) === -1) {
+          return true
+        } else {
+          return false
+        }
+      })
+      return edgesFiltered
+    },
+    checkForEdge (sourceName, targetName, cyclePoint, edges) {
+      // checks the 'edges' array to see if edge is present
+      const edgePath = '~mdawson/runtime-tutorial-families/run1'
+      const edgeSearchTerm = `${edgePath}//$edge|${cyclePoint}/${sourceName}|${cyclePoint}/${targetName}`
+      const edgeSearch = edges.filter((edge) => {
+        const stringSearch = edge.id.indexOf(edgeSearchTerm)
+        if (stringSearch === -1) {
+          return false
+        } else {
+          return true
+        }
+      })
+      return edgeSearch
+    },
     mountSVGPanZoom () {
       // Check the SVG is ready:
       // * The SVG document must be rendered with something in it before we can
@@ -599,10 +764,28 @@ export default {
      */
     getFamilies (nodes) {
       if (nodes) {
-        this.familyArrayStore = Object.keys(nodes.reduce((x, y) => {
-          (x[y.node.firstParent.id.split('/')[y.node.firstParent.id.split('/').length - 1]] ||= []).push(y)
-          return x
-        }, {}))
+        const families = this.namespaces.filter((family) => {
+          return family.name != 'root'
+        }).map((family) => family.name)
+        const cycles = this.workflows[0].children.map(child => child.tokens.cycle)
+        this.groupFamilyArrayStore = families
+        this.collapseFamilyArrayStore = []
+        families.forEach((family) => 
+          cycles.forEach((cycle) => {
+            this.collapseFamilyArrayStore.push(`${family}-${cycle}`)
+          })
+          // {
+          //   family: family,
+          //   cycles
+          // }
+        )
+        // this.namespace.forEach((namespace) => {
+        //   if (namespace != 'root') {
+        //     namespace.node.childTasks.forEach((child) => {
+
+        //     })
+        //   }
+        // })
       }
 
       if (!this.groupFamily) return
@@ -760,11 +943,59 @@ export default {
       this.updating = true
 
       // extract the graph (non reactive lists of nodes & edges)
-      const nodes = await this.waitFor(() => {
+      let nodes = await this.waitFor(() => {
         const nodes = this.getGraphNodes()
         return nodes.length ? nodes : false
       })
-      const edges = this.getGraphEdges()
+      let edges = this.getGraphEdges()
+
+      const removedEdges = []
+      // what needs to be removed?
+      this.collapseFamily.forEach((familyCycleName) => {
+        const familyName = familyCycleName.split("-")[0]
+        const cycleName = familyCycleName.split("-")[1]
+        const namespace = this.namespaces.find((namespace) => namespace.name === familyName)
+        const childNodes = namespace.node.childTasks
+        childNodes.forEach((childNode) => {
+          // REMOVE NODES
+          const nodeCheck = this.checkForNode(childNode.name, cycleName, nodes)
+          // if the node exists in nodes it needs removing
+          if (nodeCheck) {
+            nodes = this.removeNode(childNode.name, cycleName, nodes)
+          }
+          // REMOVE EDGES
+          const edgeCheck = this.checkForEdge(childNode.name, '', cycleName, edges)
+          removedEdges.push(edgeCheck[0])
+          // if there is an edge with a source or target it needs removing
+          if (edgeCheck) {
+            edges = this.removeEdge(childNode.name, cycleName, edges)
+          }
+        })
+      })
+
+      // what needs to be added?
+      this.collapseFamily.forEach((familyCycleName) => {
+        const familyName = familyCycleName.split("-")[0]
+        const cycleName = familyCycleName.split("-")[1]
+        const namespace = this.namespaces.find((namespace) => namespace.name === familyName)
+        // ADD NODES
+        nodes = this.createNode(namespace.name, cycleName, nodes)
+        // ADD EDGES
+        const childNodes = namespace.node.childTasks
+        childNodes.forEach((childNode) => {
+          // check to see if child node edges have been removed in above step
+          const edgeCheckRemovedEdges = this.checkForEdge(childNode.name, '', cycleName, removedEdges)
+          if (edgeCheckRemovedEdges) {
+            const targetName = edgeCheckRemovedEdges[0].name.split('/')[edgeCheckRemovedEdges[0].name.split('/').length - 1]
+            // prevent duplicate edges
+            const edgeCheckEdges = this.checkForEdge(namespace.name, targetName, cycleName, edges)
+            if (!edgeCheckEdges.length) {
+              this.edgeTemplate = this.createEdge(namespace.name, targetName, cycleName)
+              edges.push(this.edgeTemplate)
+            }
+          }
+        })
+      })
 
       if (!nodes || !nodes.length) {
         // we can't graph this, reset and wait for something to draw
@@ -796,7 +1027,7 @@ export default {
       }
       // wipe old nodes
       this.graphNodes = nodes
-
+      
       // obtain the node dimensions to use in the layout
       // NOTE: need to wait for the nodes to all be rendered before we can
       // measure them
@@ -940,6 +1171,12 @@ export default {
       if (newValue === true) { this.groupFamily = false }
     },
     groupFamily (newValue, oldValue) {
+      // refresh the graph when group by family option is changed
+      this.graphID = null
+      this.refresh()
+      if (newValue === true) { this.groupCycle = false }
+    },
+    collapseFamily (newValue, oldValue) {
       // refresh the graph when group by family option is changed
       this.graphID = null
       this.refresh()
