@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,29 +19,16 @@ import axios from 'axios'
 import User from '@/model/User.model'
 import { createUrl, getCylcHeaders } from '@/utils/urls'
 
-class UserService {
+export default class UserService {
   /**
    * Gets the user profile from the backend server.
-   * @returns {Promise<*>} - a promise that dispatches Vuex action
+   * @returns {Promise<User>} - a promise that dispatches Vuex action
    */
-  getUserProfile () {
-    return axios.get(
+  async getUserProfile () {
+    const { data } = await axios.get(
       createUrl('userprofile'),
-      { headers: getCylcHeaders() },
-    ).then(({ data }) => {
-      return new User(
-        data.name,
-        data.groups,
-        data.created,
-        data.admin,
-        data.server,
-        data.owner,
-        data.permissions,
-        data.mode,
-        data.initials
-      )
-    })
+      { headers: getCylcHeaders() }
+    )
+    return new User(data)
   }
 }
-
-export default UserService

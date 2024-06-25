@@ -1,9 +1,6 @@
 {
-  "tableHeader": "Seu perfil de Usuário",
-  "tableSubHeader": "Esta é a lista (modo leitura) do perfil do seu usuário",
+  "title": "Configurações",
+  "yourProfile": "Seu perfil de Usuário",
   "username": "Nome de Usuário",
-  "administrator": "Administrador",
-  "groups": "Grupos",
-  "created": "Criado",
   "permissions": "Operações Autorizadas"
 }

@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script setup>
-import { provide, readonly, ref } from 'vue'
+import { onBeforeUnmount, provide, readonly, ref } from 'vue'
 import { eventBus } from '@/services/eventBus'
 
 const props = defineProps({
@@ -49,5 +49,9 @@ provide('animResetTime', readonly(animResetTime))
 
 eventBus.on(`lumino:show:${props.id}`, () => {
   animResetTime.value = Date.now()
+})
+
+onBeforeUnmount(() => {
+  eventBus.off(`lumino:show:${props.id}`)
 })
 </script>

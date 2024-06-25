@@ -149,10 +149,3 @@ const showGoButton = computed(() => (
 ))
 
 </script>
-
-<style>
-/* work around bug with v-combobox overflow https://github.com/vuetifyjs/vuetify/issues/17596 */
-  .v-combobox__selection {
-    overflow-x: hidden;
-  }
-</style>

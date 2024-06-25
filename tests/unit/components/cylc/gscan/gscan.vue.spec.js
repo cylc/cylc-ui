@@ -16,9 +16,7 @@
  */
 
 import { mount } from '@vue/test-utils'
-import { createStore } from 'vuex'
 import { createVuetify } from 'vuetify'
-import storeOptions from '@/store/options'
 import GScan from '@/components/cylc/gscan/GScan.vue'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import {
@@ -49,12 +47,6 @@ function filterNodes (wrapper, filteredOutNodesCache) {
 }
 
 describe('GScan component', () => {
-  const store = createStore(storeOptions)
-  const resetState = () => {
-    store.commit('workflows/SET_WORKFLOW_NAME', null)
-  }
-  beforeEach(resetState)
-
   describe('Sorting', () => {
     it('sets workflow sort order by status', () => {
       // for each worflow state ...

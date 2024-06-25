@@ -98,7 +98,7 @@ describe('Log view', () => {
     store = createStore(storeOptions)
     store.commit(
       'user/SET_USER',
-      new User('cylc', [], new Date(), true, 'localhost', owner)
+      new User({ username: 'cylc', permissions: [], owner })
     )
     $workflowService = sinon.createStubInstance(WorkflowService)
     $workflowService.apolloClient = {

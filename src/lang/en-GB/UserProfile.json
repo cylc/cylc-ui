@@ -1,9 +1,6 @@
 {
-  "tableHeader": "Your Profile",
-  "tableSubHeader": "This is a read-only view of your user",
+  "title": "Settings",
+  "yourProfile": "Your Profile",
   "username": "Username",
-  "administrator": "Administrator",
-  "groups": "Groups",
-  "created": "Created",
   "permissions": "Authorized Operations"
 }

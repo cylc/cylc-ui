@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-list
         class="pa-0 d-flex flex-column"
       >
-        <c-header/>
+        <c-header />
 
         <v-list-item
           to="/"

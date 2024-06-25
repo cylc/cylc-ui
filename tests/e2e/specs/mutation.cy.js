@@ -18,12 +18,14 @@
 import { processMutations } from '@/utils/aotf'
 import { cloneDeep, upperFirst } from 'lodash'
 import {
-  MUTATIONS
+  MUTATIONS,
+  patchUserprofile,
 } from '$tests/e2e/support/graphql'
 import { Deferred } from '$tests/util'
 
 describe('Mutations component', () => {
   beforeEach(() => {
+    patchUserprofile()
     cy.visit('/#/tree/one')
   })
 
@@ -208,7 +210,7 @@ describe('Mutations component', () => {
       .click()
       .get('.c-mutation-menu-list')
       // choose mutation with long form so it overflows
-      .contains('Play')
+      .contains('Broadcast')
       .parents('.v-list-item')
       .find('[data-cy=mutation-edit]')
       .click()

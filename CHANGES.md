@@ -12,6 +12,30 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.5.0 (Released 2024-06-18)
+
+### 🚀 Enhancements
+
+[#1466](https://github.com/cylc/cylc-ui/pull/1466) - Added gantt view: a new view showing job durations over time.
+
+[#1510](https://github.com/cylc/cylc-ui/pull/1510) - Analysis view: added a time series layout which plots run time against cycle points.
+
+[#1717](https://github.com/cylc/cylc-ui/pull/1717), [#1744](https://github.com/cylc/cylc-ui/pull/1744), [#1745](https://github.com/cylc/cylc-ui/pull/1745), [#1751](https://github.com/cylc/cylc-ui/pull/1751) - More view options are now remembered & restored when navigating between workflows.
+
+[#1755](https://github.com/cylc/cylc-ui/pull/1755) - Add a toolbar button for changing the graph window extent.
+
+[#1763](https://github.com/cylc/cylc-ui/pull/1763) - Added graph view feature to group nodes by cycle point
+
+### 🔧 Fixes
+
+[#1758](https://github.com/cylc/cylc-ui/pull/1758) - Clicking "Log" in the command menu now works correctly for workflows in the sidebar.
+
+[#1778](https://github.com/cylc/cylc-ui/pull/1778) - Compatibility with JupyterHub 4.1 XSRF changes
+
+[#1780](https://github.com/cylc/cylc-ui/pull/1780) - Fixed graph view rendering bug in Firefox.
+
+[#1802](https://github.com/cylc/cylc-ui/pull/1802) - Fixed bug where task progress animations would reset when switching between tabs in the workspace.
+
 ## cylc-ui-2.4.0 (Released 2024-04-02)
 
 ### Enhancements
