@@ -129,7 +129,8 @@ import {
   mdiFileRotateRight,
   mdiVectorSelection,
   mdiVectorCombine,
-  mdiAlphaCCircle
+  mdiAlphaCCircle,
+  mdiAlphaFCircle
 } from '@mdi/js'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
@@ -330,6 +331,13 @@ export default {
      * If true the graph nodes will be grouped by family
      * @type {import('vue').Ref<boolean>}
      */
+    const collapseCycle = useInitialOptions('collapseCycle', { props, emit }, [])
+
+    /**
+     * The group by family toggle state.
+     * If true the graph nodes will be grouped by family
+     * @type {import('vue').Ref<boolean>}
+     */
     const collapseFamily = useInitialOptions('collapseFamily', { props, emit }, [])
 
     return {
@@ -339,6 +347,7 @@ export default {
       spacing,
       groupCycle,
       groupFamily,
+      collapseCycle,
       collapseFamily,
     }
   },
@@ -367,6 +376,7 @@ export default {
       // true if page is loading for the first time and nodeDimensions are yet to be calculated
       initialLoad: true,
       groupFamilyArrayStore: [],
+      collapseCycleArrayStore: [],
       collapseFamilyArrayStore: [],
       edgeTemplate: {},
     }
@@ -387,7 +397,6 @@ export default {
   beforeUnmount () {
     clearInterval(this.refreshTimer)
   },
-
   computed: {
     ...mapState('workflows', ['cylcTree']),
     ...mapGetters('workflows', ['getNodes']),
@@ -470,8 +479,16 @@ export default {
               items: this.groupFamilyArrayStore,
             },
             {
-              title: 'Collapse by family',
+              title: 'Collapse by cycle point',
               icon: mdiAlphaCCircle,
+              action: 'select',
+              value: this.collapseCycle,
+              key: 'collapseCycle',
+              items: this.collapseCycleArrayStore,
+            },
+            {
+              title: 'Collapse by family',
+              icon: mdiAlphaFCircle,
               action: 'select',
               value: this.collapseFamily,
               key: 'collapseFamily',
@@ -485,6 +502,7 @@ export default {
 
   methods: {
     createNode (nodeName, cyclePoint, nodes) {
+      // const abc = this.workflows[0].tokens.clone({cycle: "20240624T1200Z", workflow: "consolidate_observations"})
       // adds a new node object to 'nodes' array
       const nodePath = '~mdawson/runtime-tutorial-families/run1'
       const nodeId = `${nodePath}//${cyclePoint}/${nodeName}`
@@ -499,14 +517,14 @@ export default {
             cyclePoint,
             id: `${nodeParent}/root/${nodeName}`,
             name: 'root',
-            state: 'waiting'
+            state: 'succeeded'
           },
           id: false,
           isHeld: false,
           isQueued: false,
           isRunahead: false,
           name: nodeName,
-          state: 'waiting',
+          state: 'succeeded',
           task: {
             meanElapsedTime: 0
           }
@@ -549,29 +567,29 @@ export default {
         return nodeSearch
       }
     },
-    createEdge (sourceName, targetName, cyclePoint) {
+    createEdge (sourceName, targetName, sourceCyclePoint, targetCyclePoint) {
       // adds a new edge object to 'edges' array
       const edgePath = '~mdawson/runtime-tutorial-families/run1'
-      const edgeId = `${edgePath}//$edge|${cyclePoint}/${sourceName}|${cyclePoint}/${targetName}`
+      const edgeId = `${edgePath}//$edge|${sourceCyclePoint}/${sourceName}|${targetCyclePoint}/${targetName}`
       const sourceObject = {
-        cycle: cyclePoint,
+        cycle: sourceCyclePoint,
         edge: undefined,
-        id: `${cyclePoint}/${sourceName}`,
+        id: `${sourceCyclePoint}/${sourceName}`,
         job: undefined,
         namespace: undefined,
-        relativeID: `${cyclePoint}/${sourceName}`,
+        relativeID: `${sourceCyclePoint}/${sourceName}`,
         task: sourceName,
         user: undefined,
         workflow: undefined,
         workflowID: ''
       }
       const targetObject = {
-        cycle: cyclePoint,
+        cycle: targetCyclePoint,
         edge: undefined,
-        id: `${cyclePoint}/${targetName}`,
+        id: `${targetCyclePoint}/${targetName}`,
         job: undefined,
         namespace: undefined,
-        relativeID: `${cyclePoint}/${targetName}`,
+        relativeID: `${targetCyclePoint}/${targetName}`,
         task: targetName,
         user: undefined,
         workflow: undefined,
@@ -584,8 +602,8 @@ export default {
         name: edgeId,
         node: {
           id: edgeId,
-          source: `${edgePath}//${cyclePoint}/${sourceName}`,
-          target: `${edgePath}//${cyclePoint}/${targetName}`,
+          source: `${edgePath}//${sourceCyclePoint}/${sourceName}`,
+          target: `${edgePath}//${targetCyclePoint}/${targetName}`,
         },
         tokens: {
           cycle: undefined,
@@ -603,11 +621,13 @@ export default {
       }
       return newEdge
     },
-    removeEdge (edgeName, cyclePoint, edges) {
+    removeEdge (sourceName, sourceCyclePoint, targetName, targetCyclePoint, edges) {
       // removes a edge object from the 'edges' array
-      const edgeSearchTerm = `${cyclePoint}/${edgeName}`
+      const edgePath = '~mdawson/runtime-tutorial-families/run1'
+      const edgeSearchTerm = `${edgePath}//$edge|${sourceCyclePoint}/${sourceName}|${targetCyclePoint}/${targetName}`
+      
       const edgesFiltered = edges.filter((edge) => {
-        if (edge.id.search(edgeSearchTerm) === -1) {
+        if (edge.id.indexOf(edgeSearchTerm) === -1) {
           return true
         } else {
           return false
@@ -615,10 +635,17 @@ export default {
       })
       return edgesFiltered
     },
-    checkForEdge (sourceName, targetName, cyclePoint, edges) {
-      // checks the 'edges' array to see if edge is present
+    checkForEdge (typeOfSearch, sourceName, targetName, cyclePoint, edges) {
       const edgePath = '~mdawson/runtime-tutorial-families/run1'
-      const edgeSearchTerm = `${edgePath}//$edge|${cyclePoint}/${sourceName}|${cyclePoint}/${targetName}`
+
+      let edgeSearchTerm = ''
+      if (typeOfSearch === 'cycle') {
+        edgeSearchTerm = `${edgePath}//$edge|${cyclePoint}/${sourceName}|`
+      }
+      if (typeOfSearch === 'family') {
+        edgeSearchTerm = `${edgePath}//$edge|${cyclePoint}/${sourceName}|${cyclePoint}/${targetName}`
+      }
+      
       const edgeSearch = edges.filter((edge) => {
         const stringSearch = edge.id.indexOf(edgeSearchTerm)
         if (stringSearch === -1) {
@@ -750,7 +777,6 @@ export default {
      * @returns {{ [dateTime: string]: Object[] }=} mapping of cycle points to nodes
      */
     getCycles (nodes) {
-      if (!this.groupCycle) return
       return nodes.reduce((x, y) => {
         (x[y.tokens.cycle] ||= []).push(y)
         return x
@@ -765,20 +791,20 @@ export default {
     getFamilies (nodes) {
       if (nodes) {
         const families = this.namespaces.filter((family) => {
-          return family.name != 'root'
+          return family.name !== 'root'
         }).map((family) => family.name)
-        const cycles = this.workflows[0].children.map(child => child.tokens.cycle)
+        // const cycles = this.workflows[0].children.map(child => child.tokens.cycle)
         this.groupFamilyArrayStore = families
-        this.collapseFamilyArrayStore = []
-        families.forEach((family) => 
-          cycles.forEach((cycle) => {
-            this.collapseFamilyArrayStore.push(`${family}-${cycle}`)
-          })
-          // {
-          //   family: family,
-          //   cycles
-          // }
-        )
+        this.collapseFamilyArrayStore = families
+        // families.forEach((family) =>
+        //   cycles.forEach((cycle) => {
+        //     this.collapseFamilyArrayStore.push(`${family}-${cycle}`)
+        //   })
+        //   // {
+        //   //   family: family,
+        //   //   cycles
+        //   // }
+        // )
         // this.namespace.forEach((namespace) => {
         //   if (namespace != 'root') {
         //     namespace.node.childTasks.forEach((child) => {
@@ -852,31 +878,62 @@ export default {
               label = "${key}";\n
               fontsize = "70px"
               style=dashed
-              margin=60.0
+              margin=60.0`)
+              if (this.groupFamily) {
+                // Loop over the subgraphs
+                Object.keys(families).forEach((keyFamily, iFamily) => {
+                  if (this.groupFamily.includes(keyFamily)) {
+                    const familiesCycle = families[keyFamily].filter((node) => {
+                      return node.tokens.cycle === key
+                    })
+                    // Loop over the nodes that are included in the subraph
+                    const nodeFormattedArray = familiesCycle.map(a => `"${a.id}"`)
+                    ret.push(`
+                    subgraph cluster_margin_family${iFamily}${i}
+                    {
+                      margin=100.0
+                      label="margin"
+                      subgraph cluster_family${iFamily}${i} {${nodeFormattedArray};\n
+                        label = "${keyFamily}${key}";\n
+                        fontsize = "70px"
+                        style=dashed
+                        margin=60.0
+                      }
+                    }`)
+                  }
+                })
+              }
+          ret.push(`
             }
           }`)
         })
       }
 
-      if (this.groupFamily) {
-        // Loop over the subgraphs
-        Object.keys(families).forEach((key, i) => {
-          if (this.groupFamily.includes(key)) {
-            // Loop over the nodes that are included in the subraph
-            const nodeFormattedArray = families[key].map(a => `"${a.id}"`)
-            ret.push(`
-            subgraph cluster_margin_${i}
-            {
-              margin=100.0
-              label="margin"
-              subgraph cluster_${i} {${nodeFormattedArray};\n
-                label = "${key}";\n
-                fontsize = "70px"
-                style=dashed
-                margin=60.0
-              }
-            }`)
-          }
+      // To do combine this with the version above
+      if (!this.groupCycle && this.groupFamily) {
+        Object.keys(cycles).forEach((key, i) => {
+          // Loop over the subgraphs
+          Object.keys(families).forEach((keyFamily, iFamily) => {
+            if (this.groupFamily.includes(keyFamily)) {
+              const familiesCycle = families[keyFamily].filter((node) => {
+                      return node.tokens.cycle === key
+                    })
+              // Loop over the nodes that are included in the subraph
+              const nodeFormattedArray = familiesCycle.map(a => `"${a.id}"`)
+              ret.push(`
+              subgraph cluster_margin_family${iFamily}${i}
+              {
+                margin=100.0
+                label="margin"
+                subgraph cluster_family${iFamily}${i} {${nodeFormattedArray};\n
+                  label = "${keyFamily}${key}";\n
+                  fontsize = "70px"
+                  style=dashed
+                  margin=60.0
+                }
+              }`)
+            }
+          })
         })
       }
 
@@ -896,6 +953,8 @@ export default {
         }
       }
       ret.push('}')
+      console.log('Dot Code')
+      console.log(ret.join('\n'))
       return ret.join('\n')
     },
     hashGraph (nodes, edges) {
@@ -949,53 +1008,128 @@ export default {
       })
       let edges = this.getGraphEdges()
 
+      // ----------------------------------------
       const removedEdges = []
       // what needs to be removed?
-      this.collapseFamily.forEach((familyCycleName) => {
-        const familyName = familyCycleName.split("-")[0]
-        const cycleName = familyCycleName.split("-")[1]
-        const namespace = this.namespaces.find((namespace) => namespace.name === familyName)
-        const childNodes = namespace.node.childTasks
-        childNodes.forEach((childNode) => {
+      // ---------------REMOVE NODES BASED ON FAMILY------------
+      // ṃust do this before removing nodes and edges based on cycle as 
+      // cycle collapsing takes priority of families
+      this.collapseCycleArrayStore.forEach((cycle) => {
+        this.collapseFamily.forEach((family) => {
+          const namespace = this.namespaces.find((namespace) => namespace.name === family)
+          const childNodes = namespace.node.childTasks
+          childNodes.forEach((childNode) => {
+            console.log('------CHILDNODE-----')
+            console.log(childNode)
+            // REMOVE NODES
+            const nodeCheck = this.checkForNode(childNode.name, cycle, nodes)
+              console.log('this is in family and it is in collapseCycle')
+              // if the node exists in nodes it needs removing
+              if (nodeCheck) {
+                if (!this.collapseCycle.includes(nodeCheck.tokens.cycle)) { // cycle collapsing takes priority over family collapsing
+                  nodes = this.removeNode(childNode.name, cycle, nodes)
+                }
+              }
+              // REMOVE EDGES
+              const edgeCheck = this.checkForEdge('family', childNode.name, '', cycle, edges)
+              // if there is an edge with a source or target it needs removing
+              if (edgeCheck.length) {
+                if (!this.collapseCycle.includes(nodeCheck.tokens.cycle)) { // cycle collapsing takes priority over family collapsing
+                  removedEdges.push(edgeCheck[0])
+                  const targetName = edgeCheck[0].node.target.split('/')[edgeCheck[0].node.target.split('/').length - 1]
+                  const targetCycle = edgeCheck[0].node.target.split('/')[edgeCheck[0].node.target.split('/').length - 2]
+                  edges = this.removeEdge(childNode.name, cycle, targetName, targetCycle, edges)
+                }
+              }
+          })
+        })
+      })
+      // ---------------REMOVE NODES BASED ON CYCLE POINT------------
+      this.collapseCycle.forEach((cycle) => {
+        const cycleNode = this.workflows[0].children.filter((node) => {
+          return node.name === cycle
+        })
+        cycleNode[0].children.forEach((childNode) => {
           // REMOVE NODES
-          const nodeCheck = this.checkForNode(childNode.name, cycleName, nodes)
+          const nodeCheck = this.checkForNode(childNode.name, cycle, nodes)
           // if the node exists in nodes it needs removing
           if (nodeCheck) {
-            nodes = this.removeNode(childNode.name, cycleName, nodes)
+            nodes = this.removeNode(childNode.name, cycle, nodes)
           }
           // REMOVE EDGES
-          const edgeCheck = this.checkForEdge(childNode.name, '', cycleName, edges)
-          removedEdges.push(edgeCheck[0])
+          const edgeCheck = this.checkForEdge('cycle', childNode.name, '', cycle, edges)
           // if there is an edge with a source or target it needs removing
-          if (edgeCheck) {
-            edges = this.removeEdge(childNode.name, cycleName, edges)
+          if (edgeCheck.length) {
+            removedEdges.push(edgeCheck[0])
+            const targetName = edgeCheck[0].node.target.split('/')[edgeCheck[0].node.target.split('/').length - 1]
+            const targetCycle = edgeCheck[0].node.target.split('/')[edgeCheck[0].node.target.split('/').length - 2]
+            edges = this.removeEdge(childNode.name, cycle, targetName, targetCycle, edges)
           }
         })
       })
 
       // what needs to be added?
-      this.collapseFamily.forEach((familyCycleName) => {
-        const familyName = familyCycleName.split("-")[0]
-        const cycleName = familyCycleName.split("-")[1]
-        const namespace = this.namespaces.find((namespace) => namespace.name === familyName)
-        // ADD NODES
-        nodes = this.createNode(namespace.name, cycleName, nodes)
-        // ADD EDGES
-        const childNodes = namespace.node.childTasks
-        childNodes.forEach((childNode) => {
-          // check to see if child node edges have been removed in above step
-          const edgeCheckRemovedEdges = this.checkForEdge(childNode.name, '', cycleName, removedEdges)
-          if (edgeCheckRemovedEdges) {
-            const targetName = edgeCheckRemovedEdges[0].name.split('/')[edgeCheckRemovedEdges[0].name.split('/').length - 1]
-            // prevent duplicate edges
-            const edgeCheckEdges = this.checkForEdge(namespace.name, targetName, cycleName, edges)
-            if (!edgeCheckEdges.length) {
-              this.edgeTemplate = this.createEdge(namespace.name, targetName, cycleName)
-              edges.push(this.edgeTemplate)
-            }
+      // ---------------ADDS NODES BASED ON FAMILY------------
+      // ṃust do this before adding nodes and edges based on cycle as 
+      // cycle collapsing takes priority of families
+      this.collapseCycleArrayStore.forEach((cycle) => {
+        this.collapseFamily.forEach((family) => {
+          const namespace = this.namespaces.find((namespace) => namespace.name === family)
+          console.log('NAMESPACEEEE--------')
+          console.log(namespace)
+          // ADD NODES
+          if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
+            nodes = this.createNode(namespace.name, cycle, nodes)
           }
+          // ADD EDGES
+          const childNodes = namespace.node.childTasks
+          childNodes.forEach((childNode) => {
+            // check to see if child node edges have been removed in above step
+            const edgeCheckRemovedEdges = this.checkForEdge('family', childNode.name, '', cycle, removedEdges)
+            if (edgeCheckRemovedEdges) {
+              const targetName = edgeCheckRemovedEdges[0].name.split('/')[edgeCheckRemovedEdges[0].name.split('/').length - 1]
+              const targetCycle = edgeCheckRemovedEdges[0].name.split('/')[edgeCheckRemovedEdges[0].name.split('/').length - 2].split('|')[1]
+              // prevent duplicate edges
+              const edgeCheckEdges = this.checkForEdge('family', namespace.name, targetName, cycle, edges)
+              if (!edgeCheckEdges.length) {
+                if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
+                  this.edgeTemplate = this.createEdge(namespace.name, targetName, cycle, targetCycle)
+                  edges.push(this.edgeTemplate)
+                }
+              }
+            }
+          })
         })
       })
+      // ---------------ADDS NODES BASED ON CYCLE POINT------------
+      this.collapseCycle.forEach((cycle) => {
+        // ADD NODES
+        nodes = this.createNode(cycle, cycle, nodes)
+        // ADD EDGES
+        const cycleNode = this.workflows[0].children.filter((node) => {
+          return node.name === cycle
+        })
+        cycleNode[0].children.forEach((childNode) => {
+          // check to see if child node edges have been removed in above step
+          const edgeCheckRemovedEdges = this.checkForEdge('cycle', childNode.name, '', cycle, removedEdges)
+          if (edgeCheckRemovedEdges) {
+              const targetName = edgeCheckRemovedEdges[0].name.split('/')[edgeCheckRemovedEdges[0].name.split('/').length - 1]
+              const targetCycle = edgeCheckRemovedEdges[0].name.split('/')[edgeCheckRemovedEdges[0].name.split('/').length - 2].split('|')[1]
+              // only want one edge that goes to a different cycle point
+              if (targetCycle != cycle) {
+                // prevent duplicate edges
+                const edgeCheckEdges = this.checkForEdge('cycle', cycle, '', cycle, edges)
+                if (!edgeCheckEdges.length) {
+                  this.edgeTemplate = this.createEdge(cycle, targetName, cycle, targetCycle)
+                  edges.push(this.edgeTemplate)
+                }
+              }
+            }
+        })
+      })
+
+
+      // ----------------------------------------
 
       if (!nodes || !nodes.length) {
         // we can't graph this, reset and wait for something to draw
@@ -1005,6 +1139,8 @@ export default {
       }
 
       const cycles = this.getCycles(nodes)
+      // this.collapseCycleArrayStore = Object.keys(cycles)
+      this.collapseCycleArrayStore = this.workflows[0].children.map(child => child.tokens.cycle)
       const families = this.getFamilies(nodes)
 
       // compute the graph ID
@@ -1027,7 +1163,7 @@ export default {
       }
       // wipe old nodes
       this.graphNodes = nodes
-      
+
       // obtain the node dimensions to use in the layout
       // NOTE: need to wait for the nodes to all be rendered before we can
       // measure them
@@ -1168,19 +1304,25 @@ export default {
       // refresh the graph when group by cycle point option is changed
       this.graphID = null
       this.refresh()
-      if (newValue === true) { this.groupFamily = false }
+      // if (newValue === true) { this.groupFamily = false }
     },
     groupFamily (newValue, oldValue) {
       // refresh the graph when group by family option is changed
       this.graphID = null
       this.refresh()
-      if (newValue === true) { this.groupCycle = false }
+      // if (newValue === true) { this.groupCycle = false }
     },
     collapseFamily (newValue, oldValue) {
       // refresh the graph when group by family option is changed
       this.graphID = null
       this.refresh()
-      if (newValue === true) { this.groupCycle = false }
+      // if (newValue === true) { this.groupCycle = false }
+    },
+    collapseCycle (newValue, oldValue) {
+      // refresh the graph when group by family option is changed
+      this.graphID = null
+      this.refresh()
+      // if (newValue === true) { this.groupCycle = false }
     }
   }
 }

@@ -130,7 +130,8 @@ export default {
     return {
       selectedItems: {
         groupFamily: [],
-        collapseFamily: []
+        collapseFamily: [],
+        collapseCycle: []
       }
     }
   },
