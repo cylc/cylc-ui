@@ -43,8 +43,8 @@ const reducedAnimation = useReducedAnimation()
 
 const vuetifyDefaults = computed(() => ({
   global: {
-    transition: reducedAnimation.value ? false : null,
-    ripple: reducedAnimation.value ? false : null,
+    transition: reducedAnimation.value ? 'no' : undefined,
+    ripple: reducedAnimation.value ? false : undefined,
   }
 }))
 

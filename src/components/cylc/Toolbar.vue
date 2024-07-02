@@ -45,14 +45,14 @@ component. Note: this is not used for the workflow view, see
 
 <script>
 import { mapState } from 'vuex'
-import { useToolbar, toolbarHeight } from '@/utils/toolbar'
+import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import {
   mdiViewList
 } from '@mdi/js'
 
 export default {
   setup () {
-    const { toggleDrawer } = useToolbar()
+    const { toggleDrawer } = useDrawer()
     return { toggleDrawer, toolbarHeight }
   },
 
