@@ -49,6 +49,7 @@ const actions = {
     if (alert?.color === 'error') {
       console.error(alert.err)
     } else if (alert) {
+      // eslint-disable-next-line no-console
       console.log(alert.err)
     }
     commit('SET_ALERT', alert)
