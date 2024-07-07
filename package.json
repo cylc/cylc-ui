@@ -53,13 +53,13 @@
     "vuex": "4.1.0"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "3.12.39",
+    "@cypress/code-coverage": "3.12.41",
     "@vitejs/plugin-vue": "5.0.5",
     "@vitest/coverage-istanbul": "1.6.0",
     "@vue/test-utils": "2.4.6",
     "concurrently": "8.2.2",
     "cross-fetch": "4.0.0",
-    "cypress": "13.12.0",
+    "cypress": "13.13.0",
     "cypress-vite": "1.5.0",
     "eslint": "8.57.0",
     "eslint-config-standard": "17.1.0",
