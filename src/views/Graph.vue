@@ -503,51 +503,6 @@ export default {
   },
 
   methods: {
-    createNode (nodeName, cyclePoint) {
-      // const abc = this.workflows[0].tokens.clone({cycle: "20240624T1200Z", workflow: "consolidate_observations"})
-      // adds a new node object to 'nodes' array
-      const nodePath = this.workflowIDs[0]
-      const nodeId = `${nodePath}//${cyclePoint}/${nodeName}`
-      const nodeParent = `${nodePath}//${cyclePoint}`
-      const newNode = {
-        children: [],
-        familyTree: undefined,
-        id: nodeId,
-        name: nodeName,
-        node: {
-          firstParent: {
-            cyclePoint,
-            id: `${nodeParent}/root/${nodeName}`,
-            name: 'root',
-            state: 'succeeded'
-          },
-          id: false,
-          isHeld: false,
-          isQueued: false,
-          isRunahead: false,
-          name: nodeName,
-          state: 'succeeded',
-          task: {
-            meanElapsedTime: 0
-          }
-        },
-        parent: nodeParent,
-        tokens: {
-          cycle: cyclePoint,
-          edge: undefined,
-          id: nodeId,
-          job: undefined,
-          namespce: undefined,
-          relativeID: `${cyclePoint}/${nodeName}`,
-          task: nodeName,
-          user: undefined,
-          workflow: undefined,
-          workflowID: nodePath
-        },
-        type: 'family'
-      }
-      return newNode
-    },
     removeNode (nodeName, cyclePoint, nodes) {
       // removes a node object from the 'nodes' array
       const nodePath = this.workflowIDs[0]
@@ -568,17 +523,39 @@ export default {
         return nodeSearch
       }
     },
-    createEdge (sourceName, targetName, sourceCyclePoint, targetCyclePoint) {
+    createEdge (edgeType, sourceName, targetName, sourceCyclePoint, targetCyclePoint) {
       // adds a new edge object to 'edges' array
       const edgePath = this.workflowIDs[0]
-      const edgeId = `${edgePath}//$edge|${sourceCyclePoint}/${sourceName}|${targetCyclePoint}/${targetName}`
+      let edgeId = ''
+      let targetId = ''
+      let sourceId = ''
+      if (edgeType === 'noCollapsed') {
+        edgeId = `${edgePath}//$edge|${sourceCyclePoint}/${sourceName}|${targetCyclePoint}/${targetName}`
+        targetId = `${targetCyclePoint}/${targetName}`
+        sourceId = `${sourceCyclePoint}/${sourceName}`
+      }
+      if (edgeType === 'collapsedTarget') {
+        edgeId = `${edgePath}//$edge|${sourceCyclePoint}/${sourceName}|${targetName}`
+        targetId = `${targetName}`
+        sourceId = `${sourceCyclePoint}/${sourceName}`
+      }
+      if (edgeType === 'collapsedSource') {
+        edgeId = `${edgePath}//$edge|${sourceCyclePoint}|${targetCyclePoint}/${targetName}`
+        targetId = `${targetCyclePoint}/${targetName}`
+        sourceId = `${sourceName}`
+      }
+      if (edgeType === 'collapsedSourceAndTarget') {
+        edgeId = `${edgePath}//$edge|${sourceName}|${targetName}`
+        targetId = `${targetName}`
+        sourceId = `${sourceName}`
+      }
       const sourceObject = {
         cycle: sourceCyclePoint,
         edge: undefined,
-        id: `${sourceCyclePoint}/${sourceName}`,
+        id: sourceId,
         job: undefined,
         namespace: undefined,
-        relativeID: `${sourceCyclePoint}/${sourceName}`,
+        relativeID: sourceId,
         task: sourceName,
         user: undefined,
         workflow: undefined,
@@ -587,10 +564,10 @@ export default {
       const targetObject = {
         cycle: targetCyclePoint,
         edge: undefined,
-        id: `${targetCyclePoint}/${targetName}`,
+        id: targetId,
         job: undefined,
         namespace: undefined,
-        relativeID: `${targetCyclePoint}/${targetName}`,
+        relativeID: targetId,
         task: targetName,
         user: undefined,
         workflow: undefined,
@@ -603,8 +580,8 @@ export default {
         name: edgeId,
         node: {
           id: edgeId,
-          source: `${edgePath}//${sourceCyclePoint}/${sourceName}`,
-          target: `${edgePath}//${targetCyclePoint}/${targetName}`,
+          source: `${edgePath}//${sourceId}`,
+          target: `${edgePath}//${targetId}`,
         },
         tokens: {
           cycle: undefined,
@@ -800,34 +777,11 @@ export default {
      * @returns {{ [dateTime: string]: Object[] }=} mapping of family to nodes
      */
     getFamilies (nodes) {
-      if (nodes) {
-        const families = this.namespaces.filter((family) => {
-          return family.name !== 'root'
-        }).map((family) => family.name)
-        // const cycles = this.workflows[0].children.map(child => child.tokens.cycle)
-        this.groupFamilyArrayStore = families
-        this.collapseFamilyArrayStore = families
-        // families.forEach((family) =>
-        //   cycles.forEach((cycle) => {
-        //     this.collapseFamilyArrayStore.push(`${family}-${cycle}`)
-        //   })
-        //   // {
-        //   //   family: family,
-        //   //   cycles
-        //   // }
-        // )
-        // this.namespace.forEach((namespace) => {
-        //   if (namespace != 'root') {
-        //     namespace.node.childTasks.forEach((child) => {
-
-        //     })
-        //   }
-        // })
-      }
-
       if (!this.groupFamily) return
       return nodes.reduce((x, y) => {
-        (x[y.node.firstParent.id.split('/')[y.node.firstParent.id.split('/').length - 1]] ||= []).push(y)
+        if (y.node.firstParent) {
+          (x[y.node.firstParent.id.split('/')[y.node.firstParent.id.split('/').length - 1]] ||= []).push(y)
+        }
         return x
       }, {})
     },
@@ -1098,13 +1052,15 @@ export default {
       // cycle collapsing takes priority of families
       this.collapseCycleArrayStore.forEach((cycle) => {
         this.collapseFamily.forEach((family) => {
-          const namespace = this.namespaces.find((namespace) => namespace.name === family)
+          const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
+            return node.name === family && node.tokens.cycle === cycle
+          })
           // ADD NODES
           if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
-            this.nodeTemplate = this.createNode(namespace.name, cycle)
-            nodes.push(this.nodeTemplate)
+            nodes.push(indexSearch)
           }
           // ADD EDGES
+          const namespace = this.namespaces.find((namespace) => namespace.name === family)
           const childNodes = namespace.node.childTasks
           childNodes.forEach((childNode) => {
             // check to see if child node edges have been removed in above step
@@ -1116,7 +1072,7 @@ export default {
               const edgeCheckEdges = this.checkForEdge(namespace.name, targetName, cycle, edges)
               if (!edgeCheckEdges.length) {
                 if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
-                  this.edgeTemplate = this.createEdge(namespace.name, targetName, cycle, targetCycle)
+                  this.edgeTemplate = this.createEdge('noCollapsed', namespace.name, targetName, cycle, targetCycle)
                   edges.push(this.edgeTemplate)
                 }
               }
@@ -1126,9 +1082,11 @@ export default {
       })
       // ---------------ADDS NODES BASED ON CYCLE POINT------------
       this.collapseCycle.forEach((cycle) => {
+        const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
+          return node.name === cycle && node.tokens.cycle === cycle
+        })
         // ADD NODES
-        this.nodeTemplate = this.createNode(cycle, cycle)
-        nodes.push(this.nodeTemplate)
+        nodes.push(indexSearch)
         // ADD EDGES
         const cycleNode = this.workflows[0].children.filter((node) => {
           return node.name === cycle
@@ -1144,11 +1102,11 @@ export default {
               if (targetCycle !== cycle) {
                 if (this.collapseCycle.includes(targetCycle)) {
                   // this collapsed cycle => next collapsed cycle
-                  this.edgeTemplate = this.createEdge(cycle, targetCycle, cycle, targetCycle)
+                  this.edgeTemplate = this.createEdge('collapsedSourceAndTarget', cycle, targetCycle, cycle, targetCycle)
                   edges.push(this.edgeTemplate)
                 } else {
                   // this collapsed cycle => next cycle
-                  this.edgeTemplate = this.createEdge(cycle, targetName, cycle, targetCycle)
+                  this.edgeTemplate = this.createEdge('collapsedSource', cycle, targetName, cycle, targetCycle)
                   edges.push(this.edgeTemplate)
                 }
               }
@@ -1163,11 +1121,11 @@ export default {
               if (sourceCycle !== cycle) {
                 if (this.collapseCycle.includes(sourceCycle)) {
                   // previous collapsed cycle => this collapsed cycle
-                  this.edgeTemplate = this.createEdge(sourceCycle, cycle, sourceCycle, cycle)
+                  this.edgeTemplate = this.createEdge('collapsedSourceAndTarget', sourceCycle, cycle, sourceCycle, cycle)
                   edges.push(this.edgeTemplate)
                 } else {
                   // previous cycle => this collapsed cycle
-                  this.edgeTemplate = this.createEdge(sourceName, cycle, sourceCycle, cycle)
+                  this.edgeTemplate = this.createEdge('collapsedTarget', sourceName, cycle, sourceCycle, cycle)
                   edges.push(this.edgeTemplate)
                 }
               }
@@ -1194,6 +1152,8 @@ export default {
       this.latestCycle = Object.keys(cycles)[0]
       this.collapseCycleArrayStore = this.workflows[0].children.map(child => child.tokens.cycle)
       const families = this.getFamilies(nodes)
+      this.groupFamilyArrayStore = this.namespaces.filter((family) => { return family.name !== 'root' }).map((family) => family.name)
+      this.collapseFamilyArrayStore = this.namespaces.filter((family) => { return family.name !== 'root' }).map((family) => family.name)
 
       // compute the graph ID
       const graphID = this.hashGraph(nodes, edges)
