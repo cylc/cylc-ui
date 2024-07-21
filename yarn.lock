@@ -402,13 +402,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/code-coverage@npm:3.12.42":
-  version: 3.12.42
-  resolution: "@cypress/code-coverage@npm:3.12.42"
+"@cypress/code-coverage@npm:3.12.43":
+  version: 3.12.43
+  resolution: "@cypress/code-coverage@npm:3.12.43"
   dependencies:
     "@cypress/webpack-preprocessor": "npm:^6.0.0"
     chalk: "npm:4.1.2"
-    dayjs: "npm:1.11.10"
+    dayjs: "npm:1.11.12"
     debug: "npm:4.3.4"
     execa: "npm:4.1.0"
     globby: "npm:11.1.0"
@@ -421,7 +421,7 @@ __metadata:
     babel-loader: ^8.3 || ^9
     cypress: "*"
     webpack: ^4 || ^5
-  checksum: 10c0/eb064795e04503ced9f3c5c006bb685fe8175df4f4820ba43e44296d940aefaf5e1c1f997d93bb5bf59ed031dfdc562a9dac4de9332c92aae3b01426e5297cb8
+  checksum: 10c0/d04bcc62b8049007f6960d751058796291fdb7b12dac0a79781e95b9a6bf6990660bd33c050d6509aa7fb854810439608c8f7b75cbd0d3ff633f97f0b848a904
   languageName: node
   linkType: hard
 
@@ -3794,7 +3794,7 @@ __metadata:
   resolution: "cylc-ui@workspace:."
   dependencies:
     "@apollo/client": "npm:3.10.8"
-    "@cypress/code-coverage": "npm:3.12.42"
+    "@cypress/code-coverage": "npm:3.12.43"
     "@hpcc-js/wasm": "npm:2.18.0"
     "@lumino/default-theme": "npm:2.1.6"
     "@lumino/widgets": "npm:2.4.0"
@@ -3953,7 +3953,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:1.11.10, dayjs@npm:^1.10.4":
+"dayjs@npm:1.11.12":
+  version: 1.11.12
+  resolution: "dayjs@npm:1.11.12"
+  checksum: 10c0/9673d37f3f9ad8a91caaeae9b3fea9a0010c81c7f58599fb9d860bc3359b86632fbff8eb7dddc86c2acaab01c5e6860bc672952f17b58c9286140c52b077c8e4
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.10.4":
   version: 1.11.10
   resolution: "dayjs@npm:1.11.10"
   checksum: 10c0/4de9af50639d47df87f2e15fa36bb07e0f9ed1e9c52c6caa1482788ee9a384d668f1dbd00c54f82aaab163db07d61d2899384b8254da3a9184fc6deca080e2fe
