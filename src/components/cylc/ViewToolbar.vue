@@ -49,7 +49,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <template v-slot:prepend="{ isActive }">
                 <v-list-item-action>
-                  <v-checkbox v-model="selectedItems[iControl.key]" v-on:update:modelValue="iControl.callback" :value="item"/>
+                  <v-checkbox 
+                    v-model="selectedItems[iControl.key]" 
+                    v-on:update:modelValue="iControl.callback" 
+                    :value="item"
+                    :disabled="iControl.config ? iControl.config[getNameFromIndex(iControl.config, item).id].disabled : false"
+                    :indeterminate="iControl.config ? iControl.config[getNameFromIndex(iControl.config, item).id].disabled : false"
+                    :class="`pl-${iControl.config ? iControl.config[getNameFromIndex(iControl.config, item).id].spacing : 0}`"
+                  />
+                  {{`pl-${iControl.config ? iControl.config[getNameFromIndex(iControl.config, item).id].spacing : 0}`}}
                 </v-list-item-action>
               </template>
               <v-list-item-title>{{ item }}</v-list-item-title>
@@ -238,6 +246,11 @@ export default {
       }
       return vars
     },
+    getNameFromIndex (config, name) {
+      return Object.values(config).find((object) => {
+        return object.name === name
+      })
+    }
   }
 }
 </script>
