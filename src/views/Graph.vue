@@ -321,24 +321,28 @@ export default {
 
     /**
      * The group by family toggle state.
-     * If true the graph nodes will be grouped by family
-     * @type {import('vue').Ref<boolean>}
+     * @type {import('vue').Ref<array>}
      */
     const groupFamily = useInitialOptions('groupFamily', { props, emit }, [])
 
     /**
-     * The group by family toggle state.
-     * If true the graph nodes will be grouped by family
-     * @type {import('vue').Ref<boolean>}
+     * The collapse by cycle toggle state.
+     * @type {import('vue').Ref<array>}
      */
     const collapseCycle = useInitialOptions('collapseCycle', { props, emit }, [])
 
     /**
-     * The group by family toggle state.
+     * The collapse by family toggle state.
      * If true the graph nodes will be grouped by family
-     * @type {import('vue').Ref<boolean>}
+     * @type {import('vue').Ref<array>}
      */
     const collapseFamily = useInitialOptions('collapseFamily', { props, emit }, [])
+
+    /**
+     * An objevt similar to the $index but containing node configuration data
+     * @type {import('vue').Ref<object>}
+     */
+    const collapseFamilyConfig = useInitialOptions('collapseFamilyConfig', { props, emit }, {})
 
     return {
       jobTheme: useJobTheme(),
@@ -349,6 +353,7 @@ export default {
       groupFamily,
       collapseCycle,
       collapseFamily,
+      collapseFamilyConfig
     }
   },
 
@@ -394,6 +399,47 @@ export default {
       this.updateTimer()
     })
     this.mountSVGPanZoom()
+
+    // Calculate some values for familes that we need for the toolbar
+    Object.keys(this.cylcTree.$index).forEach((itemName) => {
+      // Function for counting how many layers deep the children go
+      function count(children) {
+        return children.reduce((depth, child) => {
+          return Math.max(depth, 1 + count(child.children)); // increment depth of children by 1, and compare it with accumulated depth of other children within the same element
+        }, 0); //default value 0 that's returned if there are no children
+      }
+      // Function for getting a flattened array of the nested children
+      function childArray(a) {
+        return a.reduce(function (flattened, {id, name, children}) {
+          let namespace = false   
+          return flattened
+            .concat([{id, name, children}])
+            .concat(children ? childArray(children, id) : []);
+        }, []);
+      }
+      const itemValue = this.cylcTree.$index[itemName]
+      this.collapseFamilyConfig[itemName] = {
+        id: itemName,
+        name: itemValue.name,
+        directChildren: [],
+        allChildren: childArray([itemValue]),
+        depth: count([itemValue]),
+        disabled: false,
+        visible: true,
+        collapsSelected: false,
+        groupSelected: false,
+      }
+    })
+    // Get the maximum depth value
+    const maxDepth = Object.values(this.collapseFamilyConfig)[0].depth
+    Object.keys(this.collapseFamilyConfig).forEach((key) => {
+      const spacingUnit = 5
+      const depth = this.collapseFamilyConfig[key].depth
+      this.collapseFamilyConfig[key].spacing =  (maxDepth * spacingUnit) - (depth * spacingUnit)
+    })
+    // const maxDepth = Object.values(this.collapseFamilyConfig).sort((a, b) => {
+    //   b.amount - a.amount
+    // })[0]
   },
 
   beforeUnmount () {
@@ -495,6 +541,7 @@ export default {
               value: this.collapseFamily,
               key: 'collapseFamily',
               items: this.collapseFamilyArrayStore,
+              config: this.collapseFamilyConfig
             }
           ]
         }
@@ -785,6 +832,11 @@ export default {
         return x
       }, {})
     },
+    getNodeByFamilyAndCycle (family, cycle) {
+      Object.values(this.cylcTree.$index).find((node) => {
+        return node.name === family && node.tokens.cycle === cycle
+      })
+    },
     getDotCode (nodeDimensions, nodes, edges, cycles, families) {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
@@ -829,82 +881,335 @@ export default {
         `)
       }
 
-      if (this.groupCycle) {
-        // Loop over the subgraphs
-        Object.keys(cycles).forEach((key, i) => {
-          if (!this.collapseCycle.includes(key)) {
-            // Loop over the nodes that are included in the subraph
-            const nodeFormattedArray = cycles[key].map(a => `"${a.id}"`)
-            ret.push(`
-            subgraph cluster_margin_${i}
-            {
-              margin=100.0
-              label="margin"
-              subgraph cluster_${i} {${nodeFormattedArray};\n
-              label = "${key}";\n
-              fontsize = "70px"
-              style=dashed
-              margin=60.0`)
-            if (this.groupFamily) {
-              // Loop over the subgraphs
-              Object.keys(families).forEach((keyFamily, iFamily) => {
-                if (this.groupFamily.includes(keyFamily)) {
-                  const familiesCycle = families[keyFamily].filter((node) => {
-                    return node.tokens.cycle === key
-                  })
-                  // Loop over the nodes that are included in the subraph
-                  const nodeFormattedArray = familiesCycle.map(a => `"${a.id}"`)
-                  ret.push(`
-                    subgraph cluster_margin_family${iFamily}${i}
-                    {
-                      margin=100.0
-                      label="margin"
-                      subgraph cluster_family${iFamily}${i} {${nodeFormattedArray};\n
-                        label = "${keyFamily}${key}";\n
-                        fontsize = "70px"
-                        style=dashed
-                        margin=60.0
-                      }
-                    }`)
-                }
-              })
-            }
-            ret.push(`
-              }
-            }`)
-          }
-        })
-      }
+      // if (this.groupCycle) {
+      //   // Loop over the subgraphs
+      //   Object.keys(cycles).forEach((key, i) => {
+      //     if (!this.collapseCycle.includes(key)) {
+      //       // Loop over the nodes that are included in the subraph
+      //       const nodeFormattedArray = cycles[key].map(a => `"${a.id}"`)
+      //       ret.push(`
+      //       subgraph cluster_margin_${i}
+      //       {
+      //         margin=100.0
+      //         label="margin"
+      //         subgraph cluster_${i} {${nodeFormattedArray};\n
+      //         label = "${key}";\n
+      //         fontsize = "70px"
+      //         style=dashed
+      //         margin=60.0`)
+      //       if (this.groupFamily) {
+      //         // Loop over the subgraphs
+      //         Object.keys(families).forEach((keyFamily, iFamily) => {
+      //           if (this.groupFamily.includes(keyFamily)) {
+      //             const familiesCycle = families[keyFamily].filter((node) => {
+      //               return node.tokens.cycle === key
+      //             })
+      //             // Loop over the nodes that are included in the subraph
+      //             const nodeFormattedArray = familiesCycle.map(a => `"${a.id}"`)
+      //             if (nodeFormattedArray.length){
+      //               ret.push(`
+      //                 subgraph cluster_margin_family${iFamily}${i}
+      //                 {
+      //                   margin=100.0
+      //                   label="margin"
+      //                   subgraph cluster_family${iFamily}${i} {${nodeFormattedArray};\n
+      //                     label = "${keyFamily}${key}";\n
+      //                     fontsize = "70px"
+      //                     style=dashed
+      //                     margin=60.0
+      //                   }
+      //                 }`)
+      //             }
+      //           }
+      //         })
+      //       }
+      //       ret.push(`
+      //         }
+      //       }`)
+      //     }
+      //   })
+      // }
 
-      // To do combine this with the version above
-      if (!this.groupCycle && this.groupFamily) {
-        Object.keys(cycles).forEach((key, i) => {
-          if (!this.collapseCycle.includes(key)) {
-            // Loop over the subgraphs
-            Object.keys(families).forEach((keyFamily, iFamily) => {
-              if (this.groupFamily.includes(keyFamily)) {
-                const familiesCycle = families[keyFamily].filter((node) => {
-                  return node.tokens.cycle === key
-                })
-                // Loop over the nodes that are included in the subraph
-                const nodeFormattedArray = familiesCycle.map(a => `"${a.id}"`)
+      // // To do combine this with the version above
+      // if (!this.groupCycle && this.groupFamily) {
+      //   Object.keys(cycles).forEach((key, i) => {
+      //     if (!this.collapseCycle.includes(key)) {
+      //       // Loop over the subgraphs
+      //       Object.keys(families).forEach((keyFamily, iFamily) => {
+      //         console.log('=-=-=-=-=-=-families-=-=-=-=-=-')
+      //         console.log(families)
+      //         if (this.groupFamily.includes(keyFamily)) {
+      //           console.log('this is all the cycles in that family')
+      //           console.log(families[keyFamily])
+      //           const familiesCycle = families[keyFamily].filter((node) => {
+      //             return node.tokens.cycle === key
+      //           })
+      //           console.log('this is one of the cylces in that family')
+      //           console.log(key)
+      //           console.log(keyFamily)
+      //           console.log(familiesCycle)
+      //           // Loop over the nodes that are included in the subraph
+      //           const nodeFormattedArray = familiesCycle.map(a => `"${a.id}"`)
+      //           console.log(nodeFormattedArray)
+      //           if (nodeFormattedArray.length){
+      //             ret.push(`
+      //             subgraph cluster_margin_family${iFamily}${i}
+      //             {
+      //               margin=100.0
+      //               label="margin"
+      //               subgraph cluster_family${iFamily}${i} {${nodeFormattedArray};\n
+      //                 label = "${keyFamily}${key}";\n
+      //                 fontsize = "70px"
+      //                 style=dashed
+      //                 margin=60.0
+      //               }
+      //             }`)
+      //           }
+      //         }
+      //       })
+      //     }
+      //   })
+
+      // if (this.groupCycle) {
+      //   console.log("GROUP CYCLE IS SELECTED")
+      //   Object.keys(cycles).forEach((keyCycle, iCycle) => {
+      //     const indexSearch = Object.values(this.collapseFamilyConfig).filter((node) => {
+      //       return node.cycle === keyCycle
+      //     })
+      //   indexSearch.forEach((node, i) => {
+      //     const childArray = []
+      //     node.directChildren.forEach((child) => {
+      //       childArray.push(child)
+      //     })
+      //     // make a new subgraph with the childNodes
+      //     const nodeFormattedArray = childArray.filter((a) => {
+      //       return a.name != node.name && a.name != '01'
+      //     }).map(a => `"${a.id}"`)
+      //     console.log(`pushing the text for node ${keyCycle}`)
+      //     ret.push(`
+      //               subgraph cluster_margin_family_${keyCycle}
+      //               {
+      //                 margin=100.0
+      //                 label="margin"
+      //                 subgraph cluster_family_${keyCycle} {${nodeFormattedArray.join()};\n
+      //                   label = "${keyCycle}";\n
+      //                   fontsize = "70px"
+      //                   style=dashed
+      //                   margin=60.0
+      //                 }
+      //               }`)
+      //     })
+      //   })
+      // }
+
+      Object.keys(cycles).forEach((keyCycle, iCycle) => {
+        const indexSearch = Object.values(this.collapseFamilyConfig).filter((node) => {
+          return node.groupSelected === true && node.cycle === keyCycle
+        })
+        // Step 0 include all the cycles as seperate subgraphs
+        if (this.groupCycle) {
+          indexSearch.forEach((node, i) => {
+            if (!this.collapseCycle.includes(node.name) && !this.collapseFamilyArrayStore.includes(node.name)) {
+              const childArray = []
+              node.directChildren.forEach((child) => {
+                childArray.push(child)
+              })
+              // make a new subgraph with the childNodes
+              const nodeFormattedArray = childArray.filter((a) => {
+                return a.name != node.name && a.name != '01'
+              }).map(a => `"${a.id}"`)
+              ret.push(`
+                        subgraph cluster_margin_family_${keyCycle}
+                        {
+                          margin=100.0
+                          label="margin"
+                          subgraph cluster_family_${keyCycle} {${nodeFormattedArray.join()};\n
+                            label = "${keyCycle}";\n
+                            fontsize = "70px"
+                            style=dashed
+                            margin=60.0
+                          }
+                        }`)
+            }
+          })
+        }
+        indexSearch.sort((a, b) => a.depth - b.depth).forEach((node, i) => {
+          if(node.ancestors && !this.collapseFamily.includes(node.name) && !this.collapseCycle.includes(node.cycle)) {
+            // Step 1 Cycle layer of the subgraph
+            if (this.groupCycle){
+              ret.push(`
+                        subgraph cluster_margin_family_${keyCycle}
+                        {
+                          margin=100.0
+                          label="margin"
+                          subgraph cluster_family_${keyCycle} {\n
+                            label = "${keyCycle}";\n
+                            fontsize = "70px"
+                            style=dashed
+                            margin=60.0`)
+            }
+            // Step 2 beginning of family nesting
+            node.ancestors.reverse().forEach((ancestor) => {
+              if (this.groupFamily.includes(ancestor.name )){
                 ret.push(`
-                subgraph cluster_margin_family${iFamily}${i}
-                {
-                  margin=100.0
-                  label="margin"
-                  subgraph cluster_family${iFamily}${i} {${nodeFormattedArray};\n
-                    label = "${keyFamily}${key}";\n
-                    fontsize = "70px"
-                    style=dashed
-                    margin=60.0
-                  }
-                }`)
+                        subgraph cluster_margin_family_${ancestor.name}${keyCycle}
+                        {
+                          margin=100.0
+                          label="margin"
+                          subgraph cluster_family_${ancestor.name}${keyCycle} {\n
+                            label = "${ancestor.name}${keyCycle}";\n
+                            fontsize = "70px"
+                            style=dashed
+                            margin=60.0`)
               }
             })
+            // Step 3 the actually subgraph definition
+            if(!this.collapseFamily.includes(node.name) && node.directChildren.length) {
+              const childArray = []
+              node.directChildren.forEach((child) => {
+                if (this.collapseFamily.includes(child.name) || !this.collapseFamilyArrayStore.includes(child.name)) {
+                  childArray.push(child)
+                } else {
+                  childArray.push(...child.children)
+                }
+              })
+              // make a new subgraph with the childNodes
+              const nodeFormattedArray = childArray.filter((a) => {
+                return a.name != node.name && a.name != '01'
+              }).map(a => `"${a.id}"`)
+              ret.push(`
+                        subgraph cluster_margin_family_${node.name}${keyCycle}
+                        {
+                          margin=100.0
+                          label="margin"
+                          subgraph cluster_family_${node.name}${keyCycle} {${nodeFormattedArray.join()};\n
+                            label = "${node.name}${keyCycle}";\n
+                            fontsize = "70px"
+                            style=dashed
+                            margin=60.0
+                          }
+                        }`)
+            }
+            // Step 4 end of family nesting
+            node.ancestors.reverse().forEach((ancestor) => {
+              if (this.groupFamily.includes(ancestor.name )){
+                ret.push(`
+                            }
+                          }`)
+              }
+            })
+            // Step 5 end of Cycle layer
+            if (this.groupCycle){
+              ret.push(`
+                            }
+                          }`)
+            }
           }
+          
         })
-      }
+        // indexSearch.sort((a, b) => a.depth - b.depth).forEach((node, i) => {
+        //   if(!this.collapseFamily.includes(node.name) && node.directChildren.length) {
+        //     const childArray = []
+        //     node.directChildren.forEach((child) => {
+        //       if (this.collapseFamily.includes(child.name) || !this.collapseFamilyArrayStore.includes(child.name)) {
+        //         childArray.push(child)
+        //       } else {
+        //         childArray.push(...child.children)
+        //       }
+        //     })
+        //     // make a new subgraph with the childNodes
+        //     const nodeFormattedArray = childArray.filter((a) => {
+        //       return a.name != node.name && a.name != '01'
+        //     }).map(a => `"${a.id}"`)
+        //     ret.push(`
+        //               subgraph cluster_margin_family${i}
+        //               {
+        //                 margin=100.0
+        //                 label="margin"
+        //                 subgraph cluster_family${i} {${nodeFormattedArray.join()};\n
+        //                   label = "${node.name}";\n
+        //                   fontsize = "70px"
+        //                   style=dashed
+        //                   margin=60.0
+        //                 }
+        //               }`)
+        //   } else {
+        //     return
+        //   }
+        // })
+      })
+      
+      // To do combine this with the version above
+      // if (!this.groupCycle && this.groupFamily) {
+      //   // Loop over the cycles
+      //   Object.keys(cycles).forEach((keyCycle, iCycle) => {
+      //     // If the cycle is collapsed then we dont want to do anything (cycle>family)
+      //     if (!this.collapseCycle.includes(keyCycle)) {
+      //       // Loop over the families
+      //       this.namespaces.forEach((keyFamily, iFamily) => {
+      //         if (this.groupFamily.includes(keyFamily.name)) {
+      //           // Dont want to group the latest cycle
+      //           if (keyCycle != this.latestCycle) {
+      //             // const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
+      //             //     return node.name === keyFamily.name && node.tokens.cycle === keyCycle
+      //             //   })
+      //             // calculated how nested this groups are
+      //             console.log('-=-=-=-==-==--=_+_+_+_+__+')
+      //             console.log(this.collapseFamilyConfig)
+      //             console.log("THIS IS WHAT IM WORKING WITH (INDEXSEARCH)")
+      //             console.log(indexSearch)
+      //             console.log('CHECK SEE IF ITS GROUPED ALREADY')
+      //             console.log(this.collapseFamilyConfig[indexSearch.id].grouped)
+      //             if (!this.collapseFamilyConfig[indexSearch.id].grouped) {
+      //               console.log('CHECK SEE IF IT HAS ANY CHILDEREN')
+      //               console.log(indexSearch.children)
+      //               if (indexSearch.children.length) {
+      //                 indexSearch.children.forEach((child) => {
+      //                   console.log('CHECK SEE IF CHILD IS GROUPED ALREADY')
+
+      //                 })
+      //               }
+      //             }
+      //             // // Dont want to group it if its collapsed
+      //             // if (!this.collapseFamily.includes(indexSearch.name) ) {
+      //             //   console.log("------NAME-----")
+      //             //   console.log(indexSearch.name)
+      //             //   console.log('----------------from collapseFamilyConfig---------------------')
+      //             //   console.log(this.collapseFamilyConfig[indexSearch.id])
+      //             //   console.log('----------------from $index---------------------')
+      //             //   console.log(indexSearch)
+      //             //   if (indexSearch.children.length){
+      //             //     const subRet = []
+      //             //     this.indexSearch.forEach((child) => {
+      //             //       if(this.groupFamily.includes(child.name)) {
+      //             //         child.childeren.forEach((childChild) => {
+      //             //           childChild
+      //             //         })
+      //             //       }
+      //             //       if (child.name != '01' && child.name != keyFamily.name && this.collapseFamilyConfig[child.id].visible) {
+      //             //         subRet.push(`"${child.id}"`)
+      //             //       }
+      //             //     })
+      //             //     ret.push(`
+      //             //       subgraph cluster_margin_family${iFamily}${iCycle}
+      //             //       {
+      //             //         margin=100.0
+      //             //         label="margin"
+      //             //         subgraph cluster_family${iFamily}${iCycle} {${subRet.join()};\n
+      //             //           label = "${keyFamily.name}${keyCycle}";\n
+      //             //           fontsize = "70px"
+      //             //           style=dashed
+      //             //           margin=60.0
+      //             //       }
+      //             //     }`)
+      //             //   }
+      //             // }
+      //           }
+      //         }
+      //       })
+      //     }
+      //   })
+      // }
 
       if (this.transpose) {
         // left-right orientation
@@ -979,159 +1284,153 @@ export default {
 
       // ----------------------------------------
       const removedEdges = []
-
-      // ---------------REMOVE NODES BASED ON FAMILY------------
-      // ṃust do this before removing nodes and edges based on cycle as
-      // cycle collapsing takes priority of families
-      this.collapseCycleArrayStore.forEach((cycle) => {
-        this.collapseFamily.forEach((family) => {
-          const namespace = this.namespaces.find((namespace) => namespace.name === family)
-          const childNodes = namespace.node.childTasks
-          childNodes.forEach((childNode) => {
-            // REMOVE NODES
-            const nodeCheck = this.checkForNode(childNode.name, cycle, nodes)
-            // if the node exists in nodes it needs removing
-            if (nodeCheck) {
-              if (!this.collapseCycle.includes(nodeCheck.tokens.cycle)) { // cycle collapsing takes priority over family collapsing
-                nodes = this.removeNode(childNode.name, cycle, nodes)
-              }
-            }
-            // REMOVE EDGES
-            const edgeCheck = this.checkForEdge(childNode.name, '', cycle, edges)
-            // if there is an edge with a source or target it needs removing
-            if (edgeCheck.length) {
-              if (!this.collapseCycle.includes(nodeCheck.tokens.cycle)) { // cycle collapsing takes priority over family collapsing
-                removedEdges.push(edgeCheck[0])
-                const targetName = edgeCheck[0].node.target.split('/')[edgeCheck[0].node.target.split('/').length - 1]
-                const targetCycle = edgeCheck[0].node.target.split('/')[edgeCheck[0].node.target.split('/').length - 2]
-                edges = this.removeEdge(childNode.name, cycle, targetName, targetCycle, edges)
-              }
-            }
-          })
-        })
-      })
-      // ---------------REMOVE NODES BASED ON CYCLE POINT------------
-      this.collapseCycle.forEach((cycle) => {
-        const cycleNode = this.workflows[0].children.filter((node) => {
-          return node.name === cycle
-        })
-        cycleNode[0].children.forEach((childNode) => {
-          // REMOVE NODES
-          const nodeCheck = this.checkForNode(childNode.name, cycle, nodes)
-          // if the node exists in nodes it needs removing
-          if (nodeCheck) {
-            nodes = this.removeNode(childNode.name, cycle, nodes)
+      Object.keys(this.collapseFamilyConfig).forEach((id) => {
+        this.collapseFamilyConfig[id].disabled = false
+        if (this.collapseFamily.includes(this.collapseFamilyConfig[id].name)) {
+            this.collapseFamilyConfig[id].collapseSelected = true
           }
-          // REMOVE EDGES
-          const edgeCheckSource = this.checkForEdgeBySource(childNode.name, cycle, edges)
-          const edgeCheckTarget = this.checkForEdgeByTarget(childNode.name, cycle, edges)
-          // if there is an edge with a source or target it needs removing
-          if (edgeCheckSource.length) {
-            edgeCheckSource.forEach((edge) => {
-              removedEdges.push(edge)
-              const targetName = edge.node.target.split('/')[edge.node.target.split('/').length - 1]
-              const targetCycle = edge.node.target.split('/')[edge.node.target.split('/').length - 2]
-              edges = this.removeEdge(childNode.name, cycle, targetName, targetCycle, edges)
-            })
-          }
-          if (edgeCheckTarget.length) {
-            edgeCheckTarget.forEach((edge) => {
-              removedEdges.push(edge)
-              const targetName = edge.node.target.split('/')[edge.node.target.split('/').length - 1]
-              const targetCycle = edge.node.target.split('/')[edge.node.target.split('/').length - 2]
-              const sourceName = edge.node.source.split('/')[edge.node.source.split('/').length - 1]
-              const sourceCycle = edge.node.source.split('/')[edge.node.source.split('/').length - 2]
-              edges = this.removeEdge(sourceName, sourceCycle, targetName, targetCycle, edges)
-            })
-          }
-        })
+        if (this.groupFamily.includes(this.collapseFamilyConfig[id].name) || this.collapseCycleArrayStore.includes(this.collapseFamilyConfig[id].name)) {
+          this.collapseFamilyConfig[id].groupSelected = true
+        } else {
+          this.collapseFamilyConfig[id].groupSelected = false
+        }
+        this.collapseFamilyConfig[id].directChildren = this.cylcTree.$index[id].children
+        this.collapseFamilyConfig[id].cycle = this.cylcTree.$index[id].tokens.cycle
+        this.collapseFamilyConfig[id].ancestors = this.cylcTree.$index[id].node.ancestors
       })
 
-      // ---------------ADDS NODES BASED ON FAMILY------------
-      // ṃust do this before adding nodes and edges based on cycle as
-      // cycle collapsing takes priority of families
+      console.log('STARTING FAMILY STUFF')
       this.collapseCycleArrayStore.forEach((cycle) => {
         this.collapseFamily.forEach((family) => {
           const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
             return node.name === family && node.tokens.cycle === cycle
           })
-          // ADD NODES
-          if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
-            nodes.push(indexSearch)
-          }
-          // ADD EDGES
-          const namespace = this.namespaces.find((namespace) => namespace.name === family)
-          const childNodes = namespace.node.childTasks
-          childNodes.forEach((childNode) => {
-            // check to see if child node edges have been removed in above step
-            const edgeCheckRemovedEdges = this.checkForEdge(childNode.name, '', cycle, removedEdges)
-            if (edgeCheckRemovedEdges) {
-              const targetName = edgeCheckRemovedEdges[0].name.split('/')[edgeCheckRemovedEdges[0].name.split('/').length - 1]
-              const targetCycle = edgeCheckRemovedEdges[0].name.split('/')[edgeCheckRemovedEdges[0].name.split('/').length - 2].split('|')[1]
-              // prevent duplicate edges
-              const edgeCheckEdges = this.checkForEdge(namespace.name, targetName, cycle, edges)
-              if (!edgeCheckEdges.length) {
-                if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
-                  this.edgeTemplate = this.createEdge('noCollapsed', namespace.name, targetName, cycle, targetCycle)
-                  edges.push(this.edgeTemplate)
+          if (indexSearch) {
+            // ---------------REMOVE NODES BASED ON FAMILY------------
+            // ṃust do this before removing nodes and edges based on cycle as
+            // cycle collapsing takes priority of families
+            this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+              if (config.name !=indexSearch.name && config.name !="01") {
+                this.collapseFamilyConfig[config.id].disabled = true
+                // REMOVE NODES
+                nodes = this.removeNode(config.name, cycle, nodes)
+                this.collapseFamilyConfig[config.id].visible = false
+                // REMOVE EDGES
+                const edgeCheck = this.checkForEdge(config.name, '', cycle, edges)
+                // if there is an edge with a source or target it needs removing
+                if (edgeCheck.length) {
+                  // if (!this.collapseCycle.includes(nodeCheck.tokens.cycle)) { // cycle collapsing takes priority over family collapsing
+                    removedEdges.push(edgeCheck[0])
+                    const targetName = this.cylcTree.$index[edgeCheck[0].node.target].name
+                    const targetCycle = this.cylcTree.$index[edgeCheck[0].node.target].tokens.cycle
+                    edges = this.removeEdge(config.name, cycle, targetName, targetCycle, edges)
+                  // }
                 }
+              }
+            })
+            // ---------------ADD NODES BASED ON FAMILY------------
+            if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
+              nodes.push(indexSearch)
+              this.collapseFamilyConfig[indexSearch.id].visible = true
+            }
+            this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+              const edgeCheckRemovedEdges = this.checkForEdge(config.name, '', cycle, removedEdges)
+              if (edgeCheckRemovedEdges.length) {
+                const targetName = this.cylcTree.$index[edgeCheckRemovedEdges[0].node.target].name
+                const targetCycle = this.cylcTree.$index[edgeCheckRemovedEdges[0].node.target].tokens.cycle
+                // prevent duplicate edges
+                const edgeCheckEdges = this.checkForEdge(indexSearch.name, targetName, cycle, edges)
+                if (!edgeCheckEdges.length) {
+                  if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
+                    this.edgeTemplate = this.createEdge('noCollapsed', indexSearch.name, targetName, cycle, targetCycle)
+                    edges.push(this.edgeTemplate)
+                  }
+                }
+              }
+            })
+          }
+        })
+      })
+      console.log('STARTING CYCLE STUFF')
+      this.collapseCycle.forEach((cycle) => {
+        const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
+            return node.name === cycle
+          })
+        if (indexSearch) {
+          // ---------------REMOVE NODES BASED ON CYCLE POINT------------
+          this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+            if (config.name !=indexSearch.name && config.name !="01") {
+              // REMOVE NODES
+              nodes = this.removeNode(config.name, cycle, nodes)
+              // REMOVE EDGES
+              // if there is an edge with a source or target it needs removing
+              const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, edges)
+              const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, edges)
+              if (edgeCheckSource.length) {
+                edgeCheckSource.forEach((edge) => {
+                  removedEdges.push(edge)
+                  const targetName = this.cylcTree.$index[edge.node.target].name
+                  const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+                  edges = this.removeEdge(config.name, cycle, targetName, targetCycle, edges)
+                })
+              }
+              if (edgeCheckTarget.length) {
+                edgeCheckTarget.forEach((edge) => {
+                  removedEdges.push(edge)
+                  const targetName = this.cylcTree.$index[edge.node.target].name
+                  const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+                  const sourceName = this.cylcTree.$index[edge.node.source].name
+                  const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
+                  edges = this.removeEdge(sourceName, sourceCycle, targetName, targetCycle, edges)
+                })
               }
             }
           })
-        })
-      })
-      // ---------------ADDS NODES BASED ON CYCLE POINT------------
-      this.collapseCycle.forEach((cycle) => {
-        const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
-          return node.name === cycle && node.tokens.cycle === cycle
-        })
-        // ADD NODES
-        nodes.push(indexSearch)
-        // ADD EDGES
-        const cycleNode = this.workflows[0].children.filter((node) => {
-          return node.name === cycle
-        })
-        cycleNode[0].children.forEach((childNode) => {
-          // check to see if child node edges have been removed in above step
-          const edgeCheckSource = this.checkForEdgeBySource(childNode.name, cycle, removedEdges)
-          if (edgeCheckSource) {
-            edgeCheckSource.forEach((edge) => {
-              const targetName = edge.node.target.split('/')[edge.node.target.split('/').length - 1]
-              const targetCycle = edge.node.target.split('/')[edge.node.target.split('/').length - 2]
-              // only want one edge that goes to a different cycle point
-              if (targetCycle !== cycle) {
-                if (this.collapseCycle.includes(targetCycle)) {
-                  // this collapsed cycle => next collapsed cycle
-                  this.edgeTemplate = this.createEdge('collapsedSourceAndTarget', cycle, targetCycle, cycle, targetCycle)
-                  edges.push(this.edgeTemplate)
-                } else {
-                  // this collapsed cycle => next cycle
-                  this.edgeTemplate = this.createEdge('collapsedSource', cycle, targetName, cycle, targetCycle)
-                  edges.push(this.edgeTemplate)
+          // ---------------ADD NODES BASED ON CYCLE POINT------------
+          nodes.push(indexSearch)
+          // next bit starts here
+          // ---------------ADD EDGES BASED ON CYCLE POINT------------
+          this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+            const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, removedEdges)
+            if (edgeCheckSource) {
+              edgeCheckSource.forEach((edge) => {
+                const targetName = this.cylcTree.$index[edge.node.target].name
+                const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+                // only want one edge that goes to a different cycle point
+                if (targetCycle !== cycle) {
+                  if (this.collapseCycle.includes(targetCycle)) {
+                    // this collapsed cycle => next collapsed cycle
+                    this.edgeTemplate = this.createEdge('collapsedSourceAndTarget', cycle, targetCycle, cycle, targetCycle)
+                    edges.push(this.edgeTemplate)
+                  } else {
+                    // this collapsed cycle => next cycle
+                    this.edgeTemplate = this.createEdge('collapsedSource', cycle, targetName, cycle, targetCycle)
+                    edges.push(this.edgeTemplate)
+                  }
                 }
-              }
-            })
-          }
-          const edgeCheckTarget = this.checkForEdgeByTarget(childNode.name, cycle, removedEdges)
-          if (edgeCheckTarget) {
-            edgeCheckTarget.forEach((edge) => {
-              const sourceName = edge.node.source.split('/')[edge.node.source.split('/').length - 1]
-              const sourceCycle = edge.node.source.split('/')[edge.node.source.split('/').length - 2]
-              // only want one edge that goes to a different cycle point
-              if (sourceCycle !== cycle) {
-                if (this.collapseCycle.includes(sourceCycle)) {
-                  // previous collapsed cycle => this collapsed cycle
-                  this.edgeTemplate = this.createEdge('collapsedSourceAndTarget', sourceCycle, cycle, sourceCycle, cycle)
-                  edges.push(this.edgeTemplate)
-                } else {
-                  // previous cycle => this collapsed cycle
-                  this.edgeTemplate = this.createEdge('collapsedTarget', sourceName, cycle, sourceCycle, cycle)
-                  edges.push(this.edgeTemplate)
+              })
+            }
+            const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, removedEdges)
+            if (edgeCheckTarget) {
+              edgeCheckTarget.forEach((edge) => {
+                const sourceName = this.cylcTree.$index[edge.node.source].name
+                const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
+                // only want one edge that goes to a different cycle point
+                if (sourceCycle !== cycle) {
+                  if (this.collapseCycle.includes(sourceCycle)) {
+                    // previous collapsed cycle => this collapsed cycle
+                    this.edgeTemplate = this.createEdge('collapsedSourceAndTarget', sourceCycle, cycle, sourceCycle, cycle)
+                    edges.push(this.edgeTemplate)
+                  } else {
+                    // previous cycle => this collapsed cycle
+                    this.edgeTemplate = this.createEdge('collapsedTarget', sourceName, cycle, sourceCycle, cycle)
+                    edges.push(this.edgeTemplate)
+                  }
                 }
-              }
-            })
-          }
-        })
+              })
+            }
+          })
+        }
       })
       // remove any duplicate edges that might have got into edges
       edges = Array.from(new Set(edges.map(a => a.id)))
