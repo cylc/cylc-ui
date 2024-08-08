@@ -837,6 +837,81 @@ export default {
         return node.name === family && node.tokens.cycle === cycle
       })
     },
+    addSubgraph(dotcode, pointer, graphSections){
+      let depth = 0
+      pointer.children.forEach((key, i) => {
+        const value = key
+        const children = this.collapseFamilyConfig[value.id].allChildren
+        const removedNodes = []
+        children.forEach((a) => {
+            if (this.collapseFamily.includes(a.name)) {
+              a.children.forEach((child) => {
+                removedNodes.push(child.name)
+              })
+            }
+          })
+        // filter parent
+        if (key.node.name !== '01' && 
+          children.length && 
+          this.groupFamily.includes(key.node.name) &&
+          !this.collapseFamily.includes(key.node.name) &&
+          !this.collapseFamily.includes(key.node.firstParent.name)) {
+
+          // filter child
+          const nodeFormattedArray = children.filter((a) => {
+            // if its not 01
+            const isOne = a.name != '01'
+            // if its not in the list of families (unless its been collapsed)
+            const isFamily = !this.groupFamilyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
+            // its the node has been removed/collapsed
+            const isRemoved = !removedNodes.includes(a.name)
+            return isOne && isFamily && isRemoved
+            // return a.name != '01' && !this.groupFamilyArrayStore.includes(a.name)
+          }).map(a => `"${a.id}"`)
+          if (nodeFormattedArray.length) {
+            dotcode.push(`
+            subgraph cluster_margin_family_${key.name}${key.tokens.cycle}
+              {
+              margin=100.0
+              label="margin"
+              subgraph cluster_${key.name}${key.tokens.cycle}
+                {${nodeFormattedArray}${nodeFormattedArray.length ? ';' : ''}
+                  label = "${key.name}"
+                  fontsize = "70px"
+                  style=dashed
+                  margin=60.0
+            `)
+          }
+        }
+
+        if(value){
+          depth+=1
+          this.addSubgraph(dotcode, value, graphSections)
+        }
+        if(Object.keys(graphSections).includes(key)){
+          dotcode.push(graphSections[key.id])
+        }
+
+        if (key.node.name !== '01' && 
+          children.length &&
+          this.groupFamily.includes(key.node.name) &&
+          !this.collapseFamily.includes(key.node.name) &&
+          !this.collapseFamily.includes(key.node.firstParent.name)) {
+          const nodeFormattedArray = children.filter((a) => {
+            // if its not 01
+            const isOne = a.name != '01'
+            // if its not in the list of families (unless its been collapsed)
+            const isFamily = !this.groupFamilyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
+            // its the node has been removed/collapsed
+            const isRemoved = !removedNodes.includes(a.name)
+            return isOne && isFamily && isRemoved
+          }).map(a => `"${a.id}"`)
+          if (nodeFormattedArray.length){
+            dotcode.push('}}')
+          }
+        }
+      })
+    },
     getDotCode (nodeDimensions, nodes, edges, cycles, families) {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
@@ -881,335 +956,65 @@ export default {
         `)
       }
 
-      // if (this.groupCycle) {
-      //   // Loop over the subgraphs
-      //   Object.keys(cycles).forEach((key, i) => {
-      //     if (!this.collapseCycle.includes(key)) {
-      //       // Loop over the nodes that are included in the subraph
-      //       const nodeFormattedArray = cycles[key].map(a => `"${a.id}"`)
-      //       ret.push(`
-      //       subgraph cluster_margin_${i}
-      //       {
-      //         margin=100.0
-      //         label="margin"
-      //         subgraph cluster_${i} {${nodeFormattedArray};\n
-      //         label = "${key}";\n
-      //         fontsize = "70px"
-      //         style=dashed
-      //         margin=60.0`)
-      //       if (this.groupFamily) {
-      //         // Loop over the subgraphs
-      //         Object.keys(families).forEach((keyFamily, iFamily) => {
-      //           if (this.groupFamily.includes(keyFamily)) {
-      //             const familiesCycle = families[keyFamily].filter((node) => {
-      //               return node.tokens.cycle === key
-      //             })
-      //             // Loop over the nodes that are included in the subraph
-      //             const nodeFormattedArray = familiesCycle.map(a => `"${a.id}"`)
-      //             if (nodeFormattedArray.length){
-      //               ret.push(`
-      //                 subgraph cluster_margin_family${iFamily}${i}
-      //                 {
-      //                   margin=100.0
-      //                   label="margin"
-      //                   subgraph cluster_family${iFamily}${i} {${nodeFormattedArray};\n
-      //                     label = "${keyFamily}${key}";\n
-      //                     fontsize = "70px"
-      //                     style=dashed
-      //                     margin=60.0
-      //                   }
-      //                 }`)
-      //             }
-      //           }
-      //         })
-      //       }
-      //       ret.push(`
-      //         }
-      //       }`)
-      //     }
-      //   })
-      // }
 
-      // // To do combine this with the version above
-      // if (!this.groupCycle && this.groupFamily) {
-      //   Object.keys(cycles).forEach((key, i) => {
-      //     if (!this.collapseCycle.includes(key)) {
-      //       // Loop over the subgraphs
-      //       Object.keys(families).forEach((keyFamily, iFamily) => {
-      //         console.log('=-=-=-=-=-=-families-=-=-=-=-=-')
-      //         console.log(families)
-      //         if (this.groupFamily.includes(keyFamily)) {
-      //           console.log('this is all the cycles in that family')
-      //           console.log(families[keyFamily])
-      //           const familiesCycle = families[keyFamily].filter((node) => {
-      //             return node.tokens.cycle === key
-      //           })
-      //           console.log('this is one of the cylces in that family')
-      //           console.log(key)
-      //           console.log(keyFamily)
-      //           console.log(familiesCycle)
-      //           // Loop over the nodes that are included in the subraph
-      //           const nodeFormattedArray = familiesCycle.map(a => `"${a.id}"`)
-      //           console.log(nodeFormattedArray)
-      //           if (nodeFormattedArray.length){
-      //             ret.push(`
-      //             subgraph cluster_margin_family${iFamily}${i}
-      //             {
-      //               margin=100.0
-      //               label="margin"
-      //               subgraph cluster_family${iFamily}${i} {${nodeFormattedArray};\n
-      //                 label = "${keyFamily}${key}";\n
-      //                 fontsize = "70px"
-      //                 style=dashed
-      //                 margin=60.0
-      //               }
-      //             }`)
-      //           }
-      //         }
-      //       })
-      //     }
-      //   })
-
-      // if (this.groupCycle) {
-      //   console.log("GROUP CYCLE IS SELECTED")
-      //   Object.keys(cycles).forEach((keyCycle, iCycle) => {
-      //     const indexSearch = Object.values(this.collapseFamilyConfig).filter((node) => {
-      //       return node.cycle === keyCycle
-      //     })
-      //   indexSearch.forEach((node, i) => {
-      //     const childArray = []
-      //     node.directChildren.forEach((child) => {
-      //       childArray.push(child)
-      //     })
-      //     // make a new subgraph with the childNodes
-      //     const nodeFormattedArray = childArray.filter((a) => {
-      //       return a.name != node.name && a.name != '01'
-      //     }).map(a => `"${a.id}"`)
-      //     console.log(`pushing the text for node ${keyCycle}`)
-      //     ret.push(`
-      //               subgraph cluster_margin_family_${keyCycle}
-      //               {
-      //                 margin=100.0
-      //                 label="margin"
-      //                 subgraph cluster_family_${keyCycle} {${nodeFormattedArray.join()};\n
-      //                   label = "${keyCycle}";\n
-      //                   fontsize = "70px"
-      //                   style=dashed
-      //                   margin=60.0
-      //                 }
-      //               }`)
-      //     })
-      //   })
-      // }
-
-      Object.keys(cycles).forEach((keyCycle, iCycle) => {
-        const indexSearch = Object.values(this.collapseFamilyConfig).filter((node) => {
-          return node.groupSelected === true && node.cycle === keyCycle
-        })
-        // Step 0 include all the cycles as seperate subgraphs
-        if (this.groupCycle) {
-          indexSearch.forEach((node, i) => {
-            if (!this.collapseCycle.includes(node.name) && !this.collapseFamilyArrayStore.includes(node.name)) {
-              const childArray = []
-              node.directChildren.forEach((child) => {
-                childArray.push(child)
-              })
-              // make a new subgraph with the childNodes
-              const nodeFormattedArray = childArray.filter((a) => {
-                return a.name != node.name && a.name != '01'
-              }).map(a => `"${a.id}"`)
-              ret.push(`
-                        subgraph cluster_margin_family_${keyCycle}
-                        {
-                          margin=100.0
-                          label="margin"
-                          subgraph cluster_family_${keyCycle} {${nodeFormattedArray.join()};\n
-                            label = "${keyCycle}";\n
-                            fontsize = "70px"
-                            style=dashed
-                            margin=60.0
-                          }
-                        }`)
-            }
+      const graph_sections = {}
+      Object.keys(cycles).forEach((cycle, iCycle) => {
+        console.log('CYCLE')
+        console.log(cycle)
+        const indexSearch = Object.values(this.cylcTree.$index).filter((node) => {
+            return node.tokens.cycle === cycle
           })
-        }
-        indexSearch.sort((a, b) => a.depth - b.depth).forEach((node, i) => {
-          if(node.ancestors && !this.collapseFamily.includes(node.name) && !this.collapseCycle.includes(node.cycle)) {
-            // Step 1 Cycle layer of the subgraph
-            if (this.groupCycle){
-              ret.push(`
-                        subgraph cluster_margin_family_${keyCycle}
-                        {
-                          margin=100.0
-                          label="margin"
-                          subgraph cluster_family_${keyCycle} {\n
-                            label = "${keyCycle}";\n
-                            fontsize = "70px"
-                            style=dashed
-                            margin=60.0`)
-            }
-            // Step 2 beginning of family nesting
-            node.ancestors.reverse().forEach((ancestor) => {
-              if (this.groupFamily.includes(ancestor.name )){
-                ret.push(`
-                        subgraph cluster_margin_family_${ancestor.name}${keyCycle}
-                        {
-                          margin=100.0
-                          label="margin"
-                          subgraph cluster_family_${ancestor.name}${keyCycle} {\n
-                            label = "${ancestor.name}${keyCycle}";\n
-                            fontsize = "70px"
-                            style=dashed
-                            margin=60.0`)
+        if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
+          indexSearch.forEach((task) => {
+            const parent = task.node.firstParent
+            if (!parent) {return}
+            const section = graph_sections[parent.id] ??= []
+            section.push(`${task.name} [title=${task.name}]`)
+            graph_sections[task.node.firstParent.id] = section
+          })
+          if (this.groupCycle) {
+            const cycleChildren = this.cylcTree.$index[`${this.workflowIDs[0]}//${cycle}`]
+            const removedNodes = []
+            indexSearch.forEach((a) => {
+              if (this.collapseFamily.includes(a.name)) {
+                a.children.forEach((child) => {
+                  removedNodes.push(child.name)
+                })
               }
             })
-            // Step 3 the actually subgraph definition
-            if(!this.collapseFamily.includes(node.name) && node.directChildren.length) {
-              const childArray = []
-              node.directChildren.forEach((child) => {
-                if (this.collapseFamily.includes(child.name) || !this.collapseFamilyArrayStore.includes(child.name)) {
-                  childArray.push(child)
-                } else {
-                  childArray.push(...child.children)
-                }
-              })
-              // make a new subgraph with the childNodes
-              const nodeFormattedArray = childArray.filter((a) => {
-                return a.name != node.name && a.name != '01'
-              }).map(a => `"${a.id}"`)
-              ret.push(`
-                        subgraph cluster_margin_family_${node.name}${keyCycle}
-                        {
-                          margin=100.0
-                          label="margin"
-                          subgraph cluster_family_${node.name}${keyCycle} {${nodeFormattedArray.join()};\n
-                            label = "${node.name}${keyCycle}";\n
-                            fontsize = "70px"
-                            style=dashed
-                            margin=60.0
-                          }
-                        }`)
-            }
-            // Step 4 end of family nesting
-            node.ancestors.reverse().forEach((ancestor) => {
-              if (this.groupFamily.includes(ancestor.name )){
-                ret.push(`
-                            }
-                          }`)
-              }
-            })
-            // Step 5 end of Cycle layer
-            if (this.groupCycle){
-              ret.push(`
-                            }
-                          }`)
-            }
+            const nodeFormattedArray = indexSearch.filter((a) => {
+              // if its not 01
+              const isOne = a.name != '01'
+              // if its not in the list of families (unless its been collapsed)
+              const isFamily = !this.groupFamilyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
+              // the node has been removed/collapsed
+              const isRemoved = !removedNodes.includes(a.name)
+              // its not a node representing this cycle
+              const isThisCycle = a.name != cycle
+              // its not a node root node
+              const isRoot = a.name != "root"
+              return isOne && isFamily && isRemoved && isThisCycle && isRoot
+            }).map(a => `"${a.id}"`)
+            ret.push(`
+              subgraph cluster_margin_family_${cycle}
+                {
+                margin=100.0
+                label="margin"
+                subgraph cluster_${cycle} {
+                    ${nodeFormattedArray}${nodeFormattedArray.length ? ';' : ''}
+                    label = "${cycle}"
+                    fontsize = "70px"
+                    style=dashed
+                    margin=60.0
+              `)
           }
-          
-        })
-        // indexSearch.sort((a, b) => a.depth - b.depth).forEach((node, i) => {
-        //   if(!this.collapseFamily.includes(node.name) && node.directChildren.length) {
-        //     const childArray = []
-        //     node.directChildren.forEach((child) => {
-        //       if (this.collapseFamily.includes(child.name) || !this.collapseFamilyArrayStore.includes(child.name)) {
-        //         childArray.push(child)
-        //       } else {
-        //         childArray.push(...child.children)
-        //       }
-        //     })
-        //     // make a new subgraph with the childNodes
-        //     const nodeFormattedArray = childArray.filter((a) => {
-        //       return a.name != node.name && a.name != '01'
-        //     }).map(a => `"${a.id}"`)
-        //     ret.push(`
-        //               subgraph cluster_margin_family${i}
-        //               {
-        //                 margin=100.0
-        //                 label="margin"
-        //                 subgraph cluster_family${i} {${nodeFormattedArray.join()};\n
-        //                   label = "${node.name}";\n
-        //                   fontsize = "70px"
-        //                   style=dashed
-        //                   margin=60.0
-        //                 }
-        //               }`)
-        //   } else {
-        //     return
-        //   }
-        // })
-      })
-      
-      // To do combine this with the version above
-      // if (!this.groupCycle && this.groupFamily) {
-      //   // Loop over the cycles
-      //   Object.keys(cycles).forEach((keyCycle, iCycle) => {
-      //     // If the cycle is collapsed then we dont want to do anything (cycle>family)
-      //     if (!this.collapseCycle.includes(keyCycle)) {
-      //       // Loop over the families
-      //       this.namespaces.forEach((keyFamily, iFamily) => {
-      //         if (this.groupFamily.includes(keyFamily.name)) {
-      //           // Dont want to group the latest cycle
-      //           if (keyCycle != this.latestCycle) {
-      //             // const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
-      //             //     return node.name === keyFamily.name && node.tokens.cycle === keyCycle
-      //             //   })
-      //             // calculated how nested this groups are
-      //             console.log('-=-=-=-==-==--=_+_+_+_+__+')
-      //             console.log(this.collapseFamilyConfig)
-      //             console.log("THIS IS WHAT IM WORKING WITH (INDEXSEARCH)")
-      //             console.log(indexSearch)
-      //             console.log('CHECK SEE IF ITS GROUPED ALREADY')
-      //             console.log(this.collapseFamilyConfig[indexSearch.id].grouped)
-      //             if (!this.collapseFamilyConfig[indexSearch.id].grouped) {
-      //               console.log('CHECK SEE IF IT HAS ANY CHILDEREN')
-      //               console.log(indexSearch.children)
-      //               if (indexSearch.children.length) {
-      //                 indexSearch.children.forEach((child) => {
-      //                   console.log('CHECK SEE IF CHILD IS GROUPED ALREADY')
+          this.addSubgraph(ret, this.cylcTree.$index[`${this.workflowIDs[0]}//${cycle}/root`], graph_sections)
+          if (this.groupCycle) {
+            ret.push('}}')
+          }
+        }
 
-      //                 })
-      //               }
-      //             }
-      //             // // Dont want to group it if its collapsed
-      //             // if (!this.collapseFamily.includes(indexSearch.name) ) {
-      //             //   console.log("------NAME-----")
-      //             //   console.log(indexSearch.name)
-      //             //   console.log('----------------from collapseFamilyConfig---------------------')
-      //             //   console.log(this.collapseFamilyConfig[indexSearch.id])
-      //             //   console.log('----------------from $index---------------------')
-      //             //   console.log(indexSearch)
-      //             //   if (indexSearch.children.length){
-      //             //     const subRet = []
-      //             //     this.indexSearch.forEach((child) => {
-      //             //       if(this.groupFamily.includes(child.name)) {
-      //             //         child.childeren.forEach((childChild) => {
-      //             //           childChild
-      //             //         })
-      //             //       }
-      //             //       if (child.name != '01' && child.name != keyFamily.name && this.collapseFamilyConfig[child.id].visible) {
-      //             //         subRet.push(`"${child.id}"`)
-      //             //       }
-      //             //     })
-      //             //     ret.push(`
-      //             //       subgraph cluster_margin_family${iFamily}${iCycle}
-      //             //       {
-      //             //         margin=100.0
-      //             //         label="margin"
-      //             //         subgraph cluster_family${iFamily}${iCycle} {${subRet.join()};\n
-      //             //           label = "${keyFamily.name}${keyCycle}";\n
-      //             //           fontsize = "70px"
-      //             //           style=dashed
-      //             //           margin=60.0
-      //             //       }
-      //             //     }`)
-      //             //   }
-      //             // }
-      //           }
-      //         }
-      //       })
-      //     }
-      //   })
-      // }
+      })
 
       if (this.transpose) {
         // left-right orientation
