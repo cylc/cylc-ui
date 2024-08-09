@@ -40,6 +40,12 @@ module.exports = {
         functions: 'only-multiline',
       },
     ],
+    'no-console': [
+      'error',
+      {
+        allow: ['warn', 'error']
+      }
+    ],
     'template-curly-spacing': [
       'off'
     ],
@@ -60,6 +66,6 @@ module.exports = {
     ],
     'cypress/unsafe-to-chain-command': [
       'off'
-    ]
+    ],
   },
 }
