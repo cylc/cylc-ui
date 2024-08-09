@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="c-key-val my-1"
     no-gutters
   >
-    <v-col cols="4">
+    <v-col cols="5">
       <div>
         <v-text-field
           placeholder="key"
@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-bind="{ ...$attrs, ...$options.textFieldProps }"
         />
         <v-tooltip v-bind="tooltipProps">
-          <span>Pre-existing settings cannot be renamed</span>
+          <span><code>{{ modelValue.key }}</code><br/>(Pre-existing settings cannot be renamed)</span>
         </v-tooltip>
       </div>
     </v-col>
