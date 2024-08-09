@@ -23,14 +23,18 @@ import Toolbar from '@/components/cylc/workspace/Toolbar.vue'
 import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
 import sinon from 'sinon'
 import WorkflowService from '@/services/workflow.service'
+import { useDrawer } from '@/utils/toolbar'
+
 const $workflowService = sinon.createStubInstance(WorkflowService)
 
 describe('Workspace toolbar component', () => {
   let store
+  const { drawer: drawerState } = useDrawer()
 
   beforeEach(() => {
     store = createStore(storeOptions)
     store.commit('user/SET_USER', { owner: 'rincewind' })
+    drawerState.value = false
   })
 
   it('hides/shows nav button according to viewport size & whether drawer is collapsed', async () => {
@@ -47,11 +51,10 @@ describe('Workspace toolbar component', () => {
     })
     // Btn should show when drawer is collapsed
     wrapper.vm.$vuetify.display.mobile = false
-    store.commit('app/setDrawer', false)
     await wrapper.vm.$nextTick()
     expect(wrapper.find('#toggle-drawer').exists()).to.equal(true)
     // Btn should not show when drawer is visible on large viewport
-    store.commit('app/setDrawer', true)
+    drawerState.value = true
     await wrapper.vm.$nextTick()
     expect(wrapper.find('#toggle-drawer').exists()).to.equal(false)
     // Btn should show when drawer is visible on small viewport

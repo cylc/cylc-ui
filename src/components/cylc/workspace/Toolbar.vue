@@ -210,7 +210,7 @@ import {
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils'
-import { useToolbar, toolbarHeight } from '@/utils/toolbar'
+import { useDrawer, useNavBtn, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import graphql from '@/mixins/graphql'
 import {
@@ -264,7 +264,8 @@ export default {
   name: 'Toolbar',
 
   setup () {
-    const { showNavBtn, toggleDrawer } = useToolbar()
+    const { showNavBtn } = useNavBtn()
+    const { toggleDrawer } = useDrawer()
     return {
       eventBus,
       showNavBtn,

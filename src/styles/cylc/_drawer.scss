@@ -20,13 +20,13 @@
 
 body.resizing-drawer {
   cursor: ew-resize !important;
+  #c-sidebar, .v-main {
+    // Prevent Vuetify-provided transitions during resize to ensure responsiveness
+    transition: none !important;
+  }
 }
 
 #c-sidebar {
-  /* this is not in our styles/material-dashboard, so we need to force-override */
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important;
-
   @include theme-dependent(background-color, settings.$grey, 4);
 
   .resize-bar {

@@ -61,16 +61,22 @@ describe('App', () => {
   })
 
   it.each([
-    { value: true, expected: { vuetify: false } },
-    { value: false, expected: { vuetify: null } },
+    {
+      value: true,
+      expected: {
+        transition: 'no',
+        ripple: false
+      }
+    },
+    {
+      value: false,
+      expected: {}
+    },
   ])('applies reduced animation = $value from localStorage', ({ value, expected }) => {
     localStorage.setItem('reducedAnimation', value)
     const wrapper = mountFunction()
     expect(wrapper.vm.vuetifyDefaults).toMatchObject({
-      global: {
-        transition: expected.vuetify,
-        ripple: expected.vuetify,
-      }
+      global: expected
     })
   })
 })

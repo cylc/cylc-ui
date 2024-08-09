@@ -15,11 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { unref } from 'vue'
 import { mount } from '@vue/test-utils'
-import { createStore } from 'vuex'
 import { createVuetify } from 'vuetify'
-import { useNavBtn, useToolbar } from '@/utils/toolbar'
-import storeOptions from '@/store/options'
+import { useDrawer, useNavBtn } from '@/utils/toolbar'
 
 /**
  * Create a vuetify instance in mobile mode or not.
@@ -33,11 +32,11 @@ const vuetify = (mobile) => createVuetify({
   }
 })
 
-describe('Toolbar utils', () => {
-  let store
+describe('Toolbar/drawer utils', () => {
+  const { drawer: drawerState } = useDrawer()
 
   beforeEach(() => {
-    store = createStore(storeOptions)
+    drawerState.value = false
   })
 
   describe('useNavBtn()', () => {
@@ -46,7 +45,7 @@ describe('Toolbar utils', () => {
       { mobile: true, drawer: false, expected: true },
       { mobile: false, drawer: true, expected: false },
       { mobile: false, drawer: false, expected: true },
-    ])('returns whether to show nav button %o', ({ mobile, drawer, expected }) => {
+    ])('{mobile: $mobile, drawer: $drawer} -> $expected', ({ mobile, drawer, expected }) => {
       const wrapper = mount(
         {
           setup () {
@@ -57,43 +56,38 @@ describe('Toolbar utils', () => {
         },
         {
           global: {
-            plugins: [store, vuetify(mobile)]
+            plugins: [vuetify(mobile)]
           },
         }
       )
-      store.commit('app/setDrawer', drawer)
+      drawerState.value = drawer
       expect(wrapper.vm.showNavBtn).to.equal(expected)
     })
   })
 
-  describe('useToolbar()', () => {
+  describe('useDrawer()', () => {
     const mountFunction = (vuetify) => mount(
       {
         setup () {
-          const { toggleDrawer } = useToolbar()
-          return { toggleDrawer }
+          const { drawer, toggleDrawer } = useDrawer()
+          return { drawer, toggleDrawer }
         },
         render () {}
       },
       {
         global: {
-          plugins: [store, vuetify]
+          plugins: [vuetify]
         }
       }
     )
 
-    it('sets drawer on mount', () => {
-      store.commit('app/setDrawer', true)
-      const wrapper = mountFunction(vuetify(true))
-      expect(wrapper.vm.$vuetify.display.mobile).to.be.true
-      expect(store.state.app.drawer).to.be.false
-    })
-
     it('toggles the drawer', () => {
       const wrapper = mountFunction(createVuetify())
-      const initialState = store.state.app.drawer
+      const initialState = unref(drawerState)
+      expect(wrapper.vm.drawer).toEqual(initialState)
       wrapper.vm.toggleDrawer()
-      expect(store.state.app.drawer).to.equal(!initialState)
+      expect(drawerState.value).toEqual(!initialState)
+      expect(wrapper.vm.drawer).toEqual(!initialState)
     })
   })
 })
