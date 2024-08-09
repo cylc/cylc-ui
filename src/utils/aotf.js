@@ -35,7 +35,7 @@ import {
   mdiDelete,
   mdiEmail,
   mdiFileDocumentOutline,
-  mdiVectorPolylineEdit,
+  mdiInformationOutline,
   mdiMinusCircleOutline,
   mdiPause,
   mdiPauseCircleOutline,
@@ -44,7 +44,8 @@ import {
   mdiPlaylistEdit,
   mdiRefreshCircle,
   mdiReload,
-  mdiStop
+  mdiStop,
+  mdiVectorPolylineEdit,
 } from '@mdi/js'
 
 import { Alert } from '@/model/Alert.model'
@@ -128,6 +129,7 @@ export function getMutationIcon (name) {
     case 'clean': return mdiDelete
     case 'editRuntime': return mdiPlaylistEdit
     case 'hold': return mdiPauseCircleOutline // to distinguish from pause
+    case 'info': return mdiInformationOutline
     case 'kill': return mdiCloseCircle
     case 'log': return mdiFileDocumentOutline
     case 'message': return mdiEmail
@@ -188,6 +190,7 @@ export const primaryMutations = {
     'trigger',
     'kill',
     'log',
+    'info',
     'set'
   ]
 }
@@ -313,6 +316,13 @@ export const dummyMutations = [
     _requiresInfo: false,
     _validStates: WorkflowStateNames,
   },
+  {
+    name: 'info',
+    description: 'View task information.',
+    args: [],
+    _appliesTo: [cylcObjects.Namespace],
+    _requiresInfo: false
+  },
 ]
 
 /**
@@ -322,7 +332,7 @@ export const dummyMutations = [
  */
 const dummyMutationsPermissionsMap = Object.freeze({
   broadcast: Object.freeze(['editRuntime']),
-  read: Object.freeze(['log'])
+  read: Object.freeze(['log', 'info'])
 })
 
 /**
