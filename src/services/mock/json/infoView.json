@@ -1,0 +1,81 @@
+{
+  "deltas": {
+    "id": "~user/one",
+    "added": {
+      "taskProxies": [
+        {
+          "id": "~user/one//20000102T0000Z/failed",
+          "state": "failed",
+          "isHeld": false,
+          "isQueued": false,
+          "isRunahead": false,
+
+          "task": {
+            "meanElapsedTime": "10",
+            "meta": {
+              "title": "Failed Task",
+              "description": "A task that always fails!",
+              "URL": "https://cylc.org",
+              "userDefined": {
+                "my custom field": "My custom value!"
+              }
+            }
+          },
+
+          "jobs": [
+            {
+              "id": "~user/one//20000102T0000Z/failed/01",
+              "jobId": "1234",
+              "startedTime": 0,
+              "state": "failed"
+            }
+          ],
+
+          "prerequisites": [
+            {
+              "satisfied": true,
+              "expression": "c0 & c1",
+              "conditions": [
+                {
+                  "taskId": "20000102T0000Z/succeeded",
+                  "reqState": "succeeded",
+                  "expreAlias": "c0",
+                  "satisfied": true
+                },
+                {
+                  "taskId": "20000102T0000Z/eventually_succeeded",
+                  "reqState": "succeeded",
+                  "expreAlias": "c1",
+                  "satisfied": true
+                }
+              ]
+            }
+          ],
+
+          "outputs": [
+            {
+              "label": "submitted",
+              "satisfied": true
+            },
+            {
+              "label": "started",
+              "satisfied": true
+            },
+            {
+              "label": "succeeded",
+              "satisfied": false
+            },
+            {
+              "label": "failed",
+              "satisfied": true
+            },
+            {
+              "label": "expired",
+              "satisfied": false
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
