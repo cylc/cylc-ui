@@ -16,125 +16,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="c-info">
-    <div v-if="task.id">
-      <!-- The task summary
-
-      * The "-40" comes from the GraphNode offset, see the GraphNode compoent.
-      * The height is "200" + "40".
-      * The "99999" is the maximum component width (the xMinYMin value prevents
-        this from taking up more horizontal space than it requires).
-      * The "8em" is the height that this SVG will be scaled to fill.
-      -->
-      <svg
-        preserveAspectRatio="xMinYMin"
-        viewBox="-40 -40 99999 200"
-        height="8em"
-      >
-        <GraphNode
-          :task="taskNode"
-          :jobs="jobNodes"
-          :jobTheme="jobTheme"
-        />
-      </svg>
-      <br />
-
-      <!-- The task information -->
-      <v-expansion-panels
-        multiple
-        variant="accordion"
-        v-model="panelExpansion"
-      >
-        <!-- The metadata -->
-        <v-expansion-panel class="metadata-panel">
-          <v-expansion-panel-title color="blue-grey-lighten-1">
-            Metadata
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <dl>
-              <dt>Title</dt>
-              <dd>{{ taskMetadata.title }}</dd>
-              <v-divider />
-              <dt>Description</dt>
-              <dd><span class="markup">{{ taskMetadata.description }}</span></dd>
-              <v-divider />
-              <dt>URL</dt>
-              <dd>
-                <!--
-                    NOTE: for security reasons, always display the full URL
-                    that the link directs to
-                -->
-                <a
-                  v-if="taskMetadata.URL"
-                  :href="taskMetadata.URL"
-                  target="_blank"
-                >
-                  {{ taskMetadata.URL }}
-                </a>
-              </dd>
-              <v-divider />
-              <template v-for="(value, key) in customMetadata" :key="key">
-                <dt>{{ key }}</dt>
-                <dd><span class="markup">{{ value }}</span></dd>
-                <v-divider />
-              </template>
-            </dl>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <!-- The prereqs -->
-        <v-expansion-panel class="prerequisites-panel">
-          <v-expansion-panel-title color="blue-grey-lighten-2">
-            Prerequisites
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <ul>
-              <li v-for="prereq in prerequisites" :key="prereq.expression">
-                <span
-                  class="prerequisite-alias condition"
-                  :class="{satisfied: prereq.satisfied}"
-                >{{ prereq.expression }}</span>
-                <ul>
-                  <li
-                    v-for="condition in prereq.conditions"
-                    :key="condition.taskAlias"
-                  >
-                    <span
-                      class="prerequisite-alias condition"
-                      :class="{satisfied: condition.satisfied}"
-                    >
-                      {{ condition.exprAlias }}
-                    </span>
-                    <span style="margin-left: 0.5em">
-                      {{ condition.taskId }}:{{ condition.reqState }}
-                    </span>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-
-        <!-- The outputs -->
-        <v-expansion-panel class="outputs-panel">
-          <v-expansion-panel-title color="blue-grey-lighten-1">
-            Outputs
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <ul>
-              <li v-for="output in outputs" :key="output.label">
-                <span
-                  class="condition"
-                  :class="{satisfied: output.satisfied}"
-                >{{ output.label }}</span>
-              </li>
-            </ul>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-
-      </v-expansion-panels>
-    </div>
-  </div>
+  <InfoComponent
+    v-if="taskNode.id"
+    :task="taskNode"
+    :panelExpansion="panelExpansion"
+    @update:panelExpansion="updatePanelExpansion"
+  />
 </template>
 
 <script>
@@ -149,8 +36,8 @@ import {
   useInitialOptions
 } from '@/utils/initialOptions'
 import { Tokens } from '@/utils/uid'
-import { useJobTheme } from '@/composables/localStorage'
-import GraphNode from '@/components/cylc/GraphNode.vue'
+
+import InfoComponent from '@/components/cylc/Info.vue'
 
 // NOTE: This query is run outside of the central data store
 const QUERY = gql`
@@ -228,15 +115,43 @@ fragment JobData on Job {
 }
 `
 
+function taskObjToNode (task) {
+  const tokens = new Tokens(task.id)
+  return {
+    id: task.id,
+    tokens,
+    name: tokens.task,
+    node: task,
+    children: [],
+  }
+}
+
+function jobObjToNode (job) {
+  const tokens = new Tokens(job.id)
+  return {
+    id: job.id,
+    name: tokens.job,
+    tokens,
+    node: job,
+  }
+}
+
+function rebuildTaskChildren (taskNode, taskData) {
+  taskNode.children = []
+  for (const job of taskData.jobs) {
+    taskNode.children.push(jobObjToNode(job))
+  }
+}
+
 /** Callback for assembling the log file from the subscription */
 class InfoCallback extends DeltasCallback {
   /**
    * @param {Results} results
    */
-  constructor (task, node) {
+  constructor (taskNode) {
     super()
-    this.task = task
-    this.taskNode = node
+    this.task = {}
+    this.taskNode = taskNode
   }
 
   onAdded (added, store, errors) {
@@ -245,16 +160,16 @@ class InfoCallback extends DeltasCallback {
 
     // construct a dummy "node" like to make it look like a node in the
     // central data store
-    this.taskNode.id = this.task.id
-    this.taskNode.tokens = new Tokens(this.task.id)
-    this.taskNode.name = this.taskNode.tokens.task
-    this.taskNode.node = this.task
+    Object.assign(this.taskNode, taskObjToNode(this.task))
+    rebuildTaskChildren(this.taskNode, this.task)
   }
 
   onUpdated (updated, store, errors) {
     if (updated?.taskProxies) {
       Object.assign(this.task, updated.taskProxies[0])
     }
+
+    rebuildTaskChildren(this.taskNode, this.task)
   }
 
   onPruned (pruned) {
@@ -270,7 +185,7 @@ export default {
   ],
 
   components: {
-    GraphNode,
+    InfoComponent,
   },
 
   head () {
@@ -289,7 +204,6 @@ export default {
     const panelExpansion = useInitialOptions('panelExpansion', { props, emit }, [0])
     return {
       requestedTokens,
-      jobTheme: useJobTheme(),
       panelExpansion,
     }
   },
@@ -301,9 +215,6 @@ export default {
       // and re-issued with the new values
       requestedCycle: undefined,
       requestedTask: undefined,
-
-      // This is where the task data will be put when it arrives
-      task: {},
 
       // The task formatted as a data-store node
       taskNode: {},
@@ -320,118 +231,18 @@ export default {
         { ...this.variables, taskID: this.requestedTokens?.relativeID },
         `info-query-${this._uid}`,
         [
-          new InfoCallback(this.task, this.taskNode)
+          new InfoCallback(this.taskNode)
         ],
         /* isDelta */ true,
         /* isGlobalCallback */ false
       )
     },
-
-    jobNodes () {
-      // The task's jobs in the format of a data store-node
-      const ret = []
-      let tokens
-      for (const job of this.task.jobs) {
-        tokens = new Tokens(job.id)
-        ret.push({
-          id: job.id,
-          name: tokens.job,
-          tokens,
-          node: { job }
-        })
-      }
-      return ret
-    },
-
-    latestJob () {
-      // NOTE: we cannot use the latestJob function here because the job is
-      // not gaurenteed to be in the central data store (this data comes from a
-      // custom query)
-      if (!this.task.id) {
-        return undefined
-      }
-      return this.task?.jobs?.[0]
-    },
-
-    taskMetadata () {
-      // Default task metadata sections (title, description, URL)
-      return this.task?.task?.meta || {}
-    },
-
-    customMetadata () {
-      // Used-defined task metadata sections
-      return this.task?.task?.meta.userDefined || {}
-    },
-
-    prerequisites () {
-      // Task prerequsite information.
-      return this.task?.prerequisites || {}
-    },
-
-    outputs () {
-      // Task output information.
-      return this.task?.outputs || {}
-    },
-
   },
 
-}
-</script>
-
-<style scoped lang="scss">
-  .c-info {
-    // for user-defined text where whitespace should be preserved
-    .markup {
-      white-space: pre;
-    }
-
-    // prefixes a tick or cross before the entry
-    .condition:before {
-      content: '✕';
-      padding-right: 0.5em;
-      color: rgb(255, 100, 100);
-    }
-    .condition.satisfied:before {
-      content: '✓';
-      color: rgb(75, 230, 75);
-    }
-
-    // for prerequsite task "aliases" (used in conditional expressions)
-    .prerequisite-alias {
-      font-style: italic;
-      color: rgb(100, 100, 255);
-    }
-
-    .metadata-panel {
-      dl {
-        dt dd {
-          padding-left: 1em;
-          padding-right: 1em;
-        }
-        dt {
-          font-size: 1.3em;
-          padding-top: 0.4em;
-        }
-        dd {
-          padding-bottom: 0.4em;
-        }
-      }
-    }
-
-    .prerequisites-panel {
-      li {
-        list-style: none;
-      }
-
-      ul li ul {
-        margin-left: 2em;
-      }
-    }
-
-    .outputs-panel {
-      li {
-        list-style: none;
-      }
+  methods: {
+    updatePanelExpansion (value) {
+      this.panelExpansion = value
     }
   }
-</style>
+}
+</script>
