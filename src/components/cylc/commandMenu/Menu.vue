@@ -92,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-dialog
       v-if="dialogMutation"
       v-model="dialog"
-      width="700px"
+      :width="dialogMutation._dialogWidth ?? '700px'"
       max-width="100%"
       content-class="c-mutation-dialog mx-0"
     >
