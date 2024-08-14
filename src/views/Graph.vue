@@ -403,31 +403,26 @@ export default {
     // Calculate some values for familes that we need for the toolbar
     Object.keys(this.cylcTree.$index).forEach((itemName) => {
       // Function for counting how many layers deep the children go
-      function count(children) {
+      function count (children) {
         return children.reduce((depth, child) => {
-          return Math.max(depth, 1 + count(child.children)); // increment depth of children by 1, and compare it with accumulated depth of other children within the same element
-        }, 0); //default value 0 that's returned if there are no children
+          return Math.max(depth, 1 + count(child.children)) // increment depth of children by 1, and compare it with accumulated depth of other children within the same element
+        }, 0) // default value 0 that's returned if there are no children
       }
       // Function for getting a flattened array of the nested children
-      function childArray(a) {
-        return a.reduce(function (flattened, {id, name, children}) {
-          let namespace = false   
+      function childArray (a) {
+        return a.reduce(function (flattened, { id, name, children }) {
           return flattened
-            .concat([{id, name, children}])
-            .concat(children ? childArray(children, id) : []);
-        }, []);
+            .concat([{ id, name, children }])
+            .concat(children ? childArray(children, id) : [])
+        }, [])
       }
       const itemValue = this.cylcTree.$index[itemName]
       this.collapseFamilyConfig[itemName] = {
         id: itemName,
         name: itemValue.name,
-        directChildren: [],
         allChildren: childArray([itemValue]),
         depth: count([itemValue]),
         disabled: false,
-        visible: true,
-        collapsSelected: false,
-        groupSelected: false,
       }
     })
     // Get the maximum depth value
@@ -435,7 +430,7 @@ export default {
     Object.keys(this.collapseFamilyConfig).forEach((key) => {
       const spacingUnit = 5
       const depth = this.collapseFamilyConfig[key].depth
-      this.collapseFamilyConfig[key].spacing =  (maxDepth * spacingUnit) - (depth * spacingUnit)
+      this.collapseFamilyConfig[key].spacing = (maxDepth * spacingUnit) - (depth * spacingUnit)
     })
     // const maxDepth = Object.values(this.collapseFamilyConfig).sort((a, b) => {
     //   b.amount - a.amount
@@ -837,30 +832,29 @@ export default {
         return node.name === family && node.tokens.cycle === cycle
       })
     },
-    addSubgraph(dotcode, pointer, graphSections){
+    addSubgraph (dotcode, pointer, graphSections) {
       let depth = 0
       pointer.children.forEach((key, i) => {
         const value = key
         const children = this.collapseFamilyConfig[value.id].allChildren
         const removedNodes = []
         children.forEach((a) => {
-            if (this.collapseFamily.includes(a.name)) {
-              a.children.forEach((child) => {
-                removedNodes.push(child.name)
-              })
-            }
-          })
+          if (this.collapseFamily.includes(a.name)) {
+            a.children.forEach((child) => {
+              removedNodes.push(child.name)
+            })
+          }
+        })
         // filter parent
-        if (key.node.name !== '01' && 
-          children.length && 
+        if (key.node.name !== '01' &&
+          children.length &&
           this.groupFamily.includes(key.node.name) &&
           !this.collapseFamily.includes(key.node.name) &&
           !this.collapseFamily.includes(key.node.firstParent.name)) {
-
           // filter child
           const nodeFormattedArray = children.filter((a) => {
             // if its not 01
-            const isOne = a.name != '01'
+            const isOne = a.name !== '01'
             // if its not in the list of families (unless its been collapsed)
             const isFamily = !this.groupFamilyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
             // its the node has been removed/collapsed
@@ -884,29 +878,29 @@ export default {
           }
         }
 
-        if(value){
-          depth+=1
+        if (value) {
+          depth += 1
           this.addSubgraph(dotcode, value, graphSections)
         }
-        if(Object.keys(graphSections).includes(key)){
+        if (Object.keys(graphSections).includes(key)) {
           dotcode.push(graphSections[key.id])
         }
 
-        if (key.node.name !== '01' && 
+        if (key.node.name !== '01' &&
           children.length &&
           this.groupFamily.includes(key.node.name) &&
           !this.collapseFamily.includes(key.node.name) &&
           !this.collapseFamily.includes(key.node.firstParent.name)) {
           const nodeFormattedArray = children.filter((a) => {
             // if its not 01
-            const isOne = a.name != '01'
+            const isOne = a.name !== '01'
             // if its not in the list of families (unless its been collapsed)
             const isFamily = !this.groupFamilyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
             // its the node has been removed/collapsed
             const isRemoved = !removedNodes.includes(a.name)
             return isOne && isFamily && isRemoved
           }).map(a => `"${a.id}"`)
-          if (nodeFormattedArray.length){
+          if (nodeFormattedArray.length) {
             dotcode.push('}}')
           }
         }
@@ -956,24 +950,22 @@ export default {
         `)
       }
 
-
-      const graph_sections = {}
+      const graphSections = {}
       Object.keys(cycles).forEach((cycle, iCycle) => {
         console.log('CYCLE')
         console.log(cycle)
         const indexSearch = Object.values(this.cylcTree.$index).filter((node) => {
-            return node.tokens.cycle === cycle
-          })
+          return node.tokens.cycle === cycle
+        })
         if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
           indexSearch.forEach((task) => {
             const parent = task.node.firstParent
-            if (!parent) {return}
-            const section = graph_sections[parent.id] ??= []
+            if (!parent) { return }
+            const section = graphSections[parent.id] ??= []
             section.push(`${task.name} [title=${task.name}]`)
-            graph_sections[task.node.firstParent.id] = section
+            graphSections[task.node.firstParent.id] = section
           })
           if (this.groupCycle) {
-            const cycleChildren = this.cylcTree.$index[`${this.workflowIDs[0]}//${cycle}`]
             const removedNodes = []
             indexSearch.forEach((a) => {
               if (this.collapseFamily.includes(a.name)) {
@@ -984,15 +976,15 @@ export default {
             })
             const nodeFormattedArray = indexSearch.filter((a) => {
               // if its not 01
-              const isOne = a.name != '01'
+              const isOne = a.name !== '01'
               // if its not in the list of families (unless its been collapsed)
               const isFamily = !this.groupFamilyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
               // the node has been removed/collapsed
               const isRemoved = !removedNodes.includes(a.name)
               // its not a node representing this cycle
-              const isThisCycle = a.name != cycle
+              const isThisCycle = a.name !== cycle
               // its not a node root node
-              const isRoot = a.name != "root"
+              const isRoot = a.name !== 'root'
               return isOne && isFamily && isRemoved && isThisCycle && isRoot
             }).map(a => `"${a.id}"`)
             ret.push(`
@@ -1008,12 +1000,11 @@ export default {
                     margin=60.0
               `)
           }
-          this.addSubgraph(ret, this.cylcTree.$index[`${this.workflowIDs[0]}//${cycle}/root`], graph_sections)
+          this.addSubgraph(ret, this.cylcTree.$index[`${this.workflowIDs[0]}//${cycle}/root`], graphSections)
           if (this.groupCycle) {
             ret.push('}}')
           }
         }
-
       })
 
       if (this.transpose) {
@@ -1091,17 +1082,7 @@ export default {
       const removedEdges = []
       Object.keys(this.collapseFamilyConfig).forEach((id) => {
         this.collapseFamilyConfig[id].disabled = false
-        if (this.collapseFamily.includes(this.collapseFamilyConfig[id].name)) {
-            this.collapseFamilyConfig[id].collapseSelected = true
-          }
-        if (this.groupFamily.includes(this.collapseFamilyConfig[id].name) || this.collapseCycleArrayStore.includes(this.collapseFamilyConfig[id].name)) {
-          this.collapseFamilyConfig[id].groupSelected = true
-        } else {
-          this.collapseFamilyConfig[id].groupSelected = false
-        }
-        this.collapseFamilyConfig[id].directChildren = this.cylcTree.$index[id].children
         this.collapseFamilyConfig[id].cycle = this.cylcTree.$index[id].tokens.cycle
-        this.collapseFamilyConfig[id].ancestors = this.cylcTree.$index[id].node.ancestors
       })
 
       console.log('STARTING FAMILY STUFF')
@@ -1115,28 +1096,24 @@ export default {
             // ṃust do this before removing nodes and edges based on cycle as
             // cycle collapsing takes priority of families
             this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
-              if (config.name !=indexSearch.name && config.name !="01") {
+              if (config.name !== indexSearch.name && config.name !== '01') {
                 this.collapseFamilyConfig[config.id].disabled = true
                 // REMOVE NODES
                 nodes = this.removeNode(config.name, cycle, nodes)
-                this.collapseFamilyConfig[config.id].visible = false
                 // REMOVE EDGES
                 const edgeCheck = this.checkForEdge(config.name, '', cycle, edges)
                 // if there is an edge with a source or target it needs removing
                 if (edgeCheck.length) {
-                  // if (!this.collapseCycle.includes(nodeCheck.tokens.cycle)) { // cycle collapsing takes priority over family collapsing
-                    removedEdges.push(edgeCheck[0])
-                    const targetName = this.cylcTree.$index[edgeCheck[0].node.target].name
-                    const targetCycle = this.cylcTree.$index[edgeCheck[0].node.target].tokens.cycle
-                    edges = this.removeEdge(config.name, cycle, targetName, targetCycle, edges)
-                  // }
+                  removedEdges.push(edgeCheck[0])
+                  const targetName = this.cylcTree.$index[edgeCheck[0].node.target].name
+                  const targetCycle = this.cylcTree.$index[edgeCheck[0].node.target].tokens.cycle
+                  edges = this.removeEdge(config.name, cycle, targetName, targetCycle, edges)
                 }
               }
             })
             // ---------------ADD NODES BASED ON FAMILY------------
             if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
               nodes.push(indexSearch)
-              this.collapseFamilyConfig[indexSearch.id].visible = true
             }
             this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
               const edgeCheckRemovedEdges = this.checkForEdge(config.name, '', cycle, removedEdges)
@@ -1159,12 +1136,12 @@ export default {
       console.log('STARTING CYCLE STUFF')
       this.collapseCycle.forEach((cycle) => {
         const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
-            return node.name === cycle
-          })
+          return node.name === cycle
+        })
         if (indexSearch) {
           // ---------------REMOVE NODES BASED ON CYCLE POINT------------
           this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
-            if (config.name !=indexSearch.name && config.name !="01") {
+            if (config.name !== indexSearch.name && config.name !== '01') {
               // REMOVE NODES
               nodes = this.removeNode(config.name, cycle, nodes)
               // REMOVE EDGES
