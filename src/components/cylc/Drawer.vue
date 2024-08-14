@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <v-navigation-drawer
     v-model="drawer"
     id="c-sidebar"
-    ref="drawerRef"
     floating
     :width="drawerWidth"
     class="fill-height"
@@ -68,11 +67,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { nextTick, ref } from 'vue'
+import { useDisplay } from 'vuetify'
 import Header from '@/components/cylc/Header.vue'
-import { mapMutations } from 'vuex'
 import Workflows from '@/views/Workflows.vue'
 import { mdiHome, mdiGraphql } from '@mdi/js'
 import pkg from '@/../package.json'
+import { when } from '@/utils'
+import { useDrawer } from '@/utils/toolbar'
 
 export const initialWidth = 260
 export const minWidth = 150
@@ -83,48 +85,29 @@ export default {
     'c-header': Header
   },
 
-  data: function () {
-    return {
-      drawerWidth: initialWidth
+  setup () {
+    const { mobile } = useDisplay()
+
+    const drawerWidth = ref(initialWidth)
+
+    const { drawer } = useDrawer()
+    // Show drawer initially if viewport is large enough:
+    drawer.value = !mobile.value
+
+    function resize (e) {
+      // If less than min width, will collapse (to 4px because that's the resize-bar width)
+      drawerWidth.value = e.clientX > minWidth ? e.clientX : 4
     }
-  },
 
-  mounted () {
-    this.setEvents()
-  },
+    /** @type {import('vue').Ref<HTMLElement>} template ref */
+    const resizeBar = ref(null)
 
-  computed: {
-    drawer: {
-      get () {
-        return this.$store.state.app.drawer
-      },
-      set (val) {
-        this.setDrawer(val)
-      }
-    }
-  },
-
-  methods: {
-    ...mapMutations('app', ['setDrawer']),
-    getDrawerElement () {
-      // Cannot use $refs.drawerRef.$el due to https://github.com/vuetifyjs/vuetify/issues/16766
-      return document.getElementById('c-sidebar')
-    },
-    resize (e) {
-      // If less than min width, will collapse (to 4px because that's the
-      // resize-bar width)
-      this.drawerWidth = e.clientX > minWidth ? e.clientX : 4
-    },
-    setEvents () {
-      const el = this.getDrawerElement()
-      const drawerBorder = this.$refs.resizeBar
-      drawerBorder.addEventListener(
+    when(resizeBar, () => {
+      resizeBar.value.addEventListener(
         'mousedown',
         (mdEvent) => {
-          // Prevent Vuetify-provided transitions to ensure responsiveness
-          el.style.transition = 'none'
           document.body.classList.add('resizing-drawer')
-          document.addEventListener('mousemove', this.resize, { passive: true })
+          document.addEventListener('mousemove', resize, { passive: true })
           mdEvent.stopPropagation?.()
           mdEvent.preventDefault?.()
 
@@ -132,22 +115,25 @@ export default {
             'mouseup',
             (muEvent) => {
               if (muEvent.clientX < minWidth) {
-                this.drawer = false
+                drawer.value = false
                 // Reset to width at time of mousedown
-                // (using a timeout as a hack to prevent drawer briefly
-                // reappearing (nextTick doesn't work))
-                setTimeout(() => {
-                  this.drawerWidth = mdEvent.clientX
-                }, 200)
+                nextTick(() => {
+                  drawerWidth.value = mdEvent.clientX
+                })
               }
-              el.style.transition = null
               document.body.classList.remove('resizing-drawer')
-              document.removeEventListener('mousemove', this.resize)
+              document.removeEventListener('mousemove', resize)
             },
             { once: true }
           )
         }
       )
+    })
+
+    return {
+      drawer,
+      drawerWidth,
+      resizeBar,
     }
   },
 
