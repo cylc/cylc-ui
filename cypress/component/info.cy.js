@@ -217,4 +217,34 @@ describe('Info component', () => {
         ).to.deep.equal([0, 1])
       })
   })
+
+  it('should work for a task with no data', () => {
+    // ensure the component can be mounted without errors for empty states
+    // i.e. no metadata, prerequisites, outputs or jobs
+    const tokens = new Tokens('~user/workflow//1234/foo')
+    const task = {
+      id: tokens.id,
+      name: tokens.task,
+      tokens,
+      node: {
+        task: {
+          meta: {
+            customMeta: {}
+          }
+        },
+        prerequisites: [],
+        outputs: [],
+      },
+      children: [],
+    }
+
+    cy.vmount(InfoComponent, {
+      props: {
+        task,
+        class: 'job_theme--default',
+        // NOTE: expand all sections by default
+        panelExpansion: [0, 1, 2],
+      }
+    })
+  })
 })
