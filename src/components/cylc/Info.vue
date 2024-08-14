@@ -21,21 +21,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     * The "-40" comes from the GraphNode offset, see the GraphNode compoent.
     * The height is "200" + "40".
-    * The "99999" is the maximum component width (the xMinYMin value prevents
-      this from taking up more horizontal space than it requires).
+    * The "99999" is the maximum component width (because we don't know
+      how wide it will be until we render it).
+    * The "overflow-x: hidden" prevents this 99999 width from causing
+      horizontal scrolling.
     * The "8em" is the height that this SVG will be scaled to fill.
     -->
-    <svg
-      preserveAspectRatio="xMinYMin"
-      viewBox="-40 -40 99999 200"
-      height="6em"
-    >
-      <GraphNode
-        :task="task"
-        :jobs="task.children"
-        :jobTheme="jobTheme"
-      />
-    </svg>
+    <div style="overflow-x: hidden;">
+      <svg
+        preserveAspectRatio="xMinYMin"
+        viewBox="-40 -40 99999 200"
+        height="6em"
+      >
+        <GraphNode
+          :task="task"
+          :jobs="task.children"
+          :jobTheme="jobTheme"
+        />
+      </svg>
+    </div>
 
     <!-- The task information -->
     <v-expansion-panels
