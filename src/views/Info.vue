@@ -122,6 +122,7 @@ function taskObjToNode (task) {
     tokens,
     name: tokens.task,
     node: task,
+    type: 'task',
     children: [],
   }
 }
@@ -133,6 +134,7 @@ function jobObjToNode (job) {
     name: tokens.job,
     tokens,
     node: job,
+    type: 'job',
   }
 }
 
