@@ -16,30 +16,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="d-flex fill-height align-items-center justify-content-center">
-    <v-card class="pa-4">
-      <v-card-title primary-title>
-        <div>
-          <h3 class="text-h5 mb-0">{{ $t('NotFound.title') }}</h3>
-        </div>
-      </v-card-title>
-      <v-card-text>
-        {{ $t('NotFound.message') }}
-      </v-card-text>
-      <v-card-actions>
-        <button
-          @click="$router.go(-1)"
-          class="v-btn bg-success"
-        >
+  <v-empty-state
+    :headline="$t('NotFound.title')"
+    :title="$t('NotFound.message')"
+    image="/img/logo.svg"
+  >
+    <template #actions>
+      <v-defaults-provider :defaults="defaults">
+        <v-btn @click="router.go(-1)">
           {{ $t('NotFound.goBack') }}
-        </button>
-        <router-link
-          to="/"
-          class="text-white bg-success v-btn"
-        >
-          <button>{{ $t('NotFound.toHomepage') }}</button>
-        </router-link>
-      </v-card-actions>
-    </v-card>
-  </div>
+        </v-btn>
+        <v-btn href="/">
+          {{ $t('NotFound.toHomepage') }}
+        </v-btn>
+      </v-defaults-provider>
+    </template>
+  </v-empty-state>
 </template>
+
+<script setup>
+import router from '@/router'
+
+const defaults = {
+  VBtn: {
+    variant: 'tonal',
+  },
+}
+</script>
