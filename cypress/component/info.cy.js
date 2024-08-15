@@ -153,22 +153,22 @@ describe('Info component', () => {
       .find('.prerequisite-alias.condition')
       .should('have.length', 6)
       .then((selector) => {
-        expect(selector[0]).to.contain('(c0 & c1) | c2')
+        expect(selector[0]).to.contain('(0 & 1) | 2')
         expect(selector[0].classList.toString()).to.equal('prerequisite-alias condition')
 
-        expect(selector[0]).to.contain('c0')
+        expect(selector[0]).to.contain('0')
         expect(selector[1].classList.toString()).to.equal('prerequisite-alias condition satisfied')
 
-        expect(selector[0]).to.contain('c1')
+        expect(selector[0]).to.contain('1')
         expect(selector[2].classList.toString()).to.equal('prerequisite-alias condition')
 
-        expect(selector[0]).to.contain('c2')
+        expect(selector[0]).to.contain('2')
         expect(selector[3].classList.toString()).to.equal('prerequisite-alias condition')
 
-        expect(selector[0]).to.contain('c0')
+        expect(selector[0]).to.contain('0')
         expect(selector[4].classList.toString()).to.equal('prerequisite-alias condition satisfied')
 
-        expect(selector[0]).to.contain('c0')
+        expect(selector[0]).to.contain('0')
         expect(selector[5].classList.toString()).to.equal('prerequisite-alias condition satisfied')
       })
 

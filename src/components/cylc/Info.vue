@@ -95,7 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <span
                 class="prerequisite-alias condition"
                 :class="{satisfied: prereq.satisfied}"
-              >{{ prereq.expression }}</span>
+              >{{ prereq.expression.replace(/c/g, '') }}</span>
               <ul>
                 <li
                   v-for="condition in prereq.conditions"
@@ -105,7 +105,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     class="prerequisite-alias condition"
                     :class="{satisfied: condition.satisfied}"
                   >
-                    {{ condition.exprAlias }}
+                    {{ condition.exprAlias.replace(/c/, '') }}
                   </span>
                   <span style="margin-left: 0.5em">
                     {{ condition.taskId }}:{{ condition.reqState }}
