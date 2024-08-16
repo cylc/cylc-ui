@@ -101,7 +101,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import gql from 'graphql-tag'
 import { mapGetters, mapState } from 'vuex'
-import { getPageTitle } from '@/utils/index'
 import { useJobTheme } from '@/composables/localStorage'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -359,6 +358,44 @@ export default {
 
   data () {
     return {
+      testTreeDropDown: [
+        {
+          id: 1,
+          name: 'GET_OBSERVATIONS',
+          children: [
+            {
+              id: 2,
+              name: 'GET_OBSERVATIONS_NORTH',
+            },
+            {
+              id: 3,
+              name: 'GET_OBSERVATIONS_SOUTH',
+              disabled: true
+            }]
+        }
+      ],
+      testTreeDropDownCycle: [
+        {
+          id: 1,
+          name: '20240816T2100Z',
+        },
+        {
+          id: 2,
+          name: '20240816T1200Z',
+        },
+        {
+          id: 3,
+          name: '20240816T0900Z',
+        },
+        {
+          id: 4,
+          name: '20240816T0600Z',
+        },
+        {
+          id: 5,
+          name: '20240816T0300Z',
+        }
+      ],
       // the graph orientation
       orientation: 'TB',
       // the auto-refresh timer
@@ -402,12 +439,6 @@ export default {
 
     // Calculate some values for familes that we need for the toolbar
     Object.keys(this.cylcTree.$index).forEach((itemName) => {
-      // Function for counting how many layers deep the children go
-      function count (children) {
-        return children.reduce((depth, child) => {
-          return Math.max(depth, 1 + count(child.children)) // increment depth of children by 1, and compare it with accumulated depth of other children within the same element
-        }, 0) // default value 0 that's returned if there are no children
-      }
       // Function for getting a flattened array of the nested children
       function childArray (a) {
         return a.reduce(function (flattened, { id, name, children }) {
@@ -421,20 +452,9 @@ export default {
         id: itemName,
         name: itemValue.name,
         allChildren: childArray([itemValue]),
-        depth: count([itemValue]),
         disabled: false,
       }
     })
-    // Get the maximum depth value
-    const maxDepth = Object.values(this.collapseFamilyConfig)[0].depth
-    Object.keys(this.collapseFamilyConfig).forEach((key) => {
-      const spacingUnit = 5
-      const depth = this.collapseFamilyConfig[key].depth
-      this.collapseFamilyConfig[key].spacing = (maxDepth * spacingUnit) - (depth * spacingUnit)
-    })
-    // const maxDepth = Object.values(this.collapseFamilyConfig).sort((a, b) => {
-    //   b.amount - a.amount
-    // })[0]
   },
 
   beforeUnmount () {
@@ -519,7 +539,7 @@ export default {
               action: 'select',
               value: this.groupFamily,
               key: 'groupFamily',
-              items: this.groupFamilyArrayStore,
+              items: this.testTreeDropDown,
             },
             {
               title: 'Collapse by cycle point',
@@ -527,7 +547,8 @@ export default {
               action: 'select',
               value: this.collapseCycle,
               key: 'collapseCycle',
-              items: this.collapseCycleArrayStore.filter(c => c !== this.latestCycle)
+              items: this.testTreeDropDownCycle
+              // items: this.collapseCycleArrayStore.filter(c => c !== this.latestCycle)
             },
             {
               title: 'Collapse by family',
@@ -535,8 +556,7 @@ export default {
               action: 'select',
               value: this.collapseFamily,
               key: 'collapseFamily',
-              items: this.collapseFamilyArrayStore,
-              config: this.collapseFamilyConfig
+              items: this.testTreeDropDown,
             }
           ]
         }
@@ -833,7 +853,6 @@ export default {
       })
     },
     addSubgraph (dotcode, pointer, graphSections) {
-      let depth = 0
       pointer.children.forEach((key, i) => {
         const value = key
         const children = this.collapseFamilyConfig[value.id].allChildren
@@ -879,7 +898,6 @@ export default {
         }
 
         if (value) {
-          depth += 1
           this.addSubgraph(dotcode, value, graphSections)
         }
         if (Object.keys(graphSections).includes(key)) {
@@ -952,8 +970,6 @@ export default {
 
       const graphSections = {}
       Object.keys(cycles).forEach((cycle, iCycle) => {
-        console.log('CYCLE')
-        console.log(cycle)
         const indexSearch = Object.values(this.cylcTree.$index).filter((node) => {
           return node.tokens.cycle === cycle
         })

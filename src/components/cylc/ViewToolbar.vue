@@ -41,28 +41,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-tooltip>{{ iControl.title }}</v-tooltip>
             </v-btn>
           </template >
-          <v-list>
-            <v-list-item
-              v-for="(item, index) in iControl.items"
-              :key="index"
-              :value="index"
-            >
-              <template v-slot:prepend="{ isActive }">
-                <v-list-item-action>
-                  <v-checkbox 
-                    v-model="selectedItems[iControl.key]" 
-                    v-on:update:modelValue="iControl.callback" 
-                    :value="item"
-                    :disabled="iControl.config ? iControl.config[getNameFromIndex(iControl.config, item).id].disabled : false"
-                    :indeterminate="iControl.config ? iControl.config[getNameFromIndex(iControl.config, item).id].disabled : false"
-                    :class="`pl-${iControl.config ? iControl.config[getNameFromIndex(iControl.config, item).id].spacing : 0}`"
-                  />
-                  {{`pl-${iControl.config ? iControl.config[getNameFromIndex(iControl.config, item).id].spacing : 0}`}}
-                </v-list-item-action>
-              </template>
-              <v-list-item-title>{{ item }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
+          <v-treeview
+            v-model:selected="selectedItems[iControl.key]"
+            v-on:update:selected="iControl.callback" 
+            :items="iControl.items"
+            select-strategy='independent'
+            item-title="name"
+            item-value="name"
+            item-props
+            selectable
+            return-object
+            open-all
+          ></v-treeview>
         </v-menu>
         <v-btn v-else
           v-bind="btnProps"
@@ -80,9 +70,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { btnProps } from '@/utils/viewToolbar'
+import { VTreeview } from 'vuetify/labs/VTreeview'
 
 export default {
   name: 'ViewToolbar',
+
+  components: {
+    VTreeview,
+  },
 
   emits: [
     'setOption'
@@ -246,11 +241,6 @@ export default {
       }
       return vars
     },
-    getNameFromIndex (config, name) {
-      return Object.values(config).find((object) => {
-        return object.name === name
-      })
-    }
   }
 }
 </script>
