@@ -106,9 +106,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     :class="{satisfied: condition.satisfied}"
                   >
                     {{ condition.exprAlias.replace(/c/, '') }}
-                  </span>
-                  <span style="margin-left: 0.5em">
-                    {{ condition.taskId }}:{{ condition.reqState }}
+
+                    <span style="margin-left: 0.5em; color: rgb(0,0,0)">
+                      {{ condition.taskId }}:{{ condition.reqState }}
+                    </span>
                   </span>
                 </li>
               </ul>
@@ -206,18 +207,25 @@ export default {
 
     // for user-defined text where whitespace should be preserved
     .markup {
-      white-space: pre;
+      white-space: pre-wrap;
+    }
+
+    // change the appearance of satisfied/unsatisfied conditions
+    .condition {
+      opacity: 0.6;
+    }
+    .condition.satisfied {
+      opacity: 1;
     }
 
     // prefixes a tick or cross before the entry
     .condition:before {
-      content: '✕';
+      content: '\25CB';
       padding-right: 0.5em;
-      color: rgb(255, 100, 100);
+      color: rgb(0, 0, 0);
     }
     .condition.satisfied:before {
-      content: '✓';
-      color: rgb(75, 230, 75);
+      content: '\25CF';
     }
 
     // for prerequsite task "aliases" (used in conditional expressions)

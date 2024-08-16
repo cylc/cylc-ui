@@ -26,7 +26,7 @@
             {
               "id": "~user/one//20000102T0000Z/failed/01",
               "jobId": "1234",
-              "startedTime": 0,
+              "startedTime": "0",
               "state": "failed"
             }
           ],
@@ -39,13 +39,13 @@
                 {
                   "taskId": "20000102T0000Z/succeeded",
                   "reqState": "succeeded",
-                  "expreAlias": "c0",
+                  "exprAlias": "c0",
                   "satisfied": true
                 },
                 {
                   "taskId": "20000102T0000Z/eventually_succeeded",
                   "reqState": "succeeded",
-                  "expreAlias": "c1",
+                  "exprAlias": "c1",
                   "satisfied": true
                 }
               ]

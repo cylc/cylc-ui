@@ -150,9 +150,9 @@ class InfoCallback extends DeltasCallback {
   /**
    * @param {Results} results
    */
-  constructor (taskNode) {
+  constructor (task, taskNode) {
     super()
-    this.task = {}
+    this.task = task
     this.taskNode = taskNode
   }
 
@@ -219,6 +219,7 @@ export default {
       requestedTask: undefined,
 
       // The task formatted as a data-store node
+      task: {},
       taskNode: {},
     }
   },
@@ -233,7 +234,7 @@ export default {
         { ...this.variables, taskID: this.requestedTokens?.relativeID },
         `info-query-${this._uid}`,
         [
-          new InfoCallback(this.taskNode)
+          new InfoCallback(this.task, this.taskNode)
         ],
         /* isDelta */ true,
         /* isGlobalCallback */ false
