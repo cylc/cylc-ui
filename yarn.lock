@@ -395,14 +395,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/code-coverage@npm:3.12.44":
-  version: 3.12.44
-  resolution: "@cypress/code-coverage@npm:3.12.44"
+"@cypress/code-coverage@npm:3.12.45":
+  version: 3.12.45
+  resolution: "@cypress/code-coverage@npm:3.12.45"
   dependencies:
     "@cypress/webpack-preprocessor": "npm:^6.0.0"
     chalk: "npm:4.1.2"
     dayjs: "npm:1.11.12"
-    debug: "npm:4.3.5"
+    debug: "npm:4.3.6"
     execa: "npm:4.1.0"
     globby: "npm:11.1.0"
     istanbul-lib-coverage: "npm:^3.0.0"
@@ -414,7 +414,7 @@ __metadata:
     babel-loader: ^8.3 || ^9
     cypress: "*"
     webpack: ^4 || ^5
-  checksum: 10c0/6f6915c7d1840ac306f3344ce27d9391f7629f7a48b5ad305d14050cc67a6e9ac4f533a7b7cfda50717b36eef3970da48ed62ecb162169ddeb9fd8483d7c1c0a
+  checksum: 10c0/09c25a67d3afae3a5bbc5eb49d6f0b9c150138dce87d748cc33a9760c08b4548f3b466611096760704d67290fc5c50e0ada230e4dad30393ac0261483ff98148
   languageName: node
   linkType: hard
 
@@ -3461,7 +3461,7 @@ __metadata:
   resolution: "cylc-ui@workspace:."
   dependencies:
     "@apollo/client": "npm:3.11.4"
-    "@cypress/code-coverage": "npm:3.12.44"
+    "@cypress/code-coverage": "npm:3.12.45"
     "@hpcc-js/wasm": "npm:2.18.1"
     "@lumino/default-theme": "npm:2.1.7"
     "@lumino/widgets": "npm:2.5.0"
@@ -3474,7 +3474,7 @@ __metadata:
     axios: "npm:1.7.4"
     concurrently: "npm:8.2.2"
     cross-fetch: "npm:4.0.0"
-    cypress: "npm:13.13.2"
+    cypress: "npm:13.13.3"
     cypress-vite: "npm:1.5.0"
     dedent: "npm:1.5.3"
     enumify: "npm:2.0.0"
@@ -3540,9 +3540,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:13.13.2":
-  version: 13.13.2
-  resolution: "cypress@npm:13.13.2"
+"cypress@npm:13.13.3":
+  version: 13.13.3
+  resolution: "cypress@npm:13.13.3"
   dependencies:
     "@cypress/request": "npm:^3.0.1"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -3588,7 +3588,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/7a38851aac96ff36414a2a4665312cc6778b9863913d5328685c4b13339aa3159506574d63d60d974ccc4a88b4d26db2b3a9c8c5a9921d351dc41ebdae446bae
+  checksum: 10c0/187fdbe0ca6eedd04a04828971847ef5f3d0e0c2bd74a25a761dd2cc0de1fb84f7e4c1bc4f88e46f753d87748b31eca3ddaae798275546fe1964c8453cbe4a63
   languageName: node
   linkType: hard
 
@@ -3667,7 +3667,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:*, debug@npm:4, debug@npm:^4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.3.5":
+"debug@npm:*, debug@npm:4, debug@npm:4.3.6, debug@npm:^4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.3.5":
   version: 4.3.6
   resolution: "debug@npm:4.3.6"
   dependencies:
@@ -3694,18 +3694,6 @@ __metadata:
   dependencies:
     ms: "npm:2.0.0"
   checksum: 10c0/5bff34a352d7b2eaa31886eeaf2ee534b5461ec0548315b2f9f80bd1d2533cab7df1fa52e130ce27bc31c3945fbffb0fc72baacdceb274b95ce853db89254ea4
-  languageName: node
-  linkType: hard
-
-"debug@npm:4.3.5":
-  version: 4.3.5
-  resolution: "debug@npm:4.3.5"
-  dependencies:
-    ms: "npm:2.1.2"
-  peerDependenciesMeta:
-    supports-color:
-      optional: true
-  checksum: 10c0/082c375a2bdc4f4469c99f325ff458adad62a3fc2c482d59923c260cb08152f34e2659f72b3767db8bb2f21ca81a60a42d1019605a412132d7b9f59363a005cc
   languageName: node
   linkType: hard
 
