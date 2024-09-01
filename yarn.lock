@@ -3662,7 +3662,7 @@ __metadata:
     eslint-plugin-cypress: "npm:2.15.2"
     eslint-plugin-import: "npm:2.29.1"
     eslint-plugin-n: "npm:16.6.2"
-    eslint-plugin-no-only-tests: "npm:3.1.0"
+    eslint-plugin-no-only-tests: "npm:3.3.0"
     eslint-plugin-promise: "npm:6.6.0"
     eslint-plugin-vue: "npm:9.27.0"
     eslint-plugin-vuetify: "npm:2.4.0"
@@ -4580,10 +4580,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-no-only-tests@npm:3.1.0":
-  version: 3.1.0
-  resolution: "eslint-plugin-no-only-tests@npm:3.1.0"
-  checksum: 10c0/c710ae04094cfa4695c44efe8d5036eb881893157accf3564b96f3ee5626edef855c93ec1801557e888e390e1892775da79d9564e1a33b83941fba994725b9cd
+"eslint-plugin-no-only-tests@npm:3.3.0":
+  version: 3.3.0
+  resolution: "eslint-plugin-no-only-tests@npm:3.3.0"
+  checksum: 10c0/a04425d9d3bcd745267168782eb12a3a712b8357264ddd4e204204318975c2c21e2c1efe68113181de908548a85762205b61d8f92ec9dc5e0a5ae54c0240a24d
   languageName: node
   linkType: hard
 
