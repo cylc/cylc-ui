@@ -395,13 +395,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/code-coverage@npm:3.12.46":
-  version: 3.12.46
-  resolution: "@cypress/code-coverage@npm:3.12.46"
+"@cypress/code-coverage@npm:3.12.47":
+  version: 3.12.47
+  resolution: "@cypress/code-coverage@npm:3.12.47"
   dependencies:
     "@cypress/webpack-preprocessor": "npm:^6.0.0"
     chalk: "npm:4.1.2"
-    dayjs: "npm:1.11.12"
+    dayjs: "npm:1.11.13"
     debug: "npm:4.3.6"
     execa: "npm:4.1.0"
     globby: "npm:11.1.0"
@@ -414,7 +414,7 @@ __metadata:
     babel-loader: ^8.3 || ^9
     cypress: "*"
     webpack: ^4 || ^5
-  checksum: 10c0/23f02d8dfe44da0f95a0e43da2daa72db4f85f880fa98ccc078a3b2b26c5b9a0d1f5873b4eb26dffe5c6d230450eed4a0240fff4acfe9e6537bf38d0473e5f56
+  checksum: 10c0/068500421d89d265a82de5df1466631b892c47797fface02eede6cea7affe5b1345d11bc3020ee7a8276a0a30c725ebcc7b9aabcfbcc0a9c9edf5d9d0adcf3cc
   languageName: node
   linkType: hard
 
@@ -3639,7 +3639,7 @@ __metadata:
   resolution: "cylc-ui@workspace:."
   dependencies:
     "@apollo/client": "npm:3.11.4"
-    "@cypress/code-coverage": "npm:3.12.46"
+    "@cypress/code-coverage": "npm:3.12.47"
     "@hpcc-js/wasm": "npm:2.20.0"
     "@lumino/default-theme": "npm:2.1.7"
     "@lumino/widgets": "npm:2.5.0"
@@ -3652,7 +3652,7 @@ __metadata:
     axios: "npm:1.7.4"
     concurrently: "npm:8.2.2"
     cross-fetch: "npm:4.0.0"
-    cypress: "npm:13.14.1"
+    cypress: "npm:13.14.2"
     cypress-vite: "npm:1.5.0"
     dedent: "npm:1.5.3"
     enumify: "npm:2.0.0"
@@ -3718,9 +3718,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:13.14.1":
-  version: 13.14.1
-  resolution: "cypress@npm:13.14.1"
+"cypress@npm:13.14.2":
+  version: 13.14.2
+  resolution: "cypress@npm:13.14.2"
   dependencies:
     "@cypress/request": "npm:^3.0.1"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -3766,7 +3766,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/1f9c18a6ae5ebfdb4f1d0c6d85e47c90cab8ef89a992b7dff8c142316b1e3abd94aef78b41d2a593ff5ce226ecda5ea456850426123fcc124a46653e9bd7e7b5
+  checksum: 10c0/ca838bbf878c46aa643e879c83c1532250cb3ec12cdc4e94e9c483bf042179a8de2b9d30fcc7777820793d71c44627c75c35c472b9de8b8dd39500ffbea75a34
   languageName: node
   linkType: hard
 
@@ -3831,7 +3831,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:1.11.12, dayjs@npm:^1.10.4":
+"dayjs@npm:1.11.13":
+  version: 1.11.13
+  resolution: "dayjs@npm:1.11.13"
+  checksum: 10c0/a3caf6ac8363c7dade9d1ee797848ddcf25c1ace68d9fe8678ecf8ba0675825430de5d793672ec87b24a69bf04a1544b176547b2539982275d5542a7955f35b7
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.10.4":
   version: 1.11.12
   resolution: "dayjs@npm:1.11.12"
   checksum: 10c0/9673d37f3f9ad8a91caaeae9b3fea9a0010c81c7f58599fb9d860bc3359b86632fbff8eb7dddc86c2acaab01c5e6860bc672952f17b58c9286140c52b077c8e4
