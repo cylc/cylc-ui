@@ -213,7 +213,7 @@ export default {
             }
           },
           title: {
-            text: 'Time',
+            text: 'Time (UTC)',
           },
         },
         yaxis: {
