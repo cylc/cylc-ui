@@ -130,6 +130,19 @@ export default {
 
     const chartOptions = computed(() => ({
       chart: {
+        defaultLocale: 'en',
+        locales: [
+          {
+            name: 'en',
+            options: {
+              toolbar: {
+                exportToSVG: 'Download SVG',
+                exportToPNG: 'Download PNG',
+                menu: 'Download'
+              }
+            }
+          }
+        ],
         animations: {
           enabled: reducedAnimation.value ? false : props.animate,
           easing: 'easeinout',
