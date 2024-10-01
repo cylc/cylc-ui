@@ -305,6 +305,25 @@ export default {
     chartOptions () {
       return {
         chart: {
+          defaultLocale: 'en',
+          locales: [
+            {
+              name: 'en',
+              options: {
+                toolbar: {
+                  exportToSVG: 'Download SVG',
+                  exportToPNG: 'Download PNG',
+                  menu: 'Download',
+                  selection: 'Selection',
+                  selectionZoom: 'Selection Zoom',
+                  zoomIn: 'Zoom In',
+                  zoomOut: 'Zoom Out',
+                  pan: 'Panning',
+                  reset: 'Reset Zoom'
+                }
+              }
+            }
+          ],
           animations: {
             enabled: this.animate && !this.reducedAnimation,
             easing: 'easeinout',
@@ -401,7 +420,7 @@ export default {
           },
           toolbar: {
             autoSelected: 'selection',
-            show: false
+            show: true
           }
         },
         legend: {
