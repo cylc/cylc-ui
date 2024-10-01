@@ -209,11 +209,11 @@ export default {
         xaxis: {
           labels: {
             formatter: function (value, timestamp, opts) {
-              return new Date(value).toTimeString().slice(0, 9)
+              return new Date(value).toUTCString().slice(17, -3)
             }
           },
           title: {
-            text: 'Time',
+            text: 'Time (UTC)',
           },
         },
         yaxis: {
