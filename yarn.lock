@@ -731,11 +731,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphiql/react@npm:^0.26.0":
-  version: 0.26.0
-  resolution: "@graphiql/react@npm:0.26.0"
+"@graphiql/react@npm:^0.26.2":
+  version: 0.26.2
+  resolution: "@graphiql/react@npm:0.26.2"
   dependencies:
-    "@graphiql/toolkit": "npm:^0.10.0"
+    "@graphiql/toolkit": "npm:^0.11.0"
     "@headlessui/react": "npm:^1.7.15"
     "@radix-ui/react-dialog": "npm:^1.0.4"
     "@radix-ui/react-dropdown-menu": "npm:^2.0.5"
@@ -744,7 +744,7 @@ __metadata:
     "@types/codemirror": "npm:^5.60.8"
     clsx: "npm:^1.2.1"
     codemirror: "npm:^5.65.3"
-    codemirror-graphql: "npm:^2.1.0"
+    codemirror-graphql: "npm:^2.1.1"
     copy-to-clipboard: "npm:^3.2.0"
     framer-motion: "npm:^6.5.1"
     get-value: "npm:^3.0.1"
@@ -755,13 +755,13 @@ __metadata:
     graphql: ^15.5.0 || ^16.0.0 || ^17.0.0-alpha.2
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 10c0/ef808eafc92c5d18e19e8cc56440bfdf0480d4fd56c067f06a28d880664b9c54fa5335e88d00a70618bd340fb3fb32edb4c8ec14bb7e18eebf3c1eb62aefd2d3
+  checksum: 10c0/365797d16b7eb6479718699b5ff0565c6549ae78ef554cbf8d7eb31df2223e0bc5ba467574439c3010e41ba376b7ec6df5988ae3e00c387900b81d05747e9fdf
   languageName: node
   linkType: hard
 
-"@graphiql/toolkit@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@graphiql/toolkit@npm:0.10.0"
+"@graphiql/toolkit@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@graphiql/toolkit@npm:0.11.0"
   dependencies:
     "@n1ru4l/push-pull-async-iterable-iterator": "npm:^3.1.0"
     meros: "npm:^1.1.4"
@@ -771,7 +771,7 @@ __metadata:
   peerDependenciesMeta:
     graphql-ws:
       optional: true
-  checksum: 10c0/d3386ce3bf5d578c1b77248e154f8f33184c3877c121b1beed8944ec7dfbba2235aec179e548a5abfd3467725cb408ca492ad0d6a719a9e3576a76fd93972460
+  checksum: 10c0/2a02e8de23bdf46d5c4a814f6651dd6bb69cbfef43ef672c67fb8081b795dc9d162b6e973e33074fab4e3f28f741569570a485fea5a0c6eaca76ff4cae284e1d
   languageName: node
   linkType: hard
 
@@ -3276,9 +3276,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codemirror-graphql@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "codemirror-graphql@npm:2.1.0"
+"codemirror-graphql@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "codemirror-graphql@npm:2.1.1"
   dependencies:
     "@types/codemirror": "npm:^0.0.90"
     graphql-language-service: "npm:5.3.0"
@@ -3286,7 +3286,7 @@ __metadata:
     "@codemirror/language": 6.0.0
     codemirror: ^5.65.3
     graphql: ^15.5.0 || ^16.0.0 || ^17.0.0-alpha.2
-  checksum: 10c0/77ef877c6c0aed68b9ba3f2ec8d0ab68ecde61b0433120faae071d061e69dd0919cec1acf72ab3df4c985e2ecb919b08e7581ad188fc951d86334a2995d0ade8
+  checksum: 10c0/7fc617cea5d4882764fa22cea2b4e30683870e04317ceece55761f76ca5f77d9f0e4260511fbcede880420f849cb54d961cb6f31c818c8b483423f77dc32fc85
   languageName: node
   linkType: hard
 
@@ -3590,7 +3590,7 @@ __metadata:
     eslint-plugin-vuetify: "npm:2.4.0"
     express: "npm:4.21.0"
     express-ws: "npm:5.0.2"
-    graphiql: "npm:3.7.0"
+    graphiql: "npm:3.7.1"
     graphql: "npm:16.9.0"
     graphql-tag: "npm:2.12.6"
     istanbul-lib-coverage: "npm:3.2.2"
@@ -5674,16 +5674,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphiql@npm:3.7.0":
-  version: 3.7.0
-  resolution: "graphiql@npm:3.7.0"
+"graphiql@npm:3.7.1":
+  version: 3.7.1
+  resolution: "graphiql@npm:3.7.1"
   dependencies:
-    "@graphiql/react": "npm:^0.26.0"
+    "@graphiql/react": "npm:^0.26.2"
   peerDependencies:
     graphql: ^15.5.0 || ^16.0.0 || ^17.0.0-alpha.2
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 10c0/4a782793d9ae381d76e1fb8b48905799ebd30e48af24aa4c8795e72105d881abe3b4cac578740ba0826cfca8343af81c6800911f0afdee40daf075fecd9aabad
+  checksum: 10c0/7251fc5664d99ec7048333af1a8e5d2dff1b1df4f362f53c1c7abf47f63b307382024713371e9acd2bd2dd1f89db4c08cff30cea0ad12b16ad19781654d092c0
   languageName: node
   linkType: hard
 
