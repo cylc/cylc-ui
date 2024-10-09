@@ -220,6 +220,9 @@ fragment FamilyData on Family {
   childTasks {
     name
   }
+  childFamilies {
+    name
+  }
 }
 
 fragment AddedDelta on Added {
@@ -341,7 +344,11 @@ export default {
      * An objevt similar to the $index but containing node configuration data
      * @type {import('vue').Ref<object>}
      */
-    const collapseFamilyConfig = useInitialOptions('collapseFamilyConfig', { props, emit }, {})
+    // const collapseFamilyConfig = useInitialOptions('collapseFamilyConfig', { props, emit }, {})
+
+    const allChilderenLookUp = useInitialOptions('allChilderenLookUp', { props, emit }, {})
+
+    const testTreeDropDownCycle = useInitialOptions('testTreeDropDownCycle', { props, emit }, [])
 
     return {
       jobTheme: useJobTheme(),
@@ -352,50 +359,52 @@ export default {
       groupFamily,
       collapseCycle,
       collapseFamily,
-      collapseFamilyConfig
+      // collapseFamilyConfig,
+      allChilderenLookUp,
+      testTreeDropDownCycle
     }
   },
 
   data () {
     return {
-      testTreeDropDown: [
-        {
-          id: 1,
-          name: 'GET_OBSERVATIONS',
-          children: [
-            {
-              id: 2,
-              name: 'GET_OBSERVATIONS_NORTH',
-            },
-            {
-              id: 3,
-              name: 'GET_OBSERVATIONS_SOUTH',
-              disabled: true
-            }]
-        }
-      ],
-      testTreeDropDownCycle: [
-        {
-          id: 1,
-          name: '20240816T2100Z',
-        },
-        {
-          id: 2,
-          name: '20240816T1200Z',
-        },
-        {
-          id: 3,
-          name: '20240816T0900Z',
-        },
-        {
-          id: 4,
-          name: '20240816T0600Z',
-        },
-        {
-          id: 5,
-          name: '20240816T0300Z',
-        }
-      ],
+      // testTreeDropDown: [
+      //   {
+      //     id: 1,
+      //     name: 'GET_OBSERVATIONS',
+      //     children: [
+      //       {
+      //         id: 2,
+      //         name: 'GET_OBSERVATIONS_NORTH',
+      //       },
+      //       {
+      //         id: 3,
+      //         name: 'GET_OBSERVATIONS_SOUTH',
+      //         disabled: true
+      //       }]
+      //   }
+      // ],
+      // testTreeDropDownCycle: [
+      //   {
+      //     id: 1,
+      //     name: '20240816T2100Z',
+      //   },
+      //   {
+      //     id: 2,
+      //     name: '20240816T1200Z',
+      //   },
+      //   {
+      //     id: 3,
+      //     name: '20240816T0900Z',
+      //   },
+      //   {
+      //     id: 4,
+      //     name: '20240816T0600Z',
+      //   },
+      //   {
+      //     id: 5,
+      //     name: '20240816T0300Z',
+      //   }
+      // ],
       // the graph orientation
       orientation: 'TB',
       // the auto-refresh timer
@@ -448,12 +457,13 @@ export default {
         }, [])
       }
       const itemValue = this.cylcTree.$index[itemName]
-      this.collapseFamilyConfig[itemName] = {
-        id: itemName,
-        name: itemValue.name,
-        allChildren: childArray([itemValue]),
-        disabled: false,
-      }
+      this.allChilderenLookUp[itemName] = childArray([itemValue])
+      // this.collapseFamilyConfig[itemName] = {
+      //   id: itemName,
+      //   name: itemValue.name,
+      //   allChildren: childArray([itemValue]),
+      //   disabled: false,
+      // }
     })
   },
 
@@ -481,6 +491,18 @@ export default {
     },
     namespaces () {
       return this.workflows[0].$namespaces
+    },
+    testTreeDropDown () {
+      if (this.groupFamilyArrayStore.length) {
+        return [this.traverseTree('root', [])[0]]
+      } else {
+        return [
+          {
+            name: 'No families',
+            disabled: true
+          }
+        ]
+      }
     },
     controlGroups () {
       return [
@@ -565,6 +587,34 @@ export default {
   },
 
   methods: {
+    traverseTree(name, store) {
+      let idCount = 1
+      const node = this.workflows[0].tokens.clone({cycle: '$namespace|'+name})
+      const value = this.cylcTree.$index[node.id]
+      if (!value) {return []}
+
+      if (value.node.childFamilies.length === 0) {
+        return value.name
+      }
+      const disabledValue = this.collapseFamily.includes(value.name) ? true: false
+
+      const subStore = []
+      value.node.childFamilies.forEach(child => {
+        subStore.push({
+          id: idCount,
+          name: this.traverseTree(child.name, store),
+          disabled: disabledValue
+        })
+        idCount=idCount+1
+      });
+      store.push({
+        id: idCount,
+        name: value.name,
+        children: subStore,
+      })
+      idCount=idCount+1
+      return store
+    },
     removeNode (nodeName, cyclePoint, nodes) {
       // removes a node object from the 'nodes' array
       const nodePath = this.workflowIDs[0]
@@ -855,7 +905,9 @@ export default {
     addSubgraph (dotcode, pointer, graphSections) {
       pointer.children.forEach((key, i) => {
         const value = key
-        const children = this.collapseFamilyConfig[value.id].allChildren
+        // const children = this.collapseFamilyConfig[value.id].allChildren
+        const children = this.allChilderenLookUp[value.id]
+        if (!children) {return}
         const removedNodes = []
         children.forEach((a) => {
           if (this.collapseFamily.includes(a.name)) {
@@ -1096,12 +1148,11 @@ export default {
 
       // ----------------------------------------
       const removedEdges = []
-      Object.keys(this.collapseFamilyConfig).forEach((id) => {
-        this.collapseFamilyConfig[id].disabled = false
-        this.collapseFamilyConfig[id].cycle = this.cylcTree.$index[id].tokens.cycle
-      })
+      // Object.keys(this.collapseFamilyConfig).forEach((id) => {
+        // this.collapseFamilyConfig[id].disabled = false
+        // this.collapseFamilyConfig[id].cycle = this.cylcTree.$index[id].tokens.cycle
+      // })
 
-      console.log('STARTING FAMILY STUFF')
       this.collapseCycleArrayStore.forEach((cycle) => {
         this.collapseFamily.forEach((family) => {
           const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
@@ -1111,9 +1162,10 @@ export default {
             // ---------------REMOVE NODES BASED ON FAMILY------------
             // ṃust do this before removing nodes and edges based on cycle as
             // cycle collapsing takes priority of families
-            this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+            // this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+            this.allChilderenLookUp[indexSearch.id].forEach((config) => {
               if (config.name !== indexSearch.name && config.name !== '01') {
-                this.collapseFamilyConfig[config.id].disabled = true
+                // this.collapseFamilyConfig[config.id].disabled = true
                 // REMOVE NODES
                 nodes = this.removeNode(config.name, cycle, nodes)
                 // REMOVE EDGES
@@ -1131,7 +1183,8 @@ export default {
             if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
               nodes.push(indexSearch)
             }
-            this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+            // this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+            this.allChilderenLookUp[indexSearch.id].forEach((config) => {
               const edgeCheckRemovedEdges = this.checkForEdge(config.name, '', cycle, removedEdges)
               if (edgeCheckRemovedEdges.length) {
                 const targetName = this.cylcTree.$index[edgeCheckRemovedEdges[0].node.target].name
@@ -1156,7 +1209,9 @@ export default {
         })
         if (indexSearch) {
           // ---------------REMOVE NODES BASED ON CYCLE POINT------------
-          this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+          // this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+          if(!this.allChilderenLookUp[indexSearch.id]) {return}
+          this.allChilderenLookUp[indexSearch.id].forEach((config) => {
             if (config.name !== indexSearch.name && config.name !== '01') {
               // REMOVE NODES
               nodes = this.removeNode(config.name, cycle, nodes)
@@ -1188,7 +1243,8 @@ export default {
           nodes.push(indexSearch)
           // next bit starts here
           // ---------------ADD EDGES BASED ON CYCLE POINT------------
-          this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+          // this.collapseFamilyConfig[indexSearch.id].allChildren.forEach((config) => {
+          this.allChilderenLookUp[indexSearch.id].forEach((config) => {
             const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, removedEdges)
             if (edgeCheckSource) {
               edgeCheckSource.forEach((edge) => {
@@ -1248,10 +1304,15 @@ export default {
       const cycles = this.getCycles(nodes)
       this.latestCycle = Object.keys(cycles)[0]
       this.collapseCycleArrayStore = this.workflows[0].children.map(child => child.tokens.cycle)
+      this.testTreeDropDownCycle = []
+      this.collapseCycleArrayStore.forEach((value, i) => {
+        this.testTreeDropDownCycle.push(
+          {id: i, name: value, test:'123'}
+        )
+      })
       const families = this.getFamilies(nodes)
       this.groupFamilyArrayStore = this.namespaces.filter((family) => { return family.name !== 'root' }).map((family) => family.name)
       this.collapseFamilyArrayStore = this.namespaces.filter((family) => { return family.name !== 'root' }).map((family) => family.name)
-
       // compute the graph ID
       const graphID = this.hashGraph(nodes, edges)
       if (this.graphID === graphID) {
