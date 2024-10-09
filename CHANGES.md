@@ -12,6 +12,12 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.6.0 (Released 2024-10-09)
+
+### 🚀 Enhancements
+
+[#1888](https://github.com/cylc/cylc-ui/pull/1888) - Increased the width of the Edit Runtime dialog.
+
 ## cylc-ui-2.5.0 (Released 2024-06-18)
 
 ### 🚀 Enhancements
