@@ -514,10 +514,10 @@ const mutations = {
 // NOTE: deltas are applied in the order listed here
 // NOTE: we must create tasks before families (note cycles ARE families
 // because of the way we request them)
-const KEYS = ['workflow', 'taskProxies', 'cyclePoints', 'familyProxies', 'jobs', 'edges']
+const KEYS = ['workflow', 'taskProxies', 'cyclePoints', 'familyProxies', 'jobs', 'edges', 'families']
 
 // Pruned keys which return arrays of pruned IDs
-const PRUNED_KEYS_MULT = ['taskProxies', 'familyProxies', 'jobs', 'edges']
+const PRUNED_KEYS_MULT = ['taskProxies', 'familyProxies', 'jobs', 'edges', 'families']
 // Pruned keys which contain single pruned IDs
 const PRUNED_KEYS_SING = ['workflow']
 
