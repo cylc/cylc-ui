@@ -24,6 +24,7 @@ const { LogData } = require('./logData.cjs')
 const { LogFiles } = require('./logFiles.cjs')
 const analysisQuery = require('./analysisQuery.json')
 const ganttQuery = require('./ganttQuery.json')
+const InfoViewSubscription = require('./infoView.json')
 
 const workflows = [workflowOne, ...workflowsMulti]
 const analysisTaskQuery = analysisQuery.taskQuery
@@ -43,5 +44,6 @@ module.exports = {
   analysisTaskQuery,
   analysisJobQuery,
   analysisQuery,
-  ganttQuery
+  ganttQuery,
+  InfoViewSubscription
 }
