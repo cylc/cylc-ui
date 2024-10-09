@@ -120,4 +120,17 @@ describe('Command Menu component', () => {
       .get('.c-mutation-menu')
       .should('not.exist')
   })
+
+  it("copies the object's name to the clipboard", { browser: 'electron' }, () => {
+    // (Access to the clipboard in Cypress only reliably works in Electron)
+    cy.get('#workflow-mutate-button')
+      .click()
+      .get('.c-mutation-menu')
+      .find('[data-cy=copy-to-clipboard]')
+      .click()
+    // clipboard should contain the object's name:
+    cy.window().its('navigator.clipboard')
+      .then((clip) => clip.readText())
+      .should('equal', '~user/one')
+  })
 })

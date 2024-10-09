@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-card>
         <v-card-title class="pb-1 pt-3">
           {{ node.id }}
+          <CopyBtn :text="node.id"/>
         </v-card-title>
         <v-card-subtitle class="pt-0 pb-2">
           {{ typeAndStatusText }}
@@ -72,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 data-cy="mutation-edit"
                 class="ml-2"
               >
-                <v-icon>{{ $options.icons.mdiPencil }}</v-icon>
+                <v-icon>{{ icons.mdiPencil }}</v-icon>
               </v-btn>
             </template>
           </v-list-item>
@@ -111,7 +112,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
 import {
   filterAssociations,
   getMutationArgsFromTokens,
@@ -119,17 +120,19 @@ import {
 } from '@/utils/aotf'
 import Mutation from '@/components/cylc/Mutation.vue'
 import {
-  mdiPencil
+  mdiPencil,
 } from '@mdi/js'
 import { mapGetters, mapState } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
 import { eventBus } from '@/services/eventBus'
+import CopyBtn from '@/components/core/CopyBtn.vue'
 
 export default {
   name: 'CommandMenu',
 
   components: {
-    Mutation
+    CopyBtn,
+    Mutation,
   },
 
   props: {
@@ -140,18 +143,21 @@ export default {
     }
   },
 
-  data () {
+  setup () {
     return {
-      dialog: false,
-      dialogMutation: null,
-      dialogKey: false,
-      expanded: false,
-      node: null,
-      mutations: [],
-      isLoadingMutations: true,
-      showMenu: false,
-      types: [],
-      target: null,
+      dialog: ref(false),
+      dialogMutation: ref(null),
+      dialogKey: ref(false),
+      expanded: ref(false),
+      node: ref(null),
+      mutations: ref([]),
+      isLoadingMutations: ref(true),
+      showMenu: ref(false),
+      types: ref([]),
+      target: ref(null),
+      icons: {
+        mdiPencil,
+      },
     }
   },
 
@@ -317,10 +323,6 @@ export default {
         this.callMutationFromContext(mutation)
       }
     }
-  },
-
-  icons: {
-    mdiPencil,
   },
 }
 </script>
