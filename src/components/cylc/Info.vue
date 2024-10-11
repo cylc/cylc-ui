@@ -135,6 +135,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel-text>
       </v-expansion-panel>
 
+      <!-- The completion -->
+      <v-expansion-panel class="completion-panel">
+        <v-expansion-panel-title color="blue-grey-lighten-2">
+          Completion
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <!-- TODO: We don't have an "is complete" field yet so we cannot
+            display an aggregate status-->
+          <ul>
+            <li
+              v-for="([complete, indent, line], index) in formatCompletion(completion, outputs)"
+              :key="index"
+            >
+              <span
+                class="condition"
+                :class="{satisfied: complete, blank: (complete === null)}"
+              >
+                <!-- Indent the line as required -->
+                <span :style="`margin-left: ${1 * indent}em;`"></span>
+                {{ line }}
+              </span>
+            </li>
+          </ul>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
     </v-expansion-panels>
   </div>
 </template>
@@ -142,6 +168,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
+import { formatCompletion } from '@/utils/outputs'
 
 export default {
   name: 'InfoComponent',
@@ -196,7 +223,16 @@ export default {
       return this.task?.node?.outputs || {}
     },
 
+    completion () {
+      // Task output completion expression stuff.
+      return this.task?.node?.runtime.completion
+    }
+
   },
+
+  methods: {
+    formatCompletion,
+  }
 
 }
 </script>
@@ -214,18 +250,22 @@ export default {
     .condition {
       opacity: 0.6;
     }
-    .condition.satisfied {
+    .condition.satisfied, .condition.blank {
       opacity: 1;
     }
 
     // prefixes a tick or cross before the entry
     .condition:before {
-      content: '\25CB';
-      padding-right: 0.5em;
+      display: inline-block;
+      content: '\25CB'; /* empty circle */
+      width: 1.5em;
       color: rgb(0, 0, 0);
     }
     .condition.satisfied:before {
-      content: '\25CF';
+      content: '\25CF'; /* filled circle */
+    }
+    .condition.blank:before {
+      content: ''; /* blank */
     }
 
     // for prerequsite task "aliases" (used in conditional expressions)
@@ -261,6 +301,12 @@ export default {
     }
 
     .outputs-panel {
+      li {
+        list-style: none;
+      }
+    }
+
+    .completion-panel {
       li {
         list-style: none;
       }

@@ -98,7 +98,15 @@ const TASK = {
         message: 'failed',
         satisfied: false,
       },
-    ]
+      {
+        label: 'x',
+        message: 'xxx',
+        satisfied: true,
+      }
+    ],
+    runtime: {
+      completion: '(succeeded and x) or failed'
+    }
   },
   children: [
     {
@@ -127,7 +135,7 @@ describe('Info component', () => {
         task: TASK,
         class: 'job_theme--default',
         // NOTE: expand all sections by default
-        panelExpansion: [0, 1, 2],
+        panelExpansion: [0, 1, 2, 3],
       }
     })
 
@@ -175,7 +183,7 @@ describe('Info component', () => {
     // the outputs panel
     cy.get('.outputs-panel.v-expansion-panel--active').should('be.visible')
       .find('.condition')
-      .should('have.length', 3)
+      .should('have.length', 4)
       .then((selector) => {
         expect(selector[0]).to.contain('started')
         expect(selector[0].classList.toString()).to.equal('condition satisfied')
@@ -185,6 +193,30 @@ describe('Info component', () => {
 
         expect(selector[2]).to.contain('failed')
         expect(selector[2].classList.toString()).to.equal('condition')
+
+        expect(selector[3]).to.contain('x')
+        expect(selector[3].classList.toString()).to.equal('condition satisfied')
+      })
+
+    // the completion panel
+    cy.get('.completion-panel.v-expansion-panel--active').should('be.visible')
+      .find('.condition')
+      .should('have.length', 5)
+      .then((selector) => {
+        expect(selector[0]).to.contain('(')
+        expect(selector[0].classList.toString()).to.equal('condition blank')
+
+        expect(selector[1]).to.contain('succeeded')
+        expect(selector[1].classList.toString()).to.equal('condition')
+
+        expect(selector[2]).to.contain('and x')
+        expect(selector[2].classList.toString()).to.equal('condition satisfied')
+
+        expect(selector[3]).to.contain(')')
+        expect(selector[3].classList.toString()).to.equal('condition blank')
+
+        expect(selector[4]).to.contain('or failed')
+        expect(selector[4].classList.toString()).to.equal('condition')
       })
   })
 

@@ -94,6 +94,10 @@ fragment TaskProxyData on TaskProxy {
     label
     satisfied
   }
+
+  runtime {
+    completion
+  }
 }
 
 fragment TaskDefinitionData on Task {
