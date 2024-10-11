@@ -138,6 +138,11 @@ export default {
       }
     }
   },
+  mounted () {
+    this.selectedItems['groupFamily'] = this.groups[0].controls[7].value
+    this.selectedItems['collapseCycle'] = this.groups[0].controls[8].value
+    this.selectedItems['collapseFamily'] = this.groups[0].controls[9].value
+  },
 
   computed: {
     iGroups () {
