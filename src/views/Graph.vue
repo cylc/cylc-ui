@@ -446,7 +446,8 @@ export default {
     },
     treeDropDownFamily () {
       if (this.familyArrayStore.length) {
-        return [this.traverseTree('root', [])[0]]
+        let idCount = 1
+        return this.traverseTree('root', [], idCount)
       } else {
         return [
           {
@@ -548,25 +549,27 @@ export default {
   },
 
   methods: {
-    traverseTree (name, store) {
-      let idCount = 1
+    traverseTree (name, store, idCount) {
       const node = this.workflows[0].tokens.clone({ cycle: '$namespace|' + name })
       const value = this.cylcTree.$index[node.id]
       if (!value) { return [] }
 
-      if (value.node.childFamilies.length === 0) {
-        return value.name
-      }
       const disabledValue = this.collapseFamily.includes(value.name)
 
+      if (value.node.childFamilies.length === 0 && value.node.parents[0].name!='root') {
+        return
+      }
       const subStore = []
       value.node.childFamilies.forEach(child => {
-        subStore.push({
-          id: idCount,
-          name: this.traverseTree(child.name, store),
-          disabled: disabledValue
-        })
-        idCount = idCount + 1
+        this.traverseTree(child.name, store, idCount)
+        if (child.name !== 'root') {
+          subStore.push({
+            id: idCount,
+            name: child.name,
+            disabled: disabledValue
+          })
+          idCount = idCount + 1
+        }
       })
       store.push({
         id: idCount,
@@ -574,7 +577,8 @@ export default {
         children: subStore,
       })
       idCount = idCount + 1
-      return store
+
+      return store.filter((family) => {return family.name!='root'})
     },
     removeNode (nodeName, cyclePoint, nodes) {
       // removes a node object from the 'nodes' array
@@ -1012,7 +1016,9 @@ export default {
               const isThisCycle = a.name !== cycle
               // its not a node root node
               const isRoot = a.name !== 'root'
-              return isOne && isFamily && isRemoved && isThisCycle && isRoot
+              // is not numeric
+              const isNumeric = !parseFloat(a.name)
+              return isOne && isFamily && isRemoved && isThisCycle && isRoot && isNumeric
             }).map(a => `"${a.id}"`)
             ret.push(`
               subgraph cluster_margin_family_${cycle}
