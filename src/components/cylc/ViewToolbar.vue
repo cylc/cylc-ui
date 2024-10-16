@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </template >
           <v-treeview
             v-model:selected="selectedItems[iControl.key]"
-            v-on:update:selected="iControl.callback" 
+            v-on:update:selected="iControl.callback"
             :items="iControl.items"
             select-strategy='independent'
             item-title="name"
@@ -139,9 +139,9 @@ export default {
     }
   },
   mounted () {
-    this.selectedItems['groupFamily'] = this.groups[0].controls[7].value
-    this.selectedItems['collapseCycle'] = this.groups[0].controls[8].value
-    this.selectedItems['collapseFamily'] = this.groups[0].controls[9].value
+    this.selectedItems.groupFamily = this.groups[0].controls[7].value
+    this.selectedItems.collapseCycle = this.groups[0].controls[8].value
+    this.selectedItems.collapseFamily = this.groups[0].controls[9].value
   },
 
   computed: {
