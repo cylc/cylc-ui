@@ -66,8 +66,12 @@
       "schedule": ["on the 15th day of the month"]
     },
     {
-      "groupName": "preact packages",
-      "matchPackagePatterns": ["^preact"],
+      "groupName": "graphiql packages",
+      "matchPackageNames": [
+        "graphiql",
+        "preact"
+      ],
+      "automerge": true,
       "schedule": ["on the 12th day of the month"]
     },
     {
