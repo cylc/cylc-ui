@@ -222,7 +222,7 @@ export default {
 
   methods: {
     isEditable (mutation, authorised) {
-      return mutation.name !== 'log' && !this.isDisabled(mutation, authorised)
+      return mutation.name !== 'log' && mutation.name !== 'info' && !this.isDisabled(mutation, authorised)
     },
     isDisabled (mutation, authorised) {
       if (!authorised) {
@@ -265,6 +265,23 @@ export default {
               name: 'Log',
               initialOptions: {
                 relativeID: this.node.tokens.relativeID || null
+              }
+            }
+          )
+        })
+      } else if (mutation.name === 'info') {
+        this.$router.push({
+          name: 'Workspace',
+          params: {
+            workflowName: this.node.tokens.workflow
+          }
+        }).then(() => {
+          eventBus.emit(
+            'add-view',
+            {
+              name: 'Info',
+              initialOptions: {
+                requestedTokens: this.node.tokens || undefined
               }
             }
           )
