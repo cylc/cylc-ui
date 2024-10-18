@@ -31,6 +31,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-card>
         <v-card-title class="pb-1 pt-3">
           {{ node.id }}
+          <v-btn
+            v-if="clipboard.isSupported"
+            @click="clipboard.copy(node.id)"
+            icon
+            variant="plain"
+            size="small"
+            density="comfortable"
+            data-cy="copy-to-clipboard"
+          >
+            <v-icon>{{ clipboard.copied ? icons.mdiClipboardCheck : icons.mdiContentCopy }}</v-icon>
+            <v-tooltip :open-delay="1e3">{{ clipboard.copied ? 'Copied' : 'Copy' }}</v-tooltip>
+          </v-btn>
         </v-card-title>
         <v-card-subtitle class="pt-0 pb-2">
           {{ typeAndStatusText }}
@@ -72,7 +84,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 data-cy="mutation-edit"
                 class="ml-2"
               >
-                <v-icon>{{ $options.icons.mdiPencil }}</v-icon>
+                <v-icon>{{ icons.mdiPencil }}</v-icon>
               </v-btn>
             </template>
           </v-list-item>
@@ -111,7 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import {
   filterAssociations,
   getMutationArgsFromTokens,
@@ -119,11 +131,14 @@ import {
 } from '@/utils/aotf'
 import Mutation from '@/components/cylc/Mutation.vue'
 import {
-  mdiPencil
+  mdiClipboardCheck,
+  mdiContentCopy,
+  mdiPencil,
 } from '@mdi/js'
 import { mapGetters, mapState } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
 import { eventBus } from '@/services/eventBus'
+import { useClipboard } from '@vueuse/core'
 
 export default {
   name: 'CommandMenu',
@@ -140,18 +155,26 @@ export default {
     }
   },
 
-  data () {
+  setup () {
+    const clipboard = reactive(useClipboard())
+
     return {
-      dialog: false,
-      dialogMutation: null,
-      dialogKey: false,
-      expanded: false,
-      node: null,
-      mutations: [],
-      isLoadingMutations: true,
-      showMenu: false,
-      types: [],
-      target: null,
+      dialog: ref(false),
+      dialogMutation: ref(null),
+      dialogKey: ref(false),
+      expanded: ref(false),
+      node: ref(null),
+      mutations: ref([]),
+      isLoadingMutations: ref(true),
+      showMenu: ref(false),
+      types: ref([]),
+      target: ref(null),
+      clipboard,
+      icons: {
+        mdiClipboardCheck,
+        mdiContentCopy,
+        mdiPencil,
+      },
     }
   },
 
@@ -317,10 +340,6 @@ export default {
         this.callMutationFromContext(mutation)
       }
     }
-  },
-
-  icons: {
-    mdiPencil,
   },
 }
 </script>
