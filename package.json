@@ -43,7 +43,7 @@
     "nprogress": "1.0.0-1",
     "preact": "10.24.3",
     "subscriptions-transport-ws": "0.11.0",
-    "svg-pan-zoom": "3.6.1",
+    "svg-pan-zoom": "3.6.2",
     "vue": "3.4.11",
     "vue-i18n": "10.0.4",
     "vue-router": "4.4.5",
