@@ -30,8 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <v-card>
         <v-card-title class="pb-1 pt-3">
-          {{ node.id }}
-          <CopyBtn :text="node.id"/>
+          {{ title }}
+          <CopyBtn :text="title"/>
         </v-card-title>
         <v-card-subtitle class="pt-0 pb-2">
           {{ typeAndStatusText }}
@@ -196,6 +196,10 @@ export default {
           )
       }
       return this.mutations
+    },
+
+    title () {
+      return this.node.tokens.clone({ user: undefined }).id
     },
 
     typeAndStatusText () {

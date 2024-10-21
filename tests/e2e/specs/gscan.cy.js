@@ -164,7 +164,7 @@ describe('GScan component', () => {
       .should('be.visible')
       .find('.v-card-title')
       .should(($el) => {
-        expect($el.text().trim()).to.equal('~user/one')
+        expect($el.text().trim()).to.equal('one')
       })
       .get('.c-mutation-menu-list:first')
       .children()
