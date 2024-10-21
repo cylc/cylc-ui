@@ -118,7 +118,7 @@ describe('GScan component', () => {
         .should('have.length', 2)
       // Clicking back in box should close menu
       cy.get('@workflowFilterInput')
-        .click(15, 40)
+        .click({ force: true })
         .get('.v-select__content')
         .contains('.v-list-item', 'running')
         .should('not.be.visible')
@@ -158,7 +158,7 @@ describe('GScan component', () => {
 
   it('shows mutations menu when clicking on workflow icon', () => {
     cy.get('.c-gscan-workflows')
-      .find('.c-treeitem [data-c-interactive]:first') //
+      .find('.c-treeitem [data-c-interactive]:first')
       .click()
       .get('.c-mutation-menu')
       .should('be.visible')
