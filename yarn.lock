@@ -3612,7 +3612,7 @@ __metadata:
     sinon: "npm:19.0.2"
     standard: "npm:17.1.2"
     subscriptions-transport-ws: "npm:0.11.0"
-    svg-pan-zoom: "npm:3.6.1"
+    svg-pan-zoom: "npm:3.6.2"
     vite: "npm:5.4.9"
     vite-plugin-eslint: "npm:1.8.1"
     vite-plugin-istanbul: "npm:6.0.2"
@@ -9394,10 +9394,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svg-pan-zoom@npm:3.6.1":
-  version: 3.6.1
-  resolution: "svg-pan-zoom@npm:3.6.1"
-  checksum: 10c0/e34cc15334e2d4e86904567162e1ee44691eba9f1291c1bea0f2410ebd91f6cd6fc56a39e3d2c911b79a67e8d46d88dabd5430d1c1ce9d0f6d6617501f84956c
+"svg-pan-zoom@npm:3.6.2":
+  version: 3.6.2
+  resolution: "svg-pan-zoom@npm:3.6.2"
+  checksum: 10c0/dc05030bd6545d523de71e38d79d6830f780a74416a609269cc378fe8778796e794cb3e27f0f5b20bd7ee930597820e5b4463e4e4e0708127bed81e020339ec0
   languageName: node
   linkType: hard
 
