@@ -349,6 +349,13 @@ export default {
      */
     const allChilderenLookUp = useInitialOptions('allChilderenLookUp', { props, emit }, {})
 
+    /**
+     * An object look-up where keys are the family names
+     * Values are a flattened array of all the parent family names
+     * @type {import('vue').Ref<array>}
+     */
+    const allParentLookUp = useInitialOptions('allParentLookUp', { props, emit }, {})
+
     return {
       jobTheme: useJobTheme(),
       transpose,
@@ -359,6 +366,7 @@ export default {
       collapseCycle,
       collapseFamily,
       allChilderenLookUp,
+      allParentLookUp
     }
   },
 
@@ -404,19 +412,9 @@ export default {
     })
     this.mountSVGPanZoom()
 
-    // Calculate some values for familes that we need for the toolbar
-    Object.keys(this.cylcTree.$index).forEach((itemName) => {
-      // Function for getting a flattened array of the nested children
-      function childArray (a) {
-        return a.reduce(function (flattened, { id, name, children }) {
-          return flattened
-            .concat([{ id, name, children }])
-            .concat(children ? childArray(children, id) : [])
-        }, [])
-      }
-      const itemValue = this.cylcTree.$index[itemName]
-      this.allChilderenLookUp[itemName] = childArray([itemValue])
-    })
+    // This is a function collects
+    this.getAllChildrenLookUp()
+    this.getAllParentLookUp()
   },
 
   beforeUnmount () {
@@ -442,12 +440,11 @@ export default {
       return this.getNodes('workflow', this.workflowIDs)
     },
     namespaces () {
-      return this.workflows[0].$namespaces
+      return this.workflows[0]?.$namespaces || []
     },
     treeDropDownFamily () {
       if (this.familyArrayStore.length) {
-        let idCount = 1
-        return this.traverseTree('root', [], idCount)
+        return this.getTree()
       } else {
         return [
           {
@@ -549,36 +546,72 @@ export default {
   },
 
   methods: {
-    traverseTree (name, store, idCount) {
-      const node = this.workflows[0].tokens.clone({ cycle: '$namespace|' + name })
-      const value = this.cylcTree.$index[node.id]
-      if (!value) { return [] }
-
-      const disabledValue = this.collapseFamily.includes(value.name)
-
-      if (value.node.childFamilies.length === 0 && value.node.parents[0].name!='root') {
-        return
-      }
-      const subStore = []
-      value.node.childFamilies.forEach(child => {
-        this.traverseTree(child.name, store, idCount)
-        if (child.name !== 'root') {
-          subStore.push({
-            id: idCount,
-            name: child.name,
-            disabled: disabledValue
+    getAllParentLookUp () {
+      this.allParentLookUp = {}
+      this.namespaces.forEach((namespace) => {
+        const array = []
+        let parents = namespace.node.parents
+        while (parents.length) {
+          parents.forEach((parent) => {
+            const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${parent.name}` })
+            const childNode = this.cylcTree.$index[childTokens.id]
+            array.push(childNode.name)
+            parents = childNode.node.parents
           })
-          idCount = idCount + 1
         }
+        this.allParentLookUp[namespace.name] = array
       })
-      store.push({
-        id: idCount,
-        name: value.name,
-        children: subStore,
+    },
+    getAllChildrenLookUp () {
+      this.allChilderenLookUp = {}
+      // Calculate some values for familes that we need for the toolbar
+      Object.keys(this.cylcTree.$index).forEach((itemName) => {
+        // Function for getting a flattened array of the nested children
+        function childArray (a) {
+          return a.reduce(function (flattened, { id, name, children }) {
+            return flattened
+              .concat([{ id, name, children }])
+              .concat(children ? childArray(children, id) : [])
+          }, [])
+        }
+        const itemValue = this.cylcTree.$index[itemName]
+        this.allChilderenLookUp[itemName] = childArray([itemValue])
       })
-      idCount = idCount + 1
+    },
+    getTree () {
+      const counter = {
+        value: 0,
+        next () {
+          this.value = this.value + 1
+          return this.value
+        }
+      }
 
-      return store.filter((family) => {return family.name!='root'})
+      const root = {
+        id: counter.next(),
+        name: 'root',
+        children: []
+      }
+      const tokens = this.workflows[0].tokens.clone({ cycle: '$namespace|root' })
+      const node = this.cylcTree.$index[tokens.id]
+      return this.getTreeHelper(root, node, counter).children
+    },
+    getTreeHelper (store, node, counter) {
+      let tempItem
+      const disabled = this.collapseFamily.includes(node.name)
+      for (const childFamily of node.node.childFamilies) {
+        const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${childFamily.name}` })
+        const childNode = this.cylcTree.$index[childTokens.id]
+        tempItem = {
+          id: counter.next(),
+          name: childFamily.name,
+          children: [],
+          disabled
+        }
+        this.getTreeHelper(tempItem, childNode, counter)
+        store.children.push(tempItem)
+      }
+      return store
     },
     removeNode (nodeName, cyclePoint, nodes) {
       // removes a node object from the 'nodes' array
@@ -720,6 +753,26 @@ export default {
         return edge.node.target === edgeSearchTerm
       })
       return edgeSearch
+    },
+    removeEdgeBySource (edgeCheckSource, edges, removedEdges, config, cycle) {
+      edgeCheckSource.forEach((edge) => {
+        removedEdges.push(edge)
+        const targetName = this.cylcTree.$index[edge.node.target].name
+        const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+        edges = this.removeEdge(config.name, cycle, targetName, targetCycle, edges)
+      })
+      return [edges, removedEdges]
+    },
+    removeEdgeByTarget (edgeCheckTarget, edges, removedEdges) {
+      edgeCheckTarget.forEach((edge) => {
+        removedEdges.push(edge)
+        const targetName = this.cylcTree.$index[edge.node.target].name
+        const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+        const sourceName = this.cylcTree.$index[edge.node.source].name
+        const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
+        edges = this.removeEdge(sourceName, sourceCycle, targetName, targetCycle, edges)
+      })
+      return [edges, removedEdges]
     },
     mountSVGPanZoom () {
       // Check the SVG is ready:
@@ -894,7 +947,9 @@ export default {
             const isFamily = !this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
             // its the node has been removed/collapsed
             const isRemoved = !removedNodes.includes(a.name)
-            return isOne && isFamily && isRemoved
+            // is not numeric
+            const isNumeric = !parseFloat(a.name)
+            return isOne && isFamily && isRemoved && isNumeric
           }).map(a => `"${a.id}"`)
           if (nodeFormattedArray.length) {
             dotcode.push(`
@@ -1000,7 +1055,7 @@ export default {
             const removedNodes = []
             indexSearch.forEach((a) => {
               if (this.collapseFamily.includes(a.name)) {
-                a.children.forEach((child) => {
+                this.allChilderenLookUp[a.id].forEach((child) => {
                   removedNodes.push(child.name)
                 })
               }
@@ -1011,14 +1066,20 @@ export default {
               // if its not in the list of families (unless its been collapsed)
               const isFamily = !this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
               // the node has been removed/collapsed
-              const isRemoved = !removedNodes.includes(a.name)
+              const isRemoved = !removedNodes.includes(a.name) || this.collapseFamily.includes(a.name)
               // its not a node representing this cycle
               const isThisCycle = a.name !== cycle
               // its not a node root node
               const isRoot = a.name !== 'root'
               // is not numeric
               const isNumeric = !parseFloat(a.name)
-              return isOne && isFamily && isRemoved && isThisCycle && isRoot && isNumeric
+              let isAncestor = true
+              if (this.allParentLookUp[a.name]) {
+                isAncestor = !this.allParentLookUp[a.name].some(element => {
+                  return this.collapseFamily.includes(element)
+                })
+              }
+              return isOne && isFamily && isRemoved && isThisCycle && isRoot && isNumeric && isAncestor
             }).map(a => `"${a.id}"`)
             ret.push(`
               subgraph cluster_margin_family_${cycle}
@@ -1104,6 +1165,9 @@ export default {
       }
       this.updating = true
 
+      this.getAllParentLookUp()
+      this.getAllChildrenLookUp()
+
       // extract the graph (non reactive lists of nodes & edges)
       let nodes = await this.waitFor(() => {
         const nodes = this.getGraphNodes()
@@ -1112,7 +1176,7 @@ export default {
       let edges = this.getGraphEdges()
 
       // ----------------------------------------
-      const removedEdges = []
+      let removedEdges = []
 
       this.cycleArrayStore.forEach((cycle) => {
         this.collapseFamily.forEach((family) => {
@@ -1128,13 +1192,15 @@ export default {
                 // REMOVE NODES
                 nodes = this.removeNode(config.name, cycle, nodes)
                 // REMOVE EDGES
-                const edgeCheck = this.checkForEdge(config.name, '', cycle, edges)
                 // if there is an edge with a source or target it needs removing
-                if (edgeCheck.length) {
-                  removedEdges.push(edgeCheck[0])
-                  const targetName = this.cylcTree.$index[edgeCheck[0].node.target].name
-                  const targetCycle = this.cylcTree.$index[edgeCheck[0].node.target].tokens.cycle
-                  edges = this.removeEdge(config.name, cycle, targetName, targetCycle, edges)
+                const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, edges)
+                const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, edges)
+
+                if (edgeCheckSource.length) {
+                  [edges, removedEdges] = this.removeEdgeBySource(edgeCheckSource, edges, removedEdges, config, cycle)
+                }
+                if (edgeCheckTarget.length) {
+                  [edges, removedEdges] = this.removeEdgeByTarget(edgeCheckTarget, edges, removedEdges)
                 }
               }
             })
@@ -1143,18 +1209,52 @@ export default {
               nodes.push(indexSearch)
             }
             this.allChilderenLookUp[indexSearch.id].forEach((config) => {
-              const edgeCheckRemovedEdges = this.checkForEdge(config.name, '', cycle, removedEdges)
-              if (edgeCheckRemovedEdges.length) {
-                const targetName = this.cylcTree.$index[edgeCheckRemovedEdges[0].node.target].name
-                const targetCycle = this.cylcTree.$index[edgeCheckRemovedEdges[0].node.target].tokens.cycle
-                // prevent duplicate edges
-                const edgeCheckEdges = this.checkForEdge(indexSearch.name, targetName, cycle, edges)
-                if (!edgeCheckEdges.length) {
-                  if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
-                    this.edgeTemplate = this.createEdge('noCollapsed', indexSearch.name, targetName, cycle, targetCycle)
+              const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, removedEdges)
+              if (edgeCheckSource) {
+                edgeCheckSource.forEach((edge) => {
+                  const targetName = this.cylcTree.$index[edge.node.target].name
+                  const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+                  const sourceFamilyName = indexSearch.name
+                  const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
+                  // Note
+                  // only want one edge that goes to a different cycle point
+                  if (this.collapseFamily.includes(targetFamilyName)) {
+                    // this collapsed family => next collapsed family
+                    this.edgeTemplate = this.createEdge('noCollapsed', sourceFamilyName, targetFamilyName, cycle, targetCycle)
+                    edges.push(this.edgeTemplate)
+                  } else {
+                    // this collapsed family => next task
+                    this.edgeTemplate = this.createEdge('noCollapsed', sourceFamilyName, targetName, cycle, targetCycle)
                     edges.push(this.edgeTemplate)
                   }
-                }
+                })
+              }
+              const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, removedEdges)
+              if (edgeCheckTarget) {
+                edgeCheckTarget.forEach((edge) => {
+                  const sourceName = this.cylcTree.$index[edge.node.source].name
+                  const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
+                  const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
+                  const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
+                  // if (
+                  //   this.allParentLookUp[sourceFamilyName].some(element => {
+                  //     return this.collapseFamily.includes(element)
+                  //   }) || targetFamilyName === 'root' || sourceFamilyName === 'root'
+                  // ) {
+                  //   return
+                  // } else
+                  if (
+                    this.collapseFamily.includes(sourceFamilyName)
+                  ) {
+                    // previous collapsed cycle => this collapsed cycle
+                    this.edgeTemplate = this.createEdge('noCollapsed', sourceFamilyName, targetFamilyName, sourceCycle, cycle)
+                    edges.push(this.edgeTemplate)
+                  } else {
+                    // previous cycle => this collapsed cycle
+                    this.edgeTemplate = this.createEdge('noCollapsed', sourceName, targetFamilyName, sourceCycle, cycle)
+                    edges.push(this.edgeTemplate)
+                  }
+                })
               }
             })
           }
@@ -1177,22 +1277,10 @@ export default {
               const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, edges)
               const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, edges)
               if (edgeCheckSource.length) {
-                edgeCheckSource.forEach((edge) => {
-                  removedEdges.push(edge)
-                  const targetName = this.cylcTree.$index[edge.node.target].name
-                  const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
-                  edges = this.removeEdge(config.name, cycle, targetName, targetCycle, edges)
-                })
+                [edges, removedEdges] = this.removeEdgeBySource(edgeCheckSource, edges, removedEdges, config, cycle)
               }
               if (edgeCheckTarget.length) {
-                edgeCheckTarget.forEach((edge) => {
-                  removedEdges.push(edge)
-                  const targetName = this.cylcTree.$index[edge.node.target].name
-                  const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
-                  const sourceName = this.cylcTree.$index[edge.node.source].name
-                  const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
-                  edges = this.removeEdge(sourceName, sourceCycle, targetName, targetCycle, edges)
-                })
+                [edges, removedEdges] = this.removeEdgeByTarget(edgeCheckTarget, edges, removedEdges)
               }
             }
           })
