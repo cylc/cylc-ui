@@ -14,13 +14,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export function getNodeChildren (node, cyclePointsOrderDesc) {
+export function getNodeChildren (node, cyclePointsOrderDesc, flat) {
   // returns child nodes folling the family tree and following sort order
   if (node.type === 'workflow' && !cyclePointsOrderDesc) {
     // a user configuration has configured the sort order for cycle points to
     // be reversed
     return [...node.children].reverse()
-  } else if (node.type === 'cycle') {
+  } else if (node.type === 'cycle' && !flat) {
     // display tasks in the inheritance tree
     if (node.familyTree?.length) {
       const rootFamily = node.familyTree[0]
