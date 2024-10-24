@@ -1236,14 +1236,13 @@ export default {
                   const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
                   const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
                   const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
-                  // if (
-                  //   this.allParentLookUp[sourceFamilyName].some(element => {
-                  //     return this.collapseFamily.includes(element)
-                  //   }) || targetFamilyName === 'root' || sourceFamilyName === 'root'
-                  // ) {
-                  //   return
-                  // } else
                   if (
+                    this.allParentLookUp[sourceFamilyName].some(element => {
+                      return this.collapseFamily.includes(element)
+                    }) || targetFamilyName === 'root' || sourceFamilyName === 'root'
+                  ) {
+                    return undefined
+                  } else if (
                     this.collapseFamily.includes(sourceFamilyName)
                   ) {
                     // previous collapsed cycle => this collapsed cycle
