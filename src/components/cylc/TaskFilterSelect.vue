@@ -5,6 +5,14 @@
     multiple
     v-model="localValue"
   >
+    <template #prepend-item>
+      <v-list-item
+        @click="selectAll"
+      >
+        Select All
+      </v-list-item>
+    </template>
+
     <template #item="{ item, props }">
       <v-list-item v-bind="props">
         <template #prepend>
@@ -90,5 +98,9 @@ const maxVisibleStates = 4
 
 function removeItem (key) {
   localValue.value = localValue.value.filter(item => item !== key)
+}
+
+function selectAll () {
+  localValue.value = props.items
 }
 </script>
