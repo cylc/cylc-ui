@@ -1259,7 +1259,6 @@ export default {
           }
         })
       })
-      console.log('STARTING CYCLE STUFF')
       this.collapseCycle.forEach((cycle) => {
         const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
           return node.name === cycle
