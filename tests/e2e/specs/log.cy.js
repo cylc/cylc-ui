@@ -21,6 +21,7 @@ import {
   workflowLogFiles,
 } from '@/services/mock/json/logFiles.cjs'
 import {
+  logDirPath,
   jobLogLines,
   workflowLogLines,
 } from '@/services/mock/json/logData.cjs'
@@ -76,8 +77,10 @@ describe('Log View', () => {
     // the file path should be displayed
     cy.get('[data-cy=log-path]')
       .should('be.visible')
-      .contains('my-host:')
-      .contains(defaultFile)
+      .invoke('text').then((text) => {
+        expect(text.startsWith('my-host:')).to.be.true
+        expect(text.endsWith(defaultFile)).to.be.true
+      })
 
     // the connected icon should be visible
     cy.get('[data-cy=connected-icon]')
@@ -141,8 +144,10 @@ describe('Log View', () => {
       // the file path should be displayed
       .get('[data-cy=log-path]')
       .should('be.visible')
-      .contains('my-host:')
-      .contains(defaultFile)
+      .invoke('text').then((text) => {
+        expect(text.startsWith('my-host:')).to.be.true
+        expect(text.endsWith(defaultFile)).to.be.true
+      })
     // the job log files list should have been populated
     expectFileListContains(jobLogFiles)
   })
@@ -156,6 +161,14 @@ describe('Log View', () => {
 
     cy.get('.c-log .v-alert')
       .should('be.visible')
+  })
+
+  it('copies the log filepath to the clipboard', { browser: 'electron' }, () => {
+    cy.get('.c-log [data-cy=copy-to-clipboard]')
+      .click()
+    cy.window().its('navigator.clipboard')
+      .then((clip) => clip.readText())
+      .should('equal', `${logDirPath}/${workflowLogFiles[0]}`)
   })
 })
 
