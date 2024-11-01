@@ -1,17 +1,19 @@
 import { Tokens } from '@/utils/uid'
 
-const nodeSuceeded =
+const nodeSucceeded =
   {
-    id: 'user/one/run1//1/succeeded',
+    id: 'user/one/run1//2/succeeded',
     name: 'succeeded',
     node: {
+      name: 'succeeded',
       firstParent: {
-        id: 'user/one/run1//1/SUCCEEDED'
+        id: 'user/one/run1//2/SUCCEEDED'
       }
     },
     tokens: {
       cycle: '2'
-    }
+    },
+    children: []
   }
 
 const nodeRetrying =
@@ -19,27 +21,40 @@ const nodeRetrying =
     id: 'user/one/run1//1/retrying',
     name: 'retrying',
     node: {
+      name: 'retrying',
       firstParent: {
         id: 'user/one/run1//1/BAD'
       }
     },
     tokens: {
       cycle: '1'
-    }
+    },
+    children: [
+      {
+        id: 'user/one/run1//1/retrying/01',
+        name: 'retrying',
+      },
+      {
+        id: 'user/one/run1//1/retrying/02',
+        name: 'retrying',
+      }
+    ]
   }
 
 const nodeSleepy =
   {
-    id: 'user/one/run1//1/sleepy',
+    id: 'user/one/run1//2/sleepy',
     name: 'sleepy',
     node: {
+      name: 'sleepy',
       firstParent: {
         id: 'user/one/run1//1/root'
       }
     },
     tokens: {
       cycle: '2'
-    }
+    },
+    children: []
   }
 
 const nodeFailed =
@@ -47,13 +62,14 @@ const nodeFailed =
     id: 'user/one/run1//1/failed',
     name: 'failed',
     node: {
+      name: 'failed',
       firstParent: {
         id: 'user/one/run1//1/BAD'
       }
     },
     tokens: {
       cycle: '1'
-    }
+    },
   }
 
 const nodeNamespaceRoot =
@@ -61,10 +77,12 @@ const nodeNamespaceRoot =
     id: 'user/one/run1//$namespace|root',
     name: 'root',
     node: {
+      name: 'root',
       parents: [],
       childFamilies: [{ name: 'GOOD' }, { name: 'BAD' }],
       childTasks: [{ name: 'checkpoint' }, { name: 'sleepy' }, { name: 'waiting' }]
-    }
+    },
+    tokens: { cycle: undefined }
   }
 
 const nodeNamespaceBad =
@@ -72,10 +90,12 @@ const nodeNamespaceBad =
     id: 'user/one/run1//$namespace|BAD',
     name: 'BAD',
     node: {
+      name: 'root',
       parents: [{ name: 'root' }],
       childFamilies: [],
       childTasks: [{ name: 'retrying' }, { name: 'failed' }]
-    }
+    },
+    tokens: { cycle: undefined }
   }
 
 const nodeNamespaceGood =
@@ -83,10 +103,12 @@ const nodeNamespaceGood =
     id: 'user/one/run1//$namespace|GOOD',
     name: 'GOOD',
     node: {
+      name: 'GOOD',
       parents: [{ name: 'root' }],
       childFamilies: [{ name: 'SUCCEEDED' }],
       childTasks: [{ name: 'retrying' }, { name: 'failed' }]
-    }
+    },
+    tokens: { cycle: undefined }
   }
 
 const nodeNamespaceSucceeded =
@@ -94,41 +116,90 @@ const nodeNamespaceSucceeded =
     id: 'user/one/run1//$namespace|SUCCEEDED',
     name: 'SUCCEEDED',
     node: {
+      name: 'GOOD',
       parents: [{ name: 'GOOD' }],
       childFamilies: [],
       childTasks: [{ name: 'succeeded' }, { name: 'eventually_succeeded' }]
-    }
+    },
+    tokens: { cycle: undefined }
   }
 
 const workflows = [
   {
     id: '~user/one',
+    node: {
+      firstParent: {
+        id: ''
+      }
+    },
     children: [
       {
         id: '~user/one//1',
+        tokens: { cycle: 1 },
+        node: {
+          firstParent: {
+            id: ''
+          }
+        },
         children: [
           {
             id: '~user/one//1/eventually_succeeded',
+            tokens: { cycle: 1 },
+            node: {
+              firstParent: {
+                id: 'user/one/run1//1/SUCCEEDED'
+              }
+            },
             children: [
               {
                 id: '~user/one//1/eventually_succeeded/3',
+                tokens: { cycle: 1 },
+                node: {
+                  firstParent: {
+                    id: 'user/one/run1//1/SUCCEEDED'
+                  }
+                },
                 children: [],
               },
               {
                 id: '~user/one//1/eventually_succeeded/2',
+                tokens: { cycle: 1 },
+                node: {
+                  firstParent: {
+                    id: 'user/one/run1//1/SUCCEEDED'
+                  }
+                },
                 children: [],
               },
               {
                 id: '~user/one//1/eventually_succeeded/1',
+                tokens: { cycle: 1 },
+                node: {
+                  firstParent: {
+                    id: 'user/one/run1//1/SUCCEEDED'
+                  }
+                },
                 children: [],
               },
             ],
           },
           {
             id: '~user/one//1/failed',
+            tokens: { cycle: 1 },
+            node: {
+              firstParent: {
+                id: 'user/one/run1//1/BAD'
+              }
+            },
             children: [
               {
                 id: '~user/one//1/failed/1',
+                tokens: { cycle: 1 },
+                node: {
+                  firstParent: {
+                    id: 'user/one/run1//1/BAD'
+                  }
+                },
                 children: [],
               },
             ],
@@ -150,13 +221,49 @@ const nodes = [
   nodeFailed,
   nodeRetrying,
   nodeSleepy,
-  nodeSuceeded
+  nodeSucceeded
+]
+
+const edges = [
+  {
+    id: 'user/one/run1//$edge|1/succeeded|1/failed',
+    name: 'user/one/run1//$edge|1/succeeded|1/failed',
+    parent: 'user/one/run1',
+    node: {
+      id: 'user/one/run1//$edge|1/succeeded|1/failed',
+      source: 'user/one/run1//1/succeeded',
+      target: 'user/one/run1//1/failed',
+      __typename: 'Edge'
+    }
+  },
+  {
+    id: 'user/one/run1//$edge|1/failed|1/checkpoint',
+    name: 'user/one/run1//$edge|1/failed|1/checkpoint',
+    parent: 'user/one/run1',
+    node: {
+      id: 'user/one/run1//$edge|1/failed|1/checkpoint',
+      source: 'user/one/run1//1/failed',
+      target: 'user/one/run1//1/checkpoint',
+      __typename: 'Edge'
+    }
+  },
+  {
+    id: 'user/one/run1//$edge|2/sleepy|1/failed',
+    name: 'user/one/run1//$edge|2/sleepy|1/failed',
+    parent: 'user/one/run1',
+    node: {
+      id: 'user/one/run1//$edge|2/sleepy|1/failed',
+      source: 'user/one/run1//2/sleepy',
+      target: 'user/one/run1//1/failed',
+      __typename: 'Edge'
+    }
+  }
 ]
 
 const cylcTree = {
   $index: {
-    'user/one/run1//1/succeeded': nodeSuceeded,
-    'user/one/run1//1/sleepy': nodeSleepy,
+    'user/one/run1//1/succeeded': nodeSucceeded,
+    'user/one/run1//2/sleepy': nodeSleepy,
     'user/one/run1//1/retrying': nodeRetrying,
     'user/one/run1//1/failed': nodeFailed,
     'user/one/run1//$namespace|root': nodeNamespaceRoot,
@@ -166,23 +273,6 @@ const cylcTree = {
   }
 }
 
-// const getFamilies = (nodes) => {
-//   if (!groupFamily) return
-//   return nodes.reduce((x, y) => {
-//     if (y.node.firstParent) {
-//       (x[y.node.firstParent.id.split('/')[y.node.firstParent.id.split('/').length - 1]] ||= []).push(y)
-//     }
-//     return x
-//   }, {})
-// }
-
-const getCycles = (nodes) => {
-  return nodes.reduce((x, y) => {
-    (x[y.tokens.cycle] ||= []).push(y)
-    return x
-  }, {})
-}
-
 const namespaces = () => {
   return workflows[0]?.$namespaces || []
 }
@@ -190,8 +280,7 @@ const namespaces = () => {
 export {
   workflows,
   nodes,
+  edges,
   cylcTree,
-  // getFamilies,
-  getCycles,
   namespaces
 }

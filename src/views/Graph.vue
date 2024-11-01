@@ -622,17 +622,6 @@ export default {
       })
       return nodesFiltered
     },
-    checkForNode (nodeName, cyclePoint, nodes) {
-      // checks the 'edges' array to see if edge is present
-      const nodePath = this.workflowIDs[0]
-      const nodeId = `${nodePath}//${cyclePoint}/${nodeName}`
-      const nodeSearch = nodes.find((node) => { return node.id === nodeId })
-      if (nodeSearch === -1) {
-        return null
-      } else {
-        return nodeSearch
-      }
-    },
     createEdge (edgeType, sourceName, targetName, sourceCyclePoint, targetCyclePoint) {
       // adds a new edge object to 'edges' array
       const edgePath = this.workflowIDs[0]
@@ -721,20 +710,6 @@ export default {
         }
       })
       return edgesFiltered
-    },
-    checkForEdge (sourceName, targetName, cyclePoint, edges) {
-      const edgePath = this.workflowIDs[0]
-      const edgeSearchTerm = `${edgePath}//$edge|${cyclePoint}/${sourceName}|${cyclePoint}/${targetName}`
-
-      const edgeSearch = edges.filter((edge) => {
-        const stringSearch = edge.id.indexOf(edgeSearchTerm)
-        if (stringSearch === -1) {
-          return false
-        } else {
-          return true
-        }
-      })
-      return edgeSearch
     },
     checkForEdgeBySource (sourceName, cyclePoint, edges) {
       const edgePath = this.workflowIDs[0]
@@ -914,11 +889,6 @@ export default {
         }
         return x
       }, {})
-    },
-    getNodeByFamilyAndCycle (family, cycle) {
-      Object.values(this.cylcTree.$index).find((node) => {
-        return node.name === family && node.tokens.cycle === cycle
-      })
     },
     addSubgraph (dotcode, pointer, graphSections) {
       pointer.children.forEach((key, i) => {
