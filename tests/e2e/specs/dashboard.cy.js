@@ -54,6 +54,12 @@ describe('Dashboard', () => {
       .should('have.class', 'v-list-item--disabled')
   })
 
+  it('Disables Jupyter Lab button when not installed', () => {
+    cy
+      .get('#jupyter-lab-button')
+      .should('have.class', 'v-list-item--disabled')
+  })
+
   for (const ref of ['workflow-table-link', 'user-settings-link', 'quickstart-link']) {
     it(`Visits ${ref}`, () => {
       cy.get(`[data-cy=${ref}`)
