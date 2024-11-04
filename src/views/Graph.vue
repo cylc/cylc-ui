@@ -1087,8 +1087,8 @@ export default {
         }
       }
       ret.push('}')
-      console.log('Dot Code')
-      console.log(ret.join('\n'))
+      // console.log('Dot Code')
+      // console.log(ret.join('\n'))
       return ret.join('\n')
     },
     hashGraph (nodes, edges) {

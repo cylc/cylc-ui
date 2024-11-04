@@ -50,7 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             item-value="name"
             item-props
             selectable
-            return-object
             open-all
           ></v-treeview>
         </v-menu>
