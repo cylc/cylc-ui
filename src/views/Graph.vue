@@ -182,18 +182,11 @@ fragment FamilyProxyData on FamilyProxy {
   __typename
   id
   state
-  ancestors {
-    name
-  }
-  childTasks {
-    id
-  }
   isHeld
   isRunahead
   isQueued
   name
   id
-  cyclePoint
   firstParent {
     id
     name
@@ -211,9 +204,6 @@ fragment FamilyData on Family {
   id
   name
   parents {
-    name
-  }
-  childTasks {
     name
   }
   childFamilies {
