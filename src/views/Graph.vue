@@ -514,7 +514,7 @@ export default {
             {
               title: 'Group by family',
               icon: mdiVectorCombine,
-              action: 'select',
+              action: 'select-tree',
               value: this.groupFamily,
               key: 'groupFamily',
               items: this.treeDropDownFamily,
@@ -522,7 +522,7 @@ export default {
             {
               title: 'Collapse by cycle point',
               icon: mdiAlphaCCircle,
-              action: 'select',
+              action: 'select-tree',
               value: this.collapseCycle,
               key: 'collapseCycle',
               items: this.treeDropDownCycle,
@@ -530,7 +530,7 @@ export default {
             {
               title: 'Collapse by family',
               icon: mdiAlphaFCircle,
-              action: 'select',
+              action: 'select-tree',
               value: this.collapseFamily,
               key: 'collapseFamily',
               items: this.treeDropDownFamily,

@@ -30,7 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="control"
         :data-cy="`control-${iControl.key}`"
       >
-        <v-menu v-if="iControl.action==='select'"
+        <v-menu 
+        v-if="iControl.action==='select-tree'"
         :close-on-content-click="false">
           <template v-slot:activator="{ props }" >
             <v-btn
@@ -130,18 +131,17 @@ export default {
 
   data () {
     return {
-      selectedItems: {
-        groupFamily: [],
-        collapseFamily: [],
-        collapseCycle: []
-      }
+      selectedItems: {}
     }
   },
   mounted () {
-    if (this.groups[0].controls.length >= 6) {
-      this.selectedItems.groupFamily = this.groups[0].controls[7].value
-      this.selectedItems.collapseCycle = this.groups[0].controls[8].value
-      this.selectedItems.collapseFamily = this.groups[0].controls[9].value
+    if (this.groups[0].title == 'Graph') {
+      const getControlValue = (groups, controlKey) => {
+        return groups[0].controls.find(control => control.key === controlKey).value
+      }
+      this.selectedItems.groupFamily = getControlValue(this.groups, 'groupFamily')
+      this.selectedItems.collapseCycle = getControlValue(this.groups, 'collapseCycle')
+      this.selectedItems.collapseFamily = getControlValue(this.groups, 'collapseFamily')
     }
   },
 
@@ -177,7 +177,7 @@ export default {
             case 'callback':
               callback = (e) => this.call(control, e)
               break
-            case 'select':
+            case 'select-tree':
               callback = (e) => this.select(control, e)
               if (control.value.length) {
                 color = 'blue'
@@ -233,7 +233,6 @@ export default {
       // call a control's callback
       control.value = this.selectedItems[control.key]
       this.$emit('setOption', control.key, control.value)
-      // e.currentTarget.blur()
     },
     getValues () {
       // an object with all defined values
