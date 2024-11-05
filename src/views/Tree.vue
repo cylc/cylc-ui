@@ -37,6 +37,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             class="d-flex flex-nowrap ml-2"
           >
             <v-btn
+              @click="flat = !flat"
+              icon
+              variant="flat"
+              size="small"
+              data-cy="toggle-families"
+            >
+              <v-icon size="x-large">
+                {{ flat? $options.icons.mdiFormatAlignRight : $options.icons.mdiFormatAlignJustify }}
+              </v-icon>
+              <v-tooltip>
+                {{ flat ? "Show Families" : "Hide Families" }}
+              </v-tooltip>
+            </v-btn>
+            <v-btn
               @click="expandAll = ['workflow', 'cycle', 'family']"
               icon
               variant="flat"
@@ -72,6 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :hoverable="false"
             :autoStripTypes="['workflow']"
             :node-filter-func="filterNode"
+            :flat="flat"
             v-bind="{ expandAll, filterState }"
             ref="treeComponent"
           />
@@ -83,7 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { mdiPlus, mdiMinus } from '@mdi/js'
+import { mdiPlus, mdiMinus, mdiFormatAlignRight, mdiFormatAlignJustify } from '@mdi/js'
 import gql from 'graphql-tag'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -222,8 +237,11 @@ export default {
      */
     const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { id: null, states: null })
 
+    const flat = useInitialOptions('flat', { props, emit }, false)
+
     return {
-      tasksFilter
+      tasksFilter,
+      flat,
     }
   },
 
@@ -301,6 +319,8 @@ export default {
   icons: {
     mdiPlus,
     mdiMinus,
+    mdiFormatAlignRight,
+    mdiFormatAlignJustify,
   },
 }
 </script>

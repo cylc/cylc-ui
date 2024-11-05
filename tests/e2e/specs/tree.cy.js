@@ -355,4 +355,13 @@ describe('Tree view', () => {
     cy.get('[data-cy="filter task state"]')
       .contains('.v-select__selection', '(+')
   })
+
+  describe('Toggle families', () => {
+    it('Toggles between flat and hierarchical modes', () => {
+      cy.visit('/#/tree/one')
+      cy.get('.node-data-family').should('have.length', 3)
+      cy.get('[data-cy=toggle-families]').click()
+      cy.get('.node-data-family').should('have.length', 0)
+    })
+  })
 })

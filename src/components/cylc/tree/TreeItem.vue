@@ -233,6 +233,11 @@ export default {
       type: Number,
       required: false,
     },
+    flat: {
+      type: Boolean,
+      requried: false,
+      default: false,
+    },
   },
 
   data () {
@@ -268,7 +273,7 @@ export default {
     nodeChildren () {
       return this.node.type === 'job'
         ? null
-        : getNodeChildren(this.node, this.cyclePointsOrderDesc)
+        : getNodeChildren(this.node, this.cyclePointsOrderDesc, this.flat)
     },
     nodeStyle () {
       return {

@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-for="child of rootChildren"
       :key="child.id"
       :node="child"
-      v-bind="{ hoverable, cyclePointsOrderDesc, expandAll, filteredOutNodesCache }"
+      v-bind="{ hoverable, cyclePointsOrderDesc, expandAll, filteredOutNodesCache, flat }"
     />
   </v-container>
 </template>
@@ -82,6 +82,11 @@ export default {
       required: false,
       default: () => []
     },
+    flat: {
+      type: Boolean,
+      required: false,
+      default: true,
+    }
   },
 
   components: {
