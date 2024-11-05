@@ -172,8 +172,6 @@ fragment TaskProxyData on TaskProxy {
   firstParent {
     id
     name
-    cyclePoint
-    state
   }
   task {
     meanElapsedTime
@@ -199,8 +197,6 @@ fragment FamilyProxyData on FamilyProxy {
   firstParent {
     id
     name
-    cyclePoint
-    state
   }
 }
 
