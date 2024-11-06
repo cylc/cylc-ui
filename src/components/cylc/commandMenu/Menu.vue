@@ -135,14 +135,6 @@ export default {
     Mutation,
   },
 
-  props: {
-    interactive: {
-      type: Boolean,
-      required: false,
-      default: true
-    }
-  },
-
   setup () {
     return {
       dialog: ref(false),
