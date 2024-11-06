@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="control"
         :data-cy="`control-${iControl.key}`"
       >
-        <v-menu 
+        <v-menu
         v-if="iControl.action==='select-tree'"
         :close-on-content-click="false">
           <template v-slot:activator="{ props }" >
@@ -135,7 +135,7 @@ export default {
     }
   },
   mounted () {
-    if (this.groups[0].title == 'Graph') {
+    if (this.groups[0].title === 'Graph') {
       const getControlValue = (groups, controlKey) => {
         return groups[0].controls.find(control => control.key === controlKey).value
       }
