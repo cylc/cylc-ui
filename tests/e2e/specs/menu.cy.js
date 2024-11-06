@@ -95,14 +95,14 @@ describe('Command Menu component', () => {
     cy.get('.c-gscan .node').contains('one')
       .parents('.node').find('[data-c-interactive]')
       .click()
-      .get('.c-mutation-menu')
+      .get('.c-mutation-menu .v-card-title')
       .should('be.visible')
-      .contains('~user/one')
+      .contains('one')
     cy.get('#workflow-mutate-button')
       .click({ force: true })
-      .get('.c-mutation-menu')
+      .get('.c-mutation-menu .v-card-title')
       .should('be.visible')
-      .contains('~user/one')
+      .contains('one')
   })
 
   it('only closes when appropriate if clicking inside menu', () => {
@@ -119,5 +119,18 @@ describe('Command Menu component', () => {
       .click()
       .get('.c-mutation-menu')
       .should('not.exist')
+  })
+
+  it("copies the object's name to the clipboard", { browser: 'electron' }, () => {
+    // (Access to the clipboard in Cypress only reliably works in Electron)
+    cy.get('.node-data-task:first [data-c-interactive]:first')
+      .click()
+      .get('.c-mutation-menu')
+      .find('[data-cy=copy-to-clipboard]')
+      .click()
+    // clipboard should contain the object's name:
+    cy.window().its('navigator.clipboard')
+      .then((clip) => clip.readText())
+      .should('equal', 'one//20000102T0000Z/failed')
   })
 })
