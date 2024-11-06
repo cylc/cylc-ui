@@ -363,7 +363,6 @@ export default {
       // supports loading graph when component is mounted and autoRefresh is off.
       // true if page is loading for the first time and nodeDimensions are yet to be calculated
       initialLoad: true,
-      familyArrayStore: [],
       cycleArrayStore: [],
       edgeTemplate: {},
       nodeTemplate: {},
@@ -463,6 +462,9 @@ export default {
         lookup[itemName] = childArray([itemValue])
       })
       return lookup
+    },
+    familyArrayStore () {
+      return this.namespaces.filter((family) => { return family.name !== 'root' }).map((family) => family.name)
     },
     controlGroups () {
       return [
@@ -1282,7 +1284,6 @@ export default {
       this.latestCycle = Object.keys(cycles)[0]
       this.cycleArrayStore = this.workflows[0].children.map(child => child.tokens.cycle)
       const families = this.getFamilies(nodes)
-      this.familyArrayStore = this.namespaces.filter((family) => { return family.name !== 'root' }).map((family) => family.name)
       // compute the graph ID
       const graphID = this.hashGraph(nodes, edges)
       if (this.graphID === graphID) {
