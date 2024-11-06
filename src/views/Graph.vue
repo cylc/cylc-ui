@@ -585,8 +585,7 @@ export default {
     },
     removeNode (nodeName, cyclePoint, nodes) {
       // removes a node object from the 'nodes' array
-      const nodePath = this.workflowIDs[0]
-      const nodeId = `${nodePath}//${cyclePoint}/${nodeName}`
+      const nodeId = this.workflows[0].tokens.clone({ cycle: cyclePoint, task: nodeName }).id
       const nodesFiltered = nodes.filter((node) => {
         return node.id !== nodeId
       })
@@ -594,79 +593,45 @@ export default {
     },
     createEdge (edgeType, sourceName, targetName, sourceCyclePoint, targetCyclePoint) {
       // adds a new edge object to 'edges' array
-      const edgePath = this.workflowIDs[0]
-      let edgeId = ''
-      let targetId = ''
-      let sourceId = ''
+      let src, tgt
       if (edgeType === 'noCollapsed') {
-        edgeId = `${edgePath}//$edge|${sourceCyclePoint}/${sourceName}|${targetCyclePoint}/${targetName}`
-        targetId = `${targetCyclePoint}/${targetName}`
-        sourceId = `${sourceCyclePoint}/${sourceName}`
+        src = `${sourceCyclePoint}/${sourceName}`
+        tgt = `${targetCyclePoint}/${targetName}`
       }
       if (edgeType === 'collapsedTarget') {
-        edgeId = `${edgePath}//$edge|${sourceCyclePoint}/${sourceName}|${targetName}`
-        targetId = `${targetName}`
-        sourceId = `${sourceCyclePoint}/${sourceName}`
+        src = `${sourceCyclePoint}/${sourceName}|${targetName}`
+        tgt = `${sourceCyclePoint}/${sourceName}|${targetName}`
       }
       if (edgeType === 'collapsedSource') {
-        edgeId = `${edgePath}//$edge|${sourceCyclePoint}|${targetCyclePoint}/${targetName}`
-        targetId = `${targetCyclePoint}/${targetName}`
-        sourceId = `${sourceName}`
+        src = `${sourceCyclePoint}|${targetCyclePoint}/${targetName}`
+        tgt = `${sourceCyclePoint}|${targetCyclePoint}/${targetName}`
       }
       if (edgeType === 'collapsedSourceAndTarget') {
-        edgeId = `${edgePath}//$edge|${sourceName}|${targetName}`
-        targetId = `${targetName}`
-        sourceId = `${sourceName}`
+        src = `${sourceName}|${targetName}`
+        tgt = `${sourceName}|${targetName}`
       }
-      const sourceObject = {
-        cycle: sourceCyclePoint,
-        edge: undefined,
-        id: sourceId,
-        job: undefined,
-        namespace: undefined,
-        relativeID: sourceId,
-        task: sourceName,
-        user: undefined,
-        workflow: undefined,
-        workflowID: ''
-      }
-      const targetObject = {
-        cycle: targetCyclePoint,
-        edge: undefined,
-        id: targetId,
-        job: undefined,
-        namespace: undefined,
-        relativeID: targetId,
-        task: targetName,
-        user: undefined,
-        workflow: undefined,
-        workflowID: ''
-      }
-      const newEdge = {
+      const tokens = this.workflows[0].tokens.clone({
+        cycle: `$edge|${src}|${tgt}`
+      })
+      return {
+        id: tokens.id,
+        name: tokens.id,
+        tokens,
+        type: 'family',
         children: [],
         familyTree: undefined,
-        id: edgeId,
-        name: edgeId,
         node: {
-          id: edgeId,
-          source: `${edgePath}//${sourceId}`,
-          target: `${edgePath}//${targetId}`,
+          id: tokens.id,
+          source: this.workflows[0].tokens.clone({
+            cycle: tokens.edge[0].cycle,
+            task: tokens.edge[0].task,
+          }).id,
+          target: this.workflows[0].tokens.clone({
+            cycle: tokens.edge[1].cycle,
+            task: tokens.edge[1].task,
+          }).id,
         },
-        tokens: {
-          cycle: undefined,
-          edge: [sourceObject, targetObject],
-          id: edgeId,
-          job: undefined,
-          namespce: undefined,
-          relativeID: '',
-          task: undefined,
-          user: undefined,
-          workflow: undefined,
-          workflowID: edgePath
-        },
-        type: 'family'
       }
-      return newEdge
     },
     removeEdge (sourceName, sourceCyclePoint, targetName, targetCyclePoint, edges) {
       // removes a edge object from the 'edges' array
@@ -702,20 +667,25 @@ export default {
     removeEdgeBySource (edgeCheckSource, edges, removedEdges, config, cycle) {
       edgeCheckSource.forEach((edge) => {
         removedEdges.push(edge)
-        const targetName = this.cylcTree.$index[edge.node.target].name
-        const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
-        edges = this.removeEdge(config.name, cycle, targetName, targetCycle, edges)
+        edges = this.removeEdge(
+          config.name,
+          cycle,
+          edge.tokens.edge[1].task,
+          edge.tokens.edge[1].cycle,
+          edges
+        )
       })
       return [edges, removedEdges]
     },
     removeEdgeByTarget (edgeCheckTarget, edges, removedEdges) {
       edgeCheckTarget.forEach((edge) => {
         removedEdges.push(edge)
-        const targetName = this.cylcTree.$index[edge.node.target].name
-        const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
-        const sourceName = this.cylcTree.$index[edge.node.source].name
-        const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
-        edges = this.removeEdge(sourceName, sourceCycle, targetName, targetCycle, edges)
+        edges = this.removeEdge(
+          edge.tokens.edge[0].task,
+          edge.tokens.edge[0].cycle,
+          edge.tokens.edge[1].task,
+          edge.tokens.edge[1].cycle, edges
+        )
       })
       return [edges, removedEdges]
     },
@@ -845,21 +815,6 @@ export default {
         return x
       }, {})
     },
-    /**
-     * Get the nodes binned by family
-     *
-     * @param {Object[]} nodes
-     * @returns {{ [dateTime: string]: Object[] }=} mapping of family to nodes
-     */
-    getFamilies (nodes) {
-      if (!this.groupFamily) return
-      return nodes.reduce((x, y) => {
-        if (y.node.firstParent) {
-          (x[y.node.firstParent.id.split('/')[y.node.firstParent.id.split('/').length - 1]] ||= []).push(y)
-        }
-        return x
-      }, {})
-    },
     addSubgraph (dotcode, pointer, graphSections) {
       pointer.children.forEach((key, i) => {
         const value = key
@@ -874,22 +829,20 @@ export default {
           }
         })
         // filter parent
-        if (key.node.name !== '01' &&
+        if (
           children.length &&
           this.groupFamily.includes(key.node.name) &&
           !this.collapseFamily.includes(key.node.name) &&
           !this.collapseFamily.includes(key.node.firstParent.name)) {
           // filter child
           const nodeFormattedArray = children.filter((a) => {
-            // if its not 01
-            const isOne = a.name !== '01'
             // if its not in the list of families (unless its been collapsed)
             const isFamily = !this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
             // its the node has been removed/collapsed
             const isRemoved = !removedNodes.includes(a.name)
             // is not numeric
             const isNumeric = !parseFloat(a.name)
-            return isOne && isFamily && isRemoved && isNumeric
+            return isFamily && isRemoved && isNumeric
           }).map(a => `"${a.id}"`)
           if (nodeFormattedArray.length) {
             dotcode.push(`
@@ -914,19 +867,17 @@ export default {
           dotcode.push(graphSections[key.id])
         }
 
-        if (key.node.name !== '01' &&
+        if (
           children.length &&
           this.groupFamily.includes(key.node.name) &&
           !this.collapseFamily.includes(key.node.name) &&
           !this.collapseFamily.includes(key.node.firstParent.name)) {
           const nodeFormattedArray = children.filter((a) => {
-            // if its not 01
-            const isOne = a.name !== '01'
             // if its not in the list of families (unless its been collapsed)
             const isFamily = !this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
             // its the node has been removed/collapsed
             const isRemoved = !removedNodes.includes(a.name)
-            return isOne && isFamily && isRemoved
+            return isFamily && isRemoved
           }).map(a => `"${a.id}"`)
           if (nodeFormattedArray.length) {
             dotcode.push('}}')
@@ -934,7 +885,7 @@ export default {
         }
       })
     },
-    getDotCode (nodeDimensions, nodes, edges, cycles, families) {
+    getDotCode (nodeDimensions, nodes, edges, cycles) {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
       let spacing = this.spacing
@@ -1001,8 +952,6 @@ export default {
               }
             })
             const nodeFormattedArray = indexSearch.filter((a) => {
-              // if its not 01
-              const isOne = a.name !== '01'
               // if its not in the list of families (unless its been collapsed)
               const isFamily = !this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
               // the node has been removed/collapsed
@@ -1019,7 +968,7 @@ export default {
                   return this.collapseFamily.includes(element)
                 })
               }
-              return isOne && isFamily && isRemoved && isThisCycle && isRoot && isNumeric && isAncestor
+              return isFamily && isRemoved && isThisCycle && isRoot && isNumeric && isAncestor
             }).map(a => `"${a.id}"`)
             ret.push(`
               subgraph cluster_margin_family_${cycle}
@@ -1057,8 +1006,6 @@ export default {
         }
       }
       ret.push('}')
-      // console.log('Dot Code')
-      // console.log(ret.join('\n'))
       return ret.join('\n')
     },
     hashGraph (nodes, edges) {
@@ -1283,7 +1230,6 @@ export default {
       const cycles = this.getCycles(nodes)
       this.latestCycle = Object.keys(cycles)[0]
       this.cycleArrayStore = this.workflows[0].children.map(child => child.tokens.cycle)
-      const families = this.getFamilies(nodes)
       // compute the graph ID
       const graphID = this.hashGraph(nodes, edges)
       if (this.graphID === graphID) {
@@ -1328,7 +1274,7 @@ export default {
 
       // layout the graph
       try {
-        await this.layout(nodes, edges, nodeDimensions, cycles, families)
+        await this.layout(nodes, edges, nodeDimensions, cycles)
       } catch (e) {
         // something went wrong, allow the layout to retry later
         this.graphID = null
@@ -1371,9 +1317,9 @@ export default {
      * @param {Object[]} edges
      * @param {{ [id: string]: SVGRect }} nodeDimensions
      */
-    async layout (nodes, edges, nodeDimensions, cycles, families) {
+    async layout (nodes, edges, nodeDimensions, cycles) {
       // generate the GraphViz dot code
-      const dotCode = this.getDotCode(nodeDimensions, nodes, edges, cycles, families)
+      const dotCode = this.getDotCode(nodeDimensions, nodes, edges, cycles)
 
       // run the layout algorithm
       const jsonString = (await this.graphviz).layout(dotCode, 'json')
