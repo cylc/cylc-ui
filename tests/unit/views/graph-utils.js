@@ -234,6 +234,18 @@ const edges = [
       source: 'user/one/run1//1/succeeded',
       target: 'user/one/run1//1/failed',
       __typename: 'Edge'
+    },
+    tokens: {
+      edge: [
+        {
+          task: 'succeeded',
+          cycle: '1'
+        },
+        {
+          task: 'failed',
+          cycle: '1'
+        },
+      ]
     }
   },
   {
@@ -245,6 +257,18 @@ const edges = [
       source: 'user/one/run1//1/failed',
       target: 'user/one/run1//1/checkpoint',
       __typename: 'Edge'
+    },
+    tokens: {
+      edge: [
+        {
+          task: 'failed',
+          cycle: '1'
+        },
+        {
+          task: 'checkpoint',
+          cycle: '1'
+        },
+      ]
     }
   },
   {
@@ -256,6 +280,18 @@ const edges = [
       source: 'user/one/run1//2/sleepy',
       target: 'user/one/run1//1/failed',
       __typename: 'Edge'
+    },
+    tokens: {
+      edge: [
+        {
+          task: 'sleepy',
+          cycle: '2'
+        },
+        {
+          task: 'failed',
+          cycle: '1'
+        },
+      ]
     }
   }
 ]

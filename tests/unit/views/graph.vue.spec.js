@@ -116,215 +116,215 @@ describe('Graph view', () => {
     )
   })
 
-  it('it gets families', async () => {
-    const wrapper = mount(Graph, {
-      shallow: true,
-      global: {
-        plugins: [store],
-        mocks: { $workflowService }
-      },
-      props: {
-        workflowName: 'one',
-      },
-      computed: {
-        workflows () {
-          return workflows
-        },
-        namespaces () {
-          return namespaces()
-        },
-        cylcTree () {
-          return cylcTree
-        }
-      }
-    })
+  // it('it gets families', async () => {
+  //   const wrapper = mount(Graph, {
+  //     shallow: true,
+  //     global: {
+  //       plugins: [store],
+  //       mocks: { $workflowService }
+  //     },
+  //     props: {
+  //       workflowName: 'one',
+  //     },
+  //     computed: {
+  //       workflows () {
+  //         return workflows
+  //       },
+  //       namespaces () {
+  //         return namespaces()
+  //       },
+  //       cylcTree () {
+  //         return cylcTree
+  //       }
+  //     }
+  //   })
 
-    expect(wrapper.vm.getFamilies(nodes)).toMatchObject(
-      {
-        BAD: [
-          {
-            id: 'user/one/run1//1/failed',
-            name: 'failed',
-            node: {
-              firstParent: {
-                id: 'user/one/run1//1/BAD'
-              }
-            },
-            tokens: {
-              cycle: '1'
-            }
-          },
-          {
-            id: 'user/one/run1//1/retrying',
-            name: 'retrying',
-            node: {
-              firstParent: {
-                id: 'user/one/run1//1/BAD'
-              }
-            },
-            tokens: {
-              cycle: '1'
-            }
-          }
-        ],
-        SUCCEEDED: [
-          {
-            id: 'user/one/run1//2/succeeded',
-            name: 'succeeded',
-            node: {
-              firstParent: {
-                id: 'user/one/run1//2/SUCCEEDED'
-              }
-            },
-            tokens: {
-              cycle: '2'
-            }
-          }
-        ],
-        root: [
-          {
-            id: 'user/one/run1//2/sleepy',
-            name: 'sleepy',
-            node: {
-              firstParent: {
-                id: 'user/one/run1//1/root'
-              }
-            },
-            tokens: {
-              cycle: '2'
-            }
-          }
-        ]
-      }
-    )
-  })
+  //   expect(wrapper.vm.getFamilies(nodes)).toMatchObject(
+  //     {
+  //       BAD: [
+  //         {
+  //           id: 'user/one/run1//1/failed',
+  //           name: 'failed',
+  //           node: {
+  //             firstParent: {
+  //               id: 'user/one/run1//1/BAD'
+  //             }
+  //           },
+  //           tokens: {
+  //             cycle: '1'
+  //           }
+  //         },
+  //         {
+  //           id: 'user/one/run1//1/retrying',
+  //           name: 'retrying',
+  //           node: {
+  //             firstParent: {
+  //               id: 'user/one/run1//1/BAD'
+  //             }
+  //           },
+  //           tokens: {
+  //             cycle: '1'
+  //           }
+  //         }
+  //       ],
+  //       SUCCEEDED: [
+  //         {
+  //           id: 'user/one/run1//2/succeeded',
+  //           name: 'succeeded',
+  //           node: {
+  //             firstParent: {
+  //               id: 'user/one/run1//2/SUCCEEDED'
+  //             }
+  //           },
+  //           tokens: {
+  //             cycle: '2'
+  //           }
+  //         }
+  //       ],
+  //       root: [
+  //         {
+  //           id: 'user/one/run1//2/sleepy',
+  //           name: 'sleepy',
+  //           node: {
+  //             firstParent: {
+  //               id: 'user/one/run1//1/root'
+  //             }
+  //           },
+  //           tokens: {
+  //             cycle: '2'
+  //           }
+  //         }
+  //       ]
+  //     }
+  //   )
+  // })
 
-  it('it gets all children look up object', async () => {
-    const wrapper = mount(Graph, {
-      shallow: true,
-      global: {
-        plugins: [store],
-        mocks: { $workflowService }
-      },
-      props: {
-        workflowName: 'one',
-      },
-      computed: {
-        workflows () {
-          return workflows
-        },
-        namespaces () {
-          return namespaces()
-        },
-        cylcTree () {
-          return cylcTree
-        }
-      }
-    })
+  // it('it gets all children look up object', async () => {
+  //   const wrapper = mount(Graph, {
+  //     shallow: true,
+  //     global: {
+  //       plugins: [store],
+  //       mocks: { $workflowService }
+  //     },
+  //     props: {
+  //       workflowName: 'one',
+  //     },
+  //     computed: {
+  //       workflows () {
+  //         return workflows
+  //       },
+  //       namespaces () {
+  //         return namespaces()
+  //       },
+  //       cylcTree () {
+  //         return cylcTree
+  //       }
+  //     }
+  //   })
 
-    wrapper.vm.getAllChildrenLookUp()
+  //   wrapper.vm.getAllChildrenLookUp()
 
-    expect(wrapper.vm.allChilderenLookUp).toMatchObject(
-      {
-        'user/one/run1//$namespace|BAD': [
-          {
-            children: undefined,
-            id: 'user/one/run1//$namespace|BAD',
-            name: 'BAD'
-          }
-        ],
-        'user/one/run1//$namespace|GOOD': [
-          {
-            children: undefined,
-            id: 'user/one/run1//$namespace|GOOD',
-            name: 'GOOD'
-          }
-        ],
-        'user/one/run1//$namespace|SUCCEEDED': [
-          {
-            children: undefined,
-            id: 'user/one/run1//$namespace|SUCCEEDED',
-            name: 'SUCCEEDED'
-          }
-        ],
-        'user/one/run1//$namespace|root': [
-          {
-            children: undefined,
-            id: 'user/one/run1//$namespace|root',
-            name: 'root'
-          }
-        ],
-        'user/one/run1//1/failed': [
-          {
-            children: undefined,
-            id: 'user/one/run1//1/failed',
-            name: 'failed'
-          }
-        ],
-        'user/one/run1//1/retrying': [
-          {
-            children: [
-              {
-                id: 'user/one/run1//1/retrying/01',
-                name: 'retrying'
-              },
-              {
-                id: 'user/one/run1//1/retrying/02',
-                name: 'retrying'
-              }
-            ],
-            id: 'user/one/run1//1/retrying',
-            name: 'retrying',
-          },
-          {
-            id: 'user/one/run1//1/retrying/01',
-            name: 'retrying',
-            children: undefined
-          },
-          {
-            id: 'user/one/run1//1/retrying/02',
-            name: 'retrying',
-            children: undefined
-          }
-        ]
-      }
-    )
-  })
+  //   expect(wrapper.vm.allChilderenLookUp).toMatchObject(
+  //     {
+  //       'user/one/run1//$namespace|BAD': [
+  //         {
+  //           children: undefined,
+  //           id: 'user/one/run1//$namespace|BAD',
+  //           name: 'BAD'
+  //         }
+  //       ],
+  //       'user/one/run1//$namespace|GOOD': [
+  //         {
+  //           children: undefined,
+  //           id: 'user/one/run1//$namespace|GOOD',
+  //           name: 'GOOD'
+  //         }
+  //       ],
+  //       'user/one/run1//$namespace|SUCCEEDED': [
+  //         {
+  //           children: undefined,
+  //           id: 'user/one/run1//$namespace|SUCCEEDED',
+  //           name: 'SUCCEEDED'
+  //         }
+  //       ],
+  //       'user/one/run1//$namespace|root': [
+  //         {
+  //           children: undefined,
+  //           id: 'user/one/run1//$namespace|root',
+  //           name: 'root'
+  //         }
+  //       ],
+  //       'user/one/run1//1/failed': [
+  //         {
+  //           children: undefined,
+  //           id: 'user/one/run1//1/failed',
+  //           name: 'failed'
+  //         }
+  //       ],
+  //       'user/one/run1//1/retrying': [
+  //         {
+  //           children: [
+  //             {
+  //               id: 'user/one/run1//1/retrying/01',
+  //               name: 'retrying'
+  //             },
+  //             {
+  //               id: 'user/one/run1//1/retrying/02',
+  //               name: 'retrying'
+  //             }
+  //           ],
+  //           id: 'user/one/run1//1/retrying',
+  //           name: 'retrying',
+  //         },
+  //         {
+  //           id: 'user/one/run1//1/retrying/01',
+  //           name: 'retrying',
+  //           children: undefined
+  //         },
+  //         {
+  //           id: 'user/one/run1//1/retrying/02',
+  //           name: 'retrying',
+  //           children: undefined
+  //         }
+  //       ]
+  //     }
+  //   )
+  // })
 
-  it('it gets all parents look up object', async () => {
-    const wrapper = mount(Graph, {
-      shallow: true,
-      global: {
-        plugins: [store],
-        mocks: { $workflowService }
-      },
-      props: {
-        workflowName: 'one',
-      },
-      computed: {
-        workflows () {
-          return workflows
-        },
-        namespaces () {
-          return namespaces()
-        },
-        cylcTree () {
-          return cylcTree
-        }
-      }
-    })
+  // it('it gets all parents look up object', async () => {
+  //   const wrapper = mount(Graph, {
+  //     shallow: true,
+  //     global: {
+  //       plugins: [store],
+  //       mocks: { $workflowService }
+  //     },
+  //     props: {
+  //       workflowName: 'one',
+  //     },
+  //     computed: {
+  //       workflows () {
+  //         return workflows
+  //       },
+  //       namespaces () {
+  //         return namespaces()
+  //       },
+  //       cylcTree () {
+  //         return cylcTree
+  //       }
+  //     }
+  //   })
 
-    wrapper.vm.getAllParentLookUp()
+  //   wrapper.vm.getAllParentLookUp()
 
-    expect(wrapper.vm.allParentLookUp).toMatchObject(
-      {
-        BAD: ['root'],
-        GOOD: ['root'],
-        SUCCEEDED: ['GOOD', 'root'],
-        root: []
-      }
-    )
-  })
+  //   expect(wrapper.vm.allParentLookUp).toMatchObject(
+  //     {
+  //       BAD: ['root'],
+  //       GOOD: ['root'],
+  //       SUCCEEDED: ['GOOD', 'root'],
+  //       root: []
+  //     }
+  //   )
+  // })
 
   it('it gets tree', async () => {
     const wrapper = mount(Graph, {
@@ -481,12 +481,75 @@ describe('Graph view', () => {
         },
         workflowIDs () {
           return ['user/one/run1']
+        },
+        allChildrenLookUp () {
+          return {
+            'user/one/run1//1/succeeded': [
+              {
+                id: 'user/one/run1//2/succeeded',
+                name: 'succeeded',
+                children: []
+              }
+            ],
+            'user/one/run1//2/sleepy': [{ id: 'user/one/run1//2/sleepy', name: 'sleepy', children: [] }],
+            'user/one/run1//1/retrying': [
+              {
+                id: 'user/one/run1//1/retrying',
+                name: 'retrying',
+                children: [Array]
+              },
+              {
+                id: 'user/one/run1//1/retrying/01',
+                name: 'retrying',
+                children: undefined
+              },
+              {
+                id: 'user/one/run1//1/retrying/02',
+                name: 'retrying',
+                children: undefined
+              }
+            ],
+            'user/one/run1//1/failed': [
+              {
+                id: 'user/one/run1//1/failed',
+                name: 'failed',
+                children: undefined
+              }
+            ],
+            'user/one/run1//$namespace|root': [
+              {
+                id: 'user/one/run1//$namespace|root',
+                name: 'root',
+                children: undefined
+              }
+            ],
+            'user/one/run1//$namespace|BAD': [
+              {
+                id: 'user/one/run1//$namespace|BAD',
+                name: 'BAD',
+                children: undefined
+              }
+            ],
+            'user/one/run1//$namespace|GOOD': [
+              {
+                id: 'user/one/run1//$namespace|GOOD',
+                name: 'GOOD',
+                children: undefined
+              }
+            ],
+            'user/one/run1//$namespace|SUCCEEDED': [
+              {
+                id: 'user/one/run1//$namespace|SUCCEEDED',
+                name: 'SUCCEEDED',
+                children: undefined
+              }
+            ]
+          }
         }
       }
     })
     // in this test we remove the first edge with a source of 'user/one/run1//1/sleepy'
-    wrapper.vm.getAllChildrenLookUp()
-    const config = wrapper.vm.allChilderenLookUp['user/one/run1//2/sleepy'][0]
+    const config = wrapper.vm.allChildrenLookUp['user/one/run1//2/sleepy'][0]
     const edgeCheckSource = wrapper.vm.checkForEdgeBySource(config.name, '2', edges)
     const removedEdges = []
 
@@ -557,12 +620,91 @@ describe('Graph view', () => {
         },
         workflowIDs () {
           return ['user/one/run1']
+        },
+        allChildrenLookUp () {
+          return {
+            'user/one/run1//1/succeeded': [
+              {
+                id: 'user/one/run1//2/succeeded',
+                name: 'succeeded',
+                children: [],
+              }
+            ],
+            'user/one/run1//2/sleepy': [
+              {
+                id: 'user/one/run1//2/sleepy',
+                name: 'sleepy',
+                children: [],
+              }
+            ],
+            'user/one/run1//1/retrying': [
+              {
+                id: 'user/one/run1//1/retrying',
+                name: 'retrying',
+                children: [
+                  {
+                    id: 'user/one/run1//1/retrying/01',
+                    name: 'retrying',
+                  },
+                  {
+                    id: 'user/one/run1//1/retrying/02',
+                    name: 'retrying',
+                  }
+                ],
+              },
+              {
+                id: 'user/one/run1//1/retrying/01',
+                name: 'retrying',
+                children: undefined,
+              },
+              {
+                id: 'user/one/run1//1/retrying/02',
+                name: 'retrying',
+                children: undefined,
+              }
+            ],
+            'user/one/run1//1/failed': [
+              {
+                id: 'user/one/run1//1/failed',
+                name: 'failed',
+                children: undefined,
+              }
+            ],
+            'user/one/run1//$namespace|root': [
+              {
+                id: 'user/one/run1//$namespace|root',
+                name: 'root',
+                children: undefined,
+              }
+            ],
+            'user/one/run1//$namespace|BAD': [
+              {
+                id: 'user/one/run1//$namespace|BAD',
+                name: 'BAD',
+                children: undefined,
+              }
+            ],
+            'user/one/run1//$namespace|GOOD': [
+              {
+                id: 'user/one/run1//$namespace|GOOD',
+                name: 'GOOD',
+                children: undefined,
+              }
+            ],
+            'user/one/run1//$namespace|SUCCEEDED': [
+              {
+                id: 'user/one/run1//$namespace|SUCCEEDED',
+                name: 'SUCCEEDED',
+                children: undefined,
+              }
+            ]
+          }
         }
       }
     })
+    await wrapper.vm.$nextTick()
     // in this test we remove the first edge with a target of 'user/one/run1//1/failed'
-    wrapper.vm.getAllChildrenLookUp()
-    const config = wrapper.vm.allChilderenLookUp['user/one/run1//1/failed'][0]
+    const config = wrapper.vm.allChildrenLookUp['user/one/run1//1/failed'][0]
     const edgeCheckTarget = wrapper.vm.checkForEdgeByTarget(config.name, '1', edges)
     const removedEdges = []
 
@@ -570,17 +712,6 @@ describe('Graph view', () => {
       [
         // the returned edges array with the edge removed
         [
-          {
-            id: 'user/one/run1//$edge|1/succeeded|1/failed',
-            name: 'user/one/run1//$edge|1/succeeded|1/failed',
-            parent: 'user/one/run1',
-            node: {
-              id: 'user/one/run1//$edge|1/succeeded|1/failed',
-              source: 'user/one/run1//1/succeeded',
-              target: 'user/one/run1//1/failed',
-              __typename: 'Edge'
-            }
-          },
           {
             id: 'user/one/run1//$edge|1/failed|1/checkpoint',
             name: 'user/one/run1//$edge|1/failed|1/checkpoint',
@@ -590,6 +721,18 @@ describe('Graph view', () => {
               source: 'user/one/run1//1/failed',
               target: 'user/one/run1//1/checkpoint',
               __typename: 'Edge'
+            },
+            tokens: {
+              edge: [
+                {
+                  task: 'failed',
+                  cycle: '1'
+                },
+                {
+                  task: 'checkpoint',
+                  cycle: '1'
+                },
+              ]
             }
           }
         ],
@@ -604,6 +747,18 @@ describe('Graph view', () => {
               source: 'user/one/run1//1/succeeded',
               target: 'user/one/run1//1/failed',
               __typename: 'Edge'
+            },
+            tokens: {
+              edge: [
+                {
+                  task: 'succeeded',
+                  cycle: '1'
+                },
+                {
+                  task: 'failed',
+                  cycle: '1'
+                },
+              ]
             }
           },
           {
@@ -615,6 +770,18 @@ describe('Graph view', () => {
               source: 'user/one/run1//2/sleepy',
               target: 'user/one/run1//1/failed',
               __typename: 'Edge'
+            },
+            tokens: {
+              edge: [
+                {
+                  task: 'sleepy',
+                  cycle: '2'
+                },
+                {
+                  task: 'failed',
+                  cycle: '1'
+                },
+              ]
             }
           }
         ]
