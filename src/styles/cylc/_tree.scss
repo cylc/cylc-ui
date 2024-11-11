@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use '../settings.scss';
+ @use "sass:map";
+ @use '../settings';
 
 $active-color: #BDD5F7;
 /**
@@ -47,7 +48,7 @@ $icon-width: 1.5rem;
 
 @mixin states() {
   &:hover {
-    background-color: map-get(settings.$grey, 'lighten-3');
+    background-color: map.get(settings.$grey, 'lighten-3');
   }
 }
 
@@ -105,7 +106,7 @@ $icon-width: 1.5rem;
   }
 
   $arrow-size: calc($icon-width / 2);
-  $leaf-background-color: map-get(settings.$grey, 'lighten-3');
+  $leaf-background-color: map.get(settings.$grey, 'lighten-3');
 
   .leaf {
     padding: 0;

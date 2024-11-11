@@ -102,6 +102,13 @@ export default defineConfig(({ mode }) => {
       // good enough:
       target: 'modules',
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler',
+        },
+      },
+    },
     define: {
       // Allow vue devtools to work when runing vite build:
       __VUE_PROD_DEVTOOLS__: mode !== 'production'

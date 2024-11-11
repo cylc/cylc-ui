@@ -48,6 +48,8 @@ import { when } from '@/utils'
 import { useDefaultView } from '@/views/views'
 import { eventBus } from '@/services/eventBus'
 
+import '@lumino/default-theme/style'
+
 /*
  * A component to wrap the Lumino application.
  *
