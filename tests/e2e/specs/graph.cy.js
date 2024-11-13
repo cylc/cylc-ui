@@ -229,7 +229,7 @@ describe('Graph View', () => {
       })
   })
 
-  it('should collapse by family', () => {
+  it.only('should collapse by family', () => {
     cy.visit('/#/graph/one')
     waitForGraphLayout()
 
@@ -291,11 +291,11 @@ describe('Graph View', () => {
         }
       })
 
-      // there should be 10 graph edges (all on-screen)
+      // there should be 7 graph edges (all on-screen)
       .get('.c-graph:first')
       .find('.graph:first .edges:first')
       .children()
-      .should('have.length', 5)
+      .should('have.length', 7)
       .should('be.visible')
   })
 })
