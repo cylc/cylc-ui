@@ -153,6 +153,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               The complete Cylc documentation
             </v-list-item-subtitle>
           </v-list-item>
+          <v-list-item
+            to="/graphiql"
+          >
+            <template v-slot:prepend>
+              <v-icon size="1.6em">{{ $options.icons.mdiGraphql }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+             GraphiQL
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Explore the Cylc GraphQL API
+            </v-list-item-subtitle>
+          </v-list-item>
         </v-list>
       </v-col>
     </v-row>
@@ -161,7 +174,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { mdiBook, mdiBookMultiple, mdiBookOpenVariant, mdiCog, mdiHubspot, mdiTable } from '@mdi/js'
+import {
+  mdiBook,
+  mdiBookMultiple,
+  mdiBookOpenVariant,
+  mdiCog,
+  mdiHubspot,
+  mdiTable,
+  mdiGraphql,
+} from '@mdi/js'
 import { jupyterLogo } from '@/utils/icons'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
@@ -273,6 +294,7 @@ export default {
     workflow: mdiBookOpenVariant,
     documentation: mdiBookMultiple,
     jupyterLogo,
+    mdiGraphql,
   },
 }
 </script>
