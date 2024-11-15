@@ -229,7 +229,7 @@ describe('Graph View', () => {
       })
   })
 
-  it.only('should collapse by family', () => {
+  it('should collapse by family', () => {
     cy.visit('/#/graph/one')
     waitForGraphLayout()
 
