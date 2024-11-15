@@ -568,7 +568,11 @@ export default {
     },
     getTreeHelper (store, node, counter) {
       let tempItem
-      const disabled = this.collapseFamily.includes(node.name)
+      const isParent = this.collapseFamily.includes(node.name)
+      const isAncestor = this.allParentLookUp[node.name].some(element => {
+        return this.collapseFamily.includes(element)
+      })
+      const disabled = isParent || isAncestor
       for (const childFamily of node.node.childFamilies) {
         const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${childFamily.name}` })
         const childNode = this.cylcTree.$index[childTokens.id]
