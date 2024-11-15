@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-btn>
           </template >
           <v-treeview
-            v-model:selected="selectedItems[iControl.key]"
+            v-model:selected="iControl.value"
             v-on:update:selected="iControl.callback"
             :items="iControl.items"
             select-strategy='independent'
@@ -134,16 +134,6 @@ export default {
       selectedItems: {}
     }
   },
-  mounted () {
-    if (this.groups[0].title === 'Graph') {
-      const getControlValue = (groups, controlKey) => {
-        return groups[0].controls.find(control => control.key === controlKey).value
-      }
-      this.selectedItems.groupFamily = getControlValue(this.groups, 'groupFamily')
-      this.selectedItems.collapseCycle = getControlValue(this.groups, 'collapseCycle')
-      this.selectedItems.collapseFamily = getControlValue(this.groups, 'collapseFamily')
-    }
-  },
 
   computed: {
     iGroups () {
@@ -229,10 +219,9 @@ export default {
       control.callback()
       e.currentTarget.blur()
     },
-    select (control, e) {
+    select (control, value) {
       // call a control's callback
-      control.value = this.selectedItems[control.key]
-      this.$emit('setOption', control.key, control.value)
+      this.$emit('setOption', control.key, value)
     },
     getValues () {
       // an object with all defined values

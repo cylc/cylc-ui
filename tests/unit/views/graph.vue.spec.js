@@ -135,6 +135,21 @@ describe('Graph view', () => {
         },
         cylcTree () {
           return cylcTree
+        },
+        allParentLookUp () {
+          return {
+            BAD: [
+              'root'
+            ],
+            GOOD: [
+              'root'
+            ],
+            root: [],
+            SUCCEEDED: [
+              'GOOD',
+              'root'
+            ]
+          }
         }
       }
     })
