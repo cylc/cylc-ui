@@ -3634,7 +3634,7 @@ __metadata:
     nyc: "npm:17.1.0"
     preact: "npm:10.24.3"
     sass: "npm:1.77.8"
-    simple-icons: "npm:2.17.1"
+    simple-icons: "npm:13.17.0"
     sinon: "npm:19.0.2"
     standard: "npm:17.1.2"
     subscriptions-transport-ws: "npm:0.11.0"
@@ -9009,10 +9009,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"simple-icons@npm:2.17.1":
-  version: 2.17.1
-  resolution: "simple-icons@npm:2.17.1"
-  checksum: 10c0/134bcac6e5c9f737dafe2d24a323f78259dd5a8bb31ea0034469ccac837242ec75982a1fd63e23e33f516e0fedb65cb254209e414142ac4d6ccb75d5fba041ee
+"simple-icons@npm:13.17.0":
+  version: 13.17.0
+  resolution: "simple-icons@npm:13.17.0"
+  checksum: 10c0/1bba21f4504769e31d3984c0b3df796ed005688b4bf6fe4ef32e6e5da083781c0abb6d458a926df25e752f7122c7c0fad9199d01b15130db8597ab0f4a35d069
   languageName: node
   linkType: hard
 
