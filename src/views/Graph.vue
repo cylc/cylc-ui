@@ -1113,8 +1113,15 @@ export default {
                 // the node is collapsed by its first parent
                 return nodeFirstFamily
               } else if (ancestor) {
-                return this.allParentLookUp[nodeFirstFamily][0]
-                // this is almost certainly an over simplification -> better logic needed here
+                // the node is collapsed by an ancestor
+                this.allParentLookUp[nodeFirstFamily].reverse().every((family) => {
+                  if (this.collapseFamily.includes(family)) {
+                    return true
+                  } else {
+                    return false
+                  }
+                })
+                return family
               } else {
                 // the node is not collapsed
                 return null
