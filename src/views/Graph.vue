@@ -693,6 +693,29 @@ export default {
       })
       return [edges, removedEdges]
     },
+    isNodeCollapsedByFamily (nodeFirstFamily) {
+      console.log(nodeFirstFamily)
+      // the nodes first parent is collapsed
+      const firstParent = this.collapseFamily.includes(nodeFirstFamily)
+      // a family member up the tree is collapsed
+      const ancestor = this.allParentLookUp[nodeFirstFamily].some(element => {
+        return this.collapseFamily.includes(element)
+      })
+      if (firstParent && !ancestor) {
+        // the node is collapsed by its first parent
+        return nodeFirstFamily
+      } else if (ancestor) {
+        // the node is collapsed by an ancestor
+        for (let i = this.allParentLookUp[nodeFirstFamily].length - 1; i >= 0; i--) {
+          if (this.collapseFamily.includes(this.allParentLookUp[nodeFirstFamily][i])) {
+            return this.allParentLookUp[nodeFirstFamily][i]
+          }
+        }
+      } else {
+        // the node is not collapsed
+        return null
+      }
+    },
     mountSVGPanZoom () {
       // Check the SVG is ready:
       // * The SVG document must be rendered with something in it before we can
@@ -1102,36 +1125,11 @@ export default {
             if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
               nodes.push(indexSearch)
             }
-            const isNodeCollapsedByFamily = (nodeFirstFamily) => {
-              // the nodes first parent is collapsed
-              const firstParent = this.collapseFamily.includes(nodeFirstFamily)
-              // a family member up the tree is collapsed
-              const ancestor = this.allParentLookUp[nodeFirstFamily].some(element => {
-                return this.collapseFamily.includes(element)
-              })
-              if (firstParent && !ancestor) {
-                // the node is collapsed by its first parent
-                return nodeFirstFamily
-              } else if (ancestor) {
-                // the node is collapsed by an ancestor
-                this.allParentLookUp[nodeFirstFamily].reverse().every((family) => {
-                  if (this.collapseFamily.includes(family)) {
-                    return true
-                  } else {
-                    return false
-                  }
-                })
-                return family
-              } else {
-                // the node is not collapsed
-                return null
-              }
-            }
 
             const edgeHasCollapsedTargetFamilyOnly = (targetFirstFamily, sourceFirstFamily) => {
-              if (isNodeCollapsedByFamily(targetFirstFamily) && !isNodeCollapsedByFamily(sourceFirstFamily)) {
+              if (this.isNodeCollapsedByFamily(targetFirstFamily) && !this.isNodeCollapsedByFamily(sourceFirstFamily)) {
                 return {
-                  target: isNodeCollapsedByFamily(targetFirstFamily),
+                  target: this.isNodeCollapsedByFamily(targetFirstFamily),
                   source: undefined
                 }
               } else {
@@ -1140,10 +1138,10 @@ export default {
             }
 
             const edgeHasCollapsedSourceFamilyOnly = (targetFirstFamily, sourceFirstFamily) => {
-              if (!isNodeCollapsedByFamily(targetFirstFamily) && isNodeCollapsedByFamily(sourceFirstFamily)) {
+              if (!this.isNodeCollapsedByFamily(targetFirstFamily) && this.isNodeCollapsedByFamily(sourceFirstFamily)) {
                 return {
                   target: undefined,
-                  source: isNodeCollapsedByFamily(sourceFirstFamily)
+                  source: this.isNodeCollapsedByFamily(sourceFirstFamily)
                 }
               } else {
                 return false
@@ -1151,10 +1149,10 @@ export default {
             }
 
             const edgeHasCollapsedTargetandSourceFamily = (targetFirstFamily, sourceFirstFamily) => {
-              if (isNodeCollapsedByFamily(targetFirstFamily) && isNodeCollapsedByFamily(sourceFirstFamily)) {
+              if (this.isNodeCollapsedByFamily(targetFirstFamily) && this.isNodeCollapsedByFamily(sourceFirstFamily)) {
                 return {
-                  target: isNodeCollapsedByFamily(targetFirstFamily),
-                  source: isNodeCollapsedByFamily(sourceFirstFamily)
+                  target: this.isNodeCollapsedByFamily(targetFirstFamily),
+                  source: this.isNodeCollapsedByFamily(sourceFirstFamily)
                 }
               } else {
                 return false
@@ -1171,6 +1169,10 @@ export default {
                   const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
                   const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
                   const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
+
+                  console.log('-------check edge source---------')
+                  console.log(this.isNodeCollapsedByFamily(targetFamilyName))
+                  console.log(this.isNodeCollapsedByFamily(sourceFamilyName))
 
                   if (edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)) {
                     if (!this.collapseCycle.includes(sourceCycle)) {
@@ -1199,6 +1201,10 @@ export default {
                   const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
                   const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
                   const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
+
+                  console.log('-------check edge target---------')
+                  console.log(this.isNodeCollapsedByFamily(targetFamilyName))
+                  console.log(this.isNodeCollapsedByFamily(sourceFamilyName))
 
                   if (edgeHasCollapsedTargetFamilyOnly(targetFamilyName, sourceFamilyName)) {
                     if (!this.collapseCycle.includes(targetCycle)) {

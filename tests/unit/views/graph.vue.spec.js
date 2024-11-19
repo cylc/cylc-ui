@@ -180,7 +180,7 @@ describe('Graph view', () => {
     )
   })
 
-  it('it gets checks for edge by source', async () => {
+  it('it checks for edge by source', async () => {
     const wrapper = mount(Graph, {
       shallow: true,
       global: {
@@ -222,7 +222,7 @@ describe('Graph view', () => {
     )
   })
 
-  it('it gets checks for edge by target', async () => {
+  it('it checks for edge by target', async () => {
     const wrapper = mount(Graph, {
       shallow: true,
       global: {
