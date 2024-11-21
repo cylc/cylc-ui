@@ -18,23 +18,21 @@
 @use "settings";
 @use "vuetify";
 
-@import "cylc/variables";
-
-@import "cylc/markdown";
-@import "cylc/dashboard";
-@import "cylc/drawer";
-@import "cylc/gscan";
-@import "cylc/header";
-@import "cylc/job";
-@import "cylc/toolbar";
-@import "cylc/tree";
-@import "cylc/table";
-@import "cylc/user_profile";
-@import "cylc/warning";
-@import "cylc/workflow";
-@import "cylc/tooltip";
-@import "cylc/mutation_form";
-@import "cylc/menu";
+@use "cylc/markdown";
+@use "cylc/dashboard";
+@use "cylc/drawer";
+@use "cylc/gscan";
+@use "cylc/header";
+@use "cylc/job";
+@use "cylc/toolbar";
+@use "cylc/tree";
+@use "cylc/table";
+@use "cylc/user_profile";
+@use "cylc/warning";
+@use "cylc/workflow";
+@use "cylc/tooltip";
+@use "cylc/mutation_form";
+@use "cylc/menu";
 
 html {
   // Only show scrollbar when needed:

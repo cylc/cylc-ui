@@ -15,8 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use '../settings.scss';
-@import '@lumino/default-theme/style/index.css';
+@use '../settings';
 
 .workflow-panel {
   .main {

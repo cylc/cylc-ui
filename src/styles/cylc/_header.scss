@@ -15,22 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use '../settings.scss';
-@import '../util.scss';
+@use "sass:map";
+@use '../settings';
+@use '../util';
 
 .c-header {
   display: block;
 
-  @include theme-dependent(background-color, settings.$grey, 3);
+  @include util.theme-dependent(background-color, settings.$grey, 3);
 
   .c-environment-info {
     font-size: 1rem;
-    font-weight: map-get(settings.$font-weights, 'regular');
+    font-weight: map.get(settings.$font-weights, 'regular');
 
     .v-chip {
       font-size: 1rem;
-      @include theme-dependent(background-color, settings.$grey, 5, !important);
-      @include theme-dependent(border-color, settings.$grey, 1, !important);
+      @include util.theme-dependent(background-color, settings.$grey, 5, !important);
+      @include util.theme-dependent(border-color, settings.$grey, 1, !important);
     }
   }
 }
