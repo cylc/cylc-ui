@@ -38,16 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
 
-        <v-list-item
-          to="/graphiql"
-          class="v-list-item"
-        >
-          <template v-slot:prepend>
-            <v-icon style="opacity: 1;">{{ $options.icons.mdiGraphql }}</v-icon>
-          </template>
-          <v-list-item-title>GraphiQL</v-list-item-title>
-        </v-list-item>
         <v-divider class="" />
+
         <v-list-item>
           <v-list-item-title>Workflows</v-list-item-title>
         </v-list-item>
