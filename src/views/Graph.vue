@@ -694,7 +694,6 @@ export default {
       return [edges, removedEdges]
     },
     isNodeCollapsedByFamily (nodeFirstFamily) {
-      console.log(nodeFirstFamily)
       // the nodes first parent is collapsed
       const firstParent = this.collapseFamily.includes(nodeFirstFamily)
       // a family member up the tree is collapsed
@@ -863,18 +862,22 @@ export default {
           !this.collapseFamily.includes(key.node.firstParent.name)) {
           // filter child
           const nodeFormattedArray = children.filter((a) => {
-            // if its not in the list of families (unless its been collapsed)
-            const isFamily = !this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
-            // its the node has been removed/collapsed
-            const isRemoved = !removedNodes.includes(a.name)
-            // is not numeric
             const isNumeric = !parseFloat(a.name)
             let isAncestor = true
             if (isNumeric) {
               const nodeFirstParent = this.cylcTree.$index[a.id].node.firstParent.name
               isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
             }
-            return isFamily && isRemoved && isNumeric && isAncestor
+            return (
+              // the node is not a numeric value
+              isNumeric &&
+              // if its not in the list of families (unless its been collapsed)
+              (!this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)) &&
+              // the node has been removed/collapsed
+              !removedNodes.includes(a.name) &&
+              // the node doesnt have a collapsed ancestor
+              isAncestor
+            )
           }).map(a => `"${a.id}"`)
           if (nodeFormattedArray.length) {
             dotcode.push(`
@@ -984,22 +987,27 @@ export default {
               }
             })
             const nodeFormattedArray = indexSearch.filter((a) => {
-              // if its not in the list of families (unless its been collapsed)
-              const isFamily = !this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
-              // the node has been removed/collapsed
-              const isRemoved = !removedNodes.includes(a.name) || this.collapseFamily.includes(a.name)
-              // its not a node representing this cycle
-              const isThisCycle = a.name !== cycle
-              // its not a node root node
-              const isRoot = a.name !== 'root'
-              // is not numeric
               const isNumeric = !parseFloat(a.name)
+              const isRoot = a.name !== 'root'
               let isAncestor = true
-              if (isNumeric) {
+              if (isNumeric && isRoot) {
                 const nodeFirstParent = this.cylcTree.$index[a.id].node.firstParent.name
                 isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
               }
-              return isFamily && isRemoved && isThisCycle && isRoot && isNumeric && isAncestor
+              return (
+                // the node is not a numeric value
+                isNumeric &&
+                // if its not in the list of families (unless its been collapsed)
+                (!this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)) &&
+                // the node has been removed/collapsed
+                (!removedNodes.includes(a.name) || this.collapseFamily.includes(a.name)) &&
+                // its not a node representing this cycle
+                a.name !== cycle &&
+                // its not a root node
+                isRoot &&
+                // the node doesnt have a collapsed ancestor
+                isAncestor
+              )
             }).map(a => `"${a.id}"`)
             ret.push(`
               subgraph cluster_margin_family_${cycle}
@@ -1037,8 +1045,6 @@ export default {
         }
       }
       ret.push('}')
-      console.log('---------------DOT CODE---------------')
-      console.log(ret.join('\n'))
       return ret.join('\n')
     },
     hashGraph (nodes, edges) {
@@ -1176,10 +1182,6 @@ export default {
                   const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
                   const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
 
-                  console.log('-------check edge source---------')
-                  console.log(this.isNodeCollapsedByFamily(targetFamilyName))
-                  console.log(this.isNodeCollapsedByFamily(sourceFamilyName))
-
                   if (edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)) {
                     if (!this.collapseCycle.includes(sourceCycle)) {
                       const familyData = edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)
@@ -1207,10 +1209,6 @@ export default {
                   const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
                   const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
                   const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
-
-                  console.log('-------check edge target---------')
-                  console.log(this.isNodeCollapsedByFamily(targetFamilyName))
-                  console.log(this.isNodeCollapsedByFamily(sourceFamilyName))
 
                   if (edgeHasCollapsedTargetFamilyOnly(targetFamilyName, sourceFamilyName)) {
                     if (!this.collapseCycle.includes(targetCycle)) {
