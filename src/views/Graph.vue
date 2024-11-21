@@ -869,7 +869,12 @@ export default {
             const isRemoved = !removedNodes.includes(a.name)
             // is not numeric
             const isNumeric = !parseFloat(a.name)
-            return isFamily && isRemoved && isNumeric
+            let isAncestor = true
+            if (isNumeric) {
+              const nodeFirstParent = this.cylcTree.$index[a.id].node.firstParent.name
+              isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
+            }
+            return isFamily && isRemoved && isNumeric && isAncestor
           }).map(a => `"${a.id}"`)
           if (nodeFormattedArray.length) {
             dotcode.push(`
@@ -990,10 +995,9 @@ export default {
               // is not numeric
               const isNumeric = !parseFloat(a.name)
               let isAncestor = true
-              if (this.allParentLookUp[a.name]) {
-                isAncestor = !this.allParentLookUp[a.name].some(element => {
-                  return this.collapseFamily.includes(element)
-                })
+              if (isNumeric) {
+                const nodeFirstParent = this.cylcTree.$index[a.id].node.firstParent.name
+                isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
               }
               return isFamily && isRemoved && isThisCycle && isRoot && isNumeric && isAncestor
             }).map(a => `"${a.id}"`)
@@ -1033,6 +1037,8 @@ export default {
         }
       }
       ret.push('}')
+      console.log('---------------DOT CODE---------------')
+      console.log(ret.join('\n'))
       return ret.join('\n')
     },
     hashGraph (nodes, edges) {
