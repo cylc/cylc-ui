@@ -1116,7 +1116,7 @@ export default {
             // cycle collapsing takes priority of families
             // ...this node is collapsed so need to remove any of its children (nodes and edges) from the graph if it has any...
             this.allChildrenLookUp[indexSearch.id].forEach((config) => {
-              if (config.name !== indexSearch.name && config.name !== '01') {
+              if (config.name !== indexSearch.name) {
                 // REMOVE NODES
                 nodes = this.removeNode(config.name, cycle, nodes)
                 // REMOVE EDGES
@@ -1194,7 +1194,7 @@ export default {
                     if (!this.collapseCycle.includes(sourceCycle) && !this.collapseCycle.includes(targetCycle)) {
                       const familyData = edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
                       this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
-                      if (!familyData.source === familyData.target) {
+                      if (familyData.source !== familyData.target) {
                         edges.push(this.edgeTemplate)
                       }
                     }
@@ -1222,7 +1222,7 @@ export default {
                     if (!this.collapseCycle.includes(sourceCycle) && !this.collapseCycle.includes(targetCycle)) {
                       const familyData = edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
                       this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
-                      if (!familyData.source === familyData.target) {
+                      if (familyData.source !== familyData.target) {
                         edges.push(this.edgeTemplate)
                       }
                     }
@@ -1241,7 +1241,7 @@ export default {
           // ---------------REMOVE NODES BASED ON CYCLE POINT------------
           if (!this.allChildrenLookUp[indexSearch.id]) { return }
           this.allChildrenLookUp[indexSearch.id].forEach((config) => {
-            if (config.name !== indexSearch.name && config.name !== '01') {
+            if (config.name !== indexSearch.name) {
               // REMOVE NODES
               nodes = this.removeNode(config.name, cycle, nodes)
               // REMOVE EDGES
