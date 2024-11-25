@@ -855,6 +855,7 @@ export default {
           }
         })
         // filter parent
+        let openedBrackets = false
         if (
           children.length &&
           this.groupFamily.includes(key.node.name) &&
@@ -880,6 +881,7 @@ export default {
             )
           }).map(a => `"${a.id}"`)
           if (nodeFormattedArray.length) {
+            openedBrackets = true
             dotcode.push(`
             subgraph cluster_margin_family_${key.name}${key.tokens.cycle}
               {
@@ -901,22 +903,8 @@ export default {
         if (Object.keys(graphSections).includes(key)) {
           dotcode.push(graphSections[key.id])
         }
-
-        if (
-          children.length &&
-          this.groupFamily.includes(key.node.name) &&
-          !this.collapseFamily.includes(key.node.name) &&
-          !this.collapseFamily.includes(key.node.firstParent.name)) {
-          const nodeFormattedArray = children.filter((a) => {
-            // if its not in the list of families (unless its been collapsed)
-            const isFamily = !this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
-            // its the node has been removed/collapsed
-            const isRemoved = !removedNodes.has(a.name)
-            return isFamily && isRemoved
-          }).map(a => `"${a.id}"`)
-          if (nodeFormattedArray.length) {
-            dotcode.push('}}')
-          }
+        if (openedBrackets) {
+          dotcode.push('}}')
         }
       })
     },
