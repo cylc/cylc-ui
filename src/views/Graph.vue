@@ -954,9 +954,7 @@ export default {
 
       const graphSections = {}
       Object.keys(cycles).forEach((cycle, iCycle) => {
-        const indexSearch = Object.values(this.cylcTree.$index).filter((node) => {
-          return node.tokens.cycle === cycle
-        })
+        const indexSearch = cycles[cycle]
         if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
           indexSearch.forEach((task) => {
             const parent = task.node.firstParent
