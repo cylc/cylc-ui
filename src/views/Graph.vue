@@ -846,11 +846,11 @@ export default {
         const value = key
         const children = this.allChildrenLookUp[value.id]
         if (!children) { return }
-        const removedNodes = []
+        const removedNodes = new Set()
         children.forEach((a) => {
           if (this.collapseFamily.includes(a.name)) {
             a.children.forEach((child) => {
-              removedNodes.push(child.name)
+              removedNodes.add(child.name)
             })
           }
         })
@@ -874,7 +874,7 @@ export default {
               // if its not in the list of families (unless its been collapsed)
               (!this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)) &&
               // the node has been removed/collapsed
-              !removedNodes.includes(a.name) &&
+              !removedNodes.has(a.name) &&
               // the node doesnt have a collapsed ancestor
               isAncestor
             )
@@ -911,7 +911,7 @@ export default {
             // if its not in the list of families (unless its been collapsed)
             const isFamily = !this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)
             // its the node has been removed/collapsed
-            const isRemoved = !removedNodes.includes(a.name)
+            const isRemoved = !removedNodes.has(a.name)
             return isFamily && isRemoved
           }).map(a => `"${a.id}"`)
           if (nodeFormattedArray.length) {
@@ -978,11 +978,11 @@ export default {
             graphSections[task.node.firstParent.id] = section
           })
           if (this.groupCycle) {
-            const removedNodes = []
+            const removedNodes = new Set()
             indexSearch.forEach((a) => {
               if (this.collapseFamily.includes(a.name)) {
                 this.allChildrenLookUp[a.id].forEach((child) => {
-                  removedNodes.push(child.name)
+                  removedNodes.add(child.name)
                 })
               }
             })
@@ -1000,7 +1000,7 @@ export default {
                 // if its not in the list of families (unless its been collapsed)
                 (!this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)) &&
                 // the node has been removed/collapsed
-                (!removedNodes.includes(a.name) || this.collapseFamily.includes(a.name)) &&
+                (!removedNodes.has(a.name) || this.collapseFamily.includes(a.name)) &&
                 // its not a node representing this cycle
                 a.name !== cycle &&
                 // its not a root node
