@@ -957,9 +957,8 @@ export default {
         const indexSearch = cycles[cycle]
         if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
           indexSearch.forEach((task) => {
-            const parent = task.node.firstParent
-            if (!parent) { return }
-            const section = graphSections[parent.id] ??= []
+            if (!task.node.firstParent) { return }
+            const section = graphSections[task.node.firstParent.id] ??= []
             section.push(`${task.name} [title=${task.name}]`)
             graphSections[task.node.firstParent.id] = section
           })
