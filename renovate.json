@@ -52,7 +52,7 @@
       "schedule": ["on the 10th day of the month"]
     },
     {
-      "matchPackageNames": ["sass"],
+      "matchPackageNames": ["sass-embedded"],
       "schedule": ["on the 25th day of the month"]
     },
     {
