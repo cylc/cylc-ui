@@ -15,9 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use '../settings.scss';
-@import 'variables';
-
+@use '../settings';
+@use 'variables';
 
 .c-toolbar {
   $icon-size: 24px;
@@ -31,7 +30,7 @@
   }
 
   .status-msg {
-    color: $font-dimished-color;
+    color: variables.$font-dimished-color;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;

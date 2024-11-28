@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,38 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use "sass:map";
-@use '../settings';
-@use '../util';
+import { mount } from '@vue/test-utils'
+import Menu from '@/components/cylc/commandMenu/Menu.vue'
+import { Tokens } from '@/utils/uid'
 
-body.resizing-drawer {
-  cursor: ew-resize !important;
-  #c-sidebar, .v-main {
-    // Prevent Vuetify-provided transitions during resize to ensure responsiveness
-    transition: none !important;
-  }
-}
-
-#c-sidebar {
-  @include util.theme-dependent(background-color, settings.$grey, 4);
-
-  .resize-bar {
-    display: block;
-    width: 4px;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    right: 0;
-    cursor: ew-resize;
-    transition: background-color 0.2s;
-
-    &:hover, body.resizing-drawer & {
-      background: map.get(settings.$blue, "base");
-      transition-delay: 0.5s;
+describe('Command menu', () => {
+  it('has a title with the node ID excluding the username', () => {
+    const wrapper = mount(Menu, { shallow: true })
+    wrapper.vm.target = { dataset: {} }
+    const id = '~neil.armstrong/apollo//11/eagle'
+    wrapper.vm.node = {
+      id,
+      tokens: new Tokens(id)
     }
-  }
-
-  .v-navigation-drawer__append {
-    overflow: hidden;
-  }
-}
+    expect(wrapper.vm.title).toEqual('apollo//11/eagle')
+  })
+})

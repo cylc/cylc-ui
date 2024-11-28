@@ -65,8 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        type: [e2e, component]
-        browser: [firefox, chrome]
+        browser: [firefox, chrome, electron]
         os: [ubuntu-latest]
 # TODO: re-enable once macos build is stable #590
 #         include:
@@ -85,7 +84,6 @@ jobs:
           cache: yarn
 
       - name: Test (E2E)
-        if: matrix.type == 'e2e'
         uses: cypress-io/github-action@v6
         env:
           BASE_URL: http://localhost:4173/
@@ -97,7 +95,6 @@ jobs:
           browser: ${{ matrix.browser }}
 
       - name: Test (component)
-        if: matrix.type == 'component'
         uses: cypress-io/github-action@v6
         with:
           component: true
@@ -107,13 +104,13 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: 'cypress-screenshots_${{ matrix.type }}_${{ matrix.browser }}_${{ matrix.os }}'
+          name: 'cypress-screenshots_${{ matrix.browser }}_${{ matrix.os }}'
           path: tests/e2e/screenshots
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 'coverage_${{ matrix.type }}_${{ matrix.browser }}_${{ matrix.os }}'
+          name: 'coverage_${{ matrix.browser }}_${{ matrix.os }}'
           path: coverage/lcov.info
           retention-days: 4
 
@@ -129,7 +126,7 @@ jobs:
         uses: actions/download-artifact@v4
 
       - name: Codecov upload
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           name: ${{ github.workflow }}
           fail_ci_if_error: true

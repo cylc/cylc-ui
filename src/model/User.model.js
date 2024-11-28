@@ -16,7 +16,7 @@
  */
 
 export default class User {
-  constructor ({ username, owner, permissions, mode, initials, color }) {
+  constructor ({ username, owner, permissions, mode, initials, color, extensions }) {
     /**
      * @type {string}
      */
@@ -47,5 +47,9 @@ export default class User {
      * @type {string | null}
      */
     this.color = color
+    /**
+      * Jupyter server extensions.
+      */
+    this.extensions = extensions
   }
 }

@@ -95,6 +95,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               You are not running Cylc UI via Cylc Hub.
             </v-tooltip>
           </div>
+          <div>
+            <v-list-item
+              id="jupyter-lab-button"
+              :disabled="!user.extensions?.lab"
+              :href="user.extensions?.lab"
+              target="_blank"
+            >
+              <template v-slot:prepend>
+                <v-icon size="1.6em">{{ $options.icons.jupyterLogo }}</v-icon>
+              </template>
+              <v-list-item-title class="text-h6 font-weight-light">
+                Jupyter Lab
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                Open Jupyter Lab in a new browser tab.
+              </v-list-item-subtitle>
+            </v-list-item>
+            <v-tooltip :disabled="user.extensions?.lab">
+              Jupyter Lab is not installed.
+            </v-tooltip>
+          </div>
         </v-list>
       </v-col>
       <v-col md="6" lg="6">
@@ -132,6 +153,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               The complete Cylc documentation
             </v-list-item-subtitle>
           </v-list-item>
+          <v-list-item
+            to="/graphiql"
+          >
+            <template v-slot:prepend>
+              <v-icon size="1.6em">{{ $options.icons.mdiGraphql }}</v-icon>
+            </template>
+            <v-list-item-title class="text-h6 font-weight-light">
+             GraphiQL
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              Explore the Cylc GraphQL API
+            </v-list-item-subtitle>
+          </v-list-item>
         </v-list>
       </v-col>
     </v-row>
@@ -140,7 +174,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { mdiBook, mdiBookMultiple, mdiBookOpenVariant, mdiCog, mdiHubspot, mdiTable } from '@mdi/js'
+import {
+  mdiBook,
+  mdiBookMultiple,
+  mdiBookOpenVariant,
+  mdiCog,
+  mdiHubspot,
+  mdiTable,
+  mdiGraphql,
+} from '@mdi/js'
+import { jupyterLogo } from '@/utils/icons'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import { createUrl } from '@/utils/urls'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
@@ -250,6 +293,8 @@ export default {
     quickstart: mdiBook,
     workflow: mdiBookOpenVariant,
     documentation: mdiBookMultiple,
+    jupyterLogo,
+    mdiGraphql,
   },
 }
 </script>

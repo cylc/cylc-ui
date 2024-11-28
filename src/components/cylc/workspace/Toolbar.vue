@@ -108,6 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <v-select
                 v-model="nWindow"
                 :items="[0,1,2,3]"
+                :disabled="!user.permissions?.includes('setGraphWindowExtent')"
               >
                 <template #append-inner>
                   <v-progress-circular

@@ -108,7 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <v-col
           v-if="results.path"
-          class="d-flex align-center overflow-x-auto text-pre"
+          class="d-flex align-center"
         >
           <v-chip
             data-cy="connected-icon"
@@ -125,12 +125,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             {{ results.connected ? 'Connected' : 'Reconnect' }}
           </v-chip>
-          <span
+          <div
             data-cy="log-path"
-            style="padding-left: 0.5em; color: rgb(150,150,150);"
+            class="ml-2 mr-1 d-flex text-medium-emphasis text-pre overflow-x-hidden"
           >
-            {{ results.path }}
-          </span>
+            <span>{{ results.host }}:</span>
+            <span class="flex-shrink-1 text-truncate">{{ parentPath }}</span>
+            <span>/{{ file }}</span>
+          </div>
+          <CopyBtn
+            :text="results.path"
+            tooltip="Copy path"
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -172,7 +178,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { usePrevious, whenever } from '@vueuse/core'
 import { useStore } from 'vuex'
 import {
@@ -197,7 +203,8 @@ import { Tokens } from '@/utils/uid'
 import gql from 'graphql-tag'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import DeltasCallback from '@/services/callbacks'
-import debounce from 'lodash/debounce'
+import { debounce } from 'lodash-es'
+import CopyBtn from '@/components/core/CopyBtn.vue'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -267,6 +274,8 @@ class Results {
     /** @type {string[]} */
     this.lines = []
     /** @type {?string} */
+    this.host = null
+    /** @type {?string} */
     this.path = null
     /** @type {?boolean} */
     this.connected = null
@@ -300,7 +309,7 @@ class LogsCallback extends DeltasCallback {
       this.results.error = added.error
     }
     if (added.path != null) {
-      this.results.path = added.path
+      [this.results.host, this.results.path] = added.path.split(':', 2)
     }
   }
 }
@@ -314,8 +323,9 @@ export default {
   ],
 
   components: {
+    CopyBtn,
     LogComponent,
-    ViewToolbar
+    ViewToolbar,
   },
   emits: [
     updateInitialOptionsEvent,
@@ -355,6 +365,11 @@ export default {
       results.value = new Results()
     }
 
+    /** The path of the log file parent dir minus the trailing slash. */
+    const parentPath = computed(
+      () => results.value.path?.substring(0, results.value.path.length - file.value.length - 1)
+    )
+
     whenever(
       () => store.state.offline,
       () => { results.value.connected = false }
@@ -374,6 +389,7 @@ export default {
       // list of log files for the selected workflow/task/job
       logFiles: ref([]),
       results,
+      parentPath,
       relativeID,
       previousRelativeID,
       file,

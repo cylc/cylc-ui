@@ -15,38 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use "sass:map";
-@use '../settings';
-@use '../util';
+/**
+ * SVG icons for use in the Cylc UI:
+ * - Centralise icons for use throughout multiple components.
+ * - Define custom icons.
+ * - Reformat icons for other source.
+ *
+ * Note, the `<v-icon>` component expects icons in the MDI format i.e.:
+ * - A string representing an SVG path.
+ * - Consisting of a bezier curve (e.g. `M 0,0 C 1,1 Z`).
+ * - That fits within a 24px box.
+ */
 
-body.resizing-drawer {
-  cursor: ew-resize !important;
-  #c-sidebar, .v-main {
-    // Prevent Vuetify-provided transitions during resize to ensure responsiveness
-    transition: none !important;
-  }
-}
+import { Jupyter } from 'simple-icons'
 
-#c-sidebar {
-  @include util.theme-dependent(background-color, settings.$grey, 4);
-
-  .resize-bar {
-    display: block;
-    width: 4px;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    right: 0;
-    cursor: ew-resize;
-    transition: background-color 0.2s;
-
-    &:hover, body.resizing-drawer & {
-      background: map.get(settings.$blue, "base");
-      transition-delay: 0.5s;
-    }
-  }
-
-  .v-navigation-drawer__append {
-    overflow: hidden;
-  }
-}
+export const jupyterLogo = Jupyter.svg.replace(/.*d="(.*)".*/, '$1')

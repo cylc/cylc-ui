@@ -63,6 +63,7 @@ const LogData = async ({ id, file }) => {
 
 module.exports = {
   LogData,
+  logDirPath,
   jobLogLines,
   workflowLogLines,
 }

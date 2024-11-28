@@ -179,6 +179,7 @@ describe('Tree view', () => {
 
   describe('filters', () => {
     const initialNumTasks = 7
+
     it('Should filter by ID', () => {
       cy.visit('/#/tree/one')
       // Should not filter by default
@@ -207,6 +208,7 @@ describe('Tree view', () => {
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
     })
+
     it('Should filter by task states', () => {
       cy.visit('/#/tree/one')
       for (const name of [/^succeeded$/, /^failed$/, /^retrying$/]) {
@@ -230,6 +232,7 @@ describe('Tree view', () => {
       cy.get('.node-data-task:visible')
         .should('have.length', 1)
     })
+
     it('Should filter by ID and states', () => {
       cy.visit('/#/tree/one')
       cy
@@ -250,6 +253,7 @@ describe('Tree view', () => {
         .should('have.length', 1)
         .contains('retrying')
     })
+
     it('remembers job ID and file when switching between workflows', () => {
       cy.visit('/#/workspace/one')
       cy
@@ -273,6 +277,24 @@ describe('Tree view', () => {
         .get('.node-data-task:visible')
         .should('have.length', 1)
         .contains('retrying')
+    })
+
+    it('Provides a select all functionality', () => {
+      cy.visit('/#/tree/one')
+      cy
+        .get('[data-cy="filter task state"]')
+        .get('.v-list-item--active')
+        .should('have.length', 0)
+      cy
+        .get('[data-cy="filter task state"]')
+        .click()
+        .get('.v-list-item')
+        .contains('Select All')
+        .click({ force: true })
+      cy
+        .get('[data-cy="filter task state"]')
+        .get('.v-list-item--active')
+        .should('have.length', 8)
     })
   })
 
@@ -354,5 +376,14 @@ describe('Tree view', () => {
       .click({ force: true })
     cy.get('[data-cy="filter task state"]')
       .contains('.v-select__selection', '(+')
+  })
+
+  describe('Toggle families', () => {
+    it('Toggles between flat and hierarchical modes', () => {
+      cy.visit('/#/tree/one')
+      cy.get('.node-data-family').should('have.length', 3)
+      cy.get('[data-cy=toggle-families]').click()
+      cy.get('.node-data-family').should('have.length', 0)
+    })
   })
 })
