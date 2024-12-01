@@ -54,9 +54,9 @@
     "vuex": "4.1.0"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "3.13.7",
+    "@cypress/code-coverage": "3.13.8",
     "@vitejs/plugin-vue": "5.2.1",
-    "@vitest/coverage-istanbul": "2.1.5",
+    "@vitest/coverage-istanbul": "2.1.6",
     "@vue/test-utils": "2.4.6",
     "concurrently": "9.1.0",
     "cross-fetch": "4.0.0",
@@ -86,7 +86,7 @@
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "6.0.2",
     "vite-plugin-vuetify": "2.0.4",
-    "vitest": "2.1.5"
+    "vitest": "2.1.6"
   },
   "peerDependenciesMeta": {
     "react": {
