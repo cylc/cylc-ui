@@ -46,7 +46,7 @@
     "subscriptions-transport-ws": "0.11.0",
     "svg-pan-zoom": "3.6.2",
     "vue": "3.4.11",
-    "vue-i18n": "10.0.4",
+    "vue-i18n": "10.0.5",
     "vue-router": "4.5.0",
     "vue-the-mask": "0.11.1",
     "vue3-apexcharts": "1.4.1",
@@ -54,9 +54,9 @@
     "vuex": "4.1.0"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "3.13.7",
-    "@vitejs/plugin-vue": "5.2.0",
-    "@vitest/coverage-istanbul": "2.1.5",
+    "@cypress/code-coverage": "3.13.8",
+    "@vitejs/plugin-vue": "5.2.1",
+    "@vitest/coverage-istanbul": "2.1.6",
     "@vue/test-utils": "2.4.6",
     "concurrently": "9.1.0",
     "cross-fetch": "4.0.0",
@@ -70,8 +70,8 @@
     "eslint-plugin-n": "16.6.2",
     "eslint-plugin-no-only-tests": "3.3.0",
     "eslint-plugin-promise": "6.6.0",
-    "eslint-plugin-vue": "9.30.0",
-    "eslint-plugin-vuetify": "2.4.0",
+    "eslint-plugin-vue": "9.32.0",
+    "eslint-plugin-vuetify": "2.5.1",
     "express": "4.21.1",
     "express-ws": "5.0.2",
     "istanbul-lib-coverage": "3.2.2",
@@ -82,11 +82,11 @@
     "sass-embedded": "1.81.0",
     "sinon": "19.0.2",
     "standard": "17.1.2",
-    "vite": "5.4.11",
+    "vite": "6.0.1",
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "6.0.2",
     "vite-plugin-vuetify": "2.0.4",
-    "vitest": "2.1.5"
+    "vitest": "2.1.6"
   },
   "peerDependenciesMeta": {
     "react": {
