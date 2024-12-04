@@ -548,6 +548,31 @@ export default {
   },
 
   methods: {
+    /**
+     * A nested Family object
+     * @typedef {Object} Family
+     * @property {Family[]} children - Array of the familys child families
+     * @property {number} id - An integer id (required for vuetify toolbar)
+     * @property {string} name - The family name
+     * @property {boolean} disabled - used in vuetify toolbar
+     */
+    /**
+     * A node object
+     * @typedef {Object} Node
+     * @param {Array} children - The nodes immediate children
+     * @param {Undefined} familyTree - The nodes familyTree
+     * @param {String} id - The node id
+     * @param {String} name - The node name
+     * @param {Object} node - The node object (note not of type Node)
+     * @param {String} parent - The nodes immediate parent id
+     * @param {Object} tokens - The nodes token object
+     * @param {String} type - The nodes type "task" | "$namespace" | "$edge"
+     */
+    /**
+     * Get a nested object of families
+     *
+     * @returns {Family[]} array containing nested structure of families
+     */
     getTree () {
       const counter = {
         value: 0,
@@ -566,6 +591,13 @@ export default {
       const node = this.cylcTree.$index[tokens.id]
       return this.getTreeHelper(root, node, counter).children
     },
+    /**
+     * Get a nested object of families
+     * @property {Family} store - nested object of families
+     * @property {Node} node - node object
+     * @property {number} counter - counter used for index
+     * @returns {Family} nested structure of families
+     */
     getTreeHelper (store, node, counter) {
       let tempItem
       const isParent = this.collapseFamily.includes(node.name)
@@ -587,14 +619,29 @@ export default {
       }
       return store
     },
+    /**
+     * Removes a node from an array of nodes
+     * @property {String} nodeName - name of node to be removed
+     * @property {String} cyclePoint - isodatTime of node to be removed
+     * @property {Node[]} nodes - array of nodes included in the graph
+     * @returns {Node[]} updated array of nodes included in the graph (with node removed)
+     */
     removeNode (nodeName, cyclePoint, nodes) {
-      // removes a node object from the 'nodes' array
       const nodeId = this.workflows[0].tokens.clone({ cycle: cyclePoint, task: nodeName }).id
       const nodesFiltered = nodes.filter((node) => {
         return node.id !== nodeId
       })
       return nodesFiltered
     },
+    /**
+     * Creates an edge from the name and cycle of source and target nodes
+     * @property {String} edgeType - config option 'noCollapsed'|'collapsedTarget'|'collapsedSource'|'collapsedSourceAndTarget'
+     * @property {String} sourceName - name of source node
+     * @property {String} targetName - name of target node
+     * @property {String} sourceCyclePoint - isodatTime of source node
+     * @property {String} targetCyclePoint - isodatTime of target node
+     * @returns {Node} the created edge
+     */
     createEdge (edgeType, sourceName, targetName, sourceCyclePoint, targetCyclePoint) {
       // adds a new edge object to 'edges' array
       let src, tgt
@@ -637,6 +684,15 @@ export default {
         },
       }
     },
+    /**
+     * Removes an edge from an array of edges
+     * @property {String} sourceName - name of source node of edge to be removed
+     * @property {String} targetName - name of target node of edge to be removed
+     * @property {String} sourceCyclePoint - isodatTime of source node of edge to be removed
+     * @property {String} targetCyclePoint - isodatTime of target node of edge to be removed
+     * @property {Node[]} edges - array of edges included in the graph
+     * @returns {Node[]} updated array of edges included in the graph (with edge removed)
+     */
     removeEdge (sourceName, sourceCyclePoint, targetName, targetCyclePoint, edges) {
       // removes a edge object from the 'edges' array
       const edgePath = this.workflowIDs[0]
@@ -650,24 +706,14 @@ export default {
       })
       return edgesFiltered
     },
-    checkForEdgeBySource (sourceName, cyclePoint, edges) {
-      const edgePath = this.workflowIDs[0]
-      const edgeSearchTerm = `${edgePath}//${cyclePoint}/${sourceName}`
-
-      const edgeSearch = edges.filter((edge) => {
-        return edge.node.source === edgeSearchTerm
-      })
-      return edgeSearch
-    },
-    checkForEdgeByTarget (sourceName, cyclePoint, edges) {
-      const edgePath = this.workflowIDs[0]
-      const edgeSearchTerm = `${edgePath}//${cyclePoint}/${sourceName}`
-
-      const edgeSearch = edges.filter((edge) => {
-        return edge.node.target === edgeSearchTerm
-      })
-      return edgeSearch
-    },
+    /**
+     * Removes an edges from an array of edges based on source node
+     * @property {Node[]} edgeCheckSource - array of edges that have been identified as needing removal from the graph
+     * @property {String} cycle - isodatTime of edge to be removed
+     * @property {Node[]} removedEdges - array store of nodes that have been removed from the graph
+     * @property {Node[]} edges - array of edges included in the graph
+     * @returns {[Node[], Node[]]} the updated edges and removed edge store arrays
+     */
     removeEdgeBySource (edgeCheckSource, edges, removedEdges, config, cycle) {
       edgeCheckSource.forEach((edge) => {
         removedEdges.push(edge)
@@ -681,6 +727,14 @@ export default {
       })
       return [edges, removedEdges]
     },
+    /**
+     * Removes an edges from an array of edges based on target node
+     * @property {Node[]} edgeCheckTarget - array of edges that have been identified as needing removal from the graph
+     * @property {String} cycle - isodatTime of edge to be removed
+     * @property {Node[]} removedEdges - array store of nodes that have been removed from the graph
+     * @property {Node[]} edges - array of edges included in the graph
+     * @returns {[Node[], Node[]]} the updated edges and removed edge store arrays
+     */
     removeEdgeByTarget (edgeCheckTarget, edges, removedEdges) {
       edgeCheckTarget.forEach((edge) => {
         removedEdges.push(edge)
@@ -688,26 +742,67 @@ export default {
           edge.tokens.edge[0].task,
           edge.tokens.edge[0].cycle,
           edge.tokens.edge[1].task,
-          edge.tokens.edge[1].cycle, edges
+          edge.tokens.edge[1].cycle,
+          edges
         )
       })
       return [edges, removedEdges]
     },
-    isNodeCollapsedByFamily (nodeFirstFamily) {
+    /**
+     * Filters edges array based on source node
+     * @property {String} sourceName - name of source node of edge to be removed
+     * @property {String} sourceCyclePoint - isodatTime of source node of edge to be removed
+     * @property {Node[]} edges - array of edges included in the graph
+     * @returns {Node[]} the edges that match source names and cycle point
+     */
+    checkForEdgeBySource (sourceName, cyclePoint, edges) {
+      const edgePath = this.workflowIDs[0]
+      const edgeSearchTerm = `${edgePath}//${cyclePoint}/${sourceName}`
+
+      const edgeSearch = edges.filter((edge) => {
+        return edge.node.source === edgeSearchTerm
+      })
+      return edgeSearch
+    },
+    /**
+     * Filters edges array based on target node
+     * @property {String} targetName - name of target node of edge to be removed
+     * @property {String} sourceCyclePoint - isodatTime of target node of edge to be removed
+     * @property {Node[]} edges - array of edges included in the graph
+     * @returns {Node[]} the edges that match source names and cycle point
+     */
+    checkForEdgeByTarget (targetName, cyclePoint, edges) {
+      const edgePath = this.workflowIDs[0]
+      const edgeSearchTerm = `${edgePath}//${cyclePoint}/${targetName}`
+
+      const edgeSearch = edges.filter((edge) => {
+        return edge.node.target === edgeSearchTerm
+      })
+      return edgeSearch
+    },
+    /**
+     * Check if node is collapsed by family or ancestor
+     * If not collapsed return null
+     * If the node is collapsed by first parent return the parent name
+     * If the node is collapsed by an ancestor further up the tree return the name of the ancestor
+     * @property {String} nodeFirstParent - name of the first parent
+     * @returns {String | null} name of the collapsed parent/ancestor or null
+     */
+    isNodeCollapsedByFamily (nodeFirstParent) {
       // the nodes first parent is collapsed
-      const firstParent = this.collapseFamily.includes(nodeFirstFamily)
+      const firstParent = this.collapseFamily.includes(nodeFirstParent)
       // a family member up the tree is collapsed
-      const ancestor = this.allParentLookUp[nodeFirstFamily].some(element => {
+      const ancestor = this.allParentLookUp[nodeFirstParent].some(element => {
         return this.collapseFamily.includes(element)
       })
       if (firstParent && !ancestor) {
         // the node is collapsed by its first parent
-        return nodeFirstFamily
+        return nodeFirstParent
       } else if (ancestor) {
         // the node is collapsed by an ancestor
-        for (let i = this.allParentLookUp[nodeFirstFamily].length - 1; i >= 0; i--) {
-          if (this.collapseFamily.includes(this.allParentLookUp[nodeFirstFamily][i])) {
-            return this.allParentLookUp[nodeFirstFamily][i]
+        for (let i = this.allParentLookUp[nodeFirstParent].length - 1; i >= 0; i--) {
+          if (this.collapseFamily.includes(this.allParentLookUp[nodeFirstParent][i])) {
+            return this.allParentLookUp[nodeFirstParent][i]
           }
         }
       } else {
@@ -812,15 +907,7 @@ export default {
      * Get the dimensions of currently rendered graph nodes
      * (we feed these dimensions into the GraphViz dot code to improve layout).
      *
-     * @param {Object[]} nodes - The graph nodes
-     * @param {Object[]} nodes[].children - The nodes immediate children
-     * @param {undefined} nodes[].familyTree - The nodes familyTree
-     * @param {string} nodes[].id - The node id
-     * @param {string} nodes[].name - The node name
-     * @param {Object} nodes[].node - The node object
-     * @param {string} nodes[].parent - The nodes immediate parent id
-     * @param {Object} nodes[].tokens - The nodes token object
-     * @param {string} nodes[].type - The nodes type "task" | "$namespace" | "$edge"
+     * @param {Node[]} nodes - The graph nodes
      * @returns {{ [id: string]: SVGRect }} mapping of node IDs to their
      * bounding boxes.
      */
@@ -840,15 +927,7 @@ export default {
     /**
      * Get the nodes binned by cycle point
      *
-     * @param {Object[]} nodes - The graph nodes
-     * @param {Array} nodes[].children - The nodes immediate children
-     * @param {Undefined} nodes[].familyTree - The nodes familyTree
-     * @param {String} nodes[].id - The node id
-     * @param {String} nodes[].name - The node name
-     * @param {Object} nodes[].node - The node object
-     * @param {String} nodes[].parent - The nodes immediate parent id
-     * @param {Object} nodes[].tokens - The nodes token object
-     * @param {String} nodes[].type - The nodes type "task" | "$namespace" | "$edge"
+     * @param {Node[]} nodes - The graph nodes
      * @returns {{ [dateTime: string]: Object[] }=} mapping of cycle points to nodes
      */
     getCycles (nodes) {
@@ -866,15 +945,7 @@ export default {
      * The pointer grandchildren are the nodes that will be included in the grouping
      *
      * @param {String[]} dotcode - The array of strings that make up the dot code
-     * @param {Object} pointer - Node object pointer used for recursion to navigate graph tree
-     * @param {Array} pointer.children - The nodes immediate children
-     * @param {undefined} pointer.familyTree - The nodes familyTree
-     * @param {String} pointer.id - The node id
-     * @param {String} pointer.name - The node name
-     * @param {Object} pointer.node - The node object
-     * @param {String} pointer.parent - The nodes immediate parent id
-     * @param {Object} pointer.tokens - The nodes token object
-     * @param {String} pointer.type - The nodes type "task" | "family" | "$namespace" | "$edge"
+     * @param {Node} pointer - Node object pointer used for recursion to navigate graph tree
      */
     addSubgraph (dotcode, pointer) {
       // If there are no families grouped we dont need to run this code
