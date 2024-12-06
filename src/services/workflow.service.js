@@ -167,6 +167,7 @@ class WorkflowService {
       })
     } catch (err) {
       console.error(err)
+      // eslint-disable-next-line no-console
       console.log('retrying introspection query')
       await new Promise(resolve => setTimeout(resolve, 2000))
       return this.loadTypes()
@@ -242,7 +243,6 @@ class WorkflowService {
           callback.init(store, errors)
           for (const error of errors) {
             store.commit('SET_ALERT', new Alert(error[0], 'error'), { root: true })
-            // eslint-disable-next-line no-console
             console.warn(...error)
             subscription.handleViewState(ViewState.ERROR, error('Error presetting view state'))
           }
@@ -358,7 +358,6 @@ class WorkflowService {
                   new Alert(error[0], 'error'),
                   { root: true }
                 )
-                // eslint-disable-next-line no-console
                 console.warn(...error)
               }
             },
@@ -423,7 +422,6 @@ class WorkflowService {
   unsubscribe (query, uid) {
     const subscription = this.subscriptions[query.name]
     if (!subscription) {
-      // eslint-disable-next-line no-console
       console.warn(`Could not unsubscribe [${query.name}]: Not Found`)
       return
     }
