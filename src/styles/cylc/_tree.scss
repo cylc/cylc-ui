@@ -97,6 +97,7 @@ $icon-width: 1.5rem;
     .node-data {
       display: flex;
       flex-wrap: nowrap;
+      align-items: center;
       .node-summary {
         display: flex;
         flex-wrap: nowrap;
