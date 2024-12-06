@@ -15,28 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// we mount the tree to include the TreeItem component and other vuetify children components
 import { mount } from '@vue/test-utils'
 import { vi } from 'vitest'
-import { createVuetify } from 'vuetify'
 import { cloneDeep } from 'lodash'
 import Tree from '@/components/cylc/tree/Tree.vue'
 import { simpleWorkflowTree4Nodes } from './tree.data'
-import CommandMenuPlugin from '@/components/cylc/commandMenu/plugin'
-
-const vuetify = createVuetify()
 
 describe('Tree component', () => {
   const mountFunction = (props) => mount(Tree, {
-    global: {
-      plugins: [vuetify, CommandMenuPlugin],
-    },
     props: {
       workflows: cloneDeep(simpleWorkflowTree4Nodes),
       autoStripTypes: ['workflow'],
       filterState: null,
       ...props,
-    }
+    },
+    shallow: true,
   })
 
   it.each([
