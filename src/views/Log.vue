@@ -146,32 +146,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       no-gutters
       class="overflow-auto px-4 pb-2"
     >
-      <v-col>
-        <v-skeleton-loader
-          v-if="id && file && results.connected == null"
-          type="text@5"
-          class="mx-n4 align-content-start"
+    <v-col>
+      <v-skeleton-loader
+        v-if="id && file && results.connected == null"
+        type="text@5"
+        class="mx-n4 align-content-start"
+      />
+      <template v-else>
+        <log-component
+          data-cy="log-viewer"
+          :logs="results.lines"
+          :timestamps="timestamps"
+          :word-wrap="wordWrap"
+          :error="results.error"
+          :autoScroll="autoScroll"
+          @updating="updating"
         />
-        <template v-else>
-          <v-alert
-            v-if="results.error"
-            type="error"
-            variant="tonal"
-            density="comfortable"
-            class="mb-4"
-            :icon="$options.icons.mdiFileAlertOutline"
-          >
-            <span class="text-pre-wrap text-break">
-              {{ results.error }}
-            </span>
-          </v-alert>
-          <log-component
-            data-cy="log-viewer"
-            :logs="results.lines"
-            :timestamps="timestamps"
-            :word-wrap="wordWrap"
-          />
-        </template>
+      </template>
       </v-col>
     </v-row>
   </v-container>
@@ -183,11 +174,11 @@ import { usePrevious, whenever } from '@vueuse/core'
 import { useStore } from 'vuex'
 import {
   mdiClockOutline,
-  mdiFileAlertOutline,
   mdiFolderRefresh,
   mdiPowerPlugOff,
   mdiPowerPlug,
   mdiWrap,
+  mdiMouseScrollWheel,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
@@ -358,6 +349,9 @@ export default {
     /** Wrap lines? */
     const wordWrap = useInitialOptions('wordWrap', { props, emit }, false)
 
+    /** AutoScroll? */
+    const autoScroll = useInitialOptions('autoScroll', { props, emit }, false)
+
     /** The log subscription results */
     const results = ref(new Results())
 
@@ -402,6 +396,7 @@ export default {
       jobLog: ref(relativeID.value == null ? 0 : 1),
       timestamps,
       wordWrap,
+      autoScroll,
       reset,
       debouncedUpdateRelativeID,
       toolbarBtnSize,
@@ -428,6 +423,13 @@ export default {
               action: 'toggle',
               value: this.wordWrap,
               key: 'wordWrap',
+            },
+            {
+              title: 'Auto scroll',
+              icon: mdiMouseScrollWheel,
+              action: 'toggle',
+              value: this.autoScroll,
+              key: 'autoScroll',
             },
           ]
         }
@@ -568,12 +570,11 @@ export default {
       this.file = null
       // go back to last chosen job if we are switching back to job logs
       this.relativeID = val ? this.previousRelativeID : null
-    },
+    }
   },
 
   // Misc options
   icons: {
-    mdiFileAlertOutline,
     mdiFolderRefresh,
     mdiPowerPlug,
     mdiPowerPlugOff,

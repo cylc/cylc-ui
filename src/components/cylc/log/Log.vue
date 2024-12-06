@@ -16,14 +16,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <pre><span
-    v-for="(log, index) in computedLogs"
-    :key="index"
-    :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
-  >{{ log }}</span></pre>
+  <div class="log-wrapper">
+    <v-alert
+      v-if="error"
+      type="error"
+      variant="tonal"
+      density="comfortable"
+      class="mb-4"
+      :icon="$options.icons.mdiFileAlertOutline"
+    >
+      <span class="text-pre-wrap text-break">
+        {{ error }}
+      </span>
+    </v-alert>
+    <pre class="log-text"><span
+      v-for="(log, index) in computedLogs"
+      :key="index"
+      :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
+    >{{ log }}</span></pre>
+    <!-- a div to use for autoscrolling -->
+    <div ref="auto-scroll-end"></div>
+  </div>
 </template>
 
 <script>
+import {
+  mdiFileAlertOutline
+} from '@mdi/js'
 
 export default {
   name: 'LogComponent',
@@ -47,12 +66,27 @@ export default {
       required: false,
       default: false
     },
+    error: {
+      type: String,
+      required: false
+    },
+    autoScroll: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
   },
 
   data () {
     return {
-      match: ''
+      match: '',
+      ro: null
     }
+  },
+
+  mounted () {
+    this.ro = new ResizeObserver(this.onResize)
+    this.ro.observe(this.$el)
   },
 
   computed: {
@@ -70,6 +104,12 @@ export default {
   },
 
   methods: {
+    onResize () {
+      if (this.autoScroll) {
+        this.scrollToElement('auto-scroll-end', { behavior: 'smooth' })
+      }
+    },
+
     updateLogs () {
       return this.logs.map((logLine) => {
         return this.stripTimestamp(logLine)
@@ -83,7 +123,19 @@ export default {
         return this.match[1]
       }
       return logLine
-    }
+    },
+
+    scrollToElement (elementCLassName, options) {
+      if (this.$refs[elementCLassName]) {
+        this.$refs[elementCLassName].scrollIntoView(options)
+      }
+    },
+
+  },
+
+  // Misc options
+  icons: {
+    mdiFileAlertOutline
   }
 }
 
