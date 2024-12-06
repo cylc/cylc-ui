@@ -407,6 +407,10 @@ export default {
     namespaces () {
       return this.workflows[0]?.$namespaces || []
     },
+    /**
+     * Gets the Family tree as a nested object for use in vuetify toolbar drop down
+     * @returns {Family[]} array containing nested structure of families
+     */
     treeDropDownFamily () {
       if (this.familyArrayStore.length) {
         return this.getTree()
@@ -419,6 +423,10 @@ export default {
         ]
       }
     },
+    /**
+     * Gets the array of cycles for use in vuetify toolbar drop down
+     * @returns {String[]} array containing nested structure of families
+     */
     treeDropDownCycle () {
       const store = []
       this.cycleArrayStore.forEach((name, id) => {
@@ -429,6 +437,22 @@ export default {
       })
       return store
     },
+    /**
+     * Object for looking up family ancestors
+     *
+     * example return object
+     * {
+     *  FAMILY: ['PARENT_FAMILY', 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
+     *  PARENT_FAMILY: [ 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
+     *  GRANDPARENT_FAMILY: [ 'GREAT_GRANDPARENT_FAMILY', 'root' ],
+     *  GREAT_GRANDPARENT_FAMILY : ['root'],
+     *  root: []
+     * }
+     *
+     * note: object value arrays do not contain family names as strings only - not nodes
+     *
+     * @returns {Object} keys are family names, values are arrays containing all ancestors names
+     */
     allParentLookUp () {
       const lookup = {}
       this.namespaces.forEach((namespace) => {
@@ -446,6 +470,54 @@ export default {
       })
       return lookup
     },
+    /**
+     * Object for looking up children
+     *
+     * example return object
+     *
+     * {
+     *  workflow-name/run1/cycle/PARENT_FAMILY:
+     *   [
+     *     {
+     *       id: 'workflow-name/run1/cycle/PARENT_FAMILY'
+     *       name: 'PARENT_FAMILY'
+     *       children: Proxy
+     *     },
+     *     {
+     *       id: 'workflow-name/run1/cycle/FAMILY'
+     *       name: 'FAMILY'
+     *       children: Proxy
+     *     },
+     *     {
+     *       id: 'workflow-name/run1/cycle/task1'
+     *       name: 'task1'
+     *       children: Proxy
+     *     }
+     *   ]
+     *  workflow-name/run1/cycle/FAMILY:
+     *   [
+     *     {
+     *       id: 'workflow-name/run1/cycle/FAMILY'
+     *       name: 'FAMILY'
+     *       children: Proxy
+     *     },
+     *     {
+     *       id: 'workflow-name/run1/cycle/task1'
+     *       name: 'task1'
+     *       children: Proxy
+     *     }
+     *   ]
+     *  workflow-name/run1/cycle/task1:
+     *   [
+     *     {
+     *       id: 'workflow-name/run1/cycle/task1'
+     *       name: 'task1'
+     *       children: Proxy
+     *     }
+     *   ]
+     * }
+     * @returns {Object} keys are node ids, values are arrays of objects containing all children
+     */
     allChildrenLookUp () {
       const lookup = {}
       // Calculate some values for familes that we need for the toolbar
@@ -463,6 +535,10 @@ export default {
       })
       return lookup
     },
+    /**
+     * Get an array of family names
+     * @returns {String[]} array of family names
+     */
     familyArrayStore () {
       return this.namespaces.filter((family) => { return family.name !== 'root' }).map((family) => family.name)
     },
