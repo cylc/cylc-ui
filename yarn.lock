@@ -2484,6 +2484,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@yr/monotone-cubic-spline@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@yr/monotone-cubic-spline@npm:1.0.3"
+  checksum: 10c0/6098d2138dcf8b722c80f2e9167d24a064184c37fb5b3276e34c717351b496735777b71f7e69c3fa6b94f8a81eba309c4a1e37349a26b8541113b1afa84d7bf8
+  languageName: node
+  linkType: hard
+
 "abbrev@npm:^2.0.0":
   version: 2.0.0
   resolution: "abbrev@npm:2.0.0"
@@ -2615,17 +2622,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apexcharts@npm:3.41.0":
-  version: 3.41.0
-  resolution: "apexcharts@npm:3.41.0"
+"apexcharts@npm:3.54.1":
+  version: 3.54.1
+  resolution: "apexcharts@npm:3.54.1"
   dependencies:
+    "@yr/monotone-cubic-spline": "npm:^1.0.3"
     svg.draggable.js: "npm:^2.2.2"
     svg.easing.js: "npm:^2.0.0"
     svg.filter.js: "npm:^2.0.2"
     svg.pathmorphing.js: "npm:^0.1.3"
     svg.resize.js: "npm:^1.4.3"
     svg.select.js: "npm:^3.0.1"
-  checksum: 10c0/b6c5ab14d6247f81de392c71fd160a59c9467cda8e07725d6ee3e10ba8013e69807ac57e35e62f9e81e772cfe8dc928c7a76e032619f19c90ad8cb7b5dfb9eba
+  checksum: 10c0/cff45279cd5572cdf000345fe4c5ef2bd4b4a2e43a5f5e6d8a1f71f484d7a125029b0a23d37f35561de899dd315c40b8f9de7ccd0ada6275f666eabe5e238867
   languageName: node
   linkType: hard
 
@@ -3649,7 +3657,7 @@ __metadata:
     "@vitest/coverage-istanbul": "npm:2.1.6"
     "@vue/test-utils": "npm:2.4.6"
     "@vueuse/core": "npm:11.2.0"
-    apexcharts: "npm:3.41.0"
+    apexcharts: "npm:3.54.1"
     axios: "npm:1.7.8"
     concurrently: "npm:9.1.0"
     cross-fetch: "npm:4.0.0"
@@ -3697,7 +3705,7 @@ __metadata:
     vue-i18n: "npm:10.0.5"
     vue-router: "npm:4.5.0"
     vue-the-mask: "npm:0.11.1"
-    vue3-apexcharts: "npm:1.4.1"
+    vue3-apexcharts: "npm:1.8.0"
     vuetify: "npm:3.7.4"
     vuex: "npm:4.1.0"
   peerDependenciesMeta:
@@ -10604,13 +10612,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue3-apexcharts@npm:1.4.1":
-  version: 1.4.1
-  resolution: "vue3-apexcharts@npm:1.4.1"
+"vue3-apexcharts@npm:1.8.0":
+  version: 1.8.0
+  resolution: "vue3-apexcharts@npm:1.8.0"
   peerDependencies:
-    apexcharts: "> 3.0.0"
-    vue: "> 3.0.0"
-  checksum: 10c0/1fb0110811961996fb9406eac230ccf592a9038a0e9f9042b2c9589442d798f3380e91be753057317527b56fa6334d56d607158345db236bcc693b0165edf94b
+    apexcharts: ">=4.0.0"
+    vue: ">=3.0.0"
+  checksum: 10c0/dfb6e0ff7a5d21227431c52107966e6e0a17bc809d95771f62cdb7cd29039de4bae00d33e632fb9f40f19d09aacd54e07cbf1dab55e925cd206e2a7afd50e0e1
   languageName: node
   linkType: hard
 
