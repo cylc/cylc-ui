@@ -85,6 +85,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               />
             </div>
             <span class="mx-1">{{ node.name }}</span>
+            <v-chip
+              label
+              density="compact"
+              size="small"
+              class="ml-1 cursor-default"
+              :prepend-icon="$options.icons.flow"
+              :disabled="node.node.state === 'waiting' && !node.node.isQueued"
+            >
+              {{ formatFlowNums(node.node.flowNums) }}
+              <v-tooltip location="right">
+                Flows: {{ formatFlowNums(node.node.flowNums) }}
+              </v-tooltip>
+            </v-chip>
           </template>
           <template v-else-if="node.type === 'job'">
             <Job
@@ -175,13 +188,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiChevronRight } from '@mdi/js'
+import { ref } from 'vue'
+import {
+  mdiChevronRight,
+  mdiLabelOutline,
+} from '@mdi/js'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import JobDetails from '@/components/cylc/tree/JobDetails.vue'
 import {
+  formatFlowNums,
+  jobMessageOutputs,
   latestJob,
-  jobMessageOutputs
 } from '@/utils/tasks'
 import { getIndent, getNodeChildren } from '@/components/cylc/tree/util'
 
@@ -240,9 +258,10 @@ export default {
     },
   },
 
-  data () {
+  setup () {
     return {
-      manuallyExpanded: null,
+      manuallyExpanded: ref(null),
+      formatFlowNums,
     }
   },
 
@@ -319,6 +338,7 @@ export default {
 
   icons: {
     mdiChevronRight,
+    flow: mdiLabelOutline
   },
 }
 </script>
