@@ -23,6 +23,7 @@ const jobLogFiles = [
   'job.out',
   'job.err',
   'job',
+  'job-activity.log',
 ]
 
 const workflowLogFiles = [
@@ -48,7 +49,27 @@ const LogFiles = async ({ id }) => {
   }
 }
 
+/**
+ * Return a mock GQL response for job state.
+ *
+ * @param {{ id: string }} variables
+ */
+const JobState = async ({ id, workflowId }) => {
+  await simulatedDelay(500)
+  return {
+    data: {
+      jobs: [
+        {
+          id: id,
+          state: id.includes('/failed') ? 'failed' : 'succeeded'
+        }
+      ]
+    }
+  }
+}
+
 module.exports = {
+  JobState,
   LogFiles,
   deletedFile,
   jobLogFiles,

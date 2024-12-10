@@ -21,55 +21,9 @@ import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
-import Log, { getDefaultFile } from '@/views/Log.vue'
+import Log from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
-
-describe('getDefaultFile()', () => {
-  it.each([
-    {
-      files: [
-        'job.err',
-        'job.out',
-        'job',
-        'job-activity.log',
-        'job.status',
-        'zjob.out',
-      ].sort().reverse(),
-      expected: 'job.out',
-    },
-    {
-      files: [
-        'job',
-        'job-activity.log',
-        'job.status',
-        'scheduler/pluto',
-      ].sort().reverse(),
-      expected: 'job',
-    },
-    {
-      files: [
-        'scheduler/02-restart-02.log',
-        'scheduler/01-start-01.log',
-        'install/02-reinstall.log',
-        'config/flow-processed.cylc',
-        'config/20240212T155825+0000-rose-suite.conf',
-        'config/02-restart-02.cylc',
-      ].sort().reverse(),
-      expected: 'scheduler/02-restart-02.log',
-    },
-    {
-      files: [],
-      expected: null,
-    },
-    {
-      files: ['ceres', 'vesta', 'aphosis'].sort().reverse(),
-      expected: null,
-    },
-  ])('getDefaultFile($files) == $expected', ({ files, expected }) => {
-    expect(getDefaultFile(files)).toBe(expected)
-  })
-})
 
 describe('Log view', () => {
   const owner = 'svimes'
@@ -105,11 +59,82 @@ describe('Log view', () => {
       query: () => ({
         data: {
           logFiles: {
-            files: ['a.log', 'b.log']
-          }
+            files: ['a.log', 'b.log'],
+          },
+          jobs: [
+            {
+              id: 'a',
+              state: 'succeeded'
+            },
+            {
+              id: 'b',
+              state: 'succeeded'
+            },
+          ]
         }
       }),
     }
+  })
+
+  it.each([
+    {
+      files: [
+        'job.err',
+        'job.out',
+        'job',
+        'job-activity.log',
+        'job.status',
+        'zjob.out',
+      ].sort().reverse(),
+      expected: 'job.out',
+    },
+    {
+      files: [
+        'job',
+        'job-activity.log',
+        'job.status',
+        'scheduler/pluto',
+      ].sort().reverse(),
+      expected: 'job.out',
+    },
+    {
+      files: [],
+      expected: 'job.out',
+    },
+    {
+      files: ['ceres', 'vesta', 'aphosis'].sort().reverse(),
+      expected: 'job.out',
+    },
+  ])('job log getDefaultFile($files) == $expected', async ({ files, expected }) => {
+    const wrapper = mountFunction()
+    wrapper.vm.jobLog = 1
+    expect(await wrapper.vm.getDefaultFile(files)).toBe(expected)
+  })
+
+  it.each([
+    {
+      files: [
+        'scheduler/02-restart-02.log',
+        'scheduler/01-start-01.log',
+        'install/02-reinstall.log',
+        'config/flow-processed.cylc',
+        'config/20240212T155825+0000-rose-suite.conf',
+        'config/02-restart-02.cylc',
+      ].sort().reverse(),
+      expected: 'scheduler/02-restart-02.log',
+    },
+    {
+      files: [],
+      expected: null,
+    },
+    {
+      files: ['ceres', 'vesta', 'aphosis'].sort().reverse(),
+      expected: null,
+    },
+  ])('workflow log getDefaultFile($files) == $expected', async ({ files, expected }) => {
+    const wrapper = mountFunction()
+    wrapper.vm.jobLog = 0
+    expect(await wrapper.vm.getDefaultFile(files)).toBe(expected)
   })
 
   it('issues the subscription', async () => {

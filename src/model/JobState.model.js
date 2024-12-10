@@ -42,4 +42,15 @@ class JobState extends Enumify {
 
 export const JobStateNames = JobState.enumValues.map(({ name }) => name)
 
+export const JobStateLogFileMap = new Map(JobState.enumValues.map((state) => {
+  switch (state) {
+    case JobState.FAILED:
+      return [state.name, 'job.err']
+    case JobState.SUBMIT_FAILED:
+      return [state.name, 'job-activity.log']
+    default:
+      return [state.name, 'job.out']
+  }
+}))
+
 export default JobState
