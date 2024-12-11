@@ -195,7 +195,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
                 <v-select
                   v-model="defaultView"
-                  :items="Array.from($options.allViews.keys())"
+                  :items="defaultViews"
                   :prepend-inner-icon="$options.allViews.get(defaultView).icon"
                   data-cy="select-default-view"
                   :menu-props="{ 'data-cy': 'select-default-view-menu' }"
@@ -247,6 +247,16 @@ export default {
 
   computed: {
     ...mapState('user', ['user']),
+
+    defaultViews () {
+      const views = Array.from(this.$options.allViews.keys())
+
+      // filter out the "Info" view as this cannot presently be opened on the
+      // workflow itself, only jobs inside of the workflow
+      // https://github.com/cylc/cylc-ui/issues/1898 will resolve this
+      views.pop('Info')
+      return views
+    }
   },
 
   methods: {
