@@ -19,13 +19,12 @@ describe('Info View', () => {
   it('works', () => {
     // test opening the "Info View" from a task in the "Tree View"
     cy.visit('/#/workspace/one')
-      // click on task 20000102T0000Z/failed
-      .get('.c-treeitem .c-treeitem .c-treeitem:first')
-      .find('.c-task')
+      // click on task
+      .get('.node-data-task [data-c-interactive]:first')
       .click({ force: true })
 
       // from the menu select the "Info" psudo-mutation
-      .get('.v-list > :nth-child(6)')
+      .get('.v-list-item')
       .contains('Info')
       .click({ force: true })
 

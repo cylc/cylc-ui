@@ -161,23 +161,23 @@ describe('Info component', () => {
       .find('.prerequisite-alias.condition')
       .should('have.length', 6)
       .then((selector) => {
-        expect(selector[0]).to.contain('(0 & 1) | 2')
-        expect(selector[0].classList.toString()).to.equal('prerequisite-alias condition')
+        expect(selector[0].innerText).to.equal('(0 & 1) | 2')
+        expect(selector[0]).to.not.have.class('satisfied')
 
-        expect(selector[0]).to.contain('0')
-        expect(selector[1].classList.toString()).to.equal('prerequisite-alias condition satisfied')
+        expect(selector[1].innerText).to.equal('0 a:succeeded')
+        expect(selector[1]).to.have.class('satisfied')
 
-        expect(selector[0]).to.contain('1')
-        expect(selector[2].classList.toString()).to.equal('prerequisite-alias condition')
+        expect(selector[2].innerText).to.equal('1 b:custom_output')
+        expect(selector[2]).to.not.have.class('satisfied')
 
-        expect(selector[0]).to.contain('2')
-        expect(selector[3].classList.toString()).to.equal('prerequisite-alias condition')
+        expect(selector[3].innerText).to.equal('2 a:expired')
+        expect(selector[3]).to.not.have.class('satisfied')
 
-        expect(selector[0]).to.contain('0')
-        expect(selector[4].classList.toString()).to.equal('prerequisite-alias condition satisfied')
+        expect(selector[4].innerText).to.equal('0')
+        expect(selector[4]).to.have.class('satisfied')
 
-        expect(selector[0]).to.contain('0')
-        expect(selector[5].classList.toString()).to.equal('prerequisite-alias condition satisfied')
+        expect(selector[5].innerText).to.equal('0 x:succeeded')
+        expect(selector[5]).to.have.class('satisfied')
       })
 
     // the outputs panel
