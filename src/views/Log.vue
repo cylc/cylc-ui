@@ -170,6 +170,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :logs="results.lines"
             :timestamps="timestamps"
             :word-wrap="wordWrap"
+            @updating="updating"
           />
           <!-- a div to use for autoscrolling -->
           <div class="auto-scroll-end"></div>
@@ -414,7 +415,6 @@ export default {
 
   data () {
     return {
-      timer: null,
       autoScroll: false,
       controlGroups: [
         {
@@ -496,6 +496,11 @@ export default {
       if (el) {
         // Use el.scrollIntoView() to instantly scroll to the element
         el.scrollIntoView(options)
+      }
+    },
+    updating () {
+      if (this.autoScroll) {
+        this.scrollToElement('auto-scroll-end', { behavior: 'smooth' })
       }
     },
     setOption (option, value) {
@@ -582,25 +587,12 @@ export default {
     },
   },
 
-  beforeUnmount () {
-    clearInterval(this.timer)
-  },
-
   watch: {
     jobLog (val, old) {
       // reset the filename when the log mode changes
       this.file = null
       // go back to last chosen job if we are switching back to job logs
       this.relativeID = val ? this.previousRelativeID : null
-    },
-    autoScroll (val, old) {
-      if (old) {
-        clearInterval(this.timer)
-      } else {
-        this.timer = setInterval(() => {
-          this.scrollToElement('auto-scroll-end', { behavior: 'smooth' })
-        }, 1000)
-      }
     }
   },
 
