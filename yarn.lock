@@ -15,9 +15,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.11.9":
-  version: 3.11.9
-  resolution: "@apollo/client@npm:3.11.9"
+"@apollo/client@npm:3.12.4":
+  version: 3.12.4
+  resolution: "@apollo/client@npm:3.12.4"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     "@wry/caches": "npm:^1.0.0"
@@ -36,8 +36,8 @@ __metadata:
   peerDependencies:
     graphql: ^15.0.0 || ^16.0.0
     graphql-ws: ^5.5.5
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc
     subscriptions-transport-ws: ^0.9.0 || ^0.11.0
   peerDependenciesMeta:
     graphql-ws:
@@ -48,7 +48,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 10c0/6488442b79137267dab716cc486efb16f59e3d6a91d833c1eebe9c72bdbcf4650974ab788ba893c49db585a5ad258ed1f63c2ed3d025d157dfb488b387100bf1
+  checksum: 10c0/6b30b14d576230cb56b0bb9b328c81f33631640e3d97a1185a20ede7e200dfa79502d695c347920e8c930a36e50870a41f5244ae2167d0123ad56973642528e6
   languageName: node
   linkType: hard
 
@@ -3933,7 +3933,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "cylc-ui@workspace:."
   dependencies:
-    "@apollo/client": "npm:3.11.9"
+    "@apollo/client": "npm:3.12.4"
     "@cypress/code-coverage": "npm:3.13.8"
     "@hpcc-js/wasm": "npm:2.22.3"
     "@lumino/default-theme": "npm:2.1.7"
