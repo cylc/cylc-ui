@@ -24,18 +24,18 @@
     "test": "vitest run && yarn run serve cy:run"
   },
   "dependencies": {
-    "@apollo/client": "3.11.9",
+    "@apollo/client": "3.12.4",
     "@hpcc-js/wasm": "2.22.3",
     "@lumino/default-theme": "2.1.7",
     "@lumino/widgets": "2.5.0",
     "@mdi/js": "7.4.47",
-    "@vueuse/core": "11.2.0",
+    "@vueuse/core": "11.3.0",
     "apexcharts": "3.54.1",
     "axios": "1.7.8",
     "dedent": "1.5.3",
     "enumify": "2.0.0",
     "graphiql": "3.7.2",
-    "graphql": "16.9.0",
+    "graphql": "16.10.0",
     "graphql-tag": "2.12.6",
     "lodash-es": "4.17.21",
     "markdown-it": "14.1.0",
@@ -50,17 +50,17 @@
     "vue-router": "4.5.0",
     "vue-the-mask": "0.11.1",
     "vue3-apexcharts": "1.8.0",
-    "vuetify": "3.7.4",
+    "vuetify": "3.7.6",
     "vuex": "4.1.0"
   },
   "devDependencies": {
     "@cypress/code-coverage": "3.13.8",
     "@vitejs/plugin-vue": "5.2.1",
-    "@vitest/coverage-istanbul": "2.1.6",
+    "@vitest/coverage-istanbul": "2.1.8",
     "@vue/test-utils": "2.4.6",
     "concurrently": "9.1.0",
     "cross-fetch": "4.0.0",
-    "cypress": "13.16.0",
+    "cypress": "13.16.1",
     "cypress-vite": "1.5.0",
     "eslint": "8.57.1",
     "eslint-config-standard": "17.1.0",
@@ -82,11 +82,11 @@
     "sass-embedded": "1.81.0",
     "sinon": "19.0.2",
     "standard": "17.1.2",
-    "vite": "6.0.1",
+    "vite": "6.0.3",
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "6.0.2",
     "vite-plugin-vuetify": "2.0.4",
-    "vitest": "2.1.6"
+    "vitest": "2.1.8"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -99,5 +99,5 @@
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
   },
-  "packageManager": "yarn@4.5.3"
+  "packageManager": "yarn@4.6.0"
 }
