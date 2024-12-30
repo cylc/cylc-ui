@@ -16,7 +16,14 @@
  */
 
 import TaskState from '@/model/TaskState.model'
-import { dtMean, extractGroupState, latestJob, formatDuration, jobMessageOutputs } from '@/utils/tasks'
+import {
+  dtMean,
+  extractGroupState,
+  latestJob,
+  formatDuration,
+  jobMessageOutputs,
+  formatFlowNums,
+} from '@/utils/tasks'
 
 describe('tasks', () => {
   describe('extractGroupState', () => {
@@ -205,6 +212,16 @@ describe('tasks', () => {
           isMessage: true,
         },
       ])
+    })
+  })
+
+  describe('formatFlowNums', () => {
+    it.each([
+      ['[1]', '1'],
+      ['[1, 4, 8]', '1, 4, 8'],
+      ['[]', 'None'],
+    ])('formatFlowNums(%s) -> %s', (input, expected) => {
+      expect(formatFlowNums(input)).toEqual(expected)
     })
   })
 })
