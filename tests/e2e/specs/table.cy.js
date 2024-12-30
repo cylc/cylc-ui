@@ -37,14 +37,14 @@ describe('Table view', () => {
         .should('be.empty')
       cy.get('[data-cy="filter task state"] input')
         .should('have.value', '')
-      cy.get('td > div.d-flex > div')
+      cy.get('td [data-cy=task]')
         .contains('sleepy')
         .should('be.visible')
       for (const id of ['eep', '/sle']) {
         cy.get('[data-cy=filter-id] input')
           .clear()
           .type(id)
-        cy.get('td > div.d-flex > div')
+        cy.get('td [data-cy=task]')
           .contains('sleepy')
           .should('be.visible')
         cy.get('.c-table table > tbody > tr')
@@ -57,7 +57,7 @@ describe('Table view', () => {
         .get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
       cy
-        .get('td > div.d-flex > div')
+        .get('td [data-cy=task]')
         .contains(TaskState.FAILED.name)
         .should('be.visible')
       cy
@@ -68,7 +68,7 @@ describe('Table view', () => {
         .contains(TaskState.RUNNING.name)
         .click({ force: true })
       cy
-        .get('td > div.d-flex > div')
+        .get('td [data-cy=task]')
         .contains('checkpoint')
         .should('be.visible')
       cy
@@ -95,7 +95,7 @@ describe('Table view', () => {
         .get('[data-cy=filter-id] input')
         .type('eventually')
       cy
-        .get('td > div.d-flex > div')
+        .get('td [data-cy=task]')
         .contains('eventually')
         .should('be.visible')
     })
@@ -161,7 +161,7 @@ describe('State saving', () => {
       .get('[data-cy=filter-id] input:last')
       .type('eventually')
     cy
-      .get('td > div.d-flex > div')
+      .get('td [data-cy=task]')
       .contains('eventually')
       .should('be.visible')
     // Navigate away
@@ -174,7 +174,7 @@ describe('State saving', () => {
       .should('have.length', 1)
       .should('be.visible')
     cy
-      .get('td > div.d-flex > div')
+      .get('td [data-cy=task]')
       .contains('eventually')
       .should('be.visible')
   })

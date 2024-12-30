@@ -19,6 +19,13 @@ import TaskState from '@/model/TaskState.model'
 import { TASK_OUTPUT_NAMES } from '@/model/TaskOutput.model'
 
 /**
+ * @typedef TaskNode
+ * @property {string?} flowNums
+ * @property {string} state
+ * @property {boolean} isQueued
+ */
+
+/**
  * States used when the parent is stopped.
  * @type {TaskState[]}
  */
@@ -130,4 +137,25 @@ export function dtMean (taskNode) {
  */
 export function formatFlowNums (flowNums) {
   return JSON.parse(flowNums).join(', ') || 'None'
+}
+
+/**
+ * Return whether a task has concrete flow numbers
+ * (i.e. not data store "ghost tasks").
+ *
+ * @param {TaskNode} node
+ * @returns {boolean}
+ */
+export function flowNumsValid (node) {
+  return Boolean(node.flowNums && (node.state !== 'waiting' || node.isQueued))
+}
+
+/**
+ * Return whether a task is in the None flow.
+ *
+ * @param {TaskNode} node
+ * @returns {boolean}
+ */
+export function isFlowNone (node) {
+  return Boolean(node.flowNums && !JSON.parse(node.flowNums).length)
 }

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-show="!filteredOutNodesCache.get(node)"
     class="c-treeitem"
     :data-node-type="node.type"
+    :data-node-name="node.name"
   >
     <div
       class="node d-flex align-center"
@@ -64,7 +65,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             />
             <span class="mx-1">{{ node.name }}</span>
           </template>
-          <template v-else-if="node.type === 'task'">
+          <div
+            v-else-if="node.type === 'task'"
+            class="d-flex align-center"
+            :class="{ 'flow-none': isFlowNone(node.node) }"
+          >
             <!-- Task summary -->
             <Task
               v-command-menu="node"
@@ -86,21 +91,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               />
             </div>
             <span class="mx-1">{{ node.name }}</span>
-            <v-chip
-              v-if="node.node.flowNums"
-              label
-              density="compact"
-              size="small"
-              class="ml-1 cursor-default"
-              :prepend-icon="$options.icons.flow"
-              :disabled="node.node.state === 'waiting' && !node.node.isQueued"
-            >
-              {{ formatFlowNums(node.node.flowNums) }}
-              <v-tooltip location="right">
-                Flows: {{ formatFlowNums(node.node.flowNums) }}
-              </v-tooltip>
-            </v-chip>
-          </template>
+            <FlowNumsChip :node="node.node"/>
+          </div>
           <template v-else-if="node.type === 'job'">
             <Job
               v-command-menu="node"
@@ -192,24 +184,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import {
   mdiChevronRight,
-  mdiLabelOutline,
 } from '@mdi/js'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import JobDetails from '@/components/cylc/tree/JobDetails.vue'
 import {
-  formatFlowNums,
   jobMessageOutputs,
   latestJob,
+  isFlowNone,
 } from '@/utils/tasks'
 import { getIndent, getNodeChildren } from '@/components/cylc/tree/util'
 import { once } from '@/utils'
 import { useToggle } from '@vueuse/core'
+import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
 
 export default {
   name: 'TreeItem',
 
   components: {
+    FlowNumsChip,
     Task,
     Job,
     JobDetails,
@@ -270,8 +263,8 @@ export default {
 
     return {
       isExpanded,
+      isFlowNone,
       latestJob,
-      formatFlowNums,
       renderChildren,
       toggleExpandCollapse,
     }
@@ -329,7 +322,6 @@ export default {
 
   icons: {
     mdiChevronRight,
-    flow: mdiLabelOutline
   },
 }
 </script>

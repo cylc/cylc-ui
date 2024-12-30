@@ -127,7 +127,7 @@ import WorkflowState from '@/model/WorkflowState.model'
 import { eventBus } from '@/services/eventBus'
 import CopyBtn from '@/components/core/CopyBtn.vue'
 import { upperFirst } from 'lodash-es'
-import { formatFlowNums } from '@/utils/tasks'
+import { formatFlowNums, flowNumsValid } from '@/utils/tasks'
 
 export default {
   name: 'CommandMenu',
@@ -218,7 +218,7 @@ export default {
           if (this.node.node.isRunahead) {
             ret += ' (runahead)'
           }
-          if (this.node.node.flowNums) {
+          if (flowNumsValid(this.node.node)) {
             ret += ` • Flows: ${formatFlowNums(this.node.node.flowNums)}`
           }
         }

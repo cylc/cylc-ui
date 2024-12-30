@@ -59,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :task="node"
             :jobs="node.children"
             :jobTheme="jobTheme"
+            :class="{ 'flow-none': isFlowNone(node.node) }"
           />
         </g>
         <!-- the edges
@@ -128,6 +129,7 @@ import {
   mdiFileRotateRight,
   mdiVectorSelection
 } from '@mdi/js'
+import { isFlowNone } from '@/utils/tasks'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
 // the tree view uses which allows the requests to overlap with this and other
@@ -265,7 +267,8 @@ export default {
       transpose,
       autoRefresh,
       spacing,
-      groupCycle
+      groupCycle,
+      isFlowNone,
     }
   },
 
