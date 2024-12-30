@@ -35,7 +35,7 @@
     "dedent": "1.5.3",
     "enumify": "2.0.0",
     "graphiql": "3.7.2",
-    "graphql": "16.9.0",
+    "graphql": "16.10.0",
     "graphql-tag": "2.12.6",
     "lodash-es": "4.17.21",
     "markdown-it": "14.1.0",
