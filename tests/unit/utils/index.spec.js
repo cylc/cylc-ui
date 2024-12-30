@@ -16,7 +16,7 @@
  */
 
 import { nextTick, ref } from 'vue'
-import { when, until } from '@/utils/index'
+import { once, when, until } from '@/utils/index'
 
 describe.each([
   { func: when, description: 'watches source until true and then stops watching' },
@@ -40,5 +40,34 @@ describe.each([
     source.value = true
     await nextTick()
     expect(counter).toEqual(1)
+  })
+})
+
+describe('when()', () => {
+  it('works for a source that is already truthy', () => {
+    const source = ref(true)
+    let counter = 0
+    when(source, () => counter++)
+    expect(counter).toEqual(1)
+  })
+})
+
+describe('once()', () => {
+  it('returns a ref that permanently toggles to true when the source bevomes truthy', async () => {
+    const source = ref(false)
+    const myRef = once(source)
+    expect(myRef.value).toEqual(false)
+    source.value = true
+    await nextTick()
+    expect(myRef.value).toEqual(true)
+    source.value = false
+    await nextTick()
+    expect(myRef.value).toEqual(true)
+  })
+
+  it('works for a source that is already truthy', () => {
+    const source = ref(true)
+    const myRef = once(source)
+    expect(myRef.value).toEqual(true)
   })
 })

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 
 /**
  * Watch source until it is truthy, then call the callback (and stop watching).
@@ -27,6 +27,10 @@ import { watch } from 'vue'
  * @param {import('vue').WatchOptions?} options
  */
 export function when (source, callback, options = {}) {
+  if (source.value) {
+    callback()
+    return
+  }
   const unwatch = watch(
     source,
     (ready) => {
@@ -35,7 +39,7 @@ export function when (source, callback, options = {}) {
         callback()
       }
     },
-    { immediate: true, ...options }
+    options
   )
 }
 
@@ -52,4 +56,21 @@ export function until (source, options = {}) {
   return new Promise((resolve) => {
     when(source, resolve, options)
   })
+}
+
+/**
+ * Return a ref that is permanently set to true when the source becomes truthy.
+ *
+ * @param {import('vue').WatchSource} source
+ * @param {import('vue').WatchOptions?} options
+ * @returns {import('vue').Ref<boolean>}
+ */
+export function once (source, options = {}) {
+  const _ref = ref(false)
+  when(
+    source,
+    () => { _ref.value = true },
+    options
+  )
+  return _ref
 }

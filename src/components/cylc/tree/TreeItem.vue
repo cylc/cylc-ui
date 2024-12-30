@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <div
     v-show="!filteredOutNodesCache.get(node)"
     class="c-treeitem"
+    :data-node-type="node.type"
   >
     <div
       class="node d-flex align-center"
@@ -30,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="renderExpandCollapseBtn"
         aria-label="Expand/collapse"
         class="node-expand-collapse-button flex-shrink-0"
-        @click="toggleExpandCollapse"
+        @click="toggleExpandCollapse()"
         :style="expandCollapseBtnStyle"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -86,6 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
             <span class="mx-1">{{ node.name }}</span>
             <v-chip
+              v-if="node.node.flowNums"
               label
               density="compact"
               size="small"
@@ -147,7 +149,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 class="ml-2 bg-grey text-white"
                 size="small"
                 link
-                @click="toggleExpandCollapse"
+                @click="toggleExpandCollapse()"
               >
                 +{{ jobMessageOutputs.length - 5 }}
               </v-chip>
@@ -188,7 +190,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { ref } from 'vue'
 import {
   mdiChevronRight,
   mdiLabelOutline,
@@ -202,6 +203,8 @@ import {
   latestJob,
 } from '@/utils/tasks'
 import { getIndent, getNodeChildren } from '@/components/cylc/tree/util'
+import { once } from '@/utils'
+import { useToggle } from '@vueuse/core'
 
 export default {
   name: 'TreeItem',
@@ -258,28 +261,23 @@ export default {
     },
   },
 
-  setup () {
+  setup (props) {
+    const [isExpanded, toggleExpandCollapse] = useToggle(
+      props.autoExpandTypes.includes(props.node.type)
+    )
+    // Toggles to true when this.isExpanded first becomes true and doesn't get recomputed afterwards
+    const renderChildren = once(isExpanded)
+
     return {
-      manuallyExpanded: ref(null),
+      isExpanded,
+      latestJob,
       formatFlowNums,
+      renderChildren,
+      toggleExpandCollapse,
     }
   },
 
   computed: {
-    isExpanded: {
-      get () {
-        return this.manuallyExpanded ?? this.autoExpandTypes.includes(this.node.type)
-      },
-      set (value) {
-        this.manuallyExpanded = value
-      }
-    },
-
-    renderChildren () {
-      // Toggles to true when this.isExpanded first becomes true and doesn't get recomputed afterwards
-      return this.renderChildren || this.isExpanded
-    },
-
     hasChildren () {
       return (
         // "job" nodes have auto-generated "job-detail" nodes
@@ -327,13 +325,6 @@ export default {
         this.isExpanded = false // manually collapsed
       }
     }
-  },
-
-  methods: {
-    toggleExpandCollapse () {
-      this.isExpanded = !this.isExpanded
-    },
-    latestJob
   },
 
   icons: {
