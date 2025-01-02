@@ -20,7 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-for="(log, index) in computedLogs"
     :key="index"
     :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
-  >{{ log }}</span></pre>
+  >{{ log }}</span>
+  </pre>
 </template>
 
 <script>
@@ -83,6 +84,15 @@ export default {
         return this.match[1]
       }
       return logLine
+    }
+  },
+
+  watch: {
+    computedLogs: {
+      handler (val, old) {
+        this.$emit('updating')
+      },
+      deep: true
     }
   }
 }

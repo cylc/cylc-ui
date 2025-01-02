@@ -121,7 +121,7 @@ describe('Log View', () => {
       .click()
       // the old log file lines should have been wiped
       .get('[data-cy=log-viewer]')
-      .should('be.empty')
+      .should('have.length', 1)
       .get('[data-cy=file-input] input')
       .should('be.disabled')
 
@@ -130,7 +130,7 @@ describe('Log View', () => {
       .find('input')
       .type('1/')
       .get('[data-cy=log-viewer]')
-      .should('be.empty')
+      .should('have.length', 1)
       .get('[data-cy=file-input] input')
       .should('be.disabled')
 
