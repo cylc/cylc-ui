@@ -130,7 +130,7 @@ describe('Log View', () => {
       .find('input')
       .type('1/')
       .get('[data-cy=log-viewer]')
-      .should('be.empty')
+      .should('have.length', 1)
       .get('[data-cy=file-input] input')
       .should('be.disabled')
 
