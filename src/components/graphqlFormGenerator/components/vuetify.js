@@ -206,7 +206,6 @@ export function getComponentProps (gqlType, namedTypes, kinds) {
   if (ret) {
     return ret
   }
-  // eslint-disable-next-line no-console
   console.warn(`Falling back to string for type: ${name}, kind: ${kind}`)
   return namedTypes.String
 }
