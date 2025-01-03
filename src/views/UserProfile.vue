@@ -39,26 +39,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
                 <v-col cols="9">
                   <v-text-field
-                      :model-value="user.username"
-                      disabled
-                      id="profile-username"
-                      aria-disabled="true"
-                      class="text-body-1"
+                    :model-value="user.username"
+                    disabled
+                    id="profile-username"
+                    class="text-body-1"
                   />
                 </v-col>
               </v-row>
 
-              <v-row no-gutters class="align-center wrap">
+              <v-row
+                v-if="user.extensions"
+                no-gutters
+                class="align-center wrap"
+              >
                 <v-col cols="3">
                   <span>Jupyter Server Extensions</span>
                 </v-col>
                 <v-col cols="9">
                   <v-text-field
-                      :model-value="Object.keys(user.extensions).join(', ') || 'None'"
-                      disabled
-                      id="profile-extensions"
-                      aria-disabled="true"
-                      class="text-body-1"
+                    :model-value="Object.keys(user.extensions).join(', ') || 'None'"
+                    disabled
+                    id="profile-extensions"
+                    class="text-body-1"
                   />
                 </v-col>
               </v-row>
