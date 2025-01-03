@@ -37,8 +37,7 @@ describe('Tree view', () => {
     cy.get('.node-data-job:first')
       .should('not.exist')
     // Expand the first task
-    cy.get('.node-data-task:first')
-      .parents('.node')
+    cy.get('[data-node-type=task]:first')
       .find('.node-expand-collapse-button')
       .click()
     // Now the first job should be visible
@@ -59,9 +58,7 @@ describe('Tree view', () => {
   it('Displays job details when expanded', () => {
     // this is testing that there is a margin, not necessarily that the leaf node's triangle is exactly under the node
     cy.visit('/#/tree/one')
-    cy.get('.node-data-task')
-      .contains('eventually_succeeded')
-      .parents('.node')
+    cy.get('[data-node-name=eventually_succeeded]')
       .find('.node-expand-collapse-button')
       .click()
     // no jobs, and no leaves are visible initially
@@ -136,19 +133,12 @@ describe('Tree view', () => {
     cy.visit('/#/tree/one')
 
     // find the task proxy
-    cy
-      .get('.mx-1')
-      .contains('eventually_succeeded')
-      .parent()
-      .parent()
-
+    cy.get('[data-node-name=eventually_succeeded]').as('task')
       // expand the job nodes
       .find('.node-expand-collapse-button')
       .click({ force: true })
-      .parent()
-      .parent()
-
       // the jobs should be visible
+    cy.get('@task')
       .find('.node-data-job')
       .should('be.visible')
 
@@ -160,20 +150,16 @@ describe('Tree view', () => {
       // the remainder should be referenced in an overflow counter +2
       .parent()
       .contains('+2')
-      .parent()
-      .parent()
-      .parent()
-      .parent()
 
-      // expand the job details node
+    // expand the job details node
+    cy.get('@task')
+      .find('[data-node-type=job]:first').as('job')
       .find('.node-expand-collapse-button')
       .click({ force: true })
 
-      // all 7 outputs/messages should be listed in the job-details
-      .parent()
-      .parent()
-      .find('.job-details')
-      .find('.output')
+    // all 7 outputs/messages should be listed in the job-details
+    cy.get('@job')
+      .find('.job-details .output')
       .should('have.length', 7)
   })
 
@@ -193,8 +179,7 @@ describe('Tree view', () => {
         cy.get('.node-data-task:visible')
           .should('have.length.lessThan', initialNumTasks)
           .contains('succeeded')
-        cy.get('.node-data-task')
-          .contains('waiting')
+        cy.get('[data-node-name=waiting]')
           .should('not.be.visible')
       }
       // It should stop filtering when input is cleared
@@ -250,7 +235,7 @@ describe('Tree view', () => {
         .click({ force: true })
       cy
         .get('.node-data-task:visible')
-        .should('have.length', 1)
+        .should('have.length', 2)
         .contains('retrying')
     })
 
@@ -275,7 +260,7 @@ describe('Tree view', () => {
       // Navigate back
       cy.visit('/#/workspace/one')
         .get('.node-data-task:visible')
-        .should('have.length', 1)
+        .should('have.length', 2)
         .contains('retrying')
     })
 
@@ -321,9 +306,7 @@ describe('Tree view', () => {
         .click()
         .get('.node-data-job:first')
         .should('not.exist')
-      cy.get('.node-data-task')
-        .contains('failed')
-        .parents('.node')
+      cy.get('[data-node-name=failed]')
         .find('.node-expand-collapse-button')
         .click()
         .get('.node-data-job:first')

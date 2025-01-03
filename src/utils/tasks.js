@@ -19,6 +19,13 @@ import TaskState from '@/model/TaskState.model'
 import { TASK_OUTPUT_NAMES } from '@/model/TaskOutput.model'
 
 /**
+ * @typedef TaskNode
+ * @property {string?} flowNums
+ * @property {string} state
+ * @property {boolean} isQueued
+ */
+
+/**
  * States used when the parent is stopped.
  * @type {TaskState[]}
  */
@@ -40,7 +47,7 @@ const isStoppedOrderedStates = [
  * @returns {string} a valid Task State name, or empty string if not found
  * @link @see https://github.com/cylc/cylc-flow/blob/d66ae5c3ce8c749c8178d1cd53cb8c81d1560346/lib/cylc/task_state_prop.py
  */
-function extractGroupState (childStates, isStopped = false) {
+export function extractGroupState (childStates, isStopped = false) {
   const states = isStopped ? isStoppedOrderedStates : TaskState.enumValues
   for (const state of states) {
     if (childStates.includes(state.name)) {
@@ -50,7 +57,7 @@ function extractGroupState (childStates, isStopped = false) {
   return ''
 }
 
-function latestJob (taskProxy) {
+export function latestJob (taskProxy) {
   return taskProxy?.children?.[0]?.node
 }
 
@@ -67,7 +74,7 @@ function latestJob (taskProxy) {
  *   }
  * }
  */
-function jobMessageOutputs (jobNode) {
+export function jobMessageOutputs (jobNode) {
   const ret = []
 
   for (const message of jobNode.node.messages || []) {
@@ -96,7 +103,7 @@ function jobMessageOutputs (jobNode) {
  * 00:00:00, rather than undefined
  * @return {string=} Formatted duration
  */
-function formatDuration (dur, allowZeros = false) {
+export function formatDuration (dur, allowZeros = false) {
   if (dur || (dur === 0 && allowZeros === true)) {
     const seconds = dur % 60
     const minutes = ((dur - seconds) / 60) % 60
@@ -118,16 +125,37 @@ function formatDuration (dur, allowZeros = false) {
   return undefined
 }
 
-function dtMean (taskNode) {
+export function dtMean (taskNode) {
   // Convert to an easily read duration format:
   const dur = taskNode.node?.task?.meanElapsedTime
   return formatDuration(dur)
 }
 
-export {
-  extractGroupState,
-  latestJob,
-  jobMessageOutputs,
-  formatDuration,
-  dtMean
+/**
+ * @param {string} flowNums - Flow numbers in DB format
+ * @returns {string} - Flow numbers in pretty format
+ */
+export function formatFlowNums (flowNums) {
+  return JSON.parse(flowNums).join(', ') || 'None'
+}
+
+/**
+ * Return whether a task has concrete flow numbers
+ * (i.e. not data store "ghost tasks").
+ *
+ * @param {TaskNode} node
+ * @returns {boolean}
+ */
+export function flowNumsValid (node) {
+  return Boolean(node.flowNums && (node.state !== 'waiting' || node.isQueued))
+}
+
+/**
+ * Return whether a task is in the None flow.
+ *
+ * @param {TaskNode} node
+ * @returns {boolean}
+ */
+export function isFlowNone (node) {
+  return Boolean(node.flowNums && !JSON.parse(node.flowNums).length)
 }

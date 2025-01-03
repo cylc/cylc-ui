@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -116,18 +116,17 @@ describe('TreeItem component', () => {
 
   describe('children', () => {
     it.each([
-      { manuallyExpanded: null, expected: ['CyclePoint', 'TaskProxy'] },
-      { manuallyExpanded: true, expected: ['CyclePoint', 'TaskProxy', 'Job'] },
-      { manuallyExpanded: false, expected: [] },
-    ])('recursively mounts child TreeItems if expanded ($manuallyExpanded)', ({ manuallyExpanded, expected }) => {
+      { autoExpandTypes: undefined, expected: ['CyclePoint', 'TaskProxy'] },
+      { autoExpandTypes: ['workflow', 'cycle', 'family', 'task'], expected: ['CyclePoint', 'TaskProxy', 'Job'] },
+      { autoExpandTypes: ['workflow'], expected: ['CyclePoint'] },
+      { autoExpandTypes: [], expected: [] },
+    ])('recursively mounts child TreeItems ($autoExpandTypes)', ({ autoExpandTypes, expected }) => {
       const wrapper = mountFunction({
         props: {
           node: simpleWorkflowNode,
           filteredOutNodesCache: new WeakMap(),
+          autoExpandTypes,
         },
-        data: () => ({
-          manuallyExpanded,
-        }),
       })
       expect(
         wrapper.findAllComponents({ name: 'TreeItem' })
