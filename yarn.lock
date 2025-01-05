@@ -418,9 +418,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/code-coverage@npm:3.13.8":
-  version: 3.13.8
-  resolution: "@cypress/code-coverage@npm:3.13.8"
+"@cypress/code-coverage@npm:3.13.9":
+  version: 3.13.9
+  resolution: "@cypress/code-coverage@npm:3.13.9"
   dependencies:
     "@cypress/webpack-preprocessor": "npm:^6.0.0"
     chalk: "npm:4.1.2"
@@ -437,7 +437,7 @@ __metadata:
     babel-loader: ^8.3 || ^9
     cypress: "*"
     webpack: ^4 || ^5
-  checksum: 10c0/d3b4cb1648a63e8bf43933724f0cade6d33fd5a44686c8cbd391b95ca024a8e9286da49bc867aa926ebb531e847ca127fe4d2f80a2b4847b650117e11d3f97b7
+  checksum: 10c0/2876574b2e2a245ecea6245163d8999f0137cb91fe50225aff927e19791f97f95f7f4dec61276ab902a56dd834a5a48819dafff64ff98ccede6c4688bec0eaa6
   languageName: node
   linkType: hard
 
@@ -3891,12 +3891,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:4.0.0":
-  version: 4.0.0
-  resolution: "cross-fetch@npm:4.0.0"
+"cross-fetch@npm:4.1.0":
+  version: 4.1.0
+  resolution: "cross-fetch@npm:4.1.0"
   dependencies:
-    node-fetch: "npm:^2.6.12"
-  checksum: 10c0/386727dc4c6b044746086aced959ff21101abb85c43df5e1d151547ccb6f338f86dec3f28b9dbddfa8ff5b9ec8662ed2263ad4607a93b2dc354fb7fe3bbb898a
+    node-fetch: "npm:^2.7.0"
+  checksum: 10c0/628b134ea27cfcada67025afe6ef1419813fffc5d63d175553efa75a2334522d450300a0f3f0719029700da80e96327930709d5551cf6deb39bb62f1d536642e
   languageName: node
   linkType: hard
 
@@ -3941,7 +3941,7 @@ __metadata:
   resolution: "cylc-ui@workspace:."
   dependencies:
     "@apollo/client": "npm:3.12.4"
-    "@cypress/code-coverage": "npm:3.13.8"
+    "@cypress/code-coverage": "npm:3.13.9"
     "@hpcc-js/wasm": "npm:2.22.3"
     "@lumino/default-theme": "npm:2.1.7"
     "@lumino/widgets": "npm:2.5.0"
@@ -3953,9 +3953,9 @@ __metadata:
     apexcharts: "npm:3.41.0"
     axios: "npm:1.7.8"
     concurrently: "npm:9.1.2"
-    cross-fetch: "npm:4.0.0"
-    cypress: "npm:13.16.1"
-    cypress-vite: "npm:1.5.0"
+    cross-fetch: "npm:4.1.0"
+    cypress: "npm:13.17.0"
+    cypress-vite: "npm:1.6.0"
     dedent: "npm:1.5.3"
     enumify: "npm:2.0.0"
     eslint: "npm:8.57.1"
@@ -4009,21 +4009,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"cypress-vite@npm:1.5.0":
-  version: 1.5.0
-  resolution: "cypress-vite@npm:1.5.0"
+"cypress-vite@npm:1.6.0":
+  version: 1.6.0
+  resolution: "cypress-vite@npm:1.6.0"
   dependencies:
     chokidar: "npm:^3.5.3"
     debug: "npm:^4.3.4"
   peerDependencies:
-    vite: ^2.9.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
-  checksum: 10c0/a314cb6ffa080e8139e29d969190b3ca93d04c6fdc11fbf2e2e152bb91b8bebd100766653076c3d4c34f3d002e7cbc68b9bcc40ace19c557cac742cd0a987297
+    vite: ^2.9.0 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
+  checksum: 10c0/0ea175b1cd5580046f76014138cc126f757789cae59c278cec029e95d704cb1cf48c46cb28e894c97bd87a252e5156a4923bbea51d71c347ff85b96668e458a4
   languageName: node
   linkType: hard
 
-"cypress@npm:13.16.1":
-  version: 13.16.1
-  resolution: "cypress@npm:13.16.1"
+"cypress@npm:13.17.0":
+  version: 13.17.0
+  resolution: "cypress@npm:13.17.0"
   dependencies:
     "@cypress/request": "npm:^3.0.6"
     "@cypress/xvfb": "npm:^1.2.4"
@@ -4070,7 +4070,7 @@ __metadata:
     yauzl: "npm:^2.10.0"
   bin:
     cypress: bin/cypress
-  checksum: 10c0/fae077c53338778978a245998b70287e999316de391ed8b03eb39f376b836c683aebeb29396145d679e2e33ae37530a562db94cefff5e0e567cc87c027115257
+  checksum: 10c0/159ce620e32d2785082aaa1f4f30f203dcec466df4a8e80dfa299035358772fd513c35820070ba8db52e2bf58078a372ff7009068e26967f993656e7da62e221
   languageName: node
   linkType: hard
 
@@ -7907,7 +7907,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.12":
+"node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
