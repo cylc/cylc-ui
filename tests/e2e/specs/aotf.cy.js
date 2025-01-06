@@ -90,40 +90,37 @@ describe('Api On The Fly', () => {
       cy.wait(['@IntrospectQuery'])
 
       // expand the second task so that its job is visible
-      cy
-        .get(':nth-child(2) > .node > .node-data > .c-task:first')
-        .parent().parent()
-        .find('.node-expand-collapse-button:first')
+      cy.get('.c-tree [data-node-type=task]:eq(1) .node-expand-collapse-button')
         .click()
 
       const tests = [
         // cycle point
         {
-          selector: '.node-data-cycle > .c-task:first',
+          selector: '.node-data-cycle .c-task:first',
           mutationTitle: 'Cycle Mutation',
           mutationText: 'cycle'
         },
         // family
         {
-          selector: '.node-data-family > .c-task:first',
+          selector: '.node-data-family .c-task:first',
           mutationTitle: 'Namespace Mutation',
           mutationText: 'namespace'
         },
         // task
         {
-          selector: '.node-data-task > .c-task:first',
+          selector: '.node-data-task .c-task:first',
           mutationTitle: 'Namespace Mutation',
           mutationText: 'namespace'
         },
         // job (in task summary)
         {
-          selector: '.node-data-task > .node-summary > .c-job:first',
+          selector: '.node-data-task .node-summary .c-job:first',
           mutationTitle: 'Job Mutation',
           mutationText: 'job'
         },
         // job (expanded)
         {
-          selector: '.node-data-job:visible > .c-job',
+          selector: '.node-data-job:visible .c-job',
           mutationTitle: 'Job Mutation',
           mutationText: 'job'
         }
@@ -133,13 +130,11 @@ describe('Api On The Fly', () => {
         // click on a cycle point node
         cy
           .get(test.selector)
-          .should('exist')
           .should('be.visible')
           .click()
         // ensure it opens the mutation menu
         cy
           .get('.c-mutation-menu-list:first')
-          .should('exist')
           .should('be.visible')
           .within(() => {
             // ensure the mutation menu is associated with the correct object
@@ -152,13 +147,12 @@ describe('Api On The Fly', () => {
               .should('have.text', test.mutationText)
           })
         // click outside of the menu
-        cy
-          .get('.workflow-panel:first')
+        // (click on hidden element to avoid clicking on anything unexpected)
+        cy.get('noscript')
           .click({ force: true })
         // ensure that the menu has closed
-        cy
-          .get('.c-mutation-menu-list')
-          .should('not.be.visible')
+        cy.get('.c-mutation-menu-list')
+          .should('not.exist')
       }
     })
 

@@ -126,6 +126,8 @@ import { mapGetters, mapState } from 'vuex'
 import WorkflowState from '@/model/WorkflowState.model'
 import { eventBus } from '@/services/eventBus'
 import CopyBtn from '@/components/core/CopyBtn.vue'
+import { upperFirst } from 'lodash-es'
+import { formatFlowNums } from '@/utils/tasks'
 
 export default {
   name: 'CommandMenu',
@@ -199,14 +201,14 @@ export default {
         // can happen briefly when switching workflows
         return
       }
-      let ret = this.node.type
+      let ret = upperFirst(this.node.type)
       if (this.node.type !== 'cycle') {
         // NOTE: cycle point nodes don't have associated node data at present
-        ret += ' - '
+        ret += ' • '
         if (this.node.type === 'workflow') {
-          ret += this.node.node.statusMsg || this.node.node.status || 'state unknown'
+          ret += upperFirst(this.node.node.statusMsg || this.node.node.status || 'state unknown')
         } else {
-          ret += this.node.node.state || 'state unknown'
+          ret += upperFirst(this.node.node.state || 'state unknown')
           if (this.node.node.isHeld) {
             ret += ' (held)'
           }
@@ -215,6 +217,9 @@ export default {
           }
           if (this.node.node.isRunahead) {
             ret += ' (runahead)'
+          }
+          if (this.node.node.flowNums) {
+            ret += ` • Flows: ${formatFlowNums(this.node.node.flowNums)}`
           }
         }
       }

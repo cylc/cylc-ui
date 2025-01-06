@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-show="!filteredOutNodesCache.get(node)"
     class="c-treeitem"
     :data-node-type="node.type"
+    :data-node-name="node.name"
   >
     <div
       class="node d-flex align-center"
@@ -64,7 +65,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             />
             <span class="mx-1">{{ node.name }}</span>
           </template>
-          <template v-else-if="node.type === 'task'">
+          <div
+            v-else-if="node.type === 'task'"
+            class="d-flex align-center"
+            :class="{ 'flow-none': isFlowNone(node.node.flowNums) }"
+          >
             <!-- Task summary -->
             <Task
               v-command-menu="node"
@@ -86,7 +91,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               />
             </div>
             <span class="mx-1">{{ node.name }}</span>
-          </template>
+            <FlowNumsChip :flowNums="node.node.flowNums"/>
+          </div>
           <template v-else-if="node.type === 'job'">
             <Job
               v-command-menu="node"
@@ -176,22 +182,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { mdiChevronRight } from '@mdi/js'
+import {
+  mdiChevronRight,
+} from '@mdi/js'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import JobDetails from '@/components/cylc/tree/JobDetails.vue'
 import {
+  jobMessageOutputs,
   latestJob,
-  jobMessageOutputs
+  isFlowNone,
 } from '@/utils/tasks'
 import { getIndent, getNodeChildren } from '@/components/cylc/tree/util'
 import { once } from '@/utils'
 import { useToggle } from '@vueuse/core'
+import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
 
 export default {
   name: 'TreeItem',
 
   components: {
+    FlowNumsChip,
     Task,
     Job,
     JobDetails,
@@ -252,6 +263,7 @@ export default {
 
     return {
       isExpanded,
+      isFlowNone,
       latestJob,
       renderChildren,
       toggleExpandCollapse,

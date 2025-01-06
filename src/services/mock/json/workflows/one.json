@@ -115,6 +115,7 @@
           "isQueued": false,
           "isRunahead": false,
           "cyclePoint": "20000102T0000Z",
+          "flowNums": "[1]",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/root",
             "name": "root",
@@ -133,6 +134,7 @@
           "isQueued": false,
           "isRunahead": false,
           "cyclePoint": "20000102T0000Z",
+          "flowNums": "[1]",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/SUCCEEDED",
             "name": "SUCCEEDED",
@@ -152,6 +154,7 @@
           "isQueued": false,
           "isRunahead": false,
           "cyclePoint": "20000102T0000Z",
+          "flowNums": "[1,2]",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/BAD",
             "name": "BAD",
@@ -170,6 +173,7 @@
           "isQueued": false,
           "isRunahead": false,
           "cyclePoint": "20000102T0000Z",
+          "flowNums": "[1]",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/BAD",
             "name": "BAD",
@@ -183,11 +187,12 @@
         {
           "id": "~user/one//20000102T0000Z/sleepy",
           "name": "sleepy",
-          "state": "",
+          "state": "submitted",
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
           "cyclePoint": "20000102T0000Z",
+          "flowNums": "[]",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/root",
             "name": "root",
@@ -206,6 +211,7 @@
           "isQueued": false,
           "isRunahead": false,
           "cyclePoint": "20000102T0000Z",
+          "flowNums": "[1]",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/SUCCEEDED",
             "name": "SUCCEEDED",
@@ -220,11 +226,12 @@
         {
           "id": "~user/one//20000102T0000Z/waiting",
           "name": "waiting",
-          "state": "",
+          "state": "waiting",
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
           "cyclePoint": "20000102T0000Z",
+          "flowNums": "[1]",
           "firstParent": {
             "id": "~user/one//20000102T0000Z/root",
             "name": "root",
@@ -401,6 +408,20 @@
           "submittedTime": "2020-11-08T22:57:15Z",
           "finishedTime": "2020-11-08T22:57:19Z",
           "state": "succeeded",
+          "submitNum": 1
+        },
+        {
+          "id": "~user/one//20000102T0000Z/sleepy/1",
+          "firstParent": {
+            "id": "~user/one//20000102T0000Z/sleepy"
+          },
+          "jobRunnerName": "background",
+          "jobId": "61983",
+          "platform": "localhost",
+          "startedTime": "",
+          "submittedTime": "2020-11-08T23:02:09Z",
+          "finishedTime": "",
+          "state": "submitted",
           "submitNum": 1
         }
       ],
