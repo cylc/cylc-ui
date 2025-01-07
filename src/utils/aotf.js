@@ -908,7 +908,6 @@ function _mutateSuccess (message) {
 async function _mutateError (mutationName, err, response) {
   // log the response
   if (response) {
-    // eslint-disable-next-line no-console
     console.error('mutation response', response)
   }
 

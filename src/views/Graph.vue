@@ -705,7 +705,6 @@ export default {
         // something went wrong, allow the layout to retry later
         this.graphID = null
         this.updating = false
-        // eslint-disable-next-line no-console
         console.error(e)
         return
       }
