@@ -82,6 +82,7 @@ fragment TaskProxyData on TaskProxy {
     meanElapsedTime
     name
   }
+  flowNums
 }
 
 fragment JobData on Job {

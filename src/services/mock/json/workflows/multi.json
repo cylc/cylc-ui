@@ -145,6 +145,7 @@
             "isQueued": true,
             "isRunahead": false,
             "name": "foo",
+            "flowNums": "[1]",
             "task": {
               "meanElapsedTime": 0,
               "__typename": "Task"
@@ -162,6 +163,7 @@
             "isQueued": false,
             "isRunahead": false,
             "name": "foo",
+            "flowNums": "[1]",
             "task": {
               "meanElapsedTime": 0,
               "__typename": "Task"

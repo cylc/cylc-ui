@@ -149,4 +149,18 @@ describe('Graph View', () => {
     waitForGraphLayout()
     checkRememberToolbarSettings('[data-cy="control-groupCycle"]', 'not.have.class', 'have.class')
   })
+
+  describe('Flow nums', () => {
+    it('Shows flow=None task dimmed', () => {
+      cy.visit('/#/graph/one')
+      waitForGraphLayout()
+      cy.get('.c-graph-node.flow-none').as('flowNone')
+        .should('have.css', 'opacity')
+        .then((opacity) => {
+          expect(parseFloat(opacity)).to.be.closeTo(0.6, 0.2)
+        })
+      cy.get('@flowNone')
+        .contains('sleepy')
+    })
+  })
 })

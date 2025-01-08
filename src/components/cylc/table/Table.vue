@@ -28,7 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-model:items-per-page="itemsPerPage"
   >
     <template v-slot:item.task.name="{ item }">
-      <div class="d-flex align-content-center flex-nowrap">
+      <div
+        class="d-flex align-center flex-nowrap"
+        :class="{ 'flow-none': isFlowNone(item.task.node.flowNums) }"
+        :data-cy-task-name="item.task.name"
+      >
         <div style="width: 2em;">
           <Task
             v-command-menu="item.task"
@@ -44,7 +48,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :previous-state="item.previousJob?.node?.state"
           />
         </div>
-        <div>{{ item.task.name }}</div>
+        {{ item.task.name }}
+        <FlowNumsChip
+          :flowNums="item.task.node.flowNums"
+          class="ml-2"
+        />
       </div>
     </template>
     <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
@@ -110,13 +118,17 @@ import {
   datetimeComparator,
   numberComparator,
 } from '@/components/cylc/table/sort'
-import { dtMean } from '@/utils/tasks'
+import {
+  dtMean,
+  isFlowNone,
+} from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 import {
   initialOptions,
   updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
+import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
 
 export default {
   name: 'TableComponent',
@@ -132,6 +144,7 @@ export default {
   },
 
   components: {
+    FlowNumsChip,
     Task,
     Job,
   },
@@ -243,6 +256,7 @@ export default {
       icons: {
         mdiChevronDown
       },
+      isFlowNone,
       itemsPerPageOptions: [
         { value: 10, title: '10' },
         { value: 20, title: '20' },
