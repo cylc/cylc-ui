@@ -12,6 +12,28 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.7.0 (Released 2025-01-08)
+
+### 🚀 Enhancements
+
+[#1886](https://github.com/cylc/cylc-ui/pull/1886) - Added an info view to display task information including metadata, prerequisites and outputs.
+
+[#1966](https://github.com/cylc/cylc-ui/pull/1966) - Added copy-to-clipboard buttons:
+  - the ID of a workflow/task/etc from the command menu
+  - the log file path in the Log view
+
+[#1973](https://github.com/cylc/cylc-ui/pull/1973) - Add a button to toggle families on and off in the tree view.
+
+[#1974](https://github.com/cylc/cylc-ui/pull/1974) - Add a "Select All" action in the task state filter.
+
+[#1982](https://github.com/cylc/cylc-ui/pull/1982) - Add link to Jupyter Lab from the Dashboard (if Jupyter Lab is installed).
+
+[#2016](https://github.com/cylc/cylc-ui/pull/2016) - Show [flow numbers](https://cylc.github.io/cylc-doc/stable/html/glossary.html#term-flow) when applicable. Removed tasks (flow=None) are now dimmed.
+
+### 🔧 Fixes
+
+[#1979](https://github.com/cylc/cylc-ui/pull/1979) - Don't offer the n-window selection if you don't have permissions to use it.
+
 ## cylc-ui-2.6.0 (Released 2024-10-09)
 
 ### 🚀 Enhancements
