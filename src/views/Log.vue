@@ -236,6 +236,20 @@ query LogFiles($id: ID!) {
 `
 
 /**
+ * Query used to retrieve data on the Job.
+ *
+ * @type {DocumentNode}
+*/
+const JOB_QUERY = gql`
+query JobState($id: [ID!]) {
+  jobs (live: false, workflows: $id) {
+    id
+    state
+  }
+}
+`
+
+/**
  * The preferred file to start with as a list of patterns.
  * The first pattern with a matching file name will be chosen.
  */
@@ -460,18 +474,6 @@ export default {
         }
       }
       return this.workflowId
-    },
-    workflowStatus () {
-      if (this.workflows[0].node.stateTotals.failed) {
-        return 'failed'
-      }
-      if (this.workflows[0].node.stateTotals.submitted | this.workflows[0].node.stateTotals.running | this.workflows[0].node.stateTotals.succeeded) {
-        return 'succeeded'
-      }
-      if (this.workflows[0].node.stateTotals['submit-failed']) {
-        return 'submit-failed'
-      }
-      return 0
     }
   },
 
@@ -509,21 +511,43 @@ export default {
      * @param {string[]} logFiles - list of available log filenames
      * @returns {?string}
      */
-    getDefaultFile (logFiles) {
-      if (this.workflowStatus === 'failed') {
-        return 'job.err'
-      }
-      if (this.workflowStatus === 'submit-failed') {
-        return 'job-activity.log'
-      }
-
-      if (logFiles.length) {
-        // loop through all the options in LOG_FILE_DEFAULTS
-        for (const filePattern of LOG_FILE_DEFAULTS) {
-          // Loop through all the filenames e.g.[job.out, job.status]
-          for (const fileName of logFiles) {
-            if (filePattern.exec(fileName)) {
-              return fileName
+    async getDefaultFile (logFiles) {
+      if (this.jobLog === 1) {
+        // we are looking at a job log => pick the appropriate log file based on its state
+        // get the job from the store
+        let result
+        try {
+          // get the list of available log files
+          result = await this.$workflowService.apolloClient.query({
+            query: JOB_QUERY,
+            variables: { id: [this.id] }
+          })
+        } catch (err) {
+          // the query failed
+          console.warn(err)
+          return
+        }
+        if (result.data.jobs[0]) {
+          if (result.data.jobs[0].state === 'failed') {
+            return 'job.err'
+          }
+          if (result.data.jobs[0].state === 'submit-failed') {
+            return 'job-activity.log'
+          }
+          return 'job.out' // rather than undefined
+        } else {
+          return 'job.out'
+        }
+      } else {
+        // we are viewing the workflow log => always default to the latest log file
+        if (logFiles.length) {
+          // loop through all the options in LOG_FILE_DEFAULTS
+          for (const filePattern of LOG_FILE_DEFAULTS) {
+            // Loop through all the filenames e.g.[job.out, job.status]
+            for (const fileName of logFiles) {
+              if (filePattern.exec(fileName)) {
+                return fileName
+              }
             }
           }
         }
@@ -568,8 +592,8 @@ export default {
           this.file = null
         }
         if (!this.file) {
-        // set the default log file if appropriate
-          this.file = this.getDefaultFile(logFiles)
+          // set the default log file if appropriate
+          this.file = await this.getDefaultFile(logFiles)
         }
       }
 

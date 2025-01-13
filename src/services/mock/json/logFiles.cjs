@@ -23,6 +23,7 @@ const jobLogFiles = [
   'job.out',
   'job.err',
   'job',
+  'job-activity.log',
 ]
 
 const workflowLogFiles = [
