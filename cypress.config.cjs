@@ -33,14 +33,7 @@ module.exports = defineConfig({
           mode: 'development',
         })
       )
-
-      return Object.assign({}, config, {
-        fixturesFolder: 'tests/e2e/fixtures',
-        specPattern: 'tests/e2e/specs',
-        screenshotsFolder: 'tests/e2e/screenshots',
-        videosFolder: 'tests/e2e/videos',
-        supportFile: 'tests/e2e/support/index.js'
-      })
+      return config
     },
     specPattern: 'tests/e2e/specs/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'tests/e2e/support/index.js'
@@ -56,6 +49,9 @@ module.exports = defineConfig({
       require('@cypress/code-coverage/task')(on, config)
       return config
     },
+    specPattern: 'tests/component/**/*.cy.{js,jsx,ts,tsx}',
+    supportFile: 'tests/component/support/index.js',
+    indexHtmlFile: 'tests/component/support/component-index.html'
   },
 
   env: {
