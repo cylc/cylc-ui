@@ -21,7 +21,7 @@ const familyProxy = require('./familyProxy.json')
 const workflowOne = require('./workflows/one')
 const workflowsMulti = require('./workflows/multi')
 const { LogData } = require('./logData.cjs')
-const { LogFiles } = require('./logFiles.cjs')
+const { LogFiles, JobState } = require('./logFiles.cjs')
 const analysisQuery = require('./analysisQuery.json')
 const ganttQuery = require('./ganttQuery.json')
 
@@ -35,6 +35,7 @@ module.exports = {
   familyProxy,
   LogData,
   LogFiles,
+  JobState,
   App: workflows,
   Workflow ({ workflowId }) {
     return workflows.find(({ deltas }) => deltas.id === workflowId) || {}

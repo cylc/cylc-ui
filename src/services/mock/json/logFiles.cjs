@@ -49,7 +49,22 @@ const LogFiles = async ({ id }) => {
   }
 }
 
+const JobState = async ({ id }) => {
+  await simulatedDelay(500)
+  return {
+    data: {
+      jobs: [
+        {
+        id: '~user/one//1/a',
+        state: 'succeeded'
+        }
+      ]
+    }
+  }
+}
+
 module.exports = {
+  JobState,
   LogFiles,
   deletedFile,
   jobLogFiles,
