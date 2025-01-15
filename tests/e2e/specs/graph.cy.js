@@ -297,7 +297,6 @@ describe('Graph View', () => {
       .children()
       .should('have.length', 7)
       .should('be.visible')
-      
   })
 })
 
