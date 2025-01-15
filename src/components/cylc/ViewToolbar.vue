@@ -49,7 +49,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             select-strategy='independent'
             item-title="name"
             item-value="name"
-            item-props
             selectable
             open-all
           ></v-treeview>
