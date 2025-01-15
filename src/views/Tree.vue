@@ -193,6 +193,7 @@ fragment TaskProxyData on TaskProxy {
   firstParent {
     id
   }
+  flowNums
 }
 
 fragment JobData on Job {

@@ -59,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :task="node"
             :jobs="node.children"
             :jobTheme="jobTheme"
+            :class="{ 'flow-none': isFlowNone(node.node.flowNums) }"
           />
         </g>
         <!-- the edges
@@ -131,6 +132,7 @@ import {
   mdiAlphaCCircle,
   mdiAlphaFCircle
 } from '@mdi/js'
+import { isFlowNone } from '@/utils/tasks'
 
 // NOTE: Use TaskProxies not nodesEdges{nodes} to list nodes as this is what
 // the tree view uses which allows the requests to overlap with this and other
@@ -176,6 +178,7 @@ fragment TaskProxyData on TaskProxy {
   task {
     meanElapsedTime
   }
+  flowNums
 }
 
 fragment FamilyProxyData on FamilyProxy {
@@ -337,6 +340,7 @@ export default {
       groupFamily,
       collapseCycle,
       collapseFamily,
+      isFlowNone,
     }
   },
 
@@ -1570,7 +1574,6 @@ export default {
         // something went wrong, allow the layout to retry later
         this.graphID = null
         this.updating = false
-        // eslint-disable-next-line no-console
         console.error(e)
         return
       }

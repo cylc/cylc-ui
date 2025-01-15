@@ -237,7 +237,7 @@ const simpleWorkflowTree4Nodes = [
           __typename: 'CyclePoint',
           state: 'failed'
         },
-        children: [],
+        children: ['stub'],
         familyTree: [
           {
             id: '~user/workflow1//20100101T0000Z/root',

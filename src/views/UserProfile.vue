@@ -39,26 +39,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
                 <v-col cols="9">
                   <v-text-field
-                      :model-value="user.username"
-                      disabled
-                      id="profile-username"
-                      aria-disabled="true"
-                      class="text-body-1"
+                    :model-value="user.username"
+                    disabled
+                    id="profile-username"
+                    class="text-body-1"
                   />
                 </v-col>
               </v-row>
 
-              <v-row no-gutters class="align-center wrap">
+              <v-row
+                v-if="user.extensions"
+                no-gutters
+                class="align-center wrap"
+              >
                 <v-col cols="3">
                   <span>Jupyter Server Extensions</span>
                 </v-col>
                 <v-col cols="9">
                   <v-text-field
-                      :model-value="Object.keys(user.extensions).join(', ') || 'None'"
-                      disabled
-                      id="profile-extensions"
-                      aria-disabled="true"
-                      class="text-body-1"
+                    :model-value="Object.keys(user.extensions).join(', ') || 'None'"
+                    disabled
+                    id="profile-extensions"
+                    class="text-body-1"
                   />
                 </v-col>
               </v-row>
@@ -195,7 +197,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
                 <v-select
                   v-model="defaultView"
-                  :items="Array.from($options.allViews.keys())"
+                  :items="defaultViews"
                   :prepend-inner-icon="$options.allViews.get(defaultView).icon"
                   data-cy="select-default-view"
                   :menu-props="{ 'data-cy': 'select-default-view-menu' }"
@@ -247,6 +249,16 @@ export default {
 
   computed: {
     ...mapState('user', ['user']),
+
+    defaultViews () {
+      const views = Array.from(this.$options.allViews.keys())
+
+      // filter out the "Info" view as this cannot presently be opened on the
+      // workflow itself, only jobs inside of the workflow
+      // https://github.com/cylc/cylc-ui/issues/1898 will resolve this
+      views.pop('Info')
+      return views
+    }
   },
 
   methods: {

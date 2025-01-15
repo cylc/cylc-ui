@@ -37,15 +37,13 @@ describe('Table view', () => {
         .should('be.empty')
       cy.get('[data-cy="filter task state"] input')
         .should('have.value', '')
-      cy.get('td > div.d-flex > div')
-        .contains('sleepy')
+      cy.get('td [data-cy-task-name=sleepy]')
         .should('be.visible')
       for (const id of ['eep', '/sle']) {
         cy.get('[data-cy=filter-id] input')
           .clear()
           .type(id)
-        cy.get('td > div.d-flex > div')
-          .contains('sleepy')
+        cy.get('td [data-cy-task-name=sleepy]')
           .should('be.visible')
         cy.get('.c-table table > tbody > tr')
           .should('have.length', 1)
@@ -57,8 +55,7 @@ describe('Table view', () => {
         .get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
       cy
-        .get('td > div.d-flex > div')
-        .contains(TaskState.FAILED.name)
+        .get('td [data-cy-task-name=failed]')
         .should('be.visible')
       cy
         .get('[data-cy="filter task state"]')
@@ -68,8 +65,7 @@ describe('Table view', () => {
         .contains(TaskState.RUNNING.name)
         .click({ force: true })
       cy
-        .get('td > div.d-flex > div')
-        .contains('checkpoint')
+        .get('td [data-cy-task-name=checkpoint]')
         .should('be.visible')
       cy
         .get('.c-table table > tbody > tr')
@@ -95,8 +91,7 @@ describe('Table view', () => {
         .get('[data-cy=filter-id] input')
         .type('eventually')
       cy
-        .get('td > div.d-flex > div')
-        .contains('eventually')
+        .get('td [data-cy-task-name=eventually_succeeded]')
         .should('be.visible')
     })
     it('displays and sorts mean run time', () => {
@@ -161,8 +156,7 @@ describe('State saving', () => {
       .get('[data-cy=filter-id] input:last')
       .type('eventually')
     cy
-      .get('td > div.d-flex > div')
-      .contains('eventually')
+      .get('td [data-cy-task-name=eventually_succeeded]')
       .should('be.visible')
     // Navigate away
     cy.visit('/#/')
@@ -174,8 +168,7 @@ describe('State saving', () => {
       .should('have.length', 1)
       .should('be.visible')
     cy
-      .get('td > div.d-flex > div')
-      .contains('eventually')
+      .get('td [data-cy-task-name=eventually_succeeded]')
       .should('be.visible')
   })
 
@@ -209,5 +202,22 @@ describe('State saving', () => {
       .should('have.class', sortedClass)
     cy.get('@itemsPerPage').find('input')
       .should('have.value', -1)
+  })
+
+  describe('Flow nums', () => {
+    it('Only shows flow nums when not 1, and flow=None is dimmed', () => {
+      cy.visit('/#/table/one')
+      cy.get('[data-cy-task-name=failed]')
+        .find('[data-cy=flow-num-chip]')
+        .contains('1, 2')
+      cy.get('[data-cy-task-name=checkpoint]')
+        .find('[data-cy=flow-num-chip]')
+        .should('not.exist')
+      cy.get('[data-cy-task-name=sleepy].flow-none')
+        .should('have.css', 'opacity')
+        .then((opacity) => {
+          expect(parseFloat(opacity)).to.be.closeTo(0.6, 0.2)
+        })
+    })
   })
 })

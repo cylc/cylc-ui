@@ -11,7 +11,7 @@ the UI.
 
 ## Copyright and Terms of Use
 
-Copyright (C) 2018-<span actions:bind='current-year'>2024</span> NIWA & British Crown (Met Office) & Contributors.
+Copyright (C) 2018-<span actions:bind='current-year'>2025</span> NIWA & British Crown (Met Office) & Contributors.
 
 Cylc is free software: you can redistribute it and/or modify it under the terms
 of the GNU General Public License as published by the Free Software Foundation,
@@ -69,7 +69,7 @@ There are three groups of tests:
 * Unit tests
   * Simple unit tests for individual functions and classes.
   * **Framework:** [Vitest](https://vitest.dev/)
-  * **Assertions:** [Chai](https://www.chaijs.com/)/[Jest](https://jestjs.io/docs/expect)
+  * **Assertions:** [Chai](https://www.chaijs.com/)/[Vitest](https://vitest.dev/api/expect.html)
   * **Path:** `tests/unit`
   * **Command:** `yarn run test:unit` (watches by default, only re-runs changed file)
     * (To prevent watching, use `yarn vitest run`)
@@ -77,7 +77,7 @@ There are three groups of tests:
   * In-browser tests which mount a single Vue component standalone.
   * **Framework:** [Cypress](https://docs.cypress.io/guides/overview/why-cypress)
   * **Assertions:** Chai
-  * **Path:** `cypress/component`
+  * **Path:** `tests/component`
   * **Command:** `yarn run test:component`
     * (For "headless" mode use `yarn cypress run --component --config video=false`)
 * End to end tests

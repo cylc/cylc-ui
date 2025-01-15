@@ -15,11 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module.exports = {
-  plugins: [
-    'cypress'
-  ],
-  env: {
-    'cypress/globals': true
-  },
-}
+import { mount } from '@vue/test-utils'
+import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
+
+describe('Flow Nums Chip component', () => {
+  describe('showFlowNums', () => {
+    it.each([
+      [undefined, undefined],
+      ['[]', false],
+      ['[1]', false],
+      ['[2]', true],
+      ['[1, 2]', true],
+    ])('%s -> %s', (flowNums, expected) => {
+      const wrapper = mount(FlowNumsChip, {
+        props: { flowNums },
+        shallow: true,
+      })
+      expect(wrapper.vm.showFlowNums).toEqual(expected)
+    })
+  })
+})

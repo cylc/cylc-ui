@@ -30,5 +30,8 @@
     "hold"
   ],
   "mode": "single user",
-  "owner": "user"
+  "owner": "user",
+  "extensions": {
+    "cylc": "/cylc"
+  }
 }
