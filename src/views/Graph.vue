@@ -524,19 +524,31 @@ export default {
      */
     allChildrenLookUp () {
       const lookup = {}
-      // Calculate some values for familes that we need for the toolbar
-      Object.keys(this.cylcTree.$index).forEach((itemName) => {
-        // Function for getting a flattened array of the nested children
-        function childArray (a) {
-          return a.reduce(function (flattened, { id, name, children }) {
-            return flattened
-              .concat([{ id, name, children }])
-              .concat(children ? childArray(children, id) : [])
-          }, [])
+      // Function for getting a flattened array of the nested children
+      function childArray (a) {
+        return a.reduce(function (flattened, { id, name, children }) {
+          return flattened
+            .concat([{ id, name, children }])
+            .concat(children ? childArray(children, id) : [])
+        }, [])
+      }
+      for (const workflow of this.workflows) {
+        lookup[workflow.id] = childArray([workflow])
+        for (const cycle of workflow.children) {
+          lookup[cycle.id] = childArray([cycle])
+          // for tasks
+          for (const task of cycle.children) {
+            lookup[task.id] = childArray([task])
+          }
+          // for families
+          for (const family of this.familyArrayStore) {
+            const familyId = `${cycle.id}/${family}`
+            if (this.cylcTree.$index[familyId]) {
+              lookup[familyId] = childArray([this.cylcTree.$index[familyId]])
+            }
+          }
         }
-        const itemValue = this.cylcTree.$index[itemName]
-        lookup[itemName] = childArray([itemValue])
-      })
+      }
       return lookup
     },
     /**
