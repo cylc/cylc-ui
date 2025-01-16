@@ -1080,15 +1080,15 @@ export default {
           // Take our array of grandchildren and remove nodes that we dont want to include
           // nodeFormattedArray will be an array of string node ids to be included in the grouping
           const nodeFormattedArray = grandChildren.filter((grandChild) => {
-            const isNumeric = !parseFloat(grandChild.name)
+            const isNotJob = (this.cylcTree.$index[grandChild.id].type !== 'job')
             let isAncestor = true
-            if (isNumeric) {
+            if (isNotJob) {
               const nodeFirstParent = this.cylcTree.$index[grandChild.id].node.firstParent.name
               isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
             }
             return (
-              // the node is not a numeric value
-              isNumeric &&
+              // the node is not a Job
+              isNotJob &&
               // if its not in the list of families (unless its been collapsed)
               (!this.familyArrayStore.includes(grandChild.name) || this.collapseFamily.includes(grandChild.name)) &&
               // the node has been removed/collapsed
@@ -1190,16 +1190,16 @@ export default {
               }
             })
             const nodeFormattedArray = indexSearch.filter((a) => {
-              const isNumeric = !parseFloat(a.name)
+              const isNotJob = (this.cylcTree.$index[grandChild.id].type !== 'job')
               const isRoot = a.name !== 'root'
               let isAncestor = true
-              if (isNumeric && isRoot) {
+              if (isNotJob && isRoot) {
                 const nodeFirstParent = this.cylcTree.$index[a.id].node.firstParent.name
                 isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
               }
               return (
-                // the node is not a numeric value
-                isNumeric &&
+                // the node is not a job
+                isNotJob &&
                 // if its not in the list of families (unless its been collapsed)
                 (!this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)) &&
                 // the node has been removed/collapsed
