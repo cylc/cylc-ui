@@ -526,10 +526,16 @@ export default {
       const lookup = {}
       // Function for getting a flattened array of the nested children
       function childArray (a) {
-        return a.reduce(function (flattened, { id, name, children }) {
-          return flattened
-            .concat([{ id, name, children }])
-            .concat(children ? childArray(children, id) : [])
+        return a.reduce(function (flattened, { id, name, children, type }) {
+          // We dont want to include jobs so dont include children if type is "task"
+          if (type === 'task') {
+            return flattened
+              .concat([{ id, name, type }])
+          } else {
+            return flattened
+              .concat([{ id, name, children, type }])
+              .concat(children ? childArray(children, id) : [])
+          }
         }, [])
       }
       for (const workflow of this.workflows) {
@@ -1080,15 +1086,10 @@ export default {
           // Take our array of grandchildren and remove nodes that we dont want to include
           // nodeFormattedArray will be an array of string node ids to be included in the grouping
           const nodeFormattedArray = grandChildren.filter((grandChild) => {
-            const isNotJob = (this.cylcTree.$index[grandChild.id].type !== 'job')
             let isAncestor = true
-            if (isNotJob) {
-              const nodeFirstParent = this.cylcTree.$index[grandChild.id].node.firstParent.name
-              isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
-            }
+            const nodeFirstParent = this.cylcTree.$index[grandChild.id].node.firstParent.name
+            isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
             return (
-              // the node is not a Job
-              isNotJob &&
               // if its not in the list of families (unless its been collapsed)
               (!this.familyArrayStore.includes(grandChild.name) || this.collapseFamily.includes(grandChild.name)) &&
               // the node has been removed/collapsed
@@ -1190,16 +1191,13 @@ export default {
               }
             })
             const nodeFormattedArray = indexSearch.filter((a) => {
-              const isNotJob = (this.cylcTree.$index[grandChild.id].type !== 'job')
               const isRoot = a.name !== 'root'
               let isAncestor = true
-              if (isNotJob && isRoot) {
+              if (isRoot) {
                 const nodeFirstParent = this.cylcTree.$index[a.id].node.firstParent.name
                 isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
               }
               return (
-                // the node is not a job
-                isNotJob &&
                 // if its not in the list of families (unless its been collapsed)
                 (!this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)) &&
                 // the node has been removed/collapsed
