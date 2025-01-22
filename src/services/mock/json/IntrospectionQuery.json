@@ -737,7 +737,7 @@
           },
           {
             "name": "family",
-            "description": "Task definition, static fields",
+            "description": "Task definition, static fields.",
             "args": [
               {
                 "name": "stripNull",
@@ -781,7 +781,7 @@
           },
           {
             "name": "families",
-            "description": "Task definition, static fields",
+            "description": "Task definition, static fields.",
             "args": [
               {
                 "name": "workflows",
@@ -1179,7 +1179,7 @@
           },
           {
             "name": "edges",
-            "description": "Dependency edge task/family proxies",
+            "description": "Dependency edge task/family proxies.",
             "args": [
               {
                 "name": "workflows",
@@ -1631,7 +1631,7 @@
           },
           {
             "name": "extTrigger",
-            "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".\n\nValid for: paused, running workflows.",
+            "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n`$CYLC_EXT_TRIGGER_ID`.  Tasks can use\n`$CYLC_EXT_TRIGGER_ID`, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "id",
@@ -1864,7 +1864,7 @@
           },
           {
             "name": "resume",
-            "description": "Resume a paused workflow.\nSee also the opposite command `pause`.\n\nValid for: paused workflows.",
+            "description": "Resume a paused workflow.\n\nSee also the opposite command `pause`.\n\nValid for: paused workflows.",
             "args": [
               {
                 "name": "workflows",
@@ -2433,8 +2433,30 @@
           },
           {
             "name": "remove",
-            "description": "Remove one or more task instances from a running workflow.\n\nValid for: paused, running workflows.",
+            "description": "Remove one or more task instances from a running workflow.\n\nValid for: paused, running, stopping workflows.",
             "args": [
+              {
+                "name": "flow",
+                "description": "\"Remove the task(s) from the specified flows. \"\n\nThis should be a list of flow numbers, or 'all'\nto remove the task(s) from all flows they belong to\n(which is the default).",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Flow",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[\"all\"]",
+                "__typename": "__InputValue"
+              },
               {
                 "name": "tasks",
                 "description": null,
@@ -2492,11 +2514,11 @@
           },
           {
             "name": "set",
-            "description": "Set task prerequisites or outputs.\n\nBy default, set all required outputs for target task(s).\n\nSetting prerequisites contributes to the task's readiness to run.\n\nSetting outputs contributes to the task's completion, sets the\ncorresponding prerequisites of child tasks, and sets any implied\noutputs:\n - ``started`` implies ``submitted``.\n - ``succeeded`` and ``failed`` imply ``started``.\n - custom outputs and ``expired`` do not imply any other outputs.\n\nValid for: paused, running, stopping workflows.",
+            "description": "Set task prerequisites or outputs.\n\nBy default, set all required outputs for target task(s) (including\n`submitted`, `started` and `succeeded` even if they are optional).\n\nSetting prerequisites contributes to the task's readiness to run.\n\nSetting outputs contributes to the task's completion, sets the\ncorresponding prerequisites of child tasks, and sets any implied\noutputs:\n - `started` implies `submitted`.\n - `succeeded` and `failed` imply `started`.\n - custom outputs and `expired` do not imply any other outputs.\n\nValid for: paused, running, stopping workflows.",
             "args": [
               {
                 "name": "flow",
-                "description": "The flow(s) to trigger these tasks in.\n\nThis should be a list of flow numbers OR a single-item list\ncontaining one of the following three strings:\n\n* all - Triggered tasks belong to all active flows\n  (default).\n* new - Triggered tasks are assigned to a new flow.\n* none - Triggered tasks do not belong to any flow.",
+                "description": "The flow(s) to trigger/set these tasks in.\n\nBy default:\n* active tasks (n=0) keep their existing flow assignment\n* inactive tasks (n>0) get assigned all active flows\n\nOtherwise you can assign (inactive tasks) or add to (active tasks):\n* a list of integer flow numbers\nor one of the following strings:\n* all - all active flows\n* new - an automatically generated new flow number\n* none - (ignored for active tasks): no flow",
                 "type": {
                   "kind": "LIST",
                   "name": null,
@@ -2513,7 +2535,7 @@
                   },
                   "__typename": "__Type"
                 },
-                "defaultValue": "[\"all\"]",
+                "defaultValue": "[]",
                 "__typename": "__InputValue"
               },
               {
@@ -2631,11 +2653,11 @@
           },
           {
             "name": "trigger",
-            "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).\n\nValid for: paused, running workflows.",
+            "description": "Manually trigger tasks, even in a paused workflow.\n\nTriggering a task that is not yet queued will queue it.\n\nTriggering a queued task runs it immediately.\n\nCylc queues restrict the number of jobs that can be active\n(submitted or running) at once. They release tasks to run\nwhen their active task count drops below the queue limit.\nSo, depending on the active task count, you may need to\ntrigger a task twice to make it run immediately.\n\nAttempts to trigger active tasks will be ignored.\n\nValid for: paused, running workflows.",
             "args": [
               {
                 "name": "flow",
-                "description": "The flow(s) to trigger these tasks in.\n\nThis should be a list of flow numbers OR a single-item list\ncontaining one of the following three strings:\n\n* all - Triggered tasks belong to all active flows\n  (default).\n* new - Triggered tasks are assigned to a new flow.\n* none - Triggered tasks do not belong to any flow.",
+                "description": "The flow(s) to trigger/set these tasks in.\n\nBy default:\n* active tasks (n=0) keep their existing flow assignment\n* inactive tasks (n>0) get assigned all active flows\n\nOtherwise you can assign (inactive tasks) or add to (active tasks):\n* a list of integer flow numbers\nor one of the following strings:\n* all - all active flows\n* new - an automatically generated new flow number\n* none - (ignored for active tasks): no flow",
                 "type": {
                   "kind": "LIST",
                   "name": null,
@@ -2652,7 +2674,7 @@
                   },
                   "__typename": "__Type"
                 },
-                "defaultValue": "[\"all\"]",
+                "defaultValue": "[]",
                 "__typename": "__InputValue"
               },
               {
@@ -2670,6 +2692,18 @@
               {
                 "name": "flowWait",
                 "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduler to\n\"continue on\" from this task until the flow has caught up\nwith it.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "onResume",
+                "description": "If the workflow is paused, wait until it is resumed before\nrunning the triggered task(s).",
                 "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
@@ -2844,7 +2878,7 @@
                 "description": null,
                 "type": {
                   "kind": "ENUM",
-                  "name": "RunMode",
+                  "name": "WorkflowRunMode",
                   "ofType": null,
                   "__typename": "__Type"
                 },
@@ -3808,7 +3842,7 @@
             },
             {
               "name": "family",
-              "description": "Task definition, static fields",
+              "description": "Task definition, static fields.",
               "args": [
                 {
                   "name": "stripNull",
@@ -3852,7 +3886,7 @@
             },
             {
               "name": "families",
-              "description": "Task definition, static fields",
+              "description": "Task definition, static fields.",
               "args": [
                 {
                   "name": "workflows",
@@ -4250,7 +4284,7 @@
             },
             {
               "name": "edges",
-              "description": "Dependency edge task/family proxies",
+              "description": "Dependency edge task/family proxies.",
               "args": [
                 {
                   "name": "workflows",
@@ -6007,7 +6041,7 @@
               "args": [
                 {
                   "name": "states",
-                  "description": "List of task states to show",
+                  "description": "List of task states to show.",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -6138,7 +6172,7 @@
               "args": [
                 {
                   "name": "ids",
-                  "description": "Node IDs, cycle point and/or-just family/task namespace:\n    [\"1234/foo\", \"1234/FAM\", \"*/FAM\"]",
+                  "description": "Node IDs, cycle point and/or-just family/task namespace.\n\nE.g: `[\"1234/foo\", \"1234/FAM\", \"*/FAM\"]`",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -6281,7 +6315,7 @@
             },
             {
               "name": "runtime",
-              "description": "The task's `[runtime`] section.",
+              "description": "The task's `[runtime]` section.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -6735,7 +6769,7 @@
         {
           "kind": "OBJECT",
           "name": "NodeMeta",
-          "description": "\nMeta data fields,\nincluding custom fields in a generic user-defined dump",
+          "description": "Meta data fields, including custom fields in a generic user-defined\ndump.",
           "fields": [
             {
               "name": "title",
@@ -7082,6 +7116,20 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
+            },
+            {
+              "name": "runMode",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "ENUM",
+                "name": "TaskRunMode",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -7127,6 +7175,32 @@
           "inputFields": null,
           "interfaces": [],
           "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "ENUM",
+          "name": "TaskRunMode",
+          "description": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "Skip",
+              "description": "Skips job submission; sets required outputs (by default) or configured outputs.",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            },
+            {
+              "name": "Live",
+              "description": "Task will submit their configured jobs.",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            }
+          ],
           "possibleTypes": null,
           "__typename": "__Type"
         },
@@ -7358,7 +7432,7 @@
             },
             {
               "name": "depth",
-              "description": "The family inheritance depth",
+              "description": "The family inheritance depth.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -8426,7 +8500,7 @@
         {
           "kind": "OBJECT",
           "name": "Output",
-          "description": "Task output",
+          "description": "Task output.",
           "fields": [
             {
               "name": "label",
@@ -8535,7 +8609,7 @@
         {
           "kind": "OBJECT",
           "name": "XTrigger",
-          "description": "Task trigger",
+          "description": "Task trigger.",
           "fields": [
             {
               "name": "id",
@@ -8713,7 +8787,7 @@
             },
             {
               "name": "taskProxy",
-              "description": "Associated Task Proxy",
+              "description": "Associated Task Proxy.",
               "args": [
                 {
                   "name": "stripNull",
@@ -8902,7 +8976,7 @@
             },
             {
               "name": "taskProxy",
-              "description": "The TaskProxy of the task which submitted this job",
+              "description": "The TaskProxy of the task which submitted this job.",
               "args": [
                 {
                   "name": "stripNull",
@@ -9152,7 +9226,7 @@
             },
             {
               "name": "family",
-              "description": "Family definition",
+              "description": "Family definition.",
               "args": [
                 {
                   "name": "stripNull",
@@ -10211,7 +10285,7 @@
         {
           "kind": "OBJECT",
           "name": "Family",
-          "description": "Task definition, static fields",
+          "description": "Task definition, static fields.",
           "fields": [
             {
               "name": "id",
@@ -10285,7 +10359,7 @@
             },
             {
               "name": "proxies",
-              "description": "Associated cycle point proxies",
+              "description": "Associated cycle point proxies.",
               "args": [
                 {
                   "name": "ids",
@@ -10930,7 +11004,7 @@
         {
           "kind": "OBJECT",
           "name": "Edges",
-          "description": "Dependency edge",
+          "description": "Dependency edge.",
           "fields": [
             {
               "name": "edges",
@@ -11135,7 +11209,7 @@
         {
           "kind": "OBJECT",
           "name": "Edge",
-          "description": "Dependency edge task/family proxies",
+          "description": "Dependency edge task/family proxies.",
           "fields": [
             {
               "name": "id",
@@ -11343,7 +11417,7 @@
         {
           "kind": "OBJECT",
           "name": "PollTask",
-          "description": "Polling task edge",
+          "description": "Polling task edge.",
           "fields": [
             {
               "name": "localProxy",
@@ -11617,7 +11691,7 @@
             },
             {
               "name": "taskProxy",
-              "description": "The TaskProxy of the task which submitted this job",
+              "description": "The TaskProxy of the task which submitted this job.",
               "args": [
                 {
                   "name": "stripNull",
@@ -11909,7 +11983,7 @@
             },
             {
               "name": "runtime",
-              "description": "The task's `[runtime`] section.",
+              "description": "The task's `[runtime]` section.",
               "args": [],
               "type": {
                 "kind": "OBJECT",
@@ -12768,7 +12842,7 @@
             },
             {
               "name": "extTrigger",
-              "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".\n\nValid for: paused, running workflows.",
+              "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n`$CYLC_EXT_TRIGGER_ID`.  Tasks can use\n`$CYLC_EXT_TRIGGER_ID`, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "id",
@@ -13001,7 +13075,7 @@
             },
             {
               "name": "resume",
-              "description": "Resume a paused workflow.\nSee also the opposite command `pause`.\n\nValid for: paused workflows.",
+              "description": "Resume a paused workflow.\n\nSee also the opposite command `pause`.\n\nValid for: paused workflows.",
               "args": [
                 {
                   "name": "workflows",
@@ -13570,8 +13644,30 @@
             },
             {
               "name": "remove",
-              "description": "Remove one or more task instances from a running workflow.\n\nValid for: paused, running workflows.",
+              "description": "Remove one or more task instances from a running workflow.\n\nValid for: paused, running, stopping workflows.",
               "args": [
+                {
+                  "name": "flow",
+                  "description": "\"Remove the task(s) from the specified flows. \"\n\nThis should be a list of flow numbers, or 'all'\nto remove the task(s) from all flows they belong to\n(which is the default).",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "Flow",
+                        "ofType": null,
+                        "__typename": "__Type"
+                      },
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[\"all\"]",
+                  "__typename": "__InputValue"
+                },
                 {
                   "name": "tasks",
                   "description": null,
@@ -13629,11 +13725,11 @@
             },
             {
               "name": "set",
-              "description": "Set task prerequisites or outputs.\n\nBy default, set all required outputs for target task(s).\n\nSetting prerequisites contributes to the task's readiness to run.\n\nSetting outputs contributes to the task's completion, sets the\ncorresponding prerequisites of child tasks, and sets any implied\noutputs:\n - ``started`` implies ``submitted``.\n - ``succeeded`` and ``failed`` imply ``started``.\n - custom outputs and ``expired`` do not imply any other outputs.\n\nValid for: paused, running, stopping workflows.",
+              "description": "Set task prerequisites or outputs.\n\nBy default, set all required outputs for target task(s) (including\n`submitted`, `started` and `succeeded` even if they are optional).\n\nSetting prerequisites contributes to the task's readiness to run.\n\nSetting outputs contributes to the task's completion, sets the\ncorresponding prerequisites of child tasks, and sets any implied\noutputs:\n - `started` implies `submitted`.\n - `succeeded` and `failed` imply `started`.\n - custom outputs and `expired` do not imply any other outputs.\n\nValid for: paused, running, stopping workflows.",
               "args": [
                 {
                   "name": "flow",
-                  "description": "The flow(s) to trigger these tasks in.\n\nThis should be a list of flow numbers OR a single-item list\ncontaining one of the following three strings:\n\n* all - Triggered tasks belong to all active flows\n  (default).\n* new - Triggered tasks are assigned to a new flow.\n* none - Triggered tasks do not belong to any flow.",
+                  "description": "The flow(s) to trigger/set these tasks in.\n\nBy default:\n* active tasks (n=0) keep their existing flow assignment\n* inactive tasks (n>0) get assigned all active flows\n\nOtherwise you can assign (inactive tasks) or add to (active tasks):\n* a list of integer flow numbers\nor one of the following strings:\n* all - all active flows\n* new - an automatically generated new flow number\n* none - (ignored for active tasks): no flow",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -13650,7 +13746,7 @@
                     },
                     "__typename": "__Type"
                   },
-                  "defaultValue": "[\"all\"]",
+                  "defaultValue": "[]",
                   "__typename": "__InputValue"
                 },
                 {
@@ -13768,11 +13864,11 @@
             },
             {
               "name": "trigger",
-              "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).\n\nValid for: paused, running workflows.",
+              "description": "Manually trigger tasks, even in a paused workflow.\n\nTriggering a task that is not yet queued will queue it.\n\nTriggering a queued task runs it immediately.\n\nCylc queues restrict the number of jobs that can be active\n(submitted or running) at once. They release tasks to run\nwhen their active task count drops below the queue limit.\nSo, depending on the active task count, you may need to\ntrigger a task twice to make it run immediately.\n\nAttempts to trigger active tasks will be ignored.\n\nValid for: paused, running workflows.",
               "args": [
                 {
                   "name": "flow",
-                  "description": "The flow(s) to trigger these tasks in.\n\nThis should be a list of flow numbers OR a single-item list\ncontaining one of the following three strings:\n\n* all - Triggered tasks belong to all active flows\n  (default).\n* new - Triggered tasks are assigned to a new flow.\n* none - Triggered tasks do not belong to any flow.",
+                  "description": "The flow(s) to trigger/set these tasks in.\n\nBy default:\n* active tasks (n=0) keep their existing flow assignment\n* inactive tasks (n>0) get assigned all active flows\n\nOtherwise you can assign (inactive tasks) or add to (active tasks):\n* a list of integer flow numbers\nor one of the following strings:\n* all - all active flows\n* new - an automatically generated new flow number\n* none - (ignored for active tasks): no flow",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -13789,7 +13885,7 @@
                     },
                     "__typename": "__Type"
                   },
-                  "defaultValue": "[\"all\"]",
+                  "defaultValue": "[]",
                   "__typename": "__InputValue"
                 },
                 {
@@ -13807,6 +13903,18 @@
                 {
                   "name": "flowWait",
                   "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduler to\n\"continue on\" from this task until the flow has caught up\nwith it.",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "onResume",
+                  "description": "If the workflow is paused, wait until it is resumed before\nrunning the triggered task(s).",
                   "type": {
                     "kind": "SCALAR",
                     "name": "Boolean",
@@ -13981,7 +14089,7 @@
                   "description": null,
                   "type": {
                     "kind": "ENUM",
-                    "name": "RunMode",
+                    "name": "WorkflowRunMode",
                     "ofType": null,
                     "__typename": "__Type"
                   },
@@ -14321,7 +14429,7 @@
         {
           "kind": "OBJECT",
           "name": "ExtTrigger",
-          "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n``$CYLC_EXT_TRIGGER_ID``.  Tasks can use\n``$CYLC_EXT_TRIGGER_ID``, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".\n\nValid for: paused, running workflows.",
+          "description": "Report an external event message to a scheduler.\n\nExternal triggers allow any program to send\nmessages to the Cylc scheduler. Cylc can use such\nmessages as signals that an external prerequisite has\nbeen satisfied.\n\nThe ID argument should be unique to each external\ntrigger event. When an incoming message satisfies\na task's external trigger the message ID is broadcast\nto all downstream tasks in the cycle point as\n`$CYLC_EXT_TRIGGER_ID`.  Tasks can use\n`$CYLC_EXT_TRIGGER_ID`, for example,  to\nidentify a new data file that the external\ntriggering system is responding to.\n\nUse the retry options in case the target workflow is down or out of\ncontact.\n\nNote: To manually trigger a task use \"Trigger\" not\n\"ExtTrigger\".\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -14425,7 +14533,7 @@
         {
           "kind": "OBJECT",
           "name": "Resume",
-          "description": "Resume a paused workflow.\nSee also the opposite command `pause`.\n\nValid for: paused workflows.",
+          "description": "Resume a paused workflow.\n\nSee also the opposite command `pause`.\n\nValid for: paused workflows.",
           "fields": [
             {
               "name": "result",
@@ -14812,33 +14920,7 @@
         {
           "kind": "OBJECT",
           "name": "Remove",
-          "description": "Remove one or more task instances from a running workflow.\n\nValid for: paused, running workflows.",
-          "fields": [
-            {
-              "name": "result",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "GenericScalar",
-                "ofType": null,
-                "__typename": "__Type"
-              },
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__Field"
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "enumValues": null,
-          "possibleTypes": null,
-          "__typename": "__Type"
-        },
-        {
-          "kind": "OBJECT",
-          "name": "SetPrereqsAndOutputs",
-          "description": "Set task prerequisites or outputs.\n\nBy default, set all required outputs for target task(s).\n\nSetting prerequisites contributes to the task's readiness to run.\n\nSetting outputs contributes to the task's completion, sets the\ncorresponding prerequisites of child tasks, and sets any implied\noutputs:\n - ``started`` implies ``submitted``.\n - ``succeeded`` and ``failed`` imply ``started``.\n - custom outputs and ``expired`` do not imply any other outputs.\n\nValid for: paused, running, stopping workflows.",
+          "description": "Remove one or more task instances from a running workflow.\n\nValid for: paused, running, stopping workflows.",
           "fields": [
             {
               "name": "result",
@@ -14873,9 +14955,35 @@
           "__typename": "__Type"
         },
         {
+          "kind": "OBJECT",
+          "name": "SetPrereqsAndOutputs",
+          "description": "Set task prerequisites or outputs.\n\nBy default, set all required outputs for target task(s) (including\n`submitted`, `started` and `succeeded` even if they are optional).\n\nSetting prerequisites contributes to the task's readiness to run.\n\nSetting outputs contributes to the task's completion, sets the\ncorresponding prerequisites of child tasks, and sets any implied\noutputs:\n - `started` implies `submitted`.\n - `succeeded` and `failed` imply `started`.\n - custom outputs and `expired` do not imply any other outputs.\n\nValid for: paused, running, stopping workflows.",
+          "fields": [
+            {
+              "name": "result",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "GenericScalar",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
           "kind": "SCALAR",
           "name": "OutputLabel",
-          "description": "Task output, e.g. \"succeeded\".",
+          "description": "Task output, e.g. `succeeded`.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -14886,7 +14994,7 @@
         {
           "kind": "SCALAR",
           "name": "PrerequisiteString",
-          "description": "A task prerequisite, e.g. \"2040/foo:succeeded\".",
+          "description": "A task prerequisite, e.g. `2040/foo:succeeded`.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -14897,7 +15005,7 @@
         {
           "kind": "OBJECT",
           "name": "Trigger",
-          "description": "Manually trigger tasks.\n\nWarning: waiting tasks that are queue-limited will be queued if\ntriggered, to submit as normal when released by the queue; queued\ntasks will submit immediately if triggered, even if that violates\nthe queue limit (so you may need to trigger a queue-limited task\ntwice to get it to submit immediately).\n\nValid for: paused, running workflows.",
+          "description": "Manually trigger tasks, even in a paused workflow.\n\nTriggering a task that is not yet queued will queue it.\n\nTriggering a queued task runs it immediately.\n\nCylc queues restrict the number of jobs that can be active\n(submitted or running) at once. They release tasks to run\nwhen their active task count drops below the queue limit.\nSo, depending on the active task count, you may need to\ntrigger a task twice to make it run immediately.\n\nAttempts to trigger active tasks will be ignored.\n\nValid for: paused, running workflows.",
           "fields": [
             {
               "name": "result",
@@ -14959,36 +15067,29 @@
         },
         {
           "kind": "ENUM",
-          "name": "RunMode",
-          "description": "The mode to run a workflow in.",
+          "name": "WorkflowRunMode",
+          "description": null,
           "fields": null,
           "inputFields": null,
           "interfaces": null,
           "enumValues": [
             {
               "name": "Live",
-              "description": "The normal default run mode",
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__EnumValue"
-            },
-            {
-              "name": "Dummy",
-              "description": "Replaces all *-script items with nothing",
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__EnumValue"
-            },
-            {
-              "name": "DummyLocal",
-              "description": "Replaces all *-script items with nothing and sets platform = localhost for all tasks.",
+              "description": "Task will submit their configured jobs.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
             },
             {
               "name": "Simulation",
-              "description": "Simulates job submission, does not run anything at all.",
+              "description": "Simulates job submission with configurable exection time and succeeded/failed outcomes (but does not submit real jobs).",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            },
+            {
+              "name": "Dummy",
+              "description": "Submits real jobs with empty scripts.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
@@ -15056,11 +15157,11 @@
           "fields": [
             {
               "name": "deltas",
-              "description": "Grouped deltas of the WFS publish",
+              "description": "Grouped deltas of the WFS publish.",
               "args": [
                 {
                   "name": "workflows",
-                  "description": "List of full ID, i.e. `~user/workflow_id`",
+                  "description": "List of full ID, i.e. `~user/workflow_id`.",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -16158,7 +16259,7 @@
             },
             {
               "name": "family",
-              "description": "Task definition, static fields",
+              "description": "Task definition, static fields.",
               "args": [
                 {
                   "name": "id",
@@ -16250,7 +16351,7 @@
             },
             {
               "name": "families",
-              "description": "Task definition, static fields",
+              "description": "Task definition, static fields.",
               "args": [
                 {
                   "name": "workflows",
@@ -16792,7 +16893,7 @@
             },
             {
               "name": "edges",
-              "description": "Dependency edge task/family proxies",
+              "description": "Dependency edge task/family proxies.",
               "args": [
                 {
                   "name": "workflows",
@@ -17231,7 +17332,7 @@
         {
           "kind": "OBJECT",
           "name": "Deltas",
-          "description": "Grouped deltas of the WFS publish",
+          "description": "Grouped deltas of the WFS publish.",
           "fields": [
             {
               "name": "id",
@@ -17317,7 +17418,7 @@
             },
             {
               "name": "pruned",
-              "description": "WFS Nodes/Edges that have been removed.",
+              "description": "Objects (e.g. workflows, tasks, jobs) which have been removed from\nthe store.",
               "args": [
                 {
                   "name": "stripNull",
@@ -20186,7 +20287,7 @@
             },
             {
               "name": "edges",
-              "description": "Graph edges",
+              "description": "Graph edges.",
               "args": [
                 {
                   "name": "ids",
@@ -20388,7 +20489,7 @@
         {
           "kind": "OBJECT",
           "name": "Pruned",
-          "description": "WFS Nodes/Edges that have been removed.",
+          "description": "Objects (e.g. workflows, tasks, jobs) which have been removed from\nthe store.",
           "fields": [
             {
               "name": "workflow",
