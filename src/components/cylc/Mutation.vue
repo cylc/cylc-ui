@@ -138,6 +138,7 @@ import {
 } from '@/utils/aotf'
 import { mdiClose } from '@mdi/js'
 import { useDynamicVuetifyDefaults } from '@/plugins/vuetify'
+import { inputDefaults } from '@/components/graphqlFormGenerator/components/vuetify'
 
 export default {
   name: 'mutation',
@@ -177,7 +178,7 @@ export default {
   },
 
   setup () {
-    const vuetifyDefaults = useDynamicVuetifyDefaults()
+    const vuetifyDefaults = useDynamicVuetifyDefaults(inputDefaults)
 
     return {
       vuetifyDefaults,

@@ -25,22 +25,27 @@ import { VTextField } from 'vuetify/components/VTextField'
 import colors from 'vuetify/util/colors'
 import { mdiClose } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
+import { merge } from 'lodash-es'
 
-const inputDefaults = Object.fromEntries([
+export const inputComponents = [
   VAutocomplete,
   VCombobox,
   VSelect,
   VTextarea,
-  VTextField
-].map(({ name }) => [
-  name,
-  {
-    density: 'compact',
-    variant: 'outlined',
-    clearIcon: mdiClose,
-    hideDetails: true,
-  }
-]))
+  VTextField,
+].map(({ name }) => name)
+
+const inputDefaults = Object.fromEntries(
+  inputComponents.map((name) => [
+    name,
+    {
+      density: 'compact',
+      variant: 'outlined',
+      clearIcon: mdiClose,
+      hideDetails: true,
+    }
+  ])
+)
 
 /**
  * @type {import('vuetify').VuetifyOptions}
@@ -84,14 +89,19 @@ export const vuetifyOptions = {
  * the static defaults provided in `createVuetify(vuetifyOptions)`.
  *
  * For use with a v-defaults-provider.
+ *
+ * @param {Object=} other - Additional defaults to provide.
  */
-export function useDynamicVuetifyDefaults () {
+export function useDynamicVuetifyDefaults (other = {}) {
   const reducedAnimation = useReducedAnimation()
 
-  return computed(() => ({
-    global: {
-      transition: reducedAnimation.value ? 'no' : undefined,
-      ripple: reducedAnimation.value ? false : undefined,
-    }
-  }))
+  return computed(() => merge(
+    {
+      global: {
+        transition: reducedAnimation.value ? 'no' : undefined,
+        ripple: reducedAnimation.value ? false : undefined,
+      },
+    },
+    other
+  ))
 }

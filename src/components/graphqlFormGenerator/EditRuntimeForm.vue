@@ -223,7 +223,6 @@ export default {
     getInputProps (fieldName) {
       const gqlType = findByName(this.type.fields, fieldName).type
       return {
-        ...VuetifyConfig.defaultProps,
         gqlType,
         ...getComponentProps(gqlType, NamedTypes, VuetifyConfig.kinds)
       }
