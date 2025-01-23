@@ -7187,15 +7187,29 @@
           "interfaces": null,
           "enumValues": [
             {
-              "name": "Skip",
-              "description": "Skips job submission; sets required outputs (by default) or configured outputs.",
+              "name": "Live",
+              "description": "Task will submit their configured jobs.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
             },
             {
-              "name": "Live",
-              "description": "Task will submit their configured jobs.",
+              "name": "Simulation",
+              "description": "Simulates job submission with configurable exection time and succeeded/failed outcomes (but does not submit real jobs).",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            },
+            {
+              "name": "Dummy",
+              "description": "Submits real jobs with empty scripts.",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            },
+            {
+              "name": "Skip",
+              "description": "Skips job submission; sets required outputs (by default) or configured outputs.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
