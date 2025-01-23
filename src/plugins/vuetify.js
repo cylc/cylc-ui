@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { computed } from 'vue'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 import { VCombobox } from 'vuetify/components/VCombobox'
@@ -23,6 +24,7 @@ import { VTextarea } from 'vuetify/components/VTextarea'
 import { VTextField } from 'vuetify/components/VTextField'
 import colors from 'vuetify/util/colors'
 import { mdiClose } from '@mdi/js'
+import { useReducedAnimation } from '@/composables/localStorage'
 
 const inputDefaults = Object.fromEntries([
   VAutocomplete,
@@ -75,4 +77,21 @@ export const vuetifyOptions = {
     },
     ...inputDefaults
   },
+}
+
+/**
+ * Composable that provides Vuetify defaults that can change at runtime, as opposed to
+ * the static defaults provided in `createVuetify(vuetifyOptions)`.
+ *
+ * For use with a v-defaults-provider.
+ */
+export function useDynamicVuetifyDefaults () {
+  const reducedAnimation = useReducedAnimation()
+
+  return computed(() => ({
+    global: {
+      transition: reducedAnimation.value ? 'no' : undefined,
+      ripple: reducedAnimation.value ? false : undefined,
+    }
+  }))
 }
