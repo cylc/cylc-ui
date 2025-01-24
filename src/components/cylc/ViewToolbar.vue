@@ -128,12 +128,6 @@ export default {
     }
   },
 
-  data () {
-    return {
-      selectedItems: {}
-    }
-  },
-
   computed: {
     iGroups () {
       // wrap the provided props into something we can mutate with derived
