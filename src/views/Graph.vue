@@ -1336,7 +1336,9 @@ export default {
             // ...now we have removed any parts of child nodes that shouldnt be there we can add nodes and edges that should be...
             // ---------------ADD NODES BASED ON FAMILY------------
             if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
-              nodes.push(indexSearch)
+              if (!this.isNodeCollapsedByFamily(indexSearch.node.firstParent.name)) {
+                nodes.push(indexSearch)
+              }
             }
 
             const edgeHasCollapsedTargetFamilyOnly = (targetFirstFamily, sourceFirstFamily) => {
