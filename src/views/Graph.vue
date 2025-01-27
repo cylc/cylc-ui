@@ -455,19 +455,19 @@ export default {
      */
     allParentLookUp () {
       const lookup = {}
-      this.namespaces.forEach((namespace) => {
+      for (const namespace of this.namespaces) {
         const array = []
         let parents = namespace.node.parents
         while (parents.length) {
-          parents.forEach((parent) => {
+          for (const parent of parents) {
             const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${parent.name}` })
             const childNode = this.cylcTree.$index[childTokens.id]
             array.push(childNode.name)
             parents = childNode.node.parents
-          })
+          }
         }
         lookup[namespace.name] = array
-      })
+      }
       return lookup
     },
     /**
@@ -809,7 +809,7 @@ export default {
      * @returns {[Node[], Node[]]} the updated edges and removed edge store arrays
      */
     removeEdgeBySource (edgeCheckSource, edges, removedEdges, config, cycle) {
-      edgeCheckSource.forEach((edge) => {
+      for (const edge of edgeCheckSource) {
         removedEdges.push(edge)
         edges = this.removeEdge(
           config.name,
@@ -818,7 +818,7 @@ export default {
           edge.tokens.edge[1].cycle,
           edges
         )
-      })
+      }
       return [edges, removedEdges]
     },
     /**
@@ -830,7 +830,7 @@ export default {
      * @returns {[Node[], Node[]]} the updated edges and removed edge store arrays
      */
     removeEdgeByTarget (edgeCheckTarget, edges, removedEdges) {
-      edgeCheckTarget.forEach((edge) => {
+      for (const edge of edgeCheckTarget) {
         removedEdges.push(edge)
         edges = this.removeEdge(
           edge.tokens.edge[0].task,
@@ -839,7 +839,7 @@ export default {
           edge.tokens.edge[1].cycle,
           edges
         )
-      })
+      }
       return [edges, removedEdges]
     },
     /**
@@ -1053,7 +1053,7 @@ export default {
 
       // The pointer has children
       // We want to see if we can group each child
-      pointer.children.forEach((child, i) => {
+      for (const child of pointer.children) {
         // The pointer child has children (grandChildren)
         // These grandChildren are the nodes that will be included in the grouping
         const grandChildren = this.allChildrenLookUp[child.id]
@@ -1061,13 +1061,13 @@ export default {
         // Some of the nodes may have been collapsed
         // Work out if any have and store for reference later
         const removedNodes = new Set()
-        grandChildren.forEach((a) => {
-          if (this.collapseFamily.includes(a.name)) {
-            a.children.forEach((child) => {
+        for (const grandChild of grandChildren) {
+          if (this.collapseFamily.includes(grandChild.name)) {
+            for (const child of grandChild.children) {
               removedNodes.add(child.name)
-            })
+            }
           }
-        })
+        }
         let openedBrackets = false
         if (
           // If this pointer has grandchildren
@@ -1121,7 +1121,7 @@ export default {
         if (openedBrackets) {
           dotcode.push('}}')
         }
-      })
+      }
     },
     getDotCode (nodeDimensions, nodes, edges, cycles) {
       // return GraphViz dot code for the given nodes, edges and dimensions
@@ -1168,24 +1168,24 @@ export default {
       }
 
       const graphSections = {}
-      Object.keys(cycles).forEach((cycle, iCycle) => {
+      for (const cycle of Object.keys(cycles)) {
         const indexSearch = cycles[cycle]
         if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
-          indexSearch.forEach((task) => {
+          for (const task of indexSearch) {
             if (!task.node.firstParent) { return }
             const section = graphSections[task.node.firstParent.id] ??= []
             section.push(`${task.name} [title=${task.name}]`)
             graphSections[task.node.firstParent.id] = section
-          })
+          }
           if (this.groupCycle) {
             const removedNodes = new Set()
-            indexSearch.forEach((a) => {
-              if (this.collapseFamily.includes(a.name)) {
-                this.allChildrenLookUp[a.id].forEach((child) => {
+            for (const node of indexSearch) {
+              if (this.collapseFamily.includes(node.name)) {
+                for (const child of this.allChildrenLookUp[node.id]) {
                   removedNodes.add(child.name)
-                })
+                }
               }
-            })
+            }
             const nodeFormattedArray = indexSearch.filter((a) => {
               const isRoot = a.name !== 'root'
               let isAncestor = true
@@ -1224,7 +1224,7 @@ export default {
             ret.push('}}')
           }
         }
-      })
+      }
 
       if (this.transpose) {
         // left-right orientation
@@ -1299,9 +1299,9 @@ export default {
       let removedEdges = []
 
       // For all cycles...
-      this.cycleArrayStore.forEach((cycle) => {
+      for (const cycle of this.cycleArrayStore) {
         // ...loop through collapsed families...
-        this.collapseFamily.forEach((family) => {
+        for (const family of this.collapseFamily) {
           // ...get the node from the index...
           const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
             return node.name === family && node.tokens.cycle === cycle
@@ -1312,7 +1312,7 @@ export default {
             // ṃust do this before removing nodes and edges based on cycle as
             // cycle collapsing takes priority of families
             // ...this node is collapsed so need to remove any of its children (nodes and edges) from the graph if it has any...
-            this.allChildrenLookUp[indexSearch.id].forEach((config) => {
+            for (const config of this.allChildrenLookUp[indexSearch.id]) {
               if (config.name !== indexSearch.name) {
                 // REMOVE NODES
                 nodes = this.removeNode(config.name, cycle, nodes)
@@ -1328,7 +1328,7 @@ export default {
                   [edges, removedEdges] = this.removeEdgeByTarget(edgeCheckTarget, edges, removedEdges)
                 }
               }
-            })
+            }
             // ...now we have removed any parts of child nodes that shouldnt be there we can add nodes and edges that should be...
             // ---------------ADD NODES BASED ON FAMILY------------
             if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
@@ -1371,10 +1371,10 @@ export default {
             }
 
             // ...this node is collapsed so need to remove any of its children (nodes and edges) from the graph if it has any...
-            this.allChildrenLookUp[indexSearch.id].forEach((config) => {
+            for (const config of this.allChildrenLookUp[indexSearch.id]) {
               const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, removedEdges)
               if (edgeCheckSource) {
-                edgeCheckSource.forEach((edge) => {
+                for (const edge of edgeCheckSource) {
                   const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
                   const targetName = this.cylcTree.$index[edge.node.target].name
                   const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
@@ -1398,11 +1398,11 @@ export default {
                       }
                     }
                   }
-                })
+                }
               }
               const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, removedEdges)
               if (edgeCheckTarget) {
-                edgeCheckTarget.forEach((edge) => {
+                for (const edge of edgeCheckTarget) {
                   const sourceName = this.cylcTree.$index[edge.node.source].name
                   const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
                   const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
@@ -1426,20 +1426,20 @@ export default {
                       }
                     }
                   }
-                })
+                }
               }
-            })
+            }
           }
-        })
-      })
-      this.collapseCycle.forEach((cycle) => {
+        }
+      }
+      for (const cycle of this.collapseCycle) {
         const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
           return node.name === cycle
         })
         if (indexSearch) {
           // ---------------REMOVE NODES BASED ON CYCLE POINT------------
           if (!this.allChildrenLookUp[indexSearch.id]) { return }
-          this.allChildrenLookUp[indexSearch.id].forEach((config) => {
+          for (const config of this.allChildrenLookUp[indexSearch.id]) {
             if (config.name !== indexSearch.name) {
               // REMOVE NODES
               nodes = this.removeNode(config.name, cycle, nodes)
@@ -1454,15 +1454,15 @@ export default {
                 [edges, removedEdges] = this.removeEdgeByTarget(edgeCheckTarget, edges, removedEdges)
               }
             }
-          })
+          }
           // ---------------ADD NODES BASED ON CYCLE POINT------------
           nodes.push(indexSearch)
           // next bit starts here
           // ---------------ADD EDGES BASED ON CYCLE POINT------------
-          this.allChildrenLookUp[indexSearch.id].forEach((config) => {
+          for (const config of this.allChildrenLookUp[indexSearch.id]) {
             const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, removedEdges)
             if (edgeCheckSource) {
-              edgeCheckSource.forEach((edge) => {
+              for (const edge of edgeCheckSource) {
                 const targetName = this.cylcTree.$index[edge.node.target].name
                 const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
                 // only want one edge that goes to a different cycle point
@@ -1484,11 +1484,11 @@ export default {
                     }
                   }
                 }
-              })
+              }
             }
             const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, removedEdges)
             if (edgeCheckTarget) {
-              edgeCheckTarget.forEach((edge) => {
+              for (const edge of edgeCheckTarget) {
                 const sourceName = this.cylcTree.$index[edge.node.source].name
                 const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
                 // only want one edge that goes to a different cycle point
@@ -1510,11 +1510,11 @@ export default {
                     }
                   }
                 }
-              })
+              }
             }
-          })
+          }
         }
-      })
+      }
       // remove any duplicate edges that might have got into edges
       edges = Array.from(new Set(edges.map(a => a.id)))
         .map(id => {
