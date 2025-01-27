@@ -432,14 +432,10 @@ export default {
      * @returns {String[]} array containing nested structure of families
      */
     treeDropDownCycle () {
-      const store = []
-      this.cycleArrayStore.forEach((name, id) => {
-        store.push({
-          id,
-          name
-        })
-      })
-      return store
+      return this.cycleArrayStore.map((name, id) => ({
+        id,
+        name,
+      }))
     },
     /**
      * Object for looking up family ancestors
