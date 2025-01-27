@@ -79,7 +79,7 @@
     "json-server": "0.17.4",
     "nodemon": "3.1.9",
     "nyc": "17.1.0",
-    "sass-embedded": "1.81.0",
+    "sass-embedded": "1.83.4",
     "sinon": "19.0.2",
     "standard": "17.1.2",
     "vite": "6.0.11",
