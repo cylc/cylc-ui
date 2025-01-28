@@ -148,7 +148,9 @@ export default {
           color = null
           callback = null
           disabled = false
-
+          if (control.items && control.items.length) {
+            disabled = control.items[0].disabled
+          }
           // set callback and color
           switch (control.action) {
             case 'toggle':

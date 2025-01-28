@@ -435,6 +435,7 @@ export default {
       return this.cycleArrayStore.map((name, id) => ({
         id,
         name,
+        disabled: false
       }))
     },
     /**
@@ -449,7 +450,7 @@ export default {
      *  root: []
      * }
      *
-     * note: object value arrays do not contain family names as strings only - not nodes
+     * note: object value arrays contain family names as strings only - not nodes
      *
      * @returns {Object} keys are family names, values are arrays containing all ancestors names
      */
@@ -520,33 +521,19 @@ export default {
      */
     allChildrenLookUp () {
       const lookup = {}
-      // Function for getting a flattened array of the nested children
-      function childArray (a) {
-        return a.reduce(function (flattened, { id, name, children, type }) {
-          // We dont want to include jobs so dont include children if type is "task"
-          if (type === 'task') {
-            return flattened
-              .concat([{ id, name, type }])
-          } else {
-            return flattened
-              .concat([{ id, name, children, type }])
-              .concat(children ? childArray(children, id) : [])
-          }
-        }, [])
-      }
       for (const workflow of this.workflows) {
-        lookup[workflow.id] = childArray([workflow])
+        lookup[workflow.id] = this.childArray([workflow])
         for (const cycle of workflow.children) {
-          lookup[cycle.id] = childArray([cycle])
+          lookup[cycle.id] = this.childArray([cycle])
           // for tasks
           for (const task of cycle.children) {
-            lookup[task.id] = childArray([task])
+            lookup[task.id] = this.childArray([task])
           }
           // for families
           for (const family of this.familyArrayStore) {
             const familyId = `${cycle.id}/${family}`
             if (this.cylcTree.$index[familyId]) {
-              lookup[familyId] = childArray([this.cylcTree.$index[familyId]])
+              lookup[familyId] = this.childArray([this.cylcTree.$index[familyId]])
             }
           }
         }
@@ -663,6 +650,26 @@ export default {
      * @param {String} type - The nodes type "task" | "$namespace" | "$edge"
      */
     /**
+     * Get a flattened array of the nested children
+     * @property {Node[]} nodeArray - Array of nodes
+     * @returns {Object} flattened array of all node childeren (including the original node)
+     * @param {String} id - The node id
+     * @param {String} name - The node name
+     * @param {String} type - 'workflow' | 'cycle' | 'family' | 'task' | 'job'
+     * @param {Object[]} children - Array of children
+     */
+    childArray (nodeArray) {
+      return nodeArray.flatMap(({ id, name, children, type }) => {
+        // We dont want to include jobs so dont include children if type is "task"
+        if (type === 'task') {
+          return [{ id, name, type }]
+        } else {
+          return [{ id, name, children, type }]
+            .concat(children ? this.childArray(children) : [])
+        }
+      })
+    },
+    /**
      * Get a nested object of families
      *
      * @returns {Family[]} array containing nested structure of families
@@ -742,16 +749,13 @@ export default {
       if (edgeType === 'noCollapsed') {
         src = `${sourceCyclePoint}/${sourceName}`
         tgt = `${targetCyclePoint}/${targetName}`
-      }
-      if (edgeType === 'collapsedTarget') {
+      } else if (edgeType === 'collapsedTarget') {
         src = `${sourceCyclePoint}/${sourceName}|${targetName}`
         tgt = `${sourceCyclePoint}/${sourceName}|${targetName}`
-      }
-      if (edgeType === 'collapsedSource') {
+      } else if (edgeType === 'collapsedSource') {
         src = `${sourceCyclePoint}|${targetCyclePoint}/${targetName}`
         tgt = `${sourceCyclePoint}|${targetCyclePoint}/${targetName}`
-      }
-      if (edgeType === 'collapsedSourceAndTarget') {
+      } else if (edgeType === 'collapsedSourceAndTarget') {
         src = `${sourceName}|${targetName}`
         tgt = `${sourceName}|${targetName}`
       }
@@ -791,14 +795,9 @@ export default {
       // removes a edge object from the 'edges' array
       const edgePath = this.workflowIDs[0]
       const edgeSearchTerm = `${edgePath}//$edge|${sourceCyclePoint}/${sourceName}|${targetCyclePoint}/${targetName}`
-      const edgesFiltered = edges.filter((edge) => {
-        if (edge.id.indexOf(edgeSearchTerm) === -1) {
-          return true
-        } else {
-          return false
-        }
-      })
-      return edgesFiltered
+      return edges.filter(
+        (edge) => edge.id.indexOf(edgeSearchTerm) === -1
+      )
     },
     /**
      * Removes an edges from an array of edges based on source node

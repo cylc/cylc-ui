@@ -593,4 +593,129 @@ describe('Graph view', () => {
       ]
     )
   })
+  it('it gets flattened array of the nested children', async () => {
+    const wrapper = mount(Graph, {
+      shallow: true,
+      global: {
+        plugins: [store],
+        mocks: { $workflowService }
+      },
+      props: {
+        workflowName: 'one',
+      },
+      computed: {
+        workflows () {
+          return workflows
+        },
+        namespaces () {
+          return namespaces()
+        },
+        cylcTree () {
+          return cylcTree
+        },
+        workflowIDs () {
+          return ['user/one/run1']
+        },
+      }
+    })
+    const testData = [
+      {
+        id: 'user/one/run1//1',
+        name: 'cycle',
+        children: [
+          {
+            id: 'user/one/run1//1/child',
+            name: 'child',
+            children: [
+              {
+                id: 'user/one/run1//1/grandChildA',
+                name: 'grandChildA',
+                children: [
+                  {
+                    id: 'user/one/run1//1/grandChildA/1',
+                    name: '1',
+                    type: 'job'
+                  }
+                ],
+                type: 'task'
+              },
+              {
+                id: 'user/one/run1//1/grandChildB',
+                name: 'grandChildB',
+                children: [
+                  {
+                    id: 'user/one/run1//1/grandChildB/1',
+                    name: '1',
+                    type: 'job'
+                  }
+                ],
+                type: 'task'
+              }
+            ],
+            type: 'family'
+          }
+        ],
+        type: 'cycle'
+      },
+    ]
+    expect(wrapper.vm.childArray(testData)).toMatchObject(
+      [
+        {
+          id: 'user/one/run1//1',
+          name: 'cycle',
+          children: [
+            {
+              id: 'user/one/run1//1/child',
+              name: 'child',
+              children: [
+                {
+                  id: 'user/one/run1//1/grandChildA',
+                  name: 'grandChildA',
+                  children: [{ id: 'user/one/run1//1/grandChildA/1', name: '1', type: 'job' }],
+                  type: 'task'
+                },
+                {
+                  id: 'user/one/run1//1/grandChildB',
+                  name: 'grandChildB',
+                  children: [{ id: 'user/one/run1//1/grandChildB/1', name: '1', type: 'job' }],
+                  type: 'task'
+                }
+              ],
+              type: 'family'
+            }
+          ],
+          type: 'cycle'
+        },
+        {
+          id: 'user/one/run1//1/child',
+          name: 'child',
+          children: [
+            {
+              id: 'user/one/run1//1/grandChildA',
+              name: 'grandChildA',
+              children: [{ id: 'user/one/run1//1/grandChildA/1', name: '1', type: 'job' }],
+              type: 'task'
+            },
+            {
+              id: 'user/one/run1//1/grandChildB',
+              name: 'grandChildB',
+              children: [{ id: 'user/one/run1//1/grandChildB/1', name: '1', type: 'job' }],
+              type: 'task'
+            }
+          ],
+          type: 'family'
+        },
+        {
+          id: 'user/one/run1//1/grandChildA',
+          name: 'grandChildA',
+          type: 'task'
+        },
+        {
+          id: 'user/one/run1//1/grandChildB',
+          name: 'grandChildB',
+          type: 'task'
+        }
+      ]
+    )
+  })
 })
