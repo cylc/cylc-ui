@@ -56,11 +56,11 @@
   "devDependencies": {
     "@cypress/code-coverage": "3.13.10",
     "@vitejs/plugin-vue": "5.2.1",
-    "@vitest/coverage-istanbul": "2.1.8",
+    "@vitest/coverage-istanbul": "3.0.4",
     "@vue/test-utils": "2.4.6",
     "concurrently": "9.1.2",
     "cross-fetch": "4.1.0",
-    "cypress": "13.17.0",
+    "cypress": "14.0.0",
     "cypress-vite": "1.6.0",
     "eslint": "8.57.1",
     "eslint-config-standard": "17.1.0",
@@ -86,7 +86,7 @@
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "6.0.2",
     "vite-plugin-vuetify": "2.0.4",
-    "vitest": "2.1.8"
+    "vitest": "3.0.4"
   },
   "peerDependenciesMeta": {
     "react": {
