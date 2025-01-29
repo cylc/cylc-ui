@@ -391,7 +391,6 @@ export default {
       cycleArrayStore: [],
       edgeTemplate: {},
       nodeTemplate: {},
-      latestCycle: ''
     }
   },
 
@@ -1531,7 +1530,6 @@ export default {
       }
 
       const cycles = this.getCycles(nodes)
-      this.latestCycle = Object.keys(cycles)[0]
       this.cycleArrayStore = this.workflows[0].children.map(child => child.tokens.cycle)
       // compute the graph ID
       const graphID = this.hashGraph(nodes, edges)
