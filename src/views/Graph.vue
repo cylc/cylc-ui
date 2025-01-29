@@ -266,6 +266,27 @@ fragment PrunedDelta on Pruned {
 }
 `
 
+/**
+ * Get a flattened array of the nested children
+ * @property {Node[]} nodeArray - Array of nodes
+ * @returns {Object} flattened array of all node childeren (including the original node)
+ * @param {String} id - The node id
+ * @param {String} name - The node name
+ * @param {String} type - 'workflow' | 'cycle' | 'family' | 'task' | 'job'
+ * @param {Object[]} children - Array of children
+ */
+export const childArray = (nodeArray) => {
+  return nodeArray.flatMap(({ id, name, children, type }) => {
+    // We dont want to include jobs so dont include children if type is "task"
+    if (type === 'task') {
+      return [{ id, name, type }]
+    } else {
+      return [{ id, name, children, type }]
+        .concat(children ? childArray(children) : [])
+    }
+  })
+}
+
 export default {
   name: 'Graph',
 
@@ -522,18 +543,18 @@ export default {
     allChildrenLookUp () {
       const lookup = {}
       for (const workflow of this.workflows) {
-        lookup[workflow.id] = this.childArray([workflow])
+        lookup[workflow.id] = childArray([workflow])
         for (const cycle of workflow.children) {
-          lookup[cycle.id] = this.childArray([cycle])
+          lookup[cycle.id] = childArray([cycle])
           // for tasks
           for (const task of cycle.children) {
-            lookup[task.id] = this.childArray([task])
+            lookup[task.id] = childArray([task])
           }
           // for families
           for (const family of this.familyArrayStore) {
             const familyId = `${cycle.id}/${family}`
             if (this.cylcTree.$index[familyId]) {
-              lookup[familyId] = this.childArray([this.cylcTree.$index[familyId]])
+              lookup[familyId] = childArray([this.cylcTree.$index[familyId]])
             }
           }
         }
@@ -649,26 +670,6 @@ export default {
      * @param {Object} tokens - The nodes token object
      * @param {String} type - The nodes type "task" | "$namespace" | "$edge"
      */
-    /**
-     * Get a flattened array of the nested children
-     * @property {Node[]} nodeArray - Array of nodes
-     * @returns {Object} flattened array of all node childeren (including the original node)
-     * @param {String} id - The node id
-     * @param {String} name - The node name
-     * @param {String} type - 'workflow' | 'cycle' | 'family' | 'task' | 'job'
-     * @param {Object[]} children - Array of children
-     */
-    childArray (nodeArray) {
-      return nodeArray.flatMap(({ id, name, children, type }) => {
-        // We dont want to include jobs so dont include children if type is "task"
-        if (type === 'task') {
-          return [{ id, name, type }]
-        } else {
-          return [{ id, name, children, type }]
-            .concat(children ? this.childArray(children) : [])
-        }
-      })
-    },
     /**
      * Get a nested object of families
      *

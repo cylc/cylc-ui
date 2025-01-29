@@ -17,7 +17,7 @@ import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
-import Graph from '@/views/Graph.vue'
+import Graph, { childArray } from '@/views/Graph.vue'
 import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
 import { workflows, cylcTree, nodes, edges, namespaces } from './graph-utils.js'
@@ -594,30 +594,6 @@ describe('Graph view', () => {
     )
   })
   it('it gets flattened array of the nested children', async () => {
-    const wrapper = mount(Graph, {
-      shallow: true,
-      global: {
-        plugins: [store],
-        mocks: { $workflowService }
-      },
-      props: {
-        workflowName: 'one',
-      },
-      computed: {
-        workflows () {
-          return workflows
-        },
-        namespaces () {
-          return namespaces()
-        },
-        cylcTree () {
-          return cylcTree
-        },
-        workflowIDs () {
-          return ['user/one/run1']
-        },
-      }
-    })
     const testData = [
       {
         id: 'user/one/run1//1',
@@ -658,7 +634,7 @@ describe('Graph view', () => {
         type: 'cycle'
       },
     ]
-    expect(wrapper.vm.childArray(testData)).toMatchObject(
+    expect(childArray(testData)).toMatchObject(
       [
         {
           id: 'user/one/run1//1',
