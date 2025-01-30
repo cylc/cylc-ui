@@ -111,6 +111,21 @@
             ]
           }
         ],
+        "families": [
+          {
+            "__typename": "Family",
+            "id": "~user/other/multi/run2//$namespace|root",
+            "name": "root",
+            "parents": [],
+            "childTasks": [
+              {
+                "name": "foo",
+                "__typename": "Task"
+              }
+            ],
+            "childFamilies": []
+          }
+        ],
         "familyProxies": [
           {
             "__typename": "FamilyProxy",
