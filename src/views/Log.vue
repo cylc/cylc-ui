@@ -170,7 +170,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :logs="results.lines"
             :timestamps="timestamps"
             :word-wrap="wordWrap"
+            @updating="updating"
           />
+          <!-- a div to use for autoscrolling -->
+          <div class="auto-scroll-end"></div>
         </template>
       </v-col>
     </v-row>
@@ -188,6 +191,7 @@ import {
   mdiPowerPlugOff,
   mdiPowerPlug,
   mdiWrap,
+  mdiMouseScrollWheel,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
@@ -411,6 +415,7 @@ export default {
 
   data () {
     return {
+      autoScroll: false,
       controlGroups: [
         {
           title: 'Log',
@@ -428,6 +433,13 @@ export default {
               action: 'toggle',
               value: this.wordWrap,
               key: 'wordWrap',
+            },
+            {
+              title: 'Auto scroll',
+              icon: mdiMouseScrollWheel,
+              action: 'toggle',
+              value: this.autoScroll,
+              key: 'autoScroll',
             },
           ]
         }
@@ -478,6 +490,19 @@ export default {
   },
 
   methods: {
+    scrollToElement (elementCLassName, options) {
+      const el = this.$el.getElementsByClassName(elementCLassName)[0]
+
+      if (el) {
+        // Use el.scrollIntoView() to instantly scroll to the element
+        el.scrollIntoView(options)
+      }
+    },
+    updating () {
+      if (this.autoScroll) {
+        this.scrollToElement('auto-scroll-end', { behavior: 'smooth' })
+      }
+    },
     setOption (option, value) {
       // used by the ViewToolbar to update settings
       this[option] = value
@@ -568,7 +593,7 @@ export default {
       this.file = null
       // go back to last chosen job if we are switching back to job logs
       this.relativeID = val ? this.previousRelativeID : null
-    },
+    }
   },
 
   // Misc options
