@@ -44,17 +44,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- the node value -->
         <!-- TODO: revisit these node.type values that can be replaced by constants later (and in other components too). -->
         <div :class="nodeDataClass">
-          <template v-if="node.type === 'cycle'">
+          <template v-if="node.type === 'cycle' && node.familyTree?.length">
             <!-- NOTE: cycle point nodes don't have any data associated with them
               at present so we must use the root family node for the task icon.
               We don't use this for the v-command-menu as that would set the node
               type to family. -->
             <Task
               v-command-menu="node"
-              v-if="node.familyTree?.length"
               :key="node.id"
               :task="node.familyTree[0].node"
-          />
+            />
             <span class="mx-1">{{ node.name }}</span>
           </template>
           <template v-else-if="node.type === 'family'">
