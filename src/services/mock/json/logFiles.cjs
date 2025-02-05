@@ -60,8 +60,8 @@ const JobState = async ({ id }) => {
     data: {
       jobs: [
         {
-        id: id[0],
-        state: id[0].includes('/failed') ? 'failed':'succeeded'
+          id: id[0],
+          state: id[0].includes('/failed') ? 'failed' : 'succeeded'
         }
       ]
     }
