@@ -532,7 +532,7 @@ export default {
         if (logFiles.length) {
           // loop through all the options in LOG_FILE_DEFAULTS
           for (const filePattern of LOG_FILE_DEFAULTS) {
-            // Loop through all the filenames e.g.[job.out, job.status]
+            // Loop through all the filenames e.g. [config/..., scheduler/...]
             for (const fileName of logFiles) {
               if (filePattern.exec(fileName)) {
                 return fileName
