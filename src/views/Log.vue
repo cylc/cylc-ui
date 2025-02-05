@@ -180,7 +180,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { ref, computed } from 'vue'
 import { usePrevious, whenever } from '@vueuse/core'
-import { useStore, mapGetters } from 'vuex'
+import { useStore } from 'vuex'
 import {
   mdiClockOutline,
   mdiFileAlertOutline,
@@ -449,16 +449,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters('workflows', ['getNodes']),
     workflowTokens () {
       // tokens for the workflow this view was opened for
       return new Tokens(this.workflowId)
-    },
-    workflowIDs () {
-      return [this.workflowId]
-    },
-    workflows () {
-      return this.getNodes('workflow', this.workflowIDs)
     },
     id () {
       // the ID of the workflow/task/job we are subscribed to
