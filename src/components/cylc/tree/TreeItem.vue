@@ -105,46 +105,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               class="text-grey d-flex flex-nowrap flex-row align-center"
               v-if="jobMessageOutputs && jobMessageOutputs.length > 0"
             >
-              <!--
-                We had a tricky bug in #530 due to the :key here. In summary, the list
-                that is backing this component changes. It contains zero or more entries,
-                up to N (5 at the time of writing).
-                Initially we used `:key=customOutput.id` here. But Vue tried to avoid
-                changing the DOM elements, which caused some elements to be out of order
-                in the final rendered UI (as Vue was trying to optimize and keep the
-                DOM elements in-place whenever possible).
-                That behaviour is not deterministic, so sometimes you would have the list
-                in order. The fix was to use a key that combines a string with the list
-                iteration `index` (the `:key` value must be unique, so we used output-chip
-                prefix).
-                @see https://github.com/cylc/cylc-ui/pull/530#issuecomment-781076619
-              -->
-              <v-tooltip
-                v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
-                :key="`output-chip-${index}`"
-                :activator="null"
+              <v-defaults-provider
+                :defaults="{
+                  VChip: { size: 'small', density: 'comfortable', class: 'ml-2' }
+                }"
               >
-                <template v-slot:activator="{ props }">
-                  <v-chip
-                    v-bind="props"
-                    :class="customOutput.isMessage ? 'bg-light-grey text-black' : 'bg-grey text-white'"
-                    class="ml-2 message-output"
-                    size="small"
-                  >
-                    {{ customOutput.label }}
-                  </v-chip>
-                </template>
-                <span>{{ customOutput.message }}</span>
-              </v-tooltip>
-              <v-chip
-                v-if="jobMessageOutputs.length > 5"
-                class="ml-2 bg-grey text-white"
-                size="small"
-                link
-                @click="toggleExpandCollapse()"
-              >
-                +{{ jobMessageOutputs.length - 5 }}
-              </v-chip>
+                <v-chip
+                  v-for="(customOutput, index) of [...jobMessageOutputs].slice(0, 5)"
+                  :key="`${customOutput.label}-${index}`"
+                  :class="customOutput.isMessage ? 'bg-light-grey text-black' : 'bg-grey text-white'"
+                  class="message-output"
+                >
+                  {{ customOutput.label }}
+                  <v-tooltip :text="customOutput.message"/>
+                </v-chip>
+                <v-chip
+                  v-if="jobMessageOutputs.length > 5"
+                  class="bg-grey text-white"
+                  @click="toggleExpandCollapse()"
+                >
+                  +{{ jobMessageOutputs.length - 5 }}
+                </v-chip>
+              </v-defaults-provider>
             </span>
           </template>
         </div>

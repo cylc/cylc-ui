@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <div data-cy="workspace-view">
     <Toolbar
-      :views="workspaceViews"
+      :views="workflowViews"
       :workflow-name="workflowName"
     />
     <div
@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { ref } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
-import { allViews, workspaceViews } from '@/views/views.js'
+import { allViews, workflowViews } from '@/views/views.js'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
 import ViewState from '@/model/ViewState.model'
@@ -69,7 +69,7 @@ export default {
 
     return {
       allViews,
-      workspaceViews,
+      workflowViews,
       lumino,
     }
   },
