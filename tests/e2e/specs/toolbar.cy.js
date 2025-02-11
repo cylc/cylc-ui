@@ -112,7 +112,7 @@ describe('N-window selector', () => {
       .get('[data-cy=n-win-popup]')
       .find('[role=combobox]')
       .click()
-      .invoke('attr', 'aria-owns').then((dropdownID) => {
+      .invoke('attr', 'aria-controls').then((dropdownID) => {
         cy.get(`#${dropdownID}`)
           .contains('3')
           .click()
