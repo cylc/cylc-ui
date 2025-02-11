@@ -96,7 +96,6 @@ export default {
 
     // merge this in with default and override props
     const propGroups = [
-      VuetifyConfig.defaultProps,
       componentProps,
       this.propOverrides || {}
     ]
