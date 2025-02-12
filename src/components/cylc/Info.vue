@@ -84,6 +84,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel-text>
       </v-expansion-panel>
 
+      <v-expansion-panel class="run-mode-panel">
+        <v-expansion-panel-title color="blue-grey-lighten-2">
+          Run Mode
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-icon>{{ runModeIcon }}</v-icon>  {{ runMode }}
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
+      <v-expansion-panel class="xtriggers-panel">
+        <v-expansion-panel-title color="blue-grey-lighten-2">
+          Xtriggers
+        </v-expansion-panel-title>
+        <v-expansion-panel-text v-for="id, label, satisfied in xtriggers" :key="id">
+          {{ id }} | {{ label }} | {{ satisfied }}
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
       <!-- The prereqs -->
       <v-expansion-panel class="prerequisites-panel">
         <v-expansion-panel-title color="blue-grey-lighten-2">
@@ -169,6 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import { formatCompletion } from '@/utils/outputs'
+import { mdiSkipForward, mdiChatQuestion, mdiGhostOutline, mdiPlay, mdiDramaMasks } from '@mdi/js'
 
 export default {
   name: 'InfoComponent',
@@ -226,6 +245,30 @@ export default {
     completion () {
       // Task output completion expression stuff.
       return this.task?.node?.runtime.completion
+    },
+
+    runModeIcon () {
+      // Task Run Mode:
+      if (this.task?.node?.runtime.runMode === 'Skip') {
+        return mdiSkipForward
+      } else if (this.task?.node?.runtime.runMode === 'Live') {
+        return mdiPlay
+      } else if (this.task?.node?.runtime.runMode === 'Simulation') {
+        return mdiGhostOutline
+      } else if (this.task?.node?.runtime.runMode === 'Dummy') {
+        return mdiDramaMasks
+      }
+      return mdiChatQuestion
+    },
+
+    runMode () {
+      // Task Run Mode:
+      return this.task?.node?.runtime.runMode
+    },
+
+    xtriggers () {
+      debugger
+      return this.task?.node?.xtriggers
     }
 
   },
