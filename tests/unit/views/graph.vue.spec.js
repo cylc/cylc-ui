@@ -600,8 +600,8 @@ describe('Graph view', () => {
         name: 'cycle',
         children: [
           {
-            id: 'user/one/run1//1/child',
-            name: 'child',
+            id: 'user/one/run1//1/CHILD',
+            name: 'CHILD',
             children: [
               {
                 id: 'user/one/run1//1/grandChildA',
@@ -641,8 +641,8 @@ describe('Graph view', () => {
           name: 'cycle',
           children: [
             {
-              id: 'user/one/run1//1/child',
-              name: 'child',
+              id: 'user/one/run1//1/CHILD',
+              name: 'CHILD',
               children: [
                 {
                   id: 'user/one/run1//1/grandChildA',
@@ -663,8 +663,8 @@ describe('Graph view', () => {
           type: 'cycle'
         },
         {
-          id: 'user/one/run1//1/child',
-          name: 'child',
+          id: 'user/one/run1//1/CHILD',
+          name: 'CHILD',
           children: [
             {
               id: 'user/one/run1//1/grandChildA',

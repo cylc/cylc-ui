@@ -167,6 +167,7 @@
             },
             "firstParent": {
               "id": "~user/other/multi/run2//1/root",
+              "name": "root",
               "__typename": "FamilyProxy"
             },
             "__typename": "TaskProxy"
@@ -185,6 +186,7 @@
             },
             "firstParent": {
               "id": "~user/other/multi/run2//2/root",
+              "name": "root",
               "__typename": "FamilyProxy"
             },
             "__typename": "TaskProxy"

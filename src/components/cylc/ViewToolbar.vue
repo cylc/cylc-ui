@@ -32,20 +32,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <v-menu
         v-if="iControl.action==='select-tree'"
-        :close-on-content-click="false">
-          <template v-slot:activator="{ props }" >
+          :close-on-content-click="false"
+        >
+          <template v-slot:activator="{ props }">
             <v-btn
-            v-bind="{...$attrs, ...props, ...btnProps}"
-            :disabled="iControl.disabled"
-            :color="iControl.color">
+              v-bind="{...$attrs, ...props, ...btnProps}"
+              :disabled="iControl.disabled"
+              :color="iControl.color"
+            >
               <v-icon>{{ iControl.icon }}</v-icon>
               <v-tooltip>{{ iControl.title }}</v-tooltip>
             </v-btn>
-          </template >
+          </template>
           <v-treeview
             v-model:selected="iControl.value"
             v-on:update:selected="iControl.callback"
             :items="iControl.items"
+            item-props
             select-strategy='independent'
             item-title="name"
             item-value="name"
