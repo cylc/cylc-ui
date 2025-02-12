@@ -97,8 +97,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-expansion-panel-title color="blue-grey-lighten-2">
           Xtriggers
         </v-expansion-panel-title>
-        <v-expansion-panel-text v-for="id, label, satisfied in xtriggers" :key="id">
-          {{ id }} | {{ label }} | {{ satisfied }}
+        <v-expansion-panel-text>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>ID</th>
+              <th>Trigger Time*</th>
+              <th>Is satisfied</th>
+            </tr>
+            <tr v-for="xt in xtriggers" :key="xt">
+              <td>{{ xt.label }}</td>
+              <td>{{ xt.id }}</td>
+              <td>{{ xt.clockTriggerTime || ""}}</td>
+              <td><center><v-icon>{{ xt.satisfactionIcon }}</v-icon></center></td>
+            </tr>
+          </table>
+          <p class="footnote">* for clock triggers</p>
         </v-expansion-panel-text>
       </v-expansion-panel>
 
@@ -187,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import { formatCompletion } from '@/utils/outputs'
-import { mdiSkipForward, mdiChatQuestion, mdiGhostOutline, mdiPlay, mdiDramaMasks } from '@mdi/js'
+import { mdiSkipForward, mdiChatQuestion, mdiGhostOutline, mdiPlay, mdiDramaMasks, mdiCheckboxOutline, mdiCheckboxBlankOutline } from '@mdi/js'
 
 export default {
   name: 'InfoComponent',
@@ -267,8 +281,18 @@ export default {
     },
 
     xtriggers () {
-      debugger
-      return this.task?.node?.xtriggers
+      // debugger
+      const xtriggers = this.task?.node?.xtriggers
+      xtriggers.forEach(element => {
+        if (element.satisfied === true) {
+          element.satisfactionIcon = mdiCheckboxOutline
+        } else {
+          element.satisfactionIcon = mdiCheckboxBlankOutline
+        }
+        const re = /trigger_time=(\d+)/
+        element.clockTriggerTime = new Date(Number(re.exec(element.id)[1]) * 1000).toLocaleString()
+      })
+      return xtriggers
     }
 
   },
@@ -355,4 +379,18 @@ export default {
       }
     }
   }
+
+    .xtriggers-panel {
+      td {
+        border-bottom: 1px rgb(159, 206, 206) solid;
+        padding-left: 4px;
+      }
+      th {
+        padding-left: 4px;
+        border-bottom: 2px rgb(159, 206, 206) solid;
+      }
+      .footnote {
+        font-size: smaller;
+      }
+    }
 </style>
