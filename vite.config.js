@@ -101,6 +101,10 @@ export default defineConfig(({ mode }) => {
       // Use default browser compatibility for ECMAScript syntax as it's
       // good enough:
       target: 'modules',
+      commonjsOptions: {
+        // Workaround https://github.com/vitejs/vite/issues/19410:
+        strictRequires: 'auto',
+      },
     },
     css: {
       preprocessorOptions: {
