@@ -19,6 +19,7 @@
         "directives": [],
         "environment": [],
         "outputs": [],
+        "runMode": "Live",
         "__typename": "Runtime"
       }
     }
