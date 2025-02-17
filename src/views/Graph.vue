@@ -200,12 +200,14 @@ fragment JobData on Job {
 fragment FamilyData on Family {
   id
   name
-  parents {
+  firstParent {
+    id
     name
   }
   childFamilies {
     name
   }
+  descendants
 }
 
 fragment AddedDelta on Added {
@@ -433,9 +435,7 @@ export default {
       if (this.familyArrayStore.length) {
         const ret = []
         for (const rootFamily of this.getTree()) {
-          if (Object.keys(this.allParentLookUp).includes(rootFamily.name)) {
-            ret.push(rootFamily)
-          }
+          ret.push(rootFamily)
         }
         return ret
       } else {
@@ -477,31 +477,16 @@ export default {
     allParentLookUp () {
       const lookup = {}
       for (const namespace of this.namespaces) {
-        const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
-          return node.name === namespace.name
-        })
         const array = []
-        if (indexSearch.node.firstParent) {
-          array.push(indexSearch.node.firstParent.name)
-        }
-        // Note this uses firtParent field to avoid issues with branching families
-        let parent = indexSearch.node.firstParent
+        let parent = namespace.node.firstParent
         while (parent) {
-          const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
-            return node.name === parent.name
-          })
-          if (indexSearch.node.firstParent) {
-            array.push(indexSearch.node.firstParent.name)
-            parent = indexSearch.node.firstParent
-          } else {
-            parent = null
-          }
+          const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${parent.name}` })
+          const childNode = this.cylcTree.$index[childTokens.id]
+          array.push(childNode.name)
+          parent = childNode.node.firstParent
         }
-        if (array.length) {
-          lookup[namespace.name] = array
-        }
+        lookup[namespace.name] = array
       }
-      lookup.root = []
       return lookup
     },
     /**
@@ -701,9 +686,13 @@ export default {
         name: 'root',
         children: []
       }
-      const tokens = this.workflows[0].tokens.clone({ cycle: '$namespace|root' })
-      const node = this.cylcTree.$index[tokens.id]
-      return this.getTreeHelper(root, node, counter).children
+      if (this.workflows) {
+        const tokens = this.workflows[0].tokens.clone({ cycle: '$namespace|root' })
+        const node = this.cylcTree.$index[tokens.id]
+        if (node) {
+          return this.getTreeHelper(root, node, counter).children
+        }
+      }
     },
     /**
      * Get a nested object of families
@@ -713,24 +702,26 @@ export default {
      * @returns {Family} nested structure of families
      */
     getTreeHelper (store, node, counter) {
-      if (this.allParentLookUp[node.name]) {
-        let tempItem
-        const isParent = this.collapseFamily.includes(node.name)
-        const isAncestor = this.allParentLookUp[node.name].some(element => {
-          return this.collapseFamily.includes(element)
-        })
-        const disabled = isParent || isAncestor
-        for (const childFamily of node.node.childFamilies) {
-          const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${childFamily.name}` })
+      let tempItem
+      const isParent = this.collapseFamily.includes(node.name)
+      const isAncestor = this.allParentLookUp[node.name].some(element => {
+        return this.collapseFamily.includes(element)
+      })
+      const disabled = isParent || isAncestor
+      for (const childFamily of node.node.descendants) {
+        if (this.namespaces.map((obj) => obj.name).includes(childFamily)) {
+          const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${childFamily}` })
           const childNode = this.cylcTree.$index[childTokens.id]
-          tempItem = {
-            id: counter.next(),
-            name: childFamily.name,
-            children: [],
-            disabled
+          if (childNode.node.firstParent.id === node.id) {
+            tempItem = {
+              id: counter.next(),
+              name: childFamily,
+              children: [],
+              disabled
+            }
+            this.getTreeHelper(tempItem, childNode, counter)
+            store.children.push(tempItem)
           }
-          this.getTreeHelper(tempItem, childNode, counter)
-          store.children.push(tempItem)
         }
       }
       return store

@@ -52,6 +52,7 @@
           "id": "~user/one//$namespace|root",
           "name": "root",
           "parents": [],
+          "descendants": ["BAD", "GOOD", "waiting", "sleepy", "checkpoint"],
           "childTasks": [
             {
               "name": "checkpoint",
@@ -81,12 +82,14 @@
           "__typename": "Family",
           "id": "~user/one//$namespace|BAD",
           "name": "BAD",
+          "firstParent": { "id": "~user/one//$namespace|root", "name": "root"},
           "parents": [
             {
               "name": "root",
               "_typename": "Family"
             }
           ],
+          "descendants": ["GOOD", "failed", "retrying"],
           "childTasks": [
             {
               "name": "failed",
@@ -103,12 +106,14 @@
           "__typename": "Family",
           "id": "~user/one//$namespace|GOOD",
           "name": "GOOD",
+          "firstParent": { "id": "~user/one//$namespace|root", "name": "root"},
           "parents": [
             {
               "name": "root",
               "_typename": "family"
             }
           ],
+          "descendants": ["SUCCEEDED"],
           "childTasks": [],
           "childFamilies": [
             {
@@ -121,12 +126,14 @@
           "__typename": "Family",
           "id": "~user/one//$namespace|SUCCEEDED",
           "name": "SUCCEEDED",
+          "firstParent": { "id": "~user/one//$namespace|GOOD", "name": "GOOD"},
           "parents": [
             {
               "name": "GOOD",
               "_typename": "Family"
             }
           ],
+          "descendants": ["GOOD", "eventually_succeeded", "succeeded"],
           "childTasks": [
             {
               "name": "eventually_succeeded",

@@ -65,7 +65,8 @@ const nodeFailed =
       name: 'failed',
       firstParent: {
         id: 'user/one/run1//1/BAD'
-      }
+      },
+      descendants: []
     },
     tokens: {
       cycle: '1'
@@ -78,9 +79,10 @@ const nodeNamespaceRoot =
     name: 'root',
     node: {
       name: 'root',
-      parents: [],
+      firstParent: null,
       childFamilies: [{ name: 'GOOD' }, { name: 'BAD' }],
-      childTasks: [{ name: 'checkpoint' }, { name: 'sleepy' }, { name: 'waiting' }]
+      childTasks: [{ name: 'checkpoint' }, { name: 'sleepy' }, { name: 'waiting' }],
+      descendants: ['GOOD', 'SUCCEEDED', 'BAD', 'checkpoint', 'sleepy', 'waiting', 'retrying', 'failed', 'succeeded', 'eventually_succeeded']
     },
     tokens: { cycle: undefined }
   }
@@ -91,9 +93,10 @@ const nodeNamespaceBad =
     name: 'BAD',
     node: {
       name: 'root',
-      parents: [{ name: 'root' }],
+      firstParent: {id: 'user/one/run1//$namespace|root', name: 'root'},
       childFamilies: [],
-      childTasks: [{ name: 'retrying' }, { name: 'failed' }]
+      childTasks: [{ name: 'retrying' }, { name: 'failed' }],
+      descendants: ['retrying', 'failed']
     },
     tokens: { cycle: undefined }
   }
@@ -104,9 +107,10 @@ const nodeNamespaceGood =
     name: 'GOOD',
     node: {
       name: 'GOOD',
-      parents: [{ name: 'root' }],
+      firstParent: {id: 'user/one/run1//$namespace|root', name: 'root'},
       childFamilies: [{ name: 'SUCCEEDED' }],
-      childTasks: [{ name: 'retrying' }, { name: 'failed' }]
+      childTasks: [{ name: 'succeeded' }, { name: 'eventually_succeeded' }],
+      descendants: ['SUCCEEDED', 'succeeded', 'eventually_succeeded']
     },
     tokens: { cycle: undefined }
   }
@@ -117,9 +121,10 @@ const nodeNamespaceSucceeded =
     name: 'SUCCEEDED',
     node: {
       name: 'GOOD',
-      parents: [{ name: 'GOOD' }],
+      firstParent: {id: 'user/one/run1//$namespace|GOOD', name: 'GOOD'},
       childFamilies: [],
-      childTasks: [{ name: 'succeeded' }, { name: 'eventually_succeeded' }]
+      childTasks: [{ name: 'succeeded' }, { name: 'eventually_succeeded' }],
+      descendants: ['succeeded', 'eventually_succeeded'],      
     },
     tokens: { cycle: undefined }
   }
@@ -130,7 +135,8 @@ const workflows = [
     node: {
       firstParent: {
         id: ''
-      }
+      },
+      descendants: []
     },
     children: [
       {
@@ -138,8 +144,9 @@ const workflows = [
         tokens: { cycle: 1 },
         node: {
           firstParent: {
-            id: ''
-          }
+            id: '~user/one'
+          },
+          descendants: []
         },
         children: [
           {

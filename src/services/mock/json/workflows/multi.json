@@ -117,6 +117,7 @@
             "id": "~user/other/multi/run2//$namespace|root",
             "name": "root",
             "parents": [],
+            "descendants": ["foo"],
             "childTasks": [
               {
                 "name": "foo",
