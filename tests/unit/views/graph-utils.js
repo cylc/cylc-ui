@@ -93,7 +93,7 @@ const nodeNamespaceBad =
     name: 'BAD',
     node: {
       name: 'root',
-      firstParent: {id: 'user/one/run1//$namespace|root', name: 'root'},
+      firstParent: { id: 'user/one/run1//$namespace|root', name: 'root' },
       childFamilies: [],
       childTasks: [{ name: 'retrying' }, { name: 'failed' }],
       descendants: ['retrying', 'failed']
@@ -107,7 +107,7 @@ const nodeNamespaceGood =
     name: 'GOOD',
     node: {
       name: 'GOOD',
-      firstParent: {id: 'user/one/run1//$namespace|root', name: 'root'},
+      firstParent: { id: 'user/one/run1//$namespace|root', name: 'root' },
       childFamilies: [{ name: 'SUCCEEDED' }],
       childTasks: [{ name: 'succeeded' }, { name: 'eventually_succeeded' }],
       descendants: ['SUCCEEDED', 'succeeded', 'eventually_succeeded']
@@ -121,10 +121,10 @@ const nodeNamespaceSucceeded =
     name: 'SUCCEEDED',
     node: {
       name: 'GOOD',
-      firstParent: {id: 'user/one/run1//$namespace|GOOD', name: 'GOOD'},
+      firstParent: { id: 'user/one/run1//$namespace|GOOD', name: 'GOOD' },
       childFamilies: [],
       childTasks: [{ name: 'succeeded' }, { name: 'eventually_succeeded' }],
-      descendants: ['succeeded', 'eventually_succeeded'],      
+      descendants: ['succeeded', 'eventually_succeeded'],
     },
     tokens: { cycle: undefined }
   }
