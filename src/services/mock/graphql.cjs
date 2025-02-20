@@ -52,10 +52,10 @@ function getOperationName (query) {
  * @param {?Record<string, *>} variables - GraphQL query variables
  * @returns {*|Promise<*>} GraphQL response
  */
-function getGraphQLQueryResponse (operationName, variables) {
+async function getGraphQLQueryResponse (operationName, variables) {
   const res = data[operationName] || {}
   if (typeof res === 'function') {
-    return res(variables)
+    return await res(variables)
   }
   return res
 }
@@ -67,12 +67,24 @@ function getGraphQLQueryResponse (operationName, variables) {
  * @param {*} request - Express HTTP GraphQL request
  * @returns {*|Promise<*>} GraphQL response
  */
-function handleGraphQLRequest (request) {
+async function handleGraphQLRequest (request) {
   const isSchemaQuery = request.body.query.includes('__schema')
   const operationName = isSchemaQuery
     ? 'IntrospectionQuery'
     : getOperationName(request.body.query)
-  return getGraphQLQueryResponse(operationName, request.body.variables)
+  try {
+    return await getGraphQLQueryResponse(operationName, request.body.variables)
+  } catch (err) {
+    console.error(err)
+    return {
+      errors: [{
+        message: err.message,
+        extensions: {
+          stacktrace: err.stack.split ? err.stack.split('\n') : err.stack,
+        },
+      }],
+    }
+  }
 }
 
 module.exports = {
