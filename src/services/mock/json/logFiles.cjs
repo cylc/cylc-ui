@@ -54,14 +54,14 @@ const LogFiles = async ({ id }) => {
  *
  * @param {{ id: string }} variables
  */
-const JobState = async ({ id }) => {
+const JobState = async ({ id, workflow_id }) => {
   await simulatedDelay(500)
   return {
     data: {
       jobs: [
         {
-          id: id[0],
-          state: id[0].includes('/failed') ? 'failed' : 'succeeded'
+          id: id,
+          state: id.includes('/failed') ? 'failed' : 'succeeded'
         }
       ]
     }

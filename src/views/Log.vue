@@ -242,8 +242,8 @@ query LogFiles($id: ID!) {
  * @type {DocumentNode}
 */
 const JOB_QUERY = gql`
-query JobState($id: [ID!]) {
-  jobs (live: false, workflows: $id) {
+query JobState($id: ID!, $workflow_id: ID!) {
+  jobs (live: false, ids: [$id], workflows: [$workflow_id]) {
     id
     state
   }
@@ -511,19 +511,23 @@ export default {
         // get the job from the store
         let result
         try {
-          // get the list of available log files
-          result = await this.$workflowService.apolloClient.query({
-            query: JOB_QUERY,
-            variables: { id: [this.id] }
-          })
+          if (this.id) {
+            // get the list of available log files
+            result = await this.$workflowService.query2(
+              JOB_QUERY,
+              {
+                id: this.id.split('//')[1],
+                workflow_id: this.workflowTokens.workflow
+              }
+            )
+          }
         } catch (err) {
           // the query failed
           console.warn(err)
           return
         }
-        const job = result.data.jobs.find(x => x.id === this.id)
-        if (job) {
-          return JobStateLogFileMap.get(job.state) || 'job.out'
+        if (result && result.data.jobs.length) {
+          return JobStateLogFileMap.get(result.data.jobs[0].state) || 'job.out'
         } else {
           return 'job.out'
         }
