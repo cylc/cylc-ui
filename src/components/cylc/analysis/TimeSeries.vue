@@ -93,11 +93,14 @@ import {
   difference,
   pick,
   union,
-  uniq,
-  upperFirst
+  uniq
 } from 'lodash'
 import gql from 'graphql-tag'
-import { formatDuration } from '@/utils/tasks'
+import {
+  getTimingOption,
+  formatDuration,
+  formatChartLabels
+} from '@/utils/tasks'
 import {
   mdiDownload,
   mdiRefresh,
@@ -119,7 +122,8 @@ const jobFields = [
   'totalTime',
   'queueTime',
   'runTime',
-  'startedTime'
+  'startedTime',
+  'maxRss'
 ]
 
 /** The one-off query which retrieves historical job timing statistics */
@@ -284,7 +288,7 @@ export default {
             const currentStartedTime = seriesData[job.name].data[job.cyclePoint].startedTime
             // Only add data if this job was run more recently than any existing data
             if (currentStartedTime === undefined || job.startedTime.localeCompare(currentStartedTime) === 1) {
-              time = job[`${this.timingOption}Time`]
+              time = job[getTimingOption(this.timingOption)]
               Object.assign(seriesData[job.name].data[job.cyclePoint], {
                 x: job.cyclePoint,
                 y: time,
@@ -384,7 +388,7 @@ export default {
           forceNiceScale: true,
           min: this.showOrigin ? 0 : undefined,
           title: {
-            text: upperFirst(this.timingOption) + ' time',
+            text: formatChartLabels(this.timingOption),
           },
           labels: {
             formatter: function (value) {
@@ -445,7 +449,7 @@ export default {
         yaxis: {
           tickAmount: 3,
           title: {
-            text: upperFirst(this.timingOption) + ' time',
+            text: formatChartLabels(this.timingOption),
           },
           labels: {
             formatter: function (value) {

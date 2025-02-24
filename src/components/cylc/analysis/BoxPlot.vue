@@ -65,7 +65,11 @@ import {
   mdiSortVariant,
 } from '@mdi/js'
 import { upperFirst } from 'lodash'
-import { formatDuration } from '@/utils/tasks'
+import {
+  formatDuration,
+  getTimingOption,
+  formatChartLabels
+} from '@/utils/tasks'
 import { useReducedAnimation } from '@/composables/localStorage'
 import {
   initialOptions,
@@ -165,11 +169,11 @@ export default {
       },
       tooltip: {
         custom ({ seriesIndex, dataPointIndex, w }) {
-          const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true)
-          const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true)
-          const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true)
-          const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true)
-          const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true)
+          const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true, props.timingOption)
+          const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true, props.timingOption)
+          const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true, props.timingOption)
+          const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true, props.timingOption)
+          const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true, props.timingOption)
           return `
             <div class="pa-2">
               <div>Maximum: ${max}</div>
@@ -194,10 +198,10 @@ export default {
       },
       xaxis: {
         title: {
-          text: `${upperFirst(props.timingOption)} time`,
+          text: `${upperFirst(getTimingOption(props.timingOption))}`,
         },
         labels: {
-          formatter: (value) => formatDuration(value, true)
+          formatter: (value) => formatDuration(value, true, props.timingOption)
         },
       },
     }))
@@ -221,11 +225,11 @@ export default {
         data.push({
           x: sortedTasks[i].name,
           y: [
-            sortedTasks[i][`min${upperFirst(this.timingOption)}Time`],
+            sortedTasks[i][`min${upperFirst(getTimingOption(this.timingOption))}`],
             sortedTasks[i][`${this.timingOption}Quartiles`][0],
             sortedTasks[i][`${this.timingOption}Quartiles`][1],
             sortedTasks[i][`${this.timingOption}Quartiles`][2],
-            sortedTasks[i][`max${upperFirst(this.timingOption)}Time`],
+            sortedTasks[i][`max${upperFirst(getTimingOption(this.timingOption))}`],
           ],
         })
       }
@@ -241,10 +245,10 @@ export default {
         { title: 'Task name', value: 'name' },
         { title: 'Platform', value: 'platform' },
         { title: 'Count', value: 'count' },
-        { title: `Mean ${this.timingOption} time`, value: `mean${upperFirst(this.timingOption)}Time` },
-        { title: `Median ${this.timingOption} time`, value: `median${upperFirst(this.timingOption)}Time` },
-        { title: `Min ${this.timingOption} time`, value: `min${upperFirst(this.timingOption)}Time` },
-        { title: `Max ${this.timingOption} time`, value: `max${upperFirst(this.timingOption)}Time` },
+        { title: `Mean ${formatChartLabels(this.timingOption)}`, value: `mean${upperFirst(getTimingOption(this.timingOption))}` },
+        { title: `Median ${formatChartLabels(this.timingOption)}`, value: `median${upperFirst(getTimingOption(this.timingOption))}` },
+        { title: `Min ${formatChartLabels(this.timingOption)}`, value: `min${upperFirst(getTimingOption(this.timingOption))}` },
+        { title: `Max ${formatChartLabels(this.timingOption)}`, value: `max${upperFirst(getTimingOption(this.timingOption))}` },
       ]
     },
   },

@@ -56,7 +56,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { upperFirst } from 'lodash'
-import { formatDuration } from '@/utils/tasks'
+import {
+  formatDuration,
+  formatHeader
+} from '@/utils/tasks'
 import {
   initialOptions,
   updateInitialOptionsEvent,
@@ -130,48 +133,64 @@ export default {
       const times = upperFirst(this.timingOption)
       const timingHeaders = [
         {
-          title: `Mean T-${times}`,
-          key: `mean${times}Time`,
+          title: `Mean ${times}`,
+          key: `${formatHeader('mean', times)}`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
+          timingOption: this.timingOption
         },
         {
-          title: `Std Dev T-${times}`,
-          key: `stdDev${times}Time`,
+          title: `Std Dev ${times}`,
+          key: `${formatHeader('stdDev', times)}`,
           formatter: formatDuration,
-          allowZeros: true
+          allowZeros: true,
+          timingOption: this.timingOption
         },
         {
-          title: `Min T-${times}`,
-          key: `min${times}Time`,
+          title: `Min ${times}`,
+          key: `${formatHeader('min', times)}`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
+          timingOption: this.timingOption
         },
         {
-          title: `Q1 T-${times}`,
-          key: `${times.toLowerCase()}Quartiles.0`,
+          title: `Q1 ${times}`,
+          key: `${formatHeader('quartiles', times)}Quartiles.0`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
+          timingOption: this.timingOption
         },
         {
-          title: `Median T-${times}`,
-          key: `${times.toLowerCase()}Quartiles.1`,
+          title: `Median ${times}`,
+          key: `${formatHeader('quartiles', times)}Quartiles.1`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
+          timingOption: this.timingOption
         },
         {
-          title: `Q3 T-${times}`,
-          key: `${times.toLowerCase()}Quartiles.2`,
+          title: `Q3 ${times}`,
+          key: `${formatHeader('quartiles', times)}Quartiles.2`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
+          timingOption: this.timingOption
         },
         {
-          title: `Max T-${times}`,
-          key: `max${times}Time`,
+          title: `Max ${times}`,
+          key: `${formatHeader('max', times)}`,
           formatter: formatDuration,
-          allowZeros: false
+          allowZeros: false,
+          timingOption: this.timingOption
         }
       ]
+      if (this.timingOption === 'cpuTime') {
+        timingHeaders.push({
+          title: 'Total CPU Time',
+          key: 'totalCpuTime',
+          formatter: formatDuration,
+          allowZeros: false,
+          timingOption: this.timingOption
+        })
+      }
       return this.headers.concat(timingHeaders)
     }
   },
@@ -186,7 +205,7 @@ export default {
         value = value[index]
       }
       if (header.formatter) {
-        return header.formatter(value, header.allowZeros)
+        return header.formatter(value, header.allowZeros, this.timingOption)
       }
       return value
     }

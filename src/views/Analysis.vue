@@ -184,7 +184,18 @@ const taskFields = [
   'stdDevQueueTime',
   'minQueueTime',
   'queueQuartiles',
-  'maxQueueTime'
+  'maxQueueTime',
+  'maxMaxRss',
+  'meanMaxRss',
+  'stdDevMaxRss',
+  'minMaxRss',
+  'maxRssQuartiles',
+  'maxCpuTime',
+  'meanCpuTime',
+  'stdDevCpuTime',
+  'minCpuTime',
+  'totalCpuTime',
+  'cpuTimeQuartiles',
 ]
 
 /** The one-off query which retrieves historical task timing statistics */
@@ -359,6 +370,8 @@ export default {
     { value: 'totalTimes', title: 'Total times' },
     { value: 'runTimes', title: 'Run times' },
     { value: 'queueTimes', title: 'Queue times' },
+    { value: 'maxRss', title: 'Max RSS' },
+    { value: 'cpuTime', title: 'CPU Time' },
   ],
 }
 </script>
