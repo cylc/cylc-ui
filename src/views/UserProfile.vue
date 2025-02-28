@@ -210,6 +210,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </template>
                 </v-select>
               </v-row>
+
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>Log view word wrap</span>
+                </v-col>
+                <v-checkbox
+                  v-model="logWordWrap"
+                  data-cy="log-wrap"
+                />
+              </v-row>
             </v-container>
           </v-defaults-provider>
         </v-form>
@@ -221,7 +231,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState } from 'vuex'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
-import { useCyclePointsOrderDesc, useJobTheme, useReducedAnimation } from '@/composables/localStorage'
+import { useCyclePointsOrderDesc, useJobTheme, useLogWordWrapDefault, useReducedAnimation } from '@/composables/localStorage'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { allViews, useDefaultView } from '@/views/views.js'
 import Job from '@/components/cylc/Job.vue'
@@ -243,6 +253,7 @@ export default {
       cyclePointsOrderDesc: useCyclePointsOrderDesc(),
       jobTheme: useJobTheme(),
       reducedAnimation: useReducedAnimation(),
+      logWordWrap: useLogWordWrapDefault(),
       upperFirst,
     }
   },
