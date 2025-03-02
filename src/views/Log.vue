@@ -205,6 +205,7 @@ import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import DeltasCallback from '@/services/callbacks'
 import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
+import { JobStateLogFileMap } from '@/model/JobState.model'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -236,6 +237,20 @@ query LogFiles($id: ID!) {
 `
 
 /**
+ * Query used to retrieve data on the Job.
+ *
+ * @type {DocumentNode}
+*/
+const JOB_QUERY = gql`
+query JobState($id: ID!, $workflowId: ID!) {
+  jobs (live: false, ids: [$id], workflows: [$workflowId]) {
+    id
+    state
+  }
+}
+`
+
+/**
  * The preferred file to start with as a list of patterns.
  * The first pattern with a matching file name will be chosen.
  */
@@ -247,27 +262,6 @@ const LOG_FILE_DEFAULTS = [
   // scheduler log (lexographical sorting ensures the latest log)
   /^scheduler\/*/
 ]
-
-/**
- * Return the default log file from the given log filenames, if there is a
- * matching filename. Relies on the filenames having been sorted in descending
- * order.
- *
- * @param {string[]} logFiles - list of available log filenames
- * @returns {?string}
- */
-export const getDefaultFile = (logFiles) => {
-  if (logFiles.length) {
-    for (const filePattern of LOG_FILE_DEFAULTS) {
-      for (const fileName of logFiles) {
-        if (filePattern.exec(fileName)) {
-          return fileName
-        }
-      }
-    }
-  }
-  return null // rather than undefined
-}
 
 class Results {
   constructor () {
@@ -503,6 +497,56 @@ export default {
         /* isGlobalCallback */ false
       )
     },
+    /**
+     * Return the default log file from the given log filenames, if there is a
+     * matching filename. Relies on the filenames having been sorted in descending
+     * order.
+     *
+     * @param {string[]} logFiles - list of available log filenames
+     * @returns {?string}
+     */
+    async getDefaultFile (logFiles) {
+      if (this.jobLog === 1) {
+        // we are looking at a job log => pick the appropriate log file based on its state
+        // get the job from the store
+        let result
+        try {
+          if (this.id) {
+            // get the list of available log files
+            result = await this.$workflowService.query2(
+              JOB_QUERY,
+              {
+                id: this.id.split('//')[1],
+                workflowId: this.workflowTokens.workflow
+              }
+            )
+          }
+        } catch (err) {
+          // the query failed
+          console.warn(err)
+          return
+        }
+        if (result && result.data.jobs.length) {
+          return JobStateLogFileMap.get(result.data.jobs[0].state) || 'job.out'
+        } else {
+          return 'job.out'
+        }
+      } else {
+        // we are viewing the workflow log => always default to the latest log file
+        if (logFiles.length) {
+          // loop through all the options in LOG_FILE_DEFAULTS
+          for (const filePattern of LOG_FILE_DEFAULTS) {
+            // Loop through all the filenames e.g. [config/..., scheduler/...]
+            for (const fileName of logFiles) {
+              if (filePattern.exec(fileName)) {
+                return fileName
+              }
+            }
+          }
+        }
+      }
+      return null // rather than undefined
+    },
     async updateLogFileList (reset = true) {
       // if reset===true then the this.file will be reset
       // otherwise it will be left alone
@@ -537,13 +581,14 @@ export default {
 
       // reset the file if it is not present in the new selection
       if (reset) {
-        if (this.file && !logFiles.includes(this.file)) {
+        if (this.file) {
           this.file = null
         }
         if (!this.file) {
-        // set the default log file if appropriate
-          this.file = getDefaultFile(logFiles)
+          // set the default log file if appropriate
+          this.file = await this.getDefaultFile(logFiles)
         }
+        this.file = await this.getDefaultFile(logFiles)
       }
 
       // update the file input
