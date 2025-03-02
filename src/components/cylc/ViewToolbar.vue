@@ -30,7 +30,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         class="control"
         :data-cy="`control-${iControl.key}`"
       >
-        <v-btn
+        <v-menu
+        v-if="iControl.action==='select-tree'"
+          :close-on-content-click="false"
+        >
+          <template v-slot:activator="{ props }">
+            <v-btn
+              v-bind="{...$attrs, ...props, ...btnProps}"
+              :disabled="iControl.disabled"
+              :color="iControl.color"
+            >
+              <v-icon>{{ iControl.icon }}</v-icon>
+              <v-tooltip>{{ iControl.title }}</v-tooltip>
+            </v-btn>
+          </template>
+          <v-treeview
+            v-model:selected="iControl.value"
+            v-on:update:selected="iControl.callback"
+            :items="iControl.items"
+            item-props
+            select-strategy='independent'
+            item-title="name"
+            item-value="name"
+            selectable
+            open-all
+          ></v-treeview>
+        </v-menu>
+        <v-btn v-else
           v-bind="btnProps"
           :disabled="iControl.disabled"
           :color="iControl.color"
@@ -46,9 +72,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { btnProps } from '@/utils/viewToolbar'
+import { VTreeview } from 'vuetify/labs/VTreeview'
 
 export default {
   name: 'ViewToolbar',
+
+  components: {
+    VTreeview,
+  },
 
   emits: [
     'setOption'
@@ -120,7 +151,9 @@ export default {
           color = null
           callback = null
           disabled = false
-
+          if (control.items && control.items.length) {
+            disabled = control.items[0].disabled
+          }
           // set callback and color
           switch (control.action) {
             case 'toggle':
@@ -131,6 +164,12 @@ export default {
               break
             case 'callback':
               callback = (e) => this.call(control, e)
+              break
+            case 'select-tree':
+              callback = (e) => this.select(control, e)
+              if (control.value.length) {
+                color = 'blue'
+              }
               break
           }
 
@@ -177,6 +216,10 @@ export default {
       // call a control's callback
       control.callback()
       e.currentTarget.blur()
+    },
+    select (control, value) {
+      // call a control's callback
+      this.$emit('setOption', control.key, value)
     },
     getValues () {
       // an object with all defined values
