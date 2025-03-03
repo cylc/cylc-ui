@@ -123,7 +123,8 @@ const jobFields = [
   'queueTime',
   'runTime',
   'startedTime',
-  'maxRss'
+  'maxRss',
+  'cpuTime'
 ]
 
 /** The one-off query which retrieves historical job timing statistics */
@@ -370,7 +371,7 @@ export default {
               if (!value) {
                 return null
               }
-              const y = formatDuration(value, true)
+              const y = formatDuration(value, true, this.timingOption)
               const platform = this.series[seriesIndex].data[dataPointIndex].platform
               return `${y} (${platform})`
             }

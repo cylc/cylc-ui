@@ -98,10 +98,11 @@ export function jobMessageOutputs (jobNode) {
  * 00:00:00, rather than undefined
  * @return {string=} Formatted duration
  */
- export function formatDuration (value, allowZeros = false, timingOption = false) {
-  // Smaller number of seconds are formatted as HH:MM:SS
+export function formatDuration (value, allowZeros = false, timingOption = false) {
+  // Times are formatted as HH:MM:SS
   if (timingOption === 'queue' || timingOption === 'total' || timingOption === 'run' || timingOption === 'cpuTime') {
     if (value || (value === 0 && allowZeros === true)) {
+      // Convert CPU time to seconds
       if (timingOption === 'cpuTime') {
         value = value / 1000
       }
@@ -120,7 +121,7 @@ export function jobMessageOutputs (jobNode) {
         ':' + minutes.toString().padStart(2, '0') +
         ':' + Math.round(seconds).toString().padStart(2, '0')
     }
-  // Larger number means it's memory
+  // If memory value passed
   } else if (timingOption === 'maxRss') {
     if (value / 1024 < 5000) {
       const kilobytes = value / 1024
