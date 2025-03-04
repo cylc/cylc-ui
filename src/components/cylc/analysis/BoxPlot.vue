@@ -198,7 +198,7 @@ export default {
       },
       xaxis: {
         title: {
-          text: `${upperFirst(getTimingOption(props.timingOption))}`,
+          text: `${formatChartLabels(props.timingOption)}`,
         },
         labels: {
           formatter: (value) => formatDuration(value, true, props.timingOption)

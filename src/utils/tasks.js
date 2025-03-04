@@ -143,8 +143,10 @@ export function formatChartLabels (timingOption) {
   // Create correct labels for the charts
   if (timingOption === 'maxRss') {
     return 'Max RSS'
+  } else if (timingOption === 'cpuTime') {
+    return 'CPU Time'
   } else {
-    return upperFirst(timingOption) + ' time'
+    return upperFirst(timingOption) + ' Time'
   }
 }
 
