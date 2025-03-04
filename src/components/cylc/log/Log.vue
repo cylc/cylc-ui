@@ -79,14 +79,12 @@ export default {
 
   data () {
     return {
-      match: '',
-      ro: null
-    }
+      match: ''    }
   },
 
   mounted () {
-    this.ro = new ResizeObserver(this.onResize)
-    this.ro.observe(this.$el)
+    const ro = new ResizeObserver(this.onResize)
+    ro.observe(this.$el)
   },
 
   computed: {

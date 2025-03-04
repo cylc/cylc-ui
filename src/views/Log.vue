@@ -160,7 +160,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :word-wrap="wordWrap"
           :error="results.error"
           :autoScroll="autoScroll"
-          @updating="updating"
         />
       </template>
       </v-col>
