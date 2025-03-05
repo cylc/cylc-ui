@@ -79,7 +79,8 @@ export default {
 
   data () {
     return {
-      match: ''    }
+      match: ''
+    }
   },
 
   mounted () {
