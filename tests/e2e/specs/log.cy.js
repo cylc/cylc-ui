@@ -157,8 +157,6 @@ describe('Log View', () => {
       .find('input')
       .clear()
       .type('1/failed/01')
-      .get('[data-cy=log-viewer]')
-      .should('be.empty')
       .get('[data-cy=file-input]')
       .contains(defaultFileFailed)
       .get('[data-cy=log-path]')

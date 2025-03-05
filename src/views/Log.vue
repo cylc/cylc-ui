@@ -426,6 +426,7 @@ export default {
           ]
         }
       ],
+      initialLoad: true
     }
   },
 
@@ -581,14 +582,11 @@ export default {
 
       // reset the file if it is not present in the new selection
       if (reset) {
-        if (this.file) {
-          this.file = null
-        }
-        if (!this.file) {
+        if (!this.file || !this.initialLoad) {
           // set the default log file if appropriate
           this.file = await this.getDefaultFile(logFiles)
         }
-        this.file = await this.getDefaultFile(logFiles)
+        this.initialLoad = false
       }
 
       // update the file input
