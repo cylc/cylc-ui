@@ -30,10 +30,10 @@ describe('User Profile', () => {
   const defaultFontSize = 16 // px
   beforeEach(() => {
     cy.visit('/#/user-profile')
-    cy.title().should('eq', 'Cylc UI | User Profile')
   })
 
   it('Visits the user profile', () => {
+    cy.title().should('eq', 'Cylc UI | User Profile')
     cy.get('input#profile-username')
       .should('be.visible')
       .should('be.disabled')
@@ -157,5 +157,22 @@ describe('User Profile', () => {
     cy.get('#input-cyclepoints-order')
       .click()
     checkCyclePointOrder(['1', '2'])
+  })
+
+  it('Sets log view word wrap default setting', () => {
+    const checkLogWrap = (expected) => {
+      cy.visit('/#/log/one')
+        .get('[data-cy=control-wordWrap] button')
+        .should('have.attr', 'aria-checked', String(expected))
+    }
+
+    cy.get('[data-cy=log-wrap] input').as('checkbox')
+      .should('not.be.checked')
+    checkLogWrap(false)
+    cy.visit('/#/user-profile')
+      .get('@checkbox')
+      .click()
+      .should('be.checked')
+    checkLogWrap(true)
   })
 })
