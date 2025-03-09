@@ -62,7 +62,8 @@ const INITIAL_DATA = {
       frozenKey: true
     }
   ],
-  outputs: []
+  outputs: [],
+  runMode: 'Live',
 }
 
 const $workflowService = {
