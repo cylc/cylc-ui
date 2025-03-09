@@ -21,11 +21,61 @@ import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 import { createVuetify } from 'vuetify'
 import sinon from 'sinon'
-import Log, { getDefaultFile } from '@/views/Log.vue'
+import Log from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
 
-describe('getDefaultFile()', () => {
+describe('Log view', () => {
+  const owner = 'svimes'
+  const workflowName = 'thud'
+  const workflowID = `~${owner}/${workflowName}`
+  const initialFile = 'koom-valley.log'
+
+  const vuetify = createVuetify()
+  let $workflowService, store
+
+  const mountFunction = (options) => mount(Log, {
+    global: {
+      plugins: [vuetify, store],
+      mocks: { $workflowService },
+    },
+    props: {
+      workflowName,
+      initialOptions: {
+        file: initialFile,
+      },
+    },
+    ...options
+  })
+
+  beforeEach(() => {
+    store = createStore(storeOptions)
+    store.commit(
+      'user/SET_USER',
+      new User({ username: 'cylc', permissions: [], owner })
+    )
+    $workflowService = sinon.createStubInstance(WorkflowService)
+    $workflowService.apolloClient = {
+      query: () => ({
+        data: {
+          logFiles: {
+            files: ['a.log', 'b.log'],
+          },
+          jobs: [
+            {
+              id: 'a',
+              state: 'succeeded'
+            },
+            {
+              id: 'b',
+              state: 'succeeded'
+            },
+          ]
+        }
+      }),
+    }
+  })
+
   it.each([
     {
       files: [
@@ -66,50 +116,9 @@ describe('getDefaultFile()', () => {
       files: ['ceres', 'vesta', 'aphosis'].sort().reverse(),
       expected: null,
     },
-  ])('getDefaultFile($files) == $expected', ({ files, expected }) => {
-    expect(getDefaultFile(files)).toBe(expected)
-  })
-})
-
-describe('Log view', () => {
-  const owner = 'svimes'
-  const workflowName = 'thud'
-  const workflowID = `~${owner}/${workflowName}`
-  const initialFile = 'koom-valley.log'
-
-  const vuetify = createVuetify()
-  let $workflowService, store
-
-  const mountFunction = (options) => mount(Log, {
-    global: {
-      plugins: [vuetify, store],
-      mocks: { $workflowService },
-    },
-    props: {
-      workflowName,
-      initialOptions: {
-        file: initialFile,
-      },
-    },
-    ...options
-  })
-
-  beforeEach(() => {
-    store = createStore(storeOptions)
-    store.commit(
-      'user/SET_USER',
-      new User({ username: 'cylc', permissions: [], owner })
-    )
-    $workflowService = sinon.createStubInstance(WorkflowService)
-    $workflowService.apolloClient = {
-      query: () => ({
-        data: {
-          logFiles: {
-            files: ['a.log', 'b.log']
-          }
-        }
-      }),
-    }
+  ])('getDefaultFile($files) == $expected', async ({ files, expected }) => {
+    const wrapper = mountFunction()
+    expect(await wrapper.vm.getDefaultFile(files)).toBe(expected)
   })
 
   it('issues the subscription', async () => {
