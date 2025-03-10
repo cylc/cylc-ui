@@ -128,6 +128,7 @@ import { eventBus } from '@/services/eventBus'
 import CopyBtn from '@/components/core/CopyBtn.vue'
 import { upperFirst } from 'lodash-es'
 import { formatFlowNums } from '@/utils/tasks'
+import { JobStateLogFileMap } from '@/model/JobState.model'
 
 export default {
   name: 'CommandMenu',
@@ -271,7 +272,8 @@ export default {
             {
               name: 'Log',
               initialOptions: {
-                relativeID: this.node.tokens.relativeID || null
+                relativeID: this.node.tokens.relativeID || null,
+                file: JobStateLogFileMap.get(this.node.node.state),
               }
             }
           )
