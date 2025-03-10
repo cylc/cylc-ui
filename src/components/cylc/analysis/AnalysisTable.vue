@@ -58,7 +58,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { upperFirst } from 'lodash'
 import {
   formatDuration,
-  formatHeader
+  formatHeader,
+  formatChartLabels,
 } from '@/utils/tasks'
 import {
   initialOptions,
@@ -131,61 +132,74 @@ export default {
   computed: {
     shownHeaders () {
       const times = upperFirst(this.timingOption)
-      const timingHeaders = [
-        {
-          title: `Mean ${times}`,
-          key: `${formatHeader('mean', times)}`,
-          formatter: formatDuration,
-          allowZeros: false,
-          timingOption: this.timingOption
-        },
-        {
-          title: `Min ${times}`,
-          key: `${formatHeader('min', times)}`,
-          formatter: formatDuration,
-          allowZeros: false,
-          timingOption: this.timingOption
-        },
-        {
-          title: `Q1 ${times}`,
-          key: `${formatHeader('quartiles', times)}Quartiles.0`,
-          formatter: formatDuration,
-          allowZeros: false,
-          timingOption: this.timingOption
-        },
-        {
-          title: `Median ${times}`,
-          key: `${formatHeader('quartiles', times)}Quartiles.1`,
-          formatter: formatDuration,
-          allowZeros: false,
-          timingOption: this.timingOption
-        },
-        {
-          title: `Q3 ${times}`,
-          key: `${formatHeader('quartiles', times)}Quartiles.2`,
-          formatter: formatDuration,
-          allowZeros: false,
-          timingOption: this.timingOption
-        },
-        {
-          title: `Max ${times}`,
-          key: `${formatHeader('max', times)}`,
-          formatter: formatDuration,
-          allowZeros: false,
-          timingOption: this.timingOption
+      const timingHeaders = []
+      // Check if there are any stats to show
+      let stats = false
+      for (let i = 0; i < this.tasks.length; i++) {
+        if (this.tasks[i].count > 1) {
+          stats = true
+          break
         }
-      ]
-      if (this.timingOption === 'cpuTime') {
-        timingHeaders.push({
-          title: 'Total CPU Time',
-          key: 'totalCpuTime',
-          formatter: formatDuration,
-          allowZeros: false,
-          timingOption: this.timingOption
-        })
       }
+      if (stats) {
+        timingHeaders.push(
+          {
+            title: `Mean ${formatChartLabels(times)}`,
+            key: `${formatHeader('mean', times)}`,
+            formatter: formatDuration,
+            allowZeros: false,
+            timingOption: this.timingOption
+          },
+          {
+            title: `Min ${formatChartLabels(times)}`,
+            key: `${formatHeader('min', times)}`,
+            formatter: formatDuration,
+            allowZeros: false,
+            timingOption: this.timingOption
+          },
+          {
+            title: `Q1 ${formatChartLabels(times)}`,
+            key: `${formatHeader('quartiles', times)}Quartiles.0`,
+            formatter: formatDuration,
+            allowZeros: false,
+            timingOption: this.timingOption
+          },
+          {
+            title: `Median ${formatChartLabels(times)}`,
+            key: `${formatHeader('quartiles', times)}Quartiles.1`,
+            formatter: formatDuration,
+            allowZeros: false,
+            timingOption: this.timingOption
+          },
+          {
+            title: `Q3 ${formatChartLabels(times)}`,
+            key: `${formatHeader('quartiles', times)}Quartiles.2`,
+            formatter: formatDuration,
+            allowZeros: false,
+            timingOption: this.timingOption
+          },
+          {
+            title: `Max ${formatChartLabels(times)}`,
+            key: `${formatHeader('max', times)}`,
+            formatter: formatDuration,
+            allowZeros: false,
+            timingOption: this.timingOption
+          }
+        )
+      } else {
+        timingHeaders.push(
+          {
+            title: `${formatChartLabels(times)}`,
+            key: `${formatHeader('mean', times)}`,
+            formatter: formatDuration,
+            allowZeros: false,
+            timingOption: this.timingOption
+          }
+        )
+      }
+
       // Don't show std dev for cpuTime or maxRss
-      if (this.timingOption !== 'cpuTime' && this.timingOption !== 'maxRss') {
+      if (this.timingOption !== 'cpuTime' && this.timingOption !== 'maxRss' && stats) {
         timingHeaders.push({
           title: `Std Dev ${times}`,
           key: `${formatHeader('stdDev', times)}`,

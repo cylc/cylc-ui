@@ -123,14 +123,14 @@ export function formatDuration (value, allowZeros = false, timingOption = false)
     }
   // If memory value passed
   } else if (timingOption === 'maxRss') {
-    if (value / 1024 < 5000) {
-      const kilobytes = value / 1024
+    if (value < 5000) {
+      const kilobytes = value
       return kilobytes.toPrecision(3) + ' KB'
-    } else if (value / 1048576 < 1000) {
-      const megabytes = value / 1048576
+    } else if (value / 1024 < 1000) {
+      const megabytes = value / 1024
       return megabytes.toPrecision(3) + ' MB'
     } else {
-      const gigabytes = value / 1073741824
+      const gigabytes = value / 1048576
       return gigabytes.toPrecision(3) + ' GB'
     }
   }
@@ -141,9 +141,9 @@ export function formatDuration (value, allowZeros = false, timingOption = false)
 
 export function formatChartLabels (timingOption) {
   // Create correct labels for the charts
-  if (timingOption === 'maxRss') {
+  if (timingOption === 'maxRss' || timingOption === 'MaxRss') {
     return 'Max RSS'
-  } else if (timingOption === 'cpuTime') {
+  } else if (timingOption === 'cpuTime' || timingOption === 'CpuTime') {
     return 'CPU Time'
   } else {
     return upperFirst(timingOption) + ' Time'
