@@ -709,7 +709,7 @@ export default {
       })
       const disabled = isParent || isAncestor
       for (const childFamily of node.node.descendants) {
-        if (this.namespaces.map((obj) => obj.name).includes(childFamily)) {
+        if (this.namespaces.some((obj) => obj.name === childFamily)) {
           const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${childFamily}` })
           const childNode = this.cylcTree.$index[childTokens.id]
           if (childNode.node.firstParent.id === node.id) {
