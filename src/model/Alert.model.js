@@ -22,9 +22,10 @@ export class Alert {
    * @param {string} color - color of the displayed alert.
    * @param {?string} msg - a custom message to display in the alert instead of err.
    */
-  constructor (err, color, msg = null) {
+  constructor (err, color, msg = null, timeout = 10000) {
     this.err = err
     this.text = msg || err
     this.color = color
+    this.timeout = timeout
   }
 }

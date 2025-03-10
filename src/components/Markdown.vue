@@ -26,7 +26,10 @@
 <script>
 import MarkdownIt from 'markdown-it'
 
-const md = new MarkdownIt()
+const md = new MarkdownIt({
+  // allow HTML syntax
+  html: true,
+})
 
 export default {
   name: 'Markdown',

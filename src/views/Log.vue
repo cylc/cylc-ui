@@ -125,6 +125,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           >
             {{ results.connected ? 'Connected' : 'Reconnect' }}
           </v-chip>
+          <JupyterLauncher :path="urlSafePath" style="margin-left: 0.5em" />
           <div
             data-cy="log-path"
             class="ml-2 mr-1 d-flex text-medium-emphasis text-pre overflow-x-hidden"
@@ -205,6 +206,7 @@ import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import DeltasCallback from '@/services/callbacks'
 import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
+import JupyterLauncher from '@/components/cylc/JupyterLauncher.vue'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -324,6 +326,7 @@ export default {
 
   components: {
     CopyBtn,
+    JupyterLauncher,
     LogComponent,
     ViewToolbar,
   },
@@ -370,6 +373,10 @@ export default {
       () => results.value.path?.substring(0, results.value.path.length - file.value.length - 1)
     )
 
+    const urlSafePath = computed(
+      () => encodeURIComponent(`${parentPath.value}/${file.value}`)
+    )
+
     whenever(
       () => store.state.offline,
       () => { results.value.connected = false }
@@ -406,6 +413,7 @@ export default {
       debouncedUpdateRelativeID,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
+      urlSafePath,
     }
   },
 
