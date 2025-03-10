@@ -47,11 +47,13 @@ const InfoView = defineAsyncComponent(() => import('@/views/Info.vue'))
 export const TREE = 'Tree'
 
 /**
- * A map of the views that can be opened in a workspace directly.
+ * A map of the views that can be opened for a workflow.
  *
  * Note, some views may require additional context to open.
+ *
+ * @type {Map<string, CylcView>}
  */
-export const workspaceViews = new Map([
+export const workflowViews = new Map([
   [TREE, { component: TreeView, icon: mdiFileTree }],
   ['Table', { component: TableView, icon: mdiTable }],
   ['Graph', { component: GraphView, icon: mdiGraph }],
@@ -59,6 +61,11 @@ export const workspaceViews = new Map([
   ['Analysis', { component: AnalysisView, icon: mdiChartLine }],
   ['Gantt', { component: GanttView, icon: mdiChartGantt }],
 ])
+
+// Development views that we don't want in production:
+if (import.meta.env.MODE !== 'production') {
+  workflowViews.set('SimpleTree', { component: SimpleTreeView, icon: mdiTree })
+}
 
 /**
  * A map of Vue views or components.
@@ -72,15 +79,11 @@ export const workspaceViews = new Map([
  * @type {Map<string, CylcView>}
  */
 export const allViews = new Map([
-  ...workspaceViews,
+  ...workflowViews,
+  // For now, Info view cannot be opened for a workflow, but this will be resolved by
+  // https://github.com/cylc/cylc-ui/issues/1898
   ['Info', { component: InfoView, icon: mdiInformationOutline }],
 ])
-
-// Development views that we don't want in production:
-if (import.meta.env.MODE !== 'production') {
-  allViews.set('SimpleTree', { component: SimpleTreeView, icon: mdiTree })
-  workspaceViews.set('SimpleTree', { component: SimpleTreeView, icon: mdiTree })
-}
 
 export const useDefaultView = () => {
   const defaultView = useLocalStorage('defaultView', TREE)

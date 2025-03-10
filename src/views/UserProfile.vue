@@ -197,15 +197,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-col>
                 <v-select
                   v-model="defaultView"
-                  :items="defaultViews"
-                  :prepend-inner-icon="$options.allViews.get(defaultView).icon"
+                  :items="Array.from(workflowViews.keys())"
+                  :prepend-inner-icon="workflowViews.get(defaultView).icon"
                   data-cy="select-default-view"
                   :menu-props="{ 'data-cy': 'select-default-view-menu' }"
                 >
                   <template v-slot:item="{ item, props }">
                     <v-list-item
                       v-bind="props"
-                      :prepend-icon="$options.allViews.get(item.value).icon"
+                      :prepend-icon="workflowViews.get(item.value).icon"
                     />
                   </template>
                 </v-select>
@@ -223,7 +223,7 @@ import { mapState } from 'vuex'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
 import { useCyclePointsOrderDesc, useJobTheme, useReducedAnimation } from '@/composables/localStorage'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
-import { allViews, useDefaultView } from '@/views/views.js'
+import { workflowViews, useDefaultView } from '@/views/views.js'
 import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
 import { upperFirst } from 'lodash-es'
@@ -244,21 +244,12 @@ export default {
       jobTheme: useJobTheme(),
       reducedAnimation: useReducedAnimation(),
       upperFirst,
+      workflowViews,
     }
   },
 
   computed: {
     ...mapState('user', ['user']),
-
-    defaultViews () {
-      const views = Array.from(this.$options.allViews.keys())
-
-      // filter out the "Info" view as this cannot presently be opened on the
-      // workflow itself, only jobs inside of the workflow
-      // https://github.com/cylc/cylc-ui/issues/1898 will resolve this
-      views.pop('Info')
-      return views
-    }
   },
 
   methods: {
@@ -267,8 +258,6 @@ export default {
     increaseFontSize,
     getCurrentFontSize,
   },
-
-  allViews,
 
   vuetifyDefaults: {
     global: {
