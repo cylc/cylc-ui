@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="log-wrapper">
+  <div ref="wrapper">
     <v-alert
       v-if="error"
       type="error"
@@ -29,20 +29,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{ error }}
       </span>
     </v-alert>
-    <pre class="log-text"><span
+    <pre data-cy="log-text"><span
       v-for="(log, index) in computedLogs"
       :key="index"
       :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
     >{{ log }}</span></pre>
     <!-- a div to use for autoscrolling -->
-    <div ref="auto-scroll-end"></div>
+    <div ref="autoScrollEnd"></div>
   </div>
 </template>
 
 <script>
+import { useTemplateRef, watch } from 'vue'
 import {
   mdiFileAlertOutline
 } from '@mdi/js'
+import { when } from '@/utils'
 
 export default {
   name: 'LogComponent',
@@ -77,15 +79,29 @@ export default {
     }
   },
 
-  data () {
-    return {
-      match: ''
-    }
-  },
+  setup (props) {
+    const wrapperRef = useTemplateRef('wrapper')
+    const autoScrollEndRef = useTemplateRef('autoScrollEnd')
 
-  mounted () {
-    const ro = new ResizeObserver(this.onResize)
-    ro.observe(this.$el)
+    function scrollToEnd () {
+      autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
+    }
+
+    when(wrapperRef, () => {
+      const ro = new ResizeObserver(scrollToEnd)
+      watch(
+        () => props.autoScroll,
+        (val) => {
+          if (val) {
+            scrollToEnd()
+            ro.observe(wrapperRef.value)
+          } else {
+            ro.disconnect()
+          }
+        },
+        { immediate: true }
+      )
+    })
   },
 
   computed: {
@@ -103,12 +119,6 @@ export default {
   },
 
   methods: {
-    onResize () {
-      if (this.autoScroll) {
-        this.scrollToElement('auto-scroll-end', { behavior: 'smooth' })
-      }
-    },
-
     updateLogs () {
       return this.logs.map((logLine) => {
         return this.stripTimestamp(logLine)
@@ -117,19 +127,8 @@ export default {
 
     stripTimestamp (logLine) {
       const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
-      this.match = logLine.match(regex)
-      if (this.match) {
-        return this.match[1]
-      }
-      return logLine
+      return logLine.match(regex)?.[1] ?? logLine
     },
-
-    scrollToElement (elementCLassName, options) {
-      if (this.$refs[elementCLassName]) {
-        this.$refs[elementCLassName].scrollIntoView(options)
-      }
-    },
-
   },
 
   // Misc options

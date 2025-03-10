@@ -32,56 +32,64 @@ const mountOpts = {
   props: {}
 }
 
-const logs = [...Array(20).keys()].map(e => e.toString() + '\n')
+function logLines (length) {
+  return Array.from({ length }, (_, i) => `Line ${i + 1}\n`)
+}
 
 describe('Log Component', () => {
+  beforeEach(() => {
+    // Cypress needs an ancestor that hides overflow for its visibility assertions
+    // to detect if an element is scrolled out of view
+    // https://docs.cypress.io/app/core-concepts/interacting-with-elements#An-element-is-considered-hidden-if
+    cy.get('[data-cy-root]')
+      .then(($el) => {
+        $el.css({ height: '100vh', overflow: 'auto' })
+      })
+  })
+
   it('renders', () => {
     // see: https://on.cypress.io/mounting-vue
     cy.mount(LogComponent, merge(mountOpts, {
       props: {
-        logs,
-        timestamps: 'timestamps',
-        'word-wrap': false,
-        autoScroll: false,
-        error: null
+        logs: logLines(20),
       },
-    })).as('wrapper')
+    }))
 
-    cy.get('[class="log-wrapper"]')
+    cy.get('span')
+      .contains('Line 1')
       .should('be.visible')
-      .contains('1')
   })
 
   it('autoScrolls', () => {
     // see: https://on.cypress.io/mounting-vue
     cy.mount(LogComponent, merge(mountOpts, {
       props: {
-        logs,
-        timestamps: 'timestamps',
-        'word-wrap': false,
+        logs: logLines(30),
         autoScroll: false,
-        error: null
       },
-    })).as('wrapper')
+    })).as('component')
 
     // should not scroll to bottom
-    cy.window().then(($window) => {
-      expect($window.scrollY).to.equal(0)
-    })
+    cy.get('span').contains('Line 30')
+      .should('not.be.visible')
 
     // turn autoscroll on
-    cy.get('@wrapper').then(({ wrapper }) => {
+    cy.get('@component').then(({ wrapper }) => {
       wrapper.setProps({
         autoScroll: true
       })
     })
+    cy.get('span').contains('Line 30')
+      .should('be.visible')
+
     // update the log
-    cy.get('@wrapper').then(({ wrapper }) => {
+    cy.get('@component').then(({ wrapper }) => {
       wrapper.setProps({
-        logs: [...Array(40).keys()].map(e => e.toString() + '\n')
+        logs: logLines(50)
       })
     })
     // log file should now have scrolled to the bottom
-    cy.get('[class="log-wrapper"]').window().its('scrollY').should('not.equal', 0)
+    cy.get('span').contains('Line 50')
+      .should('be.visible')
   })
 })
