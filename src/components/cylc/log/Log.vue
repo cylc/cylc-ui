@@ -16,14 +16,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <pre><span
-    v-for="(log, index) in computedLogs"
-    :key="index"
-    :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
-  >{{ log }}</span></pre>
+  <div ref="wrapper">
+    <v-alert
+      v-if="error"
+      type="error"
+      variant="tonal"
+      density="comfortable"
+      class="mb-4"
+      :icon="$options.icons.mdiFileAlertOutline"
+    >
+      <span class="text-pre-wrap text-break">
+        {{ error }}
+      </span>
+    </v-alert>
+    <pre data-cy="log-text"><span
+      v-for="(log, index) in computedLogs"
+      :key="index"
+      :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
+    >{{ log }}</span></pre>
+    <!-- a div to use for autoscrolling -->
+    <div ref="autoScrollEnd"></div>
+  </div>
 </template>
 
 <script>
+import { useTemplateRef, watch } from 'vue'
+import {
+  mdiFileAlertOutline
+} from '@mdi/js'
+import { when } from '@/utils'
 
 export default {
   name: 'LogComponent',
@@ -47,12 +68,40 @@ export default {
       required: false,
       default: false
     },
+    error: {
+      type: String,
+      required: false
+    },
+    autoScroll: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
   },
 
-  data () {
-    return {
-      match: ''
+  setup (props) {
+    const wrapperRef = useTemplateRef('wrapper')
+    const autoScrollEndRef = useTemplateRef('autoScrollEnd')
+
+    function scrollToEnd () {
+      autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
     }
+
+    when(wrapperRef, () => {
+      const ro = new ResizeObserver(scrollToEnd)
+      watch(
+        () => props.autoScroll,
+        (val) => {
+          if (val) {
+            scrollToEnd()
+            ro.observe(wrapperRef.value)
+          } else {
+            ro.disconnect()
+          }
+        },
+        { immediate: true }
+      )
+    })
   },
 
   computed: {
@@ -78,12 +127,13 @@ export default {
 
     stripTimestamp (logLine) {
       const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
-      this.match = logLine.match(regex)
-      if (this.match) {
-        return this.match[1]
-      }
-      return logLine
-    }
+      return logLine.match(regex)?.[1] ?? logLine
+    },
+  },
+
+  // Misc options
+  icons: {
+    mdiFileAlertOutline
   }
 }
 
