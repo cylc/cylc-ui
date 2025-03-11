@@ -68,8 +68,9 @@ export default {
       autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
     }
 
+    const ro = new ResizeObserver(scrollToEnd)
+
     when(wrapperRef, () => {
-      const ro = new ResizeObserver(scrollToEnd)
       watch(
         () => props.autoScroll,
         (val) => {
@@ -86,12 +87,11 @@ export default {
   },
 
   mounted () {
-    // this.ro.observe(this.$el)
     window.addEventListener('wheel', this.handleScroll)
   },
 
   onBeforeUnmount () {
-    // this.ro.disconnect()
+    this.ro.disconnect()
     window.removeEventListener('wheel', this.handleScroll)
   },
 
