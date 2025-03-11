@@ -154,7 +154,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
         <template v-else>
           <v-alert
-            v-if="error"
+            v-if="results.error"
             type="error"
             variant="tonal"
             density="comfortable"
@@ -162,7 +162,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :icon="$options.icons.mdiFileAlertOutline"
           >
             <span class="text-pre-wrap text-break">
-              {{ error }}
+              {{ results.error }}
             </span>
           </v-alert>
           <log-component
@@ -170,7 +170,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :logs="results.lines"
             :timestamps="timestamps"
             :word-wrap="wordWrap"
-            :error="results.error"
             :autoScroll="autoScroll"
             @auto-scroll="autoScrollToggle"
           />
