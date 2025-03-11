@@ -146,22 +146,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       no-gutters
       class="overflow-auto px-4 pb-2"
     >
-    <v-col>
-      <v-skeleton-loader
-        v-if="id && file && results.connected == null"
-        type="text@5"
-        class="mx-n4 align-content-start"
-      />
-      <template v-else>
-        <log-component
-          data-cy="log-viewer"
-          :logs="results.lines"
-          :timestamps="timestamps"
-          :word-wrap="wordWrap"
-          :error="results.error"
-          :autoScroll="autoScroll"
+      <v-col>
+        <v-skeleton-loader
+          v-if="id && file && results.connected == null"
+          type="text@5"
+          class="mx-n4 align-content-start"
         />
-      </template>
+        <template v-else>
+          <v-alert
+            v-if="error"
+            type="error"
+            variant="tonal"
+            density="comfortable"
+            class="mb-4"
+            :icon="$options.icons.mdiFileAlertOutline"
+          >
+            <span class="text-pre-wrap text-break">
+              {{ error }}
+            </span>
+          </v-alert>
+          <log-component
+            data-cy="log-viewer"
+            :logs="results.lines"
+            :timestamps="timestamps"
+            :word-wrap="wordWrap"
+            :error="results.error"
+            :autoScroll="autoScroll"
+            @auto-scroll="autoScrollToggle"
+          />
+        </template>
       </v-col>
     </v-row>
   </v-container>
@@ -177,7 +190,8 @@ import {
   mdiPowerPlugOff,
   mdiPowerPlug,
   mdiWrap,
-  mdiMouseScrollWheel,
+  mdiFileAlertOutline,
+  mdiMouseMoveDown,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
@@ -425,7 +439,7 @@ export default {
             },
             {
               title: 'Auto scroll',
-              icon: mdiMouseScrollWheel,
+              icon: mdiMouseMoveDown,
               action: 'toggle',
               value: this.autoScroll,
               key: 'autoScroll',
@@ -561,6 +575,11 @@ export default {
       this.fileDisabled = true
       this.logFiles = []
     },
+    autoScrollToggle () {
+      this.autoScroll = false
+      const index = this.controlGroups[0].controls.findIndex(obj => obj.key === 'autoScroll')
+      this.controlGroups[0].controls[index].value = this.autoScroll
+    }
   },
 
   watch: {
@@ -577,6 +596,7 @@ export default {
     mdiFolderRefresh,
     mdiPowerPlug,
     mdiPowerPlugOff,
+    mdiFileAlertOutline
   }
 }
 </script>

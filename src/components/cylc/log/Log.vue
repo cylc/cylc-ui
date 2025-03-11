@@ -17,18 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div ref="wrapper">
-    <v-alert
-      v-if="error"
-      type="error"
-      variant="tonal"
-      density="comfortable"
-      class="mb-4"
-      :icon="$options.icons.mdiFileAlertOutline"
-    >
-      <span class="text-pre-wrap text-break">
-        {{ error }}
-      </span>
-    </v-alert>
     <pre data-cy="log-text"><span
       v-for="(log, index) in computedLogs"
       :key="index"
@@ -41,9 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { useTemplateRef, watch } from 'vue'
-import {
-  mdiFileAlertOutline
-} from '@mdi/js'
 import { when } from '@/utils'
 
 export default {
@@ -67,10 +52,6 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    },
-    error: {
-      type: String,
-      required: false
     },
     autoScroll: {
       type: Boolean,
@@ -104,6 +85,16 @@ export default {
     })
   },
 
+  mounted () {
+    // this.ro.observe(this.$el)
+    window.addEventListener('wheel', this.handleScroll)
+  },
+
+  onBeforeUnmount () {
+    // this.ro.disconnect()
+    window.removeEventListener('wheel', this.handleScroll)
+  },
+
   computed: {
     computedLogs () {
       if (this.logs.length > 0) {
@@ -129,11 +120,12 @@ export default {
       const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
       return logLine.match(regex)?.[1] ?? logLine
     },
-  },
 
-  // Misc options
-  icons: {
-    mdiFileAlertOutline
+    handleScroll (event) {
+      if (this.autoScroll) {
+        this.$emit('autoScroll')
+      }
+    },
   }
 }
 
