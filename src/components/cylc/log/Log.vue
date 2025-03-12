@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { useTemplateRef, watch } from 'vue'
+import { useTemplateRef, watch, onBeforeUnmount } from 'vue'
 import { when } from '@/utils'
 
 export default {
@@ -84,15 +84,10 @@ export default {
         { immediate: true }
       )
     })
-  },
 
-  mounted () {
-    window.addEventListener('wheel', this.handleScroll)
-  },
-
-  onBeforeUnmount () {
-    this.ro.disconnect()
-    window.removeEventListener('wheel', this.handleScroll)
+    onBeforeUnmount(() => {
+      ro.disconnect()
+    })
   },
 
   computed: {
@@ -119,13 +114,7 @@ export default {
     stripTimestamp (logLine) {
       const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
       return logLine.match(regex)?.[1] ?? logLine
-    },
-
-    handleScroll (event) {
-      if (this.autoScroll) {
-        this.$emit('autoScroll')
-      }
-    },
+    }
   }
 }
 
