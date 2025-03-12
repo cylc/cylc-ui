@@ -382,7 +382,7 @@ export default {
     }, 500)
 
     /** AutoScroll? */
-    const autoScroll = useInitialOptions('autoScroll', { props, emit }, false)
+    const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
     const logScrollEl = useTemplateRef('logScroll')
     const { arrivedState, directions } = useScroll(logScrollEl)
     // Turn on autoscroll when user scrolls to bottom:
