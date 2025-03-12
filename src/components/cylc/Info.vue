@@ -84,6 +84,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel-text>
       </v-expansion-panel>
 
+      <v-expansion-panel class="run-mode-panel">
+        <v-expansion-panel-title color="blue-grey-lighten-2">
+          Run Mode
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-icon>{{ runModeIcon }}</v-icon>  {{ runMode }}
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
+      <v-expansion-panel class="xtriggers-panel">
+        <v-expansion-panel-title color="blue-grey-lighten-2">
+          Xtriggers
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <table>
+            <tr>
+              <th>Label</th>
+              <th>ID</th>
+              <th>Is satisfied</th>
+            </tr>
+            <tr v-for="xt in xtriggers" :key="xt">
+              <td>{{ xt.label }}</td>
+              <td>{{ xt.id }}</td>
+              <td><center><v-icon>{{ xt.satisfactionIcon }}</v-icon></center></td>
+            </tr>
+          </table>
+          <p class="footnote">* for clock triggers</p>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
       <!-- The prereqs -->
       <v-expansion-panel class="prerequisites-panel">
         <v-expansion-panel-title color="blue-grey-lighten-2">
@@ -169,6 +199,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import { formatCompletion } from '@/utils/outputs'
+import { mdiSkipForward, mdiChatQuestion, mdiGhostOutline, mdiPlay, mdiDramaMasks, mdiCheckboxOutline, mdiCheckboxBlankOutline } from '@mdi/js'
 
 export default {
   name: 'InfoComponent',
@@ -226,6 +257,38 @@ export default {
     completion () {
       // Task output completion expression stuff.
       return this.task?.node?.runtime.completion
+    },
+
+    runModeIcon () {
+      // Task Run Mode:
+      if (this.task?.node?.runtime.runMode === 'Skip') {
+        return mdiSkipForward
+      } else if (this.task?.node?.runtime.runMode === 'Live') {
+        return mdiPlay
+      } else if (this.task?.node?.runtime.runMode === 'Simulation') {
+        return mdiGhostOutline
+      } else if (this.task?.node?.runtime.runMode === 'Dummy') {
+        return mdiDramaMasks
+      }
+      return mdiChatQuestion
+    },
+
+    runMode () {
+      // Task Run Mode:
+      return this.task?.node?.runtime.runMode
+    },
+
+    xtriggers () {
+      // debugger
+      const xtriggers = this.task?.node?.xtriggers
+      xtriggers.forEach(element => {
+        if (element.satisfied === true) {
+          element.satisfactionIcon = mdiCheckboxOutline
+        } else {
+          element.satisfactionIcon = mdiCheckboxBlankOutline
+        }
+      })
+      return xtriggers
     }
 
   },
@@ -312,4 +375,18 @@ export default {
       }
     }
   }
+
+    .xtriggers-panel {
+      td {
+        border-bottom: 1px rgb(159, 206, 206) solid;
+        padding-left: 4px;
+      }
+      th {
+        padding-left: 4px;
+        border-bottom: 2px rgb(159, 206, 206) solid;
+      }
+      .footnote {
+        font-size: smaller;
+      }
+    }
 </style>
