@@ -102,13 +102,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <tr>
               <th>Label</th>
               <th>ID</th>
-              <th>Trigger Time*</th>
               <th>Is satisfied</th>
             </tr>
             <tr v-for="xt in xtriggers" :key="xt">
               <td>{{ xt.label }}</td>
               <td>{{ xt.id }}</td>
-              <td>{{ xt.clockTriggerTime || ""}}</td>
               <td><center><v-icon>{{ xt.satisfactionIcon }}</v-icon></center></td>
             </tr>
           </table>
@@ -289,8 +287,6 @@ export default {
         } else {
           element.satisfactionIcon = mdiCheckboxBlankOutline
         }
-        const re = /trigger_time=(\d+)/
-        element.clockTriggerTime = new Date(Number(re.exec(element.id)[1]) * 1000).toLocaleString()
       })
       return xtriggers
     }
