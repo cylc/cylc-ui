@@ -136,9 +136,6 @@ export function formatDuration (value, allowZeros = false, timingOption = false)
   }
   // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
   // return "undefined" rather than a number for these cases
-  console.log('got here somehow')
-  console.log(value)
-  console.log(timingOption)
   return undefined
 }
 
