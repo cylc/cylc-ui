@@ -142,46 +142,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-container>
 
     <!-- the log file viewer -->
-    <v-row
+    <div
+      ref="logScroll"
       no-gutters
-      class="overflow-auto px-4 pb-2"
+      class="h-100 overflow-auto px-4 pb-2"
     >
-      <v-col>
-        <v-skeleton-loader
-          v-if="id && file && results.connected == null"
-          type="text@5"
-          class="mx-n4 align-content-start"
+      <v-skeleton-loader
+        v-if="id && file && results.connected == null"
+        type="text@5"
+        class="mx-n4 align-content-start"
+      />
+      <template v-else>
+        <v-alert
+          v-if="results.error"
+          type="error"
+          variant="tonal"
+          density="comfortable"
+          class="mb-4"
+          :icon="$options.icons.mdiFileAlertOutline"
+        >
+          <span class="text-pre-wrap text-break">
+            {{ results.error }}
+          </span>
+        </v-alert>
+        <log-component
+          data-cy="log-viewer"
+          :logs="results.lines"
+          :timestamps="timestamps"
+          :word-wrap="wordWrap"
+          :autoScroll="autoScroll"
         />
-        <template v-else>
-          <v-alert
-            v-if="results.error"
-            type="error"
-            variant="tonal"
-            density="comfortable"
-            class="mb-4"
-            :icon="$options.icons.mdiFileAlertOutline"
-          >
-            <span class="text-pre-wrap text-break">
-              {{ results.error }}
-            </span>
-          </v-alert>
-          <log-component
-            data-cy="log-viewer"
-            :logs="results.lines"
-            :timestamps="timestamps"
-            :word-wrap="wordWrap"
-            :autoScroll="autoScroll"
-            @auto-scroll="autoScrollToggle"
-          />
-        </template>
-      </v-col>
-    </v-row>
+      </template>
+    </div>
   </v-container>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
-import { usePrevious, whenever } from '@vueuse/core'
+import { ref, computed, useTemplateRef } from 'vue'
+import { usePrevious, useScroll, whenever } from '@vueuse/core'
 import { useStore } from 'vuex'
 import {
   mdiClockOutline,
@@ -361,9 +359,6 @@ export default {
     /** Wrap lines? */
     const wordWrap = useInitialOptions('wordWrap', { props, emit }, false)
 
-    /** AutoScroll? */
-    const autoScroll = useInitialOptions('autoScroll', { props, emit }, false)
-
     /** The log subscription results */
     const results = ref(new Results())
 
@@ -385,6 +380,24 @@ export default {
     const debouncedUpdateRelativeID = debounce((value) => {
       relativeID.value = value
     }, 500)
+
+    /** AutoScroll? */
+    const autoScroll = useInitialOptions('autoScroll', { props, emit }, false)
+    const logScrollEl = useTemplateRef('logScroll')
+    const { arrivedState, directions } = useScroll(logScrollEl)
+    // Turn on autoscroll when user scrolls to bottom:
+    whenever(() => arrivedState.bottom && !arrivedState.top, () => {
+      // (when page first loads both top and bottom are true)
+      autoScroll.value = true
+    })
+    // Turn off autoscroll when user scrolls up:
+    whenever(() => directions.top, () => {
+      autoScroll.value = false
+    })
+    // When autoscroll is turned off, cancel any smooth scroll in progress:
+    whenever(() => !autoScroll.value, () => {
+      logScrollEl.value?.scrollBy(0, 0)
+    })
 
     /** View toolbar button size */
     const toolbarBtnSize = '40'
@@ -413,39 +426,6 @@ export default {
       debouncedUpdateRelativeID,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
-    }
-  },
-
-  data () {
-    return {
-      controlGroups: [
-        {
-          title: 'Log',
-          controls: [
-            {
-              title: 'Timestamps',
-              icon: mdiClockOutline,
-              action: 'toggle',
-              value: this.timestamps,
-              key: 'timestamps'
-            },
-            {
-              title: 'Word wrap',
-              icon: mdiWrap,
-              action: 'toggle',
-              value: this.wordWrap,
-              key: 'wordWrap',
-            },
-            {
-              title: 'Auto scroll',
-              icon: mdiMouseMoveDown,
-              action: 'toggle',
-              value: this.autoScroll,
-              key: 'autoScroll',
-            },
-          ]
-        }
-      ],
     }
   },
 
@@ -488,6 +468,36 @@ export default {
         }
       }
       return this.workflowId
+    },
+    controlGroups () {
+      return [
+        {
+          title: 'Log',
+          controls: [
+            {
+              title: 'Timestamps',
+              icon: mdiClockOutline,
+              action: 'toggle',
+              value: this.timestamps,
+              key: 'timestamps'
+            },
+            {
+              title: 'Word wrap',
+              icon: mdiWrap,
+              action: 'toggle',
+              value: this.wordWrap,
+              key: 'wordWrap',
+            },
+            {
+              title: 'Auto scroll',
+              icon: mdiMouseMoveDown,
+              action: 'toggle',
+              value: this.autoScroll,
+              key: 'autoScroll',
+            },
+          ]
+        }
+      ]
     }
   },
 
@@ -574,11 +584,6 @@ export default {
       this.fileDisabled = true
       this.logFiles = []
     },
-    autoScrollToggle () {
-      this.autoScroll = false
-      const index = this.controlGroups[0].controls.findIndex(obj => obj.key === 'autoScroll')
-      this.controlGroups[0].controls[index].value = this.autoScroll
-    }
   },
 
   watch: {
