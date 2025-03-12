@@ -98,9 +98,9 @@ export function jobMessageOutputs (jobNode) {
  * 00:00:00, rather than undefined
  * @return {string=} Formatted duration
  */
-export function formatDuration (value, allowZeros = false, timingOption = false) {
+export function formatDuration (value, allowZeros = false, timingOption = true) {
   // Times are formatted as HH:MM:SS
-  if (timingOption === 'queue' || timingOption === 'total' || timingOption === 'run' || timingOption === 'cpuTime') {
+  if (timingOption === 'queue' || timingOption === 'total' || timingOption === 'run' || timingOption === 'cpuTime' || timingOption === true) {
     if (value || (value === 0 && allowZeros === true)) {
       // Convert CPU time to seconds
       if (timingOption === 'cpuTime') {
