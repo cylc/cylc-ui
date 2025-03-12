@@ -392,9 +392,7 @@ export default {
             text: formatChartLabels(this.timingOption),
           },
           labels: {
-            formatter: function (value) {
-              return formatDuration(value, true)
-            }
+            formatter: (value) => formatDuration(value, true, this.timingOption)
           },
         },
       }
@@ -453,9 +451,7 @@ export default {
             text: formatChartLabels(this.timingOption),
           },
           labels: {
-            formatter: function (value) {
-              return formatDuration(value, true)
-            }
+            formatter: (value) => formatDuration(value, true, this.timingOption)
           },
           min: this.showOrigin ? 0 : undefined
         },

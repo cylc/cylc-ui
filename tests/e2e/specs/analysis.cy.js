@@ -135,6 +135,20 @@ describe('Analysis view', () => {
         cy
           .get('.c-analysis table > tbody > tr')
           .should('have.length', numTasks)
+        // Show Max RSS
+        cy
+          .get('#c-analysis-filter-task-timings')
+          .click({ force: true })
+        cy
+          .get('.v-list-item')
+          .contains('Max RSS')
+          .click({ force: true })
+        cy
+          .get('td')
+          .contains('MB')
+        cy
+          .get('.c-analysis table > tbody > tr')
+          .should('have.length', numTasks)
       })
 
       it('Should filter by task name, platform and timings', () => {
@@ -207,6 +221,43 @@ describe('Analysis view', () => {
           .should('have.length', 1)
           .should('be.visible')
       })
+      it('Should show Max RSS', () => {
+        cy
+          .get('#c-analysis-filter-task-timings')
+          .click({ force: true })
+        cy
+          .get('.v-list-item')
+          .contains('Max RSS')
+          .click({ force: true })
+        cy
+          .get('td')
+          .contains('MB')
+          .should('be.visible')
+        cy
+          .get('.c-analysis table > tbody > tr')
+          .should('have.length', numTasks)
+          .should('be.visible')
+        cy
+          .get('.v-chip__content')
+          .should('not.exist')
+      })
+      it('Should show CPU Time', () => {
+        cy
+          .get('#c-analysis-filter-task-timings')
+          .click({ force: true })
+        cy
+          .get('.v-list-item')
+          .contains('CPU Time')
+          .click({ force: true })
+        cy
+          .get('td')
+          .contains('00:00:10')
+          .should('be.visible')
+        cy
+          .get('.v-chip__content')
+          .should('exist')
+          .contains('CPU Time')
+      })
     })
   })
 
@@ -231,6 +282,38 @@ describe('Analysis view', () => {
         .should('be.visible')
         .get('.vue-apexcharts')
         .should('not.exist')
+    })
+    it('Should show Max RSS', () => {
+      cy
+        .get('#c-analysis-filter-task-timings')
+        .click({ force: true })
+      cy
+        .get('.v-list-item')
+        .contains('Max RSS')
+        .click({ force: true })
+      cy
+        .get('.apexcharts-yaxis-label')
+        .should('have.length', numTasks)
+      cy
+        .get('.apexcharts-xaxis-label')
+        .contains('MB')
+        .should('be.visible')
+    })
+    it('Should show CPU Time', () => {
+      cy
+        .get('#c-analysis-filter-task-timings')
+        .click({ force: true })
+      cy
+        .get('.v-list-item')
+        .contains('CPU Time')
+        .click({ force: true })
+      cy
+        .get('.apexcharts-yaxis-label')
+        .should('have.length', numTasks)
+      cy
+        .get('.apexcharts-xaxis-label')
+        .contains('00:00:00')
+        .should('be.visible')
     })
 
     it('refreshes without getting bogus apexcharts error', () => {
