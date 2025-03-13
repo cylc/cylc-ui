@@ -250,6 +250,19 @@ query JobState($id: ID!, $workflowId: ID!) {
 }
 `
 
+/**
+ * The preferred file to start with as a list of patterns.
+ * The first pattern with a matching file name will be chosen.
+ */
+const LOG_FILE_DEFAULTS = [
+  // job stdout
+  /^job\.out$/,
+  // job script (e.g. on job submission failure)
+  /^job$/,
+  // scheduler log (lexographical sorting ensures the latest log)
+  /^scheduler\/*/
+]
+
 class Results {
   constructor () {
     /** @type {string[]} */
@@ -522,11 +535,13 @@ export default {
       } else {
         // we are viewing the workflow log => always default to the latest log file
         if (logFiles.length) {
-          // Loop through all the filenames e.g. [config/..., scheduler/...]
-          // (lexographical sorting ensures the latest log)
-          for (const fileName of logFiles) {
-            if (fileName.startsWith('scheduler/')) {
-              return fileName
+          // loop through all the options in LOG_FILE_DEFAULTS
+          for (const filePattern of LOG_FILE_DEFAULTS) {
+            // Loop through all the filenames e.g. [config/..., scheduler/...]
+            for (const fileName of logFiles) {
+              if (filePattern.exec(fileName)) {
+                return fileName
+              }
             }
           }
         }
