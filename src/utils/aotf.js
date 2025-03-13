@@ -562,7 +562,12 @@ export function processArguments (mutation, types) {
     arg._multiple = multiple
     arg._required = required
     if (arg.defaultValue) {
-      arg._default = JSON.parse(arg.defaultValue)
+      // Enum arg values trip up JSON.parse
+      try {
+        arg._default = JSON.parse(arg.defaultValue)
+      } catch (SyntaxError) {
+        arg._default = arg.defaultValue
+      }
     } else {
       arg._default = getNullValue(arg.type, types)
     }
