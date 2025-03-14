@@ -392,7 +392,9 @@ export default {
     })
     // Turn off autoscroll when user scrolls up:
     whenever(() => directions.top, () => {
-      autoScroll.value = false
+      if (results.value.lines.length) {
+        autoScroll.value = false
+      }
     })
     // When autoscroll is turned off, cancel any smooth scroll in progress:
     whenever(() => !autoScroll.value, () => {
