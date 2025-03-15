@@ -113,6 +113,7 @@ describe('Log view', () => {
   })
 
   it('issues the subscription', async () => {
+    window.HTMLElement.prototype.scrollIntoView = function () {}
     const wrapper = mountFunction()
     expect(wrapper.vm.jobLog).toEqual(0)
     expect(wrapper.vm.query.variables).toMatchObject({

@@ -16,14 +16,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <pre><span
-    v-for="(log, index) in computedLogs"
-    :key="index"
-    :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
-  >{{ log }}</span></pre>
+  <div ref="wrapper">
+    <pre data-cy="log-text"><span
+      v-for="(log, index) in computedLogs"
+      :key="index"
+      :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
+    >{{ log }}</span></pre>
+    <!-- a div to use for autoscrolling -->
+    <div ref="autoScrollEnd"></div>
+  </div>
 </template>
 
 <script>
+import { useTemplateRef, watch, onBeforeUnmount } from 'vue'
+import { when } from '@/utils'
 
 export default {
   name: 'LogComponent',
@@ -47,12 +53,41 @@ export default {
       required: false,
       default: false
     },
+    autoScroll: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
   },
 
-  data () {
-    return {
-      match: ''
+  setup (props) {
+    const wrapperRef = useTemplateRef('wrapper')
+    const autoScrollEndRef = useTemplateRef('autoScrollEnd')
+
+    function scrollToEnd () {
+      autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
     }
+
+    const ro = new ResizeObserver(scrollToEnd)
+
+    when(wrapperRef, () => {
+      watch(
+        () => props.autoScroll,
+        (val) => {
+          if (val) {
+            scrollToEnd()
+            ro.observe(wrapperRef.value)
+          } else {
+            ro.disconnect()
+          }
+        },
+        { immediate: true }
+      )
+    })
+
+    onBeforeUnmount(() => {
+      ro.disconnect()
+    })
   },
 
   computed: {
@@ -78,11 +113,7 @@ export default {
 
     stripTimestamp (logLine) {
       const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
-      this.match = logLine.match(regex)
-      if (this.match) {
-        return this.match[1]
-      }
-      return logLine
+      return logLine.match(regex)?.[1] ?? logLine
     }
   }
 }
