@@ -17,13 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <v-select
-    persistent-hint
     v-model="model"
     v-bind="$attrs"
-    :items="type.enumValues"
+    :items="enumValues"
     item-title="name"
     :hint="itemDesc"
     placeholder="Select an option"
+    persistent-hint
   />
 </template>
 
@@ -32,13 +32,31 @@ import { formElement } from '@/components/graphqlFormGenerator/mixins'
 
 export default {
   name: 'g-enum',
+
   mixins: [formElement],
+
+  props: {
+    /** Specify a subset of the type's enum values that will be displayed. */
+    allowedValues: {
+      type: Array,
+      required: false,
+    },
+  },
+
   computed: {
+    enumValues () {
+      return this.allowedValues?.length
+        ? this.type.enumValues.filter(
+          ({ name }) => this.allowedValues.includes(name)
+        )
+        : this.type.enumValues
+    },
+
     itemDesc () {
       return this.type.enumValues.find(
         ({ name }) => name === this.modelValue
       )?.description ?? ''
-    }
+    },
   }
 }
 </script>

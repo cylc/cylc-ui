@@ -5,7 +5,7 @@ The files in this directory include:
 - `*.json` these a [json-server](https://github.com/typicode/json-server) database
   files. For each of these, when exported, you should have an entry in the `/db`
   endpoint.
-- `data.js` this is a JS module that exports the imported JSON files. The names
+- `index.cjs` this is a JS module that exports the imported JSON files. The names
   used in the export section drive the value that appears in the `json-server`
   endpoints (see `/db` to inspect what values are available).
 
