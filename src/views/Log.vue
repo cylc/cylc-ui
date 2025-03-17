@@ -152,26 +152,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         type="text@5"
         class="mx-n4 align-content-start"
       />
-      <template v-else>
-        <v-alert
-          v-if="results.error"
-          type="error"
-          variant="tonal"
-          density="comfortable"
-          class="mb-4"
-          :icon="$options.icons.mdiFileAlertOutline"
-        >
-          <span class="text-pre-wrap text-break">
-            {{ results.error }}
-          </span>
-        </v-alert>
-        <log-component
-          data-cy="log-viewer"
-          :logs="results.lines"
-          :timestamps="timestamps"
-          :word-wrap="wordWrap"
-          :autoScroll="autoScroll"
-        />
+      <template v-else >
+        <div class="d-flex flex-column justify-center">
+          <v-alert
+            v-if="results.error"
+            type="error"
+            variant="tonal"
+            density="comfortable"
+            class="mb-4"
+            :icon="$options.icons.mdiFileAlertOutline"
+          >
+            <span class="text-pre-wrap text-break">
+              {{ results.error }}
+            </span>
+          </v-alert>
+          <log-component
+            data-cy="log-viewer"
+            :logs="results.lines"
+            :timestamps="timestamps"
+            :word-wrap="wordWrap"
+            :autoScroll="autoScroll"
+          />
+          <v-btn
+            v-if="results.lines.length"
+            class="my-3 mx-auto"
+            @click="scrollToTop">scroll to top
+          </v-btn>
+        </div>
       </template>
     </div>
   </v-container>
@@ -428,6 +435,7 @@ export default {
       debouncedUpdateRelativeID,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
+      logScrollEl
     }
   },
 
@@ -504,6 +512,10 @@ export default {
   },
 
   methods: {
+    scrollToTop () {
+      this.autoScroll = false
+      this.logScrollEl.scrollTo(0, 0)
+    },
     setOption (option, value) {
       // used by the ViewToolbar to update settings
       this[option] = value
