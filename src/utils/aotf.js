@@ -119,6 +119,10 @@ import { isBoolean } from 'lodash-es'
  * @property {boolean} authorised
  */
 
+const LIST = 'LIST'
+const NON_NULL = 'NON_NULL'
+const OBJECT = 'OBJECT'
+
 /**
  * Associates icons with mutations by name.
  * @param {string} name - mutation name
@@ -522,12 +526,12 @@ export function processArguments (mutation, types) {
     let multiple = false
     let cylcObject = null
     let cylcType = null
-    const required = arg.type?.kind === 'NON_NULL'
+    const required = arg.type?.kind === NON_NULL
     while (pointer) {
       // walk down the nested type tree
-      if (pointer.kind === 'LIST') {
+      if (pointer.kind === LIST) {
         multiple = true
-      } else if (pointer.kind !== 'NON_NULL' && pointer.name) {
+      } else if (pointer.kind !== NON_NULL && pointer.name) {
         cylcType = pointer.name
         for (const objectName in mutationMapping) {
           for (const [type, impliesMultiple] of mutationMapping[objectName]) {
@@ -706,12 +710,12 @@ export function getBaseType (type) {
 export function getNullValue (type, types = []) {
   let ret = null
   for (const subType of iterateType(type)) {
-    if (subType.kind === 'LIST') {
+    if (subType.kind === LIST) {
       const ofType = getNullValue(subType.ofType, types)
       ret = ofType ? [ofType] : []
       break
     }
-    if (subType.kind === 'OBJECT') {
+    if (subType.kind === OBJECT) {
       ret = {}
       // TODO: this type iteration is already done in the mixin
       //       should we use the mixin or a subset there-of here?
@@ -742,12 +746,12 @@ export function argumentSignature (arg) {
   for (const type of stack) {
     if (
       type.name === null &&
-      type.kind === 'LIST'
+      type.kind === LIST
     ) {
       ret = `[${ret}]`
     } else if (
       type.name === null &&
-      type.kind === 'NON_NULL'
+      type.kind === NON_NULL
     ) {
       ret = ret + '!'
     } else if (type.name) {
