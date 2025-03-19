@@ -16,14 +16,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <pre><span
-    v-for="(log, index) in computedLogs"
-    :key="index"
-    :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
-  >{{ log }}</span></pre>
+  <div ref="wrapper" :class="{
+    'strip-timestamps': !timestamps,
+    'word-wrap': wordWrap,
+  }">
+    <pre ref="pre" class="content"></pre>
+    <div ref="autoScrollEnd"></div>
+  </div>
 </template>
 
 <script>
+import { useTemplateRef, watch, onBeforeUnmount } from 'vue'
+import { when } from '@/utils'
+import { eventBus } from '@/services/eventBus'
 
 export default {
   name: 'LogComponent',
@@ -38,53 +43,95 @@ export default {
       required: false,
       default: true
     },
-    logs: {
-      type: Array,
-      required: true
-    },
     wordWrap: {
       type: Boolean,
       required: false,
       default: false
     },
-  },
-
-  data () {
-    return {
-      match: ''
+    autoScroll: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
 
-  computed: {
-    computedLogs () {
-      if (this.logs.length > 0) {
-        if (!this.timestamps) {
-          return this.updateLogs()
-        } else return this.logs
-      } else if (this.placeholder) {
-        return [this.placeholder]
-      } else {
-        return []
-      }
-    },
+  setup (props) {
+    const wrapperRef = useTemplateRef('wrapper')
+    const autoScrollEndRef = useTemplateRef('autoScrollEnd')
+
+    function scrollToEnd () {
+      autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
+    }
+
+    const ro = new ResizeObserver(scrollToEnd)
+
+    when(wrapperRef, () => {
+      watch(
+        () => props.autoScroll,
+        (val) => {
+          if (val) {
+            scrollToEnd()
+            ro.observe(wrapperRef.value)
+          } else {
+            ro.disconnect()
+          }
+        },
+        { immediate: true }
+      )
+    })
+
+    onBeforeUnmount(() => {
+      ro.disconnect()
+    })
+  },
+
+  mounted () {
+    eventBus.on('lines-added', this.addLines)
+  },
+
+  beforeUnmount () {
+    eventBus.off('lines-added')
   },
 
   methods: {
-    updateLogs () {
-      return this.logs.map((logLine) => {
-        return this.stripTimestamp(logLine)
-      })
-    },
-
-    stripTimestamp (logLine) {
-      const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
-      this.match = logLine.match(regex)
-      if (this.match) {
-        return this.match[1]
+    addLines (lines) {
+      let line, ele, match
+      for (line of lines) {
+        match = line.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s)(.*\s*)/)
+        if (match) {
+          line = match[2]
+          ele = document.createElement('span')
+          ele.classList.add('timestamp')
+          ele.innerText = match[1]
+          this.$refs.pre.appendChild(ele)
+        }
+        ele = document.createElement('span')
+        ele.innerText = line
+        this.$refs.pre.appendChild(ele)
       }
-      return logLine
     }
-  }
+  },
 }
 
 </script>
+
+<style lang="scss">
+.c-log {
+  .content {
+    height: 100%!important;
+  }
+
+  .timestamp {
+    color: blue;
+  }
+
+  .strip-timestamps .timestamp {
+    display: none
+  }
+
+  .word-wrap .content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+</style>
