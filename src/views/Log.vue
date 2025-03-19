@@ -139,49 +139,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           />
         </v-col>
       </v-row>
+      <v-alert
+        v-if="results.error"
+        type="error"
+        variant="tonal"
+        density="compact"
+        class="mt-2"
+        :icon="$options.icons.mdiFileAlertOutline"
+      >
+        <span class="text-pre-wrap text-break">
+          {{ results.error }}
+        </span>
+      </v-alert>
     </v-container>
 
     <!-- the log file viewer -->
-    <div
-      ref="logScroll"
-      no-gutters
-      class="h-100 overflow-auto px-4 pb-2"
-    >
-      <v-skeleton-loader
-        v-if="id && file && results.connected == null"
-        type="text@5"
-        class="mx-n4 align-content-start"
-      />
-      <template v-else >
-        <div class="d-flex flex-column justify-center">
-          <v-alert
-            v-if="results.error"
-            type="error"
-            variant="tonal"
-            density="comfortable"
-            class="mb-4"
-            :icon="$options.icons.mdiFileAlertOutline"
-          >
-            <span class="text-pre-wrap text-break">
-              {{ results.error }}
-            </span>
-          </v-alert>
-          <log-component
-            data-cy="log-viewer"
-            :logs="results.lines"
-            :timestamps="timestamps"
-            :word-wrap="wordWrap"
-            :autoScroll="autoScroll"
-          />
-        </div>
-      </template>
-    </div>
+    <v-skeleton-loader
+      v-if="id && file && results.connected == null"
+      type="text@5"
+      class="align-content-start"
+    />
+    <log-component
+      v-else
+      data-cy="log-viewer"
+      :logs="results.lines"
+      :timestamps="timestamps"
+      :word-wrap="wordWrap"
+      v-model:autoScroll="autoScroll"
+    />
   </v-container>
 </template>
 
 <script>
-import { ref, computed, useTemplateRef } from 'vue'
-import { usePrevious, useScroll, whenever } from '@vueuse/core'
+import { ref, computed } from 'vue'
+import { usePrevious, whenever } from '@vueuse/core'
 import { useStore } from 'vuex'
 import {
   mdiClockOutline,
@@ -385,23 +376,6 @@ export default {
 
     /** AutoScroll? */
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
-    const logScrollEl = useTemplateRef('logScroll')
-    const { arrivedState, directions } = useScroll(logScrollEl)
-    // Turn on autoscroll when user scrolls to bottom:
-    whenever(() => arrivedState.bottom && !arrivedState.top, () => {
-      // (when page first loads both top and bottom are true)
-      autoScroll.value = true
-    })
-    // Turn off autoscroll when user scrolls up:
-    whenever(() => directions.top, () => {
-      if (results.value.lines.length) {
-        autoScroll.value = false
-      }
-    })
-    // When autoscroll is turned off, cancel any smooth scroll in progress:
-    whenever(() => !autoScroll.value, () => {
-      logScrollEl.value?.scrollBy(0, 0)
-    })
 
     /** View toolbar button size */
     const toolbarBtnSize = '40'
@@ -430,7 +404,6 @@ export default {
       debouncedUpdateRelativeID,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
-      logScrollEl
     }
   },
 

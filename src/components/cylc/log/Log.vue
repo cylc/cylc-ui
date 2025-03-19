@@ -16,8 +16,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div ref="wrapper">
-    <pre data-cy="log-text"><span
+  <div
+    ref="scrollWrapper"
+    class="h-100 overflow-auto px-4 pb-2"
+  >
+    <pre ref="logText" data-cy="log-text"><span
       v-for="(log, index) in computedLogs"
       :key="index"
       :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
@@ -26,9 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-if="logs.length"
       position="fixed"
       location="bottom right"
-      class="ma-3"
+      class="ma-5"
       @click="scrollToTop"
       :icon="$options.icons.mdiMouseMoveUp"
+      data-cy="log-scroll-top"
     />
     <!-- a div to use for autoscrolling -->
     <div ref="autoScrollEnd"></div>
@@ -36,11 +40,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { useTemplateRef, watch, onBeforeUnmount } from 'vue'
+import { useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
+import { useScroll, useVModel, whenever } from '@vueuse/core'
 import { when } from '@/utils'
 import {
   mdiMouseMoveUp
 } from '@mdi/js'
+
 export default {
   name: 'LogComponent',
 
@@ -70,28 +76,51 @@ export default {
     }
   },
 
-  setup (props) {
-    const wrapperRef = useTemplateRef('wrapper')
+  emits: [
+    'update:autoScroll'
+  ],
+
+  setup (props, { emit }) {
+    const logText = useTemplateRef('logText')
+    const scrollWrapper = useTemplateRef('scrollWrapper')
     const autoScrollEndRef = useTemplateRef('autoScrollEnd')
+
+    const autoScroll = useVModel(props, 'autoScroll', emit)
+    const { arrivedState, directions } = useScroll(scrollWrapper)
+
+    // Turn on autoscroll when user scrolls to bottom:
+    whenever(() => arrivedState.bottom && !arrivedState.top, () => {
+      // (when page first loads both top and bottom are true)
+      autoScroll.value = true
+    })
+    // Turn off autoscroll when user scrolls up:
+    whenever(() => props.logs.length && directions.top, () => {
+      autoScroll.value = false
+    })
 
     function scrollToEnd () {
       autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
     }
 
-    function scrollToTop () {
-      wrapperRef.value?.scrollIntoView({ behavior: 'smooth' })
+    async function scrollToTop () {
+      autoScroll.value = false
+      // Wait for smooth scroll cancel to happen
+      await nextTick()
+      scrollWrapper.value?.scroll({ top: 0, left: 0, behavior: 'smooth' })
     }
 
     const ro = new ResizeObserver(scrollToEnd)
 
-    when(wrapperRef, () => {
+    when(logText, () => {
       watch(
-        () => props.autoScroll,
+        autoScroll,
         (val) => {
           if (val) {
             scrollToEnd()
-            ro.observe(wrapperRef.value)
+            ro.observe(logText.value)
           } else {
+            // When autoscroll is turned off, cancel any smooth scroll in progress:
+            scrollWrapper.value.scrollBy(0, 0)
             ro.disconnect()
           }
         },
