@@ -92,4 +92,17 @@ describe('Log Component', () => {
     cy.get('span').contains('Line 50')
       .should('be.visible')
   })
+
+  it('scroll to the top', () => {
+    // see: https://on.cypress.io/mounting-vue
+    cy.mount(LogComponent, merge(mountOpts, {
+      props: {
+        logs: logLines(30),
+        autoScroll: true,
+      },
+    })).as('component')
+    cy.get('.v-btn').click({ force: true }).click({ force: true })
+    cy.get('span').contains('Line 1')
+      .should('be.visible')
+  })
 })

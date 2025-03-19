@@ -22,6 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :key="index"
       :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
     >{{ log }}</span></pre>
+    <v-btn
+      v-if="logs.length"
+      position="fixed"
+      location="bottom right"
+      class="ma-3"
+      @click="scrollToTop"
+      :icon="$options.icons.mdiMouseMoveUp"
+    />
     <!-- a div to use for autoscrolling -->
     <div ref="autoScrollEnd"></div>
   </div>
@@ -30,7 +38,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { useTemplateRef, watch, onBeforeUnmount } from 'vue'
 import { when } from '@/utils'
-
+import {
+  mdiMouseMoveUp
+} from '@mdi/js'
 export default {
   name: 'LogComponent',
 
@@ -68,6 +78,10 @@ export default {
       autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
     }
 
+    function scrollToTop () {
+      wrapperRef.value?.scrollIntoView({ behavior: 'smooth' })
+    }
+
     const ro = new ResizeObserver(scrollToEnd)
 
     when(wrapperRef, () => {
@@ -88,6 +102,10 @@ export default {
     onBeforeUnmount(() => {
       ro.disconnect()
     })
+
+    return {
+      scrollToTop
+    }
   },
 
   computed: {
@@ -115,6 +133,11 @@ export default {
       const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
       return logLine.match(regex)?.[1] ?? logLine
     }
+  },
+
+  // Misc options
+  icons: {
+    mdiMouseMoveUp
   }
 }
 

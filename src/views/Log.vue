@@ -173,11 +173,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :word-wrap="wordWrap"
             :autoScroll="autoScroll"
           />
-          <v-btn
-            v-if="results.lines.length"
-            class="my-3 mx-auto"
-            @click="scrollToTop">scroll to top
-          </v-btn>
         </div>
       </template>
     </div>
@@ -512,10 +507,6 @@ export default {
   },
 
   methods: {
-    scrollToTop () {
-      this.autoScroll = false
-      this.logScrollEl.scrollTo(0, 0)
-    },
     setOption (option, value) {
       // used by the ViewToolbar to update settings
       this[option] = value
