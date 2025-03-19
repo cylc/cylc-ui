@@ -16,13 +16,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div ref="wrapper">
-    <pre data-cy="log-text"><span
-      v-for="(log, index) in computedLogs"
-      :key="index"
-      :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
-    >{{ log }}</span></pre>
-    <!-- a div to use for autoscrolling -->
+  <div ref="wrapper" :class="{
+    'strip-timestamps': !timestamps,
+    'word-wrap': wordWrap,
+  }">
+    <pre ref="pre" class="content"></pre>
     <div ref="autoScrollEnd"></div>
   </div>
 </template>
@@ -30,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { useTemplateRef, watch, onBeforeUnmount } from 'vue'
 import { when } from '@/utils'
+import { eventBus } from '@/services/eventBus'
 
 export default {
   name: 'LogComponent',
@@ -43,10 +42,6 @@ export default {
       type: Boolean,
       required: false,
       default: true
-    },
-    logs: {
-      type: Array,
-      required: true
     },
     wordWrap: {
       type: Boolean,
@@ -90,32 +85,53 @@ export default {
     })
   },
 
-  computed: {
-    computedLogs () {
-      if (this.logs.length > 0) {
-        if (!this.timestamps) {
-          return this.updateLogs()
-        } else return this.logs
-      } else if (this.placeholder) {
-        return [this.placeholder]
-      } else {
-        return []
-      }
-    },
+  mounted () {
+    eventBus.on('lines-added', this.addLines)
+  },
+
+  beforeUnmount () {
+    eventBus.off('lines-added')
   },
 
   methods: {
-    updateLogs () {
-      return this.logs.map((logLine) => {
-        return this.stripTimestamp(logLine)
-      })
-    },
-
-    stripTimestamp (logLine) {
-      const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
-      return logLine.match(regex)?.[1] ?? logLine
+    addLines (lines) {
+      let line, ele, match
+      for (line of lines) {
+        match = line.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s)(.*\s*)/)
+        if (match) {
+          line = match[2]
+          ele = document.createElement('span')
+          ele.classList.add('timestamp')
+          ele.innerText = match[1]
+          this.$refs.pre.appendChild(ele)
+        }
+        ele = document.createElement('span')
+        ele.innerText = line
+        this.$refs.pre.appendChild(ele)
+      }
     }
-  }
+  },
 }
 
 </script>
+
+<style lang="scss">
+.c-log {
+  .content {
+    height: 100%!important;
+  }
+
+  .timestamp {
+    color: blue;
+  }
+
+  .strip-timestamps .timestamp {
+    display: none
+  }
+
+  .word-wrap .content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+</style>
