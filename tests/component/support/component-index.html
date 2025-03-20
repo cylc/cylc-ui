@@ -5,6 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Components App</title>
+    <style>
+      [data-v-app] {
+        /* Ensure we can use visibility assertions to test if an element has scrolled out of view.
+        See https://docs.cypress.io/app/core-concepts/interacting-with-elements#An-element-is-considered-hidden-if */
+        height: 100vh;
+      }
+    </style>
   </head>
   <body>
     <div data-cy-root></div>

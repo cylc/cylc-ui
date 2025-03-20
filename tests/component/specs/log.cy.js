@@ -37,16 +37,6 @@ function logLines (length) {
 }
 
 describe('Log Component', () => {
-  beforeEach(() => {
-    // Cypress needs an ancestor that hides overflow for its visibility assertions
-    // to detect if an element is scrolled out of view
-    // https://docs.cypress.io/app/core-concepts/interacting-with-elements#An-element-is-considered-hidden-if
-    cy.get('[data-cy-root]')
-      .then(($el) => {
-        $el.css({ height: '100vh', overflow: 'auto' })
-      })
-  })
-
   it('renders', () => {
     // see: https://on.cypress.io/mounting-vue
     cy.mount(LogComponent, merge(mountOpts, {
@@ -101,7 +91,10 @@ describe('Log Component', () => {
         autoScroll: true,
       },
     })).as('component')
-    cy.get('.v-btn').click({ force: true }).click({ force: true })
+    // should be scrolled to bottom initially with autoScroll prop set to true
+    cy.get('span').contains('Line 30')
+      .should('be.visible')
+    cy.get('[data-cy=log-scroll-top').click()
     cy.get('span').contains('Line 1')
       .should('be.visible')
   })
