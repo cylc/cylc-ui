@@ -562,10 +562,10 @@ export function processArguments (mutation, types) {
     arg._multiple = multiple
     arg._required = required
     if (arg.defaultValue) {
-      // Enum arg values trip up JSON.parse
       try {
         arg._default = JSON.parse(arg.defaultValue)
-      } catch (SyntaxError) {
+      } catch {
+        // In Graphene 3, Enum default values changed from JSON serialised strings to plain strings
         arg._default = arg.defaultValue
       }
     } else {
