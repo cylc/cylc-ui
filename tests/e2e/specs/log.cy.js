@@ -120,7 +120,7 @@ describe('Log View', () => {
     cy.get('[data-cy=job-toggle]')
       .click()
       // the old log file lines should have been wiped
-      .get('[data-cy=log-viewer]')
+      .get('[data-cy=log-text]')
       .should('be.empty')
       .get('[data-cy=file-input] input')
       .should('be.disabled')
@@ -129,7 +129,7 @@ describe('Log View', () => {
     cy.get('[data-cy=job-id-input]')
       .find('input')
       .type('1/')
-      .get('[data-cy=log-viewer]')
+      .get('[data-cy=log-text]')
       .should('be.empty')
       .get('[data-cy=file-input] input')
       .should('be.disabled')
@@ -139,7 +139,7 @@ describe('Log View', () => {
       .find('input')
       .type('a')
       // the new log file should have been loaded
-      .get('[data-cy=log-viewer]')
+      .get('[data-cy=log-text]')
       .contains(jobLogLines.join(''))
       // the file path should be displayed
       .get('[data-cy=log-path]')

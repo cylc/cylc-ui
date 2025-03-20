@@ -142,17 +142,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </v-container>
 
     <!-- the log file viewer -->
-    <v-row
+    <div
+      ref="logScroll"
       no-gutters
-      class="overflow-auto px-4 pb-2"
+      class="h-100 overflow-auto px-4 pb-2"
     >
-      <v-col>
-        <v-skeleton-loader
-          v-if="id && file && results.connected == null"
-          type="text@5"
-          class="mx-n4 align-content-start"
-        />
-        <template v-else>
+      <v-skeleton-loader
+        v-if="id && file && results.connected == null"
+        type="text@5"
+        class="mx-n4 align-content-start"
+      />
+      <template v-else >
+        <div class="d-flex flex-column justify-center">
           <v-alert
             v-if="results.error"
             type="error"
@@ -170,24 +171,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :logs="results.lines"
             :timestamps="timestamps"
             :word-wrap="wordWrap"
+            :autoScroll="autoScroll"
           />
-        </template>
-      </v-col>
-    </v-row>
+        </div>
+      </template>
+    </div>
   </v-container>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
-import { usePrevious, whenever } from '@vueuse/core'
+import { ref, computed, useTemplateRef } from 'vue'
+import { usePrevious, useScroll, whenever } from '@vueuse/core'
 import { useStore } from 'vuex'
 import {
   mdiClockOutline,
-  mdiFileAlertOutline,
   mdiFolderRefresh,
   mdiPowerPlugOff,
   mdiPowerPlug,
   mdiWrap,
+  mdiFileAlertOutline,
+  mdiMouseMoveDown,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
@@ -380,6 +383,26 @@ export default {
       relativeID.value = value
     }, 500)
 
+    /** AutoScroll? */
+    const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
+    const logScrollEl = useTemplateRef('logScroll')
+    const { arrivedState, directions } = useScroll(logScrollEl)
+    // Turn on autoscroll when user scrolls to bottom:
+    whenever(() => arrivedState.bottom && !arrivedState.top, () => {
+      // (when page first loads both top and bottom are true)
+      autoScroll.value = true
+    })
+    // Turn off autoscroll when user scrolls up:
+    whenever(() => directions.top, () => {
+      if (results.value.lines.length) {
+        autoScroll.value = false
+      }
+    })
+    // When autoscroll is turned off, cancel any smooth scroll in progress:
+    whenever(() => !autoScroll.value, () => {
+      logScrollEl.value?.scrollBy(0, 0)
+    })
+
     /** View toolbar button size */
     const toolbarBtnSize = '40'
 
@@ -402,36 +425,12 @@ export default {
       jobLog: ref(relativeID.value == null ? 0 : 1),
       timestamps,
       wordWrap,
+      autoScroll,
       reset,
       debouncedUpdateRelativeID,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
-    }
-  },
-
-  data () {
-    return {
-      controlGroups: [
-        {
-          title: 'Log',
-          controls: [
-            {
-              title: 'Timestamps',
-              icon: mdiClockOutline,
-              action: 'toggle',
-              value: this.timestamps,
-              key: 'timestamps'
-            },
-            {
-              title: 'Word wrap',
-              icon: mdiWrap,
-              action: 'toggle',
-              value: this.wordWrap,
-              key: 'wordWrap',
-            },
-          ]
-        }
-      ],
+      logScrollEl
     }
   },
 
@@ -474,6 +473,36 @@ export default {
         }
       }
       return this.workflowId
+    },
+    controlGroups () {
+      return [
+        {
+          title: 'Log',
+          controls: [
+            {
+              title: 'Timestamps',
+              icon: mdiClockOutline,
+              action: 'toggle',
+              value: this.timestamps,
+              key: 'timestamps'
+            },
+            {
+              title: 'Word wrap',
+              icon: mdiWrap,
+              action: 'toggle',
+              value: this.wordWrap,
+              key: 'wordWrap',
+            },
+            {
+              title: 'Auto scroll',
+              icon: mdiMouseMoveDown,
+              action: 'toggle',
+              value: this.autoScroll,
+              key: 'autoScroll',
+            },
+          ]
+        }
+      ]
     }
   },
 
@@ -568,15 +597,15 @@ export default {
       this.file = null
       // go back to last chosen job if we are switching back to job logs
       this.relativeID = val ? this.previousRelativeID : null
-    },
+    }
   },
 
   // Misc options
   icons: {
-    mdiFileAlertOutline,
     mdiFolderRefresh,
     mdiPowerPlug,
     mdiPowerPlugOff,
+    mdiFileAlertOutline
   }
 }
 </script>
