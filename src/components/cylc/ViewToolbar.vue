@@ -31,10 +31,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :data-cy="`control-${iControl.key}`"
       >
         <v-btn
+          @click="iControl.callback"
           v-bind="btnProps"
           :disabled="iControl.disabled"
-          :color="iControl.color"
-          @click="iControl.callback"
+          :aria-checked="iControl.value"
+          :color="iControl.value ? 'blue' : undefined"
+          role="switch"
         >
           <v-icon>{{ iControl.icon }}</v-icon>
           <v-tooltip>{{ iControl.title }}</v-tooltip>
@@ -107,7 +109,6 @@ export default {
       const ret = []
       let iGroup
       let iControl
-      let color // control color
       let callback // callback to fire when control is activated
       let disabled // true if control should not be enabled
       const values = this.getValues()
@@ -117,17 +118,13 @@ export default {
           iControls: []
         }
         for (const control of group.controls) {
-          color = null
           callback = null
           disabled = false
 
-          // set callback and color
+          // set callback
           switch (control.action) {
             case 'toggle':
               callback = (e) => this.toggle(control, e)
-              if (control.value) {
-                color = 'blue'
-              }
               break
             case 'callback':
               callback = (e) => this.call(control, e)
@@ -150,7 +147,6 @@ export default {
 
           iControl = {
             ...control,
-            color,
             callback,
             disabled
           }
