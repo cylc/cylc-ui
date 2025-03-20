@@ -24,6 +24,7 @@ import GList from '@/components/graphqlFormGenerator/components/List.vue'
 import GObject from '@/components/graphqlFormGenerator/components/Object.vue'
 import GBroadcastSetting from '@/components/graphqlFormGenerator/components/BroadcastSetting.vue'
 import GMapItem from '@/components/graphqlFormGenerator/components/MapItem.vue'
+import { inputComponents } from '@/plugins/vuetify'
 
 const NumberFieldProps = {
   is: VTextField,
@@ -55,14 +56,18 @@ export const RULES = {
 
 export const RUNTIME_SETTING = 'RuntimeSetting'
 
-export default {
-  defaultProps: {
-    // default props for all form inputs
-    variant: 'filled',
-    density: 'compact',
-    hideDetails: false,
-  },
+/** Defaults for all form inputs */
+export const inputDefaults = Object.fromEntries(
+  inputComponents.map((name) => [
+    name,
+    {
+      variant: 'filled',
+      hideDetails: false,
+    }
+  ])
+)
 
+export default {
   namedTypes: {
     // registry of GraphQL "named types" (e.g. String)
     // {namedType: {is: ComponentClass, prop1: value, ...}}
