@@ -15,9 +15,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.13.3":
-  version: 3.13.3
-  resolution: "@apollo/client@npm:3.13.3"
+"@apollo/client@npm:3.13.5":
+  version: 3.13.5
+  resolution: "@apollo/client@npm:3.13.5"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     "@wry/caches": "npm:^1.0.0"
@@ -47,7 +47,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 10c0/f249b4e8b52d9a84b1de700f5177dd4f0e37dcc3b91fd092f1dc7a175171c6cac8b7d2bc0213301b9493bc162c2317915160be19f054dc23037c4678e1d4fcbe
+  checksum: 10c0/5a6b9a004fbf7ef049258782e5dd4280e4d4944f73a71beac2b719d19d87a5bda2be7e28cc4b2a95da385e2577397ef3e640d8b07abe2553b5271ad11c104263
   languageName: node
   linkType: hard
 
@@ -3730,7 +3730,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "cylc-ui@workspace:."
   dependencies:
-    "@apollo/client": "npm:3.13.3"
+    "@apollo/client": "npm:3.13.5"
     "@cypress/code-coverage": "npm:3.13.12"
     "@hpcc-js/wasm": "npm:2.22.4"
     "@lumino/default-theme": "npm:2.1.8"
