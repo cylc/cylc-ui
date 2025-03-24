@@ -154,7 +154,6 @@ describe('Graph view', () => {
       }
     })
 
-    // wrapper.vm.nextTick()
     expect(wrapper.vm.getTree()).toMatchObject(
       [
         {
@@ -162,18 +161,15 @@ describe('Graph view', () => {
             {
               children: [],
               disabled: false,
-              id: 3,
               name: 'SUCCEEDED',
             },
           ],
           disabled: false,
-          id: 2,
           name: 'GOOD',
         },
         {
           children: [],
           disabled: false,
-          id: 4,
           name: 'BAD',
         },
       ]

@@ -432,20 +432,7 @@ export default {
      * @returns {Family[]} array containing nested structure of families
      */
     treeDropDownFamily () {
-      if (this.familyArrayStore.length) {
-        const ret = []
-        for (const rootFamily of this.getTree()) {
-          ret.push(rootFamily)
-        }
-        return ret
-      } else {
-        return [
-          {
-            name: 'No families',
-            disabled: true
-          }
-        ]
-      }
+      return this.familyArrayStore.length ? this.getTree() : [{ name: 'No families', disabled: true }]
     },
     /**
      * Gets the array of cycles for use in vuetify toolbar drop down
@@ -563,7 +550,7 @@ export default {
      * @returns {String[]} array of family names
      */
     familyArrayStore () {
-      return this.namespaces.filter((family) => { return family.name !== 'root' }).map((family) => family.name)
+      return this.namespaces.flatMap((family) => family.name !== 'root' ? family.name : [])
     },
     controlGroups () {
       return [
@@ -673,16 +660,7 @@ export default {
      * @returns {Family[]} array containing nested structure of families
      */
     getTree () {
-      const counter = {
-        value: 0,
-        next () {
-          this.value = this.value + 1
-          return this.value
-        }
-      }
-
       const root = {
-        id: counter.next(),
         name: 'root',
         children: []
       }
@@ -690,7 +668,7 @@ export default {
         const tokens = this.workflows[0].tokens.clone({ cycle: '$namespace|root' })
         const node = this.cylcTree.$index[tokens.id]
         if (node) {
-          return this.getTreeHelper(root, node, counter).children
+          return this.getTreeHelper(root, node).children
         }
       }
     },
@@ -701,7 +679,7 @@ export default {
      * @property {number} counter - counter used for index
      * @returns {Family} nested structure of families
      */
-    getTreeHelper (store, node, counter) {
+    getTreeHelper (store, node) {
       let tempItem
       const isParent = this.collapseFamily.includes(node.name)
       const isAncestor = this.allParentLookUp[node.name].some(element => {
@@ -709,19 +687,15 @@ export default {
       })
       const disabled = isParent || isAncestor
       for (const childFamily of node.node.descendants) {
-        if (this.namespaces.some((obj) => obj.name === childFamily)) {
-          const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${childFamily}` })
-          const childNode = this.cylcTree.$index[childTokens.id]
-          if (childNode.node.firstParent.id === node.id) {
-            tempItem = {
-              id: counter.next(),
-              name: childFamily,
-              children: [],
-              disabled
-            }
-            this.getTreeHelper(tempItem, childNode, counter)
-            store.children.push(tempItem)
+        const childNamespace = this.namespaces.find((obj) => obj.name === childFamily)
+        if (childNamespace?.node.firstParent.id === node.id) {
+          tempItem = {
+            name: childFamily,
+            children: [],
+            disabled
           }
+          this.getTreeHelper(tempItem, childNamespace)
+          store.children.push(tempItem)
         }
       }
       return store

@@ -89,7 +89,7 @@
               "_typename": "Family"
             }
           ],
-          "descendants": ["GOOD", "failed", "retrying"],
+          "descendants": ["failed", "retrying"],
           "childTasks": [
             {
               "name": "failed",
@@ -133,7 +133,7 @@
               "_typename": "Family"
             }
           ],
-          "descendants": ["GOOD", "eventually_succeeded", "succeeded"],
+          "descendants": ["eventually_succeeded", "succeeded"],
           "childTasks": [
             {
               "name": "eventually_succeeded",
