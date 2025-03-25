@@ -167,6 +167,9 @@ fragment EdgeData on Edge {
 fragment TaskProxyData on TaskProxy {
   id
   state
+  isHeld
+  isRunahead
+  isQueued
   name
   firstParent {
     id
@@ -182,8 +185,13 @@ fragment FamilyProxyData on FamilyProxy {
   __typename
   id
   state
+  isHeld
+  isRunahead
+  isQueued
   name
-  id
+  ancestors { 
+     name 
+   } 
   firstParent {
     id
     name
@@ -386,7 +394,6 @@ export default {
       initialLoad: true,
       cycleArrayStore: [],
       edgeTemplate: {},
-      nodeTemplate: {},
     }
   },
 
