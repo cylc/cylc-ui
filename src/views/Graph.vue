@@ -191,7 +191,10 @@ fragment FamilyProxyData on FamilyProxy {
   name
   ancestors { 
      name 
-   } 
+   }
+  childTasks {
+    id
+  }
   firstParent {
     id
     name
