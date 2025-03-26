@@ -14,3 +14,4 @@ window.ResizeObserver ??= ResizeObserverStub
 // Mock element scroll API as not currently included in jsdom:
 // https://github.com/jsdom/jsdom/issues/1422
 Element.prototype.scrollBy ??= function () { }
+Element.prototype.scrollIntoView ??= function () { }
