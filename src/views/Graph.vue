@@ -1161,7 +1161,6 @@ export default {
         const indexSearch = cycles[cycle]
         if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
           for (const task of indexSearch) {
-            if (!task.node.firstParent) { return }
             const section = graphSections[task.node.firstParent.id] ??= []
             section.push(`${task.name} [title=${task.name}]`)
             graphSections[task.node.firstParent.id] = section
@@ -1427,7 +1426,6 @@ export default {
         })
         if (indexSearch) {
           // ---------------REMOVE NODES BASED ON CYCLE POINT------------
-          if (!this.allChildrenLookUp[indexSearch.id]) { return }
           for (const config of this.allChildrenLookUp[indexSearch.id]) {
             if (config.name !== indexSearch.name) {
               // REMOVE NODES
