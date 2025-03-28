@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <dd>{{ taskMetadata.title }}</dd>
             <v-divider />
             <dt>Description</dt>
-            <dd><span class="markup">{{ taskMetadata.description }}</span></dd>
+            <dd><Markdown :markdown="taskMetadata.description"/></dd>
             <v-divider />
             <dt>URL</dt>
             <dd>
@@ -168,12 +168,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
+import Markdown from '@/components/Markdown.vue'
 import { formatCompletion } from '@/utils/outputs'
 
 export default {
   name: 'InfoComponent',
 
   components: {
+    Markdown,
     GraphNode,
   },
 

@@ -24,9 +24,9 @@
 </template>
 
 <script>
-import MarkdownIt from 'markdown-it'
+import { MyST } from 'mystjs'
 
-const md = new MarkdownIt()
+const md = new MyST()
 
 export default {
   name: 'Markdown',
