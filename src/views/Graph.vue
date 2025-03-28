@@ -1380,8 +1380,8 @@ export default {
                   if (edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)) {
                     if (!this.collapseCycle.includes(sourceCycle) && !this.collapseCycle.includes(targetCycle)) {
                       const familyData = edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                      this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
-                      if (familyData.source !== familyData.target) {
+                      if (familyData.source !== familyData.target || sourceCycle !== targetCycle) {
+                        this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
                         edges.push(this.edgeTemplate)
                       }
                     }
@@ -1408,8 +1408,8 @@ export default {
                   if (edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)) {
                     if (!this.collapseCycle.includes(sourceCycle) && !this.collapseCycle.includes(targetCycle)) {
                       const familyData = edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                      this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
-                      if (familyData.source !== familyData.target) {
+                      if (familyData.source !== familyData.target || sourceCycle !== targetCycle) {
+                        this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
                         edges.push(this.edgeTemplate)
                       }
                     }
