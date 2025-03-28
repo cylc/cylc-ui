@@ -46,6 +46,107 @@
           "ancestors": []
         }
       ],
+      "families": [
+        {
+          "__typename": "Family",
+          "id": "~user/one//$namespace|root",
+          "name": "root",
+          "parents": [],
+          "descendants": ["BAD", "GOOD", "waiting", "sleepy", "checkpoint"],
+          "childTasks": [
+            {
+              "name": "checkpoint",
+              "_typename": "Task"
+            },
+            {
+              "name": "sleepy",
+              "_typename": "Task"
+            },
+            {
+              "name": "waiting",
+              "_typename": "Task"
+            }
+          ],
+          "childFamilies": [
+            {
+              "name": "BAD",
+              "_typename": "Family"
+            },
+            {
+              "name": "GOOD",
+              "_typename": "Family"
+            }
+          ]
+        },
+        {
+          "__typename": "Family",
+          "id": "~user/one//$namespace|BAD",
+          "name": "BAD",
+          "firstParent": { "id": "~user/one//$namespace|root", "name": "root"},
+          "parents": [
+            {
+              "name": "root",
+              "_typename": "Family"
+            }
+          ],
+          "descendants": ["failed", "retrying"],
+          "childTasks": [
+            {
+              "name": "failed",
+              "_typename": "Task"
+            },
+            {
+              "name": "retrying",
+              "_typename": "Task"
+            }
+          ],
+          "childFamilies": []
+        },
+        {
+          "__typename": "Family",
+          "id": "~user/one//$namespace|GOOD",
+          "name": "GOOD",
+          "firstParent": { "id": "~user/one//$namespace|root", "name": "root"},
+          "parents": [
+            {
+              "name": "root",
+              "_typename": "family"
+            }
+          ],
+          "descendants": ["SUCCEEDED"],
+          "childTasks": [],
+          "childFamilies": [
+            {
+              "name": "SUCCEEDED",
+              "_typename": "Family"
+            }
+          ]
+        },
+        {
+          "__typename": "Family",
+          "id": "~user/one//$namespace|SUCCEEDED",
+          "name": "SUCCEEDED",
+          "firstParent": { "id": "~user/one//$namespace|GOOD", "name": "GOOD"},
+          "parents": [
+            {
+              "name": "GOOD",
+              "_typename": "Family"
+            }
+          ],
+          "descendants": ["eventually_succeeded", "succeeded"],
+          "childTasks": [
+            {
+              "name": "eventually_succeeded",
+              "_typename": "Task"
+            },
+            {
+              "name": "succeeded",
+              "_typename": "Task"
+            }
+          ],
+          "childFamilies": []
+        }
+      ],
       "familyProxies": [
         {
           "__typename": "FamilyProxy",
