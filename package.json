@@ -99,5 +99,5 @@
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
   },
-  "packageManager": "yarn@4.8.0"
+  "packageManager": "yarn@4.8.1"
 }
