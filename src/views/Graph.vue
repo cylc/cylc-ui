@@ -396,7 +396,6 @@ export default {
       // true if page is loading for the first time and nodeDimensions are yet to be calculated
       initialLoad: true,
       cycleArrayStore: [],
-      edgeTemplate: {},
     }
   },
 
@@ -844,11 +843,7 @@ export default {
     checkForEdgeBySource (sourceName, cyclePoint, edges) {
       const edgePath = this.workflowIDs[0]
       const edgeSearchTerm = `${edgePath}//${cyclePoint}/${sourceName}`
-
-      const edgeSearch = edges.filter((edge) => {
-        return edge.node.source === edgeSearchTerm
-      })
-      return edgeSearch
+      return edges.filter((edge) => edge.node.source === edgeSearchTerm)
     },
 
     /**
@@ -861,11 +856,7 @@ export default {
     checkForEdgeByTarget (targetName, cyclePoint, edges) {
       const edgePath = this.workflowIDs[0]
       const edgeSearchTerm = `${edgePath}//${cyclePoint}/${targetName}`
-
-      const edgeSearch = edges.filter((edge) => {
-        return edge.node.target === edgeSearchTerm
-      })
-      return edgeSearch
+      return edges.filter((edge) => edge.node.target === edgeSearchTerm)
     },
 
     /**
@@ -1335,92 +1326,89 @@ export default {
         // ...loop through collapsed families...
         for (const family of this.collapseFamily) {
           // ...get the node from the index...
-          const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
-            return node.name === family && node.tokens.cycle === cycle
-          })
+          const indexSearch = Object.values(this.cylcTree.$index).find(
+            (node) => node.name === family && node.tokens.cycle === cycle
+          )
+          if (!indexSearch) continue
           // ...now we have a node - we have to understand all its relations in the graph...
-          if (indexSearch) {
-            // ---------------REMOVE NODES BASED ON FAMILY------------
-            // must do this before removing nodes and edges based on cycle as
-            // cycle collapsing takes priority of families
-            // ...this node is collapsed so need to remove any of its children
-            // (nodes and edges) from the graph if it has any...
-            for (const config of this.allChildrenLookUp[indexSearch.id]) {
-              if (config.name !== indexSearch.name) {
-                // REMOVE NODES
-                nodes = this.removeNode(config.name, cycle, nodes)
-                // REMOVE EDGES
-                // if there is an edge with a source or target it needs removing
-                const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, edges)
-                const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, edges)
+          // ---------------REMOVE NODES BASED ON FAMILY------------
+          // must do this before removing nodes and edges based on cycle as
+          // cycle collapsing takes priority of families
+          // ...this node is collapsed so need to remove any of its children
+          // (nodes and edges) from the graph if it has any...
+          for (const config of this.allChildrenLookUp[indexSearch.id]) {
+            if (config.name !== indexSearch.name) {
+              // REMOVE NODES
+              nodes = this.removeNode(config.name, cycle, nodes)
+              // REMOVE EDGES
+              // if there is an edge with a source or target it needs removing
+              const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, edges)
+              const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, edges)
 
-                if (edgeCheckSource.length) {
-                  [edges, removedEdges] = this.removeEdgeBySource(edgeCheckSource, edges, removedEdges, config, cycle)
-                }
-                if (edgeCheckTarget.length) {
-                  [edges, removedEdges] = this.removeEdgeByTarget(edgeCheckTarget, edges, removedEdges)
-                }
+              if (edgeCheckSource.length) {
+                [edges, removedEdges] = this.removeEdgeBySource(edgeCheckSource, edges, removedEdges, config, cycle)
+              }
+              if (edgeCheckTarget.length) {
+                [edges, removedEdges] = this.removeEdgeByTarget(edgeCheckTarget, edges, removedEdges)
               }
             }
-            // ...now we have removed any parts of child nodes that shouldnt be there we can add nodes and edges that should be...
-            // ---------------ADD NODES BASED ON FAMILY------------
-            if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
-              if (!this.isNodeCollapsedByFamily(indexSearch.node.firstParent.name)) {
-                nodes.push(indexSearch)
-              }
+          }
+          // ...now we have removed any parts of child nodes that shouldnt be there we can add nodes and edges that should be...
+          // ---------------ADD NODES BASED ON FAMILY------------
+          if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
+            if (!this.isNodeCollapsedByFamily(indexSearch.node.firstParent.name)) {
+              nodes.push(indexSearch)
             }
+          }
 
-            // ...this node is collapsed so need to remove any of its children (nodes and edges) from the graph if it has any...
-            for (const config of this.allChildrenLookUp[indexSearch.id]) {
-              const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, removedEdges)
-              if (edgeCheckSource) {
-                for (const edge of edgeCheckSource) {
-                  const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
-                  const targetName = this.cylcTree.$index[edge.node.target].name
-                  const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
-                  const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
-                  const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
+          // ...this node is collapsed so need to remove any of its children (nodes and edges) from the graph if it has any...
+          for (const config of this.allChildrenLookUp[indexSearch.id]) {
+            for (const edge of this.checkForEdgeBySource(config.name, cycle, removedEdges)) {
+              const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
+              const targetName = this.cylcTree.$index[edge.node.target].name
+              const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+              const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
+              const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
 
-                  if (!this.collapseCycle.includes(sourceCycle)) {
-                    const familyData = this.edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)
-                    if (familyData) {
-                      this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, targetName, sourceCycle, targetCycle)
-                      edges.push(this.edgeTemplate)
-                    }
+              if (!this.collapseCycle.includes(sourceCycle)) {
+                const familyData = this.edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)
+                if (familyData) {
+                  edges.push(
+                    this.createEdge('noCollapsed', familyData.source, targetName, sourceCycle, targetCycle)
+                  )
+                }
 
-                    if (!this.collapseCycle.includes(targetCycle)) {
-                      const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                      if (familyData && (familyData.source !== familyData.target || sourceCycle !== targetCycle)) {
-                        this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
-                        edges.push(this.edgeTemplate)
-                      }
-                    }
+                if (!this.collapseCycle.includes(targetCycle)) {
+                  const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
+                  if (familyData && (familyData.source !== familyData.target || sourceCycle !== targetCycle)) {
+                    edges.push(
+                      this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
+                    )
                   }
                 }
               }
-              const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, removedEdges)
-              if (edgeCheckTarget) {
-                for (const edge of edgeCheckTarget) {
-                  const sourceName = this.cylcTree.$index[edge.node.source].name
-                  const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
-                  const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
-                  const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
-                  const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
+            }
+            for (const edge of this.checkForEdgeByTarget(config.name, cycle, removedEdges)) {
+              const sourceName = this.cylcTree.$index[edge.node.source].name
+              const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
+              const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+              const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
+              const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
 
-                  if (!this.collapseCycle.includes(targetCycle)) {
-                    const familyData = this.edgeHasCollapsedTargetFamilyOnly(targetFamilyName, sourceFamilyName)
-                    if (familyData) {
-                      this.edgeTemplate = this.createEdge('noCollapsed', sourceName, familyData.target, sourceCycle, targetCycle)
-                      edges.push(this.edgeTemplate)
-                    }
+              if (!this.collapseCycle.includes(targetCycle)) {
+                const familyData = this.edgeHasCollapsedTargetFamilyOnly(targetFamilyName, sourceFamilyName)
+                if (familyData) {
+                  edges.push(
+                    this.createEdge('noCollapsed', sourceName, familyData.target, sourceCycle, targetCycle)
+                  )
+                }
 
-                    if (!this.collapseCycle.includes(sourceCycle)) {
-                      const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                      if (familyData && (familyData.source !== familyData.target || sourceCycle !== targetCycle)) {
-                        this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
-                        edges.push(this.edgeTemplate)
-                      }
-                    }
+                if (!this.collapseCycle.includes(sourceCycle)) {
+                  const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
+                  if (familyData && (familyData.source !== familyData.target || sourceCycle !== targetCycle)) {
+                    edges.push(
+                      this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
+                    )
                   }
                 }
               }
@@ -1455,60 +1443,58 @@ export default {
           // next bit starts here
           // ---------------ADD EDGES BASED ON CYCLE POINT------------
           for (const config of this.allChildrenLookUp[indexSearch.id]) {
-            const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, removedEdges)
-            if (edgeCheckSource) {
-              for (const edge of edgeCheckSource) {
-                const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
-                const targetName = this.cylcTree.$index[edge.node.target].name
-                const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
-                const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
+            for (const edge of this.checkForEdgeBySource(config.name, cycle, removedEdges)) {
+              const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
+              const targetName = this.cylcTree.$index[edge.node.target].name
+              const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+              const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
 
-                if (targetCycle !== sourceCycle) {
-                  // edge has collapsed source cycle only
-                  if (!this.collapseCycle.includes(targetCycle) && this.collapseCycle.includes(sourceCycle)) {
-                    if (this.isNodeCollapsedByFamily(targetFamilyName)) {
-                      this.edgeTemplate = this.createEdge('collapsedSource', sourceCycle, this.isNodeCollapsedByFamily(targetFamilyName), sourceCycle, targetCycle)
-                      edges.push(this.edgeTemplate)
-                    } else {
-                      this.edgeTemplate = this.createEdge('collapsedSource', sourceCycle, targetName, sourceCycle, targetCycle)
-                      edges.push(this.edgeTemplate)
-                    }
-                  }
-
-                  // edge has collapsed target and source cycle
-                  if (this.collapseCycle.includes(targetCycle) && this.collapseCycle.includes(sourceCycle)) {
-                    this.edgeTemplate = this.createEdge('collapsedSourceAndTarget', sourceCycle, targetCycle, sourceCycle, targetCycle)
-                    edges.push(this.edgeTemplate)
-                  }
+              if (sourceCycle === targetCycle) continue
+              // edge has collapsed source cycle only
+              if (!this.collapseCycle.includes(targetCycle) && this.collapseCycle.includes(sourceCycle)) {
+                if (this.isNodeCollapsedByFamily(targetFamilyName)) {
+                  edges.push(
+                    this.createEdge('collapsedSource', sourceCycle, this.isNodeCollapsedByFamily(targetFamilyName), sourceCycle, targetCycle)
+                  )
+                } else {
+                  edges.push(
+                    this.createEdge('collapsedSource', sourceCycle, targetName, sourceCycle, targetCycle)
+                  )
                 }
               }
+
+              // edge has collapsed target and source cycle
+              if (this.collapseCycle.includes(targetCycle) && this.collapseCycle.includes(sourceCycle)) {
+                edges.push(
+                  this.createEdge('collapsedSourceAndTarget', sourceCycle, targetCycle, sourceCycle, targetCycle)
+                )
+              }
             }
-            const edgeCheckTarget = this.checkForEdgeByTarget(config.name, cycle, removedEdges)
-            if (edgeCheckTarget) {
-              for (const edge of edgeCheckTarget) {
-                const sourceName = this.cylcTree.$index[edge.node.source].name
-                const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
-                const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
-                const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
+            for (const edge of this.checkForEdgeByTarget(config.name, cycle, removedEdges)) {
+              const sourceName = this.cylcTree.$index[edge.node.source].name
+              const sourceCycle = this.cylcTree.$index[edge.node.source].tokens.cycle
+              const targetCycle = this.cylcTree.$index[edge.node.target].tokens.cycle
+              const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
 
-                if (targetCycle !== sourceCycle) {
-                  // edge has collapsed target cycle only
-                  if (this.collapseCycle.includes(targetCycle) && !this.collapseCycle.includes(sourceCycle)) {
-                    if (this.isNodeCollapsedByFamily(sourceFamilyName)) {
-                      this.edgeTemplate = this.createEdge('collapsedTarget', this.isNodeCollapsedByFamily(sourceFamilyName), targetCycle, sourceCycle, targetCycle)
-                      edges.push(this.edgeTemplate)
-                    } else {
-                      this.edgeTemplate = this.createEdge('collapsedTarget', sourceName, targetCycle, sourceCycle, targetCycle)
-                      edges.push(this.edgeTemplate)
-                    }
-                  }
-
-                  // edge has collapsed target and source cycle
-                  if (this.collapseCycle.includes(targetCycle) && this.collapseCycle.includes(sourceCycle)) {
-                    this.edgeTemplate = this.createEdge('collapsedSourceAndTarget', sourceCycle, targetCycle, sourceCycle, targetCycle)
-                    edges.push(this.edgeTemplate)
-                  }
+              if (sourceCycle === targetCycle) continue
+              // edge has collapsed target cycle only
+              if (this.collapseCycle.includes(targetCycle) && !this.collapseCycle.includes(sourceCycle)) {
+                if (this.isNodeCollapsedByFamily(sourceFamilyName)) {
+                  edges.push(
+                    this.createEdge('collapsedTarget', this.isNodeCollapsedByFamily(sourceFamilyName), targetCycle, sourceCycle, targetCycle)
+                  )
+                } else {
+                  edges.push(
+                    this.createEdge('collapsedTarget', sourceName, targetCycle, sourceCycle, targetCycle)
+                  )
                 }
+              }
+
+              // edge has collapsed target and source cycle
+              if (this.collapseCycle.includes(targetCycle) && this.collapseCycle.includes(sourceCycle)) {
+                edges.push(
+                  this.createEdge('collapsedSourceAndTarget', sourceCycle, targetCycle, sourceCycle, targetCycle)
+                )
               }
             }
           }
