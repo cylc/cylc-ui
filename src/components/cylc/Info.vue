@@ -54,11 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel-title>
         <v-expansion-panel-text>
           <dl>
-            <dt>Title</dt>
-            <dd>{{ taskMetadata.title }}</dd>
-            <v-divider />
-            <dt>Description</dt>
-            <dd><Markdown :markdown="taskMetadata.description"/></dd>
+            <dt><Markdown :markdown="'# ' + (taskMetadata.title || '(Title)')"/></dt>
             <v-divider />
             <dt>URL</dt>
             <dd>
@@ -75,9 +71,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </a>
             </dd>
             <v-divider />
+            <dt>Description</dt>
+            <dd><Markdown :markdown="taskMetadata.description"/></dd>
+            <v-divider />
             <template v-for="(value, key) in customMetadata" :key="key">
-              <dt>{{ key }}</dt>
-              <dd><span class="markup">{{ value }}</span></dd>
+              <dt><Markdown :markdown="'## ' + key"/></dt>
+              <dd><Markdown :markdown="value"/></dd>
               <v-divider />
             </template>
           </dl>
