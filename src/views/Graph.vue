@@ -678,6 +678,7 @@ export default {
         }
       }
     },
+
     /**
      * Get a nested object of families
      * @property {Family} store - nested object of families
@@ -706,6 +707,7 @@ export default {
       }
       return store
     },
+
     /**
      * Removes a node from an array of nodes
      * @property {String} nodeName - name of node to be removed
@@ -720,6 +722,7 @@ export default {
       })
       return nodesFiltered
     },
+
     /**
      * Creates an edge from the name and cycle of source and target nodes
      * @property {String} edgeType - config option 'noCollapsed'|'collapsedTarget'|'collapsedSource'|'collapsedSourceAndTarget'
@@ -768,6 +771,7 @@ export default {
         },
       }
     },
+
     /**
      * Removes an edge from an array of edges
      * @property {String} sourceName - name of source node of edge to be removed
@@ -785,6 +789,7 @@ export default {
         (edge) => edge.id.indexOf(edgeSearchTerm) === -1
       )
     },
+
     /**
      * Removes an edges from an array of edges based on source node
      * @property {Node[]} edgeCheckSource - array of edges that have been identified as needing removal from the graph
@@ -806,6 +811,7 @@ export default {
       }
       return [edges, removedEdges]
     },
+
     /**
      * Removes an edges from an array of edges based on target node
      * @property {Node[]} edgeCheckTarget - array of edges that have been identified as needing removal from the graph
@@ -827,6 +833,7 @@ export default {
       }
       return [edges, removedEdges]
     },
+
     /**
      * Filters edges array based on source node
      * @property {String} sourceName - name of source node of edge to be removed
@@ -843,6 +850,7 @@ export default {
       })
       return edgeSearch
     },
+
     /**
      * Filters edges array based on target node
      * @property {String} targetName - name of target node of edge to be removed
@@ -859,6 +867,7 @@ export default {
       })
       return edgeSearch
     },
+
     /**
      * Check if node is collapsed by family or ancestor
      * If not collapsed return null
@@ -889,6 +898,7 @@ export default {
         return null
       }
     },
+
     mountSVGPanZoom () {
       // Check the SVG is ready:
       // * The SVG document must be rendered with something in it before we can
@@ -938,9 +948,11 @@ export default {
       // Center the view after load:
       this.reset()
     },
+
     setOption (option, value) {
       this[option] = value
     },
+
     updateTimer () {
       // turn the timer on or off depending on the value of autoRefresh
       // if initialLoad is true we want to set a refresh interval
@@ -952,14 +964,17 @@ export default {
         this.refreshTimer = null
       }
     },
+
     increaseSpacing () {
       // increase graph layout node spacing by 10%
       this.spacing = this.spacing * 1.1
     },
+
     decreaseSpacing () {
       // decrease graph layout node spacing by 10%
       this.spacing = this.spacing * (10 / 11)
     },
+
     getGraphNodes () {
       // list graph nodes from the store (non reactive list)
       const ret = []
@@ -972,6 +987,7 @@ export default {
       }
       return ret
     },
+
     getGraphEdges () {
       // list graph edges from the store (non reactive list)
       const ret = []
@@ -982,6 +998,7 @@ export default {
       }
       return ret
     },
+
     /**
      * Get the dimensions of currently rendered graph nodes
      * (we feed these dimensions into the GraphViz dot code to improve layout).
@@ -1003,6 +1020,7 @@ export default {
       }
       return ret
     },
+
     /**
      * Get the nodes binned by cycle point
      *
@@ -1015,6 +1033,7 @@ export default {
         return x
       }, {})
     },
+
     /**
      * Recursive function that adds a subgraph to the dot code
      *
@@ -1108,6 +1127,7 @@ export default {
         }
       }
     },
+
     getDotCode (nodeDimensions, nodes, edges, cycles) {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
@@ -1228,6 +1248,7 @@ export default {
       ret.push('}')
       return ret.join('\n')
     },
+
     hashGraph (nodes, edges) {
       // generate a hash for this list of nodes and edges
       return nonCryptoHash(
@@ -1235,12 +1256,14 @@ export default {
         (edges || []).map(n => n.id).reduce((x, y) => { return x + y }, 1)
       )
     },
+
     reset () {
       // pan / zoom so that the graph is centered and in frame
       this.panZoomTo(
         this.$refs.graph.getElementsByClassName('svg-pan-zoom_viewport')[0]
       )
     },
+
     panZoomTo (ele) {
       // pan / zoom so that the provided SVG element is centered and in frame
       // Acknowledgment: Code adapted from suggestion from @iftahh in
@@ -1264,6 +1287,31 @@ export default {
       const desiredWidth = 50 * Math.sqrt(bbox.width / 25) * 11 * realZoom
       this.panZoomWidget.zoom(relativeZoom * width / desiredWidth)
     },
+
+    edgeHasCollapsedTargetFamilyOnly (targetFirstFamily, sourceFirstFamily) {
+      const target = this.isNodeCollapsedByFamily(targetFirstFamily)
+      if (target && !this.isNodeCollapsedByFamily(sourceFirstFamily)) {
+        return { target }
+      }
+    },
+
+    edgeHasCollapsedSourceFamilyOnly (targetFirstFamily, sourceFirstFamily) {
+      const source = this.isNodeCollapsedByFamily(sourceFirstFamily)
+      if (source && !this.isNodeCollapsedByFamily(targetFirstFamily)) {
+        return { source }
+      }
+    },
+
+    edgeHasCollapsedTargetandSourceFamily (targetFirstFamily, sourceFirstFamily) {
+      const target = this.isNodeCollapsedByFamily(targetFirstFamily)
+      if (target) {
+        const source = this.isNodeCollapsedByFamily(sourceFirstFamily)
+        if (source) {
+          return { target, source }
+        }
+      }
+    },
+
     async refresh () {
       // refresh the graph layout if required
       if (this.updating) {
@@ -1322,39 +1370,6 @@ export default {
               }
             }
 
-            const edgeHasCollapsedTargetFamilyOnly = (targetFirstFamily, sourceFirstFamily) => {
-              if (this.isNodeCollapsedByFamily(targetFirstFamily) && !this.isNodeCollapsedByFamily(sourceFirstFamily)) {
-                return {
-                  target: this.isNodeCollapsedByFamily(targetFirstFamily),
-                  source: undefined
-                }
-              } else {
-                return false
-              }
-            }
-
-            const edgeHasCollapsedSourceFamilyOnly = (targetFirstFamily, sourceFirstFamily) => {
-              if (!this.isNodeCollapsedByFamily(targetFirstFamily) && this.isNodeCollapsedByFamily(sourceFirstFamily)) {
-                return {
-                  target: undefined,
-                  source: this.isNodeCollapsedByFamily(sourceFirstFamily)
-                }
-              } else {
-                return false
-              }
-            }
-
-            const edgeHasCollapsedTargetandSourceFamily = (targetFirstFamily, sourceFirstFamily) => {
-              if (this.isNodeCollapsedByFamily(targetFirstFamily) && this.isNodeCollapsedByFamily(sourceFirstFamily)) {
-                return {
-                  target: this.isNodeCollapsedByFamily(targetFirstFamily),
-                  source: this.isNodeCollapsedByFamily(sourceFirstFamily)
-                }
-              } else {
-                return false
-              }
-            }
-
             // ...this node is collapsed so need to remove any of its children (nodes and edges) from the graph if it has any...
             for (const config of this.allChildrenLookUp[indexSearch.id]) {
               const edgeCheckSource = this.checkForEdgeBySource(config.name, cycle, removedEdges)
@@ -1366,18 +1381,16 @@ export default {
                   const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
                   const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
 
-                  if (edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)) {
-                    if (!this.collapseCycle.includes(sourceCycle)) {
-                      const familyData = edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)
+                  if (!this.collapseCycle.includes(sourceCycle)) {
+                    const familyData = this.edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)
+                    if (familyData) {
                       this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, targetName, sourceCycle, targetCycle)
                       edges.push(this.edgeTemplate)
                     }
-                  }
 
-                  if (edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)) {
-                    if (!this.collapseCycle.includes(sourceCycle) && !this.collapseCycle.includes(targetCycle)) {
-                      const familyData = edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                      if (familyData.source !== familyData.target || sourceCycle !== targetCycle) {
+                    if (!this.collapseCycle.includes(targetCycle)) {
+                      const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
+                      if (familyData && (familyData.source !== familyData.target || sourceCycle !== targetCycle)) {
                         this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
                         edges.push(this.edgeTemplate)
                       }
@@ -1394,18 +1407,16 @@ export default {
                   const sourceFamilyName = this.cylcTree.$index[edge.node.source].node.firstParent.name
                   const targetFamilyName = this.cylcTree.$index[edge.node.target].node.firstParent.name
 
-                  if (edgeHasCollapsedTargetFamilyOnly(targetFamilyName, sourceFamilyName)) {
-                    if (!this.collapseCycle.includes(targetCycle)) {
-                      const familyData = edgeHasCollapsedTargetFamilyOnly(targetFamilyName, sourceFamilyName)
+                  if (!this.collapseCycle.includes(targetCycle)) {
+                    const familyData = this.edgeHasCollapsedTargetFamilyOnly(targetFamilyName, sourceFamilyName)
+                    if (familyData) {
                       this.edgeTemplate = this.createEdge('noCollapsed', sourceName, familyData.target, sourceCycle, targetCycle)
                       edges.push(this.edgeTemplate)
                     }
-                  }
 
-                  if (edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)) {
-                    if (!this.collapseCycle.includes(sourceCycle) && !this.collapseCycle.includes(targetCycle)) {
-                      const familyData = edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                      if (familyData.source !== familyData.target || sourceCycle !== targetCycle) {
+                    if (!this.collapseCycle.includes(sourceCycle)) {
+                      const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
+                      if (familyData && (familyData.source !== familyData.target || sourceCycle !== targetCycle)) {
                         this.edgeTemplate = this.createEdge('noCollapsed', familyData.source, familyData.target, sourceCycle, targetCycle)
                         edges.push(this.edgeTemplate)
                       }
@@ -1588,6 +1599,7 @@ export default {
       this.graphID = graphID
       this.updating = false
     },
+
     async waitFor (callback, retries = 10) {
       // wait for things to render
       // Will return when the callback returns something truthy.
@@ -1599,6 +1611,7 @@ export default {
         await this.$nextTick()
       }
     },
+
     /**
      * Re-layout the graph after any new nodes have been rendered.
      *
