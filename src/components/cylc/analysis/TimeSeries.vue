@@ -125,7 +125,7 @@ const jobFields = [
 /** The one-off query which retrieves historical job timing statistics */
 const JOB_QUERY = gql`
 query analysisJobQuery ($workflows: [ID], $tasks: [ID]) {
-  jobs(live: false, workflows: $workflows, tasks: $tasks) {
+  jobs(live: false, workflows: $workflows, tasks: $tasks, states: ["succeeded"]) {
     ${jobFields.join('\n')}
   }
 }

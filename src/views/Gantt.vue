@@ -120,7 +120,7 @@ const jobFields = [
 /** The query which retrieves historical Job timing statistics */
 const QUERY = gql`
 query ganttQuery ($workflows: [ID]) {
-  jobs(live: false, workflows: $workflows) {
+  jobs(live: false, workflows: $workflows, states: ["succeeded"]) {
     ${jobFields.join('\n')}
   }
 }
