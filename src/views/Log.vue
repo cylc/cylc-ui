@@ -290,11 +290,10 @@ class LogsCallback extends DeltasCallback {
   onAdded (added, store, errors) {
     if (this.results.connected === false) {
       // We have reconnected; clear the current lines otherwise they will be duplicated
-      // TODO: add reset event
-      this.results.lines = []
+      this.callback('reset-log', null)
     }
     if (added.lines) {
-      this.callback(added.lines)
+      this.callback('lines-added', added.lines)
     }
     if (added.connected != null) {
       this.results.connected = added.connected
@@ -324,6 +323,7 @@ export default {
   emits: [
     updateInitialOptionsEvent,
     'lines-added',
+    'reset-log',
   ],
 
   props: {
@@ -481,8 +481,11 @@ export default {
   },
 
   methods: {
-    sendLines (lines) {
-      eventBus.emit('lines-added', lines)
+    // sendLines (lines) {
+    //   eventBus.emit('lines-added', lines)
+    // },
+    sendEvent (event, payload) {
+      eventBus.emit(event, payload)
     },
     setOption (option, value) {
       // used by the ViewToolbar to update settings
@@ -503,7 +506,7 @@ export default {
         { id: this.id, file: this.file },
         `log-query-${this._uid}`,
         [
-          new LogsCallback(this.results, this.sendLines)
+          new LogsCallback(this.results, this.sendEvent)
         ],
         /* isDelta */ false,
         /* isGlobalCallback */ false

@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       'word-wrap': wordWrap,
     }"
   >
-    <pre ref="content" class="content" style="display: inline; padding-bottom: 1em;"></pre>
+    <pre ref="content" class="content"></pre>
     <v-btn
       position="fixed"
       location="bottom right"
@@ -33,8 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :icon="$options.icons.mdiMouseMoveUp"
       data-cy="log-scroll-top"
     />
-    <!-- a div to use for autoscrolling -->
-    <!--div ref="autoScrollEnd"></div-->
   </div>
 </template>
 
@@ -88,7 +86,7 @@ export default {
       autoScroll.value = false
     })
 
-    function scrollToEnd () {
+    function scrollToBottom () {
       content.value?.scrollIntoView(false, { behaviour: 'smooth' })
     }
 
@@ -100,16 +98,18 @@ export default {
 
     return {
       scrollToTop,
-      scrollToEnd,
+      scrollToBottom,
     }
   },
 
   mounted () {
     eventBus.on('lines-added', this.addLines)
+    eventBus.on('reset-log', this.clear)
   },
 
   beforeUnmount () {
     eventBus.off('lines-added')
+    eventBus.off('reset-log')
   },
 
   methods: {
@@ -118,6 +118,7 @@ export default {
       for (line of lines) {
         match = line.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s)(.*\s*)/)
         if (match) {
+          // line has a timestamp prefix
           line = match[2]
           ele = document.createElement('span')
           ele.classList.add('timestamp')
@@ -129,15 +130,19 @@ export default {
         this.$refs.content.appendChild(ele)
       }
       if (this.autoScroll) {
-        this.scrollToEnd()
+        this.scrollToBottom()
       }
+    },
+
+    clear () {
+      this.$refs.content.textContent = ''
     },
   },
 
   watch: {
     autoScroll (newVal) {
       if (newVal) {
-        this.scrollToEnd()
+        this.scrollToBottom()
       }
     }
   },
@@ -153,6 +158,8 @@ export default {
 .c-log {
   .content {
     height: 100%!important;
+    display: inline;
+    padding-bottom: 1em;
   }
 
   .timestamp {
