@@ -162,7 +162,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <log-component
       v-else
       data-cy="log-viewer"
-      :logs="results.lines"
       :timestamps="timestamps"
       :word-wrap="wordWrap"
       v-model:autoScroll="autoScroll"
@@ -265,8 +264,6 @@ export const getDefaultFile = (logFiles) => {
 
 class Results {
   constructor () {
-    /** @type {string[]} */
-    this.lines = []
     /** @type {?string} */
     this.host = null
     /** @type {?string} */
@@ -283,18 +280,20 @@ class LogsCallback extends DeltasCallback {
   /**
    * @param {Results} results
    */
-  constructor (results) {
+  constructor (results, callback) {
     super()
     this.results = results
+    this.callback = callback
   }
 
   onAdded (added, store, errors) {
     if (this.results.connected === false) {
       // We have reconnected; clear the current lines otherwise they will be duplicated
+      // TODO: add reset event
       this.results.lines = []
     }
     if (added.lines) {
-      this.results.lines.push(...added.lines)
+      this.callback(added.lines)
     }
     if (added.connected != null) {
       this.results.connected = added.connected
@@ -323,6 +322,7 @@ export default {
   },
   emits: [
     updateInitialOptionsEvent,
+    'lines-added',
   ],
 
   props: {
@@ -480,6 +480,9 @@ export default {
   },
 
   methods: {
+    sendLines (lines) {
+      eventBus.emit('lines-added', lines)
+    }
     setOption (option, value) {
       // used by the ViewToolbar to update settings
       this[option] = value
@@ -499,7 +502,7 @@ export default {
         { id: this.id, file: this.file },
         `log-query-${this._uid}`,
         [
-          new LogsCallback(this.results)
+          new LogsCallback(this.results, this.sendLines)
         ],
         /* isDelta */ false,
         /* isGlobalCallback */ false

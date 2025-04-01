@@ -17,14 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div
-    ref="scrollWrapper"
+    ref="wrapper"
     class="h-100 overflow-auto px-4 pb-2"
+    :class="{
+      'strip-timestamps': !timestamps,
+      'word-wrap': wordWrap,
+    }"
   >
-    <pre ref="logText" data-cy="log-text"><span
-      v-for="(log, index) in computedLogs"
-      :key="index"
-      :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
-    >{{ log }}</span></pre>
+    <pre ref="content" class="content"></pre>
     <v-btn
       v-if="logs.length"
       position="fixed"
@@ -43,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
 import { useScroll, useVModel, whenever } from '@vueuse/core'
 import { when } from '@/utils'
+import { eventBus } from '@/services/eventBus'
 import {
   mdiMouseMoveUp
 } from '@mdi/js'
@@ -59,10 +60,6 @@ export default {
       type: Boolean,
       required: false,
       default: true
-    },
-    logs: {
-      type: Array,
-      required: true
     },
     wordWrap: {
       type: Boolean,
@@ -81,12 +78,12 @@ export default {
   ],
 
   setup (props, { emit }) {
-    const logText = useTemplateRef('logText')
-    const scrollWrapper = useTemplateRef('scrollWrapper')
+    const content = useTemplateRef('content')
+    const wrapper = useTemplateRef('wrapper')
     const autoScrollEndRef = useTemplateRef('autoScrollEnd')
 
     const autoScroll = useVModel(props, 'autoScroll', emit)
-    const { arrivedState, directions } = useScroll(scrollWrapper)
+    const { arrivedState, directions } = useScroll(wrapper)
 
     // Turn on autoscroll when user scrolls to bottom:
     whenever(() => arrivedState.bottom && !arrivedState.top, () => {
@@ -106,21 +103,21 @@ export default {
       autoScroll.value = false
       // Wait for smooth scroll cancel to happen
       await nextTick()
-      scrollWrapper.value?.scroll({ top: 0, left: 0, behavior: 'smooth' })
+      wrapper.value?.scroll({ top: 0, left: 0, behavior: 'smooth' })
     }
 
     const ro = new ResizeObserver(scrollToEnd)
 
-    when(logText, () => {
+    when(content, () => {
       watch(
         autoScroll,
         (val) => {
           if (val) {
             scrollToEnd()
-            ro.observe(logText.value)
+            ro.observe(content.value)
           } else {
             // When autoscroll is turned off, cancel any smooth scroll in progress:
-            scrollWrapper.value.scrollBy(0, 0)
+            wrapper.value.scrollBy(0, 0)
             ro.disconnect()
           }
         },
@@ -137,31 +134,31 @@ export default {
     }
   },
 
-  computed: {
-    computedLogs () {
-      if (this.logs.length > 0) {
-        if (!this.timestamps) {
-          return this.updateLogs()
-        } else return this.logs
-      } else if (this.placeholder) {
-        return [this.placeholder]
-      } else {
-        return []
-      }
-    },
+  mounted () {
+    eventBus.on('lines-added', this.addLines)
+  },
+
+  beforeUnmount () {
+    eventBus.off('lines-added')
   },
 
   methods: {
-    updateLogs () {
-      return this.logs.map((logLine) => {
-        return this.stripTimestamp(logLine)
-      })
+    addLines (lines) {
+      let line, ele, match
+      for (line of lines) {
+        match = line.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s)(.*\s*)/)
+        if (match) {
+          line = match[2]
+          ele = document.createElement('span')
+          ele.classList.add('timestamp')
+          ele.innerText = match[1]
+          this.$refs.pre.appendChild(ele)
+        }
+        ele = document.createElement('span')
+        ele.innerText = line
+        this.$refs.pre.appendChild(ele)
+      }
     },
-
-    stripTimestamp (logLine) {
-      const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s(.*\s*)/
-      return logLine.match(regex)?.[1] ?? logLine
-    }
   },
 
   // Misc options
@@ -171,3 +168,25 @@ export default {
 }
 
 </script>
+
+
+<style lang="scss">
+.c-log {
+  .content {
+    height: 100%!important;
+  }
+
+  .timestamp {
+    color: blue;
+  }
+
+  .strip-timestamps .timestamp {
+    display: none
+  }
+
+  .word-wrap .content {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+</style>
