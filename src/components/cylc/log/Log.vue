@@ -79,59 +79,24 @@ export default {
   setup (props, { emit }) {
     const content = useTemplateRef('content')
     const wrapper = useTemplateRef('wrapper')
-    const autoScrollEndRef = useTemplateRef('autoScrollEnd')
-
     const autoScroll = useVModel(props, 'autoScroll', emit)
+
     const { arrivedState, directions } = useScroll(wrapper)
 
-    // Turn on autoscroll when user scrolls to bottom:
-    whenever(() => arrivedState.bottom && !arrivedState.top, () => {
-      // (when page first loads both top and bottom are true)
-      autoScroll.value = true
-    })
     // Turn off autoscroll when user scrolls up:
-    // whenever(() => props.logs.length && directions.top, () => {
-    //   autoScroll.value = false
-    // })
+    whenever(() => directions.top, () => {
+      autoScroll.value = false
+    })
 
     function scrollToEnd () {
-      // autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
-      console.log(`scrollToEnd ${document.body.scrollHeight}`)
-      // window.scrollTo(0, document.body.scrollHeight)
-      // content.scrollTop = content.scrollHeight
-      // document.scrollingElement.scrollTop = content.scrollHeight
-      content.value?.scrollIntoView(false)
+      content.value?.scrollIntoView(false, { behaviour: 'smooth' })
     }
 
     async function scrollToTop () {
       autoScroll.value = false
-      // Wait for smooth scroll cancel to happen
       await nextTick()
       wrapper.value?.scroll({ top: 0, left: 0, behavior: 'smooth' })
     }
-
-    // const ro = new ResizeObserver(scrollToEnd)
-
-    // when(content, () => {
-    //   watch(
-    //     autoScroll,
-    //     (val) => {
-    //       if (val) {
-    //         scrollToEnd()
-    //         ro.observe(content.value)
-    //       } else {
-    //         // When autoscroll is turned off, cancel any smooth scroll in progress:
-    //         wrapper.value.scrollBy(0, 0)
-    //         ro.disconnect()
-    //       }
-    //     },
-    //     { immediate: true }
-    //   )
-    // })
-
-    // onBeforeUnmount(() => {
-    //   ro.disconnect()
-    // })
 
     return {
       scrollToTop,
