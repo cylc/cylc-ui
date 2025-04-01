@@ -37,13 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
+import { useTemplateRef, nextTick } from 'vue'
 import { useScroll, useVModel, whenever } from '@vueuse/core'
-import { when } from '@/utils'
 import { eventBus } from '@/services/eventBus'
-import {
-  mdiMouseMoveUp
-} from '@mdi/js'
+import { mdiMouseMoveUp } from '@mdi/js'
 
 export default {
   name: 'LogComponent',
