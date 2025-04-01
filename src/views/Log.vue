@@ -198,6 +198,7 @@ import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import DeltasCallback from '@/services/callbacks'
 import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
+import { eventBus } from '@/services/eventBus'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -482,7 +483,7 @@ export default {
   methods: {
     sendLines (lines) {
       eventBus.emit('lines-added', lines)
-    }
+    },
     setOption (option, value) {
       // used by the ViewToolbar to update settings
       this[option] = value

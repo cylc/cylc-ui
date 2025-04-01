@@ -24,9 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       'word-wrap': wordWrap,
     }"
   >
-    <pre ref="content" class="content"></pre>
+    <pre ref="content" class="content" style="display: inline; padding-bottom: 1em;"></pre>
     <v-btn
-      v-if="logs.length"
       position="fixed"
       location="bottom right"
       class="ma-5"
@@ -35,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       data-cy="log-scroll-top"
     />
     <!-- a div to use for autoscrolling -->
-    <div ref="autoScrollEnd"></div>
+    <!--div ref="autoScrollEnd"></div-->
   </div>
 </template>
 
@@ -91,12 +90,17 @@ export default {
       autoScroll.value = true
     })
     // Turn off autoscroll when user scrolls up:
-    whenever(() => props.logs.length && directions.top, () => {
-      autoScroll.value = false
-    })
+    // whenever(() => props.logs.length && directions.top, () => {
+    //   autoScroll.value = false
+    // })
 
     function scrollToEnd () {
-      autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
+      // autoScrollEndRef.value?.scrollIntoView({ behavior: 'smooth' })
+      console.log(`scrollToEnd ${document.body.scrollHeight}`)
+      // window.scrollTo(0, document.body.scrollHeight)
+      // content.scrollTop = content.scrollHeight
+      // document.scrollingElement.scrollTop = content.scrollHeight
+      content.value?.scrollIntoView(false)
     }
 
     async function scrollToTop () {
@@ -106,31 +110,32 @@ export default {
       wrapper.value?.scroll({ top: 0, left: 0, behavior: 'smooth' })
     }
 
-    const ro = new ResizeObserver(scrollToEnd)
+    // const ro = new ResizeObserver(scrollToEnd)
 
-    when(content, () => {
-      watch(
-        autoScroll,
-        (val) => {
-          if (val) {
-            scrollToEnd()
-            ro.observe(content.value)
-          } else {
-            // When autoscroll is turned off, cancel any smooth scroll in progress:
-            wrapper.value.scrollBy(0, 0)
-            ro.disconnect()
-          }
-        },
-        { immediate: true }
-      )
-    })
+    // when(content, () => {
+    //   watch(
+    //     autoScroll,
+    //     (val) => {
+    //       if (val) {
+    //         scrollToEnd()
+    //         ro.observe(content.value)
+    //       } else {
+    //         // When autoscroll is turned off, cancel any smooth scroll in progress:
+    //         wrapper.value.scrollBy(0, 0)
+    //         ro.disconnect()
+    //       }
+    //     },
+    //     { immediate: true }
+    //   )
+    // })
 
-    onBeforeUnmount(() => {
-      ro.disconnect()
-    })
+    // onBeforeUnmount(() => {
+    //   ro.disconnect()
+    // })
 
     return {
-      scrollToTop
+      scrollToTop,
+      scrollToEnd,
     }
   },
 
@@ -152,13 +157,24 @@ export default {
           ele = document.createElement('span')
           ele.classList.add('timestamp')
           ele.innerText = match[1]
-          this.$refs.pre.appendChild(ele)
+          this.$refs.content.appendChild(ele)
         }
         ele = document.createElement('span')
         ele.innerText = line
-        this.$refs.pre.appendChild(ele)
+        this.$refs.content.appendChild(ele)
+      }
+      if (this.autoScroll) {
+        this.scrollToEnd()
       }
     },
+  },
+
+  watch: {
+    autoScroll (newVal) {
+      if (newVal) {
+        this.scrollToEnd()
+      }
+    }
   },
 
   // Misc options
@@ -166,9 +182,7 @@ export default {
     mdiMouseMoveUp
   }
 }
-
 </script>
-
 
 <style lang="scss">
 .c-log {
