@@ -46,10 +46,6 @@ export default {
   name: 'LogComponent',
 
   props: {
-    placeholder: {
-      type: String,
-      required: false
-    },
     timestamps: {
       type: Boolean,
       required: false,
