@@ -3756,8 +3756,8 @@ __metadata:
     eslint-plugin-n: "npm:16.6.2"
     eslint-plugin-no-only-tests: "npm:3.3.0"
     eslint-plugin-promise: "npm:6.6.0"
-    eslint-plugin-vue: "npm:9.32.0"
-    eslint-plugin-vuetify: "npm:2.5.1"
+    eslint-plugin-vue: "npm:9.33.0"
+    eslint-plugin-vuetify: "npm:2.5.2"
     express: "npm:4.21.2"
     express-ws: "npm:5.0.2"
     graphiql: "npm:3.8.3"
@@ -4748,25 +4748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:9.32.0":
-  version: 9.32.0
-  resolution: "eslint-plugin-vue@npm:9.32.0"
-  dependencies:
-    "@eslint-community/eslint-utils": "npm:^4.4.0"
-    globals: "npm:^13.24.0"
-    natural-compare: "npm:^1.4.0"
-    nth-check: "npm:^2.1.1"
-    postcss-selector-parser: "npm:^6.0.15"
-    semver: "npm:^7.6.3"
-    vue-eslint-parser: "npm:^9.4.3"
-    xml-name-validator: "npm:^4.0.0"
-  peerDependencies:
-    eslint: ^6.2.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/69040947271b0d46132a34cccd54af5aeff9c017060ceba49c0cb689d4817468c27fb07881d655bc4453b40e2858715e3ab6a5155ee0846aa000013685185a81
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-vue@npm:^9.6.0":
+"eslint-plugin-vue@npm:9.33.0":
   version: 9.33.0
   resolution: "eslint-plugin-vue@npm:9.33.0"
   dependencies:
@@ -4784,16 +4766,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vuetify@npm:2.5.1":
-  version: 2.5.1
-  resolution: "eslint-plugin-vuetify@npm:2.5.1"
+"eslint-plugin-vue@npm:>=9.6.0":
+  version: 10.0.0
+  resolution: "eslint-plugin-vue@npm:10.0.0"
   dependencies:
-    eslint-plugin-vue: "npm:^9.6.0"
+    "@eslint-community/eslint-utils": "npm:^4.4.0"
+    natural-compare: "npm:^1.4.0"
+    nth-check: "npm:^2.1.1"
+    postcss-selector-parser: "npm:^6.0.15"
+    semver: "npm:^7.6.3"
+    xml-name-validator: "npm:^4.0.0"
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0
+    vue-eslint-parser: ^10.0.0
+  checksum: 10c0/068ae9e4661f4cf18ab947d7bbbd10025b184ee06491991163d4edefb47cf31124e90326dc5f92a6306666d6b062b59b681c14f50a2ad4cfb98324c466d28139
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-vuetify@npm:2.5.2":
+  version: 2.5.2
+  resolution: "eslint-plugin-vuetify@npm:2.5.2"
+  dependencies:
+    eslint-plugin-vue: "npm:>=9.6.0"
     requireindex: "npm:^1.2.0"
   peerDependencies:
     eslint: ^8.0.0 || ^9.0.0
     vuetify: ^3.0.0
-  checksum: 10c0/70c1284035ceafc039f3f0295ffdf4bd5ef07efc2459dff57957c9ea2834d7fd5f2da4219a337907f6faa3dad492e7b0939d9af538a579034bb588cae97fa558
+  checksum: 10c0/69c4e7898112239ea6a5c099a2d29dbdb8baf06c3a9d73db7009a6e37664d9710a9bb2fc378b20fd72c7c8da527644b78cea1fefb166074a864d1fac7140ef45
   languageName: node
   linkType: hard
 
