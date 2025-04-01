@@ -42,6 +42,8 @@ import { useScroll, useVModel, whenever } from '@vueuse/core'
 import { eventBus } from '@/services/eventBus'
 import { mdiMouseMoveUp } from '@mdi/js'
 
+const RE_TIMESTAMP = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s)(.*\s*)/
+
 export default {
   name: 'LogComponent',
 
@@ -109,7 +111,7 @@ export default {
     addLines (lines) {
       let line, ele, match
       for (line of lines) {
-        match = line.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-][\d:]+)?\s)(.*\s*)/)
+        match = line.match(RE_TIMESTAMP)
         if (match) {
           // line has a timestamp prefix
           line = match[2]
