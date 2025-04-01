@@ -281,19 +281,18 @@ class LogsCallback extends DeltasCallback {
   /**
    * @param {Results} results
    */
-  constructor (results, callback) {
+  constructor (results) {
     super()
     this.results = results
-    this.callback = callback
   }
 
   onAdded (added, store, errors) {
     if (this.results.connected === false) {
       // We have reconnected; clear the current lines otherwise they will be duplicated
-      this.callback('reset-log', null)
+      eventBus.emit('reset-log')
     }
     if (added.lines) {
-      this.callback('lines-added', added.lines)
+      eventBus.emit('lines-added', added.lines)
     }
     if (added.connected != null) {
       this.results.connected = added.connected
@@ -481,12 +480,6 @@ export default {
   },
 
   methods: {
-    // sendLines (lines) {
-    //   eventBus.emit('lines-added', lines)
-    // },
-    sendEvent (event, payload) {
-      eventBus.emit(event, payload)
-    },
     setOption (option, value) {
       // used by the ViewToolbar to update settings
       this[option] = value
@@ -506,7 +499,7 @@ export default {
         { id: this.id, file: this.file },
         `log-query-${this._uid}`,
         [
-          new LogsCallback(this.results, this.sendEvent)
+          new LogsCallback(this.results)
         ],
         /* isDelta */ false,
         /* isGlobalCallback */ false
