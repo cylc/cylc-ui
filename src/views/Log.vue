@@ -162,7 +162,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <log-component
       v-else
       data-cy="log-viewer"
-      :logs="results.lines"
       :timestamps="timestamps"
       :word-wrap="wordWrap"
       v-model:autoScroll="autoScroll"
@@ -199,6 +198,7 @@ import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import DeltasCallback from '@/services/callbacks'
 import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
+import { eventBus } from '@/services/eventBus'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -265,8 +265,6 @@ export const getDefaultFile = (logFiles) => {
 
 class Results {
   constructor () {
-    /** @type {string[]} */
-    this.lines = []
     /** @type {?string} */
     this.host = null
     /** @type {?string} */
@@ -291,10 +289,10 @@ class LogsCallback extends DeltasCallback {
   onAdded (added, store, errors) {
     if (this.results.connected === false) {
       // We have reconnected; clear the current lines otherwise they will be duplicated
-      this.results.lines = []
+      eventBus.emit('reset-log')
     }
     if (added.lines) {
-      this.results.lines.push(...added.lines)
+      eventBus.emit('lines-added', added.lines)
     }
     if (added.connected != null) {
       this.results.connected = added.connected
@@ -323,6 +321,8 @@ export default {
   },
   emits: [
     updateInitialOptionsEvent,
+    'lines-added',
+    'reset-log',
   ],
 
   props: {
