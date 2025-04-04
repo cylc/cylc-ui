@@ -29,19 +29,19 @@ describe('GraphQL mixin', () => {
     const workflowName = 'test'
     const Component = {
       mixins: [graphqlMixin],
-      render () {}
+      render () {},
     }
     const component = shallowMount(Component, {
       global: {
-        plugins: [store]
+        plugins: [store],
       },
       props: {
-        workflowName
-      }
+        workflowName,
+      },
     })
     const variables = component.vm.variables
     const expected = {
-      workflowId: `~${user.owner}/${workflowName}`
+      workflowId: `~${user.owner}/${workflowName}`,
     }
     expect(variables).to.deep.equal(expected)
   })

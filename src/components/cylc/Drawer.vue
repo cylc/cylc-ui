@@ -74,7 +74,7 @@ export const minWidth = 150
 export default {
   components: {
     Workflows,
-    'c-header': Header
+    'c-header': Header,
   },
 
   setup () {

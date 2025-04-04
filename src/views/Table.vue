@@ -61,7 +61,7 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import { matchNode } from '@/components/cylc/common/filter'
 import TableComponent from '@/components/cylc/table/Table.vue'
@@ -155,12 +155,12 @@ export default {
 
   mixins: [
     graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
     TableComponent,
-    TaskFilter
+    TaskFilter,
   },
 
   emits: [updateInitialOptionsEvent],
@@ -228,7 +228,7 @@ export default {
 
     filteredTasks () {
       return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
-    }
-  }
+    },
+  },
 }
 </script>

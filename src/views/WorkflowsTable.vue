@@ -113,11 +113,11 @@ export default {
   name: 'WorkflowsTable',
 
   mixins: [
-    subscriptionMixin
+    subscriptionMixin,
   ],
 
   components: {
-    WorkflowIcon
+    WorkflowIcon,
   },
 
   data: () => ({
@@ -139,45 +139,45 @@ export default {
     },
     workflowsTable () {
       return Object.values(this.workflows)
-    }
+    },
   },
 
   methods: {
     viewWorkflow (workflow) {
       this.$router.push({ path: `/workspace/${workflow.tokens.workflow}` })
-    }
+    },
   },
 
   headers: [
     {
       sortable: false,
       title: '',
-      key: 'icon'
+      key: 'icon',
     },
     {
       sortable: true,
       title: i18n.global.t('Workflows.tableColumnName'),
-      key: 'tokens.workflow'
+      key: 'tokens.workflow',
     },
     {
       sortable: true,
       title: 'Status',
-      key: 'node.status'
+      key: 'node.status',
     },
     {
       sortable: true,
       title: i18n.global.t('Workflows.tableColumnOwner'),
-      key: 'node.owner'
+      key: 'node.owner',
     },
     {
       sortable: true,
       title: i18n.global.t('Workflows.tableColumnHost'),
-      key: 'node.host'
+      key: 'node.host',
     },
     {
       sortable: false,
       title: i18n.global.t('Workflows.tableColumnPort'),
-      key: 'node.port'
+      key: 'node.port',
     },
   ],
 

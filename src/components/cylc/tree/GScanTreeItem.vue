@@ -134,17 +134,17 @@ export default {
   components: {
     Job,
     TreeItem,
-    WorkflowIcon
+    WorkflowIcon,
   },
 
   props: {
     node: {
       type: Object,
-      required: true
+      required: true,
     },
     depth: {
       type: Number,
-      default: 0
+      default: 0,
     },
     filteredOutNodesCache: {
       type: WeakMap,
@@ -177,13 +177,13 @@ export default {
       return {
         'c-workflow-stopped': this.node.node?.status === WorkflowState.STOPPED.name,
       }
-    }
+    },
   },
 
   methods: {
     getTaskStateClass (stateTotals, state) {
       return {
-        'empty-state': !stateTotals[state]
+        'empty-state': !stateTotals[state],
       }
     },
   },

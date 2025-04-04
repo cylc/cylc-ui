@@ -45,12 +45,12 @@ export const renderHelpIcon = (helpText) => h(
       {
         ...props,
         style: {
-          cursor: 'default'
-        }
+          cursor: 'default',
+        },
       },
       () => mdiHelpCircleOutline
     ),
-    default: () => h(Markdown, { markdown: helpText })
+    default: () => h(Markdown, { markdown: helpText }),
   }
 )
 
@@ -64,7 +64,7 @@ export default {
   mixins: [formElement],
 
   components: {
-    Markdown
+    Markdown,
   },
 
   directives: {
@@ -74,15 +74,15 @@ export default {
       if (binding.value) {
         mask(el, binding)
       }
-    }
+    },
   },
 
   props: {
     // dictionary of props for overriding default values
     propOverrides: {
       type: Object,
-      default: () => { Object() }
-    }
+      default: () => { Object() },
+    },
   },
 
   beforeCreate () {
@@ -98,7 +98,7 @@ export default {
     const propGroups = [
       VuetifyConfig.defaultProps,
       componentProps,
-      this.propOverrides || {}
+      this.propOverrides || {},
     ]
     // rules is a list so needs special treatment
     const rules = propGroups.flatMap(({ rules }) => rules ?? [])
@@ -119,15 +119,15 @@ export default {
           this.model = value
         },
         gqlType: this.gqlType,
-        types: this.types
+        types: this.types,
       },
       {
         'append-inner': this.help ? () => renderHelpIcon(this.help) : null,
         // pass the "append" slot onto the child component
-        append: (slotProps) => this.$slots.append?.(slotProps)
+        append: (slotProps) => this.$slots.append?.(slotProps),
       }
     )
-  }
+  },
 
 }
 </script>
