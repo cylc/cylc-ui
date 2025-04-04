@@ -110,5 +110,8 @@
   ],
   "vulnerabilityAlerts": {
     "addLabels": ["security"]
+  },
+  "github-actions": {
+    "enabled": false
   }
 }

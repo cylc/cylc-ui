@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { SubscriptionClient } from 'subscriptions-transport-ws'
 import {
   ApolloClient,
   ApolloLink,
@@ -25,7 +26,6 @@ import {
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { setContext } from '@apollo/client/link/context'
-import { SubscriptionClient } from 'subscriptions-transport-ws'
 import { store } from '@/store/index'
 import { createUrl, getCylcHeaders } from '@/utils/urls'
 
