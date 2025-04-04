@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* warning icon */
 .c-warn {
   svg {
     width: 1em;
@@ -30,5 +31,16 @@
       stroke: rgb(255,122,122);
       fill: rgb(248,197,102);
     }
+  }
+}
+
+/* make the warning icon "pop" when activated */
+.c-warn.active svg {
+  animation: activate 0.5s forwards;
+
+  @keyframes activate {
+    from { transform:scale(1) }
+    50% { transform:scale(1.8) }
+    to { transform:scale(1) }
   }
 }

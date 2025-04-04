@@ -30,3 +30,5 @@ export const useCyclePointsOrderDesc = () => useLocalStorage('cyclePointsOrderDe
 export const useJobTheme = () => useLocalStorage('jobTheme', 'default')
 
 export const useReducedAnimation = () => useLocalStorage('reducedAnimation', false)
+
+export const useWorkflowWarnings = () => useLocalStorage('useWorkflowWarnings', true)
