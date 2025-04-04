@@ -24,17 +24,17 @@ export const formElement = {
     // the GraphQL type this input represents
     gqlType: {
       type: Object,
-      required: true
+      required: true,
     },
     // array of all GraphQL types in the schema
     types: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     // the value (v-model is actually syntactic sugar for this)
     modelValue: {
-      required: true
-    }
+      required: true,
+    },
   },
 
   emits: ['update:modelValue'],
@@ -62,7 +62,7 @@ export const formElement = {
       },
       set (val) {
         this.$emit('update:modelValue', val)
-      }
+      },
     },
 
     type () {
@@ -80,6 +80,6 @@ export const formElement = {
         return this.type.description.trim()
       }
       return null
-    }
-  }
+    },
+  },
 }

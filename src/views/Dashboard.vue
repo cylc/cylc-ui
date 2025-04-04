@@ -230,7 +230,7 @@ export default {
   name: 'Dashboard',
 
   mixins: [
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   data () {
@@ -265,23 +265,23 @@ export default {
         .map(state => {
           return {
             text: state.name.charAt(0).toUpperCase() + state.name.slice(1),
-            count: count[state.name] || 0
+            count: count[state.name] || 0,
           }
         })
     },
     multiUserMode () {
       return this.user.mode !== 'single user'
-    }
+    },
   },
 
   workflowsHeader: [
     { value: 'count' },
-    { value: 'text' }
+    { value: 'text' },
   ],
 
   eventsHeader: [
     { value: 'id' },
-    { value: 'text' }
+    { value: 'text' },
   ],
 
   hubUrl: createUrl('/hub/home', false, true),

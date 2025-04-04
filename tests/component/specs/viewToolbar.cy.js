@@ -18,7 +18,7 @@
 import {
   mdiCog,
   mdiGestureTap,
-  mdiToggleSwitch
+  mdiToggleSwitch,
 } from '@mdi/js'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 
@@ -27,7 +27,7 @@ describe('View Toolbar Component', () => {
     cy.vmount(
       ViewToolbar,
       {
-        props: { groups }
+        props: { groups },
       }
     ).as('wrapper')
     // add the classes Vuetify requires
@@ -51,17 +51,17 @@ describe('View Toolbar Component', () => {
             icon: mdiToggleSwitch,
             action: 'toggle',
             value: true,
-            key: 'toggle'
+            key: 'toggle',
           },
           {
             title: 'Callback',
             icon: mdiGestureTap,
             action: 'callback',
             callback: myCallback,
-            key: 'callback'
-          }
-        ]
-      }
+            key: 'callback',
+          },
+        ],
+      },
     ])
 
     // test all controls rendered
@@ -125,24 +125,24 @@ describe('View Toolbar Component', () => {
             value: true,
             key: 'foo',
             enableIf: ['bar'],
-            disableIf: ['baz']
+            disableIf: ['baz'],
           },
           {
             title: 'Bar',
             icon: mdiCog,
             action: 'toggle',
             value: true,
-            key: 'bar'
+            key: 'bar',
           },
           {
             title: 'Baz',
             icon: mdiCog,
             action: 'toggle',
             value: false,
-            key: 'baz'
-          }
-        ]
-      }
+            key: 'baz',
+          },
+        ],
+      },
     ])
 
     cy
@@ -187,16 +187,16 @@ describe('View Toolbar Component', () => {
             icon: mdiCog,
             action: 'toggle',
             value: true,
-            key: 'foo'
+            key: 'foo',
           },
           {
             title: 'Bar',
             icon: mdiCog,
             action: 'toggle',
             value: false,
-            key: 'bar'
-          }
-        ]
+            key: 'bar',
+          },
+        ],
       },
       {
         title: 'Group 2',
@@ -206,17 +206,17 @@ describe('View Toolbar Component', () => {
             icon: mdiCog,
             action: 'toggle',
             value: true,
-            key: 'baz'
+            key: 'baz',
           },
           {
             title: 'Pub',
             icon: mdiCog,
             action: 'toggle',
             value: false,
-            key: 'pub'
-          }
-        ]
-      }
+            key: 'pub',
+          },
+        ],
+      },
     ])
     // TODO: visual regression test
     // https://github.com/cylc/cylc-ui/issues/178

@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <task
                     :task="{
                       state: state.name,
-                      task: {meanElapsedTime: 30}
+                      task: {meanElapsedTime: 30},
                     }"
                     :startTime="String(Date.now())"
                   />
@@ -192,13 +192,13 @@ export default {
   name: 'Guide',
   components: {
     task: Task,
-    job: Job
+    job: Job,
   },
   // TODO: extract task states and descriptions from the GraphQL API
   //       once this is an enumeration.
   data: () => ({
-    states: TaskStateUserOrder
-  })
+    states: TaskStateUserOrder,
+  }),
 }
 </script>
 

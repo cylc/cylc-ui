@@ -78,11 +78,11 @@ export default {
   name: 'Workflows',
 
   mixins: [
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
-    GScan
+    GScan,
   },
 
   data () {
@@ -92,12 +92,12 @@ export default {
         {},
         'root',
         []
-      )
+      ),
     }
   },
 
   computed: {
-    ...mapState('workflows', ['cylcTree'])
-  }
+    ...mapState('workflows', ['cylcTree']),
+  },
 }
 </script>

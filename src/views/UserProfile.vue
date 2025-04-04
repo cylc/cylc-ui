@@ -234,7 +234,7 @@ export default {
   name: 'UserProfile',
 
   components: {
-    Job
+    Job,
   },
 
   setup () {
@@ -270,7 +270,7 @@ export default {
   jobThemes: [
     'default',
     'greyscale',
-    'colour_blind'
+    'colour_blind',
   ],
 
   icons: {

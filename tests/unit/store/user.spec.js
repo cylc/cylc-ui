@@ -37,7 +37,7 @@ describe('user', () => {
     it('should set user', () => {
       const user = {
         id: 1,
-        username: 'cylc'
+        username: 'cylc',
       }
       store.dispatch('user/setUser', user)
       expect(store.state.user.user).to.deep.equal(user)

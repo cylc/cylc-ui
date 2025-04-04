@@ -17,7 +17,7 @@
 
 import {
   posToPath,
-  nonCryptoHash
+  nonCryptoHash,
 } from '@/utils/graph-utils'
 
 describe('Graph functionality', () => {

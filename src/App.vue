@@ -45,7 +45,7 @@ const vuetifyDefaults = computed(() => ({
   global: {
     transition: reducedAnimation.value ? 'no' : undefined,
     ripple: reducedAnimation.value ? false : undefined,
-  }
+  },
 }))
 
 onMounted(() => {

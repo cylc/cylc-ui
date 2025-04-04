@@ -69,7 +69,7 @@ describe('aotf (Api On The Fly)', () => {
       const input = {
         name: 'fooBar',
         description: 'Short description.\n\nLong\ndescription.\nValid for: stopped, paused workflows.',
-        args: []
+        args: [],
       }
       const output = {
         ...input,
@@ -77,7 +77,7 @@ describe('aotf (Api On The Fly)', () => {
         _icon: aotf.getMutationIcon(),
         _shortDescription: 'Short description.',
         _help: 'Long\ndescription.\nValid for: stopped, paused workflows.',
-        _validStates: ['stopped', 'paused']
+        _validStates: ['stopped', 'paused'],
       }
       aotf.processMutations([input], null)
       expect(input).to.deep.equal(output)
@@ -92,9 +92,9 @@ describe('aotf (Api On The Fly)', () => {
             name: 'fooBar',
             kind: 'Whatever',
             ofType: 'Whatever',
-            defaultValue: '42'
-          }
-        ]
+            defaultValue: '42',
+          },
+        ],
       }
       const output = {
         args: [
@@ -105,9 +105,9 @@ describe('aotf (Api On The Fly)', () => {
             _cylcType: null,
             _multiple: false,
             _required: false,
-            _default: 42
-          }
-        ]
+            _default: 42,
+          },
+        ],
       }
       aotf.processArguments(input, [])
       expect(input).to.deep.equal(output)
@@ -129,13 +129,13 @@ describe('aotf (Api On The Fly)', () => {
                   name: 'WorkflowID',
                   type: {
                     name: 'SCALAR',
-                    ofType: null
-                  }
-                }
-              }
-            }
-          }
-        ]
+                    ofType: null,
+                  },
+                },
+              },
+            },
+          },
+        ],
       }
       const output = {
         args: [
@@ -146,9 +146,9 @@ describe('aotf (Api On The Fly)', () => {
             _cylcType: 'WorkflowID',
             _multiple: true, // because of the LIST
             _required: true, // because of the NON_NULL
-            _default: ['a']
-          }
-        ]
+            _default: ['a'],
+          },
+        ],
       }
       aotf.processArguments(input, [])
       expect(input).to.deep.equal(output)
@@ -165,14 +165,14 @@ describe('aotf (Api On The Fly)', () => {
             {
               name: 'arg1',
               _cylcObject: aotf.cylcObjects.Workflow,
-              _required: true
+              _required: true,
             },
             {
               name: 'arg2',
               _cylcObject: aotf.cylcObjects.User,
-              _required: false
-            }
-          ]
+              _required: false,
+            },
+          ],
         },
         {
           // mutation that operates on users
@@ -181,9 +181,9 @@ describe('aotf (Api On The Fly)', () => {
             {
               name: 'arg1',
               _cylcObject: aotf.cylcObjects.User,
-              _required: false
-            }
-          ]
+              _required: false,
+            },
+          ],
         },
         {
           // mutation that operates on workflows but requires additional info
@@ -192,15 +192,15 @@ describe('aotf (Api On The Fly)', () => {
             {
               name: 'arg1',
               _cylcObject: aotf.cylcObjects.Workflow,
-              _required: true
+              _required: true,
             },
             {
               name: 'arg2',
               _cylcObject: null,
-              _required: true
-            }
-          ]
-        }
+              _required: true,
+            },
+          ],
+        },
       ]
       const tokens = aotf.tokenise('~a/b//c/d')
       const permissions = []
@@ -229,7 +229,7 @@ describe('aotf (Api On The Fly)', () => {
         all.map((item) => [item.mutation.name, item.requiresInfo]).sort()
       ).to.deep.equal([
         ['baz', true],
-        ['foo', false]
+        ['foo', false],
       ])
     })
 
@@ -243,14 +243,14 @@ describe('aotf (Api On The Fly)', () => {
             {
               name: 'arg1',
               _cylcObject: aotf.cylcObjects.Workflow,
-              _required: true
+              _required: true,
             },
             {
               name: 'arg2',
               _cylcObject: null,
-              _required: false
-            }
-          ]
+              _required: false,
+            },
+          ],
         },
         {
           // second argument is required -> info is required
@@ -259,14 +259,14 @@ describe('aotf (Api On The Fly)', () => {
             {
               name: 'arg1',
               _cylcObject: aotf.cylcObjects.Workflow,
-              _required: true
+              _required: true,
             },
             {
               name: 'arg2',
               _cylcObject: null,
-              _required: true
-            }
-          ]
+              _required: true,
+            },
+          ],
         },
         {
           // second argument is required -> info is required unless
@@ -276,15 +276,15 @@ describe('aotf (Api On The Fly)', () => {
             {
               name: 'arg1',
               _cylcObject: aotf.cylcObjects.Workflow,
-              _required: true
+              _required: true,
             },
             {
               name: 'arg2',
               _cylcObject: aotf.cylcObjects.CyclePoint,
-              _required: true
-            }
-          ]
-        }
+              _required: true,
+            },
+          ],
+        },
       ]
       const permissions = []
 
@@ -300,7 +300,7 @@ describe('aotf (Api On The Fly)', () => {
       ).to.deep.equal([
         ['argon', false],
         ['boron', true],
-        ['carbon', true] // no cycle point in the context -> info required
+        ['carbon', true], // no cycle point in the context -> info required
       ])
 
       // filter mutations from the context of a cycle point
@@ -315,7 +315,7 @@ describe('aotf (Api On The Fly)', () => {
       ).to.deep.equal([
         ['argon', false],
         ['boron', true],
-        ['carbon', false] // cycle point in the context -> no info is required
+        ['carbon', false], // cycle point in the context -> no info is required
       ])
     })
 
@@ -323,12 +323,12 @@ describe('aotf (Api On The Fly)', () => {
       const args = [{
         name: 'arg1',
         _cylcObject: aotf.cylcObjects.Workflow,
-        _required: true
+        _required: true,
       }]
       const mutations = [
         { name: 'argon', args },
         { name: 'boron', args },
-        { name: 'carbon', args }
+        { name: 'carbon', args },
       ]
       const permissions = ['carbon', 'argon']
 
@@ -342,7 +342,7 @@ describe('aotf (Api On The Fly)', () => {
       ).to.deep.equal([
         ['argon', true],
         ['boron', false],
-        ['carbon', true]
+        ['carbon', true],
       ])
     })
   })
@@ -352,20 +352,20 @@ describe('aotf (Api On The Fly)', () => {
       const nodes = [
         {
           name: null,
-          kind: 'NON_NULL'
+          kind: 'NON_NULL',
         },
         {
           name: null,
-          kind: 'LIST'
+          kind: 'LIST',
         },
         {
           name: null,
-          kind: 'NON_NULL'
+          kind: 'NON_NULL',
         },
         {
           name: 'MyInputObject',
-          kind: 'INPUT_OBJECT'
-        }
+          kind: 'INPUT_OBJECT',
+        },
       ]
 
       // chain these nodes together using the ofType field
@@ -394,10 +394,10 @@ describe('aotf (Api On The Fly)', () => {
         [ // String => null
           {
             type: 'String',
-            kind: 'SCALAR'
+            kind: 'SCALAR',
           },
           [],
-          null
+          null,
         ],
         [ // NON_NULL<String> => null
           {
@@ -405,11 +405,11 @@ describe('aotf (Api On The Fly)', () => {
             kind: 'NON_NULL',
             ofType: {
               type: 'String',
-              kind: 'SCALAR'
-            }
+              kind: 'SCALAR',
+            },
           },
           [],
-          null
+          null,
         ],
         [ // LIST<String> => []
           {
@@ -417,11 +417,11 @@ describe('aotf (Api On The Fly)', () => {
             kind: 'LIST',
             ofType: {
               type: 'String',
-              kind: 'SCALAR'
-            }
+              kind: 'SCALAR',
+            },
           },
           [],
-          []
+          [],
         ],
         [ // LIST<LIST<String>> => [[]]
           {
@@ -432,12 +432,12 @@ describe('aotf (Api On The Fly)', () => {
               kind: 'LIST',
               ofType: {
                 type: 'String',
-                kind: 'SCALAR'
-              }
-            }
+                kind: 'SCALAR',
+              },
+            },
           },
           [],
-          [[]]
+          [[]],
         ],
         [ // NON_NULL<LIST<String>> => []
           {
@@ -448,17 +448,17 @@ describe('aotf (Api On The Fly)', () => {
               kind: 'LIST',
               ofType: {
                 type: 'String',
-                kind: 'SCALAR'
-              }
-            }
+                kind: 'SCALAR',
+              },
+            },
           },
           [],
-          []
+          [],
         ],
         [ // OBJECT { A } => { foo: null, bar: null }
           {
             kind: 'OBJECT',
-            name: 'A'
+            name: 'A',
           },
           [
             {
@@ -466,12 +466,12 @@ describe('aotf (Api On The Fly)', () => {
               kind: 'OBJECT',
               fields: [
                 { name: 'foo', type: 'String' },
-                { name: 'bar', type: 'String' }
-              ]
-            }
+                { name: 'bar', type: 'String' },
+              ],
+            },
           ],
-          { foo: null, bar: null }
-        ]
+          { foo: null, bar: null },
+        ],
       ].forEach(([type, types, expected]) => {
         expect(
           aotf.getNullValue(type, types)
@@ -486,17 +486,17 @@ describe('aotf (Api On The Fly)', () => {
         // [type, signature]
         [
           {
-            kind: 'TEST_TYPE'
+            kind: 'TEST_TYPE',
           },
-          'TEST_TYPE'
+          'TEST_TYPE',
         ],
         [
           {
             name: 'String',
             kind: 'SCALAR',
-            ofType: null
+            ofType: null,
           },
-          'String'
+          'String',
         ],
         [
           {
@@ -505,10 +505,10 @@ describe('aotf (Api On The Fly)', () => {
             ofType: {
               name: 'String',
               kind: 'SCALAR',
-              ofType: null
-            }
+              ofType: null,
+            },
           },
-          'String!'
+          'String!',
         ],
         [
           {
@@ -523,18 +523,18 @@ describe('aotf (Api On The Fly)', () => {
                 ofType: {
                   name: 'String',
                   kind: 'SCALAR',
-                  ofType: null
-                }
-              }
-            }
+                  ofType: null,
+                },
+              },
+            },
           },
-          '[String!]!'
-        ]
+          '[String!]!',
+        ],
       ].forEach(([type, signature]) => {
         expect(
           aotf.argumentSignature({
             name: 'myArgument',
-            type
+            type,
           })
         ).to.equal(signature)
       })
@@ -551,18 +551,18 @@ describe('aotf (Api On The Fly)', () => {
             type: {
               name: 'String',
               kind: 'SCALAR',
-              ofType: null
-            }
+              ofType: null,
+            },
           },
           {
             name: 'bar',
             type: {
               name: 'Int',
               kind: 'SCALAR',
-              ofType: null
-            }
-          }
-        ]
+              ofType: null,
+            },
+          },
+        ],
       }
       expect(aotf.constructMutation(mutation)).to.equal(dedent`
         mutation MyMutation($foo: String, $bar: Int) {
@@ -588,12 +588,12 @@ describe('aotf (Api On The Fly)', () => {
                 ofType: {
                   name: 'String',
                   kind: 'SCALAR',
-                  ofType: null
-                }
-              }
-            }
-          }
-        ]
+                  ofType: null,
+                },
+              },
+            },
+          },
+        ],
       }
       expect(aotf.constructMutation(mutation)).to.equal(dedent`
         mutation MyMutation($myArg: [String]!) {
@@ -606,7 +606,7 @@ describe('aotf (Api On The Fly)', () => {
     it('handles mutation objects with no arguments', () => {
       const mutation = {
         name: 'MyMutation',
-        args: []
+        args: [],
       }
       expect(aotf.constructMutation(mutation)).to.equal(dedent`
         mutation MyMutation {
@@ -628,23 +628,23 @@ describe('aotf (Api On The Fly)', () => {
             _cylcType: 'WorkflowID',
             _cylcObject: aotf.cylcObjects.Workflow,
             _multiple: true,
-            _default: null
+            _default: null,
           },
           {
             name: 'arg2',
             _cylcType: null,
             _cylcObject: null,
             _multiple: false,
-            _default: 42
-          }
-        ]
+            _default: 42,
+          },
+        ],
       }
       const tokens = aotf.tokenise('~a/b')
       expect(
         aotf.getMutationArgsFromTokens(mutation, tokens)
       ).to.deep.equal({
         arg1: ['~a/b'],
-        arg2: 42
+        arg2: 42,
       })
     })
   })
@@ -661,25 +661,25 @@ describe('aotf (Api On The Fly)', () => {
             { name: 'age', type: { name: 'Integer' } },
             { name: 'height', type: { name: 'Integer' } },
             { name: 'width', type: { name: 'Integer' } },
-            { name: 'criminalAllegations', type: { name: 'CriminalAllegations' } }
-          ]
+            { name: 'criminalAllegations', type: { name: 'CriminalAllegations' } },
+          ],
         },
         { name: 'Integer' },
         {
           name: 'CriminalAllegations',
           fields: [
             { name: 'date', type: { name: 'Date' } },
-            { name: 'location', type: { name: 'Location' } }
-          ]
+            { name: 'location', type: { name: 'Location' } },
+          ],
         },
         { name: 'Date' },
         {
           name: 'Location',
           fields: [
-            { name: 'coordinates', type: { name: 'Coordinates' } }
-          ]
+            { name: 'coordinates', type: { name: 'Coordinates' } },
+          ],
         },
-        { name: 'Coordinates' }
+        { name: 'Coordinates' },
       ]
       personType = types.find(({ name }) => name === 'Person')
     })
@@ -698,11 +698,11 @@ describe('aotf (Api On The Fly)', () => {
             {
               name: 'location',
               fields: [
-                { name: 'coordinates', fields: null }
-              ]
-            }
-          ]
-        }
+                { name: 'coordinates', fields: null },
+              ],
+            },
+          ],
+        },
       ])
     })
 
@@ -714,9 +714,9 @@ describe('aotf (Api On The Fly)', () => {
             {
               name: 'criminalAllegations',
               fields: [
-                { name: 'location' }
-              ]
-            }
+                { name: 'location' },
+              ],
+            },
           ],
           types
         )
@@ -727,11 +727,11 @@ describe('aotf (Api On The Fly)', () => {
             {
               name: 'location',
               fields: [
-                { name: 'coordinates', fields: null }
-              ]
-            }
-          ]
-        }
+                { name: 'coordinates', fields: null },
+              ],
+            },
+          ],
+        },
       ])
     })
 
@@ -741,13 +741,13 @@ describe('aotf (Api On The Fly)', () => {
           personType,
           [
             { name: 'width' },
-            { name: 'height' }
+            { name: 'height' },
           ],
           types
         )
       ).to.deep.equal([
         { name: 'width', fields: null },
-        { name: 'height', fields: null }
+        { name: 'height', fields: null },
       ])
     })
   })
