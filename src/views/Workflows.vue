@@ -61,6 +61,10 @@ fragment WorkflowData on Workflow {
   status
   statusMsg
   stateTotals
+  logRecords {
+    level
+    message
+  }
   latestStateTasks(states: [
     "failed",
     "preparing",
@@ -79,7 +83,7 @@ export default {
   ],
 
   components: {
-    GScan
+    GScan,
   },
 
   data () {
