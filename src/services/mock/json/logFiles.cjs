@@ -42,9 +42,9 @@ const LogFiles = async ({ id }) => {
       logFiles: {
         files: id == null
           ? []
-          : id.includes('//') ? jobLogFiles : workflowLogFiles
-      }
-    }
+          : id.includes('//') ? jobLogFiles : workflowLogFiles,
+      },
+    },
   }
 }
 

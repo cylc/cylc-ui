@@ -39,7 +39,7 @@ function getRoute (path) {
   return {
     ...path,
     name: path.name || path.view,
-    component: () => import(`@/views/${path.view}.vue`)
+    component: () => import(`@/views/${path.view}.vue`),
   }
 }
 
@@ -66,7 +66,7 @@ const router = createRouter({
       return { selector: to.hash }
     }
     return { left: 0, top: 0 }
-  }
+  },
 })
 
 router.beforeEach(async (to, from) => {

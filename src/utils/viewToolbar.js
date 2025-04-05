@@ -36,6 +36,6 @@ export const btnProps = (size) => ({
   variant: 'text',
   size,
   style: {
-    fontSize: btnIconFontSize(size)
+    fontSize: btnIconFontSize(size),
   },
 })

@@ -27,20 +27,20 @@ describe('WorkflowIcon', () => {
   it.each([
     {
       status: '',
-      expected: mdiHelpCircle
+      expected: mdiHelpCircle,
     },
     {
       status: WorkflowState.STOPPED.name,
-      expected: WorkflowState.STOPPED.icon
+      expected: WorkflowState.STOPPED.icon,
     },
   ])('uses the right icon for state: $status', ({ status, expected }) => {
     const wrapper = shallowMount(WorkflowIcon, {
       global: {
-        plugins: [vuetify]
+        plugins: [vuetify],
       },
       props: {
         status,
-      }
+      },
     })
     expect(wrapper.vm.getIcon()).to.equal(expected)
   })

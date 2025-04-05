@@ -66,7 +66,7 @@ export default {
   name: 'g-map-item',
 
   mixins: [
-    formElement
+    formElement,
   ],
 
   inheritAttrs: false,
@@ -76,13 +76,13 @@ export default {
       return {
         location: 'top',
         disabled: !this.modelValue.frozenKey,
-        openDelay: 400
+        openDelay: 400,
       }
-    }
+    },
   },
 
   textFieldProps: {
-    hideDetails: true
-  }
+    hideDetails: true,
+  },
 }
 </script>

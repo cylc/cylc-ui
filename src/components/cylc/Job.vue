@@ -42,7 +42,7 @@ const Job = (props, context) => {
       height: width,
       rx: '15',
       ry: '15',
-      'stroke-width': '10'
+      'stroke-width': '10',
     }
   )
   // the job icon SVG
@@ -62,7 +62,7 @@ const Job = (props, context) => {
         rx: '15',
         ry: '15',
         opacity: '50%',
-        'stroke-width': '10'
+        'stroke-width': '10',
       }
     )
     jobIconChildren.splice(0, 0, previousStateIconSvg)
@@ -72,7 +72,7 @@ const Job = (props, context) => {
       'g',
       { class: 'c-job' },
       [
-        h('g', { class: 'job' }, jobIconChildren)
+        h('g', { class: 'job' }, jobIconChildren),
       ]
     )
   }
@@ -80,7 +80,7 @@ const Job = (props, context) => {
     'svg',
     {
       class: 'job',
-      viewBox: '0 0 100 100'
+      viewBox: '0 0 100 100',
     },
     jobIconChildren
   )
@@ -98,13 +98,13 @@ Job.props = {
   },
   previousState: {
     type: String,
-    required: false
+    required: false,
   },
   svg: {
     type: Boolean,
     required: false,
-    default: false
-  }
+    default: false,
+  },
 }
 
 export default Job

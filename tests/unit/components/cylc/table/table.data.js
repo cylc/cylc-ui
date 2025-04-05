@@ -21,7 +21,7 @@ import { Tokens } from '@/utils/uid'
 const tk = {
   taskA: new Tokens('~cylc/workflow//20000101T0000Z/taskA'),
   taskB: new Tokens('~cylc/workflow//20000102T0000Z/taskB'),
-  taskC: new Tokens('~cylc/workflow//20000103T0000Z/taskC')
+  taskC: new Tokens('~cylc/workflow//20000103T0000Z/taskC'),
 }
 
 export const simpleTableTasks = [
@@ -49,11 +49,11 @@ export const simpleTableTasks = [
             submittedTime: new Date().toISOString(),
             startedTime: new Date().toISOString(),
             finishedTime: null,
-            state: JobState.RUNNING.name
+            state: JobState.RUNNING.name,
           },
-          children: []
-        }
-      ]
+          children: [],
+        },
+      ],
     },
     latestJob: {
       id: tk.taskA.clone({ job: '01' }).id,
@@ -66,11 +66,11 @@ export const simpleTableTasks = [
         submittedTime: new Date().toISOString(),
         startedTime: new Date().toISOString(),
         finishedTime: null,
-        state: JobState.RUNNING.name
+        state: JobState.RUNNING.name,
       },
-      children: []
+      children: [],
     },
-    previousJob: null
+    previousJob: null,
   },
   {
     task: {
@@ -82,10 +82,10 @@ export const simpleTableTasks = [
         state: TaskState.WAITING.name,
         name: 'taskB',
       },
-      children: []
+      children: [],
     },
     latestJob: null,
-    previousJob: null
+    previousJob: null,
   },
   {
     task: {
@@ -97,9 +97,9 @@ export const simpleTableTasks = [
         state: TaskState.SUBMITTED.name,
         name: 'taskC',
       },
-      children: []
+      children: [],
     },
     latestJob: null,
-    previousJob: null
-  }
+    previousJob: null,
+  },
 ]

@@ -66,14 +66,14 @@ export default {
   name: 'g-list',
 
   mixins: [
-    formElement
+    formElement,
   ],
 
   props: {
     addAtStart: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   inheritAttrs: false,
@@ -102,7 +102,7 @@ export default {
     /** Remove the item at `index` from the list. */
     remove (index) {
       this.modelValue.splice(index, 1)
-    }
+    },
   },
 
   icons: {

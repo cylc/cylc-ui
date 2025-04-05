@@ -91,7 +91,7 @@ describe('Log view', () => {
         file: initialFile,
       },
     },
-    ...options
+    ...options,
   })
 
   beforeEach(() => {
@@ -105,9 +105,9 @@ describe('Log view', () => {
       query: () => ({
         data: {
           logFiles: {
-            files: ['a.log', 'b.log']
-          }
-        }
+            files: ['a.log', 'b.log'],
+          },
+        },
       }),
     }
   })
