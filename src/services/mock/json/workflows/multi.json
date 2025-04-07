@@ -111,6 +111,22 @@
             ]
           }
         ],
+        "families": [
+          {
+            "__typename": "Family",
+            "id": "~user/other/multi/run2//$namespace|root",
+            "name": "root",
+            "parents": [],
+            "descendants": ["foo"],
+            "childTasks": [
+              {
+                "name": "foo",
+                "__typename": "Task"
+              }
+            ],
+            "childFamilies": []
+          }
+        ],
         "familyProxies": [
           {
             "__typename": "FamilyProxy",
@@ -152,6 +168,7 @@
             },
             "firstParent": {
               "id": "~user/other/multi/run2//1/root",
+              "name": "root",
               "__typename": "FamilyProxy"
             },
             "__typename": "TaskProxy"
@@ -170,6 +187,7 @@
             },
             "firstParent": {
               "id": "~user/other/multi/run2//2/root",
+              "name": "root",
               "__typename": "FamilyProxy"
             },
             "__typename": "TaskProxy"

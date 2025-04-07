@@ -129,6 +129,24 @@ describe('Graph View', () => {
       .should('be.visible')
   })
 
+  it('should group by family point', () => {
+    cy.visit('/#/graph/one')
+    waitForGraphLayout()
+    cy
+      .get('[data-cy="control-groupFamily"] > .v-btn')
+      .click()
+      .get('.v-list-item').should(items => {
+        expect(items[0]).to.contain.text('BAD')
+        expect(items[1]).to.contain.text('GOOD')
+        expect(items[2]).to.contain.text('SUCCEEDED')
+      })
+      .contains('.v-list-item', 'GOOD').find('input').check()
+    cy
+      .get('.c-graph:first')
+      .find('.c-graph-subgraph > rect')
+      .should('be.visible')
+  })
+
   it('remembers autorefresh setting when switching between workflows', () => {
     cy.visit('/#/workspace/one')
     addView('Graph')
@@ -150,17 +168,148 @@ describe('Graph View', () => {
     checkRememberToolbarSettings('[data-cy="control-groupCycle"]', 'not.have.class', 'have.class')
   })
 
-  describe('Flow nums', () => {
-    it('Shows flow=None task dimmed', () => {
-      cy.visit('/#/graph/one')
-      waitForGraphLayout()
-      cy.get('.c-graph-node.flow-none').as('flowNone')
-        .should('have.css', 'opacity')
-        .then((opacity) => {
-          expect(parseFloat(opacity)).to.be.closeTo(0.6, 0.2)
-        })
-      cy.get('@flowNone')
-        .contains('sleepy')
-    })
+  it('should collapse by cycle point', () => {
+    cy.visit('/#/graph/one')
+    waitForGraphLayout()
+
+    cy
+      // there should be 7 graph nodes (all on-screen)
+      .get('.c-graph:first')
+      .find('.graph-node-container')
+      .should('be.visible')
+      .should('have.length', 7)
+
+      // they shouldn't be stacked up in a pile
+      // (we use SVG transforms to push the nodes around)
+      .each(($el, index, $list) => {
+        const el1 = $el[0]
+        const matrix1 = el1.transform.baseVal[0].matrix
+        for (const el2 of $list) {
+          if (el1 !== el2) {
+            const matrix2 = el2.transform.baseVal[0].matrix
+            expect(matrix1).to.not.equal(matrix2)
+          }
+        }
+      })
+
+      // there should be 10 graph edges (all on-screen)
+      .get('.c-graph:first')
+      .find('.graph:first .edges:first')
+      .children()
+      .should('have.length', 10)
+      .should('be.visible')
+
+    cy
+      // list items should contain one item
+      .get('[data-cy="control-collapseCycle"] > .v-btn')
+      .click()
+      .get('.v-list-item').should(items => {
+        expect(items[0]).to.contain.text('20000102T0000Z')
+      })
+      .contains('.v-list-item', '20000102T0000Z').find('input').check()
+
+    cy
+      // there should be 1 graph node (on-screen)
+      .get('.c-graph:first')
+      .find('.graph-node-container')
+      .should('be.visible')
+      .should('have.length', 1)
+
+      // they shouldn't be stacked up in a pile
+      // (we use SVG transforms to push the nodes around)
+      .each(($el, index, $list) => {
+        const el1 = $el[0]
+        const matrix1 = el1.transform.baseVal[0].matrix
+        for (const el2 of $list) {
+          if (el1 !== el2) {
+            const matrix2 = el2.transform.baseVal[0].matrix
+            expect(matrix1).to.not.equal(matrix2)
+          }
+        }
+      })
+  })
+
+  it('should collapse by family', () => {
+    cy.visit('/#/graph/one')
+    waitForGraphLayout()
+
+    cy
+      // there should be 7 graph nodes (all on-screen)
+      .get('.c-graph:first')
+      .find('.graph-node-container')
+      .should('be.visible')
+      .should('have.length', 7)
+
+      // they shouldn't be stacked up in a pile
+      // (we use SVG transforms to push the nodes around)
+      .each(($el, index, $list) => {
+        const el1 = $el[0]
+        const matrix1 = el1.transform.baseVal[0].matrix
+        for (const el2 of $list) {
+          if (el1 !== el2) {
+            const matrix2 = el2.transform.baseVal[0].matrix
+            expect(matrix1).to.not.equal(matrix2)
+          }
+        }
+      })
+
+      // there should be 10 graph edges (all on-screen)
+      .get('.c-graph:first')
+      .find('.graph:first .edges:first')
+      .children()
+      .should('have.length', 10)
+      .should('be.visible')
+
+    cy
+      // list items should contain one item
+      .get('[data-cy="control-collapseFamily"] > .v-btn')
+      .click()
+      .get('.v-list-item').should(items => {
+        expect(items[0]).to.contain.text('BAD')
+        expect(items[1]).to.contain.text('GOOD')
+        expect(items[2]).to.contain.text('SUCCEEDED')
+      })
+      .contains('.v-list-item', 'GOOD').find('input').check()
+
+    cy
+      // there should be 6 graph nodes (all on-screen)
+      .get('.c-graph:first')
+      .find('.graph-node-container')
+      .should('be.visible')
+      .should('have.length', 6)
+
+      // they shouldn't be stacked up in a pile
+      // (we use SVG transforms to push the nodes around)
+      .each(($el, index, $list) => {
+        const el1 = $el[0]
+        const matrix1 = el1.transform.baseVal[0].matrix
+        for (const el2 of $list) {
+          if (el1 !== el2) {
+            const matrix2 = el2.transform.baseVal[0].matrix
+            expect(matrix1).to.not.equal(matrix2)
+          }
+        }
+      })
+
+      // there should be 7 graph edges (all on-screen)
+      .get('.c-graph:first')
+      .find('.graph:first .edges:first')
+      .children()
+      .should('have.length', 7)
+      .should('be.visible')
+  })
+})
+
+describe('Flow nums', () => {
+  it('Shows flow=None task dimmed', () => {
+    cy.visit('/#/graph/one')
+    waitForGraphLayout()
+    cy.get('.c-graph-node.flow-none').as('flowNone')
+      .should('have.css', 'opacity')
+      .then((opacity) => {
+        expect(parseFloat(opacity)).to.be.closeTo(0.6, 0.2)
+      })
+    cy.get('@flowNone')
+      .contains('sleepy')
   })
 })
