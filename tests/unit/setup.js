@@ -15,3 +15,5 @@ window.ResizeObserver ??= ResizeObserverStub
 // https://github.com/jsdom/jsdom/issues/1422
 Element.prototype.scrollBy ??= function () { }
 Element.prototype.scrollIntoView ??= function () { }
+Element.prototype.scroll ??= function () { }
+Element.prototype.scrollTo ??= function () { }

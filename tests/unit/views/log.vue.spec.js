@@ -125,11 +125,11 @@ describe('Log view', () => {
     },
     {
       files: [],
-      expected: null,
+      expected: undefined,
     },
     {
       files: ['ceres', 'vesta', 'aphosis'].sort().reverse(),
-      expected: null,
+      expected: undefined,
     },
   ])('workflow log getDefaultFile($files) == $expected', async ({ files, expected }) => {
     const wrapper = mountFunction()
@@ -138,7 +138,6 @@ describe('Log view', () => {
   })
 
   it('issues the subscription', async () => {
-    window.HTMLElement.prototype.scrollIntoView = function () {}
     const wrapper = mountFunction()
     expect(wrapper.vm.jobLog).toEqual(0)
     expect(wrapper.vm.query.variables).toMatchObject({

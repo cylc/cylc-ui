@@ -199,7 +199,7 @@ import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import DeltasCallback from '@/services/callbacks'
 import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
-import { JobStateLogFileMap } from '@/model/JobState.model'
+import { getJobLogFileFromState } from '@/model/JobState.model'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -517,11 +517,7 @@ export default {
         console.warn(err)
         return
       }
-      if (result?.data?.jobs.length) {
-        const file = JobStateLogFileMap.get(result.data.jobs[0].state)
-        return file === undefined ? null : file || 'job.out'
-      }
-      return 'job.out'
+      return getJobLogFileFromState(result?.data?.jobs?.[0]?.state)
     },
     /**
      * Return the default workflow log file from the given log filenames, if there is a
@@ -532,15 +528,7 @@ export default {
      * @returns {?string}
      */
     getDefaultWorkflowLog (logFiles) {
-      if (logFiles.length) {
-        // Loop through all the filenames e.g. [config/..., scheduler/...]
-        for (const fileName of logFiles) {
-          if (fileName.startsWith('scheduler/')) {
-            return fileName === undefined ? null : fileName
-          }
-        }
-      }
-      return null
+      return logFiles.find((fileName) => fileName.startsWith('scheduler/'))
     },
     /**
      * Return the default log file from the given log filenames, if there is a
