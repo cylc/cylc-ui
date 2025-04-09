@@ -2,29 +2,36 @@
   "extends": [
     "config:js-app"
   ],
-  "labels": ["dependencies", "javascript"],
+  "labels": [
+    "dependencies",
+    "javascript"
+  ],
   "platformAutomerge": true,
   "automergeStrategy": "squash",
   "packageRules": [
     {
-      "matchDepNames": ["yarn"],
+      "matchDepNames": [
+        "yarn"
+      ],
       "automerge": true
     },
     {
-      "matchPackageNames": ["vue"],
+      "matchPackageNames": [
+        "vue"
+      ],
       "automerge": true
     },
     {
       "groupName": "vite packages",
       "matchPackageNames": [
         "vite",
-        "vite-plugin-vuetify"
-      ],
-      "matchPackagePatterns": [
-        "^@vitejs/"
+        "vite-plugin-vuetify",
+        "/^@vitejs//"
       ],
       "automerge": true,
-      "schedule": ["on saturday"]
+      "schedule": [
+        "on saturday"
+      ]
     },
     {
       "groupName": "dev server packages",
@@ -36,34 +43,58 @@
         "nodemon"
       ],
       "automerge": true,
-      "schedule": ["on the 5th and 20th day of the month"]
+      "schedule": [
+        "on the 5th and 20th day of the month"
+      ]
     },
     {
-      "matchPackageNames": ["vuetify"],
-      "schedule": ["on the 7th day of the month"]
+      "matchPackageNames": [
+        "vuetify"
+      ],
+      "schedule": [
+        "on the 7th day of the month"
+      ]
     },
     {
       "groupName": "lumino packages",
-      "matchPackagePatterns": ["^@lumino/"]
+      "matchPackageNames": [
+        "/^@lumino//"
+      ]
     },
     {
       "groupName": "apollo packages",
-      "matchPackagePatterns": ["^@apollo/"],
-      "schedule": ["on the 10th day of the month"]
+      "schedule": [
+        "on the 10th day of the month"
+      ],
+      "matchPackageNames": [
+        "/^@apollo//"
+      ]
     },
     {
-      "matchPackageNames": ["sass-embedded"],
-      "schedule": ["on the 25th day of the month"]
+      "matchPackageNames": [
+        "sass-embedded"
+      ],
+      "schedule": [
+        "on the 25th day of the month"
+      ]
     },
     {
-      "matchPackageNames": ["@vueuse/core"],
+      "matchPackageNames": [
+        "@vueuse/core"
+      ],
       "automerge": true,
-      "schedule": ["on the 9th day of the month"]
+      "schedule": [
+        "on the 9th day of the month"
+      ]
     },
     {
-      "matchPackageNames": ["vue-i18n"],
+      "matchPackageNames": [
+        "vue-i18n"
+      ],
       "automerge": true,
-      "schedule": ["on the 15th day of the month"]
+      "schedule": [
+        "on the 15th day of the month"
+      ]
     },
     {
       "groupName": "graphiql packages",
@@ -72,14 +103,20 @@
         "preact"
       ],
       "automerge": true,
-      "schedule": ["on the 12th day of the month"]
+      "schedule": [
+        "on the 12th day of the month"
+      ]
     },
     {
       "groupName": "eslint packages",
-      "matchPackageNames": ["standard"],
-      "matchPackagePatterns": ["^eslint"],
+      "matchPackageNames": [
+        "standard",
+        "/^eslint/"
+      ],
       "automerge": true,
-      "schedule": ["on the first day of the month"]
+      "schedule": [
+        "on the first day of the month"
+      ]
     },
     {
       "groupName": "tests packages",
@@ -88,28 +125,32 @@
         "cross-fetch",
         "jsdom",
         "nyc",
-        "sinon"
-      ],
-      "matchPackagePatterns": [
-        "^@?cypress",
-        "^@?vitest",
-        "coverage",
-        "istanbul"
+        "sinon",
+        "/^@?cypress/",
+        "/^@?vitest/",
+        "/coverage/",
+        "/istanbul/"
       ],
       "automerge": true,
-      "schedule": ["on sunday"]
+      "schedule": [
+        "on sunday"
+      ]
     },
     {
       "groupName": "analysis view packages",
       "matchPackageNames": [
-          "apexcharts",
-          "vue3-apexcharts"
+        "apexcharts",
+        "vue3-apexcharts"
       ],
-      "addLabels": ["data workflows team"]
+      "addLabels": [
+        "data workflows team"
+      ]
     }
   ],
   "vulnerabilityAlerts": {
-    "addLabels": ["security"]
+    "addLabels": [
+      "security"
+    ]
   },
   "github-actions": {
     "enabled": false
