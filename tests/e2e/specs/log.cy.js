@@ -116,6 +116,7 @@ describe('Log View', () => {
 
   it('switches from workflow -> job log', () => {
     const defaultFile = 'job.out'
+    const defaultFileFailed = 'job.err'
 
     cy.get('[data-cy=job-toggle]')
       .click()
@@ -150,6 +151,20 @@ describe('Log View', () => {
       })
     // the job log files list should have been populated
     expectFileListContains(jobLogFiles)
+
+    // correct default log file is loaded if job failed
+    cy.get('[data-cy=job-id-input]')
+      .find('input')
+      .clear()
+      .type('1/failed/01')
+      .get('[data-cy=file-input]')
+      .contains(defaultFileFailed)
+      .get('[data-cy=log-path]')
+      .should('be.visible')
+      .invoke('text').then((text) => {
+        expect(text.startsWith('my-host:')).to.be.true
+        expect(text.endsWith(defaultFileFailed)).to.be.true
+      })
   })
 
   it('shows banner when error occurs', () => {
