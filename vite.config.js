@@ -72,7 +72,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       proxy: {
-        '^/(userprofile|graphql)': {
+        '^/(userprofile|version|graphql)': {
           target: devProxyTarget,
           changeOrigin: true
         },

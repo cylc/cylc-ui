@@ -18,11 +18,11 @@
 import sinon from 'sinon'
 import axios from 'axios'
 import { createStore } from 'vuex'
-import UserService from '@/services/user.service'
+import { getUserProfile } from '@/services/user.service'
 import storeOptions from '@/store/options'
 import { Alert } from '@/model/Alert.model'
 
-describe('UserService', () => {
+describe('getUserProfile', () => {
   const store = createStore(storeOptions)
   let sandbox
   beforeEach(() => {
@@ -31,7 +31,8 @@ describe('UserService', () => {
     store.commit('SET_ALERT', null)
   })
   afterEach(() => sandbox.restore())
-  describe('getUserProfile returns the logged-in user profile information', () => {
+
+  describe('returns the logged-in user profile information', () => {
     it('returns user profile object', async () => {
       const expected = {
         username: 'cylc-user-01',
@@ -47,9 +48,10 @@ describe('UserService', () => {
         }
       })
       sandbox.stub(axios, 'get').returns(response)
-      const user = await new UserService().getUserProfile()
+      const user = await getUserProfile()
       expect(user).toMatchObject(expected)
     })
+
     it('should add an alert on error', () => {
       expect(store.state.alert).to.equal(null)
       const e = new Error('mock error')
@@ -57,7 +59,7 @@ describe('UserService', () => {
         statusText: 'Test Status'
       }
       sandbox.stub(axios, 'get').rejects(e)
-      return new UserService().getUserProfile()
+      return getUserProfile()
         .catch((error) => {
           const alert = new Alert(error.response.statusText, 'error')
           return store.dispatch('setAlert', alert)
