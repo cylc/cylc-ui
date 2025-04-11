@@ -15,8 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { shallowRef } from 'vue'
 import { createSubscriptionClient, createGraphQLUrls } from '@/graphql'
 import SubscriptionWorkflowService from '@/services/workflow.service'
+import { fetchData } from '@/utils/urls'
 
 /**
  * A plugin that loads the application services.
@@ -27,6 +29,10 @@ export default {
    */
   install (app) {
     this._installWorkflowService(app)
+
+    const versionInfo = shallowRef(null)
+    app.provide('versionInfo', versionInfo)
+    fetchData('version').then((data) => { versionInfo.value = data })
   },
 
   /**

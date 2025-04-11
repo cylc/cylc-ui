@@ -15,18 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import axios from 'axios'
 import User from '@/model/User.model'
-import { createUrl, getCylcHeaders } from '@/utils/urls'
+import { fetchData } from '@/utils/urls'
 
 /**
  * Gets the user profile from the backend server.
  * @returns {Promise<User>}
  */
 export async function getUserProfile () {
-  const { data } = await axios.get(
-    createUrl('userprofile'),
-    { headers: getCylcHeaders() }
-  )
-  return new User(data)
+  return new User(await fetchData('userprofile'))
 }
