@@ -913,13 +913,13 @@ export default {
 
     getGraphEdges () {
       // map graph edges from the store (non reactive)
-      const ret = []
+      const ret = new Map()
       for (const { $edges } of this.workflows) {
         for (const { tokens } of $edges || []) {
-          ret.push([tokens.id, new Edge(tokens)])
+          ret.set(tokens.id, new Edge(tokens))
         }
       }
-      return new Map(ret)
+      return ret
     },
 
     /**
@@ -1172,11 +1172,15 @@ export default {
       return ret.join('\n')
     },
 
+    /**
+     * Generate a hash for this list of nodes and edges.
+     * @param {Node[]} nodes
+     * @param {Map<string, Edge>} edges
+     */
     hashGraph (nodes, edges) {
-      // generate a hash for this list of nodes and edges
       return nonCryptoHash(
-        nodes.map(n => n.id).reduce((x, y) => x + y) +
-        Array.from(edges.keys()).reduce((x, y) => x + y, 1)
+        nodes.reduce((acc, n) => acc + n.id, '') +
+        Array.from(edges.keys()).reduce((acc, id) => acc + id, '')
       )
     },
 
