@@ -45,5 +45,5 @@ module.exports = {
   analysisJobQuery,
   analysisQuery,
   ganttQuery,
-  InfoViewSubscription
+  InfoViewSubscription,
 }

@@ -46,7 +46,7 @@ export default {
   name: 'Alert',
 
   computed: {
-    ...mapState(['alert'])
+    ...mapState(['alert']),
   },
 
   methods: {
@@ -56,11 +56,11 @@ export default {
      */
     closeAlert () {
       this.setAlert(null)
-    }
+    },
   },
 
   icons: {
-    mdiClose
-  }
+    mdiClose,
+  },
 }
 </script>

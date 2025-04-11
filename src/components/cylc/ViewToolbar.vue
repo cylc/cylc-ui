@@ -51,13 +51,13 @@ export default {
   name: 'ViewToolbar',
 
   emits: [
-    'setOption'
+    'setOption',
   ],
 
   props: {
     groups: {
       required: true,
-      type: Array
+      type: Array,
       /*
         groups: [
           {
@@ -97,7 +97,7 @@ export default {
     size: {
       type: String,
       default: 'default',
-    }
+    },
   },
 
   computed: {
@@ -114,7 +114,7 @@ export default {
       for (const group of this.groups) {
         iGroup = {
           ...group,
-          iControls: []
+          iControls: [],
         }
         for (const control of group.controls) {
           color = null
@@ -152,7 +152,7 @@ export default {
             ...control,
             color,
             callback,
-            disabled
+            disabled,
           }
           iGroup.iControls.push(iControl)
         }
@@ -162,7 +162,7 @@ export default {
     },
     btnProps () {
       return btnProps(this.size)
-    }
+    },
   },
 
   methods: {
@@ -190,7 +190,7 @@ export default {
       }
       return vars
     },
-  }
+  },
 }
 </script>
 
