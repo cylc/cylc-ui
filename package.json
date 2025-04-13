@@ -75,7 +75,7 @@
     "express": "5.1.0",
     "express-ws": "5.0.2",
     "istanbul-lib-coverage": "3.2.2",
-    "jsdom": "26.0.0",
+    "jsdom": "26.1.0",
     "json-server": "0.17.4",
     "nodemon": "3.1.9",
     "nyc": "17.1.0",
