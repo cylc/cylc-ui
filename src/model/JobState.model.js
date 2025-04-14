@@ -46,6 +46,7 @@ export function getJobLogFileFromState (state) {
   switch (state) {
     case JobState.FAILED.name:
       return 'job.err'
+    case JobState.SUBMITTED.name:
     case JobState.SUBMIT_FAILED.name:
       return 'job-activity.log'
     default:
