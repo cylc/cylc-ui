@@ -34,8 +34,8 @@ const middlewares = [
   ...jsonServer.defaults({ logger: false }),
   // Customize logger to hide successful XHR requests:
   logger('dev', {
-    skip: (req, res) => res.statusCode < 400
-  })
+    skip: (req, res) => res.statusCode < 400,
+  }),
 ]
 
 server.use(middlewares)

@@ -37,11 +37,11 @@ const mutations = {
       const firstKey = workspaceLayouts.keys().next().value
       workspaceLayouts.delete(firstKey)
     }
-  }
+  },
 }
 
 export const app = {
   namespaced: true,
   state,
-  mutations
+  mutations,
 }

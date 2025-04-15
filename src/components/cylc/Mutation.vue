@@ -16,111 +16,111 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-    <v-card>
-      <!-- the mutation title -->
-      <v-card-title class="py-3">
-          {{ mutation._title }}
-      </v-card-title>
-      <v-card-text class="card-text py-0 px-4">
-        <!-- the mutation description -->
-        <v-expansion-panels
-          v-bind="extendedDescription ? { hover: true } : { readonly: true }"
-        >
-          <v-expansion-panel
-            class="mutation-desc"
-            elevation="0"
-          >
-            <v-expansion-panel-title
-              v-bind="extendedDescription ? {} : {
-                expandIcon: null,
-                style: {
-                  cursor: 'default'
-                }
-              }"
-            >
-              <Markdown :markdown="shortDescription"/>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text v-if="extendedDescription">
-              <Markdown :markdown="extendedDescription"/>
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
-        <v-divider />
-        <EditRuntimeForm
-          v-if="mutation.name === 'editRuntime'"
-          v-bind="{
-            cylcObject,
-            types
-          }"
-          ref="form"
-          v-model="isValid"
-        />
-        <FormGenerator
-          v-else
-          v-bind="{
-            mutation,
-            types,
-            initialData
-          }"
-          ref="form"
-          v-model="isValid"
-        />
-      </v-card-text>
-      <v-card-actions class="pa-3">
-        <v-spacer></v-spacer>
-        <v-btn
-          color="grey"
-          @click="close()"
-          variant="text"
-          data-cy="cancel"
-        >
-          Cancel
-        </v-btn>
-        <v-btn
-          color="orange"
-          @click="$refs.form.reset()"
-          variant="text"
-          data-cy="reset"
-        >
-          Reset
-        </v-btn>
-        <v-btn
-          variant="text"
-          :color="isValid ? 'primary' : 'error'"
-          @click="submit"
-          :loading="submitting"
-          data-cy="submit"
-        >
-          Submit
-          <v-tooltip
-            location="top"
-            content-class="bg-error"
-            :disabled="isValid"
-          >
-            <span>Form contains invalid or missing values!</span>
-          </v-tooltip>
-        </v-btn>
-      </v-card-actions>
-      <v-snackbar
-        v-model="showWarning"
-        timeout="4e3"
-        color="amber-accent-2"
-        data-cy="warning-snack"
+  <v-card>
+    <!-- the mutation title -->
+    <v-card-title class="py-3">
+      {{ mutation._title }}
+    </v-card-title>
+    <v-card-text class="card-text py-0 px-4">
+      <!-- the mutation description -->
+      <v-expansion-panels
+        v-bind="extendedDescription ? { hover: true } : { readonly: true }"
       >
-        {{ warningMsg }}
-        <template v-slot:actions>
-          <v-btn
-            @click="showWarning = false"
-            icon
-            data-cy="snack-close"
+        <v-expansion-panel
+          class="mutation-desc"
+          elevation="0"
+        >
+          <v-expansion-panel-title
+            v-bind="extendedDescription ? {} : {
+              expandIcon: null,
+              style: {
+                cursor: 'default',
+              },
+            }"
           >
-            <v-icon>
-              {{ $options.icons.close }}
-            </v-icon>
-          </v-btn>
-        </template>
-      </v-snackbar>
-    </v-card>
+            <Markdown :markdown="shortDescription"/>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text v-if="extendedDescription">
+            <Markdown :markdown="extendedDescription"/>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+      <v-divider />
+      <EditRuntimeForm
+        v-if="mutation.name === 'editRuntime'"
+        v-bind="{
+          cylcObject,
+          types,
+        }"
+        ref="form"
+        v-model="isValid"
+      />
+      <FormGenerator
+        v-else
+        v-bind="{
+          mutation,
+          types,
+          initialData,
+        }"
+        ref="form"
+        v-model="isValid"
+      />
+    </v-card-text>
+    <v-card-actions class="pa-3">
+      <v-spacer></v-spacer>
+      <v-btn
+        color="grey"
+        @click="close()"
+        variant="text"
+        data-cy="cancel"
+      >
+        Cancel
+      </v-btn>
+      <v-btn
+        color="orange"
+        @click="$refs.form.reset()"
+        variant="text"
+        data-cy="reset"
+      >
+        Reset
+      </v-btn>
+      <v-btn
+        variant="text"
+        :color="isValid ? 'primary' : 'error'"
+        @click="submit"
+        :loading="submitting"
+        data-cy="submit"
+      >
+        Submit
+        <v-tooltip
+          location="top"
+          content-class="bg-error"
+          :disabled="isValid"
+        >
+          <span>Form contains invalid or missing values!</span>
+        </v-tooltip>
+      </v-btn>
+    </v-card-actions>
+    <v-snackbar
+      v-model="showWarning"
+      timeout="4e3"
+      color="amber-accent-2"
+      data-cy="warning-snack"
+    >
+      {{ warningMsg }}
+      <template v-slot:actions>
+        <v-btn
+          @click="showWarning = false"
+          icon
+          data-cy="snack-close"
+        >
+          <v-icon>
+            {{ $options.icons.close }}
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+  </v-card>
 </template>
 
 <script>
@@ -130,7 +130,7 @@ import Markdown from '@/components/Markdown.vue'
 import {
   getMutationShortDesc,
   getMutationExtendedDesc,
-  mutationStatus
+  mutationStatus,
 } from '@/utils/aotf'
 import { mdiClose } from '@mdi/js'
 
@@ -140,7 +140,7 @@ export default {
   components: {
     EditRuntimeForm,
     FormGenerator,
-    Markdown
+    Markdown,
   },
 
   emits: [
@@ -152,29 +152,29 @@ export default {
     mutation: {
       // graphql mutation object as returned by introspection query
       type: Object,
-      required: true
+      required: true,
     },
     cylcObject: {
       // data store node
       type: Object,
-      required: true
+      required: true,
     },
     types: {
       // list of all graphql types as returned by introspection query
       // (required for resolving InputType objects
-      type: Array
+      type: Array,
     },
     initialData: {
       type: Object,
       required: false,
-      default: () => {}
+      default: () => {},
     },
   },
 
   data: () => ({
     isValid: false,
     submitting: false,
-    warningMsg: null
+    warningMsg: null,
   }),
 
   computed: {
@@ -192,8 +192,8 @@ export default {
       },
       set (val) {
         if (!val) this.warningMsg = null
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -220,8 +220,8 @@ export default {
 
   // Misc options
   icons: {
-    close: mdiClose
-  }
+    close: mdiClose,
+  },
 }
 </script>
 

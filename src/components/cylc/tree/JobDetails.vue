@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { getIndent } from '@/components/cylc/tree/util'
 import {
   formatDuration,
-  jobMessageOutputs
+  jobMessageOutputs,
 } from '@/utils/tasks'
 
 export default {
@@ -79,7 +79,7 @@ export default {
     },
     meanElapsedTime: {
 
-    }
+    },
   },
 
   computed: {

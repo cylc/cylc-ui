@@ -62,5 +62,5 @@ export default {
    */
   _installUserService (app) {
     app.config.globalProperties.$userService = new UserService()
-  }
+  },
 }
