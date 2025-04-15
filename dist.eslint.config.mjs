@@ -15,11 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module.exports = {
-  plugins: [
-    'cypress'
-  ],
-  env: {
-    'cypress/globals': true
+/*
+ * Eslint config for dist directory.
+ *
+ * Note: we can't keep it in there because it would get wiped by build.
+ */
+
+import { defineConfig } from 'eslint/config'
+import globals from 'globals'
+import compatPlugin from 'eslint-plugin-compat'
+
+export default defineConfig([
+  compatPlugin.configs['flat/recommended'],
+  {
+    linterOptions: {
+      noInlineConfig: true,
+    },
+    languageOptions: {
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+      },
+      // Don't need to worry about ECMA syntax as that's handled by Vite/ESBuild:
+      ecmaVersion: 'latest',
+    },
   },
-}
+])
