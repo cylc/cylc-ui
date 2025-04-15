@@ -158,7 +158,7 @@ export default {
   computed: {
     workflowLink () {
       return this.node.type === 'workflow'
-        ? `/workspace/${ this.node.tokens.workflow }`
+        ? `/workspace/${this.node.tokens.workflow}`
         : ''
     },
 
