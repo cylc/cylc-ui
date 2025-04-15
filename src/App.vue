@@ -28,7 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useJobTheme, useReducedAnimation } from '@/composables/localStorage'
+import { useJobTheme } from '@/composables/localStorage'
+import { useDynamicVuetifyDefaults } from '@/plugins/vuetify'
 
 const DEFAULT_LAYOUT = 'empty'
 const route = useRoute()
@@ -39,14 +40,7 @@ const showSidebar = computed(() => route.meta.showSidebar ?? true)
 
 const jobTheme = useJobTheme()
 
-const reducedAnimation = useReducedAnimation()
-
-const vuetifyDefaults = computed(() => ({
-  global: {
-    transition: reducedAnimation.value ? 'no' : undefined,
-    ripple: reducedAnimation.value ? false : undefined,
-  }
-}))
+const vuetifyDefaults = useDynamicVuetifyDefaults()
 
 onMounted(() => {
   // apply stored application font-size
