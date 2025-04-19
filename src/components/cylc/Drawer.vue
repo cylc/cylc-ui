@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           to="/"
         >
           <template v-slot:prepend>
-            <v-icon style="opacity: 1;">{{ $options.icons.mdiHome }}</v-icon>
+            <v-icon style="opacity: 1;">{{ mdiHome }}</v-icon>
           </template>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
@@ -49,21 +49,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
     <div class="resize-bar" ref="resizeBar"></div>
     <template v-slot:append>
-      <div class="px-4 py-2 d-flex justify-center">
-        <span class="text--secondary">
-          <strong v-if="$options.mode !== 'production'">{{ $options.mode.toUpperCase() }}</strong> {{ $t('App.name') }} {{ $options.version }}
-        </span>
+      <div class="pa-2 d-flex justify-center">
+        <v-chip
+          id="version-chip"
+          label
+          class="font-weight-bold cursor-default"
+          :prepend-icon="mdiInformationOutline"
+          v-bind="versionChipProps"
+        />
+        <v-tooltip
+          activator="#version-chip"
+          location="top"
+          >
+          <div
+            class="d-flex flex-column align-center"
+            style="pointer-events: visible;"
+            data-cy="version-tooltip"
+          >
+            <span
+              v-for="(value, key) in cylcVersionInfo"
+              :key="key"
+            >
+              {{ key }} {{ value }}
+            </span>
+            <span>cylc-ui {{ UIVersion }}</span>
+          </div>
+        </v-tooltip>
       </div>
     </template>
   </v-navigation-drawer>
 </template>
 
 <script>
-import { nextTick, ref } from 'vue'
+import { inject, nextTick, ref, computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import Header from '@/components/cylc/Header.vue'
 import Workflows from '@/views/Workflows.vue'
-import { mdiHome, mdiGraphql } from '@mdi/js'
+import { mdiHome, mdiInformationOutline } from '@mdi/js'
 import pkg from '@/../package.json'
 import { when } from '@/utils'
 import { useDrawer } from '@/utils/toolbar'
@@ -122,18 +144,29 @@ export default {
       )
     })
 
+    const cylcVersionInfo = inject('versionInfo')
+    const versionChipProps = computed(() => import.meta.env.MODE === 'production'
+      ? {
+          text: `Cylc ${cylcVersionInfo.value?.['cylc-flow'] ?? ''}`,
+          variant: 'text'
+        }
+      : {
+          text: import.meta.env.MODE.toUpperCase(),
+          variant: 'flat',
+          color: 'indigo-darken-4',
+        }
+    )
+
     return {
       drawer,
       drawerWidth,
       resizeBar,
+      UIVersion: pkg.version,
+      cylcVersionInfo,
+      mdiInformationOutline,
+      mdiHome,
+      versionChipProps,
     }
   },
-
-  icons: {
-    mdiHome,
-    mdiGraphql,
-  },
-  mode: import.meta.env.MODE,
-  version: pkg.version,
 }
 </script>

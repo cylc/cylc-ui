@@ -29,17 +29,19 @@ const resize = (width) => cy
   .trigger('mouseup', { force: true })
 
 describe('Drawer component', () => {
-  it('Is displayed when mode is desktop', () => {
+  it('is displayed when mode is desktop', () => {
     cy.visit('/#/')
     cy
       .get('#c-sidebar')
       .should('be.visible')
   })
-  it('it should have a width of 260', () => {
+
+  it('has a width of 260', () => {
     cy.visit('/#/')
     cy.get('#c-sidebar').invoke('innerWidth').should('be.eq', 260)
   })
-  it('Is NOT displayed when mode is mobile', () => {
+
+  it('is NOT displayed when mode is mobile', () => {
     // when the window dimension is below a mobile-threshold, the app sets state.app.drawer as false
     // and then the drawer is hidden
     cy.viewport(320, 480)
@@ -52,6 +54,7 @@ describe('Drawer component', () => {
       .get('#toggle-drawer')
       .should('be.visible')
   })
+
   it('should drag to trigger resize', () => {
     cy.visit('/#/')
     cy.get('#c-sidebar')
@@ -73,5 +76,18 @@ describe('Drawer component', () => {
       .should('be.visible')
       .invoke('innerWidth')
       .should('be.closeTo', 200, 5)
+  })
+
+  it('has Cylc version info', () => {
+    cy.visit('/#/')
+    cy.get('#version-chip')
+      .trigger('mouseenter')
+      .get('[data-cy=version-tooltip]')
+      .should('be.visible')
+      .invoke('text').then((text) => {
+        expect(text).to.contain('cylc-flow ')
+        expect(text).to.contain('cylc-uiserver ')
+        expect(text).to.contain('cylc-ui ')
+      })
   })
 })

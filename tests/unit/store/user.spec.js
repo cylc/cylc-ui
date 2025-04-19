@@ -39,7 +39,7 @@ describe('user', () => {
         id: 1,
         username: 'cylc'
       }
-      store.dispatch('user/setUser', user)
+      store.commit('user/SET_USER', user)
       expect(store.state.user.user).to.deep.equal(user)
     })
   })

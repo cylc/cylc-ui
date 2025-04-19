@@ -25,15 +25,8 @@ export const mutations = {
   }
 }
 
-export const actions = {
-  setUser ({ commit }, user) {
-    commit('SET_USER', user)
-  }
-}
-
 export const user = {
   namespaced: true,
   state,
   mutations,
-  actions
 }
