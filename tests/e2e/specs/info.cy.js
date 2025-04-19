@@ -42,5 +42,37 @@ describe('Info View', () => {
       .click({ force: true })
       .get('.v-expansion-panel--active')
       .should('have.length', 2)
+      .and('contain', 'Live')
+
+      // Xtriggers should be ticked or unticked
+      // depending on fulfillment:
+      .get('.c-info .v-expansion-panel:nth-child(3)')
+      .find('button')
+      .click({ force: true })
+      .get('.v-expansion-panel--active')
+      .get('.c-info .v-expansion-panel:nth-child(3)')
+      .get('table')
+      .should('contain', 'xtrigger')
+      .and('contain', 'myxt(foo=42)')
+      .should('contain', 'another xtrigger')
+      .and('contain', 'myxt(foo=41)')
+
+      .get('.c-info .v-expansion-panel:nth-child(4)')
+      .find('button')
+      .click({ force: true })
+      .get('.v-expansion-panel--active')
+      .should('have.length', 4)
+
+      .get('.c-info .v-expansion-panel:nth-child(5)')
+      .find('button')
+      .click({ force: true })
+      .get('.v-expansion-panel--active')
+      .should('have.length', 5)
+
+      .get('.c-info .v-expansion-panel:nth-child(6)')
+      .find('button')
+      .click({ force: true })
+      .get('.v-expansion-panel--active')
+      .should('have.length', 6)
   })
 })
