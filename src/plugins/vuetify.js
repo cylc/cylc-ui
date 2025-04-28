@@ -36,7 +36,7 @@ const inputDefaults = Object.fromEntries([
     density: 'compact',
     variant: 'outlined',
     clearIcon: mdiClose,
-    hideDetails: true,
+    hideDetails: 'auto',
   }
 ]))
 

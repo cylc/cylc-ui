@@ -65,8 +65,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             v-if="jobLog"
             data-cy="job-id-input"
             class="flex-grow-1 flex-column"
-            :model-value="relativeID"
-            @update:modelValue="debouncedUpdateRelativeID"
+            v-model="inputID"
+            :rules="[validateInputID]"
             placeholder="cycle/task/job"
             clearable
           />
@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-col>
         <v-col
           cols="4"
-          class="d-flex col-gap-2"
+          class="d-flex align-start col-gap-2"
         >
           <v-select
             data-cy="file-input"
@@ -172,7 +172,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { ref, computed } from 'vue'
-import { usePrevious, whenever } from '@vueuse/core'
+import { refWithControl, usePrevious, whenever } from '@vueuse/core'
 import { useStore } from 'vuex'
 import {
   mdiClockOutline,
@@ -319,12 +319,39 @@ export default {
     const store = useStore()
 
     /**
-     * The task/job ID input.
+     * The task/job ID.
      * @type {import('vue').Ref<string>}
      */
     const relativeID = useInitialOptions('relativeID', { props, emit })
 
     const previousRelativeID = usePrevious(relativeID)
+
+    /**
+     * The user input for task/job ID.
+     * Set the value of relativeID at most every 0.5 seconds.
+     */
+    const inputID = refWithControl(relativeID.value, {
+      onChanged: debounce((value) => {
+        relativeID.value = value
+      }, 500)
+    })
+
+    function validateInputID (id) {
+      return !id || (Tokens.validate(id, true) ?? true)
+    }
+
+    /** @type {import('vue').Ref<Tokens>} */
+    const relativeTokens = computed(() => {
+      if (relativeID.value) {
+        try {
+          const tokens = new Tokens(relativeID.value, true)
+          if (tokens.task) {
+            return tokens.job ? tokens : tokens.clone({ job: 'NN' })
+          }
+        } catch {}
+      }
+      return null
+    })
 
     /**
      * The selected log file name.
@@ -355,11 +382,6 @@ export default {
       () => { results.value.connected = false }
     )
 
-    /** Set the value of relativeID at most every 0.5 seconds, used for text input */
-    const debouncedUpdateRelativeID = debounce((value) => {
-      relativeID.value = value
-    }, 500)
-
     /** AutoScroll? */
     const autoScroll = useInitialOptions('autoScroll', { props, emit }, true)
 
@@ -375,6 +397,9 @@ export default {
       parentPath,
       relativeID,
       previousRelativeID,
+      inputID,
+      validateInputID,
+      relativeTokens,
       file,
       // the label for the file input
       fileLabel: ref('Select File'),
@@ -387,7 +412,6 @@ export default {
       wordWrap,
       autoScroll,
       reset,
-      debouncedUpdateRelativeID,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
     }
@@ -421,15 +445,7 @@ export default {
       // the ID of the workflow/task/job we are subscribed to
       // OR null if not subscribed
       if (this.jobLog) {
-        try {
-          const taskTokens = new Tokens(this.relativeID, true)
-          if (!taskTokens?.task) {
-            return null
-          }
-          return this.workflowTokens.clone({ cycle: taskTokens.cycle, task: taskTokens.task, job: taskTokens.job }).id
-        } catch {
-          return null
-        }
+        return this.relativeTokens?.clone(this.workflowTokens)?.id
       }
       return this.workflowId
     },
@@ -499,15 +515,14 @@ export default {
      * @returns {?string}
      */
     async getDefaultJobLog () {
-      // get the job from the store
       let result
       try {
-        if (this.id) {
-          // get the list of available log files
+        if (this.relativeTokens) {
+          // get the latest job state
           result = await this.$workflowService.query2(
             JOB_QUERY,
             {
-              id: this.id.split('//')[1],
+              id: this.relativeTokens.id,
               workflowId: this.workflowTokens.workflow
             }
           )

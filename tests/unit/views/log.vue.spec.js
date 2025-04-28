@@ -61,80 +61,75 @@ describe('Log view', () => {
           logFiles: {
             files: ['a.log', 'b.log'],
           },
-          jobs: [
-            {
-              id: 'a',
-              state: 'succeeded'
-            },
-            {
-              id: 'b',
-              state: 'succeeded'
-            },
-          ]
         }
       }),
     }
   })
 
-  it.each([
-    {
-      files: [
-        'job.err',
-        'job.out',
-        'job',
-        'job-activity.log',
-        'job.status',
-        'zjob.out',
-      ].sort().reverse(),
-      expected: 'job.out',
-    },
-    {
-      files: [
-        'job',
-        'job-activity.log',
-        'job.status',
-        'scheduler/pluto',
-      ].sort().reverse(),
-      expected: 'job.out',
-    },
-    {
-      files: [],
-      expected: 'job.out',
-    },
-    {
-      files: ['ceres', 'vesta', 'aphosis'].sort().reverse(),
-      expected: 'job.out',
-    },
-  ])('job log getDefaultFile($files) == $expected', async ({ files, expected }) => {
-    const wrapper = mountFunction()
-    wrapper.vm.jobLog = 1
-    expect(await wrapper.vm.getDefaultFile(files)).toBe(expected)
-  })
+  describe('getDefaultFile()', () => {
+    describe('Job log', () => {
+      beforeEach(() => {
+        $workflowService.query2 = () => ({
+          data: {
+            jobs: [
+              // Query response only includes latest job
+              { id: 'w//1/foo/02', state: 'failed' },
+            ]
+          }
+        })
+      })
+      it.for([
+        [
+          'zjob.out',
+          'job.err',
+          'job.out',
+          'job',
+          'job-activity.log',
+          'job.status',
+        ],
+        [
+          'job',
+          'job-activity.log',
+          'job.status',
+          'scheduler/pluto',
+        ],
+        [],
+        ['ceres', 'vesta', 'aphosis'],
+      ])('%# Only depends on latest job state', async (files) => {
+        const wrapper = mountFunction()
+        wrapper.vm.jobLog = 1
+        wrapper.vm.relativeID = '1/foo'
+        expect(await wrapper.vm.getDefaultFile(files)).toBe('job.err')
+      })
+    })
 
-  it.each([
-    {
-      files: [
-        'scheduler/02-restart-02.log',
-        'scheduler/01-start-01.log',
-        'install/02-reinstall.log',
-        'config/flow-processed.cylc',
-        'config/20240212T155825+0000-rose-suite.conf',
-        'config/02-restart-02.cylc',
-      ].sort().reverse(),
-      expected: 'scheduler/02-restart-02.log',
-    },
-    {
-      files: [],
-      expected: undefined,
-    },
-    {
-      files: ['ceres', 'vesta', 'aphosis'].sort().reverse(),
-      expected: undefined,
-    },
-  ])('workflow log getDefaultFile($files) == $expected', async ({ files, expected }) => {
-    const wrapper = mountFunction()
-    wrapper.vm.jobLog = 0
-    expect(await wrapper.vm.getDefaultFile(files)).toBe(expected)
+    describe('Workflow log', () => {
+      it.for([
+        {
+          files: [
+            'scheduler/02-restart-02.log',
+            'scheduler/01-start-01.log',
+            'install/02-reinstall.log',
+            'config/flow-processed.cylc',
+            'config/20240212T155825+0000-rose-suite.conf',
+            'config/02-restart-02.cylc',
+          ].sort().reverse(),
+          expected: 'scheduler/02-restart-02.log',
+        },
+        {
+          files: [],
+          expected: undefined,
+        },
+        {
+          files: ['ceres', 'vesta', 'aphosis'].sort().reverse(),
+          expected: undefined,
+        },
+      ])('getDefaultFile($files) == $expected', async ({ files, expected }) => {
+        const wrapper = mountFunction()
+        wrapper.vm.jobLog = 0
+        expect(await wrapper.vm.getDefaultFile(files)).toBe(expected)
+      })
+    })
   })
 
   it('issues the subscription', async () => {
@@ -151,7 +146,7 @@ describe('Log view', () => {
     // old file & log lines should be wiped
     expect(wrapper.vm.file).toBe(null)
     expect(wrapper.vm.results.lines).toEqual([])
-    expect(wrapper.vm.id).toBe(null)
+    expect(wrapper.vm.id).toBe(undefined)
     // should have unsubscribed
     expect(wrapper.vm.$workflowService.unsubscribe.calledOnce).toBe(true)
   })
@@ -162,13 +157,13 @@ describe('Log view', () => {
     await nextTick()
     wrapper.vm.relativeID = '2000' // cycle point only is invalid
     await nextTick()
-    expect(wrapper.vm.id).toBe(null)
+    expect(wrapper.vm.id).toBe(undefined)
     expect(wrapper.vm.query).toBe(null)
     // type in complete task ID
     wrapper.vm.relativeID += '/bashfullsson'
     wrapper.vm.file = 'job.out'
     await nextTick()
-    const expectedID = `${workflowID}//2000/bashfullsson`
+    const expectedID = `${workflowID}//2000/bashfullsson/NN`
     expect(wrapper.vm.id).toEqual(expectedID)
     // query issued
     expect(wrapper.vm.query.variables).toMatchObject({
@@ -179,7 +174,7 @@ describe('Log view', () => {
 
   it('goes back to previous job when toggling job->workflow->job', async () => {
     const relativeID = '2000/angua'
-    const expectedJobID = `${workflowID}//${relativeID}`
+    const expectedJobID = `${workflowID}//${relativeID}/NN`
     const wrapper = mountFunction({
       props: {
         workflowName,

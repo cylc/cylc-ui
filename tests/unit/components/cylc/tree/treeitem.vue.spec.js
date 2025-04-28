@@ -77,7 +77,6 @@ describe('TreeItem component', () => {
   })
 
   describe('expanded', () => {
-    // using simpleJobNode as it has only one child so it is easier/quicker to test
     it.each([
       [simpleCyclepointNode, true],
       [simpleTaskNode, false],
@@ -117,7 +116,7 @@ describe('TreeItem component', () => {
   describe('children', () => {
     it.each([
       { autoExpandTypes: undefined, expected: ['CyclePoint', 'TaskProxy'] },
-      { autoExpandTypes: ['workflow', 'cycle', 'family', 'task'], expected: ['CyclePoint', 'TaskProxy', 'Job'] },
+      { autoExpandTypes: ['workflow', 'cycle', 'family', 'task'], expected: ['CyclePoint', 'TaskProxy', 'Job', 'Job'] },
       { autoExpandTypes: ['workflow'], expected: ['CyclePoint'] },
       { autoExpandTypes: [], expected: [] },
     ])('recursively mounts child TreeItems ($autoExpandTypes)', ({ autoExpandTypes, expected }) => {

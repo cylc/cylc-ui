@@ -110,19 +110,19 @@ const TASK = {
   },
   children: [
     {
-      id: TOKENS.clone({ job: '01' }).id,
-      tokens: TOKENS.clone({ job: '01' }),
-      name: '01',
-      node: {
-        state: 'failed'
-      }
-    },
-    {
       id: TOKENS.clone({ job: '02' }).id,
       tokens: TOKENS.clone({ job: '02' }),
       name: '02',
       node: {
         state: 'succeeded'
+      }
+    },
+    {
+      id: TOKENS.clone({ job: '01' }).id,
+      tokens: TOKENS.clone({ job: '01' }),
+      name: '01',
+      node: {
+        state: 'failed'
       }
     },
   ],
