@@ -52,15 +52,28 @@ subscription InfoViewSubscription ($workflowId: ID, $taskID: ID) {
   }
 }
 
+fragment WorkflowData on Workflow {
+  id
+  status
+  statusMsg
+  nEdgeDistance
+}
+
 fragment AddedDelta on Added {
   taskProxies(ids: [$taskID]) {
     ...TaskProxyData
+  }
+  workflow(ids: [$workflowId]) {
+    ...WorkflowData
   }
 }
 
 fragment UpdatedDelta on Updated {
   taskProxies(ids: [$taskID]) {
     ...TaskProxyData
+  }
+  workflow(ids: [$workflowId]) {
+    ...WorkflowData
   }
 }
 

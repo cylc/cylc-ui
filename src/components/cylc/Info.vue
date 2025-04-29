@@ -98,19 +98,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           Xtriggers
         </v-expansion-panel-title>
         <v-expansion-panel-text>
-          <table>
+          <div v-if="xtriggers.length > 0">
+          <table><tbody>
             <tr>
               <th>Label</th>
               <th>ID</th>
               <th>Is satisfied</th>
+              <th>Trigger Time*</th>
             </tr>
             <tr v-for="xt in xtriggers" :key="xt">
               <td>{{ xt.label }}</td>
               <td>{{ xt.id }}</td>
               <td><center><v-icon>{{ xt.satisfactionIcon }}</v-icon></center></td>
+              <td>{{ xt.trigger_time }}</td>
             </tr>
-          </table>
-        </v-expansion-panel-text>
+          </tbody></table>
+          <p class="footnote">
+            * For wall_clock triggers.
+          </p>
+          </div>
+          </v-expansion-panel-text>
       </v-expansion-panel>
 
       <!-- The prereqs -->
@@ -284,6 +291,16 @@ export default {
           element.satisfactionIcon = mdiCheckboxOutline
         } else {
           element.satisfactionIcon = mdiCheckboxBlankOutline
+        }
+
+        // Extract the trigger time from the ID
+        const re = /trigger_time=(?<unixTime>[0-9]+)/
+        const result = re.exec(element.id)
+        if (result === null) {
+          element.trigger_time = ''
+        } else {
+          const date = new Date(result[1] * 1000)
+          element.trigger_time = date.toISOString().split('.')[0] + 'Z'
         }
       })
       return xtriggers
