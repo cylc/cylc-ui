@@ -104,7 +104,7 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TaskFilter from '@/components/cylc/TaskFilter.vue'
@@ -221,12 +221,12 @@ export default {
 
   mixins: [
     graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
     TaskFilter,
-    TreeComponent
+    TreeComponent,
   },
 
   props: { initialOptions },
@@ -277,7 +277,7 @@ export default {
       return (this.tasksFilter.id?.trim() || this.tasksFilter.states?.length)
         ? this.tasksFilter
         : null
-    }
+    },
   },
 
   methods: {

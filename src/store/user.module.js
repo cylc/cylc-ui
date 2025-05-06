@@ -22,7 +22,7 @@ export const state = () => ({
 export const mutations = {
   SET_USER (state, user) {
     state.user = user
-  }
+  },
 }
 
 export const user = {

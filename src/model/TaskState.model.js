@@ -52,7 +52,7 @@ export const TaskStateUserOrder = [
   TaskState.SUCCEEDED,
   TaskState.SUBMIT_FAILED,
   TaskState.FAILED,
-  TaskState.EXPIRED
+  TaskState.EXPIRED,
 ]
 
 export const TaskStateNames = TaskStateUserOrder.map(({ name }) => name)
