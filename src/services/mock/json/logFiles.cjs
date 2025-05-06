@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  */
 
 const { simulatedDelay } = require('./util.cjs')
+const { Workflow } = require('./workflows/index.cjs')
 
 const deletedFile = 'deleted.log'
 
@@ -54,16 +55,21 @@ const LogFiles = async ({ id }) => {
  *
  * @param {{ id: string }} variables
  */
-const JobState = async ({ id }) => {
+const JobState = async ({ id, workflowId }) => {
+  if (!workflowId.startsWith('~')) {
+    workflowId = `~user/${workflowId}`
+  }
+  const { deltas } = Workflow({ workflowId })
+  const searchID = id.replace(
+    /\/NN$/, ''
+  ).replace(
+    /\/(\d+)$/, (match, p1) => `/${parseInt(p1)}` // strips leading zeroes
+  )
+  const { state } = deltas?.added?.jobs?.find((job) => job.id.includes(searchID)) ?? {}
   await simulatedDelay(500)
   return {
     data: {
-      jobs: [
-        {
-          id,
-          state: id.includes('/failed') ? 'failed' : 'succeeded'
-        }
-      ]
+      jobs: state ? [{ id, state }] : []
     }
   }
 }
