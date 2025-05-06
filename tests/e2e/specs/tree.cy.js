@@ -78,7 +78,7 @@ describe('Tree view', () => {
       /Finished\s*\d{4}-\d{2}-\d{2}T.+/,
       /Mean run time\s*\d{2}:\d{2}:\d{2}/,
       /Platform\s*\w+/,
-      /foo\s*foo message/
+      /foo\s*foo message/,
     ]
     for (const pattern of patterns) {
       cy.get('.leaf:visible:first .leaf-entry')

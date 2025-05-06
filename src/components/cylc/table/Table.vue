@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         size="small"
         :style="{
           visibility: (item.task.children || []).length ? null : 'hidden',
-          transform: isExpanded(internalItem) ? 'rotate(180deg)' : null
+          transform: isExpanded(internalItem) ? 'rotate(180deg)' : null,
         }"
       >
         <v-icon
@@ -126,7 +126,7 @@ import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
 
@@ -138,7 +138,7 @@ export default {
   props: {
     tasks: {
       type: Array,
-      required: true
+      required: true,
     },
     initialOptions,
   },
@@ -158,7 +158,7 @@ export default {
       [
         {
           key: 'task.tokens.cycle',
-          order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
+          order: cyclePointsOrderDesc.value ? 'desc' : 'asc',
         },
       ]
     )
@@ -172,12 +172,12 @@ export default {
         title: 'Task',
         key: 'task.name',
         sortable: true,
-        sortFunc: DEFAULT_COMPARATOR
+        sortFunc: DEFAULT_COMPARATOR,
       },
       {
         title: 'Jobs',
         key: 'data-table-expand',
-        sortable: false
+        sortable: false,
       },
       {
         title: 'Cycle Point',
@@ -254,7 +254,7 @@ export default {
       sortBy,
       headers,
       icons: {
-        mdiChevronDown
+        mdiChevronDown,
       },
       isFlowNone,
       itemsPerPageOptions: [

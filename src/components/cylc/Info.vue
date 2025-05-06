@@ -226,13 +226,13 @@ export default {
     completion () {
       // Task output completion expression stuff.
       return this.task?.node?.runtime.completion
-    }
+    },
 
   },
 
   methods: {
     formatCompletion,
-  }
+  },
 
 }
 </script>

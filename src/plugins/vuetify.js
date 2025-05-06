@@ -43,7 +43,7 @@ const inputDefaults = Object.fromEntries(
       variant: 'outlined',
       clearIcon: mdiClose,
       hideDetails: true,
-    }
+    },
   ])
 )
 
@@ -60,27 +60,27 @@ export const vuetifyOptions = {
           primary: colors.lightBlue.accent4,
           'primary-darken-1': colors.lightBlue.darken4,
           secondary: colors.teal.accent4,
-          'secondary-darken-1': colors.teal.darken3
-        }
-      }
-    }
+          'secondary-darken-1': colors.teal.darken3,
+        },
+      },
+    },
   },
   display: {
-    mobileBreakpoint: 991
+    mobileBreakpoint: 991,
   },
   icons: {
     defaultSet: 'mdi',
     aliases,
     sets: {
-      mdi
-    }
+      mdi,
+    },
   },
   defaults: {
     VTooltip: {
       activator: 'parent',
       location: 'bottom',
     },
-    ...inputDefaults
+    ...inputDefaults,
   },
 }
 

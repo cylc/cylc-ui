@@ -32,9 +32,9 @@ describe('Edit Runtime form', () => {
           data: {
             [body.operationName]: {
               result: [true, {}],
-              __typename: upperFirst(body.operationName)
-            }
-          }
+              __typename: upperFirst(body.operationName),
+            },
+          },
         })
       }
     })
@@ -122,8 +122,8 @@ describe('Edit Runtime form', () => {
           settings: [
             { init_script: 'echo Kalgan' },
             { environment: { HORSE: 'Dorothy' } },
-            { environment: { FACTION: '2nd Foundation' } }
-          ]
+            { environment: { FACTION: '2nd Foundation' } },
+          ],
         })
       })
       // Form should close

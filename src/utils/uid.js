@@ -305,7 +305,7 @@ class Tokens {
         // wipe the relative tokens in-case they were set
         cycle: undefined,
         task: undefined,
-        job: undefined
+        job: undefined,
       })
       tokensList.push([part, tokens])
     }
