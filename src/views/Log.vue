@@ -87,7 +87,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :disabled="fileDisabled"
             :items="logFiles"
             v-model="file"
-            clearable
             :menu-props="{ 'data-cy': 'file-input-menu' }"
           />
           <v-btn
