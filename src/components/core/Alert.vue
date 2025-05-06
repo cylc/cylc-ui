@@ -34,19 +34,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-icon>{{ $options.icons.mdiClose }}</v-icon>
       </v-btn>
     </template>
-    {{ alert.text }}
+    <Markdown v-if="alert.text" :markdown="String(alert.text)" />
   </v-snackbar>
 </template>
 
 <script>
 import { mdiClose } from '@mdi/js'
 import { mapActions, mapState } from 'vuex'
+import Markdown from '@/components/Markdown.vue'
 
 export default {
   name: 'Alert',
 
+  components: {
+    Markdown,
+  },
+
   computed: {
     ...mapState(['alert'])
+  },
+
+  watch: {
+    async alert (val, old) {
+      if (val && val !== old) {
+        await new Promise(resolve => setTimeout(resolve, val.timeout))
+        this.closeAlert()
+      }
+    }
   },
 
   methods: {
