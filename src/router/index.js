@@ -30,6 +30,7 @@ import { i18n } from '@/i18n'
 import paths from '@/router/paths'
 import { store } from '@/store/index'
 import { Alert } from '@/model/Alert.model'
+import { getUserProfile } from '@/services/user.service'
 
 const defaultPageTitle = i18n.global.t('App.name')
 
@@ -72,7 +73,7 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   NProgress.start()
   if (!store.state.user.user) {
-    const user = await router.app.config.globalProperties.$userService.getUserProfile()
+    const user = await getUserProfile()
     // TODO: catch error getting user profile and redirect to static error page
     store.commit('user/SET_USER', user)
   }
