@@ -3,14 +3,18 @@
     :items="items"
     clearable
     multiple
-    v-model="localValue"
+    v-model="model"
   >
     <template #prepend-item>
-      <v-list-item
-        @click="selectAll"
-      >
-        Select All
-      </v-list-item>
+      <v-select-actions>
+        <v-btn
+          @click="selectAll()"
+          data-cy="task-filter-select-all"
+        >
+          Select All
+        </v-btn>
+      </v-select-actions>
+      <v-divider/>
     </template>
 
     <template #item="{ item, props }">
@@ -33,7 +37,7 @@
       <v-chip
         v-if="index < maxVisibleStates"
         closable
-        @click:close="removeItem(item.raw)"
+        @click:close="removeItem(index)"
         size="small"
         :close-icon="mdiClose"
       >
@@ -55,24 +59,18 @@
         v-if="index === maxVisibleStates"
         class="text-grey text-caption"
       >
-        (+{{ localValue.length - maxVisibleStates }})
+        (+{{ model.length - maxVisibleStates }})
       </span>
     </template>
   </v-select>
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { mdiClose } from '@mdi/js'
 import Task from '@/components/cylc/Task.vue'
 import Workflowicon from '@/components/cylc/gscan/WorkflowIcon.vue'
 
 const props = defineProps({
-  /** Array of selected states */
-  modelValue: {
-    type: Array,
-    default: () => [],
-  },
   items: {
     type: Array,
     required: true,
@@ -83,24 +81,16 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:modelValue'])
-
-const localValue = computed({
-  get () {
-    return props.modelValue
-  },
-  set (val) {
-    emit('update:modelValue', val)
-  }
-})
+/** Array of selected states */
+const model = defineModel({ type: Array })
 
 const maxVisibleStates = 4
 
-function removeItem (key) {
-  localValue.value = localValue.value.filter(item => item !== key)
+function removeItem (index) {
+  model.value.splice(index, 1)
 }
 
 function selectAll () {
-  localValue.value = props.items
+  model.value = props.items
 }
 </script>
