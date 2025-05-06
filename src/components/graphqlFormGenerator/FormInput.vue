@@ -81,7 +81,7 @@ export default {
     // dictionary of props for overriding default values
     propOverrides: {
       type: Object,
-      default: () => { Object() }
+      default: () => ({ })
     }
   },
 
