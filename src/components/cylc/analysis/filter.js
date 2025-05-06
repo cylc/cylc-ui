@@ -26,9 +26,20 @@
  * @return {boolean} Boolean determining if task should be displayed
  */
 export function matchTask (task, tasksFilter) {
-  let ret = true
-  if (tasksFilter.name?.trim()) {
-    ret &&= task.name.includes(tasksFilter.name)
+  // Split the filter into individual words and conduct a search for each one
+  const filter = tasksFilter.name.split(/(\s+)/).filter(
+    function (e) { return e.trim().length > 0 }
+  )
+  let ret = false
+  // If the filter is empty, return true
+  if (!filter.length) {
+    ret = true
+  } else {
+    for (const element of filter) {
+      if (task.name.includes(element)) {
+        ret = true
+      }
+    }
   }
   if (tasksFilter.platformOption.trim?.()) {
     ret &&= task.platform === tasksFilter.platformOption

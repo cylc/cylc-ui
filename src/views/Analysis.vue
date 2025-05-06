@@ -28,14 +28,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md="4"
           class="pr-md-2 mb-2 mb-md-0"
         >
-          <v-text-field
-            id="c-analysis-filter-task-name"
-            clearable
-            placeholder="Filter by task name"
-            v-model.trim="tasksFilter.name"
-            ref="filterNameInput"
-            :disabled="chartType === 'timeSeries'"
-          />
+          <v-tooltip>
+            <template #activator="{ props }">
+              <v-text-field
+                id="c-analysis-filter-task-name"
+                clearable
+                placeholder="Filter by task name"
+                v-model.trim="tasksFilter.name"
+                ref="filterNameInput"
+                :disabled="chartType === 'timeSeries'"
+                v-bind="props"
+              />
+            </template>
+          <span>Add task names separated by a space</span>
+          </v-tooltip>
         </v-col>
         <v-col
           cols="12"
