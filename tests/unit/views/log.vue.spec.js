@@ -66,40 +66,28 @@ describe('Log view', () => {
     }
   })
 
-  describe('getDefaultFile()', () => {
+  describe('Default log files', () => {
     describe('Job log', () => {
-      beforeEach(() => {
+      it.each([
+        ['failed', 'job.err'],
+        ['submit-failed', 'job-activity.log'],
+        ['submitted', 'job-activity.log'],
+        ['running', 'job.out'],
+        ['succeeded', 'job.out'],
+        [undefined, undefined],
+      ])('%s -> %s', async (state, expected) => {
         $workflowService.query2 = () => ({
           data: {
             jobs: [
               // Query response only includes latest job
-              { id: 'w//1/foo/02', state: 'failed' },
+              { id: 'w//1/foo/02', state },
             ]
           }
         })
-      })
-      it.for([
-        [
-          'zjob.out',
-          'job.err',
-          'job.out',
-          'job',
-          'job-activity.log',
-          'job.status',
-        ],
-        [
-          'job',
-          'job-activity.log',
-          'job.status',
-          'scheduler/pluto',
-        ],
-        [],
-        ['ceres', 'vesta', 'aphosis'],
-      ])('%# Only depends on latest job state', async (files) => {
         const wrapper = mountFunction()
         wrapper.vm.jobLog = 1
         wrapper.vm.relativeID = '1/foo'
-        expect(await wrapper.vm.getDefaultFile(files)).toBe('job.err')
+        expect(await wrapper.vm.getDefaultJobLog()).toBe(expected)
       })
     })
 
@@ -127,7 +115,8 @@ describe('Log view', () => {
       ])('getDefaultFile($files) == $expected', async ({ files, expected }) => {
         const wrapper = mountFunction()
         wrapper.vm.jobLog = 0
-        expect(await wrapper.vm.getDefaultFile(files)).toBe(expected)
+        wrapper.vm.logFiles = files
+        expect(wrapper.vm.getDefaultWorkflowLog()).toBe(expected)
       })
     })
   })
@@ -144,7 +133,7 @@ describe('Log view', () => {
     wrapper.vm.jobLog = 1
     await nextTick()
     // old file & log lines should be wiped
-    expect(wrapper.vm.file).toBe(null)
+    expect(wrapper.vm.file).toBe(undefined)
     expect(wrapper.vm.results.lines).toEqual([])
     expect(wrapper.vm.id).toBe(undefined)
     // should have unsubscribed

@@ -90,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :menu-props="{ 'data-cy': 'file-input-menu' }"
           />
           <v-btn
-            @click="() => this.updateLogFileList(false)"
+            @click="() => this.updateLogFileList()"
             v-bind="toolbarBtnProps"
             data-cy="refresh-files"
           >
@@ -420,15 +420,15 @@ export default {
     // Watch id & file together:
     this.$watch(
       () => ({
-        id: this.id ?? undefined, // (treat null as undefined)
+        id: this.id ?? undefined, // (do not trigger the callback on null ⇄ undefined)
         file: this.file ?? undefined
       }),
       async ({ id }, old) => {
         // update the query when the id or file change
         this.updateQuery()
-        // refresh the file list when the id changes
+        // refresh the file & file list when the id changes
         if (id !== old?.id) {
-          await this.updateLogFileList()
+          await this.setNewFile(!old)
         }
       },
       { immediate: true }
@@ -507,9 +507,7 @@ export default {
       )
     },
     /**
-     * Return the default job log file from the given log filenames, if there is a
-     * matching filename. Relies on the filenames having been sorted in descending
-     * order.
+     * Query the job state and return the appropriate default log file based on the result.
      *
      * @returns {?string}
      */
@@ -528,37 +526,22 @@ export default {
         }
       } catch (err) {
         // the query failed
-        console.warn(err)
+        console.error(err)
         return
       }
       return getJobLogFileFromState(result?.data?.jobs?.[0]?.state)
     },
     /**
-     * Return the default workflow log file from the given log filenames, if there is a
+     * Get the default workflow log file from the given log filenames, if there is a
      * matching filename. Relies on the filenames having been sorted in descending
      * order.
      *
-     * @param {string[]} logFiles - list of available log filenames
      * @returns {?string}
      */
-    getDefaultWorkflowLog (logFiles) {
-      return logFiles.find((fileName) => fileName.startsWith('scheduler/'))
+    getDefaultWorkflowLog () {
+      return this.logFiles.find((fileName) => fileName.startsWith('scheduler/'))
     },
-    /**
-     * Return the default log file from the given log filenames, if there is a
-     * matching filename. Relies on the filenames having been sorted in descending
-     * order.
-     *
-     * @param {string[]} logFiles - list of available log filenames
-     * @returns {?string}
-     */
-    async getDefaultFile (logFiles) {
-      return this.jobLog ? await this.getDefaultJobLog() : this.getDefaultWorkflowLog(logFiles)
-    },
-    async updateLogFileList (reset = true) {
-      // if reset===true then the this.file will be reset
-      // otherwise it will be left alone
-
+    async updateLogFileList () {
       if (!this.id) {
         this.handleNoLogFiles()
         return
@@ -587,15 +570,6 @@ export default {
 
       const logFiles = result.data.logFiles?.files ?? []
 
-      // reset the file if it is not present in the new selection
-      if (reset) {
-        if (!this.file || !this.initialLoad) {
-          // set the default log file if appropriate
-          this.file = await this.getDefaultFile(logFiles)
-        }
-        this.initialLoad = false
-      }
-
       // update the file input
       if (logFiles.length) {
         this.fileLabel = 'Select File'
@@ -603,6 +577,25 @@ export default {
         this.logFiles = logFiles
       } else {
         this.handleNoLogFiles()
+      }
+    },
+    /**
+     * Set the appropriate workflow or job log file.
+     *
+     * @param {boolean} initialLoad - is this the initial load of the log view?
+     */
+    async setNewFile (initialLoad) {
+      const promises = [this.updateLogFileList()]
+      if (this.jobLog && !initialLoad) {
+        // (Don't query job state on initial load, as it will either be pre-populated or empty)
+        promises.push(
+          this.getDefaultJobLog().then((result) => { this.file = result })
+        )
+      }
+      // Simultaneously wait for the log file list and the job state result
+      await Promise.all(promises)
+      if (!this.jobLog) {
+        this.file = this.getDefaultWorkflowLog()
       }
     },
     handleNoLogFiles () {
