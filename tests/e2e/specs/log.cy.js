@@ -116,6 +116,7 @@ describe('Log View', () => {
 
   it('switches from workflow -> job log', () => {
     const defaultFile = 'job.out'
+    const defaultFileFailed = 'job.err'
 
     cy.get('[data-cy=job-toggle]')
       .click()
@@ -128,7 +129,7 @@ describe('Log View', () => {
     // fill in a cycle point (incomplete)
     cy.get('[data-cy=job-id-input]')
       .find('input')
-      .type('1/')
+      .type('20000102T0000Z/')
       .get('[data-cy=log-text]')
       .should('be.empty')
       .get('[data-cy=file-input] input')
@@ -137,7 +138,7 @@ describe('Log View', () => {
     // fill in a task (valid)
     cy.get('[data-cy=job-id-input]')
       .find('input')
-      .type('a')
+      .type('succeeded')
       // the new log file should have been loaded
       .get('[data-cy=log-text]')
       .contains(jobLogLines.join(''))
@@ -150,6 +151,19 @@ describe('Log View', () => {
       })
     // the job log files list should have been populated
     expectFileListContains(jobLogFiles)
+
+    // correct default log file is loaded if job failed
+    cy.get('[data-cy=job-id-input]')
+      .find('input')
+      .clear()
+      .type('20000102T0000Z/failed/01')
+      .get('[data-cy=file-input]')
+      .contains(defaultFileFailed)
+      .get('[data-cy=log-path]')
+      .should('be.visible')
+      .invoke('text').then((text) => {
+        expect(text.endsWith(defaultFileFailed)).to.be.true
+      })
   })
 
   it('shows banner when error occurs', () => {
@@ -186,12 +200,51 @@ describe('Log command in menu', () => {
       .get('[data-cy=log-viewer]')
       .contains(jobLogLines.join(''))
   })
+
+  it('chooses the log file based on the job state', () => {
+    function openJobLog (state) {
+      cy.get(`.c-tree .c-job.${state}:first`)
+        .click()
+        .get('.c-mutation').contains('Log')
+        .click()
+    }
+
+    const jobStateQueries = []
+    cy.intercept('/graphql', ({ body }) => {
+      if (body.operationName === 'JobState') {
+        jobStateQueries.push(body.variables.id)
+      }
+    })
+
+    cy.visit('/#/workspace/one')
+    openJobLog('submitted')
+    cy.get('.c-log [data-cy=file-input]')
+      .contains('job-activity.log')
+    cy.get('.lm-mod-current .lm-TabBar-tabCloseIcon').click()
+    openJobLog('succeeded')
+    cy.get('.c-log [data-cy=file-input]')
+      .contains('job.out')
+      // Should not have run queries for this
+      .then(() => {
+        expect(jobStateQueries.length).to.eq(0)
+      })
+    // But should run the job state query if we manually enter a job ID:
+    const failedID = '20000102T0000Z/failed/01'
+    cy.get('.c-log [data-cy=job-id-input] input')
+      .clear()
+      .type(failedID)
+      .get('.c-log [data-cy=file-input]')
+      .contains('job.err')
+      .then(() => {
+        expect(jobStateQueries).to.deep.eq([failedID])
+      })
+  })
 })
 
 describe('Log view in workspace', () => {
   it('remembers job ID and file when switching between workflows', () => {
-    const jobFile = 'job.out'
-    const jobID = '4/avocet'
+    const jobFile = /^job$/
+    const jobID = '20000102T0000Z/succeeded'
     cy.visit('/#/workspace/one')
       .get('#workflow-mutate-button')
       .click()
@@ -203,9 +256,13 @@ describe('Log view in workspace', () => {
       .type(jobID)
       .get('[data-cy=log-viewer]')
       .should('be.visible')
-      .get('.c-log [data-cy=file-input] input').as('fileInput')
-      .invoke('val')
-      .should('eq', jobFile)
+      .get('.c-log [data-cy=file-input]').as('fileInput')
+      .click()
+      .get('[data-cy=file-input-menu] [role=listbox]')
+      .contains(jobFile)
+      .click()
+      .get('@fileInput')
+      .contains(jobFile)
     // Navigate away
     cy.visit('/#/workspace/two')
       .get('.c-log')
@@ -216,8 +273,7 @@ describe('Log view in workspace', () => {
       .invoke('val')
       .should('eq', jobID)
       .get('@fileInput')
-      .invoke('val')
-      .should('eq', jobFile)
+      .contains(jobFile)
   })
 
   it('navigates to correct workflow when choosing log option in mutation menu', () => {

@@ -21,7 +21,7 @@ import { Tokens } from '@/utils/uid'
  * Test data for Tree component tests.
  */
 
-const stateTotalsTestWorkflowNodes = {
+export const stateTotalsTestWorkflowNodes = {
   id: '~cylc/double',
   name: 'double',
   node: {
@@ -214,7 +214,7 @@ const stateTotalsTestWorkflowNodes = {
   ]
 }
 
-const simpleWorkflowTree4Nodes = [
+export const simpleWorkflowTree4Nodes = [
   {
     id: '~user/workflow1',
     name: 'workflow1',
@@ -259,6 +259,20 @@ const simpleWorkflowTree4Nodes = [
                 },
                 children: [
                   {
+                    id: '~user/workflow1//20100101T0000Z/foo/02',
+                    name: '02',
+                    tokens: new Tokens('~user/workflow1//20100101T0000Z/foo/02'),
+                    type: 'job',
+                    node: {
+                      __typename: 'Job',
+                      startedTime: '2019-08-19T22:51:06Z',
+                      state: 'submit-failed',
+                      submitNum: 2,
+                      customOutputs: []
+                    },
+                    children: []
+                  },
+                  {
                     id: '~user/workflow1//20100101T0000Z/foo/01',
                     name: '01',
                     tokens: new Tokens('~user/workflow1//20100101T0000Z/foo/01'),
@@ -287,7 +301,12 @@ const simpleWorkflowTree4Nodes = [
   }
 ]
 
-const sampleWorkflow1 = {
+export const simpleWorkflowNode = simpleWorkflowTree4Nodes[0]
+export const simpleCyclepointNode = simpleWorkflowTree4Nodes[0].children[0]
+export const simpleTaskNode = simpleCyclepointNode.familyTree[0].children[0]
+export const simpleJobNode = simpleTaskNode.children.at(-1)
+
+export const sampleWorkflow1 = {
   workflow: {
     id: '~cylc/one',
     __typename: 'Workflow',
@@ -1309,19 +1328,4 @@ const sampleWorkflow1 = {
       }
     }
   ]
-}
-
-const simpleWorkflowNode = simpleWorkflowTree4Nodes[0]
-const simpleCyclepointNode = simpleWorkflowTree4Nodes[0].children[0]
-const simpleTaskNode = simpleCyclepointNode.familyTree[0].children[0]
-const simpleJobNode = simpleTaskNode.children[0]
-
-export {
-  stateTotalsTestWorkflowNodes,
-  simpleWorkflowTree4Nodes,
-  simpleWorkflowNode,
-  simpleCyclepointNode,
-  simpleTaskNode,
-  simpleJobNode,
-  sampleWorkflow1
 }
