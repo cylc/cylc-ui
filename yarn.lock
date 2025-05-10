@@ -2390,13 +2390,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:5.2.3":
-  version: 5.2.3
-  resolution: "@vitejs/plugin-vue@npm:5.2.3"
+"@vitejs/plugin-vue@npm:5.2.4":
+  version: 5.2.4
+  resolution: "@vitejs/plugin-vue@npm:5.2.4"
   peerDependencies:
     vite: ^5.0.0 || ^6.0.0
     vue: ^3.2.25
-  checksum: 10c0/34a719c70567582c8f345378e4f46a7edd9242e7f1595cdda408d97fccf210b8ee66b97c8555ec867f777be86ae530bd19166a542b1d7ecd6894bc544096f047
+  checksum: 10c0/9559224f178daf35e3a665410d09089b0ce7c0402981f8757481c24c22f29df377f96cc6161d92f74d16c37c6e32ac19fea99086f75338ad6ceb9b5ee8375509
   languageName: node
   linkType: hard
 
@@ -3918,7 +3918,7 @@ __metadata:
     "@lumino/default-theme": "npm:2.1.9"
     "@lumino/widgets": "npm:2.7.0"
     "@mdi/js": "npm:7.4.47"
-    "@vitejs/plugin-vue": "npm:5.2.3"
+    "@vitejs/plugin-vue": "npm:5.2.4"
     "@vitest/coverage-istanbul": "npm:3.1.2"
     "@vue/test-utils": "npm:2.4.6"
     "@vueuse/core": "npm:13.1.0"
@@ -3961,7 +3961,7 @@ __metadata:
     standard: "npm:17.1.2"
     subscriptions-transport-ws: "npm:0.11.0"
     svg-pan-zoom: "npm:3.6.2"
-    vite: "npm:6.3.4"
+    vite: "npm:6.3.5"
     vite-plugin-eslint: "npm:1.8.1"
     vite-plugin-istanbul: "npm:7.0.0"
     vite-plugin-vuetify: "npm:2.1.1"
@@ -10825,9 +10825,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:6.3.4":
-  version: 6.3.4
-  resolution: "vite@npm:6.3.4"
+"vite@npm:6.3.5":
+  version: 6.3.5
+  resolution: "vite@npm:6.3.5"
   dependencies:
     esbuild: "npm:^0.25.0"
     fdir: "npm:^6.4.4"
@@ -10876,7 +10876,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/f1534a3f42d14b30e11c58e5e451903d965d5f5ba18d8c81f9df208589e3d2c65535abaa3268d3963573174b8e056ea7bc445f567622c65fcdf98eb4acc1bf4e
+  checksum: 10c0/df70201659085133abffc6b88dcdb8a57ef35f742a01311fc56a4cfcda6a404202860729cc65a2c401a724f6e25f9ab40ce4339ed4946f550541531ced6fe41c
   languageName: node
   linkType: hard
 
