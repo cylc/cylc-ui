@@ -1115,13 +1115,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/default-theme@npm:2.1.9":
-  version: 2.1.9
-  resolution: "@lumino/default-theme@npm:2.1.9"
+"@lumino/default-theme@npm:2.1.10":
+  version: 2.1.10
+  resolution: "@lumino/default-theme@npm:2.1.10"
   dependencies:
     "@lumino/dragdrop": "npm:^2.1.6"
-    "@lumino/widgets": "npm:^2.7.0"
-  checksum: 10c0/1377c78e4483a9e43e6404987868965adc68d350d04d617b46e07d86ef2bb84feb701d1aa281612be9bfe0a260cc9315bebc9a90e148ab4f2087a93489240c4e
+    "@lumino/widgets": "npm:^2.7.1"
+  checksum: 10c0/041064e08ecfc648af7e8373a724d7ebd913abc310c53e1d6eb4589d0facb95fab8c2ccf342f8eef0eb6d58c3582bc3e455c219bdbb897649a6774a36c029f7a
   languageName: node
   linkType: hard
 
@@ -1194,9 +1194,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lumino/widgets@npm:2.7.0, @lumino/widgets@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "@lumino/widgets@npm:2.7.0"
+"@lumino/widgets@npm:2.7.1, @lumino/widgets@npm:^2.7.1":
+  version: 2.7.1
+  resolution: "@lumino/widgets@npm:2.7.1"
   dependencies:
     "@lumino/algorithm": "npm:^2.0.3"
     "@lumino/commands": "npm:^2.3.2"
@@ -1209,7 +1209,7 @@ __metadata:
     "@lumino/properties": "npm:^2.0.3"
     "@lumino/signaling": "npm:^2.1.4"
     "@lumino/virtualdom": "npm:^2.0.3"
-  checksum: 10c0/42e3accc2c6cd33b82933cd99046f7bb7bfb45e527467d5db8d784c3f4555bfea4cc8585a589eab3066d899ac2555ec89b05b35d093bb8bc6abcab797fd268e9
+  checksum: 10c0/071720916a23a0b157261ec2ecee652027a5bccad6e4702e7ff70c9086066955c0a3ea2d2b335e6e6f920ea99f0f48c334cf628b21c60ec86ab74b0aac2a6710
   languageName: node
   linkType: hard
 
@@ -3915,8 +3915,8 @@ __metadata:
     "@apollo/client": "npm:3.13.8"
     "@cypress/code-coverage": "npm:3.14.1"
     "@hpcc-js/wasm": "npm:2.22.4"
-    "@lumino/default-theme": "npm:2.1.9"
-    "@lumino/widgets": "npm:2.7.0"
+    "@lumino/default-theme": "npm:2.1.10"
+    "@lumino/widgets": "npm:2.7.1"
     "@mdi/js": "npm:7.4.47"
     "@vitejs/plugin-vue": "npm:5.2.4"
     "@vitest/coverage-istanbul": "npm:3.1.3"
