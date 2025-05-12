@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         VCombobox: {
           bgColor: 'white',
           rules: [(val) => Boolean(val) || 'Required'],
-        }
+        },
       }">
         <!-- Owner combobox -->
         <v-combobox
@@ -122,7 +122,7 @@ import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useLocalStorage } from '@vueuse/core'
 import {
-  mdiClose
+  mdiClose,
 } from '@mdi/js'
 
 const store = useStore()

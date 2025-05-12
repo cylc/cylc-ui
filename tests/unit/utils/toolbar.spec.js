@@ -29,7 +29,7 @@ import { useDrawer, useNavBtn } from '@/utils/toolbar'
 const vuetify = (mobile) => createVuetify({
   display: {
     mobileBreakpoint: mobile ? 10e3 : 0,
-  }
+  },
 })
 
 describe('Toolbar/drawer utils', () => {
@@ -56,7 +56,7 @@ describe('Toolbar/drawer utils', () => {
         },
         {
           global: {
-            plugins: [vuetify(mobile)]
+            plugins: [vuetify(mobile)],
           },
         }
       )
@@ -72,12 +72,12 @@ describe('Toolbar/drawer utils', () => {
           const { drawer, toggleDrawer } = useDrawer()
           return { drawer, toggleDrawer }
         },
-        render () {}
+        render () {},
       },
       {
         global: {
-          plugins: [vuetify]
-        }
+          plugins: [vuetify],
+        },
       }
     )
 

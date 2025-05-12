@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-if="node.familyTree?.length"
               :key="node.id"
               :task="node.familyTree[0].node"
-          />
+            />
             <span class="mx-1">{{ node.name }}</span>
           </template>
           <template v-else-if="node.type === 'family'">
@@ -107,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <v-defaults-provider
                 :defaults="{
-                  VChip: { size: 'small', density: 'comfortable', class: 'ml-2' }
+                  VChip: { size: 'small', density: 'comfortable', class: 'ml-2' },
                 }"
               >
                 <v-chip
@@ -193,11 +193,11 @@ export default {
   props: {
     node: {
       type: Object,
-      required: true
+      required: true,
     },
     depth: {
       type: Number,
-      default: 0
+      default: 0,
     },
     renderExpandCollapseBtn: {
       type: Boolean,
@@ -206,14 +206,14 @@ export default {
     cyclePointsOrderDesc: {
       type: Boolean,
       required: false,
-      default: true
+      default: true,
     },
     hoverable: Boolean,
     /** Render expanded initially if node is one of these types. */
     autoExpandTypes: {
       type: Array,
       required: false,
-      default: () => ['workflow', 'cycle', 'family']
+      default: () => ['workflow', 'cycle', 'family'],
     },
     /** When this changes, will expand if node is one of these types, otherwise collapse. */
     expandAll: {
@@ -269,13 +269,13 @@ export default {
     },
     nodeStyle () {
       return {
-        'padding-left': getIndent(this.depth)
+        'padding-left': getIndent(this.depth),
       }
     },
     nodeClass () {
       return {
         'node--hoverable': this.hoverable,
-        expanded: this.isExpanded
+        expanded: this.isExpanded,
       }
     },
     nodeDataClass () {
@@ -284,7 +284,7 @@ export default {
     expandCollapseBtnStyle () {
       return {
         // set visibility 'hidden' to ensure element takes up space
-        visibility: this.hasChildren ? null : 'hidden'
+        visibility: this.hasChildren ? null : 'hidden',
       }
     },
     jobMessageOutputs () {
@@ -299,7 +299,7 @@ export default {
       } else if (nodeTypes?.length === 0) {
         this.isExpanded = false // manually collapsed
       }
-    }
+    },
   },
 
   icons: {

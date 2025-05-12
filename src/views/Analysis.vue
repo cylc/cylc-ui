@@ -148,7 +148,7 @@ import graphqlMixin from '@/mixins/graphql'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import DeltasCallback from '@/services/callbacks'
 import AnalysisTable from '@/components/cylc/analysis/AnalysisTable.vue'
@@ -156,7 +156,7 @@ import BoxPlot from '@/components/cylc/analysis/BoxPlot.vue'
 import TimeSeries from '@/components/cylc/analysis/TimeSeries.vue'
 import {
   matchTask,
-  platformOptions
+  platformOptions,
 } from '@/components/cylc/analysis/filter'
 import {
   mdiChartTimeline,
@@ -184,7 +184,7 @@ const taskFields = [
   'stdDevQueueTime',
   'minQueueTime',
   'queueQuartiles',
-  'maxQueueTime'
+  'maxQueueTime',
 ]
 
 /** The one-off query which retrieves historical task timing statistics */
@@ -238,13 +238,13 @@ export default {
   name: 'Analysis',
 
   mixins: [
-    graphqlMixin
+    graphqlMixin,
   ],
 
   components: {
     AnalysisTable,
     BoxPlot,
-    TimeSeries
+    TimeSeries,
   },
 
   beforeMount () {
@@ -295,7 +295,7 @@ export default {
       toolbar,
       dataTableOptions,
       boxPlotOptions,
-      timeseriesPlotOptions
+      timeseriesPlotOptions,
     }
   },
 
@@ -326,7 +326,7 @@ export default {
 
     timingOption () {
       return this.tasksFilter.timingOption.replace(/Times/, '')
-    }
+    },
   },
 
   methods: {
@@ -345,7 +345,7 @@ export default {
         this.callback.onAdded(ret.data)
       },
       200 // only re-run this once every 0.2 seconds
-    )
+    ),
   },
 
   icons: {

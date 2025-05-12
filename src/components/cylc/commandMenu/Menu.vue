@@ -116,7 +116,7 @@ import { nextTick, ref } from 'vue'
 import {
   filterAssociations,
   getMutationArgsFromTokens,
-  mutate
+  mutate,
 } from '@/utils/aotf'
 import Mutation from '@/components/cylc/Mutation.vue'
 import {
@@ -282,8 +282,8 @@ export default {
         this.$router.push({
           name: 'Workspace',
           params: {
-            workflowName: this.node.tokens.workflow
-          }
+            workflowName: this.node.tokens.workflow,
+          },
         }).then(() => {
           eventBus.emit(
             'add-view',
@@ -292,7 +292,7 @@ export default {
               initialOptions: {
                 relativeID: this.node.tokens.relativeID || null,
                 file: getLogFileForNode(this.node),
-              }
+              },
             }
           )
         })
@@ -300,16 +300,16 @@ export default {
         this.$router.push({
           name: 'Workspace',
           params: {
-            workflowName: this.node.tokens.workflow
-          }
+            workflowName: this.node.tokens.workflow,
+          },
         }).then(() => {
           eventBus.emit(
             'add-view',
             {
               name: 'Info',
               initialOptions: {
-                requestedTokens: this.node.tokens || undefined
-              }
+                requestedTokens: this.node.tokens || undefined,
+              },
             }
           )
         })
@@ -360,7 +360,7 @@ export default {
       } else {
         this.callMutationFromContext(mutation)
       }
-    }
+    },
   },
 }
 </script>
