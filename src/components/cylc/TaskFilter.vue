@@ -56,14 +56,14 @@ export default {
   name: 'TaskFilter',
 
   components: {
-    TaskFilterSelect
+    TaskFilterSelect,
   },
 
   props: {
     modelValue: {
       type: Object,
-      required: true
-    } // { id, states }
+      required: true,
+    }, // { id, states }
   },
 
   computed: {
@@ -74,8 +74,8 @@ export default {
       set (value) {
         // Update 'modelValue' prop by notifying parent component's v-model for this component
         this.$emit('update:modelValue', value)
-      }
-    }
+      },
+    },
   },
   allStates: TaskStateNames,
 }

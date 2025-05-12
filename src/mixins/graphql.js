@@ -29,8 +29,8 @@ export default {
     /** This is set by vue-router */
     workflowName: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     /**
@@ -57,8 +57,8 @@ export default {
      */
     variables () {
       return {
-        workflowId: this.workflowId
+        workflowId: this.workflowId,
       }
-    }
-  }
+    },
+  },
 }

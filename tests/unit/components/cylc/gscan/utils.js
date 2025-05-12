@@ -55,7 +55,7 @@ export const TEST_TREE = {
                 status: WorkflowState.STOPPED.name,
                 stateTotals: SUBMIT_FAILED_STATE_TOTALS,
                 latestStateTasks: [],
-              }
+              },
             },
             {
               id: '~u/a/x2',
@@ -65,9 +65,9 @@ export const TEST_TREE = {
               node: {
                 status: WorkflowState.STOPPED.name,
                 latestStateTasks: [],
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         {
           id: '~u/b',
@@ -78,7 +78,7 @@ export const TEST_TREE = {
             status: WorkflowState.STOPPING.name,
             stateTotals: RUNNING_STATE_TOTALS,
             latestStateTasks: [],
-          }
+          },
         },
         {
           id: '~u/c',
@@ -89,11 +89,11 @@ export const TEST_TREE = {
             status: WorkflowState.RUNNING.name,
             stateTotals: SUBMITTED_STATE_TOTALS,
             latestStateTasks: [],
-          }
-        }
-      ]
-    }
-  ]
+          },
+        },
+      ],
+    },
+  ],
 }
 
 /**

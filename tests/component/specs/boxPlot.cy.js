@@ -74,7 +74,7 @@ const mountOpts = {
   props: {
     timingOption: 'total',
     animate: false,
-  }
+  },
 }
 
 describe('BoxPlot', () => {
@@ -99,7 +99,7 @@ describe('BoxPlot', () => {
       props: {
         tasks: Array.from(Array(7).keys(), (i) => ({
           ...task1,
-          name: `task_${i}`
+          name: `task_${i}`,
         })),
         itemsPerPage: 4,
       },

@@ -51,12 +51,12 @@ export default {
 
   mixins: [
     graphqlMixin,
-    subscriptionMixin
+    subscriptionMixin,
   ],
 
   components: {
     Lumino,
-    Toolbar
+    Toolbar,
   },
 
   setup () {
@@ -80,7 +80,7 @@ export default {
       // but back to beginning. When a widget is added, if it uses a query, then the mixins will
       // take care to set the state to LOADING and then COMPLETE (and hopefully not ERROR).
       this.viewState = ViewState.NO_STATE
-    }
+    },
   },
 
   panelStyle: {

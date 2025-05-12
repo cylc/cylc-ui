@@ -45,7 +45,7 @@ describe('getUserProfile', () => {
           ...expected,
           name: expected.username,
           other_stuff: null,
-        }
+        },
       })
       sandbox.stub(axios, 'get').returns(response)
       const user = await getUserProfile()
@@ -56,7 +56,7 @@ describe('getUserProfile', () => {
       expect(store.state.alert).to.equal(null)
       const e = new Error('mock error')
       e.response = {
-        statusText: 'Test Status'
+        statusText: 'Test Status',
       }
       sandbox.stub(axios, 'get').rejects(e)
       return getUserProfile()

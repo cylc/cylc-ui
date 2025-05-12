@@ -38,7 +38,7 @@ export default {
       return this.type.enumValues.find(
         ({ name }) => name === this.modelValue
       )?.description ?? ''
-    }
-  }
+    },
+  },
 }
 </script>
