@@ -33,8 +33,8 @@ describe('aotf (Api On The Fly)', () => {
       expect(aotf.tokenise('~a/b//c')).to.deep.equal(tokens)
       tokens[aotf.cylcObjects.Namespace] = 'd'
       expect(aotf.tokenise('~a/b//c/d')).to.deep.equal(tokens)
-      tokens[aotf.cylcObjects.Job] = 'e'
-      expect(aotf.tokenise('~a/b//c/d/e')).to.deep.equal(tokens)
+      tokens[aotf.cylcObjects.Job] = '01'
+      expect(aotf.tokenise('~a/b//c/d/01')).to.deep.equal(tokens)
     })
   })
 

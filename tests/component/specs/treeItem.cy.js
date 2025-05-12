@@ -55,15 +55,15 @@ describe('TreeItem component', () => {
     cy.toggleNode('task')
     cy.getNodeTypes()
       .should('deep.equal', {
-        all: ['cycle', 'task', 'job'],
-        visible: ['cycle', 'task', 'job']
+        all: ['cycle', 'task', 'job', 'job'],
+        visible: ['cycle', 'task', 'job', 'job']
       })
 
     cy.toggleNode('cycle')
     cy.getNodeTypes()
       .should('deep.equal', {
         // All previously expanded nodes under cycle should be hidden but remain rendered
-        all: ['cycle', 'task', 'job'],
+        all: ['cycle', 'task', 'job', 'job'],
         visible: ['cycle']
       })
 
@@ -72,8 +72,8 @@ describe('TreeItem component', () => {
     cy.getNodeTypes()
       .should('deep.equal', {
         // Job node does not use a child TreeItem
-        all: ['cycle', 'task', 'job'],
-        visible: ['cycle', 'task', 'job']
+        all: ['cycle', 'task', 'job', 'job'],
+        visible: ['cycle', 'task', 'job', 'job']
       })
   })
 })

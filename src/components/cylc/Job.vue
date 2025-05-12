@@ -32,6 +32,7 @@ const Job = (props, context) => {
   const DEFAULT_XY = '10'
   const PREVIOUS_STATE_ITEMS_XY = '25'
   const width = !isEmpty(props.previousState) ? PREVIOUS_STATE_ITEMS_SIZE : DEFAULT_SIZE
+  const cJobClass = ['c-job', props.status]
   const jobStatusIcon = h(
     'rect',
     {
@@ -70,7 +71,7 @@ const Job = (props, context) => {
   if (props.svg) {
     return h(
       'g',
-      { class: 'c-job' },
+      { class: cJobClass },
       [
         h('g', { class: 'job' }, jobIconChildren)
       ]
@@ -86,7 +87,7 @@ const Job = (props, context) => {
   )
   return h(
     'span',
-    { class: 'c-job' },
+    { class: cJobClass },
     [jobIconSvg]
   )
 }

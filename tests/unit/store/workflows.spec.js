@@ -67,13 +67,13 @@ describe('cylc tree', () => {
     expect(getTree(store)).to.deep.equal({})
 
     // add a job to the store
-    store.commit('workflows/UPDATE', { id: '~a/b//c/d/e' })
+    store.commit('workflows/UPDATE', { id: '~a/b//c/d/01' })
     expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           c: {
             d: {
-              e: {}
+              '01': {}
             }
           }
         }
@@ -92,13 +92,13 @@ describe('cylc tree', () => {
     store.commit('workflows/CREATE')
 
     // add a job
-    store.commit('workflows/UPDATE', { id: '~a/b//c/d/e' })
+    store.commit('workflows/UPDATE', { id: '~a/b//c/d/01' })
     expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           c: {
             d: {
-              e: {}
+              '01': {}
             }
           }
         }
@@ -109,18 +109,18 @@ describe('cylc tree', () => {
       '~a/b',
       '~a/b//c',
       '~a/b//c/d',
-      '~a/b//c/d/e'
+      '~a/b//c/d/01'
     ])
 
     // add another job for the same task
-    store.commit('workflows/UPDATE', { id: '~a/b//c/d/f' })
+    store.commit('workflows/UPDATE', { id: '~a/b//c/d/02' })
     expect(getTree(store)).to.deep.equal({
       a: {
         b: {
           c: {
             d: {
-              e: {},
-              f: {}
+              '01': {},
+              '02': {},
             }
           }
         }
@@ -131,8 +131,8 @@ describe('cylc tree', () => {
       '~a/b',
       '~a/b//c',
       '~a/b//c/d',
-      '~a/b//c/d/e',
-      '~a/b//c/d/f'
+      '~a/b//c/d/01',
+      '~a/b//c/d/02'
     ])
 
     // add another cycle for the same workflow
@@ -142,8 +142,8 @@ describe('cylc tree', () => {
         b: {
           c: {
             d: {
-              e: {},
-              f: {}
+              '01': {},
+              '02': {},
             }
           },
           g: {}
@@ -155,8 +155,8 @@ describe('cylc tree', () => {
       '~a/b',
       '~a/b//c',
       '~a/b//c/d',
-      '~a/b//c/d/e',
-      '~a/b//c/d/f',
+      '~a/b//c/d/01',
+      '~a/b//c/d/02',
       '~a/b//g'
     ])
   })
@@ -214,13 +214,13 @@ describe('cylc tree', () => {
       },
       {
         type: 'job',
-        id: '~a/b//c/d/e',
+        id: '~a/b//c/d/01',
         expectedTree: {
           a: {
             b: {
               c: {
                 d: {
-                  f: {}
+                  '02': {}
                 }
               },
               g: {}
@@ -232,7 +232,7 @@ describe('cylc tree', () => {
           '~a/b',
           '~a/b//c',
           '~a/b//c/d',
-          '~a/b//c/d/f',
+          '~a/b//c/d/02',
           '~a/b//g'
         ],
       },
@@ -242,10 +242,10 @@ describe('cylc tree', () => {
         firstParent: { id: '~a/b//c/root' },
       })
       store.commit('workflows/UPDATE', {
-        id: '~a/b//c/d/e',
+        id: '~a/b//c/d/01',
       })
       store.commit('workflows/UPDATE', {
-        id: '~a/b//c/d/f',
+        id: '~a/b//c/d/02',
       })
       store.commit('workflows/UPDATE', {
         id: '~a/b//g',
@@ -255,8 +255,8 @@ describe('cylc tree', () => {
           b: {
             c: {
               d: {
-                e: {},
-                f: {}
+                '01': {},
+                '02': {},
               }
             },
             g: {}
@@ -268,8 +268,8 @@ describe('cylc tree', () => {
         '~a/b',
         '~a/b//c',
         '~a/b//c/d',
-        '~a/b//c/d/e',
-        '~a/b//c/d/f',
+        '~a/b//c/d/01',
+        '~a/b//c/d/02',
         '~a/b//g'
       ])
 
@@ -343,12 +343,12 @@ describe('cylc tree', () => {
     })
   })
 
-  it('whatever', () => {
+  it('handles multiple updates', () => {
     store.commit('workflows/CREATE')
 
-    store.commit('workflows/UPDATE', { id: '~a/b//c/d/e', a: 1 })
-    store.commit('workflows/UPDATE', { id: '~a/b//c/d/e', a: 2 })
-    store.commit('workflows/UPDATE', { id: '~a/b//c/d/e', a: 2 })
+    store.commit('workflows/UPDATE', { id: '~a/b//c/d/01', a: 1 })
+    store.commit('workflows/UPDATE', { id: '~a/b//c/d/01', a: 2 })
+    store.commit('workflows/UPDATE', { id: '~a/b//c/d/01', a: 2 })
 
     const _tree = store.state.workflows.cylcTree
     expect(_tree.id).to.equal('$root')

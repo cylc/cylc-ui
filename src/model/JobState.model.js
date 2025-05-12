@@ -42,4 +42,23 @@ class JobState extends Enumify {
 
 export const JobStateNames = JobState.enumValues.map(({ name }) => name)
 
+/**
+ * Get the appropriate log file name for a job based on its state.
+ *
+ * @param {string=} state
+ * @returns {string=} log file name if state is defined & valid, else undefined.
+ */
+export function getJobLogFileFromState (state) {
+  switch (state) {
+    case JobState.FAILED.name:
+      return 'job.err'
+    case JobState.SUBMITTED.name:
+    case JobState.SUBMIT_FAILED.name:
+      return 'job-activity.log'
+    case JobState.RUNNING.name:
+    case JobState.SUCCEEDED.name:
+      return 'job.out'
+  }
+}
+
 export default JobState
