@@ -44,6 +44,7 @@
     "myst-to-html": "1.5.12",
     "nprogress": "1.0.0-1",
     "preact": "10.26.5",
+    "rehype-stringify": "^10.0.1",
     "simple-icons": "2.19.0",
     "subscriptions-transport-ws": "0.11.0",
     "svg-pan-zoom": "3.6.2",
