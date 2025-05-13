@@ -242,7 +242,6 @@ fragment FamilyData on Family {
   childFamilies {
     name
   }
-  descendants
 }
 
 fragment AddedDelta on Added {
@@ -497,33 +496,33 @@ export default {
     /**
      * Object for looking up family ancestors
      *
-     * example return object
+     * example return mapping:
      * {
-     *  FAMILY: ['PARENT_FAMILY', 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
-     *  PARENT_FAMILY: [ 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
-     *  GRANDPARENT_FAMILY: [ 'GREAT_GRANDPARENT_FAMILY', 'root' ],
-     *  GREAT_GRANDPARENT_FAMILY : ['root'],
      *  root: []
+     *  GREAT_GRANDPARENT_FAMILY : ['root'],
+     *  GRANDPARENT_FAMILY: [ 'GREAT_GRANDPARENT_FAMILY', 'root' ],
+     *  PARENT_FAMILY: [ 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
+     *  FAMILY: ['PARENT_FAMILY', 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
      * }
      *
      * note: object value arrays contain family names as strings only - not nodes
      *
-     * @returns {Object} keys are family names, values are arrays containing all ancestors names
+     * @returns {Map<string, string[]>} keys are family names, values are arrays containing all ancestors names
      */
     allParentLookUp () {
-      const lookup = {}
+      const lookup = []
       for (const namespace of this.namespaces) {
-        const array = []
+        const ancestors = []
         let parent = namespace.node.firstParent
         while (parent) {
-          const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${parent.name}` })
-          const childNode = this.cylcTree.$index[childTokens.id]
-          array.push(childNode.name)
-          parent = childNode.node.firstParent
+          const parentNode = this.cylcTree.$index[parent.id]
+          ancestors.push(parentNode.name)
+          parent = parentNode.node.firstParent
         }
-        lookup[namespace.name] = array
+        lookup.push([namespace.name, ancestors])
       }
-      return lookup
+      // Sort by shortest ancestor list to longest:
+      return new Map(lookup.sort((a, b) => a[1].length - b[1].length))
     },
     /**
      * Object for looking up children
@@ -689,46 +688,23 @@ export default {
      * @returns {Family[]} array containing nested structure of families
      */
     getTree () {
-      const root = {
-        name: 'root',
-        children: []
-      }
-      if (this.workflows) {
-        const tokens = this.workflows[0].tokens.clone({ cycle: '$namespace|root' })
-        const node = this.cylcTree.$index[tokens.id]
-        if (node) {
-          return this.getTreeHelper(root, node).children
+      const tree = []
+      for (const [name, ancestors] of this.allParentLookUp) {
+        if (name === 'root') continue
+        let pointer = tree
+        let ancestorName, disabled
+        for (let i = ancestors.length - 2; i >= 0; i--) {
+          ancestorName = ancestors[i]
+          pointer = pointer.find((item) => item.name === ancestorName).children
+          disabled ||= this.collapseFamily.includes(ancestorName)
         }
+        pointer.push({
+          name,
+          children: [],
+          disabled,
+        })
       }
-    },
-
-    /**
-     * Get a nested object of families
-     * @property {Family} store - nested object of families
-     * @property {Node} node - node object
-     * @property {number} counter - counter used for index
-     * @returns {Family} nested structure of families
-     */
-    getTreeHelper (store, node) {
-      let tempItem
-      const isParent = this.collapseFamily.includes(node.name)
-      const isAncestor = this.allParentLookUp[node.name].some(element => {
-        return this.collapseFamily.includes(element)
-      })
-      const disabled = isParent || isAncestor
-      for (const childFamily of node.node.descendants) {
-        const childNamespace = this.namespaces.find((obj) => obj.name === childFamily)
-        if (childNamespace?.node.firstParent.id === node.id) {
-          tempItem = {
-            name: childFamily,
-            children: [],
-            disabled
-          }
-          this.getTreeHelper(tempItem, childNamespace)
-          store.children.push(tempItem)
-        }
-      }
-      return store
+      return tree
     },
 
     /**
@@ -807,7 +783,7 @@ export default {
       // the nodes first parent is collapsed
       const firstParent = this.collapseFamily.includes(nodeFirstParent)
       // a family member up the tree is collapsed
-      const ancestor = this.allParentLookUp[nodeFirstParent].some(element => {
+      const ancestor = this.allParentLookUp.get(nodeFirstParent).some(element => {
         return this.collapseFamily.includes(element)
       })
       if (firstParent && !ancestor) {
@@ -815,9 +791,10 @@ export default {
         return nodeFirstParent
       } else if (ancestor) {
         // the node is collapsed by an ancestor
-        for (let i = this.allParentLookUp[nodeFirstParent].length - 1; i >= 0; i--) {
-          if (this.collapseFamily.includes(this.allParentLookUp[nodeFirstParent][i])) {
-            return this.allParentLookUp[nodeFirstParent][i]
+        const lookupParents = this.allParentLookUp.get(nodeFirstParent)
+        for (let i = lookupParents.length - 1; i >= 0; i--) {
+          if (this.collapseFamily.includes(lookupParents[i])) {
+            return lookupParents[i]
           }
         }
       } else {
