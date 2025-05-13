@@ -348,7 +348,6 @@ describe('Tree view', () => {
     cy.visit('/#/tree/one')
     cy.get('[data-cy="filter task state"]')
       .click()
-    // eslint-disable-next-line no-lone-blocks
     TaskState.enumValues.forEach(state => {
       cy.get('.v-list-item')
         .contains(state.name)
