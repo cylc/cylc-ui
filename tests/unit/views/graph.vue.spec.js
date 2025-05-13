@@ -124,42 +124,45 @@ describe('Graph view', () => {
   it('it gets tree', async () => {
     const wrapper = mountFunction({
       computed: {
-        allParentLookUp: () => ({
-          BAD: [
-            'root'
-          ],
-          GOOD: [
-            'root'
-          ],
-          root: [],
-          SUCCEEDED: [
-            'GOOD',
-            'root'
-          ]
-        }),
+        allParentLookUp: () => new Map([
+          ['ANIMALS', []],
+          ['PLANTS', []],
+          ['MAMMALS', ['ANIMALS']],
+          ['BIRDS', ['ANIMALS']],
+          ['RODENTS', ['ANIMALS', 'MAMMALS']],
+        ]),
       }
     })
 
-    expect(wrapper.vm.getTree()).toMatchObject(
-      [
-        {
-          children: [
-            {
-              children: [],
-              disabled: false,
-              name: 'SUCCEEDED',
-            },
-          ],
-          disabled: false,
-          name: 'GOOD',
-        },
-        {
-          children: [],
-          disabled: false,
-          name: 'BAD',
-        },
-      ]
-    )
+    expect(wrapper.vm.getTree()).toMatchObject([
+      {
+        name: 'ANIMALS',
+        children: [
+          {
+            name: 'MAMMALS',
+            children: [
+              {
+                name: 'RODENTS',
+                children: [],
+                disabled: false,
+              },
+            ],
+            disabled: false,
+          },
+          {
+            name: 'BIRDS',
+            children: [],
+            disabled: false,
+          }
+        ],
+        disabled: false,
+      },
+      {
+        name: 'PLANTS',
+        children: [],
+        disabled: false,
+      },
+    ])
   })
 
   it('it removes edge node by source', () => {
