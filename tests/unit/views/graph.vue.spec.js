@@ -168,7 +168,7 @@ describe('Graph view', () => {
   it('it removes edge node by source', () => {
     const wrapper = mountFunction()
     // in this test we remove the first edge with a source of 'user/one/run1//1/sleepy'
-    expect(wrapper.vm.removeEdges('sleepy', '2', edges)).toStrictEqual([
+    expect(wrapper.vm.removeEdges('user/one/run1//2/sleepy', edges)).toStrictEqual([
       // the returned removed edges array
       {
         tokens: new Tokens('user/one/run1//$edge|2/sleepy|1/failed'),
@@ -204,7 +204,7 @@ describe('Graph view', () => {
     // await wrapper.vm.$nextTick()
     // in this test we remove the first edge with a target of 'user/one/run1//1/failed'
 
-    expect(wrapper.vm.removeEdges('failed', '1', edges)).toStrictEqual([
+    expect(wrapper.vm.removeEdges('user/one/run1//1/failed', edges)).toStrictEqual([
       // the returned edges array with the edge removed
       {
         tokens: new Tokens('user/one/run1//$edge|1/succeeded|1/failed'),
