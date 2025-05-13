@@ -350,6 +350,19 @@ export function convertTree (map) {
   }))
 }
 
+/**
+ * Get the nodes binned by cycle point
+ *
+ * @param {Node[]} nodes - The graph nodes
+ * @returns {{ [dateTime: string]: Object[] }=} mapping of cycle points to nodes
+ */
+export function getCyclesToNodes (nodes) {
+  return nodes.reduce((x, y) => {
+    (x[y.tokens.cycle] ||= []).push(y)
+    return x
+  }, {})
+}
+
 export default {
   name: 'Graph',
 
@@ -451,7 +464,6 @@ export default {
       // supports loading graph when component is mounted and autoRefresh is off.
       // true if page is loading for the first time and nodeDimensions are yet to be calculated
       initialLoad: true,
-      cycleArrayStore: [],
     }
   },
 
@@ -500,11 +512,11 @@ export default {
       return this.allParentLookUp.size ? this.getTree() : [{ name: 'No families', disabled: true }]
     },
     /**
-     * Gets the array of cycles for use in vuetify toolbar drop down
-     * @returns {String[]} array containing nested structure of families
+     * Gets the array of cycles
+     * @returns {string[]}
      */
-    treeDropDownCycle () {
-      return this.cycleArrayStore.map((name) => ({ name }))
+    cycles () {
+      return this.workflows[0]?.children.map(({ tokens }) => tokens.cycle) || []
     },
     /**
      * Object for looking up family ancestors
@@ -671,7 +683,7 @@ export default {
               action: 'select-tree',
               value: this.collapseCycle,
               key: 'collapseCycle',
-              items: this.treeDropDownCycle,
+              items: this.cycles.map((name) => ({ name })),
             },
             {
               title: 'Collapse by family',
@@ -888,19 +900,6 @@ export default {
     },
 
     /**
-     * Get the nodes binned by cycle point
-     *
-     * @param {Node[]} nodes - The graph nodes
-     * @returns {{ [dateTime: string]: Object[] }=} mapping of cycle points to nodes
-     */
-    getCycles (nodes) {
-      return nodes.reduce((x, y) => {
-        (x[y.tokens.cycle] ||= []).push(y)
-        return x
-      }, {})
-    },
-
-    /**
      * Recursive function that adds a subgraph to the dot code
      *
      * Terminology:
@@ -989,7 +988,7 @@ export default {
       }
     },
 
-    getDotCode (nodeDimensions, nodes, edges, cycles) {
+    getDotCode (nodeDimensions, nodes, edges, cyclesToNodes) {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
       let spacing = this.spacing
@@ -1034,8 +1033,7 @@ export default {
       }
 
       const graphSections = {}
-      for (const cycle of Object.keys(cycles)) {
-        const indexSearch = cycles[cycle]
+      for (const [cycle, indexSearch] of Object.entries(cyclesToNodes)) {
         if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
           for (const task of indexSearch) {
             const section = graphSections[task.node.firstParent.id] ??= []
@@ -1162,7 +1160,7 @@ export default {
 
       // ----------------------------------------
       for (const family of this.collapseFamily) {
-        for (const cycle of this.cycleArrayStore) {
+        for (const cycle of this.cycles) {
           // ...get the node from the index...
           const famNode = this.cylcTree.$index[
             this.workflows[0].tokens.clone({ cycle, task: family }).id
@@ -1259,8 +1257,7 @@ export default {
         return
       }
 
-      const cycles = this.getCycles(nodes)
-      this.cycleArrayStore = this.workflows[0].children.map(child => child.tokens.cycle)
+      const cyclesToNodes = getCyclesToNodes(nodes)
       // compute the graph ID
       const graphID = this.hashGraph(nodes, edges)
       if (this.graphID === graphID) {
@@ -1305,7 +1302,7 @@ export default {
 
       // layout the graph
       try {
-        await this.layout(nodes, edges, nodeDimensions, cycles)
+        await this.layout(nodes, edges, nodeDimensions, cyclesToNodes)
       } catch (e) {
         // something went wrong, allow the layout to retry later
         this.graphID = null
@@ -1349,9 +1346,9 @@ export default {
      * @param {Map<string, Edge>} edges
      * @param {{ [id: string]: SVGRect }} nodeDimensions
      */
-    async layout (nodes, edges, nodeDimensions, cycles) {
+    async layout (nodes, edges, nodeDimensions, cyclesToNodes) {
       // generate the GraphViz dot code
-      const dotCode = this.getDotCode(nodeDimensions, nodes, edges, cycles)
+      const dotCode = this.getDotCode(nodeDimensions, nodes, edges, cyclesToNodes)
 
       // run the layout algorithm
       const jsonString = (await this.graphviz).layout(dotCode, 'json')
