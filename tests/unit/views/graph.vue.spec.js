@@ -17,7 +17,7 @@ import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
-import Graph, { childArray } from '@/views/Graph.vue'
+import Graph, { childArray, getCyclesToNodes } from '@/views/Graph.vue'
 import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
 import { Tokens } from '@/utils/uid'
@@ -60,10 +60,8 @@ describe('Graph view', () => {
     ))
   }
 
-  it('gets cycles', async () => {
-    const wrapper = mountFunction()
-
-    expect(wrapper.vm.getCycles(nodes)).toMatchObject(
+  it('gets cycles-to-nodes mapping', () => {
+    expect(getCyclesToNodes(nodes)).toMatchObject(
       {
         1: [
           {
