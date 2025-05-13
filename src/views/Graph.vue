@@ -214,7 +214,7 @@ fragment FamilyProxyData on FamilyProxy {
   isQueued
   name
   ancestors {
-     name
+    name
   }
   childTasks {
     id
@@ -335,6 +335,19 @@ export const childArray = (nodeArray) => {
         .concat(children ? childArray(children) : [])
     }
   })
+}
+
+/**
+ * Convert a mapping to a format that VTreeView can handle.
+ * @param {Map<string, { children: Map, diabled: Boolean }>} map - The mapping to convert
+ * @returns {Object[]} - The converted mapping
+ */
+export function convertTree (map) {
+  return Array.from(map, ([name, { children, disabled }]) => ({
+    name,
+    children: convertTree(children),
+    disabled,
+  }))
 }
 
 export default {
@@ -484,7 +497,7 @@ export default {
      * @returns {Family[]} array containing nested structure of families
      */
     treeDropDownFamily () {
-      return this.familyArrayStore.length ? this.getTree() : [{ name: 'No families', disabled: true }]
+      return this.allParentLookUp.size ? this.getTree() : [{ name: 'No families', disabled: true }]
     },
     /**
      * Gets the array of cycles for use in vuetify toolbar drop down
@@ -498,11 +511,10 @@ export default {
      *
      * example return mapping:
      * {
-     *  root: []
-     *  GREAT_GRANDPARENT_FAMILY : ['root'],
-     *  GRANDPARENT_FAMILY: [ 'GREAT_GRANDPARENT_FAMILY', 'root' ],
-     *  PARENT_FAMILY: [ 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
-     *  FAMILY: ['PARENT_FAMILY', 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
+     *  GREAT_GRANDPARENT_FAMILY: [ ],
+     *  GRANDPARENT_FAMILY: [ 'GREAT_GRANDPARENT_FAMILY' ],
+     *  PARENT_FAMILY: [ 'GREAT_GRANDPARENT_FAMILY', 'GRANDPARENT_FAMILY' ],
+     *  FAMILY: [ 'GREAT_GRANDPARENT_FAMILY', 'GRANDPARENT_FAMILY', 'PARENT_FAMILY' ],
      * }
      *
      * note: object value arrays contain family names as strings only - not nodes
@@ -512,11 +524,12 @@ export default {
     allParentLookUp () {
       const lookup = []
       for (const namespace of this.namespaces) {
+        if (namespace.name === 'root') continue
         const ancestors = []
         let parent = namespace.node.firstParent
-        while (parent) {
+        while (parent.name !== 'root') {
           const parentNode = this.cylcTree.$index[parent.id]
-          ancestors.push(parentNode.name)
+          ancestors.unshift(parentNode.name)
           parent = parentNode.node.firstParent
         }
         lookup.push([namespace.name, ancestors])
@@ -583,7 +596,7 @@ export default {
             lookup[task.id] = childArray([task])
           }
           // for families
-          for (const family of this.familyArrayStore) {
+          for (const family of this.allParentLookUp.keys()) {
             const familyId = `${cycle.id}/${family}`
             if (this.cylcTree.$index[familyId]) {
               lookup[familyId] = childArray([this.cylcTree.$index[familyId]])
@@ -592,13 +605,6 @@ export default {
         }
       }
       return lookup
-    },
-    /**
-     * Get an array of family names
-     * @returns {String[]} array of family names
-     */
-    familyArrayStore () {
-      return this.namespaces.flatMap((family) => family.name !== 'root' ? family.name : [])
     },
     controlGroups () {
       return [
@@ -688,23 +694,20 @@ export default {
      * @returns {Family[]} array containing nested structure of families
      */
     getTree () {
-      const tree = []
+      const tree = new Map()
       for (const [name, ancestors] of this.allParentLookUp) {
-        if (name === 'root') continue
         let pointer = tree
-        let ancestorName, disabled
-        for (let i = ancestors.length - 2; i >= 0; i--) {
-          ancestorName = ancestors[i]
-          pointer = pointer.find((item) => item.name === ancestorName).children
-          disabled ||= this.collapseFamily.includes(ancestorName)
+        let disabled = false
+        for (const ancestor of ancestors) {
+          pointer = pointer.get(ancestor).children
+          disabled ||= this.collapseFamily.includes(ancestor)
         }
-        pointer.push({
-          name,
-          children: [],
+        pointer.set(name, {
+          children: new Map(),
           disabled,
         })
       }
-      return tree
+      return convertTree(tree)
     },
 
     /**
@@ -772,34 +775,18 @@ export default {
     },
 
     /**
-     * Check if node is collapsed by family or ancestor
-     * If not collapsed return null
-     * If the node is collapsed by first parent return the parent name
-     * If the node is collapsed by an ancestor further up the tree return the name of the ancestor
-     * @property {String} nodeFirstParent - name of the first parent
-     * @returns {String | null} name of the collapsed parent/ancestor or null
+     * Check if node is collapsed by an ancestor family
+     *
+     * @param {string} id - ID of the task/family/namespace
+     * @returns {string=} name of the collapsed ancestor if any
      */
-    isNodeCollapsedByFamily (nodeFirstParent) {
-      // the nodes first parent is collapsed
-      const firstParent = this.collapseFamily.includes(nodeFirstParent)
-      // a family member up the tree is collapsed
-      const ancestor = this.allParentLookUp.get(nodeFirstParent).some(element => {
-        return this.collapseFamily.includes(element)
-      })
-      if (firstParent && !ancestor) {
-        // the node is collapsed by its first parent
-        return nodeFirstParent
-      } else if (ancestor) {
-        // the node is collapsed by an ancestor
-        const lookupParents = this.allParentLookUp.get(nodeFirstParent)
-        for (let i = lookupParents.length - 1; i >= 0; i--) {
-          if (this.collapseFamily.includes(lookupParents[i])) {
-            return lookupParents[i]
-          }
-        }
-      } else {
-        // the node is not collapsed
-        return null
+    getCollapsedAncestor (id) {
+      const { name } = this.cylcTree.$index[id].node.firstParent
+      if (name !== 'root') {
+        // TODO: could use Set.intersection if browser support is good enough?
+        return this.collapseFamily.find((family) => (
+          name === family || this.allParentLookUp.get(name).includes(family)
+        ))
       }
     },
 
@@ -985,19 +972,14 @@ export default {
         ) {
           // Take our array of grandchildren and remove nodes that we dont want to include
           // nodeFormattedArray will be an array of string node ids to be included in the grouping
-          const nodeFormattedArray = grandChildren.filter((grandChild) => {
-            let isAncestor = true
-            const nodeFirstParent = this.cylcTree.$index[grandChild.id].node.firstParent.name
-            isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
-            return (
-              // if its not in the list of families (unless its been collapsed)
-              (!this.familyArrayStore.includes(grandChild.name) || this.collapseFamily.includes(grandChild.name)) &&
-              // the node has been removed/collapsed
-              !removedNodes.has(grandChild.name) &&
-              // the node doesnt have a collapsed ancestor
-              isAncestor
-            )
-          }).map(a => `"${a.id}"`)
+          const nodeFormattedArray = grandChildren.filter((grandChild) => (
+            // if its not in the list of families (unless its been collapsed)
+            (!this.allParentLookUp.has(grandChild.name) || this.collapseFamily.includes(grandChild.name)) &&
+            // the node has been removed/collapsed
+            !removedNodes.has(grandChild.name) &&
+            // the node doesnt have a collapsed ancestor
+            !this.getCollapsedAncestor(grandChild.id)
+          )).map(a => `"${a.id}"`)
           // if there are any nodes left after the filtering step
           // make a dotcode subgraph string
           if (nodeFormattedArray.length) {
@@ -1090,26 +1072,18 @@ export default {
                 }
               }
             }
-            const nodeFormattedArray = indexSearch.filter((a) => {
-              const isRoot = a.name !== 'root'
-              let isAncestor = true
-              if (isRoot) {
-                const nodeFirstParent = this.cylcTree.$index[a.id].node.firstParent.name
-                isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
-              }
-              return (
-                // if its not in the list of families (unless its been collapsed)
-                (!this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)) &&
-                // the node has been removed/collapsed
-                (!removedNodes.has(a.name) || this.collapseFamily.includes(a.name)) &&
-                // its not a node representing this cycle
-                a.name !== cycle &&
-                // its not a root node
-                isRoot &&
-                // the node doesnt have a collapsed ancestor
-                isAncestor
-              )
-            }).map(a => `"${a.id}"`)
+            const nodeFormattedArray = indexSearch.filter((a) => (
+              // if its not in the list of families (unless its been collapsed)
+              (!this.allParentLookUp.has(a.name) || this.collapseFamily.includes(a.name)) &&
+              // the node has been removed/collapsed
+              (!removedNodes.has(a.name) || this.collapseFamily.includes(a.name)) &&
+              // its not a node representing this cycle
+              a.name !== cycle &&
+              // its not the root node
+              a.name !== 'root' &&
+              // the node doesnt have a collapsed ancestor
+              !this.getCollapsedAncestor(a.id)
+            )).map(a => `"${a.id}"`)
             ret.push(`
               subgraph cluster_margin_family_${cycle}
                 {
@@ -1192,24 +1166,24 @@ export default {
       this.panZoomWidget.zoom(relativeZoom * width / desiredWidth)
     },
 
-    edgeHasCollapsedTargetFamilyOnly (targetFirstFamily, sourceFirstFamily) {
-      const target = this.isNodeCollapsedByFamily(targetFirstFamily)
-      if (target && !this.isNodeCollapsedByFamily(sourceFirstFamily)) {
-        return { target }
+    edgeHasCollapsedTargetAncestorOnly (edge) {
+      const target = this.getCollapsedAncestor(edge.target.id)
+      if (target && !this.getCollapsedAncestor(edge.source.id)) {
+        return target
       }
     },
 
-    edgeHasCollapsedSourceFamilyOnly (targetFirstFamily, sourceFirstFamily) {
-      const source = this.isNodeCollapsedByFamily(sourceFirstFamily)
-      if (source && !this.isNodeCollapsedByFamily(targetFirstFamily)) {
-        return { source }
+    edgeHasCollapsedSourceAncestorOnly (edge) {
+      const source = this.getCollapsedAncestor(edge.source.id)
+      if (source && !this.getCollapsedAncestor(edge.target.id)) {
+        return source
       }
     },
 
-    edgeHasCollapsedTargetandSourceFamily (targetFirstFamily, sourceFirstFamily) {
-      const target = this.isNodeCollapsedByFamily(targetFirstFamily)
+    edgeHasCollapsedTargetandSourceAncestor (edge) {
+      const target = this.getCollapsedAncestor(edge.target.id)
       if (target) {
-        const source = this.isNodeCollapsedByFamily(sourceFirstFamily)
+        const source = this.getCollapsedAncestor(edge.source.id)
         if (source) {
           return { target, source }
         }
@@ -1262,53 +1236,45 @@ export default {
           }
           // ...now we have removed any parts of child nodes that shouldnt be there we can add nodes and edges that should be...
           // ---------------ADD NODES BASED ON FAMILY------------
-          if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
-            if (!this.isNodeCollapsedByFamily(indexSearch.node.firstParent.name)) {
-              nodes.push(indexSearch)
-            }
+          if (!this.collapseCycle.includes(cycle) && !this.getCollapsedAncestor(indexSearch.id)) {
+            nodes.push(indexSearch)
           }
 
           // ...this node is collapsed so need to remove any of its children (nodes and edges) from the graph if it has any...
           for (const { id: childID } of this.allChildrenLookUp[indexSearch.id]) {
             for (const edge of removedEdges.filter(({ source }) => source.id === childID)) {
-              const sourceFamilyName = this.cylcTree.$index[edge.source.id].node.firstParent.name
-              const targetFamilyName = this.cylcTree.$index[edge.target.id].node.firstParent.name
-
               if (!this.collapseCycle.includes(edge.source.cycle)) {
-                const familyData = this.edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)
-                if (familyData) {
+                const collapsedSourceAncestor = this.edgeHasCollapsedSourceAncestorOnly(edge)
+                if (collapsedSourceAncestor) {
                   edges.set(
-                    ...this.createEdge('noCollapsed', familyData.source, edge.target.task, edge.source.cycle, edge.target.cycle)
+                    ...this.createEdge('noCollapsed', collapsedSourceAncestor, edge.target.task, edge.source.cycle, edge.target.cycle)
                   )
                 }
 
                 if (!this.collapseCycle.includes(edge.target.cycle)) {
-                  const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                  if (familyData && (familyData.source !== familyData.target || edge.source.cycle !== edge.target.cycle)) {
+                  const collapsedAncestors = this.edgeHasCollapsedTargetandSourceAncestor(edge)
+                  if (collapsedAncestors && (collapsedAncestors.source !== collapsedAncestors.target || edge.source.cycle !== edge.target.cycle)) {
                     edges.set(
-                      ...this.createEdge('noCollapsed', familyData.source, familyData.target, edge.source.cycle, edge.target.cycle)
+                      ...this.createEdge('noCollapsed', collapsedAncestors.source, collapsedAncestors.target, edge.source.cycle, edge.target.cycle)
                     )
                   }
                 }
               }
             }
             for (const edge of removedEdges.filter(({ target }) => target.id === childID)) {
-              const sourceFamilyName = this.cylcTree.$index[edge.source.id].node.firstParent.name
-              const targetFamilyName = this.cylcTree.$index[edge.target.id].node.firstParent.name
-
               if (!this.collapseCycle.includes(edge.target.cycle)) {
-                const familyData = this.edgeHasCollapsedTargetFamilyOnly(targetFamilyName, sourceFamilyName)
-                if (familyData) {
+                const collapsedTargetAncestor = this.edgeHasCollapsedTargetAncestorOnly(edge)
+                if (collapsedTargetAncestor) {
                   edges.set(
-                    ...this.createEdge('noCollapsed', edge.source.task, familyData.target, edge.source.cycle, edge.target.cycle)
+                    ...this.createEdge('noCollapsed', edge.source.task, collapsedTargetAncestor, edge.source.cycle, edge.target.cycle)
                   )
                 }
 
                 if (!this.collapseCycle.includes(edge.source.cycle)) {
-                  const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                  if (familyData && (familyData.source !== familyData.target || edge.source.cycle !== edge.target.cycle)) {
+                  const collapsedAncestors = this.edgeHasCollapsedTargetandSourceAncestor(edge)
+                  if (collapsedAncestors && (collapsedAncestors.source !== collapsedAncestors.target || edge.source.cycle !== edge.target.cycle)) {
                     edges.set(
-                      ...this.createEdge('noCollapsed', familyData.source, familyData.target, edge.source.cycle, edge.target.cycle)
+                      ...this.createEdge('noCollapsed', collapsedAncestors.source, collapsedAncestors.target, edge.source.cycle, edge.target.cycle)
                     )
                   }
                 }
@@ -1340,13 +1306,13 @@ export default {
           // ---------------ADD EDGES BASED ON CYCLE POINT------------
           for (const { id: childID } of this.allChildrenLookUp[indexSearch.id]) {
             for (const edge of removedEdges.filter(({ source }) => source.id === childID)) {
-              const targetFamilyName = this.cylcTree.$index[edge.target.id].node.firstParent.name
               if (edge.source.cycle === edge.target.cycle) continue
               // edge has collapsed source cycle only
               if (!this.collapseCycle.includes(edge.target.cycle) && this.collapseCycle.includes(edge.source.cycle)) {
-                if (this.isNodeCollapsedByFamily(targetFamilyName)) {
+                const collapsedTargetAncestor = this.getCollapsedAncestor(edge.target.id)
+                if (collapsedTargetAncestor) {
                   edges.set(
-                    ...this.createEdge('collapsedSource', edge.source.cycle, this.isNodeCollapsedByFamily(targetFamilyName), edge.source.cycle, edge.target.cycle)
+                    ...this.createEdge('collapsedSource', edge.source.cycle, collapsedTargetAncestor, edge.source.cycle, edge.target.cycle)
                   )
                 } else {
                   edges.set(
@@ -1363,14 +1329,13 @@ export default {
               }
             }
             for (const edge of removedEdges.filter(({ target }) => target.id === childID)) {
-              const sourceFamilyName = this.cylcTree.$index[edge.source.id].node.firstParent.name
-
               if (edge.source.cycle === edge.target.cycle) continue
               // edge has collapsed target cycle only
               if (this.collapseCycle.includes(edge.target.cycle) && !this.collapseCycle.includes(edge.source.cycle)) {
-                if (this.isNodeCollapsedByFamily(sourceFamilyName)) {
+                const collapsedSourceAncestor = this.getCollapsedAncestor(edge.source.id)
+                if (collapsedSourceAncestor) {
                   edges.set(
-                    ...this.createEdge('collapsedTarget', this.isNodeCollapsedByFamily(sourceFamilyName), edge.target.cycle, edge.source.cycle, edge.target.cycle)
+                    ...this.createEdge('collapsedTarget', collapsedSourceAncestor, edge.target.cycle, edge.source.cycle, edge.target.cycle)
                   )
                 } else {
                   edges.set(
