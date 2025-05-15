@@ -64,7 +64,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-row>
       <div
         ref="toolbar"
-        id="analysis-toolbar"
         class="d-flex align-center flex-wrap my-2 col-gap-2 row-gap-4"
       >
         <!-- Toolbar -->
@@ -109,8 +108,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-icon :icon="$options.icons.mdiRefresh" />
             <v-tooltip>Refresh data</v-tooltip>
           </v-btn>
-          <!-- Box plot sort input teleports here -->
         </v-defaults-provider>
+        <!-- Box plot sort input teleports here -->
       </div>
       <AnalysisTable
         v-if="chartType === 'table'"
@@ -122,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-else-if="chartType === 'box'"
         :tasks="filteredTasks"
         :timing-option="timingOption"
-        :sort-input-teleport-target="toolbar?.id"
+        :sort-input-teleport-target="toolbarRef"
         v-model:initial-options="boxPlotOptions"
       />
       <TimeSeries
@@ -130,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :workflowIDs="workflowIDs"
         :platform-option="tasksFilter.platformOption"
         :timing-option="timingOption"
-        :sort-input-teleport-target="toolbar?.id"
+        :sort-input-teleport-target="toolbarRef"
         v-model:initial-options="timeseriesPlotOptions"
       />
     </v-container>
@@ -138,7 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { ref } from 'vue'
+import { useTemplateRef } from 'vue'
 import {
   debounce,
   pick,
@@ -268,8 +267,7 @@ export default {
      */
     const chartType = useInitialOptions('chartType', { props, emit }, 'table')
 
-    /** @type {import('vue').Ref<HTMLElement>} template ref */
-    const toolbar = ref(null)
+    const toolbarRef = useTemplateRef('toolbar')
 
     /**
      * The Vuetify data table options (sortBy, page etc).
@@ -292,10 +290,10 @@ export default {
     return {
       tasksFilter,
       chartType,
-      toolbar,
+      toolbarRef,
       dataTableOptions,
       boxPlotOptions,
-      timeseriesPlotOptions
+      timeseriesPlotOptions,
     }
   },
 
