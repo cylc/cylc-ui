@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,17 +18,12 @@
 const IntrospectionQuery = require('./IntrospectionQuery.json')
 const taskProxy = require('./taskProxy.json')
 const familyProxy = require('./familyProxy.json')
-const workflowOne = require('./workflows/one')
-const workflowsMulti = require('./workflows/multi')
+const { one, workflows, Workflow } = require('./workflows/index.cjs')
 const { LogData } = require('./logData.cjs')
-const { LogFiles } = require('./logFiles.cjs')
+const { LogFiles, JobState } = require('./logFiles.cjs')
 const analysisQuery = require('./analysisQuery.json')
 const ganttQuery = require('./ganttQuery.json')
 const InfoViewSubscription = require('./infoView.json')
-
-const workflows = [workflowOne, ...workflowsMulti]
-const analysisTaskQuery = analysisQuery.taskQuery
-const analysisJobQuery = analysisQuery.jobQuery
 
 module.exports = {
   IntrospectionQuery,
@@ -36,13 +31,12 @@ module.exports = {
   familyProxy,
   LogData,
   LogFiles,
+  JobState,
   App: workflows,
-  Workflow ({ workflowId }) {
-    return workflows.find(({ deltas }) => deltas.id === workflowId) || {}
-  },
-  Test: workflowOne,
-  analysisTaskQuery,
-  analysisJobQuery,
+  Workflow,
+  GraphIQLTest: one,
+  analysisTaskQuery: analysisQuery.taskQuery,
+  analysisJobQuery: analysisQuery.jobQuery,
   analysisQuery,
   ganttQuery,
   InfoViewSubscription

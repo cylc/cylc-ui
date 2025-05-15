@@ -19,6 +19,7 @@
 const PORT = 3000
 
 const userProfile = require('./json/userprofile.json')
+const versionInfo = require('./json/version.json')
 const graphql = require('./graphql.cjs')
 const websockets = require('./websockets.cjs')
 
@@ -29,6 +30,7 @@ const server = jsonServer.create()
 require('express-ws')(server)
 const router = jsonServer.router({
   userProfile,
+  version: versionInfo,
 })
 const middlewares = [
   ...jsonServer.defaults({ logger: false }),

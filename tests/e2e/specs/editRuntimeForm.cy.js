@@ -45,14 +45,8 @@ describe('Edit Runtime form', () => {
    * @param {string} nodeName - the tree node name, to search for and open the mutations form
    */
   const openMenu = (nodeName) => {
-    cy.get('[data-cy=tree-view]').as('treeView')
-      .find('.c-task')
-      .should('be.visible')
-    cy.get('@treeView')
-      .find('span')
-      .contains(nodeName)
-      .parent()
-      .find('.c-task')
+    cy.get(`[data-node-name=${nodeName}]`)
+      .find('[data-c-interactive]:first')
       .click({ force: true })
     cy.get('#less-more-button')
       .click()
@@ -63,6 +57,15 @@ describe('Edit Runtime form', () => {
     return cy
       .get('.c-mutation-menu-list:first')
       .contains('.c-mutation', 'Edit Runtime')
+  }
+
+  /**
+   * Open the Edit Runtime form for a particular node
+   * @param {string} nodeName
+   */
+  const openForm = (nodeName) => {
+    openMenu(nodeName)
+    getMenuItem().click()
   }
 
   /**
@@ -79,8 +82,7 @@ describe('Edit Runtime form', () => {
   }
 
   it('handles editing and submitting the form', () => {
-    openMenu('retrying')
-    getMenuItem().click()
+    openForm('retrying')
 
     getInputListItem('Init Script')
       .find('.v-input')
@@ -132,8 +134,7 @@ describe('Edit Runtime form', () => {
   })
 
   it('handles a form with zero diff', () => {
-    openMenu('retrying')
-    getMenuItem().click()
+    openForm('retrying')
 
     getInputListItem('Outputs')
       // Add an empty item
@@ -184,5 +185,20 @@ describe('Edit Runtime form', () => {
       .get('#less-more-button')
       .should('not.exist') // if this does deliberately exist in future, change to .click()
     getMenuItem().should('not.exist')
+  })
+
+  it('only offers live & skip run modes', () => {
+    openForm('retrying')
+    getInputListItem('Run Mode')
+      .find('.v-field')
+      .click()
+      .invoke('attr', 'aria-controls').then((dropdownID) => {
+        cy.get(`#${dropdownID}`)
+          .find('[role=option]')
+          .then(
+            (items) => Array.from(items, (x) => x.innerText).sort()
+          )
+          .should('deep.equal', ['Live', 'Skip'])
+      })
   })
 })

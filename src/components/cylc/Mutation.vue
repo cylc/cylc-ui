@@ -16,6 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
+  <!-- Have to repeat these defaults as the ones set in App.vue don't make it through
+  the parent v-dialog - see https://github.com/vuetifyjs/vuetify/issues/18123 -->
+  <v-defaults-provider :defaults="vuetifyDefaults">
     <v-card>
       <!-- the mutation title -->
       <v-card-title class="py-3">
@@ -121,6 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </template>
       </v-snackbar>
     </v-card>
+  </v-defaults-provider>
 </template>
 
 <script>
@@ -133,6 +137,8 @@ import {
   mutationStatus
 } from '@/utils/aotf'
 import { mdiClose } from '@mdi/js'
+import { useDynamicVuetifyDefaults } from '@/plugins/vuetify'
+import { inputDefaults } from '@/components/graphqlFormGenerator/components/vuetify'
 
 export default {
   name: 'mutation',
@@ -169,6 +175,14 @@ export default {
       required: false,
       default: () => {}
     },
+  },
+
+  setup () {
+    const vuetifyDefaults = useDynamicVuetifyDefaults(inputDefaults)
+
+    return {
+      vuetifyDefaults,
+    }
   },
 
   data: () => ({

@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import axios from 'axios'
+
 /**
  * Remove double forward-slashes from URL's. It avoids the slashes that
  * are preceded by ':', so that the slashes in the URL protocol are kept.
@@ -64,7 +66,7 @@ function getBaseUrl (websockets = false, baseOnly = false) {
  * @param {boolean} baseOnly - whether to use only the base URL or not when creating the new URL
  * @returns {string} - the new URL, preceded by the base URL (e.g. https://hub:8080/users/cylc/users)
  */
-function createUrl (path, websockets = false, baseOnly = false) {
+export function createUrl (path, websockets = false, baseOnly = false) {
   const baseUrl = getBaseUrl(websockets, baseOnly)
   const url = [baseUrl, path]
     .map(part => part.trim())
@@ -77,7 +79,7 @@ function createUrl (path, websockets = false, baseOnly = false) {
  *
  * - Adds X-XSRFToken header cookie-based auth.
  */
-function getCylcHeaders () {
+export function getXSRFHeaders () {
   const xsrfToken = document.cookie.match('\\b_xsrf=([^;]*)\\b')
   const cylcHeaders = {}
   if (Array.isArray(xsrfToken) && xsrfToken.length > 0) {
@@ -87,7 +89,17 @@ function getCylcHeaders () {
   return cylcHeaders
 }
 
-export {
-  createUrl,
-  getCylcHeaders,
+/**
+ * Fetches data from the given path.
+ *
+ * @param {string} path - The path to fetch data from.
+ * @returns {Promise<Object>} A promise that resolves to the fetched data.
+ * @throws {Error} If the request fails.
+ */
+export async function fetchData (path) {
+  const { data } = await axios.get(
+    createUrl(path),
+    { headers: getXSRFHeaders() }
+  )
+  return data
 }

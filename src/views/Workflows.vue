@@ -60,9 +60,6 @@ fragment WorkflowData on Workflow {
   id
   status
   statusMsg
-  owner
-  host
-  port
   stateTotals
   latestStateTasks(states: [
     "failed",

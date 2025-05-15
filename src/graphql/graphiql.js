@@ -19,7 +19,7 @@
 
 import { parse } from 'graphql'
 import { createGraphQLUrls } from '@/graphql/index'
-import { getCylcHeaders } from '@/utils/urls'
+import { getXSRFHeaders } from '@/utils/urls'
 
 // TODO: https://github.com/apollographql/GraphiQL-Subscriptions-Fetcher/issues/16
 //       the functions hasSubscriptionOperation and graphQLFetcher are both from
@@ -115,7 +115,7 @@ function fallbackGraphQLFetcher (graphQLParams) {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        ...getCylcHeaders()
+        ...getXSRFHeaders()
       },
       body: JSON.stringify(graphQLParams),
       credentials: 'include'

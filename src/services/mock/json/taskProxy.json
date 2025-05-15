@@ -37,6 +37,7 @@
           }
         ],
         "outputs": [],
+        "runMode": "Live",
         "__typename": "Runtime"
       }
     }

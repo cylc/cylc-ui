@@ -15,9 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { shallowRef } from 'vue'
 import { createSubscriptionClient, createGraphQLUrls } from '@/graphql'
 import SubscriptionWorkflowService from '@/services/workflow.service'
-import UserService from '@/services/user.service'
+import { fetchData } from '@/utils/urls'
 
 /**
  * A plugin that loads the application services.
@@ -28,7 +29,10 @@ export default {
    */
   install (app) {
     this._installWorkflowService(app)
-    this._installUserService(app)
+
+    const versionInfo = shallowRef(null)
+    app.provide('versionInfo', versionInfo)
+    fetchData('version').then((data) => { versionInfo.value = data })
   },
 
   /**
@@ -51,16 +55,4 @@ export default {
     // Options API (legacy):
     app.config.globalProperties.$workflowService = workflowService
   },
-
-  /**
-   * Creates a user service for the application.
-   *
-   * The service is available as `Vue.$userService`.
-   *
-   * @private
-   * @param {Object} app - Vue application
-   */
-  _installUserService (app) {
-    app.config.globalProperties.$userService = new UserService()
-  }
 }
