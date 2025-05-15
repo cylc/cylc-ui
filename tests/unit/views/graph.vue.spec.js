@@ -17,7 +17,7 @@ import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import sinon from 'sinon'
 import storeOptions from '@/store/options'
-import Graph, { childArray } from '@/views/Graph.vue'
+import Graph, { childArray, getCyclesToNodes } from '@/views/Graph.vue'
 import User from '@/model/User.model'
 import WorkflowService from '@/services/workflow.service'
 import { Tokens } from '@/utils/uid'
@@ -60,10 +60,8 @@ describe('Graph view', () => {
     ))
   }
 
-  it('gets cycles', async () => {
-    const wrapper = mountFunction()
-
-    expect(wrapper.vm.getCycles(nodes)).toMatchObject(
+  it('gets cycles-to-nodes mapping', () => {
+    expect(getCyclesToNodes(nodes)).toMatchObject(
       {
         1: [
           {
@@ -124,48 +122,51 @@ describe('Graph view', () => {
   it('it gets tree', async () => {
     const wrapper = mountFunction({
       computed: {
-        allParentLookUp: () => ({
-          BAD: [
-            'root'
-          ],
-          GOOD: [
-            'root'
-          ],
-          root: [],
-          SUCCEEDED: [
-            'GOOD',
-            'root'
-          ]
-        }),
+        allParentLookUp: () => new Map([
+          ['ANIMALS', []],
+          ['PLANTS', []],
+          ['MAMMALS', ['ANIMALS']],
+          ['BIRDS', ['ANIMALS']],
+          ['RODENTS', ['ANIMALS', 'MAMMALS']],
+        ]),
       }
     })
 
-    expect(wrapper.vm.getTree()).toMatchObject(
-      [
-        {
-          children: [
-            {
-              children: [],
-              disabled: false,
-              name: 'SUCCEEDED',
-            },
-          ],
-          disabled: false,
-          name: 'GOOD',
-        },
-        {
-          children: [],
-          disabled: false,
-          name: 'BAD',
-        },
-      ]
-    )
+    expect(wrapper.vm.getTree()).toMatchObject([
+      {
+        name: 'ANIMALS',
+        children: [
+          {
+            name: 'MAMMALS',
+            children: [
+              {
+                name: 'RODENTS',
+                children: [],
+                disabled: false,
+              },
+            ],
+            disabled: false,
+          },
+          {
+            name: 'BIRDS',
+            children: [],
+            disabled: false,
+          }
+        ],
+        disabled: false,
+      },
+      {
+        name: 'PLANTS',
+        children: [],
+        disabled: false,
+      },
+    ])
   })
 
   it('it removes edge node by source', () => {
     const wrapper = mountFunction()
     // in this test we remove the first edge with a source of 'user/one/run1//1/sleepy'
-    expect(wrapper.vm.removeEdges('sleepy', '2', edges)).toStrictEqual([
+    expect(wrapper.vm.removeEdges('user/one/run1//2/sleepy', edges)).toStrictEqual([
       // the returned removed edges array
       {
         tokens: new Tokens('user/one/run1//$edge|2/sleepy|1/failed'),
@@ -201,7 +202,7 @@ describe('Graph view', () => {
     // await wrapper.vm.$nextTick()
     // in this test we remove the first edge with a target of 'user/one/run1//1/failed'
 
-    expect(wrapper.vm.removeEdges('failed', '1', edges)).toStrictEqual([
+    expect(wrapper.vm.removeEdges('user/one/run1//1/failed', edges)).toStrictEqual([
       // the returned edges array with the edge removed
       {
         tokens: new Tokens('user/one/run1//$edge|1/succeeded|1/failed'),

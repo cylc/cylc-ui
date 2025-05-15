@@ -214,7 +214,7 @@ fragment FamilyProxyData on FamilyProxy {
   isQueued
   name
   ancestors {
-     name
+    name
   }
   childTasks {
     id
@@ -242,7 +242,6 @@ fragment FamilyData on Family {
   childFamilies {
     name
   }
-  descendants
 }
 
 fragment AddedDelta on Added {
@@ -336,6 +335,32 @@ export const childArray = (nodeArray) => {
         .concat(children ? childArray(children) : [])
     }
   })
+}
+
+/**
+ * Convert a mapping to a format that VTreeView can handle.
+ * @param {Map<string, { children: Map, diabled: Boolean }>} map - The mapping to convert
+ * @returns {Object[]} - The converted mapping
+ */
+export function convertTree (map) {
+  return Array.from(map, ([name, { children, disabled }]) => ({
+    name,
+    children: convertTree(children),
+    disabled,
+  }))
+}
+
+/**
+ * Get the nodes binned by cycle point
+ *
+ * @param {Node[]} nodes - The graph nodes
+ * @returns {{ [dateTime: string]: Object[] }=} mapping of cycle points to nodes
+ */
+export function getCyclesToNodes (nodes) {
+  return nodes.reduce((x, y) => {
+    (x[y.tokens.cycle] ||= []).push(y)
+    return x
+  }, {})
 }
 
 export default {
@@ -439,7 +464,6 @@ export default {
       // supports loading graph when component is mounted and autoRefresh is off.
       // true if page is loading for the first time and nodeDimensions are yet to be calculated
       initialLoad: true,
-      cycleArrayStore: [],
     }
   },
 
@@ -485,45 +509,45 @@ export default {
      * @returns {Family[]} array containing nested structure of families
      */
     treeDropDownFamily () {
-      return this.familyArrayStore.length ? this.getTree() : [{ name: 'No families', disabled: true }]
+      return this.allParentLookUp.size ? this.getTree() : [{ name: 'No families', disabled: true }]
     },
     /**
-     * Gets the array of cycles for use in vuetify toolbar drop down
-     * @returns {String[]} array containing nested structure of families
+     * Gets the array of cycles
+     * @returns {string[]}
      */
-    treeDropDownCycle () {
-      return this.cycleArrayStore.map((name) => ({ name }))
+    cycles () {
+      return this.workflows[0]?.children.map(({ tokens }) => tokens.cycle) || []
     },
     /**
      * Object for looking up family ancestors
      *
-     * example return object
+     * example return mapping:
      * {
-     *  FAMILY: ['PARENT_FAMILY', 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
-     *  PARENT_FAMILY: [ 'GRANDPARENT_FAMILY', 'GREAT_GRANDPARENT_FAMILY', 'root' ],
-     *  GRANDPARENT_FAMILY: [ 'GREAT_GRANDPARENT_FAMILY', 'root' ],
-     *  GREAT_GRANDPARENT_FAMILY : ['root'],
-     *  root: []
+     *  GREAT_GRANDPARENT_FAMILY: [ ],
+     *  GRANDPARENT_FAMILY: [ 'GREAT_GRANDPARENT_FAMILY' ],
+     *  PARENT_FAMILY: [ 'GREAT_GRANDPARENT_FAMILY', 'GRANDPARENT_FAMILY' ],
+     *  FAMILY: [ 'GREAT_GRANDPARENT_FAMILY', 'GRANDPARENT_FAMILY', 'PARENT_FAMILY' ],
      * }
      *
      * note: object value arrays contain family names as strings only - not nodes
      *
-     * @returns {Object} keys are family names, values are arrays containing all ancestors names
+     * @returns {Map<string, string[]>} keys are family names, values are arrays containing all ancestors names
      */
     allParentLookUp () {
-      const lookup = {}
+      const lookup = []
       for (const namespace of this.namespaces) {
-        const array = []
+        if (namespace.name === 'root') continue
+        const ancestors = []
         let parent = namespace.node.firstParent
-        while (parent) {
-          const childTokens = this.workflows[0].tokens.clone({ cycle: `$namespace|${parent.name}` })
-          const childNode = this.cylcTree.$index[childTokens.id]
-          array.push(childNode.name)
-          parent = childNode.node.firstParent
+        while (parent.name !== 'root') {
+          const parentNode = this.cylcTree.$index[parent.id]
+          ancestors.unshift(parentNode.name)
+          parent = parentNode.node.firstParent
         }
-        lookup[namespace.name] = array
+        lookup.push([namespace.name, ancestors])
       }
-      return lookup
+      // Sort by shortest ancestor list to longest:
+      return new Map(lookup.sort((a, b) => a[1].length - b[1].length))
     },
     /**
      * Object for looking up children
@@ -584,7 +608,7 @@ export default {
             lookup[task.id] = childArray([task])
           }
           // for families
-          for (const family of this.familyArrayStore) {
+          for (const family of this.allParentLookUp.keys()) {
             const familyId = `${cycle.id}/${family}`
             if (this.cylcTree.$index[familyId]) {
               lookup[familyId] = childArray([this.cylcTree.$index[familyId]])
@@ -593,13 +617,6 @@ export default {
         }
       }
       return lookup
-    },
-    /**
-     * Get an array of family names
-     * @returns {String[]} array of family names
-     */
-    familyArrayStore () {
-      return this.namespaces.flatMap((family) => family.name !== 'root' ? family.name : [])
     },
     controlGroups () {
       return [
@@ -666,7 +683,7 @@ export default {
               action: 'select-tree',
               value: this.collapseCycle,
               key: 'collapseCycle',
-              items: this.treeDropDownCycle,
+              items: this.cycles.map((name) => ({ name })),
             },
             {
               title: 'Collapse by family',
@@ -689,87 +706,42 @@ export default {
      * @returns {Family[]} array containing nested structure of families
      */
     getTree () {
-      const root = {
-        name: 'root',
-        children: []
-      }
-      if (this.workflows) {
-        const tokens = this.workflows[0].tokens.clone({ cycle: '$namespace|root' })
-        const node = this.cylcTree.$index[tokens.id]
-        if (node) {
-          return this.getTreeHelper(root, node).children
+      const tree = new Map()
+      for (const [name, ancestors] of this.allParentLookUp) {
+        let pointer = tree
+        let disabled = false
+        for (const ancestor of ancestors) {
+          pointer = pointer.get(ancestor).children
+          disabled ||= this.collapseFamily.includes(ancestor)
         }
+        pointer.set(name, {
+          children: new Map(),
+          disabled,
+        })
       }
-    },
-
-    /**
-     * Get a nested object of families
-     * @property {Family} store - nested object of families
-     * @property {Node} node - node object
-     * @property {number} counter - counter used for index
-     * @returns {Family} nested structure of families
-     */
-    getTreeHelper (store, node) {
-      let tempItem
-      const isParent = this.collapseFamily.includes(node.name)
-      const isAncestor = this.allParentLookUp[node.name].some(element => {
-        return this.collapseFamily.includes(element)
-      })
-      const disabled = isParent || isAncestor
-      for (const childFamily of node.node.descendants) {
-        const childNamespace = this.namespaces.find((obj) => obj.name === childFamily)
-        if (childNamespace?.node.firstParent.id === node.id) {
-          tempItem = {
-            name: childFamily,
-            children: [],
-            disabled
-          }
-          this.getTreeHelper(tempItem, childNamespace)
-          store.children.push(tempItem)
-        }
-      }
-      return store
-    },
-
-    /**
-     * Removes a node from an array of nodes
-     * @property {String} nodeName - name of node to be removed
-     * @property {String} cyclePoint - isodatTime of node to be removed
-     * @property {Node[]} nodes - array of nodes included in the graph
-     * @returns {Node[]} updated array of nodes included in the graph (with node removed)
-     */
-    removeNode (nodeName, cyclePoint, nodes) {
-      const nodeId = this.workflows[0].tokens.clone({ cycle: cyclePoint, task: nodeName }).id
-      const nodesFiltered = nodes.filter((node) => {
-        return node.id !== nodeId
-      })
-      return nodesFiltered
+      return convertTree(tree)
     },
 
     /**
      * Creates an edge from the name and cycle of source and target nodes
-     * @param {('noCollapsed'|'collapsedTarget'|'collapsedSource'|'collapsedSourceAndTarget')} edgeType
-     * @param {string} sourceName - name of source node
-     * @param {string} targetName - name of target node
-     * @param {string} sourceCyclePoint - isodatTime of source node
-     * @param {string} targetCyclePoint - isodatTime of target node
+     * @param {Object} param0 - the source and target node names and cycles
      * @returns {[string, Edge]} the created edge
      */
-    createEdge (edgeType, sourceName, targetName, sourceCyclePoint, targetCyclePoint) {
-      // adds a new edge object to 'edges' array
+    createEdge ({ sourceName, targetName, sourceCycle, targetCycle }) {
       let src, tgt
-      if (edgeType === 'noCollapsed') {
-        src = `${sourceCyclePoint}/${sourceName}`
-        tgt = `${targetCyclePoint}/${targetName}`
-      } else if (edgeType === 'collapsedTarget') {
-        src = `${sourceCyclePoint}/${sourceName}|${targetName}`
-        tgt = `${sourceCyclePoint}/${sourceName}|${targetName}`
-      } else if (edgeType === 'collapsedSource') {
-        src = `${sourceCyclePoint}|${targetCyclePoint}/${targetName}`
-        tgt = `${sourceCyclePoint}|${targetCyclePoint}/${targetName}`
-      } else if (edgeType === 'collapsedSourceAndTarget') {
-        src = `${sourceName}|${targetName}`
-        tgt = `${sourceName}|${targetName}`
+      if (sourceName === sourceCycle && targetName === targetCycle) {
+        // both source & target collapsed by cycle point
+        src = tgt = `${sourceCycle}|${targetCycle}`
+      } else if (sourceName === sourceCycle) {
+        // source collapsed by cycle point
+        src = tgt = `${sourceCycle}|${targetCycle}/${targetName}`
+      } else if (targetName === targetCycle) {
+        // target collapsed by cycle point
+        src = tgt = `${sourceCycle}/${sourceName}|${targetCycle}`
+      } else {
+        // not collapsed by cycle point
+        src = `${sourceCycle}/${sourceName}`
+        tgt = `${targetCycle}/${targetName}`
       }
       const tokens = this.workflows[0].tokens.clone({
         cycle: `$edge|${src}|${tgt}`
@@ -779,16 +751,14 @@ export default {
 
     /**
      * Removes source and target edges from the map of edges.
-     * @param {string} task - task name of source node of edge to be removed
-     * @param {string} cycle - cycle point of source node of edge to be removed
-     * @param {Map<string, Edge>} edges - array of edges included in the graph
+     * @param {string} id - ID of source node of edge to be removed
+     * @param {Map<string, Edge>} edges - edges included in the graph
      * @returns {Edge[]} removed edge store arrays
      */
-    removeEdges (task, cycle, edges) {
-      const nodeID = this.workflows[0].tokens.clone({ cycle, task }).id
+    removeEdges (id, edges) {
       const removed = []
       for (const [edgeID, edge] of edges) {
-        if ([edge.source.id, edge.target.id].includes(nodeID)) {
+        if ([edge.source.id, edge.target.id].includes(id)) {
           edges.delete(edgeID) && removed.push(edge)
         }
       }
@@ -796,33 +766,18 @@ export default {
     },
 
     /**
-     * Check if node is collapsed by family or ancestor
-     * If not collapsed return null
-     * If the node is collapsed by first parent return the parent name
-     * If the node is collapsed by an ancestor further up the tree return the name of the ancestor
-     * @property {String} nodeFirstParent - name of the first parent
-     * @returns {String | null} name of the collapsed parent/ancestor or null
+     * Check if node is collapsed by an ancestor family
+     *
+     * @param {string} id - ID of the task/family/namespace
+     * @returns {string=} name of the collapsed ancestor if any
      */
-    isNodeCollapsedByFamily (nodeFirstParent) {
-      // the nodes first parent is collapsed
-      const firstParent = this.collapseFamily.includes(nodeFirstParent)
-      // a family member up the tree is collapsed
-      const ancestor = this.allParentLookUp[nodeFirstParent].some(element => {
-        return this.collapseFamily.includes(element)
-      })
-      if (firstParent && !ancestor) {
-        // the node is collapsed by its first parent
-        return nodeFirstParent
-      } else if (ancestor) {
-        // the node is collapsed by an ancestor
-        for (let i = this.allParentLookUp[nodeFirstParent].length - 1; i >= 0; i--) {
-          if (this.collapseFamily.includes(this.allParentLookUp[nodeFirstParent][i])) {
-            return this.allParentLookUp[nodeFirstParent][i]
-          }
-        }
-      } else {
-        // the node is not collapsed
-        return null
+    getCollapsedAncestor (id) {
+      const { name } = this.cylcTree.$index[id].node.firstParent
+      if (name !== 'root') {
+        // TODO: could use Set.intersection if browser support is good enough?
+        return this.collapseFamily.find((family) => (
+          name === family || this.allParentLookUp.get(name).includes(family)
+        ))
       }
     },
 
@@ -945,19 +900,6 @@ export default {
     },
 
     /**
-     * Get the nodes binned by cycle point
-     *
-     * @param {Node[]} nodes - The graph nodes
-     * @returns {{ [dateTime: string]: Object[] }=} mapping of cycle points to nodes
-     */
-    getCycles (nodes) {
-      return nodes.reduce((x, y) => {
-        (x[y.tokens.cycle] ||= []).push(y)
-        return x
-      }, {})
-    },
-
-    /**
      * Recursive function that adds a subgraph to the dot code
      *
      * Terminology:
@@ -1008,19 +950,14 @@ export default {
         ) {
           // Take our array of grandchildren and remove nodes that we dont want to include
           // nodeFormattedArray will be an array of string node ids to be included in the grouping
-          const nodeFormattedArray = grandChildren.filter((grandChild) => {
-            let isAncestor = true
-            const nodeFirstParent = this.cylcTree.$index[grandChild.id].node.firstParent.name
-            isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
-            return (
-              // if its not in the list of families (unless its been collapsed)
-              (!this.familyArrayStore.includes(grandChild.name) || this.collapseFamily.includes(grandChild.name)) &&
-              // the node has been removed/collapsed
-              !removedNodes.has(grandChild.name) &&
-              // the node doesnt have a collapsed ancestor
-              isAncestor
-            )
-          }).map(a => `"${a.id}"`)
+          const nodeFormattedArray = grandChildren.filter((grandChild) => (
+            // if its not in the list of families (unless its been collapsed)
+            (!this.allParentLookUp.has(grandChild.name) || this.collapseFamily.includes(grandChild.name)) &&
+            // the node has been removed/collapsed
+            !removedNodes.has(grandChild.name) &&
+            // the node doesnt have a collapsed ancestor
+            !this.getCollapsedAncestor(grandChild.id)
+          )).map(a => `"${a.id}"`)
           // if there are any nodes left after the filtering step
           // make a dotcode subgraph string
           if (nodeFormattedArray.length) {
@@ -1051,7 +988,7 @@ export default {
       }
     },
 
-    getDotCode (nodeDimensions, nodes, edges, cycles) {
+    getDotCode (nodeDimensions, nodes, edges, cyclesToNodes) {
       // return GraphViz dot code for the given nodes, edges and dimensions
       const ret = ['digraph {']
       let spacing = this.spacing
@@ -1096,8 +1033,7 @@ export default {
       }
 
       const graphSections = {}
-      for (const cycle of Object.keys(cycles)) {
-        const indexSearch = cycles[cycle]
+      for (const [cycle, indexSearch] of Object.entries(cyclesToNodes)) {
         if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
           for (const task of indexSearch) {
             const section = graphSections[task.node.firstParent.id] ??= []
@@ -1113,26 +1049,18 @@ export default {
                 }
               }
             }
-            const nodeFormattedArray = indexSearch.filter((a) => {
-              const isRoot = a.name !== 'root'
-              let isAncestor = true
-              if (isRoot) {
-                const nodeFirstParent = this.cylcTree.$index[a.id].node.firstParent.name
-                isAncestor = !this.isNodeCollapsedByFamily(nodeFirstParent)
-              }
-              return (
-                // if its not in the list of families (unless its been collapsed)
-                (!this.familyArrayStore.includes(a.name) || this.collapseFamily.includes(a.name)) &&
-                // the node has been removed/collapsed
-                (!removedNodes.has(a.name) || this.collapseFamily.includes(a.name)) &&
-                // its not a node representing this cycle
-                a.name !== cycle &&
-                // its not a root node
-                isRoot &&
-                // the node doesnt have a collapsed ancestor
-                isAncestor
-              )
-            }).map(a => `"${a.id}"`)
+            const nodeFormattedArray = indexSearch.filter((a) => (
+              // if its not in the list of families (unless its been collapsed)
+              (!this.allParentLookUp.has(a.name) || this.collapseFamily.includes(a.name)) &&
+              // the node has been removed/collapsed
+              (!removedNodes.has(a.name) || this.collapseFamily.includes(a.name)) &&
+              // its not a node representing this cycle
+              a.name !== cycle &&
+              // its not the root node
+              a.name !== 'root' &&
+              // the node doesnt have a collapsed ancestor
+              !this.getCollapsedAncestor(a.id)
+            )).map(a => `"${a.id}"`)
             ret.push(`
               subgraph cluster_margin_family_${cycle}
                 {
@@ -1215,30 +1143,6 @@ export default {
       this.panZoomWidget.zoom(relativeZoom * width / desiredWidth)
     },
 
-    edgeHasCollapsedTargetFamilyOnly (targetFirstFamily, sourceFirstFamily) {
-      const target = this.isNodeCollapsedByFamily(targetFirstFamily)
-      if (target && !this.isNodeCollapsedByFamily(sourceFirstFamily)) {
-        return { target }
-      }
-    },
-
-    edgeHasCollapsedSourceFamilyOnly (targetFirstFamily, sourceFirstFamily) {
-      const source = this.isNodeCollapsedByFamily(sourceFirstFamily)
-      if (source && !this.isNodeCollapsedByFamily(targetFirstFamily)) {
-        return { source }
-      }
-    },
-
-    edgeHasCollapsedTargetandSourceFamily (targetFirstFamily, sourceFirstFamily) {
-      const target = this.isNodeCollapsedByFamily(targetFirstFamily)
-      if (target) {
-        const source = this.isNodeCollapsedByFamily(sourceFirstFamily)
-        if (source) {
-          return { target, source }
-        }
-      }
-    },
-
     async refresh () {
       // refresh the graph layout if required
       if (this.updating) {
@@ -1255,162 +1159,93 @@ export default {
       const edges = this.getGraphEdges()
 
       // ----------------------------------------
-      const removedEdges = []
-
-      // For all cycles...
-      for (const cycle of this.cycleArrayStore) {
-        // ...loop through collapsed families...
-        for (const family of this.collapseFamily) {
+      for (const family of this.collapseFamily) {
+        for (const cycle of this.cycles) {
           // ...get the node from the index...
-          const indexSearch = Object.values(this.cylcTree.$index).find(
-            (node) => node.name === family && node.tokens.cycle === cycle
-          )
-          if (!indexSearch) continue
+          const famNode = this.cylcTree.$index[
+            this.workflows[0].tokens.clone({ cycle, task: family }).id
+          ]
+          if (!famNode) continue
           // ...now we have a node - we have to understand all its relations in the graph...
           // ---------------REMOVE NODES BASED ON FAMILY------------
           // must do this before removing nodes and edges based on cycle as
           // cycle collapsing takes priority of families
           // ...this node is collapsed so need to remove any of its children
           // (nodes and edges) from the graph if it has any...
-          for (const { name } of this.allChildrenLookUp[indexSearch.id]) {
-            if (name !== indexSearch.name) {
+          for (const { id } of this.allChildrenLookUp[famNode.id]) {
+            if (id !== famNode.id) {
               // REMOVE NODES
-              nodes = this.removeNode(name, cycle, nodes)
+              nodes = nodes.filter((node) => node.id !== id)
               // REMOVE EDGES
               // if there is an edge with a source or target it needs removing
-              removedEdges.push(
-                ...this.removeEdges(name, cycle, edges),
-              )
+              for (const edge of this.removeEdges(id, edges)) {
+                // ---------------ADD EDGES BASED ON FAMILY------------
+                // skip if one end of edge is in a collapsed cycle - deal with this later:
+                if (this.collapseCycle.some(
+                  (x) => x === edge.source.cycle || x === edge.target.cycle
+                )) continue
+
+                // ...this node is collapsed so need to remove any of its children (nodes and edges) from the graph if it has any...
+                const sourceName = this.getCollapsedAncestor(edge.source.id) ?? edge.source.task
+                const targetName = this.getCollapsedAncestor(edge.target.id) ?? edge.target.task
+                // prevent self-loop edges:
+                if (sourceName === targetName && edge.source.cycle === edge.target.cycle) continue
+
+                edges.set(
+                  ...this.createEdge({
+                    sourceName,
+                    sourceCycle: edge.source.cycle,
+                    targetName,
+                    targetCycle: edge.target.cycle,
+                  })
+                )
+              }
             }
           }
           // ...now we have removed any parts of child nodes that shouldnt be there we can add nodes and edges that should be...
           // ---------------ADD NODES BASED ON FAMILY------------
-          if (!this.collapseCycle.includes(cycle)) { // cycle collapsing takes priority over family collapsing
-            if (!this.isNodeCollapsedByFamily(indexSearch.node.firstParent.name)) {
-              nodes.push(indexSearch)
-            }
-          }
-
-          // ...this node is collapsed so need to remove any of its children (nodes and edges) from the graph if it has any...
-          for (const { id: childID } of this.allChildrenLookUp[indexSearch.id]) {
-            for (const edge of removedEdges.filter(({ source }) => source.id === childID)) {
-              const sourceFamilyName = this.cylcTree.$index[edge.source.id].node.firstParent.name
-              const targetFamilyName = this.cylcTree.$index[edge.target.id].node.firstParent.name
-
-              if (!this.collapseCycle.includes(edge.source.cycle)) {
-                const familyData = this.edgeHasCollapsedSourceFamilyOnly(targetFamilyName, sourceFamilyName)
-                if (familyData) {
-                  edges.set(
-                    ...this.createEdge('noCollapsed', familyData.source, edge.target.task, edge.source.cycle, edge.target.cycle)
-                  )
-                }
-
-                if (!this.collapseCycle.includes(edge.target.cycle)) {
-                  const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                  if (familyData && (familyData.source !== familyData.target || edge.source.cycle !== edge.target.cycle)) {
-                    edges.set(
-                      ...this.createEdge('noCollapsed', familyData.source, familyData.target, edge.source.cycle, edge.target.cycle)
-                    )
-                  }
-                }
-              }
-            }
-            for (const edge of removedEdges.filter(({ target }) => target.id === childID)) {
-              const sourceFamilyName = this.cylcTree.$index[edge.source.id].node.firstParent.name
-              const targetFamilyName = this.cylcTree.$index[edge.target.id].node.firstParent.name
-
-              if (!this.collapseCycle.includes(edge.target.cycle)) {
-                const familyData = this.edgeHasCollapsedTargetFamilyOnly(targetFamilyName, sourceFamilyName)
-                if (familyData) {
-                  edges.set(
-                    ...this.createEdge('noCollapsed', edge.source.task, familyData.target, edge.source.cycle, edge.target.cycle)
-                  )
-                }
-
-                if (!this.collapseCycle.includes(edge.source.cycle)) {
-                  const familyData = this.edgeHasCollapsedTargetandSourceFamily(targetFamilyName, sourceFamilyName)
-                  if (familyData && (familyData.source !== familyData.target || edge.source.cycle !== edge.target.cycle)) {
-                    edges.set(
-                      ...this.createEdge('noCollapsed', familyData.source, familyData.target, edge.source.cycle, edge.target.cycle)
-                    )
-                  }
-                }
-              }
-            }
+          if (!this.collapseCycle.includes(cycle) && !this.getCollapsedAncestor(famNode.id)) {
+            nodes.push(famNode)
           }
         }
       }
       for (const cycle of this.collapseCycle) {
-        const indexSearch = Object.values(this.cylcTree.$index).find((node) => {
-          return node.name === cycle
-        })
-        if (indexSearch) {
-          // ---------------REMOVE NODES BASED ON CYCLE POINT------------
-          for (const { name } of this.allChildrenLookUp[indexSearch.id]) {
-            if (name !== indexSearch.name) {
-              // REMOVE NODES
-              nodes = this.removeNode(name, cycle, nodes)
-              // REMOVE EDGES
-              // if there is an edge with a source or target it needs removing
-              removedEdges.push(
-                ...this.removeEdges(name, cycle, edges)
+        const cycleNode = this.cylcTree.$index[
+          this.workflows[0].tokens.clone({ cycle }).id
+        ]
+        if (!cycleNode) continue
+        // ---------------REMOVE NODES BASED ON CYCLE POINT------------
+        for (const { id } of this.allChildrenLookUp[cycleNode.id]) {
+          if (id !== cycleNode.id) {
+            // REMOVE NODES
+            nodes = nodes.filter((node) => node.id !== id)
+            // REMOVE EDGES
+            // if there is an edge with a source or target it needs removing
+            for (const edge of this.removeEdges(id, edges)) {
+              // ---------------ADD EDGES BASED ON CYCLE POINT------------
+              // prevent self-loop edges:
+              if (edge.source.cycle === edge.target.cycle) continue
+
+              const sourceName = this.collapseCycle.includes(edge.source.cycle)
+                ? edge.source.cycle
+                : this.getCollapsedAncestor(edge.source.id) ?? edge.source.task
+              const targetName = this.collapseCycle.includes(edge.target.cycle)
+                ? edge.target.cycle
+                : this.getCollapsedAncestor(edge.target.id) ?? edge.target.task
+
+              edges.set(
+                ...this.createEdge({
+                  sourceName,
+                  sourceCycle: edge.source.cycle,
+                  targetName,
+                  targetCycle: edge.target.cycle,
+                })
               )
             }
           }
-          // ---------------ADD NODES BASED ON CYCLE POINT------------
-          nodes.push(indexSearch)
-          // next bit starts here
-          // ---------------ADD EDGES BASED ON CYCLE POINT------------
-          for (const { id: childID } of this.allChildrenLookUp[indexSearch.id]) {
-            for (const edge of removedEdges.filter(({ source }) => source.id === childID)) {
-              const targetFamilyName = this.cylcTree.$index[edge.target.id].node.firstParent.name
-              if (edge.source.cycle === edge.target.cycle) continue
-              // edge has collapsed source cycle only
-              if (!this.collapseCycle.includes(edge.target.cycle) && this.collapseCycle.includes(edge.source.cycle)) {
-                if (this.isNodeCollapsedByFamily(targetFamilyName)) {
-                  edges.set(
-                    ...this.createEdge('collapsedSource', edge.source.cycle, this.isNodeCollapsedByFamily(targetFamilyName), edge.source.cycle, edge.target.cycle)
-                  )
-                } else {
-                  edges.set(
-                    ...this.createEdge('collapsedSource', edge.source.cycle, edge.target.task, edge.source.cycle, edge.target.cycle)
-                  )
-                }
-              }
-
-              // edge has collapsed target and source cycle
-              if (this.collapseCycle.includes(edge.target.cycle) && this.collapseCycle.includes(edge.source.cycle)) {
-                edges.set(
-                  ...this.createEdge('collapsedSourceAndTarget', edge.source.cycle, edge.target.cycle, edge.source.cycle, edge.target.cycle)
-                )
-              }
-            }
-            for (const edge of removedEdges.filter(({ target }) => target.id === childID)) {
-              const sourceFamilyName = this.cylcTree.$index[edge.source.id].node.firstParent.name
-
-              if (edge.source.cycle === edge.target.cycle) continue
-              // edge has collapsed target cycle only
-              if (this.collapseCycle.includes(edge.target.cycle) && !this.collapseCycle.includes(edge.source.cycle)) {
-                if (this.isNodeCollapsedByFamily(sourceFamilyName)) {
-                  edges.set(
-                    ...this.createEdge('collapsedTarget', this.isNodeCollapsedByFamily(sourceFamilyName), edge.target.cycle, edge.source.cycle, edge.target.cycle)
-                  )
-                } else {
-                  edges.set(
-                    ...this.createEdge('collapsedTarget', edge.source.task, edge.target.cycle, edge.source.cycle, edge.target.cycle)
-                  )
-                }
-              }
-
-              // edge has collapsed target and source cycle
-              if (this.collapseCycle.includes(edge.target.cycle) && this.collapseCycle.includes(edge.source.cycle)) {
-                edges.set(
-                  ...this.createEdge('collapsedSourceAndTarget', edge.source.cycle, edge.target.cycle, edge.source.cycle, edge.target.cycle)
-                )
-              }
-            }
-          }
         }
+        // ---------------ADD NODES BASED ON CYCLE POINT------------
+        nodes.push(cycleNode)
       }
 
       // ----------------------------------------
@@ -1422,8 +1257,7 @@ export default {
         return
       }
 
-      const cycles = this.getCycles(nodes)
-      this.cycleArrayStore = this.workflows[0].children.map(child => child.tokens.cycle)
+      const cyclesToNodes = getCyclesToNodes(nodes)
       // compute the graph ID
       const graphID = this.hashGraph(nodes, edges)
       if (this.graphID === graphID) {
@@ -1468,7 +1302,7 @@ export default {
 
       // layout the graph
       try {
-        await this.layout(nodes, edges, nodeDimensions, cycles)
+        await this.layout(nodes, edges, nodeDimensions, cyclesToNodes)
       } catch (e) {
         // something went wrong, allow the layout to retry later
         this.graphID = null
@@ -1512,9 +1346,9 @@ export default {
      * @param {Map<string, Edge>} edges
      * @param {{ [id: string]: SVGRect }} nodeDimensions
      */
-    async layout (nodes, edges, nodeDimensions, cycles) {
+    async layout (nodes, edges, nodeDimensions, cyclesToNodes) {
       // generate the GraphViz dot code
-      const dotCode = this.getDotCode(nodeDimensions, nodes, edges, cycles)
+      const dotCode = this.getDotCode(nodeDimensions, nodes, edges, cyclesToNodes)
 
       // run the layout algorithm
       const jsonString = (await this.graphviz).layout(dotCode, 'json')
