@@ -55,6 +55,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 {{ item.node.status }}
               </td>
               <td>
+                {{ item.node.cylcVersion }}
+              </td>
+              <td>
                 {{ item.node.owner }}
               </td>
               <td>
@@ -75,8 +78,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState, mapGetters } from 'vuex'
 import { i18n } from '@/i18n'
 import { mdiTable } from '@mdi/js'
-import subscriptionMixin from '@/mixins/subscription'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
+import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import gql from 'graphql-tag'
 
@@ -103,6 +106,7 @@ subscription Workflow {
 fragment WorkflowData on Workflow {
   id
   status
+  cylcVersion
   owner
   host
   port
@@ -113,7 +117,7 @@ export default {
   name: 'WorkflowsTable',
 
   mixins: [
-    subscriptionMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -163,6 +167,11 @@ export default {
       sortable: true,
       title: 'Status',
       key: 'node.status'
+    },
+    {
+      sortable: true,
+      title: 'Cylc Version',
+      key: 'node.cylcVersion'
     },
     {
       sortable: true,
