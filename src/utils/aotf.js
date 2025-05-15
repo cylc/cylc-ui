@@ -52,6 +52,7 @@ import { Alert } from '@/model/Alert.model'
 import { store } from '@/store/index'
 import { Tokens } from '@/utils/uid'
 import { WorkflowState, WorkflowStateNames } from '@/model/WorkflowState.model'
+import { isBoolean } from 'lodash-es'
 
 /** @typedef {import('@apollo/client').ApolloClient} ApolloClient */
 /** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType  */
@@ -911,10 +912,16 @@ async function _mutateError (mutationName, err, response) {
     console.error('mutation response', response)
   }
 
+  let detail = ''
+  for (const e of err.cause?.result?.errors ?? []) {
+    console.error(e)
+    detail += `${e.message}\n`
+  }
+
   // open a user alert
   await store.dispatch(
     'setAlert',
-    new Alert(err, 'error', `Command failed: ${mutationName} - ${err}`)
+    new Alert(err, 'error', `Command failed: ${mutationName} - ${err}`, detail)
   )
 
   // format a response
@@ -936,14 +943,10 @@ async function _mutateError (mutationName, err, response) {
  */
 export async function mutate (mutation, variables, apolloClient, cylcID) {
   const mutationStr = constructMutation(mutation)
-  let response = null
   // eslint-disable-next-line no-console
-  console.debug([
-    `mutation(${mutation.name})`,
-    mutationStr,
-    variables
-  ])
+  console.debug(mutationStr, variables)
 
+  let response
   try {
     // call the mutation
     response = await apolloClient.mutate({
@@ -961,21 +964,34 @@ export async function mutate (mutation, variables, apolloClient, cylcID) {
   }
 
   try {
-    const { result } = response.data[mutation.name]
-    if (Array.isArray(result) && result.length === 2) {
-      // regular [commandSucceeded, message] format
-      if (result[0] === true) {
-        // success
-        return _mutateSuccess(result[1])
-      }
-      // failure (Cylc error, e.g. could not find workflow <x>)
-      return _mutateError(mutation.name, result[1], response)
-    }
-    // command in a different format (e.g. info command)
-    return _mutateSuccess(result)
+    return handleMutationResponse(mutation, response)
   } catch (error) {
     return _mutateError(mutation.name, 'invalid response', response)
   }
+}
+
+export function handleMutationResponse (mutation, response) {
+  const { result } = response.data[mutation.name]
+  if (Array.isArray(result)) {
+    if (result.length === 2 && isBoolean(result[0])) {
+      // Expected response format
+      const [success, msg] = result
+      if (success) return _mutateSuccess(msg)
+      // failure (Cylc error, e.g. could not find workflow <x>)
+      return _mutateError(mutation.name, msg, response)
+    }
+    // Handle possible nested response formats (https://github.com/cylc/cylc-ui/issues/1851):
+    const results = result.map(
+      (r) => r[mutation.name]?.result?.[0]?.response ?? r.response
+    )
+    for (const [success, msg] of results) {
+      if (!success) return _mutateError(mutation.name, msg, response)
+    }
+    return _mutateSuccess('Command(s) submitted')
+  }
+  console.warn('Unexpected format for mutation response:', result)
+  // But assume success
+  return _mutateSuccess(result)
 }
 
 /**
