@@ -114,7 +114,7 @@ fragment WorkflowData on Workflow {
 `
 
 export default {
-  name: 'WorkflowTable',
+  name: 'WorkflowsTable',
 
   mixins: [
     subscriptionComponentMixin,
