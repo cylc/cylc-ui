@@ -39,7 +39,6 @@ import {
   onMounted,
   ref,
 } from 'vue'
-import { useLocalStorage } from '@vueuse/core'
 import { startCase, uniqueId } from 'lodash'
 import WidgetComponent from '@/components/cylc/workspace/Widget.vue'
 import LuminoWidget from '@/components/cylc/workspace/lumino-widget'
@@ -102,28 +101,29 @@ const views = ref(new Map())
 
 const defaultView = useDefaultView()
 
-const layoutStorage = useLocalStorage(
-  'workspaceLayout',
-  new Map(),
-  {
-    serializer: {
-      read: (str) => JSON.parse(str, (key, value) => {
-        if (value?.__type === 'Map') {
-          return new Map(value.arr)
-        }
-        if (key === 'widgets') {
-          return value.map((w) => new LuminoWidget(w.id, w.name, w.closable))
-        }
-        return value
-      }),
-      write: (obj) => JSON.stringify(obj, (key, value) => (
-        value instanceof Map
-          ? { __type: 'Map', arr: Array.from(value) }
-          : value
-      )),
-    },
+const layouts = getStoredLayouts()
+
+function getStoredLayouts () {
+  return localStorage.workspaceLayout
+    ? JSON.parse(localStorage.workspaceLayout, reviver)
+    : new Map()
+}
+
+function replacer (key, value) {
+  return value instanceof Map
+    ? { __type: 'Map', arr: Array.from(value) }
+    : value
+}
+
+function reviver (key, value) {
+  if (value?.__type === 'Map') {
+    return new Map(value.arr)
   }
-)
+  if (key === 'widgets') {
+    return value.map((w) => new LuminoWidget(w.id, w.name, w.closable))
+  }
+  return value
+}
 
 // create a box panel, which holds the dock panel, and controls its layout
 const boxPanel = new BoxPanel({ direction: 'left-to-right', spacing: 0 })
@@ -199,15 +199,16 @@ const getLayout = (workflowName) => {
  */
 const saveLayout = () => {
   // Delete and re-add to keep this FIFO
-  layoutStorage.value.delete(props.workflowName)
-  layoutStorage.value.set(props.workflowName, {
+  layouts.delete(props.workflowName)
+  layouts.set(props.workflowName, {
     layout: JSON.parse(JSON.stringify(dockPanel.saveLayout())),
     views: new Map(views.value)
   })
-  if (layoutStorage.value.size > 100) {
-    const firstKey = layoutStorage.value.keys().next().value
-    layoutStorage.value.delete(firstKey)
+  if (layouts.size > 100) {
+    const firstKey = layouts.keys().next().value
+    layouts.delete(firstKey)
   }
+  localStorage.workspaceLayout = JSON.stringify(layouts, replacer)
 }
 
 /**
@@ -217,7 +218,7 @@ const saveLayout = () => {
  * @returns {boolean} true if the layout was restored, false otherwise
  */
 const restoreLayout = (workflowName) => {
-  const stored = layoutStorage.value.get(workflowName)
+  const stored = getStoredLayouts().get(workflowName)
   if (stored) {
     dockPanel.restoreLayout(stored.layout)
     // Wait for next tick so that Lumino has created the widget divs that the
