@@ -33,4 +33,10 @@ module.exports = {
   },
   noInlineConfig: true,
   reportUnusedDisableDirectives: false, // doesn't seem to work
+  settings: {
+    polyfills: [
+      // Used by GraphiQL, shouldn't be a problem:
+      'navigator.userAgentData',
+    ],
+  },
 }
