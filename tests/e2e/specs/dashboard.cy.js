@@ -60,6 +60,16 @@ describe('Dashboard', () => {
       .should('have.class', 'v-list-item--disabled')
   })
 
+  it('Lists workflow events', () => {
+    // NOTE: Log events may be duplicated in offline-mode due to the way the
+    // mock data is loaded. This does not apply to production.
+    cy.get('[data-cy=events-table]')
+      .find('tr:first')
+      .should('contain', 'CRITICAL')
+      .should('contain', 'other/multi/run2')
+      .should('contain', 'Workflow underwent a sudden and gratuitous total existence failure')
+  })
+
   for (const ref of ['workflow-table-link', 'user-settings-link', 'quickstart-link']) {
     it(`Visits ${ref}`, () => {
       cy.get(`[data-cy=${ref}`)

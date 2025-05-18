@@ -46,6 +46,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- control bar elements displayed only when there is a current workflow in the store -->
     <template v-if="currentWorkflow">
       <div class="c-workflow-controls flex-shrink-0">
+        <WarningIcon
+          :workflow="currentWorkflow"
+          style="font-size: 120%; padding-right: 0.3em;"
+        />
+
         <v-btn
           id="workflow-mutate-button"
           v-command-menu="currentWorkflow"
@@ -221,6 +226,7 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import { eventBus } from '@/services/eventBus'
+import WarningIcon from '@/components/cylc/WarningIcon.vue'
 
 const QUERY = gql(`
 subscription Workflow ($workflowId: ID) {
@@ -273,6 +279,10 @@ export default {
       toggleDrawer,
       toolbarHeight
     }
+  },
+
+  components: {
+    WarningIcon,
   },
 
   mixins: [
