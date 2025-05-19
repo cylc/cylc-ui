@@ -39,7 +39,6 @@ import {
   onMounted,
   ref,
 } from 'vue'
-import { useStore } from 'vuex'
 import { startCase, uniqueId } from 'lodash'
 import WidgetComponent from '@/components/cylc/workspace/Widget.vue'
 import LuminoWidget from '@/components/cylc/workspace/lumino-widget'
@@ -66,8 +65,6 @@ import '@lumino/default-theme/style'
  * @property {string} name - the view to add
  * @property {Record<string,*>} initialOptions - prop passed to the view component
  */
-
-const $store = useStore()
 
 const props = defineProps({
   workflowName: {
@@ -103,6 +100,30 @@ const mainDiv = ref(null)
 const views = ref(new Map())
 
 const defaultView = useDefaultView()
+
+const layouts = getStoredLayouts()
+
+function getStoredLayouts () {
+  return localStorage.workspaceLayout
+    ? JSON.parse(localStorage.workspaceLayout, reviver)
+    : new Map()
+}
+
+function replacer (key, value) {
+  return value instanceof Map
+    ? { __type: 'Map', arr: Array.from(value) }
+    : value
+}
+
+function reviver (key, value) {
+  if (value?.__type === 'Map') {
+    return new Map(value.arr)
+  }
+  if (key === 'widgets') {
+    return value.map((w) => new LuminoWidget(w.id, w.name, w.closable))
+  }
+  return value
+}
 
 // create a box panel, which holds the dock panel, and controls its layout
 const boxPanel = new BoxPanel({ direction: 'left-to-right', spacing: 0 })
@@ -174,24 +195,30 @@ const getLayout = (workflowName) => {
 }
 
 /**
- * Save the current layout/views to the store.
+ * Save the current layout/views to local storage.
  */
 const saveLayout = () => {
-  $store.commit('app/saveLayout', {
-    workflowName: props.workflowName,
-    layout: dockPanel.saveLayout(),
-    views: new Map(views.value),
+  // Delete and re-add to keep this FIFO
+  layouts.delete(props.workflowName)
+  layouts.set(props.workflowName, {
+    layout: JSON.parse(JSON.stringify(dockPanel.saveLayout())),
+    views: new Map(views.value)
   })
+  if (layouts.size > 100) {
+    const firstKey = layouts.keys().next().value
+    layouts.delete(firstKey)
+  }
+  localStorage.workspaceLayout = JSON.stringify(layouts, replacer)
 }
 
 /**
- * Restore the layout for this workflow from the store, if it was saved.
+ * Restore the layout for this workflow from local storage, if it was saved.
  *
  * @param {string} workflowName
  * @returns {boolean} true if the layout was restored, false otherwise
  */
 const restoreLayout = (workflowName) => {
-  const stored = $store.state.app.workspaceLayouts.get(workflowName)
+  const stored = getStoredLayouts().get(workflowName)
   if (stored) {
     dockPanel.restoreLayout(stored.layout)
     // Wait for next tick so that Lumino has created the widget divs that the
