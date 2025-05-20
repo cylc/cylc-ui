@@ -198,6 +198,7 @@ import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import DeltasCallback from '@/services/callbacks'
 import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
+import { Alert } from '@/model/Alert.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
 
 /**
@@ -558,7 +559,7 @@ export default {
         })
       } catch (err) {
         // the query failed
-        console.warn(err)
+        this.handleLogFileListingErr(err)
         this.handleNoLogFiles()
         return
       }
@@ -576,6 +577,9 @@ export default {
         this.fileDisabled = false
         this.logFiles = logFiles
       } else {
+        if (result.errors?.length) {
+          this.handleLogFileListingErr(result.errors[0].message)
+        }
         this.handleNoLogFiles()
       }
     },
@@ -602,6 +606,9 @@ export default {
       this.fileLabel = this.id ? `No log files for ${this.id}` : 'Enter a task/job ID'
       this.fileDisabled = true
       this.logFiles = []
+    },
+    handleLogFileListingErr (err) {
+      this.$store.dispatch('setAlert', new Alert(err, 'error'))
     },
   },
 

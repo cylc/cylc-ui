@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               Workflows Table
             </v-list-item-title>
             <v-list-item-subtitle>
-              View name, host, port, etc. of your workflows
+              View name, host, version, etc. of your workflows
             </v-list-item-subtitle>
           </v-list-item>
           <v-list-item to="/user-profile" data-cy="user-settings-link">
