@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <dd><Markdown :markdown="taskMetadata.description || ''"/></dd>
             <v-divider />
             <template v-for="(value, key) in customMetadata" :key="key">
-              <dt><Markdown :markdown="'## ' + key"/></dt>
+              <dt>{{ key }}></dt>
               <dd><Markdown :markdown="value"/></dd>
               <v-divider />
             </template>
