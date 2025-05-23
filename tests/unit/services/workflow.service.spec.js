@@ -30,6 +30,15 @@ import WorkflowService from '@/services/workflow.service'
 import ViewState from '@/model/ViewState.model'
 import { TreeCallback, WorkflowCallback } from './testCallback'
 
+vi.mock('@/graphql/index', () => ({
+  createApolloClient: () => ({
+    query: vi.fn(),
+    subscribe: () => ({
+      subscribe: vi.fn()
+    }),
+  })
+}))
+
 const sandbox = sinon.createSandbox()
 
 describe('WorkflowService', () => {
@@ -63,14 +72,6 @@ describe('WorkflowService', () => {
   let subscription
   beforeEach(() => {
     sandbox.stub(console, 'debug')
-    vi.mock('@/graphql/index', () => ({
-      createApolloClient: () => ({
-        query: vi.fn(),
-        subscribe: () => ({
-          subscribe: vi.fn()
-        }),
-      })
-    }))
     subscriptionClient = null
     // TODO: really load some mutations
     sandbox.stub(WorkflowService.prototype, 'loadTypes').returns(
