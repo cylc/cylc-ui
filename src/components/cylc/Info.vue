@@ -75,6 +75,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <dl>
               <dt>Title</dt>
               <dd>{{ taskMetadata.title }}</dd>
+            <v-divider />
+            <dt>URL</dt>
+            <dd>
+              <!--
+                  NOTE: for security reasons, always display the full URL
+                  that the link directs to
+              -->
+              <a
+                v-if="taskMetadata.URL"
+                :href="taskMetadata.URL"
+                target="_blank"
+              >
+                {{ taskMetadata.URL }}
+              </a>
+            </dd>
+            <v-divider />
+            <dt>Description</dt>
+            <dd><Markdown :markdown="taskMetadata.description || ''"/></dd>
+            <v-divider />
+            <template v-for="(value, key) in customMetadata" :key="key">
+              <dt>{{ key }}</dt>
+              <dd><Markdown :markdown="value"/></dd>
               <v-divider />
               <dt>Description</dt>
               <dd><span class="markup">{{ taskMetadata.description }}</span></dd>
@@ -99,6 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <dt>{{ key }}</dt>
                 <dd><span class="markup">{{ value }}</span></dd>
               </template>
+            </template>
             </dl>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -267,6 +290,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { computed } from 'vue'
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
+import Markdown from '@/components/Markdown.vue'
 import { formatCompletion } from '@/utils/outputs'
 import {
   mdiSkipForward,
@@ -285,6 +309,7 @@ export default {
   name: 'InfoComponent',
 
   components: {
+    Markdown,
     GraphNode,
   },
 

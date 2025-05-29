@@ -145,6 +145,17 @@
       "addLabels": [
         "data workflows team"
       ]
+    },
+    {
+      "groupName": "MyST packages",
+      "matchPackageNames": [
+        "myst-*",
+        "rehype-stringify",
+        "unified"
+      ],
+      "schedule": [
+        "on the 23rd day of the month"
+      ]
     }
   ],
   "vulnerabilityAlerts": {
