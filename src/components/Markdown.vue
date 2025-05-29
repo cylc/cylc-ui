@@ -24,9 +24,17 @@
 </template>
 
 <script>
-import MarkdownIt from 'markdown-it'
+import { mystParser } from 'myst-parser'
+import { State, transform, mystToHast, formatHtml } from 'myst-to-html'
+import rehypeStringify from 'rehype-stringify'
+import { unified } from 'unified'
 
-const md = new MarkdownIt()
+const pipe = unified()
+  .use(mystParser)
+  .use(transform, new State())
+  .use(mystToHast)
+  .use(formatHtml)
+  .use(rehypeStringify)
 
 export default {
   name: 'Markdown',
@@ -40,7 +48,7 @@ export default {
 
   computed: {
     html () {
-      return md.render(this.markdown)
+      return pipe.processSync(this.markdown).value
     }
   }
 }
