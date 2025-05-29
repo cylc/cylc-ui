@@ -92,10 +92,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </div>
             <span class="mx-1">{{ node.name }}</span>
             <span
-              v-if="!isExpanded && latestPlatform"
-              class="platform-badge mx-1 text-caption text-grey"
+              v-if="!isExpanded && latestJob(node)?.platform"
+              class="mx-1 text-grey"
             >
-              [{{ latestPlatform }}]
+              [{{ latestJob(node)?.platform }}]
             </span>
             <FlowNumsChip :flowNums="node.node.flowNums"/>
           </div>
@@ -185,7 +185,6 @@ import { getIndent, getNodeChildren } from '@/components/cylc/tree/util'
 import { once } from '@/utils'
 import { useToggle } from '@vueuse/core'
 import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
-import { computed } from 'vue' //
 
 export default {
   name: 'TreeItem',
@@ -250,21 +249,12 @@ export default {
     // Toggles to true when this.isExpanded first becomes true and doesn't get recomputed afterwards
     const renderChildren = once(isExpanded)
 
-    const latestPlatform = computed(() => {
-      const jobs = props.node.children
-      if (props.node.type === 'task' && jobs?.length) {
-        return jobs[0]?.node?.platform || null
-      }
-      return null
-    })
-
     return {
       isExpanded,
       isFlowNone,
       latestJob,
       renderChildren,
       toggleExpandCollapse,
-      latestPlatform,
     }
   },
 
