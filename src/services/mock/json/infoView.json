@@ -14,10 +14,17 @@
             "meanElapsedTime": "10",
             "meta": {
               "title": "Failed Task",
-              "description": "A task that always fails!",
+              "description": "# A task that always fails!\n\n - Bullet point\n - Bullet 🐜\n",
               "URL": "https://cylc.org",
               "userDefined": {
-                "my custom field": "My custom value!"
+                "my custom field": "My custom value!",
+                "Links and images": "[Great Auk - link example](https://en.wikipedia.org/wiki/Great_Auk)\n\n![Great Auk](https://upload.wikimedia.org/wikipedia/commons/4/4e/Great_Auk_%28Pinguinis_impennis%29_specimen%2C_Kelvingrove%2C_Glasgow_-_geograph.org.uk_-_1108249.jpg)",
+                "Admonitions": ":::{note}\nB-flat\n:::\n\n:::{tip}\nMy Shed\n:::\n\n:::{warning}\nLive without...\n:::\n\n:::{danger}\nMouse\n:::\n\n:::{caution}\nHorses\n:::",
+                "Titles": "## Level 2\n### Level 3\n#### Level 4\n##### Level 5\n###### Level 6",
+                "Tables": "| Header 1 | Header 2 |\n| -------- | -------- |\n| Row 1    | Row 2    |\n| Row 3    | Row 4    |\n",
+                "List Table": ":::{list-table}\n:header-rows: 1\n\n* - Header 1\n  - Header 2\n* - Row 1\n  - Row 2\n* - Row 3\n  - Row 4\n:::\n",
+                "Code blocks": "```python\n# Python\nprint('Hello, world!')\n```\n\n```bash\n# bash\nls -l\n```\n",
+                "Maths": "Inline math: $E=mc^2$ and block math:\n\n$$\n\\int_0^1 x^2 \\, dx = \\frac{1}{3}\n$$\n"
               }
             }
           },

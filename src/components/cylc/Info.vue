@@ -54,11 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel-title>
         <v-expansion-panel-text>
           <dl>
-            <dt>Title</dt>
-            <dd>{{ taskMetadata.title }}</dd>
-            <v-divider />
-            <dt>Description</dt>
-            <dd><span class="markup">{{ taskMetadata.description }}</span></dd>
+            <dt><h1 class="meta-title">{{ taskMetadata.title || '(Title)'}}</h1></dt>
             <v-divider />
             <dt>URL</dt>
             <dd>
@@ -75,9 +71,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </a>
             </dd>
             <v-divider />
+            <dt>Description</dt>
+            <dd><Markdown :markdown="taskMetadata.description || ''"/></dd>
+            <v-divider />
             <template v-for="(value, key) in customMetadata" :key="key">
               <dt>{{ key }}</dt>
-              <dd><span class="markup">{{ value }}</span></dd>
+              <dd><Markdown :markdown="value"/></dd>
               <v-divider />
             </template>
           </dl>
@@ -168,12 +167,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
+import Markdown from '@/components/Markdown.vue'
 import { formatCompletion } from '@/utils/outputs'
 
 export default {
   name: 'InfoComponent',
 
   components: {
+    Markdown,
     GraphNode,
   },
 
