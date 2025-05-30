@@ -24,12 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <g
     class="c8-task"
-    :class="{
-      [task.state]: true,
-      held: task.isHeld,
-      queued: task.isQueued && !task.isHeld,
-      runahead: task.isRunahead && !(task.isHeld || task.isQueued),
-    }"
+    :class="[task.state, modifier]"
   >
     <!-- status
 
@@ -122,6 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </g>
       <!-- expired
 
+      A clock face, at about 5pm.
       -->
       <g
         class="expired"
@@ -175,26 +171,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       />
       <!-- held
 
-        Paused icon representing isHeld.
+        Paused icon representing isHeld. Shown inside the outline
+        circle.
       -->
       <g
         class="held"
       >
-        <rect
-          x="30"
-          y="25"
-          width="16"
-          height="50"
-          rx="10"
-          ry="10"
-        />
-        <rect
-          x="54"
-          y="25"
-          width="16"
-          height="50"
-          rx="10"
-          ry="10"
+        <path
+          d="
+            m37,33
+            l0 34
+            m25,0
+            l0, -34
+          "
         />
       </g>
       <!-- queued
@@ -204,29 +193,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <g
         class="queued"
       >
-        <rect
-          x="20"
-          y="20"
-          width="60"
-          height="16"
-          rx="10"
-          ry="10"
-        />
-        <rect
-          x="20"
-          y="41"
-          width="60"
-          height="16"
-          rx="10"
-          ry="10"
-        />
-        <rect
-          x="20"
-          y="62"
-          width="60"
-          height="16"
-          rx="10"
-          ry="10"
+        <path
+          d="
+            m28,28
+            l43 0
+            m-43,21
+            l43, 0
+            m-43,21
+            l43 0
+          "
         />
       </g>
       <!-- runahead
@@ -240,6 +215,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           cx="50"
           cy="50"
           r="20"
+        />
+      </g>
+
+      <!-- xtriggered
+
+        Radio signal (similar to RSS logo) representing waiting on xtrigger(s).
+      -->
+      <g class="xtriggered">
+        <path
+          d="
+            m10,70
+            a60, 60, 0, 0, 1, 60, -60
+            m-40, 60
+            a40, 40 0, 0, 1, 40, -40
+            m-6, 27
+            a9,9, 0, 1, 0, .1, 0
+            m0, 4
+            a6,6, 0, 1, 0, .1, 0
+          "
+        />
+      </g>
+
+      <!-- Retry
+
+        Circular arrow representing a retry.
+      -->
+       <g class="retry">
+        <!-- An arc describing the arrow -->
+        <path d="m25, 50 a30 30 1 1 1 25 30 "/>
+        <!-- The arrowhead -->
+        <polygon points="0,40 26,75 52,40, 25,46"/>
+      </g>
+
+      <!-- Wallclock
+
+        A clock face representing an unsatisfied wallclock trigger.
+
+        The path is just the hands of the clock. The icon is created in
+        combination with the outline circle.
+      -->
+      <g class="wallclock">
+        <path
+          d="
+            m50, 18
+            l0, 36
+            l14, 14
+            l3,3
+            l3,-3
+            l-18, -18
+          "
         />
       </g>
     </g>
@@ -274,6 +299,17 @@ const props = defineProps({
  * @see @/components/cylc/workspace/Widget.vue
  */
 const animResetTime = inject('animResetTime', () => ref(0), true)
+
+// Get modifier (if any) for the task state.
+const modifier = computed(() => {
+  if (props.task.isHeld) return 'held'
+  if (props.task.isQueued) return 'queued'
+  if (props.task.isRunahead) return 'runahead'
+  if (props.task.isRetry) return 'retry'
+  if (props.task.isWallclock) return 'wallclock'
+  if (props.task.isXtriggered) return 'xtriggered'
+  return ''
+})
 
 const runningStyle = computed(() => {
   if (
@@ -381,6 +417,18 @@ const modifierTransform = _getModifierTransform()
         fill: none;
         stroke: none;
       }
+      .wallclock {
+        fill: none;
+        stroke: none;
+      }
+      .xtriggered {
+        fill: none;
+        stroke: none;
+      }
+      .retry {
+        fill: none;
+        stroke: none;
+      }
     }
 
     &.preparing .status .dot {
@@ -436,14 +484,18 @@ const modifierTransform = _getModifierTransform()
       .outline {
         stroke: $foreground;
       }
-      .held rect {
-        fill: $foreground;
+      .held path {
+        stroke: $foreground;
+        stroke-linecap: round;
+        stroke-width: 16px;
       }
     }
 
     &.queued .modifier {
-      .queued rect {
-        fill: $foreground;
+      .queued path {
+        stroke: $foreground;
+        stroke-linecap: round;
+        stroke-width: 16px;
       }
     }
 
@@ -452,6 +504,42 @@ const modifierTransform = _getModifierTransform()
         stroke: $foreground;
       }
       .runahead circle {
+        fill: $foreground;
+      }
+    }
+
+    &.xtriggered .modifier {
+      .xtriggered {
+        stroke: $foreground;
+        stroke-width: 12px;
+        stroke-linecap: round;
+        fill: none;
+      }
+    }
+
+    &.wallclock .modifier {
+      .outline {
+        fill: $background;
+        stroke: $foreground;
+        stroke-width: 7px;
+      }
+      .wallclock {
+        stroke: $foreground;
+        stroke-width: 8px;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    }
+
+    &.retry .modifier {
+      .retry path {
+        stroke: $foreground;
+        stroke-width: 12px;
+        stroke-linecap: round;
+      }
+      .retry polygon {
+        stroke: none;
         fill: $foreground;
       }
     }
