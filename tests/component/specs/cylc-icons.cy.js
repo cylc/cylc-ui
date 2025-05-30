@@ -57,13 +57,19 @@ function makeTask (
   state = 'waiting',
   isHeld = false,
   isQueued = false,
-  isRunahead = false
+  isRunahead = false,
+  isRetry = false,
+  isWallclock = false,
+  isXtriggered = false,
 ) {
   return {
     state,
     isHeld,
     isQueued,
     isRunahead,
+    isRetry,
+    isWallclock,
+    isXtriggered,
     task: {
       meanElapsedTime: MEAN_ELAPSED_TIME // NOTE time in seconds
     }
@@ -117,7 +123,14 @@ describe('Task component', () => {
   })
   it('Renders for each task modifier', () => {
     let task
-    for (const modifier of ['isHeld', 'isQueued', 'isRunahead']) {
+    for (const modifier of [
+      'isHeld',
+      'isQueued',
+      'isRunahead',
+      'isXtriggered',
+      'isRetry',
+      'isWallclock'
+    ]) {
       task = makeTask()
       task[modifier] = true
       cy.mount(TaskComponent, { props: { task } })
