@@ -87,4 +87,25 @@ export default class LuminoWidget extends Widget {
     eventBus.emit(`lumino:show:${this.id}`)
     super.onAfterShow(msg)
   }
+
+  toJSON () {
+    // Allow the widget to be serialized.
+    // We only need to store this limited info when saving the layout,
+    // allowing us to entirely recreate the widget when restoring the layout.
+    return {
+      name: this.name,
+      id: this.id,
+      closable: this.closable,
+    }
+  }
+
+  /**
+   * JSON.parse reviver function for reconstructing a serialized Lumino ILayoutConfig.
+   */
+  static layoutReviver (key, value) {
+    if (key === 'widgets') {
+      return value.map((w) => new LuminoWidget(w.id, w.name, w.closable))
+    }
+    return value
+  }
 }

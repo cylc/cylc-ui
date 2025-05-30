@@ -160,6 +160,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </template>
               <v-list-item-title>{{ startCase(name) }}</v-list-item-title>
             </v-list-item>
+            <v-divider/>
+            <v-card-actions class="mb-n2">
+              <v-btn
+                @click="eventBus.emit('reset-workspace-layout')"
+                :prepend-icon="$options.icons.mdiArrowULeftTop"
+                class="flex-grow-1"
+              >
+                Reset layout
+              </v-btn>
+            </v-card-actions>
           </v-list>
         </v-menu>
       </v-btn>
@@ -207,7 +217,8 @@ import {
   mdiPlusBoxMultiple,
   mdiStop,
   mdiViewList,
-  mdiAccount
+  mdiAccount,
+  mdiArrowULeftTop
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils'
@@ -456,7 +467,8 @@ export default {
     run: mdiPlay,
     stop: mdiStop,
     mdiCog,
-    mdiAccount
+    mdiAccount,
+    mdiArrowULeftTop,
   },
 }
 </script>

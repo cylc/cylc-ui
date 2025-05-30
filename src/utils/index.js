@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ref, watch } from 'vue'
+import { ref, toValue, watch } from 'vue'
 
 /**
  * Watch source until it is truthy, then call the callback (and stop watching).
@@ -27,7 +27,8 @@ import { ref, watch } from 'vue'
  * @param {import('vue').WatchOptions?} options
  */
 export function when (source, callback, options = {}) {
-  if (source.value) {
+  const { immediate = true } = options
+  if (immediate && toValue(source)) {
     callback()
     return
   }
@@ -73,4 +74,23 @@ export function once (source, options = {}) {
     options
   )
   return _ref
+}
+
+export function watchWithControl (source, callback, options = {}) {
+  const doWatch = () => watch(source, callback, options)
+  let watchHandle = doWatch()
+  return {
+    // stop: () => watchHandle?.stop(),
+    pause () {
+      watchHandle = watchHandle?.stop()
+    },
+    resume () {
+      watchHandle ??= doWatch()
+    },
+    trigger () {
+      if (watchHandle) { // Only trigger if not paused
+        callback()
+      }
+    },
+  }
 }
