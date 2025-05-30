@@ -193,6 +193,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
               <v-row no-gutters class="align-center wrap">
                 <v-col cols="3">
+                  <span>Warning icons (<WarningIcon
+                    :workflow="{node: {warningActive: true}}"
+                  />) in the workflows sidebar</span>
+                </v-col>
+                <v-checkbox
+                  v-model="workflowWarnings"
+                />
+              </v-row>
+
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
                   <span>Default view</span>
                 </v-col>
                 <v-select
@@ -221,12 +232,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { mapState } from 'vuex'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
-import { useCyclePointsOrderDesc, useJobTheme, useReducedAnimation } from '@/composables/localStorage'
+import {
+  useCyclePointsOrderDesc,
+  useJobTheme,
+  useReducedAnimation,
+  useWorkflowWarnings,
+} from '@/composables/localStorage'
 import { decreaseFontSize, getCurrentFontSize, increaseFontSize, resetFontSize } from '@/utils/font-size'
 import { workflowViews, useDefaultView } from '@/views/views.js'
 import Job from '@/components/cylc/Job.vue'
 import JobState from '@/model/JobState.model'
 import { upperFirst } from 'lodash-es'
+import WarningIcon from '@/components/cylc/WarningIcon.vue'
 
 // TODO: update where user preferences are stored after #335
 
@@ -234,7 +251,8 @@ export default {
   name: 'UserProfile',
 
   components: {
-    Job
+    Job,
+    WarningIcon,
   },
 
   setup () {
@@ -243,6 +261,7 @@ export default {
       cyclePointsOrderDesc: useCyclePointsOrderDesc(),
       jobTheme: useJobTheme(),
       reducedAnimation: useReducedAnimation(),
+      workflowWarnings: useWorkflowWarnings(),
       upperFirst,
       workflowViews,
     }
