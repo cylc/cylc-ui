@@ -44,7 +44,6 @@ import { startCase, uniqueId } from 'lodash'
 import WidgetComponent from '@/components/cylc/workspace/Widget.vue'
 import LuminoWidget from '@/components/cylc/workspace/lumino-widget'
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
-import { when } from '@/utils'
 import { useDefaultView } from '@/views/views'
 import { eventBus } from '@/services/eventBus'
 
@@ -157,6 +156,8 @@ const addView = ({ name, initialOptions = {} }, onTop = true) => {
 /**
  * Remove all the widgets present in the DockPanel.
  */
+// (This is likely to be used in the future)
+// eslint-disable-next-line no-unused-vars
 const closeAllViews = () => {
   for (const widget of Array.from(dockPanel.widgets())) {
     widget.close()
@@ -205,21 +206,6 @@ const restoreLayout = (workflowName) => {
 }
 
 /**
- * Save & close the current layout and open the one for the given workflow.
- *
- * @param {string} workflowName
- */
-const changeLayout = (workflowName) => {
-  saveLayout()
-  closeAllViews()
-  // Wait if necessary for the workflowName prop to be updated to the new value:
-  when(
-    () => props.workflowName === workflowName,
-    () => getLayout(workflowName),
-  )
-}
-
-/**
  * React to a deleted event.
  *
  * @param {string} id - widget ID
@@ -230,8 +216,4 @@ const onWidgetDeleted = (id) => {
     emit('emptied')
   }
 }
-
-defineExpose({
-  changeLayout,
-})
 </script>
