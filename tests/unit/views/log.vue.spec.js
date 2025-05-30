@@ -123,6 +123,7 @@ describe('Log view', () => {
 
   it('issues the subscription', async () => {
     const wrapper = mountFunction()
+    await nextTick()
     expect(wrapper.vm.jobLog).toEqual(0)
     expect(wrapper.vm.query.variables).toMatchObject({
       id: workflowID,
