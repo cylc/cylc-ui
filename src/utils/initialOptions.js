@@ -57,7 +57,7 @@ export function useInitialOptions (name, { props, emit }, defaultValue) {
       updateInitialOptionsEvent,
       { ...props.initialOptions, [name]: val }
     ),
-    { immediate: true, deep: true }
+    { deep: true }// Separate commit: Fix unnecessary immediate updates
   )
   return _ref
 }
