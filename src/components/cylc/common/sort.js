@@ -70,27 +70,26 @@ export const DEFAULT_COMPARATOR = (left, right) => {
  * @param {Object[]} array - list of string values, or of objects with string values
  * @param {Object} value - a value to be inserted in the list, or an object wrapping the value (see iteratee)
  * @param {SortedIndexByIteratee=} iteratee - an optional function used to return the value of the element of the list}
- * @param {SortedIndexByComparator=} comparator - function used to compare the newValue with otherValues in the list
+ * @param {{comparator: SortedIndexByComparator, reverse: boolean}=} options - an optional object with a comparator function and a reverse flag
  * @return {number} - sorted index
  */
-export function sortedIndexBy (array, value, iteratee, options = {}) {
-  // comparator, reverse = false) {
+export function sortedIndexBy (array, value, iteratee = (x) => x, options = {}) {
   if (array.length === 0) {
     return 0
   }
-  // If given a function, use it. Otherwise, simply use identity function.
-  const iterateeFunction = iteratee || ((value) => value)
   // If given a function, use it. Otherwise, simply use locale sort with numeric enabled
-  const comparatorFunction = options.comparator || ((leftObject, leftValue, rightObject, rightValue) => DEFAULT_COMPARATOR(leftValue, rightValue))
+  const comparator = options.comparator || (
+    (leftObject, leftValue, rightObject, rightValue) => DEFAULT_COMPARATOR(leftValue, rightValue)
+  )
   let low = 0
   let high = array.length
 
-  const newValue = iterateeFunction(value)
+  const newValue = iteratee(value)
 
   while (low < high) {
     const mid = Math.floor((low + high) / 2)
-    const midValue = iterateeFunction(array[mid])
-    let higher = comparatorFunction(value, newValue, array[mid], midValue)
+    const midValue = iteratee(array[mid])
+    let higher = comparator(value, newValue, array[mid], midValue)
     if (options.reverse) {
       higher = higher * -1
     }
