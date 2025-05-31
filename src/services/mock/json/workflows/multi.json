@@ -65,6 +65,7 @@
           "statusMsg": "paused",
           "owner": "user",
           "host": "ncc1701.starfleet.gov",
+          "cylcVersion": "8.5.0.dev",
           "port": 43078,
           "stateTotals": {
             "waiting": 2,

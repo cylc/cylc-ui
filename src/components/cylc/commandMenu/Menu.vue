@@ -226,6 +226,9 @@ export default {
         ret += ' • '
         if (this.node.type === 'workflow') {
           ret += upperFirst(this.node.node.statusMsg || this.node.node.status || 'state unknown')
+          if (this.node.node.cylcVersion) {
+            ret += ` • Cylc ${this.node.node.cylcVersion}`
+          }
         } else {
           ret += upperFirst(this.node.node.state || 'state unknown')
           if (this.node.node.isHeld) {
