@@ -27,40 +27,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <template v-slot:actions>
       <v-btn
-        icon
+        :icon="mdiClose"
         @click="closeAlert"
         data-cy="snack-close"
-      >
-        <v-icon>{{ $options.icons.mdiClose }}</v-icon>
-      </v-btn>
+      />
     </template>
-    {{ alert.text }}
+    <p>
+      {{ alert.text }}
+    </p>
+    <p
+      v-if="alert.detail"
+      class="mt-2 opacity-80"
+    >
+      {{ alert.detail }}
+    </p>
   </v-snackbar>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 import { mdiClose } from '@mdi/js'
-import { mapActions, mapState } from 'vuex'
 
-export default {
-  name: 'Alert',
+const store = useStore()
+const alert = computed(() => store.state.alert)
 
-  computed: {
-    ...mapState(['alert'])
-  },
-
-  methods: {
-    ...mapActions(['setAlert']),
-    /**
-     * Dismisses the alert from the UI, also removing it from the Vuex store.
-     */
-    closeAlert () {
-      this.setAlert(null)
-    }
-  },
-
-  icons: {
-    mdiClose
-  }
+/**
+ * Dismisses the alert from the UI, also removing it from the Vuex store.
+ */
+function closeAlert () {
+  store.dispatch('setAlert', null)
 }
 </script>
