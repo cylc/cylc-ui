@@ -27,6 +27,6 @@
  * - That fits within a 24px box.
  */
 
-import { Jupyter } from 'simple-icons'
+import { siJupyter } from 'simple-icons'
 
-export const jupyterLogo = Jupyter.svg.replace(/.*d="(.*)".*/, '$1')
+export const jupyterLogo = siJupyter.svg.replace(/.*d="(.*)".*/, '$1')
