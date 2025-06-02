@@ -61,9 +61,9 @@ import '@lumino/default-theme/style'
  */
 
 /**
- * Mitt event for adding a view to the workspace.
- * @typedef {Object} AddViewEvent
- * @property {string} name - the view to add
+ * Options for views in the workspace.
+ * @typedef {Object} IViewOptions
+ * @property {string} name - the view component name
  * @property {Record<string,*>} initialOptions - prop passed to the view component
  */
 
@@ -96,7 +96,7 @@ const mainDiv = ref(null)
 /**
  * Mapping of widget ID to the name of view component and its initialOptions prop.
  *
- * @type {import('vue').Ref<Map<string, AddViewEvent>>}
+ * @type {import('vue').Ref<Map<string, IViewOptions>>}
  */
 const views = ref(new Map())
 
@@ -150,7 +150,7 @@ onBeforeUnmount(() => {
 /**
  * Create a widget and add it to the dock.
  *
- * @param {AddViewEvent} event
+ * @param {IViewOptions} param0
  * @param {boolean} onTop
  */
 async function addView ({ name, initialOptions = {} }, onTop = true) {
