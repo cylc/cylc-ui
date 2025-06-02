@@ -50,6 +50,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <!-- task summary tooltips -->
           <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
           <div
+            class="ma-0 pa-0"
+            min-width="0"
+            min-height="0"
+            style="font-size: 120%; width: auto;"
+          >
+            <WarningIcon v-if="workflowWarnings" :workflow="node" />
+          </div>
+          <div
             v-for="[state, tasks] in Object.entries(descendantTaskInfo.latestTasks)"
             :key="`${node.id}-${state}`"
             :class="getTaskStateClass(descendantTaskInfo.stateTotals, state)"
@@ -90,8 +98,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Job from '@/components/cylc/Job.vue'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
+import WarningIcon from '@/components/cylc/WarningIcon.vue'
 import { JobStateNames } from '@/model/JobState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
+import { useWorkflowWarnings } from '@/composables/localStorage'
 
 /**
  * Get aggregated task state totals and latest task states for all descendents of a node.
@@ -108,7 +118,9 @@ function traverseChildren (node, stateTotals = {}, latestTasks = {}) {
       traverseChildren(child, stateTotals, latestTasks)
     }
   } else if (node.type === 'workflow' && node.node.stateTotals) {
-    // if we are at the end of a node (or at least, hit a workflow node), stop and merge the latest state tasks from this node with all the others from the tree
+    // if we are at the end of a node (or at least, hit a workflow node), stop and merge state
+
+    // the latest state tasks from this node with all the others from the tree
     for (const [state, totals] of Object.entries(node.node.stateTotals)) {
       if (JobStateNames.includes(state)) { // filter only valid states
         // (cast as numbers so they dont get concatenated as strings)
@@ -134,8 +146,13 @@ export default {
   components: {
     Job,
     TreeItem,
-    WorkflowIcon
+    WarningIcon,
+    WorkflowIcon,
   },
+
+  data: () => ({
+    workflowWarnings: useWorkflowWarnings()
+  }),
 
   props: {
     node: {
@@ -190,5 +207,6 @@ export default {
 
   nodeTypes: ['workflow-part', 'workflow'],
   maxTasksDisplayed: 5,
+  WorkflowState,
 }
 </script>
