@@ -39,11 +39,12 @@ import {
   onMounted,
   ref,
 } from 'vue'
-import { useStore } from 'vuex'
-import { startCase, uniqueId } from 'lodash'
+import { startCase, uniqueId } from 'lodash-es'
 import WidgetComponent from '@/components/cylc/workspace/Widget.vue'
-import LuminoWidget from '@/components/cylc/workspace/lumino-widget'
+import { LuminoWidget } from '@/components/cylc/workspace/luminoWidget'
 import { BoxPanel, DockPanel, Widget } from '@lumino/widgets'
+import { watchWithControl } from '@/utils/reactivity'
+import { replacer, reviver } from '@/utils/json'
 import { useDefaultView } from '@/views/views'
 import { eventBus } from '@/services/eventBus'
 
@@ -65,8 +66,6 @@ import '@lumino/default-theme/style'
  * @property {string} name - the view to add
  * @property {Record<string,*>} initialOptions - prop passed to the view component
  */
-
-const $store = useStore()
 
 const props = defineProps({
   workflowName: {
@@ -114,21 +113,35 @@ const resizeObserver = new ResizeObserver(() => {
   boxPanel.update()
 })
 
-onMounted(() => {
+const layoutsCache = window.caches.open('workspace-layouts')
+const layoutWatcher = watchWithControl(views, saveLayout, { deep: true })
+
+onMounted(async () => {
+  // Store any add-view events that occur before the layout is ready
+  // (e.g. when opening log view from command menu):
+  const bufferedAddViewEvents = []
+  eventBus.on('add-view', (e) => bufferedAddViewEvents.push(e))
+
   // Attach box panel to DOM:
   Widget.attach(boxPanel, mainDiv.value)
   // Watch for resize of the main element to trigger relayout:
   resizeObserver.observe(mainDiv.value)
+
+  await getLayout()
+  dockPanel.layoutModified.connect(() => layoutWatcher.trigger())
+
+  eventBus.off('add-view')
   eventBus.on('add-view', addView)
+  bufferedAddViewEvents.forEach((e) => addView(e))
   eventBus.on('lumino:deleted', onWidgetDeleted)
-  getLayout(props.workflowName)
+  eventBus.on('reset-workspace-layout', resetToDefault)
 })
 
 onBeforeUnmount(() => {
   resizeObserver.disconnect()
   eventBus.off('add-view', addView)
   eventBus.off('lumino:deleted', onWidgetDeleted)
-  saveLayout()
+  eventBus.off('reset-workspace-layout', resetToDefault)
   // Register with Lumino that the dock panel is no longer used,
   // otherwise uncaught errors can occur when restoring layout
   dockPanel.dispose()
@@ -140,69 +153,102 @@ onBeforeUnmount(() => {
  * @param {AddViewEvent} event
  * @param {boolean} onTop
  */
-const addView = ({ name, initialOptions = {} }, onTop = true) => {
+async function addView ({ name, initialOptions = {} }, onTop = true) {
+  layoutWatcher.pause()
   const id = uniqueId('widget')
   const luminoWidget = new LuminoWidget(id, startCase(name), /* closable */ true)
   dockPanel.addWidget(luminoWidget, { mode: 'tab-after' })
+  if (onTop) {
+    dockPanel.selectWidget(luminoWidget)
+  }
   // give time for Lumino's widget DOM element to be created
-  nextTick(() => {
-    views.value.set(id, { name, initialOptions })
-    if (onTop) {
-      dockPanel.selectWidget(luminoWidget)
-    }
-  })
+  await nextTick()
+  views.value.set(id, { name, initialOptions })
+  layoutWatcher.resume()
+  layoutWatcher.trigger()
 }
 
 /**
  * Remove all the widgets present in the DockPanel.
  */
-// (This is likely to be used in the future)
-// eslint-disable-next-line no-unused-vars
-const closeAllViews = () => {
+async function closeAllViews () {
   for (const widget of Array.from(dockPanel.widgets())) {
     widget.close()
   }
+  await nextTick()
 }
 
 /**
- * Get the saved layout (if there is one) for the given workflow,
+ * Get the saved layout (if there is one) for the current workflow,
  * else add the default view.
- *
- * @param {string} workflowName
  */
-const getLayout = (workflowName) => {
-  restoreLayout(workflowName) || addView({ name: defaultView.value })
+async function getLayout () {
+  await restoreLayout() || await addView({ name: defaultView.value })
 }
 
 /**
- * Save the current layout/views to the store.
+ * Save the current layout/views to cache storage.
  */
-const saveLayout = () => {
-  $store.commit('app/saveLayout', {
-    workflowName: props.workflowName,
+async function saveLayout () {
+  // Serialize layout first to synchronously capture the current state
+  const serializedLayout = JSON.stringify({
     layout: dockPanel.saveLayout(),
-    views: new Map(views.value),
-  })
+    views: views.value,
+  }, replacer)
+  const cache = await layoutsCache
+  // Overrides on FIFO basis:
+  await cache.put(props.workflowName, new Response(
+    serializedLayout,
+    { headers: { 'Content-Type': 'application/json' } }
+  ))
+  const keys = await cache.keys()
+  if (keys.length > 100) {
+    await cache.delete(keys[0])
+  }
 }
 
 /**
- * Restore the layout for this workflow from the store, if it was saved.
- *
- * @param {string} workflowName
- * @returns {boolean} true if the layout was restored, false otherwise
+ * Return the saved layout for this workflow from cache storage, if it was saved.
  */
-const restoreLayout = (workflowName) => {
-  const stored = $store.state.app.workspaceLayouts.get(workflowName)
+async function getStoredLayout () {
+  const cache = await layoutsCache
+  const stored = await cache.match(props.workflowName).then((r) => r?.text())
   if (stored) {
+    return JSON.parse(
+      stored,
+      (key, value) => reviver(key, LuminoWidget.layoutReviver(key, value))
+    )
+  }
+}
+
+/**
+ * Restore the layout for this workflow, if it was saved.
+ *
+ * @returns true if the layout was restored, false otherwise
+ */
+async function restoreLayout () {
+  const stored = await getStoredLayout()
+  if (stored) {
+    layoutWatcher.pause()
     dockPanel.restoreLayout(stored.layout)
     // Wait for next tick so that Lumino has created the widget divs that the
     // views will be teleported into
-    nextTick(() => {
-      views.value = stored.views
-    })
+    await nextTick()
+    views.value = stored.views
+    layoutWatcher.resume()
     return true
   }
   return false
+}
+
+/**
+ * Reset the workspace layout to a single tab with the default view.
+ */
+async function resetToDefault () {
+  layoutWatcher.pause()
+  await closeAllViews()
+  await addView({ name: defaultView.value })
+  // (addView resumes the layout watcher)
 }
 
 /**

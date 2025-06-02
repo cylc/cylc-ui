@@ -16,7 +16,8 @@
  */
 
 import { nextTick, ref, computed } from 'vue'
-import { once, when, until } from '@/utils/reactivity'
+import { vi } from 'vitest'
+import { once, when, until, watchWithControl } from '@/utils/reactivity'
 
 const truthySources = () => [
   ref(true),
@@ -73,5 +74,48 @@ describe('once()', () => {
   it.for(truthySources())('works for already-truthy source %s', (source) => {
     const myRef = once(source)
     expect(myRef.value).toEqual(true)
+  })
+})
+
+describe('watchWithControl()', () => {
+  it('allows pausing and resuming', async () => {
+    const source = ref(0)
+    const callback = vi.fn()
+    const watcher = watchWithControl(source, callback)
+    expect(callback).toHaveBeenCalledTimes(0)
+
+    source.value++
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    watcher.pause()
+    source.value++
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    watcher.resume()
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    source.value++
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(2)
+  })
+
+  it('allows manual triggering', async () => {
+    const callback = vi.fn()
+    const watcher = watchWithControl(ref(null), callback)
+    expect(callback).toHaveBeenCalledTimes(0)
+
+    watcher.trigger()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    watcher.pause()
+    watcher.trigger()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    watcher.resume()
+    watcher.trigger()
+    expect(callback).toHaveBeenCalledTimes(2)
   })
 })

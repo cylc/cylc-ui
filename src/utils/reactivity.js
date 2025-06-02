@@ -75,3 +75,31 @@ export function once (source, options = {}) {
   )
   return _ref
 }
+
+/**
+ * Provides a controlled watcher with pause, resume, and manual trigger capabilities.
+ *
+ * Unlike the standard Vue `watch()`, resuming a paused watcher will not trigger the callback immediately.
+ * Using the `trigger()` method only works if the watcher is not paused.
+ *
+ * @param {import('vue').WatchSource} source
+ * @param {import('vue').WatchCallback} callback
+ * @param {import('vue').WatchOptions?} options
+ */
+export function watchWithControl (source, callback, options = {}) {
+  const doWatch = () => watch(source, callback, options)
+  let watchHandle = doWatch()
+  return {
+    pause () {
+      watchHandle = watchHandle?.stop()
+    },
+    resume () {
+      watchHandle ??= doWatch()
+    },
+    trigger () {
+      if (watchHandle) { // Only trigger if not paused
+        callback()
+      }
+    },
+  }
+}

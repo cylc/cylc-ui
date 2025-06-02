@@ -15,28 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createStore } from 'vuex'
-import storeOptions from '@/store/options'
+import { replacer, reviver } from '@/utils/json'
 
-/**
- * Tests for the store/app module.
- */
-describe('app', () => {
-  let store
-  beforeEach(() => {
-    store = createStore(storeOptions)
-  })
-  /**
-   * Tests for store.app.title.
-   */
-  describe('title', () => {
-    it('should start with no title', () => {
-      expect(store.state.app.title).to.equal(null)
-    })
-    it('should set title', () => {
-      const title = 'Cylc'
-      store.commit('app/setTitle', title)
-      expect(store.state.app.title).to.equal(title)
-    })
+describe('JSON utils', () => {
+  it('replaces and revives Maps and Sets', () => {
+    const obj = {
+      foo: new Map([
+        ['a', 1],
+        ['b', 2],
+      ]),
+      bar: new Set([1, 2, 3]),
+      control: ['Conklin', 'Abbott'],
+    }
+    const json = JSON.stringify(obj, replacer)
+    expect(JSON.parse(json, reviver)).toEqual(obj)
   })
 })
