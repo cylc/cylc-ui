@@ -210,7 +210,7 @@ import {
   mdiAccount
 } from '@mdi/js'
 import { startCase } from 'lodash'
-import { until } from '@/utils'
+import { until } from '@/utils/reactivity'
 import { useDrawer, useNavBtn, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
 import graphql from '@/mixins/graphql'
