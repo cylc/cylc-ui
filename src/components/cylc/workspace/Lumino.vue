@@ -47,6 +47,7 @@ import { watchWithControl } from '@/utils/reactivity'
 import { replacer, reviver } from '@/utils/json'
 import { useDefaultView } from '@/views/views'
 import { eventBus } from '@/services/eventBus'
+import { useWorkspaceLayoutsCache } from '@/composables/cacheStorage'
 
 import '@lumino/default-theme/style'
 
@@ -113,7 +114,7 @@ const resizeObserver = new ResizeObserver(() => {
   boxPanel.update()
 })
 
-const layoutsCache = window.caches.open('workspace-layouts')
+const layoutsCache = useWorkspaceLayoutsCache()
 const layoutWatcher = watchWithControl(views, saveLayout, { deep: true })
 
 onMounted(async () => {

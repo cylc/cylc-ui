@@ -41,13 +41,11 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('clearLayoutsCache', (value = true) => {
-  // Clear any stored workspace layouts (or not)
-  Cypress.env('clearLayoutsCache', value)
-})
-
-Cypress.on('window:before:load', async (win) => {
-  if (Cypress.env('clearLayoutsCache')) {
-    await win.caches.delete('workspace-layouts')
-  }
+Cypress.Commands.add('clearLayoutsCache', () => {
+  // Clear any stored workspace layouts
+  cy.window().then((win) => new Cypress.Promise(
+    (resolve) => {
+      win.caches?.delete('workspace-layouts')?.then(resolve) ?? resolve()
+    }
+  ))
 })

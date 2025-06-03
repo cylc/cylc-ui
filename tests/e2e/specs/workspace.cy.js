@@ -107,7 +107,6 @@ describe('Workspace view and component/widget', () => {
   })
 
   it('Saves and restores layout when navigating', () => {
-    cy.clearLayoutsCache(false)
     // We will drag tab to the right to split into 2 panes
     const dragOptions = { clientX: 950, clientY: 330, force: true }
 
@@ -169,9 +168,15 @@ describe('Workspace view and component/widget', () => {
     cy.visit('/#/workspace/one')
     expectRememberedLayout()
 
-    // Refresh
-    cy.reload()
-    expectRememberedLayout()
+    cy.window().then((win) => {
+      if (win.caches) {
+        // Test page refresh
+        cy.reload()
+        expectRememberedLayout()
+      } else {
+        cy.log('Cache API not supported; skipping page refresh test.')
+      }
+    })
   })
 
   it('Resets layout', () => {
