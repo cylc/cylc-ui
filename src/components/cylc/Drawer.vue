@@ -87,7 +87,7 @@ import Header from '@/components/cylc/Header.vue'
 import Workflows from '@/views/Workflows.vue'
 import { mdiHome, mdiInformationOutline } from '@mdi/js'
 import pkg from '@/../package.json'
-import { when } from '@/utils'
+import { when } from '@/utils/reactivity'
 import { useDrawer } from '@/utils/toolbar'
 
 export const initialWidth = 260

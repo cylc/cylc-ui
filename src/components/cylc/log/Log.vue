@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { useTemplateRef, watch, onBeforeUnmount, nextTick } from 'vue'
 import { useScroll, useVModel, whenever } from '@vueuse/core'
-import { when } from '@/utils'
+import { when } from '@/utils/reactivity'
 import {
   mdiMouseMoveUp
 } from '@mdi/js'

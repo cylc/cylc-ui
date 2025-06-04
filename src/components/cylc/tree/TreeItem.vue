@@ -176,7 +176,7 @@ import {
   isFlowNone,
 } from '@/utils/tasks'
 import { getIndent, getNodeChildren } from '@/components/cylc/tree/util'
-import { once } from '@/utils'
+import { once } from '@/utils/reactivity'
 import { useToggle } from '@vueuse/core'
 import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
 

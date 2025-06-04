@@ -15,8 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { nextTick, ref } from 'vue'
-import { once, when, until } from '@/utils/index'
+import { nextTick, ref, computed } from 'vue'
+import { vi } from 'vitest'
+import { once, when, until, watchWithControl } from '@/utils/reactivity'
+
+const truthySources = () => [
+  ref(true),
+  computed(() => true),
+  () => true,
+]
 
 describe.each([
   { func: when, description: 'watches source until true and then stops watching' },
@@ -44,8 +51,7 @@ describe.each([
 })
 
 describe('when()', () => {
-  it('works for a source that is already truthy', () => {
-    const source = ref(true)
+  it.for(truthySources())('works for already-truthy source %s', (source) => {
     let counter = 0
     when(source, () => counter++)
     expect(counter).toEqual(1)
@@ -53,7 +59,7 @@ describe('when()', () => {
 })
 
 describe('once()', () => {
-  it('returns a ref that permanently toggles to true when the source bevomes truthy', async () => {
+  it('returns a ref that permanently toggles to true when the source becomes truthy', async () => {
     const source = ref(false)
     const myRef = once(source)
     expect(myRef.value).toEqual(false)
@@ -65,9 +71,51 @@ describe('once()', () => {
     expect(myRef.value).toEqual(true)
   })
 
-  it('works for a source that is already truthy', () => {
-    const source = ref(true)
+  it.for(truthySources())('works for already-truthy source %s', (source) => {
     const myRef = once(source)
     expect(myRef.value).toEqual(true)
+  })
+})
+
+describe('watchWithControl()', () => {
+  it('allows pausing and resuming', async () => {
+    const source = ref(0)
+    const callback = vi.fn()
+    const watcher = watchWithControl(source, callback)
+    expect(callback).toHaveBeenCalledTimes(0)
+
+    source.value++
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    watcher.pause()
+    source.value++
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    watcher.resume()
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    source.value++
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(2)
+  })
+
+  it('allows manual triggering', async () => {
+    const callback = vi.fn()
+    const watcher = watchWithControl(ref(null), callback)
+    expect(callback).toHaveBeenCalledTimes(0)
+
+    watcher.trigger()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    watcher.pause()
+    watcher.trigger()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    watcher.resume()
+    watcher.trigger()
+    expect(callback).toHaveBeenCalledTimes(2)
   })
 })

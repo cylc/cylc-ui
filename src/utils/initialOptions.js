@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ export function useInitialOptions (name, { props, emit }, defaultValue) {
       updateInitialOptionsEvent,
       { ...props.initialOptions, [name]: val }
     ),
-    { immediate: true, deep: true }
+    { deep: true }
   )
   return _ref
 }

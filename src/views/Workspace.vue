@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :style="$options.panelStyle"
     >
       <Lumino
-        ref="lumino"
+        :key="workflowName"
         @emptied="onEmptied"
         :workflow-name="workflowName"
         :allViews="allViews"
@@ -36,8 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { ref } from 'vue'
-import { onBeforeRouteUpdate } from 'vue-router'
 import { allViews, workflowViews } from '@/views/views.js'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionMixin from '@/mixins/subscription'
@@ -60,17 +58,9 @@ export default {
   },
 
   setup () {
-    /** Template ref */
-    const lumino = ref(null)
-
-    onBeforeRouteUpdate((to, from) => {
-      lumino.value.changeLayout(to.params.workflowName)
-    })
-
     return {
       allViews,
       workflowViews,
-      lumino,
     }
   },
 

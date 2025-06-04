@@ -15,28 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createStore } from 'vuex'
-import storeOptions from '@/store/options'
+// JSON utilities.
 
 /**
- * Tests for the store/app module.
+ * Custom replacer function for JSON.stringify to handle JS objects that
+ * cannot otherwise be serialized.
  */
-describe('app', () => {
-  let store
-  beforeEach(() => {
-    store = createStore(storeOptions)
-  })
-  /**
-   * Tests for store.app.title.
-   */
-  describe('title', () => {
-    it('should start with no title', () => {
-      expect(store.state.app.title).to.equal(null)
-    })
-    it('should set title', () => {
-      const title = 'Cylc'
-      store.commit('app/setTitle', title)
-      expect(store.state.app.title).to.equal(title)
-    })
-  })
-})
+export function replacer (key, value) {
+  if (value instanceof Map) {
+    return { _jsonType: 'Map', _val: Array.from(value) }
+  }
+  if (value instanceof Set) {
+    return { _jsonType: 'Set', _val: Array.from(value) }
+  }
+  return value
+}
+
+/**
+ * Custom reviver function for JSON.parse to handle JS objects that
+ * cannot otherwise be serialized.
+ */
+export function reviver (key, value) {
+  if (value?._jsonType === 'Map') {
+    return new Map(value._val)
+  }
+  if (value?._jsonType === 'Set') {
+    return new Set(value._val)
+  }
+  return value
+}

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -111,13 +111,15 @@ describe('Workspace view and component/widget', () => {
     const dragOptions = { clientX: 950, clientY: 330, force: true }
 
     // Assert there are 2 panes each with their own tab bar and widget
-    const expectSplitPane = () => {
+    function expectRememberedLayout () {
       cy.get('.lm-TabBar')
         .should('have.length', 2)
       cy.get('.lm-DockPanel-widget')
         .should('have.length', 2)
       cy.get('.c-tree')
         .should('be.visible')
+        .find('[data-cy=filter-id] input')
+        .should('have.value', 'GOOD')
       cy.get('.c-table')
         .should('be.visible')
     }
@@ -139,7 +141,9 @@ describe('Workspace view and component/widget', () => {
     // (It takes a moment for the split pane to render properly - should('be.visible') does not wait for this unfortunately)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(100)
-    expectSplitPane()
+    cy.get('.c-tree [data-cy=filter-id] input')
+      .type('GOOD')
+    expectRememberedLayout()
 
     // Navigate to another workflow
     cy.visit('/#/workspace/two')
@@ -152,7 +156,7 @@ describe('Workspace view and component/widget', () => {
 
     // Navigate back to original workflow
     cy.visit('/#/workspace/one')
-    expectSplitPane()
+    expectRememberedLayout()
 
     // Navigate to non-workspace view (unmounts Lumino)
     cy.visit('/#/')
@@ -162,7 +166,34 @@ describe('Workspace view and component/widget', () => {
 
     // Navigate back to original workflow
     cy.visit('/#/workspace/one')
-    expectSplitPane()
+    expectRememberedLayout()
+
+    cy.window().then((win) => {
+      if (win.caches) {
+        // Test page refresh
+        cy.reload()
+        expectRememberedLayout()
+      } else {
+        cy.log('Cache API not supported; skipping page refresh test.')
+      }
+    })
+  })
+
+  it('Resets layout', () => {
+    cy.get('.lm-TabBar-tabCloseIcon').click()
+    cy.get('.c-tree')
+      .should('not.exist')
+    addView('Table')
+    addView('Table')
+    cy.get('.lm-DockPanel-widget')
+      .should('have.length', 2)
+
+    cy.get('[data-cy=add-view-btn]').click()
+      .get('[data-cy=reset-layout-btn]').click()
+    cy.get('.lm-DockPanel-widget')
+      .should('have.length', 1)
+    cy.get('.c-tree')
+      .should('be.visible')
   })
 
   it('Does not suffer uncaught errors in Lumino backend after restoring layout', () => {
