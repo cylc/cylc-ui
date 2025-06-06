@@ -95,7 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-if="!isExpanded && latestJob(node)?.platform"
               class="mx-1 text-grey"
             >
-              [{{ latestJob(node)?.platform }}]
+              {{ latestJob(node)?.platform }}
             </span>
             <FlowNumsChip :flowNums="node.node.flowNums"/>
           </div>
