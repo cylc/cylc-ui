@@ -61,6 +61,7 @@ below.
  - Christopher Bennett
  - Mark Dawson
  - Min RK
+ - Harleen Kaur
 <!-- end-shortlog -->
 
 (All contributors are identifiable with email addresses in the git version

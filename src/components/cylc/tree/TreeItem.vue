@@ -91,6 +91,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               />
             </div>
             <span class="mx-1">{{ node.name }}</span>
+            <span
+              v-if="!isExpanded && latestJob(node)?.platform"
+              class="mx-1 text-grey"
+            >
+              {{ latestJob(node)?.platform }}
+            </span>
             <FlowNumsChip :flowNums="node.node.flowNums"/>
           </div>
           <template v-else-if="node.type === 'job'">
