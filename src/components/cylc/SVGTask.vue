@@ -94,54 +94,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         The "x" in the centre of the outline used to represent failure.
       -->
-      <g
-        class="cross"
-        transform="rotate(45, 50, 50)"
-      >
-        <rect
-          x="43"
-          y="15"
-          width="14"
-          height="70"
-          rx="7.5"
-          ry="7.5"
-        />
-        <rect
-          x="15"
-          y="43"
-          width="70"
-          height="14"
-          rx="7.5"
-          ry="7.5"
-        />
-      </g>
+      <path class="cross"
+        d="
+          m30,30
+          l40 40
+          m0,-40
+          l-40 40
+        "
+      />
+
       <!-- expired
 
       A clock face, at about 5pm.
       -->
-      <g
-        class="expired"
-      >
-        <rect
-          x="50"
-          y="46"
-          width="42"
-          height="8"
-          rx="5"
-          ry="5"
-          transform="rotate(-90, 50, 50)"
-        />
-        <rect
-          x="50"
-          y="46"
-          width="30"
-          height="8"
-          rx="5"
-          ry="5"
-          transform="rotate(45, 50, 50)"
-        />
-      </g>
+      <path
+        class="clockhands_big"
+        d="
+          m50,12
+          l0 38
+          l18 18
+        "
+      />
     </g>
+
     <!-- modifier
 
       Represents any task state modifiers e.g. isHeld, isRunahead, isQueued.
@@ -391,11 +366,11 @@ const modifierTransform = _getModifierTransform()
         fill: none;
         stroke: none;
       }
-      .cross rect {
+      .cross path {
         fill: none;
         stroke: none;
       }
-      .expired rect {
+      .clockhands_big {
         fill: none;
         stroke: none;
       }
@@ -454,8 +429,10 @@ const modifierTransform = _getModifierTransform()
       .outline {
         fill: $foreground;
       }
-      .cross rect {
-        fill: $background;
+      .cross {
+        stroke: $background;
+        stroke-width: 14px;
+        stroke-linecap: round;
       }
     }
 
@@ -463,8 +440,10 @@ const modifierTransform = _getModifierTransform()
       .outline {
         fill: $background;
       }
-      .cross rect {
-        fill: $foreground;
+      .cross {
+        stroke: $foreground;
+        stroke-width: 14px;
+        stroke-linecap: round;
       }
     }
 
@@ -475,8 +454,10 @@ const modifierTransform = _getModifierTransform()
       .dot {
         fill: $background;
       }
-      .expired rect {
-        fill: $background;
+      .clockhands_big {
+        stroke: $background;
+        stroke-width: 8px;
+        stroke-linecap: round;
       }
     }
 
