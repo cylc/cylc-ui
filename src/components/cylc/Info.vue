@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <tr v-for="xt in xtriggers" :key="xt">
               <td>{{ xt.label }}</td>
               <td>{{ xt.id }}</td>
-              <td><center><v-icon>{{ xt.satisfactionIcon }}</v-icon></center></td>
+              <td class="d-flex justify-center"><v-icon>{{ xt.satisfactionIcon }}</v-icon></td>
               <td>{{ xt.trigger_time }}</td>
             </tr>
           </tbody></table>
