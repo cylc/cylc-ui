@@ -45,7 +45,7 @@ Cypress.Commands.add('clearLayoutsCache', () => {
   // Clear any stored workspace layouts
   cy.window().then((win) => new Cypress.Promise(
     (resolve) => {
-      win.caches?.delete('workspace-layouts')?.then(resolve) ?? resolve()
+      win.caches?.delete('cylc-workspace-layouts')?.then(resolve) ?? resolve()
     }
   ))
 })

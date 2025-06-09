@@ -27,7 +27,7 @@ const fallbackStore = new Map()
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Cache
  */
 export function useWorkspaceLayoutsCache () {
-  return window.caches?.open('workspace-layouts') ?? Promise.resolve({
+  return window.caches?.open('cylc-workspace-layouts') ?? Promise.resolve({
     // Fallback for environments without Cache API support (e.g. Cypress Firefox on GH Actions).
     // Does not persist across page reloads, but oh well.
     async match (key) {
