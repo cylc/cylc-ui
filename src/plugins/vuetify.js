@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { computed } from 'vue'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import { VAutocomplete } from 'vuetify/components/VAutocomplete'
 import { VCombobox } from 'vuetify/components/VCombobox'
@@ -23,22 +24,28 @@ import { VTextarea } from 'vuetify/components/VTextarea'
 import { VTextField } from 'vuetify/components/VTextField'
 import colors from 'vuetify/util/colors'
 import { mdiClose } from '@mdi/js'
+import { useReducedAnimation } from '@/composables/localStorage'
+import { merge } from 'lodash-es'
 
-const inputDefaults = Object.fromEntries([
+export const inputComponents = [
   VAutocomplete,
   VCombobox,
   VSelect,
   VTextarea,
-  VTextField
-].map(({ name }) => [
-  name,
-  {
-    density: 'compact',
-    variant: 'outlined',
-    clearIcon: mdiClose,
-    hideDetails: true,
-  }
-]))
+  VTextField,
+].map(({ name }) => name)
+
+const inputDefaults = Object.fromEntries(
+  inputComponents.map((name) => [
+    name,
+    {
+      density: 'compact',
+      variant: 'outlined',
+      clearIcon: mdiClose,
+      hideDetails: 'auto',
+    }
+  ])
+)
 
 /**
  * @type {import('vuetify').VuetifyOptions}
@@ -75,4 +82,26 @@ export const vuetifyOptions = {
     },
     ...inputDefaults
   },
+}
+
+/**
+ * Composable that provides Vuetify defaults that can change at runtime, as opposed to
+ * the static defaults provided in `createVuetify(vuetifyOptions)`.
+ *
+ * For use with a v-defaults-provider.
+ *
+ * @param {Object=} other - Additional defaults to provide.
+ */
+export function useDynamicVuetifyDefaults (other = {}) {
+  const reducedAnimation = useReducedAnimation()
+
+  return computed(() => merge(
+    {
+      global: {
+        transition: reducedAnimation.value ? 'no' : undefined,
+        ripple: reducedAnimation.value ? false : undefined,
+      },
+    },
+    other
+  ))
 }

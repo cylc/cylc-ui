@@ -128,6 +128,25 @@ import { eventBus } from '@/services/eventBus'
 import CopyBtn from '@/components/core/CopyBtn.vue'
 import { upperFirst } from 'lodash-es'
 import { formatFlowNums } from '@/utils/tasks'
+import { getJobLogFileFromState } from '@/model/JobState.model'
+
+/**
+ * Return the appropriate log file for a job or task node, or nothing for other nodes.
+ *
+ * @param {Object} node - Cylc object node (i.e. workflow, cycle, family, task or job)
+ */
+export function getLogFileForNode (node) {
+  let jobState
+  if (node.type === 'job') {
+    jobState = node.node.state
+  } else if (node.type === 'task') {
+    // Choose latest job (jobs are sorted by submit num descending in the store)
+    jobState = node.children[0]?.node.state
+  } else {
+    return
+  }
+  return getJobLogFileFromState(jobState)
+}
 
 export default {
   name: 'CommandMenu',
@@ -271,7 +290,8 @@ export default {
             {
               name: 'Log',
               initialOptions: {
-                relativeID: this.node.tokens.relativeID || null
+                relativeID: this.node.tokens.relativeID || null,
+                file: getLogFileForNode(this.node),
               }
             }
           )

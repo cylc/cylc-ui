@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,18 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const state = () => ({
-  user: null,
-})
+const one = require('./one')
+const multi = require('./multi')
 
-export const mutations = {
-  SET_USER (state, user) {
-    state.user = user
-  }
+const workflows = [one, ...multi]
+
+function Workflow ({ workflowId }) {
+  return workflows.find(({ deltas }) => deltas.id === workflowId) || {}
 }
 
-export const user = {
-  namespaced: true,
-  state,
-  mutations,
+module.exports = {
+  one,
+  workflows,
+  Workflow,
 }

@@ -27,7 +27,7 @@ import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { setContext } from '@apollo/client/link/context'
 import { store } from '@/store/index'
-import { createUrl, getCylcHeaders } from '@/utils/urls'
+import { createUrl, getXSRFHeaders } from '@/utils/urls'
 
 /** @typedef {import('subscriptions-transport-ws').ClientOptions} ClientOptions */
 
@@ -133,7 +133,7 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     return {
       headers: {
         ...headers,
-        ...getCylcHeaders()
+        ...getXSRFHeaders()
       }
     }
   })

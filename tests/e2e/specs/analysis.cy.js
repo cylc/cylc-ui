@@ -507,9 +507,12 @@ function addView (view) {
 describe('Filters and Options save state', () => {
   const numTasks = sortedTasks.length
   describe('Options save state', () => {
-    it('remembers table and box & whiskers toggle option when switching between workflows', () => {
+    beforeEach(() => {
       cy.visit('/#/workspace/one')
       addView('Analysis')
+    })
+
+    it('remembers table and box & whiskers toggle option when switching between workflows', () => {
       cy.get('.c-analysis [data-cy=box-plot-toggle]')
         .click()
         .get('.vue-apexcharts')
@@ -521,13 +524,6 @@ describe('Filters and Options save state', () => {
       cy.visit('/#/workspace/one')
       cy.get('.vue-apexcharts')
         .should('be.visible')
-    })
-  })
-
-  describe('State saving', () => {
-    beforeEach(() => {
-      cy.visit('/#/workspace/one')
-      addView('Analysis')
     })
 
     it('remembers task name, platform and timings when switching between workflows', () => {
@@ -622,6 +618,14 @@ describe('Filters and Options save state', () => {
       cy.visit('/#/workspace/one')
       cy.get('[data-cy=box-plot-sort-select]')
         .contains('Count')
+        .should('be.visible')
+    })
+
+    it('shows sorting controls in correct tab', () => {
+      addView('Analysis') // second analysis view
+      cy.get('.c-analysis [data-cy=box-plot-toggle]:last')
+        .click()
+        .get('[data-cy="box-plot-sort-select"]')
         .should('be.visible')
     })
   })

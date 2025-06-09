@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,18 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const state = () => ({
-  user: null,
+import { getJobLogFileFromState } from '@/model/JobState.model'
+
+describe('Job state', () => {
+  it.each([
+    ['submitted', 'job-activity.log'],
+    ['submit-failed', 'job-activity.log'],
+    ['running', 'job.out'],
+    ['succeeded', 'job.out'],
+    ['failed', 'job.err'],
+    ['pontifex', undefined],
+    [undefined, undefined],
+  ])('getJobLogFileFromState(%s) -> %s', (state, expected) => {
+    expect(getJobLogFileFromState(state)).toEqual(expected)
+  })
 })
-
-export const mutations = {
-  SET_USER (state, user) {
-    state.user = user
-  }
-}
-
-export const user = {
-  namespaced: true,
-  state,
-  mutations,
-}

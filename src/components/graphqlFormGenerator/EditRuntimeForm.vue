@@ -57,6 +57,7 @@ import { cloneDeep, isArray, isEqual, snakeCase, startCase } from 'lodash'
 import { VTextarea } from 'vuetify/components/VTextarea'
 import VuetifyConfig, { getComponentProps, RUNTIME_SETTING } from '@/components/graphqlFormGenerator/components/vuetify'
 import { findByName, mutate, mutationStatus } from '@/utils/aotf'
+import GEnum from '@/components/graphqlFormGenerator/components/Enum.vue'
 
 const NamedTypes = {
   ...VuetifyConfig.namedTypes,
@@ -65,7 +66,12 @@ const NamedTypes = {
     rows: '1',
     autoGrow: true,
     style: 'font-family: monospace;'
-  }
+  },
+  TaskRunMode: {
+    is: GEnum,
+    // Workaround https://github.com/cylc/cylc-flow/pull/6554#discussion_r1922563421
+    allowedValues: ['Live', 'Skip'],
+  },
 }
 
 export default {
@@ -223,7 +229,6 @@ export default {
     getInputProps (fieldName) {
       const gqlType = findByName(this.type.fields, fieldName).type
       return {
-        ...VuetifyConfig.defaultProps,
         gqlType,
         ...getComponentProps(gqlType, NamedTypes, VuetifyConfig.kinds)
       }

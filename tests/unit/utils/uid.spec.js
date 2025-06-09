@@ -154,22 +154,55 @@ describe('Universal ID (UID)', () => {
       expect(b.task).to.equal(undefined)
     })
 
-    it('should clone and set in the same operation', () => {
-      const a = new Tokens('w//c')
-      const b = a.clone({ cycle: 'd', task: 't' })
-      expect(
-        Object.assign({}, b)
-      ).to.deep.equal({
-        user: undefined,
-        workflow: 'w',
-        cycle: 'd',
-        task: 't',
-        job: undefined,
-        id: 'w//d/t',
-        workflowID: 'w',
-        relativeID: 'd/t',
-        namespace: undefined,
-        edge: undefined
+    describe('Cloning', () => {
+      it('clones and sets in the same operation', () => {
+        expect(
+          new Tokens('w//c').clone({ cycle: 'd', task: 't' })
+        ).toMatchObject({
+          user: undefined,
+          workflow: 'w',
+          cycle: 'd',
+          task: 't',
+          job: undefined,
+          id: 'w//d/t',
+          workflowID: 'w',
+          relativeID: 'd/t',
+          namespace: undefined,
+          edge: undefined
+        })
+      })
+
+      it.each([
+        ['~U/W', 'c/t', '~U/W//c/t'],
+        ['~U/W//C/T/01', 'w//c', '~U/w//c/T/01'],
+        ['~U/W//C/T/01', '~u/w//c/t/02', '~u/w//c/t/02'],
+        ['~U/W//C/T/01', 'c/t', '~U/W//c/t/01'],
+      ])('%s clones %s -> %s', (left, right, expected) => {
+        expect(
+          new Tokens(left).clone(new Tokens(right, !right.includes('//')))
+        ).toEqual(
+          new Tokens(expected)
+        )
+      })
+
+      it('unsets nullish values if object being cloned is not a Tokens instance', () => {
+        expect(
+          new Tokens('~u/w//c/t').clone({ cycle: null, task: undefined })
+        ).toEqual(
+          new Tokens('~u/w')
+        )
+      })
+
+      it('throws if trying to clone with invalid keys', () => {
+        expect(() => {
+          new Tokens('~u/w//c/t').clone({ horse: 'value' })
+        }).toThrow('Invalid key: horse')
+      })
+
+      it('throws if trying to clone with invalid types', () => {
+        expect(() => {
+          new Tokens('~u/w//c').clone({ cycle: true })
+        }).toThrow('Invalid type for value: true')
       })
     })
 
@@ -283,5 +316,37 @@ describe('Universal ID (UID)', () => {
         ]
       ])
     })
+
+    describe('Invalid job IDs', () => {
+      describe.each([true, false])('relative: %o', (relative) => {
+        it.each([
+          ['c/t/01', true],
+          ['c/t/1', true],
+          ['c/t/1000', true],
+          ['c/t/', true],
+          ['c/t', true],
+          ['c/t/NN', true],
+          ['c/t/nn', false],
+          ['c/t/j', false],
+          ['c/t/1f', false],
+          ['c/t/*', false], // job glob not allowed currently, but could be needed in future
+        ])('%s ok? %o', (id, ok) => {
+          if (!relative) id = `~u/w//${id}`
+          if (ok) {
+            // eslint-disable-next-line no-new
+            new Tokens(id, relative)
+          } else {
+            expect(() => new Tokens(id, relative)).toThrow('Invalid job ID')
+          }
+        })
+      })
+    })
+  })
+
+  it.each([
+    ['w//c/t/01', undefined],
+    ['w//c/t/j', 'Invalid job ID: j'],
+  ])('Tokens.validate(%o) -> %o', (id, expected) => {
+    expect(Tokens.validate(id)).toEqual(expected) // doesn't throw
   })
 })
