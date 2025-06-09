@@ -35,6 +35,7 @@ export function useWorkspaceLayoutsCache () {
       return fallbackStore.get(key)?.clone()
     },
     async put (key, value) {
+      // FIFO:
       fallbackStore.delete(key)
       fallbackStore.set(key, value)
     },

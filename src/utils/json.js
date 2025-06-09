@@ -20,6 +20,12 @@
 /**
  * Custom replacer function for JSON.stringify to handle JS objects that
  * cannot otherwise be serialized.
+ *
+ * E.g.:
+ * > const json = JSON.stringify(obj, replacer)
+ * > const obj = JSON.parse(json, reviver)
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#the_replacer_parameter
  */
 export function replacer (key, value) {
   if (value instanceof Map) {
@@ -34,6 +40,9 @@ export function replacer (key, value) {
 /**
  * Custom reviver function for JSON.parse to handle JS objects that
  * cannot otherwise be serialized.
+ *
+ * @see replacer
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse#the_reviver_parameter
  */
 export function reviver (key, value) {
   if (value?._jsonType === 'Map') {
