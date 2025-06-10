@@ -38,7 +38,7 @@ describe('tasks', () => {
           [TaskState.WAITING].map((state) => state.name)],
         [
           TaskState.RUNNING.name,
-          [TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name)]
+          [TaskState.SUBMITTED, TaskState.RUNNING].map((state) => state.name)],
       ].forEach((val) => {
         const groupState = extractGroupState(val[1], false)
         expect(groupState).to.equal(val[0])
@@ -55,7 +55,7 @@ describe('tasks', () => {
           [TaskState.SUCCEEDED].map((state) => state.name)],
         [
           TaskState.RUNNING.name,
-          [TaskState.SUBMITTED, TaskState.RUNNING, TaskState.EXPIRED].map((state) => state.name)]
+          [TaskState.SUBMITTED, TaskState.RUNNING, TaskState.EXPIRED].map((state) => state.name)],
       ].forEach((val) => {
         const groupState = extractGroupState(val[1], true)
         expect(groupState).to.equal(val[0])
@@ -70,27 +70,27 @@ describe('tasks', () => {
   describe.each([
     {
       taskProxy: null,
-      expected: undefined
+      expected: undefined,
     },
     {
       taskProxy: {},
-      expected: undefined
+      expected: undefined,
     },
     {
       taskProxy: {
-        children: []
+        children: [],
       },
-      expected: undefined
+      expected: undefined,
     },
     {
       taskProxy: {
         children: [
           { node: 'foo' },
           { node: 'bar' },
-        ]
+        ],
       },
-      expected: 'foo'
-    }
+      expected: 'foo',
+    },
   ])('latestJob($taskProxy)', ({ taskProxy, expected }) => {
     it(`returns ${expected}`, () => {
       expect(latestJob(taskProxy)).to.equal(expected)
@@ -102,56 +102,56 @@ describe('tasks', () => {
       const tests = [
         {
           taskNode: { node: null },
-          expected: undefined
+          expected: undefined,
         },
         {
           taskNode: {
             task: {
-              meanElapsedTime: 0
-            }
+              meanElapsedTime: 0,
+            },
           },
-          expected: undefined
+          expected: undefined,
         },
         {
           taskNode: {
             node: {
               task: {
-                meanElapsedTime: 84
-              }
-            }
+                meanElapsedTime: 84,
+              },
+            },
           },
-          expected: '00:01:24'
+          expected: '00:01:24',
         },
         {
           taskNode: {
             node: {
               task: {
-                meanElapsedTime: 42
-              }
-            }
+                meanElapsedTime: 42,
+              },
+            },
           },
-          expected: '00:00:42'
+          expected: '00:00:42',
         },
         {
           taskNode: {
             node: {
               task: {
-                meanElapsedTime: 4242
-              }
-            }
+                meanElapsedTime: 4242,
+              },
+            },
           },
-          expected: '01:10:42'
+          expected: '01:10:42',
         },
         {
           taskNode: {
             node: {
               task: {
-                meanElapsedTime: 1426332
-              }
-            }
+                meanElapsedTime: 1426332,
+              },
+            },
           },
-          expected: '16d 12:12:12'
-        }
+          expected: '16d 12:12:12',
+        },
       ]
       tests.forEach(test => {
         expect(dtMean(test.taskNode)).to.equal(test.expected)
@@ -194,9 +194,9 @@ describe('tasks', () => {
             outputs: [{
               label: 'my-output',
               message: 'chilbolton',
-            }]
-          }
-        }
+            }],
+          },
+        },
       }
 
       expect(jobMessageOutputs(jobNode)).toEqual([

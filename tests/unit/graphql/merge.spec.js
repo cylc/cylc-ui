@@ -163,20 +163,20 @@ describe('mergeQueries', () => {
           const tests = [
             {
               a: true,
-              b: false
+              b: false,
             },
             {
               a: 'test',
-              b: 'production'
+              b: 'production',
             },
             {
               a: 1,
-              b: 10
+              b: 10,
             },
             {
               a: 1.0,
-              b: 10.0
-            }
+              b: 10.0,
+            },
           ]
           for (const test of tests) {
             const queryA = gql`query {

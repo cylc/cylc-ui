@@ -22,7 +22,7 @@ import GraphNode from '@/components/cylc/GraphNode.vue'
 import { Tokens } from '@/utils/uid'
 import {
   MEAN_ELAPSED_TIME,
-  getStartTime
+  getStartTime,
 } from './utils/task'
 
 function makeTaskNode (id, state, jobStates) {
@@ -36,8 +36,8 @@ function makeTaskNode (id, state, jobStates) {
       id: jobTokens.id,
       name: jobTokens.job,
       node: {
-        state: jobState
-      }
+        state: jobState,
+      },
     }
     if (jobState === 'running') { // TODO constant
       job.node.startedTime = getStartTime(50)
@@ -55,9 +55,9 @@ function makeTaskNode (id, state, jobStates) {
       isHeld: false,
       state,
       task: {
-        meanElapsedTime: MEAN_ELAPSED_TIME
-      }
-    }
+        meanElapsedTime: MEAN_ELAPSED_TIME,
+      },
+    },
   }
 
   return [task, jobs]
@@ -73,13 +73,13 @@ const GraphNodeSVG = defineComponent({
         width: '100%',
         height: '100%',
         // the "-40" bit is to account for the task modifiers
-        viewBox: '-40,-40,450,150'
+        viewBox: '-40,-40,450,150',
       },
       [
-        h(GraphNode, this.$attrs)
+        h(GraphNode, this.$attrs),
       ]
     )
-  }
+  },
 })
 
 describe('graph node component', () => {
@@ -92,7 +92,7 @@ describe('graph node component', () => {
     cy.mount(
       GraphNodeSVG,
       {
-        props: { task, jobs }
+        props: { task, jobs },
       }
     )
     // there should be 4 jobs
@@ -117,7 +117,7 @@ describe('graph node component', () => {
     cy.mount(
       GraphNodeSVG,
       {
-        props: { task, jobs, maxJobs: 4 }
+        props: { task, jobs, maxJobs: 4 },
       }
     )
     // there should be <maxJobs> jobs

@@ -25,7 +25,7 @@ import dedent from 'dedent'
 import gql from 'graphql-tag'
 import {
   getIntrospectionQuery as getGraphQLIntrospectionQuery,
-  print
+  print,
 } from 'graphql'
 import {
   mdiBullhorn,
@@ -162,7 +162,7 @@ export const cylcObjects = Object.freeze({
   CyclePoint: 'cycle',
   Namespace: 'task',
   // Task: 'task',
-  Job: 'job'
+  Job: 'job',
 })
 
 /**
@@ -176,13 +176,13 @@ export const primaryMutations = {
     'stop',
     'reload',
     'clean',
-    'log'
+    'log',
   ],
   [cylcObjects.CyclePoint]: [
     'hold',
     'release',
     'trigger',
-    'kill'
+    'kill',
   ],
   [cylcObjects.Namespace]: [
     'hold',
@@ -191,8 +191,8 @@ export const primaryMutations = {
     'kill',
     'log',
     'info',
-    'set'
-  ]
+    'set',
+  ],
 }
 
 // handle families the same as tasks
@@ -209,7 +209,7 @@ const identifierOrder = [
   cylcObjects.CyclePoint,
   cylcObjects.Namespace,
   // cylcObjects.Task,
-  cylcObjects.Job
+  cylcObjects.Job,
 ]
 
 /**
@@ -225,22 +225,22 @@ const identifierOrder = [
 export const mutationMapping = {
   [cylcObjects.User]: [],
   [cylcObjects.Workflow]: [
-    ['WorkflowID', false]
+    ['WorkflowID', false],
   ],
   [cylcObjects.CyclePoint]: [
     ['CyclePoint', false],
-    ['CyclePointGlob', true]
+    ['CyclePointGlob', true],
   ],
   [cylcObjects.Namespace]: [
     ['NamespaceName', false],
-    ['NamespaceIDGlob', true]
+    ['NamespaceIDGlob', true],
   ],
   // [cylcObjects.Task]: [
   //   ['TaskID', false]
   // ],
   [cylcObjects.Job]: [
-    ['JobID', false]
-  ]
+    ['JobID', false],
+  ],
 }
 
 /**
@@ -266,7 +266,7 @@ export const compoundFields = {
     (tokens[cylcObjects.CyclePoint] || '*') +
     '/' +
     tokens[cylcObjects.Namespace]
-  )
+  ),
 }
 
 /**
@@ -277,7 +277,7 @@ export const compoundFields = {
  */
 export const alternateFields = {
   // cycle points can be used as namespace identifiers
-  NamespaceIDGlob: cylcObjects.CyclePoint
+  NamespaceIDGlob: cylcObjects.CyclePoint,
 }
 
 /**
@@ -288,7 +288,7 @@ export const alternateFields = {
 export const mutationStatus = Object.freeze({
   FAILED: 'FAILED',
   SUCCEEDED: 'SUCCEEDED',
-  WARN: 'WARN'
+  WARN: 'WARN',
 })
 
 /**
@@ -322,7 +322,7 @@ export const dummyMutations = [
     description: 'View task information.',
     args: [],
     _appliesTo: [cylcObjects.Namespace],
-    _requiresInfo: false
+    _requiresInfo: false,
   },
 ]
 
@@ -333,7 +333,7 @@ export const dummyMutations = [
  */
 const dummyMutationsPermissionsMap = Object.freeze({
   broadcast: Object.freeze(['editRuntime']),
-  read: Object.freeze(['log', 'info'])
+  read: Object.freeze(['log', 'info']),
 })
 
 /**
@@ -422,7 +422,7 @@ export function extractFields (type, fields, types) {
     const fieldType = findByName(types, getBaseType(gqlField.type).name)
     return {
       name: field.name,
-      fields: extractFields(fieldType, field.fields, types)
+      fields: extractFields(fieldType, field.fields, types),
     }
   })
 }
@@ -833,7 +833,7 @@ export function constructQueryStr (query) {
     `  ${query.name}(${argNames.join(', ')}) {`,
     constructFieldsStr(query.fields, 2),
     '  }',
-    '}'
+    '}',
   ].join('\n').trim()
 }
 
@@ -892,7 +892,7 @@ export function getMutationArgsFromTokens (mutation, tokens) {
 function _mutateSuccess (message) {
   return {
     status: mutationStatus.SUCCEEDED,
-    message
+    message,
   }
 }
 
@@ -941,14 +941,14 @@ export async function mutate (mutation, variables, apolloClient, cylcID) {
   console.debug([
     `mutation(${mutation.name})`,
     mutationStr,
-    variables
+    variables,
   ])
 
   try {
     // call the mutation
     response = await apolloClient.mutate({
       mutation: gql(mutationStr),
-      variables
+      variables,
     })
   } catch (err) {
     // mutation failed (client-server error e.g. variable format, syntax error)
@@ -993,12 +993,12 @@ export async function query (query, variables, apolloClient) {
   console.debug([
     `query(${query.name})`,
     queryStr,
-    variables
+    variables,
   ])
 
   const response = await apolloClient.query({
     query: gql(queryStr),
-    variables
+    variables,
   })
   return response.data
 }
