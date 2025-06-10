@@ -24,15 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <g
     class="c8-task"
-    :class="{
-      [task.state]: true,
-      held: task.isHeld,
-      queued: task.isQueued && !task.isHeld,
-      runahead: task.isRunahead && !(task.isHeld || task.isQueued),
-      retry: task.isRetry && !(task.isHeld || task.isQueued || task.isRunahead),
-      wallclock: task.isWallclock && !(task.isHeld || task.isQueued || task.isRunahead || task.isRetry),
-      xtriggers: task.isXtriggered && !(task.isHeld || task.isQueued || task.isRunahead || task.isRetry || task.isWallclock),
-    }"
+    :class="[task.state, modifier]"
   >
     <!-- status
 
@@ -125,6 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </g>
       <!-- expired
 
+      A clock face, at about 5pm.
       -->
       <g
         class="expired"
@@ -186,10 +179,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <path
           d="
-            M37,33
-            L37 67
-            M62,33
-            L62 67
+            m37,33
+            l0 34
+            m25,0
+            l0, -34
           "
         />
       </g>
@@ -225,32 +218,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
       </g>
 
-      <!-- Radio signal representing waiting on xtriggers -->
+      <!-- xtriggered
+
+        Radio signal (similar to RSS logo) representing waiting on xtrigger(s).
+      -->
       <g class="xtriggers">
         <path
           d="
-            M10,70
-            a60, 060, 0, 0, 1, 60, -60
-            M30,70
+            m10,70
+            a60, 60, 0, 0, 1, 60, -60
+            m-40, 60
             a40, 40 0, 0, 1, 40, -40
-            M64,57
+            m-6, 27
             a9,9, 0, 1, 0, .1, 0
           "
         />
       </g>
 
-      <!-- Retry triggers -->
+      <!-- Retry
+
+        Circular arrow representing a retry.
+      -->
        <g class="retry">
         <!-- An arc describing the arrow -->
-        <path d="M25, 50 a30 30 1 1 1 25 30 "/>
+        <path d="m25, 50 a30 30 1 1 1 25 30 "/>
         <!-- The arrowhead -->
         <polygon points="0,40 26,75 52,40, 25,46"/>
       </g>
 
-      <!-- Wallclock xtriggers
+      <!-- Wallclock
 
-      Used with the outline circle, the path is just the hands
-      of the clock.
+        A clock face representing an unsatisfied wallclock trigger.
+
+        The path is just the hands of the clock. The icon is created in
+        combination with the outline circle.
       -->
       <g class="wallclock">
         <path
@@ -296,6 +297,17 @@ const props = defineProps({
  * @see @/components/cylc/workspace/Widget.vue
  */
 const animResetTime = inject('animResetTime', () => ref(0), true)
+
+// Get modifier (if any) for the task state.
+const modifier = computed(() => {
+  if (props.task.isHeld) return 'held'
+  if (props.task.isQueued) return 'queued'
+  if (props.task.isRunahead) return 'runahead'
+  if (props.task.isRetry) return 'retry'
+  if (props.task.isWallclock) return 'wallclock'
+  if (props.task.isXtriggered) return 'xtriggered'
+  return ''
+})
 
 const runningStyle = computed(() => {
   if (

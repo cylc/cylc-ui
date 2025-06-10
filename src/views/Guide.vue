@@ -113,8 +113,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   The task is not ready to run yet - it is still waiting on
-                  upstream <b>dependencies</b> or old style
-                  <b>external triggers</b>.
+                  upstream <b>dependencies</b> (or old style
+                  external triggers).
                 </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
@@ -179,7 +179,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   The task is waiting to retry running after
-                  a configured <b>execution retry delay</b>.
+                  a configured <b>submission or execution retry delay</b>.
                   It will then attempt to run the job again.
                 </v-list-item-subtitle>
               </v-list-item>
@@ -218,10 +218,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <em>Note: tasks downstream of queued (or runahead limited) tasks
                are not themselves shown as queued (or runahead limited)
                because they are not otherwise ready to run yet.</em>
-             </p>
-            <p>
-              <em>Note: external triggers (e.g. clock triggers) are not yet
-               exposed in the UI.</em>
              </p>
           </v-card-text>
         </v-card>
