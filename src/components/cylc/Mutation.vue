@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-card>
       <!-- the mutation title -->
       <v-card-title class="py-3">
-          {{ mutation._title }}
+        {{ mutation._title }}
       </v-card-title>
       <v-card-text class="card-text py-0 px-4">
         <!-- the mutation description -->

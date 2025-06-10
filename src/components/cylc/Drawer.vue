@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-tooltip
           activator="#version-chip"
           location="top"
-          >
+        >
           <div
             class="d-flex flex-column align-center"
             style="pointer-events: visible;"
