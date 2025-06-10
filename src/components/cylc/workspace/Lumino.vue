@@ -258,7 +258,10 @@ async function resetToDefault () {
  * @param {string} id - widget ID
  */
 const onWidgetDeleted = (id) => {
+  // layoutWatcher will be triggered by DockPanel.layoutModified, so pause to avoid duplicate trigger:
+  layoutWatcher.pause()
   views.value.delete(id)
+  layoutWatcher.resume()
   if (!views.value.size) {
     emit('emptied')
   }
