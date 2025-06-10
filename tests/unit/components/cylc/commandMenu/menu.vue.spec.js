@@ -31,7 +31,7 @@ describe('Command menu', () => {
     const id = '~neil.armstrong/apollo//11/eagle'
     wrapper.vm.node = {
       id,
-      tokens: new Tokens(id)
+      tokens: new Tokens(id),
     }
     expect(wrapper.vm.title).toEqual('apollo//11/eagle')
   })
@@ -51,8 +51,8 @@ describe('Command menu', () => {
       {
         testID: 'workflow node',
         node: simpleWorkflowNode,
-        expected: undefined
-      }
+        expected: undefined,
+      },
     ])('$testID', ({ node, expected }) => {
       expect(getLogFileForNode(node)).toEqual(expected)
     })

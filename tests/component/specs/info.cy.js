@@ -37,8 +37,8 @@ const TASK = {
         customMeta: {
           answer: '42',
           question: 'mutually exclusive',
-        }
-      }
+        },
+      },
     },
     prerequisites: [
       {
@@ -102,11 +102,11 @@ const TASK = {
         label: 'x',
         message: 'xxx',
         satisfied: true,
-      }
+      },
     ],
     runtime: {
-      completion: '(succeeded and x) or failed'
-    }
+      completion: '(succeeded and x) or failed',
+    },
   },
   children: [
     {
@@ -114,16 +114,16 @@ const TASK = {
       tokens: TOKENS.clone({ job: '02' }),
       name: '02',
       node: {
-        state: 'succeeded'
-      }
+        state: 'succeeded',
+      },
     },
     {
       id: TOKENS.clone({ job: '01' }).id,
       tokens: TOKENS.clone({ job: '01' }),
       name: '01',
       node: {
-        state: 'failed'
-      }
+        state: 'failed',
+      },
     },
   ],
 }
@@ -136,7 +136,7 @@ describe('Info component', () => {
         class: 'job_theme--default',
         // NOTE: expand all sections by default
         panelExpansion: [0, 1, 2, 3],
-      }
+      },
     })
 
     // there should be a task icon (running)
@@ -225,11 +225,11 @@ describe('Info component', () => {
     cy.vmount(InfoComponent, {
       props: {
         task: TASK,
-        class: 'job_theme--default'
+        class: 'job_theme--default',
       },
       listeners: {
         'update:panelExpansion': spy,
-      }
+      },
     }).as('wrapper')
 
     // ONLY the metadata panel should be expanded by default
@@ -261,8 +261,8 @@ describe('Info component', () => {
       node: {
         task: {
           meta: {
-            customMeta: {}
-          }
+            customMeta: {},
+          },
         },
         prerequisites: [],
         outputs: [],
@@ -276,7 +276,7 @@ describe('Info component', () => {
         class: 'job_theme--default',
         // NOTE: expand all sections by default
         panelExpansion: [0, 1, 2],
-      }
+      },
     })
   })
 })

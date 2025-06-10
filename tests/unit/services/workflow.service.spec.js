@@ -67,16 +67,16 @@ describe('WorkflowService', () => {
       createApolloClient: () => ({
         query: vi.fn(),
         subscribe: () => ({
-          subscribe: vi.fn()
+          subscribe: vi.fn(),
         }),
-      })
+      }),
     }))
     subscriptionClient = null
     // TODO: really load some mutations
     sandbox.stub(WorkflowService.prototype, 'loadTypes').returns(
       Promise.resolve({
         mutations: [],
-        types: []
+        types: [],
       })
     )
     service = new WorkflowService(url, subscriptionClient)
@@ -90,7 +90,7 @@ describe('WorkflowService', () => {
     subscriptionQuery = new SubscriptionQuery(
       query,
       {
-        workflowId: '~cylc/test'
+        workflowId: '~cylc/test',
       },
       'root',
       [],
@@ -108,7 +108,7 @@ describe('WorkflowService', () => {
       _uid: 'view',
       query: subscriptionQuery,
       viewState: ViewState.NO_STATE,
-      setAlert: () => {}
+      setAlert: () => {},
     }
     service.subscribe(view)
   })
@@ -224,7 +224,7 @@ describe('WorkflowService', () => {
        */
       const view1 = {
         _uid: 'view1',
-        query: query1
+        query: query1,
       }
       service.subscribe(view1)
       // at this point we have only 1 query, so the computed query must have the exact value we provided
@@ -249,7 +249,7 @@ describe('WorkflowService', () => {
        */
       const view2 = {
         _uid: 'view2',
-        query: query2
+        query: query2,
       }
       service.subscribe(view2)
       // now the queries must have been merged
@@ -271,7 +271,7 @@ describe('WorkflowService', () => {
     it('should not add duplicate callbacks', () => {
       const newCallbacks = [
         new WorkflowCallback(),
-        new TreeCallback()
+        new TreeCallback(),
       ]
       subscriptionQuery.callbacks.push(...newCallbacks)
       const newSubscriptionQuery = new SubscriptionQuery(
@@ -284,7 +284,7 @@ describe('WorkflowService', () => {
       )
       const anotherView = {
         _uid: 'anotherView',
-        query: newSubscriptionQuery
+        query: newSubscriptionQuery,
       }
       service.subscribe(anotherView)
       // Same callbacks, Lodash's union should add to list like a set
@@ -304,7 +304,7 @@ describe('WorkflowService', () => {
       )
       const anotherView = {
         _uid: 'anotherView',
-        query: newSubscriptionQuery
+        query: newSubscriptionQuery,
       }
       service.subscribe(anotherView)
       // Same callbacks, Lodash's union should add to list like a set
@@ -318,7 +318,7 @@ describe('WorkflowService', () => {
       const anotherQuery = new SubscriptionQuery(
         gql`query { workflow { id } }`,
         {
-          invalidVariable: true
+          invalidVariable: true,
         },
         'test',
         [],
@@ -327,7 +327,7 @@ describe('WorkflowService', () => {
         _uid: 'view',
         query: anotherQuery,
         viewState: ViewState.NO_STATE,
-        setAlert: () => {}
+        setAlert: () => {},
       }
       expect(() => { service.recompute(subscription) }).to.throw()
     })
@@ -346,7 +346,7 @@ describe('WorkflowService', () => {
     it('should NOT call unsubscribe if there are still subscribers left', () => {
       const anotherView = {
         _uid: 'test',
-        query: subscriptionQuery
+        query: subscriptionQuery,
       }
       service.subscribe(anotherView)
       const stub = sandbox.stub(service, 'stopSubscription')
@@ -357,7 +357,7 @@ describe('WorkflowService', () => {
   describe('stopSubscription', () => {
     it('should remove the subscription', () => {
       subscription.observable = {
-        unsubscribe: () => {}
+        unsubscribe: () => {},
       }
       expect(service.subscriptions[subscription.query.name]).to.not.equal(null)
       service.stopSubscription(subscription)
@@ -383,8 +383,8 @@ describe('Global Callback', () => {
       added: {
         id: 123,
         workflow: { id: '~user/foo' },
-        taskProxies: { id: '~user/foo//1/a' }
-      }
+        taskProxies: { id: '~user/foo//1/a' },
+      },
     }
     callback.before(delta1, store, errors)
     callback.onAdded(delta1.added, store, errors)
@@ -403,8 +403,8 @@ describe('Global Callback', () => {
       added: {
         id: 234,
         workflow: { id: '~user/foo', reloaded: true },
-        taskProxies: { id: '~user/foo//2/b' }
-      }
+        taskProxies: { id: '~user/foo//2/b' },
+      },
     }
     callback.before(delta2, store, errors)
     callback.onUpdated(delta2.added, store, errors)

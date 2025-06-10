@@ -8,28 +8,28 @@ const allCommands = {
   'serve:jupyterhub': {
     command: 'yarn run serve:jupyterhub',
     name: 'SERVER',
-    prefixColor: 'yellow'
+    prefixColor: 'yellow',
   },
   'serve:vue': {
     command: `yarn run serve:vue ${VITE_OPTIONS ?? ''}`,
     name: 'VITE',
-    prefixColor: 'blue'
+    prefixColor: 'blue',
   },
   preview: {
     command: `yarn run -B vite preview --mode offline ${VITE_OPTIONS ?? ''}`,
     name: 'VITE',
-    prefixColor: 'blue'
+    prefixColor: 'blue',
   },
   'e2e:open': {
     command: 'yarn run -B cypress open --e2e',
     name: 'TESTS',
-    prefixColor: 'magenta'
+    prefixColor: 'magenta',
   },
   'cy:run': {
     command: 'yarn run -B cypress run',
     name: 'TESTS',
-    prefixColor: 'cyan'
-  }
+    prefixColor: 'cyan',
+  },
 }
 
 concurrently(

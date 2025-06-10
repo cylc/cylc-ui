@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
     vue(),
     vuetify(),
     eslint({
-      failOnError: mode === 'production'
+      failOnError: mode === 'production',
     }),
     // GraphiQL is a React app:
     react(),
@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => {
   if (mode !== 'production' && process.env.COVERAGE) {
     plugins.push(
       IstanbulPlugin({
-        forceBuildInstrument: true
+        forceBuildInstrument: true,
       })
     )
   }
@@ -62,7 +62,7 @@ export default defineConfig(({ mode }) => {
         // GraphiQL is a React app (use Preact as it's smaller):
         react: 'preact/compat',
         'react-dom': 'preact/compat',
-      }
+      },
     },
     plugins,
     optimizeDeps: {
@@ -78,18 +78,18 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '^/(userprofile|version|graphql)': {
           target: devProxyTarget,
-          changeOrigin: true
+          changeOrigin: true,
         },
         '^/subscriptions': {
           target: devProxyTarget,
           changeOrigin: true,
-          ws: true
-        }
+          ws: true,
+        },
       },
       watch: {
         ignored: [
-          path.resolve(__dirname, './coverage')
-        ]
+          path.resolve(__dirname, './coverage'),
+        ],
       },
       warmup: {
         clientFiles: [
@@ -97,8 +97,8 @@ export default defineConfig(({ mode }) => {
           './src/App.vue',
           './src/views/Dashboard.vue',
           './src/views/Workspace.vue',
-        ]
-      }
+        ],
+      },
     },
     build: {
       sourcemap: mode !== 'production',
@@ -119,7 +119,7 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       // Allow vue devtools to work when runing vite build:
-      __VUE_PROD_DEVTOOLS__: mode !== 'production'
+      __VUE_PROD_DEVTOOLS__: mode !== 'production',
     },
     // Unit test specific config:
     test: {
@@ -137,12 +137,12 @@ export default defineConfig(({ mode }) => {
       coverage: {
         provider: 'istanbul',
         include: [
-          'src/**'
+          'src/**',
         ],
         exclude: [
-          'src/services/mock/**'
+          'src/services/mock/**',
         ],
-      }
-    }
+      },
+    },
   }
 })

@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <v-card>
       <!-- the mutation title -->
       <v-card-title class="py-3">
-          {{ mutation._title }}
+        {{ mutation._title }}
       </v-card-title>
       <v-card-text class="card-text py-0 px-4">
         <!-- the mutation description -->
@@ -37,8 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-bind="extendedDescription ? {} : {
                 expandIcon: null,
                 style: {
-                  cursor: 'default'
-                }
+                  cursor: 'default',
+                },
               }"
             >
               <Markdown :markdown="shortDescription"/>
@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-if="mutation.name === 'editRuntime'"
           v-bind="{
             cylcObject,
-            types
+            types,
           }"
           ref="form"
           v-model="isValid"
@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           v-bind="{
             mutation,
             types,
-            initialData
+            initialData,
           }"
           ref="form"
           v-model="isValid"
@@ -134,7 +134,7 @@ import Markdown from '@/components/Markdown.vue'
 import {
   getMutationShortDesc,
   getMutationExtendedDesc,
-  mutationStatus
+  mutationStatus,
 } from '@/utils/aotf'
 import { mdiClose } from '@mdi/js'
 import { useDynamicVuetifyDefaults } from '@/plugins/vuetify'
@@ -146,7 +146,7 @@ export default {
   components: {
     EditRuntimeForm,
     FormGenerator,
-    Markdown
+    Markdown,
   },
 
   emits: [
@@ -158,22 +158,22 @@ export default {
     mutation: {
       // graphql mutation object as returned by introspection query
       type: Object,
-      required: true
+      required: true,
     },
     cylcObject: {
       // data store node
       type: Object,
-      required: true
+      required: true,
     },
     types: {
       // list of all graphql types as returned by introspection query
       // (required for resolving InputType objects
-      type: Array
+      type: Array,
     },
     initialData: {
       type: Object,
       required: false,
-      default: () => {}
+      default: () => {},
     },
   },
 
@@ -188,7 +188,7 @@ export default {
   data: () => ({
     isValid: false,
     submitting: false,
-    warningMsg: null
+    warningMsg: null,
   }),
 
   computed: {
@@ -206,8 +206,8 @@ export default {
       },
       set (val) {
         if (!val) this.warningMsg = null
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -234,8 +234,8 @@ export default {
 
   // Misc options
   icons: {
-    close: mdiClose
-  }
+    close: mdiClose,
+  },
 }
 </script>
 

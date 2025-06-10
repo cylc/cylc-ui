@@ -91,7 +91,7 @@ const localValue = computed({
   },
   set (val) {
     emit('update:modelValue', val)
-  }
+  },
 })
 
 const maxVisibleStates = 4
