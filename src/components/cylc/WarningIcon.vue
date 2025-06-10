@@ -17,39 +17,67 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!--
     WarningIcon - A dismiss-able warning icon
+
+    states:
+    * no warnings: grey + translucent
+    * new warnings: yellow
+    * warnings dismissed: grey
 -->
 
 <template>
   <span
     class="c-warn"
-    style="display:inline-block; vertical-align:middle"
+    :class="{'active': workflow.node.warningActive}"
+    style="display: inline-block;"
   >
     <v-tooltip
       :activator="null"
       location="bottom"
-      :disabled="!message"
+      :disabled="!workflow.node.logRecords?.length"
     >
       <template
         v-slot:activator="{ props }"
       >
+        <!-- NOTE: the click.prevent suppresses router navigation -->
         <svg
           viewBox="0 0 100 100"
           v-bind="props"
           @click="deactivate"
+          @click.prevent
+          style="
+            vertical-align: middle;
+            cursor: pointer;
+          "
+          :style="[workflow.node.logRecords?.length ? {opacity: 1} : {opacity: 0.3}]"
         >
           <path
-            :d="path()"
-            :stroke-width="strokeWidth()"
-            v-bind:class="{'active': active}"
+            :d="$options.path"
+            :stroke-width="$options.strokeWidth"
+            v-bind:class="{'active': workflow.node.warningActive}"
           />
         </svg>
       </template>
-      <span>{{ message }}</span>
+      Recent warnings (click to dismiss):
+      <table>
+        <tr
+          v-for="(event, index) in (workflow.node.logRecords || []).slice().reverse()"
+          :key="index"
+        >
+          <td style="padding-right: 0.5em; vertical-align: top;">
+            <EventChip :level="event.level" />
+          </td><td>
+            <span>{{ event.message }}</span>
+          </td>
+        </tr>
+      </table>
     </v-tooltip>
   </span>
 </template>
 
 <script>
+import EventChip from '@/components/cylc/EventChip.vue'
+import { store } from '@/store/index'
+
 /* stuff we want to do once, when the component is loaded, rather than
  * every time it is used. */
 // stroke
@@ -85,34 +113,25 @@ function pathJoin (list) {
 }
 
 export default {
-  name: 'Warning',
-  data: function () {
-    return {
-      active: this.startActive
-    }
+  name: 'WarningIcon',
+
+  components: {
+    EventChip,
   },
+
   props: {
-    message: {
-      type: String,
-      required: false
-    },
-    startActive: {
-      type: Boolean,
-      required: false
+    workflow: {
+      required: true,
     }
   },
+
   methods: {
-    path () {
-      return PATH
-    },
-
-    strokeWidth () {
-      return sw
-    },
-
     deactivate () {
-      this.active = false
-    }
-  }
+      store.commit('workflows/UPDATE', { id: this.workflow.id, warningActive: false })
+    },
+  },
+
+  strokeWidth: sw,
+  path: PATH,
 }
 </script>
