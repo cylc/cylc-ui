@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <Teleport
     v-if="sortInputTeleportTarget"
-    :to="`#${sortInputTeleportTarget}`"
+    :to="sortInputTeleportTarget"
   >
     <div class="d-flex flex-grow-1 col-gap-1">
       <v-autocomplete
@@ -200,7 +200,7 @@ export default {
     },
     /** Where to teleport the sorting input (or don't render if null) */
     sortInputTeleportTarget: {
-      type: String,
+      type: HTMLElement,
       default: null,
     },
   },

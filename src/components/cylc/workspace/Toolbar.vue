@@ -85,13 +85,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
 
       <!-- n-window selector -->
-      <v-chip
+      <v-btn
         :disabled="isStopped"
-        link
+        variant="tonal"
+        rounded
         size="small"
         data-cy="n-win-selector"
       >
         N={{ nWindow }}
+        <template #append>
+          <v-icon
+            :icon="$options.icons.mdiChevronDown"
+            class="mx-n1"
+          />
+        </template>
         <v-menu
           activator="parent"
           :close-on-content-click="false"
@@ -122,11 +129,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-card-text>
           </v-card>
         </v-menu>
-      </v-chip>
+      </v-btn>
 
       <!-- workflow status message -->
-      <span class="status-msg text-md-body-1 text-body-2">
-        {{ statusMsg }}
+      <span class="status-msg text-body-2">
+        {{ statusAndVersion }}
       </span>
 
       <v-spacer class="mx-0" />
@@ -219,7 +226,8 @@ import {
   mdiStop,
   mdiViewList,
   mdiAccount,
-  mdiArrowULeftTop
+  mdiChevronDown,
+  mdiArrowULeftTop,
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
@@ -233,6 +241,7 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import { eventBus } from '@/services/eventBus'
+import { upperFirst } from 'lodash-es'
 
 const QUERY = gql(`
 subscription Workflow ($workflowId: ID) {
@@ -254,6 +263,7 @@ fragment WorkflowData on Workflow {
   status
   statusMsg
   nEdgeDistance
+  cylcVersion
 }
 
 fragment AddedDelta on Added {
@@ -353,8 +363,12 @@ export default {
         this.currentWorkflow.node.status === WorkflowState.STOPPED.name
       )
     },
-    statusMsg () {
-      return this.currentWorkflow.node.statusMsg || ''
+    statusAndVersion () {
+      let ret = upperFirst(this.currentWorkflow.node.statusMsg || '')
+      if (this.currentWorkflow.node.cylcVersion) {
+        ret += ` • Cylc ${this.currentWorkflow.node.cylcVersion}`
+      }
+      return ret
     },
     enabled () {
       // object holding the states of controls that are supposed to be enabled
@@ -469,6 +483,7 @@ export default {
     stop: mdiStop,
     mdiCog,
     mdiAccount,
+    mdiChevronDown,
     mdiArrowULeftTop,
   },
 }
