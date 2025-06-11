@@ -21,10 +21,12 @@ export class Alert {
    * @param {Error|string} err - original thrown error to log if possible, or an error message.
    * @param {string} color - color of the displayed alert.
    * @param {?string} msg - a custom message to display in the alert instead of err.
+   * @param {?string} detail - more details to show.
    */
-  constructor (err, color, msg = null) {
+  constructor (err, color, msg = null, detail = null) {
     this.err = err
     this.text = msg || err
     this.color = color
+    this.detail = detail
   }
 }
