@@ -124,7 +124,7 @@ function getIndex (state, id) {
   return state.cylcTree.$index[id]
 }
 
-/* Add a child node under a parent Node */
+/** Add a child node under a parent Node */
 function addChild (parentNode, childNode) {
   // determine which list to add this node to
   // console.log(`$t ++ ${childNode.id}`)
@@ -144,20 +144,12 @@ function addChild (parentNode, childNode) {
   }
 
   // insert the child preserving sort order
-  let comparator
-  if (['cycle', 'family'].includes(parentNode.type)) {
-    // sort by type, then name
-    // (this makes families sort before tasks in the graph)
-    comparator = (n) => `${n.type}-${n.name}`
-  } else {
-    // sort by name
-    comparator = (n) => n.name
-  }
+  const iteratee = (n) => `${n.type}-${n.name}` // (this makes families sort before tasks in the tree)
   const reverse = ['cycle', 'job'].includes(childNode.type)
   const index = sortedIndexBy(
     parentNode[key],
     childNode,
-    comparator,
+    iteratee,
     { reverse }
   )
   parentNode[key].splice(index, 0, childNode)
