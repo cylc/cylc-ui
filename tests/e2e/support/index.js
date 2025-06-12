@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,6 +35,11 @@ import '@cypress/code-coverage/support'
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+
+beforeEach(() => {
+  // Cypress test isolation does not include CacheStorage, so we need to clear it ourselves:
+  cy.clearLayoutsCache()
+})
 
 Cypress.on('uncaught:exception', (err) => {
   if (

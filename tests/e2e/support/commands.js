@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,3 +40,12 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('clearLayoutsCache', () => {
+  // Clear any stored workspace layouts
+  cy.window().then((win) => new Cypress.Promise(
+    (resolve) => {
+      win.caches?.delete('cylc-workspace-layouts')?.then(resolve) ?? resolve()
+    }
+  ))
+})

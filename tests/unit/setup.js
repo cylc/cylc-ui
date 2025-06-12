@@ -10,6 +10,7 @@ class ResizeObserverStub {
 }
 
 window.ResizeObserver ??= ResizeObserverStub
+window.DragEvent ??= function () { }
 
 // Mock element scroll API as not currently included in jsdom:
 // https://github.com/jsdom/jsdom/issues/1422

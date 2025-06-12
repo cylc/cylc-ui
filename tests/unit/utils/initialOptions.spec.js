@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,11 +31,8 @@ describe('useInitialOptions', () => {
     }
     const props = { initialOptions }
     const name = useInitialOptions('name', { props, emit })
-    // Should be called immediately
-    expect(emit).toHaveBeenCalledWith(
-      updateInitialOptionsEvent,
-      initialOptions
-    )
+    // Should not be called immediately (as this leads to unnecessarily saving the workspace layout many times)
+    expect(emit).not.toHaveBeenCalled()
     emit.mockClear()
     // Change the value of the ref
     name.value = 'Nicole Brennan'
