@@ -4325,7 +4325,7 @@ __metadata:
     eslint-plugin-vuetify: "npm:2.5.2"
     express: "npm:5.1.0"
     express-ws: "npm:5.0.2"
-    graphiql: "npm:4.1.1"
+    graphiql: "npm:4.1.2"
     graphql: "npm:16.11.0"
     graphql-tag: "npm:2.12.6"
     istanbul-lib-coverage: "npm:3.2.2"
@@ -4337,7 +4337,7 @@ __metadata:
     nodemon: "npm:3.1.10"
     nprogress: "npm:1.0.0-1"
     nyc: "npm:17.1.0"
-    preact: "npm:10.26.8"
+    preact: "npm:10.26.9"
     sass-embedded: "npm:1.89.0"
     simple-icons: "npm:15.1.0"
     sinon: "npm:20.0.0"
@@ -6372,9 +6372,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphiql@npm:4.1.1":
-  version: 4.1.1
-  resolution: "graphiql@npm:4.1.1"
+"graphiql@npm:4.1.2":
+  version: 4.1.2
+  resolution: "graphiql@npm:4.1.2"
   dependencies:
     "@graphiql/plugin-doc-explorer": "npm:^0.2.2"
     "@graphiql/plugin-history": "npm:^0.2.2"
@@ -6384,7 +6384,7 @@ __metadata:
     graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
     react: ^18 || ^19
     react-dom: ^18 || ^19
-  checksum: 10c0/f39c465022ee3d53551c92cf21c1fb736637eb0b3a2a6761af9365aec7e4d90a349f5556bd91271809081c494dc136b2699f2398540f2c415d2246aaa11994f0
+  checksum: 10c0/48575fd742e72a6736f59f5a3f8bc08299963f44a62885a766d9e9798bcc3f75c6d46840ca3a17383edcc598c9732e24e6df13ad7f7e5702ce950a4917b90704
   languageName: node
   linkType: hard
 
@@ -8856,10 +8856,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"preact@npm:10.26.8":
-  version: 10.26.8
-  resolution: "preact@npm:10.26.8"
-  checksum: 10c0/83b6a38af15386c0d93bbaf12996d624354f9c511f79d188f0d673b8f91740849b0603c207da1f10450b07a8659333864a3735d3b5fe23a790ef6cb85d1107c8
+"preact@npm:10.26.9":
+  version: 10.26.9
+  resolution: "preact@npm:10.26.9"
+  checksum: 10c0/15f187e3278ae749b70e887f88bb01be63ebcc2eea46ffa86be69180716db40b8b4304e9768767fd68a5910ef5fd1f9ea6389e17cd25e950be76574d568e8fc3
   languageName: node
   linkType: hard
 
