@@ -167,6 +167,9 @@ fragment TaskProxyData on TaskProxy {
   isHeld
   isRunahead
   isQueued
+  isRetry
+  isWallclock
+  isXtriggered
   name
   task {
     meanElapsedTime
