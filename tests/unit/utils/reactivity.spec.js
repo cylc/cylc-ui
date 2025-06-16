@@ -118,4 +118,35 @@ describe('watchWithControl()', () => {
     watcher.trigger()
     expect(callback).toHaveBeenCalledTimes(2)
   })
+
+  it('allows ignoring changes during a callback', async () => {
+    const source = ref(0)
+    const callback = vi.fn()
+    const watcher = watchWithControl(source, callback)
+
+    await watcher.ignore(() => {
+      source.value++
+    })
+    expect(source.value).toEqual(1)
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(0)
+
+    source.value++
+    expect(source.value).toEqual(2)
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+
+    watcher.pause()
+    // Check ignore changes while paused does not inadvertently resume the watcher
+    await watcher.ignore(() => {
+      source.value++
+    })
+    expect(source.value).toEqual(3)
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+    source.value++
+    expect(source.value).toEqual(4)
+    await nextTick()
+    expect(callback).toHaveBeenCalledTimes(1)
+  })
 })
