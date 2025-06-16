@@ -1033,23 +1033,22 @@ export default {
       }
 
       const graphSections = {}
-      for (const [cycle, indexSearch] of Object.entries(cyclesToNodes)) {
-        if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
-          for (const task of indexSearch) {
+      for (const [cycle, nodesInCycle] of Object.entries(cyclesToNodes)) {
+        if (nodesInCycle.length && !this.collapseCycle.includes(cycle)) {
+          for (const task of nodesInCycle) {
             const section = graphSections[task.node.firstParent.id] ??= []
             section.push(`${task.name} [title=${task.name}]`)
-            graphSections[task.node.firstParent.id] = section
           }
           if (this.groupCycle) {
             const removedNodes = new Set()
-            for (const node of indexSearch) {
+            for (const node of nodesInCycle) {
               if (this.collapseFamily.includes(node.name)) {
                 for (const child of this.allChildrenLookUp[node.id]) {
                   removedNodes.add(child.name)
                 }
               }
             }
-            const nodeFormattedArray = indexSearch.filter((a) => (
+            const nodeFormattedArray = nodesInCycle.filter((a) => (
               // if its not in the list of families (unless its been collapsed)
               (!this.allParentLookUp.has(a.name) || this.collapseFamily.includes(a.name)) &&
               // the node has been removed/collapsed
