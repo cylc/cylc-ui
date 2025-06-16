@@ -1033,23 +1033,22 @@ export default {
       }
 
       const graphSections = {}
-      for (const [cycle, indexSearch] of Object.entries(cyclesToNodes)) {
-        if (indexSearch.length && !this.collapseCycle.includes(cycle)) {
-          for (const task of indexSearch) {
+      for (const [cycle, nodesInCycle] of Object.entries(cyclesToNodes)) {
+        if (nodesInCycle.length && !this.collapseCycle.includes(cycle)) {
+          for (const task of nodesInCycle) {
             const section = graphSections[task.node.firstParent.id] ??= []
             section.push(`${task.name} [title=${task.name}]`)
-            graphSections[task.node.firstParent.id] = section
           }
           if (this.groupCycle) {
             const removedNodes = new Set()
-            for (const node of indexSearch) {
+            for (const node of nodesInCycle) {
               if (this.collapseFamily.includes(node.name)) {
                 for (const child of this.allChildrenLookUp[node.id]) {
                   removedNodes.add(child.name)
                 }
               }
             }
-            const nodeFormattedArray = indexSearch.filter((a) => (
+            const nodeFormattedArray = nodesInCycle.filter((a) => (
               // if its not in the list of families (unless its been collapsed)
               (!this.allParentLookUp.has(a.name) || this.collapseFamily.includes(a.name)) &&
               // the node has been removed/collapsed
@@ -1158,7 +1157,46 @@ export default {
       })
       const edges = this.getGraphEdges()
 
-      // ----------------------------------------
+      for (const cycle of this.collapseCycle) {
+        const cycleNode = this.cylcTree.$index[
+          this.workflows[0].tokens.clone({ cycle }).id
+        ]
+        if (!cycleNode) continue
+        // ---------------REMOVE NODES BASED ON CYCLE POINT------------
+        // must do this before removing nodes/edges based on family as cycle collapsing takes priority over families
+        for (const { id } of this.allChildrenLookUp[cycleNode.id]) {
+          if (id !== cycleNode.id) {
+            // REMOVE NODES
+            nodes = nodes.filter((node) => node.id !== id)
+            // REMOVE EDGES
+            // if there is an edge with a source or target it needs removing
+            for (const edge of this.removeEdges(id, edges)) {
+              // ---------------ADD EDGES BASED ON CYCLE POINT------------
+              // prevent self-loop edges:
+              if (edge.source.cycle === edge.target.cycle) continue
+
+              const sourceName = this.collapseCycle.includes(edge.source.cycle)
+                ? edge.source.cycle
+                : this.getCollapsedAncestor(edge.source.id) ?? edge.source.task
+              const targetName = this.collapseCycle.includes(edge.target.cycle)
+                ? edge.target.cycle
+                : this.getCollapsedAncestor(edge.target.id) ?? edge.target.task
+
+              edges.set(
+                ...this.createEdge({
+                  sourceName,
+                  sourceCycle: edge.source.cycle,
+                  targetName,
+                  targetCycle: edge.target.cycle,
+                })
+              )
+            }
+          }
+        }
+        // ---------------ADD NODES BASED ON CYCLE POINT------------
+        nodes.push(cycleNode)
+      }
+
       for (const family of this.collapseFamily) {
         for (const cycle of this.cycles) {
           // ...get the node from the index...
@@ -1168,8 +1206,6 @@ export default {
           if (!famNode) continue
           // ...now we have a node - we have to understand all its relations in the graph...
           // ---------------REMOVE NODES BASED ON FAMILY------------
-          // must do this before removing nodes and edges based on cycle as
-          // cycle collapsing takes priority of families
           // ...this node is collapsed so need to remove any of its children
           // (nodes and edges) from the graph if it has any...
           for (const { id } of this.allChildrenLookUp[famNode.id]) {
@@ -1209,46 +1245,6 @@ export default {
           }
         }
       }
-      for (const cycle of this.collapseCycle) {
-        const cycleNode = this.cylcTree.$index[
-          this.workflows[0].tokens.clone({ cycle }).id
-        ]
-        if (!cycleNode) continue
-        // ---------------REMOVE NODES BASED ON CYCLE POINT------------
-        for (const { id } of this.allChildrenLookUp[cycleNode.id]) {
-          if (id !== cycleNode.id) {
-            // REMOVE NODES
-            nodes = nodes.filter((node) => node.id !== id)
-            // REMOVE EDGES
-            // if there is an edge with a source or target it needs removing
-            for (const edge of this.removeEdges(id, edges)) {
-              // ---------------ADD EDGES BASED ON CYCLE POINT------------
-              // prevent self-loop edges:
-              if (edge.source.cycle === edge.target.cycle) continue
-
-              const sourceName = this.collapseCycle.includes(edge.source.cycle)
-                ? edge.source.cycle
-                : this.getCollapsedAncestor(edge.source.id) ?? edge.source.task
-              const targetName = this.collapseCycle.includes(edge.target.cycle)
-                ? edge.target.cycle
-                : this.getCollapsedAncestor(edge.target.id) ?? edge.target.task
-
-              edges.set(
-                ...this.createEdge({
-                  sourceName,
-                  sourceCycle: edge.source.cycle,
-                  targetName,
-                  targetCycle: edge.target.cycle,
-                })
-              )
-            }
-          }
-        }
-        // ---------------ADD NODES BASED ON CYCLE POINT------------
-        nodes.push(cycleNode)
-      }
-
-      // ----------------------------------------
 
       if (!nodes || !nodes.length) {
         // we can't graph this, reset and wait for something to draw
