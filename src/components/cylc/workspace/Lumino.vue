@@ -246,10 +246,8 @@ async function restoreLayout () {
  * Reset the workspace layout to a single tab with the default view.
  */
 async function resetToDefault () {
-  layoutWatcher.pause()
-  await closeAllViews()
+  await layoutWatcher.ignore(closeAllViews)
   await addView({ name: defaultView.value })
-  // (addView resumes the layout watcher)
 }
 
 /**
@@ -257,13 +255,12 @@ async function resetToDefault () {
  *
  * @param {string} id - widget ID
  */
-const onWidgetDeleted = (id) => {
-  // layoutWatcher will be triggered by DockPanel.layoutModified, so pause to avoid duplicate trigger:
-  layoutWatcher.pause()
-  views.value.delete(id)
-  layoutWatcher.resume()
-  if (!views.value.size) {
-    emit('emptied')
-  }
+function onWidgetDeleted (id) {
+  layoutWatcher.ignore(() => {
+    views.value.delete(id)
+    if (!views.value.size) {
+      emit('emptied')
+    }
+  })
 }
 </script>
