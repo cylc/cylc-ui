@@ -45,6 +45,7 @@ export const TEST_TREE = {
           name: 'a',
           type: 'workflow-part',
           tokens: new Tokens('~u/a'),
+          node: {},
           children: [
             {
               id: '~u/a/x1',

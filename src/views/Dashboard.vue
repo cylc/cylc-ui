@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     class="c-dashboard mt-4 py-0 px-6"
   >
     <v-row wrap>
-      <v-col md="6" lg="6">
+      <v-col md="4" lg="3">
         <p class="text-h4 mb-2">Workflows</p>
         <v-data-table
           :headers="$options.workflowsHeader"
@@ -31,25 +31,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           id="dashboard-workflows"
           items-per-page="-1"
           style="font-size: 1rem;"
+          density="compact"
         >
           <!-- Hide header & footer: -->
           <template v-slot:headers></template>
           <template v-slot:bottom></template>
         </v-data-table>
       </v-col>
-      <v-col md="6" lg="6">
+      <v-col md="8" lg="9">
         <p class="text-h4 mb-2">Events</p>
         <v-data-table
           :headers="$options.eventsHeader"
           :items="events"
+          :items-per-page="8"
+          density="compact"
+          data-cy="events-table"
         >
           <!-- Hide header: -->
           <template v-slot:headers></template>
+
+          <!-- Hide footer if no events: -->
+          <template v-if="!events.length" v-slot:bottom></template>
+
+          <!-- Special template if there are no events to display -->
           <template v-slot:no-data>
             <td class="text-h6 text-disabled">No events</td>
           </template>
-          <!-- Hide footer if no events: -->
-          <template v-if="!events.length" v-slot:bottom></template>
+
+          <template v-slot:item.level="{ item }">
+            <EventChip :level="item.level" />
+          </template>
         </v-data-table>
       </v-col>
     </v-row>
@@ -189,6 +200,7 @@ import { createUrl } from '@/utils/urls'
 import { WorkflowState, WorkflowStateOrder } from '@/model/WorkflowState.model'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
+import EventChip from '@/components/cylc/EventChip.vue'
 
 const QUERY = gql`
 subscription App {
@@ -233,6 +245,10 @@ export default {
     subscriptionComponentMixin
   ],
 
+  components: {
+    EventChip,
+  },
+
   data () {
     return {
       query: new SubscriptionQuery(
@@ -243,7 +259,6 @@ export default {
         /* isDelta */ true,
         /* isGlobalCallback */ true
       ),
-      events: [],
     }
   },
 
@@ -271,6 +286,16 @@ export default {
     },
     multiUserMode () {
       return this.user.mode !== 'single user'
+    },
+    events () {
+      const events = []
+      for (const workflow of this.workflows) {
+        const logRecords = workflow.node?.logRecords || []
+        for (const record of logRecords) {
+          events.push({ workflow: workflow.tokens.workflow, ...record })
+        }
+      }
+      return events.reverse()
     }
   },
 
@@ -280,8 +305,9 @@ export default {
   ],
 
   eventsHeader: [
-    { value: 'id' },
-    { value: 'text' }
+    { value: 'level' },
+    { value: 'workflow' },
+    { value: 'message' }
   ],
 
   hubUrl: createUrl('/hub/home', false, true),
