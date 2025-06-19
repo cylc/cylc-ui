@@ -34,8 +34,8 @@ const NumberFieldProps = {
   }
 }
 
-const RE = {
-  cyclePoint: String.raw`\d+(T\d+(Z|[+-]\d+)?)?`,
+export const RE = {
+  cyclePoint: String.raw`\d+[\dW-]*(T\d+[\d:]*(Z|[+-]\d+[\d:]*)?)?`,
 }
 
 export const RULES = {
