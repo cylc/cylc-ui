@@ -45,7 +45,7 @@ const TaskComponent = defineComponent({
   render () {
     return h(
       'span',
-      { style: 'font-size: 200px; margin: 100px;' },
+      { style: 'font-size: 200px; margin-left: 100px; margin-top: 50px; display: inline-block' },
       [
         h(Task, this.$attrs)
       ]
@@ -139,7 +139,7 @@ describe('Task component', () => {
         {
           overwrite: true,
           disableTimersAndAnimations: false,
-          padding: [10, 5, 5, 10]
+          padding: [10, 10, 15, 10]
         }
       )
     }
