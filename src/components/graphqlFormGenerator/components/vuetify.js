@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,8 +34,8 @@ const NumberFieldProps = {
   }
 }
 
-const RE = {
-  cyclePoint: '\\d+(T\\d+(Z|[+-]\\d+)?)?'
+export const RE = {
+  cyclePoint: String.raw`\d+[\dW-]*(T\d+[\d:]*(Z|[+-]\d+[\d:]*)?)?`,
 }
 
 export const RULES = {
@@ -110,7 +110,7 @@ export default {
       rules: [
         RULES.noSpaces,
         // character whitelist
-        x => Boolean(!x || x.match(`^${RE.cyclePoint}$`)) || 'Invalid Cycle Point'
+        x => Boolean(!x || x.match(String.raw`^${RE.cyclePoint}$`)) || 'Invalid Cycle Point'
       ]
     },
     CyclePointGlob: {
@@ -127,7 +127,7 @@ export default {
     BroadcastCyclePoint: {
       is: VTextField,
       rules: [
-        x => Boolean(!x || x.match(`^(${RE.cyclePoint}|\\*)$`)) || 'Must be "*" or a valid cycle point'
+        x => Boolean(!x || x.match(String.raw`^(${RE.cyclePoint}|\*)$`)) || 'Must be "*" or a valid cycle point'
       ]
     },
     // TaskStatus
