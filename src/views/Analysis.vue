@@ -110,6 +110,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-btn>
         </v-defaults-provider>
         <!-- Box plot sort input teleports here -->
+        <v-chip closable>
+          The Analysis View only shows successful tasks.
+        </v-chip>
       </div>
       <AnalysisTable
         v-if="chartType === 'table'"
