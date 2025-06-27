@@ -57,7 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         >
           <GraphNode
             :task="node"
-            :jobs="node.children"
+            :jobs="['task', 'family'].includes(node.type) ? node.children : []"
             :jobTheme="jobTheme"
             :class="{ 'flow-none': isFlowNone(node.node.flowNums) }"
           />
