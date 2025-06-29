@@ -706,9 +706,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/code-coverage@npm:3.14.4":
-  version: 3.14.4
-  resolution: "@cypress/code-coverage@npm:3.14.4"
+"@cypress/code-coverage@npm:3.14.5":
+  version: 3.14.5
+  resolution: "@cypress/code-coverage@npm:3.14.5"
   dependencies:
     "@cypress/webpack-preprocessor": "npm:^6.0.0"
     chalk: "npm:4.1.2"
@@ -725,7 +725,7 @@ __metadata:
     babel-loader: ^8.3 || ^9 || ^10
     cypress: "*"
     webpack: ^4 || ^5
-  checksum: 10c0/4f6d879994d8da8ef52d4e75e569eb7178e879d0cb7ce914fb3dd6edee305b53ec55bf27802aa1d26d70552acec56753072b3bc47ac3d25b8fcb0a22aff40f30
+  checksum: 10c0/bb6ce2779222a4e242f11a27c0934c26c6dcf8acfe95e7554713d884cdf87c4f92a02b9e2e0ac10dbfc8068f7846c594f1783bba7c9894b535c183c3667cefdc
   languageName: node
   linkType: hard
 
@@ -4187,7 +4187,7 @@ __metadata:
   resolution: "cylc-ui@workspace:."
   dependencies:
     "@apollo/client": "npm:3.13.8"
-    "@cypress/code-coverage": "npm:3.14.4"
+    "@cypress/code-coverage": "npm:3.14.5"
     "@hpcc-js/wasm": "npm:2.23.0"
     "@lumino/default-theme": "npm:2.1.10"
     "@lumino/widgets": "npm:2.7.1"
