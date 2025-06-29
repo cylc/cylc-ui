@@ -97,6 +97,13 @@ fragment TaskProxyData on TaskProxy {
 
   runtime {
     completion
+    runMode
+  }
+
+  xtriggers {
+    label
+    id
+    satisfied
   }
 }
 
