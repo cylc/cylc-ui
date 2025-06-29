@@ -33,14 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         ref="selectTasks"
       >
         <template v-slot:prepend-item>
-          <v-card-actions class="mt-n2">
+          <v-select-actions>
             <v-btn @click="selectSearchResults">
               Select all
             </v-btn>
             <v-btn @click="deselectSearchResults">
               Deselect all
             </v-btn>
-          </v-card-actions>
+          </v-select-actions>
           <v-divider/>
         </template>
       </v-autocomplete>
