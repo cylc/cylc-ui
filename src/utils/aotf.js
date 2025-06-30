@@ -517,20 +517,12 @@ export function getMutationExtendedDesc (text) {
  * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
  */
 export function processArguments (mutation, types) {
-  let pointer = null
-  let multiple = null
-  let required = null
-  let cylcObject = null
-  let cylcType = null
   for (const arg of mutation.args) {
-    pointer = arg.type
-    multiple = false
-    required = false
-    cylcObject = null
-    cylcType = null
-    if (pointer?.kind === 'NON_NULL') {
-      required = true
-    }
+    let pointer = arg.type
+    let multiple = false
+    let cylcObject = null
+    let cylcType = null
+    const required = arg.type?.kind === 'NON_NULL'
     while (pointer) {
       // walk down the nested type tree
       if (pointer.kind === 'LIST') {
@@ -858,30 +850,32 @@ export function getMutationArgsFromTokens (mutation, tokens) {
   const argspec = {}
   let value
   for (const arg of mutation.args) {
-    const alternate = alternateFields[arg._cylcType]
-    for (let token in tokens) {
-      if (arg._cylcObject && [token, alternate].includes(arg._cylcObject)) {
-        if (arg.name === 'cutoff') {
-          // Work around for a field we don't want filled in, see:
-          // * https://github.com/cylc/cylc-ui/issues/1222
-          // * https://github.com/cylc/cylc-ui/issues/1225
-          // TODO: Once #1225 is done the field type can be safely changed in
-          // the schema without creating a compatibility issue with the UIS.
-          continue
+    if (arg._cylcObject) {
+      const alternate = alternateFields[arg._cylcType]
+      for (let token in tokens) {
+        if ([token, alternate].includes(arg._cylcObject)) {
+          if (arg.name === 'cutoff') {
+            // Work around for a field we don't want filled in, see:
+            // * https://github.com/cylc/cylc-ui/issues/1222
+            // * https://github.com/cylc/cylc-ui/issues/1225
+            // TODO: Once #1225 is done the field type can be safely changed in
+            // the schema without creating a compatibility issue with the UIS.
+            continue
+          }
+          if (arg._cylcObject === alternate) {
+            token = alternate
+          }
+          if (arg._cylcType in compoundFields) {
+            value = compoundFields[arg._cylcType](tokens)
+          } else {
+            value = tokens[token]
+          }
+          if (arg._multiple) {
+            value = [value]
+          }
+          argspec[arg.name] = value
+          break
         }
-        if (arg._cylcObject === alternate) {
-          token = alternate
-        }
-        if (arg._cylcType in compoundFields) {
-          value = compoundFields[arg._cylcType](tokens)
-        } else {
-          value = tokens[token]
-        }
-        if (arg._multiple) {
-          value = [value]
-        }
-        argspec[arg.name] = value
-        break
       }
     }
     if (!argspec[arg.name]) {
