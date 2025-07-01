@@ -67,7 +67,7 @@
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-compat": "4.2.0",
     "eslint-plugin-cypress": "2.15.2",
-    "eslint-plugin-import": "2.31.0",
+    "eslint-plugin-import": "2.32.0",
     "eslint-plugin-n": "16.6.2",
     "eslint-plugin-no-only-tests": "3.3.0",
     "eslint-plugin-promise": "6.6.0",
