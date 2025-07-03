@@ -36,11 +36,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-tooltip>
       </div>
     </v-col>
-    <v-col cols="auto">
+    <v-col cols="auto" style="display: inline-block; padding-top: 0.5em;">
       <span>=</span>
     </v-col>
     <v-col>
-      <v-text-field
+      <v-textarea
+        rows="1"
+        auto-grow
         placeholder="value"
         v-model="modelValue.value"
         class="c-input-val"
