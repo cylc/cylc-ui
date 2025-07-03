@@ -28,10 +28,10 @@ describe('matchTask', () => {
 
   it('should match with default or matching filter values', () => {
     const filters = [
-      { name: '', platformOption: -1 },
-      { name: 'task_name', platformOption: -1 },
-      { name: '', platformOption: 'task_platform' },
-      { name: 'task_name', platformOption: 'task_platform' }
+      { name: [], platformOption: -1 },
+      { name: ['task_name'], platformOption: -1 },
+      { name: [], platformOption: 'task_platform' },
+      { name: ['task_name'], platformOption: 'task_platform' }
     ]
     filters.forEach(filter => {
       expect(matchTask(task, filter)).to.equal(true)
@@ -40,30 +40,11 @@ describe('matchTask', () => {
 
   it('should not match if at least one of the filter options does not match', () => {
     const filters = [
-      { name: 'task_name', platformOption: 'wrong_platform' },
-      { name: 'wrong_task', platformOption: 'task_platform' },
-      { name: 'wrong_task', platformOption: 'wrong_platform' }
+      { name: ['task_name'], platformOption: 'wrong_platform' },
+      { name: ['wrong_task'], platformOption: 'task_platform' },
+      { name: ['wrong_task'], platformOption: 'wrong_platform' }
     ]
     filters.forEach(filter => {
-      expect(matchTask(task, filter)).to.equal(false)
-    })
-  })
-
-  it('should allow partial matches of names but not platforms', () => {
-    const filterNames = [
-      { name: 'task_', platformOption: -1 },
-      { name: '_name', platformOption: -1 },
-      { name: 'sk_na', platformOption: -1 }
-    ]
-    const filterPlatforms = [
-      { name: '', platformOption: 'platform' },
-      { name: '', platformOption: 'form_1' },
-      { name: '', platformOption: 'form' }
-    ]
-    filterNames.forEach(filter => {
-      expect(matchTask(task, filter)).to.equal(true)
-    })
-    filterPlatforms.forEach(filter => {
       expect(matchTask(task, filter)).to.equal(false)
     })
   })
