@@ -566,9 +566,41 @@ describe('aotf (Api On The Fly)', () => {
           }
         ]
       }
-      expect(aotf.constructMutation(mutation)).to.equal(dedent`
+      aotf.processMutations([mutation])
+      const variables = {
+        foo: 'defined',
+        bar: 'defined', // N.B. type irrelevant for this test
+      }
+      expect(aotf.constructMutation(mutation, variables)).to.equal(dedent`
         mutation MyMutation($foo: String, $bar: Int) {
           MyMutation(foo: $foo, bar: $bar) {
+            result
+          }
+        }
+      `.trim())
+    })
+
+    it("doesn't include non-required args with default value", () => {
+      const mutation = {
+        name: 'MyMutation',
+        args: [
+          {
+            name: 'foo',
+            type: { name: 'String', kind: 'SCALAR' },
+            defaultValue: 'default',
+          },
+          {
+            name: 'bar',
+            type: { name: 'Int', kind: 'SCALAR' },
+            defaultValue: 42,
+          }
+        ]
+      }
+      aotf.processMutations([mutation])
+      const variables = { foo: 'default', bar: 42 }
+      expect(aotf.constructMutation(mutation, variables)).to.equal(dedent`
+        mutation MyMutation() {
+          MyMutation() {
             result
           }
         }
@@ -597,6 +629,7 @@ describe('aotf (Api On The Fly)', () => {
           }
         ]
       }
+      aotf.processMutations([mutation])
       expect(aotf.constructMutation(mutation)).to.equal(dedent`
         mutation MyMutation($myArg: [String]!) {
           MyMutation(myArg: $myArg) {
