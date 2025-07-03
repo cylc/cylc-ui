@@ -105,8 +105,26 @@ const TASK = {
       }
     ],
     runtime: {
-      completion: '(succeeded and x) or failed'
-    }
+      completion: '(succeeded and x) or failed',
+      runMode: 'Live',
+    },
+    xtriggers: [
+      {
+        label: 'xtrigger',
+        id: 'my-xtrigger(foo=99)',
+        satisfied: false
+      },
+      {
+        label: 'xtrigger',
+        id: 'my-xtrigger(foo=42)',
+        satisfied: false
+      },
+      {
+        label: 'wallclock-xtrigger',
+        id: 'wall_clock(trigger_time=634737600)',
+        satisfied: true
+      }
+    ]
   },
   children: [
     {
@@ -135,7 +153,7 @@ describe('Info component', () => {
         task: TASK,
         class: 'job_theme--default',
         // NOTE: expand all sections by default
-        panelExpansion: [0, 1, 2, 3],
+        panelExpansion: [0, 1, 2, 3, 4, 5],
       }
     })
 
@@ -155,6 +173,21 @@ describe('Info component', () => {
       .get('.metadata-panel a:first') // the URL should be an anchor
       .should('have.attr', 'href', 'https://cylc.org')
       .contains(/^https:\/\/cylc.org$/)
+
+    // the run mode panel:
+    cy.get('.run-mode-panel.v-expansion-panel--active').should('be.visible')
+      .contains('Live')
+
+    // the xtriggers panel
+    cy.get('.xtriggers-panel.v-expansion-panel--active').should('be.visible')
+      .get('table')
+      .get('tbody tr')
+      .children()
+      .then((selector) => {
+        expect(selector[0].innerText).to.equal('wallclock-xtrigger')
+        expect(selector[4].innerText).to.equal('my-xtrigger(foo=42)')
+        expect(selector[7].innerText).to.equal('my-xtrigger(foo=99)')
+      })
 
     // the prerequisites panel
     cy.get('.prerequisites-panel.v-expansion-panel--active').should('be.visible')
@@ -246,7 +279,7 @@ describe('Info component', () => {
       .get('@wrapper').then(({ wrapper }) => {
         expect(
           wrapper.emitted('update:panelExpansion')[0][0]
-        ).to.deep.equal([0, 1])
+        ).to.deep.equal([0, 3])
       })
   })
 
@@ -266,6 +299,8 @@ describe('Info component', () => {
         },
         prerequisites: [],
         outputs: [],
+        runtime: {},
+        xtriggers: []
       },
       children: [],
     }
@@ -275,8 +310,45 @@ describe('Info component', () => {
         task,
         class: 'job_theme--default',
         // NOTE: expand all sections by default
-        panelExpansion: [0, 1, 2],
+        panelExpansion: [0, 1, 2, 3],
       }
     })
   })
+
+  for (const mode of ['Skip', 'Simulation', 'Dummy']) {
+    it('should display ' + mode + ' mode', () => {
+      // ensure the component can be mounted without errors for empty states
+      // i.e. no metadata, prerequisites, outputs or jobs
+      const tokens = new Tokens('~user/workflow//1234/foo')
+      const task = {
+        id: tokens.id,
+        name: tokens.task,
+        tokens,
+        node: {
+          task: {
+            meta: {
+              customMeta: {}
+            }
+          },
+          prerequisites: [],
+          outputs: [],
+          runtime: { runMode: mode },
+          xtriggers: []
+        },
+        children: [],
+      }
+
+      cy.vmount(InfoComponent, {
+        props: {
+          task,
+          class: 'job_theme--default',
+          // Expand just the run mode panel
+          panelExpansion: [1],
+        }
+      })
+
+      cy.get('.run-mode-panel.v-expansion-panel--active').should('be.visible')
+        .contains(mode)
+    })
+  }
 })
