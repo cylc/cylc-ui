@@ -110,9 +110,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </tr>
             </thead>
             <tbody>
-              <tr v-for="xt in xtriggers" :key="xt">
+              <tr v-for="xt in xtriggers" :key="xt.id">
                 <td>{{ xt.label }}</td>
-                <td>{{ xt.id2 }}</td>
+                <td>{{ xt.id }}</td>
                 <td><v-icon>{{ xt.satisfactionIcon }}</v-icon></td>
               </tr>
             </tbody>
@@ -205,7 +205,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import { formatCompletion } from '@/utils/outputs'
-import { mdiSkipForward, mdiChatQuestion, mdiGhostOutline, mdiPlay, mdiDramaMasks, mdiCheckboxOutline, mdiCheckboxBlankOutline } from '@mdi/js'
+import {
+  mdiSkipForward,
+  mdiChatQuestion,
+  mdiGhostOutline,
+  mdiPlay,
+  mdiDramaMasks,
+  mdiCheckboxOutline,
+  mdiCheckboxBlankOutline
+} from '@mdi/js'
+import { cloneDeep } from 'lodash-es'
 
 export default {
   name: 'InfoComponent',
@@ -285,32 +294,21 @@ export default {
     },
 
     xtriggers () {
-      const xtriggers = this.task?.node?.xtriggers
-      xtriggers.forEach(xtrigger => {
-        if (xtrigger.satisfied === true) {
-          xtrigger.satisfactionIcon = mdiCheckboxOutline
-        } else {
-          xtrigger.satisfactionIcon = mdiCheckboxBlankOutline
-        }
-
+      const xtriggers = this.task?.node?.xtriggers?.map((item) => {
+        const xtrigger = cloneDeep(item)
+        xtrigger.satisfactionIcon = xtrigger.satisfied ? mdiCheckboxOutline : mdiCheckboxBlankOutline
         // Extract the trigger time from the ID
-        const re = /trigger_time=(?<unixTime>[0-9.]+)/
-        const result = re.exec(xtrigger.id)
-        if (result === null) {
-          xtrigger.id2 = xtrigger.id
-        } else {
-          // Since we've created this date from a Unix timestamp,
-          // we can safely assume it is in UTC:
-          xtrigger.id2 = xtrigger.id.replace(
-            re,
-            'trigger_time=' + new Date(result[1] * 1000).toISOString().slice(0, -5) + 'Z'
-          )
-        }
+        // Since we've created this date from a Unix timestamp, we can safely assume it is in UTC:
+        xtrigger.id = xtrigger.id.replace(
+          /trigger_time=(?<unixTime>[0-9.]+)/,
+          (match, p1) => `trigger_time=${new Date(p1 * 1000).toISOString().slice(0, -5)}Z`
+        )
+        return xtrigger
       })
       // Sort the xtriggers by label, then by ID:
       xtriggers.sort(function (a, b) {
         if (a.label === b.label) {
-          return a.id2 > b.id2 ? 1 : -1
+          return a.id > b.id ? 1 : -1
         }
         return a.label > b.label ? 1 : -1
       })
