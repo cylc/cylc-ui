@@ -62,15 +62,15 @@ describe('Analysis view', () => {
           .contains('eventually')
           .should('be.visible')
         cy
-          .get('td')
-          .contains('waiting')
-          .should('be.visible')
-        cy
           .get('#c-analysis-filter-task-name')
           .click()
           .get('.v-list-item')
           .contains('waiting')
           .click({ force: true })
+        cy
+          .get('td')
+          .contains('waiting')
+          .should('be.visible')
         cy
           .get('.c-analysis table > tbody > tr')
           .should('have.length', 1)
