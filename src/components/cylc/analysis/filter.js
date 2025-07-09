@@ -27,12 +27,8 @@
  */
 export function matchTask (task, tasksFilter) {
   let ret = false
-  if (tasksFilter.name.length > 0) {
-    for (let i = 0; i < tasksFilter.name.length; i++) {
-      if (tasksFilter.name[i] === task.name) {
-        ret = true
-      }
-    }
+  if (tasksFilter.name?.length) {
+    ret = tasksFilter.name.some((name) => task.name === name)
   } else {
     // If no name filter is applied, show all tasks
     ret = true
