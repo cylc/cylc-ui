@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="align-content-start"
     />
     <v-container
+      v-else
       fluid
       class="pa-2"
     >
