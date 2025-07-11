@@ -517,20 +517,12 @@ export function getMutationExtendedDesc (text) {
  * @param {IntrospectionInputType[]} types - Types as returned by introspection query.
  */
 export function processArguments (mutation, types) {
-  let pointer = null
-  let multiple = null
-  let required = null
-  let cylcObject = null
-  let cylcType = null
   for (const arg of mutation.args) {
-    pointer = arg.type
-    multiple = false
-    required = false
-    cylcObject = null
-    cylcType = null
-    if (pointer?.kind === 'NON_NULL') {
-      required = true
-    }
+    let pointer = arg.type
+    let multiple = false
+    let cylcObject = null
+    let cylcType = null
+    const required = arg.type?.kind === 'NON_NULL'
     while (pointer) {
       // walk down the nested type tree
       if (pointer.kind === 'LIST') {
@@ -770,10 +762,11 @@ export function argumentSignature (arg) {
 /** Construct a mutation string from a mutation introspection.
  *
  * @param {Mutation} mutation - A mutation as returned by an introspection query.
+ * @param {Record<string,any>} variables
  *
  * @returns {string} A mutation string for a client to send to the server.
  */
-export function constructMutation (mutation) {
+export function constructMutation (mutation, variables) {
   // the scan mutation has no arguments
   if (!mutation.args.length) {
     return dedent`
@@ -788,6 +781,12 @@ export function constructMutation (mutation) {
   const argNames = []
   const argTypes = []
   for (const arg of mutation.args) {
+    if (!arg._required && variables?.[arg.name] === arg._default) {
+      // Skip optional arguments that are set to their default value -
+      // this helps avoid back-compat issues when we add new args to the schema
+      // TODO: remove this workaround when addressing https://github.com/cylc/cylc-ui/issues/1225
+      continue
+    }
     argNames.push(`${arg.name}: $${arg.name}`)
     argTypes.push(`$${arg.name}: ${argumentSignature(arg)}`)
   }
@@ -858,30 +857,32 @@ export function getMutationArgsFromTokens (mutation, tokens) {
   const argspec = {}
   let value
   for (const arg of mutation.args) {
-    const alternate = alternateFields[arg._cylcType]
-    for (let token in tokens) {
-      if (arg._cylcObject && [token, alternate].includes(arg._cylcObject)) {
-        if (arg.name === 'cutoff') {
-          // Work around for a field we don't want filled in, see:
-          // * https://github.com/cylc/cylc-ui/issues/1222
-          // * https://github.com/cylc/cylc-ui/issues/1225
-          // TODO: Once #1225 is done the field type can be safely changed in
-          // the schema without creating a compatibility issue with the UIS.
-          continue
+    if (arg._cylcObject) {
+      const alternate = alternateFields[arg._cylcType]
+      for (let token in tokens) {
+        if ([token, alternate].includes(arg._cylcObject)) {
+          if (arg.name === 'cutoff') {
+            // Work around for a field we don't want filled in, see:
+            // * https://github.com/cylc/cylc-ui/issues/1222
+            // * https://github.com/cylc/cylc-ui/issues/1225
+            // TODO: Once #1225 is done the field type can be safely changed in
+            // the schema without creating a compatibility issue with the UIS.
+            continue
+          }
+          if (arg._cylcObject === alternate) {
+            token = alternate
+          }
+          if (arg._cylcType in compoundFields) {
+            value = compoundFields[arg._cylcType](tokens)
+          } else {
+            value = tokens[token]
+          }
+          if (arg._multiple) {
+            value = [value]
+          }
+          argspec[arg.name] = value
+          break
         }
-        if (arg._cylcObject === alternate) {
-          token = alternate
-        }
-        if (arg._cylcType in compoundFields) {
-          value = compoundFields[arg._cylcType](tokens)
-        } else {
-          value = tokens[token]
-        }
-        if (arg._multiple) {
-          value = [value]
-        }
-        argspec[arg.name] = value
-        break
       }
     }
     if (!argspec[arg.name]) {
@@ -940,14 +941,14 @@ async function _mutateError (mutationName, err, response) {
  * Call a mutation.
  *
  * @param {Mutation} mutation
- * @param {Object} variables
+ * @param {Record<string,any>} variables
  * @param {ApolloClient} apolloClient
  * @param {string=} cylcID
  *
  * @returns {(MutationResponse | Promise<MutationResponse>)} {status, msg}
  */
 export async function mutate (mutation, variables, apolloClient, cylcID) {
-  const mutationStr = constructMutation(mutation)
+  const mutationStr = constructMutation(mutation, variables)
   // eslint-disable-next-line no-console
   console.debug(mutationStr, variables)
 
