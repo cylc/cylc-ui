@@ -26,9 +26,12 @@
  * @return {boolean} Boolean determining if task should be displayed
  */
 export function matchTask (task, tasksFilter) {
-  let ret = true
-  if (tasksFilter.name?.trim()) {
-    ret &&= task.name.includes(tasksFilter.name)
+  let ret = false
+  if (tasksFilter.name?.length) {
+    ret = tasksFilter.name.some((name) => task.name === name)
+  } else {
+    // If no name filter is applied, show all tasks
+    ret = true
   }
   if (tasksFilter.platformOption.trim?.()) {
     ret &&= task.platform === tasksFilter.platformOption
