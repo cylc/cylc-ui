@@ -117,7 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             location="right"
             v-if="timingOption === 'cpuTime'"
           >
-            Total CPU Time Of Suite {{ formatDuration(tasks[0].totalOfTotals, false, 'cpuTime') }}
+            Total CPU Time: {{ formatDuration(tasks[0].totalOfTotals, false, 'cpuTime') }}
           </v-chip>
           <!-- Box plot sort input teleports here -->
         </v-defaults-provider>
