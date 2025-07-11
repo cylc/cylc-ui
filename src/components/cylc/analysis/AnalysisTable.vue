@@ -134,13 +134,7 @@ export default {
       const times = upperFirst(this.timingOption)
       const timingHeaders = []
       // Check if there are any stats to show
-      let stats = false
-      for (let i = 0; i < this.tasks.length; i++) {
-        if (this.tasks[i].count > 1) {
-          stats = true
-          break
-        }
-      }
+      const stats = this.tasks.some((task) => task.count > 1)
       if (stats) {
         timingHeaders.push(
           {
