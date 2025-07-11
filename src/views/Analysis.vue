@@ -17,7 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <template>
   <div class="c-analysis">
+    <v-skeleton-loader
+      v-if="!Object.keys(callback.tasks).length"
+      type="table"
+      class="align-content-start"
+    />
     <v-container
+      v-else
       fluid
       class="pa-2"
     >
@@ -108,8 +114,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-icon :icon="$options.icons.mdiRefresh" />
             <v-tooltip>Refresh data</v-tooltip>
           </v-btn>
+          <v-chip
+            location="right"
+            v-if="timingOption === 'cpuTime'"
+          >
+            Total CPU Time: {{ formatDuration(tasks[0].totalOfTotals, false, 'cpuTime') }}
+          </v-chip>
+          <!-- Box plot sort input teleports here -->
         </v-defaults-provider>
-        <!-- Box plot sort input teleports here -->
       </div>
       <AnalysisTable
         v-if="chartType === 'table'"
@@ -143,6 +155,7 @@ import {
   pick,
 } from 'lodash'
 import gql from 'graphql-tag'
+import { formatDuration } from '@/utils/tasks'
 import graphqlMixin from '@/mixins/graphql'
 import {
   initialOptions,
@@ -183,7 +196,19 @@ const taskFields = [
   'stdDevQueueTime',
   'minQueueTime',
   'queueQuartiles',
-  'maxQueueTime'
+  'maxQueueTime',
+  'maxMaxRss',
+  'meanMaxRss',
+  'stdDevMaxRss',
+  'minMaxRss',
+  'maxRssQuartiles',
+  'maxCpuTime',
+  'meanCpuTime',
+  'stdDevCpuTime',
+  'minCpuTime',
+  'totalCpuTime',
+  'cpuTimeQuartiles',
+  'totalOfTotals'
 ]
 
 /** The one-off query which retrieves historical task timing statistics */
@@ -343,7 +368,8 @@ export default {
         this.callback.onAdded(ret.data)
       },
       200 // only re-run this once every 0.2 seconds
-    )
+    ),
+    formatDuration
   },
 
   icons: {
@@ -357,6 +383,8 @@ export default {
     { value: 'totalTimes', title: 'Total times' },
     { value: 'runTimes', title: 'Run times' },
     { value: 'queueTimes', title: 'Queue times' },
+    { value: 'maxRss', title: 'Max RSS' },
+    { value: 'cpuTime', title: 'CPU Time' },
   ],
 }
 </script>
