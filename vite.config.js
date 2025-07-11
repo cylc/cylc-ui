@@ -102,9 +102,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       sourcemap: mode !== 'production',
-      // Use default browser compatibility for ECMAScript syntax as it's
-      // good enough:
-      target: 'modules',
+      target: 'baseline-widely-available',
       rollupOptions: {
         // Workaround https://github.com/vitejs/vite/issues/19410:
         maxParallelFileOps: 100,
