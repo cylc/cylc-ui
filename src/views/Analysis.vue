@@ -108,11 +108,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-icon :icon="$options.icons.mdiRefresh" />
             <v-tooltip>Refresh data</v-tooltip>
           </v-btn>
+          <v-btn>
+            <v-icon :icon="$options.icons.mdiInformationOutline" />
+            <v-tooltip>
+              The Analysis View shows data for all succeeded jobs in all cycles
+              of the workflow.
+            </v-tooltip>
+          </v-btn>
         </v-defaults-provider>
         <!-- Box plot sort input teleports here -->
-        <v-chip closable>
-          The Analysis View only shows successful tasks.
-        </v-chip>
       </div>
       <AnalysisTable
         v-if="chartType === 'table'"
@@ -165,6 +169,7 @@ import {
   mdiChartTimelineVariant,
   mdiRefresh,
   mdiTable,
+  mdiInformationOutline,
 } from '@mdi/js'
 
 /** List of fields to request for task for each task */
@@ -354,6 +359,7 @@ export default {
     mdiChartTimelineVariant,
     mdiRefresh,
     mdiTable,
+    mdiInformationOutline,
   },
 
   timingOptions: [
