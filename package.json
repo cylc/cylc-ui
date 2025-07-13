@@ -85,7 +85,7 @@
     "standard": "17.1.2",
     "vite": "6.3.5",
     "vite-plugin-eslint": "1.8.1",
-    "vite-plugin-istanbul": "7.0.0",
+    "vite-plugin-istanbul": "7.1.0",
     "vite-plugin-vuetify": "2.1.1",
     "vitest": "3.2.4"
   },
