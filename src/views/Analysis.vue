@@ -28,12 +28,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md="4"
           class="pr-md-2 mb-2 mb-md-0"
         >
-          <v-text-field
+          <v-combobox
             id="c-analysis-filter-task-name"
             clearable
+            chips
+            multiple
+            closable-chips
             placeholder="Filter by task name"
-            v-model.trim="tasksFilter.name"
+            v-model="tasksFilter.name"
             ref="filterNameInput"
+            :items="this.tasks.map(task => task.name)"
             :disabled="chartType === 'timeSeries'"
           />
         </v-col>
@@ -259,7 +263,7 @@ export default {
      * The task name, timing option and platform filter state.
      * @type {import('vue').Ref<object>}
      */
-    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { name: '', timingOption: 'totalTimes', platformOption: -1 })
+    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { name: [], timingOption: 'totalTimes', platformOption: -1 })
 
     /**
      * Determines the Analysis type ('table' | 'box' | 'timeSeries')
