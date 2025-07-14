@@ -84,6 +84,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel-text>
       </v-expansion-panel>
 
+      <v-expansion-panel class="run-mode-panel">
+        <v-expansion-panel-title color="blue-grey-lighten-2">
+          Run Mode
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-icon>{{ runModeIcon }}</v-icon>  {{ runMode }}
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
+      <v-expansion-panel
+        v-if="xtriggers.length"
+        class="xtriggers-panel"
+      >
+        <v-expansion-panel-title color="blue-grey-lighten-1">
+          Xtriggers
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-table density="compact">
+            <thead>
+              <tr>
+                <th>Label</th>
+                <th>ID</th>
+                <th>Is satisfied</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="xt in xtriggers" :key="xt.id">
+                <td>{{ xt.label }}</td>
+                <td>{{ xt.id }}</td>
+                <td><v-icon>{{ xt.satisfactionIcon }}</v-icon></td>
+              </tr>
+            </tbody>
+          </v-table>
+          </v-expansion-panel-text>
+      </v-expansion-panel>
+
       <!-- The prereqs -->
       <v-expansion-panel class="prerequisites-panel">
         <v-expansion-panel-title color="blue-grey-lighten-2">
@@ -169,6 +205,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import { formatCompletion } from '@/utils/outputs'
+import {
+  mdiSkipForward,
+  mdiChatQuestion,
+  mdiGhostOutline,
+  mdiPlay,
+  mdiDramaMasks,
+  mdiCheckboxOutline,
+  mdiCheckboxBlankOutline
+} from '@mdi/js'
+import { cloneDeep } from 'lodash-es'
 
 export default {
   name: 'InfoComponent',
@@ -226,6 +272,47 @@ export default {
     completion () {
       // Task output completion expression stuff.
       return this.task?.node?.runtime.completion
+    },
+
+    runModeIcon () {
+      // Task Run Mode:
+      if (this.task?.node?.runtime.runMode === 'Skip') {
+        return mdiSkipForward
+      } else if (this.task?.node?.runtime.runMode === 'Live') {
+        return mdiPlay
+      } else if (this.task?.node?.runtime.runMode === 'Simulation') {
+        return mdiGhostOutline
+      } else if (this.task?.node?.runtime.runMode === 'Dummy') {
+        return mdiDramaMasks
+      }
+      return mdiChatQuestion
+    },
+
+    runMode () {
+      // Task Run Mode:
+      return this.task?.node?.runtime.runMode
+    },
+
+    xtriggers () {
+      const xtriggers = this.task?.node?.xtriggers?.map((item) => {
+        const xtrigger = cloneDeep(item)
+        xtrigger.satisfactionIcon = xtrigger.satisfied ? mdiCheckboxOutline : mdiCheckboxBlankOutline
+        // Extract the trigger time from the ID
+        // Since we've created this date from a Unix timestamp, we can safely assume it is in UTC:
+        xtrigger.id = xtrigger.id.replace(
+          /trigger_time=(?<unixTime>[0-9.]+)/,
+          (match, p1) => `trigger_time=${new Date(p1 * 1000).toISOString().slice(0, -5)}Z`
+        )
+        return xtrigger
+      })
+      // Sort the xtriggers by label, then by ID:
+      xtriggers.sort(function (a, b) {
+        if (a.label === b.label) {
+          return a.id > b.id ? 1 : -1
+        }
+        return a.label > b.label ? 1 : -1
+      })
+      return xtriggers
     }
 
   },

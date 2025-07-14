@@ -15,28 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { createStore } from 'vuex'
-import storeOptions from '@/store/options'
+import { LuminoWidget } from '@/components/cylc/workspace/luminoWidget'
 
-/**
- * Tests for the store/app module.
- */
-describe('app', () => {
-  let store
-  beforeEach(() => {
-    store = createStore(storeOptions)
-  })
-  /**
-   * Tests for store.app.title.
-   */
-  describe('title', () => {
-    it('should start with no title', () => {
-      expect(store.state.app.title).to.equal(null)
+describe('LuminoWidget', () => {
+  it('stringifies to JSON and revives to new instance', () => {
+    const layout = {
+      widgets: [new LuminoWidget('widget71', 'Treadstone')]
+    }
+    const stringified = JSON.stringify(layout)
+    expect(JSON.parse(stringified).widgets[0]).toEqual({
+      id: 'widget71',
+      name: 'Treadstone',
+      closable: true,
     })
-    it('should set title', () => {
-      const title = 'Cylc'
-      store.commit('app/setTitle', title)
-      expect(store.state.app.title).to.equal(title)
-    })
+    const revived = JSON.parse(stringified, LuminoWidget.layoutReviver).widgets[0]
+    expect(revived).toBeInstanceOf(LuminoWidget)
+    expect(revived.id).toEqual('widget71')
+    expect(revived.name).toEqual('Treadstone')
   })
 })

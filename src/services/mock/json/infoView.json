@@ -76,8 +76,27 @@
           ],
 
           "runtime": {
-            "completion": "succeeded"
-          }
+            "completion": "succeeded",
+            "runMode": "Live"
+          },
+
+          "xtriggers": [
+            {
+              "label": "xtrigger",
+              "id": "myxt(foo=42)",
+              "satisfied": true
+            },
+            {
+              "label": "another xtrigger",
+              "id": "myxt(foo=41)",
+              "satisfied": false
+            },
+            {
+              "label": "clock xtrigger",
+              "id": "wall_clock(trigger_time=440121600)",
+              "satisfied": true
+            }
+          ]
         }
       ]
     }

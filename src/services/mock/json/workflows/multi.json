@@ -84,6 +84,20 @@
             "submitted": [],
             "running": []
           },
+          "logRecords": [
+            {
+              "level": "CRITICAL",
+              "message": "Workflow underwent a sudden and gratuitous total existence failure"
+            },
+            {
+              "level": "ERROR",
+              "message": "SOS"
+            },
+            {
+              "level": "WARNING",
+              "message": "Reality may go on the blink at infinite improbability."
+            }
+          ],
           "__typename": "Workflow"
         },
         "cyclePoints": [
