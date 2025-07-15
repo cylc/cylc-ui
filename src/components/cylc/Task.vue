@@ -48,11 +48,11 @@ export default {
       // Scale the size of the task state modifier
       type: Number,
       default: 0.7
-    }
+    },
   },
   components: {
     SVGTask
-  }
+  },
 }
 </script>
 
