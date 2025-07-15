@@ -4182,6 +4182,7 @@ __metadata:
     vite: "npm:6.3.5"
     vite-plugin-eslint: "npm:1.8.1"
     vite-plugin-istanbul: "npm:7.1.0"
+    vite-plugin-monaco-editor-esm: "npm:2.0.2"
     vite-plugin-vuetify: "npm:2.1.1"
     vitest: "npm:3.2.4"
     vue: "npm:3.5.17"
@@ -11060,6 +11061,15 @@ __metadata:
   peerDependencies:
     vite: ">=4 <=7"
   checksum: 10c0/1b0f32b455a81a4bc711e1fac2f66caf774908dacb7527601f5e35ae58345a84587913355a2646778c5b993bfc4fbf9f63a1148a20e9070834697919dcb12672
+  languageName: node
+  linkType: hard
+
+"vite-plugin-monaco-editor-esm@npm:2.0.2":
+  version: 2.0.2
+  resolution: "vite-plugin-monaco-editor-esm@npm:2.0.2"
+  peerDependencies:
+    monaco-editor: ">=0.33.0"
+  checksum: 10c0/8f5ee3caa05aa4219c8d00c3a26aacd047ab4c3a9328c104314b7cec1e4395760ac13103e90f0e3d3bba57dc7c88d0e44777b91843be804816a9722b58a540a1
   languageName: node
   linkType: hard
 

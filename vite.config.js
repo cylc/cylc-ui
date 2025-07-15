@@ -21,6 +21,7 @@ import vuetify from 'vite-plugin-vuetify'
 import react from '@vitejs/plugin-react'
 import eslint from 'vite-plugin-eslint'
 import IstanbulPlugin from 'vite-plugin-istanbul'
+import monaco from 'vite-plugin-monaco-editor-esm'
 import dns from 'dns'
 import path from 'path'
 
@@ -28,14 +29,26 @@ import path from 'path'
 dns.setDefaultResultOrder('ipv4first')
 
 export default defineConfig(({ mode }) => {
+  const graphiQLPlugins = [
+    react(),
+    monaco({
+      languageWorkers: ['editorWorkerService', 'json'],
+      customWorkers: [
+        {
+          label: 'graphql',
+          entry: 'monaco-graphql/esm/graphql.worker.js',
+        },
+      ],
+    })
+  ]
+
   const plugins = [
     vue(),
     vuetify(),
     eslint({
       failOnError: mode === 'production'
     }),
-    // GraphiQL is a React app:
-    react(),
+    ...graphiQLPlugins,
   ]
 
   if (mode !== 'production' && process.env.COVERAGE) {
