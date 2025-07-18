@@ -141,7 +141,7 @@ export function formatDuration (value, allowZeros = false, timingOption = true) 
 
 export function formatChartLabels (timingOption) {
   // Create correct labels for the charts
-  if (timingOption === 'maxRss' || timingOption === 'MaxRss') {
+  if (timingOption.toLowerCase() === 'maxrss') {
     return 'Max RSS'
   } else if (timingOption === 'cpuTime' || timingOption === 'CpuTime') {
     return 'CPU Time'
