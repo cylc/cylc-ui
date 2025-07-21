@@ -63,7 +63,10 @@ describe('Analysis view', () => {
           .should('be.visible')
         cy
           .get('#c-analysis-filter-task-name')
-          .type('wait')
+          .click()
+          .get('.v-list-item')
+          .contains('waiting')
+          .click({ force: true })
         cy
           .get('td')
           .contains('waiting')
@@ -195,7 +198,10 @@ describe('Analysis view', () => {
         // Show task names containing 'wait'
         cy
           .get('#c-analysis-filter-task-name')
-          .type('wait')
+          .click()
+          .get('.v-list-item')
+          .contains('waiting')
+          .click({ force: true })
         cy
           .get('td')
           .contains('waiting')
@@ -545,7 +551,10 @@ describe('Filters and Options save state', () => {
       // Set queue task name filter options
       cy
         .get('#c-analysis-filter-task-name')
-        .type('wait')
+        .click()
+        .get('.v-list-item')
+        .contains('waiting')
+        .click({ force: true })
 
       // Set task times filter options
       cy

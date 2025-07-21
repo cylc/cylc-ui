@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { afterAll, beforeAll } from 'vitest'
 import * as aotf from '@/utils/aotf'
 import dedent from 'dedent'
 // need the polyfill as otherwise ApolloClient fails to be imported as it checks for a global fetch object on import...
 import 'cross-fetch/polyfill'
+import sinon from 'sinon'
 
 describe('aotf (Api On The Fly)', () => {
   describe('tokenise', () => {
@@ -564,9 +566,41 @@ describe('aotf (Api On The Fly)', () => {
           }
         ]
       }
-      expect(aotf.constructMutation(mutation)).to.equal(dedent`
+      aotf.processMutations([mutation])
+      const variables = {
+        foo: 'defined',
+        bar: 'defined', // N.B. type irrelevant for this test
+      }
+      expect(aotf.constructMutation(mutation, variables)).to.equal(dedent`
         mutation MyMutation($foo: String, $bar: Int) {
           MyMutation(foo: $foo, bar: $bar) {
+            result
+          }
+        }
+      `.trim())
+    })
+
+    it("doesn't include non-required args with default value", () => {
+      const mutation = {
+        name: 'MyMutation',
+        args: [
+          {
+            name: 'foo',
+            type: { name: 'String', kind: 'SCALAR' },
+            defaultValue: 'default',
+          },
+          {
+            name: 'bar',
+            type: { name: 'Int', kind: 'SCALAR' },
+            defaultValue: 42,
+          }
+        ]
+      }
+      aotf.processMutations([mutation])
+      const variables = { foo: 'default', bar: 42 }
+      expect(aotf.constructMutation(mutation, variables)).to.equal(dedent`
+        mutation MyMutation() {
+          MyMutation() {
             result
           }
         }
@@ -595,6 +629,7 @@ describe('aotf (Api On The Fly)', () => {
           }
         ]
       }
+      aotf.processMutations([mutation])
       expect(aotf.constructMutation(mutation)).to.equal(dedent`
         mutation MyMutation($myArg: [String]!) {
           MyMutation(myArg: $myArg) {
@@ -749,6 +784,141 @@ describe('aotf (Api On The Fly)', () => {
         { name: 'width', fields: null },
         { name: 'height', fields: null }
       ])
+    })
+  })
+
+  describe('handleMutationResponse()', () => {
+    const mutation = { name: 'breach' }
+    beforeAll(() => {
+      sinon.stub(console, 'error')
+      sinon.stub(console, 'warn')
+    })
+    afterAll(() => {
+      sinon.restore()
+    })
+
+    it.each([
+      {
+        testID: 'original interface',
+        response: {
+          data: {
+            [mutation.name]: {
+              result: [true, 'arasaka']
+            }
+          }
+        },
+        expected: {
+          status: 'SUCCEEDED', message: 'arasaka'
+        }
+      },
+
+      {
+        testID: 'original interface with failure',
+        response: {
+          data: {
+            [mutation.name]: {
+              result: [false, 'relic malfunction']
+            }
+          }
+        },
+        expected: {
+          status: 'FAILED', message: 'relic malfunction'
+        }
+      },
+
+      {
+        testID: 'nested',
+        response: {
+          data: {
+            [mutation.name]: {
+              result: [
+                {
+                  [mutation.name]: {
+                    result: [{ id: 'wflow1', response: [true, 'arasaka'] }]
+                  }
+                },
+                {
+                  [mutation.name]: {
+                    result: [{ id: 'wflow2', response: [true, 'kiroshi'] }]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        expected: {
+          status: 'SUCCEEDED', message: 'Command(s) submitted'
+        }
+      },
+
+      {
+        testID: 'nested with failure',
+        response: {
+          data: {
+            [mutation.name]: {
+              result: [
+                {
+                  [mutation.name]: {
+                    result: [{ id: 'wflow1', response: [true, 'arasaka'] }]
+                  }
+                },
+                {
+                  [mutation.name]: {
+                    result: [{ id: 'wflow2', response: [false, 'relic malfunction'] }]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        expected: {
+          status: 'FAILED', message: 'relic malfunction'
+        }
+      },
+
+      {
+        testID: 'other format',
+        response: {
+          data: {
+            [mutation.name]: {
+              result: [{ response: [true, 'arasaka'] }]
+            }
+          }
+        },
+        expected: {
+          status: 'SUCCEEDED', message: 'Command(s) submitted'
+        }
+      },
+
+      {
+        testID: 'other format with failure',
+        response: {
+          data: {
+            [mutation.name]: {
+              result: [{ response: [false, 'relic malfunction'] }]
+            }
+          }
+        },
+        expected: {
+          status: 'FAILED', message: 'relic malfunction'
+        }
+      },
+
+      {
+        testID: 'unexpected format - assume success',
+        response: {
+          data: {
+            [mutation.name]: {
+              result: 2077,
+            }
+          }
+        },
+        expected: {
+          status: 'SUCCEEDED', message: 2077
+        }
+      }
+    ])('handles response - $testID', async ({ response, expected, testID }) => {
+      expect(await aotf.handleMutationResponse(mutation, response)).toStrictEqual(expected)
     })
   })
 })

@@ -64,9 +64,14 @@ export default {
     }
   },
   watch: {
-    query (newVal, oldVal) {
-      // if the query changes, unsubscribe & re-subscribe
-      this._updateQuery(newVal, oldVal)
-    }
+    query: {
+      handler (newVal, oldVal) {
+        // if the query changes, unsubscribe & re-subscribe
+        this._updateQuery(newVal, oldVal)
+      },
+      // Ensure all component mounts/unmounts take place before running the handler
+      // (this is needed to prevent subscription mismatches):
+      flush: 'post',
+    },
   }
 }

@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     >
       <defs>
         <marker
-          id="arrow-end"
+          :id="`${_uid}-arrow-end`"
           viewbox="0 0 8 8"
           refX="1" refY="5"
           markerUnits="strokeWidth"
@@ -83,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               stroke="rgb(90,90,90)"
               stroke-width="5"
               fill="none"
-              marker-end="url(#arrow-end)"
+              :marker-end="`url(#${_uid}-arrow-end)`"
             />
           </g>
         </g>
@@ -167,6 +167,9 @@ fragment TaskProxyData on TaskProxy {
   isHeld
   isRunahead
   isQueued
+  isRetry
+  isWallclock
+  isXtriggered
   name
   task {
     meanElapsedTime

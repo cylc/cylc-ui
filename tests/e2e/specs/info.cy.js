@@ -32,15 +32,52 @@ describe('Info View', () => {
       .get('.c-info').should('be.visible')
 
       // the metadata panel should be expanded by default
-      .find('.v-expansion-panel--active')
+      .find('.metadata-panel')
       .should('have.length', 1)
       .should('have.class', 'metadata-panel')
 
       // other panels should expand when clicked
-      .get('.c-info .v-expansion-panel:nth-child(2)')
+      .get('.run-mode-panel')
       .find('button')
       .click({ force: true })
-      .get('.v-expansion-panel--active')
-      .should('have.length', 2)
+      .get('.run-mode-panel')
+      .should('have.length', 1)
+      .and('contain', 'Live')
+
+      .get('.xtriggers-panel')
+      .find('button')
+      .click({ force: true })
+      .get('.xtriggers-panel')
+      .get('table')
+      .should('contain', 'xtrigger')
+      .and('contain', 'myxt(foo=42)')
+      .should('contain', 'another xtrigger')
+      .and('contain', 'myxt(foo=41)')
+
+      .get('.prerequisites-panel')
+      .find('button')
+      .click({ force: true })
+      .get('.prerequisites-panel')
+      .should('contain', '0 & 1')
+
+      .get('.outputs-panel')
+      .find('button')
+      .click({ force: true })
+      // Outputs panel should have three satisfied outputs:
+      .get('.outputs-panel')
+      .find('li .satisfied')
+      .should('contain', 'submitted')
+      .and('contain', 'started')
+      .and('contain', 'failed')
+      // and two unsatisfied outputs:
+      .get('.outputs-panel')
+      .find('li')
+      .should('have.length', 5)
+
+      .get('.completion-panel')
+      .find('button')
+      .click({ force: true })
+      .get('.completion-panel')
+      .should('have.length', 1)
   })
 })

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { isReactive } from 'vue'
 import { createStore } from 'vuex'
 import storeOptions from '@/store/options'
 
@@ -38,20 +37,6 @@ describe('app', () => {
       const title = 'Cylc'
       store.commit('app/setTitle', title)
       expect(store.state.app.title).to.equal(title)
-    })
-  })
-
-  describe('workspaceLayouts', () => {
-    it('saves unproxied layout', () => {
-      // Test that the Lumino layout saved in the store is not proxied, because
-      // proxying the layout breaks some parts of the 3rd party Lumino backend
-      const workflowName = 'zane'
-      const fakeLayout = { a: { b: 'c' } }
-      const fakeViews = new Map([[1, 2], [3, 4]])
-      store.commit('app/saveLayout', { workflowName, layout: fakeLayout, views: fakeViews })
-      const stored = store.state.app.workspaceLayouts.get(workflowName)
-      expect(stored).toEqual({ layout: fakeLayout, views: fakeViews })
-      expect(isReactive(stored.layout)).toBe(false)
     })
   })
 })

@@ -34,12 +34,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           md="4"
           class="pr-md-2 mb-2 mb-md-0"
         >
-          <v-text-field
+          <v-combobox
             id="c-analysis-filter-task-name"
             clearable
+            chips
+            multiple
+            closable-chips
             placeholder="Filter by task name"
-            v-model.trim="tasksFilter.name"
+            v-model="tasksFilter.name"
             ref="filterNameInput"
+            :items="this.tasks.map(task => task.name)"
             :disabled="chartType === 'timeSeries'"
           />
         </v-col>
@@ -114,14 +118,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-icon :icon="$options.icons.mdiRefresh" />
             <v-tooltip>Refresh data</v-tooltip>
           </v-btn>
-          <v-chip
-            location="right"
-            v-if="timingOption === 'cpuTime'"
-          >
-            Total CPU Time: {{ formatDuration(tasks[0].totalOfTotals, false, 'cpuTime') }}
-          </v-chip>
-          <!-- Box plot sort input teleports here -->
+          <v-btn>
+            <v-icon :icon="$options.icons.mdiInformationOutline" />
+            <v-tooltip>
+              The Analysis View shows data for all succeeded jobs in all cycles
+              of the workflow.
+            </v-tooltip>
+          </v-btn>
         </v-defaults-provider>
+        <!-- Box plot sort input teleports here -->
       </div>
       <AnalysisTable
         v-if="chartType === 'table'"
@@ -175,6 +180,7 @@ import {
   mdiChartTimelineVariant,
   mdiRefresh,
   mdiTable,
+  mdiInformationOutline,
 } from '@mdi/js'
 
 /** List of fields to request for task for each task */
@@ -284,7 +290,7 @@ export default {
      * The task name, timing option and platform filter state.
      * @type {import('vue').Ref<object>}
      */
-    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { name: '', timingOption: 'totalTimes', platformOption: -1 })
+    const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, { name: [], timingOption: 'totalTimes', platformOption: -1 })
 
     /**
      * Determines the Analysis type ('table' | 'box' | 'timeSeries')
@@ -377,6 +383,7 @@ export default {
     mdiChartTimelineVariant,
     mdiRefresh,
     mdiTable,
+    mdiInformationOutline,
   },
 
   timingOptions: [

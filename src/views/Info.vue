@@ -70,6 +70,9 @@ fragment TaskProxyData on TaskProxy {
   isHeld
   isQueued
   isRunahead
+  isRetry
+  isWallclock
+  isXtriggered
 
   task {
     ...TaskDefinitionData
@@ -97,6 +100,13 @@ fragment TaskProxyData on TaskProxy {
 
   runtime {
     completion
+    runMode
+  }
+
+  xtriggers {
+    label
+    id
+    satisfied
   }
 }
 

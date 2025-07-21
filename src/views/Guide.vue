@@ -113,7 +113,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   The task is not ready to run yet - it is still waiting on
-                  upstream <b>dependencies</b> or <b>xtriggers</b>.
+                  upstream <b>dependencies</b> (or old style
+                  external triggers).
                 </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
@@ -165,15 +166,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   which restricts the number of active cycle points.
                 </v-list-item-subtitle>
               </v-list-item>
+              <v-list-item>
+                <template v-slot:prepend>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'waiting', isRetry: true}"
+                    class="mr-4"
+                  />
+                </template>
+                <v-list-item-title>
+                  Retry
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task is waiting to retry running after
+                  a configured <b>submission or execution retry delay</b>.
+                  It will then attempt to run the job again.
+                </v-list-item-subtitle>
+              </v-list-item>
+              <v-list-item>
+                <template v-slot:prepend>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'waiting', isWallclock: true}"
+                    class="mr-4"
+                  />
+                </template>
+                <v-list-item-title>
+                  Wallclock
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  This task is waiting for a wallclock trigger.
+                </v-list-item-subtitle>
+              </v-list-item>
+              <v-list-item>
+                <template v-slot:prepend>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'waiting', isXtriggered: true}"
+                    class="mr-4"
+                  />
+                </template>
+                <v-list-item-title>
+                  Xtriggered
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  This task is waiting for an <b>xtrigger</b>.
+                </v-list-item-subtitle>
+              </v-list-item>
             </v-list>
             <p>
             <em>Note: tasks downstream of queued (or runahead limited) tasks
                are not themselves shown as queued (or runahead limited)
                because they are not otherwise ready to run yet.</em>
-             </p>
-            <p>
-              <em>Note: external triggers (e.g. clock triggers) are not yet
-               exposed in the UI.</em>
              </p>
           </v-card-text>
         </v-card>
