@@ -12,6 +12,34 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.8.0 (Released 2025-07-23)
+
+### 🚀 Enhancements
+
+[#2017](https://github.com/cylc/cylc-ui/pull/2017) - Added option to set automatic scrolling in log view
+
+[#2025](https://github.com/cylc/cylc-ui/pull/2025) - Added conditional default log file based on job outcome
+
+[#2102](https://github.com/cylc/cylc-ui/pull/2102) - Added xtriggers and run mode to the task info view.
+
+[#2135](https://github.com/cylc/cylc-ui/pull/2135) - Show more Cylc version info in the sidebar.
+
+[#2169](https://github.com/cylc/cylc-ui/pull/2169) - Added workflow warning information:
+  - A dismissable warning icon in the workflows sidebar and workspace toolbar which illuminates when a warning is present.
+  - All warnings are listed in events section of the dashboard.
+
+[#2176](https://github.com/cylc/cylc-ui/pull/2176) - Workspace tab layout is now remembered beyond the current browser session.
+
+[#2190](https://github.com/cylc/cylc-ui/pull/2190) - Added icon modifiers for tasks waiting on failure-retry, xtriggers or wallclock.
+
+[#2222](https://github.com/cylc/cylc-ui/pull/2222) - The Edit Runtime form now supports multi-line environment variables.
+
+### 🔧 Fixes
+
+[#2163](https://github.com/cylc/cylc-ui/pull/2163) - Fixed sorting controls appearing in wrong tab when multiple analysis view tabs are open.
+
+[#2174](https://github.com/cylc/cylc-ui/pull/2174) - Fixed spurious error when running a command on multiple workflows.
+
 ## cylc-ui-2.7.0 (Released 2025-01-08)
 
 ### 🚀 Enhancements
