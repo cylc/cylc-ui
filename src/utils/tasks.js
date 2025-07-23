@@ -99,6 +99,9 @@ export function jobMessageOutputs (jobNode) {
  * @return {string=} Formatted duration
  */
 export function formatDuration (value, allowZeros = false, timingOption = true) {
+  if (timingOption === 'maxRss') {
+    return formatRSS(value)
+  }
   // Times are formatted as HH:MM:SS
   if (timingOption === 'queue' || timingOption === 'total' || timingOption === 'run' || timingOption === 'cpuTime' || timingOption === true) {
     if (value || (value === 0 && allowZeros === true)) {
@@ -121,22 +124,24 @@ export function formatDuration (value, allowZeros = false, timingOption = true) 
         ':' + minutes.toString().padStart(2, '0') +
         ':' + Math.round(seconds).toString().padStart(2, '0')
     }
-  // If memory value passed
-  } else if (timingOption === 'maxRss') {
-    if (value < 5000) {
-      const kilobytes = value
-      return kilobytes.toPrecision(3) + ' KB'
-    } else if (value / 1024 < 1000) {
-      const megabytes = value / 1024
-      return megabytes.toPrecision(3) + ' MB'
-    } else {
-      const gigabytes = value / 1048576
-      return gigabytes.toPrecision(3) + ' GB'
-    }
+    // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
+    // return "undefined" rather than a number for these cases
+    return undefined
   }
-  // the meanElapsedTime can be 0/undefined (i.e. task has not run before)
-  // return "undefined" rather than a number for these cases
-  return undefined
+}
+
+function formatRSS (value) {
+  // Format the max RSS value in a human-readable format
+  if (value < 5000) {
+    const kilobytes = value
+    return kilobytes.toPrecision(3) + ' KB'
+  } else if (value / 1024 < 1000) {
+    const megabytes = value / 1024
+    return megabytes.toPrecision(3) + ' MB'
+  } else {
+    const gigabytes = value / 1048576
+    return gigabytes.toPrecision(3) + ' GB'
+  }
 }
 
 export function formatChartLabels (timingOption) {

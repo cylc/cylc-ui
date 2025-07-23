@@ -118,6 +118,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-icon :icon="$options.icons.mdiRefresh" />
             <v-tooltip>Refresh data</v-tooltip>
           </v-btn>
+          <v-chip location="right" v-if="timingOption === 'cpuTime'">
+            Total CPU Time: {{
+            formatDuration(tasks[0].totalOfTotals, false, 'cpuTime') }}
+          </v-chip>
           <v-btn>
             <v-icon :icon="$options.icons.mdiInformationOutline" />
             <v-tooltip>
