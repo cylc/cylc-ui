@@ -34,7 +34,7 @@
     "axios": "1.11.0",
     "dedent": "1.6.0",
     "enumify": "2.0.0",
-    "graphiql": "4.1.2",
+    "graphiql": "5.0.6",
     "graphql": "16.11.0",
     "graphql-tag": "2.12.6",
     "lodash-es": "4.17.21",
@@ -86,6 +86,7 @@
     "vite": "7.0.6",
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "7.1.0",
+    "vite-plugin-monaco-editor-esm": "2.0.2",
     "vite-plugin-vuetify": "2.1.1",
     "vitest": "3.2.4"
   },

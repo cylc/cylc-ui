@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import 'graphiql/graphiql.css'
+import 'graphiql/style.css'
 import { render, createElement } from 'preact/compat'
 import { GraphiQL } from 'graphiql'
 import { fallbackGraphQLFetcher, graphQLFetcher } from '@/graphql/graphiql'
