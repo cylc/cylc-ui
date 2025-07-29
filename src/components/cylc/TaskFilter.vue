@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="filter-id"
         clearable
         placeholder="Filter by ID"
-        v-model="localValue.id"
+        v-model="model.id"
         ref="filterIDInput"
       />
     </v-col>
@@ -38,9 +38,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="mb-2 mb-md-0"
     >
       <TaskFilterSelect
-        v-model="localValue.states"
+        v-model="model.states"
         type="task state"
-        :items="$options.allStates"
+        :items="TaskStateNames"
         data-cy="filter task state"
         placeholder="Filter by task state"
       />
@@ -48,35 +48,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </v-row>
 </template>
 
-<script>
+<script setup>
 import { TaskStateNames } from '@/model/TaskState.model'
 import TaskFilterSelect from '@/components/cylc/TaskFilterSelect.vue'
 
-export default {
-  name: 'TaskFilter',
+/** @type {import('vue').Ref<{ id: string?, states: string[]? }>} */
+const model = defineModel({
+  type: Object,
+  required: true,
+})
 
-  components: {
-    TaskFilterSelect
-  },
-
-  props: {
-    modelValue: {
-      type: Object,
-      required: true
-    } // { id, states }
-  },
-
-  computed: {
-    localValue: {
-      get () {
-        return this.modelValue
-      },
-      set (value) {
-        // Update 'modelValue' prop by notifying parent component's v-model for this component
-        this.$emit('update:modelValue', value)
-      }
-    }
-  },
-  allStates: TaskStateNames,
-}
 </script>
