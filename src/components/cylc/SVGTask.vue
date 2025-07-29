@@ -161,6 +161,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           "
         />
       </g>
+
+      <!-- runahead
+
+        Dot icon representing isRunahead.
+      -->
+      <g
+        class="runahead"
+      >
+        <circle
+          cx="50"
+          cy="50"
+          r="20"
+        />
+      </g>
+
+      <!-- Run Mode is Skip
+
+        Fast-forward icon representing skip-mode
+      -->
+      <g
+        class="skip"
+      >
+        <path class="skip"
+          d="M 5 15 v 70 l 43 -35 M 50 15 v 70 l 43 -35"
+        />
+      </g>
+
       <!-- queued
 
         Burger bar-like icon representing isQueued.
@@ -177,19 +204,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             m-43,21
             l43 0
           "
-        />
-      </g>
-      <!-- runahead
-
-        Dot icon representing isRunahead.
-      -->
-      <g
-        class="runahead"
-      >
-        <circle
-          cx="50"
-          cy="50"
-          r="20"
         />
       </g>
 
@@ -278,8 +292,9 @@ const animResetTime = inject('animResetTime', () => ref(0), true)
 // Get modifier (if any) for the task state.
 const modifier = computed(() => {
   if (props.task.isHeld) return 'held'
-  if (props.task.isQueued) return 'queued'
   if (props.task.isRunahead) return 'runahead'
+  if (props.task.runtime?.runMode === 'Skip') return 'skip'
+  if (props.task.isQueued) return 'queued'
   if (props.task.isRetry) return 'retry'
   if (props.task.isWallclock) return 'wallclock'
   if (props.task.isXtriggered) return 'xtriggered'
@@ -384,11 +399,15 @@ const modifierTransform = _getModifierTransform()
         fill: none;
         stroke: none;
       }
-      .queued rect {
+      .runahead circle {
         fill: none;
         stroke: none;
       }
-      .runahead circle {
+      .skip{
+        fill: none;
+        stroke: none;
+      }
+      .queued rect {
         fill: none;
         stroke: none;
       }
@@ -472,20 +491,28 @@ const modifierTransform = _getModifierTransform()
       }
     }
 
+    &.runahead .modifier {
+          .outline {
+            stroke: $foreground;
+          }
+          .runahead circle {
+            fill: $foreground;
+          }
+        }
+
+    &.skip .modifier {
+      .skip path {
+        stroke: $background;
+        fill: $foreground;
+        stroke-width: 0px;
+      }
+    }
+
     &.queued .modifier {
       .queued path {
         stroke: $foreground;
         stroke-linecap: round;
         stroke-width: 16px;
-      }
-    }
-
-    &.runahead .modifier {
-      .outline {
-        stroke: $foreground;
-      }
-      .runahead circle {
-        fill: $foreground;
       }
     }
 

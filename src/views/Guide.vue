@@ -138,22 +138,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    :task="{state: 'waiting', isQueued: true}"
-                    class="mr-4"
-                  />
-                </template>
-                <v-list-item-title>
-                  Queued
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  The task is ready to run but is held back by a queue,
-                  which restricts the number of active tasks.
-                </v-list-item-subtitle>
-              </v-list-item>
-              <v-list-item>
-                <template v-slot:prepend>
-                  <task
-                    style="font-size: 2em;"
                     :task="{state: 'waiting', isRunahead: true}"
                     class="mr-4"
                   />
@@ -164,6 +148,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-list-item-subtitle>
                   The task is ready to run but is beyond the runahead limit,
                   which restricts the number of active cycle points.
+                </v-list-item-subtitle>
+              </v-list-item>
+              <v-list-item>
+                <template v-slot:prepend>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'skip', runtime: { runMode: 'Skip' }}"
+                    class="mr-4"
+                  />
+                </template>
+                <v-list-item-title>
+                  Skip Mode
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  This task will be run in skip mode.
+                </v-list-item-subtitle>
+              </v-list-item>
+              <v-list-item>
+                <template v-slot:prepend>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'waiting', isQueued: true}"
+                    class="mr-4"
+                  />
+                </template>
+                <v-list-item-title>
+                  Queued
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  The task is ready to run but is held back by a queue,
+                  which restricts the number of active tasks.
                 </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
