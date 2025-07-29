@@ -175,6 +175,9 @@ fragment TaskProxyData on TaskProxy {
     meanElapsedTime
   }
   flowNums
+  runtime {
+    runMode
+  }
 }
 
 fragment JobData on Job {
