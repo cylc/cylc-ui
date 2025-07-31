@@ -141,42 +141,42 @@ export default {
             title: `Mean ${formatChartLabels(times)}`,
             key: `${formatHeader('mean', times)}`,
             formatter: formatDuration,
-            allowZeros: false,
+            allowZeros: true,
             timingOption: this.timingOption
           },
           {
             title: `Min ${formatChartLabels(times)}`,
             key: `${formatHeader('min', times)}`,
             formatter: formatDuration,
-            allowZeros: false,
+            allowZeros: true,
             timingOption: this.timingOption
           },
           {
             title: `Q1 ${formatChartLabels(times)}`,
             key: `${formatHeader('quartiles', times)}Quartiles.0`,
             formatter: formatDuration,
-            allowZeros: false,
+            allowZeros: true,
             timingOption: this.timingOption
           },
           {
             title: `Median ${formatChartLabels(times)}`,
             key: `${formatHeader('quartiles', times)}Quartiles.1`,
             formatter: formatDuration,
-            allowZeros: false,
+            allowZeros: true,
             timingOption: this.timingOption
           },
           {
             title: `Q3 ${formatChartLabels(times)}`,
             key: `${formatHeader('quartiles', times)}Quartiles.2`,
             formatter: formatDuration,
-            allowZeros: false,
+            allowZeros: true,
             timingOption: this.timingOption
           },
           {
             title: `Max ${formatChartLabels(times)}`,
             key: `${formatHeader('max', times)}`,
             formatter: formatDuration,
-            allowZeros: false,
+            allowZeros: true,
             timingOption: this.timingOption
           }
         )
@@ -186,7 +186,7 @@ export default {
             title: `${formatChartLabels(times)}`,
             key: `${formatHeader('mean', times)}`,
             formatter: formatDuration,
-            allowZeros: false,
+            allowZeros: true,
             timingOption: this.timingOption
           }
         )
