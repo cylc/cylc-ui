@@ -194,6 +194,9 @@ fragment TaskProxyData on TaskProxy {
   isHeld
   isRunahead
   isQueued
+  isRetry
+  isWallclock
+  isXtriggered
   name
   firstParent {
     id
