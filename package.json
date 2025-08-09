@@ -83,7 +83,7 @@
     "sass-embedded": "1.89.2",
     "sinon": "21.0.0",
     "standard": "17.1.2",
-    "vite": "7.0.6",
+    "vite": "7.1.1",
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "7.1.0",
     "vite-plugin-vuetify": "2.1.2",
