@@ -110,7 +110,7 @@ describe('N-window selector', () => {
     cy.get('[data-cy=n-win-selector]')
       .click()
       .get('[data-cy=n-win-popup]')
-      .find('[role=combobox]')
+      .find('.v-field[role=combobox]')
       .click()
       .invoke('attr', 'aria-controls').then((dropdownID) => {
         cy.get(`#${dropdownID}`)
