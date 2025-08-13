@@ -54,6 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             item-value="name"
             selectable
             open-all
+            indent-lines
+            separate-roots
           ></v-treeview>
         </v-menu>
         <v-btn v-else
