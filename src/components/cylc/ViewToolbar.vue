@@ -54,6 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             item-value="name"
             selectable
             open-all
+            indent-lines
+            separate-roots
           ></v-treeview>
         </v-menu>
         <v-btn v-else
@@ -72,14 +74,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { btnProps } from '@/utils/viewToolbar'
-import { VTreeview } from 'vuetify/labs/VTreeview'
 
 export default {
   name: 'ViewToolbar',
-
-  components: {
-    VTreeview,
-  },
 
   emits: [
     'setOption'
