@@ -26,6 +26,20 @@ Cylc.  If not, see [GNU licenses](http://www.gnu.org/licenses/).
 
 ## Development
 
+[![Contributors](https://img.shields.io/github/contributors/cylc/cylc-ui.svg?color=9cf)](https://github.com/cylc/cylc-ui/graphs/contributors)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/cylc/cylc-ui.svg?color=yellowgreen)](https://github.com/cylc/cylc-ui/commits/master)
+[![Last commit](https://img.shields.io/github/last-commit/cylc/cylc-ui.svg?color=ff69b4)](https://github.com/cylc/cylc-ui/commits/master)
+
+Contributions welcome:
+
+* Read the [contributing](https://github.com/cylc/cylc-ui/blob/master/CONTRIBUTING.md) page.
+* Development setup instructions are in the
+  [developer docs](https://cylc.github.io/cylc-admin/#cylc-8-developer-docs).
+* Involved change proposals can be found in the
+  [admin pages](https://cylc.github.io/cylc-admin/#change-proposals).
+* Touch base in the
+  [developers chat](https://matrix.to/#/#cylc-general:matrix.org).
+
 ### Install & Build
 
 ```bash
