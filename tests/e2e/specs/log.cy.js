@@ -242,15 +242,19 @@ describe('Log command in menu', () => {
 })
 
 describe('Log view in workspace', () => {
+  function openWorkflowLog () {
+    cy.get('#workflow-mutate-button')
+      .click()
+      .get('.c-mutation').contains('Log')
+      .click()
+  }
+
   it('remembers job ID and file when switching between workflows', () => {
     const jobFile = /^job$/
     const jobID = '20000102T0000Z/succeeded'
     cy.visit('/#/workspace/one')
-      .get('#workflow-mutate-button')
-      .click()
-      .get('.c-mutation').contains('Log')
-      .click()
-      .get('[data-cy=job-toggle]')
+    openWorkflowLog()
+    cy.get('[data-cy=job-toggle]')
       .click()
       .get('.c-log [data-cy=job-id-input] input').as('jobIDInput')
       .type(jobID)
@@ -274,6 +278,28 @@ describe('Log view in workspace', () => {
       .should('eq', jobID)
       .get('@fileInput')
       .contains(jobFile)
+  })
+
+  it('remembers word wrap setting and sets default word wrap', () => {
+    cy.visit('/#/workspace/one')
+      .get('.lm-TabBar-tabCloseIcon').click()
+    openWorkflowLog()
+    cy.get('.c-log [data-cy=control-wordWrap] button')
+      .should('have.attr', 'aria-checked', 'false')
+    // Open a new log view
+    openWorkflowLog()
+    cy.get('.c-log:last [data-cy=control-wordWrap] button')
+      .click()
+      .should('have.attr', 'aria-checked', 'true')
+    // Should not affect the first log view
+    cy.get('.lm-TabBar-tab:first').click()
+      .get('.c-log:first [data-cy=control-wordWrap] button')
+      .should('have.attr', 'aria-checked', 'false')
+    // Should set the default word wrap for new log views
+    cy.visit('/#/workspace/multi/level/run1')
+    openWorkflowLog()
+    cy.get('.c-log [data-cy=control-wordWrap] button')
+      .should('have.attr', 'aria-checked', 'true')
   })
 
   it('navigates to correct workflow when choosing log option in mutation menu', () => {
