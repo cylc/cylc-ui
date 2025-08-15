@@ -69,7 +69,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :rules="[validateInputID]"
             placeholder="cycle/task/job"
             clearable
-          />
+          >
+            <template #prepend-inner>
+              <v-btn
+                :disabled="!relativeTokens || jobNode === false"
+                v-bind="toolbarBtnProps"
+                size="medium"
+                variant="plain"
+                @click="() => jobNode ?? fetchJobData()"
+                data-cy="job-info-btn"
+              >
+                <v-icon :icon="$options.icons.mdiInformationOutline"/>
+                <v-menu
+                  activator="parent"
+                  :close-on-content-click="false"
+                >
+                  <v-card class="pa-2">
+                    <v-skeleton-loader
+                      v-if="!jobNode"
+                      type="text@6"
+                    />
+                    <JobDetails
+                      v-else
+                      :node="jobNode"
+                      density="compact"
+                      hover
+                    >
+                      <template #header>
+                        {{ new Tokens(jobNode.id).relativeID }}
+                      </template>
+                    </JobDetails>
+                  </v-card>
+                </v-menu>
+              </v-btn>
+            </template>
+          </v-text-field>
           <v-text-field
             v-else
             data-cy="workflow-id-input"
@@ -181,6 +215,7 @@ import {
   mdiWrap,
   mdiFileAlertOutline,
   mdiMouseMoveDown,
+  mdiInformationOutline,
 } from '@mdi/js'
 import { btnProps } from '@/utils/viewToolbar'
 import graphqlMixin from '@/mixins/graphql'
@@ -200,6 +235,7 @@ import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
 import { Alert } from '@/model/Alert.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
+import JobDetails from '@/components/cylc/common/JobDetails.vue'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -236,10 +272,16 @@ query LogFiles($id: ID!) {
  * @type {DocumentNode}
 */
 const JOB_QUERY = gql`
-query JobState($id: ID!, $workflowId: ID!) {
+query Jobs($id: ID!, $workflowId: ID!) {
   jobs (live: false, ids: [$id], workflows: [$workflowId]) {
     id
     state
+    platform
+    jobId
+    jobRunnerName
+    submittedTime
+    startedTime
+    finishedTime
   }
 }
 `
@@ -306,6 +348,7 @@ export default {
     CopyBtn,
     LogComponent,
     ViewToolbar,
+    JobDetails,
   },
   emits: [
     updateInitialOptionsEvent,
@@ -400,6 +443,7 @@ export default {
       inputID,
       validateInputID,
       relativeTokens,
+      Tokens,
       file,
       // the label for the file input
       fileLabel: ref('Select File'),
@@ -414,6 +458,7 @@ export default {
       reset,
       toolbarBtnSize,
       toolbarBtnProps: btnProps(toolbarBtnSize),
+      jobNode: ref(null),
     }
   },
 
@@ -508,12 +553,13 @@ export default {
       )
     },
     /**
-     * Query the job state and return the appropriate default log file based on the result.
+     * Query job data.
      *
-     * @returns {?string}
+     * @returns {Object|false} The job node, or false if no data/the query failed.
      */
-    async getDefaultJobLog () {
+    async fetchJobData () {
       let result
+      this.jobNode = null
       try {
         if (this.relativeTokens) {
           // get the latest job state
@@ -528,9 +574,10 @@ export default {
       } catch (err) {
         // the query failed
         console.error(err)
-        return
+        return false
       }
-      return getJobLogFileFromState(result?.data?.jobs?.[0]?.state)
+      this.jobNode = result?.data?.jobs?.[0] ?? false
+      return this.jobNode
     },
     /**
      * Get the default workflow log file from the given log filenames, if there is a
@@ -593,7 +640,9 @@ export default {
       if (this.jobLog && !initialLoad) {
         // (Don't query job state on initial load, as it will either be pre-populated or empty)
         promises.push(
-          this.getDefaultJobLog().then((result) => { this.file = result })
+          this.fetchJobData().then((result) => {
+            this.file = getJobLogFileFromState(result?.state)
+          })
         )
       }
       // Simultaneously wait for the log file list and the job state result
@@ -626,7 +675,8 @@ export default {
     mdiFolderRefresh,
     mdiPowerPlug,
     mdiPowerPlugOff,
-    mdiFileAlertOutline
+    mdiFileAlertOutline,
+    mdiInformationOutline,
   }
 }
 </script>

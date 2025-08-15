@@ -69,19 +69,20 @@ describe('Tree view', () => {
       .prev()
       .click()
     cy.get('.leaf:visible:first')
-    const patterns = [
-      /Platform\s*\w+/,
-      /Job ID\s*\d+/,
-      /Job runner\s*\w+/,
-      /Submitted\s*\d{4}-\d{2}-\d{2}T.+/,
-      /Started\s*\d{4}-\d{2}-\d{2}T.+/,
-      /Finished\s*\d{4}-\d{2}-\d{2}T.+/,
-      /Mean run time\s*\d{2}:\d{2}:\d{2}/,
-      /Platform\s*\w+/,
-      /foo\s*foo message/
-    ]
-    for (const pattern of patterns) {
-      cy.get('.leaf:visible:first .leaf-entry')
+    const patterns = new Map([
+      ['Platform', /\w+/],
+      ['Job ID', /\d+/],
+      ['Job runner', /\w+/],
+      ['Submitted time', /\d{4}-\d{2}-\d{2}T.+/],
+      ['Started time', /\d{4}-\d{2}-\d{2}T.+/],
+      ['Finished time', /\d{4}-\d{2}-\d{2}T.+/],
+      ['Mean run time', /\d{2}:\d{2}:\d{2}/],
+      ['foo', 'foo message'],
+    ])
+    for (const [key, pattern] of patterns.entries()) {
+      cy.get('.leaf:visible:first td')
+        .contains(key)
+        .parent().find('td:last')
         .contains(pattern)
     }
     // The leaf node has a triangle pointing to the job icon - check the margin
@@ -159,7 +160,7 @@ describe('Tree view', () => {
 
     // all 7 outputs/messages should be listed in the job-details
     cy.get('@job')
-      .find('.job-details .output')
+      .find('.job-details .outputs tbody tr')
       .should('have.length', 7)
   })
 

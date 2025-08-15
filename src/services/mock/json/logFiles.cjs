@@ -55,7 +55,7 @@ const LogFiles = async ({ id }) => {
  *
  * @param {{ id: string }} variables
  */
-const JobState = async ({ id, workflowId }) => {
+const Jobs = async ({ id, workflowId }) => {
   if (!workflowId.startsWith('~')) {
     workflowId = `~user/${workflowId}`
   }
@@ -65,17 +65,17 @@ const JobState = async ({ id, workflowId }) => {
   ).replace(
     /\/(\d+)$/, (match, p1) => `/${parseInt(p1)}` // strips leading zeroes
   )
-  const { state } = deltas?.added?.jobs?.find((job) => job.id.includes(searchID)) ?? {}
+  const node = deltas?.added?.jobs?.find((job) => job.id.includes(searchID)) ?? {}
   await simulatedDelay(500)
   return {
     data: {
-      jobs: state ? [{ id, state }] : []
+      jobs: node.state ? [{ id, ...node }] : []
     }
   }
 }
 
 module.exports = {
-  JobState,
+  Jobs,
   LogFiles,
   deletedFile,
   jobLogFiles,
