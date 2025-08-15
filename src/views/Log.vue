@@ -170,7 +170,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { refWithControl, usePrevious, whenever } from '@vueuse/core'
 import { useStore } from 'vuex'
 import {
@@ -200,6 +200,7 @@ import { debounce } from 'lodash-es'
 import CopyBtn from '@/components/core/CopyBtn.vue'
 import { Alert } from '@/model/Alert.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
+import { useLogWordWrapDefault } from '@/composables/localStorage'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -362,8 +363,12 @@ export default {
     /** Toggle timestamps in log files */
     const timestamps = useInitialOptions('timestamps', { props, emit }, true)
 
-    /** Wrap lines? */
-    const wordWrap = useInitialOptions('wordWrap', { props, emit }, false)
+    /* Wrap lines? */
+    const wordWrapDefault = useLogWordWrapDefault()
+    const wordWrap = useInitialOptions('wordWrap', { props, emit }, wordWrapDefault.value)
+    watch(wordWrap, (value) => {
+      wordWrapDefault.value = value
+    })
 
     /** The log subscription results */
     const results = ref(new Results())
