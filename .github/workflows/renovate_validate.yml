@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - renovate.json
+      - '.github/workflows/renovate_validate.yml'
   workflow_dispatch:
 
 concurrency:
