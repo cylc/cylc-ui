@@ -125,7 +125,10 @@ const RELATIVE_ID = new RegExp(`
 
 const JOB_ID = /^(\d+|NN)$/
 
-function detokenise (tokens, workflow = true, relative = true) {
+export function detokenise (
+  tokens,
+  { workflow, relative } = { workflow: true, relative: true }
+) {
   let parts = []
   let ret = ''
 
@@ -136,10 +139,8 @@ function detokenise (tokens, workflow = true, relative = true) {
     if (tokens.workflow) {
       parts.push(tokens.workflow)
     }
-    if (parts) {
-      ret = parts.join('/')
-      parts = []
-    }
+    ret = parts.join('/')
+    parts = []
   }
 
   if (relative) {
@@ -196,7 +197,7 @@ export class Tokens {
     let task
     let job
 
-    if (id === null) {
+    if (id == null) {
       throw new Error(`Invalid ID ${id}`)
     }
 
@@ -268,8 +269,8 @@ export class Tokens {
       throw new Error(`Invalid job ID: ${this.job}`)
     }
 
-    this.workflowID = detokenise(this, true, false)
-    this.relativeID = detokenise(this, false, true)
+    this.workflowID = detokenise(this, { workflow: true })
+    this.relativeID = detokenise(this, { relative: true })
   }
 
   set (fields) {

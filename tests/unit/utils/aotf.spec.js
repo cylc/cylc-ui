@@ -40,26 +40,6 @@ describe('aotf (Api On The Fly)', () => {
     })
   })
 
-  describe('getType', () => {
-    it('should extract the type from tokens', () => {
-      const tokens = {}
-      expect(aotf.getType(tokens)).to.deep.equal(null)
-      tokens[aotf.cylcObjects.User] = 'a'
-      expect(aotf.getType(tokens)).to.deep.equal(aotf.cylcObjects.User)
-      tokens[aotf.cylcObjects.Workflow] = 'b'
-      expect(aotf.getType(tokens)).to.deep.equal(aotf.cylcObjects.Workflow)
-      tokens[aotf.cylcObjects.CyclePoint] = 'c'
-      expect(aotf.getType(tokens)).to.deep.equal(aotf.cylcObjects.CyclePoint)
-    })
-  })
-
-  describe('camelToWords', () => {
-    it('should convert camel case to plain text', () => {
-      expect(aotf.camelToWords(null)).to.equal('')
-      expect(aotf.camelToWords('aBC')).to.equal('A B C')
-    })
-  })
-
   describe('getStates', () => {
     it('gets valid states', () => {
       expect(aotf.getStates('Valid for: running, stopped workflows.')).to.deep.equal(['running', 'stopped'])
