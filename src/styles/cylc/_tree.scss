@@ -20,17 +20,12 @@
 
 $active-color: #BDD5F7;
 /**
- * Height of each line/row in the tree. Same as saying “each node in the tree has
- * $line-height height”.
- */
-$line-height: 1.8em;
-/**
  * The number of visible outputs in the job info box, under the “outputs” header.
- * This value is used with $line-height to calculate the maximum height of the
+ * This value is used to calculate the maximum height of the
  * outputs container. Change this value to 10, and you will have 10 visible outputs
  * in the job info, the remaining outputs being accessible through a scroll.
  */
-$visible-outputs: 5;
+$visible-outputs: 6;
 
 // Task/job/expand/collapse icon width
 $icon-width: 1.5rem;
@@ -67,7 +62,6 @@ $icon-width: 1.5rem;
   vertical-align:middle;
   width: 100%;
   .node {
-    line-height: $line-height;
     display: block;
 
     .node-expand-collapse-button {
@@ -122,34 +116,23 @@ $icon-width: 1.5rem;
       border-left: $arrow-size solid transparent;
       border-right: $arrow-size solid transparent;
       border-bottom: $arrow-size solid $leaf-background-color;
-      display: flex;
-      flex-wrap: nowrap;
     }
     .leaf-data {
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: column;
       background-color: $leaf-background-color;
-      .leaf-entry {
-        display: flex;
-        flex-wrap: nowrap;
-        .leaf-entry-title {
-          // This is the minimum width of the left part in a leaf entry, with the title
-          // ATW the longest text is "latest message". This may need some tweaking. It
-          // would be much simpler if we could rely on flex+row, but we have to create
-          // two elements, and use a v-for with Vue. The v-for element creates an extra
-          // wrapper that stops us of being able to use a single parent with display: flex
-          min-width: 150px;
-        }
-        .leaf-entry-value {
-          white-space: nowrap;
+      table {
+        td, th {
+          &:first-of-type {
+            // This is the minimum width of the left part in a leaf entry.
+            // This may need some tweaking.
+            width: 12em;
+          }
         }
       }
-      .leaf-outputs-entry {
-        // 5 outputs, plus a buffer of 1.0em that appears to give the scroll just the
+      .outputs {
+        // N outputs, plus a buffer to give the scroll just the
         // right space to show the N items in the scroll (without the buffer the last
         // item is partially hidden).
-        max-height: calc($line-height * $visible-outputs + 1.0em);
+        max-height: calc(var(--v-table-row-height) * ($visible-outputs + 0.5));
         overflow-y: auto;
       }
     }
