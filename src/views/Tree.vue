@@ -196,6 +196,9 @@ fragment TaskProxyData on TaskProxy {
   firstParent {
     id
   }
+  runtime {
+    runMode
+  }
   flowNums
 }
 
