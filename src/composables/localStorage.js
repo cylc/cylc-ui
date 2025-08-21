@@ -32,3 +32,5 @@ export const useJobTheme = () => useLocalStorage('jobTheme', 'default')
 export const useReducedAnimation = () => useLocalStorage('reducedAnimation', false)
 
 export const useWorkflowWarnings = () => useLocalStorage('useWorkflowWarnings', true)
+
+export const useLogWordWrapDefault = () => useLocalStorage('logWordWrap', false)

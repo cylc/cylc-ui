@@ -20,10 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     ref="scrollWrapper"
     class="h-100 overflow-auto px-4 pb-2"
   >
-    <pre ref="logText" data-cy="log-text"><span
+    <pre
+      ref="logText"
+      :class="wordWrap ? 'text-pre-wrap text-break' : 'text-pre'"
+      data-cy="log-text"
+    ><span
       v-for="(log, index) in computedLogs"
       :key="index"
-      :class="wordWrap ? 'text-pre-wrap' : 'text-pre'"
     >{{ log }}</span></pre>
     <v-btn
       v-if="logs.length"
