@@ -154,7 +154,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <template v-slot:prepend>
                   <task
                     style="font-size: 2em;"
-                    :task="{state: 'skip', runtime: { runMode: 'Skip' }}"
+                    :task="{state: 'waiting', runtime: { runMode: 'Skip' }}"
                     class="mr-4"
                   />
                 </template>
