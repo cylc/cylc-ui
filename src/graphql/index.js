@@ -151,6 +151,8 @@ export function createApolloClient (httpUrl, subscriptionClient) {
         errorPolicy: 'all'
       }
     },
-    connectToDevTools: import.meta.env.MODE !== 'production'
+    devtools: {
+      enabled: import.meta.env.MODE !== 'production',
+    },
   })
 }
