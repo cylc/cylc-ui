@@ -492,13 +492,13 @@ const modifierTransform = _getModifierTransform()
     }
 
     &.runahead .modifier {
-          .outline {
-            stroke: $foreground;
-          }
-          .runahead circle {
-            fill: $foreground;
-          }
-        }
+      .outline {
+        stroke: $foreground;
+      }
+      .runahead circle {
+        fill: $foreground;
+      }
+    }
 
     &.skip .modifier {
       .skip path {
