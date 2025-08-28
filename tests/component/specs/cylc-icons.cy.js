@@ -56,8 +56,9 @@ const TaskComponent = defineComponent({
 function makeTask (
   state = 'waiting',
   isHeld = false,
-  isQueued = false,
   isRunahead = false,
+  runtime = { runMode: 'Live' },
+  isQueued = false,
   isRetry = false,
   isWallclock = false,
   isXtriggered = false,
@@ -65,8 +66,9 @@ function makeTask (
   return {
     state,
     isHeld,
-    isQueued,
     isRunahead,
+    runtime,
+    isQueued,
     isRetry,
     isWallclock,
     isXtriggered,
@@ -125,17 +127,25 @@ describe('Task component', () => {
     let task
     for (const modifier of [
       'isHeld',
-      'isQueued',
       'isRunahead',
+      'skip',
+      'isQueued',
       'isXtriggered',
       'isRetry',
       'isWallclock'
     ]) {
       task = makeTask()
-      task[modifier] = true
+      let filename
+      if (modifier === 'skip') {
+        task.runtime.runMode = 'Skip'
+        filename = 'isSkip'
+      } else {
+        task[modifier] = true
+        filename = modifier
+      }
       cy.mount(TaskComponent, { props: { task } })
       cy.get('.c8-task').last().screenshot(
-        `task-${modifier}`,
+        `task-${filename}`,
         {
           overwrite: true,
           disableTimersAndAnimations: false,
