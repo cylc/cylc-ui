@@ -201,6 +201,7 @@ import CopyBtn from '@/components/core/CopyBtn.vue'
 import { Alert } from '@/model/Alert.model'
 import { getJobLogFileFromState } from '@/model/JobState.model'
 import { useLogWordWrapDefault } from '@/composables/localStorage'
+import { eventBus } from '@/services/eventBus'
 
 /**
  * Query used to retrieve data for the Log view.
@@ -314,6 +315,12 @@ export default {
 
   props: {
     initialOptions,
+    /** ID of widget if the log view is in a Lumino tab. */
+    widgetID: {
+      type: String,
+      required: false,
+      default: null,
+    },
   },
 
   setup (props, { emit }) {
@@ -429,7 +436,18 @@ export default {
         id: this.id ?? undefined, // (do not trigger the callback on null ⇄ undefined)
         file: this.file ?? undefined
       }),
-      async ({ id }, old) => {
+      async ({ id, file }, old) => {
+        // update the widget tab caption when the id or file change
+        if (this.widgetID) {
+          const prefix = this.relativeID ? `${this.relativeID} – ` : ''
+          eventBus.emit(
+            `lumino:update-tab:${this.widgetID}`,
+            {
+              title: this.jobLog ? 'Log – Job' : 'Log – Workflow',
+              caption: `${prefix}${file ?? 'No file selected'}`,
+            }
+          )
+        }
         // update the query when the id or file change
         this.updateQuery()
         // refresh the file & file list when the id changes

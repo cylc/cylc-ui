@@ -42,11 +42,11 @@
 .lm-TabBar-tab {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #C0C0C0;
+  flex-basis: 10rem !important; // Min width of tab
 }
 .lm-TabBar-tabLabel {
   font-family: settings.$body-font-family;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 .lm-TabBar-tabCloseIcon {
   color: inherit;
