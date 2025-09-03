@@ -121,9 +121,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   :key="`${customOutput.label}-${index}`"
                   :class="customOutput.isMessage ? 'bg-light-grey text-black' : 'bg-grey text-white'"
                   class="message-output"
+                  v-tooltip="customOutput.isMessage ? `Task message: ${customOutput.message}` : customOutput.message"
                 >
-                  {{ customOutput.label }}
-                  <v-tooltip :text="customOutput.message"/>
+                  {{ customOutput.isMessage ? customOutput.message : customOutput.label }}
                 </v-chip>
                 <v-chip
                   v-if="jobMessageOutputs.length > 5"
