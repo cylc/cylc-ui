@@ -32,7 +32,7 @@
     "@vueuse/core": "13.6.0",
     "apexcharts": "3.54.1",
     "axios": "1.11.0",
-    "dedent": "1.6.0",
+    "dedent": "1.7.0",
     "enumify": "2.0.0",
     "graphiql": "4.1.2",
     "graphql": "16.11.0",
