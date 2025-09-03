@@ -35,16 +35,27 @@ describe('modifier', () => {
     [['isWallclock', 'isXtriggered'], 'wallclock'],
     [['isHeld', 'isWallclock', 'isXtriggered'], 'held'],
     // Some cases in the middle of the list:
-    [['isQueued', 'isRunahead', 'isXtriggered'], 'queued'],
+    [['isQueued', 'isRunahead', 'isXtriggered'], 'runahead'],
     [['isRunahead', 'isRetry', 'isWallclock'], 'runahead'],
+    // Skip is handled before queued and after runahead
+    [['isRunahead', 'skip'], 'runahead'],
+    [['isQueued', 'skip'], 'skip'],
   ])('returns the correct modifier for %o', (switchedOn, expected) => {
     const wrapper = mount(SVGTask, {
       props: {
         task: Object.fromEntries(
-          switchedOn.map((modifier) => [modifier, true])
+          // switchedOn.map((modifier) => [modifier, true])
+          switchedOn.map(mapper)
         ),
       }
     })
+    function mapper (key) {
+      if (key === 'skip') {
+        return ['runtime', { runMode: 'Skip' }]
+      } else {
+        return [key, true]
+      }
+    }
     expect(wrapper.vm.modifier).toBe(expected)
     expect(wrapper.get('.c8-task').classes()).toContain(expected)
   })

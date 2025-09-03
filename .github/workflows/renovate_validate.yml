@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - renovate.json
+      - '.github/workflows/renovate_validate.yml'
   workflow_dispatch:
 
 concurrency:
@@ -19,7 +20,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node
         uses: actions/setup-node@v4
