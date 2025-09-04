@@ -12,6 +12,18 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.9.0 (Released 2025-09-04)
+
+### 🚀 Enhancements
+
+[#2078](https://github.com/cylc/cylc-ui/pull/2078) - Log view word wrap setting is now saved.
+
+[#2261](https://github.com/cylc/cylc-ui/pull/2261) - Add a skip mode modifier for the task icon
+
+### 🔧 Fixes
+
+[#2078](https://github.com/cylc/cylc-ui/pull/2078) - Fixed log view word wrap not working in all cases.
+
 ## cylc-ui-2.8.0 (Released 2025-07-23)
 
 ### 🚀 Enhancements
