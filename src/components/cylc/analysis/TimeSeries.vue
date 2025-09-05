@@ -93,11 +93,14 @@ import {
   difference,
   pick,
   union,
-  uniq,
-  upperFirst
+  uniq
 } from 'lodash'
 import gql from 'graphql-tag'
-import { formatDuration } from '@/utils/tasks'
+import {
+  getTimingOption,
+  formatDuration,
+  formatChartLabels
+} from '@/utils/tasks'
 import {
   mdiDownload,
   mdiRefresh,
@@ -119,7 +122,9 @@ const jobFields = [
   'totalTime',
   'queueTime',
   'runTime',
-  'startedTime'
+  'startedTime',
+  'maxRss',
+  'cpuTime'
 ]
 
 /** The one-off query which retrieves historical job timing statistics */
@@ -284,7 +289,7 @@ export default {
             const currentStartedTime = seriesData[job.name].data[job.cyclePoint].startedTime
             // Only add data if this job was run more recently than any existing data
             if (currentStartedTime === undefined || job.startedTime.localeCompare(currentStartedTime) === 1) {
-              time = job[`${this.timingOption}Time`]
+              time = job[getTimingOption(this.timingOption)]
               Object.assign(seriesData[job.name].data[job.cyclePoint], {
                 x: job.cyclePoint,
                 y: time,
@@ -366,7 +371,7 @@ export default {
               if (!value) {
                 return null
               }
-              const y = formatDuration(value, true)
+              const y = formatDuration(value, true, this.timingOption)
               const platform = this.series[seriesIndex].data[dataPointIndex].platform
               return `${y} (${platform})`
             }
@@ -384,12 +389,10 @@ export default {
           forceNiceScale: true,
           min: this.showOrigin ? 0 : undefined,
           title: {
-            text: upperFirst(this.timingOption) + ' time',
+            text: formatChartLabels(this.timingOption),
           },
           labels: {
-            formatter: function (value) {
-              return formatDuration(value, true)
-            }
+            formatter: (value) => formatDuration(value, true, this.timingOption)
           },
         },
       }
@@ -445,12 +448,10 @@ export default {
         yaxis: {
           tickAmount: 3,
           title: {
-            text: upperFirst(this.timingOption) + ' time',
+            text: formatChartLabels(this.timingOption),
           },
           labels: {
-            formatter: function (value) {
-              return formatDuration(value, true)
-            }
+            formatter: (value) => formatDuration(value, true, this.timingOption)
           },
           min: this.showOrigin ? 0 : undefined
         },
