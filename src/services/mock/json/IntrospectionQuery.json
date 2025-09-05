@@ -245,11 +245,45 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "null",
                 "__typename": "__InputValue"
               },
               {
                 "name": "tasks",
+                "description": "Deprecated, use ids: [\"*/<task>\"].",
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[]",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "states",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "__typename": "__Type"
+                },
+                "defaultValue": "[]",
+                "__typename": "__InputValue"
+              },
+              {
+                "name": "exstates",
                 "description": null,
                 "type": {
                   "kind": "LIST",
@@ -454,7 +488,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "null",
                 "__typename": "__InputValue"
               }
             ],
@@ -704,7 +738,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "null",
                 "__typename": "__InputValue"
               },
               {
@@ -884,7 +918,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "null",
                 "__typename": "__InputValue"
               },
               {
@@ -1146,7 +1180,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "null",
                 "__typename": "__InputValue"
               },
               {
@@ -1224,7 +1258,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "null",
                 "__typename": "__InputValue"
               },
               {
@@ -1442,7 +1476,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "null",
                 "__typename": "__InputValue"
               },
               {
@@ -1559,7 +1593,7 @@
                   },
                   "__typename": "__Type"
                 },
-                "defaultValue": "\"Set\"",
+                "defaultValue": "Set",
                 "__typename": "__InputValue"
               },
               {
@@ -1713,7 +1747,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "null",
                 "__typename": "__InputValue"
               },
               {
@@ -1735,7 +1769,7 @@
                   },
                   "__typename": "__Type"
                 },
-                "defaultValue": null,
+                "defaultValue": "null",
                 "__typename": "__InputValue"
               },
               {
@@ -1829,6 +1863,18 @@
             "name": "reload",
             "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.\n\nValid for: paused, running workflows.",
             "args": [
+              {
+                "name": "reloadGlobal",
+                "description": "Reload global config as well as the workflow config",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "defaultValue": "false",
+                "__typename": "__InputValue"
+              },
               {
                 "name": "workflows",
                 "description": null,
@@ -2056,7 +2102,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": "\"Clean\"",
+                "defaultValue": "Clean",
                 "__typename": "__InputValue"
               },
               {
@@ -2882,7 +2928,7 @@
                   "ofType": null,
                   "__typename": "__Type"
                 },
-                "defaultValue": "\"Live\"",
+                "defaultValue": "Live",
                 "__typename": "__InputValue"
               },
               {
@@ -3099,10 +3145,6 @@
         "interfaces": [],
         "enumValues": null,
         "possibleTypes": null,
-        "__typename": "__Type"
-      },
-      "subscriptionType": {
-        "name": "UISSubscriptions",
         "__typename": "__Type"
       },
       "types": [
@@ -3350,11 +3392,45 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
                   "name": "tasks",
+                  "description": "Deprecated, use ids: [\"*/<task>\"].",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "states",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null,
+                      "__typename": "__Type"
+                    },
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "[]",
+                  "__typename": "__InputValue"
+                },
+                {
+                  "name": "exstates",
                   "description": null,
                   "type": {
                     "kind": "LIST",
@@ -3559,7 +3635,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 }
               ],
@@ -3809,7 +3885,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -3989,7 +4065,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -4251,7 +4327,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -4329,7 +4405,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -4547,7 +4623,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -4800,7 +4876,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -4926,7 +5002,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -5134,7 +5210,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -5342,7 +5418,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -5478,7 +5554,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -5614,7 +5690,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -5817,7 +5893,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -6225,6 +6301,25 @@
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__Field"
+            },
+            {
+              "name": "logRecords",
+              "description": "Scheduler log messages of level WARNING and above.\n\nWarning: This is an incrementally updated field. Each update\ncontains a list of **new** log messages, not a list of all\nmessages. It is down to the client to store / preserve previous\nrecords.",
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "LogRecord",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
             }
           ],
           "inputFields": null,
@@ -6258,7 +6353,7 @@
         {
           "kind": "SCALAR",
           "name": "Int",
-          "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31 - 1) and 2^31 - 1 since represented in JSON as double-precision floating point numbers specifiedby [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point).",
+          "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -6508,7 +6603,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -6634,7 +6729,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -7221,7 +7316,7 @@
         {
           "kind": "SCALAR",
           "name": "Float",
-          "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point). ",
+          "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -7417,6 +7512,48 @@
               "__typename": "__Field"
             },
             {
+              "name": "isRetry",
+              "description": "True if this task has a scheduled retry.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "isWallclock",
+              "description": "True if this task has an unsatisfied wallclock trigger.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "isXtriggered",
+              "description": "True if this task has an unsatisfied xtrigger (excluding retry and wallclock xtriggers).",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
               "name": "flowNums",
               "description": "The flows this task instance belongs to.",
               "args": [],
@@ -7499,7 +7636,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -7572,7 +7709,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -7645,7 +7782,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -7819,7 +7956,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -8027,7 +8164,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -8235,7 +8372,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -8438,7 +8575,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -9435,6 +9572,48 @@
               "__typename": "__Field"
             },
             {
+              "name": "isRetry",
+              "description": "True if this family contains a task that has a scheduled retry.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "isWallclock",
+              "description": "True if this family contains a task that has an unsatisfied wallclock trigger.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "isXtriggered",
+              "description": "True if this family contains a task that has an unsatisfied xtrigger (excluding retry and wallclock xtriggers).",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
               "name": "depth",
               "description": null,
               "args": [],
@@ -9615,7 +9794,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -9823,7 +10002,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -10031,7 +10210,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -10234,7 +10413,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -10373,7 +10552,7 @@
             },
             {
               "name": "proxies",
-              "description": "Associated cycle point proxies.",
+              "description": "Associated family proxy instances.",
               "args": [
                 {
                   "name": "ids",
@@ -10524,7 +10703,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -10581,7 +10760,7 @@
             },
             {
               "name": "parents",
-              "description": "Family definition parent.",
+              "description": "Families that this family directly inherits from.",
               "args": [
                 {
                   "name": "ids",
@@ -10650,7 +10829,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -10707,7 +10886,7 @@
             },
             {
               "name": "childTasks",
-              "description": "Descendant definition tasks.",
+              "description": "Tasks that inherit from this family.",
               "args": [
                 {
                   "name": "ids",
@@ -10776,7 +10955,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -10833,7 +11012,7 @@
             },
             {
               "name": "childFamilies",
-              "description": "Descendant desc families.",
+              "description": "Families that inherit from this family.",
               "args": [
                 {
                   "name": "ids",
@@ -10902,7 +11081,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -11101,7 +11280,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -11609,6 +11788,46 @@
             },
             {
               "name": "stringExtended",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null,
+          "__typename": "__Type"
+        },
+        {
+          "kind": "OBJECT",
+          "name": "LogRecord",
+          "description": null,
+          "fields": [
+            {
+              "name": "level",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "message",
               "description": null,
               "args": [],
               "type": {
@@ -12190,7 +12409,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -12316,7 +12535,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -12784,7 +13003,7 @@
                     },
                     "__typename": "__Type"
                   },
-                  "defaultValue": "\"Set\"",
+                  "defaultValue": "Set",
                   "__typename": "__InputValue"
                 },
                 {
@@ -12938,7 +13157,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -12960,7 +13179,7 @@
                     },
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -13054,6 +13273,18 @@
               "name": "reload",
               "description": "Reload the configuration of a running workflow.\n\nAll settings including task definitions, with the exception of\nworkflow log config, can be changed on reload. Changes to task\ndefinitions take effect immediately, unless a task is already\nrunning at reload time.\n\nIf the workflow was started with Jinja2 template variables on the\ncommand line (cylc play --set \"FOO='bar'\" REG) the same template\nsettings apply to the reload (only changes to the flow.cylc\nfile itself are reloaded).\n\nIf the modified workflow config does not parse, failure to reload\nwill be reported but no harm will be done to the running workflow.\n\nValid for: paused, running workflows.",
               "args": [
+                {
+                  "name": "reloadGlobal",
+                  "description": "Reload global config as well as the workflow config",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                },
                 {
                   "name": "workflows",
                   "description": null,
@@ -13281,7 +13512,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": "\"Clean\"",
+                  "defaultValue": "Clean",
                   "__typename": "__InputValue"
                 },
                 {
@@ -14107,7 +14338,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": "\"Live\"",
+                  "defaultValue": "Live",
                   "__typename": "__InputValue"
                 },
                 {
@@ -14845,7 +15076,7 @@
         {
           "kind": "SCALAR",
           "name": "NamespaceIDGlob",
-          "description": "A glob search for an active task or family.\n\nCan use the wildcard character (`*`), e.g `foo*` might match `foot`.",
+          "description": "A task or family ID e.g. `2000/foo`.\n\nGlobs can be used to match active tasks or families.\n\nE.g `2*/foo*` might match `2000/foot`.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -15088,6 +15319,13 @@
           "interfaces": null,
           "enumValues": [
             {
+              "name": "Dummy",
+              "description": "Submits real jobs with empty scripts.",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            },
+            {
               "name": "Live",
               "description": "Task will submit their configured jobs.",
               "isDeprecated": false,
@@ -15097,13 +15335,6 @@
             {
               "name": "Simulation",
               "description": "Simulates job submission with configurable exection time and succeeded/failed outcomes (but does not submit real jobs).",
-              "isDeprecated": false,
-              "deprecationReason": null,
-              "__typename": "__EnumValue"
-            },
-            {
-              "name": "Dummy",
-              "description": "Submits real jobs with empty scripts.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
@@ -15558,7 +15789,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -15834,7 +16065,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -16192,7 +16423,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -16468,7 +16699,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -16826,7 +17057,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -16952,7 +17183,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -17218,7 +17449,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -17540,7 +17771,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -17748,7 +17979,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -17884,7 +18115,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -18010,7 +18241,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -18218,7 +18449,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -18354,7 +18585,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -18550,7 +18781,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -18758,7 +18989,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -18894,7 +19125,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -19020,7 +19251,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -19228,7 +19459,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -19364,7 +19595,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -19472,7 +19703,7 @@
             }
           ],
           "inputFields": null,
-          "interfaces": null,
+          "interfaces": [],
           "enumValues": null,
           "possibleTypes": [
             {
@@ -19566,7 +19797,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -19774,7 +20005,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -19910,7 +20141,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -20036,7 +20267,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -20244,7 +20475,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -20380,7 +20611,7 @@
                     "ofType": null,
                     "__typename": "__Type"
                   },
-                  "defaultValue": null,
+                  "defaultValue": "null",
                   "__typename": "__InputValue"
                 },
                 {
@@ -20716,8 +20947,22 @@
         {
           "kind": "OBJECT",
           "name": "__Schema",
-          "description": "A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation and subscription operations.",
+          "description": "A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation, and subscription operations.",
           "fields": [
+            {
+              "name": "description",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
             {
               "name": "types",
               "description": "A list of all types supported by this server.",
@@ -20833,7 +21078,7 @@
         {
           "kind": "OBJECT",
           "name": "__Type",
-          "description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+          "description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name, description and optional `specifiedByURL`, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
           "fields": [
             {
               "name": "kind",
@@ -20870,6 +21115,20 @@
             },
             {
               "name": "description",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "specifiedByURL",
               "description": null,
               "args": [],
               "type": {
@@ -21007,7 +21266,20 @@
             {
               "name": "inputFields",
               "description": null,
-              "args": [],
+              "args": [
+                {
+                  "name": "includeDeprecated",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                }
+              ],
               "type": {
                 "kind": "LIST",
                 "name": null,
@@ -21052,7 +21324,7 @@
         {
           "kind": "ENUM",
           "name": "__TypeKind",
-          "description": "An enum describing what kind of type a given `__Type` is",
+          "description": "An enum describing what kind of type a given `__Type` is.",
           "fields": null,
           "inputFields": null,
           "interfaces": null,
@@ -21073,7 +21345,7 @@
             },
             {
               "name": "INTERFACE",
-              "description": "Indicates this type is an interface. `fields` and `possibleTypes` are valid fields.",
+              "description": "Indicates this type is an interface. `fields`, `interfaces`, and `possibleTypes` are valid fields.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
@@ -21158,7 +21430,20 @@
             {
               "name": "args",
               "description": null,
-              "args": [],
+              "args": [
+                {
+                  "name": "includeDeprecated",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                }
+              ],
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -21302,6 +21587,39 @@
             },
             {
               "name": "defaultValue",
+              "description": "A GraphQL-formatted string representing the default value for this input value.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null,
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "isDeprecated",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
+              "name": "deprecationReason",
               "description": null,
               "args": [],
               "type": {
@@ -21438,6 +21756,25 @@
               "__typename": "__Field"
             },
             {
+              "name": "isRepeatable",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null,
+                  "__typename": "__Type"
+                },
+                "__typename": "__Type"
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__Field"
+            },
+            {
               "name": "locations",
               "description": null,
               "args": [],
@@ -21469,7 +21806,20 @@
             {
               "name": "args",
               "description": null,
-              "args": [],
+              "args": [
+                {
+                  "name": "includeDeprecated",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null,
+                    "__typename": "__Type"
+                  },
+                  "defaultValue": "false",
+                  "__typename": "__InputValue"
+                }
+              ],
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -21493,63 +21843,6 @@
               },
               "isDeprecated": false,
               "deprecationReason": null,
-              "__typename": "__Field"
-            },
-            {
-              "name": "onOperation",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": true,
-              "deprecationReason": "Use `locations`.",
-              "__typename": "__Field"
-            },
-            {
-              "name": "onFragment",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": true,
-              "deprecationReason": "Use `locations`.",
-              "__typename": "__Field"
-            },
-            {
-              "name": "onField",
-              "description": null,
-              "args": [],
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "isDeprecated": true,
-              "deprecationReason": "Use `locations`.",
               "__typename": "__Field"
             }
           ],
@@ -21617,6 +21910,13 @@
               "__typename": "__EnumValue"
             },
             {
+              "name": "VARIABLE_DEFINITION",
+              "description": "Location adjacent to a variable definition.",
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "__typename": "__EnumValue"
+            },
+            {
               "name": "SCHEMA",
               "description": "Location adjacent to a schema definition.",
               "isDeprecated": false,
@@ -21632,7 +21932,7 @@
             },
             {
               "name": "OBJECT",
-              "description": "Location adjacent to an object definition.",
+              "description": "Location adjacent to an object type definition.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
@@ -21681,7 +21981,7 @@
             },
             {
               "name": "INPUT_OBJECT",
-              "description": "Location adjacent to an input object definition.",
+              "description": "Location adjacent to an input object type definition.",
               "isDeprecated": false,
               "deprecationReason": null,
               "__typename": "__EnumValue"
@@ -21698,66 +21998,7 @@
           "__typename": "__Type"
         }
       ],
-      "directives": [
-        {
-          "name": "include",
-          "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
-          "locations": [
-            "FIELD",
-            "FRAGMENT_SPREAD",
-            "INLINE_FRAGMENT"
-          ],
-          "args": [
-            {
-              "name": "if",
-              "description": "Included when true.",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "defaultValue": null,
-              "__typename": "__InputValue"
-            }
-          ],
-          "__typename": "__Directive"
-        },
-        {
-          "name": "skip",
-          "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
-          "locations": [
-            "FIELD",
-            "FRAGMENT_SPREAD",
-            "INLINE_FRAGMENT"
-          ],
-          "args": [
-            {
-              "name": "if",
-              "description": "Skipped when true.",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "__typename": "__Type"
-              },
-              "defaultValue": null,
-              "__typename": "__InputValue"
-            }
-          ],
-          "__typename": "__Directive"
-        }
-      ]
+      "__typename": "__Schema"
     }
   }
 }
