@@ -59,7 +59,7 @@
     "@vitejs/plugin-vue": "6.0.1",
     "@vitest/coverage-istanbul": "3.2.4",
     "@vue/test-utils": "2.4.6",
-    "concurrently": "9.2.0",
+    "concurrently": "9.2.1",
     "cross-fetch": "4.1.0",
     "cypress": "14.5.4",
     "cypress-vite": "1.7.0",
