@@ -33,30 +33,10 @@ describe('aotf (Api On The Fly)', () => {
       expect(aotf.tokenise('~a/b')).to.deep.equal(tokens)
       tokens[aotf.cylcObjects.CyclePoint] = 'c'
       expect(aotf.tokenise('~a/b//c')).to.deep.equal(tokens)
-      tokens[aotf.cylcObjects.Namespace] = 'd'
+      tokens[aotf.cylcObjects.Task] = 'd'
       expect(aotf.tokenise('~a/b//c/d')).to.deep.equal(tokens)
       tokens[aotf.cylcObjects.Job] = '01'
       expect(aotf.tokenise('~a/b//c/d/01')).to.deep.equal(tokens)
-    })
-  })
-
-  describe('getType', () => {
-    it('should extract the type from tokens', () => {
-      const tokens = {}
-      expect(aotf.getType(tokens)).to.deep.equal(null)
-      tokens[aotf.cylcObjects.User] = 'a'
-      expect(aotf.getType(tokens)).to.deep.equal(aotf.cylcObjects.User)
-      tokens[aotf.cylcObjects.Workflow] = 'b'
-      expect(aotf.getType(tokens)).to.deep.equal(aotf.cylcObjects.Workflow)
-      tokens[aotf.cylcObjects.CyclePoint] = 'c'
-      expect(aotf.getType(tokens)).to.deep.equal(aotf.cylcObjects.CyclePoint)
-    })
-  })
-
-  describe('camelToWords', () => {
-    it('should convert camel case to plain text', () => {
-      expect(aotf.camelToWords(null)).to.equal('')
-      expect(aotf.camelToWords('aBC')).to.equal('A B C')
     })
   })
 
@@ -103,8 +83,8 @@ describe('aotf (Api On The Fly)', () => {
           {
             ...input.args[0],
             _title: 'Foo Bar',
-            _cylcObject: null,
-            _cylcType: null,
+            _cylcObjects: undefined,
+            _cylcType: undefined,
             _multiple: false,
             _required: false,
             _default: 42
@@ -144,7 +124,7 @@ describe('aotf (Api On The Fly)', () => {
           {
             ...input.args[0],
             _title: 'Foo Bar',
-            _cylcObject: aotf.cylcObjects.Workflow,
+            _cylcObjects: [aotf.cylcObjects.Workflow],
             _cylcType: 'WorkflowID',
             _multiple: true, // because of the LIST
             _required: true, // because of the NON_NULL
@@ -166,12 +146,12 @@ describe('aotf (Api On The Fly)', () => {
           args: [
             {
               name: 'arg1',
-              _cylcObject: aotf.cylcObjects.Workflow,
+              _cylcObjects: [aotf.cylcObjects.Workflow],
               _required: true
             },
             {
               name: 'arg2',
-              _cylcObject: aotf.cylcObjects.User,
+              _cylcObjects: [aotf.cylcObjects.User],
               _required: false
             }
           ]
@@ -182,7 +162,7 @@ describe('aotf (Api On The Fly)', () => {
           args: [
             {
               name: 'arg1',
-              _cylcObject: aotf.cylcObjects.User,
+              _cylcObjects: [aotf.cylcObjects.User],
               _required: false
             }
           ]
@@ -193,12 +173,12 @@ describe('aotf (Api On The Fly)', () => {
           args: [
             {
               name: 'arg1',
-              _cylcObject: aotf.cylcObjects.Workflow,
+              _cylcObjects: [aotf.cylcObjects.Workflow],
               _required: true
             },
             {
               name: 'arg2',
-              _cylcObject: null,
+              _cylcObjects: undefined,
               _required: true
             }
           ]
@@ -211,7 +191,7 @@ describe('aotf (Api On The Fly)', () => {
       expect(
         aotf.filterAssociations(
           // filter by the "namespace" object
-          aotf.cylcObjects.Namespace,
+          aotf.cylcObjects.Task,
           tokens,
           mutations,
           permissions
@@ -244,12 +224,12 @@ describe('aotf (Api On The Fly)', () => {
           args: [
             {
               name: 'arg1',
-              _cylcObject: aotf.cylcObjects.Workflow,
+              _cylcObjects: [aotf.cylcObjects.Workflow],
               _required: true
             },
             {
               name: 'arg2',
-              _cylcObject: null,
+              _cylcObjects: undefined,
               _required: false
             }
           ]
@@ -260,12 +240,12 @@ describe('aotf (Api On The Fly)', () => {
           args: [
             {
               name: 'arg1',
-              _cylcObject: aotf.cylcObjects.Workflow,
+              _cylcObjects: [aotf.cylcObjects.Workflow],
               _required: true
             },
             {
               name: 'arg2',
-              _cylcObject: null,
+              _cylcObjects: undefined,
               _required: true
             }
           ]
@@ -277,12 +257,12 @@ describe('aotf (Api On The Fly)', () => {
           args: [
             {
               name: 'arg1',
-              _cylcObject: aotf.cylcObjects.Workflow,
+              _cylcObjects: [aotf.cylcObjects.Workflow],
               _required: true
             },
             {
               name: 'arg2',
-              _cylcObject: aotf.cylcObjects.CyclePoint,
+              _cylcObjects: [aotf.cylcObjects.CyclePoint],
               _required: true
             }
           ]
@@ -324,7 +304,7 @@ describe('aotf (Api On The Fly)', () => {
     it('should filter by permissions', () => {
       const args = [{
         name: 'arg1',
-        _cylcObject: aotf.cylcObjects.Workflow,
+        _cylcObjects: [aotf.cylcObjects.Workflow],
         _required: true
       }]
       const mutations = [
@@ -661,14 +641,14 @@ describe('aotf (Api On The Fly)', () => {
           {
             name: 'arg1',
             _cylcType: 'WorkflowID',
-            _cylcObject: aotf.cylcObjects.Workflow,
+            _cylcObjects: [aotf.cylcObjects.Workflow],
             _multiple: true,
             _default: null
           },
           {
             name: 'arg2',
-            _cylcType: null,
-            _cylcObject: null,
+            _cylcType: undefined,
+            _cylcObjects: undefined,
             _multiple: false,
             _default: 42
           }
