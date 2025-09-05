@@ -187,6 +187,8 @@ describe('tasks', () => {
       const jobNode = {
         node: {
           messages: [
+            'submitted',
+            'started',
             'chilbolton',
             'larkhill',
           ],
@@ -208,8 +210,8 @@ describe('tasks', () => {
         },
         {
           level: undefined,
-          label: 'larkhill',
-          message: 'Task message: larkhill',
+          label: undefined,
+          message: 'larkhill',
           isMessage: true,
         },
       ])

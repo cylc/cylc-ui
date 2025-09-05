@@ -184,6 +184,31 @@ describe('Log View', () => {
       .then((clip) => clip.readText())
       .should('equal', `${logDirPath}/${workflowLogFiles[0]}`)
   })
+
+  it('has a job info menu', () => {
+    cy.get('.c-log [data-cy=job-info-btn]')
+      .should('not.exist')
+    cy.get('[data-cy=job-toggle]').click()
+      .get('[data-cy=job-id-input] input')
+      .type('20000102T0000Z/')
+    cy.get('.c-log [data-cy=job-info-btn]')
+      .should('be.visible')
+      // The button should be disabled until a task ID is entered:
+      .should('be.disabled')
+    cy.get('[data-cy=job-id-input] input')
+      .type('succeeded')
+    cy.get('.c-log [data-cy=job-info-btn]')
+      .should('not.be.disabled')
+      .click()
+      .get('[data-cy=job-details]')
+      // It includes job submit number:
+      .contains('20000102T0000Z/succeeded/1')
+      .get('[data-cy=job-details] td')
+      // It includes platform:
+      .contains('Platform')
+      .parent().find('td:last')
+      .contains('localhost')
+  })
 })
 
 describe('Log command in menu', () => {
@@ -209,10 +234,10 @@ describe('Log command in menu', () => {
         .click()
     }
 
-    const jobStateQueries = []
+    const jobDataQueries = []
     cy.intercept('/graphql', ({ body }) => {
-      if (body.operationName === 'JobState') {
-        jobStateQueries.push(body.variables.id)
+      if (body.operationName === 'Jobs') {
+        jobDataQueries.push(body.variables.id)
       }
     })
 
@@ -226,7 +251,7 @@ describe('Log command in menu', () => {
       .contains('job.out')
       // Should not have run queries for this
       .then(() => {
-        expect(jobStateQueries.length).to.eq(0)
+        expect(jobDataQueries.length).to.eq(0)
       })
     // But should run the job state query if we manually enter a job ID:
     const failedID = '20000102T0000Z/failed/01'
@@ -236,7 +261,7 @@ describe('Log command in menu', () => {
       .get('.c-log [data-cy=file-input]')
       .contains('job.err')
       .then(() => {
-        expect(jobStateQueries).to.deep.eq([failedID])
+        expect(jobDataQueries).to.deep.eq([failedID])
       })
   })
 })
