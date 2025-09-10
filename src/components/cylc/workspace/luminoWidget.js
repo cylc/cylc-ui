@@ -66,6 +66,10 @@ export class LuminoWidget extends Widget {
     // which cause the tab panel to be updated.
     this.title.label = this.name
     this.title.closable = this.closable
+    eventBus.on(`lumino:update-tab:${this.id}`, ({ title, caption }) => {
+      this.title.label = title
+      this.title.caption = caption
+    })
     super.onBeforeAttach(msg)
   }
 
@@ -79,6 +83,7 @@ export class LuminoWidget extends Widget {
   onCloseRequest (msg) {
     // Emit an event so that the Vue component knows that it needs to be removed too
     eventBus.emit('lumino:deleted', this.id)
+    eventBus.off(`lumino:update-tab:${this.id}`)
     super.onCloseRequest(msg)
   }
 
