@@ -218,7 +218,8 @@ const taskFields = [
   'minCpuTime',
   'totalCpuTime',
   'cpuTimeQuartiles',
-  'totalOfTotals'
+  'totalOfTotals',
+  'memAlloc'
 ]
 
 /** The one-off query which retrieves historical task timing statistics */

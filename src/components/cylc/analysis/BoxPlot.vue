@@ -169,12 +169,25 @@ export default {
       },
       tooltip: {
         custom ({ seriesIndex, dataPointIndex, w }) {
-          const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true, props.timingOption)
-          const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true, props.timingOption)
-          const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true, props.timingOption)
-          const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true, props.timingOption)
-          const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true, props.timingOption)
-          return `
+          const max = formatDuration(w.globals.seriesCandleC[0][dataPointIndex], true, props.timingOption)
+          const q3 = formatDuration(w.globals.seriesCandleL[0][dataPointIndex], true, props.timingOption)
+          const med = formatDuration(w.globals.seriesCandleM[0][dataPointIndex], true, props.timingOption)
+          const q1 = formatDuration(w.globals.seriesCandleH[0][dataPointIndex], true, props.timingOption)
+          const min = formatDuration(w.globals.seriesCandleO[0][dataPointIndex], true, props.timingOption)
+          if (props.timingOption === 'maxRss') {
+            const memAlloc = formatDuration(w.globals.series[0][dataPointIndex], true, props.timingOption)
+            return `
+            <div class="pa-2">
+              <div>Maximum: ${max}</div>
+              <div>Q3: ${q3} </div>
+              <div>Median: ${med}</div>
+              <div>Q1: ${q1}</div>
+              <div>Minimum: ${min}</div>
+              <div>Memory Allocated: ${memAlloc}</div>
+            </div>
+          `
+          } else {
+            return `
             <div class="pa-2">
               <div>Maximum: ${max}</div>
               <div>Q3: ${q3} </div>
@@ -183,6 +196,7 @@ export default {
               <div>Minimum: ${min}</div>
             </div>
           `
+          }
         },
       },
       plotOptions: {
@@ -230,7 +244,8 @@ export default {
             sortedTasks[i][`${this.timingOption}Quartiles`][1],
             sortedTasks[i][`${this.timingOption}Quartiles`][2],
             sortedTasks[i][`max${upperFirst(getTimingOption(this.timingOption))}`],
-          ],
+            sortedTasks[i].memAlloc
+          ]
         })
       }
       return [{ data }]
