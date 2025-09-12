@@ -267,18 +267,14 @@ describe('Tree view', () => {
 
     it('Provides a select all functionality', () => {
       cy.visit('/#/tree/one')
-      cy
-        .get('[data-cy="filter task state"]')
+      cy.get('[data-cy="filter task state"]')
         .get('.v-list-item--active')
         .should('have.length', 0)
-      cy
-        .get('[data-cy="filter task state"]')
+      cy.get('[data-cy="filter task state"]')
         .click()
-        .get('.v-list-item')
-        .contains('Select All')
-        .click({ force: true })
-      cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy=task-filter-select-all]')
+        .click()
+      cy.get('[data-cy="filter task state"]')
         .get('.v-list-item--active')
         .should('have.length', 8)
     })
