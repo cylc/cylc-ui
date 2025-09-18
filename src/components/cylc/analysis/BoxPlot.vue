@@ -165,11 +165,11 @@ export default {
       },
       tooltip: {
         custom ({ seriesIndex, dataPointIndex, w }) {
-          const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true)
-          const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true)
-          const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true)
-          const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true)
-          const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true)
+          const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], { allowZeros: true })
+          const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], { allowZeros: true })
+          const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], { allowZeros: true })
+          const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], { allowZeros: true })
+          const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], { allowZeros: true })
           return `
             <div class="pa-2">
               <div>Maximum: ${max}</div>
@@ -197,7 +197,7 @@ export default {
           text: `${upperFirst(props.timingOption)} time`,
         },
         labels: {
-          formatter: (value) => formatDuration(value, true)
+          formatter: (value) => formatDuration(value, { allowZeros: true })
         },
       },
     }))
