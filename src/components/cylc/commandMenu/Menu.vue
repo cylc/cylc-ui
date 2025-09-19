@@ -336,13 +336,8 @@ export default {
       // displayed in the menu (this is what the skeleton-loader is for)
       this.isLoadingMutations = false
       this.types = types
-      let type = this.node.type
-      if (type === 'family') {
-        // show the same mutation list for families as for tasks
-        type = 'task'
-      }
       this.mutations = filterAssociations(
-        type,
+        this.node.type,
         this.node.tokens,
         mutations,
         this.user.permissions

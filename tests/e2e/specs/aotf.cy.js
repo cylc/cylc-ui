@@ -295,18 +295,18 @@ describe('Api On The Fly', () => {
         // it should list the one default workflow mutation
         // (see workflowService.primaryMutations)
         .get('.c-mutation-menu-list:first')
-        .find('.v-list-item')
-        .should('have.length', 2) // +1 because of the "see more" button
+        .find('.c-mutation')
+        .should('have.length', 1)
         // toggle the menu to "see more" items
-        .find('#less-more-button')
+        .get('#less-more-button')
         .click()
         // it should now list the five workflow mutations
         .get('.c-mutation-menu-list:first')
-        .find('.v-list-item')
-        .should('have.length', 6) // +1 because of the "see less" button
+        .find('.c-mutation')
+        .should('have.length', 5)
         // should have unauthorised mutation disabled
         .get('.c-mutation-menu-list:first')
-        .find('.v-list-item:nth-child(4)')
+        .find('.c-mutation:nth-child(4)')
         .should('exist')
         .should('have.class', 'v-list-item--disabled')
         // toggle the menu to "see less" items
@@ -315,8 +315,8 @@ describe('Api On The Fly', () => {
         // it should list the one default workflow mutation
         // (see workflowService.primaryMutations)
         .get('.c-mutation-menu-list:first')
-        .find('.v-list-item')
-        .should('have.length', 2) // +1 because of the "see more" button
+        .find('.c-mutation')
+        .should('have.length', 1)
     })
   })
 })
