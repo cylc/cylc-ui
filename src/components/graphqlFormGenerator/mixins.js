@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) NIWA & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,71 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
+import { computed } from 'vue'
 
-export const formElement = {
-  components: {}, // Filled on created()
-
-  props: {
-    // the GraphQL type this input represents
-    gqlType: {
-      type: Object,
-      required: true
-    },
-    // array of all GraphQL types in the schema
-    types: {
-      type: Array,
-      default: () => []
-    },
-    // the value (v-model is actually syntactic sugar for this)
-    modelValue: {
-      required: true
-    }
+/**
+ * @type {Record<string, import('vue').Prop>}
+ */
+export const formElementProps = {
+  // the GraphQL type this input represents
+  gqlType: {
+    type: Object,
+    required: true,
   },
-
-  emits: ['update:modelValue'],
-
-  created () {
-    // Avoid problem of circular reference by deferring
-    // the population of $options.components
-    // https://forum.vuejs.org/t/failed-to-resolve-component-when-not-using-hot-swap/113894/2
-    // TODO: FormInput is not needed by all components that use this
-    // mixin; we should replace this mixin with a composable.
-    this.$options.components.FormInput = FormInput
+  // array of all GraphQL types in the schema
+  types: {
+    type: Array,
+    default: () => [],
   },
+}
 
-  computed: {
-    /* The model we pass to the form input.
-     *
-     * Note the v-model approach does not work with nesting out of the box,
-     * you need to capture and propagate "input" events up the component tree
-     * to enable this nested structure of components to share the same model
-     * and be managed by Vue correctly.
-     */
-    model: {
-      get () {
-        return this.modelValue
-      },
-      set (val) {
-        this.$emit('update:modelValue', val)
-      }
-    },
+export function useFormElement (props) {
+  const type = computed(
+    () => props.types.find(
+      (type) => type.name === props.gqlType.name && type.kind === props.gqlType.kind
+    )
+  )
+  // TODO: provide argument help then default to type help if not found
+  const help = computed(() => type.value?.description?.trim())
 
-    type () {
-      for (const type of this.types) {
-        if (type.name === this.gqlType.name && type.kind === this.gqlType.kind) {
-          return type
-        }
-      }
-      return null
-    },
-
-    help () {
-      // TODO: provide argument help then default to type help if not found
-      if (this.type && this.type.description) {
-        return this.type.description.trim()
-      }
-      return null
-    }
+  return {
+    help,
+    type,
   }
 }
