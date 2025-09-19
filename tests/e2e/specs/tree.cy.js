@@ -73,10 +73,10 @@ describe('Tree view', () => {
       ['Platform', /\w+/],
       ['Job ID', /\d+/],
       ['Job runner', /\w+/],
-      ['Submitted time', /\d{4}-\d{2}-\d{2}T.+/],
-      ['Started time', /\d{4}-\d{2}-\d{2}T.+/],
-      ['Finished time', /\d{4}-\d{2}-\d{2}T.+/],
-      ['Mean run time', /\d{2}:\d{2}:\d{2}/],
+      ['Submit time', /\d{4}-\d{2}-\d{2}T.+/],
+      ['Start time', /\d{4}-\d{2}-\d{2}T.+/],
+      ['Finish time', /\d{4}-\d{2}-\d{2}T.+/],
+      ['Run time', /\d{2}:\d{2}:\d{2}/],
       ['foo', 'foo message'],
     ])
     for (const [key, pattern] of patterns.entries()) {

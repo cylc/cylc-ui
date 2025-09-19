@@ -366,7 +366,7 @@ export default {
               if (!value) {
                 return null
               }
-              const y = formatDuration(value, true)
+              const y = formatDuration(value, { allowZeros: true })
               const platform = this.series[seriesIndex].data[dataPointIndex].platform
               return `${y} (${platform})`
             }
@@ -387,9 +387,7 @@ export default {
             text: upperFirst(this.timingOption) + ' time',
           },
           labels: {
-            formatter: function (value) {
-              return formatDuration(value, true)
-            }
+            formatter: (value) => formatDuration(value, { allowZeros: true })
           },
         },
       }
@@ -448,9 +446,7 @@ export default {
             text: upperFirst(this.timingOption) + ' time',
           },
           labels: {
-            formatter: function (value) {
-              return formatDuration(value, true)
-            }
+            formatter: (value) => formatDuration(value, { allowZeros: true })
           },
           min: this.showOrigin ? 0 : undefined
         },

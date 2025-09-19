@@ -42,27 +42,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td>{{ node.jobRunnerName }}</td>
       </tr>
       <tr>
-        <td>Submitted time</td>
+        <td>Submit time</td>
         <td>{{ node.submittedTime }}</td>
       </tr>
-      <tr>
-        <td>Started time</td>
-        <td>{{ node.startedTime }}</td>
-      </tr>
-      <tr>
-        <td>Finished time</td>
-        <td>{{ node.finishedTime }}</td>
-      </tr>
-      <tr v-if="meanElapsedTime">
-        <td>Mean run time</td>
-        <td>{{ formatDuration(meanElapsedTime) }}</td>
+      <template v-if="node.startedTime">
+        <tr>
+          <td>Start time</td>
+          <td>{{ node.startedTime }}</td>
+        </tr>
+        <tr>
+          <td>Finish time</td>
+          <td>
+            <EstimatedTime
+              :actual="node.finishedTime"
+              :estimate="node.estimatedFinishTime"
+            />
+          </td>
+        </tr>
+      </template>
+      <tr v-if="node.finishedTime || meanElapsedTime">
+        <td>Run time</td>
+        <td>
+          <EstimatedTime
+            :actual="getRunTime(node)"
+            :estimate="meanElapsedTime"
+            :formatter="(x) => formatDuration(x, { allowZeros: true })"
+            tooltip="Mean"
+          />
+        </td>
       </tr>
     </tbody>
   </v-table>
 </template>
 
 <script setup>
-import { formatDuration } from '@/utils/tasks'
+import { formatDuration, getRunTime } from '@/utils/tasks'
+import EstimatedTime from '@/components/cylc/common/EstimatedTime.vue'
 
 defineProps({
   node: {

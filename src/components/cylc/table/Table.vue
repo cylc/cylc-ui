@@ -55,8 +55,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
       </div>
     </template>
+    <template v-slot:item.latestJob.node.finishedTime="{ item, value }">
+      <EstimatedTime
+        :actual="value"
+        :estimate="item.latestJob?.node.estimatedFinishTime"
+      />
+    </template>
     <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
-      <td>{{ dtMean(item.task) }}</td>
+      <EstimatedTime
+        v-bind="taskRunTimes.get(item.task.id)"
+        :formatter="(x) => formatDuration(x, { allowZeros: true })"
+        tooltip="Mean"
+      />
     </template>
     <template v-slot:item.data-table-expand="{ item, internalItem, toggleExpand, isExpanded }">
       <v-btn
@@ -70,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         }"
       >
         <v-icon
-          :icon="icons.mdiChevronDown"
+          :icon="mdiChevronDown"
           size="large"
         />
       </v-btn>
@@ -98,8 +108,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td>{{ job.node.jobId }}</td>
         <td>{{ job.node.submittedTime }}</td>
         <td>{{ job.node.startedTime }}</td>
-        <td>{{ job.node.finishedTime }}</td>
-        <td></td>
+        <td>
+          <EstimatedTime
+            :actual="job.node.finishedTime"
+            :estimate="job.node.estimatedFinishTime"
+          />
+        </td>
+        <td>
+          <EstimatedTime
+            :actual="getRunTime(job.node)"
+            :estimate="item.task.node?.task.meanElapsedTime"
+            :formatter="(x) => formatDuration(x, { allowZeros: true })"
+            tooltip="Mean"
+          />
+        </td>
       </tr>
     </template>
     <template v-slot:bottom>
@@ -108,8 +130,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </v-data-table>
 </template>
 
-<script>
-import { ref, watch } from 'vue'
+<script setup>
+import { ref, computed } from 'vue'
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import { mdiChevronDown } from '@mdi/js'
@@ -119,153 +141,154 @@ import {
   numberComparator,
 } from '@/components/cylc/table/sort'
 import {
-  dtMean,
+  getRunTime,
+  formatDuration,
   isFlowNone,
+  isTruthyOrZero,
 } from '@/utils/tasks'
 import { useCyclePointsOrderDesc } from '@/composables/localStorage'
 import {
-  initialOptions,
+  initialOptions as initialOptionsProp,
   updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
 import FlowNumsChip from '@/components/cylc/common/FlowNumsChip.vue'
+import EstimatedTime from '@/components/cylc/common/EstimatedTime.vue'
 
-export default {
-  name: 'TableComponent',
+const emit = defineEmits([updateInitialOptionsEvent])
 
-  emits: [updateInitialOptionsEvent],
+const props = defineProps({
+  tasks: {
+    type: Array,
+    required: true
+  },
+  initialOptions: initialOptionsProp,
+})
 
-  props: {
-    tasks: {
-      type: Array,
-      required: true
+const cyclePointsOrderDesc = useCyclePointsOrderDesc()
+
+const sortBy = useInitialOptions(
+  'sortBy',
+  { props, emit },
+  [
+    {
+      key: 'task.tokens.cycle',
+      order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
     },
-    initialOptions,
+  ]
+)
+
+const page = useInitialOptions('page', { props, emit }, 1)
+
+const itemsPerPage = useInitialOptions('itemsPerPage', { props, emit }, 50)
+
+const headers = ref([
+  {
+    title: 'Task',
+    key: 'task.name',
+    sortFunc: DEFAULT_COMPARATOR,
   },
-
-  components: {
-    FlowNumsChip,
-    Task,
-    Job,
+  {
+    title: 'Jobs',
+    key: 'data-table-expand',
   },
-
-  setup (props, { emit }) {
-    const cyclePointsOrderDesc = useCyclePointsOrderDesc()
-
-    const sortBy = useInitialOptions(
-      'sortBy',
-      { props, emit },
-      [
-        {
-          key: 'task.tokens.cycle',
-          order: cyclePointsOrderDesc.value ? 'desc' : 'asc'
-        },
-      ]
-    )
-
-    const page = useInitialOptions('page', { props, emit }, 1)
-
-    const itemsPerPage = useInitialOptions('itemsPerPage', { props, emit }, 50)
-
-    const headers = ref([
-      {
-        title: 'Task',
-        key: 'task.name',
-        sortable: true,
-        sortFunc: DEFAULT_COMPARATOR
-      },
-      {
-        title: 'Jobs',
-        key: 'data-table-expand',
-        sortable: false
-      },
-      {
-        title: 'Cycle Point',
-        key: 'task.tokens.cycle',
-        sortable: true,
-        sortFunc: DEFAULT_COMPARATOR,
-      },
-      {
-        title: 'Platform',
-        key: 'latestJob.node.platform',
-        sortable: true,
-        sortFunc: DEFAULT_COMPARATOR,
-      },
-      {
-        title: 'Job Runner',
-        key: 'latestJob.node.jobRunnerName',
-        sortable: true,
-        sortFunc: DEFAULT_COMPARATOR,
-      },
-      {
-        title: 'Job ID',
-        key: 'latestJob.node.jobId',
-        sortable: true,
-        sortFunc: DEFAULT_COMPARATOR,
-      },
-      {
-        title: 'Submit',
-        key: 'latestJob.node.submittedTime',
-        sortable: true,
-        sortFunc: datetimeComparator,
-      },
-      {
-        title: 'Start',
-        key: 'latestJob.node.startedTime',
-        sortable: true,
-        sortFunc: datetimeComparator,
-      },
-      {
-        title: 'Finish',
-        key: 'latestJob.node.finishedTime',
-        sortable: true,
-        sortFunc: datetimeComparator,
-      },
-      {
-        title: 'Run Time',
-        key: 'task.node.task.meanElapsedTime',
-        sortable: true,
-        sortFunc: numberComparator,
-      },
-    ])
-
-    // Ensure that whenever a sort order changes, empty/nullish values are
-    // always sorted last regardless.
-    watch(
-      sortBy,
-      (val) => {
-        for (const { key, order } of val) {
-          const header = headers.value.find((x) => x.key === key)
-          header.sort = (a, b) => {
-            if (!a && !b) return 0
-            if (!a) return order === 'asc' ? 1 : -1
-            if (!b) return order === 'asc' ? -1 : 1
-            return header.sortFunc(a, b)
-          }
-        }
-      },
-      { deep: true, immediate: true }
-    )
-
-    return {
-      dtMean,
-      itemsPerPage,
-      page,
-      sortBy,
-      headers,
-      icons: {
-        mdiChevronDown
-      },
-      isFlowNone,
-      itemsPerPageOptions: [
-        { value: 10, title: '10' },
-        { value: 20, title: '20' },
-        { value: 50, title: '50' },
-        { value: 100, title: '100' },
-        { value: 200, title: '200' },
-        { value: -1, title: 'All' },
-      ],
-    }
+  {
+    title: 'Cycle Point',
+    key: 'task.tokens.cycle',
+    sortFunc: DEFAULT_COMPARATOR,
   },
+  {
+    title: 'Platform',
+    key: 'latestJob.node.platform',
+    sortFunc: DEFAULT_COMPARATOR,
+  },
+  {
+    title: 'Job Runner',
+    key: 'latestJob.node.jobRunnerName',
+    sortFunc: DEFAULT_COMPARATOR,
+  },
+  {
+    title: 'Job ID',
+    key: 'latestJob.node.jobId',
+    sortFunc: DEFAULT_COMPARATOR,
+  },
+  {
+    title: 'Submit',
+    key: 'latestJob.node.submittedTime',
+    sortFunc: datetimeComparator,
+  },
+  {
+    title: 'Start',
+    key: 'latestJob.node.startedTime',
+    sortFunc: datetimeComparator,
+  },
+  {
+    title: 'Finish',
+    key: 'latestJob.node.finishedTime',
+    sortRaw (node1, node2) {
+      const a = node1.latestJob?.node
+      const b = node2.latestJob?.node
+      return nullSorter(
+        'latestJob.node.finishedTime',
+        datetimeComparator,
+        a?.finishedTime || a?.estimatedFinishTime,
+        b?.finishedTime || b?.estimatedFinishTime
+      )
+    },
+  },
+  {
+    title: 'Run Time',
+    key: 'task.node.task.meanElapsedTime',
+    sortRaw (node1, node2) {
+      const a = taskRunTimes.value.get(node1.task.id)
+      const b = taskRunTimes.value.get(node2.task.id)
+      return nullSorter(
+        'task.node.task.meanElapsedTime',
+        numberComparator,
+        a?.actual || a?.estimate,
+        b?.actual || b?.estimate
+      )
+    },
+  },
+])
+
+/**
+ * Ensure that empty/nullish values are always sorted last regardless of sort order.
+ */
+function nullSorter (key, sortFunc, a, b) {
+  const x = isTruthyOrZero(a)
+  const y = isTruthyOrZero(b)
+  if (x && y) return sortFunc(a, b)
+  if (!x && !y) return 0
+  const { order } = sortBy.value.find((x) => x.key === key)
+  if (!x) return order === 'asc' ? 1 : -1
+  if (!y) return order === 'asc' ? -1 : 1
 }
+
+for (const header of headers.value) {
+  if (header.sortFunc) {
+    header.sort = (a, b) => nullSorter(header.key, header.sortFunc, a, b)
+  }
+}
+
+/** Data for the run time column, for each task's latest job. */
+const taskRunTimes = computed(() => new Map(
+  props.tasks.map(({ task, latestJob }) => [
+    task.id,
+    {
+      actual: getRunTime(latestJob?.node),
+      estimate: task.node?.task?.meanElapsedTime,
+    }
+  ])
+))
+
+const itemsPerPageOptions = [
+  { value: 10, title: '10' },
+  { value: 20, title: '20' },
+  { value: 50, title: '50' },
+  { value: 100, title: '100' },
+  { value: 200, title: '200' },
+  { value: -1, title: 'All' },
+]
+
 </script>

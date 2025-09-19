@@ -29,6 +29,7 @@ describe('Table view', () => {
       .should('have.length', initialNumRows)
       .should('be.visible')
   })
+
   describe('Filters', () => {
     it('Should filter by ID', () => {
       cy.get('.c-table table > tbody > tr')
@@ -94,30 +95,37 @@ describe('Table view', () => {
         .get('td [data-cy-task-name=eventually_succeeded]')
         .should('be.visible')
     })
-    it('displays and sorts mean run time', () => {
+    it('displays and sorts latest job run time', () => {
       // sort dt-mean ascending
       cy.get('.c-table')
         .contains('th', 'Run Time').as('dTHeader')
         .click()
-        // (1st row, 10th column)
-        .get('tbody > :nth-child(1) > :nth-child(10)')
-        .contains('00:00:04')
-        .get('tbody > :nth-child(2) > :nth-child(10)')
-        .contains('00:00:12')
-        .get('tbody > :nth-child(3) > :nth-child(10)')
-        .should(($ele) => {
-          expect($ele.text().trim()).equal('') // no value sorted after numbers
+        .get('tbody tr td:nth-child(10)') // 10th column
+        .then(($cells) => {
+          expect(Array.from($cells, (cell) => cell.innerText.trim())).to.deep.equal([
+            '00:00:01',
+            '00:00:01',
+            '00:00:04',
+            '00:00:12',
+            '00:03:00',
+            '', // no value sorted after numbers
+            '',
+          ])
         })
-        // sort dt-mean descending
+      // sort dt-mean descending
       cy.get('@dTHeader')
         .click()
-        .get('tbody > :nth-child(1) > :nth-child(10)')
-        .contains('00:00:12')
-        .get('tbody > :nth-child(2) > :nth-child(10)')
-        .contains('00:00:04')
-        .get('tbody > :nth-child(3) > :nth-child(10)')
-        .should(($ele) => {
-          expect($ele.text().trim()).equal('') // no value still sorted after numbers
+        .get('tbody tr td:nth-child(10)')
+        .then(($cells) => {
+          expect(Array.from($cells, (cell) => cell.innerText.trim())).to.deep.equal([
+            '00:03:00',
+            '00:00:12',
+            '00:00:04',
+            '00:00:01',
+            '00:00:01',
+            '', // no value still sorted after numbers
+            '',
+          ])
         })
     })
   })
