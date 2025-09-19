@@ -2702,18 +2702,6 @@
                 "__typename": "__InputValue"
               },
               {
-                "name": "onResume",
-                "description": "If the workflow is paused, wait until it is resumed before\nrunning the triggered task(s).",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null,
-                  "__typename": "__Type"
-                },
-                "defaultValue": "false",
-                "__typename": "__InputValue"
-              },
-              {
                 "name": "tasks",
                 "description": null,
                 "type": {
@@ -13917,18 +13905,6 @@
                 {
                   "name": "flowWait",
                   "description": "Should the workflow \"wait\" or \"continue on\" from this task?\n\nIf `false` the scheduler will spawn and run downstream tasks\nas normal (default).\n\nIf `true` the scheduler will not spawn the downstream tasks\nunless it has been caught by the same flow at a later time.\n\nFor example you might set this to True to trigger a task\nahead of a flow, where you don't want the scheduler to\n\"continue on\" from this task until the flow has caught up\nwith it.",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null,
-                    "__typename": "__Type"
-                  },
-                  "defaultValue": "false",
-                  "__typename": "__InputValue"
-                },
-                {
-                  "name": "onResume",
-                  "description": "If the workflow is paused, wait until it is resumed before\nrunning the triggered task(s).",
                   "type": {
                     "kind": "SCALAR",
                     "name": "Boolean",
