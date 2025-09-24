@@ -132,14 +132,14 @@ export function formatDuration (value, allowZeros = false, timingOption = true) 
 
 function formatRSS (value) {
   // Format the max RSS value in a human-readable format
-  if (value < 5000) {
-    const kilobytes = value
+  if (value / 1024 < 1000) {
+    const kilobytes = value / 1024
     return kilobytes.toPrecision(3) + ' KB'
-  } else if (value / 1024 < 1000) {
-    const megabytes = value / 1024
+  } else if (value / 1048576 < 1000) {
+    const megabytes = value / 1048576
     return megabytes.toPrecision(3) + ' MB'
   } else {
-    const gigabytes = value / 1048576
+    const gigabytes = value / 1073741824
     return gigabytes.toPrecision(3) + ' GB'
   }
 }
