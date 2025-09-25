@@ -221,11 +221,15 @@ export default {
             x: point.memAlloc,
             y: point.name,
             marker: {
-              size: 6,
-              fillColor: '#FFF',
-              strokeColor: '#FF0000',
-              shape: 'circle',
+              size: 0 // Hides the default marker
             },
+            image: {
+              path: 'img/redline.jpg',
+              width: 40,
+              height: 60,
+              offsetX: 0,
+              offsetY: -3,
+            }
           }))
         },
         plotOptions: {
