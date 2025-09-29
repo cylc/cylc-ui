@@ -253,7 +253,13 @@ const headers = ref([
 ])
 
 /**
- * Ensure that empty/nullish values are always sorted last regardless of sort order.
+ * A comparator that ensures empty/nullish values are always sorted last regardless of sort order.
+ *
+ * @param {string} key - The key for the column being sorted.
+ * @param {function} sortFunc - The comparator function to use if both values are truthy or zero.
+ * @param {any} a - The first value to compare.
+ * @param {any} b - The second value to compare.
+ * @returns {number} A number > 0 if a > b, or < 0 if a < b, or 0 if a === b
  */
 function nullSorter (key, sortFunc, a, b) {
   const x = isTruthyOrZero(a)

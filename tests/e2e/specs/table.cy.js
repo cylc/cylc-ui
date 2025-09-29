@@ -17,6 +17,15 @@
 
 import TaskState from '@/model/TaskState.model'
 
+// Get cell text for a column by header name, as an array
+Cypress.Commands.add('getColumnValues', (header) => {
+  return cy.get('.c-table th')
+    .contains(header)
+    .parents('th')
+    .then(($th) => cy.get(`.c-table tr > td:nth-child(${$th.index() + 1})`))
+    .then(($cells) => Array.from($cells, (cell) => cell.innerText.trim()))
+})
+
 const initialNumRows = 7
 
 describe('Table view', () => {
@@ -30,7 +39,7 @@ describe('Table view', () => {
       .should('be.visible')
   })
 
-  describe('Filters', () => {
+  describe('Filters & sorting', () => {
     it('Should filter by ID', () => {
       cy.get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
@@ -51,6 +60,7 @@ describe('Table view', () => {
           .should('be.visible')
       }
     })
+
     it('Should filter by task state', () => {
       cy
         .get('.c-table table > tbody > tr')
@@ -73,6 +83,7 @@ describe('Table view', () => {
         .should('have.length', 1)
         .should('be.visible')
     })
+
     it('Should filter by ID and states', () => {
       cy
         .get('.c-table table > tbody > tr')
@@ -95,6 +106,7 @@ describe('Table view', () => {
         .get('td [data-cy-task-name=eventually_succeeded]')
         .should('be.visible')
     })
+
     it('displays and sorts latest job run time', () => {
       const nonzeroValues = [
         '00:00:01',
@@ -107,26 +119,47 @@ describe('Table view', () => {
       cy.get('.c-table')
         .contains('th', 'Run Time').as('dTHeader')
         .click()
-        .get('tbody tr td:nth-child(10)') // 10th column
-        .then(($cells) => {
-          expect(Array.from($cells, (cell) => cell.innerText.trim())).to.deep.equal([
-            ...nonzeroValues,
-            '', // no value sorted after numbers
-            '',
-          ])
-        })
+      cy.getColumnValues('Run Time').should('deep.equal', [
+        ...nonzeroValues,
+        '', // no value sorted after numbers
+        '',
+      ])
       // sort dt-mean descending
       cy.get('@dTHeader')
         .click()
-        .get('tbody tr td:nth-child(10)')
-        .then(($cells) => {
-          expect(Array.from($cells, (cell) => cell.innerText.trim())).to.deep.equal([
-            ...nonzeroValues.slice().reverse(),
-            '', // no value still sorted after numbers
-            '',
-          ])
-        })
+      cy.getColumnValues('Run Time').should('deep.equal', [
+        ...nonzeroValues.slice().reverse(),
+        '', // no value still sorted after numbers
+        '',
+      ])
     })
+  })
+
+  it('sorts finish time including estimates', () => {
+    const nonzeroValues = [
+      '2020-11-08T22:57:16Z',
+      '2020-11-08T22:57:19Z',
+      '2020-11-08T22:57:33Z',
+      '2020-11-08T22:57:41Z',
+      '2020-11-08T23:00:36Z',
+    ]
+    // sort finish time ascending
+    cy.get('.c-table')
+      .contains('th', 'Finish').as('header')
+      .click()
+    cy.getColumnValues('Finish').should('deep.equal', [
+      ...nonzeroValues,
+      '', // no value sorted after numbers
+      '',
+    ])
+    // sort finish time descending
+    cy.get('@header')
+      .click()
+    cy.getColumnValues('Finish').should('deep.equal', [
+      ...nonzeroValues.slice().reverse(),
+      '', // no value still sorted after numbers
+      '',
+    ])
   })
 })
 
