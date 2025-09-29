@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <EstimatedTime
         v-bind="taskRunTimes.get(item.task.id)"
         :formatter="(x) => formatDuration(x, { allowZeros: true })"
-        tooltip="Mean"
+        tooltip="Mean for this task"
       />
     </template>
     <template v-slot:item.data-table-expand="{ item, internalItem, toggleExpand, isExpanded }">

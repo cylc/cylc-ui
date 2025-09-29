@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </template>
   <span
     v-else-if="isTruthyOrZero(estimate)"
+    v-tooltip="{ text: tooltip, openDelay: 200 }"
     class="d-inline-flex align-center text-blue-grey"
   >
     {{ formatter(estimate) }}
@@ -30,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :icon="mdiTimerSand"
       size="small"
       class="ml-1"
-      v-tooltip="{ text: tooltip, openDelay: 200 }"
     />
   </span>
 </template>

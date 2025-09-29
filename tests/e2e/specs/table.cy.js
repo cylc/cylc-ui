@@ -96,6 +96,13 @@ describe('Table view', () => {
         .should('be.visible')
     })
     it('displays and sorts latest job run time', () => {
+      const nonzeroValues = [
+        '00:00:01',
+        '00:00:01',
+        '00:00:04',
+        '00:00:12',
+        '00:03:00',
+      ]
       // sort dt-mean ascending
       cy.get('.c-table')
         .contains('th', 'Run Time').as('dTHeader')
@@ -103,11 +110,7 @@ describe('Table view', () => {
         .get('tbody tr td:nth-child(10)') // 10th column
         .then(($cells) => {
           expect(Array.from($cells, (cell) => cell.innerText.trim())).to.deep.equal([
-            '00:00:01',
-            '00:00:01',
-            '00:00:04',
-            '00:00:12',
-            '00:03:00',
+            ...nonzeroValues,
             '', // no value sorted after numbers
             '',
           ])
@@ -118,11 +121,7 @@ describe('Table view', () => {
         .get('tbody tr td:nth-child(10)')
         .then(($cells) => {
           expect(Array.from($cells, (cell) => cell.innerText.trim())).to.deep.equal([
-            '00:03:00',
-            '00:00:12',
-            '00:00:04',
-            '00:00:01',
-            '00:00:01',
+            ...nonzeroValues.slice().reverse(),
             '', // no value still sorted after numbers
             '',
           ])

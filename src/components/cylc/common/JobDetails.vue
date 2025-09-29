@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :actual="getRunTime(node)"
             :estimate="meanElapsedTime"
             :formatter="(x) => formatDuration(x, { allowZeros: true })"
-            tooltip="Mean"
+            tooltip="Mean for this task"
           />
         </td>
       </tr>
