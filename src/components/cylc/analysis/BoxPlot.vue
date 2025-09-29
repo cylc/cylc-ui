@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :height="105 + series[0].data.length * 60"
     width="95%"
     class="d-flex justify-center"
-  />
+    />
   <v-pagination
     v-model="page"
     :length="numPages"
@@ -65,7 +65,11 @@ import {
   mdiSortVariant,
 } from '@mdi/js'
 import { upperFirst } from 'lodash'
-import { formatDuration } from '@/utils/tasks'
+import {
+  formatDuration,
+  getTimingOption,
+  formatChartLabels
+} from '@/utils/tasks'
 import { useReducedAnimation } from '@/composables/localStorage'
 import {
   initialOptions,
@@ -128,79 +132,130 @@ export default {
 
     const reducedAnimation = useReducedAnimation()
 
-    const chartOptions = computed(() => ({
-      chart: {
-        defaultLocale: 'en',
-        locales: [
-          {
-            name: 'en',
-            options: {
-              toolbar: {
-                exportToSVG: 'Download SVG',
-                exportToPNG: 'Download PNG',
-                menu: 'Download'
+    const compare = (a, b) => {
+      const ret = a[sortBy.value] < b[sortBy.value] ? -1 : 1
+      return sortDesc.value ? -ret : ret
+    }
+
+    const chartOptions = computed(() => {
+      const currentTasks = (() => {
+        if (props.timingOption === 'maxRss') {
+          const sortedTasks = [...props.tasks].sort((a, b) => compare(a, b))
+          const startIndex = Math.max(0, props.itemsPerPage * (page.value - 1))
+          const endIndex = Math.min(sortedTasks.length, startIndex + props.itemsPerPage)
+          return sortedTasks.slice(startIndex, endIndex)
+        }
+        return []
+      })()
+
+      return {
+        chart: {
+          defaultLocale: 'en',
+          locales: [
+            {
+              name: 'en',
+              options: {
+                toolbar: {
+                  exportToSVG: 'Download SVG',
+                  exportToPNG: 'Download PNG',
+                  menu: 'Download'
+                }
               }
             }
-          }
-        ],
-        animations: {
-          enabled: reducedAnimation.value ? false : props.animate,
-          easing: 'easeinout',
-          speed: 300,
-          animateGradually: {
-            enabled: true,
-            delay: 150,
+          ],
+          animations: {
+            enabled: reducedAnimation.value ? false : props.animate,
+            easing: 'easeinout',
+            speed: 300,
+            animateGradually: {
+              enabled: true,
+              delay: 150,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 350,
+            },
           },
-          dynamicAnimation: {
-            enabled: true,
-            speed: 350,
+          fontFamily: 'inherit',
+          toolbar: {
+            tools: {
+              download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
+            },
           },
         },
-        fontFamily: 'inherit',
-        toolbar: {
-          tools: {
-            download: `<svg class="w-100 h-100"><path d="${mdiDownload}"></path></svg>`,
-          },
-        },
-      },
-      tooltip: {
-        custom ({ seriesIndex, dataPointIndex, w }) {
-          const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true)
-          const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true)
-          const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true)
-          const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true)
-          const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true)
-          return `
-            <div class="pa-2">
+        tooltip: {
+          custom ({ seriesIndex, dataPointIndex, w }) {
+            const max = formatDuration(w.globals.seriesCandleC[seriesIndex][dataPointIndex], true, props.timingOption)
+            const q3 = formatDuration(w.globals.seriesCandleL[seriesIndex][dataPointIndex], true, props.timingOption)
+            const med = formatDuration(w.globals.seriesCandleM[seriesIndex][dataPointIndex], true, props.timingOption)
+            const q1 = formatDuration(w.globals.seriesCandleH[seriesIndex][dataPointIndex], true, props.timingOption)
+            const min = formatDuration(w.globals.seriesCandleO[seriesIndex][dataPointIndex], true, props.timingOption)
+            if (props.timingOption === 'maxRss') {
+              const memAlloc = formatDuration(w.globals.series[seriesIndex][dataPointIndex], true, props.timingOption)
+              return `
+              <div class="pa-2">
               <div>Maximum: ${max}</div>
               <div>Q3: ${q3} </div>
               <div>Median: ${med}</div>
               <div>Q1: ${q1}</div>
               <div>Minimum: ${min}</div>
-            </div>
-          `
-        },
-      },
-      plotOptions: {
-        bar: {
-          horizontal: true,
-        },
-        boxPlot: {
-          colors: {
-            upper: '#6DD5C2',
-            lower: '#6AA4F1',
+              <div>Memory Allocated: ${memAlloc}</div>
+              </div>
+            `
+            } else {
+              return `
+              <div class="pa-2">
+              <div>Maximum: ${max}</div>
+              <div>Q3: ${q3} </div>
+              <div>Median: ${med}</div>
+              <div>Q1: ${q1}</div>
+              <div>Minimum: ${min}</div>
+              </div>
+            `
+            }
           },
         },
-      },
-      xaxis: {
-        title: {
-          text: `${upperFirst(props.timingOption)} time`,
+        annotations: {
+          position: 'front',
+          points: currentTasks.map(point => ({
+            x: point.memAlloc,
+            y: point.name,
+            marker: {
+              size: 0 // Hides the default marker
+            },
+            image: {
+              path: 'img/redline.jpg',
+              width: 40,
+              height: 60,
+              offsetX: 0,
+              offsetY: -3,
+            }
+          }))
         },
-        labels: {
-          formatter: (value) => formatDuration(value, true)
+        plotOptions: {
+          bar: {
+            horizontal: true,
+          },
+          boxPlot: {
+            colors: {
+              upper: '#6DD5C2',
+              lower: '#6AA4F1',
+            },
+          },
         },
-      },
-    }))
+        xaxis: {
+          min: currentTasks.length > 0 ? 0 : undefined,
+          max: currentTasks.length > 0 ? Math.ceil(Math.max(0, ...currentTasks.map(t => t.memAlloc)) * 1.05) : undefined,
+          type: 'numeric',
+          title: {
+            text: `${formatChartLabels(props.timingOption)}`,
+          },
+          labels: {
+            formatter: (value) => formatDuration(value, true, props.timingOption)
+          },
+        },
+      }
+    })
 
     return {
       sortBy,
@@ -215,21 +270,21 @@ export default {
       const sortedTasks = [...this.tasks].sort(this.compare)
       const startIndex = Math.max(0, this.itemsPerPage * (this.page - 1))
       const endIndex = Math.min(sortedTasks.length, startIndex + this.itemsPerPage)
-
-      const data = []
+      const boxData = []
       for (let i = startIndex; i < endIndex; i++) {
-        data.push({
+        boxData.push({
           x: sortedTasks[i].name,
           y: [
-            sortedTasks[i][`min${upperFirst(this.timingOption)}Time`],
+            sortedTasks[i][`min${upperFirst(getTimingOption(this.timingOption))}`],
             sortedTasks[i][`${this.timingOption}Quartiles`][0],
             sortedTasks[i][`${this.timingOption}Quartiles`][1],
             sortedTasks[i][`${this.timingOption}Quartiles`][2],
-            sortedTasks[i][`max${upperFirst(this.timingOption)}Time`],
-          ],
+            sortedTasks[i][`max${upperFirst(getTimingOption(this.timingOption))}`],
+            sortedTasks[i].memAlloc > 0 ? sortedTasks[i].memAlloc : 1 // ApexCharts seems inconsistent if this extra data is 0
+          ]
         })
       }
-      return [{ data }]
+      return [{ name: 'boxPlot', type: 'boxPlot', data: boxData }]
     },
 
     numPages () {
@@ -241,10 +296,10 @@ export default {
         { title: 'Task name', value: 'name' },
         { title: 'Platform', value: 'platform' },
         { title: 'Count', value: 'count' },
-        { title: `Mean ${this.timingOption} time`, value: `mean${upperFirst(this.timingOption)}Time` },
-        { title: `Median ${this.timingOption} time`, value: `median${upperFirst(this.timingOption)}Time` },
-        { title: `Min ${this.timingOption} time`, value: `min${upperFirst(this.timingOption)}Time` },
-        { title: `Max ${this.timingOption} time`, value: `max${upperFirst(this.timingOption)}Time` },
+        { title: `Mean ${formatChartLabels(this.timingOption)}`, value: `mean${upperFirst(getTimingOption(this.timingOption))}` },
+        { title: `Median ${formatChartLabels(this.timingOption)}`, value: `median${upperFirst(getTimingOption(this.timingOption))}` },
+        { title: `Min ${formatChartLabels(this.timingOption)}`, value: `min${upperFirst(getTimingOption(this.timingOption))}` },
+        { title: `Max ${formatChartLabels(this.timingOption)}`, value: `max${upperFirst(getTimingOption(this.timingOption))}` },
       ]
     },
   },
