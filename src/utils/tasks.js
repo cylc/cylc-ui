@@ -92,11 +92,12 @@ export function jobMessageOutputs (jobNode) {
  * Durations of 0 seconds return undefined unless allowZeros is true
  *
  * @param {number=} dur Duration in seconds
- * @param {boolean} [allowZeros=false] Whether durations of 0 are formatted as
+ * @param {Object} [options]
+ * @param {boolean} [options.allowZeros] Whether durations of 0 are formatted as
  * 00:00:00, rather than undefined
  * @return {string=} Formatted duration
  */
-export function formatDuration (dur, allowZeros = false) {
+export function formatDuration (dur, { allowZeros = false } = {}) {
   if (dur || (dur === 0 && allowZeros === true)) {
     const seconds = dur % 60
     const minutes = ((dur - seconds) / 60) % 60
@@ -118,10 +119,23 @@ export function formatDuration (dur, allowZeros = false) {
   return undefined
 }
 
-export function dtMean (taskNode) {
-  // Convert to an easily read duration format:
-  const dur = taskNode.node?.task?.meanElapsedTime
-  return formatDuration(dur)
+/**
+ * Return the run time of a job node in seconds.
+ */
+export function getRunTime (jobNode) {
+  if (jobNode?.startedTime && jobNode?.finishedTime) {
+    return (new Date(jobNode.finishedTime) - new Date(jobNode.startedTime)) / 1000
+  }
+}
+
+/**
+ * Format a datetime as an ISO 8601 string in UTC, without milliseconds.
+ *
+ * @param {Date} date - The date to format.
+ * @returns {string} The formatted date string.
+ */
+export function formatDatetime (date) {
+  return `${date.toISOString().slice(0, -5)}Z`
 }
 
 /**
@@ -140,4 +154,8 @@ export function formatFlowNums (flowNums) {
  */
 export function isFlowNone (flowNums) {
   return Boolean(flowNums && !JSON.parse(flowNums).length)
+}
+
+export function isTruthyOrZero (value) {
+  return value === 0 || Boolean(value)
 }

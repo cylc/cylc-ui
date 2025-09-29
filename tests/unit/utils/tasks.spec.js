@@ -17,13 +17,15 @@
 
 import TaskState from '@/model/TaskState.model'
 import {
-  dtMean,
   extractGroupState,
   latestJob,
   formatDuration,
   jobMessageOutputs,
   formatFlowNums,
   isFlowNone,
+  formatDatetime,
+  getRunTime,
+  isTruthyOrZero,
 } from '@/utils/tasks'
 
 describe('tasks', () => {
@@ -97,68 +99,6 @@ describe('tasks', () => {
     })
   })
 
-  describe('dtMean', () => {
-    it('should format seconds to nice isodatetime format', () => {
-      const tests = [
-        {
-          taskNode: { node: null },
-          expected: undefined
-        },
-        {
-          taskNode: {
-            task: {
-              meanElapsedTime: 0
-            }
-          },
-          expected: undefined
-        },
-        {
-          taskNode: {
-            node: {
-              task: {
-                meanElapsedTime: 84
-              }
-            }
-          },
-          expected: '00:01:24'
-        },
-        {
-          taskNode: {
-            node: {
-              task: {
-                meanElapsedTime: 42
-              }
-            }
-          },
-          expected: '00:00:42'
-        },
-        {
-          taskNode: {
-            node: {
-              task: {
-                meanElapsedTime: 4242
-              }
-            }
-          },
-          expected: '01:10:42'
-        },
-        {
-          taskNode: {
-            node: {
-              task: {
-                meanElapsedTime: 1426332
-              }
-            }
-          },
-          expected: '16d 12:12:12'
-        }
-      ]
-      tests.forEach(test => {
-        expect(dtMean(test.taskNode)).to.equal(test.expected)
-      })
-    })
-  })
-
   describe('formatDuration', () => {
     it('should format seconds to nice isodatetime format', () => {
       expect(formatDuration(null)).to.equal(undefined)
@@ -172,13 +112,33 @@ describe('tasks', () => {
       expect(formatDuration(0)).to.equal(undefined)
     })
     it('should change format of 0 seconds based on value of allowZeros', () => {
-      expect(formatDuration(0, false)).to.equal(undefined)
-      expect(formatDuration(0, true)).to.equal('00:00:00')
+      expect(formatDuration(0, { allowZeros: false })).to.equal(undefined)
+      expect(formatDuration(0, { allowZeros: true })).to.equal('00:00:00')
     })
     it('should not change format of non-zero values based on allowZeros', () => {
       expect(formatDuration(42)).to.equal('00:00:42')
-      expect(formatDuration(42, false)).to.equal('00:00:42')
-      expect(formatDuration(42, true)).to.equal('00:00:42')
+      expect(formatDuration(42, { allowZeros: false })).to.equal('00:00:42')
+      expect(formatDuration(42, { allowZeros: true })).to.equal('00:00:42')
+    })
+  })
+
+  describe('formatDatetime', () => {
+    it.each([
+      ['2022-10-05T11:56:00.000Z', '2022-10-05T11:56:00Z'],
+      ['2023-05-20T14:48-04:30', '2023-05-20T19:18:00Z'],
+      ['2024-01-15T09:30:45.123Z', '2024-01-15T09:30:45Z'],
+    ])('%s -> %s', (input, expected) => {
+      expect(formatDatetime(new Date(input))).toEqual(expected)
+    })
+  })
+
+  describe('getRunTime', () => {
+    it.each([
+      [{ startedTime: '2024-10-01T23:59:40Z', finishedTime: '2024-10-02T00:00:10Z' }, 30],
+      [{ startedTime: '2024-10-01T23:59:40Z' }, undefined],
+      [{ }, undefined],
+    ])('%o -> %o', (jobNode, expected) => {
+      expect(getRunTime(jobNode)).toEqual(expected)
     })
   })
 
@@ -236,6 +196,21 @@ describe('tasks', () => {
       ['[1]', false],
     ])('isFlowNone(%o) -> %o', (input, expected) => {
       expect(isFlowNone(input)).toEqual(expected)
+    })
+  })
+
+  describe('isTruthyOrZero', () => {
+    it.each([
+      [undefined, false],
+      [null, false],
+      [false, false],
+      ['', false],
+      ['foo', true],
+      [0, true],
+      [-1, true],
+      [[], true],
+    ])('%o -> %o', (input, expected) => {
+      expect(isTruthyOrZero(input)).toEqual(expected)
     })
   })
 })
