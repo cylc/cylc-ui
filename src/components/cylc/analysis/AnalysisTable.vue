@@ -186,7 +186,7 @@ export default {
         value = value[index]
       }
       if (header.formatter) {
-        return header.formatter(value, header.allowZeros)
+        return header.formatter(value, header)
       }
       return value
     }

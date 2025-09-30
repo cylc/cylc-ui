@@ -150,6 +150,7 @@ fragment JobData on Job {
   startedTime
   submittedTime
   finishedTime
+  estimatedFinishTime
   state
   submitNum
 }
