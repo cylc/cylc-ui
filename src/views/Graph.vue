@@ -206,6 +206,9 @@ fragment TaskProxyData on TaskProxy {
     meanElapsedTime
   }
   flowNums
+  runtime {
+    runMode
+  }
 }
 
 fragment FamilyProxyData on FamilyProxy {

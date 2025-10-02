@@ -215,6 +215,7 @@ import {
   mdiCheckboxBlankOutline
 } from '@mdi/js'
 import { cloneDeep } from 'lodash-es'
+import { formatDatetime } from '@/utils/tasks'
 
 export default {
   name: 'InfoComponent',
@@ -301,7 +302,7 @@ export default {
         // Since we've created this date from a Unix timestamp, we can safely assume it is in UTC:
         xtrigger.id = xtrigger.id.replace(
           /trigger_time=(?<unixTime>[0-9.]+)/,
-          (match, p1) => `trigger_time=${new Date(p1 * 1000).toISOString().slice(0, -5)}Z`
+          (match, p1) => `trigger_time=${formatDatetime(new Date(p1 * 1000))}`
         )
         return xtrigger
       })

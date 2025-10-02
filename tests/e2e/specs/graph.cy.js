@@ -48,7 +48,7 @@ function checkRememberToolbarSettings (selector, stateBefore, stateAfter) {
   cy
     .get(selector)
     .find('.v-btn')
-    .should(stateBefore, 'text-blue')
+    .should('have.attr', 'aria-checked', String(stateBefore))
     .click()
   // Navigate away
   cy.visit('/#/')
@@ -59,7 +59,7 @@ function checkRememberToolbarSettings (selector, stateBefore, stateAfter) {
   cy
     .get(selector)
     .find('.v-btn')
-    .should(stateAfter, 'text-blue')
+    .should('have.attr', 'aria-checked', String(stateAfter))
 }
 
 describe('Graph View', () => {
@@ -151,21 +151,21 @@ describe('Graph View', () => {
     cy.visit('/#/workspace/one')
     addView('Graph')
     waitForGraphLayout()
-    checkRememberToolbarSettings('[data-cy=control-autoRefresh]', 'have.class', 'not.have.class')
+    checkRememberToolbarSettings('[data-cy=control-autoRefresh]', true, false)
   })
 
   it('remembers transpose setting when switching between workflows', () => {
     cy.visit('/#/workspace/one')
     addView('Graph')
     waitForGraphLayout()
-    checkRememberToolbarSettings('[data-cy=control-transpose]', 'not.have.class', 'have.class')
+    checkRememberToolbarSettings('[data-cy=control-transpose]', false, true)
   })
 
   it('remembers cycle point grouping setting when switching between workflows', () => {
     cy.visit('/#/workspace/one')
     addView('Graph')
     waitForGraphLayout()
-    checkRememberToolbarSettings('[data-cy="control-groupCycle"]', 'not.have.class', 'have.class')
+    checkRememberToolbarSettings('[data-cy="control-groupCycle"]', false, true)
   })
 
   it('should collapse by cycle point', () => {

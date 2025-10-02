@@ -17,6 +17,15 @@
 
 import TaskState from '@/model/TaskState.model'
 
+// Get cell text for a column by header name, as an array
+Cypress.Commands.add('getColumnValues', (header) => {
+  return cy.get('.c-table th')
+    .contains(header)
+    .parents('th')
+    .then(($th) => cy.get(`.c-table tr > td:nth-child(${$th.index() + 1})`))
+    .then(($cells) => Array.from($cells, (cell) => cell.innerText.trim()))
+})
+
 const initialNumRows = 7
 
 describe('Table view', () => {
@@ -29,7 +38,8 @@ describe('Table view', () => {
       .should('have.length', initialNumRows)
       .should('be.visible')
   })
-  describe('Filters', () => {
+
+  describe('Filters & sorting', () => {
     it('Should filter by ID', () => {
       cy.get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
@@ -50,6 +60,7 @@ describe('Table view', () => {
           .should('be.visible')
       }
     })
+
     it('Should filter by task state', () => {
       cy
         .get('.c-table table > tbody > tr')
@@ -72,6 +83,7 @@ describe('Table view', () => {
         .should('have.length', 1)
         .should('be.visible')
     })
+
     it('Should filter by ID and states', () => {
       cy
         .get('.c-table table > tbody > tr')
@@ -94,32 +106,60 @@ describe('Table view', () => {
         .get('td [data-cy-task-name=eventually_succeeded]')
         .should('be.visible')
     })
-    it('displays and sorts mean run time', () => {
+
+    it('displays and sorts latest job run time', () => {
+      const nonzeroValues = [
+        '00:00:01',
+        '00:00:01',
+        '00:00:04',
+        '00:00:12',
+        '00:03:00',
+      ]
       // sort dt-mean ascending
       cy.get('.c-table')
         .contains('th', 'Run Time').as('dTHeader')
         .click()
-        // (1st row, 10th column)
-        .get('tbody > :nth-child(1) > :nth-child(10)')
-        .contains('00:00:04')
-        .get('tbody > :nth-child(2) > :nth-child(10)')
-        .contains('00:00:12')
-        .get('tbody > :nth-child(3) > :nth-child(10)')
-        .should(($ele) => {
-          expect($ele.text().trim()).equal('') // no value sorted after numbers
-        })
-        // sort dt-mean descending
+      cy.getColumnValues('Run Time').should('deep.equal', [
+        ...nonzeroValues,
+        '', // no value sorted after numbers
+        '',
+      ])
+      // sort dt-mean descending
       cy.get('@dTHeader')
         .click()
-        .get('tbody > :nth-child(1) > :nth-child(10)')
-        .contains('00:00:12')
-        .get('tbody > :nth-child(2) > :nth-child(10)')
-        .contains('00:00:04')
-        .get('tbody > :nth-child(3) > :nth-child(10)')
-        .should(($ele) => {
-          expect($ele.text().trim()).equal('') // no value still sorted after numbers
-        })
+      cy.getColumnValues('Run Time').should('deep.equal', [
+        ...nonzeroValues.slice().reverse(),
+        '', // no value still sorted after numbers
+        '',
+      ])
     })
+  })
+
+  it('sorts finish time including estimates', () => {
+    const nonzeroValues = [
+      '2020-11-08T22:57:16Z',
+      '2020-11-08T22:57:19Z',
+      '2020-11-08T22:57:33Z',
+      '2020-11-08T22:57:41Z',
+      '2020-11-08T23:00:36Z',
+    ]
+    // sort finish time ascending
+    cy.get('.c-table')
+      .contains('th', 'Finish').as('header')
+      .click()
+    cy.getColumnValues('Finish').should('deep.equal', [
+      ...nonzeroValues,
+      '', // no value sorted after numbers
+      '',
+    ])
+    // sort finish time descending
+    cy.get('@header')
+      .click()
+    cy.getColumnValues('Finish').should('deep.equal', [
+      ...nonzeroValues.slice().reverse(),
+      '', // no value still sorted after numbers
+      '',
+    ])
   })
 })
 
@@ -183,7 +223,7 @@ describe('State saving', () => {
     cy.get('.c-table .v-data-table-footer__items-per-page .v-select')
       .as('itemsPerPage')
       .find('input')
-      .should('not.have.value', -1)
+      .should('not.have.value', 'All')
       .get('@itemsPerPage')
       .click()
       .get('[role="listbox"] .v-list-item')
@@ -192,7 +232,7 @@ describe('State saving', () => {
       // Wait for menu to close
       .should('not.exist')
       .get('@itemsPerPage').find('input')
-      .should('have.value', -1)
+      .should('have.value', 'All')
     // Navigate away
     cy.visit('/#/')
       .get('.c-dashboard')
@@ -201,7 +241,7 @@ describe('State saving', () => {
     cy.get('@platformCol')
       .should('have.class', sortedClass)
     cy.get('@itemsPerPage').find('input')
-      .should('have.value', -1)
+      .should('have.value', 'All')
   })
 
   describe('Flow nums', () => {

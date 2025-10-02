@@ -24,6 +24,7 @@ import sinon from 'sinon'
 import Log from '@/views/Log.vue'
 import WorkflowService from '@/services/workflow.service'
 import User from '@/model/User.model'
+import { getJobLogFileFromState } from '@/model/JobState.model'
 
 describe('Log view', () => {
   const owner = 'svimes'
@@ -87,7 +88,9 @@ describe('Log view', () => {
         const wrapper = mountFunction()
         wrapper.vm.jobLog = 1
         wrapper.vm.relativeID = '1/foo'
-        expect(await wrapper.vm.getDefaultJobLog()).toBe(expected)
+        const result = await wrapper.vm.fetchJobData()
+        expect(result.state).toBe(state)
+        expect(getJobLogFileFromState(result.state)).toBe(expected)
       })
     })
 

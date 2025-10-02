@@ -196,6 +196,9 @@ fragment TaskProxyData on TaskProxy {
   firstParent {
     id
   }
+  runtime {
+    runMode
+  }
   flowNums
 }
 
@@ -207,6 +210,7 @@ fragment JobData on Job {
   startedTime
   submittedTime
   finishedTime
+  estimatedFinishTime
   state
   submitNum
   messages

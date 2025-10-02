@@ -31,14 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :data-cy="`control-${iControl.key}`"
       >
         <v-menu
-        v-if="iControl.action==='select-tree'"
+          v-if="iControl.action==='select-tree'"
           :close-on-content-click="false"
         >
           <template v-slot:activator="{ props }">
             <v-btn
               v-bind="{...$attrs, ...props, ...btnProps}"
               :disabled="iControl.disabled"
-              :color="iControl.color"
+              :color="iControl.value.length ? 'blue' : undefined"
             >
               <v-icon>{{ iControl.icon }}</v-icon>
               <v-tooltip>{{ iControl.title }}</v-tooltip>
@@ -57,10 +57,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           ></v-treeview>
         </v-menu>
         <v-btn v-else
+          @click="iControl.callback"
           v-bind="btnProps"
           :disabled="iControl.disabled"
-          :color="iControl.color"
-          @click="iControl.callback"
+          :aria-checked="iControl.value"
+          :color="iControl.value ? 'blue' : undefined"
+          role="switch"
         >
           <v-icon>{{ iControl.icon }}</v-icon>
           <v-tooltip>{{ iControl.title }}</v-tooltip>
@@ -72,14 +74,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { btnProps } from '@/utils/viewToolbar'
-import { VTreeview } from 'vuetify/labs/VTreeview'
 
 export default {
   name: 'ViewToolbar',
-
-  components: {
-    VTreeview,
-  },
 
   emits: [
     'setOption'
@@ -138,7 +135,6 @@ export default {
       const ret = []
       let iGroup
       let iControl
-      let color // control color
       let callback // callback to fire when control is activated
       let disabled // true if control should not be enabled
       const values = this.getValues()
@@ -148,25 +144,18 @@ export default {
           iControls: []
         }
         for (const control of group.controls) {
-          color = null
           callback = null
           disabled = false
-          // set callback and color
+          // set callback
           switch (control.action) {
             case 'toggle':
               callback = (e) => this.toggle(control, e)
-              if (control.value) {
-                color = 'blue'
-              }
               break
             case 'callback':
               callback = (e) => this.call(control, e)
               break
             case 'select-tree':
               callback = (e) => this.select(control, e)
-              if (control.value.length) {
-                color = 'blue'
-              }
               break
           }
 
@@ -186,7 +175,6 @@ export default {
 
           iControl = {
             ...control,
-            color,
             callback,
             disabled
           }

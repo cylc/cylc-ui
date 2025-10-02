@@ -83,5 +83,40 @@ describe('Table component', () => {
         { order: expected }
       ])
     })
+
+    describe('nullSorter', () => {
+      it.each([
+        ['a', 'b', 'asc', -1],
+        ['a', 'b', 'desc', 1],
+        ['a', '', 'asc', -1],
+        ['a', '', 'desc', 1],
+        ['a', null, 'asc', -1],
+        ['a', null, 'desc', 1],
+        [null, 'a', 'asc', 1],
+        [null, 'a', 'desc', -1],
+        ['a', undefined, 'asc', -1],
+        ['a', undefined, 'desc', 1],
+        [0, null, 'asc', -1],
+        [0, null, 'desc', 1],
+        [null, null, 'asc', 0],
+        [null, null, 'desc', 0],
+        ['', null, 'asc', 0],
+        ['', null, 'desc', 0],
+      ])('$2: $0, $1 -> $3', (a, b, order, expected) => {
+        const key = 'key'
+        const wrapper = mountFunction({
+          props: {
+            tasks: [],
+            initialOptions: {
+              sortBy: [{ key, order }]
+            }
+          }
+        })
+        const comparator = (x, y) => {
+          return order === 'asc' ? x.localeCompare(y) : y.localeCompare(x)
+        }
+        expect(wrapper.vm.nullSorter(key, comparator, a, b)).toEqual(expected)
+      })
+    })
   })
 })

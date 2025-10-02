@@ -22,6 +22,7 @@ import { VCombobox } from 'vuetify/components/VCombobox'
 import { VSelect } from 'vuetify/components/VSelect'
 import { VTextarea } from 'vuetify/components/VTextarea'
 import { VTextField } from 'vuetify/components/VTextField'
+import { VCardActions } from 'vuetify/components/VCard'
 import colors from 'vuetify/util/colors'
 import { mdiClose } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
@@ -75,10 +76,19 @@ export const vuetifyOptions = {
       mdi
     }
   },
+  aliases: {
+    VSelectActions: VCardActions,
+  },
   defaults: {
     VTooltip: {
       activator: 'parent',
       location: 'bottom',
+    },
+    VList: {
+      slim: true,
+    },
+    VSelectActions: {
+      class: 'mt-n2'
     },
     ...inputDefaults
   },

@@ -232,8 +232,9 @@ export default {
         } else {
           ret += upperFirst(this.node.node.state || 'state unknown')
           if (this.node.node.isHeld) ret += ' (held)'
-          if (this.node.node.isQueued) ret += ' (queued)'
           if (this.node.node.isRunahead) ret += ' (beyond runahead limit)'
+          if (this.node.node.runtime?.runMode === 'Skip') ret += ' (skip mode)'
+          if (this.node.node.isQueued) ret += ' (queued)'
           if (this.node.node.isRetry) ret += ' (awaiting retry)'
           else if (this.node.node.isWallclock) ret += ' (awaiting wallclock)'
           else if (this.node.node.isXtriggered) ret += ' (awaiting xtrigger)'
