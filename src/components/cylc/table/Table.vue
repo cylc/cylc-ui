@@ -33,14 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :class="{ 'flow-none': isFlowNone(item.task.node.flowNums) }"
         :data-cy-task-name="item.task.name"
       >
-        <div style="width: 2em;">
+        <div v-bind="jobIconParentProps">
           <Task
             v-command-menu="item.task"
             :task="item.task.node"
             :startTime="item.latestJob?.node?.startedTime"
           />
         </div>
-        <div style="width: 2em;">
+        <div v-bind="jobIconParentProps">
           <Job
             v-if="item.latestJob"
             v-command-menu="item.latestJob"
@@ -93,14 +93,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       >
         <td :colspan="3">
           <div class="d-flex align-content-center flex-nowrap">
-            <div class="d-flex" style="margin-left: 2em;">
+            <div v-bind="jobIconParentProps" :style="{ marginLeft: jobIconParentProps.style.width }">
               <Job
                 v-command-menu="job"
                 :key="`${job.id}-summary-${index}`"
                 :status="job.node.state"
               />
-              <span class="ml-2">#{{ job.node.submitNum }}</span>
             </div>
+            <span>#{{ job.node.submitNum }}</span>
           </div>
         </td>
         <td>{{ job.node.platform }}</td>
@@ -287,6 +287,11 @@ const taskRunTimes = computed(() => new Map(
     }
   ])
 ))
+
+const jobIconParentProps = {
+  class: ['d-flex', 'align-center'],
+  style: { width: '2em' },
+}
 
 const itemsPerPageOptions = [
   { value: 10, title: '10' },
