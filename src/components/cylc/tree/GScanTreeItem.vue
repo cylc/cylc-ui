@@ -47,37 +47,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </span>
         </div>
         <div class="d-flex text-right c-gscan-workflow-states flex-grow-0">
-          <!-- task summary tooltips -->
-          <!-- a v-tooltip does not work directly set on Cylc job component, so we use a div to wrap it -->
-          <div
-            class="ma-0 pa-0"
-            min-width="0"
-            min-height="0"
-            style="font-size: 120%; width: auto;"
-          >
-            <WarningIcon v-if="workflowWarnings" :workflow="node" />
-          </div>
-          <div
-            v-for="[state, tasks] in Object.entries(descendantTaskInfo.latestTasks)"
-            :key="`${node.id}-${state}`"
-            :class="getTaskStateClass(descendantTaskInfo.stateTotals, state)"
-            class="ma-0 pa-0"
-            min-width="0"
-            min-height="0"
-            style="font-size: 120%; width: auto;"
-          >
-            <Job :status="state" />
-            <v-tooltip location="top">
-              <!-- tooltip text -->
-              <div class="text-grey-lighten-1">
-                {{ descendantTaskInfo.stateTotals[state] ?? 0 }} {{ state }}. Recent {{ state }} tasks:
-              </div>
-              <div v-for="(task, index) in tasks.slice(0, $options.maxTasksDisplayed)" :key="index">
-                {{ task }}<br v-if="index !== tasks.length - 1" />
-              </div>
-            </v-tooltip>
-          </div>
+          <WarningIcon
+            v-if="workflowWarnings"
+            :workflow="node"
+            style="font-size: 120%;"
+          />
         </div>
+        <template
+          v-for="state in Object.keys(descendantTaskInfo.latestTasks)"
+          :key="`${node.id}-${state}`"
+        >
+          <TaskStateBadge
+            v-if="descendantTaskInfo.stateTotals[state]"
+            :state="state"
+            :value="descendantTaskInfo.stateTotals[state]"
+          />
+        </template>
       </div>
     </v-list-item>
 
@@ -95,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import Job from '@/components/cylc/Job.vue'
+import TaskStateBadge from '@/components/cylc/TaskStateBadge.vue'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
@@ -150,7 +135,7 @@ export default {
   name: 'GScanTreeItem',
 
   components: {
-    Job,
+    TaskStateBadge,
     TreeItem,
     WarningIcon,
     WorkflowIcon,
@@ -201,14 +186,6 @@ export default {
         'c-workflow-stopped': this.node.node?.status === WorkflowState.STOPPED.name,
       }
     }
-  },
-
-  methods: {
-    getTaskStateClass (stateTotals, state) {
-      return {
-        'empty-state': !stateTotals[state]
-      }
-    },
   },
 
   nodeTypes: ['workflow-part', 'workflow'],

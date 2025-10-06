@@ -66,19 +66,19 @@ describe('User Profile', () => {
     }
   })
 
-  it('Sets the job theme', () => {
+  it('Sets the task/job theme', () => {
     cy.get('#input-job-theme-default')
       .click({ force: true })
-    // set the job theme to normal
-    cy.get('.c-gscan:first .c-job:first rect:first')
-      .should('have.css', 'fill')
+    // set the theme to normal
+    cy.get('.c-gscan .task-state-badge.running').as('taskBadge')
+      .should('have.css', 'background-color')
       .then(($fill1) => {
-        // set the job theme to greyscale
+        // set the theme to greyscale
         cy.get('#input-job-theme-greyscale')
           .click({ force: true })
-        cy.get('.c-gscan:first .c-job:first rect:first')
-          .should('have.css', 'fill')
-          // make sure that the job has changed colour
+        cy.get('@taskBadge')
+          .should('have.css', 'background-color')
+          // make sure that the task state badge has changed colour
           .then(($fill2) => {
             expect($fill1).not.to.equal($fill2)
           })
