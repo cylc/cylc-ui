@@ -15,9 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@use "sass:list";
+
 /* css namespace for job element */
 $cjob: ".c-job .job rect";
-
 
 #{$cjob} {
     /* if no job status display nothing */
@@ -25,121 +26,78 @@ $cjob: ".c-job .job rect";
     stroke: transparent;
 }
 
-.c-job {
-    .job {
-        vertical-align: middle;
-        /* scale the icon to the font-size */
-        width: 1em;
-        height: 1em;
-    }
+.c-job .job {
+    /* scale the icon to the font-size */
+    width: 1em;
+    height: 1em;
 }
 
-@mixin job_theme($theme) {
-    @if $theme == "default" {
-        $teal: rgb(109,213,194);
-        $blue: rgb(106,164,241);
-        $green: rgb(81,175,81);
-        $red: rgb(207,72,72);
-        $pink: rgb(190,106,192);
-
-        #{$cjob} {
-            &.submitted {
-                fill: $teal;
-                stroke: $teal;
-            }
-
-            &.running {
-                fill: $blue;
-                stroke: $blue;
-            }
-
-            &.succeeded {
-                fill: $green;
-                stroke: $green;
-            }
-
-            &.failed {
-                fill: $red;
-                stroke: $red;
-            }
-
-            &.submit-failed {
-                fill: $pink;
-                stroke: $pink;
-            }
-        }
-    } @else if $theme == "greyscale" {
-        $light: rgb(208,208,208);
-        $medium: rgb(133,133,133);
-        $dark: rgb(0,0,0);
-
-        #{$cjob} {
-            &.submitted {
-                fill: transparent;
-                stroke: $light;
-            }
-
-            &.running {
-                fill: $light;
-                stroke: $light;
-            }
-
-            &.succeeded {
-                fill: $medium;
-                stroke: $medium;
-            }
-
-            &.failed {
-                fill: $dark;
-                stroke: $dark;
-            }
-
-            &.submit-failed {
-                fill: transparent;
-                stroke: $dark;
-            }
-        }
-    } @else if $theme == "colour_blind" {
-        $grey: rgb(152,152,152);
-        $success: rgb(108,218,255);
-        $error: rgb(146,0,0);
-
-        #{$cjob} {
-            &.submitted {
-                fill: transparent;
-                stroke: $grey;
-            }
-
-            &.running {
-                fill: $grey;
-                stroke: $grey;
-            }
-
-            &.succeeded {
-                fill: $success;
-                stroke: $success;
-            }
-
-            &.failed {
-                fill: $error;
-                stroke: $error;
-            }
-
-            &.submit-failed {
-                fill: transparent;
-                stroke: $error;
-            }
-        }
-    }
+.task-state-badge {
+    font-size: 0.7em;
+    height: 1.8em;
+    min-width: 1.8em;
+    border-radius: 1.8em;
+    border: 2px solid;
+    margin: 0 0.1em;
+    line-height: normal;
 }
 
-@each $theme in "default", "greyscale", "colour_blind" {
+$teal: rgb(109,213,194);
+$blue: rgb(106,164,241);
+$green: rgb(81,175,81);
+$red: rgb(207,72,72);
+$pink: rgb(190,106,192);
+
+$light: rgb(208,208,208);
+$medium: rgb(133,133,133);
+$dark: rgb(0,0,0);
+
+$grey: rgb(152,152,152);
+$success: rgb(108,218,255);
+$error: rgb(146,0,0);
+
+// Mapping of job themes to job states to (fill, outline, text) colors
+$themes: (
+    "default": (
+        "submitted": ($teal, $teal, white),
+        "running": ($blue, $blue, white),
+        "succeeded": ($green, $green, white),
+        "failed": ($red, $red, white),
+        "submit-failed": ($pink, $pink, white),
+    ),
+    "greyscale": (
+        "submitted": (transparent, $light, black),
+        "running": ($light, $light, black),
+        "succeeded": ($medium, $medium, white),
+        "failed": ($dark, $dark, white),
+        "submit-failed": (transparent, $dark, black),
+    ),
+    "colour_blind": (
+        "submitted": (transparent, $grey, black),
+        "running": ($grey, $grey, white),
+        "succeeded": ($success, $success, black),
+        "failed": ($error, $error, white),
+        "submit-failed": (transparent, $error, black),
+    ),
+);
+
+@each $theme, $state_map in $themes {
     .job_theme--#{$theme} {
         &, // job theme as configured by the top-level application
         &.job_theme_override {
             // if overridden elsewhere the new value should take priority
             // (this allows us to override the theme in the user profile)
-            @include job_theme($theme);
+            @each $state, $colors in $state_map {
+                #{$cjob}.#{$state} {
+                    fill: list.nth($colors, 1);
+                    stroke: list.nth($colors, 2);
+                }
+                .task-state-badge.#{$state} {
+                    background-color: list.nth($colors, 1);
+                    border-color: list.nth($colors, 2);
+                    color: list.nth($colors, 3);
+                }
+            }
         }
     }
 }
