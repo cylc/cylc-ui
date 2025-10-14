@@ -188,7 +188,7 @@ export const primaryMutations = {
     'release',
     'trigger',
     'kill',
-    'play',
+    'set',
   ],
   [cylcObjects.Family]: [
     'hold',
@@ -572,6 +572,10 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
     ),
   ]
   for (const mutation of mutations) {
+    if (cylcObject === 'cycle' && mutation.name === 'play') {
+      // Don't show 'play' on cycle points as the cycle point options that get auto-filled don't apply for restarting a workflow.
+      continue
+    }
     const authorised = permissions.includes(mutation.name.toLowerCase())
     let requiresInfo = mutation._requiresInfo ?? false
     let applies = mutation._appliesTo?.includes(cylcObject)
