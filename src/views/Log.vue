@@ -443,7 +443,7 @@ export default {
           eventBus.emit(
             `lumino:update-tab:${this.widgetID}`,
             {
-              title: this.jobLog ? 'Log – Job' : 'Log – Workflow',
+              title: `Log: ${this.jobLog ? 'Job' : 'Workflow'}`,
               caption: `${prefix}${file ?? 'No file selected'}`,
             }
           )
