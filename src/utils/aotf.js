@@ -50,9 +50,9 @@ import {
 
 import { Alert } from '@/model/Alert.model'
 import { store } from '@/store/index'
-import { Tokens } from '@/utils/uid'
+import { detokenise, Tokens } from '@/utils/uid'
 import { WorkflowState, WorkflowStateNames } from '@/model/WorkflowState.model'
-import { isBoolean } from 'lodash-es'
+import { isBoolean, startCase } from 'lodash-es'
 
 /** @typedef {import('@apollo/client').ApolloClient} ApolloClient */
 /** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType  */
@@ -204,20 +204,6 @@ export const primaryMutations = {
 primaryMutations.family = primaryMutations[cylcObjects.Namespace]
 
 /**
- * Cylc "objects" in hierarchy order.
- *
- * Note, this is the order they would appear in a tree representation.
- */
-const identifierOrder = [
-  cylcObjects.User,
-  cylcObjects.Workflow,
-  cylcObjects.CyclePoint,
-  cylcObjects.Namespace,
-  // cylcObjects.Task,
-  cylcObjects.Job
-]
-
-/**
  * Mapping of mutation argument types to Cylc "objects" (workflow, cycle,
  * task etc.).
  *
@@ -252,14 +238,7 @@ export const mutationMapping = {
  * Mutation argument types which are derived from more than one token.
  */
 export const compoundFields = {
-  WorkflowID: (tokens) => {
-    if (tokens[cylcObjects.User]) {
-      return `~${tokens[cylcObjects.User]}/${tokens[cylcObjects.Workflow]}`
-    }
-    // don't provide user if not specified
-    // (will fallback to the UIs user)
-    return tokens[cylcObjects.Workflow]
-  },
+  WorkflowID: (tokens) => detokenise(tokens, { workflow: true }),
   NamespaceIDGlob: (tokens) => (
     // expand unspecified fields to '*'
     (tokens[cylcObjects.CyclePoint] || '*') +
@@ -363,33 +342,6 @@ export function tokenise (id) {
 }
 
 /**
- * Return the lowest token in the hierarchy.
- *
- * @param {Object} tokens
- * @returns {String}
- * */
-export function getType (tokens) {
-  let last = null
-  let item = null
-  for (const key of identifierOrder) {
-    item = tokens[key]
-    if (!item) {
-      break
-    }
-    last = key
-  }
-  return last
-}
-
-/**
- * Convert camel case to words.
- */
-export function camelToWords (camel) {
-  const result = (camel || '').replace(/([A-Z])/g, ' $1')
-  return result.charAt(0).toUpperCase() + result.slice(1)
-}
-
-/**
  * Find the GraphQL object with the given name.
  *
  * @export
@@ -450,7 +402,7 @@ export function extractFields (type, fields, types) {
  */
 export function processMutations (mutations, types) {
   for (const mutation of mutations) {
-    mutation._title = camelToWords(mutation.name)
+    mutation._title = startCase(mutation.name)
     mutation._icon = getMutationIcon(mutation.name)
     mutation._shortDescription = getMutationShortDesc(mutation.description)
     mutation._help = getMutationExtendedDesc(mutation.description)
@@ -553,7 +505,7 @@ export function processArguments (mutation, types) {
       }
       pointer = pointer.ofType
     }
-    arg._title = camelToWords(arg.name)
+    arg._title = startCase(arg.name)
     arg._cylcObject = cylcObject
     arg._cylcType = cylcType
     arg._multiple = multiple
