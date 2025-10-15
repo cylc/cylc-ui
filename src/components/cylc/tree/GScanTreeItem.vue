@@ -46,23 +46,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-tooltip>
           </span>
         </div>
-        <div class="d-flex text-right c-gscan-workflow-states flex-grow-0">
+        <div class="d-flex c-gscan-workflow-states flex-grow-0">
+          <template
+            v-for="state in Object.keys(descendantTaskInfo.latestTasks)"
+            :key="`${node.id}-${state}`"
+          >
+            <TaskStateBadge
+              v-if="descendantTaskInfo.stateTotals[state]"
+              :state="state"
+              :value="descendantTaskInfo.stateTotals[state]"
+            />
+          </template>
           <WarningIcon
             v-if="workflowWarnings"
             :workflow="node"
+            class="ml-1"
             style="font-size: 120%;"
           />
         </div>
-        <template
-          v-for="state in Object.keys(descendantTaskInfo.latestTasks)"
-          :key="`${node.id}-${state}`"
-        >
-          <TaskStateBadge
-            v-if="descendantTaskInfo.stateTotals[state]"
-            :state="state"
-            :value="descendantTaskInfo.stateTotals[state]"
-          />
-        </template>
       </div>
     </v-list-item>
 
