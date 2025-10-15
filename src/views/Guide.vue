@@ -86,6 +86,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </p>
           </v-card-text>
         </v-card>
+
+        <br />
+
+        <v-card variant="outlined" class="pa-1">
+          <v-card-title primary-title>
+            <p class="text-h4 text--primary">Skip Mode?</p>
+          </v-card-title>
+          <v-card-text>
+            <p>
+              Tasks can be configured to skip rather than run. These tasks are
+              marked with a special icon proving they are not otherwise held
+              back from running by some other factor (e.g, if they are held).
+            </p>
+            <v-list
+               lines="three"
+            >
+              <v-list-item>
+                <template v-slot:prepend>
+                  <task
+                    style="font-size: 2em;"
+                    :task="{state: 'waiting', runtime: { runMode: 'Skip' }}"
+                    class="mr-4"
+                  />
+                </template>
+                <v-list-item-title>
+                  Skip Mode
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  This task will be run in skip mode.
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card>
       </v-col>
 
       <v-col>
@@ -148,21 +182,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <v-list-item-subtitle>
                   The task is ready to run but is beyond the runahead limit,
                   which restricts the number of active cycle points.
-                </v-list-item-subtitle>
-              </v-list-item>
-              <v-list-item>
-                <template v-slot:prepend>
-                  <task
-                    style="font-size: 2em;"
-                    :task="{state: 'waiting', runtime: { runMode: 'Skip' }}"
-                    class="mr-4"
-                  />
-                </template>
-                <v-list-item-title>
-                  Skip Mode
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  This task will be run in skip mode.
                 </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
