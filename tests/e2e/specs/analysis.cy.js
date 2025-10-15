@@ -280,7 +280,7 @@ describe('Analysis view', () => {
       // There should be three tasks in the drop down list when loaded
       // Plus 2 entries for Select and Deselect all
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .click()
         .get('.v-list-item')
         .its('length')
@@ -312,7 +312,7 @@ describe('Analysis view', () => {
     it('Should select tasks from the autocomplete drop down list', () => {
       // Add waiting task and check only two cycles visible on both graphs
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .click()
         .get('.v-list-item')
         .contains('waiting')
@@ -322,7 +322,7 @@ describe('Analysis view', () => {
         .should('have.length', 4)
         // Add eventually_succeeded task and check three cycles visible
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .click()
         .get('.v-list-item')
         .contains('eventually')
@@ -332,7 +332,7 @@ describe('Analysis view', () => {
         .should('have.length', 6)
       // Remove selected tasks and check no cycle points are visible
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .click()
         .get('.v-list-item')
         .contains('waiting')
@@ -348,7 +348,7 @@ describe('Analysis view', () => {
     it('Should search for and add/remove tasks', () => {
       // Before searching, the options to add/remove all tasks should exist
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .click()
         .get('.v-list-item')
         .contains('succeeded')
@@ -360,26 +360,26 @@ describe('Analysis view', () => {
         .should('exist')
       // Select all tasks that contain succeeded
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .type('succeeded')
         .get('.v-card-actions')
         .contains('Select all')
         .click()
       // Check the correct tasks have been added
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .find('.v-chip')
         .its('length')
         .should('eq', 2)
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .find('.v-chip')
         .contains(/^succeeded$/)
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .find('.v-chip')
         .contains('eventually_succeeded')
       // Remove all tasks that contain eventually
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .find('input')
         .clear()
         .type('eventually')
@@ -388,10 +388,10 @@ describe('Analysis view', () => {
         .click()
       // Check only succeeded task is selected
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .find('.v-chip')
         .contains(/^succeeded$/)
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .find('.v-chip')
         .contains('eventually_succeeded')
         .should('not.exist')
@@ -400,7 +400,7 @@ describe('Analysis view', () => {
     it('Should show origin, when selected', () => {
       // Add waiting task and check y-axis doesn't start at origin
       cy
-        .get('.d-flex > .v-autocomplete')
+        .get('[data-cy=time-series-task-select]')
         .click()
         .get('.v-list-item')
         .contains('waiting')
