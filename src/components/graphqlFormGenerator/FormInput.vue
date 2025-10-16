@@ -20,113 +20,94 @@ This is a convenience component that wraps an input component, allowing
 dynamically created inputs.
 -->
 
-<script>
-import { h, mergeProps } from 'vue'
+<template>
+  <component
+    :is="inputProps.is"
+    v-bind="inputProps"
+    v-model="model"
+    :gqlType="gqlType"
+    :types="types"
+    v-mask="inputProps.mask"
+  >
+    <template
+      v-if="help"
+      v-slot:append-inner
+    >
+      <v-tooltip>
+        <template v-slot:activator="{ props }">
+          <v-icon
+            v-bind="props"
+            style="cursor: default"
+            :icon="mdiHelpCircleOutline"
+          />
+        </template>
+        <Markdown :markdown="help" />
+      </v-tooltip>
+    </template>
+    <!-- pass the "append" slot onto the child component -->
+    <template v-slot:append="slotProps">
+      <slot
+        name="append"
+        v-bind="slotProps"
+      />
+    </template>
+  </component>
+</template>
+
+<script setup>
+import { mergeProps, useAttrs } from 'vue'
 import { mask } from 'vue-the-mask'
 import Markdown from '@/components/Markdown.vue'
-import { formElement } from '@/components/graphqlFormGenerator/mixins'
+import { formElementProps, useFormElement } from '@/components/graphqlFormGenerator/mixins'
 import VuetifyConfig, { getComponentProps } from '@/components/graphqlFormGenerator/components/vuetify'
 import { mdiHelpCircleOutline } from '@mdi/js'
 import { VIcon } from 'vuetify/components/VIcon'
 import { VTooltip } from 'vuetify/components/VTooltip'
-import { upperFirst } from 'lodash'
 
-/**
- * Render help icon with tooltip containing help text.
- *
- * @param {string} helpText - (supports markdown)
- */
-export const renderHelpIcon = (helpText) => h(
-  VTooltip,
-  { location: 'bottom' },
-  {
-    activator: ({ props }) => h(
-      VIcon,
-      {
-        ...props,
-        style: {
-          cursor: 'default'
-        }
-      },
-      () => mdiHelpCircleOutline
-    ),
-    default: () => h(Markdown, { markdown: helpText })
-  }
-)
-
-export default {
-  name: 'g-form-input',
-
+defineOptions({
   // Prevent fallthrough attrs overriding the supplied props for the input
   // https://github.com/vuejs/core/issues/6504
   inheritAttrs: false,
+})
 
-  mixins: [formElement],
+const attrs = useAttrs()
 
-  components: {
-    Markdown
-  },
-
-  directives: {
-    mask: (el, binding) => {
-      // only use the mask if one is provided, this allows us to use the
-      // mask directive on elements which it doesn't support
-      if (binding.value) {
-        mask(el, binding)
-      }
-    }
-  },
-
-  props: {
-    // dictionary of props for overriding default values
-    propOverrides: {
-      type: Object,
-      default: () => { Object() }
-    }
-  },
-
-  beforeCreate () {
-    // Set the props to pass to the form input. Note, this includes the "is"
-    // prop which tells Vue which component class to use.
-    // TODO: move to rule based system to allow changing
-    //       of parent components based on child types?
-
-    // get the default props for this graphQL type
-    const componentProps = getComponentProps(this.gqlType, VuetifyConfig.namedTypes, VuetifyConfig.kinds)
-
-    // merge this in with default and override props
-    const propGroups = [
-      componentProps,
-      this.propOverrides || {}
-    ]
-    // rules is a list so needs special treatment
-    const rules = propGroups.flatMap(({ rules }) => rules ?? [])
-
-    this.inputProps = mergeProps(this.$attrs, ...propGroups, { rules })
-  },
-
-  render () {
-    // Some components implement custom v-model
-    // (https://v2.vuejs.org/v2/guide/components-custom-events.html#Customizing-Component-v-model)
-    const vModel = this.inputProps.is.options?.model || { prop: 'modelValue', event: 'update:modelValue' }
-    return h(
-      this.inputProps.is,
-      {
-        ...this.inputProps,
-        [vModel.prop]: this.model,
-        [`on${upperFirst(vModel.event)}`]: (value) => {
-          this.model = value
-        },
-        gqlType: this.gqlType,
-        types: this.types
-      },
-      {
-        'append-inner': this.help ? () => renderHelpIcon(this.help) : null,
-        // pass the "append" slot onto the child component
-        append: (slotProps) => this.$slots.append?.(slotProps)
-      }
-    )
+const vMask = (el, binding) => {
+  // only use the mask if one is provided, this allows us to use the
+  // mask directive on elements which it doesn't support
+  if (binding.value) {
+    mask(el, binding)
   }
-
 }
+
+const props = defineProps({
+  ...formElementProps,
+  // dictionary of props for overriding default values
+  propOverrides: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+const model = defineModel()
+
+// Set the props to pass to the form input. Note, this includes the "is"
+// prop which tells Vue which component class to use.
+// TODO: move to rule based system to allow changing
+//       of parent components based on child types?
+
+// get the default props for this graphQL type
+const componentProps = getComponentProps(props.gqlType, VuetifyConfig.namedTypes, VuetifyConfig.kinds)
+
+// merge this in with default and override props
+const propGroups = [
+  componentProps,
+  props.propOverrides || {}
+]
+// rules is a list so needs special treatment
+const rules = propGroups.flatMap(({ rules }) => rules ?? [])
+
+const inputProps = mergeProps(attrs, ...propGroups, { rules })
+
+const { help } = useFormElement(props)
 </script>
