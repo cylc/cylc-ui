@@ -21,7 +21,7 @@
     :class="state"
     v-tooltip="{ text: tooltip, openDelay: 400, location: 'top' }"
   >
-    {{ value > 99 ? '99+' : value }}
+    {{ value }}
   </div>
 </template>
 
