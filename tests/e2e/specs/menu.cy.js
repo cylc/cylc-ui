@@ -16,8 +16,8 @@
  */
 
 describe('Command Menu component', () => {
-  const collapsedWorkflowMenuLength = 5 // (mutations + "show more" btn)
-  const expandedWorkflowMenuLength = 22
+  const collapsedWorkflowMenuLength = 4
+  const expandedWorkflowMenuLength = 21
 
   beforeEach(() => {
     cy.visit('/#/workspace/one')
@@ -34,7 +34,7 @@ describe('Command Menu component', () => {
       // the menu should now be open
       .get('.c-mutation-menu-list:first')
       .should('be.visible')
-      .children()
+      .children('.c-mutation')
       .should('have.length', collapsedWorkflowMenuLength)
       .get('.c-mutation-menu')
       .should('be.visible')
@@ -51,7 +51,7 @@ describe('Command Menu component', () => {
       .click()
       .get('.c-mutation-menu-list')
       .should('be.visible')
-      .children()
+      .children('.c-mutation')
       .should('have.length', expandedWorkflowMenuLength)
     // Should close when clicking outside of the menu
     // (click on hidden element to avoid clicking on anything unexpected)
@@ -64,7 +64,7 @@ describe('Command Menu component', () => {
       .click()
       .get('.c-mutation-menu-list')
       .should('be.visible')
-      .children()
+      .children('.c-mutation')
       .should('have.length', collapsedWorkflowMenuLength)
   })
 
