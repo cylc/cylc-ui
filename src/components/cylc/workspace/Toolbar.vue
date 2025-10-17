@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <!-- control bar elements displayed only when there is a current workflow in the store -->
     <template v-if="currentWorkflow">
-      <div class="c-workflow-controls flex-shrink-0">
+      <div class="c-workflow-controls d-flex align-center flex-shrink-0">
         <WarningIcon
           :workflow="currentWorkflow"
           style="font-size: 120%; padding-right: 0.3em;"
