@@ -109,20 +109,26 @@ import { useWorkflowWarnings } from '@/composables/localStorage'
  * @param {Object} node
  * @param {Record<string, number>} stateTotals
  * @param {Record<string, string[]>} latestTasks
+ * @param {Boolean} topLevel - true if the traversal depth is 0, else false.
  */
-function traverseChildren (node, stateTotals = {}, latestTasks = {}) {
+function traverseChildren (node, stateTotals = {}, latestTasks = {}, topLevel = true) {
   // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
   if (node.type === 'workflow-part' && node.children) {
     // at every branch, recurse all child nodes
     for (const child of node.children) {
-      traverseChildren(child, stateTotals, latestTasks)
+      traverseChildren(child, stateTotals, latestTasks, false)
     }
   } else if (node.type === 'workflow' && node.node.stateTotals) {
     // if we are at the end of a node (or at least, hit a workflow node), stop and merge state
 
     // the latest state tasks from this node with all the others from the tree
     for (const [state, totals] of Object.entries(node.node.stateTotals)) {
-      if (JobStateNames.includes(state)) { // filter only valid states
+      if (
+        // filter only valid states
+        JobStateNames.includes(state) &&
+        // omit state totals from stopped workflows
+        (topLevel || node.node.status !== 'stopped')
+      ) {
         // (cast as numbers so they dont get concatenated as strings)
         stateTotals[state] = (stateTotals[state] ?? 0) + parseInt(totals)
       }
