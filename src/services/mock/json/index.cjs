@@ -20,7 +20,7 @@ const taskProxy = require('./taskProxy.json')
 const familyProxy = require('./familyProxy.json')
 const { one, workflows, Workflow } = require('./workflows/index.cjs')
 const { LogData } = require('./logData.cjs')
-const { LogFiles, JobState } = require('./logFiles.cjs')
+const { LogFiles, Jobs } = require('./logFiles.cjs')
 const analysisQuery = require('./analysisQuery.json')
 const ganttQuery = require('./ganttQuery.json')
 const InfoViewSubscription = require('./infoView.json')
@@ -31,7 +31,7 @@ module.exports = {
   familyProxy,
   LogData,
   LogFiles,
-  JobState,
+  Jobs,
   App: workflows,
   Workflow,
   GraphIQLTest: one,

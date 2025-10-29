@@ -81,8 +81,8 @@ export function jobMessageOutputs (jobNode) {
     )
     ret.push({
       level: undefined, // TODO: https://github.com/cylc/cylc-ui/pull/1436
-      label: messageOutput?.label ?? message,
-      message: messageOutput?.message ?? `Task message: ${message}`,
+      label: messageOutput?.label,
+      message: messageOutput?.message ?? message,
       isMessage: !messageOutput,
     })
   }
