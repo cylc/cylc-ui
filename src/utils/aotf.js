@@ -50,9 +50,9 @@ import {
 
 import { Alert } from '@/model/Alert.model'
 import { store } from '@/store/index'
-import { Tokens } from '@/utils/uid'
+import { detokenise, Tokens } from '@/utils/uid'
 import { WorkflowState, WorkflowStateNames } from '@/model/WorkflowState.model'
-import { isBoolean } from 'lodash-es'
+import { isBoolean, startCase } from 'lodash-es'
 
 /** @typedef {import('@apollo/client').ApolloClient} ApolloClient */
 /** @typedef {import('graphql').IntrospectionInputType} IntrospectionInputType  */
@@ -71,7 +71,7 @@ import { isBoolean } from 'lodash-es'
  * @property {GQLType} type
  * @property {?string} defaultValue
  * @property {string=} _title
- * @property {string=} _cylcObject
+ * @property {string=} _cylcObjects
  * @property {string=} _cylcType
  * @property {boolean=} _required
  * @property {boolean=} _multiple
@@ -119,6 +119,10 @@ import { isBoolean } from 'lodash-es'
  * @property {boolean} authorised
  */
 
+const LIST = 'LIST'
+const NON_NULL = 'NON_NULL'
+const OBJECT = 'OBJECT'
+
 /**
  * Associates icons with mutations by name.
  * @param {string} name - mutation name
@@ -161,8 +165,8 @@ export const cylcObjects = Object.freeze({
   User: 'user',
   Workflow: 'workflow',
   CyclePoint: 'cycle',
-  Namespace: 'task',
-  // Task: 'task',
+  Family: 'family',
+  Task: 'task',
   Job: 'job'
 })
 
@@ -183,35 +187,26 @@ export const primaryMutations = {
     'hold',
     'release',
     'trigger',
-    'kill'
+    'kill',
+    'set',
   ],
-  [cylcObjects.Namespace]: [
+  [cylcObjects.Family]: [
     'hold',
     'release',
     'trigger',
     'kill',
+    'set',
+  ],
+  [cylcObjects.Task]: [
+    'hold',
+    'release',
+    'trigger',
+    'kill',
+    'set',
     'log',
     'info',
-    'set'
-  ]
+  ],
 }
-
-// handle families the same as tasks
-primaryMutations.family = primaryMutations[cylcObjects.Namespace]
-
-/**
- * Cylc "objects" in hierarchy order.
- *
- * Note, this is the order they would appear in a tree representation.
- */
-const identifierOrder = [
-  cylcObjects.User,
-  cylcObjects.Workflow,
-  cylcObjects.CyclePoint,
-  cylcObjects.Namespace,
-  // cylcObjects.Task,
-  cylcObjects.Job
-]
 
 /**
  * Mapping of mutation argument types to Cylc "objects" (workflow, cycle,
@@ -221,52 +216,39 @@ const identifierOrder = [
  * auto-populate the input element in the mutation form based on the object
  * that was clicked on.
  *
- * object: [[typeName: String, impliesMultiple: Boolean]]
  */
-export const mutationMapping = {
-  [cylcObjects.User]: [],
-  [cylcObjects.Workflow]: [
-    ['WorkflowID', false]
-  ],
-  [cylcObjects.CyclePoint]: [
-    ['CyclePoint', false],
-    ['CyclePointGlob', true]
-  ],
-  [cylcObjects.Namespace]: [
-    ['NamespaceName', false],
-    ['NamespaceIDGlob', true]
-  ],
-  // [cylcObjects.Task]: [
-  //   ['TaskID', false]
-  // ],
-  [cylcObjects.Job]: [
-    ['JobID', false]
-  ]
+const mutationMapping = {
+  WorkflowID: [cylcObjects.Workflow],
+  CyclePoint: [cylcObjects.CyclePoint],
+  CyclePointGlob: [cylcObjects.CyclePoint],
+  NamespaceName: [cylcObjects.Task, cylcObjects.Family],
+  NamespaceIDGlob: [cylcObjects.Task, cylcObjects.Family],
+  // TaskID: [cylcObjects.Task],
+  JobID: [cylcObjects.Job],
 }
+
+/** Argument types that imply multiple values. */
+const impliesMultiple = Object.freeze([
+  'CyclePointGlob',
+  'NamespaceIDGlob',
+])
 
 /**
  * Mutation argument types which are derived from more than one token.
  */
 export const compoundFields = {
-  WorkflowID: (tokens) => {
-    if (tokens[cylcObjects.User]) {
-      return `~${tokens[cylcObjects.User]}/${tokens[cylcObjects.Workflow]}`
-    }
-    // don't provide user if not specified
-    // (will fallback to the UIs user)
-    return tokens[cylcObjects.Workflow]
-  },
+  WorkflowID: (tokens) => detokenise(tokens, { workflow: true }),
   NamespaceIDGlob: (tokens) => (
     // expand unspecified fields to '*'
     (tokens[cylcObjects.CyclePoint] || '*') +
     '/' +
-    (tokens[cylcObjects.Namespace] || '*')
+    (tokens[cylcObjects.Task] || '*')
   ),
   TaskID: (tokens) => (
     // expand unspecified fields to '*'
     (tokens[cylcObjects.CyclePoint] || '*') +
     '/' +
-    tokens[cylcObjects.Namespace]
+    tokens[cylcObjects.Task]
   )
 }
 
@@ -305,7 +287,7 @@ export const dummyMutations = [
 
       This only applies for the cycle point of the chosen task/family instance.`,
     args: [],
-    _appliesTo: [cylcObjects.Namespace, cylcObjects.CyclePoint],
+    _appliesTo: [cylcObjects.Task, cylcObjects.Family, cylcObjects.CyclePoint],
     _requiresInfo: true,
     _validStates: [WorkflowState.RUNNING.name, WorkflowState.PAUSED.name],
     _dialogWidth: '1200px',
@@ -314,7 +296,7 @@ export const dummyMutations = [
     name: 'log',
     description: 'View the logs.',
     args: [],
-    _appliesTo: [cylcObjects.Workflow, cylcObjects.Namespace, cylcObjects.Job],
+    _appliesTo: [cylcObjects.Workflow, cylcObjects.Task, cylcObjects.Job],
     _requiresInfo: false,
     _validStates: WorkflowStateNames,
   },
@@ -322,7 +304,7 @@ export const dummyMutations = [
     name: 'info',
     description: 'View task information.',
     args: [],
-    _appliesTo: [cylcObjects.Namespace],
+    _appliesTo: [cylcObjects.Task],
     _requiresInfo: false
   },
 ]
@@ -356,33 +338,6 @@ export function tokenise (id) {
     }
   }
   return ret
-}
-
-/**
- * Return the lowest token in the hierarchy.
- *
- * @param {Object} tokens
- * @returns {String}
- * */
-export function getType (tokens) {
-  let last = null
-  let item = null
-  for (const key of identifierOrder) {
-    item = tokens[key]
-    if (!item) {
-      break
-    }
-    last = key
-  }
-  return last
-}
-
-/**
- * Convert camel case to words.
- */
-export function camelToWords (camel) {
-  const result = (camel || '').replace(/([A-Z])/g, ' $1')
-  return result.charAt(0).toUpperCase() + result.slice(1)
 }
 
 /**
@@ -446,7 +401,7 @@ export function extractFields (type, fields, types) {
  */
 export function processMutations (mutations, types) {
   for (const mutation of mutations) {
-    mutation._title = camelToWords(mutation.name)
+    mutation._title = startCase(mutation.name)
     mutation._icon = getMutationIcon(mutation.name)
     mutation._shortDescription = getMutationShortDesc(mutation.description)
     mutation._help = getMutationExtendedDesc(mutation.description)
@@ -501,8 +456,8 @@ export function getMutationExtendedDesc (text) {
  * This adds some computed fields prefixed with an underscore for later use:
  *   _title:
  *     Human-readable name for the mutation.
- *   _cylcObject:
- *     The Cylc Object this field relates to if any (e.g. Cycle, Task etc.).
+ *   _cylcObjects:
+ *     The Cylc objects this field relates to if any (e.g. Cycle, Task etc.).
  *   _cylcType:
  *     The underlying GraphQL type that provides this relationship
  *     (e.g. taskID).
@@ -520,37 +475,25 @@ export function processArguments (mutation, types) {
   for (const arg of mutation.args) {
     let pointer = arg.type
     let multiple = false
-    let cylcObject = null
-    let cylcType = null
-    const required = arg.type?.kind === 'NON_NULL'
+    let cylcObjects
+    let cylcType
+    const required = arg.type?.kind === NON_NULL
     while (pointer) {
       // walk down the nested type tree
-      if (pointer.kind === 'LIST') {
+      if (pointer.kind === LIST) {
         multiple = true
-      } else if (pointer.kind !== 'NON_NULL' && pointer.name) {
+      } else if (pointer.kind !== NON_NULL && pointer.name) {
         cylcType = pointer.name
-        for (const objectName in mutationMapping) {
-          for (const [type, impliesMultiple] of mutationMapping[objectName]) {
-            if (pointer.name === type) {
-              cylcObject = objectName
-              if (impliesMultiple) {
-                multiple = true
-              }
-              break
-            }
-          }
-          if (cylcObject) {
-            break
-          }
-        }
-        if (cylcObject) {
+        cylcObjects = mutationMapping[cylcType]
+        multiple ||= impliesMultiple.includes(cylcType)
+        if (cylcObjects) {
           break
         }
       }
       pointer = pointer.ofType
     }
-    arg._title = camelToWords(arg.name)
-    arg._cylcObject = cylcObject
+    arg._title = startCase(arg.name)
+    arg._cylcObjects = cylcObjects
     arg._cylcType = cylcType
     arg._multiple = multiple
     arg._required = required
@@ -629,16 +572,20 @@ export function filterAssociations (cylcObject, tokens, mutations, permissions) 
     ),
   ]
   for (const mutation of mutations) {
+    if (cylcObject === 'cycle' && mutation.name === 'play') {
+      // Don't show 'play' on cycle points as the cycle point options that get auto-filled don't apply for restarting a workflow.
+      continue
+    }
     const authorised = permissions.includes(mutation.name.toLowerCase())
     let requiresInfo = mutation._requiresInfo ?? false
     let applies = mutation._appliesTo?.includes(cylcObject)
     for (const arg of mutation.args) {
-      if (arg._cylcObject) {
-        if (arg._cylcObject === cylcObject) {
+      if (arg._cylcObjects) {
+        if (arg._cylcObjects.includes(cylcObject)) {
           // this is the object type we are filtering for
           applies = true
         }
-        if (arg._required && !tokens[arg._cylcObject]) {
+        if (arg._required && !arg._cylcObjects.some((t) => tokens[t])) {
           // this cannot be satisfied by the context
           requiresInfo = true
         }
@@ -706,12 +653,12 @@ export function getBaseType (type) {
 export function getNullValue (type, types = []) {
   let ret = null
   for (const subType of iterateType(type)) {
-    if (subType.kind === 'LIST') {
+    if (subType.kind === LIST) {
       const ofType = getNullValue(subType.ofType, types)
       ret = ofType ? [ofType] : []
       break
     }
-    if (subType.kind === 'OBJECT') {
+    if (subType.kind === OBJECT) {
       ret = {}
       // TODO: this type iteration is already done in the mixin
       //       should we use the mixin or a subset there-of here?
@@ -742,12 +689,12 @@ export function argumentSignature (arg) {
   for (const type of stack) {
     if (
       type.name === null &&
-      type.kind === 'LIST'
+      type.kind === LIST
     ) {
       ret = `[${ret}]`
     } else if (
       type.name === null &&
-      type.kind === 'NON_NULL'
+      type.kind === NON_NULL
     ) {
       ret = ret + '!'
     } else if (type.name) {
@@ -855,39 +802,31 @@ export function constructQueryStr (query) {
  * */
 export function getMutationArgsFromTokens (mutation, tokens) {
   const argspec = {}
-  let value
   for (const arg of mutation.args) {
-    if (arg._cylcObject) {
-      const alternate = alternateFields[arg._cylcType]
-      for (let token in tokens) {
-        if ([token, alternate].includes(arg._cylcObject)) {
-          if (arg.name === 'cutoff') {
-            // Work around for a field we don't want filled in, see:
-            // * https://github.com/cylc/cylc-ui/issues/1222
-            // * https://github.com/cylc/cylc-ui/issues/1225
-            // TODO: Once #1225 is done the field type can be safely changed in
-            // the schema without creating a compatibility issue with the UIS.
-            continue
-          }
-          if (arg._cylcObject === alternate) {
-            token = alternate
-          }
-          if (arg._cylcType in compoundFields) {
-            value = compoundFields[arg._cylcType](tokens)
-          } else {
-            value = tokens[token]
-          }
-          if (arg._multiple) {
-            value = [value]
-          }
-          argspec[arg.name] = value
-          break
-        }
+    if (
+      arg._cylcObjects &&
+      // Work around for a field we don't want filled in, see:
+      // * https://github.com/cylc/cylc-ui/issues/1222
+      // * https://github.com/cylc/cylc-ui/issues/1225
+      // TODO: Once #1225 is done the field type can be safely changed in
+      // the schema without creating a compatibility issue with the UIS.
+      arg.name !== 'cutoff'
+    ) {
+      let value
+      if (arg._cylcType in compoundFields) {
+        value = compoundFields[arg._cylcType](tokens)
+      } else {
+        const alternate = alternateFields[arg._cylcType]
+        const token = arg._cylcObjects.includes(alternate)
+          ? alternate
+          : arg._cylcObjects.find((t) => tokens[t])
+        value = tokens[token]
+      }
+      if (value) {
+        argspec[arg.name] = arg._multiple ? [value] : value
       }
     }
-    if (!argspec[arg.name]) {
-      argspec[arg.name] = arg._default
-    }
+    argspec[arg.name] ||= arg._default
   }
   return argspec
 }

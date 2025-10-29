@@ -124,7 +124,8 @@
             "state": "running"
           },
           "task": {
-            "name": "checkpoint"
+            "name": "checkpoint",
+            "meanElapsedTime": 180
           }
         },
         {
@@ -256,6 +257,7 @@
           "startedTime": "2020-11-08T22:57:36Z",
           "submittedTime": "2020-11-08T22:57:35Z",
           "finishedTime": "",
+          "estimatedFinishTime": "2020-11-08T23:00:36Z",
           "state": "running",
           "submitNum": 1
         },

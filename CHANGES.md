@@ -12,6 +12,14 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.10.0 (Released 2025-10-01)
+
+### 🚀 Enhancements
+
+[#2265](https://github.com/cylc/cylc-ui/pull/2265) - Improved the legibility of job details in the tree view and added a job details menu to the log view.
+
+[#2317](https://github.com/cylc/cylc-ui/pull/2317) - Show estimated finish times of running jobs in the tree and table views.
+
 ## cylc-ui-2.9.0 (Released 2025-09-04)
 
 ### 🚀 Enhancements

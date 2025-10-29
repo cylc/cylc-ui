@@ -1,6 +1,6 @@
 {
   "name": "cylc-ui",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "private": true,
   "license": "GPL-3.0-only",
   "type": "module",
@@ -24,14 +24,14 @@
     "test": "vitest run && yarn run serve cy:run"
   },
   "dependencies": {
-    "@apollo/client": "3.14.0",
+    "@apollo/client": "4.0.7",
     "@hpcc-js/wasm": "2.26.0",
     "@lumino/default-theme": "2.1.10",
     "@lumino/widgets": "2.7.1",
     "@mdi/js": "7.4.47",
     "@vueuse/core": "13.9.0",
     "apexcharts": "3.54.1",
-    "axios": "1.11.0",
+    "axios": "1.12.0",
     "dedent": "1.7.0",
     "enumify": "2.0.0",
     "graphiql": "4.1.2",
@@ -45,7 +45,7 @@
     "simple-icons": "15.2.0",
     "subscriptions-transport-ws": "0.11.0",
     "svg-pan-zoom": "3.6.2",
-    "vue": "3.5.21",
+    "vue": "3.5.22",
     "vue-i18n": "11.1.12",
     "vue-router": "4.5.1",
     "vue-the-mask": "0.11.1",
@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "3.14.6",
-    "@vitejs/plugin-react": "5.0.3",
+    "@vitejs/plugin-react": "5.0.4",
     "@vitejs/plugin-vue": "6.0.1",
     "@vitest/coverage-istanbul": "3.2.4",
     "@vue/test-utils": "2.4.6",
@@ -83,7 +83,7 @@
     "sass-embedded": "1.91.0",
     "sinon": "21.0.0",
     "standard": "17.1.2",
-    "vite": "7.1.6",
+    "vite": "7.1.11",
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "7.1.0",
     "vite-plugin-vuetify": "2.1.2",
@@ -100,5 +100,5 @@
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
   },
-  "packageManager": "yarn@4.10.2"
+  "packageManager": "yarn@4.10.3"
 }

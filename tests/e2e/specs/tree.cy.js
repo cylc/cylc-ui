@@ -73,10 +73,10 @@ describe('Tree view', () => {
       ['Platform', /\w+/],
       ['Job ID', /\d+/],
       ['Job runner', /\w+/],
-      ['Submitted time', /\d{4}-\d{2}-\d{2}T.+/],
-      ['Started time', /\d{4}-\d{2}-\d{2}T.+/],
-      ['Finished time', /\d{4}-\d{2}-\d{2}T.+/],
-      ['Mean run time', /\d{2}:\d{2}:\d{2}/],
+      ['Submit time', /\d{4}-\d{2}-\d{2}T.+/],
+      ['Start time', /\d{4}-\d{2}-\d{2}T.+/],
+      ['Finish time', /\d{4}-\d{2}-\d{2}T.+/],
+      ['Run time', /\d{2}:\d{2}:\d{2}/],
       ['foo', 'foo message'],
     ])
     for (const [key, pattern] of patterns.entries()) {
@@ -267,18 +267,14 @@ describe('Tree view', () => {
 
     it('Provides a select all functionality', () => {
       cy.visit('/#/tree/one')
-      cy
-        .get('[data-cy="filter task state"]')
+      cy.get('[data-cy="filter task state"]')
         .get('.v-list-item--active')
         .should('have.length', 0)
-      cy
-        .get('[data-cy="filter task state"]')
+      cy.get('[data-cy="filter task state"]')
         .click()
-        .get('.v-list-item')
-        .contains('Select All')
-        .click({ force: true })
-      cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy=task-filter-select-all]')
+        .click()
+      cy.get('[data-cy="filter task state"]')
         .get('.v-list-item--active')
         .should('have.length', 8)
     })
