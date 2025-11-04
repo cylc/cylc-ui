@@ -144,7 +144,9 @@ function addChild (parentNode, childNode) {
   }
 
   // insert the child preserving sort order
-  const iteratee = (n) => `${n.type}-${n.name}` // (this makes families sort before tasks in the tree)
+  const iteratee = ['task', 'family'].includes(childNode.type)
+    ? (n) => `${n.type}-${n.name}` // (this makes families sort before tasks in the tree)
+    : (n) => n.name
   const reverse = ['cycle', 'job'].includes(childNode.type)
   const index = sortedIndexBy(
     parentNode[key],
