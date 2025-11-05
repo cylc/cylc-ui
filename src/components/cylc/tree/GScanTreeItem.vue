@@ -117,12 +117,16 @@ function getStatesInfo (node, stateTotals = {}, latestTasks = {}) {
 
     // the non-zero state totals from this node with all the others from the tree
     for (const state of taskStatesOrdered) {
-      const nodeTotal = node.node.stateTotals[state]
+      let nodeTotal = node.node.stateTotals[state]
+      const nodeLatestTasks = Array.from(node.node.latestStateTasks?.[state] ?? [])
+      if (state === TaskState.SUBMITTED.name) { // include preparing tasks
+        nodeTotal += node.node.stateTotals.preparing
+        nodeLatestTasks.push(...(node.node.latestStateTasks?.preparing ?? []))
+      }
       if (nodeTotal) {
         stateTotals[state] = (stateTotals[state] ?? 0) + nodeTotal
       }
-      const nodeLatestTasks = node.node.latestStateTasks?.[state]
-      if (nodeLatestTasks?.length) {
+      if (nodeLatestTasks.length) {
         latestTasks[state] = [
           ...(latestTasks[state] ?? []),
           ...nodeLatestTasks,

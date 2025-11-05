@@ -152,7 +152,7 @@ describe('GScanTreeItem', () => {
       }
     })
     it('combines all descendant tasks', () => {
-      expect(wrapper.vm.statesInfo.latestTasks.submitted.length).to.equal(10)
+      expect(wrapper.vm.statesInfo.latestTasks.submitted.length).to.equal(20)
       expect(wrapper.vm.statesInfo.latestTasks.running.length).to.equal(10)
     })
     it('combines all descendant task totals', () => {

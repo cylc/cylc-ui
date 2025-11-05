@@ -25,7 +25,7 @@
       location="top"
       :open-delay="400"
     >
-      {{ value }} {{ state }} task{{ value > 1 ? 's': '' }}.
+      {{ value }} {{ displayName }} task{{ value > 1 ? 's': '' }}.
       <template v-if="latestTasks.length">
         Latest:
         <span
@@ -41,7 +41,9 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   state: {
     type: String,
     required: true
@@ -59,4 +61,8 @@ defineProps({
     default: 5,
   },
 })
+
+const displayName = computed(
+  () => props.state === 'submitted' ? 'preparing/submitted' : props.state
+)
 </script>
