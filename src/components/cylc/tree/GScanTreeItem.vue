@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <TreeItem
     v-bind="{ node, depth, filteredOutNodesCache, hoverable }"
-    :auto-expand-types="$options.nodeTypes"
+    :auto-expand-types="nodeTypes"
     :render-expand-collapse-btn="node.type !== 'workflow'"
     ref="treeItem"
   >
@@ -47,16 +47,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </span>
         </div>
         <div class="d-flex c-gscan-workflow-states flex-grow-0">
-          <template
-            v-for="state in Object.keys(descendantTaskInfo.latestTasks)"
-            :key="`${node.id}-${state}`"
-          >
-            <TaskStateBadge
-              v-if="descendantTaskInfo.stateTotals[state]"
-              :state="state"
-              :value="descendantTaskInfo.stateTotals[state]"
-            />
-          </template>
+          <TaskStateBadge
+            v-for="(value, state) in statesInfo.stateTotals"
+            :key="state"
+            v-bind="{ state, value }"
+            :latest-tasks="statesInfo.latestTasks[state]"
+          />
           <WarningIcon
             v-if="workflowWarnings"
             :workflow="node"
@@ -80,51 +76,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </TreeItem>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
 import TaskStateBadge from '@/components/cylc/TaskStateBadge.vue'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
-import { JobStateNames } from '@/model/JobState.model'
+import TaskState from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import { useWorkflowWarnings } from '@/composables/localStorage'
 
+const nodeTypes = ['workflow-part', 'workflow']
+
+/** Display order in sidebar */
+const taskStatesOrdered = [
+  TaskState.FAILED.name,
+  TaskState.SUBMIT_FAILED.name,
+  TaskState.SUBMITTED.name,
+  TaskState.RUNNING.name,
+]
+
 /**
- * Get aggregated task state totals and latest task states for all descendents of a node.
+ * Get aggregated task state totals for all descendents of a node.
  *
  * @param {Object} node
- * @param {Record<string, number>} stateTotals
- * @param {Record<string, string[]>} latestTasks
- * @param {Boolean} topLevel - true if the traversal depth is 0, else false.
+ * @param {Record<string, number>} stateTotals - Accumulator for state totals.
+ * @param {Record<string, string[]>} latestTasks - Accumulator for latest tasks.
  */
-function traverseChildren (node, stateTotals = {}, latestTasks = {}, topLevel = true) {
+function getStatesInfo (node, stateTotals = {}, latestTasks = {}) {
   // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
   if (node.type === 'workflow-part' && node.children) {
-    // at every branch, recurse all child nodes
+    // at every branch, recurse all child nodes except stopped workflows
     for (const child of node.children) {
-      traverseChildren(child, stateTotals, latestTasks, false)
-    }
-  } else if (node.type === 'workflow' && node.node.stateTotals) {
-    // if we are at the end of a node (or at least, hit a workflow node), stop and merge state
-
-    // the latest state tasks from this node with all the others from the tree
-    for (const [state, totals] of Object.entries(node.node.stateTotals)) {
-      if (
-        // filter only valid states
-        JobStateNames.includes(state) &&
-        // omit state totals from stopped workflows
-        (topLevel || node.node.status !== 'stopped')
-      ) {
-        // (cast as numbers so they dont get concatenated as strings)
-        stateTotals[state] = (stateTotals[state] ?? 0) + parseInt(totals)
+      if (child.node.status !== WorkflowState.STOPPED.name) {
+        getStatesInfo(child, stateTotals, latestTasks)
       }
     }
-    for (const [state, taskNames] of Object.entries(node.node.latestStateTasks)) {
-      if (JobStateNames.includes(state)) {
-        // concat the new tasks in where they don't already exist
+  } else if (node.type === 'workflow' && node.node.stateTotals) {
+    // if we hit a workflow node, stop and merge state
+
+    // the non-zero state totals from this node with all the others from the tree
+    for (const state of taskStatesOrdered) {
+      const nodeTotal = node.node.stateTotals[state]
+      if (nodeTotal) {
+        stateTotals[state] = (stateTotals[state] ?? 0) + nodeTotal
+      }
+      const nodeLatestTasks = node.node.latestStateTasks?.[state]
+      if (nodeLatestTasks?.length) {
         latestTasks[state] = [
           ...(latestTasks[state] ?? []),
-          ...taskNames,
+          ...nodeLatestTasks,
         ].sort().reverse() // cycle point descending order
       }
     }
@@ -132,65 +133,40 @@ function traverseChildren (node, stateTotals = {}, latestTasks = {}, topLevel = 
   return { stateTotals, latestTasks }
 }
 
-export default {
-  name: 'GScanTreeItem',
+const workflowWarnings = useWorkflowWarnings()
 
-  components: {
-    TaskStateBadge,
-    TreeItem,
-    WarningIcon,
-    WorkflowIcon,
+const props = defineProps({
+  node: {
+    type: Object,
+    required: true
   },
-
-  data: () => ({
-    workflowWarnings: useWorkflowWarnings()
-  }),
-
-  props: {
-    node: {
-      type: Object,
-      required: true
-    },
-    depth: {
-      type: Number,
-      default: 0
-    },
-    filteredOutNodesCache: {
-      type: WeakMap,
-      required: true,
-    },
-    hoverable: {
-      type: Boolean,
-    },
+  depth: {
+    type: Number,
+    default: 0
   },
-
-  computed: {
-    workflowLink () {
-      return this.node.type === 'workflow'
-        ? `/workspace/${ this.node.tokens.workflow }`
-        : ''
-    },
-
-    /** Task state totals and latest states for all descendents of this node. */
-    descendantTaskInfo () {
-      return traverseChildren(this.node)
-    },
-
-    nodeChildren () {
-      return this.node.type === 'workflow'
-        ? []
-        : this.node.children
-    },
-
-    nodeClass () {
-      return {
-        'c-workflow-stopped': this.node.node?.status === WorkflowState.STOPPED.name,
-      }
-    }
+  filteredOutNodesCache: {
+    type: WeakMap,
+    required: true,
   },
+  hoverable: {
+    type: Boolean,
+  },
+})
 
-  nodeTypes: ['workflow-part', 'workflow'],
-  maxTasksDisplayed: 5,
-  WorkflowState,
-}
+const workflowLink = computed(
+  () => props.node.type === 'workflow'
+    ? `/workspace/${ props.node.tokens.workflow }`
+    : ''
+)
+
+/** Task state totals for all descendents of this node. */
+const statesInfo = computed(() => getStatesInfo(props.node))
+
+const nodeChildren = computed(
+  () => props.node.type === 'workflow' ? [] : props.node.children
+)
+
+const nodeClass = computed(() => ({
+  'c-workflow-stopped': props.node.node?.status === WorkflowState.STOPPED.name,
+}))
 </script>

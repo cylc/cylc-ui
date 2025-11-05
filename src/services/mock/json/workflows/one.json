@@ -23,14 +23,14 @@
         "latestStateTasks": {
           "submitted": [],
           "running": [
-            "checkpoint"
+            "20000102T0000Z/checkpoint"
           ],
           "succeeded": [
-            "eventually_succeeded",
-            "succeeded"
+            "20000102T0000Z/eventually_succeeded",
+            "20000102T0000Z/succeeded"
           ],
           "failed": [
-            "failed"
+            "20000102T0000Z/failed"
           ]
         }
       },

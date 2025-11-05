@@ -19,16 +19,29 @@
   <div
     class="task-state-badge d-flex justify-center align-center px-1 font-weight-medium"
     :class="state"
-    v-tooltip="{ text: tooltip, openDelay: 400, location: 'top' }"
   >
     {{ value }}
+    <v-tooltip
+      location="top"
+      :open-delay="400"
+    >
+      {{ value }} {{ state }} task{{ value > 1 ? 's': '' }}.
+      <template v-if="latestTasks.length">
+        Latest:
+        <span
+          v-for="(task, index) in latestTasks.slice(0, maxLatestTasks)"
+          :key="index"
+          class="text-grey-lighten-1"
+        >
+          <br/>{{ task }}
+        </span>
+      </template>
+    </v-tooltip>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-
-const props = defineProps({
+defineProps({
   state: {
     type: String,
     required: true
@@ -37,9 +50,13 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  latestTasks: {
+    type: Array,
+    default: () => [],
+  },
+  maxLatestTasks: {
+    type: Number,
+    default: 5,
+  },
 })
-
-const tooltip = computed(
-  () => `${props.value} ${props.state} task${props.value > 1 ? 's' : ''}`
-)
 </script>
