@@ -34,10 +34,11 @@ $cjob: ".c-job .job rect";
 
 .task-state-badge {
     font-size: 0.7em;
-    height: 1.8em;
-    min-width: 1.8em;
-    border-radius: 1.8em;
-    border: 2px solid;
+    $height: 1.8em;
+    height: $height;
+    min-width: $height;
+    border-radius: $height;
+    border: 0.2em solid;
     margin: 0 0.1em;
     line-height: normal;
 }
