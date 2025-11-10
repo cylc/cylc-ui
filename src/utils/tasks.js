@@ -133,7 +133,7 @@ export function formatDuration (value, allowZeros = false, timingOption = true) 
 
 function formatRSS (value) {
   // Format the max RSS value in a human-readable format
-  if (value === 0 || value === undefined || value === null) {
+  if (value === undefined || value === null) {
     return undefined
   } else if (value / 1024 < 1000) {
     const kilobytes = value / 1024
