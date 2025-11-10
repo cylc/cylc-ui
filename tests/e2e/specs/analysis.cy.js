@@ -637,5 +637,29 @@ describe('Filters and Options save state', () => {
         .get('[data-cy="box-plot-sort-select"]')
         .should('be.visible')
     })
+    it('displays correct tooltip content for box plot', () => {
+      cy.get('.c-analysis [data-cy=box-plot-toggle]').click()
+      cy.get('[data-cy=box-plot-chart] .apexcharts-series path')
+        .first()
+        .trigger('mouseover', { force: true })
+        .trigger('mousemove', { force: true })
+
+      // Check tooltip content
+      cy.get('.apexcharts-tooltip')
+        .should('be.visible')
+        .contains('Maximum: 00:00:33')
+      cy.get('.apexcharts-tooltip')
+        .contains('Median')
+      cy.get('.apexcharts-tooltip')
+        .contains('Minimum')
+      // If timingOption is maxRss, check for Memory Allocated
+      cy.get('#c-analysis-filter-task-timings')
+        .invoke('val')
+        .then(val => {
+          if (val === 'Max RSS') {
+            cy.get('.apexcharts-tooltip').contains('Memory Allocated')
+          }
+        })
+    })
   })
 })

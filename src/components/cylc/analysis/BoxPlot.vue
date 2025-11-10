@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </div>
   </Teleport>
   <VueApexCharts
+    data-cy="box-plot-chart"
     type="boxPlot"
     :options="chartOptions"
     :series="series"
