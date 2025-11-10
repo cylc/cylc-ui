@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-model="displayedTasks"
         label="Select tasks"
         ref="selectTasks"
+        data-cy="time-series-task-select"
       >
         <template v-slot:prepend-item>
           <v-select-actions>
