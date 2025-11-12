@@ -151,13 +151,12 @@ describe('GScanTreeItem', () => {
         filteredOutNodesCache: new WeakMap(),
       }
     })
-    it('combines all descendant tasks', () => {
-      expect(wrapper.vm.descendantTaskInfo.latestTasks.submitted.length).to.equal(10)
-      expect(wrapper.vm.descendantTaskInfo.latestTasks.running.length).to.equal(10)
+    it('does not combine descendant latest state tasks', () => {
+      expect(wrapper.vm.statesInfo.latestTasks).to.deep.equal({})
     })
     it('combines all descendant task totals', () => {
-      expect(wrapper.vm.descendantTaskInfo.stateTotals.submitted).to.equal(5)
-      expect(wrapper.vm.descendantTaskInfo.stateTotals.running).to.equal(12)
+      expect(wrapper.vm.statesInfo.stateTotals.submitted).to.equal(5)
+      expect(wrapper.vm.statesInfo.stateTotals.running).to.equal(12)
     })
     it('collapses to the lowest only-child', () => {
       expect(wrapper.vm.node.id).to.equal('~cylc/double/mid')
