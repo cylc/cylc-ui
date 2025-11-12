@@ -26,11 +26,11 @@
       :open-delay="400"
     >
       {{ value }} {{ displayName }} task{{ value > 1 ? 's': '' }}.
-      <template v-if="latestTasks.length">
+      <template v-if="latestTasks?.length">
         Latest:
         <span
-          v-for="(task, index) in latestTasks.slice(0, maxLatestTasks)"
-          :key="index"
+          v-for="task in latestTasks"
+          :key="task"
           class="text-grey-lighten-1"
         >
           <br/>{{ task }}
@@ -55,10 +55,6 @@ const props = defineProps({
   latestTasks: {
     type: Array,
     default: () => [],
-  },
-  maxLatestTasks: {
-    type: Number,
-    default: 5,
   },
 })
 

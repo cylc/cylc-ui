@@ -151,9 +151,8 @@ describe('GScanTreeItem', () => {
         filteredOutNodesCache: new WeakMap(),
       }
     })
-    it('combines all descendant tasks', () => {
-      expect(wrapper.vm.statesInfo.latestTasks.submitted.length).to.equal(20)
-      expect(wrapper.vm.statesInfo.latestTasks.running.length).to.equal(10)
+    it('does not combine descendant latest state tasks', () => {
+      expect(wrapper.vm.statesInfo.latestTasks).to.deep.equal({})
     })
     it('combines all descendant task totals', () => {
       expect(wrapper.vm.statesInfo.stateTotals.submitted).to.equal(5)

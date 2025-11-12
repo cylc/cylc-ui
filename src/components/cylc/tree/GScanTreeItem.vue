@@ -99,11 +99,13 @@ const taskStatesOrdered = [
 /**
  * Get aggregated task state totals for all descendents of a node.
  *
+ * Also get latest state tasks for workflow nodes.
+ *
  * @param {Object} node
  * @param {Record<string, number>} stateTotals - Accumulator for state totals.
- * @param {Record<string, string[]>} latestTasks - Accumulator for latest tasks.
  */
-function getStatesInfo (node, stateTotals = {}, latestTasks = {}) {
+function getStatesInfo (node, stateTotals = {}) {
+  const latestTasks = {}
   // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
   if (node.type === 'workflow-part' && node.children) {
     // at every branch, recurse all child nodes except stopped workflows
@@ -118,19 +120,19 @@ function getStatesInfo (node, stateTotals = {}, latestTasks = {}) {
     // the non-zero state totals from this node with all the others from the tree
     for (const state of taskStatesOrdered) {
       let nodeTotal = node.node.stateTotals[state]
-      const nodeLatestTasks = Array.from(node.node.latestStateTasks?.[state] ?? [])
+      let nodeLatestTasks = node.node.latestStateTasks?.[state] ?? []
       if (state === TaskState.SUBMITTED.name) { // include preparing tasks
         nodeTotal += node.node.stateTotals.preparing
-        nodeLatestTasks.push(...(node.node.latestStateTasks?.preparing ?? []))
+        nodeLatestTasks = [
+          ...nodeLatestTasks,
+          ...(node.node.latestStateTasks?.preparing ?? []),
+        ].slice(0, 5) // limit to 5 latest (submitted tasks take priority)
       }
       if (nodeTotal) {
         stateTotals[state] = (stateTotals[state] ?? 0) + nodeTotal
       }
       if (nodeLatestTasks.length) {
-        latestTasks[state] = [
-          ...(latestTasks[state] ?? []),
-          ...nodeLatestTasks,
-        ].sort().reverse() // cycle point descending order
+        latestTasks[state] = nodeLatestTasks
       }
     }
   }
