@@ -135,7 +135,7 @@ export default defineConfig(({ mode }) => {
       coverage: {
         provider: 'istanbul',
         include: [
-          'src/**'
+          'src/**/*.{js,mjs,jsx,ts,tsx,vue}',
         ],
         exclude: [
           'src/services/mock/**'
