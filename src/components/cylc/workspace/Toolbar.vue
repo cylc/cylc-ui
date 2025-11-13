@@ -266,6 +266,8 @@ subscription Workflow ($workflowId: ID) {
 
 fragment WorkflowData on Workflow {
   id
+  host
+  owner
   status
   statusMsg
   nEdgeDistance
@@ -375,6 +377,9 @@ export default {
     },
     statusAndVersion () {
       let ret = upperFirst(this.currentWorkflow.node.statusMsg || '')
+      if (this.currentWorkflow.node.host && this.currentWorkflow.node.owner) {
+        ret += ` •  ${this.currentWorkflow.node.owner}@${this.currentWorkflow.node.host}`
+      }
       if (this.currentWorkflow.node.cylcVersion) {
         ret += ` • Cylc ${this.currentWorkflow.node.cylcVersion}`
       }
