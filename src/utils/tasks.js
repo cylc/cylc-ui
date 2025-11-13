@@ -147,6 +147,29 @@ function formatRSS (value) {
   }
 }
 
+export function compare (a, b, sortBy, sortDesc) {
+  /**
+   * @param {string|number} a
+   * @param {string|number} b
+   * @returns {number}
+  */
+  let ret = ''
+  // Median values are stored in quartile arrays, so need to access the 2nd element
+  if (sortBy === 'medianRunTime' || sortBy === 'medianQueueTime' || sortBy === 'medianTotalTime' || sortBy === 'medianMaxRss') {
+    sortBy = sortBy.replace('median', '').replace('Time', '')
+    sortBy = sortBy.charAt(0).toLowerCase() + sortBy.slice(1)
+    sortBy = sortBy + 'Quartiles'
+    ret = a[sortBy][1] < b[sortBy][1] ? -1 : 1
+  } else if (sortBy === 'medianCpuTime') {
+    sortBy = 'cpuTimeQuartiles'
+    ret = a[sortBy][1] < b[sortBy][1] ? -1 : 1
+  } else {
+  // All non median sorts
+    ret = a[sortBy] < b[sortBy] ? -1 : 1
+  }
+  return sortDesc.value ? -ret : ret
+}
+
 export function formatChartLabels (timingOption) {
   // Create correct labels for the charts
   if (timingOption.toLowerCase() === 'maxrss') {

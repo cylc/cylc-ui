@@ -69,7 +69,8 @@ import { upperFirst } from 'lodash'
 import {
   formatDuration,
   getTimingOption,
-  formatChartLabels
+  formatChartLabels,
+  compare,
 } from '@/utils/tasks'
 import { useReducedAnimation } from '@/composables/localStorage'
 import {
@@ -126,22 +127,17 @@ export default {
     const page = useInitialOptions('page', { props, emit }, 1)
 
     /**
-     * The sort descending/sscending state.
+     * The sort descending/ascending state.
      * @type {import('vue').Ref<boolean>}
      */
     const sortDesc = useInitialOptions('sortDesc', { props, emit }, false)
 
     const reducedAnimation = useReducedAnimation()
 
-    const compare = (a, b) => {
-      const ret = a[sortBy.value] < b[sortBy.value] ? -1 : 1
-      return sortDesc.value ? -ret : ret
-    }
-
     const chartOptions = computed(() => {
       const currentTasks = (() => {
         if (props.timingOption === 'maxRss') {
-          const sortedTasks = [...props.tasks].sort((a, b) => compare(a, b))
+          const sortedTasks = [...props.tasks].sort((a, b) => compare(a, b, sortBy.value, sortDesc.value))
           const startIndex = Math.max(0, props.itemsPerPage * (page.value - 1))
           const endIndex = Math.min(sortedTasks.length, startIndex + props.itemsPerPage)
           return sortedTasks.slice(startIndex, endIndex)
@@ -268,7 +264,7 @@ export default {
 
   computed: {
     series () {
-      const sortedTasks = [...this.tasks].sort(this.compare)
+      const sortedTasks = [...this.tasks].sort((a, b) => compare(a, b, this.sortBy, this.sortDesc))
       const startIndex = Math.max(0, this.itemsPerPage * (this.page - 1))
       const endIndex = Math.min(sortedTasks.length, startIndex + this.itemsPerPage)
       const boxData = []
@@ -310,18 +306,6 @@ export default {
       // Clamp page number
       this.page = Math.min(this.numPages, this.page)
     }
-  },
-
-  methods: {
-    /**
-     * @param {string|number} a
-     * @param {string|number} b
-     * @returns {number}
-     */
-    compare (a, b) {
-      const ret = a[this.sortBy] < b[this.sortBy] ? -1 : 1
-      return this.sortDesc ? -ret : ret
-    },
   },
 
   icons: {
