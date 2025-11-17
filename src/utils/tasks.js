@@ -167,7 +167,7 @@ export function compare (a, b, sortBy, sortDesc) {
   // All non median sorts
     ret = a[sortBy] < b[sortBy] ? -1 : 1
   }
-  return sortDesc.value ? -ret : ret
+  return sortDesc ? -ret : ret
 }
 
 export function formatChartLabels (timingOption) {

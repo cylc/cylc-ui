@@ -16,7 +16,6 @@
  */
 
 import { analysisTaskQuery } from '@/services/mock/json/index.cjs'
-import { clone } from 'lodash'
 
 const sortedTasks = analysisTaskQuery.data.tasks.map(({ name }) => name).sort()
 
@@ -341,7 +340,7 @@ describe('Analysis view', () => {
         .then((els) => {
           expect(
             Array.from(els, (i) => i.textContent)
-          ).to.deep.equal(sortedTasks)
+          ).to.deep.equal(['eventually_succeeded', 'succeeded', 'waiting'])
         })
       cy.get('[data-cy=box-plot-sort]')
         .click()
@@ -349,7 +348,7 @@ describe('Analysis view', () => {
         .then((els) => {
           expect(
             Array.from(els, (i) => i.textContent)
-          ).to.deep.equal(clone(sortedTasks).reverse())
+          ).to.deep.equal(['waiting', 'succeeded', 'eventually_succeeded'])
         })
     })
   })
