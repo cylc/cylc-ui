@@ -14,6 +14,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {
+  GenericModifiers,
+  TaskModifier,
+  TaskState,
+  TaskStateNames,
+  WaitingStateModifiers,
+} from '@/model/TaskState.model'
+
 /**
  * Scale icon size to button size.
  * https://github.com/vuetifyjs/vuetify/issues/16288
@@ -39,3 +47,47 @@ export const btnProps = (size) => ({
     fontSize: btnIconFontSize(size)
   },
 })
+
+function getProps (modifier) {
+  const ret = {}
+  if (modifier === TaskModifier.isSkip) {
+    ret.runtime = { runMode: 'Skip' }
+  } else {
+    ret[modifier.field] = true
+  }
+  return ret
+}
+
+export const taskStateItems = [
+  {
+    title: TaskState.WAITING.name,
+    value: TaskState.WAITING.name,
+    props: { state: TaskState.WAITING.name },
+    children: WaitingStateModifiers
+      .map((modifier) => {
+        return {
+          title: modifier.title,
+          value: modifier.field,
+          props: getProps(modifier)
+        }
+      })
+  },
+  ...TaskStateNames
+    .filter((name) => name !== TaskState.WAITING.name)
+    .map((name) => {
+      return {
+        title: name,
+        value: name,
+        props: { state: name }
+      }
+    }),
+  { type: 'divider' },
+  ...GenericModifiers
+    .map((modifier) => {
+      return {
+        title: modifier.title,
+        value: modifier.field,
+        props: getProps(modifier)
+      }
+    }),
+]
