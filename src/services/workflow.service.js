@@ -384,7 +384,7 @@ class WorkflowService {
    * @param {DocumentNode} query - an already parsed GraphQL query (i.e. not a `string`)
    * @param {Object} variables
    * @param {SubscriptionOptions} subscriptionOptions - { next(), error() }
-   * @returns {Subscription}
+   * @returns {import('rxjs').Subscription}
    */
   startCylcSubscription (query, variables, subscriptionOptions) {
     if (!query) {

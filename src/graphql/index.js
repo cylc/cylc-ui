@@ -21,11 +21,10 @@ import {
   ApolloLink,
   HttpLink,
   InMemoryCache,
-  split
-} from '@apollo/client/core'
+} from '@apollo/client'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
-import { setContext } from '@apollo/client/link/context'
+import { SetContextLink } from '@apollo/client/link/context'
 import { store } from '@/store/index'
 import { createUrl, getXSRFHeaders } from '@/utils/urls'
 
@@ -119,7 +118,7 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     ? new WebSocketLink(subscriptionClient)
     : new ApolloLink() // return an empty link, useful for testing, offline mode, etc
 
-  const link = split(
+  const link = ApolloLink.split(
     ({ query }) => {
       const definition = getMainDefinition(query)
       return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
@@ -128,7 +127,7 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     httpLink
   )
 
-  const wsAuthLink = setContext((_, { headers }) => {
+  const wsAuthLink = new SetContextLink(({ headers }) => {
     // add an X-XSRFToken header for hubless token based auth
     return {
       headers: {
