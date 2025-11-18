@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { SubscriptionClient } from 'subscriptions-transport-ws'
+import { createClient } from 'graphql-ws'
 import {
   ApolloClient,
   ApolloLink,
@@ -23,13 +23,12 @@ import {
   InMemoryCache,
   split
 } from '@apollo/client/core'
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { getMainDefinition } from '@apollo/client/utilities'
-import { WebSocketLink } from '@apollo/client/link/ws'
 import { setContext } from '@apollo/client/link/context'
 import { store } from '@/store/index'
 import { createUrl, getXSRFHeaders } from '@/utils/urls'
-
-/** @typedef {import('subscriptions-transport-ws').ClientOptions} ClientOptions */
+import { uniqueId } from 'lodash-es'
 
 /**
  * Create the HTTP and WebSocket URLs for an ApolloClient.
@@ -50,45 +49,32 @@ export function createGraphQLUrls () {
  * Create a subscription client.
  *
  * @private
- * @param {string} wsUrl - WebSocket subscription URL
- * @param {ClientOptions} options - SubscriptionClient options
- * @param {*} wsImpl - WebSocket implementation (native by default)
- * @return {SubscriptionClient} a subscription client
+ * @param {string} url - WebSocket subscription URL
+ * @return {import('graphql-ws').Client} a subscription client
  */
-export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
-  /** @type {ClientOptions} */
-  const opts = {
-    reconnect: true,
+export function createSubscriptionClient (url) {
+  return createClient({
+    url,
     lazy: false,
-    // Raise initial connection timeout from 1->3 secs to try to mitigate slow connection problem
-    // https://github.com/cylc/cylc-ui/issues/1200
-    minTimeout: 3e3,
-    ...options,
-  }
-  const subscriptionClient = new SubscriptionClient(wsUrl, opts, wsImpl)
-  // these are the available hooks in the subscription client lifecycle
-  subscriptionClient.onConnecting(() => {
-    store.commit('SET_OFFLINE', true)
+    on: {
+      connecting (isRetry) {
+        if (isRetry) console.warn('Retrying WS connection')
+        store.commit('SET_OFFLINE', true)
+      },
+      connected (socket, payload, wasRetry) {
+        store.commit('SET_OFFLINE', false)
+      },
+      closed (event) {
+        store.commit('SET_OFFLINE', true)
+      },
+      error (error) {
+        console.error(error)
+        store.commit('SET_OFFLINE', true)
+        // TODO: store.commit('SET_ALERT') with the error details?
+      },
+    },
+    generateID: (payload) => uniqueId(payload.operationName)
   })
-  subscriptionClient.onConnected(() => {
-    store.commit('SET_OFFLINE', false)
-  })
-  subscriptionClient.onReconnecting(() => {
-    store.commit('SET_OFFLINE', true)
-  })
-  subscriptionClient.onReconnected(() => {
-    store.commit('SET_OFFLINE', false)
-  })
-  subscriptionClient.onDisconnected(() => {
-    store.commit('SET_OFFLINE', true)
-  })
-  // TODO: at the moment the error displays an Event object, but the browser also displays the problem, as well as the offline indicator
-  //       would be nice to find a better error message using the error object
-  // subscriptionClient.onError((error) => {
-  //   console.error(error)
-  //   store.commit('SET_ALERT', new Alert(error, 'error'))
-  // })
-  return subscriptionClient
 }
 
 /**
@@ -107,7 +93,7 @@ export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
  *
  * @public
  * @param {string} httpUrl
- * @param {SubscriptionClient|null} subscriptionClient
+ * @param {?import('graphql-ws').Client} subscriptionClient
  * @returns {ApolloClient} an ApolloClient
  */
 export function createApolloClient (httpUrl, subscriptionClient) {
@@ -116,7 +102,7 @@ export function createApolloClient (httpUrl, subscriptionClient) {
   })
 
   const wsLink = subscriptionClient !== null
-    ? new WebSocketLink(subscriptionClient)
+    ? new GraphQLWsLink(subscriptionClient)
     : new ApolloLink() // return an empty link, useful for testing, offline mode, etc
 
   const link = split(
