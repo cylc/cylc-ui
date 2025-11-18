@@ -4495,6 +4495,7 @@ __metadata:
     nprogress: "npm:1.0.0-1"
     nyc: "npm:17.1.0"
     preact: "npm:10.27.2"
+    rxjs: "npm:7.8.2"
     sass-embedded: "npm:1.93.3"
     simple-icons: "npm:15.2.0"
     sinon: "npm:21.0.0"

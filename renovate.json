@@ -67,7 +67,8 @@
         "on the 10th day of the month"
       ],
       "matchPackageNames": [
-        "@apollo/**"
+        "@apollo/**",
+        "rxjs"
       ]
     },
     {
