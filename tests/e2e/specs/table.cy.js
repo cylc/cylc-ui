@@ -43,14 +43,12 @@ describe('Table view', () => {
     it('Should filter by ID', () => {
       cy.get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
-      cy.get('[data-cy=filter-id] input')
+      cy.get('[data-cy=control-taskIDFilter] input')
         .should('be.empty')
-      cy.get('[data-cy="filter task state"] input')
-        .should('have.value', '')
       cy.get('td [data-cy-task-name=sleepy]')
         .should('be.visible')
       for (const id of ['eep', '/sle']) {
-        cy.get('[data-cy=filter-id] input')
+        cy.get('[data-cy=control-taskIDFilter] input')
           .clear()
           .type(id)
         cy.get('td [data-cy-task-name=sleepy]')
@@ -69,7 +67,7 @@ describe('Table view', () => {
         .get('td [data-cy-task-name=failed]')
         .should('be.visible')
       cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy=control-taskStateFilter]')
         .click()
       cy
         .get('.v-list-item')
@@ -89,7 +87,7 @@ describe('Table view', () => {
         .get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
       cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy=control-taskStateFilter]')
         .click()
       cy
         .get('.v-list-item')
@@ -100,7 +98,7 @@ describe('Table view', () => {
         .should('have.length', 2)
         .should('be.visible')
       cy
-        .get('[data-cy=filter-id] input')
+        .get('[data-cy=control-taskIDFilter] input')
         .type('eventually')
       cy
         .get('td [data-cy-task-name=eventually_succeeded]')
@@ -182,18 +180,19 @@ describe('State saving', () => {
       .get('.c-table table > tbody > tr')
       .should('have.length', initialNumRows)
     cy
-      .get('[data-cy="filter task state"]:last')
+      .get('[data-cy=control-taskStateFilter]:last')
       .click()
     cy
       .get('.v-list-item')
-      .contains(TaskState.SUCCEEDED.name)
+      .filter(':visible')
+      .contains('.v-list-item', 'succeeded')
       .click({ force: true })
     cy
       .get('.c-table table > tbody > tr')
       .should('have.length', 2)
       .should('be.visible')
     cy
-      .get('[data-cy=filter-id] input:last')
+      .get('[data-cy=control-taskIDFilter] input:last')
       .type('eventually')
     cy
       .get('td [data-cy-task-name=eventually_succeeded]')

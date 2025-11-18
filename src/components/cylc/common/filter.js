@@ -17,6 +17,13 @@
 
 /* Logic for filtering tasks. */
 
+import {
+  GenericModifierNames,
+  TaskState,
+  TaskStateNames,
+  WaitingStateModifierNames,
+} from '@/model/TaskState.model'
+
 /**
  * Return true if the node ID matches the given ID, or if no ID is given.
  *
@@ -36,8 +43,29 @@ export function matchID (node, id) {
  * @param {?string[]} states
  * @returns {boolean}
  */
-export function matchState (node, states) {
-  return !states?.length || states.includes(node.node.state)
+export function matchState (
+  node,
+  states = [],
+  waitingStateModifiers = [],
+  genericModifiers = [],
+) {
+  return (
+    (!states?.length || states.includes(node.node.state)) &&
+    (
+      node.node.state !== 'waiting' ||
+      !states.includes(TaskState.WAITING.name) ||
+      !waitingStateModifiers.length ||
+      waitingStateModifiers.some((modifier) => node.node[modifier])
+    ) &&
+    (
+      !genericModifiers.length ||
+      genericModifiers.some((modifier) => node.node[modifier]) ||
+      (
+        genericModifiers.includes('isSkip') &&
+        node.node.runtime?.runMode === 'Skip'
+      )
+    )
+  )
 }
 
 /**
@@ -49,6 +77,14 @@ export function matchState (node, states) {
  * @param {?string[]} states
  * @return {boolean}
  */
-export function matchNode (node, id, states) {
-  return matchID(node, id) && matchState(node, states)
+export function matchNode (node, id, states, waitingStateModifiers, genericModifiers) {
+  return matchID(node, id) && matchState(node, states, waitingStateModifiers, genericModifiers)
+}
+
+export function groupStateFilters (states) {
+  return [
+    states.filter(x => TaskStateNames.includes(x)),
+    states.filter(x => WaitingStateModifierNames.includes(x)),
+    states.filter(x => GenericModifierNames.includes(x)),
+  ]
 }

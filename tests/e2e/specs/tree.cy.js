@@ -174,7 +174,7 @@ describe('Tree view', () => {
         .should('have.length', initialNumTasks)
         .contains('waiting')
       for (const id of ['eed', '/suc', 'GOOD', 'SUC']) {
-        cy.get('[data-cy=filter-id] input')
+        cy.get('.c-view-toolbar input')
           .clear()
           .type(id)
         cy.get('.node-data-task:visible')
@@ -184,12 +184,12 @@ describe('Tree view', () => {
           .should('not.be.visible')
       }
       // It should stop filtering when input is cleared
-      cy.get('[data-cy=filter-id] input')
+      cy.get('.c-view-toolbar input')
         .clear()
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
       // It should filter by cycle point
-      cy.get('[data-cy=filter-id] input')
+      cy.get('.c-view-toolbar input')
         .type('2000') // (matches all tasks)
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
@@ -202,7 +202,7 @@ describe('Tree view', () => {
           .contains(name)
           .should('be.visible')
       }
-      cy.get('[data-cy="filter task state"]')
+      cy.get('[data-cy="control-taskStateFilter"]')
         .click()
         .get('.v-list-item')
         .contains(new RegExp(`^${TaskState.FAILED.name}$`))
@@ -226,10 +226,10 @@ describe('Tree view', () => {
         .contains('failed')
         .should('be.visible')
       cy
-        .get('[data-cy=filter-id]')
+        .get('[data-cy="control-taskIDFilter"]')
         .type('i')
       cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy="control-taskStateFilter"]')
         .click()
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
@@ -247,10 +247,10 @@ describe('Tree view', () => {
         .contains('failed')
         .should('be.visible')
       cy
-        .get('[data-cy=filter-id]')
+        .get('[data-cy="control-taskIDFilter"]')
         .type('i')
       cy
-        .get('[data-cy="filter task state"]')
+        .get('[data-cy="control-taskStateFilter"]')
         .click()
         .get('.v-list-item')
         .contains(TaskState.WAITING.name)
@@ -265,18 +265,37 @@ describe('Tree view', () => {
         .contains('retrying')
     })
 
-    it('Provides a select all functionality', () => {
+    it('Provides a reset functionality', () => {
       cy.visit('/#/tree/one')
-      cy.get('[data-cy="filter task state"]')
+      cy.get('[data-cy="control-taskStateFilter"]')
+        .click()
+        .get('.v-list-item')
+        .as('filters')
+
+      // select some states
+      for (const state of [
+        TaskState.WAITING,
+        TaskState.PREPARING,
+        TaskState.SUBMITTED]
+      ) {
+        cy.get('@filters')
+          .contains(state.name)
+          .click()
+      }
+
+      // there should be three states selected
+      cy.get('@filters')
+        .get('.v-list-item--active')
+        .should('have.length', 3)
+
+      // press the reset button
+      cy.get('[data-cy="control-taskStateFilter-reset"]')
+        .click()
+
+      // there should be zero states selected
+      cy.get('@filters')
         .get('.v-list-item--active')
         .should('have.length', 0)
-      cy.get('[data-cy="filter task state"]')
-        .click()
-        .get('[data-cy=task-filter-select-all]')
-        .click()
-      cy.get('[data-cy="filter task state"]')
-        .get('.v-list-item--active')
-        .should('have.length', 8)
     })
   })
 
@@ -287,11 +306,11 @@ describe('Tree view', () => {
         .contains('sleepy')
         .as('sleepyTask')
         .should('be.visible')
-      cy.get('[data-cy=collapse-all]')
+      cy.get('[data-cy=control-CollapseAll]')
         .click()
         .get('@sleepyTask')
         .should('not.be.visible')
-        .get('[data-cy=expand-all]')
+        .get('[data-cy=control-ExpandAll]')
         .click()
         .get('@sleepyTask')
         .should('be.visible')
@@ -299,7 +318,7 @@ describe('Tree view', () => {
 
     it('Does not expand jobs but can collapse them', () => {
       cy.visit('/#/tree/one')
-        .get('[data-cy=expand-all]')
+        .get('[data-cy=control-ExpandAll]')
         .click()
         .get('.node-data-job:first')
         .should('not.exist')
@@ -308,14 +327,14 @@ describe('Tree view', () => {
         .click()
         .get('.node-data-job:first')
         .should('be.visible')
-      cy.get('[data-cy=expand-all]')
+      cy.get('[data-cy=control-ExpandAll]')
         .click()
         // The job should remain expanded
         .get('.node-data-job:first')
         .should('be.visible')
-      cy.get('[data-cy=collapse-all]')
+      cy.get('[data-cy=control-CollapseAll]')
         .click()
-        .get('[data-cy=expand-all]')
+        .get('[data-cy=control-ExpandAll]')
         .click()
         // The job should be collapsed now
         .get('.node-data-job:first')
@@ -328,41 +347,24 @@ describe('Tree view', () => {
         .contains('sleepy')
         .as('sleepyTask')
         .should('be.visible')
-      cy.get('[data-cy=filter-id]')
+      cy.get('[data-cy="control-taskIDFilter"]')
         .type('sleep')
-      cy.get('[data-cy=collapse-all]')
+      cy.get('[data-cy=control-CollapseAll]')
         .click()
         .get('@sleepyTask')
         .should('not.be.visible')
-        .get('[data-cy=expand-all]')
+        .get('[data-cy=control-ExpandAll]')
         .click()
         .get('@sleepyTask')
         .should('be.visible')
     })
   })
 
-  it('should show a summary of tasks if the number of selected items is greater than the maximum limit', () => {
-    cy.visit('/#/tree/one')
-    cy.get('[data-cy="filter task state"]')
-      .click()
-    // eslint-disable-next-line no-lone-blocks
-    TaskState.enumValues.forEach(state => {
-      cy.get('.v-list-item')
-        .contains(state.name)
-        .click({ force: true })
-    })
-    // Click outside to close dropdown
-    cy.get('noscript')
-      .click({ force: true })
-    cy.get('[data-cy="filter task state"]')
-      .contains('.v-select__selection', '(+')
-  })
-
   describe('Toggle families', () => {
     it('Toggles between flat and hierarchical modes', () => {
       cy.visit('/#/tree/one')
       cy.get('.node-data-family').should('have.length', 3)
-      cy.get('[data-cy=toggle-families]').click()
+      cy.get('[data-cy=control-flat]').click()
       cy.get('.node-data-family').should('have.length', 0)
     })
   })

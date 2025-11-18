@@ -35,9 +35,12 @@ const taskNode = {
     id: '~user/one//20000102T0000Z/succeeded',
     name: 'succeeded',
     state: 'succeeded',
-    isHeld: false,
+    isHeld: true,
     isQueued: false,
     isRunahead: false,
+    isRetry: true,
+    isWallclock: false,
+    isXtriggered: false,
     cyclePoint: '20000102T0000Z',
     firstParent: {
       id: '~user/one//20000102T0000Z/SUCCEEDED',
@@ -76,8 +79,25 @@ describe('task filtering', () => {
       { node: taskNode, states: ['succeeded'], expected: true },
       { node: taskNode, states: ['succeeded', 'failed'], expected: true },
       { node: taskNode, states: ['failed'], expected: false },
-    ])('matchState(<$node.node.state>, $states)', ({ node, states, expected }) => {
-      expect(matchState(node, states)).toBe(expected)
+      { node: taskNode, states: ['waiting'], waitingStateModifiers: ['isRetry'], expected: false },
+      { node: taskNode, genericModifiers: ['isHeld'], expected: true },
+      { node: taskNode, genericModifiers: ['isHeld', 'isRunahead'], expected: true },
+      { node: taskNode, genericModifiers: ['isRunahead'], expected: false },
+      { node: taskNode, states: ['succeeded'], genericModifiers: ['isHeld'], expected: true },
+      { node: taskNode, states: ['waiting'], genericModifiers: ['isHeld'], expected: false },
+    ])('matchState(<$node.node.state>, $states)', ({
+      node,
+      states,
+      waitingStateModifiers,
+      genericModifiers,
+      expected,
+    }) => {
+      expect(matchState(
+        node,
+        states,
+        waitingStateModifiers,
+        genericModifiers,
+      )).toBe(expected)
     })
   })
 

@@ -60,7 +60,7 @@ describe('Filter save state', () => {
     // Set task name filter option to something other than default ('')
     selectOption('#c-gantt-filter-job-name', 'c3')
     // Set task times filter option to something other than default ('Total times')
-    selectOption('#c-gantt-filter-job-timings', 'Queue')
+    selectOption('#c-gantt-filter-job-timings', 'Queue times')
     // Set platform filter option to something other than default ('All')
     selectOption('#c-gantt-filter-job-platforms', 'localhost')
     // Set tasks per page filter option to something other than default (10)
@@ -75,7 +75,7 @@ describe('Filter save state', () => {
     // Check name filter
     checkOption('#c-gantt-filter-job-name', 'c3')
     // Check task times filter
-    checkOption('#c-gantt-filter-job-timings', 'Queue')
+    checkOption('#c-gantt-filter-job-timings', 'Queue times')
     // Check platform filter
     checkOption('#c-gantt-filter-job-platforms', 'localhost')
     // Check tasks per page

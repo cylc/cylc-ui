@@ -123,7 +123,7 @@ import Tree from '@/components/cylc/tree/Tree.vue'
 import { filterByName, filterByState } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 import { mutate } from '@/utils/aotf'
-import TaskFilterSelect from '@/components/cylc/TaskFilterSelect.vue'
+import TaskFilterSelect from '@/components/cylc/gscan/TaskFilterSelect.vue'
 
 export default {
   name: 'GScan',

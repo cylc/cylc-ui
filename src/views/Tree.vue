@@ -22,57 +22,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="c-tree pa-2"
       data-cy="tree-view"
     >
-      <!-- Toolbar -->
+      <!-- The Toolbar -->
       <v-row
         no-gutters
         class="d-flex flex-wrap"
       >
-        <!-- Filters -->
-        <v-col>
-          <TaskFilter v-model="tasksFilter" />
-        </v-col>
-        <!-- Expand, collapse all -->
-        <v-col class="flex-grow-0">
-          <div
-            class="d-flex flex-nowrap ml-2"
-          >
-            <v-btn
-              @click="flat = !flat"
-              icon
-              variant="flat"
-              size="small"
-              data-cy="toggle-families"
-            >
-              <v-icon size="x-large">
-                {{ flat? $options.icons.mdiFormatAlignRight : $options.icons.mdiFormatAlignJustify }}
-              </v-icon>
-              <v-tooltip>
-                {{ flat ? "Show Families" : "Hide Families" }}
-              </v-tooltip>
-            </v-btn>
-            <v-btn
-              @click="expandAll = ['workflow', 'cycle', 'family']"
-              icon
-              variant="flat"
-              size="small"
-              data-cy="expand-all"
-            >
-              <v-icon size="x-large">{{ $options.icons.mdiPlus }}</v-icon>
-              <v-tooltip>Expand all</v-tooltip>
-            </v-btn>
-            <v-btn
-              @click="expandAll = []"
-              icon
-              variant="flat"
-              size="small"
-              data-cy="collapse-all"
-            >
-              <v-icon size="x-large">{{ $options.icons.mdiMinus }}</v-icon>
-              <v-tooltip>Collapse all</v-tooltip>
-            </v-btn>
-          </div>
-        </v-col>
+        <ViewToolbar
+          :groups="controlGroups"
+          @setOption="setOption"
+        />
       </v-row>
+
+      <!-- The Tree -->
       <v-row
         no-gutters
         class="mt-2"
@@ -98,7 +59,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { mdiPlus, mdiMinus, mdiFormatAlignRight, mdiFormatAlignJustify } from '@mdi/js'
+import {
+  mdiFormatAlignJustify,
+  mdiFormatAlignRight,
+  mdiMinus,
+  mdiPlus,
+} from '@mdi/js'
 import gql from 'graphql-tag'
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -107,9 +73,9 @@ import {
   useInitialOptions
 } from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
-import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
-import { matchID, matchState } from '@/components/cylc/common/filter'
+import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
+import { matchID, matchState, groupStateFilters } from '@/components/cylc/common/filter'
 
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
@@ -232,8 +198,8 @@ export default {
   ],
 
   components: {
-    TaskFilter,
-    TreeComponent
+    TreeComponent,
+    ViewToolbar,
   },
 
   props: { initialOptions },
@@ -282,12 +248,81 @@ export default {
 
     filterState () {
       return (this.tasksFilter.id?.trim() || this.tasksFilter.states?.length)
-        ? this.tasksFilter
+        ? [this.tasksFilter.id, this.tasksFilter.states]
         : null
-    }
+    },
+
+    controlGroups () {
+      return [
+        {
+          title: 'Filter',
+          controls: [
+            {
+              title: 'Filter By ID',
+              action: 'taskIDFilter',
+              key: 'taskIDFilter',
+              value: this.tasksFilter.id
+            },
+            {
+              title: 'Filter By State',
+              action: 'taskStateFilter',
+              key: 'taskStateFilter',
+              value: this.tasksFilter.states,
+            },
+          ],
+        },
+        {
+          title: 'Tree',
+          controls: [
+            {
+              title: 'Toggle Families',
+              icon: {
+                true: mdiFormatAlignJustify,
+                false: mdiFormatAlignRight
+              },
+              action: 'toggle',
+              value: this.flat,
+              key: 'flat'
+            },
+            {
+              title: 'Expand All',
+              key: 'ExpandAll',
+              icon: mdiPlus,
+              action: 'callback',
+              callback: this.treeExpandAll,
+            },
+            {
+              title: 'Collapse All',
+              key: 'CollapseAll',
+              icon: mdiMinus,
+              action: 'callback',
+              callback: this.treeCollapseAll,
+            },
+          ]
+        }
+      ]
+    },
   },
 
   methods: {
+    setOption (option, value) {
+      if (option === 'taskStateFilter') {
+        this.tasksFilter.states = value
+      } else if (option === 'taskIDFilter') {
+        this.tasksFilter.id = value
+      } else {
+        this[option] = value
+      }
+    },
+
+    treeExpandAll () {
+      this.expandAll = ['workflow', 'cycle', 'family']
+    },
+
+    treeCollapseAll () {
+      this.expandAll = []
+    },
+
     /**
      * Recursively set the filtered out cache for this node and its children if applicable.
      *
@@ -302,7 +337,12 @@ export default {
         // jobs are always included and don't contribute to the filtering
         return false
       }
-      const stateMatch = matchState(node, this.tasksFilter.states)
+
+      const [states, waitingStateModifiers, genericModifiers] = groupStateFilters(
+        this.tasksFilter.states?.length ? this.tasksFilter.states : []
+      )
+
+      const stateMatch = matchState(node, states, waitingStateModifiers, genericModifiers)
       // This node should be included if any parent matches the ID filter
       const idMatch = parentsIDMatch || matchID(node, this.tasksFilter.id)
       let isMatch = stateMatch && idMatch
@@ -325,10 +365,10 @@ export default {
   },
 
   icons: {
-    mdiPlus,
-    mdiMinus,
-    mdiFormatAlignRight,
     mdiFormatAlignJustify,
+    mdiFormatAlignRight,
+    mdiMinus,
+    mdiPlus,
   },
 }
 </script>

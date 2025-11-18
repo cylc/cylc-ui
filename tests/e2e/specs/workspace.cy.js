@@ -118,7 +118,7 @@ describe('Workspace view and component/widget', () => {
         .should('have.length', 2)
       cy.get('.c-tree')
         .should('be.visible')
-        .find('[data-cy=filter-id] input')
+        .find('[data-cy=control-taskIDFilter] input')
         .should('have.value', 'GOOD')
       cy.get('.c-table')
         .should('be.visible')
@@ -141,7 +141,8 @@ describe('Workspace view and component/widget', () => {
     // (It takes a moment for the split pane to render properly - should('be.visible') does not wait for this unfortunately)
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(100)
-    cy.get('.c-tree [data-cy=filter-id] input')
+    cy.get('.c-tree')
+      .find('[data-cy=control-taskIDFilter] input')
       .type('GOOD')
     expectRememberedLayout()
 
