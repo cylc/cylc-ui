@@ -21,16 +21,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       fluid
       class="c-table ma-0 pa-2 h-100 flex-column d-flex"
     >
-      <!-- Toolbar -->
+      <!-- The Toolbar -->
       <v-row
         no-gutters
         class="d-flex flex-wrap flex-grow-0"
       >
-        <!-- Filters -->
-        <v-col>
-          <TaskFilter v-model="tasksFilter"/>
-        </v-col>
+        <ViewToolbar
+          :groups="controlGroups"
+          @setOption="setOption"
+        />
       </v-row>
+
+      <!-- The Table -->
       <v-row
         no-gutters
         class="flex-grow-1 position-relative"
@@ -56,6 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
@@ -63,9 +66,9 @@ import {
   updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
-import { matchNode } from '@/components/cylc/common/filter'
+import { matchNode, groupStateFilters } from '@/components/cylc/common/filter'
+import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
-import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 
@@ -167,7 +170,7 @@ export default {
 
   components: {
     TableComponent,
-    TaskFilter
+    ViewToolbar,
   },
 
   emits: [updateInitialOptionsEvent],
@@ -234,8 +237,47 @@ export default {
     },
 
     filteredTasks () {
-      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
-    }
-  }
+      const [states, waitingStateModifiers, genericModifiers] = groupStateFilters(
+        this.tasksFilter.states?.length ? this.tasksFilter.states : []
+      )
+      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, states, waitingStateModifiers, genericModifiers))
+    },
+
+    controlGroups () {
+      return [
+        {
+          title: 'Filter',
+          controls: [
+            {
+              title: 'Filter By ID',
+              action: 'taskIDFilter',
+              key: 'taskIDFilter',
+              value: this.tasksFilter.id
+            },
+            {
+              title: 'Filter By State',
+              action: 'taskStateFilter',
+              key: 'taskStateFilter',
+              value: this.tasksFilter.states,
+            },
+          ],
+        },
+      ]
+    },
+  },
+
+  methods: {
+    setOption (option, value) {
+      if (option === 'taskStateFilter') {
+        this.tasksFilter.states = value
+        this.tasksFilter.updated = new Date()
+      } else if (option === 'taskIDFilter') {
+        this.tasksFilter.id = value
+        this.tasksFilter.updated = new Date()
+      } else {
+        this[option] = value
+      }
+    },
+  },
 }
 </script>
