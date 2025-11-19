@@ -4515,7 +4515,7 @@ __metadata:
     vue-i18n: "npm:11.1.12"
     vue-router: "npm:4.5.1"
     vue-the-mask: "npm:0.11.1"
-    vue3-apexcharts: "npm:1.8.0"
+    vue3-apexcharts: "npm:1.10.0"
     vuetify: "npm:3.10.5"
     vuex: "npm:4.1.0"
   peerDependenciesMeta:
@@ -11622,13 +11622,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue3-apexcharts@npm:1.8.0":
-  version: 1.8.0
-  resolution: "vue3-apexcharts@npm:1.8.0"
+"vue3-apexcharts@npm:1.10.0":
+  version: 1.10.0
+  resolution: "vue3-apexcharts@npm:1.10.0"
   peerDependencies:
     apexcharts: ">=4.0.0"
     vue: ">=3.0.0"
-  checksum: 10c0/dfb6e0ff7a5d21227431c52107966e6e0a17bc809d95771f62cdb7cd29039de4bae00d33e632fb9f40f19d09aacd54e07cbf1dab55e925cd206e2a7afd50e0e1
+  checksum: 10c0/03592edbb0821a831e6d60a38d82b91482071e8b3ee9052c5078a9f093fd4cd32c094bb0f4c91659a84aadaf498ceee3c1a850fef1fe315f28fb84893df1f291
   languageName: node
   linkType: hard
 
