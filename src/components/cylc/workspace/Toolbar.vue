@@ -46,9 +46,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- control bar elements displayed only when there is a current workflow in the store -->
     <template v-if="currentWorkflow">
       <div class="c-workflow-controls d-flex align-center flex-shrink-0">
+        <v-tooltip v-if="isRunning">
+          <template v-slot:activator="{ props }">
+            <v-icon :icon="$options.icons.info" v-bind="props" />
+          </template>
+          <dl>
+            <dt>Owner:</dt>
+            <dd>{{ currentWorkflow.node.owner }}</dd>
+            <dt>Host:</dt>
+            <dd>{{ currentWorkflow.node.host }}</dd>
+            <dt>Cylc version:</dt>
+            <dd>{{ currentWorkflow.node.cylcVersion}}</dd>
+          </dl>
+        </v-tooltip>
+
         <WarningIcon
           :workflow="currentWorkflow"
-          style="font-size: 120%; padding-right: 0.3em;"
+          style="font-size: 120%; padding-left: 0.3em; padding-right: 0.3em;"
         />
 
         <v-btn
@@ -233,6 +247,7 @@ import {
   mdiAccount,
   mdiChevronDown,
   mdiArrowULeftTop,
+  mdiInformationOutline,
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
@@ -377,9 +392,6 @@ export default {
     },
     statusAndVersion () {
       let ret = upperFirst(this.currentWorkflow.node.statusMsg || '')
-      if (this.currentWorkflow.node.host && this.currentWorkflow.node.owner) {
-        ret += ` •  ${this.currentWorkflow.node.owner}@${this.currentWorkflow.node.host}`
-      }
       if (this.currentWorkflow.node.cylcVersion) {
         ret += ` • Cylc ${this.currentWorkflow.node.cylcVersion}`
       }
@@ -498,6 +510,7 @@ export default {
   icons: {
     add: mdiPlusBoxMultiple,
     hold: mdiPause,
+    info: mdiInformationOutline,
     list: mdiViewList,
     menu: mdiMicrosoftXboxControllerMenu,
     run: mdiPlay,
