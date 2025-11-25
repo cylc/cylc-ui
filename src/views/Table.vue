@@ -44,7 +44,7 @@ import {
   updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
-import { matchNode, groupStateFilters } from '@/components/cylc/common/filter'
+import { matchNode, groupStateFilters, globToRegex } from '@/components/cylc/common/filter'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -218,7 +218,13 @@ export default {
       const [states, waitingStateModifiers, genericModifiers] = groupStateFilters(
         this.tasksFilter.states?.length ? this.tasksFilter.states : []
       )
-      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, states, waitingStateModifiers, genericModifiers))
+      return this.tasks.filter(({ task }) => matchNode(
+        task,
+        globToRegex(this.tasksFilter.id),
+        states,
+        waitingStateModifiers,
+        genericModifiers
+      ))
     },
 
     controlGroups () {

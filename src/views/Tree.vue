@@ -53,7 +53,7 @@ import {
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import TreeComponent from '@/components/cylc/tree/Tree.vue'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
-import { matchID, matchState, groupStateFilters } from '@/components/cylc/common/filter'
+import { matchID, matchState, groupStateFilters, globToRegex } from '@/components/cylc/common/filter'
 
 const QUERY = gql`
 subscription Workflow ($workflowId: ID) {
@@ -322,7 +322,7 @@ export default {
 
       const stateMatch = matchState(node, states, waitingStateModifiers, genericModifiers)
       // This node should be included if any parent matches the ID filter
-      const idMatch = parentsIDMatch || matchID(node, this.tasksFilter.id)
+      const idMatch = parentsIDMatch || matchID(node, globToRegex(this.tasksFilter.id))
       let isMatch = stateMatch && idMatch
 
       let { children } = node
