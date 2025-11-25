@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     density="compact"
     v-model:page="page"
     v-model:items-per-page="itemsPerPage"
+    fixed-header
   >
     <template v-slot:item.task.name="{ item }">
       <div

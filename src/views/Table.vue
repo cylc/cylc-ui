@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <v-container
     fluid
-    class="c-table ma-0 pa-2 h-100 flex-column d-flex"
+    class="c-table pa-2 pb-0 h-100 flex-column d-flex"
   >
     <ViewToolbar
       :groups="controlGroups"
@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <TableComponent
         :tasks="filteredTasks"
         v-model:initial-options="dataTableOptions"
+        class="mh-100"
       />
     </div>
   </v-container>

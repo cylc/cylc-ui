@@ -16,44 +16,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="h-100">
-    <v-container
-      fluid
-      class="c-tree pa-2"
-      data-cy="tree-view"
-    >
-      <!-- The Toolbar -->
-      <v-row
-        no-gutters
-        class="d-flex flex-wrap"
-      >
-        <ViewToolbar
-          :groups="controlGroups"
-          @setOption="setOption"
-        />
-      </v-row>
-
-      <!-- The Tree -->
-      <v-row
-        no-gutters
-        class="mt-2"
-      >
-        <v-col
-          cols="12"
-          class="mh-100 position-relative"
-        >
-          <TreeComponent
-            :workflows="workflows"
-            :hoverable="false"
-            :autoStripTypes="['workflow']"
-            :node-filter-func="filterNode"
-            :flat="flat"
-            v-bind="{ expandAll, filterState }"
-            ref="treeComponent"
-          />
-        </v-col>
-      </v-row>
-    </v-container>
+  <div class="c-tree h-100 overflow-auto">
+    <ViewToolbar
+      class="toolbar"
+      :groups="controlGroups"
+      @setOption="setOption"
+    />
+    <TreeComponent
+      class="tree"
+      :workflows="workflows"
+      :hoverable="false"
+      :autoStripTypes="['workflow']"
+      :node-filter-func="filterNode"
+      :flat="flat"
+      v-bind="{ expandAll, filterState }"
+      ref="treeComponent"
+    />
   </div>
 </template>
 
@@ -372,3 +350,19 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+.c-tree {
+  .toolbar {
+    position: sticky;
+    top: 0;
+    padding: 0.5em;
+    background: white;
+    z-index: 1;
+  }
+  .tree {
+    width: 100%;
+    padding: 0 0.5em;
+  }
+}
+</style>
