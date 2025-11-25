@@ -124,8 +124,16 @@ describe('Table view', () => {
     })
 
     it('should filter by ID', async () => {
+      // plain ID
       wrapper.vm.tasksFilter = {
         id: 'taskA'
+      }
+      await nextTick()
+      expect(wrapper.vm.filteredTasks.length).to.equal(1)
+
+      // glob ID
+      wrapper.vm.tasksFilter = {
+        id: 'task[A]'
       }
       await nextTick()
       expect(wrapper.vm.filteredTasks.length).to.equal(1)
