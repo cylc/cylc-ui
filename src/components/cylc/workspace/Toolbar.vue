@@ -46,23 +46,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- control bar elements displayed only when there is a current workflow in the store -->
     <template v-if="currentWorkflow">
       <div class="c-workflow-controls d-flex align-center flex-shrink-0">
-        <v-tooltip v-if="isRunning">
-          <template v-slot:activator="{ props }">
-            <v-icon :icon="$options.icons.info" v-bind="props" />
-          </template>
-          <dl>
-            <dt>Owner:</dt>
-            <dd>{{ currentWorkflow.node.owner }}</dd>
-            <dt>Host:</dt>
-            <dd>{{ currentWorkflow.node.host }}</dd>
-            <dt>Cylc version:</dt>
-            <dd>{{ currentWorkflow.node.cylcVersion}}</dd>
-          </dl>
-        </v-tooltip>
-
         <WarningIcon
           :workflow="currentWorkflow"
-          style="font-size: 120%; padding-left: 0.3em; padding-right: 0.3em;"
+          style="font-size: 120%; padding-right: 0.3em;"
         />
 
         <v-btn
@@ -150,9 +136,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-menu>
       </v-btn>
 
+      <!-- workflow info icon -->
+      <v-tooltip v-if="isRunning" :activator="$event => $event.target.closest('span')">
+        <template v-slot:activator="{ props }">
+          <span v-bind="props">
+            <v-icon :icon="$options.icons.info"/>
+          </span>
+        </template>
+        <dl>
+          <dt><strong>Owner:</strong> {{ currentWorkflow.node.owner }}</dt>
+          <dt><strong>Host:</strong> {{ currentWorkflow.node.host }}</dt>
+          <dt><strong>Cylc version:</strong> {{ currentWorkflow.node.cylcVersion }}</dt>
+        </dl>
+      </v-tooltip>
+
       <!-- workflow status message -->
       <span class="status-msg text-body-2">
-        {{ statusAndVersion }}
+        {{ statusMessage }}
       </span>
 
       <v-spacer class="mx-0" />
@@ -390,12 +390,8 @@ export default {
         this.currentWorkflow.node.status === WorkflowState.STOPPED.name
       )
     },
-    statusAndVersion () {
-      let ret = upperFirst(this.currentWorkflow.node.statusMsg || '')
-      if (this.currentWorkflow.node.cylcVersion) {
-        ret += ` • Cylc ${this.currentWorkflow.node.cylcVersion}`
-      }
-      return ret
+    statusMessage () {
+      return upperFirst(this.currentWorkflow.node.statusMsg || '')
     },
     enabled () {
       // object holding the states of controls that are supposed to be enabled
