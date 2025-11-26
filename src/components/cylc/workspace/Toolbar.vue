@@ -155,6 +155,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{ statusMessage }}
       </span>
 
+      <!-- workflow version if different from UIS cylc-flow version -->
+      <span class="version-pop text-body-2">
+        {{ versionPopup }}
+      </span>
+
       <v-spacer class="mx-0" />
 
       <v-btn
@@ -235,6 +240,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { inject } from 'vue'
 import { mapState } from 'vuex'
 import {
   mdiCog,
@@ -392,6 +398,16 @@ export default {
     },
     statusMessage () {
       return upperFirst(this.currentWorkflow.node.statusMsg || '')
+    },
+    versionPopup () {
+      let ret = ''
+      if (
+        this.currentWorkflow.node.cylcVersion &&
+        this.currentWorkflow.node.cylcVersion !== inject('versionInfo').value?.['cylc-flow']
+      ) {
+        ret += ` • Cylc ${this.currentWorkflow.node.cylcVersion}`
+      }
+      return ret
     },
     enabled () {
       // object holding the states of controls that are supposed to be enabled
