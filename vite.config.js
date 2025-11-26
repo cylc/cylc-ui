@@ -88,7 +88,8 @@ export default defineConfig(({ mode }) => {
       },
       watch: {
         ignored: [
-          path.resolve(__dirname, './coverage')
+          path.resolve(__dirname, './coverage'),
+          path.resolve(__dirname, '**/.nfs*'),
         ]
       },
       warmup: {
