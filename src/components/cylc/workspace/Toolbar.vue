@@ -137,12 +137,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-btn>
 
       <!-- workflow info icon -->
-      <v-tooltip v-if="isRunning" :activator="$event => $event.target.closest('span')">
-        <template v-slot:activator="{ props }">
-          <span v-bind="props">
-            <v-icon :icon="$options.icons.info"/>
-          </span>
-        </template>
+      <v-icon
+        v-if="isRunning"
+        :icon="$options.icons.info"
+        id="info-icon"
+      />
+      <v-tooltip v-if="isRunning" activator="#info-icon">
         <dl>
           <dt><strong>Owner:</strong> {{ currentWorkflow.node.owner }}</dt>
           <dt><strong>Host:</strong> {{ currentWorkflow.node.host }}</dt>
