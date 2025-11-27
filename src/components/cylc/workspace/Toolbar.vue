@@ -153,11 +153,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- workflow status message -->
       <span class="status-msg text-body-2">
         {{ statusMessage }}
-      </span>
-
-      <!-- workflow version if different from UIS cylc-flow version -->
-      <span class="version-pop text-body-2">
-        {{ versionPopup }}
+        <!-- workflow Cylc version popup on differ with UIS version -->
+        <!-- nested within status-msg for style inheritance -->
+        <span v-if="currentWorkflow.node.cylcVersion !== uisFlowVersion">
+          {{ versionPopup }}
+        </span>
       </span>
 
       <v-spacer class="mx-0" />
@@ -318,11 +318,13 @@ export default {
   setup () {
     const { showNavBtn } = useNavBtn()
     const { toggleDrawer } = useDrawer()
+    const uisFlowVersion = inject('versionInfo').value?.['cylc-flow']
     return {
       eventBus,
       showNavBtn,
       toggleDrawer,
-      toolbarHeight
+      toolbarHeight,
+      uisFlowVersion
     }
   },
 
@@ -401,10 +403,7 @@ export default {
     },
     versionPopup () {
       let ret = ''
-      if (
-        this.currentWorkflow.node.cylcVersion &&
-        this.currentWorkflow.node.cylcVersion !== inject('versionInfo').value?.['cylc-flow']
-      ) {
+      if (this.currentWorkflow.node.cylcVersion) {
         ret += ` • Cylc ${this.currentWorkflow.node.cylcVersion}`
       }
       return ret
