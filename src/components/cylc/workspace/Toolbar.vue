@@ -318,7 +318,11 @@ export default {
   setup () {
     const { showNavBtn } = useNavBtn()
     const { toggleDrawer } = useDrawer()
-    const uisFlowVersion = inject('versionInfo').value?.['cylc-flow']
+    const uisVersionInfo = inject('versionInfo')
+    let uisFlowVersion = ''
+    if (uisVersionInfo) {
+      uisFlowVersion = uisVersionInfo.value?.['cylc-flow']
+    }
     return {
       eventBus,
       showNavBtn,
