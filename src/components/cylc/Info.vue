@@ -64,7 +64,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         },
       }">
         <!-- The metadata -->
-        <v-expansion-panel class="metadata-panel">
+        <v-expansion-panel
+          value="metadata"
+          class="metadata-panel"
+        >
           <v-expansion-panel-title>
             Metadata
           </v-expansion-panel-title>
@@ -100,7 +103,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-expansion-panel-text>
         </v-expansion-panel>
 
-        <v-expansion-panel class="run-mode-panel">
+        <v-expansion-panel
+          value="runMode"
+          class="run-mode-panel"
+        >
           <v-expansion-panel-title>
             Run Mode
           </v-expansion-panel-title>
@@ -112,7 +118,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel>
 
         <v-expansion-panel
+          v-if="inheritance?.length > 1"
+          value="inheritance"
+          data-cy="inheritance-panel"
+        >
+          <v-expansion-panel-title>
+            Inheritance
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <v-breadcrumbs :items="inheritance">
+              <template #divider>
+                <v-icon
+                  :icon="mdiChevronRight"
+                  size="small"
+                  class="mx-n1"
+                />
+              </template>
+            </v-breadcrumbs>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+
+        <v-expansion-panel
           v-if="xtriggers.length"
+          value="xtriggers"
           class="xtriggers-panel"
         >
           <v-expansion-panel-title>
@@ -139,7 +167,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel>
 
         <!-- The prereqs -->
-        <v-expansion-panel class="prerequisites-panel">
+        <v-expansion-panel
+          value="prereqs"
+          class="prerequisites-panel"
+        >
           <v-expansion-panel-title>
             Prerequisites
           </v-expansion-panel-title>
@@ -173,7 +204,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel>
 
         <!-- The outputs -->
-        <v-expansion-panel class="outputs-panel">
+        <v-expansion-panel
+          value="outputs"
+          class="outputs-panel"
+        >
           <v-expansion-panel-title>
             Outputs
           </v-expansion-panel-title>
@@ -190,7 +224,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-expansion-panel>
 
         <!-- The completion -->
-        <v-expansion-panel class="completion-panel">
+        <v-expansion-panel
+          value="completion"
+          class="completion-panel"
+        >
           <v-expansion-panel-title>
             Completion
           </v-expansion-panel-title>
@@ -220,6 +257,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useJobTheme } from '@/composables/localStorage'
 import GraphNode from '@/components/cylc/GraphNode.vue'
 import { formatCompletion } from '@/utils/outputs'
@@ -230,7 +268,8 @@ import {
   mdiPlay,
   mdiDramaMasks,
   mdiCheckboxOutline,
-  mdiCheckboxBlankOutline
+  mdiCheckboxBlankOutline,
+  mdiChevronRight
 } from '@mdi/js'
 import { cloneDeep } from 'lodash-es'
 import { formatDatetime } from '@/utils/datetime'
@@ -248,13 +287,19 @@ export default {
     },
     panelExpansion: {
       required: false,
-      default: [0],
+      default: ['metadata'],
     },
   },
 
   setup (props, { emit }) {
+    const inheritance = computed(
+      () => props.task?.node?.namespace?.slice(1) ?? []
+    )
+
     return {
+      inheritance,
       jobTheme: useJobTheme(),
+      mdiChevronRight,
     }
   },
 
@@ -411,6 +456,11 @@ export default {
       li {
         list-style: none;
       }
+    }
+
+    .v-breadcrumbs {
+      flex-wrap: wrap;
+      padding: 0;
     }
   }
 </style>

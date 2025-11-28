@@ -66,6 +66,7 @@ fragment UpdatedDelta on Updated {
 
 fragment TaskProxyData on TaskProxy {
   id
+  namespace
   state
   isHeld
   isQueued
@@ -217,7 +218,7 @@ export default {
 
   setup (props, { emit }) {
     const requestedTokens = useInitialOptions('requestedTokens', { props, emit })
-    const panelExpansion = useInitialOptions('panelExpansion', { props, emit }, [0])
+    const panelExpansion = useInitialOptions('panelExpansion', { props, emit }, ['metadata'])
     return {
       requestedTokens,
       panelExpansion,
