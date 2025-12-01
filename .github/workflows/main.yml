@@ -19,10 +19,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: yarn
@@ -44,7 +44,7 @@ jobs:
           yarn run coverage:unit
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: coverage_unit
           path: coverage/clover.xml
@@ -75,10 +75,10 @@ jobs:
       COVERAGE: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: yarn
@@ -101,14 +101,14 @@ jobs:
           browser: ${{ matrix.browser }}
 
       - name: Upload screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: 'cypress-screenshots_${{ matrix.browser }}_${{ matrix.os }}'
           path: tests/e2e/screenshots
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: 'coverage_${{ matrix.browser }}_${{ matrix.os }}'
           path: coverage/lcov.info
@@ -120,10 +120,10 @@ jobs:
     timeout-minutes: 2
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download coverage artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
 
       - name: Codecov upload
         uses: codecov/codecov-action@v5

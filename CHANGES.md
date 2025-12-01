@@ -12,6 +12,32 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.11.0 (Released 2025-11-27)
+
+### 🚀 Enhancements
+
+[#2290](https://github.com/cylc/cylc-ui/pull/2290) - Added tooltip to distinguish between multiple log view tabs.
+
+[#2331](https://github.com/cylc/cylc-ui/pull/2331) - Improved how task states are displayed in the sidebar.
+
+[#2339](https://github.com/cylc/cylc-ui/pull/2339) - In the sidebar, don't include task states for stopped workflows in any parent state totals.
+
+### 🔧 Fixes
+
+[#2284](https://github.com/cylc/cylc-ui/pull/2284) - Fixed Log & Info commands erroneously showing for families.
+
+[#2335](https://github.com/cylc/cylc-ui/pull/2335) - The play, pause and stop buttons in the workspace toolbar will now "grey out" if you do not have the permissions to run these commands.
+
+[#2349](https://github.com/cylc/cylc-ui/pull/2349) - Fixed workflow sorting bug in the sidebar.
+
+## cylc-ui-2.10.0 (Released 2025-10-01)
+
+### 🚀 Enhancements
+
+[#2265](https://github.com/cylc/cylc-ui/pull/2265) - Improved the legibility of job details in the tree view and added a job details menu to the log view.
+
+[#2317](https://github.com/cylc/cylc-ui/pull/2317) - Show estimated finish times of running jobs in the tree and table views.
+
 ## cylc-ui-2.9.0 (Released 2025-09-04)
 
 ### 🚀 Enhancements

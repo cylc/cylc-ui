@@ -1,6 +1,6 @@
 {
   "name": "cylc-ui",
-  "version": "2.9.0",
+  "version": "2.11.0",
   "private": true,
   "license": "GPL-3.0-only",
   "type": "module",
@@ -25,13 +25,13 @@
   },
   "dependencies": {
     "@apollo/client": "3.14.0",
-    "@hpcc-js/wasm": "2.26.0",
+    "@hpcc-js/wasm": "2.28.0",
     "@lumino/default-theme": "2.1.10",
     "@lumino/widgets": "2.7.1",
     "@mdi/js": "7.4.47",
     "@vueuse/core": "13.9.0",
     "apexcharts": "3.54.1",
-    "axios": "1.11.0",
+    "axios": "1.13.2",
     "dedent": "1.7.0",
     "enumify": "2.0.0",
     "graphiql": "4.1.2",
@@ -41,27 +41,27 @@
     "markdown-it": "14.1.0",
     "mitt": "3.0.1",
     "nprogress": "1.0.0-1",
-    "preact": "10.27.0",
+    "preact": "10.27.2",
     "simple-icons": "15.2.0",
     "subscriptions-transport-ws": "0.11.0",
     "svg-pan-zoom": "3.6.2",
-    "vue": "3.5.22",
+    "vue": "3.5.24",
     "vue-i18n": "11.1.12",
     "vue-router": "4.5.1",
     "vue-the-mask": "0.11.1",
     "vue3-apexcharts": "1.8.0",
-    "vuetify": "3.9.7",
+    "vuetify": "3.10.5",
     "vuex": "4.1.0"
   },
   "devDependencies": {
     "@cypress/code-coverage": "3.14.6",
-    "@vitejs/plugin-react": "5.0.3",
+    "@vitejs/plugin-react": "5.1.1",
     "@vitejs/plugin-vue": "6.0.1",
-    "@vitest/coverage-istanbul": "3.2.4",
+    "@vitest/coverage-istanbul": "4.0.8",
     "@vue/test-utils": "2.4.6",
     "concurrently": "9.2.1",
     "cross-fetch": "4.1.0",
-    "cypress": "14.5.4",
+    "cypress": "15.6.0",
     "cypress-vite": "1.7.0",
     "eslint": "8.57.1",
     "eslint-config-standard": "17.1.0",
@@ -76,18 +76,18 @@
     "express": "5.1.0",
     "express-ws": "5.0.2",
     "istanbul-lib-coverage": "3.2.2",
-    "jsdom": "26.1.0",
+    "jsdom": "27.2.0",
     "json-server": "0.17.4",
     "nodemon": "3.1.10",
     "nyc": "17.1.0",
-    "sass-embedded": "1.91.0",
+    "sass-embedded": "1.93.3",
     "sinon": "21.0.0",
     "standard": "17.1.2",
-    "vite": "7.1.6",
+    "vite": "7.2.2",
     "vite-plugin-eslint": "1.8.1",
     "vite-plugin-istanbul": "7.1.0",
     "vite-plugin-vuetify": "2.1.2",
-    "vitest": "3.2.4"
+    "vitest": "4.0.8"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -100,5 +100,5 @@
   "bugs": {
     "url": "https://github.com/cylc/cylc-ui/issues"
   },
-  "packageManager": "yarn@4.10.3"
+  "packageManager": "yarn@4.11.0"
 }

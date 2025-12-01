@@ -223,7 +223,7 @@ describe('State saving', () => {
     cy.get('.c-table .v-data-table-footer__items-per-page .v-select')
       .as('itemsPerPage')
       .find('input')
-      .should('not.have.value', 'All')
+      .should('not.have.value', -1)
       .get('@itemsPerPage')
       .click()
       .get('[role="listbox"] .v-list-item')
@@ -232,7 +232,7 @@ describe('State saving', () => {
       // Wait for menu to close
       .should('not.exist')
       .get('@itemsPerPage').find('input')
-      .should('have.value', 'All')
+      .should('have.value', -1)
     // Navigate away
     cy.visit('/#/')
       .get('.c-dashboard')
@@ -241,7 +241,7 @@ describe('State saving', () => {
     cy.get('@platformCol')
       .should('have.class', sortedClass)
     cy.get('@itemsPerPage').find('input')
-      .should('have.value', 'All')
+      .should('have.value', -1)
   })
 
   describe('Flow nums', () => {

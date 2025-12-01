@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <!-- control bar elements displayed only when there is a current workflow in the store -->
     <template v-if="currentWorkflow">
-      <div class="c-workflow-controls flex-shrink-0">
+      <div class="c-workflow-controls d-flex align-center flex-shrink-0">
         <WarningIcon
           :workflow="currentWorkflow"
           style="font-size: 120%; padding-right: 0.3em;"
@@ -387,6 +387,7 @@ export default {
       return {
         playToggle: (
           // the play button (for the play from stopped scenario)
+          this.user.permissions.includes('play') &&
           this.isStopped &&
           (
             this.expecting.play === null ||
@@ -395,6 +396,10 @@ export default {
         ),
         pauseToggle: (
           // the play/pause button
+          (
+            (this.isPaused && this.user.permissions.includes('resume')) ||
+            (!this.isPaused && this.user.permissions.includes('pause'))
+          ) &&
           !this.isStopped &&
           !this.expecting.stop &&
           this.currentWorkflow.node.status !== WorkflowState.STOPPING.name &&
@@ -405,6 +410,7 @@ export default {
         ),
         stopToggle: (
           // the stop button
+          this.user.permissions.includes('stop') &&
           !this.isStopped &&
           (
             this.expecting.stop === null ||

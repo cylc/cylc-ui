@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :is="props.allViews.get(name).component"
       :workflow-name="workflowName"
       v-model:initial-options="views.get(id).initialOptions"
+      :widgetID="id"
       class="h-100"
     />
   </WidgetComponent>

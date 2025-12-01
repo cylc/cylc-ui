@@ -45,7 +45,7 @@
             "submit-failed": 0,
             "submitted": 0,
             "running": 0,
-            "failed": 0,
+            "failed": 1,
             "succeeded": 0
           },
           "latestStateTasks": {},
@@ -73,7 +73,7 @@
             "preparing": 0,
             "submit-failed": 0,
             "submitted": 0,
-            "running": 0,
+            "running": 3,
             "failed": 0,
             "succeeded": 0
           },

@@ -106,7 +106,7 @@ describe('GScan component', () => {
       cy.get('[data-cy="filter task state"]')
         .click()
         .get('.v-select__content')
-        .contains('.v-list-item', 'succeed')
+        .contains('.v-list-item', 'succeeded')
         .click({ force: true })
       cy.get('.c-treeitem:visible')
         .should('have.length', 1)
@@ -168,6 +168,27 @@ describe('GScan component', () => {
         .click({ force: true })
       cy.get('@badge')
         .should('be.visible')
+    })
+  })
+
+  describe('Task state badges', () => {
+    it('collates task states up the tree', () => {
+      cy.get('.c-gscan')
+        .find('[data-node-name="other/multi"]').as('parent')
+        .find('.node:first .task-state-badge')
+        .should('have.length', 1)
+        .should('have.class', 'running')
+        .contains('3')
+      // child run2 contributes the running tasks
+      cy.get('@parent').find('[data-node-name="run2"] .task-state-badge')
+        .should('have.length', 1)
+        .should('have.class', 'running')
+        .contains('3')
+      // but child run1 is stopped and so doesn't contribute
+      cy.get('@parent').find('[data-node-name="run1"] .task-state-badge')
+        .should('have.length', 1)
+        .should('have.class', 'failed')
+        .contains('1')
     })
   })
 

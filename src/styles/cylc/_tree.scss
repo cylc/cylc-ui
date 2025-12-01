@@ -20,7 +20,7 @@
 
 $active-color: #BDD5F7;
 /** Height of each line/row in the tree. */
-$line-height: 1.8em;
+$node-height: 1.8em;
 /**
  * The number of visible outputs in the job info box, under the “outputs” header.
  * This value is used to calculate the maximum height of the
@@ -64,7 +64,8 @@ $icon-width: 1.5rem;
   vertical-align:middle;
   width: 100%;
   .node {
-    line-height: $line-height;
+    min-height: $node-height;
+    line-height: normal;
     display: block;
 
     .node-expand-collapse-button {

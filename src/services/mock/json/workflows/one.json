@@ -15,22 +15,22 @@
           "expired": 0,
           "preparing": 0,
           "submit-failed": 0,
-          "submitted": 0,
-          "running": 1,
-          "failed": 1,
+          "submitted": 1,
+          "running": 10,
+          "failed": 2,
           "succeeded": 2
         },
         "latestStateTasks": {
           "submitted": [],
           "running": [
-            "checkpoint"
+            "20000102T0000Z/checkpoint"
           ],
           "succeeded": [
-            "eventually_succeeded",
-            "succeeded"
+            "20000102T0000Z/eventually_succeeded",
+            "20000102T0000Z/succeeded"
           ],
           "failed": [
-            "failed"
+            "20000102T0000Z/failed"
           ]
         }
       },
