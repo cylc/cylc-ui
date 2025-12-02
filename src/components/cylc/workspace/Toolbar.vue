@@ -437,6 +437,7 @@ export default {
   },
 
   watch: {
+    // reset the "expecting" state markers when the workflow state changes
     isRunning () {
       this.expecting.play = null
     },
@@ -445,6 +446,14 @@ export default {
     },
     isStopped () {
       this.expecting.stop = null
+    },
+    // reset the "expecting" state markers when we switch workflow
+    currentWorkflow () {
+      this.expecting = {
+        play: null,
+        paused: null,
+        stop: null,
+      }
     },
   },
 
