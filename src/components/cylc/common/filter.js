@@ -92,7 +92,11 @@ export function matchState (
     ) &&
     (
       !genericModifiers.length ||
-      genericModifiers.some((modifier) => node.node[modifier])
+      genericModifiers.some((modifier) => node.node[modifier]) ||
+      (
+        genericModifiers.includes('isSkip') &&
+        node.node.runtime?.runMode === 'Skip'
+      )
     )
   )
 }

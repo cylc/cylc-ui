@@ -363,7 +363,7 @@ export default {
     padding: 0.5em;
   }
   .tree {
-    margin: 0 0.5em 0 0.5em;
+    margin: 0.5em;
     width: calc(100% - 1em);
   }
 }
