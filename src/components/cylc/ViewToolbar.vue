@@ -82,17 +82,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             >
               <Task :task="item.taskProps" />
             </template>
-            <!-- disable expansion until parent active (for task state filters) -->
-            <template
-              v-slot:toggle="{ props: toggleProps, isActive, isOpen }"
-              v-if="iControl.props['task-state-icons']"
-            >
-              <v-icon
-                :icon="isOpen ? $options.icons.mdiChevronUp : $options.icons.mdiChevronDown"
-                :disabled="!isActive && !isOpen"
-                v-bind="toggleProps"
-              />
-            </template>
           </v-treeview>
         </v-menu>
       </div>
@@ -109,6 +98,7 @@ import {
   mdiFilter,
   mdiMagnify,
 } from '@mdi/js'
+import { TaskState, WaitingStateModifierNames } from '@/model/TaskState.model'
 
 export default {
   name: 'ViewToolbar',
@@ -202,6 +192,7 @@ export default {
       let callback // callback to fire when control is activated
       let disabled // true if control should not be enabled
       let props
+      let action
       const values = this.getValues()
       for (const group of this.groups) {
         iGroup = {
@@ -212,9 +203,10 @@ export default {
           callback = null
           disabled = false
           props = control.props || {}
+          action = control.action
 
           // set callback
-          switch (control.action) {
+          switch (action) {
             case 'toggle': // toggle button
               callback = (e) => this.toggle(control, e)
               break
@@ -224,7 +216,7 @@ export default {
             case 'taskIDFilter': // specialised "input" for filtering tasks
               callback = (value) => this.set(control, value)
               control.icon = mdiMagnify
-              control.action = 'input'
+              action = 'input'
               props = {
                 placeholder: 'Search',
                 ...props,
@@ -234,7 +226,7 @@ export default {
               callback = (value) => this.set(control, value)
               break
             case 'taskStateFilter': // specialised "menu" for filtering tasks
-              control.action = 'menu'
+              action = 'menu'
               control.icon = mdiFilter
               props = {
                 items: taskStateItems,
@@ -266,6 +258,7 @@ export default {
 
           iControl = {
             ...control,
+            action,
             props,
             callback,
             disabled
@@ -308,6 +301,17 @@ export default {
     },
     set (control, value) {
       // update the value
+      if ( // special logic for the taskStateFilter
+        control.action === 'taskStateFilter' &&
+        // if a waiting state modifier is selected
+        value.some((modifier) => WaitingStateModifierNames.includes(modifier)) &&
+        // but the waiting state is not
+        !value.includes(TaskState.WAITING.name)
+      ) {
+        // then add the waiting state (i.e, don't allow the user to de-select
+        // waiting whilst a modifier is in play)
+        value.push(TaskState.WAITING.name)
+      }
       this.$emit('setOption', control.key, value)
     },
     autoResizeInput (e) {
