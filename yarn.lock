@@ -4485,7 +4485,7 @@ __metadata:
     eslint-plugin-promise: "npm:6.6.0"
     eslint-plugin-vue: "npm:9.33.0"
     eslint-plugin-vuetify: "npm:2.5.2"
-    express: "npm:5.2.0"
+    express: "npm:5.2.1"
     express-ws: "npm:5.0.2"
     graphiql: "npm:4.1.2"
     graphql: "npm:16.11.0"
@@ -5875,9 +5875,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:5.2.0":
-  version: 5.2.0
-  resolution: "express@npm:5.2.0"
+"express@npm:5.2.1":
+  version: 5.2.1
+  resolution: "express@npm:5.2.1"
   dependencies:
     accepts: "npm:^2.0.0"
     body-parser: "npm:^2.2.1"
@@ -5907,7 +5907,7 @@ __metadata:
     statuses: "npm:^2.0.1"
     type-is: "npm:^2.0.1"
     vary: "npm:^1.1.2"
-  checksum: 10c0/be184dbd5eadffd899811bcd91b22df96d968b29e31076e8bbafcaa5c25dafd0012b8daece4135b876e4576407e4ca811c089ead2bb45f9e08df812ba0966a82
+  checksum: 10c0/45e8c841ad188a41402ddcd1294901e861ee0819f632fb494f2ed344ef9c43315d294d443fb48d594e6586a3b779785120f43321417adaef8567316a55072949
   languageName: node
   linkType: hard
 
