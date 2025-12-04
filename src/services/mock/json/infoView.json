@@ -10,6 +10,13 @@
           "isQueued": false,
           "isRunahead": false,
 
+          "namespace": [
+            "root",
+            "BAD",
+            "failed"
+          ],
+
+
           "task": {
             "meanElapsedTime": "10",
             "meta": {
