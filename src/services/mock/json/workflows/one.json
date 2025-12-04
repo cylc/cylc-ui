@@ -50,6 +50,13 @@
       "familyProxies": [
         {
           "__typename": "FamilyProxy",
+          "id": "~user/one//20000102T0000Z/root",
+          "name": "root",
+          "state": "failed",
+          "cyclePoint": "20000102T0000Z"
+        },
+        {
+          "__typename": "FamilyProxy",
           "id": "~user/one//20000102T0000Z/BAD",
           "name": "BAD",
           "state": "failed",
@@ -115,6 +122,9 @@
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {
@@ -135,6 +145,9 @@
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {
@@ -152,9 +165,12 @@
           "id": "~user/one//20000102T0000Z/failed",
           "name": "failed",
           "state": "failed",
-          "isHeld": false,
+          "isHeld": true,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1,2]",
           "firstParent": {
@@ -174,6 +190,9 @@
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": true,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {
@@ -193,6 +212,9 @@
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[]",
           "firstParent": {
@@ -212,6 +234,9 @@
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": false,
+          "isXtriggered": false,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {
@@ -223,6 +248,9 @@
           "task": {
             "meanElapsedTime": 4.0,
             "name": "succeeded"
+          },
+          "runtime": {
+            "runMode": "Skip"
           }
         },
         {
@@ -232,6 +260,9 @@
           "isHeld": false,
           "isQueued": false,
           "isRunahead": false,
+          "isRetry": false,
+          "isWallclock": true,
+          "isXtriggered": true,
           "cyclePoint": "20000102T0000Z",
           "flowNums": "[1]",
           "firstParent": {

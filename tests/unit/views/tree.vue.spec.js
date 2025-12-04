@@ -55,7 +55,7 @@ const workflowNode = {
                 {
                   ...expandID('~user/workflow1//1/foo'),
                   type: 'task',
-                  node: { state: 'failed' },
+                  node: { state: 'failed', isHeld: true },
                   children: [
                     {
                       ...expandID('~user/workflow1//1/foo/1'),
@@ -114,19 +114,33 @@ describe('Tree view', () => {
     })
 
     it.each([
+      // the task should be displayed
       { tasksFilter: { id: 'foo' }, filteredOut: false },
       { tasksFilter: { states: ['failed'] }, filteredOut: false },
       { tasksFilter: { id: 'foo', states: ['failed'] }, filteredOut: false },
+      { tasksFilter: { id: 'foo', states: ['isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'foo', states: ['failed', 'isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'f*', states: ['failed', 'isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'f?', states: ['failed', 'isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'f[o]o', states: ['failed', 'isHeld'] }, filteredOut: false },
+      { tasksFilter: { id: 'f[!z]o', states: ['failed', 'isHeld'] }, filteredOut: false },
 
+      // the task should *not* be displayed
       { tasksFilter: { id: 'asdf' }, filteredOut: true },
       { tasksFilter: { states: ['running'] }, filteredOut: true },
       { tasksFilter: { id: 'foo', states: ['running'] }, filteredOut: true },
       { tasksFilter: { id: 'asdf', states: ['failed'] }, filteredOut: true },
+      { tasksFilter: { id: 'asdf', states: ['failed', 'isRunahead'] }, filteredOut: true },
+      { tasksFilter: { id: 'asdf*' }, filteredOut: true },
+      { tasksFilter: { id: 'asdf?' }, filteredOut: true },
+      { tasksFilter: { id: 'asd[f]' }, filteredOut: true },
+      { tasksFilter: { id: 'asd[!f]' }, filteredOut: true },
     ])('filters by $tasksFilter', async ({ tasksFilter, filteredOut }) => {
       const wrapper = mountFunction()
       wrapper.vm.tasksFilter = tasksFilter
       await nextTick()
-      expect(wrapper.vm.filterState).toMatchObject(tasksFilter)
+      expect(wrapper.vm.filterState[0]).toMatchObject(tasksFilter.id)
+      expect(wrapper.vm.filterState[1]).toMatchObject(tasksFilter.states)
       const filteredOutNodesCache = new Map()
       expect(wrapper.vm.filterNode(workflowNode, filteredOutNodesCache)).toEqual(!filteredOut)
       expect(getIDMap(filteredOutNodesCache)).toEqual({
