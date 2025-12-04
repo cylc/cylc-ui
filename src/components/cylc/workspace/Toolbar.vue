@@ -136,9 +136,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </v-menu>
       </v-btn>
 
+      <!-- workflow info icon -->
+      <v-icon
+        v-if="isRunning"
+        :icon="$options.icons.info"
+        id="info-icon"
+      />
+      <v-tooltip v-if="isRunning" activator="#info-icon">
+        <dl>
+          <dt><strong>Owner:</strong> {{ currentWorkflow.node.owner }}</dt>
+          <dt><strong>Host:</strong> {{ currentWorkflow.node.host }}</dt>
+          <dt><strong>Cylc version:</strong> {{ currentWorkflow.node.cylcVersion }}</dt>
+        </dl>
+      </v-tooltip>
+
       <!-- workflow status message -->
       <span class="status-msg text-body-2">
-        {{ statusAndVersion }}
+        {{ statusMessage }}
+        <!-- workflow Cylc version popup on differ with UIS version -->
+        <!-- nested within status-msg for style inheritance -->
+        <span v-if="currentWorkflow.node.cylcVersion !== uisFlowVersion">
+          {{ versionPopup }}
+        </span>
       </span>
 
       <v-spacer class="mx-0" />
@@ -221,6 +240,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
+import { inject } from 'vue'
 import { mapState } from 'vuex'
 import {
   mdiCog,
@@ -233,6 +253,7 @@ import {
   mdiAccount,
   mdiChevronDown,
   mdiArrowULeftTop,
+  mdiInformationOutline,
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
@@ -266,6 +287,8 @@ subscription Workflow ($workflowId: ID) {
 
 fragment WorkflowData on Workflow {
   id
+  host
+  owner
   status
   statusMsg
   nEdgeDistance
@@ -295,11 +318,17 @@ export default {
   setup () {
     const { showNavBtn } = useNavBtn()
     const { toggleDrawer } = useDrawer()
+    const uisVersionInfo = inject('versionInfo')
+    let uisFlowVersion = ''
+    if (uisVersionInfo) {
+      uisFlowVersion = uisVersionInfo.value?.['cylc-flow']
+    }
     return {
       eventBus,
       showNavBtn,
       toggleDrawer,
-      toolbarHeight
+      toolbarHeight,
+      uisFlowVersion
     }
   },
 
@@ -373,8 +402,11 @@ export default {
         this.currentWorkflow.node.status === WorkflowState.STOPPED.name
       )
     },
-    statusAndVersion () {
-      let ret = upperFirst(this.currentWorkflow.node.statusMsg || '')
+    statusMessage () {
+      return upperFirst(this.currentWorkflow.node.statusMsg || '')
+    },
+    versionPopup () {
+      let ret = ''
       if (this.currentWorkflow.node.cylcVersion) {
         ret += ` • Cylc ${this.currentWorkflow.node.cylcVersion}`
       }
@@ -502,6 +534,7 @@ export default {
   icons: {
     add: mdiPlusBoxMultiple,
     hold: mdiPause,
+    info: mdiInformationOutline,
     list: mdiViewList,
     menu: mdiMicrosoftXboxControllerMenu,
     run: mdiPlay,
