@@ -383,8 +383,8 @@ class WorkflowService {
    *
    * @param {DocumentNode} query - an already parsed GraphQL query (i.e. not a `string`)
    * @param {Object} variables
-   * @param {SubscriptionOptions} subscriptionOptions - { next(), error() }
-   * @returns {Subscription}
+   * @param {import('rxjs').Observer} subscriptionOptions
+   * @returns {import('rxjs').Subscription}
    */
   startCylcSubscription (query, variables, subscriptionOptions) {
     if (!query) {
@@ -403,14 +403,7 @@ class WorkflowService {
       query,
       variables,
       fetchPolicy: 'no-cache'
-    }).subscribe({
-      next (value) {
-        subscriptionOptions.next(value)
-      },
-      error (errorValue) {
-        subscriptionOptions.error(errorValue)
-      }
-    })
+    }).subscribe(subscriptionOptions)
   }
 
   /**
