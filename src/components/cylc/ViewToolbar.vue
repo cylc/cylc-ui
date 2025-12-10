@@ -218,7 +218,7 @@ export default {
               control.icon = mdiMagnify
               action = 'input'
               props = {
-                placeholder: 'Search',
+                placeholder: 'Search     (globs supported)',
                 ...props,
               }
               break
