@@ -23,6 +23,9 @@ import {
   TaskStateNames,
   WaitingStateModifierNames,
 } from '@/model/TaskState.model'
+import {
+  escapeRegExp
+} from 'lodash-es'
 
 /* Convert a glob to a Regex.
  *
@@ -45,14 +48,12 @@ export function globToRegex (glob) {
     // prefix a space then subtract the first four characters (`\x20`)
     // from the result
     // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/escape
-    RegExp.escape(' ' + glob.trim())
-      .substr(4)
-      // `*` -> `.*`
+    escapeRegExp(glob.trim())
       .replace(/\\\*/, '.*')
       // `?` -> `.`
       .replace(/\\\?/, '.')
       // `[!X]` -> `[^X]`
-      .replace(/\\\[\\x21([^]*)\\\]/, '[^$1]')
+      .replace(/\\\[!([^]*)\\\]/, '[^$1]')
       // `[X]` -> `[X]`
       .replace(/\\\[([^]*)\\\]/, '[$1]')
   )
