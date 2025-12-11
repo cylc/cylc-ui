@@ -99,7 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :workflows="workflows"
         :node-filter-func="filterNode"
         tree-item-component="GScanTreeItem"
-        class="c-gscan-workflow"
+        class="c-gscan-workflow pa-0"
         ref="tree"
         v-bind="{ filterState }"
       />

@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="h-100 c-tree">
+  <div class="c-tree h-100 overflow-auto">
     <ViewToolbar
       class="toolbar"
       :groups="controlGroups"
@@ -356,16 +356,13 @@ export default {
   .toolbar {
     position: sticky;
     top: 0;
-    height: 4em;
     padding: 0.5em;
     background: white;
     z-index: 1;
   }
   .tree {
-    height: calc(100% - 4.1em);
     width: 100%;
-    padding-left: 0.5em !important;
-    overflow-y: scroll;
+    padding: 0 0.5em;
   }
 }
 </style>
