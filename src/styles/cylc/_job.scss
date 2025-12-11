@@ -102,3 +102,12 @@ $themes: (
         }
     }
 }
+
+.task-state-badge.retry, .task-state-badge.held {
+  font-size: 0.8em;
+  min-width: 0;
+  background: none;
+  border: none;
+  padding: 0 0 0.2em 0;
+  margin: none;
+}
