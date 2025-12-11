@@ -147,6 +147,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <dt><strong>Owner:</strong> {{ currentWorkflow.node.owner }}</dt>
           <dt><strong>Host:</strong> {{ currentWorkflow.node.host }}</dt>
           <dt><strong>Cylc version:</strong> {{ currentWorkflow.node.cylcVersion }}</dt>
+          <dt><strong>Run mode:</strong> {{ currentWorkflow.node.runMode }}</dt>
         </dl>
       </v-tooltip>
 
@@ -293,6 +294,7 @@ fragment WorkflowData on Workflow {
   statusMsg
   nEdgeDistance
   cylcVersion
+  runMode
 }
 
 fragment AddedDelta on Added {
