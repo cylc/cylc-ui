@@ -117,6 +117,13 @@ function getStatesInfo (node, stateTotals = {}) {
   } else if (node.type === 'workflow' && node.node.stateTotals) {
     // if we hit a workflow node, stop and merge state
 
+    if (node.node.containsHeld) {
+      stateTotals.held = true
+    }
+    if (node.node.containsRetry) {
+      stateTotals.retry = true
+    }
+
     // the non-zero state totals from this node with all the others from the tree
     for (const state of taskStatesOrdered) {
       let nodeTotal = node.node.stateTotals[state]
