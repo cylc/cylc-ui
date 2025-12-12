@@ -11,6 +11,7 @@
         "runMode": "live",
         "status": "running",
         "statusMsg": "running",
+        "lastUpdated": 1765537625.399079,
         "stateTotals": {
           "waiting": 3,
           "expired": 0,
