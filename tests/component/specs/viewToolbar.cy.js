@@ -27,7 +27,7 @@ describe('View Toolbar Component', () => {
     cy.vmount(
       ViewToolbar,
       {
-        props: { groups }
+        props: { groups },
       }
     ).as('wrapper')
     // add the classes Vuetify requires
@@ -223,5 +223,94 @@ describe('View Toolbar Component', () => {
     ])
     // TODO: visual regression test
     // https://github.com/cylc/cylc-ui/issues/178
+  })
+
+  it('filters task states', () => {
+    mountToolbar([
+      {
+        title: 'Group 1',
+        controls: [
+          {
+            title: 'Filter',
+            action: 'taskStateFilter',
+            value: [],
+            key: 'filter'
+          }
+        ]
+      },
+    ])
+    cy.get('.control > button').click()
+    cy.get('.v-list-item').as('menuItems')
+      .filter(':visible')
+      .should('have.length', 10)
+      .contains('.v-list-item', 'waiting').as('waitingItem')
+
+    // 1) select the waiting state and expand the waiting submenu
+    cy.get('@waitingItem')
+      .click()
+      .find('button')
+      .click({ force: true })
+
+      // the setOption event should be fired
+      .get('@wrapper').then(({ wrapper }) => {
+        expect(
+          wrapper.emitted().setOption.at(-1)[1]
+        ).to.deep.equal(['waiting'])
+      })
+
+      // the waiting state should be selected
+      .get('@waitingItem')
+      .should('have.class', 'v-list-item--active')
+
+      // the waiting submenu should be open
+      .get('.v-list-item').as('menuItems')
+      .filter(':visible')
+      .should('have.length', 15)
+
+    // 2) select the Retry state
+    cy.get('@menuItems')
+      .contains('Retry')
+      .click({ force: true })
+
+      // the setOption event should be fired
+      .get('@wrapper').then(({ wrapper }) => {
+        expect(
+          wrapper.emitted().setOption.at(-1)[1]
+        ).to.deep.equal(['waiting', 'isRetry'])
+      })
+
+    // 3) unselect the waiting state
+    cy.get('@waitingItem')
+      .click()
+
+      // implementation detail: the setOption event is fired again
+      // but the waiting state is not removed
+      .get('@wrapper').then(({ wrapper }) => {
+        expect(
+          wrapper.emitted().setOption.at(-1)[1]
+        ).to.deep.equal(['isRetry', 'waiting'])
+      })
+
+      // the waiting state should still be selected
+      .get('@waitingItem')
+      .should('have.class', 'v-list-item--active')
+
+    // 3) unselect the retry state THEN the waiting state
+    cy.get('@menuItems')
+      .contains('Retry')
+      .click({ force: true })
+      .get('@waitingItem')
+      .click()
+
+      // the waiting state should NOT be selected
+      .get('@waitingItem')
+      .should('not.have.class', 'v-list-item--active')
+
+      // the setOption event should be fired
+      .get('@wrapper').then(({ wrapper }) => {
+        expect(
+          wrapper.emitted().setOption.at(-1)[1]
+        ).to.deep.equal([])
+      })
   })
 })
