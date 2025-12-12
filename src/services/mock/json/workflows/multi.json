@@ -67,6 +67,7 @@
           "host": "ncc1701.starfleet.gov",
           "cylcVersion": "8.5.0.dev",
           "port": 43078,
+          "lastUpdated": 1765539542.0254955,
           "stateTotals": {
             "waiting": 2,
             "expired": 0,
