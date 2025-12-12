@@ -8,6 +8,7 @@
         "host": "localhost",
         "port": 43079,
         "cylcVersion": "8.4.2",
+        "runMode": "live",
         "status": "running",
         "statusMsg": "running",
         "stateTotals": {
