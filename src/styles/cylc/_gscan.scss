@@ -45,6 +45,10 @@
       .c-treeitem {
         margin: 0.25em 0;
 
+        &.compact {
+          margin: 0;
+        }
+
         .c-treeitem {
           margin: 0;
         }
