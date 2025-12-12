@@ -34,3 +34,5 @@ export const useReducedAnimation = () => useLocalStorage('reducedAnimation', fal
 export const useWorkflowWarnings = () => useLocalStorage('useWorkflowWarnings', true)
 
 export const useLogWordWrapDefault = () => useLocalStorage('logWordWrap', false)
+
+export const useCompactMode = () => useLocalStorage('compactMode', false)

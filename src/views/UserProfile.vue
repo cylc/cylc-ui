@@ -221,6 +221,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </template>
                 </v-select>
               </v-row>
+
+              <v-row no-gutters class="align-center wrap">
+                <v-col cols="3">
+                  <span>Compact Mode</span>
+                </v-col>
+                <v-checkbox
+                  v-model="compactMode"
+                />
+              </v-row>
             </v-container>
           </v-defaults-provider>
         </v-form>
@@ -233,6 +242,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import { mapState } from 'vuex'
 import { mdiCog, mdiFormatFontSizeDecrease, mdiFormatFontSizeIncrease } from '@mdi/js'
 import {
+  useCompactMode,
   useCyclePointsOrderDesc,
   useJobTheme,
   useReducedAnimation,
@@ -262,6 +272,7 @@ export default {
       jobTheme: useJobTheme(),
       reducedAnimation: useReducedAnimation(),
       workflowWarnings: useWorkflowWarnings(),
+      compactMode: useCompactMode(),
       upperFirst,
       workflowViews,
     }
