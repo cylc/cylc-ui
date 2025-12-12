@@ -131,40 +131,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   v-model="jobTheme"
                 >
                   <table class="c-job-state-table">
-                    <tr>
-                      <th>State</th>
-                      <th
-                        v-for="theme in $options.jobThemes"
-                        :key="theme"
+                    <tbody>
+                      <tr>
+                        <th>State</th>
+                        <th
+                          v-for="theme in $options.jobThemes"
+                          :key="theme"
+                        >
+                          {{ upperFirst(theme.replace('_', ' ')) }}
+                        </th>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td
+                          v-for="theme in $options.jobThemes"
+                          :key="theme"
+                        >
+                          <v-radio
+                            :value="theme"
+                            :id="`input-job-theme-${theme}`"
+                          />
+                        </td>
+                      </tr>
+                      <tr
+                        v-for="state in $options.jobStates"
+                        :key="state"
                       >
-                        {{ upperFirst(theme.replace('_', ' ')) }}
-                      </th>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td
-                        v-for="theme in $options.jobThemes"
-                        :key="theme"
-                      >
-                        <v-radio
-                          :value="theme"
-                          :id="`input-job-theme-${theme}`"
-                        />
-                      </td>
-                    </tr>
-                    <tr
-                      v-for="state in $options.jobStates"
-                      :key="state"
-                    >
-                      <td>{{state}}</td>
-                      <td
-                        v-for="theme in $options.jobThemes"
-                        :key="theme"
-                        :class="[`job_theme--${theme}`, 'job_theme_override']"
-                      >
-                        <job :status="state" />
-                      </td>
-                    </tr>
+                        <td>{{state}}</td>
+                        <td
+                          v-for="theme in $options.jobThemes"
+                          :key="theme"
+                          :class="[`job_theme--${theme}`, 'job_theme_override']"
+                        >
+                          <job :status="state" />
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
                 </v-radio-group>
                 <v-col cols="9">
