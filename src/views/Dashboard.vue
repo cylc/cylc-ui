@@ -23,43 +23,63 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   >
     <v-row wrap>
       <v-col md="4" lg="3">
-        <p class="text-headline-large my-2">Workflows</p>
+        <p class="text-title-large">Workflows</p>
         <v-data-table
           :headers="$options.workflowsHeader"
           :items="workflowsTable"
           :loading="isLoading"
           id="dashboard-workflows"
-          items-per-page="-1"
+          :items-per-page="-1"
           style="font-size: 1rem;"
           density="compact"
+          hide-default-header
         >
-          <!-- Hide header & footer: -->
-          <template v-slot:headers></template>
-          <template v-slot:bottom></template>
+          <template #bottom>
+            <div class="d-flex justify-center mb-2">
+              <v-btn
+                text="Workflows table view"
+                to="/workflow-table"
+                :append-icon="icons.mdiArrowRight"
+                variant="text"
+                data-cy="workflow-table-link-2"
+              />
+            </div>
+          </template>
         </v-data-table>
       </v-col>
       <v-col md="8" lg="9">
-        <p class="text-headline-large my-2">Events</p>
+        <p class="text-title-large">Events</p>
         <v-data-table
-          :headers="$options.eventsHeader"
+          :headers="eventsHeaders"
           :items="events"
-          :items-per-page="8"
+          :items-per-page="5"
+          hide-default-header
           density="compact"
           data-cy="events-table"
         >
-          <!-- Hide header: -->
-          <template v-slot:headers></template>
-
-          <!-- Hide footer if no events: -->
-          <template v-if="!events.length" v-slot:bottom></template>
-
-          <!-- Special template if there are no events to display -->
-          <template v-slot:no-data>
-            <td class="text-title-large text-disabled">No events</td>
+          <template #bottom>
+            <div class="d-flex justify-center mb-2">
+              <v-btn
+                text="Events view"
+                to="/events"
+                :append-icon="icons.mdiArrowRight"
+                variant="text"
+                data-cy="events-table-view-all"
+              />
+            </div>
           </template>
 
-          <template v-slot:item.level="{ item }">
+          <template #no-data>
+            <span class="text-medium-emphasis">No events</span>
+          </template>
+
+          <template #item.level="{ item }">
             <EventChip :level="item.level" />
+          </template>
+          <template #item.message="{ item }">
+            <div class="truncated-message py-1">
+              {{ item.message }}
+            </div>
           </template>
         </v-data-table>
       </v-col>
@@ -70,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-list lines="three" class="pa-0">
           <v-list-item to="/workflow-table" data-cy="workflow-table-link">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ $options.icons.table }}</v-icon>
+              <v-icon size="1.6em">{{ icons.table }}</v-icon>
             </template>
             <v-list-item-title>
               Workflows Table
@@ -81,7 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item to="/user-profile" data-cy="user-settings-link">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ $options.icons.settings }}</v-icon>
+              <v-icon size="1.6em">{{ icons.settings }}</v-icon>
             </template>
             <v-list-item-title>
               Settings
@@ -93,7 +113,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div>
             <v-list-item id="cylc-hub-button" :disabled=!hubURL :href="hubURL">
               <template v-slot:prepend>
-                <v-icon size="1.6em">{{ $options.icons.hub }}</v-icon>
+                <v-icon size="1.6em">{{ icons.hub }}</v-icon>
               </template>
               <v-list-item-title>
                 Cylc Hub
@@ -114,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               target="_blank"
             >
               <template v-slot:prepend>
-                <v-icon size="1.6em">{{ $options.icons.jupyterLogo }}</v-icon>
+                <v-icon size="1.6em">{{ icons.jupyterLogo }}</v-icon>
               </template>
               <v-list-item-title>
                 Jupyter Lab
@@ -133,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-list lines="three" class="pa-0">
           <v-list-item to="/guide" data-cy="quickstart-link">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ $options.icons.quickstart }}</v-icon>
+              <v-icon size="1.6em">{{ icons.quickstart }}</v-icon>
             </template>
             <v-list-item-title>
               Cylc UI Quickstart
@@ -144,7 +164,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/workflow-design-guide/index.html" target="_blank">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ $options.icons.workflow }}</v-icon>
+              <v-icon size="1.6em">{{ icons.workflow }}</v-icon>
             </template>
             <v-list-item-title>
               Workflow Design Guide
@@ -155,7 +175,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </v-list-item>
           <v-list-item href="https://cylc.github.io/cylc-doc/stable/html/index.html" target="_blank">
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ $options.icons.documentation }}</v-icon>
+              <v-icon size="1.6em">{{ icons.documentation }}</v-icon>
             </template>
             <v-list-item-title>
               Documentation
@@ -168,7 +188,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             to="/graphiql"
           >
             <template v-slot:prepend>
-              <v-icon size="1.6em">{{ $options.icons.mdiGraphql }}</v-icon>
+              <v-icon size="1.6em">{{ icons.mdiGraphql }}</v-icon>
             </template>
             <v-list-item-title>
               GraphiQL
@@ -193,6 +213,7 @@ import {
   mdiHubspot,
   mdiTable,
   mdiGraphql,
+  mdiArrowRight,
 } from '@mdi/js'
 import { jupyterLogo } from '@/utils/icons'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
@@ -201,6 +222,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import EventChip from '@/components/cylc/EventChip.vue'
 import { useUserService } from '@/services/user.service'
+import { headers as eventsHeaders, useWorkflowEvents } from '@/mixins/workflowEvents.js'
 
 const QUERY = gql`
 subscription App {
@@ -252,9 +274,24 @@ export default {
   setup () {
     const { user, hubURL } = useUserService()
 
+    const { events } = useWorkflowEvents()
+
     return {
       user,
       hubURL,
+      events,
+      eventsHeaders,
+      icons: {
+        table: mdiTable,
+        settings: mdiCog,
+        hub: mdiHubspot,
+        quickstart: mdiBook,
+        workflow: mdiBookOpenVariant,
+        documentation: mdiBookMultiple,
+        jupyterLogo,
+        mdiGraphql,
+        mdiArrowRight,
+      },
     }
   },
 
@@ -292,38 +329,19 @@ export default {
           }
         })
     },
-    events () {
-      const events = []
-      for (const workflow of this.workflows) {
-        const logRecords = workflow.node?.logRecords || []
-        for (const record of logRecords) {
-          events.push({ workflow: workflow.tokens.workflow, ...record })
-        }
-      }
-      return events.reverse()
-    },
   },
 
   workflowsHeader: [
     { value: 'count' },
     { value: 'text' },
   ],
-
-  eventsHeader: [
-    { value: 'level' },
-    { value: 'workflow' },
-    { value: 'message' },
-  ],
-
-  icons: {
-    table: mdiTable,
-    settings: mdiCog,
-    hub: mdiHubspot,
-    quickstart: mdiBook,
-    workflow: mdiBookOpenVariant,
-    documentation: mdiBookMultiple,
-    jupyterLogo,
-    mdiGraphql,
-  },
 }
 </script>
+
+<style lang="scss" scoped>
+@use "/src/styles/util";
+
+.truncated-message {
+  @include util.line-clamp(4);
+}
+</style>
