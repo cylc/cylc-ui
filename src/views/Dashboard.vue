@@ -49,18 +49,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           data-cy="events-table"
         >
           <!-- Hide header: -->
-          <template v-slot:headers></template>
+          <template #headers></template>
 
           <!-- Hide footer if no events: -->
-          <template v-if="!events.length" v-slot:bottom></template>
+          <template v-if="!events.length" #bottom></template>
 
           <!-- Special template if there are no events to display -->
-          <template v-slot:no-data>
-            <td class="text-h6 text-disabled">No events</td>
+          <template #no-data>
+            <span class="text-h6 text-disabled">No events</span>
           </template>
 
-          <template v-slot:item.level="{ item }">
+          <template #item.level="{ item }">
             <EventChip :level="item.level" />
+          </template>
+          <template #item.message="{ item }">
+            <div class="truncated-message py-1">
+              {{ item.message }}
+            </div>
           </template>
         </v-data-table>
       </v-col>
@@ -342,3 +347,11 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+@use "/src/styles/util";
+
+.truncated-message {
+  @include util.line-clamp(4);
+}
+</style>
