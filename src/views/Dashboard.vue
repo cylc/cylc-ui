@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           :items="workflowsTable"
           :loading="isLoading"
           id="dashboard-workflows"
-          items-per-page="-1"
+          :items-per-page="-1"
           style="font-size: 1rem;"
           density="compact"
         >
@@ -43,7 +43,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-data-table
           :headers="$options.eventsHeader"
           :items="events"
-          :items-per-page="8"
+          v-model:items-per-page="eventsItemsPerPage"
+          :items-per-page-options="eventsItemsPerPageOptions"
           density="compact"
           data-cy="events-table"
         >
@@ -185,6 +186,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import { useLocalStorage } from '@vueuse/core'
 import {
   mdiBook,
   mdiBookMultiple,
@@ -247,6 +249,22 @@ export default {
 
   components: {
     EventChip,
+  },
+
+  setup () {
+    const eventsItemsPerPage = useLocalStorage('dashboardEventsItemsPerPage', 8)
+    const eventsItemsPerPageOptions = [
+      { value: 5, title: '5' },
+      { value: 8, title: '8' },
+      { value: 10, title: '10' },
+      { value: 20, title: '20' },
+      { value: -1, title: 'All' },
+    ]
+
+    return {
+      eventsItemsPerPage,
+      eventsItemsPerPageOptions,
+    }
   },
 
   data () {
