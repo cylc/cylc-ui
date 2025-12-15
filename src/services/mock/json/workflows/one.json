@@ -36,7 +36,13 @@
           "failed": [
             "20000102T0000Z/failed"
           ]
-        }
+        },
+        "logRecords": [
+          {
+            "level": "WARNING",
+            "message": "Partially satisfied prerequisites: * 20260826T1800Z/housekeep is waiting on ['20260826T1800Z/ensemble_housekeep_member0_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member0_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member10_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member10_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member11_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member11_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member12_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member12_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member13_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member13_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member14_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member14_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member15_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member15_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member16_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member16_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member17_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member17_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member1_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member1_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member2_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member2_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member3_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member3_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member4_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member4_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member5_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member5_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member6_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member6_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member7_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member7_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member8_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member8_ehz2:succeeded', '20260826T1800Z/ensemble_housekeep_member9_ehz1:succeeded', '20260826T1800Z/ensemble_housekeep_member9_ehz2:succeeded']"
+          }
+        ]
       },
       "cyclePoints": [
         {

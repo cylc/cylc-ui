@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) Earth Sciences New Zealand & British Crown (Met Office) & Contributors.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
  */
 
 import { WorkflowStateOrder } from '@/model/WorkflowState.model'
+import { __heightThreshold as heightThreshold } from '@/mixins/workflowEvents.js'
 
 describe('Dashboard', () => {
   beforeEach(() => {
@@ -63,29 +64,31 @@ describe('Dashboard', () => {
   it('Lists workflow events', () => {
     // NOTE: Log events may be duplicated in offline-mode due to the way the
     // mock data is loaded. This does not apply to production.
-    cy.get('[data-cy=events-table]')
-      .find('tbody > :nth-child(1)')
+    cy.get('[data-cy=events-table] tr:eq(1)')
       .should('contain', 'WARNING')
       .should('contain', 'other/multi/run2')
       .should('contain', 'Reality may go on the blink at infinite improbability')
 
-    cy.get('[data-cy=events-table]')
-      .find('tbody > :nth-child(3)')
-      .should('contain', 'CRITICAL')
-      .should('contain', 'other/multi/run2')
-      .should('contain', 'Workflow underwent a sudden and gratuitous total existence failure')
+    // Table should not take up too much height (long messages should be truncated)
+    cy.get('[data-cy=events-table] tbody')
+      .invoke('height')
+      .should('be.lt', heightThreshold)
   })
 
-  for (const ref of ['workflow-table-link', 'user-settings-link', 'quickstart-link']) {
-    it(`Visits ${ref}`, () => {
-      cy.get(`[data-cy=${ref}`)
+  for (const [ref, url] of [
+    ['workflow-table-link', '/workflow-table'],
+    ['workflow-table-link-2', '/workflow-table'],
+    ['events-table-view-all', '/events'],
+    ['user-settings-link', '/user-profile'],
+    ['quickstart-link', '/guide'],
+  ]) {
+    it(`${ref} links to ${url}`, () => {
+      cy.get(`[data-cy=${ref}]`)
         .click()
+      cy.url()
+        .should('match', new RegExp(`${url}$`))
       cy.contains('Page not found', { matchCase: false })
         .should('not.exist')
-        // Ideally we should check for HTTP 404 but our 404 page returns 200!
-        // https://github.com/cylc/cylc-ui/issues/334
     })
   }
-
-  // TODO: add test that verifies the dashboard content after we have reviewed how it should look like
 })

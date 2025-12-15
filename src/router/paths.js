@@ -99,6 +99,16 @@ export default [
     },
   },
   {
+    path: '/events',
+    view: 'Events',
+    meta: {
+      title: 'Workflow Events',
+      layout: 'default',
+      toolbar: true,
+      showSidebar: true,
+    },
+  },
+  {
     path: '/tree/:workflowName(.*)',
     view: 'Tree',
     meta: {
