@@ -215,7 +215,7 @@ export default {
     },
     {
       sortable: true,
-      title: 'Last Updated',
+      title: 'Last Activity',
       key: 'node.lastUpdated'
     },
   ],

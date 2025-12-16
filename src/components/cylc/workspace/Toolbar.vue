@@ -143,12 +143,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         id="info-icon"
       />
       <v-tooltip v-if="isRunning" activator="#info-icon">
-        <dl>
-          <dt><strong>Owner:</strong> {{ currentWorkflow.node.owner }}</dt>
-          <dt><strong>Host:</strong> {{ currentWorkflow.node.host }}</dt>
-          <dt><strong>Cylc version:</strong> {{ currentWorkflow.node.cylcVersion }}</dt>
-          <dt><strong>Run mode:</strong> {{ currentWorkflow.node.runMode }}</dt>
-        </dl>
+        <strong>Owner:</strong> {{ currentWorkflow.node.owner }}
+        <strong>Host:</strong> {{ currentWorkflow.node.host }}
+        <strong>Cylc version:</strong> {{ currentWorkflow.node.cylcVersion }}
+        <strong>Run mode:</strong> {{ currentWorkflow.node.runMode }}
+        <strong>Last activity:</strong> {{ useTimeAgo(currentWorkflow.node.lastUpdated * 1e3, opts5s) }}
       </v-tooltip>
 
       <!-- workflow status message -->
@@ -243,6 +242,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import { inject } from 'vue'
 import { mapState } from 'vuex'
+import { useTimeAgo } from '@vueuse/core'
 import {
   mdiCog,
   mdiMicrosoftXboxControllerMenu,
@@ -256,7 +256,7 @@ import {
   mdiArrowULeftTop,
   mdiInformationOutline,
 } from '@mdi/js'
-import { startCase } from 'lodash'
+import { startCase, upperFirst } from 'lodash-es'
 import { until } from '@/utils/reactivity'
 import { useDrawer, useNavBtn, toolbarHeight } from '@/utils/toolbar'
 import WorkflowState from '@/model/WorkflowState.model'
@@ -268,8 +268,8 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 import { eventBus } from '@/services/eventBus'
-import { upperFirst } from 'lodash-es'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
+import { opts5s } from '@/utils/datetime'
 
 const QUERY = gql(`
 subscription Workflow ($workflowId: ID) {
@@ -327,10 +327,12 @@ export default {
     }
     return {
       eventBus,
+      opts5s,
       showNavBtn,
       toggleDrawer,
       toolbarHeight,
-      uisFlowVersion
+      uisFlowVersion,
+      useTimeAgo,
     }
   },
 
