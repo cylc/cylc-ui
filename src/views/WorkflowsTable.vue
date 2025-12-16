@@ -66,6 +66,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <td>
                 {{ item.node.port }}
               </td>
+              <td>
+                {{ displayLastUpdate(item.node.lastUpdated, now) }}
+              </td>
             </tr>
           </template>
         </v-data-table>
@@ -82,6 +85,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import gql from 'graphql-tag'
+import { humanDuration } from '@/utils/datetime'
 
 const QUERY = gql`
 subscription Workflow {
@@ -110,6 +114,7 @@ fragment WorkflowData on Workflow {
   owner
   host
   port
+  lastUpdated
 }
 `
 
@@ -133,7 +138,17 @@ export default {
       true,
       true
     ),
+    now: null,
   }),
+
+  mounted () {
+    this.updateDate()
+    this.interval = setInterval(this.updateDate, 5000) // 5 second update interval
+  },
+
+  beforeUnmount () {
+    clearInterval(this.interval)
+  },
 
   computed: {
     ...mapState('workflows', ['cylcTree']),
@@ -149,6 +164,16 @@ export default {
   methods: {
     viewWorkflow (workflow) {
       this.$router.push({ path: `/workspace/${workflow.tokens.workflow}` })
+    },
+    updateDate () {
+      this.now = new Date()
+    },
+    displayLastUpdate (timestamp, now) {
+      // NOTE: "now" is provided for reactivity purposes
+      // (it ensures this field gets updated)
+      if (timestamp) {
+        return humanDuration(new Date(timestamp * 1000))
+      }
     }
   },
 
@@ -187,6 +212,11 @@ export default {
       sortable: false,
       title: i18n.global.t('Workflows.tableColumnPort'),
       key: 'node.port'
+    },
+    {
+      sortable: true,
+      title: 'Last Updated',
+      key: 'node.lastUpdated'
     },
   ],
 
