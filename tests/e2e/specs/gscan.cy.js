@@ -192,6 +192,18 @@ describe('GScan component', () => {
     })
   })
 
+  describe('Task waiting badges', () => {
+    it('displays retry and held icons', () => {
+      cy.get('.c-gscan')
+        .find('[data-node-name="one"]').as('parent')
+        .find('.node:first .task-state-badge:first')
+        .should('have.class', 'held')
+      // child run2 contributes the running tasks
+      cy.get('@parent').find('.node:first .task-state-badge:nth-child(2)')
+        .should('have.class', 'retry')
+    })
+  })
+
   describe('Warnings', () => {
     it('collates warnings up the tree', () => {
       // NOTE: Log events may be duplicated in offline-mode due to the way the
