@@ -226,7 +226,7 @@ export default {
 
     filterState () {
       return (this.tasksFilter.id?.trim() || this.tasksFilter.states?.length)
-        ? [this.tasksFilter.id, this.tasksFilter.states]
+        ? [this.tasksFilter.id, this.tasksFilter.states, this.flat]
         : null
     },
 
@@ -330,7 +330,7 @@ export default {
         // follow the family tree from cycle point nodes
         children = node.familyTree[0]?.children
       }
-      if (children) {
+      if (!this.flat && children) {
         for (const child of children) {
           isMatch = this.filterNode(child, filteredOutNodesCache, idMatch) || isMatch
           // Note: do not break early as we must run the filter over all children
