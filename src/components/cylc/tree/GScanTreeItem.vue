@@ -38,10 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div class="c-gscan-workflow-name flex-grow-1">
           <span>
             {{ node.name || node.id }}
-            <v-tooltip
-              location="top"
-              style="overflow-wrap: anywhere;"
-            >
+            <v-tooltip style="overflow-wrap: anywhere;">
               {{ node.id }}
             </v-tooltip>
           </span>
