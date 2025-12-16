@@ -128,7 +128,8 @@
           "task": {
             "name": "checkpoint",
             "meanElapsedTime": 180
-          }
+          },
+          "namespace": ["root", "checkpoint"]
         },
         {
           "id": "~user/one//20000102T0000Z/eventually_succeeded",
@@ -148,7 +149,8 @@
           "task": {
             "meanElapsedTime": 11.5,
             "name": "eventually_succeeded"
-          }
+          },
+          "namespace": ["root", "GOOD", "SUCCEEDED", "eventually_succeeded"]
         },
         {
           "id": "~user/one//20000102T0000Z/failed",
@@ -167,7 +169,8 @@
           },
           "task": {
             "name": "failed"
-          }
+          },
+          "namespace": ["root", "BAD", "failed"]
         },
         {
           "id": "~user/one//20000102T0000Z/retrying",
@@ -186,7 +189,8 @@
           },
           "task": {
             "name": "retrying"
-          }
+          },
+          "namespace": ["root", "BAD", "retrying"]
         },
         {
           "id": "~user/one//20000102T0000Z/sleepy",
@@ -205,7 +209,8 @@
           },
           "task": {
             "name": "sleepy"
-          }
+          },
+          "namespace": ["root", "sleepy"]
         },
         {
           "id": "~user/one//20000102T0000Z/succeeded",
@@ -225,7 +230,8 @@
           "task": {
             "meanElapsedTime": 4.0,
             "name": "succeeded"
-          }
+          },
+          "namespace": ["root", "GOOD", "SUCCEEDED", "succeeded"]
         },
         {
           "id": "~user/one//20000102T0000Z/waiting",
@@ -244,7 +250,8 @@
           },
           "task": {
             "name": "waiting"
-          }
+          },
+          "namespace": ["root", "waiting"]
         }
       ],
       "jobs": [
