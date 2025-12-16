@@ -146,6 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         v-if="isRunning"
         activator="#info-icon"
         :eager="false"
+        interactive
       >
         <strong>Owner:</strong> {{ currentWorkflow.node.owner }}
         <strong>Host:</strong> {{ currentWorkflow.node.host }}

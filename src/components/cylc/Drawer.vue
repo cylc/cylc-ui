@@ -60,19 +60,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-tooltip
           activator="#version-chip"
           location="top"
-          >
+          interactive
+        >
           <div
-            class="d-flex flex-column align-center"
-            style="pointer-events: visible;"
+            class="d-flex flex-column"
             data-cy="version-tooltip"
           >
             <span
               v-for="(value, key) in cylcVersionInfo"
               :key="key"
             >
-              {{ key }} {{ value }}
+              <strong>{{ key }}:</strong> {{ value }}
             </span>
-            <span>cylc-ui {{ UIVersion }}</span>
+            <span><strong>cylc-ui:</strong> {{ UIVersion }}</span>
           </div>
         </v-tooltip>
       </div>
