@@ -39,8 +39,11 @@ $cjob: ".c-job .job rect";
     min-width: $height;
     border-radius: $height;
     border: 0.2em solid;
-    margin: 0 0.1em;
     line-height: normal;
+    margin: 0 1px;
+}
+.modifier-badge {
+    margin: 0 2px;
 }
 
 $teal: rgb(109,213,194);
@@ -101,13 +104,4 @@ $themes: (
             }
         }
     }
-}
-
-.task-state-badge.retry, .task-state-badge.held {
-  font-size: 0.8em;
-  min-width: 0;
-  background: none;
-  border: none;
-  padding: 0 0 0.2em 0;
-  margin: none;
 }

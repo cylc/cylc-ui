@@ -46,7 +46,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-tooltip>
           </span>
         </div>
-        <div class="d-flex c-gscan-workflow-states flex-grow-0">
+        <div class="d-flex c-gscan-workflow-states flex-grow-0 align-center">
+          <v-icon
+            v-for="modifier in statesInfo.modifiers"
+            :key="modifier"
+            :icon="modifierIcons[modifier]"
+            v-tooltip="`Has ${modifier} tasks.`"
+            size="1em"
+            class="modifier-badge"
+            :class="modifier"
+          />
           <TaskStateBadge
             v-for="(value, state) in statesInfo.stateTotals"
             :key="state"
@@ -85,6 +94,7 @@ import WarningIcon from '@/components/cylc/WarningIcon.vue'
 import TaskState from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import { useWorkflowWarnings } from '@/composables/localStorage'
+import { taskHeld, taskRetry } from '@/utils/icons'
 
 const nodeTypes = ['workflow-part', 'workflow']
 
@@ -96,6 +106,11 @@ const taskStatesOrdered = [
   TaskState.RUNNING.name,
 ]
 
+const modifierIcons = {
+  held: taskHeld,
+  retrying: taskRetry,
+}
+
 /**
  * Get aggregated task state totals for all descendents of a node.
  *
@@ -103,25 +118,26 @@ const taskStatesOrdered = [
  *
  * @param {Object} node
  * @param {Record<string, number>} stateTotals - Accumulator for state totals.
+ * @param {Set<string>} modifiers - Accumulator for modifier states.
  */
-function getStatesInfo (node, stateTotals = {}) {
+function getStatesInfo (node, stateTotals = {}, modifiers = new Set()) {
   const latestTasks = {}
   // if we aren't at the end of the node tree, continue recurse until we hit something other then a workflow part
   if (node.type === 'workflow-part' && node.children) {
     // at every branch, recurse all child nodes except stopped workflows
     for (const child of node.children) {
       if (child.node.status !== WorkflowState.STOPPED.name) {
-        getStatesInfo(child, stateTotals, latestTasks)
+        getStatesInfo(child, stateTotals, modifiers)
       }
     }
   } else if (node.type === 'workflow' && node.node.stateTotals) {
     // if we hit a workflow node, stop and merge state
 
     if (node.node.containsHeld) {
-      stateTotals.held = true
+      modifiers.add('held')
     }
     if (node.node.containsRetry) {
-      stateTotals.retry = true
+      modifiers.add('retrying')
     }
 
     // the non-zero state totals from this node with all the others from the tree
@@ -143,7 +159,7 @@ function getStatesInfo (node, stateTotals = {}) {
       }
     }
   }
-  return { stateTotals, latestTasks }
+  return { stateTotals, latestTasks, modifiers }
 }
 
 const workflowWarnings = useWorkflowWarnings()

@@ -196,11 +196,11 @@ describe('GScan component', () => {
     it('displays retry and held icons', () => {
       cy.get('.c-gscan')
         .find('[data-node-name="one"]').as('parent')
-        .find('.node:first .task-state-badge:first')
-        .should('have.class', 'held')
+        .find('.node:first .modifier-badge.held')
+        .should('be.visible')
       // child run2 contributes the running tasks
-      cy.get('@parent').find('.node:first .task-state-badge:nth-child(2)')
-        .should('have.class', 'retry')
+      cy.get('@parent').find('.node:first .modifier-badge.retrying')
+        .should('be.visible')
     })
   })
 
