@@ -174,7 +174,7 @@ describe('Tree view', () => {
         .should('have.length', initialNumTasks)
         .contains('waiting')
       for (const id of ['eed', '/suc', 'GOOD', 'SUC']) {
-        cy.get('.c-view-toolbar input')
+        cy.get('[data-cy=control-taskIDFilter] input')
           .clear()
           .type(id)
         cy.get('.node-data-task:visible')
