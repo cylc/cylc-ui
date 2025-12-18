@@ -17,16 +17,12 @@
 
 <template>
   <div
-    class="task-state-badge d-flex justify-center align-center font-weight-medium"
+    class="task-state-badge d-flex justify-center align-center px-1 font-weight-medium"
     :class="state"
   >
-    <v-icon v-if="isModifier" >{{ icon }}</v-icon>
-    {{ isModifier ? '' : value }}
-    <v-tooltip
-      location="top"
-      :open-delay="400"
-    >
-      {{ displayText }}
+    {{ value }}
+    <v-tooltip>
+      {{ value }} {{ displayName }} task{{ value > 1 ? 's': '' }}.
       <template v-if="latestTasks?.length">
         Latest:
         <span
@@ -43,7 +39,6 @@
 
 <script setup>
 import { computed } from 'vue'
-import { taskHeld, taskRetry } from '@/utils/icons'
 
 const props = defineProps({
   state: {
@@ -60,28 +55,7 @@ const props = defineProps({
   },
 })
 
-const icons = {
-  held: taskHeld,
-  retry: taskRetry,
-}
-
-const isModifier = computed(
-  () => ['held', 'retry'].includes(props.state)
-)
-
 const displayName = computed(
   () => props.state === 'submitted' ? 'preparing/submitted' : props.state
-)
-
-const displayText = computed(
-  () => isModifier.value
-    ? `One or more ${props.state} task(s).`
-    : `${props.value} ${displayName.value} task${props.value > 1 ? 's' : ''}`
-)
-
-const icon = computed(
-  () => isModifier.value
-    ? icons[props.state]
-    : null
 )
 </script>
