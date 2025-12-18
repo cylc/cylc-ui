@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     :auto-expand-types="nodeTypes"
     :render-expand-collapse-btn="node.type !== 'workflow'"
     ref="treeItem"
+    :class="{compact: compactMode}"
   >
     <WorkflowIcon
       v-if="node.type === 'workflow'"
@@ -33,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :to="workflowLink"
       :class="nodeClass"
       class="flex-grow-1 flex-shrink-1 px-2 ml-1"
+      :density="compactMode ? 'compact' : 'comfortable'"
     >
       <div class="d-flex align-center align-content-center flex-nowrap">
         <div class="c-gscan-workflow-name flex-grow-1">
@@ -90,8 +92,8 @@ import TreeItem from '@/components/cylc/tree/TreeItem.vue'
 import WarningIcon from '@/components/cylc/WarningIcon.vue'
 import TaskState from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
-import { useWorkflowWarnings } from '@/composables/localStorage'
 import { taskHeld, taskRetry } from '@/utils/icons'
+import { useCompactMode, useWorkflowWarnings } from '@/composables/localStorage'
 
 const nodeTypes = ['workflow-part', 'workflow']
 
@@ -160,6 +162,8 @@ function getStatesInfo (node, stateTotals = {}, modifiers = new Set()) {
 }
 
 const workflowWarnings = useWorkflowWarnings()
+
+const compactMode = useCompactMode()
 
 const props = defineProps({
   node: {
