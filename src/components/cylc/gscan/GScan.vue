@@ -99,7 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :workflows="workflows"
         :node-filter-func="filterNode"
         tree-item-component="GScanTreeItem"
-        class="c-gscan-workflow"
+        class="c-gscan-workflow pa-0"
         ref="tree"
         v-bind="{ filterState }"
       />
@@ -123,7 +123,7 @@ import Tree from '@/components/cylc/tree/Tree.vue'
 import { filterByName, filterByState } from '@/components/cylc/gscan/filters'
 import { sortedWorkflowTree } from '@/components/cylc/gscan/sort.js'
 import { mutate } from '@/utils/aotf'
-import TaskFilterSelect from '@/components/cylc/TaskFilterSelect.vue'
+import TaskFilterSelect from '@/components/cylc/gscan/TaskFilterSelect.vue'
 
 export default {
   name: 'GScan',

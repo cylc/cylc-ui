@@ -27,7 +27,7 @@ describe('View Toolbar Component', () => {
     cy.vmount(
       ViewToolbar,
       {
-        props: { groups }
+        props: { groups },
       }
     ).as('wrapper')
     // add the classes Vuetify requires
