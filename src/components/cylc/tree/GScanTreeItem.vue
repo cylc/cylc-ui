@@ -40,11 +40,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div class="c-gscan-workflow-name flex-grow-1">
           <span>
             {{ node.name || node.id }}
-            <v-tooltip
-              location="top"
-              style="overflow-wrap: anywhere;"
-            >
+            <v-tooltip style="overflow-wrap: anywhere;">
               {{ node.id }}
+              <template v-if="node.type === 'workflow' && node.node.status !== WorkflowState.STOPPED.name">
+                <br/>
+                <span class="text-grey-lighten-1">
+                  Last activity: {{ useTimeAgo(node.node.lastUpdated * 1e3, opts5s) }}
+                </span>
+              </template>
             </v-tooltip>
           </span>
         </div>
@@ -80,6 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script setup>
 import { computed } from 'vue'
+import { useTimeAgo } from '@vueuse/core'
 import TaskStateBadge from '@/components/cylc/TaskStateBadge.vue'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import TreeItem from '@/components/cylc/tree/TreeItem.vue'
@@ -87,6 +91,7 @@ import WarningIcon from '@/components/cylc/WarningIcon.vue'
 import TaskState from '@/model/TaskState.model'
 import { WorkflowState } from '@/model/WorkflowState.model'
 import { useCompactMode, useWorkflowWarnings } from '@/composables/localStorage'
+import { opts5s } from '@/utils/datetime'
 
 const nodeTypes = ['workflow-part', 'workflow']
 

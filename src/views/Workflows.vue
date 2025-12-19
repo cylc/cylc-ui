@@ -61,6 +61,7 @@ fragment WorkflowData on Workflow {
   status
   statusMsg
   stateTotals
+  lastUpdated
   logRecords {
     level
     message

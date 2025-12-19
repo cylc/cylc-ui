@@ -85,9 +85,9 @@ describe('Drawer component', () => {
       .get('[data-cy=version-tooltip]')
       .should('be.visible')
       .invoke('text').then((text) => {
-        expect(text).to.contain('cylc-flow ')
-        expect(text).to.contain('cylc-uiserver ')
-        expect(text).to.contain('cylc-ui ')
+        expect(text).to.contain('cylc-flow: ')
+        expect(text).to.contain('cylc-uiserver: ')
+        expect(text).to.contain('cylc-ui: ')
       })
   })
 })

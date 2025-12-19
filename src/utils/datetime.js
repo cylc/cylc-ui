@@ -38,3 +38,9 @@ export function humanDuration (date) {
     duration = duration / number
   }
 }
+
+/** Options for vueuse useTimeAgo() - set update interval 5 seconds */
+export const opts5s = Object.freeze({
+  showSecond: true,
+  updateInterval: 5e3,
+})
