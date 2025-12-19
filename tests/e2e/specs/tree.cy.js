@@ -184,12 +184,12 @@ describe('Tree view', () => {
           .should('not.be.visible')
       }
       // It should stop filtering when input is cleared
-      cy.get('.c-view-toolbar input')
+      cy.get('[data-cy=control-taskIDFilter] input')
         .clear()
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
       // It should filter by cycle point
-      cy.get('.c-view-toolbar input')
+      cy.get('[data-cy=control-taskIDFilter] input')
         .type('2000') // (matches all tasks)
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
