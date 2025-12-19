@@ -198,7 +198,6 @@ describe('GScan component', () => {
         .find('[data-node-name="one"]').as('parent')
         .find('.node:first .modifier-badge.held')
         .should('be.visible')
-      // child run2 contributes the running tasks
       cy.get('@parent').find('.node:first .modifier-badge.retrying')
         .should('be.visible')
     })
