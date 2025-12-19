@@ -420,19 +420,12 @@ describe('Analysis view', () => {
   })
 })
 
-function addView (view) {
-  cy.get('[data-cy=add-view-btn]').click()
-  cy.get(`#toolbar-add-${view}-view`).click()
-    // wait for menu to close
-    .should('not.be.exist')
-}
-
 describe('Filters and Options save state', () => {
   const numTasks = sortedTasks.length
   describe('Options save state', () => {
     beforeEach(() => {
+      localStorage.defaultView = 'Analysis'
       cy.visit('/#/workspace/one')
-      addView('Analysis')
     })
 
     it('remembers table and box & whiskers toggle option when switching between workflows', () => {
@@ -548,7 +541,12 @@ describe('Filters and Options save state', () => {
     })
 
     it('shows sorting controls in correct tab', () => {
-      addView('Analysis') // second analysis view
+      // add second analysis view
+      cy.get('[data-cy=add-view-btn]').click()
+      cy.get('#toolbar-add-Analysis-view').click()
+        // wait for menu to close
+        .should('not.be.exist')
+
       cy.get('.c-analysis [data-cy=box-plot-toggle]:last')
         .click()
         .get('[data-cy="box-plot-sort-select"]')

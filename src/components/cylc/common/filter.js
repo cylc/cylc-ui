@@ -17,6 +17,44 @@
 
 /* Logic for filtering tasks. */
 
+import {
+  GenericModifierNames,
+  TaskState,
+  TaskStateNames,
+  WaitingStateModifierNames,
+} from '@/model/TaskState.model'
+import {
+  escapeRegExp
+} from 'lodash-es'
+
+/* Convert a glob to a Regex.
+ *
+ * Returns null if a blank string is provided as input.
+ *
+ * Supports the same globs as Python's "fnmatch" module:
+ *   `*` - match everything.
+ *   `?` - match a single character.
+ *   `[seq]` - match any character in seq (same as regex).
+ *   `[!seq]` - match any character *not* in seq.
+ */
+export function globToRegex (glob) {
+  if (!glob || !glob.trim()) {
+    // no glob provided
+    return null
+  }
+  return new RegExp(
+    // escape any regex characters in the glob
+    escapeRegExp(glob.trim())
+      .replace(/\\\*/, '.*')
+      // `?` -> `.`
+      .replace(/\\\?/, '.')
+      // `[!X]` -> `[^X]`
+      .replace(/\\\[!([^]*)\\\]/, '[^$1]')
+      // `[X]` -> `[X]`
+      .replace(/\\\[([^]*)\\\]/, '[$1]')
+  )
+}
+
 /**
  * Return true if the node ID matches the given ID, or if no ID is given.
  *
@@ -24,8 +62,8 @@
  * @param {?string} id
  * @return {boolean}
  */
-export function matchID (node, id) {
-  return !id?.trim() || node.tokens.relativeID.includes(id)
+export function matchID (node, regex) {
+  return !regex || Boolean(node.tokens.relativeID.match(regex))
 }
 
 /**
@@ -36,8 +74,29 @@ export function matchID (node, id) {
  * @param {?string[]} states
  * @returns {boolean}
  */
-export function matchState (node, states) {
-  return !states?.length || states.includes(node.node.state)
+export function matchState (
+  node,
+  states = [],
+  waitingStateModifiers = [],
+  genericModifiers = [],
+) {
+  return (
+    (!states?.length || states.includes(node.node.state)) &&
+    (
+      node.node.state !== 'waiting' ||
+      !states.includes(TaskState.WAITING.name) ||
+      !waitingStateModifiers.length ||
+      waitingStateModifiers.some((modifier) => node.node[modifier])
+    ) &&
+    (
+      !genericModifiers.length ||
+      genericModifiers.some((modifier) => node.node[modifier]) ||
+      (
+        genericModifiers.includes('isSkip') &&
+        node.node.runtime?.runMode === 'Skip'
+      )
+    )
+  )
 }
 
 /**
@@ -49,6 +108,14 @@ export function matchState (node, states) {
  * @param {?string[]} states
  * @return {boolean}
  */
-export function matchNode (node, id, states) {
-  return matchID(node, id) && matchState(node, states)
+export function matchNode (node, regex, states, waitingStateModifiers, genericModifiers) {
+  return matchID(node, regex) && matchState(node, states, waitingStateModifiers, genericModifiers)
+}
+
+export function groupStateFilters (states) {
+  return [
+    states.filter(x => TaskStateNames.includes(x)),
+    states.filter(x => WaitingStateModifierNames.includes(x)),
+    states.filter(x => GenericModifierNames.includes(x)),
+  ]
 }

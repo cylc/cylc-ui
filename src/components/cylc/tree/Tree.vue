@@ -16,10 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <v-container
-    fluid
-    class="pa-0"
-  >
+  <div>
     <component
       :is="treeItemComponent"
       v-for="child of rootChildren"
@@ -27,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :node="child"
       v-bind="{ hoverable, cyclePointsOrderDesc, expandAll, filteredOutNodesCache, flat }"
     />
-  </v-container>
+  </div>
 </template>
 
 <script>

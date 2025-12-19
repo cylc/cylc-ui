@@ -16,46 +16,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <div class="h-100">
-    <v-container
-      fluid
-      class="c-table ma-0 pa-2 h-100 flex-column d-flex"
-    >
-      <!-- Toolbar -->
-      <v-row
-        no-gutters
-        class="d-flex flex-wrap flex-grow-0"
-      >
-        <!-- Filters -->
-        <v-col>
-          <TaskFilter v-model="tasksFilter"/>
-        </v-col>
-      </v-row>
-      <v-row
-        no-gutters
-        class="flex-grow-1 position-relative"
-      >
-        <v-col
-          cols="12"
-          class="mh-100 position-relative"
-        >
-          <v-container
-            fluid
-            class="ma-0 pa-0 w-100 h-100 left-0 top-0 position-absolute pt-2"
-          >
-            <TableComponent
-              :tasks="filteredTasks"
-              v-model:initial-options="dataTableOptions"
-            />
-          </v-container>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+  <v-container
+    fluid
+    class="c-table pa-2 pb-0 h-100 flex-column d-flex"
+  >
+    <ViewToolbar
+      :groups="controlGroups"
+      @setOption="setOption"
+    />
+    <div class="overflow-hidden">
+      <TableComponent
+        :tasks="filteredTasks"
+        v-model:initial-options="dataTableOptions"
+        class="mh-100"
+      />
+    </div>
+  </v-container>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+
 import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
@@ -63,9 +44,9 @@ import {
   updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
-import { matchNode } from '@/components/cylc/common/filter'
+import { matchNode, groupStateFilters, globToRegex } from '@/components/cylc/common/filter'
+import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
-import TaskFilter from '@/components/cylc/TaskFilter.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import gql from 'graphql-tag'
 
@@ -167,7 +148,7 @@ export default {
 
   components: {
     TableComponent,
-    TaskFilter
+    ViewToolbar,
   },
 
   emits: [updateInitialOptionsEvent],
@@ -234,8 +215,51 @@ export default {
     },
 
     filteredTasks () {
-      return this.tasks.filter(({ task }) => matchNode(task, this.tasksFilter.id, this.tasksFilter.states))
-    }
-  }
+      const [states, waitingStateModifiers, genericModifiers] = groupStateFilters(
+        this.tasksFilter.states?.length ? this.tasksFilter.states : []
+      )
+      return this.tasks.filter(({ task }) => matchNode(
+        task,
+        globToRegex(this.tasksFilter.id),
+        states,
+        waitingStateModifiers,
+        genericModifiers
+      ))
+    },
+
+    controlGroups () {
+      return [
+        {
+          title: 'Filter',
+          controls: [
+            {
+              title: 'Filter By ID',
+              action: 'taskIDFilter',
+              key: 'taskIDFilter',
+              value: this.tasksFilter.id
+            },
+            {
+              title: 'Filter By State',
+              action: 'taskStateFilter',
+              key: 'taskStateFilter',
+              value: this.tasksFilter.states,
+            },
+          ],
+        },
+      ]
+    },
+  },
+
+  methods: {
+    setOption (option, value) {
+      if (option === 'taskStateFilter') {
+        this.tasksFilter.states = value
+      } else if (option === 'taskIDFilter') {
+        this.tasksFilter.id = value
+      } else {
+        this[option] = value
+      }
+    },
+  },
 }
 </script>

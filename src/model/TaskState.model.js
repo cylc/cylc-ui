@@ -43,6 +43,7 @@ export class TaskState extends Enumify {
 
 /**
  * Task states ordered for display purposes.
+ * TODO: replace this by iterating TaskState.enumKeys?
  */
 export const TaskStateUserOrder = [
   TaskState.WAITING,
@@ -56,5 +57,39 @@ export const TaskStateUserOrder = [
 ]
 
 export const TaskStateNames = TaskStateUserOrder.map(({ name }) => name)
+
+export class TaskModifier extends Enumify {
+  static isRetry = new TaskModifier('isRetry', 'Retry')
+  static isRunahead = new TaskModifier('isRunahead', 'Runahead')
+  static isQueued = new TaskModifier('isQueued', 'Queued')
+  static isWallclock = new TaskModifier('isWallclock', 'Wallclock')
+  static isXtrigger = new TaskModifier('isXtriggered', 'Xtrigger')
+  static isHeld = new TaskModifier('isHeld', 'Held')
+  static isSkip = new TaskModifier('isSkip', 'Skip')
+  static _ = this.closeEnum()
+
+  constructor (field, title) {
+    super()
+    this.field = field
+    this.title = title
+  }
+}
+
+export const WaitingStateModifiers = [
+  TaskModifier.isRetry,
+  TaskModifier.isRunahead,
+  TaskModifier.isQueued,
+  TaskModifier.isWallclock,
+  TaskModifier.isXtrigger,
+]
+
+export const WaitingStateModifierNames = WaitingStateModifiers.map(({ field }) => field)
+
+export const GenericModifiers = [
+  TaskModifier.isSkip,
+  TaskModifier.isHeld,
+]
+
+export const GenericModifierNames = GenericModifiers.map(({ field }) => field)
 
 export default TaskState
