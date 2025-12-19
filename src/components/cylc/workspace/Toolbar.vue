@@ -142,7 +142,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         :icon="$options.icons.info"
         id="info-icon"
       />
-      <v-tooltip v-if="isRunning" activator="#info-icon">
+      <v-tooltip
+        v-if="isRunning"
+        activator="#info-icon"
+        :eager="false"
+      >
         <dl>
           <dt><strong>Owner:</strong> {{ currentWorkflow.node.owner }}</dt>
           <dt><strong>Host:</strong> {{ currentWorkflow.node.host }}</dt>
