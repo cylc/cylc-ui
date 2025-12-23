@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       @click.stop="toggleDrawer"
       id="toggle-drawer"
     >
-      <v-icon>{{ $options.icons.list }}</v-icon>
+      <v-icon>{{ icons.list }}</v-icon>
     </v-btn>
     <!-- title -->
     <v-toolbar-title
@@ -54,14 +54,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-btn
           id="workflow-mutate-button"
           v-command-menu="currentWorkflow"
-          :icon="$options.icons.menu"
+          :icon="icons.menu"
           size="small"
           density="comfortable"
         />
 
         <v-btn
           id="workflow-play-button"
-          :icon="$options.icons.run"
+          :icon="icons.run"
           :disabled="!enabled.playToggle"
           v-if="!isRunning"
           @click="onClickPlay"
@@ -71,7 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-btn
           id="workflow-play-pause-button"
-          :icon="isPaused ? $options.icons.run : $options.icons.hold"
+          :icon="isPaused ? icons.run : icons.hold"
           :disabled="!enabled.pauseToggle"
           v-if="isRunning"
           @click="onClickReleaseHold"
@@ -81,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-btn
           id="workflow-stop-button"
-          :icon="$options.icons.stop"
+          :icon="icons.stop"
           :disabled="!enabled.stopToggle"
           @click="onClickStop"
           size="small"
@@ -100,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         N={{ nWindow }}
         <template #append>
           <v-icon
-            :icon="$options.icons.mdiChevronDown"
+            :icon="icons.mdiChevronDown"
             class="mx-n1"
           />
         </template>
@@ -139,7 +139,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <!-- workflow info icon -->
       <v-icon
         v-if="isRunning"
-        :icon="$options.icons.info"
+        :icon="icons.info"
         id="info-icon"
       />
       <v-tooltip v-if="isRunning" activator="#info-icon">
@@ -170,7 +170,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         data-cy="add-view-btn"
       >
         <v-icon class="icon">
-          {{ $options.icons.add }}
+          {{ icons.add }}
         </v-icon>
         <span class="label">
           {{ $t('Toolbar.addView') }}
@@ -196,7 +196,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <v-card-actions class="mb-n2">
               <v-btn
                 @click="eventBus.emit('reset-workspace-layout')"
-                :prepend-icon="$options.icons.mdiArrowULeftTop"
+                :prepend-icon="icons.mdiArrowULeftTop"
                 class="flex-grow-1"
                 data-cy="reset-layout-btn"
               >
@@ -219,19 +219,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           </div>
           <v-icon
             v-else
-            :icon="$options.icons.mdiAccount"
+            :icon="icons.mdiAccount"
           />
         </v-avatar>
         <v-menu activator="parent">
           <v-card :title="user.username">
             <v-card-text>
-              <v-btn
-                to="/user-profile"
-                variant="tonal"
-                :prepend-icon="$options.icons.mdiCog"
-              >
-                Settings
-              </v-btn>
+              <div class="d-flex flex-column row-gap-2">
+                <v-defaults-provider
+                  :defaults="{
+                    VBtn: { variant: 'tonal', spaced: true },
+                  }"
+                >
+                  <v-btn
+                    to="/guide"
+                    :prepend-icon="icons.mdiHelpCircleOutline"
+                  >
+                    Guide
+                  </v-btn>
+                  <v-btn
+                    to="/user-profile"
+                    :prepend-icon="icons.mdiCog"
+                  >
+                    Settings
+                  </v-btn>
+                </v-defaults-provider>
+              </div>
             </v-card-text>
           </v-card>
         </v-menu>
@@ -255,6 +268,7 @@ import {
   mdiChevronDown,
   mdiArrowULeftTop,
   mdiInformationOutline,
+  mdiHelpCircleOutline,
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
@@ -320,17 +334,30 @@ export default {
   setup () {
     const { showNavBtn } = useNavBtn()
     const { toggleDrawer } = useDrawer()
+
     const uisVersionInfo = inject('versionInfo')
-    let uisFlowVersion = ''
-    if (uisVersionInfo) {
-      uisFlowVersion = uisVersionInfo.value?.['cylc-flow']
-    }
+    const uisFlowVersion = uisVersionInfo?.value?.['cylc-flow'] ?? ''
+
     return {
       eventBus,
       showNavBtn,
       toggleDrawer,
       toolbarHeight,
-      uisFlowVersion
+      uisFlowVersion,
+      icons: {
+        add: mdiPlusBoxMultiple,
+        hold: mdiPause,
+        info: mdiInformationOutline,
+        list: mdiViewList,
+        menu: mdiMicrosoftXboxControllerMenu,
+        run: mdiPlay,
+        stop: mdiStop,
+        mdiCog,
+        mdiAccount,
+        mdiChevronDown,
+        mdiArrowULeftTop,
+        mdiHelpCircleOutline,
+      },
     }
   },
 
@@ -531,20 +558,6 @@ export default {
       return status === mutationStatus.SUCCEEDED
     },
     startCase,
-  },
-
-  icons: {
-    add: mdiPlusBoxMultiple,
-    hold: mdiPause,
-    info: mdiInformationOutline,
-    list: mdiViewList,
-    menu: mdiMicrosoftXboxControllerMenu,
-    run: mdiPlay,
-    stop: mdiStop,
-    mdiCog,
-    mdiAccount,
-    mdiChevronDown,
-    mdiArrowULeftTop,
   },
 }
 </script>
