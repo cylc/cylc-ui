@@ -18,14 +18,15 @@
 import { defineAsyncComponent } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import {
+  mdiChartGantt,
   mdiChartLine,
   mdiFileDocumentMultipleOutline,
   mdiFileTree,
   mdiGraph,
+  mdiHelp,
+  mdiInformationOutline,
   mdiTable,
   mdiTree,
-  mdiChartGantt,
-  mdiInformationOutline,
 } from '@mdi/js'
 
 // Use dynamic async components for lazy loading:
@@ -38,6 +39,7 @@ const GanttView = defineAsyncComponent(() => import('@/views/Gantt.vue'))
 const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue'))
 const InfoView = defineAsyncComponent(() => import('@/views/Info.vue'))
 const MutationView = defineAsyncComponent(() => import('@/components/cylc/Mutation.vue'))
+const GuideView = defineAsyncComponent(() => import('@/views/Guide.vue'))
 
 /**
  * @typedef {Object} CylcView
@@ -61,6 +63,7 @@ export const workflowViews = new Map([
   ['Log', { component: LogView, icon: mdiFileDocumentMultipleOutline }],
   ['Analysis', { component: AnalysisView, icon: mdiChartLine }],
   ['Gantt', { component: GanttView, icon: mdiChartGantt }],
+  ['Guide', { component: GuideView, icon: mdiHelp }],
 ])
 
 // Development views that we don't want in production:

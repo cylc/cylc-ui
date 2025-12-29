@@ -236,12 +236,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   }"
                 >
                   <v-btn
-                    to="/guide"
-                    :prepend-icon="icons.mdiHelpCircleOutline"
-                  >
-                    Guide
-                  </v-btn>
-                  <v-btn
                     to="/user-profile"
                     :prepend-icon="icons.mdiCog"
                   >
