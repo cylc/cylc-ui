@@ -85,12 +85,12 @@ export const workflowViews = new Map([
   ['Gantt', {
     component: GanttView,
     icon: mdiChartGantt,
-    description: 'View job timings as a gantt chart.',
+    description: 'View job timings as a Gantt chart.',
   }],
   ['Guide', {
     component: GuideView,
     icon: mdiHelp,
-    description: 'The Cylc GUI quichstart guide.',
+    description: 'The Cylc GUI quickstart guide.',
   }],
 ])
 

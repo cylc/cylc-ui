@@ -321,7 +321,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-card-text>
             <p>
               Cylc workflows can be very large, or even infinite. So rather
-              than displaying <b>all</b> of the tasks tasks, Cylc displays a
+              than displaying <b>all</b> of the tasks, Cylc displays a
               moving window of tasks built around the workflow's
               "<a href="https://cylc.org/cylc-doc/stable/html/glossary.html#term-active-task">active tasks</a>"
               (the ones which the workflow is operating on right now).
@@ -333,7 +333,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               We call this the "n=1 window".
               Active tasks are said to be "n=0". The tasks immediately
               up/downstream of them are "n=1", and so on
-              (<a href="https://cylc.org/cylc-doc/stable/html/user-guide/running-workflows/tasks-jobs-ui.html#the-n-window">more info</a>).
+              (<a href="https://cylc.org/cylc-doc/stable/html/user-guide/running-workflows/tasks-jobs-ui.html#the-n-window">full documentation</a>).
             </p>
 
             <p>
