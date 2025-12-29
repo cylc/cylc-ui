@@ -123,6 +123,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </v-list>
           </v-card-text>
         </v-card>
+
+        <br />
+
+        <v-card variant="outlined" class="pa-1">
+          <v-card-title primary-title>
+            <p class="text-h4 text--primary">Tabs</p>
+          </v-card-title>
+          <v-card-text>
+            <p>
+              The Cylc GUI has lots of views, each of which opens in a new tab.
+            </p>
+
+            <p>
+              Click and drag on tabs to arrange them into a layout. Click and
+              drag on the margin between tabs to resize them.
+            </p>
+
+            <br />
+
+            <img src="/img/guide-tabs.gif" style="width: 100%; max-width: 600px;" />
+          </v-card-text>
+        </v-card>
       </v-col>
 
       <v-col>
