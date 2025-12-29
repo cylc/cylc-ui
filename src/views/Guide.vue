@@ -128,6 +128,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
         <v-card variant="outlined" class="pa-1">
           <v-card-title primary-title>
+            <p class="text-h4 text--primary">Views</p>
+          </v-card-title>
+          <v-card-text>
+            Cylc provides lots of views which you can use to monitor and
+            interact with workflows in different ways.
+            <v-list>
+              <v-list-item
+                v-for="[name, view] in workflowViews.entries()"
+                v-bind:key="name"
+              >
+                <template v-slot:prepend>
+                  <v-icon size="large">{{ view.icon }}</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ view.description }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+
+            When viewing a workflow, press the "Add View" button to open a new
+            view.
+          </v-card-text>
+        </v-card>
+
+        <br />
+
+        <v-card variant="outlined" class="pa-1">
+          <v-card-title primary-title>
             <p class="text-h4 text--primary">Tabs</p>
           </v-card-title>
           <v-card-text>
@@ -394,6 +425,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Task from '@/components/cylc/Task.vue'
 import Job from '@/components/cylc/Job.vue'
 import GraphNode from '@/components/cylc/GraphNode.vue'
+import { workflowViews } from '@/views/views'
 import { TaskStateUserOrder } from '@/model/TaskState.model'
 import { Tokens } from '@/utils/uid'
 import { uniqueId } from 'lodash-es'
@@ -413,6 +445,8 @@ export default {
     // TODO: extract task states and descriptions from the GraphQL API
     //       once this is an enumeration.
     states: TaskStateUserOrder,
+
+    workflowViews,
 
     exampleTasks: [
       {

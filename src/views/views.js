@@ -57,18 +57,50 @@ export const TREE = 'Tree'
  * @type {Map<string, CylcView>}
  */
 export const workflowViews = new Map([
-  [TREE, { component: TreeView, icon: mdiFileTree }],
-  ['Table', { component: TableView, icon: mdiTable }],
-  ['Graph', { component: GraphView, icon: mdiGraph }],
-  ['Log', { component: LogView, icon: mdiFileDocumentMultipleOutline }],
-  ['Analysis', { component: AnalysisView, icon: mdiChartLine }],
-  ['Gantt', { component: GanttView, icon: mdiChartGantt }],
-  ['Guide', { component: GuideView, icon: mdiHelp }],
+  [TREE, {
+    component: TreeView,
+    icon: mdiFileTree,
+    description: 'View the hierarchy of cycles, families tasks and jobs.',
+  }],
+  ['Table', {
+    component: TableView,
+    icon: mdiTable,
+    description: 'View tasks in a sortable table.',
+  }],
+  ['Graph', {
+    component: GraphView,
+    icon: mdiGraph,
+    description: 'View tasks in a dependency graph.',
+  }],
+  ['Log', {
+    component: LogView,
+    icon: mdiFileDocumentMultipleOutline,
+    description: "View a task or workflow's log files.",
+  }],
+  ['Analysis', {
+    component: AnalysisView,
+    icon: mdiChartLine,
+    description: 'Analyise job performance.',
+  }],
+  ['Gantt', {
+    component: GanttView,
+    icon: mdiChartGantt,
+    description: 'View job timings as a gantt chart.',
+  }],
+  ['Guide', {
+    component: GuideView,
+    icon: mdiHelp,
+    description: 'The Cylc GUI quichstart guide.',
+  }],
 ])
 
 // Development views that we don't want in production:
 if (import.meta.env.MODE !== 'production') {
-  workflowViews.set('SimpleTree', { component: SimpleTreeView, icon: mdiTree })
+  workflowViews.set('SimpleTree', {
+    component: SimpleTreeView,
+    icon: mdiTree,
+    description: '',
+  })
 }
 
 /**
