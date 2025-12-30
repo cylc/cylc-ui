@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             :key="mutation.name"
             :disabled="isDisabled(mutation, authorised)"
             @click.stop="enact(mutation, requiresInfo)"
-            class="c-mutation py-2 pr-2"
+            class="c-mutation-menu-item py-2 pr-2"
             :title="mutation._title"
             :subtitle="mutation._shortDescription"
           >
@@ -98,12 +98,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       content-class="c-mutation-dialog mx-0"
     >
       <Mutation
-        :mutation="dialogMutation"
-        :cylcObject="node"
-        :initialData="initialData(dialogMutation, node.tokens)"
+        :initialOptions="{
+          mutation: dialogMutation,
+          cylcObject: node,
+          data: initialData(dialogMutation, node.tokens),
+          types: types,
+        }"
         @close="() => dialog = false"
         @success="() => showMenu = false"
-        :types="types"
         :key="dialogKey /* Enables re-render of component each time dialog opened */"
         ref="mutationComponent"
       />

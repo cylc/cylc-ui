@@ -237,7 +237,7 @@ describe('FormGenerator Component', () => {
     const wrapper = mountFunction({
       props: {
         mutation: BASIC_MUTATION,
-        initialData: {
+        data: {
           MyString: 'Foo'
         }
       }
@@ -248,17 +248,34 @@ describe('FormGenerator Component', () => {
     })
   })
 
-  it('should reset to initial conditions', () => {
+  it('should reset to initial state', () => {
     const wrapper = mountFunction({
       props: {
         mutation: BASIC_MUTATION,
         initialData: {
-          MyString: 'Foo'
-        }
+          MyString: 'before'
+        },
+        data: {
+          MyString: 'after'
+        },
       }
     })
-    const before = getModel(wrapper)
+    expect(getModel(wrapper).MyString).to.deep.equal('after')
     wrapper.vm.reset()
-    expect(getModel(wrapper)).to.deep.equal(before)
+    expect(getModel(wrapper).MyString).to.deep.equal('before')
+  })
+
+  it('should reset to defaults', () => {
+    const wrapper = mountFunction({
+      props: {
+        mutation: BASIC_MUTATION,
+        data: {
+          MyString: 'after'
+        },
+      }
+    })
+    expect(getModel(wrapper).MyString).to.deep.equal('after')
+    wrapper.vm.reset()
+    expect(getModel(wrapper).MyString).to.deep.equal('MyDefault')
   })
 })

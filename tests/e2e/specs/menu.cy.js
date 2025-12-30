@@ -34,7 +34,7 @@ describe('Command Menu component', () => {
       // the menu should now be open
       .get('.c-mutation-menu-list:first')
       .should('be.visible')
-      .children('.c-mutation')
+      .children('.c-mutation-menu-item')
       .should('have.length', collapsedWorkflowMenuLength)
       .get('.c-mutation-menu')
       .should('be.visible')
@@ -51,7 +51,7 @@ describe('Command Menu component', () => {
       .click()
       .get('.c-mutation-menu-list')
       .should('be.visible')
-      .children('.c-mutation')
+      .children('.c-mutation-menu-item')
       .should('have.length', expandedWorkflowMenuLength)
     // Should close when clicking outside of the menu
     // (click on hidden element to avoid clicking on anything unexpected)
@@ -64,7 +64,7 @@ describe('Command Menu component', () => {
       .click()
       .get('.c-mutation-menu-list')
       .should('be.visible')
-      .children('.c-mutation')
+      .children('.c-mutation-menu-item')
       .should('have.length', collapsedWorkflowMenuLength)
   })
 
@@ -115,7 +115,7 @@ describe('Command Menu component', () => {
       .should('be.visible')
     // Should close when clicking on task mutation
     cy.get('.c-mutation-menu-list')
-      .find('.c-mutation:not([aria-disabled]):first')
+      .find('.c-mutation-menu-item:not([aria-disabled]):first')
       .click()
       .get('.c-mutation-menu')
       .should('not.exist')

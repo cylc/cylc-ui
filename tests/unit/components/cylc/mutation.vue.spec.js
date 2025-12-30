@@ -62,8 +62,10 @@ describe('Mutation Component', () => {
   it('should display mutation name and description', () => {
     const wrapper = mountFunction({
       props: {
-        cylcObject,
-        mutation: BASIC_MUTATION,
+        initialOptions: {
+          cylcObject,
+          mutation: BASIC_MUTATION,
+        },
         cancel: () => {}
       }
     })
@@ -75,12 +77,14 @@ describe('Mutation Component', () => {
   describe('Mutation descriptions', () => {
     const mountWithDescription = (desc) => mountFunction({
       props: {
-        cylcObject,
-        mutation: {
-          name: 'Darmok',
-          description: desc,
-          args: [],
-          _title: 'Darmok'
+        initialOptions: {
+          cylcObject,
+          mutation: {
+            name: 'Darmok',
+            description: desc,
+            args: [],
+            _title: 'Darmok'
+          },
         },
         cancel: () => {}
       }

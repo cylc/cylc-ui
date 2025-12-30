@@ -92,6 +92,11 @@ export default {
       // introspection types
       type: Array,
       required: true
+    },
+    data: {
+      type: Object,
+      required: false,
+      default: () => { return {} }, // for ease of testing
     }
   },
 
@@ -105,8 +110,16 @@ export default {
     }
   },
 
-  created () {
-    this.reset()
+  async created () {
+    if (Object.keys(this.data).length) {
+      // restore view from previous query & data
+      this.initialData = cloneDeep(this.data)
+      this.model = this.data
+      this.type = findByName(this.types, 'Runtime')
+      this.loading = false
+    } else {
+      this.reset()
+    }
   },
 
   computed: {
@@ -129,6 +142,7 @@ export default {
   methods: {
     /** Set this form to its initial conditions. */
     async reset () {
+      // initialise view from query
       const queryName = (
         ['cycle', 'family'].includes(this.cylcObject.type) ? 'familyProxy' : 'taskProxy'
       )
@@ -140,8 +154,8 @@ export default {
         { id: this.tokens.id },
         [{ name: queryField }]
       )
-      const model = cloneDeep(result[queryName][queryField])
-      this.type = findByName(this.types, model.__typename)
+      const model = Object.assign(this.data, cloneDeep(result[queryName][queryField]))
+      this.type = findByName(this.types, 'Runtime')
       // Do not want GQL internal '__typename' field to show up in the form
       delete model.__typename
       // Due to how broadcast works, we cannot rename the keys of/remove

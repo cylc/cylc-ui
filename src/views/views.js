@@ -37,6 +37,7 @@ const AnalysisView = defineAsyncComponent(() => import('@/views/Analysis.vue'))
 const GanttView = defineAsyncComponent(() => import('@/views/Gantt.vue'))
 const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue'))
 const InfoView = defineAsyncComponent(() => import('@/views/Info.vue'))
+const MutationView = defineAsyncComponent(() => import('@/components/cylc/Mutation.vue'))
 
 /**
  * @typedef {Object} CylcView
@@ -83,6 +84,7 @@ export const allViews = new Map([
   // For now, Info view cannot be opened for a workflow, but this will be resolved by
   // https://github.com/cylc/cylc-ui/issues/1898
   ['Info', { component: InfoView, icon: mdiInformationOutline }],
+  ['Command', { component: MutationView, icon: mdiInformationOutline }],
 ])
 
 export const useDefaultView = () => {
