@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </v-card>
     </v-menu>
     <v-dialog
-      v-if="dialogMutation"
+      v-if="dialog && dialogMutation"
       v-model="dialog"
       :width="dialogMutation._dialogWidth ?? '700px'"
       max-width="100%"
