@@ -22,6 +22,8 @@
           "failed": 2,
           "succeeded": 2
         },
+        "containsHeld": true,
+        "containsRetry": true,
         "latestStateTasks": {
           "submitted": [],
           "running": [

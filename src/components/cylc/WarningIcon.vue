@@ -33,7 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :activator="null"
       location="bottom"
       :disabled="!workflow.node.logRecords?.length"
-      :open-delay="400"
     >
       <template
         v-slot:activator="{ props }"

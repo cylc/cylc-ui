@@ -95,14 +95,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       v-else
       class="c-gscan-workflows flex-grow-1 pl-2"
     >
-      <Tree
-        :workflows="workflows"
-        :node-filter-func="filterNode"
-        tree-item-component="GScanTreeItem"
-        class="c-gscan-workflow pa-0"
-        ref="tree"
-        v-bind="{ filterState }"
-      />
+      <v-defaults-provider :defaults="{
+        VTooltip: {
+          location: 'top',
+          openDelay: 400,
+          eager: false,
+        }
+      }">
+        <Tree
+          :workflows="workflows"
+          :node-filter-func="filterNode"
+          tree-item-component="GScanTreeItem"
+          class="c-gscan-workflow pa-0"
+          ref="tree"
+          v-bind="{ filterState }"
+        />
+      </v-defaults-provider>
     </div>
     <!-- when no workflows are returned in the GraphQL query -->
     <div v-if="!workflows.length">

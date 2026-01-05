@@ -21,10 +21,7 @@
     :class="state"
   >
     {{ value }}
-    <v-tooltip
-      location="top"
-      :open-delay="400"
-    >
+    <v-tooltip>
       {{ value }} {{ displayName }} task{{ value > 1 ? 's': '' }}.
       <template v-if="latestTasks?.length">
         Latest:

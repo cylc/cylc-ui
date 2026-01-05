@@ -39,8 +39,11 @@ $cjob: ".c-job .job rect";
     min-width: $height;
     border-radius: $height;
     border: 0.2em solid;
-    margin: 0 0.1em;
     line-height: normal;
+    margin: 0 1px;
+}
+.modifier-badge {
+    margin: 0 2px;
 }
 
 $teal: rgb(109,213,194);
