@@ -34,42 +34,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-data-table
           :headers="$options.headers"
           :items="workflowsTable"
+          hover
           data-cy="workflows-table"
           style="font-size: 1rem;"
         >
           <template v-slot:item="{ item }">
-            <tr
-              @click="viewWorkflow(item)"
-              style="cursor: pointer"
+            <v-defaults-provider
+              :defaults="{
+                VTooltip: {
+                  openDelay: 200,
+                },
+              }"
             >
-              <td width="1em">
-                <WorkflowIcon
-                  :status="item.node.status"
-                  v-command-menu="item"
-                />
-              </td>
-              <td>
-                {{ item.tokens.workflow }}
-              </td>
-              <td>
-                {{ item.node.status }}
-              </td>
-              <td>
-                {{ item.node.cylcVersion }}
-              </td>
-              <td>
-                {{ item.node.owner }}
-              </td>
-              <td>
-                {{ item.node.host }}
-              </td>
-              <td>
-                {{ item.node.port }}
-              </td>
-              <td>
-                {{ displayLastUpdate(item.node.lastUpdated, now) }}
-              </td>
-            </tr>
+              <tr
+                @click="viewWorkflow(item)"
+                style="cursor: pointer"
+              >
+                <td width="1em">
+                  <WorkflowIcon
+                    :status="item.node.status"
+                    v-command-menu="item"
+                  />
+                </td>
+                <td>
+                  {{ item.tokens.workflow }}
+                </td>
+                <td>
+                  {{ item.node.status }}
+                </td>
+                <td>
+                  {{ item.node.cylcVersion }}
+                </td>
+                <td>
+                  {{ item.node.owner }}
+                </td>
+                <td>
+                  {{ item.node.host }}
+                </td>
+                <td>
+                  {{ item.node.port }}
+                </td>
+                <td>
+                  <span v-if="item.node.lastUpdated">
+                    {{ formatDatetime(new Date(item.node.lastUpdated * 1000)) }}
+                    <v-tooltip>
+                      {{ displayLastUpdate(item.node.lastUpdated, now) }}
+                    </v-tooltip>
+                  </span>
+                </td>
+              </tr>
+            </v-defaults-provider>
           </template>
         </v-data-table>
       </v-col>
@@ -85,7 +99,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import gql from 'graphql-tag'
-import { humanDuration } from '@/utils/datetime'
+import { formatDatetime, humanDuration } from '@/utils/datetime'
 
 const QUERY = gql`
 subscription Workflow {
@@ -127,6 +141,12 @@ export default {
 
   components: {
     WorkflowIcon
+  },
+
+  setup () {
+    return {
+      formatDatetime,
+    }
   },
 
   data: () => ({
@@ -215,7 +235,7 @@ export default {
     },
     {
       sortable: true,
-      title: 'Last Updated',
+      title: 'Last Activity',
       key: 'node.lastUpdated'
     },
   ],
