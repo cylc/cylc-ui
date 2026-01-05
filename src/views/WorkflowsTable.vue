@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col>
         <!-- TODO: this is not really an alert, it's a heading -->
         <v-alert
-          :icon="$options.icons.mdiTable"
+          :icon="icons.mdiTable"
           prominent
           color="grey-lighten-3"
         >
@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           data-cy="workflows-table"
           style="font-size: 1rem;"
         >
-          <template v-slot:item="{ item }">
+          <template #item="{ props, item }">
             <v-defaults-provider
               :defaults="{
                 VTooltip: {
@@ -46,43 +46,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 },
               }"
             >
-              <tr
+              <v-data-table-row
+                v-bind="props"
                 @click="viewWorkflow(item)"
-                style="cursor: pointer"
+                class="cursor-pointer"
               >
-                <td width="1em">
+                <template #item.icon="{ item }">
                   <WorkflowIcon
                     :status="item.node.status"
                     v-command-menu="item"
                   />
-                </td>
-                <td>
-                  {{ item.tokens.workflow }}
-                </td>
-                <td>
-                  {{ item.node.status }}
-                </td>
-                <td>
-                  {{ item.node.cylcVersion }}
-                </td>
-                <td>
-                  {{ item.node.owner }}
-                </td>
-                <td>
-                  {{ item.node.host }}
-                </td>
-                <td>
-                  {{ item.node.port }}
-                </td>
-                <td>
-                  <span v-if="item.node.lastUpdated">
-                    {{ formatDatetime(new Date(item.node.lastUpdated * 1000)) }}
+                </template>
+                <template #item.node.lastUpdated="{ value }">
+                  <span v-if="value">
+                    {{ formatDatetime(new Date(value * 1000)) }}
                     <v-tooltip>
-                      {{ displayLastUpdate(item.node.lastUpdated, now) }}
+                      {{ displayLastUpdate(value, now) }}
                     </v-tooltip>
                   </span>
-                </td>
-              </tr>
+                </template>
+              </v-data-table-row>
             </v-defaults-provider>
           </template>
         </v-data-table>
@@ -146,6 +129,9 @@ export default {
   setup () {
     return {
       formatDatetime,
+      icons: {
+        mdiTable,
+      },
     }
   },
 
@@ -239,9 +225,5 @@ export default {
       key: 'node.lastUpdated'
     },
   ],
-
-  icons: {
-    mdiTable,
-  },
 }
 </script>
