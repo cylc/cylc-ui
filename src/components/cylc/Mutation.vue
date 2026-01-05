@@ -16,9 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <template>
-  <!-- Have to repeat these defaults as the ones set in App.vue don't make it through
-  the parent v-dialog - see https://github.com/vuetifyjs/vuetify/issues/18123 -->
-  <v-card class="c-mutation">
+  <v-card
+    class="c-mutation"
+    variant="flat"
+  >
     <!-- the mutation title -->
     <template v-slot:title>
       {{ mutation._title }}
@@ -38,6 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </template>
 
     <v-card-text class="card-text py-0 px-4">
+      <!-- Have to repeat these defaults as the ones set in App.vue don't make it through
+      the parent v-dialog - see https://github.com/vuetifyjs/vuetify/issues/18123 -->
       <v-defaults-provider :defaults="vuetifyDefaults">
         <!-- the mutation description -->
         <v-expansion-panels
@@ -324,13 +327,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /* the body should scroll, the title and actions should remain fixed */
 .c-mutation {
   display: flex;
   flex-direction: column;
 
-  .card-text{
+  .card-text {
     overflow-y: auto;
   }
 }
