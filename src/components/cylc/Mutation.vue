@@ -18,27 +18,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <template>
   <!-- Have to repeat these defaults as the ones set in App.vue don't make it through
   the parent v-dialog - see https://github.com/vuetifyjs/vuetify/issues/18123 -->
-  <v-defaults-provider :defaults="vuetifyDefaults">
-    <v-card class="c-mutation">
-      <!-- the mutation title -->
-      <template v-slot:title>
-        {{ mutation._title }}
-      </template>
+  <v-card class="c-mutation">
+    <!-- the mutation title -->
+    <template v-slot:title>
+      {{ mutation._title }}
+    </template>
 
-      <!-- the open in new tab button -->
-      <template v-slot:append v-if="!isView">
-        <v-icon
-          data-cy="open-in-new-tab"
-          @click="openInTab"
-        >
-          {{ $options.icons.mdiOpenInNew }}
-        </v-icon>
-        <v-tooltip>
-          Open in new tab
-        </v-tooltip>
-      </template>
+    <!-- the open in new tab button -->
+    <template v-slot:append v-if="!isView">
+      <v-icon
+        data-cy="open-in-new-tab"
+        @click="openInTab"
+      >
+        {{ $options.icons.mdiOpenInNew }}
+      </v-icon>
+      <v-tooltip>
+        Open in new tab
+      </v-tooltip>
+    </template>
 
-      <v-card-text class="card-text py-0 px-4">
+    <v-card-text class="card-text py-0 px-4">
+      <v-defaults-provider :defaults="vuetifyDefaults">
         <!-- the mutation description -->
         <v-expansion-panels
           v-bind="extendedDescription ? { hover: true } : { readonly: true }"
@@ -86,68 +86,68 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           ref="form"
           v-model="isValid"
         />
-      </v-card-text>
+      </v-defaults-provider>
+    </v-card-text>
 
-      <!-- the actions -->
-      <v-card-actions class="pa-3">
-        <v-spacer></v-spacer>
-        <v-btn
-          color="grey"
-          @click="close()"
-          variant="text"
-          data-cy="cancel"
-          v-if="!isView"
-        >
-          Cancel
-        </v-btn>
-        <v-btn
-          color="orange"
-          @click="$refs.form.reset()"
-          variant="text"
-          data-cy="reset"
-        >
-          Reset
-        </v-btn>
-        <v-btn
-          variant="text"
-          :color="isValid ? 'primary' : 'error'"
-          @click="submit"
-          :loading="submitting"
-          data-cy="submit"
-        >
-          Submit
-          <v-tooltip
-            location="top"
-            content-class="bg-error"
-            :disabled="isValid"
-          >
-            <span>Form contains invalid or missing values!</span>
-          </v-tooltip>
-        </v-btn>
-      </v-card-actions>
-
-      <!-- the warnings -->
-      <v-snackbar
-        v-model="showWarning"
-        timeout="4e3"
-        color="amber-accent-2"
-        data-cy="warning-snack"
+    <!-- the actions -->
+    <v-card-actions class="pa-3">
+      <v-spacer></v-spacer>
+      <v-btn
+        color="grey"
+        @click="close()"
+        variant="text"
+        data-cy="cancel"
+        v-if="!isView"
       >
-        {{ warningMsg }}
-        <template v-slot:actions>
-          <v-btn
-            @click="showWarning = false"
-            icon
-            data-cy="snack-close"
-          >
-            <v-icon>
-              {{ $options.icons.close }}
-            </v-icon>
-          </v-btn>
-        </template>
-      </v-snackbar>
-    </v-card>
-  </v-defaults-provider>
+        Cancel
+      </v-btn>
+      <v-btn
+        color="orange"
+        @click="$refs.form.reset()"
+        variant="text"
+        data-cy="reset"
+      >
+        Reset
+      </v-btn>
+      <v-btn
+        variant="text"
+        :color="isValid ? 'primary' : 'error'"
+        @click="submit"
+        :loading="submitting"
+        data-cy="submit"
+      >
+        Submit
+        <v-tooltip
+          location="top"
+          content-class="bg-error"
+          :disabled="isValid"
+        >
+          <span>Form contains invalid or missing values!</span>
+        </v-tooltip>
+      </v-btn>
+    </v-card-actions>
+
+    <!-- the warnings -->
+    <v-snackbar
+      v-model="showWarning"
+      timeout="4e3"
+      color="amber-accent-2"
+      data-cy="warning-snack"
+    >
+      {{ warningMsg }}
+      <template v-slot:actions>
+        <v-btn
+          @click="showWarning = false"
+          icon
+          data-cy="snack-close"
+        >
+          <v-icon>
+            {{ $options.icons.close }}
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+  </v-card>
 </template>
 
 <script>
