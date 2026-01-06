@@ -215,7 +215,7 @@ import {
   mdiCheckboxBlankOutline
 } from '@mdi/js'
 import { cloneDeep } from 'lodash-es'
-import { formatDatetime } from '@/utils/tasks'
+import { formatDatetime } from '@/utils/datetime'
 
 export default {
   name: 'InfoComponent',

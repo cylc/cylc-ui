@@ -129,16 +129,6 @@ export function getRunTime (jobNode) {
 }
 
 /**
- * Format a datetime as an ISO 8601 string in UTC, without milliseconds.
- *
- * @param {Date} date - The date to format.
- * @returns {string} The formatted date string.
- */
-export function formatDatetime (date) {
-  return `${date.toISOString().slice(0, -5)}Z`
-}
-
-/**
  * @param {string} flowNums - Flow numbers in DB format
  * @returns {string} - Flow numbers in pretty format
  */

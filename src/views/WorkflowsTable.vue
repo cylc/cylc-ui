@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <v-col>
         <!-- TODO: this is not really an alert, it's a heading -->
         <v-alert
-          :icon="$options.icons.mdiTable"
+          :icon="icons.mdiTable"
           prominent
           color="grey-lighten-3"
         >
@@ -34,42 +34,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <v-data-table
           :headers="$options.headers"
           :items="workflowsTable"
+          hover
           data-cy="workflows-table"
           style="font-size: 1rem;"
         >
-          <template v-slot:item="{ item }">
-            <tr
-              @click="viewWorkflow(item)"
-              style="cursor: pointer"
+          <template #item="{ props, item }">
+            <v-defaults-provider
+              :defaults="{
+                VTooltip: {
+                  openDelay: 200,
+                },
+              }"
             >
-              <td width="1em">
-                <WorkflowIcon
-                  :status="item.node.status"
-                  v-command-menu="item"
-                />
-              </td>
-              <td>
-                {{ item.tokens.workflow }}
-              </td>
-              <td>
-                {{ item.node.status }}
-              </td>
-              <td>
-                {{ item.node.cylcVersion }}
-              </td>
-              <td>
-                {{ item.node.owner }}
-              </td>
-              <td>
-                {{ item.node.host }}
-              </td>
-              <td>
-                {{ item.node.port }}
-              </td>
-              <td>
-                {{ displayLastUpdate(item.node.lastUpdated, now) }}
-              </td>
-            </tr>
+              <v-data-table-row
+                v-bind="props"
+                @click="viewWorkflow(item)"
+                class="cursor-pointer"
+              >
+                <template #item.icon="{ item }">
+                  <WorkflowIcon
+                    :status="item.node.status"
+                    v-command-menu="item"
+                  />
+                </template>
+                <template #item.node.lastUpdated="{ value }">
+                  <span v-if="value">
+                    {{ formatDatetime(new Date(value * 1000)) }}
+                    <v-tooltip>
+                      {{ displayLastUpdate(value, now) }}
+                    </v-tooltip>
+                  </span>
+                </template>
+              </v-data-table-row>
+            </v-defaults-provider>
           </template>
         </v-data-table>
       </v-col>
@@ -85,7 +82,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import WorkflowIcon from '@/components/cylc/gscan/WorkflowIcon.vue'
 import gql from 'graphql-tag'
-import { humanDuration } from '@/utils/datetime'
+import { formatDatetime, humanDuration } from '@/utils/datetime'
 
 const QUERY = gql`
 subscription Workflow {
@@ -127,6 +124,15 @@ export default {
 
   components: {
     WorkflowIcon
+  },
+
+  setup () {
+    return {
+      formatDatetime,
+      icons: {
+        mdiTable,
+      },
+    }
   },
 
   data: () => ({
@@ -215,13 +221,9 @@ export default {
     },
     {
       sortable: true,
-      title: 'Last Updated',
+      title: 'Last Activity',
       key: 'node.lastUpdated'
     },
   ],
-
-  icons: {
-    mdiTable,
-  },
 }
 </script>

@@ -23,7 +23,6 @@ import {
   jobMessageOutputs,
   formatFlowNums,
   isFlowNone,
-  formatDatetime,
   getRunTime,
   isTruthyOrZero,
 } from '@/utils/tasks'
@@ -119,17 +118,6 @@ describe('tasks', () => {
       expect(formatDuration(42)).to.equal('00:00:42')
       expect(formatDuration(42, { allowZeros: false })).to.equal('00:00:42')
       expect(formatDuration(42, { allowZeros: true })).to.equal('00:00:42')
-    })
-  })
-
-  describe('formatDatetime', () => {
-    it.each([
-      ['2022-10-05T11:56:00.000Z', '2022-10-05T11:56:00Z'],
-      ['2023-05-20T14:48-04:30', '2023-05-20T19:18:00Z'],
-      ['2023-12-04T11:38+13:25', '2023-12-03T22:13:00Z'],
-      ['2024-01-15T09:30:45.123Z', '2024-01-15T09:30:45Z'],
-    ])('%s -> %s', (input, expected) => {
-      expect(formatDatetime(new Date(input))).toEqual(expected)
     })
   })
 
