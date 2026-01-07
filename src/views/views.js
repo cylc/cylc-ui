@@ -18,14 +18,15 @@
 import { defineAsyncComponent } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import {
+  mdiChartGantt,
   mdiChartLine,
   mdiFileDocumentMultipleOutline,
   mdiFileTree,
   mdiGraph,
+  mdiHelp,
+  mdiInformationOutline,
   mdiTable,
   mdiTree,
-  mdiChartGantt,
-  mdiInformationOutline,
 } from '@mdi/js'
 
 // Use dynamic async components for lazy loading:
@@ -38,6 +39,7 @@ const GanttView = defineAsyncComponent(() => import('@/views/Gantt.vue'))
 const SimpleTreeView = defineAsyncComponent(() => import('@/views/SimpleTree.vue'))
 const InfoView = defineAsyncComponent(() => import('@/views/Info.vue'))
 const MutationView = defineAsyncComponent(() => import('@/components/cylc/Mutation.vue'))
+const GuideView = defineAsyncComponent(() => import('@/views/Guide.vue'))
 
 /**
  * @typedef {Object} CylcView
@@ -55,17 +57,50 @@ export const TREE = 'Tree'
  * @type {Map<string, CylcView>}
  */
 export const workflowViews = new Map([
-  [TREE, { component: TreeView, icon: mdiFileTree }],
-  ['Table', { component: TableView, icon: mdiTable }],
-  ['Graph', { component: GraphView, icon: mdiGraph }],
-  ['Log', { component: LogView, icon: mdiFileDocumentMultipleOutline }],
-  ['Analysis', { component: AnalysisView, icon: mdiChartLine }],
-  ['Gantt', { component: GanttView, icon: mdiChartGantt }],
+  [TREE, {
+    component: TreeView,
+    icon: mdiFileTree,
+    description: 'View the hierarchy of cycles, families tasks and jobs.',
+  }],
+  ['Table', {
+    component: TableView,
+    icon: mdiTable,
+    description: 'View tasks in a sortable table.',
+  }],
+  ['Graph', {
+    component: GraphView,
+    icon: mdiGraph,
+    description: 'View tasks in a dependency graph.',
+  }],
+  ['Log', {
+    component: LogView,
+    icon: mdiFileDocumentMultipleOutline,
+    description: "View a task or workflow's log files.",
+  }],
+  ['Analysis', {
+    component: AnalysisView,
+    icon: mdiChartLine,
+    description: 'Analyise job performance.',
+  }],
+  ['Gantt', {
+    component: GanttView,
+    icon: mdiChartGantt,
+    description: 'View job timings as a Gantt chart.',
+  }],
+  ['Guide', {
+    component: GuideView,
+    icon: mdiHelp,
+    description: 'The Cylc GUI quickstart guide.',
+  }],
 ])
 
 // Development views that we don't want in production:
 if (import.meta.env.MODE !== 'production') {
-  workflowViews.set('SimpleTree', { component: SimpleTreeView, icon: mdiTree })
+  workflowViews.set('SimpleTree', {
+    component: SimpleTreeView,
+    icon: mdiTree,
+    description: '',
+  })
 }
 
 /**

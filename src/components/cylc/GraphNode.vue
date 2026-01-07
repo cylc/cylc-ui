@@ -116,9 +116,6 @@ export default {
       default: 1.2,
       required: false
     },
-    jobTheme: {
-      required: true
-    }
   },
   computed: {
     nodeID () {
