@@ -266,7 +266,6 @@ import {
   mdiChevronDown,
   mdiArrowULeftTop,
   mdiInformationOutline,
-  mdiHelpCircleOutline,
 } from '@mdi/js'
 import { startCase } from 'lodash'
 import { until } from '@/utils/reactivity'
@@ -354,7 +353,6 @@ export default {
         mdiAccount,
         mdiChevronDown,
         mdiArrowULeftTop,
-        mdiHelpCircleOutline,
       },
     }
   },
