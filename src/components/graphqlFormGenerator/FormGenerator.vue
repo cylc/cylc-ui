@@ -55,12 +55,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </template>
 
 <script>
-import { cloneDeep, lowerCase, upperFirst } from 'lodash'
+import { lowerCase, upperFirst } from 'lodash'
 import { mdiHelpCircleOutline } from '@mdi/js'
 
 import Markdown from '@/components/Markdown.vue'
 import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
 import { getNullValue, mutate } from '@/utils/aotf'
+import { cloneDeep } from 'lodash-es'
 
 export default {
   name: 'form-generator',
@@ -71,23 +72,39 @@ export default {
   },
 
   props: {
+    // model: true if the form is valid, else False
     modelValue: {
-      // validity of form
       type: Boolean,
       required: false,
       default: () => false
     },
+
+    // the mutation we are operating on
     mutation: {
       type: Object,
       required: true
     },
+
+    // list of GraphQL types extracted from the introspection query
     types: {
       type: Array,
       default: () => []
     },
+
+    // the live state of the form
+    data: {
+      type: Object,
+      required: false,
+      default: () => { return {} }, // for ease of testing
+    },
+
+    // the inital state of the form - i.e, what it will be restored back to
+    // when the reset button is pushed
     initialData: {
-      type: Object
-    }
+      type: Object,
+      required: false,
+      default: () => { return {} }, // for ease of testing
+    },
   },
 
   emits: ['update:modelValue'],
@@ -97,7 +114,8 @@ export default {
   }),
 
   created () {
-    this.reset()
+    // begin with the initial data
+    this.model = this.applyDefaults(this.data)
   },
 
   computed: {
@@ -127,13 +145,14 @@ export default {
   methods: {
     /* Set this form to its initial conditions. */
     reset () {
-      // begin with the initial data
-      const model = cloneDeep(this.initialData || {})
+      Object.assign(this.model, this.applyDefaults(cloneDeep(this.initialData)))
+    },
 
+    applyDefaults (data) {
       // then apply default values from the schema
       let defaultValue
       for (const arg of this.mutation.args) {
-        if (arg.name in model) {
+        if (arg.name in data) {
           // if the argument is defined in the initial data leave it unchanged
           continue
         }
@@ -154,11 +173,10 @@ export default {
           //       THIS would break Vue model
           defaultValue = getNullValue(arg.type, this.types)
         }
-        model[arg.name] = defaultValue
+        data[arg.name] = defaultValue
       }
 
-      // done
-      this.model = model
+      return data
     },
 
     async submit () {

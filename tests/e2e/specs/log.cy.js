@@ -218,7 +218,7 @@ describe('Log command in menu', () => {
       .should('have.length', 1)
       .get('.c-tree .c-job:first')
       .click()
-      .get('.c-mutation').contains('Log')
+      .get('.c-mutation-menu-item').contains('Log')
       .click()
       .get('.lm-DockPanel-widget')
       .should('have.length', 2)
@@ -230,7 +230,7 @@ describe('Log command in menu', () => {
     function openJobLog (state) {
       cy.get(`.c-tree .c-job.${state}:first`)
         .click()
-        .get('.c-mutation').contains('Log')
+        .get('.c-mutation-menu-item').contains('Log')
         .click()
     }
 
@@ -270,7 +270,7 @@ describe('Log view in workspace', () => {
   function openWorkflowLog () {
     cy.get('#workflow-mutate-button')
       .click()
-      .get('.c-mutation').contains('Log')
+      .get('.c-mutation-menu-item').contains('Log')
       .click()
   }
 
@@ -334,7 +334,7 @@ describe('Log view in workspace', () => {
       .get('.c-gscan .node').contains(one)
       .parents('.node').find('[data-c-interactive]')
       .click()
-      .get('.c-mutation').contains('Log')
+      .get('.c-mutation-menu-item').contains('Log')
       .click()
     cy.url()
       .should('contain', `/workspace/${encodeURIComponent(one)}`)
@@ -344,7 +344,7 @@ describe('Log view in workspace', () => {
     cy.get('.c-gscan .node').contains(multi)
       .parents('.node').find('[data-c-interactive]')
       .click()
-      .get('.c-mutation').contains('Log')
+      .get('.c-mutation-menu-item').contains('Log')
       .click()
     cy.url()
       .should('contain', `/workspace/${encodeURIComponent(multi)}`)

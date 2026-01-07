@@ -242,6 +242,70 @@ describe('Api On The Fly', () => {
           expect(mutation.variables.cycle).to.equal('20000102T0000Z')
         })
     })
+
+    it('opens in a new tab', () => {
+      cy
+        // wait for the mutations to have loaded
+        .wait(['@IntrospectQuery'])
+
+        // open the mutation menu
+        .get('.node-data-cycle > .c-task:first')
+        .click()
+
+        // click on the first mutation
+        .get('.c-mutation-menu-list:first [data-cy=mutation-edit]')
+        .click()
+
+        // this should open the mutation editor
+        .get('.v-dialog').as('dialog')
+        .should('be.visible')
+
+        // make an edit to the workflow field
+        .get('input[value="~user/one"]').as('workflowInput')
+        .type('-edit-1')
+        .should('have.value', '~user/one-edit-1')
+
+        // the edit should be reverted when the form is reset
+        .get('.c-mutation [data-cy=reset]')
+        .click()
+        .get('@workflowInput')
+        .should('have.value', '~user/one')
+
+        // make another edit
+        .type('-edit-2')
+        .should('have.value', '~user/one-edit-2')
+
+        // open the form in a new tab
+        .get('.c-mutation')
+        .should('have.length', 1)
+        .find('[data-cy=open-in-new-tab]')
+        .click()
+
+        // the dialog and menu should have been closed
+        .get('@dialog')
+        .should('not.exist')
+        .get('.c-mutation-menu-list')
+        .should('not.exist')
+
+        // the mutation should have re-opened in a new tab (original destroyed)
+        .get('.c-mutation')
+        .should('have.length', 1)
+        .get('@workflowInput')
+        .should('not.exist')
+
+        // the tab title should contain the mutation name
+        .get('body')
+        .contains('.lm-TabBar-tabLabel', 'Command: Cycle Mutation')
+        .should('have.length', 1)
+
+        // the edit should have been preserved in the new tab
+        .get('input[value="~user/one-edit-2"]')
+
+        // the field should revert to its original value when reset
+        .get('.c-mutation [data-cy=reset]')
+        .click()
+        .get('input[value="~user/one"]')
+    })
   })
 
   describe('Play/pause button', () => {
@@ -295,18 +359,18 @@ describe('Api On The Fly', () => {
         // it should list the one default workflow mutation
         // (see workflowService.primaryMutations)
         .get('.c-mutation-menu-list:first')
-        .find('.c-mutation')
+        .find('.c-mutation-menu-item')
         .should('have.length', 1)
         // toggle the menu to "see more" items
         .get('#less-more-button')
         .click()
         // it should now list the five workflow mutations
         .get('.c-mutation-menu-list:first')
-        .find('.c-mutation')
+        .find('.c-mutation-menu-item')
         .should('have.length', 5)
         // should have unauthorised mutation disabled
         .get('.c-mutation-menu-list:first')
-        .find('.c-mutation:nth-child(4)')
+        .find('.c-mutation-menu-item:nth-child(4)')
         .should('exist')
         .should('have.class', 'v-list-item--disabled')
         // toggle the menu to "see less" items
@@ -315,7 +379,7 @@ describe('Api On The Fly', () => {
         // it should list the one default workflow mutation
         // (see workflowService.primaryMutations)
         .get('.c-mutation-menu-list:first')
-        .find('.c-mutation')
+        .find('.c-mutation-menu-item')
         .should('have.length', 1)
     })
   })

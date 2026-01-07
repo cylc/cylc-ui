@@ -144,6 +144,7 @@ onBeforeUnmount(() => {
   eventBus.off('add-view', addView)
   eventBus.off('lumino:deleted', onWidgetDeleted)
   eventBus.off('reset-workspace-layout', resetToDefault)
+  layoutWatcher.pause()
   // Register with Lumino that the dock panel is no longer used,
   // otherwise uncaught errors can occur when restoring layout
   dockPanel.dispose()
