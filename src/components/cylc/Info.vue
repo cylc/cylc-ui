@@ -44,159 +44,177 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- The task information -->
     <v-expansion-panels
       multiple
-      variant="accordion"
       v-model="panelExpansionModel"
+      flat
+      static
+      color="blue-grey-lighten-3"
+      bg-color="grey-lighten-4"
+      rounded="lg"
     >
-      <!-- The metadata -->
-      <v-expansion-panel class="metadata-panel">
-        <v-expansion-panel-title color="blue-grey-lighten-1">
-          Metadata
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <dl>
-            <dt>Title</dt>
-            <dd>{{ taskMetadata.title }}</dd>
-            <v-divider />
-            <dt>Description</dt>
-            <dd><span class="markup">{{ taskMetadata.description }}</span></dd>
-            <v-divider />
-            <dt>URL</dt>
-            <dd>
-              <!--
-                  NOTE: for security reasons, always display the full URL
-                  that the link directs to
-              -->
-              <a
-                v-if="taskMetadata.URL"
-                :href="taskMetadata.URL"
-                target="_blank"
-              >
-                {{ taskMetadata.URL }}
-              </a>
-            </dd>
-            <v-divider />
-            <template v-for="(value, key) in customMetadata" :key="key">
-              <dt>{{ key }}</dt>
-              <dd><span class="markup">{{ value }}</span></dd>
+      <v-defaults-provider :defaults="{
+        VExpansionPanelTitle: {
+          class: 'text-button py-2',
+        },
+        VExpansionPanelText: {
+          class: 'mt-2',
+        },
+        VTable: {
+          density: 'compact',
+          class: 'bg-transparent',
+        },
+      }">
+        <!-- The metadata -->
+        <v-expansion-panel class="metadata-panel">
+          <v-expansion-panel-title>
+            Metadata
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <dl>
+              <dt>Title</dt>
+              <dd>{{ taskMetadata.title }}</dd>
               <v-divider />
-            </template>
-          </dl>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-
-      <v-expansion-panel class="run-mode-panel">
-        <v-expansion-panel-title color="blue-grey-lighten-2">
-          Run Mode
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-icon>{{ runModeIcon }}</v-icon>  {{ runMode }}
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-
-      <v-expansion-panel
-        v-if="xtriggers.length"
-        class="xtriggers-panel"
-      >
-        <v-expansion-panel-title color="blue-grey-lighten-1">
-          Xtriggers
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-table density="compact">
-            <thead>
-              <tr>
-                <th>Label</th>
-                <th>ID</th>
-                <th>Is satisfied</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="xt in xtriggers" :key="xt.id">
-                <td>{{ xt.label }}</td>
-                <td>{{ xt.id }}</td>
-                <td><v-icon>{{ xt.satisfactionIcon }}</v-icon></td>
-              </tr>
-            </tbody>
-          </v-table>
-          </v-expansion-panel-text>
-      </v-expansion-panel>
-
-      <!-- The prereqs -->
-      <v-expansion-panel class="prerequisites-panel">
-        <v-expansion-panel-title color="blue-grey-lighten-2">
-          Prerequisites
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <ul>
-            <li v-for="prereq in prerequisites" :key="prereq.expression">
-              <span
-                class="prerequisite-alias condition"
-                :class="{satisfied: prereq.satisfied}"
-              >{{ prereq.expression.replace(/c/g, '') }}</span>
-              <ul>
-                <li
-                  v-for="condition in prereq.conditions"
-                  :key="condition.taskAlias"
-                >
-                  <span
-                    class="prerequisite-alias condition"
-                    :class="{satisfied: condition.satisfied}"
+              <dt>Description</dt>
+              <dd><span class="markup">{{ taskMetadata.description }}</span></dd>
+              <template v-if="taskMetadata.URL">
+                <v-divider />
+                <dt>URL</dt>
+                <dd>
+                  <!--
+                      NOTE: for security reasons, always display the full URL
+                      that the link directs to
+                  -->
+                  <a
+                    :href="taskMetadata.URL"
+                    target="_blank"
                   >
-                    {{ condition.exprAlias.replace(/c/, '') }}
+                    {{ taskMetadata.URL }}
+                  </a>
+                </dd>
+              </template>
+              <template v-for="(value, key) in customMetadata" :key="key">
+                <v-divider />
+                <dt>{{ key }}</dt>
+                <dd><span class="markup">{{ value }}</span></dd>
+              </template>
+            </dl>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
 
-                    <span style="margin-left: 0.5em; color: rgb(0,0,0)">
-                      {{ condition.taskId }}:{{ condition.reqState }}
+        <v-expansion-panel class="run-mode-panel">
+          <v-expansion-panel-title>
+            Run Mode
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <div class="d-flex align-center gap-2">
+              <v-icon :icon="runModeIcon"/>{{ runMode }}
+            </div>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+
+        <v-expansion-panel
+          v-if="xtriggers.length"
+          class="xtriggers-panel"
+        >
+          <v-expansion-panel-title>
+            Xtriggers
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <v-table>
+              <thead>
+                <tr>
+                  <th>Label</th>
+                  <th>ID</th>
+                  <th>Is satisfied</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="xt in xtriggers" :key="xt.id">
+                  <td>{{ xt.label }}</td>
+                  <td class="text-mono">{{ xt.id }}</td>
+                  <td><v-icon>{{ xt.satisfactionIcon }}</v-icon></td>
+                </tr>
+              </tbody>
+            </v-table>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+
+        <!-- The prereqs -->
+        <v-expansion-panel class="prerequisites-panel">
+          <v-expansion-panel-title>
+            Prerequisites
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <ul>
+              <li v-for="prereq in prerequisites" :key="prereq.expression">
+                <span
+                  class="prerequisite-alias condition"
+                  :class="{satisfied: prereq.satisfied}"
+                >{{ prereq.expression.replace(/c/g, '') }}</span>
+                <ul>
+                  <li
+                    v-for="condition in prereq.conditions"
+                    :key="condition.taskAlias"
+                  >
+                    <span
+                      class="prerequisite-alias condition"
+                      :class="{satisfied: condition.satisfied}"
+                    >
+                      {{ condition.exprAlias.replace(/c/, '') }}
+
+                      <span style="margin-left: 0.5em; color: rgb(0,0,0)">
+                        {{ condition.taskId }}:{{ condition.reqState }}
+                      </span>
                     </span>
-                  </span>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
 
-      <!-- The outputs -->
-      <v-expansion-panel class="outputs-panel">
-        <v-expansion-panel-title color="blue-grey-lighten-1">
-          Outputs
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <ul>
-            <li v-for="output in outputs" :key="output.label">
-              <span
-                class="condition"
-                :class="{satisfied: output.satisfied}"
-              >{{ output.label }}</span>
-            </li>
-          </ul>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
+        <!-- The outputs -->
+        <v-expansion-panel class="outputs-panel">
+          <v-expansion-panel-title>
+            Outputs
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <ul>
+              <li v-for="output in outputs" :key="output.label">
+                <span
+                  class="condition"
+                  :class="{satisfied: output.satisfied}"
+                >{{ output.label }}</span>
+              </li>
+            </ul>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
 
-      <!-- The completion -->
-      <v-expansion-panel class="completion-panel">
-        <v-expansion-panel-title color="blue-grey-lighten-2">
-          Completion
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <!-- TODO: We don't have an "is complete" field yet so we cannot
-            display an aggregate status-->
-          <ul>
-            <li
-              v-for="([complete, indent, line], index) in formatCompletion(completion, outputs)"
-              :key="index"
-            >
-              <span
-                class="condition"
-                :class="{satisfied: complete, blank: (complete === null)}"
+        <!-- The completion -->
+        <v-expansion-panel class="completion-panel">
+          <v-expansion-panel-title>
+            Completion
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <!-- TODO: We don't have an "is complete" field yet so we cannot
+              display an aggregate status-->
+            <ul>
+              <li
+                v-for="([complete, indent, line], index) in formatCompletion(completion, outputs)"
+                :key="index"
               >
-                <!-- Indent the line as required -->
-                <span :style="`margin-left: ${1 * indent}em;`"></span>
-                {{ line }}
-              </span>
-            </li>
-          </ul>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-
+                <span
+                  class="condition"
+                  :class="{satisfied: complete, blank: (complete === null)}"
+                >
+                  <!-- Indent the line as required -->
+                  <span :style="`margin-left: ${1 * indent}em;`"></span>
+                  {{ line }}
+                </span>
+              </li>
+            </ul>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-defaults-provider>
     </v-expansion-panels>
   </div>
 </template>
@@ -364,16 +382,11 @@ export default {
 
     .metadata-panel {
       dl {
-        dt dd {
-          padding-left: 1em;
-          padding-right: 1em;
-        }
         dt {
-          font-size: 1.3em;
-          padding-top: 0.4em;
+          font-weight: bold;
         }
-        dd {
-          padding-bottom: 0.4em;
+        .v-divider {
+          margin: 0.4em 0;
         }
       }
     }
