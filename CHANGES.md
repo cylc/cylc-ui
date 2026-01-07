@@ -12,6 +12,33 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.12.0 (Released 2026-01-07)
+
+### 🚀 Enhancements
+
+[#2361](https://github.com/cylc/cylc-ui/pull/2361) - An information icon containing workflow details (via hover over) has been added to the workspace toolbar.
+
+[#2370](https://github.com/cylc/cylc-ui/pull/2370) - Task filtering improvements:
+  * Task ID filtering now supports globs.
+  * Task state filtering now supports queued, runahead, wallclock, xtriggered, retry, held and skip selectors.
+  * Task filtering controls have been redesigned.
+
+[#2372](https://github.com/cylc/cylc-ui/pull/2372) - Improved the appearance of the Info view.
+
+[#2378](https://github.com/cylc/cylc-ui/pull/2378) - Added held and retry icons to the workflows sidebar, these will indicate if any n=0 tasks are in these states.
+
+[#2380](https://github.com/cylc/cylc-ui/pull/2380) - Made the workflows sidebar more compact and added an option called "Compact Mode" to reduce it further.
+
+[#2381](https://github.com/cylc/cylc-ui/pull/2381), [#2396](https://github.com/cylc/cylc-ui/pull/2396) - Added a "last activity" column to the workflows table.
+
+[#2392](https://github.com/cylc/cylc-ui/pull/2392) - Expanded the guide section and added it as a view so it can be opened as a tab.
+
+[#2394](https://github.com/cylc/cylc-ui/pull/2394) - The command editor can now be opened in a new tab.
+
+### 🔧 Fixes
+
+[#2377](https://github.com/cylc/cylc-ui/pull/2377) - Fixed the play/pause/stop buttons in the toolbar being incorrectly disabled when switching between workflows.
+
 ## cylc-ui-2.11.0 (Released 2025-11-27)
 
 ### 🚀 Enhancements
