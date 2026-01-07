@@ -144,6 +144,7 @@ onBeforeUnmount(() => {
   eventBus.off('add-view', addView)
   eventBus.off('lumino:deleted', onWidgetDeleted)
   eventBus.off('reset-workspace-layout', resetToDefault)
+  layoutWatcher.pause()
   // Register with Lumino that the dock panel is no longer used,
   // otherwise uncaught errors can occur when restoring layout
   dockPanel.dispose()
@@ -192,9 +193,6 @@ async function getLayout () {
  * Save the current layout/views to cache storage.
  */
 async function saveLayout () {
-  if (!dockPanel.layout) {
-    return // dockPanel not yet initialised
-  }
   // Serialize layout first to synchronously capture the current state
   const serializedLayout = JSON.stringify({
     layout: dockPanel.saveLayout(),
