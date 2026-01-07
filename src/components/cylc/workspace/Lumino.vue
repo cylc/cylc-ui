@@ -192,6 +192,9 @@ async function getLayout () {
  * Save the current layout/views to cache storage.
  */
 async function saveLayout () {
+  if (!dockPanel.layout) {
+    return // dockPanel not yet initialised
+  }
   // Serialize layout first to synchronously capture the current state
   const serializedLayout = JSON.stringify({
     layout: dockPanel.saveLayout(),
