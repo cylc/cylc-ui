@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- the open in new tab button -->
     <template v-slot:append v-if="!isView">
       <v-icon
-        v-if="mutation.name !== 'editRuntime'"
+        v-if="!['editRuntime', 'broadcast'].includes(mutation.name)"
         data-cy="open-in-new-tab"
         @click="openInTab"
       >
