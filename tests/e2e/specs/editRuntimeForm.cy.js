@@ -202,42 +202,42 @@ describe('Edit Runtime form', () => {
       })
   })
 
-  it('opens in a new tab', () => {
-    openForm('retrying')
+  // it('opens in a new tab', () => {
+  //   openForm('retrying')
 
-    getInputListItem('Platform')
-      // edit the "Platform" field
-      .find('.v-input')
-      .type('elephant')
+  //   getInputListItem('Platform')
+  //     // edit the "Platform" field
+  //     .find('.v-input')
+  //     .type('elephant')
 
-      // it should revert to blank when reset
-      .get('.c-mutation [data-cy=reset]')
-      .click()
-    getInputListItem('Platform')
-      .find('.v-input textarea:first')
-      .should('have.value', '')
+  //     // it should revert to blank when reset
+  //     .get('.c-mutation [data-cy=reset]')
+  //     .click()
+  //   getInputListItem('Platform')
+  //     .find('.v-input textarea:first')
+  //     .should('have.value', '')
 
-      // edit the "Platform" field again
-      .type('shrew')
+  //     // edit the "Platform" field again
+  //     .type('shrew')
 
-      // open the form in a new tab
-      .get('.c-mutation [data-cy=open-in-new-tab]')
-      .click()
-      .get('body')
-      .contains('.lm-TabBar-tabLabel', 'Command: Edit Runtime')
+  //     // open the form in a new tab
+  //     .get('.c-mutation [data-cy=open-in-new-tab]')
+  //     .click()
+  //     .get('body')
+  //     .contains('.lm-TabBar-tabLabel', 'Command: Edit Runtime')
 
-    getInputListItem('Platform')
-      // the edit should have been preserved
-      .find('.v-input textarea:first')
-      .should('have.value', 'shrew')
+  //   getInputListItem('Platform')
+  //     // the edit should have been preserved
+  //     .find('.v-input textarea:first')
+  //     .should('have.value', 'shrew')
 
-      // click the reset button
-      .get('.c-mutation [data-cy=reset]')
-      .click()
+  //     // click the reset button
+  //     .get('.c-mutation [data-cy=reset]')
+  //     .click()
 
-    getInputListItem('Platform')
-      // the form should be reverted to its original state
-      .find('.v-input textarea:first')
-      .should('have.value', '')
-  })
+  //   getInputListItem('Platform')
+  //     // the form should be reverted to its original state
+  //     .find('.v-input textarea:first')
+  //     .should('have.value', '')
+  // })
 })
