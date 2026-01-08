@@ -12,6 +12,14 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.12.1 (Released 2026-01-08)
+
+### 🔧 Fixes
+
+[#2404](https://github.com/cylc/cylc-ui/pull/2404) - Fixed a bug introduced in 2.12.0 where the command editor would lose inputted data.
+
+[#2407](https://github.com/cylc/cylc-ui/pull/2407), [#2409](https://github.com/cylc/cylc-ui/pull/2409) - Disabled opening of Edit Runtime and Broadcast editor in a new tab due to a bug introduced in 2.12.0.
+
 ## cylc-ui-2.12.0 (Released 2026-01-08)
 
 ### 🚀 Enhancements
