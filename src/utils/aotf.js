@@ -142,12 +142,12 @@ export function getMutationIcon (name) {
     case 'play': return mdiPlay
     case 'poll': return mdiRefreshCircle
     case 'release': return mdiPlayCircleOutline // to distinguish from play
-    case 'reload': return mdiReload
     case 'remove': return mdiMinusCircleOutline
     case 'resume': return mdiPlay
     case 'set': return mdiVectorPolylineEdit
     case 'stop': return mdiStop
     case 'trigger': return mdiCursorPointer
+    case 'validateReinstall': return mdiReload
     default: return mdiCog
   }
 }
@@ -179,7 +179,7 @@ export const primaryMutations = {
     'resume',
     'pause',
     'stop',
-    'reload',
+    'validateReinstall',
     'clean',
     'log'
   ],
