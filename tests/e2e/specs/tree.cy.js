@@ -167,32 +167,67 @@ describe('Tree view', () => {
   describe('filters', () => {
     const initialNumTasks = 7
 
-    it('Should filter by ID', () => {
-      cy.visit('/#/tree/one')
+    function checkFilteredTasks (expectedNames) {
+      cy.get('.c-tree .node-data-task:visible')
+        .then((eles) => {
+          const names = []
+          for (const ele of eles) {
+            names.push(
+              Cypress.$(ele).find('.mx-1:first').text()
+            )
+          }
+          expect(names.sort()).to.deep.equal(expectedNames.sort())
+        })
+    }
+
+    function testFiltering () {
+      cy.get('[data-cy=control-taskIDFilter] input').as('idFilter')
+
       // Should not filter by default
       cy.get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
         .contains('waiting')
-      for (const id of ['eed', '/suc', 'GOOD', 'SUC']) {
-        cy.get('[data-cy=control-taskIDFilter] input')
-          .clear()
-          .type(id)
-        cy.get('.node-data-task:visible')
-          .should('have.length.lessThan', initialNumTasks)
-          .contains('succeeded')
-        cy.get('[data-node-name=waiting]')
-          .should('not.be.visible')
-      }
-      // It should stop filtering when input is cleared
-      cy.get('[data-cy=control-taskIDFilter] input')
-        .clear()
+
+      // filter by task name
+      cy.get('@idFilter').clear().type('c')
+        .then(() => { checkFilteredTasks(['eventually_succeeded', 'succeeded', 'checkpoint']) })
+      cy.get('@idFilter').clear().type('ch')
+        .then(() => { checkFilteredTasks(['checkpoint']) })
+      cy.get('@idFilter').clear().type('c*point')
+        .then(() => { checkFilteredTasks(['checkpoint']) })
+
+      // chearing the input should clear the filter
+      cy.get('@idFilter').clear()
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
-      // It should filter by cycle point
-      cy.get('[data-cy=control-taskIDFilter] input')
-        .type('2000') // (matches all tasks)
+
+      // filter by family name
+      cy.get('@idFilter').clear().type('BA')
+        .then(() => { checkFilteredTasks(['failed', 'retrying']) })
+      cy.get('@idFilter').clear().type('B*D')
+        .then(() => { checkFilteredTasks(['failed', 'retrying']) })
+
+      // filter by cycle point
+      cy.get('@idFilter').clear().type('20000102T0000Z')
         .get('.node-data-task:visible')
         .should('have.length', initialNumTasks)
+
+      cy.get('@idFilter').clear()
+    }
+
+    it('Should filter by ID (normal mode)', () => {
+      cy.visit('/#/tree/one')
+
+      testFiltering()
+    })
+
+    it('Should filter by ID (flat mode)', () => {
+      cy.visit('/#/tree/one')
+
+      // put the tree view into "flat" mode (no families)
+      cy.get('[data-cy="control-flat"]').click()
+
+      testFiltering()
     })
 
     it('Should filter by task states', () => {

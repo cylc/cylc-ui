@@ -45,13 +45,13 @@ export function globToRegex (glob) {
   return new RegExp(
     // escape any regex characters in the glob
     escapeRegExp(glob.trim())
-      .replace(/\\\*/, '.*')
+      .replace(/\\\*/g, '.*')
       // `?` -> `.`
-      .replace(/\\\?/, '.')
+      .replace(/\\\?/g, '.')
       // `[!X]` -> `[^X]`
-      .replace(/\\\[!([^]*)\\\]/, '[^$1]')
+      .replace(/\\\[!([^\\\]]*)\\\]/g, '[^$1]')
       // `[X]` -> `[X]`
-      .replace(/\\\[([^]*)\\\]/, '[$1]')
+      .replace(/\\\[([^\\\]]*)\\\]/g, '[$1]')
   )
 }
 
