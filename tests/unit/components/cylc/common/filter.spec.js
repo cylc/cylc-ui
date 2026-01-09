@@ -131,14 +131,22 @@ describe('task filtering', () => {
 
       // globs
       { glob: 'f*o', regex: /f.*o/ },
+      { glob: 'f*o*o', regex: /f.*o.*o/ },
       { glob: 'f?o', regex: /f.o/ },
+      { glob: 'f?o?o', regex: /f.o.o/ },
       { glob: 'f[o]o', regex: /f[o]o/ },
+      { glob: 'f[o]o[o]l', regex: /f[o]o[o]l/ },
       { glob: 'f[!o]o', regex: /f[^o]o/ },
+      { glob: 'f[!o]o[!o]l', regex: /f[^o]o[^o]l/ },
 
       // regex escapes
       { glob: '.*', regex: /\..*/ },
+      { glob: '.*.*.*', regex: /\..*\..*\..*/ },
       { glob: '(x)', regex: /\(x\)/ },
       { glob: '\\w\\d\\s', regex: /\\w\\d\\s/ },
+
+      // nasty
+      { glob: 'a*[bc]d[!ef]*g?h.*i(j)', regex: /a.*[bc]d[^ef].*g.h\..*i\(j\)/ }
     ])('globToRegex($glob) => $regex', ({ glob, regex }) => {
       expect(String(globToRegex(glob))).toBe(String(regex))
     })
