@@ -128,11 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-expansion-panel-text>
             <v-breadcrumbs :items="inheritance">
               <template #divider>
-                <v-icon
-                  :icon="mdiChevronRight"
-                  size="small"
-                  class="mx-n1"
-                />
+                <span>::</span>
               </template>
             </v-breadcrumbs>
           </v-expansion-panel-text>
@@ -269,7 +265,6 @@ import {
   mdiDramaMasks,
   mdiCheckboxOutline,
   mdiCheckboxBlankOutline,
-  mdiChevronRight
 } from '@mdi/js'
 import { cloneDeep } from 'lodash-es'
 import { formatDatetime } from '@/utils/datetime'
@@ -299,7 +294,6 @@ export default {
     return {
       inheritance,
       jobTheme: useJobTheme(),
-      mdiChevronRight,
     }
   },
 
