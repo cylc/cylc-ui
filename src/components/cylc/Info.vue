@@ -123,7 +123,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           data-cy="inheritance-panel"
         >
           <v-expansion-panel-title>
-            Inheritance
+            <template #default="{ expanded }">
+              Inheritance
+                <v-icon
+                  v-if="expanded"
+                  :icon="icons.mdiHelpCircleOutline"
+                  class="ml-2"
+                  v-tooltip="{
+                    text: 'Shows the linearised family inheritance hierarchy for this task. The order of precedence is determined by the C3 algorithm used in Python.',
+                    location: 'top',
+                  }"
+                />
+            </template>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <v-breadcrumbs :items="inheritance">
@@ -265,6 +276,7 @@ import {
   mdiDramaMasks,
   mdiCheckboxOutline,
   mdiCheckboxBlankOutline,
+  mdiHelpCircleOutline,
 } from '@mdi/js'
 import { cloneDeep } from 'lodash-es'
 import { formatDatetime } from '@/utils/datetime'
@@ -294,6 +306,9 @@ export default {
     return {
       inheritance,
       jobTheme: useJobTheme(),
+      icons: {
+        mdiHelpCircleOutline,
+      },
     }
   },
 
