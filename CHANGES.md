@@ -12,6 +12,14 @@ $ towncrier create <PR-number>.<feat|fix>.md --content "Short description"
 
 <!-- towncrier release notes start -->
 
+## cylc-ui-2.12.2 (Released 2026-01-12)
+
+### 🔧 Fixes
+
+[#2413](https://github.com/cylc/cylc-ui/pull/2413) - Fixed tree view search bugs:
+  - Didn't work when families are toggled off.
+  - Globs containing multiple `*` didn't work.
+
 ## cylc-ui-2.12.1 (Released 2026-01-08)
 
 ### 🔧 Fixes
