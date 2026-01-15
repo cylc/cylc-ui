@@ -15,9 +15,27 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
-  <div ref="mainDiv" class="main pa-2 fill-height">
+  <div
+    ref="mainDiv"
+    class="main pa-2 fill-height position-relative"
+  >
     <!-- Lumino box panel gets inserted here -->
+    <Transition appear>
+      <!-- Transition needed to avoid flashing this notice upon navigation -->
+      <v-empty-state
+        v-if="!views.size"
+        title="Workspace is empty"
+        text="To get started, add a view"
+        class="position-absolute top-0 left-0 h-100 w-100 text-medium-emphasis"
+        id="empty-workspace-notice"
+      >
+        <template #text>
+          To get started, add a view using the toolbar above
+        </template>
+      </v-empty-state>
+    </Transition>
   </div>
+  <!-- Widgets get teleported to box panel -->
   <WidgetComponent
     v-for="[id, { name }] in views"
     :key="id"
@@ -39,6 +57,7 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  useTemplateRef,
 } from 'vue'
 import { startCase, uniqueId } from 'lodash-es'
 import WidgetComponent from '@/components/cylc/workspace/Widget.vue'
@@ -89,11 +108,7 @@ const emit = defineEmits([
   'emptied'
 ])
 
-/**
- * Template ref
- * @type {import('vue').Ref<HTMLElement>}
- */
-const mainDiv = ref(null)
+const mainDiv = useTemplateRef('mainDiv')
 
 /**
  * Mapping of widget ID to the name of view component and its initialOptions prop.

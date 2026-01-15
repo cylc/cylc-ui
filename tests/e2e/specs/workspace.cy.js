@@ -89,6 +89,8 @@ describe('Workspace view and component/widget', () => {
   it('Can remove widgets by clicking close icon in tab', () => {
     cy.get('.lm-TabBar-tabLabel')
       .should('have.length', 1)
+    cy.get('#empty-workspace-notice')
+      .should('not.exist')
     addView('Tree')
     // ensure we have 2 widgets now
     cy.get('.lm-TabBar-tabLabel')
@@ -104,6 +106,8 @@ describe('Workspace view and component/widget', () => {
       .should('not.exist')
     cy.get('.lm-DockPanel-widget')
       .should('not.exist')
+    cy.get('#empty-workspace-notice')
+      .should('be.visible')
   })
 
   it('Saves and restores layout when navigating', () => {
