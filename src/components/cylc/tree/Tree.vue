@@ -24,6 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :node="child"
       v-bind="{ hoverable, cyclePointsOrderDesc, expandAll, filteredOutNodesCache, flat }"
     />
+    <v-filter-empty-state
+      v-if="allFilteredOut"
+      data-cy="filter-no-results"
+    />
   </div>
 </template>
 
@@ -134,4 +138,11 @@ const rootChildren = computed(() => {
   // nodes to allow us to differentiate between them
   return props.workflows
 })
+
+const allFilteredOut = computed(() => (
+  props.filterState &&
+  rootChildren.value.every(
+    (node) => filteredOutNodesCache.value.get(node)
+  )
+))
 </script>

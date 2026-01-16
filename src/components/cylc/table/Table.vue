@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     v-model:items-per-page="itemsPerPage"
     fixed-header
   >
-    <template v-slot:item.task.name="{ item }">
+    <template #item.task.name="{ item }">
       <div
         class="d-flex align-center flex-nowrap"
         :class="{ 'flow-none': isFlowNone(item.task.node.flowNums) }"
@@ -56,20 +56,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
       </div>
     </template>
-    <template v-slot:item.latestJob.node.finishedTime="{ item, value }">
+    <template #item.latestJob.node.finishedTime="{ item, value }">
       <EstimatedTime
         :actual="value"
         :estimate="item.latestJob?.node.estimatedFinishTime"
       />
     </template>
-    <template v-slot:item.task.node.task.meanElapsedTime="{ item }">
+    <template #item.task.node.task.meanElapsedTime="{ item }">
       <EstimatedTime
         v-bind="taskRunTimes.get(item.task.id)"
         :formatter="(x) => formatDuration(x, { allowZeros: true })"
         tooltip="Mean for this task"
       />
     </template>
-    <template v-slot:item.data-table-expand="{ item, internalItem, toggleExpand, isExpanded }">
+    <template #item.data-table-expand="{ item, internalItem, toggleExpand, isExpanded }">
       <v-btn
         @click="toggleExpand(internalItem)"
         icon
@@ -86,7 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         />
       </v-btn>
     </template>
-    <template v-slot:expanded-row="{ item }">
+    <template #expanded-row="{ item }">
       <tr
         v-bind:key="job.id"
         v-for="(job, index) in item.task.children"
@@ -125,8 +125,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </td>
       </tr>
     </template>
-    <template v-slot:bottom>
+    <template #bottom>
       <v-data-table-footer :itemsPerPageOptions="itemsPerPageOptions" />
+    </template>
+    <template #no-data v-if="filterState">
+      <v-filter-empty-state data-cy="filter-no-results"/>
     </template>
   </v-data-table>
 </template>
@@ -164,6 +167,10 @@ const props = defineProps({
     required: true
   },
   initialOptions: initialOptionsProp,
+  filterState: {
+    type: [Object, null],
+    default: null,
+  },
 })
 
 const cyclePointsOrderDesc = useCyclePointsOrderDesc()

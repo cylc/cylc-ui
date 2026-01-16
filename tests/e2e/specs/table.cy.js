@@ -39,7 +39,7 @@ describe('Table view', () => {
       .should('be.visible')
   })
 
-  describe('Filters & sorting', () => {
+  describe('Filters', () => {
     it('Should filter by ID', () => {
       cy.get('.c-table table > tbody > tr')
         .should('have.length', initialNumRows)
@@ -105,6 +105,21 @@ describe('Table view', () => {
         .should('be.visible')
     })
 
+    it('Displays a notice when no tasks match the filter', () => {
+      cy.get('.c-table table > tbody > tr')
+        .should('have.length', initialNumRows)
+      cy.get('.c-table [data-cy=filter-no-results]')
+        .should('not.exist')
+      cy.get('[data-cy="control-taskIDFilter"]')
+        .type('j3cduF4h2djAk1')
+      cy.get('.c-table table > tbody > tr')
+        .should('have.length', 1)
+      cy.get('.c-table [data-cy=filter-no-results]')
+        .should('be.visible')
+    })
+  })
+
+  describe('Sorting', () => {
     it('displays and sorts latest job run time', () => {
       const nonzeroValues = [
         '00:00:01',

@@ -23,6 +23,7 @@ import { VSelect } from 'vuetify/components/VSelect'
 import { VTextarea } from 'vuetify/components/VTextarea'
 import { VTextField } from 'vuetify/components/VTextField'
 import { VCardActions } from 'vuetify/components/VCard'
+import { VEmptyState } from 'vuetify/components/VEmptyState'
 import colors from 'vuetify/util/colors'
 import { mdiClose } from '@mdi/js'
 import { useReducedAnimation } from '@/composables/localStorage'
@@ -78,6 +79,7 @@ export const vuetifyOptions = {
   },
   aliases: {
     VSelectActions: VCardActions,
+    VFilterEmptyState: VEmptyState,
   },
   defaults: {
     VTooltip: {
@@ -89,6 +91,11 @@ export const vuetifyOptions = {
     },
     VSelectActions: {
       class: 'mt-n2'
+    },
+    VFilterEmptyState: {
+      title: 'No results',
+      text: 'Try adjusting your filters above',
+      class: 'text-medium-emphasis',
     },
     ...inputDefaults
   },
