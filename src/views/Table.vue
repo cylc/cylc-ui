@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <TableComponent
         :tasks="filteredTasks"
         v-model:initial-options="dataTableOptions"
+        v-bind="{ filterState }"
         class="mh-100"
       />
     </div>
@@ -44,7 +45,7 @@ import {
   updateInitialOptionsEvent,
   useInitialOptions
 } from '@/utils/initialOptions'
-import { matchNode, groupStateFilters, globToRegex } from '@/components/cylc/common/filter'
+import { matchNode, groupStateFilters, globToRegex, useTasksFilterState } from '@/components/cylc/common/filter'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import TableComponent from '@/components/cylc/table/Table.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -163,6 +164,7 @@ export default {
      * @type {import('vue').Ref<object>}
      */
     const tasksFilter = useInitialOptions('tasksFilter', { props, emit }, {})
+    const filterState = useTasksFilterState(tasksFilter)
 
     /**
      * The Vuetify data table options (sortBy, page etc).
@@ -173,6 +175,7 @@ export default {
     return {
       dataTableOptions,
       tasksFilter,
+      filterState,
     }
   },
 

@@ -26,6 +26,7 @@ import {
 import {
   escapeRegExp
 } from 'lodash-es'
+import { computed } from 'vue'
 
 /* Convert a glob to a Regex.
  *
@@ -118,4 +119,19 @@ export function groupStateFilters (states) {
     states.filter(x => WaitingStateModifierNames.includes(x)),
     states.filter(x => GenericModifierNames.includes(x)),
   ]
+}
+
+/**
+ * Return the filter state as a tuple of [id, states] or null if no filter is applied.
+ *
+ * @template {{ id?, states? }} T
+ * @param {import('vue').Ref<T>} tasksFilter
+ * @return {import('vue').ComputedRef<T?>}
+ */
+export function useTasksFilterState (tasksFilter) {
+  return computed(
+    () => (tasksFilter.value.id?.trim() || tasksFilter.value.states?.length)
+      ? [tasksFilter.value.id, tasksFilter.value.states]
+      : null
+  )
 }

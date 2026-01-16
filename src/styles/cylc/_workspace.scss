@@ -36,6 +36,15 @@
     .lm-BoxPanel {
       flex: 1 1 auto;
     }
+
+    #empty-workspace-notice {
+      &.v-enter-from, &.v-leave-to, &.v-leave-active {
+        opacity: 0;
+      }
+      &.v-enter-active {
+        transition: opacity 0.2s ease 0.2s;
+      }
+    }
   }
 }
 

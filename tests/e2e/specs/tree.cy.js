@@ -332,6 +332,20 @@ describe('Tree view', () => {
         .get('.v-list-item--active')
         .should('have.length', 0)
     })
+
+    it('Displays a notice when no tasks match the filter', () => {
+      cy.visit('/#/tree/one')
+      cy.get('.node-data-task')
+        .should('be.visible')
+      cy.get('[data-cy=filter-no-results]')
+        .should('not.exist')
+      cy.get('[data-cy="control-taskIDFilter"]')
+        .type('j3cduF4h2djAk1')
+      cy.get('.node-data-task')
+        .should('not.be.visible')
+      cy.get('[data-cy=filter-no-results]')
+        .should('be.visible')
+    })
   })
 
   describe('Expand/collapse all buttons', () => {
