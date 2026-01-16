@@ -33,21 +33,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </v-input>
 </template>
 
-<script>
-import { formElement } from '@/components/graphqlFormGenerator/mixins'
+<script setup>
+import { computed } from 'vue'
+import FormInput from '@/components/graphqlFormGenerator/FormInput.vue'
+import { formElementProps, useFormElement } from '@/components/graphqlFormGenerator/mixins'
 
-export default {
-  name: 'g-input-object',
+const props = defineProps({
+  ...formElementProps
+})
 
-  mixins: [formElement],
+const model = defineModel({ required: true })
 
-  computed: {
-    inputs () {
-      return this.type.fields.map(field => ({
-        gqlType: field.type,
-        label: field.name
-      }))
-    }
-  }
-}
+const { type } = useFormElement(props)
+
+const inputs = computed(() => type.value.fields.map(
+  (field) => ({
+    gqlType: field.type,
+    label: field.name
+  })
+))
 </script>
