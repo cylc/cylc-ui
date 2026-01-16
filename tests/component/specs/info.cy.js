@@ -40,6 +40,12 @@ const TASK = {
         }
       }
     },
+    namespace: [
+      'root',
+      'GRANDPA',
+      'DAD',
+      TOKENS.task,
+    ],
     prerequisites: [
       {
         satisfied: false,
@@ -147,110 +153,137 @@ const TASK = {
 }
 
 describe('Info component', () => {
-  it('displays task information', () => {
-    cy.vmount(InfoComponent, {
-      props: {
-        task: TASK,
-        class: 'job_theme--default',
-        // NOTE: expand all sections by default
-        panelExpansion: [0, 1, 2, 3, 4, 5],
-      }
+  describe('Task information', () => {
+    beforeEach(() => {
+      cy.vmount(InfoComponent, {
+        props: {
+          task: TASK,
+          class: 'job_theme--default',
+          // NOTE: expand all sections by default
+          panelExpansion: [
+            'metadata',
+            'runMode',
+            'inheritance',
+            'xtriggers',
+            'prereqs',
+            'outputs',
+            'completion',
+          ],
+        }
+      })
     })
 
-    // there should be a task icon (running)
-    cy.get('.c-graph-node .c8-task.running').should('be.visible')
+    it('shows task icon and jobs', () => {
+      // there should be a task icon (running)
+      cy.get('.c-graph-node .c8-task.running').should('be.visible')
 
-    // and two job icons (succeeded & failed)
-    cy.get('.c-graph-node .c-job').should('have.length', 2)
-      .get('.c-graph-node .c-job .failed').should('be.visible')
-      .get('.c-graph-node .c-job .succeeded').should('be.visible')
+      // and two job icons (succeeded & failed)
+      cy.get('.c-graph-node .c-job').should('have.length', 2)
+        .get('.c-graph-node .c-job .failed').should('be.visible')
+        .get('.c-graph-node .c-job .succeeded').should('be.visible')
+    })
 
-    // the metadata panel
-    cy.get('.metadata-panel.v-expansion-panel--active').should('be.visible')
-      .contains('My Foo')
-      .get('.metadata-panel') // the description should be displayed
-      .contains(/Lorem ipsum dolor sit amet.*/)
-      .get('.metadata-panel a:first') // the URL should be an anchor
-      .should('have.attr', 'href', 'https://cylc.org')
-      .contains(/^https:\/\/cylc.org$/)
+    it('shows metadata', () => {
+      cy.get('.metadata-panel.v-expansion-panel--active').should('be.visible')
+        .contains('My Foo')
+        .get('.metadata-panel') // the description should be displayed
+        .contains(/Lorem ipsum dolor sit amet.*/)
+        .get('.metadata-panel a:first') // the URL should be an anchor
+        .should('have.attr', 'href', 'https://cylc.org')
+        .contains(/^https:\/\/cylc.org$/)
+    })
 
-    // the run mode panel:
-    cy.get('.run-mode-panel.v-expansion-panel--active').should('be.visible')
-      .contains('Live')
+    it('shows run mode and inheritance', () => {
+      cy.get('.run-mode-panel.v-expansion-panel--active').should('be.visible')
+        .contains('Live')
 
-    // the xtriggers panel
-    cy.get('.xtriggers-panel.v-expansion-panel--active').should('be.visible')
-      .get('table')
-      .get('tbody tr')
-      .children()
-      .then((selector) => {
-        expect(selector[0].innerText).to.equal('wallclock-xtrigger')
-        expect(selector[4].innerText).to.equal('my-xtrigger(foo=42)')
-        expect(selector[7].innerText).to.equal('my-xtrigger(foo=99)')
-      })
+      cy.get('[data-cy=inheritance-panel]')
+        .find('li:not([aria-hidden="true"])')
+        .then(($els) => Array.from($els, (el) => el.innerText))
+        .should('deep.equal', [
+          'GRANDPA',
+          'DAD',
+          'foo',
+        ])
+    })
 
-    // the prerequisites panel
-    cy.get('.prerequisites-panel.v-expansion-panel--active').should('be.visible')
-      .find('.prerequisite-alias.condition')
-      .should('have.length', 6)
-      .then((selector) => {
-        expect(selector[0].innerText).to.equal('(0 & 1) | 2')
-        expect(selector[0]).to.not.have.class('satisfied')
+    it('shows xtriggers', () => {
+      cy.get('.xtriggers-panel.v-expansion-panel--active').should('be.visible')
+        .get('table')
+        .get('tbody tr')
+        .children()
+        .then((selector) => {
+          expect(selector[0].innerText).to.equal('wallclock-xtrigger')
+          expect(selector[4].innerText).to.equal('my-xtrigger(foo=42)')
+          expect(selector[7].innerText).to.equal('my-xtrigger(foo=99)')
+        })
+    })
 
-        expect(selector[1].innerText).to.equal('0 a:succeeded')
-        expect(selector[1]).to.have.class('satisfied')
+    it('shows prerequisites', () => {
+      cy.get('.prerequisites-panel.v-expansion-panel--active').should('be.visible')
+        .find('.prerequisite-alias.condition')
+        .should('have.length', 6)
+        .then((selector) => {
+          expect(selector[0].innerText).to.equal('(0 & 1) | 2')
+          expect(selector[0]).to.not.have.class('satisfied')
 
-        expect(selector[2].innerText).to.equal('1 b:custom_output')
-        expect(selector[2]).to.not.have.class('satisfied')
+          expect(selector[1].innerText).to.equal('0 a:succeeded')
+          expect(selector[1]).to.have.class('satisfied')
 
-        expect(selector[3].innerText).to.equal('2 a:expired')
-        expect(selector[3]).to.not.have.class('satisfied')
+          expect(selector[2].innerText).to.equal('1 b:custom_output')
+          expect(selector[2]).to.not.have.class('satisfied')
 
-        expect(selector[4].innerText).to.equal('0')
-        expect(selector[4]).to.have.class('satisfied')
+          expect(selector[3].innerText).to.equal('2 a:expired')
+          expect(selector[3]).to.not.have.class('satisfied')
 
-        expect(selector[5].innerText).to.equal('0 x:succeeded')
-        expect(selector[5]).to.have.class('satisfied')
-      })
+          expect(selector[4].innerText).to.equal('0')
+          expect(selector[4]).to.have.class('satisfied')
 
-    // the outputs panel
-    cy.get('.outputs-panel.v-expansion-panel--active').should('be.visible')
-      .find('.condition')
-      .should('have.length', 4)
-      .then((selector) => {
-        expect(selector[0]).to.contain('started')
-        expect(selector[0].classList.toString()).to.equal('condition satisfied')
+          expect(selector[5].innerText).to.equal('0 x:succeeded')
+          expect(selector[5]).to.have.class('satisfied')
+        })
+    })
 
-        expect(selector[1]).to.contain('succeeded')
-        expect(selector[1].classList.toString()).to.equal('condition')
+    it('shows outputs', () => {
+      cy.get('.outputs-panel.v-expansion-panel--active').should('be.visible')
+        .find('.condition')
+        .should('have.length', 4)
+        .then((selector) => {
+          expect(selector[0]).to.contain('started')
+          expect(selector[0].classList.toString()).to.equal('condition satisfied')
 
-        expect(selector[2]).to.contain('failed')
-        expect(selector[2].classList.toString()).to.equal('condition')
+          expect(selector[1]).to.contain('succeeded')
+          expect(selector[1].classList.toString()).to.equal('condition')
 
-        expect(selector[3]).to.contain('x')
-        expect(selector[3].classList.toString()).to.equal('condition satisfied')
-      })
+          expect(selector[2]).to.contain('failed')
+          expect(selector[2].classList.toString()).to.equal('condition')
 
-    // the completion panel
-    cy.get('.completion-panel.v-expansion-panel--active').should('be.visible')
-      .find('.condition')
-      .should('have.length', 5)
-      .then((selector) => {
-        expect(selector[0]).to.contain('(')
-        expect(selector[0].classList.toString()).to.equal('condition blank')
+          expect(selector[3]).to.contain('x')
+          expect(selector[3].classList.toString()).to.equal('condition satisfied')
+        })
+    })
 
-        expect(selector[1]).to.contain('succeeded')
-        expect(selector[1].classList.toString()).to.equal('condition')
+    it('shows completion info', () => {
+      cy.get('.completion-panel.v-expansion-panel--active').should('be.visible')
+        .find('.condition')
+        .should('have.length', 5)
+        .then((selector) => {
+          expect(selector[0]).to.contain('(')
+          expect(selector[0].classList.toString()).to.equal('condition blank')
 
-        expect(selector[2]).to.contain('and x')
-        expect(selector[2].classList.toString()).to.equal('condition satisfied')
+          expect(selector[1]).to.contain('succeeded')
+          expect(selector[1].classList.toString()).to.equal('condition')
 
-        expect(selector[3]).to.contain(')')
-        expect(selector[3].classList.toString()).to.equal('condition blank')
+          expect(selector[2]).to.contain('and x')
+          expect(selector[2].classList.toString()).to.equal('condition satisfied')
 
-        expect(selector[4]).to.contain('or failed')
-        expect(selector[4].classList.toString()).to.equal('condition')
-      })
+          expect(selector[3]).to.contain(')')
+          expect(selector[3].classList.toString()).to.equal('condition blank')
+
+          expect(selector[4]).to.contain('or failed')
+          expect(selector[4].classList.toString()).to.equal('condition')
+        })
+    })
   })
 
   it('should expand sections as intended', () => {
@@ -279,7 +312,7 @@ describe('Info component', () => {
       .get('@wrapper').then(({ wrapper }) => {
         expect(
           wrapper.emitted('update:panelExpansion')[0][0]
-        ).to.deep.equal([0, 3])
+        ).to.deep.equal(['metadata', 'prereqs'])
       })
   })
 
@@ -317,8 +350,6 @@ describe('Info component', () => {
 
   for (const mode of ['Skip', 'Simulation', 'Dummy']) {
     it('should display ' + mode + ' mode', () => {
-      // ensure the component can be mounted without errors for empty states
-      // i.e. no metadata, prerequisites, outputs or jobs
       const tokens = new Tokens('~user/workflow//1234/foo')
       const task = {
         id: tokens.id,
@@ -343,7 +374,7 @@ describe('Info component', () => {
           task,
           class: 'job_theme--default',
           // Expand just the run mode panel
-          panelExpansion: [1],
+          panelExpansion: ['runMode'],
         }
       })
 
