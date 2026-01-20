@@ -82,31 +82,3 @@ describe('Filter save state', () => {
     checkOption('#c-gantt-tasks-per-page', '25')
   })
 })
-
-describe('Render the correct amount of jobs', () => {
-  it('allows changing the number of jobs displayed', () => {
-    cy.visit('/#/gantt/one')
-    let jobsToShow = 5
-
-    cy.get('#c-gantt-job-range')
-      .clear()
-      .type(jobsToShow)
-      .blur() // Trigger the change event
-      .should('have.value', jobsToShow)
-
-    cy.get('.vue-apexcharts')
-      .should('be.visible')
-      .contains('d1')
-
-    jobsToShow = 4
-
-    cy.get('#c-gantt-job-range')
-      .clear()
-      .type(jobsToShow)
-      .blur() // Trigger the change event
-      .should('have.value', jobsToShow)
-
-    cy.get('.vue-apexcharts')
-      .contains('d1').should('not.exist')
-  })
-})

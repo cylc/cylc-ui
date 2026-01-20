@@ -80,25 +80,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             prefix="Tasks Per Page"
             v-model="tasksPerPage"/>
         </v-col>
-        <v-col
-          cols="12"
-          md="4"
-          class="pr-md-2 mb-2"
-        >
-          <v-text-field
-            id="c-gantt-job-range"
-            ref="jobRangeInput"
-            label="Number of jobs displayed"
-            type="number"
-            :counter="totalJobs"
-            :counter-value="jobsRange"
-            :model-value="jobsRange"
-            @change="updateJobsRange"
-            :rules="[v => v >= 1 || 'Must be at least 1']"
-            step="10"
-            clearable
-          />
-        </v-col>
       </v-row>
       <GanttChart
         :jobs="filteredJobs"
@@ -209,16 +190,9 @@ export default {
       platformOption: -1,
     })
 
-    /**
-     * The number of latest jobs to display.
-     * @type {import('vue').Ref<number>}
-     */
-    const jobsRange = useInitialOptions('jobsRange', { props, emit }, 100)
-
     return {
       tasksPerPage,
       jobsFilter,
-      jobsRange,
     }
   },
 
@@ -244,30 +218,8 @@ export default {
     workflowIDs () {
       return [this.workflowId]
     },
-    totalJobs () {
-      return Object.values(this.callback.jobs).flat().length
-    },
     filteredJobs () {
-      // Flatten all jobs into a single array
-      const allJobs = Object.values(this.callback.jobs).flat()
-
-      // Sort jobs by submission time in descending order
-      const sortedJobs = allJobs.sort((a, b) => new Date(b.submittedTime) - new Date(a.submittedTime))
-
-      // Take the latest N jobs based on user input
-      const latestJobs = sortedJobs.slice(0, this.jobsRange)
-
-      // Group the latest jobs by task name
-      const groupedJobs = latestJobs.reduce((acc, job) => {
-        if (!acc[job.name]) {
-          acc[job.name] = []
-        }
-        acc[job.name].push(job)
-        return acc
-      }, {})
-
-      // Apply filters to the grouped jobs
-      return matchTasks(groupedJobs, this.jobsFilter)
+      return matchTasks(this.callback.jobs, this.jobsFilter)
     },
     platformOptions () {
       return platformOptions(this.callback.jobs)
@@ -278,16 +230,6 @@ export default {
   },
 
   methods: {
-    updateJobsRange (event) {
-      const value = event.target.value
-      const numValue = Number(value)
-      // Ensure the value is a number and not less than 1.
-      this.jobsRange = Math.max(1, numValue)
-      // Focuses on text input so the counter shows up
-      this.$nextTick(() => {
-        this.$refs.jobRangeInput.focus()
-      })
-    },
     /**
      * Run the one-off query for historical job data and pass its results
      * through the callback
