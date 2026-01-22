@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       :height="450"
       width="95%"
       class="d-flex justify-center"
-          />
+    />
   </div>
   <div id="miniTimeSeries">
     <VueApexCharts
@@ -85,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       class="d-flex justify-center"
     />
   </div>
-  </template>
+</template>
 
 <script>
 import VueApexCharts from 'vue3-apexcharts'

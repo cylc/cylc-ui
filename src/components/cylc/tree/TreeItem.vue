@@ -54,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               v-if="node.familyTree?.length"
               :key="node.id"
               :task="node.familyTree[0].node"
-          />
+            />
             <span class="mx-1">{{ node.name }}</span>
           </template>
           <template v-else-if="node.type === 'family'">

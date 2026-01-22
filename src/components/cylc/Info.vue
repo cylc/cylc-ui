@@ -125,15 +125,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <v-expansion-panel-title>
             <template #default="{ expanded }">
               Inheritance
-                <v-icon
-                  v-if="expanded"
-                  :icon="icons.mdiHelpCircleOutline"
-                  class="ml-2"
-                  v-tooltip="{
-                    text: 'Shows the linearised family inheritance hierarchy for this task. The order of precedence is determined by the C3 algorithm used in Python.',
-                    location: 'top',
-                  }"
-                />
+              <v-icon
+                v-if="expanded"
+                :icon="icons.mdiHelpCircleOutline"
+                class="ml-2"
+                v-tooltip="{
+                  text: 'Shows the linearised family inheritance hierarchy for this task. The order of precedence is determined by the C3 algorithm used in Python.',
+                  location: 'top',
+                }"
+              />
             </template>
           </v-expansion-panel-title>
           <v-expansion-panel-text>

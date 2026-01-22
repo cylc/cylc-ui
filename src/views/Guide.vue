@@ -50,35 +50,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               One task can have multiple jobs, by automatic retry or manual
               triggering.
             </p>
-         </v-card-text>
-            <table id="task-job-state-table">
-              <tr>
-                <td>Task</td>
-                <td></td>
-                <td>Job</td>
-              </tr>
-              <tr
-                v-bind:key="state.name.name"
-                v-for="state of states"
-              >
-                <td style="font-size: 2em;">
-                  <!-- set times to make the progress change -->
-                  <task
-                    :task="{
-                      state: state.name,
-                      task: {meanElapsedTime: 30},
-                    }"
-                    :startTime="String(Date.now())"
-                  />
-                </td>
-                <td>
-                  <span>{{ state.name }}</span>
-                </td>
-                <td style="font-size: 2em;">
-                  <job :status="state.name" />
-                </td>
-              </tr>
-            </table>
+          </v-card-text>
+          <table id="task-job-state-table">
+            <tr>
+              <td>Task</td>
+              <td></td>
+              <td>Job</td>
+            </tr>
+            <tr
+              v-bind:key="state.name.name"
+              v-for="state of states"
+            >
+              <td style="font-size: 2em;">
+                <!-- set times to make the progress change -->
+                <task
+                  :task="{
+                    state: state.name,
+                    task: {meanElapsedTime: 30},
+                  }"
+                  :startTime="String(Date.now())"
+                />
+              </td>
+              <td>
+                <span>{{ state.name }}</span>
+              </td>
+              <td style="font-size: 2em;">
+                <job :status="state.name" />
+              </td>
+            </tr>
+          </table>
           <v-card-text>
             <p>
               A <b>waiting task</b> with <b>failed jobs</b> will
@@ -103,7 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               back from running by some other factor (e.g, if they are held).
             </p>
             <v-list
-               lines="three"
+              lines="three"
             >
               <v-list-item>
                 <template v-slot:prepend>
@@ -187,7 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <p>
               Why has my task not started to run yet?
             </p>
-           <v-list
+            <v-list
               lines="three"
             >
               <v-list-item>
@@ -305,10 +305,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </v-list-item>
             </v-list>
             <p>
-            <em>Note: tasks downstream of queued (or runahead limited) tasks
-               are not themselves shown as queued (or runahead limited)
-               because they are not otherwise ready to run yet.</em>
-             </p>
+              <em>Note: tasks downstream of queued (or runahead limited) tasks
+                are not themselves shown as queued (or runahead limited)
+                because they are not otherwise ready to run yet.</em>
+            </p>
           </v-card-text>
         </v-card>
 
@@ -362,9 +362,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   </marker>
                 </defs>
                 <g
-                ref="graph"
+                  ref="graph"
                   v-on:click.stop.prevent=""
-                  >
+                >
 
                   <g
                     v-for="(task, index) in exampleTasks"
@@ -397,7 +397,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       stroke-width="5"
                       fill="none"
                       :marker-end="`url(#${uid}-arrow-end)`"
-                    :transform="`translate(0, ${ (240 * index) + 120 })`"
+                      :transform="`translate(0, ${ (240 * index) + 120 })`"
                     />
 
                   </g>
