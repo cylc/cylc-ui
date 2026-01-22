@@ -17,7 +17,7 @@
 
 import {
   matchTasks,
-  platformOptions
+  platformOptions,
 } from '@/components/cylc/gantt/filter'
 
 describe('matchTasks', () => {
@@ -41,7 +41,7 @@ describe('matchTasks', () => {
       name: 'task3',
       platform: 'test_platform', // 2nd job submitted on different platform
       id: 'task3/02',
-    }
+    },
   ]
   const task4 = [{
     name: 'task4',
@@ -94,12 +94,12 @@ describe('platformOptions', () => {
     const tasks = {
       test_entry_1: [{ name: 'test_entry_1', platform: 'platform_1' }],
       test_entry_2: [{ name: 'test_entry_2', platform: 'platform_1' }],
-      test_entry_3: [{ name: 'test_entry_3', platform: 'platform_2' }]
+      test_entry_3: [{ name: 'test_entry_3', platform: 'platform_2' }],
     }
     const expected = [
       { title: 'All', value: -1 },
       { title: 'platform_1', value: 'platform_1' },
-      { title: 'platform_2', value: 'platform_2' }
+      { title: 'platform_2', value: 'platform_2' },
     ]
     expect(platformOptions([])).to.deep.equal([{ title: 'All', value: -1 }])
     expect(platformOptions(tasks)).to.deep.equal(expected)

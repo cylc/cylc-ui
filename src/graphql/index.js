@@ -21,7 +21,7 @@ import {
   ApolloLink,
   HttpLink,
   InMemoryCache,
-  split
+  split,
 } from '@apollo/client/core'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/client/link/ws'
@@ -42,7 +42,7 @@ export function createGraphQLUrls () {
   const wsUrl = createUrl('subscriptions', true)
   return {
     httpUrl,
-    wsUrl
+    wsUrl,
   }
 }
 
@@ -112,7 +112,7 @@ export function createSubscriptionClient (wsUrl, options = {}, wsImpl = null) {
  */
 export function createApolloClient (httpUrl, subscriptionClient) {
   const httpLink = new HttpLink({
-    uri: httpUrl
+    uri: httpUrl,
   })
 
   const wsLink = subscriptionClient !== null
@@ -133,8 +133,8 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     return {
       headers: {
         ...headers,
-        ...getXSRFHeaders()
-      }
+        ...getXSRFHeaders(),
+      },
     }
   })
 
@@ -144,12 +144,12 @@ export function createApolloClient (httpUrl, subscriptionClient) {
     defaultOptions: {
       query: {
         fetchPolicy: 'no-cache',
-        errorPolicy: 'all'
+        errorPolicy: 'all',
       },
       watchQuery: {
         fetchPolicy: 'no-cache',
-        errorPolicy: 'all'
-      }
+        errorPolicy: 'all',
+      },
     },
     devtools: {
       enabled: import.meta.env.MODE !== 'production',

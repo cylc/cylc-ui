@@ -54,8 +54,8 @@ export default {
   props: {
     subgraph: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     labelXPosition () {
@@ -67,6 +67,6 @@ export default {
       // Adding 90pt to the y position brings the label inside the rect
       return (parseInt(this.subgraph.y) + 90)
     },
-  }
+  },
 }
 </script>

@@ -65,7 +65,7 @@ const NamedTypes = {
     is: VTextarea,
     rows: '1',
     autoGrow: true,
-    style: 'font-family: monospace;'
+    style: 'font-family: monospace;',
   },
   TaskRunMode: {
     is: GEnum,
@@ -81,23 +81,23 @@ export default {
     modelValue: {
       // validity of form
       type: Boolean,
-      default: () => false
+      default: () => false,
     },
     cylcObject: {
       // data store node
       type: Object,
-      required: true
+      required: true,
     },
     types: {
       // introspection types
       type: Array,
-      required: true
+      required: true,
     },
     data: {
       type: Object,
       required: false,
       default: () => { return {} }, // for ease of testing
-    }
+    },
   },
 
   emits: ['update:modelValue'],
@@ -135,8 +135,8 @@ export default {
       set (value) {
         // Update 'value' prop by notifying parent component's v-model for this component
         this.$emit('update:modelValue', value)
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -178,7 +178,7 @@ export default {
       if (!settings.length) {
         return {
           message: 'No changes were made',
-          status: mutationStatus.WARN
+          status: mutationStatus.WARN,
         }
       }
       const args = {
@@ -187,7 +187,7 @@ export default {
         mode: 'Set',
         namespaces: [this.tokens.task],
         settings,
-        workflows: [this.tokens.workflowID]
+        workflows: [this.tokens.workflowID],
       }
       const mutation = await this.$workflowService.getMutation('broadcast')
       return await mutate(
@@ -221,7 +221,7 @@ export default {
               )) {
                 // Convert { key: x, value: y } to { x: y }
                 ret.push({
-                  [field]: { [obj.key]: obj.value }
+                  [field]: { [obj.key]: obj.value },
                 })
               }
             }
@@ -244,11 +244,11 @@ export default {
       const gqlType = findByName(this.type.fields, fieldName).type
       return {
         gqlType,
-        ...getComponentProps(gqlType, NamedTypes, VuetifyConfig.kinds)
+        ...getComponentProps(gqlType, NamedTypes, VuetifyConfig.kinds),
       }
     },
 
-    startCase
-  }
+    startCase,
+  },
 }
 </script>

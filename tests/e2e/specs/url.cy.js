@@ -42,8 +42,8 @@ describe('URL handling', () => {
         username: 'user',
         permissions: [],
         mode: 'single user',
-        owner: 'user'
-      }
+        owner: 'user',
+      },
     })
     cy.visit('/#').get('#app')
     cy.url().should('contain', 'noAuth')

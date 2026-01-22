@@ -25,7 +25,7 @@ import dedent from 'dedent'
 import gql from 'graphql-tag'
 import {
   getIntrospectionQuery as getGraphQLIntrospectionQuery,
-  print
+  print,
 } from 'graphql'
 import {
   mdiBullhorn,
@@ -167,7 +167,7 @@ export const cylcObjects = Object.freeze({
   CyclePoint: 'cycle',
   Family: 'family',
   Task: 'task',
-  Job: 'job'
+  Job: 'job',
 })
 
 /**
@@ -181,7 +181,7 @@ export const primaryMutations = {
     'stop',
     'reload',
     'clean',
-    'log'
+    'log',
   ],
   [cylcObjects.CyclePoint]: [
     'hold',
@@ -249,7 +249,7 @@ export const compoundFields = {
     (tokens[cylcObjects.CyclePoint] || '*') +
     '/' +
     tokens[cylcObjects.Task]
-  )
+  ),
 }
 
 /**
@@ -260,7 +260,7 @@ export const compoundFields = {
  */
 export const alternateFields = {
   // cycle points can be used as namespace identifiers
-  NamespaceIDGlob: cylcObjects.CyclePoint
+  NamespaceIDGlob: cylcObjects.CyclePoint,
 }
 
 /**
@@ -271,7 +271,7 @@ export const alternateFields = {
 export const mutationStatus = Object.freeze({
   FAILED: 'FAILED',
   SUCCEEDED: 'SUCCEEDED',
-  WARN: 'WARN'
+  WARN: 'WARN',
 })
 
 /**
@@ -305,7 +305,7 @@ export const dummyMutations = [
     description: 'View task information.',
     args: [],
     _appliesTo: [cylcObjects.Task],
-    _requiresInfo: false
+    _requiresInfo: false,
   },
 ]
 
@@ -316,7 +316,7 @@ export const dummyMutations = [
  */
 const dummyMutationsPermissionsMap = Object.freeze({
   broadcast: Object.freeze(['editRuntime']),
-  read: Object.freeze(['log', 'info'])
+  read: Object.freeze(['log', 'info']),
 })
 
 /**
@@ -378,7 +378,7 @@ export function extractFields (type, fields, types) {
     const fieldType = findByName(types, getBaseType(gqlField.type).name)
     return {
       name: field.name,
-      fields: extractFields(fieldType, field.fields, types)
+      fields: extractFields(fieldType, field.fields, types),
     }
   })
 }
@@ -785,7 +785,7 @@ export function constructQueryStr (query) {
     `  ${query.name}(${argNames.join(', ')}) {`,
     constructFieldsStr(query.fields, 2),
     '  }',
-    '}'
+    '}',
   ].join('\n').trim()
 }
 
@@ -838,7 +838,7 @@ export function getMutationArgsFromTokens (mutation, tokens) {
 function _mutateSuccess (message) {
   return {
     status: mutationStatus.SUCCEEDED,
-    message
+    message,
   }
 }
 
@@ -896,7 +896,7 @@ export async function mutate (mutation, variables, apolloClient, cylcID) {
     // call the mutation
     response = await apolloClient.mutate({
       mutation: gql(mutationStr),
-      variables
+      variables,
     })
   } catch (err) {
     // mutation failed (client-server error e.g. variable format, syntax error)
@@ -954,12 +954,12 @@ export async function query (query, variables, apolloClient) {
   console.debug([
     `query(${query.name})`,
     queryStr,
-    variables
+    variables,
   ])
 
   const response = await apolloClient.query({
     query: gql(queryStr),
-    variables
+    variables,
   })
   return response.data
 }

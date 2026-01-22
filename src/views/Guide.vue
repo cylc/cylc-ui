@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                   <task
                     :task="{
                       state: state.name,
-                      task: {meanElapsedTime: 30}
+                      task: {meanElapsedTime: 30},
                     }"
                     :startTime="String(Date.now())"
                   />
@@ -489,7 +489,7 @@ export default {
         },
         jobs: [],
       },
-    ]
+    ],
   }),
 
   methods: {

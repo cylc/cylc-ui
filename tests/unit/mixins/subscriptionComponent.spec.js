@@ -29,14 +29,14 @@ describe('Subscription Component mixin', () => {
     const Component = {
       mixins: [subscriptionComponentMixin],
       data: () => ({
-        query: { foo: 1 }
+        query: { foo: 1 },
       }),
-      render () { }
+      render () { },
     }
     component = mount(Component, {
       global: {
-        mocks: { $workflowService }
-      }
+        mocks: { $workflowService },
+      },
     })
   })
 

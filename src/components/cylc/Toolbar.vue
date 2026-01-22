@@ -47,7 +47,7 @@ component. Note: this is not used for the workflow view, see
 import { mapState } from 'vuex'
 import { useDrawer, toolbarHeight } from '@/utils/toolbar'
 import {
-  mdiViewList
+  mdiViewList,
 } from '@mdi/js'
 
 export default {
@@ -57,7 +57,7 @@ export default {
   },
 
   computed: {
-    ...mapState('app', ['title'])
+    ...mapState('app', ['title']),
   },
 
   icons: {

@@ -59,10 +59,10 @@ describe('Mutations component', () => {
       service.introspection = Promise.resolve({
         mutations,
         types: [],
-        queries: []
+        queries: [],
       })
       service.primaryMutations = {
-        workflow: ['workflowMutation']
+        workflow: ['workflowMutation'],
       }
     })
   }
@@ -79,9 +79,9 @@ describe('Mutations component', () => {
             data: {
               [req.body.operationName]: {
                 result: [true, {}],
-                __typename: upperFirst(req.body.operationName)
-              }
-            }
+                __typename: upperFirst(req.body.operationName),
+              },
+            },
           })
         }
       })

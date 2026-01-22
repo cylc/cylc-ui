@@ -153,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             } : {
               color: 'error',
               prependIcon: $options.icons.mdiPowerPlugOff,
-              onClick: updateQuery
+              onClick: updateQuery,
             }"
           >
             {{ results.connected ? 'Connected' : 'Reconnect' }}
@@ -223,7 +223,7 @@ import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import LogComponent from '@/components/cylc/log/Log.vue'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
@@ -343,7 +343,7 @@ export default {
 
   mixins: [
     graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -384,7 +384,7 @@ export default {
     const inputID = refWithControl(relativeID.value, {
       onChanged: debounce((value) => {
         relativeID.value = value
-      }, 500)
+      }, 500),
     })
 
     function validateInputID (id) {
@@ -479,7 +479,7 @@ export default {
     this.$watch(
       () => ({
         id: this.id ?? undefined, // (do not trigger the callback on null ⇄ undefined)
-        file: this.file ?? undefined
+        file: this.file ?? undefined,
       }),
       async ({ id, file }, old) => {
         // update the widget tab caption when the id or file change
@@ -527,7 +527,7 @@ export default {
               icon: mdiClockOutline,
               action: 'toggle',
               value: this.timestamps,
-              key: 'timestamps'
+              key: 'timestamps',
             },
             {
               title: 'Word wrap',
@@ -543,10 +543,10 @@ export default {
               value: this.autoScroll,
               key: 'autoScroll',
             },
-          ]
-        }
+          ],
+        },
       ]
-    }
+    },
   },
 
   methods: {
@@ -569,7 +569,7 @@ export default {
         { id: this.id, file: this.file },
         `log-query-${this._uid}`,
         [
-          new LogsCallback(this.results)
+          new LogsCallback(this.results),
         ],
         /* isDelta */ false,
         /* isGlobalCallback */ false
@@ -590,7 +590,7 @@ export default {
             JOB_QUERY,
             {
               id: this.relativeTokens.id,
-              workflowId: this.workflowTokens.workflow
+              workflowId: this.workflowTokens.workflow,
             }
           )
         }
@@ -625,7 +625,7 @@ export default {
         // get the list of available log files
         result = await this.$workflowService.apolloClient.query({
           query: LOG_FILE_QUERY,
-          variables: { id: this.id }
+          variables: { id: this.id },
         })
       } catch (err) {
         // the query failed
@@ -690,7 +690,7 @@ export default {
       this.file = null
       // go back to last chosen job if we are switching back to job logs
       this.relativeID = val ? this.previousRelativeID : null
-    }
+    },
   },
 
   // Misc options
@@ -700,6 +700,6 @@ export default {
     mdiPowerPlugOff,
     mdiFileAlertOutline,
     mdiInformationOutline,
-  }
+  },
 }
 </script>

@@ -68,7 +68,7 @@ export default {
 
   components: {
     Markdown,
-    FormInput
+    FormInput,
   },
 
   props: {
@@ -76,19 +76,19 @@ export default {
     modelValue: {
       type: Boolean,
       required: false,
-      default: () => false
+      default: () => false,
     },
 
     // the mutation we are operating on
     mutation: {
       type: Object,
-      required: true
+      required: true,
     },
 
     // list of GraphQL types extracted from the introspection query
     types: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
 
     // the live state of the form
@@ -126,7 +126,7 @@ export default {
         ret.push({
           gqlType: arg.type,
           label: arg.name,
-          description: arg.description
+          description: arg.description,
         })
       }
       return ret
@@ -138,8 +138,8 @@ export default {
       set (value) {
         // Update 'value' prop by notifying parent component's v-model for this component
         this.$emit('update:modelValue', value)
-      }
-    }
+      },
+    },
   },
 
   methods: {

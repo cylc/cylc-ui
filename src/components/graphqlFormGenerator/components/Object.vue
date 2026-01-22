@@ -45,9 +45,9 @@ export default {
     inputs () {
       return this.type.fields.map(field => ({
         gqlType: field.type,
-        label: field.name
+        label: field.name,
       }))
-    }
-  }
+    },
+  },
 }
 </script>

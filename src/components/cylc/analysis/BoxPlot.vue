@@ -70,7 +70,7 @@ import { useReducedAnimation } from '@/composables/localStorage'
 import {
   initialOptions,
   updateInitialOptionsEvent,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 
 export default {
@@ -138,10 +138,10 @@ export default {
               toolbar: {
                 exportToSVG: 'Download SVG',
                 exportToPNG: 'Download PNG',
-                menu: 'Download'
-              }
-            }
-          }
+                menu: 'Download',
+              },
+            },
+          },
         ],
         animations: {
           enabled: reducedAnimation.value ? false : props.animate,
@@ -197,7 +197,7 @@ export default {
           text: `${upperFirst(props.timingOption)} time`,
         },
         labels: {
-          formatter: (value) => formatDuration(value, { allowZeros: true })
+          formatter: (value) => formatDuration(value, { allowZeros: true }),
         },
       },
     }))
@@ -253,7 +253,7 @@ export default {
     numPages () {
       // Clamp page number
       this.page = Math.min(this.numPages, this.page)
-    }
+    },
   },
 
   methods: {

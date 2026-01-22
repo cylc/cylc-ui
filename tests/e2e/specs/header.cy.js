@@ -35,8 +35,8 @@ describe('Header Component multiuser', () => {
           'read',
         ],
         mode: 'multi user',
-        owner: 'userTest'
-      }
+        owner: 'userTest',
+      },
     }).as('test-data-server-owner-input')
     cy.visit('/#/')
   })

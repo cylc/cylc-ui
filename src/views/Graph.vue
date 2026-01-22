@@ -107,7 +107,7 @@ import graphqlMixin from '@/mixins/graphql'
 import subscriptionComponentMixin from '@/mixins/subscriptionComponent'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 // import CylcTreeCallback from '@/services/treeCallback'
@@ -116,7 +116,7 @@ import GraphSubgraph from '@/components/cylc/GraphSubgraph.vue'
 import ViewToolbar from '@/components/cylc/ViewToolbar.vue'
 import {
   posToPath,
-  nonCryptoHash
+  nonCryptoHash,
 } from '@/utils/graph-utils'
 import { Graphviz } from '@hpcc-js/wasm/graphviz'
 import svgPanZoom from 'svg-pan-zoom'
@@ -127,7 +127,7 @@ import {
   mdiArrowExpand,
   mdiRefresh,
   mdiFileRotateRight,
-  mdiVectorSelection
+  mdiVectorSelection,
 } from '@mdi/js'
 import { isFlowNone } from '@/utils/tasks'
 
@@ -230,13 +230,13 @@ export default {
 
   mixins: [
     graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
     GraphNode,
     GraphSubgraph,
-    ViewToolbar
+    ViewToolbar,
   },
 
   props: { initialOptions },
@@ -349,51 +349,51 @@ export default {
               icon: mdiRefresh,
               action: 'callback',
               callback: this.refresh,
-              disableIf: ['autoRefresh']
+              disableIf: ['autoRefresh'],
             },
             {
               title: 'Auto Refresh',
               icon: mdiTimer,
               action: 'toggle',
               value: this.autoRefresh,
-              key: 'autoRefresh'
+              key: 'autoRefresh',
             },
             {
               title: 'Transpose',
               icon: mdiFileRotateRight,
               action: 'toggle',
               value: this.transpose,
-              key: 'transpose'
+              key: 'transpose',
             },
             {
               title: 'Centre',
               icon: mdiImageFilterCenterFocus,
               action: 'callback',
-              callback: this.reset
+              callback: this.reset,
             },
             {
               title: 'Increase Spacing',
               icon: mdiArrowExpand,
               action: 'callback',
-              callback: this.increaseSpacing
+              callback: this.increaseSpacing,
             },
             {
               title: 'Decrease Spacing',
               icon: mdiArrowCollapse,
               action: 'callback',
-              callback: this.decreaseSpacing
+              callback: this.decreaseSpacing,
             },
             {
               title: 'Group by cycle point',
               icon: mdiVectorSelection,
               action: 'toggle',
               value: this.groupCycle,
-              key: 'groupCycle'
-            }
-          ]
-        }
+              key: 'groupCycle',
+            },
+          ],
+        },
       ]
-    }
+    },
   },
 
   methods: {
@@ -439,7 +439,7 @@ export default {
           fit: false,
           contain: false,
           center: true,
-          refreshRate: 'auto'
+          refreshRate: 'auto',
         }
       )
 
@@ -634,7 +634,7 @@ export default {
       // pan to center
       this.panZoomWidget.pan({
         x: -realZoom * (bbox.x - width / (realZoom * 2) + bbox.width / 2),
-        y: -realZoom * (bbox.y - height / (realZoom * 2) + bbox.height / 2)
+        y: -realZoom * (bbox.y - height / (realZoom * 2) + bbox.height / 2),
       })
 
       // zoom to fit
@@ -773,7 +773,7 @@ export default {
               y: -top,
               width: right - left,
               height: top - bottom,
-              label: obj.label
+              label: obj.label,
             }
           }
         } else {
@@ -797,7 +797,7 @@ export default {
         // mount the svgPanZoom widget on first load
         this.mountSVGPanZoom()
       }
-    }
+    },
   },
 
   watch: {
@@ -826,8 +826,8 @@ export default {
       // refresh the graph when group by cycle point option is changed
       this.graphID = null
       this.refresh()
-    }
-  }
+    },
+  },
 }
 </script>
 

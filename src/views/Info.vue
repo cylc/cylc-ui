@@ -33,7 +33,7 @@ import SubscriptionQuery from '@/model/SubscriptionQuery.model'
 import DeltasCallback from '@/services/callbacks'
 import {
   initialOptions,
-  useInitialOptions
+  useInitialOptions,
 } from '@/utils/initialOptions'
 import { Tokens } from '@/utils/uid'
 
@@ -198,7 +198,7 @@ export default {
 
   mixins: [
     graphqlMixin,
-    subscriptionComponentMixin
+    subscriptionComponentMixin,
   ],
 
   components: {
@@ -208,7 +208,7 @@ export default {
   head () {
     return {
       // This sets the page title.
-      title: getPageTitle('App.workflow', { name: this.workflowName })
+      title: getPageTitle('App.workflow', { name: this.workflowName }),
     }
   },
 
@@ -249,7 +249,7 @@ export default {
         { ...this.variables, taskID: this.requestedTokens?.relativeID },
         `info-query-${this._uid}`,
         [
-          new InfoCallback(this.task, this.taskNode)
+          new InfoCallback(this.task, this.taskNode),
         ],
         /* isDelta */ true,
         /* isGlobalCallback */ false
@@ -260,7 +260,7 @@ export default {
   methods: {
     updatePanelExpansion (value) {
       this.panelExpansion = value
-    }
-  }
+    },
+  },
 }
 </script>

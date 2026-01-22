@@ -25,10 +25,10 @@ const WarningComponent = defineComponent({
       'span',
       { style: 'font-size: 200px; margin: 100px;' },
       [
-        h(WarningIcon, this.$attrs)
+        h(WarningIcon, this.$attrs),
       ]
     )
-  }
+  },
 })
 
 // data-store workflow node with no warnings
@@ -42,10 +42,10 @@ const workflowWithWarning = {
   ...workflowWithoutWarning,
   node: {
     logRecords: [
-      { level: 'INFO', message: 'Hello Warning!' }
+      { level: 'INFO', message: 'Hello Warning!' },
     ],
     warningActive: true,
-  }
+  },
 }
 
 describe('Warning Icon', () => {

@@ -73,11 +73,11 @@ describe('cylc tree', () => {
         b: {
           c: {
             d: {
-              '01': {}
-            }
-          }
-        }
-      }
+              '01': {},
+            },
+          },
+        },
+      },
     })
 
     // CLEAR should wipe the store
@@ -98,18 +98,18 @@ describe('cylc tree', () => {
         b: {
           c: {
             d: {
-              '01': {}
-            }
-          }
-        }
-      }
+              '01': {},
+            },
+          },
+        },
+      },
     })
     expect(getIndex()).to.deep.equal([
       '~a',
       '~a/b',
       '~a/b//c',
       '~a/b//c/d',
-      '~a/b//c/d/01'
+      '~a/b//c/d/01',
     ])
 
     // add another job for the same task
@@ -121,10 +121,10 @@ describe('cylc tree', () => {
             d: {
               '01': {},
               '02': {},
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     })
     expect(getIndex()).to.deep.equal([
       '~a',
@@ -132,7 +132,7 @@ describe('cylc tree', () => {
       '~a/b//c',
       '~a/b//c/d',
       '~a/b//c/d/01',
-      '~a/b//c/d/02'
+      '~a/b//c/d/02',
     ])
 
     // add another cycle for the same workflow
@@ -144,11 +144,11 @@ describe('cylc tree', () => {
             d: {
               '01': {},
               '02': {},
-            }
+            },
           },
-          g: {}
-        }
-      }
+          g: {},
+        },
+      },
     })
     expect(getIndex()).to.deep.equal([
       '~a',
@@ -157,7 +157,7 @@ describe('cylc tree', () => {
       '~a/b//c/d',
       '~a/b//c/d/01',
       '~a/b//c/d/02',
-      '~a/b//g'
+      '~a/b//g',
     ])
   })
 
@@ -186,14 +186,14 @@ describe('cylc tree', () => {
         expectedTree: {
           a: {
             b: {
-              g: {}
-            }
-          }
+              g: {},
+            },
+          },
         },
         expectedIndex: [
           '~a',
           '~a/b',
-          '~a/b//g'
+          '~a/b//g',
         ],
       },
       {
@@ -202,14 +202,14 @@ describe('cylc tree', () => {
         expectedTree: {
           a: {
             b: {
-              g: {}
-            }
-          }
+              g: {},
+            },
+          },
         },
         expectedIndex: [
           '~a',
           '~a/b',
-          '~a/b//g'
+          '~a/b//g',
         ],
       },
       {
@@ -220,12 +220,12 @@ describe('cylc tree', () => {
             b: {
               c: {
                 d: {
-                  '02': {}
-                }
+                  '02': {},
+                },
               },
-              g: {}
-            }
-          }
+              g: {},
+            },
+          },
         },
         expectedIndex: [
           '~a',
@@ -233,7 +233,7 @@ describe('cylc tree', () => {
           '~a/b//c',
           '~a/b//c/d',
           '~a/b//c/d/02',
-          '~a/b//g'
+          '~a/b//g',
         ],
       },
     ])('removes a $type from the tree', ({ id, expectedTree, expectedIndex }) => {
@@ -257,11 +257,11 @@ describe('cylc tree', () => {
               d: {
                 '01': {},
                 '02': {},
-              }
+              },
             },
-            g: {}
-          }
-        }
+            g: {},
+          },
+        },
       })
       expect(getIndex()).to.deep.equal([
         '~a',
@@ -270,7 +270,7 @@ describe('cylc tree', () => {
         '~a/b//c/d',
         '~a/b//c/d/01',
         '~a/b//c/d/02',
-        '~a/b//g'
+        '~a/b//g',
       ])
 
       store.commit('workflows/REMOVE', id)
@@ -317,13 +317,13 @@ describe('cylc tree', () => {
       {
         id: '~a',
         foo: 1,
-        bar: 2
+        bar: 2,
       }
     )
     expect(getNode('~a').node).to.deep.equal({
       id: '~a',
       foo: 1,
-      bar: 2
+      bar: 2,
     })
 
     // update a node
@@ -332,14 +332,14 @@ describe('cylc tree', () => {
       {
         id: '~a',
         bar: 3, // update
-        baz: 4 // add
+        baz: 4, // add
       }
     )
     expect(getNode('~a').node).to.deep.equal({
       id: '~a',
       foo: 1, // old (not updated)
       bar: 3, // new (updated)
-      baz: 4 // new (added)
+      baz: 4, // new (added)
     })
   })
 
@@ -428,7 +428,7 @@ describe('cylc tree', () => {
     expect(_tree.children.map(n => n.id)).to.deep.equal([
       '~a',
       '~b',
-      '~c'
+      '~c',
     ])
 
     // insert workflows
@@ -439,7 +439,7 @@ describe('cylc tree', () => {
     expect(user.children.map(n => n.id)).to.deep.equal([
       '~a/a1x',
       '~a/a5x',
-      '~a/a10x'
+      '~a/a10x',
     ])
 
     // insert cycles
@@ -450,7 +450,7 @@ describe('cylc tree', () => {
     expect(workflow.children.map(n => n.id)).to.deep.equal([
       '~a/a1x//20T0',
       '~a/a1x//10T0',
-      '~a/a1x//5T0'
+      '~a/a1x//5T0',
     ])
 
     // insert tasks
@@ -461,7 +461,7 @@ describe('cylc tree', () => {
     expect(cycle.children.map(n => n.id)).to.deep.equal([
       '~a/a1x//5T0/f1d',
       '~a/a1x//5T0/f5d',
-      '~a/a1x//5T0/f10d'
+      '~a/a1x//5T0/f10d',
     ])
 
     // insert jobs
@@ -472,7 +472,7 @@ describe('cylc tree', () => {
     expect(task.children.map(n => n.id)).to.deep.equal([
       '~a/a1x//5T0/f1d/03',
       '~a/a1x//5T0/f1d/02',
-      '~a/a1x//5T0/f1d/01'
+      '~a/a1x//5T0/f1d/01',
     ])
 
     // insert edges
@@ -483,7 +483,7 @@ describe('cylc tree', () => {
     expect(workflow.$edges.map(n => n.id)).to.deep.equal([
       '~a/a1x//$edge|1/a|2/a',
       '~a/a1x//$edge|1/b|2/b',
-      '~a/a1x//$edge|1/c|2/c'
+      '~a/a1x//$edge|1/c|2/c',
     ])
 
     // insert namespaces
@@ -494,7 +494,7 @@ describe('cylc tree', () => {
     expect(workflow.$namespaces.map(n => n.id)).to.deep.equal([
       '~a/a1x//$namespace|a',
       '~a/a1x//$namespace|b',
-      '~a/a1x//$namespace|c'
+      '~a/a1x//$namespace|c',
     ])
   })
 
@@ -509,9 +509,9 @@ describe('cylc tree', () => {
         name: 'PENGUIN',
         ancestors: [
           { name: 'ANIMAL' },
-          { name: 'root' }
+          { name: 'root' },
         ],
-        __typename: 'FamilyProxy'
+        __typename: 'FamilyProxy',
       }
     )
 
@@ -583,8 +583,8 @@ describe('cylc tree', () => {
         childTasks: [
           { id: '~u/w//1/adelie' },
           { id: '~u/w//1/gentoo' },
-          { id: '~u/w//1/jeffes' }
-        ]
+          { id: '~u/w//1/jeffes' },
+        ],
       }
     )
     store.commit(
@@ -592,8 +592,8 @@ describe('cylc tree', () => {
       {
         id: '~u/w//1/ANIMAL',
         childTasks: [
-          { id: '~u/w//1/great-auk' }
-        ]
+          { id: '~u/w//1/great-auk' },
+        ],
       }
     )
 
@@ -604,12 +604,12 @@ describe('cylc tree', () => {
     expect(animal.children.map(node => node.id)).to.deep.equal([
       // NOTE: families should sort before tasks
       '~u/w//1/PENGUIN',
-      '~u/w//1/great-auk'
+      '~u/w//1/great-auk',
     ])
     expect(penguin.children.map(node => node.id)).to.deep.equal([
       '~u/w//1/adelie',
       '~u/w//1/gentoo',
-      '~u/w//1/jeffes'
+      '~u/w//1/jeffes',
     ])
 
     // test removing task (1/adelie)
@@ -619,7 +619,7 @@ describe('cylc tree', () => {
     expect(cycle.children.length).to.equal(3)
     expect(penguin.children.map(node => node.id)).to.deep.equal([
       '~u/w//1/gentoo',
-      '~u/w//1/jeffes'
+      '~u/w//1/jeffes',
     ])
   })
 
@@ -638,12 +638,12 @@ describe('cylc tree', () => {
         childTasks: [
           { id: '~u/w//1/adelie' },
           { id: '~u/w//1/gentoo' },
-          { id: '~u/w//1/jeffes' }
+          { id: '~u/w//1/jeffes' },
         ],
         ancestors: [
-          { name: 'root' }
+          { name: 'root' },
         ],
-        __typename: 'FamilyProxy'
+        __typename: 'FamilyProxy',
       }
     )
     // remove a family
@@ -652,7 +652,7 @@ describe('cylc tree', () => {
 
     // the family tree should be destroyed...
     expect(cycle.familyTree.map(node => node.id)).to.deep.equal([
-      '~u/w//1/root'
+      '~u/w//1/root',
     ])
     expect(cycle.familyTree[0].children.map(node => node.id)).to.deep.equal([])
 
@@ -661,7 +661,7 @@ describe('cylc tree', () => {
       '~u/w//1/adelie',
       '~u/w//1/gentoo',
       '~u/w//1/great-auk',
-      '~u/w//1/jeffes'
+      '~u/w//1/jeffes',
     ])
   })
 
@@ -678,14 +678,14 @@ describe('cylc tree', () => {
       {
         id: '~u/w//1/root',
         ancestors: [],
-        __typename: 'FamilyProxy'
+        __typename: 'FamilyProxy',
       }
     )
 
     const cycle = store.state.workflows.cylcTree.$index['~u/w//1']
     expect(cycle.children.length).to.equal(0)
     expect(cycle.familyTree.map(c => c.id)).to.deep.equal([
-      '~u/w//1/root'
+      '~u/w//1/root',
     ])
   })
 
@@ -698,28 +698,28 @@ describe('cylc tree', () => {
     store.commit(
       'workflows/UPDATE',
       {
-        id: '~u/a/b/c'
+        id: '~u/a/b/c',
       }
     )
 
     store.commit(
       'workflows/UPDATE',
       {
-        id: '~u/a/b/c//1/x'
+        id: '~u/a/b/c//1/x',
       }
     )
 
     const user = store.state.workflows.cylcTree.$index['~u']
     expect(user.children.map(c => c.id)).to.deep.equal([
-      '~u/a'
+      '~u/a',
     ])
     const workflowA = user.children[0]
     expect(workflowA.children.map(c => c.id)).to.deep.equal([
-      '~u/a/b'
+      '~u/a/b',
     ])
     const workflowB = workflowA.children[0]
     expect(workflowB.children.map(c => c.id)).to.deep.equal([
-      '~u/a/b/c'
+      '~u/a/b/c',
     ])
   })
 })

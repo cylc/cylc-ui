@@ -61,9 +61,9 @@ const workflows = [
               },
             ],
           },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
 ]
 
@@ -81,7 +81,7 @@ describe('Table view', () => {
       shallow: true,
       global: {
         plugins: [store],
-        mocks: { $workflowService }
+        mocks: { $workflowService },
       },
       props: {
         workflowName: 'one',
@@ -94,12 +94,12 @@ describe('Table view', () => {
       {
         task: { id: '~user/one//1/eventually_succeeded' },
         latestJob: { id: '~user/one//1/eventually_succeeded/3' },
-        previousJob: { id: '~user/one//1/eventually_succeeded/2' }
+        previousJob: { id: '~user/one//1/eventually_succeeded/2' },
       },
       {
         task: { id: '~user/one//1/failed' },
         latestJob: { id: '~user/one//1/failed/1' },
-      }
+      },
     ])
   })
 
@@ -110,7 +110,7 @@ describe('Table view', () => {
         shallow: true,
         global: {
           plugins: [store],
-          mocks: { $workflowService }
+          mocks: { $workflowService },
         },
         props: {
           workflowName: 'one',
@@ -126,14 +126,14 @@ describe('Table view', () => {
     it('should filter by ID', async () => {
       // plain ID
       wrapper.vm.tasksFilter = {
-        id: 'taskA'
+        id: 'taskA',
       }
       await nextTick()
       expect(wrapper.vm.filteredTasks.length).to.equal(1)
 
       // glob ID
       wrapper.vm.tasksFilter = {
-        id: 'task[A]'
+        id: 'task[A]',
       }
       await nextTick()
       expect(wrapper.vm.filteredTasks.length).to.equal(1)
@@ -142,8 +142,8 @@ describe('Table view', () => {
     it('should filter by task state', async () => {
       wrapper.vm.tasksFilter = {
         states: [
-          TaskState.WAITING.name
-        ]
+          TaskState.WAITING.name,
+        ],
       }
       await nextTick()
       expect(wrapper.vm.filteredTasks.length).to.equal(1)
@@ -153,8 +153,8 @@ describe('Table view', () => {
       wrapper.vm.tasksFilter = {
         id: 'taskA',
         states: [
-          TaskState.WAITING.name
-        ]
+          TaskState.WAITING.name,
+        ],
       }
       await nextTick()
       expect(wrapper.vm.filteredTasks.length).to.equal(0)

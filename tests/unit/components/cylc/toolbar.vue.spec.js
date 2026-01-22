@@ -24,10 +24,10 @@ import storeOptions from '@/store/options'
 
 describe('Toolbar component', () => {
   const vuetify = createVuetify({
-    display: {}
+    display: {},
   })
   const $route = {
-    name: 'testRoute'
+    name: 'testRoute',
   }
   let store
   let mountFunction
@@ -37,16 +37,16 @@ describe('Toolbar component', () => {
     mountFunction = () => mount(Toolbar, {
       global: {
         plugins: [vuetify, store],
-        mocks: { $route }
-      }
+        mocks: { $route },
+      },
     })
 
     store.state.workflows.workflows = [
       {
         id: 'user/id',
         name: 'test',
-        status: WorkflowState.RUNNING.name
-      }
+        status: WorkflowState.RUNNING.name,
+      },
     ]
   })
 
