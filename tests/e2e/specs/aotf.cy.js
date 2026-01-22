@@ -244,6 +244,9 @@ describe('Api On The Fly', () => {
     })
 
     it('opens in a new tab', () => {
+      const mutations = mockApolloClient()
+
+      // 1) it opens in a new tab (restores from popup data)
       cy
         // wait for the mutations to have loaded
         .wait(['@IntrospectQuery'])
@@ -300,6 +303,36 @@ describe('Api On The Fly', () => {
 
         // the edit should have been preserved in the new tab
         .get('input[value="~user/one-edit-2"]')
+
+        // click the submit button
+        .get('.c-mutation [data-cy=submit]')
+        .click()
+        .then(() => {
+          // the mutation should have been submitted with the edited value
+          expect(mutations.length).to.equal(1)
+          expect(mutations[0].variables.workflow).to.equal('~user/one-edit-2')
+        })
+
+      // 2) it restores from the saved layout
+      cy
+        // navigate to another workflow and back
+        .visit('/#/workspace/other/multi/run2')
+        .visit('/#/workspace/one')
+
+        // clear prior mutation
+        .then(() => { mutations.splice(0, mutations.length) })
+
+        // the edit should have been preserved post-navigation
+        .get('input[value="~user/one-edit-2"]')
+
+        // click the submit button
+        .get('.c-mutation [data-cy=submit]')
+        .click()
+        .then(() => {
+          // the mutation should have been submitted with the edited value
+          expect(mutations.length).to.equal(1)
+          expect(mutations[0].variables.workflow).to.equal('~user/one-edit-2')
+        })
 
         // the field should revert to its original value when reset
         .get('.c-mutation [data-cy=reset]')
